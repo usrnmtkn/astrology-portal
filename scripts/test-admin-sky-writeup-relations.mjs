@@ -85,8 +85,16 @@ assert.match(dashboard, /Create a complete edition/u, "Template rows must expose
 assert.match(dashboard, /TL;DR · explicit edition copy/u, "Edition compilation must collect an explicit TL;DR in Content Studio.");
 assert.match(dashboard, /summary: edition\.tldr/u, "The saved summary mirror must use the explicit compiled TL;DR.");
 assert.match(dashboard, /All 12 approved house horoscopes are required/u, "Compilation must require complete house coverage.");
-assert.match(dashboard, /Approve & publish edition/u, "Compiled editions need a distinct owner approval action.");
+assert.match(dashboard, /Approve &amp; publish complete edition/u, "Compiled editions need a distinct owner approval action.");
+assert.match(dashboard, /Edit the reader experience/u, "Compiled editions must open as one article-first editor.");
+assert.match(dashboard, /Drafts save automatically/u, "The article editor must explain its non-serving autosave behavior.");
+assert.match(dashboard, /Review only what changed/u, "The owner must review a focused field diff before publication.");
+assert.match(dashboard, /Publish changes/u, "Field edits must publish through one complete-edition action.");
+assert.match(dashboard, /Publication checklist/u, "Incomplete article workspaces must show their remaining blockers.");
+assert.match(dashboard, /sky-article-edition-workspace/u, "Incomplete article fields must persist in a non-serving workspace.");
 assert.match(generatedContentApi, /ownerAction === "approve-sky-article-edition"/u, "The API must enforce the explicit owner approval action.");
+assert.match(generatedContentApi, /ownerAction === "save-sky-article-edition-revision"/u, "The API must save edits outside the LIVE row.");
+assert.match(generatedContentApi, /ownerAction === "publish-sky-article-edition-revision"/u, "The API must atomically publish a reviewed complete revision.");
 assert.match(readerApp, /selectActiveSkyArticleEdition/u, "Sky reader articles must select active compiled editions.");
 assert.match(readerApp, /tldr: selected\.edition\.tldr/u, "Reader placement previews must consume the explicit compiled TL;DR.");
 assert.match(readerApp, /section\?\.tldr\s*\?\s*textPreview\(section\.tldr\)/u, "The Transits list must prefer explicit TL;DR copy over the full article body.");

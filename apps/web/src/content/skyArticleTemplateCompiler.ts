@@ -65,6 +65,25 @@ export type CompiledSkyArticleEdition = {
   transitStartInstant: string;
   validFrom: string;
   validTo: string;
+  revision?: {
+    baseCompiledHash: string;
+    changedFieldIds: string[];
+  };
+};
+
+export type SkyArticleEditableFields = {
+  aspectPassages: SkyArticleAspectPassage[];
+  body: string;
+  headline: string;
+  housePassages: SkyArticleHousePassage[];
+  tldr: string;
+};
+
+export type SkyArticleFieldChange = {
+  after: string;
+  before: string;
+  fieldId: string;
+  label: string;
 };
 
 export type SkyArticleEditionCandidate = {
@@ -198,6 +217,110 @@ function markdownSections(markdown: string): SkyArticleSection[] {
   }
   flush();
   return sections;
+}
+
+function passageMarkdown(edition: Pick<CompiledSkyArticleEdition, "housePassages">) {
+  return edition.housePassages
+    .slice()
+    .sort((left, right) => left.house - right.house)
+    .map((passage) => `### ${passage.risingSign ? `${titleCaseToken(passage.risingSign)} Rising` : `${passage.house}${passage.house === 1 ? "st" : passage.house === 2 ? "nd" : passage.house === 3 ? "rd" : "th"} House`}\n\n${passage.body.trim()}`)
+    .join("\n\n");
+}
+
+export function skyArticleEditableFields(edition: CompiledSkyArticleEdition): SkyArticleEditableFields {
+  return {
+    headline: edition.headline,
+    tldr: edition.tldr,
+    body: edition.body,
+    housePassages: edition.housePassages.map((passage) => ({ ...passage })),
+    aspectPassages: edition.aspectPassages.map((passage) => ({ ...passage }))
+  };
+}
+
+export function skyArticleEditionFieldChanges(
+  base: CompiledSkyArticleEdition,
+  fields: SkyArticleEditableFields
+): SkyArticleFieldChange[] {
+  const changes: SkyArticleFieldChange[] = [];
+  const add = (fieldId: string, label: string, before: string, after: string) => {
+    if (before !== after) changes.push({ fieldId, label, before, after });
+  };
+
+  add("headline", "Headline", base.headline, fields.headline);
+  add("tldr", "TL;DR", base.tldr, fields.tldr);
+  add("body", "General article", base.body, fields.body);
+
+  base.housePassages.forEach((passage) => {
+    const revised = fields.housePassages.find((candidate) => candidate.contentKey === passage.contentKey);
+    add(`house:${passage.house}`, `House ${passage.house}`, passage.body, revised?.body ?? "");
+  });
+  base.aspectPassages.forEach((passage) => {
+    const revised = fields.aspectPassages.find((candidate) => candidate.contentKey === passage.contentKey);
+    add(`aspect:${passage.contentKey}`, `${titleCaseToken(passage.natalPoint)} ${titleCaseToken(passage.aspect)}`, passage.body, revised?.body ?? "");
+  });
+
+  return changes;
+}
+
+function assertEditableRevisionShape(base: CompiledSkyArticleEdition, fields: SkyArticleEditableFields) {
+  if (!fields.headline.trim() || !fields.tldr.trim() || !fields.body.trim()) {
+    throw new Error("Sky article headline, TL;DR, and general article copy are required.");
+  }
+  if (fields.housePassages.length !== base.housePassages.length) {
+    throw new Error("Sky article revisions cannot add or remove house passages.");
+  }
+  if (fields.aspectPassages.length !== base.aspectPassages.length) {
+    throw new Error("Sky article revisions cannot add or remove natal-aspect passages.");
+  }
+  base.housePassages.forEach((passage) => {
+    const revised = fields.housePassages.find((candidate) => candidate.contentKey === passage.contentKey);
+    if (!revised || revised.house !== passage.house || revised.risingSign !== passage.risingSign || !revised.body.trim()) {
+      throw new Error(`Sky article House ${passage.house} revision must preserve its calculated identity and non-empty copy.`);
+    }
+  });
+  base.aspectPassages.forEach((passage) => {
+    const revised = fields.aspectPassages.find((candidate) => candidate.contentKey === passage.contentKey);
+    if (!revised || revised.aspect !== passage.aspect || revised.natalPoint !== passage.natalPoint || !revised.body.trim()) {
+      throw new Error(`Sky article aspect revision must preserve ${passage.contentKey} and its non-empty copy.`);
+    }
+  });
+}
+
+export async function reviseSkyArticleEdition(
+  base: CompiledSkyArticleEdition,
+  fields: SkyArticleEditableFields
+): Promise<CompiledSkyArticleEdition> {
+  assertCompiledSkyArticleEdition(base);
+  assertEditableRevisionShape(base, fields);
+  const headline = compactBlankLines(fields.headline);
+  const tldr = compactBlankLines(fields.tldr);
+  const body = compactBlankLines(fields.body);
+  const housePassages = fields.housePassages.map((passage) => ({ ...passage, body: compactBlankLines(passage.body) }));
+  const aspectPassages = fields.aspectPassages.map((passage) => ({ ...passage, body: compactBlankLines(passage.body) }));
+  const changes = skyArticleEditionFieldChanges(base, { headline, tldr, body, housePassages, aspectPassages });
+  const compiledMarkdown = compactBlankLines([
+    `# ${headline}`,
+    body,
+    "## Horoscopes",
+    passageMarkdown({ housePassages })
+  ].join("\n\n"));
+  const compiledHash = await sha256(JSON.stringify({ tldr, compiledMarkdown, housePassages, aspectPassages }));
+
+  return {
+    ...base,
+    headline,
+    tldr,
+    body,
+    articleSections: markdownSections(body),
+    housePassages,
+    aspectPassages,
+    compiledMarkdown,
+    compiledHash,
+    revision: {
+      baseCompiledHash: base.revision?.baseCompiledHash ?? base.compiledHash,
+      changedFieldIds: changes.map((change) => change.fieldId)
+    }
+  };
 }
 
 function articleBodyBeforeHoroscopes(markdown: string) {
