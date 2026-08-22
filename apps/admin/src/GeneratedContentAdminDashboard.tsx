@@ -1609,7 +1609,7 @@ function dashboardErrorMessage(error: unknown) {
       return `${error.path} rejected ${error.method}. The dashboard called an endpoint with the wrong HTTP method.`;
     }
 
-    return `${error.path} failed with HTTP ${error.status}.`;
+    return `${error.path} failed with HTTP ${error.status}${error.details ? `: ${error.details}` : "."}`;
   }
 
   return error instanceof Error ? error.message : "Could not load admin content.";
@@ -2881,7 +2881,7 @@ export function GeneratedContentAdminDashboard() {
       }
       setMessage(`${draftForSave.contentKey} saved as ${contentStatusLabel(saved?.status ?? status)}.`);
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : "Could not save row.");
+      setMessage(dashboardErrorMessage(error));
     } finally {
       setIsLoading(false);
     }

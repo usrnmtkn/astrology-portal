@@ -971,6 +971,21 @@ for (const row of skyPlacementOwnerApprovedFallbacksV1.rows.filter((candidate) =
   assert.doesNotMatch(rendered.body, /\{\{/u);
 }
 
+const jupiterLeoOwnerCopy = renderer.renderSkyPlacement({
+  planet: "jupiter",
+  sign: "leo",
+  entryDate: "June 30, 2026",
+  exitDate: "July 26, 2027"
+});
+assert.match(
+  jupiterLeoOwnerCopy.body,
+  /For about a year, Jupiter in Leo makes it harder to hide the parts of our lives that want more room/u
+);
+assert.match(
+  jupiterLeoOwnerCopy.body,
+  /If you build your confidence entirely on applause, you will always need somebody nearby to provide it\.$/u
+);
+
 assert.throws(
   () => renderer.renderSkyPlacement({ planet: "sun", sign: "virgo", ...ownerFallbackDateFacts }),
   /SOURCE_GAP: continuous sky placement sign copy sun\/virgo/u,
