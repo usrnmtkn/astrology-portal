@@ -46,6 +46,12 @@ try {
       sign: "virgo",
       referenceDate: new Date("2026-08-10T12:00:00Z"),
       timeZone: "America/New_York"
+    }),
+    uranus: await ephemeris.getSkyPlacementTransitFacts({
+      planet: "uranus",
+      sign: "gemini",
+      referenceDate: new Date("2025-08-22T12:00:00Z"),
+      timeZone: "America/New_York"
     })
   };
 
@@ -81,6 +87,7 @@ try {
 
   const keyDateFacts = (facts) => ({
     planet: facts.planet.toLowerCase().replaceAll(" ", "-"),
+    sign: facts.sign.toLowerCase().replaceAll(" ", "-"),
     residencyPasses: facts.residencyPasses,
     residencyStations: facts.residencyStations
   });
@@ -95,8 +102,8 @@ try {
   const lilithDates = nodeKeyDates(keyDateFacts(fixtures.lilith));
   assert.equal(lilithDates.filter((entry) => entry.event === "residency-pass").length, fixtures.lilith.residencyPasses.length);
   assert.equal(lilithDates.find((entry) => entry.event === "residency-pass")?.label, `Pass 1 of ${fixtures.lilith.residencyPasses.length}`);
-  assert.ok(lilithDates.some((entry) => entry.label === "Lilith stations retrograde"));
-  assert.ok(lilithDates.some((entry) => entry.label === "Lilith stations direct"));
+  assert.ok(lilithDates.some((entry) => entry.label === "Lilith stations retrograde in Capricorn"));
+  assert.ok(lilithDates.some((entry) => entry.label === "Lilith stations direct in Capricorn"));
   assert.equal(
     TRUE_LILITH_KEY_DATES_INTRO,
     "True Black Moon Lilith stations about once a month, so it crosses the same degrees several times before it finally moves on.",
@@ -111,8 +118,8 @@ try {
   const mercuryDates = nodeKeyDates(keyDateFacts(fixtures.mercury));
   assert.equal(mercuryDates.filter((entry) => entry.event === "residency-pass").length, 1);
   assert.equal(mercuryDates.find((entry) => entry.event === "residency-pass")?.label, "", "Single-pass ranges have no pass label.");
-  assert.ok(mercuryDates.some((entry) => entry.label === "Mercury stations retrograde"));
-  assert.ok(mercuryDates.some((entry) => entry.label === "Mercury stations direct"));
+  assert.ok(mercuryDates.some((entry) => entry.label === "Mercury stations retrograde in Cancer"));
+  assert.ok(mercuryDates.some((entry) => entry.label === "Mercury stations direct in Cancer"));
   assert.equal(nodeKeyDatesIntro(keyDateFacts(fixtures.mercury)), null, "The true-Lilith introduction must not render for Mercury.");
   assert.equal(browserRenderer.skyPlacementKeyDatesIntro(keyDateFacts(fixtures.mercury)), null);
 
@@ -125,8 +132,13 @@ try {
   assert.equal(fixtures.venus.residencyStations.length, 0, "The no-station residency fixture must stay station-free.");
   assert.equal(venusDates.length, 1, "A verified no-station residency must not invent a station line.");
 
+  const uranusDates = nodeKeyDates(keyDateFacts(fixtures.uranus));
+  assert.ok(uranusDates.some((entry) => entry.label === "Uranus stations retrograde in Gemini"));
+  assert.ok(uranusDates.some((entry) => entry.label === "Uranus stations direct in Gemini"));
+
   const partial = nodeKeyDates({
     planet: "mercury",
+    sign: "cancer",
     residencyPasses: [fixtures.mercury.residencyPasses[0], { entryDate: "invalid", exitDate: "invalid" }],
     residencyStations: [
       ...fixtures.mercury.residencyStations,
@@ -136,7 +148,18 @@ try {
   assert.equal(partial.filter((entry) => entry.event === "residency-pass").length, 1, "Invalid passes must fail closed without hiding verified passes.");
   assert.ok(!partial.some((entry) => entry.date.startsWith("2030")), "Stations outside verified passes must not render.");
 
-  console.log("Sky placement Key dates regression passed: all-pass, station, single-pass, no-station, parity, and fail-closed fixtures are clean.");
+  const missingSign = nodeKeyDates({
+    planet: "mercury",
+    sign: "",
+    residencyPasses: fixtures.mercury.residencyPasses,
+    residencyStations: fixtures.mercury.residencyStations
+  });
+  assert.ok(
+    !missingSign.some((entry) => entry.event?.startsWith("station-")),
+    "A station without an engine-supplied placement sign must fail closed instead of rendering an incomplete label."
+  );
+
+  console.log("Sky placement Key dates regression passed: station signs, all-pass, single-pass, no-station, parity, and fail-closed fixtures are clean.");
 } finally {
   await vite.close();
 }
