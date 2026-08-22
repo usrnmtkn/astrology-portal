@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "recordType": "natal_aspect_serving_exact_approval",
+  "approvalId": "natal-sun-square-ascendant-owner-approval-2026-08-22",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "approvedAt": "2026-08-22",
+  "recordedAt": "2026-08-22",
+  "surface": "you-natal-aspect",
+  "contentKey": "fallback-hook/natal-aspect-lived/sun/square/ascendant",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payloadSha256": "53475aba515b86413d77c87552313bf779735f5ea6b5c17f18b65b4a3d8317d5",
+  "payload": {
+    "body": "A plan can make sense on paper, but feel completely off the moment you start living it. You find yourself doing the work, showing up to the meetings, and hitting the milestones, while privately wondering why none of it feels like yours anymore. The person everyone sees managing the role is no longer the person who has to live with the daily routine. When there is a gap between who you are and what you keep projecting, every decision feels like a course correction. Things get simpler once you stop forcing yourself to maintain a reputation, title, or expectation you outgrew six months ago. Align what you do with what you actually want right now, instead of keeping up an appearance for people who only know the older version of you."
+  },
+  "ownerInstruction": "Owner supplied replacement wording in direct response to the request for exact approval of the missing Sun square Ascendant natal interpretation.",
+  "ownerConfirmationSource": {
+    "channel": "Codex task owner message",
+    "taskId": "019fedfe-d553-75e3-be16-8abaa96cdf44",
+    "date": "2026-08-22"
+  },
+  "approvalEffect": "exact_wording_approval",
+  "friendSurfaceEffect": "none; Friend remains fail-closed until separately authored observer-position wording is approved",
+  "automaticCopyEdits": 0
+}
