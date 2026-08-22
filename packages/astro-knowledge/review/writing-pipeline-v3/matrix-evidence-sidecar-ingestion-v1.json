@@ -20,9 +20,9 @@
     "argument_candidate": 787
   },
   "deduplicatedSharedIndexCounts": {
-    "entries": 5827,
-    "meaning": 2176,
-    "register": 1709,
+    "entries": 5923,
+    "meaning": 2224,
+    "register": 1757,
     "scene": 415,
     "argument": 1181,
     "phrase": 346,
@@ -64,9 +64,16 @@
       "argument": 0,
       "phrase": 0
     },
+    "reviewed-sky-point-placement-meaning": {
+      "meaning": 48,
+      "register": 0,
+      "scene": 0,
+      "argument": 0,
+      "phrase": 0
+    },
     "owner-corpus-passage": {
       "meaning": 0,
-      "register": 482,
+      "register": 530,
       "scene": 0,
       "argument": 0,
       "phrase": 0
@@ -133,7 +140,7 @@
     "matrixZeroScene": 114,
     "extendedZeroScene": 252,
     "extendedZeroSceneWithinMatrixPlacements": 98,
-    "extendedZeroMeaning": 16,
+    "extendedZeroMeaning": 4,
     "extendedZeroArgument": 71
   },
   "beforeCounts": {
@@ -146,9 +153,9 @@
     "planetSignKeys": 190
   },
   "afterCounts": {
-    "entries": 5827,
-    "meaning": 2176,
-    "register": 1709,
+    "entries": 5923,
+    "meaning": 2224,
+    "register": 1757,
     "scene": 415,
     "argument": 1181,
     "phrase": 346,
@@ -175,18 +182,54 @@
     "moonCancerMeaning": 1,
     "moonAquariusMeaning": 1,
     "lilithBySign": {
-      "aries": 4,
-      "taurus": 4,
-      "gemini": 4,
-      "cancer": 4,
-      "leo": 4,
-      "virgo": 4,
-      "libra": 4,
-      "scorpio": 5,
-      "sagittarius": 4,
-      "capricorn": 4,
-      "aquarius": 4,
-      "pisces": 4
+      "aries": {
+        "meaning": 1,
+        "sceneOrArgument": 4
+      },
+      "taurus": {
+        "meaning": 1,
+        "sceneOrArgument": 4
+      },
+      "gemini": {
+        "meaning": 1,
+        "sceneOrArgument": 4
+      },
+      "cancer": {
+        "meaning": 1,
+        "sceneOrArgument": 4
+      },
+      "leo": {
+        "meaning": 1,
+        "sceneOrArgument": 4
+      },
+      "virgo": {
+        "meaning": 1,
+        "sceneOrArgument": 4
+      },
+      "libra": {
+        "meaning": 1,
+        "sceneOrArgument": 4
+      },
+      "scorpio": {
+        "meaning": 1,
+        "sceneOrArgument": 5
+      },
+      "sagittarius": {
+        "meaning": 1,
+        "sceneOrArgument": 4
+      },
+      "capricorn": {
+        "meaning": 1,
+        "sceneOrArgument": 4
+      },
+      "aquarius": {
+        "meaning": 1,
+        "sceneOrArgument": 4
+      },
+      "pisces": {
+        "meaning": 1,
+        "sceneOrArgument": 4
+      }
     }
   },
   "deduplication": "within role + exact planet + exact sign + event by copy_sha; governance precedence wins",

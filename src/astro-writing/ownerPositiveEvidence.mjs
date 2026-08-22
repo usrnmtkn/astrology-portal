@@ -222,6 +222,39 @@ export function ownerPositiveEvidenceFromSurfaceQualifiedPool(pool) {
     }));
 }
 
+export function ownerLockedLilithV5Evidence(rows) {
+  return (rows ?? [])
+    .filter((entry) => (
+      entry?.review_status === "approved"
+      && /^fallback-hook\/sky-placement-(?:tagline|hook|lived|turn)\/lilith\/[a-z-]+$/u.test(String(entry?.contentKey ?? ""))
+      && /OWNER-AUTHORED V5/iu.test(String(entry?.notes ?? ""))
+      && /owner exact-wording approval/iu.test(String(entry?.approved_via ?? ""))
+      && typeof entry?.body_you === "string"
+      && entry.body_you.trim()
+    ))
+    .map((entry) => {
+      const parts = entry.contentKey.split("/");
+      return Object.freeze({
+        id: `owner-locked-lilith-v5:${entry.contentKey}`,
+        contentKey: entry.contentKey,
+        family: "sky-placement-current-sky-writer",
+        sourceFamily: "owner-locked-lilith-v5-placement",
+        register: /\b(?:you|your|yours|yourself|yourselves)\b/iu.test(entry.body_you) ? "second_person" : "collective",
+        text: entry.body_you,
+        sourcePath: "packages/astro-knowledge/review/lilith-placements-v5/lilith-placements-v5-staged-rows.json",
+        planet: "lilith",
+        sign: parts.at(-1),
+        articleBeat: parts.at(-3).replace("sky-placement-", ""),
+        structuralFunction: "owner-locked placement passage",
+        authorityClass: "owner_authored_final",
+        ownerAuthored: true,
+        ownerApproved: true,
+        useAsPositiveVoiceEvidence: true,
+        evidenceRole: "owner_locked_same_placement_family"
+      });
+    });
+}
+
 export function ownerPositiveEvidenceFromVoiceIndexBySourceIds(index, sourceIds, family) {
   const requested = new Set(sourceIds ?? []);
   if (!requested.size) return [];

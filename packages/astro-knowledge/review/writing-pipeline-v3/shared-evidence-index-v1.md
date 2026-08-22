@@ -6,12 +6,12 @@ Index key: `planet|sign; *|* is globally eligible register evidence`
 
 ## Role counts
 
-- Meaning: **2176**
-- Register: **1709**
+- Meaning: **2224**
+- Register: **1757**
 - Scene: **415**
 - Argument: **1181**
 - Phrase: **346**
-- Total entries: **5827** across **247** planet-sign keys
+- Total entries: **5923** across **247** planet-sign keys
 
 Scene precedence is fixed as: same-planet-sign owner-approved house cores; approved serving
 rows; knowledge-matrix scene rows. Governance precedence still applies within each source tier.
@@ -27,6 +27,8 @@ rows; knowledge-matrix scene rows. Governance precedence still applies within ea
 - `data/writing/OWNER_APPROVED_EXAMPLES.jsonl`
 - `data/writing/owner-register-gold.json`
 - `data/writing/phrase-evidence-index/owner-phrase-evidence-v1.jsonl`
+- `tldr-astro-phrasebank/phrasebank/cc-sky-points-authored.json`
+- `packages/astro-knowledge/review/lilith-placements-v5/lilith-placements-v5-staged-rows.json`
 - `tldr-astro-phrasebank/MARIE-VOICE-BANK.md`
 - `tldr-astro-phrasebank/WRITING-STANDARD.md`
 
