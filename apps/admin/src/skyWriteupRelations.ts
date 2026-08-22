@@ -77,9 +77,9 @@ function nestedString(record: Record<string, unknown> | null | undefined, paths:
 function keyPlacementParts(contentKey: string) {
   const normalizedKey = contentKey.toLowerCase();
   const matches = [
-    normalizedKey.match(/^sky\.placement\.(?:base|topper)\.([a-z-]+)\.([a-z-]+)/u),
-    normalizedKey.match(/^sky[./-]placement[./-](?:base[./-]|topper[./-])?([a-z-]+)[./-]([a-z-]+)/u),
-    normalizedKey.match(/^fallback-hook\/sky-sign-copy\/([a-z-]+)\/([a-z-]+)/u)
+    normalizedKey.match(/^sky\.placement\.(?:base|topper)\.([a-z_-]+)\.([a-z_-]+)/u),
+    normalizedKey.match(/^sky[./-]placement[./-](?:base[./-]|topper[./-])?([a-z_-]+)[./-]([a-z_-]+)/u),
+    normalizedKey.match(/^fallback-hook\/sky-sign-copy\/([a-z_-]+)\/([a-z_-]+)/u)
   ];
   const match = matches.find(Boolean);
   return match ? { planet: match[1], sign: match[2] } : null;
@@ -100,7 +100,7 @@ function signFromHeadline(headline: string) {
 
 export function skyWriteupContextForRow(row: SkyWriteupRelationRow): SkyWriteupContext | null {
   const keyParts = keyPlacementParts(row.content_key);
-  const keyPlanetOnly = row.content_key.toLowerCase().match(/^fallback-hook\/sky-placement\/([a-z-]+)$/u)?.[1] ?? "";
+  const keyPlanetOnly = row.content_key.toLowerCase().match(/^fallback-hook\/sky-placement\/([a-z_-]+)$/u)?.[1] ?? "";
   const planet = normalizedToken(
     keyParts?.planet
       || nestedString(row.facts, [["planet"], ["body"], ["derivedFrom", "planet"], ["placementDerivation", "planet"]])

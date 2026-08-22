@@ -398,7 +398,12 @@ export function createFallbackRenderer(templatesFile: TemplatesFile, rowsFile: R
     };
     const template = getTemplate("fallback-template/natal.angle-in-sign");
     const body = renderTemplate(template, ctx, `${facts.angle}/${facts.sign}`, voice);
-    return { headline: mustache(template.headline ?? "", ctx), parts: [body], body, templateKey: template.contentKey };
+    return {
+      headline: mustache(template.headline ?? "", ctx),
+      parts: [body],
+      body,
+      templateKey: template.contentKey,
+    };
   }
 
   function renderNatalAspect(facts: AspectFacts, opts: RenderOpts = {}): RenderResult {
@@ -418,20 +423,6 @@ export function createFallbackRenderer(templatesFile: TemplatesFile, rowsFile: R
       };
     }
 
-    // Keep reviewed generic aspect prose as an explicitly labeled continuity
-    // fallback. Exact owner-approved rows always win and callers can surface or
-    // withhold this lower provenance tier without confusing the two.
-    const genericLived = getReaderLivedRow(`fallback-hook/aspect-lived/${aspect}`, voice, opts);
-    if (genericLived) {
-      return {
-        headline: `${title(facts.planetA)} ${aspect} ${title(facts.planetB)}`,
-        parts: [genericLived.body ?? ""],
-        body: genericLived.body ?? "",
-        astroHint: genericLived.astroHint,
-        templateKey: genericLived.contentKey,
-        provenanceTier: "legacy-reviewed",
-      };
-    }
     const group = ASPECT_GROUP[aspect];
     const pair = group
       ? getHook(`fallback-hook/aspect-pair/${facts.planetA}/${facts.planetB}/${group}`, voice, opts)
@@ -458,7 +449,13 @@ export function createFallbackRenderer(templatesFile: TemplatesFile, rowsFile: R
     };
     const template = getTemplate("fallback-template/natal.aspect");
     const body = renderTemplate(template, ctx, `${facts.planetA}-${facts.aspect}-${facts.planetB}`, voice);
-    return { headline: mustache(template.headline ?? "", ctx), parts: [body], body, templateKey: template.contentKey };
+    return {
+      headline: mustache(template.headline ?? "", ctx),
+      parts: [body],
+      body,
+      templateKey: template.contentKey,
+      provenanceTier: "legacy-reviewed",
+    };
   }
 
   // ---- Empty-house pages (natal): sign-on-cusp -> ruler -> ruler placement -> activation
