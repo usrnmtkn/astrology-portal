@@ -35,8 +35,8 @@ const skyReviewHorizonFixture = {
   endDate: "2026-11-20",
   snapshotCount: 91,
   calculationMethod: "daily-active-sky-snapshot",
-  counts: { occurrences: 1, aspectCandidates: 1, placementCandidates: 0, activeWindows: 1 },
-  reviewCounts: { missing_draft: 1 },
+  counts: { occurrences: 2, aspectCandidates: 1, placementCandidates: 1, activeWindows: 2 },
+  reviewCounts: { missing_draft: 1, draft_needs_work: 1 },
   generationPlan: {
     status: "authorization_required",
     reusableCandidatesMissingDrafts: 1,
@@ -46,16 +46,48 @@ const skyReviewHorizonFixture = {
     contentKeys: ["sky.aspect.sun.trine.chiron.leo.taurus"],
     note: "Fixture generation plan."
   },
-  occurrences: [{
-    kind: "aspect",
-    contentKey: "sky.aspect.sun.trine.chiron.leo.taurus",
-    label: "Sun trine Chiron",
-    facts: { a: "sun", b: "chiron", aspect: "trine", signA: "leo", signB: "taurus" },
-    activeDates: ["2026-08-22"],
-    windows: [{ startDate: "2026-08-22", endDate: "2026-08-22" }],
-    reviewStatus: "missing_draft",
-    row: null
-  }]
+  occurrences: [
+    {
+      kind: "aspect",
+      contentKey: "sky.aspect.sun.trine.chiron.leo.taurus",
+      label: "Sun trine Chiron",
+      facts: { a: "sun", b: "chiron", aspect: "trine", signA: "leo", signB: "taurus" },
+      activeDates: ["2026-08-22"],
+      windows: [{ startDate: "2026-08-22", endDate: "2026-08-22" }],
+      reviewStatus: "missing_draft",
+      row: null
+    },
+    {
+      kind: "placement",
+      contentKey: "sky.placement.base.jupiter.leo",
+      label: "Jupiter in Leo",
+      facts: { planet: "jupiter", sign: "leo" },
+      activeDates: ["2026-08-22"],
+      windows: [{ startDate: "2026-08-22", endDate: "2026-11-20" }],
+      reviewStatus: "draft_needs_work",
+      row: {
+        id: "qa-jupiter-leo-candidate",
+        content_key: "sky.placement.base.jupiter.leo",
+        surface: "sky",
+        mode: "feed",
+        headline: "Jupiter in Leo",
+        summary: null,
+        body: "A generated candidate that is not the owner-approved article readers receive.",
+        status: "DRAFT",
+        block_type: "sky_placement",
+        event_type: "collective-placement-card",
+        target_date: null,
+        sections: [],
+        lane: "reference",
+        review_state: "needs-review",
+        facts: { planet: "jupiter", sign: "leo" },
+        source_snapshot: {},
+        judge_score: 2,
+        judge_gate: "regenerate",
+        updated_at: now
+      }
+    }
+  ]
 };
 
 const heldSkyAspectDrafts = [
@@ -1296,6 +1328,71 @@ test.describe("content dashboard admin user flow case studies", () => {
       eventType: "collective-aspect-card",
       blockType: "sky_aspect",
       facts: { a: "sun", b: "chiron", aspect: "trine", signA: "leo", signB: "taurus" }
+    });
+    await assertNoBrowserErrors();
+  });
+
+  test("generated placement candidates identify the owner-approved article that replaces them", async ({ page }) => {
+    const assertNoBrowserErrors = await expectNoBrowserErrors(page);
+    const writes: Array<{ method: string; payload: Record<string, unknown> }> = [];
+    const servingArticle = {
+      ...generatedContentRows[0],
+      id: "qa-jupiter-leo-serving-article",
+      content_key: "fallback-hook/sky-sign-copy/jupiter/leo",
+      headline: "Jupiter in Leo",
+      body: "Jupiter enters Leo on {{entryDate}}.\n\nAttention can become the measure.\n\nBefore {{exitDate}}, choose the work.",
+      facts: { fallbackArchitectureV3: true, review_status: "approved" },
+      provider: "tldrastro-fallback-architecture-v3",
+      source_snapshot: {
+        sourcePackage: "tldrastro-fallback-architecture-v3",
+        review_status: "approved"
+      },
+      sections: {
+        packageRecord: {
+          contentKey: "fallback-hook/sky-sign-copy/jupiter/leo",
+          content_role: "fallback_hook",
+          grammar_frame: "continuous_editorial_unit",
+          render_policy: "sky-placement-continuous-v2",
+          fact_line: "{{entryDate}} to {{exitDate}}",
+          aspect_insert: "{{aspectInsert}}",
+          opening: "Jupiter enters Leo on {{entryDate}}.",
+          tension: "Attention can become the measure.",
+          development: "The work can keep its own shape.",
+          close: "Before {{exitDate}}, choose the work.",
+          review_status: "approved"
+        }
+      }
+    };
+    await seedAdminApi(page, {
+      generatedRows: [servingArticle, ...generatedContentRows.slice(1)],
+      onGeneratedContentWrite: (write) => writes.push(write)
+    });
+    await expectAdminRouteLoads(page, "/admin/content#review-queue");
+
+    await page.getByRole("button", { name: /Upcoming 90 days/ }).click();
+    const candidate = page.locator(".admin-sky-voice-card", { hasText: "Jupiter in Leo" });
+
+    await expect(candidate.getByText("Not serving — replaced by owner-approved article", { exact: true })).toBeVisible();
+    await expect(candidate.getByText("fallback-hook/sky-sign-copy/jupiter/leo", { exact: true })).toBeVisible();
+    await candidate.getByRole("button", { name: "Edit serving article" }).click();
+
+    const editor = page.getByRole("dialog", { name: "Generated content editor" });
+    await expect(editor.getByRole("region", { name: "Sky Placement article workspace" })).toBeVisible();
+    await expect(editor.getByRole("region", { name: "Rendered fallback preview" })).toContainText("Jupiter enters Leo");
+    await expect(editor.getByLabel("Fallback field Opening")).toHaveValue("Jupiter enters Leo on {{entryDate}}.");
+    await expect(editor.getByLabel("Insert variable in Opening")).toContainText("{{exitDate}}");
+    await expect(editor.getByText("Package renderer")).toHaveCount(0);
+    await editor.getByLabel("Fallback field Development").fill("The work keeps its own shape.");
+    await expect(editor.getByRole("region", { name: "Review fallback changes" })).toContainText("The work keeps its own shape.");
+    await editor.getByRole("button", { name: "Save", exact: true }).click();
+    await expect.poll(() => writes.length).toBe(1);
+    expect(writes[0].payload).toMatchObject({
+      id: "qa-jupiter-leo-serving-article",
+      reviewStatus: "needs_review",
+      sections: {
+        packageRecord: { development: "The work can keep its own shape.", review_status: "approved" },
+        packageDraft: { development: "The work keeps its own shape.", review_status: "approved" }
+      }
     });
     await assertNoBrowserErrors();
   });
