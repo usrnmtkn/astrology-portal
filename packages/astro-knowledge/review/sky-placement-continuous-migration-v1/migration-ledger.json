@@ -1,0 +1,1641 @@
+{
+  "schema": "sky-placement-continuous-migration-v1",
+  "generated_at": null,
+  "policy": {
+    "current_copy_changes": 0,
+    "billed_calls": 0,
+    "replacement_status": "needs_review until exact owner approval",
+    "serving_rule": "existing approved page remains selected until an approved continuous-v2 row exists",
+    "moon_rule": "sky-placement-moon-entry-v1 remains intentional and is excluded"
+  },
+  "counts": {
+    "total_pages": 168,
+    "protected_continuous": 55,
+    "protected_moon": 12,
+    "migration_targets": 101,
+    "framed_targets": 88,
+    "lilith_targets": 12,
+    "quarantined_standalone_targets": 1,
+    "zero_meaning": 0,
+    "zero_scene": 73,
+    "zero_argument": 0
+  },
+  "targets": [
+    {
+      "page_key": "sun/virgo",
+      "current_template": "sky-placement-standalone-hook-v1",
+      "target_template": "sky-placement-continuous-v2",
+      "writing_family": "fast-mover-article",
+      "status": "evidence-preflight",
+      "owner_approval": "not_requested",
+      "serving_transition": "not_authorized",
+      "evidence": {
+        "meaning": 15,
+        "scene": 1,
+        "argument": 9,
+        "register_pool": 7,
+        "phrase_pool": 346
+      }
+    },
+    {
+      "page_key": "jupiter/aries",
+      "current_template": "sky-placement-frame-v3",
+      "target_template": "sky-placement-continuous-v2",
+      "writing_family": "slow-mover-article",
+      "status": "evidence-preflight",
+      "owner_approval": "not_requested",
+      "serving_transition": "not_authorized",
+      "evidence": {
+        "meaning": 17,
+        "scene": 1,
+        "argument": 7,
+        "register_pool": 7,
+        "phrase_pool": 346
+      }
+    },
+    {
+      "page_key": "jupiter/taurus",
+      "current_template": "sky-placement-frame-v3",
+      "target_template": "sky-placement-continuous-v2",
+      "writing_family": "slow-mover-article",
+      "status": "evidence-preflight",
+      "owner_approval": "not_requested",
+      "serving_transition": "not_authorized",
+      "evidence": {
+        "meaning": 18,
+        "scene": 0,
+        "argument": 11,
+        "register_pool": 7,
+        "phrase_pool": 346
+      }
+    },
+    {
+      "page_key": "jupiter/gemini",
+      "current_template": "sky-placement-frame-v3",
+      "target_template": "sky-placement-continuous-v2",
+      "writing_family": "slow-mover-article",
+      "status": "evidence-preflight",
+      "owner_approval": "not_requested",
+      "serving_transition": "not_authorized",
+      "evidence": {
+        "meaning": 18,
+        "scene": 2,
+        "argument": 8,
+        "register_pool": 7,
+        "phrase_pool": 346
+      }
+    },
+    {
+      "page_key": "jupiter/cancer",
+      "current_template": "sky-placement-frame-v3",
+      "target_template": "sky-placement-continuous-v2",
+      "writing_family": "slow-mover-article",
+      "status": "evidence-preflight",
+      "owner_approval": "not_requested",
+      "serving_transition": "not_authorized",
+      "evidence": {
+        "meaning": 16,
+        "scene": 3,
+        "argument": 10,
+        "register_pool": 7,
+        "phrase_pool": 346
+      }
+    },
+    {
+      "page_key": "jupiter/virgo",
+      "current_template": "sky-placement-frame-v3",
+      "target_template": "sky-placement-continuous-v2",
+      "writing_family": "slow-mover-article",
+      "status": "evidence-preflight",
+      "owner_approval": "not_requested",
+      "serving_transition": "not_authorized",
+      "evidence": {
+        "meaning": 5,
+        "scene": 0,
+        "argument": 6,
+        "register_pool": 7,
+        "phrase_pool": 346
+      }
+    },
+    {
+      "page_key": "jupiter/scorpio",
+      "current_template": "sky-placement-frame-v3",
+      "target_template": "sky-placement-continuous-v2",
+      "writing_family": "slow-mover-article",
+      "status": "evidence-preflight",
+      "owner_approval": "not_requested",
+      "serving_transition": "not_authorized",
+      "evidence": {
+        "meaning": 6,
+        "scene": 1,
+        "argument": 7,
+        "register_pool": 7,
+        "phrase_pool": 346
+      }
+    },
+    {
+      "page_key": "jupiter/sagittarius",
+      "current_template": "sky-placement-frame-v3",
+      "target_template": "sky-placement-continuous-v2",
+      "writing_family": "slow-mover-article",
+      "status": "evidence-preflight",
+      "owner_approval": "not_requested",
+      "serving_transition": "not_authorized",
+      "evidence": {
+        "meaning": 23,
+        "scene": 0,
+        "argument": 14,
+        "register_pool": 7,
+        "phrase_pool": 346
+      }
+    },
+    {
+      "page_key": "jupiter/capricorn",
+      "current_template": "sky-placement-frame-v3",
+      "target_template": "sky-placement-continuous-v2",
+      "writing_family": "slow-mover-article",
+      "status": "evidence-preflight",
+      "owner_approval": "not_requested",
+      "serving_transition": "not_authorized",
+      "evidence": {
+        "meaning": 6,
+        "scene": 2,
+        "argument": 6,
+        "register_pool": 7,
+        "phrase_pool": 346
+      }
+    },
+    {
+      "page_key": "jupiter/aquarius",
+      "current_template": "sky-placement-frame-v3",
+      "target_template": "sky-placement-continuous-v2",
+      "writing_family": "slow-mover-article",
+      "status": "evidence-preflight",
+      "owner_approval": "not_requested",
+      "serving_transition": "not_authorized",
+      "evidence": {
+        "meaning": 6,
+        "scene": 0,
+        "argument": 4,
+        "register_pool": 7,
+        "phrase_pool": 346
+      }
+    },
+    {
+      "page_key": "jupiter/pisces",
+      "current_template": "sky-placement-frame-v3",
+      "target_template": "sky-placement-continuous-v2",
+      "writing_family": "slow-mover-article",
+      "status": "evidence-preflight",
+      "owner_approval": "not_requested",
+      "serving_transition": "not_authorized",
+      "evidence": {
+        "meaning": 17,
+        "scene": 1,
+        "argument": 10,
+        "register_pool": 7,
+        "phrase_pool": 346
+      }
+    },
+    {
+      "page_key": "saturn/taurus",
+      "current_template": "sky-placement-frame-v3",
+      "target_template": "sky-placement-continuous-v2",
+      "writing_family": "slow-mover-article",
+      "status": "evidence-preflight",
+      "owner_approval": "not_requested",
+      "serving_transition": "not_authorized",
+      "evidence": {
+        "meaning": 3,
+        "scene": 0,
+        "argument": 5,
+        "register_pool": 7,
+        "phrase_pool": 346
+      }
+    },
+    {
+      "page_key": "saturn/gemini",
+      "current_template": "sky-placement-frame-v3",
+      "target_template": "sky-placement-continuous-v2",
+      "writing_family": "slow-mover-article",
+      "status": "evidence-preflight",
+      "owner_approval": "not_requested",
+      "serving_transition": "not_authorized",
+      "evidence": {
+        "meaning": 3,
+        "scene": 1,
+        "argument": 5,
+        "register_pool": 7,
+        "phrase_pool": 346
+      }
+    },
+    {
+      "page_key": "saturn/cancer",
+      "current_template": "sky-placement-frame-v3",
+      "target_template": "sky-placement-continuous-v2",
+      "writing_family": "slow-mover-article",
+      "status": "evidence-preflight",
+      "owner_approval": "not_requested",
+      "serving_transition": "not_authorized",
+      "evidence": {
+        "meaning": 2,
+        "scene": 0,
+        "argument": 5,
+        "register_pool": 7,
+        "phrase_pool": 346
+      }
+    },
+    {
+      "page_key": "saturn/leo",
+      "current_template": "sky-placement-frame-v3",
+      "target_template": "sky-placement-continuous-v2",
+      "writing_family": "slow-mover-article",
+      "status": "evidence-preflight",
+      "owner_approval": "not_requested",
+      "serving_transition": "not_authorized",
+      "evidence": {
+        "meaning": 2,
+        "scene": 0,
+        "argument": 6,
+        "register_pool": 7,
+        "phrase_pool": 346
+      }
+    },
+    {
+      "page_key": "saturn/virgo",
+      "current_template": "sky-placement-frame-v3",
+      "target_template": "sky-placement-continuous-v2",
+      "writing_family": "slow-mover-article",
+      "status": "evidence-preflight",
+      "owner_approval": "not_requested",
+      "serving_transition": "not_authorized",
+      "evidence": {
+        "meaning": 3,
+        "scene": 0,
+        "argument": 4,
+        "register_pool": 7,
+        "phrase_pool": 346
+      }
+    },
+    {
+      "page_key": "saturn/libra",
+      "current_template": "sky-placement-frame-v3",
+      "target_template": "sky-placement-continuous-v2",
+      "writing_family": "slow-mover-article",
+      "status": "evidence-preflight",
+      "owner_approval": "not_requested",
+      "serving_transition": "not_authorized",
+      "evidence": {
+        "meaning": 10,
+        "scene": 1,
+        "argument": 9,
+        "register_pool": 7,
+        "phrase_pool": 346
+      }
+    },
+    {
+      "page_key": "saturn/scorpio",
+      "current_template": "sky-placement-frame-v3",
+      "target_template": "sky-placement-continuous-v2",
+      "writing_family": "slow-mover-article",
+      "status": "evidence-preflight",
+      "owner_approval": "not_requested",
+      "serving_transition": "not_authorized",
+      "evidence": {
+        "meaning": 6,
+        "scene": 0,
+        "argument": 6,
+        "register_pool": 7,
+        "phrase_pool": 346
+      }
+    },
+    {
+      "page_key": "saturn/sagittarius",
+      "current_template": "sky-placement-frame-v3",
+      "target_template": "sky-placement-continuous-v2",
+      "writing_family": "slow-mover-article",
+      "status": "evidence-preflight",
+      "owner_approval": "not_requested",
+      "serving_transition": "not_authorized",
+      "evidence": {
+        "meaning": 9,
+        "scene": 0,
+        "argument": 9,
+        "register_pool": 7,
+        "phrase_pool": 346
+      }
+    },
+    {
+      "page_key": "saturn/aquarius",
+      "current_template": "sky-placement-frame-v3",
+      "target_template": "sky-placement-continuous-v2",
+      "writing_family": "slow-mover-article",
+      "status": "evidence-preflight",
+      "owner_approval": "not_requested",
+      "serving_transition": "not_authorized",
+      "evidence": {
+        "meaning": 17,
+        "scene": 1,
+        "argument": 5,
+        "register_pool": 7,
+        "phrase_pool": 346
+      }
+    },
+    {
+      "page_key": "saturn/pisces",
+      "current_template": "sky-placement-frame-v3",
+      "target_template": "sky-placement-continuous-v2",
+      "writing_family": "slow-mover-article",
+      "status": "evidence-preflight",
+      "owner_approval": "not_requested",
+      "serving_transition": "not_authorized",
+      "evidence": {
+        "meaning": 14,
+        "scene": 2,
+        "argument": 6,
+        "register_pool": 7,
+        "phrase_pool": 346
+      }
+    },
+    {
+      "page_key": "uranus/aries",
+      "current_template": "sky-placement-frame-v3",
+      "target_template": "sky-placement-continuous-v2",
+      "writing_family": "slow-mover-article",
+      "status": "evidence-preflight",
+      "owner_approval": "not_requested",
+      "serving_transition": "not_authorized",
+      "evidence": {
+        "meaning": 14,
+        "scene": 0,
+        "argument": 10,
+        "register_pool": 7,
+        "phrase_pool": 346
+      }
+    },
+    {
+      "page_key": "uranus/taurus",
+      "current_template": "sky-placement-frame-v3",
+      "target_template": "sky-placement-continuous-v2",
+      "writing_family": "slow-mover-article",
+      "status": "evidence-preflight",
+      "owner_approval": "not_requested",
+      "serving_transition": "not_authorized",
+      "evidence": {
+        "meaning": 28,
+        "scene": 2,
+        "argument": 12,
+        "register_pool": 7,
+        "phrase_pool": 346
+      }
+    },
+    {
+      "page_key": "uranus/cancer",
+      "current_template": "sky-placement-frame-v3",
+      "target_template": "sky-placement-continuous-v2",
+      "writing_family": "slow-mover-article",
+      "status": "evidence-preflight",
+      "owner_approval": "not_requested",
+      "serving_transition": "not_authorized",
+      "evidence": {
+        "meaning": 2,
+        "scene": 1,
+        "argument": 5,
+        "register_pool": 7,
+        "phrase_pool": 346
+      }
+    },
+    {
+      "page_key": "uranus/leo",
+      "current_template": "sky-placement-frame-v3",
+      "target_template": "sky-placement-continuous-v2",
+      "writing_family": "slow-mover-article",
+      "status": "evidence-preflight",
+      "owner_approval": "not_requested",
+      "serving_transition": "not_authorized",
+      "evidence": {
+        "meaning": 2,
+        "scene": 0,
+        "argument": 5,
+        "register_pool": 7,
+        "phrase_pool": 346
+      }
+    },
+    {
+      "page_key": "uranus/virgo",
+      "current_template": "sky-placement-frame-v3",
+      "target_template": "sky-placement-continuous-v2",
+      "writing_family": "slow-mover-article",
+      "status": "evidence-preflight",
+      "owner_approval": "not_requested",
+      "serving_transition": "not_authorized",
+      "evidence": {
+        "meaning": 2,
+        "scene": 0,
+        "argument": 5,
+        "register_pool": 7,
+        "phrase_pool": 346
+      }
+    },
+    {
+      "page_key": "uranus/libra",
+      "current_template": "sky-placement-frame-v3",
+      "target_template": "sky-placement-continuous-v2",
+      "writing_family": "slow-mover-article",
+      "status": "evidence-preflight",
+      "owner_approval": "not_requested",
+      "serving_transition": "not_authorized",
+      "evidence": {
+        "meaning": 2,
+        "scene": 0,
+        "argument": 5,
+        "register_pool": 7,
+        "phrase_pool": 346
+      }
+    },
+    {
+      "page_key": "uranus/scorpio",
+      "current_template": "sky-placement-frame-v3",
+      "target_template": "sky-placement-continuous-v2",
+      "writing_family": "slow-mover-article",
+      "status": "evidence-preflight",
+      "owner_approval": "not_requested",
+      "serving_transition": "not_authorized",
+      "evidence": {
+        "meaning": 2,
+        "scene": 0,
+        "argument": 5,
+        "register_pool": 7,
+        "phrase_pool": 346
+      }
+    },
+    {
+      "page_key": "uranus/sagittarius",
+      "current_template": "sky-placement-frame-v3",
+      "target_template": "sky-placement-continuous-v2",
+      "writing_family": "slow-mover-article",
+      "status": "evidence-preflight",
+      "owner_approval": "not_requested",
+      "serving_transition": "not_authorized",
+      "evidence": {
+        "meaning": 3,
+        "scene": 0,
+        "argument": 5,
+        "register_pool": 7,
+        "phrase_pool": 346
+      }
+    },
+    {
+      "page_key": "uranus/capricorn",
+      "current_template": "sky-placement-frame-v3",
+      "target_template": "sky-placement-continuous-v2",
+      "writing_family": "slow-mover-article",
+      "status": "evidence-preflight",
+      "owner_approval": "not_requested",
+      "serving_transition": "not_authorized",
+      "evidence": {
+        "meaning": 2,
+        "scene": 0,
+        "argument": 5,
+        "register_pool": 7,
+        "phrase_pool": 346
+      }
+    },
+    {
+      "page_key": "uranus/aquarius",
+      "current_template": "sky-placement-frame-v3",
+      "target_template": "sky-placement-continuous-v2",
+      "writing_family": "slow-mover-article",
+      "status": "evidence-preflight",
+      "owner_approval": "not_requested",
+      "serving_transition": "not_authorized",
+      "evidence": {
+        "meaning": 2,
+        "scene": 0,
+        "argument": 5,
+        "register_pool": 7,
+        "phrase_pool": 346
+      }
+    },
+    {
+      "page_key": "uranus/pisces",
+      "current_template": "sky-placement-frame-v3",
+      "target_template": "sky-placement-continuous-v2",
+      "writing_family": "slow-mover-article",
+      "status": "evidence-preflight",
+      "owner_approval": "not_requested",
+      "serving_transition": "not_authorized",
+      "evidence": {
+        "meaning": 4,
+        "scene": 0,
+        "argument": 5,
+        "register_pool": 7,
+        "phrase_pool": 346
+      }
+    },
+    {
+      "page_key": "neptune/taurus",
+      "current_template": "sky-placement-frame-v3",
+      "target_template": "sky-placement-continuous-v2",
+      "writing_family": "slow-mover-article",
+      "status": "evidence-preflight",
+      "owner_approval": "not_requested",
+      "serving_transition": "not_authorized",
+      "evidence": {
+        "meaning": 3,
+        "scene": 0,
+        "argument": 4,
+        "register_pool": 7,
+        "phrase_pool": 346
+      }
+    },
+    {
+      "page_key": "neptune/gemini",
+      "current_template": "sky-placement-frame-v3",
+      "target_template": "sky-placement-continuous-v2",
+      "writing_family": "slow-mover-article",
+      "status": "evidence-preflight",
+      "owner_approval": "not_requested",
+      "serving_transition": "not_authorized",
+      "evidence": {
+        "meaning": 3,
+        "scene": 0,
+        "argument": 5,
+        "register_pool": 7,
+        "phrase_pool": 346
+      }
+    },
+    {
+      "page_key": "neptune/cancer",
+      "current_template": "sky-placement-frame-v3",
+      "target_template": "sky-placement-continuous-v2",
+      "writing_family": "slow-mover-article",
+      "status": "evidence-preflight",
+      "owner_approval": "not_requested",
+      "serving_transition": "not_authorized",
+      "evidence": {
+        "meaning": 2,
+        "scene": 0,
+        "argument": 4,
+        "register_pool": 7,
+        "phrase_pool": 346
+      }
+    },
+    {
+      "page_key": "neptune/leo",
+      "current_template": "sky-placement-frame-v3",
+      "target_template": "sky-placement-continuous-v2",
+      "writing_family": "slow-mover-article",
+      "status": "evidence-preflight",
+      "owner_approval": "not_requested",
+      "serving_transition": "not_authorized",
+      "evidence": {
+        "meaning": 3,
+        "scene": 0,
+        "argument": 4,
+        "register_pool": 7,
+        "phrase_pool": 346
+      }
+    },
+    {
+      "page_key": "neptune/virgo",
+      "current_template": "sky-placement-frame-v3",
+      "target_template": "sky-placement-continuous-v2",
+      "writing_family": "slow-mover-article",
+      "status": "evidence-preflight",
+      "owner_approval": "not_requested",
+      "serving_transition": "not_authorized",
+      "evidence": {
+        "meaning": 2,
+        "scene": 0,
+        "argument": 4,
+        "register_pool": 7,
+        "phrase_pool": 346
+      }
+    },
+    {
+      "page_key": "neptune/libra",
+      "current_template": "sky-placement-frame-v3",
+      "target_template": "sky-placement-continuous-v2",
+      "writing_family": "slow-mover-article",
+      "status": "evidence-preflight",
+      "owner_approval": "not_requested",
+      "serving_transition": "not_authorized",
+      "evidence": {
+        "meaning": 2,
+        "scene": 0,
+        "argument": 4,
+        "register_pool": 7,
+        "phrase_pool": 346
+      }
+    },
+    {
+      "page_key": "neptune/scorpio",
+      "current_template": "sky-placement-frame-v3",
+      "target_template": "sky-placement-continuous-v2",
+      "writing_family": "slow-mover-article",
+      "status": "evidence-preflight",
+      "owner_approval": "not_requested",
+      "serving_transition": "not_authorized",
+      "evidence": {
+        "meaning": 3,
+        "scene": 0,
+        "argument": 4,
+        "register_pool": 7,
+        "phrase_pool": 346
+      }
+    },
+    {
+      "page_key": "neptune/sagittarius",
+      "current_template": "sky-placement-frame-v3",
+      "target_template": "sky-placement-continuous-v2",
+      "writing_family": "slow-mover-article",
+      "status": "evidence-preflight",
+      "owner_approval": "not_requested",
+      "serving_transition": "not_authorized",
+      "evidence": {
+        "meaning": 2,
+        "scene": 0,
+        "argument": 5,
+        "register_pool": 7,
+        "phrase_pool": 346
+      }
+    },
+    {
+      "page_key": "neptune/capricorn",
+      "current_template": "sky-placement-frame-v3",
+      "target_template": "sky-placement-continuous-v2",
+      "writing_family": "slow-mover-article",
+      "status": "evidence-preflight",
+      "owner_approval": "not_requested",
+      "serving_transition": "not_authorized",
+      "evidence": {
+        "meaning": 2,
+        "scene": 1,
+        "argument": 4,
+        "register_pool": 7,
+        "phrase_pool": 346
+      }
+    },
+    {
+      "page_key": "neptune/aquarius",
+      "current_template": "sky-placement-frame-v3",
+      "target_template": "sky-placement-continuous-v2",
+      "writing_family": "slow-mover-article",
+      "status": "evidence-preflight",
+      "owner_approval": "not_requested",
+      "serving_transition": "not_authorized",
+      "evidence": {
+        "meaning": 4,
+        "scene": 0,
+        "argument": 6,
+        "register_pool": 7,
+        "phrase_pool": 346
+      }
+    },
+    {
+      "page_key": "neptune/pisces",
+      "current_template": "sky-placement-frame-v3",
+      "target_template": "sky-placement-continuous-v2",
+      "writing_family": "slow-mover-article",
+      "status": "evidence-preflight",
+      "owner_approval": "not_requested",
+      "serving_transition": "not_authorized",
+      "evidence": {
+        "meaning": 24,
+        "scene": 0,
+        "argument": 13,
+        "register_pool": 7,
+        "phrase_pool": 346
+      }
+    },
+    {
+      "page_key": "pluto/aries",
+      "current_template": "sky-placement-frame-v3",
+      "target_template": "sky-placement-continuous-v2",
+      "writing_family": "slow-mover-article",
+      "status": "evidence-preflight",
+      "owner_approval": "not_requested",
+      "serving_transition": "not_authorized",
+      "evidence": {
+        "meaning": 2,
+        "scene": 0,
+        "argument": 4,
+        "register_pool": 7,
+        "phrase_pool": 346
+      }
+    },
+    {
+      "page_key": "pluto/taurus",
+      "current_template": "sky-placement-frame-v3",
+      "target_template": "sky-placement-continuous-v2",
+      "writing_family": "slow-mover-article",
+      "status": "evidence-preflight",
+      "owner_approval": "not_requested",
+      "serving_transition": "not_authorized",
+      "evidence": {
+        "meaning": 3,
+        "scene": 0,
+        "argument": 5,
+        "register_pool": 7,
+        "phrase_pool": 346
+      }
+    },
+    {
+      "page_key": "pluto/gemini",
+      "current_template": "sky-placement-frame-v3",
+      "target_template": "sky-placement-continuous-v2",
+      "writing_family": "slow-mover-article",
+      "status": "evidence-preflight",
+      "owner_approval": "not_requested",
+      "serving_transition": "not_authorized",
+      "evidence": {
+        "meaning": 2,
+        "scene": 1,
+        "argument": 4,
+        "register_pool": 7,
+        "phrase_pool": 346
+      }
+    },
+    {
+      "page_key": "pluto/cancer",
+      "current_template": "sky-placement-frame-v3",
+      "target_template": "sky-placement-continuous-v2",
+      "writing_family": "slow-mover-article",
+      "status": "evidence-preflight",
+      "owner_approval": "not_requested",
+      "serving_transition": "not_authorized",
+      "evidence": {
+        "meaning": 2,
+        "scene": 0,
+        "argument": 4,
+        "register_pool": 7,
+        "phrase_pool": 346
+      }
+    },
+    {
+      "page_key": "pluto/leo",
+      "current_template": "sky-placement-frame-v3",
+      "target_template": "sky-placement-continuous-v2",
+      "writing_family": "slow-mover-article",
+      "status": "evidence-preflight",
+      "owner_approval": "not_requested",
+      "serving_transition": "not_authorized",
+      "evidence": {
+        "meaning": 2,
+        "scene": 0,
+        "argument": 4,
+        "register_pool": 7,
+        "phrase_pool": 346
+      }
+    },
+    {
+      "page_key": "pluto/virgo",
+      "current_template": "sky-placement-frame-v3",
+      "target_template": "sky-placement-continuous-v2",
+      "writing_family": "slow-mover-article",
+      "status": "evidence-preflight",
+      "owner_approval": "not_requested",
+      "serving_transition": "not_authorized",
+      "evidence": {
+        "meaning": 3,
+        "scene": 0,
+        "argument": 4,
+        "register_pool": 7,
+        "phrase_pool": 346
+      }
+    },
+    {
+      "page_key": "pluto/libra",
+      "current_template": "sky-placement-frame-v3",
+      "target_template": "sky-placement-continuous-v2",
+      "writing_family": "slow-mover-article",
+      "status": "evidence-preflight",
+      "owner_approval": "not_requested",
+      "serving_transition": "not_authorized",
+      "evidence": {
+        "meaning": 2,
+        "scene": 0,
+        "argument": 4,
+        "register_pool": 7,
+        "phrase_pool": 346
+      }
+    },
+    {
+      "page_key": "pluto/scorpio",
+      "current_template": "sky-placement-frame-v3",
+      "target_template": "sky-placement-continuous-v2",
+      "writing_family": "slow-mover-article",
+      "status": "evidence-preflight",
+      "owner_approval": "not_requested",
+      "serving_transition": "not_authorized",
+      "evidence": {
+        "meaning": 3,
+        "scene": 0,
+        "argument": 4,
+        "register_pool": 7,
+        "phrase_pool": 346
+      }
+    },
+    {
+      "page_key": "pluto/sagittarius",
+      "current_template": "sky-placement-frame-v3",
+      "target_template": "sky-placement-continuous-v2",
+      "writing_family": "slow-mover-article",
+      "status": "evidence-preflight",
+      "owner_approval": "not_requested",
+      "serving_transition": "not_authorized",
+      "evidence": {
+        "meaning": 2,
+        "scene": 0,
+        "argument": 5,
+        "register_pool": 7,
+        "phrase_pool": 346
+      }
+    },
+    {
+      "page_key": "pluto/capricorn",
+      "current_template": "sky-placement-frame-v3",
+      "target_template": "sky-placement-continuous-v2",
+      "writing_family": "slow-mover-article",
+      "status": "evidence-preflight",
+      "owner_approval": "not_requested",
+      "serving_transition": "not_authorized",
+      "evidence": {
+        "meaning": 36,
+        "scene": 1,
+        "argument": 7,
+        "register_pool": 7,
+        "phrase_pool": 346
+      }
+    },
+    {
+      "page_key": "pluto/pisces",
+      "current_template": "sky-placement-frame-v3",
+      "target_template": "sky-placement-continuous-v2",
+      "writing_family": "slow-mover-article",
+      "status": "evidence-preflight",
+      "owner_approval": "not_requested",
+      "serving_transition": "not_authorized",
+      "evidence": {
+        "meaning": 2,
+        "scene": 0,
+        "argument": 4,
+        "register_pool": 7,
+        "phrase_pool": 346
+      }
+    },
+    {
+      "page_key": "chiron/taurus",
+      "current_template": "sky-placement-frame-v3",
+      "target_template": "sky-placement-continuous-v2",
+      "writing_family": "slow-mover-article",
+      "status": "evidence-preflight",
+      "owner_approval": "not_requested",
+      "serving_transition": "not_authorized",
+      "evidence": {
+        "meaning": 15,
+        "scene": 0,
+        "argument": 7,
+        "register_pool": 7,
+        "phrase_pool": 346
+      }
+    },
+    {
+      "page_key": "chiron/gemini",
+      "current_template": "sky-placement-frame-v3",
+      "target_template": "sky-placement-continuous-v2",
+      "writing_family": "slow-mover-article",
+      "status": "evidence-preflight",
+      "owner_approval": "not_requested",
+      "serving_transition": "not_authorized",
+      "evidence": {
+        "meaning": 3,
+        "scene": 3,
+        "argument": 4,
+        "register_pool": 7,
+        "phrase_pool": 346
+      }
+    },
+    {
+      "page_key": "chiron/cancer",
+      "current_template": "sky-placement-frame-v3",
+      "target_template": "sky-placement-continuous-v2",
+      "writing_family": "slow-mover-article",
+      "status": "evidence-preflight",
+      "owner_approval": "not_requested",
+      "serving_transition": "not_authorized",
+      "evidence": {
+        "meaning": 3,
+        "scene": 0,
+        "argument": 4,
+        "register_pool": 7,
+        "phrase_pool": 346
+      }
+    },
+    {
+      "page_key": "chiron/leo",
+      "current_template": "sky-placement-frame-v3",
+      "target_template": "sky-placement-continuous-v2",
+      "writing_family": "slow-mover-article",
+      "status": "evidence-preflight",
+      "owner_approval": "not_requested",
+      "serving_transition": "not_authorized",
+      "evidence": {
+        "meaning": 3,
+        "scene": 0,
+        "argument": 6,
+        "register_pool": 7,
+        "phrase_pool": 346
+      }
+    },
+    {
+      "page_key": "chiron/virgo",
+      "current_template": "sky-placement-frame-v3",
+      "target_template": "sky-placement-continuous-v2",
+      "writing_family": "slow-mover-article",
+      "status": "evidence-preflight",
+      "owner_approval": "not_requested",
+      "serving_transition": "not_authorized",
+      "evidence": {
+        "meaning": 3,
+        "scene": 1,
+        "argument": 5,
+        "register_pool": 7,
+        "phrase_pool": 346
+      }
+    },
+    {
+      "page_key": "chiron/libra",
+      "current_template": "sky-placement-frame-v3",
+      "target_template": "sky-placement-continuous-v2",
+      "writing_family": "slow-mover-article",
+      "status": "evidence-preflight",
+      "owner_approval": "not_requested",
+      "serving_transition": "not_authorized",
+      "evidence": {
+        "meaning": 3,
+        "scene": 0,
+        "argument": 5,
+        "register_pool": 7,
+        "phrase_pool": 346
+      }
+    },
+    {
+      "page_key": "chiron/scorpio",
+      "current_template": "sky-placement-frame-v3",
+      "target_template": "sky-placement-continuous-v2",
+      "writing_family": "slow-mover-article",
+      "status": "evidence-preflight",
+      "owner_approval": "not_requested",
+      "serving_transition": "not_authorized",
+      "evidence": {
+        "meaning": 3,
+        "scene": 0,
+        "argument": 5,
+        "register_pool": 7,
+        "phrase_pool": 346
+      }
+    },
+    {
+      "page_key": "chiron/sagittarius",
+      "current_template": "sky-placement-frame-v3",
+      "target_template": "sky-placement-continuous-v2",
+      "writing_family": "slow-mover-article",
+      "status": "evidence-preflight",
+      "owner_approval": "not_requested",
+      "serving_transition": "not_authorized",
+      "evidence": {
+        "meaning": 3,
+        "scene": 0,
+        "argument": 5,
+        "register_pool": 7,
+        "phrase_pool": 346
+      }
+    },
+    {
+      "page_key": "chiron/capricorn",
+      "current_template": "sky-placement-frame-v3",
+      "target_template": "sky-placement-continuous-v2",
+      "writing_family": "slow-mover-article",
+      "status": "evidence-preflight",
+      "owner_approval": "not_requested",
+      "serving_transition": "not_authorized",
+      "evidence": {
+        "meaning": 3,
+        "scene": 0,
+        "argument": 4,
+        "register_pool": 7,
+        "phrase_pool": 346
+      }
+    },
+    {
+      "page_key": "chiron/aquarius",
+      "current_template": "sky-placement-frame-v3",
+      "target_template": "sky-placement-continuous-v2",
+      "writing_family": "slow-mover-article",
+      "status": "evidence-preflight",
+      "owner_approval": "not_requested",
+      "serving_transition": "not_authorized",
+      "evidence": {
+        "meaning": 3,
+        "scene": 0,
+        "argument": 5,
+        "register_pool": 7,
+        "phrase_pool": 346
+      }
+    },
+    {
+      "page_key": "chiron/pisces",
+      "current_template": "sky-placement-frame-v3",
+      "target_template": "sky-placement-continuous-v2",
+      "writing_family": "slow-mover-article",
+      "status": "evidence-preflight",
+      "owner_approval": "not_requested",
+      "serving_transition": "not_authorized",
+      "evidence": {
+        "meaning": 4,
+        "scene": 0,
+        "argument": 5,
+        "register_pool": 7,
+        "phrase_pool": 346
+      }
+    },
+    {
+      "page_key": "north-node/aries",
+      "current_template": "sky-placement-frame-v3",
+      "target_template": "sky-placement-continuous-v2",
+      "writing_family": "slow-mover-article",
+      "status": "evidence-preflight",
+      "owner_approval": "not_requested",
+      "serving_transition": "not_authorized",
+      "evidence": {
+        "meaning": 14,
+        "scene": 1,
+        "argument": 4,
+        "register_pool": 7,
+        "phrase_pool": 346
+      }
+    },
+    {
+      "page_key": "north-node/taurus",
+      "current_template": "sky-placement-frame-v3",
+      "target_template": "sky-placement-continuous-v2",
+      "writing_family": "slow-mover-article",
+      "status": "evidence-preflight",
+      "owner_approval": "not_requested",
+      "serving_transition": "not_authorized",
+      "evidence": {
+        "meaning": 14,
+        "scene": 0,
+        "argument": 7,
+        "register_pool": 7,
+        "phrase_pool": 346
+      }
+    },
+    {
+      "page_key": "north-node/gemini",
+      "current_template": "sky-placement-frame-v3",
+      "target_template": "sky-placement-continuous-v2",
+      "writing_family": "slow-mover-article",
+      "status": "evidence-preflight",
+      "owner_approval": "not_requested",
+      "serving_transition": "not_authorized",
+      "evidence": {
+        "meaning": 14,
+        "scene": 1,
+        "argument": 6,
+        "register_pool": 7,
+        "phrase_pool": 346
+      }
+    },
+    {
+      "page_key": "north-node/cancer",
+      "current_template": "sky-placement-frame-v3",
+      "target_template": "sky-placement-continuous-v2",
+      "writing_family": "slow-mover-article",
+      "status": "evidence-preflight",
+      "owner_approval": "not_requested",
+      "serving_transition": "not_authorized",
+      "evidence": {
+        "meaning": 3,
+        "scene": 1,
+        "argument": 4,
+        "register_pool": 7,
+        "phrase_pool": 346
+      }
+    },
+    {
+      "page_key": "north-node/leo",
+      "current_template": "sky-placement-frame-v3",
+      "target_template": "sky-placement-continuous-v2",
+      "writing_family": "slow-mover-article",
+      "status": "evidence-preflight",
+      "owner_approval": "not_requested",
+      "serving_transition": "not_authorized",
+      "evidence": {
+        "meaning": 2,
+        "scene": 0,
+        "argument": 4,
+        "register_pool": 7,
+        "phrase_pool": 346
+      }
+    },
+    {
+      "page_key": "north-node/virgo",
+      "current_template": "sky-placement-frame-v3",
+      "target_template": "sky-placement-continuous-v2",
+      "writing_family": "slow-mover-article",
+      "status": "evidence-preflight",
+      "owner_approval": "not_requested",
+      "serving_transition": "not_authorized",
+      "evidence": {
+        "meaning": 3,
+        "scene": 1,
+        "argument": 5,
+        "register_pool": 7,
+        "phrase_pool": 346
+      }
+    },
+    {
+      "page_key": "north-node/libra",
+      "current_template": "sky-placement-frame-v3",
+      "target_template": "sky-placement-continuous-v2",
+      "writing_family": "slow-mover-article",
+      "status": "evidence-preflight",
+      "owner_approval": "not_requested",
+      "serving_transition": "not_authorized",
+      "evidence": {
+        "meaning": 3,
+        "scene": 0,
+        "argument": 6,
+        "register_pool": 7,
+        "phrase_pool": 346
+      }
+    },
+    {
+      "page_key": "north-node/scorpio",
+      "current_template": "sky-placement-frame-v3",
+      "target_template": "sky-placement-continuous-v2",
+      "writing_family": "slow-mover-article",
+      "status": "evidence-preflight",
+      "owner_approval": "not_requested",
+      "serving_transition": "not_authorized",
+      "evidence": {
+        "meaning": 3,
+        "scene": 0,
+        "argument": 5,
+        "register_pool": 7,
+        "phrase_pool": 346
+      }
+    },
+    {
+      "page_key": "north-node/sagittarius",
+      "current_template": "sky-placement-frame-v3",
+      "target_template": "sky-placement-continuous-v2",
+      "writing_family": "slow-mover-article",
+      "status": "evidence-preflight",
+      "owner_approval": "not_requested",
+      "serving_transition": "not_authorized",
+      "evidence": {
+        "meaning": 2,
+        "scene": 0,
+        "argument": 4,
+        "register_pool": 7,
+        "phrase_pool": 346
+      }
+    },
+    {
+      "page_key": "north-node/capricorn",
+      "current_template": "sky-placement-frame-v3",
+      "target_template": "sky-placement-continuous-v2",
+      "writing_family": "slow-mover-article",
+      "status": "evidence-preflight",
+      "owner_approval": "not_requested",
+      "serving_transition": "not_authorized",
+      "evidence": {
+        "meaning": 2,
+        "scene": 0,
+        "argument": 5,
+        "register_pool": 7,
+        "phrase_pool": 346
+      }
+    },
+    {
+      "page_key": "north-node/aquarius",
+      "current_template": "sky-placement-frame-v3",
+      "target_template": "sky-placement-continuous-v2",
+      "writing_family": "slow-mover-article",
+      "status": "evidence-preflight",
+      "owner_approval": "not_requested",
+      "serving_transition": "not_authorized",
+      "evidence": {
+        "meaning": 2,
+        "scene": 1,
+        "argument": 4,
+        "register_pool": 7,
+        "phrase_pool": 346
+      }
+    },
+    {
+      "page_key": "north-node/pisces",
+      "current_template": "sky-placement-frame-v3",
+      "target_template": "sky-placement-continuous-v2",
+      "writing_family": "slow-mover-article",
+      "status": "evidence-preflight",
+      "owner_approval": "not_requested",
+      "serving_transition": "not_authorized",
+      "evidence": {
+        "meaning": 2,
+        "scene": 1,
+        "argument": 4,
+        "register_pool": 7,
+        "phrase_pool": 346
+      }
+    },
+    {
+      "page_key": "south-node/aries",
+      "current_template": "sky-placement-frame-v3",
+      "target_template": "sky-placement-continuous-v2",
+      "writing_family": "slow-mover-article",
+      "status": "evidence-preflight",
+      "owner_approval": "not_requested",
+      "serving_transition": "not_authorized",
+      "evidence": {
+        "meaning": 3,
+        "scene": 0,
+        "argument": 5,
+        "register_pool": 7,
+        "phrase_pool": 346
+      }
+    },
+    {
+      "page_key": "south-node/taurus",
+      "current_template": "sky-placement-frame-v3",
+      "target_template": "sky-placement-continuous-v2",
+      "writing_family": "slow-mover-article",
+      "status": "evidence-preflight",
+      "owner_approval": "not_requested",
+      "serving_transition": "not_authorized",
+      "evidence": {
+        "meaning": 3,
+        "scene": 0,
+        "argument": 5,
+        "register_pool": 7,
+        "phrase_pool": 346
+      }
+    },
+    {
+      "page_key": "south-node/gemini",
+      "current_template": "sky-placement-frame-v3",
+      "target_template": "sky-placement-continuous-v2",
+      "writing_family": "slow-mover-article",
+      "status": "evidence-preflight",
+      "owner_approval": "not_requested",
+      "serving_transition": "not_authorized",
+      "evidence": {
+        "meaning": 2,
+        "scene": 1,
+        "argument": 5,
+        "register_pool": 7,
+        "phrase_pool": 346
+      }
+    },
+    {
+      "page_key": "south-node/cancer",
+      "current_template": "sky-placement-frame-v3",
+      "target_template": "sky-placement-continuous-v2",
+      "writing_family": "slow-mover-article",
+      "status": "evidence-preflight",
+      "owner_approval": "not_requested",
+      "serving_transition": "not_authorized",
+      "evidence": {
+        "meaning": 2,
+        "scene": 0,
+        "argument": 4,
+        "register_pool": 7,
+        "phrase_pool": 346
+      }
+    },
+    {
+      "page_key": "south-node/leo",
+      "current_template": "sky-placement-frame-v3",
+      "target_template": "sky-placement-continuous-v2",
+      "writing_family": "slow-mover-article",
+      "status": "evidence-preflight",
+      "owner_approval": "not_requested",
+      "serving_transition": "not_authorized",
+      "evidence": {
+        "meaning": 2,
+        "scene": 0,
+        "argument": 4,
+        "register_pool": 7,
+        "phrase_pool": 346
+      }
+    },
+    {
+      "page_key": "south-node/virgo",
+      "current_template": "sky-placement-frame-v3",
+      "target_template": "sky-placement-continuous-v2",
+      "writing_family": "slow-mover-article",
+      "status": "evidence-preflight",
+      "owner_approval": "not_requested",
+      "serving_transition": "not_authorized",
+      "evidence": {
+        "meaning": 2,
+        "scene": 1,
+        "argument": 4,
+        "register_pool": 7,
+        "phrase_pool": 346
+      }
+    },
+    {
+      "page_key": "south-node/libra",
+      "current_template": "sky-placement-frame-v3",
+      "target_template": "sky-placement-continuous-v2",
+      "writing_family": "slow-mover-article",
+      "status": "evidence-preflight",
+      "owner_approval": "not_requested",
+      "serving_transition": "not_authorized",
+      "evidence": {
+        "meaning": 14,
+        "scene": 0,
+        "argument": 8,
+        "register_pool": 7,
+        "phrase_pool": 346
+      }
+    },
+    {
+      "page_key": "south-node/scorpio",
+      "current_template": "sky-placement-frame-v3",
+      "target_template": "sky-placement-continuous-v2",
+      "writing_family": "slow-mover-article",
+      "status": "evidence-preflight",
+      "owner_approval": "not_requested",
+      "serving_transition": "not_authorized",
+      "evidence": {
+        "meaning": 13,
+        "scene": 0,
+        "argument": 5,
+        "register_pool": 7,
+        "phrase_pool": 346
+      }
+    },
+    {
+      "page_key": "south-node/sagittarius",
+      "current_template": "sky-placement-frame-v3",
+      "target_template": "sky-placement-continuous-v2",
+      "writing_family": "slow-mover-article",
+      "status": "evidence-preflight",
+      "owner_approval": "not_requested",
+      "serving_transition": "not_authorized",
+      "evidence": {
+        "meaning": 14,
+        "scene": 0,
+        "argument": 10,
+        "register_pool": 7,
+        "phrase_pool": 346
+      }
+    },
+    {
+      "page_key": "south-node/capricorn",
+      "current_template": "sky-placement-frame-v3",
+      "target_template": "sky-placement-continuous-v2",
+      "writing_family": "slow-mover-article",
+      "status": "evidence-preflight",
+      "owner_approval": "not_requested",
+      "serving_transition": "not_authorized",
+      "evidence": {
+        "meaning": 3,
+        "scene": 0,
+        "argument": 5,
+        "register_pool": 7,
+        "phrase_pool": 346
+      }
+    },
+    {
+      "page_key": "south-node/aquarius",
+      "current_template": "sky-placement-frame-v3",
+      "target_template": "sky-placement-continuous-v2",
+      "writing_family": "slow-mover-article",
+      "status": "evidence-preflight",
+      "owner_approval": "not_requested",
+      "serving_transition": "not_authorized",
+      "evidence": {
+        "meaning": 2,
+        "scene": 1,
+        "argument": 4,
+        "register_pool": 7,
+        "phrase_pool": 346
+      }
+    },
+    {
+      "page_key": "south-node/pisces",
+      "current_template": "sky-placement-frame-v3",
+      "target_template": "sky-placement-continuous-v2",
+      "writing_family": "slow-mover-article",
+      "status": "evidence-preflight",
+      "owner_approval": "not_requested",
+      "serving_transition": "not_authorized",
+      "evidence": {
+        "meaning": 3,
+        "scene": 0,
+        "argument": 6,
+        "register_pool": 7,
+        "phrase_pool": 346
+      }
+    },
+    {
+      "page_key": "lilith/aries",
+      "current_template": "fallback-template/sky.placement-article",
+      "target_template": "sky-placement-continuous-v2",
+      "writing_family": "slow-mover-article",
+      "status": "evidence-preflight",
+      "owner_approval": "not_requested",
+      "serving_transition": "not_authorized",
+      "evidence": {
+        "meaning": 1,
+        "scene": 0,
+        "argument": 4,
+        "register_pool": 7,
+        "phrase_pool": 346
+      }
+    },
+    {
+      "page_key": "lilith/taurus",
+      "current_template": "fallback-template/sky.placement-article",
+      "target_template": "sky-placement-continuous-v2",
+      "writing_family": "slow-mover-article",
+      "status": "evidence-preflight",
+      "owner_approval": "not_requested",
+      "serving_transition": "not_authorized",
+      "evidence": {
+        "meaning": 1,
+        "scene": 0,
+        "argument": 4,
+        "register_pool": 7,
+        "phrase_pool": 346
+      }
+    },
+    {
+      "page_key": "lilith/gemini",
+      "current_template": "fallback-template/sky.placement-article",
+      "target_template": "sky-placement-continuous-v2",
+      "writing_family": "slow-mover-article",
+      "status": "evidence-preflight",
+      "owner_approval": "not_requested",
+      "serving_transition": "not_authorized",
+      "evidence": {
+        "meaning": 1,
+        "scene": 0,
+        "argument": 4,
+        "register_pool": 7,
+        "phrase_pool": 346
+      }
+    },
+    {
+      "page_key": "lilith/cancer",
+      "current_template": "fallback-template/sky.placement-article",
+      "target_template": "sky-placement-continuous-v2",
+      "writing_family": "slow-mover-article",
+      "status": "evidence-preflight",
+      "owner_approval": "not_requested",
+      "serving_transition": "not_authorized",
+      "evidence": {
+        "meaning": 1,
+        "scene": 0,
+        "argument": 4,
+        "register_pool": 7,
+        "phrase_pool": 346
+      }
+    },
+    {
+      "page_key": "lilith/leo",
+      "current_template": "fallback-template/sky.placement-article",
+      "target_template": "sky-placement-continuous-v2",
+      "writing_family": "slow-mover-article",
+      "status": "evidence-preflight",
+      "owner_approval": "not_requested",
+      "serving_transition": "not_authorized",
+      "evidence": {
+        "meaning": 1,
+        "scene": 0,
+        "argument": 4,
+        "register_pool": 7,
+        "phrase_pool": 346
+      }
+    },
+    {
+      "page_key": "lilith/virgo",
+      "current_template": "fallback-template/sky.placement-article",
+      "target_template": "sky-placement-continuous-v2",
+      "writing_family": "slow-mover-article",
+      "status": "evidence-preflight",
+      "owner_approval": "not_requested",
+      "serving_transition": "not_authorized",
+      "evidence": {
+        "meaning": 1,
+        "scene": 0,
+        "argument": 4,
+        "register_pool": 7,
+        "phrase_pool": 346
+      }
+    },
+    {
+      "page_key": "lilith/libra",
+      "current_template": "fallback-template/sky.placement-article",
+      "target_template": "sky-placement-continuous-v2",
+      "writing_family": "slow-mover-article",
+      "status": "evidence-preflight",
+      "owner_approval": "not_requested",
+      "serving_transition": "not_authorized",
+      "evidence": {
+        "meaning": 1,
+        "scene": 0,
+        "argument": 4,
+        "register_pool": 7,
+        "phrase_pool": 346
+      }
+    },
+    {
+      "page_key": "lilith/scorpio",
+      "current_template": "fallback-template/sky.placement-article",
+      "target_template": "sky-placement-continuous-v2",
+      "writing_family": "slow-mover-article",
+      "status": "evidence-preflight",
+      "owner_approval": "not_requested",
+      "serving_transition": "not_authorized",
+      "evidence": {
+        "meaning": 1,
+        "scene": 1,
+        "argument": 4,
+        "register_pool": 7,
+        "phrase_pool": 346
+      }
+    },
+    {
+      "page_key": "lilith/sagittarius",
+      "current_template": "fallback-template/sky.placement-article",
+      "target_template": "sky-placement-continuous-v2",
+      "writing_family": "slow-mover-article",
+      "status": "evidence-preflight",
+      "owner_approval": "not_requested",
+      "serving_transition": "not_authorized",
+      "evidence": {
+        "meaning": 1,
+        "scene": 0,
+        "argument": 4,
+        "register_pool": 7,
+        "phrase_pool": 346
+      }
+    },
+    {
+      "page_key": "lilith/capricorn",
+      "current_template": "fallback-template/sky.placement-article",
+      "target_template": "sky-placement-continuous-v2",
+      "writing_family": "slow-mover-article",
+      "status": "evidence-preflight",
+      "owner_approval": "not_requested",
+      "serving_transition": "not_authorized",
+      "evidence": {
+        "meaning": 1,
+        "scene": 0,
+        "argument": 4,
+        "register_pool": 7,
+        "phrase_pool": 346
+      }
+    },
+    {
+      "page_key": "lilith/aquarius",
+      "current_template": "fallback-template/sky.placement-article",
+      "target_template": "sky-placement-continuous-v2",
+      "writing_family": "slow-mover-article",
+      "status": "evidence-preflight",
+      "owner_approval": "not_requested",
+      "serving_transition": "not_authorized",
+      "evidence": {
+        "meaning": 1,
+        "scene": 0,
+        "argument": 4,
+        "register_pool": 7,
+        "phrase_pool": 346
+      }
+    },
+    {
+      "page_key": "lilith/pisces",
+      "current_template": "fallback-template/sky.placement-article",
+      "target_template": "sky-placement-continuous-v2",
+      "writing_family": "slow-mover-article",
+      "status": "evidence-preflight",
+      "owner_approval": "not_requested",
+      "serving_transition": "not_authorized",
+      "evidence": {
+        "meaning": 1,
+        "scene": 0,
+        "argument": 4,
+        "register_pool": 7,
+        "phrase_pool": 346
+      }
+    }
+  ]
+}
