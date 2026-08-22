@@ -1,9 +1,9 @@
 {
   "schemaVersion": "content-inventory-v1",
   "generatedOn": "2026-08-10",
-  "sourceCommit": "4f004e6e131cf3d22e40efaff273ed35ea16c858",
+  "sourceCommit": "23e0a5e8b72df442577a7721b1cc9caae281868c",
   "authorityRule": "Only owner-approved and owner-locked records may serve or export.",
-  "contentFingerprint": "9d5b39780189d0b127b91a5cbfffa9b145663692a79a8ddf23ad809cb8707696",
+  "contentFingerprint": "e9ae576b35fd64f6b1aa2699da75e8d3a0d52a25231e097fdaaea5898113dea1",
   "recordCount": 10526,
   "statusCounts": {
     "owner-approved": 10526
@@ -175376,14 +175376,14 @@
       "provenance": "generated",
       "sourceAuthor": "composed",
       "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
-      "approvalVersionDate": "package-owner-approval",
-      "contentHash": "89d61681d77f02d92076eea2b834e3509ec128424c654c450aee288432b931fe",
+      "approvalVersionDate": "Owner-authored verbatim in Content Studio on 2026-08-22.",
+      "contentHash": "eda2fd3d07f9e9b7d01e8a834ec74616f67c47ddc195d7165172372de25915e7",
       "wording": {
-        "body_you": "Jupiter enters Leo on {{entryDate}}, and the work we kept private becomes easier to show. Jupiter governs growth, opportunity, and the confidence to reach for more than what already exists. Leo is the sign of visibility, creative pride, and being seen. Someone posts the first piece, accepts the invitation, or puts their name on an idea that used to be described as a group effort. Visibility brings confidence. Confidence makes the next version larger.\n\nJupiter in Leo grows through creative courage and the willingness to be seen. The applause feels good because it confirms that the risk reached someone. Then the response becomes the measure. We promise more before the current work is finished, repeat the part that got noticed, and quietly drop what mattered when nobody praised it. Recognition starts deciding what deserves to exist.\n\nThe work can grow without being shaped around the reaction. A larger audience does not make every larger promise worth keeping. Creative expression does not require applause to exist. Praise can show what connected with an audience without deciding what deserves to be made next.\n\nBefore {{exitDate}}, work made only to hold attention may be harder to recognize as our own.",
-        "opening": "Jupiter enters Leo on {{entryDate}}, and the work we kept private becomes easier to show. Jupiter governs growth, opportunity, and the confidence to reach for more than what already exists. Leo is the sign of visibility, creative pride, and being seen. Someone posts the first piece, accepts the invitation, or puts their name on an idea that used to be described as a group effort. Visibility brings confidence. Confidence makes the next version larger.",
-        "tension": "Jupiter in Leo grows through creative courage and the willingness to be seen. The applause feels good because it confirms that the risk reached someone. Then the response becomes the measure. We promise more before the current work is finished, repeat the part that got noticed, and quietly drop what mattered when nobody praised it. Recognition starts deciding what deserves to exist.",
-        "development": "The work can grow without being shaped around the reaction. A larger audience does not make every larger promise worth keeping. Creative expression does not require applause to exist. Praise can show what connected with an audience without deciding what deserves to be made next.",
-        "close": "Before {{exitDate}}, work made only to hold attention may be harder to recognize as our own.",
+        "body_you": "For about a year, Jupiter in Leo makes it harder to hide the parts of our lives that want more room, more recognition, and a stronger sense that what we are doing actually matters. Jupiter expands whatever it touches, and Leo brings that growth into the places where pride, creativity, courage, visibility, and generosity are already asking for our attention, which can look like finally putting your name on the work, making something ambitious enough to be noticed, celebrating people properly, or taking a chance on an idea you have been treating like a private hobby because showing it to other people would make their opinion matter.\n\nThere is plenty of confidence available here, but there is also a temptation to confuse attention with proof that something is working, especially when a compliment, audience, title, invitation, or public win gives you the immediate feedback that quieter work does not. Jupiter can make the appetite for recognition bigger at the same time that Leo makes recognition feel personal, so it is worth noticing when you are improving the work because you care about it and when you are changing it because you are watching the room too closely. Generosity is one of the better uses of this transit, particularly when success gives you more to share, more people to invite in, or more reason to make somebody else feel seen instead of treating every opportunity as another chance to establish your own importance.\n\nBeing seen for something you actually care about is the point.\n\nIf you build your confidence entirely on applause, you will always need somebody nearby to provide it.",
+        "opening": "For about a year, Jupiter in Leo makes it harder to hide the parts of our lives that want more room, more recognition, and a stronger sense that what we are doing actually matters. Jupiter expands whatever it touches, and Leo brings that growth into the places where pride, creativity, courage, visibility, and generosity are already asking for our attention, which can look like finally putting your name on the work, making something ambitious enough to be noticed, celebrating people properly, or taking a chance on an idea you have been treating like a private hobby because showing it to other people would make their opinion matter.",
+        "tension": "There is plenty of confidence available here, but there is also a temptation to confuse attention with proof that something is working, especially when a compliment, audience, title, invitation, or public win gives you the immediate feedback that quieter work does not. Jupiter can make the appetite for recognition bigger at the same time that Leo makes recognition feel personal, so it is worth noticing when you are improving the work because you care about it and when you are changing it because you are watching the room too closely. Generosity is one of the better uses of this transit, particularly when success gives you more to share, more people to invite in, or more reason to make somebody else feel seen instead of treating every opportunity as another chance to establish your own importance.",
+        "development": "Being seen for something you actually care about is the point.",
+        "close": "If you build your confidence entirely on applause, you will always need somebody nearby to provide it.",
         "try_this": [
           "We can show one finished piece before promising the next one.",
           "We can keep one unusual part even when the familiar part gets more praise.",
@@ -227523,10 +227523,10 @@
       "provenance": "source-archive",
       "sourceAuthor": "composed",
       "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
-      "approvalVersionDate": "Verbatim reuse of an owner-approved knowledge-matrix ingress passage; no prose changes.",
-      "contentHash": "6d6fbe61798f083914673598ff5e2996818cebd84f5a37d5161f293f63b03f5d",
+      "approvalVersionDate": "Owner-authored verbatim in Content Studio on 2026-08-22.",
+      "contentHash": "dc8b978178447768b6840fb7a7aba69a2587f56dacbb2d5136ec62fe153fa557",
       "wording": {
-        "body_you": "Jupiter in Leo moves through your 10th house of career and public life, so someone may say your name in the right room, a larger role may open, or you may get asked to take on something more public. Being wanted can feel good. It can also make it easier to say yes just to feel included, before you know what you are agreeing to. Recognition can grow fast. So can the temptation to say yes because being asked feels flattering."
+        "body_you": "Jupiter moves through Leo in your 10th house, bringing growth to career, reputation, leadership, recognition, and the responsibilities attached to being known for what you do. You may receive a promotion, publish something important, take on a more visible role, attract a larger client base, or finally reach the point where people are asking you to make decisions instead of waiting for somebody else to approve yours. Leo adds pride and visibility to this part of your chart, so the desire to be taken seriously can become much stronger, particularly if you have spent years doing work that other people benefited from without giving you the title, money, or credit that should have come with it.\n\nThe danger is accepting every visible opportunity because it looks like progress from the outside. More responsibility is only useful when the authority, compensation, support, and time required to do the job have grown with it, and a title can become expensive very quickly when you are expected to carry problems you were never given the power to solve. Let the year make your work easier to recognize, but make sure recognition changes the terms too."
       },
       "astrology": {
         "objects": [
@@ -227550,10 +227550,10 @@
       "provenance": "source-archive",
       "sourceAuthor": "composed",
       "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
-      "approvalVersionDate": "Verbatim reuse of an owner-approved knowledge-matrix ingress passage; no prose changes.",
-      "contentHash": "ce7341b713f0ba366aef661c9d4eb3f97bac5407723641133f3475efa04a8c80",
+      "approvalVersionDate": "Owner-authored verbatim in Content Studio on 2026-08-22.",
+      "contentHash": "58d214358ce26d6078fca3920031e9394ef039823dd7558ce63ace953f22f14e",
       "wording": {
-        "body_you": "Jupiter in Leo moves through your 11th house of friendships and community, so your circle may get bigger, invitations may multiply, or a group may connect you to people you would not have met on your own. More people does not automatically mean more support. A group can make you feel seen, but being popular inside it is not the same as being supported by it."
+        "body_you": "Jupiter moves through Leo in your 11th house, expanding friendships, communities, professional networks, audiences, and the long-term goals that become more possible when the right people know what you are trying to build. You may meet collaborators, find yourself included in rooms that used to feel difficult to enter, receive more invitations, or realize that one introduction has opened a door you would have struggled to reach on your own. Leo makes visibility inside groups more important, which can bring genuine recognition for what you contribute but can also expose how quickly belonging becomes complicated when everybody wants to be the person being noticed.\n\nPay attention to the groups where success is shared and the ones where every opportunity quietly turns into a contest for access, attention, or proximity to whoever has the most influence. Jupiter can give you a larger circle this year, but a larger circle is not automatically a better one, especially if keeping your place requires constant attendance, emotional work, or enthusiasm you no longer feel. Invest in the connections that still make sense when there is nothing useful to gain from being seen together."
       },
       "astrology": {
         "objects": [
@@ -227577,10 +227577,10 @@
       "provenance": "source-archive",
       "sourceAuthor": "composed",
       "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
-      "approvalVersionDate": "Verbatim reuse of an owner-approved knowledge-matrix ingress passage; no prose changes.",
-      "contentHash": "98e4dd86b12d7fbd35c310ec1feefbbb2b3477f751ea20e661544f4d053157f4",
+      "approvalVersionDate": "Owner-authored verbatim in Content Studio on 2026-08-22.",
+      "contentHash": "7503d08a9fa1bfbe0c60e23bf67b072e01c38466265686ceccc3df35639a788b",
       "wording": {
-        "body_you": "Jupiter in Leo moves through your 12th house of endings and closure, so hope can return in a private way. Rest, retreat, therapy, spiritual practice, or work done out of sight may give you more room than pushing for an immediate public result. Private pride can make it harder to admit what you miss, regret, or need help finishing."
+        "body_you": "Jupiter moves through Leo in your 12th house, expanding the part of your life that operates privately, including rest, endings, solitude, grief, recovery, and the thoughts that become easier to hear when there is finally less noise around them. A year like this can feel quieter from the outside even when a great deal is changing internally, particularly if you are closing out a long chapter, working on something before it is ready to be public, or realizing how much of your exhaustion has come from treating every open hour as time that should be used productively.\n\nLeo brings pride into a house that usually asks for privacy, which can expose how difficult it is to rest when nobody can see what you accomplished with the day, or how quickly you start explaining yourself when you need time away from people who are accustomed to your availability. You do not need to disappear, but you may need to become much more selective about what deserves access to you while this cycle is clearing space. Some of the most important work you do this year may have nothing impressive to show for it until much later."
       },
       "astrology": {
         "objects": [
@@ -227739,10 +227739,10 @@
       "provenance": "source-archive",
       "sourceAuthor": "composed",
       "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
-      "approvalVersionDate": "Verbatim reuse of an owner-approved knowledge-matrix ingress passage; no prose changes.",
-      "contentHash": "3e54782fec34bdc2e80d9a02b12a4e44ffe6b15123a6a3717732709aca657d23",
+      "approvalVersionDate": "Owner-authored verbatim in Content Studio on 2026-08-22.",
+      "contentHash": "d7cc3a968cd76d815bf27f800173b8d39f8384e107b0218076599e5896d41150",
       "wording": {
-        "body_you": "Jupiter in Leo moves through your 7th house of one-on-one bonds, so a relationship, client list, or collaboration may bring more opportunity, but being wanted can make it easier to agree before you know what you are agreeing to. You can enjoy being chosen and still ask if the relationship works when nobody is trying to impress anybody."
+        "body_you": "Jupiter moves through Leo in your 7th house, expanding relationships, partnerships, contracts, clients, and the part of your life where another person’s choices have a direct effect on yours. You may meet more people, enter a significant relationship, attract larger clients, formalize a partnership, or discover that an existing connection has reached the point where the two of you need clearer terms because there is more at stake than there used to be. Leo brings warmth and generosity to one-on-one relationships, which can make this a deeply supportive year, but it can also make admiration feel so good that practical incompatibilities are easy to postpone.\n\nSomeone being enthusiastic about you is not the same as being able to build a life, business, or agreement with you. Pay attention to what happens after the chemistry, praise, opportunity, or big promise has had time to become ordinary, because that is when schedules, money, communication, responsibility, and follow-through start telling you what the relationship can actually support. Let people love you loudly this year, but make sure they can also show up when nobody is watching."
       },
       "astrology": {
         "objects": [
@@ -227766,10 +227766,10 @@
       "provenance": "source-archive",
       "sourceAuthor": "composed",
       "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
-      "approvalVersionDate": "Verbatim reuse of an owner-approved knowledge-matrix ingress passage; no prose changes.",
-      "contentHash": "0ae44f9a13de70fc8fb98806c451d59470728a3672a1a46480f48336e2c54d8f",
+      "approvalVersionDate": "Owner-authored verbatim in Content Studio on 2026-08-22.",
+      "contentHash": "0c123875f258f0a4192b907b2f8e821729826d509d67fa7bc6fd83690b72b897",
       "wording": {
-        "body_you": "Jupiter in Leo moves through your 8th house of shared resources and privacy, so shared resources may increase, or the stakes around debt, support, taxes, or what people owe each other may get larger. More help can also mean more obligation. Being generous can feel good until the shared arrangement starts depending on you always giving more."
+        "body_you": "Jupiter moves through Leo in your 8th house, bringing attention to shared money, debt, taxes, inheritance, investments, intimacy, and the agreements that determine who carries what when resources and responsibilities are combined. You may receive financial support, restructure debt, merge finances, deal with an estate, secure funding, or enter a relationship where the practical questions around trust become impossible to treat as separate from the emotional ones. Leo can make generosity larger here, but it can also make pride interfere with conversations about who owes what, who has access, and who gets to make decisions once money or responsibility is shared.\n\nThis is a good year to improve the terms, not to pretend terms are unnecessary because everybody involved has good intentions. Put the numbers in writing, understand what you are signing, ask who controls the account, and do not confuse somebody’s willingness to spend generously with their willingness to share power. Jupiter can increase what is available to you through other people, but the arrangement works best when nobody has to stay confused in order to keep the peace."
       },
       "astrology": {
         "objects": [
@@ -227793,10 +227793,10 @@
       "provenance": "source-archive",
       "sourceAuthor": "composed",
       "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
-      "approvalVersionDate": "Verbatim reuse of an owner-approved knowledge-matrix ingress passage; no prose changes.",
-      "contentHash": "955a17b9427bb3e36c62aedbf5652ed208fc1dd270a01c7fe887b03cc067f421",
+      "approvalVersionDate": "Owner-authored verbatim in Content Studio on 2026-08-22.",
+      "contentHash": "702dfb85998d9d2a6de4768d5891808368edd47e78965c2194449ecfd267d105",
       "wording": {
-        "body_you": "Jupiter in Leo moves through your 9th house of belief and adventure, so travel, study, publishing, teaching, or a belief may open a larger world. Confidence can outrun the facts if enthusiasm becomes proof. A belief can become part of your identity quickly, which makes changing your mind feel more personal than it needs to."
+        "body_you": "Jupiter, moving through Leo in your 9th house, expands education, travel, publishing, teaching, belief, and the larger questions that change what you think your life could become. You may return to school, travel farther, publish your work, begin teaching, enter a legal or academic process, or become much more serious about an idea that used to live mostly in conversation. Leo gives conviction to this part of the chart, which can help you speak with more confidence about what you know, especially after a period of collecting information without deciding what you actually believe.\n\nThe risk is becoming so attached to the idea that you are right that curiosity starts disappearing from the process. Jupiter likes big explanations and Leo likes confidence, but the strongest argument still has to survive new information, particularly when somebody with less status, fewer credentials, or a different background notices something you missed. Let the world get bigger this year without requiring every new experience to confirm what you already thought."
       },
       "astrology": {
         "objects": [

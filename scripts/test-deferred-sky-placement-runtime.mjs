@@ -71,6 +71,13 @@ const moonTaurusFacts = {
     exactDate: "August 6, 2026"
   }]
 };
+const jupiterLeoFacts = {
+  planet: "jupiter",
+  sign: "leo",
+  entryDate: "June 30, 2026",
+  exitDate: "July 26, 2027",
+  events: []
+};
 
 assert.equal(runtime.isSkyPlacementFallbackArchitectureV3BundleLoaded(), false);
 assert.ok(placementRows.hookRows.length > 650, "The long-form placement package must stay in its deferred partition.");
@@ -128,6 +135,17 @@ assert.equal(moonTaurusAfter.templateKey, "sky-placement-moon-entry-v1");
 assert.equal(moonTaurusAfter.contentKey, "fallback-hook/sky-placement-hook/moon/taurus");
 assert.match(moonTaurusAfter.body, /The Moon in Taurus squares Jupiter in Leo on August 6\./u);
 assert.doesNotMatch(moonTaurusAfter.body, /\{\{/u);
+const jupiterLeoAfter = runtime.transitSynastryFallbackRendererV3.renderSkyPlacement(jupiterLeoFacts);
+assert.match(jupiterLeoAfter.body, /For about a year, Jupiter in Leo makes it harder to hide/u);
+assert.match(jupiterLeoAfter.body, /somebody nearby to provide it\.$/u);
+assert.match(
+  runtime.transitSynastryFallbackRendererV3.renderSkyPlacementHouseCore({
+    planet: "jupiter",
+    sign: "leo",
+    house: 7
+  }).body,
+  /Let people love you loudly this year/u
+);
 assert.equal(await runtime.loadSkyPlacementFallbackArchitectureV3Bundle(), false);
 
 console.log("Deferred Sky Placement runtime parity passed.");

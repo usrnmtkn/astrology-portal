@@ -276,6 +276,9 @@ function applyFallbackArchitectureV3ReviewPatch(row: ExistingGeneratedContentRow
   const facts = isRecord(body.facts) ? body.facts : isRecord(row.facts) ? { ...row.facts } : {};
   const sourceSnapshot = isRecord(body.sourceSnapshot) ? body.sourceSnapshot : isRecord(row.source_snapshot) ? { ...row.source_snapshot } : {};
   const record = { ...v3PackageRecord(row) };
+  const packageOriginalRecord = isRecord(sections.packageOriginalRecord)
+    ? { ...sections.packageOriginalRecord }
+    : { ...record };
   const reviewStatus = packageReviewStatus(row, body.reviewStatus || stringFrom(sourceSnapshot.review_status));
 
   if (!fallbackArchitectureV3ReviewStatuses.has(reviewStatus)) {
@@ -283,11 +286,35 @@ function applyFallbackArchitectureV3ReviewPatch(row: ExistingGeneratedContentRow
   }
 
   if (body.revertToPackageOriginal) {
-    patch.headline = stringFrom(record.headline) || row.headline || "";
-    patch.summary = stringFrom(record.summary) || row.summary || "";
-    patch.body = stringFrom(record.body ?? record.body_you) || row.body || "";
-    sections.body_you = record.body_you ?? null;
-    sections.body_they = record.body_they ?? null;
+    patch.headline = stringFrom(packageOriginalRecord.headline) || row.headline || "";
+    patch.summary = stringFrom(packageOriginalRecord.summary) || row.summary || "";
+    patch.body = stringFrom(packageOriginalRecord.body ?? packageOriginalRecord.body_you) || row.body || "";
+    sections.body_you = packageOriginalRecord.body_you ?? null;
+    sections.body_they = packageOriginalRecord.body_they ?? null;
+  }
+
+  // Package rows are rendered from sections.packageRecord, not from the
+  // dashboard's top-level mirrors. Keep every editable prose field in sync so
+  // a successful admin save cannot silently leave the reader on stale copy.
+  if (typeof patch.headline === "string") {
+    record.headline = patch.headline;
+  }
+  if (typeof patch.summary === "string") {
+    record.summary = patch.summary;
+  }
+  if (typeof patch.body === "string") {
+    if (typeof record.body_you === "string") {
+      record.body_you = patch.body;
+      sections.body_you = patch.body;
+    } else {
+      record.body = patch.body;
+    }
+  }
+  if (typeof sections.body_you === "string") {
+    record.body_you = sections.body_you;
+  }
+  if (typeof sections.body_they === "string") {
+    record.body_they = sections.body_they;
   }
 
   record.review_status = reviewStatus;
@@ -296,6 +323,7 @@ function applyFallbackArchitectureV3ReviewPatch(row: ExistingGeneratedContentRow
   }
 
   sections.packageRecord = record;
+  sections.packageOriginalRecord = packageOriginalRecord;
   sections.dashboardEditHistory = [
     ...(Array.isArray(sections.dashboardEditHistory) ? sections.dashboardEditHistory : []),
     {

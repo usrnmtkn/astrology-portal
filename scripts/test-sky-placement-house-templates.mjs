@@ -54,6 +54,22 @@ for (const placementKey of ["moon/taurus", "lilith/sagittarius", "north-node/aqu
   }
 }
 
+for (let house = 7; house <= 12; house += 1) {
+  const sourceRow = source.rows.find((row) => (
+    row.contentKey === `house-horoscope-core/jupiter/leo/house-${house}`
+  ));
+  assert.ok(sourceRow, `Jupiter in Leo house ${house} must exist.`);
+  assert.equal(
+    renderSkyPlacementHouseCore({ planet: "jupiter", sign: "leo", house }).body,
+    sourceRow.body_you,
+    `Jupiter in Leo house ${house} must render the recovered Content Studio copy verbatim.`
+  );
+}
+assert.match(
+  renderSkyPlacementHouseCore({ planet: "jupiter", sign: "leo", house: 7 }).body,
+  /Let people love you loudly this year/u
+);
+
 const app = read("apps/web/src/App.tsx");
 const article = read("apps/web/src/features/sky/SkyDetailArticle.tsx");
 assert.match(app, /heading: packageSection\?\.heading \|\| personalTransitDisplayTitle\(transit\)/u);
