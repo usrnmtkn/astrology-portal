@@ -533,6 +533,7 @@ async function listGeneratedContent(req: IncomingMessage) {
   const contentKeyPrefix = requestUrl.searchParams.get("contentKeyPrefix");
   const startDate = requestUrl.searchParams.get("startDate");
   const endDate = requestUrl.searchParams.get("endDate");
+  const visibility = requestUrl.searchParams.get("visibility") ?? "all";
   const limit = Math.min(Number(requestUrl.searchParams.get("limit") ?? "50"), 1000);
   const offset = Math.max(Number(requestUrl.searchParams.get("offset") ?? "0"), 0);
   const selectColumns = [
@@ -578,6 +579,9 @@ async function listGeneratedContent(req: IncomingMessage) {
 
   if (id) {
     params.set("id", `eq.${id}`);
+  } else if (visibility === "editorial") {
+    params.set("lane", "eq.serving");
+    params.set("status", "neq.ARCHIVED");
   } else if (status !== "all") {
     params.set("status", `eq.${status}`);
   }
