@@ -1268,8 +1268,8 @@
     line-height: var(--leading-meta);
   }
 
-  .mode-guest .aspect-section :where(.aspect-row-copy strong, .aspect-row-copy h3),
-  .mode-member .aspect-section :where(.aspect-row-copy strong, .aspect-row-copy h3) {
+  .mode-guest .aspect-section :where(.aspect-row-copy strong, .aspect-row-copy h3, .aspect-row-copy h4),
+  .mode-member .aspect-section :where(.aspect-row-copy strong, .aspect-row-copy h3, .aspect-row-copy h4) {
     font-size: var(--aspect-card-title-size);
     line-height: var(--aspect-card-title-line);
   }

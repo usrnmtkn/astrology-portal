@@ -87,6 +87,15 @@ const youPage = fs.readFileSync(path.join(repoRoot, "apps/web/src/features/you/Y
 assert.match(youPage, /label: "Planetary Aspects"/u);
 assert.match(youPage, /label: "Angles and Points"/u);
 assert.match(youPage, /article-related-aspects__group-label/u);
-assert.doesNotMatch(youPage, /group\.label \? <h3>/u, "Natal aspect subgroup labels must use the eyebrow treatment.");
+assert.match(
+  youPage,
+  /<h3 className="eyebrow section-label article-related-aspects__label article-related-aspects__group-label">/u,
+  "Natal aspect subgroup labels must be semantic headings with the eyebrow treatment."
+);
+assert.doesNotMatch(
+  youPage,
+  /<span className="eyebrow section-label article-related-aspects__label article-related-aspects__group-label">/u,
+  "Natal aspect subgroup labels must not fall back to non-semantic spans."
+);
 
 console.log("natal exact-copy routing: ok (241 frozen aspects, dashboard hook lane, contextual house bridges, matching subgroup labels)");
