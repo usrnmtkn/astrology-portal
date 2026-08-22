@@ -8930,8 +8930,28 @@ body,
   padding: 3px 6px;
 }
 
+.admin-dashboard .admin-sky-edition-facts-row {
+  align-items: end;
+  display: grid;
+  gap: 12px;
+  grid-template-columns: minmax(0, 1fr) auto;
+}
+
+.admin-dashboard .admin-sky-edition-fields {
+  display: grid;
+  gap: 14px;
+}
+
+.admin-dashboard .admin-sky-edition-fields .admin-review-copy-editor {
+  background: var(--admin-ui-surface-2);
+  border: 1px solid var(--admin-ui-border-soft);
+  border-radius: var(--admin-ui-radius-lg);
+  padding: 12px;
+}
+
 @media (max-width: 920px) {
-  .admin-dashboard .admin-fallback-diagnostic-grid {
+  .admin-dashboard .admin-fallback-diagnostic-grid,
+  .admin-dashboard .admin-sky-edition-facts-row {
     grid-template-columns: 1fr;
   }
 }
