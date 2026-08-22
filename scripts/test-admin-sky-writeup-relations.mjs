@@ -94,6 +94,7 @@ assert.match(dashboard, /Review only what changed/u, "The owner must review a fo
 assert.match(dashboard, /Publish changes/u, "Field edits must publish through one complete-edition action.");
 assert.match(dashboard, /Publication checklist/u, "Incomplete article workspaces must show their remaining blockers.");
 assert.match(dashboard, /sky-article-edition-workspace/u, "Incomplete article fields must persist in a non-serving workspace.");
+assert.match(dashboard, /failed with HTTP \$\{error\.status\}\$\{error\.details \? `: \$\{error\.details\}`/u, "Admin failures must expose the server validation message instead of only the HTTP status.");
 assert.match(generatedContentApi, /ownerAction === "approve-sky-article-edition"/u, "The API must enforce the explicit owner approval action.");
 assert.match(generatedContentApi, /ownerAction === "save-sky-article-edition-revision"/u, "The API must save edits outside the LIVE row.");
 assert.match(generatedContentApi, /ownerAction === "publish-sky-article-edition-revision"/u, "The API must atomically publish a reviewed complete revision.");
