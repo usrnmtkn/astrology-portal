@@ -1,4 +1,4 @@
-import { interpolateTemplateString, type TemplateSlotValues } from "../services/templateInterpolation";
+import { interpolateTemplateString, type TemplateSlotValues } from "../services/templateInterpolation.js";
 
 const templateTokenPattern = /\{\{\s*([#^/]?)\s*([A-Za-z0-9_]+)\s*\}\}|\{(?!\{)\s*([A-Za-z0-9_]+)\s*\}(?!\})/g;
 
