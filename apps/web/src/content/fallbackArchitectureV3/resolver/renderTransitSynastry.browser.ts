@@ -166,9 +166,10 @@ export const TRUE_LILITH_KEY_DATES_INTRO = "True Black Moon Lilith stations abou
 
 export function skyPlacementKeyDates({
   planet,
+  sign,
   residencyPasses,
   residencyStations
-}: Pick<SkyPlacementFacts, "planet" | "residencyPasses" | "residencyStations">): SkyArticleKeyDate[] {
+}: Pick<SkyPlacementFacts, "planet" | "sign" | "residencyPasses" | "residencyStations">): SkyArticleKeyDate[] {
   const passes = (residencyPasses ?? [])
     .filter((pass) => {
       const entry = new Date(pass.entryDate);
@@ -186,6 +187,7 @@ export function skyPlacementKeyDates({
     label: passes.length > 1 ? `Pass ${index + 1} of ${passes.length}` : "",
     event: "residency-pass"
   }));
+  const stationSign = String(sign ?? "").trim();
   for (const station of residencyStations ?? []) {
     const occursAt = new Date(station.occursAt);
     if (Number.isNaN(occursAt.getTime())) continue;
@@ -193,10 +195,10 @@ export function skyPlacementKeyDates({
       occursAt.getTime() >= new Date(pass.entryDate).getTime()
       && occursAt.getTime() <= new Date(pass.exitDate).getTime()
     ));
-    if (!isVerifiedInsidePass) continue;
+    if (!isVerifiedInsidePass || !stationSign) continue;
     keyDates.push({
       date: station.occursAt,
-      label: `${title(planet)} stations ${station.direction}`,
+      label: `${title(planet)} stations ${station.direction} in ${title(stationSign)}`,
       event: `station-${station.direction}`
     });
   }
@@ -204,7 +206,7 @@ export function skyPlacementKeyDates({
 }
 
 export function skyPlacementKeyDatesIntro(
-  facts: Pick<SkyPlacementFacts, "planet" | "residencyPasses" | "residencyStations">
+  facts: Pick<SkyPlacementFacts, "planet" | "sign" | "residencyPasses" | "residencyStations">
 ): string | null {
   return String(facts.planet ?? "").trim().toLowerCase() === "lilith"
     && skyPlacementKeyDates(facts).length > 0
