@@ -3054,7 +3054,7 @@ test.describe("client-facing user flow case studies", () => {
     await assertNoClientErrors();
   });
 
-  test("personalized Sky placement keeps applicable natal aspect facts visible", async ({ page }) => {
+  test("personalized Sky placement keeps applicable natal aspect facts and approved writing visible", async ({ page }) => {
     const assertNoClientErrors = await expectNoClientErrors(page);
 
     await seedClientState(page, {
@@ -3073,6 +3073,11 @@ test.describe("client-facing user flow case studies", () => {
       personalizedSection.getByRole("heading", { level: 3, name: "Aspects to the natal chart" })
     ).toBeVisible({ timeout: 20_000 });
     await expect(personalizedSection.getByRole("heading", { level: 4 }).first()).toBeVisible();
+    await expectReaderFacingCopy(
+      personalizedSection.locator(".sky-detail-personalized-aspect p").first(),
+      "Personalized Sky aspect interpretation",
+      100
+    );
     await assertNoClientErrors();
   });
 

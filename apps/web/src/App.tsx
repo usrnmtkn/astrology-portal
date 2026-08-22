@@ -11248,7 +11248,11 @@ export function App() {
     if (!shouldLoadDeferredFallbackContent({
       mode,
       friendNatalContentRequested,
-      friendRelationshipContentRequests
+      friendRelationshipContentRequests,
+      skyPlacementPersonalizationRequested: Boolean(
+        skyDetailRoutePath?.startsWith("sky/placement/")
+        && (profileNatalSky?.ascendant ?? userProfile?.rising)
+      )
     })) {
       return () => {
         cancelled = true;
@@ -11268,7 +11272,14 @@ export function App() {
     return () => {
       cancelled = true;
     };
-  }, [friendNatalContentRequested, friendRelationshipContentRequests, mode]);
+  }, [
+    friendNatalContentRequested,
+    friendRelationshipContentRequests,
+    mode,
+    profileNatalSky?.ascendant,
+    skyDetailRoutePath,
+    userProfile?.rising
+  ]);
 
   useEffect(() => {
     let cancelled = false;
