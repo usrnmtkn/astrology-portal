@@ -148,7 +148,10 @@ assert.deepEqual(
 const servingApprovedReviews = new Set(["approved", "approved_reuse", "reviewed"]);
 // This fingerprint is the frozen pre-V13 baseline. Later owner-approved releases
 // have their own hash-bound gates and must not be misclassified as predecessors.
-const postV13GovernedReleases = new Set(["natal-moon-final-rendered-v3"]);
+const postV13GovernedReleases = new Set([
+  "ll-matrix-v13-incremental-owner-approval-2026-08-17",
+  "natal-moon-final-rendered-v3",
+]);
 const priorApprovedRows = sourceRows.hookRows.filter((row) => (
   row.source_release !== "ll-matrix-v13-owner-approved-runtime"
   && !postV13GovernedReleases.has(row.source_release)

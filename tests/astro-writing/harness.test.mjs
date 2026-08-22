@@ -419,7 +419,7 @@ assert.equal(ownerPhraseEvidenceReport.integrity.builderCreatedJoinedSegments, 0
 assert.equal(matrixEvidenceRows.length, 3473);
 assert.equal(Object.keys(matrixCoverage).length, 179);
 assert.equal(Object.values(matrixCoverage).filter((entry) => entry.scene === 0).length, 114);
-assert.equal(llMatrixV13Rows.filter((row) => row.ownerApproved === true).length, 301);
+assert.equal(llMatrixV13Rows.filter((row) => row.ownerApproved === true).length, 302);
 assert.equal(llMatrixV13ManifestRows.length, 301);
 assert.equal(normalizeMatrixToken("Black Moon Lilith"), "lilith");
 assert.equal(normalizeMatrixToken("Lunar Nodes"), "nodes");

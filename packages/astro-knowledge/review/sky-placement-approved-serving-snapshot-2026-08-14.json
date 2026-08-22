@@ -4,7 +4,32 @@
   "recordType": "derived_validation_snapshot",
   "articleCount": 58,
   "articlesSha256": "6d501ec1d2f6ccd914ab69c1ba61233c1d28d37e14c9befc937c15b6fd2f9069",
-  "readerPunctuationNormalizedArticlesSha256": "bb7fb5456407ac17a37df24f11612d74bf0a5551f083c6178f2913b3bb82fb95",
+  "readerPunctuationNormalizedArticlesSha256": "6d92ec2963e8ff4162528dfc1d807f2707f786cb933e110c5a132cc12ab0cc32",
+  "priorReaderPunctuationNormalizedArticlesSha256": "bb7fb5456407ac17a37df24f11612d74bf0a5551f083c6178f2913b3bb82fb95",
+  "revisions": [
+    {
+      "date": "2026-08-17",
+      "change": "Residency date token swap in 14 approved sky-sign-copy rows: {{previousResidencyEntryDate}} -> {{previousResidencyEntryDateWithYear}} and {{previousResidencyExitDate}} -> {{previousResidencyExitDateWithYear}}, in the development slot only.",
+      "prosePreserved": true,
+      "affectedContentKeys": [
+        "fallback-hook/sky-sign-copy/chiron/aries",
+        "fallback-hook/sky-sign-copy/jupiter/libra",
+        "fallback-hook/sky-sign-copy/mars/aquarius",
+        "fallback-hook/sky-sign-copy/mars/cancer",
+        "fallback-hook/sky-sign-copy/mars/gemini",
+        "fallback-hook/sky-sign-copy/mars/leo",
+        "fallback-hook/sky-sign-copy/mars/pisces",
+        "fallback-hook/sky-sign-copy/mars/sagittarius",
+        "fallback-hook/sky-sign-copy/mars/taurus",
+        "fallback-hook/sky-sign-copy/mars/virgo",
+        "fallback-hook/sky-sign-copy/nodes/aquarius-leo",
+        "fallback-hook/sky-sign-copy/pluto/aquarius",
+        "fallback-hook/sky-sign-copy/sun/virgo",
+        "fallback-hook/sky-sign-copy/venus/cancer"
+      ],
+      "ownerApprovalProvenance": "PENDING_RESOLVABLE_ID - owner directive given 2026-08-17 in the working session that produced this change; owner selected both-token variant matching the saturn/capricorn precedent. Replace with a resolvable thread or task ID before merge."
+    }
+  ],
   "approvalRecords": [
     "packages/astro-knowledge/review/sun-leo-fallback-v3/approval-record.json",
     "packages/astro-knowledge/review/saturn-capricorn-article-v3/OWNER-APPROVAL-2026-08-13.md",

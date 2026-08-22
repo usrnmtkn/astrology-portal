@@ -17,7 +17,7 @@ Canonical workbook changed: **no**
 
 ## V13 recovery
 
-- Approved V13 source rows: **301**
+- Approved V13 source rows: **302**
 - Runtime-manifest rows: **301**
 - Rows added to the shared evidence index: **301**
 - Shared-index entries: **4861 → 5831**

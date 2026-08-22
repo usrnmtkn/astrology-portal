@@ -23,6 +23,7 @@ import {
   lintDailyGlanceFriendVoice,
   type DailyGlancePersonSlots
 } from "./dailyGlanceVoice.browser";
+import { isGovernedReaderEligible, synastryReaderTier, transitReaderTier, type SynastryReaderTier, type TransitReaderTier } from "./readerEligibility.browser.ts";
 
 export interface AuthoredCard {
   contentKey: string;
@@ -53,6 +54,12 @@ export interface AuthoredCard {
   article_structure?: "final-v1";
   article_sections?: SkyArticleSection[];
   review_status?: string;
+  approval?: {
+    approvalLevel?: string | null;
+    recordPath?: string | null;
+    payloadSha256?: string | null;
+    approvedAt?: string | null;
+  } | null;
 }
 export interface TransitLibFile { authoredCards: AuthoredCard[] }
 export interface TransitRendererOpts { allowUnreviewed?: boolean }
@@ -106,13 +113,22 @@ export interface LunationEventCardFacts extends LunationHoroscopeFacts {
   blendFallbackEnabled?: boolean;
 }
 export interface CompatFacts { planet: string; signA: string; signB: string; otherName: string }
-export interface SynastryAspectFacts { planetA: string; planetB: string; aspect: string; otherName: string }
+export interface SynastryAspectFacts {
+  planetA: string;
+  planetB: string;
+  aspect: string;
+  otherName: string;
+  otherPronouns?: { subject?: string | null; object?: string | null; possessive?: string | null } | null;
+  romanticAllowed?: boolean;
+  relationshipType?: string | null;
+}
 export interface SkyEvent { type: string; a?: string; b?: string; aspect?: string; sign?: string; aSign?: string; bSign?: string; houseA?: number; houseB?: number; dateLine?: string; exactDate?: string; exactDateKey?: string; exactDegree?: number; applying?: boolean }
 export interface SkySeasonFacts { sign: string; events?: SkyEvent[] }
 export interface SkyHoroscopeFacts { risingSign: string; events?: SkyEvent[] }
 export interface SkyPlacementFacts {
   planet: string;
   sign: string;
+  surface?: "sky" | "calendar";
   events?: SkyEvent[];
   asOfDate?: string | null;
   articleMode?: "current" | "archive";
@@ -265,11 +281,13 @@ export interface TransitRenderResult {
   risingHoroscopes?: { risingSign: string; body: string }[];
   articleSections?: SkyArticleRenderedSection[];
   variantId?: string;
+  provenanceTier?: TransitReaderTier;
 }
-export interface SynastryRenderResult extends TransitRenderResult { tag: string | null }
+export interface SynastryRenderResult extends TransitRenderResult {
+  tag: string | null;
+  synastryTier: SynastryReaderTier;
+}
 export interface TransitLabelResult { label: string; window: string }
-
-const DAILY_GLANCE_READER_ELIGIBLE = new Set(["approved", "approved_reuse", "reviewed"]);
 
 function dailyGlanceHash(value: string) {
   let hash = 0x811c9dc5;
@@ -305,11 +323,16 @@ export function selectDailyGlanceVariantSet({
 }) {
   const fallback = { id: "primary", ...primary };
   if (!variantSet || variantSet.pairing_policy !== "explicit_pairs_only") return fallback;
-  const eligible = (status: string) => allowUnreviewed || DAILY_GLANCE_READER_ELIGIBLE.has(status);
-  const headlines = new Map(variantSet.headlines.filter((item) => eligible(item.review_status)).map((item) => [item.id, item.text]));
-  const bodies = new Map(variantSet.bodies.filter((item) => eligible(item.review_status)).map((item) => [item.id, item.text]));
+  const eligible = (kind: "headline" | "body" | "pairing", item: { id: string; review_status: string; approval?: AuthoredCard["approval"] }) => (
+    isGovernedReaderEligible({
+      ...item,
+      contentKey: `daily-glance-variant/${contentKey}/${kind}/${item.id}`
+    }, { allowUnreviewed })
+  );
+  const headlines = new Map(variantSet.headlines.filter((item) => eligible("headline", item)).map((item) => [item.id, item.text]));
+  const bodies = new Map(variantSet.bodies.filter((item) => eligible("body", item)).map((item) => [item.id, item.text]));
   const pairs = variantSet.pairings
-    .filter((pairing) => eligible(pairing.review_status))
+    .filter((pairing) => eligible("pairing", pairing))
     .map((pairing) => ({ id: pairing.id, headline: headlines.get(pairing.headline_id), body: bodies.get(pairing.body_id) }))
     .filter((pair): pair is { id: string; headline: string; body: string } => Boolean(pair.headline && pair.body));
   if (!pairs.some((pair) => pair.id === "primary")) pairs.unshift(fallback);
@@ -372,7 +395,7 @@ function renderSynastryPairVoice(body: string, holders: Ctx) {
   rendered = rendered
     .replace(new RegExp(`${marker}'s`, "g"), "your")
     .replace(
-      new RegExp(`${marker}(\\s+(?:(?:${READER_HOLDER_ADVERBS})\\s+)*)(?:${READER_HOLDER_VERB_PATTERN})\\b`, "g"),
+      new RegExp(`(?<!from\\s)${marker}(\\s+(?:(?:${READER_HOLDER_ADVERBS})\\s+)*)(?:${READER_HOLDER_VERB_PATTERN})\\b`, "g"),
       (match: string, spacing: string) => {
         const verb = match.slice(marker.length + spacing.length);
         return `you${spacing}${READER_HOLDER_VERBS.get(verb) ?? verb}`;
@@ -457,8 +480,6 @@ export function friendVoiceFromReaderCopy(body: string, name: string) {
   return rendered;
 }
 
-const READER_ELIGIBLE = new Set(["approved_reuse", "approved", "reviewed"]);
-
 function eligibleRowsByKey<T extends { contentKey: string; review_status?: string }>(
   rows: T[],
   allowUnreviewed: boolean
@@ -476,7 +497,7 @@ function eligibleRowsByKey<T extends { contentKey: string; review_status?: strin
         key,
         [...keyed]
           .reverse()
-          .find((candidate) => allowUnreviewed || READER_ELIGIBLE.has(candidate.review_status ?? ""))
+          .find((candidate) => isGovernedReaderEligible(candidate, { allowUnreviewed }))
       ] as const)
       .filter((entry): entry is readonly [string, T] => Boolean(entry[1]))
   );
@@ -840,7 +861,8 @@ export function createTransitSynastryRenderer(
       partSourceKeys: [[c.contentKey]],
       sourceKeys: [c.contentKey],
       templateKey,
-      contentKey: c.contentKey
+      contentKey: c.contentKey,
+      provenanceTier: transitReaderTier(c) ?? undefined
     });
 
   const fillKeep = (body: string, ctx: Ctx): string => body.replace(/\{\{([\w.]+)\}\}/g, (_, k) => (ctx[k] != null ? String(ctx[k]) : `{{${k}}}`)).trim();
@@ -1013,7 +1035,7 @@ export function createTransitSynastryRenderer(
         : `${title(transiting)} ${aspect} ${voice}'s ${title(natal)}`;
       const passHook = pass ? hookVoice(`fallback-hook/transit-pass/${pass}`, v) : null;
       if (passHook) aBody = `${aBody}\n\n${passHook}`;
-      return { headline: authoredHeadline, body: aBody, parts: aBody.split("\n\n"), templateKey: "authored/transit-aspect", contentKey: c.contentKey };
+      return { headline: authoredHeadline, body: aBody, parts: aBody.split("\n\n"), templateKey: "authored/transit-aspect", contentKey: c.contentKey, provenanceTier: transitReaderTier(c) ?? undefined };
     }
   }
     // fallback template
@@ -1148,58 +1170,63 @@ export function createTransitSynastryRenderer(
     return { headline: sub(fill(T.headline ?? "", ctx)), body, parts: [body], templateKey: T.contentKey };
   }
 
-  function renderSynastryAspect({ planetA, planetB, aspect, otherName }: SynastryAspectFacts): SynastryRenderResult {
+  function renderSynastryAspect({
+    planetA,
+    planetB,
+    aspect,
+    otherName,
+    otherPronouns,
+    romanticAllowed,
+    relationshipType
+  }: SynastryAspectFacts): SynastryRenderResult {
     const T = tpl("fallback-template/synastry.aspect-v3");
-    const g = GROUP[aspect];
-    const fwd = hooks.get(`fallback-hook/synastry-pair/${planetA}/${planetB}/${g}`);
-  const rev = fwd ? null : hooks.get(`fallback-hook/synastry-pair/${planetB}/${planetA}/${g}`);
-  const pairRow = fwd ?? rev;
+    // Exact aspect rows win. Until exact non-conjunction rows are approved, the
+    // existing hard/soft family is retained as an explicitly labeled fallback.
+    const aspectFamily = aspect === "square" || aspect === "opposition"
+      ? "hard"
+      : aspect === "trine" || aspect === "sextile"
+        ? "soft"
+        : null;
+    const exactFwd = hooks.get(`fallback-hook/synastry-pair/${planetA}/${planetB}/${aspect}`);
+    const exactRev = exactFwd ? null : hooks.get(`fallback-hook/synastry-pair/${planetB}/${planetA}/${aspect}`);
+    const groupedFwd = exactFwd || exactRev || !aspectFamily
+      ? null
+      : hooks.get(`fallback-hook/synastry-pair/${planetA}/${planetB}/${aspectFamily}`);
+    const groupedRev = exactFwd || exactRev || groupedFwd || !aspectFamily
+      ? null
+      : hooks.get(`fallback-hook/synastry-pair/${planetB}/${planetA}/${aspectFamily}`);
+    const fwd = exactFwd ?? groupedFwd;
+    const rev = exactRev ?? groupedRev;
+    const pairRow = fwd ?? rev;
+    const selectionTier = pairRow ? synastryReaderTier(pairRow) : null;
+  const otherSubject = otherPronouns?.subject?.trim() || "they";
+  const otherObject = otherPronouns?.object?.trim() || "them";
+  const otherPossessive = otherPronouns?.possessive?.trim() || "their";
   // holder1 = person holding the row key's first planet; reader is always planetA
   const holders = fwd
-    ? { holder1: "you", holder2: otherName, holder1Poss: "your", holder2Poss: `${otherName}'s`, holder1PossCap: "Your", holder2PossCap: `${otherName}'s` }
-    : { holder1: otherName, holder2: "you", holder1Poss: `${otherName}'s`, holder2Poss: "your", holder1PossCap: `${otherName}'s`, holder2PossCap: "Your" };
+    ? { holder1: "you", holder2: otherName, holder1Poss: "your", holder2Poss: `${otherName}'s`, holder1PossCap: "Your", holder2PossCap: `${otherName}'s`, holder2Subject: otherSubject, holder2Object: otherObject, holder2PronounPoss: otherPossessive }
+    : { holder1: otherName, holder2: "you", holder1Poss: `${otherName}'s`, holder2Poss: "your", holder1PossCap: `${otherName}'s`, holder2PossCap: "Your", holder1Subject: otherSubject, holder1Object: otherObject, holder1PronounPoss: otherPossessive };
     const pairVoice = fwd ? pairRow?.body_you : pairRow?.body_they;
-    // plain "what this planet is in your life" phrases: reader voice for A, other-person voice for B
-    const modeA = hooks.get(`fallback-hook/planet-mode/${planetA}`)?.body_you;
-    const modeB = hooks.get(`fallback-hook/planet-mode/${planetB}`)?.body_they;
     const typeRow = hooks.get(`fallback-hook/synastry-aspect-type/${aspect}`);
-    const ctx: Ctx = {
-      possessive: "Your",
-      planetATitle: title(planetA), planetBTitle: title(planetB), aspectName: aspect, otherName,
-      aspectAdj: vocab.get(`fallback-vocab/aspect-adj/${aspect}`)?.body,
-      synAspectLine: typeRow && modeA && modeB ? fill(typeRow.body_you ?? "", {
-        modeA, modeB, otherName,
-        // what each person's planet feels like to the other (hard aspects)
-        gratesA: hooks.get(`fallback-hook/planet-grates/${planetA}`)?.body_you,
-        gratesB: hooks.get(`fallback-hook/planet-grates/${planetB}`)?.body_they,
-        sceneA: vocab.get(`fallback-vocab/planet-scene/${planetA}`)?.body,
-        sceneB: vocab.get(`fallback-vocab/planet-scene/${planetB}`)?.body,
-        askA: vocab.get(`fallback-vocab/planet-ask/${planetA}`)?.body,
-        askB: vocab.get(`fallback-vocab/planet-ask/${planetB}`)?.body,
-      }) : null,
-      pairSentences: pairVoice ? renderSynastryPairVoice(pairVoice, holders) : null,
-    // signature closing formula for the assembled fallback (matches the natal-aspect close)
-    closingLine: (() => {
-      const coreA = vocab.get(`fallback-vocab/planet-core/${planetA}`)?.body;
-      const coreB = vocab.get(`fallback-vocab/planet-core/${planetB}`)?.body;
-      const motion = vocab.get(`fallback-vocab/aspect-motion/${aspect}`)?.body;
-      return coreA && coreB && motion ? `That's your ${title(planetA)} ${aspect} ${otherName}'s ${title(planetB)}: ${coreA} and ${coreB} ${motion}.` : null;
-    })(),
-    };
-    // authored pair copy stands alone (natal-aspect pattern): the headline carries the
-    // astronomy, the pair paragraph carries the meaning. Generic assembly only when no pair row.
-    if (ctx.pairSentences) {
-      const headlinePair = (T.headline ?? "").replace(/\{\{([\w.]+)\}\}/g, (_, k) => (ctx as Ctx)[k] ?? "");
-      return { headline: headlinePair, tag: (typeRow as { tag?: string } | undefined)?.tag ?? null, body: ctx.pairSentences as string, parts: [ctx.pairSentences as string], templateKey: T.contentKey };
+    const pairSentences = pairVoice ? renderSynastryPairVoice(pairVoice, holders) : null;
+    if (pairSentences) {
+      const headlinePair = (T.headline ?? "").replace(/\{\{([\w.]+)\}\}/g, (_, k) => ({
+        possessive: "Your",
+        planetATitle: title(planetA),
+        planetBTitle: title(planetB),
+        aspectAdj: ({ conjunction: "conjunct", opposition: "opposite" } as Record<string, string>)[aspect] ?? aspect,
+        otherName
+      } as Ctx)[k] ?? "");
+      const body = pairSentences;
+      if (romanticAllowed === false && /\b(?:romance|romantic|dating|sexual|sexy|chemistry|attraction|attracted)\b/iu.test(body)) {
+        throw new SourceGapError(`SOURCE_GAP: synastry relationship context ${relationshipType ?? "unspecified"} does not permit romantic copy`);
+      }
+      if (!selectionTier) {
+        throw new SourceGapError(`SOURCE_GAP: ineligible synastry row ${pairRow?.contentKey ?? "missing"}`);
+      }
+      return { headline: headlinePair, tag: (typeRow as { tag?: string } | undefined)?.tag ?? null, body, parts: [body], templateKey: T.contentKey, contentKey: pairRow?.contentKey, synastryTier: selectionTier };
     }
-    for (const slot of T.requiredSlots ?? []) if (ctx[slot] == null) throw new SourceGapError(`SOURCE_GAP: synastry aspect slot ${slot} for ${planetA}-${aspect}-${planetB}`);
-    let body = T.body
-      .replace(/\{\{#([\w.]+)\}\}([\s\S]*?)\{\{\/\1\}\}/g, (_, key, inner) => (ctx[key] ? inner : ""))
-      .replace(/\{\{([\w.]+)\}\}/g, (_, k) => ctx[k] ?? "");
-    body = body.replace(/\s{2,}/g, " ").trim();
-    const headline = (T.headline ?? "").replace(/\{\{([\w.]+)\}\}/g, (_, k) => ({ ...ctx, possessive: "Your" } as Ctx)[k] ?? "");
-    // headline stays astrology; tag is the plain-English quality shown underneath it
-    return { headline, tag: (typeRow as { tag?: string } | undefined)?.tag ?? null, body, parts: [body], templateKey: T.contentKey };
+    throw new SourceGapError(`SOURCE_GAP: synastry aspect ${planetA}-${aspect}-${planetB}`);
   }
 
 
@@ -2061,11 +2088,20 @@ export function createTransitSynastryRenderer(
 
   function renderSkyPlacement(facts: SkyPlacementFacts): TransitRenderResult {
     const keyDates = skyPlacementKeyDates(facts);
-    return {
+    const rendered = {
       ...renderSkyPlacementCopy(facts),
       keyDates,
       keyDatesIntro: skyPlacementKeyDatesIntro(facts)
     };
+    if (
+      facts.surface === "calendar"
+      && /\b(?:you|your|yours|yourself|you're|you've|you'll|you'd)\b/iu.test(
+        [rendered.tagline, rendered.body].filter(Boolean).join(" ")
+      )
+    ) {
+      throw new SourceGapError(`SOURCE_GAP: calendar ingress ${facts.planet}/${facts.sign} violates the collective register`);
+    }
+    return rendered;
   }
 
   // ---- Friends Circle feed (FRIENDS-CIRCLE-FEED-SPEC.md) ----
@@ -2308,6 +2344,9 @@ export function createTransitSynastryRenderer(
     const rawBody = exactRow?.body_you ?? compactLunationRow?.body_you ?? String(signRow?.body ?? "");
     const body = fill(rawBody, { signTitle: title(normalizedSign) }).replace(/^in \. /, "");
     if (/\{\{/.test(body)) throw new SourceGapError(`SOURCE_GAP: phase ${phase} in ${normalizedSign} has an unfilled slot`);
+    if (/\b(?:you|your|yours|yourself|you're|you've|you'll|you'd)\b/iu.test(body)) {
+      throw new SourceGapError(`SOURCE_GAP: calendar phase ${phase} in ${normalizedSign} violates the collective register`);
+    }
     const PHASE_NAMES: Record<string, string> = { "new-moon": "New Moon", "waxing-crescent": "Waxing Crescent Moon", "first-quarter": "First Quarter Moon", "waxing-gibbous": "Waxing Gibbous Moon", "full-moon": "Full Moon", "disseminating": "Disseminating Moon", "last-quarter": "Last Quarter Moon", "balsamic": "Balsamic Moon" };
     const plain = `${PHASE_NAMES[phase] ?? title(phase)} in ${title(normalizedSign)}`;
     return {

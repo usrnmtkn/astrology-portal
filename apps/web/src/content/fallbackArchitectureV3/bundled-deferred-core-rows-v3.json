@@ -17816,6 +17816,33 @@
       "distribution_lane": "serving"
     },
     {
+      "contentKey": "fallback-hook/placement-house-lived/sun/9",
+      "content_role": "full_copy",
+      "grammar_frame": "complete_sentence",
+      "body": "Sun in the 9th house wants a worldview large enough to inhabit. You travel, study, learn languages, pursue higher education, argue philosophy, publish, or chase a truth that makes the rest of life more coherent. Principles can become central to identity.\n\nThe blind spot appears when one form of proof becomes so important that every other way of knowing is dismissed before it has been considered. You are strongest when conviction keeps expanding through experience. A philosophy has more value after it has survived contact with a larger world.",
+      "reader_only": true,
+      "render_policy": "reader-only-exact-lived-v1",
+      "review_status": "approved",
+      "source_keys": [
+        "packages/astro-knowledge/voice/tldr-astro/satori-writer/ll-matrix-v13/ll-matrix-v13.json",
+        "packages/astro-knowledge/review/ll-sun-9th-house-owner-approval-2026-08-17.json"
+      ],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/ll-sun-9th-house-owner-approval-2026-08-17.json",
+        "payloadSha256": "5bef8882427933570a3ec39ef89e883e9d8dfc3e3a7e9a012ad84f00cd7e2d27",
+        "approvedAt": "2026-08-17"
+      },
+      "source_release": "ll-matrix-v13-incremental-owner-approval-2026-08-17",
+      "runtime_family": "placement-house-lived",
+      "runtime_key": "sun|9th house",
+      "source_sheet": "PlacementMeanings",
+      "governance": "owner-approved-clarity-fix-ll-v12",
+      "owner_approved": true,
+      "precedence": "incremental exact owner approval supersedes earlier generic house copy on the same runtime key",
+      "distribution_lane": "serving"
+    },
+    {
       "contentKey": "fallback-hook/placement-sign-lived/pluto/taurus",
       "content_role": "full_copy",
       "grammar_frame": "complete_sentence",

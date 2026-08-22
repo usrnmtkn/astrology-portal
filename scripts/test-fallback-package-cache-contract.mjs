@@ -9,6 +9,7 @@ import {
   createPackageManifest,
   PACKAGE_VERSION
 } from "../apps/web/src/content/fallbackArchitectureV3/dist/tldr-content.js";
+import { isGovernedReaderEligible } from "../apps/web/src/content/fallbackArchitectureV3/resolver/readerEligibility.mjs";
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const read = (relativePath) => fs.readFileSync(path.join(repoRoot, relativePath), "utf8");
@@ -18,7 +19,7 @@ const generatedContentSource = read("apps/web/src/services/generatedContent.ts")
 const materializerSource = read("scripts/materialize-fallback-architecture-v3-dashboard-rows.mjs");
 const appSource = read("apps/web/src/App.tsx");
 
-assert.equal(PACKAGE_VERSION, "v3-2026-08-20b");
+assert.equal(PACKAGE_VERSION, "v3-2026-08-21a");
 assert.match(
   runtimeSource,
   /export const fallbackArchitectureV3BundledManifestSummary = bundledManifestSummaryV3 as FallbackArchitectureV3PackageManifestSummary/u,
@@ -204,7 +205,7 @@ const skyPlacementRows = latestEligible([
   ...skyPlacementOwnerApprovedFallbacks.rows,
   ...sunLeoHouseCoreReaderRows,
   ...venusLibraHouseCoreReaderRows
-]);
+]).filter((row) => isGovernedReaderEligible(row));
 const skyPlacementKeys = new Set(skyPlacementRows.map((row) => row.contentKey));
 const expectedCoreManifest = createPackageManifest({
   ...{
@@ -230,6 +231,7 @@ const expectedCoreManifest = createPackageManifest({
       ...skyPlanetFrames.rows,
       ...skyPlacementVoicePass.rows,
       ...skySignCopyRows,
+      ...skyPlacementOwnerApprovedFallbacks.rows,
       ...sunLeoHouseCoreReaderRows,
       ...venusLibraHouseCoreReaderRows
     ]).filter((row) => !skyPlacementKeys.has(row.contentKey)),

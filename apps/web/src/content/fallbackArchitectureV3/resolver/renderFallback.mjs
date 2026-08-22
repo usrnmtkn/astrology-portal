@@ -300,7 +300,12 @@ export function renderNatalAngle(facts, opts = {}) {
   };
   const template = getTemplate("fallback-template/natal.angle-in-sign");
   const body = renderTemplate(template, ctx, `${angle}/${sign}`, voice);
-  return { headline: mustache(template.headline, ctx), parts: [body], body, templateKey: template.contentKey };
+  return {
+    headline: mustache(template.headline, ctx),
+    parts: [body],
+    body,
+    templateKey: template.contentKey,
+  };
 }
 
 const ASPECT_GROUP = { conjunction: "conjunction", square: "hard", opposition: "hard", trine: "soft", sextile: "soft" };
@@ -321,6 +326,7 @@ export function renderNatalAspect(facts, opts = {}) {
       body: exactLived.body,
       astroHint: exactLived.astroHint,
       templateKey: exactLived.contentKey,
+      provenanceTier: "exact-owner-approved",
     };
   }
   const group = ASPECT_GROUP[aspect];
@@ -349,7 +355,13 @@ export function renderNatalAspect(facts, opts = {}) {
   };
   const template = getTemplate("fallback-template/natal.aspect");
   const body = renderTemplate(template, ctx, `${planetA}-${aspect}-${planetB}`, voice);
-  return { headline: mustache(template.headline, ctx), parts: [body], body, templateKey: template.contentKey };
+  return {
+    headline: mustache(template.headline, ctx),
+    parts: [body],
+    body,
+    templateKey: template.contentKey,
+    provenanceTier: "legacy-reviewed",
+  };
 }
 
 /** Normalize app wording to the supported canonical aspect ids ("conjunct" -> "conjunction", etc).

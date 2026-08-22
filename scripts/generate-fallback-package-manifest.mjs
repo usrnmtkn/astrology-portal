@@ -8,6 +8,7 @@ import {
   createPackageManifest,
   PACKAGE_VERSION
 } from "../apps/web/src/content/fallbackArchitectureV3/dist/tldr-content.js";
+import { isGovernedReaderEligible } from "../apps/web/src/content/fallbackArchitectureV3/resolver/readerEligibility.mjs";
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const packageRoot = path.join(repoRoot, "apps/web/src/content/fallbackArchitectureV3");
@@ -334,7 +335,7 @@ const skyPlacementRows = {
     ...skyPlacementOwnerApprovedRows.rows,
     ...sunLeoHouseCoreRows,
     ...venusLibraHouseCoreRows
-  ]),
+  ]).filter((row) => isGovernedReaderEligible(row)),
   vocabularyRows: []
 };
 const skyPlacementKeySet = new Set(skyPlacementRows.hookRows.map((row) => row.contentKey));

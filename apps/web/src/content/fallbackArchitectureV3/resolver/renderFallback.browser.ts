@@ -141,7 +141,16 @@ export interface EmptyHouseFacts {
 export type NormalizedAspect = "conjunction" | "square" | "trine" | "sextile" | "opposition" | "quincunx" | "semisextile";
 export type AspectInput = NormalizedAspect | "nonagen";
 export interface AspectFacts { planetA: string; planetB: string; aspect: AspectInput; voice: Voice }
-export interface RenderResult { headline: string; parts: string[]; partKeys?: string[]; body: string; templateKey: string; astroHint?: string; sourceKeys?: string[] }
+export interface RenderResult {
+  headline: string;
+  parts: string[];
+  partKeys?: string[];
+  body: string;
+  templateKey: string;
+  astroHint?: string;
+  sourceKeys?: string[];
+  provenanceTier?: "exact-owner-approved" | "legacy-reviewed";
+}
 export interface RenderOpts {
   allowUnreviewed?: boolean;
   /** Adds the owner-approved mechanism bridge on empty-house detail pages only. */
@@ -389,7 +398,12 @@ export function createFallbackRenderer(templatesFile: TemplatesFile, rowsFile: R
     };
     const template = getTemplate("fallback-template/natal.angle-in-sign");
     const body = renderTemplate(template, ctx, `${facts.angle}/${facts.sign}`, voice);
-    return { headline: mustache(template.headline ?? "", ctx), parts: [body], body, templateKey: template.contentKey };
+    return {
+      headline: mustache(template.headline ?? "", ctx),
+      parts: [body],
+      body,
+      templateKey: template.contentKey,
+    };
   }
 
   function renderNatalAspect(facts: AspectFacts, opts: RenderOpts = {}): RenderResult {
@@ -405,8 +419,10 @@ export function createFallbackRenderer(templatesFile: TemplatesFile, rowsFile: R
         body: exactLived.body ?? "",
         astroHint: exactLived.astroHint,
         templateKey: exactLived.contentKey,
+        provenanceTier: "exact-owner-approved",
       };
     }
+
     const group = ASPECT_GROUP[aspect];
     const pair = group
       ? getHook(`fallback-hook/aspect-pair/${facts.planetA}/${facts.planetB}/${group}`, voice, opts)
@@ -433,7 +449,13 @@ export function createFallbackRenderer(templatesFile: TemplatesFile, rowsFile: R
     };
     const template = getTemplate("fallback-template/natal.aspect");
     const body = renderTemplate(template, ctx, `${facts.planetA}-${facts.aspect}-${facts.planetB}`, voice);
-    return { headline: mustache(template.headline ?? "", ctx), parts: [body], body, templateKey: template.contentKey };
+    return {
+      headline: mustache(template.headline ?? "", ctx),
+      parts: [body],
+      body,
+      templateKey: template.contentKey,
+      provenanceTier: "legacy-reviewed",
+    };
   }
 
   // ---- Empty-house pages (natal): sign-on-cusp -> ruler -> ruler placement -> activation

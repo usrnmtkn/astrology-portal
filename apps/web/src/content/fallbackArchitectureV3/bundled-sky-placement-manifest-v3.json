@@ -1,8 +1,8 @@
 {
-  "packageVersion": "v3-2026-08-20b",
-  "contentHash": "40920d64d00da5e0217b4f467451f654",
-  "keyManifestHash": "f8dfd1eb99116d5fe9fe7055813f551b",
-  "keyCount": 787,
+  "packageVersion": "v3-2026-08-21a",
+  "contentHash": "06b54a4928f8892db5dbd00bc26f9259",
+  "keyManifestHash": "3f8cf847f68d6c63c053ca29804e7397",
+  "keyCount": 786,
   "keys": [
     "hook:fallback-hook/sky-placement-aspect/sun/jupiter/conjunction",
     "hook:fallback-hook/sky-placement-aspect/sun/moon/opposition/aquarius",
@@ -753,7 +753,6 @@
     "hook:fallback-hook/sky-sign-copy/sun/sagittarius",
     "hook:fallback-hook/sky-sign-copy/sun/scorpio",
     "hook:fallback-hook/sky-sign-copy/sun/taurus",
-    "hook:fallback-hook/sky-sign-copy/sun/virgo",
     "hook:fallback-hook/sky-sign-copy/uranus/gemini",
     "hook:fallback-hook/sky-sign-copy/venus/aquarius",
     "hook:fallback-hook/sky-sign-copy/venus/aries",

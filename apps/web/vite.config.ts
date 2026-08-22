@@ -31,6 +31,41 @@ function trimSwissEphemerisWebDataPlugin() {
   };
 }
 
+function browserOnlySwissEphemerisPlugin() {
+  const wasmNodeBootstrap = 'if(ENVIRONMENT_IS_NODE){const{createRequire}=await import("module");var require=createRequire(import.meta.url)}';
+  const sourceNodeBranch = /    \/\/ In Node\.js environment, we need to help locate the WASM and data files\n    if \(typeof process[^]*?    \} else \{\n      \/\/ Browser environment\n([^]*?)\n    \}\n\n    this\.SweModule/u;
+
+  return {
+    name: "tldr-browser-only-swiss-ephemeris",
+    apply: "build" as const,
+    enforce: "pre" as const,
+    transform(code, id) {
+      if (id.includes("swisseph-wasm/src/swisseph.js")) {
+        const match = code.match(sourceNodeBranch);
+        if (!match) {
+          throw new Error("The swisseph-wasm environment branch changed; review the browser-only build transform.");
+        }
+        return code.replace(
+          sourceNodeBranch,
+          `    // The Vite target is browser-only; omit the dependency's Node path resolver.\n${match[1]}\n\n    this.SweModule`
+        );
+      }
+
+      if (id.includes("swisseph-wasm/wasm/swisseph.js")) {
+        if (!code.includes(wasmNodeBootstrap)) {
+          throw new Error("The swisseph-wasm Node bootstrap changed; review the browser-only build transform.");
+        }
+        return code.replace(
+          wasmNodeBootstrap,
+          'if(ENVIRONMENT_IS_NODE){throw new Error("The web Swiss Ephemeris bundle cannot run in Node.js")}'
+        );
+      }
+
+      return undefined;
+    }
+  };
+}
+
 function serveFullSwissEphemerisDataInDevPlugin() {
   return {
     name: "tldr-serve-full-swiss-ephemeris-data-in-dev",
@@ -145,6 +180,7 @@ export default defineConfig(({ mode }) => {
       suppressUnrelatedMonorepoHotUpdatesPlugin(),
       localApiRoutePlugin(),
       serveFullSwissEphemerisDataInDevPlugin(),
+      browserOnlySwissEphemerisPlugin(),
       trimSwissEphemerisWebDataPlugin(),
       react()
     ],
@@ -154,6 +190,9 @@ export default defineConfig(({ mode }) => {
     },
     build: {
       manifest: true,
+      // Large data registries are route-split and governed by gzip budgets.
+      // Use a raw-size advisory that reflects the largest intentional registry.
+      chunkSizeWarningLimit: 2200,
       modulePreload: {
         resolveDependencies(_url, deps) {
           return deps.filter((dep) => !dep.includes("swisseph-"));

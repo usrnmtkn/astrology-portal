@@ -89,6 +89,7 @@ const aspect = runtime.fallbackRendererV3.renderNatalAspect({
   voice: "Alex"
 });
 assert.ok(aspect.body.trim(), "An ordinary Friends natal aspect must render a non-empty body after the bundle loads.");
+assert.equal(aspect.provenanceTier, "legacy-reviewed");
 
 assert.equal(runtime.friendDetailHasReaderFacingContent({ body: [], sections: [] }), false);
 assert.equal(runtime.friendDetailHasReaderFacingContent({
