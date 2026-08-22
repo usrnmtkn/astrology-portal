@@ -45,7 +45,7 @@ Preconditions:
 Steps:
 1. Open the content dashboard admin.
 2. Verify the default page is Review Queue; there is no separate Studio Home page.
-3. Confirm the five primary destinations are Review Queue, Content Library, Articles, Composition, and Aspect Patterns.
+3. Confirm the seven primary destinations are Review Queue, Content Library, Articles, Compatibility, Composite Review, Composition, and Aspect Patterns.
 4. Open Composition and move through Templates, Slots, Vocabulary, Fallback Hooks, and Surface Map as workspace tabs.
 5. Expand Operations / Advanced and verify Sky Aspect Drafts, Users, Reports, Connection, and Diagnostics remain reachable.
 

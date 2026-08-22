@@ -312,6 +312,10 @@ assert.match(adminDashboard, /aria-label="Compatibility filters"/, "Compatibilit
 assert.match(adminDashboard, /Compatibility sections/, "Compatibility admin must group content, fallback hooks, vocabulary, and slots.");
 assert.match(adminDashboard, /filteredCompatibilityRows/, "Compatibility admin table must render the filtered compatibility row set.");
 assert.match(adminDashboard, /handleCompatibilityCreateAction/, "Compatibility admin must open connected compatibility-specific drafts.");
+assert.match(adminDashboard, /\{ page: "compatibility", label: "Compatibility", icon: Users \}/, "Compatibility must remain a first-class primary admin destination.");
+assert.match(adminDashboard, /\{ page: "compositeByType", label: "Composite Review", icon: Users \}/, "Composite and synastry write-ups must remain reachable from the primary admin navigation.");
+assert.doesNotMatch(adminDashboard, /compatibility:\s*"content"/, "The Compatibility hash must not redirect to the generic Content Library.");
+assert.doesNotMatch(adminDashboard, /"composite-review":\s*"reviewQueue"/, "The Composite Review hash must not redirect to the generic Review Queue.");
 assert.ok(fallbackHookKeys.has("fallback-hook/compat-domain/moon"), "Friends compatibility fallback hooks must be discoverable in the V3 package catalog.");
 assert.match(manualChartsPanel, /transitSynastryFallbackRendererV3\.renderCompat\(\{/, "Compatibility cards must render through the V3 package.");
 assert.match(manualChartsPanel, /const yourSign = yourPosition\?\.sign \|\| cachedProfileSign;/, "Compatibility may use the reader's persisted Sun or Moon sign while their full natal chart loads.");
