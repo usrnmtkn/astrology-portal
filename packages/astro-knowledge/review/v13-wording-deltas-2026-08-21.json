@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "reviewSet": "v13-wording-deltas-2026-08-21",
+  "status": "needs_review",
+  "ownerApproved": false,
+  "promotionAuthorized": false,
+  "note": "These wording deltas were found in the working source while the rows still carried hashes for different exact-owner-approved payloads. The approved payloads remain live until these replacements receive their own exact approval records.",
+  "candidates": [
+    {
+      "contentKey": "fallback-hook/planet-lived/moon",
+      "currentApprovedPhrase": "what unsettles you",
+      "proposedPhrase": "what puts you on edge",
+      "status": "needs_review"
+    },
+    {
+      "contentKey": "fallback-hook/planet-lived/pluto",
+      "currentApprovedPhrase": "once the old leverage is gone",
+      "proposedPhrase": "once the old advantage is gone",
+      "status": "needs_review"
+    }
+  ]
+}

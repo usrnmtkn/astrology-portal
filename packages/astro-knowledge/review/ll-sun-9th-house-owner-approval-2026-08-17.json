@@ -1,0 +1,19 @@
+{
+ "record": "owner-exact-wording-approval",
+ "approvedAt": "2026-08-17",
+ "approvedBy": "owner",
+ "provenance": "Owner approval given in Cowork session 2026-08-17, in response to the rendered Sun in Aquarius in the 9th house page. Owner instruction: 'approve the v12 clarity-audit row'.",
+ "matrix": "ll-matrix-v13",
+ "sheet": "PlacementMeanings",
+ "key": "sun|9th house",
+ "previousGovernance": "assistant-clarity-first-authorial-audit-ll-v12-ready-for-author-approval",
+ "newGovernance": "owner-approved-clarity-fix-ll-v12",
+ "ownerApproved": true,
+ "payloadSha256": "5bef8882427933570a3ec39ef89e883e9d8dfc3e3a7e9a012ad84f00cd7e2d27",
+ "copy": "Sun in the 9th house wants a worldview large enough to inhabit. You travel, study, learn languages, pursue higher education, argue philosophy, publish, or chase a truth that makes the rest of life more coherent. Principles can become central to identity.\n\nThe blind spot appears when one form of proof becomes so important that every other way of knowing is dismissed before it has been considered. You are strongest when conviction keeps expanding through experience. A philosophy has more value after it has survived contact with a larger world.",
+ "appliesTo": [
+  "PlacementMeanings sun|9th house"
+ ],
+ "downstream": "Serving ingestion is a separate step. The natal placement surface currently renders fallback-hook/placement-house-sentence/sun/9, which this row supersedes once ingested through the queue.",
+ "scope": "This record approves ONE row. The other 713 rows carrying assistant-clarity-first-authorial-audit-ll-v12-ready-for-author-approval remain unapproved."
+}
