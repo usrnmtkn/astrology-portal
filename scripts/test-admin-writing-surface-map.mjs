@@ -85,6 +85,8 @@ assert.match(dashboardSource, /disabled=\{isLoading \|\| !cmsCanSignOff\}/u, "Th
 const generatedContentApiSource = fs.readFileSync(path.join(repoRoot, "api/admin/generated-content.ts"), "utf8");
 assert.match(generatedContentApiSource, /CMS template cannot be published/u, "The Admin API must reject incomplete CMS templates even when the UI is bypassed.");
 assert.match(generatedContentApiSource, /isCmsRow \? "manual-admin" : "claude"/u, "CMS rows must retain manual owner-authored provenance instead of being labeled as model output.");
+const cmsTemplateValidationSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/content/cmsTemplateValidation.ts"), "utf8");
+assert.match(cmsTemplateValidationSource, /from "\.\.\/services\/templateInterpolation\.js"/u, "Shared CMS validator imports must retain a server-runtime-resolvable .js extension.");
 const surfaceMapSource = fs.readFileSync(path.join(repoRoot, "apps/admin/src/writingSurfaceSourceMap.ts"), "utf8");
 assert.doesNotMatch(surfaceMapSource, /apps\/web\/src\/services\/horoscopes\.ts|normalizeCalendarDaySurface|dayCardBody/u, "The surface directory must not retain removed horoscope or calendar render paths.");
 
