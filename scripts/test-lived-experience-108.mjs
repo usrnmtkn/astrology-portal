@@ -103,7 +103,24 @@ const existingApprovedRows = source.hookRows.filter((row) => (
   && !livedPrefixes.some((prefix) => row.contentKey.startsWith(prefix))
   && row.source_release !== llMatrixV13Release
   && row.source_release !== "natal-moon-final-rendered-v3"
-));
+)).map((row) => {
+  // Preserve the frozen historical fingerprint while allowing the later,
+  // separately hash-bound Friend house-bridge context release.
+  if (row.source_release !== "natal-house-bridge-context-v2") return row;
+  const historicalRow = {
+    ...row,
+    body_you: row.body_you.replace(
+      /^Your \{\{planetTitle\}\} is in your/u,
+      "It's in your",
+    ),
+    body_they: row.body_they.replace(
+      /^Their \{\{planetTitle\}\} is in their/u,
+      "It's in their",
+    ),
+  };
+  delete historicalRow.source_release;
+  return historicalRow;
+});
 assert.equal(
   sha256(JSON.stringify(existingApprovedRows)),
   manifest.invariants.readerPunctuationNormalizedExistingApprovedRowsSha256,
@@ -187,20 +204,23 @@ for (const [workbookKey, entry] of Object.entries(packet.payloads)) {
     const expectedTemplateKey = finalMoonRow
       ? `fallback-hook/natal-you-placement-house-final/${object}/${house}`
       : mappedKey(workbookKey);
+    const expectedCore = expectedBody.startsWith("It's in your ")
+      ? expectedBody.split("\n\n").slice(1).join("\n\n")
+      : expectedBody;
+    const houseLabel = `${house}${house === 1 ? "st" : house === 2 ? "nd" : house === 3 ? "rd" : "th"}`;
     for (const [label, render] of [
       ["node", renderNodeNatalPlacement],
       ["browser", browser.renderNatalPlacement],
     ]) {
       const result = render({ planet: object, sign: "aries", house, voice: "you" });
-      assert.equal(
+      assert.match(
         result.parts.at(-1),
-        expectedBody,
-        `${label}:${workbookKey}: approved house body must remain byte-identical as the final placement section`
+        new RegExp(`^Your ${object.split("-").map((part) => part[0].toUpperCase() + part.slice(1)).join(" ")} is in your ${houseLabel} house, meaning`, "u"),
+        `${label}:${workbookKey}: final placement section must begin with the contextual house bridge`
       );
-      assert.equal(
-        result.parts.filter((part) => part === expectedBody).length,
-        1,
-        `${label}:${workbookKey}: approved house body must appear exactly once`
+      assert.ok(
+        result.parts.at(-1).endsWith(expectedCore),
+        `${label}:${workbookKey}: approved house core must remain byte-identical after the contextual bridge`
       );
       assert.equal(result.templateKey, expectedTemplateKey);
     }

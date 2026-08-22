@@ -157,7 +157,22 @@ const priorApprovedRows = sourceRows.hookRows.filter((row) => (
   && !postV13GovernedReleases.has(row.source_release)
   && !row.contentKey.startsWith("fallback-hook/empty-house/")
   && servingApprovedReviews.has(row.review_status)
-));
+)).map((row) => {
+  if (row.source_release !== "natal-house-bridge-context-v2") return row;
+  const historicalRow = {
+    ...row,
+    body_you: row.body_you.replace(
+      /^Your \{\{planetTitle\}\} is in your/u,
+      "It's in your"
+    ),
+    body_they: row.body_they.replace(
+      /^Their \{\{planetTitle\}\} is in their/u,
+      "It's in their"
+    ),
+  };
+  delete historicalRow.source_release;
+  return historicalRow;
+});
 assert.equal(
   sha256(JSON.stringify(priorApprovedRows)),
   manifest.invariants.readerPunctuationNormalizedExistingApprovedRowsSha256,

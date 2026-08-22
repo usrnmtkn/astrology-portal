@@ -48,7 +48,12 @@ for (const row of artifact.houseRows) {
   assert.equal(row.qualityIntentions.length, 5, `${row.runtimeKey} intention count`);
   assert.equal(row.ownerArgumentVerdict, "");
   assert.equal(row.ownerArgumentEdit, "");
-  assert.equal(bridgeRows.get(row.bridgeContentKey)?.body_you, row.bridge, `${row.runtimeKey} bridge drift`);
+  const contextualBridge = row.bridge.replace(/^It's in your/u, "Your {{planetTitle}} is in your");
+  assert.equal(
+    bridgeRows.get(row.bridgeContentKey)?.body_you,
+    contextualBridge,
+    `${row.runtimeKey} contextual bridge drift`
+  );
   assert.equal(sha256(row.bridge), row.bridgeSha256);
 }
 
@@ -66,4 +71,4 @@ for (const row of artifact.renderRows) {
 }
 
 assert.ok(fs.statSync("outputs/019fedfe-d553-75e3-be16-8abaa96cdf44/TLDR-NATAL-MOON-AUTHORING-READINESS-V2.xlsx").size > 10000);
-console.log("Moon authoring-readiness guard passed: 12 signs, 12 approved mechanisms, 24 calibration renders, 120 blocked renders, source bytes and canonical bridges unchanged.");
+console.log("Moon authoring-readiness guard passed: 12 signs, 12 approved mechanisms, 24 calibration renders, 120 blocked renders, historical review bytes unchanged and contextual serving bridges verified.");

@@ -29,6 +29,11 @@ const expectedMercurySignBody = rows.hookRows.find(
 const expectedSunNinthHouseBody = rows.hookRows.find(
   (row) => row.contentKey === "fallback-hook/placement-house-lived/sun/9"
 )?.body;
+const expectedRenderedMoonHouseBody = expectedHouseBody?.replace(
+  /^It's in your 6th house, meaning/u,
+  "Your Moon is in your 6th house, meaning"
+);
+const expectedRenderedSunNinthHouseBody = `Your Sun is in your 9th house, meaning this side of you comes out through travel, study, belief, and the big questions.\n\n${expectedSunNinthHouseBody}`;
 
 assert.ok(expectedSignBody, "Moon-in-Scorpio approved sign copy must exist.");
 assert.ok(expectedHouseBody, "Moon-in-6th-house approved house copy must exist.");
@@ -42,7 +47,7 @@ for (const [rendererName, renderPlacement] of [
   const you = renderPlacement({ planet: "moon", sign: "scorpio", house: 6, voice: "you" });
   assert.deepEqual(
     you.parts,
-    [expectedSignBody, expectedHouseBody],
+    [expectedSignBody, expectedRenderedMoonHouseBody],
     `${rendererName} You placement must preserve both approved exact rows in sign-then-house order.`
   );
   assert.deepEqual(
@@ -74,7 +79,7 @@ for (const [rendererName, renderPlacement] of [
   );
 
   const sunNinth = renderPlacement({ planet: "sun", sign: "aquarius", house: 9, voice: "you" });
-  assert.equal(sunNinth.parts.at(-1), expectedSunNinthHouseBody);
+  assert.equal(sunNinth.parts.at(-1), expectedRenderedSunNinthHouseBody);
   assert.equal(sunNinth.partKeys?.at(-1), "fallback-hook/placement-house-lived/sun/9");
 }
 
