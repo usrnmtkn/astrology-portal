@@ -80,6 +80,11 @@ assert.match(dashboardSource, /announceContentUpdate/u, "Published Admin edits m
 assert.match(dashboardSource, /cms-surface-template-v1/u, "The Surface Map must provide a governed CMS authoring path.");
 assert.match(dashboardSource, /contentSystem === "cms-surface-override" \|\| draft\.contentKey\.startsWith\("cms\/"\)/u, "Saving a CMS row must preserve its CMS provenance and fail-closed template type.");
 assert.match(dashboardSource, /contentType: "mustache-template"[\s\S]*contentSystem: "cms-surface-override"[\s\S]*contentLevel: "owner-authored"/u, "CMS rows must remain owner-authored Mustache templates after save.");
+assert.match(dashboardSource, /validateCmsTemplate/u, "The Admin editor must validate CMS placeholders before Sign Off.");
+assert.match(dashboardSource, /disabled=\{isLoading \|\| !cmsCanSignOff\}/u, "The Admin editor must block Sign Off for incomplete CMS templates.");
+const generatedContentApiSource = fs.readFileSync(path.join(repoRoot, "api/admin/generated-content.ts"), "utf8");
+assert.match(generatedContentApiSource, /CMS template cannot be published/u, "The Admin API must reject incomplete CMS templates even when the UI is bypassed.");
+assert.match(generatedContentApiSource, /isCmsRow \? "manual-admin" : "claude"/u, "CMS rows must retain manual owner-authored provenance instead of being labeled as model output.");
 const surfaceMapSource = fs.readFileSync(path.join(repoRoot, "apps/admin/src/writingSurfaceSourceMap.ts"), "utf8");
 assert.doesNotMatch(surfaceMapSource, /apps\/web\/src\/services\/horoscopes\.ts|normalizeCalendarDaySurface|dayCardBody/u, "The surface directory must not retain removed horoscope or calendar render paths.");
 

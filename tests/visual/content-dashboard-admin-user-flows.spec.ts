@@ -630,7 +630,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await openAdminDeepLink("#surface-map?area=friends&status=partial");
     await expectAdminHeader(page, "Surface Map", "Admin / App surfaces / Surface map");
     await expect(page.getByRole("group", { name: "Filter surfaces by area" }).getByRole("button", { name: /Friends/ })).toHaveAttribute("aria-pressed", "true");
-    await expect(page.getByRole("group", { name: "Filter surfaces by admin editability" }).getByRole("button", { name: /Partly editable/ })).toHaveAttribute("aria-pressed", "true");
+    await expect(page.getByRole("group", { name: "Filter surfaces by admin editability" }).getByRole("button", { name: /Runtime gaps/ })).toHaveAttribute("aria-pressed", "true");
 
     await expectAdminRouteLoads(page, "/admin/content#home");
     await expectAdminHeader(page, "Content Studio", "Admin / Home");
@@ -982,7 +982,13 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(editor.getByLabel("Content key")).toHaveValue("cms/natal-empty-house/detail/you/template");
     await expect(editor.getByText("Reader-facing CMS override")).toBeVisible();
     await expect(editor.locator("p", { hasText: "Allowed slots:" })).toContainText("{{houseOrdinal}}");
+    await fillAdminEditorField(editor, "Body", "Your {{houseOrdinal}} house begins in {{missingTopic}}.");
+    await expect(editor.getByRole("alert", { name: "CMS template errors" })).toContainText("{{missingTopic}}");
+    await expect(editor.getByRole("button", { name: "Sign Off" })).toBeDisabled();
     await fillAdminEditorField(editor, "Body", "Your {{houseOrdinal}} house begins in {{sign}}. Review what you repeat here each month.");
+    await expect(editor.getByRole("alert", { name: "CMS template errors" })).toHaveCount(0);
+    await expect(editor.getByLabel("CMS template preview")).toContainText("Your 2nd house begins in Taurus.");
+    await expect(editor.getByRole("button", { name: "Sign Off" })).toBeEnabled();
     await editor.getByRole("button", { name: "Save", exact: true }).click();
     await expect(editor.getByText("Reader-facing CMS override")).toBeVisible();
     await expect(editor.locator(".admin-editor-toolbar")).toContainText("Draft");
@@ -1139,7 +1145,7 @@ test.describe("content dashboard admin user flow case studies", () => {
 
     await openAdminDeepLink("#surface-map");
     await expectAdminHeader(page, "Surface Map", "Admin / App surfaces / Surface map");
-    await expect(page.getByText(/public surfaces|content paths/i)).toBeVisible();
+    await expect(page.getByText(/reader surface directory|mapped surfaces/i).first()).toBeVisible();
 
     await assertNoBrowserErrors();
   });
