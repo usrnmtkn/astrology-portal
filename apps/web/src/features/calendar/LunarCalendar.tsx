@@ -29,6 +29,7 @@ import {
   transitSynastryFallbackRendererV3 as calendarFallbackRendererV3
 } from "../../content/fallbackArchitectureV3Runtime";
 import { firstReaderFacingCopy, isReaderFacingCopy, readerFacingParagraphs } from "../../content/readerSafety";
+import { cmsSurfaceKeys, resolveCmsSurfaceOverride } from "../../content/cmsSurfaceOverrides";
 import { slugContentPart } from "../../services/generatedContentKeys";
 import { resolveSkyAspectGeneratedContent } from "../../services/skyAspectContent";
 import {
@@ -2163,7 +2164,12 @@ export function LunarCalendar({
     const contentKeys = [
       ...visibleEvents.flatMap(calendarEventGeneratedContentKeys),
       ...selectedEvents.flatMap(calendarEventGeneratedContentKeys),
-      ...(selectedDay ? lunarDayGeneratedContentKeys(selectedDay, editorialEvents) : [])
+      ...(selectedDay ? lunarDayGeneratedContentKeys(selectedDay, editorialEvents) : []),
+      ...visibleDays.flatMap((day) => [
+        ...cmsSurfaceKeys.calendarDay("moon", day.moonSign),
+        ...cmsSurfaceKeys.calendarDay("phase", calendarPhaseContentKey(calendarPhaseLabelForDay(day, calendar.days))),
+        ...cmsSurfaceKeys.calendarDay("continuation", day.moonSign)
+      ])
     ].filter((contentKey) => !fallbackArchitectureV3AuthoredContentForKey(contentKey));
     const firstDate = visibleDays[0]?.dateKey ?? selectedDateKey;
     const lastDate = visibleDays.at(-1)?.dateKey ?? selectedDateKey;
@@ -2328,6 +2334,28 @@ export function LunarCalendar({
             body: continuationBody,
             contentKey: `generated/calendar-moon-continuation/${day.dateKey}`,
             source: "continuation"
+          };
+        }
+      }
+
+      if (guidance) {
+        const subject = guidance.source === "phase" ? calendarPhaseContentKey(phase) : day.moonSign;
+        const override = resolveCmsSurfaceOverride(
+          generatedContent,
+          cmsSurfaceKeys.calendarDay(guidance.source, subject),
+          {
+            date: day.dateKey,
+            moonSign: day.moonSign,
+            phase,
+            role
+          }
+        );
+        if (override) {
+          guidance = {
+            ...guidance,
+            headline: override.headline || guidance.headline,
+            body: override.body,
+            contentKey: override.contentKey
           };
         }
       }

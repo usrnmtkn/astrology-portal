@@ -75,6 +75,7 @@ for (const { key, surface, body } of rows) {
 
 for (const outputRoot of outputRoots) {
   fs.mkdirSync(outputRoot, { recursive: true });
+  fs.rmSync(path.join(outputRoot, "admin-source-draft-catalog-v1.json"), { force: true });
   fs.writeFileSync(
     path.join(outputRoot, "admin-hook-catalog-index-v1.json"),
     `${JSON.stringify(indexPayload)}\n`

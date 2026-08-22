@@ -92,7 +92,7 @@ export function FriendNatalTab({
               : placementTitleFromParts(row.label, row.sign, row.retrograde);
             const body = birthTimeUnknown && row.label === "Ascendant"
               ? ""
-              : friendPlacementDescription(row.label, row.sign);
+              : row.description ?? friendPlacementDescription(row.label, row.sign);
             const canOpenDetail = hasNatalChart
               && row.detailAvailable !== false
               && !row.sign.toLowerCase().includes("pending");

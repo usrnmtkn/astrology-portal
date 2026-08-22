@@ -20,6 +20,26 @@ export type WritingSurfaceMapItem = {
   nextAction: string;
 };
 
+export type WritingSurfaceAdminRoute = {
+  label: string;
+  hash: string;
+  purpose: "reader-copy" | "supporting-copy" | "source-review";
+  note: string;
+};
+
+export type WritingSurfaceAdminAccess = {
+  readerLocation: string;
+  editability: "editable" | "partial";
+  routes: WritingSurfaceAdminRoute[];
+  cmsStarters?: Array<{
+    label: string;
+    contentKey: string;
+    surface: "sky" | "you" | "natal" | "relationship";
+    headline: string;
+    allowedSlots: string[];
+  }>;
+};
+
 export const writingLayerLabels: Record<WritingLayer, string> = {
   "source-grounded": "Source-grounded",
   generated: "Generated",
@@ -110,7 +130,7 @@ export const writingSurfaceSourceMap: WritingSurfaceMapItem[] = [
     nextAction: "Expose per-row provenance so QA can distinguish knowledge rows from madlib fallback.",
     sources: [
       { label: "App.tsx", path: "apps/web/src/App.tsx", role: "renderer" },
-      { label: "fallback-source-rows-v3.json", path: "apps/web/src/content/fallback-source-rows-v3.json", role: "knowledge" },
+      { label: "fallback-source-rows-v3.json", path: "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json", role: "knowledge" },
       { label: "generatedContent.ts", path: "apps/web/src/services/generatedContent.ts", role: "stored-source" },
       { label: "fallback-source-rows-v3.json", path: "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json", role: "fallback-package" }
     ]
@@ -128,7 +148,7 @@ export const writingSurfaceSourceMap: WritingSurfaceMapItem[] = [
     sources: [
       { label: "App.tsx", path: "apps/web/src/App.tsx", role: "renderer" },
       { label: "relationshipRegistry.ts", path: "apps/web/src/content/relationshipRegistry.ts", role: "knowledge" },
-      { label: "fallback-source-rows-v3.json", path: "apps/web/src/content/fallback-source-rows-v3.json", role: "knowledge" },
+      { label: "fallback-source-rows-v3.json", path: "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json", role: "knowledge" },
       { label: "generatedContent.ts", path: "apps/web/src/services/generatedContent.ts", role: "stored-source" }
     ]
   },
@@ -146,7 +166,7 @@ export const writingSurfaceSourceMap: WritingSurfaceMapItem[] = [
       { label: "App.tsx", path: "apps/web/src/App.tsx", role: "renderer" },
       { label: "fallbackArchitectureV3Runtime.ts", path: "apps/web/src/content/fallbackArchitectureV3Runtime.ts", role: "source-grounded" },
       { label: "fallbackArchitectureV3/dist/tldr-content.js", path: "apps/web/src/content/fallbackArchitectureV3/dist/tldr-content.js", role: "source-grounded" },
-      { label: "fallback-architecture-v3-dashboard-rows.json", path: "apps/web/src/content/fallback-architecture-v3-dashboard-rows.json", role: "source-grounded" },
+      { label: "dashboard materializer", path: "scripts/materialize-fallback-architecture-v3-dashboard-rows.mjs", role: "stored-source" },
       { label: "cc-natal-source-grounded-bundle.json", path: "tldr-astro-phrasebank/phrasebank/cc-natal-source-grounded-bundle.json", role: "phrasebank" },
       { label: "fallback-source-rows-v3.json", path: "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json", role: "fallback-package" }
     ]
@@ -164,22 +184,8 @@ export const writingSurfaceSourceMap: WritingSurfaceMapItem[] = [
     sources: [
       { label: "App.tsx", path: "apps/web/src/App.tsx", role: "renderer" },
       { label: "fallbackArchitectureV3Runtime.ts", path: "apps/web/src/content/fallbackArchitectureV3Runtime.ts", role: "source-grounded" },
-      { label: "fallback-architecture-v3-dashboard-rows.json", path: "apps/web/src/content/fallback-architecture-v3-dashboard-rows.json", role: "source-grounded" },
+      { label: "dashboard materializer", path: "scripts/materialize-fallback-architecture-v3-dashboard-rows.mjs", role: "stored-source" },
       { label: "fallback-source-rows-v3.json", path: "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json", role: "fallback-package" }
-    ]
-  },
-  {
-    id: "soul-roadmap-card",
-    surface: "You / Friends: Soul Roadmap Card",
-    area: "Natal",
-    status: "normalized",
-    requiredSlots: ["purpose pattern"],
-    visibleLayerOrder: ["madlib-fallback"],
-    currentRenderPath: "SoulRoadmapCard resolves local sign-roadmap material through normalizedSoulRoadmapSection, omits missing development slots, and exposes fallback provenance labels in the card/detail UI.",
-    risk: "This surface is structurally normalized but currently has only Layer 2 local roadmap material, not a reviewed source-grounded bundle.",
-    nextAction: "Move sign-roadmap material into a reviewed/source-grounded bundle if this card should graduate to Layer 1.",
-    sources: [
-      { label: "SoulRoadmapCard.tsx", path: "apps/web/src/components/charts/SoulRoadmapCard.tsx", role: "renderer" }
     ]
   },
   {
@@ -228,7 +234,7 @@ export const writingSurfaceSourceMap: WritingSurfaceMapItem[] = [
       { label: "data/transits", path: "packages/astro-knowledge/data/transits", role: "knowledge" },
       { label: "fallbackArchitectureV3Runtime.ts", path: "apps/web/src/content/fallbackArchitectureV3Runtime.ts", role: "source-grounded" },
       { label: "dist/tldr-content.js", path: "apps/web/src/content/fallbackArchitectureV3/dist/tldr-content.js", role: "fallback-package" },
-      { label: "fallback-architecture-v3-dashboard-rows.json", path: "scripts/generated/fallback-architecture-v3-dashboard-rows.json", role: "source-grounded" },
+      { label: "dashboard materializer", path: "scripts/materialize-fallback-architecture-v3-dashboard-rows.mjs", role: "stored-source" },
       { label: "fallback-source-rows-v3.json", path: "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json", role: "fallback-package" }
     ]
   },
@@ -246,37 +252,7 @@ export const writingSurfaceSourceMap: WritingSurfaceMapItem[] = [
       { label: "App.tsx", path: "apps/web/src/App.tsx", role: "renderer" },
       { label: "fallbackArchitectureV3Runtime.ts", path: "apps/web/src/content/fallbackArchitectureV3Runtime.ts", role: "source-grounded" },
       { label: "dist/tldr-content.js", path: "apps/web/src/content/fallbackArchitectureV3/dist/tldr-content.js", role: "fallback-package" },
-      { label: "fallback-architecture-v3-dashboard-rows.json", path: "scripts/generated/fallback-architecture-v3-dashboard-rows.json", role: "source-grounded" },
-      { label: "fallback-source-rows-v3.json", path: "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json", role: "fallback-package" }
-    ]
-  },
-  {
-    id: "friends-compatibility-highlights",
-    surface: "Friends Compatibility: Highlight Cards",
-    area: "Friends",
-    status: "normalized",
-    requiredSlots: ["highlight body"],
-    visibleLayerOrder: ["madlib-fallback"],
-    currentRenderPath: "compatibilityHighlights passes every highlight body through normalizeMadlibCardSurface before rendering.",
-    risk: "This surface currently has only Layer 2 coverage because the highlights are synthesized from calculated chart facts instead of a reviewed authored bundle.",
-    nextAction: "Add reviewed/source-grounded highlight rows if these cards need Layer 1 coverage, and expose layer/sourceKeys in the UI.",
-    sources: [
-      { label: "App.tsx", path: "apps/web/src/App.tsx", role: "renderer" },
-      { label: "fallback-source-rows-v3.json", path: "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json", role: "fallback-package" }
-    ]
-  },
-  {
-    id: "friends-circle-feed-cards",
-    surface: "Friends Circle Feed And Overview Cards",
-    area: "Friends",
-    status: "normalized",
-    requiredSlots: ["card body"],
-    visibleLayerOrder: ["madlib-fallback"],
-    currentRenderPath: "circleActivationCards and circleFeedPreviewCards pass card bodies through normalizeMadlibCardSurface and omit empty cards.",
-    risk: "This surface is structurally normalized, but its product reason to exist is unresolved; most cards are Layer 2 because they are assembled from live chart facts rather than reviewed card prose.",
-    nextAction: "Product-review Friends Circle before writing more prose: decide whether it is relationship radar, friend timing, social feed, or circle overview, then add authored rows only for the chosen job.",
-    sources: [
-      { label: "App.tsx", path: "apps/web/src/App.tsx", role: "renderer" },
+      { label: "dashboard materializer", path: "scripts/materialize-fallback-architecture-v3-dashboard-rows.mjs", role: "stored-source" },
       { label: "fallback-source-rows-v3.json", path: "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json", role: "fallback-package" }
     ]
   },
@@ -324,7 +300,7 @@ export const writingSurfaceSourceMap: WritingSurfaceMapItem[] = [
     sources: [
       { label: "lunarDayResolver.ts", path: "apps/web/src/features/calendar/lunarDayResolver.ts", role: "renderer" },
       { label: "generatedContent.ts", path: "apps/web/src/services/generatedContent.ts", role: "stored-source" },
-      { label: "fallback-source-rows-v3.json", path: "apps/web/src/content/fallback-source-rows-v3.json", role: "knowledge" }
+      { label: "fallback-source-rows-v3.json", path: "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json", role: "knowledge" }
     ]
   },
   {
@@ -333,10 +309,10 @@ export const writingSurfaceSourceMap: WritingSurfaceMapItem[] = [
     area: "Sky",
     status: "normalized",
     requiredSlots: ["day body"],
-    visibleLayerOrder: ["madlib-fallback"],
-    currentRenderPath: "normalizeCalendarDaySurface resolves lunation, moon-sign, season, and transit-thread slots before dayCardBody renders them.",
-    risk: "This surface currently has Layer 2 local calendar material only; reviewed/source-grounded day-card rows are not wired yet.",
-    nextAction: "Add reviewed/source-grounded calendar day rows if this card needs Layer 1 coverage, and expose section provenance in QA.",
+    visibleLayerOrder: ["source-grounded", "madlib-fallback"],
+    currentRenderPath: "Calendar day cards resolve matching LIVE CMS Moon, phase, and continuation rows first, then use the reviewed package guidance or calculated fallback.",
+    risk: "Dates, Moon signs, and phases stay calculated; CMS templates may edit only the prose around those facts.",
+    nextAction: "Use the Moon-day starter or create a phase or continuation row, then review and publish it.",
     sources: [
       { label: "LunarCalendar.tsx", path: "apps/web/src/features/calendar/LunarCalendar.tsx", role: "renderer" }
     ]
@@ -347,12 +323,13 @@ export const writingSurfaceSourceMap: WritingSurfaceMapItem[] = [
     area: "Sky",
     status: "normalized",
     requiredSlots: ["period summary", "reflection"],
-    visibleLayerOrder: ["madlib-fallback"],
-    currentRenderPath: "getHoroscope renders the output of normalizeHoroscopeSurface for period summary, Moon context, and reflection slots.",
-    risk: "This surface currently has Layer 2 local horoscope material only; reviewed/source-grounded horoscope rows are not wired yet.",
-    nextAction: "Add reviewed/source-grounded horoscope rows if this surface should remain in product, and expose slot provenance in QA.",
+    visibleLayerOrder: ["source-grounded", "madlib-fallback"],
+    currentRenderPath: "buildWeeklyHoroscope resolves matching LIVE CMS rows for the weekly macro and each section, then uses the reviewed package renderer while keeping dates, houses, and event facts calculated.",
+    risk: "A template with an unavailable calculated slot fails closed and leaves the reviewed weekly fallback in place.",
+    nextAction: "Use the weekly Moon starter or create a source-specific weekly row, then review and publish it.",
     sources: [
-      { label: "horoscopes.ts", path: "apps/web/src/services/horoscopes.ts", role: "renderer" }
+      { label: "weeklyHoroscope.ts", path: "apps/web/src/services/weeklyHoroscope.ts", role: "renderer" },
+      { label: "YouPage.tsx", path: "apps/web/src/features/you/YouPage.tsx", role: "renderer" }
     ]
   },
   {
@@ -361,10 +338,10 @@ export const writingSurfaceSourceMap: WritingSurfaceMapItem[] = [
     area: "Natal",
     status: "normalized",
     requiredSlots: ["placement label description"],
-    visibleLayerOrder: ["madlib-fallback"],
-    currentRenderPath: "PlacementRows wraps placement descriptions and dignity tooltip text through normalizePlacementMicrocopySection before rendering.",
-    risk: "Most of this is short UI explanatory text and currently Layer 2 local material.",
-    nextAction: "Move any interpretive row descriptions that need editorial control into Layer 1 source-grounded records.",
+    visibleLayerOrder: ["source-grounded", "madlib-fallback"],
+    currentRenderPath: "PlacementRows resolves a planet-specific or generic LIVE CMS description first, then uses the existing normalized placement microcopy.",
+    risk: "Placement facts and dignity labels remain calculated; the CMS row controls only the descriptive prose.",
+    nextAction: "Use the placement-row starter, or create a planet-specific cms/chart-placement-row row, then review and publish it.",
     sources: [
       { label: "PlacementRows.tsx", path: "apps/web/src/components/charts/PlacementRows.tsx", role: "renderer" }
     ]
@@ -375,10 +352,10 @@ export const writingSurfaceSourceMap: WritingSurfaceMapItem[] = [
     area: "Natal",
     status: "normalized",
     requiredSlots: ["house sign"],
-    visibleLayerOrder: ["madlib-fallback"],
-    currentRenderPath: "normalizeEmptyHouseCardSurface and normalizeEmptyHouseDetailSurface wrap empty-house card summaries and detail paragraphs before rendering.",
-    risk: "This surface currently has Layer 2 local empty-house material only; no reviewed/source-grounded empty-house bundle is wired yet.",
-    nextAction: "Move reviewed empty-house copy into Layer 1 records if this surface remains prominent, and expose section provenance in QA.",
+    visibleLayerOrder: ["source-grounded", "madlib-fallback"],
+    currentRenderPath: "Empty-house cards and details resolve the most specific matching LIVE CMS row first, then use the existing normalized local copy.",
+    risk: "House, sign, and ruler facts stay calculated; missing template slots safely return the reader to the local fallback.",
+    nextAction: "Use the detail starter or create card/detail rows for a specific house or sign, then review and publish them.",
     sources: [
       { label: "App.tsx", path: "apps/web/src/App.tsx", role: "renderer" }
     ]
@@ -389,10 +366,10 @@ export const writingSurfaceSourceMap: WritingSurfaceMapItem[] = [
     area: "Transits",
     status: "normalized",
     requiredSlots: ["house activation"],
-    visibleLayerOrder: ["madlib-fallback"],
-    currentRenderPath: "normalizeTransitHouseSurface renders a source-based house activation madlib frame; no generated rows or fallback hooks feed the visible row.",
-    risk: "This surface currently has only the madlib fallback layer because no reviewed transit-house source bundle is wired yet.",
-    nextAction: "Add reviewed/source-grounded transit-through-house records if this row needs Layer 1 coverage.",
+    visibleLayerOrder: ["source-grounded", "madlib-fallback"],
+    currentRenderPath: "Personal transit house rows resolve the most specific matching LIVE CMS row first, then use the existing source-based house activation fallback.",
+    risk: "Planet, house, sign, motion, and timing remain calculated; a template that cannot resolve those slots does not serve.",
+    nextAction: "Use the transit-house starter or create a more specific planet/house row, then review and publish it.",
     sources: [
       { label: "App.tsx", path: "apps/web/src/App.tsx", role: "renderer" },
       { label: "fallback-source-rows-v3.json", path: "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json", role: "fallback-package" }
@@ -418,3 +395,147 @@ export const writingSurfaceSourceMap: WritingSurfaceMapItem[] = [
     ]
   }
 ];
+
+/**
+ * Admin destinations are deliberately separate from the runtime description above.
+ * The dashboard consumes this record as its navigation contract, and the focused
+ * admin test fails when a reader surface is added without an editorial route.
+ */
+export const writingSurfaceAdminAccess: Record<string, WritingSurfaceAdminAccess> = {
+  "friends-compatibility-planet-cards": {
+    readerLocation: "Friends > Compatibility > planet comparison cards",
+    editability: "editable",
+    routes: [{ label: "Edit compatibility copy", hash: "#compatibility?q=compatibility", purpose: "reader-copy", note: "Opens saved compatibility rows and the card-copy authoring flow." }]
+  },
+  "friends-compatibility-exact-dynamics": {
+    readerLocation: "Friends > Compatibility > exact dynamics",
+    editability: "editable",
+    routes: [{ label: "Edit exact dynamics", hash: "#compatibility?q=synastry", purpose: "reader-copy", note: "Searches the compatibility workspace for exact synastry copy." }]
+  },
+  "friends-synastry-contact": {
+    readerLocation: "Friends > Synastry > aspect row and detail",
+    editability: "editable",
+    routes: [{ label: "Edit synastry content", hash: "#exact-content?q=synastry", purpose: "reader-copy", note: "Opens stored synastry rows in the full content editor." }]
+  },
+  "friends-house-overlays": {
+    readerLocation: "Friends > Synastry > house overlays",
+    editability: "editable",
+    routes: [{ label: "Edit house overlays", hash: "#exact-content?q=house+overlay", purpose: "reader-copy", note: "Opens house-overlay rows and source records." }]
+  },
+  "friends-composite": {
+    readerLocation: "Friends > Composite chart",
+    editability: "editable",
+    routes: [{ label: "Edit composite copy", hash: "#composite-review", purpose: "reader-copy", note: "Opens relationship-type composite variants in one editor." }]
+  },
+  "natal-placement-detail": {
+    readerLocation: "You or Friends > Birth chart > placement detail",
+    editability: "editable",
+    routes: [{ label: "Edit natal placements", hash: "#exact-content?category=Natal+Chart&q=placement", purpose: "reader-copy", note: "Opens saved natal placement rows and source material." }]
+  },
+  "natal-aspect-detail": {
+    readerLocation: "You or Friends > Birth chart > natal aspect detail",
+    editability: "editable",
+    routes: [{ label: "Edit natal aspects", hash: "#exact-content?category=Natal+Aspects&q=aspect", purpose: "reader-copy", note: "Opens saved natal-aspect rows." }]
+  },
+  "career-archetype-card": {
+    readerLocation: "You or Friends > Birth chart > Career Archetype",
+    editability: "editable",
+    routes: [{ label: "Edit career copy", hash: "#exact-content?q=ms%2Fcareer", purpose: "reader-copy", note: "Opens the LIVE-first career content family." }]
+  },
+  "sky-placement-detail": {
+    readerLocation: "Sky > placement detail > article and Rising-sign house horoscope",
+    editability: "editable",
+    routes: [
+      { label: "Edit placement articles", hash: "#articles?q=sky", purpose: "reader-copy", note: "Opens Sky article rows, house horoscopes, and attached aspect passages." },
+      { label: "Review Sky queue", hash: "#review-queue?source=all&q=sky", purpose: "source-review", note: "Opens scheduled and held Sky candidates." }
+    ]
+  },
+  "sky-aspect-detail": {
+    readerLocation: "Sky > aspect card > aspect detail page",
+    editability: "editable",
+    routes: [
+      { label: "Review source drafts", hash: "#source-drafts", purpose: "source-review", note: "Searches all held Current Sky aspect passages, including drafts that are not allowed to serve." },
+      { label: "Edit saved aspect rows", hash: "#exact-content?category=Sky&q=sky.", purpose: "reader-copy", note: "Opens saved exact-aspect rows in the editor." }
+    ]
+  },
+  "personal-transit-detail": {
+    readerLocation: "You or Friends > personal transit detail",
+    editability: "editable",
+    routes: [{ label: "Edit personal transits", hash: "#exact-content?q=transit", purpose: "reader-copy", note: "Opens stored personal-transit rows." }]
+  },
+  "sky-daily-timing": {
+    readerLocation: "Today or You > daily timing writeup",
+    editability: "editable",
+    routes: [{ label: "Edit daily timing", hash: "#exact-content?q=daily+timing", purpose: "reader-copy", note: "Opens stored daily timing sections." }]
+  },
+  "sky-calendar-event-cards": {
+    readerLocation: "Calendar > event cards",
+    editability: "editable",
+    routes: [{ label: "Edit calendar events", hash: "#exact-content?q=calendar+event", purpose: "reader-copy", note: "Opens exact stored event descriptions." }]
+  },
+  "sky-lunar-day-editorial": {
+    readerLocation: "Calendar > lunar day detail",
+    editability: "editable",
+    routes: [
+      { label: "Edit lunar rows", hash: "#exact-content?q=lunar", purpose: "reader-copy", note: "Opens stored lunar editorial rows." },
+      { label: "Edit lunar fallbacks", hash: "#fallback-hooks?section=lunar-calendar", purpose: "supporting-copy", note: "Opens fallback wording used when an exact row is unavailable." }
+    ]
+  },
+  "sky-calendar-day-cards": {
+    readerLocation: "Calendar > day cards",
+    editability: "editable",
+    routes: [{ label: "Edit day-card copy", hash: "#exact-content?q=cms%2Fcalendar-day", purpose: "reader-copy", note: "Opens LIVE-first Calendar day templates." }],
+    cmsStarters: [
+      { label: "Start Moon-day template", contentKey: "cms/calendar-day/moon", surface: "sky", headline: "Moon in {{moonSign}}", allowedSlots: ["date", "moonSign", "phase", "role"] },
+      { label: "Start phase-day template", contentKey: "cms/calendar-day/phase", surface: "sky", headline: "{{phase}}", allowedSlots: ["date", "moonSign", "phase", "role"] },
+      { label: "Start continuation template", contentKey: "cms/calendar-day/continuation", surface: "sky", headline: "Moon in {{moonSign}}", allowedSlots: ["date", "moonSign", "phase", "role"] }
+    ]
+  },
+  "sky-horoscopes": {
+    readerLocation: "Sky or You > daily and weekly horoscope summaries",
+    editability: "editable",
+    routes: [{ label: "Edit horoscope copy", hash: "#exact-content?q=cms%2Fweekly-horoscope", purpose: "reader-copy", note: "Opens LIVE-first weekly section templates; calculated dates and houses remain runtime facts." }],
+    cmsStarters: [
+      { label: "Start weekly Moon template", contentKey: "cms/weekly-horoscope/weekly-moon", surface: "you", headline: "Your week", allowedSlots: ["risingSign", "date", "day", "driver", "timing", "house", "houseOrdinal"] },
+      { label: "Start lunation-week template", contentKey: "cms/weekly-horoscope/lunation", surface: "you", headline: "{{driver}}", allowedSlots: ["risingSign", "date", "day", "driver", "timing", "house", "houseOrdinal"] },
+      { label: "Start station-week template", contentKey: "cms/weekly-horoscope/station", surface: "you", headline: "{{driver}}", allowedSlots: ["risingSign", "date", "day", "driver", "timing", "house", "houseOrdinal"] },
+      { label: "Start return-week template", contentKey: "cms/weekly-horoscope/return", surface: "you", headline: "{{driver}}", allowedSlots: ["risingSign", "date", "day", "driver", "timing", "house", "houseOrdinal"] },
+      { label: "Start heavy-transit template", contentKey: "cms/weekly-horoscope/heavy", surface: "you", headline: "{{driver}}", allowedSlots: ["risingSign", "date", "day", "driver", "timing", "house", "houseOrdinal"] },
+      { label: "Start weekly overview template", contentKey: "cms/weekly-horoscope/macro", surface: "you", headline: "Your week", allowedSlots: ["risingSign", "weekStart", "weekEnd"] }
+    ]
+  },
+  "chart-placement-row-microcopy": {
+    readerLocation: "You or Friends > chart placement rows and tooltips",
+    editability: "editable",
+    routes: [{ label: "Edit placement-row copy", hash: "#exact-content?q=cms%2Fchart-placement-row", purpose: "reader-copy", note: "Opens LIVE-first placement-row overrides." }],
+    cmsStarters: [{ label: "Start placement-row template", contentKey: "cms/chart-placement-row/template", surface: "natal", headline: "Placement row", allowedSlots: ["planet", "sign", "voice", "ownerName"] }]
+  },
+  "natal-empty-house": {
+    readerLocation: "You or Friends > empty-house card and detail",
+    editability: "editable",
+    routes: [{ label: "Edit empty-house copy", hash: "#exact-content?q=cms%2Fnatal-empty-house", purpose: "reader-copy", note: "Opens LIVE-first card and detail templates." }],
+    cmsStarters: [
+      { label: "Start your empty-house card", contentKey: "cms/natal-empty-house/card/you/template", surface: "natal", headline: "{{houseOrdinal}} house", allowedSlots: ["house", "houseOrdinal", "sign", "ruler", "rulerSign", "rulerHouse", "rulerHouseOrdinal", "ownerName"] },
+      { label: "Start empty-house detail template", contentKey: "cms/natal-empty-house/detail/you/template", surface: "natal", headline: "{{houseOrdinal}} house", allowedSlots: ["house", "houseOrdinal", "sign", "ruler", "rulerSign", "rulerHouse", "rulerHouseOrdinal"] },
+      { label: "Start friend empty-house card", contentKey: "cms/natal-empty-house/card/they/template", surface: "natal", headline: "{{houseOrdinal}} house", allowedSlots: ["house", "houseOrdinal", "sign", "ruler", "rulerSign", "rulerHouse", "rulerHouseOrdinal", "ownerName"] },
+      { label: "Start friend empty-house detail", contentKey: "cms/natal-empty-house/detail/they/template", surface: "natal", headline: "{{houseOrdinal}} house", allowedSlots: ["house", "houseOrdinal", "sign", "ruler", "rulerSign", "rulerHouse", "rulerHouseOrdinal"] }
+    ]
+  },
+  "personal-transit-house": {
+    readerLocation: "You or Friends > personal transit house rows",
+    editability: "editable",
+    routes: [{ label: "Edit transit-house copy", hash: "#exact-content?q=cms%2Fpersonal-transit-house", purpose: "reader-copy", note: "Opens LIVE-first transit-house overrides." }],
+    cmsStarters: [
+      { label: "Start your transit-house template", contentKey: "cms/personal-transit-house/you/template", surface: "you", headline: "{{planet}} through your {{houseOrdinal}} house", allowedSlots: ["planet", "sign", "house", "houseOrdinal", "motion", "window", "owner", "ownerPossessive"] },
+      { label: "Start friend transit-house template", contentKey: "cms/personal-transit-house/they/template", surface: "you", headline: "{{planet}} through {{ownerPossessive}} {{houseOrdinal}} house", allowedSlots: ["planet", "sign", "house", "houseOrdinal", "motion", "window", "owner", "ownerPossessive"] }
+    ]
+  },
+  "surface-specs-builders": {
+    readerLocation: "Internal composition system; not shown directly to readers",
+    editability: "editable",
+    routes: [
+      { label: "Edit templates", hash: "#templates", purpose: "supporting-copy", note: "Opens saved composition templates." },
+      { label: "Edit slots", hash: "#slots", purpose: "supporting-copy", note: "Opens editable slot-backed rows." }
+    ]
+  }
+};
