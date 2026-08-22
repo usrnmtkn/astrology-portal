@@ -5,7 +5,7 @@ Status: **derived index; no billed calls**
 - Matrix placement combinations: **415**
 - Matrix-only zero-scene placements: **114**
 - Extended zero-scene placements: **252**
-- Extended zero-meaning placements: **16**
+- Extended zero-meaning placements: **4**
 
 The extended scene count combines exact planet-sign house cores, approved serving rows,
 matrix scene rows, and qualifying owner-corpus fixtures. Repeated matrix copy is counted once
@@ -15,18 +15,18 @@ per role by `copy_sha`.
 
 | Placement | Matrix meaning | Matrix scene | Extended meaning | Extended scene | Extended register | Extended argument |
 |---|---:|---:|---:|---:|---:|---:|
-| Chiron|Aquarius | 2 | 0 | 2 | 0 | 2 | 5 |
-| Chiron|Aries | 18 | 1 | 15 | 1 | 14 | 5 |
-| Chiron|Cancer | 2 | 0 | 2 | 0 | 2 | 4 |
-| Chiron|Capricorn | 2 | 0 | 2 | 0 | 2 | 4 |
-| Chiron|Gemini | 2 | 2 | 2 | 3 | 2 | 4 |
-| Chiron|Leo | 2 | 0 | 2 | 0 | 2 | 6 |
-| Chiron|Libra | 2 | 0 | 2 | 0 | 2 | 5 |
-| Chiron|Pisces | 3 | 0 | 3 | 0 | 2 | 5 |
-| Chiron|Sagittarius | 2 | 0 | 2 | 0 | 2 | 5 |
-| Chiron|Scorpio | 2 | 0 | 2 | 0 | 2 | 5 |
-| Chiron|Taurus | 17 | 0 | 14 | 0 | 10 | 7 |
-| Chiron|Virgo | 2 | 0 | 2 | 1 | 1 | 5 |
+| Chiron|Aquarius | 2 | 0 | 3 | 0 | 2 | 5 |
+| Chiron|Aries | 18 | 1 | 16 | 1 | 14 | 5 |
+| Chiron|Cancer | 2 | 0 | 3 | 0 | 2 | 4 |
+| Chiron|Capricorn | 2 | 0 | 3 | 0 | 2 | 4 |
+| Chiron|Gemini | 2 | 2 | 3 | 3 | 2 | 4 |
+| Chiron|Leo | 2 | 0 | 3 | 0 | 2 | 6 |
+| Chiron|Libra | 2 | 0 | 3 | 0 | 2 | 5 |
+| Chiron|Pisces | 3 | 0 | 4 | 0 | 2 | 5 |
+| Chiron|Sagittarius | 2 | 0 | 3 | 0 | 2 | 5 |
+| Chiron|Scorpio | 2 | 0 | 3 | 0 | 2 | 5 |
+| Chiron|Taurus | 17 | 0 | 15 | 0 | 10 | 7 |
+| Chiron|Virgo | 2 | 0 | 3 | 1 | 1 | 5 |
 | Jupiter|Aquarius | 7 | 0 | 6 | 0 | 2 | 4 |
 | Jupiter|Aries | 16 | 1 | 17 | 1 | 11 | 7 |
 | Jupiter|Cancer | 22 | 1 | 16 | 3 | 110 | 10 |
@@ -87,18 +87,18 @@ per role by `copy_sha`.
 | Neptune|Taurus | 2 | 0 | 3 | 0 | 1 | 4 |
 | Neptune|Virgo | 2 | 0 | 2 | 0 | 2 | 4 |
 | Nodes|Pisces | 24 | 0 | 12 | 0 | 10 | 3 |
-| North Node|Aquarius | 1 | 0 | 1 | 1 | 0 | 4 |
-| North Node|Aries | 15 | 1 | 13 | 1 | 12 | 4 |
-| North Node|Cancer | 2 | 0 | 2 | 1 | 1 | 4 |
-| North Node|Capricorn | 1 | 0 | 1 | 0 | 0 | 5 |
-| North Node|Gemini | 15 | 1 | 13 | 1 | 12 | 6 |
-| North Node|Leo | 1 | 0 | 1 | 0 | 1 | 4 |
-| North Node|Libra | 2 | 0 | 2 | 0 | 1 | 6 |
-| North Node|Pisces | 3 | 0 | 1 | 1 | 0 | 4 |
-| North Node|Sagittarius | 1 | 0 | 1 | 0 | 1 | 4 |
-| North Node|Scorpio | 2 | 0 | 2 | 0 | 1 | 5 |
-| North Node|Taurus | 15 | 0 | 13 | 0 | 11 | 7 |
-| North Node|Virgo | 2 | 0 | 2 | 1 | 0 | 5 |
+| North Node|Aquarius | 1 | 0 | 2 | 1 | 0 | 4 |
+| North Node|Aries | 15 | 1 | 14 | 1 | 12 | 4 |
+| North Node|Cancer | 2 | 0 | 3 | 1 | 1 | 4 |
+| North Node|Capricorn | 1 | 0 | 2 | 0 | 0 | 5 |
+| North Node|Gemini | 15 | 1 | 14 | 1 | 12 | 6 |
+| North Node|Leo | 1 | 0 | 2 | 0 | 1 | 4 |
+| North Node|Libra | 2 | 0 | 3 | 0 | 1 | 6 |
+| North Node|Pisces | 3 | 0 | 2 | 1 | 0 | 4 |
+| North Node|Sagittarius | 1 | 0 | 2 | 0 | 1 | 4 |
+| North Node|Scorpio | 2 | 0 | 3 | 0 | 1 | 5 |
+| North Node|Taurus | 15 | 0 | 14 | 0 | 11 | 7 |
+| North Node|Virgo | 2 | 0 | 3 | 1 | 0 | 5 |
 | Pluto|Aquarius | 36 | 0 | 14 | 1 | 8 | 6 |
 | Pluto|Aries | 2 | 0 | 2 | 0 | 2 | 4 |
 | Pluto|Cancer | 2 | 0 | 2 | 0 | 2 | 4 |
@@ -124,18 +124,18 @@ per role by `copy_sha`.
 | Saturn|Taurus | 2 | 0 | 3 | 0 | 2 | 5 |
 | Saturn|Unspecified | 1 | 0 | 0 | 0 | 0 | 0 |
 | Saturn|Virgo | 3 | 0 | 3 | 0 | 2 | 4 |
-| South Node|Aquarius | 1 | 0 | 1 | 1 | 1 | 4 |
-| South Node|Aries | 2 | 0 | 2 | 0 | 1 | 5 |
-| South Node|Cancer | 1 | 0 | 1 | 0 | 1 | 4 |
-| South Node|Capricorn | 2 | 0 | 2 | 0 | 1 | 5 |
-| South Node|Gemini | 1 | 0 | 1 | 1 | 1 | 5 |
-| South Node|Leo | 1 | 0 | 1 | 0 | 0 | 4 |
-| South Node|Libra | 15 | 0 | 13 | 0 | 12 | 8 |
-| South Node|Pisces | 2 | 0 | 2 | 0 | 1 | 6 |
-| South Node|Sagittarius | 15 | 0 | 13 | 0 | 8 | 10 |
-| South Node|Scorpio | 15 | 0 | 12 | 0 | 8 | 5 |
-| South Node|Taurus | 2 | 0 | 2 | 0 | 1 | 5 |
-| South Node|Virgo | 3 | 0 | 1 | 1 | 0 | 4 |
+| South Node|Aquarius | 1 | 0 | 2 | 1 | 1 | 4 |
+| South Node|Aries | 2 | 0 | 3 | 0 | 1 | 5 |
+| South Node|Cancer | 1 | 0 | 2 | 0 | 1 | 4 |
+| South Node|Capricorn | 2 | 0 | 3 | 0 | 1 | 5 |
+| South Node|Gemini | 1 | 0 | 2 | 1 | 1 | 5 |
+| South Node|Leo | 1 | 0 | 2 | 0 | 0 | 4 |
+| South Node|Libra | 15 | 0 | 14 | 0 | 12 | 8 |
+| South Node|Pisces | 2 | 0 | 3 | 0 | 1 | 6 |
+| South Node|Sagittarius | 15 | 0 | 14 | 0 | 8 | 10 |
+| South Node|Scorpio | 15 | 0 | 13 | 0 | 8 | 5 |
+| South Node|Taurus | 2 | 0 | 3 | 0 | 1 | 5 |
+| South Node|Virgo | 3 | 0 | 2 | 1 | 0 | 4 |
 | Stellium (Mars, Jupiter, Saturn, Pluto)|Capricorn | 3 | 0 | 3 | 0 | 3 | 0 |
 | Sun|Aquarius | 45 | 3 | 15 | 1 | 12 | 9 |
 | Sun|Aquarius I | 1 | 0 | 1 | 0 | 0 | 0 |
@@ -194,18 +194,18 @@ per role by `copy_sha`.
 | Venus|Scorpio | 23 | 0 | 22 | 0 | 13 | 10 |
 | Venus|Taurus | 59 | 0 | 30 | 0 | 26 | 9 |
 | Venus|Virgo | 31 | 2 | 17 | 1 | 39 | 6 |
-| chiron|aquarius | 0 | 0 | 2 | 0 | 2 | 5 |
-| chiron|aries | 0 | 0 | 15 | 1 | 14 | 5 |
-| chiron|cancer | 0 | 0 | 2 | 0 | 2 | 4 |
-| chiron|capricorn | 0 | 0 | 2 | 0 | 2 | 4 |
-| chiron|gemini | 0 | 0 | 2 | 3 | 2 | 4 |
-| chiron|leo | 0 | 0 | 2 | 0 | 2 | 6 |
-| chiron|libra | 0 | 0 | 2 | 0 | 2 | 5 |
-| chiron|pisces | 0 | 0 | 3 | 0 | 2 | 5 |
-| chiron|sagittarius | 0 | 0 | 2 | 0 | 2 | 5 |
-| chiron|scorpio | 0 | 0 | 2 | 0 | 2 | 5 |
-| chiron|taurus | 0 | 0 | 14 | 0 | 10 | 7 |
-| chiron|virgo | 0 | 0 | 2 | 1 | 1 | 5 |
+| chiron|aquarius | 0 | 0 | 3 | 0 | 2 | 5 |
+| chiron|aries | 0 | 0 | 16 | 1 | 14 | 5 |
+| chiron|cancer | 0 | 0 | 3 | 0 | 2 | 4 |
+| chiron|capricorn | 0 | 0 | 3 | 0 | 2 | 4 |
+| chiron|gemini | 0 | 0 | 3 | 3 | 2 | 4 |
+| chiron|leo | 0 | 0 | 3 | 0 | 2 | 6 |
+| chiron|libra | 0 | 0 | 3 | 0 | 2 | 5 |
+| chiron|pisces | 0 | 0 | 4 | 0 | 2 | 5 |
+| chiron|sagittarius | 0 | 0 | 3 | 0 | 2 | 5 |
+| chiron|scorpio | 0 | 0 | 3 | 0 | 2 | 5 |
+| chiron|taurus | 0 | 0 | 15 | 0 | 10 | 7 |
+| chiron|virgo | 0 | 0 | 3 | 1 | 1 | 5 |
 | jupiter|10th-house | 0 | 0 | 1 | 0 | 0 | 0 |
 | jupiter|11th-house | 0 | 0 | 1 | 0 | 0 | 0 |
 | jupiter|12th-house | 0 | 0 | 1 | 0 | 0 | 0 |
@@ -223,18 +223,18 @@ per role by `copy_sha`.
 | jupiter|scorpio | 0 | 0 | 6 | 1 | 2 | 7 |
 | jupiter|taurus | 0 | 0 | 18 | 0 | 12 | 11 |
 | jupiter|virgo | 0 | 0 | 5 | 0 | 0 | 6 |
-| lilith|aquarius | 0 | 0 | 0 | 0 | 0 | 4 |
-| lilith|aries | 0 | 0 | 0 | 0 | 0 | 4 |
-| lilith|cancer | 0 | 0 | 0 | 0 | 0 | 4 |
-| lilith|capricorn | 0 | 0 | 0 | 0 | 0 | 4 |
-| lilith|gemini | 0 | 0 | 0 | 0 | 0 | 4 |
-| lilith|leo | 0 | 0 | 0 | 0 | 0 | 4 |
-| lilith|libra | 0 | 0 | 0 | 0 | 0 | 4 |
-| lilith|pisces | 0 | 0 | 0 | 0 | 0 | 4 |
-| lilith|sagittarius | 0 | 0 | 0 | 0 | 0 | 4 |
-| lilith|scorpio | 0 | 0 | 0 | 1 | 0 | 4 |
-| lilith|taurus | 0 | 0 | 0 | 0 | 0 | 4 |
-| lilith|virgo | 0 | 0 | 0 | 0 | 0 | 4 |
+| lilith|aquarius | 0 | 0 | 1 | 0 | 4 | 4 |
+| lilith|aries | 0 | 0 | 1 | 0 | 4 | 4 |
+| lilith|cancer | 0 | 0 | 1 | 0 | 4 | 4 |
+| lilith|capricorn | 0 | 0 | 1 | 0 | 4 | 4 |
+| lilith|gemini | 0 | 0 | 1 | 0 | 4 | 4 |
+| lilith|leo | 0 | 0 | 1 | 0 | 4 | 4 |
+| lilith|libra | 0 | 0 | 1 | 0 | 4 | 4 |
+| lilith|pisces | 0 | 0 | 1 | 0 | 4 | 4 |
+| lilith|sagittarius | 0 | 0 | 1 | 0 | 4 | 4 |
+| lilith|scorpio | 0 | 0 | 1 | 1 | 4 | 4 |
+| lilith|taurus | 0 | 0 | 1 | 0 | 4 | 4 |
+| lilith|virgo | 0 | 0 | 1 | 0 | 4 | 4 |
 | mars|10th-house | 0 | 0 | 1 | 0 | 0 | 0 |
 | mars|12th-house | 0 | 0 | 1 | 0 | 0 | 0 |
 | mars|1st-house | 0 | 0 | 1 | 0 | 0 | 0 |
@@ -307,18 +307,18 @@ per role by `copy_sha`.
 | neptune|virgo | 0 | 0 | 2 | 0 | 2 | 4 |
 | nodes|aquarius-leo | 0 | 0 | 0 | 0 | 0 | 1 |
 | nodes|pisces | 0 | 0 | 12 | 0 | 10 | 3 |
-| north-node|aquarius | 0 | 0 | 1 | 1 | 0 | 4 |
-| north-node|aries | 0 | 0 | 13 | 1 | 12 | 4 |
-| north-node|cancer | 0 | 0 | 2 | 1 | 1 | 4 |
-| north-node|capricorn | 0 | 0 | 1 | 0 | 0 | 5 |
-| north-node|gemini | 0 | 0 | 13 | 1 | 12 | 6 |
-| north-node|leo | 0 | 0 | 1 | 0 | 1 | 4 |
-| north-node|libra | 0 | 0 | 2 | 0 | 1 | 6 |
-| north-node|pisces | 0 | 0 | 1 | 1 | 0 | 4 |
-| north-node|sagittarius | 0 | 0 | 1 | 0 | 1 | 4 |
-| north-node|scorpio | 0 | 0 | 2 | 0 | 1 | 5 |
-| north-node|taurus | 0 | 0 | 13 | 0 | 11 | 7 |
-| north-node|virgo | 0 | 0 | 2 | 1 | 0 | 5 |
+| north-node|aquarius | 0 | 0 | 2 | 1 | 0 | 4 |
+| north-node|aries | 0 | 0 | 14 | 1 | 12 | 4 |
+| north-node|cancer | 0 | 0 | 3 | 1 | 1 | 4 |
+| north-node|capricorn | 0 | 0 | 2 | 0 | 0 | 5 |
+| north-node|gemini | 0 | 0 | 14 | 1 | 12 | 6 |
+| north-node|leo | 0 | 0 | 2 | 0 | 1 | 4 |
+| north-node|libra | 0 | 0 | 3 | 0 | 1 | 6 |
+| north-node|pisces | 0 | 0 | 2 | 1 | 0 | 4 |
+| north-node|sagittarius | 0 | 0 | 2 | 0 | 1 | 4 |
+| north-node|scorpio | 0 | 0 | 3 | 0 | 1 | 5 |
+| north-node|taurus | 0 | 0 | 14 | 0 | 11 | 7 |
+| north-node|virgo | 0 | 0 | 3 | 1 | 0 | 5 |
 | pluto|12th-house | 0 | 0 | 1 | 0 | 0 | 0 |
 | pluto|3rd-house | 0 | 0 | 1 | 0 | 0 | 0 |
 | pluto|5th-house | 0 | 0 | 1 | 0 | 0 | 0 |
@@ -352,18 +352,18 @@ per role by `copy_sha`.
 | saturn|scorpio | 0 | 0 | 6 | 0 | 2 | 6 |
 | saturn|taurus | 0 | 0 | 3 | 0 | 2 | 5 |
 | saturn|virgo | 0 | 0 | 3 | 0 | 2 | 4 |
-| south-node|aquarius | 0 | 0 | 1 | 1 | 1 | 4 |
-| south-node|aries | 0 | 0 | 2 | 0 | 1 | 5 |
-| south-node|cancer | 0 | 0 | 1 | 0 | 1 | 4 |
-| south-node|capricorn | 0 | 0 | 2 | 0 | 1 | 5 |
-| south-node|gemini | 0 | 0 | 1 | 1 | 1 | 5 |
-| south-node|leo | 0 | 0 | 1 | 0 | 0 | 4 |
-| south-node|libra | 0 | 0 | 13 | 0 | 12 | 8 |
-| south-node|pisces | 0 | 0 | 2 | 0 | 1 | 6 |
-| south-node|sagittarius | 0 | 0 | 13 | 0 | 8 | 10 |
-| south-node|scorpio | 0 | 0 | 12 | 0 | 8 | 5 |
-| south-node|taurus | 0 | 0 | 2 | 0 | 1 | 5 |
-| south-node|virgo | 0 | 0 | 1 | 1 | 0 | 4 |
+| south-node|aquarius | 0 | 0 | 2 | 1 | 1 | 4 |
+| south-node|aries | 0 | 0 | 3 | 0 | 1 | 5 |
+| south-node|cancer | 0 | 0 | 2 | 0 | 1 | 4 |
+| south-node|capricorn | 0 | 0 | 3 | 0 | 1 | 5 |
+| south-node|gemini | 0 | 0 | 2 | 1 | 1 | 5 |
+| south-node|leo | 0 | 0 | 2 | 0 | 0 | 4 |
+| south-node|libra | 0 | 0 | 14 | 0 | 12 | 8 |
+| south-node|pisces | 0 | 0 | 3 | 0 | 1 | 6 |
+| south-node|sagittarius | 0 | 0 | 14 | 0 | 8 | 10 |
+| south-node|scorpio | 0 | 0 | 13 | 0 | 8 | 5 |
+| south-node|taurus | 0 | 0 | 3 | 0 | 1 | 5 |
+| south-node|virgo | 0 | 0 | 2 | 1 | 0 | 4 |
 | stellium-(mars,-jupiter,-saturn,-pluto)|capricorn | 0 | 0 | 3 | 0 | 3 | 0 |
 | sun|5th-house | 0 | 0 | 1 | 0 | 0 | 0 |
 | sun|8th-house | 0 | 0 | 1 | 0 | 0 | 0 |

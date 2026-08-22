@@ -6,13 +6,13 @@ Generated 2026-08-15. This audit made no prose changes and used no billed calls.
 
 | state | pages | disposition |
 |---|---:|---|
-| Owner-approved continuous article | 56 | Keep byte-protected |
+| Owner-approved continuous article | 55 | Keep byte-protected |
 | Owner-approved Moon entry | 12 | Keep byte-protected |
 | Owner-locked Lilith V5 | 12 | Keep byte-protected |
-| Legacy thin standalone | 0 | Complete through owner review |
+| Legacy thin standalone | 1 | Complete through owner review |
 | SOURCE_GAP | 0 | Correctly hidden until approved article exists |
 
-**Complete today:** 80 of 168 pages have governed full copy. **Editorial completion queue:** 0 pages (0 visible-but-thin, 0 fail closed).
+**Complete today:** 79 of 168 pages have governed full copy. **Editorial completion queue:** 1 pages (1 visible-but-thin, 0 fail closed).
 
 ## What the audit fixed
 
@@ -31,5 +31,5 @@ The earlier semantic hook audit is not a rewrite mandate: it used now-superseded
 ## Files
 
 - `inventory.json`: all 168 pages, render lane, content key, mechanical checks, and recovery findings.
-- `editorial-queue.md`: the exact 0-page completion queue.
+- `editorial-queue.md`: the exact 1-page completion queue.
 - `verification.md`: generated after the repository test pass.

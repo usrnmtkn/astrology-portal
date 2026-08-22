@@ -125,12 +125,12 @@
 }
 
 .aspect-row-copy strong,
-.aspect-row-copy h3,
+.aspect-row-copy :is(h3, h4),
 .tx-title,
 .aspect-section .aspect-row-copy strong,
-.aspect-section .aspect-row-copy h3,
+.aspect-section .aspect-row-copy :is(h3, h4),
 .friend-chart-page .aspect-row-copy strong,
-.friend-chart-page .aspect-row-copy h3 {
+.friend-chart-page .aspect-row-copy :is(h3, h4) {
   color: var(--card-title-color);
   font-family: var(--font-display);
   font-size: var(--aspect-card-title-size);

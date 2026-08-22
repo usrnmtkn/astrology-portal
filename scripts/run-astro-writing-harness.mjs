@@ -9,6 +9,7 @@ import { retrieveOwnerContext } from "../src/astro-writing/retrieveOwnerContext.
 import { assertPositiveOwnerEvidenceContext, OwnerEvidencePreconditionError } from "../src/astro-writing/ownerEvidencePolicy.mjs";
 import {
   ownerPositiveEvidenceFromSurfaceQualifiedPool,
+  ownerLockedLilithV5Evidence,
   ownerApprovedMatrixRoleEvidenceForTarget,
   ownerRelevantEvidenceFromVoiceIndex,
   ownerPositiveEvidenceFromVoiceIndexBySourceIds
@@ -132,6 +133,10 @@ const matrixEvidenceRows = withoutOwnerRejectedEvidence(
   corrections,
   "copy"
 );
+const lilithV5Rows = JSON.parse(fs.readFileSync(
+  path.resolve("packages/astro-knowledge/review/lilith-placements-v5/lilith-placements-v5-staged-rows.json"),
+  "utf8"
+)).rows;
 const phraseEvidence = loadPhraseEvidenceIndex(path.resolve("data/writing/phrase-evidence-index/owner-phrase-evidence-v1.jsonl"));
 const relevantOwnerEvidence = ownerRelevantEvidenceFromVoiceIndex(voiceIndex, {
   planet: request.meaningInput?.object,
@@ -139,6 +144,7 @@ const relevantOwnerEvidence = ownerRelevantEvidenceFromVoiceIndex(voiceIndex, {
 });
 const examples = [
   ...ownerPositiveEvidenceFromSurfaceQualifiedPool(surfaceQualifiedPool),
+  ...ownerLockedLilithV5Evidence(lilithV5Rows),
   ...relevantOwnerEvidence.selected,
   ...ownerPositiveEvidenceFromVoiceIndexBySourceIds(
     voiceIndex,
