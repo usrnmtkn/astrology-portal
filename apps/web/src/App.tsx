@@ -10794,6 +10794,27 @@ export function App() {
   const usesFullPageLayout = isProfileMode || isFriendsMode || isCalendarMode;
   const activeSunriseOrbDegrees = DEFAULT_SUNRISE_ORB_DEGREES;
   const primaryProfileChart = userProfile?.charts[0];
+  const primaryProfileBirthDate = validChartBirthDate(primaryProfileChart);
+  const skyPlacementPersonalizationTransits = useMemo(() => {
+    if (!sky || !profileNatalSky || !primaryProfileBirthDate) {
+      return profileTransits;
+    }
+
+    const enrichedById = new Map(profileTransits.map((transit) => [transit.id, transit]));
+
+    return rankedProfileTransits(
+      sky,
+      profileNatalSky,
+      primaryProfileBirthDate,
+      activeSunriseOrbDegrees
+    ).map((transit) => enrichedById.get(transit.id) ?? transit);
+  }, [
+    activeSunriseOrbDegrees,
+    primaryProfileBirthDate,
+    profileNatalSky,
+    profileTransits,
+    sky
+  ]);
   const personalTimingSettings = useMemo(
     () => apiSettingsFromChartSettings(userProfile?.settings),
     [userProfile?.settings]
@@ -10998,7 +11019,7 @@ export function App() {
     setSelectedSkyDetail(personalizedSkyPlacementDetail(
       detail,
       profileNatalSky?.ascendant ?? userProfile?.rising,
-      profileTransits,
+      skyPlacementPersonalizationTransits,
       sky?.generatedAt ?? new Date().toISOString()
     ));
 
@@ -11472,7 +11493,7 @@ export function App() {
 
     const personalizationKey = [
       profileNatalSky?.ascendant ?? userProfile?.rising ?? "",
-      profileTransits.map((transit) => transit.id).join(",")
+      skyPlacementPersonalizationTransits.map((transit) => transit.id).join(",")
     ].join(":");
     const refreshKey = `${skyDetailRoutePath}:${fallbackArchitectureV3Version}:${personalizationKey}`;
 
@@ -11498,10 +11519,10 @@ export function App() {
     setSelectedSkyDetail(personalizedSkyPlacementDetail(
       detail,
       profileNatalSky?.ascendant ?? userProfile?.rising,
-      profileTransits,
+      skyPlacementPersonalizationTransits,
       sky.generatedAt
     ));
-  }, [fallbackArchitectureV3Version, profileNatalSky?.ascendant, profileTransits, selectedSkyDetail?.routePath, sky, skyDetailRoutePath, skyGeneratedContent, userProfile?.rising]);
+  }, [fallbackArchitectureV3Version, profileNatalSky?.ascendant, selectedSkyDetail?.routePath, sky, skyDetailRoutePath, skyGeneratedContent, skyPlacementPersonalizationTransits, userProfile?.rising]);
 
   useEffect(() => {
     if (!selectedSkyDetail) {
