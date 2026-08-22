@@ -235,7 +235,7 @@ function skyAspectKernel(args: {
     knowledgeIds: [`sky-${args.a}-${args.aspect}-${args.b}`]
   };
   const gate = prepareProductionPreCallGate(input);
-  const config = generationConfig();
+  const config = generationConfig("sky-exact-aspect");
   const generationMetadata = {
     provider: config.provider,
     model: config.model,

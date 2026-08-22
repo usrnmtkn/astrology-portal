@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "auditId": "sky-placement-writer-heldout-fixture-audit-v1",
-  "sourceRecordCount": 30,
+  "sourceRecordCount": 33,
   "targetFixtureCount": 20,
   "validFixtureCount": 6,
   "exactShortfall": 14,
@@ -340,6 +340,19 @@
       ]
     },
     {
+      "id": "synastry-foundation-manufacturing-confidence-soft-context-rejection",
+      "preservedRejectedWording": true,
+      "exactOwnerWrittenReplacement": false,
+      "clearOwnerProvenance": true,
+      "enoughContext": false,
+      "calibrationRestricted": false,
+      "validHeldoutFixture": false,
+      "reasons": [
+        "record does not prove the replacement was written verbatim by the owner",
+        "fragments do not provide enough context for held-out evaluation"
+      ]
+    },
+    {
       "id": "sky-placement-writer-batch-4-owner-edited-approved-v1-exact-approval",
       "preservedRejectedWording": true,
       "exactOwnerWrittenReplacement": false,
@@ -361,6 +374,32 @@
       "validHeldoutFixture": false,
       "reasons": [
         "record does not prove the replacement was written verbatim by the owner"
+      ]
+    },
+    {
+      "id": "synastry-foundation-ground-beneath-disconnected-closer-rejection",
+      "preservedRejectedWording": true,
+      "exactOwnerWrittenReplacement": false,
+      "clearOwnerProvenance": true,
+      "enoughContext": false,
+      "calibrationRestricted": false,
+      "validHeldoutFixture": false,
+      "reasons": [
+        "record does not prove the replacement was written verbatim by the owner",
+        "fragments do not provide enough context for held-out evaluation"
+      ]
+    },
+    {
+      "id": "synastry-foundation-deeper-work-security-disconnected-closer-rejection",
+      "preservedRejectedWording": true,
+      "exactOwnerWrittenReplacement": false,
+      "clearOwnerProvenance": true,
+      "enoughContext": false,
+      "calibrationRestricted": false,
+      "validHeldoutFixture": false,
+      "reasons": [
+        "record does not prove the replacement was written verbatim by the owner",
+        "fragments do not provide enough context for held-out evaluation"
       ]
     }
   ]
