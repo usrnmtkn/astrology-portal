@@ -3431,7 +3431,7 @@ export function GeneratedContentAdminDashboard() {
           })}
         </section>
         <details className="admin-nav-advanced" open={advancedAdminNavItems.some((item) => item.page === activePage) || undefined}>
-          <summary>Operations / Advanced</summary>
+          <summary className="admin-eyebrow">Operations / Advanced</summary>
           <section className="admin-nav-section" aria-label="Operations and advanced tools">
             {advancedAdminNavItems.map((item) => {
               const Icon = item.icon;
@@ -3507,7 +3507,7 @@ export function GeneratedContentAdminDashboard() {
         {hasLoadFailure && renderLoadFailure()}
 
         {isCompositionPage(activePage) && (
-          <nav className="admin-composition-tabs" aria-label="Composition workspace">
+          <nav className="admin-template-tabs admin-composition-tabs" aria-label="Composition workspace">
             {compositionTabs.map((item) => (
               <button key={item.page} type="button" className={activePage === item.page ? "active" : ""} aria-current={activePage === item.page ? "page" : undefined} onClick={() => navigateAdminPage(item.page)}>
                 {item.label}

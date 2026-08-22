@@ -8072,51 +8072,6 @@ body,
   gap: 5px;
 }
 
-.admin-dashboard .admin-nav-advanced {
-  border-top: 1px solid var(--admin-ui-border);
-  padding-top: 12px;
-}
-
-.admin-dashboard .admin-nav-advanced summary {
-  color: var(--admin-ui-subtle);
-  cursor: pointer;
-  font-family: var(--font-label);
-  font-size: var(--admin-ui-type-label);
-  font-weight: var(--weight-medium);
-  letter-spacing: var(--tracking-label);
-  list-style-position: inside;
-  text-transform: uppercase;
-}
-
-.admin-dashboard .admin-nav-advanced[open] summary {
-  margin-bottom: 8px;
-}
-
-.admin-dashboard .admin-composition-tabs {
-  align-items: center;
-  border-bottom: 1px solid var(--admin-ui-border);
-  display: flex;
-  gap: 6px;
-  overflow-x: auto;
-  padding-bottom: 10px;
-}
-
-.admin-dashboard .admin-composition-tabs button {
-  background: transparent;
-  border: 1px solid transparent;
-  border-radius: var(--admin-ui-radius);
-  color: var(--admin-ui-muted);
-  min-height: 34px;
-  padding: 0 12px;
-  white-space: nowrap;
-}
-
-.admin-dashboard .admin-composition-tabs button:hover,
-.admin-dashboard .admin-composition-tabs button.active {
-  background: var(--admin-ui-neutral-soft);
-  color: var(--admin-ui-text);
-}
-
 .admin-dashboard :where(.admin-breadcrumb, .admin-eyebrow, label span, .admin-metadata-field span, .admin-field-wide > span) {
   color: var(--admin-ui-subtle);
   font-family: var(--font-label);
