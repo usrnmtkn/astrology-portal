@@ -35,8 +35,8 @@ const skyReviewHorizonFixture = {
   endDate: "2026-11-20",
   snapshotCount: 91,
   calculationMethod: "daily-active-sky-snapshot",
-  counts: { occurrences: 1, aspectCandidates: 1, placementCandidates: 0, activeWindows: 1 },
-  reviewCounts: { missing_draft: 1 },
+  counts: { occurrences: 2, aspectCandidates: 1, placementCandidates: 1, activeWindows: 2 },
+  reviewCounts: { missing_draft: 1, draft_needs_work: 1 },
   generationPlan: {
     status: "authorization_required",
     reusableCandidatesMissingDrafts: 1,
@@ -46,16 +46,48 @@ const skyReviewHorizonFixture = {
     contentKeys: ["sky.aspect.sun.trine.chiron.leo.taurus"],
     note: "Fixture generation plan."
   },
-  occurrences: [{
-    kind: "aspect",
-    contentKey: "sky.aspect.sun.trine.chiron.leo.taurus",
-    label: "Sun trine Chiron",
-    facts: { a: "sun", b: "chiron", aspect: "trine", signA: "leo", signB: "taurus" },
-    activeDates: ["2026-08-22"],
-    windows: [{ startDate: "2026-08-22", endDate: "2026-08-22" }],
-    reviewStatus: "missing_draft",
-    row: null
-  }]
+  occurrences: [
+    {
+      kind: "aspect",
+      contentKey: "sky.aspect.sun.trine.chiron.leo.taurus",
+      label: "Sun trine Chiron",
+      facts: { a: "sun", b: "chiron", aspect: "trine", signA: "leo", signB: "taurus" },
+      activeDates: ["2026-08-22"],
+      windows: [{ startDate: "2026-08-22", endDate: "2026-08-22" }],
+      reviewStatus: "missing_draft",
+      row: null
+    },
+    {
+      kind: "placement",
+      contentKey: "sky.placement.base.jupiter.leo",
+      label: "Jupiter in Leo",
+      facts: { planet: "jupiter", sign: "leo" },
+      activeDates: ["2026-08-22"],
+      windows: [{ startDate: "2026-08-22", endDate: "2026-11-20" }],
+      reviewStatus: "draft_needs_work",
+      row: {
+        id: "qa-jupiter-leo-candidate",
+        content_key: "sky.placement.base.jupiter.leo",
+        surface: "sky",
+        mode: "feed",
+        headline: "Jupiter in Leo",
+        summary: null,
+        body: "A generated candidate that is not the owner-approved article readers receive.",
+        status: "DRAFT",
+        block_type: "sky_placement",
+        event_type: "collective-placement-card",
+        target_date: null,
+        sections: [],
+        lane: "reference",
+        review_state: "needs-review",
+        facts: { planet: "jupiter", sign: "leo" },
+        source_snapshot: {},
+        judge_score: 2,
+        judge_gate: "regenerate",
+        updated_at: now
+      }
+    }
+  ]
 };
 
 const heldSkyAspectDrafts = [
@@ -1297,6 +1329,19 @@ test.describe("content dashboard admin user flow case studies", () => {
       blockType: "sky_aspect",
       facts: { a: "sun", b: "chiron", aspect: "trine", signA: "leo", signB: "taurus" }
     });
+    await assertNoBrowserErrors();
+  });
+
+  test("generated placement candidates identify the owner-approved article that replaces them", async ({ page }) => {
+    const assertNoBrowserErrors = await expectNoBrowserErrors(page);
+    await seedAdminApi(page);
+    await expectAdminRouteLoads(page, "/admin/content#review-queue");
+
+    await page.getByRole("button", { name: /Upcoming 90 days/ }).click();
+    const candidate = page.locator(".admin-sky-voice-card", { hasText: "Jupiter in Leo" });
+
+    await expect(candidate.getByText("Not serving — replaced by owner-approved article", { exact: true })).toBeVisible();
+    await expect(candidate.getByText("fallback-hook/sky-sign-copy/jupiter/leo", { exact: true })).toBeVisible();
     await assertNoBrowserErrors();
   });
 

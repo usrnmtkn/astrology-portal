@@ -40,6 +40,10 @@ import {
   relatedHousePassages,
   skyWriteupContextForRow
 } from "./skyWriteupRelations";
+import {
+  ownerApprovedReplacementLabel,
+  ownerApprovedSkyPlacementArticleKey
+} from "./skyPlacementServingStatus";
 import type {
   WritingSurfaceAdminAccess,
   WritingSurfaceMapItem,
@@ -4722,6 +4726,10 @@ export function GeneratedContentAdminDashboard() {
           {skyReviewHorizon.occurrences.map((occurrence) => {
             const row = occurrence.row;
             const canApprove = row?.judge_score === 3 && row.judge_gate === "human-review" && row.status !== "LIVE";
+            const ownerApprovedArticleKey = ownerApprovedSkyPlacementArticleKey(occurrence.contentKey);
+            const statusLabel = ownerApprovedArticleKey
+              ? ownerApprovedReplacementLabel
+              : statusLabels[occurrence.reviewStatus];
             return (
               <article key={occurrence.contentKey} className="admin-sky-voice-card">
                 <header>
@@ -4730,7 +4738,7 @@ export function GeneratedContentAdminDashboard() {
                     <code>{occurrence.contentKey}</code>
                   </div>
                   <div className="admin-review-queue-meta-strip">
-                    <span className="ui-pill admin-status">{statusLabels[occurrence.reviewStatus]}</span>
+                    <span className="ui-pill admin-status">{statusLabel}</span>
                     <span className="ui-pill admin-status">{occurrence.kind}</span>
                   </div>
                 </header>
@@ -4739,6 +4747,9 @@ export function GeneratedContentAdminDashboard() {
                   <div><dt>Last active</dt><dd>{occurrence.windows.at(-1)?.endDate ?? "Not calculated"}</dd></div>
                   <div><dt>Active days</dt><dd>{occurrence.activeDates.length}</dd></div>
                   <div><dt>Windows</dt><dd>{occurrence.windows.length}</dd></div>
+                  {ownerApprovedArticleKey
+                    ? <div><dt>Reader source</dt><dd><code>{ownerApprovedArticleKey}</code></dd></div>
+                    : null}
                 </dl>
                 <div className="admin-sky-voice-body">{row?.body || "No saved draft exists yet. Create a manual draft to write this card, or run the separately authorized generation job."}</div>
                 <div className="admin-review-queue-actions">

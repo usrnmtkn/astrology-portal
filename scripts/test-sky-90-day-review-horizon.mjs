@@ -89,10 +89,16 @@ assert.match(dashboard, /Upcoming 90 days/u);
 assert.match(dashboard, /Approve &amp; schedule/u);
 assert.match(dashboard, /\["DRAFT", "REVIEWED"\]\.includes\(row\.status\)/u);
 assert.match(dashboard, /This view is inventory and review status only/u);
+assert.match(dashboard, /ownerApprovedSkyPlacementArticleKey\(occurrence\.contentKey\)/u);
 assert.match(dashboard, /Create draft/u);
 assert.match(dashboard, /openMissingSkyDraft\(occurrence\)/u);
 assert.match(dashboard, /facts:\s*draftForSave\.facts \?\? \{\}/u);
 assert.match(dashboard, /sections:\s*draftForSave\.sections \?\? \{\}/u);
 assert.match(dashboard, /if \(draft\.blockType === "sky_aspect"\) return "collective-aspect-card"/u);
+
+const servingStatus = fs.readFileSync(path.join(repoRoot, "apps/admin/src/skyPlacementServingStatus.ts"), "utf8");
+assert.match(servingStatus, /Not serving — replaced by owner-approved article/u);
+assert.match(servingStatus, /sky-placement-serving-manifest-v1\.json/u);
+assert.match(servingStatus, /fallback-hook\/sky-sign-copy\/\$\{planet\}\/\$\{sign\}/u);
 
 console.log(`Sky 90-day review horizon checks passed (${horizon.counts.occurrences} fixture candidates, ${horizon.counts.activeWindows} active windows).`);
