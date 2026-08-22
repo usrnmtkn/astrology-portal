@@ -575,7 +575,7 @@ export function SkyDetailArticle({
                   <p>{detail.closingCharge}</p>
                 </section>
               ) : null}
-              {detail.risingHoroscopes?.length ? (
+              {detail.risingHoroscopes?.length && !detail.personalizedPlacement ? (
                 <section
                   className="article-section sky-detail-section"
                   id="sky-rising-horoscopes"
