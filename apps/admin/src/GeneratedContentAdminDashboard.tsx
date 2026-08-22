@@ -305,6 +305,10 @@ type AdminVocabularyCategoryFilter = AdminVocabularySection;
 
 const adminSecretStorageKey = "tldrastro:contentAdminSecret";
 
+function normalizeAdminSecret(value: string) {
+  return value.trim();
+}
+
 function getLocalContentGenerationSecret() {
   return (globalThis as typeof globalThis & { __LOCAL_CONTENT_GENERATION_SECRET__?: string }).__LOCAL_CONTENT_GENERATION_SECRET__ ?? "";
 }
@@ -364,7 +368,7 @@ const primaryAdminNavItems: AdminNavItem[] = [
   { page: "reviewQueue", label: "Review Queue", icon: Check },
   { page: "content", label: "Content Library", icon: BookOpenText },
   { page: "articles", label: "Articles", icon: FileText },
-  { page: "templates", label: "Composition", icon: Sparkles },
+  { page: "templates", label: "Templates", icon: Sparkles },
   { page: "aspectPatternCoverage", label: "Aspect Patterns", icon: BookOpenText }
 ];
 const advancedAdminNavItems: AdminNavItem[] = [
@@ -1610,11 +1614,12 @@ function dashboardErrorMessage(error: unknown) {
 
 async function adminJsonRequest<T>(path: string, secret: string, options: RequestInit = {}) {
   const method = options.method ?? "GET";
+  const normalizedSecret = normalizeAdminSecret(secret);
   const response = await fetch(path, {
     ...options,
     headers: {
       "content-type": "application/json",
-      ...(secret ? { authorization: `Bearer ${secret}` } : {}),
+      ...(normalizedSecret ? { authorization: `Bearer ${normalizedSecret}` } : {}),
       ...options.headers
     }
   });
@@ -1736,20 +1741,21 @@ function emptyDraftForHook(item: HookCatalogItem): AdminDraft {
 
 function useSavedSecret() {
   const [secret, setSecret] = useState(() => {
-    const localSecret = getLocalContentGenerationSecret();
+    const localSecret = normalizeAdminSecret(getLocalContentGenerationSecret());
 
     try {
-      return window.localStorage.getItem(adminSecretStorageKey) ?? localSecret;
+      return normalizeAdminSecret(window.localStorage.getItem(adminSecretStorageKey) ?? localSecret);
     } catch {
       return localSecret;
     }
   });
 
   function saveSecret(nextSecret: string) {
-    setSecret(nextSecret);
+    const normalizedSecret = normalizeAdminSecret(nextSecret);
+    setSecret(normalizedSecret);
     try {
-      if (nextSecret.trim()) {
-        window.localStorage.setItem(adminSecretStorageKey, nextSecret);
+      if (normalizedSecret) {
+        window.localStorage.setItem(adminSecretStorageKey, normalizedSecret);
       } else {
         window.localStorage.removeItem(adminSecretStorageKey);
       }
@@ -2454,7 +2460,8 @@ export function GeneratedContentAdminDashboard() {
   }
 
   async function loadDashboardData() {
-    if (!secret.trim()) {
+    const normalizedSecret = normalizeAdminSecret(secret);
+    if (!normalizedSecret) {
       setLoadState("idle");
       setLoadError("Admin access is required before content can load.");
       setLoadDiagnostics(null);
@@ -2471,10 +2478,10 @@ export function GeneratedContentAdminDashboard() {
     try {
       const needsExtendedInventory = isCompositionPage(activePage) || showReferenceRows || showRetiredRows;
       const [generatedResult, reviewResult, usersResult, sourceDraftResult] = await Promise.allSettled([
-        loadAllGeneratedContentRows(secret, needsExtendedInventory ? "all" : "editorial"),
-        adminJsonRequest<{ ok: boolean; rows?: AdminReviewRecord[]; records?: AdminReviewRecord[]; counts?: unknown }>("/api/admin/review-records?surface=upcomingAspects&status=all", secret),
-        adminJsonRequest<{ ok: boolean; rows: AdminUserGeneratedContentRow[] }>("/api/admin/user-generated-content?status=all&limit=100", secret),
-        loadAdminSourceDraftCatalog(secret)
+        loadAllGeneratedContentRows(normalizedSecret, needsExtendedInventory ? "all" : "editorial"),
+        adminJsonRequest<{ ok: boolean; rows?: AdminReviewRecord[]; records?: AdminReviewRecord[]; counts?: unknown }>("/api/admin/review-records?surface=upcomingAspects&status=all", normalizedSecret),
+        adminJsonRequest<{ ok: boolean; rows: AdminUserGeneratedContentRow[] }>("/api/admin/user-generated-content?status=all&limit=100", normalizedSecret),
+        loadAdminSourceDraftCatalog(normalizedSecret)
       ]);
 
       if (generatedResult.status === "rejected") {
@@ -2511,8 +2518,12 @@ export function GeneratedContentAdminDashboard() {
       setLoadState("loaded");
       setMessage(`Loaded ${generatedRows.length} saved rows, ${reviewRowsPayload.length} review records, and ${usersPayload.rows?.length ?? 0} user rows.${partialWarnings.length ? ` Partial load: ${partialWarnings.join(", ")}.` : ""}`);
     } catch (error) {
-      const nextMessage = dashboardErrorMessage(error);
-      setLoadState(error instanceof AdminRequestError && error.status === 401 ? "accessDenied" : "error");
+      const accessDenied = error instanceof AdminRequestError && error.status === 401;
+      const nextMessage = accessDenied
+        ? "Admin access was denied. The rejected saved secret was cleared; paste the current Production CONTENT_GENERATION_SECRET and load content again."
+        : dashboardErrorMessage(error);
+      if (accessDenied) setSecret("");
+      setLoadState(accessDenied ? "accessDenied" : "error");
       setLoadError(nextMessage);
       setLoadDiagnostics(error instanceof AdminRequestError ? `${error.method} ${error.path} -> HTTP ${error.status}${error.details ? ` (${error.details})` : ""}` : null);
       setMessage(nextMessage);
@@ -3447,7 +3458,15 @@ export function GeneratedContentAdminDashboard() {
       </nav>
       <section className="admin-sidebar-status" aria-label="Admin status">
         <span className={`ui-pill admin-status ${loadState === "loaded" ? "status-live" : loadState === "accessDenied" || loadState === "error" ? "status-error" : "status-draft"}`}>
-          {loadState === "loaded" ? "Access verified" : loadState === "loading" ? "Loading" : secret.trim() ? "Access saved" : "Local only"}
+          {loadState === "loaded"
+            ? "Access verified"
+            : loadState === "loading"
+            ? "Loading"
+            : loadState === "accessDenied"
+            ? "Access denied"
+            : secret.trim()
+            ? "Access saved"
+            : "Local only"}
         </span>
         <small>{loadState === "loaded" ? `${rows.length} saved rows loaded` : "Rows not loaded"}</small>
         <small>Fallback package {hookCatalogPackageVersion}</small>
