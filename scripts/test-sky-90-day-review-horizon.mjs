@@ -79,7 +79,7 @@ assert.match(endpoint, /minimumSuccessfulCalls:\s*missingDrafts\.length \* 2/u);
 assert.doesNotMatch(endpoint, /generateCard|providerCall|OPENAI_API_KEY|GEMINI_API_KEY/u);
 
 const adminApi = fs.readFileSync(path.join(repoRoot, "api/admin/generated-content.ts"), "utf8");
-assert.match(adminApi, /ownerAction\?: "approve-and-schedule"/u);
+assert.match(adminApi, /ownerAction\?:\s*(?:\n\s*)?\|?\s*"approve-and-schedule"/u);
 assert.match(adminApi, /assertCanPublishGeneratedContent/u);
 assert.match(adminApi, /patch\.lane = "serving"/u);
 assert.match(adminApi, /\["sky_aspect", "sky_placement"\]\.includes\(existing\?\.block_type/u);
