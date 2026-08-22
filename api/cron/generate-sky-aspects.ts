@@ -1,5 +1,6 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
 import skyAspectGenerator from "../../packages/astro-knowledge/scripts/generate-sky-aspect-cards.js";
+import editorialJudgeRuntime from "../../packages/astro-knowledge/scripts/editorial-judge-runtime.js";
 import { currentSkyFacts, type PlanetPosition, type SkyAspect } from "../_lib/current-sky.js";
 import { loadLocalWebEnv } from "../_lib/local-env.js";
 import { canonicalizeNodeAxisAspects } from "@tldr/astro-knowledge/sky-aspect-engine";
@@ -13,6 +14,9 @@ import {
 loadLocalWebEnv();
 
 const { generate, generateCard, generationConfig, normalizeCardArgs, reviewPairSources } = skyAspectGenerator;
+const { assertLiveJudgeAuthorized } = editorialJudgeRuntime as unknown as {
+  assertLiveJudgeAuthorized: () => void;
+};
 const supportedAspects = new Set<string>(canonicalSkyAspectProfile.aspects.map((aspect) => aspect.id));
 const maxJudgeRegenerations = 2;
 type JudgeGate = "human-review" | "regenerate";
@@ -635,6 +639,17 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
 
   if (!isAuthorized(req)) {
     sendJson(res, 401, { error: "Unauthorized." });
+    return;
+  }
+
+  try {
+    assertLiveJudgeAuthorized();
+  } catch (error) {
+    sendJson(res, 409, {
+      ok: false,
+      code: "LIVE_LLM_JUDGE_NOT_AUTHORIZED",
+      error: error instanceof Error ? error.message : "Live LLM judging is not authorized."
+    });
     return;
   }
 
