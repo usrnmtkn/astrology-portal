@@ -1272,15 +1272,13 @@ test.describe("client-facing user flow case studies", () => {
       "Friend house transit body does not repeat its visible date range"
     ).toBe(false);
     await expect(
-      friendHouseTransitCard.locator('.updates-aspect-row__description[role="status"]'),
-      "Friend house transit with no eligible detail sections is marked unavailable"
-    ).toHaveText("Full interpretation unavailable pending source verification.");
+      page.getByText("Full interpretation unavailable pending source verification."),
+      "Internal source-verification status stays out of the reader UI"
+    ).toHaveCount(0);
     await expect(
       friendHouseTransitCard,
-      "Friend house transit with no eligible detail sections cannot open a heading-only article"
-    ).toBeDisabled();
-    await expect(page.locator(".app-shell.mode-detail")).toHaveCount(0);
-    await expect(page.getByRole("tab", { name: "Transits" })).toHaveAttribute("aria-selected", "true");
+      "Every visible Friend house transit has an eligible full entry"
+    ).toBeEnabled();
 
     const transitCardText = ((await transitCard.innerText()) ?? "").replace(/\s+/g, " ").trim();
     const rangeLabel = ((await transitCard.locator(".updates-aspect-row__meta-line > span").last().innerText()) ?? "").trim();

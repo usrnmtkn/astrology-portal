@@ -60,11 +60,8 @@ function FriendPersonalTransitCard({
 }) {
   return (
     <button
-      aria-label={transit.detailAvailable
-        ? `Open full entry for ${transit.title}`
-        : `Full entry unavailable for ${transit.title}`}
+      aria-label={`Open full entry for ${transit.title}`}
       className="updates-aspect-row friend-transit-row"
-      disabled={!transit.detailAvailable}
       onClick={() => onOpen(transit.id)}
       type="button"
     >
@@ -77,11 +74,6 @@ function FriendPersonalTransitCard({
           <span>{transit.rangeLabel}</span>
         </span>
         <p className="updates-aspect-row__description transit-card-preview">{transit.summary}</p>
-        {!transit.detailAvailable ? (
-          <span className="updates-aspect-row__description" role="status">
-            Full interpretation unavailable pending source verification.
-          </span>
-        ) : null}
       </span>
       <span className="updates-aspect-row__meta" aria-label={`${transit.timingLabel}, ${transit.orb} orb`}>
         <span className="updates-aspect-row__dot" aria-hidden="true" />
@@ -121,13 +113,18 @@ export function FriendTransitsTab({
   patternTimingOverrides: Record<string, NatalAspectPatternActivationTimingWindow>;
   personalTransitGroups: FriendPersonalTransitGroup[];
 }) {
-  const personalTransitCount = personalTransitGroups.reduce((count, group) => count + group.transits.length, 0);
-  const shortTermGroup = personalTransitGroups.find((group) => group.key === "short");
-  const longTermGroup = personalTransitGroups.find((group) => group.key === "long");
+  const visiblePersonalTransitGroups = personalTransitGroups.map((group) => ({
+    ...group,
+    transits: group.transits.filter((transit) => transit.detailAvailable)
+  }));
+  const visibleHouseTransits = houseTransits.filter((transit) => transit.detailAvailable);
+  const personalTransitCount = visiblePersonalTransitGroups.reduce((count, group) => count + group.transits.length, 0);
+  const shortTermGroup = visiblePersonalTransitGroups.find((group) => group.key === "short");
+  const longTermGroup = visiblePersonalTransitGroups.find((group) => group.key === "long");
   const shortTermTransits = shortTermGroup?.transits ?? [];
   const longTermTransits = longTermGroup?.transits ?? [];
   const hasActivePattern = patternItems.some((item) => Boolean(item.activationCopy));
-  const hasAnyTransit = Boolean(dailyForecast) || personalTransitCount > 0 || houseTransits.length > 0 || bondTransits.length > 0 || hasActivePattern;
+  const hasAnyTransit = Boolean(dailyForecast) || personalTransitCount > 0 || visibleHouseTransits.length > 0 || bondTransits.length > 0 || hasActivePattern;
   const hasDailyGuidance = dailyDoItems.length === 3 && dailyDontItems.length === 3;
 
   return (
@@ -199,17 +196,14 @@ export function FriendTransitsTab({
             </div>
           </section>
         ) : null}
-        {houseTransits.length > 0 && (
+        {visibleHouseTransits.length > 0 && (
           <section className="friend-transit-group" aria-label="House transits">
             <span className="eyebrow section-label friend-section-label">Where it lands</span>
             <div className="updates-aspect-list friend-transit-list">
-              {houseTransits.map((card) => (
+              {visibleHouseTransits.map((card) => (
                 <button
-                  aria-label={card.detailAvailable
-                    ? `Open full entry for ${card.title}`
-                    : `Full entry unavailable for ${card.title}`}
+                  aria-label={`Open full entry for ${card.title}`}
                   className="updates-aspect-row updates-aspect-row--house"
-                  disabled={!card.detailAvailable}
                   key={card.id}
                   onClick={() => onOpenHouseTransit(card.id)}
                   type="button"
@@ -229,11 +223,6 @@ export function FriendTransitsTab({
                     </span>
                     {card.rowSummary ? (
                       <span className="updates-aspect-row__description transit-card-preview">{card.rowSummary}</span>
-                    ) : null}
-                    {!card.detailAvailable ? (
-                      <span className="updates-aspect-row__description" role="status">
-                        Full interpretation unavailable pending source verification.
-                      </span>
                     ) : null}
                     <span className="house-transit-keywords" aria-label="House keywords">
                       <span className="ui-pill house-transit-term-tag">{card.termLabel}</span>
