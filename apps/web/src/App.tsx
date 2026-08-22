@@ -5547,7 +5547,7 @@ function relatedAspectRowsForPlacement({
         <>
           <AspectGlyphs from={pointName} aspect={aspect.type} to={otherPoint} />
           <span className="aspect-row-copy">
-            <h3>{title}</h3>
+            <h4>{title}</h4>
             {displaySummary ? <p>{displaySummary}</p> : null}
           </span>
           <span className="aspect-row-meta" aria-label={`${wholeDegreeOrb(aspect.orb)} orb`}>
