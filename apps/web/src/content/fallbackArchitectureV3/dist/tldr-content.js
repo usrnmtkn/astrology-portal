@@ -210,7 +210,12 @@ function createFallbackRenderer(templatesFile, rowsFile) {
     };
     const template = getTemplate("fallback-template/natal.angle-in-sign");
     const body = renderTemplate(template, ctx, `${facts.angle}/${facts.sign}`, voice);
-    return { headline: mustache(template.headline ?? "", ctx), parts: [body], body, templateKey: template.contentKey };
+    return {
+      headline: mustache(template.headline ?? "", ctx),
+      parts: [body],
+      body,
+      templateKey: template.contentKey
+    };
   }
   function renderNatalAspect(facts, opts2 = {}) {
     const voice = facts.voice === "you" ? "you" : "they";
@@ -222,7 +227,8 @@ function createFallbackRenderer(templatesFile, rowsFile) {
         parts: [exactLived.body ?? ""],
         body: exactLived.body ?? "",
         astroHint: exactLived.astroHint,
-        templateKey: exactLived.contentKey
+        templateKey: exactLived.contentKey,
+        provenanceTier: "exact-owner-approved"
       };
     }
     const group = ASPECT_GROUP[aspect];
@@ -248,7 +254,13 @@ function createFallbackRenderer(templatesFile, rowsFile) {
     };
     const template = getTemplate("fallback-template/natal.aspect");
     const body = renderTemplate(template, ctx, `${facts.planetA}-${facts.aspect}-${facts.planetB}`, voice);
-    return { headline: mustache(template.headline ?? "", ctx), parts: [body], body, templateKey: template.contentKey };
+    return {
+      headline: mustache(template.headline ?? "", ctx),
+      parts: [body],
+      body,
+      templateKey: template.contentKey,
+      provenanceTier: "legacy-reviewed"
+    };
   }
   const SIGN_RULER = { aries: "mars", taurus: "venus", gemini: "mercury", cancer: "moon", leo: "sun", virgo: "mercury", libra: "venus", scorpio: "mars", sagittarius: "jupiter", capricorn: "saturn", aquarius: "saturn", pisces: "jupiter" };
   const EMPTY_HOUSE_V14_MODERN_RULER = { aries: "mars", taurus: "venus", gemini: "mercury", cancer: "moon", leo: "sun", virgo: "mercury", libra: "venus", scorpio: "pluto", sagittarius: "jupiter", capricorn: "saturn", aquarius: "uranus", pisces: "neptune" };
@@ -428,6 +440,80 @@ function fillDailyGlancePersonSlots(bodyThey, slots) {
   });
 }
 
+// apps/web/src/content/fallbackArchitectureV3/resolver/readerEligibility.browser.ts
+var READER_ELIGIBLE_REVIEW_STATUSES = /* @__PURE__ */ new Set([
+  "approved",
+  "approved_reuse",
+  "reviewed"
+]);
+var EXACT_APPROVAL_REQUIRED_PREFIXES = [
+  "authored/transit-",
+  "fallback-hook/daily-",
+  "fallback-hook/natal-aspect-lived/",
+  "fallback-hook/synastry-pair/",
+  "daily-glance-variant/"
+];
+var QUARANTINED_CONTENT_KEYS = /* @__PURE__ */ new Set([
+  "fallback-hook/sky-sign-copy/sun/virgo"
+]);
+var EXACT_SYNASTRY_ASPECTS = /* @__PURE__ */ new Set([
+  "conjunction",
+  "opposition",
+  "square",
+  "trine",
+  "sextile"
+]);
+var GROUPED_SYNASTRY_ASPECTS = /* @__PURE__ */ new Set(["hard", "soft"]);
+var DAILY_CONTINUITY_PREFIXES = ["fallback-hook/daily-", "daily-glance-variant/"];
+function transitReaderTier(row) {
+  if (!row.contentKey.startsWith("authored/transit-")) return null;
+  if (!READER_ELIGIBLE_REVIEW_STATUSES.has(String(row.review_status ?? "").trim().toLowerCase())) {
+    return null;
+  }
+  return hasExactOwnerApproval(row) ? "exact-owner-approved" : "legacy-reviewed";
+}
+function synastryReaderTier(row) {
+  if (!row.contentKey.startsWith("fallback-hook/synastry-pair/")) return null;
+  if (!READER_ELIGIBLE_REVIEW_STATUSES.has(String(row.review_status ?? "").trim().toLowerCase())) {
+    return null;
+  }
+  const aspect = row.contentKey.split("/").at(-1) ?? "";
+  if (EXACT_SYNASTRY_ASPECTS.has(aspect) && hasExactOwnerApproval(row)) {
+    return "exact-owner-approved";
+  }
+  if (GROUPED_SYNASTRY_ASPECTS.has(aspect) && hasExactOwnerApproval(row)) {
+    return "owner-approved-grouped";
+  }
+  if (EXACT_SYNASTRY_ASPECTS.has(aspect) || GROUPED_SYNASTRY_ASPECTS.has(aspect)) {
+    return "legacy-reviewed";
+  }
+  return null;
+}
+function hasExactOwnerApproval(row) {
+  const approval = row.approval;
+  return approval?.approvalLevel === "exact_owner_approved" && typeof approval.recordPath === "string" && approval.recordPath.trim().length > 0 && typeof approval.payloadSha256 === "string" && /^[a-f0-9]{64}$/iu.test(approval.payloadSha256) && typeof approval.approvedAt === "string" && approval.approvedAt.trim().length > 0;
+}
+function requiresExactOwnerApproval(contentKey) {
+  return EXACT_APPROVAL_REQUIRED_PREFIXES.some((prefix) => contentKey.startsWith(prefix));
+}
+function isGovernedReaderEligible(row, { allowUnreviewed = false } = {}) {
+  if (allowUnreviewed) return true;
+  if (QUARANTINED_CONTENT_KEYS.has(row.contentKey)) return false;
+  if (!READER_ELIGIBLE_REVIEW_STATUSES.has(String(row.review_status ?? "").trim().toLowerCase())) {
+    return false;
+  }
+  if (row.contentKey.startsWith("fallback-hook/synastry-pair/")) {
+    return synastryReaderTier(row) !== null;
+  }
+  if (row.contentKey.startsWith("authored/transit-")) {
+    return transitReaderTier(row) !== null;
+  }
+  if (DAILY_CONTINUITY_PREFIXES.some((prefix) => row.contentKey.startsWith(prefix))) {
+    return true;
+  }
+  return !requiresExactOwnerApproval(row.contentKey) || hasExactOwnerApproval(row);
+}
+
 // apps/web/src/content/fallbackArchitectureV3/resolver/renderTransitSynastry.browser.ts
 var TRUE_LILITH_KEY_DATES_INTRO = "True Black Moon Lilith stations about once a month, so it crosses the same degrees several times before it finally moves on.";
 function skyPlacementKeyDates({
@@ -463,7 +549,6 @@ function skyPlacementKeyDates({
 function skyPlacementKeyDatesIntro(facts) {
   return String(facts.planet ?? "").trim().toLowerCase() === "lilith" && skyPlacementKeyDates(facts).length > 0 ? TRUE_LILITH_KEY_DATES_INTRO : null;
 }
-var DAILY_GLANCE_READER_ELIGIBLE = /* @__PURE__ */ new Set(["approved", "approved_reuse", "reviewed"]);
 function dailyGlanceHash(value) {
   let hash = 2166136261;
   for (let index = 0; index < value.length; index += 1) {
@@ -488,10 +573,13 @@ function selectDailyGlanceVariantSet({
 }) {
   const fallback = { id: "primary", ...primary };
   if (!variantSet || variantSet.pairing_policy !== "explicit_pairs_only") return fallback;
-  const eligible = (status) => allowUnreviewed || DAILY_GLANCE_READER_ELIGIBLE.has(status);
-  const headlines = new Map(variantSet.headlines.filter((item) => eligible(item.review_status)).map((item) => [item.id, item.text]));
-  const bodies = new Map(variantSet.bodies.filter((item) => eligible(item.review_status)).map((item) => [item.id, item.text]));
-  const pairs = variantSet.pairings.filter((pairing) => eligible(pairing.review_status)).map((pairing) => ({ id: pairing.id, headline: headlines.get(pairing.headline_id), body: bodies.get(pairing.body_id) })).filter((pair) => Boolean(pair.headline && pair.body));
+  const eligible = (kind, item) => isGovernedReaderEligible({
+    ...item,
+    contentKey: `daily-glance-variant/${contentKey}/${kind}/${item.id}`
+  }, { allowUnreviewed });
+  const headlines = new Map(variantSet.headlines.filter((item) => eligible("headline", item)).map((item) => [item.id, item.text]));
+  const bodies = new Map(variantSet.bodies.filter((item) => eligible("body", item)).map((item) => [item.id, item.text]));
+  const pairs = variantSet.pairings.filter((pairing) => eligible("pairing", pairing)).map((pairing) => ({ id: pairing.id, headline: headlines.get(pairing.headline_id), body: bodies.get(pairing.body_id) })).filter((pair) => Boolean(pair.headline && pair.body));
   if (!pairs.some((pair) => pair.id === "primary")) pairs.unshift(fallback);
   const dayNumber = dailyGlanceDayNumber(dateKey);
   if (pairs.length === 1 || dayNumber === null) return pairs[0] ?? fallback;
@@ -605,7 +693,7 @@ function renderSynastryPairVoice(body, holders) {
   const marker = "__reader_holder__";
   let rendered = fill(body, { ...holders, [readerHolder]: marker });
   rendered = rendered.replace(new RegExp(`${marker}'s`, "g"), "your").replace(
-    new RegExp(`${marker}(\\s+(?:(?:${READER_HOLDER_ADVERBS})\\s+)*)(?:${READER_HOLDER_VERB_PATTERN})\\b`, "g"),
+    new RegExp(`(?<!from\\s)${marker}(\\s+(?:(?:${READER_HOLDER_ADVERBS})\\s+)*)(?:${READER_HOLDER_VERB_PATTERN})\\b`, "g"),
     (match, spacing) => {
       const verb = match.slice(marker.length + spacing.length);
       return `you${spacing}${READER_HOLDER_VERBS.get(verb) ?? verb}`;
@@ -665,7 +753,6 @@ function friendVoiceFromReaderCopy(body, name) {
   });
   return rendered;
 }
-var READER_ELIGIBLE2 = /* @__PURE__ */ new Set(["approved_reuse", "approved", "reviewed"]);
 function eligibleRowsByKey(rows, allowUnreviewed) {
   const candidates = /* @__PURE__ */ new Map();
   for (const row of rows) {
@@ -676,7 +763,7 @@ function eligibleRowsByKey(rows, allowUnreviewed) {
   return new Map(
     [...candidates].map(([key, keyed]) => [
       key,
-      [...keyed].reverse().find((candidate) => allowUnreviewed || READER_ELIGIBLE2.has(candidate.review_status ?? ""))
+      [...keyed].reverse().find((candidate) => isGovernedReaderEligible(candidate, { allowUnreviewed }))
     ]).filter((entry) => Boolean(entry[1]))
   );
 }
@@ -922,7 +1009,8 @@ function createTransitSynastryRenderer(transitLib, templatesFile, rowsFile, opts
     partSourceKeys: [[c.contentKey]],
     sourceKeys: [c.contentKey],
     templateKey,
-    contentKey: c.contentKey
+    contentKey: c.contentKey,
+    provenanceTier: transitReaderTier(c) ?? void 0
   });
   const fillKeep = (body, ctx) => body.replace(/\{\{([\w.]+)\}\}/g, (_, k) => ctx[k] != null ? String(ctx[k]) : `{{${k}}}`).trim();
   const EVENT_QUALITY = { conjunction: "conjunction", square: "hard", opposition: "hard", trine: "soft", sextile: "soft" };
@@ -1077,7 +1165,7 @@ ${fogNote}`;
         if (passHook2) aBody = `${aBody}
 
 ${passHook2}`;
-        return { headline: authoredHeadline, body: aBody, parts: aBody.split("\n\n"), templateKey: "authored/transit-aspect", contentKey: c.contentKey };
+        return { headline: authoredHeadline, body: aBody, parts: aBody.split("\n\n"), templateKey: "authored/transit-aspect", contentKey: c.contentKey, provenanceTier: transitReaderTier(c) ?? void 0 };
       }
     }
     const T = tpl("fallback-template/transit.aspect");
@@ -1197,54 +1285,50 @@ ${passHook}`;
     const body = sub(fill(T.body, ctx));
     return { headline: sub(fill(T.headline ?? "", ctx)), body, parts: [body], templateKey: T.contentKey };
   }
-  function renderSynastryAspect({ planetA, planetB, aspect, otherName }) {
+  function renderSynastryAspect({
+    planetA,
+    planetB,
+    aspect,
+    otherName,
+    otherPronouns,
+    romanticAllowed,
+    relationshipType
+  }) {
     const T = tpl("fallback-template/synastry.aspect-v3");
-    const g = GROUP[aspect];
-    const fwd = hooks.get(`fallback-hook/synastry-pair/${planetA}/${planetB}/${g}`);
-    const rev = fwd ? null : hooks.get(`fallback-hook/synastry-pair/${planetB}/${planetA}/${g}`);
+    const aspectFamily = aspect === "square" || aspect === "opposition" ? "hard" : aspect === "trine" || aspect === "sextile" ? "soft" : null;
+    const exactFwd = hooks.get(`fallback-hook/synastry-pair/${planetA}/${planetB}/${aspect}`);
+    const exactRev = exactFwd ? null : hooks.get(`fallback-hook/synastry-pair/${planetB}/${planetA}/${aspect}`);
+    const groupedFwd = exactFwd || exactRev || !aspectFamily ? null : hooks.get(`fallback-hook/synastry-pair/${planetA}/${planetB}/${aspectFamily}`);
+    const groupedRev = exactFwd || exactRev || groupedFwd || !aspectFamily ? null : hooks.get(`fallback-hook/synastry-pair/${planetB}/${planetA}/${aspectFamily}`);
+    const fwd = exactFwd ?? groupedFwd;
+    const rev = exactRev ?? groupedRev;
     const pairRow = fwd ?? rev;
-    const holders = fwd ? { holder1: "you", holder2: otherName, holder1Poss: "your", holder2Poss: `${otherName}'s`, holder1PossCap: "Your", holder2PossCap: `${otherName}'s` } : { holder1: otherName, holder2: "you", holder1Poss: `${otherName}'s`, holder2Poss: "your", holder1PossCap: `${otherName}'s`, holder2PossCap: "Your" };
+    const selectionTier = pairRow ? synastryReaderTier(pairRow) : null;
+    const otherSubject = otherPronouns?.subject?.trim() || "they";
+    const otherObject = otherPronouns?.object?.trim() || "them";
+    const otherPossessive = otherPronouns?.possessive?.trim() || "their";
+    const holders = fwd ? { holder1: "you", holder2: otherName, holder1Poss: "your", holder2Poss: `${otherName}'s`, holder1PossCap: "Your", holder2PossCap: `${otherName}'s`, holder2Subject: otherSubject, holder2Object: otherObject, holder2PronounPoss: otherPossessive } : { holder1: otherName, holder2: "you", holder1Poss: `${otherName}'s`, holder2Poss: "your", holder1PossCap: `${otherName}'s`, holder2PossCap: "Your", holder1Subject: otherSubject, holder1Object: otherObject, holder1PronounPoss: otherPossessive };
     const pairVoice = fwd ? pairRow?.body_you : pairRow?.body_they;
-    const modeA = hooks.get(`fallback-hook/planet-mode/${planetA}`)?.body_you;
-    const modeB = hooks.get(`fallback-hook/planet-mode/${planetB}`)?.body_they;
     const typeRow = hooks.get(`fallback-hook/synastry-aspect-type/${aspect}`);
-    const ctx = {
-      possessive: "Your",
-      planetATitle: title2(planetA),
-      planetBTitle: title2(planetB),
-      aspectName: aspect,
-      otherName,
-      aspectAdj: vocab.get(`fallback-vocab/aspect-adj/${aspect}`)?.body,
-      synAspectLine: typeRow && modeA && modeB ? fill(typeRow.body_you ?? "", {
-        modeA,
-        modeB,
-        otherName,
-        // what each person's planet feels like to the other (hard aspects)
-        gratesA: hooks.get(`fallback-hook/planet-grates/${planetA}`)?.body_you,
-        gratesB: hooks.get(`fallback-hook/planet-grates/${planetB}`)?.body_they,
-        sceneA: vocab.get(`fallback-vocab/planet-scene/${planetA}`)?.body,
-        sceneB: vocab.get(`fallback-vocab/planet-scene/${planetB}`)?.body,
-        askA: vocab.get(`fallback-vocab/planet-ask/${planetA}`)?.body,
-        askB: vocab.get(`fallback-vocab/planet-ask/${planetB}`)?.body
-      }) : null,
-      pairSentences: pairVoice ? renderSynastryPairVoice(pairVoice, holders) : null,
-      // signature closing formula for the assembled fallback (matches the natal-aspect close)
-      closingLine: (() => {
-        const coreA = vocab.get(`fallback-vocab/planet-core/${planetA}`)?.body;
-        const coreB = vocab.get(`fallback-vocab/planet-core/${planetB}`)?.body;
-        const motion = vocab.get(`fallback-vocab/aspect-motion/${aspect}`)?.body;
-        return coreA && coreB && motion ? `That's your ${title2(planetA)} ${aspect} ${otherName}'s ${title2(planetB)}: ${coreA} and ${coreB} ${motion}.` : null;
-      })()
-    };
-    if (ctx.pairSentences) {
-      const headlinePair = (T.headline ?? "").replace(/\{\{([\w.]+)\}\}/g, (_, k) => ctx[k] ?? "");
-      return { headline: headlinePair, tag: typeRow?.tag ?? null, body: ctx.pairSentences, parts: [ctx.pairSentences], templateKey: T.contentKey };
+    const pairSentences = pairVoice ? renderSynastryPairVoice(pairVoice, holders) : null;
+    if (pairSentences) {
+      const headlinePair = (T.headline ?? "").replace(/\{\{([\w.]+)\}\}/g, (_, k) => ({
+        possessive: "Your",
+        planetATitle: title2(planetA),
+        planetBTitle: title2(planetB),
+        aspectAdj: { conjunction: "conjunct", opposition: "opposite" }[aspect] ?? aspect,
+        otherName
+      })[k] ?? "");
+      const body = pairSentences;
+      if (romanticAllowed === false && /\b(?:romance|romantic|dating|sexual|sexy|chemistry|attraction|attracted)\b/iu.test(body)) {
+        throw new SourceGapError(`SOURCE_GAP: synastry relationship context ${relationshipType ?? "unspecified"} does not permit romantic copy`);
+      }
+      if (!selectionTier) {
+        throw new SourceGapError(`SOURCE_GAP: ineligible synastry row ${pairRow?.contentKey ?? "missing"}`);
+      }
+      return { headline: headlinePair, tag: typeRow?.tag ?? null, body, parts: [body], templateKey: T.contentKey, contentKey: pairRow?.contentKey, synastryTier: selectionTier };
     }
-    for (const slot of T.requiredSlots ?? []) if (ctx[slot] == null) throw new SourceGapError(`SOURCE_GAP: synastry aspect slot ${slot} for ${planetA}-${aspect}-${planetB}`);
-    let body = T.body.replace(/\{\{#([\w.]+)\}\}([\s\S]*?)\{\{\/\1\}\}/g, (_, key, inner) => ctx[key] ? inner : "").replace(/\{\{([\w.]+)\}\}/g, (_, k) => ctx[k] ?? "");
-    body = body.replace(/\s{2,}/g, " ").trim();
-    const headline = (T.headline ?? "").replace(/\{\{([\w.]+)\}\}/g, (_, k) => ({ ...ctx, possessive: "Your" })[k] ?? "");
-    return { headline, tag: typeRow?.tag ?? null, body, parts: [body], templateKey: T.contentKey };
+    throw new SourceGapError(`SOURCE_GAP: synastry aspect ${planetA}-${aspect}-${planetB}`);
   }
   const SPEED = ["moon", "mercury", "venus", "sun", "mars", "jupiter", "saturn", "chiron", "uranus", "neptune", "pluto", "north-node", "south-node"];
   function pairEffectOf(ev, areaOverride) {
@@ -1932,11 +2016,17 @@ ${passHook}`;
   }
   function renderSkyPlacement(facts) {
     const keyDates = skyPlacementKeyDates(facts);
-    return {
+    const rendered = {
       ...renderSkyPlacementCopy(facts),
       keyDates,
       keyDatesIntro: skyPlacementKeyDatesIntro(facts)
     };
+    if (facts.surface === "calendar" && /\b(?:you|your|yours|yourself|you're|you've|you'll|you'd)\b/iu.test(
+      [rendered.tagline, rendered.body].filter(Boolean).join(" ")
+    )) {
+      throw new SourceGapError(`SOURCE_GAP: calendar ingress ${facts.planet}/${facts.sign} violates the collective register`);
+    }
+    return rendered;
   }
   function formatCircleNames(names = [], includesReader = true) {
     const clean = names.map((n) => {
@@ -2137,6 +2227,9 @@ ${passHook}`;
     const rawBody = exactRow?.body_you ?? compactLunationRow?.body_you ?? String(signRow?.body ?? "");
     const body = fill(rawBody, { signTitle: title2(normalizedSign) }).replace(/^in \. /, "");
     if (/\{\{/.test(body)) throw new SourceGapError(`SOURCE_GAP: phase ${phase} in ${normalizedSign} has an unfilled slot`);
+    if (/\b(?:you|your|yours|yourself|you're|you've|you'll|you'd)\b/iu.test(body)) {
+      throw new SourceGapError(`SOURCE_GAP: calendar phase ${phase} in ${normalizedSign} violates the collective register`);
+    }
     const PHASE_NAMES = { "new-moon": "New Moon", "waxing-crescent": "Waxing Crescent Moon", "first-quarter": "First Quarter Moon", "waxing-gibbous": "Waxing Gibbous Moon", "full-moon": "Full Moon", "disseminating": "Disseminating Moon", "last-quarter": "Last Quarter Moon", "balsamic": "Balsamic Moon" };
     const plain = `${PHASE_NAMES[phase] ?? title2(phase)} in ${title2(normalizedSign)}`;
     return {
@@ -2631,7 +2724,7 @@ function createKnowledgeMatrixV13Resolver(file) {
 }
 
 // apps/web/src/content/fallbackArchitectureV3/resolver/index.browser.ts
-var PACKAGE_VERSION = "v3-2026-08-20b";
+var PACKAGE_VERSION = "v3-2026-08-21a";
 function stablePackageValue(value) {
   if (Array.isArray(value)) {
     return value.map(stablePackageValue);

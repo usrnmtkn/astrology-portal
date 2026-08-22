@@ -16,6 +16,19 @@ const skyRow = {
 const context = skyWriteupContextForRow(skyRow);
 assert.deepEqual(context, { planet: "sun", sign: "leo" });
 
+assert.deepEqual(
+  skyWriteupContextForRow({
+    id: "sky-north-node-aquarius",
+    content_key: "sky.placement.base.north_node.aquarius",
+    headline: "",
+    block_type: "sky_placement",
+    facts: null,
+    source_snapshot: null
+  }),
+  { planet: "north-node", sign: "aquarius" },
+  "Canonical underscore-delimited node keys must resolve without relying on facts or headline fallbacks."
+);
+
 const rows = [
   { id: "h10", content_key: "house-horoscope-core/sun/leo/house-10" },
   { id: "h2", content_key: "house-horoscope-core/sun/leo/house-2" },
