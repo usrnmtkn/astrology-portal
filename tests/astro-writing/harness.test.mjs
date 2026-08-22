@@ -47,6 +47,7 @@ import {
   ownerApprovedMatrixRoleEvidenceForTarget,
   ownerRelevantEvidenceFromVoiceIndex,
   ownerPositiveEvidenceFromSurfaceQualifiedPool,
+  ownerLockedLilithV5Evidence,
   generatedApprovalState,
   markPipelineReady,
   promoteCandidateWriter,
@@ -361,6 +362,35 @@ const ownerRegisterGold = JSON.parse(read("data/writing/owner-register-gold.json
 const ownerPositiveEvidence = ownerPositiveEvidenceFromSurfaceQualifiedPool(JSON.parse(read(
   "packages/astro-knowledge/voice/tldr-astro/satori-writer/surface-qualified-positive-exemplars-v2.json"
 )));
+const ownerLockedLilithEvidence = ownerLockedLilithV5Evidence(JSON.parse(read(
+  "packages/astro-knowledge/review/lilith-placements-v5/lilith-placements-v5-staged-rows.json"
+)).rows);
+assert.equal(ownerLockedLilithEvidence.length, 48);
+assert.ok(ownerPositiveEvidence.some((entry) => entry.sourceFamily === "sky-lunation"));
+const lilithSagittariusRetrievalPlan = buildMeaningPlan({
+  object: "lilith",
+  sign: "sagittarius",
+  objectFunction: "refusal, autonomy, and anger that carries information about a crossed limit",
+  signMechanics: "belief, meaning, conviction, freedom, and the search for what is true",
+  coreTension: "certainty becomes authority before the claim answers to evidence",
+  likelyObservableBehaviors: ["a repeated claim is defended as a test of loyalty"],
+  likelyConsequences: ["disagreement is treated as a character flaw"],
+  risks: ["ninth-house topics replace the sign mechanism"]
+});
+const lilithSagittariusRetrievalContext = retrieveOwnerContext(lilithSagittariusRetrievalPlan, {
+  examples: [...ownerPositiveEvidence, ...ownerLockedLilithEvidence],
+  contentFamily: "slow-mover-article",
+  register: "second_person",
+  relevantOwnerPassagesAvailableCount: 0,
+  ownerPassageRelevanceTier: "exact-owner-locked-lilith-placement",
+  matrixEvidenceAvailableCount: 0,
+  samePlanetSignSceneAvailableCount: 0,
+  corrections: allOwnerCorrections,
+  phraseEvidence: []
+});
+assert.ok(lilithSagittariusRetrievalContext.sameFamilyExamples.length >= 3);
+assert.ok(lilithSagittariusRetrievalContext.sameFamilyExamples.every((entry) => entry.sourceFamily !== "sky-lunation"));
+assert.ok(lilithSagittariusRetrievalContext.sameFamilyExamples.some((entry) => entry.sourceFamily === "owner-locked-lilith-v5-placement"));
 const writerVoiceIndex = JSON.parse(read("packages/astro-knowledge/voice/tldr-astro/satori-writer/voice-index.json"));
 const sunVirgoRelevantOwnerEvidence = ownerRelevantEvidenceFromVoiceIndex(writerVoiceIndex, { planet: "sun", sign: "virgo" });
 assert.ok(sunVirgoRelevantOwnerEvidence.counts.selected >= 3);
@@ -394,6 +424,7 @@ const matrixEvidenceRows = jsonl("data/writing/matrix-evidence-index/TLDR-Matrix
 const matrixCoverage = JSON.parse(read("data/writing/matrix-evidence-index/TLDR-Matrix-Coverage-By-Placement.json"));
 const llMatrixV13Rows = JSON.parse(read("packages/astro-knowledge/voice/tldr-astro/satori-writer/ll-matrix-v13/ll-matrix-v13.json")).rows;
 const llMatrixV13ManifestRows = JSON.parse(read("packages/astro-knowledge/review/ll-matrix-v13-runtime-manifest.json")).rows;
+const skyPointMeaningRows = JSON.parse(read("tldr-astro-phrasebank/phrasebank/cc-sky-points-authored.json")).reviewed;
 const ownerPhraseEvidence = loadPhraseEvidenceIndex(path.join(repoRoot, "data/writing/phrase-evidence-index/owner-phrase-evidence-v1.jsonl"));
 const ownerPhraseEvidenceReport = JSON.parse(read("packages/astro-knowledge/review/writing-pipeline-v3/phrase-evidence-v1/phrase-evidence-index-report.json"));
 assert.equal(ownerPhraseEvidence.filter((entry) => entry.store === "voice-bank").length, 87);
@@ -483,7 +514,8 @@ const sharedEvidenceIndex = buildSharedEvidenceIndex({
   approvedExamples,
   registerExamples: ownerPositiveEvidence,
   registerGoldExamples: ownerRegisterGold,
-  phraseExamples: ownerPhraseEvidence
+  phraseExamples: ownerPhraseEvidence,
+  skyPointMeaningRows
 });
 const extendedCoverage = buildExtendedEvidenceCoverage({ matrixCoverage, index: sharedEvidenceIndex });
 assert.deepEqual(Object.keys(sharedEvidenceIndex.counts).sort(), ["argument", "entries", "meaning", "phrase", "planetSignKeys", "register", "scene"].sort());
@@ -496,6 +528,7 @@ assert.equal(sharedEvidenceIndex.entries.filter((entry) => entry.sourceKind === 
 assert.ok(sharedEvidenceIndex.byPlanetSign["moon|cancer"].meaning.some((id) => id.startsWith("ll-matrix-v13:")));
 assert.ok(sharedEvidenceIndex.byPlanetSign["moon|aquarius"].meaning.some((id) => id.startsWith("ll-matrix-v13:")));
 for (const sign of ["aries", "taurus", "gemini", "cancer", "leo", "virgo", "libra", "scorpio", "sagittarius", "capricorn", "aquarius", "pisces"]) {
+  assert.ok(sharedEvidenceIndex.byPlanetSign[`lilith|${sign}`]?.meaning.length > 0, `Lilith ${sign} must retrieve reviewed exact-sign meaning evidence.`);
   assert.ok((sharedEvidenceIndex.byPlanetSign[`lilith|${sign}`]?.scene.length ?? 0) + (sharedEvidenceIndex.byPlanetSign[`lilith|${sign}`]?.argument.length ?? 0) > 0, `Lilith ${sign} must retrieve real scene or argument evidence.`);
 }
 assert.equal(sharedEvidenceIndex.byPlanetSign["*|*"].phrase.length, 346);
@@ -874,7 +907,7 @@ const venusPipelineArgumentInput = {
 };
 const pendingPipeline = await runSkyPlacementWritingPipeline({
   meaningInput: venusPipelineRequest.meaningInput,
-  examples: ownerPositiveEvidence,
+  examples: [...ownerPositiveEvidence, ...ownerLockedLilithEvidence],
   matrixExamples: venusLibraRoleEvidence.meaning,
   matrixArgumentCandidates: venusLibraRoleEvidence.argument_candidate,
   matrixEvidenceAvailableCount: venusLibraRoleEvidence.meaning.length,
@@ -903,7 +936,7 @@ const approvedArgumentOutline = approveArgumentOutline(pendingPipeline.argumentO
 });
 const pipeline = await runSkyPlacementWritingPipeline({
   meaningInput: venusPipelineRequest.meaningInput,
-  examples: ownerPositiveEvidence,
+  examples: [...ownerPositiveEvidence, ...ownerLockedLilithEvidence],
   matrixExamples: venusLibraRoleEvidence.meaning,
   matrixArgumentCandidates: venusLibraRoleEvidence.argument_candidate,
   matrixEvidenceAvailableCount: venusLibraRoleEvidence.meaning.length,
@@ -1027,7 +1060,7 @@ assert.ok(validateCopyBatch([
 ]).advisories.some((entry) => entry.category === "spine_scaffold_repetition"));
 const fastMoverPending = await runSkyPlacementWritingPipeline({
   meaningInput: venusPipelineRequest.meaningInput,
-  examples: ownerPositiveEvidence,
+  examples: [...ownerPositiveEvidence, ...ownerLockedLilithEvidence],
   matrixExamples: venusLibraRoleEvidence.meaning,
   matrixArgumentCandidates: venusLibraRoleEvidence.argument_candidate,
   matrixEvidenceAvailableCount: venusLibraRoleEvidence.meaning.length,
@@ -1045,7 +1078,7 @@ const fastMoverPending = await runSkyPlacementWritingPipeline({
 const fastMoverApprovedArgument = approveArgumentOutline(fastMoverPending.argumentOutline, { exactOwnerRuling: "I approve this outline." });
 const fastMoverPipeline = await runSkyPlacementWritingPipeline({
   meaningInput: venusPipelineRequest.meaningInput,
-  examples: ownerPositiveEvidence,
+  examples: [...ownerPositiveEvidence, ...ownerLockedLilithEvidence],
   matrixExamples: venusLibraRoleEvidence.meaning,
   matrixArgumentCandidates: venusLibraRoleEvidence.argument_candidate,
   matrixEvidenceAvailableCount: venusLibraRoleEvidence.meaning.length,
@@ -1133,7 +1166,7 @@ const protectedPartialFields = {
 };
 const partialFastMoverPipeline = await runSkyPlacementWritingPipeline({
   meaningInput: venusPipelineRequest.meaningInput,
-  examples: ownerPositiveEvidence,
+  examples: [...ownerPositiveEvidence, ...ownerLockedLilithEvidence],
   matrixExamples: venusLibraRoleEvidence.meaning,
   matrixArgumentCandidates: venusLibraRoleEvidence.argument_candidate,
   matrixEvidenceAvailableCount: venusLibraRoleEvidence.meaning.length,
@@ -1200,14 +1233,21 @@ assert.deepEqual(structuralPresenceWithoutQuality.failedElements, [
 ]);
 assert.ok(structuralPresenceWithoutQuality.failures.find((entry) => entry.element === "close")?.inheritedElement);
 
-const sameFamilyOwnerExamples = ownerPositiveEvidence.filter((entry) => entry.family === "sky-placement-current-sky-writer");
+const sameFamilyOwnerExamples = ownerLockedLilithEvidence;
 assert.ok(sameFamilyOwnerExamples.length >= 3);
+const genericSameFamilyOwnerExamples = sameFamilyOwnerExamples.slice(0, 3).map((entry, index) => ({
+  ...entry,
+  id: `generic-same-family-${index + 1}`,
+  contentKey: `generic-same-family-${index + 1}`,
+  planet: null,
+  sign: null
+}));
 const failedRetrievalRuns = [];
 for (const fixture of [
   {
     label: "target theme matched but phrase packet omitted",
     family: "fast-mover-article",
-    examples: sameFamilyOwnerExamples.slice(0, 3),
+    examples: genericSameFamilyOwnerExamples,
     registerGoldExamples: ownerRegisterGold,
     phraseEvidence: [],
     expectedCode: "OWNER_PHRASE_EVIDENCE_MISSING"
@@ -1233,7 +1273,7 @@ for (const fixture of [
   {
     label: "relevant published owner passages available but packet contains only generic voice examples",
     family: "fast-mover-article",
-    examples: sameFamilyOwnerExamples.slice(0, 3),
+    examples: genericSameFamilyOwnerExamples,
     registerGoldExamples: ownerRegisterGold,
     relevantOwnerPassagesAvailableCount: 3,
     ownerPassageRelevanceTier: "same-sign-then-same-planet",
