@@ -10,7 +10,7 @@ export * from "./knowledgeMatrixV13.browser";
 // Version stamp: the app must surface this in its debug/about screen and the dashboard
 // admin must show it next to the import status, so the owner can verify at a glance
 // that the running app and the dashboard are on the current package.
-export const PACKAGE_VERSION = "v3-2026-08-21b";
+export const PACKAGE_VERSION = "v3-2026-08-22a";
 
 type PackageRow = {
   contentKey: string;
