@@ -240,6 +240,13 @@ resolver/renderTransitSynastry.browser.ts
 
 Never patch `dist/tldr-content.js` by hand.
 
+Passing tests against the two resolver source files is not sufficient. The
+reader app imports the prebuilt `dist/tldr-content.js`, so every resolver
+behavior change must also have a regression that imports that shipped artifact
+and compares it with both source implementations. A product-surface change is
+complete only after the exact app-facing payload or rendered surface is
+verified.
+
 ### 5. Rebuild generated artifacts
 
 From the repository root:
