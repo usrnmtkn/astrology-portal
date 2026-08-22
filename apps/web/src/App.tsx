@@ -5461,7 +5461,7 @@ function personalizedSkyPlacementDetail(
       sign,
       house
     });
-    const natalAspectLines = transits
+    const natalAspects = transits
       .filter((transit) => (
         normalizeContentIdPart(transit.transitPlanet) === planet
         && normalizeContentIdPart(transit.transitSign ?? "") === sign
@@ -5476,9 +5476,13 @@ function personalizedSkyPlacementDetail(
               transitingPlanet: planet
             })
           : null;
-        return compiledAspect?.body ?? personalTransitPackageSection(transit, generatedAt)?.body ?? "";
-      })
-      .filter(Boolean);
+        const packageSection = personalTransitPackageSection(transit, generatedAt);
+        return {
+          key: transit.id,
+          heading: packageSection?.heading || personalTransitDisplayTitle(transit),
+          body: compiledAspect?.body ?? packageSection?.body ?? null
+        };
+      });
 
     return {
       ...detail,
@@ -5486,7 +5490,7 @@ function personalizedSkyPlacementDetail(
         body: compiledHousePassage?.body ?? rendered?.body ?? "",
         contentKey: compiledHousePassage?.contentKey ?? rendered?.contentKey ?? `sky-article-house/${planet}/${sign}/${house}`,
         heading: "Where it lands for you",
-        natalAspectLines
+        natalAspects
       }
     };
   } catch (error) {
@@ -12344,11 +12348,14 @@ export function App() {
 
   useEffect(() => {
     const socialNatalCacheMissing = ownSocialProfile?.hasNatalChart === false;
+    const skyPlacementPersonalizationActive = mode === "member"
+      && Boolean(skyDetailRoutePath?.startsWith("sky/placement/"));
 
     if (
       !userProfile
       || (
         !socialNatalCacheMissing
+        && !skyPlacementPersonalizationActive
         && !shouldRunProfileNatalCalculation(mode, isProfileMode, friendCalculationNeeds)
       )
     ) {
@@ -12523,6 +12530,7 @@ export function App() {
     friendCalculationNeeds,
     isProfileMode,
     mode,
+    skyDetailRoutePath,
     ownSocialProfile?.hasNatalChart,
     showNatalAspectPatterns,
     showNatalAspectPatternActivation

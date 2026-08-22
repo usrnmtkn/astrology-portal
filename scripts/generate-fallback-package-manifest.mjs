@@ -215,6 +215,7 @@ function fullReaderBundle() {
   const skyPlacementRows = readJson("source-rows/sky-placement-inventories-voice-pass-v1.json");
   const skySignRows = readSkySignCopySources().flatMap((source) => source.rows ?? []);
   const skyPlacementOwnerApprovedRows = skyPlacementOwnerApprovedReaderRows();
+  const skyPlacementHouseTemplateRows = readJson("source-rows/sky-placement-house-templates-v1.json").rows;
   const sunLeoHouseCoreRows = readJson("source-rows/sun-leo-house-cores-v1.json").rows
     .map(({ notes: _notes, source_keys: _sourceKeys, approved_via: _approvedVia, ...row }) => row);
   const venusLibraHouseCoreRows = readJson("source-rows/venus-libra-house-cores-v1.json").rows
@@ -246,6 +247,7 @@ function fullReaderBundle() {
         ...skyPlacementRows.rows,
         ...skySignRows,
         ...skyPlacementOwnerApprovedRows.rows,
+        ...skyPlacementHouseTemplateRows,
         ...sunLeoHouseCoreRows,
         ...venusLibraHouseCoreRows
       ]),
@@ -274,6 +276,7 @@ const pairDailyClauses = readJson("source-rows/pair-daily-clauses-v1.json");
 const skyPlacementVoicePassRows = readJson("source-rows/sky-placement-inventories-voice-pass-v1.json");
 const skyPlanetFrameRows = readJson("source-rows/sky-planet-frames-v1.json");
 const skyPlacementOwnerApprovedRows = skyPlacementOwnerApprovedReaderRows();
+const skyPlacementHouseTemplateRows = readJson("source-rows/sky-placement-house-templates-v1.json").rows;
 const sunLeoHouseCoreRows = readJson("source-rows/sun-leo-house-cores-v1.json").rows
   .map(({ notes: _notes, source_keys: _sourceKeys, approved_via: _approvedVia, ...row }) => row);
 const venusLibraHouseCoreRows = readJson("source-rows/venus-libra-house-cores-v1.json").rows
@@ -333,6 +336,7 @@ const skyPlacementRows = {
     ...(skyPlacementVoicePassRows.rows ?? []),
     ...skySignCopyRows,
     ...skyPlacementOwnerApprovedRows.rows,
+    ...skyPlacementHouseTemplateRows,
     ...sunLeoHouseCoreRows,
     ...venusLibraHouseCoreRows
   ]).filter((row) => isGovernedReaderEligible(row)),
