@@ -50,6 +50,12 @@ An approved authored unit serves verbatim. Do not shorten it, paraphrase it,
 derive a TLDR from it, or silently repair it at render time. A requested copy
 change creates a new approved version of that unit.
 
+The same rule applies during source selection. A compact knowledge-matrix row,
+evidence passage, generic transit row, card-length preference, or template
+cannot replace a known owner-authored unit for the same content key. Protected
+owner-authored sources must retain their recorded hash and word count, and the
+materializer must fail rather than substitute shorter copy.
+
 ### Review state controls serving
 
 Only `approved`, `approved_reuse`, and `reviewed` rows are reader-eligible.
