@@ -1,0 +1,35 @@
+{
+  "fixture": {
+    "eventDate": "2026-07-29T14:35:00.000Z",
+    "lunation": "Full Moon in Aquarius",
+    "risingSign": "Gemini",
+    "formerTrigger": {
+      "uranusHouse": 1,
+      "uranusLayerActive": true
+    }
+  },
+  "before": {
+    "headline": "Full Moon for Gemini Rising",
+    "body": "A course, trip, application, publication, or long-term plan may be reaching the point where someone has to give a real answer. This Full Moon lands in your 9th house of belief systems, spiritual direction, and long-term goals, bringing this part of your life to a head. What has been building here for the last six months shows its results now, ready or not.\n\nSix months ago, consciously or not, this lunar cycle began with the New Moon in Aquarius on February 17.\n\nAn Aquarius Full Moon shows you how the arrangement actually works. Saturn rules this sign, so attention turns to the responsibilities, limits, and old terms holding the plan together. The fixed signs are involved, so check your grip. The friction this week runs between your 3rd house of conversations, errands, and your daily circles and your 9th house of belief systems, spiritual direction, and long-term goals. The immediate demands on one side can compete with what is becoming undeniable on the other, so let the tension show you what needs to change.\n\nSaturn rules this Full Moon from your 11th house, so friends, organizations, professional contacts, and shared commitments are part of the answer. A goal everyone supported in theory may have quietly become your responsibility to carry.\n\nUranus in your 1st house adds a more personal element of change. Other people may notice that your direction, language, or presentation is changing before you have fully explained it. This week, the missing information arrives, someone gives their answer, or the practical cost of the plan becomes harder to ignore.",
+    "parts": [
+      "A course, trip, application, publication, or long-term plan may be reaching the point where someone has to give a real answer. This Full Moon lands in your 9th house of belief systems, spiritual direction, and long-term goals, bringing this part of your life to a head. What has been building here for the last six months shows its results now, ready or not.",
+      "Six months ago, consciously or not, this lunar cycle began with the New Moon in Aquarius on February 17.",
+      "An Aquarius Full Moon shows you how the arrangement actually works. Saturn rules this sign, so attention turns to the responsibilities, limits, and old terms holding the plan together. The fixed signs are involved, so check your grip. The friction this week runs between your 3rd house of conversations, errands, and your daily circles and your 9th house of belief systems, spiritual direction, and long-term goals. The immediate demands on one side can compete with what is becoming undeniable on the other, so let the tension show you what needs to change.",
+      "Saturn rules this Full Moon from your 11th house, so friends, organizations, professional contacts, and shared commitments are part of the answer. A goal everyone supported in theory may have quietly become your responsibility to carry.",
+      "Uranus in your 1st house adds a more personal element of change. Other people may notice that your direction, language, or presentation is changing before you have fully explained it. This week, the missing information arrives, someone gives their answer, or the practical cost of the plan becomes harder to ignore."
+    ],
+    "templateKey": "fallback-template/sky.lunation-horoscope"
+  },
+  "after": {
+    "headline": "Full Moon for Gemini Rising",
+    "body": "A course, trip, application, publication, or long-term plan may be reaching the point where someone has to give a real answer. This Full Moon lands in your 9th house of belief systems, spiritual direction, and long-term goals, bringing this part of your life to a head. What has been building here for the last six months shows its results now, ready or not.\n\nSix months ago, consciously or not, this lunar cycle began with the New Moon in Aquarius on February 17.\n\nAn Aquarius Full Moon shows you how the arrangement actually works. Saturn rules this sign, so attention turns to the responsibilities, limits, and old terms holding the plan together. The fixed signs are involved, so check your grip. The friction this week runs between your 3rd house of conversations, errands, and your daily circles and your 9th house of belief systems, spiritual direction, and long-term goals. The immediate demands on one side can compete with what is becoming undeniable on the other, so let the tension show you what needs to change.\n\nSaturn rules this Full Moon from your 11th house, so friends, organizations, professional contacts, and shared commitments are part of the answer. A goal everyone supported in theory may have quietly become your responsibility to carry.\n\nThis week, the missing information arrives, someone gives their answer, or the practical cost of the plan becomes harder to ignore.",
+    "parts": [
+      "A course, trip, application, publication, or long-term plan may be reaching the point where someone has to give a real answer. This Full Moon lands in your 9th house of belief systems, spiritual direction, and long-term goals, bringing this part of your life to a head. What has been building here for the last six months shows its results now, ready or not.",
+      "Six months ago, consciously or not, this lunar cycle began with the New Moon in Aquarius on February 17.",
+      "An Aquarius Full Moon shows you how the arrangement actually works. Saturn rules this sign, so attention turns to the responsibilities, limits, and old terms holding the plan together. The fixed signs are involved, so check your grip. The friction this week runs between your 3rd house of conversations, errands, and your daily circles and your 9th house of belief systems, spiritual direction, and long-term goals. The immediate demands on one side can compete with what is becoming undeniable on the other, so let the tension show you what needs to change.",
+      "Saturn rules this Full Moon from your 11th house, so friends, organizations, professional contacts, and shared commitments are part of the answer. A goal everyone supported in theory may have quietly become your responsibility to carry.",
+      "This week, the missing information arrives, someone gives their answer, or the practical cost of the plan becomes harder to ignore."
+    ],
+    "templateKey": "fallback-template/sky.lunation-horoscope"
+  }
+}

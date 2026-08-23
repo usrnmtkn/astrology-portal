@@ -6,7 +6,7 @@ import {
 } from "../content/fallbackArchitectureV3Runtime";
 import type { LocationInput, PlanetPosition, SkySnapshot } from "../types";
 import { isEligibleTransitReturn } from "./transitReturns";
-import type { LunarCalendarEvent } from "./ephemeris";
+import type { LunarCalendarEvent, MatchingNewMoonFact } from "./ephemeris";
 import {
   cmsSurfaceKeys,
   resolveCmsSurfaceOverride,
@@ -168,6 +168,7 @@ type WeeklyEphemerisData = {
   events: LunarCalendarEvent[];
   snapshots: SkySnapshot[];
   lunationEventSkies: Map<string, SkySnapshot>;
+  matchingNewMoons: Map<string, MatchingNewMoonFact>;
   stationEventPositions: Map<string, PlanetPosition>;
 };
 
@@ -382,7 +383,7 @@ async function loadWeeklyEphemeris(location: LocationInput, window: WeeklyWindow
     const calculationDates = window.dateKeys.map((dateKey) => new Date(`${dateKey}T16:00:00Z`));
     const rangeStart = new Date(`${window.weekStart}T00:00:00Z`);
     const rangeEnd = new Date(`${window.weekEnd}T23:59:59.999Z`);
-    const { getAstrodienstSky, getLunarCalendarRangeEvents } = await import("./ephemeris");
+    const { getAstrodienstSky, getLunarCalendarRangeEvents, getMatchingNewMoonForFullMoon } = await import("./ephemeris");
     const [rangeEvents, ...snapshots] = await Promise.all([
       getLunarCalendarRangeEvents(location, rangeStart, rangeEnd),
       ...calculationDates.map((date) => getAstrodienstSky(location, date))
@@ -397,6 +398,15 @@ async function loadWeeklyEphemeris(location: LocationInput, window: WeeklyWindow
         event.id,
         await getAstrodienstSky(location, new Date(event.startsAt), { includeTransitWindows: true })
       ] as const))
+    );
+    const matchingNewMoons = new Map<string, MatchingNewMoonFact>(
+      (await Promise.all(lunationEvents.map(async (event) => {
+        if (lunationKind(event) !== "full-moon" || !event.sign) return null;
+        const match = await getMatchingNewMoonForFullMoon(location, event.startsAt, event.sign);
+        return match ? [event.id, match] as const : null;
+      }))).filter(
+        (entry): entry is readonly [string, MatchingNewMoonFact] => entry !== null
+      )
     );
     const stationPositionEntries = await Promise.all(
       events.filter(isExactStation).map(async (event) => {
@@ -416,7 +426,7 @@ async function loadWeeklyEphemeris(location: LocationInput, window: WeeklyWindow
       )
     );
 
-    return { events, snapshots, lunationEventSkies, stationEventPositions };
+    return { events, snapshots, lunationEventSkies, matchingNewMoons, stationEventPositions };
   })();
 
   weeklyEphemerisCache.set(key, request);
@@ -452,21 +462,11 @@ export function lunationBlendFacts(
     ? snapshot.positions.find((position) => normalizeId(position.planet) === ruler)
     : null;
   const rulerHouse = rulerPosition ? wholeSignHouse(rulerPosition.sign, risingSign) : null;
-  const moon = snapshot.positions.find((position) => normalizeId(position.planet) === "moon");
   const uranus = snapshot.positions.find((position) => normalizeId(position.planet) === "uranus");
   const uranusHouse = uranus ? wholeSignHouse(uranus.sign, risingSign) : null;
-  const lunationLights = isFullMoon ? [moon, sun] : [moon ?? sun];
-  const uranusLongitude = uranus?.longitude;
-  const uranusHasCloseAspect = typeof uranusLongitude === "number"
-    && lunationLights.some((light) => {
-      if (typeof light?.longitude !== "number") return false;
-      const separation = angularSeparation(uranusLongitude, light.longitude);
-      return exactAspects.some(({ degrees }) => Math.abs(separation - degrees) <= 3);
-    });
-  const uranusLayerActive = Boolean(
-    uranusHouse
-    && ([1, 4, 7, 10].includes(uranusHouse) || uranusHasCloseAspect)
-  );
+  // The Uranus-only lunation layer is retained in the content library but is
+  // intentionally non-serving. See docs/decisions/2026-08-23-remove-uranus-lunation-reader-layer.md.
+  const uranusLayerActive = false;
 
   return {
     moonHouse,
@@ -614,13 +614,20 @@ export function resolveWeeklyStationCopy(
   return renderStation(event, risingSign, rows, stationPosition, timeZone);
 }
 
-function renderLunation(event: LunarCalendarEvent, risingSign: string, eventSky: SkySnapshot) {
+function renderLunation(
+  event: LunarCalendarEvent,
+  risingSign: string,
+  eventSky: SkySnapshot,
+  matchingNewMoon?: MatchingNewMoonFact
+) {
   const kind = lunationKind(event);
   const blendFacts = lunationBlendFacts(eventSky, event.sign ?? "", risingSign, kind);
   const rendered = transitSynastryFallbackRendererV3.renderLunationHoroscope({
     kind,
     sign: normalizeId(event.sign ?? ""),
     risingSign: normalizeId(risingSign),
+    eventDate: event.startsAt,
+    matchingNewMoon,
     ...blendFacts,
     weekly: true
   });
@@ -1291,7 +1298,7 @@ export async function buildWeeklyHoroscope({
 }): Promise<WeeklyHoroscopeAssembly> {
   const timeZone = location.timeZone || "UTC";
   const window = weeklyWindowFor(now, timeZone);
-  const { events, snapshots, lunationEventSkies, stationEventPositions } = await loadWeeklyEphemeris(location, window);
+  const { events, snapshots, lunationEventSkies, matchingNewMoons, stationEventPositions } = await loadWeeklyEphemeris(location, window);
   const natalTargets = natalSky.positions.filter((position) => typeof position.longitude === "number");
   const contactsByDay = snapshots.map((snapshot) => weeklyDailyTransitContacts(snapshot, natalTargets));
   const contacts = contactsByDay.flat();
@@ -1331,7 +1338,12 @@ export async function buildWeeklyHoroscope({
         if (event.type === "lunation") {
           const eventSky = lunationEventSkies.get(event.id);
           if (!eventSky) throw new SourceGapError(`SOURCE_GAP: event-time sky missing for ${event.id}`);
-          const rendered = renderLunation(event, risingSign, eventSky);
+          const rendered = renderLunation(
+            event,
+            risingSign,
+            eventSky,
+            matchingNewMoons.get(event.id)
+          );
           candidates.push({
             dateKey: event.dateKey,
             dayLabel: eventDayLabel(event.dateKey),

@@ -44,6 +44,17 @@
       "rule": "Give each supplied aspect its own attributed sentence and place it in the supplied houses. No fact, no sentence."
     },
     {
+      "id": "matching_new_moon_anchor",
+      "requiredFor": ["full-moon"],
+      "factDependencies": ["exactAt", "matchingNewMoon.exactAt", "matchingNewMoon.sign"],
+      "template": "Six months ago, consciously or not, this lunar cycle began with the New Moon in {{matchingNewMoonSign}} on {{matchingNewMoonDate}}.",
+      "dateFormat": {
+        "sameCalendarYear": "MMMM d",
+        "differentCalendarYear": "MMMM d, yyyy"
+      },
+      "rule": "Every ordinary Full Moon write-up names the verified matching New Moon. Include the New Moon year only when its calendar year differs from the Full Moon year."
+    },
+    {
       "id": "response_close",
       "required": true,
       "factDependencies": ["eventType"],
@@ -64,12 +75,13 @@
     },
     "full-moon": {
       "temperature": ["culmination", "illumination", "release"],
-      "movements": ["house_landing", "axis_partner", "event_condition", "education_beat", "aspect_weave", "response_close"],
+      "movements": ["house_landing", "axis_partner", "event_condition", "matching_new_moon_anchor", "education_beat", "aspect_weave", "response_close"],
       "axisNamingAllowed": true,
       "revealBeat": false,
       "collapseFirst": false,
-      "sixMonthArc": false,
-      "matchingNewMoonClaim": "fact_gated",
+      "sixMonthArc": true,
+      "arcPolicy": "required_matching_new_moon_anchor",
+      "matchingNewMoonClaim": "required",
       "closePolicy": "match_full_moon_theme"
     },
     "eclipse-solar": {
@@ -112,6 +124,7 @@
       "outerPlanetPlacementsComplete"
     ],
     "fullMoonAndLunarEclipse": ["sunSign", "sunHouse"],
+    "fullMoon": ["matchingNewMoon.exactAt", "matchingNewMoon.sign"],
     "rule": "No fact, no sentence. Empty aspect or outer-planet lists are accepted only with an explicit completeness flag."
   },
   "openQuestions": [

@@ -1,8 +1,8 @@
 {
-  "packageVersion": "v3-2026-08-23k",
-  "contentHash": "a1283cdc15d1a348993aae721cf6fe8c",
-  "keyManifestHash": "d95d0565d7c750290ddbd67f2637eb95",
-  "keyCount": 9154,
+  "packageVersion": "v3-2026-08-23l",
+  "contentHash": "3bbba20e15bce1227c77aa480db775fe",
+  "keyManifestHash": "bab425b6ed8bb7aacb01d1ccd0592986",
+  "keyCount": 9155,
   "keys": [
     "authored:approved/calendar-weekly-overview/2026-08-03",
     "authored:authored/calendar-weekly-moon/aquarius",
@@ -4074,6 +4074,7 @@
     "hook:fallback-hook/lunation-intention/7",
     "hook:fallback-hook/lunation-intention/8",
     "hook:fallback-hook/lunation-intention/9",
+    "hook:fallback-hook/lunation-matching-new-moon-anchor/full",
     "hook:fallback-hook/lunation-moment/full/1",
     "hook:fallback-hook/lunation-moment/full/10",
     "hook:fallback-hook/lunation-moment/full/11",

@@ -25,3 +25,26 @@ After clarification, the owner ruled:
   desire.
 
 No generation, serving, or runtime approval is recorded by these rulings.
+
+## Matching New Moon anchor addendum
+
+Date: 2026-08-23
+
+The owner directed that every ordinary Full Moon write-up include this anchor:
+
+> Six months ago, consciously or not, this lunar cycle began with the New Moon in X.
+
+The owner then directed that the verified matching New Moon date be included, with its year
+shown only when the six-month cycle crosses a calendar year, and asked for the rule and
+compiler to be updated.
+
+Machine interpretation:
+
+- `matchingNewMoon` is required for every `full-moon` packet.
+- Its sign must match the Full Moon sign and its exact time must precede the Full Moon.
+- The governed sentence is: "Six months ago, consciously or not, this lunar cycle began
+  with the New Moon in {{matchingNewMoonSign}} on {{matchingNewMoonDate}}."
+- `matchingNewMoonDate` renders as `MMMM d` in the same calendar year and `MMMM d, yyyy`
+  when the New Moon year differs from the Full Moon year.
+- This is a writing-rule and compiler update. It does not authorize generation, serving, or
+  runtime use of the non-serving lunation template contract.

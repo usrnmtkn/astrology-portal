@@ -786,6 +786,7 @@ try {
   assert.equal(geminiBlendFacts.rulerHouse, 11);
   assert.equal(geminiBlendFacts.rulerRetrograde, true);
   assert.equal(geminiBlendFacts.uranusHouse, 1);
+  assert.equal(geminiBlendFacts.uranusLayerActive, false);
   assert.doesNotThrow(() => weekly.assertLunationBodyMatchesEventSky(
     "Saturn is currently retrograde in Aries, Uranus is in Gemini, and Jupiter conjunct the Sun in Leo.",
     eventSky
@@ -875,7 +876,7 @@ try {
     realWeek.horoscope.body,
     /Because Saturn is retrograde, this is less about taking on something new and more an inspection of what already exists:/u
   );
-  assert.match(
+  assert.doesNotMatch(
     realWeek.horoscope.body,
     /Uranus in your 1st house adds a more personal element of change/u
   );
