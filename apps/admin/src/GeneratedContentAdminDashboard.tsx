@@ -16,7 +16,8 @@ import {
   Server,
   Sparkles,
   Trash2,
-  Users
+  Users,
+  X
 } from "lucide-react";
 import { lazy, Suspense, useEffect, useMemo, useRef, useState } from "react";
 import type { KeyboardEvent as ReactKeyboardEvent } from "react";
@@ -61,7 +62,9 @@ import {
   renderWorkspacePreview,
   setPackageValueAt,
   skyFallbackIdentity,
+  skyPlacementCompositionOptions,
   skyPlacementFallbackSectionOutline,
+  skyPlacementFrameTemplateKey,
   skyFallbackWorkspace
 } from "./skyFallbackWorkspace";
 import { templateVariableReferences } from "./templateVariableReference";
@@ -668,7 +671,10 @@ function draftIsFallbackHook(draft: AdminDraft) {
 }
 
 function draftIsTemplate(draft: AdminDraft) {
-  return draft.blockType === "template" || draft.blockType === "fallback_template" || draft.contentKey.startsWith("slot-template/");
+  return draft.blockType === "template"
+    || draft.blockType === "fallback_template"
+    || draft.contentKey.startsWith("slot-template/")
+    || draft.contentKey.startsWith("fallback-template/");
 }
 
 function contentSystemForRole(role: AdminContentRole): Exclude<AdminContentSystemFilter, "all"> {
@@ -2356,6 +2362,15 @@ export function GeneratedContentAdminDashboard() {
   }
 
   useEffect(() => {
+    if (!message || loadState === "loading") return;
+    const isErrorMessage = loadState === "error" || loadState === "accessDenied";
+    const timeout = window.setTimeout(() => {
+      setMessage((current) => current === message ? "" : current);
+    }, isErrorMessage ? 14_000 : 7_000);
+    return () => window.clearTimeout(timeout);
+  }, [loadState, message]);
+
+  useEffect(() => {
     let secondFrame = 0;
     const firstFrame = window.requestAnimationFrame(() => {
       window.scrollTo({ top: 0, left: 0, behavior: "auto" });
@@ -3907,7 +3922,14 @@ export function GeneratedContentAdminDashboard() {
           </div>
         </header>
 
-        {message && <p className={`admin-save-toast ${loadState === "error" || loadState === "accessDenied" ? "is-error" : ""}`} role="status">{message}</p>}
+        {message && (
+          <div className={`admin-save-toast ${loadState === "error" || loadState === "accessDenied" ? "is-error" : ""}`} role="status">
+            <span>{message}</span>
+            <button type="button" onClick={() => setMessage("")} aria-label="Dismiss notification">
+              <X size={16} aria-hidden="true" />
+            </button>
+          </div>
+        )}
         {hasAccessIssue && activePage !== "connection" && renderAccessGate()}
         {hasLoadFailure && renderLoadFailure()}
 
@@ -5241,6 +5263,8 @@ export function GeneratedContentAdminDashboard() {
       || fallbackHookReviewStatusForDraft(currentDraft);
     const packageReviewStatus = packageReviewStatusForDraft(currentDraft);
     const packageRecord = draftPackageRecord(currentDraft);
+    const isSkyPlacementFrameTemplate = currentDraft.contentKey === skyPlacementFrameTemplateKey;
+    const skyPlacementTemplateOptions = skyPlacementCompositionOptions(effectivePackageRecord(currentDraft.sections));
     const skyFallbackEditor = skyFallbackWorkspace(currentDraft.contentKey, currentDraft.sections);
     const skyFallbackContentIdentity = skyFallbackIdentity(currentDraft.contentKey);
     const effectiveSkyFallbackVariableTarget = skyFallbackEditor?.fields.some((field) => field.key === skyFallbackVariableTarget)
@@ -5410,7 +5434,7 @@ export function GeneratedContentAdminDashboard() {
         }
       });
     };
-    const updateSkyFallbackField = (field: string, value: string) => {
+    const updateSkyFallbackField = (field: string, value: unknown) => {
       const sections = objectRecord(currentDraft.sections) ?? {};
       const original = objectRecord(sections.packageRecord) ?? {};
       const currentPackageDraft = Object.keys(objectRecord(sections.packageDraft) ?? {}).length
@@ -5554,6 +5578,38 @@ export function GeneratedContentAdminDashboard() {
               <p>Templates and slots assemble fallback language from reviewed source phrases. Edit them as scaffolds, not as final authored reader prose.</p>
             </div>
           )}
+          {isSkyPlacementFrameTemplate && (
+            <section className="admin-content-role-panel admin-sky-placement-composition" aria-label="Sky Placement fallback composition">
+              <div>
+                <p className="admin-eyebrow">Sky Placement fallback composition</p>
+                <h3>Educational sections</h3>
+              </div>
+              <p>These switches set the global defaults for every canonical Sky Placement fallback page. Individual articles do not override them here.</p>
+              <label className="admin-composition-option">
+                <input
+                  type="checkbox"
+                  checked={skyPlacementTemplateOptions.includePlanetLore}
+                  onChange={(event) => updateSkyFallbackField("compositionOptions.includePlanetLore", event.target.checked)}
+                />
+                <span>
+                  <strong>Include planet explanation</strong>
+                  <small>Shows the reviewed <code>sky-placement-frame/&#123;planet&#125;</code> section.</small>
+                </span>
+              </label>
+              <label className="admin-composition-option">
+                <input
+                  type="checkbox"
+                  checked={skyPlacementTemplateOptions.includeSignLore}
+                  onChange={(event) => updateSkyFallbackField("compositionOptions.includeSignLore", event.target.checked)}
+                />
+                <span>
+                  <strong>Include sign history and symbolism</strong>
+                  <small>Shows the reviewed <code>sky-placement-lore/&#123;sign&#125;</code> section.</small>
+                </span>
+              </label>
+              <p className="admin-field-hint"><strong>Review rule:</strong> changing a switch creates a non-serving package proposal. It does not change reader pages until the proposal is approved, regenerated, and deployed.</p>
+            </section>
+          )}
           {isCmsSurfaceDraft && (
             <div className="admin-editor-guidance" aria-label="CMS surface template guidance">
               <strong>Reader-facing CMS override</strong>
@@ -5583,7 +5639,8 @@ export function GeneratedContentAdminDashboard() {
               <h3>{skyFallbackContentIdentity?.typeLabel ?? contentRole.label}</h3>
             </div>
             <p>{skyFallbackContentIdentity
-              ? `Reader-facing ${skyFallbackContentIdentity.groupLabel.toLowerCase()} content. Its internal fallback key remains visible for traceability.`
+              ? skyFallbackContentIdentity.description
+                ?? `Reader-facing ${skyFallbackContentIdentity.groupLabel.toLowerCase()} content. Its internal fallback key remains visible for traceability.`
               : contentRole.detail}</p>
             {contentRole.label === "Fallback source/helper" && (
               <p><strong>Reader rule:</strong> this text can support the fallback system, but it cannot appear as a standalone authored write-up.</p>

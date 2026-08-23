@@ -725,6 +725,8 @@ test.describe("content dashboard admin user flow case studies", () => {
       timeout: routeReadyTimeoutMs
     });
     await expect(page.getByRole("status")).toContainText(`Loaded ${generatedContentRows.length} saved rows`);
+    await page.getByRole("button", { name: "Dismiss notification" }).click();
+    await expect(page.getByRole("status")).toHaveCount(0);
   });
 
   test("admin shell navigates every primary dashboard surface", async ({ page }) => {
@@ -1768,6 +1770,48 @@ test.describe("content dashboard admin user flow case studies", () => {
     await list.locator(".admin-content-row", { hasText: "Alpha fallback" }).getByRole("button", { name: "Edit" }).click();
     await expect(page.getByLabel("Fallback hook guidance")).toContainText("Edit the Headline, Summary, or Body below");
     await expect(page.getByLabel("Fallback hook guidance")).toContainText("Sign Off makes it reader-eligible");
+    await assertNoBrowserErrors();
+  });
+
+  test("Sky Placement template parts use reader-facing titles and descriptions", async ({ page }) => {
+    const assertNoBrowserErrors = await expectNoBrowserErrors(page);
+    const fallbackSeed = generatedContentRows.find((row) => row.content_key === "fallback-hook/friends.compatibility.planet-card")!;
+    await seedAdminApi(page, {
+      generatedRows: [
+        {
+          ...fallbackSeed,
+          id: "qa-sun-placement-opening",
+          content_key: "fallback-hook/sky-placement/sun",
+          headline: "Sun",
+          block_type: "fallback_hook"
+        },
+        {
+          ...fallbackSeed,
+          id: "qa-sun-placement-frame",
+          content_key: "fallback-hook/sky-placement-frame/sun",
+          headline: "Sun",
+          block_type: "fallback_hook"
+        },
+        {
+          ...fallbackSeed,
+          id: "qa-sun-virgo-placement-sign",
+          content_key: "fallback-hook/sky-placement-sign/sun/virgo",
+          headline: "Virgo",
+          block_type: "fallback_hook"
+        }
+      ]
+    });
+    await expectAdminRouteLoads(page, "/admin/content#fallback-hooks");
+
+    const list = page.getByRole("complementary", { name: "Saved fallback hook rows" });
+    await expect(list.getByText("Sun · Transit dates and opening", { exact: true })).toBeVisible();
+    await expect(list.getByText("Sun · About the Sun", { exact: true })).toBeVisible();
+    await expect(list.getByText("Sun in Virgo", { exact: true })).toBeVisible();
+
+    await list.locator(".admin-content-row", { hasText: "Sun · Transit dates and opening" }).getByRole("button", { name: "Edit" }).click();
+    const editor = page.getByRole("dialog", { name: "Generated content editor" });
+    await expect(editor.getByRole("region", { name: "Content role" })).toContainText("Transit dates and opening");
+    await expect(editor.getByRole("region", { name: "Content role" })).toContainText("Shared Sun opening with calculated sign, entry date, and exit date");
     await assertNoBrowserErrors();
   });
 
