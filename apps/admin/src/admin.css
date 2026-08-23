@@ -9164,7 +9164,7 @@ body,
   white-space: normal;
 }
 
-.admin-dashboard :where(.admin-title-field :where(input, select), .admin-review-copy-editor textarea, .admin-metadata-field :where(input, select), .admin-field-wide input) {
+.admin-dashboard :where(.admin-title-field :where(input, select), .admin-review-copy-editor textarea, .admin-metadata-field :where(input, select), .admin-field-wide :where(input, select)) {
   box-sizing: border-box;
   width: 100%;
 }

@@ -118,6 +118,7 @@ type AdminPhrasebankTier = "CONFIRMED" | "REVIEWED" | "SESSION_APPROVED_DRAFT" |
 type AdminPhrasebankTierFilter = AdminPhrasebankTier | "all";
 type AdminContentCategoryFilter = "all" | "Sky" | "Natal Aspects" | "Natal Angles" | "Natal Chart" | "Relationship" | "Condition Modifiers" | "Fallback Hooks" | "Fallback Templates";
 type AdminFallbackHookSectionFilter = "all" | "sky" | "you" | "friends" | "lunar-calendar" | "settings";
+type AdminFallbackRowSort = "title-asc" | "title-desc" | "type";
 type WritingSurfaceAreaFilter = "all" | "sky" | "you" | "friends" | "calendar" | "settings";
 type WritingSurfaceStatusFilter = "all" | "complete" | "partial" | "missing";
 type AdminArticlePointFilter = "all" | "sun" | "moon" | "mercury" | "venus" | "mars" | "jupiter" | "saturn" | "uranus" | "neptune" | "pluto" | "other";
@@ -439,6 +440,11 @@ const fallbackSections: Array<{ key: AdminFallbackHookSectionFilter; label: stri
   { key: "friends", label: "Friends" },
   { key: "lunar-calendar", label: "Lunar Calendar" },
   { key: "settings", label: "Settings" }
+];
+const fallbackRowSortOptions: Array<{ key: AdminFallbackRowSort; label: string }> = [
+  { key: "title-asc", label: "Title A–Z" },
+  { key: "title-desc", label: "Title Z–A" },
+  { key: "type", label: "Type (grouped)" }
 ];
 const articlePointFilters: Array<{ key: AdminArticlePointFilter; label: string }> = [
   { key: "all", label: "All planets and points" },
@@ -1395,6 +1401,19 @@ function rowTypeLabel(row: AdminGeneratedContentRow) {
   return contentClassLabel(contentClassForRow(row));
 }
 
+function compareFallbackRows(left: AdminGeneratedContentRow, right: AdminGeneratedContentRow, sort: AdminFallbackRowSort) {
+  const compare = (first: string, second: string) => first.localeCompare(second, undefined, { numeric: true, sensitivity: "base" });
+  const titleDifference = compare(rowTitle(left), rowTitle(right));
+
+  if (sort === "title-desc") return -titleDifference || compare(right.content_key, left.content_key);
+  if (sort === "type") {
+    return compare(rowTypeLabel(left), rowTypeLabel(right))
+      || titleDifference
+      || compare(left.content_key, right.content_key);
+  }
+  return titleDifference || compare(left.content_key, right.content_key);
+}
+
 function contentClassForRow(row: AdminGeneratedContentRow | AdminReviewRecord): AdminContentClass {
   const contentKey = "content_key" in row ? row.content_key : row.contentKey;
   const blockType = "content_key" in row ? row.block_type : row.blockType;
@@ -1869,6 +1888,7 @@ export function GeneratedContentAdminDashboard() {
   const [showRetiredRows, setShowRetiredRows] = useState(false);
   const [query, setQuery] = useState("");
   const [fallbackSectionFilter, setFallbackSectionFilter] = useState<AdminFallbackHookSectionFilter>("all");
+  const [fallbackRowSort, setFallbackRowSort] = useState<AdminFallbackRowSort>("type");
   const [surfaceAreaFilter, setSurfaceAreaFilter] = useState<WritingSurfaceAreaFilter>("all");
   const [surfaceStatusFilter, setSurfaceStatusFilter] = useState<WritingSurfaceStatusFilter>("all");
   const [vocabularyCategory, setVocabularyCategory] = useState<AdminVocabularyCategoryFilter>("planets");
@@ -2103,7 +2123,7 @@ export function GeneratedContentAdminDashboard() {
   const filteredFallbackRows = useMemo(() => savedFallbackRows.filter((row) => (
     (fallbackSectionFilter === "all" || fallbackSectionForKey(row.content_key, row.surface) === fallbackSectionFilter)
       && matchesAdminSearch(fallbackHookVisibleSearchText(row), query)
-  )), [savedFallbackRows, fallbackSectionFilter, query]);
+  )).sort((left, right) => compareFallbackRows(left, right, fallbackRowSort)), [savedFallbackRows, fallbackSectionFilter, fallbackRowSort, query]);
   const filteredHookCatalog = useMemo(() => {
     const search = query.trim().toLowerCase();
 
@@ -4044,14 +4064,28 @@ export function GeneratedContentAdminDashboard() {
               </button>
             </section>
             {renderFallbackTabs()}
-            <label className="admin-field-wide">
-              <span>Search fallback articles and passages</span>
-              <input aria-label="Search fallback articles and passages" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Planet, sign, aspect, house, or content key" />
-            </label>
+            <section className="admin-content-filters" aria-label="Fallback row controls">
+              <div className="admin-review-filter-grid">
+                <label className="admin-field-wide">
+                  <span>Search fallback articles and passages</span>
+                  <input aria-label="Search fallback articles and passages" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Planet, sign, aspect, house, or content key" />
+                </label>
+                <label className="admin-field-wide">
+                  <span>Sort rows</span>
+                  <select aria-label="Sort fallback rows" value={fallbackRowSort} onChange={(event) => setFallbackRowSort(event.target.value as AdminFallbackRowSort)}>
+                    {fallbackRowSortOptions.map((option) => <option key={option.key} value={option.key}>{option.label}</option>)}
+                  </select>
+                </label>
+              </div>
+            </section>
             <section className="admin-workbench admin-review-workspace">
               {renderEditor()}
               <aside className="admin-list-panel" aria-label="Saved fallback hook rows">
-                {renderFallbackContentGroups(filteredFallbackRows)}
+                {fallbackRowSort === "type"
+                  ? renderFallbackContentGroups(filteredFallbackRows)
+                  : filteredFallbackRows.length > 0
+                    ? renderContentTable(filteredFallbackRows)
+                    : <p className="admin-empty">No rows match these filters.</p>}
               </aside>
             </section>
           </section>
@@ -5329,8 +5363,9 @@ export function GeneratedContentAdminDashboard() {
           )}
           {isFallbackHookDraft && !skyFallbackEditor && (
             <div className="admin-editor-guidance" aria-label="Fallback hook guidance">
-              <strong>Fallback system hook</strong>
-              <p>This row supports the fallback system. It should stay simple, safe, and reviewable; it is not treated as an authored dashboard article.</p>
+              <strong>How to update this fallback</strong>
+              <p>Edit the Headline, Summary, or Body below. Keep names inside double braces, such as {"{{entryDate}}"}, because the app replaces them with live facts when it uses this fallback.</p>
+              <p><strong>Save</strong> keeps the current status. <strong>Reviewed</strong> records editorial review without publishing this standard row. <strong>Sign Off</strong> makes it reader-eligible, but it is still used only when higher-priority authored or generated copy is unavailable. The content key controls where it is used and normally should not be changed.</p>
             </div>
           )}
           {isTemplateDraft && (
