@@ -55,7 +55,12 @@ export function ReportFulfillmentAdminPanel({ secret }: { secret: string }) {
     try {
       const response = await fetch("/api/admin/report-fulfillment", {
         ...init,
-        headers: { authorization: `Bearer ${secret}`, "content-type": "application/json", ...(init?.headers ?? {}) }
+        headers: {
+          authorization: `Bearer ${secret}`,
+          "x-content-generation-secret": secret,
+          "content-type": "application/json",
+          ...(init?.headers ?? {})
+        }
       });
       const payload = await response.json() as AdminResponse;
       if (!response.ok) throw new AdminRequestError(payload.error ?? `Request failed with ${response.status}.`, response.status, payload.code);

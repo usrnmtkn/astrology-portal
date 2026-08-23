@@ -1656,7 +1656,10 @@ async function adminJsonRequest<T>(path: string, secret: string, options: Reques
     ...options,
     headers: {
       "content-type": "application/json",
-      ...(normalizedSecret ? { authorization: `Bearer ${normalizedSecret}` } : {}),
+      ...(normalizedSecret ? {
+        authorization: `Bearer ${normalizedSecret}`,
+        "x-content-generation-secret": normalizedSecret
+      } : {}),
       ...options.headers
     }
   });
