@@ -1,4 +1,4 @@
-import { expect, test, type Page } from "@playwright/test";
+import { expect, test, type Locator, type Page } from "@playwright/test";
 import { readFileSync } from "node:fs";
 import { mkdir } from "node:fs/promises";
 import path from "node:path";
@@ -64,12 +64,15 @@ async function selectFriendDetailTab(
 ) {
   if (name === "Synastry" || name === "Composite") {
     const option = page.getByRole("menuitemradio", { name: new RegExp(`^${name}`) });
+    const moreButton = page.getByRole("button", { name: /More, \d+ sections/ });
 
-    if (!await option.isVisible().catch(() => false)) {
-      await page.getByRole("button", { name: /More, \d+ sections/ }).click();
-    }
+    await expect(async () => {
+      if (!await option.isVisible().catch(() => false)) {
+        await moreButton.click();
+      }
 
-    await option.click();
+      await option.click({ timeout: 2_000 });
+    }).toPass({ timeout: 10_000 });
     return;
   }
 
@@ -422,6 +425,22 @@ async function expectNoHorizontalOverflow(page: Page, label: string) {
   const maxScrollWidth = Math.max(dimensions.bodyScrollWidth, dimensions.documentScrollWidth);
 
   expect(maxScrollWidth, `${label} does not create horizontal overflow`).toBeLessThanOrEqual(dimensions.viewportWidth + 2);
+}
+
+async function expectLocatorInsideViewport(locator: Locator, viewportWidth: number, label: string) {
+  await expect(locator).toBeVisible();
+  await expect.poll(async () => (
+    locator.evaluate((element, width) => {
+      const rect = element.getBoundingClientRect();
+
+      return rect.width > 0
+        && rect.height > 0
+        && rect.left >= 0
+        && rect.right <= width;
+    }, viewportWidth).catch(() => false)
+  ), {
+    message: `${label} is rendered completely inside the ${viewportWidth}px viewport`
+  }).toBe(true);
 }
 
 async function expectSharedLabelContract(page: Page, label: string, options: { requireLabels?: boolean } = {}) {
@@ -1533,19 +1552,11 @@ test.describe("client-facing user flow case studies", () => {
     await page.getByRole("button", { name: "Open Nikki" }).click();
 
     const tablist = page.getByRole("tablist", { name: "Chart profile sections" });
-    await expect(tablist).toBeVisible();
-    const tablistBox = await tablist.boundingBox();
-    expect(tablistBox).not.toBeNull();
-    expect(tablistBox!.x).toBeGreaterThanOrEqual(0);
-    expect(tablistBox!.x + tablistBox!.width).toBeLessThanOrEqual(390);
+    await expectLocatorInsideViewport(tablist, 390, "Friend chart section tabs");
 
     await page.getByRole("button", { name: "More, 2 sections" }).click();
     const menu = page.getByRole("menu", { name: "More chart profile sections" });
-    await expect(menu).toBeVisible();
-    const menuBox = await menu.boundingBox();
-    expect(menuBox).not.toBeNull();
-    expect(menuBox!.x).toBeGreaterThanOrEqual(0);
-    expect(menuBox!.x + menuBox!.width).toBeLessThanOrEqual(390);
+    await expectLocatorInsideViewport(menu, 390, "Friend chart section overflow menu");
 
     await selectFriendDetailTab(page, "Composite");
     await expect(page.getByText("What a composite chart is")).toBeVisible();
