@@ -1,0 +1,17 @@
+{
+  "schema_version": "supabase-independent-sky-placement-archive-verification-v1",
+  "verified_at": "2026-08-23T15:04:15.698Z",
+  "applied": true,
+  "row_count": 158,
+  "archived_reference_count": 158,
+  "still_live_or_serving_count": 0,
+  "protected_content_drift_count": 0,
+  "protected_content_sha256_before": "b2c826213e925d523575530808294a36ac5ecc634342a18485cea25c2e277a26",
+  "protected_content_sha256_after": "b2c826213e925d523575530808294a36ac5ecc634342a18485cea25c2e277a26",
+  "after_counts": {
+    "base:ARCHIVED/reference": 36,
+    "legacy-placement:ARCHIVED/reference": 120,
+    "topper:ARCHIVED/reference": 2
+  },
+  "drift": []
+}
