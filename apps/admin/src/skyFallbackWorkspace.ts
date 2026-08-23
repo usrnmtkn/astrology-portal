@@ -14,9 +14,16 @@ export type SkyFallbackWorkspace = {
 export type SkyFallbackIdentity = {
   title: string;
   typeLabel: string;
+  description?: string;
   groupKey: "articles" | "houses" | "sky-aspects" | "personal-transits" | "supporting";
   groupLabel: string;
 };
+
+export const skyPlacementFrameTemplateKey = "fallback-template/sky-placement-frame-v3";
+
+export type SkyPlacementCompositionOption = "includePlanetLore" | "includeSignLore";
+
+export type SkyPlacementCompositionOptions = Record<SkyPlacementCompositionOption, boolean>;
 
 export const skyPlacementFallbackSectionOutline = [
   {
@@ -65,6 +72,12 @@ function words(value: string) {
     .replace(/\b\w/gu, (match) => match.toUpperCase());
 }
 
+function planetWithDefiniteArticle(planetTitle: string) {
+  return ["Sun", "Moon", "North Node", "South Node"].includes(planetTitle)
+    ? `the ${planetTitle}`
+    : planetTitle;
+}
+
 const natalPlanetInSignTemplatePattern = /^fallback-template\/natal\.planet-in-sign\/([a-z-]+)$/u;
 
 export function natalPlanetInSignTemplateHeadline(contentKey: string, headline: string) {
@@ -105,6 +118,67 @@ function ordinalHouse(value: string) {
 
 export function skyFallbackIdentity(contentKey: string): SkyFallbackIdentity | null {
   const parts = contentKey.split("/").filter(Boolean);
+
+  if (contentKey === skyPlacementFrameTemplateKey) {
+    return {
+      title: "Sky Placement fallback page template",
+      typeLabel: "Canonical Sky Placement fallback template",
+      description: "Assembles the complete fallback page from transit dates, the planet explanation, sign history and symbolism, the planet-in-sign interpretation, and any approved current aspects.",
+      groupKey: "supporting",
+      groupLabel: "Sky Placement template parts"
+    };
+  }
+
+  const placementOpeningIndex = parts.indexOf("sky-placement");
+  if (placementOpeningIndex >= 0 && parts.length === placementOpeningIndex + 2) {
+    const planetTitle = words(parts[placementOpeningIndex + 1]);
+    return {
+      title: `${planetTitle} · Transit dates and opening`,
+      typeLabel: "Transit dates and opening",
+      description: `Shared ${planetTitle} opening with calculated sign, entry date, and exit date. Used across all ${planetTitle} placement pages.`,
+      groupKey: "supporting",
+      groupLabel: "Sky Placement template parts"
+    };
+  }
+
+  const placementFrameIndex = parts.indexOf("sky-placement-frame");
+  if (placementFrameIndex >= 0 && parts.length === placementFrameIndex + 2) {
+    const planetTitle = words(parts[placementFrameIndex + 1]);
+    const describedPlanet = planetWithDefiniteArticle(planetTitle);
+    return {
+      title: `${planetTitle} · About ${describedPlanet}`,
+      typeLabel: `About ${describedPlanet}`,
+      description: `Shared explanation of what ${describedPlanet} governs and how its transit shows up. Used across all ${planetTitle} placement pages.`,
+      groupKey: "supporting",
+      groupLabel: "Sky Placement template parts"
+    };
+  }
+
+  const placementLoreIndex = parts.indexOf("sky-placement-lore");
+  if (placementLoreIndex >= 0 && parts.length === placementLoreIndex + 2) {
+    const signTitle = words(parts[placementLoreIndex + 1]);
+    return {
+      title: `${signTitle} · About the sign`,
+      typeLabel: "About the sign",
+      description: `Reusable ${signTitle} history, symbol, ruler, and seasonal context for Sky Placement fallback pages. This is an independent copy of the Sky Season lore and can be reviewed separately.`,
+      groupKey: "supporting",
+      groupLabel: "Sky Placement template parts"
+    };
+  }
+
+  const placementSignIndex = parts.indexOf("sky-placement-sign");
+  if (placementSignIndex >= 0 && parts.length >= placementSignIndex + 3) {
+    const planetTitle = words(parts[placementSignIndex + 1]);
+    const signTitle = words(parts[placementSignIndex + 2]);
+    return {
+      title: `${planetTitle} in ${signTitle}`,
+      typeLabel: "Planet-in-sign interpretation",
+      description: `Sign-specific interpretation used when ${planetTitle} is in ${signTitle}.`,
+      groupKey: "supporting",
+      groupLabel: "Sky Placement template parts"
+    };
+  }
+
   const skyArticleIndex = parts.indexOf("sky-sign-copy");
   if (skyArticleIndex >= 0 && parts.length >= skyArticleIndex + 3) {
     return {
@@ -179,12 +253,34 @@ function record(value: unknown): Record<string, unknown> {
     : {};
 }
 
+export function skyPlacementCompositionOptions(source: unknown): SkyPlacementCompositionOptions {
+  const options = record(record(source).compositionOptions);
+  return {
+    includePlanetLore: options.includePlanetLore !== false,
+    includeSignLore: options.includeSignLore !== false
+  };
+}
+
+export function setSkyPlacementCompositionOption(
+  source: Record<string, unknown>,
+  option: SkyPlacementCompositionOption,
+  enabled: boolean
+) {
+  return {
+    ...source,
+    compositionOptions: {
+      ...record(source.compositionOptions),
+      [option]: enabled
+    }
+  };
+}
+
 export function packageValueAt(source: Record<string, unknown>, path: string): string {
   const value = path.split(".").reduce<unknown>((current, part) => record(current)[part], source);
   return typeof value === "string" ? value : "";
 }
 
-export function setPackageValueAt(source: Record<string, unknown>, path: string, value: string) {
+export function setPackageValueAt(source: Record<string, unknown>, path: string, value: unknown) {
   const next = structuredClone(source);
   const parts = path.split(".");
   let cursor = next;
@@ -249,8 +345,7 @@ export function packageDraftChanges(sections: unknown) {
   const draft = record(sectionRecord.packageDraft);
   if (!Object.keys(draft).length) return [];
   const workspace = skyFallbackWorkspace(String(original.contentKey ?? ""), sections);
-  if (!workspace) return [];
-  return workspace.fields
+  const fieldChanges = (workspace?.fields ?? [])
     .map((field) => ({
       key: field.key,
       label: field.label,
@@ -258,6 +353,18 @@ export function packageDraftChanges(sections: unknown) {
       after: packageValueAt(draft, field.key)
     }))
     .filter((change) => change.before !== change.after);
+  const compositionChanges = String(original.contentKey ?? "") === skyPlacementFrameTemplateKey
+    ? ([
+        ["includePlanetLore", "Include planet explanation"],
+        ["includeSignLore", "Include sign history and symbolism"]
+      ] as const).map(([key, label]) => ({
+        key: `compositionOptions.${key}`,
+        label,
+        before: skyPlacementCompositionOptions(original)[key] ? "Included" : "Excluded",
+        after: skyPlacementCompositionOptions(draft)[key] ? "Included" : "Excluded"
+      })).filter((change) => change.before !== change.after)
+    : [];
+  return [...compositionChanges, ...fieldChanges];
 }
 
 export function renderWorkspacePreview(fields: SkyFallbackField[], values: Record<string, string> = {}) {
