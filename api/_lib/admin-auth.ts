@@ -11,11 +11,17 @@ function bearerSecret(req: IncomingMessage) {
   return firstHeader(req.headers.authorization)?.match(/^Bearer\s+(.+)$/iu)?.[1];
 }
 
+function normalizeSecret(value: string | undefined) {
+  return value?.trim() ?? "";
+}
+
 function suppliedSecrets(req: IncomingMessage) {
   return [
     firstHeader(req.headers[CONTENT_ADMIN_SECRET_HEADER]),
     bearerSecret(req)
-  ].filter((value): value is string => typeof value === "string");
+  ]
+    .map(normalizeSecret)
+    .filter(Boolean);
 }
 
 function secretsMatch(supplied: string, expected: string) {
@@ -25,7 +31,7 @@ function secretsMatch(supplied: string, expected: string) {
 }
 
 export function isContentAdminAuthorized(req: IncomingMessage) {
-  const expected = process.env.CONTENT_GENERATION_SECRET;
+  const expected = normalizeSecret(process.env.CONTENT_GENERATION_SECRET);
   if (!expected) return process.env.NODE_ENV !== "production";
   return suppliedSecrets(req).some((supplied) => secretsMatch(supplied, expected));
 }
