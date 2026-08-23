@@ -39,7 +39,7 @@
         "cc/planet/sun",
         "cc/house/1"
       ],
-      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "doctrine_source": "CC layer-order logic + cc/house scenes (voiced original)",
       "tone_version": "marie-calibrated-v1",
       "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
       "review_note": "needs Marie/editorial final sign-off before serving"
@@ -61,7 +61,7 @@
         "cc/planet/sun",
         "cc/house/2"
       ],
-      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "doctrine_source": "CC layer-order logic + cc/house scenes (voiced original)",
       "tone_version": "marie-calibrated-v1",
       "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
       "review_note": "needs Marie/editorial final sign-off before serving"
@@ -83,7 +83,7 @@
         "cc/planet/sun",
         "cc/house/3"
       ],
-      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "doctrine_source": "CC layer-order logic + cc/house scenes (voiced original)",
       "tone_version": "marie-calibrated-v1",
       "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
       "review_note": "needs Marie/editorial final sign-off before serving"
@@ -105,7 +105,7 @@
         "cc/planet/sun",
         "cc/house/4"
       ],
-      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "doctrine_source": "CC layer-order logic + cc/house scenes (voiced original)",
       "tone_version": "marie-calibrated-v1",
       "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
       "review_note": "needs Marie/editorial final sign-off before serving"
@@ -127,7 +127,7 @@
         "cc/planet/sun",
         "cc/house/5"
       ],
-      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "doctrine_source": "CC layer-order logic + cc/house scenes (voiced original)",
       "tone_version": "marie-calibrated-v1",
       "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
       "review_note": "needs Marie/editorial final sign-off before serving"
@@ -149,7 +149,7 @@
         "cc/planet/sun",
         "cc/house/6"
       ],
-      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "doctrine_source": "CC layer-order logic + cc/house scenes (voiced original)",
       "tone_version": "marie-calibrated-v1",
       "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
       "review_note": "needs Marie/editorial final sign-off before serving"
@@ -171,7 +171,7 @@
         "cc/planet/sun",
         "cc/house/7"
       ],
-      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "doctrine_source": "CC layer-order logic + cc/house scenes (voiced original)",
       "tone_version": "marie-calibrated-v1",
       "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
       "review_note": "needs Marie/editorial final sign-off before serving"
@@ -193,7 +193,7 @@
         "cc/planet/sun",
         "cc/house/8"
       ],
-      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "doctrine_source": "CC layer-order logic + cc/house scenes (voiced original)",
       "tone_version": "marie-calibrated-v1",
       "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
       "review_note": "needs Marie/editorial final sign-off before serving"
@@ -215,7 +215,7 @@
         "cc/planet/sun",
         "cc/house/9"
       ],
-      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "doctrine_source": "CC layer-order logic + cc/house scenes (voiced original)",
       "tone_version": "marie-calibrated-v1",
       "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
       "review_note": "needs Marie/editorial final sign-off before serving"
@@ -237,7 +237,7 @@
         "cc/planet/sun",
         "cc/house/10"
       ],
-      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "doctrine_source": "CC layer-order logic + cc/house scenes (voiced original)",
       "tone_version": "marie-calibrated-v1",
       "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
       "review_note": "needs Marie/editorial final sign-off before serving"
@@ -259,7 +259,7 @@
         "cc/planet/sun",
         "cc/house/11"
       ],
-      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "doctrine_source": "CC layer-order logic + cc/house scenes (voiced original)",
       "tone_version": "marie-calibrated-v1",
       "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
       "review_note": "needs Marie/editorial final sign-off before serving"
@@ -281,7 +281,7 @@
         "cc/planet/sun",
         "cc/house/12"
       ],
-      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "doctrine_source": "CC layer-order logic + cc/house scenes (voiced original)",
       "tone_version": "marie-calibrated-v1",
       "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
       "review_note": "needs Marie/editorial final sign-off before serving"
@@ -303,7 +303,7 @@
         "cc/planet/moon",
         "cc/house/1"
       ],
-      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "doctrine_source": "CC layer-order logic + cc/house scenes (voiced original)",
       "tone_version": "marie-calibrated-v1",
       "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
       "review_note": "needs Marie/editorial final sign-off before serving"
@@ -325,7 +325,7 @@
         "cc/planet/moon",
         "cc/house/2"
       ],
-      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "doctrine_source": "CC layer-order logic + cc/house scenes (voiced original)",
       "tone_version": "marie-calibrated-v1",
       "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
       "review_note": "needs Marie/editorial final sign-off before serving"
@@ -347,7 +347,7 @@
         "cc/planet/moon",
         "cc/house/3"
       ],
-      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "doctrine_source": "CC layer-order logic + cc/house scenes (voiced original)",
       "tone_version": "marie-calibrated-v1",
       "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
       "review_note": "needs Marie/editorial final sign-off before serving"
@@ -369,7 +369,7 @@
         "cc/planet/moon",
         "cc/house/4"
       ],
-      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "doctrine_source": "CC layer-order logic + cc/house scenes (voiced original)",
       "tone_version": "marie-calibrated-v1",
       "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
       "review_note": "needs Marie/editorial final sign-off before serving"
@@ -391,7 +391,7 @@
         "cc/planet/moon",
         "cc/house/5"
       ],
-      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "doctrine_source": "CC layer-order logic + cc/house scenes (voiced original)",
       "tone_version": "marie-calibrated-v1",
       "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
       "review_note": "needs Marie/editorial final sign-off before serving"
@@ -413,7 +413,7 @@
         "cc/planet/moon",
         "cc/house/6"
       ],
-      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "doctrine_source": "CC layer-order logic + cc/house scenes (voiced original)",
       "tone_version": "marie-calibrated-v1",
       "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
       "review_note": "needs Marie/editorial final sign-off before serving"
@@ -435,7 +435,7 @@
         "cc/planet/moon",
         "cc/house/7"
       ],
-      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "doctrine_source": "CC layer-order logic + cc/house scenes (voiced original)",
       "tone_version": "marie-calibrated-v1",
       "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
       "review_note": "needs Marie/editorial final sign-off before serving",
@@ -463,7 +463,7 @@
         "cc/planet/moon",
         "cc/house/8"
       ],
-      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "doctrine_source": "CC layer-order logic + cc/house scenes (voiced original)",
       "tone_version": "marie-calibrated-v1",
       "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
       "review_note": "needs Marie/editorial final sign-off before serving"
@@ -485,7 +485,7 @@
         "cc/planet/moon",
         "cc/house/9"
       ],
-      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "doctrine_source": "CC layer-order logic + cc/house scenes (voiced original)",
       "tone_version": "marie-calibrated-v1",
       "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
       "review_note": "needs Marie/editorial final sign-off before serving"
@@ -507,7 +507,7 @@
         "cc/planet/moon",
         "cc/house/10"
       ],
-      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "doctrine_source": "CC layer-order logic + cc/house scenes (voiced original)",
       "tone_version": "marie-calibrated-v1",
       "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
       "review_note": "needs Marie/editorial final sign-off before serving"
@@ -529,7 +529,7 @@
         "cc/planet/moon",
         "cc/house/11"
       ],
-      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "doctrine_source": "CC layer-order logic + cc/house scenes (voiced original)",
       "tone_version": "marie-calibrated-v1",
       "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
       "review_note": "needs Marie/editorial final sign-off before serving"
@@ -551,7 +551,7 @@
         "cc/planet/moon",
         "cc/house/12"
       ],
-      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "doctrine_source": "CC layer-order logic + cc/house scenes (voiced original)",
       "tone_version": "marie-calibrated-v1",
       "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
       "review_note": "needs Marie/editorial final sign-off before serving",
@@ -579,7 +579,7 @@
         "cc/planet/mercury",
         "cc/house/1"
       ],
-      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "doctrine_source": "CC layer-order logic + cc/house scenes (voiced original)",
       "tone_version": "marie-calibrated-v1",
       "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
       "review_note": "needs Marie/editorial final sign-off before serving",
@@ -607,7 +607,7 @@
         "cc/planet/mercury",
         "cc/house/2"
       ],
-      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "doctrine_source": "CC layer-order logic + cc/house scenes (voiced original)",
       "tone_version": "marie-calibrated-v1",
       "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
       "review_note": "needs Marie/editorial final sign-off before serving",
@@ -635,7 +635,7 @@
         "cc/planet/mercury",
         "cc/house/3"
       ],
-      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "doctrine_source": "CC layer-order logic + cc/house scenes (voiced original)",
       "tone_version": "marie-calibrated-v1",
       "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
       "review_note": "needs Marie/editorial final sign-off before serving"
@@ -657,7 +657,7 @@
         "cc/planet/mercury",
         "cc/house/4"
       ],
-      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "doctrine_source": "CC layer-order logic + cc/house scenes (voiced original)",
       "tone_version": "marie-calibrated-v1",
       "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
       "review_note": "needs Marie/editorial final sign-off before serving"
@@ -679,7 +679,7 @@
         "cc/planet/mercury",
         "cc/house/5"
       ],
-      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "doctrine_source": "CC layer-order logic + cc/house scenes (voiced original)",
       "tone_version": "marie-calibrated-v1",
       "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
       "review_note": "needs Marie/editorial final sign-off before serving",
@@ -707,7 +707,7 @@
         "cc/planet/mercury",
         "cc/house/6"
       ],
-      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "doctrine_source": "CC layer-order logic + cc/house scenes (voiced original)",
       "tone_version": "marie-calibrated-v1",
       "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
       "review_note": "needs Marie/editorial final sign-off before serving",
@@ -735,7 +735,7 @@
         "cc/planet/mercury",
         "cc/house/7"
       ],
-      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "doctrine_source": "CC layer-order logic + cc/house scenes (voiced original)",
       "tone_version": "marie-calibrated-v1",
       "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
       "review_note": "needs Marie/editorial final sign-off before serving",
@@ -763,7 +763,7 @@
         "cc/planet/mercury",
         "cc/house/8"
       ],
-      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "doctrine_source": "CC layer-order logic + cc/house scenes (voiced original)",
       "tone_version": "marie-calibrated-v1",
       "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
       "review_note": "needs Marie/editorial final sign-off before serving"
@@ -785,7 +785,7 @@
         "cc/planet/mercury",
         "cc/house/9"
       ],
-      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "doctrine_source": "CC layer-order logic + cc/house scenes (voiced original)",
       "tone_version": "marie-calibrated-v1",
       "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
       "review_note": "needs Marie/editorial final sign-off before serving"
@@ -807,7 +807,7 @@
         "cc/planet/mercury",
         "cc/house/10"
       ],
-      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "doctrine_source": "CC layer-order logic + cc/house scenes (voiced original)",
       "tone_version": "marie-calibrated-v1",
       "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
       "review_note": "needs Marie/editorial final sign-off before serving",
@@ -835,7 +835,7 @@
         "cc/planet/mercury",
         "cc/house/11"
       ],
-      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "doctrine_source": "CC layer-order logic + cc/house scenes (voiced original)",
       "tone_version": "marie-calibrated-v1",
       "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
       "review_note": "needs Marie/editorial final sign-off before serving",
@@ -863,7 +863,7 @@
         "cc/planet/mercury",
         "cc/house/12"
       ],
-      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "doctrine_source": "CC layer-order logic + cc/house scenes (voiced original)",
       "tone_version": "marie-calibrated-v1",
       "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
       "review_note": "needs Marie/editorial final sign-off before serving",
@@ -891,7 +891,7 @@
         "cc/planet/venus",
         "cc/house/1"
       ],
-      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "doctrine_source": "CC layer-order logic + cc/house scenes (voiced original)",
       "tone_version": "marie-calibrated-v1",
       "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
       "review_note": "needs Marie/editorial final sign-off before serving"
@@ -913,7 +913,7 @@
         "cc/planet/venus",
         "cc/house/2"
       ],
-      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "doctrine_source": "CC layer-order logic + cc/house scenes (voiced original)",
       "tone_version": "marie-calibrated-v1",
       "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
       "review_note": "needs Marie/editorial final sign-off before serving"
@@ -935,7 +935,7 @@
         "cc/planet/venus",
         "cc/house/3"
       ],
-      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "doctrine_source": "CC layer-order logic + cc/house scenes (voiced original)",
       "tone_version": "marie-calibrated-v1",
       "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
       "review_note": "needs Marie/editorial final sign-off before serving"
@@ -957,7 +957,7 @@
         "cc/planet/venus",
         "cc/house/4"
       ],
-      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "doctrine_source": "CC layer-order logic + cc/house scenes (voiced original)",
       "tone_version": "marie-calibrated-v1",
       "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
       "review_note": "needs Marie/editorial final sign-off before serving"
@@ -979,7 +979,7 @@
         "cc/planet/venus",
         "cc/house/5"
       ],
-      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "doctrine_source": "CC layer-order logic + cc/house scenes (voiced original)",
       "tone_version": "marie-calibrated-v1",
       "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
       "review_note": "needs Marie/editorial final sign-off before serving"
@@ -1001,7 +1001,7 @@
         "cc/planet/venus",
         "cc/house/6"
       ],
-      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "doctrine_source": "CC layer-order logic + cc/house scenes (voiced original)",
       "tone_version": "marie-calibrated-v1",
       "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
       "review_note": "needs Marie/editorial final sign-off before serving"
@@ -1023,7 +1023,7 @@
         "cc/planet/venus",
         "cc/house/7"
       ],
-      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "doctrine_source": "CC layer-order logic + cc/house scenes (voiced original)",
       "tone_version": "marie-calibrated-v1",
       "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
       "review_note": "needs Marie/editorial final sign-off before serving"
@@ -1045,7 +1045,7 @@
         "cc/planet/venus",
         "cc/house/8"
       ],
-      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "doctrine_source": "CC layer-order logic + cc/house scenes (voiced original)",
       "tone_version": "marie-calibrated-v1",
       "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
       "review_note": "needs Marie/editorial final sign-off before serving"
@@ -1067,7 +1067,7 @@
         "cc/planet/venus",
         "cc/house/9"
       ],
-      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "doctrine_source": "CC layer-order logic + cc/house scenes (voiced original)",
       "tone_version": "marie-calibrated-v1",
       "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
       "review_note": "needs Marie/editorial final sign-off before serving"
@@ -1089,7 +1089,7 @@
         "cc/planet/venus",
         "cc/house/10"
       ],
-      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "doctrine_source": "CC layer-order logic + cc/house scenes (voiced original)",
       "tone_version": "marie-calibrated-v1",
       "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
       "review_note": "needs Marie/editorial final sign-off before serving"
@@ -1111,7 +1111,7 @@
         "cc/planet/venus",
         "cc/house/11"
       ],
-      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "doctrine_source": "CC layer-order logic + cc/house scenes (voiced original)",
       "tone_version": "marie-calibrated-v1",
       "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
       "review_note": "needs Marie/editorial final sign-off before serving"
@@ -1133,7 +1133,7 @@
         "cc/planet/venus",
         "cc/house/12"
       ],
-      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "doctrine_source": "CC layer-order logic + cc/house scenes (voiced original)",
       "tone_version": "marie-calibrated-v1",
       "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
       "review_note": "needs Marie/editorial final sign-off before serving"
@@ -1155,7 +1155,7 @@
         "cc/planet/mars",
         "cc/house/1"
       ],
-      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "doctrine_source": "CC layer-order logic + cc/house scenes (voiced original)",
       "tone_version": "marie-calibrated-v1",
       "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
       "review_note": "needs Marie/editorial final sign-off before serving",
@@ -1183,7 +1183,7 @@
         "cc/planet/mars",
         "cc/house/2"
       ],
-      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "doctrine_source": "CC layer-order logic + cc/house scenes (voiced original)",
       "tone_version": "marie-calibrated-v1",
       "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
       "review_note": "needs Marie/editorial final sign-off before serving"
@@ -1205,7 +1205,7 @@
         "cc/planet/mars",
         "cc/house/3"
       ],
-      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "doctrine_source": "CC layer-order logic + cc/house scenes (voiced original)",
       "tone_version": "marie-calibrated-v1",
       "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
       "review_note": "needs Marie/editorial final sign-off before serving"
@@ -1227,7 +1227,7 @@
         "cc/planet/mars",
         "cc/house/4"
       ],
-      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "doctrine_source": "CC layer-order logic + cc/house scenes (voiced original)",
       "tone_version": "marie-calibrated-v1",
       "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
       "review_note": "needs Marie/editorial final sign-off before serving"
@@ -1249,7 +1249,7 @@
         "cc/planet/mars",
         "cc/house/5"
       ],
-      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "doctrine_source": "CC layer-order logic + cc/house scenes (voiced original)",
       "tone_version": "marie-calibrated-v1",
       "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
       "review_note": "needs Marie/editorial final sign-off before serving",
@@ -1277,7 +1277,7 @@
         "cc/planet/mars",
         "cc/house/6"
       ],
-      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "doctrine_source": "CC layer-order logic + cc/house scenes (voiced original)",
       "tone_version": "marie-calibrated-v1",
       "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
       "review_note": "needs Marie/editorial final sign-off before serving",
@@ -1305,7 +1305,7 @@
         "cc/planet/mars",
         "cc/house/7"
       ],
-      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "doctrine_source": "CC layer-order logic + cc/house scenes (voiced original)",
       "tone_version": "marie-calibrated-v1",
       "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
       "review_note": "needs Marie/editorial final sign-off before serving",
@@ -1333,7 +1333,7 @@
         "cc/planet/mars",
         "cc/house/8"
       ],
-      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "doctrine_source": "CC layer-order logic + cc/house scenes (voiced original)",
       "tone_version": "marie-calibrated-v1",
       "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
       "review_note": "needs Marie/editorial final sign-off before serving"
@@ -1355,7 +1355,7 @@
         "cc/planet/mars",
         "cc/house/9"
       ],
-      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "doctrine_source": "CC layer-order logic + cc/house scenes (voiced original)",
       "tone_version": "marie-calibrated-v1",
       "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
       "review_note": "needs Marie/editorial final sign-off before serving"
@@ -1377,7 +1377,7 @@
         "cc/planet/mars",
         "cc/house/10"
       ],
-      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "doctrine_source": "CC layer-order logic + cc/house scenes (voiced original)",
       "tone_version": "marie-calibrated-v1",
       "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
       "review_note": "needs Marie/editorial final sign-off before serving",
@@ -1405,7 +1405,7 @@
         "cc/planet/mars",
         "cc/house/11"
       ],
-      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "doctrine_source": "CC layer-order logic + cc/house scenes (voiced original)",
       "tone_version": "marie-calibrated-v1",
       "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
       "review_note": "needs Marie/editorial final sign-off before serving",
@@ -1433,7 +1433,7 @@
         "cc/planet/mars",
         "cc/house/12"
       ],
-      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "doctrine_source": "CC layer-order logic + cc/house scenes (voiced original)",
       "tone_version": "marie-calibrated-v1",
       "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
       "review_note": "needs Marie/editorial final sign-off before serving",
@@ -1461,7 +1461,7 @@
         "cc/planet/jupiter",
         "cc/house/1"
       ],
-      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "doctrine_source": "CC layer-order logic + cc/house scenes (voiced original)",
       "tone_version": "marie-calibrated-v1",
       "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
       "review_note": "needs Marie/editorial final sign-off before serving",
@@ -1489,7 +1489,7 @@
         "cc/planet/jupiter",
         "cc/house/2"
       ],
-      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "doctrine_source": "CC layer-order logic + cc/house scenes (voiced original)",
       "tone_version": "marie-calibrated-v1",
       "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
       "review_note": "needs Marie/editorial final sign-off before serving",
@@ -1517,7 +1517,7 @@
         "cc/planet/jupiter",
         "cc/house/3"
       ],
-      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "doctrine_source": "CC layer-order logic + cc/house scenes (voiced original)",
       "tone_version": "marie-calibrated-v1",
       "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
       "review_note": "needs Marie/editorial final sign-off before serving",
@@ -1545,7 +1545,7 @@
         "cc/planet/jupiter",
         "cc/house/4"
       ],
-      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "doctrine_source": "CC layer-order logic + cc/house scenes (voiced original)",
       "tone_version": "marie-calibrated-v1",
       "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
       "review_note": "needs Marie/editorial final sign-off before serving",
@@ -1573,7 +1573,7 @@
         "cc/planet/jupiter",
         "cc/house/5"
       ],
-      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "doctrine_source": "CC layer-order logic + cc/house scenes (voiced original)",
       "tone_version": "marie-calibrated-v1",
       "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
       "review_note": "needs Marie/editorial final sign-off before serving",
@@ -1601,7 +1601,7 @@
         "cc/planet/jupiter",
         "cc/house/6"
       ],
-      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "doctrine_source": "CC layer-order logic + cc/house scenes (voiced original)",
       "tone_version": "marie-calibrated-v1",
       "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
       "review_note": "needs Marie/editorial final sign-off before serving",
@@ -1629,7 +1629,7 @@
         "cc/planet/jupiter",
         "cc/house/7"
       ],
-      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "doctrine_source": "CC layer-order logic + cc/house scenes (voiced original)",
       "tone_version": "marie-calibrated-v1",
       "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
       "review_note": "needs Marie/editorial final sign-off before serving",
@@ -1657,7 +1657,7 @@
         "cc/planet/jupiter",
         "cc/house/8"
       ],
-      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "doctrine_source": "CC layer-order logic + cc/house scenes (voiced original)",
       "tone_version": "marie-calibrated-v1",
       "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
       "review_note": "needs Marie/editorial final sign-off before serving"
@@ -1679,7 +1679,7 @@
         "cc/planet/jupiter",
         "cc/house/9"
       ],
-      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "doctrine_source": "CC layer-order logic + cc/house scenes (voiced original)",
       "tone_version": "marie-calibrated-v1",
       "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
       "review_note": "needs Marie/editorial final sign-off before serving",
@@ -1707,7 +1707,7 @@
         "cc/planet/jupiter",
         "cc/house/10"
       ],
-      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "doctrine_source": "CC layer-order logic + cc/house scenes (voiced original)",
       "tone_version": "marie-calibrated-v1",
       "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
       "review_note": "needs Marie/editorial final sign-off before serving",
@@ -1735,7 +1735,7 @@
         "cc/planet/jupiter",
         "cc/house/11"
       ],
-      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "doctrine_source": "CC layer-order logic + cc/house scenes (voiced original)",
       "tone_version": "marie-calibrated-v1",
       "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
       "review_note": "needs Marie/editorial final sign-off before serving",
@@ -1763,7 +1763,7 @@
         "cc/planet/jupiter",
         "cc/house/12"
       ],
-      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "doctrine_source": "CC layer-order logic + cc/house scenes (voiced original)",
       "tone_version": "marie-calibrated-v1",
       "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
       "review_note": "needs Marie/editorial final sign-off before serving",
@@ -1791,7 +1791,7 @@
         "cc/planet/saturn",
         "cc/house/1"
       ],
-      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "doctrine_source": "CC layer-order logic + cc/house scenes (voiced original)",
       "tone_version": "marie-calibrated-v1",
       "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
       "review_note": "needs Marie/editorial final sign-off before serving"
@@ -1813,7 +1813,7 @@
         "cc/planet/saturn",
         "cc/house/2"
       ],
-      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "doctrine_source": "CC layer-order logic + cc/house scenes (voiced original)",
       "tone_version": "marie-calibrated-v1",
       "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
       "review_note": "needs Marie/editorial final sign-off before serving"
@@ -1835,7 +1835,7 @@
         "cc/planet/saturn",
         "cc/house/3"
       ],
-      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "doctrine_source": "CC layer-order logic + cc/house scenes (voiced original)",
       "tone_version": "marie-calibrated-v1",
       "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
       "review_note": "needs Marie/editorial final sign-off before serving"
@@ -1857,7 +1857,7 @@
         "cc/planet/saturn",
         "cc/house/4"
       ],
-      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "doctrine_source": "CC layer-order logic + cc/house scenes (voiced original)",
       "tone_version": "marie-calibrated-v1",
       "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
       "review_note": "needs Marie/editorial final sign-off before serving"
@@ -1879,7 +1879,7 @@
         "cc/planet/saturn",
         "cc/house/5"
       ],
-      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "doctrine_source": "CC layer-order logic + cc/house scenes (voiced original)",
       "tone_version": "marie-calibrated-v1",
       "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
       "review_note": "needs Marie/editorial final sign-off before serving"
@@ -1901,7 +1901,7 @@
         "cc/planet/saturn",
         "cc/house/6"
       ],
-      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "doctrine_source": "CC layer-order logic + cc/house scenes (voiced original)",
       "tone_version": "marie-calibrated-v1",
       "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
       "review_note": "needs Marie/editorial final sign-off before serving"
@@ -1923,7 +1923,7 @@
         "cc/planet/saturn",
         "cc/house/7"
       ],
-      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "doctrine_source": "CC layer-order logic + cc/house scenes (voiced original)",
       "tone_version": "marie-calibrated-v1",
       "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
       "review_note": "needs Marie/editorial final sign-off before serving"
@@ -1945,7 +1945,7 @@
         "cc/planet/saturn",
         "cc/house/8"
       ],
-      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "doctrine_source": "CC layer-order logic + cc/house scenes (voiced original)",
       "tone_version": "marie-calibrated-v1",
       "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
       "review_note": "needs Marie/editorial final sign-off before serving"
@@ -1967,7 +1967,7 @@
         "cc/planet/saturn",
         "cc/house/9"
       ],
-      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "doctrine_source": "CC layer-order logic + cc/house scenes (voiced original)",
       "tone_version": "marie-calibrated-v1",
       "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
       "review_note": "needs Marie/editorial final sign-off before serving"
@@ -1989,7 +1989,7 @@
         "cc/planet/saturn",
         "cc/house/10"
       ],
-      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "doctrine_source": "CC layer-order logic + cc/house scenes (voiced original)",
       "tone_version": "marie-calibrated-v1",
       "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
       "review_note": "needs Marie/editorial final sign-off before serving"
@@ -2011,7 +2011,7 @@
         "cc/planet/saturn",
         "cc/house/11"
       ],
-      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "doctrine_source": "CC layer-order logic + cc/house scenes (voiced original)",
       "tone_version": "marie-calibrated-v1",
       "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
       "review_note": "needs Marie/editorial final sign-off before serving"
@@ -2033,7 +2033,7 @@
         "cc/planet/saturn",
         "cc/house/12"
       ],
-      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "doctrine_source": "CC layer-order logic + cc/house scenes (voiced original)",
       "tone_version": "marie-calibrated-v1",
       "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
       "review_note": "needs Marie/editorial final sign-off before serving",
@@ -2061,7 +2061,7 @@
         "cc/planet/uranus",
         "cc/house/1"
       ],
-      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "doctrine_source": "CC layer-order logic + cc/house scenes (voiced original)",
       "tone_version": "marie-calibrated-v1",
       "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
       "review_note": "needs Marie/editorial final sign-off before serving",
@@ -2089,7 +2089,7 @@
         "cc/planet/uranus",
         "cc/house/2"
       ],
-      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "doctrine_source": "CC layer-order logic + cc/house scenes (voiced original)",
       "tone_version": "marie-calibrated-v1",
       "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
       "review_note": "needs Marie/editorial final sign-off before serving",
@@ -2117,7 +2117,7 @@
         "cc/planet/uranus",
         "cc/house/3"
       ],
-      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "doctrine_source": "CC layer-order logic + cc/house scenes (voiced original)",
       "tone_version": "marie-calibrated-v1",
       "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
       "review_note": "needs Marie/editorial final sign-off before serving"
@@ -2139,7 +2139,7 @@
         "cc/planet/uranus",
         "cc/house/4"
       ],
-      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "doctrine_source": "CC layer-order logic + cc/house scenes (voiced original)",
       "tone_version": "marie-calibrated-v1",
       "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
       "review_note": "needs Marie/editorial final sign-off before serving"
@@ -2161,7 +2161,7 @@
         "cc/planet/uranus",
         "cc/house/5"
       ],
-      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "doctrine_source": "CC layer-order logic + cc/house scenes (voiced original)",
       "tone_version": "marie-calibrated-v1",
       "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
       "review_note": "needs Marie/editorial final sign-off before serving"
@@ -2183,7 +2183,7 @@
         "cc/planet/uranus",
         "cc/house/6"
       ],
-      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "doctrine_source": "CC layer-order logic + cc/house scenes (voiced original)",
       "tone_version": "marie-calibrated-v1",
       "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
       "review_note": "needs Marie/editorial final sign-off before serving"
@@ -2205,7 +2205,7 @@
         "cc/planet/uranus",
         "cc/house/7"
       ],
-      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "doctrine_source": "CC layer-order logic + cc/house scenes (voiced original)",
       "tone_version": "marie-calibrated-v1",
       "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
       "review_note": "needs Marie/editorial final sign-off before serving"
@@ -2227,7 +2227,7 @@
         "cc/planet/uranus",
         "cc/house/8"
       ],
-      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "doctrine_source": "CC layer-order logic + cc/house scenes (voiced original)",
       "tone_version": "marie-calibrated-v1",
       "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
       "review_note": "needs Marie/editorial final sign-off before serving"
@@ -2249,7 +2249,7 @@
         "cc/planet/uranus",
         "cc/house/9"
       ],
-      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "doctrine_source": "CC layer-order logic + cc/house scenes (voiced original)",
       "tone_version": "marie-calibrated-v1",
       "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
       "review_note": "needs Marie/editorial final sign-off before serving"
@@ -2271,7 +2271,7 @@
         "cc/planet/uranus",
         "cc/house/10"
       ],
-      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "doctrine_source": "CC layer-order logic + cc/house scenes (voiced original)",
       "tone_version": "marie-calibrated-v1",
       "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
       "review_note": "needs Marie/editorial final sign-off before serving",
@@ -2299,7 +2299,7 @@
         "cc/planet/uranus",
         "cc/house/11"
       ],
-      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "doctrine_source": "CC layer-order logic + cc/house scenes (voiced original)",
       "tone_version": "marie-calibrated-v1",
       "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
       "review_note": "needs Marie/editorial final sign-off before serving",
@@ -2327,7 +2327,7 @@
         "cc/planet/uranus",
         "cc/house/12"
       ],
-      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "doctrine_source": "CC layer-order logic + cc/house scenes (voiced original)",
       "tone_version": "marie-calibrated-v1",
       "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
       "review_note": "needs Marie/editorial final sign-off before serving",
@@ -2355,7 +2355,7 @@
         "cc/planet/neptune",
         "cc/house/1"
       ],
-      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "doctrine_source": "CC layer-order logic + cc/house scenes (voiced original)",
       "tone_version": "marie-calibrated-v1",
       "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
       "review_note": "needs Marie/editorial final sign-off before serving"
@@ -2377,7 +2377,7 @@
         "cc/planet/neptune",
         "cc/house/2"
       ],
-      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "doctrine_source": "CC layer-order logic + cc/house scenes (voiced original)",
       "tone_version": "marie-calibrated-v1",
       "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
       "review_note": "needs Marie/editorial final sign-off before serving"
@@ -2399,7 +2399,7 @@
         "cc/planet/neptune",
         "cc/house/3"
       ],
-      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "doctrine_source": "CC layer-order logic + cc/house scenes (voiced original)",
       "tone_version": "marie-calibrated-v1",
       "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
       "review_note": "needs Marie/editorial final sign-off before serving"
@@ -2421,7 +2421,7 @@
         "cc/planet/neptune",
         "cc/house/4"
       ],
-      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "doctrine_source": "CC layer-order logic + cc/house scenes (voiced original)",
       "tone_version": "marie-calibrated-v1",
       "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
       "review_note": "needs Marie/editorial final sign-off before serving"
@@ -2443,7 +2443,7 @@
         "cc/planet/neptune",
         "cc/house/5"
       ],
-      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "doctrine_source": "CC layer-order logic + cc/house scenes (voiced original)",
       "tone_version": "marie-calibrated-v1",
       "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
       "review_note": "needs Marie/editorial final sign-off before serving"
@@ -2465,7 +2465,7 @@
         "cc/planet/neptune",
         "cc/house/6"
       ],
-      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "doctrine_source": "CC layer-order logic + cc/house scenes (voiced original)",
       "tone_version": "marie-calibrated-v1",
       "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
       "review_note": "needs Marie/editorial final sign-off before serving"
@@ -2487,7 +2487,7 @@
         "cc/planet/neptune",
         "cc/house/7"
       ],
-      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "doctrine_source": "CC layer-order logic + cc/house scenes (voiced original)",
       "tone_version": "marie-calibrated-v1",
       "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
       "review_note": "needs Marie/editorial final sign-off before serving"
@@ -2509,7 +2509,7 @@
         "cc/planet/neptune",
         "cc/house/8"
       ],
-      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "doctrine_source": "CC layer-order logic + cc/house scenes (voiced original)",
       "tone_version": "marie-calibrated-v1",
       "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
       "review_note": "needs Marie/editorial final sign-off before serving"
@@ -2531,7 +2531,7 @@
         "cc/planet/neptune",
         "cc/house/9"
       ],
-      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "doctrine_source": "CC layer-order logic + cc/house scenes (voiced original)",
       "tone_version": "marie-calibrated-v1",
       "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
       "review_note": "needs Marie/editorial final sign-off before serving"
@@ -2553,7 +2553,7 @@
         "cc/planet/neptune",
         "cc/house/10"
       ],
-      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "doctrine_source": "CC layer-order logic + cc/house scenes (voiced original)",
       "tone_version": "marie-calibrated-v1",
       "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
       "review_note": "needs Marie/editorial final sign-off before serving"
@@ -2575,7 +2575,7 @@
         "cc/planet/neptune",
         "cc/house/11"
       ],
-      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "doctrine_source": "CC layer-order logic + cc/house scenes (voiced original)",
       "tone_version": "marie-calibrated-v1",
       "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
       "review_note": "needs Marie/editorial final sign-off before serving"
@@ -2597,7 +2597,7 @@
         "cc/planet/neptune",
         "cc/house/12"
       ],
-      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "doctrine_source": "CC layer-order logic + cc/house scenes (voiced original)",
       "tone_version": "marie-calibrated-v1",
       "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
       "review_note": "needs Marie/editorial final sign-off before serving",
@@ -2625,7 +2625,7 @@
         "cc/planet/pluto",
         "cc/house/1"
       ],
-      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "doctrine_source": "CC layer-order logic + cc/house scenes (voiced original)",
       "tone_version": "marie-calibrated-v1",
       "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
       "review_note": "needs Marie/editorial final sign-off before serving"
@@ -2647,7 +2647,7 @@
         "cc/planet/pluto",
         "cc/house/2"
       ],
-      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "doctrine_source": "CC layer-order logic + cc/house scenes (voiced original)",
       "tone_version": "marie-calibrated-v1",
       "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
       "review_note": "needs Marie/editorial final sign-off before serving"
@@ -2669,7 +2669,7 @@
         "cc/planet/pluto",
         "cc/house/3"
       ],
-      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "doctrine_source": "CC layer-order logic + cc/house scenes (voiced original)",
       "tone_version": "marie-calibrated-v1",
       "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
       "review_note": "needs Marie/editorial final sign-off before serving"
@@ -2691,7 +2691,7 @@
         "cc/planet/pluto",
         "cc/house/4"
       ],
-      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "doctrine_source": "CC layer-order logic + cc/house scenes (voiced original)",
       "tone_version": "marie-calibrated-v1",
       "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
       "review_note": "needs Marie/editorial final sign-off before serving"
@@ -2713,7 +2713,7 @@
         "cc/planet/pluto",
         "cc/house/5"
       ],
-      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "doctrine_source": "CC layer-order logic + cc/house scenes (voiced original)",
       "tone_version": "marie-calibrated-v1",
       "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
       "review_note": "needs Marie/editorial final sign-off before serving"
@@ -2735,7 +2735,7 @@
         "cc/planet/pluto",
         "cc/house/6"
       ],
-      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "doctrine_source": "CC layer-order logic + cc/house scenes (voiced original)",
       "tone_version": "marie-calibrated-v1",
       "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
       "review_note": "needs Marie/editorial final sign-off before serving"
@@ -2757,7 +2757,7 @@
         "cc/planet/pluto",
         "cc/house/7"
       ],
-      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "doctrine_source": "CC layer-order logic + cc/house scenes (voiced original)",
       "tone_version": "marie-calibrated-v1",
       "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
       "review_note": "needs Marie/editorial final sign-off before serving"
@@ -2779,7 +2779,7 @@
         "cc/planet/pluto",
         "cc/house/8"
       ],
-      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "doctrine_source": "CC layer-order logic + cc/house scenes (voiced original)",
       "tone_version": "marie-calibrated-v1",
       "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
       "review_note": "needs Marie/editorial final sign-off before serving"
@@ -2801,7 +2801,7 @@
         "cc/planet/pluto",
         "cc/house/9"
       ],
-      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "doctrine_source": "CC layer-order logic + cc/house scenes (voiced original)",
       "tone_version": "marie-calibrated-v1",
       "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
       "review_note": "needs Marie/editorial final sign-off before serving"
@@ -2823,7 +2823,7 @@
         "cc/planet/pluto",
         "cc/house/10"
       ],
-      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "doctrine_source": "CC layer-order logic + cc/house scenes (voiced original)",
       "tone_version": "marie-calibrated-v1",
       "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
       "review_note": "needs Marie/editorial final sign-off before serving"
@@ -2845,7 +2845,7 @@
         "cc/planet/pluto",
         "cc/house/11"
       ],
-      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "doctrine_source": "CC layer-order logic + cc/house scenes (voiced original)",
       "tone_version": "marie-calibrated-v1",
       "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
       "review_note": "needs Marie/editorial final sign-off before serving"
@@ -2867,7 +2867,7 @@
         "cc/planet/pluto",
         "cc/house/12"
       ],
-      "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+      "doctrine_source": "CC layer-order logic + cc/house scenes (voiced original)",
       "tone_version": "marie-calibrated-v1",
       "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
       "review_note": "needs Marie/editorial final sign-off before serving",

@@ -40,7 +40,7 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "The life you've built over the last cycle is getting weighed, and whatever isn't truly yours is starting to ask to be rebuilt on real ground. It can feel heavy, like the structures you leaned on are being tested against who you actually are now. This is your Saturn return: you stop borrowing authority and start becoming your own. Commit to the version of your life you'd actually choose, and let the rest go, even the parts you were proud of building.",
-      "revoice_version": "chani-quality-v1-authored",
+      "revoice_version": "CC-quality-v1-authored",
       "pull_quote": {
         "text": "Grieve the version of you who worked so hard to try make broken things work.",
         "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
@@ -84,7 +84,7 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Something you started about seven years ago gets tested, and you begin questioning whether you're on the right track. The doubt returns each time you avoid the unglamorous work the goal actually requires. The friction is a mid-course correction, not a verdict on the whole plan. Do the boring, load-bearing part of the commitment instead of starting over. This square recurs across the cycle; each pass asks the same question from a new angle.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "marie_advice": {
         "text": "Shortcuts become especially persuasive when the real work is repetitive. That is when people start buying tools they do not need, changing direction again, or talking about the work more than they do it. Return to the part that requires practice. Skill still grows the old-fashioned way.",
         "tier": "CONFIRMED",
@@ -123,7 +123,7 @@
       "derivation_note": "opposition read as the restructuring felt through others / the outer world",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Something you started about seven years ago gets tested, and you begin questioning whether you're on the right track. The doubt returns each time you avoid the unglamorous work the goal actually requires. The friction is a mid-course correction, not a verdict on the whole plan. Do the boring, load-bearing part of the commitment instead of starting over. This square recurs across the cycle; each pass asks the same question from a new angle.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     },
     {
       "id": "cc/aspect-pair/saturn-trine-saturn",
@@ -155,7 +155,7 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "The structures you've built quietly hold, and steady effort turns into something durable without a fight. Discipline feels supportive rather than heavy right now. This is a consolidation phase in the Saturn cycle, a good time to formalize what works. Make the long-term commitment and build it properly.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     },
     {
       "id": "cc/aspect-pair/saturn-sextile-saturn",
@@ -188,7 +188,7 @@
       "derivation_note": "sextile = the supportive Saturn phase as an opportunity that only pays off when acted on",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "The structures you've built quietly hold, and steady effort turns into something durable without a fight. Discipline feels supportive rather than heavy right now. This is a consolidation phase in the Saturn cycle, a good time to formalize what works. Make the long-term commitment and build it properly.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     },
     {
       "id": "cc/aspect-pair/saturn-conjunction-sun",
@@ -220,7 +220,7 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Your direction and confidence get weighed against reality, and a long effort reaches the point where it proves out or has to be rebuilt. The responsibility you've been carrying gets heavier before it gets clearer. This is a maturing of who you are, not a punishment, and it asks for real foundations under the identity. Do the unglamorous part and let the confidence you build be earned rather than borrowed. Over the passes, keep what's proven and quietly retire what isn't.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "marie_advice": {
         "text": "A serious commitment eventually reaches the part nobody applauds. The work becomes repetitive, inconvenient, and harder to explain to people who expected quick results. This is where your choice acquires weight. Keep showing up after the excitement leaves.",
         "tier": "CONFIRMED",
@@ -258,7 +258,7 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "A limit, duty, or authority stands directly in your path, and the gap between where you are and where you want to be feels stark. Every time you read the block as a verdict on your worth, it gets heavier. The wall is information about pacing, not proof you're not enough. Name what's actually in your control and put steady work there. The pressure recurs until the structure holds; treat each pass as a test, not a sentence.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     },
     {
       "id": "cc/aspect-pair/saturn-opposition-sun",
@@ -291,7 +291,7 @@
       "derivation_note": "opposition read as the restructuring felt through others / the outer world",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "A limit, duty, or authority stands directly in your path, and the gap between where you are and where you want to be feels stark. Every time you read the block as a verdict on your worth, it gets heavier. The wall is information about pacing, not proof you're not enough. Name what's actually in your control and put steady work there. The pressure recurs until the structure holds; treat each pass as a test, not a sentence.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     },
     {
       "id": "cc/aspect-pair/saturn-trine-sun",
@@ -323,7 +323,7 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Steady effort on who you're becoming pays off, and discipline feels supportive rather than heavy. The long build is quietly working. This is a window to commit to something durable and make it official. Make the long-term commitment to the direction and build it properly.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     },
     {
       "id": "cc/aspect-pair/saturn-sextile-sun",
@@ -356,7 +356,7 @@
       "derivation_note": "sextile = the supportive Saturn phase as an opportunity that only pays off when acted on",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Steady effort on who you're becoming pays off, and discipline feels supportive rather than heavy. The long build is quietly working. This is a window to commit to something durable and make it official. Make the long-term commitment to the direction and build it properly.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     },
     {
       "id": "cc/aspect-pair/saturn-conjunction-moon",
@@ -388,7 +388,7 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Your emotional life and home get serious, and you feel the weight of what you're responsible for holding. A sense of being unsupported or alone with it keeps surfacing. This is your emotional foundation being rebuilt on something real, which feels heavy before it feels safe. Tend the actual need and build one dependable source of comfort rather than toughing it out alone. Each pass asks you to take more honest responsibility for your own care.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "The pressure to always be strong.",
         "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
@@ -427,7 +427,7 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Your needs collide with duty or someone's distance, and comfort feels rationed. You keep dropping yourself to hold it together, or reading a cool moment as the whole truth. The heaviness is real weather, not a permanent verdict on your emotional life. Comfort yourself first, then deal with the actual limit rather than the feeling of it. The mood recurs across passes; each time, handle the concrete constraint under it.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "The pressure to always be strong.",
         "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
@@ -467,7 +467,7 @@
       "derivation_note": "opposition read as the restructuring felt through others / the outer world",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Your needs collide with duty or someone's distance, and comfort feels rationed. You keep dropping yourself to hold it together, or reading a cool moment as the whole truth. The heaviness is real weather, not a permanent verdict on your emotional life. Comfort yourself first, then deal with the actual limit rather than the feeling of it. The mood recurs across passes; each time, handle the concrete constraint under it.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     },
     {
       "id": "cc/aspect-pair/saturn-trine-moon",
@@ -499,7 +499,7 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Your feelings settle into structure, and there's real comfort in routine and knowing where you stand. Steadiness and care are cooperating. A good time to build a dependable emotional foundation. Put one steadying routine or boundary in place.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     },
     {
       "id": "cc/aspect-pair/saturn-sextile-moon",
@@ -532,7 +532,7 @@
       "derivation_note": "sextile = the supportive Saturn phase as an opportunity that only pays off when acted on",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Your feelings settle into structure, and there's real comfort in routine and knowing where you stand. Steadiness and care are cooperating. A good time to build a dependable emotional foundation. Put one steadying routine or boundary in place.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     },
     {
       "id": "cc/aspect-pair/saturn-conjunction-mercury",
@@ -564,7 +564,7 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Your thinking turns serious and careful, and you're asked to commit to a plan, a study, or a hard truth over time. The seriousness can read as pessimism until you use it for precision. This is your mind being disciplined, not shut down, and it rewards structure and follow-through. Say the plain, structured version and do the detailed work the idea actually needs. Across passes, the plan gets tested and refined rather than abandoned.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "Stop wearing burnout like a badge of honor. It's just burnout.",
         "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
@@ -602,7 +602,7 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Your ideas run into skepticism, delay, or heavy self-doubt, and communication feels slow or blocked. You keep taking the difficulty as proof the idea is hopeless. The resistance is asking for precision and patience, not surrender. Say the clear, bare-bones version and let it be enough for now. The block recurs until the thinking is solid; each pass sharpens it.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "Just because fear helps us create narratives doesn't mean that those narratives are prophecies.",
         "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
@@ -642,7 +642,7 @@
       "derivation_note": "opposition read as the restructuring felt through others / the outer world",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Your ideas run into skepticism, delay, or heavy self-doubt, and communication feels slow or blocked. You keep taking the difficulty as proof the idea is hopeless. The resistance is asking for precision and patience, not surrender. Say the clear, bare-bones version and let it be enough for now. The block recurs until the thinking is solid; each pass sharpens it.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "Just because fear helps us create narratives doesn't mean that those narratives are prophecies.",
         "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
@@ -681,7 +681,7 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Your thinking is clear, careful, and organized, and you can plan and say the precise thing. Focus and follow-through are both online. A window for the serious conversation or the detailed long-term work. Use it to structure the plan you keep putting off.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     },
     {
       "id": "cc/aspect-pair/saturn-sextile-mercury",
@@ -714,7 +714,7 @@
       "derivation_note": "sextile = the supportive Saturn phase as an opportunity that only pays off when acted on",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Your thinking is clear, careful, and organized, and you can plan and say the precise thing. Focus and follow-through are both online. A window for the serious conversation or the detailed long-term work. Use it to structure the plan you keep putting off.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     },
     {
       "id": "cc/aspect-pair/saturn-conjunction-venus",
@@ -746,7 +746,7 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "A relationship, or your sense of being valued, is being asked to get real and commit. Their reserve, or the effort it's taking, can read as depth or as a cold shoulder, and it's worth knowing which. Let the love build slowly if it's building, ask for what you need out loud, and call out the chill honestly when it's actually a chill.",
-      "revoice_version": "chani-quality-v1-authored",
+      "revoice_version": "CC-quality-v1-authored",
       "pull_quote": {
         "text": "Undercharging is not humility.",
         "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
@@ -785,7 +785,7 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "A relationship, expense, or commitment feels tested, distant, or effortful, and doubt about being wanted creeps in. You judge the connection by its coldest moment and pull away. The chill is a test of the bond, not proof you're unwanted. Name what's sustainable instead of keeping the peace at your own expense. The doubt recurs; each pass asks for a more honest limit.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "Undercharging is not humility.",
         "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
@@ -825,7 +825,7 @@
       "derivation_note": "opposition read as the restructuring felt through others / the outer world",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "A relationship, expense, or commitment feels tested, distant, or effortful, and doubt about being wanted creeps in. You judge the connection by its coldest moment and pull away. The chill is a test of the bond, not proof you're unwanted. Name what's sustainable instead of keeping the peace at your own expense. The doubt recurs; each pass asks for a more honest limit.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     },
     {
       "id": "cc/aspect-pair/saturn-trine-venus",
@@ -857,7 +857,7 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Affection and commitment sit easily together, and your sense of worth feels stable and worth the effort. Warmth and structure agree right now. A good time to define what you want and make it durable. Say what you want from the relationship and build it to last.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     },
     {
       "id": "cc/aspect-pair/saturn-sextile-venus",
@@ -890,7 +890,7 @@
       "derivation_note": "sextile = the supportive Saturn phase as an opportunity that only pays off when acted on",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Affection and commitment sit easily together, and your sense of worth feels stable and worth the effort. Warmth and structure agree right now. A good time to define what you want and make it durable. Say what you want from the relationship and build it to last.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     },
     {
       "id": "cc/aspect-pair/saturn-conjunction-mars",
@@ -922,7 +922,7 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Your drive gets disciplined, and raw effort has to be organized into something that lasts. Impatience with the slow, structured path keeps flaring. This is your energy being trained, not blocked, and controlled effort now builds real capacity. Move in smaller structured steps and finish what you start. Across passes, the discipline compounds if you don't force it.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "Stop wearing burnout like a badge of honor. It's just burnout.",
         "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
@@ -966,7 +966,7 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Your drive runs straight into a wall of limits, delay, or authority, and the friction is frustrating. You either push recklessly or freeze, and both cost you. The resistance marks exactly where your effort needs to get stronger. Channel the energy into disciplined, bounded action instead of a reckless push. The wall recurs until the effort is structured; each pass is a strength test.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     },
     {
       "id": "cc/aspect-pair/saturn-opposition-mars",
@@ -999,7 +999,7 @@
       "derivation_note": "opposition read as the restructuring felt through others / the outer world",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Your drive runs straight into a wall of limits, delay, or authority, and the friction is frustrating. You either push recklessly or freeze, and both cost you. The resistance marks exactly where your effort needs to get stronger. Channel the energy into disciplined, bounded action instead of a reckless push. The wall recurs until the effort is structured; each pass is a strength test.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     },
     {
       "id": "cc/aspect-pair/saturn-trine-mars",
@@ -1031,7 +1031,7 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Energy and discipline cooperate, and you can work hard without burning out. Steady, productive drive is available. A window to build something that needs sustained effort. Put the energy into the long project now.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     },
     {
       "id": "cc/aspect-pair/saturn-sextile-mars",
@@ -1064,7 +1064,7 @@
       "derivation_note": "sextile = the supportive Saturn phase as an opportunity that only pays off when acted on",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Energy and discipline cooperate, and you can work hard without burning out. Steady, productive drive is available. A window to build something that needs sustained effort. Put the energy into the long project now.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     }
   ]
 }

@@ -393,7 +393,7 @@ The later v5 smoke showed that GPT-5.6 Sol still does not apply it reliably.
 
 ## CC/SD boundary
 
-CHANI and Spirit Daughter material is used only as an anti-imitation boundary.
+CC and Spirit Daughter material is used only as an anti-imitation boundary.
 It is not a source of dates, doctrine, or generated copy. Owner-verbatim text
 is exempt from literal CC/SD construction matching because the purpose of that
 check is to detect generator drift, not retroactively reject Marie's published

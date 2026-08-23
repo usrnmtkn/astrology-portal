@@ -57,7 +57,7 @@ function firstNonResolveSettleMatch(text, pattern) {
 
 const SLOTS = ["hook", "lived", "turn"];
 const FACT_GATED_SLOTS = ["priorSignHandoff", "cycleLine", "concurrentEvents", "cycleLocation"];
-// CHANI-modeled extended slots (2026-07-27). Optional: the 7 approved trios
+// CC-modeled extended slots (2026-07-27). Optional: the 7 approved trios
 // predate them, so they lint only when present. The engine always emits them.
 const EXTENDED_SLOTS = ["tagline", "moves"];
 const sentencesOf = (text) => (String(text).match(/[^.!?]+[.!?]+/g) || []).map((s) => s.trim());

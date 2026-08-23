@@ -37,7 +37,7 @@ The included training script follows the OpenAI gpt-oss Transformers recipe. It 
 
 Only owner-authored, owner-approved material may enter training.
 
-- No scraped Co-Star, CHANI, social, book, or third-party copy.
+- No scraped Co-Star, CC, social, book, or third-party copy.
 - No `needs_review` rows.
 - No profile records, handles, birth data, chart data, or other personal information.
 - Calibration fixtures remain evaluation references unless they receive a paired structured fact brief.

@@ -173,7 +173,7 @@ for body, houses in H.items():
             "house_integration": integ,   # natal: completes "In the Nth house, ..."
             "home_scene": home,           # home planetary horoscope, Marie horoscope voice
             "source_keys": [f"cc/planet/{body}", f"cc/house/{h}"],
-            "doctrine_source": "CHANI layer-order logic + cc/house scenes (voiced original)",
+            "doctrine_source": "CC layer-order logic + cc/house scenes (voiced original)",
             "tone_version": "marie-calibrated-v1",
             "originalityCheck": "voiced original; home_scene in Marie's horoscope voice (You've been ... this week ...)",
             "review_note": "needs Marie/editorial final sign-off before serving",

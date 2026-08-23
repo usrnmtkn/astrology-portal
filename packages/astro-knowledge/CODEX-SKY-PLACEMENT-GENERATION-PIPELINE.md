@@ -17,22 +17,22 @@ never scores cards or placement trios. `editorial-voice-router.js` enforces
 that boundary and passes the article planet through to the long-form judge so
 its per-planet furniture check is active.
 
-## Article structure (owner's CHANI models, 2026-07-27)
+## Article structure (owner's CC models, 2026-07-27)
 
-The owner supplied two CHANI pages as STRUCTURAL models (Sun-in-Leo horoscopes,
+The owner supplied two CC pages as STRUCTURAL models (Sun-in-Leo horoscopes,
 Jupiter-in-Leo guide) - structure borrowed, copy never. The page renders:
 
 1. TAGLINE - 2-5 word imperative under the title (generated slot, new)
 2. WHEN - date range, COMPUTED from ephemeris, never generated
-3. HOOK - doubles as CHANI's "Takeaway" block (approved beat)
+3. HOOK - doubles as CC's "Takeaway" block (approved beat)
 4. LIVED - body with pace (approved beat)
 5. TURN - the confrontation (approved beat)
 6. MOVES - 2-3 concrete ways to work with the transit (generated slot, new;
-   CHANI's "7 ways" cut to the best 2-3, each held to the swap test)
+   CC's "7 ways" cut to the best 2-3, each held to the swap test)
 7. Dated sky events during the transit (lunations/eclipses/aspects) in their
    own blocks below, COMPUTED only
 
-CHANI's "last time this happened" history section is deliberately EXCLUDED:
+CC's "last time this happened" history section is deliberately EXCLUDED:
 it needs sourced historical claims we do not have (falsifiability rule).
 The engine emits {tagline, hook, lived, turn, moves}; rows materialize as
 `sky-placement-tagline|hook|lived|turn|moves/{planet}/{sign}`. The 7 approved

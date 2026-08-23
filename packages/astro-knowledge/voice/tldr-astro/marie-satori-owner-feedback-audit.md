@@ -64,10 +64,10 @@ Authoritative machine-readable decisions live in `marie-satori-editorial-decisio
 **OWNER DECISION:** PERMITTED EXCEPTION — `steady` is allowed for observable effort, pace, support, light, or reliability. It is prohibited only when used as vague energy language or an empty positive adjective. Remove the machine rule requiring `stable`, `strong`, or `solid` before it. (Owner-resolved worksheet, 2026-08-03.)  
 **Notes:** Judge the noun and sentence, not the word in isolation.
 
-### CF-016 — Chani warmth versus Chani fingerprints
+### CF-016 — CC warmth versus CC fingerprints
 
 **Earlier rule:** Flag CC/SD recognizability because generated copy drifts toward their constructions.  
-**Later clarification:** Chani-adjacent warmth, tenderness, permission, and moderate lyrical cadence are acceptable.  
+**Later clarification:** CC-adjacent warmth, tenderness, permission, and moderate lyrical cadence are acceptable.
 **Affected surfaces:** All editorial writing.  
 **Proposed resolution:** Keep warmth and emotional intelligence. Flag documented constructions and advocacy-default subject matter, not softness by itself. Marie determines what the article notices.  
 **OWNER DECISION:** ____________________  
@@ -246,8 +246,8 @@ These are normalized summaries of rules currently affecting future work. They re
 | OV-025 | informational | Marie’s recurring themes include technology, power, gatekeeping, recognition, work, money, status, control, exclusion, invisible labor, and someone else setting the terms. | Theme selection | Owner rule | |
 | OV-026 | informational | Use Marie’s recurring themes only when the placement supports them. | Theme selection | Owner rule | |
 | OV-027 | informational | Do not treat collective astrology as an automatic instruction to write about activism, policy, institutions, or collective healing. | Collective astrology | Owner rule | |
-| OV-023 | informational | Chani-adjacent warmth, tenderness, permission, emotional intelligence, and moderate lyrical cadence are acceptable. | Delivery | Owner clarification | |
-| OV-024 | informational | Chani-like advocacy-default subject matter is not acceptable unless the astrology and owner material directly support it. | Theme selection | Owner clarification | |
+| OV-023 | informational | CC-adjacent warmth, tenderness, permission, emotional intelligence, and moderate lyrical cadence are acceptable. | Delivery | Owner clarification | |
+| OV-024 | informational | CC-like advocacy-default subject matter is not acceptable unless the astrology and owner material directly support it. | Theme selection | Owner clarification | |
 | OV-037 | informational | Source corpora supply facts and scene notes, not crafted prose. Voice enters at the owner-evidence writing pass. | Source use | Owner rule | |
 
 ### Governance and approval
