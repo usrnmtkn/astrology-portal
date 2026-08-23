@@ -203,13 +203,16 @@ const bundledManifestSummary = readJson(`${packageDir}/bundled-manifest-summary-
 const isSkyPlacementPartitionRow = (row) => (
   String(row.contentKey ?? "").startsWith("house-horoscope-core/")
   || String(row.contentKey ?? "").startsWith("fallback-hook/sky-sign-copy/")
+  || String(row.contentKey ?? "").startsWith("fallback-hook/sky-placement-sign/")
   || (
     String(row.contentKey ?? "").startsWith("fallback-hook/sky-placement-")
-    && !String(row.contentKey ?? "").startsWith("fallback-hook/sky-placement-sign/")
   )
 );
 const skyPlacementRows = latestEligible([
   ...sourceRows.hookRows.filter(isSkyPlacementPartitionRow),
+  ...skyAspectPhrasebook.hookRows.filter((row) => (
+    String(row.contentKey ?? "").startsWith("fallback-hook/sky-placement-sign/")
+  )),
   ...skyPlanetFrames.rows,
   ...skyPlacementVoicePass.rows,
   ...skySignCopyRows,
