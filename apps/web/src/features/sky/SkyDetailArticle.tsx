@@ -478,6 +478,27 @@ export function SkyDetailArticle({
       drilldown
   );
   const isAspectsOnlyArticle = hasAspectCard && !hasReadableBody;
+  const risingHoroscopesSection = detail.risingHoroscopes?.length ? (
+    <section
+      className="article-section sky-detail-section"
+      id="sky-rising-horoscopes"
+      aria-labelledby="sky-rising-horoscopes-title"
+    >
+      <div className="article-related-aspects__copy-list">
+        <h2 id="sky-rising-horoscopes-title">Horoscopes by rising sign</h2>
+        {detail.risingHoroscopes.map((entry) => (
+          <div className="sky-rising-horoscope" key={entry.risingSign}>
+            <h3 className="sky-rising-horoscope__title">
+              {entry.risingSign} &amp; {entry.risingSign} Rising
+            </h3>
+            {readerFacingParagraphs([entry.body]).map((paragraph) => (
+              <p key={paragraph}>{paragraph}</p>
+            ))}
+          </div>
+        ))}
+      </div>
+    </section>
+  ) : null;
 
   return (
     <section
@@ -603,25 +624,7 @@ export function SkyDetailArticle({
                   <p>{detail.closingCharge}</p>
                 </section>
               ) : null}
-              {detail.risingHoroscopes?.length ? (
-                <section
-                  className="article-section sky-detail-section"
-                  id="sky-rising-horoscopes"
-                  aria-labelledby="sky-rising-horoscopes-title"
-                >
-                  <h2 id="sky-rising-horoscopes-title">Horoscopes by rising sign</h2>
-                  {detail.risingHoroscopes.map((entry) => (
-                    <div key={entry.risingSign}>
-                      <h3 className="sky-rising-horoscope__title">
-                        {entry.risingSign} &amp; {entry.risingSign} Rising
-                      </h3>
-                      {readerFacingParagraphs([entry.body]).map((paragraph) => (
-                        <p key={paragraph}>{paragraph}</p>
-                      ))}
-                    </div>
-                  ))}
-                </section>
-              ) : null}
+              {!detail.personalizedPlacement ? risingHoroscopesSection : null}
               {detail.seriesLine ? (
                 <aside className="article-section sky-detail-section sky-aspect-series" aria-label="Aspect series">
                   <p>{detail.seriesLine}</p>
@@ -765,6 +768,16 @@ export function SkyDetailArticle({
               </div>
             </section>
           </>
+        ) : null}
+
+        {detail.personalizedPlacement && risingHoroscopesSection ? (
+          <div className="article-card sky-detail-rising-horoscopes-card">
+            <div className="article-body-card sky-detail-body">
+              <div className="article-body-inner">
+                {risingHoroscopesSection}
+              </div>
+            </div>
+          </div>
         ) : null}
       </article>
     </section>
