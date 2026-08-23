@@ -1555,7 +1555,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     };
     await seedAdminApi(page, { generatedRows: [articleRow, houseRow] });
     await expectAdminRouteLoads(page, "/admin/content#fallback-hooks");
-    await page.getByLabel("Search fallback articles and passages").fill("jupiter leo");
+    await page.getByLabel("Search fallback articles and passages").fill("Jupiter in Leo");
 
     const articleGroup = page.getByRole("region", { name: "Sky Placement articles" });
     await expect(articleGroup.getByText("Jupiter in Leo", { exact: true })).toBeVisible();
@@ -1563,12 +1563,19 @@ test.describe("content dashboard admin user flow case studies", () => {
     const houseGroup = page.getByRole("region", { name: "House horoscopes" });
     await expect(houseGroup.getByText("Jupiter in Leo · 10th House", { exact: true })).toBeVisible();
     await expect(houseGroup.getByText("House horoscope", { exact: true })).toBeVisible();
+    await page.getByLabel("Search fallback articles and passages").fill("Jupiter in Leo 10th House");
+    await expect(articleGroup).toBeHidden();
+    await expect(houseGroup.getByText("Jupiter in Leo · 10th House", { exact: true })).toBeVisible();
+    await houseGroup.getByRole("button", { name: "Edit" }).click();
+    await expect(page.getByRole("dialog", { name: "Generated content editor" }).getByLabel("Headline"))
+      .toHaveValue("Jupiter in Leo · 10th House");
+    await page.getByRole("dialog", { name: "Generated content editor" }).getByRole("button", { name: "Close" }).click();
 
     await page.getByLabel("Search fallback articles and passages").fill("no matching astrology row");
     await expect(page.getByText("No rows match these filters.", { exact: true })).toBeVisible();
 
     await page.setViewportSize({ width: 390, height: 844 });
-    await page.getByLabel("Search fallback articles and passages").fill("jupiter leo");
+    await page.getByLabel("Search fallback articles and passages").fill("Jupiter in Leo");
     await expect(page.getByRole("region", { name: "Sky Placement articles" })).toContainText("Jupiter in Leo");
     await expect(page.getByRole("region", { name: "House horoscopes" })).toContainText("Jupiter in Leo · 10th House");
     await assertNoBrowserErrors();
