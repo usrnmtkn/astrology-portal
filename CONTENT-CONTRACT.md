@@ -39,6 +39,15 @@ The admin dashboard has a Content QA view listing every reader-facing unit: key,
 source package, version (author-final | draft), contract status, and failure reasons. This
 view is the work queue for the author. Silent degradation is a bug by definition.
 
+### R7. Owner-authored passages are indivisible
+An owner-authored, author-final passage renders byte-for-byte. It must never be
+shortened, summarized, excerpted, paraphrased, combined with another passage,
+or replaced by a compact matrix/evidence row because a surface or importer
+prefers shorter copy. If a separate short treatment is needed, it requires its
+own field or content key and explicit owner approval for that exact wording.
+Protected author-final sources carry an exact-text hash and word count; drift
+in either value fails import and QA.
+
 ## Enforcement
 
 1. `scripts/test-content-contract.mjs` is committed UNMODIFIED and must pass. It may not be

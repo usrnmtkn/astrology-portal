@@ -19,7 +19,7 @@ const generatedContentSource = read("apps/web/src/services/generatedContent.ts")
 const materializerSource = read("scripts/materialize-fallback-architecture-v3-dashboard-rows.mjs");
 const appSource = read("apps/web/src/App.tsx");
 
-assert.equal(PACKAGE_VERSION, "v3-2026-08-22f");
+assert.equal(PACKAGE_VERSION, "v3-2026-08-22g");
 assert.match(
   runtimeSource,
   /export const fallbackArchitectureV3BundledManifestSummary = bundledManifestSummaryV3 as FallbackArchitectureV3PackageManifestSummary/u,
@@ -109,7 +109,9 @@ const skyPlacementHouseTemplateReaderRows = skyPlacementHouseTemplates.rows.map(
   content_role: row.content_role,
   grammar_frame: row.grammar_frame,
   body_you: row.body_you,
-  review_status: row.review_status
+  review_status: row.review_status,
+  ...(row.source_release ? { source_release: row.source_release } : {}),
+  ...(row.copy_protection ? { copy_protection: row.copy_protection } : {})
 }));
 const sunLeoHouseCores = readJson(`${packageDir}/source-rows/sun-leo-house-cores-v1.json`);
 const sunLeoHouseCoreReaderRows = sunLeoHouseCores.rows.map(({
