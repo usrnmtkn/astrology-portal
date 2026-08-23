@@ -6547,7 +6547,11 @@ export function GeneratedContentAdminDashboard() {
                       </header>
                       <p>{variable.meaning}</p>
                       <dl className="admin-hook-pattern-list">
-                        <div><dt>Example</dt><dd>{variable.example}</dd></div>
+                        {variable.sourceKind === "runtime" ? (
+                          <div><dt>Example value</dt><dd>{variable.example}</dd></div>
+                        ) : (
+                          <div><dt>Saved writing</dt><dd>Open the source rows to read or edit the actual copy that can fill this variable.</dd></div>
+                        )}
                         <div><dt>Comes from</dt><dd>{variable.source}</dd></div>
                         <div><dt>Used in</dt><dd>{variable.fields.join(", ")}</dd></div>
                       </dl>
