@@ -59,6 +59,6 @@ export function requireInternalRunner(req: IncomingMessage) {
   return secrets.some((secret) => req.headers.authorization === `Bearer ${secret}`);
 }
 
-export async function requireReportAdmin(req: IncomingMessage) {
+export function requireReportAdmin(req: IncomingMessage) {
   return isContentAdminAuthorized(req);
 }
