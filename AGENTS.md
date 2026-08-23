@@ -87,6 +87,20 @@ behavior:
 If the source resolvers pass but the shipped artifact or rendered surface does
 not, the task is not complete and must not be reported as deployed.
 
+### Browser release-path verification (mandatory)
+
+A source resolver or unit test is not proof that reader-facing copy is fixed.
+Rebuild the actual web bundle and verify the rendered reader route. Local
+Playwright runs must start a fresh preview from the current checkout. Never
+enable `reuseExistingServer` or use an already-running preview as release
+evidence.
+
+For protected owner-authored copy, browser regressions must assert identifying
+text from the opening and the final sentence. Checking only that a source file
+contains the passage is insufficient. A production claim requires the merge
+commit's deployment to finish successfully and the same rendered-copy
+regression to pass against the production URL.
+
 ### Isolated-worktree application-test prerequisite (mandatory)
 
 An isolated worktree created from Git contains the source for
