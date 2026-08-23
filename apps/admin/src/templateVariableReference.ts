@@ -6,6 +6,7 @@ export type TemplateVariableReference = {
   meaning: string;
   example: string;
   source: string;
+  sourceKind: "saved-copy" | "runtime";
   requirement: TemplateVariableRequirement;
   fields: string[];
 };
@@ -477,6 +478,9 @@ export function templateVariableReferences(
         name,
         label: humanizeVariable(name),
         ...definition,
+        sourceKind: (/^(Calculated|Runtime|Selected relationship|Relationship renderer)/u.test(definition.source)
+          ? "runtime"
+          : "saved-copy") as TemplateVariableReference["sourceKind"],
         requirement,
         fields: [...usage.fields].sort()
       };

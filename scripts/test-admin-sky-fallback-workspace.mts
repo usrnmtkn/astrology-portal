@@ -62,11 +62,23 @@ assert.equal(
 );
 assert.equal(natalPlanetInSignTemplateTitle("fallback-template/natal.house-context", "Planet in Sign"), null);
 assert.deepEqual(skyFallbackIdentity("fallback-hook/sky-placement-lived/jupiter/leo"), {
-  title: "Jupiter in Leo · Lived passage",
-  typeLabel: "Legacy Sky Placement passage",
+  title: "Jupiter in Leo · How it shows up",
+  typeLabel: "Sky Placement fallback article section",
   groupKey: "supporting",
-  groupLabel: "Supporting fallback rows"
+  groupLabel: "Sky Placement fallback articles"
 });
+assert.equal(
+  skyFallbackIdentity("fallback-hook/sky-placement-tagline/jupiter/leo")?.title,
+  "Jupiter in Leo · Short headline"
+);
+assert.equal(
+  skyFallbackIdentity("fallback-hook/sky-placement-hook/jupiter/leo")?.title,
+  "Jupiter in Leo · Opening"
+);
+assert.equal(
+  skyFallbackIdentity("fallback-hook/sky-placement-turn/jupiter/leo")?.title,
+  "Jupiter in Leo · Challenge and response"
+);
 assert.equal(
   skyFallbackIdentity("fallback-hook/sky-aspect-sign/sun/leo/trine/chiron/taurus")?.title,
   "Sun in Leo Trine Chiron in Taurus"

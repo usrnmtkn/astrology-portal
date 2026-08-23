@@ -171,8 +171,10 @@ assert.match(dashboard, /Create a complete edition/u, "Template rows must expose
 assert.match(dashboard, /TL;DR · explicit edition copy/u, "Edition compilation must collect an explicit TL;DR in Content Studio.");
 assert.match(dashboard, /summary: edition\.tldr/u, "The saved summary mirror must use the explicit compiled TL;DR.");
 assert.match(dashboard, /All 12 approved house horoscopes are required/u, "Compilation must require complete house coverage.");
-assert.match(dashboard, /Only an approved complete Sky house horoscope can serve/u, "Admin must distinguish reader-ready house horoscopes from source candidates.");
+assert.match(dashboard, /Only a complete, approved Sky house horoscope can appear/u, "Admin must explain which house horoscopes can appear in the app.");
 assert.match(dashboard, /passage\.availability === "Reader-ready"/u, "Edition compilation must not silently promote transit source candidates.");
+assert.match(dashboard, /Complete horoscope/u, "Admin must label usable house horoscopes in plain editorial language.");
+assert.match(dashboard, /Supporting passage/u, "Admin must label source candidates in plain editorial language.");
 assert.match(dashboard, /Approve &amp; publish complete edition/u, "Compiled editions need a distinct owner approval action.");
 assert.match(dashboard, /Edit the reader experience/u, "Compiled editions must open as one article-first editor.");
 assert.match(dashboard, /Drafts save automatically/u, "The article editor must explain its non-serving autosave behavior.");

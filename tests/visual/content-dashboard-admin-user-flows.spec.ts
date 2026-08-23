@@ -22,7 +22,7 @@ const adminPages = [
 ];
 
 const adminCreateCases = [
-  { action: "Create article", hash: "articles", editorHeading: "Create article", eventType: "sky_article", blockType: "sky_article", contentKey: "sky/article/new-row" },
+  { action: "Create article", hash: "articles", editorHeading: "Create article", eventType: "sky_article", blockType: "essay", contentKey: "article/manual/new-row" },
   { action: "Create content row", hash: "exact-content", editorHeading: "Author new row", eventType: "essay", blockType: "essay", contentKey: "content/manual/new-row" },
   { action: "Create reusable phrase", hash: "vocabulary", editorHeading: "Create reusable phrase", eventType: "vocab", blockType: "vocabulary_phrase", contentKey: "vocab/planets/create-reusable-phrase-qa-row", phraseEditor: true },
   { action: "Create template", hash: "templates", editorHeading: "Author new row", eventType: "slot-template", blockType: "template", contentKey: "slot-template/manual/new-template" },
@@ -147,6 +147,36 @@ const generatedContentRows = [
     knowledge_ids: ["qa-sky-source"],
     source_snapshot: { contentSystem: "authored", contentLevel: "source-grounded", contentType: "sky_article", authoringSource: "qa-fixture" },
     reviewer_notes: "QA fixture row.",
+    prompt_version: "qa-admin-flow",
+    provider: "qa-fixture",
+    model: null,
+    reviewed_at: now,
+    published_at: now,
+    updated_at: now,
+    created_at: now
+  },
+  {
+    id: "qa-standalone-article-row",
+    content_key: "article/manual/sun-in-cancer",
+    surface: "sky",
+    mode: "article",
+    status: "LIVE",
+    event_type: "sky_article",
+    target_date: null,
+    headline: "Understanding the Sun in Cancer",
+    summary: "A standalone article fixture that is deliberately separate from the Sky write-up workflow.",
+    body: "This long-form article is available to editorial workflows without duplicating the current Sky placement write-up.",
+    sections: [],
+    block_type: "essay",
+    lane: "serving",
+    review_state: null,
+    evergreen: true,
+    evergreen_at: now,
+    evergreen_by: "qa",
+    facts: { body: "Sun", sign: "Cancer" },
+    knowledge_ids: ["qa-standalone-article-source"],
+    source_snapshot: { contentSystem: "authored", contentLevel: "source-grounded", contentType: "article", authoringSource: "qa-fixture" },
+    reviewer_notes: "QA standalone article fixture row.",
     prompt_version: "qa-admin-flow",
     provider: "qa-fixture",
     model: null,
@@ -670,10 +700,10 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(page.getByRole("button", { name: "Load content" })).toBeEnabled();
     await page.getByRole("button", { name: "Load content" }).click();
 
-    await expect(page.getByRole("region", { name: "Admin status" })).toContainText("8 saved rows loaded", {
+    await expect(page.getByRole("region", { name: "Admin status" })).toContainText(`${generatedContentRows.length} saved rows loaded`, {
       timeout: routeReadyTimeoutMs
     });
-    await expect(page.getByRole("status")).toContainText("Loaded 8 saved rows");
+    await expect(page.getByRole("status")).toContainText(`Loaded ${generatedContentRows.length} saved rows`);
   });
 
   test("admin shell navigates every primary dashboard surface", async ({ page }) => {
@@ -1181,11 +1211,11 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(articleFilters.getByLabel("Article content system")).toHaveValue("all");
 
     await articleFilters.getByLabel("Article planet or point").selectOption("sun");
-    await expect(page.locator(".admin-content-row", { hasText: "sky.placement.sun.cancer" })).toHaveCount(1);
+    await expect(page.locator(".admin-content-row", { hasText: "article/manual/sun-in-cancer" })).toHaveCount(1);
     await expect(page.locator(".admin-dashboard h2").filter({ hasText: "Articles" })).toBeVisible();
 
     await articleFilters.getByLabel("Search articles").fill("cancer");
-    await expect(page.locator(".admin-content-row", { hasText: "Sun in Cancer" }).first()).toBeVisible();
+    await expect(page.locator(".admin-content-row", { hasText: "Understanding the Sun in Cancer" }).first()).toBeVisible();
 
     await articleFilters.getByLabel("Article content system").selectOption("fallback");
     await expect(page.locator(".admin-content-row")).toHaveCount(0);
@@ -1195,7 +1225,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(articleFilters.getByLabel("Article planet or point")).toHaveValue("all");
     await expect(articleFilters.getByLabel("Article content system")).toHaveValue("all");
     await expect(articleFilters.getByLabel("Search articles")).toHaveValue("");
-    await expect(page.locator(".admin-content-row", { hasText: "sky.placement.sun.cancer" })).toHaveCount(1);
+    await expect(page.locator(".admin-content-row", { hasText: "article/manual/sun-in-cancer" })).toHaveCount(1);
 
     await assertNoBrowserErrors();
   });
@@ -1387,7 +1417,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(page.locator("[aria-label='Status']")).toBeVisible();
     await expect(page.locator("[aria-label='Status']").getByRole("tab", { name: /Draft/ })).toBeVisible();
     await expect(page.locator("[aria-label='Status']").getByRole("tab", { name: /Published/ })).toBeVisible();
-    await expect(page.getByText("Reader safety")).toBeVisible();
+    await expect(page.getByRole("region", { name: "App visibility status" }).getByText("App visibility")).toBeVisible();
 
     await page.getByLabel("Search content").fill("moon");
     await expect(page.locator(".admin-content-row", { hasText: "Moon in Virgo" }).first()).toBeVisible();

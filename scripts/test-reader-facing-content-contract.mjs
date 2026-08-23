@@ -306,7 +306,9 @@ assert.doesNotMatch(adminDashboard, /aria-label="App display source"/, "Admin ed
 assert.match(adminDashboard, /aria-label="Article filters"/, "Articles admin surface must include dedicated filters.");
 assert.match(adminDashboard, /Article content system/, "Articles admin filters must include authored vs fallback content system.");
 assert.match(adminDashboard, /filteredArticleRows/, "Articles admin table must render the filtered article row set.");
-assert.match(adminDashboard, /Needs source material/, "Admin readiness must flag fallback/source lanes that are empty or too thin.");
+assert.match(adminDashboard, /Needs more source copy/, "Admin visibility must explain when fallback/source lanes are empty or too thin in plain language.");
+assert.match(adminDashboard, /label: "Available in app"/, "Published serving rows must use a clear app-visibility label without implying that every eligible row is currently selected.");
+assert.match(adminDashboard, /label: "Not published"/, "Draft rows must use a clear publishing label instead of internal held-state jargon.");
 assert.match(adminDashboard, /rowNeedsSourceMaterial/, "Admin readiness must classify weak fallback source rows separately from normal draft/review states.");
 assert.match(adminDashboard, /aria-label="Compatibility filters"/, "Compatibility admin surface must include dedicated filters.");
 assert.match(adminDashboard, /Compatibility sections/, "Compatibility admin must group content, fallback hooks, vocabulary, and slots.");
