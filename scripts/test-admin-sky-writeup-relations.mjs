@@ -99,7 +99,7 @@ assert.deepEqual(
   "Approved lunation macros must participate in the same Sky write-up workflow as placements."
 );
 const piscesFullMoonContext = skyLunationContextForRow(piscesFullMoonMacro);
-assert.deepEqual(piscesFullMoonContext, { kind: "full-moon", sign: "pisces" });
+assert.deepEqual(piscesFullMoonContext, { kind: "full-moon", eclipse: "none", sign: "pisces" });
 assert.deepEqual(
   skyLunationContextForRow({
     id: "solar-eclipse",
@@ -107,7 +107,18 @@ assert.deepEqual(
     headline: "Virgo Solar Eclipse",
     block_type: "sky_article"
   }),
-  { kind: "new-moon", sign: "virgo" }
+  { kind: "new-moon", eclipse: "solar", sign: "virgo" }
+);
+assert.deepEqual(
+  skyLunationContextForRow({
+    id: "lunar-eclipse",
+    content_key: "sky/article-edition/lunation/pisces-2026-08-28",
+    headline: "Pisces Full Moon",
+    block_type: "sky_article",
+    facts: { moonEvent: { name: "Full Moon", sign: "Pisces", eclipseType: "lunar" } }
+  }),
+  { kind: "full-moon", eclipse: "lunar", sign: "pisces" },
+  "Structured eclipse facts must outrank a headline that omits the eclipse label."
 );
 
 const lunationSourceRows = [
