@@ -2,6 +2,7 @@ import type { IncomingMessage, ServerResponse } from "node:http";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath, URL } from "node:url";
+import { isContentAdminAuthorized } from "../_lib/admin-auth.js";
 import { loadLocalWebEnv } from "../_lib/local-env.js";
 import {
   assertCompiledSkyArticleEdition,
@@ -550,16 +551,6 @@ function sendJson(res: ServerResponse, status: number, body: unknown) {
   res.statusCode = status;
   res.setHeader("content-type", "application/json");
   res.end(JSON.stringify(body));
-}
-
-function isAuthorized(req: IncomingMessage) {
-  const secret = process.env.CONTENT_GENERATION_SECRET;
-
-  if (!secret) {
-    return process.env.NODE_ENV !== "production";
-  }
-
-  return req.headers.authorization === `Bearer ${secret}`;
 }
 
 export function listHeldSkyAspectSourceDrafts(): HeldSkyAspectSourceDraft[] {
@@ -1542,7 +1533,7 @@ async function deleteGeneratedContent(req: IncomingMessage) {
 }
 
 export default async function handler(req: IncomingMessage, res: ServerResponse) {
-  if (!isAuthorized(req)) {
+  if (!isContentAdminAuthorized(req)) {
     sendJson(res, 401, { error: "Unauthorized." });
     return;
   }

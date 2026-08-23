@@ -280,7 +280,10 @@ export function AspectPatternWriteups({ initialKind = "natal", secret = "" }: { 
         method: selectedRow.generatedContentId ? "PATCH" : "POST",
         headers: {
           "content-type": "application/json",
-          ...(secret.trim() ? { authorization: `Bearer ${secret.trim()}` } : {})
+          ...(secret.trim() ? {
+            authorization: `Bearer ${secret.trim()}`,
+            "x-content-generation-secret": secret.trim()
+          } : {})
         },
         body: JSON.stringify({
           kind,

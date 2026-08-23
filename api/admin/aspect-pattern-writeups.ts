@@ -1,6 +1,7 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { createRequire } from "node:module";
 import { URL } from "node:url";
+import { isContentAdminAuthorized } from "../_lib/admin-auth.js";
 import { loadLocalWebEnv } from "../_lib/local-env.js";
 
 loadLocalWebEnv();
@@ -141,12 +142,6 @@ function sendJson(res: ServerResponse, status: number, body: unknown) {
   res.setHeader("content-type", "application/json");
   res.setHeader("cache-control", "no-store");
   res.end(JSON.stringify(body));
-}
-
-function isAuthorized(req: IncomingMessage) {
-  const secret = process.env.CONTENT_GENERATION_SECRET;
-  if (!secret) return process.env.NODE_ENV !== "production";
-  return req.headers.authorization === `Bearer ${secret}`;
 }
 
 function requireEnv(name: string) {
@@ -565,7 +560,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
         sendJson(res, 200, { ok: true, previews: previewForRecord(saveKind, record) });
         return;
       }
-      if (!isAuthorized(req)) {
+      if (!isContentAdminAuthorized(req)) {
         sendJson(res, 401, { ok: false, error: "Unauthorized." });
         return;
       }

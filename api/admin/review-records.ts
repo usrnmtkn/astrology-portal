@@ -1,5 +1,6 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { URL } from "node:url";
+import { isContentAdminAuthorized } from "../_lib/admin-auth.js";
 import { loadLocalWebEnv } from "../_lib/local-env.js";
 import { transitToNatalOrbLimit } from "../_lib/astrology-config.js";
 import { canonicalSkyAspectProfile } from "../../apps/web/src/services/canonicalSkyAspectProfile.js";
@@ -251,16 +252,6 @@ function sendJson(res: ServerResponse, status: number, body: unknown) {
   res.statusCode = status;
   res.setHeader("content-type", "application/json");
   res.end(JSON.stringify(body));
-}
-
-function isAuthorized(req: IncomingMessage) {
-  const secret = process.env.CONTENT_GENERATION_SECRET;
-
-  if (!secret) {
-    return process.env.NODE_ENV !== "production";
-  }
-
-  return req.headers.authorization === `Bearer ${secret}`;
 }
 
 function slug(value: string) {
@@ -1301,7 +1292,7 @@ function counts(records: ReviewRecord[]) {
 }
 
 export default async function handler(req: IncomingMessage, res: ServerResponse) {
-  if (!isAuthorized(req)) {
+  if (!isContentAdminAuthorized(req)) {
     sendJson(res, 401, { error: "Unauthorized." });
     return;
   }
