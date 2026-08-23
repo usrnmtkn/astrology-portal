@@ -36,7 +36,13 @@ async function checkOnce() {
   if (healthPayload?.ok !== true) throw new Error(`Health smoke returned HTTP 200 without ok=true: ${JSON.stringify(healthSummary)}`);
 
   const admin = await fetch(`${baseUrl}/api/admin/report-fulfillment`, {
-    headers: { accept: "application/json", authorization: `Bearer ${adminSecret}` }
+    headers: {
+      accept: "application/json",
+      authorization: `Bearer ${adminSecret}`,
+      // Admin traffic uses a dedicated credential header because deployment
+      // intermediaries may consume Authorization before the function runs.
+      "x-content-generation-secret": adminSecret
+    }
   });
   const adminSummary = await responseSummary(admin.clone());
   if (admin.status !== 200) throw new Error(`Authenticated report smoke failed: ${JSON.stringify(adminSummary)}`);
