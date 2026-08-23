@@ -414,11 +414,12 @@ while sign and date remain computed.
 2. `sunHouse` for Full Moons and lunar eclipses;
 3. `rulerHouse` from the traditional ruler's event-time placement;
 4. optional ruler retrograde state;
-5. optional Uranus layer only when Uranus is computed as closely involved.
+5. the verified prior same-sign New Moon for ordinary Full Moons.
 
 Cancer and Leo lunations skip the ruler line when the Moon or Sun rules its own
-lunation. A missing optional ruler-house or Uranus row does not invalidate the
-rest of the card.
+lunation. A missing optional ruler-house row does not invalidate the rest of the
+card. A missing or invalid matching New Moon fails ordinary Full Moon assembly
+closed. The retained Uranus layer rows do not render.
 
 ### Friends
 
@@ -468,11 +469,11 @@ Quiet weeks fall back to `renderWeeklyMoon`.
 |---|---|---|
 | Recognizable ninth-house situation | `lunation-opening-situation/9` | Aquarius counted from Gemini rising |
 | Moon lights up the ninth house | Moon-house frame + house vocabulary | Aquarius counted from Gemini rising |
+| Six-month cycle anchor | `lunation-matching-new-moon-anchor/full` | Prior same-sign New Moon in Aquarius on February 17 |
 | Compact Aquarius Full Moon meaning | `lunation-sign-compact/aquarius` | kind and sign |
 | Third-versus-ninth counterpoint | counterpoint frame + house vocabulary, woven into the compact core | Sun in Leo counted from Gemini rising |
 | Saturn rules from the eleventh | `lunation-ruler-house/11` | Saturn rules Aquarius; Saturn in Aries; Aries is eleventh |
 | Retrograde overlay | `lunation-ruler-retro` | Saturn retrograde at event time |
-| Uranus layer | `lunation-uranus-layer/1` | Uranus in Gemini and close to the lunation |
 | Present-tense ending | `lunation-week-layer` | weekly rendering context |
 
 If Saturn occupies a different sign on a future event date, the same content

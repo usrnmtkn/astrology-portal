@@ -47,6 +47,12 @@ belongs to eclipses only.
 
 Temperature: culmination, illumination, release. Something built since the matching New
 Moon comes to light or comes due.
+Every ordinary Full Moon write-up includes the matching New Moon anchor immediately after
+the house-specific setup: "Six months ago, consciously or not, this lunar cycle began with
+the New Moon in {{matchingNewMoonSign}} on {{matchingNewMoonDate}}." Both values are
+calculation-owned facts. The date renders as month and day when the New Moon and Full Moon
+fall in the same calendar year, and adds the New Moon year when the cycle crosses a calendar
+year.
 This is the ONLY template where axis naming is allowed (your standing rule): the opposition
 IS the event, so the two houses converse. Your model: "The Cancer-Capricorn axis is a
 conversation between care and control."
@@ -80,6 +86,8 @@ reveals. No desire test; the reader did not choose the event.)
 Engine facts for the event: exact date/time, degree and sign, aspects to the lunation with
 dates; the whole-sign house per rising; active outer-planet placements per rising. Every
 aspect sentence traces to a supplied fact. No fact, no sentence.
+Ordinary Full Moon packets also require the exact date/time and sign of the verified matching
+New Moon. The matching New Moon must precede the Full Moon and share its sign.
 
 ## Provenance
 
@@ -101,3 +109,10 @@ close is theme-matched per event (sharp or gentle as the event's theme dictates,
 register); the solar eclipse template describes what the event begins, interrupts, or
 reveals, with no desire test and no implication the reader chose it. Records now match the
 repo at commit 27b22916.
+
+OWNER ADDENDUM (2026-08-23): every ordinary Full Moon write-up anchors its six-month cycle
+to the verified matching New Moon. Required anchor: "Six months ago, consciously or not,
+this lunar cycle began with the New Moon in {{matchingNewMoonSign}} on
+{{matchingNewMoonDate}}." Include the New Moon year only when the matching New Moon and Full
+Moon fall in different calendar years. This addendum updates the writing contract and packet
+compiler only; generation, serving, and runtime eligibility remain separately gated.

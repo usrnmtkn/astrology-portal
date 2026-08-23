@@ -105,6 +105,11 @@ export type LunarCalendarEvent = {
   eclipseType?: LunarCalendarEclipseType;
 };
 
+export type MatchingNewMoonFact = {
+  exactAt: string;
+  sign: string;
+};
+
 export type LunarCalendarActiveAspect = {
   planetA: string;
   aspectType: string;
@@ -2894,6 +2899,47 @@ export function getLunarCalendarRangeEvents(
   }
 
   return request;
+}
+
+export function matchingNewMoonForFullMoon(
+  events: LunarCalendarEvent[],
+  fullMoonStartsAt: string,
+  fullMoonSign: string
+): MatchingNewMoonFact | null {
+  const fullMoonTime = Date.parse(fullMoonStartsAt);
+  const normalizedSign = fullMoonSign.trim().toLowerCase();
+  if (!Number.isFinite(fullMoonTime) || !normalizedSign) return null;
+
+  const match = events
+    .filter((event) => (
+      event.type === "lunation"
+      && event.primary !== false
+      && event.title.toLowerCase().startsWith("new moon")
+      && event.sign?.trim().toLowerCase() === normalizedSign
+      && Date.parse(event.startsAt) < fullMoonTime
+    ))
+    .sort((first, second) => second.startsAt.localeCompare(first.startsAt))[0];
+
+  return match?.sign
+    ? { exactAt: match.startsAt, sign: match.sign }
+    : null;
+}
+
+export async function getMatchingNewMoonForFullMoon(
+  location: LocationInput,
+  fullMoonStartsAt: string,
+  fullMoonSign: string
+): Promise<MatchingNewMoonFact | null> {
+  const fullMoonTime = Date.parse(fullMoonStartsAt);
+  if (!Number.isFinite(fullMoonTime)) return null;
+
+  const dayMs = 86_400_000;
+  const candidates = await getLunarCalendarRangeEvents(
+    location,
+    new Date(fullMoonTime - 220 * dayMs),
+    new Date(fullMoonTime - 120 * dayMs)
+  );
+  return matchingNewMoonForFullMoon(candidates, fullMoonStartsAt, fullMoonSign);
 }
 
 const solarDaylightCache = new Map<string, Promise<SolarDaylight>>();
