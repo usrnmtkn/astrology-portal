@@ -21,7 +21,8 @@ import type { KeyboardEvent as ReactKeyboardEvent } from "react";
 import { isReaderFacingCopy } from "../../web/src/content/readerSafety";
 import { renderCmsTemplatePreview, validateCmsTemplate } from "../../web/src/content/cmsTemplateValidation";
 import { announceContentUpdate } from "../../web/src/services/contentUpdateSignal";
-import { adminSecretStorageKey, normalizeAdminSecret } from "./adminSecret";
+import { adminCredentialHeaders, adminSecretStorageKey, normalizeAdminSecret } from "./adminSecret";
+import { loadOwnerSessionAccessToken, watchOwnerSessionAccessToken } from "./ownerSession";
 import {
   SKY_ARTICLE_COMPILER_VERSION,
   compileSkyArticleEdition,
@@ -1651,10 +1652,7 @@ async function adminJsonRequest<T>(path: string, secret: string, options: Reques
     ...options,
     headers: {
       "content-type": "application/json",
-      ...(normalizedSecret ? {
-        authorization: `Bearer ${normalizedSecret}`,
-        "x-content-generation-secret": normalizedSecret
-      } : {}),
+      ...adminCredentialHeaders(normalizedSecret),
       ...options.headers
     }
   });
@@ -1799,11 +1797,15 @@ function useSavedSecret() {
     }
   }
 
-  return [secret, saveSecret] as const;
+  function setTransientCredential(nextCredential: string) {
+    setSecret(normalizeAdminSecret(nextCredential));
+  }
+
+  return [secret, saveSecret, setTransientCredential] as const;
 }
 
 export function GeneratedContentAdminDashboard() {
-  const [secret, setSecret] = useSavedSecret();
+  const [secret, setSecret, setTransientCredential] = useSavedSecret();
   const [secretInput, setSecretInput] = useState(secret);
   const [activePage, setActivePage] = useState<AdminDashboardPage>(() => parseAdminHash().page);
   const [rows, setRows] = useState<AdminGeneratedContentRow[]>([]);
@@ -2294,9 +2296,40 @@ export function GeneratedContentAdminDashboard() {
   }, []);
 
   useEffect(() => {
-    if (secret.trim()) {
-      void loadDashboardData();
-    }
+    const emergencySecret = secret;
+    let cancelled = false;
+    let activeSessionToken = "";
+    let unsubscribe = () => {};
+
+    void (async () => {
+      setLoadState("loading");
+      unsubscribe = watchOwnerSessionAccessToken((nextToken) => {
+        if (cancelled || nextToken === activeSessionToken) return;
+        activeSessionToken = nextToken;
+        setTransientCredential(nextToken);
+        void loadDashboardData(nextToken, false, "session");
+      });
+      const accessToken = await loadOwnerSessionAccessToken();
+
+      if (!cancelled && accessToken) {
+        activeSessionToken = accessToken;
+        setTransientCredential(accessToken);
+        if (await loadDashboardData(accessToken, false, "session")) return;
+      }
+
+      if (!cancelled && emergencySecret.trim()) {
+        setTransientCredential(emergencySecret);
+        await loadDashboardData(emergencySecret, false, "secret");
+      } else if (!cancelled) {
+        setLoadState("idle");
+      }
+
+    })();
+
+    return () => {
+      cancelled = true;
+      unsubscribe();
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -2496,14 +2529,14 @@ export function GeneratedContentAdminDashboard() {
     navigateAdminPage("vocabulary", params, { keepEditorOpen: true });
   }
 
-  async function loadDashboardData(secretOverride?: string, persistOnSuccess = false) {
+  async function loadDashboardData(secretOverride?: string, persistOnSuccess = false, credentialKind: "session" | "secret" = "secret") {
     const normalizedSecret = normalizeAdminSecret(secretOverride ?? secret);
     if (!normalizedSecret) {
       setLoadState("idle");
       setLoadError("Admin access is required before content can load.");
       setLoadDiagnostics(null);
-      setMessage("Paste the secret value, not the words CONTENT_GENERATION_SECRET, then load content.");
-      return;
+      setMessage("Sign in with the owner account or use the emergency access key.");
+      return false;
     }
 
     setLoadState("loading");
@@ -2559,16 +2592,20 @@ export function GeneratedContentAdminDashboard() {
       ].filter(Boolean);
       setLoadState("loaded");
       setMessage(`Loaded ${generatedRows.length} saved rows, ${reviewRowsPayload.length} review records, and ${usersPayload.rows?.length ?? 0} user rows.${partialWarnings.length ? ` Partial load: ${partialWarnings.join(", ")}.` : ""}`);
+      return true;
     } catch (error) {
       const accessDenied = error instanceof AdminRequestError && error.status === 401;
       const nextMessage = accessDenied
-        ? "Admin access was denied. Paste the current Production secret value; you may paste either the value alone or CONTENT_GENERATION_SECRET=value."
+        ? credentialKind === "session"
+          ? "This signed-in account does not have Content Studio access. Sign in with the owner account or use the emergency access key."
+          : "Admin access was denied. Sign in with the owner account or paste the current emergency access key."
         : dashboardErrorMessage(error);
-      if (accessDenied && normalizedSecret === normalizeAdminSecret(secret)) setSecret("");
+      if (accessDenied && credentialKind === "secret" && normalizedSecret === normalizeAdminSecret(secret)) setSecret("");
       setLoadState(accessDenied ? "accessDenied" : "error");
       setLoadError(nextMessage);
       setLoadDiagnostics(error instanceof AdminRequestError ? `${error.method} ${error.path} -> HTTP ${error.status}${error.details ? ` (${error.details})` : ""}` : null);
       setMessage(nextMessage);
+      return false;
     } finally {
       setIsLoading(false);
     }
@@ -4536,10 +4573,10 @@ export function GeneratedContentAdminDashboard() {
         <div>
           <p className="admin-eyebrow">Admin access required</p>
           <h2>Content is hidden until the dashboard can call the admin API</h2>
-          <p>The saved rows are still in the admin API. Paste the secret value. You can also paste the complete `CONTENT_GENERATION_SECRET=value` line.</p>
+          <p>Sign in to TLDR Astro with the owner account. The emergency access key remains available if account access is unavailable.</p>
         </div>
         <label className="admin-access-inline-field">
-          <span>Secret</span>
+          <span>Emergency access key</span>
           <input
             aria-label="Secret"
             type="password"
@@ -4550,7 +4587,7 @@ export function GeneratedContentAdminDashboard() {
                 submitAdminSecret();
               }
             }}
-            placeholder="Paste secret value or CONTENT_GENERATION_SECRET=value"
+            placeholder="Paste emergency access key"
           />
         </label>
         <button type="button" onClick={submitAdminSecret} disabled={isLoading || !normalizeAdminSecret(secretInput)}>

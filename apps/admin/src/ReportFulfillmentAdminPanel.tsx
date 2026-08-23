@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { adminCredentialHeaders } from "./adminSecret";
 import { RefreshCw } from "lucide-react";
 
 type AdminResponse = {
@@ -56,8 +57,7 @@ export function ReportFulfillmentAdminPanel({ secret }: { secret: string }) {
       const response = await fetch("/api/admin/report-fulfillment", {
         ...init,
         headers: {
-          authorization: `Bearer ${secret}`,
-          "x-content-generation-secret": secret,
+          ...adminCredentialHeaders(secret),
           "content-type": "application/json",
           ...(init?.headers ?? {})
         }

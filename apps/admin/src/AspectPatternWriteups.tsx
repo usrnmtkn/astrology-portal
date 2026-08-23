@@ -1,5 +1,6 @@
 import { AlertTriangle, BookOpenText, Check, Columns2, RefreshCw, Save, Search } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { adminCredentialHeaders } from "./adminSecret";
 
 type AspectPatternWriteupKind = "natal" | "activation";
 type AuthoredStatus = "draft" | "reviewed" | "approved" | "deprecated";
@@ -280,10 +281,7 @@ export function AspectPatternWriteups({ initialKind = "natal", secret = "" }: { 
         method: selectedRow.generatedContentId ? "PATCH" : "POST",
         headers: {
           "content-type": "application/json",
-          ...(secret.trim() ? {
-            authorization: `Bearer ${secret.trim()}`,
-            "x-content-generation-secret": secret.trim()
-          } : {})
+          ...adminCredentialHeaders(secret)
         },
         body: JSON.stringify({
           kind,
