@@ -603,7 +603,7 @@ export function SkyDetailArticle({
                   <p>{detail.closingCharge}</p>
                 </section>
               ) : null}
-              {detail.risingHoroscopes?.length && !detail.personalizedPlacement ? (
+              {detail.risingHoroscopes?.length ? (
                 <section
                   className="article-section sky-detail-section"
                   id="sky-rising-horoscopes"
@@ -612,7 +612,9 @@ export function SkyDetailArticle({
                   <h2 id="sky-rising-horoscopes-title">Horoscopes by rising sign</h2>
                   {detail.risingHoroscopes.map((entry) => (
                     <div key={entry.risingSign}>
-                      <h3 className="sky-rising-horoscope__title">{entry.risingSign} rising</h3>
+                      <h3 className="sky-rising-horoscope__title">
+                        {entry.risingSign} &amp; {entry.risingSign} Rising
+                      </h3>
                       {readerFacingParagraphs([entry.body]).map((paragraph) => (
                         <p key={paragraph}>{paragraph}</p>
                       ))}
@@ -740,7 +742,7 @@ export function SkyDetailArticle({
             </h2>
             <section
               className="article-card sky-detail-personalized-placement"
-              id="sky-rising-horoscopes"
+              id="sky-personalized-placement"
               aria-labelledby="sky-detail-personalized-placement-title"
             >
               <div className="article-body-card sky-detail-body">
