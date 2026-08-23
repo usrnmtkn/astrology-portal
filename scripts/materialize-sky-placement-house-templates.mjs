@@ -2,6 +2,7 @@
 
 import fs from "node:fs";
 import path from "node:path";
+import crypto from "node:crypto";
 import { fileURLToPath } from "node:url";
 import { ownerRejectedExactTexts } from "../src/astro-writing/ownerEvidenceRejections.mjs";
 
@@ -22,6 +23,12 @@ const normalize = (value) => String(value ?? "")
 const normalizePlanet = (value) => normalize(value).replace(/^black-moon-lilith$/u, "lilith");
 
 const servingManifest = readJson(path.join(packageRoot, "authored-inputs/sky-placement-serving-manifest-v1.json"));
+const ownerAuthoredPath = path.join(
+  packageRoot,
+  "authored-inputs/owner-authored-sky-placement-house-passages-v1.json"
+);
+const ownerAuthoredArtifact = readJson(ownerAuthoredPath);
+const ownerAuthoredRows = ownerAuthoredArtifact.rows ?? [];
 const matrixPath = path.join(
   repoRoot,
   "packages/astro-knowledge/voice/tldr-astro/satori-writer/knowledge-matrix-v9/knowledge-matrix-v9-owner-approved-rows.json"
@@ -46,6 +53,36 @@ const corrections = [
 ];
 const rejectedTexts = ownerRejectedExactTexts(corrections);
 const eligibleStatuses = new Set(["approved", "approved_reuse", "reviewed"]);
+
+function bodySha256(value) {
+  return crypto.createHash("sha256").update(String(value ?? ""), "utf8").digest("hex");
+}
+
+function wordCount(value) {
+  return String(value ?? "").trim().split(/\s+/u).filter(Boolean).length;
+}
+
+assertOwnerAuthoredRowsAreProtected();
+
+function assertOwnerAuthoredRowsAreProtected() {
+  const keys = new Set();
+  for (const row of ownerAuthoredRows) {
+    const body = String(row.body_you ?? "");
+    if (!row.contentKey?.startsWith("house-horoscope-core/") || keys.has(row.contentKey)) {
+      throw new Error(`Invalid or duplicate protected owner-authored key: ${row.contentKey}`);
+    }
+    keys.add(row.contentKey);
+    if (row.review_status !== "approved" || !body || !row.approval_record) {
+      throw new Error(`Protected owner-authored row is incomplete: ${row.contentKey}`);
+    }
+    if (row.word_count !== wordCount(body)) {
+      throw new Error(`Protected owner-authored row word count changed: ${row.contentKey}`);
+    }
+    if (row.body_sha256 !== bodySha256(body)) {
+      throw new Error(`Protected owner-authored row wording changed: ${row.contentKey}`);
+    }
+  }
+}
 
 const manifestPlacementKeys = (servingManifest.releases ?? [])
   .filter((release) => release.distribution_state === "serving")
@@ -161,41 +198,48 @@ function approvedTemplateCandidate(planet, sign, house) {
 }
 
 const selectionCounts = {
+  protectedOwnerAuthored: 0,
   ownerAuthoredInventory: 0,
   matrix: 0,
   legacyApprovedTransit: 0,
   approvedTemplateComposition: 0,
   missing: 0
 };
+const protectedOwnerRelease = "owner-authored-sky-placement-house-passages-v1";
 const rows = [];
 
 for (const placementKey of placementKeys) {
   const [planet, sign] = placementKey.split("/");
   for (let house = 1; house <= 12; house += 1) {
     const contentKey = `house-horoscope-core/${planet}/${sign}/house-${house}`;
-    const ownerInventoryRow = ownerInventoryRows.find((row) => (
+    const protectedOwnerRow = ownerAuthoredRows.find((row) => row.contentKey === contentKey) ?? null;
+    const ownerInventoryRow = protectedOwnerRow ? null : ownerInventoryRows.find((row) => (
       row.contentKey === contentKey
       && !rejectedTexts.has(String(row.wording.body_you).trim())
     )) ?? null;
-    const matrixRows = ownerInventoryRow ? [] : matrixCandidates(planet, sign, house);
+    const matrixRows = protectedOwnerRow || ownerInventoryRow ? [] : matrixCandidates(planet, sign, house);
     const matrixRow = matrixRows[0] ?? null;
-    const transitRow = ownerInventoryRow || matrixRow ? null : transitCandidate(planet, sign, house);
-    const templateRow = ownerInventoryRow || matrixRow || transitRow ? null : approvedTemplateCandidate(planet, sign, house);
-    const body = String(ownerInventoryRow?.wording.body_you ?? matrixRow?.Experience ?? transitRow?.body_you ?? transitRow?.body ?? templateRow?.body ?? "").trim();
+    const transitRow = protectedOwnerRow || ownerInventoryRow || matrixRow ? null : transitCandidate(planet, sign, house);
+    const templateRow = protectedOwnerRow || ownerInventoryRow || matrixRow || transitRow ? null : approvedTemplateCandidate(planet, sign, house);
+    const body = String(protectedOwnerRow?.body_you ?? ownerInventoryRow?.wording.body_you ?? matrixRow?.Experience ?? transitRow?.body_you ?? transitRow?.body ?? templateRow?.body ?? "").trim();
 
     if (!body) {
       selectionCounts.missing += 1;
       continue;
     }
 
-    const selectedFrom = ownerInventoryRow
+    const selectedFrom = protectedOwnerRow
+      ? "protected-owner-authored-passage"
+      : ownerInventoryRow
       ? "owner-authored-content-studio-inventory"
       : matrixRow
         ? "owner-approved-matrix-ingress"
       : transitRow
         ? "approved-transit-fallback"
         : "approved-template-composition";
-    selectionCounts[ownerInventoryRow
+    selectionCounts[protectedOwnerRow
+      ? "protectedOwnerAuthored"
+      : ownerInventoryRow
       ? "ownerAuthoredInventory"
       : matrixRow
         ? "matrix"
@@ -209,14 +253,18 @@ for (const placementKey of placementKeys) {
       render_policy: "sky-placement-house-template-v1",
       body_you: body,
       review_status: "approved_reuse",
-      source_keys: ownerInventoryRow
+      source_keys: protectedOwnerRow
+        ? [`${path.relative(repoRoot, ownerAuthoredPath)}#${contentKey}`]
+        : ownerInventoryRow
         ? [`${path.relative(repoRoot, ownerInventoryPath)}#${contentKey}`]
         : matrixRow
           ? [`${path.relative(repoRoot, matrixPath)}#house_activations/source_row-${matrixRow.source_row}`]
         : transitRow
           ? [`${path.relative(repoRoot, transitPath)}#${transitRow.contentKey}`]
           : templateRow.sourceKeys,
-      approved_via: ownerInventoryRow
+      approved_via: protectedOwnerRow
+        ? protectedOwnerRow.approval_record
+        : ownerInventoryRow
         ? ownerInventoryRow.approvalVersionDate
         : matrixRow
           ? "Verbatim reuse of an owner-approved knowledge-matrix ingress passage; no prose changes."
@@ -225,12 +273,22 @@ for (const placementKey of placementKeys) {
           : "Deterministic composition of the approved transit.house template, approved planet-house effect, and approved house topic.",
       template_selection: {
         selected_from: selectedFrom,
-        candidate_count: ownerInventoryRow ? 1 : matrixRows.length || 1,
-        source: ownerInventoryRow
+        candidate_count: protectedOwnerRow || ownerInventoryRow ? 1 : matrixRows.length || 1,
+        source: protectedOwnerRow
+          ? path.relative(repoRoot, ownerAuthoredPath)
+          : ownerInventoryRow
           ? "data/content-inventory/content-inventory-v1.json"
           : matrixRow?.Source ?? transitRow?.contentKey ?? templateRow.sourceKeys.join(" + "),
-        source_row: ownerInventoryRow?.contentHash ?? matrixRow?.source_row ?? null
-      }
+        source_row: protectedOwnerRow?.body_sha256 ?? ownerInventoryRow?.contentHash ?? matrixRow?.source_row ?? null
+      },
+      ...(protectedOwnerRow ? {
+        source_release: protectedOwnerRelease,
+        copy_protection: {
+          policy: "byte-exact-owner-authored",
+          word_count: protectedOwnerRow.word_count,
+          body_sha256: protectedOwnerRow.body_sha256
+        }
+      } : {})
     });
   }
 }
@@ -240,6 +298,7 @@ const artifact = {
   version: "1.0.0",
   generatedFrom: [
     path.relative(repoRoot, matrixPath),
+    path.relative(repoRoot, ownerAuthoredPath),
     path.relative(repoRoot, transitPath),
     path.relative(repoRoot, fallbackSourcePath),
     path.relative(repoRoot, fallbackTemplatePath),
@@ -252,13 +311,15 @@ const artifact = {
     scope: "Twelve house passages for every governed long-form or recurring Sky placement route.",
     copy: "Selected passages are reused byte-for-byte; this materializer never writes or edits prose.",
     priority: [
+      "Protected owner-authored passage recorded in the non-generated authored-input source; serve byte-for-byte.",
       "Owner-authored Content Studio passage recorded in the governed content inventory.",
       "Owner-approved matrix ingress passage from today/current-sky.",
       "Owner-approved matrix ingress passage from the published archive.",
       "Existing approved transit house/sign passage when the matrix has no eligible passage.",
       "Approved transit.house template composition when no complete approved passage exists."
     ],
-    rejection: "Any exact text in the owner correction ledger is ineligible."
+    rejection: "Any exact text in the owner correction ledger is ineligible.",
+    preservation: "Author-final text is immutable. A protected passage may not be shortened, summarized, excerpted, paraphrased, or reconstructed from matrix evidence. Hash or word-count drift fails materialization."
   },
   placementCount: placementKeys.length,
   rowCount: rows.length,

@@ -577,7 +577,9 @@ function skyPlacementHouseTemplateReaderRows(rows) {
     content_role: row.content_role,
     grammar_frame: row.grammar_frame,
     body_you: row.body_you,
-    review_status: row.review_status
+    review_status: row.review_status,
+    ...(row.source_release ? { source_release: row.source_release } : {}),
+    ...(row.copy_protection ? { copy_protection: row.copy_protection } : {})
   }));
 }
 
