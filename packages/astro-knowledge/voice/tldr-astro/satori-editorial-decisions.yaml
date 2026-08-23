@@ -367,19 +367,19 @@
       "status": "approved",
       "category": "adjacent-voice",
       "scope": {"surfaces": ["all-editorial-copy"]},
-      "normalized_rule": "Chani-adjacent warmth, tenderness, permission, emotional intelligence, and moderate lyrical cadence are allowed. Documented adjacent-site constructions and advocacy-default subject matter are not.",
+      "normalized_rule": "CC-adjacent warmth, tenderness, permission, emotional intelligence, and moderate lyrical cadence are allowed. Documented adjacent-site constructions and advocacy-default subject matter are not.",
       "rationale": "Softness is not the problem; recognizable borrowed constructions and the wrong recurring subject matter are.",
       "owner_source": {"type": "owner_instruction", "reference": "owner clarification and attachment f7646d3c-c4f3-4025-9b52-341ef03de541", "date": "2026-08-03"},
       "effective_date": "2026-08-03",
-      "supersedes": ["chani-like-is-automatically-off-voice"],
+      "supersedes": ["CC-like-is-automatically-off-voice"],
       "examples_allowed": ["Warm, emotionally observant permission to do one nameable thing."],
       "examples_rejected": ["Welcome to another powerful week.", "Let's dive into what the stars have in store.", "You got this."],
       "effect": "conditional",
       "writer_prompt_exposure": "first_call",
       "mechanical": {"kind": "term_set", "terms": ["Welcome to another powerful week", "Let's dive into what the stars have in store", "You got this", "Great question."], "severity": "fail", "message": "This exact adjacent-site construction is not house voice."},
-      "enforcement": {"writer": true, "judge": true, "linter": true, "vocabulary_retrieval": true, "regression_tests": ["chani-warmth-allowed", "adjacent-site-construction-rejected"]},
+      "enforcement": {"writer": true, "judge": true, "linter": true, "vocabulary_retrieval": true, "regression_tests": ["CC-warmth-allowed", "adjacent-site-construction-rejected"]},
       "regression_cases": [
-        {"id": "chani-warmth-allowed", "surface": "sky-placement", "kind": "judge", "text": "Someone can change the plan without apologizing for having a preference.", "expected": "allow"},
+        {"id": "CC-warmth-allowed", "surface": "sky-placement", "kind": "judge", "text": "Someone can change the plan without apologizing for having a preference.", "expected": "allow"},
         {"id": "adjacent-site-construction-rejected", "surface": "sky-placement", "kind": "linter", "text": "Welcome to another powerful week. You got this.", "expected": "fail"}
       ]
     },

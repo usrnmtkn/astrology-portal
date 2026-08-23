@@ -32,7 +32,7 @@ const prompts = [
 ];
 
 for (const prompt of prompts) {
-  assert.match(prompt, /CC\/SD\/AC|CHANI, Spirit Daughter, or AC/);
+  assert.match(prompt, /CC\/SD\/AC|CC, Spirit Daughter, or AC/);
   assert.match(prompt, /Shared astrological knowledge and terminology are never flagged(?: by recognizability)?/);
   assert.match(prompt, /decans/);
   assert.match(prompt, /cazimi/);

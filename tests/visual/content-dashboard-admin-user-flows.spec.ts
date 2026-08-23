@@ -1846,7 +1846,22 @@ test.describe("content dashboard admin user flow case studies", () => {
         }
       }
     };
-    await seedAdminApi(page, { generatedRows: [templateRow] });
+    const planetIntroRow = {
+      ...generatedContentRows[0],
+      id: "qa-sun-planet-intro",
+      content_key: "fallback-hook/planet-intro/sun",
+      headline: "Sun introduction",
+      summary: "Reviewed opening for the Sun.",
+      body: "The Sun describes identity, purpose, and the need to create.",
+      block_type: "fallback_hook",
+      status: "DRAFT",
+      provider: "tldrastro-fallback-architecture-v3",
+      sections: {
+        body_you: "The Sun describes identity, purpose, and the need to create.",
+        body_they: "The Sun describes their identity, purpose, and need to create."
+      }
+    };
+    await seedAdminApi(page, { generatedRows: [templateRow, planetIntroRow] });
     await expectAdminRouteLoads(page, "/admin/content#fallback-hooks");
 
     const savedRow = page.locator(".admin-content-row", { hasText: "fallback-template/natal.planet-in-sign/sun" });
@@ -1883,6 +1898,24 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(variableGuide).toBeHidden();
     await expect(editor.getByLabel("body_you")).toHaveValue(editedBody);
     await expectNoHorizontalOverflow(page, "Template editor with variable action on mobile");
+
+    await editor.getByRole("button", { name: /^Variables \(\d+\)$/u }).click();
+    await variableGuide.getByRole("searchbox", { name: "Find a variable or meaning" }).fill("planet intro");
+    await variableGuide.locator(".admin-variable-reference-card", { hasText: "{{planetIntro}}" })
+      .getByRole("button", { name: "Review source writing" })
+      .click();
+
+    const variableDetails = page.getByRole("dialog", { name: "Planet intro variable details" });
+    await expect(variableDetails).toContainText("fallback-hook/planet-intro/sun");
+    await variableDetails.locator(".admin-variable-source-row", { hasText: "Sun introduction" }).click();
+    await expect(variableDetails).toContainText("The Sun describes identity, purpose, and the need to create.");
+    await variableDetails.getByRole("button", { name: "Edit source" }).click();
+
+    await expect(variableGuide).toBeHidden();
+    await expect(variableDetails).toBeHidden();
+    await expect(page.getByRole("dialog")).toHaveCount(1);
+    await expect(editor.getByLabel("Content key")).toHaveValue("fallback-hook/planet-intro/sun");
+    await expect(editor.getByLabel("Body")).toHaveValue("The Sun describes identity, purpose, and the need to create.");
     await assertNoBrowserErrors();
   });
 

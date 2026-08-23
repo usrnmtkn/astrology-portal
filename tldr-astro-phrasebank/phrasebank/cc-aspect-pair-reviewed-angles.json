@@ -57,7 +57,7 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "How you come across is lit up and people notice you more than usual. You feel more yourself and more visible at the same time. Let yourself be seen on purpose instead of dimming to stay comfortable.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "Trust that your voice is enough.",
         "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
@@ -90,7 +90,7 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Who you're rubs against how you have to show up right now. The version of you the moment asks for feels a size too small. Adjust the presentation without editing the actual self underneath.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "Stop making yourself smaller to make others comfortable.",
         "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
@@ -123,7 +123,7 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Being yourself and being received line up with unusual ease. Your presence lands well without much effort. Step forward while the room is this receptive.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "Trust that your voice is enough.",
         "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
@@ -158,7 +158,7 @@
       "derivation_note": "sextile = the harmonious contact as an opportunity that only pays off when acted on",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Being yourself and being received line up with unusual ease. Your presence lands well without much effort, but only if you take the opening. Step forward while the room is this receptive.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "Stop making yourself smaller to make others comfortable.",
         "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
@@ -193,7 +193,7 @@
       "derivation_note": "opposition to the ascendant is geometrically a conjunction to the descendant; read through the opposite pole",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Who you're shows up most clearly through the person across from you. You meet yourself in how a close other responds, felt from the opposite side of the axis. Let the relationship reflect you back without handing it your whole identity.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     },
     {
       "id": "cc/aspect-pair/sun-conjunction-midheaven",
@@ -219,7 +219,7 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Your public role and your sense of self point the same way. What you're known for starts to feel like an extension of who you are. Claim the visible position instead of waiting to be handed it.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "Where work meets worth.",
         "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
@@ -252,7 +252,7 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Your direction and your public obligations pull against each other. The role you're expected to play doesn't fit who you're becoming. Name the mismatch before you either burn out performing or quit outright.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "You are being asked to reconsider how you show up in the world and what success means to you now.",
         "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
@@ -285,7 +285,7 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Your identity and your work reinforce each other. Recognition comes for something that's actually you. Put your name on the work while the support is there.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "Where work meets worth.",
         "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
@@ -320,7 +320,7 @@
       "derivation_note": "sextile = the harmonious contact as an opportunity that only pays off when acted on",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Your identity and your work reinforce each other. Recognition comes for something that's actually you, but only if you take the opening. Put your name on the work while the support is there.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "You are being asked to reconsider how you show up in the world and what success means to you now.",
         "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
@@ -355,7 +355,7 @@
       "derivation_note": "opposition to the midheaven is geometrically a conjunction to the ic; read through the opposite pole",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Your sense of self draws back toward home, family, and your private base. You feel most like yourself away from the public eye, felt from the opposite side of the axis. Tend the private foundation before the outer world gets loud again.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     },
     {
       "id": "cc/aspect-pair/sun-conjunction-descendant",
@@ -381,7 +381,7 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Who you're shows up most clearly through the person across from you. You meet yourself in how a close other responds. Let the relationship reflect you back without handing it your whole identity.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "Who have you become in your relationships?",
         "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
@@ -414,7 +414,7 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Your sense of self scrapes against what a close relationship asks. Being yourself and keeping the peace feel briefly incompatible. Say the true thing gently rather than swallowing it or steamrolling.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "Who have you become in your relationships?",
         "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
@@ -447,7 +447,7 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "You and a close other bring out an easy confidence in each other. Partnership feels like it adds to you rather than costing you. Lean into the connection that lets you be more yourself.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "Invitation, availability, and trust are also actions. Connection is an action.",
         "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
@@ -482,7 +482,7 @@
       "derivation_note": "sextile = the harmonious contact as an opportunity that only pays off when acted on",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "You and a close other bring out an easy confidence in each other. Partnership feels like it adds to you rather than costing you, but only if you take the opening. Lean into the connection that lets you be more yourself.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "Invitation, availability, and trust are also actions. Connection is an action.",
         "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
@@ -517,7 +517,7 @@
       "derivation_note": "opposition to the descendant is geometrically a conjunction to the ascendant; read through the opposite pole",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "How you come across is lit up and people notice you more than usual. You feel more yourself and more visible at the same time, felt from the opposite side of the axis. Let yourself be seen on purpose instead of dimming to stay comfortable.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     },
     {
       "id": "cc/aspect-pair/sun-conjunction-ic",
@@ -543,7 +543,7 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Your sense of self draws back toward home, family, and your private base. You feel most like yourself away from the public eye. Tend the private foundation before the outer world gets loud again.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "Become the home you're desperately searching for in others.",
         "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
@@ -576,7 +576,7 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Who you're becoming pushes against your roots or your family's picture of you. The old foundation and the new self don't quite agree. Honor where you came from without letting it write who you are now.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "The fourth house is a place we can't not return to.",
         "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
@@ -609,7 +609,7 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Home and identity settle into each other comfortably. Your private base quietly steadies your confidence. Rest in the foundation and let it refill you.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "Become the home you're desperately searching for in others.",
         "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
@@ -644,7 +644,7 @@
       "derivation_note": "sextile = the harmonious contact as an opportunity that only pays off when acted on",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Home and identity settle into each other comfortably. Your private base quietly steadies your confidence, but only if you take the opening. Rest in the foundation and let it refill you.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "The fourth house is a place we can't not return to.",
         "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
@@ -679,7 +679,7 @@
       "derivation_note": "opposition to the ic is geometrically a conjunction to the midheaven; read through the opposite pole",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Your public role and your sense of self point the same way. What you're known for starts to feel like an extension of who you are, felt from the opposite side of the axis. Claim the visible position instead of waiting to be handed it.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     },
     {
       "id": "cc/aspect-pair/moon-conjunction-ascendant",
@@ -705,7 +705,7 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Your feelings show on the surface and color how you come across. Your mood is unusually visible to everyone around you. Let the feeling be seen rather than performing steadiness over it.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "Stop pretending everything’s fine if it’s not.",
         "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
@@ -738,7 +738,7 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "What you need pulls against how you have to present yourself. Holding the composed face starts to cost you. Make one small room for the need instead of only managing the image.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "Stop pretending everything’s fine if it’s not.",
         "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
@@ -771,7 +771,7 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Your feelings and your presence flow together warmly. People feel met just being around you. Offer the warmth freely while it's this easy.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "Your needs are not too much.",
         "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
@@ -806,7 +806,7 @@
       "derivation_note": "sextile = the harmonious contact as an opportunity that only pays off when acted on",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Your feelings and your presence flow together warmly. People feel met just being around you, but only if you take the opening. Offer the warmth freely while it's this easy.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "Your needs are not too much.",
         "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
@@ -841,7 +841,7 @@
       "derivation_note": "opposition to the ascendant is geometrically a conjunction to the descendant; read through the opposite pole",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Your need for closeness surfaces through the person across from you. You look to a close other for comfort and safety, felt from the opposite side of the axis. Ask for the reassurance directly instead of testing whether they'll notice.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     },
     {
       "id": "cc/aspect-pair/moon-conjunction-midheaven",
@@ -867,7 +867,7 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Your emotional life and your public role become closely tied. How you feel starts steering what you do in the world. Let care shape the work without letting every mood set the agenda.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "You're finally understanding that self-care isn't some luxury you earn after everyone else is taken care of.",
         "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
@@ -900,7 +900,7 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Your need for comfort clashes with your public responsibilities. The job asks for a steadiness your feelings aren't providing today. Protect a little private refuelling so the public part can hold.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "You're finally understanding that self-care isn't some luxury you earn after everyone else is taken care of.",
         "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
@@ -933,7 +933,7 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Your instincts and your vocation cooperate. You can feel your way to the right professional move. Trust the gut read on the work decision.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     },
     {
       "id": "cc/aspect-pair/moon-sextile-midheaven",
@@ -961,7 +961,7 @@
       "derivation_note": "sextile = the harmonious contact as an opportunity that only pays off when acted on",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Your instincts and your vocation cooperate. You can feel your way to the right professional move, but only if you take the opening. Trust the gut read on the work decision.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     },
     {
       "id": "cc/aspect-pair/moon-opposition-midheaven",
@@ -989,7 +989,7 @@
       "derivation_note": "opposition to the midheaven is geometrically a conjunction to the ic; read through the opposite pole",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Your feelings pull all the way home, to family and your oldest sense of safety. You want the door shut and the people who feel like home close, felt from the opposite side of the axis. Go home in whatever form that takes and let yourself be soft there.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     },
     {
       "id": "cc/aspect-pair/moon-conjunction-descendant",
@@ -1015,7 +1015,7 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Your need for closeness centers on the person across from you. You look to a close other for comfort and safety. Ask for the reassurance directly instead of testing whether they'll notice.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "Stop absorbing everyone else's anxiety as care.",
         "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
@@ -1048,7 +1048,7 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Your need for security rubs against what a relationship can give. You want more holding than the moment is offering. Name the need plainly rather than withdrawing to be pursued.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "Stop absorbing everyone else's anxiety as care.",
         "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
@@ -1081,7 +1081,7 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Emotional closeness with a partner comes easily. You feel safe being seen by someone close. Let yourself be cared for without earning it first.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     },
     {
       "id": "cc/aspect-pair/moon-sextile-descendant",
@@ -1109,7 +1109,7 @@
       "derivation_note": "sextile = the harmonious contact as an opportunity that only pays off when acted on",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Emotional closeness with a partner comes easily. You feel safe being seen by someone close, but only if you take the opening. Let yourself be cared for without earning it first.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     },
     {
       "id": "cc/aspect-pair/moon-opposition-descendant",
@@ -1137,7 +1137,7 @@
       "derivation_note": "opposition to the descendant is geometrically a conjunction to the ascendant; read through the opposite pole",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Your feelings show on the surface and color how you come across. Your mood is unusually visible to everyone around you, felt from the opposite side of the axis. Let the feeling be seen rather than performing steadiness over it.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     },
     {
       "id": "cc/aspect-pair/moon-conjunction-ic",
@@ -1163,7 +1163,7 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Your feelings pull all the way home, to family and your oldest sense of safety. You want the door shut and the people who feel like home close. Go home in whatever form that takes and let yourself be soft there.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "This is the Jupiter of wells, wombs, kitchens, and kin.",
         "source": "Marie Satori (\"What Jupiter in Cancer Means for Your Sign\") — full-corpus audit",
@@ -1196,7 +1196,7 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Your emotional needs collide with home or family pressure. The place meant to restore you is asking something of you instead. Tend your own need before you referee the household.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "Without a supportive foundation, it’s nearly impossible to thrive.",
         "source": "Marie Satori (\"Cancer Full Moon\") — full-corpus audit",
@@ -1229,7 +1229,7 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Home feels actually nourishing right now. Your private life refills you without effort. Spend unhurried time where you feel safest.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "This is the Jupiter of wells, wombs, kitchens, and kin.",
         "source": "Marie Satori (\"What Jupiter in Cancer Means for Your Sign\") — full-corpus audit",
@@ -1264,7 +1264,7 @@
       "derivation_note": "sextile = the harmonious contact as an opportunity that only pays off when acted on",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Home feels actually nourishing right now. Your private life refills you without effort, but only if you take the opening. Spend unhurried time where you feel safest.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "Without a supportive foundation, it’s nearly impossible to thrive.",
         "source": "Marie Satori (\"Cancer Full Moon\") — full-corpus audit",
@@ -1299,7 +1299,7 @@
       "derivation_note": "opposition to the ic is geometrically a conjunction to the midheaven; read through the opposite pole",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Your emotional life and your public role become closely tied. How you feel starts steering what you do in the world, felt from the opposite side of the axis. Let care shape the work without letting every mood set the agenda.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     },
     {
       "id": "cc/aspect-pair/mercury-conjunction-ascendant",
@@ -1325,7 +1325,7 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "How you think and talk becomes how you come across. People meet you through your words and quick read of things. Say the clear version; your presence is in the sentence.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "Stop filling every silence with your voice.",
         "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
@@ -1358,7 +1358,7 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "What you want to say rubs against how you're expected to sound. The polished version keeps flattening what you actually mean. Send the plainer sentence before you over-edit it.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "Stop filling every silence with your voice.",
         "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
@@ -1391,7 +1391,7 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Your thinking and your presence sync up. You explain yourself and land it in the same move. Have the conversation while your words are this ready.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     },
     {
       "id": "cc/aspect-pair/mercury-sextile-ascendant",
@@ -1419,7 +1419,7 @@
       "derivation_note": "sextile = the harmonious contact as an opportunity that only pays off when acted on",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Your thinking and your presence sync up. You explain yourself and land it in the same move, but only if you take the opening. Have the conversation while your words are this ready.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     },
     {
       "id": "cc/aspect-pair/mercury-opposition-ascendant",
@@ -1447,7 +1447,7 @@
       "derivation_note": "opposition to the ascendant is geometrically a conjunction to the descendant; read through the opposite pole",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Your thinking gets drawn into dialogue with the person across from you. You sharpen your ideas by talking them through with a close other, felt from the opposite side of the axis. Talk it out plainly and actually listen to the reply.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     },
     {
       "id": "cc/aspect-pair/mercury-conjunction-midheaven",
@@ -1473,7 +1473,7 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Your thinking and communication move to the center of your public role. You're recognized for how you say and organize things. Put the idea in writing where the right people will see it.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "This is when your words become your commitments.",
         "source": "Marie Satori (\"Saturn Enters Aries 2025\") — full-corpus audit",
@@ -1506,7 +1506,7 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Your ideas run into how your field expects them packaged. Being understood and being credited aren't lining up. Clarify the message before you assume the room got it.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "You might want to be liked more than you want to be heard.",
         "source": "Marie Satori (\"Astrological Overview: August 3–9\") — full-corpus audit",
@@ -1539,7 +1539,7 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Your mind and your work cooperate. The clear plan and the public move fit together. Pitch the idea while the thinking is this sharp.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "This is when your words become your commitments.",
         "source": "Marie Satori (\"Saturn Enters Aries 2025\") — full-corpus audit",
@@ -1574,7 +1574,7 @@
       "derivation_note": "sextile = the harmonious contact as an opportunity that only pays off when acted on",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Your mind and your work cooperate. The clear plan and the public move fit together, but only if you take the opening. Pitch the idea while the thinking is this sharp.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "You might want to be liked more than you want to be heard.",
         "source": "Marie Satori (\"Astrological Overview: August 3–9\") — full-corpus audit",
@@ -1609,7 +1609,7 @@
       "derivation_note": "opposition to the midheaven is geometrically a conjunction to the ic; read through the opposite pole",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Your thoughts turn toward home, family, and the past. Old conversations and household logistics fill your mind, felt from the opposite side of the axis. Sort the family message or the home plan while it's front of mind.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     },
     {
       "id": "cc/aspect-pair/mercury-conjunction-descendant",
@@ -1635,7 +1635,7 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Your thinking gets drawn into dialogue with the person across from you. You sharpen your ideas by talking them through with a close other. Talk it out plainly and actually listen to the reply.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "Stop believing that being understood requires constant explanation.",
         "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
@@ -1668,7 +1668,7 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "A conversation with a close other keeps missing. You and they are running on different definitions of the same word. Slow the exchange and check what each of you actually means.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "Stop exhausting yourself being everyone's translator.",
         "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
@@ -1701,7 +1701,7 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Talking with a partner comes easily. You think better out loud with them. Have the honest conversation while it's flowing.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "Stop believing that being understood requires constant explanation.",
         "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
@@ -1736,7 +1736,7 @@
       "derivation_note": "sextile = the harmonious contact as an opportunity that only pays off when acted on",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Talking with a partner comes easily. You think better out loud with them, but only if you take the opening. Have the honest conversation while it's flowing.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "Stop exhausting yourself being everyone's translator.",
         "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
@@ -1771,7 +1771,7 @@
       "derivation_note": "opposition to the descendant is geometrically a conjunction to the ascendant; read through the opposite pole",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "How you think and talk becomes how you come across. People meet you through your words and quick read of things, felt from the opposite side of the axis. Say the clear version; your presence is in the sentence.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     },
     {
       "id": "cc/aspect-pair/mercury-conjunction-ic",
@@ -1797,7 +1797,7 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Your thoughts turn toward home, family, and the past. Old conversations and household logistics fill your mind. Sort the family message or the home plan while it's front of mind.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "Memories aren't stored and static; they change because they are always being rediscovered.",
         "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
@@ -1830,7 +1830,7 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "What you think rubs against family patterns or old stories. An old script keeps answering before you do. Name the inherited assumption before you act on it.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "Memories aren't stored and static; they change because they are always being rediscovered.",
         "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
@@ -1863,7 +1863,7 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Your mind rests easily in home and roots. You think clearly in your private space. Do the thinking work where you feel settled.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     },
     {
       "id": "cc/aspect-pair/mercury-sextile-ic",
@@ -1891,7 +1891,7 @@
       "derivation_note": "sextile = the harmonious contact as an opportunity that only pays off when acted on",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Your mind rests easily in home and roots. You think clearly in your private space, but only if you take the opening. Do the thinking work where you feel settled.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     },
     {
       "id": "cc/aspect-pair/mercury-opposition-ic",
@@ -1919,7 +1919,7 @@
       "derivation_note": "opposition to the ic is geometrically a conjunction to the midheaven; read through the opposite pole",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Your thinking and communication move to the center of your public role. You're recognized for how you say and organize things, felt from the opposite side of the axis. Put the idea in writing where the right people will see it.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     },
     {
       "id": "cc/aspect-pair/venus-conjunction-ascendant",
@@ -1945,7 +1945,7 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Warmth and charm come through in how you meet people. You're more magnetic and more interested in pleasure and connection. Let yourself be liked without hiding the request underneath the charm.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "Let yourself want what you want.",
         "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
@@ -1978,7 +1978,7 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "What you want rubs against how you're presenting yourself. Being pleasant is quietly costing you what you actually prefer. State the preference instead of smoothing it over.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "You don’t need to fix everything to deserve love.",
         "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
@@ -2011,7 +2011,7 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Attraction and ease flow through your presence. Connection and good feeling come to you without much effort. Reach for the lovely thing while it's this available.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "Let yourself want what you want.",
         "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
@@ -2046,7 +2046,7 @@
       "derivation_note": "sextile = the harmonious contact as an opportunity that only pays off when acted on",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Attraction and ease flow through your presence. Connection and good feeling come to you without much effort, but only if you take the opening. Reach for the lovely thing while it's this available.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "You don’t need to fix everything to deserve love.",
         "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
@@ -2081,7 +2081,7 @@
       "derivation_note": "opposition to the ascendant is geometrically a conjunction to the descendant; read through the opposite pole",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Love, attraction, and value center on the person across from you. Closeness and being valued move to the front of your attention, felt from the opposite side of the axis. Let the connection be warm and say what you actually want from it.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     },
     {
       "id": "cc/aspect-pair/venus-conjunction-midheaven",
@@ -2107,7 +2107,7 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Your taste, values, and relationships touch your public life. Who and what you value becomes visible in your work. Let the work reflect what you actually find worth doing.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     },
     {
       "id": "cc/aspect-pair/venus-square-midheaven",
@@ -2133,7 +2133,7 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "What you value pulls against what your role rewards. The pleasant public choice and the honest one part ways. Choose the value you can stand behind, not just the smooth one.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     },
     {
       "id": "cc/aspect-pair/venus-trine-midheaven",
@@ -2159,7 +2159,7 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Your values and your vocation agree. The work you love is also the work that lands well. Say yes to the pleasant, well-aligned opportunity.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     },
     {
       "id": "cc/aspect-pair/venus-sextile-midheaven",
@@ -2187,7 +2187,7 @@
       "derivation_note": "sextile = the harmonious contact as an opportunity that only pays off when acted on",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Your values and your vocation agree. The work you love is also the work that lands well, but only if you take the opening. Say yes to the pleasant, well-aligned opportunity.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     },
     {
       "id": "cc/aspect-pair/venus-opposition-midheaven",
@@ -2215,7 +2215,7 @@
       "derivation_note": "opposition to the midheaven is geometrically a conjunction to the ic; read through the opposite pole",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Your sense of comfort and beauty surfaces from home. You want your private space warm, lovely, and easy to be in, felt from the opposite side of the axis. Make one part of home nicer to live in.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     },
     {
       "id": "cc/aspect-pair/venus-conjunction-descendant",
@@ -2241,7 +2241,7 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Love, attraction, and value center on the person across from you. Closeness and being valued move to the front of your attention. Let the connection be warm and say what you actually want from it.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "No relationship, no job, no amount of success is worth abandoning yourself for.",
         "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
@@ -2274,7 +2274,7 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "What you value pulls against what a relationship is giving. Affection and fairness aren't quite balanced right now. Say what you want out loud instead of keeping a quiet tally of who owes who.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     },
     {
       "id": "cc/aspect-pair/venus-trine-descendant",
@@ -2300,7 +2300,7 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Warmth with a partner comes easily. You feel valued and easy to be close to. Enjoy the affection and let it be simple.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     },
     {
       "id": "cc/aspect-pair/venus-sextile-descendant",
@@ -2328,7 +2328,7 @@
       "derivation_note": "sextile = the harmonious contact as an opportunity that only pays off when acted on",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Warmth with a partner comes easily. You feel valued and easy to be close to, but only if you take the opening. Enjoy the affection and let it be simple.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     },
     {
       "id": "cc/aspect-pair/venus-opposition-descendant",
@@ -2356,7 +2356,7 @@
       "derivation_note": "opposition to the descendant is geometrically a conjunction to the ascendant; read through the opposite pole",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Warmth and charm come through in how you meet people. You're more magnetic and more interested in pleasure and connection, felt from the opposite side of the axis. Let yourself be liked without hiding the request underneath the charm.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     },
     {
       "id": "cc/aspect-pair/venus-conjunction-ic",
@@ -2382,7 +2382,7 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Your sense of comfort and beauty turns toward home. You want your private space warm, lovely, and easy to be in. Make one part of home nicer to live in.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     },
     {
       "id": "cc/aspect-pair/venus-square-ic",
@@ -2408,7 +2408,7 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "What you find comforting rubs against family or household reality. The comfort you want and the home you have aren't matching. Improve the part that affects daily life and stop there.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     },
     {
       "id": "cc/aspect-pair/venus-trine-ic",
@@ -2434,7 +2434,7 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Home feels warm and pleasurable. Your private life is a source of comfort and beauty. Enjoy the ease of your own space.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     },
     {
       "id": "cc/aspect-pair/venus-sextile-ic",
@@ -2462,7 +2462,7 @@
       "derivation_note": "sextile = the harmonious contact as an opportunity that only pays off when acted on",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Home feels warm and pleasurable. Your private life is a source of comfort and beauty, but only if you take the opening. Enjoy the ease of your own space.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     },
     {
       "id": "cc/aspect-pair/venus-opposition-ic",
@@ -2490,7 +2490,7 @@
       "derivation_note": "opposition to the ic is geometrically a conjunction to the midheaven; read through the opposite pole",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Your taste, values, and relationships touch your public life. Who and what you value becomes visible in your work, felt from the opposite side of the axis. Let the work reflect what you actually find worth doing.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     },
     {
       "id": "cc/aspect-pair/mars-conjunction-ascendant",
@@ -2516,7 +2516,7 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Your drive is right at the surface today, in how you meet people and how quickly you'll push or defend yourself. It reads as energetic, maybe a little confrontational, and that's fine as long as you know it's there. Aim the force at something real and have the hard conversation directly, rather than letting it leak out sideways.",
-      "revoice_version": "chani-quality-v1-authored",
+      "revoice_version": "CC-quality-v1-authored",
       "pull_quote": {
         "text": "The Aries Full Moon is raw. Be feral.",
         "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
@@ -2549,7 +2549,7 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Your drive rubs against how you're allowed to show up. You're spoiling for a push the situation won't cleanly take. Burn the energy on effort, not on the nearest person.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "The boat needs to be rocked if it's heading somewhere dangerous.",
         "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
@@ -2582,7 +2582,7 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Your energy and your presence cooperate. You can act decisively and be received well doing it. Make the bold move while the timing supports it.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "The Aries Full Moon is raw. Be feral.",
         "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
@@ -2617,7 +2617,7 @@
       "derivation_note": "sextile = the harmonious contact as an opportunity that only pays off when acted on",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Your energy and your presence cooperate. You can act decisively and be received well doing it, but only if you take the opening. Make the bold move while the timing supports it.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "The boat needs to be rocked if it's heading somewhere dangerous.",
         "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
@@ -2652,7 +2652,7 @@
       "derivation_note": "opposition to the ascendant is geometrically a conjunction to the descendant; read through the opposite pole",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Your drive and heat show up through the person across from you. A close relationship gets more charged, passionate or combative, felt from the opposite side of the axis. Have it out directly and cleanly rather than letting resentment build.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     },
     {
       "id": "cc/aspect-pair/mars-conjunction-midheaven",
@@ -2678,7 +2678,7 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Your drive lands squarely on your career and public ambition. You're certain what you want and impatient with anyone who limits it. Push hard on the goal, and pick your fights with your boss carefully.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "Action isn't quantified by disruption.",
         "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
@@ -2711,7 +2711,7 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Your ambition collides with the people who set your limits. A boss, rule, or rival is in the way of the push. Move in structured steps rather than forcing a confrontation you'll pay for.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "Action isn't quantified by disruption.",
         "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
@@ -2744,7 +2744,7 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Your drive and your work cooperate. Effort turns into visible progress without a fight. Spend the energy on the ambitious task now.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     },
     {
       "id": "cc/aspect-pair/mars-sextile-midheaven",
@@ -2772,7 +2772,7 @@
       "derivation_note": "sextile = the harmonious contact as an opportunity that only pays off when acted on",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Your drive and your work cooperate. Effort turns into visible progress without a fight, but only if you take the opening. Spend the energy on the ambitious task now.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     },
     {
       "id": "cc/aspect-pair/mars-opposition-midheaven",
@@ -2800,7 +2800,7 @@
       "derivation_note": "opposition to the midheaven is geometrically a conjunction to the ic; read through the opposite pole",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Your drive surfaces from home, family, or your private base. There's heat around the household, or energy to change it, felt from the opposite side of the axis. Fix or move the thing at home instead of simmering about it.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     },
     {
       "id": "cc/aspect-pair/mars-conjunction-descendant",
@@ -2826,7 +2826,7 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Your drive and heat show up through the person across from you. A close relationship gets more charged, passionate or combative. Have it out directly and cleanly rather than letting resentment build.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "People who call you difficult are the ones who benefit from your lack of boundaries.",
         "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
@@ -2859,7 +2859,7 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Your assertion clashes with a close other. Wanting your way and wanting the peace are at odds. Name the friction now while it's still small.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "People who call you difficult are the ones who benefit from your lack of boundaries.",
         "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
@@ -2892,7 +2892,7 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "You and a partner can act well together. Shared drive moves you both forward. Take on the thing that needs two people's energy.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     },
     {
       "id": "cc/aspect-pair/mars-sextile-descendant",
@@ -2920,7 +2920,7 @@
       "derivation_note": "sextile = the harmonious contact as an opportunity that only pays off when acted on",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "You and a partner can act well together. Shared drive moves you both forward, but only if you take the opening. Take on the thing that needs two people's energy.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     },
     {
       "id": "cc/aspect-pair/mars-opposition-descendant",
@@ -2948,7 +2948,7 @@
       "derivation_note": "opposition to the descendant is geometrically a conjunction to the ascendant; read through the opposite pole",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Your drive and assertion come straight through how you meet people. You're quicker to push, act, and defend yourself, felt from the opposite side of the axis. Aim the force and have the conflict directly instead of letting it leak.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     },
     {
       "id": "cc/aspect-pair/mars-conjunction-ic",
@@ -2974,7 +2974,7 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Your drive turns toward home, family, or your private base. There's heat around the household, or energy to change it. Fix or move the thing at home instead of simmering about it.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "Stop calling it stress when it's actually rage being suppressed.",
         "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
@@ -3007,7 +3007,7 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Your push collides with family or the home foundation. An old household tension flares up. Address the specific friction, not the whole history.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "Stop calling it stress when it's actually rage being suppressed.",
         "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
@@ -3040,7 +3040,7 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "You can put real energy into home. Improving your private base feels satisfying, not draining. Do the physical home project while the drive is there.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     },
     {
       "id": "cc/aspect-pair/mars-sextile-ic",
@@ -3068,7 +3068,7 @@
       "derivation_note": "sextile = the harmonious contact as an opportunity that only pays off when acted on",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "You can put real energy into home. Improving your private base feels satisfying, not draining, but only if you take the opening. Do the physical home project while the drive is there.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     },
     {
       "id": "cc/aspect-pair/mars-opposition-ic",
@@ -3096,7 +3096,7 @@
       "derivation_note": "opposition to the ic is geometrically a conjunction to the midheaven; read through the opposite pole",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Your drive lands squarely on your career and public ambition. You're certain what you want and impatient with anyone who limits it, felt from the opposite side of the axis. Push hard on the goal and pick your fights with authority carefully.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     },
     {
       "id": "cc/aspect-pair/jupiter-conjunction-ascendant",
@@ -3122,7 +3122,7 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Optimism and appetite come through in how you meet the world. You feel bigger, luckier, and more willing to be seen. Take the opening, sized to what you can actually follow through on.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "You’re allowed to make things that don’t impress anyone but you.",
         "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
@@ -3155,7 +3155,7 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Your appetite for more rubs against how you can present. Confidence tips toward overpromising or overdoing it. Make the bold move real by keeping it one honest size.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "You’re allowed to make things that don’t impress anyone but you.",
         "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
@@ -3188,7 +3188,7 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Growth and presence flow together. Doors open through simply showing up as yourself. Say yes to the expansion while it's easy.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     },
     {
       "id": "cc/aspect-pair/jupiter-sextile-ascendant",
@@ -3216,7 +3216,7 @@
       "derivation_note": "sextile = the harmonious contact as an opportunity that only pays off when acted on",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Growth and presence flow together. Doors open through simply showing up as yourself, but only if you take the opening. Say yes to the expansion while it's easy.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     },
     {
       "id": "cc/aspect-pair/jupiter-opposition-ascendant",
@@ -3244,7 +3244,7 @@
       "derivation_note": "opposition to the ascendant is geometrically a conjunction to the descendant; read through the opposite pole",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Generosity and growth center on a close relationship. A partnership feels expansive, lucky, or newly meaningful, felt from the opposite side of the axis. Invest in the connection without overpromising what you can give.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     },
     {
       "id": "cc/aspect-pair/jupiter-conjunction-midheaven",
@@ -3270,7 +3270,7 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Expansion and opportunity land on your public role. Career growth and recognition feel newly possible. Reach for the bigger position and back it with real preparation.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "Trust that your work doesn’t have to look like anyone else’s, it just needs to feel aligned with your soul.",
         "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
@@ -3303,7 +3303,7 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Your ambition to grow outruns what the role can hold. The opportunity is real but the promise is getting ahead of the plan. Grow, and build the structure that makes it hold.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "Trust that your work doesn’t have to look like anyone else’s, it just needs to feel aligned with your soul.",
         "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
@@ -3336,7 +3336,7 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Growth and vocation cooperate. The expansive career move also lands well. Take the well-aligned opportunity.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     },
     {
       "id": "cc/aspect-pair/jupiter-sextile-midheaven",
@@ -3364,7 +3364,7 @@
       "derivation_note": "sextile = the harmonious contact as an opportunity that only pays off when acted on",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Growth and vocation cooperate. The expansive career move also lands well, but only if you take the opening. Take the well-aligned opportunity.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     },
     {
       "id": "cc/aspect-pair/jupiter-opposition-midheaven",
@@ -3392,7 +3392,7 @@
       "derivation_note": "opposition to the midheaven is geometrically a conjunction to the ic; read through the opposite pole",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Growth and abundance turn toward home and family. The private base feels like it wants to expand, felt from the opposite side of the axis. Grow the home life in one concrete, sustainable way.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     },
     {
       "id": "cc/aspect-pair/jupiter-conjunction-descendant",
@@ -3418,7 +3418,7 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Generosity and growth center on a close relationship. A partnership feels expansive, lucky, or newly meaningful. Invest in the connection without overpromising what you can give.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "You’re allowed to love without wondering if it makes you look weak.",
         "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
@@ -3451,7 +3451,7 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Your appetite for more strains a close relationship. Wanting bigger and keeping it grounded pull apart. Enjoy the growth and keep the commitments realistic.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "You’re allowed to love without wondering if it makes you look weak.",
         "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
@@ -3484,7 +3484,7 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "A partnership feels easy and full of opportunity. The right person opens doors for you and you for them. Say yes to the generous connection.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     },
     {
       "id": "cc/aspect-pair/jupiter-sextile-descendant",
@@ -3512,7 +3512,7 @@
       "derivation_note": "sextile = the harmonious contact as an opportunity that only pays off when acted on",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "A partnership feels easy and full of opportunity. The right person opens doors for you and you for them, but only if you take the opening. Say yes to the generous connection.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     },
     {
       "id": "cc/aspect-pair/jupiter-opposition-descendant",
@@ -3540,7 +3540,7 @@
       "derivation_note": "opposition to the descendant is geometrically a conjunction to the ascendant; read through the opposite pole",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Optimism and appetite come through in how you meet the world. You feel bigger, luckier, and more willing to be seen, felt from the opposite side of the axis. Take the opening, sized to what you can actually follow through on.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     },
     {
       "id": "cc/aspect-pair/jupiter-conjunction-ic",
@@ -3566,7 +3566,7 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Growth and abundance turn toward home and family. The private base feels like it wants to expand. Grow the home life in one concrete, sustainable way.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "Jupiter in Cancer is about building trust.",
         "source": "Marie Satori (\"What Jupiter in Cancer Means for Your Sign\") — full-corpus audit",
@@ -3599,7 +3599,7 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Your wish to expand strains the home foundation. Bigger plans and the actual household aren't matching. Scale the home change to what the foundation can carry.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "What will you create from the ashes of what’s no longer working?",
         "source": "Marie Satori (\"Aquarius New Moon 2025\") — full-corpus audit",
@@ -3632,7 +3632,7 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Home and roots feel abundant and supportive. Your private base is a real source of growth. Build on the foundation while it's this solid.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "Jupiter in Cancer is about building trust.",
         "source": "Marie Satori (\"What Jupiter in Cancer Means for Your Sign\") — full-corpus audit",
@@ -3667,7 +3667,7 @@
       "derivation_note": "sextile = the harmonious contact as an opportunity that only pays off when acted on",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Home and roots feel abundant and supportive. Your private base is a real source of growth, but only if you take the opening. Build on the foundation while it's this solid.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "What will you create from the ashes of what’s no longer working?",
         "source": "Marie Satori (\"Aquarius New Moon 2025\") — full-corpus audit",
@@ -3702,7 +3702,7 @@
       "derivation_note": "opposition to the ic is geometrically a conjunction to the midheaven; read through the opposite pole",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Expansion and opportunity land on your public role. Career growth and recognition feel newly possible, felt from the opposite side of the axis. Reach for the bigger position and back it with real preparation.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     },
     {
       "id": "cc/aspect-pair/saturn-conjunction-ascendant",
@@ -3728,7 +3728,7 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Responsibility and seriousness settle onto how you show up. You feel more weight, more visible, and less free to be casual. Finish what's unfinished and simplify rather than starting something new.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "Starting at the wrong time wastes more time than waiting for the right time.",
         "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
@@ -3760,7 +3760,7 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Your sense of self runs into a hard limit or duty. The version of you that's allowed right now feels constrained. Do the unglamorous part; the confidence it builds is real.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "Stop needing to appear unshakeable when you're clearly shaking.",
         "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
@@ -3793,7 +3793,7 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Structure and self support each other. Steady effort makes your presence more solid. Commit to the long build while discipline feels supportive.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     },
     {
       "id": "cc/aspect-pair/saturn-sextile-ascendant",
@@ -3821,7 +3821,7 @@
       "derivation_note": "sextile = the harmonious contact as an opportunity that only pays off when acted on",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Structure and self support each other. Steady effort makes your presence more solid, but only if you take the opening. Commit to the long build while discipline feels supportive.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     },
     {
       "id": "cc/aspect-pair/saturn-opposition-ascendant",
@@ -3849,7 +3849,7 @@
       "derivation_note": "opposition to the ascendant is geometrically a conjunction to the descendant; read through the opposite pole",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Seriousness and commitment center on a close relationship. A partnership asks for more structure, honesty, or a defined limit, felt from the opposite side of the axis. Make one agreement clearer before adding another obligation.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     },
     {
       "id": "cc/aspect-pair/saturn-conjunction-midheaven",
@@ -3875,7 +3875,7 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Responsibility and authority land on your public role. You're being asked to carry more and prove it over time. Take the weight seriously and build the career one earned step at a time.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "Authority is the power to make choices about your own life. Status is the role that you play for other people.",
         "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
@@ -3908,7 +3908,7 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Your ambition runs into a wall of limits or authority. The recognition you want is being made to wait. Treat the delay as a test of commitment, not a verdict.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "Authority is the power to make choices about your own life. Status is the role that you play for other people.",
         "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
@@ -3941,7 +3941,7 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Discipline and vocation cooperate. Patient work turns into durable standing. Make the long-term professional commitment now.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     },
     {
       "id": "cc/aspect-pair/saturn-sextile-midheaven",
@@ -3969,7 +3969,7 @@
       "derivation_note": "sextile = the harmonious contact as an opportunity that only pays off when acted on",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Discipline and vocation cooperate. Patient work turns into durable standing, but only if you take the opening. Make the long-term professional commitment now.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     },
     {
       "id": "cc/aspect-pair/saturn-opposition-midheaven",
@@ -3997,7 +3997,7 @@
       "derivation_note": "opposition to the midheaven is geometrically a conjunction to the ic; read through the opposite pole",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Responsibility and limits settle onto home and family. The private foundation needs shoring up or simplifying, felt from the opposite side of the axis. Repair the base you keep returning to, slowly and for real.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     },
     {
       "id": "cc/aspect-pair/saturn-conjunction-descendant",
@@ -4023,7 +4023,7 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Seriousness and commitment center on a close relationship. A partnership asks for more structure, honesty, or a defined limit. Make one agreement clearer before adding another obligation.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "Stop wearing burnout like a badge of honor. It's just burnout.",
         "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
@@ -4055,7 +4055,7 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Duty or distance strains a close relationship. The connection feels effortful, cool, or tested. Name what's sustainable rather than withdrawing to keep the peace.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "marie_advice": {
         "text": "Some relationships survive because one person keeps leaving the door cracked. You answer the late message, agree to one more conversation, and call it kindness even though every contact unsettles your life again. If leaving was necessary, finish leaving.",
         "tier": "CONFIRMED",
@@ -4087,7 +4087,7 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Commitment with a partner feels stable and worth the effort. The relationship holds weight without strain. Define what you want and make it durable.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     },
     {
       "id": "cc/aspect-pair/saturn-sextile-descendant",
@@ -4115,7 +4115,7 @@
       "derivation_note": "sextile = the harmonious contact as an opportunity that only pays off when acted on",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Commitment with a partner feels stable and worth the effort. The relationship holds weight without strain, but only if you take the opening. Define what you want and make it durable.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     },
     {
       "id": "cc/aspect-pair/saturn-opposition-descendant",
@@ -4143,7 +4143,7 @@
       "derivation_note": "opposition to the descendant is geometrically a conjunction to the ascendant; read through the opposite pole",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Responsibility and seriousness settle onto how you show up. You feel more weight, more visible, and less free to be casual, felt from the opposite side of the axis. Finish what's unfinished and simplify rather than starting something new.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     },
     {
       "id": "cc/aspect-pair/saturn-conjunction-ic",
@@ -4169,7 +4169,7 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Responsibility and limits settle onto home and family. The private foundation needs shoring up or simplifying. Repair the base you keep returning to, slowly and for real.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "Stop wearing burnout like a badge of honor. It's just burnout.",
         "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
@@ -4201,7 +4201,7 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Duty around home or family presses on you. An old foundation is asking to be dealt with, not deferred. Handle the concrete household obligation before it grows.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "There is always change in the fourth house, but there is nothing new.",
         "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
@@ -4234,7 +4234,7 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Home and structure support each other. Your private base is steady and dependable. Build the lasting thing at home while it's grounded.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "The fourth house is where the bodies are buried.",
         "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
@@ -4269,7 +4269,7 @@
       "derivation_note": "sextile = the harmonious contact as an opportunity that only pays off when acted on",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Home and structure support each other. Your private base is steady and dependable, but only if you take the opening. Build the lasting thing at home while it's grounded.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "The fourth house is where the bodies are buried.",
         "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
@@ -4304,7 +4304,7 @@
       "derivation_note": "opposition to the ic is geometrically a conjunction to the midheaven; read through the opposite pole",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Responsibility and authority land on your public role. You're being asked to carry more and prove it over time, felt from the opposite side of the axis. Take the weight seriously and build the career one earned step at a time.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "There is always change in the fourth house, but there is nothing new.",
         "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",

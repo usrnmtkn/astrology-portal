@@ -33,7 +33,7 @@
       "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "A push to get your way hardens into a need to dominate the situation or the person in it. It's easy to fall into going all-or-nothing to force the outcome, which can cost you a power struggle and a bridge you will want back. But the intensity is real fuel, it just wants a target that's change rather than winning. Aim the force at what you actually want to build, and leave one exit standing.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "Stop fearing that changing means losing yourself.",
         "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
@@ -71,7 +71,7 @@
       "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Your drive keeps running into a wall right now, whether it's a limit, a delay, or a wave of self-doubt. It's frustrating, and pushing harder or freezing up will only wear you out. This is a moment for the long game: break the goal into smaller, steadier steps, and let the resistance show you exactly where you need to get stronger.",
-      "revoice_version": "chani-quality-v1-authored",
+      "revoice_version": "CC-quality-v1-authored",
       "pull_quote": {
         "text": "Saturn doesn't want you to become faster, more efficient, or more competitive. It just wants you to act your age.",
         "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
@@ -109,7 +109,7 @@
       "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "The facts blur and it's easy to hear the version you were hoping for. It's easy to fall into filling the gaps with a hunch and acting on it, which can cost you a promise made on fog that has to be walked back. But clarity is available, it just has to be checked against something solid. Confirm the detail against a real source before you sign or agree.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "Imagination is the only way you can contend with uncertainty.",
         "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
@@ -141,7 +141,7 @@
       "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "A conversation can turn into a quiet contest over who's right or whether your effort gets seen, and words can dig or maneuver more than usual. The real subject is usually recognition, and it responds to plainness, not pressure. Say the honest thing directly, because the maneuvering costs more than the point ever will.",
-      "revoice_version": "chani-quality-v1-authored",
+      "revoice_version": "CC-quality-v1-authored",
       "pull_quote": {
         "text": "Words are choices that reveal alignment or avoidance.",
         "source": "Marie Satori (\"Gemini Season 2025\") — full-corpus audit",
@@ -180,7 +180,7 @@
       "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Thoughts turn heavy and self-critical and words feel slow to come. It's easy to fall into reading the seriousness as proof it's hopeless, which can cost you a real idea left unsaid because it didn't feel finished. But this is precision, not pessimism, and it rewards the plain structured version. Say the clear, bare-bones version and let it be enough.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "Your pace is not too slow.",
         "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
@@ -218,7 +218,7 @@
       "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Something said or heard touches an old sore spot and words land harder than intended. It's easy to fall into answering from the hurt and getting defensive, which can cost you a defensive exchange where a repair was possible. But the sting is an opening for the honest conversation, not only for more hurt. Use it for the healing conversation rather than the defensive one.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "Virgo’s precision no longer needs to be a weapon turned against yourself.",
         "source": "Marie Satori (\"Mercury Enters Virgo\") — full-corpus audit",
@@ -251,7 +251,7 @@
       "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Something another person does lands right on an old bruise. It's easy to fall into treating their action as the whole wound, which can cost you a fight about them that was really about the tender spot. But the ache was there before they touched it. Tend the bruise first, then decide what's actually about them.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "You don’t need to armor up to be loved.",
         "source": "Marie Satori (\"Venus in Cancer 2025\") — full-corpus audit",
@@ -284,7 +284,7 @@
       "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "What usually comforts you stops feeling like enough and you get restless for more. It's easy to fall into chasing a bigger fix than the moment needs, which can cost you overreach that leaves the real need unmet. But the hunger is information about what's missing, not a mandate to supersize. Name the actual need before you go looking for more.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "Real care needs a structure, a schedule and not just sentiment.",
         "source": "Marie Satori (\"Monthly Astrology: June 2025\") — full-corpus audit",
@@ -317,7 +317,7 @@
       "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Your need for calm runs up against someone's heat or push. It's easy to fall into snapping before you clock the irritation, which can cost you a small conflict that didn't have to happen. But the charge wants to move through your body, not your mouth. Move first, then speak.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "The body holds what the mind won’t.",
         "source": "Marie Satori (\"Chiron Retrograde in Aries\") — full-corpus audit",
@@ -350,7 +350,7 @@
       "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "You feel one thing and think another, and they won't line up. It's easy to fall into letting the argument in your head overrule the feeling, which can cost you a decision that ignores half of what's true. But both the logic and the mood are carrying real data. Hear both out before you decide anything.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "Some truths are felt in the body before the mind can understand them.",
         "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
@@ -383,7 +383,7 @@
       "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Your feelings blur with everyone else's until you can't tell which are yours. It's easy to fall into taking the room's mood as your own, which can cost you a choice made on borrowed feeling. But your own signal is in there under the noise. Get quiet and check what's actually yours before acting.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     },
     {
       "id": "cc/aspect-pair/moon-opposition-pluto",
@@ -409,7 +409,7 @@
       "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Emotional intensity runs into a control dynamic, an old jealousy or a buried feeling asking to be seen. It's easy to fall into reacting from the grip instead of choosing, which can cost you a reaction that hands someone else the wheel. But the feeling can be felt fully without running the show. Feel it all the way through, then choose your response.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "You can’t do everything alone anymore. At least not without it breaking you.",
         "source": "Marie Satori (\"Aquarius Full Moon 2025\") — full-corpus audit",
@@ -442,7 +442,7 @@
       "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Your own needs collide with a duty or with someone's distance. It's easy to fall into dropping yourself to hold it together, or dropping the task to feel okay, which can cost you resentment on one side or a dropped ball on the other. But you don't actually have to choose between the two. Make room for the feeling without abandoning the responsibility.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "Your pace is not too slow.",
         "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
@@ -474,7 +474,7 @@
       "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "The face you show and the feeling underneath sit across from each other. It's easy to fall into picking one and disowning the other, which can cost you a self that's either performed or overwhelmed. But both sides are you and both can be true at once. Let the outer steadiness and the inner need coexist today.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "You can’t do everything alone anymore. At least not without it breaking you.",
         "source": "Marie Satori (\"Aquarius Full Moon 2025\") — full-corpus audit",
@@ -507,7 +507,7 @@
       "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Your need for security pulls hard against an urge to break away. It's easy to fall into bolting or clamping down, which can cost you a disruption you caused instead of chose. But the restlessness is pointing at something that needs more room. Give the need for space a small, deliberate outlet.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "You’re allowed to soften. You’re allowed to receive. You’re allowed to rest.",
         "source": "Marie Satori (\"Aquarius Full Moon 2025\") — full-corpus audit",
@@ -540,7 +540,7 @@
       "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "What you need for comfort pulls against what you want to give someone else. It's easy to fall into over-tending them and starving yourself, or the reverse, which can cost you a lopsided exchange nobody enjoys. But both your comfort and theirs get to count. Say what you actually want instead of keeping a silent scoreboard.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "You don’t need to armor up to be loved.",
         "source": "Marie Satori (\"Venus in Cancer 2025\") — full-corpus audit",
@@ -573,7 +573,7 @@
       "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "An old hurt gets poked and you go straight to defense. It's easy to fall into acting on the flinch before you notice it, which can cost you a reaction that reopens the wound. But the defensiveness is a bruise, not a verdict. Notice the flinch before you move on it.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     },
     {
       "id": "cc/aspect-pair/moon-square-jupiter",
@@ -599,7 +599,7 @@
       "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "A good mood inflates and you promise more than the day can hold. It's easy to fall into committing big on a feeling, which can cost you obligations you can't honor later. But the warmth is real, the scale is the thing to watch. Enjoy the lift and keep the commitments to size.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "Real care needs a structure, a schedule and not just sentiment.",
         "source": "Marie Satori (\"Monthly Astrology: June 2025\") — full-corpus audit",
@@ -632,7 +632,7 @@
       "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Feeling runs hot and the fuse is short, and you're one comment away from the reply you'll keep replaying. It's easy to fall into saying the sharp thing before you mean to, which can cost you a remark you would take back an hour later. But the heat is energy that wants a physical outlet. Move the charge through your body before it reaches your mouth.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "The body holds what the mind won’t.",
         "source": "Marie Satori (\"Chiron Retrograde in Aries\") — full-corpus audit",
@@ -665,7 +665,7 @@
       "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Your head and your heart start to bicker. It's easy to fall into overthinking the mood or talking yourself out of a real feeling, which can cost you a true feeling argued away. But the noise settles once you let the feeling be a fact. Quiet the mental chatter first, then name what you feel.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "Some truths are felt in the body before the mind can understand them.",
         "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
@@ -698,7 +698,7 @@
       "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Moods turn foggy and porous and you soak up everyone's feelings. It's easy to fall into making a big emotional call inside the haze, which can cost you a decision you can't see clearly enough to trust. But the fog lifts with rest, it's not the truth. Rest, and hold the big emotional decisions until it clears.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     },
     {
       "id": "cc/aspect-pair/moon-square-north-node",
@@ -724,7 +724,7 @@
       "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "What you're reaching for scrapes against what actually soothes you, and it feels awkward. It's easy to fall into retreating to the familiar because the growth is uncomfortable, which can cost you a small chance to grow, skipped for comfort. But the awkwardness is the stretch, not a stop sign. Take one small step toward it anyway.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "Connection begins with honesty, and honesty begins with you.",
         "source": "Marie Satori (\"Cancer Full Moon\") — full-corpus audit",
@@ -757,7 +757,7 @@
       "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Emotional intensity turns toward control or a quiet brooding power struggle. It's easy to fall into gripping the feeling and turning it over and over, which can cost you an afternoon lost to the spiral. But the intensity clears when you let it move. Let the feeling pass through instead of holding it.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "Your emotions aren't symptoms to cure. They're your navigation system.",
         "source": "Marie Satori (\"Pisces Full Moon Eclipse\") — full-corpus audit",
@@ -790,7 +790,7 @@
       "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "A feeling runs into a cold wall today, and you can end up feeling unsupported, blocked, or just not enough. It's real weather, but it isn't the whole truth about your life. Comfort yourself first, then deal with the actual limit in front of you rather than the heavy mood around it.",
-      "revoice_version": "chani-quality-v1-authored",
+      "revoice_version": "CC-quality-v1-authored",
       "pull_quote": {
         "text": "Starting at the wrong time wastes more time than waiting for the right time.",
         "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
@@ -828,7 +828,7 @@
       "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "What would comfort you and what you think you should be doing pull in different directions. It's easy to fall into pushing through and resenting it, or resting and feeling guilty, which can cost you a day spent half in each. But you can pick one on purpose instead of being pulled. Choose comfort or push deliberately, and let the other wait.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "You’re allowed to soften. You’re allowed to receive. You’re allowed to rest.",
         "source": "Marie Satori (\"Aquarius Full Moon 2025\") — full-corpus audit",
@@ -861,7 +861,7 @@
       "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Restlessness spikes and feelings arrive without warning. It's easy to fall into bolting from the familiar to get relief, which can cost you a disruption you didn't think through. But the urge is a signal that something is too tight. Give yourself real space before you upend anything.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "Success is remaining open when closing would have been easier.",
         "source": "Marie Satori (\"Pisces Full Moon Eclipse\") — full-corpus audit",
@@ -894,7 +894,7 @@
       "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "You want comfort and you want closeness, and the two are slightly crossed. It's easy to fall into soothing the gap with spending or sweets, which can cost you a quick fix that misses the real want. But the craving is pointing at a softer need underneath. Reach for the actual comfort instead of the substitute.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "This is the kind of love that remembers your favorite song.",
         "source": "Marie Satori (\"Venus in Cancer 2025\") — full-corpus audit",
@@ -927,7 +927,7 @@
       "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "A wish to expand runs into something telling you to slow down and consolidate. It's easy to fall into overreaching, or shutting the growth down entirely, which can cost you growth that outruns its foundation, or a foundation with nothing on it. But optimism and realism are both right here. Grow, and build the structure that lets the growth hold.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "What do you long for?",
         "source": "Marie Satori (\"2025 New and Full Moons\") — full-corpus audit",
@@ -960,7 +960,7 @@
       "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Your public self and your private feelings pull opposite ways. It's easy to fall into performing steadiness and abandoning what you need, which can cost you a composed exterior that costs too much to keep up. But the outer role and the inner need are both true. Stay steady on the outside without dropping what you feel underneath.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "Stop needing to appear unshakeable when you're clearly shaking.",
         "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
@@ -992,7 +992,7 @@
       "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Your aim runs up against hard reality or someone else's limit. It's easy to fall into reading the gap as a verdict on your worth, which can cost you confidence spent arguing with a wall. But the limit is information about pacing, not about your value. Name what's in your control and put steady work there.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     },
     {
       "id": "cc/aspect-pair/sun-square-pluto",
@@ -1018,7 +1018,7 @@
       "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Something asks you to drop a hollow version of yourself and get honest about power. It's easy to fall into gripping harder for control instead of loosening, which can cost you a reckoning made heavier by the grip. But what's false is trying to fall away so something real can stand. Let the hollow part go rather than defending it.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     },
     {
       "id": "cc/aspect-pair/sun-square-saturn",
@@ -1044,7 +1044,7 @@
       "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Your momentum runs into a limit today, a duty, a delay, or someone with authority saying not yet, and it's easy to take it as a verdict on you. It isn't. It's a test of commitment. Do the boring, load-bearing part nobody claps for, because the confidence you build that way is the kind that actually holds.",
-      "revoice_version": "chani-quality-v1-authored"
+      "revoice_version": "CC-quality-v1-authored"
     },
     {
       "id": "cc/aspect-pair/venus-opposition-north-node",
@@ -1070,7 +1070,7 @@
       "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "What you value and what you're growing toward pull against each other, often through another person. It's easy to fall into reaching for the old comfort over the stretch, which can cost you a familiar pleasure that quietly keeps you in place. But the tension is showing you which choice actually moves you. Choose the option that helps you grow, even if it's less familiar.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "Are you surrounding yourself with people who see you for who you are or for what you offer?",
         "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
@@ -1103,7 +1103,7 @@
       "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Closeness runs into power, jealousy, or the sense you have been giving far more than you get. It's easy to fall into reacting to the intensity before you know what you want, which can cost you more of yourself poured into an imbalance. But the imbalance is being exposed so you can address it. Get clear on what you want from the connection before you react.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "A lesson in worth, love, and what must be left behind in order to move forward.",
         "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
@@ -1136,7 +1136,7 @@
       "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "A relationship, or your sense of being valued, might feel tested, distant, or like more effort than it should be, and it's easy to read that chill as proof you're not wanted. More often it's just asking whether the connection holds up when you stop over-giving to keep the peace. Ask for what you need directly instead of pulling away, and let people show you they care through what they actually do.",
-      "revoice_version": "chani-quality-v1-authored",
+      "revoice_version": "CC-quality-v1-authored",
       "pull_quote": {
         "text": "No relationship, no job, no amount of success is worth abandoning yourself for.",
         "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
@@ -1173,7 +1173,7 @@
       "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "An old tender spot lines up with where you're meant to grow, and there's a gentle opening, and the wound and the growth edge are pointing the same direction. What's easy to miss is that you leave the sore spot untouched because it's easier, so tend it in one small honest way and let it point you forward.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "This is a chance to stop that cycle, if it still exists.",
         "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
@@ -1205,7 +1205,7 @@
       "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Focused intensity is available that can move something that has been stuck, and deep drive without the fight is rare and usable. What's easy to miss is that you let the drive sit idle to avoid the power struggle, so aim it at one real, lasting change.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "Stop fearing that changing means losing yourself.",
         "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
@@ -1236,7 +1236,7 @@
       "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Energy and discipline are cooperating, so you can work hard without burning out, and this is productive drive that actually lasts. What's easy to miss is that you coast and let the steady window pass, so finish the thing you keep almost finishing.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "Saturn doesn't want you to become faster, more efficient, or more competitive. It just wants you to act your age.",
         "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
@@ -1267,7 +1267,7 @@
       "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Ideas connect easily and explaining things feels natural, and the mental flow wants a subject worth the reach. What's easy to miss is that you spend it on small talk instead of a real question, so say the idea out loud before you have perfected it.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "You are adaptable, you like choices, and a curious mind that enjoys exploring multiple subjects.",
         "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
@@ -1299,7 +1299,7 @@
       "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Thinking is clear, careful, and organized, so you can plan and say the precise thing, and precision and follow-through are both online. What's easy to miss is that you let the focus drift to easy tasks, so use it for the serious conversation or the detailed work.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "Your pace is not too slow.",
         "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
@@ -1330,7 +1330,7 @@
       "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "A gentle chance opens to tend an old sore spot, and small care goes a long way here. What's easy to miss is that you skip it because it feels small, so do one kind thing toward the tender part.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     },
     {
       "id": "cc/aspect-pair/moon-sextile-jupiter",
@@ -1355,7 +1355,7 @@
       "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "A warm, hopeful feeling wants to rise in you, and the optimism and the mood are lined up on their own. What's easy to miss is that you brush it off or hold it back, so let it move through your body without forcing it bigger.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     },
     {
       "id": "cc/aspect-pair/moon-sextile-mars",
@@ -1380,7 +1380,7 @@
       "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "A chance opens to turn a feeling into action, and the feeling is ready to become a move. What's easy to miss is that you let the impulse fade, so do the small brave thing the mood is pointing at.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "Mars in Cancer doesn’t fight to win, it fights to protect.",
         "source": "Marie Satori (\"Mars Direct in Cancer\") — full-corpus audit",
@@ -1412,7 +1412,7 @@
       "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "It gets easier to put a feeling into words, and feeling and language are cooperating. What's easy to miss is that you keep avoiding the conversation, so have the talk you have been putting off.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     },
     {
       "id": "cc/aspect-pair/moon-sextile-neptune",
@@ -1437,7 +1437,7 @@
       "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "A soft opening for intuition and compassion appears, and the gentle signal is worth trusting. What's easy to miss is that you talk yourself out of the nudge, so follow it into something you make or someone you care for.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     },
     {
       "id": "cc/aspect-pair/moon-sextile-pluto",
@@ -1462,7 +1462,7 @@
       "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "A chance opens to go one level deeper without drama, and depth is available cleanly right now. What's easy to miss is that you stay on the surface, so let one honest feeling surface and actually look at it.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "Your emotions aren't symptoms to cure. They're your navigation system.",
         "source": "Marie Satori (\"Pisces Full Moon Eclipse\") — full-corpus audit",
@@ -1494,7 +1494,7 @@
       "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "A chance opens to give a feeling some structure, and structure helps the feeling settle. What's easy to miss is that you let the mood stay loose and unsettled, so add a steadying routine or a small boundary.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "Starting at the wrong time wastes more time than waiting for the right time.",
         "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
@@ -1525,7 +1525,7 @@
       "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "A small opening lines up how you feel with what you're doing, and self and feeling are gently in step. What's easy to miss is that you overlook the easy step, so take it and let the mood carry the day.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     },
     {
       "id": "cc/aspect-pair/moon-sextile-uranus",
@@ -1550,7 +1550,7 @@
       "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "A chance opens to try a fresh emotional approach, and novelty is easy and low-risk today. What's easy to miss is that you default to the usual routine, so break one small pattern and notice how it feels.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "Success is remaining open when closing would have been easier.",
         "source": "Marie Satori (\"Pisces Full Moon Eclipse\") — full-corpus audit",
@@ -1582,7 +1582,7 @@
       "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "A soft opening for warmth, affection, and small pleasures appears, and tenderness is close to the surface. What's easy to miss is that you postpone the nice thing, so reach for the comforting, lovely thing now.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "This is the kind of love that remembers your favorite song.",
         "source": "Marie Satori (\"Venus in Cancer 2025\") — full-corpus audit",
@@ -1614,7 +1614,7 @@
       "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "It's easier than usual to feel the tender thing without being swamped by it, and healing is unusually comfortable here. What's easy to miss is that you avoid it out of habit, so let yourself feel it while it's gentle.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     },
     {
       "id": "cc/aspect-pair/moon-trine-jupiter",
@@ -1639,7 +1639,7 @@
       "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "A warm, generous, feel-good flow is easy to share, and the mood is actually generous. What's easy to miss is that you keep it to yourself, so spread the good feeling around.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     },
     {
       "id": "cc/aspect-pair/moon-trine-mars",
@@ -1664,7 +1664,7 @@
       "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Emotion is fueling action smoothly and you're moved by what you care about, and feeling and drive are cooperating. What's easy to miss is that you sit on the energy, so put it to work on something that matters to you.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "Mars in Cancer doesn’t fight to win, it fights to protect.",
         "source": "Marie Satori (\"Mars Direct in Cancer\") — full-corpus audit",
@@ -1696,7 +1696,7 @@
       "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "It's easy to name what you feel and talk it through, and feeling and words flow together. What's easy to miss is that you stay quiet anyway, so say the honest, gentle thing.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     },
     {
       "id": "cc/aspect-pair/moon-trine-neptune",
@@ -1721,7 +1721,7 @@
       "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "A soft, imaginative, forgiving mood is available, and empathy and imagination are open. What's easy to miss is that you let it pass unused, so make something or offer someone a little grace.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     },
     {
       "id": "cc/aspect-pair/moon-trine-pluto",
@@ -1746,7 +1746,7 @@
       "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "You can be honest about the heavy thing and come out lighter, and depth here restores rather than drains. What's easy to miss is that you keep it buried, so say the true thing and let it renew you.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     },
     {
       "id": "cc/aspect-pair/moon-trine-saturn",
@@ -1771,7 +1771,7 @@
       "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "There's real comfort in routine, discipline, and knowing where you stand, and contained feeling is its own comfort now. What's easy to miss is that you resist the structure that would steady you, so lean into the routine that grounds you.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "Starting at the wrong time wastes more time than waiting for the right time.",
         "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
@@ -1802,7 +1802,7 @@
       "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Who you are and how you feel agree without effort, and comfort and confidence come easily. What's easy to miss is that you second-guess the easy confidence, so take the day at its word.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     },
     {
       "id": "cc/aspect-pair/moon-trine-uranus",
@@ -1827,7 +1827,7 @@
       "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Change feels easy and you're comfortable doing it your own way, and emotional freedom is refreshing here. What's easy to miss is that you cling to the familiar out of habit, so try the fresh approach that appeals to you.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     },
     {
       "id": "cc/aspect-pair/moon-trine-venus",
@@ -1852,7 +1852,7 @@
       "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "A warm, affectionate mood is good for closeness and self-kindness, and affection comes easily today. What's easy to miss is that you keep the tenderness at arm's length, so reach for connection or treat yourself gently.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     },
     {
       "id": "cc/aspect-pair/sun-trine-jupiter",
@@ -1877,7 +1877,7 @@
       "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Confidence and opportunity align and doors feel open, and the expansion is real and available. What's easy to miss is that you hesitate and let the moment pass, so say yes to growth you can actually honor.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "This world is deeply incomplete without your authentic voice.",
         "source": "Marie Satori (\"Libra New Moon 2025\") — full-corpus audit",
@@ -1909,7 +1909,7 @@
       "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Ambition and structure are working with each other and steady effort pays off, and discipline feels supportive rather than heavy. What's easy to miss is that you wait instead of committing, so commit to something long-term and build it properly.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     },
     {
       "id": "cc/aspect-pair/venus-sextile-neptune",
@@ -1934,7 +1934,7 @@
       "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "A gentle opening around love, art, and imagination appears, and inspiration can become real if you move on it. What's easy to miss is that you only admire it instead of acting, so make one tangible, beautiful thing with what is already here.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     },
     {
       "id": "cc/aspect-pair/venus-sextile-north-node",
@@ -1959,7 +1959,7 @@
       "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Warmth and your growth edge cooperate and a small step toward what you want feels natural, and pleasure and growth point the same way. What's easy to miss is that you wait for a bigger sign, so reach for the connection or pleasure that also moves you forward.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "Start with the people who’ve shown up for your healing, not just your accomplishments.",
         "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
@@ -1991,7 +1991,7 @@
       "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Good feeling, social ease, and a little luck in love and money flow, and the ease is real, the only risk is overdoing it. What's easy to miss is that you let the warmth go unspent, so be generous without overextending.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "Not one of us is too much for the right connections.",
         "source": "Marie Satori (\"Libra New Moon 2025\") — full-corpus audit",
@@ -2023,7 +2023,7 @@
       "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Romance, art, and compassion blend beautifully, and love and imagination are cooperating. What's easy to miss is that you drift off into the ideal, so enjoy it with one foot on the ground about what's real.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     },
     {
       "id": "cc/aspect-pair/venus-trine-saturn",
@@ -2048,7 +2048,7 @@
       "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Affection and commitment sit easily together and your sense of worth feels stable, and warmth and structure agree here. What's easy to miss is that you leave the good thing undefined, so define what you want and make it durable.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     },
     {
       "id": "cc/aspect-pair/mars-conjunction-jupiter",
@@ -2073,7 +2073,7 @@
       "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Drive and confidence swell at the same time and bold moves feel easy. It can be hard to separate the push to act from the appetite for more right now, so take the big swing, sized to what you can actually follow through on.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "What are you willing to fight for? What deserves your determination?",
         "source": "Marie Satori (\"Saturn Enters Aries 2025\") — full-corpus audit",
@@ -2105,7 +2105,7 @@
       "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Your drive locks onto something you're actually hungry for. It can be hard to separate the raw wanting from the goal it's aimed at right now, so point it at what matters and go, without skipping your basic needs.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "What are you willing to fight for? What deserves your determination?",
         "source": "Marie Satori (\"Saturn Enters Aries 2025\") — full-corpus audit",
@@ -2137,7 +2137,7 @@
       "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Thinking speeds up and words get sharp and quick. It can be hard to separate the fast thought from the urge to fire it off right now, so stay deliberate about what you send.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     },
     {
       "id": "cc/aspect-pair/moon-conjunction-chiron",
@@ -2162,7 +2162,7 @@
       "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "An old feeling surfaces and a sore spot goes tender. It can be hard to separate the mood from the old wound it touches right now, so be gentle with yourself, this is a place that still heals.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     },
     {
       "id": "cc/aspect-pair/moon-conjunction-jupiter",
@@ -2187,7 +2187,7 @@
       "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Your heart feels generous today, and it's easy to let the good in. Warmth, hope, and a little more faith than usual are all available to you, so let yourself feel held by them. Just keep an eye on the urge to overdo it, and enjoy the abundance without inflating the promises.",
-      "revoice_version": "chani-quality-v1-authored"
+      "revoice_version": "CC-quality-v1-authored"
     },
     {
       "id": "cc/aspect-pair/moon-conjunction-mars",
@@ -2212,7 +2212,7 @@
       "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Your feelings run hot and fast today, and a mood can move you to act before you've thought it through. That's powerful when it's aimed and reactive when it's not. Feel the intensity, then point it at something real, and move your body before the heat reaches your mouth.",
-      "revoice_version": "chani-quality-v1-authored"
+      "revoice_version": "CC-quality-v1-authored"
     },
     {
       "id": "cc/aspect-pair/moon-conjunction-mercury",
@@ -2237,7 +2237,7 @@
       "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Feeling and thought run together, so you feel what you think. It can be hard to separate the emotion from the need to talk it out right now, so say the tender thing plainly.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     },
     {
       "id": "cc/aspect-pair/moon-conjunction-neptune",
@@ -2262,7 +2262,7 @@
       "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Feelings turn dreamy and porous and you soak up the room. It can be hard to separate the mood from the blurred edges around it right now, so enjoy the imagination and keep a boundary where you drift.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "Imagination is the only way you can contend with uncertainty.",
         "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
@@ -2293,7 +2293,7 @@
       "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Your feelings point straight at what you're growing toward. It can be hard to separate the pull from the direction it names right now, so take one step closer without mistaking the intensity for a finished decision.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "Connection begins with honesty, and honesty begins with you.",
         "source": "Marie Satori (\"Cancer Full Moon\") — full-corpus audit",
@@ -2325,7 +2325,7 @@
       "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Feelings run deep and intense and something buried can surface. It can be hard to separate the depth of feeling from the buried thing rising right now, so let it move through instead of gripping it.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     },
     {
       "id": "cc/aspect-pair/moon-conjunction-saturn",
@@ -2350,7 +2350,7 @@
       "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Feelings turn heavy, serious, or lonely and you want to withdraw. It can be hard to separate the heavy mood from the pull to pull away right now, so tend to yourself and let it pass without taking it as the truth.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "Your pace is not too slow.",
         "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
@@ -2387,7 +2387,7 @@
       "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Feelings and identity move as one, so you feel most yourself when you honor the mood. It can be hard to separate what you need from who you are right now, so let the mood and the day point the same way.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     },
     {
       "id": "cc/aspect-pair/moon-conjunction-uranus",
@@ -2412,7 +2412,7 @@
       "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Moods turn sudden and restless and you need room to breathe. It can be hard to separate the feeling from the urge for space right now, so expect the unexpected and give yourself room.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     },
     {
       "id": "cc/aspect-pair/moon-conjunction-venus",
@@ -2437,7 +2437,7 @@
       "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Feelings turn soft, affectionate, and pleasure-seeking. It can be hard to separate the tenderness from the wish for closeness right now, so open a window for warmth, connection, and self-care.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     },
     {
       "id": "cc/aspect-pair/sun-conjunction-north-node",
@@ -2462,7 +2462,7 @@
       "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Who you are and where you're headed line up and you feel the pull toward something bigger. It can be hard to separate your identity from the direction it's drawn to right now, so aim yourself at it deliberately, without burning past your own limits.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     },
     {
       "id": "cc/aspect-pair/venus-conjunction-mars",
@@ -2487,7 +2487,7 @@
       "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Attraction and drive line up right now, so what you want and who you want it from stop being separate questions. Desire feels direct, a little bold, and easy to act on before you've thought it through. Pursue it plainly instead of dressing it up as something more acceptable, and let the rest of the connection catch up to the spark.",
-      "revoice_version": "chani-quality-v1-authored"
+      "revoice_version": "CC-quality-v1-authored"
     },
     {
       "id": "cc/aspect-pair/venus-conjunction-uranus",
@@ -2512,7 +2512,7 @@
       "originalityCheck": "voiced; decomposed to slots; prohibited seams cleared",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Attraction turns sudden and electric, a spark or an urge to shake up how you love or spend. It can be hard to separate the pull from the urge to disrupt right now, so enjoy the novelty without mistaking a jolt for a foundation.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     }
   ]
 }

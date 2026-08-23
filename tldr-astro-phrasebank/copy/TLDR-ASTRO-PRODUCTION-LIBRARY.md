@@ -2,7 +2,7 @@
 
 **Version:** 1.0 · **Built:** 2026-07-13 · **Scope:** editorial production library (article types, structures, vocabulary, hooks, fallbacks, personalized natal layer, surface variants, validation).
 
-**Evidence base (only):** `tldr-astro-template-handoff-v2` (v2.0.1) `sources/` and `references/` — `cc-source-phrases.json`, `marie-source-phrases.json`, `tldr-astro-records.json`, `tldr-astro-voice-spec.md`, `CHANI-APP-CONTENT-LOGIC.json`, `source-derived-clause-exemplars.json`, and 50 CHANI reference screenshots. Nothing here is invented beyond what the corpus demonstrates; structural lessons are paraphrased, only short excerpts are quoted.
+**Evidence base (only):** `tldr-astro-template-handoff-v2` (v2.0.1) `sources/` and `references/` — `cc-source-phrases.json`, `marie-source-phrases.json`, `tldr-astro-records.json`, `tldr-astro-voice-spec.md`, `CC-APP-CONTENT-LOGIC.json`, `source-derived-clause-exemplars.json`, and 50 CC reference screenshots. Nothing here is invented beyond what the corpus demonstrates; structural lessons are paraphrased, only short excerpts are quoted.
 
 **Non-negotiable frame (from the package):** sources and screenshots are **evidence, not reader-ready copy**. A source key existing does not make a record READY. The reader only ever meets the *voiced* layer (Marie Satori house voice); the `cc/*` and `ms/*` reference logic is scaffolding that supplies WHAT is true, never shown raw. Compact and expanded copy must differ. When the required exact source is missing, return `SOURCE_GAP` rather than assembling prose from keywords.
 
@@ -16,9 +16,9 @@
 | `marie-source-phrases.json` | Marie Satori material: chart-comparison verdicts (synastry), retrograde phases, per-planet retrograde/ingress, dignity tags, profection years, midheaven-by-sign, mercury-rx/uranus-rx by sign, venus year, eclipse fragments, pull-quotes/essay-quotes. | dict keyed by `ms/...` | APPROVED for guidance; `pull-quote/*` and `essay-quote/*` REFERENCE_ONLY |
 | `tldr-astro-records.json` | 2 MB record store: 132 generic transit-through-house rows (quarantined as `REFERENCE_SCAFFOLD`) + 84 exact aspect-pair rows requiring review. | `{records:[...]}` | REFERENCE_SCAFFOLD / EVIDENCE_ONLY_UNTIL_REVIEWED |
 | `tldr-astro-voice-spec.md` | The Marie Satori house voice: gold-standard exemplars, signature moves, banned register. | prose | Voice authority (serving lane) |
-| `CHANI-APP-CONTENT-LOGIC.json` | Reverse-engineered CHANI generation logic for natal placement pages, gift/challenge aspect sorting, and transit prioritization, from 42 screenshots. | structured | REFERENCE_ONLY (mechanics, not copy) |
+| `CC-APP-CONTENT-LOGIC.json` | Reverse-engineered CC generation logic for natal placement pages, gift/challenge aspect sorting, and transit prioritization, from 42 screenshots. | structured | REFERENCE_ONLY (mechanics, not copy) |
 | `source-derived-clause-exemplars.json` | 4 sentence-ready calibration records (sky retrograde, natal Sun, saturn-square-venus transit, moon-node aspect) showing fact→meaning→voice. | records with `slots` | REVIEWED_CLAUSE exemplars |
-| `references/chani-*-screenshots/` (50 PNG) | 40 legacy + 10 current CHANI app screens (Me/birth-chart, Transits, Home planetary horoscopes, Moon forecast, Sky). | images | REFERENCE_ONLY / `raw_chani_copy` PROHIBITED as serving source |
+| `references/CC-*-screenshots/` (50 PNG) | 40 legacy + 10 current CC app screens (Me/birth-chart, Transits, Home planetary horoscopes, Moon forecast, Sky). | images | REFERENCE_ONLY / `raw_chani_copy` PROHIBITED as serving source |
 
 **Duplicate sources:** the four smaller ZIPs (`-REVIEWED-COMPLETE`, `-NEW-NATAL-TRANSITS-DIRECTION`, `-FULL-DASHBOARD-NEW-DIRECTION`, `-FINAL-SOURCE-GROUNDED-TEMPLATES`) are prior iterations; their `cc-source-phrases.json` / `marie-source-phrases.json` / `tldr-astro-records.json` are byte-identical to v2.0.1. Use v2.0.1 only. See §14 and the changelog.
 
@@ -58,7 +58,7 @@ _New article types identified from the corpus beyond a naive "daily/weekly/month
 
 ### Per-type editorial detail
 
-Each type below gives: purpose · hook pattern · body pattern · personalized placement · close · fallback · short surfaces · validation. Structures are written as sequences of editorial functions (per spec §4), grounded in the voice spec and CHANI-APP-CONTENT-LOGIC.
+Each type below gives: purpose · hook pattern · body pattern · personalized placement · close · fallback · short surfaces · validation. Structures are written as sequences of editorial functions (per spec §4), grounded in the voice spec and CC-APP-CONTENT-LOGIC.
 
 **daily-horoscope** — _Purpose:_ name one scene the reader could actually meet today and one proportionate move. _Hook:_ a recognizable moment or a light imperative (`cc/sign/*/hook/alt*`), never "the astrology" first. _Body:_ one dominant theme → one concrete life area → one behavior they may notice → one small correction. _Personalized placement:_ natal-house layer near the end only ("today's Moon moves through your {house} house, so this may show up through {one concrete example}"). _Close:_ one action or a plain reframe (`cc/sign/*/action/alt*`, `/closing/alt*`); may be omitted when the thought is complete. _Fallback:_ `fallback/daily-horoscope`. _Short surfaces:_ feed-card 70–120w, tooltip 12–24w. _Validation:_ exactly one scene; action is specific (state the rate / send the text), not "know your worth".
 
@@ -153,7 +153,7 @@ Phase records are distinct (`ms/retro-phase/pre-retrograde-shadow | stationary |
 - Exact natal aspects outrank generic luminary commentary.
 - Missing/unreliable birth time → suppress house- and sect-dependent copy; fall back to sign-based collective. (See §13 and `SECT-ELIGIBILITY-CONTRACT`.)
 
-### CHANI natal-placement page order (from `CHANI-APP-CONTENT-LOGIC.json`, calibration only)
+### CC natal-placement page order (from `CC-APP-CONTENT-LOGIC.json`, calibration only)
 `1 sign (function×archetype) → 2 house (concrete domain) → 3 sect importance (only for the sect light) → 4 natal retrograde (if Rx at birth) → 5 dignity note (if in dignity/debility) → 6 gifts & challenges (all aspects, sorted)`.
 Aspect sorting: trine/sextile → GIFTS; conjunction inherits the other body's nature; square/opposition → CHALLENGES; benefic (Venus/Jupiter) in a hard aspect may sit under GIFTS as gift-with-tension; order by tightest orb then traditional body order.
 
@@ -1291,7 +1291,7 @@ Runtime/editorial gates (from the extraction spec §19 + the package contracts).
 4. Supporting sources used as constraints — a house selects the scene, never emits a keyword paragraph.
 5. One coherent situation; no symbol-by-symbol translation; no concatenated modules.
 6. Optional beats suppressed when they only repeat; no mandatory "this transit reveals / you may be noticing".
-7. `SOURCE_GAP` when the required exact source is missing — never build prose from keywords, prompts, feedback, reports, or raw CHANI copy.
+7. `SOURCE_GAP` when the required exact source is missing — never build prose from keywords, prompts, feedback, reports, or raw CC copy.
 8. Compact ≠ expanded.
 9. Daily and weekly treated as containers, not events. Solar and lunar eclipses separated. Retrograde and direct-station separated. Moon phase and Moon sign separated.
 10. Every personalized template uses the natal house; exact natal aspects outrank generic Sun/Moon; Sun/Moon/rising synthesized into one story, never three paragraphs.

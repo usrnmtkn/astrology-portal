@@ -3,7 +3,7 @@
 build_natal_retrograde.py — Me/Natal RETROGRADE-by-planet (authored, needs sign-off).
 
 PERSONAL planets (Mercury, Venus, Mars, Jupiter, Saturn, Chiron): a warm section on the
-planet's placement page (CHANI-style) — heading "{Planet} was retrograde when you were
+planet's placement page (CC-style) — heading "{Planet} was retrograde when you were
 born." + an encouraging paragraph that reframes retrograde as inward / non-linear growth.
 
 OUTER planets (Uranus, Neptune, Pluto): each is retrograde for roughly half the year, so

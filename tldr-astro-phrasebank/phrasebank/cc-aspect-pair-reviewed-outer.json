@@ -59,7 +59,7 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "A restlessness with who you're supposed to be turns loud and sudden, and change you didn't plan starts arriving. The steady identity you built may no longer contain a self that wants more room to be original, and this is less a breakdown than a wake-up: the life outgrew the role. Change one real thing you can reverse and watch what the freedom shows you.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "You just have to stop gripping onto where you’ve been.",
         "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
@@ -97,7 +97,7 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Something restless is knocking against who you thought you were, and the urge to break free can feel urgent and sudden. The jolts are aimed at what no longer fits, not at everything you are. Instead of blowing up the whole life at once, change one real thing you can walk back, and let the freedom show you what it's actually pointing at.",
-      "revoice_version": "chani-quality-v1-authored",
+      "revoice_version": "CC-quality-v1-authored",
       "pull_quote": {
         "text": "You just have to stop gripping onto where you’ve been.",
         "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
@@ -136,7 +136,7 @@
       "derivation_note": "opposition read as the hard contact felt through other people / the outer world",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Sudden disruptions keep knocking against who you thought you were, and the pull to break free feels urgent. The version of yourself you've been defending may no longer contain a freedom you keep postponing, and the jolts are aimed at what no longer fits, not at all of who you are. Run one bounded experiment instead of detonating the whole structure.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     },
     {
       "id": "cc/aspect-pair/uranus-trine-sun",
@@ -167,7 +167,7 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "A freer, more original version of yourself becomes easy to try on, and change feels exciting rather than threatening. The routine that has held you may no longer contain the part of you ready to do it your own way, and freedom is available here without a crisis to force it. Take the unconventional option while it's this low-risk.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     },
     {
       "id": "cc/aspect-pair/uranus-sextile-sun",
@@ -200,7 +200,7 @@
       "derivation_note": "sextile = the soft contact as an opportunity that only pays off when acted on",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "A freer, more original version of yourself becomes easy to try on, and change feels exciting rather than threatening. The routine that has held you may no longer contain the part of you ready to do it your own way, and freedom is available here without a crisis to force it. Take the unconventional option while it's this low-risk.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     },
     {
       "id": "cc/aspect-pair/uranus-conjunction-moon",
@@ -231,7 +231,7 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Your emotional life gets jolted awake, and old comforts suddenly feel too small to live in. The domestic setup you've leaned on may no longer contain a need for emotional space you haven't named, and the restlessness is your feelings asking for a truer arrangement, not proof something's wrong. Change one part of the home or routine and feel what opens up.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "If you're feeling drained or pulled inward, don’t fight it.",
         "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
@@ -269,7 +269,7 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Feelings arrive without warning and the familiar refuge keeps getting disrupted. The security you're gripping may no longer contain a need for room you've been denying, and the upheaval is pointing at where you've outgrown a comfort, not tearing down your base. Give the restlessness a small, contained outlet before it forces a bigger break.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "If you're feeling drained or pulled inward, don’t fight it.",
         "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
@@ -308,7 +308,7 @@
       "derivation_note": "opposition read as the hard contact felt through other people / the outer world",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Feelings arrive without warning and the familiar refuge keeps getting disrupted. The security you're gripping may no longer contain a need for room you've been denying, and the upheaval is pointing at where you've outgrown a comfort, not tearing down your base. Give the restlessness a small, contained outlet before it forces a bigger break.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "Let the endings and beginnings happen without trying to control how they unfold.",
         "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
@@ -346,7 +346,7 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "A fresh emotional freedom becomes available and you can care for yourself in a new way. The old emotional habit may no longer contain a lighter, more independent way of feeling safe, and you can update how you find comfort without losing it. Try the unfamiliar source of ease while it feels easy.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "Let the endings and beginnings happen without trying to control how they unfold.",
         "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
@@ -386,7 +386,7 @@
       "derivation_note": "sextile = the soft contact as an opportunity that only pays off when acted on",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "A fresh emotional freedom becomes available and you can care for yourself in a new way. The old emotional habit may no longer contain a lighter, more independent way of feeling safe, and you can update how you find comfort without losing it. Try the unfamiliar source of ease while it feels easy.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     },
     {
       "id": "cc/aspect-pair/uranus-conjunction-mercury",
@@ -417,7 +417,7 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Your thinking speeds up and jumps track, and sudden insights arrive faster than you can file them. The way you've always reasoned may no longer contain a mind that wants to break its own patterns, and the mental jolt is an awakening, not a malfunction. Write the flash of insight down before it scatters, then test one of them.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "Embrace the mishaps and make the most of every obstacle.",
         "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
@@ -455,7 +455,7 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Your thoughts get erratic and impatient, and you want to blurt the disruptive thing. The settled opinion you've held may no longer contain an idea that no longer fits the old frame, and the friction is your mind outgrowing a conclusion, not losing its grip. Sleep on the impulse to upend the plan, then change one piece deliberately.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "Embrace the mishaps and make the most of every obstacle.",
         "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
@@ -494,7 +494,7 @@
       "derivation_note": "opposition read as the hard contact felt through other people / the outer world",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Your thoughts get erratic and impatient, and you want to blurt the disruptive thing. The settled opinion you've held may no longer contain an idea that no longer fits the old frame, and the friction is your mind outgrowing a conclusion, not losing its grip. Sleep on the impulse to upend the plan, then change one piece deliberately.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     },
     {
       "id": "cc/aspect-pair/uranus-trine-mercury",
@@ -525,7 +525,7 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Original ideas come easily and you can think outside the usual channel. The predictable approach may no longer contain a more inventive way of solving it, and innovation is low-cost here if you reach for it. Try the unconventional solution while the thinking is this open.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     },
     {
       "id": "cc/aspect-pair/uranus-sextile-mercury",
@@ -558,7 +558,7 @@
       "derivation_note": "sextile = the soft contact as an opportunity that only pays off when acted on",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Original ideas come easily and you can think outside the usual channel. The predictable approach may no longer contain a more inventive way of solving it, and innovation is low-cost here if you reach for it. Try the unconventional solution while the thinking is this open.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     },
     {
       "id": "cc/aspect-pair/uranus-conjunction-venus",
@@ -589,7 +589,7 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Attraction and taste turn sudden and electric, and what you want in love or money shifts overnight. The relationship shape you settled into may no longer contain a need for freedom inside your connections, and the spark is asking you to update how you love, not to torch what's real. Enjoy the novelty without mistaking a jolt for a foundation.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "You're discovering that love doesn't need you to put out your fire.",
         "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
@@ -627,7 +627,7 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Your love life and values get unpredictable, and restlessness pulls at a steady arrangement. The comfortable version of the relationship may no longer contain a desire for space you've been sitting on, and the disruption is testing what's alive in the bond, not condemning it. Name the need for room directly instead of acting it out.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "You're discovering that love doesn't need you to put out your fire.",
         "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
@@ -666,7 +666,7 @@
       "derivation_note": "opposition read as the hard contact felt through other people / the outer world",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Your love life and values get unpredictable, and restlessness pulls at a steady arrangement. The comfortable version of the relationship may no longer contain a desire for space you've been sitting on, and the disruption is testing what's alive in the bond, not condemning it. Name the need for room directly instead of acting it out.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     },
     {
       "id": "cc/aspect-pair/uranus-trine-venus",
@@ -697,7 +697,7 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "A freer, more unconventional warmth becomes available and you can revalue what matters without drama. The habitual way you relate may no longer contain room to love or spend on your own terms, and you can loosen an old pattern here without losing the connection. Try relating in the freer way while it feels natural.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     },
     {
       "id": "cc/aspect-pair/uranus-sextile-venus",
@@ -730,7 +730,7 @@
       "derivation_note": "sextile = the soft contact as an opportunity that only pays off when acted on",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "A freer, more unconventional warmth becomes available and you can revalue what matters without drama. The habitual way you relate may no longer contain room to love or spend on your own terms, and you can loosen an old pattern here without losing the connection. Try relating in the freer way while it feels natural.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     },
     {
       "id": "cc/aspect-pair/uranus-conjunction-mars",
@@ -761,7 +761,7 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Your drive turns impulsive and independent, and you want to act on your own terms right now. The disciplined way you've channeled effort may no longer contain a need to move without asking permission, and the charged energy is initiative waking up, dangerous only when it's blind. Point the surge at one bold, reversible move rather than a rash one.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "If something falls apart now, it likely needed to.",
         "source": "Marie Satori (\"Sagittarius Full Moon 2025\") — full-corpus audit",
@@ -799,7 +799,7 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Your actions get erratic and accident-prone, and frustration wants a sudden outlet. The controlled way you usually push may no longer contain an impatience you've been sitting on, and the friction marks where your drive needs a new direction, not a reckless one. Burn the restlessness on something physical before you force a break.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "If something falls apart now, it likely needed to.",
         "source": "Marie Satori (\"Sagittarius Full Moon 2025\") — full-corpus audit",
@@ -838,7 +838,7 @@
       "derivation_note": "opposition read as the hard contact felt through other people / the outer world",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Your actions get erratic and accident-prone, and frustration wants a sudden outlet. The controlled way you usually push may no longer contain an impatience you've been sitting on, and the friction marks where your drive needs a new direction, not a reckless one. Burn the restlessness on something physical before you force a break.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     },
     {
       "id": "cc/aspect-pair/uranus-trine-mars",
@@ -869,7 +869,7 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "You can act freely and originally, and independent moves come off without a fight. The routine way you take action may no longer contain the urge to do it your own way, and bold, unconventional action is unusually low-risk now. Take the independent initiative while the timing supports it.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     },
     {
       "id": "cc/aspect-pair/uranus-sextile-mars",
@@ -902,7 +902,7 @@
       "derivation_note": "sextile = the soft contact as an opportunity that only pays off when acted on",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "You can act freely and originally, and independent moves come off without a fight. The routine way you take action may no longer contain the urge to do it your own way, and bold, unconventional action is unusually low-risk now. Take the independent initiative while the timing supports it.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     },
     {
       "id": "cc/aspect-pair/neptune-conjunction-sun",
@@ -933,7 +933,7 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Your sense of who you're goes soft at the edges, and your usual drive quietly loses its outline. The confident self you present may be losing definition before a gentler, less ego-driven sense of purpose is ready, and this is your identity being rinsed of what was only performance, which feels like fog until it clears. Ground the day in one concrete task while the bigger picture reforms.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "You don’t need to articulate what you’re feeling. You already know.",
         "source": "Marie Satori (\"Pisces Season\") — full-corpus audit",
@@ -977,7 +977,7 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Your direction gets murky and your confidence keeps slipping through your fingers. The goal you were sure of may be losing definition before a purpose you can't quite see yet is ready, and the confusion is real, and the danger is deciding who you're from inside the haze. Hold the big identity questions and just handle the next real thing in front of you.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "You can’t control your way to peace.",
         "source": "Marie Satori (\"Astrology: August 30–September 7\") — full-corpus audit",
@@ -1016,7 +1016,7 @@
       "derivation_note": "opposition read as the hard contact felt through other people / the outer world",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Your direction gets murky and your confidence keeps slipping through your fingers. The goal you were sure of may be losing definition before a purpose you can't quite see yet is ready, and the confusion is real, and the danger is deciding who you're from inside the haze. Hold the big identity questions and just handle the next real thing in front of you.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "You can’t control your way to peace.",
         "source": "Marie Satori (\"Astrology: August 30–September 7\") — full-corpus audit",
@@ -1054,7 +1054,7 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Inspiration and compassion open easily, and a more spiritual sense of yourself flows in. The narrow definition of success may be losing definition before a wider, more meaningful sense of self is ready, and you can dissolve an old rigidity here without losing yourself. Give the vision one small concrete form so it doesn't only stay a mood.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "You don’t need to articulate what you’re feeling. You already know.",
         "source": "Marie Satori (\"Pisces Season\") — full-corpus audit",
@@ -1094,7 +1094,7 @@
       "derivation_note": "sextile = the soft contact as an opportunity that only pays off when acted on",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Inspiration and compassion open easily, and a more spiritual sense of yourself flows in. The narrow definition of success may be losing definition before a wider, more meaningful sense of self is ready, and you can dissolve an old rigidity here without losing yourself. Give the vision one small concrete form so it doesn't only stay a mood.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     },
     {
       "id": "cc/aspect-pair/neptune-conjunction-moon",
@@ -1125,7 +1125,7 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Your feelings turn porous and dreamy, and it's hard to tell your mood from the room's. The clear read you had on your needs may be losing definition before a softer, more merged way of feeling is ready, and the boundaries are dissolving, which is tender and disorienting at once. Get quiet and name one feeling as yours before you act on any of them.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "marie_advice": {
         "text": "Some days you answer the messages, make the food, finish the shift, and feel almost nothing while doing it. That does not make the day meaningless. Keeping your life going during a low period is work, even when nobody sees anything dramatic happen.",
         "tier": "CONFIRMED",
@@ -1162,7 +1162,7 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "A vague emotional longing or disillusion settles in, and what you need keeps going out of focus. The security you thought you had may be losing definition before an emotional truth still taking shape is ready, and the ache is information, and the trap is numbing it or chasing a fantasy of rescue. Rest, and make no large emotional decision until the fog lifts.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     },
     {
       "id": "cc/aspect-pair/neptune-opposition-moon",
@@ -1194,7 +1194,7 @@
       "derivation_note": "opposition read as the hard contact felt through other people / the outer world",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "A vague emotional longing or disillusion settles in, and what you need keeps going out of focus. The security you thought you had may be losing definition before an emotional truth still taking shape is ready, and the ache is information, and the trap is numbing it or chasing a fantasy of rescue. Rest, and make no large emotional decision until the fog lifts.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     },
     {
       "id": "cc/aspect-pair/neptune-trine-moon",
@@ -1225,7 +1225,7 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Empathy and imagination flow gently, and caring for others feels natural and healing. The guarded way you hold feelings may be losing definition before a more open, compassionate way to relate is ready, and you can soften an old defense here without being swept away. Channel the tenderness into one creative or caring act.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     },
     {
       "id": "cc/aspect-pair/neptune-sextile-moon",
@@ -1258,7 +1258,7 @@
       "derivation_note": "sextile = the soft contact as an opportunity that only pays off when acted on",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Empathy and imagination flow gently, and caring for others feels natural and healing. The guarded way you hold feelings may be losing definition before a more open, compassionate way to relate is ready, and you can soften an old defense here without being swept away. Channel the tenderness into one creative or caring act.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     },
     {
       "id": "cc/aspect-pair/neptune-conjunction-mercury",
@@ -1289,7 +1289,7 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Your thinking turns dreamy and impressionable right now, and it's easy to hear the version you were hoping for instead of the one that's true. Imagination is high, which is a gift for anything creative and a risk for anything you're signing. Enjoy the inspiration, and check every important detail against something solid before you commit.",
-      "revoice_version": "chani-quality-v1-authored",
+      "revoice_version": "CC-quality-v1-authored",
       "pull_quote": {
         "text": "Sometimes the only move is to make peace with not knowing.",
         "source": "Marie Satori (\"Mercury Retrograde in Leo 2025\") — full-corpus audit",
@@ -1333,7 +1333,7 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Your mind gets foggy and easily misled, and communication keeps slipping past each other. The facts you were sure of may be losing definition before an understanding that isn't settled yet is ready, and the confusion is real; signing or promising on a hunch is where it bites. Confirm in writing and postpone the binding decision.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "Not everything that sounds good is true.",
         "source": "Marie Satori (\"Leo Full Moon\") — full-corpus audit",
@@ -1372,7 +1372,7 @@
       "derivation_note": "opposition read as the hard contact felt through other people / the outer world",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Your mind gets foggy and easily misled, and communication keeps slipping past each other. The facts you were sure of may be losing definition before an understanding that isn't settled yet is ready, and the confusion is real; signing or promising on a hunch is where it bites. Confirm in writing and postpone the binding decision.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "Not everything that sounds good is true.",
         "source": "Marie Satori (\"Leo Full Moon\") — full-corpus audit",
@@ -1410,7 +1410,7 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Imaginative, intuitive thinking flows and you can picture what isn't there yet. The strictly literal approach may be losing definition before a more inspired way to see the problem is ready, and you can loosen rigid thinking here without losing the thread. Use the imagination on something you'll actually make.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "Sometimes the only move is to make peace with not knowing.",
         "source": "Marie Satori (\"Mercury Retrograde in Leo 2025\") — full-corpus audit",
@@ -1450,7 +1450,7 @@
       "derivation_note": "sextile = the soft contact as an opportunity that only pays off when acted on",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Imaginative, intuitive thinking flows and you can picture what isn't there yet. The strictly literal approach may be losing definition before a more inspired way to see the problem is ready, and you can loosen rigid thinking here without losing the thread. Use the imagination on something you'll actually make.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     },
     {
       "id": "cc/aspect-pair/neptune-conjunction-venus",
@@ -1481,7 +1481,7 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Love and beauty turn luminous and idealized, and you see the best in someone or something. The clear-eyed view of the relationship may be losing definition before a more compassionate, less possessive way to love is ready, and idealization is rising, which is inspiring right up until it becomes a set-up for disappointment. Enjoy the beauty and keep one foot in what's actually being offered.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "This is not just about romance, it’s about self-worth.",
         "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
@@ -1519,7 +1519,7 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "A romantic fog or quiet disillusion settles over love or money, and what you value gets hard to see. The picture you painted of them may be losing definition before a truer sense of what you actually want is ready, and the letdown is the fantasy correcting, not love itself failing. Wait on the financial or romantic leap until you can see it plainly.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "This is not just about romance, it’s about self-worth.",
         "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
@@ -1558,7 +1558,7 @@
       "derivation_note": "opposition read as the hard contact felt through other people / the outer world",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "A romantic fog or quiet disillusion settles over love or money, and what you value gets hard to see. The picture you painted of them may be losing definition before a truer sense of what you actually want is ready, and the letdown is the fantasy correcting, not love itself failing. Wait on the financial or romantic leap until you can see it plainly.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     },
     {
       "id": "cc/aspect-pair/neptune-trine-venus",
@@ -1589,7 +1589,7 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Romance, art, and compassion blend beautifully, and tenderness comes without effort. The transactional view of worth may be losing definition before a softer, more generous way to value things is ready, and you can dissolve an old hardness in how you love here. Make one beautiful thing or offer one act of grace.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     },
     {
       "id": "cc/aspect-pair/neptune-sextile-venus",
@@ -1622,7 +1622,7 @@
       "derivation_note": "sextile = the soft contact as an opportunity that only pays off when acted on",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Romance, art, and compassion blend beautifully, and tenderness comes without effort. The transactional view of worth may be losing definition before a softer, more generous way to value things is ready, and you can dissolve an old hardness in how you love here. Make one beautiful thing or offer one act of grace.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     },
     {
       "id": "cc/aspect-pair/neptune-conjunction-mars",
@@ -1653,7 +1653,7 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Your drive goes quietly unclear, and the energy you count on keeps draining or diffusing. The direct way you take action may be losing definition before a subtler, more inspired kind of effort is ready, and your will is being softened, which reads as weakness but can become surrender to something larger. Rest when you're depleted and aim the energy at something you actually believe in.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "You are not meant to push harder right now, just sit back and observe.",
         "source": "Marie Satori (\"Eclipse Season: Pisces New Moon to Pisces Total Lunar Eclipse\") — full-corpus audit",
@@ -1691,7 +1691,7 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Your actions get undermined or misdirected, and motivation keeps leaking away. The plan you were driving may be losing definition before a direction you can't force into focus yet is ready, and the frustration is your drive meeting fog, and pushing harder only tires you. Do one small grounded action rather than forcing the whole campaign.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "You are not meant to push harder right now, just sit back and observe.",
         "source": "Marie Satori (\"Eclipse Season: Pisces New Moon to Pisces Total Lunar Eclipse\") — full-corpus audit",
@@ -1730,7 +1730,7 @@
       "derivation_note": "opposition read as the hard contact felt through other people / the outer world",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Your actions get undermined or misdirected, and motivation keeps leaking away. The plan you were driving may be losing definition before a direction you can't force into focus yet is ready, and the frustration is your drive meeting fog, and pushing harder only tires you. Do one small grounded action rather than forcing the whole campaign.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "You’re here to protect your energy by caring for what you can control.",
         "source": "Marie Satori (\"Monthly Astrology: June 2025\") — full-corpus audit",
@@ -1768,7 +1768,7 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "You can act from inspiration and compassion, and effort flows toward something meaningful. The purely self-interested push may be losing definition before a gentler motivation that still moves is ready, and you can act in service of a vision here without losing momentum. Put the energy behind the ideal while it's this available.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "You’re here to protect your energy by caring for what you can control.",
         "source": "Marie Satori (\"Monthly Astrology: June 2025\") — full-corpus audit",
@@ -1808,7 +1808,7 @@
       "derivation_note": "sextile = the soft contact as an opportunity that only pays off when acted on",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "You can act from inspiration and compassion, and effort flows toward something meaningful. The purely self-interested push may be losing definition before a gentler motivation that still moves is ready, and you can act in service of a vision here without losing momentum. Put the energy behind the ideal while it's this available.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     },
     {
       "id": "cc/aspect-pair/pluto-conjunction-sun",
@@ -1840,7 +1840,7 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "A pressure to become someone truer builds, and a hollow version of yourself starts to fall away. The image you've been holding together has been protecting a fear of not mattering, but it may now be intensifying the exhaustion of defending a self that isn't quite real. This is a death-and-rebirth of identity: what's false leaves so what's real can stand. Let one outworn part of your self-image go instead of gripping for control.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "The old version of you is dead.",
         "source": "Marie Satori (\"Uranus Direct in Taurus 2025\") — full-corpus audit",
@@ -1885,7 +1885,7 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Something confronts you at the root of who you are, and a power struggle over your own direction intensifies. The need to stay in control of how you're seen has been protecting a fear of powerlessness, but it may now be intensifying a reckoning that gets heavier the harder you grip. The crisis is forcing a real transformation, not just testing you. Face what's surfacing and release the part you can't actually control.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "The past releases its grip.",
         "source": "Marie Satori (\"Venus Retrograde 2025\") — full-corpus audit",
@@ -1925,7 +1925,7 @@
       "derivation_note": "opposition read as the hard contact felt through other people / the outer world",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Something confronts you at the root of who you are, and a power struggle over your own direction intensifies. The need to stay in control of how you're seen has been protecting a fear of powerlessness, but it may now be intensifying a reckoning that gets heavier the harder you grip. The crisis is forcing a real transformation, not just testing you. Face what's surfacing and release the part you can't actually control.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "The past releases its grip.",
         "source": "Marie Satori (\"Venus Retrograde 2025\") — full-corpus audit",
@@ -1964,7 +1964,7 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "You can transform yourself deliberately, and a deep, quiet authority becomes available. The habit of hiding your own power has been protecting a fear of your own intensity, but it may now be intensifying influence left unused, turning into control. Real change is available here without a collision to force it. Point the intensity at one honest change you want to lead.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     },
     {
       "id": "cc/aspect-pair/pluto-sextile-sun",
@@ -1998,7 +1998,7 @@
       "derivation_note": "sextile = the soft contact as an opportunity that only pays off when acted on",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "You can transform yourself deliberately, and a deep, quiet authority becomes available. The habit of hiding your own power has been protecting a fear of your own intensity, but it may now be intensifying influence left unused, turning into control. Real change is available here without a collision to force it. Point the intensity at one honest change you want to lead.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     },
     {
       "id": "cc/aspect-pair/pluto-conjunction-moon",
@@ -2030,7 +2030,7 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Buried feelings surface with real force, and something old and primal in your emotional life demands to be felt. The way you manage and contain your feelings has been protecting a fear of being overwhelmed, but it may now be intensifying brooding or a quiet compulsion that grips harder the more you resist. This empties out an old emotional pattern so a truer one can form. Let the deep feeling move through you instead of managing it away.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "Scorpio doesn't kill what's alive. It names what's already dead.",
         "source": "Marie Satori (\"Full Moon in Taurus\") — full-corpus audit",
@@ -2069,7 +2069,7 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "An emotional upheaval, often through home or family, brings a compulsive intensity you can't wave off. The control you keep over your own needs has been protecting a fear of dependence or loss, but it may now be intensifying a power struggle where the real subject is safety. The pressure is transforming how you find security at the root. Feel it fully, then choose your response rather than react from the grip.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "Scorpio doesn't kill what's alive. It names what's already dead.",
         "source": "Marie Satori (\"Full Moon in Taurus\") — full-corpus audit",
@@ -2109,7 +2109,7 @@
       "derivation_note": "opposition read as the hard contact felt through other people / the outer world",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "An emotional upheaval, often through home or family, brings a compulsive intensity you can't wave off. The control you keep over your own needs has been protecting a fear of dependence or loss, but it may now be intensifying a power struggle where the real subject is safety. The pressure is transforming how you find security at the root. Feel it fully, then choose your response rather than react from the grip.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     },
     {
       "id": "cc/aspect-pair/pluto-trine-moon",
@@ -2141,7 +2141,7 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "You can be honest about the heavy thing and come out lighter, and deep feeling renews rather than drowns you. The instinct to bury what's intense has been protecting a fear of what's underneath, but it may now be intensifying depth avoided, calcifying into numbness. You can transform an old emotional wound here without a crisis. Say the true, buried thing and let it move you.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     },
     {
       "id": "cc/aspect-pair/pluto-sextile-moon",
@@ -2175,7 +2175,7 @@
       "derivation_note": "sextile = the soft contact as an opportunity that only pays off when acted on",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "You can be honest about the heavy thing and come out lighter, and deep feeling renews rather than drowns you. The instinct to bury what's intense has been protecting a fear of what's underneath, but it may now be intensifying depth avoided, calcifying into numbness. You can transform an old emotional wound here without a crisis. Say the true, buried thing and let it move you.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     },
     {
       "id": "cc/aspect-pair/pluto-conjunction-mercury",
@@ -2207,7 +2207,7 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Your thinking goes deep and relentless, and your mind fixes on getting to the bottom of something. The need to control the narrative has been protecting a fear of what the truth might cost, but it may now be intensifying obsessive rumination that mistakes digging for progress. This transforms how you think by forcing the buried subject into the light. Investigate honestly, then say the plain truth instead of maneuvering.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "Start noticing patterns.",
         "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
@@ -2246,7 +2246,7 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Conversations turn into contests for control, and a compulsive thought won't let you go. The habit of using words to hold power has been protecting a fear of being unheard or overpowered, but it may now be intensifying trust spent on a mental power play. The pressure is remaking how you communicate at the root. Say the honest thing directly and drop the maneuvering.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "Start noticing patterns.",
         "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
@@ -2286,7 +2286,7 @@
       "derivation_note": "opposition read as the hard contact felt through other people / the outer world",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Conversations turn into contests for control, and a compulsive thought won't let you go. The habit of using words to hold power has been protecting a fear of being unheard or overpowered, but it may now be intensifying trust spent on a mental power play. The pressure is remaking how you communicate at the root. Say the honest thing directly and drop the maneuvering.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     },
     {
       "id": "cc/aspect-pair/pluto-trine-mercury",
@@ -2318,7 +2318,7 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "You can think penetratingly and use that depth to change something real. The instinct to keep your insights hidden has been protecting a fear of your own conclusions, but it may now be intensifying penetrating insight left unspoken. Deep, transformative understanding is available cleanly here. Put the insight to work on one real problem.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     },
     {
       "id": "cc/aspect-pair/pluto-sextile-mercury",
@@ -2352,7 +2352,7 @@
       "derivation_note": "sextile = the soft contact as an opportunity that only pays off when acted on",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "You can think penetratingly and use that depth to change something real. The instinct to keep your insights hidden has been protecting a fear of your own conclusions, but it may now be intensifying penetrating insight left unspoken. Deep, transformative understanding is available cleanly here. Put the insight to work on one real problem.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     },
     {
       "id": "cc/aspect-pair/pluto-conjunction-venus",
@@ -2384,7 +2384,7 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Love turns intense and consuming right now, and a connection can surface power, depth, or a pull you can't hold casually. It's magnetic, and it can tip toward control or obsession if you let it. Get honest about what you actually want from the bond before the intensity decides for you, and let it be deep without letting it become possession.",
-      "revoice_version": "chani-quality-v1-authored",
+      "revoice_version": "CC-quality-v1-authored",
       "pull_quote": {
         "text": "Grieve the version of you who worked so hard to try make broken things work.",
         "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
@@ -2422,7 +2422,7 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Jealousy, control, or an imbalance you've tolerated erupts, and a relationship or value gets forced into reckoning. The power you hold or hand over in love has been protecting a fear of loss or of not being enough, but it may now be intensifying resentment from an exchange that's been lopsided too long. The upheaval is transforming what you value, not just breaking a bond. Name the imbalance plainly instead of reacting to the charge.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "Stop proving your worth to people who can't even recognize their own.",
         "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
@@ -2462,7 +2462,7 @@
       "derivation_note": "opposition read as the hard contact felt through other people / the outer world",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Jealousy, control, or an imbalance you've tolerated erupts, and a relationship or value gets forced into reckoning. The power you hold or hand over in love has been protecting a fear of loss or of not being enough, but it may now be intensifying resentment from an exchange that's been lopsided too long. The upheaval is transforming what you value, not just breaking a bond. Name the imbalance plainly instead of reacting to the charge.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "Stop proving your worth to people who can't even recognize their own.",
         "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
@@ -2501,7 +2501,7 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "You can deepen a connection and let what's shallow fall away without a fight. The habit of keeping love safe and surface has been protecting a fear of real intimacy, but it may now be intensifying closeness held back, going cold. You can transform how you value and relate here cleanly. Let one honest thing be said and let the depth in.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "What we crave, what we attract, and what we believe we deserve all come under scrutiny.",
         "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
@@ -2542,7 +2542,7 @@
       "derivation_note": "sextile = the soft contact as an opportunity that only pays off when acted on",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "You can deepen a connection and let what's shallow fall away without a fight. The habit of keeping love safe and surface has been protecting a fear of real intimacy, but it may now be intensifying closeness held back, going cold. You can transform how you value and relate here cleanly. Let one honest thing be said and let the depth in.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "What we crave, what we attract, and what we believe we deserve all come under scrutiny.",
         "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
@@ -2581,7 +2581,7 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Your drive turns intense and unstoppable, and a will to prevail rises from somewhere deep. The control you keep over your own force has been protecting a fear of powerlessness, but it may now be intensifying a push that becomes domination, of a situation or a person. This transforms how you use your power by showing you its real target. Aim the intensity at real change rather than at winning, and don't torch a bridge you'll need.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "This is about stopping the war with who you already are.",
         "source": "Marie Satori (\"Virgo New Moon: August 23, 2025\") — full-corpus audit",
@@ -2620,7 +2620,7 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Your drive collides with a power you can't overpower, and pushing harder only deepens a standoff that won't resolve cleanly. The need to win the confrontation has been protecting a fear of being controlled, but it may now be intensifying a scorched-earth fight that costs more than the point. The struggle is transforming how you assert yourself at the root. Channel the force into what you're building and refuse the pointless battle.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "This is about stopping the war with who you already are.",
         "source": "Marie Satori (\"Virgo New Moon: August 23, 2025\") — full-corpus audit",
@@ -2660,7 +2660,7 @@
       "derivation_note": "opposition read as the hard contact felt through other people / the outer world",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "Your drive collides with a power you can't overpower, and pushing harder only deepens a standoff that won't resolve cleanly. The need to win the confrontation has been protecting a fear of being controlled, but it may now be intensifying a scorched-earth fight that costs more than the point. The struggle is transforming how you assert yourself at the root. Channel the force into what you're building and refuse the pointless battle.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     },
     {
       "id": "cc/aspect-pair/pluto-trine-mars",
@@ -2692,7 +2692,7 @@
       "review_note": "needs Marie/editorial final sign-off before serving",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "You can act with deep, focused power and move something that's been stuck. The instinct to hold your full force back has been protecting a fear of your own intensity, but it may now be intensifying real power left idle or leaking into control. Deep, lasting action is available here without a collision. Point the concentrated drive at one real, lasting change.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     },
     {
       "id": "cc/aspect-pair/pluto-sextile-mars",
@@ -2726,7 +2726,7 @@
       "derivation_note": "sextile = the soft contact as an opportunity that only pays off when acted on",
       "tone_version": "marie-calibrated-v1",
       "expanded_narrative": "You can act with deep, focused power and move something that's been stuck. The instinct to hold your full force back has been protecting a fear of your own intensity, but it may now be intensifying real power left idle or leaking into control. Deep, lasting action is available here without a collision. Point the concentrated drive at one real, lasting change.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     }
   ]
 }

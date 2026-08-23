@@ -44,7 +44,7 @@
       "originalityCheck": "voiced original; doctrine-grounded",
       "review_note": "needs Marie/editorial final sign-off before serving",
       "expanded_narrative": "The wound sits right on the surface, in your body and how you meet the world, so you can feel visibly different or marked. You either hide the tender part or lead with it. Let people meet the real, unpolished you in one small way.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "Your doubts, even your very well studied doubts, aren't prophecies.",
         "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
@@ -78,7 +78,7 @@
       "originalityCheck": "voiced original; doctrine-grounded",
       "review_note": "needs Marie/editorial final sign-off before serving",
       "expanded_narrative": "An old wound about your right to simply exist keeps rubbing against how you have to show up. You brace for rejection before you've even entered the room. Show up as yourself once, without the armor.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "You are enough even when you feel minuscule.",
         "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
@@ -113,7 +113,7 @@
       "originalityCheck": "voiced original; doctrine-grounded",
       "review_note": "needs Marie/editorial final sign-off before serving",
       "expanded_narrative": "You can wear the old wound lightly, and it becomes part of what makes you approachable. People feel safe with you because you're not pretending to be unhurt. Let the healed-enough wound be visible; it's a gift.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "You are enough even when you feel minuscule.",
         "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
@@ -150,7 +150,7 @@
       "derived_from": "cc/aspect-pair/chiron-trine-ascendant",
       "derivation_note": "sextile = the harmonious contact as an opportunity that only pays off when acted on",
       "expanded_narrative": "You can wear the old wound lightly, and it becomes part of what makes you approachable. People feel safe with you because you're not pretending to be unhurt, but only if you take the opening. Let the healed-enough wound be visible; it's a gift.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "Some of our most courageous people are also the most scared.",
         "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
@@ -186,7 +186,7 @@
       "derived_from": "cc/aspect-pair/chiron-conjunction-descendant",
       "derivation_note": "opposition to the ascendant is geometrically a conjunction to the descendant; read through the opposite pole",
       "expanded_narrative": "The wound shows up through your closest relationships, so a partner can mirror your tender spot. You attract wounded others to heal, or fear you're only wanted when useful, felt from the opposite side of the axis. Let one relationship be mutual, not a rescue.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "Fear is not the enemy.",
         "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
@@ -220,7 +220,7 @@
       "originalityCheck": "voiced original; doctrine-grounded",
       "review_note": "needs Marie/editorial final sign-off before serving",
       "expanded_narrative": "The wound sits on your public role and worth, so being seen for your work touches an old inadequacy. You overwork to prove yourself, or hide the work so no one can judge it. Do the visible work anyway, wound and all.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "Your doubts, even your very well studied doubts, aren't prophecies.",
         "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
@@ -254,7 +254,7 @@
       "originalityCheck": "voiced original; doctrine-grounded",
       "review_note": "needs Marie/editorial final sign-off before serving",
       "expanded_narrative": "An old wound about achievement and being good enough collides with your public path. You read professional setbacks as proof you don't belong. Take the next real step; the wound doesn't decide your worth.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "Stop measuring your worth by your output.",
         "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
@@ -289,7 +289,7 @@
       "originalityCheck": "voiced original; doctrine-grounded",
       "review_note": "needs Marie/editorial final sign-off before serving",
       "expanded_narrative": "You can turn the old worth-wound into work that actually helps others. Your vocation carries real compassion because you know the ache. Build the public work that heals what wounded you.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "Stop measuring your worth by your output.",
         "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
@@ -326,7 +326,7 @@
       "derived_from": "cc/aspect-pair/chiron-trine-midheaven",
       "derivation_note": "sextile = the harmonious contact as an opportunity that only pays off when acted on",
       "expanded_narrative": "You can turn the old worth-wound into work that actually helps others. Your vocation carries real compassion because you know the ache, but only if you take the opening. Build the public work that heals what wounded you.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     },
     {
       "id": "cc/aspect-pair/chiron-opposition-midheaven",
@@ -356,7 +356,7 @@
       "derived_from": "cc/aspect-pair/chiron-conjunction-ic",
       "derivation_note": "opposition to the midheaven is geometrically a conjunction to the ic; read through the opposite pole",
       "expanded_narrative": "The wound reaches all the way home, so the family foundation itself felt unsafe or wounding. You either recreate the old wound at home or overprotect against it, felt from the opposite side of the axis. Build one small piece of the safety you didn't get.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "Some of our most courageous people are also the most scared.",
         "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
@@ -390,7 +390,7 @@
       "originalityCheck": "voiced original; doctrine-grounded",
       "review_note": "needs Marie/editorial final sign-off before serving",
       "expanded_narrative": "The wound shows up through your closest relationships, so a partner can mirror your tender spot. You attract wounded others to heal, or fear you're only wanted when useful. Let one relationship be mutual, not a rescue.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "Your doubts, even your very well studied doubts, aren't prophecies.",
         "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
@@ -424,7 +424,7 @@
       "originalityCheck": "voiced original; doctrine-grounded",
       "review_note": "needs Marie/editorial final sign-off before serving",
       "expanded_narrative": "An old wound about being wanted keeps getting pressed in close relationships. You over-give to secure love, then quietly resent it. Ask for what you need instead of earning your place.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     },
     {
       "id": "cc/aspect-pair/chiron-trine-descendant",
@@ -452,7 +452,7 @@
       "originalityCheck": "voiced original; doctrine-grounded",
       "review_note": "needs Marie/editorial final sign-off before serving",
       "expanded_narrative": "You can bring real healing to a close relationship without losing yourself. Your care lands because you know the wound firsthand. Offer someone the acceptance in a relationship that you needed.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     },
     {
       "id": "cc/aspect-pair/chiron-sextile-descendant",
@@ -482,7 +482,7 @@
       "derived_from": "cc/aspect-pair/chiron-trine-descendant",
       "derivation_note": "sextile = the harmonious contact as an opportunity that only pays off when acted on",
       "expanded_narrative": "You can bring real healing to a close relationship without losing yourself. Your care lands because you know the wound firsthand, but only if you take the opening. Offer someone the acceptance in a relationship that you needed.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "Some of our most courageous people are also the most scared.",
         "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
@@ -518,7 +518,7 @@
       "derived_from": "cc/aspect-pair/chiron-conjunction-ascendant",
       "derivation_note": "opposition to the descendant is geometrically a conjunction to the ascendant; read through the opposite pole",
       "expanded_narrative": "The wound sits right on the surface, in your body and how you meet the world, so you can feel visibly different or marked. You either hide the tender part or lead with it, felt from the opposite side of the axis. Let people meet the real, unpolished you in one small way.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "Fear is not the enemy.",
         "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
@@ -552,7 +552,7 @@
       "originalityCheck": "voiced original; doctrine-grounded",
       "review_note": "needs Marie/editorial final sign-off before serving",
       "expanded_narrative": "The wound reaches all the way home, so the family foundation itself felt unsafe or wounding. You either recreate the old wound at home or overprotect against it. Build one small piece of the safety you didn't get.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "Your doubts, even your very well studied doubts, aren't prophecies.",
         "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
@@ -586,7 +586,7 @@
       "originalityCheck": "voiced original; doctrine-grounded",
       "review_note": "needs Marie/editorial final sign-off before serving",
       "expanded_narrative": "An old family wound keeps rubbing against the home you're trying to build now. The past reaches into your present base uninvited. Name the inherited wound instead of passing it on.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "The ones you said you were done with, but never really left behind.",
         "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
@@ -621,7 +621,7 @@
       "originalityCheck": "voiced original; doctrine-grounded",
       "review_note": "needs Marie/editorial final sign-off before serving",
       "expanded_narrative": "You can heal the family wound and make home a actually safe place. Your private base becomes the refuge you always needed. Make home the safety you can now give yourself.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "The ones you said you were done with, but never really left behind.",
         "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",
@@ -658,7 +658,7 @@
       "derived_from": "cc/aspect-pair/chiron-trine-ic",
       "derivation_note": "sextile = the harmonious contact as an opportunity that only pays off when acted on",
       "expanded_narrative": "You can heal the family wound and make home a actually safe place. Your private base becomes the refuge you always needed, but only if you take the opening. Make home the safety you can now give yourself.",
-      "revoice_version": "chani-quality-v1-composed"
+      "revoice_version": "CC-quality-v1-composed"
     },
     {
       "id": "cc/aspect-pair/chiron-opposition-ic",
@@ -688,7 +688,7 @@
       "derived_from": "cc/aspect-pair/chiron-conjunction-midheaven",
       "derivation_note": "opposition to the ic is geometrically a conjunction to the midheaven; read through the opposite pole",
       "expanded_narrative": "The wound sits on your public role and worth, so being seen for your work touches an old inadequacy. You overwork to prove yourself, or hide the work so no one can judge it, felt from the opposite side of the axis. Do the visible work anyway, wound and all.",
-      "revoice_version": "chani-quality-v1-composed",
+      "revoice_version": "CC-quality-v1-composed",
       "pull_quote": {
         "text": "Fear is not the enemy.",
         "source": "@mariesatori / mariesatori.com (marie-source-phrases.json)",

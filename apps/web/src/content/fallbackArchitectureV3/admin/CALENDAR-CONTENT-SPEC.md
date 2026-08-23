@@ -1,6 +1,6 @@
 # Calendar page — content system + integration plan (v1, 2026-07-21)
 
-Replaces ALL legacy lunar copy on the Calendar page with package-rendered content. References: the owner's calendar files (2026 Astro Calendar, 2025 Weekly Emotional Moon, 2025 Astro Guide aspects, Solstices-Equinoxes, moon ingresses) and the CHANI-style calendar pattern (daily moon sign + phase strip, void-of-course windows, ingress times, season openers, lunation ritual pages).
+Replaces ALL legacy lunar copy on the Calendar page with package-rendered content. References: the owner's calendar files (2026 Astro Calendar, 2025 Weekly Emotional Moon, 2025 Astro Guide aspects, Solstices-Equinoxes, moon ingresses) and the CC-style calendar pattern (daily moon sign + phase strip, void-of-course windows, ingress times, season openers, lunation ritual pages).
 
 ## Legacy copy to REMOVE (all of it is app-side, none is package content)
 

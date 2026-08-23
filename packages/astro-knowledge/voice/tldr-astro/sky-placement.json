@@ -73,7 +73,7 @@
   },
 
   "articleStructure": {
-    "note": "Owner-provided structural models (2026-07-27): CHANI's 'Horoscopes for the Sun in Leo' and 'Your guide to Jupiter in Leo'. STRUCTURE is borrowed, never their copy. The page renders top to bottom as: (1) TAGLINE - one clear full sentence under the title; (2) WHEN - the computed date range from ephemeris, never generated; (3) PRIOR-SIGN HANDOFF when engine facts exist; (4) QUOTE - the first sentence of the hook, promoted by the reader into its own bold callout and removed from the body; (5) MEANING, including the CYCLE LINE when reviewed cycle facts exist; (6) LIVED - the body with pace and useful expression; (7) TURN - the observable distortion or confrontation; (8) CONCURRENT EVENTS when ranked engine events exist; (9) MOVES - 2-3 concrete ways to work with the transit, each one specific sentence; (10) COMPUTED EVENTS - dated aspects/lunations during the transit render from ephemeris. CHANI's cultural 'last time this happened' history section is EXCLUDED: only an engine-supplied prior residency date range may appear, because cultural or historical characterization would require sources we do not have.",
+    "note": "Owner-provided structural models (2026-07-27): CC's 'Horoscopes for the Sun in Leo' and 'Your guide to Jupiter in Leo'. STRUCTURE is borrowed, never their copy. The page renders top to bottom as: (1) TAGLINE - one clear full sentence under the title; (2) WHEN - the computed date range from ephemeris, never generated; (3) PRIOR-SIGN HANDOFF when engine facts exist; (4) QUOTE - the first sentence of the hook, promoted by the reader into its own bold callout and removed from the body; (5) MEANING, including the CYCLE LINE when reviewed cycle facts exist; (6) LIVED - the body with pace and useful expression; (7) TURN - the observable distortion or confrontation; (8) CONCURRENT EVENTS when ranked engine events exist; (9) MOVES - 2-3 concrete ways to work with the transit, each one specific sentence; (10) COMPUTED EVENTS - dated aspects/lunations during the transit render from ephemeris. CC's cultural 'last time this happened' history section is EXCLUDED: only an engine-supplied prior residency date range may appear, because cultural or historical characterization would require sources we do not have.",
     "generatedSlots": ["tagline", "hook", "lived", "turn", "moves"],
     "computedSlots": ["date range", "prior-sign handoff facts", "cycle facts", "concurrent events", "current aspects", "lunations/eclipses during transit"],
     "factGatedSlots": [
@@ -104,7 +104,7 @@
       }
     ],
     "taglineRules": "One clear full sentence readers understand on first read, normally 6-18 words. Strong is welcome; cryptic compression is not. Use plain everyday words.",
-    "movesRules": "2-3 items. Each is one sentence, a specific doable action tied to THIS placement (CHANI model: 'emcee an open mic', not 'embrace the energy'). No generic coaching verbs (embrace, trust, align, manifest). A move that would work for any placement fails the swap test."
+    "movesRules": "2-3 items. Each is one sentence, a specific doable action tied to THIS placement (CC model: 'emcee an open mic', not 'embrace the energy'). No generic coaching verbs (embrace, trust, align, manifest). A move that would work for any placement fails the swap test."
   },
 
   "timingDevices": {

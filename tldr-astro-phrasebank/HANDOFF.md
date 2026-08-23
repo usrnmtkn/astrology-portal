@@ -1,6 +1,6 @@
 # TLDR Astro — Handoff for Codex
 
-This bundle is the reviewed content system for a CHANI-style astrology app written in Marie
+This bundle is the reviewed content system for a CC-style astrology app written in Marie
 Satori's voice. It is a Python **phrasebank + composers + validation-harness** repo. Everything
 below is buildable and green as of handoff.
 

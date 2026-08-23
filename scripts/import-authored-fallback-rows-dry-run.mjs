@@ -7,10 +7,10 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.resolve(__dirname, "..");
 
 export const fallbackImportBatchId = "handoff-fallback-authoring-v18-dry-run";
-export const defaultFallbackSourcePath = "/Users/mprez/Downloads/us.sitesucker.mac.sitesucker/www.chani.com/tldr-astro-fallback-rows.json";
-export const defaultSatoriFallbackSourcePath = "/Users/mprez/Downloads/us.sitesucker.mac.sitesucker/www.chani.com/tldr-astro-satori-fallback-rows.json";
-export const defaultPlacementChildrenSourcePath = "/Users/mprez/Downloads/us.sitesucker.mac.sitesucker/www.chani.com/tldrastro-placement-children.json";
-export const defaultFallbackReportPath = "/Users/mprez/Downloads/us.sitesucker.mac.sitesucker/www.chani.com/tldr-astro-fallback-import-report.md";
+export const defaultFallbackSourcePath = "/Users/mprez/Downloads/us.sitesucker.mac.sitesucker/www.CC.com/tldr-astro-fallback-rows.json";
+export const defaultSatoriFallbackSourcePath = "/Users/mprez/Downloads/us.sitesucker.mac.sitesucker/www.CC.com/tldr-astro-satori-fallback-rows.json";
+export const defaultPlacementChildrenSourcePath = "/Users/mprez/Downloads/us.sitesucker.mac.sitesucker/www.CC.com/tldrastro-placement-children.json";
+export const defaultFallbackReportPath = "/Users/mprez/Downloads/us.sitesucker.mac.sitesucker/www.CC.com/tldr-astro-fallback-import-report.md";
 export const defaultFallbackOutDir = path.join(repoRoot, "scripts", "generated", "fallback-row-import-v18");
 
 const runtimeFallbackFamilies = new Set([

@@ -87,7 +87,7 @@ Runtime/editorial gates (from the extraction spec §19 + the package contracts).
 4. Supporting sources used as constraints — a house selects the scene, never emits a keyword paragraph.
 5. One coherent situation; no symbol-by-symbol translation; no concatenated modules.
 6. Optional beats suppressed when they only repeat; no mandatory "this transit reveals / you may be noticing".
-7. `SOURCE_GAP` when the required exact source is missing — never build prose from keywords, prompts, feedback, reports, or raw CHANI copy.
+7. `SOURCE_GAP` when the required exact source is missing — never build prose from keywords, prompts, feedback, reports, or raw CC copy.
 8. Compact ≠ expanded.
 9. Daily and weekly treated as containers, not events. Solar and lunar eclipses separated. Retrograde and direct-station separated. Moon phase and Moon sign separated.
 10. Every personalized template uses the natal house; exact natal aspects outrank generic Sun/Moon; Sun/Moon/rising synthesized into one story, never three paragraphs.

@@ -408,6 +408,31 @@ const variableDefinitions: Record<string, VariableDefinition> = {
     meaning: "The complete approved article copy inserted into an article wrapper.",
     example: "The full multi-paragraph Sky write-up",
     source: "Selected article record"
+  },
+  windowFrame: {
+    meaning: "The reviewed opening passage that explains the current planet's broader transit window.",
+    example: "Jupiter remains in Leo for about a year, expanding questions of visibility and creative confidence.",
+    source: "Reviewed Sky placement hook"
+  },
+  planetFrame: {
+    meaning: "Optional reviewed context for the planet's current retrograde or shadow phase.",
+    example: "During the retrograde, growth may require revisiting an earlier promise or plan.",
+    source: "Reviewed Sky planet-phase hook"
+  },
+  signLore: {
+    meaning: "Optional reviewed background explaining the sign's symbolism in this Sky placement.",
+    example: "Leo brings questions of pride, courage, generosity, and being seen.",
+    source: "Reviewed Sky sign-lore hook"
+  },
+  signCopy: {
+    meaning: "The main reviewed write-up for this exact planet-in-sign placement.",
+    example: "The approved Jupiter-in-Leo placement passage",
+    source: "Reviewed Sky sign-copy hook"
+  },
+  currentAspects: {
+    meaning: "Optional paragraphs assembled from the exact aspects currently made by this Sky placement.",
+    example: "Jupiter square Uranus adds pressure to change direction quickly.",
+    source: "Reviewed current Sky aspect rows"
   }
 };
 

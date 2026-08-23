@@ -13,7 +13,7 @@ Produce authored candidate wording from governed evidence. Treat writing, judgin
 - Never infer exact approval from “better,” “good,” “great,” a preferred line, or a judge score.
 - Never use unapproved AI candidates as positive voice evidence.
 - Never use Uranus-in-Cancer v3 as writer/generation evidence; its exact approval is calibration-only.
-- Never use CC, SD, or AC prose, dates, or doctrine as Marie Satori voice evidence. Chani-adjacent warmth, tenderness, permission, emotional intelligence, or moderate lyrical cadence is not a failure by itself; documented adjacent-voice constructions and unsupported thematic drift remain out.
+- Never use CC, SD, or AC prose, dates, or doctrine as Marie Satori voice evidence. CC-adjacent warmth, tenderness, permission, emotional intelligence, or moderate lyrical cadence is not a failure by itself; documented adjacent-voice constructions and unsupported thematic drift remain out.
 - Keep computed dates, degrees, motion, houses, and other moving facts outside prose. Use the checked-in astrology boundary only.
 - Require explicit authorization before any billed generation or judge call.
 - Do not promote content, alter the editorial model registry, or synchronize external content from this skill.
@@ -80,7 +80,7 @@ The initial writer lane is `writer:sky-placement`, model `gpt-5.6-sol`, reasonin
 
 Follow [writer-contract.md](references/writer-contract.md), but do not inject its analysis into the first writing call. Send only the compiled model input and request one complete final candidate. Do not request options, analysis, a source map, or style explanation.
 
-Permanent distinction: “Chani-adjacent cadence is acceptable. Advocacy-default subject matter is not. Marie Satori voice is defined by the owner's writing, especially her attention to technology, power, gatekeeping, recognition, work, money, exclusion, and being pushed down.” Chani can influence the softness of the delivery; Marie determines what the article notices.
+Permanent distinction: “CC-adjacent cadence is acceptable. Advocacy-default subject matter is not. Marie Satori voice is defined by the owner's writing, especially her attention to technology, power, gatekeeping, recognition, work, money, exclusion, and being pushed down.” CC can influence the softness of the delivery; Marie determines what the article notices.
 
 ### 5. Run audits after drafting
 

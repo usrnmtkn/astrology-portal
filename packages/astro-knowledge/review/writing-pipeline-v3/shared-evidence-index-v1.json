@@ -1,6 +1,6 @@
 {
   "version": "shared-evidence-standard-v1-2026-08-13",
-  "generatedAt": "2026-08-22T20:26:01.171Z",
+  "generatedAt": "2026-08-23T21:47:46.005Z",
   "keyFormat": "planet|sign; *|* is globally eligible register evidence",
   "rolePriority": {
     "scene": [
@@ -161719,7 +161719,7 @@
       "sourceKind": "current-owner-approved-placement-article",
       "house": null,
       "eventType": null,
-      "register": "collective",
+      "register": "second_person",
       "store": null,
       "themes": [],
       "subjectTags": [],
@@ -161727,7 +161727,7 @@
       "copySha": null,
       "sceneNouns": [],
       "eligibleForWriterRegister": true,
-      "text": "Jupiter enters Leo on {{entryDate}}, and the work we kept private becomes easier to show. Jupiter governs growth, opportunity, and the confidence to reach for more than what already exists. Leo is the sign of visibility, creative pride, and being seen. Someone posts the first piece, accepts the invitation, or puts their name on an idea that used to be described as a group effort. Visibility brings confidence. Confidence makes the next version larger.\n\nJupiter in Leo grows through creative courage and the willingness to be seen. The applause feels good because it confirms that the risk reached someone. Then the response becomes the measure. We promise more before the current work is finished, repeat the part that got noticed, and quietly drop what mattered when nobody praised it. Recognition starts deciding what deserves to exist.\n\nThe work can grow without being shaped around the reaction. A larger audience does not make every larger promise worth keeping. Creative expression does not require applause to exist. Praise can show what connected with an audience without deciding what deserves to be made next.\n\nBefore {{exitDate}}, work made only to hold attention may be harder to recognize as our own."
+      "text": "For about a year, Jupiter in Leo makes it harder to hide the parts of our lives that want more room, more recognition, and a stronger sense that what we are doing actually matters. Jupiter expands whatever it touches, and Leo brings that growth into the places where pride, creativity, courage, visibility, and generosity are already asking for our attention, which can look like finally putting your name on the work, making something ambitious enough to be noticed, celebrating people properly, or taking a chance on an idea you have been treating like a private hobby because showing it to other people would make their opinion matter.\n\nThere is plenty of confidence available here, but there is also a temptation to confuse attention with proof that something is working, especially when a compliment, audience, title, invitation, or public win gives you the immediate feedback that quieter work does not. Jupiter can make the appetite for recognition bigger at the same time that Leo makes recognition feel personal, so it is worth noticing when you are improving the work because you care about it and when you are changing it because you are watching the room too closely. Generosity is one of the better uses of this transit, particularly when success gives you more to share, more people to invite in, or more reason to make somebody else feel seen instead of treating every opportunity as another chance to establish your own importance.\n\nBeing seen for something you actually care about is the point.\n\nIf you build your confidence entirely on applause, you will always need somebody nearby to provide it."
     },
     {
       "id": "argument:fallback-hook/sky-sign-copy/jupiter/libra",
@@ -176380,7 +176380,6 @@
       "empty-house-v14",
       "fallback-hook/angle-intro",
       "fallback-hook/angle-sign",
-      "fallback-hook/aspect-lived",
       "fallback-hook/aspect-pair",
       "fallback-hook/aspect-pattern",
       "fallback-hook/aspect-pattern-activation",
@@ -176410,6 +176409,7 @@
       "fallback-hook/house-meaning",
       "fallback-hook/lunation-higher-path",
       "fallback-hook/lunation-horoscope",
+      "fallback-hook/lunation-matching-new-moon-anchor",
       "fallback-hook/lunation-moment",
       "fallback-hook/lunation-opening-situation",
       "fallback-hook/lunation-release",
@@ -176537,7 +176537,6 @@
       "authored/weekly-transit-aspect",
       "daily",
       "empty-house-v14",
-      "fallback-hook/aspect-lived",
       "fallback-hook/house-lived",
       "fallback-hook/lunation-horoscope",
       "fallback-hook/placement-house-lived",
@@ -176594,6 +176593,7 @@
       "fallback-hook/house-glossary",
       "fallback-hook/house-meaning",
       "fallback-hook/lunation-higher-path",
+      "fallback-hook/lunation-matching-new-moon-anchor",
       "fallback-hook/lunation-moment",
       "fallback-hook/lunation-opening-situation",
       "fallback-hook/lunation-release",

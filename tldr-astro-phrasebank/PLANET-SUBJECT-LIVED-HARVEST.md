@@ -8,7 +8,7 @@ obvious OCR artifacts (stray accents, spacing) silently corrected, wording untou
 Sources and citation keys:
 - **Hand** = Planets in Youth, Robert Hand (843287735-Planets-in-Youth-Patterns-of-Early-Development.txt)
 - **Tanaaz** = The Ultimate Guide to Astrology, Tanaaz Chubb (897673014)
-- **Chani** = You Were Born for This summary, Chani Nicholas (1045500252)
+- **CC** = You Were Born for This summary, CC Nicholas (1045500252)
 - **Forrest** = The Book of the Moon, Steven Forrest (742243087)
 - **Unravel** = Astrology: Unravel the Secrets (887025494)
 - Parker DK (510191106) and Secret Language (613266882) are two-column OCR jumbles; planet-in-sign
@@ -23,61 +23,61 @@ behavior (kept familiar objects) is filed under Moon/Cancer with its true source
 
 ### Aries
 - "You like to be the first to do everything, and often you take risks that others consider unwise, because you want to be known for doing something that no one else will do." (Hand, ~line 3050)
-- "you are meant to shine through courage and assertiveness ... You thrive when taking initiative" (Chani, ~line 1122)
-- "your life's purpose centers on bold action and self-expression" (Chani, ~line 1126)
+- "you are meant to shine through courage and assertiveness ... You thrive when taking initiative" (CC, ~line 1122)
+- "your life's purpose centers on bold action and self-expression" (CC, ~line 1126)
 
 ### Taurus
 - "You want to make every moment last, so you try to work carefully and slowly. Others may criticize you for being slow, but that may mean only that they are not as careful as you are." (Hand, ~line 3073)
-- "You shine through your ability to create beauty and comfort." (Chani, ~line 1135)
-- "recognizing that patience and consistency will help you achieve your goals" (Chani, ~line 1138)
+- "You shine through your ability to create beauty and comfort." (CC, ~line 1135)
+- "recognizing that patience and consistency will help you achieve your goals" (CC, ~line 1138)
 
 ### Gemini
 - "A very playful person, you sometimes like to play tricks on other people." (Hand, ~line 3105)
-- "You shine through sharing ideas, being curious, and connecting with others." (Chani, ~line 1146)
-- "your desire to know everything can lead to distraction" (Chani, ~line 1149)
+- "You shine through sharing ideas, being curious, and connecting with others." (CC, ~line 1146)
+- "your desire to know everything can lead to distraction" (CC, ~line 1149)
 
 ### Cancer
 - "You like to know that others feel free to come to you for help and reassurance at any time." (Hand, ~line 3140)
-- "You shine in creating safe spaces for others and demonstrating care." (Chani, ~line 1156)
-- "A person with their Sun in Cancer expresses their purpose through nurturing and forming deep emotional connections." (Chani, ~line 1154)
+- "You shine in creating safe spaces for others and demonstrating care." (CC, ~line 1156)
+- "A person with their Sun in Cancer expresses their purpose through nurturing and forming deep emotional connections." (CC, ~line 1154)
 
 ### Leo
 - "You are spirited and strong willed and like to be the center of attention. Sometimes you may be a show-off" (Hand, ~line 3159)
 - "Being respected by others is very important to you, and for this reason you are less likely than others to tell lies. You feel that everything should be out in the open." (Hand, ~line 3170)
-- "You are meant to shine brightly and share your talents with the world." (Chani, ~line 1165)
+- "You are meant to shine brightly and share your talents with the world." (CC, ~line 1165)
 
 ### Virgo
 - "When you aren't neat, you lose respect for yourself, because you have very high standards" (Hand, ~line 3187)
 - "You like to help others because being useful makes you feel good. You are able to put off what you want for yourself in order to help someone you love do what he or she wants." (Hand, ~line 3205)
-- "You shine through your analytical skills and attention to detail." (Chani, ~line 1176)
+- "You shine through your analytical skills and attention to detail." (CC, ~line 1176)
 
 ### Libra
 - "You don't like to be left out of the crowd for any reason, and you will work very hard to make sure that you are liked by people of all ages." (Hand, ~line 3212)
 - "you are quite strong willed and often the person in a group who makes things happen. It is just that you feel the need to be with others in order to express yourself." (Hand, ~line 3215)
-- "You shine by fostering harmony and partnership." (Chani, ~line 1186)
+- "You shine by fostering harmony and partnership." (CC, ~line 1186)
 
 ### Scorpio
 - "you don't commit your emotions lightly. And you have no respect for anyone who plays with other people's feelings." (Hand, ~line 3255)
-- "You shine through your passion and the ability to navigate complex situations." (Chani, ~line 1197)
-- "Your strength lies in personal transformation and helping others heal" (Chani, ~line 1199)
+- "You shine through your passion and the ability to navigate complex situations." (CC, ~line 1197)
+- "Your strength lies in personal transformation and helping others heal" (CC, ~line 1199)
 
 ### Sagittarius
 - "You feel that picking up and cleaning are not important enough to waste your time on." (Hand, ~line 3290)
-- "Your purpose is to seek truth and share wisdom while embracing spontaneity. You shine through optimism and the pursuit of knowledge." (Chani, ~line 1206)
+- "Your purpose is to seek truth and share wisdom while embracing spontaneity. You shine through optimism and the pursuit of knowledge." (CC, ~line 1206)
 
 ### Capricorn
 - "you want to be important and achieve something real that everyone can point to as yours." (Hand, ~line 3300)
 - "you will not take credit for anything that you have not done yourself, to make sure that all your achievements are real." (Hand, ~line 3302)
-- "You shine when working diligently toward your goals." (Chani, ~line 1217)
+- "You shine when working diligently toward your goals." (CC, ~line 1217)
 
 ### Aquarius
 - "When you are with a group of friends, you think about the group as a whole rather than just about yourself." (Hand, ~line 3345)
-- "You shine through your unique perspective and intellectual contributions." (Chani, ~line 1227)
+- "You shine through your unique perspective and intellectual contributions." (CC, ~line 1227)
 
 ### Pisces
 - "Very often you like to go into your own private fantasy world and think about ideas that mean something only to you." (Hand, ~line 3372)
-- "You shine through your artistry and compassion for others." (Chani, ~line 1237)
-- "your life's purpose lies in creativity, empathy, and spiritual exploration" (Chani, ~line 1236)
+- "You shine through your artistry and compassion for others." (CC, ~line 1237)
+- "your life's purpose lies in creativity, empathy, and spiritual exploration" (CC, ~line 1236)
 
 ---
 
@@ -87,7 +87,7 @@ behavior (kept familiar objects) is filed under Moon/Cancer with its true source
 - "There is a tendency for your emotions to go from zero to ten pretty quickly" (Tanaaz, ~line 1648)
 - "If you do find yourself feeling overly emotional, physical activities such as deep breathing, exercising, and so on can be a healthy way to release." (Tanaaz, ~line 1651)
 - "Secret of Happiness & Healing: Regular adventures involving conquest of fear" (Forrest, ~line 1171)
-- "Needs independence and action" (Chani, ~line 466)
+- "Needs independence and action" (CC, ~line 466)
 
 ### Taurus
 - "You like warmth, comfort and the security of familiar surroundings. You like to be near a fire or in a favorite chair, and you enjoy good food." (Hand, ~line 5238)

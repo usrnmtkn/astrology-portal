@@ -68,6 +68,6 @@ python3 tests/build_banks.py > banks.md   # regenerate the vocabulary banks
 - Compatibility records with `format: "multi-paragraph"` render paragraph breaks only where `\n\n` appears. Do not split on sentences or semicolons; replace `{friend}` with the display name every time.
 - Exact planet-in-sign / aspect-pair source first; a house locates the scene, it never emits a keyword paragraph.
 - Sources are evidence; the reader only meets the voiced layer. Compact card copy differs from expanded detail.
-- Missing exact source -> `SOURCE_GAP`. Never compose prose from keywords, prompts, feedback, reports, or raw CHANI copy.
+- Missing exact source -> `SOURCE_GAP`. Never compose prose from keywords, prompts, feedback, reports, or raw CC copy.
 - Sect content only with reliable birth time + horizon. Transit sect-weighting stays off (experimental).
 ```

@@ -329,7 +329,7 @@ function parseArticle(raw) {
     if (SLOTS.every((s) => typeof parsed[s] === "string" && parsed[s].trim())) {
       const article = {};
       for (const s of SLOTS) article[s] = cleanText(parsed[s]);
-      // extended slots (CHANI structure). Required from the model; parse
+      // extended slots (CC structure). Required from the model; parse
       // stays lenient so injected legacy fixtures without them still work.
       if (typeof parsed.tagline === "string" && parsed.tagline.trim()) {
         article.tagline = cleanText(parsed.tagline).replace(/[.!?]+$/, "");
