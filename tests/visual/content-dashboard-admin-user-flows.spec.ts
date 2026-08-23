@@ -1717,7 +1717,7 @@ test.describe("content dashboard admin user flow case studies", () => {
       ...generatedContentRows[0],
       id: "qa-natal-planet-sign-template",
       content_key: "fallback-template/natal.planet-in-sign/sun",
-      headline: "Sun in a sign",
+      headline: "{{planetTitle}} in {{signTitle}}",
       body: bodyYou,
       block_type: "fallback_template",
       provider: "tldrastro-fallback-architecture-v3",
@@ -1745,9 +1745,11 @@ test.describe("content dashboard admin user flow case studies", () => {
 
     const savedRow = page.locator(".admin-content-row", { hasText: "fallback-template/natal.planet-in-sign/sun" });
     await expect(savedRow).toHaveCount(1);
+    await expect(savedRow.locator(".admin-content-row-title")).toHaveText("Sun in a Sign");
     await savedRow.getByRole("button", { name: "Edit" }).click();
 
     const editor = page.getByRole("dialog", { name: "Generated content editor" });
+    await expect(editor.getByLabel("Headline")).toHaveValue("Sun in {{signTitle}}");
     const editedBody = `${bodyYou} QA draft remains here.`;
     await editor.getByLabel("body_you").fill(editedBody);
     await editor.getByRole("button", { name: /^Variables \(\d+\)$/u }).click();
