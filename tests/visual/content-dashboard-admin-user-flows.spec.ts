@@ -1402,6 +1402,60 @@ test.describe("content dashboard admin user flow case studies", () => {
     await assertNoBrowserErrors();
   });
 
+  test("Content Library connects a shadowed placement candidate to its owner-approved source workspace", async ({ page }) => {
+    const assertNoBrowserErrors = await expectNoBrowserErrors(page);
+    const servingArticle = {
+      ...generatedContentRows[0],
+      id: "qa-jupiter-leo-content-library-source",
+      content_key: "fallback-hook/sky-sign-copy/jupiter/leo",
+      headline: "Jupiter in Leo",
+      body: "Jupiter enters Leo on {{entryDate}}.\n\nAttention can become the measure.\n\nBefore {{exitDate}}, choose the work.",
+      lane: "reference",
+      status: "DRAFT",
+      facts: { fallbackArchitectureV3: true, review_status: "approved" },
+      provider: "tldrastro-fallback-architecture-v3",
+      source_snapshot: {
+        sourcePackage: "tldrastro-fallback-architecture-v3",
+        review_status: "approved"
+      },
+      sections: {
+        packageRecord: {
+          contentKey: "fallback-hook/sky-sign-copy/jupiter/leo",
+          content_role: "fallback_hook",
+          grammar_frame: "continuous_editorial_unit",
+          render_policy: "sky-placement-continuous-v2",
+          fact_line: "{{entryDate}} to {{exitDate}}",
+          aspect_insert: "{{aspectInsert}}",
+          opening: "Jupiter enters Leo on {{entryDate}}.",
+          tension: "Attention can become the measure.",
+          development: "The work can keep its own shape.",
+          close: "Before {{exitDate}}, choose the work.",
+          review_status: "approved"
+        }
+      }
+    };
+    await seedAdminApi(page, {
+      generatedRows: [...generatedContentRows.slice(0, 6), skyReviewHorizonFixture.occurrences[1].row!, servingArticle]
+    });
+    await expectAdminRouteLoads(page, "/admin/content#exact-content");
+
+    await page.getByLabel("Search content").fill("sky.placement.base.jupiter.leo");
+    const candidate = page.locator(".admin-content-row", { hasText: "sky.placement.base.jupiter.leo" });
+    await expect(candidate).toHaveCount(1);
+    await candidate.getByRole("button", { name: "Edit" }).click();
+
+    const editor = page.getByRole("dialog", { name: "Generated content editor" });
+    const readerStatus = editor.getByRole("region", { name: "Reader source status" });
+    await expect(readerStatus.getByText("Not serving — replaced by owner-approved article", { exact: true })).toBeVisible();
+    await expect(readerStatus.getByText("fallback-hook/sky-sign-copy/jupiter/leo", { exact: true })).toBeVisible();
+    await readerStatus.getByRole("button", { name: "Open owner-approved source" }).click();
+
+    await expect(editor.getByRole("region", { name: "Sky Placement article workspace" })).toBeVisible();
+    await expect(editor.getByLabel("Fallback field Opening")).toHaveValue("Jupiter enters Leo on {{entryDate}}.");
+    await expect(editor.getByLabel("Insert variable in Opening")).toContainText("{{exitDate}}");
+    await assertNoBrowserErrors();
+  });
+
   test("composition surfaces expose templates, slots, vocabulary, fallback hooks, and surface map", async ({ page }) => {
     const assertNoBrowserErrors = await expectNoBrowserErrors(page);
     await seedAdminApi(page);
