@@ -106,6 +106,22 @@ behind the first application-test import.
 
 Any reader-facing astrology copy written in chat must use the owner’s writing rules, phrase bank, corpus, voice, tone, and prior editorial decisions. Semantic components determine meaning; the owner’s writing determines how that meaning is expressed.
 
+### Owner-authored copy is never compressed
+
+An owner-authored passage is an indivisible, author-final unit. Never shorten,
+summarize, excerpt, paraphrase, combine, or reconstruct it to fit a surface,
+template, token target, card length, or fallback inventory. Word count is not a
+selection criterion and compact matrix evidence is not a substitute for a
+known owner-authored passage. If the product needs shorter copy, create a
+separate field or content key and obtain the owner's approval for that exact
+short version. If the surface cannot render the full passage, fail the unit or
+fix the surface; do not change the writing.
+
+Protected owner-authored sources must carry their exact-text hash and word
+count. Materializers, imports, CMS synchronization, resolver selection, and UI
+rendering must preserve the protected body byte-for-byte. Any mismatch is a
+blocking error, not permission to fall back to a shorter row.
+
 ### Global owner-vocabulary rule
 
 This rule applies to every reader-facing astrology draft, rewrite, revision,

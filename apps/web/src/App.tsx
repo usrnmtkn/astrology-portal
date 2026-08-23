@@ -72,6 +72,7 @@ import {
   transitV3SameBeatKeyForContentKey
 } from "./content/fallbackArchitectureV3Runtime";
 import { natalPlacementReaderSectionCopy } from "./content/natalPlacementReaderSections";
+import { preserveProtectedOwnerSkyPlacementPassage } from "./content/protectedOwnerSkyPlacementPassages";
 import { firstReaderFacingCopy, isReaderFacingCopy, readerFacingParagraphs } from "./content/readerSafety";
 import {
   selectActiveSkyArticleEdition,
@@ -5202,6 +5203,38 @@ function normalizeSkyPlacementSurface(
       : fallbackSection
         ? [fallbackSection]
         : [];
+  const protectedSections = sections.map((section) => {
+    if (!section.risingHoroscopes?.length) return section;
+
+    return {
+      ...section,
+      risingHoroscopes: section.risingHoroscopes.map((passage) => {
+        const canonicalRisingSign = passage.risingSign
+          ? zodiacSigns.find((candidate) => (
+              normalizeContentIdPart(candidate) === normalizeContentIdPart(passage.risingSign ?? "")
+            ))
+          : null;
+        const house = passage.house
+          ?? (canonicalRisingSign
+            ? wholeSignHouseForSign(position.sign, canonicalRisingSign)
+            : null);
+        if (!house) return passage;
+
+        const preserved = preserveProtectedOwnerSkyPlacementPassage({
+          body: passage.body,
+          contentKey: passage.contentKey,
+          house,
+          planet: normalizeContentIdPart(position.planet),
+          sign: normalizeContentIdPart(position.sign)
+        });
+        return {
+          ...passage,
+          body: preserved.body,
+          contentKey: preserved.contentKey ?? passage.contentKey
+        };
+      })
+    };
+  });
   const hasProductionSection = Boolean(compiledArticleSection || approvedFallbackSection || mergedGeneratedSection);
 
   return {
@@ -5211,7 +5244,7 @@ function normalizeSkyPlacementSurface(
       : fallbackSection
         ? (fallbackSection.layer === "authored" ? "servable" : "partial")
         : "not-servable",
-    sections
+    sections: protectedSections
   };
 }
 
