@@ -2,7 +2,6 @@ import type { LunarCalendarEvent } from "../../services/ephemeris";
 import {
   skyIngressContentKey,
   skyIngressInstanceContentKey,
-  skyPlacementBaseContentKey,
   slugContentPart
 } from "../../services/generatedContentKeys";
 import { skyAspectGeneratedContentKeys } from "../../services/skyAspectContent";
@@ -83,11 +82,5 @@ export function calendarEventGeneratedContentKeys(event: LunarCalendarEvent) {
 }
 
 export function calendarTransitDetailContentKeys(event: LunarCalendarEvent) {
-  const eventKeys = calendarEventGeneratedContentKeys(event);
-  const sign = event.toSign ?? event.sign;
-  const placementKey = event.planet && sign
-    ? skyPlacementBaseContentKey(event.planet, sign)
-    : "";
-
-  return Array.from(new Set([...eventKeys, placementKey].filter(Boolean)));
+  return Array.from(new Set(calendarEventGeneratedContentKeys(event)));
 }

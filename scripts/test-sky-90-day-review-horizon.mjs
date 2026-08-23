@@ -81,12 +81,14 @@ assert.doesNotMatch(endpoint, /generateCard|providerCall|OPENAI_API_KEY|GEMINI_A
 const adminApi = fs.readFileSync(path.join(repoRoot, "api/admin/generated-content.ts"), "utf8");
 assert.match(adminApi, /ownerAction\?:\s*(?:\n\s*)?\|?\s*"approve-and-schedule"/u);
 assert.match(adminApi, /assertCanPublishGeneratedContent/u);
-assert.match(adminApi, /patch\.lane = "serving"/u);
+assert.match(adminApi, /patch\.lane = isSkyPlacement \? "reference" : "serving"/u);
+assert.match(adminApi, /owner-approved-package-import-required/u);
 assert.match(adminApi, /\["sky_aspect", "sky_placement"\]\.includes\(existing\?\.block_type/u);
 
 const dashboard = fs.readFileSync(path.join(repoRoot, "apps/admin/src/GeneratedContentAdminDashboard.tsx"), "utf8");
 assert.match(dashboard, /Upcoming 90 days/u);
-assert.match(dashboard, /Approve &amp; schedule/u);
+assert.match(dashboard, /Approve for package/u);
+assert.match(dashboard, /Approve & schedule/u);
 assert.match(dashboard, /\["DRAFT", "REVIEWED"\]\.includes\(row\.status\)/u);
 assert.match(dashboard, /This view is inventory and review status only/u);
 assert.match(dashboard, /ownerApprovedSkyPlacementArticleKey\(occurrence\.contentKey\)/u);
