@@ -74,6 +74,11 @@ for (const endpoint of ["sky-article-facts.ts", "sky-article-template-slots.ts"]
 }
 
 const readerSource = fs.readFileSync(new URL("../apps/web/src/features/sky/SkyDetailArticle.tsx", import.meta.url), "utf8");
-assert.match(readerSource, /detail\.risingHoroscopes\?\.length && !detail\.personalizedPlacement/u);
+assert.match(readerSource, /detail\.personalizedPlacement && risingHoroscopesSection/u);
+assert.ok(
+  readerSource.indexOf("{detail.personalizedPlacement ? (")
+    < readerSource.indexOf("{detail.personalizedPlacement && risingHoroscopesSection ? ("),
+  "The personalized passage must render before the complete rising-sign horoscope list."
+);
 
-console.log("Sky article AI fills only unfinished safe slots, preserves existing values, and hides the all-sign list when a personal house is available.");
+console.log("Sky article AI fills only unfinished safe slots, preserves existing values, and keeps the all-sign list after the personal house passage.");
