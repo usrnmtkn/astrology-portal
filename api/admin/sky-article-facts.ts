@@ -1,5 +1,6 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { URL } from "node:url";
+import { isContentAdminAuthorized } from "../_lib/admin-auth.js";
 import { currentSkyFacts } from "../_lib/current-sky.js";
 import { loadLocalWebEnv } from "../_lib/local-env.js";
 import { skyArticleEditionFactsFromSnapshot } from "../_lib/sky-article-facts.js";
@@ -16,18 +17,12 @@ function sendJson(res: ServerResponse, status: number, body: unknown) {
   res.end(JSON.stringify(body));
 }
 
-function isAuthorized(req: IncomingMessage) {
-  const secret = process.env.CONTENT_GENERATION_SECRET;
-  if (!secret) return process.env.NODE_ENV !== "production";
-  return req.headers.authorization === `Bearer ${secret}`;
-}
-
 export default async function handler(req: IncomingMessage, res: ServerResponse) {
   if (req.method !== "GET") {
     sendJson(res, 405, { error: "Use GET." });
     return;
   }
-  if (!isAuthorized(req)) {
+  if (!isContentAdminAuthorized(req)) {
     sendJson(res, 401, { error: "Unauthorized." });
     return;
   }
