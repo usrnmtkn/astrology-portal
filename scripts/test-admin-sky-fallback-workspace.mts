@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import {
+  houseHoroscopeCoreHeadline,
   natalPlanetInSignTemplateHeadline,
   natalPlanetInSignTemplateTitle,
   packageDraftChanges,
@@ -42,6 +43,11 @@ assert.deepEqual(skyFallbackIdentity(original.contentKey), {
   groupLabel: "Sky Placement articles"
 });
 assert.equal(skyFallbackIdentity("house-horoscope-core/jupiter/leo/house-10")?.title, "Jupiter in Leo · 10th House");
+assert.equal(
+  houseHoroscopeCoreHeadline("house-horoscope-core/jupiter/leo/house-1", "House 1"),
+  "Jupiter in Leo · 1st House"
+);
+assert.equal(houseHoroscopeCoreHeadline("fallback-template/natal.house-context", "House context"), "House context");
 assert.equal(
   natalPlanetInSignTemplateHeadline("fallback-template/natal.planet-in-sign/sun", "{{planetTitle}} in {{signTitle}}"),
   "Sun in {{signTitle}}"
