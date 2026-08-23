@@ -2755,7 +2755,9 @@ export function GeneratedContentAdminDashboard() {
             : occurrence)
         } : current);
       }
-      setMessage(`${row.content_key} approved. It is eligible only when current calculated Sky facts select this reusable configuration.`);
+      setMessage(row.block_type === "sky_placement"
+        ? `${row.content_key} approved for package import. It is not serving until the governed package is regenerated, reviewed, merged, and deployed.`
+        : `${row.content_key} approved. It is eligible only when current calculated Sky facts select this reusable configuration.`);
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "Could not approve and schedule the Sky row.");
     } finally {
@@ -4985,7 +4987,7 @@ export function GeneratedContentAdminDashboard() {
                 <div className="admin-review-queue-actions">
                   <button type="button" onClick={() => openRow(row)}>Edit</button>
                   {row.judge_score === 3 && row.judge_gate === "human-review" && row.status !== "LIVE"
-                    ? <button type="button" onClick={() => void approveAndScheduleSkyRow(row)} disabled={isLoading}>Approve &amp; schedule</button>
+                    ? <button type="button" onClick={() => void approveAndScheduleSkyRow(row)} disabled={isLoading}>{row.block_type === "sky_placement" ? "Approve for package" : "Approve & schedule"}</button>
                     : null}
                 </div>
               </article>
@@ -5069,7 +5071,7 @@ export function GeneratedContentAdminDashboard() {
                   ) : null}
                   {row ? <button type="button" onClick={() => openRow(row)}>Edit</button> : null}
                   {!row ? <button type="button" onClick={() => openMissingSkyDraft(occurrence)}>Create draft</button> : null}
-                  {canApprove ? <button type="button" onClick={() => void approveAndScheduleSkyRow(row)} disabled={isLoading}>Approve &amp; schedule</button> : null}
+                  {canApprove ? <button type="button" onClick={() => void approveAndScheduleSkyRow(row)} disabled={isLoading}>{row.block_type === "sky_placement" ? "Approve for package" : "Approve & schedule"}</button> : null}
                 </div>
               </article>
             );
@@ -6242,9 +6244,9 @@ export function GeneratedContentAdminDashboard() {
                   Reviewed
                 </button>
                 {isGovernedSkyDraft && selectedRow ? (
-                  <button type="button" onClick={() => void approveAndScheduleSkyRow(selectedRow)} disabled={isLoading || skyDraftHasUnsavedCopy} title={skyDraftHasUnsavedCopy ? "Save and revalidate copy edits before approval." : "Approve this reusable card for calculated matching Sky configurations."}>
+                  <button type="button" onClick={() => void approveAndScheduleSkyRow(selectedRow)} disabled={isLoading || skyDraftHasUnsavedCopy} title={skyDraftHasUnsavedCopy ? "Save and revalidate copy edits before approval." : currentDraft.blockType === "sky_placement" ? "Approve this copy for governed package import. This does not publish it." : "Approve this reusable card for calculated matching Sky configurations."}>
                     <Check size={16} aria-hidden="true" />
-                    Approve &amp; schedule
+                    {currentDraft.blockType === "sky_placement" ? "Approve for package" : "Approve & schedule"}
                   </button>
                 ) : (
                   <button type="button" onClick={() => void saveDraft("LIVE")} disabled={isLoading || !cmsCanSignOff} title={!cmsCanSignOff ? "Fix the CMS template errors before Sign Off." : undefined}>

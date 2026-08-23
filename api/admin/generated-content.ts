@@ -1306,11 +1306,24 @@ async function updateGeneratedContent(req: IncomingMessage) {
       judgeGate: existing.judge_gate
     });
     const now = new Date().toISOString();
-    patch.status = "LIVE";
-    patch.lane = "serving";
-    patch.review_state = null;
+    const isSkyPlacement = existing.block_type === "sky_placement";
+    patch.status = isSkyPlacement ? "REVIEWED" : "LIVE";
+    patch.lane = isSkyPlacement ? "reference" : "serving";
+    patch.review_state = isSkyPlacement ? "owner-approved-package-import-required" : null;
     patch.reviewed_at = now;
-    patch.published_at = now;
+    patch.published_at = isSkyPlacement ? null : now;
+    if (isSkyPlacement) {
+      patch.source_snapshot = {
+        ...(existing.source_snapshot ?? {}),
+        ownerApproval: {
+          approved: true,
+          action: "approve-sky-placement-for-package",
+          approvedAt: now,
+          contentKey: existing.content_key,
+          source: "content-studio-explicit-action"
+        }
+      };
+    }
   }
 
   if (body.ownerAction === "approve-sky-article-edition") {

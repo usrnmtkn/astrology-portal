@@ -113,6 +113,20 @@ const placement = existingRow({
     skyPlacementJudge: { recommendation: "approve", approvalSource: "llm-advisory" }
   }
 });
+const approvedPlacement = await invoke(
+  { id: "sky-row", ownerAction: "approve-and-schedule" },
+  placement
+);
+assert.equal(approvedPlacement.status, 200);
+assert.equal(approvedPlacement.patches[0].status, "REVIEWED");
+assert.equal(approvedPlacement.patches[0].lane, "reference");
+assert.equal(approvedPlacement.patches[0].review_state, "owner-approved-package-import-required");
+assert.equal(approvedPlacement.patches[0].published_at, null);
+assert.equal(
+  approvedPlacement.patches[0].source_snapshot.ownerApproval.action,
+  "approve-sky-placement-for-package"
+);
+
 const editedPlacement = await invoke({ id: "sky-row", body: "Changed placement copy" }, placement);
 assert.equal(editedPlacement.status, 200);
 assert.equal(editedPlacement.patches[0].status, "DRAFT");
