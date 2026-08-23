@@ -16,6 +16,13 @@ function keyPart(value: string | number | null | undefined) {
     || "unknown";
 }
 
+function aspectGroup(value: string) {
+  const normalized = keyPart(value);
+  if (normalized === "square" || normalized === "opposition") return "hard";
+  if (normalized === "trine" || normalized === "sextile") return "soft";
+  return normalized;
+}
+
 export const cmsSurfaceKeys = {
   soulRoadmap: (sun: string, moon: string, path: string) => [
     `cms/soul-roadmap/${keyPart(sun)}/${keyPart(moon)}/${keyPart(path)}`,
@@ -35,6 +42,24 @@ export const cmsSurfaceKeys = {
     `cms/personal-transit-house/${voice}/${keyPart(planet)}/${house}`,
     `cms/personal-transit-house/${voice}/template`
   ],
+  transitAspect: (voice: "you" | "they", planet: string, sign: string, natalPoint: string, aspect: string) => {
+    const exactAspect = keyPart(aspect);
+    const groupedAspect = aspectGroup(aspect);
+    const signPart = keyPart(sign);
+    const planetPart = keyPart(planet);
+    const natalPart = keyPart(natalPoint);
+    return [
+      `cms/personal-transit-aspect/${voice}/${planetPart}/${signPart}/${natalPart}/${exactAspect}`,
+      ...(groupedAspect !== exactAspect
+        ? [`cms/personal-transit-aspect/${voice}/${planetPart}/${signPart}/${natalPart}/${groupedAspect}`]
+        : []),
+      `cms/personal-transit-aspect/${voice}/${planetPart}/${natalPart}/${exactAspect}`,
+      ...(groupedAspect !== exactAspect
+        ? [`cms/personal-transit-aspect/${voice}/${planetPart}/${natalPart}/${groupedAspect}`]
+        : []),
+      `cms/personal-transit-aspect/${voice}/template`
+    ];
+  },
   calendarDay: (kind: "moon" | "phase" | "continuation", subject?: string | null) => [
     ...(subject ? [`cms/calendar-day/${kind}/${keyPart(subject)}`] : []),
     `cms/calendar-day/${kind}`

@@ -1,8 +1,8 @@
 {
-  "packageVersion": "v3-2026-08-22e",
-  "contentHash": "eb99da46a5f2ac72ced8a99863ca5a16",
-  "keyManifestHash": "fde359893e59e86528268c6729518d59",
-  "keyCount": 7398,
+  "packageVersion": "v3-2026-08-22f",
+  "contentHash": "0ffcf43239624d6e8a2ab5447fa96e02",
+  "keyManifestHash": "c7e5f0b0aeb183d441f8edda3133bc00",
+  "keyCount": 7399,
   "keys": [
     "authored:approved/calendar-weekly-overview/2026-08-03",
     "authored:authored/calendar-weekly-moon/aquarius",
@@ -6461,6 +6461,7 @@
     "hook:fallback-hook/transit-effect-soft/venus/variant-2",
     "hook:fallback-hook/transit-effect-soft/venus/variant-3",
     "hook:fallback-hook/transit-effect-soft/venus/venus",
+    "hook:fallback-hook/transit-house-event-frame/generic",
     "hook:fallback-hook/transit-house-event-frame/jupiter",
     "hook:fallback-hook/transit-house-event-frame/mars",
     "hook:fallback-hook/transit-house-event-frame/mercury",
