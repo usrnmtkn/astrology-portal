@@ -257,7 +257,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     return;
   }
 
-  if (!isContentAdminAuthorized(req)) {
+  if (!await isContentAdminAuthorized(req)) {
     sendJson(res, 401, { error: "Unauthorized." });
     return;
   }
