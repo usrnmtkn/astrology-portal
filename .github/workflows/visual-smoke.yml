@@ -10,6 +10,9 @@ jobs:
   visual-smoke:
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    env:
+      VITE_SUPABASE_URL: https://visual-smoke.supabase.test
+      VITE_SUPABASE_ANON_KEY: visual-smoke-placeholder
 
     steps:
       - name: Check out repository
@@ -30,11 +33,11 @@ jobs:
       - name: Install Playwright Chromium
         run: npx playwright install --with-deps chromium
 
+      - name: Enforce fresh browser release path
+        run: npm run test:playwright-release-path
+
       - name: Build app
         run: npm run build
-        env:
-          VITE_SUPABASE_URL: https://visual-smoke.supabase.test
-          VITE_SUPABASE_ANON_KEY: visual-smoke-placeholder
 
       - name: Verify production health endpoint imports
         run: npm run test:production-health
