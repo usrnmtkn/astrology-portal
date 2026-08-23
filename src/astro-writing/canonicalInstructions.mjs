@@ -1,11 +1,12 @@
 // Canonical API instructions. The verbatim owner language below is sourced from
-// docs/writing/VOICE_CONTRACT.md, docs/writing/ASTROLOGY_CONTRACT.md, and
+// docs/writing/VOICE_CONTRACT.md, docs/writing/ASTROLOGY_CONTRACT.md,
+// docs/writing/MARIE_SATORI_LONG_FORM_VOICE_STANDARD.md, and
 // docs/writing/REVIEW_RUBRIC.md. Tests prevent these excerpts from drifting.
 
 import { REVIEWER_GOLD_EXEMPLARS } from "./reviewerGoldExemplars.generated.mjs";
 import { buildCardWriterInstructions } from "./cardWritingStandard.mjs";
 
-export const CANONICAL_WRITING_INSTRUCTIONS_VERSION = "tldr-astro-writing-v5-owner-passage-first-human-pattern-2026-08-21";
+export const CANONICAL_WRITING_INSTRUCTIONS_VERSION = "tldr-astro-writing-v6-owner-long-form-sentence-architecture-2026-08-22";
 export const CARD_WRITING_INSTRUCTIONS_VERSION = "tldr-astro-card-writing-v3-owner-standard-candidate-2026-08-09";
 export const CANONICAL_REVIEWER_INSTRUCTIONS_VERSION = "tldr-astro-editorial-gate-v4-cold-rendered-prose-2026-08-11";
 
@@ -58,6 +59,12 @@ a narrowly scoped revision instruction.`;
 export const canonicalAstrologyWritingInstructions = `CODEX INSTRUCTION (owner-designated canonical form): Translate every astrological idea into lived cause and consequence. Begin with the specific human experience, behavior, conflict, decision, or consequence the astrology describes. Use concrete stakes such as work, money, home, body, time, access, recognition, and relationships. For aspects, show one force acting on another. For synastry, show one person doing something and the other reacting. For placements, describe the recurring behavior and need rather than predicting an event. Add perspective, warmth, or advice only after the truth has been clearly named. Never make the reader decode astrology language to understand what is happening.
 
 OWNER-PASSAGE-FIRST RULE: Write from the actual owner passages in the REGISTER lane, never from a synthesized description of the owner's style. The astrology mechanism supplies meaning; retrieved owner prose supplies prose behavior. Generic examples and register gold may supplement relevant exact-planet-sign, same-sign, or same-planet passages but may never replace them. Register gold demonstrates specificity only and does not license its argument or paragraph architecture. Do not impose balanced paragraph design, a mandatory thesis/complication/solution sequence, or an explanation after an example has already made the point.
+
+LONG-FORM SENTENCE ARCHITECTURE (owner direction, 2026-08-22): This rule governs long-form articles, transit-and-house interpretations, reports, and developed body paragraphs. It does not remove the CARD register's permission for a concise hook or an earned short landing. Default to medium and long natural sentences. A paragraph composed mostly of 4-12 word sentences is a voice failure. Do not split one connected thought into four or five punchy statements, and do not manufacture a Statement. Statement. Command. Slogan. rhythm. Carry the thought through astrological condition -> recognizable situation -> learned behavior -> underlying reason -> consequence when those ideas belong together.
+
+The prose must do more than name a feeling. Explain what is happening, why this astrology brings it up, what the person may notice in ordinary life, what experience may have taught them to do, how that response still affects current choices, and what becomes possible once the old response can be distinguished from the present situation. Astrology must explain the experience: planet is the process, sign is how it behaves or where sensitivity is expressed, and house is where it becomes visible. For Chiron, ask what happened, what the person learned to do because of it, and how that learned response still shapes choices now; do not reduce Chiron to generic healing.
+
+Connect sentences logically so each sentence answers or complicates the one before it. Prefer physical and observable language such as body, clothes, voice, photographs, posture, schedule, paycheck, title, credit, invitation, deadline, home, sleep, appointment, food, messages, meetings, responsibilities, bills, and time. Do not overwrite the astrology with poetry or switch into generic wellness, permission, motivational, or inspirational language. Advice may appear only after the mechanism and consequence are understood, and it must emerge from the interpretation rather than arrive as a slogan. Before returning long-form copy, reject any paragraph that reads like app notifications or social-media captions, could be pasted under a different placement, or lacks a traceable cause-and-consequence chain.
 
 PLACEMENT-BREADTH RULE: The planet-sign mechanism owns the placement's scope. A chosen expression may organize the page but may not redefine the placement. Different scenes do not create breadth when they all prove the same narrow behavior or social thesis. Keep the broad mechanism distinct from the chosen lens; do not force every paragraph to prove one argument.
 
@@ -156,6 +163,9 @@ Does the copy rely on familiar domestic, dating, therapy, workplace, or self-hel
 Can the tagline be understood without the body?
 Reject cryptic compression.
 
+9. LONG-FORM SENTENCE ARCHITECTURE
+For long-form articles, transit-and-house interpretations, reports, and developed body paragraphs: is the paragraph mostly composed of short declarative sentences, or has one connected thought been split into a punchy sequence? Require medium and long natural sentences that carry the astrology through recognizable situation, behavior, reason, and consequence. A deliberate card hook or earned short landing is not a failure by itself.
+
 OTHER CHECKS
 
 clinical shorthand
@@ -216,6 +226,7 @@ export const REVIEW_FIELDS = Object.freeze([
   "clinical_shorthand",
   "advocacy_register_drift",
   "tagline_stands_alone",
+  "clipped_sentence_rhythm",
   "voice_match",
   "register_consistency",
   "redundancy"
@@ -231,5 +242,6 @@ export const HARD_REVISE_FIELDS = Object.freeze([
   "invented_motive",
   "stock_trope",
   "metaphor_requires_translation",
-  "tagline_stands_alone"
+  "tagline_stands_alone",
+  "clipped_sentence_rhythm"
 ]);

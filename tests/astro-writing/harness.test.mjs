@@ -137,6 +137,7 @@ const astrologyContract = read("docs/writing/ASTROLOGY_CONTRACT.md");
 const voiceContract = read("docs/writing/VOICE_CONTRACT.md");
 const literalRules = read("docs/writing/LITERAL_LANGUAGE_RULES.md");
 const rubric = read("docs/writing/REVIEW_RUBRIC.md");
+const longFormVoiceStandard = read("docs/writing/MARIE_SATORI_LONG_FORM_VOICE_STANDARD.md");
 const ownerDoctrine = read("packages/astro-knowledge/review/writing-harness-v1/TLDR-Owner-Writing-Doctrine.md");
 const cardStandard = read("tldr-astro-phrasebank/TLDR-CARD-TRANSIT-WRITING-STANDARD-OWNER.md");
 const cardChecklist = read("tldr-astro-phrasebank/TLDR-CARD-CRITIQUE-CHECKLIST-V3-DRAFT.md");
@@ -153,6 +154,18 @@ for (const required of [
 }
 assert.ok(voiceContract.includes("CODEX INSTRUCTION (owner-designated canonical form)"));
 assert.ok(voiceContract.includes("# Marie voice bank (gold-standard reference)"));
+assert.equal(
+  sha256(longFormVoiceStandard),
+  "8ac0a55bfe7b542204d08595ef13cf2ca49bc92c1f8734a230b5d2249c04afbe",
+  "The owner-supplied long-form voice standard must remain byte-for-byte intact."
+);
+for (const required of [
+  "A paragraph composed mostly of 4–12 word sentences is a voice failure.",
+  "astrological condition → recognizable situation → learned behavior → underlying reason → consequence",
+  "Write the whole thought."
+]) {
+  assert.ok(longFormVoiceStandard.includes(required), `Long-form owner standard must contain ${required}`);
+}
 assert.ok(rubric.includes("STAGE 1: ASTROLOGY MEANING PLAN"));
 assert.ok(rubric.includes("STAGE 6: DETERMINISTIC VALIDATION"));
 assert.ok(read("docs/writing/EDITORIAL-GATE-REVIEWER-PROMPT.md").includes("ASSUME THERE IS A DEFECT UNTIL EACH REQUIRED CHECK PASSES."));
@@ -216,6 +229,20 @@ assert.ok(
 );
 const compactCanonicalInstructions = canonicalAstrologyWritingInstructions.replace(/\s+/gu, " ");
 const compactVoiceContract = voiceContract.replace(/\s+/gu, " ");
+for (const instruction of [
+  "A paragraph composed mostly of 4-12 word sentences is a voice failure.",
+  "Do not split one connected thought into four or five punchy statements",
+  "For Chiron, ask what happened, what the person learned to do because of it",
+  "Advice may appear only after the mechanism and consequence are understood"
+]) {
+  assert.ok(
+    compactCanonicalInstructions.includes(instruction),
+    `Canonical API instructions must include the 2026-08-22 long-form voice rule: ${instruction}`
+  );
+}
+assert.ok(REVIEW_FIELDS.includes("clipped_sentence_rhythm"));
+assert.ok(HARD_REVISE_FIELDS.includes("clipped_sentence_rhythm"));
+assert.match(canonicalAstrologyReviewInstructions, /9\. LONG-FORM SENTENCE ARCHITECTURE/u);
 for (const instruction of [
   "Astrology may explain why the pattern is easy to enter, but it may not excuse an observable action",
   "A transitive instruction names its object.",
