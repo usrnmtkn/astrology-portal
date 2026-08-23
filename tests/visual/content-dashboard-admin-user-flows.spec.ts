@@ -1099,7 +1099,12 @@ test.describe("content dashboard admin user flow case studies", () => {
       block_type: null,
       lane: "reference",
       review_state: "fallback-system-reference",
-      facts: { fallbackArchitectureV3: true, content_role: "authored_card", review_status: "approved" },
+      facts: {
+        fallbackArchitectureV3: true,
+        content_role: "authored_card",
+        review_status: "approved",
+        moonEvent: { name: "Full Moon", sign: "Pisces", eclipseType: "lunar" }
+      },
       source_snapshot: packageSource,
       sections: { packageRecord: { contentKey: "authored/sky-lunation-macro/full-moon/pisces", body: "Check the details without treating reality as a betrayal of the dream.", content_role: "authored_card", review_status: "approved" } },
       provider: "tldrastro-fallback-architecture-v3"
@@ -1132,6 +1137,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     const editor = page.locator(".admin-editor-panel");
     const related = editor.getByRole("region", { name: "Related reader horoscope passages" });
     await expect(editor.getByLabel("Body")).toHaveValue("Check the details without treating reality as a betrayal of the dream.");
+    await expect(related.locator("dl > div", { hasText: "Eclipse" })).toContainText("Lunar eclipse");
     await expect(related.locator("details > summary > span")).toHaveText([
       "Aspect passages",
       "Rising-sign horoscopes"
