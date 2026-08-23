@@ -111,7 +111,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     sendJson(res, 405, { error: "Use POST." });
     return;
   }
-  if (!await isContentAdminAuthorized(req)) {
+  if (!isContentAdminAuthorized(req)) {
     sendJson(res, 401, { error: "Unauthorized." });
     return;
   }

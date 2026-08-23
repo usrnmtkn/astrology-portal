@@ -187,7 +187,7 @@ function adminFailure(error: unknown) {
 }
 
 export default async function handler(req: IncomingMessage, res: ServerResponse) {
-  if (!await requireReportAdmin(req)) return sendJson(res, 401, { error: "Unauthorized." });
+  if (!requireReportAdmin(req)) return sendJson(res, 401, { error: "Unauthorized." });
   try {
     if (req.method === "GET") return sendJson(res, 200, await dashboard());
     if (req.method === "POST") return sendJson(res, 200, await action(await jsonRequestBody(req), req));
