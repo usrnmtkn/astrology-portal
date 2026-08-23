@@ -1031,6 +1031,71 @@ function createTransitSynastryRenderer(transitLib, templatesFile, rowsFile, opts
   const EVENT_QUALITY = { conjunction: "conjunction", square: "hard", opposition: "hard", trine: "soft", sextile: "soft" };
   const EVENT_VERB = { conjunction: "sitting right on", square: "squaring", opposition: "opposing", trine: "trining", sextile: "sextiling" };
   const CONJ_SOFT = /* @__PURE__ */ new Set(["venus", "sun", "mercury", "jupiter"]);
+  function renderTransitHouseEvent({ planet, house, sign, natal, natalHouse, aspect, window: win, voice = "you", variant }) {
+    const v = voice === "you" ? "you" : "they";
+    const quality = EVENT_QUALITY[aspect];
+    if (!quality) throw new SourceGapError(`SOURCE_GAP: transit-house event ${planet}/${natal}/${aspect}`);
+    const cls = quality === "conjunction" ? CONJ_SOFT.has(planet) ? "soft" : "hard" : quality;
+    const specificFrameKey = `fallback-hook/transit-house-event-frame/${planet}`;
+    const frameKey = hookVoice(specificFrameKey, v) ? specificFrameKey : "fallback-hook/transit-house-event-frame/generic";
+    const frameRaw = hookVoice(frameKey, v);
+    const windowClause = win ? /^(until|through|till|before|by)\b/i.test(win) ? ` ${win.charAt(0).toLowerCase()}${win.slice(1)}` : ` until ${win}` : "";
+    const natalHouseSuffix = natalHouse ? v === "you" ? ` in your ${ordinal2(natalHouse)} house` : ` in the ${ordinal2(natalHouse)} house` : "";
+    const natalTitle = `${title2(natal)}${natalHouseSuffix}`;
+    const frame = frameRaw ? fillKeep(frameRaw, {
+      Name: v === "they" ? voice : "",
+      aspectVerb: EVENT_VERB[aspect],
+      houseOrdinal: ordinal2(house),
+      natalTitle,
+      transitTitle: title2(planet),
+      windowClause
+    }) : null;
+    const wantsKey = `fallback-hook/transit-house-event-wants/${planet}/${sign}`;
+    const holdsKey = `fallback-hook/transit-house-event-natal/${natal}`;
+    const sceneKeys = [
+      `fallback-hook/transit-house-event-scenes/${planet}/${natal}/${cls}`,
+      `fallback-hook/transit-effect-${cls}/${planet}/${natal}`
+    ];
+    const wants = sign ? hookVoice(wantsKey, v) : null;
+    const holds = hookVoice(holdsKey, v);
+    const sceneKey = sceneKeys.find((key) => Boolean(hookVoice(key, v))) ?? null;
+    const scenes = sceneKey ? hookVoice(sceneKey, v) : null;
+    if (frame && wants && holds && scenes && sceneKey) {
+      const body2 = `${frame} ${wants}; ${holds}. ${scenes}`.trim();
+      const sourceKeys2 = [frameKey, wantsKey, holdsKey, sceneKey];
+      return {
+        headline: `${title2(planet)} ${aspect} ${v === "you" ? "your" : `${voice}'s`} ${title2(natal)}`,
+        body: body2,
+        parts: [body2],
+        partSourceKeys: [sourceKeys2],
+        sourceKeys: sourceKeys2,
+        templateKey: "fallback-template/transit.house-event"
+      };
+    }
+    const renderedAspect = renderTransitAspect({
+      transiting: planet,
+      natal,
+      aspect,
+      voice,
+      variant,
+      window: win ?? null
+    });
+    const body = frame ? `${frame} ${renderedAspect.body}` : renderedAspect.body;
+    const sourceKeys = [
+      ...frame ? [frameKey] : [],
+      ...renderedAspect.contentKey ? [renderedAspect.contentKey] : [],
+      renderedAspect.templateKey
+    ];
+    return {
+      headline: renderedAspect.headline || `${title2(planet)} ${aspect} ${v === "you" ? "your" : `${voice}'s`} ${title2(natal)}`,
+      body,
+      parts: [body],
+      partSourceKeys: [sourceKeys],
+      sourceKeys,
+      templateKey: "fallback-template/transit.house-event",
+      contentKey: renderedAspect.contentKey
+    };
+  }
   function renderTransitHouse({ planet, house, sign, window: win, voice = "you", variant, events, isRetrograde }) {
     const v = voice === "you" ? "you" : "they";
     if (sign) {
@@ -1053,34 +1118,19 @@ function createTransitSynastryRenderer(transitLib, templatesFile, rowsFile, opts
         }
         for (const e of events ?? []) {
           try {
-            const quality = EVENT_QUALITY[e.aspect];
-            const cls = quality === "conjunction" ? CONJ_SOFT.has(planet) ? "soft" : "hard" : quality;
-            const frameKey = `fallback-hook/transit-house-event-frame/${planet}`;
-            const frameRaw = quality ? hookVoice(frameKey, v) : null;
-            const windowClause = e.window ? /^(until|through|till|before|by)\b/i.test(e.window) ? ` ${e.window.charAt(0).toLowerCase()}${e.window.slice(1)}` : ` until ${e.window}` : "";
-            const frame = frameRaw ? fillKeep(frameRaw, { houseOrdinal: ordinal2(house), natalTitle: title2(e.natal), Name: v === "they" ? voice : "", windowClause, aspectVerb: EVENT_VERB[e.aspect] }) : null;
-            const wantsKey = `fallback-hook/transit-house-event-wants/${planet}/${sign}`;
-            const holdsKey = `fallback-hook/transit-house-event-natal/${e.natal}`;
-            const sceneKeys = [
-              `fallback-hook/transit-house-event-scenes/${planet}/${e.natal}/${cls}`,
-              `fallback-hook/transit-effect-${cls}/${planet}/${e.natal}`
-            ];
-            const wants = sign ? hookVoice(wantsKey, v) : null;
-            const holds = hookVoice(holdsKey, v);
-            const sceneKey = sceneKeys.find((key) => Boolean(hookVoice(key, v))) ?? null;
-            const scenes = sceneKey ? hookVoice(sceneKey, v) : null;
-            if (frame && wants && holds && scenes && sceneKey) {
-              parts.push(`${frame} ${wants}; ${holds}. ${scenes}`.trim());
-              partSourceKeys.push([frameKey, wantsKey, holdsKey, sceneKey]);
-            } else {
-              const asp = renderTransitAspect({ transiting: planet, natal: e.natal, aspect: e.aspect, voice, window: e.window ?? null });
-              parts.push(frame ? `${frame} ${asp.body}` : asp.body);
-              partSourceKeys.push([
-                ...frame ? [frameKey] : [],
-                ...asp.contentKey ? [asp.contentKey] : [],
-                asp.templateKey
-              ]);
-            }
+            const renderedEvent = renderTransitHouseEvent({
+              aspect: e.aspect,
+              house,
+              natal: e.natal,
+              natalHouse: e.natalHouse,
+              planet,
+              sign,
+              variant,
+              voice,
+              window: e.window ?? null
+            });
+            parts.push(renderedEvent.body);
+            partSourceKeys.push(renderedEvent.sourceKeys ?? []);
           } catch {
           }
         }
@@ -2555,7 +2605,7 @@ ${passHook}`;
       templateKey: "fallback-template/daily.dodont"
     };
   }
-  return { renderTransitHouse, renderTransitAspect, renderTransitLabel, renderTransitReturn, renderTransitRetro, renderCompat, renderSynastryAspect, renderSkySeason, renderSkyHoroscope, renderSkyLunation, renderSkyPlacement, renderSkyPlacementHouseCore, renderSkyAspectCard, renderCircleStory, renderPairDaily, formatCircleNames, renderCalendarPhase, renderVoidOfCourse, renderSeasonMarker, renderWeeklyMoon, renderBondTransit, renderLunationMacro, renderLunationHoroscope, renderLunationEventCard, renderDoDont, renderDailyGlance };
+  return { renderTransitHouse, renderTransitHouseEvent, renderTransitAspect, renderTransitLabel, renderTransitReturn, renderTransitRetro, renderCompat, renderSynastryAspect, renderSkySeason, renderSkyHoroscope, renderSkyLunation, renderSkyPlacement, renderSkyPlacementHouseCore, renderSkyAspectCard, renderCircleStory, renderPairDaily, formatCircleNames, renderCalendarPhase, renderVoidOfCourse, renderSeasonMarker, renderWeeklyMoon, renderBondTransit, renderLunationMacro, renderLunationHoroscope, renderLunationEventCard, renderDoDont, renderDailyGlance };
 }
 
 // apps/web/src/content/fallbackArchitectureV3/resolver/knowledgeMatrixV9.browser.ts
@@ -2752,7 +2802,7 @@ function createKnowledgeMatrixV13Resolver(file) {
 }
 
 // apps/web/src/content/fallbackArchitectureV3/resolver/index.browser.ts
-var PACKAGE_VERSION = "v3-2026-08-22e";
+var PACKAGE_VERSION = "v3-2026-08-22f";
 function stablePackageValue(value) {
   if (Array.isArray(value)) {
     return value.map(stablePackageValue);
