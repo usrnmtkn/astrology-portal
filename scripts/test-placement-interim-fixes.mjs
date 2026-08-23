@@ -145,6 +145,18 @@ const planets = interim.templates.map((template) => template.contentKey.split("/
 const firstFourWords = new Set();
 let renderCount = 0;
 for (const planet of planets) {
+  const planetTitle = planet.split("-").map((part) => part[0].toUpperCase() + part.slice(1)).join(" ");
+  const expectedHeadline = `${planetTitle} in {{signTitle}}`;
+  assert.equal(
+    interim.templates.find((template) => template.contentKey.endsWith(`/${planet}`))?.headline,
+    expectedHeadline,
+    `${planet} source template headline must name its planet`
+  );
+  assert.equal(
+    baseTemplates.templates.find((template) => template.contentKey.endsWith(`/${planet}`))?.headline,
+    expectedHeadline,
+    `${planet} packaged template headline must name its planet`
+  );
   for (const sign of baseRows.coverage.signs) {
     const rendered = interimNatal.renderNatalPlacement({
       planet,
@@ -155,7 +167,6 @@ for (const planet of planets) {
     assert.equal(rendered.templateKey, `fallback-template/natal.planet-in-sign/${planet}`);
     assert.doesNotMatch(rendered.body, /\{\{|\}\}/u);
     if (sign === baseRows.coverage.signs[0]) {
-      const planetTitle = planet.split("-").map((part) => part[0].toUpperCase() + part.slice(1)).join(" ");
       const opening = rendered.body.slice(rendered.body.indexOf(`Your ${planetTitle}`));
       const prefix = words(opening).slice(0, 4).join(" ");
       assert.ok(!firstFourWords.has(prefix), `${planet} duplicated a four-word placement opener`);
