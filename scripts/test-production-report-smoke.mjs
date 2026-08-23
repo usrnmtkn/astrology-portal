@@ -8,14 +8,22 @@ const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), ".."
 let failHealth = false;
 const requests = [];
 const server = http.createServer((req, res) => {
-  requests.push({ url: req.url, authorization: req.headers.authorization });
+  requests.push({
+    url: req.url,
+    authorization: req.headers.authorization,
+    contentGenerationSecret: req.headers["x-content-generation-secret"]
+  });
   res.setHeader("content-type", "application/json");
   if (req.url === "/api/health") {
     res.statusCode = failHealth ? 503 : 200;
     res.end(JSON.stringify({ ok: !failHealth, status: failHealth ? "degraded" : "ok" }));
     return;
   }
-  if (req.url === "/api/admin/report-fulfillment" && req.headers.authorization === "Bearer fixture-secret") {
+  if (
+    req.url === "/api/admin/report-fulfillment"
+    && req.headers.authorization === "Bearer fixture-secret"
+    && req.headers["x-content-generation-secret"] === "fixture-secret"
+  ) {
     res.statusCode = 200;
     res.end(JSON.stringify({ billingMode: "free_test", reports: [], users: [] }));
     return;
@@ -57,6 +65,7 @@ try {
   assert.match(passed.stdout, /Production report smoke passed/u);
   assert.deepEqual(requests.map((request) => request.url), ["/api/health", "/api/admin/report-fulfillment"]);
   assert.equal(requests[1].authorization, "Bearer fixture-secret");
+  assert.equal(requests[1].contentGenerationSecret, "fixture-secret");
 
   requests.length = 0;
   failHealth = true;
