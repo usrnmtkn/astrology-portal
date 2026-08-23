@@ -1887,6 +1887,8 @@ test.describe("content dashboard admin user flow case studies", () => {
     const introCard = variableGuide.locator(".admin-variable-reference-card", { hasText: "{{planetIntro}}" });
     await expect(introCard).toContainText("Optional");
     await expect(introCard).toContainText("introductory sentences");
+    await expect(introCard).toContainText("Open the source rows to read or edit the actual copy");
+    await expect(introCard).not.toContainText("The Sun describes identity, purpose, and the need to create.");
 
     await variableGuide.getByRole("searchbox", { name: "Find a variable or meaning" }).fill("modifier");
     await expect(variableGuide.locator(".admin-variable-reference-card")).toHaveCount(1);
@@ -1907,6 +1909,13 @@ test.describe("content dashboard admin user flow case studies", () => {
 
     const variableDetails = page.getByRole("dialog", { name: "Planet intro variable details" });
     await expect(variableDetails).toContainText("fallback-hook/planet-intro/sun");
+    const detailToolbarBox = await variableDetails.locator(".admin-editor-toolbar").boundingBox();
+    const detailBodyBox = await variableDetails.locator(".admin-post-editor").boundingBox();
+    expect(detailToolbarBox).not.toBeNull();
+    expect(detailBodyBox).not.toBeNull();
+    expect(detailToolbarBox!.height).toBeLessThan(260);
+    expect(detailBodyBox!.y - (detailToolbarBox!.y + detailToolbarBox!.height)).toBeLessThanOrEqual(24);
+    await expectNoHorizontalOverflow(page, "Stacked variable detail mobile slide-out");
     await variableDetails.locator(".admin-variable-source-row", { hasText: "Sun introduction" }).click();
     await expect(variableDetails).toContainText("The Sun describes identity, purpose, and the need to create.");
     await variableDetails.getByRole("button", { name: "Edit source" }).click();

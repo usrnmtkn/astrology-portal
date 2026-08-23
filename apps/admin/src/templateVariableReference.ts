@@ -201,7 +201,7 @@ const variableDefinitions: Record<string, VariableDefinition> = {
   },
   angleIntro: {
     meaning: "Optional introductory copy explaining the calculated chart angle.",
-    example: "The Ascendant describes first impressions and how you enter a room.",
+    example: "An approved introduction for the calculated chart angle",
     source: "Reviewed angle hook"
   },
   angleTitle: {

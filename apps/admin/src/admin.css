@@ -10324,3 +10324,50 @@ body,
     width: 100vw !important;
   }
 }
+
+/* Shared slide-out shell. Keep every editor, guide, and nested source panel
+   compact at the top while its content scrolls independently below. */
+.admin-dashboard .admin-editor-panel {
+  align-content: stretch;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  overflow: hidden;
+  overscroll-behavior: contain;
+}
+
+.admin-dashboard .admin-editor-panel > .admin-editor-toolbar {
+  flex: 0 0 auto;
+  margin-bottom: 0;
+  position: relative;
+  top: auto;
+}
+
+.admin-dashboard .admin-editor-panel > .admin-post-editor {
+  align-content: start;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.admin-dashboard .admin-editor-panel .admin-editor-toolbar > div:first-child {
+  min-width: 0;
+}
+
+.admin-dashboard .admin-editor-panel .admin-editor-toolbar-actions {
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+@media (max-width: 720px) {
+  .admin-dashboard .admin-editor-panel .admin-editor-toolbar {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .admin-dashboard .admin-editor-panel .admin-editor-toolbar-actions {
+    justify-content: flex-start;
+  }
+}
