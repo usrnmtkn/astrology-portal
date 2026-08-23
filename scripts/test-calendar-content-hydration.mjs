@@ -243,8 +243,8 @@ assert.ok(
 );
 
 assert.ok(
-  calendarTransitDetailContentKeys(ingressEvent).includes("sky.placement.base.jupiter.leo"),
-  "On-demand Calendar detail must include its placement article key."
+  !calendarTransitDetailContentKeys(ingressEvent).includes("sky.placement.base.jupiter.leo"),
+  "Calendar detail must not request the retired Supabase Sky Placement reader key."
 );
 
 fs.mkdirSync(ephemerisBundleDir, { recursive: true });

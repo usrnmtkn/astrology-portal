@@ -75,7 +75,6 @@ import { natalPlacementReaderSectionCopy } from "./content/natalPlacementReaderS
 import { preserveProtectedOwnerSkyPlacementPassage } from "./content/protectedOwnerSkyPlacementPassages";
 import { firstReaderFacingCopy, isReaderFacingCopy, readerFacingParagraphs } from "./content/readerSafety";
 import {
-  selectActiveSkyArticleEdition,
   skyArticleAspectPassageForTransit
 } from "./content/skyArticleTemplateCompiler";
 import type { ContentBundle } from "./content/types";
@@ -248,8 +247,6 @@ import {
   compositeHouseContentKey,
   compositePointContentKey,
   compositeSignContentKey,
-  skyPlacementBaseContentKey,
-  skyPlacementTopperContentKey,
   synastryAspectContentKey,
   transitHouseContentKey
 } from "./services/generatedContentKeys";
@@ -4235,12 +4232,6 @@ function skyAspectDisplayTitle(aspect: SkySnapshot["aspects"][number]) {
   return `${aspect.from} ${titleCase(aspect.type)} ${aspect.to}`;
 }
 
-function recordField(value: unknown) {
-  return value && typeof value === "object" && !Array.isArray(value)
-    ? value as Record<string, unknown>
-    : null;
-}
-
 function generatedSkyAspectWritingSection(
   aspect: SkySnapshot["aspects"][number],
   generatedContent?: GeneratedContentMap,
@@ -4722,229 +4713,6 @@ function skyPlacementDisplayTitle(position: PlanetPosition) {
   return `${position.planet} in ${position.sign}`;
 }
 
-const collectiveSkyPlacementTraditionalBodies = new Set([
-  "sun",
-  "moon",
-  "mercury",
-  "venus",
-  "mars",
-  "jupiter",
-  "saturn",
-  "uranus",
-  "neptune",
-  "pluto"
-]);
-const collectiveSkyPlacementPointBodies = new Set(["chiron", "north-node", "lilith"]);
-
-function collectiveSkyPlacementSource(planet: string, sign: string) {
-  if (collectiveSkyPlacementTraditionalBodies.has(planet)) {
-    return `data/placements/sign/${planet}-${sign}.json`;
-  }
-
-  if (collectiveSkyPlacementPointBodies.has(planet)) {
-    return `data/points/placements/sign/${planet}-${sign}.json`;
-  }
-
-  if (planet === "south-node") {
-    return `data/placements/sign/south-node-${sign}.json`;
-  }
-
-  return null;
-}
-
-function normalizedCollectiveSkyPlacementFacts(position: PlanetPosition) {
-  const planet = normalizeContentIdPart(position.planet);
-  const sign = normalizeContentIdPart(position.sign);
-  const placementSource = collectiveSkyPlacementSource(planet, sign);
-
-  if (
-    !planet
-    || !sign
-    || !placementSource
-    || !zodiacSigns.some((candidate) => normalizeContentIdPart(candidate) === sign)
-  ) {
-    return null;
-  }
-
-  return {
-    planet,
-    sign,
-    placementSource,
-    derivedFrom: null
-  };
-}
-
-function generatedSkyPlacementCardPassesBoundary(
-  content: LiveGeneratedContent,
-  expected: NonNullable<ReturnType<typeof normalizedCollectiveSkyPlacementFacts>>
-) {
-  const source = content.sourceSnapshot ?? {};
-  const lint = recordField(source.skyPlacementVoiceLint);
-  const facts = recordField(source.placementFacts);
-  const body = generatedContentParagraphs(content).join("\n\n").trim();
-  const paragraphs = body.split(/\n\s*\n/).filter((paragraph) => paragraph.trim()).length;
-  const containsInternalMetadata = /\b(?:provenance|linter|lint score|editorial status|draft status|review queue)\b/i.test(body);
-
-  return Boolean(
-    body
-    && paragraphs === 2
-    && isReaderFacingCopy(body)
-    && !containsInternalMetadata
-    && content.contentKey === skyPlacementBaseContentKey(expected.planet, expected.sign)
-    && content.blockType === "sky_placement"
-    && content.eventType === "collective-placement-card"
-    && lint?.score === 3
-    && lint?.fails === 0
-    && content.judgeScore === 3
-    && content.judgeGate === "human-review"
-    && source.contentType === "sky-placement-card"
-    && source.placementSource === expected.placementSource
-    && facts?.planet === expected.planet
-    && facts?.sign === expected.sign
-    && !source.placementDerivation
-  );
-}
-
-const skyPlacementTopperMaxOrb = 1;
-const skyPlacementTopperAspects = new Set(["conjunction", "sextile", "square", "trine", "opposition"]);
-
-function tightestSkyPlacementTopperAspect(
-  position: PlanetPosition,
-  aspects: SkySnapshot["aspects"],
-  positions: PlanetPosition[]
-) {
-  const aspect = aspects
-    .filter((candidate) => candidate.from === position.planet || candidate.to === position.planet)
-    .filter((candidate) => skyPlacementTopperAspects.has(normalizeContentIdPart(candidate.type)))
-    .filter((candidate) => Number.isFinite(candidate.orb) && candidate.orb <= skyPlacementTopperMaxOrb)
-    .slice()
-    .sort((first, second) => first.orb - second.orb)[0];
-
-  if (!aspect) {
-    return null;
-  }
-
-  const otherName = aspect.from === position.planet ? aspect.to : aspect.from;
-  const otherPosition = positions.find((candidate) => candidate.planet === otherName);
-
-  if (!otherPosition) {
-    return null;
-  }
-
-  return {
-    planet: normalizeContentIdPart(position.planet),
-    sign: normalizeContentIdPart(position.sign),
-    aspect: normalizeContentIdPart(aspect.type),
-    other: normalizeContentIdPart(otherName),
-    otherSign: normalizeContentIdPart(otherPosition.sign)
-  };
-}
-
-function generatedSkyPlacementTopperPassesBoundary(
-  content: LiveGeneratedContent,
-  expected: NonNullable<ReturnType<typeof tightestSkyPlacementTopperAspect>>
-) {
-  const source = content.sourceSnapshot ?? {};
-  const lint = recordField(source.skyPlacementTopperVoiceLint);
-  const facts = recordField(source.skyPlacementTopperFacts);
-  const body = generatedContentParagraphs(content).join("\n\n").trim();
-  const paragraphs = body.split(/\n\s*\n/).filter((paragraph) => paragraph.trim()).length;
-  const containsInternalMetadata = /\b(?:provenance|linter|lint score|editorial status|draft status|review queue)\b/i.test(body);
-
-  return Boolean(
-    body
-    && paragraphs === 1
-    && isReaderFacingCopy(body)
-    && !containsInternalMetadata
-    && content.contentKey === skyPlacementTopperContentKey(
-      expected.planet,
-      expected.sign,
-      expected.aspect,
-      expected.other
-    )
-    && content.blockType === "sky_placement"
-    && content.eventType === "collective-placement-topper"
-    && lint?.score === 3
-    && lint?.fails === 0
-    && content.judgeScore === 3
-    && content.judgeGate === "human-review"
-    && source.contentType === "sky-placement-topper"
-    && source.baseContentKey === skyPlacementBaseContentKey(expected.planet, expected.sign)
-    && source.judgedCombination === "topper-plus-unchanged-base"
-    && typeof source.pairSource === "string"
-    && facts?.planet === expected.planet
-    && facts.sign === expected.sign
-    && facts.aspect === expected.aspect
-    && facts.other === expected.other
-    && facts.otherSign === expected.otherSign
-  );
-}
-
-function generatedSkyPlacementTopper(
-  position: PlanetPosition,
-  aspects: SkySnapshot["aspects"],
-  positions: PlanetPosition[],
-  generatedContent?: GeneratedContentMap
-) {
-  if (!generatedContent) {
-    return null;
-  }
-
-  const expected = tightestSkyPlacementTopperAspect(position, aspects, positions);
-
-  if (!expected) {
-    return null;
-  }
-
-  const content = liveGeneratedContent(
-    generatedContent,
-    skyPlacementTopperContentKey(
-      expected.planet,
-      expected.sign,
-      expected.aspect,
-      expected.other
-    )
-  );
-
-  return content && generatedSkyPlacementTopperPassesBoundary(content, expected)
-    ? content
-    : null;
-}
-
-function generatedSkyPlacementWritingSection(
-  position: PlanetPosition,
-  generatedContent?: GeneratedContentMap
-): NormalizedSkyPlacementSection | null {
-  if (!generatedContent) {
-    return null;
-  }
-
-  const expected = normalizedCollectiveSkyPlacementFacts(position);
-
-  if (!expected) {
-    return null;
-  }
-
-  const content = liveGeneratedContent(
-    generatedContent,
-    skyPlacementBaseContentKey(expected.planet, expected.sign)
-  );
-
-  if (!content || !generatedSkyPlacementCardPassesBoundary(content, expected)) {
-    return null;
-  }
-
-  return {
-    slot: "meaning",
-    required: true,
-    layer: "generated",
-    tier: "generated-sky-placement-lint-v1",
-    sourceKeys: [content.contentKey, expected.placementSource],
-    heading: content.headline || skyPlacementDisplayTitle(position),
-    body: generatedContentParagraphs(content).join("\n\n").trim()
-  };
-}
-
 function skyPlacementWritingSection(
   position: PlanetPosition,
   _duration: string | null | undefined,
@@ -5125,44 +4893,13 @@ function exactSkyPlacementRisingHoroscopes(
   }
 }
 
-function compiledSkyArticleWritingSection(
-  position: PlanetPosition,
-  generatedContent: GeneratedContentMap,
-  generatedAt: string
-): NormalizedSkyPlacementSection | null {
-  const planet = normalizeContentIdPart(position.planet);
-  const sign = normalizeContentIdPart(position.sign);
-  const selected = selectActiveSkyArticleEdition(generatedContent.values(), { activeInstant: generatedAt, planet, sign });
-  if (!selected) return null;
-
-  return {
-    slot: "meaning",
-    required: true,
-    layer: "authored",
-    tier: "compiled-sky-article-edition-v2",
-    sourceKeys: ["compiled-sky-article-edition-v2", selected.edition.templateKey, selected.content.contentKey],
-    heading: selected.edition.headline,
-    tldr: selected.edition.tldr,
-    body: selected.edition.body,
-    articleWindow: `${selected.edition.validFrom} - ${selected.edition.validTo}`,
-    articleMode: "current",
-    risingHoroscopes: selected.edition.housePassages,
-    articleAspectPassages: selected.edition.aspectPassages,
-    articleSections: selected.edition.articleSections.map((section) => ({
-      kind: "authored",
-      heading: section.heading,
-      body: section.body
-    }))
-  };
-}
-
 function normalizeSkyPlacementSurface(
   position: PlanetPosition,
   duration?: string | null,
-  generatedContent?: GeneratedContentMap,
+  _generatedContent?: GeneratedContentMap,
   beats: SkyWritingAspectBeat[] = [],
   generatedAt = new Date().toISOString(),
-  topperContext?: {
+  _topperContext?: {
     aspects: SkySnapshot["aspects"];
     positions: PlanetPosition[];
   },
@@ -5172,37 +4909,8 @@ function normalizeSkyPlacementSurface(
     hasPriorIngress?: boolean;
   }
 ): NormalizedSkyPlacementArticle {
-  const generatedSection = generatedSkyPlacementWritingSection(position, generatedContent);
-  const compiledArticleSection = generatedContent
-    ? compiledSkyArticleWritingSection(position, generatedContent, generatedAt)
-    : null;
   const fallbackSection = skyPlacementWritingSection(position, duration, beats, generatedAt, articleOptions);
-  const topper = generatedSection && topperContext
-    ? generatedSkyPlacementTopper(
-        position,
-        topperContext.aspects,
-        topperContext.positions,
-        generatedContent
-      )
-    : null;
-  const mergedGeneratedSection = generatedSection && topper
-    ? {
-        ...generatedSection,
-        tier: "generated-sky-placement-with-topper-v1",
-        sourceKeys: [topper.contentKey, ...generatedSection.sourceKeys],
-        body: `${generatedContentParagraphs(topper).join("\n\n").trim()}\n\n${generatedSection.body}`
-      }
-    : generatedSection;
-  const approvedFallbackSection = fallbackSection?.layer === "authored" ? fallbackSection : null;
-  const sections = compiledArticleSection
-    ? [compiledArticleSection]
-    : approvedFallbackSection
-    ? [approvedFallbackSection]
-    : mergedGeneratedSection
-      ? [mergedGeneratedSection]
-      : fallbackSection
-        ? [fallbackSection]
-        : [];
+  const sections = fallbackSection ? [fallbackSection] : [];
   const protectedSections = sections.map((section) => {
     if (!section.risingHoroscopes?.length) return section;
 
@@ -5235,7 +4943,7 @@ function normalizeSkyPlacementSurface(
       })
     };
   });
-  const hasProductionSection = Boolean(compiledArticleSection || approvedFallbackSection || mergedGeneratedSection);
+  const hasProductionSection = fallbackSection?.layer === "authored";
 
   return {
     surface: "sky-placement",
@@ -11828,17 +11536,6 @@ export function App() {
         targetDate: sky.generatedAt.slice(0, 10)
       });
     });
-    const placementContentKeys = sky.positions.flatMap((position) => {
-      const expected = normalizedCollectiveSkyPlacementFacts(position);
-      const topper = tightestSkyPlacementTopperAspect(position, sky.aspects, sky.positions);
-
-      return [
-        expected ? skyPlacementBaseContentKey(expected.planet, expected.sign) : "",
-        topper
-          ? skyPlacementTopperContentKey(topper.planet, topper.sign, topper.aspect, topper.other)
-          : ""
-      ].filter(Boolean);
-    });
     const personalTransitAspectContentKeys = skyPlacementPersonalizationTransits.flatMap((transit) => (
       cmsSurfaceKeys.transitAspect(
         "you",
@@ -11851,7 +11548,6 @@ export function App() {
     const currentSkyContentKeys = [
       ...new Set([
         ...aspectContentKeys,
-        ...placementContentKeys,
         ...personalTransitAspectContentKeys
       ])
     ];
