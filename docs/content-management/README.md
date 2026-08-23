@@ -154,6 +154,11 @@ API verifies that session with Supabase on every request and authorizes it only
 when the protected `app_metadata.role` is exactly `admin`. A normal signed-in
 member is not an admin and remains denied.
 
+The verifier uses the browser app's `VITE_SUPABASE_URL` and publishable key
+before any server-job Supabase configuration. Content Studio sessions must be
+checked by the same Supabase project that issued them; unrelated server jobs
+may intentionally use a different project.
+
 `CONTENT_GENERATION_SECRET` remains an emergency fallback, not the normal
 browser login. The dashboard never saves a Supabase access token in its own
 admin-secret storage key. If the signed-in session expires, the dashboard

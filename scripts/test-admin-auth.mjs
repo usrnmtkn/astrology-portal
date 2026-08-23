@@ -11,6 +11,8 @@ const previousEnvironment = process.env.NODE_ENV;
 const previousSecret = process.env.CONTENT_GENERATION_SECRET;
 const previousSupabaseUrl = process.env.SUPABASE_URL;
 const previousSupabaseKey = process.env.SUPABASE_PUBLISHABLE_KEY;
+const previousViteSupabaseUrl = process.env.VITE_SUPABASE_URL;
+const previousViteSupabaseKey = process.env.VITE_SUPABASE_PUBLISHABLE_KEY;
 
 try {
   assert.equal(normalizeAdminSecret(" production-admin-secret "), "production-admin-secret");
@@ -62,6 +64,21 @@ try {
   assert.equal(await isContentAdminAuthorized(request({ "x-content-admin-session": "member-session-token" }), verifiedMember), false, "An ordinary signed-in member must remain denied.");
   assert.equal(await isContentAdminAuthorized(request({ "x-content-admin-session": "expired-session-token" }), rejectedSession), false, "An invalid session must remain denied.");
   assert.equal(await isContentAdminAuthorized(request({ "x-content-admin-session": "owner-session-token" }), async () => { throw new Error("network"); }), false, "Session verification failures must fail closed.");
+
+  process.env.VITE_SUPABASE_URL = "https://browser-auth.example.test";
+  process.env.VITE_SUPABASE_PUBLISHABLE_KEY = "browser-publishable-test-key";
+  const verifiedBrowserProjectAdmin = async (url, options) => {
+    assert.equal(url, "https://browser-auth.example.test/auth/v1/user");
+    assert.equal(options.headers.apikey, "browser-publishable-test-key");
+    return { ok: true, json: async () => ({ id: "owner", app_metadata: { role: "admin" } }) };
+  };
+  assert.equal(
+    await isContentAdminAuthorized(request({ "x-content-admin-session": "browser-owner-session-token" }), verifiedBrowserProjectAdmin),
+    true,
+    "Content Studio must verify the browser session against the Vite Supabase project when server jobs use a different project."
+  );
+  delete process.env.VITE_SUPABASE_URL;
+  delete process.env.VITE_SUPABASE_PUBLISHABLE_KEY;
 
   assert.deepEqual(adminCredentialHeaders("header.payload.signature"), {
     authorization: "Bearer header.payload.signature",
@@ -117,4 +134,8 @@ try {
   else process.env.SUPABASE_URL = previousSupabaseUrl;
   if (previousSupabaseKey === undefined) delete process.env.SUPABASE_PUBLISHABLE_KEY;
   else process.env.SUPABASE_PUBLISHABLE_KEY = previousSupabaseKey;
+  if (previousViteSupabaseUrl === undefined) delete process.env.VITE_SUPABASE_URL;
+  else process.env.VITE_SUPABASE_URL = previousViteSupabaseUrl;
+  if (previousViteSupabaseKey === undefined) delete process.env.VITE_SUPABASE_PUBLISHABLE_KEY;
+  else process.env.VITE_SUPABASE_PUBLISHABLE_KEY = previousViteSupabaseKey;
 }
