@@ -527,6 +527,11 @@ function isGovernedReaderEligible(row, { allowUnreviewed = false } = {}) {
   return !requiresExactOwnerApproval(row.contentKey) || hasExactOwnerApproval(row);
 }
 
+// apps/web/src/content/fallbackArchitectureV3/resolver/lunationNormalization.mjs
+function normalizeLunationSign(value) {
+  return String(value ?? "").trim().toLowerCase();
+}
+
 // apps/web/src/content/fallbackArchitectureV3/resolver/renderTransitSynastry.browser.ts
 var TRUE_LILITH_KEY_DATES_INTRO = "True Black Moon Lilith stations about once a month, so it crosses the same degrees several times before it finally moves on.";
 function skyPlacementKeyDates({
@@ -2398,14 +2403,14 @@ ${passHook}`;
     kind,
     sign,
     risingSign,
+    eventDate,
+    matchingNewMoon,
     house,
     moonHouse,
     sunHouse,
     ruler,
     rulerHouse,
     rulerRetrograde,
-    uranusHouse,
-    uranusLayerActive,
     weekly = false
   }) {
     const isEclipse = kind === "eclipse-solar" || kind === "eclipse-lunar";
@@ -2417,6 +2422,25 @@ ${passHook}`;
     const houseFrame = fill(frame, { houseOrdinal: ordinal2(h), jurisdiction });
     const opening = hooks.get(`fallback-hook/lunation-opening-situation/${h}`)?.body_you;
     const paras = [opening ? `${opening} ${houseFrame}` : houseFrame];
+    if (kind === "full-moon") {
+      const anchor = hooks.get("fallback-hook/lunation-matching-new-moon-anchor/full")?.body_you;
+      const fullMoonDateKey = eventDate?.trim().slice(0, 10) ?? "";
+      const newMoonDateKey = matchingNewMoon?.exactAt.trim().slice(0, 10) ?? "";
+      const fullMoonMatch = /^(\d{4})-(\d{2})-(\d{2})$/u.exec(fullMoonDateKey);
+      const newMoonMatch = /^(\d{4})-(\d{2})-(\d{2})$/u.exec(newMoonDateKey);
+      if (!anchor || !fullMoonMatch || !newMoonMatch || normalizeLunationSign(matchingNewMoon?.sign) !== normalizeLunationSign(sign) || newMoonDateKey >= fullMoonDateKey) {
+        throw new SourceGapError(`SOURCE_GAP: invalid matching New Moon for Full Moon ${eventDate ?? "unknown-date"}/${sign}`);
+      }
+      const monthIndex = Number(newMoonMatch[2]) - 1;
+      const monthName = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"][monthIndex];
+      if (!monthName) throw new SourceGapError(`SOURCE_GAP: invalid matching New Moon date ${newMoonDateKey}`);
+      const crossYear = newMoonMatch[1] !== fullMoonMatch[1];
+      const matchingNewMoonDate = `${monthName} ${Number(newMoonMatch[3])}${crossYear ? `, ${newMoonMatch[1]}` : ""}`;
+      paras.push(fill(anchor, {
+        matchingNewMoonSign: title2(normalizeLunationSign(matchingNewMoon.sign)),
+        matchingNewMoonDate
+      }));
+    }
     const signCompact = hooks.get(`fallback-hook/lunation-sign-compact/${which}-moon/${sign}`)?.body_you ?? (which === "full" ? hooks.get(`fallback-hook/lunation-sign-compact/${sign}`)?.body_you : null);
     if (signCompact) paras.push(signCompact);
     if (which === "full" && sunHouse && sunHouse !== h) {
@@ -2443,15 +2467,7 @@ ${passHook}`;
       }
     }
     const weekLayer = weekly ? hooks.get("fallback-hook/lunation-week-layer")?.body_you : null;
-    let weekLayerRendered = false;
-    if (uranusLayerActive && uranusHouse) {
-      const uranusLayer = hooks.get(`fallback-hook/lunation-uranus-layer/${uranusHouse}`)?.body_you;
-      if (uranusLayer) {
-        paras.push(weekLayer ? `${uranusLayer} ${weekLayer}` : uranusLayer);
-        weekLayerRendered = Boolean(weekLayer);
-      }
-    }
-    if (weekLayer && !weekLayerRendered) paras.push(weekLayer);
+    if (weekLayer) paras.push(weekLayer);
     const label = isEclipse ? which === "new" ? "Solar Eclipse" : "Lunar Eclipse" : which === "new" ? "New Moon" : "Full Moon";
     return { headline: `${label} for ${title2(risingSign)} Rising`, body: paras.join("\n\n"), parts: paras, templateKey: "fallback-template/sky.lunation-horoscope" };
   }
@@ -2466,7 +2482,7 @@ ${passHook}`;
       `authored/satori-lunation/${normalizedEventDate}/${risingKey}`
     );
     if (satori) return result(satori, "authored/satori-lunation-v1");
-    if (blendFallbackEnabled) return renderLunationHoroscope(blendFacts);
+    if (blendFallbackEnabled) return renderLunationHoroscope({ eventDate, ...blendFacts });
     throw new SourceGapError(
       `SOURCE_GAP: no satori lunation card for ${normalizedEventDate}/${risingKey}`
     );
@@ -2779,7 +2795,7 @@ function createKnowledgeMatrixV13Resolver(file) {
 }
 
 // apps/web/src/content/fallbackArchitectureV3/resolver/index.browser.ts
-var PACKAGE_VERSION = "v3-2026-08-23k";
+var PACKAGE_VERSION = "v3-2026-08-23l";
 function stablePackageValue(value) {
   if (Array.isArray(value)) {
     return value.map(stablePackageValue);

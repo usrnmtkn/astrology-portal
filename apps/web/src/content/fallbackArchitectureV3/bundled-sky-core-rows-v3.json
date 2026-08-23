@@ -3003,6 +3003,15 @@
       "notes": "Per-rising lunation horoscope (owner template library: house illuminated -> Release/Shift -> why -> Higher Path). Slots {{houseOrdinal}}, {{jurisdiction}}."
     },
     {
+      "contentKey": "fallback-hook/lunation-matching-new-moon-anchor/full",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Six months ago, consciously or not, this lunar cycle began with the New Moon in {{matchingNewMoonSign}} on {{matchingNewMoonDate}}.",
+      "body_they": "Six months ago, consciously or not, this lunar cycle began with the New Moon in {{matchingNewMoonSign}} on {{matchingNewMoonDate}}.",
+      "review_status": "approved",
+      "notes": "Required ordinary Full Moon cycle anchor. The astrology engine supplies the preceding same-sign New Moon and its exact date. Include the year only when the New Moon and Full Moon occur in different calendar years. Owner ruling 2026-08-23."
+    },
+    {
       "contentKey": "fallback-hook/lunation-horoscope/new",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",

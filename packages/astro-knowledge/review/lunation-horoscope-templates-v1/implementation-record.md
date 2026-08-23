@@ -15,6 +15,19 @@ fact-gated packet compiler for four event types:
 No reader copy, fallback row, renderer, approval status, package version, or generated
 runtime artifact changes in this implementation.
 
+## 2026-08-23 matching New Moon anchor update
+
+The owner added a required six-month callback for every ordinary Full Moon write-up. The
+compiler now requires the matching New Moon's exact time and sign, verifies that it precedes
+the Full Moon and shares its sign, and supplies the governed anchor sentence. The formatter
+includes the New Moon year only when its calendar year differs from the Full Moon year.
+
+The initial rule update was non-serving. The owner subsequently clarified that the app
+assembly itself was the target and authorized implementation. The reader package now carries
+an approved anchor hook, both parallel resolvers require the verified engine fact, weekly
+assembly supplies it, and the You-page fallback supplies it when that existing fallback is
+enabled. The package artifacts and package version are rebuilt with the runtime change.
+
 ## Governance
 
 The owner package says `NOTHING SHIPS`. The owner resolved and confirmed all three template

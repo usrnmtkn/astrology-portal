@@ -125,7 +125,7 @@ import {
 import type { CompatibilityDynamic } from "./features/friends/CompatibilityTab";
 import { usePersonalTiming, type PersonalTimingStatus } from "./features/you/usePersonalTiming";
 import { settingsRouteChangeEvent } from "./features/settings/settingsRouting";
-import type { LunarCalendarEvent } from "./services/ephemeris";
+import type { LunarCalendarEvent, MatchingNewMoonFact } from "./services/ephemeris";
 
 import {
   calendarEventGeneratedContentKeys,
@@ -16099,6 +16099,10 @@ function ProfileView({
   const [transitArticle, setTransitArticle] = useState<YouTransitArticle | null>(null);
   const [activePlacementRouteId, setActivePlacementRouteId] = useState<string | null>(null);
   const [weeklyHoroscopeAssembly, setWeeklyHoroscopeAssembly] = useState<WeeklyHoroscopeAssembly | null>(null);
+  const [dailyMatchingNewMoon, setDailyMatchingNewMoon] = useState<{
+    fullMoonEventDate: string;
+    fact: MatchingNewMoonFact;
+  } | null>(null);
   useContentRegistryRevision();
   const primaryChart = profile.charts[0];
   const savedBirthDate = validChartBirthDate(primaryChart);
@@ -16197,6 +16201,69 @@ function ProfileView({
     generatedContent,
     unknownBirthTime,
     targetDate
+  ]);
+  const lunationBlendYouFallbackEnabled = String(
+    import.meta.env.VITE_ENABLE_LUNATION_BLEND_YOU_FALLBACK ?? "false"
+  ).toLowerCase() === "true";
+  useEffect(() => {
+    const moonEvent = currentSky?.moonEvent;
+    if (
+      !lunationBlendYouFallbackEnabled
+      || !moonEvent
+      || moonEvent.days !== 0
+      || moonEvent.name !== "Full Moon"
+    ) {
+      setDailyMatchingNewMoon(null);
+      return;
+    }
+
+    const currentLocation = profile.currentLocationData
+      ? withTimeZone(profile.currentLocationData)
+      : profile.currentLocation
+        ? locationFromLabel(profile.currentLocation)
+        : null;
+    if (!currentLocation) {
+      setDailyMatchingNewMoon(null);
+      return;
+    }
+
+    let cancelled = false;
+    setDailyMatchingNewMoon((current) => (
+      current?.fullMoonEventDate === moonEvent.occursAt ? current : null
+    ));
+    void import("./services/ephemeris")
+      .then(({ getMatchingNewMoonForFullMoon }) => getMatchingNewMoonForFullMoon(
+        currentLocation,
+        moonEvent.occursAt,
+        moonEvent.sign
+      ))
+      .then((fact) => {
+        if (cancelled) return;
+        setDailyMatchingNewMoon(fact
+          ? { fullMoonEventDate: moonEvent.occursAt, fact }
+          : null);
+      })
+      .catch((error) => {
+        if (!cancelled) {
+          console.warn("Matching New Moon lookup failed; hiding assembled Full Moon fallback.", error);
+          setDailyMatchingNewMoon(null);
+        }
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [
+    currentSky?.moonEvent?.days,
+    currentSky?.moonEvent?.name,
+    currentSky?.moonEvent?.occursAt,
+    currentSky?.moonEvent?.sign,
+    lunationBlendYouFallbackEnabled,
+    profile.currentLocation,
+    profile.currentLocationData?.label,
+    profile.currentLocationData?.latitude,
+    profile.currentLocationData?.longitude,
+    profile.currentLocationData?.timeZone
   ]);
   const profileTiming = savedBirthDate && !unknownBirthTime && natalSky?.ascendant
     ? timingContextForChart({
@@ -16911,14 +16978,18 @@ function ProfileView({
 
     try {
       const kind = currentSky.moonEvent.name === "New Moon" ? "new-moon" : "full-moon";
+      const matchingNewMoon = kind === "full-moon"
+        && dailyMatchingNewMoon?.fullMoonEventDate === currentSky.moonEvent.occursAt
+        ? dailyMatchingNewMoon.fact
+        : undefined;
+      if (kind === "full-moon" && lunationBlendYouFallbackEnabled && !matchingNewMoon) return [];
       const rendered = transitSynastryFallbackRendererV3.renderLunationEventCard({
         eventDate: currentSky.moonEvent.occursAt,
-        blendFallbackEnabled: String(
-          import.meta.env.VITE_ENABLE_LUNATION_BLEND_YOU_FALLBACK ?? "false"
-        ).toLowerCase() === "true",
+        blendFallbackEnabled: lunationBlendYouFallbackEnabled,
         kind,
         sign: normalizeContentIdPart(currentSky.moonEvent.sign),
         risingSign: normalizeContentIdPart(displayRising),
+        matchingNewMoon,
         ...lunationBlendFacts(
           currentSky,
           currentSky.moonEvent.sign,
