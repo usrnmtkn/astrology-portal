@@ -482,7 +482,7 @@ const compatibilitySections: Array<{ key: AdminCompatibilitySectionFilter; label
   { key: "content", label: "App card copy", description: "Reader-facing compatibility rows that can replace the built-in phrasebank copy." },
   { key: "fallback-hooks", label: "Simple fallbacks", description: "Saved fallback routes used only when reviewed prose is unavailable." },
   { key: "vocabulary", label: "Reusable phrases", description: "Relationship and compatibility phrase rows available to templates and review." },
-  { key: "slots", label: "Templates & slots", description: "Mustache templates and slot-backed rows used to assemble compatibility copy." }
+  { key: "slots", label: "Templates & slots", description: "Patterns and source rows used to assemble compatibility copy." }
 ];
 const compatibilitySortOptions: Array<{ key: AdminCompatibilitySort; label: string }> = [
   { key: "updated-desc", label: "Newest updated" },
@@ -561,40 +561,44 @@ function adminPageBreadcrumb(activePage: AdminDashboardPage) {
 
 function adminPageDescription(activePage: AdminDashboardPage) {
   switch (activePage) {
+    case "articles":
+      return "Write and manage standalone articles.";
     case "skyWriteups":
-      return "Planetary placements and lunations in one editorial workflow, with the main write-up, related aspects, and personalized horoscopes together.";
+      return "Edit planetary placements, lunations, aspects, and horoscopes.";
     case "reviewQueue":
-      return "Phrasebank-first publishing queue with content-class, tier, evergreen, and bulk sign-off controls.";
+      return "Review, approve, and publish content.";
     case "content":
-      return "The full editable library: saved content rows plus source rows ready to review, filter, edit, or promote.";
+      return "Find and edit every saved content row.";
     case "knowledge":
-      return "Complete fallback articles, house passages, aspects, and supporting rows, grouped by what readers receive.";
+      return "Edit backup copy used when primary content is unavailable.";
     case "vocabulary":
-      return "Reusable vocab namespaces and phrase rows for generation, taglines, and relationship context.";
+      return "Edit reusable words and phrases used across the app.";
     case "slotDictionary":
-      return "Editable source rows that fill app slots: reusable vocab, fallback hooks, and template scaffolds.";
+      return "See what fills each template variable.";
     case "templates":
-      return "Mustache scaffolds and structured templates used to assemble app copy.";
+      return "Edit the patterns used to assemble reader copy.";
     case "compositeByType":
-      return "Composite relationship copy grouped by relationship type, with gated romantic variants separated.";
+      return "Review composite write-ups by relationship type.";
     case "compatibility":
-      return "Compatibility content, fallback hooks, vocabulary, slots, and templates in one searchable review surface.";
+      return "Edit compatibility copy and its supporting parts.";
     case "hooks":
-      return "Every public surface and runtime hook request, with saved coverage separated from local placeholders.";
+      return "See which app surfaces request each content key.";
     case "sourceDrafts":
-      return "Held Current Sky aspect passages, searchable by planet or aspect and editable without making them reader-eligible.";
+      return "Review unpublished Current Sky aspect drafts.";
     case "aspectPatternCoverage":
-      return "Editable natal and Active Now aspect-pattern write-ups with resolver previews, validation, and authored/fallback comparison.";
+      return "Edit natal and Active Now aspect-pattern copy.";
     case "aspectPatternActivationCoverage":
-      return "Editable Active Now aspect-pattern write-ups with resolver previews, validation, and authored/fallback comparison.";
+      return "Edit Active Now aspect-pattern copy.";
     case "aspectDiagnostics":
-      return "Read-only detector, relationship, and ranking diagnostics for natal aspect patterns.";
+      return "Inspect how natal aspect patterns are detected and ranked.";
     case "users":
-      return "Read-mostly user-generated rows by subject, surface, status, and latest update.";
+      return "Review user-created content and its status.";
     case "reportFulfillment":
-      return "Orders, gate pass rates, retries, judge scores, exceptions, delivery time, token spend, and sampled audits.";
+      return "Monitor report orders, delivery, and quality.";
+    case "connection":
+      return "Check Content Studio access and API health.";
     default:
-      return "A rebuilt admin dashboard organized around review, the full content library, fallback rows, vocab, and user output.";
+      return "Manage app content.";
   }
 }
 
@@ -1232,6 +1236,44 @@ function titleFromKey(contentKey: string) {
     || contentKey;
 }
 
+function templateDestinationLabel(contentKey: string) {
+  if (contentKey.startsWith("slot-template/compatibility/")) return "Compatibility";
+
+  const slotId = contentKey.match(/^slot-template\/([^/]+)$/u)?.[1]?.toUpperCase();
+  if (!slotId) return "Reader copy";
+  if (/^2[A-Z]$/u.test(slotId)) return "Natal Moon";
+  if (slotId === "3A" || /^6[A-D]$/u.test(slotId)) return "Current Sky placement";
+  if (/^3[B-E]$/u.test(slotId) || /^4[A-I]$/u.test(slotId)) return "Personalized transit";
+  if (/^5[A-K]$/u.test(slotId)) return "Natal placement";
+  if (/^5[L-O]$/u.test(slotId)) return "Natal angle";
+  if (/^5[P-S]$/u.test(slotId)) return "Natal aspect";
+  if (/^6[E-F]$/u.test(slotId)) return "Current Sky aspect";
+  if (/^6[G-M]$/u.test(slotId)) return "Retrograde timeline";
+  if (slotId === "6N") return "Sky detail";
+  if (slotId === "6O") return "Calendar";
+  return "Reader copy";
+}
+
+function templateDisplayName(contentKey: string, headline: string) {
+  const destination = templateDestinationLabel(contentKey);
+  let name = normalizeText(headline) || titleFromKey(contentKey);
+
+  name = name
+    .replace(/^compatibility\s+/iu, "")
+    .replace(/^current[- ]sky\s+(?:aspect:\s*)?/iu, "")
+    .replace(/^collective\s+planet\s+in\s+sign:\s*/iu, "")
+    .replace(/^personalized\s+planet\/sign\/house:\s*/iu, "")
+    .replace(/^natal\s+aspect:\s*/iu, "")
+    .replace(/^angles:\s*/iu, "")
+    .replace(/^moon\s+(?:sign|phase):\s*/iu, "")
+    .replace(/^placement\s+core:\s*/iu, "")
+    .replace(/\s+(?:slot|template|voice scaffold)$/iu, "")
+    .trim();
+
+  if (!name) name = "Template";
+  return `${destination} · ${name.charAt(0).toUpperCase()}${name.slice(1)}`;
+}
+
 function ordinalLabel(value: number) {
   const mod100 = value % 100;
   if (mod100 >= 11 && mod100 <= 13) return `${value}th`;
@@ -1392,6 +1434,7 @@ function rowTitle(row: AdminGeneratedContentRow | AdminReviewRecord | AdminUserG
   if ("content_key" in row) {
     const structuredIdentity = skyFallbackIdentity(row.content_key);
     if (structuredIdentity) return structuredIdentity.title;
+    if (row.content_key.startsWith("slot-template/")) return templateDisplayName(row.content_key, normalizeText(row.headline));
     const natalTemplateTitle = natalPlanetInSignTemplateTitle(row.content_key, normalizeText(row.headline));
     if (natalTemplateTitle) return natalTemplateTitle;
     return normalizeText(row.headline) || titleFromKey(row.content_key);
@@ -1410,6 +1453,7 @@ function rowBody(row: AdminGeneratedContentRow | AdminReviewRecord | AdminUserGe
 function rowTypeLabel(row: AdminGeneratedContentRow) {
   const structuredIdentity = skyFallbackIdentity(row.content_key);
   if (structuredIdentity) return structuredIdentity.typeLabel;
+  if (row.content_key.startsWith("slot-template/")) return `Copy pattern for ${templateDestinationLabel(row.content_key).toLowerCase()}`;
   if (row.content_key.startsWith("authored/career-natal-aspect/")) return "Natal aspect passage";
   if (row.content_key.startsWith("authored/career-transit-house/")) return "Transit house passage";
   if (row.content_key.startsWith("authored/career-placement/")) return "Natal placement passage";
@@ -3831,7 +3875,7 @@ export function GeneratedContentAdminDashboard() {
                 <button type="button" role="menuitem" onClick={() => handleCreateAction("templates", "Create template opened.")}>
                   <KeyRound size={16} aria-hidden="true" />
                   <span>Create template</span>
-                  <small>Mustache scaffold</small>
+                  <small>Reusable reader-copy pattern</small>
                 </button>
                 <button type="button" role="menuitem" onClick={() => handleCreateAction("knowledge", "Create fallback hook opened.")}>
                   <Flag size={16} aria-hidden="true" />
@@ -4354,19 +4398,19 @@ export function GeneratedContentAdminDashboard() {
 
         {activePage === "templates" && (
           <section className="admin-template-page">
-            <section className="admin-phrasebook-panel" aria-label="Mustache template library">
+            <section className="admin-phrasebook-panel" aria-label="Reader copy template library">
               <div className="admin-section-heading-row">
                 <div>
                   <p className="admin-eyebrow">Composition</p>
-                  <h2>Mustache templates and voice scaffolds</h2>
-                  <p>Templates now support the phrasebank review flow instead of competing with it as a generation workflow.</p>
+                  <h2>Reader copy templates</h2>
+                  <p>Each row is a reusable pattern for one app destination. Its title shows where it is used.</p>
                 </div>
                 <span className="ui-pill admin-status">{templateRows.length} saved</span>
               </div>
             </section>
             <label className="admin-field-wide">
               <span>Search templates</span>
-              <input aria-label="Search templates" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Template name, key, or source" />
+              <input aria-label="Search templates" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Destination, template name, or key" />
             </label>
             <section className="admin-workbench admin-review-workspace">
               {renderEditor()}
