@@ -1705,15 +1705,22 @@ export function isGeneratedContentReaderBoundaryAllowed(row: GeneratedContentRea
     || row.content_key.startsWith("synastry.")
     || row.content_key.startsWith("synastry-")
     || /^A-[^/]+_B-[^/]+_/u.test(row.content_key);
+  const isSkyPlacementWorkspace = row.content_key.startsWith("sky.placement.")
+    || row.event_type === "collective-placement-card"
+    || row.event_type === "collective-placement-topper"
+    || row.event_type === "sky-article-edition"
+    || row.event_type === "sky-article-edition-revision"
+    || row.event_type === "sky-article-edition-workspace";
 
-  if (!isSynastryGeneratedLane) {
+  if (!isSynastryGeneratedLane && !isSkyPlacementWorkspace) {
     return true;
   }
 
   // Package-originated rows are installed through
   // loadFallbackArchitectureV3DashboardBundle and rendered by the package
-  // resolver. The generic generated-content map must never be a second
-  // synastry copy source.
+  // resolver. The generic generated-content map remains available to writer,
+  // judge, and owner-review tooling, but must never become a second reader
+  // copy source for synastry or Sky Placement.
   return false;
 }
 
