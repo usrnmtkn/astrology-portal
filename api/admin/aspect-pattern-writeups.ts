@@ -560,7 +560,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
         sendJson(res, 200, { ok: true, previews: previewForRecord(saveKind, record) });
         return;
       }
-      if (!isContentAdminAuthorized(req)) {
+      if (!await isContentAdminAuthorized(req)) {
         sendJson(res, 401, { ok: false, error: "Unauthorized." });
         return;
       }
