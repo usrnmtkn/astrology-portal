@@ -25,10 +25,19 @@ try {
   assert.equal(isContentAdminAuthorized(request({ "x-content-generation-secret": "wrong" })), false);
   assert.equal(isContentAdminAuthorized(request({ "x-content-generation-secret": "production-admin-secret" })), true);
   assert.equal(isContentAdminAuthorized(request({ authorization: "Bearer production-admin-secret" })), true);
+  assert.equal(isContentAdminAuthorized(request({ "x-content-generation-secret": " production-admin-secret " })), true);
   assert.equal(isContentAdminAuthorized(request({
     authorization: "Bearer wrong",
     "x-content-generation-secret": "production-admin-secret"
   })), true, "The dedicated header must work when an intermediary consumes Authorization.");
+
+  process.env.CONTENT_GENERATION_SECRET = " production-admin-secret\n";
+  assert.equal(
+    isContentAdminAuthorized(request({ "x-content-generation-secret": "production-admin-secret" })),
+    true,
+    "Deployment environment whitespace must not invalidate the configured secret."
+  );
+  process.env.CONTENT_GENERATION_SECRET = "production-admin-secret";
 
   delete process.env.CONTENT_GENERATION_SECRET;
   assert.equal(isContentAdminAuthorized(request()), false, "Production must fail closed without a configured secret.");
