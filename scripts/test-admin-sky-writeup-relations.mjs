@@ -5,6 +5,8 @@ import {
   personalTransitAspectCmsStarter,
   relatedAspectPassages,
   relatedHousePassages,
+  relatedLunationHoroscopes,
+  skyLunationContextForRow,
   skyWriteupContextForRow
 } from "../apps/admin/src/skyWriteupRelations.ts";
 
@@ -82,6 +84,61 @@ assert.deepEqual(
     block_type: "sky_article"
   }),
   { planet: "moon", sign: "pisces" }
+);
+
+const piscesFullMoonMacro = {
+  id: "pisces-full-moon-macro",
+  content_key: "authored/sky-lunation-macro/full-moon/pisces",
+  headline: "The Macro View: What the Pisces Full Moon Represents",
+  body: "Check the details without treating reality as a betrayal of the dream.",
+  mode: "article"
+};
+assert.deepEqual(
+  skyWriteupContextForRow(piscesFullMoonMacro),
+  { planet: "moon", sign: "pisces" },
+  "Approved lunation macros must participate in the same Sky write-up workflow as placements."
+);
+const piscesFullMoonContext = skyLunationContextForRow(piscesFullMoonMacro);
+assert.deepEqual(piscesFullMoonContext, { kind: "full-moon", sign: "pisces" });
+assert.deepEqual(
+  skyLunationContextForRow({
+    id: "solar-eclipse",
+    content_key: "sky/article-edition/lunation/virgo-solar-eclipse",
+    headline: "Virgo Solar Eclipse",
+    block_type: "sky_article"
+  }),
+  { kind: "new-moon", sign: "virgo" }
+);
+
+const lunationSourceRows = [
+  { id: "frame", content_key: "fallback-hook/lunation-horoscope/full", body: "Your {{houseOrdinal}} house of {{jurisdiction}} is illuminated." },
+  { id: "focus", content_key: "fallback-hook/lunation-sign-compact/full-moon/pisces", body: "Pisces asks where empathy has become an obligation." },
+  ...Array.from({ length: 12 }, (_, index) => ({
+    id: `opening-${index + 1}`,
+    content_key: `fallback-hook/lunation-opening-situation/${index + 1}`,
+    body: `Opening ${index + 1}.`
+  })),
+  ...Array.from({ length: 12 }, (_, index) => ({
+    id: `jurisdiction-${index + 1}`,
+    content_key: `fallback-vocab/house-jurisdiction/${index + 1}`,
+    body: `house topic ${index + 1}`
+  }))
+];
+const lunationHoroscopes = relatedLunationHoroscopes(lunationSourceRows, piscesFullMoonContext);
+assert.equal(lunationHoroscopes.length, 12);
+assert.equal(lunationHoroscopes.every((horoscope) => horoscope.sourceReady), true);
+assert.deepEqual(
+  lunationHoroscopes.map(({ risingSign, house }) => [risingSign, house]).slice(0, 2),
+  [["aries", 12], ["taurus", 11]],
+  "The dashboard must use the same whole-sign house ordering as the runtime lunation composer."
+);
+assert.match(
+  lunationHoroscopes.find((horoscope) => horoscope.risingSign === "pisces").preview,
+  /Opening 1\. Your 1st house of house topic 1 is illuminated\.[\s\S]*Pisces asks/u
+);
+assert.deepEqual(
+  lunationHoroscopes.find((horoscope) => horoscope.risingSign === "pisces").sources.map((source) => source.role),
+  ["Horoscope frame", "House opening", "House jurisdiction", "Sign focus"]
 );
 
 assert.equal(
