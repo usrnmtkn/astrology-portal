@@ -1248,7 +1248,8 @@ function templateDestinationLabel(contentKey: string) {
   if (/^5[L-O]$/u.test(slotId)) return "Natal angle";
   if (/^5[P-S]$/u.test(slotId)) return "Natal aspect";
   if (/^6[E-F]$/u.test(slotId)) return "Current Sky aspect";
-  if (/^6[G-M]$/u.test(slotId)) return "Retrograde timeline";
+  if (/^6[G-L]$/u.test(slotId)) return "Retrograde timeline";
+  if (slotId === "6M") return "Current Sky event";
   if (slotId === "6N") return "Sky detail";
   if (slotId === "6O") return "Calendar";
   return "Reader copy";
@@ -1269,6 +1270,9 @@ function templateDisplayName(contentKey: string, headline: string) {
     .replace(/^placement\s+core:\s*/iu, "")
     .replace(/\s+(?:slot|template|voice scaffold)$/iu, "")
     .trim();
+
+  if (destination === "Current Sky placement") name = name.replace(/^current\s+/iu, "");
+  if (destination === "Calendar") name = name.replace(/^calendar\s+/iu, "");
 
   if (!name) name = "Template";
   return `${destination} · ${name.charAt(0).toUpperCase()}${name.slice(1)}`;
