@@ -1949,9 +1949,11 @@ function renderSkyPlacementCopy({
     ));
   }
 
-  // Lilith joins the continuous renderer only when an approved continuous row
-  // exists. Until then, its owner-approved four-slot page remains unchanged.
-  // This makes migration additive instead of blanking a page at cutover time.
+  // Continuous articles win when they exist. Otherwise a standalone sign row
+  // may supply the sign-specific slot to the canonical frame composer below;
+  // it is never a finished page by itself.
+  let standaloneSignCopy = null;
+  const fourSlotEligible = skyPlacementRenderEligible(planet, sign);
   if (SKY_PLACEMENT_CONTINUOUS_PLANETS.has(planet) || (planet === "lilith" && continuousSignCopy)) {
     const standaloneHook = hooks.get(`fallback-hook/sky-placement-sign/${planet}/${sign}`);
     if (continuousSignCopy) {
@@ -1968,22 +1970,8 @@ function renderSkyPlacementCopy({
         previousResidencyExitDate
       });
     }
-    if (!skyPlacementRenderEligible(planet, sign) && standaloneHook?.body_you) {
-      const body = standaloneHook.body_you.trim();
-      if (!body || /\{\{/u.test(body)) {
-        throw new SourceGapError(`SOURCE_GAP: standalone sky placement hook ${planet}/${sign}`);
-      }
-      return {
-        headline: `${capitalizeSentence(transitRef(planet))} in ${title(sign)}`,
-        tagline: null,
-        keyDates: [],
-        body,
-        parts: [body],
-        templateKey: "sky-placement-standalone-hook-v1",
-        contentKey: standaloneHook.contentKey
-      };
-    }
-    if (!skyPlacementRenderEligible(planet, sign)) {
+    standaloneSignCopy = standaloneHook?.body_you?.trim() || null;
+    if (!fourSlotEligible && !standaloneSignCopy) {
       throw new SourceGapError(`SOURCE_GAP: continuous sky placement sign copy ${planet}/${sign}`);
     }
   }
@@ -1999,8 +1987,10 @@ function renderSkyPlacementCopy({
   const signCopy = continuousSignCopy?.body_you;
   const signParts = signCopy
     ? [signCopy]
-    : pairHook && pairLived && pairTurn
+    : (fourSlotEligible || planet === "lilith") && pairHook && pairLived && pairTurn
       ? [pairHook, pairLived, pairTurn]
+      : standaloneSignCopy
+        ? [standaloneSignCopy]
       : [];
   const tagline = hooks.get(`fallback-hook/sky-placement-tagline/${planet}/${sign}`)?.body_you ?? null;
   {
@@ -2011,17 +2001,15 @@ function renderSkyPlacementCopy({
       ? retrogradePlanetFrame ?? directPlanetFrame
       : directPlanetFrame;
     const signStyle = vocab.get(`fallback-vocab/sky-sign-style/${sign}`)?.body;
-    const planetFunction = vocab.get(`fallback-vocab/sky-planet-function/${planet}`)?.body;
     if (
       windowFrame
       && planetFrame
       && signStyle
-      && planetFunction
       && entryDate
       && exitDate
       && signParts.length > 0
     ) {
-      const ctx = { signTitle: title(sign), signStyle, planetFunction, entryDate, exitDate };
+      const ctx = { signTitle: title(sign), signStyle, entryDate, exitDate };
       const parts = [
         windowFrame,
         planetFrame,
@@ -2037,28 +2025,15 @@ function renderSkyPlacementCopy({
         body: parts.join("\n\n"),
         parts,
         templateKey: signCopy ? "sky-placement-article-v2" : "sky-placement-frame-v3",
-        contentKey: signCopy ? signCopyKey : `fallback-hook/sky-placement/${planet}`
+        contentKey: standaloneSignCopy
+          ? `fallback-hook/sky-placement-sign/${planet}/${sign}`
+          : signCopy
+            ? signCopyKey
+            : `fallback-hook/sky-placement/${planet}`
       };
     }
   }
 
-  if (pairHook && pairLived && pairTurn) {
-    let parts = [pairHook, pairLived, retrogradeGuidance, pairTurn, ...aspectParas].filter(Boolean);
-    if (planet === "lilith") {
-      parts = parts.map((part) => fillKeep(part, { exitDate }));
-      if (parts.some((part) => /\{\{/u.test(part))) {
-        throw new SourceGapError(`SOURCE_GAP: sky placement pair slots lilith/${sign}`);
-      }
-    }
-    return {
-      headline: `${transitRef(planet)} in ${title(sign)}`.replace(/^the /, "The "),
-      tagline,
-      body: parts.join("\n\n"),
-      parts,
-      templateKey: "fallback-template/sky.placement-article",
-      contentKey: pairKey
-    };
-  }
   throw new SourceGapError(`SOURCE_GAP: sky placement ${planet}/${sign}`);
 }
 

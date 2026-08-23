@@ -78,6 +78,13 @@ const jupiterLeoFacts = {
   exitDate: "July 26, 2027",
   events: []
 };
+const sunVirgoFacts = {
+  planet: "sun",
+  sign: "virgo",
+  entryDate: "August 22, 2026",
+  exitDate: "September 22, 2026",
+  events: []
+};
 
 assert.equal(runtime.isSkyPlacementFallbackArchitectureV3BundleLoaded(), false);
 assert.ok(placementRows.hookRows.length > 650, "The long-form placement package must stay in its deferred partition.");
@@ -92,10 +99,11 @@ assert.equal(
   "The deferred placement manifest must cover both on-demand placement chunks."
 );
 
-const before = runtime.transitSynastryFallbackRendererV3.renderSkyPlacement(facts);
-assert.equal(before.templateKey, "sky-placement-standalone-hook-v1");
-assert.equal(before.contentKey, "fallback-hook/sky-placement-sign/sun/leo");
-assert.doesNotMatch(before.body, /\{\{/u, "The eager reader-safety floor must always be renderable.");
+assert.throws(
+  () => runtime.transitSynastryFallbackRendererV3.renderSkyPlacement(facts),
+  /SOURCE_GAP/u,
+  "Sky Placement must wait for its canonical package instead of rendering an eager thin article."
+);
 assert.throws(
   () => runtime.transitSynastryFallbackRendererV3.renderSkyPlacement(moonTaurusFacts),
   /SOURCE_GAP/u,
@@ -146,6 +154,14 @@ assert.match(
   }).body,
   /Let people love you loudly this year/u
 );
+const sunVirgoAfter = runtime.transitSynastryFallbackRendererV3.renderSkyPlacement(sunVirgoFacts);
+assert.equal(sunVirgoAfter.templateKey, "sky-placement-frame-v3");
+assert.equal(sunVirgoAfter.contentKey, "fallback-hook/sky-placement-sign/sun/virgo");
+assert.equal(sunVirgoAfter.parts.length, 3);
+assert.match(sunVirgoAfter.parts[0], /August 22, 2026 to September 22, 2026/u);
+assert.match(sunVirgoAfter.parts[1], /The Sun puts one part of life under direct light/u);
+assert.match(sunVirgoAfter.parts[2], /confidence to usefulness, accuracy, and the work that improves an ordinary day/u);
+assert.doesNotMatch(sunVirgoAfter.body, /\{\{/u);
 assert.equal(await runtime.loadSkyPlacementFallbackArchitectureV3Bundle(), false);
 
 console.log("Deferred Sky Placement runtime parity passed.");

@@ -345,7 +345,9 @@ const snapshotBundle: FallbackArchitectureV3Bundle = {
       ...((bundledSkyCoreRowsV3 as RowsFile).hookRows ?? []),
       ...(lunationBlendUnitsV1.hookRows as HookRow[]),
       ...(skyArticleV1.hookRows as HookRow[]),
-      ...(skyAspectPhrasebookV1.hookRows as HookRow[])
+      ...(skyAspectPhrasebookV1.hookRows as HookRow[]).filter(
+        (row) => !row.contentKey.startsWith("fallback-hook/sky-placement-sign/")
+      )
     ],
     vocabularyRows: [
       ...((bundledSkyCoreRowsV3 as RowsFile).vocabularyRows ?? []),

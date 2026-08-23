@@ -135,10 +135,16 @@ const lilithMigrationFacts = {
   previousResidencyExitDate: "January 1, 2018",
   events: []
 };
+const lilithFramedFallback = renderer.renderSkyPlacement(lilithMigrationFacts);
 assert.equal(
-  renderer.renderSkyPlacement(lilithMigrationFacts).templateKey,
-  "fallback-template/sky.placement-article",
-  "Lilith must keep its approved four-slot page until an approved continuous row exists."
+  lilithFramedFallback.templateKey,
+  "sky-placement-frame-v3",
+  "Lilith four-slot copy must render inside the canonical frame until an approved continuous row exists."
+);
+assert.match(
+  lilithFramedFallback.body,
+  /Until January 3, 2027/u,
+  "The canonical frame must preserve Lilith's governed final-exit substitution."
 );
 assert.equal(
   lilithMigrationProbeRenderer.renderSkyPlacement(lilithMigrationFacts).templateKey,
@@ -579,13 +585,8 @@ assert.doesNotMatch(writingSurfaceSourceMap, /sky-writing-v1|skyContentSnapshot/
 
 assert.match(app, /transitSynastryFallbackRendererV3\.renderSkyPlacement\(\{/, "Sky placement rendering must call the V3 package renderer.");
 for (const [label, source] of [["Node", nodeTransitRenderer], ["browser", browserTransitRenderer]]) {
-  const pairSlotBranch = source.slice(source.indexOf("if (pairHook && pairLived && pairTurn)"), source.indexOf("throw new SourceGapError(`SOURCE_GAP: sky placement ${planet}/${sign}`)"));
-  assert.doesNotMatch(
-    pairSlotBranch,
-    /fillKeep\(part, \{ entryDate, exitDate \}\)/u,
-    `${label} must not impose a universal date-token contract on fact-sourced four-slot durations.`
-  );
-  assert.match(pairSlotBranch, /if \(planet === "lilith"\)/u, `${label} must preserve Lilith's governed exitDate substitution.`);
+  assert.doesNotMatch(source, /sky-placement-standalone-hook-v1/u, `${label} must not retain the thin standalone renderer.`);
+  assert.doesNotMatch(source, /fallback-template\/sky\.placement-article/u, `${label} must not retain the unframed four-slot renderer.`);
 }
 assert.match(
   app,
@@ -812,9 +813,10 @@ assert.equal(
 );
 assert.match(
   lilithAries.body,
-  /^Someone finally says no to the demand they have agreed to a hundred times before/u,
-  "Owner-approved Lilith placement copy must render from the promoted pair rows."
+  /Someone finally says no to the demand they have agreed to a hundred times before/u,
+  "The canonical frame must preserve owner-approved Lilith pair copy verbatim."
 );
+assert.equal(lilithAries.templateKey, "sky-placement-frame-v3");
 assert.equal(Object.hasOwn(lilithAries, "moves"), false, "Lilith placement articles must not expose a Try this section.");
 assert.doesNotMatch(
   sunLeo.body,

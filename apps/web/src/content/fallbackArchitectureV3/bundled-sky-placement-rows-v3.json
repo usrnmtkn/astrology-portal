@@ -10928,6 +10928,438 @@
       "review_status": "approved"
     },
     {
+      "contentKey": "fallback-hook/sky-placement-sign/sun/aries",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "The Sun in Aries brings identity and confidence closer to action. People are quicker to start, answer directly, and make a choice before every consequence is known, so hesitation can feel more frustrating than the risk of being first.",
+      "body_they": "The Sun in Aries brings identity and confidence closer to action. People are quicker to start, answer directly, and make a choice before every consequence is known, so hesitation can feel more frustrating than the risk of being first.",
+      "review_status": "reviewed",
+      "source_keys": [
+        "sky-aspect phrasebook (ChatGPT-drafted from house vocab + Jansky/Hand, owner-reviewed)"
+      ],
+      "note": "sky placement (planet in sign, collective); reviewed"
+    },
+    {
+      "contentKey": "fallback-hook/sky-placement-sign/sun/taurus",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "The Sun in Taurus puts confidence behind what can be maintained. People take more pride in choosing carefully, protecting time and resources, and staying with a decision long enough to see what it produces, even when someone else wants a faster answer.",
+      "body_they": "The Sun in Taurus puts confidence behind what can be maintained. People take more pride in choosing carefully, protecting time and resources, and staying with a decision long enough to see what it produces, even when someone else wants a faster answer.",
+      "review_status": "reviewed",
+      "source_keys": [
+        "sky-aspect phrasebook (ChatGPT-drafted from house vocab + Jansky/Hand, owner-reviewed)"
+      ],
+      "note": "sky placement (planet in sign, collective); reviewed"
+    },
+    {
+      "contentKey": "fallback-hook/sky-placement-sign/sun/gemini",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "The Sun in Gemini brings confidence into conversation. People are more willing to ask another question, compare several answers, and change their minds when new information arrives; being able to respond may matter more than having one final position.",
+      "body_they": "The Sun in Gemini brings confidence into conversation. People are more willing to ask another question, compare several answers, and change their minds when new information arrives; being able to respond may matter more than having one final position.",
+      "review_status": "reviewed",
+      "source_keys": [
+        "sky-aspect phrasebook (ChatGPT-drafted from house vocab + Jansky/Hand, owner-reviewed)"
+      ],
+      "note": "sky placement (planet in sign, collective); reviewed"
+    },
+    {
+      "contentKey": "fallback-hook/sky-placement-sign/sun/cancer",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "The Sun in Cancer directs attention toward who and what people feel responsible for protecting. Decisions are easier to understand through family, belonging, memory, or the need to keep private life from being pushed aside.",
+      "body_they": "The Sun in Cancer directs attention toward who and what people feel responsible for protecting. Decisions are easier to understand through family, belonging, memory, or the need to keep private life from being pushed aside.",
+      "review_status": "reviewed",
+      "source_keys": [
+        "sky-aspect phrasebook (ChatGPT-drafted from house vocab + Jansky/Hand, owner-reviewed)"
+      ],
+      "note": "sky placement (planet in sign, collective); reviewed"
+    },
+    {
+      "contentKey": "fallback-hook/sky-placement-sign/sun/leo",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "The Sun in Leo makes confidence, recognition, and creative authorship more visible. People want to stand behind their work, celebrate what matters, and know their contribution was noticed; a muted response can carry more weight than intended.",
+      "body_they": "The Sun in Leo makes confidence, recognition, and creative authorship more visible. People want to stand behind their work, celebrate what matters, and know their contribution was noticed; a muted response can carry more weight than intended.",
+      "review_status": "reviewed",
+      "source_keys": [
+        "sky-aspect phrasebook (ChatGPT-drafted from house vocab + Jansky/Hand, owner-reviewed)"
+      ],
+      "note": "sky placement (planet in sign, collective); reviewed"
+    },
+    {
+      "contentKey": "fallback-hook/sky-placement-sign/sun/virgo",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "The Sun in Virgo ties confidence to usefulness, accuracy, and the work that improves an ordinary day. People notice what is unfinished or poorly handled and may feel more comfortable fixing the problem than taking credit for seeing it.",
+      "body_they": "The Sun in Virgo ties confidence to usefulness, accuracy, and the work that improves an ordinary day. People notice what is unfinished or poorly handled and may feel more comfortable fixing the problem than taking credit for seeing it.",
+      "review_status": "reviewed",
+      "source_keys": [
+        "sky-aspect phrasebook (ChatGPT-drafted from house vocab + Jansky/Hand, owner-reviewed)"
+      ],
+      "note": "sky placement (planet in sign, collective); reviewed"
+    },
+    {
+      "contentKey": "fallback-hook/sky-placement-sign/sun/libra",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "The Sun in Libra brings identity into relationship with other people's needs, reactions, and choices. People weigh how a decision will land, look for a fair arrangement, and become more aware of the cost of keeping the peace when no agreement feels honest.",
+      "body_they": "The Sun in Libra brings identity into relationship with other people's needs, reactions, and choices. People weigh how a decision will land, look for a fair arrangement, and become more aware of the cost of keeping the peace when no agreement feels honest.",
+      "review_status": "reviewed",
+      "source_keys": [
+        "sky-aspect phrasebook (ChatGPT-drafted from house vocab + Jansky/Hand, owner-reviewed)"
+      ],
+      "note": "sky placement (planet in sign, collective); reviewed"
+    },
+    {
+      "contentKey": "fallback-hook/sky-placement-sign/sun/scorpio",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "The Sun in Scorpio concentrates attention around trust, privacy, and the parts of a situation people are reluctant to name. Confidence comes from knowing what is actually happening, especially when the public explanation leaves out the motive, fear, or power underneath it.",
+      "body_they": "The Sun in Scorpio concentrates attention around trust, privacy, and the parts of a situation people are reluctant to name. Confidence comes from knowing what is actually happening, especially when the public explanation leaves out the motive, fear, or power underneath it.",
+      "review_status": "reviewed",
+      "source_keys": [
+        "sky-aspect phrasebook (ChatGPT-drafted from house vocab + Jansky/Hand, owner-reviewed)"
+      ],
+      "note": "sky placement (planet in sign, collective); reviewed"
+    },
+    {
+      "contentKey": "fallback-hook/sky-placement-sign/sun/sagittarius",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "The Sun in Sagittarius makes confidence easier to find through movement, belief, and a wider view of what may be possible. People are more willing to speak from conviction, take a chance on a larger plan, or leave familiar limits behind, sometimes before the details are settled.",
+      "body_they": "The Sun in Sagittarius makes confidence easier to find through movement, belief, and a wider view of what may be possible. People are more willing to speak from conviction, take a chance on a larger plan, or leave familiar limits behind, sometimes before the details are settled.",
+      "review_status": "reviewed",
+      "source_keys": [
+        "sky-aspect phrasebook (ChatGPT-drafted from house vocab + Jansky/Hand, owner-reviewed)"
+      ],
+      "note": "sky placement (planet in sign, collective); reviewed"
+    },
+    {
+      "contentKey": "fallback-hook/sky-placement-sign/sun/capricorn",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "The Sun in Capricorn puts identity and confidence against the measure of responsibility, consequence, and time. People want their choices to hold up, their work to count, and their authority to be earned, so pleasure may be postponed until the important obligation is handled.",
+      "body_they": "The Sun in Capricorn puts identity and confidence against the measure of responsibility, consequence, and time. People want their choices to hold up, their work to count, and their authority to be earned, so pleasure may be postponed until the important obligation is handled.",
+      "review_status": "reviewed",
+      "source_keys": [
+        "sky-aspect phrasebook (ChatGPT-drafted from house vocab + Jansky/Hand, owner-reviewed)"
+      ],
+      "note": "sky placement (planet in sign, collective); reviewed"
+    },
+    {
+      "contentKey": "fallback-hook/sky-placement-sign/sun/aquarius",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "The Sun in Aquarius makes confidence more dependent on independent judgment and the freedom to question the accepted answer. People pay closer attention to who has been excluded, what could work differently, and whether belonging now requires agreement that no longer makes sense.",
+      "body_they": "The Sun in Aquarius makes confidence more dependent on independent judgment and the freedom to question the accepted answer. People pay closer attention to who has been excluded, what could work differently, and whether belonging now requires agreement that no longer makes sense.",
+      "review_status": "reviewed",
+      "source_keys": [
+        "sky-aspect phrasebook (ChatGPT-drafted from house vocab + Jansky/Hand, owner-reviewed)"
+      ],
+      "note": "sky placement (planet in sign, collective); reviewed"
+    },
+    {
+      "contentKey": "fallback-hook/sky-placement-sign/sun/pisces",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "The Sun in Pisces lets identity become more responsive to imagination, compassion, and what cannot be solved through force. People may recognize themselves in a shared feeling, a creative vision, or someone else's pain, while clear personal boundaries become harder to maintain.",
+      "body_they": "The Sun in Pisces lets identity become more responsive to imagination, compassion, and what cannot be solved through force. People may recognize themselves in a shared feeling, a creative vision, or someone else's pain, while clear personal boundaries become harder to maintain.",
+      "review_status": "reviewed",
+      "source_keys": [
+        "sky-aspect phrasebook (ChatGPT-drafted from house vocab + Jansky/Hand, owner-reviewed)"
+      ],
+      "note": "sky placement (planet in sign, collective); reviewed"
+    },
+    {
+      "contentKey": "fallback-hook/sky-placement-sign/venus/aries",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Venus in Aries makes affection and desire more direct. Interest is easier to recognize through the first move, an immediate answer, or the willingness to choose what feels alive before every consequence has been discussed.",
+      "body_they": "Venus in Aries makes affection and desire more direct. Interest is easier to recognize through the first move, an immediate answer, or the willingness to choose what feels alive before every consequence has been discussed.",
+      "review_status": "reviewed",
+      "source_keys": [
+        "sky-aspect phrasebook (ChatGPT-drafted from house vocab + Jansky/Hand, owner-reviewed)"
+      ],
+      "note": "sky placement (planet in sign, collective); reviewed"
+    },
+    {
+      "contentKey": "fallback-hook/sky-placement-sign/venus/taurus",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Venus in Taurus expresses care through consistency, physical comfort, and what can be enjoyed without being rushed. Affection becomes easier to trust when someone returns, remembers what feels good, and treats time, money, and attention as real resources.",
+      "body_they": "Venus in Taurus expresses care through consistency, physical comfort, and what can be enjoyed without being rushed. Affection becomes easier to trust when someone returns, remembers what feels good, and treats time, money, and attention as real resources.",
+      "review_status": "reviewed",
+      "source_keys": [
+        "sky-aspect phrasebook (ChatGPT-drafted from house vocab + Jansky/Hand, owner-reviewed)"
+      ],
+      "note": "sky placement (planet in sign, collective); reviewed"
+    },
+    {
+      "contentKey": "fallback-hook/sky-placement-sign/venus/gemini",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Venus in Gemini keeps connection moving through conversation, curiosity, and a responsive exchange. Interest may show up as another question, a quick message, a shared joke, or the feeling that there is still more to learn about each other.",
+      "body_they": "Venus in Gemini keeps connection moving through conversation, curiosity, and a responsive exchange. Interest may show up as another question, a quick message, a shared joke, or the feeling that there is still more to learn about each other.",
+      "review_status": "reviewed",
+      "source_keys": [
+        "sky-aspect phrasebook (ChatGPT-drafted from house vocab + Jansky/Hand, owner-reviewed)"
+      ],
+      "note": "sky placement (planet in sign, collective); reviewed"
+    },
+    {
+      "contentKey": "fallback-hook/sky-placement-sign/venus/cancer",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Venus in Cancer expresses affection through protection, memory, and care for private life. People may show love by checking in, making someone comfortable, remembering what was needed before, or creating a place where the connection can feel safe.",
+      "body_they": "Venus in Cancer expresses affection through protection, memory, and care for private life. People may show love by checking in, making someone comfortable, remembering what was needed before, or creating a place where the connection can feel safe.",
+      "review_status": "reviewed",
+      "source_keys": [
+        "sky-aspect phrasebook (ChatGPT-drafted from house vocab + Jansky/Hand, owner-reviewed)"
+      ],
+      "note": "sky placement (planet in sign, collective); reviewed"
+    },
+    {
+      "contentKey": "fallback-hook/sky-placement-sign/venus/leo",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Venus in Leo makes affection, pleasure, and appreciation more visible. Affection is easier to recognize when it is expressed openly, celebrated, or made clear enough that no one has to guess how much the person or event mattered.",
+      "body_they": "Venus in Leo makes affection, pleasure, and appreciation more visible. Affection is easier to recognize when it is expressed openly, celebrated, or made clear enough that no one has to guess how much the person or event mattered.",
+      "review_status": "reviewed",
+      "source_keys": [
+        "sky-aspect phrasebook (ChatGPT-drafted from house vocab + Jansky/Hand, owner-reviewed)"
+      ],
+      "note": "sky placement (planet in sign, collective); reviewed"
+    },
+    {
+      "contentKey": "fallback-hook/sky-placement-sign/venus/virgo",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Venus in Virgo expresses care through attention, effort, and the small repair that makes an ordinary day easier. Affection may appear as remembering a detail, helping with the work, or noticing a need before anyone has to ask.",
+      "body_they": "Venus in Virgo expresses care through attention, effort, and the small repair that makes an ordinary day easier. Affection may appear as remembering a detail, helping with the work, or noticing a need before anyone has to ask.",
+      "review_status": "reviewed",
+      "source_keys": [
+        "sky-aspect phrasebook (ChatGPT-drafted from house vocab + Jansky/Hand, owner-reviewed)"
+      ],
+      "note": "sky placement (planet in sign, collective); reviewed"
+    },
+    {
+      "contentKey": "fallback-hook/sky-placement-sign/venus/libra",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Venus in Libra looks for reciprocity, consideration, and an arrangement people can enter without resentment. Connection feels better when each person has been heard, the exchange feels fair, and thoughtfulness is visible in how the choice was made.",
+      "body_they": "Venus in Libra looks for reciprocity, consideration, and an arrangement people can enter without resentment. Connection feels better when each person has been heard, the exchange feels fair, and thoughtfulness is visible in how the choice was made.",
+      "review_status": "reviewed",
+      "source_keys": [
+        "sky-aspect phrasebook (ChatGPT-drafted from house vocab + Jansky/Hand, owner-reviewed)"
+      ],
+      "note": "sky placement (planet in sign, collective); reviewed"
+    },
+    {
+      "contentKey": "fallback-hook/sky-placement-sign/venus/scorpio",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Venus in Scorpio makes affection more private, intense, and dependent on trust. People may care through loyalty, honesty about what is difficult, and the willingness to stay present when a connection reaches money, jealousy, grief, or fear.",
+      "body_they": "Venus in Scorpio makes affection more private, intense, and dependent on trust. People may care through loyalty, honesty about what is difficult, and the willingness to stay present when a connection reaches money, jealousy, grief, or fear.",
+      "review_status": "reviewed",
+      "source_keys": [
+        "sky-aspect phrasebook (ChatGPT-drafted from house vocab + Jansky/Hand, owner-reviewed)"
+      ],
+      "note": "sky placement (planet in sign, collective); reviewed"
+    },
+    {
+      "contentKey": "fallback-hook/sky-placement-sign/venus/sagittarius",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Venus in Sagittarius looks for pleasure through honesty, movement, and experiences that make life feel larger. Affection may grow through shared plans, humor, travel, learning, or enough freedom for people to keep discovering who they are.",
+      "body_they": "Venus in Sagittarius looks for pleasure through honesty, movement, and experiences that make life feel larger. Affection may grow through shared plans, humor, travel, learning, or enough freedom for people to keep discovering who they are.",
+      "review_status": "reviewed",
+      "source_keys": [
+        "sky-aspect phrasebook (ChatGPT-drafted from house vocab + Jansky/Hand, owner-reviewed)"
+      ],
+      "note": "sky placement (planet in sign, collective); reviewed"
+    },
+    {
+      "contentKey": "fallback-hook/sky-placement-sign/venus/capricorn",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Venus in Capricorn expresses care through reliability, planning, and an investment that can be measured over time. Affection may look restrained at first, but it becomes visible in who follows through, prepares for the future, and remains when the work is inconvenient.",
+      "body_they": "Venus in Capricorn expresses care through reliability, planning, and an investment that can be measured over time. Affection may look restrained at first, but it becomes visible in who follows through, prepares for the future, and remains when the work is inconvenient.",
+      "review_status": "reviewed",
+      "source_keys": [
+        "sky-aspect phrasebook (ChatGPT-drafted from house vocab + Jansky/Hand, owner-reviewed)"
+      ],
+      "note": "sky placement (planet in sign, collective); reviewed"
+    },
+    {
+      "contentKey": "fallback-hook/sky-placement-sign/venus/aquarius",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Venus in Aquarius values connection with enough room for independent thought, friendship, and an unconventional arrangement. Affection may appear through shared ideas, respect for difference, or the relief of being accepted without having to follow a familiar script.",
+      "body_they": "Venus in Aquarius values connection with enough room for independent thought, friendship, and an unconventional arrangement. Affection may appear through shared ideas, respect for difference, or the relief of being accepted without having to follow a familiar script.",
+      "review_status": "reviewed",
+      "source_keys": [
+        "sky-aspect phrasebook (ChatGPT-drafted from house vocab + Jansky/Hand, owner-reviewed)"
+      ],
+      "note": "sky placement (planet in sign, collective); reviewed"
+    },
+    {
+      "contentKey": "fallback-hook/sky-placement-sign/venus/pisces",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Venus in Pisces makes affection more responsive to compassion, imagination, and what people feel without saying. Care may become generous and forgiving, while disappointment grows when the hoped-for connection carries more weight than the agreement people actually made.",
+      "body_they": "Venus in Pisces makes affection more responsive to compassion, imagination, and what people feel without saying. Care may become generous and forgiving, while disappointment grows when the hoped-for connection carries more weight than the agreement people actually made.",
+      "review_status": "reviewed",
+      "source_keys": [
+        "sky-aspect phrasebook (ChatGPT-drafted from house vocab + Jansky/Hand, owner-reviewed)"
+      ],
+      "note": "sky placement (planet in sign, collective); reviewed"
+    },
+    {
+      "contentKey": "fallback-hook/sky-placement-sign/saturn/aries",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Saturn in Aries concentrates pressure around starting, asserting a need, and acting without permission. Limits may appear through hesitation, a challenge to someone's authority, or the consequences that arrive when urgency moves faster than preparation.",
+      "body_they": "Saturn in Aries concentrates pressure around starting, asserting a need, and acting without permission. Limits may appear through hesitation, a challenge to someone's authority, or the consequences that arrive when urgency moves faster than preparation.",
+      "review_status": "reviewed",
+      "source_keys": [
+        "sky-aspect phrasebook (ChatGPT-drafted from house vocab + Jansky/Hand, owner-reviewed)"
+      ],
+      "note": "sky placement (planet in sign, collective); reviewed"
+    },
+    {
+      "contentKey": "fallback-hook/sky-placement-sign/saturn/taurus",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Saturn in Taurus concentrates responsibility around money, effort, and what can be sustained. Limits tend to appear through the budget, the available resources, or a refusal to promise more than can be maintained.",
+      "body_they": "Saturn in Taurus concentrates responsibility around money, effort, and what can be sustained. Limits tend to appear through the budget, the available resources, or a refusal to promise more than can be maintained.",
+      "review_status": "reviewed",
+      "source_keys": [
+        "sky-aspect phrasebook (ChatGPT-drafted from house vocab + Jansky/Hand, owner-reviewed)"
+      ],
+      "note": "sky placement (planet in sign, collective); reviewed"
+    },
+    {
+      "contentKey": "fallback-hook/sky-placement-sign/saturn/gemini",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Saturn in Gemini puts weight on words, decisions, and the information a plan depends on. Progress may slow until the terms are clear, the question is answered, or someone accepts responsibility for what was said.",
+      "body_they": "Saturn in Gemini puts weight on words, decisions, and the information a plan depends on. Progress may slow until the terms are clear, the question is answered, or someone accepts responsibility for what was said.",
+      "review_status": "reviewed",
+      "source_keys": [
+        "sky-aspect phrasebook (ChatGPT-drafted from house vocab + Jansky/Hand, owner-reviewed)"
+      ],
+      "note": "sky placement (planet in sign, collective); reviewed"
+    },
+    {
+      "contentKey": "fallback-hook/sky-placement-sign/saturn/cancer",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Saturn in Cancer brings responsibility into family, home, memory, and emotional care. Limits may appear when someone has more people to protect than energy to offer, or when an old obligation still shapes what feels safe to choose.",
+      "body_they": "Saturn in Cancer brings responsibility into family, home, memory, and emotional care. Limits may appear when someone has more people to protect than energy to offer, or when an old obligation still shapes what feels safe to choose.",
+      "review_status": "reviewed",
+      "source_keys": [
+        "sky-aspect phrasebook (ChatGPT-drafted from house vocab + Jansky/Hand, owner-reviewed)"
+      ],
+      "note": "sky placement (planet in sign, collective); reviewed"
+    },
+    {
+      "contentKey": "fallback-hook/sky-placement-sign/saturn/leo",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Saturn in Leo makes recognition, leadership, and creative expression carry consequences. Praise may be restrained, visibility may have to be earned, and the person at the center may be judged by what happens after the attention arrives.",
+      "body_they": "Saturn in Leo makes recognition, leadership, and creative expression carry consequences. Praise may be restrained, visibility may have to be earned, and the person at the center may be judged by what happens after the attention arrives.",
+      "review_status": "reviewed",
+      "source_keys": [
+        "sky-aspect phrasebook (ChatGPT-drafted from house vocab + Jansky/Hand, owner-reviewed)"
+      ],
+      "note": "sky placement (planet in sign, collective); reviewed"
+    },
+    {
+      "contentKey": "fallback-hook/sky-placement-sign/saturn/virgo",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Saturn in Virgo puts pressure on work, routines, accuracy, and the details that keep daily life functioning. A plan may slow because the repair is incomplete, the standard has not been met, or someone is already carrying too much of the practical load.",
+      "body_they": "Saturn in Virgo puts pressure on work, routines, accuracy, and the details that keep daily life functioning. A plan may slow because the repair is incomplete, the standard has not been met, or someone is already carrying too much of the practical load.",
+      "review_status": "reviewed",
+      "source_keys": [
+        "sky-aspect phrasebook (ChatGPT-drafted from house vocab + Jansky/Hand, owner-reviewed)"
+      ],
+      "note": "sky placement (planet in sign, collective); reviewed"
+    },
+    {
+      "contentKey": "fallback-hook/sky-placement-sign/saturn/libra",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Saturn in Libra makes agreements, fairness, and reciprocity difficult to leave vague. A connection or contract may reach the point where people have to name what each person owes, what is equal, and which compromise has become too costly.",
+      "body_they": "Saturn in Libra makes agreements, fairness, and reciprocity difficult to leave vague. A connection or contract may reach the point where people have to name what each person owes, what is equal, and which compromise has become too costly.",
+      "review_status": "reviewed",
+      "source_keys": [
+        "sky-aspect phrasebook (ChatGPT-drafted from house vocab + Jansky/Hand, owner-reviewed)"
+      ],
+      "note": "sky placement (planet in sign, collective); reviewed"
+    },
+    {
+      "contentKey": "fallback-hook/sky-placement-sign/saturn/scorpio",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Saturn in Scorpio concentrates responsibility around trust, privacy, debt, and shared resources. Limits may appear through money that cannot be separated cleanly, information someone is reluctant to reveal, or loyalty that now requires proof.",
+      "body_they": "Saturn in Scorpio concentrates responsibility around trust, privacy, debt, and shared resources. Limits may appear through money that cannot be separated cleanly, information someone is reluctant to reveal, or loyalty that now requires proof.",
+      "review_status": "reviewed",
+      "source_keys": [
+        "sky-aspect phrasebook (ChatGPT-drafted from house vocab + Jansky/Hand, owner-reviewed)"
+      ],
+      "note": "sky placement (planet in sign, collective); reviewed"
+    },
+    {
+      "contentKey": "fallback-hook/sky-placement-sign/saturn/sagittarius",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Saturn in Sagittarius tests beliefs, promises, education, travel, and plans built around a distant goal. Confidence has to answer to evidence, cost, law, or the responsibility that follows once a larger claim becomes a real commitment.",
+      "body_they": "Saturn in Sagittarius tests beliefs, promises, education, travel, and plans built around a distant goal. Confidence has to answer to evidence, cost, law, or the responsibility that follows once a larger claim becomes a real commitment.",
+      "review_status": "reviewed",
+      "source_keys": [
+        "sky-aspect phrasebook (ChatGPT-drafted from house vocab + Jansky/Hand, owner-reviewed)"
+      ],
+      "note": "sky placement (planet in sign, collective); reviewed"
+    },
+    {
+      "contentKey": "fallback-hook/sky-placement-sign/saturn/capricorn",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Saturn in Capricorn makes duty, authority, and long-term consequence difficult to avoid. Limits arrive through deadlines, hierarchy, public responsibility, or the amount of work required to make an ambition credible.",
+      "body_they": "Saturn in Capricorn makes duty, authority, and long-term consequence difficult to avoid. Limits arrive through deadlines, hierarchy, public responsibility, or the amount of work required to make an ambition credible.",
+      "review_status": "reviewed",
+      "source_keys": [
+        "sky-aspect phrasebook (ChatGPT-drafted from house vocab + Jansky/Hand, owner-reviewed)"
+      ],
+      "note": "sky placement (planet in sign, collective); reviewed"
+    },
+    {
+      "contentKey": "fallback-hook/sky-placement-sign/saturn/aquarius",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Saturn in Aquarius puts responsibility into groups, systems, technology, and plans for a shared future. A new idea may have to survive policy, public consequence, and the question of who belongs before it can become the accepted structure.",
+      "body_they": "Saturn in Aquarius puts responsibility into groups, systems, technology, and plans for a shared future. A new idea may have to survive policy, public consequence, and the question of who belongs before it can become the accepted structure.",
+      "review_status": "reviewed",
+      "source_keys": [
+        "sky-aspect phrasebook (ChatGPT-drafted from house vocab + Jansky/Hand, owner-reviewed)"
+      ],
+      "note": "sky placement (planet in sign, collective); reviewed"
+    },
+    {
+      "contentKey": "fallback-hook/sky-placement-sign/saturn/pisces",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "Saturn in Pisces makes unclear limits, emotional labor, grief, and exhaustion harder to work around. A promise may stall because no one can define the responsibility, or because the person carrying it has reached a limit that was easy to miss.",
+      "body_they": "Saturn in Pisces makes unclear limits, emotional labor, grief, and exhaustion harder to work around. A promise may stall because no one can define the responsibility, or because the person carrying it has reached a limit that was easy to miss.",
+      "review_status": "reviewed",
+      "source_keys": [
+        "sky-aspect phrasebook (ChatGPT-drafted from house vocab + Jansky/Hand, owner-reviewed)"
+      ],
+      "note": "sky placement (planet in sign, collective); reviewed"
+    },
+    {
       "contentKey": "fallback-hook/sky-planet-education/saturn",
       "content_role": "fallback_hook",
       "grammar_frame": "collective_editorial_unit",
