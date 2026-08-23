@@ -7,6 +7,7 @@ import {
   FileText,
   Flag,
   KeyRound,
+  Moon,
   Plus,
   RefreshCw,
   Save,
@@ -41,6 +42,8 @@ import {
   personalTransitAspectCmsStarter,
   relatedAspectPassages,
   relatedHousePassages,
+  relatedLunationHoroscopes,
+  skyLunationContextForRow,
   skyWriteupContextForRow
 } from "./skyWriteupRelations";
 import {
@@ -79,6 +82,7 @@ type GeneratedContentSurface = "sky" | "you" | "natal" | "synastry" | "composite
 type GeneratedContentMode = "feed" | "in_depth" | "article" | "card" | string;
 type AdminDashboardPage =
   | "articles"
+  | "skyWriteups"
   | "compatibility"
   | "content"
   | "reviewQueue"
@@ -332,6 +336,7 @@ const vocabularySections: Array<{ key: AdminVocabularySection; label: string; de
 
 const adminPageHashKeys: Record<AdminDashboardPage, string> = {
   articles: "articles",
+  skyWriteups: "sky-writeups",
   compatibility: "compatibility",
   content: "exact-content",
   reviewQueue: "review-queue",
@@ -374,6 +379,7 @@ const compositionTabs: AdminNavItem[] = [
 const primaryAdminNavItems: AdminNavItem[] = [
   { page: "reviewQueue", label: "Review Queue", icon: Check },
   { page: "content", label: "Content Library", icon: BookOpenText },
+  { page: "skyWriteups", label: "Sky Write-ups", icon: Moon },
   { page: "articles", label: "Articles", icon: FileText },
   { page: "compatibility", label: "Compatibility", icon: Users },
   { page: "compositeByType", label: "Composite Review", icon: Users },
@@ -490,6 +496,7 @@ function parseAdminHash() {
 function adminPageTitle(activePage: AdminDashboardPage) {
   switch (activePage) {
     case "articles": return "Articles";
+    case "skyWriteups": return "Sky Write-ups";
     case "compatibility": return "Compatibility";
     case "content": return "Content Library";
     case "reviewQueue": return "Review Queue";
@@ -513,6 +520,7 @@ function adminPageTitle(activePage: AdminDashboardPage) {
 function adminPageBreadcrumb(activePage: AdminDashboardPage) {
   switch (activePage) {
     case "articles": return "Admin / Write / Articles";
+    case "skyWriteups": return "Admin / Write / Sky write-ups";
     case "compatibility": return "Admin / Write / Compatibility";
     case "content": return "Admin / Write / Content library";
     case "reviewQueue": return "Admin / Publish / Review queue";
@@ -535,6 +543,8 @@ function adminPageBreadcrumb(activePage: AdminDashboardPage) {
 
 function adminPageDescription(activePage: AdminDashboardPage) {
   switch (activePage) {
+    case "skyWriteups":
+      return "Planetary placements and lunations in one editorial workflow, with the main write-up, related aspects, and personalized horoscopes together.";
     case "reviewQueue":
       return "Phrasebank-first publishing queue with content-class, tier, evergreen, and bulk sign-off controls.";
     case "content":
@@ -716,6 +726,18 @@ function isArticleLibraryRow(row: AdminGeneratedContentRow) {
   return (row.mode === "article" || row.block_type === "sky_article")
     && row.lane === "serving"
     && !isRetiredAdminRow(row);
+}
+
+function isSkyWriteupLibraryRow(row: AdminGeneratedContentRow) {
+  const key = row.content_key.toLowerCase();
+  return !isRetiredAdminRow(row) && (
+    row.block_type === "sky_placement"
+    || row.block_type === "sky_article"
+    || /^sky\.placement\./u.test(key)
+    || /^sky[/-](?:placement|article)[/-]/u.test(key)
+    || /^sky-article\//u.test(key)
+    || /^authored\/sky-lunation-macro\//u.test(key)
+  );
 }
 
 function reviewRecordFromGeneratedRow(row: AdminGeneratedContentRow): AdminReviewRecord {
@@ -1872,7 +1894,11 @@ export function GeneratedContentAdminDashboard() {
   const skyArticleWorkspaceAutosaveSequenceRef = useRef(0);
 
   const visibleRows = useMemo(() => rows.filter((row) => (
-    (showReferenceRows || (showRetiredRows && isRetiredAdminRow(row)) || isCompositionPage(activePage) || !isPassiveReferenceAdminRow(row))
+    (showReferenceRows
+      || (showRetiredRows && isRetiredAdminRow(row))
+      || isCompositionPage(activePage)
+      || (activePage === "skyWriteups" && isSkyWriteupLibraryRow(row))
+      || !isPassiveReferenceAdminRow(row))
     && (showRetiredRows || !isRetiredAdminRow(row))
   )), [rows, activePage, showReferenceRows, showRetiredRows]);
   const savedFallbackRows = useMemo(
@@ -1897,6 +1923,15 @@ export function GeneratedContentAdminDashboard() {
   );
   const articleRows = useMemo(
     () => visibleRows.filter(isArticleLibraryRow),
+    [visibleRows]
+  );
+  const skyWriteupRows = useMemo(
+    () => visibleRows.filter(isSkyWriteupLibraryRow).sort((left, right) => {
+      const leftIsLunation = Boolean(skyLunationContextForRow(left));
+      const rightIsLunation = Boolean(skyLunationContextForRow(right));
+      return Number(leftIsLunation) - Number(rightIsLunation)
+        || rowTitle(left).localeCompare(rowTitle(right));
+    }),
     [visibleRows]
   );
   const filteredArticleRows = useMemo(() => articleRows.filter((row) => {
@@ -2207,7 +2242,7 @@ export function GeneratedContentAdminDashboard() {
   }, [activePage]);
 
   useEffect(() => {
-    const needsExtendedInventory = isCompositionPage(activePage) || showReferenceRows || showRetiredRows;
+    const needsExtendedInventory = activePage === "skyWriteups" || isCompositionPage(activePage) || showReferenceRows || showRetiredRows;
     if (!needsExtendedInventory || allRowsLoaded || loadState !== "loaded" || !secret.trim()) return;
     let cancelled = false;
     setIsLoading(true);
@@ -3883,6 +3918,26 @@ export function GeneratedContentAdminDashboard() {
           </section>
         )}
 
+        {activePage === "skyWriteups" && (
+          <section className="admin-template-page">
+            <section className="admin-content-toolbar">
+              <div>
+                <p className="admin-eyebrow">Sky editorial workspace</p>
+                <h2>Placements and lunations</h2>
+                <p>
+                  {skyWriteupRows.filter((row) => !skyLunationContextForRow(row)).length} planetary placement write-ups and {skyWriteupRows.filter((row) => skyLunationContextForRow(row)).length} lunation write-ups. Open one row to review its main copy, aspects, and personalized horoscopes in reading order.
+                </p>
+              </div>
+            </section>
+            <section className="admin-workbench admin-review-workspace">
+              {renderEditor()}
+              <aside className="admin-list-panel" aria-label="Sky write-up rows">
+                {renderContentTable(skyWriteupRows)}
+              </aside>
+            </section>
+          </section>
+        )}
+
         {activePage === "articles" && (
           <section className="admin-template-page">
             <section className="admin-content-toolbar">
@@ -4963,7 +5018,10 @@ export function GeneratedContentAdminDashboard() {
     const showGenericBody = !isPackageDraft || (!showPackageBodyYou && !isContinuousSkyPackage);
     const skyWriteupParent = skyWriteupParentId ? rows.find((row) => row.id === skyWriteupParentId) ?? null : null;
     const skyWriteupContext = selectedRow ? skyWriteupContextForRow(selectedRow) : null;
-    const skyHousePassages = skyWriteupContext ? relatedHousePassages(rows, skyWriteupContext) : [];
+    const skyLunationContext = selectedRow ? skyLunationContextForRow(selectedRow) : null;
+    const skyHousePassages = skyWriteupContext && !skyLunationContext ? relatedHousePassages(rows, skyWriteupContext) : [];
+    const skyLunationHoroscopes = skyLunationContext ? relatedLunationHoroscopes(rows, skyLunationContext) : [];
+    const sourceReadyLunationHoroscopes = skyLunationHoroscopes.filter((horoscope) => horoscope.sourceReady).length;
     const skyReaderReadyHousePassages = skyHousePassages.filter((passage) => (
       passage.availability === "Reader-ready" && isApprovedSkyRelationRow(passage.row)
     ));
@@ -5729,18 +5787,25 @@ export function GeneratedContentAdminDashboard() {
             <section className="admin-sky-related-editor admin-fallback-diagnostic-panel" aria-label="Related reader horoscope passages">
               <header className="admin-sky-related-heading admin-fallback-diagnostic-heading">
                 <div>
-                  <p className="admin-eyebrow">Reader horoscope passages</p>
-                  <h3>Review the personalized copy from this Sky write-up</h3>
+                  <p className="admin-eyebrow">{skyLunationContext ? "Lunation workspace" : "Reader horoscope passages"}</p>
+                  <h3>{skyLunationContext ? "Review the write-up, aspects, and rising-sign horoscopes" : "Review the personalized copy from this Sky write-up"}</h3>
                   <p>
-                    These rows are selected after the app knows which house this placement activates and whether it aspects a natal placement.
-                    Editing a passage here opens its canonical saved row.
+                    {skyLunationContext
+                      ? "The macro write-up stays first. Moon-to-natal aspect passages follow it, and the twelve rising-sign horoscope compositions stay at the bottom. Editing a source opens the canonical row the app actually uses."
+                      : "These rows are selected after the app knows which house this placement activates and whether it aspects a natal placement. Editing a passage here opens its canonical saved row."}
                   </p>
                 </div>
                 <dl className="admin-hook-pattern-list">
-                  <div><dt>Placement</dt><dd>{titleFromKey(skyWriteupContext.planet)}{skyWriteupContext.sign ? ` in ${titleFromKey(skyWriteupContext.sign)}` : ""}</dd></div>
+                  <div><dt>{skyLunationContext ? "Lunation" : "Placement"}</dt><dd>{skyLunationContext ? `${titleFromKey(skyLunationContext.sign)} ${titleFromKey(skyLunationContext.kind)}` : `${titleFromKey(skyWriteupContext.planet)}${skyWriteupContext.sign ? ` in ${titleFromKey(skyWriteupContext.sign)}` : ""}`}</dd></div>
                   <div><dt>Aspect passages</dt><dd>{skyAspectPassages.length}</dd></div>
-                  <div><dt>Reader-ready houses</dt><dd>{populatedSkyHouses}/12</dd></div>
-                  <div><dt>Source candidates</dt><dd>{candidateSkyHouses}/12 houses</dd></div>
+                  {skyLunationContext ? (
+                    <div><dt>Rising horoscopes</dt><dd>{sourceReadyLunationHoroscopes}/12 source-ready</dd></div>
+                  ) : (
+                    <>
+                      <div><dt>Reader-ready houses</dt><dd>{populatedSkyHouses}/12</dd></div>
+                      <div><dt>Source candidates</dt><dd>{candidateSkyHouses}/12 houses</dd></div>
+                    </>
+                  )}
                 </dl>
               </header>
 
@@ -5751,7 +5816,7 @@ export function GeneratedContentAdminDashboard() {
                   <strong>{skyAspectPassages.length} rows</strong>
                 </summary>
                 <p className="admin-sky-related-help">
-                  These passages can appear beneath the house horoscope when this transiting placement aspects something in the reader’s natal chart.
+                  These passages can appear beneath the horoscope when the transiting Moon or placement aspects something in the reader’s natal chart.
                 </p>
                 <label className="admin-sky-related-search">
                   <span>Find an aspect passage</span>
@@ -5791,42 +5856,83 @@ export function GeneratedContentAdminDashboard() {
                 </div>
               </details>
 
-              <details className="admin-sky-related-group admin-diagnostics-details" open={Boolean(skyFallbackEditor)}>
-                <summary>
-                  <span>House horoscopes</span>
-                  {" "}
-                  <strong>{populatedSkyHouses}/12 reader-ready</strong>
-                </summary>
-                <p className="admin-sky-related-help">
-                  Only an approved complete Sky house horoscope can serve on this placement page. House introductions, generic house passages, and older sign-specific transit passages remain visible as source candidates; the app will not substitute them silently.
-                </p>
-                <div className="admin-sky-house-grid admin-lunar-coverage-row-list">
-                  {Array.from({ length: 12 }, (_, index) => index + 1).map((house) => {
-                    const passages = skyHousePassages.filter((passage) => passage.house === house);
-                    return (
-                      <article key={house} className={`admin-hook-detail-section ${passages.length ? "has-passage" : "is-missing"}`}>
+              {skyLunationContext ? (
+                <details className="admin-sky-related-group admin-diagnostics-details" open={Boolean(skyFallbackEditor)}>
+                  <summary>
+                    <span>Rising-sign horoscopes</span>
+                    {" "}
+                    <strong>{sourceReadyLunationHoroscopes}/12 source-ready</strong>
+                  </summary>
+                  <p className="admin-sky-related-help">
+                    The app assembles these twelve horoscopes from the saved frame, house opening, house jurisdiction, and lunation-sign focus below. Exact-date ruler and retrograde layers are calculated later, so the dashboard does not store twelve duplicate final articles.
+                  </p>
+                  <div className="admin-sky-house-grid admin-lunar-coverage-row-list">
+                    {skyLunationHoroscopes.map((horoscope) => (
+                      <article key={horoscope.risingSign} className={`admin-hook-detail-section ${horoscope.sourceReady ? "has-passage" : "is-missing"}`}>
                         <header className="admin-fallback-diagnostic-heading">
-                          <strong>{ordinalLabel(house)} House</strong>
-                          <span>{passages.length ? `${passages.length} field${passages.length === 1 ? "" : "s"}` : "Not saved"}</span>
+                          <strong>{titleFromKey(horoscope.risingSign)} Rising · {ordinalLabel(horoscope.house)} House</strong>
+                          <span>{horoscope.sourceReady ? "Source-ready" : "Missing required source"}</span>
                         </header>
-                        {passages.map((passage) => (
-                          <div className="admin-sky-related-row admin-hook-detail-section" key={passage.row.id}>
-                            <div>
-                              <span>{passage.kind} · {passage.availability}</span>
-                              <code>{passage.row.content_key}</code>
-                              <p>{passage.row.body || "No passage body saved."}</p>
+                        <div className="admin-copy-preview">
+                          {horoscope.preview
+                            ? horoscope.preview.split(/\n{2,}/u).map((paragraph) => <p key={paragraph}>{paragraph}</p>)
+                            : <p>No base horoscope preview can be assembled yet.</p>}
+                        </div>
+                        <div className="admin-sky-aspect-list">
+                          {horoscope.sources.map((source) => (
+                            <div className="admin-sky-related-row admin-hook-detail-section" key={`${source.role}-${source.row.id}`}>
+                              <div>
+                                <span>{source.role}</span>
+                                <code>{source.row.content_key}</code>
+                              </div>
+                              <button type="button" onClick={() => openRelatedSkyRow(selectedRow.id, source.row)}>
+                                Edit source
+                              </button>
                             </div>
-                            <button type="button" onClick={() => openRelatedSkyRow(selectedRow.id, passage.row)}>
-                              Edit passage
-                            </button>
-                          </div>
-                        ))}
-                        {!passages.length && <p>No house-horoscope row matches this placement and sign.</p>}
+                          ))}
+                        </div>
                       </article>
-                    );
-                  })}
-                </div>
-              </details>
+                    ))}
+                  </div>
+                </details>
+              ) : (
+                <details className="admin-sky-related-group admin-diagnostics-details" open={Boolean(skyFallbackEditor)}>
+                  <summary>
+                    <span>House horoscopes</span>
+                    {" "}
+                    <strong>{populatedSkyHouses}/12 reader-ready</strong>
+                  </summary>
+                  <p className="admin-sky-related-help">
+                    Only an approved complete Sky house horoscope can serve on this placement page. House introductions, generic house passages, and older sign-specific transit passages remain visible as source candidates; the app will not substitute them silently.
+                  </p>
+                  <div className="admin-sky-house-grid admin-lunar-coverage-row-list">
+                    {Array.from({ length: 12 }, (_, index) => index + 1).map((house) => {
+                      const passages = skyHousePassages.filter((passage) => passage.house === house);
+                      return (
+                        <article key={house} className={`admin-hook-detail-section ${passages.length ? "has-passage" : "is-missing"}`}>
+                          <header className="admin-fallback-diagnostic-heading">
+                            <strong>{ordinalLabel(house)} House</strong>
+                            <span>{passages.length ? `${passages.length} field${passages.length === 1 ? "" : "s"}` : "Not saved"}</span>
+                          </header>
+                          {passages.map((passage) => (
+                            <div className="admin-sky-related-row admin-hook-detail-section" key={passage.row.id}>
+                              <div>
+                                <span>{passage.kind} · {passage.availability}</span>
+                                <code>{passage.row.content_key}</code>
+                                <p>{passage.row.body || "No passage body saved."}</p>
+                              </div>
+                              <button type="button" onClick={() => openRelatedSkyRow(selectedRow.id, passage.row)}>
+                                Edit passage
+                              </button>
+                            </div>
+                          ))}
+                          {!passages.length && <p>No house-horoscope row matches this placement and sign.</p>}
+                        </article>
+                      );
+                    })}
+                  </div>
+                </details>
+              )}
             </section>
           )}
           {fallbackDiagnostic && (

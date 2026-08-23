@@ -2,6 +2,7 @@ export type SkyWriteupRelationRow = {
   id: string;
   content_key: string;
   headline?: string | null;
+  body?: string | null;
   block_type?: string | null;
   mode?: string | null;
   facts?: Record<string, unknown> | null;
@@ -13,11 +14,27 @@ export type SkyWriteupContext = {
   sign: string | null;
 };
 
+export type SkyLunationContext = {
+  kind: "new-moon" | "full-moon";
+  sign: string;
+};
+
 export type RelatedHousePassage<Row extends SkyWriteupRelationRow = SkyWriteupRelationRow> = {
   house: number;
   kind: "Sky house horoscope" | "House and sign passage" | "House passage" | "House introduction";
   availability: "Reader-ready" | "Source candidate";
   row: Row;
+};
+
+export type RelatedLunationHoroscope<Row extends SkyWriteupRelationRow = SkyWriteupRelationRow> = {
+  risingSign: string;
+  house: number;
+  preview: string;
+  sourceReady: boolean;
+  sources: Array<{
+    role: "Horoscope frame" | "House opening" | "House jurisdiction" | "Sign focus";
+    row: Row;
+  }>;
 };
 
 export type PersonalTransitAspectCmsStarter = {
@@ -60,6 +77,7 @@ const signs = [
 
 const planetSet = new Set<string>(planets);
 const signSet = new Set<string>(signs);
+const signOrder = [...signs];
 
 function normalizedToken(value: unknown) {
   return typeof value === "string"
@@ -102,21 +120,28 @@ function signFromHeadline(headline: string) {
   return signs.find((sign) => (
     new RegExp(`\\b(?:in|into|enters|entering)\\s+${sign}\\b`, "u").test(normalized)
     || new RegExp(`\\b${sign}\\s+(?:new|full)\\s+moon\\b`, "u").test(normalized)
+    || new RegExp(`\\b${sign}\\s+(?:solar|lunar)\\s+eclipse\\b`, "u").test(normalized)
   )) ?? "";
 }
 
 export function skyWriteupContextForRow(row: SkyWriteupRelationRow): SkyWriteupContext | null {
   const keyParts = keyPlacementParts(row.content_key);
+  const lunationKeyParts = row.content_key.toLowerCase().match(/^authored\/sky-lunation-macro\/(?:new-moon|full-moon)\/([^/]+)$/u);
+  const isLunationLike = /(?:^|[./-])lunation(?:[./-]|$)/iu.test(row.content_key)
+    || /\b(?:new|full) moon\b|\b(?:solar|lunar) eclipse\b/iu.test(row.headline ?? "");
   const keyPlanetOnly = row.content_key.toLowerCase().match(/^fallback-hook\/sky-placement\/([a-z_-]+)$/u)?.[1] ?? "";
   const planet = normalizedToken(
     keyParts?.planet
+      || (lunationKeyParts ? "moon" : "")
       || nestedString(row.facts, [["planet"], ["body"], ["derivedFrom", "planet"], ["placementDerivation", "planet"]])
       || nestedString(row.source_snapshot, [["planet"], ["body"], ["derivedFrom", "planet"], ["placementDerivation", "planet"]])
       || keyPlanetOnly
+      || (isLunationLike ? "moon" : "")
       || planetFromHeadline(row.headline ?? "")
   );
   const sign = normalizedToken(
     keyParts?.sign
+      || lunationKeyParts?.[1]
       || nestedString(row.facts, [["sign"], ["derivedFrom", "sign"], ["placementDerivation", "sign"]])
       || nestedString(row.source_snapshot, [["sign"], ["derivedFrom", "sign"], ["placementDerivation", "sign"]])
       || signFromHeadline(row.headline ?? "")
@@ -126,10 +151,107 @@ export function skyWriteupContextForRow(row: SkyWriteupRelationRow): SkyWriteupC
     || row.mode === "article"
     || /^sky\.placement\./iu.test(row.content_key)
     || /^sky[./-](?:placement|article)[./-]/iu.test(row.content_key)
+    || /^authored\/sky-lunation-macro\//iu.test(row.content_key)
     || /^fallback-hook\/sky-(?:placement|sign-copy)\//iu.test(row.content_key);
 
   if (!isSkyWriteup || !planetSet.has(planet)) return null;
   return { planet, sign: signSet.has(sign) ? sign : null };
+}
+
+export function skyLunationContextForRow(row: SkyWriteupRelationRow): SkyLunationContext | null {
+  const key = row.content_key.toLowerCase();
+  const keyMatch = key.match(/^authored\/sky-lunation-macro\/(new-moon|full-moon)\/([^/]+)$/u);
+  if (keyMatch && signSet.has(normalizedToken(keyMatch[2]))) {
+    return { kind: keyMatch[1] as SkyLunationContext["kind"], sign: normalizedToken(keyMatch[2]) };
+  }
+
+  const eventType = normalizedToken(nestedString(row.facts, [
+    ["lunationKind"],
+    ["kind"],
+    ["moonEvent", "kind"],
+    ["moonEvent", "name"]
+  ]) || nestedString(row.source_snapshot, [
+    ["lunationKind"],
+    ["kind"],
+    ["moonEvent", "kind"],
+    ["moonEvent", "name"]
+  ]));
+  const headline = (row.headline ?? "").toLowerCase();
+  const kind = eventType.includes("new") || eventType.includes("solar") || /\bnew moon\b|\bsolar eclipse\b/u.test(headline)
+    ? "new-moon"
+    : eventType.includes("full") || eventType.includes("lunar") || /\bfull moon\b|\blunar eclipse\b/u.test(headline)
+      ? "full-moon"
+      : null;
+  const context = skyWriteupContextForRow(row);
+  const isLunationRow = /(?:^|[./-])lunation(?:[./-]|$)/u.test(key)
+    || /\b(?:new|full) moon\b|\b(?:solar|lunar) eclipse\b/u.test(headline);
+
+  return isLunationRow && kind && context?.sign
+    ? { kind, sign: context.sign }
+    : null;
+}
+
+function ordinal(value: number) {
+  const mod100 = value % 100;
+  if (mod100 >= 11 && mod100 <= 13) return `${value}th`;
+  if (value % 10 === 1) return `${value}st`;
+  if (value % 10 === 2) return `${value}nd`;
+  if (value % 10 === 3) return `${value}rd`;
+  return `${value}th`;
+}
+
+function relationBody(row: SkyWriteupRelationRow | undefined) {
+  return typeof row?.body === "string" ? row.body.trim() : "";
+}
+
+function fillLunationFrame(frame: string, house: number, jurisdiction: string) {
+  return frame
+    .replace(/\{\{houseOrdinal\}\}/gu, ordinal(house))
+    .replace(/\{\{jurisdiction\}\}/gu, jurisdiction)
+    .trim();
+}
+
+export function relatedLunationHoroscopes<Row extends SkyWriteupRelationRow>(
+  rows: Row[],
+  context: SkyLunationContext
+): RelatedLunationHoroscope<Row>[] {
+  const rowsByKey = new Map(rows.map((row) => [row.content_key.toLowerCase(), row]));
+  const frameKey = `fallback-hook/lunation-horoscope/${context.kind === "new-moon" ? "new" : "full"}`;
+  const frameRow = rowsByKey.get(frameKey);
+  const signFocusKey = `fallback-hook/lunation-sign-compact/${context.kind}/${context.sign}`;
+  const legacyFullSignFocusKey = `fallback-hook/lunation-sign-compact/${context.sign}`;
+  const signFocusRow = rowsByKey.get(signFocusKey)
+    ?? (context.kind === "full-moon" ? rowsByKey.get(legacyFullSignFocusKey) : undefined);
+  const lunationSignIndex = signOrder.indexOf(context.sign as typeof signs[number]);
+
+  if (lunationSignIndex < 0) return [];
+
+  return signOrder.map((risingSign, risingIndex) => {
+    const house = ((lunationSignIndex - risingIndex + 12) % 12) + 1;
+    const openingRow = rowsByKey.get(`fallback-hook/lunation-opening-situation/${house}`);
+    const jurisdictionRow = rowsByKey.get(`fallback-vocab/house-jurisdiction/${house}`);
+    const jurisdiction = relationBody(jurisdictionRow);
+    const frame = relationBody(frameRow);
+    const opening = relationBody(openingRow);
+    const signFocus = relationBody(signFocusRow);
+    const openingAndFrame = [opening, frame && jurisdiction ? fillLunationFrame(frame, house, jurisdiction) : ""]
+      .filter(Boolean)
+      .join(" ");
+    const preview = [openingAndFrame, signFocus].filter(Boolean).join("\n\n");
+    const sources: RelatedLunationHoroscope<Row>["sources"] = [];
+    if (frameRow) sources.push({ role: "Horoscope frame", row: frameRow });
+    if (openingRow) sources.push({ role: "House opening", row: openingRow });
+    if (jurisdictionRow) sources.push({ role: "House jurisdiction", row: jurisdictionRow });
+    if (signFocusRow) sources.push({ role: "Sign focus", row: signFocusRow });
+
+    return {
+      risingSign,
+      house,
+      preview,
+      sourceReady: Boolean(frame && jurisdiction),
+      sources
+    };
+  });
 }
 
 function housePassageMatch(row: SkyWriteupRelationRow, context: SkyWriteupContext): Omit<RelatedHousePassage, "row"> | null {

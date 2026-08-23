@@ -13,6 +13,7 @@ const adminScreenshotDir = path.join("test-results", "content-dashboard-admin-fl
 const adminPages = [
   { nav: "Review Queue", title: "Review Queue", breadcrumb: "Admin / Publish / Review queue", hash: "review-queue" },
   { nav: "Content Library", title: "Content Library", breadcrumb: "Admin / Write / Content library", hash: "exact-content" },
+  { nav: "Sky Write-ups", title: "Sky Write-ups", breadcrumb: "Admin / Write / Sky write-ups", hash: "sky-writeups" },
   { nav: "Articles", title: "Articles", breadcrumb: "Admin / Write / Articles", hash: "articles" },
   { nav: "Compatibility", title: "Compatibility", breadcrumb: "Admin / Write / Compatibility", hash: "compatibility" },
   { nav: "Composite Review", title: "Composite Review", breadcrumb: "Admin / Write / Composite review", hash: "composite-review" },
@@ -563,7 +564,7 @@ async function expectAdminRouteLoads(page: Page, route: string) {
     await expect(page.locator(".admin-dashboard-header h1")).toBeVisible({
       timeout: routeReadyTimeoutMs
     });
-    await expect(page.getByRole("region", { name: "Admin status" })).toContainText("8 saved rows loaded", {
+    await expect(page.getByRole("region", { name: "Admin status" })).toContainText("saved rows loaded", {
       timeout: routeReadyTimeoutMs
     });
   });
@@ -1053,6 +1054,110 @@ test.describe("content dashboard admin user flow case studies", () => {
       animations: "disabled",
       fullPage: true,
       path: path.join(adminScreenshotDir, "narrow-sky-fallback-diagnostic.png")
+    });
+    await assertNoBrowserErrors();
+  });
+
+  test("lunations live in Sky Write-ups with macro, aspects, then twelve rising horoscopes", async ({ page }) => {
+    const assertNoBrowserErrors = await expectNoBrowserErrors(page);
+    await page.setViewportSize({ width: 1308, height: 900 });
+    const packageSource = {
+      sourcePackage: "tldrastro-fallback-architecture-v3",
+      contentSystem: "authored",
+      contentLevel: "source-grounded",
+      content_role: "authored_card",
+      review_status: "approved"
+    };
+    const relationRow = (id: string, contentKey: string, body: string, blockType = "fallback_hook") => ({
+      ...generatedContentRows[0],
+      id,
+      content_key: contentKey,
+      mode: "feed",
+      status: "DRAFT",
+      event_type: blockType === "vocabulary_phrase" ? "vocab" : "fallback-hook",
+      headline: contentKey,
+      summary: "",
+      body,
+      block_type: blockType,
+      lane: "reference",
+      review_state: "fallback-system-reference",
+      facts: { fallbackArchitectureV3: true },
+      source_snapshot: packageSource,
+      sections: { packageRecord: { contentKey, body_you: body, content_role: blockType === "vocabulary_phrase" ? "vocabulary" : "fallback_hook", review_status: "approved" } },
+      provider: "tldrastro-fallback-architecture-v3"
+    });
+    const macroRow = {
+      ...generatedContentRows[0],
+      id: "qa-pisces-full-moon",
+      content_key: "authored/sky-lunation-macro/full-moon/pisces",
+      mode: "article",
+      status: "DRAFT",
+      event_type: "sky-lunation-macro",
+      headline: "The Macro View: What the Pisces Full Moon Represents",
+      summary: "The macro view",
+      body: "Check the details without treating reality as a betrayal of the dream.",
+      block_type: null,
+      lane: "reference",
+      review_state: "fallback-system-reference",
+      facts: { fallbackArchitectureV3: true, content_role: "authored_card", review_status: "approved" },
+      source_snapshot: packageSource,
+      sections: { packageRecord: { contentKey: "authored/sky-lunation-macro/full-moon/pisces", body: "Check the details without treating reality as a betrayal of the dream.", content_role: "authored_card", review_status: "approved" } },
+      provider: "tldrastro-fallback-architecture-v3"
+    };
+    const lunationRows = [
+      macroRow,
+      relationRow("qa-lunation-frame", "fallback-hook/lunation-horoscope/full", "Your {{houseOrdinal}} house of {{jurisdiction}} is illuminated."),
+      relationRow("qa-lunation-focus", "fallback-hook/lunation-sign-compact/full-moon/pisces", "Pisces asks where empathy has become an obligation."),
+      relationRow("qa-lunation-aspect", "authored/transit-aspect/moon/saturn/hard", "The Moon presses against a natal Saturn boundary."),
+      ...Array.from({ length: 12 }, (_, index) => relationRow(
+        `qa-lunation-opening-${index + 1}`,
+        `fallback-hook/lunation-opening-situation/${index + 1}`,
+        `Opening situation for house ${index + 1}.`
+      )),
+      ...Array.from({ length: 12 }, (_, index) => relationRow(
+        `qa-lunation-jurisdiction-${index + 1}`,
+        `fallback-vocab/house-jurisdiction/${index + 1}`,
+        `house topic ${index + 1}`,
+        "vocabulary_phrase"
+      ))
+    ];
+    await seedAdminApi(page, { generatedRows: lunationRows });
+    await expectAdminRouteLoads(page, "/admin/content#sky-writeups");
+
+    await expectAdminHeader(page, "Sky Write-ups", "Admin / Write / Sky write-ups");
+    const macroListRow = page.locator(".admin-content-row", { hasText: "authored/sky-lunation-macro/full-moon/pisces" });
+    await expect(macroListRow).toHaveCount(1);
+    await macroListRow.getByRole("button", { name: "Edit" }).click();
+
+    const editor = page.locator(".admin-editor-panel");
+    const related = editor.getByRole("region", { name: "Related reader horoscope passages" });
+    await expect(editor.getByLabel("Body")).toHaveValue("Check the details without treating reality as a betrayal of the dream.");
+    await expect(related.locator("details > summary > span")).toHaveText([
+      "Aspect passages",
+      "Rising-sign horoscopes"
+    ]);
+    const readingOrder = await editor.locator(".admin-post-editor").evaluate((postEditor) => {
+      const body = postEditor.querySelector('[aria-label="Body"]')?.closest("label");
+      const relatedRegion = postEditor.querySelector('[aria-label="Related reader horoscope passages"]');
+      const [aspects, horoscopes] = relatedRegion ? Array.from(relatedRegion.querySelectorAll(":scope > details")) : [];
+      return Boolean(body && relatedRegion && aspects && horoscopes
+        && body.compareDocumentPosition(relatedRegion) & Node.DOCUMENT_POSITION_FOLLOWING
+        && aspects.compareDocumentPosition(horoscopes) & Node.DOCUMENT_POSITION_FOLLOWING);
+    });
+    expect(readingOrder, "macro copy precedes aspects and rising-sign horoscopes").toBe(true);
+
+    await related.getByText("Rising-sign horoscopes", { exact: true }).click();
+    await expect(related).toContainText("12/12 source-ready");
+    await expect(related.locator(".admin-sky-house-grid > article")).toHaveCount(12);
+    await expect(related).toContainText("Pisces Rising · 1st House");
+    await expect(related).toContainText("Aries Rising · 12th House");
+    await expect(related).toContainText("The app assembles these twelve horoscopes from the saved frame");
+    await expectNoHorizontalOverflow(page, "Lunation Sky write-up editor");
+    await mkdir(adminScreenshotDir, { recursive: true });
+    await page.screenshot({
+      animations: "disabled",
+      fullPage: true,
+      path: path.join(adminScreenshotDir, "narrow-lunation-sky-writeup-editor.png")
     });
     await assertNoBrowserErrors();
   });
