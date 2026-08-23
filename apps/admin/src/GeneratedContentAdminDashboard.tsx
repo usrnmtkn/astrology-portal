@@ -2,6 +2,7 @@ import {
   ArrowLeft,
   BarChart3,
   BookOpenText,
+  Braces,
   Check,
   Database,
   FileText,
@@ -58,6 +59,7 @@ import {
   skyFallbackIdentity,
   skyFallbackWorkspace
 } from "./skyFallbackWorkspace";
+import { templateVariableReferences } from "./templateVariableReference";
 import type {
   WritingSurfaceAdminAccess,
   WritingSurfaceMapItem,
@@ -1908,6 +1910,8 @@ export function GeneratedContentAdminDashboard() {
   const [skyRelatedAspectQuery, setSkyRelatedAspectQuery] = useState("");
   const [skyFallbackPreviewFacts, setSkyFallbackPreviewFacts] = useState<Record<string, string>>({});
   const [skyFallbackVariableTarget, setSkyFallbackVariableTarget] = useState("");
+  const [templateVariableReferenceOpen, setTemplateVariableReferenceOpen] = useState(false);
+  const [templateVariableQuery, setTemplateVariableQuery] = useState("");
   const [skyArticleEditionForm, setSkyArticleEditionForm] = useState<SkyArticleEditionForm | null>(null);
   const [skyArticleEditor, setSkyArticleEditor] = useState<SkyArticleEditorState | null>(null);
   const [draft, setDraft] = useState<AdminDraft | null>(null);
@@ -2542,6 +2546,8 @@ export function GeneratedContentAdminDashboard() {
   }
 
   function closeEditor() {
+    setTemplateVariableReferenceOpen(false);
+    setTemplateVariableQuery("");
     setSelectedRowId(null);
     setDraft(null);
     setSkyWriteupParentId(null);
@@ -3106,6 +3112,8 @@ export function GeneratedContentAdminDashboard() {
     setSkyRelatedAspectQuery("");
     setSkyFallbackPreviewFacts({});
     setSkyFallbackVariableTarget("");
+    setTemplateVariableReferenceOpen(false);
+    setTemplateVariableQuery("");
     skyArticleAutosaveSequenceRef.current += 1;
     setSkyArticleEditor(edition && baseEdition ? {
       baseEdition,
@@ -5098,6 +5106,24 @@ export function GeneratedContentAdminDashboard() {
       ? skyFallbackVariableTarget
       : skyFallbackEditor?.fields.find((field) => field.key === "fact_line")?.key ?? skyFallbackEditor?.fields[0]?.key ?? "";
     const effectiveSkyFallback = effectivePackageRecord(currentDraft.sections);
+    const variableReferences = templateVariableReferences({
+      Headline: currentDraft.headline,
+      Summary: currentDraft.summary,
+      Body: currentDraft.body,
+      body_you: packageFieldString(currentDraft, "body_you"),
+      body_they: packageFieldString(currentDraft, "body_they")
+    }, effectiveSkyFallback);
+    const normalizedTemplateVariableQuery = templateVariableQuery.trim().toLowerCase();
+    const filteredVariableReferences = normalizedTemplateVariableQuery
+      ? variableReferences.filter((variable) => [
+          variable.name,
+          variable.label,
+          variable.meaning,
+          variable.example,
+          variable.source,
+          ...variable.fields
+        ].some((value) => value.toLowerCase().includes(normalizedTemplateVariableQuery)))
+      : variableReferences;
     const skyFallbackChanges = packageDraftChanges(currentDraft.sections);
     const skyFallbackPreview = skyFallbackEditor
       ? renderWorkspacePreview(skyFallbackEditor.fields, skyFallbackPreviewFacts)
@@ -5349,6 +5375,15 @@ export function GeneratedContentAdminDashboard() {
           </div>
           <div className="admin-editor-toolbar-actions">
             <span className={`ui-pill admin-status status-${currentDraft.status.toLowerCase()}`}>{contentStatusLabel(currentDraft.status)}</span>
+            {variableReferences.length > 0 && (
+              <button
+                type="button"
+                onClick={() => setTemplateVariableReferenceOpen(true)}
+              >
+                <Braces size={16} aria-hidden="true" />
+                Variables ({variableReferences.length})
+              </button>
+            )}
             <button type="button" onClick={closeEditor}>
               Close
             </button>
@@ -6222,6 +6257,93 @@ export function GeneratedContentAdminDashboard() {
           )}
         </section>
       </aside>
+      {templateVariableReferenceOpen && (
+        <>
+          <button
+            type="button"
+            className="admin-editor-backdrop"
+            style={{ zIndex: 80 }}
+            aria-label="Close template variable reference"
+            onClick={() => setTemplateVariableReferenceOpen(false)}
+          />
+          <aside
+            className="admin-editor-panel admin-variable-reference-panel"
+            style={{ maxWidth: "min(560px, 100vw)", width: "min(560px, 100vw)", zIndex: 81 }}
+            role="dialog"
+            aria-modal="true"
+            aria-label="Template variable reference"
+          >
+            <header className="admin-editor-toolbar">
+              <div>
+                <p className="admin-eyebrow">Template help</p>
+                <h2>Variables in this template</h2>
+                <p className="admin-field-hint">These values are filled by the app when it builds a reader passage. Your draft stays open behind this guide.</p>
+              </div>
+              <button type="button" onClick={() => setTemplateVariableReferenceOpen(false)}>Back to editor</button>
+            </header>
+            <div className="admin-post-editor">
+              <section className="admin-hook-detail-section admin-variable-syntax-guide" aria-label="Template syntax guide">
+                <h3>How to read the template</h3>
+                <dl className="admin-hook-pattern-list">
+                  <div>
+                    <dt><code>{"{{planetTitle}}"}</code></dt>
+                    <dd>Inserts one value, such as <em>Jupiter</em>.</dd>
+                  </div>
+                  <div>
+                    <dt><code>{"{{#planetIntro}}…{{/planetIntro}}"}</code></dt>
+                    <dd>Includes the whole block only when that optional copy is available.</dd>
+                  </div>
+                  <div>
+                    <dt><code>{"{{.}}"}</code></dt>
+                    <dd>Inserts the current sentence while the app moves through a list.</dd>
+                  </div>
+                </dl>
+              </section>
+
+              <label className="admin-field-wide admin-variable-reference-search">
+                <span>Find a variable or meaning</span>
+                <input
+                  type="search"
+                  value={templateVariableQuery}
+                  onChange={(event) => setTemplateVariableQuery(event.target.value)}
+                  placeholder="Try planet, sign, optional…"
+                  autoFocus
+                />
+              </label>
+
+              <p className="admin-field-hint admin-variable-reference-count" aria-live="polite">
+                Showing {filteredVariableReferences.length} of {variableReferences.length} variables used in this row.
+              </p>
+
+              <section className="admin-sky-edition-fields admin-variable-reference-list" aria-label="Variables used in this row">
+                {filteredVariableReferences.map((variable) => (
+                  <article className="admin-hook-detail-section admin-variable-reference-card" key={variable.name}>
+                    <header className="admin-fallback-diagnostic-heading">
+                      <div>
+                        <code>{`{{${variable.name}}}`}</code>
+                        <h3>{variable.label}</h3>
+                      </div>
+                      <span className={`ui-pill admin-status status-${variable.requirement === "Required" ? "live" : variable.requirement === "Optional" ? "draft" : "reviewed"}`}>{variable.requirement}</span>
+                    </header>
+                    <p>{variable.meaning}</p>
+                    <dl className="admin-hook-pattern-list">
+                      <div><dt>Example</dt><dd>{variable.example}</dd></div>
+                      <div><dt>Comes from</dt><dd>{variable.source}</dd></div>
+                      <div><dt>Used in</dt><dd>{variable.fields.join(", ")}</dd></div>
+                    </dl>
+                  </article>
+                ))}
+                {filteredVariableReferences.length === 0 && (
+                  <div className="admin-empty-state">
+                    <strong>No matching variables</strong>
+                    <p>Try a variable name such as <code>planetTitle</code>, or search by a meaning such as “sign.”</p>
+                  </div>
+                )}
+              </section>
+            </div>
+          </aside>
+        </>
+      )}
       </>
     );
   }
