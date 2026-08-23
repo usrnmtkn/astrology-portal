@@ -433,6 +433,7 @@ async function seedAdminApi(
     initialSecret?: string;
     expectedSecret?: string;
     generatedRows?: Record<string, unknown>[];
+    generatedContentDelayMs?: number;
   } = {}
 ) {
   const apiGeneratedContentRows = options.generatedRows ?? generatedContentRows;
@@ -545,6 +546,9 @@ async function seedAdminApi(
         return;
       }
 
+      if (options.generatedContentDelayMs) {
+        await new Promise((resolve) => setTimeout(resolve, options.generatedContentDelayMs));
+      }
       await route.fulfill({
         status: 200,
         contentType: "application/json",
@@ -673,6 +677,23 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(page.getByRole("button", { name: "TLDR Astro home" })).toHaveCount(0);
 
     await assertNoBrowserErrors();
+  });
+
+  test("initial CMS load does not present zero counts as a ready dashboard", async ({ page }) => {
+    await seedAdminApi(page, { generatedContentDelayMs: 1_000 });
+    await page.goto("/admin/content");
+
+    await expect(page.getByRole("status")).toContainText("Loading saved content…");
+    await expect(page.getByRole("status")).not.toContainText("Content Studio ready");
+    await expect(page.getByRole("region", { name: "Admin status" })).toContainText("Loading");
+    await expect(page.getByRole("region", { name: "Loading saved content" })).toBeVisible();
+    await expect(page.getByRole("navigation", { name: "Review queue views" })).toBeHidden();
+
+    await expect(page.getByRole("region", { name: "Admin status" })).toContainText(`${generatedContentRows.length} saved rows loaded`, {
+      timeout: routeReadyTimeoutMs
+    });
+    await expect(page.getByRole("region", { name: "Loading saved content" })).toBeHidden();
+    await expect(page.getByRole("navigation", { name: "Review queue views" })).toBeVisible();
   });
 
   test("admin access validates pasted env assignments before saving them", async ({ page }) => {

@@ -1892,11 +1892,11 @@ export function GeneratedContentAdminDashboard() {
   const [reviewRows, setReviewRows] = useState<AdminReviewRecord[]>([]);
   const [userRows, setUserRows] = useState<AdminUserGeneratedContentRow[]>([]);
   const [facts, setFacts] = useState<AdminContentFact[]>([]);
-  const [message, setMessage] = useState("Content Studio ready.");
-  const [loadState, setLoadState] = useState<AdminLoadState>("idle");
+  const [message, setMessage] = useState("Loading saved content…");
+  const [loadState, setLoadState] = useState<AdminLoadState>("loading");
   const [loadError, setLoadError] = useState<string | null>(null);
   const [loadDiagnostics, setLoadDiagnostics] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [isCreateMenuOpen, setIsCreateMenuOpen] = useState(false);
   const [contentStatusFilter, setContentStatusFilter] = useState<GeneratedContentStatus | "all">("all");
   const [contentLibraryView, setContentLibraryView] = useState<ContentLibraryView>("all");
@@ -2230,8 +2230,9 @@ export function GeneratedContentAdminDashboard() {
     () => rows.filter((row) => selectedIds.has(row.id)),
     [rows, selectedIds]
   );
-  const hasAccessIssue = loadState === "accessDenied" || (!secret.trim() && loadState !== "loaded");
+  const hasAccessIssue = loadState === "accessDenied" || (!secret.trim() && loadState !== "loaded" && loadState !== "loading");
   const hasLoadFailure = loadState === "error";
+  const isInitialDashboardLoad = loadState === "loading" && rows.length === 0;
 
   async function refreshHookCatalog() {
     setHookCatalogLoadState("loading");
@@ -2420,6 +2421,8 @@ export function GeneratedContentAdminDashboard() {
         await loadDashboardData(emergencySecret, false, "secret");
       } else if (!cancelled) {
         setLoadState("idle");
+        setIsLoading(false);
+        setMessage("Sign in with the owner account or use the emergency access key.");
       }
 
     })();
@@ -2644,6 +2647,7 @@ export function GeneratedContentAdminDashboard() {
     setLoadState("loading");
     setLoadError(null);
     setLoadDiagnostics(null);
+    setMessage("Loading saved content…");
     setSourceDraftLoadState("loading");
     setSourceDraftError(null);
     setIsLoading(true);
@@ -3843,6 +3847,19 @@ export function GeneratedContentAdminDashboard() {
         {hasAccessIssue && activePage !== "connection" && renderAccessGate()}
         {hasLoadFailure && renderLoadFailure()}
 
+        {isInitialDashboardLoad && (
+          <section className="admin-content-toolbar admin-review-queue-hero admin-initial-loading" aria-label="Loading saved content" aria-live="polite">
+            <div>
+              <p className="admin-eyebrow">Connecting to Content Studio</p>
+              <h2>Loading saved content…</h2>
+              <p>Verifying access and loading CMS rows. Counts and editing controls will appear when the request finishes.</p>
+            </div>
+            <RefreshCw size={22} aria-hidden="true" />
+          </section>
+        )}
+
+        <div className="admin-loaded-workspace" hidden={isInitialDashboardLoad} aria-busy={loadState === "loading"}>
+
         {isCompositionPage(activePage) && (
           <nav className="admin-template-tabs admin-composition-tabs" aria-label="Composition workspace">
             {compositionTabs.map((item) => (
@@ -4530,6 +4547,8 @@ export function GeneratedContentAdminDashboard() {
             <ReportFulfillmentAdminPanel secret={secret} />
           </Suspense>
         )}
+
+        </div>
 
       </section>
     </main>
