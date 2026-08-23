@@ -112,6 +112,7 @@ assert.ok(heldSources.every((source) => (
 const generatedContentApi = fs.readFileSync(path.join(repoRoot, "api/admin/generated-content.ts"), "utf8");
 assert.match(generatedContentApi, /sourceDrafts"\) === "sky-aspects"/u, "The secret-protected Admin API must expose the held source-draft catalog.");
 assert.match(generatedContentApi, /listHeldSkyAspectSourceDrafts/u, "The Admin API must load the held source-draft directory.");
+assert.match(generatedContentApi, /path\.dirname\(fileURLToPath\(import\.meta\.url\)\)[\s\S]*"\.\.\/\.\."[\s\S]*four-body-unverified/u, "The held source-draft catalog must resolve from the repository instead of the dev server working directory.");
 
 const appSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/App.tsx"), "utf8");
 const calendarSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/features/calendar/LunarCalendar.tsx"), "utf8");

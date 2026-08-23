@@ -18,6 +18,29 @@ export type SkyFallbackIdentity = {
   groupLabel: string;
 };
 
+export const skyPlacementFallbackSectionOutline = [
+  {
+    key: "tagline",
+    label: "Short headline",
+    description: "The brief headline shown with the placement."
+  },
+  {
+    key: "hook",
+    label: "Opening",
+    description: "Introduces the planet in the sign and the main idea."
+  },
+  {
+    key: "lived",
+    label: "How it shows up",
+    description: "Shows the placement through recognizable situations and behavior."
+  },
+  {
+    key: "turn",
+    label: "Challenge and response",
+    description: "Names what becomes difficult and the useful response."
+  }
+] as const;
+
 const articleFieldOrder = [
   ["fact_line", "Calculated date line"],
   ["opening", "Opening paragraphs"],
@@ -105,17 +128,12 @@ export function skyFallbackIdentity(contentKey: string): SkyFallbackIdentity | n
   const legacyPlacementIndex = parts.findIndex((part) => /^sky-placement-(tagline|hook|lived|turn)$/u.test(part));
   if (legacyPlacementIndex >= 0 && parts.length >= legacyPlacementIndex + 3) {
     const slot = parts[legacyPlacementIndex].replace(/^sky-placement-/u, "");
-    const slotLabels: Record<string, string> = {
-      tagline: "Tagline",
-      hook: "Opening passage",
-      lived: "Lived passage",
-      turn: "Closing passage"
-    };
+    const slotLabel = skyPlacementFallbackSectionOutline.find((section) => section.key === slot)?.label ?? words(slot);
     return {
-      title: `${words(parts[legacyPlacementIndex + 1])} in ${words(parts[legacyPlacementIndex + 2])} · ${slotLabels[slot] ?? words(slot)}`,
-      typeLabel: "Legacy Sky Placement passage",
+      title: `${words(parts[legacyPlacementIndex + 1])} in ${words(parts[legacyPlacementIndex + 2])} · ${slotLabel}`,
+      typeLabel: "Sky Placement fallback article section",
       groupKey: "supporting",
-      groupLabel: "Supporting fallback rows"
+      groupLabel: "Sky Placement fallback articles"
     };
   }
 

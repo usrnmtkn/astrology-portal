@@ -63947,12 +63947,12 @@
   },
   {
    "contentKey": "fallback-hook/aspect-lived/sextile",
-   "content_role": "full_copy",
+   "content_role": "source_material",
    "grammar_frame": "complete_sentence",
    "body": "A sextile is an opportunity that is easy to use if you take it. The conversation happens, the right tool is nearby, timing improves, or somebody offers help, but you still have to act on it. Ease creates room rather than a guaranteed result.\n\nIt can feel lucky precisely because the effort and the opportunity are not fighting each other. The advantage is real. It still needs use.",
-   "reader_only": true,
-   "render_policy": "reader-only-exact-lived-v1",
-   "review_status": "approved",
+   "reader_only": false,
+   "render_policy": "reference-only-generic-aspect-baseline-v1",
+   "review_status": "reviewed",
    "source_keys": [
     "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V13-DIRECT-LANGUAGE-OWNER-APPROVED.xlsx",
     "packages/astro-knowledge/voice/tldr-astro/marie-satori-writer/ll-matrix-v13/knowledge-matrix-v13-owner-approved-locked.json"
@@ -63969,19 +63969,24 @@
    "source_sheet": "AspectMeanings",
    "source_workbook_row": 4,
    "source_workbook_sha256": "937549e74eb8e68f8c7e884db6789aeaa79368e53dba5b6ef1c4be697dddb41c",
-   "governance": "owner-approved-v13-direct-language",
+   "governance": "owner-approved-generic-aspect-source-material-2026-08-23",
    "owner_approved": true,
-   "precedence": "owner-approved V13 exact key supersedes earlier LL copy on the same runtime key",
-   "distribution_lane": "serving"
+   "precedence": "Owner retained this generic aspect doctrine as source material only; exact planet/point pair copy must serve instead.",
+   "distribution_lane": "reference",
+   "source_material": {
+    "classifiedAt": "2026-08-23",
+    "purpose": "baseline-for-exact-pair-authoring",
+    "neverServeVerbatim": true
+   }
   },
   {
    "contentKey": "fallback-hook/aspect-lived/quincunx",
-   "content_role": "full_copy",
+   "content_role": "source_material",
    "grammar_frame": "complete_sentence",
    "body": "An inconjunct puts two needs on schedules that never quite line up. You solve for one and the other becomes a problem again, so the same situation keeps requiring another adjustment in thought, behavior, desire, or timing.\n\nThe answer is rarely choosing one planet forever. It gets more workable once you stop fixing today's problem by automatically creating tomorrow's.",
-   "reader_only": true,
-   "render_policy": "reader-only-exact-lived-v1",
-   "review_status": "approved",
+   "reader_only": false,
+   "render_policy": "reference-only-generic-aspect-baseline-v1",
+   "review_status": "reviewed",
    "source_keys": [
     "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V13-DIRECT-LANGUAGE-OWNER-APPROVED.xlsx",
     "packages/astro-knowledge/voice/tldr-astro/marie-satori-writer/ll-matrix-v13/knowledge-matrix-v13-owner-approved-locked.json"
@@ -63998,10 +64003,15 @@
    "source_sheet": "AspectMeanings",
    "source_workbook_row": 7,
    "source_workbook_sha256": "937549e74eb8e68f8c7e884db6789aeaa79368e53dba5b6ef1c4be697dddb41c",
-   "governance": "owner-approved-v13-direct-language",
+   "governance": "owner-approved-generic-aspect-source-material-2026-08-23",
    "owner_approved": true,
-   "precedence": "owner-approved V13 exact key supersedes earlier LL copy on the same runtime key",
-   "distribution_lane": "serving"
+   "precedence": "Owner retained this generic aspect doctrine as source material only; exact planet/point pair copy must serve instead.",
+   "distribution_lane": "reference",
+   "source_material": {
+    "classifiedAt": "2026-08-23",
+    "purpose": "baseline-for-exact-pair-authoring",
+    "neverServeVerbatim": true
+   }
   },
   {
    "contentKey": "fallback-hook/natal-aspect-lived/sun/nonagen/moon",
@@ -68759,12 +68769,12 @@
   },
   {
    "contentKey": "fallback-hook/natal-moon-phase-lived/balsamic",
-   "content_role": "full_copy",
+   "content_role": "source_material",
    "grammar_frame": "complete_sentence",
    "body": "Balsamic Moon births can outgrow purely personal goals once they see what the same effort might contribute to a group, cause, or future larger than the self. Humanitarian work, metaphysical questions, history, prophecy, and the meaning of life may feel unusually important. A sense of destiny can become strong.\n\nThat sense of destiny matters more once it has a real task attached to it. Ideals need a community, practice, project, or contribution that can absorb the feeling. Otherwise destiny stays an idea you never act on.",
-   "reader_only": true,
-   "render_policy": "reader-only-exact-lived-v1",
-   "review_status": "approved",
+   "reader_only": false,
+   "render_policy": "reference-only-never-serve-verbatim",
+   "review_status": "superseded",
    "source_keys": [
     "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V13-DIRECT-LANGUAGE-OWNER-APPROVED.xlsx",
     "packages/astro-knowledge/voice/tldr-astro/marie-satori-writer/ll-matrix-v13/knowledge-matrix-v13-owner-approved-locked.json"
@@ -68781,10 +68791,15 @@
    "source_sheet": "NodesPhasesFortune",
    "source_workbook_row": 9,
    "source_workbook_sha256": "937549e74eb8e68f8c7e884db6789aeaa79368e53dba5b6ef1c4be697dddb41c",
-   "governance": "owner-approved-v13-direct-language",
-   "owner_approved": true,
-   "precedence": "owner-approved V13 exact key supersedes earlier LL copy on the same runtime key",
-   "distribution_lane": "serving"
+   "governance": "owner-retired-unwired-2026-08-23",
+   "owner_approved": false,
+   "precedence": "Owner retired this unwired natal Moon-phase row on 2026-08-23; retain wording only as historical source material.",
+   "distribution_lane": "reference",
+   "retirement": {
+    "retiredAt": "2026-08-23",
+    "reason": "No live natal Moon-phase resolver requests this key.",
+    "disposition": "historical-source-material"
+   }
   },
   {
    "contentKey": "fallback-hook/placement-house-lived/part-of-fortune/4",
