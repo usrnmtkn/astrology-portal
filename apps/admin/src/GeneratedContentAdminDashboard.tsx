@@ -21,6 +21,7 @@ import type { KeyboardEvent as ReactKeyboardEvent } from "react";
 import { isReaderFacingCopy } from "../../web/src/content/readerSafety";
 import { renderCmsTemplatePreview, validateCmsTemplate } from "../../web/src/content/cmsTemplateValidation";
 import { announceContentUpdate } from "../../web/src/services/contentUpdateSignal";
+import { adminSecretStorageKey, normalizeAdminSecret } from "./adminSecret";
 import {
   SKY_ARTICLE_COMPILER_VERSION,
   compileSkyArticleEdition,
@@ -315,12 +316,6 @@ type AdminDraft = {
 
 type AdminVocabularySection = "planets" | "signs" | "natal" | "relationship" | "career";
 type AdminVocabularyCategoryFilter = AdminVocabularySection;
-
-const adminSecretStorageKey = "tldrastro:contentAdminSecret";
-
-function normalizeAdminSecret(value: string) {
-  return value.trim();
-}
 
 function getLocalContentGenerationSecret() {
   return (globalThis as typeof globalThis & { __LOCAL_CONTENT_GENERATION_SECRET__?: string }).__LOCAL_CONTENT_GENERATION_SECRET__ ?? "";
@@ -1809,6 +1804,7 @@ function useSavedSecret() {
 
 export function GeneratedContentAdminDashboard() {
   const [secret, setSecret] = useSavedSecret();
+  const [secretInput, setSecretInput] = useState(secret);
   const [activePage, setActivePage] = useState<AdminDashboardPage>(() => parseAdminHash().page);
   const [rows, setRows] = useState<AdminGeneratedContentRow[]>([]);
   const [allRowsLoaded, setAllRowsLoaded] = useState(false);
@@ -2500,13 +2496,13 @@ export function GeneratedContentAdminDashboard() {
     navigateAdminPage("vocabulary", params, { keepEditorOpen: true });
   }
 
-  async function loadDashboardData() {
-    const normalizedSecret = normalizeAdminSecret(secret);
+  async function loadDashboardData(secretOverride?: string, persistOnSuccess = false) {
+    const normalizedSecret = normalizeAdminSecret(secretOverride ?? secret);
     if (!normalizedSecret) {
       setLoadState("idle");
       setLoadError("Admin access is required before content can load.");
       setLoadDiagnostics(null);
-      setMessage("Paste CONTENT_GENERATION_SECRET, then load content.");
+      setMessage("Paste the secret value, not the words CONTENT_GENERATION_SECRET, then load content.");
       return;
     }
 
@@ -2551,6 +2547,11 @@ export function GeneratedContentAdminDashboard() {
       }
       setFacts([]);
 
+      if (persistOnSuccess) {
+        setSecret(normalizedSecret);
+        setSecretInput(normalizedSecret);
+      }
+
       const partialWarnings = [
         reviewResult.status === "rejected" ? "review records failed" : "",
         usersResult.status === "rejected" ? "user rows failed" : "",
@@ -2561,9 +2562,9 @@ export function GeneratedContentAdminDashboard() {
     } catch (error) {
       const accessDenied = error instanceof AdminRequestError && error.status === 401;
       const nextMessage = accessDenied
-        ? "Admin access was denied. The rejected saved secret was cleared; paste the current Production CONTENT_GENERATION_SECRET and load content again."
+        ? "Admin access was denied. Paste the current Production secret value; you may paste either the value alone or CONTENT_GENERATION_SECRET=value."
         : dashboardErrorMessage(error);
-      if (accessDenied) setSecret("");
+      if (accessDenied && normalizedSecret === normalizeAdminSecret(secret)) setSecret("");
       setLoadState(accessDenied ? "accessDenied" : "error");
       setLoadError(nextMessage);
       setLoadDiagnostics(error instanceof AdminRequestError ? `${error.method} ${error.path} -> HTTP ${error.status}${error.details ? ` (${error.details})` : ""}` : null);
@@ -2571,6 +2572,19 @@ export function GeneratedContentAdminDashboard() {
     } finally {
       setIsLoading(false);
     }
+  }
+
+  function submitAdminSecret() {
+    const normalizedSecret = normalizeAdminSecret(secretInput);
+    if (!normalizedSecret) {
+      const nextMessage = "Paste the secret value, not the words CONTENT_GENERATION_SECRET.";
+      setLoadState("accessDenied");
+      setLoadError(nextMessage);
+      setLoadDiagnostics(null);
+      setMessage(nextMessage);
+      return;
+    }
+    void loadDashboardData(normalizedSecret, true);
   }
 
   async function loadSkyReviewHorizon() {
@@ -4233,14 +4247,19 @@ export function GeneratedContentAdminDashboard() {
                 <h2>Connection</h2>
                 <p>Save the content generation secret for local admin API calls.</p>
               </div>
-              <button type="button" onClick={() => void loadDashboardData()} disabled={isLoading}>
+              <button type="button" onClick={submitAdminSecret} disabled={isLoading || !normalizeAdminSecret(secretInput)}>
                 <RefreshCw size={16} aria-hidden="true" />
                 Check Access
               </button>
             </section>
             <label className="admin-field-wide">
               <span>CONTENT_GENERATION_SECRET</span>
-              <input type="password" value={secret} onChange={(event) => setSecret(event.target.value)} placeholder="Paste admin secret" />
+              <input
+                type="password"
+                value={secretInput}
+                onChange={(event) => setSecretInput(event.target.value)}
+                placeholder="Paste secret value or CONTENT_GENERATION_SECRET=value"
+              />
             </label>
           </section>
         )}
@@ -4497,24 +4516,24 @@ export function GeneratedContentAdminDashboard() {
         <div>
           <p className="admin-eyebrow">Admin access required</p>
           <h2>Content is hidden until the dashboard can call the admin API</h2>
-          <p>The saved rows are still in the admin API. Paste `CONTENT_GENERATION_SECRET`, then reload the dashboard data.</p>
+          <p>The saved rows are still in the admin API. Paste the secret value. You can also paste the complete `CONTENT_GENERATION_SECRET=value` line.</p>
         </div>
         <label className="admin-access-inline-field">
           <span>Secret</span>
           <input
             aria-label="Secret"
             type="password"
-            value={secret}
-            onChange={(event) => setSecret(event.target.value)}
+            value={secretInput}
+            onChange={(event) => setSecretInput(event.target.value)}
             onKeyDown={(event) => {
               if (event.key === "Enter") {
-                void loadDashboardData();
+                submitAdminSecret();
               }
             }}
-            placeholder="CONTENT_GENERATION_SECRET"
+            placeholder="Paste secret value or CONTENT_GENERATION_SECRET=value"
           />
         </label>
-        <button type="button" onClick={() => void loadDashboardData()} disabled={isLoading || !secret.trim()}>
+        <button type="button" onClick={submitAdminSecret} disabled={isLoading || !normalizeAdminSecret(secretInput)}>
           <RefreshCw size={16} aria-hidden="true" />
           Load content
         </button>
