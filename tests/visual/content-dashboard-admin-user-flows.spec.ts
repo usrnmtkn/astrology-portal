@@ -1697,7 +1697,11 @@ test.describe("content dashboard admin user flow case studies", () => {
 
     await openAdminDeepLink("#templates");
     await expectAdminHeader(page, "Templates", "Admin / Composition / Templates");
-    await expect(page.getByText(/Mustache templates|voice scaffolds/i)).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Reader copy templates" })).toBeVisible();
+    await expect(page.getByText("Each row is a reusable pattern for one app destination. Its title shows where it is used.")).toBeVisible();
+    const compatibilityTemplate = page.locator(".admin-content-row", { hasText: "slot-template/compatibility/planet-card" });
+    await expect(compatibilityTemplate.getByText("Compatibility · Planet card", { exact: true })).toBeVisible();
+    await expect(compatibilityTemplate.getByText("Copy pattern for compatibility", { exact: true })).toBeVisible();
 
     await openAdminDeepLink("#slots");
     await expectAdminHeader(page, "Slots", "Admin / Composition / Slots");
