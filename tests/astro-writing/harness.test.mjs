@@ -182,7 +182,7 @@ assert.equal(read("docs/writing/BANNED_PATTERNS.md"), read("tldr-astro-phraseban
 assert.equal(read("data/writing/owner-corrections.jsonl"), read("packages/astro-knowledge/review/writing-harness-v2/owner-corrections.jsonl"));
 assert.ok(voiceContract.startsWith(ownerDoctrine));
 assert.ok(voiceContract.endsWith(read("tldr-astro-phrasebank/MARIE-VOICE-BANK.md")));
-assert.equal(sha256(cardStandard), "20ebf9edc5143c7f7dc04672bb1d107f7b480dcac61043db17b19432c6491175", "Card transit writing standard must remain byte-for-byte owner supplied.");
+assert.equal(sha256(cardStandard), "fb2eea13216bdff25f3c1f1a9940bd1fc92c518a1275815495b86e1517236c02", "Card transit writing standard must remain byte-for-byte owner supplied after the approved CC attribution rename.");
 assert.equal(cardTransitWritingStandard, cardStandard);
 assert.equal(cardCritiqueChecklist, cardChecklist);
 assert.match(cardStandard, /Status: owner ruling, 2026-08-09[\s\S]*Generation rule, not reader-facing copy/u);

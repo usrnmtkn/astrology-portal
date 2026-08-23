@@ -72,7 +72,7 @@ const packageReferences = new Map(templatePackage.templates.flatMap((template) =
 const genericPackageReferences = [...packageReferences.values()].filter((reference) => (
   reference.source === "Runtime resolver" || reference.source === "Calculated runtime fact"
 ));
-assert.equal(packageReferences.size, 70, "The variable guide should cover every variable in the current fallback template package.");
+assert.equal(packageReferences.size, 72, "The variable guide should cover every variable in the current fallback template package.");
 assert.deepEqual(genericPackageReferences, [], "Every packaged template variable should have a specific editorial definition, example, and source.");
 
 console.log(`Admin template variable reference tests passed (${packageReferences.size} packaged variables documented).`);

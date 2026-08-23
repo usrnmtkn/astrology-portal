@@ -6589,7 +6589,12 @@ export function GeneratedContentAdminDashboard() {
               setSelectedTemplateVariableName(null);
             }}
             onSelectSource={setSelectedTemplateVariableSourceId}
-            onEditSource={(row) => openRow(row as AdminGeneratedContentRow)}
+            onEditSource={(row) => {
+              setSelectedTemplateVariableSourceId(null);
+              setSelectedTemplateVariableName(null);
+              setTemplateVariableReferenceOpen(false);
+              openRow(row as AdminGeneratedContentRow);
+            }}
           />
         </Suspense>
       )}
