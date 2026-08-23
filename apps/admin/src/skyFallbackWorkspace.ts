@@ -11,23 +11,122 @@ export type SkyFallbackWorkspace = {
   variables: string[];
 };
 
+export type SkyFallbackIdentity = {
+  title: string;
+  typeLabel: string;
+  groupKey: "articles" | "houses" | "sky-aspects" | "personal-transits" | "supporting";
+  groupLabel: string;
+};
+
 const articleFieldOrder = [
-  ["fact_line", "Date line"],
-  ["opening", "Opening"],
-  ["tension", "Tension"],
-  ["development", "Development"],
+  ["fact_line", "Calculated date line"],
+  ["opening", "Opening paragraphs"],
+  ["tension", "Complication paragraphs"],
+  ["development", "Development / turn"],
   ["era_layer.frame", "Era frame"],
   ["era_layer.handoff", "Era handoff"],
   ["era_layer.recurrence", "Recurrence"],
   ["era_layer.collective_lesson", "Collective lesson"],
-  ["close", "Close"]
+  ["close", "Final paragraph"]
 ] as const;
 
 const aspectFieldOrder = [
-  ["body", "Collective copy"],
-  ["body_you", "Direct-address copy"],
-  ["body_they", "Friend copy"]
+  ["body", "Collective Sky copy"],
+  ["body_you", "Reader transit copy"],
+  ["body_they", "Friend transit copy"]
 ] as const;
+
+function words(value: string) {
+  return value
+    .replace(/[-_]/gu, " ")
+    .replace(/\b\w/gu, (match) => match.toUpperCase());
+}
+
+function ordinalHouse(value: string) {
+  const house = Number(value.replace(/^house-/u, ""));
+  if (!Number.isInteger(house)) return words(value);
+  const mod100 = house % 100;
+  if (mod100 >= 11 && mod100 <= 13) return `${house}th House`;
+  if (house % 10 === 1) return `${house}st House`;
+  if (house % 10 === 2) return `${house}nd House`;
+  if (house % 10 === 3) return `${house}rd House`;
+  return `${house}th House`;
+}
+
+export function skyFallbackIdentity(contentKey: string): SkyFallbackIdentity | null {
+  const parts = contentKey.split("/").filter(Boolean);
+  const skyArticleIndex = parts.indexOf("sky-sign-copy");
+  if (skyArticleIndex >= 0 && parts.length >= skyArticleIndex + 3) {
+    return {
+      title: `${words(parts[skyArticleIndex + 1])} in ${words(parts[skyArticleIndex + 2])}`,
+      typeLabel: "Full Sky Placement article",
+      groupKey: "articles",
+      groupLabel: "Sky Placement articles"
+    };
+  }
+
+  const houseIndex = parts.indexOf("house-horoscope-core");
+  if (houseIndex >= 0 && parts.length >= houseIndex + 4) {
+    return {
+      title: `${words(parts[houseIndex + 1])} in ${words(parts[houseIndex + 2])} · ${ordinalHouse(parts[houseIndex + 3])}`,
+      typeLabel: "House horoscope",
+      groupKey: "houses",
+      groupLabel: "House horoscopes"
+    };
+  }
+
+  const legacyPlacementIndex = parts.findIndex((part) => /^sky-placement-(tagline|hook|lived|turn)$/u.test(part));
+  if (legacyPlacementIndex >= 0 && parts.length >= legacyPlacementIndex + 3) {
+    const slot = parts[legacyPlacementIndex].replace(/^sky-placement-/u, "");
+    const slotLabels: Record<string, string> = {
+      tagline: "Tagline",
+      hook: "Opening passage",
+      lived: "Lived passage",
+      turn: "Closing passage"
+    };
+    return {
+      title: `${words(parts[legacyPlacementIndex + 1])} in ${words(parts[legacyPlacementIndex + 2])} · ${slotLabels[slot] ?? words(slot)}`,
+      typeLabel: "Legacy Sky Placement passage",
+      groupKey: "supporting",
+      groupLabel: "Supporting fallback rows"
+    };
+  }
+
+  const signedAspectIndex = parts.indexOf("sky-aspect-sign");
+  if (signedAspectIndex >= 0 && parts.length >= signedAspectIndex + 6) {
+    const [planetA, signA, aspect, planetB, signB] = parts.slice(signedAspectIndex + 1);
+    return {
+      title: `${words(planetA)} in ${words(signA)} ${words(aspect)} ${words(planetB)} in ${words(signB)}`,
+      typeLabel: "Collective Sky aspect",
+      groupKey: "sky-aspects",
+      groupLabel: "Sky aspects"
+    };
+  }
+
+  const placementAspectIndex = parts.indexOf("sky-placement-aspect");
+  if (placementAspectIndex >= 0 && parts.length >= placementAspectIndex + 4) {
+    const [planetA, planetB, aspect, sign] = parts.slice(placementAspectIndex + 1);
+    return {
+      title: `${words(planetA)} ${words(aspect)} ${words(planetB)}${sign ? ` · ${words(sign)}` : ""}`,
+      typeLabel: "Sky Placement aspect",
+      groupKey: "sky-aspects",
+      groupLabel: "Sky aspects"
+    };
+  }
+
+  const transitAspectIndex = parts.indexOf("transit-aspect");
+  if (transitAspectIndex >= 0 && parts.length >= transitAspectIndex + 4) {
+    const [planet, natalPoint, aspect] = parts.slice(transitAspectIndex + 1);
+    return {
+      title: `${words(planet)} ${words(aspect)} your ${words(natalPoint)}`,
+      typeLabel: "Transit to natal",
+      groupKey: "personal-transits",
+      groupLabel: "Transits to natal"
+    };
+  }
+
+  return null;
+}
 
 function record(value: unknown): Record<string, unknown> {
   return value && typeof value === "object" && !Array.isArray(value)
