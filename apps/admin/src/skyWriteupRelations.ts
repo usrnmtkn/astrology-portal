@@ -20,6 +20,8 @@ export type SkyLunationContext = {
   sign: string;
 };
 
+export type SkyWriteupSubjectType = "planet" | "angle" | "point";
+
 export type RelatedHousePassage<Row extends SkyWriteupRelationRow = SkyWriteupRelationRow> = {
   house: number;
   kind: "Sky house horoscope" | "House and sign passage" | "House passage" | "House introduction";
@@ -79,6 +81,34 @@ const signs = [
 const planetSet = new Set<string>(planets);
 const signSet = new Set<string>(signs);
 const signOrder = [...signs];
+const standardPlanetSet = new Set([
+  "sun",
+  "moon",
+  "mercury",
+  "venus",
+  "mars",
+  "jupiter",
+  "saturn",
+  "uranus",
+  "neptune",
+  "pluto"
+]);
+const angleSet = new Set([
+  "ascendant",
+  "descendant",
+  "midheaven",
+  "mc",
+  "imum-coeli",
+  "ic"
+]);
+const pointSet = new Set([
+  "chiron",
+  "north-node",
+  "south-node",
+  "lilith",
+  "part-of-fortune",
+  "vertex"
+]);
 
 function normalizedToken(value: unknown) {
   return typeof value === "string"
@@ -123,6 +153,45 @@ function signFromHeadline(headline: string) {
     || new RegExp(`\\b${sign}\\s+(?:new|full)\\s+moon\\b`, "u").test(normalized)
     || new RegExp(`\\b${sign}\\s+(?:solar|lunar)\\s+eclipse\\b`, "u").test(normalized)
   )) ?? "";
+}
+
+function subjectTokenForRow(row: SkyWriteupRelationRow) {
+  const contextPlanet = skyWriteupContextForRow(row)?.planet ?? "";
+  if (contextPlanet) return contextPlanet;
+
+  const explicitSubject = nestedString(row.facts, [
+    ["planet"],
+    ["body"],
+    ["point"],
+    ["angle"],
+    ["object"],
+    ["placement", "planet"],
+    ["placement", "point"],
+    ["placement", "angle"]
+  ]) || nestedString(row.source_snapshot, [
+    ["planet"],
+    ["body"],
+    ["point"],
+    ["angle"],
+    ["object"],
+    ["placement", "planet"],
+    ["placement", "point"],
+    ["placement", "angle"]
+  ]);
+  if (explicitSubject) return explicitSubject;
+
+  const searchable = normalizedToken(`${row.content_key} ${row.headline ?? ""}`);
+  return [...angleSet, ...pointSet, ...standardPlanetSet]
+    .find((subject) => searchable === subject || searchable.startsWith(`${subject}-`) || searchable.includes(`-${subject}-`) || searchable.endsWith(`-${subject}`))
+    ?? "";
+}
+
+export function skyWriteupSubjectTypeForRow(row: SkyWriteupRelationRow): SkyWriteupSubjectType | null {
+  const subject = subjectTokenForRow(row);
+  if (angleSet.has(subject)) return "angle";
+  if (pointSet.has(subject)) return "point";
+  if (standardPlanetSet.has(subject)) return "planet";
+  return null;
 }
 
 export function skyWriteupContextForRow(row: SkyWriteupRelationRow): SkyWriteupContext | null {
