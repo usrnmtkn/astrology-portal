@@ -28,6 +28,20 @@ Steps, from `docs/runbooks/sky-canary-rollout.md`:
 
 1. Merge a reviewed, clean release PR to `main`; let the Vercel Git integration
    deploy that exact commit. Never deploy this dirty feature worktree directly.
+   A `Ready` deployment is not sufficient evidence that production is current.
+   Before declaring the release live, verify all three boundaries:
+   - the deployment owning the public production alias was built from the current
+     `origin/main` commit (a concurrently completed deployment from an older
+     commit must not retain or reclaim the alias);
+   - an authenticated request to the production admin API succeeds with the
+     configured production secret; and
+   - the affected workflow succeeds through the public production UI, including
+     its source-navigation or save boundary when the change touches Content
+     Studio.
+   If concurrent `main` builds race, trigger a new deployment of the latest
+   `main` through the normal Git integration. Do not treat a preview URL, a
+   deployment's `Ready` state, or a successful build in isolation as proof that
+   the public application contains the change.
 2. `npm run smoke:writing-kernel` against the deployed bundle. This is the
    whole point of the stage — it proves the resolver can load the index in the
    serverless environment, which no local test can prove.
