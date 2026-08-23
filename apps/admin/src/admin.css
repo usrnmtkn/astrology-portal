@@ -10136,3 +10136,112 @@ body,
 .admin-editor-panel .admin-sky-related-heading {
   flex-direction: column;
 }
+
+.admin-dashboard .admin-variable-review-button {
+  justify-content: center;
+  margin-top: 4px;
+  width: 100%;
+}
+
+.admin-dashboard .admin-variable-detail-panel,
+.admin-dashboard .admin-variable-source-panel {
+  box-shadow: -34px 0 90px rgba(0, 0, 0, 0.58);
+}
+
+.admin-dashboard .admin-variable-detail-panel .admin-editor-toolbar h2 code {
+  color: var(--admin-ui-text);
+  font-size: inherit;
+  overflow-wrap: anywhere;
+}
+
+.admin-dashboard .admin-variable-source-summary,
+.admin-dashboard .admin-variable-source-metadata {
+  display: grid;
+  gap: 14px;
+}
+
+.admin-dashboard .admin-variable-source-heading {
+  display: grid;
+  gap: 6px;
+}
+
+.admin-dashboard .admin-variable-source-heading h3 {
+  margin: 3px 0 0;
+}
+
+.admin-dashboard .admin-variable-source-list,
+.admin-dashboard .admin-variable-source-copy {
+  display: grid;
+  gap: 10px;
+}
+
+.admin-dashboard .admin-variable-source-row {
+  align-items: center;
+  background: var(--admin-ui-surface-2);
+  border: 1px solid var(--admin-ui-border);
+  border-radius: var(--admin-ui-radius-lg);
+  color: var(--admin-ui-text);
+  display: flex;
+  gap: 14px;
+  justify-content: space-between;
+  min-width: 0;
+  padding: 14px;
+  text-align: left;
+  width: 100%;
+}
+
+.admin-dashboard .admin-variable-source-row:hover,
+.admin-dashboard .admin-variable-source-row:focus-visible {
+  background: var(--admin-ui-surface-3);
+  border-color: var(--admin-ui-border-strong);
+}
+
+.admin-dashboard .admin-variable-source-row > span:first-child {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+}
+
+.admin-dashboard .admin-variable-source-row strong,
+.admin-dashboard .admin-variable-source-row code {
+  overflow-wrap: anywhere;
+}
+
+.admin-dashboard .admin-variable-source-row .ui-pill {
+  flex: 0 0 auto;
+}
+
+.admin-dashboard .admin-variable-source-panel .admin-editor-toolbar > div:first-child {
+  min-width: 0;
+}
+
+.admin-dashboard .admin-variable-source-panel .admin-editor-toolbar > div:first-child > code {
+  display: block;
+  margin-top: 7px;
+  overflow-wrap: anywhere;
+}
+
+.admin-dashboard .admin-variable-source-prose {
+  color: var(--admin-ui-text);
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
+
+.admin-dashboard .admin-variable-runtime-note {
+  margin: 0;
+}
+
+@media (max-width: 720px) {
+  .admin-dashboard .admin-variable-source-row {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .admin-dashboard .admin-variable-detail-panel,
+  .admin-dashboard .admin-variable-source-panel,
+  .admin-dashboard .admin-variable-reference-panel {
+    max-width: 100vw !important;
+    width: 100vw !important;
+  }
+}

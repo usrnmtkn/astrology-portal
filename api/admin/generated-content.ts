@@ -554,8 +554,12 @@ function sendJson(res: ServerResponse, status: number, body: unknown) {
 }
 
 export function listHeldSkyAspectSourceDrafts(): HeldSkyAspectSourceDraft[] {
+  const repoRoot = path.resolve(
+    path.dirname(fileURLToPath(import.meta.url)),
+    "../.."
+  );
   const sourceRoot = path.join(
-    process.cwd(),
+    repoRoot,
     "packages/astro-knowledge/data/points/aspects/sky/four-body-unverified"
   );
 
@@ -573,7 +577,7 @@ export function listHeldSkyAspectSourceDrafts(): HeldSkyAspectSourceDraft[] {
         || source.governanceState !== "needs-owner-decision"
         || source.status !== "NEEDS_OWNER_DECISION"
       ) {
-        throw new Error(`${path.relative(process.cwd(), absolutePath)} is not a held Current Sky aspect draft.`);
+        throw new Error(`${path.relative(repoRoot, absolutePath)} is not a held Current Sky aspect draft.`);
       }
       return {
         id: source.id,
@@ -586,7 +590,7 @@ export function listHeldSkyAspectSourceDrafts(): HeldSkyAspectSourceDraft[] {
         governanceState: "needs-owner-decision" as const,
         surfacePermission: Array.isArray(source.surfacePermission) ? source.surfacePermission.filter((value): value is string => typeof value === "string") : [],
         status: "NEEDS_OWNER_DECISION" as const,
-        sourcePath: path.relative(process.cwd(), absolutePath),
+        sourcePath: path.relative(repoRoot, absolutePath),
         provenance: isRecord(source.provenance) ? source.provenance : null
       };
     })
