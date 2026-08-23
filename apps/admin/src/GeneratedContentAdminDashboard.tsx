@@ -3065,6 +3065,26 @@ export function GeneratedContentAdminDashboard() {
     }
   }
 
+  async function openOwnerApprovedSkyPlacementArticle(contentKey: string, label: string) {
+    setIsLoading(true);
+    try {
+      const existing = rows.find((row) => row.content_key === contentKey);
+      const row = existing ?? (await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>(
+        `/api/admin/generated-content?status=all&visibility=all&contentKey=${encodeURIComponent(contentKey)}&limit=1`,
+        secret
+      )).rows?.find((candidate) => candidate.content_key === contentKey);
+      if (!row) throw new Error(`The owner-approved source ${contentKey} is not materialized in Content Studio.`);
+      if (!existing) setRows((current) => [row, ...current]);
+      setShowReferenceRows(true);
+      openRow(row);
+      setMessage(`Opened the owner-approved article for ${label}. Changes remain non-serving until separately approved and landed.`);
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : "Could not open the owner-approved Sky Placement article.");
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
   function openMissingSkyDraft(occurrence: SkyReviewHorizonOccurrence) {
     setSelectedRowId(null);
     setSkyWriteupParentId(null);
@@ -4891,6 +4911,8 @@ export function GeneratedContentAdminDashboard() {
     const currentDraft = draft ?? (selectedRow ? draftFromRow(selectedRow) : null);
     if (!currentDraft) return null;
 
+    const ownerApprovedArticleKey = ownerApprovedSkyPlacementArticleKey(currentDraft.contentKey);
+
     const isVocabularyDraft = draftIsVocabulary(currentDraft);
     const isArticleDraft = draftIsArticle(currentDraft);
     const isFallbackHookDraft = draftIsFallbackHook(currentDraft);
@@ -5214,6 +5236,21 @@ export function GeneratedContentAdminDashboard() {
               <p><strong>Reader rule:</strong> this text can support the fallback system, but it cannot appear as a standalone authored write-up.</p>
             )}
           </section>
+          {ownerApprovedArticleKey && (
+            <section className="admin-editor-guidance" aria-label="Reader source status">
+              <strong>{ownerApprovedReplacementLabel}</strong>
+              <p>
+                Readers receive <code>{ownerApprovedArticleKey}</code>, not this generated candidate.
+              </p>
+              <button
+                type="button"
+                onClick={() => void openOwnerApprovedSkyPlacementArticle(ownerApprovedArticleKey, currentDraft.headline || titleFromKey(currentDraft.contentKey))}
+                disabled={isLoading}
+              >
+                Open owner-approved source
+              </button>
+            </section>
+          )}
           {skyFallbackEditor && (
             <section className="admin-fallback-diagnostic-panel" aria-label={skyFallbackEditor.title}>
               <header className="admin-sky-related-heading admin-fallback-diagnostic-heading">
