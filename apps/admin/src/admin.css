@@ -7481,6 +7481,22 @@ body,
   max-width: 980px;
 }
 
+.admin-initial-loading {
+  min-height: 220px;
+}
+
+.admin-initial-loading > svg {
+  align-self: center;
+  animation: admin-content-loading-spin 1s linear infinite;
+  color: var(--admin-muted);
+}
+
+@keyframes admin-content-loading-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 .admin-sky-voice-tabs {
   display: flex;
   flex-wrap: wrap;
