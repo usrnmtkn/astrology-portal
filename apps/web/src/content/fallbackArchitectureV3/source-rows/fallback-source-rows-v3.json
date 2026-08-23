@@ -45360,18 +45360,147 @@
    "approved_via": "owner-supplied locked gold, 2026-07-27"
   },
   {
+   "contentKey": "fallback-hook/sky-placement-lore/aries",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "Aries is the first sign of the zodiac, cardinal fire ruled by Mars, and its symbol is the ram. The zodiac's story starts here, at the spring equinox, when light comes back and everything green pushes up through cold ground. Aries carries that push: the nerve to begin, to want, to go first. The stereotype is the hothead. The older story is the spark that gets the whole wheel turning.",
+   "body_they": "Aries is the first sign of the zodiac, cardinal fire ruled by Mars, and its symbol is the ram. The zodiac's story starts here, at the spring equinox, when light comes back and everything green pushes up through cold ground. Aries carries that push: the nerve to begin, to want, to go first. The stereotype is the hothead. The older story is the spark that gets the whole wheel turning.",
+   "review_status": "approved_reuse",
+   "source_keys": [
+    "fallback-hook/sky-season-lore/aries"
+   ],
+   "notes": "Placement sign-lore row copied byte-for-byte from the approved Sky Season lore; independent key permits later placement-specific review.",
+   "approved_via": "owner instruction, 2026-08-23"
+  },
+  {
+   "contentKey": "fallback-hook/sky-placement-lore/taurus",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "Taurus is the second sign, fixed earth ruled by Venus, and its symbol is the bull. It arrives in the fullness of spring, when the world is finally warm and worth savoring. Taurus governs the body's pleasures and the patience to build things that last. The stereotype is stubbornness. The older story is the gardener who knows that nothing good grows fast.",
+   "body_they": "Taurus is the second sign, fixed earth ruled by Venus, and its symbol is the bull. It arrives in the fullness of spring, when the world is finally warm and worth savoring. Taurus governs the body's pleasures and the patience to build things that last. The stereotype is stubbornness. The older story is the gardener who knows that nothing good grows fast.",
+   "review_status": "approved_reuse",
+   "source_keys": [
+    "fallback-hook/sky-season-lore/taurus"
+   ],
+   "notes": "Placement sign-lore row copied byte-for-byte from the approved Sky Season lore; independent key permits later placement-specific review.",
+   "approved_via": "owner instruction, 2026-08-23"
+  },
+  {
+   "contentKey": "fallback-hook/sky-placement-lore/gemini",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "Gemini is the third sign, mutable air ruled by Mercury, and its symbol is the twins. It sits at the bright, busy end of spring, when everything wants to be met, named, and talked to. Gemini governs language, curiosity, and holding two truths at once. The stereotype is the flake. The older story is the messenger who connects worlds that would not otherwise speak.",
+   "body_they": "Gemini is the third sign, mutable air ruled by Mercury, and its symbol is the twins. It sits at the bright, busy end of spring, when everything wants to be met, named, and talked to. Gemini governs language, curiosity, and holding two truths at once. The stereotype is the flake. The older story is the messenger who connects worlds that would not otherwise speak.",
+   "review_status": "approved_reuse",
+   "source_keys": [
+    "fallback-hook/sky-season-lore/gemini"
+   ],
+   "notes": "Placement sign-lore row copied byte-for-byte from the approved Sky Season lore; independent key permits later placement-specific review.",
+   "approved_via": "owner instruction, 2026-08-23"
+  },
+  {
+   "contentKey": "fallback-hook/sky-placement-lore/cancer",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "Cancer is the fourth sign, cardinal water ruled by the Moon, and its symbol is the crab, a soft body inside a strong shell. It begins at the summer solstice, the year's fullest light, and it governs home, memory, and the instinct to protect what is loved. The stereotype is moodiness. The older story is the keeper of the hearth, the one who remembers where everyone came from.",
+   "body_they": "Cancer is the fourth sign, cardinal water ruled by the Moon, and its symbol is the crab, a soft body inside a strong shell. It begins at the summer solstice, the year's fullest light, and it governs home, memory, and the instinct to protect what is loved. The stereotype is moodiness. The older story is the keeper of the hearth, the one who remembers where everyone came from.",
+   "review_status": "approved_reuse",
+   "source_keys": [
+    "fallback-hook/sky-season-lore/cancer"
+   ],
+   "notes": "Placement sign-lore row copied byte-for-byte from the approved Sky Season lore; independent key permits later placement-specific review.",
+   "approved_via": "owner instruction, 2026-08-23"
+  },
+  {
+   "contentKey": "fallback-hook/sky-placement-lore/virgo",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "Virgo is the sixth sign, mutable earth ruled by Mercury, and its symbol is the maiden holding a sheaf of wheat. This is the sign of the harvest: the stretch of late summer when the crop gets sorted, what nourishes is kept, and what spoils is composted. That is Virgo's real work, discernment in service of care. The stereotype is the perfectionist with the label maker. The older story is the healer and the craftsperson, the one who loves something enough to tend its details.",
+   "body_they": "Virgo is the sixth sign, mutable earth ruled by Mercury, and its symbol is the maiden holding a sheaf of wheat. This is the sign of the harvest: the stretch of late summer when the crop gets sorted, what nourishes is kept, and what spoils is composted. That is Virgo's real work, discernment in service of care. The stereotype is the perfectionist with the label maker. The older story is the healer and the craftsperson, the one who loves something enough to tend its details.",
+   "review_status": "approved_reuse",
+   "source_keys": [
+    "fallback-hook/sky-season-lore/virgo"
+   ],
+   "notes": "Placement sign-lore row copied byte-for-byte from the approved Sky Season lore; independent key permits later placement-specific review.",
+   "approved_via": "owner instruction, 2026-08-23"
+  },
+  {
+   "contentKey": "fallback-hook/sky-placement-lore/libra",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "Libra is the seventh sign, cardinal air ruled by Venus, and its symbol is the scales, the only symbol in the zodiac that is not a living creature. It begins at the autumn equinox, the day light and dark stand equal, and it governs partnership, fairness, and beauty as a form of order. The stereotype is indecision. The older story is the judge who takes every side seriously because the balance actually matters.",
+   "body_they": "Libra is the seventh sign, cardinal air ruled by Venus, and its symbol is the scales, the only symbol in the zodiac that is not a living creature. It begins at the autumn equinox, the day light and dark stand equal, and it governs partnership, fairness, and beauty as a form of order. The stereotype is indecision. The older story is the judge who takes every side seriously because the balance actually matters.",
+   "review_status": "approved_reuse",
+   "source_keys": [
+    "fallback-hook/sky-season-lore/libra"
+   ],
+   "notes": "Placement sign-lore row copied byte-for-byte from the approved Sky Season lore; independent key permits later placement-specific review.",
+   "approved_via": "owner instruction, 2026-08-23"
+  },
+  {
+   "contentKey": "fallback-hook/sky-placement-lore/scorpio",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "Scorpio is the eighth sign, fixed water ruled by Mars in the ancient system and Pluto in the modern, and its symbols climb a ladder: scorpion, serpent, eagle. It rules the composting part of autumn, and it governs intimacy, shared resources, and the truths people keep under the floor. The stereotype is the schemer. The older story is the one willing to walk into the underworld and come back changed.",
+   "body_they": "Scorpio is the eighth sign, fixed water ruled by Mars in the ancient system and Pluto in the modern, and its symbols climb a ladder: scorpion, serpent, eagle. It rules the composting part of autumn, and it governs intimacy, shared resources, and the truths people keep under the floor. The stereotype is the schemer. The older story is the one willing to walk into the underworld and come back changed.",
+   "review_status": "approved_reuse",
+   "source_keys": [
+    "fallback-hook/sky-season-lore/scorpio"
+   ],
+   "notes": "Placement sign-lore row copied byte-for-byte from the approved Sky Season lore; independent key permits later placement-specific review.",
+   "approved_via": "owner instruction, 2026-08-23"
+  },
+  {
+   "contentKey": "fallback-hook/sky-placement-lore/sagittarius",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "Sagittarius is the ninth sign, mutable fire ruled by Jupiter, and its symbol is the centaur archer, half animal and half philosopher, aiming past the horizon. It rules the darkening end of autumn, when the search for meaning gets serious, and it governs belief, travel, and the long questions. The stereotype is the one who cannot commit. The older story is the teacher who had to wander to have something worth teaching.",
+   "body_they": "Sagittarius is the ninth sign, mutable fire ruled by Jupiter, and its symbol is the centaur archer, half animal and half philosopher, aiming past the horizon. It rules the darkening end of autumn, when the search for meaning gets serious, and it governs belief, travel, and the long questions. The stereotype is the one who cannot commit. The older story is the teacher who had to wander to have something worth teaching.",
+   "review_status": "approved_reuse",
+   "source_keys": [
+    "fallback-hook/sky-season-lore/sagittarius"
+   ],
+   "notes": "Placement sign-lore row copied byte-for-byte from the approved Sky Season lore; independent key permits later placement-specific review.",
+   "approved_via": "owner instruction, 2026-08-23"
+  },
+  {
+   "contentKey": "fallback-hook/sky-placement-lore/capricorn",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "Capricorn is the tenth sign, cardinal earth ruled by Saturn, and its symbol is the sea-goat, a climber with a fish's tail, at home in the deep and on the mountain. It begins at the winter solstice, the darkest day, which is exactly when it starts building toward the light. It governs work, mastery, and time. The stereotype is the workaholic. The older story is the elder who builds things that outlive them.",
+   "body_they": "Capricorn is the tenth sign, cardinal earth ruled by Saturn, and its symbol is the sea-goat, a climber with a fish's tail, at home in the deep and on the mountain. It begins at the winter solstice, the darkest day, which is exactly when it starts building toward the light. It governs work, mastery, and time. The stereotype is the workaholic. The older story is the elder who builds things that outlive them.",
+   "review_status": "approved_reuse",
+   "source_keys": [
+    "fallback-hook/sky-season-lore/capricorn"
+   ],
+   "notes": "Placement sign-lore row copied byte-for-byte from the approved Sky Season lore; independent key permits later placement-specific review.",
+   "approved_via": "owner instruction, 2026-08-23"
+  },
+  {
+   "contentKey": "fallback-hook/sky-placement-lore/pisces",
+   "content_role": "fallback_hook",
+   "grammar_frame": "complete_sentence",
+   "body_you": "Pisces is the twelfth and last sign, mutable water ruled by Jupiter in the ancient system and Neptune in the modern, and its symbol is two fish swimming in opposite directions, tied together. It rules the end of winter, when the year dissolves before beginning again, and it governs dreams, compassion, and the places where the line between you and everything else gets thin. The stereotype is the escapist. The older story is the mystic who feels the whole ocean and still comes back to shore.",
+   "body_they": "Pisces is the twelfth and last sign, mutable water ruled by Jupiter in the ancient system and Neptune in the modern, and its symbol is two fish swimming in opposite directions, tied together. It rules the end of winter, when the year dissolves before beginning again, and it governs dreams, compassion, and the places where the line between you and everything else gets thin. The stereotype is the escapist. The older story is the mystic who feels the whole ocean and still comes back to shore.",
+   "review_status": "approved_reuse",
+   "source_keys": [
+    "fallback-hook/sky-season-lore/pisces"
+   ],
+   "notes": "Placement sign-lore row copied byte-for-byte from the approved Sky Season lore; independent key permits later placement-specific review.",
+   "approved_via": "owner instruction, 2026-08-23"
+  },
+  {
    "contentKey": "fallback-hook/sky-placement-lore/leo",
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
-   "body_you": "Leo is the fifth sign, fixed fire ruled by the Sun, and its symbol is the lion. It rules high summer, when the light is at its most generous and everything ripens in the open. The stereotype is the show-off; the older story is the sovereign whose warmth makes other people braver.",
-   "body_they": "Leo is the fifth sign, fixed fire ruled by the Sun, and its symbol is the lion. It rules high summer, when the light is at its most generous and everything ripens in the open. The stereotype is the show-off; the older story is the sovereign whose warmth makes other people braver.",
-   "review_status": "approved",
+   "body_you": "Leo is the fifth sign, fixed fire ruled by the Sun, and its symbol is the lion. It rules high summer, when the light is at its most generous and everything ripens in the open. Leo governs the heart, creativity, and the courage to be seen. The stereotype is the show-off. The older story is the sovereign whose warmth makes other people braver.",
+   "body_they": "Leo is the fifth sign, fixed fire ruled by the Sun, and its symbol is the lion. It rules high summer, when the light is at its most generous and everything ripens in the open. Leo governs the heart, creativity, and the courage to be seen. The stereotype is the show-off. The older story is the sovereign whose warmth makes other people braver.",
+   "review_status": "approved_reuse",
    "source_keys": [
-    "fallback-hook/sky-season-lore/leo",
-    "outputs/sky-article-sun-leo-gold.md"
+    "fallback-hook/sky-season-lore/leo"
    ],
-   "notes": "Placement-article lore slot, trimmed only to avoid repeating the meaning beat.",
-   "approved_via": "owner-supplied locked gold, 2026-07-27"
+   "notes": "Placement sign-lore row copied byte-for-byte from the approved Sky Season lore; independent key permits later placement-specific review.",
+   "approved_via": "owner instruction, 2026-08-23"
   },
   {
    "contentKey": "fallback-hook/sky-placement-meaning/sun/leo",
@@ -45432,15 +45561,14 @@
    "contentKey": "fallback-hook/sky-placement-lore/aquarius",
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
-   "body_you": "Aquarius is the eleventh sign, fixed air ruled by Saturn in the old system and Uranus in the modern, and its symbol is the water bearer, pouring something out for everyone. It rules deep winter, when survival depends on the group, and it governs community, invention, and the future. The stereotype is the detached one; the older story is the neighbor who carries what the whole village needs.",
-   "body_they": "Aquarius is the eleventh sign, fixed air ruled by Saturn in the old system and Uranus in the modern, and its symbol is the water bearer, pouring something out for everyone. It rules deep winter, when survival depends on the group, and it governs community, invention, and the future. The stereotype is the detached one; the older story is the neighbor who carries what the whole village needs.",
-   "review_status": "approved",
+   "body_you": "Aquarius is the eleventh sign, fixed air ruled by Saturn in the ancient system and Uranus in the modern, and its symbol is the water bearer, pouring something out for everyone. It rules deep winter, when survival depends on the group, and it governs community, invention, and the future. The stereotype is the detached one. The older story is the neighbor who carries what the whole village needs and refuses to keep it private.",
+   "body_they": "Aquarius is the eleventh sign, fixed air ruled by Saturn in the ancient system and Uranus in the modern, and its symbol is the water bearer, pouring something out for everyone. It rules deep winter, when survival depends on the group, and it governs community, invention, and the future. The stereotype is the detached one. The older story is the neighbor who carries what the whole village needs and refuses to keep it private.",
+   "review_status": "approved_reuse",
    "source_keys": [
-    "fallback-hook/sky-season-lore/aquarius",
-    "outputs/sky-article-pluto-aquarius-tier3.md"
+    "fallback-hook/sky-season-lore/aquarius"
    ],
-   "notes": "Placement-article lore slot, trimmed only to avoid repeating the meaning beat.",
-   "approved_via": "owner-supplied Tier-3 reference, 2026-07-27"
+   "notes": "Placement sign-lore row copied byte-for-byte from the approved Sky Season lore; independent key permits later placement-specific review.",
+   "approved_via": "owner instruction, 2026-08-23"
   },
   {
    "contentKey": "fallback-hook/sky-placement-meaning/pluto/aquarius",

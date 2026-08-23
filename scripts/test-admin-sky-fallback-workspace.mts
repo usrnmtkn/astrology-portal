@@ -5,8 +5,11 @@ import {
   natalPlanetInSignTemplateTitle,
   packageDraftChanges,
   renderWorkspacePreview,
+  setSkyPlacementCompositionOption,
   setPackageValueAt,
   skyFallbackIdentity,
+  skyPlacementCompositionOptions,
+  skyPlacementFrameTemplateKey,
   skyFallbackWorkspace
 } from "../apps/admin/src/skyFallbackWorkspace.ts";
 
@@ -42,6 +45,102 @@ assert.deepEqual(skyFallbackIdentity(original.contentKey), {
   groupKey: "articles",
   groupLabel: "Sky Placement articles"
 });
+assert.deepEqual(skyFallbackIdentity("fallback-hook/sky-placement/sun"), {
+  title: "Sun · Transit dates and opening",
+  typeLabel: "Transit dates and opening",
+  description: "Shared Sun opening with calculated sign, entry date, and exit date. Used across all Sun placement pages.",
+  groupKey: "supporting",
+  groupLabel: "Sky Placement template parts"
+});
+assert.deepEqual(skyFallbackIdentity("fallback-hook/sky-placement-frame/sun"), {
+  title: "Sun · About the Sun",
+  typeLabel: "About the Sun",
+  description: "Shared explanation of what the Sun governs and how its transit shows up. Used across all Sun placement pages.",
+  groupKey: "supporting",
+  groupLabel: "Sky Placement template parts"
+});
+assert.deepEqual(skyFallbackIdentity("fallback-hook/sky-placement-lore/aquarius"), {
+  title: "Aquarius · About the sign",
+  typeLabel: "About the sign",
+  description: "Reusable Aquarius history, symbol, ruler, and seasonal context for Sky Placement fallback pages. This is an independent copy of the Sky Season lore and can be reviewed separately.",
+  groupKey: "supporting",
+  groupLabel: "Sky Placement template parts"
+});
+assert.deepEqual(skyFallbackIdentity("fallback-hook/sky-placement-sign/sun/virgo"), {
+  title: "Sun in Virgo",
+  typeLabel: "Planet-in-sign interpretation",
+  description: "Sign-specific interpretation used when Sun is in Virgo.",
+  groupKey: "supporting",
+  groupLabel: "Sky Placement template parts"
+});
+const placementPlanets = [
+  "sun", "moon", "mercury", "venus", "mars", "jupiter", "saturn",
+  "uranus", "neptune", "pluto", "chiron", "north-node", "south-node", "lilith"
+];
+const placementSigns = [
+  "aries", "taurus", "gemini", "cancer", "leo", "virgo",
+  "libra", "scorpio", "sagittarius", "capricorn", "aquarius", "pisces"
+];
+placementPlanets.forEach((planet) => {
+  assert.equal(
+    skyFallbackIdentity(`fallback-hook/sky-placement/${planet}`)?.typeLabel,
+    "Transit dates and opening",
+    `${planet} must receive the shared opening label.`
+  );
+  assert.match(
+    skyFallbackIdentity(`fallback-hook/sky-placement-frame/${planet}`)?.typeLabel ?? "",
+    /^About /u,
+    `${planet} must receive the planet explanation label.`
+  );
+  placementSigns.forEach((sign) => {
+    assert.equal(
+      skyFallbackIdentity(`fallback-hook/sky-placement-sign/${planet}/${sign}`)?.typeLabel,
+      "Planet-in-sign interpretation",
+      `${planet} in ${sign} must receive the sign interpretation label.`
+    );
+  });
+});
+assert.equal(
+  skyFallbackIdentity("fallback-hook/sky-placement-frame/north-node")?.title,
+  "North Node · About the North Node"
+);
+
+const placementFrameTemplate = {
+  contentKey: skyPlacementFrameTemplateKey,
+  compositionOptions: {
+    includePlanetLore: true,
+    includeSignLore: true
+  }
+};
+assert.deepEqual(skyFallbackIdentity(skyPlacementFrameTemplateKey), {
+  title: "Sky Placement fallback page template",
+  typeLabel: "Canonical Sky Placement fallback template",
+  description: "Assembles the complete fallback page from transit dates, the planet explanation, sign history and symbolism, the planet-in-sign interpretation, and any approved current aspects.",
+  groupKey: "supporting",
+  groupLabel: "Sky Placement template parts"
+});
+assert.deepEqual(skyPlacementCompositionOptions(placementFrameTemplate), {
+  includePlanetLore: true,
+  includeSignLore: true
+});
+const signLoreDisabled = setSkyPlacementCompositionOption(placementFrameTemplate, "includeSignLore", false);
+assert.deepEqual(skyPlacementCompositionOptions(signLoreDisabled), {
+  includePlanetLore: true,
+  includeSignLore: false
+});
+assert.deepEqual(placementFrameTemplate.compositionOptions, {
+  includePlanetLore: true,
+  includeSignLore: true
+}, "Changing a template option must not mutate the package original.");
+assert.deepEqual(packageDraftChanges({
+  packageRecord: placementFrameTemplate,
+  packageDraft: signLoreDisabled
+}), [{
+  key: "compositionOptions.includeSignLore",
+  label: "Include sign history and symbolism",
+  before: "Included",
+  after: "Excluded"
+}]);
 assert.equal(skyFallbackIdentity("house-horoscope-core/jupiter/leo/house-10")?.title, "Jupiter in Leo · 10th House");
 assert.equal(
   houseHoroscopeCoreHeadline("house-horoscope-core/jupiter/leo/house-1", "House 1"),
