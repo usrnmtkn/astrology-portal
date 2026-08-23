@@ -1,0 +1,30 @@
+{
+  "schema_version": "supabase-independent-sky-placement-archive-v1",
+  "archived_on": "2026-08-23",
+  "production_project_host": "hdmdufozrgrajkfhydit.supabase.co",
+  "table": "public.generated_interpretations",
+  "query_predicate": "content_key.like.sky.placement.%,event_type.in.(sky-article-edition,sky-article-edition-revision,sky-article-edition-workspace)",
+  "row_count": 158,
+  "before_counts": {
+    "base:DRAFT/serving": 17,
+    "base:LIVE/serving": 19,
+    "legacy-placement:LIVE/serving": 120,
+    "topper:DRAFT/reference": 1,
+    "topper:LIVE/serving": 1
+  },
+  "rows_sha256": "537a39f4430dc8acd3792c1c6fce00563fc2662b332f8d129664ed1780f0b5fd",
+  "rows_file_sha256": "2f1dea42209d66c0a62a577b22e271c589320afc698f130b517745d4bd7c7f10",
+  "protected_content_sha256": "b2c826213e925d523575530808294a36ac5ecc634342a18485cea25c2e277a26",
+  "privacy": {
+    "created_by": "The raw auth UUID is omitted. A one-way SHA-256 digest is retained per row.",
+    "credentials": "No Supabase URL key or service-role credential is included."
+  },
+  "authorized_change": {
+    "fields": {
+      "status": "ARCHIVED",
+      "lane": "reference"
+    },
+    "unchanged": "All copy, facts, source snapshots, model metadata, review metadata, and IDs.",
+    "owner_instruction": "Export and hash all 158 rows as an archival record. Change them to ARCHIVED/reference rather than deleting them."
+  }
+}
