@@ -737,7 +737,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(page.getByLabel("Search vocabulary")).toHaveValue("trust");
 
     await openAdminDeepLink("#fallback-hooks?section=friends");
-    await expectAdminHeader(page, "Fallback Hooks", "Admin / Composition / Fallback hooks");
+    await expectAdminHeader(page, "Fallback Articles & Passages", "Admin / Composition / Fallback articles & passages");
     await expect(page.getByRole("tab", { name: /Friends/ })).toHaveAttribute("aria-selected", "true");
 
     await openAdminDeepLink("#surface-map?area=friends&status=partial");
@@ -795,7 +795,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(page.getByText(/Select Author to retry\./)).toBeVisible();
     await firstHook.getByRole("button", { name: "Author" }).click();
 
-    await expectAdminHeader(page, "Fallback Hooks", "Admin / Composition / Fallback hooks");
+    await expectAdminHeader(page, "Fallback Articles & Passages", "Admin / Composition / Fallback articles & passages");
     await expect(page.getByLabel("Body")).not.toHaveValue("");
     expect(indexRequests).toBe(2);
     expect(skyBodyRequests).toBe(2);
@@ -841,7 +841,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     const createFallbackHook = page.getByRole("menuitem", { name: /Create fallback hook/ });
     await expect(createFallbackHook).toBeVisible();
     await createFallbackHook.click({ force: true });
-    await expectAdminHeader(page, "Fallback Hooks", "Admin / Composition / Fallback hooks");
+    await expectAdminHeader(page, "Fallback Articles & Passages", "Admin / Composition / Fallback articles & passages");
     await assertNoBrowserErrors();
   });
 
@@ -1346,13 +1346,13 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(page.locator(".admin-content-row")).toContainText("vocab/relationship/compatibility-repair");
 
     await page.getByRole("navigation", { name: "Composition workspace" }).getByRole("button", { name: "Fallback Hooks" }).click();
-    await expectAdminHeader(page, "Fallback Hooks", "Admin / Composition / Fallback hooks");
+    await expectAdminHeader(page, "Fallback Articles & Passages", "Admin / Composition / Fallback articles & passages");
     const friendsFallbackTab = page
       .getByRole("tablist", { name: "Fallback hook sections" })
       .getByRole("tab", { name: "Friends" });
     await friendsFallbackTab.click();
     await expect(friendsFallbackTab).toHaveAttribute("aria-selected", "true");
-    await page.getByLabel("Search fallback hooks").fill("compatibility card");
+    await page.getByLabel("Search fallback articles and passages").fill("compatibility card");
     await expect(page.locator(".admin-content-row")).toHaveCount(1);
     await expect(page.locator(".admin-content-row")).toContainText("fallback-hook/friends.compatibility.planet-card");
 
@@ -1488,11 +1488,17 @@ test.describe("content dashboard admin user flow case studies", () => {
 
     const editor = page.getByRole("dialog", { name: "Generated content editor" });
     await expect(editor.getByRole("region", { name: "Sky Placement article workspace" })).toBeVisible();
+    await expect(editor.getByRole("heading", { name: "Jupiter in Leo", exact: true }).first()).toBeVisible();
+    await expect(editor.getByText("Full Sky Placement article.", { exact: false }).first()).toBeVisible();
+    await expect(editor.getByRole("heading", { name: "Article paragraphs" })).toBeVisible();
     await expect(editor.getByRole("region", { name: "Rendered fallback preview" })).toContainText("Jupiter enters Leo");
-    await expect(editor.getByLabel("Fallback field Opening")).toHaveValue("Jupiter enters Leo on {{entryDate}}.");
-    await expect(editor.getByLabel("Insert variable in Opening")).toContainText("{{exitDate}}");
+    await expect(editor.getByLabel("Fallback field Opening paragraphs")).toHaveValue("Jupiter enters Leo on {{entryDate}}.");
+    const calculatedFacts = editor.getByRole("region", { name: "Calculated facts" });
+    await expect(calculatedFacts).toContainText("These tokens are the only variables");
+    await expect(calculatedFacts).toContainText("{{exitDate}}");
+    await expect(editor.getByLabel("Calculated fact target field")).toHaveValue("fact_line");
     await expect(editor.getByText("Package renderer")).toHaveCount(0);
-    await editor.getByLabel("Fallback field Development").fill("The work keeps its own shape.");
+    await editor.getByLabel("Fallback field Development / turn").fill("The work keeps its own shape.");
     await expect(editor.getByRole("region", { name: "Review fallback changes" })).toContainText("The work keeps its own shape.");
     await editor.getByRole("button", { name: "Save", exact: true }).click();
     await expect.poll(() => writes.length).toBe(1);
@@ -1504,6 +1510,61 @@ test.describe("content dashboard admin user flow case studies", () => {
         packageDraft: { development: "The work keeps its own shape.", review_status: "approved" }
       }
     });
+    await assertNoBrowserErrors();
+  });
+
+  test("fallback library groups complete astrology titles by reader content type", async ({ page }) => {
+    const assertNoBrowserErrors = await expectNoBrowserErrors(page);
+    const articleRow = {
+      ...generatedContentRows[0],
+      id: "qa-fallback-title-article",
+      content_key: "fallback-hook/sky-sign-copy/jupiter/leo",
+      headline: "Leo",
+      provider: "tldrastro-fallback-architecture-v3",
+      source_snapshot: { sourcePackage: "tldrastro-fallback-architecture-v3", review_status: "approved" },
+      sections: {
+        packageRecord: {
+          contentKey: "fallback-hook/sky-sign-copy/jupiter/leo",
+          content_role: "fallback_hook",
+          render_policy: "sky-placement-continuous-v2",
+          opening: "Jupiter enters Leo.",
+          close: "The work keeps its own shape.",
+          review_status: "approved"
+        }
+      }
+    };
+    const houseRow = {
+      ...articleRow,
+      id: "qa-fallback-title-house",
+      content_key: "house-horoscope-core/jupiter/leo/house-10",
+      headline: "House 10",
+      sections: {
+        packageRecord: {
+          contentKey: "house-horoscope-core/jupiter/leo/house-10",
+          content_role: "fallback_hook",
+          body_you: "Jupiter in Leo moves through your 10th house.",
+          review_status: "approved"
+        }
+      }
+    };
+    await seedAdminApi(page, { generatedRows: [articleRow, houseRow] });
+    await expectAdminRouteLoads(page, "/admin/content#fallback-hooks");
+    await page.getByLabel("Search fallback articles and passages").fill("jupiter leo");
+
+    const articleGroup = page.getByRole("region", { name: "Sky Placement articles" });
+    await expect(articleGroup.getByText("Jupiter in Leo", { exact: true })).toBeVisible();
+    await expect(articleGroup.getByText("Full Sky Placement article", { exact: true })).toBeVisible();
+    const houseGroup = page.getByRole("region", { name: "House horoscopes" });
+    await expect(houseGroup.getByText("Jupiter in Leo · 10th House", { exact: true })).toBeVisible();
+    await expect(houseGroup.getByText("House horoscope", { exact: true })).toBeVisible();
+
+    await page.getByLabel("Search fallback articles and passages").fill("no matching astrology row");
+    await expect(page.getByText("No rows match these filters.", { exact: true })).toBeVisible();
+
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.getByLabel("Search fallback articles and passages").fill("jupiter leo");
+    await expect(page.getByRole("region", { name: "Sky Placement articles" })).toContainText("Jupiter in Leo");
+    await expect(page.getByRole("region", { name: "House horoscopes" })).toContainText("Jupiter in Leo · 10th House");
     await assertNoBrowserErrors();
   });
 
@@ -1556,8 +1617,9 @@ test.describe("content dashboard admin user flow case studies", () => {
     await readerStatus.getByRole("button", { name: "Open owner-approved source" }).click();
 
     await expect(editor.getByRole("region", { name: "Sky Placement article workspace" })).toBeVisible();
-    await expect(editor.getByLabel("Fallback field Opening")).toHaveValue("Jupiter enters Leo on {{entryDate}}.");
-    await expect(editor.getByLabel("Insert variable in Opening")).toContainText("{{exitDate}}");
+    await expect(editor.getByRole("heading", { name: "Jupiter in Leo", exact: true }).first()).toBeVisible();
+    await expect(editor.getByLabel("Fallback field Opening paragraphs")).toHaveValue("Jupiter enters Leo on {{entryDate}}.");
+    await expect(editor.getByRole("region", { name: "Calculated facts" })).toContainText("{{exitDate}}");
     await assertNoBrowserErrors();
   });
 
@@ -1584,7 +1646,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(page.getByRole("tablist", { name: "Vocabulary categories" }).getByRole("tab", { name: "Relationship" })).toBeVisible();
 
     await openAdminDeepLink("#fallback-hooks");
-    await expectAdminHeader(page, "Fallback Hooks", "Admin / Composition / Fallback hooks");
+    await expectAdminHeader(page, "Fallback Articles & Passages", "Admin / Composition / Fallback articles & passages");
     await expect(page.locator("main.admin-dashboard")).toContainText(/Sky|Natal|Lunar Calendar|Settings|Friends/);
 
     await openAdminDeepLink("#surface-map");
