@@ -1,4 +1,4 @@
-import { AlertTriangle, BookOpenText, Check, Columns2, RefreshCw, Save, Search } from "lucide-react";
+import { AlertTriangle, BookOpenText, Check, Columns2, RefreshCw, Save, Search, X } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { adminCredentialHeaders } from "./adminSecret";
 
@@ -235,6 +235,14 @@ export function AspectPatternWriteups({ initialKind = "natal", secret = "" }: { 
   }, [kind]);
 
   useEffect(() => {
+    if (!message) return;
+    const timeout = window.setTimeout(() => {
+      setMessage((current) => current === message ? "" : current);
+    }, 7_000);
+    return () => window.clearTimeout(timeout);
+  }, [message]);
+
+  useEffect(() => {
     if (selectedRow) {
       setDraft(cloneRecord(selectedRow.record));
       setDraftPreviews(selectedRow.previews);
@@ -343,7 +351,14 @@ export function AspectPatternWriteups({ initialKind = "natal", secret = "" }: { 
           <p>{error}</p>
         </section>
       )}
-      {message && <p className="admin-save-toast" role="status">{message}</p>}
+      {message && (
+        <div className="admin-save-toast" role="status">
+          <span>{message}</span>
+          <button type="button" onClick={() => setMessage("")} aria-label="Dismiss notification">
+            <X size={16} aria-hidden="true" />
+          </button>
+        </div>
+      )}
 
       <section className="admin-status-grid aspect-writeups-summary" aria-label="Aspect pattern write-up coverage summary">
         {[

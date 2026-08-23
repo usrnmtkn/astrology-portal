@@ -484,6 +484,33 @@ body,
   flex: 0 0 auto;
 }
 
+.admin-save-toast span {
+  min-width: 0;
+}
+
+.admin-save-toast button {
+  align-items: center;
+  background: transparent;
+  border: 0;
+  border-radius: 50%;
+  color: currentColor;
+  cursor: pointer;
+  display: inline-flex;
+  flex: 0 0 auto;
+  height: 32px;
+  justify-content: center;
+  margin: -6px -8px -6px 0;
+  padding: 0;
+  width: 32px;
+}
+
+.admin-save-toast button:hover,
+.admin-save-toast button:focus-visible {
+  background: rgba(255, 255, 255, 0.12);
+  outline: 2px solid currentColor;
+  outline-offset: 1px;
+}
+
 .admin-report-feedback {
   align-items: flex-start;
   background: rgba(20, 38, 31, 0.72);
@@ -8968,6 +8995,42 @@ body,
   margin: 4px 0 0;
 }
 
+.admin-dashboard .admin-sky-placement-composition {
+  gap: 12px;
+}
+
+.admin-dashboard .admin-composition-option {
+  align-items: flex-start;
+  background: var(--admin-ui-surface-2);
+  border: 1px solid var(--admin-ui-border);
+  border-radius: var(--admin-ui-radius-lg);
+  cursor: pointer;
+  display: grid;
+  gap: 10px;
+  grid-template-columns: auto minmax(0, 1fr);
+  padding: 12px;
+}
+
+.admin-dashboard .admin-composition-option input {
+  margin-top: 3px;
+}
+
+.admin-dashboard .admin-composition-option span {
+  display: grid;
+  gap: 4px;
+}
+
+.admin-dashboard .admin-composition-option strong {
+  color: var(--admin-ui-text);
+  font-size: var(--admin-ui-type-body);
+}
+
+.admin-dashboard .admin-composition-option small {
+  color: var(--admin-ui-muted);
+  font-size: var(--admin-ui-type-hint);
+  line-height: 1.45;
+}
+
 .admin-dashboard .admin-fallback-diagnostic-panel {
   display: grid;
   gap: 10px;
@@ -9203,7 +9266,7 @@ body,
 .admin-dashboard .admin-save-toast {
   bottom: 24px;
   max-width: min(420px, calc(100vw - 48px));
-  pointer-events: none;
+  pointer-events: auto;
   right: 24px;
 }
 

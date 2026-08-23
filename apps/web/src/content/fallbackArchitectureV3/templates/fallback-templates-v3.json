@@ -376,20 +376,25 @@
    "note": "Same-sign compat fallback: merged portrait per Writing Rules; no pluralization by string substitution."
   },
   {
-   "contentKey": "fallback-template/sky.placement-article",
+   "contentKey": "fallback-template/sky-placement-frame-v3",
    "content_role": "template",
    "surface": "sky",
    "headline": "{{planetTitle}} in {{signTitle}}",
    "requiredSlots": [
-    "hook",
-    "lived",
-    "turn"
+    "windowFrame",
+    "signCopy"
    ],
    "optionalSlots": [
+    "planetFrame",
+    "signLore",
     "currentAspects"
    ],
-   "body": "{{hook}}\n\n{{lived}}\n\n{{turn}}",
-   "note": "Voice-first placement frame with exclusive slot ownership: hook is one present-tense observation with no timing; lived owns the single duration and single sign-style render; turn owns one shadow, response, and closing beat. Exact-dated current aspects may be appended separately."
+   "compositionOptions": {
+    "includePlanetLore": true,
+    "includeSignLore": true
+   },
+   "body": "{{windowFrame}}\n\n{{planetFrame}}\n\n{{signLore}}\n\n{{signCopy}}\n\n{{currentAspects}}",
+   "note": "Canonical Sky Placement fallback composition. Planet lore and sign lore are independent optional educational blocks; their inclusion defaults are controlled by compositionOptions. Exact-dated current aspects may be appended separately."
   },
   {
    "contentKey": "fallback-template/transit.aspect",

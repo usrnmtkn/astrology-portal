@@ -69,7 +69,11 @@ assert.ok(!skyArticleV1.vocabularyRows.some((row) => (
 assert.doesNotMatch(skyPlacementResolver, /fallback-vocab\/sign-style\//u);
 assert.doesNotMatch(skyPlacementResolver, /fallback-vocab\/planet-function\//u);
 assert.match(skyPlacementResolver, /fallback-vocab\/sky-sign-style\//u);
-assert.match(skyPlacementResolver, /fallback-vocab\/sky-planet-function\//u);
+assert.match(
+  skyPlacementResolver,
+  /fallback-hook\/sky-placement-frame\//u,
+  "Sky Placement fallback pages must use the reviewed planet-explanation hook family."
+);
 assert.doesNotMatch(
   skyPlacementResolver,
   /2026-08-18|afterAxisFlip/u,
@@ -316,11 +320,18 @@ for (const isShadowPhase of [false, true]) {
     planet: "saturn",
     sign: "pisces",
     asOfDate: "2024-07-01T12:00:00Z",
+    entryDate: "March 7, 2023",
+    exitDate: "May 24, 2025",
     isShadowPhase
   });
-  assert.equal(rendered.templateKey, "fallback-template/sky.placement-article");
+  assert.equal(rendered.templateKey, "sky-placement-frame-v3");
   assert.notEqual(rendered.templateKey, "sky-placement-standalone-hook-v1");
 }
+assert.equal(
+  templates.templates.some((template) => template.contentKey === "fallback-template/sky.placement-article"),
+  false,
+  "The obsolete unframed Sky Placement template must remain retired."
+);
 
 const fastDirectArticle = {
   ...archive,
