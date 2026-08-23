@@ -36,11 +36,14 @@ function secretsMatch(supplied: string, expected: string) {
 }
 
 function supabaseAuthConfig() {
-  const url = (process.env.SUPABASE_URL ?? process.env.VITE_SUPABASE_URL ?? "").replace(/\/$/u, "");
-  const key = process.env.SUPABASE_PUBLISHABLE_KEY
-    ?? process.env.SUPABASE_ANON_KEY
-    ?? process.env.VITE_SUPABASE_PUBLISHABLE_KEY
+  // Content Studio forwards the browser session issued by the Vite app. Verify
+  // it against that same Supabase project even when unrelated server jobs use a
+  // different SUPABASE_URL.
+  const url = (process.env.VITE_SUPABASE_URL ?? process.env.SUPABASE_URL ?? "").replace(/\/$/u, "");
+  const key = process.env.VITE_SUPABASE_PUBLISHABLE_KEY
     ?? process.env.VITE_SUPABASE_ANON_KEY
+    ?? process.env.SUPABASE_PUBLISHABLE_KEY
+    ?? process.env.SUPABASE_ANON_KEY
     ?? "";
   return { url, key };
 }
