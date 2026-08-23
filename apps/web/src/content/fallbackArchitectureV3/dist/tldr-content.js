@@ -1,4 +1,4 @@
-// apps/web/src/content/fallbackArchitectureV3/resolver/renderFallback.browser.ts
+// resolver/renderFallback.browser.ts
 var SourceGapError = class extends Error {
 };
 var RoleViolationError = class extends Error {
@@ -400,7 +400,7 @@ function normalizeAspect(input) {
   return map[k] ?? null;
 }
 
-// apps/web/src/content/fallbackArchitectureV3/resolver/dailyGlanceVoice.browser.ts
+// resolver/dailyGlanceVoice.browser.ts
 var SECOND_PERSON = /\b(?:you|your|yours|yourself|yourselves)\b/giu;
 var DIRECT_IMPERATIVE = /(?:^|[.!?]\s+)(?:don't|do not|stop|keep|let|give|take|check|say|ask|make|go|trust|put|use|change|tell|be|try|finish|clear|get|notice|remember|decide|write|walk|sit|come|pick|start|see|rest|reschedule|lead|treat|reduce|stay|run|choose|review|pay|complete|separate|begin|send|follow|hold|bring|count|read|skip|look|call|move|leave|delay|spend|accept|speak|expect|know|direct)\b/giu;
 var PERSON_SLOT = /\{\{([\w.]+)\}\}/gu;
@@ -453,7 +453,7 @@ function fillDailyGlancePersonSlots(bodyThey, slots) {
   });
 }
 
-// apps/web/src/content/fallbackArchitectureV3/resolver/readerEligibility.browser.ts
+// resolver/readerEligibility.browser.ts
 var READER_ELIGIBLE_REVIEW_STATUSES = /* @__PURE__ */ new Set([
   "approved",
   "approved_reuse",
@@ -527,7 +527,7 @@ function isGovernedReaderEligible(row, { allowUnreviewed = false } = {}) {
   return !requiresExactOwnerApproval(row.contentKey) || hasExactOwnerApproval(row);
 }
 
-// apps/web/src/content/fallbackArchitectureV3/resolver/renderTransitSynastry.browser.ts
+// resolver/renderTransitSynastry.browser.ts
 var TRUE_LILITH_KEY_DATES_INTRO = "True Black Moon Lilith stations about once a month, so it crosses the same degrees several times before it finally moves on.";
 function skyPlacementKeyDates({
   planet,
@@ -2010,24 +2010,12 @@ ${passHook}`;
         previousResidencyExitDate
       });
     }
+    let standaloneSignCopy = null;
+    const fourSlotEligible = skyPlacementRenderEligible(planet, sign);
     if (SKY_PLACEMENT_CONTINUOUS_PLANETS.has(planet) || planet === "lilith" && continuousSignCopy) {
       const standaloneHook = hooks.get(`fallback-hook/sky-placement-sign/${planet}/${sign}`);
-      if (!skyPlacementRenderEligible(planet, sign) && standaloneHook?.body_you) {
-        const body = standaloneHook.body_you.trim();
-        if (!body || /\{\{/u.test(body)) {
-          throw new SourceGapError(`SOURCE_GAP: standalone sky placement hook ${planet}/${sign}`);
-        }
-        return {
-          headline: `${capitalizeSentence(transitRef(planet))} in ${title2(sign)}`,
-          tagline: null,
-          keyDates: [],
-          body,
-          parts: [body],
-          templateKey: "sky-placement-standalone-hook-v1",
-          contentKey: standaloneHook.contentKey
-        };
-      }
-      if (!skyPlacementRenderEligible(planet, sign)) {
+      standaloneSignCopy = standaloneHook?.body_you?.trim() || null;
+      if (!fourSlotEligible && !standaloneSignCopy) {
         throw new SourceGapError(`SOURCE_GAP: continuous sky placement sign copy ${planet}/${sign}`);
       }
     }
@@ -2037,7 +2025,7 @@ ${passHook}`;
     const pairLived = hooks.get(`fallback-hook/sky-placement-lived/${planet}/${sign}`)?.body_you;
     const pairTurn = hooks.get(`fallback-hook/sky-placement-turn/${planet}/${sign}`)?.body_you;
     const signCopy = continuousSignCopy?.body_you;
-    const signParts = signCopy ? [signCopy] : pairHook && pairLived && pairTurn ? [pairHook, pairLived, pairTurn] : [];
+    const signParts = signCopy ? [signCopy] : (fourSlotEligible || planet === "lilith") && pairHook && pairLived && pairTurn ? [pairHook, pairLived, pairTurn] : standaloneSignCopy ? [standaloneSignCopy] : [];
     const tagline = hooks.get(`fallback-hook/sky-placement-tagline/${planet}/${sign}`)?.body_you ?? null;
     {
       const windowFrame = hooks.get(`fallback-hook/sky-placement/${planet}`)?.body_you;
@@ -2045,12 +2033,10 @@ ${passHook}`;
       const retrogradePlanetFrame = hooks.get(`fallback-hook/sky-placement-retro-frame/${planet}`)?.body_you;
       const planetFrame = isRetrograde || isShadowPhase ? retrogradePlanetFrame ?? directPlanetFrame : directPlanetFrame;
       const signStyle = vocab.get(`fallback-vocab/sky-sign-style/${sign}`)?.body;
-      const planetFunction = vocab.get(`fallback-vocab/sky-planet-function/${planet}`)?.body;
-      if (windowFrame && planetFrame && signStyle && planetFunction && entryDate && exitDate && signParts.length > 0) {
+      if (windowFrame && planetFrame && signStyle && entryDate && exitDate && signParts.length > 0) {
         const ctx = {
           signTitle: title2(sign),
           signStyle,
-          planetFunction,
           entryDate,
           exitDate
         };
@@ -2069,26 +2055,9 @@ ${passHook}`;
           body: parts.join("\n\n"),
           parts,
           templateKey: signCopy ? "sky-placement-article-v2" : "sky-placement-frame-v3",
-          contentKey: signCopy ? signCopyKey : `fallback-hook/sky-placement/${planet}`
+          contentKey: standaloneSignCopy ? `fallback-hook/sky-placement-sign/${planet}/${sign}` : signCopy ? signCopyKey : `fallback-hook/sky-placement/${planet}`
         };
       }
-    }
-    if (pairHook && pairLived && pairTurn) {
-      let parts = [pairHook, pairLived, retrogradeGuidance, pairTurn, ...aspectParas].filter((part) => Boolean(part));
-      if (planet === "lilith") {
-        parts = parts.map((part) => fillKeep(part, { exitDate }));
-        if (parts.some((part) => /\{\{/u.test(part))) {
-          throw new SourceGapError(`SOURCE_GAP: sky placement pair slots lilith/${sign}`);
-        }
-      }
-      return {
-        headline: `${transitRef(planet)} in ${title2(sign)}`.replace(/^the /, "The "),
-        tagline,
-        body: parts.join("\n\n"),
-        parts,
-        templateKey: "fallback-template/sky.placement-article",
-        contentKey: pairKey
-      };
     }
     throw new SourceGapError(`SOURCE_GAP: sky placement ${planet}/${sign}`);
   }
@@ -2608,7 +2577,7 @@ ${passHook}`;
   return { renderTransitHouse, renderTransitHouseEvent, renderTransitAspect, renderTransitLabel, renderTransitReturn, renderTransitRetro, renderCompat, renderSynastryAspect, renderSkySeason, renderSkyHoroscope, renderSkyLunation, renderSkyPlacement, renderSkyPlacementHouseCore, renderSkyAspectCard, renderCircleStory, renderPairDaily, formatCircleNames, renderCalendarPhase, renderVoidOfCourse, renderSeasonMarker, renderWeeklyMoon, renderBondTransit, renderLunationMacro, renderLunationHoroscope, renderLunationEventCard, renderDoDont, renderDailyGlance };
 }
 
-// apps/web/src/content/fallbackArchitectureV3/resolver/knowledgeMatrixV9.browser.ts
+// resolver/knowledgeMatrixV9.browser.ts
 var EXCLUDED_PREFIX = "[EXCLUDE FROM FALLBACK]";
 var OWNER_APPROVED = "owner-approved";
 function normalizedKeyPart(value) {
@@ -2709,7 +2678,7 @@ function createKnowledgeMatrixV9Resolver(manifest, rowsFile, buildReport) {
   });
 }
 
-// apps/web/src/content/fallbackArchitectureV3/resolver/knowledgeMatrixV13.browser.ts
+// resolver/knowledgeMatrixV13.browser.ts
 var ALLOWED_GOVERNANCE = [
   "owner-approved-v13-direct-language",
   "owner-lived-experience-ll-v9-owner-approved",
@@ -2801,7 +2770,7 @@ function createKnowledgeMatrixV13Resolver(file) {
   });
 }
 
-// apps/web/src/content/fallbackArchitectureV3/resolver/index.browser.ts
+// resolver/index.browser.ts
 var PACKAGE_VERSION = "v3-2026-08-22g";
 function stablePackageValue(value) {
   if (Array.isArray(value)) {
