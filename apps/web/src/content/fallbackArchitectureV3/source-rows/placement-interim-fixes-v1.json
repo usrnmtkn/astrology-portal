@@ -79,7 +79,7 @@
    "contentKey": "fallback-template/natal.planet-in-sign/sun",
    "content_role": "template",
    "surface": "you|friends",
-   "headline": "{{planetTitle}} in {{signTitle}}",
+   "headline": "Sun in {{signTitle}}",
    "requiredSlots": [
     "possessive",
     "planetTitle",
@@ -107,7 +107,7 @@
    "contentKey": "fallback-template/natal.planet-in-sign/moon",
    "content_role": "template",
    "surface": "you|friends",
-   "headline": "{{planetTitle}} in {{signTitle}}",
+   "headline": "Moon in {{signTitle}}",
    "requiredSlots": [
     "possessive",
     "planetTitle",
@@ -135,7 +135,7 @@
    "contentKey": "fallback-template/natal.planet-in-sign/mercury",
    "content_role": "template",
    "surface": "you|friends",
-   "headline": "{{planetTitle}} in {{signTitle}}",
+   "headline": "Mercury in {{signTitle}}",
    "requiredSlots": [
     "possessive",
     "planetTitle",
@@ -163,7 +163,7 @@
    "contentKey": "fallback-template/natal.planet-in-sign/venus",
    "content_role": "template",
    "surface": "you|friends",
-   "headline": "{{planetTitle}} in {{signTitle}}",
+   "headline": "Venus in {{signTitle}}",
    "requiredSlots": [
     "possessive",
     "planetTitle",
@@ -191,7 +191,7 @@
    "contentKey": "fallback-template/natal.planet-in-sign/mars",
    "content_role": "template",
    "surface": "you|friends",
-   "headline": "{{planetTitle}} in {{signTitle}}",
+   "headline": "Mars in {{signTitle}}",
    "requiredSlots": [
     "possessive",
     "planetTitle",
@@ -219,7 +219,7 @@
    "contentKey": "fallback-template/natal.planet-in-sign/jupiter",
    "content_role": "template",
    "surface": "you|friends",
-   "headline": "{{planetTitle}} in {{signTitle}}",
+   "headline": "Jupiter in {{signTitle}}",
    "requiredSlots": [
     "possessive",
     "planetTitle",
@@ -247,7 +247,7 @@
    "contentKey": "fallback-template/natal.planet-in-sign/saturn",
    "content_role": "template",
    "surface": "you|friends",
-   "headline": "{{planetTitle}} in {{signTitle}}",
+   "headline": "Saturn in {{signTitle}}",
    "requiredSlots": [
     "possessive",
     "planetTitle",
@@ -275,7 +275,7 @@
    "contentKey": "fallback-template/natal.planet-in-sign/uranus",
    "content_role": "template",
    "surface": "you|friends",
-   "headline": "{{planetTitle}} in {{signTitle}}",
+   "headline": "Uranus in {{signTitle}}",
    "requiredSlots": [
     "possessive",
     "planetTitle",
@@ -303,7 +303,7 @@
    "contentKey": "fallback-template/natal.planet-in-sign/neptune",
    "content_role": "template",
    "surface": "you|friends",
-   "headline": "{{planetTitle}} in {{signTitle}}",
+   "headline": "Neptune in {{signTitle}}",
    "requiredSlots": [
     "possessive",
     "planetTitle",
@@ -331,7 +331,7 @@
    "contentKey": "fallback-template/natal.planet-in-sign/pluto",
    "content_role": "template",
    "surface": "you|friends",
-   "headline": "{{planetTitle}} in {{signTitle}}",
+   "headline": "Pluto in {{signTitle}}",
    "requiredSlots": [
     "possessive",
     "planetTitle",
@@ -359,7 +359,7 @@
    "contentKey": "fallback-template/natal.planet-in-sign/chiron",
    "content_role": "template",
    "surface": "you|friends",
-   "headline": "{{planetTitle}} in {{signTitle}}",
+   "headline": "Chiron in {{signTitle}}",
    "requiredSlots": [
     "possessive",
     "planetTitle",
@@ -387,7 +387,7 @@
    "contentKey": "fallback-template/natal.planet-in-sign/lilith",
    "content_role": "template",
    "surface": "you|friends",
-   "headline": "{{planetTitle}} in {{signTitle}}",
+   "headline": "Lilith in {{signTitle}}",
    "requiredSlots": [
     "possessive",
     "planetTitle",
@@ -416,7 +416,7 @@
    "contentKey": "fallback-template/natal.planet-in-sign/north-node",
    "content_role": "template",
    "surface": "you|friends",
-   "headline": "{{planetTitle}} in {{signTitle}}",
+   "headline": "North Node in {{signTitle}}",
    "requiredSlots": [
     "possessive",
     "planetTitle",
@@ -442,7 +442,7 @@
    "contentKey": "fallback-template/natal.planet-in-sign/south-node",
    "content_role": "template",
    "surface": "you|friends",
-   "headline": "{{planetTitle}} in {{signTitle}}",
+   "headline": "South Node in {{signTitle}}",
    "requiredSlots": [
     "possessive",
     "planetTitle",

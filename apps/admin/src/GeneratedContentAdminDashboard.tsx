@@ -53,6 +53,8 @@ import {
 } from "./skyPlacementServingStatus";
 import {
   effectivePackageRecord,
+  natalPlanetInSignTemplateHeadline,
+  natalPlanetInSignTemplateTitle,
   packageDraftChanges,
   renderWorkspacePreview,
   setPackageValueAt,
@@ -1382,8 +1384,12 @@ function rowTitle(row: AdminGeneratedContentRow | AdminReviewRecord | AdminUserG
   if ("content_key" in row) {
     const structuredIdentity = skyFallbackIdentity(row.content_key);
     if (structuredIdentity) return structuredIdentity.title;
+    const natalTemplateTitle = natalPlanetInSignTemplateTitle(row.content_key, normalizeText(row.headline));
+    if (natalTemplateTitle) return natalTemplateTitle;
     return normalizeText(row.headline) || titleFromKey(row.content_key);
   }
+  const natalTemplateTitle = natalPlanetInSignTemplateTitle(row.contentKey, normalizeText(row.title));
+  if (natalTemplateTitle) return natalTemplateTitle;
   const structuredIdentity = skyFallbackIdentity(row.contentKey);
   if (structuredIdentity) return structuredIdentity.title;
   return normalizeText(row.title) || normalizeText(row.summary) || titleFromKey(row.contentKey);
@@ -1785,7 +1791,7 @@ function draftFromRow(row: AdminGeneratedContentRow): AdminDraft {
     surface: row.surface,
     mode: row.mode,
     status: row.status,
-    headline: normalizeText(row.headline),
+    headline: natalPlanetInSignTemplateHeadline(row.content_key, normalizeText(row.headline)),
     summary: normalizeText(row.summary),
     body: normalizeText(row.body),
     lane: row.lane ?? "serving",

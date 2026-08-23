@@ -463,7 +463,7 @@
    "body": "{{#planetIntro}}{{planetIntro}}{{/planetIntro}} {{possessive}} {{planetTitle}} is in {{signTitle}}. You hurt and heal {{signAdverb}}, and {{signNeed}} is what the tender spot asks for.{{#placementSentences}} {{placementSentences}}{{/placementSentences}}{{#placementGerundText}} Day to day, that can look like {{placementGerundText}}.{{/placementGerundText}} Pushed too far, this side of you can tip into {{planetExcess}}. {{planetBest}}{{#modifierSentences}} {{.}}{{/modifierSentences}}",
    "surface": "you|friends",
    "body_you": "{{#planetIntro}}{{planetIntro}}{{/planetIntro}} {{possessive}} {{planetTitle}} is in {{signTitle}}. You hurt and heal {{signAdverb}}, and {{signNeed}} is what the tender spot asks for.{{#placementSentences}} {{placementSentences}}{{/placementSentences}}{{#placementGerundText}} Day to day, that can look like {{placementGerundText}}.{{/placementGerundText}} Pushed too far, this side of you can tip into {{planetExcess}}. {{planetBest}}{{#modifierSentences}} {{.}}{{/modifierSentences}}",
-   "headline": "{{planetTitle}} in {{signTitle}}",
+   "headline": "Chiron in {{signTitle}}",
    "body_they": "{{#planetIntro}}{{planetIntro}}{{/planetIntro}} {{possessive}} {{planetTitle}} is in {{signTitle}}. They hurt and heal {{signAdverb}}, and {{signNeed}} is what the tender spot asks for.{{#placementSentences}} {{placementSentences}}{{/placementSentences}}{{#placementGerundText}} Day to day, that can look like {{placementGerundText}}.{{/placementGerundText}} Pushed too far, this side of them can tip into {{planetExcess}}. {{planetBest}}{{#modifierSentences}} {{.}}{{/modifierSentences}}",
    "contentKey": "fallback-template/natal.planet-in-sign/chiron",
    "source_keys": [
@@ -491,7 +491,7 @@
    "body": "{{#planetIntro}}{{planetIntro}}{{/planetIntro}} {{possessive}} {{planetTitle}} is in {{signTitle}}: you grow and reach {{signAdverb}}, and {{signNeed}} is what expands you.{{#placementSentences}} {{placementSentences}}{{/placementSentences}}{{#placementGerundText}} Day to day, that can look like {{placementGerundText}}.{{/placementGerundText}} Pushed too far, this side of you can tip into {{planetExcess}}. {{planetBest}}{{#modifierSentences}} {{.}}{{/modifierSentences}}",
    "surface": "you|friends",
    "body_you": "{{#planetIntro}}{{planetIntro}}{{/planetIntro}} {{possessive}} {{planetTitle}} is in {{signTitle}}: you grow and reach {{signAdverb}}, and {{signNeed}} is what expands you.{{#placementSentences}} {{placementSentences}}{{/placementSentences}}{{#placementGerundText}} Day to day, that can look like {{placementGerundText}}.{{/placementGerundText}} Pushed too far, this side of you can tip into {{planetExcess}}. {{planetBest}}{{#modifierSentences}} {{.}}{{/modifierSentences}}",
-   "headline": "{{planetTitle}} in {{signTitle}}",
+   "headline": "Jupiter in {{signTitle}}",
    "body_they": "{{#planetIntro}}{{planetIntro}}{{/planetIntro}} {{possessive}} {{planetTitle}} is in {{signTitle}}: they grow and reach {{signAdverb}}, and {{signNeed}} is what expands them.{{#placementSentences}} {{placementSentences}}{{/placementSentences}}{{#placementGerundText}} Day to day, that can look like {{placementGerundText}}.{{/placementGerundText}} Pushed too far, this side of them can tip into {{planetExcess}}. {{planetBest}}{{#modifierSentences}} {{.}}{{/modifierSentences}}",
    "contentKey": "fallback-template/natal.planet-in-sign/jupiter",
    "source_keys": [
@@ -520,7 +520,7 @@
    "notes": "Tone benchmark; placement opener remains byte-identical when rendered.",
    "surface": "you|friends",
    "body_you": "{{#planetIntro}}{{planetIntro}}{{/planetIntro}} {{possessive}} {{planetTitle}} is in {{signTitle}}, meaning you refuse and reclaim {{signAdverb}}, and what you want most is {{signNeed}}.{{#placementSentences}} {{placementSentences}}{{/placementSentences}}{{#placementGerundText}} Day to day, that can look like {{placementGerundText}}.{{/placementGerundText}} Pushed too far, this side of you can tip into {{planetExcess}}. {{planetBest}}{{#modifierSentences}} {{.}}{{/modifierSentences}}",
-   "headline": "{{planetTitle}} in {{signTitle}}",
+   "headline": "Lilith in {{signTitle}}",
    "body_they": "{{#planetIntro}}{{planetIntro}}{{/planetIntro}} {{possessive}} {{planetTitle}} is in {{signTitle}}, meaning they refuse and reclaim {{signAdverb}}, and what they want most is {{signNeed}}.{{#placementSentences}} {{placementSentences}}{{/placementSentences}}{{#placementGerundText}} Day to day, that can look like {{placementGerundText}}.{{/placementGerundText}} Pushed too far, this side of them can tip into {{planetExcess}}. {{planetBest}}{{#modifierSentences}} {{.}}{{/modifierSentences}}",
    "contentKey": "fallback-template/natal.planet-in-sign/lilith",
    "source_keys": [
@@ -548,7 +548,7 @@
    "body": "{{#planetIntro}}{{planetIntro}}{{/planetIntro}} {{possessive}} {{planetTitle}} is in {{signTitle}}. You go after things {{signAdverb}}, and {{signNeed}} is worth the fight to you.{{#placementSentences}} {{placementSentences}}{{/placementSentences}}{{#placementGerundText}} Day to day, that can look like {{placementGerundText}}.{{/placementGerundText}} Pushed too far, this side of you can tip into {{planetExcess}}. {{planetBest}}{{#modifierSentences}} {{.}}{{/modifierSentences}}",
    "surface": "you|friends",
    "body_you": "{{#planetIntro}}{{planetIntro}}{{/planetIntro}} {{possessive}} {{planetTitle}} is in {{signTitle}}. You go after things {{signAdverb}}, and {{signNeed}} is worth the fight to you.{{#placementSentences}} {{placementSentences}}{{/placementSentences}}{{#placementGerundText}} Day to day, that can look like {{placementGerundText}}.{{/placementGerundText}} Pushed too far, this side of you can tip into {{planetExcess}}. {{planetBest}}{{#modifierSentences}} {{.}}{{/modifierSentences}}",
-   "headline": "{{planetTitle}} in {{signTitle}}",
+   "headline": "Mars in {{signTitle}}",
    "body_they": "{{#planetIntro}}{{planetIntro}}{{/planetIntro}} {{possessive}} {{planetTitle}} is in {{signTitle}}. They go after things {{signAdverb}}, and {{signNeed}} is worth the fight to them.{{#placementSentences}} {{placementSentences}}{{/placementSentences}}{{#placementGerundText}} Day to day, that can look like {{placementGerundText}}.{{/placementGerundText}} Pushed too far, this side of them can tip into {{planetExcess}}. {{planetBest}}{{#modifierSentences}} {{.}}{{/modifierSentences}}",
    "contentKey": "fallback-template/natal.planet-in-sign/mars",
    "source_keys": [
@@ -576,7 +576,7 @@
    "body": "{{#planetIntro}}{{planetIntro}}{{/planetIntro}} {{possessive}} {{planetTitle}} is in {{signTitle}}, so your mind runs {{signAdverb}}; what it hunts for is {{signNeed}}.{{#placementSentences}} {{placementSentences}}{{/placementSentences}}{{#placementGerundText}} Day to day, that can look like {{placementGerundText}}.{{/placementGerundText}} Pushed too far, this side of you can tip into {{planetExcess}}. {{planetBest}}{{#modifierSentences}} {{.}}{{/modifierSentences}}",
    "surface": "you|friends",
    "body_you": "{{#planetIntro}}{{planetIntro}}{{/planetIntro}} {{possessive}} {{planetTitle}} is in {{signTitle}}, so your mind runs {{signAdverb}}; what it hunts for is {{signNeed}}.{{#placementSentences}} {{placementSentences}}{{/placementSentences}}{{#placementGerundText}} Day to day, that can look like {{placementGerundText}}.{{/placementGerundText}} Pushed too far, this side of you can tip into {{planetExcess}}. {{planetBest}}{{#modifierSentences}} {{.}}{{/modifierSentences}}",
-   "headline": "{{planetTitle}} in {{signTitle}}",
+   "headline": "Mercury in {{signTitle}}",
    "body_they": "{{#planetIntro}}{{planetIntro}}{{/planetIntro}} {{possessive}} {{planetTitle}} is in {{signTitle}}, so their mind runs {{signAdverb}}; what it hunts for is {{signNeed}}.{{#placementSentences}} {{placementSentences}}{{/placementSentences}}{{#placementGerundText}} Day to day, that can look like {{placementGerundText}}.{{/placementGerundText}} Pushed too far, this side of them can tip into {{planetExcess}}. {{planetBest}}{{#modifierSentences}} {{.}}{{/modifierSentences}}",
    "contentKey": "fallback-template/natal.planet-in-sign/mercury",
    "source_keys": [
@@ -604,7 +604,7 @@
    "body": "{{#planetIntro}}{{planetIntro}}{{/planetIntro}} {{possessive}} {{planetTitle}} lives in {{signTitle}}. You feel things {{signAdverb}}, and nothing settles you like {{signNeed}}.{{#placementSentences}} {{placementSentences}}{{/placementSentences}}{{#placementGerundText}} Day to day, that can look like {{placementGerundText}}.{{/placementGerundText}} Pushed too far, this side of you can tip into {{planetExcess}}. {{planetBest}}{{#modifierSentences}} {{.}}{{/modifierSentences}}",
    "surface": "you|friends",
    "body_you": "{{#planetIntro}}{{planetIntro}}{{/planetIntro}} {{possessive}} {{planetTitle}} lives in {{signTitle}}. You feel things {{signAdverb}}, and nothing settles you like {{signNeed}}.{{#placementSentences}} {{placementSentences}}{{/placementSentences}}{{#placementGerundText}} Day to day, that can look like {{placementGerundText}}.{{/placementGerundText}} Pushed too far, this side of you can tip into {{planetExcess}}. {{planetBest}}{{#modifierSentences}} {{.}}{{/modifierSentences}}",
-   "headline": "{{planetTitle}} in {{signTitle}}",
+   "headline": "Moon in {{signTitle}}",
    "body_they": "{{#planetIntro}}{{planetIntro}}{{/planetIntro}} {{possessive}} {{planetTitle}} lives in {{signTitle}}. They feel things {{signAdverb}}, and nothing settles them like {{signNeed}}.{{#placementSentences}} {{placementSentences}}{{/placementSentences}}{{#placementGerundText}} Day to day, that can look like {{placementGerundText}}.{{/placementGerundText}} Pushed too far, this side of them can tip into {{planetExcess}}. {{planetBest}}{{#modifierSentences}} {{.}}{{/modifierSentences}}",
    "contentKey": "fallback-template/natal.planet-in-sign/moon",
    "source_keys": [
@@ -632,7 +632,7 @@
    "body": "{{#planetIntro}}{{planetIntro}}{{/planetIntro}} {{possessive}} {{planetTitle}} is in {{signTitle}}. You dream and imagine {{signAdverb}}, and {{signNeed}} is where the edges soften.{{#placementSentences}} {{placementSentences}}{{/placementSentences}}{{#placementGerundText}} Day to day, that can look like {{placementGerundText}}.{{/placementGerundText}} Pushed too far, this side of you can tip into {{planetExcess}}. {{planetBest}}{{#modifierSentences}} {{.}}{{/modifierSentences}}",
    "surface": "you|friends",
    "body_you": "{{#planetIntro}}{{planetIntro}}{{/planetIntro}} {{possessive}} {{planetTitle}} is in {{signTitle}}. You dream and imagine {{signAdverb}}, and {{signNeed}} is where the edges soften.{{#placementSentences}} {{placementSentences}}{{/placementSentences}}{{#placementGerundText}} Day to day, that can look like {{placementGerundText}}.{{/placementGerundText}} Pushed too far, this side of you can tip into {{planetExcess}}. {{planetBest}}{{#modifierSentences}} {{.}}{{/modifierSentences}}",
-   "headline": "{{planetTitle}} in {{signTitle}}",
+   "headline": "Neptune in {{signTitle}}",
    "body_they": "{{#planetIntro}}{{planetIntro}}{{/planetIntro}} {{possessive}} {{planetTitle}} is in {{signTitle}}. They dream and imagine {{signAdverb}}, and {{signNeed}} is where the edges soften.{{#placementSentences}} {{placementSentences}}{{/placementSentences}}{{#placementGerundText}} Day to day, that can look like {{placementGerundText}}.{{/placementGerundText}} Pushed too far, this side of them can tip into {{planetExcess}}. {{planetBest}}{{#modifierSentences}} {{.}}{{/modifierSentences}}",
    "contentKey": "fallback-template/natal.planet-in-sign/neptune",
    "source_keys": [
@@ -660,7 +660,7 @@
    "body": "{{#planetIntro}}{{planetIntro}}{{/planetIntro}} {{possessive}} {{planetTitle}} is in {{signTitle}}: growth comes {{signAdverb}}, and {{signNeed}} is the direction it points.{{#placementSentences}} {{placementSentences}}{{/placementSentences}} {{nodeJourney}}{{#modifierSentences}} {{.}}{{/modifierSentences}}",
    "surface": "you|friends",
    "body_you": "{{#planetIntro}}{{planetIntro}}{{/planetIntro}} {{possessive}} {{planetTitle}} is in {{signTitle}}: growth comes {{signAdverb}}, and {{signNeed}} is the direction it points.{{#placementSentences}} {{placementSentences}}{{/placementSentences}} {{nodeJourney}}{{#modifierSentences}} {{.}}{{/modifierSentences}}",
-   "headline": "{{planetTitle}} in {{signTitle}}",
+   "headline": "North Node in {{signTitle}}",
    "body_they": "{{#planetIntro}}{{planetIntro}}{{/planetIntro}} {{possessive}} {{planetTitle}} is in {{signTitle}}: growth comes {{signAdverb}}, and {{signNeed}} is the direction it points.{{#placementSentences}} {{placementSentences}}{{/placementSentences}} {{nodeJourney}}{{#modifierSentences}} {{.}}{{/modifierSentences}}",
    "contentKey": "fallback-template/natal.planet-in-sign/north-node",
    "source_keys": [
@@ -686,7 +686,7 @@
    "body": "{{#planetIntro}}{{planetIntro}}{{/planetIntro}} {{possessive}} {{planetTitle}} is in {{signTitle}}: you transform {{signAdverb}}, and {{signNeed}} is what you refuse to fake.{{#placementSentences}} {{placementSentences}}{{/placementSentences}}{{#placementGerundText}} Day to day, that can look like {{placementGerundText}}.{{/placementGerundText}} Pushed too far, this side of you can tip into {{planetExcess}}. {{planetBest}}{{#modifierSentences}} {{.}}{{/modifierSentences}}",
    "surface": "you|friends",
    "body_you": "{{#planetIntro}}{{planetIntro}}{{/planetIntro}} {{possessive}} {{planetTitle}} is in {{signTitle}}: you transform {{signAdverb}}, and {{signNeed}} is what you refuse to fake.{{#placementSentences}} {{placementSentences}}{{/placementSentences}}{{#placementGerundText}} Day to day, that can look like {{placementGerundText}}.{{/placementGerundText}} Pushed too far, this side of you can tip into {{planetExcess}}. {{planetBest}}{{#modifierSentences}} {{.}}{{/modifierSentences}}",
-   "headline": "{{planetTitle}} in {{signTitle}}",
+   "headline": "Pluto in {{signTitle}}",
    "body_they": "{{#planetIntro}}{{planetIntro}}{{/planetIntro}} {{possessive}} {{planetTitle}} is in {{signTitle}}: they transform {{signAdverb}}, and {{signNeed}} is what they refuse to fake.{{#placementSentences}} {{placementSentences}}{{/placementSentences}}{{#placementGerundText}} Day to day, that can look like {{placementGerundText}}.{{/placementGerundText}} Pushed too far, this side of them can tip into {{planetExcess}}. {{planetBest}}{{#modifierSentences}} {{.}}{{/modifierSentences}}",
    "contentKey": "fallback-template/natal.planet-in-sign/pluto",
    "source_keys": [
@@ -714,7 +714,7 @@
    "body": "{{#planetIntro}}{{planetIntro}}{{/planetIntro}} {{possessive}} {{planetTitle}} is in {{signTitle}}. You build and commit {{signAdverb}}, and {{signNeed}} is what you take seriously.{{#placementSentences}} {{placementSentences}}{{/placementSentences}}{{#placementGerundText}} Day to day, that can look like {{placementGerundText}}.{{/placementGerundText}} Pushed too far, this side of you can tip into {{planetExcess}}. {{planetBest}}{{#modifierSentences}} {{.}}{{/modifierSentences}}",
    "surface": "you|friends",
    "body_you": "{{#planetIntro}}{{planetIntro}}{{/planetIntro}} {{possessive}} {{planetTitle}} is in {{signTitle}}. You build and commit {{signAdverb}}, and {{signNeed}} is what you take seriously.{{#placementSentences}} {{placementSentences}}{{/placementSentences}}{{#placementGerundText}} Day to day, that can look like {{placementGerundText}}.{{/placementGerundText}} Pushed too far, this side of you can tip into {{planetExcess}}. {{planetBest}}{{#modifierSentences}} {{.}}{{/modifierSentences}}",
-   "headline": "{{planetTitle}} in {{signTitle}}",
+   "headline": "Saturn in {{signTitle}}",
    "body_they": "{{#planetIntro}}{{planetIntro}}{{/planetIntro}} {{possessive}} {{planetTitle}} is in {{signTitle}}. They build and commit {{signAdverb}}, and {{signNeed}} is what they take seriously.{{#placementSentences}} {{placementSentences}}{{/placementSentences}}{{#placementGerundText}} Day to day, that can look like {{placementGerundText}}.{{/placementGerundText}} Pushed too far, this side of them can tip into {{planetExcess}}. {{planetBest}}{{#modifierSentences}} {{.}}{{/modifierSentences}}",
    "contentKey": "fallback-template/natal.planet-in-sign/saturn",
    "source_keys": [
@@ -742,7 +742,7 @@
    "body": "{{#planetIntro}}{{planetIntro}}{{/planetIntro}} {{possessive}} {{planetTitle}} is in {{signTitle}}. Your old strengths run {{signAdverb}}, and {{signNeed}} is the comfort they guard.{{#placementSentences}} {{placementSentences}}{{/placementSentences}} {{nodeJourney}}{{#modifierSentences}} {{.}}{{/modifierSentences}}",
    "surface": "you|friends",
    "body_you": "{{#planetIntro}}{{planetIntro}}{{/planetIntro}} {{possessive}} {{planetTitle}} is in {{signTitle}}. Your old strengths run {{signAdverb}}, and {{signNeed}} is the comfort they guard.{{#placementSentences}} {{placementSentences}}{{/placementSentences}} {{nodeJourney}}{{#modifierSentences}} {{.}}{{/modifierSentences}}",
-   "headline": "{{planetTitle}} in {{signTitle}}",
+   "headline": "South Node in {{signTitle}}",
    "body_they": "{{#planetIntro}}{{planetIntro}}{{/planetIntro}} {{possessive}} {{planetTitle}} is in {{signTitle}}. Their old strengths run {{signAdverb}}, and {{signNeed}} is the comfort they guard.{{#placementSentences}} {{placementSentences}}{{/placementSentences}} {{nodeJourney}}{{#modifierSentences}} {{.}}{{/modifierSentences}}",
    "contentKey": "fallback-template/natal.planet-in-sign/south-node",
    "source_keys": [
@@ -768,7 +768,7 @@
    "body": "{{#planetIntro}}{{planetIntro}}{{/planetIntro}} {{possessive}} {{planetTitle}} is in {{signTitle}}: you show up {{signAdverb}}, and {{signNeed}} is what keeps the light on.{{#placementSentences}} {{placementSentences}}{{/placementSentences}}{{#placementGerundText}} Day to day, that can look like {{placementGerundText}}.{{/placementGerundText}} Pushed too far, this side of you can tip into {{planetExcess}}. {{planetBest}}{{#modifierSentences}} {{.}}{{/modifierSentences}}",
    "surface": "you|friends",
    "body_you": "{{#planetIntro}}{{planetIntro}}{{/planetIntro}} {{possessive}} {{planetTitle}} is in {{signTitle}}: you show up {{signAdverb}}, and {{signNeed}} is what keeps the light on.{{#placementSentences}} {{placementSentences}}{{/placementSentences}}{{#placementGerundText}} Day to day, that can look like {{placementGerundText}}.{{/placementGerundText}} Pushed too far, this side of you can tip into {{planetExcess}}. {{planetBest}}{{#modifierSentences}} {{.}}{{/modifierSentences}}",
-   "headline": "{{planetTitle}} in {{signTitle}}",
+   "headline": "Sun in {{signTitle}}",
    "body_they": "{{#planetIntro}}{{planetIntro}}{{/planetIntro}} {{possessive}} {{planetTitle}} is in {{signTitle}}: they show up {{signAdverb}}, and {{signNeed}} is what keeps the light on.{{#placementSentences}} {{placementSentences}}{{/placementSentences}}{{#placementGerundText}} Day to day, that can look like {{placementGerundText}}.{{/placementGerundText}} Pushed too far, this side of them can tip into {{planetExcess}}. {{planetBest}}{{#modifierSentences}} {{.}}{{/modifierSentences}}",
    "contentKey": "fallback-template/natal.planet-in-sign/sun",
    "source_keys": [
@@ -796,7 +796,7 @@
    "body": "{{#planetIntro}}{{planetIntro}}{{/planetIntro}} {{possessive}} {{planetTitle}} is in {{signTitle}}: you break patterns {{signAdverb}}, and {{signNeed}} is the freedom you defend.{{#placementSentences}} {{placementSentences}}{{/placementSentences}}{{#placementGerundText}} Day to day, that can look like {{placementGerundText}}.{{/placementGerundText}} Pushed too far, this side of you can tip into {{planetExcess}}. {{planetBest}}{{#modifierSentences}} {{.}}{{/modifierSentences}}",
    "surface": "you|friends",
    "body_you": "{{#planetIntro}}{{planetIntro}}{{/planetIntro}} {{possessive}} {{planetTitle}} is in {{signTitle}}: you break patterns {{signAdverb}}, and {{signNeed}} is the freedom you defend.{{#placementSentences}} {{placementSentences}}{{/placementSentences}}{{#placementGerundText}} Day to day, that can look like {{placementGerundText}}.{{/placementGerundText}} Pushed too far, this side of you can tip into {{planetExcess}}. {{planetBest}}{{#modifierSentences}} {{.}}{{/modifierSentences}}",
-   "headline": "{{planetTitle}} in {{signTitle}}",
+   "headline": "Uranus in {{signTitle}}",
    "body_they": "{{#planetIntro}}{{planetIntro}}{{/planetIntro}} {{possessive}} {{planetTitle}} is in {{signTitle}}: they break patterns {{signAdverb}}, and {{signNeed}} is the freedom they defend.{{#placementSentences}} {{placementSentences}}{{/placementSentences}}{{#placementGerundText}} Day to day, that can look like {{placementGerundText}}.{{/placementGerundText}} Pushed too far, this side of them can tip into {{planetExcess}}. {{planetBest}}{{#modifierSentences}} {{.}}{{/modifierSentences}}",
    "contentKey": "fallback-template/natal.planet-in-sign/uranus",
    "source_keys": [
@@ -824,7 +824,7 @@
    "body": "{{#planetIntro}}{{planetIntro}}{{/planetIntro}} {{possessive}} {{planetTitle}} is in {{signTitle}}: you love and enjoy {{signAdverb}}, and {{signNeed}} is what wins you.{{#placementSentences}} {{placementSentences}}{{/placementSentences}}{{#placementGerundText}} Day to day, that can look like {{placementGerundText}}.{{/placementGerundText}} Pushed too far, this side of you can tip into {{planetExcess}}. {{planetBest}}{{#modifierSentences}} {{.}}{{/modifierSentences}}",
    "surface": "you|friends",
    "body_you": "{{#planetIntro}}{{planetIntro}}{{/planetIntro}} {{possessive}} {{planetTitle}} is in {{signTitle}}: you love and enjoy {{signAdverb}}, and {{signNeed}} is what wins you.{{#placementSentences}} {{placementSentences}}{{/placementSentences}}{{#placementGerundText}} Day to day, that can look like {{placementGerundText}}.{{/placementGerundText}} Pushed too far, this side of you can tip into {{planetExcess}}. {{planetBest}}{{#modifierSentences}} {{.}}{{/modifierSentences}}",
-   "headline": "{{planetTitle}} in {{signTitle}}",
+   "headline": "Venus in {{signTitle}}",
    "body_they": "{{#planetIntro}}{{planetIntro}}{{/planetIntro}} {{possessive}} {{planetTitle}} is in {{signTitle}}: they love and enjoy {{signAdverb}}, and {{signNeed}} is what wins them.{{#placementSentences}} {{placementSentences}}{{/placementSentences}}{{#placementGerundText}} Day to day, that can look like {{placementGerundText}}.{{/placementGerundText}} Pushed too far, this side of them can tip into {{planetExcess}}. {{planetBest}}{{#modifierSentences}} {{.}}{{/modifierSentences}}",
    "contentKey": "fallback-template/natal.planet-in-sign/venus",
    "source_keys": [
