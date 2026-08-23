@@ -69,7 +69,7 @@ Driver: the transiting Moon. Its tightest applying aspect to a supported natal t
 Priority order when several land on one date; show at most the top TWO, in this order:
 
 1. **Eclipse** (solar or lunar): `renderLunationHoroscope({ kind: "eclipse-solar"|"eclipse-lunar", sign, risingSign })` as slot 4. Suppress the ordinary lunation treatment.
-2. **New/Full Moon**: `renderLunationHoroscope({ kind, sign, risingSign })` as slot 4. On these days the Moon is also the headline driver; do not ALSO render a Moon aspect card in At a Glance if the lunation aspect is the same contact (that is the same beat twice). Use the lunation horoscope as the day's main content and keep At a Glance to the interim Moon-house line.
+2. **New/Full Moon**: `renderLunationHoroscope({ kind, sign, risingSign, eventDate, matchingNewMoon })` as slot 4. `matchingNewMoon` is required for ordinary Full Moons and must be the engine-verified prior same-sign New Moon; omit it for New Moons. On these days the Moon is also the headline driver; do not ALSO render a Moon aspect card in At a Glance if the lunation aspect is the same contact (that is the same beat twice). Use the lunation horoscope as the day's main content and keep At a Glance to the interim Moon-house line.
 3. **Station on a natal point** (any planet stationing within 1 degree of a natal point): headliner day. `renderTransitRetro` (station retrograde) or the aspect card with real window (station direct), plus the bespoke deep section rule below.
 4. **Return** (Sun through Saturn, plus lunar return if the product surfaces it): `renderTransitReturn` as slot 4.
 5. **Season markers** (solstices/equinoxes) and sign ingresses: one-line `renderSeasonMarker` / calendar treatment in the strip; not a section.

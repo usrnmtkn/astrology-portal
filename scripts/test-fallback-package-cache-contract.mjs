@@ -19,7 +19,7 @@ const generatedContentSource = read("apps/web/src/services/generatedContent.ts")
 const materializerSource = read("scripts/materialize-fallback-architecture-v3-dashboard-rows.mjs");
 const appSource = read("apps/web/src/App.tsx");
 
-assert.equal(PACKAGE_VERSION, "v3-2026-08-23k");
+assert.equal(PACKAGE_VERSION, "v3-2026-08-23l");
 assert.match(
   runtimeSource,
   /export const fallbackArchitectureV3BundledManifestSummary = bundledManifestSummaryV3 as FallbackArchitectureV3PackageManifestSummary/u,

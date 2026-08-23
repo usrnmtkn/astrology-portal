@@ -233,9 +233,11 @@ assert.match(
 );
 assert.match(
   appSource,
-  /blendFallbackEnabled: String\(\s*import\.meta\.env\.VITE_ENABLE_LUNATION_BLEND_YOU_FALLBACK \?\? "false"\s*\)\.toLowerCase\(\) === "true"/u,
+  /const lunationBlendYouFallbackEnabled = String\(\s*import\.meta\.env\.VITE_ENABLE_LUNATION_BLEND_YOU_FALLBACK \?\? "false"\s*\)\.toLowerCase\(\) === "true"/u,
   "The weekly-blend fallback must remain behind its explicit You-page feature gate."
 );
+assert.match(appSource, /getMatchingNewMoonForFullMoon/u);
+assert.match(appSource, /matchingNewMoon,/u);
 assert.match(appSource, /qualifyingTransits: qualifyingDailyTransits\.map/u);
 assert.match(youPageSource, />Areas of Your Life</u);
 assert.match(youPageSource, />Behind this Forecast</u);

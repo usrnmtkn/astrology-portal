@@ -10,6 +10,7 @@ import {
   lintDailyGlanceFriendVoice
 } from "./dailyGlanceVoice.mjs";
 import { isGovernedReaderEligible, synastryReaderTier, transitReaderTier } from "./readerEligibility.mjs";
+import { normalizeLunationSign } from "./lunationNormalization.mjs";
 
 const here = path.dirname(url.fileURLToPath(import.meta.url));
 const lib = JSON.parse(fs.readFileSync(path.join(here, "../source-rows/transit-synastry-rows-v1.json"), "utf8"));
@@ -2237,7 +2238,7 @@ export function renderBondTransit({ transiting, aspect, endpointPlanet, endpoint
 
 // ---- Per-rising lunation horoscope (owner weekly shape): recognizable situation
 // -> house frame -> compact sign core -> full-moon counterpoint -> current ruler
-// house -> optional modern layer -> one present-tense ending. Moving-body houses
+// house -> one present-tense ending. Moving-body houses
 // arrive as event-time facts. ----
 const SIGN_ORDER = ["aries", "taurus", "gemini", "cancer", "leo", "virgo", "libra", "scorpio", "sagittarius", "capricorn", "aquarius", "pisces"];
 export function renderLunationMacro({ kind, sign }) {
@@ -2247,7 +2248,7 @@ export function renderLunationMacro({ kind, sign }) {
   return result(macro, "authored/sky-lunation-macro");
 }
 
-export function renderLunationHoroscope({ kind, sign, risingSign, house, moonHouse, sunHouse, ruler, rulerHouse, rulerRetrograde, uranusHouse, uranusLayerActive, weekly = false }) {
+export function renderLunationHoroscope({ kind, sign, risingSign, eventDate, matchingNewMoon, house, moonHouse, sunHouse, ruler, rulerHouse, rulerRetrograde, weekly = false }) {
   const isEclipse = kind === "eclipse-solar" || kind === "eclipse-lunar";
   const which = kind === "new-moon" || kind === "eclipse-solar" ? "new" : "full";
   const h = moonHouse ?? house ?? ((SIGN_ORDER.indexOf(sign) - SIGN_ORDER.indexOf(risingSign) + 12) % 12) + 1;
@@ -2257,6 +2258,31 @@ export function renderLunationHoroscope({ kind, sign, risingSign, house, moonHou
   const houseFrame = fill(frame, { houseOrdinal: ordinal(h), jurisdiction });
   const opening = hooks.get(`fallback-hook/lunation-opening-situation/${h}`)?.body_you;
   const paras = [opening ? `${opening} ${houseFrame}` : houseFrame];
+  if (kind === "full-moon") {
+    const anchor = hooks.get("fallback-hook/lunation-matching-new-moon-anchor/full")?.body_you;
+    const fullMoonDateKey = eventDate?.trim().slice(0, 10) ?? "";
+    const newMoonDateKey = matchingNewMoon?.exactAt.trim().slice(0, 10) ?? "";
+    const fullMoonMatch = /^(\d{4})-(\d{2})-(\d{2})$/u.exec(fullMoonDateKey);
+    const newMoonMatch = /^(\d{4})-(\d{2})-(\d{2})$/u.exec(newMoonDateKey);
+    if (
+      !anchor
+      || !fullMoonMatch
+      || !newMoonMatch
+      || normalizeLunationSign(matchingNewMoon?.sign) !== normalizeLunationSign(sign)
+      || newMoonDateKey >= fullMoonDateKey
+    ) {
+      throw new SourceGapError(`SOURCE_GAP: invalid matching New Moon for Full Moon ${eventDate ?? "unknown-date"}/${sign}`);
+    }
+    const monthIndex = Number(newMoonMatch[2]) - 1;
+    const monthName = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"][monthIndex];
+    if (!monthName) throw new SourceGapError(`SOURCE_GAP: invalid matching New Moon date ${newMoonDateKey}`);
+    const crossYear = newMoonMatch[1] !== fullMoonMatch[1];
+    const matchingNewMoonDate = `${monthName} ${Number(newMoonMatch[3])}${crossYear ? `, ${newMoonMatch[1]}` : ""}`;
+    paras.push(fill(anchor, {
+      matchingNewMoonSign: title(normalizeLunationSign(matchingNewMoon.sign)),
+      matchingNewMoonDate
+    }));
+  }
   // Per-rising cards use a compact, reviewed sign core. The full per-sign
   // section belongs to the Sky article and must never be copied into this card.
   // Sign packages use kind-qualified compact cores. The approved Aquarius
@@ -2293,15 +2319,7 @@ export function renderLunationHoroscope({ kind, sign, risingSign, house, moonHou
   const weekLayer = weekly
     ? hooks.get("fallback-hook/lunation-week-layer")?.body_you
     : null;
-  let weekLayerRendered = false;
-  if (uranusLayerActive && uranusHouse) {
-    const uranusLayer = hooks.get(`fallback-hook/lunation-uranus-layer/${uranusHouse}`)?.body_you;
-    if (uranusLayer) {
-      paras.push(weekLayer ? `${uranusLayer} ${weekLayer}` : uranusLayer);
-      weekLayerRendered = Boolean(weekLayer);
-    }
-  }
-  if (weekLayer && !weekLayerRendered) paras.push(weekLayer);
+  if (weekLayer) paras.push(weekLayer);
   // The former manifestations, moment, Release/Shift, Higher Path, intention,
   // and eclipse-note stack is intentionally retired on per-rising cards. A
   // dedicated reviewed closer may be added later; never synthesize one here.
@@ -2316,7 +2334,7 @@ export function renderLunationEventCard({ eventDate, blendFallbackEnabled = fals
     `authored/satori-lunation/${normalizedEventDate}/${risingKey}`
   );
   if (satori) return result(satori, "authored/satori-lunation-v1");
-  if (blendFallbackEnabled) return renderLunationHoroscope(blendFacts);
+  if (blendFallbackEnabled) return renderLunationHoroscope({ eventDate, ...blendFacts });
   throw new SourceGapError(
     `SOURCE_GAP: no satori lunation card for ${normalizedEventDate}/${risingKey}`
   );
