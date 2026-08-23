@@ -337,7 +337,8 @@ try {
       termLabel: "Long-term",
       keywords: ["Money", "Values"],
       house: 2,
-      houseLabel: "2nd house"
+      houseLabel: "2nd house",
+      detailAvailable: true
     }],
     onOpenBondTransit() {},
     onOpenHouseTransit() {},
@@ -354,7 +355,8 @@ try {
         rangeLabel: "Aug 1–3",
         timingLabel: "Active now",
         summary: "Emotional momentum is easier to use.",
-        orb: "1°"
+        orb: "1°",
+        detailAvailable: true
       }]
     }]
   }));

@@ -54,6 +54,15 @@ assert.equal(contract.calibrationResolvedAt, "2026-08-11");
 assert.equal(contract.runtimeEligible, false);
 assert.equal(contract.generationAuthorized, false);
 assert.equal(contract.servingAuthorized, false);
+const matchingNewMoonAnchor = contract.sharedSpine.find((item) => item.id === "matching_new_moon_anchor");
+assert.deepEqual(matchingNewMoonAnchor.requiredFor, ["full-moon"]);
+assert.equal(
+  matchingNewMoonAnchor.template,
+  "Six months ago, consciously or not, this lunar cycle began with the New Moon in {{matchingNewMoonSign}} on {{matchingNewMoonDate}}."
+);
+assert.equal(matchingNewMoonAnchor.dateFormat.sameCalendarYear, "MMMM d");
+assert.equal(matchingNewMoonAnchor.dateFormat.differentCalendarYear, "MMMM d, yyyy");
+assert.deepEqual(contract.factGate.fullMoon, ["matchingNewMoon.exactAt", "matchingNewMoon.sign"]);
 
 const newMoon = compileLunationHoroscopePacket(base);
 assert.equal(newMoon.event.eventType, "new-moon");
@@ -79,9 +88,37 @@ const fullMoon = compileLunationHoroscopePacket({
 });
 assert.equal(fullMoon.writingPlan.axisNamingAllowed, true);
 assert.equal(fullMoon.writingPlan.revealBeat, false);
+assert.equal(fullMoon.writingPlan.sixMonthArc, true);
+assert.equal(fullMoon.writingPlan.arcPolicy, "required_matching_new_moon_anchor");
 assert.equal(fullMoon.writingPlan.matchingNewMoonClaimAllowed, true);
+assert.equal(fullMoon.writingPlan.matchingNewMoonAnchorRequired, true);
+assert.equal(fullMoon.event.matchingNewMoon.dateLabel, "May 16");
+assert.equal(fullMoon.event.matchingNewMoon.includeYear, false);
+assert.equal(
+  fullMoon.event.matchingNewMoon.anchor,
+  "Six months ago, consciously or not, this lunar cycle began with the New Moon in Taurus on May 16."
+);
 assert.equal(fullMoon.writingPlan.closePolicy, "match_full_moon_theme");
 assert.deepEqual(fullMoon.governance.unresolvedQuestions, []);
+
+const crossYearFullMoon = compileLunationHoroscopePacket({
+  ...structuredClone(base),
+  eventType: "full-moon",
+  exactAt: "2026-01-03T05:02:00-05:00",
+  eventSign: "cancer",
+  moonHouse: 4,
+  houseDomains: ["home", "family", "private life"],
+  sunSign: "capricorn",
+  sunHouse: 10,
+  ruler: { body: "moon", sign: "cancer", house: 4, retrograde: false },
+  matchingNewMoon: { exactAt: "2025-06-25T06:31:00-04:00", sign: "cancer" }
+});
+assert.equal(crossYearFullMoon.event.matchingNewMoon.dateLabel, "June 25, 2025");
+assert.equal(crossYearFullMoon.event.matchingNewMoon.includeYear, true);
+assert.equal(
+  crossYearFullMoon.event.matchingNewMoon.anchor,
+  "Six months ago, consciously or not, this lunar cycle began with the New Moon in Cancer on June 25, 2025."
+);
 
 const solar = compileLunationHoroscopePacket({ ...structuredClone(base), eventType: "eclipse-solar" });
 assert.equal(solar.writingPlan.sixMonthArc, true);
@@ -114,6 +151,48 @@ expectSourceGap((input) => { delete input.moonHouse; }, /moonHouse/);
 expectSourceGap((input) => { input.aspectsComplete = false; }, /aspectsComplete/);
 expectSourceGap((input) => { delete input.aspects[0].exactAt; }, /aspects\[0\]\.exactAt/);
 expectSourceGap((input) => { input.outerPlanetPlacementsComplete = false; }, /outerPlanetPlacementsComplete/);
+
+assert.throws(
+  () => compileLunationHoroscopePacket({
+    ...structuredClone(base),
+    eventType: "full-moon",
+    eventSign: "taurus",
+    moonHouse: 2,
+    houseDomains: ["money", "possessions", "self-worth"],
+    sunSign: "scorpio",
+    sunHouse: 8,
+    ruler: { body: "venus", sign: "libra", house: 7, retrograde: false }
+  }),
+  (error) => error instanceof LunationSourceGapError && /matchingNewMoon is required/.test(error.message)
+);
+assert.throws(
+  () => compileLunationHoroscopePacket({
+    ...structuredClone(base),
+    eventType: "full-moon",
+    eventSign: "taurus",
+    moonHouse: 2,
+    houseDomains: ["money", "possessions", "self-worth"],
+    sunSign: "scorpio",
+    sunHouse: 8,
+    ruler: { body: "venus", sign: "libra", house: 7, retrograde: false },
+    matchingNewMoon: { exactAt: "2026-05-16T16:01:00-04:00", sign: "aries" }
+  }),
+  (error) => error instanceof LunationSourceGapError && /must match the Full Moon sign/.test(error.message)
+);
+assert.throws(
+  () => compileLunationHoroscopePacket({
+    ...structuredClone(base),
+    eventType: "full-moon",
+    eventSign: "taurus",
+    moonHouse: 2,
+    houseDomains: ["money", "possessions", "self-worth"],
+    sunSign: "scorpio",
+    sunHouse: 8,
+    ruler: { body: "venus", sign: "libra", house: 7, retrograde: false },
+    matchingNewMoon: { exactAt: "2026-10-16T16:01:00-04:00", sign: "taurus" }
+  }),
+  (error) => error instanceof LunationSourceGapError && /must precede the Full Moon/.test(error.message)
+);
 
 assert.throws(
   () => compileLunationHoroscopePacket(base, { forGeneration: true }),

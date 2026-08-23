@@ -410,7 +410,15 @@ console.log("Rendered 12 Lilith sky placements.");
 {
   let lh = 0;
   for (const rs of SIGNS) for (const kd of ["new-moon", "full-moon", "eclipse-solar", "eclipse-lunar"]) {
-    const r = renderLunationHoroscope({ kind: kd, sign: "aquarius", risingSign: rs });
+    const r = renderLunationHoroscope({
+      kind: kd,
+      sign: "aquarius",
+      risingSign: rs,
+      ...(kd === "full-moon" ? {
+        eventDate: "2026-07-29T14:35:00.000Z",
+        matchingNewMoon: { exactAt: "2026-02-17T12:01:00.000Z", sign: "aquarius" }
+      } : {})
+    });
     if (/\{\{/.test(r.body)) fail(`lunation horoscope ${kd}/${rs}: slot leak`);
     if (/\b(?:It can show up|That might look|Let go of|Your higher path|Set your intention)\b/.test(r.body)) {
       fail(`lunation horoscope ${kd}/${rs}: retired closer stack leaked`);
@@ -420,7 +428,13 @@ console.log("Rendered 12 Lilith sky placements.");
     }
     lh++;
   }
-  const aq = renderLunationHoroscope({ kind: "full-moon", sign: "aquarius", risingSign: "aquarius" });
+  const aq = renderLunationHoroscope({
+    kind: "full-moon",
+    sign: "aquarius",
+    risingSign: "aquarius",
+    eventDate: "2026-07-29T14:35:00.000Z",
+    matchingNewMoon: { exactAt: "2026-02-17T12:01:00.000Z", sign: "aquarius" }
+  });
   if (!aq.body.includes("1st house")) fail("lunation horoscope: house math wrong for same-sign rising");
   console.log(`Rendered ${lh} per-rising lunation horoscopes.`);
 }

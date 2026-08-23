@@ -22,6 +22,10 @@ const TRADITIONAL_RULER = {
 };
 const ASPECTS = new Set(["conjunction", "sextile", "square", "trine", "opposition", "quincunx"]);
 const OUTER_PLANETS = new Set(["uranus", "neptune", "pluto"]);
+const MONTH_NAMES = [
+  "January", "February", "March", "April", "May", "June",
+  "July", "August", "September", "October", "November", "December"
+];
 
 export class LunationSourceGapError extends Error {
   constructor(message) {
@@ -57,6 +61,23 @@ function validExactAt(value, label) {
   }
   if (!Number.isFinite(Date.parse(value))) sourceGap(`${label} is not a valid date-time`);
   return value;
+}
+
+function calendarDateParts(exactAt, label) {
+  const match = /^(\d{4})-(\d{2})-(\d{2})T/u.exec(exactAt);
+  if (!match) sourceGap(`${label} must begin with a calendar date`);
+  const year = Number(match[1]);
+  const month = Number(match[2]);
+  const day = Number(match[3]);
+  if (!MONTH_NAMES[month - 1] || day < 1 || day > 31) sourceGap(`${label} has an invalid calendar date`);
+  return { year, month, day };
+}
+
+export function formatMatchingNewMoonDateLabel(matchingNewMoonExactAt, fullMoonExactAt) {
+  const matching = calendarDateParts(validExactAt(matchingNewMoonExactAt, "matchingNewMoon.exactAt"), "matchingNewMoon.exactAt");
+  const full = calendarDateParts(validExactAt(fullMoonExactAt, "exactAt"), "exactAt");
+  const monthDay = `${MONTH_NAMES[matching.month - 1]} ${matching.day}`;
+  return matching.year === full.year ? monthDay : `${monthDay}, ${matching.year}`;
 }
 
 function validateDomains(value) {
@@ -153,11 +174,27 @@ export function compileLunationHoroscopePacket(facts, options = {}) {
   const outerPlanetPlacements = validateOuterPlanets(facts.outerPlanetPlacements, facts.outerPlanetPlacementsComplete);
 
   let matchingNewMoon = null;
+  if (eventType === "full-moon" && facts.matchingNewMoon == null) {
+    sourceGap("matchingNewMoon is required for full-moon write-ups");
+  }
   if (facts.matchingNewMoon != null) {
     if (eventType !== "full-moon" && eventType !== "eclipse-lunar") sourceGap("matchingNewMoon applies only to Full Moons and lunar eclipses");
+    const matchingExactAt = validExactAt(facts.matchingNewMoon.exactAt, "matchingNewMoon.exactAt");
+    const matchingSign = normalizedSign(facts.matchingNewMoon.sign, "matchingNewMoon.sign");
+    if (matchingSign !== eventSign) sourceGap("matchingNewMoon.sign must match the Full Moon sign");
+    if (Date.parse(matchingExactAt) >= Date.parse(exactAt)) sourceGap("matchingNewMoon.exactAt must precede the Full Moon");
+    const dateLabel = formatMatchingNewMoonDateLabel(matchingExactAt, exactAt);
     matchingNewMoon = {
-      exactAt: validExactAt(facts.matchingNewMoon.exactAt, "matchingNewMoon.exactAt"),
-      sign: normalizedSign(facts.matchingNewMoon.sign, "matchingNewMoon.sign")
+      exactAt: matchingExactAt,
+      sign: matchingSign,
+      dateLabel,
+      includeYear: calendarDateParts(matchingExactAt, "matchingNewMoon.exactAt").year
+        !== calendarDateParts(exactAt, "exactAt").year,
+      anchor: CONTRACT.sharedSpine
+        .find((item) => item.id === "matching_new_moon_anchor")
+        ?.template
+        .replace("{{matchingNewMoonSign}}", matchingSign.replace(/^./u, (character) => character.toUpperCase()))
+        .replace("{{matchingNewMoonDate}}", dateLabel)
     };
   }
 
@@ -225,7 +262,11 @@ export function compileLunationHoroscopePacket(facts, options = {}) {
       eventAgencyPolicy: template.eventAgencyPolicy ?? null,
       readerChoiceImplied: template.readerChoiceImplied ?? null,
       aspectAttribution,
-      matchingNewMoonClaimAllowed: Boolean(matchingNewMoon)
+      matchingNewMoonClaimAllowed: Boolean(matchingNewMoon),
+      matchingNewMoonAnchorRequired: eventType === "full-moon",
+      matchingNewMoonAnchorTemplate: eventType === "full-moon"
+        ? CONTRACT.sharedSpine.find((item) => item.id === "matching_new_moon_anchor")?.template ?? null
+        : null
     },
     outputContract: {
       register: CONTRACT.register,
