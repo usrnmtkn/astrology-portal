@@ -37,8 +37,8 @@ assert.match(
 );
 assert.match(
   appSource,
-  /const currentSkyContentKeys = \[\.\.\.aspectContentKeys, \.\.\.placementContentKeys\];[\s\S]*?loadLiveGeneratedContentForKeys\(currentSkyContentKeys\)[\s\S]*?setSkyGeneratedContent\(mergeGeneratedContentMaps\(content, normalizedSkySnapshotContent\)\)/u,
-  "The Sky page must hydrate only current aspect and placement keys, then merge live copy into the visible fallback cards."
+  /const personalTransitAspectContentKeys = skyPlacementPersonalizationTransits\.flatMap[\s\S]*?cmsSurfaceKeys\.transitAspect[\s\S]*?const currentSkyContentKeys = \[[\s\S]*?\.\.\.personalTransitAspectContentKeys[\s\S]*?loadLiveGeneratedContentForKeys\(currentSkyContentKeys\)[\s\S]*?setSkyGeneratedContent\(mergeGeneratedContentMaps\(content, normalizedSkySnapshotContent\)\)/u,
+  "The Sky page must hydrate current collective keys and personalized natal-aspect CMS keys, then merge live copy into the visible fallback cards."
 );
 assert.match(
   appSource,

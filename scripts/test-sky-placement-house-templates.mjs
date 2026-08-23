@@ -73,7 +73,7 @@ assert.match(
 const app = read("apps/web/src/App.tsx");
 const article = read("apps/web/src/features/sky/SkyDetailArticle.tsx");
 assert.match(app, /heading: packageSection\?\.heading \|\| personalTransitDisplayTitle\(transit\)/u);
-assert.match(app, /body: compiledAspect\?\.body \?\? packageSection\?\.body \?\? null/u);
+assert.match(app, /body: packageSection\?\.body \?\? compiledAspect\?\.body \?\? null/u);
 assert.match(article, /detail\.personalizedPlacement\.natalAspects\.map/u);
 assert.match(article, /<h4>\{aspect\.heading\}<\/h4>/u);
 
