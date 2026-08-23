@@ -5797,6 +5797,9 @@ export function GeneratedContentAdminDashboard() {
                 </div>
                 <dl className="admin-hook-pattern-list">
                   <div><dt>{skyLunationContext ? "Lunation" : "Placement"}</dt><dd>{skyLunationContext ? `${titleFromKey(skyLunationContext.sign)} ${titleFromKey(skyLunationContext.kind)}` : `${titleFromKey(skyWriteupContext.planet)}${skyWriteupContext.sign ? ` in ${titleFromKey(skyWriteupContext.sign)}` : ""}`}</dd></div>
+                  {skyLunationContext && (
+                    <div><dt>Eclipse</dt><dd>{skyLunationContext.eclipse === "none" ? "Not an eclipse" : `${titleFromKey(skyLunationContext.eclipse)} eclipse`}</dd></div>
+                  )}
                   <div><dt>Aspect passages</dt><dd>{skyAspectPassages.length}</dd></div>
                   {skyLunationContext ? (
                     <div><dt>Rising horoscopes</dt><dd>{sourceReadyLunationHoroscopes}/12 source-ready</dd></div>
