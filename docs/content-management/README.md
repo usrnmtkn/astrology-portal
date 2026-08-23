@@ -147,6 +147,19 @@ scripts/
   Import, materialization, contract, regression, and QA tooling
 ```
 
+## Content Studio access
+
+Content Studio uses the existing signed-in TLDR Astro owner session. The Admin
+API verifies that session with Supabase on every request and authorizes it only
+when the protected `app_metadata.role` is exactly `admin`. A normal signed-in
+member is not an admin and remains denied.
+
+`CONTENT_GENERATION_SECRET` remains an emergency fallback, not the normal
+browser login. The dashboard never saves a Supabase access token in its own
+admin-secret storage key. If the signed-in session expires, the dashboard
+refreshes the same-origin Supabase session; if verification fails, the API
+fails closed and shows the emergency access field.
+
 ## Finding content from the reader surface
 
 Open Content Studio > App surfaces > Surface Map. This is the canonical
