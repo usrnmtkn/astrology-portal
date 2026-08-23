@@ -150,9 +150,11 @@ scripts/
 ## Content Studio access
 
 Content Studio uses the existing signed-in TLDR Astro owner session. The Admin
-API verifies that session with Supabase on every request and authorizes it only
-when the protected `app_metadata.role` is exactly `admin`. A normal signed-in
-member is not an admin and remains denied.
+API verifies that session with Supabase on every request. It authorizes either
+the protected `app_metadata.role = admin` claim or an exact verified email in
+the server-only `CONTENT_ADMIN_EMAILS` allowlist. A normal signed-in member
+remains denied. The email allowlist gives the owner a stable bootstrap path
+without making an ordinary account an administrator.
 
 The verifier uses the browser app's `VITE_SUPABASE_URL` and publishable key
 before any server-job Supabase configuration. Content Studio sessions must be

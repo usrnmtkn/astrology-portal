@@ -13,6 +13,7 @@ const previousSupabaseUrl = process.env.SUPABASE_URL;
 const previousSupabaseKey = process.env.SUPABASE_PUBLISHABLE_KEY;
 const previousViteSupabaseUrl = process.env.VITE_SUPABASE_URL;
 const previousViteSupabaseKey = process.env.VITE_SUPABASE_PUBLISHABLE_KEY;
+const previousAdminEmails = process.env.CONTENT_ADMIN_EMAILS;
 
 try {
   assert.equal(normalizeAdminSecret(" production-admin-secret "), "production-admin-secret");
@@ -52,6 +53,7 @@ try {
   process.env.CONTENT_GENERATION_SECRET = "production-admin-secret";
   process.env.SUPABASE_URL = "https://auth.example.test";
   process.env.SUPABASE_PUBLISHABLE_KEY = "publishable-test-key";
+  process.env.CONTENT_ADMIN_EMAILS = "owner@example.com";
   const verifiedAdmin = async (url, options) => {
     assert.equal(url, "https://auth.example.test/auth/v1/user");
     assert.equal(options.headers.apikey, "publishable-test-key");
@@ -59,8 +61,12 @@ try {
     return { ok: true, json: async () => ({ id: "owner", app_metadata: { role: "admin" } }) };
   };
   const verifiedMember = async () => ({ ok: true, json: async () => ({ id: "member", app_metadata: { role: "member" } }) });
+  const verifiedOwnerEmail = async () => ({ ok: true, json: async () => ({ id: "owner-email", email: "Owner@Example.com", app_metadata: { role: "member" } }) });
+  const verifiedUnknownEmail = async () => ({ ok: true, json: async () => ({ id: "unknown-email", email: "reader@example.com", app_metadata: { role: "member" } }) });
   const rejectedSession = async () => ({ ok: false, json: async () => ({ message: "invalid" }) });
   assert.equal(await isContentAdminAuthorized(request({ "x-content-admin-session": "owner-session-token" }), verifiedAdmin), true, "A server-verified admin role must authorize Content Studio.");
+  assert.equal(await isContentAdminAuthorized(request({ "x-content-admin-session": "owner-email-session-token" }), verifiedOwnerEmail), true, "The exact server-configured owner email must authorize after Supabase verifies the session.");
+  assert.equal(await isContentAdminAuthorized(request({ "x-content-admin-session": "unknown-email-session-token" }), verifiedUnknownEmail), false, "A verified email outside the owner allowlist must remain denied.");
   assert.equal(await isContentAdminAuthorized(request({ "x-content-admin-session": "member-session-token" }), verifiedMember), false, "An ordinary signed-in member must remain denied.");
   assert.equal(await isContentAdminAuthorized(request({ "x-content-admin-session": "expired-session-token" }), rejectedSession), false, "An invalid session must remain denied.");
   assert.equal(await isContentAdminAuthorized(request({ "x-content-admin-session": "owner-session-token" }), async () => { throw new Error("network"); }), false, "Session verification failures must fail closed.");
@@ -138,4 +144,6 @@ try {
   else process.env.VITE_SUPABASE_URL = previousViteSupabaseUrl;
   if (previousViteSupabaseKey === undefined) delete process.env.VITE_SUPABASE_PUBLISHABLE_KEY;
   else process.env.VITE_SUPABASE_PUBLISHABLE_KEY = previousViteSupabaseKey;
+  if (previousAdminEmails === undefined) delete process.env.CONTENT_ADMIN_EMAILS;
+  else process.env.CONTENT_ADMIN_EMAILS = previousAdminEmails;
 }
