@@ -48,7 +48,16 @@ function supabaseAuthConfig() {
   return { url, key };
 }
 
-async function hasVerifiedAdminRole(req: IncomingMessage, fetchImpl: typeof fetch) {
+function configuredOwnerEmails() {
+  return new Set(
+    (process.env.CONTENT_ADMIN_EMAILS ?? "")
+      .split(/[\s,]+/u)
+      .map((value) => value.trim().toLowerCase())
+      .filter(Boolean)
+  );
+}
+
+async function hasVerifiedAdminIdentity(req: IncomingMessage, fetchImpl: typeof fetch) {
   const token = sessionToken(req);
   const { url, key } = supabaseAuthConfig();
   if (!token || !url || !key) return false;
@@ -58,11 +67,17 @@ async function hasVerifiedAdminRole(req: IncomingMessage, fetchImpl: typeof fetc
       headers: { apikey: key, authorization: `Bearer ${token}` }
     });
     const payload = await response.json().catch(() => null) as {
+      email?: unknown;
       app_metadata?: { role?: unknown };
-      user?: { app_metadata?: { role?: unknown } };
+      user?: { email?: unknown; app_metadata?: { role?: unknown } };
     } | null;
     const role = payload?.app_metadata?.role ?? payload?.user?.app_metadata?.role;
-    return response.ok && role === "admin";
+    const email = payload?.email ?? payload?.user?.email;
+    const verifiedEmail = typeof email === "string" ? email.trim().toLowerCase() : "";
+    return response.ok && (
+      role === "admin"
+      || (verifiedEmail !== "" && configuredOwnerEmails().has(verifiedEmail))
+    );
   } catch {
     return false;
   }
@@ -72,5 +87,5 @@ export async function isContentAdminAuthorized(req: IncomingMessage, fetchImpl: 
   const expected = normalizeSecret(process.env.CONTENT_GENERATION_SECRET);
   if (expected && suppliedSecrets(req).some((supplied) => secretsMatch(supplied, expected))) return true;
   if (!expected && process.env.NODE_ENV !== "production" && !sessionToken(req)) return true;
-  return hasVerifiedAdminRole(req, fetchImpl);
+  return hasVerifiedAdminIdentity(req, fetchImpl);
 }
