@@ -21,7 +21,6 @@ import type { KeyboardEvent as ReactKeyboardEvent } from "react";
 import { isReaderFacingCopy } from "../../web/src/content/readerSafety";
 import { renderCmsTemplatePreview, validateCmsTemplate } from "../../web/src/content/cmsTemplateValidation";
 import { announceContentUpdate } from "../../web/src/services/contentUpdateSignal";
-import { getSupabaseClient } from "../../web/src/services/auth";
 import { adminSecretStorageKey, normalizeAdminSecret } from "./adminSecret";
 import {
   SKY_ARTICLE_COMPILER_VERSION,
@@ -1648,16 +1647,13 @@ function dashboardErrorMessage(error: unknown) {
 async function adminJsonRequest<T>(path: string, secret: string, options: RequestInit = {}) {
   const method = options.method ?? "GET";
   const normalizedSecret = normalizeAdminSecret(secret);
-  const isSessionToken = /^[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+$/u.test(normalizedSecret);
   const response = await fetch(path, {
     ...options,
     headers: {
       "content-type": "application/json",
       ...(normalizedSecret ? {
         authorization: `Bearer ${normalizedSecret}`,
-        ...(isSessionToken
-          ? { "x-content-admin-session": normalizedSecret }
-          : { "x-content-generation-secret": normalizedSecret })
+        "x-content-generation-secret": normalizedSecret
       } : {}),
       ...options.headers
     }
@@ -1803,15 +1799,11 @@ function useSavedSecret() {
     }
   }
 
-  function setTransientCredential(nextCredential: string) {
-    setSecret(normalizeAdminSecret(nextCredential));
-  }
-
-  return [secret, saveSecret, setTransientCredential] as const;
+  return [secret, saveSecret] as const;
 }
 
 export function GeneratedContentAdminDashboard() {
-  const [secret, setSecret, setTransientCredential] = useSavedSecret();
+  const [secret, setSecret] = useSavedSecret();
   const [secretInput, setSecretInput] = useState(secret);
   const [activePage, setActivePage] = useState<AdminDashboardPage>(() => parseAdminHash().page);
   const [rows, setRows] = useState<AdminGeneratedContentRow[]>([]);
@@ -2302,22 +2294,9 @@ export function GeneratedContentAdminDashboard() {
   }, []);
 
   useEffect(() => {
-    const savedSecret = secret;
-    void (async () => {
-      const client = await getSupabaseClient().catch(() => null);
-      const session = client ? await client.auth.getSession().catch(() => null) : null;
-      const accessToken = session?.data.session?.access_token ?? "";
-
-      if (accessToken) {
-        setTransientCredential(accessToken);
-        if (await loadDashboardData(accessToken)) return;
-      }
-
-      if (savedSecret.trim()) {
-        setTransientCredential(savedSecret);
-        await loadDashboardData(savedSecret);
-      }
-    })();
+    if (secret.trim()) {
+      void loadDashboardData();
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -2524,7 +2503,7 @@ export function GeneratedContentAdminDashboard() {
       setLoadError("Admin access is required before content can load.");
       setLoadDiagnostics(null);
       setMessage("Paste the secret value, not the words CONTENT_GENERATION_SECRET, then load content.");
-      return false;
+      return;
     }
 
     setLoadState("loading");
@@ -2580,7 +2559,6 @@ export function GeneratedContentAdminDashboard() {
       ].filter(Boolean);
       setLoadState("loaded");
       setMessage(`Loaded ${generatedRows.length} saved rows, ${reviewRowsPayload.length} review records, and ${usersPayload.rows?.length ?? 0} user rows.${partialWarnings.length ? ` Partial load: ${partialWarnings.join(", ")}.` : ""}`);
-      return true;
     } catch (error) {
       const accessDenied = error instanceof AdminRequestError && error.status === 401;
       const nextMessage = accessDenied
@@ -2591,7 +2569,6 @@ export function GeneratedContentAdminDashboard() {
       setLoadError(nextMessage);
       setLoadDiagnostics(error instanceof AdminRequestError ? `${error.method} ${error.path} -> HTTP ${error.status}${error.details ? ` (${error.details})` : ""}` : null);
       setMessage(nextMessage);
-      return false;
     } finally {
       setIsLoading(false);
     }
