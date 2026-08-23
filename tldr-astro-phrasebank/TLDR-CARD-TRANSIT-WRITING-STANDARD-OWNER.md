@@ -3,7 +3,7 @@
 **Status: owner ruling, 2026-08-09. Generation rule, not reader-facing copy. Canonical for the CARD register: all planetary transit-to-natal files and short app surfaces. Derived from the Jupiter transit-to-natal rewrite process (reference implementation: `TLDR-JUPITER-TRANSIT-NATAL-FAMILY-OWNER.md`, owner-approved). Companions: `TLDR-REGISTER-PER-SURFACE-RULING-OWNER.md` (surface scoping), `TLDR-REPORT-LIVED-PROSE-STANDARD-OWNER.md` (the report-register counterpart). Section 23 is the top-level Codex direction for rewriting the remaining planetary files. Sections 20–21 feed the critique checklist example library and the card-harness rubric directly. Owner text verbatim below.**
 
 ```text
-The Jupiter rewrite exposed a much clearer set of rules for getting the rest of the files to this level. The important change was not simply "write more like Chani." It was where the writing begins, how the astrology enters, and what counts as a finished observation.
+The Jupiter rewrite exposed a much clearer set of rules for getting the rest of the files to this level. The important change was not simply "write more like CC." It was where the writing begins, how the astrology enters, and what counts as a finished observation.
 
 Canonical writing rules for bringing existing files to this level
 
@@ -281,7 +281,7 @@ That advice belongs specifically to this problem.
 
 9. Warmth comes after the truth
 
-The Chani screenshots helped clarify this.
+The CC screenshots helped clarify this.
 What we wanted from that style was:
 
 * confidence
@@ -459,7 +459,7 @@ These are the editorial corrections I would preserve almost verbatim as generati
 Translation:
 Stop optimizing for neat doctrine language. Compare the copy against the approved voice and lived prose, not against the previous generated draft.
 "This is more of the style."
-You said this after showing the Chani screenshots.
+You said this after showing the CC screenshots.
 Translation:
 Add personality, rhythm, permission, and point of view. Let the copy speak to a person instead of documenting the transit.
 "I need the entire write-up."
@@ -480,9 +480,9 @@ Revision must improve the thought, not merely rearrange it. Preserve any line th
 "This doesn't make sense when I read it."
 Translation:
 Read every sentence as ordinary English, not as astrology logic. If a sentence only makes sense because the writer knows the transit mechanics, rewrite it.
-"Write in a Chani way that is not flat."
+"Write in a CC way that is not flat."
 Translation:
-Use warmth and lyrical confidence after the observation is clear. Do not confuse Chani-like cadence with vagueness or therapy language.
+Use warmth and lyrical confidence after the observation is clear. Do not confuse CC-like cadence with vagueness or therapy language.
 
 21. The editorial test before an entry can be called finished
 

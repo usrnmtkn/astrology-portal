@@ -117,6 +117,7 @@ const genericAspectSourceMaterialKeys = new Set([
 const retiredHistoricalSourceKeys = new Set([
   "fallback-hook/natal-moon-phase-lived/balsamic",
 ]);
+const referenceOnlySourceKeys = new Set([...genericAspectSourceMaterialKeys, ...retiredHistoricalSourceKeys]);
 assert.equal(sourceByReleaseKey.size, 301);
 assert.equal(manifest.rows.length, 301);
 const observedServingSubstitutions = new Set();
@@ -269,6 +270,14 @@ try {
       expectedServingBody(lockedRow),
       `${lockedRow.contentKey}: Supabase body must match locked history except enumerated owner-approved substitutions.`,
     );
+    if (referenceOnlySourceKeys.has(lockedRow.contentKey)) {
+      assert.equal(row.status, "DRAFT", `${lockedRow.contentKey}: reference material must not be published.`);
+      assert.equal(row.lane, "reference", `${lockedRow.contentKey}: reference material must stay outside the serving lane.`);
+      assert.equal(row.review_state, "fallback-system-reference", `${lockedRow.contentKey}: reference material must retain its dashboard guard.`);
+      assert.equal(row.facts?.readerServing, false, `${lockedRow.contentKey}: reference material must fail the reader gate.`);
+      assert.equal(row.sections?.packageRecord?.content_role, "source_material");
+      continue;
+    }
     assert.equal(row.status, "LIVE", `${lockedRow.contentKey}: serving status must be LIVE.`);
     assert.equal(row.lane, "serving", `${lockedRow.contentKey}: serving lane must be explicit.`);
     assert.equal(row.review_state, null, `${lockedRow.contentKey}: reader guard must be clear.`);

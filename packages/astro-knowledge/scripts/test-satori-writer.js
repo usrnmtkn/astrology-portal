@@ -857,14 +857,14 @@ function main() {
   assert.strictEqual(registry.lanes["judge:sky-placement"].active.reasoningEffort, "low");
 
   const writerPolicy = require(path.join("..", "config", "satori-writer-policy-v1.json"));
-  assert.match(writerPolicy.voiceTarget.permanentRule, /Chani-adjacent cadence is acceptable/);
+  assert.match(writerPolicy.voiceTarget.permanentRule, /CC-adjacent cadence is acceptable/);
   assert.strictEqual(writerPolicy.voiceTarget.advocacySubjectsRequireAstrologyAndOwnerSupport, true);
   assert(writerPolicy.voiceTarget.ownerRecurringConcerns.includes("gatekeeping"));
   assert(writerPolicy.voiceTarget.advocacyDefaultSubjects.includes("policy reform"));
   assert.strictEqual(writerPolicy.voiceTarget.thirdPartyProseIsVoiceEvidence, false);
   const judgePrompt = buildJudgePrompt(target.article, { tier: "social", planet: "jupiter", sign: "libra", deterministicResults: { score: 3, fails: 0 } });
   assert.match(judgePrompt, /COMPACT FINAL-ACCEPTABILITY RUBRIC/);
-  assert.match(judgePrompt, /\[CF-016\].*Chani-adjacent warmth/);
+  assert.match(judgePrompt, /\[CF-016\].*CC-adjacent warmth/);
   assert.match(judgePrompt, /\[CF-007\].*does not default to campaigns/);
   assert.match(judgePrompt, /\[CF-005\].*Reserve harm and self-harm for literal harm/);
   assert.match(judgePrompt, /DETERMINISTIC CHECK RESULTS/);
@@ -881,7 +881,7 @@ function main() {
   assert.doesNotMatch(skill, /\[TODO/);
   assert.match(skill, /name: satori-writer/);
   assert.match(skill, /Terra only at the end/);
-  assert.match(skill, /Chani can influence the softness of the delivery; Marie determines what the article notices/);
+  assert.match(skill, /CC can influence the softness of the delivery; Marie determines what the article notices/);
   const fixtureAudit = auditRecords();
   assert.strictEqual(fixtureAudit.sourceRecordCount, 33);
   assert.strictEqual(fixtureAudit.validFixtureCount, 6);

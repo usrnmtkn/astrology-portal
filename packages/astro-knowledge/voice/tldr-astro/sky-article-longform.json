@@ -67,7 +67,7 @@
     },
     {
       "id": "recognizability",
-      "rule": "Would any sentence be identifiable as CHANI, Spirit Daughter, or AC? The documented phrasing constructions in voice/banned-constructions.json (source CC/SD/AC) mark adjacent voices the generator may drift toward. Flag phrasing and constructions on the list; AC's structural timing devices may be adapted, but theatrical titles and dense stacked metaphor may not. Shared astrological knowledge and terminology are never flagged by recognizability: Dragon's Head/Tail, decans, dignities, cazimi, and the tradition's vocabulary are common to astrologers and free to use. Owner-verbatim text is exempt. The sharpest CC/SD boundary: Marie's permission lines are specific and falsifiable (allowed to do a nameable thing); SD's are affirmational (deserve to feel good)."
+      "rule": "Would any sentence be identifiable as CC, Spirit Daughter, or AC? The documented phrasing constructions in voice/banned-constructions.json (source CC/SD/AC) mark adjacent voices the generator may drift toward. Flag phrasing and constructions on the list; AC's structural timing devices may be adapted, but theatrical titles and dense stacked metaphor may not. Shared astrological knowledge and terminology are never flagged by recognizability: Dragon's Head/Tail, decans, dignities, cazimi, and the tradition's vocabulary are common to astrologers and free to use. Owner-verbatim text is exempt. The sharpest CC/SD boundary: Marie's permission lines are specific and falsifiable (allowed to do a nameable thing); SD's are affirmational (deserve to feel good)."
     },
     {
       "id": "lint-clean",

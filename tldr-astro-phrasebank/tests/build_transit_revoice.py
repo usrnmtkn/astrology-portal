@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-build_transit_revoice.py — CHANI-quality flowing paragraphs for transit/aspect DETAIL.
+build_transit_revoice.py — CC-quality flowing paragraphs for transit/aspect DETAIL.
 
 Adds an `expanded_narrative` to aspect-pair records: one warm, hook-first, flowing
 paragraph (no creative headline — the title stays the plain astrology name). This is
@@ -124,11 +124,11 @@ def main():
     hand = 0; composed = 0; skipped = 0
     for rid, r in idx.items():
         if rid in REVOICE:
-            r["expanded_narrative"] = REVOICE[rid]; r["revoice_version"] = "chani-quality-v1-authored"; hand += 1
+            r["expanded_narrative"] = REVOICE[rid]; r["revoice_version"] = "CC-quality-v1-authored"; hand += 1
         else:
             para = compose(r)
             if para:
-                r["expanded_narrative"] = para; r["revoice_version"] = "chani-quality-v1-composed"; composed += 1
+                r["expanded_narrative"] = para; r["revoice_version"] = "CC-quality-v1-composed"; composed += 1
             else:
                 skipped += 1
     for fp, d in data.items():

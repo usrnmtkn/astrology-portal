@@ -338,7 +338,7 @@
       "active": true
     },
     {
-      "id": "chani-warmth-allowed",
+      "id": "CC-warmth-allowed",
       "surface": "sky-placement",
       "kind": "judge",
       "text": "Someone can change the plan without apologizing for having a preference.",

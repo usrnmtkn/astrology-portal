@@ -19,7 +19,7 @@ for b in build_aspect_reviews build_aspect_reviews_batch2 build_angle_reviews \
   python3 "tests/$b.py" >/dev/null
 done
 
-echo "2/4  applying Marie tone pass + CHANI-quality transit revoice…"
+echo "2/4  applying Marie tone pass + CC-quality transit revoice…"
 python3 tests/tone_pass.py >/dev/null
 python3 tests/build_transit_revoice.py >/dev/null
 

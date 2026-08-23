@@ -101,4 +101,4 @@ fallback templates (per surface)                      → generated fallback par
 authored full_copy (reviewed per combination)  ───────────── no full_copy exists
 ```
 
-The instruction-source firewall from SOURCE-TIER-CONTRACT.md applies unchanged: prompts, chat feedback, audits, fixtures, screenshots, and raw CHANI copy can never become slot values or hooks.
+The instruction-source firewall from SOURCE-TIER-CONTRACT.md applies unchanged: prompts, chat feedback, audits, fixtures, screenshots, and raw CC copy can never become slot values or hooks.

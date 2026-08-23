@@ -4,7 +4,7 @@ import path from "node:path";
 import process from "node:process";
 
 const repoRoot = path.resolve(path.dirname(new URL(import.meta.url).pathname), "..");
-const defaultSourceDir = "/Users/mprez/Downloads/us.sitesucker.mac.sitesucker/www.chani.com";
+const defaultSourceDir = "/Users/mprez/Downloads/us.sitesucker.mac.sitesucker/www.CC.com";
 const importBatchId = `dashboard-source-${new Date().toISOString().slice(0, 10)}`;
 const dignityLinesPath = path.join(
   repoRoot,

@@ -32,6 +32,6 @@ trait → ordinary behavior → cost when rigid. Aries and Taurus are Marie's re
 
 ---
 
-Foundation: Hand (Planets in Youth ~3039-3390), Chani (You Were Born for This ~1121-1240), Co-Star sign
+Foundation: Hand (Planets in Youth ~3039-3390), CC (You Were Born for This ~1121-1240), Co-Star sign
 palettes per CO-STAR-TEMPLATE-ANALYSIS.md. Traits SOURCE_SUPPORTED; examples SA_STYLE_ORIGINAL;
 interactions DERIVED_SYNTHESIS; sources recorded in informed_by.

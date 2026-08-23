@@ -1,6 +1,6 @@
 # Coverage audit — what's complete, partial, and missing
 
-> **UPDATE 2.** Synastry (99: inter-aspects + house overlays), composite (130: planet cores + planet-in-house), the small tails (transiting-node contacts, Ceres/Pallas/Juno/Vesta, 23 fast-planet gap pairs) are now built. And every one of the **470 transit/aspect records now carries a CHANI-quality flowing `expanded_narrative`** (15 hand-authored premium + 455 composed from the seam-clean slots, fixing capitalization and the clunky assembly frame; plain title kept, no creative headline). Bank total: **1,167 reviewed records + 127 CONFIRMED quotes**. Full pipeline `tests/build_all.sh` is green: 2216/2216 harness, 17/17 suite. Synastry and composite are the only formerly-missing surfaces, now done.
+> **UPDATE 2.** Synastry (99: inter-aspects + house overlays), composite (130: planet cores + planet-in-house), the small tails (transiting-node contacts, Ceres/Pallas/Juno/Vesta, 23 fast-planet gap pairs) are now built. And every one of the **470 transit/aspect records now carries a CC-quality flowing `expanded_narrative`** (15 hand-authored premium + 455 composed from the seam-clean slots, fixing capitalization and the clunky assembly frame; plain title kept, no creative headline). Bank total: **1,167 reviewed records + 127 CONFIRMED quotes**. Full pipeline `tests/build_all.sh` is green: 2216/2216 harness, 17/17 suite. Synastry and composite are the only formerly-missing surfaces, now done.
 
 
 
@@ -16,7 +16,7 @@ Original short answer (now largely closed): the transit-to-natal / aspect layer 
 | **Natal aspects** (`me.natal_aspect`) | ✅ broad | same 472 pairs serve this | — | Hamaker-Zondag ✓ |
 | **Natal nodes** | ✅ | 24 (NN × 12 signs + 12 houses) | node transits (transiting node → natal) | Spring, Rudhyar ✓ |
 | **Chiron** | ✅ | 49 (placements + personal aspects) + 20 (→ angles) | — | folder Chiron material ✓ |
-| **Natal placements** — body in sign + house synthesis (`me.natal_placement`) | ⚠️ **exemplars only (2)** | Sun-in-Aquarius-9th + a couple | the **core "Me" page**: ~120 planet-in-sign + house synthesis + sect/dignity/retro/ruler modifiers | CHANI layer-order logic ✓, cc/planet-in-sign + cc/house evidence ✓ |
+| **Natal placements** — body in sign + house synthesis (`me.natal_placement`) | ⚠️ **exemplars only (2)** | Sun-in-Aquarius-9th + a couple | the **core "Me" page**: ~120 planet-in-sign + house synthesis + sect/dignity/retro/ruler modifiers | CC layer-order logic ✓, cc/planet-in-sign + cc/house evidence ✓ |
 | **Natal angles** — Asc/MC/Desc/IC in sign (`me.natal_angle`) | ❌ **missing** | 0 | 4 angles × 12 signs = 48 | ms/midheaven (12) evidence, general doctrine |
 | **Sky collective planet-in-sign** (`sky.planet_sign`) | ⚠️ 1 fixture | Sun-in-Cancer collective | 10 bodies × 12 signs = 120 | cc/planet-in-sign evidence ✓ |
 | **Current-sky aspects** (`sky.aspect`) | ⚠️ 1 fixture | Moon-conj-NN | the 472 pairs can reframe collectively; needs a collective pass | Hand/Hamaker-Zondag ✓ |

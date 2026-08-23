@@ -294,7 +294,7 @@ def main():
                 if ok: misc_pass += 1
                 else: failures.append((r["id"], field, "seam/register"))
 
-    # expanded_narrative (CHANI-quality detail paragraphs) — seam + register over every sentence
+    # expanded_narrative (CC-quality detail paragraphs) — seam + register over every sentence
     en_total = en_pass = 0
     for rec in ap:
         p = rec.get("expanded_narrative")
@@ -311,7 +311,7 @@ def main():
     print(f"Extracted {len(tpls)} templates from the mad-libs file.")
     print(f"Aspect-pair transit renders: {passed}/{total} passed the seam filter + 10-point acceptance test.")
     if en_total:
-        print(f"Transit expanded_narratives (CHANI-quality): {en_pass}/{en_total} passed.")
+        print(f"Transit expanded_narratives (CC-quality): {en_pass}/{en_total} passed.")
         total += en_total; passed += en_pass
     if node_total:
         print(f"Natal node placements: {node_pass}/{node_total} passed.")
