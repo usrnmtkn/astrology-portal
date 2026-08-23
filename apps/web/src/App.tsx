@@ -11204,7 +11204,7 @@ export function App() {
     Promise.allSettled([localLoad, dashboardLoad]).then((results) => {
       if (cancelled || available) return;
 
-      console.warn("Sky Placement fallback articles failed to load; the approved standalone floor remains active.", {
+      console.warn("Sky Placement fallback package failed to load; reader copy remains fail-closed.", {
         localError: results[0].status === "rejected" ? results[0].reason : null,
         dashboardError: results[1].status === "rejected" ? results[1].reason : null
       });
