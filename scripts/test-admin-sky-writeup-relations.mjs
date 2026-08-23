@@ -189,8 +189,8 @@ assert.match(generatedContentApi, /ownerAction === "approve-sky-article-edition"
 assert.match(generatedContentApi, /Continuous Sky write-ups must be edited in Opening, Tension, Development, and Close/u, "The API must reject lossy unstructured edits to continuous write-ups.");
 assert.match(generatedContentApi, /ownerAction === "save-sky-article-edition-revision"/u, "The API must save edits outside the LIVE row.");
 assert.match(generatedContentApi, /ownerAction === "publish-sky-article-edition-revision"/u, "The API must atomically publish a reviewed complete revision.");
-assert.match(readerApp, /selectActiveSkyArticleEdition/u, "Sky reader articles must select active compiled editions.");
-assert.match(readerApp, /tldr: selected\.edition\.tldr/u, "Reader placement previews must consume the explicit compiled TL;DR.");
+assert.doesNotMatch(readerApp, /selectActiveSkyArticleEdition/u, "Sky reader articles must not select the Supabase edition workspace directly.");
+assert.match(readerApp, /const sections = fallbackSection \? \[fallbackSection\] : \[\];/u, "Sky reader articles must select the governed package output.");
 assert.match(readerApp, /section\?\.tldr\s*\?\s*textPreview\(section\.tldr\)/u, "The Transits list must prefer explicit TL;DR copy over the full article body.");
 assert.match(readerApp, /compiledHousePassage/u, "Reader personalization must use the compiled house passage.");
 assert.match(readerApp, /compiledAspect/u, "Reader personalization must append the compiled natal-aspect passage.");

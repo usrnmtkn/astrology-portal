@@ -30,14 +30,6 @@ assert.match(
 );
 assert.match(migration, /'sky_placement'/);
 
-assert.match(app, /content\.blockType === "sky_placement"/);
-assert.match(app, /content\.eventType === "collective-placement-card"/);
-assert.match(app, /lint\?\.score === 3/);
-assert.match(app, /lint\?\.fails === 0/);
-assert.match(app, /content\.judgeScore === 3/);
-assert.match(app, /content\.judgeGate === "human-review"/);
-assert.doesNotMatch(app, /content\.judgeGate === "auto-publish"/);
-assert.match(app, /content\.contentKey === skyPlacementBaseContentKey\(expected\.planet, expected\.sign\)/);
 assert.match(
   generatedContentKeys,
   /export function skyPlacementBaseContentKey\(body: string, sign: string\)[\s\S]*`sky\.placement\.base\.\$\{moduleContentPart\(body\)\}\.\$\{moduleContentPart\(sign\)\}`/
@@ -46,20 +38,20 @@ assert.match(
   generatedContentKeys,
   /export function skyPlacementTopperContentKey\([\s\S]*`sky\.placement\.topper\./
 );
-assert.match(app, /source\.placementSource === expected\.placementSource/);
-assert.match(app, /return `data\/placements\/sign\/south-node-\$\{sign\}\.json`/);
-assert.doesNotMatch(app, /north-node-\$\{collectiveSkyPlacementOppositeSigns/);
-assert.match(app, /&& !source\.placementDerivation/);
-assert.match(app, /const generatedSection = generatedSkyPlacementWritingSection/);
 assert.match(
   app,
-  /const sections = compiledArticleSection[\s\S]*\? \[compiledArticleSection\][\s\S]*: approvedFallbackSection[\s\S]*\? \[approvedFallbackSection\][\s\S]*: mergedGeneratedSection[\s\S]*\? \[mergedGeneratedSection\]/,
-  "Explicitly approved compiled articles must precede owner-approved package rows, which must still precede generated placement cards."
+  /const sections = fallbackSection \? \[fallbackSection\] : \[\];/,
+  "Sky Placement reader pages must resolve from the governed fallback package only."
 );
-assert.match(app, /const skyPlacementTopperMaxOrb = 1/);
-assert.match(app, /content\.eventType === "collective-placement-topper"/);
-assert.match(app, /source\.judgedCombination === "topper-plus-unchanged-base"/);
-assert.match(app, /body: `\$\{generatedContentParagraphs\(topper\)/);
+assert.match(app, /const hasProductionSection = fallbackSection\?\.layer === "authored";/);
+assert.doesNotMatch(app, /generatedSkyPlacementWritingSection/);
+assert.doesNotMatch(app, /compiledSkyArticleWritingSection/);
+assert.doesNotMatch(app, /generatedSkyPlacementTopper/);
+assert.doesNotMatch(app, /skyPlacementBaseContentKey/);
+assert.doesNotMatch(app, /skyPlacementTopperContentKey/);
+assert.match(generatedContent, /const isSkyPlacementWorkspace = row\.content_key\.startsWith\("sky\.placement\."\)/);
+assert.match(generatedContent, /!isSynastryGeneratedLane && !isSkyPlacementWorkspace/);
+assert.match(generatedContent, /writer,[\s\S]*judge,[\s\S]*owner-review tooling/);
 
 assert.match(cron, /generatePlacementCard\?: PlacementGenerator/);
 assert.match(cron, /error: "sky-placement-engine-not-ready"/);
