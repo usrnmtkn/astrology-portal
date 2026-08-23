@@ -42,6 +42,28 @@ function words(value: string) {
     .replace(/\b\w/gu, (match) => match.toUpperCase());
 }
 
+const natalPlanetInSignTemplatePattern = /^fallback-template\/natal\.planet-in-sign\/([a-z-]+)$/u;
+
+export function natalPlanetInSignTemplateHeadline(contentKey: string, headline: string) {
+  const planet = contentKey.match(natalPlanetInSignTemplatePattern)?.[1];
+  if (!planet) return headline;
+
+  const planetTitle = words(planet);
+  const normalizedHeadline = headline.trim();
+  if (!normalizedHeadline || /^(?:\{\{\s*planetTitle\s*\}\}|planet)\s+in\s+(?:\{\{\s*signTitle\s*\}\}|sign)$/iu.test(normalizedHeadline)) {
+    return `${planetTitle} in {{signTitle}}`;
+  }
+
+  return headline.replace(/\{\{\s*planetTitle\s*\}\}/gu, planetTitle);
+}
+
+export function natalPlanetInSignTemplateTitle(contentKey: string, headline: string) {
+  if (!natalPlanetInSignTemplatePattern.test(contentKey)) return null;
+
+  return natalPlanetInSignTemplateHeadline(contentKey, headline)
+    .replace(/\{\{\s*signTitle\s*\}\}/gu, "a Sign");
+}
+
 function ordinalHouse(value: string) {
   const house = Number(value.replace(/^house-/u, ""));
   if (!Number.isInteger(house)) return words(value);
