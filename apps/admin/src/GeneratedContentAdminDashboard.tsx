@@ -55,6 +55,7 @@ import {
   packageDraftChanges,
   renderWorkspacePreview,
   setPackageValueAt,
+  skyFallbackIdentity,
   skyFallbackWorkspace
 } from "./skyFallbackWorkspace";
 import type {
@@ -406,7 +407,7 @@ const contentClassFilters: Array<{ key: AdminContentClassFilter; label: string }
   { key: "all", label: "All classes" },
   { key: "phrasebank", label: "Authored app copy" },
   { key: "generated", label: "Generated prose" },
-  { key: "fallback-hook", label: "Fallback hooks" },
+  { key: "fallback-hook", label: "Fallback articles & passages" },
   { key: "vocab", label: "Fallback source phrases" },
   { key: "reference", label: "Source material" },
   { key: "legacy", label: "Legacy generated rows" },
@@ -428,7 +429,7 @@ const categoryFilters: Array<{ key: AdminContentCategoryFilter; label: string }>
   { key: "Natal Chart", label: "Natal Chart" },
   { key: "Relationship", label: "Relationship" },
   { key: "Condition Modifiers", label: "Condition Modifiers" },
-  { key: "Fallback Hooks", label: "Fallback Hooks" },
+  { key: "Fallback Hooks", label: "Fallback Articles & Passages" },
   { key: "Fallback Templates", label: "Fallback Templates" }
 ];
 const fallbackSections: Array<{ key: AdminFallbackHookSectionFilter; label: string }> = [
@@ -504,7 +505,7 @@ function adminPageTitle(activePage: AdminDashboardPage) {
     case "connection": return "Connection";
     case "vocabulary": return "Vocabulary & Phrases";
     case "slotDictionary": return "Slots";
-    case "knowledge": return "Fallback Hooks";
+    case "knowledge": return "Fallback Articles & Passages";
     case "templates": return "Templates";
     case "hooks": return "Surface Map";
     case "sourceDrafts": return "Sky Aspect Drafts";
@@ -528,7 +529,7 @@ function adminPageBreadcrumb(activePage: AdminDashboardPage) {
     case "connection": return "Admin / Connection";
     case "vocabulary": return "Admin / Composition / Vocabulary & phrases";
     case "slotDictionary": return "Admin / Composition / Slots";
-    case "knowledge": return "Admin / Composition / Fallback hooks";
+    case "knowledge": return "Admin / Composition / Fallback articles & passages";
     case "templates": return "Admin / Composition / Templates";
     case "hooks": return "Admin / Composition / Surface map";
     case "sourceDrafts": return "Admin / App surfaces / Sky aspect drafts";
@@ -550,7 +551,7 @@ function adminPageDescription(activePage: AdminDashboardPage) {
     case "content":
       return "The full editable library: saved content rows plus source rows ready to review, filter, edit, or promote.";
     case "knowledge":
-      return "Saved fallback rows only. Local runtime hooks live in the Hook Catalog until they are authored.";
+      return "Complete fallback articles, house passages, aspects, and supporting rows, grouped by what readers receive.";
     case "vocabulary":
       return "Reusable vocab namespaces and phrase rows for generation, taglines, and relationship context.";
     case "slotDictionary":
@@ -1371,13 +1372,27 @@ async function loadAdminSourceDraftCatalog(secret: string): Promise<AdminSourceD
 
 function rowTitle(row: AdminGeneratedContentRow | AdminReviewRecord | AdminUserGeneratedContentRow) {
   if ("content_key" in row) {
+    const structuredIdentity = skyFallbackIdentity(row.content_key);
+    if (structuredIdentity) return structuredIdentity.title;
     return normalizeText(row.headline) || titleFromKey(row.content_key);
   }
+  const structuredIdentity = skyFallbackIdentity(row.contentKey);
+  if (structuredIdentity) return structuredIdentity.title;
   return normalizeText(row.title) || normalizeText(row.summary) || titleFromKey(row.contentKey);
 }
 
 function rowBody(row: AdminGeneratedContentRow | AdminReviewRecord | AdminUserGeneratedContentRow) {
   return "content_key" in row ? normalizeText(row.body) : normalizeText(row.body);
+}
+
+function rowTypeLabel(row: AdminGeneratedContentRow) {
+  const structuredIdentity = skyFallbackIdentity(row.content_key);
+  if (structuredIdentity) return structuredIdentity.typeLabel;
+  if (row.content_key.startsWith("authored/career-natal-aspect/")) return "Natal aspect passage";
+  if (row.content_key.startsWith("authored/career-transit-house/")) return "Transit house passage";
+  if (row.content_key.startsWith("authored/career-placement/")) return "Natal placement passage";
+  if (row.content_key.startsWith("authored/career-transit/")) return "Personal transit passage";
+  return contentClassLabel(contentClassForRow(row));
 }
 
 function contentClassForRow(row: AdminGeneratedContentRow | AdminReviewRecord): AdminContentClass {
@@ -1872,6 +1887,7 @@ export function GeneratedContentAdminDashboard() {
   const [skyWriteupParentId, setSkyWriteupParentId] = useState<string | null>(null);
   const [skyRelatedAspectQuery, setSkyRelatedAspectQuery] = useState("");
   const [skyFallbackPreviewFacts, setSkyFallbackPreviewFacts] = useState<Record<string, string>>({});
+  const [skyFallbackVariableTarget, setSkyFallbackVariableTarget] = useState("");
   const [skyArticleEditionForm, setSkyArticleEditionForm] = useState<SkyArticleEditionForm | null>(null);
   const [skyArticleEditor, setSkyArticleEditor] = useState<SkyArticleEditorState | null>(null);
   const [draft, setDraft] = useState<AdminDraft | null>(null);
@@ -3069,6 +3085,7 @@ export function GeneratedContentAdminDashboard() {
     setSkyWriteupParentId(null);
     setSkyRelatedAspectQuery("");
     setSkyFallbackPreviewFacts({});
+    setSkyFallbackVariableTarget("");
     skyArticleAutosaveSequenceRef.current += 1;
     setSkyArticleEditor(edition && baseEdition ? {
       baseEdition,
@@ -4017,24 +4034,24 @@ export function GeneratedContentAdminDashboard() {
           <section className="admin-template-page">
             <section className="admin-content-toolbar">
               <div>
-                <p className="admin-eyebrow">Saved-first fallback rows</p>
-                <h2>Fallback Hooks</h2>
-                <p>Sky, Natal, Lunar Calendar, Settings, and Friends fallback rows appear here only after they exist in saved content.</p>
+                <p className="admin-eyebrow">Reader fallback library</p>
+                <h2>Fallback Articles &amp; Passages</h2>
+                <p>Find complete articles, house horoscopes, aspects, and supporting fallback rows by their reader-facing astrology title.</p>
               </div>
               <button type="button" onClick={() => navigateAdminPage("hooks")}>
                 <KeyRound size={16} aria-hidden="true" />
-                Open Hook Catalog
+                Open Surface Map
               </button>
             </section>
             {renderFallbackTabs()}
             <label className="admin-field-wide">
-              <span>Search fallback hooks</span>
-              <input aria-label="Search fallback hooks" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Hook name, key, or surface" />
+              <span>Search fallback articles and passages</span>
+              <input aria-label="Search fallback articles and passages" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Planet, sign, aspect, house, or content key" />
             </label>
             <section className="admin-workbench admin-review-workspace">
               {renderEditor()}
               <aside className="admin-list-panel" aria-label="Saved fallback hook rows">
-                {renderContentTable(filteredFallbackRows)}
+                {renderFallbackContentGroups(filteredFallbackRows)}
               </aside>
             </section>
           </section>
@@ -4715,6 +4732,41 @@ export function GeneratedContentAdminDashboard() {
     );
   }
 
+  function renderFallbackContentGroups(tableRows: AdminGeneratedContentRow[]) {
+    const groups = [
+      { key: "articles", label: "Sky Placement articles" },
+      { key: "houses", label: "House horoscopes" },
+      { key: "sky-aspects", label: "Sky aspects" },
+      { key: "personal-transits", label: "Transits to natal" },
+      { key: "supporting", label: "Supporting fallback rows" }
+    ] as const;
+    const groupedRows = new Map(groups.map((group) => [group.key, [] as AdminGeneratedContentRow[]]));
+    tableRows.forEach((row) => {
+      const groupKey = skyFallbackIdentity(row.content_key)?.groupKey ?? "supporting";
+      groupedRows.get(groupKey)?.push(row);
+    });
+    const visibleGroups = groups.filter((group) => (groupedRows.get(group.key)?.length ?? 0) > 0);
+
+    if (visibleGroups.length === 0) return <p className="admin-empty">No rows match these filters.</p>;
+
+    return (
+      <div className="admin-sky-edition-fields" aria-label="Fallback content grouped by reader use">
+        {visibleGroups.map((group) => {
+          const rows = groupedRows.get(group.key) ?? [];
+          return (
+            <section className="admin-hook-detail-section" aria-label={group.label} key={group.key}>
+              <div className="admin-section-heading-row">
+                <h3>{group.label}</h3>
+                <p>{rows.length} rows</p>
+              </div>
+              {renderContentTable(rows)}
+            </section>
+          );
+        })}
+      </div>
+    );
+  }
+
   function renderContentTable(tableRows: AdminGeneratedContentRow[]) {
     return (
       <div className="admin-content-table-scroll">
@@ -4746,6 +4798,7 @@ export function GeneratedContentAdminDashboard() {
                   </td>
                   <td className="admin-content-title-cell">
                     <strong className="admin-content-row-title">{rowTitle(row)}</strong>
+                    <small className="admin-content-type-label admin-field-hint">{rowTypeLabel(row)}</small>
                     <code className="admin-content-row-key">{row.content_key}</code>
                   </td>
                   <td><span className={`admin-reader-state-pill ${safety.key}`} title={safety.detail}>{safety.label}</span></td>
@@ -5006,6 +5059,10 @@ export function GeneratedContentAdminDashboard() {
     const packageReviewStatus = packageReviewStatusForDraft(currentDraft);
     const packageRecord = draftPackageRecord(currentDraft);
     const skyFallbackEditor = skyFallbackWorkspace(currentDraft.contentKey, currentDraft.sections);
+    const skyFallbackContentIdentity = skyFallbackIdentity(currentDraft.contentKey);
+    const effectiveSkyFallbackVariableTarget = skyFallbackEditor?.fields.some((field) => field.key === skyFallbackVariableTarget)
+      ? skyFallbackVariableTarget
+      : skyFallbackEditor?.fields.find((field) => field.key === "fact_line")?.key ?? skyFallbackEditor?.fields[0]?.key ?? "";
     const effectiveSkyFallback = effectivePackageRecord(currentDraft.sections);
     const skyFallbackChanges = packageDraftChanges(currentDraft.sections);
     const skyFallbackPreview = skyFallbackEditor
@@ -5174,6 +5231,13 @@ export function GeneratedContentAdminDashboard() {
         }
       });
     };
+    const insertSkyFallbackVariable = (variable: string) => {
+      if (!skyFallbackEditor || !effectiveSkyFallbackVariableTarget) return;
+      const target = skyFallbackEditor.fields.find((field) => field.key === effectiveSkyFallbackVariableTarget);
+      if (!target) return;
+      const spacer = target.value && !/\s$/u.test(target.value) ? " " : "";
+      updateSkyFallbackField(target.key, `${target.value}${spacer}{{${variable}}}`);
+    };
     const discardSkyFallbackProposal = () => {
       const sections = objectRecord(currentDraft.sections) ?? {};
       const { packageDraft: _discarded, ...withoutDraft } = sections;
@@ -5263,7 +5327,7 @@ export function GeneratedContentAdminDashboard() {
               <p>Choose a section, name the phrase, then write the reusable wording. The internal key is generated from the section and title so phrases stay grouped in the dashboard.</p>
             </div>
           )}
-          {isFallbackHookDraft && (
+          {isFallbackHookDraft && !skyFallbackEditor && (
             <div className="admin-editor-guidance" aria-label="Fallback hook guidance">
               <strong>Fallback system hook</strong>
               <p>This row supports the fallback system. It should stay simple, safe, and reviewable; it is not treated as an authored dashboard article.</p>
@@ -5301,9 +5365,11 @@ export function GeneratedContentAdminDashboard() {
           <section className="admin-content-role-panel" aria-label="Content role">
             <div>
               <p className="admin-eyebrow">Content role</p>
-              <h3>{contentRole.label}</h3>
+              <h3>{skyFallbackContentIdentity?.typeLabel ?? contentRole.label}</h3>
             </div>
-            <p>{contentRole.detail}</p>
+            <p>{skyFallbackContentIdentity
+              ? `Reader-facing ${skyFallbackContentIdentity.groupLabel.toLowerCase()} content. Its internal fallback key remains visible for traceability.`
+              : contentRole.detail}</p>
             {contentRole.label === "Fallback source/helper" && (
               <p><strong>Reader rule:</strong> this text can support the fallback system, but it cannot appear as a standalone authored write-up.</p>
             )}
@@ -5328,8 +5394,8 @@ export function GeneratedContentAdminDashboard() {
               <header className="admin-sky-related-heading admin-fallback-diagnostic-heading">
                 <div>
                   <p className="admin-eyebrow">Reader source workspace</p>
-                  <h3>{skyFallbackEditor.title}</h3>
-                  <p>See the complete reader copy, its calculated variables, related passages, and every proposed change in one place.</p>
+                  <h3>{skyFallbackContentIdentity?.title ?? skyFallbackEditor.title}</h3>
+                  <p><strong>{skyFallbackContentIdentity?.typeLabel ?? skyFallbackEditor.title}.</strong> See the complete reader copy, calculated facts, related passages, and every proposed change in one place.</p>
                 </div>
                 <dl className="admin-hook-pattern-list">
                   <div><dt>Serving key</dt><dd><code>{currentDraft.contentKey}</code></dd></div>
@@ -5346,7 +5412,7 @@ export function GeneratedContentAdminDashboard() {
 
               <section className="admin-hook-detail-section admin-copy-preview" aria-label="Rendered fallback preview">
                 <p className="admin-eyebrow">Reader preview</p>
-                <h3>{currentDraft.headline || titleFromKey(currentDraft.contentKey)}</h3>
+                <h3>{skyFallbackContentIdentity?.title || currentDraft.headline || titleFromKey(currentDraft.contentKey)}</h3>
                 {skyFallbackEditor.fields.find((field) => field.key === "fact_line") ? (
                   <p className="admin-field-hint">{renderWorkspacePreview(
                     [{ ...skyFallbackEditor.fields.find((field) => field.key === "fact_line")!, key: "date_line" }],
@@ -5359,33 +5425,44 @@ export function GeneratedContentAdminDashboard() {
                 )}
               </section>
 
+              {skyFallbackEditor.variables.length > 0 && (
+                <section className="admin-hook-detail-section admin-calculated-facts" aria-label="Calculated facts">
+                  <div>
+                    <p className="admin-eyebrow">Engine-supplied values</p>
+                    <h3>Calculated facts</h3>
+                    <p>These tokens are the only variables. The article fields below are complete reader paragraphs.</p>
+                  </div>
+                  <label className="admin-field-wide">
+                    <span>Insert into article field</span>
+                    <select aria-label="Calculated fact target field" value={effectiveSkyFallbackVariableTarget} onChange={(event) => setSkyFallbackVariableTarget(event.target.value)}>
+                      {skyFallbackEditor.fields.map((field) => <option key={field.key} value={field.key}>{field.label}</option>)}
+                    </select>
+                  </label>
+                  <div className="admin-token-list" role="group" aria-label="Available calculated facts">
+                    {skyFallbackEditor.variables.map((variable) => (
+                      <button type="button" key={variable} onClick={() => insertSkyFallbackVariable(variable)}>{`{{${variable}}}`}</button>
+                    ))}
+                  </div>
+                </section>
+              )}
+
               <section className="admin-sky-edition-fields" aria-label="Editable fallback fields">
                 <header>
                   <p className="admin-eyebrow">Editable copy</p>
-                  <h3>Article and aspect fields</h3>
+                  <h3>{skyFallbackEditor.kind === "article" ? "Article paragraphs" : "Aspect audience versions"}</h3>
+                  <p>{skyFallbackEditor.kind === "article"
+                    ? "Each field is a section of the complete article, not a reusable variable."
+                    : "Each field is the complete aspect passage for its named reader surface."}</p>
                 </header>
                 {skyFallbackEditor.fields.map((field) => (
                   <label className="admin-review-copy-editor" key={field.key}>
                     <span>{field.label}</span>
+                    <small className="admin-field-hint">Internal source field: <code>{field.key}</code></small>
                     <textarea
                       aria-label={`Fallback field ${field.label}`}
                       value={field.value}
                       onChange={(event) => updateSkyFallbackField(field.key, event.target.value)}
                     />
-                    {skyFallbackEditor.variables.length > 0 && (
-                      <select
-                        aria-label={`Insert variable in ${field.label}`}
-                        value=""
-                        onChange={(event) => {
-                          if (!event.target.value) return;
-                          const spacer = field.value && !/\s$/u.test(field.value) ? " " : "";
-                          updateSkyFallbackField(field.key, `${field.value}${spacer}{{${event.target.value}}}`);
-                        }}
-                      >
-                        <option value="">Insert calculated variable…</option>
-                        {skyFallbackEditor.variables.map((variable) => <option key={variable} value={variable}>{`{{${variable}}}`}</option>)}
-                      </select>
-                    )}
                   </label>
                 ))}
               </section>
