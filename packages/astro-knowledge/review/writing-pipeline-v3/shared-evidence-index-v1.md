@@ -78,6 +78,7 @@ None among the stores represented by the approved-example export.
 - `fallback-hook/house-glossary`
 - `fallback-hook/house-meaning`
 - `fallback-hook/lunation-higher-path`
+- `fallback-hook/lunation-matching-new-moon-anchor`
 - `fallback-hook/lunation-moment`
 - `fallback-hook/lunation-opening-situation`
 - `fallback-hook/lunation-release`

@@ -1,6 +1,6 @@
 # TLDR Astro — Handoff for Codex
 
-This bundle is the reviewed content system for a -style astrology app written in Project Author's voice. It is a Python **phrasebank + composers + validation-harness** repo. Everything
+This bundle is the reviewed content system for a CC-style astrology app written in Project Author's voice. It is a Python **phrasebank + composers + validation-harness** repo. Everything
 below is buildable and green as of handoff.
 
 ## 1. How to build & validate
