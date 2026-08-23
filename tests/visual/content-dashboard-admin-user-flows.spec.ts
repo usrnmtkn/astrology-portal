@@ -1709,6 +1709,75 @@ test.describe("content dashboard admin user flow case studies", () => {
     await assertNoBrowserErrors();
   });
 
+  test("template editor opens a readable variable reference without losing the draft", async ({ page }) => {
+    const assertNoBrowserErrors = await expectNoBrowserErrors(page);
+    const bodyYou = "{{#planetIntro}}{{planetIntro}}{{/planetIntro}} {{possessive}} {{planetTitle}} is in {{signTitle}}, meaning you {{planetVerb}} {{signAdverb}}, and what you want most is {{signNeed}}.{{#placementGerundText}} Day to day, that can look like {{placementGerundText}}.{{/placementGerundText}} Pushed too far, this side of you can tip into {{planetExcess}}. {{planetBest}}{{#modifierSentences}} {{.}}{{/modifierSentences}}";
+    const bodyThey = bodyYou.replace("meaning you", "meaning they").replace("side of you", "side of them");
+    const templateRow = {
+      ...generatedContentRows[0],
+      id: "qa-natal-planet-sign-template",
+      content_key: "fallback-template/natal.planet-in-sign/sun",
+      headline: "Sun in a sign",
+      body: bodyYou,
+      block_type: "fallback_template",
+      provider: "tldrastro-fallback-architecture-v3",
+      facts: { fallbackArchitectureV3: true, review_status: "needs_review" },
+      source_snapshot: {
+        sourcePackage: "tldrastro-fallback-architecture-v3",
+        review_status: "needs_review"
+      },
+      sections: {
+        body_you: bodyYou,
+        body_they: bodyThey,
+        packageRecord: {
+          contentKey: "fallback-template/natal.planet-in-sign/sun",
+          content_role: "template",
+          review_status: "needs_review",
+          requiredSlots: ["possessive", "planetTitle", "signTitle", "planetVerb", "signAdverb", "signNeed", "planetExcess", "planetBest"],
+          optionalSlots: ["planetIntro", "placementGerundText", "modifierSentences"],
+          body_you: bodyYou,
+          body_they: bodyThey
+        }
+      }
+    };
+    await seedAdminApi(page, { generatedRows: [templateRow] });
+    await expectAdminRouteLoads(page, "/admin/content#fallback-hooks");
+
+    const savedRow = page.locator(".admin-content-row", { hasText: "fallback-template/natal.planet-in-sign/sun" });
+    await expect(savedRow).toHaveCount(1);
+    await savedRow.getByRole("button", { name: "Edit" }).click();
+
+    const editor = page.getByRole("dialog", { name: "Generated content editor" });
+    const editedBody = `${bodyYou} QA draft remains here.`;
+    await editor.getByLabel("body_you").fill(editedBody);
+    await editor.getByRole("button", { name: /^Variables \(\d+\)$/u }).click();
+
+    const variableGuide = page.getByRole("dialog", { name: "Template variable reference" });
+    await expect(variableGuide).toBeVisible();
+    await expect(variableGuide.getByRole("heading", { name: "Variables in this template" })).toBeVisible();
+    await expect(variableGuide.getByRole("region", { name: "Template syntax guide" })).toContainText("Includes the whole block only when that optional copy is available");
+
+    const verbCard = variableGuide.locator(".admin-variable-reference-card", { hasText: "{{planetVerb}}" });
+    await expect(verbCard).toContainText("Required");
+    await expect(verbCard).toContainText("base-form action associated with the planet");
+    await expect(verbCard).toContainText("Planet vocabulary");
+    const introCard = variableGuide.locator(".admin-variable-reference-card", { hasText: "{{planetIntro}}" });
+    await expect(introCard).toContainText("Optional");
+    await expect(introCard).toContainText("introductory sentences");
+
+    await variableGuide.getByRole("searchbox", { name: "Find a variable or meaning" }).fill("modifier");
+    await expect(variableGuide.locator(".admin-variable-reference-card")).toHaveCount(1);
+    await expect(variableGuide).toContainText("Showing 1 of");
+
+    await page.setViewportSize({ width: 390, height: 844 });
+    await expectNoHorizontalOverflow(page, "Template variable reference mobile slide-out");
+    await variableGuide.getByRole("button", { name: "Back to editor" }).click();
+    await expect(variableGuide).toBeHidden();
+    await expect(editor.getByLabel("body_you")).toHaveValue(editedBody);
+    await expectNoHorizontalOverflow(page, "Template editor with variable action on mobile");
+    await assertNoBrowserErrors();
+  });
+
   test("admin responsive web and mobile views stay readable", async ({ page }) => {
     const assertNoBrowserErrors = await expectNoBrowserErrors(page);
     await mkdir(adminScreenshotDir, { recursive: true });
