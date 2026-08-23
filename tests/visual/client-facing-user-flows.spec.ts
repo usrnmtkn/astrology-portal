@@ -3033,6 +3033,28 @@ test.describe("client-facing user flow case studies", () => {
     await assertNoClientErrors();
   });
 
+  test("Jupiter in Leo shows the owner's complete 5th-house horoscope", async ({ page }) => {
+    const assertNoClientErrors = await expectNoClientErrors(page);
+
+    await seedClientState(page, { now: "2026-08-22T16:00:00.000Z" });
+    await expectClientRouteLoads(page, "/#sky/placement/jupiter/leo");
+
+    const horoscopeSection = page.getByRole("region", { name: "Horoscopes by rising sign" });
+    await expect(horoscopeSection).toBeVisible();
+    const ariesHeading = horoscopeSection.getByRole("heading", { name: "Aries & Aries Rising" });
+    await expect(ariesHeading).toBeVisible();
+    await expect(horoscopeSection).toContainText(
+      "Jupiter moves through Leo in your 5th house, bringing more attention to creativity, romance, pleasure, children"
+    );
+    await expect(horoscopeSection).toContainText(
+      "The best thing you build this year may be the part of your schedule that finally belongs to you."
+    );
+    await expect(horoscopeSection).not.toContainText(
+      "If everybody loves the version you are already bored with, you are still bored."
+    );
+    await assertNoClientErrors();
+  });
+
   test("Venus in Libra uses a different approved passage after the owner rejection", async ({ page }) => {
     const assertNoClientErrors = await expectNoClientErrors(page);
 
