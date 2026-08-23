@@ -1,4 +1,5 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
+import { isContentAdminAuthorized } from "./admin-auth.js";
 
 export function sendJson(res: ServerResponse, status: number, body: unknown) {
   res.statusCode = status;
@@ -59,7 +60,5 @@ export function requireInternalRunner(req: IncomingMessage) {
 }
 
 export function requireReportAdmin(req: IncomingMessage) {
-  const secret = process.env.CONTENT_GENERATION_SECRET;
-  if (!secret) return process.env.NODE_ENV !== "production";
-  return req.headers.authorization === `Bearer ${secret}`;
+  return isContentAdminAuthorized(req);
 }
