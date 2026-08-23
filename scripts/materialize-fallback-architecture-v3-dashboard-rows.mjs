@@ -83,9 +83,9 @@ function isContinuousSkyPlacementRecord(record, contentKey) {
 function isSkyPlacementPartitionKey(contentKey) {
   return contentKey.startsWith("house-horoscope-core/")
     || contentKey.startsWith("fallback-hook/sky-sign-copy/")
+    || contentKey.startsWith("fallback-hook/sky-placement-sign/")
     || (
       contentKey.startsWith("fallback-hook/sky-placement-")
-      && !contentKey.startsWith("fallback-hook/sky-placement-sign/")
     );
 }
 

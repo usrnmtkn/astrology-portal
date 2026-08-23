@@ -59,14 +59,14 @@ const transitFacts = {
   window: "Until Jul 23, 2026"
 };
 const skyBefore = runtime.transitSynastryFallbackRendererV3.renderSkyAspectCard(skyFacts);
-const skyPlacementBefore = runtime.transitSynastryFallbackRendererV3.renderSkyPlacement({
+const skyPlacementFacts = {
   planet: "sun",
   sign: "leo",
   events: [],
   asOfDate: "2026-08-01",
   entryDate: "July 22, 2026",
   exitDate: "August 23, 2026"
-});
+};
 const skySeasonBefore = runtime.transitSynastryFallbackRendererV3.renderSkySeason({ sign: "leo", events: [] });
 const skyLunationBefore = runtime.transitSynastryFallbackRendererV3.renderSkyLunation({
   kind: "new-moon",
@@ -84,7 +84,12 @@ assert.equal(runtime.isDeferredFallbackArchitectureV3BundleLoaded(), false);
 assert.equal(runtime.isEmptyHouseFallbackArchitectureV3BundleLoaded(), false);
 assert.equal(runtime.isRelationshipFallbackArchitectureV3BundleLoaded(), false);
 assert.ok(skyBefore.body, "Approved specific Sky aspect copy must be available before the transit bundle loads.");
-assert.ok(skyPlacementBefore.body && skySeasonBefore.body && skyLunationBefore.body);
+assert.throws(
+  () => runtime.transitSynastryFallbackRendererV3.renderSkyPlacement(skyPlacementFacts),
+  /SOURCE_GAP/u,
+  "Sky Placement must wait for its canonical package instead of rendering an eager thin article."
+);
+assert.ok(skySeasonBefore.body && skyLunationBefore.body);
 assert.ok(dignityBefore, "Sky dignity copy must remain in the eager core.");
 assert.equal(placementBefore, "", "Natal and friend placement prose must remain deferred.");
 assert.ok(
@@ -151,14 +156,6 @@ assert.deepEqual(emptyHouseAfter.sourceKeys, [
 assert.equal(await runtime.loadEmptyHouseFallbackArchitectureV3Bundle(), false);
 
 const skyAfter = runtime.transitSynastryFallbackRendererV3.renderSkyAspectCard(skyFacts);
-const skyPlacementAfter = runtime.transitSynastryFallbackRendererV3.renderSkyPlacement({
-  planet: "sun",
-  sign: "leo",
-  events: [],
-  asOfDate: "2026-08-01",
-  entryDate: "July 22, 2026",
-  exitDate: "August 23, 2026"
-});
 const skySeasonAfter = runtime.transitSynastryFallbackRendererV3.renderSkySeason({ sign: "leo", events: [] });
 const skyLunationAfter = runtime.transitSynastryFallbackRendererV3.renderSkyLunation({
   kind: "new-moon",
@@ -183,7 +180,11 @@ assert.deepEqual(
   },
   "Installing transit content must not change the approved Sky fallback result."
 );
-assert.deepEqual(skyPlacementAfter, skyPlacementBefore, "Deferred rows must not change Sky placement copy.");
+assert.throws(
+  () => runtime.transitSynastryFallbackRendererV3.renderSkyPlacement(skyPlacementFacts),
+  /SOURCE_GAP/u,
+  "Loading the personal-transit bundle must not bypass the dedicated Sky Placement package boundary."
+);
 assert.deepEqual(skySeasonAfter, skySeasonBefore, "Deferred rows must not change Sky season copy.");
 assert.deepEqual(skyLunationAfter, skyLunationBefore, "Deferred rows must not change Sky lunation copy.");
 assert.equal(runtime.fallbackV3DignityLine("fall", "moon", "you"), dignityBefore);
