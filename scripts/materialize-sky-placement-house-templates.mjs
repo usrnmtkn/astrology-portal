@@ -248,6 +248,7 @@ for (const placementKey of placementKeys) {
         : "approvedTemplateComposition"] += 1;
     rows.push({
       contentKey,
+      headline: `${title(planet)} in ${title(sign)} · ${ordinal(house)} House`,
       content_role: "house_horoscope_core",
       grammar_frame: "second_person_block",
       render_policy: "sky-placement-house-template-v1",
