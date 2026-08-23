@@ -45,7 +45,8 @@ import {
   relatedHousePassages,
   relatedLunationHoroscopes,
   skyLunationContextForRow,
-  skyWriteupContextForRow
+  skyWriteupContextForRow,
+  skyWriteupSubjectTypeForRow
 } from "./skyWriteupRelations";
 import {
   ownerApprovedReplacementLabel,
@@ -133,6 +134,7 @@ type AdminFallbackRowSort = "title-asc" | "title-desc" | "type";
 type WritingSurfaceAreaFilter = "all" | "sky" | "you" | "friends" | "calendar" | "settings";
 type WritingSurfaceStatusFilter = "all" | "complete" | "partial" | "missing";
 type AdminArticlePointFilter = "all" | "sun" | "moon" | "mercury" | "venus" | "mars" | "jupiter" | "saturn" | "uranus" | "neptune" | "pluto" | "other";
+type AdminSkyWriteupSubjectFilter = "all" | "planet" | "angle" | "point";
 type AdminCompatibilitySectionFilter = "all" | "content" | "fallback-hooks" | "vocabulary" | "slots";
 type AdminCompatibilitySort = "updated-desc" | "updated-asc" | "title-asc" | "status" | "source";
 type AdminCompatibilityCreateKind = "content" | "vocabulary" | "fallback-hook" | "template";
@@ -470,6 +472,12 @@ const articlePointFilters: Array<{ key: AdminArticlePointFilter; label: string }
   { key: "neptune", label: "Neptune" },
   { key: "pluto", label: "Pluto" },
   { key: "other", label: "Other articles" }
+];
+const skyWriteupSubjectFilters: Array<{ key: AdminSkyWriteupSubjectFilter; label: string }> = [
+  { key: "all", label: "All planets, angles, and points" },
+  { key: "planet", label: "Planets and lunations" },
+  { key: "angle", label: "Angles" },
+  { key: "point", label: "Points" }
 ];
 const contentSystemFilters: Array<{ key: AdminContentSystemFilter; label: string }> = [
   { key: "all", label: "All content systems" },
@@ -1965,6 +1973,7 @@ export function GeneratedContentAdminDashboard() {
   const [vocabularyCategory, setVocabularyCategory] = useState<AdminVocabularyCategoryFilter>("planets");
   const [articleStatusFilter, setArticleStatusFilter] = useState<GeneratedContentStatus | "all">("LIVE");
   const [articlePointFilter, setArticlePointFilter] = useState<AdminArticlePointFilter>("all");
+  const [skyWriteupSubjectFilter, setSkyWriteupSubjectFilter] = useState<AdminSkyWriteupSubjectFilter>("all");
   const [articleContentSystemFilter, setArticleContentSystemFilter] = useState<AdminContentSystemFilter>("all");
   const [articleQuery, setArticleQuery] = useState("");
   const [compatibilitySectionFilter, setCompatibilitySectionFilter] = useState<AdminCompatibilitySectionFilter>("all");
@@ -2044,6 +2053,13 @@ export function GeneratedContentAdminDashboard() {
         || rowTitle(left).localeCompare(rowTitle(right));
     }),
     [visibleRows]
+  );
+  const filteredSkyWriteupRows = useMemo(
+    () => skyWriteupRows.filter((row) => (
+      skyWriteupSubjectFilter === "all"
+      || skyWriteupSubjectTypeForRow(row) === skyWriteupSubjectFilter
+    )),
+    [skyWriteupRows, skyWriteupSubjectFilter]
   );
   const filteredArticleRows = useMemo(() => articleRows.filter((row) => {
     return (articleStatusFilter === "all" || row.status === articleStatusFilter)
@@ -4068,10 +4084,31 @@ export function GeneratedContentAdminDashboard() {
                 </p>
               </div>
             </section>
+            <section className="admin-content-filters" aria-label="Sky write-up filters">
+              <div className="admin-review-filter-grid">
+                <label>
+                  <span>Planet, angle, or point</span>
+                  <select
+                    aria-label="Sky write-up type"
+                    value={skyWriteupSubjectFilter}
+                    onChange={(event) => setSkyWriteupSubjectFilter(event.target.value as AdminSkyWriteupSubjectFilter)}
+                  >
+                    {skyWriteupSubjectFilters.map((filter) => (
+                      <option key={filter.key} value={filter.key}>{filter.label}</option>
+                    ))}
+                  </select>
+                </label>
+                <p className="admin-filter-result-count" aria-live="polite">
+                  <strong>{filteredSkyWriteupRows.length}</strong> of {skyWriteupRows.length} shown
+                </p>
+              </div>
+            </section>
             <section className="admin-workbench admin-review-workspace">
               {renderEditor()}
               <aside className="admin-list-panel" aria-label="Sky write-up rows">
-                {renderContentTable(skyWriteupRows)}
+                {filteredSkyWriteupRows.length > 0
+                  ? renderContentTable(filteredSkyWriteupRows)
+                  : <p className="admin-empty">No Sky write-ups match this type.</p>}
               </aside>
             </section>
           </section>

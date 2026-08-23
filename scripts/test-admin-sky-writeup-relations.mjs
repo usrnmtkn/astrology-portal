@@ -7,7 +7,8 @@ import {
   relatedHousePassages,
   relatedLunationHoroscopes,
   skyLunationContextForRow,
-  skyWriteupContextForRow
+  skyWriteupContextForRow,
+  skyWriteupSubjectTypeForRow
 } from "../apps/admin/src/skyWriteupRelations.ts";
 
 const skyRow = {
@@ -20,6 +21,28 @@ const skyRow = {
 };
 const context = skyWriteupContextForRow(skyRow);
 assert.deepEqual(context, { planet: "sun", sign: "leo" });
+assert.equal(skyWriteupSubjectTypeForRow(skyRow), "planet");
+
+assert.equal(
+  skyWriteupSubjectTypeForRow({
+    id: "sky-ascendant-aries",
+    content_key: "sky.placement.base.ascendant.aries",
+    headline: "Ascendant in Aries",
+    block_type: "sky_placement"
+  }),
+  "angle",
+  "Angles must be filterable even though they are not planetary placement contexts."
+);
+
+assert.equal(
+  skyWriteupSubjectTypeForRow({
+    id: "sky-chiron-taurus",
+    content_key: "sky.placement.base.chiron.taurus",
+    headline: "Chiron in Taurus",
+    block_type: "sky_placement"
+  }),
+  "point"
+);
 
 assert.deepEqual(
   skyWriteupContextForRow({
@@ -100,6 +123,7 @@ assert.deepEqual(
 );
 const piscesFullMoonContext = skyLunationContextForRow(piscesFullMoonMacro);
 assert.deepEqual(piscesFullMoonContext, { kind: "full-moon", eclipse: "none", sign: "pisces" });
+assert.equal(skyWriteupSubjectTypeForRow(piscesFullMoonMacro), "planet", "Lunations belong in the planet filter.");
 assert.deepEqual(
   skyLunationContextForRow({
     id: "solar-eclipse",
@@ -200,5 +224,7 @@ assert.match(readerApp, /renderTransitHouseEvent/u, "Sky-placement natal aspects
 assert.match(readerApp, /body: packageSection\?\.body \?\? compiledAspect\?\.body/u, "House-aware composition and CMS overrides must outrank the old generic compiled passage.");
 assert.match(dashboard, /Edit house-aware reader override/u, "Sky article aspect rows must expose the reader-facing CMS override directly.");
 assert.match(dashboard, /calculatedHouseContext: true/u, "Dynamic-house CMS drafts must record that houses are calculated, not fixed authored metadata.");
+assert.match(dashboard, /aria-label="Sky write-up type"/u, "Sky Write-ups must expose a planet, angle, or point filter.");
+assert.match(dashboard, /filteredSkyWriteupRows/u, "The Sky write-up list must render the selected subject type instead of the unfiltered inventory.");
 
 console.log("Admin Sky write-up relationship checks passed.");
