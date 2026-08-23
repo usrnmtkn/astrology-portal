@@ -1881,7 +1881,9 @@ ${passHook}`;
     historyDegreeRange,
     risingHouseMap,
     isRetrograde = false,
-    isShadowPhase = false
+    isShadowPhase = false,
+    includePlanetLore,
+    includeSignLore
   }) {
     const retrogradeGuidance = isRetrograde ? hooks.get(`fallback-hook/transit-retro/${planet}`)?.body_you : null;
     if (isRetrograde && !retrogradeGuidance) {
@@ -2028,12 +2030,17 @@ ${passHook}`;
     const signParts = signCopy ? [signCopy] : (fourSlotEligible || planet === "lilith") && pairHook && pairLived && pairTurn ? [pairHook, pairLived, pairTurn] : standaloneSignCopy ? [standaloneSignCopy] : [];
     const tagline = hooks.get(`fallback-hook/sky-placement-tagline/${planet}/${sign}`)?.body_you ?? null;
     {
+      const placementTemplate = tpl("fallback-template/sky-placement-frame-v3");
+      const compositionOptions = placementTemplate.compositionOptions;
+      const shouldIncludePlanetLore = includePlanetLore ?? compositionOptions?.includePlanetLore !== false;
+      const shouldIncludeSignLore = includeSignLore ?? compositionOptions?.includeSignLore !== false;
       const windowFrame = hooks.get(`fallback-hook/sky-placement/${planet}`)?.body_you;
       const directPlanetFrame = hooks.get(`fallback-hook/sky-placement-frame/${planet}`)?.body_you;
       const retrogradePlanetFrame = hooks.get(`fallback-hook/sky-placement-retro-frame/${planet}`)?.body_you;
       const planetFrame = isRetrograde || isShadowPhase ? retrogradePlanetFrame ?? directPlanetFrame : directPlanetFrame;
+      const signLore = hooks.get(`fallback-hook/sky-placement-lore/${sign}`)?.body_you;
       const signStyle = vocab.get(`fallback-vocab/sky-sign-style/${sign}`)?.body;
-      if (windowFrame && planetFrame && signStyle && entryDate && exitDate && signParts.length > 0) {
+      if (windowFrame && (!shouldIncludePlanetLore || planetFrame) && (!shouldIncludeSignLore || signLore) && signStyle && entryDate && exitDate && signParts.length > 0) {
         const ctx = {
           signTitle: title2(sign),
           signStyle,
@@ -2042,10 +2049,11 @@ ${passHook}`;
         };
         const parts = [
           windowFrame,
-          planetFrame,
+          ...shouldIncludePlanetLore ? [planetFrame] : [],
+          ...shouldIncludeSignLore ? [signLore] : [],
           ...signParts,
           ...aspectParas
-        ].map((part) => fillKeep(part, ctx));
+        ].filter((part) => Boolean(part)).map((part) => fillKeep(part, ctx));
         if (parts.some((part) => /\{\{/u.test(part))) {
           throw new SourceGapError(`SOURCE_GAP: sky placement V3 frame ${planet}/${sign}`);
         }
@@ -2771,7 +2779,7 @@ function createKnowledgeMatrixV13Resolver(file) {
 }
 
 // apps/web/src/content/fallbackArchitectureV3/resolver/index.browser.ts
-var PACKAGE_VERSION = "v3-2026-08-23h";
+var PACKAGE_VERSION = "v3-2026-08-23k";
 function stablePackageValue(value) {
   if (Array.isArray(value)) {
     return value.map(stablePackageValue);
