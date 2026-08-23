@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import fs from "node:fs";
 import { isContentAdminAuthorized } from "../api/_lib/admin-auth.ts";
+import { normalizeAdminSecret } from "../apps/admin/src/adminSecret.ts";
 
 function request(headers = {}) {
   return { headers };
@@ -10,6 +11,13 @@ const previousEnvironment = process.env.NODE_ENV;
 const previousSecret = process.env.CONTENT_GENERATION_SECRET;
 
 try {
+  assert.equal(normalizeAdminSecret(" production-admin-secret "), "production-admin-secret");
+  assert.equal(normalizeAdminSecret("CONTENT_GENERATION_SECRET=production-admin-secret"), "production-admin-secret");
+  assert.equal(normalizeAdminSecret("export CONTENT_GENERATION_SECRET='production-admin-secret'"), "production-admin-secret");
+  assert.equal(normalizeAdminSecret('CONTENT_GENERATION_SECRET="production-admin-secret"'), "production-admin-secret");
+  assert.equal(normalizeAdminSecret("# Production\nCONTENT_GENERATION_SECRET=production-admin-secret\nCRON_SECRET=other"), "production-admin-secret");
+  assert.equal(normalizeAdminSecret("CONTENT_GENERATION_SECRET"), "", "The variable name alone is not a credential.");
+
   process.env.NODE_ENV = "production";
   process.env.CONTENT_GENERATION_SECRET = "production-admin-secret";
 
