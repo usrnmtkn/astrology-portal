@@ -60,9 +60,11 @@ import {
   renderWorkspacePreview,
   setPackageValueAt,
   skyFallbackIdentity,
+  skyPlacementFallbackSectionOutline,
   skyFallbackWorkspace
 } from "./skyFallbackWorkspace";
 import { templateVariableReferences } from "./templateVariableReference";
+import { articleAppDestination, isSkyWriteupContentRow } from "./articleWorkspace";
 import type {
   WritingSurfaceAdminAccess,
   WritingSurfaceMapItem,
@@ -81,6 +83,10 @@ const AspectPatternWriteups = lazy(async () => {
 const ReportFulfillmentAdminPanel = lazy(async () => {
   const module = await import("./ReportFulfillmentAdminPanel");
   return { default: module.ReportFulfillmentAdminPanel };
+});
+const TemplateVariableReviewPanels = lazy(async () => {
+  const module = await import("./TemplateVariableReviewPanels");
+  return { default: module.TemplateVariableReviewPanels };
 });
 
 type GeneratedContentStatus = "DRAFT" | "REVIEWED" | "LIVE" | "ARCHIVED" | "ERROR";
@@ -735,21 +741,14 @@ function isPassiveReferenceAdminRow(row: AdminGeneratedContentRow) {
 }
 
 function isArticleLibraryRow(row: AdminGeneratedContentRow) {
-  return (row.mode === "article" || row.block_type === "sky_article")
+  return row.mode === "article"
     && row.lane === "serving"
+    && !isSkyWriteupContentRow(row)
     && !isRetiredAdminRow(row);
 }
 
 function isSkyWriteupLibraryRow(row: AdminGeneratedContentRow) {
-  const key = row.content_key.toLowerCase();
-  return !isRetiredAdminRow(row) && (
-    row.block_type === "sky_placement"
-    || row.block_type === "sky_article"
-    || /^sky\.placement\./u.test(key)
-    || /^sky[/-](?:placement|article)[/-]/u.test(key)
-    || /^sky-article\//u.test(key)
-    || /^authored\/sky-lunation-macro\//u.test(key)
-  );
+  return !isRetiredAdminRow(row) && isSkyWriteupContentRow(row);
 }
 
 function reviewRecordFromGeneratedRow(row: AdminGeneratedContentRow): AdminReviewRecord {
@@ -1107,10 +1106,16 @@ function fallbackCompositionDiagnosticForDraft(draft: AdminDraft, role: AdminCon
 
 function articlePointForRow(row: AdminGeneratedContentRow): AdminArticlePointFilter {
   const normalizedKey = row.content_key.toLowerCase();
+  const facts = objectRecord(row.facts);
+  const factPoint = [facts?.point, facts?.planet, facts?.body]
+    .find((value) => typeof value === "string" && value.trim()) as string | undefined;
   const keyMatch = normalizedKey.match(/^sky[./-](?:placement|article)[./-]([a-z-]+)/)
     ?? normalizedKey.match(/^sky[./-]([a-z-]+)[./-][a-z-]+(?:[./-]rx)?$/);
   const headlineMatch = normalizeText(row.headline).toLowerCase().match(/^(sun|moon|mercury|venus|mars|jupiter|saturn|uranus|neptune|pluto)\b/);
-  const candidate = keyMatch?.[1]?.replace(/-/g, " ") || headlineMatch?.[1] || "";
+  const candidate = factPoint?.toLowerCase().replace(/-/g, " ")
+    || keyMatch?.[1]?.replace(/-/g, " ")
+    || headlineMatch?.[1]
+    || "";
   const point = candidate.split(/\s+/)[0];
 
   return articlePointFilters.some((filter) => filter.key === point) && point !== "all"
@@ -1608,13 +1613,17 @@ function readerSafetyForRow(row: AdminGeneratedContentRow | AdminReviewRecord | 
   const lane = "lane" in row ? row.lane : undefined;
   const reviewState = "review_state" in row ? row.review_state : undefined;
 
-  if (rowNeedsSourceMaterial(row)) return { key: "needs-source-material", label: "Needs source material", detail: "Fallback/source lane is empty or too thin to compose reader prose." };
-  if (!body && !headline) return { key: "fallback-needed", label: "Fallback needed", detail: "No reader-facing copy is present." };
-  if (!isReaderFacingCopy(`${headline} ${body}`)) return { key: "reference-held", label: "Reference held", detail: "Copy looks like metadata or internal notes." };
-  if (status !== "LIVE") return { key: "draft-held", label: "Draft held", detail: "Not published." };
-  if (lane && lane !== "serving") return { key: "reference-held", label: "Reference held", detail: "Not in serving lane." };
-  if (reviewState) return { key: "review-held", label: "Review held", detail: "Review state is still set." };
-  return { key: "reader-ready", label: "Reader-ready", detail: "Published serving row with safe copy." };
+  if (rowNeedsSourceMaterial(row)) return { key: "needs-source-material", label: "Needs more source copy", detail: "There is not enough reusable writing to build a complete passage." };
+  if (!body && !headline) return { key: "fallback-needed", label: "Copy missing", detail: "This row has no reader-facing copy." };
+  if (!isReaderFacingCopy(`${headline} ${body}`)) return { key: "reference-held", label: "Internal reference", detail: "This row contains internal notes or metadata, not reader copy." };
+  if (status !== "LIVE") return { key: "draft-held", label: "Not published", detail: "This row is saved as a draft and cannot appear in the app." };
+  if (lane && lane !== "serving") return { key: "reference-held", label: "Internal reference", detail: "This row is reference material and cannot appear in the app." };
+  if (reviewState) return { key: "review-held", label: "Awaiting review", detail: "This row still needs editorial review before it can appear in the app." };
+  return { key: "reader-ready", label: "Available in app", detail: "This row is published and available for the app to use." };
+}
+
+function housePassageAvailabilityLabel(availability: "Reader-ready" | "Source candidate") {
+  return availability === "Reader-ready" ? "Complete horoscope" : "Supporting passage";
 }
 
 function fallbackSectionForKey(key: string, surface?: string): AdminFallbackHookSectionFilter {
@@ -1924,6 +1933,8 @@ export function GeneratedContentAdminDashboard() {
   const [skyFallbackVariableTarget, setSkyFallbackVariableTarget] = useState("");
   const [templateVariableReferenceOpen, setTemplateVariableReferenceOpen] = useState(false);
   const [templateVariableQuery, setTemplateVariableQuery] = useState("");
+  const [selectedTemplateVariableName, setSelectedTemplateVariableName] = useState<string | null>(null);
+  const [selectedTemplateVariableSourceId, setSelectedTemplateVariableSourceId] = useState<string | null>(null);
   const [skyArticleEditionForm, setSkyArticleEditionForm] = useState<SkyArticleEditionForm | null>(null);
   const [skyArticleEditor, setSkyArticleEditor] = useState<SkyArticleEditorState | null>(null);
   const [draft, setDraft] = useState<AdminDraft | null>(null);
@@ -2560,6 +2571,8 @@ export function GeneratedContentAdminDashboard() {
   function closeEditor() {
     setTemplateVariableReferenceOpen(false);
     setTemplateVariableQuery("");
+    setSelectedTemplateVariableName(null);
+    setSelectedTemplateVariableSourceId(null);
     setSelectedRowId(null);
     setDraft(null);
     setSkyWriteupParentId(null);
@@ -3128,6 +3141,8 @@ export function GeneratedContentAdminDashboard() {
     setSkyFallbackVariableTarget("");
     setTemplateVariableReferenceOpen(false);
     setTemplateVariableQuery("");
+    setSelectedTemplateVariableName(null);
+    setSelectedTemplateVariableSourceId(null);
     skyArticleAutosaveSequenceRef.current += 1;
     setSkyArticleEditor(edition && baseEdition ? {
       baseEdition,
@@ -3342,7 +3357,7 @@ export function GeneratedContentAdminDashboard() {
     if (page === "articles") {
       setDraft({
         id: null,
-        contentKey: "sky/article/new-row",
+        contentKey: "article/manual/new-row",
         surface: "sky",
         mode: "article",
         status: "DRAFT",
@@ -3351,7 +3366,7 @@ export function GeneratedContentAdminDashboard() {
         body: "",
         lane: "serving",
         reviewState: "EDITORIAL_REVIEW_REQUIRED",
-        blockType: "sky_article",
+        blockType: "essay",
         promptVersion: "manual-admin",
         sections: null,
         facts: null,
@@ -3953,18 +3968,18 @@ export function GeneratedContentAdminDashboard() {
               </div>
             </section>
             {renderContentFilters()}
-            <section className="admin-reader-safety-panel" aria-label="Reader safety status">
+            <section className="admin-reader-safety-panel" aria-label="App visibility status">
               <div>
-                <p className="admin-eyebrow">Reader safety</p>
-                <h3>Runtime Readiness</h3>
-                <p>Reader routes serve Published authored rows first. When authored copy is missing, fallback needs enough source material to compose safe prose.</p>
+                <p className="admin-eyebrow">App visibility</p>
+                <h3>What readers can see</h3>
+                <p>Published app copy can appear for readers. Drafts, internal references, and incomplete writing stay hidden.</p>
               </div>
               <div className="admin-reader-safety-grid">
-                <article className="reader-ready"><span>Reader-ready</span><strong>{readerCounts["reader-ready"]}</strong></article>
-                <article><span>Draft/editorial</span><strong>{readerCounts["draft-held"]}</strong></article>
-                <article><span>Reference/review held</span><strong>{readerCounts["reference-held"] + readerCounts["review-held"]}</strong></article>
-                <article className={readerCounts["needs-source-material"] ? "needs-fallback" : ""}><span>Needs source material</span><strong>{readerCounts["needs-source-material"]}</strong></article>
-                <article className={readerCounts["fallback-needed"] ? "needs-fallback" : ""}><span>Fallback needed</span><strong>{readerCounts["fallback-needed"]}</strong></article>
+                <article className="reader-ready"><span>Available in app</span><strong>{readerCounts["reader-ready"]}</strong></article>
+                <article><span>Not published</span><strong>{readerCounts["draft-held"]}</strong></article>
+                <article><span>Internal or awaiting review</span><strong>{readerCounts["reference-held"] + readerCounts["review-held"]}</strong></article>
+                <article className={readerCounts["needs-source-material"] ? "needs-fallback" : ""}><span>Needs more source copy</span><strong>{readerCounts["needs-source-material"]}</strong></article>
+                <article className={readerCounts["fallback-needed"] ? "needs-fallback" : ""}><span>Copy missing</span><strong>{readerCounts["fallback-needed"]}</strong></article>
               </div>
             </section>
             {renderBulkBar()}
@@ -4003,7 +4018,7 @@ export function GeneratedContentAdminDashboard() {
               <div>
                 <p className="admin-eyebrow">Article writing</p>
                 <h2>Articles</h2>
-                <p>{filteredArticleRows.length} of {articleRows.length} article rows shown. Filter by status, planet, content system, or text.</p>
+                <p>{filteredArticleRows.length} of {articleRows.length} standalone article rows shown. Sky placements and lunations stay in Sky Write-ups.</p>
               </div>
               <button type="button" onClick={() => handleCreateAction("articles", "New article draft started.")}>
                 <Plus size={16} aria-hidden="true" />
@@ -4014,7 +4029,7 @@ export function GeneratedContentAdminDashboard() {
             <section className="admin-workbench admin-review-workspace">
               {renderEditor()}
               <aside className="admin-list-panel" aria-label="Article rows">
-                {renderContentTable(filteredArticleRows)}
+                {renderContentTable(filteredArticleRows, true)}
               </aside>
             </section>
           </section>
@@ -4823,7 +4838,7 @@ export function GeneratedContentAdminDashboard() {
     );
   }
 
-  function renderContentTable(tableRows: AdminGeneratedContentRow[]) {
+  function renderContentTable(tableRows: AdminGeneratedContentRow[], showArticleDestination = false) {
     return (
       <div className="admin-content-table-scroll">
         <table className="admin-content-table">
@@ -4831,8 +4846,9 @@ export function GeneratedContentAdminDashboard() {
             <tr>
               <th scope="col">Select</th>
               <th scope="col">Content</th>
-              <th scope="col">Runtime</th>
+              <th scope="col">App visibility</th>
               <th scope="col">Editorial</th>
+              {showArticleDestination && <th scope="col">App destination</th>}
               <th scope="col">Surface</th>
               <th scope="col">Kind</th>
               <th scope="col">Updated</th>
@@ -4845,6 +4861,7 @@ export function GeneratedContentAdminDashboard() {
               const safety = readerSafetyForRow(row);
               const rowClass = contentClassForRow(row);
               const rowRole = contentRoleDetails(contentRoleForRecord(row));
+              const destination = showArticleDestination ? articleAppDestination(row) : null;
               return (
                 <tr key={row.id} className={`admin-content-row ${selectedRowId === row.id ? "selected" : ""}`} onClick={() => openRow(row)}>
                   <td onClick={(event) => event.stopPropagation()}>
@@ -4859,6 +4876,12 @@ export function GeneratedContentAdminDashboard() {
                   </td>
                   <td><span className={`admin-reader-state-pill ${safety.key}`} title={safety.detail}>{safety.label}</span></td>
                   <td><span className={`ui-pill admin-status status-${row.status.toLowerCase()}`}>{contentStatusLabel(row.status)}</span></td>
+                  {destination && (
+                    <td className="admin-content-location">
+                      <strong>{destination.label}</strong>
+                      <small>{destination.detail}</small>
+                    </td>
+                  )}
                   <td className="admin-content-location"><strong>{row.surface}</strong><small>{row.mode}</small></td>
                   <td>{row.block_type || row.event_type || "content"}</td>
                   <td>{row.updated_at?.slice(0, 10) ?? row.created_at?.slice(0, 10) ?? "Local"}</td>
@@ -5392,7 +5415,11 @@ export function GeneratedContentAdminDashboard() {
             {variableReferences.length > 0 && (
               <button
                 type="button"
-                onClick={() => setTemplateVariableReferenceOpen(true)}
+                onClick={() => {
+                  setSelectedTemplateVariableName(null);
+                  setSelectedTemplateVariableSourceId(null);
+                  setTemplateVariableReferenceOpen(true);
+                }}
               >
                 <Braces size={16} aria-hidden="true" />
                 Variables ({variableReferences.length})
@@ -5458,6 +5485,24 @@ export function GeneratedContentAdminDashboard() {
               <p><strong>Reader rule:</strong> this text can support the fallback system, but it cannot appear as a standalone authored write-up.</p>
             )}
           </section>
+          {skyFallbackContentIdentity?.typeLabel === "Sky Placement fallback article section" && (
+            <section className="admin-content-role-panel" aria-label="Sky Placement fallback article structure">
+              <div>
+                <p className="admin-eyebrow">Fallback article structure</p>
+                <h3>Four sections readers receive</h3>
+              </div>
+              <p>The labels below describe complete pieces of reader copy. They are not calculated variables.</p>
+              <dl className="admin-hook-pattern-list">
+                {skyPlacementFallbackSectionOutline.map((section) => (
+                  <div key={section.key}>
+                    <dt>{section.label}</dt>
+                    <dd>{section.description}</dd>
+                  </div>
+                ))}
+              </dl>
+              <p className="admin-field-hint">Stored field names remain <code>tagline</code>, <code>hook</code>, <code>lived</code>, and <code>turn</code> for runtime compatibility.</p>
+            </section>
+          )}
           {ownerApprovedArticleKey && (
             <section className="admin-editor-guidance" aria-label="Reader source status">
               <strong>{ownerApprovedReplacementLabel}</strong>
@@ -5966,8 +6011,8 @@ export function GeneratedContentAdminDashboard() {
                     <div><dt>Rising horoscopes</dt><dd>{sourceReadyLunationHoroscopes}/12 source-ready</dd></div>
                   ) : (
                     <>
-                      <div><dt>Reader-ready houses</dt><dd>{populatedSkyHouses}/12</dd></div>
-                      <div><dt>Source candidates</dt><dd>{candidateSkyHouses}/12 houses</dd></div>
+                      <div><dt>Complete horoscopes</dt><dd>{populatedSkyHouses}/12</dd></div>
+                      <div><dt>Supporting passages</dt><dd>{candidateSkyHouses}/12 houses</dd></div>
                     </>
                   )}
                 </dl>
@@ -6064,10 +6109,10 @@ export function GeneratedContentAdminDashboard() {
                   <summary>
                     <span>House horoscopes</span>
                     {" "}
-                    <strong>{populatedSkyHouses}/12 reader-ready</strong>
+                    <strong>{populatedSkyHouses}/12 complete</strong>
                   </summary>
                   <p className="admin-sky-related-help">
-                    Only an approved complete Sky house horoscope can serve on this placement page. House introductions, generic house passages, and older sign-specific transit passages remain visible as source candidates; the app will not substitute them silently.
+                    Only a complete, approved Sky house horoscope can appear on this placement page. House introductions, generic house passages, and older sign-specific transit passages are shown as supporting writing only; the app will not use them as finished horoscopes.
                   </p>
                   <div className="admin-sky-house-grid admin-lunar-coverage-row-list">
                     {Array.from({ length: 12 }, (_, index) => index + 1).map((house) => {
@@ -6081,7 +6126,7 @@ export function GeneratedContentAdminDashboard() {
                           {passages.map((passage) => (
                             <div className="admin-sky-related-row admin-hook-detail-section" key={passage.row.id}>
                               <div>
-                                <span>{passage.kind} · {passage.availability}</span>
+                                <span>{passage.kind} · {housePassageAvailabilityLabel(passage.availability)}</span>
                                 <code>{passage.row.content_key}</code>
                                 <p>{passage.row.body || "No passage body saved."}</p>
                               </div>
@@ -6331,21 +6376,33 @@ export function GeneratedContentAdminDashboard() {
 
               <section className="admin-sky-edition-fields admin-variable-reference-list" aria-label="Variables used in this row">
                 {filteredVariableReferences.map((variable) => (
-                  <article className="admin-hook-detail-section admin-variable-reference-card" key={variable.name}>
-                    <header className="admin-fallback-diagnostic-heading">
-                      <div>
-                        <code>{`{{${variable.name}}}`}</code>
-                        <h3>{variable.label}</h3>
-                      </div>
-                      <span className={`ui-pill admin-status status-${variable.requirement === "Required" ? "live" : variable.requirement === "Optional" ? "draft" : "reviewed"}`}>{variable.requirement}</span>
-                    </header>
-                    <p>{variable.meaning}</p>
-                    <dl className="admin-hook-pattern-list">
-                      <div><dt>Example</dt><dd>{variable.example}</dd></div>
-                      <div><dt>Comes from</dt><dd>{variable.source}</dd></div>
-                      <div><dt>Used in</dt><dd>{variable.fields.join(", ")}</dd></div>
-                    </dl>
-                  </article>
+                    <article className="admin-hook-detail-section admin-variable-reference-card" key={variable.name}>
+                      <header className="admin-fallback-diagnostic-heading">
+                        <div>
+                          <code>{`{{${variable.name}}}`}</code>
+                          <h3>{variable.label}</h3>
+                        </div>
+                        <span className={`ui-pill admin-status status-${variable.requirement === "Required" ? "live" : variable.requirement === "Optional" ? "draft" : "reviewed"}`}>{variable.requirement}</span>
+                      </header>
+                      <p>{variable.meaning}</p>
+                      <dl className="admin-hook-pattern-list">
+                        <div><dt>Example</dt><dd>{variable.example}</dd></div>
+                        <div><dt>Comes from</dt><dd>{variable.source}</dd></div>
+                        <div><dt>Used in</dt><dd>{variable.fields.join(", ")}</dd></div>
+                      </dl>
+                      <button
+                        type="button"
+                        className="admin-variable-review-button"
+                        onClick={() => {
+                          setSelectedTemplateVariableSourceId(null);
+                          setSelectedTemplateVariableName(variable.name);
+                        }}
+                      >
+                        {variable.sourceKind === "runtime"
+                          ? "See how this value is filled"
+                          : "Review source writing"}
+                      </button>
+                    </article>
                 ))}
                 {filteredVariableReferences.length === 0 && (
                   <div className="admin-empty-state">
@@ -6357,6 +6414,23 @@ export function GeneratedContentAdminDashboard() {
             </div>
           </aside>
         </>
+      )}
+      {templateVariableReferenceOpen && selectedTemplateVariableName && (
+        <Suspense fallback={null}>
+          <TemplateVariableReviewPanels
+            references={variableReferences}
+            rows={rows}
+            templateContentKey={currentDraft.contentKey}
+            selectedVariableName={selectedTemplateVariableName}
+            selectedSourceId={selectedTemplateVariableSourceId}
+            onBackToVariables={() => {
+              setSelectedTemplateVariableSourceId(null);
+              setSelectedTemplateVariableName(null);
+            }}
+            onSelectSource={setSelectedTemplateVariableSourceId}
+            onEditSource={(row) => openRow(row as AdminGeneratedContentRow)}
+          />
+        </Suspense>
       )}
       </>
     );

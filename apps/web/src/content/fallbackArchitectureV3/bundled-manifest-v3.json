@@ -1,8 +1,8 @@
 {
-  "packageVersion": "v3-2026-08-22g",
-  "contentHash": "6ef6582325d4cde74fbcf93d191354d3",
-  "keyManifestHash": "bc5796b0fb5607b48cf56ebe8c5c04c0",
-  "keyCount": 9145,
+  "packageVersion": "v3-2026-08-23h",
+  "contentHash": "db78ad2fa4234523ee7eea69f7cc94bf",
+  "keyManifestHash": "11eaa2eabd9467b65663702c3a5ab2da",
+  "keyCount": 9144,
   "keys": [
     "authored:approved/calendar-weekly-overview/2026-08-03",
     "authored:authored/calendar-weekly-moon/aquarius",
@@ -4420,7 +4420,6 @@
     "hook:fallback-hook/natal-core/sun",
     "hook:fallback-hook/natal-core/uranus",
     "hook:fallback-hook/natal-core/venus",
-    "hook:fallback-hook/natal-moon-phase-lived/balsamic",
     "hook:fallback-hook/natal-you-placement-house-final/moon/1",
     "hook:fallback-hook/natal-you-placement-house-final/moon/10",
     "hook:fallback-hook/natal-you-placement-house-final/moon/11",

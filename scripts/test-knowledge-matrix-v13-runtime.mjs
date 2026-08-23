@@ -110,6 +110,13 @@ const sourceByReleaseKey = new Map(
     .filter((row) => row.source_release === "ll-matrix-v13-owner-approved-runtime")
     .map((row) => [row.contentKey, row]),
 );
+const genericAspectSourceMaterialKeys = new Set([
+  "fallback-hook/aspect-lived/sextile",
+  "fallback-hook/aspect-lived/quincunx",
+]);
+const retiredHistoricalSourceKeys = new Set([
+  "fallback-hook/natal-moon-phase-lived/balsamic",
+]);
 assert.equal(sourceByReleaseKey.size, 301);
 assert.equal(manifest.rows.length, 301);
 const observedServingSubstitutions = new Set();
@@ -130,9 +137,27 @@ for (const row of locked.rows) {
   const expectedBody = expectedServingBody(row);
   assert.equal(servingRow.body, expectedBody);
   if (expectedBody !== row.copy) observedServingSubstitutions.add(row.contentKey);
-  assert.equal(servingRow.review_status, "approved");
-  assert.equal(servingRow.reader_only, true);
-  assert.equal(servingRow.render_policy, "reader-only-exact-lived-v1");
+  if (retiredHistoricalSourceKeys.has(row.contentKey)) {
+    assert.equal(servingRow.review_status, "superseded");
+    assert.equal(servingRow.content_role, "source_material");
+    assert.equal(servingRow.distribution_lane, "reference");
+    assert.equal(servingRow.reader_only, false);
+    assert.equal(servingRow.render_policy, "reference-only-never-serve-verbatim");
+    assert.equal(servingRow.owner_approved, false);
+    assert.equal(servingRow.retirement?.disposition, "historical-source-material");
+  } else if (genericAspectSourceMaterialKeys.has(row.contentKey)) {
+    assert.equal(servingRow.review_status, "reviewed");
+    assert.equal(servingRow.content_role, "source_material");
+    assert.equal(servingRow.distribution_lane, "reference");
+    assert.equal(servingRow.reader_only, false);
+    assert.equal(servingRow.render_policy, "reference-only-generic-aspect-baseline-v1");
+    assert.equal(servingRow.source_material?.purpose, "baseline-for-exact-pair-authoring");
+    assert.equal(servingRow.source_material?.neverServeVerbatim, true);
+  } else {
+    assert.equal(servingRow.review_status, "approved");
+    assert.equal(servingRow.reader_only, true);
+    assert.equal(servingRow.render_policy, "reader-only-exact-lived-v1");
+  }
   assert.equal(servingRow.approval?.approvalLevel, "exact_owner_approved");
   assert.equal(servingRow.approval?.recordPath, approvalRecordRelativePath);
   assert.equal(servingRow.approval?.payloadSha256, row.payloadSha256);
