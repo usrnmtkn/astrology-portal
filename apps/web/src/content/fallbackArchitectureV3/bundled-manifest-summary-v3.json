@@ -6,14 +6,14 @@
   "runtimeCapability": "sky-placement-on-demand-v1",
   "partitions": {
     "core": {
-      "contentHash": "0ffcf43239624d6e8a2ab5447fa96e02",
-      "keyManifestHash": "c7e5f0b0aeb183d441f8edda3133bc00",
-      "keyCount": 7399
+      "contentHash": "ab78604e2174c94275f4ddb058dcc4de",
+      "keyManifestHash": "1c7b681ea5ce2c2ae725fb08f3140cae",
+      "keyCount": 7363
     },
     "skyPlacement": {
-      "contentHash": "d2e5875490ce54a85ac53eb2660746c4",
-      "keyManifestHash": "db68311f55eb851b94de4a51c0c6116f",
-      "keyCount": 1746
+      "contentHash": "0868132649d3db72d1b033c421777496",
+      "keyManifestHash": "74da99e9b898680d20bc83d34b4cab39",
+      "keyCount": 1782
     }
   }
 }

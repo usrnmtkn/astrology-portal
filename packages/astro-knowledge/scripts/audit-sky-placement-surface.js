@@ -52,8 +52,7 @@ function syntheticFacts(planet, sign) {
 function pageState(rendered) {
   if (rendered.templateKey === "sky-placement-continuous-v2") return "owner_approved_continuous";
   if (rendered.templateKey === "sky-placement-moon-entry-v1") return "owner_approved_moon_entry";
-  if (rendered.templateKey === "fallback-template/sky.placement-article") return "owner_locked_lilith_v5";
-  if (rendered.templateKey === "sky-placement-standalone-hook-v1") return "legacy_thin_standalone";
+  if (rendered.templateKey === "sky-placement-frame-v3") return "canonical_fallback_frame";
   return `other:${rendered.templateKey}`;
 }
 

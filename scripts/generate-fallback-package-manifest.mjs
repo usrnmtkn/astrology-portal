@@ -111,9 +111,9 @@ function isContinuousSkyPlacementRow(row) {
 function isSkyPlacementDeferredHook(row) {
   const contentKey = String(row?.contentKey ?? "");
   return contentKey.startsWith("fallback-hook/sky-sign-copy/")
+    || contentKey.startsWith("fallback-hook/sky-placement-sign/")
     || (
       contentKey.startsWith("fallback-hook/sky-placement-")
-      && !contentKey.startsWith("fallback-hook/sky-placement-sign/")
     );
 }
 
@@ -288,6 +288,7 @@ const dailyGlanceVariants = readJson("source-rows/daily-glance-variants-v1.json"
 const transitRows = readJson("source-rows/transit-synastry-rows-v1.json");
 const pairDailyFrames = readJson("source-rows/pair-daily-frames-v1.json");
 const pairDailyClauses = readJson("source-rows/pair-daily-clauses-v1.json");
+const skyAspectPhrasebookRows = readJson("source-rows/sky-aspect-phrasebook-v1.json");
 const skyPlacementVoicePassRows = readJson("source-rows/sky-placement-inventories-voice-pass-v1.json");
 const skyPlanetFrameRows = readJson("source-rows/sky-planet-frames-v1.json");
 const skyPlacementOwnerApprovedRows = skyPlacementOwnerApprovedReaderRows();
@@ -347,6 +348,9 @@ const skyAuthoredCards = {
 const skyPlacementBaseRows = {
   hookRows: latestReaderEligible([
     ...sourceRows.hookRows.filter(isSkyPlacementDeferredHook),
+    ...skyAspectPhrasebookRows.hookRows.filter((row) => (
+      String(row.contentKey ?? "").startsWith("fallback-hook/sky-placement-sign/")
+    )),
     ...(skyPlanetFrameRows.rows ?? []),
     ...(skyPlacementVoicePassRows.rows ?? []),
     ...skySignCopyRows,
