@@ -45,6 +45,13 @@ const corrections = [
   ...read("data/writing/owner-feedback-corpus.jsonl").trim().split("\n").filter(Boolean).map(JSON.parse)
 ];
 const rejectedTexts = ownerRejectedExactTexts(corrections);
+const title = (value) => value.split("-").map((part) => `${part.charAt(0).toUpperCase()}${part.slice(1)}`).join(" ");
+const ordinal = (house) => {
+  if (house === 1) return "1st";
+  if (house === 2) return "2nd";
+  if (house === 3) return "3rd";
+  return `${house}th`;
+};
 
 assert.equal(source.placementCount, 82, "Every governed Sky placement route must have a house template set.");
 assert.equal(source.rowCount, 82 * 12, "Every governed Sky placement route must have all twelve houses.");
@@ -73,9 +80,13 @@ for (const protectedRow of protectedOwnerSource.rows) {
 }
 
 for (const row of source.rows) {
+  const [, planet, sign, houseSlug] = row.contentKey.split("/");
+  const house = Number(houseSlug.replace("house-", ""));
+  const expectedHeadline = `${title(planet)} in ${title(sign)} · ${ordinal(house)} House`;
   assert.equal(row.review_status, "approved_reuse");
   assert.equal(row.content_role, "house_horoscope_core");
   assert.equal(row.grammar_frame, "second_person_block");
+  assert.equal(row.headline, expectedHeadline, `${row.contentKey} must have a searchable identity headline.`);
   assert.ok(row.body_you.trim());
   assert.equal(rejectedTexts.has(row.body_you.trim()), false, `${row.contentKey} must not restore owner-rejected text.`);
 }

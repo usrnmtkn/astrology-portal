@@ -53,6 +53,7 @@ import {
 } from "./skyPlacementServingStatus";
 import {
   effectivePackageRecord,
+  houseHoroscopeCoreHeadline,
   natalPlanetInSignTemplateHeadline,
   natalPlanetInSignTemplateTitle,
   packageDraftChanges,
@@ -1137,6 +1138,7 @@ function rowSearchText(row: AdminGeneratedContentRow) {
 function visibleRowSearchText(row: AdminGeneratedContentRow) {
   return [
     row.content_key,
+    rowTitle(row),
     row.headline,
     row.surface,
     row.mode,
@@ -1150,6 +1152,7 @@ function visibleRowSearchText(row: AdminGeneratedContentRow) {
 function fallbackHookVisibleSearchText(row: AdminGeneratedContentRow) {
   return [
     row.content_key,
+    rowTitle(row),
     row.headline,
     row.surface,
     row.mode,
@@ -1791,7 +1794,10 @@ function draftFromRow(row: AdminGeneratedContentRow): AdminDraft {
     surface: row.surface,
     mode: row.mode,
     status: row.status,
-    headline: natalPlanetInSignTemplateHeadline(row.content_key, normalizeText(row.headline)),
+    headline: natalPlanetInSignTemplateHeadline(
+      row.content_key,
+      houseHoroscopeCoreHeadline(row.content_key, normalizeText(row.headline))
+    ),
     summary: normalizeText(row.summary),
     body: normalizeText(row.body),
     lane: row.lane ?? "serving",

@@ -64,6 +64,11 @@ export function natalPlanetInSignTemplateTitle(contentKey: string, headline: str
     .replace(/\{\{\s*signTitle\s*\}\}/gu, "a Sign");
 }
 
+export function houseHoroscopeCoreHeadline(contentKey: string, headline: string) {
+  const identity = skyFallbackIdentity(contentKey);
+  return identity?.groupKey === "houses" ? identity.title : headline;
+}
+
 function ordinalHouse(value: string) {
   const house = Number(value.replace(/^house-/u, ""));
   if (!Number.isInteger(house)) return words(value);
