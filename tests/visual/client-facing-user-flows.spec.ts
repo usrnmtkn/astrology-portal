@@ -770,27 +770,34 @@ async function expectHydrationKeepsReaderCopyStable(
   page: Page,
   locator: ReturnType<Page["locator"]>,
   label: string,
-  options: { minLength?: number; waitMs?: number } = {}
+  options: { excludedSelector?: string; minLength?: number; waitMs?: number } = {}
 ) {
   const minLength = options.minLength ?? 120;
   const waitMs = options.waitMs ?? 3500;
+  const contentText = async () => options.excludedSelector
+    ? locator.evaluate((root, selector) => {
+        const clone = root.cloneNode(true) as HTMLElement;
+        clone.querySelectorAll(selector).forEach((element) => element.remove());
+        return (clone.textContent ?? "").replace(/\s+/g, " ").trim();
+      }, options.excludedSelector)
+    : ((await locator.textContent()) ?? "").replace(/\s+/g, " ").trim();
 
   await expect(locator, `${label} is visible before hydration settles`).toBeVisible();
   await expect.poll(async () => {
-    return ((await locator.textContent()) ?? "").replace(/\s+/g, " ").trim().length;
+    return (await contentText()).length;
   }, {
     message: `${label} has enough initial reader-facing copy to compare before hydration`,
     timeout: 5000
   }).toBeGreaterThanOrEqual(minLength);
 
-  const before = ((await locator.textContent()) ?? "").replace(/\s+/g, " ").trim();
+  const before = await contentText();
 
   expect(before, `${label} initial copy does not leak scaffolding or stale fallback text`).not.toMatch(readerCopyLeakPattern);
   expect(before, `${label} initial copy does not surface directional scaffold copy`).not.toMatch(directionalCopyPattern);
 
   await page.waitForTimeout(waitMs);
 
-  const after = ((await locator.textContent()) ?? "").replace(/\s+/g, " ").trim();
+  const after = await contentText();
 
   expect(after.length, `${label} keeps substantial reader-facing copy after hydration`).toBeGreaterThanOrEqual(minLength);
   expect(after, `${label} hydrated copy does not leak scaffolding or stale fallback text`).not.toMatch(readerCopyLeakPattern);
@@ -2934,7 +2941,10 @@ test.describe("client-facing user flow case studies", () => {
       page,
       page.locator(".sky-detail-article"),
       "Sky placement detail copy",
-      { minLength: 180 }
+      {
+        excludedSelector: "#sky-rising-horoscopes, #sky-personalized-placement",
+        minLength: 180
+      }
     );
 
     await expectClientRouteLoads(page, "/#you");
@@ -2979,7 +2989,9 @@ test.describe("client-facing user flow case studies", () => {
     const horoscopeSection = page.getByRole("region", { name: "Horoscopes by rising sign" });
     await expect(horoscopeSection).toBeVisible();
     await expect(horoscopeSection.getByRole("heading", { level: 3 })).toHaveCount(12);
-    await expect(horoscopeSection.getByRole("heading", { name: "Gemini rising" })).toBeVisible();
+    await expect(horoscopeSection.getByRole("heading", { name: "Aries & Aries Rising" })).toBeVisible();
+    await expect(horoscopeSection.getByRole("heading", { name: "Gemini & Gemini Rising" })).toBeVisible();
+    await expect(horoscopeSection.getByRole("heading", { name: "Pisces & Pisces Rising" })).toBeVisible();
     await expectSemanticArticleHeadingOrder(page, "Sky placement rising-sign article");
     await expect(page.getByRole("link", { name: "Jump to horoscopes" })).toHaveCount(0);
     await expect(page.locator(".sky-detail-id .article-duration")).toHaveText("July 22 to August 22, 2026");
@@ -2987,7 +2999,7 @@ test.describe("client-facing user flow case studies", () => {
     await assertNoClientErrors();
   });
 
-  test("Sky placement shows only the reader's approved house passage when Rising is known", async ({ page }) => {
+  test("Sky placement keeps all twelve rising-sign horoscopes alongside the reader's passage", async ({ page }) => {
     const assertNoClientErrors = await expectNoClientErrors(page);
 
     await seedClientState(page, {
@@ -3001,8 +3013,15 @@ test.describe("client-facing user flow case studies", () => {
     await expect(personalizedSection).toBeVisible();
     await expect(personalizedSection).toContainText("5th house");
     await expect(page.getByRole("heading", { level: 2, name: "Where it lands for you" })).toBeVisible();
+    const horoscopeSection = page.getByRole("region", { name: "Horoscopes by rising sign" });
+    await expect(horoscopeSection).toBeVisible();
+    await expect(horoscopeSection.getByRole("heading", { level: 3 })).toHaveCount(12);
+    await expect(horoscopeSection.getByRole("heading", { name: "Aries & Aries Rising" })).toBeVisible();
+    await expect(horoscopeSection.getByRole("heading", { name: "Taurus & Taurus Rising" })).toBeVisible();
+    await expect(horoscopeSection.getByRole("heading", { name: "Pisces & Pisces Rising" })).toBeVisible();
     await expectSemanticArticleHeadingOrder(page, "Personalized Sky placement article");
-    await expect(page.getByRole("region", { name: "Horoscopes by rising sign" })).toHaveCount(0);
+    await expect(page.locator("#sky-rising-horoscopes")).toHaveCount(1);
+    await expect(page.locator("#sky-personalized-placement")).toHaveCount(1);
     await expect(page.getByRole("link", { name: "Jump to horoscopes" })).toHaveCount(0);
     await expect(page.locator(".sky-detail-id .article-duration")).toHaveText("July 22 to August 22, 2026");
     await assertNoClientErrors();
@@ -3018,6 +3037,7 @@ test.describe("client-facing user flow case studies", () => {
     const horoscopeSection = page.getByRole("region", { name: "Horoscopes by rising sign" });
     await expect(horoscopeSection).toBeVisible();
     await expect(horoscopeSection.getByRole("heading", { level: 3 })).toHaveCount(12);
+    await expect(horoscopeSection.getByRole("heading", { name: "Libra & Libra Rising" })).toBeVisible();
     await expect(page.getByRole("region", { name: "Where it lands for you" })).toHaveCount(0);
     await expect(page.getByText("You may want more of what is actually fun.", { exact: true })).toHaveCount(0);
     await expect(page.locator(".sky-detail-id .article-duration")).not.toBeEmpty();
@@ -3049,6 +3069,7 @@ test.describe("client-facing user flow case studies", () => {
     const horoscopeSection = page.getByRole("region", { name: "Horoscopes by rising sign" });
     await expect(horoscopeSection).toBeVisible();
     await expect(horoscopeSection.getByRole("heading", { level: 3 })).toHaveCount(12);
+    await expect(horoscopeSection.getByRole("heading", { name: "Sagittarius & Sagittarius Rising" })).toBeVisible();
     await expect(page.getByRole("region", { name: "Where it lands for you" })).toHaveCount(0);
     await expect(page.getByRole("link", { name: "Jump to horoscopes" })).toHaveCount(0);
     await expect(page.locator(".sky-detail-id .article-duration")).not.toBeEmpty();
@@ -3064,6 +3085,7 @@ test.describe("client-facing user flow case studies", () => {
     const horoscopeSection = page.getByRole("region", { name: "Horoscopes by rising sign" });
     await expect(horoscopeSection).toBeVisible();
     await expect(horoscopeSection.getByRole("heading", { level: 3 })).toHaveCount(12);
+    await expect(horoscopeSection.getByRole("heading", { name: "Aries & Aries Rising" })).toBeVisible();
     await expect(horoscopeSection).toContainText("Uranus in Gemini moves through your 5th house");
     await assertNoClientErrors();
   });
