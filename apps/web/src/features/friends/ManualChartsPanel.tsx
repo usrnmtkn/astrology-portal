@@ -445,50 +445,12 @@ export function ManualChartsPanel({
       if (!(error instanceof FallbackV3SourceGapError)) {
         throw error;
       }
-
-      // Migration bridge: keep the friend's card visible without changing the
-      // grammar of author-final copy. The card header already identifies whose
-      // forecast this is, so unmigrated rows remain in their original second-person
-      // voice until an approved body_they replaces them. Never run sentence-wide
-      // pronoun substitution here.
-      try {
-        const dateKey = currentSky.generatedAt.slice(0, 10);
-        const rendered = driver.kind === "aspect"
-          ? transitSynastryFallbackRendererV3.renderDailyGlance({
-              natal: driver.natal,
-              aspect: driver.aspect,
-              dateKey,
-              userId
-            })
-          : transitSynastryFallbackRendererV3.renderDailyGlance({
-              house: driver.house,
-              dateKey,
-              userId
-            });
-
-        console.warn("Friend Daily At-a-Glance used the self-addressed migration bridge.", {
-          ownerName,
-          driver,
-          error
-        });
-
-        return {
-          headline: rendered.headline ?? "",
-          body: rendered.body ?? "",
-          moonContext
-        };
-      } catch (legacyError) {
-        if (legacyError instanceof FallbackV3SourceGapError) {
-          console.warn("Friend Daily At-a-Glance source gap; hiding surface.", {
-            ownerName,
-            driver,
-            error: legacyError
-          });
-          return null;
-        }
-
-        throw legacyError;
-      }
+      console.warn("Friend Daily At-a-Glance source gap; hiding surface.", {
+        ownerName,
+        driver,
+        error
+      });
+      return null;
     }
   }
 

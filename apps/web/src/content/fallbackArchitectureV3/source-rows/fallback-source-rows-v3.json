@@ -30190,7 +30190,7 @@
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
    "body_you": "You're arguing with yourself, and both sides have a point.",
-   "body_they": "You're arguing with yourself, and both sides have a point.",
+   "body_they": "{{personPreferredName}} may be working hard to look fine while another part of {{personObject}} is not fine at all.",
    "review_status": "approved",
    "notes": "Owner-authored batch 4 canonical set, exact approval 2026-08-05 (review/daily-glance-batch-4-owner-authored file; flags resolved; owner \"approved\"). Completes the surface rebuild. Owner approval 2026-08-14: Voice Pass (68) workbook SHA-256 ef1d4221c4ed6cd32816ae1918fb20f06493160d8746c008954e584473c5ea42, approved in chat with \"the spreadsheet is all owner approved\"."
   },
@@ -30199,7 +30199,7 @@
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
    "body_you": "What would happen if you stopped trying to control how everyone sees you? Part of you knows who you are, while another part is busy presenting the version that will be taken seriously, approved of, or left alone. That version may have helped you avoid criticism, rejection, or conflict. But forcing composure when you are burnt out, defensive, or uninspired is an exhausting way to live.",
-   "body_they": "What would happen if you stopped managing everyone's perception of you? A quiet conflict is running under your day between who you know yourself to be and the version you present so people will take you seriously, approve of you, or leave you alone. That version may have helped you avoid criticism, rejection, or conflict. But forcing composure when you are burnt out, defensive, or uninspired is an exhausting way to live.",
+   "body_they": "{{personPreferredName}} knows the honest answer, while another part is presenting the version that will be taken seriously, approved of, or left alone. That version may have helped {{personObject}} avoid criticism, rejection, or conflict. Holding that composure when {{personPreferredName}} is burnt out, defensive, or uninspired can become exhausting.",
    "review_status": "approved",
    "notes": "Owner-authored batch 4 canonical set, exact approval 2026-08-05 (review/daily-glance-batch-4-owner-authored file; flags resolved; owner \"approved\"). Completes the surface rebuild. Owner approval 2026-08-14: Voice Pass (68) workbook SHA-256 ef1d4221c4ed6cd32816ae1918fb20f06493160d8746c008954e584473c5ea42, approved in chat with \"the spreadsheet is all owner approved\"."
   },
@@ -30208,7 +30208,7 @@
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
    "body_you": "The plan is not more important than the energy you actually have.",
-   "body_they": "The plan is not more important than the energy you actually have.",
+   "body_they": "The original plan may be asking more energy than {{personPreferredName}} actually has.",
    "review_status": "approved",
    "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design."
   },
@@ -30217,7 +30217,7 @@
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
    "body_you": "You may get halfway through the errands and realize the rest of the list is too much. Forcing the original schedule can turn a normal day into a fight with yourself. Changing the plan does not make you unreliable. Remove one nonessential task before you start resenting everything that remains.",
-   "body_they": "You may get halfway through the errands and realize the rest of the list is too much. Forcing the original schedule can turn a normal day into a fight with yourself. Changing the plan does not make you unreliable. Remove one nonessential task before you start resenting everything that remains.",
+   "body_they": "{{personPreferredName}} may get halfway through the errands and realize the rest of the list is too much. Forcing the schedule can turn a normal day into a fight with {{personPossessiveAdjective}} own body and mood. Changing the plan does not make {{personObject}} unreliable. Dropping one nonessential task may be enough to keep the rest of the day workable.",
    "review_status": "approved",
    "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design."
   },
@@ -30226,7 +30226,7 @@
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
    "body_you": "Not everything you think needs to be said.",
-   "body_they": "Not everything you think needs to be said.",
+   "body_they": "{{personPreferredName}}’s thoughts may be moving faster than {{personPossessiveAdjective}} judgment.",
    "review_status": "approved",
    "notes": "Owner-authored batch 4 canonical set, exact approval 2026-08-05 (review/daily-glance-batch-4-owner-authored file; flags resolved; owner \"approved\"). Completes the surface rebuild."
   },
@@ -30235,7 +30235,7 @@
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
    "body_you": "Your thoughts are outrunning your judgment today. It is tempting to jump to conclusions, fill in missing details with worst-case guesses, or answer before you actually understand what is being said. Pause before you reply. You don't need to win the moment at the expense of getting it right. Don't make permanent choices with temporary information.",
-   "body_they": "Your thoughts are outrunning your judgment today. It is tempting to jump to conclusions, fill in missing details with worst-case guesses, or answer before you actually understand what is being said. Pause before you reply. You don't need to win the moment at the expense of getting it right. Don't make permanent choices with temporary information.",
+   "body_they": "{{personPreferredName}} may jump to conclusions, fill in missing details with the worst version, or answer before fully understanding what is being said. The urge to respond can be stronger than the information available. A slower reply gives {{personObject}} a better chance of getting the situation right instead of merely winning the moment.",
    "review_status": "approved",
    "notes": "Owner-authored batch 4 canonical set, exact approval 2026-08-05 (review/daily-glance-batch-4-owner-authored file; flags resolved; owner \"approved\"). Completes the surface rebuild."
   },
@@ -30244,7 +30244,7 @@
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
    "body_you": "A delayed reply can make a quiet phone feel like a final verdict.",
-   "body_they": "A delayed reply can make a quiet phone feel like a final verdict.",
+   "body_they": "A quiet phone may feel much louder to {{personPreferredName}} than it actually is.",
    "review_status": "approved",
    "notes": "Owner-authored batch 3, exact approval 2026-08-05 (review/daily-glance-batch-3-approval: owner-authored file + chat \"approved\"). Rebuilt surface; supersedes Copy Batch A."
   },
@@ -30253,7 +30253,7 @@
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
    "body_you": "You send a warm text and get silence back, and within ten minutes you are wondering if you were too much, while an impulse purchase in your cart starts looking like a reasonable fix for your feelings. Put the phone down and step away from the checkout screen. A slow reply does not get to decide what you are worth.",
-   "body_they": "You send a warm text and get silence back, and within ten minutes you are wondering if you were too much, while an impulse purchase in your cart starts looking like a reasonable fix for your feelings. Put the phone down and step away from the checkout screen. A slow reply does not get to decide what you are worth.",
+   "body_they": "{{personPreferredName}} may send a warm text, get silence back, and start wondering within minutes if the message came on too strong. An impulse purchase can begin to look like a quick fix for the feeling. The slow reply has not said anything final about the relationship or {{personPreferredName}}’s worth.",
    "review_status": "approved",
    "notes": "Owner-authored batch 3, exact approval 2026-08-05 (review/daily-glance-batch-3-approval: owner-authored file + chat \"approved\"). Rebuilt surface; supersedes Copy Batch A."
   },
@@ -30262,7 +30262,7 @@
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
    "body_you": "Anger this quick is usually the exhaustion talking.",
-   "body_they": "Anger this quick is usually the exhaustion talking.",
+   "body_they": "A fast flash of anger may be showing how exhausted {{personPreferredName}} already is.",
    "review_status": "approved",
    "notes": "Owner v3 rewrite (overload thesis), exact approval 2026-08-05; supersedes batch-3 landing. GR-004 new candidate recorded in batch-3 owner-authored file. Owner approval 2026-08-14: Voice Pass (68) workbook SHA-256 ef1d4221c4ed6cd32816ae1918fb20f06493160d8746c008954e584473c5ea42, approved in chat with \"the spreadsheet is all owner approved\"."
   },
@@ -30271,7 +30271,7 @@
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
    "body_you": "A last-minute demand lands on an already strained day, and someone pushes for an immediate answer while you are carrying private stress or sheer exhaustion. When they act like your time and energy are unlimited, it is easy to register the disrespect and lose your patience, spending twenty minutes in an argument you did not need to have and draining more energy than the task itself. You are already at your limit. You don't owe anyone an immediate reaction just because they brought an immediate demand. State your timeline, step out of the argument, and protect what's left of your day.",
-   "body_they": "A last-minute demand lands on an already strained day, and someone pushes for an immediate answer while you are carrying private stress or sheer exhaustion. When they treat your capacity as if it is bottomless, it is easy to register the disrespect and lose your patience, spending twenty minutes in a reactive conflict that drains more energy than the task itself. That flare of anger isn't a character flaw to fix. It is a signal that your bandwidth is full. You don't owe anyone an immediate reaction just because they brought an immediate demand. State your timeline, step out of the argument, and protect what's left of your day.",
+   "body_they": "A last-minute demand can land on an already strained day, and someone may push {{personPreferredName}} for an immediate answer while {{personPreferredName}} is carrying private stress or sheer exhaustion. When {{personPossessiveAdjective}} time is treated as unlimited, the disrespect can register fast and pull {{personObject}} into an argument that costs more energy than the task. A clear timeline and some distance from the fight may protect what is left of the day.",
    "review_status": "approved",
    "notes": "Owner v3 rewrite (overload thesis), exact approval 2026-08-05; supersedes batch-3 landing. GR-004 new candidate recorded in batch-3 owner-authored file. Owner approval 2026-08-14: Voice Pass (68) workbook SHA-256 ef1d4221c4ed6cd32816ae1918fb20f06493160d8746c008954e584473c5ea42, approved in chat with \"the spreadsheet is all owner approved\"."
   },
@@ -30280,7 +30280,7 @@
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
    "body_you": "The temptation is to say yes before you see the bill.",
-   "body_they": "The temptation is to say yes before you see the bill.",
+   "body_they": "{{personPreferredName}} may want to say yes before seeing the bill.",
    "review_status": "approved",
    "notes": "Owner-authored batch 4 canonical set, exact approval 2026-08-05 (review/daily-glance-batch-4-owner-authored file; flags resolved; owner \"approved\"). Completes the surface rebuild. Owner approval 2026-08-14: Voice Pass (68) workbook SHA-256 ef1d4221c4ed6cd32816ae1918fb20f06493160d8746c008954e584473c5ea42, approved in chat with \"the spreadsheet is all owner approved\"."
   },
@@ -30289,7 +30289,7 @@
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
    "body_you": "A rush of optimism can make every idea look manageable and every invitation look easier to fit in than it actually is. You may add work, spend money, or promise time before finishing what is already in front of you. Check your calendar, bank balance, and actual energy before you add anything else. More will not help if the current plan is already asking too much.",
-   "body_they": "A rush of optimism can make every idea look manageable and every invitation feel worth saying yes to. You may add work, spend money, or promise time before finishing what is already in front of you. Check your calendar, bank balance, and actual energy before you expand. More will not help if the current plan is already asking too much.",
+   "body_they": "A rush of optimism can make every idea look manageable and every invitation look easy to fit in. {{personPreferredName}} may add work, spend money, or promise time before finishing what is already in front of {{personObject}}. {{personPossessiveAdjectiveCapitalized}} calendar, bank balance, and actual energy will give a better answer than the excitement alone.",
    "review_status": "approved",
    "notes": "Owner-authored batch 4 canonical set, exact approval 2026-08-05 (review/daily-glance-batch-4-owner-authored file; flags resolved; owner \"approved\"). Completes the surface rebuild. Owner approval 2026-08-14: Voice Pass (68) workbook SHA-256 ef1d4221c4ed6cd32816ae1918fb20f06493160d8746c008954e584473c5ea42, approved in chat with \"the spreadsheet is all owner approved\"."
   },
@@ -30298,7 +30298,7 @@
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
    "body_you": "The deadline is not proof that you should be doing three jobs at once.",
-   "body_they": "Your inner critic is working overtime.",
+   "body_they": "The deadline does not mean {{personPreferredName}} should be doing three jobs at once.",
    "review_status": "approved",
    "notes": "Owner-authored batch 4 canonical set, exact approval 2026-08-05 (review/daily-glance-batch-4-owner-authored file; flags resolved; owner \"approved\"). Completes the surface rebuild. Owner approval 2026-08-14: exact chat-authored replacement approved with \"these are approved, please publish\"; supersedes the workbook text for this key."
   },
@@ -30307,7 +30307,7 @@
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
    "body_you": "Someone adds another request to a week that was already full, and your first response is to figure out how to squeeze it in. That is how an unreasonable workload starts looking like a personal time-management problem. Check what was already agreed to before you absorb the new work. Move the deadline, change the scope, or ask what should come off your list if this now takes priority.",
-   "body_they": "A slow start or unfinished task can make the whole day feel like proof that you are falling behind. You may respond by working through exhaustion and tightening every standard until nothing you finish feels good enough. Choose the work that actually matters today. Nobody has to earn rest, including you.",
+   "body_they": "Someone may add another request to a week that was already full, and {{personPreferredName}}’s first response may be figuring out how to squeeze it in. That is how an unreasonable workload starts looking like a personal time-management problem. The new work makes more sense once the deadline, scope, or existing priorities are allowed to change with it.",
    "review_status": "approved",
    "notes": "Owner-authored batch 4 canonical set, exact approval 2026-08-05 (review/daily-glance-batch-4-owner-authored file; flags resolved; owner \"approved\"). Completes the surface rebuild. Owner approval 2026-08-14: exact chat-authored replacement approved with \"these are approved, please publish\"; supersedes the workbook text for this key."
   },
@@ -30316,7 +30316,7 @@
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
    "body_you": "Your routine could use a small shake-up.",
-   "body_they": "Your routine could use a small shake-up.",
+   "body_they": "One tedious obligation may have {{personPreferredName}} wanting to scrap the whole routine.",
    "review_status": "approved",
    "notes": "Owner-authored batch 3, exact approval 2026-08-05 (review/daily-glance-batch-3-approval: owner-authored file + chat \"approved\"). Rebuilt surface; supersedes Copy Batch A. Owner approval 2026-08-14: Voice Pass (68) workbook SHA-256 ef1d4221c4ed6cd32816ae1918fb20f06493160d8746c008954e584473c5ea42, approved in chat with \"the spreadsheet is all owner approved\"."
   },
@@ -30325,7 +30325,7 @@
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
    "body_you": "You sit down to handle one tedious administrative form or one annoying obligation on your calendar, and five minutes later the whole day feels suffocating. It is easy to let that one task convince you that you preach balance while practicing burnout and need to scrap the entire schedule. You do not need to change everything because one part of it is making you miserable. Adjust the single commitment that is actually causing the friction and leave the rest intact. You're allowed to change your direction as you learn more about who you are.",
-   "body_they": "You sit down to handle a single tedious administrative form or look at one annoying obligation on your calendar, and expect restlessness. It is easy to let one frustrating task make your whole day feel suffocating, convincing you that you preach balance while practicing burnout and need to scrap the entire schedule. You don't have to optimize every second of your existence, nor do you need to tear everything down just to get some breathing room. Adjust the single commitment that is actually causing the friction and leave the rest intact. You're allowed to change your direction as you learn more about who you are.",
+   "body_they": "{{personPreferredName}} may sit down with one administrative form or annoying task and, five minutes later, feel trapped by the entire day. One frustrating commitment can make the whole schedule look wrong. The useful change is probably the part actually causing the friction, not every routine around it.",
    "review_status": "approved",
    "notes": "Owner-authored batch 3, exact approval 2026-08-05 (review/daily-glance-batch-3-approval: owner-authored file + chat \"approved\"). Rebuilt surface; supersedes Copy Batch A. Owner approval 2026-08-14: Voice Pass (68) workbook SHA-256 ef1d4221c4ed6cd32816ae1918fb20f06493160d8746c008954e584473c5ea42, approved in chat with \"the spreadsheet is all owner approved\"."
   },
@@ -30334,7 +30334,7 @@
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
    "body_you": "Question the story you're telling yourself.",
-   "body_they": "Question the story you're telling yourself.",
+   "body_they": "{{personPreferredName}} may be filling the silence with the worst possible explanation.",
    "review_status": "approved",
    "notes": "Owner-authored batch 4 canonical set, exact approval 2026-08-05 (review/daily-glance-batch-4-owner-authored file; flags resolved; owner \"approved\"). Completes the surface rebuild."
   },
@@ -30343,7 +30343,7 @@
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
    "body_you": "A delayed reply, vague plan, or conversation that suddenly feels off leaves enough room for your imagination to write the worst possible ending. You reread the message, study the wording, and connect the silence to every time someone disappointed you before. Soon, you are responding as if they have already disappointed you again. Give it time. Do not send the second message, cancel the plan, or make the decision for them before they have answered.",
-   "body_they": "A delayed reply, vague plan, or conversation that suddenly feels off leaves enough room for your imagination to write the worst possible ending. You reread the message, study the wording, and connect the silence to every time someone disappointed you before. Soon, you are responding as if they have already disappointed you again. Give it time. Do not send the second message, cancel the plan, or make the decision for them before they have answered.",
+   "body_they": "A delayed reply, vague plan, or conversation that suddenly feels off can leave enough room for {{personPreferredName}}’s imagination to write the ending. {{personSubjectCapitalized}} may reread the message, study the wording, and connect the silence to every earlier disappointment. The second message, canceled plan, or final decision can wait until the other person has actually answered.",
    "review_status": "approved",
    "notes": "Owner-authored batch 4 canonical set, exact approval 2026-08-05 (review/daily-glance-batch-4-owner-authored file; flags resolved; owner \"approved\"). Completes the surface rebuild."
   },
@@ -30352,7 +30352,7 @@
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
    "body_you": "Checking again is not going to make the answer safer.",
-   "body_they": "Control is not the same as safety.",
+   "body_they": "Checking again may give {{personPreferredName}} more to monitor, not more certainty.",
    "review_status": "approved",
    "notes": "Owner-authored batch 4 canonical set, exact approval 2026-08-05 (review/daily-glance-batch-4-owner-authored file; flags resolved; owner \"approved\"). Completes the surface rebuild. Owner approval 2026-08-14: exact chat-authored replacement approved with \"these are approved, please publish\"; supersedes the workbook text for this key."
   },
@@ -30361,7 +30361,7 @@
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
    "body_you": "You reopen the account, reread the message, or ask one more question because uncertainty makes you want another piece of information. The problem is that every new detail gives you something else to monitor. Check what actually needs checking, ask the direct question, and stop before trying to stay informed turns into trying to control an outcome you do not control.",
-   "body_they": "You may respond to uncertainty by reorganizing the schedule, checking the account again, watching everyone's mood so nothing catches you off guard. Micro-managing every detail doesn't quiet the anxiety; it only expands the list of things you have to monitor. Hyper-vigilance is not safety; it is just exhaustion. Decide what actually needs your intervention today, and let the situation breathe.",
+   "body_they": "{{personPreferredName}} may reopen the account, reread the message, or ask one more question because uncertainty makes another piece of information feel necessary. Every new detail then creates something else to watch. The useful line is between checking what actually needs checking and trying to control an outcome outside {{personPossessiveAdjective}} control.",
    "review_status": "approved",
    "notes": "Owner-authored batch 4 canonical set, exact approval 2026-08-05 (review/daily-glance-batch-4-owner-authored file; flags resolved; owner \"approved\"). Completes the surface rebuild. Owner approval 2026-08-14: exact chat-authored replacement approved with \"these are approved, please publish\"; supersedes the workbook text for this key."
   },
@@ -30370,7 +30370,7 @@
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
    "body_you": "Expecting someone to guess what you need won't tell you how much they care.",
-   "body_they": "Expecting someone to guess what you need won't tell you how much they care.",
+   "body_they": "Hints may leave {{personPreferredName}} feeling overlooked without giving anyone a fair chance to help.",
    "review_status": "approved",
    "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design."
   },
@@ -30379,7 +30379,7 @@
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
    "body_you": "Notice when you drop a hint, leave out the actual ask, and wait to see if they guess what you need. When you text that the milk is gone, delete the line asking them to stop at the store, and get a reply about dinner instead, it is easy to feel ignored, even though you never actually asked. Feeling overlooked still hurts, but expecting them to read your mind just sets everyone up to fail.",
-   "body_they": "Notice when you drop a hint, leave out the actual ask, and wait to see if they guess what you need. When you text that the milk is gone, delete the line asking them to stop at the store, and get a reply about dinner instead, it is easy to feel ignored, even though you never actually asked. Feeling overlooked still hurts, but expecting them to read your mind just sets everyone up to fail.",
+   "body_they": "{{personPreferredName}} may text that the milk is gone, delete the line asking someone to stop at the store, and then feel ignored when the reply is about dinner instead. The hurt is still real, but the actual ask never made it into the conversation. The situation gets clearer once the need is stated instead of tested.",
    "review_status": "approved",
    "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design."
   },
@@ -30388,7 +30388,7 @@
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
    "body_you": "Staying comfortable is costing you time.",
-   "body_they": "Staying comfortable is costing you time.",
+   "body_they": "A familiar choice may be keeping {{personPreferredName}} comfortable and stuck at the same time.",
    "review_status": "approved",
    "notes": "Owner-authored batch 4 canonical set, exact approval 2026-08-05 (review/daily-glance-batch-4-owner-authored file; flags resolved; owner \"approved\"). Completes the surface rebuild."
   },
@@ -30397,7 +30397,7 @@
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
    "body_you": "A familiar choice can feel safer because you already know how to survive it. That does not mean it still fits the life you are trying to build. Notice where you keep choosing the same role, relationship pattern, or work arrangement because change would require you to be inexperienced for a while. Being new at something is not proof that you made the wrong choice.",
-   "body_they": "A familiar choice can feel safer because you already know how to survive it. That does not mean it still fits the life you are trying to build. Notice where you keep choosing the same role, relationship pattern, or work arrangement because change would require you to be inexperienced for a while. Being new at something is not proof that you made the wrong choice.",
+   "body_they": "{{personPreferredName}} may keep choosing the same role, relationship pattern, or work arrangement because {{personPreferredName}} already knows how to survive it. Change would require being inexperienced for a while, which can make the old choice feel safer than it actually is. Being new at something does not mean {{personSubject}} chose wrong.",
    "review_status": "approved",
    "notes": "Owner-authored batch 4 canonical set, exact approval 2026-08-05 (review/daily-glance-batch-4-owner-authored file; flags resolved; owner \"approved\"). Completes the surface rebuild."
   },
@@ -30406,7 +30406,7 @@
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
    "body_you": "Doing it yourself is how the burden becomes yours again.",
-   "body_they": "Doing it yourself is how the burden becomes yours again.",
+   "body_they": "Doing it {{personReflexive}} may be how the old burden lands back on {{personPreferredName}}.",
    "review_status": "approved",
    "notes": "Owner-authored batch 4 canonical set, exact approval 2026-08-05 (review/daily-glance-batch-4-owner-authored file; flags resolved; owner \"approved\"). Completes the surface rebuild. Owner approval 2026-08-14: Voice Pass (68) workbook SHA-256 ef1d4221c4ed6cd32816ae1918fb20f06493160d8746c008954e584473c5ea42, approved in chat with \"the spreadsheet is all owner approved\"."
   },
@@ -30415,7 +30415,7 @@
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
    "body_you": "Pressure pulls you straight into your oldest habit: retreat, take control, smooth it over, or handle the whole thing yourself. That may end the argument right now, but it leaves you carrying the same burden again. Before you take over, give someone else a chance to answer, finish the task, or deal with the consequence. You can use what past experience taught you without stepping back into the role that cost you so much.",
-   "body_they": "Pressure pulls you straight into your oldest habit: retreat, take control, fix the mood, or handle the whole thing yourself. That impulse might protect you from temporary conflict, but it guarantees you end up carrying the exact burden you claim to be tired of. Pause before habit answers for you. You can draw on what past experience taught you without stepping back into the role that cost you so much.",
+   "body_they": "Pressure can pull {{personPreferredName}} straight into the old habit: retreat, take control, smooth it over, or handle the whole thing alone. That may end the argument quickly, but it leaves {{personObject}} carrying the same burden again. Past experience is useful; automatically taking the old role back is the part that can cost {{personObject}}.",
    "review_status": "approved",
    "notes": "Owner-authored batch 4 canonical set, exact approval 2026-08-05 (review/daily-glance-batch-4-owner-authored file; flags resolved; owner \"approved\"). Completes the surface rebuild. Owner approval 2026-08-14: Voice Pass (68) workbook SHA-256 ef1d4221c4ed6cd32816ae1918fb20f06493160d8746c008954e584473c5ea42, approved in chat with \"the spreadsheet is all owner approved\"."
   },
@@ -30424,7 +30424,7 @@
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
    "body_you": "Comfort is a quick substitute for admitting what you actually want.",
-   "body_they": "Comfort is a quick substitute for admitting what you actually want.",
+   "body_they": "{{personPreferredName}} may keep choosing the easier option and thinking about the one {{personPreferredName}} actually wanted.",
    "review_status": "approved",
    "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design. Owner approval 2026-08-14: Voice Pass (68) workbook SHA-256 ef1d4221c4ed6cd32816ae1918fb20f06493160d8746c008954e584473c5ea42, approved in chat with \"the spreadsheet is all owner approved\"."
   },
@@ -30433,7 +30433,7 @@
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
    "body_you": "You keep returning to the easier option even though it is not the one you want. You say the plan is fine, close the tab, or tell yourself it would be too disruptive to ask for more, then catch yourself thinking about the other choice again. Name what you actually want before you settle for the easiest option just because it causes the least trouble.",
-   "body_they": "Pay attention to every trip to the kitchen today, because hunger is rarely the whole story. Before reaching for another snack, put a name on whatever desire you are trying to quiet down, even if it feels inconvenient, disruptive, or unlikely. If food is still what you want after that, enjoy it. Just stop using it to answer questions you are avoiding.",
+   "body_they": "{{personPreferredName}} may say the plan is fine, close the tab, or decide it would be too disruptive to ask for more, then catch {{personReflexive}} returning to the other choice again. Comfort can be a quick substitute for admitting what {{personPreferredName}} wants. The repeated thought is usually the part worth paying attention to.",
    "review_status": "approved",
    "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design. Owner approval 2026-08-14: Voice Pass (68) workbook SHA-256 ef1d4221c4ed6cd32816ae1918fb20f06493160d8746c008954e584473c5ea42, approved in chat with \"the spreadsheet is all owner approved\"."
   },
@@ -30442,7 +30442,7 @@
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
    "body_you": "You can say yes in public and regret it in private.",
-   "body_they": "You can say yes in public and regret it in private.",
+   "body_they": "{{personPreferredName}} may say yes in public and regret it in private.",
    "review_status": "approved",
    "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design."
   },
@@ -30451,7 +30451,7 @@
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
    "body_you": "Someone asks for more, and the answer that keeps the peace comes out before you check what it will cost you. An hour later, you are resentful about a commitment you never wanted. Correct the answer. Tell them you agreed too quickly and need to revise what you can take on.",
-   "body_they": "Someone asks for more, and the answer that keeps the peace comes out before you check what it will cost you. An hour later, you are resentful about a commitment you never wanted. Correct the answer. Tell them you agreed too quickly and need to revise what you can take on.",
+   "body_they": "Someone asks for more, and {{personPreferredName}} may give the answer that keeps the peace before checking what it will cost. An hour later, that quick answer has become a commitment {{personSubject}} never wanted. The cleanest correction is simply admitting the first answer came too quickly and revising what {{personSubject}} can actually take on.",
    "review_status": "approved",
    "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design."
   },
@@ -30460,7 +30460,7 @@
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
    "body_you": "Stop treating their urgency as proof that your plans can wait.",
-   "body_they": "Stop treating their urgency as proof that your plans can wait.",
+   "body_they": "Someone else’s urgency may be rewriting {{personPreferredName}}’s day.",
    "review_status": "approved",
    "notes": "Owner-authored batch 4 canonical set, exact approval 2026-08-05 (review/daily-glance-batch-4-owner-authored file; flags resolved; owner \"approved\"). Completes the surface rebuild."
   },
@@ -30469,7 +30469,7 @@
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
    "body_you": "You started with a clear plan, but someone else's crisis just hijacked your schedule. They need more time, reassurance, or attention than you expected, and your first impulse is to put your life on hold to manage their reaction. Care is not the mistake here. The mistake is making their mood the emergency and your life the afterthought. Give what you can actually spare, not the energy you need to get through the rest of the day.",
-   "body_they": "You started with a clear plan, but someone else's crisis just hijacked your schedule. They need more time, reassurance, or attention than you expected, and your first impulse is to put your life on hold to manage their reaction. Care is not the mistake here. The mistake is making their mood the emergency and your life the afterthought. Give what you can actually spare, not the energy you need to get through the rest of the day.",
+   "body_they": "{{personPreferredName}} may start with a clear plan and end up rearranging it around someone else’s crisis. The other person needs time, reassurance, or attention, and {{personPreferredName}}’s first impulse may be to put {{personPossessiveAdjective}} own day on hold. Caring is not the problem. The strain begins when the other person’s mood becomes the emergency and {{personPreferredName}}’s own plans become the afterthought.",
    "review_status": "approved",
    "notes": "Owner-authored batch 4 canonical set, exact approval 2026-08-05 (review/daily-glance-batch-4-owner-authored file; flags resolved; owner \"approved\"). Completes the surface rebuild."
   },
@@ -30478,7 +30478,7 @@
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
    "body_you": "You can disagree without answering the argument they did not make.",
-   "body_they": "You're reading too much into it.",
+   "body_they": "{{personPreferredName}} may be answering more than the other person actually said.",
    "review_status": "approved",
    "notes": "Owner-authored batch 4 canonical set, exact approval 2026-08-05 (review/daily-glance-batch-4-owner-authored file; flags resolved; owner \"approved\"). Completes the surface rebuild. Owner approval 2026-08-14: exact chat-authored replacement approved with \"these are approved, please publish\"; supersedes the workbook text for this key."
   },
@@ -30487,7 +30487,7 @@
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
    "body_you": "A short message lands badly, and five minutes later you are responding to the tone, the timing, and everything you think they meant underneath it. Crossed wires only become a confrontation when you start fighting the story in your head instead of the words being said. Ask the question that clears up the missing part before you build a case around it.",
-   "body_they": "A blunt text, delayed reply, or clipped tone can feel loaded when you're already braced for friction. It's easy to spend twenty minutes dissecting two sentences and building an argument against a point the other person never made. Ask for clarification before you react to your worst-case assumption. Crossed wires only become a confrontation when you start fighting the story in your head instead of the words on the screen.",
+   "body_they": "A short message can land badly, and five minutes later {{personPreferredName}} may be reacting to the tone, timing, and everything the message seems to imply. Crossed wires become a confrontation when the story in {{personPossessiveAdjective}} head gets treated like the message itself. One clarifying question can keep the conversation from turning into an argument about something nobody actually said.",
    "review_status": "approved",
    "notes": "Owner-authored batch 4 canonical set, exact approval 2026-08-05 (review/daily-glance-batch-4-owner-authored file; flags resolved; owner \"approved\"). Completes the surface rebuild. Owner approval 2026-08-14: exact chat-authored replacement approved with \"these are approved, please publish\"; supersedes the workbook text for this key."
   },
@@ -30496,7 +30496,7 @@
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
    "body_you": "Being loved and feeling it do not always match.",
-   "body_they": "Being loved and feeling it do not always match.",
+   "body_they": "Being cared about and feeling cared for may not match for {{personPreferredName}} today.",
    "review_status": "approved",
    "notes": "Owner-authored batch 4 canonical set, exact approval 2026-08-05 (review/daily-glance-batch-4-owner-authored file; flags resolved; owner \"approved\"). Completes the surface rebuild. Owner approval 2026-08-14: Voice Pass (68) workbook SHA-256 ef1d4221c4ed6cd32816ae1918fb20f06493160d8746c008954e584473c5ea42, approved in chat with \"the spreadsheet is all owner approved\"."
   },
@@ -30505,7 +30505,7 @@
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
    "body_you": "Someone can care about you and still miss what you actually need. Your reflex is to hide your disappointment, convinced that saying you are disappointed will make you difficult or push them away. All this does is teach people to treat your limits as optional while keeping them blind to what you actually need. Tell them what you need and pay attention to what they actually do with the information. Caring about you and being able to meet the need are not always the same thing.",
-   "body_they": "Someone can care about you and still miss what you actually need. Your reflex is to hide your disappointment, convinced that making noise will make you a burden or push them away. All this does is teach people to treat your limits as optional while keeping them blind to what you actually need. Tell them what you need. Then give them the room to meet you, or show you that they won't.",
+   "body_they": "Someone can care about {{personPreferredName}} and still miss what {{personPreferredName}} needs. {{personPreferredName}} may hide the disappointment because saying it out loud feels difficult or risky. That keeps the other person comfortable but also leaves them blind to what is missing. The useful information is what happens after {{personPreferredName}} names the need.",
    "review_status": "approved",
    "notes": "Owner-authored batch 4 canonical set, exact approval 2026-08-05 (review/daily-glance-batch-4-owner-authored file; flags resolved; owner \"approved\"). Completes the surface rebuild. Owner approval 2026-08-14: Voice Pass (68) workbook SHA-256 ef1d4221c4ed6cd32816ae1918fb20f06493160d8746c008954e584473c5ea42, approved in chat with \"the spreadsheet is all owner approved\"."
   },
@@ -30514,7 +30514,7 @@
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
    "body_you": "Someone else's pressure can easily bait you into overreacting.",
-   "body_they": "Someone else's pressure can easily bait you into overreacting.",
+   "body_they": "Someone else’s pressure may pull a faster reaction out of {{personPreferredName}}.",
    "review_status": "approved",
    "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design. Owner approval 2026-08-14: Voice Pass (68) workbook SHA-256 ef1d4221c4ed6cd32816ae1918fb20f06493160d8746c008954e584473c5ea42, approved in chat with \"the spreadsheet is all owner approved\"."
   },
@@ -30523,7 +30523,7 @@
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
    "body_you": "Expect an urge to fire back when someone pushes a boundary or questions your judgment. Their tone can make defending yourself feel urgent before you have even heard the whole point. Ask one clear question, let them answer without interruption, and then decide how much weight to give it.",
-   "body_they": "Expect an urge to fire back when someone pushes a boundary or questions your judgment. Their edge can make instantaneous defense feel like self-preservation before you even hear them out. Ask one clear question, let them answer without interruption, and only then decide how much weight to give it.",
+   "body_they": "When someone pushes a boundary or questions {{personPreferredName}}’s judgment, the urge to fire back may arrive before hearing the whole point. The other person’s tone can make defense feel urgent. One clear question and enough room for an answer may tell {{personPreferredName}} whether the comment deserves a response or not.",
    "review_status": "approved",
    "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design. Owner approval 2026-08-14: Voice Pass (68) workbook SHA-256 ef1d4221c4ed6cd32816ae1918fb20f06493160d8746c008954e584473c5ea42, approved in chat with \"the spreadsheet is all owner approved\"."
   },
@@ -30532,7 +30532,7 @@
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
    "body_you": "More isn't the answer this time.",
-   "body_they": "More isn't the answer this time.",
+   "body_they": "Someone else’s enthusiasm may make it harder for {{personPreferredName}} to notice when the plan is too much.",
    "review_status": "approved",
    "notes": "Owner-authored batch 3, exact approval 2026-08-05 (review/daily-glance-batch-3-approval: owner-authored file + chat \"approved\"). Rebuilt surface; supersedes Copy Batch A. Owner approval 2026-08-14: Voice Pass (68) workbook SHA-256 ef1d4221c4ed6cd32816ae1918fb20f06493160d8746c008954e584473c5ea42, approved in chat with \"the spreadsheet is all owner approved\"."
   },
@@ -30541,7 +30541,7 @@
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
    "body_you": "Someone else keeps adding to the plan, and you keep agreeing before you check what you still have time or money for. A quick catch-up turns into an afternoon of extra stops. Their enthusiasm can make saying no feel harder than it should. If the extra plan takes time, money, or energy you already need somewhere else, it is too much. Enjoy the part you actually wanted and decline the additions.",
-   "body_they": "Someone else's high energy and appetite for more can easily pull you into an overcommitment you never intended to make. A quick catch-up turns into an afternoon of extra stops, and the temptation will be to move quickly, to grasp at what is returning, and to say yes before you understand the consequences. Their enthusiasm makes your limit look stingy, so you agree while mentally panicking about the work waiting at home. If it costs your peace, it's overpriced. Enjoy the first part of the plan, say a clear no to the additions, and remember that you don't have to be available for every crisis.",
+   "body_they": "A quick catch-up can turn into an afternoon of extra stops because someone keeps adding to the plan and {{personPreferredName}} keeps agreeing before checking how much time or money is still available. The additions may sound fun and still cost more than the day can hold. The best version is probably the part {{personSubject}} actually wanted, without every extra idea attached.",
    "review_status": "approved",
    "notes": "Owner-authored batch 3, exact approval 2026-08-05 (review/daily-glance-batch-3-approval: owner-authored file + chat \"approved\"). Rebuilt surface; supersedes Copy Batch A. Owner approval 2026-08-14: Voice Pass (68) workbook SHA-256 ef1d4221c4ed6cd32816ae1918fb20f06493160d8746c008954e584473c5ea42, approved in chat with \"the spreadsheet is all owner approved\"."
   },
@@ -30550,7 +30550,7 @@
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
    "body_you": "Their approval should not become another job.",
-   "body_they": "Their approval should not become another job.",
+   "body_they": "Someone else’s approval may be turning into extra work for {{personPreferredName}}.",
    "review_status": "approved",
    "notes": "Owner-authored batch 4 canonical set, exact approval 2026-08-05 (review/daily-glance-batch-4-owner-authored file; flags resolved; owner \"approved\"). Completes the surface rebuild. Owner approval 2026-08-14: Voice Pass (68) workbook SHA-256 ef1d4221c4ed6cd32816ae1918fb20f06493160d8746c008954e584473c5ea42, approved in chat with \"the spreadsheet is all owner approved\"."
   },
@@ -30559,7 +30559,7 @@
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
    "body_you": "You remember the details, show up when you said you would, and follow through, but still leave wondering what you did wrong. The other person stays distant or points to one more standard you have not met, so you keep trying harder for a response they never promised to give. At some point, the problem is no longer your effort.",
-   "body_they": "You remember the details, show up when you said you would, and follow through, but still leave wondering what you did wrong. The other person stays distant or points to one more standard you have not met, so you keep working harder for a warmth they never promised to give. At some point, the problem is no longer your effort.",
+   "body_they": "{{personPreferredName}} remembers the details, shows up when {{personSubject}} said {{personSubject}} would, and follows through, but still leaves wondering what {{personSubject}} did wrong. The other person stays distant or points to one more standard that has not been met, so {{personPreferredName}} keeps trying harder for a response that was never promised. At some point, the problem is no longer {{personPossessiveAdjective}} effort.",
    "review_status": "approved",
    "notes": "Owner-authored batch 4 canonical set, exact approval 2026-08-05 (review/daily-glance-batch-4-owner-authored file; flags resolved; owner \"approved\"). Completes the surface rebuild. Owner approval 2026-08-14: Voice Pass (68) workbook SHA-256 ef1d4221c4ed6cd32816ae1918fb20f06493160d8746c008954e584473c5ea42, approved in chat with \"the spreadsheet is all owner approved\"."
   },
@@ -30568,7 +30568,7 @@
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
    "body_you": "They changed the plan. They do not get to ruin yours.",
-   "body_they": "They changed the plan. They do not get to ruin yours.",
+   "body_they": "Someone else changed the plan, but {{personPreferredName}} does not have to lose the whole day with it.",
    "review_status": "approved",
    "notes": "Owner-authored batch 4 canonical set, exact approval 2026-08-05 (review/daily-glance-batch-4-owner-authored file; flags resolved; owner \"approved\"). Completes the surface rebuild. Owner approval 2026-08-14: Voice Pass (68) workbook SHA-256 ef1d4221c4ed6cd32816ae1918fb20f06493160d8746c008954e584473c5ea42, approved in chat with \"the spreadsheet is all owner approved\"."
   },
@@ -30577,7 +30577,7 @@
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
    "body_you": "You reorganized your life to make room for someone who just canceled, shifted the time, or went quiet. The mistake is letting their cancellation take the rest of your day with it. Take back the hours you set aside and put them toward your own life. They get to change their mind; they don't get to manage what you do next.",
-   "body_they": "You reorganized your life to make room for someone who just canceled, shifted the time, or went quiet. The mistake now is staying suspended in frustration. Take back the hours you set aside and put them toward your own life. They get to change their mind; they don't get to manage what you do next.",
+   "body_they": "{{personPreferredName}} may have reorganized the day for someone who then cancels, shifts the time, or goes quiet. The cancellation is frustrating; letting it take the rest of the day is optional. The hours {{personSubject}} had set aside can still return to {{personPossessiveAdjective}} own plans, even if the other person changed theirs.",
    "review_status": "approved",
    "notes": "Owner-authored batch 4 canonical set, exact approval 2026-08-05 (review/daily-glance-batch-4-owner-authored file; flags resolved; owner \"approved\"). Completes the surface rebuild. Owner approval 2026-08-14: Voice Pass (68) workbook SHA-256 ef1d4221c4ed6cd32816ae1918fb20f06493160d8746c008954e584473c5ea42, approved in chat with \"the spreadsheet is all owner approved\"."
   },
@@ -30586,7 +30586,7 @@
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
    "body_you": "Trust the pattern, not the promise.",
-   "body_they": "Trust the pattern, not the promise.",
+   "body_they": "{{personPreferredName}} may need to trust the pattern more than the reassurance.",
    "review_status": "approved",
    "notes": "Owner-authored batch 4 canonical set, exact approval 2026-08-05 (review/daily-glance-batch-4-owner-authored file; flags resolved; owner \"approved\"). Completes the surface rebuild. Owner approval 2026-08-14: Voice Pass (68) workbook SHA-256 ef1d4221c4ed6cd32816ae1918fb20f06493160d8746c008954e584473c5ea42, approved in chat with \"the spreadsheet is all owner approved\"."
   },
@@ -30595,7 +30595,7 @@
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
    "body_you": "Someone gives you just enough soft reassurance to keep you from walking away or setting a boundary. You want to accept the explanation because accepting the pattern means making an uncomfortable decision. Stop making the decision based on what they say they could do. Pay attention to what they actually do after the conversation ends; that is the only data that matters.",
-   "body_they": "Someone gives you just enough soft reassurance to keep you from walking away or setting a boundary. You want to accept the explanation because accepting the pattern means making an uncomfortable decision. Stop evaluating their potential and start measuring their consistency. What people do after the discussion ends is the only data that matters.",
+   "body_they": "Someone may give {{personPreferredName}} just enough reassurance to keep {{personObject}} from walking away or setting a boundary. The explanation is easier to accept than the pattern because the pattern asks for a harder decision. What the person actually does after the conversation will tell {{personPreferredName}} more than another promise about what could change.",
    "review_status": "approved",
    "notes": "Owner-authored batch 4 canonical set, exact approval 2026-08-05 (review/daily-glance-batch-4-owner-authored file; flags resolved; owner \"approved\"). Completes the surface rebuild. Owner approval 2026-08-14: Voice Pass (68) workbook SHA-256 ef1d4221c4ed6cd32816ae1918fb20f06493160d8746c008954e584473c5ea42, approved in chat with \"the spreadsheet is all owner approved\"."
   },
@@ -30604,7 +30604,7 @@
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
    "body_you": "Your need does not disappear because someone else has the final say.",
-   "body_they": "Some feelings just want to be felt, not fixed.",
+   "body_they": "Someone else having the final say does not erase {{personPreferredName}}’s need.",
    "review_status": "approved",
    "notes": "Owner-authored batch 3, exact approval 2026-08-05 (review/daily-glance-batch-3-approval: owner-authored file + chat \"approved\"). Rebuilt surface; supersedes Copy Batch A. Owner approval 2026-08-14: Voice Pass (68) workbook SHA-256 ef1d4221c4ed6cd32816ae1918fb20f06493160d8746c008954e584473c5ea42, approved in chat with \"the spreadsheet is all owner approved\"."
   },
@@ -30613,7 +30613,7 @@
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
    "body_you": "You bring a private need to the person who controls the money, access, or family decision. You explain what you need, and they point to whose money it is, who controls access, or who gets the final say. The power difference becomes obvious fast: who keeps compromising, whose needs are treated like a problem, and who is expected to accept the answer. State the facts of what you need without letting the conversation turn into a test of who has more authority. Being vulnerable does not mean giving up your position.",
-   "body_they": "You bring a private need to the person who controls the money, the access, or the family decision, explaining what you need based on care and history while they point to ownership, rules, and consequences. Power dynamics in the relationship become obvious: who makes the decisions, who always gives in, and who holds the emotional cards. Are you the one who always compromises, always bends? The question is no longer \"What do I owe this person?\" but \"What do I owe myself?\" State the facts of what you need without letting them rewrite the exchange into a test of authority. Your vulnerability is not a weakness.",
+   "body_they": "{{personPreferredName}} may bring a private need to the person who controls the money, access, or family decision and immediately run into the power difference. Who keeps compromising, whose need becomes a problem, and who is expected to accept the answer can become obvious very quickly. {{personPreferredName}} can stay vulnerable without giving up {{personPossessiveAdjective}} position in the conversation.",
    "review_status": "approved",
    "notes": "Owner-authored batch 3, exact approval 2026-08-05 (review/daily-glance-batch-3-approval: owner-authored file + chat \"approved\"). Rebuilt surface; supersedes Copy Batch A. Owner approval 2026-08-14: Voice Pass (68) workbook SHA-256 ef1d4221c4ed6cd32816ae1918fb20f06493160d8746c008954e584473c5ea42, approved in chat with \"the spreadsheet is all owner approved\"."
   },
@@ -30622,7 +30622,7 @@
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
    "body_you": "You can leave a need unsaid and still expect them to understand.",
-   "body_they": "You can leave a need unsaid and still expect them to understand.",
+   "body_they": "{{personPreferredName}} may leave a need unsaid and still hope the other person understands.",
    "review_status": "approved",
    "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design. Owner approval 2026-08-14: Voice Pass (68) workbook SHA-256 ef1d4221c4ed6cd32816ae1918fb20f06493160d8746c008954e584473c5ea42, approved in chat with \"the spreadsheet is all owner approved\"."
   },
@@ -30631,7 +30631,7 @@
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
    "body_you": "A loved one asks why you changed the evening plan, and you stop halfway through the answer because their response makes you want to shut down. You may wait for them to notice what you did not finish saying, but they cannot respond to a need you never named. Finish the sentence. Tell them what you needed when you changed the plan.",
-   "body_they": "A loved one asks why you changed the evening plan, and you stop mid-sentence when their tone feels too familiar. You may want to stay quiet and wait for them to notice what you did not finish. That test backfires. You don't have to do it all alone. Finish your sentence: tell them what you needed when you changed the plan.",
+   "body_they": "A loved one may ask why {{personPreferredName}} changed the evening plan, and {{personSubject}} may stop halfway through the answer when the response makes {{personObject}} want to shut down. Waiting for the other person to notice what was left unsaid can deepen the disappointment. The conversation has a better chance once {{personPreferredName}} finishes the sentence and names what {{personSubject}} needed.",
    "review_status": "approved",
    "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design. Owner approval 2026-08-14: Voice Pass (68) workbook SHA-256 ef1d4221c4ed6cd32816ae1918fb20f06493160d8746c008954e584473c5ea42, approved in chat with \"the spreadsheet is all owner approved\"."
   },
@@ -30640,7 +30640,7 @@
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
    "body_you": "The old excuse is getting harder to believe.",
-   "body_they": "Growth requires losing your favorite excuses.",
+   "body_they": "The old excuse may be getting harder for {{personPreferredName}} to believe.",
    "review_status": "approved",
    "notes": "Owner-authored batch 4 canonical set, exact approval 2026-08-05 (review/daily-glance-batch-4-owner-authored file; flags resolved; owner \"approved\"). Completes the surface rebuild. Owner approval 2026-08-14: Voice Pass (68) workbook SHA-256 ef1d4221c4ed6cd32816ae1918fb20f06493160d8746c008954e584473c5ea42, approved in chat with \"the spreadsheet is all owner approved\"."
   },
@@ -30649,7 +30649,7 @@
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
    "body_you": "Someone points out the same habit you thought you had already moved past, and your first instinct may be to avoid them instead of looking at the pattern. Familiar dynamics can feel easier because you already know how to behave inside them. Pay attention to who supports the choices you are trying to make now, not only the version of you that used to be easier for them.",
-   "body_they": "The people who actually help you grow will not always feel comfortable to be around. When someone calls you out on a bad habit, your instinct might be to pull back. But predictable dynamics are not the same as healthy ones. Pay attention to who supports the person you are becoming, versus who only likes you when you remain useful in the old way.",
+   "body_they": "Someone may point out the same habit {{personPreferredName}} thought {{personSubject}} had already moved past, and avoiding that person can feel easier than looking at the pattern again. Familiar dynamics are comfortable because {{personPreferredName}} already knows how to behave inside them. The people who support the choices {{personPreferredName}} is making now may matter more than the people who preferred an older version of {{personObject}}.",
    "review_status": "approved",
    "notes": "Owner-authored batch 4 canonical set, exact approval 2026-08-05 (review/daily-glance-batch-4-owner-authored file; flags resolved; owner \"approved\"). Completes the surface rebuild. Owner approval 2026-08-14: Voice Pass (68) workbook SHA-256 ef1d4221c4ed6cd32816ae1918fb20f06493160d8746c008954e584473c5ea42, approved in chat with \"the spreadsheet is all owner approved\"."
   },
@@ -30658,7 +30658,7 @@
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
    "body_you": "The automatic yes is getting harder to live with.",
-   "body_they": "The automatic yes is getting harder to live with.",
+   "body_they": "{{personPreferredName}}’s automatic yes may be getting harder to live with.",
    "review_status": "approved",
    "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design."
   },
@@ -30667,7 +30667,7 @@
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
    "body_you": "Someone asks for one more favor, and you feel yourself agreeing before you check the time you saved for yourself. The yes may keep them happy and leave you resentful. You do not have to prove care by taking on every errand. Tell them you cannot do this one.",
-   "body_they": "Someone asks for one more favor, and you feel yourself agreeing before you check the time you saved for yourself. The yes may keep them happy and leave you resentful. You do not have to prove care by taking on every errand. Tell them you cannot do this one.",
+   "body_they": "Someone asks {{personPreferredName}} for one more favor and the yes may come out before checking the time {{personPreferredName}} had saved for {{personReflexive}}. The agreement keeps the other person happy and can leave {{personPreferredName}} resentful later. Care does not require {{personObject}} to take on every errand that lands in front of {{personObject}}.",
    "review_status": "approved",
    "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design."
   },
@@ -30676,7 +30676,7 @@
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
    "body_you": "Staying silent only hides how much you've already given up.",
-   "body_they": "Staying silent only hides how much you've already given up.",
+   "body_they": "{{personPreferredName}} may be calling the relationship fine while giving up more than {{personPreferredName}} admits.",
    "review_status": "approved",
    "notes": "Owner-authored batch 4 canonical set, exact approval 2026-08-05 (review/daily-glance-batch-4-owner-authored file; flags resolved; owner \"approved\"). Completes the surface rebuild. Owner approval 2026-08-14: Voice Pass (68) workbook SHA-256 ef1d4221c4ed6cd32816ae1918fb20f06493160d8746c008954e584473c5ea42, approved in chat with \"the spreadsheet is all owner approved\"."
   },
@@ -30685,7 +30685,7 @@
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
    "body_you": "You can keep calling the relationship fine because naming the problem would force a harder conversation. Meanwhile, the distance keeps growing and you keep giving up more of what you actually want to avoid the argument. Staying polite is not fixing the relationship. It is postponing the conversation that decides what happens next.",
-   "body_they": "You can't keep tiptoeing across a gap that is actively growing. Staying quiet only hides how much you've settled for routine over connection. Walking on eggshells doesn't prevent a mess; it just guarantees one. Staying polite isn't saving the relationship. It is just delaying the inevitable.",
+   "body_they": "{{personPreferredName}} can keep the peace by avoiding the harder conversation, but the distance keeps growing while more of what {{personPreferredName}} wants gets set aside. Politeness may keep the evening calm without fixing the relationship. What happens next depends on whether the problem finally gets named.",
    "review_status": "approved",
    "notes": "Owner-authored batch 4 canonical set, exact approval 2026-08-05 (review/daily-glance-batch-4-owner-authored file; flags resolved; owner \"approved\"). Completes the surface rebuild. Owner approval 2026-08-14: Voice Pass (68) workbook SHA-256 ef1d4221c4ed6cd32816ae1918fb20f06493160d8746c008954e584473c5ea42, approved in chat with \"the spreadsheet is all owner approved\"."
   },
@@ -30694,7 +30694,7 @@
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
    "body_you": "What you want is obvious today, especially when you try to pretend you do not care.",
-   "body_they": "What you want is obvious today, especially when you try to pretend you do not care.",
+   "body_they": "What {{personPreferredName}} wants may be obvious despite the effort to hide it.",
    "review_status": "approved",
    "notes": "Owner-authored batch 3, exact approval 2026-08-05 (review/daily-glance-batch-3-approval: owner-authored file + chat \"approved\"). Rebuilt surface; supersedes Copy Batch A. Owner approval 2026-08-14: Voice Pass (68) workbook SHA-256 ef1d4221c4ed6cd32816ae1918fb20f06493160d8746c008954e584473c5ea42, approved in chat with \"the spreadsheet is all owner approved\"."
   },
@@ -30703,7 +30703,7 @@
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
    "body_you": "You might catch yourself hesitating over the plan you actually want to skip, or waiting for someone else to say the answer you are hoping for. Acting like you are fine with whatever happens does not make you look flexible right now; it just looks like distance, because the desire shows through anyway. Hiding it does not convince anyone, least of all you. Say what you want, and move forward.",
-   "body_they": "You might catch yourself hesitating over the plan you actually want to skip, or waiting for someone else to say the answer you are hoping for. Playing easygoing does not make you look flexible right now; it just looks like distance, because the desire shows through anyway. Hiding it does not convince anyone, least of all you. Say what you want, and move forward.",
+   "body_they": "{{personPreferredName}} may hesitate over the plan {{personPreferredName}} actually wants to skip, or wait for someone else to say the answer {{personPreferredName}} hopes for. Acting fine with whatever happens can read as distance when the desire is already showing. The day gets simpler once the preference is stated.",
    "review_status": "approved",
    "notes": "Owner-authored batch 3, exact approval 2026-08-05 (review/daily-glance-batch-3-approval: owner-authored file + chat \"approved\"). Rebuilt surface; supersedes Copy Batch A. Owner approval 2026-08-14: Voice Pass (68) workbook SHA-256 ef1d4221c4ed6cd32816ae1918fb20f06493160d8746c008954e584473c5ea42, approved in chat with \"the spreadsheet is all owner approved\"."
   },
@@ -30712,7 +30712,7 @@
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
    "body_you": "A sudden change of plans can quickly wear down your patience.",
-   "body_they": "A sudden change of plans can quickly wear down your patience.",
+   "body_they": "A changed plan may wear down {{personPreferredName}}’s patience faster than usual.",
    "review_status": "approved",
    "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design."
   },
@@ -30721,7 +30721,7 @@
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
    "body_you": "When someone asks to reschedule, you might catch yourself getting irritated or defensive before you even process the ask. Instead of listing every reason their idea is inconvenient, just say what you can and cannot do. You do not have to manage everyone else's feelings today. Give them a straight answer and let the rest go.",
-   "body_they": "When someone asks to reschedule, you might catch yourself getting irritated or defensive before you even process the ask. Instead of listing every reason their idea is inconvenient, just say what you can and cannot do. You do not have to manage everyone else's feelings today. Give them a straight answer and let the rest go.",
+   "body_they": "When someone asks to reschedule, {{personPreferredName}} may get irritated or defensive before processing the request. Listing every inconvenience can turn a simple change into a bigger emotional job. A straight answer about what {{personSubject}} can and cannot do may be enough. Managing the other person’s reaction is a separate job.",
    "review_status": "approved",
    "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design."
   },
@@ -30730,7 +30730,7 @@
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
    "body_you": "Once you admit what you are worried about, the whole conversation can come out at once.",
-   "body_they": "Once you admit what you are worried about, the whole conversation can come out at once.",
+   "body_they": "Once {{personPreferredName}} says what is really worrying {{personObject}}, the rest may come out quickly.",
    "review_status": "approved",
    "notes": "Owner-authored batch 3, exact approval 2026-08-05 (review/daily-glance-batch-3-approval: owner-authored file + chat \"approved\"). Rebuilt surface; supersedes Copy Batch A."
   },
@@ -30739,7 +30739,7 @@
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
    "body_you": "You are trying to decide who can take a family member to an appointment when you finally say that you do not think they should go alone. Then the rest spills out: the work you would miss, who else could help, and why this keeps becoming your responsibility. Decide who is going with them first. Then come back to why the responsibility keeps falling on you.",
-   "body_they": "You are trying to decide who can take a family member to an appointment when you finally say that you do not think they should go alone. Then the rest spills out: the work you would miss, who else could help, and why this keeps becoming your responsibility. Decide who is going with them first. Then come back to why the responsibility keeps falling on you.",
+   "body_they": "{{personPreferredName}} may be trying to arrange who can take a family member to an appointment when the real worry finally comes out: that person should not go alone. Then the rest spills out: the work {{personSubject}} would miss, who else could help, and why this keeps becoming {{personPossessiveAdjective}} responsibility. It may be easier to settle who is going first and come back to the larger question once the immediate problem is handled.",
    "review_status": "approved",
    "notes": "Owner-authored batch 3, exact approval 2026-08-05 (review/daily-glance-batch-3-approval: owner-authored file + chat \"approved\"). Rebuilt surface; supersedes Copy Batch A."
   },
@@ -30748,7 +30748,7 @@
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
    "body_you": "Love can look low-key.",
-   "body_they": "Love can look low-key.",
+   "body_they": "{{personPreferredName}} may notice love in the small things today.",
    "review_status": "approved",
    "notes": "Owner-authored batch 4 canonical set, exact approval 2026-08-05 (review/daily-glance-batch-4-owner-authored file; flags resolved; owner \"approved\"). Completes the surface rebuild. Owner approval 2026-08-14: Voice Pass (68) workbook SHA-256 ef1d4221c4ed6cd32816ae1918fb20f06493160d8746c008954e584473c5ea42, approved in chat with \"the spreadsheet is all owner approved\"."
   },
@@ -30757,7 +30757,7 @@
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
    "body_you": "Love usually looks pretty ordinary: a saved seat, a remembered coffee order, a text that arrives right when you need someone to check in. You don't need a grand, dramatic gesture to know who's in your corner. Pay attention to who shows up without making it about them, and let them know you saw it. Let the small things count.",
-   "body_they": "Love usually looks pretty ordinary: a saved seat, a remembered coffee order, a text that hits right when you need a lift. You don't need a grand, dramatic gesture to know who's in your corner. Pay attention to who shows up without making it about them, and let them know you saw it. Let the small things count.",
+   "body_they": "For {{personPreferredName}}, care may look ordinary: a saved seat, a remembered coffee order, or a text that arrives at exactly the right time. {{personSubjectCapitalized}} may not need a grand gesture to know who is in {{personPossessiveAdjective}} corner. The people who show up quietly may matter more than the ones who make the biggest display.",
    "review_status": "approved",
    "notes": "Owner-authored batch 4 canonical set, exact approval 2026-08-05 (review/daily-glance-batch-4-owner-authored file; flags resolved; owner \"approved\"). Completes the surface rebuild. Owner approval 2026-08-14: Voice Pass (68) workbook SHA-256 ef1d4221c4ed6cd32816ae1918fb20f06493160d8746c008954e584473c5ea42, approved in chat with \"the spreadsheet is all owner approved\"."
   },
@@ -30766,7 +30766,7 @@
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
    "body_you": "The feeling hits, and you are already doing something about it.",
-   "body_they": "The feeling hits, and you are already doing something about it.",
+   "body_they": "{{personPreferredName}} may be moving before deciding what the feeling needs.",
    "review_status": "approved",
    "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design. Owner approval 2026-08-14: Voice Pass (68) workbook SHA-256 ef1d4221c4ed6cd32816ae1918fb20f06493160d8746c008954e584473c5ea42, approved in chat with \"the spreadsheet is all owner approved\"."
   },
@@ -30775,7 +30775,7 @@
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
    "body_you": "You may walk out angry, make the worried call immediately, or jump into an argument that did not involve you. A quick response is not always the wrong one, but it gives you less time to decide if you are solving the problem or making it bigger. Before you leave, call, or intervene, decide what you want the next ten minutes to accomplish.",
-   "body_they": "You may walk out angry, make the worried call immediately, or jump into an argument that did not involve you. A quick response is not always the wrong one, but it gives you less time to decide whether you are solving the problem or making it bigger. Before you leave, call, or intervene, decide what you want the next ten minutes to accomplish.",
+   "body_they": "{{personPreferredName}} may walk out angry, make the worried call immediately, or jump into an argument that did not involve {{personObject}}. A fast response is not automatically the wrong response, but it gives {{personObject}} less time to tell if the response is solving the problem or making it bigger. A short pause can help {{personObject}} decide what the next ten minutes should accomplish.",
    "review_status": "approved",
    "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design. Owner approval 2026-08-14: Voice Pass (68) workbook SHA-256 ef1d4221c4ed6cd32816ae1918fb20f06493160d8746c008954e584473c5ea42, approved in chat with \"the spreadsheet is all owner approved\"."
   },
@@ -30784,7 +30784,7 @@
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
    "body_you": "Help becomes extra work when everyone shows up at the same time.",
-   "body_they": "Help becomes extra work when everyone shows up at the same time.",
+   "body_they": "Too much help can become another thing for {{personPreferredName}} to manage.",
    "review_status": "approved",
    "notes": "Owner-authored batch 3, exact approval 2026-08-05 (review/daily-glance-batch-3-approval: owner-authored file + chat \"approved\"). Rebuilt surface; supersedes Copy Batch A. Owner approval 2026-08-14: Voice Pass (68) workbook SHA-256 ef1d4221c4ed6cd32816ae1918fb20f06493160d8746c008954e584473c5ea42, approved in chat with \"the spreadsheet is all owner approved\"."
   },
@@ -30793,7 +30793,7 @@
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
    "body_you": "You ask for a ride and get three offers, a meal plan, and enough enthusiasm to turn one quick errand into a full group project. The support is genuine, but managing the offers, coordinating the details, and keeping everyone happy takes more energy than doing the job yourself. Accept the offer that actually makes your day easier and decline the rest.",
-   "body_they": "You ask for a ride and get three offers, a meal plan, and enough enthusiasm to turn one quick errand into a full group project. The support is genuine, but managing the offers, coordinating the details, and keeping everyone happy takes more energy than doing the job yourself. Accept the single offer that makes your day simpler, say a polite no to the rest, and move on.",
+   "body_they": "{{personPreferredName}} may ask for a ride and end up with three offers, a meal plan, and enough enthusiasm to turn one quick errand into a group project. The support is genuine, but coordinating everyone can take more energy than the original task. The easiest version of the day comes from accepting the offer that actually helps and letting the rest go.",
    "review_status": "approved",
    "notes": "Owner-authored batch 3, exact approval 2026-08-05 (review/daily-glance-batch-3-approval: owner-authored file + chat \"approved\"). Rebuilt surface; supersedes Copy Batch A. Owner approval 2026-08-14: Voice Pass (68) workbook SHA-256 ef1d4221c4ed6cd32816ae1918fb20f06493160d8746c008954e584473c5ea42, approved in chat with \"the spreadsheet is all owner approved\"."
   },
@@ -30802,7 +30802,7 @@
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
    "body_you": "Taking care of family is rarely just about the task itself.",
-   "body_they": "Taking care of family is rarely just about the task itself.",
+   "body_they": "Helping family may take more out of {{personPreferredName}} than the task itself.",
    "review_status": "approved",
    "notes": "Owner-authored batch 3, exact approval 2026-08-05 (review/daily-glance-batch-3-approval: owner-authored file + chat \"approved\"). Rebuilt surface; supersedes Copy Batch A. Owner approval 2026-08-14: Voice Pass (68) workbook SHA-256 ef1d4221c4ed6cd32816ae1918fb20f06493160d8746c008954e584473c5ea42, approved in chat with \"the spreadsheet is all owner approved\"."
   },
@@ -30811,7 +30811,7 @@
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
    "body_you": "A text confirms an appointment, so you reschedule a work call and now have to fit the rest of your work into fewer hours. Then another request comes in before you have adjusted to the first one. The burden is not only showing up. It is rearranging your day every time someone else needs help. Pick the most important request you can actually manage today, adjust the schedule once, and say no to the rest.",
-   "body_they": "It is the energy spent rebuilding your whole day around it. A text confirms an appointment, so you reschedule a work call and squeeze your remaining hours into a tight corner. Then another ask comes in before you have even settled the first change. The weight does not just come from showing up. It comes from constantly tearing down and rearranging your life whenever someone else needs help. Pick the most important request you can actually manage today, adjust the schedule once, and say no to the rest.",
+   "body_they": "An appointment gets confirmed, so {{personPreferredName}} moves a work call and has to fit the rest of the day into fewer hours. Then another request arrives before {{personPreferredName}} has adjusted to the first one. The burden is not only showing up; it is rearranging the whole day every time someone needs help. The most workable choice may be to decide what {{personSubject}} can actually carry and let the rest wait.",
    "review_status": "approved",
    "notes": "Owner-authored batch 3, exact approval 2026-08-05 (review/daily-glance-batch-3-approval: owner-authored file + chat \"approved\"). Rebuilt surface; supersedes Copy Batch A. Owner approval 2026-08-14: Voice Pass (68) workbook SHA-256 ef1d4221c4ed6cd32816ae1918fb20f06493160d8746c008954e584473c5ea42, approved in chat with \"the spreadsheet is all owner approved\"."
   },
@@ -30820,7 +30820,7 @@
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
    "body_you": "You keep reconsidering the whole routine after one unwelcome change.",
-   "body_they": "You keep reconsidering the whole routine after one unwelcome change.",
+   "body_they": "One unwelcome change may have {{personPreferredName}} questioning the whole routine.",
    "review_status": "approved",
    "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design. Owner approval 2026-08-14: Voice Pass (68) workbook SHA-256 ef1d4221c4ed6cd32816ae1918fb20f06493160d8746c008954e584473c5ea42, approved in chat with \"the spreadsheet is all owner approved\"."
   },
@@ -30829,7 +30829,7 @@
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
    "body_you": "You open an app you use all the time and see the price went up. Five minutes later you are comparing replacements and questioning every routine built around it. You're allowed to change your plan once you know the new price. Write down the new total and one workable alternative before you cancel anything.",
-   "body_they": "You open a familiar service, find a higher price, and lose time comparing replacements. You may feel too restless to accept the new terms. You start questioning every routine built around it. You're allowed to change your plan once you know the new price. Write down the new total and one workable alternative before changing the service.",
+   "body_they": "{{personPreferredName}} may open a familiar app, notice the price went up, and spend the next five minutes comparing replacements and reconsidering every routine built around it. The new price may justify a change, but it does not require dismantling everything at once. One workable alternative is enough before {{personPreferredName}} decides what actually needs to go.",
    "review_status": "approved",
    "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design. Owner approval 2026-08-14: Voice Pass (68) workbook SHA-256 ef1d4221c4ed6cd32816ae1918fb20f06493160d8746c008954e584473c5ea42, approved in chat with \"the spreadsheet is all owner approved\"."
   },
@@ -30838,7 +30838,7 @@
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
    "body_you": "Give yourself permission to turn the volume down on the world right now.",
-   "body_they": "Give yourself permission to turn the volume down on the world right now.",
+   "body_they": "{{personPreferredName}} may need less noise to identify the feeling.",
    "review_status": "approved",
    "notes": "Owner-authored batch 4 canonical set, exact approval 2026-08-05 (review/daily-glance-batch-4-owner-authored file; flags resolved; owner \"approved\"). Completes the surface rebuild. Owner approval 2026-08-14: Voice Pass (68) workbook SHA-256 ef1d4221c4ed6cd32816ae1918fb20f06493160d8746c008954e584473c5ea42, approved in chat with \"the spreadsheet is all owner approved\"."
   },
@@ -30847,7 +30847,7 @@
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
    "body_you": "A song can undo you. An old memory can color the whole afternoon. Someone else's mood may follow you home before you realize you picked it up. Give yourself less noise, fewer opinions, and more time before making a hard decision. Write, make something, take a long shower, or let yourself stare out the window for a while. Give yourself enough quiet to figure out what you are actually feeling before you make a decision based on it.",
-   "body_they": "A song can undo you. An old memory can color the whole afternoon. Someone else's mood may follow you home before you realize you picked it up. Give yourself less noise, fewer opinions, and more time before making a hard decision. Write, make something, take a long shower, or let yourself stare out the window for a while. Not every feeling needs to be solved, but it does need to be experienced.",
+   "body_they": "A song can undo {{personPreferredName}}. An old memory can color the afternoon, or {{personPreferredName}} can carry someone else’s mood home without realizing it. More quiet, fewer opinions, and a little time away from the decision can help {{personObject}} sort {{personPossessiveAdjective}} own feeling from everything {{personSubject}} absorbed. Writing, making something, showering, or simply staring out the window may give the day enough space to settle.",
    "review_status": "approved",
    "notes": "Owner-authored batch 4 canonical set, exact approval 2026-08-05 (review/daily-glance-batch-4-owner-authored file; flags resolved; owner \"approved\"). Completes the surface rebuild. Owner approval 2026-08-14: Voice Pass (68) workbook SHA-256 ef1d4221c4ed6cd32816ae1918fb20f06493160d8746c008954e584473c5ea42, approved in chat with \"the spreadsheet is all owner approved\"."
   },
@@ -30856,7 +30856,7 @@
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
    "body_you": "Trying to win is easier than admitting you're upset.",
-   "body_they": "Stop weaponizing control to keep from admitting you were hurt.",
+   "body_they": "{{personPreferredName}} may reach for control before admitting to being upset.",
    "review_status": "approved",
    "notes": "Owner-authored batch 4 canonical set, exact approval 2026-08-05 (review/daily-glance-batch-4-owner-authored file; flags resolved; owner \"approved\"). Completes the surface rebuild. Owner approval 2026-08-14: Voice Pass (68) workbook SHA-256 ef1d4221c4ed6cd32816ae1918fb20f06493160d8746c008954e584473c5ea42, approved in chat with \"the spreadsheet is all owner approved\"."
   },
@@ -30865,7 +30865,7 @@
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
    "body_you": "A small reaction may reveal how much you want control, recognition, or certainty. You may want to push, withhold, test, or win because saying you are upset feels more exposing. Say what actually got to you before the argument turns into a fight over who has the upper hand. Getting control of the moment will not fix the part that upset you.",
-   "body_they": "A small reaction may reveal a much larger need for control, recognition, or certainty. You may want to push, withhold, test, or win because admitting you are upset feels more exposing. Name the feeling before it turns into a power struggle. Intensity is useful when it tells the truth, not when it tries to force an outcome.",
+   "body_they": "A small reaction can show how strongly {{personPreferredName}} wants control, recognition, or certainty. {{personSubjectCapitalized}} may push, withhold, test, or try to win because saying what actually hurt feels more exposing. The argument usually gets harder once the original feeling disappears underneath a fight about who has the upper hand.",
    "review_status": "approved",
    "notes": "Owner-authored batch 4 canonical set, exact approval 2026-08-05 (review/daily-glance-batch-4-owner-authored file; flags resolved; owner \"approved\"). Completes the surface rebuild. Owner approval 2026-08-14: Voice Pass (68) workbook SHA-256 ef1d4221c4ed6cd32816ae1918fb20f06493160d8746c008954e584473c5ea42, approved in chat with \"the spreadsheet is all owner approved\"."
   },
@@ -30874,7 +30874,7 @@
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
    "body_you": "The care is being offered, but part of you still expects to be disappointed.",
-   "body_they": "The care is being offered, but the old hurt makes it hard to accept.",
+   "body_they": "{{personPreferredName}} may want the care and still hesitate to take it.",
    "review_status": "approved",
    "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design. Owner approval 2026-08-14: Voice Pass (68) workbook SHA-256 ef1d4221c4ed6cd32816ae1918fb20f06493160d8746c008954e584473c5ea42, approved in chat with \"the spreadsheet is all owner approved\"."
   },
@@ -30883,7 +30883,7 @@
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
    "body_you": "You type \"I'm fine\" after they offer to call, even though part of you wants to say yes. Wanting the help and expecting to be disappointed can happen at the same time, so refusing feels safer than asking. Tell them you could use the call after all.",
-   "body_they": "You type \"I'm fine\" after they offer to call, even though part of you wants to say yes. The need for care and the fear of being disappointed arrive at the same time, so refusing can feel safer than asking. Replace \"I'm fine\" with a quick check-in.",
+   "body_they": "{{personPreferredName}} may type “I’m fine” after someone offers to call, even when part of {{personObject}} wants to say yes. Wanting the help and expecting disappointment can exist at the same time, which can make refusal feel safer than asking for what {{personPreferredName}} needs. If {{personPreferredName}} changes {{personPossessiveAdjective}} mind and accepts the call, the care has somewhere to land.",
    "review_status": "approved",
    "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design. Owner approval 2026-08-14: Voice Pass (68) workbook SHA-256 ef1d4221c4ed6cd32816ae1918fb20f06493160d8746c008954e584473c5ea42, approved in chat with \"the spreadsheet is all owner approved\"."
   },
@@ -30892,7 +30892,7 @@
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
    "body_you": "You keep reopening the next step you said you were not ready for.",
-   "body_they": "You keep reopening the next step you said you were not ready for.",
+   "body_they": "{{personPreferredName}} keeps reopening a next step {{personSubject}} said could wait.",
    "review_status": "approved",
    "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design. Owner approval 2026-08-14: Voice Pass (68) workbook SHA-256 ef1d4221c4ed6cd32816ae1918fb20f06493160d8746c008954e584473c5ea42, approved in chat with \"the spreadsheet is all owner approved\"."
   },
@@ -30901,7 +30901,7 @@
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
    "body_you": "The application, class, project, or responsibility you keep reopening deserves a closer look. That does not mean you need to overhaul your life. If you keep coming back to the same opportunity, find out what is keeping your attention there. Write one sentence naming why you want it.",
-   "body_they": "The application, class, project, or responsibility you keep reopening deserves a closer look. That does not mean you need to overhaul your life. It does mean the choice deserves more than another closed tab. Write one sentence naming why you want it.",
+   "body_they": "The application, class, project, or responsibility {{personPreferredName}} keeps reopening probably deserves a closer look. A closer look does not require a life overhaul. Repeated attention is information. If the same opportunity keeps pulling {{personObject}} back, the useful question is what about it still has {{personPossessiveAdjective}} attention.",
    "review_status": "approved",
    "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design. Owner approval 2026-08-14: Voice Pass (68) workbook SHA-256 ef1d4221c4ed6cd32816ae1918fb20f06493160d8746c008954e584473c5ea42, approved in chat with \"the spreadsheet is all owner approved\"."
   },
@@ -30910,7 +30910,7 @@
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
    "body_you": "The past stops being memory and becomes an option.",
-   "body_they": "The past stops being memory and becomes an option.",
+   "body_they": "Something familiar may look like a second chance to {{personPreferredName}}.",
    "review_status": "approved",
    "notes": "Owner-authored batch 4 canonical set, exact approval 2026-08-05 (review/daily-glance-batch-4-owner-authored file; flags resolved; owner \"approved\"). Completes the surface rebuild."
   },
@@ -30919,7 +30919,7 @@
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
    "body_you": "An old employer reaches out. An ex checks in. A plan you abandoned suddenly looks possible again. Because you recognize the pattern, your body may relax before your mind remembers what it cost you. Pause before you call it a second chance. Do you still want this, or do you simply know how to survive it? The unfamiliar can feel uncomfortable without being wrong. The familiar can feel easy without being good. Let your history help you choose differently, not return automatically.",
-   "body_they": "An old employer reaches out. An ex checks in. A plan you abandoned suddenly looks possible again. Because you recognize the pattern, your body may relax before your mind remembers what it cost you. Pause before you call it a second chance. Do you still want this, or do you simply know how to survive it? The unfamiliar can feel uncomfortable without being wrong. The familiar can feel easy without being good. Let your history help you choose differently, not return automatically.",
+   "body_they": "An old employer reaches out. An ex checks in. A plan {{personPreferredName}} abandoned suddenly looks possible again. Because {{personPreferredName}} recognizes the pattern, {{personPossessiveAdjective}} body may relax before {{personPossessiveAdjective}} mind remembers what it cost. Familiarity can make an option feel safe without making it good. The useful question is if {{personPreferredName}} still wants it or simply knows how to survive it.",
    "review_status": "approved",
    "notes": "Owner-authored batch 4 canonical set, exact approval 2026-08-05 (review/daily-glance-batch-4-owner-authored file; flags resolved; owner \"approved\"). Completes the surface rebuild."
   },
@@ -30928,7 +30928,7 @@
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
    "body_you": "You still want the thing you keep talking yourself out of.",
-   "body_they": "The want you keep explaining away is still there.",
+   "body_they": "{{personPreferredName}} may keep circling back to the thing {{personSubject}} said {{personSubject}} did not want.",
    "review_status": "approved",
    "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design. Owner approval 2026-08-14: Voice Pass (68) workbook SHA-256 ef1d4221c4ed6cd32816ae1918fb20f06493160d8746c008954e584473c5ea42, approved in chat with \"the spreadsheet is all owner approved\"."
   },
@@ -30937,7 +30937,7 @@
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
    "body_you": "You finish the task, close the tab, then reopen the option you saved. Your routine may be comfortable, but it has not erased the part of you that wants something else. Wanting more does not make your current life a failure. Write down what you want before you start talking yourself out of it.",
-   "body_they": "You finish the task, close the tab, then reopen the option you saved. Your routine may be comfortable, but it has not erased the part of you that wants something else. Wanting more does not make your current life a failure. Finish the sentence \"What I want is...\" and stop before the justification.",
+   "body_they": "{{personPreferredName}} can finish the task, close the tab, and then reopen the option {{personSubject}} saved. A comfortable routine has not necessarily erased the part of {{personObject}} that wants something different. The useful clue is the thing {{personPreferredName}} keeps returning to after already talking {{personReflexive}} out of it once.",
    "review_status": "approved",
    "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design. Owner approval 2026-08-14: Voice Pass (68) workbook SHA-256 ef1d4221c4ed6cd32816ae1918fb20f06493160d8746c008954e584473c5ea42, approved in chat with \"the spreadsheet is all owner approved\"."
   },
@@ -30946,7 +30946,7 @@
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
    "body_you": "Let it be simple.",
-   "body_they": "Let it be simple.",
+   "body_they": "{{personPreferredName}} may know exactly what to ask for without needing a long explanation.",
    "review_status": "approved",
    "notes": "Owner-authored batch 4 canonical set, exact approval 2026-08-05 (review/daily-glance-batch-4-owner-authored file; flags resolved; owner \"approved\"). Completes the surface rebuild. Owner approval 2026-08-14: Voice Pass (68) workbook SHA-256 ef1d4221c4ed6cd32816ae1918fb20f06493160d8746c008954e584473c5ea42, approved in chat with \"the spreadsheet is all owner approved\"."
   },
@@ -30955,7 +30955,7 @@
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
    "body_you": "You know what you want before anyone asks you to justify it. Ask for the opportunity, state the limit, or say yes without adding a paragraph to make the answer easier for everyone else to accept. Put your name on the work. Let the sentence stand.",
-   "body_they": "You don't have to pre-screen your thoughts or edit your preferences just to avoid making waves. You know who you are and what you bring to the table. You don't need the buffer. This is a good day to ask for what you want directly, put your name on your accomplishments, and skip the defensive backstory. Let things be straightforward for once.",
+   "body_they": "{{personPreferredName}} may be able to ask for the opportunity, state the limit, or say yes without adding a paragraph to make the answer easier for everyone else to accept. Putting {{personPossessiveAdjective}} name on the work or letting a simple answer stand may feel unusually straightforward today.",
    "review_status": "approved",
    "notes": "Owner-authored batch 4 canonical set, exact approval 2026-08-05 (review/daily-glance-batch-4-owner-authored file; flags resolved; owner \"approved\"). Completes the surface rebuild. Owner approval 2026-08-14: Voice Pass (68) workbook SHA-256 ef1d4221c4ed6cd32816ae1918fb20f06493160d8746c008954e584473c5ea42, approved in chat with \"the spreadsheet is all owner approved\"."
   },
@@ -30964,7 +30964,7 @@
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
    "body_you": "Constantly bracing for trouble doesn't prevent it.",
-   "body_they": "Constantly bracing for trouble doesn't prevent it.",
+   "body_they": "A good day may feel unfamiliar enough that {{personPreferredName}} starts looking for the catch.",
    "review_status": "approved",
    "notes": "Owner-authored batch 4 canonical set, exact approval 2026-08-05 (review/daily-glance-batch-4-owner-authored file; flags resolved; owner \"approved\"). Completes the surface rebuild. Owner approval 2026-08-14: Voice Pass (68) workbook SHA-256 ef1d4221c4ed6cd32816ae1918fb20f06493160d8746c008954e584473c5ea42, approved in chat with \"the spreadsheet is all owner approved\"."
   },
@@ -30973,7 +30973,7 @@
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
    "body_you": "Things are running smoothly, which might ironically make you nervous. The problem is that a quiet day can make you start looking for what is about to go wrong. Your reflex might be to brace for impact, look for the hidden catch, or deflect a simple thank you by listing everything you could have done better. Constantly bracing for trouble doesn't prevent it; it just ruins any peace of mind you actually have right now. Let the good day be a good day.",
-   "body_they": "Things are running smoothly, which might ironically make you nervous. The friction comes when ease makes you suspicious. Your reflex might be to brace for impact, look for the hidden catch, or deflect a simple thank you by listing everything you could have done better. Constantly bracing for trouble doesn't prevent it; it just ruins any peace of mind you actually have right now. Drop the guard and let the momentum work for you.",
+   "body_they": "When things are running smoothly, {{personPreferredName}} may brace for what is about to go wrong, search for the hidden problem, or deflect a simple compliment by listing everything {{personSubject}} could have done better. Constantly preparing for trouble does not prevent it. It can simply make the quiet part of the day harder to enjoy.",
    "review_status": "approved",
    "notes": "Owner-authored batch 4 canonical set, exact approval 2026-08-05 (review/daily-glance-batch-4-owner-authored file; flags resolved; owner \"approved\"). Completes the surface rebuild. Owner approval 2026-08-14: Voice Pass (68) workbook SHA-256 ef1d4221c4ed6cd32816ae1918fb20f06493160d8746c008954e584473c5ea42, approved in chat with \"the spreadsheet is all owner approved\"."
   },
@@ -30982,7 +30982,7 @@
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
    "body_you": "Say the thing that's been living in your chest.",
-   "body_they": "Say the thing that's been living in your chest.",
+   "body_they": "{{personPreferredName}} may finally have the words for the conversation that went wrong.",
    "review_status": "approved",
    "notes": "Owner-authored batch 3, exact approval 2026-08-05 (review/daily-glance-batch-3-approval: owner-authored file + chat \"approved\"). Rebuilt surface; supersedes Copy Batch A. Owner approval 2026-08-14: Voice Pass (68) workbook SHA-256 ef1d4221c4ed6cd32816ae1918fb20f06493160d8746c008954e584473c5ea42, approved in chat with \"the spreadsheet is all owner approved\"."
   },
@@ -30991,7 +30991,7 @@
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
    "body_you": "You finally reach the exact reason a conversation went off the rails, and the words to explain it are right there. In a private meeting, voice note, or direct reply, you can name what upset you, what changed, and what answer you need without starting another argument. Say the part that matters and stop before the explanation turns into another point to fight over.",
-   "body_they": "You finally reach the exact reason a conversation went off the rails, and the words to explain it arrive without friction. Whether through a private meeting, a voice note, or a direct reply, you can name what hurt, what changed, and what answer is needed without starting another argument. Being direct is not cruel. Write the truth you need to say in one sentence, speak it once, calmly, and let the chips fall where they teach you. Say what you mean, say it like it matters, and let the opening do its job.",
+   "body_they": "{{personPreferredName}} may reach the exact reason the conversation went off the rails and know how to explain it without starting another argument. In a private meeting, voice note, or direct reply, {{personSubject}} can name what upset {{personObject}}, what changed, and what answer {{personPreferredName}} needs. The cleanest version says the part that matters and stops before the explanation becomes another thing to fight over.",
    "review_status": "approved",
    "notes": "Owner-authored batch 3, exact approval 2026-08-05 (review/daily-glance-batch-3-approval: owner-authored file + chat \"approved\"). Rebuilt surface; supersedes Copy Batch A. Owner approval 2026-08-14: Voice Pass (68) workbook SHA-256 ef1d4221c4ed6cd32816ae1918fb20f06493160d8746c008954e584473c5ea42, approved in chat with \"the spreadsheet is all owner approved\"."
   },
@@ -31000,7 +31000,7 @@
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
    "body_you": "Let someone make your day easier.",
-   "body_they": "You don't get extra credit for doing life the hard way.",
+   "body_they": "Someone may make {{personPreferredName}}’s day easier without asking for much in return.",
    "review_status": "approved",
    "notes": "Owner-authored batch 4 canonical set, exact approval 2026-08-05 (review/daily-glance-batch-4-owner-authored file; flags resolved; owner \"approved\"). Completes the surface rebuild. Owner approval 2026-08-14: exact chat-authored replacement approved with \"these are approved, please publish\"; supersedes the workbook text for this key."
   },
@@ -31009,7 +31009,7 @@
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
    "body_you": "Someone covers the errand, moves the meeting, sends the introduction, or takes care of the part you were already dreading. Your first instinct may be to say you are fine or immediately fill the open time with another obligation. Let the help do what it was supposed to do. You do not get extra credit for turning relief into more work.",
-   "body_they": "A line clears out, a call gets canceled, or someone handles the exact errand you were dreading. Your instinct might be to wave off the ease or immediately find something else to stress over, as if comfort has to be bought with effort. Stop picking a fight with the flow. Let the break count in whatever form it takes.",
+   "body_they": "Someone may cover the errand, move the meeting, send the introduction, or take care of the part {{personPreferredName}} was already dreading. {{personPossessiveAdjectiveCapitalized}} first instinct may be to say everything is fine or immediately fill the open time with another obligation. The help works best when the relief is allowed to remain relief instead of becoming room for more work.",
    "review_status": "approved",
    "notes": "Owner-authored batch 4 canonical set, exact approval 2026-08-05 (review/daily-glance-batch-4-owner-authored file; flags resolved; owner \"approved\"). Completes the surface rebuild. Owner approval 2026-08-14: exact chat-authored replacement approved with \"these are approved, please publish\"; supersedes the workbook text for this key."
   },
@@ -31018,7 +31018,7 @@
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
    "body_you": "It takes less energy to do the thing than to keep putting it off.",
-   "body_they": "It takes less energy to do the thing than to keep putting it off.",
+   "body_they": "Starting may cost {{personPreferredName}} less energy than continuing to avoid it.",
    "review_status": "approved",
    "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design. Owner approval 2026-08-14: Voice Pass (68) workbook SHA-256 ef1d4221c4ed6cd32816ae1918fb20f06493160d8746c008954e584473c5ea42, approved in chat with \"the spreadsheet is all owner approved\"."
   },
@@ -31027,7 +31027,7 @@
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
    "body_you": "The task you have been putting off may take less energy than all the time you have spent thinking about it. The conversation, decision, or errand may still be annoying, but it feels more possible once you start. Give it thirty minutes before you decide to put it off again.",
-   "body_they": "For the next few hours, it is easier to act on what you want instead of just thinking about it. The task, conversation, or decision you have been putting off may still be annoying, but it feels more possible now. Give it thirty minutes before your mind starts making the case for waiting again.",
+   "body_they": "The task {{personPreferredName}} has been putting off may take less energy than all the time spent thinking about it. The conversation, decision, or errand can still be annoying and become much more manageable once {{personPreferredName}} begins. Thirty focused minutes may be enough to change how heavy the task feels.",
    "review_status": "approved",
    "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design. Owner approval 2026-08-14: Voice Pass (68) workbook SHA-256 ef1d4221c4ed6cd32816ae1918fb20f06493160d8746c008954e584473c5ea42, approved in chat with \"the spreadsheet is all owner approved\"."
   },
@@ -31036,7 +31036,7 @@
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
    "body_you": "An opening just appeared.",
-   "body_they": "An opening just appeared.",
+   "body_they": "An opening may make {{personPreferredName}}’s day easier than expected.",
    "review_status": "approved",
    "notes": "Owner-authored batch 4 canonical set, exact approval 2026-08-05 (review/daily-glance-batch-4-owner-authored file; flags resolved; owner \"approved\"). Completes the surface rebuild."
   },
@@ -31045,7 +31045,7 @@
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
    "body_you": "You send the email expecting another delay, and the answer comes back yes. A meeting moves and gives you the hour you needed. The fee is lower than expected, or the right person offers an introduction without making you chase them for it. Use the opening while it is here. Send the application, make the appointment, or move the project forward.",
-   "body_they": "You send the email expecting another delay, and the answer comes back yes. A meeting moves and gives you the hour you needed. The fee is lower than expected, or the right person offers an introduction without making you chase them for it. Use the opening while it is here. Send the application, make the appointment, or move the project forward.",
+   "body_they": "{{personPreferredName}} may send the email expecting another delay and get a yes back. A meeting moves and gives {{personObject}} the hour {{personSubject}} needed. The fee is lower than expected, or the right person offers an introduction without making {{personObject}} chase it. The day has a little more room in it, and that opening can be used while it is still available.",
    "review_status": "approved",
    "notes": "Owner-authored batch 4 canonical set, exact approval 2026-08-05 (review/daily-glance-batch-4-owner-authored file; flags resolved; owner \"approved\"). Completes the surface rebuild."
   },
@@ -31054,7 +31054,7 @@
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
    "body_you": "Quiet progress is still progress.",
-   "body_they": "Quiet progress is still progress.",
+   "body_they": "A small loose end may be easier for {{personPreferredName}} to finish than keep carrying.",
    "review_status": "approved",
    "notes": "Owner-authored batch 4 canonical set, exact approval 2026-08-05 (review/daily-glance-batch-4-owner-authored file; flags resolved; owner \"approved\"). Completes the surface rebuild. Owner approval 2026-08-14: Voice Pass (68) workbook SHA-256 ef1d4221c4ed6cd32816ae1918fb20f06493160d8746c008954e584473c5ea42, approved in chat with \"the spreadsheet is all owner approved\"."
   },
@@ -31063,7 +31063,7 @@
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
    "body_you": "You open the email you have been avoiding and realize the reply takes five minutes. The bill gets paid, the appointment gets booked, or the form finally leaves the pile on your desk. None of it is exciting, but carrying it in your head every day was taking more energy than finishing it. Use the quieter day to clear one loose end.",
-   "body_they": "You open the email you have been avoiding and realize the reply takes five minutes. The bill gets paid, the appointment gets booked, or the form finally leaves the pile on your desk. None of it is exciting, but carrying it in your head every day was taking more energy than finishing it. Take advantage of the slower rhythm to clear just one loose end.",
+   "body_they": "{{personPreferredName}} may open the email {{personPreferredName}} has been avoiding and realize the reply takes five minutes. The bill gets paid, the appointment gets booked, or the form finally leaves the pile on the desk. None of it is exciting, but carrying it around mentally every day was taking more energy than finishing it.",
    "review_status": "approved",
    "notes": "Owner-authored batch 4 canonical set, exact approval 2026-08-05 (review/daily-glance-batch-4-owner-authored file; flags resolved; owner \"approved\"). Completes the surface rebuild. Owner approval 2026-08-14: Voice Pass (68) workbook SHA-256 ef1d4221c4ed6cd32816ae1918fb20f06493160d8746c008954e584473c5ea42, approved in chat with \"the spreadsheet is all owner approved\"."
   },
@@ -31072,7 +31072,7 @@
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
    "body_you": "A small change gives you your day back.",
-   "body_they": "A small change gives you your day back.",
+   "body_they": "A small change may give {{personPreferredName}} part of the day back.",
    "review_status": "approved",
    "notes": "Owner v2 rewrite, exact approval 2026-08-05; supersedes batch-4 landing; 40-word floor owner-waived for this key."
   },
@@ -31081,7 +31081,7 @@
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
    "body_you": "An unexpected gap opens in your afternoon, giving you a quick chance to clear an errand or shift your schedule. Use the window to handle something small now, and enjoy having an extra hour to yourself later.",
-   "body_they": "An unexpected gap opens in your afternoon, giving you a quick chance to clear an errand or shift your schedule. Use the window to handle something small now, and enjoy having an extra hour to yourself later.",
+   "body_they": "An unexpected gap can open in {{personPreferredName}}’s afternoon and create enough room for an errand or a small schedule change. Using that window for one practical thing may leave {{personObject}} with an extra hour later instead of another loose end following {{personObject}} into the evening.",
    "review_status": "approved",
    "notes": "Owner v2 rewrite, exact approval 2026-08-05; supersedes batch-4 landing; 40-word floor owner-waived for this key."
   },
@@ -31090,7 +31090,7 @@
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
    "body_you": "Trust the impulse before you understand the purpose.",
-   "body_they": "Trust the impulse before you understand the purpose.",
+   "body_they": "{{personPreferredName}} may get the idea before its purpose is clear.",
    "review_status": "approved",
    "notes": "Owner-authored batch 4 canonical set, exact approval 2026-08-05 (review/daily-glance-batch-4-owner-authored file; flags resolved; owner \"approved\"). Completes the surface rebuild."
   },
@@ -31099,7 +31099,7 @@
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
    "body_you": "A sentence arrives while you are washing the dishes. An image keeps returning when your attention drifts, or a vague hunch pulls you toward something you cannot explain yet. Save it before you ask what it is for. Write the line, collect the image, or make the rough version without forcing it to mean something. The structure can come later, once there is enough material to shape.",
-   "body_they": "A sentence arrives while you are washing the dishes. An image keeps returning when your attention drifts, or a vague hunch pulls you toward something you cannot explain yet. Save it before you ask what it is for. Write the line, collect the image, or make the rough version without forcing it to mean something. The structure can come later, once there is enough material to shape.",
+   "body_they": "A sentence may arrive while {{personPreferredName}} is washing the dishes. An image can keep returning when {{personPossessiveAdjective}} attention drifts, or a vague hunch can pull {{personObject}} toward something {{personSubject}} cannot explain yet. Saving the line, image, or rough version gives the idea somewhere to live before it has to make sense. The structure can come later.",
    "review_status": "approved",
    "notes": "Owner-authored batch 4 canonical set, exact approval 2026-08-05 (review/daily-glance-batch-4-owner-authored file; flags resolved; owner \"approved\"). Completes the surface rebuild."
   },
@@ -31108,7 +31108,7 @@
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
    "body_you": "It takes less effort to acknowledge a feeling than to keep minimizing it.",
-   "body_they": "It takes less effort to acknowledge a feeling than to keep minimizing it.",
+   "body_they": "{{personPreferredName}} may find it easier to acknowledge the feeling than keep minimizing it.",
    "review_status": "approved",
    "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design. Owner approval 2026-08-14: Voice Pass (68) workbook SHA-256 ef1d4221c4ed6cd32816ae1918fb20f06493160d8746c008954e584473c5ea42, approved in chat with \"the spreadsheet is all owner approved\"."
   },
@@ -31117,7 +31117,7 @@
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
    "body_you": "Talking about something painful from the past does not have to turn into a fight about every detail. You can say what affected you without defending every part of the story or demanding an answer from anyone else. Tell someone you trust what happened and how it made you feel.",
-   "body_they": "A conversation about grief, anxiety, or old family history does not have to become a fight. You can say what affected you without explaining every detail or demanding an answer from anyone else. Tell someone you trust what happened and how it made you feel.",
+   "body_they": "Talking about something painful from the past does not have to become a fight about every detail. {{personPreferredName}} may be able to say what affected {{personObject}} without defending the whole story or demanding an answer from anyone else. Telling a trusted person what happened and how it felt can be enough for the moment.",
    "review_status": "approved",
    "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design. Owner approval 2026-08-14: Voice Pass (68) workbook SHA-256 ef1d4221c4ed6cd32816ae1918fb20f06493160d8746c008954e584473c5ea42, approved in chat with \"the spreadsheet is all owner approved\"."
   },
@@ -31126,7 +31126,7 @@
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
    "body_you": "You're not weak for needing care.",
-   "body_they": "You're not weak for needing care.",
+   "body_they": "{{personPreferredName}} may have an easier time letting care reach {{personObject}}.",
    "review_status": "approved",
    "notes": "Owner-authored batch 3, exact approval 2026-08-05 (review/daily-glance-batch-3-approval: owner-authored file + chat \"approved\"). Rebuilt surface; supersedes Copy Batch A."
   },
@@ -31135,7 +31135,7 @@
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
    "body_you": "You are struggling through a difficult task or a frustrating message when someone notices you're stressed and quietly offers to handle something that would overwhelm you. Your reflex is to turn it down, because being seen stuck may feel worse than staying stuck. You don't have to keep pretending it's all okay or minimize your own experience. Accepting help mid-struggle does not make you weak or take away your independence, it just gives you room to breathe. Let them take a look and let the care reach the sore spot without putting your defenses up.",
-   "body_they": "You are struggling through a difficult task or a frustrating message when someone notices you're stressed and quietly offers to handle something that would overwhelm you. Your reflex is to turn it down, because being seen stuck may feel worse than staying stuck. You don't have to keep pretending it's all okay or minimize your own experience. Accepting help mid-struggle does not make you weak or take away your independence, it just gives you room to breathe. Let them take a look and let the care reach the sore spot without putting your defenses up.",
+   "body_they": "{{personPreferredName}} may be struggling with a difficult task or frustrating message when someone notices the stress and quietly offers to handle part of it. {{personPossessiveAdjectiveCapitalized}} reflex may still be to refuse because being seen stuck feels exposing. Letting someone help does not erase {{personPossessiveAdjective}} independence; it can simply make the hard moment easier to carry.",
    "review_status": "approved",
    "notes": "Owner-authored batch 3, exact approval 2026-08-05 (review/daily-glance-batch-3-approval: owner-authored file + chat \"approved\"). Rebuilt surface; supersedes Copy Batch A."
   },
@@ -31144,7 +31144,7 @@
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
    "body_you": "You're building muscle memory.",
-   "body_they": "You're building muscle memory.",
+   "body_they": "{{personPreferredName}} may be making a new response feel more normal through repetition.",
    "review_status": "approved",
    "notes": "Owner-authored batch 4 canonical set, exact approval 2026-08-05 (review/daily-glance-batch-4-owner-authored file; flags resolved; owner \"approved\"). Completes the surface rebuild. Owner approval 2026-08-14: Voice Pass (68) workbook SHA-256 ef1d4221c4ed6cd32816ae1918fb20f06493160d8746c008954e584473c5ea42, approved in chat with \"the spreadsheet is all owner approved\"."
   },
@@ -31153,7 +31153,7 @@
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
    "body_you": "It's the slow, quiet shift from bracing yourself to trusting your own response. You ask for help before you are overwhelmed. You choose the unfamiliar path without needing to know exactly how every step will work. Each time you say no earlier, ask for help sooner, or choose the unfamiliar option, it gets easier to do it again. Eventually, what once took all your courage becomes part of how you live.",
-   "body_they": "It's the slow, quiet shift from bracing yourself to trusting your own response. You ask for help before you are overwhelmed. You choose the unfamiliar path without requiring a hundred-step guarantee that it will all work out. Each time you practice the boundary, it becomes a little less frightening and a little more familiar. Eventually, what once took all your courage becomes part of how you live.",
+   "body_they": "{{personPreferredName}} may ask for help before reaching the point of overwhelm, say no earlier, or choose the unfamiliar option without needing every step mapped first. Each repetition makes the newer response easier to reach next time. What once required a lot of courage can gradually become part of how {{personPreferredName}} handles the situation.",
    "review_status": "approved",
    "notes": "Owner-authored batch 4 canonical set, exact approval 2026-08-05 (review/daily-glance-batch-4-owner-authored file; flags resolved; owner \"approved\"). Completes the surface rebuild. Owner approval 2026-08-14: Voice Pass (68) workbook SHA-256 ef1d4221c4ed6cd32816ae1918fb20f06493160d8746c008954e584473c5ea42, approved in chat with \"the spreadsheet is all owner approved\"."
   },
@@ -31162,7 +31162,7 @@
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
    "body_you": "Use what you learned, but put down what you carried.",
-   "body_they": "Use what you learned, but put down what you carried.",
+   "body_they": "{{personPreferredName}} may know exactly what to do when the room starts falling apart.",
    "review_status": "approved",
    "notes": "Owner-authored batch 4 canonical set, exact approval 2026-08-05 (review/daily-glance-batch-4-owner-authored file; flags resolved; owner \"approved\"). Completes the surface rebuild. Owner approval 2026-08-14: Voice Pass (68) workbook SHA-256 ef1d4221c4ed6cd32816ae1918fb20f06493160d8746c008954e584473c5ea42, approved in chat with \"the spreadsheet is all owner approved\"."
   },
@@ -31171,7 +31171,7 @@
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
    "body_you": "Experience taught you how to spot the problem before anyone else does. When the plan falls apart, the deadline moves, or someone else's panic fills the room, you may already be answering messages, assigning the next steps, and calming everyone down before you have even decided to help. Use what you know. Organize the part that is actually yours. Then stop before helping becomes another attempt to prove that you deserve to be there. Keep the skill. Put down the job of holding everyone together.",
-   "body_they": "Experience taught you how to spot the problem before anyone else does. When the plan falls apart, the deadline moves, or someone else's panic fills the room, you may already be answering messages, assigning the next steps, and calming everyone down before you have even decided to help. Use what you know. Organize the part that is actually yours. Then stop before competence becomes another way to prove that you deserve your place. That instinct may have kept you useful. It may even have kept you safe. But usefulness is not the same as belonging. Keep the skill. Put down the job of holding everyone together.",
+   "body_they": "Experience may have taught {{personPreferredName}} to spot the problem before anyone else does. When the plan falls apart, the deadline moves, or somebody else’s panic fills the room, {{personSubject}} may already be answering messages, assigning next steps, and calming everyone down before deciding whether the job is actually {{personPossessivePronoun}}. The skill is useful. The old burden begins when helping turns back into holding everyone together.",
    "review_status": "approved",
    "notes": "Owner-authored batch 4 canonical set, exact approval 2026-08-05 (review/daily-glance-batch-4-owner-authored file; flags resolved; owner \"approved\"). Completes the surface rebuild. Owner approval 2026-08-14: Voice Pass (68) workbook SHA-256 ef1d4221c4ed6cd32816ae1918fb20f06493160d8746c008954e584473c5ea42, approved in chat with \"the spreadsheet is all owner approved\"."
   },
@@ -31180,7 +31180,7 @@
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
    "body_you": "Saying nothing is not the same as wanting nothing.",
-   "body_they": "Saying nothing is not the same as wanting nothing.",
+   "body_they": "{{personPreferredName}} may find it easier to admit a small want instead of pretending not to have any.",
    "review_status": "approved",
    "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design."
   },
@@ -31189,7 +31189,7 @@
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
    "body_you": "When your partner opens the grocery order and asks what to add, you may worry that one extra snack will seem demanding. So you say \"nothing,\" which leaves the item on your phone instead of in the shared cart. You're allowed to want more. One snack does not turn the order into a crisis. Send the snack's name and price before they check out.",
-   "body_they": "When your partner opens the grocery order and asks what to add, you may worry that one extra snack will seem demanding. So you say \"nothing,\" which leaves the item on your phone instead of in the shared cart. You're allowed to want more. One snack does not turn the order into a crisis. Send the snack's name and price before they check out.",
+   "body_they": "When a partner opens the grocery order and asks what to add, {{personPreferredName}} may worry that one extra snack sounds demanding and say “nothing” instead. The item stays on {{personPossessiveAdjective}} phone instead of going into the shared cart. Naming the snack and its price is a small way of letting a want exist without turning it into a bigger argument.",
    "review_status": "approved",
    "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design."
   },
@@ -31198,7 +31198,7 @@
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
    "body_you": "Do not make yourself invisible just to make a good first impression.",
-   "body_they": "Blending in is not worth a first impression you do not recognize.",
+   "body_they": "{{personPreferredName}} may be editing {{personReflexive}} to make the first impression easier.",
    "review_status": "approved",
    "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design. Owner approval 2026-08-14: Voice Pass (68) workbook SHA-256 ef1d4221c4ed6cd32816ae1918fb20f06493160d8746c008954e584473c5ea42, approved in chat with \"the spreadsheet is all owner approved\"."
   },
@@ -31207,7 +31207,7 @@
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
    "body_you": "You dress down to blend in and leave out the one detail you actually wanted to share. Staying neutral may help you avoid attention, but it can leave you feeling invisible. You may know exactly which version of yourself will go over well here. That does not mean you have to become it. Put back the detail you were about to hide.",
-   "body_they": "You dress down to blend in and leave out the one detail you actually wanted to share. Staying neutral may help you avoid attention, but it can leave you feeling invisible. Nobody can know you from the version that never shows up. Tell one person the detail you almost kept to yourself.",
+   "body_they": "{{personPreferredName}} may dress down to blend in or leave out the one detail {{personSubject}} actually wanted to share. Staying neutral can help {{personObject}} avoid attention and also leave {{personObject}} feeling invisible. {{personSubjectCapitalized}} may know exactly which version of {{personReflexive}} will go over well in the room. The detail {{personPreferredName}} was about to hide may be the part that makes the interaction feel more like {{personObject}}.",
    "review_status": "approved",
    "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design. Owner approval 2026-08-14: Voice Pass (68) workbook SHA-256 ef1d4221c4ed6cd32816ae1918fb20f06493160d8746c008954e584473c5ea42, approved in chat with \"the spreadsheet is all owner approved\"."
   },
@@ -31216,7 +31216,7 @@
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
    "body_you": "Stop auditing your worth like it is a balance sheet.",
-   "body_they": "Stop auditing your worth like it is a balance sheet.",
+   "body_they": "A number may be telling {{personPreferredName}} a much harsher story than it deserves to.",
    "review_status": "approved",
    "notes": "Owner-authored batch 4 canonical set, exact approval 2026-08-05 (review/daily-glance-batch-4-owner-authored file; flags resolved; owner \"approved\"). Completes the surface rebuild."
   },
@@ -31225,7 +31225,7 @@
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
    "body_you": "You check your balance and feel your whole body tighten. A bill is due. The workday ends with half the list unfinished. Suddenly, the number starts telling a story about who you are: not responsible enough, not productive enough, not doing enough. Money can show you what needs attention. It cannot tell you what you are worth. Before you take on more work out of guilt, deny yourself what you need, or spend just to quiet the panic, pause and ask what would actually help. Handle the practical details, but leave your character out of it.",
-   "body_they": "You check your balance and feel your whole body tighten. A bill is due. The workday ends with half the list unfinished. Suddenly, the number starts telling a story about who you are: not responsible enough, not productive enough, not doing enough. Money can show you what needs attention. It cannot tell you what you are worth. Before you take on more work out of guilt, deny yourself what you need, or spend just to quiet the panic, pause and ask what would actually help. Handle the practical details, but leave your character out of it.",
+   "body_they": "{{personPreferredName}} may check {{personPossessiveAdjective}} balance and feel {{personPossessiveAdjective}} whole body tighten. A bill is due, half the workday list is unfinished, and suddenly the number starts sounding like proof that {{personPreferredName}} is not responsible or productive enough. Money can show {{personObject}} what needs attention without deciding {{personPreferredNamePossessive}} worth. The practical problem is easier to handle when {{personPossessiveAdjective}} character is left out of the calculation.",
    "review_status": "approved",
    "notes": "Owner-authored batch 4 canonical set, exact approval 2026-08-05 (review/daily-glance-batch-4-owner-authored file; flags resolved; owner \"approved\"). Completes the surface rebuild."
   },
@@ -31234,7 +31234,7 @@
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
    "body_you": "Extra explanation can bury the point.",
-   "body_they": "Extra explanation can bury the point.",
+   "body_they": "{{personPreferredName}} may lose more time to the back-and-forth than to the actual task.",
    "review_status": "approved",
    "notes": "Owner-authored batch 4 canonical set, exact approval 2026-08-05 (review/daily-glance-batch-4-owner-authored file; flags resolved; owner \"approved\"). Completes the surface rebuild. Owner approval 2026-08-14: Voice Pass (68) workbook SHA-256 ef1d4221c4ed6cd32816ae1918fb20f06493160d8746c008954e584473c5ea42, approved in chat with \"the spreadsheet is all owner approved\"."
   },
@@ -31243,7 +31243,7 @@
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
    "body_you": "The group chat moves dinner from seven to eight, then back again. A quick email turns into six replies. You get halfway through an errand before realizing one key detail changed, and suddenly the afternoon is disappearing into back-and-forth. Confirm the time. Answer the exact question. Put the important detail somewhere everyone can find it. A little precision now can save you from a much bigger problem later.",
-   "body_they": "The group chat moves dinner from seven to eight, then back again. A quick email sprouts six replies. You get halfway through an errand before realizing one key detail changed; and suddenly your whole afternoon is swallowed by back-and-forth. Give the small exchanges your full attention today. Confirm the time. Answer the exact question in front of you. Put the important details somewhere everyone can actually find them. A little precision right now will save you from a much bigger problem later. Say what needs to be said, make it clear, and let that be enough.",
+   "body_they": "The group chat moves dinner from seven to eight and then back again. A quick email turns into six replies. {{personPreferredName}} can get halfway through an errand before realizing one key detail changed. A clear time, a direct answer, and one place for the important information can save {{personObject}} from spending the afternoon sorting out avoidable confusion.",
    "review_status": "approved",
    "notes": "Owner-authored batch 4 canonical set, exact approval 2026-08-05 (review/daily-glance-batch-4-owner-authored file; flags resolved; owner \"approved\"). Completes the surface rebuild. Owner approval 2026-08-14: Voice Pass (68) workbook SHA-256 ef1d4221c4ed6cd32816ae1918fb20f06493160d8746c008954e584473c5ea42, approved in chat with \"the spreadsheet is all owner approved\"."
   },
@@ -31252,7 +31252,7 @@
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
    "body_you": "Make home easier to live in, not harder to maintain.",
-   "body_they": "Give your home the care it needs so it can carry you back.",
+   "body_they": "Home may be asking {{personPreferredName}} for one practical fix instead of another workaround.",
    "review_status": "approved",
    "notes": "Owner-authored batch 4 canonical set, exact approval 2026-08-05 (review/daily-glance-batch-4-owner-authored file; flags resolved; owner \"approved\"). Completes the surface rebuild. Owner approval 2026-08-14: Voice Pass (68) workbook SHA-256 ef1d4221c4ed6cd32816ae1918fb20f06493160d8746c008954e584473c5ea42, approved in chat with \"the spreadsheet is all owner approved\"."
   },
@@ -31261,7 +31261,7 @@
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
    "body_you": "You walk through the door and feel your body tighten before you have even put your keys down. The cabinet still will not close. The chair is buried again. The conversation no one wants to have is waiting at the kitchen table. Tend to the part of your private life you keep postponing because you are too tired to deal with it. Fix the latch. Clear a place to sit. Say what has been following everyone from room to room. Comfort is not a luxury or a look. It is what allows your home to hold you when the rest of life asks too much.",
-   "body_they": "You walk through the door and feel your body tighten before you have even put your keys down. The cabinet still will not close. The chair is buried again. The conversation no one wants to have is waiting at the kitchen table. Tend to the part of your private life you keep postponing because you are too tired to deal with it. Fix the latch. Clear a place to sit. Say what has been following everyone from room to room. Comfort is not a luxury or a look. It is what allows your home to hold you when the rest of life asks too much.",
+   "body_they": "{{personPreferredName}} may walk through the door and feel {{personPossessiveAdjective}} body tighten before the keys are even down. The cabinet still will not close, the chair is buried again, or the conversation nobody wants to have is waiting at the kitchen table. The private problem {{personPreferredName}} keeps postponing may be taking more energy than dealing with one part of it. A working latch, a clear place to sit, or finally naming the tension can make home easier to live in.",
    "review_status": "approved",
    "notes": "Owner-authored batch 4 canonical set, exact approval 2026-08-05 (review/daily-glance-batch-4-owner-authored file; flags resolved; owner \"approved\"). Completes the surface rebuild. Owner approval 2026-08-14: Voice Pass (68) workbook SHA-256 ef1d4221c4ed6cd32816ae1918fb20f06493160d8746c008954e584473c5ea42, approved in chat with \"the spreadsheet is all owner approved\"."
   },
@@ -31270,7 +31270,7 @@
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
    "body_you": "You don't have to turn everything you make into work.",
-   "body_they": "You don't have to turn everything you make into work.",
+   "body_they": "{{personPreferredName}} may be editing the fun out of something that was supposed to feel like {{personPossessivePronoun}}.",
    "review_status": "approved",
    "notes": "Owner-authored batch 3, exact approval 2026-08-05 (review/daily-glance-batch-3-approval: owner-authored file + chat \"approved\"). Rebuilt surface; supersedes Copy Batch A."
   },
@@ -31279,7 +31279,7 @@
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
    "body_you": "You draft a playful text or start making something, then hesitate right before sharing it and edit out the exact line that sounds most like you. You've forgotten how to have fun without turning it into work or optimizing it for an audience. Scaling back your voice might protect you from feeling exposed, but it also strips out the creative spark that makes it yours. You're allowed to make things that don't impress anyone but you, and what you create doesn't need to be profitable to matter. Put your original spin back into it and let it be messy, imperfect, and yours.",
-   "body_they": "You draft a playful text or start making something, then hesitate right before sharing it and edit out the exact line that sounds most like you. You've forgotten how to have fun without turning it into work or optimizing it for an audience. Scaling back your voice might protect you from feeling exposed, but it also strips out the creative spark that makes it yours. You're allowed to make things that don't impress anyone but you, and what you create doesn't need to be profitable to matter. Put your original spin back into it and let it be messy, imperfect, and yours.",
+   "body_they": "{{personPreferredName}} may draft a playful text or start making something, then hesitate right before sharing it and remove the exact line that sounds most like {{personObject}}. Protecting {{personReflexive}} from feeling exposed can also strip out the creative spark that made the thing enjoyable. Not everything {{personPreferredName}} makes has to impress an audience or become work before it is allowed to matter.",
    "review_status": "approved",
    "notes": "Owner-authored batch 3, exact approval 2026-08-05 (review/daily-glance-batch-3-approval: owner-authored file + chat \"approved\"). Rebuilt surface; supersedes Copy Batch A."
   },
@@ -31288,7 +31288,7 @@
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
    "body_you": "Stop structuring your day around everyone else's priorities.",
-   "body_they": "Stop structuring your day around everyone else's priorities.",
+   "body_they": "{{personPreferredName}}’s day may be leaving basic care until there is no room left for it.",
    "review_status": "approved",
    "notes": "Owner-authored batch 4 canonical set, exact approval 2026-08-05 (review/daily-glance-batch-4-owner-authored file; flags resolved; owner \"approved\"). Completes the surface rebuild."
   },
@@ -31297,7 +31297,7 @@
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
    "body_you": "Pay attention to the exhaustion that does not lift after one good night of sleep. You may be building the entire day around other people's deadlines, then trying to fit food, medication, movement, or rest into whatever is left. Your health is not an extra task after the real work. Change one part of the schedule that keeps making basic care impossible.",
-   "body_they": "Pay attention to the exhaustion that does not lift after one good night of sleep. You may be building the entire day around other people's deadlines, then trying to fit food, medication, movement, or rest into whatever is left. Your health is not an extra task after the real work. Change one part of the schedule that keeps making basic care impossible.",
+   "body_they": "{{personPreferredName}} may be building the day around other people’s deadlines and fitting food, medication, movement, or rest into whatever remains. Exhaustion that does not lift after one good night of sleep can be a sign that the schedule itself is the problem. One change to the workload may do more than asking {{personPossessiveAdjective}} body to keep compensating.",
    "review_status": "approved",
    "notes": "Owner-authored batch 4 canonical set, exact approval 2026-08-05 (review/daily-glance-batch-4-owner-authored file; flags resolved; owner \"approved\"). Completes the surface rebuild."
   },
@@ -31306,7 +31306,7 @@
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
    "body_you": "The agreement can change after you realize what it is costing you.",
-   "body_they": "Resentment is the receipt for a boundary you didn't set.",
+   "body_they": "{{personPreferredName}} may realize the agreement costs more than it did when {{personSubject}} first said yes.",
    "review_status": "approved",
    "notes": "Owner-authored batch 4 canonical set, exact approval 2026-08-05 (review/daily-glance-batch-4-owner-authored file; flags resolved; owner \"approved\"). Completes the surface rebuild. Owner approval 2026-08-14: exact chat-authored replacement approved with \"these are approved, please publish\"; supersedes the workbook text for this key."
   },
@@ -31315,7 +31315,7 @@
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
    "body_you": "You said yes because the plan sounded reasonable at the time. Then the follow-up work lands, the schedule changes, or you realize you are the person expected to keep adjusting. You are not stuck with the first version just because the conversation already happened. Go back to the part that no longer works and tell them what needs to change.",
-   "body_they": "You agree before you check in with yourself. You take on the favor, go along with the plan, or make your preference smaller so the moment stays easy. Then the resentment arrives after everyone else thinks the decision is settled. Catch yourself before the yes leaves your mouth. Ask for more notice. Name the limit while there is still room to adjust. Your needs may inconvenience someone, but that does not make them unreasonable. A connection that only works when you are easy to accommodate is not making space for all of you.",
+   "body_they": "{{personPreferredName}} agreed because the plan sounded reasonable at the time. Then the follow-up work lands, the schedule changes, or {{personPreferredName}} becomes the person expected to keep adjusting. The first version of an agreement is not sacred once the actual cost becomes clear. The relationship may need a second conversation about what no longer works.",
    "review_status": "approved",
    "notes": "Owner-authored batch 4 canonical set, exact approval 2026-08-05 (review/daily-glance-batch-4-owner-authored file; flags resolved; owner \"approved\"). Completes the surface rebuild. Owner approval 2026-08-14: exact chat-authored replacement approved with \"these are approved, please publish\"; supersedes the workbook text for this key."
   },
@@ -31324,7 +31324,7 @@
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
    "body_you": "Notice what you share and what you keep private.",
-   "body_they": "Notice what you share and what you keep private.",
+   "body_they": "Shared money or access may need clearer terms around {{personPreferredName}} today.",
    "review_status": "approved",
    "notes": "Owner-authored batch 4 canonical set, exact approval 2026-08-05 (review/daily-glance-batch-4-owner-authored file; flags resolved; owner \"approved\"). Completes the surface rebuild. Owner approval 2026-08-14: Voice Pass (68) workbook SHA-256 ef1d4221c4ed6cd32816ae1918fb20f06493160d8746c008954e584473c5ea42, approved in chat with \"the spreadsheet is all owner approved\"."
   },
@@ -31333,7 +31333,7 @@
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
    "body_you": "You split the check down the middle even though you barely ate, or keep quiet about a shared debt because bringing up money feels uncomfortable. Someone else holds the password, paperwork, or final say, and you are left working around information you should have access to. Ask who owes what, request the login, and get the exact numbers in writing. You can care about the relationship and still require clear terms before you put in more money, time, or trust.",
-   "body_they": "You split the check down the middle even though you barely ate, or keep quiet about a shared debt because bringing up money feels deeply uncomfortable. Someone else holds the password, the paperwork, or the final say, and you are left absorbing the friction. You don't have to stay in the dark to keep the peace. Bring the terms into the light. Ask who owes what, request the login, and get the exact numbers on paper. Asking for transparency does not make you weak or high maintenance. You are allowed to insist on clarity before you invest another dollar, hour, or ounce of faith.",
+   "body_they": "{{personPreferredName}} may split the check evenly after barely eating, stay quiet about a shared debt, or find that someone else holds the password, paperwork, or final say {{personPreferredName}} needs. The discomfort around asking can leave {{personObject}} carrying money, time, or risk without the information that should come with it. Clear numbers, access, and responsibility make the shared arrangement easier to trust.",
    "review_status": "approved",
    "notes": "Owner-authored batch 4 canonical set, exact approval 2026-08-05 (review/daily-glance-batch-4-owner-authored file; flags resolved; owner \"approved\"). Completes the surface rebuild. Owner approval 2026-08-14: Voice Pass (68) workbook SHA-256 ef1d4221c4ed6cd32816ae1918fb20f06493160d8746c008954e584473c5ea42, approved in chat with \"the spreadsheet is all owner approved\"."
   },
@@ -31342,7 +31342,7 @@
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
    "body_you": "You do not have to have it all figured out to keep learning.",
-   "body_they": "You do not have to have it all figured out to keep learning.",
+   "body_they": "{{personPreferredName}} may be learning something that changes an opinion {{personSubject}} once felt sure about.",
    "review_status": "approved",
    "notes": "Owner-authored batch 4 canonical set, exact approval 2026-08-05 (review/daily-glance-batch-4-owner-authored file; flags resolved; owner \"approved\"). Completes the surface rebuild. Owner approval 2026-08-14: Voice Pass (68) workbook SHA-256 ef1d4221c4ed6cd32816ae1918fb20f06493160d8746c008954e584473c5ea42, approved in chat with \"the spreadsheet is all owner approved\"."
   },
@@ -31351,7 +31351,7 @@
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
    "body_you": "You read something that changes your mind, hear a teacher explain the subject differently, or realize the rule you have been following no longer fits the life you are living. You do not need to defend an old opinion just because you once believed it. Follow the new information far enough to see what it changes. You can revise the plan without pretending the earlier version of you was stupid for believing something else.",
-   "body_they": "You feel the awkward friction when old rules no longer explain your current reality. Maybe a philosophy that kept you safe in your twenties feels restrictive now, or new information is asking you to turn a corner. You do not have to double down on an outdated worldview just to prove you were right in the first place. You are allowed to revise the course, change your mind, and learn in public. Wisdom is not holding a rigid stance. It is letting your life expand past what you used to think you knew.",
+   "body_they": "{{personPreferredName}} may read something that changes {{personPossessiveAdjective}} mind, hear a teacher explain the subject differently, or realize an old rule no longer fits {{personPossessiveAdjective}} current life. Revising the view does not make the earlier version foolish. New information is allowed to change the plan.",
    "review_status": "approved",
    "notes": "Owner-authored batch 4 canonical set, exact approval 2026-08-05 (review/daily-glance-batch-4-owner-authored file; flags resolved; owner \"approved\"). Completes the surface rebuild. Owner approval 2026-08-14: Voice Pass (68) workbook SHA-256 ef1d4221c4ed6cd32816ae1918fb20f06493160d8746c008954e584473c5ea42, approved in chat with \"the spreadsheet is all owner approved\"."
   },
@@ -31360,7 +31360,7 @@
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
    "body_you": "More responsibility should come with something you actually want.",
-   "body_they": "Lead from presence, not perfection.",
+   "body_they": "More responsibility only helps {{personPreferredName}} if something meaningful comes with it.",
    "review_status": "approved",
    "notes": "Owner-authored batch 4 canonical set, exact approval 2026-08-05 (review/daily-glance-batch-4-owner-authored file; flags resolved; owner \"approved\"). Completes the surface rebuild. Owner approval 2026-08-14: exact chat-authored replacement approved with \"these are approved, please publish\"; supersedes the workbook text for this key."
   },
@@ -31369,7 +31369,7 @@
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
    "body_you": "A bigger project lands on your desk because everyone knows you can handle it. Before you treat that as recognition, look at what comes with it. More money, authority, credit, or access can make the extra work worth considering. Another pile of responsibility with the same title and the same pay is just more work. Ask what changes for you before you agree to carry more for them.",
-   "body_they": "A promotion comes up. Your name gets mentioned in a meeting. Another project lands on your desk because everyone knows you can carry it. Before you say yes, notice what the opportunity is actually rewarding. Does it move you toward work you want your name attached to, or does it rely on your ability to stay late, absorb the pressure, and make someone else's vision happen? You do not need to become polished beyond recognition to be taken seriously. Let your public life reflect more than what you can endure. Choose the work, title, and responsibility that sound like your own definition of success.",
+   "body_they": "A bigger project may land on {{personPreferredName}}’s desk because everyone knows {{personPreferredName}} can handle it. The important question is what changes with the extra work. More money, authority, credit, or access can make the responsibility worth considering. The same title and pay with a larger pile is simply more work.",
    "review_status": "approved",
    "notes": "Owner-authored batch 4 canonical set, exact approval 2026-08-05 (review/daily-glance-batch-4-owner-authored file; flags resolved; owner \"approved\"). Completes the surface rebuild. Owner approval 2026-08-14: exact chat-authored replacement approved with \"these are approved, please publish\"; supersedes the workbook text for this key."
   },
@@ -31378,7 +31378,7 @@
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
    "body_you": "Keeping the peace is not worth inheriting everyone else's priorities.",
-   "body_they": "Keeping the peace is not worth inheriting everyone else's priorities.",
+   "body_they": "{{personPreferredName}} may be responding to a plan everyone else decided before {{personSubject}} had much say in it.",
    "review_status": "approved",
    "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design."
   },
@@ -31387,7 +31387,7 @@
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
    "body_you": "Everyone else may have decided what the plan is before you had much say in it. That puts you in the position of responding to terms you did not choose. Get clear on what is actually required, what can still be changed, and what needs to be clarified in writing. Do not make an imposed plan harder on yourself by quietly agreeing to expectations that were never realistic in the first place.",
-   "body_they": "Notice how tempting it gets to nod along just because the room is moving in one direction. Slipping into consensus keeps things smooth now, but it locks you into commitments you never asked for. Speak up to one person: name what part of the plan actually works for you, and outline the one change that makes it worth your time.",
+   "body_they": "The terms may already be in motion before {{personPreferredName}} gets a real chance to weigh in. That can leave {{personObject}} responding to expectations {{personSubject}} did not choose and quietly absorbing whatever nobody else accounted for. The situation gets easier to assess once the actual requirements, changeable parts, and responsibilities are clear instead of assumed.",
    "review_status": "approved",
    "notes": "Copy Batch A: engine-hidden daily At-a-Glance copy per TLDR-Daily-Transit-Baseline-Spec (headline grammars / four-move body). Keyed on the transiting Moon's aspect group and natal target (or house when no aspect). No astrology vocabulary by design."
   },
@@ -31396,7 +31396,7 @@
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
    "body_you": "Answering messages too early gives away the only private part of your day.",
-   "body_they": "Answering messages too early gives away the only private part of your day.",
+   "body_they": "{{personPreferredName}} may be giving away the quiet part of the day before it has even started.",
    "review_status": "approved",
    "notes": "Owner-authored batch 3, exact approval 2026-08-05 (review/daily-glance-batch-3-approval: owner-authored file + chat \"approved\"). Rebuilt surface; supersedes Copy Batch A. Owner approval 2026-08-14: Voice Pass (68) workbook SHA-256 ef1d4221c4ed6cd32816ae1918fb20f06493160d8746c008954e584473c5ea42, approved in chat with \"the spreadsheet is all owner approved\"."
   },
@@ -31405,7 +31405,7 @@
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",
    "body_you": "You wake up, reach for your phone, and start answering messages before anyone has asked for an immediate response. By breakfast, the quiet hour is gone, several conversations are open, and you are already thinking about three problems that could have waited. The cost is not only the time you spent replying. It is how quickly your own morning disappears. Send one message if you need to, put the phone down, and keep the morning you meant to have.",
-   "body_they": "You wake up, reach for your phone, and start clearing requests before anyone has asked for an immediate response. By breakfast, the quiet hour is gone, several conversations are open, and your mind is already multi-tasking the problems that could have waited. The cost is not only the time spent replying. It is how difficult it becomes to return to yourself. Send one message, put the phone down, and keep the morning you meant to have.",
+   "body_they": "{{personPreferredName}} may wake up, reach for the phone, and start answering messages before anyone has asked for an immediate response. By breakfast, several conversations are open and three problems that could have waited are already taking up mental space. The cost is not only the minutes spent replying. It is how quickly {{personPossessiveAdjective}} own morning disappears.",
    "review_status": "approved",
    "notes": "Owner-authored batch 3, exact approval 2026-08-05 (review/daily-glance-batch-3-approval: owner-authored file + chat \"approved\"). Rebuilt surface; supersedes Copy Batch A. Owner approval 2026-08-14: Voice Pass (68) workbook SHA-256 ef1d4221c4ed6cd32816ae1918fb20f06493160d8746c008954e584473c5ea42, approved in chat with \"the spreadsheet is all owner approved\"."
   },
