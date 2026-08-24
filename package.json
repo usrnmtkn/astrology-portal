@@ -77,6 +77,7 @@
     "test:content:live": "node scripts/test-authored-sky-placement-coverage.mjs --production-read",
     "qa:client-report": "node scripts/run-client-facing-qa-report.mjs",
     "qa:content-wiring": "node scripts/test-reader-facing-content-contract.mjs",
+    "qa:natal-placement-truncation": "node --experimental-strip-types scripts/test-natal-placement-sign-house-composition.mjs",
     "qa:calendar-weekly-monday-tone": "node scripts/test-calendar-weekly-monday-tone.mjs",
     "qa:timing-warmth-harvest": "node scripts/test-timing-warmth-harvest.mjs",
     "qa:client-flows": "playwright test -c playwright.config.ts tests/visual/client-facing-user-flows.spec.ts --grep-invert \"content fallback copy|directional copy\"",
