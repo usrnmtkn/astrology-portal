@@ -25,12 +25,14 @@ const isReaderEligible = (row) => eligible.has(String(row.review_status ?? "").t
 const baseLibrary = readJson("source-rows/transit-synastry-rows-v1.json");
 const baseRows = readJson("source-rows/fallback-source-rows-v3.json");
 const blend = readJson("source-rows/lunation-blend-units-v1.json");
+const lunationBook = readJson("source-rows/lunation-book-cards-v1.json");
 const templates = readJson("templates/fallback-templates-v3.json");
 const makeRenderer = ({ reader = false } = {}) => createTransitSynastryRenderer(
   {
     authoredCards: [
       ...baseLibrary.authoredCards,
-      ...blend.authoredCards
+      ...blend.authoredCards,
+      ...lunationBook.authoredCards
     ].filter((row) => !reader || isReaderEligible(row))
   },
   templates,
@@ -98,27 +100,21 @@ const geminiFacts = {
 };
 const geminiQa = qaRenderer.renderLunationHoroscope(geminiFacts);
 const geminiReader = readerRenderer.renderLunationHoroscope(geminiFacts);
-const geminiCounterpoint = geminiQa.parts.findIndex((part) => part.includes("The friction this week"));
-const geminiRuler = geminiQa.parts.findIndex((part) => part.startsWith("Saturn rules this Full Moon"));
+const geminiBookCell = lunationBook.authoredCards.find((row) => (
+  row.contentKey === "authored/book-ritual-and-the-moon/lunation-horoscope/full-moon/aquarius/rising-gemini/house-9"
+));
 const geminiUranus = geminiQa.parts.findIndex((part) => part.startsWith("Uranus in your 1st house"));
-assert.match(geminiQa.parts[0], /9th house/u);
+assert.equal(geminiQa.parts[0], geminiBookCell.body);
 assert.equal(
   geminiQa.parts[1],
   "Six months ago, consciously or not, this lunar cycle began with the New Moon in Aquarius on February 17."
 );
-assert.ok(geminiCounterpoint >= 1, "Counterpoint must follow the house frame.");
-assert.ok(geminiRuler > geminiCounterpoint, "Traditional ruler localization must follow the counterpoint.");
+assert.equal(geminiQa.parts.length, 2, "Direct rulers and generic weekly layers must not pad an exact book cell.");
 assert.equal(geminiUranus, -1, "The retained Uranus layer must not render for readers.");
-assert.match(geminiQa.parts[geminiCounterpoint], /3rd house/u);
-assert.match(
-  geminiQa.parts[geminiRuler],
-  /^Saturn rules this Full Moon from your 11th house, so friends, organizations, professional contacts, and shared commitments are part of the answer\./u
-);
-assert.match(
-  geminiReader.body,
-  /Saturn rules this Full Moon from your 11th house, so friends, organizations, professional contacts, and shared commitments are part of the answer\./u,
-  "The approved 11th-house ruler row must remain in reader output."
-);
+assert.equal(geminiReader.parts[0], geminiBookCell.body);
+assert.equal(geminiReader.contentKey, geminiBookCell.contentKey);
+assert.doesNotMatch(geminiReader.body, /The friction this week/u);
+assert.doesNotMatch(geminiReader.body, /Saturn rules this Full Moon/u);
 assert.doesNotMatch(
   geminiReader.body,
   /Uranus in your 1st house adds a more personal element of change/u,
@@ -151,8 +147,10 @@ const leoReader = readerRenderer.renderLunationHoroscope({
   rulerHouse: 9,
   ...aquariusFullMoonCycle
 });
-assert.match(leoReader.parts[0], /7th house/u);
-assert.match(leoReader.body, /your 1st house/u);
+assert.equal(
+  leoReader.parts[0],
+  lunationBook.authoredCards.find((row) => row.contentKey.endsWith("/full-moon/aquarius/rising-leo/house-7"))?.body
+);
 assert.doesNotMatch(leoReader.body, /Saturn rules this Full Moon/u);
 
 const cancerNewMoon = readerRenderer.renderLunationHoroscope({
@@ -164,6 +162,10 @@ const cancerNewMoon = readerRenderer.renderLunationHoroscope({
   ruler: "moon",
   rulerHouse: 4
 });
+assert.equal(
+  cancerNewMoon.parts[1],
+  "This New Moon begins a cycle that will develop over the next six months."
+);
 assert.doesNotMatch(cancerNewMoon.body, /The friction this week/u);
 assert.doesNotMatch(cancerNewMoon.body, /ruling this lunation/u);
 
@@ -189,6 +191,37 @@ assert.throws(
   "Ordinary Full Moon assembly must fail closed when the calculated cycle anchor is missing."
 );
 
+const recoveredAquariusVirgo = readerRenderer.renderLunationHoroscope({
+  kind: "new-moon",
+  sign: "aquarius",
+  risingSign: "virgo",
+  moonHouse: 6,
+  ruler: "saturn",
+  rulerHouse: 8,
+  rulerRetrograde: false
+});
+const recoveredCell = lunationBook.authoredCards.find((row) => row.contentKey.endsWith(
+  "/new-moon/aquarius/rising-virgo/house-6"
+));
+assert.equal(recoveredAquariusVirgo.parts[0], recoveredCell.body);
+assert.equal(recoveredAquariusVirgo.contentKey, recoveredCell.contentKey);
+
+const missingTaurusNewMoon = readerRenderer.renderLunationHoroscope({
+  kind: "new-moon",
+  sign: "taurus",
+  risingSign: "aries",
+  moonHouse: 2,
+  ruler: "venus",
+  rulerHouse: 3,
+  rulerRetrograde: false
+});
+assert.equal(missingTaurusNewMoon.contentKey, undefined);
+assert.equal(missingTaurusNewMoon.templateKey, "fallback-template/sky.lunation-horoscope");
+assert.match(missingTaurusNewMoon.parts[0], /2nd house/u);
+assert.ok(missingTaurusNewMoon.parts.includes(
+  "This New Moon begins a cycle that will develop over the next six months."
+));
+
 const vite = await createServer({
   root: path.join(repoRoot, "apps", "web"),
   appType: "custom",
@@ -201,7 +234,11 @@ try {
   );
   const browserReader = browserModule.createTransitSynastryRenderer(
     {
-      authoredCards: [...baseLibrary.authoredCards, ...blend.authoredCards].filter(isReaderEligible)
+      authoredCards: [
+        ...baseLibrary.authoredCards,
+        ...blend.authoredCards,
+        ...lunationBook.authoredCards
+      ].filter(isReaderEligible)
     },
     templates,
     {
@@ -231,5 +268,5 @@ assert.ok(
 );
 
 console.log(
-  "lunation blend assembly checks passed: 1 macro, 12 traditional-ruler rows, 12 retained non-serving Uranus rows, review gating, and skip rules"
+  "lunation blend assembly checks passed: 266 exact book cells, cycle anchors, 12 retained non-serving Uranus rows, review gating, and row fallback"
 );

@@ -1,0 +1,831 @@
+{
+  "schema": "lunation-legacy-hook-audit/v1",
+  "source": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+  "families": {
+    "lunation-release": 12,
+    "lunation-shows": 12,
+    "lunation-higher-path": 12,
+    "lunation-intention": 12,
+    "lunation-moment": 24
+  },
+  "total_rows": 72,
+  "total_code_references": 0,
+  "rows": [
+    {
+      "contentKey": "fallback-hook/lunation-higher-path/1",
+      "body_you": "Your higher path here is leading with the unedited version of yourself. Every room you enter honestly gives everyone else permission to drop their edit too.",
+      "scope": {
+        "house": 1
+      },
+      "review_status": "approved",
+      "approval": null,
+      "code_reference_count": 0,
+      "code_references": []
+    },
+    {
+      "contentKey": "fallback-hook/lunation-higher-path/10",
+      "body_you": "Your higher path here is building a public life your private self can stand behind. Alignment like that reads as authority no title can grant.",
+      "scope": {
+        "house": 10
+      },
+      "review_status": "approved",
+      "approval": null,
+      "code_reference_count": 0,
+      "code_references": []
+    },
+    {
+      "contentKey": "fallback-hook/lunation-higher-path/11",
+      "body_you": "Your higher path here is choosing communities that want the real you, and contributing like the future is a group project, because it is.",
+      "scope": {
+        "house": 11
+      },
+      "review_status": "approved",
+      "approval": null,
+      "code_reference_count": 0,
+      "code_references": []
+    },
+    {
+      "contentKey": "fallback-hook/lunation-higher-path/12",
+      "body_you": "Your higher path here is honoring the inner life: rest, reflection, and endings taken seriously. What you integrate quietly becomes wisdom the whole circle draws on.",
+      "scope": {
+        "house": 12
+      },
+      "review_status": "approved",
+      "approval": null,
+      "code_reference_count": 0,
+      "code_references": []
+    },
+    {
+      "contentKey": "fallback-hook/lunation-higher-path/2",
+      "body_you": "Your higher path here is building worth from the inside: valuing your time, your skills, and your standards before anyone else prices them. Security built that way supports more lives than your own.",
+      "scope": {
+        "house": 2
+      },
+      "review_status": "approved",
+      "approval": null,
+      "code_reference_count": 0,
+      "code_references": []
+    },
+    {
+      "contentKey": "fallback-hook/lunation-higher-path/3",
+      "body_you": "Your higher path here is saying true things clearly, especially the kind ones. Your words travel further than you see, so send the ones worth repeating.",
+      "scope": {
+        "house": 3
+      },
+      "review_status": "approved",
+      "approval": null,
+      "code_reference_count": 0,
+      "code_references": []
+    },
+    {
+      "contentKey": "fallback-hook/lunation-higher-path/4",
+      "body_you": "Your higher path here is making home a place that restores you, then letting that groundedness show up everywhere else. People build braver lives from safe foundations, starting with you.",
+      "scope": {
+        "house": 4
+      },
+      "review_status": "approved",
+      "approval": null,
+      "code_reference_count": 0,
+      "code_references": []
+    },
+    {
+      "contentKey": "fallback-hook/lunation-higher-path/5",
+      "body_you": "Your higher path here is creating and enjoying without apology. Joy done openly is contagious; your permission slip becomes other people's too.",
+      "scope": {
+        "house": 5
+      },
+      "review_status": "approved",
+      "approval": null,
+      "code_reference_count": 0,
+      "code_references": []
+    },
+    {
+      "contentKey": "fallback-hook/lunation-higher-path/6",
+      "body_you": "Your higher path here is treating your body and your days as the foundation of everything else you want. Care done consistently turns into capacity, and capacity is how you serve.",
+      "scope": {
+        "house": 6
+      },
+      "review_status": "approved",
+      "approval": null,
+      "code_reference_count": 0,
+      "code_references": []
+    },
+    {
+      "contentKey": "fallback-hook/lunation-higher-path/7",
+      "body_you": "Your higher path here is partnership between whole people: your needs on the table next to theirs. Every honest negotiation you run teaches both sides that love survives truth.",
+      "scope": {
+        "house": 7
+      },
+      "review_status": "approved",
+      "approval": null,
+      "code_reference_count": 0,
+      "code_references": []
+    },
+    {
+      "contentKey": "fallback-hook/lunation-higher-path/8",
+      "body_you": "Your higher path here is intimacy with boundaries and trust with eyes open. Going deep honestly, once, changes what you accept everywhere.",
+      "scope": {
+        "house": 8
+      },
+      "review_status": "approved",
+      "approval": null,
+      "code_reference_count": 0,
+      "code_references": []
+    },
+    {
+      "contentKey": "fallback-hook/lunation-higher-path/9",
+      "body_you": "Your higher path here is living what you actually believe and staying curious about the rest. A working philosophy helps more people than a defended one.",
+      "scope": {
+        "house": 9
+      },
+      "review_status": "approved",
+      "approval": null,
+      "code_reference_count": 0,
+      "code_references": []
+    },
+    {
+      "contentKey": "fallback-hook/lunation-intention/1",
+      "body_you": "I seek to know myself in all aspects of myself.",
+      "scope": {
+        "house": 1
+      },
+      "review_status": "approved_reuse",
+      "approval": null,
+      "code_reference_count": 0,
+      "code_references": []
+    },
+    {
+      "contentKey": "fallback-hook/lunation-intention/10",
+      "body_you": "Make sure that whatever you put your energy into, it aligns with your values and is building toward your future.",
+      "scope": {
+        "house": 10
+      },
+      "review_status": "approved_reuse",
+      "approval": null,
+      "code_reference_count": 0,
+      "code_references": []
+    },
+    {
+      "contentKey": "fallback-hook/lunation-intention/11",
+      "body_you": "To allow your unique gifts to be a source of nurturing support for yourself and for others.",
+      "scope": {
+        "house": 11
+      },
+      "review_status": "approved_reuse",
+      "approval": null,
+      "code_reference_count": 0,
+      "code_references": []
+    },
+    {
+      "contentKey": "fallback-hook/lunation-intention/12",
+      "body_you": "To allow the cycle of endings and beginnings to unfold without grasping at the expectation of the dream. Your faith, trust, and creative expression will nurture you.",
+      "scope": {
+        "house": 12
+      },
+      "review_status": "approved_reuse",
+      "approval": null,
+      "code_reference_count": 0,
+      "code_references": []
+    },
+    {
+      "contentKey": "fallback-hook/lunation-intention/2",
+      "body_you": "Figure out what you value most, and find a way to allow yourself to receive both emotional connection and love and physical support and abundance.",
+      "scope": {
+        "house": 2
+      },
+      "review_status": "approved_reuse",
+      "approval": null,
+      "code_reference_count": 0,
+      "code_references": []
+    },
+    {
+      "contentKey": "fallback-hook/lunation-intention/3",
+      "body_you": "My word is my gift, and sharing it brings me fulfillment.",
+      "scope": {
+        "house": 3
+      },
+      "review_status": "approved_reuse",
+      "approval": null,
+      "code_reference_count": 0,
+      "code_references": []
+    },
+    {
+      "contentKey": "fallback-hook/lunation-intention/4",
+      "body_you": "Everything will pass and everything is temporary. For now, set your compass internally and tend to the emotions arising. This is your home and safe space now.",
+      "scope": {
+        "house": 4
+      },
+      "review_status": "approved_reuse",
+      "approval": null,
+      "code_reference_count": 0,
+      "code_references": []
+    },
+    {
+      "contentKey": "fallback-hook/lunation-intention/5",
+      "body_you": "Stay focused on what's working in your projects and relationships and gently tend to what's not working.",
+      "scope": {
+        "house": 5
+      },
+      "review_status": "approved_reuse",
+      "approval": null,
+      "code_reference_count": 0,
+      "code_references": []
+    },
+    {
+      "contentKey": "fallback-hook/lunation-intention/6",
+      "body_you": "To tend to yourself first so that you can better serve others. Slow down and focus on the details of health, work, and daily habits.",
+      "scope": {
+        "house": 6
+      },
+      "review_status": "approved_reuse",
+      "approval": null,
+      "code_reference_count": 0,
+      "code_references": []
+    },
+    {
+      "contentKey": "fallback-hook/lunation-intention/7",
+      "body_you": "To tend to your heart in relationship matters and trust in the cycles of endings and beginnings.",
+      "scope": {
+        "house": 7
+      },
+      "review_status": "approved_reuse",
+      "approval": null,
+      "code_reference_count": 0,
+      "code_references": []
+    },
+    {
+      "contentKey": "fallback-hook/lunation-intention/8",
+      "body_you": "Security is an inner construct that you have some control over. Build trust in yourself and trust outside yourself will naturally follow.",
+      "scope": {
+        "house": 8
+      },
+      "review_status": "approved_reuse",
+      "approval": null,
+      "code_reference_count": 0,
+      "code_references": []
+    },
+    {
+      "contentKey": "fallback-hook/lunation-intention/9",
+      "body_you": "Let go of expectations and trust in the natural cycle of endings and beginnings.",
+      "scope": {
+        "house": 9
+      },
+      "review_status": "approved_reuse",
+      "approval": null,
+      "code_reference_count": 0,
+      "code_references": []
+    },
+    {
+      "contentKey": "fallback-hook/lunation-moment/full/1",
+      "body_you": "That might look like emotions running higher than usual, people noticing you more, or catching a side of yourself you had been hiding. An unexpected change may knock down a pattern you have outgrown. The release comes after the shock.",
+      "scope": {
+        "kind": "full",
+        "house": 1
+      },
+      "review_status": "approved",
+      "approval": null,
+      "code_reference_count": 0,
+      "code_references": []
+    },
+    {
+      "contentKey": "fallback-hook/lunation-moment/full/10",
+      "body_you": "That might look like a career chapter ending or changing direction, an old path you shelved coming back to life, or recognition arriving from somewhere unexpected. If the work no longer fits the person you have become, you find out now.",
+      "scope": {
+        "kind": "full",
+        "house": 10
+      },
+      "review_status": "approved",
+      "approval": null,
+      "code_reference_count": 0,
+      "code_references": []
+    },
+    {
+      "contentKey": "fallback-hook/lunation-moment/full/11",
+      "body_you": "That might look like a friendship ending or changing shape, a disagreement in a group getting loud, or people around you showing what they need before they can say it. Notice who supports the person you are now, not the person you were.",
+      "scope": {
+        "kind": "full",
+        "house": 11
+      },
+      "review_status": "approved",
+      "approval": null,
+      "code_reference_count": 0,
+      "code_references": []
+    },
+    {
+      "contentKey": "fallback-hook/lunation-moment/full/12",
+      "body_you": "That might look like dreams getting loud, grief or an old loss surfacing to be felt, or needing to find yourself again after too many busy weeks. This stretch runs more emotional than usual. Let it move through instead of scheduling over it.",
+      "scope": {
+        "kind": "full",
+        "house": 12
+      },
+      "review_status": "approved",
+      "approval": null,
+      "code_reference_count": 0,
+      "code_references": []
+    },
+    {
+      "contentKey": "fallback-hook/lunation-moment/full/2",
+      "body_you": "That might look like a bill, debt, or budget question demanding attention, or an old family pattern around money surfacing so it can finally change. What you learn about your finances now is information, not a verdict.",
+      "scope": {
+        "kind": "full",
+        "house": 2
+      },
+      "review_status": "approved",
+      "approval": null,
+      "code_reference_count": 0,
+      "code_references": []
+    },
+    {
+      "contentKey": "fallback-hook/lunation-moment/full/3",
+      "body_you": "That might look like clearing up a misunderstanding with a sibling or someone close, or finally seeing a person clearly after months of reading them wrong. Say the direct version. It lands better than the managed one.",
+      "scope": {
+        "kind": "full",
+        "house": 3
+      },
+      "review_status": "approved",
+      "approval": null,
+      "code_reference_count": 0,
+      "code_references": []
+    },
+    {
+      "contentKey": "fallback-hook/lunation-moment/full/4",
+      "body_you": "That might look like family needing more from you, a problem at home that was kept from you coming to the surface, or seeing where you have been enabling someone because saying no felt harder. If someone at home needs real help, this is the moment to get it.",
+      "scope": {
+        "kind": "full",
+        "house": 4
+      },
+      "review_status": "approved",
+      "approval": null,
+      "code_reference_count": 0,
+      "code_references": []
+    },
+    {
+      "contentKey": "fallback-hook/lunation-moment/full/5",
+      "body_you": "That might look like news about a child in your life, recognition for creative work you have been doing quietly, or attention finding you whether you asked for it or not. Being seen is the theme. Let it happen.",
+      "scope": {
+        "kind": "full",
+        "house": 5
+      },
+      "review_status": "approved",
+      "approval": null,
+      "code_reference_count": 0,
+      "code_references": []
+    },
+    {
+      "contentKey": "fallback-hook/lunation-moment/full/6",
+      "body_you": "That might look like your body asking you to slow down, a daily habit showing what it actually costs you, or work stress reaching the point where something has to change. The fix is small and daily, not dramatic.",
+      "scope": {
+        "kind": "full",
+        "house": 6
+      },
+      "review_status": "approved",
+      "approval": null,
+      "code_reference_count": 0,
+      "code_references": []
+    },
+    {
+      "contentKey": "fallback-hook/lunation-moment/full/7",
+      "body_you": "That might look like a long relationship showing whether it has grown with you, old fears of being left rising up, or a partnership question you have been postponing coming due. The important relationships get looked at honestly now and redefined.",
+      "scope": {
+        "kind": "full",
+        "house": 7
+      },
+      "review_status": "approved",
+      "approval": null,
+      "code_reference_count": 0,
+      "code_references": []
+    },
+    {
+      "contentKey": "fallback-hook/lunation-moment/full/8",
+      "body_you": "That might look like old debt resurfacing from an ex, a family member, or a split you thought was settled, or a demanding person testing your limits. The work is boundaries: what you owe, what you are owed, and what you are done carrying.",
+      "scope": {
+        "kind": "full",
+        "house": 8
+      },
+      "review_status": "approved",
+      "approval": null,
+      "code_reference_count": 0,
+      "code_references": []
+    },
+    {
+      "contentKey": "fallback-hook/lunation-moment/full/9",
+      "body_you": "That might look like an unexpected opportunity or chance meeting, a moment of truth that changes how you read a situation, or the push to break a routine that has kept you small. Say yes to the new thing even if the timing looks wrong.",
+      "scope": {
+        "kind": "full",
+        "house": 9
+      },
+      "review_status": "approved",
+      "approval": null,
+      "code_reference_count": 0,
+      "code_references": []
+    },
+    {
+      "contentKey": "fallback-hook/lunation-moment/new/1",
+      "body_you": "That might look like someone calling you selfish for putting yourself first, a plan getting redirected, or a sudden jolt that breaks a pattern you had stopped noticing. Let it. The shake-up clears room for who you are becoming.",
+      "scope": {
+        "kind": "new",
+        "house": 1
+      },
+      "review_status": "approved",
+      "approval": null,
+      "code_reference_count": 0,
+      "code_references": []
+    },
+    {
+      "contentKey": "fallback-hook/lunation-moment/new/10",
+      "body_you": "That might look like wondering whether your job still fits who you are becoming, a promotion or new path opening up, or a step back that is really a regroup. Keep workplace drama and shortcuts out of it. The long goal is the point.",
+      "scope": {
+        "kind": "new",
+        "house": 10
+      },
+      "review_status": "approved",
+      "approval": null,
+      "code_reference_count": 0,
+      "code_references": []
+    },
+    {
+      "contentKey": "fallback-hook/lunation-moment/new/11",
+      "body_you": "That might look like friendships changing, a new group pulling you in, or your community asking for a skill only you have. Someone near you needs an encouraging word, and you may be the only one who notices.",
+      "scope": {
+        "kind": "new",
+        "house": 11
+      },
+      "review_status": "approved",
+      "approval": null,
+      "code_reference_count": 0,
+      "code_references": []
+    },
+    {
+      "contentKey": "fallback-hook/lunation-moment/new/12",
+      "body_you": "That might look like needing more sleep and quiet than usual, old memories or family patterns surfacing to be cleared, or the outside world feeling like too much. Big decisions can wait. Rest is not falling behind.",
+      "scope": {
+        "kind": "new",
+        "house": 12
+      },
+      "review_status": "approved",
+      "approval": null,
+      "code_reference_count": 0,
+      "code_references": []
+    },
+    {
+      "contentKey": "fallback-hook/lunation-moment/new/2",
+      "body_you": "That might look like a deal ready to close, an idea that could turn into money, or several projects asking for your attention at once. Someone with more experience may show up right when you need direction. Take the meeting.",
+      "scope": {
+        "kind": "new",
+        "house": 2
+      },
+      "review_status": "approved",
+      "approval": null,
+      "code_reference_count": 0,
+      "code_references": []
+    },
+    {
+      "contentKey": "fallback-hook/lunation-moment/new/3",
+      "body_you": "That might look like a sibling or neighbor reaching out, a local project that needs your hands, or the push to finally say something out loud. Your words carry more power than you give them credit for.",
+      "scope": {
+        "kind": "new",
+        "house": 3
+      },
+      "review_status": "approved",
+      "approval": null,
+      "code_reference_count": 0,
+      "code_references": []
+    },
+    {
+      "contentKey": "fallback-hook/lunation-moment/new/4",
+      "body_you": "That might look like family needing more from you, changes in your living situation, or your own need for comfort getting louder. Your emotional needs are being renegotiated, and the people at home will feel it too.",
+      "scope": {
+        "kind": "new",
+        "house": 4
+      },
+      "review_status": "approved",
+      "approval": null,
+      "code_reference_count": 0,
+      "code_references": []
+    },
+    {
+      "contentKey": "fallback-hook/lunation-moment/new/5",
+      "body_you": "That might look like love, children, or a creative project moving to the front of your mind, an old hobby calling you back, or doubt about your own worth flaring up. Make something anyway. The doubt quiets when your hands are busy.",
+      "scope": {
+        "kind": "new",
+        "house": 5
+      },
+      "review_status": "approved",
+      "approval": null,
+      "code_reference_count": 0,
+      "code_references": []
+    },
+    {
+      "contentKey": "fallback-hook/lunation-moment/new/6",
+      "body_you": "That might look like your work schedule or health routine changing, stress from overworking catching up with your body, or a new habit finally sticking. Frustration you swallow tends to land in the body, so give it somewhere to go.",
+      "scope": {
+        "kind": "new",
+        "house": 6
+      },
+      "review_status": "approved",
+      "approval": null,
+      "code_reference_count": 0,
+      "code_references": []
+    },
+    {
+      "contentKey": "fallback-hook/lunation-moment/new/7",
+      "body_you": "That might look like a relationship issue that has not been dealt with coming up for a real conversation, or the decision to cut out someone who does not fit your life anymore. Some of what surfaces may sting. It is still a step toward closeness or a clean break.",
+      "scope": {
+        "kind": "new",
+        "house": 7
+      },
+      "review_status": "approved",
+      "approval": null,
+      "code_reference_count": 0,
+      "code_references": []
+    },
+    {
+      "contentKey": "fallback-hook/lunation-moment/new/8",
+      "body_you": "That might look like what felt secure not feeling so secure anymore, shared money needing an honest conversation, or being asked to let go before you know what comes next. The fear of the empty space is part of the process.",
+      "scope": {
+        "kind": "new",
+        "house": 8
+      },
+      "review_status": "approved",
+      "approval": null,
+      "code_reference_count": 0,
+      "code_references": []
+    },
+    {
+      "contentKey": "fallback-hook/lunation-moment/new/9",
+      "body_you": "That might look like an invitation, interview, or trip that seems small but leads somewhere bigger: a new friend, a new path, even a new place to live. If life feels stuck, distance gives you the view.",
+      "scope": {
+        "kind": "new",
+        "house": 9
+      },
+      "review_status": "approved",
+      "approval": null,
+      "code_reference_count": 0,
+      "code_references": []
+    },
+    {
+      "contentKey": "fallback-hook/lunation-release/1",
+      "body_you": "Let go of managing how you come across. Release the version of you built for approval. Shed the reflex to shrink so nobody flinches. As those loosen, showing up gets easier than maintaining the image ever was.",
+      "scope": {
+        "house": 1
+      },
+      "review_status": "approved",
+      "approval": null,
+      "code_reference_count": 0,
+      "code_references": []
+    },
+    {
+      "contentKey": "fallback-hook/lunation-release/10",
+      "body_you": "Let go of chasing titles that impress people you do not respect. Release the fear of being seen as ambitious. Shed the work that costs more than it pays in every currency but money. As those loosen, your reputation starts matching your actual values.",
+      "scope": {
+        "house": 10
+      },
+      "review_status": "approved",
+      "approval": null,
+      "code_reference_count": 0,
+      "code_references": []
+    },
+    {
+      "contentKey": "fallback-hook/lunation-release/11",
+      "body_you": "Let go of friendships running on history alone. Release the need to be liked by every room. Shed the futures you are holding onto only because you announced them. As those loosen, your real people and real hopes get room to arrive.",
+      "scope": {
+        "house": 11
+      },
+      "review_status": "approved",
+      "approval": null,
+      "code_reference_count": 0,
+      "code_references": []
+    },
+    {
+      "contentKey": "fallback-hook/lunation-release/12",
+      "body_you": "Let go of the processing you do alone that never quite finishes. Release the guilt that has outlived its lesson. Shed the habit of disappearing when you need people most. As those loosen, rest starts actually resting you.",
+      "scope": {
+        "house": 12
+      },
+      "review_status": "approved",
+      "approval": null,
+      "code_reference_count": 0,
+      "code_references": []
+    },
+    {
+      "contentKey": "fallback-hook/lunation-release/2",
+      "body_you": "Let go of measuring your worth by productivity. Release the fear that enough will never arrive. Shed the spending that soothes instead of serves. As those loosen, money starts following what you value instead of what you fear.",
+      "scope": {
+        "house": 2
+      },
+      "review_status": "approved",
+      "approval": null,
+      "code_reference_count": 0,
+      "code_references": []
+    },
+    {
+      "contentKey": "fallback-hook/lunation-release/3",
+      "body_you": "Let go of saying yes before you check your week. Release the story you repeat about yourself that stopped being true. Shed the scrolling that eats the hours conversation deserves. As those loosen, your words start carrying weight again.",
+      "scope": {
+        "house": 3
+      },
+      "review_status": "approved",
+      "approval": null,
+      "code_reference_count": 0,
+      "code_references": []
+    },
+    {
+      "contentKey": "fallback-hook/lunation-release/4",
+      "body_you": "Let go of keeping the family peace at your own expense. Release the guilt about outgrowing where you came from. Shed the clutter, physical and emotional, that keeps home from feeling like yours. As those loosen, your foundation starts holding you up again.",
+      "scope": {
+        "house": 4
+      },
+      "review_status": "approved",
+      "approval": null,
+      "code_reference_count": 0,
+      "code_references": []
+    },
+    {
+      "contentKey": "fallback-hook/lunation-release/5",
+      "body_you": "Let go of saving joy for after the work is done. Release the fear of being seen trying. Shed the belief that your creativity needs to earn its keep. As those loosen, play starts feeding everything else you do.",
+      "scope": {
+        "house": 5
+      },
+      "review_status": "approved",
+      "approval": null,
+      "code_reference_count": 0,
+      "code_references": []
+    },
+    {
+      "contentKey": "fallback-hook/lunation-release/6",
+      "body_you": "Let go of running on empty and calling it dedication. Release the routine that serves the schedule but not the body. Shed the small daily self-abandonments: skipped meals, skipped walks, skipped rest. As those loosen, your days start working for you instead of on you.",
+      "scope": {
+        "house": 6
+      },
+      "review_status": "approved",
+      "approval": null,
+      "code_reference_count": 0,
+      "code_references": []
+    },
+    {
+      "contentKey": "fallback-hook/lunation-release/7",
+      "body_you": "Let go of keeping score in your closest relationships. Release the habit of saying it is fine when it is not. Shed the partnership patterns you inherited but never chose. As those loosen, the people who match you get easier to see.",
+      "scope": {
+        "house": 7
+      },
+      "review_status": "approved",
+      "approval": null,
+      "code_reference_count": 0,
+      "code_references": []
+    },
+    {
+      "contentKey": "fallback-hook/lunation-release/8",
+      "body_you": "Let go of controlling what was never yours to hold. Release the debt-keeping, emotional and financial. Shed the secret you are tired of carrying alone. As those loosen, trust stops feeling like a risk and starts feeling like relief.",
+      "scope": {
+        "house": 8
+      },
+      "review_status": "approved",
+      "approval": null,
+      "code_reference_count": 0,
+      "code_references": []
+    },
+    {
+      "contentKey": "fallback-hook/lunation-release/9",
+      "body_you": "Let go of beliefs you defend but no longer believe. Release the plan that made sense for a person you have outgrown. Shed the certainty that keeps you from asking better questions. As those loosen, the bigger picture starts drawing itself.",
+      "scope": {
+        "house": 9
+      },
+      "review_status": "approved",
+      "approval": null,
+      "code_reference_count": 0,
+      "code_references": []
+    },
+    {
+      "contentKey": "fallback-hook/lunation-shows/1",
+      "body_you": "This is the fresh-start house: a new look, a new direction, a rebirth you can feel. It can show up as the urge to change your path, redirect your life, or step out as a newer version of yourself. The shell cracks so that version can emerge.",
+      "scope": {
+        "house": 1
+      },
+      "review_status": "approved",
+      "approval": null,
+      "code_reference_count": 0,
+      "code_references": []
+    },
+    {
+      "contentKey": "fallback-hook/lunation-shows/10",
+      "body_you": "It can show up as sudden changes in status, responsibility, or direction: career takes the front seat. Step back and check the long game, because whatever you pour energy into should align with your values and build toward your future.",
+      "scope": {
+        "house": 10
+      },
+      "review_status": "approved",
+      "approval": null,
+      "code_reference_count": 0,
+      "code_references": []
+    },
+    {
+      "contentKey": "fallback-hook/lunation-shows/11",
+      "body_you": "It can show up as renewal in your social networks: friendships changing, new communities forming, strength found in numbers. Surround yourself with people who inspire you, and be an active voice in the rooms you choose.",
+      "scope": {
+        "house": 11
+      },
+      "review_status": "approved",
+      "approval": null,
+      "code_reference_count": 0,
+      "code_references": []
+    },
+    {
+      "contentKey": "fallback-hook/lunation-shows/12",
+      "body_you": "It can show up as the need to tune out the world and tune in: rest, reflection, and hidden parts of the psyche surfacing to be healed. If you have been numbing yourself with busyness, this Moon calls you back to your truth.",
+      "scope": {
+        "house": 12
+      },
+      "review_status": "approved",
+      "approval": null,
+      "code_reference_count": 0,
+      "code_references": []
+    },
+    {
+      "contentKey": "fallback-hook/lunation-shows/2",
+      "body_you": "It can show up as money moving: reworking finances, revaluing your work, or behind-the-scenes effort finally getting noticed. How much you value yourself shows in what you are manifesting, so honoring your values is the real assignment.",
+      "scope": {
+        "house": 2
+      },
+      "review_status": "approved",
+      "approval": null,
+      "code_reference_count": 0,
+      "code_references": []
+    },
+    {
+      "contentKey": "fallback-hook/lunation-shows/3",
+      "body_you": "It can show up close to home: conversations with siblings and neighbors, a creative spark, or the pull to lean on your local circle. Support flows both ways right now, so connect with the people who keep your momentum going.",
+      "scope": {
+        "house": 3
+      },
+      "review_status": "approved",
+      "approval": null,
+      "code_reference_count": 0,
+      "code_references": []
+    },
+    {
+      "contentKey": "fallback-hook/lunation-shows/4",
+      "body_you": "It can show up as emotion asking for maintenance: feelings you have been holding start to build until they get processed. Checking in, feeling it fully, and letting it move through you is the actual work here; you cannot think your way out of emotion.",
+      "scope": {
+        "house": 4
+      },
+      "review_status": "approved",
+      "approval": null,
+      "code_reference_count": 0,
+      "code_references": []
+    },
+    {
+      "contentKey": "fallback-hook/lunation-shows/5",
+      "body_you": "It can show up as passion returning: an old hobby calling you back, romance warming, a creative project asking for attention. Reintegrating what you love, including the parts of yourself you abandoned along the way, is the point.",
+      "scope": {
+        "house": 5
+      },
+      "review_status": "approved",
+      "approval": null,
+      "code_reference_count": 0,
+      "code_references": []
+    },
+    {
+      "contentKey": "fallback-hook/lunation-shows/6",
+      "body_you": "It can show up as health and work routines shifting: new information challenges stuck patterns, and a new self-care rhythm wants building. If you have been giving too much, the focus swings back to you; flexibility is the best tool here.",
+      "scope": {
+        "house": 6
+      },
+      "review_status": "approved",
+      "approval": null,
+      "code_reference_count": 0,
+      "code_references": []
+    },
+    {
+      "contentKey": "fallback-hook/lunation-shows/7",
+      "body_you": "It can show up as relationship issues finally surfacing for resolution, or at least discussion: reciprocity, commitment, and who belongs in your life. What you need from others has to balance with what they can actually give.",
+      "scope": {
+        "house": 7
+      },
+      "review_status": "approved",
+      "approval": null,
+      "code_reference_count": 0,
+      "code_references": []
+    },
+    {
+      "contentKey": "fallback-hook/lunation-shows/8",
+      "body_you": "It can show up as power dynamics arising for change: trust, intimacy, debts, and shared resources on the table. What you thought gave you security may not anymore, and your deeper inner resources are what pull you through.",
+      "scope": {
+        "house": 8
+      },
+      "review_status": "approved",
+      "approval": null,
+      "code_reference_count": 0,
+      "code_references": []
+    },
+    {
+      "contentKey": "fallback-hook/lunation-shows/9",
+      "body_you": "It can show up as the pull toward the bigger picture: travel, study, or exploring beliefs to find what resonates as your own. The old map is up for revision, and honest questions serve you better than inherited answers.",
+      "scope": {
+        "house": 9
+      },
+      "review_status": "approved",
+      "approval": null,
+      "code_reference_count": 0,
+      "code_references": []
+    }
+  ]
+}
