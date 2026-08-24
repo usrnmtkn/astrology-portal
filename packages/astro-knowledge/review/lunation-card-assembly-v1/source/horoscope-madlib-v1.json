@@ -1,0 +1,524 @@
+{
+  "schema": "horoscope-madlib/v1",
+  "status": "proposed",
+  "source": "book-ritual-and-the-moon, 265 lunation entries",
+  "scope": "Scaffolding only. See nonSlottable.",
+  "slots": {
+    "LUNATION_SIGN": {
+      "values": [
+        "aries",
+        "taurus",
+        "gemini",
+        "cancer",
+        "leo",
+        "virgo",
+        "libra",
+        "scorpio",
+        "sagittarius",
+        "capricorn",
+        "aquarius",
+        "pisces"
+      ]
+    },
+    "LUNATION_KIND": {
+      "values": [
+        "new moon",
+        "full moon"
+      ]
+    },
+    "ECLIPSE_KIND": {
+      "values": [
+        "solar",
+        "lunar"
+      ],
+      "optional": true,
+      "note": "Solar maps to the matching New Moon cell; lunar maps to the matching Full Moon cell. The displayed title retains Solar Eclipse or Lunar Eclipse."
+    },
+    "ECLIPSE_NODE_POLARITY": {
+      "values": [
+        "north",
+        "south"
+      ],
+      "optional": true,
+      "computed": true,
+      "note": "Supplied by the event-time eclipse calculation. It may select an approved modifier but never generates prose by itself."
+    },
+    "ECLIPSE_VERB": {
+      "values": [
+        "shines upon"
+      ],
+      "optional": true,
+      "note": "The approved Pisces lunar-eclipse default is shines upon. Other eclipse contexts require an exact approved content row and are never randomly rotated."
+    },
+    "ILLUMINATE_VERB": {
+      "values": [
+        "illuminates",
+        "shines a light on",
+        "shines its light on",
+        "is illuminating",
+        "activates",
+        "highlights"
+      ],
+      "default": "illuminates"
+    },
+    "HOUSE": {
+      "values": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+      ]
+    },
+    "HOUSE_ORDINAL": {
+      "derivedFrom": "HOUSE"
+    },
+    "HOUSE_DOMAIN": {
+      "derivedFrom": "HOUSE",
+      "table": "houses[].domain"
+    },
+    "HOUSE_SIGN": {
+      "derivedFrom": "HOUSE",
+      "table": "houses[].naturalRuler"
+    },
+    "HOUSE_ARCANA": {
+      "derivedFrom": "HOUSE",
+      "table": "houses[].arcana"
+    },
+    "OPP_HOUSE": {
+      "derivedFrom": "HOUSE",
+      "rule": "((HOUSE + 5) % 12) + 1"
+    },
+    "SIGN_RULER": {
+      "derivedFrom": "LUNATION_SIGN",
+      "table": "signs[].ruler"
+    },
+    "INTENTION_TEXT": {
+      "authored": true,
+      "note": "no formula, must be written"
+    }
+  },
+  "templates": {
+    "opening": "The {LUNATION_SIGN_TITLE} {LUNATION_KIND} {ILLUMINATE_VERB} your {HOUSE_ORDINAL} house of {HOUSE_DOMAIN}.",
+    "tarotFrame": "The {HOUSE_ORDINAL} house is ruled by {HOUSE_SIGN} and corresponds to {HOUSE_ARCANA} in the Major Arcana.",
+    "signRuler": "{LUNATION_SIGN_TITLE} is ruled by {SIGN_RULER}.",
+    "sunCounterweight": "the sun sits opposite in your {OPP_ORDINAL} house of {OPP_DOMAIN}",
+    "intention": "Your intention for this {LUNATION_SIGN_TITLE} {LUNATION_KIND} is, \"{INTENTION_TEXT}\"",
+    "eclipseHouseOpeningSolarCandidate": null,
+    "eclipseHouseOpeningLunarCandidate": "The {LUNATION_SIGN_TITLE} lunar eclipse shines upon your {HOUSE_ORDINAL} house of {HOUSE_DOMAIN}.",
+    "eclipseNatureDefaultCandidate": "Eclipses warp time and shift the course of events in ways you can't yet see.",
+    "eclipseMechanicsCandidate": "Lunar eclipses are portals into your soul. When they come around, they can help you uncover the truth and allow you to gain knowledge that will steer your life, changing your path to a better one.",
+    "eclipseMechanicsBothKindsCandidate": "Eclipse cycles are amplified New and Full Moons that arrive in pairs or triplets, with themes that are revisited during eclipses six months later. A solar eclipse is an amplified new moon; a lunar eclipse is an amplified full moon. Both are three times as strong as a traditional new/full moon.",
+    "eclipseNoRitualCandidate": "Eclipses are not the recommended time for ritual, manifestation, or intention setting. They happen along the Lunar Nodes, and part of the work is letting the situation unfold before deciding what it is supposed to become.",
+    "eclipseKindSolarCandidate": "Solar eclipses usually start new things.",
+    "eclipseKindLunarCandidate": "Lunar eclipses help us see what needs to go and let it go.",
+    "eclipseAdviceCandidate": "You can't control it, and you shouldn't try. Not everything that changes now needs an immediate response."
+  },
+  "templateNotes": {
+    "opening": "Matches 179 of 265 book entries. 86 open some other way.",
+    "sunCounterweight": "Full moon only. For a new moon the sun is in the same house.",
+    "intention": "44 of 265 entries close with one. Format is formulaic, text is not.",
+    "openingSelector": "The book body's first sentence is the only opening on regular and eclipse paths. Do not generate a separate system opening. An eclipse variant stores an owner-reviewed replacement for that first sentence; lunar uses 'lunar eclipse' and solar uses 'solar eclipse'.",
+    "eclipseKind": "After the eclipse opening, use the solar or lunar mechanic. A South Node solar eclipse requires a separately approved reversal modifier; no modifier is currently written.",
+    "eclipseMechanics": "Render the lunar-scoped passage on lunar eclipse cards. Use eclipseMechanicsBothKindsCandidate only where the card must distinguish solar and lunar eclipses.",
+    "eclipseNoRitual": "Render only for eclipses. Explicit declared Full Moon intention blocks are omitted only through stored, owner-approved start/end spans and hashes. Incidental intention language remains. A card with an unapproved required span fails closed.",
+    "eclipseChallenge": "Optional. Render only from an approved habit-and-consequence pair selected by computed context. Never generate the two slots live.",
+    "eclipseSeason": "Axis, corridor dates, and series position are computed facts. They may fill only separately approved prose frames.",
+    "eclipseAdvice": "Append only on eclipses. The non-serving candidate requires owner approval as a complete composition plus one rendered sample before promotion."
+  },
+  "eclipseCandidateFields": {
+    "reviewStatus": "needs_review",
+    "serving": false,
+    "eclipseNature": {
+      "default": "Eclipses warp time and shift the course of events in ways you can't yet see.",
+      "candidates": [
+        "Eclipses warp time and shift the course of events in ways you can't yet see.",
+        "Eclipses bring fated events, sudden shifts, and doors closing permanently.",
+        "You will not leave this eclipse unmarked."
+      ],
+      "selectionRule": "Use default for every eclipse. The other candidates require separately approved exact contexts.",
+      "exactRowOnly": [
+        "Eclipses bring fated events, sudden shifts, and doors closing permanently.",
+        "You will not leave this eclipse unmarked."
+      ]
+    },
+    "eclipseKind": {
+      "solar": "Solar eclipses usually start new things.",
+      "lunar": "Lunar eclipses help us see what needs to go and let it go.",
+      "southNodeSolarModifier": null,
+      "gate": "The owner must supply and approve the exact South Node reversal sentence."
+    },
+    "eclipseMechanics": "Lunar eclipses are portals into your soul. When they come around, they can help you uncover the truth and allow you to gain knowledge that will steer your life, changing your path to a better one.",
+    "eclipseMechanicsScope": "lunar_only",
+    "eclipseNoRitual": "Eclipses are not the recommended time for ritual, manifestation, or intention setting. They happen along the Lunar Nodes, and part of the work is letting the situation unfold before deciding what it is supposed to become.",
+    "eclipseNoRitualApproval": {
+      "status": "owner_approved",
+      "date": "2026-08-24",
+      "promotionAuthorized": false
+    },
+    "intentionPreservation": {
+      "preserveWhenEclipse": [
+        "bookBodyOutsideApprovedDeclaredIntentionSpans",
+        "incidentalIntentionLanguage",
+        "actionsIntentions",
+        "closing"
+      ],
+      "rule": "Preserve the regular source. Omit only a stored, owner-approved declared Full Moon intention span from an eclipse variant. Never pattern-match at runtime; an affected unapproved cell fails closed."
+    },
+    "eclipseVerb": {
+      "default": "shines upon",
+      "observedCounts": {
+        "hits": 5,
+        "reveals": 5,
+        "activates": 4,
+        "illuminates": 3,
+        "shows": 5,
+        "demands": 2
+      },
+      "exactRowOnly": [
+        "strips away",
+        "cuts through",
+        "torches",
+        "rips the veil away",
+        "revokes",
+        "ends that contract",
+        "makes the cut for you"
+      ],
+      "rule": "Pisces lunar-eclipse book-opening replacements use shines upon in all twelve houses per the owner ruling of 2026-08-24. Other eclipse kinds or exceptions require separately approved exact rows."
+    },
+    "eclipseChallenge": {
+      "frame": "If you're still {ECLIPSE_HABIT}, this eclipse {ECLIPSE_CONSEQUENCE}.",
+      "approvedPairs": [],
+      "rule": "Omit unless a complete habit-and-consequence pair is approved for the computed context."
+    },
+    "eclipseSeason": {
+      "computedInputs": [
+        "eclipseAxis",
+        "seasonStart",
+        "seasonEnd",
+        "seriesPosition"
+      ],
+      "approvedFrames": [],
+      "rule": "The engine supplies every fact. Omit when no complete approved frame matches."
+    },
+    "eclipseAdvice": "You can't control it, and you shouldn't try. Not everything that changes now needs an immediate response."
+  },
+  "houses": [
+    {
+      "house": 1,
+      "ordinal": "1st",
+      "naturalRuler": "Aries",
+      "arcana": "The Emperor",
+      "domain": "Self, a time to reclaim yourself, energy, and power",
+      "domainVariants": [
+        "Self"
+      ],
+      "oppositeHouse": 7,
+      "oppositeOrdinal": "7th",
+      "oppositeDomain": "relationships"
+    },
+    {
+      "house": 2,
+      "ordinal": "2nd",
+      "naturalRuler": "Taurus",
+      "arcana": "The Hierophant",
+      "domain": "disposable income and foundation",
+      "domainVariants": [
+        "Finances and Foundation",
+        "money, property, family, and assets"
+      ],
+      "oppositeHouse": 8,
+      "oppositeOrdinal": "8th",
+      "oppositeDomain": "transformation, symbolism, and other people's money"
+    },
+    {
+      "house": 3,
+      "ordinal": "3rd",
+      "naturalRuler": "Gemini",
+      "arcana": "The Lovers",
+      "domain": "early education, how to process information, and communicate with your community, siblings, and neighbors",
+      "domainVariants": [
+        "communication, early education, processing information, community, siblings, and neighbors",
+        "communication and siblings",
+        "communication and the local community"
+      ],
+      "oppositeHouse": 9,
+      "oppositeOrdinal": "9th",
+      "oppositeDomain": "the higher self, philosophy, and greater wisdom"
+    },
+    {
+      "house": 4,
+      "ordinal": "4th",
+      "naturalRuler": "Cancer",
+      "arcana": "The Chariot",
+      "domain": "home, family, and generational karma",
+      "domainVariants": [
+        "home, family, and inherited karma",
+        "home, family, and karma",
+        "home, roots, and family",
+        "home and family",
+        "home, family, and security"
+      ],
+      "oppositeHouse": 10,
+      "oppositeOrdinal": "10th",
+      "oppositeDomain": "career and public recognition",
+      "karmicFrame": "The 4th house is a Karmic house, bringing family situations to the surface for a more profound understanding to learn, heal, and release.",
+      "karmaScope": "generational and family karma: the emotional patterns, childhood conditions and family dynamics you inherited from the people who raised them and were raised by them, which you are here to heal or break"
+    },
+    {
+      "house": 5,
+      "ordinal": "5th",
+      "naturalRuler": "Leo",
+      "arcana": "Strength",
+      "domain": "fun, heart-centeredness, and children",
+      "domainVariants": [
+        "fun and creativity",
+        "fun, children, and creativity"
+      ],
+      "oppositeHouse": 11,
+      "oppositeOrdinal": "11th",
+      "oppositeDomain": "friendship"
+    },
+    {
+      "house": 6,
+      "ordinal": "6th",
+      "naturalRuler": "Virgo",
+      "arcana": "The Hermit",
+      "domain": "health and being of service",
+      "domainVariants": [
+        "health, daily work, routine, and being of service"
+      ],
+      "oppositeHouse": 12,
+      "oppositeOrdinal": "12th",
+      "oppositeDomain": "karma, subconscious, and endings"
+    },
+    {
+      "house": 7,
+      "ordinal": "7th",
+      "naturalRuler": "Libra",
+      "arcana": "Justice",
+      "domain": "relationships",
+      "domainVariants": [],
+      "oppositeHouse": 1,
+      "oppositeOrdinal": "1st",
+      "oppositeDomain": "Self, a time to reclaim yourself, energy, and power"
+    },
+    {
+      "house": 8,
+      "ordinal": "8th",
+      "naturalRuler": "Scorpio",
+      "arcana": "Death",
+      "domain": "transformation, symbolism, and other people's money",
+      "domainVariants": [],
+      "oppositeHouse": 2,
+      "oppositeOrdinal": "2nd",
+      "oppositeDomain": "disposable income and foundation"
+    },
+    {
+      "house": 9,
+      "ordinal": "9th",
+      "naturalRuler": "Sagittarius",
+      "arcana": "Temperance",
+      "domain": "the higher self, philosophy, and greater wisdom",
+      "domainVariants": [
+        "the higher self",
+        "Higher Self"
+      ],
+      "oppositeHouse": 3,
+      "oppositeOrdinal": "3rd",
+      "oppositeDomain": "early education, how to process information, and communicate with your community, siblings, and neighbors"
+    },
+    {
+      "house": 10,
+      "ordinal": "10th",
+      "naturalRuler": "Capricorn",
+      "arcana": "The Devil",
+      "domain": "career and public recognition",
+      "domainVariants": [
+        "career and purpose",
+        "career, recognition, and purpose",
+        "career and public status"
+      ],
+      "oppositeHouse": 4,
+      "oppositeOrdinal": "4th",
+      "oppositeDomain": "home, family, and generational karma"
+    },
+    {
+      "house": 11,
+      "ordinal": "11th",
+      "naturalRuler": "Aquarius",
+      "arcana": "The Star",
+      "domain": "friendship",
+      "domainVariants": [
+        "friendships and networks",
+        "friendship, community, and networking"
+      ],
+      "oppositeHouse": 5,
+      "oppositeOrdinal": "5th",
+      "oppositeDomain": "fun, heart-centeredness, and children"
+    },
+    {
+      "house": 12,
+      "ordinal": "12th",
+      "naturalRuler": "Pisces",
+      "arcana": "The Moon",
+      "domain": "karma, subconscious, and endings",
+      "domainVariants": [],
+      "oppositeHouse": 6,
+      "oppositeOrdinal": "6th",
+      "oppositeDomain": "health and being of service",
+      "karmicFrame": "You may receive downloads of information from past lifetimes or your ancestral lineage, and it's time to clear up any spiritual or emotional debt holding you back.",
+      "karmaScope": "past-life and subconscious karma: spiritual or emotional debt carried across lifetimes, surfacing through dreams, intuition and what is hidden from you"
+    }
+  ],
+  "signs": [
+    {
+      "sign": "aries",
+      "title": "Aries",
+      "ruler": "Mars",
+      "traditionalRuler": null,
+      "naturalHouse": 1
+    },
+    {
+      "sign": "taurus",
+      "title": "Taurus",
+      "ruler": "Venus",
+      "traditionalRuler": null,
+      "naturalHouse": 2
+    },
+    {
+      "sign": "gemini",
+      "title": "Gemini",
+      "ruler": "Mercury",
+      "traditionalRuler": null,
+      "naturalHouse": 3
+    },
+    {
+      "sign": "cancer",
+      "title": "Cancer",
+      "ruler": "the Moon",
+      "traditionalRuler": null,
+      "naturalHouse": 4
+    },
+    {
+      "sign": "leo",
+      "title": "Leo",
+      "ruler": "the Sun",
+      "traditionalRuler": null,
+      "naturalHouse": 5
+    },
+    {
+      "sign": "virgo",
+      "title": "Virgo",
+      "ruler": "Mercury",
+      "traditionalRuler": null,
+      "naturalHouse": 6
+    },
+    {
+      "sign": "libra",
+      "title": "Libra",
+      "ruler": "Venus",
+      "traditionalRuler": null,
+      "naturalHouse": 7
+    },
+    {
+      "sign": "scorpio",
+      "title": "Scorpio",
+      "ruler": "Pluto",
+      "traditionalRuler": "Mars",
+      "naturalHouse": 8
+    },
+    {
+      "sign": "sagittarius",
+      "title": "Sagittarius",
+      "ruler": "Jupiter",
+      "traditionalRuler": null,
+      "naturalHouse": 9
+    },
+    {
+      "sign": "capricorn",
+      "title": "Capricorn",
+      "ruler": "Saturn",
+      "traditionalRuler": null,
+      "naturalHouse": 10
+    },
+    {
+      "sign": "aquarius",
+      "title": "Aquarius",
+      "ruler": "Uranus",
+      "traditionalRuler": "Saturn",
+      "naturalHouse": 11
+    },
+    {
+      "sign": "pisces",
+      "title": "Pisces",
+      "ruler": "Neptune",
+      "traditionalRuler": "Jupiter",
+      "naturalHouse": 12
+    }
+  ],
+  "nonSlottable": {
+    "body": {
+      "measured": "word overlap between entries is 0.18 to 0.24 on the sign axis and 0.18 to 0.24 on the house axis",
+      "meaning": "there is no shared skeleton to extract; each cell body is bespoke",
+      "consequence": "the body must come from the cell's own book entry, or from house-scoped repo rows, never from a madlib fill"
+    }
+  },
+  "collisions": [
+    {
+      "term": "karma",
+      "houses": [
+        4,
+        12
+      ],
+      "risk": "highest bleed point in the set. Both houses name karma in their domain phrase.",
+      "rule": "House 4 karma is inherited through family: living patterns, childhood, parents, the cycle you break. House 12 karma is inherited across lifetimes: spiritual debt, dreams, the subconscious, what is hidden. A card for one house must never use the other's karmic frame or vocabulary.",
+      "vocabularyFences": {
+        "4": [
+          "family",
+          "childhood",
+          "parents",
+          "roots",
+          "home",
+          "inherited pattern",
+          "generational",
+          "break the cycle"
+        ],
+        "12": [
+          "past lifetimes",
+          "ancestral lineage",
+          "subconscious",
+          "spiritual debt",
+          "dreams",
+          "hidden",
+          "the collective"
+        ]
+      },
+      "sharedTerm": {
+        "term": "ancestors",
+        "note": "appears in both houses and cannot be fenced by the noun. In house 4 ancestors are people with histories you inherit patterns from. In house 12 they are a channel transmitting information. Fence on the verb, not the noun.",
+        "house4Verbs": [
+          "inherited",
+          "passed down",
+          "learned",
+          "carried forward",
+          "repeated"
+        ],
+        "house12Verbs": [
+          "receive",
+          "download",
+          "channel",
+          "surface",
+          "come through"
+        ]
+      }
+    }
+  ]
+}

@@ -1,8 +1,8 @@
 {
-  "packageVersion": "v3-2026-08-23l",
-  "contentHash": "23041a0721c1bf9b21b1399d688f3117",
-  "keyManifestHash": "bab425b6ed8bb7aacb01d1ccd0592986",
-  "keyCount": 9155,
+  "packageVersion": "v3-2026-08-24b",
+  "contentHash": "9a25e0e1d0b66915487ecb33bdc51731",
+  "keyManifestHash": "727cde026a95c27edb22867c24f70fb2",
+  "keyCount": 9156,
   "keys": [
     "authored:approved/calendar-weekly-overview/2026-08-03",
     "authored:authored/calendar-weekly-moon/aquarius",
@@ -4047,6 +4047,7 @@
     "hook:fallback-hook/house-meaning/7",
     "hook:fallback-hook/house-meaning/8",
     "hook:fallback-hook/house-meaning/9",
+    "hook:fallback-hook/lunation-cycle-anchor/new",
     "hook:fallback-hook/lunation-higher-path/1",
     "hook:fallback-hook/lunation-higher-path/10",
     "hook:fallback-hook/lunation-higher-path/11",

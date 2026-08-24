@@ -17,6 +17,8 @@ export const READER_ELIGIBLE_REVIEW_STATUSES = new Set([
 
 const EXACT_APPROVAL_REQUIRED_PREFIXES = [
   "authored/transit-",
+  "authored/book-ritual-and-the-moon/lunation-horoscope/eclipse-",
+  "authored/lunation-eclipse-section/",
   "fallback-hook/daily-",
   "fallback-hook/natal-aspect-lived/",
   "fallback-hook/synastry-pair/",
