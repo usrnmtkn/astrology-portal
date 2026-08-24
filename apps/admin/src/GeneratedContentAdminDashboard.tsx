@@ -74,6 +74,7 @@ import {
 } from "./skyFallbackWorkspace";
 import { templateVariableReferences } from "./templateVariableReference";
 import { articleAppDestination, isSkyWriteupContentRow } from "./articleWorkspace";
+import { fallbackHookDisplayTitle } from "./fallbackHookTitle";
 import type {
   WritingSurfaceAdminAccess,
   WritingSurfaceMapItem,
@@ -1585,6 +1586,8 @@ function rowTitle(row: AdminGeneratedContentRow | AdminReviewRecord | AdminUserG
   if ("content_key" in row) {
     const structuredIdentity = skyFallbackIdentity(row.content_key);
     if (structuredIdentity) return structuredIdentity.title;
+    const fallbackHookTitle = fallbackHookDisplayTitle(row.content_key);
+    if (fallbackHookTitle) return fallbackHookTitle;
     if (row.content_key.startsWith("slot-template/")) return templateDisplayName(row.content_key, normalizeText(row.headline));
     const natalTemplateTitle = natalPlanetInSignTemplateTitle(row.content_key, normalizeText(row.headline));
     if (natalTemplateTitle) return natalTemplateTitle;
@@ -1594,6 +1597,8 @@ function rowTitle(row: AdminGeneratedContentRow | AdminReviewRecord | AdminUserG
   if (natalTemplateTitle) return natalTemplateTitle;
   const structuredIdentity = skyFallbackIdentity(row.contentKey);
   if (structuredIdentity) return structuredIdentity.title;
+  const fallbackHookTitle = fallbackHookDisplayTitle(row.contentKey);
+  if (fallbackHookTitle) return fallbackHookTitle;
   return normalizeText(row.title) || normalizeText(row.summary) || titleFromKey(row.contentKey);
 }
 
@@ -5742,6 +5747,7 @@ export function GeneratedContentAdminDashboard() {
         }
       });
     };
+    const fallbackHookEditorTitle = fallbackHookDisplayTitle(currentDraft.contentKey);
 
     return (
       <>
@@ -5762,7 +5768,9 @@ export function GeneratedContentAdminDashboard() {
                   ? "Edit phrase"
                   : isArticleDraft
                     ? "Edit article"
-                    : "Edit saved row"
+                    : fallbackHookEditorTitle
+                      ? `Edit ${fallbackHookEditorTitle}`
+                      : "Edit saved row"
                 : isVocabularyDraft
                   ? "Create reusable phrase"
                   : isArticleDraft
