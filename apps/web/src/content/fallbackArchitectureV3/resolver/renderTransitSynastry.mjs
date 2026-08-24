@@ -11,6 +11,7 @@ import {
 } from "./dailyGlanceVoice.mjs";
 import { isGovernedReaderEligible, synastryReaderTier, transitReaderTier } from "./readerEligibility.mjs";
 import { normalizeLunationSign } from "./lunationNormalization.mjs";
+import { sharedLunationEclipseSectionKey } from "./lunationEclipseSectionKeys.mjs";
 
 const here = path.dirname(url.fileURLToPath(import.meta.url));
 const lib = JSON.parse(fs.readFileSync(path.join(here, "../source-rows/transit-synastry-rows-v1.json"), "utf8"));
@@ -2297,10 +2298,10 @@ export function renderLunationHoroscope({ kind, sign, risingSign, eventDate, mat
     : null;
   const bookCell = isEclipse ? exactEclipsePreview : exactBookCell;
   const eclipseSectionPrefix = `authored/lunation-eclipse-section/${sign}/rising-${risingSign}/house-${h}`;
-  const sharedEclipseSections = new Set(["nature", "mechanics", "recommendation", "close"]);
-  const eclipseSectionKey = (id) => sharedEclipseSections.has(id)
-    ? `authored/lunation-eclipse-section/${sign}/shared/${id}`
-    : `${eclipseSectionPrefix}/${id}`;
+  const eclipseSectionKey = (id) => (
+    sharedLunationEclipseSectionKey(kind, id)
+    ?? `${eclipseSectionPrefix}/${id}`
+  );
   const eclipseSection = (id) => isEclipse ? card(eclipseSectionKey(id)) : null;
   const jurisdiction = vocab.get(`fallback-vocab/house-jurisdiction/${h}`)?.body;
   const paras = [];
@@ -2357,7 +2358,13 @@ export function renderLunationHoroscope({ kind, sign, risingSign, eventDate, mat
       flagOmittedSection(id, key);
       return null;
     }
-    paras.push(renderStoredBody(stored));
+    try {
+      paras.push(renderStoredBody(stored));
+    } catch (error) {
+      if (!(error instanceof SourceGapError)) throw error;
+      flagOmittedSection(id, key);
+      return null;
+    }
     return stored;
   };
   let authoredBodyUsed = false;
@@ -2403,7 +2410,12 @@ export function renderLunationHoroscope({ kind, sign, risingSign, eventDate, mat
   if ((kind === "full-moon" || kind === "eclipse-lunar") && !(isEclipse && bookCell) && !suppressCycleAnchor) {
     const anchor = hooks.get("fallback-hook/lunation-matching-new-moon-anchor/full")?.body_you;
     if (!anchor) throw new SourceGapError("SOURCE_GAP: missing Full Moon cycle anchor");
-    paras.push(fill(anchor, matchingNewMoonSlots()));
+    try {
+      paras.push(fill(anchor, matchingNewMoonSlots()));
+    } catch (error) {
+      if (!(kind === "eclipse-lunar" && error instanceof SourceGapError)) throw error;
+      flagOmittedSection("matching-new-moon-anchor", "fallback-hook/lunation-matching-new-moon-anchor/full");
+    }
   } else if ((kind === "new-moon" || kind === "eclipse-solar") && !(isEclipse && bookCell)) {
     const anchor = hooks.get("fallback-hook/lunation-cycle-anchor/new")?.body_you;
     if (!anchor) throw new SourceGapError("SOURCE_GAP: missing New Moon cycle anchor");

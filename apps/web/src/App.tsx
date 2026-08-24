@@ -91,6 +91,7 @@ import {
   lunarNodeTransitRangeLabel
 } from "./services/astrologyDisplay";
 import { normalizeBirthTime, twentyFourHourTimeToDisplay } from "./services/chartTime";
+import { lunationEventOccursOnLocalDate } from "./services/lunationEventDay";
 import {
   formatSignupBirthDate,
   formatSignupBirthTime,
@@ -11123,15 +11124,23 @@ export function App() {
   useEffect(() => {
     let cancelled = false;
     const lunationRising = profileNatalSky?.ascendant ?? userProfile?.rising;
-    if (!sky?.moonEvent || sky.moonEvent.days !== 0 || !lunationRising) {
+    if (
+      !sky?.moonEvent
+      || !lunationRising
+      || !lunationEventOccursOnLocalDate({
+        occursAt: sky.moonEvent.occursAt,
+        selectedDate: skyDate,
+        timeZone: sky.location.timeZone || browserTimeZone()
+      })
+    ) {
       return () => {
         cancelled = true;
       };
     }
 
     loadLunationBookFallbackArchitectureV3Bundle()
-      .then((installed) => {
-        if (installed && !cancelled) {
+      .then(() => {
+        if (!cancelled) {
           setFallbackArchitectureV3Version((version) => version + 1);
         }
       })
@@ -11142,7 +11151,7 @@ export function App() {
     return () => {
       cancelled = true;
     };
-  }, [profileNatalSky?.ascendant, sky?.moonEvent, userProfile?.rising]);
+  }, [profileNatalSky?.ascendant, sky?.location.timeZone, sky?.moonEvent, skyDate, userProfile?.rising]);
 
   useEffect(() => {
     let cancelled = false;
@@ -16241,8 +16250,12 @@ function ProfileView({
     if (
       !lunationBlendYouFallbackEnabled
       || !moonEvent
-      || moonEvent.days !== 0
       || moonEvent.name !== "Full Moon"
+      || !lunationEventOccursOnLocalDate({
+        occursAt: moonEvent.occursAt,
+        selectedDate: targetDate,
+        timeZone: currentSky.location.timeZone || browserTimeZone()
+      })
     ) {
       setDailyMatchingNewMoon(null);
       return;
@@ -16289,6 +16302,7 @@ function ProfileView({
     currentSky?.moonEvent?.name,
     currentSky?.moonEvent?.occursAt,
     currentSky?.moonEvent?.sign,
+    currentSky?.location.timeZone,
     lunationBlendYouFallbackEnabled,
     profile.currentLocation,
     profile.currentLocationData?.label,
@@ -17005,7 +17019,15 @@ function ProfileView({
     }
   })();
   const dailySpecialSections = (() => {
-    if (!currentSky?.moonEvent || currentSky.moonEvent.days !== 0 || !displayRising) return [];
+    if (
+      !currentSky?.moonEvent
+      || !displayRising
+      || !lunationEventOccursOnLocalDate({
+        occursAt: currentSky.moonEvent.occursAt,
+        selectedDate: targetDate,
+        timeZone: currentSky.location.timeZone || browserTimeZone()
+      })
+    ) return [];
 
     try {
       const kind = currentSky.moonEvent.eclipseType
@@ -17018,7 +17040,12 @@ function ProfileView({
         && dailyMatchingNewMoon?.fullMoonEventDate === currentSky.moonEvent.occursAt
         ? dailyMatchingNewMoon.fact
         : undefined;
-      if (isFullPhase && lunationBlendYouFallbackEnabled && !matchingNewMoon) return [];
+      if (
+        isFullPhase
+        && kind !== "eclipse-lunar"
+        && lunationBlendYouFallbackEnabled
+        && !matchingNewMoon
+      ) return [];
       const rendered = transitSynastryFallbackRendererV3.renderLunationEventCard({
         eventDate: currentSky.moonEvent.occursAt,
         blendFallbackEnabled: lunationBlendYouFallbackEnabled,

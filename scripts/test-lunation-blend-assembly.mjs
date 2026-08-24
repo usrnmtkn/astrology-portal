@@ -13,6 +13,9 @@ import {
 import {
   normalizeLunationSign
 } from "../apps/web/src/content/fallbackArchitectureV3/resolver/lunationNormalization.mjs";
+import {
+  sharedLunationEclipseSectionKey
+} from "../apps/web/src/content/fallbackArchitectureV3/resolver/lunationEclipseSectionKeys.mjs";
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const packageDir = path.join(repoRoot, "apps/web/src/content/fallbackArchitectureV3");
@@ -61,6 +64,16 @@ const retainedUranusRows = baseRows.hookRows.filter((row) => (
 
 assert.equal(normalizeLunationSign(" Aquarius "), "aquarius");
 assert.equal(normalizeLunationSign(null), "");
+assert.equal(
+  sharedLunationEclipseSectionKey("eclipse-lunar", "mechanics"),
+  "authored/lunation-eclipse-section/shared/lunar/mechanics"
+);
+assert.equal(
+  sharedLunationEclipseSectionKey("eclipse-solar", "mechanics"),
+  "authored/lunation-eclipse-section/shared/solar/mechanics"
+);
+assert.equal(sharedLunationEclipseSectionKey("full-moon", "mechanics"), null);
+assert.equal(sharedLunationEclipseSectionKey("eclipse-lunar", "opening"), null);
 
 assert.equal(blend.authoredCards.length, 1);
 assert.equal(rulerRows.length, 12);
@@ -229,6 +242,29 @@ assert.match(heldPiscesEclipse.body, /New Moon in Pisces on March 18\./u);
 assert.match(heldPiscesEclipse.body, /Eclipses are not the recommended time for ritual/u);
 assert.equal(heldPiscesEclipse.reviewFlags, undefined);
 
+const aquariusLunarEclipse = readerRenderer.renderLunationHoroscope({
+  ...aquariusFullMoonCycle,
+  kind: "eclipse-lunar",
+  sign: "aquarius",
+  risingSign: "gemini",
+  moonHouse: 9,
+  sunHouse: 3,
+  timeZone: "America/New_York"
+});
+assert.match(aquariusLunarEclipse.body, /Eclipses warp time and shift the course of events/u);
+assert.match(aquariusLunarEclipse.body, /Lunar eclipses are portals into your soul/u);
+assert.match(aquariusLunarEclipse.body, /Eclipses are not the recommended time for ritual/u);
+assert.match(aquariusLunarEclipse.body, /Not everything that changes now needs an immediate response/u);
+assert.ok(
+  !aquariusLunarEclipse.reviewFlags?.some((flag) => ["nature", "mechanics", "recommendation", "close"].includes(flag.sectionId)),
+  "Sign-neutral approved lunar sections must resolve for eclipse signs beyond Pisces."
+);
+assert.deepEqual(
+  aquariusLunarEclipse.reviewFlags?.map((flag) => flag.sectionId),
+  ["opening", "evergreen-body"],
+  "Only the still-unreviewed sign-specific Aquarius sections should be omitted."
+);
+
 const virgoSolarEclipseFacts = {
   kind: "eclipse-solar",
   sign: "virgo",
@@ -247,6 +283,7 @@ assert.ok(solarHouseSix, "The approved solar eclipse House 6 layer must exist.")
 assert.ok(virgoSolarEclipse.parts.includes(solarHouseSix.body));
 assert.match(virgoSolarEclipse.body, /The 6th house corresponds to the Hermit/u);
 assert.doesNotMatch(virgoSolarEclipse.body, /set intentions|time to manifest intentions/iu);
+assert.doesNotMatch(virgoSolarEclipse.body, /Lunar eclipses are portals into your soul/u);
 assert.ok(
   virgoSolarEclipse.reviewFlags?.some((flag) => flag.sectionId === "opening"),
   "Unapproved solar system prose must remain omitted and visible to the review queue."
@@ -279,7 +316,7 @@ assert.deepEqual(mechanicsFailure.reviewFlags, [{
   id: "conditional-section-omitted",
   status: "needs_review",
   sectionId: "mechanics",
-  omittedContentKey: "authored/lunation-eclipse-section/pisces/shared/mechanics",
+  omittedContentKey: "authored/lunation-eclipse-section/shared/lunar/mechanics",
   fallbackContentKey: null,
   reason: "missing-or-ineligible"
 }]);
@@ -336,6 +373,29 @@ assert.throws(
   }),
   /invalid matching New Moon/u,
   "Ordinary Full Moon assembly must fail closed when the calculated cycle anchor is missing."
+);
+
+const eclipseWithoutCycleAnchor = readerRenderer.renderLunationHoroscope({
+  kind: "eclipse-lunar",
+  sign: "pisces",
+  risingSign: "aries",
+  eventDate: "2025-09-07T18:08:54.999Z",
+  timeZone: "America/New_York"
+});
+assert.match(eclipseWithoutCycleAnchor.body, /^The Pisces lunar eclipse shines upon/u);
+assert.match(eclipseWithoutCycleAnchor.body, /Lunar eclipses are portals into your soul/u);
+assert.match(eclipseWithoutCycleAnchor.body, /Not everything that changes now needs an immediate response/u);
+assert.deepEqual(
+  eclipseWithoutCycleAnchor.reviewFlags,
+  [{
+    id: "conditional-section-omitted",
+    status: "needs_review",
+    sectionId: "matching-new-moon-anchor",
+    omittedContentKey: "fallback-hook/lunation-matching-new-moon-anchor/full",
+    fallbackContentKey: null,
+    reason: "missing-or-ineligible"
+  }],
+  "A missing lunar-eclipse cycle anchor is flagged while the approved evergreen reading still serves."
 );
 
 const recoveredAquariusVirgo = readerRenderer.renderLunationHoroscope({
