@@ -466,12 +466,14 @@ const initialReaderBundle = readerEligibleBundle(snapshotBundle);
 let localDeferredReaderBundle: FallbackArchitectureV3Bundle | null = null;
 let localEmptyHouseReaderBundle: FallbackArchitectureV3Bundle | null = null;
 let localRelationshipReaderBundle: FallbackArchitectureV3Bundle | null = null;
+let localLunationBookReaderBundle: FallbackArchitectureV3Bundle | null = null;
 let localSkyPlacementReaderBundle: FallbackArchitectureV3Bundle | null = null;
 let dashboardCoreReaderBundle: FallbackArchitectureV3Bundle | null = null;
 let dashboardSkyPlacementReaderBundle: FallbackArchitectureV3Bundle | null = null;
 let deferredFallbackBundlePromise: Promise<boolean> | null = null;
 let emptyHouseFallbackBundlePromise: Promise<boolean> | null = null;
 let relationshipFallbackBundlePromise: Promise<boolean> | null = null;
+let lunationBookFallbackBundlePromise: Promise<boolean> | null = null;
 let skyPlacementFallbackBundlePromise: Promise<boolean> | null = null;
 export let fallbackRendererV3 = createAppFallbackRenderer(initialReaderBundle);
 export let transitSynastryFallbackRendererV3 = createAppTransitRenderer(initialReaderBundle);
@@ -523,7 +525,12 @@ function recomposeReaderBundle() {
   const localCoreWithDeferred = mergeReaderBundles(initialReaderBundle, localDeferredReaderBundle);
   const localCoreWithEmptyHouses = mergeReaderBundles(localCoreWithDeferred, localEmptyHouseReaderBundle);
   const localCoreWithRelationships = mergeReaderBundles(localCoreWithEmptyHouses, localRelationshipReaderBundle);
-  const core = dashboardCoreReaderBundle ?? localCoreWithRelationships;
+  const localCoreWithLunationBook = mergeReaderBundles(localCoreWithRelationships, localLunationBookReaderBundle);
+  const core = dashboardCoreReaderBundle
+    ? localLunationBookReaderBundle
+      ? mergeReaderBundles(localLunationBookReaderBundle, dashboardCoreReaderBundle)
+      : dashboardCoreReaderBundle
+    : localCoreWithLunationBook;
   const placement = dashboardSkyPlacementReaderBundle ?? localSkyPlacementReaderBundle;
   activateReaderBundle(mergeReaderBundles(core, placement));
 }
@@ -823,4 +830,26 @@ export async function loadSkyPlacementFallbackArchitectureV3Bundle() {
     });
 
   return skyPlacementFallbackBundlePromise;
+}
+
+export function isLunationBookFallbackArchitectureV3BundleLoaded() {
+  return Boolean(localLunationBookReaderBundle);
+}
+
+export async function loadLunationBookFallbackArchitectureV3Bundle() {
+  if (localLunationBookReaderBundle) return false;
+
+  lunationBookFallbackBundlePromise ??= import("./fallbackArchitectureV3LunationBookBundle")
+    .then(({ lunationBookFallbackArchitectureV3Bundle }) => {
+      if (localLunationBookReaderBundle) return false;
+      localLunationBookReaderBundle = readerEligibleBundle(lunationBookFallbackArchitectureV3Bundle);
+      recomposeReaderBundle();
+      return true;
+    })
+    .catch((error) => {
+      lunationBookFallbackBundlePromise = null;
+      throw error;
+    });
+
+  return lunationBookFallbackBundlePromise;
 }

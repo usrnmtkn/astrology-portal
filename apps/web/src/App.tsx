@@ -57,6 +57,7 @@ import {
   installSkyPlacementFallbackArchitectureV3Bundle,
   loadDeferredFallbackArchitectureV3Bundle,
   loadEmptyHouseFallbackArchitectureV3Bundle,
+  loadLunationBookFallbackArchitectureV3Bundle,
   loadRelationshipFallbackArchitectureV3Bundle,
   loadSkyPlacementFallbackArchitectureV3Bundle,
   fallbackArchitectureV3PackageVersion,
@@ -11115,6 +11116,30 @@ export function App() {
 
   useEffect(() => {
     let cancelled = false;
+    const lunationRising = profileNatalSky?.ascendant ?? userProfile?.rising;
+    if (!sky?.moonEvent || sky.moonEvent.days !== 0 || !lunationRising) {
+      return () => {
+        cancelled = true;
+      };
+    }
+
+    loadLunationBookFallbackArchitectureV3Bundle()
+      .then((installed) => {
+        if (installed && !cancelled) {
+          setFallbackArchitectureV3Version((version) => version + 1);
+        }
+      })
+      .catch((error) => {
+        console.warn("Lunation book content failed to load; existing row fallback remains active.", error);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [profileNatalSky?.ascendant, sky?.moonEvent, userProfile?.rising]);
+
+  useEffect(() => {
+    let cancelled = false;
     if (!shouldStartRelationshipFallbackEnhancement({
       mode,
       friendRelationshipContentRequests,
@@ -16203,7 +16228,7 @@ function ProfileView({
     targetDate
   ]);
   const lunationBlendYouFallbackEnabled = String(
-    import.meta.env.VITE_ENABLE_LUNATION_BLEND_YOU_FALLBACK ?? "false"
+    import.meta.env.VITE_ENABLE_LUNATION_BLEND_YOU_FALLBACK ?? "true"
   ).toLowerCase() === "true";
   useEffect(() => {
     const moonEvent = currentSky?.moonEvent;

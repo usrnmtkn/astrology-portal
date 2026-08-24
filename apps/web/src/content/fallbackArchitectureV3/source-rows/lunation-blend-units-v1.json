@@ -12,8 +12,25 @@
    "notes": "Owner-final house-neutral macro, imported verbatim."
   }
  ],
- "hookRows": [
-  {
+  "hookRows": [
+    {
+      "contentKey": "fallback-hook/lunation-cycle-anchor/new",
+      "content_role": "fallback_hook",
+      "grammar_frame": "complete_sentence",
+      "body_you": "This New Moon begins a cycle that will develop over the next six months.",
+      "review_status": "approved",
+      "source_keys": [
+        "packages/astro-knowledge/review/lunation-card-assembly-v1/spec.md#31-new-moon"
+      ],
+      "notes": "Owner-approved New Moon cycle line supplied with the 2026-08-24 lunation assembly specification.",
+      "approval": {
+        "approvalLevel": "owner",
+        "recordPath": "packages/astro-knowledge/review/lunation-card-assembly-v1/spec.md",
+        "payloadSha256": "2074a6cbe63f78fb2624f20590dcbc15e761ed5726ebf3a5763fce05db24db18",
+        "approvedAt": "2026-08-24"
+      }
+    },
+    {
    "contentKey": "fallback-hook/lunation-ruler-house/1",
    "content_role": "fallback_hook",
    "grammar_frame": "sentence_fragment",

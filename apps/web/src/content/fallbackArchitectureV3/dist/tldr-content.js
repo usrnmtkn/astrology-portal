@@ -2416,12 +2416,19 @@ ${passHook}`;
     const isEclipse = kind === "eclipse-solar" || kind === "eclipse-lunar";
     const which = kind === "new-moon" || kind === "eclipse-solar" ? "new" : "full";
     const h = moonHouse ?? house ?? (SIGN_ORDER.indexOf(sign) - SIGN_ORDER.indexOf(risingSign) + 12) % 12 + 1;
-    const frame = hooks.get(`fallback-hook/lunation-horoscope/${which}`)?.body_you;
+    const bookCellKey = `authored/book-ritual-and-the-moon/lunation-horoscope/${kind}/${sign}/rising-${risingSign}/house-${h}`;
+    const bookCell = kind === "new-moon" || kind === "full-moon" ? card(bookCellKey) : null;
     const jurisdiction = vocab.get(`fallback-vocab/house-jurisdiction/${h}`)?.body;
-    if (!frame || !jurisdiction) throw new SourceGapError(`SOURCE_GAP: lunation horoscope ${which}/${risingSign} (house ${h})`);
-    const houseFrame = fill(frame, { houseOrdinal: ordinal2(h), jurisdiction });
-    const opening = hooks.get(`fallback-hook/lunation-opening-situation/${h}`)?.body_you;
-    const paras = [opening ? `${opening} ${houseFrame}` : houseFrame];
+    const paras = [];
+    if (bookCell?.body) {
+      paras.push(bookCell.body);
+    } else {
+      const frame = hooks.get(`fallback-hook/lunation-horoscope/${which}`)?.body_you;
+      if (!frame || !jurisdiction) throw new SourceGapError(`SOURCE_GAP: lunation horoscope ${which}/${risingSign} (house ${h})`);
+      const houseFrame = fill(frame, { houseOrdinal: ordinal2(h), jurisdiction });
+      const opening = hooks.get(`fallback-hook/lunation-opening-situation/${h}`)?.body_you;
+      paras.push(opening ? `${opening} ${houseFrame}` : houseFrame);
+    }
     if (kind === "full-moon") {
       const anchor = hooks.get("fallback-hook/lunation-matching-new-moon-anchor/full")?.body_you;
       const fullMoonDateKey = eventDate?.trim().slice(0, 10) ?? "";
@@ -2440,17 +2447,21 @@ ${passHook}`;
         matchingNewMoonSign: title2(normalizeLunationSign(matchingNewMoon.sign)),
         matchingNewMoonDate
       }));
+    } else if (kind === "new-moon") {
+      const anchor = hooks.get("fallback-hook/lunation-cycle-anchor/new")?.body_you;
+      if (!anchor) throw new SourceGapError("SOURCE_GAP: missing New Moon cycle anchor");
+      paras.push(anchor);
     }
-    const signCompact = hooks.get(`fallback-hook/lunation-sign-compact/${which}-moon/${sign}`)?.body_you ?? (which === "full" ? hooks.get(`fallback-hook/lunation-sign-compact/${sign}`)?.body_you : null);
+    const signCompact = !bookCell ? hooks.get(`fallback-hook/lunation-sign-compact/${which}-moon/${sign}`)?.body_you ?? (which === "full" ? hooks.get(`fallback-hook/lunation-sign-compact/${sign}`)?.body_you : null) : null;
     if (signCompact) paras.push(signCompact);
-    if (which === "full" && sunHouse && sunHouse !== h) {
+    if (!bookCell && which === "full" && sunHouse && sunHouse !== h && jurisdiction) {
       const sunJurisdiction = vocab.get(`fallback-vocab/house-jurisdiction/${sunHouse}`)?.body;
       if (sunJurisdiction) {
         const counterpoint = `The friction this week runs between your ${ordinal2(sunHouse)} house of ${sunJurisdiction} and your ${ordinal2(h)} house of ${jurisdiction}. The immediate demands on one side can compete with what is becoming undeniable on the other, so let the tension show you what needs to change.`;
         paras[paras.length - 1] = `${paras[paras.length - 1]} ${counterpoint}`;
       }
     }
-    if (ruler && rulerHouse && ruler !== "sun" && ruler !== "moon") {
+    if ((!bookCell || rulerRetrograde) && ruler && rulerHouse && ruler !== "sun" && ruler !== "moon") {
       const rulerHouseBody = hooks.get(`fallback-hook/lunation-ruler-house/${rulerHouse}`)?.body_you;
       if (rulerHouseBody) {
         const lunationLabel = isEclipse ? which === "new" ? "Solar Eclipse" : "Lunar Eclipse" : which === "new" ? "New Moon" : "Full Moon";
@@ -2466,10 +2477,16 @@ ${passHook}`;
         paras.push(rulerParagraph);
       }
     }
-    const weekLayer = weekly ? hooks.get("fallback-hook/lunation-week-layer")?.body_you : null;
+    const weekLayer = weekly && !bookCell ? hooks.get("fallback-hook/lunation-week-layer")?.body_you : null;
     if (weekLayer) paras.push(weekLayer);
     const label = isEclipse ? which === "new" ? "Solar Eclipse" : "Lunar Eclipse" : which === "new" ? "New Moon" : "Full Moon";
-    return { headline: `${label} for ${title2(risingSign)} Rising`, body: paras.join("\n\n"), parts: paras, templateKey: "fallback-template/sky.lunation-horoscope" };
+    return {
+      headline: bookCell?.headline || `${label} for ${title2(risingSign)} Rising`,
+      body: paras.join("\n\n"),
+      parts: paras,
+      templateKey: bookCell?.contentKey || "fallback-template/sky.lunation-horoscope",
+      contentKey: bookCell?.contentKey
+    };
   }
   function renderLunationEventCard({
     eventDate,
@@ -2795,7 +2812,7 @@ function createKnowledgeMatrixV13Resolver(file) {
 }
 
 // apps/web/src/content/fallbackArchitectureV3/resolver/index.browser.ts
-var PACKAGE_VERSION = "v3-2026-08-23l";
+var PACKAGE_VERSION = "v3-2026-08-24a";
 function stablePackageValue(value) {
   if (Array.isArray(value)) {
     return value.map(stablePackageValue);

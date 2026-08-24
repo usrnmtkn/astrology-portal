@@ -1,6 +1,7 @@
 import weeklySourceRows from "../content/fallbackArchitectureV3/source-rows/station-cards-week-openers-v1.json";
 import {
   fallbackV3LunationCompact,
+  loadLunationBookFallbackArchitectureV3Bundle,
   SourceGapError,
   transitSynastryFallbackRendererV3
 } from "../content/fallbackArchitectureV3Runtime";
@@ -1299,6 +1300,9 @@ export async function buildWeeklyHoroscope({
   const timeZone = location.timeZone || "UTC";
   const window = weeklyWindowFor(now, timeZone);
   const { events, snapshots, lunationEventSkies, matchingNewMoons, stationEventPositions } = await loadWeeklyEphemeris(location, window);
+  if (events.some(isPrincipalLunation)) {
+    await loadLunationBookFallbackArchitectureV3Bundle();
+  }
   const natalTargets = natalSky.positions.filter((position) => typeof position.longitude === "number");
   const contactsByDay = snapshots.map((snapshot) => weeklyDailyTransitContacts(snapshot, natalTargets));
   const contacts = contactsByDay.flat();

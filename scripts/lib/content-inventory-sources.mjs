@@ -81,7 +81,7 @@ function contentFamily(contentKey) {
 function astrologyFrom(row, contentKey) {
   const tokens = contentKey.toLowerCase().split("/").filter(Boolean);
   const direct = {};
-  for (const key of ["planet", "sign", "house", "aspect", "event_type", "eventType", "kind", "motion", "rising_sign", "transit_sign"]) {
+  for (const key of ["planet", "sign", "house", "aspect", "event_type", "eventType", "kind", "lunation_kind", "lunation_sign", "motion", "rising_sign", "transit_sign"]) {
     if (row[key] !== undefined && row[key] !== null && String(row[key]).trim()) direct[key] = row[key];
   }
   return {
@@ -282,6 +282,10 @@ export function buildCanonicalContentRecords(repoRoot) {
     ...rootRows("source-rows/station-cards-week-openers-v1.json"),
     ...rows("source-rows/timing-event-reader-copy-v2.json", "authoredCards"),
   ], isDistributionEligible);
+  const deferredLunationBook = latestEligible([
+    ...rows("source-rows/lunation-book-cards-v1.json", "authoredCards"),
+  ], isDistributionEligible)
+    .map((candidate) => fallbackRecord(candidate, "authored-deferred"));
   const hooks = latestEligible([
     ...rows("source-rows/fallback-source-rows-v3.json", "hookRows"),
     ...rows("source-rows/lunation-blend-units-v1.json", "hookRows"),
@@ -324,7 +328,7 @@ export function buildCanonicalContentRecords(repoRoot) {
   }
   const fallbackRecords = fallbackCandidates.filter((record) => manifestSet.has(`${record.runtimeBucket}:${record.contentKey}`));
 
-  const records = [...fallbackRecords, ...matrixV9Records(repoRoot)]
+  const records = [...fallbackRecords, ...deferredLunationBook, ...matrixV9Records(repoRoot)]
     .sort((a, b) => a.contentKey.localeCompare(b.contentKey));
   const duplicates = records.filter((record, index) => index > 0 && records[index - 1].contentKey === record.contentKey);
   if (duplicates.length) throw new Error(`Canonical inventory has duplicate runtime addresses: ${duplicates.map((record) => record.contentKey).join(", ")}`);

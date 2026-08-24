@@ -137,12 +137,14 @@ const houseGlance = reviewRenderer.renderDailyGlance({
   house: 8,
 });
 assert.ok(houseGlance.body);
-const calendarPhase = renderer.renderCalendarPhase({
-  phase: "waxing-gibbous",
-  sign: "scorpio"
-});
-assert.equal(calendarPhase.headline, "Waxing Gibbous Moon in Scorpio");
-assert.equal(calendarPhase.tagline, "The Refinement");
+assert.throws(
+  () => renderer.renderCalendarPhase({
+    phase: "waxing-gibbous",
+    sign: "scorpio"
+  }),
+  /violates the collective register/u,
+  "Reader-directed weekly Moon copy must fail closed on the collective Calendar surface."
+);
 const moonDoDont = renderer.renderDoDont({
   planet: "mars",
   sign: "aquarius",
@@ -233,8 +235,8 @@ assert.match(
 );
 assert.match(
   appSource,
-  /const lunationBlendYouFallbackEnabled = String\(\s*import\.meta\.env\.VITE_ENABLE_LUNATION_BLEND_YOU_FALLBACK \?\? "false"\s*\)\.toLowerCase\(\) === "true"/u,
-  "The weekly-blend fallback must remain behind its explicit You-page feature gate."
+  /const lunationBlendYouFallbackEnabled = String\(\s*import\.meta\.env\.VITE_ENABLE_LUNATION_BLEND_YOU_FALLBACK \?\? "true"\s*\)\.toLowerCase\(\) === "true"/u,
+  "The approved book fallback must serve on You by default while retaining an explicit rollback gate."
 );
 assert.match(appSource, /getMatchingNewMoonForFullMoon/u);
 assert.match(appSource, /matchingNewMoon,/u);
