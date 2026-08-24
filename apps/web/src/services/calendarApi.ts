@@ -12,12 +12,16 @@ type CalendarApiResponse = {
   error?: string;
 };
 
-function dateParam(date: Date) {
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const day = String(date.getDate()).padStart(2, "0");
+function dateParam(date: Date, timeZone?: string) {
+  const parts = new Intl.DateTimeFormat("en-US", {
+    ...(timeZone ? { timeZone } : {}),
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit"
+  }).formatToParts(date);
+  const valueFor = (type: Intl.DateTimeFormatPartTypes) => parts.find((part) => part.type === type)?.value ?? "";
 
-  return `${year}-${month}-${day}`;
+  return `${valueFor("year")}-${valueFor("month")}-${valueFor("day")}`;
 }
 
 export async function getLunarCalendarFromApi(
@@ -26,10 +30,11 @@ export async function getLunarCalendarFromApi(
   anchor: Date,
   detail: LunarCalendarDetailLevel
 ) {
+  const requestedDate = dateParam(anchor, location.timeZone);
   const params = new URLSearchParams({
     mode,
     detail,
-    date: dateParam(anchor),
+    date: requestedDate,
     lat: String(location.latitude),
     lon: String(location.longitude),
     label: location.label
@@ -54,6 +59,10 @@ export async function getLunarCalendarFromApi(
 
   if (!payload.ok || !payload.calendar) {
     throw new Error(payload.error ?? "Calendar API returned no calendar.");
+  }
+
+  if (mode === "week" && !payload.calendar.days.some((day) => day.dateKey === requestedDate)) {
+    throw new Error("Calendar API returned the wrong week.");
   }
 
   return payload.calendar;
