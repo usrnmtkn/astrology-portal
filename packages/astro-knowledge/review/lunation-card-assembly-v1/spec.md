@@ -170,7 +170,10 @@ Full Moon is a polar-axis event and the owner has already written every axis.
 
 `{{matchingNewMoonDate}}` is the date of the preceding New Moon in the same sign.
 Include its year only when that New Moon and the Full Moon fall in different
-calendar years.
+calendar years in the reader's timezone. Store and pass the exact timestamp;
+format its month and day with the reader's current-location timezone. Never derive
+the reader-facing date by slicing the UTC ISO string, because the local date may be
+the preceding or following calendar day.
 
 Never strip the first sentence of `{{bookBody}}` at render time. If the owner later
 wants a shorter card excerpt, store that excerpt as a separately approved artifact
@@ -189,6 +192,143 @@ Do not repeat this bridge after each block.
 
 Phase 2 may insert `{{natalContactBlock}}` into the dynamic cluster only after its
 row set and selection rule are separately approved.
+
+### 3.3 Solar and Lunar Eclipses (owner-language candidate)
+
+Eclipses reuse the corresponding exact book cell instead of creating a second
+288-cell corpus:
+
+```
+eclipse-solar -> new-moon book cell
+eclipse-lunar -> full-moon book cell
+```
+
+The reader-facing headline retains `Solar Eclipse` or `Lunar Eclipse`. The book
+body's first sentence is the sole opening. Do not generate a separate system
+opening on either the regular or eclipse path:
+
+```
+new-moon      -> exact book opening sentence
+full-moon     -> exact book opening sentence
+eclipse-solar -> stored, owner-approved solar-eclipse replacement
+eclipse-lunar -> stored, owner-approved lunar-eclipse replacement
+```
+
+The regular source remains byte-exact. A separate eclipse variant stores the
+approved first-sentence replacement and any approved declared-intention omission
+spans. The eclipse layer has eight proposed fields: `eclipseNature`,
+`eclipseMechanics`, `eclipseKind`, `eclipseVerb`, `eclipseChallenge`,
+`eclipseSeason`, `eclipseNoRitual`, and `eclipseAdvice`.
+
+Once the eclipse opening establishes the event, the eclipse-only body does not
+keep re-announcing `the Pisces full moon`, `this full moon`, `full moon energy`,
+or other product reminders unless a sentence genuinely needs to distinguish the
+lunation from another event. Approved continuity edits are stored as exact source
+spans, source hashes, and replacement text. This is an editorial rule for review,
+never authorization for runtime regex deletion; the regular Full Moon body stays
+unchanged.
+
+The reusable structure is an editorial review rubric, not a prose template:
+
+1. house hook — one plain sentence establishing the lived experience;
+2. house pattern — what has been building or becoming visible;
+3. house truth — what this house asks the reader to confront;
+4. boundary or consequence — what cannot keep being carried or managed;
+5. lived examples — one to three ordinary manifestations;
+6. optional sign bridge — included only when the sign changes how the house story unfolds;
+7. closing movement — consequence, distinction, or perspective without re-announcing the lunation.
+
+These labels describe jobs, not required sentences or renderer slots. Jobs may be
+combined, and an unsupported job is omitted. The reviewed artifact is one complete
+`eclipseHouseBody` with source provenance and an approval hash. Runtime assembly is
+limited to `eclipseOpening`, the approved complete `eclipseHouseBody`, the conditional
+cycle anchor, the locked recommendation, and the locked eclipse close.
+
+The eclipse book-opening replacement comes first. For all twelve Pisces lunar-
+eclipse cards it uses `shines upon`, not `hits`. The default `eclipseNature`
+sentence, `Eclipses warp time and shift the course of events in ways you can't
+yet see.`, comes second. The other two recorded nature sentences require
+separately approved exact contexts and never rotate randomly.
+
+Lunar cards use the approved lunar-scoped mechanics passage beginning `Like a
+Full Moon, Lunar eclipses can be a source of illumination.` The both-kinds
+mechanics sentence is retained only for a card that needs to distinguish solar
+and lunar eclipses.
+
+The observed verbs `hits`, `reveals`, `activates`, `illuminates`, `shows`, and
+`demands`, plus the one-use verbs recorded in the source evidence, are evidence,
+not a rotation bank. Pisces lunar-eclipse variants use `shines upon` in all twelve
+houses. Other eclipse contexts require separately approved assignments.
+`eclipseChallenge` renders only from a complete approved habit-and-consequence
+pair. `eclipseSeason` receives the axis, corridor dates, and series position from
+the calculation layer and may fill only an approved prose frame.
+
+Solar eclipses use the approved solar mechanic and lunar eclipses use the
+approved lunar mechanic. A South Node solar eclipse requires a separately
+approved reversal modifier. That wording is currently a source gap and must not
+be invented by the resolver.
+
+Eclipse cards render the approved recommendation paragraph. The regular book
+source stays unchanged. An eclipse variant may omit only an explicit declared
+Full Moon intention block stored with owner-approved start/end offsets, exact
+text, and SHA-256 hash. Incidental intention language stays. Never pattern-match
+or cut sentences at runtime; an affected card without an approved span fails
+closed. The two Pisces spans, in houses 4 and 12, were owner-approved on
+2026-08-24.
+
+Card-specific Pisces rulings from 2026-08-24: Card 4's eclipse opening is `The
+Pisces lunar eclipse shines upon your 4th house of home, family, and generational
+karma.` Card 10 retains the book's Pisces New Moon callback and suppresses the
+separate dynamic cycle anchor so the six-month fact appears once.
+
+Owner-approved eclipse recommendation, 2026-08-24:
+`Eclipses are not the recommended time for ritual, manifestation, or intention
+setting. They happen along the Lunar Nodes, and part of the work is letting the
+situation unfold before deciding what it is supposed to become.` Approval of
+this shared paragraph does not authorize serving an unapproved complete card.
+
+The proposed layers are recorded in
+`source/eclipse-owner-language-v1.json` and in the madlib template. Every sentence
+is assembled from exact phrases in four owner-authored eclipse articles. The
+source file records page-level provenance and excludes event-specific 2025 dates,
+degrees, aspects, stations, retrogrades, node conditions, and rising-sign claims.
+
+The twelve complete proposed eclipse cards remain `needs_review` and non-serving.
+Approved component decisions are materialized separately as exact section records:
+card-specific opening and evergreen body, plus shared nature, mechanics,
+recommendation, and close. These
+sections may compose independently because each carries its own exact approval
+hash. Unapproved continuity rewrites remain excluded; phrase authorship by itself
+does not approve a new section or complete composition.
+
+### Evergreen fail-soft rule
+
+The approved New Moon or Full Moon book cell is the required evergreen base. A
+missing, ineligible, or failed eclipse composition never suppresses that base.
+Reader lookup order is:
+
+1. verified, approved eclipse opening;
+2. approved eclipse nature and mechanics sections;
+3. approved eclipse-specific house body, or the exact evergreen New/Full Moon
+   body remainder when that body is not approved;
+4. the engine-derived cycle anchor when the book body does not already contain it;
+5. each eligible dynamic section independently;
+6. approved eclipse recommendation and close.
+
+Conditional additions such as eclipse copy, an aspect, ruler condition, timing
+note, or other dynamic section fail closed independently. The failed addition is
+omitted and the evergreen horoscope remains visible. The render result carries an
+internal `needs_review` flag naming the omitted content key and the evergreen
+fallback key. Review flags are editorial metadata and never appear in reader copy.
+An unreviewed addition is never relabeled as approved merely because its evergreen
+fallback is live.
+
+The known eclipse opening is factual framing, not an optional editorial flourish.
+When the engine verifies eclipse kind, sign, rising sign, and house and an approved
+opening record exists, failure in any later section must not remove that opening.
+Likewise, an optional ruler, aspect, or timing section may never throw away the
+assembled eclipse frame or evergreen body. Its failure produces one internal flag
+for that section and assembly continues.
 
 ---
 
