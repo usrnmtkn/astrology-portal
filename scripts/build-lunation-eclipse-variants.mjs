@@ -4,6 +4,7 @@ import crypto from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { sharedLunationEclipseSectionKey } from "../apps/web/src/content/fallbackArchitectureV3/resolver/lunationEclipseSectionKeys.mjs";
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const reviewPath = path.join(
@@ -149,7 +150,8 @@ const sharedSectionCards = sharedSectionDefinitions.map(([id, packetId]) => {
   const body = [...bodies][0];
   return {
     ...approvedSectionCard(packet.cards[0], id, body),
-    contentKey: `authored/lunation-eclipse-section/pisces/shared/${id}`,
+    contentKey: sharedLunationEclipseSectionKey("eclipse-lunar", id),
+    lunation_sign: null,
     rising_sign: null,
     house: null,
     source_keys: [reviewRecordPath]

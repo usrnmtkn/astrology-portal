@@ -763,13 +763,13 @@
       "suppress_cycle_anchor": false
     },
     {
-      "contentKey": "authored/lunation-eclipse-section/pisces/shared/nature",
+      "contentKey": "authored/lunation-eclipse-section/shared/lunar/nature",
       "content_role": "full_copy",
       "body": "Eclipses warp time and shift the course of events in ways you can't yet see.",
       "review_status": "approved",
       "owner_authored": true,
       "lunation_kind": "eclipse-lunar",
-      "lunation_sign": "pisces",
+      "lunation_sign": null,
       "rising_sign": null,
       "house": null,
       "eclipse_section": "nature",
@@ -793,13 +793,13 @@
       }
     },
     {
-      "contentKey": "authored/lunation-eclipse-section/pisces/shared/mechanics",
+      "contentKey": "authored/lunation-eclipse-section/shared/lunar/mechanics",
       "content_role": "full_copy",
       "body": "Lunar eclipses are portals into your soul. When they come around, they can help you uncover the truth and allow you to gain knowledge that will steer your life, changing your path to a better one.",
       "review_status": "approved",
       "owner_authored": true,
       "lunation_kind": "eclipse-lunar",
-      "lunation_sign": "pisces",
+      "lunation_sign": null,
       "rising_sign": null,
       "house": null,
       "eclipse_section": "mechanics",
@@ -823,13 +823,13 @@
       }
     },
     {
-      "contentKey": "authored/lunation-eclipse-section/pisces/shared/recommendation",
+      "contentKey": "authored/lunation-eclipse-section/shared/lunar/recommendation",
       "content_role": "full_copy",
       "body": "Eclipses are not the recommended time for ritual, manifestation, or intention setting. They happen along the Lunar Nodes, and part of the work is letting the situation unfold before deciding what it is supposed to become.",
       "review_status": "approved",
       "owner_authored": true,
       "lunation_kind": "eclipse-lunar",
-      "lunation_sign": "pisces",
+      "lunation_sign": null,
       "rising_sign": null,
       "house": null,
       "eclipse_section": "recommendation",
@@ -853,13 +853,13 @@
       }
     },
     {
-      "contentKey": "authored/lunation-eclipse-section/pisces/shared/close",
+      "contentKey": "authored/lunation-eclipse-section/shared/lunar/close",
       "content_role": "full_copy",
       "body": "You can't control it, and you shouldn't try. Not everything that changes now needs an immediate response.",
       "review_status": "approved",
       "owner_authored": true,
       "lunation_kind": "eclipse-lunar",
-      "lunation_sign": "pisces",
+      "lunation_sign": null,
       "rising_sign": null,
       "house": null,
       "eclipse_section": "close",
