@@ -1,0 +1,28 @@
+{
+  "schema": "pisces-lunar-eclipse-body-edits/v1",
+  "status": "owner_approved",
+  "serving": false,
+  "rule": "Apply this complete, hash-checked house-body replacement only to the Pisces lunar-eclipse variant. The regular Pisces Full Moon source remains unchanged. The editorial jobs guide review; they are not runtime madlib slots.",
+  "edits": [
+    {
+      "contentKey": "authored/book-ritual-and-the-moon/lunation-horoscope/full-moon/pisces/rising-sagittarius/house-4",
+      "start": 68,
+      "end": 3190,
+      "sha256": "f14221ccf1f3351d4be3494c02ff31bf9a765431b026a7995bc7379d56e9d9a4",
+      "text": "Home is where the heart is. Home isn't just a place - it's a feeling. It's the warmth of family and friends, the memories that remind you of your roots, a safe haven, a place where you can be yourself, unpack your emotional baggage, and be surrounded by love. The Pisces full moon is a time to reflect on the patterns and stories you may have inherited from your ancestors. Honor the stories that have been passed down, and use them as a source of strength and guidance. Take a moment to contemplate how your family history has shaped who you are today. The 4th house is a Karmic house. The pain and grief of what's arising is your teacher. During this Pisces full moon, you realize that you cannot alter the history of where you come from. You can't unburden your loved ones of their pain and the weight they carry, nor heal their trauma alone. It doesn't mean you can't be a source of strength and love for them. The fourth house governs your family dynamics, drawing them out to learn. During this lunation, there may also be important news, conversations, or turning points with family or close loved ones. Each full moon has a theme that helps you understand your past in a new way. Pisces is connected, empathetic, creative, intuitive, and compassionate. With Pisces's creative and compassionate energy, it's the perfect time to look back through old family photos and learn from their stories. Looking back at your ancestors can be a powerful reminder of how far you've come. Have you ever taken a moment to think about your ancestors and the journeys they took? Whether it was for security, opportunity, or something else, their stories are worth honoring. Take a moment to visualize your relatives as children and send them compassion and love. Picture their struggles and their resilience and honor their courage. You can help heal their inner child by sending them the sympathy, energy of stability, and safety they desperately sought. Honor their journeys, recognize their resilience, and be inspired by their courage. Take a moment to appreciate your family's journey and take stock of your own. Let the full moon energy help you break free from old patterns. Healing doesn't always mean going back. You don't need to revisit the past to heal and break habits. Instead, open yourself up to new ways of understanding old cycles. Find grace in imperfection. Understand that failure and challenging family dynamics are inescapable and not something to be ashamed of. We all need to feel that sense of belonging and peace, and that's why having a home is so important. You recently moved, need to move closer to family, or are settling into a new home. Whether you're moving, settling into a new home, or just looking to make changes, now is the perfect time to cultivate actions that will help you feel more comfortable and at home. This month's full moon intention is to find home and comfort within yourself despite any chaos that surrounds you. Over the next six months, cultivate actions that facilitate emotional support within your home and family environments and see your emotional foundation strengthen.",
+      "replacement": "Home isn't just a place - it's a feeling. It's the family and friends who make you feel safe, the memories that connect you to where you came from, and the place where you can finally put everything down. You may find yourself thinking more about the patterns and stories you inherited from your family and how much of them you still carry. Some of those stories gave you strength. Others may explain why certain problems keep repeating.\n\nThe 4th house is a karmic house. The pain and grief of what's arising is your teacher. You cannot change the history of where you come from. You cannot take away the pain your family carries or heal it for them. You can love them, support them, and still recognize where their story ends and yours begins.\n\nThere may also be important news, conversations, or turning points with family or someone close to you. Pisces brings more sensitivity to what has been passed down, especially the memories, sacrifices, and unfinished stories that still shape the way your family relates to one another.\n\nSome patterns make more sense once you understand where they came from. Understanding them does not mean you have to keep repeating them.",
+      "editorialJobs": [
+        "house-hook",
+        "house-pattern",
+        "house-truth",
+        "house-consequence",
+        "lived-examples",
+        "optional-sign-bridge",
+        "closing-movement"
+      ],
+      "ownerApproved": true,
+      "approvedAt": "2026-08-24",
+      "review": "APPROVED"
+    }
+  ]
+}
