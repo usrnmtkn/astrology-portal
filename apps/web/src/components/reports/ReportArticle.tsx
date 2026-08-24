@@ -1,6 +1,9 @@
 import { X } from "lucide-react";
 import { useMemo, useState } from "react";
-import { isReaderFacingCopy, readerFacingParagraphs } from "../../content/readerSafety";
+import {
+  fullDetailReaderFacingParagraphs,
+  isReaderFacingCopy
+} from "../../content/readerSafety";
 import { dedupeArticleSectionHeadings } from "../../utils/articleHeadings";
 import { ModalPortal } from "../ModalPortal";
 import { AttributionLine } from "./AttributionLine";
@@ -89,7 +92,7 @@ function ReportKeyDateSheet({
         <p className="report-label">Key date</p>
         <p className="report-key-date-sheet__date">{keyDate.date}</p>
         <h2 id={titleId}>{keyDate.title}</h2>
-        {readerFacingParagraphs(keyDate.paragraphs).map((paragraph, index) => (
+        {fullDetailReaderFacingParagraphs(keyDate.paragraphs).map((paragraph, index) => (
           <p key={`${keyDate.id}-paragraph-${index}`}>{paragraph}</p>
         ))}
         {keyDate.attribution ? <AttributionLine facts={keyDate.attribution} /> : null}
@@ -128,7 +131,7 @@ export function ReportArticle({ report }: { report: ReportDocument }) {
 
         <div className="report-chapters" data-report-block="chapters">
           {chapters.map((chapter) => {
-            const paragraphs = readerFacingParagraphs(chapter.paragraphs);
+            const paragraphs = fullDetailReaderFacingParagraphs(chapter.paragraphs);
             const sourceTag = readable(chapter.sourceTag);
             const headingId = `report-chapter-${chapter.id}`;
 
