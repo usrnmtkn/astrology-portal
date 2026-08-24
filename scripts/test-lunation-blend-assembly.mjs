@@ -26,13 +26,18 @@ const baseLibrary = readJson("source-rows/transit-synastry-rows-v1.json");
 const baseRows = readJson("source-rows/fallback-source-rows-v3.json");
 const blend = readJson("source-rows/lunation-blend-units-v1.json");
 const lunationBook = readJson("source-rows/lunation-book-cards-v1.json");
+const lunationEclipseVariants = readJson("source-rows/lunation-eclipse-variants-v1.json");
+const lunationEclipseHouseLayers = readJson("source-rows/lunation-eclipse-house-layers-v1.json");
 const templates = readJson("templates/fallback-templates-v3.json");
-const makeRenderer = ({ reader = false } = {}) => createTransitSynastryRenderer(
+const makeRenderer = ({ reader = false, allowUnreviewed = false } = {}) => createTransitSynastryRenderer(
   {
     authoredCards: [
       ...baseLibrary.authoredCards,
       ...blend.authoredCards,
-      ...lunationBook.authoredCards
+      ...lunationBook.authoredCards,
+      ...lunationEclipseVariants.sectionCards,
+      ...lunationEclipseHouseLayers.authoredCards,
+      ...lunationEclipseVariants.authoredCards
     ].filter((row) => !reader || isReaderEligible(row))
   },
   templates,
@@ -42,10 +47,12 @@ const makeRenderer = ({ reader = false } = {}) => createTransitSynastryRenderer(
       ...baseRows.hookRows,
       ...blend.hookRows
     ].filter((row) => !reader || isReaderEligible(row))
-  }
+  },
+  { allowUnreviewed }
 );
 const qaRenderer = makeRenderer();
 const readerRenderer = makeRenderer({ reader: true });
+const eclipsePreviewRenderer = makeRenderer({ allowUnreviewed: true });
 const rulerRows = blend.hookRows.filter((row) => row.contentKey.includes("/lunation-ruler-house/"));
 const uranusRows = blend.hookRows.filter((row) => row.contentKey.includes("/lunation-uranus-layer/"));
 const retainedUranusRows = baseRows.hookRows.filter((row) => (
@@ -180,6 +187,146 @@ const crossYear = readerRenderer.renderLunationHoroscope({
   }
 });
 assert.match(crossYear.body, /New Moon in Cancer on June 25, 2025\./u);
+
+const piscesDateBoundaryFacts = {
+  kind: "full-moon",
+  sign: "pisces",
+  risingSign: "sagittarius",
+  eventDate: "2026-08-28T04:00:00.000Z",
+  matchingNewMoon: {
+    exactAt: "2026-03-19T01:23:00.000Z",
+    sign: "pisces"
+  }
+};
+const newYorkPisces = readerRenderer.renderLunationHoroscope({
+  ...piscesDateBoundaryFacts,
+  timeZone: "America/New_York"
+});
+const tokyoPisces = readerRenderer.renderLunationHoroscope({
+  ...piscesDateBoundaryFacts,
+  timeZone: "Asia/Tokyo"
+});
+assert.match(newYorkPisces.body, /New Moon in Pisces on March 18\./u);
+assert.match(tokyoPisces.body, /New Moon in Pisces on March 19\./u);
+
+const piscesEclipseFacts = {
+  ...piscesDateBoundaryFacts,
+  kind: "eclipse-lunar",
+  timeZone: "America/New_York"
+};
+const heldPiscesEclipse = readerRenderer.renderLunationHoroscope(piscesEclipseFacts);
+const houseFourEvergreen = lunationBook.authoredCards.find((row) => row.contentKey.endsWith(
+  "/full-moon/pisces/rising-sagittarius/house-4"
+));
+assert.ok(houseFourEvergreen, "The approved Pisces Full Moon evergreen fallback must exist.");
+assert.equal(heldPiscesEclipse.contentKey, undefined);
+assert.equal(heldPiscesEclipse.templateKey, "fallback-template/sky.lunation-horoscope");
+assert.equal(heldPiscesEclipse.headline, "Lunar Eclipse for Sagittarius Rising");
+assert.match(heldPiscesEclipse.parts[0], /^The Pisces lunar eclipse shines upon your 4th house/u);
+assert.match(heldPiscesEclipse.body, /Home isn't just a place - it's a feeling\./u);
+assert.doesNotMatch(heldPiscesEclipse.body, /Home is where the heart is\./u);
+assert.match(heldPiscesEclipse.body, /New Moon in Pisces on March 18\./u);
+assert.match(heldPiscesEclipse.body, /Eclipses are not the recommended time for ritual/u);
+assert.equal(heldPiscesEclipse.reviewFlags, undefined);
+
+const virgoSolarEclipseFacts = {
+  kind: "eclipse-solar",
+  sign: "virgo",
+  risingSign: "aries",
+  moonHouse: 6,
+  sunHouse: 6,
+  ruler: "mercury",
+  rulerHouse: 6,
+  rulerRetrograde: false,
+  eventDate: "2026-09-11T03:27:00.000Z",
+  timeZone: "America/New_York"
+};
+const virgoSolarEclipse = readerRenderer.renderLunationHoroscope(virgoSolarEclipseFacts);
+const solarHouseSix = lunationEclipseHouseLayers.authoredCards.find((row) => row.house === 6);
+assert.ok(solarHouseSix, "The approved solar eclipse House 6 layer must exist.");
+assert.ok(virgoSolarEclipse.parts.includes(solarHouseSix.body));
+assert.match(virgoSolarEclipse.body, /The 6th house corresponds to the Hermit/u);
+assert.doesNotMatch(virgoSolarEclipse.body, /set intentions|time to manifest intentions/iu);
+assert.ok(
+  virgoSolarEclipse.reviewFlags?.some((flag) => flag.sectionId === "opening"),
+  "Unapproved solar system prose must remain omitted and visible to the review queue."
+);
+assert.ok(
+  !virgoSolarEclipse.reviewFlags?.some((flag) => flag.sectionId === "eclipse-house-layer"),
+  "The approved solar house layer must not be reported as missing."
+);
+
+const readerWithoutMechanics = createTransitSynastryRenderer(
+  {
+    authoredCards: [
+      ...baseLibrary.authoredCards,
+      ...blend.authoredCards,
+      ...lunationBook.authoredCards,
+      ...lunationEclipseVariants.sectionCards.filter((row) => row.eclipse_section !== "mechanics")
+    ].filter(isReaderEligible)
+  },
+  templates,
+  {
+    ...baseRows,
+    hookRows: [...baseRows.hookRows, ...blend.hookRows].filter(isReaderEligible)
+  }
+);
+const mechanicsFailure = readerWithoutMechanics.renderLunationHoroscope(piscesEclipseFacts);
+assert.match(mechanicsFailure.body, /^The Pisces lunar eclipse shines upon/u);
+assert.match(mechanicsFailure.body, /Home isn't just a place - it's a feeling\./u);
+assert.doesNotMatch(mechanicsFailure.body, /Lunar eclipses are portals into your soul/u);
+assert.deepEqual(mechanicsFailure.reviewFlags, [{
+  id: "conditional-section-omitted",
+  status: "needs_review",
+  sectionId: "mechanics",
+  omittedContentKey: "authored/lunation-eclipse-section/pisces/shared/mechanics",
+  fallbackContentKey: null,
+  reason: "missing-or-ineligible"
+}]);
+
+const readerWithoutRetroOverlay = createTransitSynastryRenderer(
+  {
+    authoredCards: [
+      ...baseLibrary.authoredCards,
+      ...blend.authoredCards,
+      ...lunationBook.authoredCards,
+      ...lunationEclipseVariants.sectionCards
+    ].filter(isReaderEligible)
+  },
+  templates,
+  {
+    ...baseRows,
+    hookRows: [...baseRows.hookRows, ...blend.hookRows]
+      .filter((row) => row.contentKey !== "fallback-hook/lunation-ruler-retro")
+      .filter(isReaderEligible)
+  }
+);
+const retroOverlayFailure = readerWithoutRetroOverlay.renderLunationHoroscope({
+  ...piscesEclipseFacts,
+  ruler: "jupiter",
+  rulerHouse: 11,
+  rulerRetrograde: true
+});
+assert.match(retroOverlayFailure.body, /^The Pisces lunar eclipse shines upon/u);
+assert.match(retroOverlayFailure.body, /Jupiter rules this Lunar Eclipse from your 11th house/u);
+assert.deepEqual(retroOverlayFailure.reviewFlags, [{
+  id: "conditional-section-omitted",
+  status: "needs_review",
+  sectionId: "ruler-retrograde",
+  omittedContentKey: "fallback-hook/lunation-ruler-retro",
+  fallbackContentKey: null,
+  reason: "missing-or-ineligible"
+}]);
+const previewPiscesEclipse = eclipsePreviewRenderer.renderLunationHoroscope(piscesEclipseFacts);
+const houseFourEclipseVariant = lunationEclipseVariants.authoredCards.find((row) => row.house === 4);
+assert.equal(previewPiscesEclipse.contentKey, houseFourEclipseVariant.contentKey);
+assert.equal(previewPiscesEclipse.parts.length, 1, "The exact reviewed template owns the complete eclipse composition.");
+assert.match(previewPiscesEclipse.body, /^The Pisces lunar eclipse shines upon your 4th house/u);
+assert.match(previewPiscesEclipse.body, /New Moon in Pisces on March 18\./u);
+assert.match(previewPiscesEclipse.body, /Home isn't just a place - it's a feeling\./u);
+assert.match(previewPiscesEclipse.body, /Understanding them does not mean you have to keep repeating them\./u);
+assert.doesNotMatch(previewPiscesEclipse.body, /\{\{/u);
+assert.equal(previewPiscesEclipse.reviewFlags, undefined);
 assert.throws(
   () => readerRenderer.renderLunationHoroscope({
     kind: "full-moon",
@@ -237,7 +384,10 @@ try {
       authoredCards: [
         ...baseLibrary.authoredCards,
         ...blend.authoredCards,
-        ...lunationBook.authoredCards
+        ...lunationBook.authoredCards,
+        ...lunationEclipseVariants.sectionCards,
+        ...lunationEclipseHouseLayers.authoredCards,
+        ...lunationEclipseVariants.authoredCards
       ].filter(isReaderEligible)
     },
     templates,
@@ -249,6 +399,35 @@ try {
   const expected = renderNodeLunationHoroscope(geminiFacts);
   assert.deepEqual(browserReader.renderLunationHoroscope(geminiFacts), expected);
   assert.deepEqual(readerRenderer.renderLunationHoroscope(geminiFacts), expected);
+  assert.deepEqual(
+    browserReader.renderLunationHoroscope({ ...piscesDateBoundaryFacts, timeZone: "America/New_York" }),
+    newYorkPisces
+  );
+  assert.deepEqual(
+    browserReader.renderLunationHoroscope({ ...piscesDateBoundaryFacts, timeZone: "Asia/Tokyo" }),
+    tokyoPisces
+  );
+  assert.deepEqual(browserReader.renderLunationHoroscope(piscesEclipseFacts), heldPiscesEclipse);
+  assert.deepEqual(browserReader.renderLunationHoroscope(virgoSolarEclipseFacts), virgoSolarEclipse);
+  const browserPreview = browserModule.createTransitSynastryRenderer(
+    {
+      authoredCards: [
+        ...baseLibrary.authoredCards,
+        ...blend.authoredCards,
+        ...lunationBook.authoredCards,
+        ...lunationEclipseVariants.sectionCards,
+        ...lunationEclipseHouseLayers.authoredCards,
+        ...lunationEclipseVariants.authoredCards
+      ]
+    },
+    templates,
+    {
+      ...baseRows,
+      hookRows: [...baseRows.hookRows, ...blend.hookRows]
+    },
+    { allowUnreviewed: true }
+  );
+  assert.deepEqual(browserPreview.renderLunationHoroscope(piscesEclipseFacts), previewPiscesEclipse);
 } finally {
   await vite.close();
 }
@@ -268,5 +447,5 @@ assert.ok(
 );
 
 console.log(
-  "lunation blend assembly checks passed: 266 exact book cells, cycle anchors, 12 retained non-serving Uranus rows, review gating, and row fallback"
+  "lunation blend assembly checks passed: 266 exact book cells, 28 approved lunar eclipse sections, 12 approved solar house layers, localized cycle anchors, resolver parity, independent section review flags, and evergreen fallback"
 );

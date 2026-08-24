@@ -19,6 +19,8 @@ const dailyGlanceVariants = JSON.parse(fs.readFileSync(path.join(here, "../sourc
 const bondLanguagePass2 = JSON.parse(fs.readFileSync(path.join(here, "../source-rows/bond-language-pass-2.json"), "utf8"));
 const lunationBlend = JSON.parse(fs.readFileSync(path.join(here, "../source-rows/lunation-blend-units-v1.json"), "utf8"));
 const lunationBook = JSON.parse(fs.readFileSync(path.join(here, "../source-rows/lunation-book-cards-v1.json"), "utf8"));
+const lunationEclipseSections = JSON.parse(fs.readFileSync(path.join(here, "../source-rows/lunation-eclipse-sections-v1.json"), "utf8"));
+const lunationEclipseHouseLayers = JSON.parse(fs.readFileSync(path.join(here, "../source-rows/lunation-eclipse-house-layers-v1.json"), "utf8"));
 const placementInterim = JSON.parse(fs.readFileSync(path.join(here, "../source-rows/placement-interim-fixes-v1.json"), "utf8"));
 const skyArticleV1 = JSON.parse(fs.readFileSync(path.join(here, "../source-rows/sky-article-v1.json"), "utf8"));
 const skyAspectPhrasebookV1 = JSON.parse(fs.readFileSync(path.join(here, "../source-rows/sky-aspect-phrasebook-v1.json"), "utf8"));
@@ -33,6 +35,8 @@ const templates = JSON.parse(fs.readFileSync(path.join(here, "../templates/fallb
 
 lib.authoredCards.push(...lunationBlend.authoredCards);
 lib.authoredCards.push(...lunationBook.authoredCards);
+lib.authoredCards.push(...lunationEclipseSections.authoredCards);
+lib.authoredCards.push(...lunationEclipseHouseLayers.authoredCards);
 lib.authoredCards.push(...skyArticleV1.authoredCards);
 rowsFile.hookRows.push(...lunationBlend.hookRows);
 rowsFile.hookRows.push(...bondLanguagePass2.rows);
@@ -154,6 +158,29 @@ const WINDOW_HOUSE = { moon: "For the next couple of days", sun: "This month", m
 // typical retrograde lengths; engine overrides with real dates via facts.window
 const WINDOW_RETRO = { mercury: "For about three weeks", venus: "For about six weeks", mars: "For the next couple of months", jupiter: "For about four months", saturn: "For about four and a half months", uranus: "For about five months", neptune: "For about five months", pluto: "For about five months", chiron: "For about five months" };
 const title = (s) => s.split("-").map((p) => p[0].toUpperCase() + p.slice(1)).join(" ");
+
+function localizedLunationDateParts(exactAt, timeZone, label) {
+  const date = new Date(exactAt);
+  if (!Number.isFinite(date.getTime())) {
+    throw new SourceGapError(`SOURCE_GAP: invalid ${label} timestamp ${exactAt}`);
+  }
+  try {
+    const parts = new Intl.DateTimeFormat("en-US", {
+      timeZone,
+      year: "numeric",
+      month: "long",
+      day: "numeric"
+    }).formatToParts(date);
+    const value = (type) => parts.find((part) => part.type === type)?.value ?? "";
+    const year = Number(value("year"));
+    const month = value("month");
+    const day = Number(value("day"));
+    if (!year || !month || !day) throw new Error("missing calendar date part");
+    return { year, month, day };
+  } catch {
+    throw new SourceGapError(`SOURCE_GAP: invalid reader timezone ${timeZone}`);
+  }
+}
 export const TRUE_LILITH_KEY_DATES_INTRO = "True Black Moon Lilith stations about once a month, so it crosses the same degrees several times before it finally moves on.";
 export function skyPlacementKeyDates({ planet, sign, residencyPasses, residencyStations }) {
   const passes = (residencyPasses ?? [])
@@ -2250,48 +2277,134 @@ export function renderLunationMacro({ kind, sign }) {
   return result(macro, "authored/sky-lunation-macro");
 }
 
-export function renderLunationHoroscope({ kind, sign, risingSign, eventDate, matchingNewMoon, house, moonHouse, sunHouse, ruler, rulerHouse, rulerRetrograde, weekly = false }) {
+export function renderLunationHoroscope({ kind, sign, risingSign, eventDate, matchingNewMoon, house, moonHouse, sunHouse, ruler, rulerHouse, rulerRetrograde, timeZone = "UTC", weekly = false }) {
   const isEclipse = kind === "eclipse-solar" || kind === "eclipse-lunar";
   const which = kind === "new-moon" || kind === "eclipse-solar" ? "new" : "full";
   const h = moonHouse ?? house ?? ((SIGN_ORDER.indexOf(sign) - SIGN_ORDER.indexOf(risingSign) + 12) % 12) + 1;
   const bookCellKey = `authored/book-ritual-and-the-moon/lunation-horoscope/${kind}/${sign}/rising-${risingSign}/house-${h}`;
-  const bookCell = kind === "new-moon" || kind === "full-moon" ? card(bookCellKey) : null;
+  const exactBookCell = card(bookCellKey);
+  const exactEclipsePreview = null;
+  const evergreenKind = kind === "eclipse-lunar"
+    ? "full-moon"
+    : kind === "eclipse-solar"
+      ? "new-moon"
+      : null;
+  const evergreenBookCellKey = evergreenKind
+    ? `authored/book-ritual-and-the-moon/lunation-horoscope/${evergreenKind}/${sign}/rising-${risingSign}/house-${h}`
+    : null;
+  const evergreenBookCell = evergreenBookCellKey
+    ? card(evergreenBookCellKey)
+    : null;
+  const bookCell = isEclipse ? exactEclipsePreview : exactBookCell;
+  const eclipseSectionPrefix = `authored/lunation-eclipse-section/${sign}/rising-${risingSign}/house-${h}`;
+  const sharedEclipseSections = new Set(["nature", "mechanics", "recommendation", "close"]);
+  const eclipseSectionKey = (id) => sharedEclipseSections.has(id)
+    ? `authored/lunation-eclipse-section/${sign}/shared/${id}`
+    : `${eclipseSectionPrefix}/${id}`;
+  const eclipseSection = (id) => isEclipse ? card(eclipseSectionKey(id)) : null;
   const jurisdiction = vocab.get(`fallback-vocab/house-jurisdiction/${h}`)?.body;
   const paras = [];
+  const reviewFlags = [];
+  const flagOmittedSection = (sectionId, omittedContentKey, fallbackContentKey = null) => {
+    reviewFlags.push({
+      id: "conditional-section-omitted",
+      status: "needs_review",
+      sectionId,
+      omittedContentKey,
+      fallbackContentKey,
+      reason: "missing-or-ineligible"
+    });
+  };
+  let matchingNewMoonSlotCache = null;
+  const matchingNewMoonSlots = () => {
+    if (matchingNewMoonSlotCache) return matchingNewMoonSlotCache;
+    const anchor = hooks.get("fallback-hook/lunation-matching-new-moon-anchor/full")?.body_you;
+    const fullMoonTime = Date.parse(eventDate ?? "");
+    const newMoonTime = Date.parse(matchingNewMoon?.exactAt ?? "");
+    const label = kind === "eclipse-lunar" ? "Lunar Eclipse" : "Full Moon";
+    if (
+      !anchor
+      || !Number.isFinite(fullMoonTime)
+      || !Number.isFinite(newMoonTime)
+      || normalizeLunationSign(matchingNewMoon?.sign) !== normalizeLunationSign(sign)
+      || newMoonTime >= fullMoonTime
+    ) {
+      throw new SourceGapError(`SOURCE_GAP: invalid matching New Moon for ${label} ${eventDate ?? "unknown-date"}/${sign}`);
+    }
+    const fullMoonLocal = localizedLunationDateParts(eventDate, timeZone, label);
+    const newMoonLocal = localizedLunationDateParts(matchingNewMoon.exactAt, timeZone, "matching New Moon");
+    const crossYear = newMoonLocal.year !== fullMoonLocal.year;
+    matchingNewMoonSlotCache = {
+      matchingNewMoonSign: title(normalizeLunationSign(matchingNewMoon.sign)),
+      matchingNewMoonDate: `${newMoonLocal.month} ${newMoonLocal.day}${crossYear ? `, ${newMoonLocal.year}` : ""}`
+    };
+    return matchingNewMoonSlotCache;
+  };
+  const renderStoredBody = (stored) => {
+    const needsMatchingNewMoon = /\{\{matchingNewMoon(?:Sign|Date)\}\}/u.test(stored.body ?? "");
+    const renderedBookBody = needsMatchingNewMoon
+      ? fill(stored.body, matchingNewMoonSlots())
+      : stored.body;
+    if (/\{\{/u.test(renderedBookBody)) {
+      throw new SourceGapError(`SOURCE_GAP: unresolved lunation book slot in ${stored.contentKey}`);
+    }
+    return renderedBookBody;
+  };
+  const pushEclipseSection = (id) => {
+    const key = eclipseSectionKey(id);
+    const stored = eclipseSection(id);
+    if (!stored?.body) {
+      flagOmittedSection(id, key);
+      return null;
+    }
+    paras.push(renderStoredBody(stored));
+    return stored;
+  };
+  let authoredBodyUsed = false;
+  let suppressCycleAnchor = false;
   if (bookCell?.body) {
-    paras.push(bookCell.body);
-  } else {
+    paras.push(renderStoredBody(bookCell));
+    authoredBodyUsed = true;
+  } else if (isEclipse) {
+    pushEclipseSection("opening");
+    pushEclipseSection("nature");
+    pushEclipseSection("mechanics");
+    const bodyKey = `${eclipseSectionPrefix}/evergreen-body`;
+    const eclipseBody = eclipseSection("evergreen-body");
+    if (eclipseBody?.body) {
+      paras.push(renderStoredBody(eclipseBody));
+      authoredBodyUsed = true;
+      suppressCycleAnchor = eclipseBody.suppress_cycle_anchor === true;
+    } else if (evergreenBookCell?.body) {
+      paras.push(renderStoredBody(evergreenBookCell));
+      authoredBodyUsed = true;
+      flagOmittedSection("evergreen-body", bodyKey, evergreenBookCell.contentKey);
+    }
+  } else if (evergreenBookCell?.body) {
+    paras.push(renderStoredBody(evergreenBookCell));
+    authoredBodyUsed = true;
+  }
+  if (!authoredBodyUsed) {
     const frame = hooks.get(`fallback-hook/lunation-horoscope/${which}`)?.body_you;
     if (!frame || !jurisdiction) throw new SourceGapError(`SOURCE_GAP: lunation horoscope ${which}/${risingSign} (house ${h})`);
     const houseFrame = fill(frame, { houseOrdinal: ordinal(h), jurisdiction });
     const opening = hooks.get(`fallback-hook/lunation-opening-situation/${h}`)?.body_you;
     paras.push(opening ? `${opening} ${houseFrame}` : houseFrame);
   }
-  if (kind === "full-moon") {
-    const anchor = hooks.get("fallback-hook/lunation-matching-new-moon-anchor/full")?.body_you;
-    const fullMoonDateKey = eventDate?.trim().slice(0, 10) ?? "";
-    const newMoonDateKey = matchingNewMoon?.exactAt.trim().slice(0, 10) ?? "";
-    const fullMoonMatch = /^(\d{4})-(\d{2})-(\d{2})$/u.exec(fullMoonDateKey);
-    const newMoonMatch = /^(\d{4})-(\d{2})-(\d{2})$/u.exec(newMoonDateKey);
-    if (
-      !anchor
-      || !fullMoonMatch
-      || !newMoonMatch
-      || normalizeLunationSign(matchingNewMoon?.sign) !== normalizeLunationSign(sign)
-      || newMoonDateKey >= fullMoonDateKey
-    ) {
-      throw new SourceGapError(`SOURCE_GAP: invalid matching New Moon for Full Moon ${eventDate ?? "unknown-date"}/${sign}`);
+  if (kind === "eclipse-solar" && !bookCell) {
+    const solarHouseLayerKey = `authored/lunation-eclipse-house-layer/solar/house-${h}`;
+    const solarHouseLayer = card(solarHouseLayerKey);
+    if (solarHouseLayer?.body) {
+      paras.push(renderStoredBody(solarHouseLayer));
+    } else {
+      flagOmittedSection("eclipse-house-layer", solarHouseLayerKey);
     }
-    const monthIndex = Number(newMoonMatch[2]) - 1;
-    const monthName = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"][monthIndex];
-    if (!monthName) throw new SourceGapError(`SOURCE_GAP: invalid matching New Moon date ${newMoonDateKey}`);
-    const crossYear = newMoonMatch[1] !== fullMoonMatch[1];
-    const matchingNewMoonDate = `${monthName} ${Number(newMoonMatch[3])}${crossYear ? `, ${newMoonMatch[1]}` : ""}`;
-    paras.push(fill(anchor, {
-      matchingNewMoonSign: title(normalizeLunationSign(matchingNewMoon.sign)),
-      matchingNewMoonDate
-    }));
-  } else if (kind === "new-moon") {
+  }
+  if ((kind === "full-moon" || kind === "eclipse-lunar") && !(isEclipse && bookCell) && !suppressCycleAnchor) {
+    const anchor = hooks.get("fallback-hook/lunation-matching-new-moon-anchor/full")?.body_you;
+    if (!anchor) throw new SourceGapError("SOURCE_GAP: missing Full Moon cycle anchor");
+    paras.push(fill(anchor, matchingNewMoonSlots()));
+  } else if ((kind === "new-moon" || kind === "eclipse-solar") && !(isEclipse && bookCell)) {
     const anchor = hooks.get("fallback-hook/lunation-cycle-anchor/new")?.body_you;
     if (!anchor) throw new SourceGapError("SOURCE_GAP: missing New Moon cycle anchor");
     paras.push(anchor);
@@ -2301,19 +2414,19 @@ export function renderLunationHoroscope({ kind, sign, risingSign, eventDate, mat
   // Sign packages use kind-qualified compact cores. The approved Aquarius
   // Full Moon calibration predates that namespace, so retain it as a
   // Full-Moon-only fallback until its kind-qualified replacement arrives.
-  const signCompact = !bookCell
+  const signCompact = !authoredBodyUsed
     ? hooks.get(`fallback-hook/lunation-sign-compact/${which}-moon/${sign}`)?.body_you
       ?? (which === "full" ? hooks.get(`fallback-hook/lunation-sign-compact/${sign}`)?.body_you : null)
     : null;
   if (signCompact) paras.push(signCompact);
-  if (!bookCell && which === "full" && sunHouse && sunHouse !== h && jurisdiction) {
+  if (!authoredBodyUsed && which === "full" && sunHouse && sunHouse !== h && jurisdiction) {
     const sunJurisdiction = vocab.get(`fallback-vocab/house-jurisdiction/${sunHouse}`)?.body;
     if (sunJurisdiction) {
       const counterpoint = `The friction this week runs between your ${ordinal(sunHouse)} house of ${sunJurisdiction} and your ${ordinal(h)} house of ${jurisdiction}. The immediate demands on one side can compete with what is becoming undeniable on the other, so let the tension show you what needs to change.`;
       paras[paras.length - 1] = `${paras[paras.length - 1]} ${counterpoint}`;
     }
   }
-  if ((!bookCell || rulerRetrograde) && ruler && rulerHouse && ruler !== "sun" && ruler !== "moon") {
+  if ((!authoredBodyUsed || isEclipse || rulerRetrograde) && ruler && rulerHouse && ruler !== "sun" && ruler !== "moon") {
     const rulerHouseBody = hooks.get(`fallback-hook/lunation-ruler-house/${rulerHouse}`)?.body_you;
     if (rulerHouseBody) {
       const lunationLabel = isEclipse
@@ -2324,14 +2437,19 @@ export function renderLunationHoroscope({ kind, sign, risingSign, eventDate, mat
       if (rulerRetrograde) {
         const retroOverlay = hooks.get("fallback-hook/lunation-ruler-retro")?.body_you;
         if (!retroOverlay) {
-          throw new SourceGapError("SOURCE_GAP: missing retrograde lunation ruler overlay");
+          flagOmittedSection("ruler-retrograde", "fallback-hook/lunation-ruler-retro");
+        } else {
+          rulerParagraph += ` ${fill(retroOverlay, { rulerTitle })}`;
         }
-        rulerParagraph += ` ${fill(retroOverlay, { rulerTitle })}`;
       }
       paras.push(rulerParagraph);
     }
   }
-  const weekLayer = weekly && !bookCell
+  if (isEclipse && !bookCell) {
+    pushEclipseSection("recommendation");
+    pushEclipseSection("close");
+  }
+  const weekLayer = weekly && !authoredBodyUsed
     ? hooks.get("fallback-hook/lunation-week-layer")?.body_you
     : null;
   if (weekLayer) paras.push(weekLayer);
@@ -2344,7 +2462,8 @@ export function renderLunationHoroscope({ kind, sign, risingSign, eventDate, mat
     body: paras.join("\n\n"),
     parts: paras,
     templateKey: bookCell?.contentKey || "fallback-template/sky.lunation-horoscope",
-    contentKey: bookCell?.contentKey
+    contentKey: bookCell?.contentKey,
+    reviewFlags: reviewFlags.length > 0 ? reviewFlags : undefined
   };
 }
 

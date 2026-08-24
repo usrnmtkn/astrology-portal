@@ -51,7 +51,11 @@ export type PersonalTimingSummary = {
 export type DailyHoroscopeAssembly = {
   doItems?: string[];
   dontItems?: string[];
-  specialSections: Array<{ headline: string; body: string }>;
+  specialSections: Array<{
+    headline: string;
+    body: string;
+    reviewFlags?: Array<Record<string, unknown>>;
+  }>;
   behindForecastRows: ReactNode[];
   derivation: Record<string, unknown>;
 };
