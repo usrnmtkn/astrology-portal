@@ -104,6 +104,7 @@ const deferredRelationshipFallbackItem = [...deferredRelationshipFallbackItems]
 const deferredManifestItem = javaScriptFiles.find((item) => item.file.includes("fallback-content-manifest-"));
 const deferredCoreItem = javaScriptFiles.find((item) => item.file.includes("fallback-content-deferred-core-"));
 const deferredSkyPlacementItem = javaScriptFiles.find((item) => item.file.includes("fallback-content-sky-placement-"));
+const deferredLunationBookItem = javaScriptFiles.find((item) => item.file.includes("fallback-content-lunation-book-"));
 const deferredPhoneAuthItem = javaScriptFiles.find((item) => item.file.includes("phone-auth-"));
 const deferredSignupItem = javaScriptFiles.find((item) => item.file.includes("SignupView-"));
 const deferredFriendsWorkspaceItem = javaScriptFiles.find((item) => item.file.includes("FriendsWorkspaceShell-"));
@@ -120,6 +121,7 @@ const measurements = {
   skyDetailChunkGzipBytes: deferredSkyDetailItem?.gzipBytes ?? 0,
   reportRouteChunkGzipBytes: deferredReportRouteItem?.gzipBytes ?? 0,
   skyPlacementFallbackChunkGzipBytes: deferredSkyPlacementItem?.gzipBytes ?? 0,
+  lunationBookFallbackChunkGzipBytes: deferredLunationBookItem?.gzipBytes ?? 0,
   transitFallbackChunkGzipBytes: deferredTransitFallbackItem?.gzipBytes ?? 0,
   relationshipFallbackChunkGzipBytes: deferredRelationshipFallbackItem?.gzipBytes ?? 0,
   signupChunkGzipBytes: deferredSignupItem?.gzipBytes ?? 0,
@@ -155,6 +157,11 @@ if (!deferredSkyPlacementItem) {
 } else if (bootFiles.has(deferredSkyPlacementItem.file)) {
   failures.push("The Sky Placement fallback article content re-entered the static App boot graph.");
 }
+if (!deferredLunationBookItem) {
+  failures.push("The on-demand lunation book chunk is missing.");
+} else if (bootFiles.has(deferredLunationBookItem.file)) {
+  failures.push("The protected lunation book re-entered the static App boot graph.");
+}
 if (deferredPhoneAuthItem && bootFiles.has(deferredPhoneAuthItem.file)) {
   failures.push("Phone validation metadata re-entered the static App boot graph.");
 }
@@ -182,6 +189,7 @@ console.log(`Deferred Friends workspace: ${formatBytes(measurements.friendsWorks
 console.log(`Deferred Sky detail article: ${formatBytes(measurements.skyDetailChunkGzipBytes)} gzip`);
 console.log(`Deferred purchased-report route: ${formatBytes(measurements.reportRouteChunkGzipBytes)} gzip`);
 console.log(`On-demand Sky Placement fallback: ${formatBytes(measurements.skyPlacementFallbackChunkGzipBytes)} gzip`);
+console.log(`On-demand lunation book: ${formatBytes(measurements.lunationBookFallbackChunkGzipBytes)} gzip`);
 console.log(`On-demand transit fallback: ${formatBytes(measurements.transitFallbackChunkGzipBytes)} gzip`);
 console.log(`Largest on-demand relationship fallback chunk: ${formatBytes(measurements.relationshipFallbackChunkGzipBytes)} gzip across ${deferredRelationshipFallbackItems.length} files`);
 console.log(`Deferred signup chunk: ${formatBytes(measurements.signupChunkGzipBytes)} gzip`);

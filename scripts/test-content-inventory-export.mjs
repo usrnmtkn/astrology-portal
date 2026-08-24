@@ -22,6 +22,10 @@ const materializedHouseRows = JSON.parse(fs.readFileSync(path.join(
   repoRoot,
   "apps/web/src/content/fallbackArchitectureV3/source-rows/sky-placement-house-templates-v1.json"
 ), "utf8")).rows;
+const lunationBookCards = JSON.parse(fs.readFileSync(path.join(
+  repoRoot,
+  "apps/web/src/content/fallbackArchitectureV3/source-rows/lunation-book-cards-v1.json"
+), "utf8")).authoredCards;
 
 assert.deepEqual(inventory.records, canonical, "Inventory records must equal the live canonical serving inventory.");
 assert.equal(inventory.contentFingerprint, fingerprint, "Inventory fingerprint must cover sorted keys, wording, and status.");
@@ -40,6 +44,17 @@ for (const protectedRow of protectedOwnerSource.rows) {
   assert.equal(materialized?.body_you, protectedRow.body_you, `${protectedRow.contentKey} must materialize byte-for-byte.`);
   const inventoried = canonical.find((row) => row.contentKey === protectedRow.contentKey);
   assert.equal(inventoried?.wording?.body_you, protectedRow.body_you, `${protectedRow.contentKey} must inventory byte-for-byte.`);
+}
+assert.equal(lunationBookCards.length, 266, "The deferred lunation book must retain all protected owner-authored cards.");
+for (const protectedCard of lunationBookCards) {
+  const inventoried = canonical.find((row) => row.contentKey === protectedCard.contentKey);
+  assert.equal(inventoried?.runtimeBucket, "authored-deferred", `${protectedCard.contentKey} must retain its lazy runtime boundary in inventory.`);
+  assert.equal(inventoried?.wording?.headline, protectedCard.headline, `${protectedCard.contentKey} headline must inventory byte-for-byte.`);
+  assert.equal(inventoried?.wording?.body, protectedCard.body, `${protectedCard.contentKey} body must inventory byte-for-byte.`);
+  assert.equal(inventoried?.contentHash, crypto.createHash("sha256").update(JSON.stringify({
+    body: protectedCard.body,
+    headline: protectedCard.headline,
+  }), "utf8").digest("hex"), `${protectedCard.contentKey} inventory hash must cover exact serving wording.`);
 }
 assert.deepEqual(report, {
   schemaVersion: "content-export-report-v1",
