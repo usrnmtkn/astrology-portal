@@ -1,13 +1,14 @@
-import { allReaderFacingCopy, firstReaderFacingCopy } from "./readerSafety";
+import { allReaderFacingCopy } from "./readerSafety";
 
 export function natalPlacementReaderSectionCopy(
   value: string | null | undefined,
-  partKey: string | null | undefined
+  _partKey: string | null | undefined
 ) {
-  const isOwnerApprovedFinalReaderSection = partKey?.startsWith("fallback-hook/natal-you-placement-") ?? false;
-  const readerCopy = isOwnerApprovedFinalReaderSection
-    ? allReaderFacingCopy([value])
-    : firstReaderFacingCopy([value]);
+  // A resolver part is already the complete semantic section selected for the
+  // reader. Never interpret an internal paragraph boundary as a preview
+  // boundary: doing so silently discarded the remainder of approved
+  // placement-sign, placement-house, and generic lived rows.
+  const readerCopy = allReaderFacingCopy([value]);
 
   // Source blocks retain their governed boundaries and hashes. The natal
   // placement article presents each semantic section as one paragraph:
