@@ -678,27 +678,24 @@ export function SkyDetailArticle({
         </div>
 
         {hasAspectCard ? (
-          <h2 className="sr-only" id="sky-detail-related-aspects-title">
-            {detail.relatedAspects?.heading ?? "Aspects to the planet"}
-          </h2>
-        ) : null}
-
-        {hasAspectCard ? aspectGroups.map((group) => (
-          <Fragment key={group.id}>
-            <h3
-              className="eyebrow section-label article-related-aspects__label article-related-aspects__label--outside"
-              id={`sky-detail-related-aspects-${group.id}`}
-            >
-              {group.label}
-            </h3>
-            <section
-              className="article-card article-related-aspects article-related-aspects-card"
-              aria-labelledby={`sky-detail-related-aspects-${group.id}`}
-            >
-              <div className="article-related-aspects__group">
-                {group.sections.length ? (
-                  <div className="article-related-aspects__copy-list">
-                    {group.sections.map((section) => {
+          <>
+            <h2 className="sr-only">Aspect details</h2>
+            {aspectGroups.map((group) => (
+              <Fragment key={group.id}>
+                <h3
+                  className="eyebrow section-label article-related-aspects__label article-related-aspects__label--outside"
+                  id={`sky-detail-related-aspects-${group.id}`}
+                >
+                  {group.label}
+                </h3>
+                <section
+                  className="article-card article-related-aspects article-related-aspects-card"
+                  aria-labelledby={`sky-detail-related-aspects-${group.id}`}
+                >
+                  <div className="article-related-aspects__group">
+                    {group.sections.length ? (
+                      <div className="article-related-aspects__copy-list">
+                        {group.sections.map((section) => {
                       const bodyParagraphs = typeof section.body === "string"
                         ? fullDetailReaderFacingParagraphs([section.body]).map((paragraph) => stripLegacySkyArticleScaffoldPrefix(paragraph)).filter(Boolean)
                         : [];
@@ -723,20 +720,22 @@ export function SkyDetailArticle({
                             : <p>{typeof section.body === "string" ? stripLegacySkyArticleScaffoldPrefix(section.body) : section.body}</p>}
                         </section>
                       );
-                    })}
+                        })}
+                      </div>
+                    ) : null}
+                    {group.rows.length ? (
+                      <div className="article-related-aspects__list aspect-row-list">
+                        {group.rows.map((row) => (
+                          <Fragment key={row.key}>{row.node}</Fragment>
+                        ))}
+                      </div>
+                    ) : null}
                   </div>
-                ) : null}
-                {group.rows.length ? (
-                  <div className="article-related-aspects__list aspect-row-list">
-                    {group.rows.map((row) => (
-                      <Fragment key={row.key}>{row.node}</Fragment>
-                    ))}
-                  </div>
-                ) : null}
-              </div>
-            </section>
-          </Fragment>
-        )) : null}
+                </section>
+              </Fragment>
+            ))}
+          </>
+        ) : null}
 
         {detail.personalizedPlacement ? (
           <>
