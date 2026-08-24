@@ -31,8 +31,8 @@ assert.equal(
 );
 assert.equal(
   natalPlacementReaderSectionCopy("First paragraph.\n\nSecond paragraph.", "fallback-template/natal.planet-in-sign"),
-  "First paragraph.",
-  "the Moon fix must not broaden the existing normalization behavior for Friend or other placement paths"
+  "First paragraph. Second paragraph.",
+  "every natal placement section must preserve all selected reader copy"
 );
 
 for (const signRow of artifact.signRows) {

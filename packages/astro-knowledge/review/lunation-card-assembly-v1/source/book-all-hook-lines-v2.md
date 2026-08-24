@@ -1,0 +1,4013 @@
+# Every hook-quality sentence in the book
+
+Source: all three parts. Part 1 with the Altar sections removed, as instructed.
+Combined corpus 1,883,444 characters, 17,606 sentences.
+
+A line qualifies if it stands alone with no sign, planet, lunation, tarot or ritual
+reference, is a complete sentence, and addresses the reader. 3,984 qualify, up from
+3,515 on Parts 2 and 3 alone. Ranked, not filtered.
+
+---
+
+
+## TIER 1  score 5.5+  (20 lines)
+
+- It's not just about the words you use but also your body language.
+- This includes not only taking care of your physical health but also creating a more harmonious and supportive work environment.
+- Remember that home is not only a physical place but it is also a feeling, a sense of security, and a connection to something greater than ourselves.
+- Remember that your home is not just a physical space but a reflection of your inner self.
+- Do not see your passion as a weapon but as a gift.
+- It's not just about who you know but who knows you.
+- Can you also make it part of your work in a way that doesn't detract from the magick of the creative process?
+- Desire alone is not enough to manifest our dreams.
+- What do you believe you can't be content without?
+- Fear is a normal part of being human, but it doesn't have to control you.
+- What are you holding onto that isn't yours?
+- You are not alone on this path of transformation and growth.
+- This energy is a swift kick of tough love, redirecting us onto a path that serves not only ourselves but others as well.
+- Your work will come alive and flow through you—not just by you.
+- Not only is our body where we store our traumas, but it also holds the wisdom to help us heal them.
+- Don't let your home, emotional world, and family life get in the way.
+- Don't let fear or guilt keep you from integrating the different sides of yourself.
+- Don't let anyone silence you, especially don't silence yourself.
+- Are you just going through the motions but can't grasp the bigger picture?
+- We all have a past, but it doesn't have to define us.
+
+## TIER 2  score 4.0 to 5.4  (96 lines)
+
+- It reminds us that spiritual life is not just a passive observation but a bold adventure.
+- Money is energy; it is the exchange for your energy and time, it is not the only way to measure your worth, it is just one of the many ways you have to exchange energy.
+- Don't hold anger towards others when they can't or don't know how to support you; this only steals your focus and progress.
+- Please note that this exercise is not meant to reflect your past or future but rather provides a snapshot of the current moment.
+- Aspire to grow in ways that are genuine and meaningful so your ambition isn't just a means to an end but part of a larger purpose.
+- Aspire to grow in genuine and meaningful ways, so your ambition isn't just a means to an end but part of a larger purpose.
+- Remember a time when you are not thinking about the past or future but instead fully immersed in a creative process and the present moment.
+- Themes of closure, rest, and letting go will be strong now as you're asked to release what isn't serving you.
+- You can't unburden your loved ones of their pain and the weight they carry, nor heal their trauma alone.
+- Don't turn away from grief and pain; instead, allow yourself to feel it and swim in it.
+- It is time to forgive past mistakes and release what you are holding onto that doesn't belong to you.
+- When you are feeling negative emotions, it can be useful to ask: which of my needs are not being met?
+- You don't want your home life and emotional needs to get neglected in favor of your career.
+- Don't let how you feel right now sabotage and derail you from all the work you've done for and on yourself.
+- Do not let this discourage you.
+- Don't let the expectations of others imprison you.
+- It's okay if you can't accomplish everything all at once.
+- What specific goals can you work towards?
+- As you will discover, this cannot be found inside yourself.
+- Any baggage that is not yours to carry only burdens your journey.
+- You cannot separate a part of yourself from your whole self.
+- How can you work to build stronger connections with others?
+- Don't be afraid to put yourself out there.
+- The more you know, the more you realize you do not know.
+- How can you take the time to heal your emotional body?
+- How can you work to be more authentic in these areas?
+- Setbacks are an inevitable part of life, but they don't have to define you.
+- You don't need to revisit the past to heal and break habits.
+- Being an optimist doesn't mean you're always happy or that everything is perfect.
+- It doesn't reflect on your worth as a person.
+- What blessings await for us on the other side of fear?
+- What is your relationship to money and material possessions?
+- Have you been able to create meaningful work?
+- If not, what does "meaningful work" look like to you?
+- You can't pour from an empty cup.
+- Life doesn't always make sense, but it's up to you to make meaning.
+- Cultivate Self-Mastery – Don't let time slip away from you.
+- Happiness is an inside job, don't outsource your happiness.
+- You don't have to conform to the standard mold to be extraordinary.
+- Pushing ahead when the timing isn't right will only hold you back in the long run.
+- Don't let nostalgia be your happiness crutch.
+- Don't fear what you might transform into.
+- Don't fear what you might mature into.
+- When you focus on creating from a place of pure presence, your work will come alive and flow through you, not just by you.
+- Listen to your body and take breaks when necessary, for self-care is not selfish - it is essential for your well-being.
+- Creating Balance and Harmony in Relationships Are there any areas of your life where you feel like you are not achieving balance or harmony?
+- If you're transitioning with your career, stay focused on the goal even if you need to do some grunt work that isn't super inspiring.
+- There's still time to make positive changes to create a secure financial future and ensure you don't let fear dictate your financial decisions.
+- Just remember: you are not your home; you are not your body; you are not your possessions; you are not your jobs or status; you are not your relationships or circumstances.
+- Explore what successful work-life balance feels for you and if you don't feel you've created it yet, take actionable steps toward it.
+- Remember that you do not exist in the world; rather, the world exists within you.
+- This way, you will not burn through your energetic resources and burn out.
+- You can wrap yourself in a white towel or robe, but do not towel dry.
+- If you feel like you are not being acknowledged, this feeling will pass.
+- You can inspire others even if you do not feel you have it all together.
+- Don't be afraid to ask for support from the people around you.
+- How can you work to create more stability and security in these areas?
+- How can you work towards manifesting these desires in your daily life?
+- If you feel like your life is in flux, don't worry - it's all part of the process.
+- Would introducing smart-home devices make your life a little easier?
+- What do you hope to achieve or work towards during this time?
+- How someone responds to your feelings doesn't determine your worth.
+- It doesn't mean you can't be a source of strength and love for them.
+- Let your imagination run wild, and don't be afraid to experiment.
+- Don't be afraid to express yourself and share what you're feeling.
+- The more you focus on what you don't have, the less you have.
+- If these fundamental needs are not attended to, it will pull energy from your career.
+- Don't let anyone pressure you into something you're not comfortable with.
+- Release any aspects of your career that do not align with your values and interests.
+- There’s nothing wrong with small steps, but no step at all will keep you stuck.
+- How can you work to create more balance and harmony in these areas?
+- You thrive on action and motion and can't stand being idle for too long.
+- If you find yourself in this situation, don't get discouraged.
+- They're not afraid to ask for what they want, nor should you.
+- It's not about you; once you embrace that knowledge, it's a liberating force.
+- Have you set healthy boundaries, like a strong trunk, to support your abundance?
+- What beliefs do you hold onto about your health or your body that are no longer true?
+- What are the root causes of these fears and how can you work to overcome them?
+- You will experience failures, and your expectation will not be met.
+- Life presents us with turning points to create change when something isn't working.
+- It happens to everyone, and it's not a sign that you are doing something wrong.
+- Letting go doesn't mean you're giving up or don't believe in something.
+- It is not enough to simply acknowledge your truth; action must be taken in order to create positive change.
+- You have a lot to offer, so don't be afraid to share your ideas with others.
+- Don't be afraid to draw inspiration from your past, even if it's painful.
+- You don't have to choose between your conservative, practical side and your inner artist.
+- It's not just about who you know, but what you can do together.
+- It's never too late to make changes that will benefit you later in life.
+- Take the time to address the aspects of your relationships that are not working.
+- Are you spending most of the day alone or with limited interaction with others?
+- You don't mind an easy life but want to feel spiritually fulfilled.
+- It is not conditional on your spouse or kids calling you on your birthday.
+- Don't impose your expectations on them and then feel disappointed when it's not met.
+- Not only will you be of service to others, but you'll cultivate a sense of good karma and wealth in the process.
+- Not all paths are easily followed, but don't worry - you'll find your way.
+- Are we the most spiritually awake in sleep, and the most asleep in waking "reality"?
+
+## TIER 3  score 2.5 to 3.9  (410 lines)
+
+- Transient things do not only include the physical objects that surround us, but also ideas, and \-in a greater sense- all objects of our perception.
+- Understanding the deeper motivations behind your desire will help you to not only set a more focused intention, but also to better understand what you truly want and need.
+- Do not resist it or give it power, for it is only your fears and shadows attempting to distract you and keep you in a state of non-acceptance.
+- Higher education boosts your knowledge and expands your perspectives, but it doesn't always address personal and spiritual growth.
+- You are a freedom fighter, and you not only fight for the ability to live a free life in your truth; you also advocate for those around you to live with the same freedoms.
+- It also reminds you that you don't have to carry the heavy baggage others give you—you can let it go and free yourself from the weight.
+- Pushing yourself ahead when it's not the right time for you to move forward will only slow you down in the long run.
+- Gifting us access not only to our own potential for growth and healing - but also healing and honoring our ancestors.
+- Do not fear the unknown, for fear itself can be a gift that can help you to let go of the past, trust in yourself, and align with the flow of life.
+- Emotional healing doesn't always come easily, so if you're having trouble processing your feelings, don't hesitate to seek help.
+- Because if you don't take control of your happiness and make conscious decisions about how you want your life to look, things will always be out of your control.
+- Gifting you access not only to your own potential for spiritual growth and healing - but also healing of your ancestors.
+- This is a powerful time to step up and take on more responsibility, even if you don't always feel comfortable in leadership roles.
+- Anything that seems too much for you to keep investing in or isn't worth the money, energy, and effort you're putting in, will be dropped.
+- Hold the image of a red ball in your mind, even if you do not see it as a physical object.
+- These are the boogeymen of your mind, the voices that fill you with doubt, saying you cannot achieve your desires.
+- It also embodies unconscious abilities, those innate talents you rely on but don't conscientiously think about.
+- Don't try to change or suppress your emotions \- just allow them to be and allow yourself to feel them.
+- Remember, success or failure is not the point, it is the recognition of your efforts that truly matters.
+- The objective is not to achieve all tens but rather to bring awareness to your overall "wheel of life" and identify areas that may need maintenance.
+- Seek counsel when needed and remember that we are interconnected beings, that no one is an island.
+- Don't let anyone make you feel guilty for taking the time to focus on yourself and your needs.
+- If you don't take the time to get yourself sorted, you can't fully be there for yourself or others later.
+- There is nothing wrong with taking small steps, but no step at all will keep you stuck.
+- Surround yourself with individuals who inspire you, and don't forget to be an active part of the conversations.
+- What role does emotion, particularly anger, play in your experience of rejection or dismissal?
+- The baggage can be words or labels placed upon you that you no longer identify with or never were your truth.
+- Stay focused on what's working in your projects and relationships, and gently release anything that is not working.
+- The Twins symbolize the interconnectedness of all things, and how we're never really separate.
+- You can't rewrite your family history, but you can become a source of strength and love for your loved ones.
+- There’s nothing wrong with small steps either, but no step at all will keep you stuck.
+- Would your parents benefit from senior care technology or fresh grocery home delivery?
+- Let go of false friends or networks that restrict you and don't bring out the best in you.
+- What are your favorite activities that bring you back into your body and out of your head?
+- Be aware of your worth, and don't allow yourself to be swayed into something that doesn't feel right.
+- You are never truly stuck in one place-- you have the power to find direction and create new patterns for yourself.
+- Don't get caught up in comparing yourself to others or focusing on what they have or do.
+- How can you work to build self-love and self-acceptance in the face of these emotions?
+- Don't become an agitating force in your own life, and remember to pause and reflect on your actions.
+- It can be difficult to self-advocate, but a crucial part of it is not letting your emotions get the better of you.
+- If you're not showing up for your own life, you can't expect to show up for anyone else.
+- Stagnation is the enemy of evolution, so don't be afraid to shake things up and forge your own path.
+- While accepting and being content with your current circumstances is good, complacency is not.
+- If you can't have an honest conversation with someone, that's not the relationship you need to be in.
+- We can easily self-sabotage when good things come to us because we feel we do not deserve it.
+- Speak from your mind and heart and release those who cannot comprehend the beauty you possess.
+- What are these aspects and how can you work to bring them to the surface in a healthy and constructive way?
+- Trusting something greater than yourself means relying on something you can't see or measure.
+- Confronting your truth is a journey inside yourself, not a battle with the outside world.
+- Don't be afraid to step out of your comfort zone and let go of the small version of yourself.
+- Don't be afraid to let your inner artist shine, even if it doesn't fit with what others expect or want from you.
+- Don't be afraid to say no to the wrong things, and yes to the things that will nourish your soul.
+- Let go of what doesn't serve you, and surround yourself with those who make you shine.
+- It's time to release false friends, networks, and social platforms that aren't supportive of your mental health.
+- To make sure you don't miss out on life's little joys, try looking at things with a broad perspective.
+- During the next few weeks, you'll be solidifying the pieces that fit together and letting go of those that don't.
+- Embrace the human experience, and do not judge yourself for your mistakes or shortcomings.
+- It's the one resource you can't manufacture more of or store up for later - it's just here, now, and then gone.
+- You can't place blame on others if you aren't willing to acknowledge and accept the love they are trying to give.
+- You never know what kind of inspiration, motivation, and success it can unlock for you.
+- As you reflect on your work, ask yourself: am I helping the collective consciousness reach its highest potential?
+- Will you deepen your commitment or be liberated from a situation you’ve been trying to make work?
+- The goal is not to judge yourself but to acknowledge and release any traumas or limiting beliefs that may be hindering your growth.
+- These bags can be words or labels placed upon you that you no longer identify with or never were your truth.
+- Are you ready to transform your life?
+- Feeling unfulfilled in your current state?
+- What person, or thing do you give your power to?
+- What is your ultimate goal and desired outcome?
+- Why do you want this specific thing or outcome?
+- Ask yourself, does this intention align with my truest self?
+- How did you feel at that moment?
+- How can you become more clear?
+- Are you a visual, kinesthetic or auditory processor?
+- Do you see, feel or hear your emotions?
+- You will rarely find a Sicilian home without garlic present.
+- It adds speed and intensity to your ritual work.
+- Gossiping will only lead to anger and hurt, so be mindful of your words now.
+- What steps are you taking to achieve them?
+- What gives you energy and drive?
+- What strategies have been effective for you in the past?
+- How can you set yourself up for success?
+- What small steps can you take to make big changes?
+- Would you like to focus on lightness or depth?
+- How do you feel about your level of higher education?
+- Are you satisfied with your current spiritual practice?
+- In what way do you see yourself creatively moving forward?
+- When was the last time you felt lack?
+- What have we built, created, and accumulated?
+- Fall in love with yourself and the rest will follow.
+- How do they influence your decisions and actions?
+- What steps do you need to take to make this happen?
+- What steps can you take to start making these changes now?
+- Are you embracing your deservingness to receive the goodness life has to offer?
+- What creative and writing projects can you commit to?
+- What are your strengths and weaknesses in this area?
+- What do you value in your relationships?
+- What areas of your life do you want to focus on improving?
+- To connect deeper with your emotional body and soul.
+- No longer running away, it instead brings you back home.
+- Ask yourself, “how can I free myself from distraction?
+- Where in your bodies do you hold pain?
+- Where in your bodies do you hold your emotions?
+- Where in your bodies do you hold the pain of others?
+- No longer running away, instead brings you back home.
+- What do you desire to feel about yourself and your life?
+- How are you expressing yourself?
+- Do you want to become a morning person?
+- What are the most important memories you have with her?
+- How has she influenced your life and who you are today?
+- How can you further your career and reach your goals?
+- How have you been prioritizing these areas in your life?
+- Can you give yourself more structure and emotional support?
+- How do you express your individuality?
+- How can you serve the greater collective?
+- Have you let go of external judgment?
+- Ask yourself, when did you last feel true joy?
+- Are you overextending yourself for a desire to belong?
+- It's time to forgive and reclaim your power.
+- Your work and status are up for review now.
+- How can you overcome these challenges and move forward?
+- What rewards or affirmations can you give yourself?
+- What are you doing when time appears to stand still?
+- When and where do you feel most present?
+- Where do you want to invest your energy?
+- What community and lifestyle do you want to be a part of?
+- The pain and grief of what's arising is your teacher.
+- You start to realize what you have to work with and your infinite potential.
+- What type of life do you want?
+- Do you want to plunge into the depths of your soul?
+- Are we in harmony with the people in our lives?
+- Recognize the source of your fear.
+- Seek out evidence to support or refute your fear.
+- What are some ways that you cope with these feelings?
+- Have you been feeling stuck in a relationship dynamic?
+- What messages have you been receiving lately?
+- What blessing await for us on the other side of the unknown?
+- What transformation are you in the midst of right now?
+- What habits can you let go of that no longer serve you?
+- How can you make more time for your health and well-being?
+- What transformation are you in the middle of?
+- What possibilities and paths have they opened up for you?
+- What dreams and goals are you currently working towards?
+- Who are your ancestors and what do you know about them?
+- Are you giving away too much of your power or yielding it?
+- Do you want to take on a more visible position?
+- Ask – what words will describe your journey?
+- How have these stories influenced your identity?
+- How can you share your skills and expertise with others?
+- What did these new experiences teach you?
+- What new experiences and knowledge are you seeking out?
+- How can you hold space for your intentions?
+- What does it mean to hold space for yourself and others?
+- How can you create more space and abundance in your life?
+- How can you be honest and true to yourself and your vision?
+- Ask yourself, when was the last time you felt lack?
+- How did it motivate your decisions?
+- Your home is so much more than a physical space.
+- How can you show up for others if you neglect your needs?
+- You must keep yourself grounded and your home a sanctuary during these transitions.
+- Who is helping you reach your goals?
+- What is your desired intention?
+- Why do you desire this intention?
+- Have you been more open to new connections?
+- Who aligns with your values and goals?
+- Notice your breath, without trying to change it.
+- Is your breath shallow or deep.
+- Are you breathing into your chest or your belly?
+- Extend this light and feelings of warmth to fill your entire body.
+- You can take a breath in to soften the tension.
+- Seeping into all the cells for your body.
+- Notice the rising of your belly and chest as you breath.
+- Feel the weight of your body on the floor.
+- How do you handle rejection or failure in your career?
+- What nourishes your soul and helps you to feel grounded?
+- But, what happens when we stray from our path?
+- What brings you feelings of stability?
+- Are you missing the experience of touch?
+- Even though you may feel isolated in your journey, and left "out in the cold", you are not alone.
+- How has your relationship with yourself and others expanded?
+- What values are important to you?
+- What qualities do you look for in a partner?
+- Are you on track to fulfilling your purpose?
+- Have you been feeling a bit lost lately?
+- How can you achieve stability?
+- What does your inner child want you to know?
+- Your inner child’s deepest insecurity/What is the block?
+- How can you heal, and self-nurture your deepest insecurity?
+- Did your family provide stability?
+- Did you come from a large or small family?
+- What steps do you need to take to get there?
+- What resources should you tap into?
+- This year may have tested your faith, but it doesn't mean you have to lose it.
+- When you post something, you never know who might see it.
+- You never know when it might return to reward or bite you.
+- No one can take away our inner strength and light, and with mindfulness and self-reflection, we can make it burn even brighter.
+- We are attached when we feel that we will not be satisfied until or unless we get what we want (our desires fulfilled) therefore, we are 'attached' to the outcome.
+- When you finally manifest your first goal, aligned with the lunar cycle, the world will never look mundane or the same again.
+- Unless your intention directly affects the shared life and financial responsibilities of someone close to you, their opinions do not matter.
+- I am never moved nor shaken by the outside environment." This affirmation will remind you of your inner strength and resilience during this change and uncertainty.
+- This mentor can help you stay focused by setting clear goals and providing guidance, support, and motivation when things are not going your way.
+- Does your desire to receive love and validation lead you to abandon a part of yourself that you would otherwise cherish?
+- We entered into a completely new terrain that no one has navigated before, and we did our best to take care of ourselves and our families and communities.
+- You seek community and friendship, and you're ready to release any false friends or networks that do not support your purpose or the purpose of the greater good.
+- This isn't about conforming to someone else's idea of what your life should be, but about shaping a path that's authentic and resonates with your true self.
+- You do not need to send this letter, but the act of writing can be a powerful way to connect with your emotions and let go of any lingering pain or resentment.
+- Remember that success is not just about achieving professional goals, but also about feeling fulfilled and satisfied in all areas of your life.
+- When you don't give yourself a chance to thrive, you're robbing yourself of the opportunity to reach your full potential.
+- You seek community and friendship, and you're ready to release any false friends and networks that are restricting and do not support your growth.
+- No one can extinguish the inner strength and light that burns within us, and through mindfulness and self-reflection, we can make it burn even brighter.
+- Remember that despite any hardships or challenges that have come into your life, it doesn't rob you of your radiant positivity.
+- Reduce activities that do not stoke your spirit to create space for activities that light you up and fill you with pleasure.
+- How can you use technology to make healthy shifts in your day-to-day life (ex: track your sleep health with a sleeping app)?
+- These are the qualities we seek to embody as we sift through the truth of what is, examining what works and what doesn't in our lives.
+- It's a time to take stock of what is not serving us and make the necessary changes to cultivate healthier habits and patterns.
+- Just be conscious of what you expect from others, and be wary of wanting what they can't give and giving what they can't receive.
+- Seeking Support and Guidance: How can you seek out support and guidance from others as you work towards your goals for personal growth and self-improvement?
+- This is where our dreams take over, they show us a projection through symbols of what we are missing and don't want to see.
+- If you believe that there is not enough to go around and that life is a zero-sum game, then you are more likely to act in ways that confirm that theory.
+- If you constantly feel like you don't have enough, you're more likely to make decisions that keep you in that position.
+- Improving and Maintaining Healthy Relationships How can you work to improve and maintain healthy relationships with the people in your life?
+- Cut the cord – If you have determined that certain situations are not working for you, give yourself permission to let go and move on.
+- It's also a reminder that it's okay to let go of the baggage that others gave you if it no longer serves you; or was never yours to carry.
+- This clarity can help you make more thoughtful choices about what you believe and if any views were passed down that don't resonate with you.
+- Are you expanding your hearts when faced with your insecurities and vulnerability, or are we contracting and retaliating in fear and pain?
+- It's also an opportunity to let go of people's baggage that you no longer need to carry or never were yours to carry in the first place.
+- When you try to find belief in something that can't be quantified, you will inevitably encounter moments where you lose faith.
+- This Sagittarian energy encourages you to seek out the truth and meaning in your life, to challenge yourself and grow in ways you never thought possible.
+- You seek the strength to reach your goals, but if your legs are not prepared, no amount of effort will propel you forward.
+- But, no matter which direction you choose, you carry the lessons of your past experiences and the potential to learn something new even if nothing has changed around you.
+- It's okay to want to help struggling family members, but don't let them hold you back from creating your own life and growing as a person.
+- Your mental health is just as important as your physical health, so don't be afraid to take a break and recharge your batteries.
+- Trust in the power of your words and speak from the heart, releasing those who cannot understand or appreciate your beauty.
+- If you've been feeling like your dreams and goals aren't coming to fruition, it's time to take a step back and review your strategy or consider changing course.
+- Balancing Work and Personal Life: How do you balance your work and personal life, and what strategies have you found helpful in achieving this balance?
+- Take responsibility for creating your own happiness and don't forget that credit goes both ways - nurture yourself and nurture those who nurture you.
+- It's not about stagnation, but rather creating a foundation of stability and security that allows us to weather the storms of change and uncertainty.
+- It is not selfish to take care of yourself, for when we are well, we are better able to serve and love those around us.
+- You don't want to sabotage your career by leaving your emotional needs unchecked and potentially feeling burnt out or melting down.
+- It's not just about recognizing and managing emotions; it's also about learning how to express your feelings healthily and positively.
+- As your emotions resurface and demand attention, don't despair - this is a sign that it's time to start the healing process.
+- It's not enough to be 'strong' or 'resilient' — you need healthy, nourishing relationships with the people around you.
+- It's not about giving up on hope, but rather shifting your attention to what is available in the present moment, combined with intuition to fuel your choices.
+- There is a sense of reconnecting with those you've fallen out of touch with, yet never energetically or emotionally forgotten.
+- It's possible that what you want to say and the words that come out don't fully sync up, be mindful of misunderstandings at this time.
+- If you're not sure if you truly want something, it's likely that you only "like" the idea of it, but don't have the true desire, need or commitment to follow through with it.
+- Step to the edge of discomfort, and let go of the small version of yourself; do not fear what you might transform into.
+- You may also be processing a recent loss or contemplating the ending of a significant relationship; if healthy boundaries and a peaceful home cannot be reached.
+- If you've been unhappy with your work-life balance, you might be making decisions to change or being forced out of situations that aren't emotionally healthy for you anymore.
+- Do you seek guidance on how to set your intentions at the new and full moons?
+- Are there areas of your life that you wish to transform and improve?
+- Do you wish to focus your energy in a way that will bring about change?
+- Make your home a sanctuary and invite those who matter most into it.
+- What is your current relationship to your self-worth and receiving?
+- Who told you, or when were you told, that you didn't deserve success or happiness?
+- Trust in the synergy of your conscious and subconscious to work in harmony.
+- Raise your energy by feeling this intention in your body and core.
+- This is your chance to take control of your home and create a space to call your own.
+- Is your job or daily routine impacting your well-being in a negative way?
+- This is important to protect your home and surfaces from wax, burns, and fires.
+- Remember, the strongest boundaries are those you build for yourself.
+- How would it feel to believe in your authority and proceed fearlessly?
+- Any behind-the-scenes work you have been doing will also soon be noticed.
+- This includes your work environment and learning to balance work with self-care.
+- Here are some prompts to get you started: ● What are your goals and aspirations?
+- How can you tap into your own determination and ambition to move forward?
+- How can you use your determination and ambition to make progress towards your goals?
+- How can you cultivate a sense of self-belief and determination?
+- Any behind-the-scenes work you’ve been doing will soon be noticed.
+- It’s possible you’re in the process of moving or rethinking your home environment.
+- Ask yourself: what am I afraid of when it comes to commitment or abandonment?
+- Here are some prompts to get you started: ● What are your core values?
+- How can you incorporate more of these elements into your routine?
+- Did you have any encouragement or motivation from others along the way?
+- How does doing this activity make you feel and why do you enjoy it?
+- Not one where you, or they, are struggling in silence or shame.
+- Your friends, family, and those around you will tell you what they need, even if they cannot find the words.
+- With practice, you can let go of old patterns and trauma and make room for the new.
+- How can you share what you’ve trained in and practiced over the years?
+- Are you abandoning a part of yourself to receive love and validation?
+- Relationships in work and love are at the forefront for you now.
+- You know that feeling when the Universe is conspiring in your favor?
+- Here are some prompts to get you started: How do you communicate with others?
+- How do you show appreciation and support for the people in your life?
+- Are there any areas of your life where you feel isolated or disconnected?
+- How do you handle conflicts or misunderstandings in your relationships?
+- What steps can you take to support your growth and development?
+- Fear can bring you wisdom, helping you understand yourself more deeply.
+- Are they bringing you joy or leaving you feeling drained and unfulfilled?
+- Honor the work, effort, and labor you have put into your work and self.
+- Back into your body and the place where you feel most like yourself.
+- Pay attention to what is holding you back and where you feel most at home.
+- Back into your body, and the place where you feel most like your true self.
+- From the words you use, body language, and online social footprint.
+- Are you abandoning a part of yourself in order to receive love and validation?
+- This includes your work environment and learning to balance work and self-care.
+- Are you looking for a way to deepen and enrich your spiritual practice?
+- Use moon water to cleanse your home, work environment, and body regularly.
+- Examining Familiar Phrases: What phrases or expressions does your mother always use, and how do they make you feel?
+- How can you bring more unconditional love and compassion into your relationships?
+- How are you being guided to accept more responsibility and mature yourself?
+- It pushes you to review your life, mature and set boundaries.
+- Have you been feeling more confident, passionate, and outgoing lately?
+- You can freely express your authentic self without fear of judgment or rejection.
+- Can you offer yourself the recognition, love, and kindness that you crave?
+- To come back to your inner home and internal sense of safety and security.
+- Unexpressed anger will find its way into your body and create health issues.
+- Your ability to feel secure and confident in your work will determine the outcome.
+- Here are some prompts to get you started: ● What makes you unique and special?
+- Do these names hold any special meaning or significance for you?
+- Your Father's Joys: ● What brings your father joy and makes him happy?
+- What was happening in these moments and how did they make you feel?
+- Early Memories: ● What is one of your earliest memories of your father?
+- Lessons from Father: ● What important lesson or skill has your father taught you?
+- What were you desiring, manifesting, and calling into your life?
+- What has shifted in the past six months, allowing you more space and freedom?
+- How can you develop daily routines to give yourself more freedom and choice?
+- Can you create a new daily practice that supports your mental health?
+- Where have you been giving away too much of yourself and energy?
+- Have you ever had a dream that felt like a download of ancient wisdom?
+- Home is where the heart is, and your heart is speaking loudly to you now.
+- What specific actions are you taking to make progress in these areas?
+- What self-care practices can you incorporate into your routine?
+- How can you build on these achievements and continue to grow and evolve?
+- You recently moved, need to move closer to family, or are settling into a new home.
+- When was the last time you let yourself be genuinely free and creative?
+- Are we giving and receiving energy in a fair and equitable way?
+- If you’re experiencing loss or grief, allow yourself to feel it.
+- How have these changes or insights impacted you and your relationships?
+- What steps can you take to adapt and process these changes or insights?
+- Examining Triggers and Wounds What are your triggers and wounds in relationships?
+- What can you do to heal and address these triggers and wounds?
+- How can you safely and effectively remove yourself from these situations?
+- How do you balance taking care of yourself with supporting and caring for others?
+- What can you do to make sure that your own needs are being met in a healthy way?
+- How can you address and release any resentment that arises from neglecting yourself?
+- What steps can you take to prioritize self-care and avoid resentment in the future?
+- It's time to take back your power and create some healthy boundaries.
+- If you feel like you're not being seen or valued at work, it's time to take a stand.
+- No matter what you call it, ghosting, stonewalling, or emotional abuse, it's never okay.
+- This is a perfect time if you've felt called to do some deep inner work.
+- How can you overcome these doubts, like the tree standing tall in the storm?
+- This is a powerful time of transformation, both within your home and within yourself.
+- Are you compromising a part of yourself in order to receive love and validation?
+- How can you transform your daily routine to introduce new healthy habits?
+- How can you overcome these barriers to move closer to your desires?
+- What traditions or rituals do you have in place to honor your ancestors?
+- You can stay calm, relaxed, and open no matter how lonely your life gets.
+- Shame is the feeling that you are inadequate and unworthy of love.
+- Feeling alone makes it hard to see a way out of your situation.
+- What will be the central themes constructing the emotional framework of your life?
+- What powerful tales do we want to tell of your journey, your adventure and your soul?
+- Expand your mind: We all want to be the best version of ourselves, right?
+- Explore Reincarnation: Have you ever wondered what came before or after this life?
+- Find comfort and home within yourself, no matter what challenges come your way.
+- How can you create more space to let your creativity flourish?
+- How can you create space to introduce new healthy habits into your daily routine?
+- How can you create more space and optimism in your relationships?
+- What new opportunities and paths opened up to you over this past year?
+- How are you stepping outside of your comfort zone to pursue these things?
+- How do you handle uncertainty or risk in your journey towards growth and exploration?
+- What prevents you from achieving your goals and sharing your vision with others?
+- What changes must you make to align yourself with your vision of your most abundant self?
+- Have you lost touch with the passion that used to define you?
+- Have you ever looked at the night sky and felt a connection to something bigger?
+- Who do you have in your life that brings out the best in you?
+- Ask yourself, How can I commit to intentionally spending and budgeting my finances?
+- Allow yourself to work through these fears with the support of those around you.
+- Who are the people you want to have in your life and support you in your journey?
+- Now notice the weight of your body on whatever surface you’re on.
+- Now bring your awareness and your breath to your heart center.
+- Imagine this light now extending out to encompass and surround your body.
+- Now if this issue had a place in or around your body, where would it be.
+- Slowly you are coming back to your body in the present moment.
+- How do you define success in your career and what steps are you taking to achieve it?
+- What strategies have you found helpful in overcoming these setbacks?
+- Are there any areas of your career where you feel stuck or unfulfilled?
+- How can you make changes to overcome these challenges and move forward?
+- The eternal source that we all return to after our physical body expires.
+- Feel into what feels like home in the deepest part of your being - the soul level.
+- Home is also your family lineage, the place from which you come.
+- Are you inviting others to take responsibility for meeting your needs and feelings?
+- It’s the one thing you can’t buy or trade for - it’s yours and yours alone.
+- Time, as we know it, is not a linear construct, and the journey towards awakening does not come neatly packaged.
+- Now you're heading into more of an internal and work-focused time.
+- You’ve had a lot going on this last year with work and home life.
+- The earth, your body, and your senses are where you feel most grounded.
+- Regaining your power, confidence, and healthy boundaries in life and relationship.
+- Always check in with yourself and decide if being alone or communicating is needed for you at the moment.
+- If you’re experiencing loss or grief now, allow yourself to feel it.
+- Think about your work/life balance and how you can take better care of your health.
+- Are there any relationships or groups that are blocking your path to success?
+- Do you need guidance on how to move past something and find peace?
+- What creative hobbies did you have as a child that helped define you?
+- How do you achieve balance in relationships with the self and others?
+- What criticisms or judgments are you experiencing internally or from others?
+- What do you see, feel, hear, and taste?
+- How tapped in are we to Source, God, Self, Goddess?
+- You may feel like you are searching for something, but you don't know what it is.
+- You don’t always like being in leadership roles.
+- Sometimes it feels like you're stuck in a never-ending cycle of planning and waiting.
+- You desire deep connection in every aspect of your life.
+- The right use of power will always be a theme in your life.
+- You can always make edits later.
+- Whatever your creative vision may be, don't be afraid to tap into it.
+- To find your creative voice, you must first be vulnerable.
+- You have to trust yourself, your ideas, and your vision.
+- Whatever it may be, dear ones, do not be afraid to put your own needs first.
+- Words can only get you so far.
+- You never know who you might meet that could help propel your vision forward.
+- Don't be afraid of what you might become when you shed the old and embrace the new.
+
+## TIER 4  score 1.5 to 2.4  (551 lines)
+
+- You will be amazed at what can happen when performing energetic uncrossings; not all work is peaceful and light, so always be mindful when working with spirits.
+- Find a way to express it, and if you have the opening, communicate your boundaries and needs to others in a way where they can receive what you have to say.
+- Expressing Unsaid Thoughts: Is there something you've always wanted to say to your mother but haven't had the chance to?
+- Unsaid Words to your Father: ● Is there something that you have always wanted to tell your father but haven't had the chance to?
+- Before acting, take some time for reflection, support your nervous system, and don't let this dynamic and expansive energy pass you by.
+- When we face, heal, and accept these parts of ourselves, we realize that nothing can stop us from achieving our dreams.
+- Is free will only applicable to your mental and emotional state and how you respond to events, people, and inner dialogue?
+- It can be hard to accept that some family members are unhealthy, but you must learn to set boundaries and take care of yourselves before you can help others.
+- Remember that questioning, understanding, and trusting the unknown is part of building faith - not just in something higher than yourself, but in your own power and strength.
+- Trust in the wisdom that your emotions have to share with you, and use this time to find or create comfort and security within your home and family life.
+- Allow these qualities and any other qualities you want to call in, to wash over you, and fill every cell and space in your body.
+- It's natural to want answers in a situation like this, but sometimes you just have to accept that you may never know why things ended the way they did and just move on.
+- This means not trying to change or suppress your emotions but allowing them to be and allowing yourself to feel them.
+- These are the areas where you lack confidence and are being called to confront and work through.
+- You take a deep breath, and with passion and enthusiasm, cast your intentions out into the world like a seed.
+- Any challenges that you have been avoiding will also come up, adding to your cosmic to-do list of inner work.
+- It's an optimal time to seek therapy, especially if therapy didn't work for you earlier in the year.
+- Are you being true to yourself, or are you projecting an image that does not truly reflect who you are?
+- Are you taking care of your basic needs, or are you neglecting your physical health in some way?
+- Do you feel content with what you know and believe, or do you sense a need to expand your understanding?
+- Are you satisfied with the way you are perceived by others in these areas of your life?
+- Do you feel like your standing is where you want it to be, or do you feel like you need to make changes?
+- The purer the body and vessel, the more easily they can be imbued with the Universal energy you call in.
+- Take time to check in and feel, you cannot think your way out of emotion.
+- Focus on how this makes you feel, including feelings of loss and grief, in order to move through this.
+- Choose a ritual area in your home that is ideally free of clutter, distractions, and technology.
+- This is a powerful time to set your intentions and work towards creating more balance and harmony in your life.
+- You've heard the saying, "the middle path is the best path," but what does that really mean?
+- Embrace the power of intention setting and visualization to manifest the home and family life that you desire.
+- As you create a beautiful and harmonious home, you also create a beautiful and harmonious inner self.
+- A safe emotional home means feeling supported, understood, and loved by those around you.
+- By setting intentions towards abundance, you can work towards creating a rich and fulfilling life.
+- Exploring Abundance: What does abundance mean to you, and how do you define it in your life?
+- Money and Financial Abundance: Reflect on your relationship with money and financial abundance.
+- What are some new ways you can explore to increase your income and financial stability?
+- It's also possible you recently moved, needs to move closer to family, or are settling into a new home.
+- Over these next six months, cultivate actions that facilitate peace in your home and family environments.
+- If not, can you both navigate the path forward to reach a place of shared core values?
+- By doing this inner work, you can gain a deeper understanding of yourself and your place in the world.
+- Are there any beliefs or values that you need to let go of in order to align with your true self?
+- Forgive yourself for what you didn't know how to do and didn't know you held power to do until now.
+- Fear can live in your body, a powerful subconscious motivator, teaching you more about yourself and your blocks.
+- Once you identify these fears, you can work to release them and replace them with more supportive beliefs.
+- Share your ideas and listen to your partners in theirs so you can all work together to expand.
+- It's also possible you recently moved, need to move closer to family, or are settling into a new home.
+- It's a time to delve deep into the mysteries of life and explore all the hidden corners of your soul.
+- When you take the time to heal your emotional bodies, what is that you desire to feel about yourself and your life?
+- This house reveals your sense of belonging, family dynamics and upbringing, and relationship with home.
+- What separates you from feeling and resting in your body, your emotional body, and your Spirit.
+- It represents the mother, our home and family life, and our early childhood emotional conditioning.
+- Do they offer security, support, and an environment that will promote your well-being?
+- This can help you connect with your emotions and create a comfortable and supportive work environment.
+- What patterns or behaviors do you carry with you that are rooted in your family history?
+- What has shifted in the past six months that asks you to step into more responsibility?
+- Can you grant permission to that vulnerable part of yourself to feel its emotions without judgment or expectation?
+- Set intentions to reconnect with your roots - your family, friends, and the places that feel at home.
+- Don’t abandon yourself, but also don’t get stuck in pride or ego and follow the path of selfishness.
+- Names for Father: ● What are some of the different names that you have called your father throughout your life?
+- How have these changed as you have grown and your relationship with your father has evolved?
+- Father's Support and Protection: ● How has your father supported and protected you throughout your life?
+- You’re expanding past old limitations and boundaries that have previously kept you safe and stagnant.
+- How are your own fears of connection and desires for freedom affecting your happiness?
+- If you're currently feeling restricted due to the opinions of others, how can you free yourself of this judgment?
+- Did you commit to a financial decision or stock trade that needs to be reworked or traded due to a market forecast?
+- It's easy to forget to honor the efforts you put into your work, self-care, and volunteering.
+- Allow yourself to accept, diagnose, and forgive yourself for experiencing these experiences.
+- It is a time to re-evaluate our work, our labor, and the service we provide to others.
+- Take care of your body by nourishing it with healthy, colon-supportive foods like oatmeal.
+- Rest, retreat, and focus on connecting with yourself and your creativity so that you can get clear on your purpose.
+- Focusing on Self-Improvement: What areas of your life are you focusing on for self-improvement?
+- The rest we need versus the physical exercise our body needs is personal to each individual.
+- You need moments of stillness in your life where you can be present and connected to your body.
+- You'll be surprised at how much your income, investments, and self-worth can grow when you commit to the work.
+- Are you allowing yourself to be deceived by your environment or the people around you?
+- Have you ever taken a moment to think about your ancestors and the journeys they took?
+- We all need to feel that sense of belonging and peace, and that's why having a home is so important.
+- How can you make changes in your network to help you take steps to actualize this dream?
+- You can learn how to navigate endings and loss by reflecting on your previous experiences.
+- It's important to be mindful of your words during this time, as gossiping can lead to anger and hurt.
+- It's also a time to reflect on the emotional ties that bind you to your family, loved ones, and your sense of home.
+- This is a great time to invest in your home and make new memories with the people you care about most.
+- Handling Conflicts and Misunderstandings How do you handle conflicts or misunderstandings in your relationships?
+- Reflecting on Sudden Changes or Insights What new information or insights have come to your attention recently?
+- What support or resources do you need to move forward and create healthy relationships?
+- Balancing Self-Care and Prioritizing Needs How do you prioritize your needs in relationships?
+- Set boundaries – Define your needs and boundaries and make sure they are clear to others.
+- Define your needs and boundaries – Make sure you are clear on what you need and what your boundaries are.
+- Be careful with debt and money during this time, and ensure you're handling your finances well.
+- The first step is acknowledging your fears (fear of success, happiness) is the first step to conquering them.
+- Asking us to shed old skin, allowing it to return to earth, so it can fertilize and feed the next cycle.
+- It penetrates to the core of our trauma, to the core of our issues, and the core of our power.
+- Stay connected to those emotions, whether you take this journey alone, or in connection with another.
+- What can you feel ready to heal, release and accept about the past so you can live more fully in the present?
+- As you look back on this past year, how comfortable are you with the process and change that has occurred so far?
+- When you embark on developing a new talent or skill, what doubts arise like the winds trying to shake the tree?
+- Take this time to create a sacred space within your home, a sanctuary of safety and warmth.
+- Re-evaluate your work environment and strive for a balance between service and self-care.
+- What intentions are you setting to commit to your career and support your professional growth?
+- How can you be in flow with the process of change and give yourself deeper into trust & intuition?
+- Reflect on the aspects of your shadow self that you've been able to confront with curiosity rather than fear.
+- Are there any obstacles or challenges that are holding you back from achieving your goals?
+- Embracing Change: How do you handle change and challenge in your journey towards self-discovery and transformation?
+- What strategies have you found to be effective in the past and how can you apply them in your current situation?
+- How has your understanding of your ancestors shaped your sense of self and your values?
+- It encourages you to connect with plants and animal spirits and planetary energies through your body.
+- How much importance do you put upon them, and how do you let them reflect how you feel about yourself?
+- If you're going through a stressful time at work, make sure you're taking time to decompress and reset.
+- Guilt is the feeling that you have done something wrong and have put yourself or others in danger.
+- Look at the stories that have come to define your life: What milestones have you reached?
+- Speak your truth without fear or expectation, and find out what life has in store for you.
+- Have you ever asked yourself if you have control over your own life, or if it's all predetermined?
+- Set intentions to nurture your family relationships, find your home and heal old wounds.
+- This includes your work environment, and learning to balance your daily routine to include self-care is essential.
+- Have you been more open this past year, and how has that affected your relationships with yourself and others?
+- Breaking Through Barriers: Are there any areas of your life where you feel stuck or stagnant?
+- What are your long-term goals and how can you use your desire for growth and exploration to help you achieve them?
+- Money can be a source of joy if you use it to align with your values and invest in things that bring you happiness.
+- Celebrate your autonomy by making conscious decisions about where you spend your money.
+- Visualize your desired outcome, then work backward to create a roadmap for getting there.
+- What literal and figurative lessons and blessings have you acquired over the past year?
+- The relationships in your life, whether in love or work, are at the forefront of your mind at this time.
+- Take this opportunity to reflect on your career and how you can work towards achieving your goals.
+- Overcoming Setbacks and Staying Motivated: How do you handle stress or pressure in your career?
+- How do you stay motivated and focused on your career goals, and what techniques do you use to stay on track?
+- Allow yourself to feel into what feels like home on the deepest level - the soul level.
+- Home is your physical body and its connection to your emotional world, the place where your soul is birthed.
+- It's important to find a balance between the two so that you can maintain a healthy work-life balance.
+- Money is more than just a physical exchange for your efforts - it's a representation of your worth, too.
+- Think about your body language, facial expressions, and gestures when talking to someone.
+- From sadness to joy, anger to gratitude, your feelings are the most potent form of communication.
+- Success is important to you, but not at the expense of your home life and emotional stability.
+- Reconnecting with your roots - your family, friends, and the places that feel at home.
+- Declutter your home and let go of any charge or emotion attached to your family legacy.
+- When was the last time you felt the warmth of a hug or the comfort of a hand on your shoulder?
+- Trauma can leave you feeling alone and disconnected and lead to symptoms like anxiety, depression, and PTSD.
+- Have you ever felt a profound sense of peace when living in alignment with your deepest values?
+- Think of your body like a bank account – you’ve got to make regular deposits if you want it to grow.
+- The fuel that you feed your body is the currency with which you invest in your well-being.
+- It’s important to take care of your health at this time; especially getting enough sleep and restoration.
+- Take things slow and steady, being mindful of the nuances and hidden information that we still need to be aware of.
+- If you navigate from your strengths, you will see the fruits of all your hard work ripen most beautifully.
+- Make it a focus to find a solution to that question if you're feeling unfulfilled in your work situation.
+- It requires you to release your fear of failure, success, and the pressures you place on yourself.
+- Over the next six months, prioritize cultivating peace in your home and with your family.
+- Do you crave deep and meaningful connections that encourage your spiritual growth and personal evolution?
+- See if you want to express a part of yourself that you've either kept hidden or been working on behind the scenes.
+- What obstacles, limiting or toxic beliefs or people, are getting in the way of your evolution?
+- Accomplishment: What are you proud of and how does it contribute to your self-love and emotional foundation?
+- Help from the other side: What is your Spirit Guide/Loved One trying to help you with currently?
+- You can use the laws of the Universe to your advantage if you understand how they work.
+- It is crucial that you fully grasp and accept this truth.
+- When we create or nurture relationships, both benefit.
+- To break this cycle, we must clear our minds and focus on understanding ourselves.
+- If we wish to be really happy, we have to give up our attachments.
+- Once you have a clear and concise intention, write it down.
+- Remember, not all of us possess the ability to conjure vivid images in our minds.
+- Imagine your intention with as much detail as possible and engage all of your senses.
+- Allow the doubt to pass through you, just as in meditation.
+- Give thank you for showing up for yourself.
+- Give thanks for all that you already have.
+- Allow yourself to detach the control.
+- Allow yourself to detach from the whens.
+- Allow yourself to be surprised by the manifestation.
+- Now you are in harmony with allowing.
+- You are detached and less anxious.
+- Review your intention and notes.
+- Your ritual and intention should not consume your entire being.
+- Ironically, your biggest adversary is your inner demons.
+- You've stepped into your power and authority.
+- You showed up for yourself and created change.
+- It's part of the process of learning to commit to yourself.
+- Reflect on what you've experienced, and respond accordingly.
+- Lunar eclipses are portals into your soul.
+- It is here that our North Node can be a guide.
+- This part of you wants to be recognized and adored.
+- Her lessons bring you to wholeness and authenticity.
+- The balancing of what you want vs.
+- Be kind to yourself and set realistic expectations.
+- In your pot, heat spring water until it simmers.
+- The next morning, you can drink, sprinkle, or spray it onto yourself and your home.
+- You repeat this process three times.
+- Now is the moment to reinvent ourselves.
+- This action allows you to gain new feedback and insight.
+- Let the light of your life be transformed with ritual.
+- Focus on yourself, not on what others have or do.
+- The words you choose to communicate with carry weight.
+- How you identify with these areas will reshape you.
+- It is important for you to stay connected to what you love.
+- Trust yourself first, and everything else will align.
+- Right now, your career is your main focus.
+- If you have an established network, use it.
+- Speak or read your intention out loud.
+- Every page is an invitation to explore, reflect, and express yourself meaningfully.
+- Speak the truth – Trust starts with you.
+- Speak from the heart and express the love within you.
+- The power of choice lies within your grasp.
+- From this nothingness, we can create beauty.
+- In doing so, we are gifted with discovery.
+- Your achievements, your creations, and your accumulations.
+- Focus on who you are and how you want to express yourself.
+- It’s important for you to stay connected to what you love.
+- The best thing you can do is be flexible.
+- Your natural flexibility will help you ride the waves.
+- Career is your main focus now.
+- Stay close to those you trust.
+- Community and networking are a big focus for you now.
+- We sync to the cycle with community, nature, and Spirit.
+- All of us have been learning to do this over the past several months.
+- You have the power to release, heal, and evolve.
+- Hold space and choose your words wisely.
+- Make decisions based on what you see.
+- Your awareness will help you avoid conflicts.
+- Breathe deeply, and shift your focus to the present moment.
+- Every page invites you to explore, reflect, and express yourself meaningfully.
+- How you identify with them will reshape you.
+- Flexibility is your best friend.
+- Your ideas should be shared and collaborated with others.
+- Community and networking is a big focus for you now.
+- Focus on how this makes you feel.
+- You need to move and feel your way through this information.
+- All of these experiences can help you see the world in new and exciting ways.
+- What you wish to avoid repeating needs to be released now.
+- This will help expand your spirit to your full potential.
+- If you're feeling stuck, you must create a strong foundation.
+- Take note of what you have achieved.
+- You are much more expansive and empowered than you realize.
+- Notice which fears hold you back and which are limiting you.
+- Let yourself be guided and inspired by your own intuition.
+- You are here to learn, explore, and make mistakes.
+- Stay open, be still, and surrender — you never know what wisdom and healing you might receive.
+- Ask yourself how you feel, and what things mean to you.
+- We can observe the sun and moon (Day and Night.
+- We see rhythms all around us in nature.
+- On the solstice, you honor and celebrate the light.
+- The horses represent your animal drives which must be mastered at this time.
+- Allow the tears to flow, wash over, and cleanse your Spirit.
+- Take this time to reflect on and update your message.
+- Emotions are powerful forces that can change your life.
+- Having fun and enjoying yourself is your top priority.
+- The power is in your choice to choose.
+- How you cope makes all the difference.
+- See where your gifts can be offered and offer them.
+- Integrating your ability to think practically is needed now.
+- If you are female, you can also place it on your womb space.
+- This can help you connect with your emotions and creativity.
+- Be mindful of over-mothering your significant other.
+- Art can also help you cope with difficult situations.
+- You deserve to live a life unencumbered by the past.
+- You are much more responsible than you realize.
+- This will carry you through the storm.
+- Find time for your creative gifts and relationships.
+- Make health and creativity your primary focus now.
+- Be honest about what you need from others and yourself.
+- You can take the initiative to create it yourself.
+- A new life is right around the corner for you.
+- Your faith, trust, and creative expression will nurture you.
+- Show him all the respect and love that you can.
+- Take this time to reflect on where you were six months ago.
+- At heart, you are a humanitarian.
+- What we desire has a power of its own.
+- It's ingrained in your DNA for survival.
+- It's time to live life on your own terms.
+- Along the way, people will lift you up and bring you down.
+- We all carry the weight of our ancestors on our shoulders.
+- You are much stronger than you realize.
+- Giving you the insight you need to make the right choices.
+- In the Northern Hemisphere, we are entering Autumn.
+- These are the qualities we want to embody during this time.
+- Set your goals and stay committed to them.
+- You worry about speaking properly or not being understood.
+- Not everyone in your life is going to be able to receive what you have to give.
+- Be grateful for those who can welcome you with open hearts.
+- Dreams, creativity, illusions, and loss are surrounding you now.
+- You need to move and feel your way through this.
+- This push to look at how you “feel” about the world vs.
+- Give in to the siren song and immerse yourself in magick.
+- It's time to reevaluate your priorities.
+- Take this time to think about what you want.
+- It's the only way to heal and find your way back to the shore.
+- We all have moments that can be difficult to move on from.
+- Invest in yourself and watch magick happen.
+- Speaking the truth –Trust starts with you.
+- Keep showing up for yourself and believing in your talents.
+- Trust me, your efforts will be noticed and appreciated.
+- You have a lot to offer, and this is the time to share it.
+- Embrace your unique talents and let your light shine.
+- Is there evidence to support your fear or is it based on assumptions or beliefs that may not be accurate?
+- As you focus on what is working in your projects and relationships, take care to gently tend to what is not.
+- It's okay to say "no" when you need to.
+- Remember, you have a right to your own time and space.
+- If you want to develop your career path, you must be your own advocate.
+- If you are self-employed, know your worth.
+- Speaking your peace comes naturally to you.
+- Every single event that occurs in your life is a reflection of your inner state.
+- You are your own best advocate and champion.
+- We all have different love languages.
+- It's time to change the way you talk to yourself.
+- Be gentle as well as honest with yourself.
+- They can influence your thoughts, emotions, and actions.
+- Choose wisely as you move forward.
+- To improve your situation, you must admit that you want more and fight for yourself.
+- We come from stars, and we’ll return to stars.
+- Together, in community, we are rooted and unbreakable.
+- Trust in the journey and listen to your inner guidance.
+- Trust that the universe is supporting you on your journey.
+- Use your dreams as a source of inspiration and guidance.
+- It can also remind us of the resources we need to get there.
+- After all, you are an alchemist!
+- The balancing of what you need vs.
+- Allowing others to help you with your challenges.
+- Give back to those who have helped you on your journey.
+- You are here because of desire.
+- Find the courage to be yourself and trust in yourself.
+- It will evolve into something that's uniquely your own.
+- It means that you're open to something new.
+- It's time to trust yourself and start taking control.
+- These people harm your life and cause more hurt than good.
+- Be the change you want to see in your world.
+- It's time to be the author of your own story.
+- Take off on an adventure and see where life leads you.
+- Finally, it is important to take action based on your truth.
+- If you haven't done so already, we will cut ties and Go Big.
+- Gather with your family and dearest friends.
+- Say goodbye to alcohol and drugs that can burden your liver.
+- To harden your limbs, perform some classic squats.
+- You stand in line between free will and fate every time you choose.
+- It seems this is the only real control you have most of the time.
+- You are wise, educated, and optimistic.
+- Hold on to your faith, and keep on your path of truth.
+- All the backward motion is preparing you for a big entrance.
+- Remember, you can only serve others if you take care of yourself first.
+- Trust in yourself and let your creativity flow.
+- It's time to recalibrate and refocus your awareness.
+- Small steps are fine too, but no step will keep you stuck.
+- You welcome this new spark of motivation.
+- For now, focus on your creative expression.
+- Your natural integrity will keep you centered.
+- Sharing heals yourself and the collective.
+- It's time to open yourself up to new possibilities.
+- Embrace all of who you are to live your most fulfilling life.
+- Show up for yourself as you do for others.
+- Set yourself up for health and success.
+- You are multi-faceted, complex, and full of potential.
+- Don't be afraid to express yourself authentically, even if it means you might face judgment or rejection.
+- To find your true voice and make your mark in the world, you have to be brave.
+- It’s time to strategize and plan for your future.
+- It reveals the obstacles we must overcome and the persistence required to do so.
+- It's time to turn your big goals into a reality.
+- It shows you where you feel limited.
+- Where your perspective is narrow and pessimistic.
+- It reveals the obstacles you must overcome and the persistence required.
+- Focus on the potential of the journey and release your need to control every detail.
+- Some you'll try to hold on to, but only keep the ones that fit.
+- The other is a reflection of your own inner beauty.
+- Feel gravity pulling you down to earth.
+- Notice if there’s tension in your jaw, neck or shoulders.
+- Bring your awareness to chest, back and torso.
+- Bring your awareness to your belly, lower back, and hips.
+- Bring your awareness to your thighs and knees.
+- Bring your awareness to your shins, feet and toes.
+- Allow yourself to sit in this space for a few breaths.
+- It doesn’t need to come from you.
+- Allow this part of you to absorb and receive what it needs.
+- Notice your breathing, inhaling and exhaling.
+- Slowly wiggle your fingers and toes.
+- You are becoming more and more awake in this present moment.
+- Become aware of the sounds and smells around you.
+- Slowly open your eyes when you are ready.
+- Imagine that sphere shrinking and returning back to you.
+- Keep coming back to this as you move through any challenges.
+- Make your house a place of refuge.
+- Celebrate who you are and all that you can become.
+- Embrace your growth, your courage, and your strength.
+- This a reminder to reflect on what makes you feel secure.
+- Your words can be powerful instruments of self-expression.
+- Your emotions are an essential part of your story.
+- Life has a way of catching up to you.
+- Intimacy is part of your human nature.
+- Connecting with others can help you feel seen and valued.
+- After all, we all crave authentic connection.
+- It will do wonders for your mental and emotional well-being.
+- When the waters get rough, their light shows you the way.
+- They keep you grounded and give you a sense of belonging.
+- Asking us to know the rules in order to break them.
+- You must be aware of self-sabotage and addictive behavior that undermines your goals.
+- Your health is your most valuable asset.
+- It's time to channel your inner Magician.
+- Tap into your passion and don’t be afraid to dive into it.
+- During this time your thoughts can become a distraction.
+- Allow your Higher Self to support your big ideas.
+- Every stage of life is an opportunity to step into your power.
+- We all have a little bit of wildness in us.
+- You are going to need it now during this unpredictable time.
+- We live in a world that values busyness.
+- Now you are making big decisions.
+- You are naturally charismatic and enjoy socializing.
+- Allow the messages and lessons to permeate every cell of your being.
+- Show up for yourself, and others.
+- Give yourself permission to evolve.
+- Deep reflection is necessary for you to move forward now.
+- Listening and sharing mutually is a skill you are mastering.
+- Focus on building what you already have.
+- Everything you need to succeed is right here.
+- To put your trust in something, start with yourself.
+- Create healing spaces for yourself.
+- Your past relationships can teach you a lot.
+- Trust in yourself, even if you are fearful.
+- The Universe is sending you signals - all you have to do is be open.
+- Once you have those answers, it’s time to plot a roadmap.
+- Where could you have been more clear?
+- You may have stagnated out of fear or a lack of inspiration.
+- Do you tend to be more direct or indirect?
+- Do you listen well or do you tend to dominate conversations?
+- Perhaps you were overpromised?
+- You may be reviewing your health or work life.
+- Your boundaries may be tested.
+- You may have to stand alone for a while, but you are strong enough to do so.
+- It is a way to shift your mindset, help you find meaning and purpose in your work, and say yes to the opportunities you want to manifest.
+- Like yourself, each of the planets has preferable zodiac signs that they visit and feel productive, and other zodiac signs where their energy does not work as easily.
+- If you did your work and remained focused on your intentions throughout the week, then you can take the day to celebrate.
+- Because the objects of our attachment are transient, their loss is inevitable, thus suffering will necessarily follow.
+- The outer demons are those individuals who attempt to make you feel small, instill fear of success and question your path.
+- As you set an intention and work towards your goal, you are breaking away from the norm and creating a new pattern that makes others uncomfortable.
+- This celebration also signals and solidifies a new pattern in your mind and energetic body as something to be appreciated and desired.
+- It's the perfect time to make those home improvements you've been dreaming of and to create a sense of belonging and feeling rooted.
+- By channeling our creative energy, we can tap into the infinite possibilities of creation and bring our work to life in a powerful and meaningful way.
+- It is a time of illumination, revealing hidden truths and emotions, and helping you understand the role of all your relationships in your life.
+- It's a time to explore the depths of your imagination, to push yourself beyond the boundaries of reality and dive into your thoughts and dreams.
+- Are you feeling grounded and supported in your current living situation, or are there concerns or issues that need to be addressed?
+- This is an opportunity to evaluate and take steps to create a home that is emotionally supportive and conducive to your overall well-being.
+- Are the connections you have with others supportive and fulfilling, or are there imbalances that need to be addressed?
+- Are you truly passionate about the causes you support and the groups you belong to, or do you feel like you are going through the motions?
+- Have you been letting things slide and letting chaos and disorder build up, or have you been actively working to clean up the mess in your life?
+- Cinnamon is also used to call in good luck, bring peace to your home, and for purification when mixed with other herbs.
+- So, let's allow the heat of the Sun to melt away the old and welcome the new as we uncover the hidden potential within ourselves.
+- If you're fortunate enough to have your needs met and still have the capacity to give back, then why not share it with your local community?
+- It is critical to examine the roots of your life to ascertain your connections to family, home, and parents and what keeps you rooted.
+- Allow yourself to feel angry, scared or overwhelmed; to cry, rage and process any emotions you’re holding inside — this will help you move forward.
+- Relationships in work and love are the emphasis for you now, as well as the need to balance your own needs with the needs of others.
+- Embrace the opportunity to become a morning person, shift your daily commute to a work-from-home hybrid, or whatever your heart desires.
+- If you feel unmotivated or disconnected, incorporate daily habits that balance your body and mind, and reconnect with the inspiration that drives you.
+- Find peace in exploring those parts of yourself that have been hidden away, and find love where there were scars or shame.
+- If you made a decision based on the feeling of lack, would you have avoided this decision if you had felt abundance or the option of choice?
+- Nurture your senses – Take care of your body and your senses by indulging in things that bring you pleasure and joy.
+- How do you typically process the ending of a situation, and what strategies have you found helpful in letting go and moving on?
+- How do you typically express and cope with this emotion, and how have you learned to process and release it in a healthy way?
+- Lessons of loss and transformation are unfolding, giving you deeper information and insight into how you process endings and beginnings.
+- Breathwork can bring profound healing to your spirit and body, especially when releasing trapped emotions and past challenges.
+- This is a great time to reach out to others and make connections, as well as to work towards realizing your goals and ideas.
+- How can you support yourself with podcasts, books, or finding a mentor to empower you to expand and step more into a public role?
+- When you let your emotions guide you with compassion and understanding rather than judgment, they can lead you to people and places that can feel like home.
+- This information is to bring peace and clarity into your home, especially if it means making big changes in who's allowed in it.
+- You’re discovering more and more about yourself on a daily basis and wondering if all the different parts of yourself are being honored and acknowledged in your work.
+- By taking the time to set intentions to support and nourish your emotional needs, you can then better support your work or public life accordingly.
+- Here are some prompts to get you started: Exploring What Makes a Good Mother: What qualities do you believe make a good mother, and why are these important to you?
+- Reflecting on Changes in Perception: How have your perceptions of your mother changed over the years, and how have the names and nicknames you've used for her evolved?
+- Remembering Moments of Joy: What makes your mother happy, and can you recall specific memories of her laughing or smiling?
+- Recalling Early Memories: Reflect on your earliest memories of your mother - what stands out to you the most about these memories?
+- How do you process and cope with difficult emotions, and how do you honor and celebrate the happy memories in your life?
+- On the other hand, you have your sense of family and home, and the emotional security and nurturing you receive from these relationships.
+- It is possible to have a successful career and a fulfilling home life - it is just a matter of finding the right balance for you.
+- Reflect on the balance between your professional goals and your emotional needs – How can you honor both aspects of your life and find harmony between them?
+- Reflect on the importance of emotional well-being and nurturing relationships – How can you cultivate a sense of emotional security and fulfillment in your life?
+- Increase productivity and focus on work – Consider setting an intention to increase your productivity and focus on your work.
+- If you're feeling overwhelmed by either work or home responsibilities, take a step back and assess what's really important to you.
+- Over these next six months, cultivate actions that facilitate emotional support within your home and family environments; and see your foundation strengthen.
+- Explore what a mature and successful work-life balance feels like for you and if you feel you still need to create it, take actionable steps toward it.
+- Long-term unhealthy relationships weaken your immune system, and living in a constantly hostile environment pumps your body's cortisol levels, leading to adrenal fatigue.
+- This includes your work environment and learning to balance work, self-care, and adding more pleasure to your daily life.
+- Find a way to express it, and if you have the opening, communicate your boundaries and needs to others in a way where they can receive it.
+- We are reviewing patterns of aloofness and emotional disconnection and releasing the stories of trauma that are perpetuating these patterns.
+- Take this time to think about what you want for yourself in the future - what type of community and friendships do you want?
+- Think of ways technology is either helping or hindering your connection at home and with your family; make adjustments accordingly.
+- How can you create daily practices to support your nervous system: drink ​chamomile tea, join a meditation group, etc.?
+- Anything that helps you find your center and stay connected to your body and your experience so you can navigate the murky waters over the next couple of weeks.
+- Be mindful of who you share your energy and resources with, and consider what boundaries you need to set in order to feel grounded and centered.
+- You need the courage to push past fear, the conviction to follow your heart even, and intuition and learn from them.
+- Overcoming Challenges and Obstacles: What challenges or obstacles have you faced in your journey towards self-improvement?
+- Utilizing Strengths for Personal Growth: What are your strengths and how can you utilize them to support your personal growth and self-improvement?
+- One of the most effective ways to influence positive change in your life is to work in tandem with your conscious and unconscious mind.
+- Over the next six months, cultivate actions that facilitate emotional support within your home and family environments and see your emotional foundation strengthen.
+- Reflecting on your previous experiences helps you to navigate through difficult endings and losses, and to heal the trauma that comes with them.
+- Take this opportunity to consider how your family fits into your future and how you can work towards cultivating deeper, healthier connections.
+- This is where your power lies, and it's a great time to explore your emotional process and to create special moments in your home.
+- Allow yourself to become a channel for this creative force, and let your work radiate through you rather than simply being created by you.
+- By understanding where the fear is coming from, we can better assess whether it is warranted and take steps to address it.
+- It is important to recognize these patterns and work on building your self-worth and setting healthy boundaries in your relationships.
+- Values in Relationships and Showing Appreciation What do you value in your relationships and how do you show appreciation and support for the people in your life?
+- Strengths in Communication and Building Connections What are your strengths in communication and how can you utilize them to build stronger connections with others?
+- Letting Go of Dysfunctional or Abusive Situations Are there any dysfunctional or abusive relationships in your life that you need to let go of?
+- Dealing with Resentment from Neglecting Yourself How do you feel when you neglect your own needs in favor of others?
+- This period has helped you clarify who and what's important and helped you find a more stable base and home within yourself.
+- You can be thoughtful and deliberate in your actions toward career growth without sacrificing your home and personal life.
+- Through this inward exploration, we have the power to transmute what is hidden within us into wellsprings of strength and wisdom.
+- What ancestral patterns are repeating in me and how can we honor our past and lineage and yet be empowered to break the cycle?
+- Take the time to nourish your body and soul, and create a new routine that will bring you more energy and stability.
+- Take the time to express it in a healthy way, and if you have the opportunity, communicate your boundaries and needs to others so they can understand.
+- What do you feel ready to heal, release and accept as the past so you can bring your attention and full self more into this present moment?
+- Visualize yourself embracing your power and strength as you delve into the depths of your psyche and uncover hidden truths about yourself.
+- You've likely checked out of your body in some way, which is your psyche's natural defense response to trauma but can leave you fragmented and needing to heal and integrate.
+- Your body is the anchor that keeps you rooted in reality while simultaneously a treasure chest that stores your emotions.
+- In addition, Taurian values enjoying life's simple pleasures and sharing these simple pleasures with those who share your home and are of family.
+- You are exploring the reality and depth of intimacy in your family relationships and the health of or lack of healthy boundaries.
+- Any hidden emotions you are hiding from others or yourself will begin to emerge, directing you to your compassionate and creative heart again.
+- Currently, you are exploring the reality and depth of intimacy in your relationships and the health of the boundaries you have created.
+- As you face feelings of vulnerability and insecurity, it's important to consider whether you choose to expand your heart or contract your energy in fear and pain.
+- If you are experiencing a loss or ending, ask yourself what you need to do or acknowledge to accept your situation and find peace.
+- Adventure awaits - the possibilities are endless and you get to make all the choices What did my soul come to learn this lifetime?
+- New opportunities will arise if you stay aligned with them." What opportunities can you seek when you commit to developing a new talent or skill?
+- Set intentions to put yourself in a position of leadership and express yourself freely; especially if you're looking to be seen at work.
+- Have you been more open in your relationships this past year, and how has that impacted your connection with yourself and others?
+- Allow yourself to face any fears of intimacy, stand on the edge of your boundaries, and take a step into the unknown.
+- Shadow work is a powerful technique for harnessing our fear, channeling it into positive energy, and using it to manifest the life we want.
+- Forgive yourself for what you didn't know before or what you didn't know you held power to do, and celebrate the new knowledge and understanding that has been revealed to you.
+- When you start to feel the spiral of overthinking and questioning, take a deep breath and remember that it's okay to be a work in progress.
+- By taking the time to reflect on your needs within your home, you can then support your work or public life accordingly.
+- It's a time to reflect on all the inner work you've been doing and to give yourself some much-needed rest and rejuvenation.
+- It's a time to put in the hard work, to be disciplined and focused, to channel your ambitions towards clear and tangible goals.
+- The behind-the-scenes work you've been doing on yourself will soon be reflected in the external world as your inner growth and development manifest in tangible ways.
+- It's important to find a balance between work and self-care and to make time for the things that nourish and support you.
+- It's important to take care of your health and well-being during this time and to make time for rest and restoration.
+- In this meditation I’ll help you create a place of resource, or stability, and then help you locate your chosen issue in and around your body.
+- Now, if it feels comfortable, slow the breath down just a bit from your normal rhythm and begin breathing through your nose if you aren’t already.
+- Choose the version of yourself and the quality of life that feels most nourishing and empowering and begin bringing that into your body and present moment.
+- By taking some time to journal, you can gain a deeper understanding of your aspirations and how to work towards achieving them.
+- Prioritizing Your Values and Defining Success: What do you value in your career and how do you prioritize those values?
+- Explore these themes and consider ways you can stay resilient and motivated as you work towards your professional goals.
+- Reflect on your work-life balance and consider ways you can create a healthy balance between your professional and personal commitments.
+- Embrace this time to create boundaries and routines that will nourish and support you on your journey of self-discovery and growth.
+- As you bask in this feeling of home, comfort and security, you'll find that it recharges your energy and fills you up with its warmth.
+- Bask in this feeling of home - comfort, and security - as it recharges your energy and fills you up with its warmth.
+- Feel the deep connection to Source that resides within each one of us – this eternal source that you return to after your physical body expires.
+- As the stars align, have you ever felt as though you were wandering aimlessly, spinning your wheels without making any real progress?
+- Those of you on your pre-destined path, know the feeling of fulfillment and stability that comes with doing work aligned with your truth.
+- This can involve decluttering and organizing your physical space, setting boundaries with others, and making sure you have access to the resources and support you need.
+- By exploring your feelings about money, we can ensure that you make decisions from a place of abundance instead of scarcity.
+- Does everyone have the necessary information to make honest choices for their emotional well-being, or are you holding back?
+- The underlying lesson of Death is that if you let go of the fear of loss or missed opportunities, you will see that change is inevitable.
+- While you consider your work, you ask yourself if it is beneficial and helps the collective consciousness reach its highest potential.
+- That said, there’s no better way to innovate than introducing smart-home devices into the lives of you and your loved ones.
+- How can you use your skills and abilities to bring about positive change that supports collective consciousness reaching its highest potential?
+- Work on communication and conflict resolution skills, set healthy boundaries, and make time for activities that bring you joy as a family.
+- You’ve been having many changes in your career and home life recently, making you question what direction you head in and if your current situation is fulfilling your needs.
+- Work on setting healthy boundaries and finding healthy ways to cope with the emotional turmoil of the world around you.
+- It calls for the release of our fears, whether they be fear of failure or fear of success, and the relinquishment of self-imposed pressures.
+- If you've been fixated on a particular issue, it's time to release that energy and recalibrate your focus on your body and well-being.
+- Write about any challenges you have faced in dealing with loss and grief, and brainstorm ways to find healing and closure.
+- Invite positivity into your life – Set an intention to invite more positivity into your life by engaging in activities that bring you joy and nourish your mind and body.
+- It's possible you are spending time in your childhood home and revisiting what "home" feels or should feel like to you.
+- If you're self-employed, be extra mindful of any recent contracts that were signed and make sure money has cleared before beginning work or taking on expenses.
+- In instances where there is a communication breakdown due to differences in perspectives, how can you bridge the gap?
+
+## TIER 5  score 0.5 to 1.4  (648 lines)
+
+- Remember, deep within your subconscious, there may be a belief or doubt that you are not ready or worthy of receiving what you desire.
+- These may manifest as negative self-talk, such as "I'm not good enough" or "I'll never be successful." Once you have identified these limiting beliefs, it's time to flip them.
+- Sometimes we exhaust ourselves trying to fix, heal or complete something that's beyond our control or simply doesn't need to be fixed.
+- If you identify a specific long-term relationship that can't find common ground or compromise, you may need to let go of the idea that the relationship is salvageable.
+- Perhaps we find ourselves continually supporting a colleague emotionally, but never feel reciprocated when we require a listening ear.
+- In silence, our minds commune in a language known only to us, bonded in our search for genuine nourishment of the mind, and soul.
+- Reflect on your values – Consider whether you are acting in ways that are not in alignment with your values or that might be causing harm to others.
+- Even on the familiar path, you may come across something new or see things from a new perspective even though nothing has seemingly changed.
+- Don't be discouraged if you've faced some setbacks this past year - this is a time to strategize and figure out how to tackle any challenges you may have.
+- Helping others may not come easily and we may feel that we are not capable of expanding through others healing, or that we don't have the tools to heal ourselves.
+- This is a time to release any aspects of your career that do not align with your core values and interests.
+- Make sure to express your needs and desires, and don't be afraid to reach out and connect with others.
+- It is a mechanism to connect with your higher self, source energy, and inner power.
+- Magick can enhance your life by adding elements of intention, ritual, and creativity.
+- Embrace the magick within you and let it guide you towards your fondest aspirations.
+- As everything exists in your mind, you have power over all things.
+- You have the ability to shape reality when you master the control of your mind.
+- Alternatively, you can contact the hospital where you were born.
+- To calculate these, you will need to eventually find your exact birth time.
+- All of the lessons were designed to help you release resistance and to live in flow with the Universe.
+- He governs time, discipline, persistence, hard work, and responsibility, guiding us on the path to maturity.
+- Plutonian experiences lead you to reconsider everything you knew to be true.
+- This includes the courage to overcome obstacles and embody our authentic selves.
+- It is the house of self, the lens through which you view the world and your place.
+- Embrace new possibilities and trust the path the universe is leading you to.
+- She reminds us to listen to our inner wisdom and trust in the power of intuition.
+- We can do this by first determining the time from dusk until sunrise.
+- Trust in the cyclical nature of abundance and know that as we give, we also receive.
+- Believe in your worthiness and embrace the power of the Law of Attraction.
+- When it comes to manifesting change, lack of clarity can impede your progress.
+- Doubt replaces our desires and a cycle of frustration and disappointment begins.
+- The Seven of Cups is a time to observe your inner desires and intentions.
+- The Law of Detachment says that we must relinquish our attachment to our desire in order to manifest it.
+- We can also easily see how we are attached to food, pleasure, or comfort.
+- It allows for trust in life and the belief that all that we desire is already ours.
+- Release the stress and energetic pressure from companies as you interview.
+- Through self-reflection, you can uncover any unknown sources of blockages.
+- To avoid this, make sure your intentions are clear and start with small goals.
+- Dig deeper and ask yourself what it will give you, and why that is important to you.
+- Reflect on the underlying emotions and feelings that are motivating your desire.
+- Hold within your being the knowing that this intention is a part of you.
+- Detach from the specifics and allow yourself to continue to live in the moment.
+- Allow yourself to start small, and embrace each victory and build upon them.
+- Each win will bring you closer to understanding what works and resonates with you.
+- This will help you to stick with the practice and manifest your intentions.
+- Watch as it falls to the ground, nestling into the fertile soil of your soul.
+- Align your efforts with what is possible within your current schedule.
+- Your desire for something more is what brought you to this book.
+- You have the power to clear the fog and manifest your desires.
+- Attempting to meet the expectations of others will only lead to disappointment for both you and them.
+- If you stay committed to your intention, you will see results.
+- Keep going, keep growing, and know that you are capable of greatness.
+- You feel great as your older habits are gone, and you've taken charge of your life.
+- Honor your commitment to yourself, your intention, and the Universe.
+- Their purpose is to open up portals for growth that offer you new ways of being.
+- Trust in the Universe's plan for you and let go of what no longer serves you.
+- Embrace the unknown and allow yourself to be guided by the Universe.
+- In understanding these nodes, we can better appreciate the journey our soul is on and the lessons we must embrace.
+- The North Node is a cosmic compass directing us towards our purpose.
+- Give yourself the same emotional support you would give another.
+- If you live too anchored in the mundane, invite in more of life's mysteries.
+- This can be a time that guides you to release any outdated self-images.
+- To become more aware of one's value and the value you place on things.
+- It's a time to evaluate what you have and find new ways to make more.
+- It's a time to be creative in your approach and manifest abundance in your life.
+- It represents how you express yourself through symbolism, such as objects and gifts.
+- It is a time to honor change, release control, and remember and honor your ancestry.
+- It represents the quest for understanding our self, relationships, and purpose.
+- It's important to let yourself feel whatever emotions arise without judging them.
+- Remember, your true power lies in how you choose to respond to those emotions.
+- Feeling them is one thing, but how you act on them is another.
+- Hold your intention in your mind as you stir and infuse the water with it.
+- Remind the herbs of their purpose and ask for their assistance as you stir.
+- This is a symbolic doorway which you will enter and exit through.
+- This will be thrown outside your door in the direction of the East.
+- Stir the water and herbs clockwise to attract your intention.
+- First, cleanse your jar with salt and water to remove lingering energies.
+- Place your hands over the container as you state your intention.
+- In this sacred practice, we learn to select, dress, prepare, and burn candles to aid in our manifestation work.
+- Dress it with oils, herbs, and crystals that align with your intention.
+- In this instance, you will be cleansing the candles you will be working with.
+- Once you pass the glass container through the smoke, it will be ready for the ritual.
+- Think of this as part of your offering to the deities, Universe, and yourself.
+- It can also be used to help restore balance and strength to your aura and emotions.
+- Even birthday candles lasting mere minutes can serve a purpose in your ritual.
+- In any situation that needs a bit of ‘sweetening’, you’ll want to use sugar.
+- If there are “t” or “i”, you can cross the t’s and dot i’s once the circle is closed.
+- This sign serves as a reminder to live fearlessly and to always remember our divine right to exist on this Earth.
+- You have the strength and courage to create a meaningful and fulfilling life.
+- It is the lens through which you view the world and your place in it.
+- Embrace new beginnings – Take bold steps towards achieving your goals.
+- Embrace your unique identity – Embody it with confidence and pride.
+- Connect with your spirit – embrace your divine right to exist in the physical plane.
+- This month offers you the resources to use your power and authority wisely.
+- The planning you do this week sets you up for the year ahead.
+- A chance to go down a different path, try something new, or redirect your life.
+- Remember — your external reality is a reflection of your inner reality.
+- Your mind is on fire and ideas are being downloaded at light speed.
+- This is a time when your emotional needs are being renegotiated.
+- Art can challenge your own thinking and spark your imagination.
+- Be honest about what you need from others and yourself; it is a liberating act.
+- Make truth a priority in all your relationships and get it all out on the table.
+- You stand firm and don’t compromise on the things that you know matter most.
+- If you find yourself deep into Spiritual studies, anchor yourself to earthly matter.
+- It's time to question your core beliefs and see if they need some upgrading.
+- You are pushing through some old limitations around personal accomplishments.
+- Integrating your ability to think practically and outside the box is needed now.
+- Let it remind you of the beauty surrounding us and the broader vision of the future.
+- It is time to set your intentions for what you want to bring into your life.
+- Write down your desire to manifest over the next six to eighteen months.
+- It can remove obstacles that block success in achieving your intentions.
+- Ask for want you want, and feel it from the center of your being.
+- When you have completed your ritual, appropriately dispose of the items.
+- Visualize roots growing from your feet into the earth to bring balance.
+- Open your journal and begin writing about your goals and aspirations.
+- You are the chalice of love, capable of fulfilling your deepest desires.
+- You hold the power to nourish the love within yourself and to share it with others.
+- It invites you to find a common ground, rather than working against one another.
+- A journal is like a magick portal to your innermost thoughts and dreams.
+- Take stock of your progress and make any necessary adjustments.
+- It's the foundation that allows you to grow and nurture your connections.
+- The more you invest in yourself, the more secure you will feel in any relationship.
+- Clear your mind, position the cards, and see what guidance comes forth.
+- This shows you where you can take gains or need to make adjustments.
+- A non-monetary form of investment highlighted is in yourself and your self-worth.
+- Meditation and journaling can help you process any thoughts holding you back.
+- Be gentle with yourself; your growth is an act of living art.
+- This can be a form of self-care and can help clear your mind and emotions.
+- Trust in the universe to guide you toward the balance and harmony you seek.
+- Allow yourself to release the past and trust in the present moment.
+- It's important to put your energy and resources into yourself.
+- Let us honor the Earth and all it has to offer to find inspiration to live a balanced and fulfilling life.
+- Every page is an invitation to explore, reflect, and express yourself in a meaningful way.
+- If there was ever an ideal opportunity to redefine and reinvent ourselves, now is it.
+- There are different techniques you can use to write tarotscopes.
+- You’re moving to a new experience and will need the self-confidence to get there.
+- How much you value yourself is apparent in what you’re manifesting externally.
+- Think about what makes you feel secure and safe, without getting stuck in stagnancy.
+- If you’ve been giving to much, now’s the time to focus on yourself.
+- Face your feelings with courage and honesty and allow yourself to be vulnerable.
+- Keep your mind open to new perspectives and new worlds begin to open up.
+- If you find yourself deep into Spiritual studies, ground yourself in earthly matters.
+- Whatever you put your intention towards, you can bring into your reality.
+- Time to set your intentions for what you want to bring into your life.
+- The structures that we're beginning to implement are more than just temporary fixes.
+- This is a great time to reflect on your journey and gain insight and clarity.
+- Reflect on the old self that you are shedding and the new self that you are creating.
+- This is the perfect time to celebrate yourself and all that you bring to this world.
+- If you or a family member needs help, get the necessary help and support.
+- Trust in the power of your own inner strength and let your unique talents shine.
+- It asks that you honor your promise to others and your commitment to yourself.
+- Allow yourself to listen and be open to truths revealed to you and others.
+- This baggage can be debt you took on from a divorce, separation, family, ex-roommate, or friend.
+- As you reflect on this resurrection, you look to see what wasn't working.
+- This process is about redefining your vision and path to self-empowerment.
+- Be mindful of writing anything that can come back to bite you later.
+- A time to process thoughts and dreams that have been holding you back.
+- Take this time to reflect on the ways you communicate and process information.
+- You’re exploring how to create a solid foundation under your feet.
+- Discover what foundation and comfort mean for you at this time.
+- Your mind is on fire, and ideas are being downloaded quickly.
+- You’re questioning if you show up fully as yourself and how this impacts your life.
+- If you’ve been giving too much, now’s the time to focus on yourself.
+- Pushing yourself ahead when it’s not your time to move will only slow you down in the long run.
+- Step to that edge of discomfort and let go of that small version of yourself.
+- Trust yourself first and most, and everything else will align.
+- It’s possible you aspire to understand the truth and wisdom behind the mysteries.
+- Attend parties with an open heart, and open mind, and let your Light shine.
+- Open your journal and begin writing about your relationships and communication style.
+- Let this moment of cosmic alignment inspire you to harness the best of both energies.
+- Voice your intentions clearly, and unapologetically express your truth.
+- Be honest with yourself about what is truly serving you and what is holding you back.
+- Forgiving yourself for any generational conditioning that was passed down to you.
+- It urges you to travel, open your mind to new worlds, and embrace new cultures.
+- You're constantly evolving, and life is continually changing.
+- Focus on how you see yourself rather than how others see you.
+- This is a time of celebration, an ideal time to celebrate all that you are.
+- This is a powerful time to remember that your self-worth comes from within.
+- You grow through quiet time in the right environment and with supportive people.
+- To be big, you must advocate for yourself and step into the comfort of your energy being seen and felt by others.
+- You're sourcing inspiration from your past to create your present and future.
+- It's time for you to step into the potential that lies inside and unleash it.
+- Dare to expose your heart and release any blocks that keep you from doing so.
+- If you seek guidance and knowledge, you can discover this wisdom by helping others.
+- Trust yourself, and trust in the healing power of your presence and touch.
+- Allow yourself to listen, and be open to truths revealed - yours and theirs.
+- Honor your sacredness, and embrace the wisdom and power that flows from within.
+- Let it remind you that you're here to grow, evolve, and expand.
+- So, try adding small doses of fun, like taking time for yourself or pursuing a hobby.
+- Here we will learn how to better nurture and mother ourselves.
+- Emotions come in waves and you are asked to surrender to them.
+- Her energy and teachings help you to access deeper capacities for unconditional love.
+- And, you are allowed to experience all your emotions at once or in waves.
+- The fourth house, also known as the "angle of the foundation," represents your home, family, and roots.
+- It also represents your emotional foundation and sense of security.
+- We see it in the seasons and the different stages of natural development.
+- The fifth house asks you to rediscover and remember who you are.
+- Take a moment to listen to your body and emotions.
+- When you reject, ignore, or judge your feelings you invalidate them.
+- Emotional invalidation can make you feel irrational, worthless, and unimportant.
+- Now is a time when you will learn how to better nurture and mother yourself.
+- They can guide you when you feel what your feelings are honestly telling you.
+- Big changes are in store for you now in relationships and how you express yourself.
+- The time has come for a full makeover of your identity and how you meet the world.
+- Taking time to realign your values is critical to your emotional well-being.
+- Returning to an old hobby or joyful pastime can help lift your mood.
+- Let yourself play and remember what it’s like to be a child with curiosity.
+- Discover your inner child and nurture them in all the ways they wish.
+- You can learn a lot from observing your daily ritual, routines, and habits.
+- Build trust in yourself and trust outside yourself will naturally follow.
+- You’re pushing through some old limitations around personal accomplishments.
+- As your career evolves, it can be easy to get caught up in uncertainty.
+- After all, only you know what will make you happy and fulfilled in the long run - so go with what works for you.
+- Let yourself dream, meditate, and be inspired by all that’s coming through.
+- When you have completed your ritual, dispose of the items appropriately.
+- This can help you connect with your emotions and promote self-care.
+- Spray yourself with moon water before playing any water sports.
+- You are naturally empathic and easily absorb other people's energies.
+- This can help you connect with your emotions and spiritual practices.
+- Place moon water on your desk, near your laptop (don’t spill it!).
+- Then, express gratitude for the role she played in bringing you into the world.
+- Structures in our lives are getting reorganized to build on a solid foundation.
+- When you do, you'll be better equipped to handle whatever comes your way.
+- Art gives you an outlet to self-express, inspire, and be inspired.
+- It can evoke calming effects and produce neural changes in your brain.
+- The challenges you face now will fade, but the lessons you learn will remain.
+- If you want your relationship to thrive, you need to set some ground rules.
+- That means having open and honest communication about what you both want and need.
+- We all carry with us the weight of our ancestors' generational conditioning.
+- Things are being rearranged so that you can build on a more solid foundation.
+- Keep personal information shared with you in good faith by others private.
+- The Sun either assists us in the playful nature of being Seen, on the stage of life.
+- I Will – Acknowledge your power, strength, and determination during this time.
+- Take control of your own journey and be proud of the life that you have procured.
+- It's important to take a step back and give yourself permission to relax.
+- Your heart is whispering to you what you’re needing most now.
+- Anchor into yourself while sharing all the gifts that partnerships and co-creating have to bring.
+- It's a call to tap into your inner wisdom and use it to transform your life.
+- This energy can manifest as the death of your old self and the birth of a new one.
+- To focus on, and develop these areas of yourself, and become a great beacon of Light.
+- Open your journal and begin writing about your self-expression and creativity.
+- This month, set the intention to write a letter to your father.
+- This exercise can be done whether your father is living or deceased.
+- If you have a photo of your father, place it in front of you as a visual anchor.
+- We are working to find harmony through exploring opposing needs and values.
+- On the one hand, you’re focused on your needs and what matters to you.
+- This gift you naturally have and continue to grow into each year.
+- It gives you the freedom to break the chains of any generational conditioning.
+- It's a process of learning and building trust in yourself and in something greater.
+- The more you learn, the more you realize just how much there is to discover.
+- The non-conformists push us to think differently and challenge what we know.
+- It's time to let go of any beliefs or patterns holding you back from greatness.
+- Surround yourself with people who lift you up, inspire you, and support your freedom.
+- Spend some time in solitude, observing your thoughts and feelings.
+- Look back on any deep purging you've done and how it has changed you.
+- We look at the truth of what is and sift through what works and what doesn’t.
+- This is the moment to sit in stillness and allow it to speak to you.
+- Organize – Take time to organize your space and protect your energy.
+- Self-Care – Focus on optimizing your daily hygiene, dressing tidily, and being clean.
+- Our focus shifts to the small details that make up our whole life.
+- Here we can appreciate all the imperfections and see just how perfect it all is.
+- Here we can relax and reconnect to ourselves in a new and more accepting way.
+- The Hermits' lessons bring you to wholeness and authenticity.
+- Who, where, and what are you giving your heart to in the present and the past.
+- You can be perpetually young, but new responsibilities have been put in front of you.
+- Friends, community, and networking with others is changing and opening for you.
+- Open your journal and begin writing about your personal growth and self-improvement.
+- We can use it to align ourselves with our intention or make adjustments if needed.
+- The ultimate release of our ego, emotional wounds, and old identity.
+- Create new habits that support the manifestation of your dreams.
+- Dive into the depths of your emotions and allow yourself to be vulnerable and open.
+- Your big hopes and dreams are an integral part of who you are.
+- Dreams have the power to transform you and the world around you.
+- That's why it's so important to take the time to reevaluate our priorities every now and then.
+- Check-in with yourself and ensure you align with your values.
+- Take this time to reflect on your financial lessons and rewards.
+- This is the time to take control of your future and make the most of your potential.
+- It's easy to blame external forces for our current situation and circumstances.
+- You can create the conditions, connections, and community you need.
+- The fourth house governs your family dynamics, drawing them out to learn.
+- Looking back at your ancestors can be a powerful reminder of how far you've come.
+- Whatever you do, let your flow take you where it wants to go.
+- Now is the perfect time to explore this relationship and express your internal joys.
+- Burnout is a self-care alert, signaling that something in your life needs to change.
+- It's time to start focusing on your relationship with yourself.
+- Focus on developing trust in your instincts and understanding your whys.
+- A lack mindset can also lead you to believe that the world is out to get you.
+- You will begin to feel an internal desire for transformation.
+- Clear your mind, position the cards, and see what guidance comes.
+- It's made you question your spirituality, philosophy, and the fairness of life.
+- You are the only one who knows what feels right to you, and your needs are just as important as anyone else's.
+- The journey of cultivating a fruitful career is found in fulfilling your needs.
+- Find the kind of people who support and complement your life vision.
+- It is difficult to describe how overwhelmed this energy can make you feel at times.
+- Engage in open and honest communication, being mindful of your words and actions.
+- Discomfort is where we grow and the truth and darkness will surface eventually.
+- Embrace your strengths and set intentions that align with your values and priorities.
+- There’s been a lot of activity in your sign over the last few weeks.
+- You are emerging with a new sense of who you are and what direction you want to take.
+- Take heed of its advice and seek out new opportunities to increase your prosperity.
+- Engage in creative endeavors that stimulate you financially and intuitively.
+- This is an opportunity to create a sanctuary that brings you peace and contentment.
+- Nurturing your inner child can help you to cultivate self-love and love for others.
+- Take the time to explore your emotions and to get to the root of any issues.
+- Power dynamics that haven’t been addressed ask for changes in your relationships.
+- If you have an established network, use it to your advantage.
+- Turn to your spiritual practices and faith to help you through any challenges.
+- This can help recharge your spiritual batteries and provide you with inspiration.
+- Another important step is to nurture your relationship with yourself.
+- Reflect: Take some time to reflect on yourself and your behaviors.
+- This can leave you feeling drained, both mentally and emotionally.
+- You have a natural inclination to shake things up and keep them moving.
+- Advocating for yourself is an essential part of your financial career trajectory.
+- If you disagree, take a step back and focus on your responsibilities in this dynamic.
+- You'll be able to approach the situation with more clarity and integrity.
+- A sign or message that confirms what you already know deep down.
+- No matter what life throws, you can choose how you react to the information.
+- These are the messages that stick with you and help to guide you on your path.
+- By looking back, you can gain a better understanding of your current situation.
+- Take note of the parts of your past that are visiting you in the present.
+- It's also possible creative project you worked on earned success or recognition.
+- This is a great opportunity to start feeling more confident in your love life.
+- Writing down your thoughts and feelings can be a powerful tool for self-discovery.
+- Know that you are valuable and worthy of love and connection.
+- You have a keen eye for perfection, but your standards can become a prison.
+- Explore new places, experience different cultures, and shift your perspective.
+- It challenges you to question your belief system and grow and evolve as a person.
+- The beliefs you hold can have a great deal of power over you.
+- You can get comfortable in your routines and stop striving for more.
+- Chances are, you admire them for their confidence and ability to inspire others.
+- Life can be challenging enough; invite people who fight for you, not against you.
+- Take the time to sort through your differences and come to a fair assessment.
+- Keep going if you're facing a challenging situation with a friend.
+- All of who you are is exposed, even the parts you push down deep into the darker corners of yourself.
+- It’s fixed water energy uncovers our innermost deep-seated truths.
+- In order to navigate the Underworld, you must first confront and channel the source of your feelings.
+- It asks you to awaken and be a witness to the present moment.
+- As you arise from the Underworld, you are transformed and awakened.
+- Blessings to all our ancestors and the unlived parts within us.
+- The time has come for a rebirth of your identity and how you meet the world.
+- Network, and share your ideas, for it is where you will find the most success.
+- As you embrace these changes, you will find yourself creating the chosen family you have always desired.
+- Remember, you are worthy of self-care and it is essential for your well-being.
+- If you have been giving too much of yourself, now is the time to focus on yourself.
+- This is a time for introspection, self-discovery and exploring your own shadow.
+- In order to heal and grow in your relationships, you must first heal and grow within yourself.
+- Be honest and clear about your needs, both with yourself and with others.
+- Trust in the power of community and let it guide you towards fulfillment.
+- Allow yourself to dream big and tap into the subconscious mind.
+- It will help you to process the messages and insights you received during the night.
+- Trust your feelings and take the time to focus on how this experience makes you feel.
+- Let it guide you as you celebrate your re-birth in the weeks to come.
+- Take this opportunity to reflect on your personal growth and transformation.
+- Open your journal and begin writing about your personal growth and transformation.
+- Both ask us to look outside at what we value and consider important in our lives.
+- It will also give us a much needed review on how we see and value ourself.
+- You have the power to transform your inner wealth into external material wealth.
+- Stay grounded and focused on the things that matter most to you.
+- It encourages you to connect with nature, plants, animal spirits, and planetary energies through your body.
+- Teaching you to think outside the box or freeing yourself from the box entirely.
+- The power of relationships is that they mirror your ongoing explorations of self.
+- It's a time to reflect on what others have done to support you.
+- Overall, recall your past decisions and how they influence your current lifestyle.
+- Your magick grows more powerful whenever you refuse to outsource it.
+- As you grow as a practitioner, your magick will grow with you.
+- For you, this past year has been a journey of self-discovery.
+- Fate has a way of shaking things up to teach you something new.
+- Now is the perfect time to reflect on your authority over your life and career.
+- Look at the big picture and ensure you're not neglecting your well-being.
+- It’s time to cut the chord from toxic relationships that no longer serve you.
+- No matter your challenges, you can see them as opportunities to learn and grow.
+- Clear your mind and position the cards and see what guidance comes forth.
+- Now's the time to take a look at the stories that have come to define your life.
+- Think about what you've gone through in your life - both successes and failures.
+- It's time to be the author of your own story – set your intentions, speak your truth.
+- Let's blaze a new trail of self-discovery and open your mind.
+- Embrace the cycles of life that will eventually bring about the integration of all that life has to offer us.
+- The first step in confronting one’s truth is to be honest with yourself.
+- Taking steps to move beyond your current situation and to create a better future.
+- Step into the unknown and find yourself on a journey of discovery and growth.
+- Stay safe and stay warm as you navigate the changing seasons.
+- Support your liver: Your liver, hips, and thighs have worked hard this year, so why not show them some extra love?
+- This will help you take those first steps toward living a healthier and happier life.
+- Take this as an opportunity to embrace your truth and sow the seeds of your future.
+- Indeed, with each decision, you stand at a crossroads between fate and your agency.
+- In this cosmic cycle, we are now shifting towards compassion and forgiveness.
+- At the same time, you must be wary of allowing this gluttonous combination to lead you to over-indulgence.
+- If you're not being treated well or taking on too much, feel free to say no.
+- The truth is, both free will and fate play a role in your life.
+- Ultimately, it is up to you to decide how much control you have over your life.
+- Keep your expectations modest, keep your faith, and stay true to your path.
+- Take the time to explore your inner self and your path forward.
+- As you reflect on your worth, ask yourself if your decisions reflect your values.
+- Use your creative energy to come up with something valuable to offer others.
+- Your spiritual practices can also be a big help at this time.
+- Nourish and care for it, and allow your sensitivity and empathy to be your allies.
+- Set intentions for the part of you that desires recognition and acknowledgment.
+- Pushing ahead when it's not your time to move will only slow you down in the long run.
+- Trust in yourself and your growing skill in listening and sharing mutually.
+- Remember, relationships are a reflection of your own inner beauty.
+- They're a way to connect with the Infinite and learn more about yourself.
+- Build trust in yourself, and faith outside yourself will naturally follow.
+- You can use this new energy as fuel to create just about anything you desire.
+- We build trust with others by committing to outcomes that support the greater good.
+- You are setting your compass internally and tending to the emotions arising.
+- Take this opportunity to reflect on your personal growth and development.
+- Open your journal and begin writing about your personal growth and development.
+- When we let this information in, we're open to new possibilities and breakthroughs.
+- Rather than feeling discouraged, I encourage you to embrace this restlessness.
+- Listen to your inner voice and follow where your curiosity leads.
+- This is a time of celebration and a time to celebrate all that you are.
+- Focus on how you see yourself and want to be seen, rather than how others see you.
+- This is a perfect time to begin to tell and retell your story.
+- Let go of all the critical thoughts holding you back and start believing in yourself.
+- As we resurface, we come out with new revelations and insights.
+- By telling your truth, you show others that you're trustworthy.
+- By speaking another's truth, you honor them and invite them to express themselves.
+- It's an opportunity to connect and grow with those around you.
+- After all, it's in your interactions with others that create space for healing.
+- No matter what changes occur, keep your focus on your emotional foundation.
+- Create a space of peace and positivity, that will nurture and uplift you.
+- So, tonight, open yourself up to the magic that surrounds you.
+- We all have creative energy inside us, it's just a matter of unlocking it.
+- So, take some time to explore your passions and find what truly brings you joy.
+- You are dynamic and multifaceted and it's time to honor that.
+- By speaking your truth, you show others that you're trustworthy.
+- Allow yourself to listen, and be open to truths revealed - yours and others.
+- Writing out your fears can help you process them, so you can get past them.
+- Some just give you the information about what not to do again.
+- Guided meditation can help as you attempt to stay centered and optimistic.
+- Your career and business need you to show up fully in day-to-day tasks and every aspect of your life.
+- It's time to claim your power and step into your true potential.
+- Reach out to those that bring joy, laughter, and love into your life.
+- On the one hand, you've gotten so much by connecting with others online.
+- You can easily forget that technology is a tool, not an end in itself.
+- Be thoughtful with your words and careful about what you post.
+- Allow your strengths and the things that make you unique to be seen.
+- Make space to invite positivity, love, and joy into your life.
+- For any meaningful progress, you need to commit time and remain disciplined.
+- It represents the peak of the chart and the summit of our aspirations.
+- This is the house of ambition, career, and the public image we present to the world.
+- It is where we strive for recognition, status, and authority.
+- It is where we find our calling in life and our sense of purpose.
+- It represents the culmination of our efforts and the realization of our goals.
+- It is where we find our place in the world and our sense of belonging.
+- These practices can help you cultivate discipline, focus, and understanding.
+- It's time to take control and find the security you need to thrive.
+- Cultivate your inner strength, prioritize what matters, and take charge of your life.
+- It's time to trust that the picture you create will be beautiful.
+- It's a chance to explore new possibilities and plant new seeds for your future.
+- New Me!” This is a time for taking stock of your personal inventory.
+- Allow these affirmations to empower you, “I permit myself to evolve.
+- This is also a time to consider how family fits into your long-term plans and goals.
+- If you have a creative vision, now is a good time to connect with it and explore it.
+- It can come from a minor mistake or be rooted in an incident from your past.
+- You are worthy of love, and you deserve to feel safe and supported.
+- Focus on creating a sense of balance and reciprocity in your relationships.
+- Trust in yourself and your abilities, as you navigate this transformative journey.
+- Embrace the discomfort and let go of the small version of yourself.
+- Trust in the process and allow yourself to be guided by the wisdom of the universe.
+- We’ll see what sensations arise, what it has to share with you if anything, and what it needs to feel safe.
+- Notice if you’re holding any tension in your forehead or behind your eyes.
+- If it feels helpful you can move your jaw or shoulders to release the tension.
+- Now bring your awareness to you arms, elbows and hands and fingertips.
+- Imagine golden light, and feelings of warmth, joy, and safely expanding in your heart center as you breath.
+- This is your space of safety as we move through the journey together.
+- To the best of your ability, cultivate a feeling of stability, confidence and joy.
+- Washing over you like a soft warm breeze or gentle waterfall.
+- Imagine all the limitless possibilities and versions of yourself.
+- You are now in this present moment You can sit up when you’re ready.
+- Open your journal and begin writing about your career and professional goals.
+- At the same time, we must also learn to be vulnerable and open to receiving support from others.
+- When you care for yourself, showing up for others meaningfully is easier.
+- Create a safe inner space where you can feel held with love and comfort.
+- Create a safe inner space where you can feel held with love from within.
+- It's a balance between giving to yourself and giving to others.
+- No more forcing a situation to make others responsible for your happiness.
+- You keep all your ancestors' struggles that brought you to this moment.
+- See yourself in a new light, and marvel at your beauty, within and without.
+- You, more than most, can end up in codependent relationships.
+- Now's the time to review and come back to yourself if necessary.
+- They have the power to shape and influence the world around you.
+- Look within to determine whether you live in a state of self-love and acceptance.
+- Your family roots shared experiences, and love for each other.
+- You need to feel safe and secure and trust yourself and others.
+- From birth, you're wired to crave connection and closeness with those around you.
+- Our connection to each other is so powerful, even from the earliest stages of life.
+- If you're feeling depleted, try taking some quiet time for yourself.
+- If you're feeling anxious, try taking a few minutes to do some deep breathing.
+- If you're experiencing loss or grief, find friends, family, and professionals who can support you.
+- It also helps you to feel seen and valued, which is essential for healing.
+- Keep your heart and mind open to new perspectives, and new worlds open up.
+- It's important to remember that you are in charge of your happiness and value system.
+- Invest in what you can and what makes you feel happy and emotionally fulfilled.
+- Your friends can also be an outlet for you to express yourself and feel accepted.
+- When you feel seen and valued, you are more likely to take care of yourself.
+- You are more likely to neglect your needs when you feel unseen or devalued.
+- It's time to reflect on your connections with the world around you.
+- Technology has allowed you to create and share more information than ever before.
+- They remind you that even in the midst of endings, there is still love.
+- We celebrate what we can share with our community and the world.
+- Channel the Divine to help you innovate and think of new ways to live your life.
+- This will enable you to feel like you can express the real you.
+- New insights will create breakthroughs and push you further toward your goal.
+- Your health is the ultimate resource – put it first and watch the dividends grow.
+- The non-conformists push you to think differently and challenge what you know.
+- Just as you can leverage Past Live Regression to guide you in achieving your goals.
+- Discover your passion and move in the direction of your desires.
+- It is time to be mindful and cut ties from what drains and no longer serves you.
+- Be passionate and loyal toward the things that bring joy and growth into your life.
+- It's a time for celebration and an excellent opportunity to celebrate all you are.
+- Lots of new experiences in relationships and how you present yourself to the world.
+- Liberation and freedom are your themes, and some big decisions in love, work, and home are taking place.
+- Make your choices from a place of generosity, open-heartedness, and kindness.
+- Listen to the guidance of your heart and trust your decisions.
+- You are now moving into a period where love, relationships, home, and career are your center focus.
+- The decisions you make shape your life, so make sure they align with your values.
+- Value yourself first and make sure you are in a situation where you are valued too.
+- This brings a sense of safety and groundedness to your world.
+- Go out in nature, or immerse yourself in some creative project.
+- You can be seen as selfish, impulsive, and aggressive when you are in your shadow.
+- When you are in your light, you are a leader, courageous and strong.
+- Over the last year, you’ve been growing and building foundations in these areas.
+- There are many things to consider, fears to face, and parts of yourself to listen to.
+- You’ve been experiencing a personal transformation these last two years.
+- These experiences have forced you to face fears and build your self-worth.
+- Trusting in the mystery of life and in something higher than yourself.
+- While also trusting in yourself and all the inner resources you’ve cultivated.
+- You’ll now face many unknowns, possible conflicts, and power games.
+- You’ve seen it all before and can face it with fierce integrity and honesty.
+- Oh, dear Sag, you are the strong light for others to follow only when you can simultaneously be a humble listener.
+- Embrace this opportunity to explore the depths of your soul and emerge renewed.
+- She has the power over the cycle of the tides, and our own emotional waters.
+- Acknowledge your own limits and seek out healthy outlets for emotional release.
+- Resist the temptation to drown yourself in your worries, don’t check out.
+- We have yet to receive information that allows us to see the bigger picture.
+- You are one with your emotions and yet you're greater than your emotions.
+- If you want to be of service and help those you hold dear, share your story.
+- Find a topic that most inspires you and can share it with your community.
+- You’re learning to trust in yourself and in the magic of the mystery.
+- Seeking the change you desire will increase your health and well-being.
+- Turn to your spiritual practices and faith to help get you through any challenges.
+- Take this opportunity to reflect on your emotional and spiritual growth.
+- Open your journal and begin writing about your emotional and spiritual growth.
+- Write about your thoughts and feelings as you explore this realm of your mind.
+- They show us where we are lacking as well as what our strengths are.
+- From disorganization to organization, we seek stability within the emotional waves.
+- Ditch negative habits that steal from your overall well-being.
+- It's also important to protect your energy by being mindful of who you share it with.
+- Making small but meaningful changes can bring more joy and harmony into your life.
+- Being of service can bring a sense of purpose and fulfillment to your life.
+- Take this time to reflect on what you have learned and how you have grown.
+- If not, now is the time to explore new opportunities and forge your own path.
+- As you move forward, remember to embrace your "adult" life and all the opportunities it has to offer.
+- You can look at the cards beneath the reversed Ace for supporting information.
+- To help you get clarity and understanding so that you can take the steps to let go.
+- If you feel down this week, write a list of what you did well.
+- Take this time to reconsider what you value and what you are willing to invest in.
+- Trust in the natural flow of the universe, and let the universe guide your travels.
+- The fourth house is where we feel "rooted" and find our center.
+- It's also possible you recently moved and need to move closer to family.
+- Be prepared for unexpected repairs to your home, technology, equipment, and transportation during this time.
+- Keep your eyes open for new opportunities and be ready to adapt to the changes.
+- This is when you reflect or are forced to reflect on memories from your life Journey.
+- It's important to spend time alone, meditate, take walks in nature, and find space to nurture yourself.
+- Your focus is to build a strong foundation towards abundance - and to enjoy all that life has to offer.
+- Message: A message Spirit Guide/Loved One wants to share with you at this moment.
+- Get a sense of your gender, physical appearance & personality.
+- With the right strategy and plan in place, you’re sure to reach your big dreams.
+- Designing your future starts with getting the lay of the land.
+- Finally, you need strategies that keep you on track - even when the going gets tough.
+- Set goals and milestones that will keep you energized and motivated.
+- We may fear or rebel against the end of this cycle and the beginning of the next.
+- If you are an artist: writer, musician, artist, actor, etc.
+- Reflect on your mother, childhood, Spirit, and source.
+- You are a lover of stories, information, words, and people.
+- You are curious, inquisitive, friendly, witty, and always ready to see something new.
+- Your body is wise and often tries to tell you when something is off balance.
+- You might need additional energy to support the work or to shorten the timeline.
+- You may struggle with acceptance or fear/rebel against the new cycle ahead.
+- This is a time to release any aspects of your business/career that do not align with your core values and interests.
+- This is a time to ensure that your life goals are meaningful to you and not or were not a pursuit to make others proud.
+- As we develop our understanding of the tangible factors that contribute to our well-being, we become more appreciative of our resources, money, and ownership.
+- As we become more familiar with our immediate surroundings and community, we develop a desire to create roots, a home, and a family.
+- We must build relationships with others, recognize their strengths and viewpoints, and join forces when appropriate.
+- In order to calculate the planetary hours, you must first determine the local sunrise and sunset times for a given day.
+- Fear and doubt can hold you back, but by acknowledging them and providing logical alternatives, areas of study, and possible solutions, you can overcome them.
+- Remember, life does not stop for anyone and you must find a balance between your present life and the life you are actively creating.
+- They can uncover hidden truths, aiding us in navigating personal, relational, or professional challenges with confidence.
+- As you work with spell candles, allow your intuition to guide you in selecting the right color, scent, and inscription.
+- Take steps to actualize your dreams and intentions, but be mindful of feelings of impulsivity, anger, and selfishness as you step forward.
+- Be mindful and reflect on your feelings, especially any feelings of impulsivity, anger, and selfishness, as you step forward.
+- By acknowledging and confronting your anger, grief, and fears head-on, you can process them before they manifest in unhealthy ways.
+- Just like a river flowing, you can confront your anger, grief, and fears head-on – allowing yourself to feel and process them before they manifest or consume you.
+- Running and walking can also be forms of meditation, connecting your mind and body, clearing your mind, and keeping you present in the moment, which can help reduce anxiety.
+- You are exploring topics of loss, control, surrender, and delving into your inner resources to cope in this time of uncertainty.
+- While not every ritual requires grounding, it can be beneficial if you feel overwhelmed with too much energy after a ritual.
+- To help you navigate this time, repeating this affirmation every morning and night is useful until it becomes second nature: "I am strong and capable.
+- If you are an artist: writer, musician, artist, actor, etc., this is a time to set the intention to have yourself, and your work is seen.
+- Abundance is when you have so many energetic resources available to you, that you live in a calm state of surplus, not in the shadow of fear, need, or lack.
+- Listing Your Desires: Make a list of the things you want in your life - including your finances, work, relationships, community, creativity, and spiritual practices.
+- At the same time, you needed to fit your business/career to fit your unique needs: working from home, being a digital nomad, for example.
+- You’re exploring topics of loss, control, surrender, and delving into your inner resources to help you get through this time of uncertainty.
+- It's possible that you are struggling, seeking to understand the greater meanings of life, asking questions like, “What is life?
+- If you are an artist: writer, musician, artist, actor, etc., this is a time to set the intention to have yourself and your work seen.
+- Your life is a constant journey toward growth, which means there will always be some challenges and growing pains along the way.
+- This month you thrive with routine and rituals, reinforcing your subconscious that your self-worth comes from knowing that you can always rely on yourself.
+- Now, through the alignment of all four elements, you learn to create an emotional container that serves as, a happy home for manifesting.
+- Creating a safe and nurturing environment - Take time to cleanse your home, bedroom, car, and office, both physically and energetically.
+- You’re exploring topics of loss, control, surrender, and delving into your inner resources to help you get through a time of uncertainty.
+- The close friends and networks in your life can help you cope with traumas, such as a job loss, serious illness, divorce, or the death of a loved one.
+- A time to re-examine your views on self-worth, feelings of lack, money, finances, debt, and any fears that come up around these themes to be worked through and shifted.
+- If you want to build strong connections with those around you, you have to make sure that your words and intentions are understood.
+- We are encouraged to start at the most basic level, by breaking unhealthy addictions, whether it be food, relationships, or work situations.
+- This is our moment to sit in the stillness and let it speak to us, let it guide us to the intentions and lessons that must birth the new life we are seeking.
+- You have unique needs for rest and movement, and by listening to your body and adjusting accordingly, you can nurture your physical, mental, and emotional well-being.
+- This mystical moon reminds you that success does not require overexertion and that you must honor your physical, emotional, and spiritual needs to preserve your vitality.
+- Remember that feeling bad is complicated enough on its own and that trying to repress or suppress your emotions only makes things worse.
+- Remember that a new life is always right around the corner, and take care of yourself as you navigate the ups and downs of relationships.
+- If you are an artist, such as a writer, musician, artist, or actor, this is a time to set the intention to have yourself and your work seen.
+- Take the time to consider what you are looking for in a partner, both now and in the future, and what you have to offer.
+- Dealing with Loneliness, Abandonment, and Rejection How do you feel when you experience loneliness, abandonment, or rejection?
+- Your self-advocacy strategies will differ between your first job and what they will be later in your career, and your system must change accordingly.
+- We are reminded of our own mortality and the fear of death, but through facing this fear, we can create a foundation of inner security, trust, and self-love.
+- Examine if you have been able to create meaningful work, like a tree bearing fruits, and if not, contemplate what that looks like to you.
+- I burn brighter with every step I take towards befriending my fears.” Remember, trust in yourself and the universe and let go of that which no longer serves you.
+- To achieve a deep intimate connection, you must continue to be open to letting go of the unnecessary burdens that have been weighing you down.
+- You are in a perpetual state of transition, yet it is only through a meaningful transformation that you can continue evolving and growing.
+- You stand at the crossroads of free will and fate every time you make a choice, raising the question of whether you truly have any free will.
+- By taking care of yourself first, in body, mind, and spirit, you'll be able to serve others in the most powerful way possible.
+- With a stronger foundation, you're learning to balance your needs with those of others, including your significant other, family, and work relationships.
+- With a stronger foundation, you're learning to balance your needs with those of others, including significant others, family, and work relationships.
+- These last few weeks, you've been moving through challenges in your work and career, or at least you've been reworking things, so they function more smoothly.
+- You know distractions will always try to take you away from your practice, but use them as a reminder to recommit to yourself.
+- This is a powerful time to reflect on the roots of your life and examine your connections to family, home, and parents, and what keeps you rooted.
+- It is a time of healing, self-reflection, and creative exploration, allowing you to access the depths of your subconscious and emotional body, and discover what lies within.
+- This can make you feel vulnerable and reactive to situations, so you must be aware of your feelings and how they impact your actions.
+- If you've been giving too much, now's the time to focus on yourself, restore your sleep schedule, and find a routine that is helpful.
+- Practice self-care, such as setting healthy boundaries, taking care of your physical and mental health, and engaging in activities that bring you joy and fulfillment.
+- Once you identify those areas, you can work on streamlining them to make your days more productive, flow, and efficient.
+- Embrace the vastness of the cosmos within and around you, recognizing your interconnectedness with all of existence.
+- Allow healing to permeate every aspect of your being, as you connect with the timeless wisdom that transcends lifetimes.
+- Whatever wound is coming up, it’s better to approach it from a place of love and compassion, even if you have to give it to yourself.
+- Reflect on the ways you can make a positive impact in your work, whether it's by taking on new challenges, mentoring others, or stepping up to lead a project.
+- You're sourcing inspiration from your past (trauma, pain, ancestry, culture) to health and create a better present and future.
+- Create a healing environment for yourself, whether that's through a specific space in your home, a self-care routine, or spending time in nature.
+- You may find peace in these moments; allow them to fill up every corner, like water filling an empty cup, until there is no room for doubt or fear.
+- Even on the familiar path, you may come across something new, or see things from a different perspective, even though nothing has seemingly changed.
+
+## TIER 6  below 0.5  (2259 lines)
+
+- This book is an invitation to reconnect with the magick that lives both within you and all around you.
+- You can use magick to create the life you want by activating your internal power and externalizing your desires.
+- Magick is a way to access and connect with your inner resources and discover your true potential.
+- Imagine the potential for transformation and manifestation, the power of your intention and will.
+- It's time to reclaim your inherent divinity and call in your own year of magick and miracles.
+- The perceived universe resides in your mind, and all that you experience is created within it.
+- Write about your experiences and insights as you begin to explore this aspect of your spiritual practice.
+- Each point corresponding to the days of the week and the center symbolizing the center of our Solar System.
+- Through these lessons, you will learn to release resistance and flow with the ebb and flow of the cosmos.
+- The planet corresponds to dreams, the collective unconscious, and the psychological undercurrents affecting us.
+- This stage in the life cycle symbolizes our first awakening to self-awareness and identity.
+- As a result of a surge of energy, we are driven to explore the possibilities of our unique purpose.
+- During this time, we learn how to take care of ourselves and acquire a grounded awareness of the world around us.
+- Once you have created a safe and comfortable space for yourself, it is time to let your inner light shine.
+- Achieving success requires becoming familiar with the social institutions and occupations surrounding us.
+- Afterward, we will meditate and reflect upon the memories we have acquired throughout our journey.
+- We can transcend limitations through cosmic consciousness and become liberated from the ego and personal identity.
+- The planets located in the first house reveal how others perceive you and your relationship with the world.
+- Trust in the transformative power of the Universe and in our strength to navigate this change.
+- Trust in the transformative power of the universe and in your own strength to navigate this change.
+- Looking to your natal fifth house can provide clues on how to tap into your creativity.
+- Let it remind you of the beauty that surrounds us and the broader vision of the future.
+- Acknowledge what has been called in thus far, and celebrate your wins no matter how small.
+- If you were focused on your intentions throughout the week, you can take the day to celebrate.
+- This can be seen in the cycles of the seasons, the cycles of day and night, and even the cycles of our own lives.
+- If you wish to manifest something different, it is essential to shift your vibration to align with that change.
+- Trust in the power of change and know that as you shift your vibration, the universe will respond accordingly.
+- Address them before moving forward and trust in the Universe to bring about the change you seek.
+- Align your energy with the cosmic flow and remember that abundance flows through you and can be shared with others.
+- We become stuck in circles, wasting energy and time, missing out on opportunities and signs.
+- Ignorance is the lack of understanding of how our mind is attached to impermanent things.
+- What we call "self" is just an imagined entity, and we are merely a part of the ceaseless becoming of the universe.
+- When you have this attitude of detachment and trust, you will attract what you set out to manifest.
+- This allows you to be more at ease while interviewing and keeps your mindset open to abundance.
+- Once you bring the unconscious to the conscious, you can make adjustments and take action.
+- To begin this journey, start by identifying the limiting beliefs that are keeping you small.
+- It also helps you to stay motivated and focused on your intentions, even when things get tough.
+- This simple act solidifies your commitment and brings your intention one step closer to reality.
+- This technique can help to tap into the powerful energy of the planets, and enhance your manifestation efforts.
+- Allow yourself to attune to the ethereal vibrations, and become familiar with the energy.
+- As you consistently align your energy and focus, you will strengthen your manifesting muscle.
+- As we delve deeper into the realm of manifestation, it is essential to understand how we process our emotions.
+- To anchor your intention to a deeper level, tap into the power of imagery and respond to it.
+- As you shift your priorities, the Universe will align to make space for your desires to manifest.
+- As you tread the path of manifestation, be aware that one formidable force can impede your progress \- demons.
+- Your inner demons want you to sabotage your success, induce anxiety and convince you to conform to a normal life.
+- Have grace and patience; magick requires practice and a relationship with yourself and the Universe.
+- It is a moment to let go of what no longer serves you and make space for new beginnings.
+- Take this time to take an honest look at yourself and be mindful of your emotions and what's unfolding around you.
+- It is identified by a particular sign and house and defines the skills you're required to learn.
+- South Node: This signifies your karmic history and the rewards you've already received.
+- It represents the path we’ve yet to walk, the challenges we’ve yet to face, and the growth we’ve yet to undertake.
+- Remember, we need not discard the wisdom of our South Node as we journey toward our North Node.
+- By acknowledging and honoring our past, we can harness its wisdom to guide our journey.
+- Trust in the transformative power of the Universe and in our own strength to navigate this change.
+- Trust in the natural flow of abundance and let the universe guide you towards financial stability and success.
+- It also reminds us of the strength of commitment and loyalty and the delicate balance between the heart and mind.
+- It also reminds us of the importance of self-expression and the power of our words to create change.
+- She offers you the energetic support and lessons to improve, heal, and unlock your emotional and karmic blockages.
+- You can lend a sounding ear to your partner but then judge and criticize yourself for feeling emotional.
+- This includes the baggage we have collected — both emotional and physical — from our past relationships.
+- If you find yourself deep into Spiritual studies, ground yourself back down to earthly matters.
+- Let it remind you of the beauty that surrounds you and the broader vision of the future.
+- It's a time for reflection, whether positive or negative, depending on where you are in your journey.
+- It's a time to reflect on your career goals and to take action towards achieving them.
+- It's important to give yourself the space to receive what is trying to be channeled through you during this time.
+- By revealing truths and providing insights, lunar eclipses guide us towards more fulfilling paths.
+- Eclipses serve as gateways to our soul, offering clarity and the knowledge needed to make critical life decisions.
+- Reflect on how your family dynamics and relationships impact your sense of emotional security and comfort.
+- This is an opportunity to tap into your creative energy, self-expression, and let your light shine.
+- This is a good time to evaluate your relationships and make any necessary changes to create a healthier dynamic.
+- This is a good time to evaluate your public image and take steps to improve it if necessary.
+- Set small, achievable goals for yourself and celebrate your progress, no matter how small.
+- Once you remove the stagnant energy that naturally builds, you can replenish your energy with protection.
+- Practicing this regularly will help you maintain a high vibration and cleanse your energetic self.
+- Dunk your head under the water three times, each time reciting the prayer or intention.
+- If you are in a shower, pour the bowl of magical ingredients over your head three times.
+- As stagnant energy is removed, the space should be filled with positive abundance or whatever you wish to call in.
+- As you stir and infuse the water, remind the herbs of their purpose and ask for their assistance as you stir.
+- Fill the jar with spring water and add any herbs or crystals that correspond with your intention.
+- The next day, close the jar with a lid and store it in a cool, dark place until you are ready to use it.
+- The more appealing you make it, the more appealing it becomes to have your wish granted.
+- Harnessing the power of color in ritual works like an astral roadmap for your intention.
+- The energy of the color is warm and magnetic, making others enjoy being in the presence of your aura.
+- Green is also associated with nature and mother earth, bringing balance and harmony into your life.
+- If you are using one of these candles, a simple set of long matches will do the trick.
+- Herbs and spices, for example, can be used to infuse your spells with their natural properties and energies.
+- You can use honey as an offering, sweetening or honey jars to sweeten a person or sitauation to you.
+- It allows you to express yourself authentically and own your power without being swayed by the opinions of others.
+- Trust in yourself and the decisions you make, knowing that the world around you is a reflection of those choices.
+- The changing seasons stir within us as the fiery energy of the Ram awakens us from our winter hibernation.
+- This month provides you with the discipline, motivation, and direction to take action on your desires.
+- It's time to take control of your life and make the decisions to help you reach your goals.
+- The time has come for a complete makeover of your identity and how you show up to the world.
+- When you align with your true Self, you will be on the correct path, and your obstacles will be overcome.
+- While you focus on these opportunities, remain grounded and in the moment with your personal relationships.
+- You have lots to share, so remember that competition leads to disharmony while collaboration fosters connection.
+- The more intention you put into these projects, the more significant their impact will be.
+- Taking the time to express your emotions actively helps you to move the energy through you and out.
+- Strength symbolizes being in tune with your inner creative flow when time seems to stand still.
+- It’s a powerful tool that can be used to explore ideas, create new concepts, and challenge your existing beliefs.
+- Running is a great way to do this, as it increases blood circulation to the brain, improving your mood.
+- Having a strong sense of integrity means not giving in to anything or anyone that doesn’t align with your values.
+- Justices reminds you that when you stick to your own integrity, you can live life with a clear conscience.
+- What you need and want from others, needs to be balanced with what they want and need from you in return.
+- Traveling will help to give you perspective in situations in your life that feel clogged and stifled.
+- Your creativity is ignited and you're ready to share your gifts with others through performance or teaching.
+- It’s time to stop waiting for someone else to give you permission and start taking ownership of your life.
+- Redefine your core values and make sure everything that comes after aligns with those values.
+- Surround yourself with friends and people who share your same values and vision, and stay close to those you trust.
+- Let yourself dream, meditate, and be inspired by all that is coming through to you right now.
+- It will also be helpful to turn to your spiritual practices and faith to help get you through any challenges.
+- Be mindful of the power of your words and actions, taking steps to actualize your dreams and intentions.
+- As with any spiritual/meditative practice or ritual, turn off your phone and create space to not be disturbed.
+- If you need to extinguish it, either snuff it out or pinch it out with moistened fingers.
+- It allows you to connect with the earth and release excess energy, helping you return to the mundane world.
+- Here are some ways to ground yourself: Touch the ground physically, such as by walking barefoot.
+- Visualize yourself embracing your inner fire and drawing strength from your own determination and ambition.
+- Take this opportunity to reflect on what motivates you and what you want to achieve in your life.
+- As you walk hand in hand with those you hold dear, your travels become richer, more fulfilling.
+- It is a time to release what no longer serves you and to create space for balanced relationships in your life.
+- Reflect on where you were six months ago – What you were manifesting and striving for.
+- If you want to create strong and lasting connections, it's important to seek things that bring people together.
+- She encourages you to seek beauty in all its forms and to appreciate art, music, and love.
+- Find joy in all the little things that make life special, and take time to appreciate what surrounds you.
+- It's ok to take a step back and acknowledge what's not serving you to make space for the things that do.
+- That's why it's important to remember that harmony comes from understanding and respecting yourself and others.
+- Having someone to rely on can save time and effort, as they can prevent costly mistakes and show you the right way.
+- These simple acts bring you closer to your core values, which are unique to you and make life worth living.
+- He also embodies the power of self-expression and the ability to use your words to create change.
+- This is a good time to consider changes in your relationships or to focus on improving your communication skills.
+- You are at your best when you say what is in your heart, so express all the love inside.
+- If you have the means, consider supporting and understanding others in your relationships.
+- It means feeling comfortable enough to express yourself and be vulnerable with others.
+- It is a time for you to shift your perspective and re-envision your relationship with your daily life.
+- Embrace the magic of the universe, dear ones, and watch as your intentions manifest before your eyes.
+- It's a time to recall energy back to yourself to create the necessary shifts and endings.
+- As you transition through this process, remember that change can be difficult, but it's also necessary for growth.
+- Trust in the process, and have faith that the universe is guiding you toward the transformation you need.
+- It's a time to take a leap of faith and say yes to new adventures and possibilities that life has in store for you.
+- A cleansing can increase well-being and uplifts your spirit by washing away stagnation and negativity.
+- It also helps us tap into our creative side and cultivate a peaceful and harmonious environment.
+- It shines a light on our attitudes toward our possessions and how we acquire and manage our resources.
+- Use the affirmation, "I have," to remind yourself of the abundance that you already possess.
+- This can help you to cultivate gratitude and to feel more empowered and capable of achieving your goals.
+- Connect with nature – Spend time in nature and allow yourself to connect with the earth and the natural world.
+- Think about what is most important to you and make a conscious effort to live in accordance with those values.
+- This is a time when our focus turns to protecting our material possessions and seeking financial security.
+- We are being forced to shoulder the burden of incompetence at the most basic and fundamental levels.
+- These next two months, in particular, we’ll be focusing on and organizing our finances and relationships.
+- On a more intimate level, we are being pushed to our limits and asked to create a new identity.
+- Someone to help you save time and effort while staying motivated and learning from their experience.
+- Anything arising right now it to help you break through disharmony and find your way back to health and service.
+- It’s possible you’ll find or deepen your partnerships through share cultured or traditions.
+- You can do this with the support of your friends and family and with a bit of self-compassion.
+- Areas of Intimacy and shared resources are your focus as you learn to trust in yourself most of all.
+- Power dynamics that haven’t been addressed are now arising asking for changes in your relationships.
+- Learn new cultures, explore new ideas, and adopt new ways of thinking to expand your mind.
+- It's time to stop waiting for someone else to permit you and start taking ownership of your life.
+- Redefine your core values and ensure everything that comes after aligns with those values.
+- Surround yourself with friends and people who share your same values and vision for the future.
+- This is good to help you explore new sides of yourself and get exposed to new ideas and visions.
+- This starts with being intentional with your thoughts, feelings, and who you surround yourself with.
+- Let yourself dream, meditate, and be inspired by all that’s coming through to you right now.
+- Reflect on your purpose and hold it in your heart, regardless of how much suffering seems to surround you.
+- And, when it comes down to what was out of your control, it’s ok to let go and move on.
+- Visualize yourself connecting with the earth and drawing in strength and stability from its energy.
+- Open your journal and begin writing about your values and what brings you comfort and security.
+- By taking some time to journal about these topics, you can gain a deeper understanding of yourself and your needs.
+- It reminds you to be mindful of your resources and to use them to create abundance and prosperity in your life.
+- It is also a call for you to navigate your own power, and how you use it in relation to others.
+- It is a time of regeneration and transformation when we get to take a look at what’s behind that closed door.
+- In the crucible of this time, we have seen the birth of unprecedented creativity and ingenious solutions.
+- The value of our collective achievements is truly realized when shared and utilized for the betterment of all.
+- Trust in the journey of your spiritual path and have faith in the process of transformation.
+- Remember that it is okay to let go of things that are no longer serving you and make space for what truly matters.
+- Set the intention to embrace your authenticity and let go of anything that is no longer serving you.
+- You can move towards greater wholeness and freedom through this process of elimination and reflection.
+- This is a time for others to be drawn to your magnetic presence and the unique gifts that you possess.
+- This is an opportunity to let go of old patterns and habits that no longer serve you, and focus on new beginnings.
+- This is an opportunity to let go of old ways of being and open ourselves up to new possibilities and growth.
+- Engage in conversations that deepen your relationships with your community, siblings, and self.
+- Buried emotions come to the surface as you re-evaluate what brings you creative and emotional fulfillment.
+- Reflect on the creative hobbies you had as a child that helped define you and consider reclaiming them.
+- Trust in the power of your inner creative flow and the infinite possibilities of creation.
+- Trust in the power of your inner self to guide you toward transforming your habits to create a better path.
+- Over the next six months, explore what a healthy relationship built on empowering each other looks like for you.
+- Time to fine-tune your social media presence (or remove yourself from specific platforms).
+- Reflect on any deep purging you’ve done, and reflect on what you want to call in to fill the space.
+- While it can be tempting to get stuck in the past, it's helpful to remember that everything in your life changes.
+- By practicing breathwork, you can tap into this energy and release any trapped emotions or past struggles.
+- In manifesting, this indicates energy transfer from the heavenly realm into our material realm of human experience.
+- It shows how you gather and process information and your relationships with those in your immediate environment.
+- Breathwork – Practice breathwork to strengthen your lungs and improve your overall well-being.
+- It can also help you to connect with your inner self and deepen your spiritual connections.
+- Remember that words and thoughts have power, and you can choose how you communicate and what you focus on.
+- This growth-oriented mentality is what opens up the space to heal and nurture yourself and others.
+- Share these ideas with others because networking now is where you’ll find the most success.
+- Make the most of this time to gather with those who bring you joy and spend quality time together.
+- Anything arising right now is to help you break through disharmony and find your way back to health and service.
+- Let the beauty of the world around you fill you with happiness and peace, and allow this to shift your energy.
+- Creativity is ignited and you're ready to share your gifts with others through performance or teaching.
+- When you are open to fate and curious about synchronicities, your Higher self can make its presence known.
+- Set the intention to surround yourself with networks and colleagues who have integrity and to avoid office drama.
+- Take this opportunity to reflect on your relationships and how you communicate with others.
+- It guides us in unraveling the larger vision and spiritual lessons embedded within these experiences.
+- Take stock of the financial lessons (positive and negative) you've learned these past six months.
+- The more you commit to yourself in the next six months, the more you'll see your investments and income growth.
+- You have an innate thirst for information and love to share what you've learned with others.
+- Now is an ideal time to examine what's bringing you pleasure, creativity, and emotional fulfillment.
+- Buried emotions surface as you re-evaluate what brings you creative and emotional fulfillment.
+- Whatever resistance you feel towards being seen, lean into it and figure out what there is to learn.
+- Be uniquely yourself, and build trust in the process of your creative self-expression.
+- If you dare to be yourself and follow your heart, you can step into your most authentic self.
+- Be honest with yourself and others, and then make room for that honesty to shine through.
+- This is an excellent time to release any daily habits or activities that harm your overall well-being.
+- You need to create a new self-care regimen that will give you more energy and create more stability and routine.
+- When you help another, you learn to expand through their healing; in return, you learn tools to heal yourself.
+- You have the power now to break free from any conditioning and embrace your true potential.
+- Once you identify these fears, take steps to strengthen your belief in yourself and your intuition.
+- This can leave you confused and uncertain, but that's also what makes it so attractive.
+- When you can find the courage to challenge your fears, you will discover that life is truly an adventure.
+- You can reach your full potential by embracing and sharing these ideas with the world.
+- Release your need to be in control, and allow yourself to flow with the current of whatever is unfolding.
+- Doing so will recharge your spiritual batteries and provide you with much-needed inspiration.
+- During the summer solstice, it reaches the cosmic gateway and begins to turn, gifting you the longest day of light.
+- As you pass through the gateway of the summer solstice, it is the gateway of incarnation.
+- Mother Moon holds up a mirror for you, asking you to look at yourself and connect with your true identity.
+- She asks if you can heal the parts of yourself that cling to memories and emotions that have taken hold of you.
+- Process your emotions – Find a healthy balance between your emotions and your thoughts.
+- Remember that family relationships are built on love and care, so make time for the people who matter most to you.
+- An essential source of information, to identify your true needs is listening to, and understanding your feelings.
+- Let's recognize what's arising, find healing within and show up for your loved ones during this time.
+- Reconnect with what inspires you and create daily practices that bring the spark and magick back into your life.
+- The Devil speaks to your false belief that you are trapped or stuck in your current circumstances.
+- Use your creative outlet and faith in something higher than yourself to be the path towards healing.
+- This can help you focus on your financial and material needs while also connecting with your emotions.
+- This can help you connect with your emotions and express them in a clear and effective way.
+- Drink moon water before going to bed, to activate the creativity that lies within your subconscious.
+- Place moon water in your bedroom to enhance the energies of your significant relationships.
+- This can help you connect with your emotions and create strong and nurturing relationships.
+- Gift moon water to close friends with whom you wish to deeper nurture your emotional connections.
+- After your visualization, open your journal and begin writing your letter to your mother.
+- Even if your mother is no longer living, you can still benefit from the process of writing a letter to her.
+- If you have a photo of your mother, consider placing it in front of you as a visual anchor.
+- Embracing Your Role as a Caregiver and Nurturer: Reflect on your own role as a caregiver or nurturer.
+- The Power of Memory and Emotion: Spend some time journaling about the role of memory and emotion in your life.
+- Showing us, by example, the discipline and maturity needed to let go and move forward.
+- Prioritize your emotional well-being and seek out opportunities for self-care and connection with loved ones.
+- As well as how your emotional well-being either strengthens or weakens your foundation.
+- Through art, you can explore your inner self, resolve inner conflicts or express internal joys.
+- Without this agreement, your connection will be sabotaged before it even has a chance to begin.
+- This self-actualization will ultimately lead to an ascension in your career and public status.
+- Listen to yourself, and give yourself the time you need to feel whole and emotionally centered.
+- Keep to your commitments and arrive on time; seek the same level of response from others.
+- He reminds us that creativity is an inherent part of our being, which deserves time and space to be expressed.
+- This celestial alignment offers a powerful opportunity to align our minds with our hearts and spirits.
+- We become vessels of divine light and love, radiating our unique brilliance into the world.
+- In this sacred dance of the elements, we are reminded that we are spiritual beings having a human experience.
+- Let us honor the connection between the universal light above and our individual brilliance within.
+- According to Agrippa, the Sun is a "lucid flame" that can help you to connect with your inner light and strength.
+- Remember that you have the ability to create positive change and to achieve your goals.
+- By focusing on this inner light and strength, you can cultivate a sense of confidence and self-assurance.
+- You can harness the power of what arises now as fuel for your creative endeavors and projects.
+- Take this time to cultivate and appreciate the people and places that have left a lasting impression on your life.
+- You are strong enough to conquer anything that comes your way - even if it's a notion from your past.
+- You’re renegotiating how you show up fully as yourself and the impact it has in your life.
+- Connecting deeper with your heart space will bring clarity and help cultivate inspiration.
+- Your health improves, and opportunities open when you leave self-sacrifice tendencies behind.
+- Remember, you have the capacity to make decisions that come from a place of trust within yourself.
+- Creativity is ignited and you're ready to share your gifts with others through performance or through teaching.
+- It’s important that you don’t get too caught up in a need for validation and satisfaction.
+- It's like finding a little piece of yourself amongst a group of people – they become family.
+- It's a reminder that our shared experiences bind us together in ways that defy distance or time.
+- Focus on your vision for the future and how you’re friends, community, and creativity can fit together.
+- Or, in its shadow - we create melodrama through our delusions of self (narcissistic & selfish behavior).
+- Visualize yourself embracing your unique talents and gifts, and drawing strength from your own self-expression.
+- Take this opportunity to reflect on your personal authenticity and how you express yourself.
+- Visualize yourself channeling healing light from the sun down to the spirit and essence of your father.
+- After your visualization, open your journal and begin writing your letter to your father.
+- We are illuminating and transforming the dysfunctional collective patterns by awakening and healing one by one.
+- Let us embrace this energy, and allow it to guide us toward a brighter future for all.
+- Allow this voice to guide you in creating a unique life to your signature soul frequency.
+- Living in your unique truth is your gift to yourself and a gift and example to others.
+- Leverage your gifts to elevate you from the masses, stand out, and be recognized for your contributions.
+- You challenge disruption and approve commitment, it’s both a positive trait and your downfall.
+- Let this moment be a reminder that you have the power to create the life, lifestyle, and community you want.
+- It sparks something electric in you, opening your eyes and pushing you from one community to another.
+- Embrace your authentic self, trust in your intuition, and allow your creativity to flow freely.
+- This is the time to release any daily habits or activities that harm your nervous system and overall well-being.
+- Disrupt any outdated models that no longer serve you, and honor the effort you have put into creating your life.
+- Free yourself from expectations, relationships, and status quo that are holding you back.
+- The universe is calling you to live in frequency with your truth and create a life that is uniquely yours.
+- This dynamic will push you toward deeper commitment or further away towards liberation.
+- Forgiveness is one of the most powerful gifts you can give yourself and your loved ones.
+- Being aware of the self-sabotaging behaviors that can hinder your growth and goals is essential.
+- It's about finding what kind of people, places, and lifestyles make you feel like your most authentic self.
+- It's time to surround yourself with those with a similar soul view and personal vibration.
+- You deserve to be surrounded by people who genuinely believe in you and want to see you happy and successful.
+- Attention to your dreams can help unlock this knowledge and clarify your current reality.
+- Then, use that insight to call in what you desire and need and fill the space with your most beautiful intentions.
+- Life can be challenging, but it's important to recognize when your own behavior holds you back.
+- If you feel as if your feelings are too strong, find healthy ways to process these emotions.
+- Release your grip, allow yourself to flow with the current, and trust that whatever unfolds is meant to be.
+- Our focus is on preservation and nourishment, as we prepare ourselves to go inward for spiritual introspection.
+- The natural cycle of autumn is upon us, a time for slowing down and gathering our resources.
+- We focus on preservation and nourishment as we prepare to go inward for spiritual introspection.
+- It's a time to evaluate what's working for us and what's not and make necessary changes.
+- It's a time to focus on the little things that make a big difference in our overall health and well-being.
+- Our focus shifts to the small details and building blocks that make up our whole life and future.
+- Make a list – Collect and organize your thoughts, and take time to analyze and reflect on them.
+- Unstable and unpredictable as we’ve been reorganizing both our inner and outer landscapes.
+- From a detached observer’s perspective - go through what is and isn’t working, in all systems of your life.
+- Take the time to reflect and really understand yourself, your needs and wants, and your values.
+- Whatever works for you, make sure to schedule it into your day so that it becomes a regular habit.
+- Try not to allow any disappointments or grief to keep you from moving forward.
+- Let this be a reminder that you can be your own source of wisdom, recognition, and strength.
+- The magick is in healthy day-to-day rituals and steps on your path toward financial health.
+- Thoughts shift to letting go of critical ideas that sabotage your self-worth and self-esteem.
+- Ask yourself if the location still aligns with what you want for yourself and your family.
+- Your natural tendency is to bolt when things get tough, though you have a deep sense of loyalty in you.
+- Know your value, and don’t allow yourself to be swayed into something that doesn’t feel right.
+- Any unhealthy or abusive behaviors within yourself or from others need to be let go of.
+- Taking a break from the daily grind is a great idea and allows you to refocus on what’s important to you.
+- You crave an expansive life, where you can venture beyond your own four walls and find something new.
+- At some point, you will need to make some mature decisions because your choices affect those around you.
+- It's about understanding your needs and anchoring yourself into acts that bring lifetime fulfillment.
+- Your friendships and community, bring you a source of inspiration that you’ve been seeking.
+- Reflect on your purpose and hold it in your heart, regardless of how much suffering surrounds you.
+- As with any spiritual/meditative practice or ritual, turn off your phone and create space not to be disturbed.
+- Take this opportunity to reflect on your own progress and what you can do to continue learning and growing.
+- By taking some time to journal about these topics, you can gain a deeper understanding of yourself and your goals.
+- From disorganization to organization, we seek stability within the rise and fall of the emotional waves.
+- It allows us to be still within the oneness of the cosmos, and remember that we are more than just physical beings.
+- We come from a place of love and beauty and will return to that when our time here in physical form is complete.
+- Adjusting those needs will make a difference in our physical, mental and emotional health.
+- Listen to your intuition, focus - realistically- on your dreams and goals, and care for yourself.
+- Go out in Nature, because in nature we get to see and experience with wonder Source’s perfect creation.
+- Remember that you are also a manifestation of this perfection and interconnected with all.
+- Embrace the powerful energy present during this time and let it guide you on your spiritual journey.
+- Let these things fill you with feelings of what it means to be connected and in flow..
+- Take this an opportunity to recognize and accept your truth so that you can move forward with new understanding.
+- Whatever it is, it helps you remember that you can live in the moment and not worry about the past or future.
+- If you need help thinking of something, explore new hobbies and approaches to access your individual state of flow.
+- Celebrate your unique power as a dreamer and embrace the hope and optimism that comes with it.
+- I am not suggesting that you have veered off course, but rather encouraging you to stay focused.
+- Invest in your goals and dreams over the next six months and watch the amazing things that can happen.
+- It's a great time to look at your relationships, clear any lingering karma, and heal any emotional wounds.
+- Ask yourself if your mind is clear or if you're being fed misinformation or toxic rumors.
+- It's also possible you're on the receiving end of a half-hearted apology or no apology.
+- It can be confusing and invalidating if you're on the receiving end of a half-hearted apology or no apology.
+- You face uncertainty and obstacles daily, and knowing when and how to take action can be challenging.
+- Refrain from getting stuck in a loop of uncertainty and resigning yourself to waiting forever.
+- It's easy to get caught up in your day-to-day responsibilities and forget why you do what you do.
+- This celestial event is the perfect opportunity to channel your inner artist and explore your creative side.
+- Art can be a path to Self Discovery and connection - to yourself, your partners, and your children.
+- As you redefine your day-to-day routine towards better health, approach yourself with compassion and self-love.
+- A relationship reflects your inner world — what you experience on the outside is a mirror of what's within.
+- When you learn to appreciate and love yourself, it will show in your relationships with others.
+- Do this, and you will be able to trust your intuition and make relationship decisions with confidence.
+- You can start by spending quality time together or going on a spiritual retreat/camping.
+- Even the smallest of steps can signify your commitment and connection to the relationship.
+- The eighth house governs your ability to transform, breaking through your subconscious and conscious patterns.
+- Embrace these parts of yourself, and you'll be able to connect to your higher self more deeply.
+- Allow yourself to feel the weight of your pain and then use it as a motivator for change.
+- Gratitude is an active process of acknowledging and appreciating what you do have in your life.
+- Built on gratitude, trust in yourself, and trust outside yourself will naturally follow.
+- It's a time to look at your life from a bigger perspective and to recognize the potential you have within.
+- Stay curious and ask questions -your truth comes from when you ask questions and integrate answers.
+- There is collective suffering you have been dealing with for years, coupled with your anxiety and uncertainty.
+- Journaling, art, and meditation can help you process and make sense of all that is happening to you.
+- By finding balance and harmony within ourselves, we can also create balance and harmony in our relationships.
+- It asks of you that you move beyond your own needs and consider the dynamics of human connection.
+- What we need and want from others, needs to be balanced with what they want and need from us in return.
+- We get a look at the cosmic balance sheet to see if we are getting / giving what is deserved.
+- This can be very positive when the social mask comes off, and we can witness the truths in our lives.
+- This includes cultivating a healthy relationship with yourself, which requires ongoing attention and effort.
+- The scales represent balance, and if you find the scales unbalanced, you are compelled to correct this imbalance.
+- This journey is to help us understand and respect another’s perspective and hopefully have compassion for them.
+- Keep asking yourself what you value and need above all else, and how that fits into the lives of those around.
+- Honesty, self-love and self-care will help create trust and harmony in your relationships in the long run.
+- It's a time to focus on your own path and to let go of any tendencies to compare yourself to others.
+- Trust in your abilities and take the time to create something meaningful and valuable.
+- Communication, perspective shifts, and information are streaming into you and swirling around you.
+- Trust in your own strength and determination, and remember that you are the driver of your own life.
+- It's important to think about how you express yourself and how it's being received by others.
+- One way to lift your mood during this time is to return to an old hobby or joyful pastime.
+- It's important for you to stay connected to what you love and to have fun and enjoy yourself.
+- Trust in your ability to tap into this boundless source of inspiration and let it guide you.
+- Let your inner light shine brightly and trust in your ability to create and attract abundance.
+- The world is waiting for your unique spark to ignite and bring new and exciting possibilities into being.
+- If you've been giving too much of yourself lately, now is the time to focus on your own needs.
+- This will allow you to better serve others and to move forward with confidence and clarity.
+- It's important to be honest with yourself and others about what you need from relationships.
+- It can be easy to be more compassionate towards others in your intimate relationships than towards yourself.
+- Allow yourself to feel your emotions without holding on to them or judging yourself for their intensity.
+- If you're feeling stuck, consider reaching out to friends and family for support and practicing self-compassion.
+- Areas of Intimacy and shared resources are your focus as you learn to trust in yourself.
+- Gather information and consider multiple viewpoints to help you see the situation more clearly.
+- With the power of the Law of Attraction at your fingertips, you have the ability to create your own reality.
+- We all deserve to be in relationships that are based on mutual trust, love and respect.
+- This will give you the confidence to seek out healthier relationships and set yourself up for success.
+- It is also important to be aware of the ways in which low self-worth can manifest in your relationships.
+- Open your journal and begin writing about your relationships, friendships and communication style.
+- As we balance the needs of self and others, we will be called to be both peacemakers and warriors.
+- The abundance of emotional energies impacts us in the most intimate of ways in our personal lives.
+- It's a time to let go of the need to control and trust that the universe is leading us to where we need to be.
+- Use a mantra – Consider using a mantra as a focus for your intentions and meditations.
+- The first step in reclaiming your power is acknowledging where you have given it away.
+- Articulating the value that you and your company bring is essential in any negotiation.
+- It's important to stay positive and not get bogged down by criticism of your current situation.
+- The messages you receive - whether in blessings or challenges - help define you and shape your life.
+- The past six months have been a journey for you in terms of your relationships with relatives and where you live.
+- Celebrate your successes and cut yourself some slack for the things that haven't worked out.
+- It can be easy to get caught up in the hustle and bustle of everyday life and forget to make time for yourself.
+- If you're feeling lost, uninspired or unfulfilled in your romantic or creative life, take a step back and reassess.
+- Set out on a local adventure, rediscover the beauty around you, and see things from a different perspective.
+- It's an opportunity to examine the conflicts that arise and ask yourself what they're teaching you.
+- Armed with this knowledge, you can make the necessary changes to help you become more present in your life.
+- Fill yourself with love and strength, and know you are worthy of healing and deep emotional fulfillment.
+- It's time to throw caution to the wind and book that spontaneous trip you've been dreaming of.
+- The more you experience, the more you realize how much there is still to learn and explore - and that's beautiful.
+- By questioning the world around you, you can find your own truth and build an authentic and meaningful life.
+- In a constantly changing world, staying grounded in your values and beliefs is essential.
+- You can convince yourself that you're happy with your job, even though it's monotonous and creatively stifling.
+- If you're worried that speaking up for yourself will make you unlikeable, look around you.
+- Take deep breaths to calm your nerves, and communicate clearly and directly with your co-workers or colleagues.
+- If you surround yourself with people who are negative and bring you down, you need to make a change.
+- After a ghosting experience, you're left in the dark and uncertain about what happened.
+- It’s also a time when we are pushed to go deeper, opening the portal between the seen and unseen worlds.
+- This can be a change in seasons or daylight, and marks the beginning of our descent into the Underworld.
+- In the third phase, you are empowered to cast away all but your essential dharma, your fundamental truth of being.
+- This can be a powerful way to connect with others and with your own desires and needs.
+- By facing the shadows within yourself, you unlock the potential for growth and healing.
+- Right now we have access to this raw power that will propel us forward into a new evolutionary state.
+- Just like how nature grows and evolves, you should strive to do the same, in harmony with the world around you.
+- As we come together, let us honor our roots, interwoven and anchoring us in an unspoken unity beneath the surface.
+- As we tap into the wellsprings of information and sustenance, let us feel the knowledge within us awaken.
+- Take your creative energy and use it to create something meaningful for others to benefit from.
+- Reflect on how to fortify your roots and connect deeper to yourself and your heritage.
+- Take this time to consider how you express yourself and how it is received by those around you.
+- Use this as an opportunity to communicate your boundaries and needs to others.
+- This will help you break through any disharmony and return to a state of harmony within yourself.
+- Trust that you are exactly where you need to be, and know that the universe is supporting you on your journey.
+- We all have our rituals, habits, and routines that we've adopted in order to maintain our mental well-being.
+- Remember, the other person in the relationship is a reflection of both your inner beauty and your inner darkness.
+- Remember that true healing and growth come from embracing all parts of yourself, the light and the dark.
+- Take the time to examine your relationships and what you can do to bring more balance and harmony.
+- Think about what you would like to see in your relationships and make sure to express those needs.
+- This is a time for you to examine the deeper aspects of yourself and your relationships.
+- This is also a time to be mindful of your financial situation, and the way you manage shared resources.
+- Embrace the call of adventure and let it guide you toward new perspectives and a deeper understanding of the world.
+- Embrace the uncertainty and trust in the changes that come your way, as they will further your growth.
+- Trust that the changes that come your way are meant to help you grow and reach your full potential.
+- Trust in the process of change and let it guide you towards deeper connections and a sense of fulfillment.
+- Reflect on how your community and network have supported your growth and opportunities in the past.
+- Trust in the process of change and let it guide you towards deeper understanding and self-expression.
+- Embrace your imagination, let yourself be inspired, and use creative means as a form of connection to the divine.
+- They can help you tap into your imagination and tap into the creative ideas flowing through you.
+- Allow the wisdom of your inner self to guide you in your journey toward self-discovery.
+- Trust in the process of change and let it guide you toward deeper understanding and fulfillment.
+- Write a letter to your ancestors expressing your gratitude for their guidance and support.
+- It provides us with a sense of security and comfort that can add to or even falsely replace internal security.
+- Take this opportunity to reflect on your inner wealth and commit to elevating your self-esteem.
+- You've had your fair share of setbacks this past year, but through it all, you've gained some invaluable wisdom.
+- As a natural innovator, you have the best intentions in finding and providing solutions.
+- It's vital to understand the delicate balance between supporting your family and attempting to fix them.
+- Art can also help you cope with difficult situations, especially children's conflicts.
+- This is an excellent time to release any daily habits or activities that hurt your overall well-being.
+- The relationship will likely grow apart; you will move further from those who want you to remain the same.
+- The more you trust and rely on yourself, the more you build self-reliance and security.
+- If you have a big project due soon, start laying the groundwork to ensure you have time to complete it.
+- Still, you also have more wisdom and life experience to help you handle those responsibilities better.
+- Avoid spending time with toxic people or letting their words and actions penetrate your mindset.
+- No matter how many negative thoughts you have, you can choose to focus on positive ones instead.
+- If you feel as if your emotions are too strong, find healthy ways to process these emotions.
+- If you’re having difficulty handling the energy, find people and places that feel supportive.
+- Guided by the centaur's flaming arrow, we set out on a journey to uncover the truth and meaning in our lives.
+- It is a time for personal transformation, for aligning your actions with our values and beliefs.
+- It’s an opportunity to explore how you can make your life bigger by connecting with your higher truth.
+- Allow yourself this moment to pause and dive deep within to discover what that story looks like for you.
+- This is an opportunity to reflect on your own journey, and explore what stories you want to tell about your life.
+- Manifesting the future you want starts with understanding what you want and envisioning how to get there.
+- Put words to your dreams, call them into existence, and watch each unfold in its own magickal timing.
+- Accept the challenge and commit to being honest, open, and true to yourself and to those around you.
+- When you are honest with each other, it strengthens your bond and makes communication more effective.
+- Picture how situations can improve if you communicate honestly and without omissions or deceptions.
+- Many past life rituals and techniques help open your subconscious mind to explore our karmic pathways.
+- It also helps you to develop your own opinions and ideas and to think more deeply about the world around you.
+- Study Religion: Studying and practicing religion can bring you closer to your spiritual self.
+- As the temperature drops, heat up your resolve and prepare for a new start and new year.
+- The last few weeks have been a powerful reminder of the strength and courage within you.
+- You have the opportunity to take control of your life story and to create the ending that you desire.
+- You can choose how you react to situations and interpret the events that occur in your life.
+- If you've had some setbacks this past year, now is the time to figure out how to face and solve any challenges.
+- If you're feeling stuck, try being more patient and mindful of your words - they have a lot of power.
+- Become more friendly with your neighbors or establish communication with a specific person or group.
+- At the same time, it's also important to stay connected with what nourishes you physically and spiritually.
+- It's a time to think about how you express yourself and how it's being received by those around you.
+- If you have a creative vision, this is an excellent time to connect with it on a spiritual or nonphysical level.
+- Remember, when you feel validated and loved from within, you'll be able to generously give that love to others.
+- If you've been giving too much of yourself lately, now is the time to focus on your needs.
+- Pay attention to the give and take in your relationships without getting too caught up in the finer details.
+- Pay attention to what you're giving and receiving without getting too caught up in the details.
+- Power dynamics still need to be addressed are emerging, asking for changes in your relationships.
+- Trust in yourself and your ability to heal, and seek out support from others who understand your experience.
+- Now is an excellent time to start getting things in order if you've been thinking about returning to school.
+- You'll get to see just how much you've understood about the transformation that's taken place within you.
+- Get clear on your desires and what you need to do to take responsibility for making them a reality.
+- Soon you'll be ready to bring this new design and structure into your community and see how well it holds up.
+- It is important to take the time to contemplate the power of your decisions and how they shape your life.
+- It is an acknowledgment that we are all connected and can grow and learn from one another.
+- It is an invitation to be seen and heard, accepted and understood, and supported in our journey of self-discovery.
+- Through this axis, you gain a more clear perspective on your life purpose and a deeper understanding of it.
+- While it can be exhilarating to have your mind ignited, it can also lead to some moments of scattered attention.
+- You are being guided towards deepening your relationships and taking on more commitment.
+- Believe in yourself and your abilities, and the universe will mirror that back to you.
+- Take this time to speak your desires into existence, and watch as the universe responds in kind.
+- It's the center of your emotional world, the sanctuary of your peace of mind, and reflects who you are.
+- This is a good time to release any daily habits or activities that harm your overall well-being.
+- Reflect on your daily routines and ask yourself what shifts can be made to cultivate more health-conscious habits.
+- These two luminaires remind you to speak the truth and honor the power and magic of words.
+- It's a reminder to go beyond the surface level and ask yourself what your life experiences mean.
+- Now is the perfect time to take advantage of the spotlight and share your voice with the world.
+- Growing your business network is the key to unlocking new opportunities and possibilities.
+- Take this moment to reflect on the importance of the people around you and their impact on your journey.
+- This energy can leave you feeling more overwhelmed and confused rather than informed and connected.
+- The constant dopamine hits and dopamine crashes can leave you feeling drained and unsatisfied.
+- It's essential to ensure you're using it to your benefit and not letting it take over your life.
+- Focus on what is working in your projects and relationships, and let go of anything holding you back.
+- Share your truth and vision with confidence - you have the power to manifest your message into reality.
+- Imagine karma as a fire: it can be a searing reminder of past errors, singeing you with its ruthless candor.
+- Let's use this time wisely as you mark a new year on the calendar and set your plans into motion.
+- Time can measure your progress, mark the evolution of new ideas, and help you cultivate personal growth.
+- Create a Budget – Invest in yourself so that you can weather any difficult times that come your way.
+- Take control of your own destiny with self-discipline and effective time management skills.
+- Because no matter what comes at you, this too shall pass but the memories will stay forever.
+- You're saying goodbye to the superfluous and wasteful and hello to the essential, meaningful, and authentic.
+- Make this time a priority to make decisions for yourself, not based on what you think/believe others want from you.
+- Remember, what you value most about yourself is evident in the reality you are creating.
+- Trust in the process, trust in yourself and the universe will align with your values and goals.
+- This is a powerful time to reflect on your communication style and consider ways to improve it.
+- This is a powerful time to tap into your creative energy and explore your passions and interests.
+- Allow yourself to play and remember what it's like to be a child with curiosity and wonder.
+- This can help to loosen any tension that's been building in your relationships and creativity.
+- A new self-care regimen that will give you more energy and create more stability and routine in your life.
+- This is also a time to focus on self-care and taking care of your physical and emotional well-being.
+- Remember that when you take care of yourself, you will be better equipped to serve others.
+- Be authentic and true to yourself, and communicate your needs to those in your relationships.
+- Honesty is a liberating act, and by being true to yourself, you will be able to create healthier relationships.
+- Communication is key, make sure that you are putting in the effort to understand the other person's perspective.
+- Reflect on how you have held space for your partner and close relationships, and how they have held space for you.
+- Mastering the art of listening and sharing mutually is a skill that will serve you well in all your relationships.
+- This is a time of transformation and growth, as you learn to trust in the natural unfolding of life.
+- Power dynamics that haven't been addressed will now arise, asking for changes in your relationships.
+- Remember, small steps are still steps forward, but no step at all will keep you stuck.
+- A call to explore foreign cultures, places, and deeper knowledge is resonating within you.
+- Incorporate daily spiritual practices into your life, and lean deeper into your intuition.
+- Reflect on your vision and goals for your future self, and commit to taking steps towards achieving them.
+- If you are feeling lost or directionless, it is easy to turn away from your spiritual practices.
+- Trust in the process and allow yourself to be guided by the wisdom of your inner self.
+- Your career is the main focus for you now, as you delve deeper into understanding yourself and your strengths.
+- Seek support from podcasts, and books, or find a mentor to empower you to expand and step more into a public role.
+- Take the time to reflect on what truly matters to you and what you are passionate about.
+- Identify the values that guide your decisions and make sure that your career choices align with them.
+- This energy is focused on exploring your internal landscape and expressing it through creative means.
+- Allow your faith, trust, and creative expression to nurture you and guide you through this transition.
+- You can seek his help in giving you longevity or extra moments to do something meaningful.
+- Now from this empowered place, think of the issue that you’re feeling challenged with.
+- See if you can create some space between yourself and the issue so that you can become a witness.
+- From your place of stability, confidence and joy, offer this part of you exactly what it asked for.
+- Journal Closing Intentions - Visually and energetically connect into the sphere that’s surrounding your space.
+- Write about your long-term career goals and how you are working towards achieving them.
+- Explore any challenges or obstacles you have faced in your career, and brainstorm ways to overcome them.
+- Give yourself time, patience and grace as you reflect on your goals and realign your focus and efforts.
+- No more blaming others for not giving you the comfort, joy, and nurturance you require.
+- It's a time to celebrate your goals and release anything that stands in your way of achieving them.
+- As we honor our own needs, we become better equipped to support and love those around us.
+- This is the time to tap into the deep connection to source that resides within each one of us.
+- As you honor your past, you open the door to a deeper understanding of yourself and your place in the world.
+- These lessons are like tests of responsibility, limitation, and resistance that help you mature.
+- So, if you have been straying from your divinely guided path, accept the lessons this energy provides you.
+- It's time to closely examine the early childhood conditioning influencing your current relationships.
+- As you navigate any challenges, keep returning to forgiveness - for yourself and others.
+- Be your own parent – With intention, practice self-love and nurture yourself as if you were your own parent.
+- Take care of your physical and emotional needs and create a safe and supportive space for yourself.
+- Fill your cup –Take the time to submerge yourself in compassion and emotional awareness.
+- You can move on if you give yourself the time and space to process these complicated feelings.
+- Emotional intelligence is the key to understanding yourself and empathizing with others.
+- Ask yourself if you have expressed what you need to say to others, your partner, and even yourself.
+- If you've been too busy tending to the outside world, now is the time to focus on your inner world.
+- You need to know that you will be taken care of when you need help and that others will be there for you.
+- If these things are missing in your life, you are likely feeling emotionally disconnected and burnt out.
+- It’s time to take an honest look at what’s cluttering up your life and taking up valuable headspace.
+- You are just you — pure consciousness — showing up here through all these layers of experience.
+- That's why it's so important to nurture your relationships and create moments of intimacy and togetherness.
+- Because when you feel insecure about reaching out, it's usually the time when you need human connection the most.
+- No matter how intense your emotions are, you have the power to use them as fuel for your creative fire.
+- Tap into that deeper part of yourself and uncover the strength, creativity, and joy that lies inside.
+- Tap into your inner child and explore the hobbies and pastimes that used to bring you joy.
+- If health issues arise, it's time to find ways to reduce your stress and locate your internal focal point.
+- Finding an inner sense of stability and connection to something higher than yourself will help ease your nerves.
+- Creating a safe space for yourself can help you process your feelings and find some relief.
+- Daily practices will also help anchor yourself and provide stress relief and stability.
+- There are many self-help tools available that can help guide you in the right direction.
+- You're motivated to connect with others in ways that support your emotional health and emotional well-being.
+- Balancing your emotional needs with the emotional needs of others is in focus for you now.
+- People need one another and knowing that you are cared for and understood can be incredibly healing.
+- If issues in your relationship need to be addressed, now is an excellent time to start that conversation.
+- It's even more likely that you're engaging in avoidance tactics and feeling energetically drained.
+- In recent years, you've become more aware of the importance of creating a supportive social network.
+- Friends provide you with emotional support, a listening ear, and a shoulder (or couch) when times get tough.
+- Even when you feel insecure about reaching out, it's usually the moment when you need it the most.
+- Feeling connected to yourself is the ultimate form of self-compassion, an essential part of feeling whole.
+- Remember that healing is a journey, and it's okay to reach out for support from those around you.
+- Having conquered the summit of your personal mountain, you now stand at its pinnacle, gazing upon the world below.
+- Your journey has equipped you with unique perspectives and experiences that can shape a better tomorrow.
+- This liberation opens the doors to thinking outside the box and embracing your authentic uniqueness.
+- Open up your frequency and channel the Divine to help you expand your thinking and manifest your vision.
+- Breakthroughs come as new insights bring awareness and take us to the edge of our tolerance.
+- This can make it difficult for you to feel connected to others and for others to connect with you.
+- You are a humanitarian by nature, with the power to design a life that is free from external conditioning.
+- If you are self-employed and your personality is your brand, this is also a time to redesign your website.
+- It’s easy to take it for granted, but when it starts to fail, so does your ability to succeed in life.
+- Share your strategies for financial success and be a listening ear for those who seek your guidance.
+- In doing so, you foster more meaningful relationships and connections by being authentic in your choices.
+- Free yourself from expectations, relationships, and the status quo that are holding you back.
+- It’s also a time when you are pushed to go deeper, opening the portal between the seen and unseen worlds.
+- The Devil pushes you to grow past the fears of your lower nature, into a more mature version of yourself.
+- You can use Future Progression to guide you in seeing future obstacles and opportunities.
+- Allow your future lifetime frequency to help bring your ideas and vision for the future to this present moment.
+- It requires you to release your fears of failure and of success; to release the pressure you place on yourself.
+- Open your journal and begin writing about your unique identity and your place in the world.
+- Exploring Your Values: Take some time to reflect on your values and how they shape your actions and decisions.
+- Write about any past experiences you have had with change, and how you have learned and grown from them.
+- By channeling this energy, you can make a difference in your own life and in the lives of others.
+- Harness the power of these energies become the leader, healer, and creator of your life and your community.
+- One way to achieve this is by grounding ourselves in daily practices that help us stay centered.
+- It is also time to reconnect with those relationships that fuel you and inspire you to greatness.
+- Although you have a shy way about you, your creativity is one way you connect with others.
+- You’ve opened up your capacity to process more emotional content than you have in the past.
+- We wear it like a badge of honor, proof that we are working hard and accomplishing things.
+- It can leave you feeling frazzled and stressed and prevent you from being truly productive.
+- The space you create by removing unnecessary noise brings in an opportunity for more creative expression.
+- You are discovering that your creative expression needs to be a part of your daily process.
+- You're daily meditation and embodiment practices will keep you level-headed during these changing times.
+- This time is about cultivating your creative and spiritual disciplines without ego or superiority.
+- Whatever is arising now is meant to push you toward greater freedom of expression and autonomy.
+- You require depth, connection, and conditions that encourage you to grow into your power and potential.
+- Whatever image you’ve been cultivating, it’s time to see it through or change direction if it’s not working out.
+- The past is coming at you like a runaway train, and you're processing lifetimes of unresolved karma and conflict.
+- Amidst the rise and fall of emotional waves, you seek stability by harmonizing disorganization with organization.
+- The language of the Universe is a symbolic and emotional one that speaks to you through symbols and vibrations.
+- Stay vigilant against self-sabotage and addictive behaviors that undermine your healing.
+- If your emotions become overwhelming, seek out healthy ways to process and handle them.
+- Let these awe-inspiring elements fill you with a profound sense of what it means to be connected and in flow.
+- We have yet to fully process information that will allow you to see the bigger picture.
+- It’s important for you to stay connected to what you love, to shake off any feelings of discomfort.
+- Let yourself play and remember what it’s like to be a child with curiosity - they know how to live in the moment.
+- Burnout is a real and valid concern, and it's a sign that something in your life needs to change.
+- Finances and shared resources are another focus for you as you learn how better to manage and organize them.
+- This is ideal to help you explore new sides of yourself and get exposed to new cultures, ideas, and visions.
+- Exploring Your Emotions: Take some time to reflect on your emotions and how they shape your actions and decisions.
+- Write about any challenges you have faced in being vulnerable, and brainstorm strategies for overcoming them.
+- This can allow you to take control of your dreams and explore your subconscious mind in a new way.
+- From disorganization to organization, we are seeking stability within the rise and fall of the emotional waves.
+- Now is a time to look at what needs to come to an end and what you are ready to bring to life.
+- The ebb and flow of the emotional currents allow us to learn how to find stability within them.
+- The rise and fall of our emotional waves are part of the process, and it's up to us to manage them in healthy ways.
+- Oppositions help us recognize the delicate balance needed in our lives and our relationships.
+- Clean out the spiritual, physical, and mental clutter in your life so you can open up new possibilities for growth.
+- Observe and self-analyze – Take some time to reflect on your thoughts, experiences, and daily habits.
+- Use a journal to record your observations and consider areas where you can create more flow in your life.
+- Take the time to analyze what is most important to you and how you can make progress toward your goals.
+- Organize your space – This is a great time to declutter and organize your physical space.
+- Full moons are a time of celebration, and this is an ideal time to celebrate all you are.
+- Embrace this time and let your creativity flow as you celebrate the unique qualities that make your family special.
+- You're reviewing your love and romantic life, what brings you pleasure and creative inspiration.
+- Empower yourself to make the necessary changes and reclaim the real estate in your head.
+- This self-reflection can help you align your relationships with your deepest desires and aspirations.
+- As you set your intentions for the next six months, trust in the universe and the power of your own transformation.
+- Allow yourself to be guided towards a greater understanding of yourself and your place in the world.
+- Trust in the power of divine logic and have faith in a higher power to guide you on your journey.
+- Remember that the universe has a plan for you, and you are exactly where you need to be in this moment.
+- Let go of any resistance to commitment and embrace the journey of discovering your true passion and purpose.
+- Remember, the people you surround yourself with have a significant impact on your well-being and prosperity.
+- Journaling can help you process emotions and gain clarity on your thoughts and feelings.
+- Trust that the universe has a plan for you, and everything is unfolding exactly as it should.
+- You can look at the cards beneath the reversed Ace for supporting information on the block.
+- The areas that are causing you the most challenges right now are the areas that need to be reworked.
+- It is a time to reconnect with our inner selves and to align our actions with our true desires.
+- You're exploring how to create a solid foundation under your feet, re-exploring what foundation means to you.
+- This is also a time to slow down and review your journey, rather than rushing to the next destination.
+- You can re-explore places you've previously visited or books that supported your studies.
+- All these moments provide clues to help you reconnect with your sense of purpose and spirituality.
+- The decisions you make and the actions you take now lay the foundations for your future.
+- Are you relying on someone else's resources or waiting for an inheritance that may not be healthy for you?
+- Cinnamon is often associated with love rituals, but it is also great to add “heat” (or speed) to your spell work.
+- When the shock abates, you may find a sense of release and liberation, perceiving a divine logic at work.
+- When we disengage from Source, Self, and God, we fall into lack.
+- How might things have been different if you had felt a sense of abundance or choice in the situation?
+- Your health, work, and daily routines may change as new information challenges and evolves stuck patterns.
+- Maybe you’re connecting more with community through work or a new health or exercise routine.
+- Keep a dream journal – Record your dreams, thoughts, experiences, and observations in a journal every Monday.
+- How do you tend to the emotional needs of others, and how do you prioritize your own emotional well-being?
+- Sometimes it can be challenging to keep your priorities straight amid work pressures and career building.
+- This could be a great time to take stock of your home and make certain changes to suit your preferences and goals.
+- You may have been doing some behind-the-scenes work lately, and now is the time for that hard work to pay off.
+- Any buried emotions surrounding a fear of being "seen" or stepping into your power may surface for examination.
+- We may face grief, sadness and shame over something we’ve done or witnessed others doing.
+- Taurian themes focus on the tangible, what you have built, created, and accumulated.
+- You may be recovering from some physical or emotional trauma that transpired in the last six months.
+- Life often presents you with moments of uncertainty, and it can be tempting to shrink away in fear.
+- Find a partner, join a support group, make friends, or reach out to your family.
+- Set intentions regarding your diet, fitness, health, routines, and daily habits.
+- Or, you may establish different boundaries with family members and ask them not to enter your home and space.
+- Maybe you've been feeling a little overwhelmed lately, or you've been putting work above self-care.
+- You may be exploring themes of loss, control, and surrender as you navigate through this uncertain time.
+- You may be struggling to understand the greater meaning of life, asking questions such as "What is life?
+- Let us make space for ourselves, to pause, to reflect, and to nurture our souls.
+- It could lead to major shifts in your relationships and a chance to renegotiate your intimate or work ties.
+- You might find remote work opportunities, create your own retreats, or help others create theirs.
+- You may connect more within your local community through work or a new health or exercise routine.
+- Sometimes it’s ok to be selfish if it sets healthy boundaries and gives you time for self-nourishment.
+- Changes and challenges with family and home life may make you more stressed than usual.
+- You tend to be on the more sensitive side, and ego conflicts at work can feel stressful and depleting.
+- Find home and comfort inside yourself, despite whatever might show up to test your patience.
+- It may be a time to focus on self-improvement and to work on building trust in ourselves and our abilities.
+- Your intention may not manifest in the ritual.
+- Use it wisely, and may your spells be successful.
+- You may even decide to become a healer or a teacher.
+- It could be a deeper understanding of yourself.
+- You may be ready to start teaching or even return to school.
+- Perhaps you've been fascinated by a philosophical question.
+- It's also possible that your family may need more for you.
+- We may have a new awareness around our triggers and wounds.
+- You sometimes attract what you are.
+- It might change your life view.
+- You may hold onto beliefs without really questioning them.
+- Sometimes, saying no to others is saying yes to yourself.
+- Sometimes you need to take a mental health break.
+- We often find our answers in the most unexpected places.
+- There are times in our lives when it feels as though the mundane tasks hold power over us, rather than the other way around.
+- Magick can help you accomplish your goals and explore your spirituality, especially when faced with life's challenges.
+- Each zodiac sign illuminates different aspects of our lives and personalities, providing a specific focus and energy for transformation.
+- This book serves as your starting point — your own North Star — for reclaiming the magickal components of everyday life.
+- It aims to remind you of the power of your own spirit while teaching you to harness the energetic currents of the Universal flow of which you are already a part.
+- The information and rituals within these pages will serve to remind you of humanity's place in the grand cosmic scheme and unlock the mystic potential within you.
+- Get ready to once again anchor in the unseen realm and bring it into your lived experience \- a realm that has been denied to us for far too long.
+- Within these pages, you will find three primary methods to help you harness the universal energies as fuel for your intentions.
+- Allow this to be your companion on the path towards shaping your reality with the power of your will to match your vision.
+- As you journey through the lunar phases, take some time to reflect on your intentions and goals, and how you can align them with the energy of each phase.
+- Write about the specific actions you are taking to manifest your desires, and consider the role that the lunar cycles play in your manifestation process.
+- As you become more comfortable with manifesting and magick you can begin exploring working with the other planetary gods.
+- After learning about their archetypal energies, you will better understand how to leverage their unique energetic currents to create the desired shifts in your life.
+- Different countries have different birth recording practices, so it is best to contact the hospital you were born at or to ask a parent or close family member.
+- You can still create your soul’s mission statement using your Sun and Moon signs, simply alter the roadmap when you have more information.
+- Magick You will notice that I use the term 'magick,' rather than 'magic,' to describe the art of ritual and raising energy.
+- The stronger your bond with these celestial bodies, the more powerful your connection will be in cosmic manifestation.
+- Below you will find descriptions attributed to the planets in order to understand better how they can amplify your cosmic co-creation rituals.
+- In your natal chart, the sun represents your potential to lead and inspire others and where you shine the brightest.
+- This essentially means that our thinking is skewed in the shortsighted belief that self-directed power, force, and our own personal evolution is all that matters.
+- This is the stage of development at which we begin to communicate, name what we see, and try to make sense of the world around us.
+- By taking this time for self-reflection, we can make the necessary changes to move from simply surviving to truly thriving and growing.
+- As we journey through the above-the-horizon signs, we are given the tools and experiences we need to navigate the complexities of human connection and social life.
+- It's a reminder to be open-minded and see the beauty in other people's lives, to move away from our narrow perspectives and find common ground.
+- We are encouraged to check in with ourselves during our journey to ensure we remain true to our core values and purpose.
+- The ruling zodiac signs, imbued with their own unique energies, offer guidance and insight into the many facets of our lives.
+- The first house represents the beginning of your journey through the zodiac and the manifestation of your spirit in the physical realm.
+- It is the foundation of your astrological chart and provides insight into your personality, physical appearance, and how you present yourself to the world.
+- This house encourages us to cultivate a sense of belonging and emotional security to navigate life's journey with confidence and self-assurance.
+- It is the house of what emerges from your foundation; where the rooted self is given a space to play, explore, and be seen.
+- It encourages us to focus on our inner creative flow, emotional mastery, self-confidence and to trust in the power of our own inner strength.
+- It encourages taking time for oneself and being attentive to details looking at how you give too much of yourself and are left feeling drained and under-appreciated.
+- These quicker vibrations correspond to the elements of life that are constantly changing, like our daily experiences and learnings.
+- Once you have charted these times, you can assign the corresponding planetary energies to each hour of planetary rulership.
+- If you’re new to working with planetary energies you can start simple; select a planetary god or goddess which aligns with what you want to manifest.
+- If you seek to release or banish energy, time your ritual after the sun dips below the horizon, when the day's energy is at its weakest.
+- This way, you can align your intentions with the cosmic flow, and harness the power of the planetary deities to manifest your desires.
+- Astrologically, these lunar events serve as powerful energetic checkpoints, allowing us to plant new seeds for the future and release that which no longer serves us.
+- By committing fully to your intentions and staying true to your vision, you can bring about real change and make your life truly magickal.
+- To deepen your connection with the lunar energies, tune into the current zodiac sign she is in, and the god or goddess she honors.
+- To begin, consider keeping a lunar journal to track your energy and moods, becoming aware of which days and zodiac signs feel supportive or restrictive for you.
+- By understanding and working with this law, we can align ourselves with the natural rhythms of the universe and use them to our advantage.
+- The seed of your manifestation embarks on the journey towards creation when it breaks through into the conscious mind as a thought.
+- This is the ideal time to call new things, people, and/or relationships into your life or to accelerate the progress of your personal initiatives.
+- This is the lunar phase to release what has been outgrown or is no longer in alignment, making space for your new blessings.
+- For that which you desire to manifest is already present in the universe, it's just waiting for you to align with it's energy.
+- As you become more comfortable in asking the Universe or the Divine for what you want, it is also important to open yourself to receiving it fully.
+- Limited beliefs about yourself or the world can prevent you from manifesting change, by recognizing and challenging them, you can break through those barriers.
+- Lastly, make sure your intentions align with your values and beliefs, as a lack of alignment can make it difficult to manifest change.
+- These habits keep us from moving forward and achieving our goals, leading us to become attached to the notion that our desires are unattainable.
+- The good news is that it's possible to break this cycle of doubt, adjusting your vibration so that the things you want can appear in your reality.
+- We maintain the belief that our emotional well-being is inextricably linked to having what we believe will make us happy.
+- We can certainly find our attachments to another person being a particular way, based on the belief that we need them to be a certain way for us to be happy.
+- When it comes to manifesting a career change or a new job opportunity, detachment can be a challenge as our sense of security and livelihood are at stake.
+- Have a specific company or role in mind, but also allow the Universe to present you with the right opportunity at the right time.
+- Life responds to our intentions in one of three ways: Yes Not now Not for you, there's something better Take a moment to reflect on where your attachments lie.
+- These are the questions that will help you identify the areas where you need to release attachments and trust the Universe to guide you to the right path.
+- By monitoring your progress and creating a sense of accountability through journaling, you can increase your chances of manifesting your desired outcomes.
+- To amplify your manifestation efforts, consider aligning your intention with the energy of the corresponding planetary ruler.
+- Allow yourself to fully experience living in this intention, and tap into the feeling as though it is happening in the present moment.
+- If you encounter resistance or doubt as you raise your energy, visualize it as a wave that washes over you and then recedes.
+- This is the time to plant the seeds of our desires deep within the fertile soil of our hearts, and watch as they sprout and bloom under the nurturing light of Mother Moon.
+- Embrace the power of emotion as you infuse your intention with your deepest desires, and let the force of your emotions be the driving force behind your manifestation.
+- Remember, to truly tap into the power of emotion, it is essential to take note of how you process and harness your emotions.
+- If you are a kinesthetic processor, feel the weight of success in your hands and the way it positively impacts those around you.
+- As we embark on the journey of manifestation, it is essential to create a realistic plan, one that allows for growth and steady progress.
+- Remember that true manifestation requires commitment and patience, as you nurture your intentions and allow them to flourish in their own time.
+- If you truly wish to make the most of your journey, seek guidance from those who have walked the path before you, and trust their advice.
+- This is the time to metaphorically water the seeds you have planted through inspired acts of service and to remain dedicated and focused on your goals.
+- If your intentions have yet to manifest, it is a time to ask questions and make shifts to bring you closer to your goal.
+- At the peak of its dualistic expression, it represents an opportunity to integrate the dualities within to shed light upon unexpressed portions of your shadow.
+- At this point in your journey, the inner and outer demons that used to haunt you are now just faint whispers in the background.
+- You have the power to choose what to focus on, and you can ignore any negative thoughts and feelings that try to take control.
+- A full lunar cycle where you commit to yourself and create change is better than not trying to achieve your desired goal and magickal life.
+- Today is a day to set aside magick and simply allow yourself to feel joy and raise your vibration before embarking on the next lunar cycle.
+- As such, they are known for bringing forth new information that pushes you towards growth in the form of life lessons.
+- This is because Eclipses take place in the realm of the Lunar Nodes, which means that the Universe is taking over and guiding you toward your fate.
+- When they come around, they can help you uncover the truth and allow you to gain knowledge that will steer your life, changing your path to a better one.
+- The South Node represents release and our origin story, influenced by past lives or the imprints our childhood left upon us.
+- The North Node feels unknown, but as with all lessons, are instrumental in helping us progress and move forward in life.
+- North Node: This symbolizes your life's purpose or karmic direction, highlighting what you aim to accomplish in this lifetime.
+- Our South Node carries echoes of past lives and memories, tracing a path through the skills we’ve honed and the lessons we’ve learned.
+- It’s our spiritual comfort zone, the realms we’ve navigated so frequently that we’re experts in them, much like a well-worn favorite book that we reach for again and again.
+- This knowledge is our spiritual inheritance — a gift from our past lives that shapes the very foundation of who we are.
+- As we strive to integrate the energy of our North Node, we inch closer to fulfilling our soul’s mission in this lifetime.
+- The insights from the South Node form a foundation, enabling us to navigate the challenges indicated by the North Node.
+- She is a reminder of the power of manifestation, and the ability to bring our desires to fruition through the power of love and attraction.
+- Her presence encourages us to nurture and care for ourselves and our relationships, and to trust in the natural rhythms of life.
+- It represents the power of creativity, resourcefulness, and the ability to use our unique talents and tools to manifest our desires.
+- It encourages us to focus on emotional mastery, self-confidence and to trust in the power of our own inner strength.
+- Free up space to let your feelings pass through you without holding on to them or judging yourself for their intensity.
+- Gifting either a positive reward, or exacerbating a negative situation, the planet ensures that our journey through life is colored with peaks and valleys to learn from.
+- Intentions that seek to impact your community, both globally and locally, and that will help move the collective toward its greater potential are favored.
+- It also highlights the state of balance between two areas of your life, asking that you integrate their lessons to live a more balanced life.
+- This is a chance to take a closer look at the relationships and emotions in your life and to see what you couldn't before.
+- It is a time for ancestral healing, performing spiritual rites of passage around life and death, and connecting deeper to desire and your creative and rejuvenating energies.
+- This transit can bring about disagreements or endings in friendships, networks, or groups that you associate yourself with.
+- It's a time to reflect on your relationships, your role in the collective, and how you can contribute to the greater good.
+- Take the time to process all the thoughts and dreams that have been holding you back and give yourself the space to create something beautiful out of the chaos.
+- Take this opportunity to prioritize your health and make any necessary changes to support your long-term well-being.
+- Take this opportunity to evaluate your financial situation and make any necessary changes to ensure that you are in control of your own resources.
+- Now's a great moment to assess your educational and spiritual pursuits and make any necessary changes to support your personal growth.
+- This is a good time to evaluate your involvement and make any necessary changes to ensure that you are fully engaged and invested in the things that matter to you.
+- As we light the wick, we call upon the elemental energy of Fire to carry our intention out to the universe, and bring our desires into being.
+- Even candles that burn for shorter times — like birthday candles — can serve magickal purposes such as adding momentum to the rituals you have begun.
+- White is the color of neutrality and can absorb the vibration of your intention, energetically shifting to serve the necessary function.
+- The astral color of yellow can give your spirit a much-needed pick-me-up, while helping to clear away the auric debris.
+- You can consider black candles as “energy recyclers” that can draw out and release negative emotions and energies while also helping you reclaim what’s been taken from you.
+- Depending on whether or not you want to observe your wax drip patterns, you can also select one that comes housed in a vessel, ideally glass as opposed to plastic.
+- From your pantry to your spice rack, you will find a variety of items that can be used in your rituals and spells to enhance their power and effectiveness.
+- Salt, a purifying and protective element, can be used to create a protective barrier around your space or as an offering to the spirits.
+- By utilizing the items in your kitchen, you can add an extra layer of intention and energy to your rituals, and connect with the natural world in a powerful way.
+- One who has the power of creation by attaching words to objects — what you think in your mind via intention — you can manifest into reality, represented by the hands.
+- Houses with diminished energy are good indicators of where you can set altars and rituals to raise energy to support this area of your life.
+- Red is also the color of the first chakra, where coiled kundalini energy resides, and corresponds to the necessities that bring stability and security to your life.
+- A journal is like a magick portal to your innermost thoughts and dreams; and invites you to explore, reflect, and express yourself meaningfully.
+- Celebrate your existence – Use affirmations like "I am worthy" and "I am deserving of love and abundance" to acknowledge and embrace your worth.
+- Placements in your natal chart, whether planets or houses, signify the divinity within you and where you can shine the brightest.
+- The changing seasons serve as a visual reminder that new beginnings are happening around you, and it's time for you to take charge and shape the year to come.
+- You'll feel the power of the Ram igniting a spark in your soul, pushing you forward to step into your authority and most authentic self.
+- If challenges arise, remember to call upon your warrior spirit and find the inner strength to keep you moving forward.
+- You have the authority over your life and decisions (and indecisions) and complete control over your thoughts and reactions.
+- Become clear about what you want to call in, what talents you want to develop, and which direction you want to take your life.
+- If you have experienced setbacks this past year, this is the time to strategize how to face and solve any challenges.
+- There has been a lot of activity in your sign over the last few weeks and you are emerging with a new sense of who you are and what direction you want to take in life.
+- You are being pushed to explore how to create a solid foundation under your feet, and to define what foundation and comfort mean for you at this time.
+- Your mentor can help you stay focused by helping you set clear goals and providing guidance, support, and motivation when things aren’t going your way.
+- It weighs down your emotional vehicle, making your journey more cumbersome Here's an important truth about facing your emotions: it's hard and it takes courage.
+- When you focus on creating from a place of pure presence, you can tap into a field of awareness that unlocks all the infinite possibilities of creation.
+- You need to create a new self-care regimen that will give you more energy, and create more stability and routine in your life.
+- Here's to taking an honest look at what it means to deepen your relationships, with integrity and honest communication.
+- It’s time for a personal quest that will lead you to discover what matters most to you and how you can use your strengths to help others.
+- If conflict is showing up for you now, try to be a conduit for cohesion and finding common ground regardless of whether or not you contributed to it.
+- If you are starting to build your network and community - put energy into being seen, and discovered for your art and talents.
+- You can create positive connections with people who share your interests, and together you can learn, grow and build forms of support.
+- If you feel like you are underwater, know that it will pass soon, and use this time to connect to your spiritual and artistic side.
+- You bathe and prepare yourself in cleansing and energetic waters — setting yourself apart from the mundane 'ordinary' life.
+- By taking some time to journal about these topics, you can gain a deeper understanding of yourself and your motivations.
+- Oppositions help you understand the delicate balance between your own needs and those of the relationship or group, as well as highlight your strengths and weaknesses.
+- Are we walking the same path, or have we strayed from one another?" Through these connections, you will discover the richness of meaning and purpose in your journey.
+- As the two celestial bodies dance in the heavens, they remind you of the intricate dance of independence and collaboration that is so essential to the human experience.
+- Embrace this transformative energy, open your heart, and allow yourself to be guided on the path of deeper connections and growth that awaits you.
+- You need to be strong enough to stand on your own, and stand up for your beliefs while being open enough to form meaningful relationships.
+- It reminds you that life is about the journey you share with others and that true fulfillment comes from healthy partnerships with those around you.
+- It's a reminder to find balance in your life, let go of the things holding you back, and embrace change with an open mind and heart.
+- If you are feeling down, take the time to write a gratitude journal of all that you have accomplished and focus on what makes your heart sing.
+- Appreciate the little things and say thank you each morning to create an energetic environment that attracts abundance.
+- It represents the power of love and attraction and the ability to make decisions based on your heart rather than your head.
+- Practice compromise and cooperation and allow others (and yourself) to express their wants and needs without taking things personally.
+- It's easy to be compassionate towards your partner or loved ones, but it's also important to extend that same compassion to yourself.
+- By freeing up space to let your feelings pass through without holding on to them or judging yourself, you can gain a deeper understanding of yourself and your relationships.
+- Take this moment to meditate on your connection with self-care, how you handle compromise in your relationships and your link to social freedom and beauty.
+- It's a time to reflect on your relationships, both with yourself and others, and to make changes that will bring you closer to your true self.
+- Take this opportunity to create a sacred space for yourself, where you can focus on your purpose, and embrace the changes that are coming your way.
+- Reflect on the growth and development as you move towards new beginnings and take responsibility for the tasks and lessons learned.
+- If you've been feeling lost or like you're just going through the motions, this is the perfect time to find yourself again.
+- The deep soil nourishing the roots of plants and trees, and the vast oceans pulsing with life, reminds us of the invaluable resources we possess.
+- Let us honor the earth and all that it offers, and trust in the natural flow of the universe to manifest our deepest desires and greatest aspirations.
+- It is during this time that we are called to anchor ourselves in stability and abundance, by investing in ourselves and cultivating a sense of groundedness.
+- It is also time to align your actions and intentions with your deepest values and to honor the beauty of the present moment.
+- Allow yourself to be nourished by the richness of the earth, and trust in the natural flow of the universe to manifest your desires.
+- Trust that you have the ability to transform your inner wealth into external material abundance, and embrace your role as an alchemist of your own life.
+- This can be a grounding and nourishing practice and can help you to feel more connected and rooted in the present moment.
+- By focusing on your senses and finding ways to nourish and pamper yourself, you can cultivate a sense of well-being and contentment.
+- This can help you to feel more grounded and purposeful and can help you to create a sense of meaning and fulfillment in your life.
+- All we have experienced and faced over the last few months have uncovered our resourcefulness, resiliency, and creativity.
+- Being reborn requires faith, courage, and the vision to see a new life and reality beyond our outdated personal and cultural conditioning.
+- If you are one of the many experiencing a time of lack, focus on what resources you do have, and how you can magnify and best utilize them.
+- Concentrate on how you picture yourself rather than how others see you; draw upon your own wellspring of internal support.
+- This is the time to clarify what you want to call in, what talents you want to develop, and which direction you want to take in life.
+- If you have experienced setbacks this past year, this is the time to strategize on how to face and solve any challenges.
+- There’s been a lot of activity in your sign over the last few weeks, and you are emerging with a new sense of who you are and what direction you want to take.
+- Honoring your values, reworking your finances, and exploring your senses and sensuality is most important to you now.
+- While having a mentor or guide can be helpful, it’s key to remember that the power lies within you to take action on the guidance you receive.
+- Take this time to consider how family fits into your future, and what steps you can take toward cultivating a deeper family connection.
+- With patience, contemplation, and observation you can make small changes in your daily routines which can add up to create more stability and structure in your life.
+- You’re discovering more and more about yourself daily and wondering if all the different parts of yourself are being honored and acknowledged in your career.
+- Sudden changes in status, responsibility or direction will further your growth, even if it’s unclear how at the moment.
+- If you are looking to be discovered and seen for your art and talents - now is the time to take action and set those intentions.
+- It’s a process, but allowing yourself to not be consumed by the what-ifs, frees up energy for the next cycle to begin.
+- Lack and Decision-Making: Think about a time when you felt like you were lacking something, and how this impacted your decisions and actions.
+- Making Changes and Manifesting Your Desires: Consider what changes you would make in your life if you had an abundance of resources and support.
+- It beckons you to take a moment to reflect on the value of your possessions, and how you can use them to cultivate more prosperity in your life.
+- It reminds you of the importance of emotional and spiritual depth and encourages you to transform your inner self for greater growth.
+- This powerful axis is a call for you to find a balance between your physical and emotional needs, to honor both your material comfort and your emotional well-being.
+- To navigate this balance, it's important to take a holistic approach, by taking care of yourself in all aspects of your life.
+- It invites you to delve deeper into the darker aspects of your life and to embrace the unknown and the transformative power it holds.
+- Let yourself honor both the tangible and the intangible, as you explore the depths of the self and the occult mysteries.
+- This axis invites you to assess whether your possessions and financial security are truly serving you or holding you back.
+- It beckons you to let go of anything that is no longer serving your highest good and embrace a deeper sense of transformation and growth.
+- This is a powerful time for you to reassess your priorities, and to ask yourself what truly brings you a sense of security and fulfillment.
+- It is a call for you to honor both your material comfort and your emotional well-being to find a balance that serves you best.
+- It also invites you to explore your deeper emotional needs, and to consider how they play a role in your overall sense of balance and fulfillment.
+- This is a powerful time for you to confront your own darkness and look at yourself in the mirror to make the changes you need to make for your own good and the good of others.
+- It reminds you that true power and wisdom come from embracing your vulnerability and authenticity and not becoming lost in the pursuit of greed and manipulation.
+- He’s focused, to the point, and shows us our weaknesses so that we can learn to stand on our own two feet even when it feels like the rug is being pulled out from under us.
+- In this case, we see that many need government support, and can see how our government is able or unable to show up.
+- At this juncture, it's important to pause and contemplate how your self-perceptions intertwine with the reality you are experiencing.
+- It's time to question whether your self-love and self-esteem are robust enough to catalyze changes that truly mirror your values and worthiness.
+- Embrace these moments of introspection, for they are opportunities for you to foster self-awareness and personal growth.
+- This period represents an opportunity to redefine and reshape your vision, crafting a path that leads to enhanced self-empowerment.
+- We eagerly anticipate the manifestation of these gifts that are the fruits of our collective imagination, promising to bring about positive change in the near future.
+- Let us extend our hope that these resources and the support accompanying them find their way to the less fortunate among us.
+- This is a time of transformation, both inward and outward, as you let go of what no longer serves you and make space for growth and healing.
+- Reflect on where you were six months ago – What you were manifesting and striving for Take stock of your progress and make any necessary adjustments.
+- Set the intention to cultivate a mindset of abundance and trust in your ability to create financial stability and prosperity.
+- Reflect and remember what is most important in your life – Take some time to reflect on what is most important in your life and make a list of your priorities.
+- Honor your old self and the new self you are creating – Take some time to honor the person you have been and the person you are becoming.
+- With the focus on these two natural oppositions, the themes we are working through are our personal inner resources vs.
+- Through a process of illumination — it encourages you to examine "old" worries, habituated restrictions, or emotional attachments resulting from past hurts.
+- Take stock of the financial lessons you've learned in the past six months and consider where adjustments can be made for growth.
+- If you're struggling with poor financial habits and seeking help to set proper financial goals, consider finding a mentor or financial advisor to guide you.
+- As you commit to yourself and take action in the next six months, you will see growth in your income and investments.
+- It is important to create a new self-care regimen that will give you more energy and create more stability and routine in your life.
+- Reflect on your daily routines and see what shifts can be made to cultivate and incorporate more healthy and revitalizing conscious habits.
+- He reminds you to take time for yourself and be attentive to the details, particularly in how you give too much of yourself and are left feeling drained and under-appreciated.
+- Honoring your values, reworking your finances, and exploring your senses and sensuality are most important to you now.
+- Questioning, learning, and building trust in the unknown is part of building faith - in yourself and in something more significant.
+- Take this time to meditate, deepen your relationship with your Higher Self, and prioritize your spiritual and emotional wellness.
+- Emotions are amplified at this time, and your actions need to be aligned with logic and reason; not everything will make sense (to all your six senses).
+- You can tap into its fortune if you remain in alignment with Universal energy but resist it, and you can experience turbulent waters.
+- Life is all about flow, so remember to center yourself within this infinite energy and trust that it will guide you.
+- This includes recognizing the delicate balance between the masculine and feminine energies within ourselves, as well as the various dualities that manifest in our daily lives.
+- They each offer unique paths to understanding, acting as complementary forces that drive us towards a more holistic perspective of our universe and our place within it.
+- It reveals your communication style, relationships with siblings and neighbors, and approach to learning and education.
+- The third house also represents your adaptability and mental agility, your desire for new experiences, and your willingness to explore your surroundings.
+- This is also a great time to review and edit your writing, and to take stock of where you are and where you want to go in the future.
+- It is possible that new information comes through that is painful to hear, causing you to review past choices and decide to act differently moving forward.
+- The key to managing this lies in comprehending your emotions and expressing them effectively, thus encouraging personal growth and nurturing healthier relationships.
+- This is the time to clarify what you want to call in, what talents you want to develop, and which direction you want to take.
+- Concentrate on how you picture yourself rather than how others see you; draw upon your wellspring of internal support.
+- Your natural ability to dive deep into the underworld/unknown will help you navigate through any uncertainty or darkness.
+- At any moment, you can find the brighter side of even the darkest topics and add a little lightness to the conversation.
+- You’re discovering more and more about yourself on a daily basis and wondering if all the different parts of yourself are being honored and acknowledged in your career.
+- If you feel like you’re underwater, know that this will pass soon and use this time to connect to your spiritual and artistic side.
+- Visualize yourself open and receptive to new ideas and perspectives, and draw strength from your ability to connect with others.
+- By taking some time to journal about these topics, you can gain a deeper understanding of yourself and your interactions with others.
+- By aligning yourself with their higher frequencies, you're able to blend reason with intuition harmoniously, facilitating a more well-rounded worldview.
+- It's an invitation to intimately acquaint yourself with these dual aspects of self—the logical mind and intuitive wisdom.
+- By bridging these formidable energies, you empower yourself with the ability to perceive the world with a greater depth of understanding and insight.
+- It's through this connection, this divine dance of duality, that you'll gain profound clarity about your unique role in the universe.
+- It's a time to ask, "What is the story I wish my life to tell?" Step into the role of the narrator of your own life's tale.
+- Define your intentions and bravely articulate your truth, breathing life into the story you envision for your journey.
+- This is the moment to challenge these barriers, to question their validity, and to liberate yourself from their constraining grasp.
+- It pushes you to draw upon your wisdom, gained through your unique life experiences, to inform and shape your future path.
+- Be mindful – Observing your thoughts, experiences, and observations in a journal can be a powerful way to gain insights into your own inner landscape.
+- Set the intention to speak and live in truth – Speaking your truth is an important aspect of self-expression and authenticity.
+- Avoid lying or speaking with omission, and see how your world changes when you are more honest and authentic in your interactions.
+- Set intentions to expand your horizons – Exploring different cultures, foreign foods, and foreign languages can be a way to expand your mind and broaden your horizons.
+- Set the intention to release any beliefs that are no longer serving you and embrace a mindset of growth and abundance.
+- Find the lessons, grow from the experience, and emerge with a stronger faith and belief in your internal flame and drive.
+- This is a beautiful week to celebrate your siblings and/or social media accomplishments (especially if you're in marketing).
+- Over the next six months, explore what a healthy relationship built on truth and trust looks and feels like for you.
+- Release any social conditioning that has allowed you to "rationalize" and ignore any spiritual lessons given to you this past year.
+- No time is wasted when you are in flow with the Universe and being guided towards a life built on truth and your greater and true happiness.
+- Think of the Cancerian crab that seeks refuge in its shell; here is where the right emotional vibration is cultivated to birth your manifestations.
+- Witnessing her many phases and interpreting the dance and relationship with the Sun; she taught us about the natural Law of Rhythm and the Path of Unfoldment.
+- By understanding your underlying motives and the driving forces that stir your emotions, you are better equipped to do so.
+- Allowing yourself to feel and process your emotions in a healthy way, rather than suppressing them or letting them control you.
+- Figure out what you value most, and find a way to allow yourself to receive both emotional connection and love, and physical support and abundance.
+- It's time to start internalizing that you are worthy of financial and emotional stability and that success is achievable.
+- If you're fortunate enough to have your needs fulfilled and still have something more to give, consider showing some kindness to those around you.
+- Take this time to consider how family fits into your future and what steps you can take toward cultivating deeper and healthier family connections.
+- Anything arising right now is to help you break through disharmony and find your way back to health and a more balanced lifestyle.
+- Surveying the landscape of possibilities can help put you in the driving seat when it comes to making a wise career move.
+- Allow yourself to exist within the collective consciousness and experience the healing and regeneration that comes with osmosis.
+- This can help you connect with your emotions and create a comfortable and nurturing environment for yourself and your loved ones.
+- This can help you connect with your emotions and expand your knowledge and understanding of different cultures and subjects.
+- Use moon water as a spiritual tool for cleansing, and healing, drink it before meditation and place it next to your journal.
+- By taking some time to journal about your experiences with your mothers, we can gain greater insight and understanding about yourself and your relationships.
+- Expressing Gratitude in a Thank You Letter: Write a thank you letter to your mother, expressing your gratitude for all that she's done for you.
+- Write A Letter To Your Mother Journal, and write a letter to your mother as a way to heal and connect with your emotions.
+- Exploring the Qualities of a Good Mother: Take some time to reflect on your relationship with your mother (or mother figure).
+- Writing a Letter to Your Mother: Write a letter to your mother (even if she is no longer alive) expressing your love and gratitude for her.
+- Reflecting on Your Upbringing and Family Dynamics: Consider how your upbringing and family dynamic has shaped your emotional world.
+- This polarity asks us to look at the relationships and objects in our lives and determine whether they are emotionally, mentally, or physically fulfilling.
+- We discover balance when we release what is decaying, giving back to the earth as fertilizer and a foundation for us to begin anew.
+- On one hand, you have your goals and ambitions - your desire for success and the structures you have created to achieve it.
+- Finding balance between these two aspects in your life can be a challenge, particularly when you are trying to juggle your career goals with your emotional needs.
+- It can help you to reflect deeply on your current situation and find meaning in even the most difficult experiences.
+- Henri Bergson's theory of creativity is especially relevant, as it reminds you that you are the creator of your own life.
+- The Devil usually symbolizes struggles with a moral problem — a choice between lust or love; but mostly, it means you're overwhelmed with an international struggle.
+- Just as good friends are good for your health, toxic relationships harm your overall well-being and drain you emotionally and mentally.
+- When you are in flow with the Universe, you are being guided towards a life built on truth and your greater and true happiness.
+- It's a time to embrace our unique gifts and talents, allowing our authentic selves to shine forth without inhibition.
+- We are called to take center stage, honoring our individuality and expressing our true essence with confidence and passion.
+- Through this detached perspective, we can navigate the intricate landscapes of our inner selves, unveiling the paths toward holistic healing solutions.
+- We honor the interconnectedness of all things, recognizing that our journey of integration and embodiment brings us closer to the divine essence that permeates the universe.
+- You can learn to embrace your unique talents and abilities and use them to inspire and uplift others, rather than seeking attention and validation for yourself.
+- They offer a window into the very essence of our being, a glimpse into the soul's capacity for artistic expression and imaginative play.
+- To strengthen yourself, you can practice inhaling golden light into your heart chakra and exhaling the shadow of your sorrows and disillusions.
+- This practice can help you to tap into the energy of the Sun and to connect with the "lucid flame" of the solar energy.
+- Foster strong, supportive relationships – Consider setting an intention to strengthen and nurture the relationships that bring joy and growth into your life.
+- A time to bring your intentions into clear focus and send them out into the Universe with a clear vision and actionable goals towards manifestation.
+- By remaining aware and conscious of your behaviors, you can navigate these challenges with grace and cultivate a harmonious connection with others.
+- By surrounding yourself with a supportive network, you create an environment where you can feel secure and at ease, allowing your creativity to flourish.
+- Should you find yourself expressing inner or outer tantrums, this energy supports you in connecting with the part of yourself that seeks acknowledgment.
+- Keep showing up for yourself and believing in your talents; your beauty, your compassion, and creativity will be seen.
+- It's time to embrace the present moment and surrender any baggage that holds you back from becoming the person you long to be.
+- Through relaxation and leisure activities, you can break free from the cycle of endless thinking that keeps you stuck in one place.
+- When you focus on creating from a place of innocence and pure presence, you can tap into a field of awareness that unlocks all the infinite possibilities of creation.
+- If you don’t protect your own energy during moments when you are giving more than you are receiving, it will severely deplete you and make you unable to help those around you.
+- If you're feeling called to become a healer or a teacher - now is the perfect time to set your intentions and follow this path.
+- Foreign cultures, places, and higher learning is calling for you and you find some of your deepest desires being nurtured there.
+- Surround yourself with friends and people who share your same values and vision for the future community and networking is a big focus for you now.
+- There is something magical that happens when you share the same space with people who understand the intricate stories of your life.
+- This energy is more about exploring your internal landscape and expressing it through creative means as a manifestation of the divine.
+- Relax into the creative wisdom that is bigger than yourself, and let it guide you instead of getting lost in the unknown.
+- We strengthen ourselves by inhaling golden light into our heart chakra and exhaling the shadow of our sorrows and disillusions.
+- By taking some time to journal about these topics, you can gain a deeper understanding of yourself and your passions.
+- By harmonizing the energies of the individual self and the collective community, we have the ability to bring about change on both a personal and communal level.
+- We are also working with the Fixed signs of the Zodiac, which brings the potential for stubbornness and unwavering perspectives.
+- If we can find stillness amidst the chaos and go within, we will find a wealth of information and answers to help us heal.
+- I understand that technology is an ever-evolving part of our world, and I choose to embrace it rather than resist it.
+- While on the other, your sense of belonging and responsibility to leave this world better for others than you found it.
+- It's a time to reclaim your power and ability to speak your mind freely, not attaching or being afraid of rebelling against the status quo.
+- Art can evoke calming effects and produce neural changes in your brain; art is a tool to rewire yourself from the inside out.
+- This celestial event beckons you to question the status quo and seek new ways to express your unique and authentic self.
+- Your individuality takes center stage as you are encouraged to embrace your differences and celebrate the aspects that make you truly one-of-a-kind.
+- With the Aquarian energy inspiring you to think outside the box, you are gifted with a surge of creative inspiration and a desire to explore new avenues of self-expression.
+- You are encouraged to tap into your passions and let your heart guide you toward new and exciting opportunities for personal growth and fulfillment.
+- Allowing you to heal, empathize with others and lead with your heart; in hopes of creating a more sustainable and compassionate existence.
+- Take this time to examine your life, let go of what no longer serves you, and set out to live a life in frequency/vibration to your truth.
+- It's a time to seek out conversations that take you deeper, that challenge you to think differently, and question your beliefs (and what you were taught to believe).
+- It will stretch your relationships past their comfort zones and limitations, bringing new insights and breakthroughs.
+- This is the time when you can give back to those who have helped you along your journey or let go of the baggage that was given to you that you no longer need to carry.
+- Take this time to think about what changes you need to make in your life, not in yourself so that you can feel comfortable in the community that supports you the most.
+- Let the energy of this powerful lunar phase draw you closer to those who will nurture and support you and understand and accept you for who you are.
+- There is a beautiful transformation that takes place in autumn, as the leaves flower and change - showing us the transformational ritual of release.
+- The last few moon cycles have been life-changing for many, unstable and unpredictable, as we've re-organized our inner and outer landscapes.
+- Still, with each step forward, we gain a deeper understanding of navigating and anchoring ourselves within this new way of being.
+- This energy encourages us to take a closer look at ourselves and make the necessary changes to live a more fulfilling life.
+- We are called to be of service to ourselves and others, to prioritize our health and well-being, and to purify our minds and hearts.
+- This polarity can manifest as a struggle between our desire for stability and order, and our need to let go and surrender to the flow of life.
+- These are the qualities we seek to embody as we prepare ourselves for spiritual introspection and the journey inward.
+- It is a time to evaluate how you take care of yourself and your physical well-being through discipline and organization.
+- This includes your job and the choices you make in your day-to-day life, such as how you care for your physical health and what you wear.
+- There is a beautiful transformation that takes place in Autumn, as the leaves flower - and show us the transformational ritual of release.
+- The more you commit to your health and establish a healthy day-to-day routine, the more you'll see your investments and income growth in the next six months.
+- There’s been a lot of activity in your sign over the last month, and you are emerging with a new sense of who you are and what direction you want to take.
+- This is a good week to celebrate any of your siblings' and social-media accomplishments (especially if you're in marketing).
+- Traveling and travelers are active in your reality right now and creating a perspective shift on how you approach your life.
+- This energy is more about exploring your internal landscape and expressing it creatively as a manifestation of the divine.
+- You can tap into its fortune if you remain aligned with Universal energy but resist it, and you can experience turbulent waters.
+- Visualize yourself focusing on your personal growth and drawing strength from your own dedication to self-improvement.
+- Reflecting on Past Successes and Accomplishments: Reflect on your past successes and accomplishments related to self-improvement.
+- By acknowledging your own role in the creation of your reality, you gain the power to make conscious choices and change the course of your life.
+- It is through this honest self-appraisal that you can liberate yourself from patterns that no longer serve you and begin to cultivate a more authentic and fulfilling path.
+- As you develop this skill, you can adjust and create a shift in your unconscious, allowing for significant shifts on the surface.
+- This can be painful though it will be quite liberating, giving us all a chance to heal and make positive changes in our lives.
+- Explore your creativity and intuition – Set an intention to tap into your creativity and follow your intuition during this time.
+- Dive into your emotions and be vulnerable – Take this opportunity to explore your emotions and allow yourself to be vulnerable and open.
+- Cultivate a sense of connection and flow – Set an intention to cultivate a sense of connection and flow in your life.
+- You hold the keys to future achievement while preserving the hopes of your ancestors and inspiring future generations.
+- Leverage your gifts to elevate yourself from the masses, inspire, and be recognized for your unique talents and vision.
+- The path to success can be winding, but with a firm vision of where you want to go, you know what to avoid in order to get there.
+- You can help heal their inner child by sending them the sympathy, energy of stability, and safety they desperately sought.
+- Create a routine that supports your mental and physical health, and practice moderation with substances that alter your perceptions.
+- Remember that you are still learning and growing, so be gentle with yourself like you would with a child trying something new.
+- When you focus on all the beautiful things in your life, and count your blessings, you open yourself up to a world of possibilities.
+- When you routinely bring your awareness back to what you're grateful for and what is working for you, you begin to lay the groundwork for a paradigm shift.
+- They connect you to your innermost self and help you better understand the deeper meanings of the things we experience.
+- Dreams can help you make sense of your environment and the people you interact with, offering insight and understanding you wouldn't have otherwise.
+- When things start to shift, it can be an opportunity to reassess what's working and what's not and how you can create something even better.
+- You're embracing changes, getting involved in new causes and interests, and actively seeking out social groups aligned with your values.
+- You're excited to find like-minded people, explore different sides of yourself, and get exposed to new ideas and visions.
+- You've already faced so much, including pain and hardship, that many things that used to scare you no longer have power over you.
+- Picture it as diving into the deep waters of your subconscious, leaving all superficial thoughts behind, and exploring your inner self.
+- You have a few choices when dealing with overwhelming feelings: either check out, confront everything, or oscillate between the two.
+- Just as nature begings its phase of conserving energy and preparing for the colder months, we too are invited to turn our attention to self-care and introspection.
+- As we nurture our relationships, we also nurture ourselves and the world around us, creating a harmonious and balanced existence.
+- Now that we have learned to value our own self-worth and accept our imperfections, we are more likely to meet others halfway and accept them as they are.
+- This is a time when we focus on cultivating relationships for internal support and security, and begin to go inward.
+- Are you bending the truth, withholding information or outright lying - to keep balance, or avoid conflict and discomfort.
+- Dysfunctional or abusive situations can be let go during this time to make way for a new version of yourself and a new vision of future relationships.
+- Remember that true balance and harmony come from within, so take care of yourself first in order to be able to extend that balance to your relationships.
+- Take the opportunity to set new intentions for the future and to take steps towards creating a vision of yourself that feels authentic and fulfilling.
+- It also reminds you to consider how you can bring value to your own life and the lives of others through your career, personal development or community involvement.
+- Embrace this energy and use it to connect with others, share your ideas and knowledge, and inspire others to do the same.
+- Close your eyes and visualize your inner creative fire like a flame, pulsing with vibrant energy and infinite possibilities.
+- When you leave self-sacrifice tendencies behind and prioritize your own health and well-being, you'll find that opportunities open up and your overall health improves.
+- Remember that it's okay to feel a full range of emotions and that it's important to allow yourself to feel and process them in a healthy way.
+- Set intentions to challenge outdated ideas and systems and to find ways to bring new energy and inspiration to your professional life.
+- It represents the strength and free flow of energy necessary to connect with your soul and find your place in the world.
+- If you are just starting to build your network and community, put effort into being seen and discovered for your unique gifts and talents.
+- Visualize yourself seeking balance and harmony in your relationships and drawing strength from your ability to connect with others.
+- Engage in positive self-talk and affirmations, invest in your education and career, and cultivate meaningful friendships.
+- These actions will help bring out your authenticity and increase the likelihood that you will be able to build the loving relationship you deserve.
+- Low self-worth can also lead you to try and make someone love you when they show disinterest in commitment, even if it means sacrificing your own well-being and security.
+- Our inner voice guides us in our daily lives and becomes even more crucial when we are in relationships with others.
+- As we navigate this balance, it is important to understand and listen to our own needs and wants, while also being aware of the needs and wants of those around us.
+- By being conscious of our own needs and wants, but also listening carefully to what others need from us, we can create more harmonious relationships in life.
+- We are called to be warriors of the self, to be brave and courageous in the face of our own vulnerabilities and reclaim our power.
+- As warriors of the self, we embark on a path of self-empowerment and courage, embracing our vulnerabilities with strength and resilience.
+- We no longer shy away from the wounded parts of ourselves but instead, embrace them as integral aspects of our journey.
+- This is a powerful opportunity to rearrange what isn’t working and to break free from any circumstances that hold us back from doing our very best for ourselves and others.
+- This is a great time to be proactive and take charge of your life, but be sure to do so with clear and conscious intention.
+- This push-pull dichotomy can deplete your energy as you seek to reconnect with yourself and revalue your priorities.
+- You can assess your relationships better with heightened subconscious awareness, detecting imbalanced dynamics or negative emotions that cause further disharmony and discord.
+- Accepting less than you are worth gives others the green light to do the same and can leave you feeling stuck and struggling.
+- Make adjustments, curb your expenses, and focus on what you require in terms of resources and opportunities to help you grow and succeed.
+- The messages you receive and conversations you hold will fill your hours, shape your decisions, and change the structure of your life and the lives around you.
+- This is an excellent time to release any daily habits or activities that hurt your overall health, energy, and well-being.
+- Taking the time to read back through what you've written can help you better understand yourself and your situation.
+- If you feel like you're not giving or receiving the support you need in your relationships, ask yourself (or your partner) what that looks like.
+- It's a chance to take stock of who has been supporting you and to show your appreciation for those who have helped you along your journey.
+- Philosophy can help you to reflect deeply on your current situation and find meaning in even the most difficult experiences.
+- The starting point of Greek philosophy is, "Am I being true to myself?" It's a question that challenges you to examine everything around you and question what you believe.
+- As you examine your thoughts, pay attention to which ones encourage thoughtfulness and which encourage frenzied states.
+- If you're not careful, you'll look back on your life and realize you wasted it, being afraid to take risks and seize opportunities.
+- Power struggles can be tough to navigate, and you're a compassionate soul, so confrontations can take a lot out of you.
+- You should practice role-playing with a close friend to ensure you are being assertive and not coming across as aggressive.
+- This is a powerful time of transformation, where we are given the strength and courage to confront our fears and embrace the unknown.
+- Your fixed water energy uncovers your innermost, deep-seated truths and urges you to go deep within yourself to be transformed.
+- The descent into the underworld is an initiation that imparts access to our own potential for growth and healing, as well as healing and honoring our ancestors.
+- This presents the possibility of spiritual and psychological rebirth as you reconnect with your authentic selves and your soul's mission.
+- Death and Rebirth – Allow the death and release of what isn’t growing, so you can free and redirect your energy and resources for something else.
+- We have the opportunity to clearly see and transform our fears and patterns around intimacy, and face and share our deepest vulnerabilities with others.
+- As you honor the legacy of your ancestors and draw upon their wisdom and strength, you emerge from the darkness with renewed understanding and power.
+- We celebrate another opportunity to be reinspired, to appreciate the physical manifestations of our efforts, and to review and recalibrate our intentions and goals.
+- We have the opportunity to clearly see and transform our fears and patterns around intimacy, face and share our deepest vulnerabilities with others with compassion.
+- Surrender to life's imperfections and disappointments and allow them to sculpt your character and nurture your heart.
+- The power of your creative energy can be a source of healing and rejuvenation, so think about how you can refill your creative well and make time for self-expression.
+- Incorporate daily rituals to honor your internal muse, gifting yourself a channel for self-expression and honing your creative voice.
+- Everything that is arising now is to help you break through disharmony and find your way back to health and service.
+- Care for your health and daily habits as you actively seek change, this will bring growth and improvement in your well-being.
+- As you drink the tea, take a moment to reflect on what changes you can make in your life to support your growth and well-being.
+- This is a time for you to examine and address any imbalances or unresolved issues that have been lingering in your connections.
+- Honesty is a liberating act that can lead to deeper intimacy or the realization that the relationship is no longer serving you.
+- Reflect on the healing that has taken place in your relationships, and consider what parts of yourself you need to heal in order to be a better partner and friend.
+- This is a powerful time for you to let go of old patterns, beliefs, and emotions that no longer serve you and make space for new experiences and opportunities.
+- The call of adventure surrounds you now, and it is time to step away from the familiar and open yourself to new possibilities.
+- Change can be uncomfortable, but use this as an opportunity to stretch beyond your comfort zone and expand your worldview.
+- Reflect on the experiences and lessons that have come your way in the past year, and how they have shaped your understanding of the world.
+- The spotlight is on you, and it's time to reassess your current plans and make sure they align with your values and long-term aspirations.
+- Embrace the call to take on new responsibilities, and let it guide you towards new opportunities and deeper fulfillment.
+- Seek out resources such as podcasts, books, and mentorship to support you in expanding your professional horizons and stepping into a more public role.
+- Remember that change can be uncomfortable, but use this as an opportunity to stretch beyond your comfort zone and expand your worldview.
+- Trust in yourself and the process of change, and let it guide you toward a deeper understanding of who you are and where you want to go.
+- The desire for deep connections is strong within you now, and your relationships and community provide a source of inspiration and fulfillment.
+- Remember that the universe is supporting you on your journey, and the connections you make now will nourish your soul and bring you a sense of belonging.
+- Seek out mentorship and guidance from those in your social circle who can help you deepen your connections and reach your potential.
+- Trust in the power of community, let go of unrealistic expectations, and embrace the blessings and learning opportunities that come your way.
+- This is an invitation to explore the deeper aspects of yourself, your inner landscape, and your connection to the divine.
+- Meditation, journaling, and art are powerful resources that can support you in expressing yourself and connecting with the divine.
+- The focus now should be on setting your internal compass, tending to your emotions, and creating a safe space for yourself.
+- Take stock of the healing and growth you've experienced in the past year and how you can further align with your truth and intuition.
+- Trust in the power of the subconscious mind and let your dreams guide you towards a deeper understanding of yourself.
+- Here are some prompts to get you started: Exploring Desires: Take some time to think about what your deepest desires are and how you are working towards fulfilling them.
+- Write about your feelings and thoughts as you connect with your ancestors and thank them for their guidance and support.
+- If we haven't been keeping track of our monetary situation, or things have gone out of control, we are definitely going to be reviewing these now.
+- It's all about understanding that not getting what you want (or not getting it when you want it) is a normal part of life.
+- If you have yet to keep track of your monetary situation, or things have gone out of control, you will be pushed to review your finances' health.
+- You are learning to utilize your inner and outer resources to the fullest, to help you through a time of transformation.
+- You have a deep longing for connection and to be connected and have your desires fulfilled by those close to you in your community.
+- To be the best version of yourself, you need to take the time to “fill your cup first.” If you’ve been giving too much, now’s the time to focus on yourself.
+- This is also a time to re-evaluate any challenging situations, relationship dynamics, or personal goals that require your attention.
+- If you haven't let go of outdated stories from your past or dealt with past issues, you can risk losing the life you're creating or the life and relationship you seek.
+- Letting go of your tightly held ideas, concepts, and theories is a crucial part of finding faith in something greater.
+- Utilize tools and resources to help you navigate and restructure negative thinking to constructive feedback, which better serves to give direction rather than depression.
+- This is a time of self-discovery as you try to understand who you are and what role you want to play in your career.
+- During this time, it's crucial to take care of yourself and focus on honoring your needs with a balance of high performance.
+- You can choose to think differently, and you can take action to change your circumstances and those who you surround yourself with.
+- No matter what has happened in the past, you can choose to move forward and create healthier friendships and a brighter future.
+- No matter how much pain and suffering exists in the world, you can also choose to focus on all the beauty and kindness.
+- If you’re working towards something and feel like you’re hitting a wall, try writing yourself a letter that you can read when you need a little push.
+- If you have something you want to come into your life, try keeping a lodestone with a handwritten note wrapped around it of what you want to bring into your life.
+- As you head into the last few weeks of the year, it's the perfect time to shed any lies or illusions that have been holding you back.
+- It’s a magickal opportunity to examine the stories that have made you who you are and consider the ones you want to be telling in the future.
+- This can be done by exploring what you truly believe, questioning why you believes it, and being open to the possibility of changing your beliefs if necessary.
+- Honesty also helps build a sense of security and comfort in relationships, as you know that the other person is making decisions with full awareness.
+- By stepping outside your comfort zone and immersing yourself in something foreign, you can gain a broader outlook on the world and learn more about yourself in the process.
+- You can gain a fascinating insight into your current life by diving into past life rituals, meditations, and theories.
+- You will become stronger, as well as appreciate the enchanting winter scenery of freshly-dusted snow-covered mountains.
+- Study Philosophy: Philosophy helps you to think critically and analytically, and encourages you to ask questions and challenge assumptions.
+- Experience other cultures: Learning other languages and cultures can help you appreciate the human experience's diversity.
+- With each choice, you reflect upon the past, thinking about the opportunities you seized and the times when you hesitated.
+- This reflection shows how you arrived at where you are today, what can be done better tomorrow, and how to proceed with your next step.
+- This time has illuminated your ability to navigate challenging situations, find creative solutions, and turn your visions into reality.
+- Use what you learned during the last month to get inspired and light a fire under yourself to reach places you thought impossible.
+- By being conscious of your role in the cosmic universe, you can expand the scope of your being and experience the fullness of life.
+- You are encouraged to contemplate the age-old questions of fate and free will and to consider the implications of your choices and actions.
+- You stand in the present moment, reflecting upon the past and the opportunities you have taken, and those you have missed or think you have missed.
+- Life is a complex tapestry of possibilities, and you are constantly presented with choices that can shape your future.
+- You have the power to make choices and decisions that will shape your life, but you are also subject to the forces of fate.
+- You can choose to embrace free will and take control of your thoughts and emotions, or you can accept fate and allow it to guide you.
+- It's time to think about what you want to do, what talents you want to develop, and which direction you want to take in life.
+- Believe that each experience is a stepping stone that will lead you to understand better who you are, your values, and what you can achieve.
+- You will gain a stronger understanding of yourself and your impact on the world through introspection and reflection.
+- It's asking you to take a deep look within and evaluate how well you've been caring for yourself and what more you can do to increase your energy and vitality.
+- Over the past few weeks, you've examined your self-worth and explored self-care practices that nourish and support you.
+- Remember, relationships reflect your inner beauty and provide a way to connect with the Infinite and learn more about yourself.
+- As you do, you'll find yourself becoming more confident and capable of committing to the relationships that matter most.
+- Over the last few weeks, you've been contemplating your self-worth and exploring self-care practices that nourish and feed you.
+- Listening and sharing mutually is a skill you are mastering, so trust in yourself and your ability and willingness to commit.
+- Areas of intimacy and shared resources are your focus as you learn to trust in yourself and access your inner well of power and strength.
+- Whatever perspectives or teachings have changed for you in the last few weeks/ months, you'll now be applying them in real time.
+- If this is happening, use it as an opportunity to reorganize your perspective and goals and reconsider what kind of company you want to surround yourself with.
+- The best intentions will have a positive impact on your community, both globally and locally, and that will assist the collective in reaching its full potential.
+- If you feel underwater, know that this will pass soon, and use this time to connect to your spiritual and artistic side.
+- Visualize yourself embracing your curiosity and desire for growth as you seek new experiences and broaden your understanding of the world.
+- Here are some prompts to get you started: Expanding Your Horizons: Take some time to reflect on the new experiences and knowledge you are seeking out.
+- Reflect on your choices: Reflecting on the choices you make in life can be a powerful exercise in understanding the cause and effect of your decisions.
+- You can look back to a single moment in time, when you made a conscious or subconscious decision, and see how it has had a greater impact on your life.
+- Journal about cause and effect: Think back to a time when you made a decision (conscious or subconscious) that had a great impact in your life.
+- It is a reminder that we are all worthy of love and belonging and can find strength and solace in the presence of another.
+- By aligning yourself with their higher vibrations, you are better able to blend reason with intuition, resulting in a more balanced view of the world.
+- The ability to bridge these two powerful energies will enable you to gain a deeper understanding and insight into the world and your place in it.
+- We can use its energy to realign ourselves with our intentions and make necessary changes to ensure we are on the right path.
+- This is a favorable moment to reconcile opposing perspectives and foster harmony in your inner dialogue and interpersonal connections.
+- Such discussions can help to challenge and expand our perspectives, opening our minds to new possibilities and helping us to grow.
+- This can be particularly helpful when we are faced with difficult decisions or are trying to make positive changes in our lives.
+- Whatever shifts are occurring in your life, reevaluate your purpose and place in the world and move forward in a way that truly aligns with your values and worth.
+- Take this opportunity to set intentions that align with your desire for meaningful relationships and personal growth.
+- Reconnect and revisit – Revisit old opportunities and reestablish connections with those you have fallen out of touch with.
+- This is a great time to create a ritual that encourages an ex or ex-friend to reach out to you or to open up the lines of communication.
+- I am willing to communicate openly and honestly with my siblings, and to seek resolution and harmony in our relationship.
+- If you are moving in with a partner or taking on a business partner, talk about how you see the relationship's future and best support each other’s goals.
+- While staying true to who you are is important, it's also important to be respectful of what matters to those around you.
+- With new knowledge and revelations, it empowers you to process this information and see how you want to put them into practice moving forward.
+- Tap into that power and trust in the understanding that these experiences are here to inform, shape, define and guide you.
+- As a creative leader, it's your strength and courage to be vulnerable and stand firm in the face of opposition that will set you apart.
+- It illuminates your subconscious mind and is a perfect time to tune in to your intuition, a time for stillness within yourself and observation.
+- Embrace the creative possibilities this moment brings and allow yourself to explore your dreams, illusions, and desires.
+- This is an opportune moment to delineate our goals, concentrate on what truly matters, and remain conscientious of our commitments.
+- It's a time to judiciously manage our resources, confront our anxieties with bravery and self-control, and carve a pathway towards success.
+- A time full of potential for personal development, the present moment asks that you to adopt a more mature outlook on your life's trajectory.
+- This is a time of year when the days grow shorter and the nights longer, temperatures drop, and our spirits can plummet as well.
+- As we gather together and illuminate the darkness, we honor the interconnectedness of humanity and the universal longing for illumination.
+- The Devil is the embodiment of duality, the state of separation from Source; the opposite of being in our higher nature of unity consciousness.
+- It's a time to trust your own wisdom and intuition as you move forward, leaving behind any need for external validation or guidance.
+- As you approach the new year and the end of another cycle, use this time to reflect on your progress and cultivate your evolution.
+- The Universe is here to give you what we ask for, but it will also test your dedication by giving you a distraction.
+- The recent activity in your sign has brought about a powerful transformation within you, and you are now emerging with a renewed sense of self and purpose.
+- This is a time for you to celebrate your growth and progress and to trust that the universe has your back in bringing you the abundance and fulfillment you deserve.
+- Your intention for this moment is to trust the process, value yourself and your worth, and let the universe conspire to bring you the manifestation of your dreams.
+- Be mindful of your needs and communicate them directly and honestly, and surround yourself with those who can appreciate and support your unique talents and gifts.
+- If you've been feeling overlooked or unacknowledged, it's important to address these feelings rather than ignore them.
+- It's reminding you to take a step back and evaluate where your heart truly lies in terms of your career and how you can make a positive impact.
+- This is a time for deep introspection and reflection upon the ways in which your past actions and choices have shaped your journey through the realm of commitment.
+- Embrace the fears arising within you as you navigate the complexities of commitment and the potential for abandonment.
+- Your focus is on areas of intimacy and shared resources, as you delve deeper into understanding yourself and your inner resources.
+- Security is an inner construct that you have some control over, so build trust in yourself and trust outside of yourself will naturally follow.
+- If you are seeking to shift your energy and perspective, start by incorporating daily spiritual practices into your routine.
+- Invest in yourself and listen to your intuition - these are powerful tools for creating an expansive and fulfilling life.
+- This is an opportunity to assess if your current career path aligns with your values and goals and make changes accordingly.
+- This will help you to make choices that are in line with your true self, rather than feeling trapped by the expectations of others.
+- By actively engaging with your community and seeing where your gifts and talents can be offered, you can take advantage of this energy to boost your career and success.
+- These changes are all a part of the process, and they help you explore new sides of yourself, and expose you to new ideas and visions.
+- It is important to allow yourself to feel and process any emotions that come up and turn to your spiritual practices for support.
+- At any point you can come back to your place of resource and if you’d like, you can bring that bit of resource and a sense of stability into your wounded place.
+- Imagine this light in your heart expanding to create a small sphere around you to serve as a container of safety for as long as it takes for you integrate your this session.
+- Visualize yourself focusing on your career and professional goals, and drawing strength from your dedication and discipline.
+- Reflect on your personal definitions of success and how you can use your values to guide you towards your professional goals.
+- We are called to take charge of our own happiness and comfort, and to parent ourselves in a loving and nurturing way.
+- In times of tumultuous change, it is all too easy to push ourselves too hard and neglect our own needs in the pursuit of serving others or chasing our dreams.
+- But, it is essential that we recognize the importance of emotional stability and support, both for ourselves and for those around us.
+- This is a powerful time for letting go and releasing old patterns, as well as the emotions we have been carrying within our bodies.
+- The universe is inviting us to release these things and make space for new beginnings as we move deeper into the new year.
+- Allow yourself to fully feel and process any emotions that arise, trust that they are guiding you towards a more authentic and true version of yourself.
+- It reminds us of the early childhood conditioning that shapes our understanding of give and take in our relationships.
+- By exploring these questions, you can discover what steps need to be taken to create a healthy balance between self-care and care for those around you.
+- They also bring us closer to understanding your karmic pasts, how it informs the present moment, and how to use those lessons to elevate.
+- Trust in the universe and let the wisdom of the stars guide you back to your intended path, towards stability and fulfillment.
+- Familiarise yourself with attachment styles to gain insights into how you relate to others and the best way to care for yourself.
+- Plus, with its energy, you can tap into your creativity and explore new ways of processing these emotions through art and music.
+- This can involve activities like self-care, therapy, or simply finding ways to connect with your emotions and those of others.
+- It's giving you the strength and insight you need to make the necessary shifts in your life so you can come into alignment with your most authentic self.
+- A place where you can be supported and celebrated for who you are and where you can celebrate your loved ones and the unique contributions they make to your career and life.
+- Taking the time to check in with yourself on a physical level can help you stay balanced and connected, so you can keep showing up for those you love in the best way possible.
+- You're learning to take on more responsibility than you're used to and navigating the needs of others while honoring your need for support and connection.
+- Notice if the words you use to communicate your authentic self or if you have been stifling it to fit the status quo or stay small.
+- Get creative and explore different ways of communication - writing, singing, public speaking - and discover the unique voice within you.
+- Take this time for self-reflection and to appreciate the people and places that have left a lasting impression on your life.
+- Take this moment to honor your loved ones and be intentional about creating meaningful connections with those still alive.
+- From physical items that have outstayed their welcome in your house to emotional baggage holding you back from living in the present.
+- Let these be the spark that ignites your creative passions and fills you with light, and let your inner child run wild.
+- This is an excellent time to refine any daily habits, routines, or activities that harm your overall emotional well-being.
+- To be the best version of yourself, you need to take the time to "fill your own cup." Stop and ask yourself what you truly need, then do it.
+- As you begin to feel a pull toward repressed emotions, it's essential to take care of yourself physically and emotionally and ensure you have a robust support system.
+- Plus, taking care of yourself allows you to be in touch with your emotions, empathize better and understand what those closest to you are feeling without words.
+- When you have people in your life who care about you and who you feel safe and secure with, it can be a powerful way to build resilience.
+- It is up to you to surrender — which feels like Death to the human ego — rather than waste time in denial, avoidance, or pining for lost opportunities.
+- Communicating your emotional needs clearly and listening to others' points of view and feelings during conversations are essential.
+- The spotlight is shining brightly on your career right now, and it's the perfect time to share your voice with the world.
+- Make an effort to reach out to those you care about, spend time with nature, and make that human-to-human connection.
+- You'll reconnect to your creativity when you carve out downtime for yourself, and it will remind you how much you love being in the spotlight.
+- It's a feeling of comfort and belonging, knowing that someone else is there to support you and love you for who you are.
+- Look up in the sky tonight, and you'll see a reminder that life is a beautiful pattern of cycles, which you are a part of.
+- A reflection is a form of self-care, and it is a chance to process all the events in your life that impacted you and resulted in you starting over.
+- It is a moment of reflection and realization that the time has come to descend, carrying with you the life force and insights you have gained along the way.
+- As you stand at the peak of your personal mountain, allow yourself to become a guiding light for the next generation.
+- As you look towards the future, seeking new and imaginative ways to bring your new year goals and visions to the present moment.
+- This is a period to uncover your distinct contributions to the collective, tapping into your unique frequency and vibration to foster innovation and see your own future.
+- Remember that you have the power to channel the Divine and use your unique perspective to make a positive impact on the world.
+- It is also known as the "house of the Good Daimōn," or conscience, that inner voice that guides us in quiet moments.
+- As you stretch beyond your current vision and tap into your intuitive and innovative abilities, this is also a time to cultivate your friendships and network with others.
+- As children we are taught to wish on stars, our first teachings and attempts of asking the Universe to grant our intentions.
+- It’s time to open your mind to the Universe, let it inspire, and transform any stagnant energy blocking you from your true path.
+- Find groups and communities that share your interests – Connect with like-minded people and join their groups or communities.
+- It is essential to consider the diverse perspectives of all races, genders, as well as the well-being of your friends and family.
+- This is a time for innovation, celebration, and embracing what you can contribute to your community and the wider world.
+- In doing so, you can step forward into the new year with confidence and clarity, ready to forge a path that aligns with your truest essence.
+- It is a time to take stock of where you are and where you want to be, to chart a course that will guide you toward fulfilling your desires and realizing your goals.
+- You can be the visionary of your own path, standing in your power to create a life that aligns with your soul's signature vibration.
+- This is a powerful time to step into our personal power and take control of our lives, cultivating a strong sense of self and personal responsibility.
+- As we trust in our inner guidance and let go of outdated patterns, we open ourselves to new opportunities for growth and self-discovery.
+- These essential foundations will enable you to live with confidence, knowing that you are taking the correct steps to secure your financial future.
+- Spend some time writing: letters, emails, PR releases or hellos expressing what you're creating and how they can be part of it.
+- This is the time to set intentions to cultivate healthy routines and daily habits which support your nervous system and overall well-being.
+- In a world full of demands, it can be tough to find the balance between being productive and taking care of your mental health.
+- Surrendering to the unknown and trusting in your own resilience allows you to move forward a little bit wiser and better prepared for what lies ahead.
+- Set intentions to meditate, deepen your relationship with your Higher Self and prioritize your spiritual and emotional wellness.
+- It is important to trust your intuition and take time to reflect during this period in order to gain knowledge and find meaning.
+- The more you learn about Spirituality and life’s mysteries, the more you realize just how much there is to discover.
+- While this energy can help you think things through, it can also lead to emotional and mental exhaustion if you aren’t practicing awareness.
+- Set the intention to tune into your inner frequency and take a moment to listen; you have access now to the wisdom of lifetimes.
+- On a cellular level, you all hold memories of each of the lifetimes you have ever experienced as well as the lifetimes we one day are going to experience.
+- Tuning into a future lifestyle frequency allow you to see what lies ahead you are better prepared to change the conditions that pave the way.
+- Visualize yourself embracing your individuality and breaking free from societal norms as you explore your unique identity.
+- Here are some prompts to get you started: Exploring Your Role in Humanitarian Causes: Take some time to reflect on your values and how they align with humanitarian causes.
+- Write about any challenges you have faced in aligning your actions with your values, and brainstorm ways to overcome them.
+- Write about any challenges you have faced in accepting and using feedback, and brainstorm strategies for handling it in a positive and productive way.
+- Write about any obstacles or challenges you have faced in pursuing your aspirations, and brainstorm ways to overcome them.
+- Balancing Independence and Collaboration: It's important to find a balance between our need for independence and autonomy, and our desire for collaboration and teamwork.
+- As a result of the Aquarian energy, you are being encouraged to consider the most effective ways in which you can have a profound impact on your community and on the world.
+- With these energies in mind, be mindful of how you can make the most profound impact on your global and local communities.
+- This majestic sign reminds us to live from the depths of our hearts, to unearth our passions, and to wholeheartedly pursue the paths that ignite our spirits.
+- This celestial energy ignites the flames of self-expression and encourages us to wholeheartedly share our authentic selves with others.
+- It invites us to bask in the joy of creation, to dance with uninhibited passion, and to generously offer our creative contributions to the tapestry of existence.
+- Let us be generous with ourselves and others, and remember that creativity, passion and play is a vital part of our being.
+- This will help us sustain the positive changes we are working towards and navigate these tumultuous times with greater clarity and grace.
+- Trust in the journey and let your daily practices be a source of stability, helping you to navigate the present moment with grace and ease.
+- Remember the warmth and generosity of the sun, and seek to bring those qualities into your own life as you cultivate strong, loyal relationships that inspire and fuel you.
+- Take this opportunity to set intentions that align with your heart's desires and move forward with passion and purpose.
+- If you have yet to keep track of your monetary situation, or things have gone out of control, you will be pushed to review what you value and what brings stability.
+- If you can find a way to use this gift without diminishing or devaluing the importance of the situation, you will be a healing bridge.
+- It encourages stillness, inviting you to immerse yourself in the cosmic tapestry, transcending mere physical existence.
+- It reminds you that you are an embodiment of love and beauty, destined to return to that divine essence once your time in physical form is complete.
+- The experience of flowing with the emotional current can have you feeling elevated or pulled under, depending on your journey and evolution.
+- It is a time of profound introspection and spiritual growth, as the Universe invites us to confront and release any fears or doubts that we have been evading.
+- This period calls for courageous confrontations with your fears and doubts, fostering a space for their release and transformation.
+- It's crucial to be mindful of the temptation to indulge in self-pity, depression, or addictive behaviors as a means of avoiding your emotions.
+- Remember that you have the ability to connect with the spiritual realm and tap into your inner resources for healing and growth.
+- It is a realm of mystery and introspection, where we can explore the mysteries of the universe and the mysteries of our own being.
+- It is a time to turn inward, to meditate and contemplate, and to trust in the wisdom of the cosmos as you embrace a new beginning.
+- We originate from a place of love and beauty, and will return to that when our time here in physical form is complete.
+- As you navigate the end of a cycle, you are called to reflect on your past actions and to take responsibility for the rewards and consequences that come with them.
+- Rather than beginning something new, this is a time to reconnect with our inner being, look within and heal any wounds we have been carrying.
+- Learning to tune in to this language will open doors to better understanding - your thoughts and emotions, the cosmos around us, and our connectedness to the world.
+- We are all mystics at heart; if you tap into your inner resources, you can begin living with a much richer understanding of your true nature.
+- The act of actively processing our journey of what didn’t materialize helps us realize what space to set intentions to call in something new.
+- This experience of flowing with the emotional current can have us feeling elevated or pulled under, depending on where we are in our journey and evolution.
+- Embrace this dialogue with your subconscious, as it holds valuable insights and messages for your personal growth and understanding.
+- Be aware of the tendency to wallow in self-pity or depression or indulge too deeply in addictive behavior to avoid your feelings.
+- Should you find it difficult to manage the intense energy, seek support from people and places that provide a sense of comfort and understanding.
+- If you find yourself lacking inspiration, slow down your mind and allow the creative energy of the Universe to flow through you.
+- All the wisdom you’ve gained in your journey is ready to be shared and taught to others with humility and a willingness to listen and learn from others as well.
+- That’s liberating and will loosen any tension that’s been building in your family and blocking your creative expression.
+- A cosmic shift in perspective and environment is inviting you to embrace a new daily routine, filled with healing vibrations and inspired by the power of this celestial event.
+- This is your call to self-care, prompting you to explore nurturing techniques like practicing resilience to better cope with stress and difficulty.
+- If you find yourself resisting, start by takings steps to cultivate self-worth and adjust any misconceptions that you have about trusting yourself.
+- Visualize yourself embracing your emotional depth and spiritual connectedness as you delve into your innermost thoughts and feelings.
+- Write about any patterns or themes you have noticed in your emotional responses, and how you have navigated them in the past.
+- Write about any challenges you have faced in understanding and expressing your emotions, and brainstorm strategies for overcoming them.
+- Write about any challenges or obstacles you have faced in connecting with your inner self, and brainstorm ways to overcome them.
+- Embracing Your Vulnerability: It can be difficult to open up and be vulnerable, but doing so can lead to deeper connections and a greater sense of self-awareness.
+- Exploring Lucid Dreams: Lucid dreaming is the ability to become aware that you are dreaming while you are still asleep.
+- Oppositions help us recognize the delicate balance that's needed in our lives and in our relationships in particular.
+- Think of this moment as an opportunity to bring awareness to which areas of your life need more attention, analysis, and organization.
+- This is a good week to celebrate any of your siblings' and your social-media accomplishments (especially if you're in marketing).
+- Even if you're currently in a relationship, you can use the lessons and experiences from your past to create something even more beautiful in the present.
+- By doing so, you'll be able to make the necessary changes to improve your overall well-being and be more present in your daily life.
+- You can do this by talking to a trusted friend or therapist or even journaling your thoughts and feelings to gain clarity.
+- As you set your intentions for the next six months, challenge yourself to explore what a fulfilling, harmonious relationship looks and feels like for you.
+- It's time to trust in the power of transformation and allow yourself to be open to new experiences and perspectives.
+- This lunar energy encourages you to expand your horizons and explore new ideas, beliefs, and philosophies that resonate with your authentic self.
+- Release any social conditioning or limiting beliefs that have held you back from fully embracing your spiritual path.
+- Meditation and introspection are powerful tools for accessing your inner wisdom and connecting with your higher self.
+- These feelings can stem from old patterns and limiting beliefs that keep you stuck in the same place, rather than moving forward towards your full potential.
+- As you engage in this process of exploration, ask yourself what type of community resonates with your soul's purpose.
+- It's crucial to surround yourself with individuals who inspire and uplift you, and to release any connections that hold you back.
+- Meditation and journaling can be powerful allies during this time, providing a pathway to connect with your inner guidance and intuition.
+- As you reflect on your past experiences and the lessons they hold, it's important to approach this process with a sense of compassion and self-love.
+- It can be particularly helpful when you are trying to plan and seeking guidance on what to expect in the early part of a new year.
+- Take the time to organize your thoughts, to listen to the whispers of your soul, and to speak your truth with care and consideration.
+- This is an opportunity to take a step back and look at your habits, routines, and relationships and see where you need to make changes.
+- It's time to examine your trust issues, childhood wounds, and other unhealthy behaviors holding you back in relationships.
+- It can help illuminate the patterns of commitment and abandonment that have been playing out in your life and offer insight into the lessons you need to learn from them.
+- Thanks to them, you have the focus and dedication to maintain consistency in order to move closer to your manifestation and be of service to others.
+- Blocked Message: A message from your Spirit Guide/Loved One has been trying to send you, that you have not received or been receptive to in the past.
+- She encourages us to take the time to understand the subtle nuances of our emotions and to work on healing and unlocking any blockages that may be holding us back.
+- It's a time for introspection and reflection on memories from your journey, where you may struggle with acceptance or fear and rebel against the new cycle ahead.
+- If you’re looking for a powerful must-have item to help with protections, purifications, and even spiritual baths, look no further than salt.
+- Without proper boundaries, you risk prioritizing the needs of others at the expense of your own, often in the hope of feeling accepted and loved.
+- Perhaps there are some changes occurring in your home and family situation right now, or you are assessing what provides you with a sense of comfort and security.
+- As you discover more about yourself, you might be wondering if your current work situation honors all these different parts.
+- You may be receiving downloads of information from past lifetimes or ancestral lineage, or trauma that needs to be healed and cleared.
+- With each new beginning, we are asked to release unfinished business, draining distractions from the past, which must be neutralized before the new cycle's manifestation.
+- You may discover hidden information about your child or receive recognition for a creative project you've been working on.
+- You may be called to create new boundaries, let go of toxic relationships, and to focus on self-care and inner growth.
+- Acknowledge your resources – Take a moment to reflect on all of the resources that you have available to you, whether they be financial, emotional, or physical.
+- You could be seeing some changes to your home and family situation right now, or assessing what provides a sense of comfort and security, emotionally as well as physically.
+- You may find that your health, work, and daily routines are changing as new information challenges and evolves stuck patterns.
+- If you feel like you’re underwater, there may be a habitual pattern that’s creating resistance within you, avoiding slowing down and getting the rest you need.
+- Forgive yourself for any generational conditioning that may have been passed down to you, and for any past mistakes.
+- You may receive downloads of information from past lifetimes/ancestral lineage and the trauma that needs to be healed, cleared, and released.
+- You could be seeing some changes to your home and family situation or re-assessing what provides comfort and security.
+- If you’ve been obsessing too much about your health or work, it could be causing too much stress, and now you need to recalibrate and refocus your awareness.
+- You may be receiving downloads of information from past lifetimes or ancestral lineage, a trauma that needs to be healed and cleared.
+- Why not dive into texts or discussions that could provide insights, or simply meditate on the question and listen to your own intuition?
+- Fear can sometimes be an insidious force, working its way into your life and stopping you from living your fullest potential.
+- Often, at this time, the Universe will ask you to work through childhood memories that may be hindering your advancement.
+- This may involve setting aside time for self-care, listening to your body's cues for rest and nourishment, and following your instincts even when it feels uncomfortable.
+- If you want to be successful, whether it means achieving your goals or creating a healthy, fulfilling life, you have to believe that you are worth it.
+- You could be seeing some changes to your home and family situation right now, or assessing what provides you with a sense of comfort and security.
+- Forgiving and Letting Go: Take some time to forgive your mother for any mistakes or missteps she may have made, and express this forgiveness in writing.
+- Or, you could be being forced to mature out of the mere fear or resistance to change that you’ve been holding onto for too long.
+- This may involve setting healthy boundaries, engaging in self-care practices, or finding ways to express your creativity and individuality.
+- You may be receiving downloads of information from past lifetimes or ancestral lineage, trauma that needs to be healed and cleared.
+- New information that was previously hidden may be surfacing that disrupts our stability and security, but also offers opportunity to heal and find connection again.
+- New information previously hidden may be surfacing that disrupts your stability and security but also offers an opportunity to heal and find connection again.
+- You may introduce new technology into your home or the home of your parents and family members to help connect more and simplify day-to-day life activities.
+- During this time, you may want to reflect on questions such as: How do I balance being of service with taking care of myself?
+- Unlike your usual social nature, you may feel like being alone now, tending to the illusions or misinformation that has been revealed at work or at home.
+- As you journey through the ebb and flow of the month, the balance between rest and rejuvenation and movement and activity may come into focus.
+- Or, we may uncover a hidden strength in a connection that we previously undervalued, encouraging us to nurture it further.
+- Reflect on Relationships – Reflect on your relationships and identify areas where you may need to work on creating balance or harmony.
+- You might also notice changes in your home and family situation during this time, or you may be evaluating what brings you comfort and security.
+- You may receive downloads of information from past lifetimes or ancestral lineage, the trauma that needs to be healed and cleared.
+- You may be spending time reflecting on your relationship choices and when the lack of boundaries left you feeling drained, emotionally and financially.
+- You may receive downloads of information from past lifetimes or your ancestral lineage, and it's time to clear up any spiritual or emotional debt holding you back.
+- To get to this place of compassion, we may first need to move through some deep Scorpionic rage and anger over some injustice and abuse of power.
+- This is a time of introspection, where you may discover new aspects of yourself and question how they fit into your work.
+- Uncovering Hidden Aspects: Consider the hidden aspects of your personality that you may need to confront and transform in order to grow and evolve.
+- Dig deep into any fears you might have about following your gut instincts, especially if it means going against the opinions of others.
+- If you struggle with releasing toxic relationships, you may seek therapy or self-care to help set healthy boundaries and heal from previous poisonous relationships.
+- You may be helping others acknowledge the roles that prejudice, bias, and stereotypes play in society and work towards collectively rejecting these false narratives.
+- You may find yourself building relationships out of fear, but it's possible to create healthy and supportive connections.
+- You may receive downloads of information from past lifetimes or ancestral lineage, a trauma that needs to be healed and cleared.
+- You may be exploring the various contradictions and conflicts within yourself and what you need to feel happy and stable in your home life.
+- During this time, you may be thinking about making changes to your living situation, such as moving or renovating your home.
+- You may find yourself questioning whether all aspects of yourself are being honored and acknowledged in your current work.
+- You may be feeling a sense of loss or uncertainty, but this is a time to tap into your spirituality and intuition for guidance.
+- You may be receiving messages from past lives or ancestral lineage, and it may be a time for healing and clearing trauma.
+- It's an opportunity to look back on the choices you've made and to reflect on how fear-based or scarcity-driven thinking may have influenced them.
+- Your health, work, and daily routines may be getting changed as new information comes through to challenge and evolve stuck patterns.
+- As life changes, you can become entrenched in fear and anxiety over the loss of what has been or the opportunity cost of what could have been instead.
+- The more you bring your whole self to each moment - your joys, fears, messiness, and vulnerabilities - the more access you have to your strength.
+- Perhaps you're discovering new connections with your community through your work or a new exercise regimen, providing a pathway toward harmony and healing.
+- Through stillness and silence, you can tap into the wisdom of your higher self and gain insights into the patterns that may be holding you back.
+- As you navigate this time, you may find yourself reassessing your home and family situation, questioning what truly brings you comfort and emotional security.
+- You may feel creatively stifled, and recent events may have created a loss of self-confidence, making you feel small.
+- You may be receiving downloads of information from past lifetimes/ancestral lineage and the trauma that needs to be healed, cleared, and released.
+- Dreaming with greater awareness can also help develop intuition and reveal hidden knowledge (even about yourself); it may also allow communication with others.
+- We may experience pain, loss, and uncertainty, but the phoenix will always rise from the ashes and breathe new possibilities into seemingly impossible circumstances.
+- Take a moment to check in with yourself and set those boundaries that will help you to maintain your equilibrium.
+- You can also pour sea salt around the area, sweep it up, and discard it outside your home.
+- Take a moment to reflect upon the ones you hold dear and ask yourself: "Are we in alignment?
+- You can also shift your daily commute to the office to incorporate a hybrid or fully work-from-home instead.
+- Remember to be kind and compassionate towards yourself as you work through this process.
+- This is a time to organize our day-to-day lives and to create healthy routines and boundaries.
+- This is a time to reclaim the parts of ourselves that we have abandoned out of shame and pain.
+- This is a time to focus on creating a sense of security and stability in your life, especially within your home.
+- Consider seeking support from a trusted friend, therapist, or counselor to help you work through these challenges.
+- Take time to set healthy boundaries, let go of anything that no longer serves you, and reclaim your power.
+- Take a moment to focus on balance and create rituals that nourish your body, mind, and spirit.
+- With commitment to your intentions, synchronicities begin to unfold, results materialize, and habits form.
+- Embrace your fears and doubts, and use them as a catalyst for brainstorming, conversation, and progress.
+- When confusion clouds our mind, we lose sight of our worth, our path, and our intuition.
+- To overcome this inner demon, remember that you are in control of your mind, emotions, and will.
+- As an alternative for hyssop, you can also use star of anise, basil, rue, rosemary, and/or sage.
+- In your pot, heat spring water, honey (taste first), roses, herbs, and spices until it simmers.
+- What you believe shapes your thoughts, behavior, and ultimately, your outcomes in life.
+- Take time each day to unpack how you want to show up.
+- Love, pleasure, relationships, children's creativity, and self-expression are at the forefront for you.
+- Consider how you can tell your truth more fully.
+- She has the power over the cycle of the tides, and our emotional currents, manifestations, and growth cycles.
+- When we look at the sky, it looks blue, it is actually all colors, and reflects back a light wave of blue.
+- It's a time for self-reflection and to reconnect with yourself, your lifestyle, your goals, and what matters most.
+- Take time for yourself each day to restore and reflect.
+- This month is about reconnecting to your resources, finances, security, and self-worth.
+- You’re reviewing your love and romantic life, what brings you pleasure, creative inspiration, and admiration.
+- Themes of trust, manipulation, deepening or widening intimacy, and shared resources are consuming you now.
+- You are being consumed by themes of trust, manipulation, deepening or widening intimacy, and shared resources now.
+- You are constantly bombarded with messages - from the news, arts, friends, family, strangers, and social media.
+- It reminds us to enjoy the earthly pleasures of our senses through taste, touch, sound, and sight.
+- It's important, to be honest, and open about your needs, so you can communicate more effectively.
+- You can set intentions to pursue knowledge, religion, higher education, adventure, and travel.
+- If you're feeling depleted, anxious, or overwhelmed, give yourself permission to step away.
+- Now is the time to make your mark.
+- Beginning are full of surprises, ups, downs, and turnarounds, but it is your unique journey.
+- You can think of place, person, animal or thing, that bring you a sense of comfort and safety to help with this.
+- Now notice what sensations, colors, textures, images, or anything else that arises when you focus on this area.
+- In any case, you will likely focus on finding the truth and meaning in how you feel, what you do, and how you live.
+- Look after yourself, and you’ll see returns that translate into a richer, healthier, and fuller life.
+- Be creative, daring, and open-minded, and allow yourself to make mistakes and learn from them.
+- Meditate, take walks in nature, find space to nurture yourself, and get out of your mind for a bit.
+- Children, art, music, dance, and anything that gives you an outlet for self-expression is calling to you now.
+- If you're looking for a new perspective on your relationships, past, and present, turn to astrology.
+- You may have recently moved or need to move closer to family.
+- This could be a time when your family needs you more than ever before.
+- Others might consider you selfish for focusing as much on yourself right now.
+- Returning to an old hobby or joyful pastime could help lift your mood.
+- Clarity may come in time, but for now, focus on your creative expression.
+- You may find yourself presented with unexpected opportunities and chance encounters.
+- You may find yourself offering to help build strength within your local community.
+- Returning to an old hobby or enjoyable pastime may lift your spirits.
+- You may have tried to fit yourself into your business/career.
+- This may be a more emotional time than usual, as dreams, creativity, illusions, and loss surround you now.
+- This may be a time when your emotional needs are being renegotiated.
+- You might also include symbols that represent your intentions or desires.
+- Clarity may come in time, for now, focus on your creative expression.
+- This may be a more emotional time than usual; dreams, creativity, illusions, and loss are surrounding you now.
+- Sometimes, your mind can become cluttered with stress and overwhelming thoughts.
+- You may feel like you’re not being acknowledged now, but this is passing.
+- Perhaps you prefer to switch careers to focus more energy on your family.
+- We may be experiencing sudden and shocking events that trigger core wounds.
+- We often find ourselves struggling to stay in control of our lives.
+- Communication can sometimes be challenging for your shy and reclusive nature.
+- This may also be a time when your emotional needs are being renegotiated.
+- For now, set your compass internally and tend to the emotions arising.
+- We tend to see what helps us get along with others instead of the truth.
+- You may experience extreme emotional upheavals that come in waves.
+- You may discover that you desire to socially connect with others through art.
+- Sometimes even the most resilient among us can get scared just like everyone else.
+- We may come face to face with our feelings of loneliness, abandonment, and rejection.
+- Traveling helps give you perspective in situations that may feel clogged and stifled.
+- This may require integrating your ability to think practically and outside the box.
+- You may be called to explore the mystical and magical aspects of your spirituality.
+- Stay open, be still, and surrender to the wisdom and healing that may come to you.
+- Your needs may clash if you're in a close relationship with someone.
+- Often times you attract those in desperate need of what you are.
+- Or, you might feel a stronger connection to the collective at this time.
+- We may be facing abusive or disempowering situations that suddenly feel intolerable.
+- We may realize that we can no longer continue in this old version of ourselves, and a new path must be made.
+- Past lovers may come back, igniting a spark that you thought had past.
+- You might also want to consider connecting with nature and spending time outdoors.
+- You may have more responsibilities as you mature into your career.
+- It could lead you to create a beautiful and inspiring story worth telling.
+- In the process, you may face old wounds or fears around change.
+- You may also deepen your connection with a loved one and experience more intimacy.
+- Traveling may help you gain some perspective and inspiration.
+- Maybe you're already in the process of embracing a new hobby or reexploring old ones.
+- Now might be the perfect time to reconnect with what lights you up.
+- Our memories can often hold onto more than just the good times.
+- Sometimes, when you least expect it, an old issue from the past can be awakened.
+- Your deepest desires may be nurtured in these realms of discovery and growth.
+- Notice places of tension or discomfort where you might be holding it.
+- We may feel unsure of which way to turn, stuck and unable to move forward.
+- It may seem challenging at first, but it will set you up for success in the long run.
+- You may be holding traumatic experiences in your subconscious.
+- If you're an introvert, this may be especially important for you.
+- You may be struggling, seeking to understand the greater meanings of life, asking questions like, "what is life?
+- Sometimes the most meaningful connections are with our Higher Self and Self.
+- You may also be exploring novel forms of study or ideas that expand your mind.
+- You may find your newest ally as soon as this lunar cycle wanes.
+- We may find ourselves revisiting old patterns we thought we had already shed.
+- It’s sometimes easier for you than most others to make light of situations.
+- Sometimes life has a way of making you feel lost in the dark.
+- The Universe asks you to face what you may have been avoiding.
+- The Universe asks that you face what you may have been avoiding.
+- You may also be discovering who is a true friend and partner to you.
+- Tend to your health and daily habits while seeking the change you desire.
+- You might be seeing projects you’ve been working on start to solidify and manifest.
+- Often we either need to negotiate, compromise, and find a happy balance.
+- We often need to negotiate, compromise, and find a happy balance.
+- Perhaps you find yourself struggling with fears of commitment or abandonment.
+- The path may not always be easy, but trust in yourself and your abilities to create the life you envision.
+- It may encourage us to focus on building self-confidence, but it may not come easily.
+- Rather than seeking guidance and knowledge, we may feel that we have to figure everything out on our own.
+- You may find yourself stuck in patterns of codependency and unhealthy power dynamics.
+- You may also be revisiting habits from the past that have caused pain or isolation.
+- This is a time to focus on creating a space for emotional security and stability, particularly within the sanctuary of your home.
+- This is a time to focus on creating a visually pleasing and harmonious living space through cleaning and decluttering your home.
+- Take time to reflect on any debt or shared resources holding you back, and take steps and address how you can free yourself from these obligations.
+- This is a time to address sleep issues and burnout by providing yourself with the rest your body requires, as everyone's needs are different.
+- This is a time to focus on the emotional needs that drive you and the role your home plays in fulfilling those needs.
+- This is a time to explore the reality and depth of intimacy in your relationships, community, and the health of your boundaries.
+- Take advantage of this time to bridge any gaps in your relationships with your siblings and work towards a more harmonious connection.
+- This is a time to break free from the confines of your comfort zone and explore your passions and dreams with reckless abandon.
+- This is a time to break free from the constraints of our comfort zones, to push ourselves beyond our limits and chase our passions and dreams with wild abandon.
+- Take time to reflect on any debt or shared resources that are holding you back, and take steps and address how you can free yourself from these obligations.
+- Take time to clear up any spiritual and emotional debt from the past year, and then focus on what you want to call in.
+- Consider any patterns or themes you have noticed in your emotional responses, and how you can work to better understand and manage your emotions.
+- Take some time to reflect on how you cope with loss and grief, and what strategies have been helpful for you in the past.
+- This is a time to consider deepening your understanding of the mystical and occult, exploring hidden knowledge and spiritual practices.
+- In this world of constant distraction, survival mode, and fight or flight responses, it is easy to overlook the magick that surrounds us in everyday life.
+- By following along, you will learn how to invoke magick, tap into your intuitive mind, and discover the boundless potential of your spirit in human form.
+- The Sun is the Universal light and cosmic Source that shines down, nurturing our souls, creativity, and intentions in an outpouring of cosmic life force.
+- This is the realm of social interaction, where we learn about the evolution and dissolution of relationships, philosophies, and ideals.
+- For business, it can represent a time when you focus on communication — public relations, marketing, teaching, speaking, and writing.
+- It symbolizes emotional mastery, inner-strength, and trust; the power of being in tune with your inner creative flow, where time seems to stand still.
+- For business, this is a time to focus on the partnerships in your career: business partners, advisors, investors, and one-on-one services provided.
+- In this way, the Chaldean Planetary Order organizes time into planetary hours, days, and weeks, aligning us with the cosmic flow and the energy of the celestial deities.
+- The reasons for suffering are desire, passion, and our, pursuit of wealth and prestige, striving for fame and popularity, or in short: craving and clinging.
+- We can find attachments everywhere: to our accomplishments, to identities based on how others see us, to our occupation, to where we live, to what kind of car we drive.
+- Create a ritual, an intimate ceremony, to honor your intention and speak it aloud, or keep it within the sacred space of your heart.
+- If you process visually, picture yourself in your mind's eye, at the helm of your thriving business, and the impact it has on your community.
+- Set your intentions for a grand vision, and plan for your life, for example, having a business that gives you the flexibility and financial freedom you desire.
+- Trust that in time, your intentions will grow and expand, just as a tree takes its time to sprout, grow roots, reach towards the sky.
+- After performing your ritual, set aside time to take action towards your intention, monitor its progress, and look for signs of movement.
+- Some of the most challenging critics and distractions can come from those closest to you \- parents, spouses, friends, siblings and co-workers.
+- It's an invitation to nurture and cultivate our talents, desires, and relationships, just like a sunflower reaching upwards towards the sun.
+- These relationships can be with family, partners, lovers, business associates, and anyone who brings emotional and financial support and security into your life.
+- These events encourage us to explore our inner thoughts, feelings, and desires, helping us understand ourselves and our life goals better.
+- It's an invitation to nurture and cultivate your talents, desires, and relationships, and to share your talents and abilities with the world.
+- Breathe your intentions for connecting with your Higher Self, celebration, or releasing, stating “I release \_\_\_\_,” into the glass jar of water.
+- From herbs and spices, to kitchen essentials such as salt and sugar, to food items like fruits and vegetables, these items can be used in various ways to enhance your rituals.
+- The more you commit to yourself in the next six months, the more you’ll see your investments, income, and self-worth grow.
+- Foreign cultures, places, and higher learning are calling for you, and you will find some of your deepest desires nurtured in those realms.
+- Friends, community, and networking with others are opening for you at this time, so engage with your community to see where your gifts can be offered.
+- You possess the power to create your reality, and that can start with being intentional with your thoughts, feelings, and who you surround yourself with.
+- When you practice self-love, honesty, and self-care, it builds trust within yourself, which can help create more trust and harmony in your relationships.
+- When you can find harmony between the two, you can create relationships full of respect, love, growth, and fulfillment.
+- Observe your daily rituals, routines, and habits, for they hold within them the potential for profound transformation.
+- Cultivate abundance – Consider focusing on fostering abundance in all aspects of your life, including financial prosperity, fulfilling relationships, and personal development.
+- This is great if it’s been moving you in a positive direction, but also know that any secrets, addictions, or underhanded behavior will also come to light soon.
+- Keep showing up for yourself and believing in your talents, and your beauty, compassion, and creativity will be seen.
+- It’s possible you’re beginning preparations to celebrate the growth of your family: engagement, marriage, baby shower, and the birth of a newborn.
+- Remember, when you are in flow with the Universe, you are constantly guided towards a life built on truth, your greater and true happiness.
+- We gather to clear energy, raise energy, gain clarity, set intentions, process symbols, and connect with nature, the Divine, and our Higher Self.
+- This is when you are most likely to be introspective, thinking deeply about your values, place in the world, and purpose.
+- By questioning our fears, limiting beliefs, and habits, we can free ourselves from old survival responses that prevent us from living our true, authentic lives.
+- This is a powerful time to embrace gentle, energetic practices such as Qi Gong, Yoga, and Tai Chi, as they can revitalize and inspire you.
+- It is said that when you allow kundalini energy to flow into the higher chakras (i.e., throat, third eye, crown), you can experience the divine energy of the heart chakra.
+- Figure out what you value most, and find a way to allow yourself to receive emotional connection, love, physical support, and abundance.
+- It's a celestial invitation to learn from our experiences, opening doors for healing, breakthroughs, and fresh directions of awareness.
+- Your emotions, much like the waves, crest and crash upon the shores of your being, urging you to surrender to their transformative power.
+- We seek what truly nourishes us, no longer seeking distractions that keep us separate from our emotions, Spirit, and Self.
+- We gather to clear energy, raise energy, gain clarity, set intentions, process symbols, connect with nature, the Divine, and our Higher Self.
+- The more you commit to yourself and take action in the next six months, the more you will see your income, investments, and self-worth grow.
+- Remember, the more you commit to yourself and take action in the next six months, the more you will see growth in your income, investments, and self-worth.
+- The friendships and networks in your life can encourage you to change or avoid unhealthy lifestyle habits, such as excessive spending, drinking, or lack of exercise.
+- Just as the celestial Sun shines upon the cosmos, infusing it with life-giving energy, our hearts reflect that brilliance, becoming the center of our own personal universe.
+- In this state of relaxation and self-assurance, you can engage with yourself and others in a calm, curious, and playful manner.
+- With an open heart and courageous spirit, you can navigate any challenges that arise, heal old wounds, and manifest your creative visions.
+- We can all draw from their courage and trust that no matter what comes our way, we are capable of handling it with grace, poise, and dignity.
+- Then, express gratitude for the role he played in your life, whether as a father figure, authority figure, or provider.
+- Through art, you can explore your inner self, cope with difficult situations, resolve inner conflicts, or express internal joys.
+- This past year has been very challenging for you and has you questioning spirituality, philosophy, fairness (or lack of fairness of life), and if there is Divine logic.
+- By relinquishing toxic and unproductive situations, we can achieve significant progress, inviting greater ease, efficiency, and acknowledgment into our lives.
+- By relinquishing toxic dynamics, we create an environment characterized by enhanced flow, efficiency, and recognition.
+- It is a time to clear energy, gain clarity, set intentions, and connect with nature, the Divine, and our Higher Self.
+- Over the next six months, you will experience significant shifts in your daily routine, physical appearance, and long-term goals.
+- If you're feeling blocked or restricted, art is the perfect creative outlet to help release stuck thoughts, energy, and emotions.
+- Let this be an opportunity to reflect on your previous experiences and how they impacted your physical and emotional health, beliefs, behaviors, and relationships.
+- It is an opportunity to evaluate our relationships, partnerships, and the way we interact with others, seeking equilibrium and harmony in our connections.
+- With this new perspective, we are more likely to cultivate connections that are marked by mutual respect, shared values, and a balanced interchange of love and support.
+- Just as you fall in and out of love with others, your relationship with yourself also needs nurturing, levity, honesty, balanced communication, and support.
+- Embrace your humor, charisma, and optimism, and set an intention to magnetize love and new opportunities for connection into your life.
+- As we strive for balance and harmony in our connections with others, let us approach this journey with curiosity, non-judgement, and kindness.
+- Through this process, we unlock our potential, tap into our authentic power, and create a ripple effect of transformation that extends beyond ourselves.
+- In the second phase, you enter a state of not-knowing, a Zen-like state where the most power, joy, and healing can be found.
+- Ancestral Connection – Connect with your ancestors, either through meditation, journaling, or other rituals that feel meaningful to you.
+- It does this for us, in service to us, so that we can accept both shadow and light, and continue to grow towards our highest potential.
+- This process is ongoing, and it is in this space that you are invited to be introspective, to ponder on your values, your place in the world, and your purpose.
+- As you connect and align your physical self with nature, the natural laws, ebbs, and flows of the Universe, you can more fully trust in the unfolding of life.
+- Anything arising right now is to help you break through disharmony and find stability, health, and being in balance, and service.
+- When you let go of the things you're holding onto so tightly, you open yourself up to new experiences, ways of thinking, and ways of living.
+- If you are mindful of what energy you are putting out, you can create a balance of harmony, abundance, and gratitude in your life, allowing them to thrive.
+- By getting lost in curiosity, you'll gain a deeper understanding of the world around you and, in return, a deeper understanding of yourself.
+- Speak with intention and clarity, and know that your words can bring connection, peace, joy, and the power to speak out against injustice.
+- Your third House of communication will be energized, which bodes well for conversations, contracts, and negotiations.
+- With a blend of discipline, courage, and foresight, we can create a pathway towards success, regardless of how cold or dark it becomes.
+- All this, while ensuring you persist on an uphill trajectory, propelling you toward a future ripe with growth, learned lessons and the promise of greater maturity.
+- The experience of eternal winter gifts us the wisdom of responsibility, practicality, determination, budgeting, and planning.
+- With patience, contemplation, and observation, you can make small changes in your daily routines which can add up to create an impactful transformation.
+- Imagine you’re tuning your own frequency to the frequency of Love, Health, Ease, and Abundance and allow those qualities in as well.
+- With the focus on these two natural oppositions, you are being asked to reflect on your emotional needs, relationships, and your ability to connect with others.
+- When you are healthy, happy, and balanced, you are more likely to be able to focus on others and not get pulled in too many directions.
+- As you traverse the path downwards, a new purpose arises—to share your hard-earned wisdom with your community, children, and the generations to come.
+- Embrace the role of a mentor, a guide, and a torchbearer as you illuminate the way for others, instilling the seeds of progress and transformation.
+- Let your insights flow like water, enriching the lives of those you encounter, and together, let us create a future shaped by wisdom, innovation, and collective progress.
+- With focus and willpower, you have the ability to craft whatever it is you want in life - whether it be physical, emotional, or mental.
+- Yet, when you take ownership of your decisions and rely on your own intuition and judgment, you build self-reliance, security, and ultimately self-reliance.
+- Your unique imprint shapes the way you create and shape your life, driven by a profound longing to be seen, accepted, loved, and appreciated.
+- Your professional and personal life experience, failures, knowledge, and wisdom holds great power and is medicine for those in your family and community.
+- It can be a challenge, but there are lifestyle systems, spiritual practices, and tools to help you - take time for yourself to find and use what works best for you.
+- When Aces surface quickly, in all three piles, it suggests tremendous positive, energetic support for your intention.
+- As you learn more about yourself, the information you find out unlocks an underdeveloped skill that, if refined, can help you with your career.
+- It governs our early education, our ability to navigate swift journeys, and our connection to our community, siblings, and neighbors.
+- It symbolizes merging of the spiritual and mundane worlds, discovering our purpose, mindfulness, moderation, the balance of passion and reason, and cultivating patience.
+- This house symbolizes the merging of these two worlds, encouraging us to discover our purpose, practice mindfulness, and strive for moderation in all aspects of life.
+- Strength can also suggest a time of connecting with animals, inviting a new pet to your home, possibly fostering a pet, or volunteering at a rescue.
+- You may find yourself sourcing inspiration from your past experiences, such as trauma, pain, ancestry, and culture, to create your present and future.
+- We may also be getting a maturity upgrade, which could manifest as taking on more responsibility in some of the areas of health, home, work, or authority issues.
+- You may also be getting a maturity upgrade, which could manifest as taking on more responsibility in health, home, work, or more authority in your life.
+- Conversely, you may also encounter frustrations stemming from a lack of recognition, appreciation, or validation for your creative work.
+- Our body awareness and intuition are heightened, calling us to tend to our triggers with curiosity and compassion, instead of impulsivity, aggression, and disconnection.
+- On the other hand, if you've been obsessing too much about your health or work, it could be causing too much stress, and it's time to recalibrate and refocus your awareness.
+- Sometimes, out of fear of being alone, we may be inclined to engage in behaviors that are jealous, vengeful, or manipulative in order to get what we want.
+- Although you may experience a sense of loss or disappointment, more opportunities will show up for you to learn, grow, and expand beyond your comfort zone.
+- You're discovering just what you need in life, work, and relationships to help you feel secure, and for Scorpios, trust, and security can often be challenging.
+- This area of life represents your home, family, and emotional security, and it's where crucial changes may be happening at this time.
+- Take a moment to reflect on how you respond and feel when receiving something.
+- This is a time to revel in your achievements and fully embrace the present moment.
+- This is a time to take the lead and take control of your own story.
+- Use this time to connect to your spiritual and artistic side.
+- Take time to realign with your values for the sake of your emotional well-being.
+- This is a time to put your energy into tangible projects and skills.
+- Remember to be kind and compassionate towards yourself as you explore these themes.
+- Remember to be specific and focus on what you truly want to manifest.
+- Take a moment to step outside, feel the soil between your toes.
+- You can also include any forgiveness or understanding that you feel is necessary.
+- This is a time to be seen and to have your voice heard and respected.
+- Take a second look at what you committed to in your investments.
+- Consider what you've learned, the experiences you've had, and the people you've met.
+- Take time to connect with your intuition and tap into that creative flow.
+- Take a moment to contemplate how your family history has shaped who you are today.
+- Take a moment to appreciate your family's journey and take stock of your own.
+- Take time to nurture and strengthen your connections with others.
+- This is a time to reflect on our relationships and examine the balance in them.
+- Take some time to pamper yourself and appreciate the beauty within and around you.
+- This is a time to reassess your relationships, career goals, and personal identity.
+- Remember to focus on taking care of yourself and to be mindful of your own needs.
+- Use this as an opportunity to grow closer to those you care about.
+- You can also tell yourself you're okay with a noncommittal partner.
+- Take some time to reflect on what you want to call to fill the space.
+- Use this time to reflect on the deeper aspects of yourself and your relationships.
+- Remember to take care of yourself and seek out support as needed.
+- Take time to journal, meditate, or pray if you need quiet time.
+- Take a deep dive into understanding who you are and why it matters.
+- This is a time to connect with your inner wisdom and let it guide your journey.
+- Make sure you're making wise choices from a place of abundance and security.
+- Take advantage of this opportunity to grow and expand your horizons.
+- Try exploring a new approach if you feel stuck in your creative projects.
+- Remember to think outside the box to take your career or business to the next level.
+- Take a moment to reflect on the things that bring you peace and a sense of security.
+- Make sure that you are in charge of your life and values system.
+- Take some time to reflect on your inner self and your spiritual journey.
+- Use this time to examine your diet, exercise routine, and self-care practices.
+- Now is the time to release these old patterns and embrace your true capabilities.
+- This is a time to be patient and mindful with your words as they carry great power.
+- May these ancient symbols bless your rituals, and may the elements themselves aid you in your sacred endeavors.
+- It warns against struggles with moral issues, obesessions and temptations that could impede your freedom.
+- Often, we may respond positively on the surface, but internally we may feel unworthy or have imposter syndrome.
+- This may be when you feel a strong desire to take control of your life and steer it in the direction you desire.
+- Sometimes it's easier to be more compassionate to those in your intimate relationship than yourself.
+- It could be the perfect opportunity to switch jobs or make changes within your workplace.
+- For you, it may signal the end of a career path, clearing the way for a needed shift in career direction.
+- It may reveal if you are clinging too tightly to certain possessions or feeling a lack of abundance.
+- It may also uncover how your material possessions impact your self-worth and sense of security.
+- This is a good time to take a careful look at areas where you may be sabotaging yourself.
+- If you're feeling depressed, tackling tasks and addressing serious matters might feel overwhelming.
+- You might also be thinking about exploring inner conflicts around what you need to feel happy and stable.
+- This could be a time of focused and emotional discipline to remain dedicated to your current journey.
+- Perhaps you are finding that your people-pleasing behavior does not create a win-win situation.
+- If you're partnered, now is a time to look at any areas where integrity may have been lacking in your relationship.
+- This question might eventually lead you to take on a new career path, or a promotion in your current one.
+- New Moons often mean beginnings and planting new seeds, and it is time to set your intentions.
+- Maybe a new version of yourself is being birthed, and a reorganization in your external world is underway.
+- By doing so, you will be able to reintegrate parts of yourself that you may have abandoned.
+- If you're feeling stuck, ask yourself where you might be avoiding or denying the truth in your emotions.
+- Friendships may be changing, and you might find yourself working with groups that are new and different for you.
+- No time is wasted, even if you feel like you may have lost months/years on something that recently ended or ended.
+- You may feel a deep sense of longing or yearning for something that feels beyond you right now.
+- Tend to the areas of your daily life that feel unclear, and ask yourself what they are teaching you.
+- It warns against struggles with moral issues, obsessions, and temptations that could impede your freedom.
+- Conversely, you may be caught in a whirlwind of intense emotions, rendering clear expression difficult.
+- This question might eventually lead you to take on a new career path or maybe even a promotion.
+- This is also a time to release any triggers from this life or past lives that may be holding you back.
+- You might consider traveling to a new place, trying new foods, or learning a new language.
+- Whatever pillar of your day-to-day life feels unclear, tend to it and ask yourself what it's teaching you.
+- We often carry with us the generational conditioning of our ancestors without realizing it.
+- You may start a business that helps the world innovate with new technology and progressive ideas.
+- Intense feelings about your own worth and value may cause temporary emotional conflict.
+- Sometimes it's easy to get stuck in your head - overthinking and questioning yourself.
+- Stay focused on what’s working in your projects and relationships, and gently tend to what’s not working.
+- You may have had a challenging relationship with your mother, family members, or motherhood itself.
+- Traveling helps give you perspective in situations in your life that may feel clogged and stifled.
+- Maybe you prefer not to have children and find fulfillment in other areas of your life.
+- Sometimes, it just takes one person to remind you of who you are and what matters most.
+- We may come face to face with some social injustices and/or core wounds that are needing attention.
+- It could also mean that there’s a big positive breakthrough happening in these areas of your life.
+- If you feel more disconnected than usual, the root of this distancing could lie in a traumatic event.
+- Simultaneously, we acknowledge the pursuit of perfection that may bring forth challenges.
+- You often struggle with feeling secure, so this time gives you the courage to affirm your sense of worth and value.
+- You may come face to face with how much you subconsciously depend on others to feel validated.
+- Perhaps where you thought you were going isn’t exactly working out and your plan needs revision.
+- You could find yourself confronted with disappointment, hopelessness, and frustration as these illusions crumble.
+- There may be some difficult emotions and unresolved issues you are forced to confront.
+- Sometimes it can be hard to stay motivated and focused when life throws challenges your way.
+- You may get clear about projections and illusions surrounding a person or specific situation.
+- Change can be a good thing, and that's especially true for your relationships and network groups.
+- It may feel like it's been years since you've had your old sense of fearlessness and adventure.
+- You may be feeling intense emotions about your worth and value, which could lead to temporary emotional conflict.
+- You may lend a listening ear to your partner but then judge and criticize yourself for feeling emotional.
+- During this time, you may also find that you're focusing on balancing your personal needs with the needs of others.
+- Your manager may need more training, resources, or desire to invest in your career development.
+- It may be a matter of learning how to communicate and express what support means to you.
+- You may feel overlooked and hurt and question everything about the situation, including your self-worth.
+- Anxiety may flare as a result of this energy that is guiding us towards something new and undiscovered.
+- You may be considering what brings you comfort and stability, both emotionally and physically.
+- Confronting Fears: Reflect on your fears and how they may be holding you back from growth and transformation.
+- You may also be noticing that the people you cultivated relationships with aren’t as supportive of your healing.
+- Everyone doesn’t need to change at the same pace as you do, but often people don’t change at all.
+- If you desire to grow, you could discover that the other person in your relationship is committed in their ways.
+- This may be when you can make a difference in the lives of others by volunteering your time and skills.
+- Take this time to reflect on what these stories might be and how they will shape your experience going forward.
+- It is important to identify any thoughts, beliefs, or feelings that may be holding you back.
+- You may not be able to control your destiny, but you can control your thoughts and emotions.
+- Your wallet might be expanding or shrinking this month, depending on how well you've planned financially.
+- Power dynamics may arise in your relationships, asking for changes and deeper examination.
+- You might be entering a relationship, moving in with your partner, or taking on a business partner.
+- If you have joint finances, this could be a great time to discuss how they're organized.
+- Perhaps try some gentle energy practices like Qi Gong, Yoga, and Tai Chi to help you revitalize and inspire you.
+- We often ask why bad things happen in the world and if there is a higher power that could prevent them.
+- Sometimes it's easy to get stuck in our heads - overthinking and questioning ourselves.
+- You may feel unsure of how to do this, or you may feel stuck or resistant to this shift.
+- It's a time to be true to yourself and speak your truth, even if it may be different from others.
+- That raise you've been wanting, or the business you've been working on, could be becoming a reality now.
+- Trust in the universe and the timing of it, even if the path may not be as glamorous as you would like.
+- That might feel counter-intuitive to your adventurous nature, but we all need comfort.
+- You may also be assessing what provides you with a sense of comfort and security, both emotionally and physically.
+- Trust in the process of building and strengthening your emotional foundation, even when it may test your patience.
+- It can make your life feel impossible to navigate, often afraid to let anyone get close because of it.
+- It may be helpful to explore new practices such as Qi Gong, Yoga, or Tai Chi to increase your energy and vitality.
+- You may come face to face with how much you unconsciously depend on others to feel validated.
+- Perhaps you find yourself eager to uncover the truth and wisdom behind the mysteries of life.
+- This introspection may lead you to explore new career paths that align with your true self and passions.
+- You may also be seeing progress in projects that you have been working on and manifesting them into reality.
+- Trust in your purpose and hold it in your heart, regardless of the challenges you may be facing.
+- It may be a time of challenge, as we confront areas where we feel we have not yet succeeded.
+- When we find ourselves meandering off course, we may struggle to find solid ground beneath us.
+- You may have grown accustomed to following society's rules and put your need for physical contact and comfort last.
+- You may be very interested in deepening your understanding of the world around you and the universe beyond it.
+- If you're in a career that you're happy with, you could be getting a promotion or going into business.
+- Perhaps you have no idea what you want, and you need to take this time to discover your values.
+- Anything that doesn’t align with our truth may suddenly break away, exposing the rebel within.
+- You may come face to face with some social injustices and/or core wounds that need attention.
+- This energy may make you feel alienated or on the fringe of society with your unique looks, ideas, and values.
+- Circumstances may suddenly change, and your perspective on reality might shift in uncomfortable ways.
+- You may even feel the desire to delve deeper into the topics of philosophy, publishing, or law.
+- It may also be helpful to let go of negative thoughts or self-doubt that may be hindering your performance.
+- You may come across conflicts with others about different perspectives or creative differences.
+- Any conflicts arising may force you to take even more responsibility and allow you to excel in your field.
+- It encourages healing from any emotional or physical challenges you may have encountered along your journey.
+- Be mindful of any uncomfortable situations that may trigger past traumas or you may be currently experiencing one.
+- Your emotions might be all over the place as you receive new information and try to integrate it into your reality.
+- Lending a hand to others may also help you find temporary relief from the pressures of the outside world.
+- You could start by cooking meals together, taking walks, or simply having open conversations.
+- You might reflect on past relationships as you re-evaluate what brings you creative and emotional fulfillment.
+- You may discover that some modifications need to be made to enhance your physical and emotional well-being.
+- These feelings may stem from past experiences or a lack of trust in yourself or others.
+- This is an invitation to take time to reflect on any debts or shared resources that may be holding you back.
+- Under the influence of this lunar energy, you may find yourself facing fears of impostor syndrome or self-doubt.
+- While this might not be a time to take action, it is a time to review your self-brand.
+- You could feel many emotions, both the highs and lows of your accomplishments and failures hitting you all at once.
+- You may find yourself questioning your priorities and reevaluating your spending habits.
+- You may also hear information about exs (lovers, friends, etc.) that can bring light to past relationships.
+- You may consider returning to a previous study, place, or faith to re-find yourself and your purpose.
+- Take a moment to be thankful for the lessons you've learnt and become aware of every moment as a learning experience.
+- Try to organize your daily life so that you receive human connection every day without having to purposely reach out for it.
+- This could be the year when the veil between the mundane and the mystical is lifted, and you are able to tap into the otherworldly forces that shape our reality.
+- By familiarizing yourself with the influence of the planets and understanding their domains, you may tap into the power of the cosmos.
+- It may be that you are unaware that you can use the energies of the planets to imbue your manifestations with added force.
+- By synchronizing your manifestations with the cosmic currents, you may ride the "astrological weather" to give your intentions added momentum.
+- Trust that this change, no matter how difficult it may seem, ultimately aligns with your soul's purpose and is for your highest good.
+- Reflect upon your thoughts, feelings, and beliefs on manifesting and ask yourself how you might open yourself up to the flow of abundance in your life.
+- As you embark on your manifestation journey, honor your inner voice and listen to any doubts or fears that may be holding you back.
+- If you have difficulties receiving, you may not realize how to witness and step into opportunities as they present themselves.
+- Remember, if you are thinking it, the seed is there \- it simply may need nurturing and many lunations (moon cycles/time) to grow.
+- You may fall into the trap of societal group thinking, facing criticism, doubt and unsolicited advice that can steer you away from your path.
+- Because of the onset of lessons they bring, this could be a time of rapid transformation in your life or perhaps a leap forward into something entirely new.
+- Eclipses are a time to face an ending — possibly one you’ve been hoping to avoid — because change comes all the same, no matter how tightly you hold on.
+- These points, often considered our spiritual compass, are powerful markers representing the past we’ve inherited and the future we’re striving towards.
+- It represents the path of least resistance, indicating behaviors that are easy for you but may not bring further rewards.
+- If we remain firmly rooted in our South Node, we may find ourselves stuck in repetitive patterns, missing the lessons and growth the universe has prepared for us in this life.
+- Trust that this change, no matter how difficult it may seem, is for your highest good and aligns with your soul's purpose.
+- If you're seeking help setting proper financial goals, it may be beneficial to seek the guidance of a mentor or financial advisor who can provide direction and assistance.
+- You may be reassessing how secure you feel financially, and take this time to see what steps you need to take to create more of a supportive financial foundation.
+- It can also be a time for illuminating communication, information, and gossip that you may have previously been unaware of.
+- It may reveal any misconceptions or inaccuracies in the information you have been receiving, and if you are being mislead by others.
+- It is often associated with wealth and mastery of talent, and can be used to help manifest these things in your life.
+- This exercise can also reveal which months or zodiac seasons (during the New and Full Moons) you may want to delve deeper into with rituals.
+- You may feel as though you're starting from scratch in some areas of your life, but the month calls you to embrace your strength and authority.
+- Embrace this opportunity, step into a new version of yourself, make a change and explore the possibilities of what could be.
+- If you allow yourself to be influenced by others, acting out of alignment with your authentic Self, you may experience friction and roadblocks.
+- It's possible that this is a time in which you're being asked to tend to multiple projects at once and to engage multiple talents.
+- If you grew up feeling like your voice didn't matter, it could be hard as an adult to remember that your words have power.
+- It’s possible you may realize a shift in your values and beliefs, or realize that you have taken on the views of others that are misleading you of your fulfillment.
+- Understanding the Timeline of Ritual and Spell Results It's important to note that although a ritual or spell begins working immediately, you may not see results right away.
+- You may also want to consider any challenges or obstacles you have faced in pursuing your dreams, and brainstorm ways to overcome them.
+- If you're seeking help setting proper financial goals, it may be beneficial to seek a mentor or financial advisor who can provide direction and assistance.
+- Though it may be uncomfortable, trust that this time will create space for you to manifest the life you truly desire.
+- If you feel stuck, take the time to look inside and get to the root of any issues you may be facing with the support of loved ones and self-compassion.
+- This may include your level of higher education, spiritual practice, and the balance between passion and reason in your life.
+- Remember that the universe may be conspiring in your favor and be careful what you wish for, as you may be limiting yourself.
+- Although things in your career may unfold unexpectedly, the relationships you establish will help guide you through any obstacles.
+- Many of us need support now, and it's possible that we may see a sudden change in our circumstances and perhaps government support finally coming through.
+- While these intentions and techniques can help, remember to tend to the daily physical reality, and keep yourself and your loved ones safe and feel loved and supported.
+- You may feel inspired to create more structure in your community; by identifying a need; that, if corrected could bring more flow and harmony within your local community.
+- Family might need more from you than usual, and this may trigger old wounds, but also help you heal and break free of old limitations.
+- What you thought gave you security, may not be so anymore as you learn to access your deeper inner resources to pull you through challenges.
+- Other cultures, and traveling helps give you perspective in situations in your life that may feel clogged and stifled.
+- You may realize a shift in your values and beliefs or realize that you have taken on the views of others that are misleading you of your fulfillment.
+- You could also be feeling a sense of relief after expending energy into an area of your life; and once the shock abates now that you release what couldn’t be fixed.
+- You may also want to consider any challenges or obstacles you have faced in creating a stable and secure environment for yourself and brainstorm ways to overcome them.
+- Persistently pose this question to yourself, especially during the challenging phases that might occur over the upcoming weeks.
+- As you navigate this transformative phase, may you find the clarity that you seek and the courage to reinvent your life.
+- Embrace any resistance you may feel towards supporting yourself and engaging in your passion projects, as it holds valuable lessons for you.
+- You might feel hesitant to lay bare your emotions, seeking shelter behind a protective barrier to avoid vulnerability.
+- You may also be thinking about moving and exploring the various contradictions and conflicts within yourself around what you need to feel happy and stable.
+- What did my soul come to learn this lifetime?” You are looking for greater meaning in the mundane world of the day-to-day, perhaps through something spiritual.
+- You may also want to consider any challenges or obstacles you have faced in connecting with others and brainstorm ways to overcome them.
+- Perhaps it taught you about your emotional needs, giving you a clearer understanding of what you value in a relationship.
+- These might be internalized beliefs about your abilities, preconceived notions about what you can achieve, or even fears about stepping outside of your comfort zone.
+- This could be your chance to read books about it, talk to people from there, learn the language or even plan a future visit.
+- This is also an excellent time to communicate and clear up any misunderstandings or falling-outs you may have had with your siblings.
+- If you hold the reins of your emotions too tightly, you will be pent-up and rigid; if you hold the reins carelessly, you might lose control.
+- Power dynamics may force you to look inside yourself and access that well of inner power and strength you may not have known you have.
+- Rewriting Difficult Memories: Write about a memory where you feel your mother could have done things differently, and then re-write the memory with a more positive outcome.
+- Set an intention to release any limiting beliefs or behaviors that may be preventing you from achieving this balance.
+- Emotions surrounding family, healing between family members, it's also possible this is a time when your family could need more for you.
+- Perhaps create a list and see where you can introduce new structures to help you organize and automate your day-to-day to streamline and optimize your time.
+- You may haven't defined your values or beliefs and have taken on the views of others that are misleading you of your fulfillment.
+- No time is wasted - even if you've been reflecting on the past few years and how, perhaps, you feel like you haven't accomplished what you set out to do.
+- May we radiate our unique light and love, illuminating the world around us and igniting the flame of divine consciousness.
+- This may involve setting clear goals and taking small steps towards achieving them, or seeking out new opportunities that align with your passions.
+- You may find yourself organizing or taking part in or organizing a community art fair, play, or an event for children to bring the community together.
+- Or, maybe you’re unwilling to reflect on a part of yourself that creates conflict and disharmony in your relationships.
+- You may often think about how to be a source of Strength for others but forget about the importance of taking care of yourself.
+- You may haven't defined your values or beliefs and have taken on the beliefs of others that are misleading you of your fulfillment.
+- Perhaps you have no idea what you want, and you need to take this time to listen to your heart and reconnect to your core values.
+- You may also want to consider any challenges or obstacles you have faced in being true to yourself and brainstorm ways to overcome them.
+- We may also look within to explore why we feel smothered and if we can respond by opening up and connecting if it feels safe.
+- This also means that we may have the determination and persistence to keep working through challenges to grow and gain deeper connections.
+- It's important to find grounding ways to take care of ourselves, or we may easily become overwhelmed by our nervous system.
+- Sometimes, your ability to defer gratification and commit to long-term goals can have you keeping to a decision that isn’t materializing to its greatest potential.
+- Take the time to listen and be heard, and you'll find that understanding can often lead to healing and building a stronger community.
+- Emotions will surface surrounding family and healing between family members; it’s also possible this is when your family could need more of you.
+- May we find clarity and organization in the midst of the chaos, as we continue on our journey of growth and self-discovery.
+- We may have been forced to confront uncomfortable truths and realign ourselves as a result, or perhaps we're still grappling with deep heartache and questioning reality.
+- During this time, we may find ourselves oscillating between feelings of disorganization and organization, as we seek stability within the rise and fall of the emotional waves.
+- It's also a time to pay attention to the ways in which we may be giving too much of ourselves and feeling drained and unappreciated as a result.
+- Tap into your instincts and trust your inner wisdom – This might involve spending time in nature, meditating, or journaling to connect with your inner self.
+- This is also a good time to communicate and clear up any misunderstandings or falling-outs you may have had with your siblings.
+- If a change is in order, then start planning carefully and strategically as there may be positive material rewards in it for you.
+- You appreciate attention to the details when it comes to all these things, and now could be a time when you bring your vision to reality.
+- You live in the sea of bliss and creative inspiration and when it comes to relationships sometimes reality can feel too overwhelming or messy.
+- Sometimes change can be difficult for you, but now’s a time for you to stretch past your comfort zone and broaden your horizons.
+- The external world might feel like an overwhelming mess, but this will pass; you’ll be back to your charming self in no time.
+- You may also want to consider any challenges or obstacles you have faced in your journey towards self-improvement, and brainstorm ways to overcome them.
+- If you lack the necessary tools to navigate and process these emotions, you might find yourself in a state of denial or engaging in addictive behaviors as a means of escape.
+- This introspective journey may lead you to gain clarity regarding the projections or illusions you held about a person or situation.
+- This process may reveal uncomfortable truths about your own actions and choices, more so than you might be willing to admit.
+- Dreams may be more vivid at this time as the subconscious communicates with you, revealing the deeper truths of your being.
+- This may involve finding alternative ways to relax and unwind, seeking support from friends or a therapist, or engaging in activities that bring you joy and fulfillment.
+- It starts with being gentle and forgiving with yourself especially with the parts of you that you may prefer to hide away.
+- This can be a challenging process, as it often means swinging to opposite extremes and experiencing the discomfort of conflict and not getting exactly what we want.
+- She reveals to you the desires of your heart and how you might best manage and fulfill them, as well as the ways in which you approach and maintain connections with others.
+- Reflect on Patterns – Reflect on any patterns or behaviors that may be holding you back from achieving harmony and balance in your relationships.
+- You may feel a sense of tension as you try to figure out how best to present your new vision of yourself to the world.
+- You may find yourself feeling particularly energized and enthusiastic about sharing information and knowledge with others.
+- You may be feeling the urge to make changes to your living space, whether that means moving, redecorating or simply decluttering.
+- It's possible that your family may need more from you than usual, which could bring up old wounds but also allow you to heal and move beyond old limitations.
+- You might see new relationships open up as others come to a close, and it's important to trust in the natural cycles of endings and beginnings.
+- Being in connection with another may remind you of this, whether it’s birthed out of a deep connection or a lesson of disempowerment.
+- Any unhealthy or abusive behaviors within yourself or from others need to be let go of, or you may experience some shocking moments which will force transformation.
+- Stay connected to what feels true for you, and maybe even try on a few different “truths” to see which one resonates most for you.
+- This may include giving people too many chances to hurt you, even when they have shown a pattern of unhealthy behavior.
+- It may also include perceiving your partner's bad behavior as a reflection of yourself and feeling like you need to change in order to be loved.
+- You may also want to consider any challenges or obstacles you have faced in maintaining healthy relationships, and brainstorm ways to overcome them.
+- Finding inner peace and creating harmony with others is often a struggle, but with the right attitude, you can create the balance you need to be successful.
+- If you're feeling particularly sensitive, avoid situations or people that might cause unnecessary conflict and instead focus on your own needs.
+- It encourages you to assert and express yourself and may bring awareness to your struggle regarding your appearance, self-esteem, and personality.
+- This sometimes means advocating and loving yourself more than you were raised to, seeing yourself, and fighting for yourself in the ways you want others to defend and see you.
+- Philosophy is often seen as complex and challenging, but it can be one of the most helpful tools to understand yourself and the world.
+- If you're feeling stuck in your life, it might be time to break up with the worn-out values and ideologies holding you back.
+- You may take a break from a significant friendship or network of friends; to give yourself distance from a challenging dynamic.
+- Over the next several weeks, we may be faced with our deepest and darkest desires and urges, and how we respond to them will shape the course of our future.
+- As you go through this process of transformation, you may initially experience shock and disruption to your foundation and outer world.
+- Your emotions may guide you towards solitude, but this can be a valuable chance to gain insight into your inner emotional process and feelings.
+- It may be a time when you are called upon to support your family more, which may also bring up past issues, and it may trigger old wounds.
+- It is possible that you may receive insights or information from past lives or your ancestral lineage, or be prompted to heal and release past traumas.
+- You may also want to consider any challenges or obstacles you have faced in your journey towards self-discovery and transformation, and brainstorm ways to overcome them.
+- This may involve spending time in nature, observing the beauty and majesty of the oceans and rivers, or finding ways to incorporate elements of nature into your daily life.
+- You may reassess how financially secure you feel and take this time to see what steps you need to take to create more of a supportive financial foundation.
+- At this time, your family members may require more of your attention, and you have the chance to empower them to develop skills to become self-sufficient.
+- By attempting to fix your family member's problem, you may deprive them of the opportunity to take responsibility for their own and your family's happiness.
+- If you have been projecting negative thoughts on your profession or feel overwhelmed - this could stem from an overactive mind and negative mental chatter from stuck energy.
+- You'll be more focused on the bigger picture of your job and may experience a few bumps in the road this time as you find your footing.
+- You may find purpose in motivating your community/network to collectively lift individuals up from their position of disadvantage.
+- Each choice you make propels you to a new destination - sometimes you choose to revisit a path, and other times somewhere unexpected.
+- There may also be some shift in your romantic life, having you reflect on your values and how much you value yourself in life and relationships.
+- This may be when you're renegotiating your emotional needs, and it's important to remember that all relationships require to give and take.
+- You may come face to face with how much you depend on others for validation, and it's important to let go of any unhealthy or abusive behaviors within yourself or from others.
+- What you thought gave you security may no longer serve you as you learn to access your deeper inner resources to navigate challenges.
+- You may also want to consider any challenges or obstacles you have faced in your journey towards self-discovery and growth, and brainstorm ways to overcome them.
+- After careful consideration, you may decide it is time to make a significant change, such as leaving a job or ending a relationship.
+- You may also want to review and edit any writing or other projects you have been working on during this time of reflection and communication.
+- You could be going through a transformation of Self; becoming more self-aware, and seeing yourself in an entirely new light.
+- You may be reassessing how secure you feel financial, and take this time to see what steps you need to take to create more of a supportive financial foundation.
+- As you grapple with complex and challenging topics, may you hold them with grace and compassion - for yourself and those you engage with.
+- Maybe you've been working on a big creative project and discover you need to try a new approach – a new medium, a new class, or a new hobby.
+- It's an opportunity to take stock of your relationships - the ones that are strong and balanced and the ones that may be out of balance or lack commitment.
+- You often spend long periods reflecting on your past and present, trying to make sense of the pieces to build something better for your future.
+- You often struggle with feeling secure, so this time gives you the courage you need to affirm your sense of worth and value.
+- Your family may need more from you than usual, and this may trigger old wounds, but it can also be an opportunity for healing and breaking free of old limitations.
+- The things that you once thought brought you security may no longer hold the same weight, as you learn to tap into your deeper inner resources to guide you through challenges.
+- The power dynamics in your life may force you to look within yourself and tap into that inner well of power and strength that you may not have known existed.
+- By setting an intention to strengthen your spirituality, new opportunities and paths may open up to you, bringing more light and understanding to your personal journey.
+- What did my soul come to learn in this lifetime?" You seek greater understanding and meaning in the everyday world, possibly through a spiritual lens.
+- Opportunities for building new friendships, expanding your community, and finding support from others may present themselves now.
+- It's important to stay focused on what is working in your projects and relationships and to address any issues that may not be working.
+- Friendships and social connections may also be shifting, and you may find yourself working with groups that are new and different for you.
+- You may also want to consider any challenges or obstacles you have faced in your journey towards success, and brainstorm ways to overcome them.
+- It might mean recognizing which people and situations have been emotionally draining you and not making you feel nourished on the deepest levels.
+- You might feel nostalgic for a time in your life when you experienced nurturing love or other powerful feelings of belonging.
+- You may also reflect on intense emotional attachments to important figures in your life who are now absent or have passed away.
+- You might be committing more deeply to a partnership, moving in together, or working through parent/family dynamics.
+- You might be taking your creative works, expanding past your local community, and reaching an international one now.
+- It may also include formal schooling or learning from other mentors, teachers, or from a significant relationship in your life.
+- What did my soul come to learn this lifetime?" You look for greater significance in the mundane day-to-day world, perhaps through something spiritual.
+- Perhaps you're making significant advances in your creative career or working through releasing some recent disappointments.
+- You may also find yourself in intensely uncomfortable situations that bring up past traumas, or you may be experiencing one.
+- You may decide to make changes in your self-image; get into shape, lose or gain weight, or visit an optometrist or cosmetic surgeon to make changes in your appearance.
+- Write about any conflicts you may have encountered between your values and your actions, and how you have navigated these challenges.
+- As the world around us shifts and changes, it is important to find ways to discharge the excess energy that we may be feeling, whether it be excitement or anxiety.
+- It may also be helpful to let go of unhealthy habits, such as overindulging in alcohol or unhealthy foods, or engaging in activities that drain your energy.
+- It may also be helpful to let go of negative patterns of behavior or communication that may be causing conflict or dissatisfaction in your relationships.
+- If you navigate these tense moments from your shadow, you might destroy these precious gifts you’ve been cultivating.
+- Perhaps you desire to connect with groups with a more humanitarian vision or focus on a grander global vision of connection and support.
+- Any mental stress or confusion you may be dealing with will pass, but it also lets you know which areas of your life need readjustment.
+- If you've been struggling with health issues lately, it might be a sign that it's time to retreat and focus on yourself.
+- As a result, our perception of information may become muddled, and we may find ourselves viewing the world through a lens of fantasy.
+- If you've been feeling stuck in a monotonous cycle, your thoughts may have become stagnant, and you may be in need of a refreshing jolt of energy.
+- You might be changing location and communities, or realizing that the community and friendships you’re in aren’t in alignment with your values.
+- While it might not feel comfortable, it brings your awareness back to yourself and you can take this time to focus on your own needs.
+- As you journal about your experiences with lucid dreaming, you may gain a deeper understanding of your subconscious mind and your own potential for growth and self-discovery.
+- Start this journey by clearing out any physical or spiritual ‘clutter’ that might be holding you back from achieving your goals and creating space for new blessings to arrive.
+- Under the influence of this lunar energy, you may feel a sense of heightened awareness around your relationships, both positive and negative.
+- You may need to address and take steps to free yourself from these obligations to move forward in a more empowered and expansive way.
+- This suggests that the outcome may be positive, but you may need to reconsider the type of ritual, or your approach.
+- New information might come through that is painful to hear, encouraging you to review past choices and make more mature choices in the present and future moments.
+- This can be a challenging time as our usual ways of thinking and communicating may be disrupted, and we may feel a sense of disconnection from ourselves and our sense of self.
+- Focus on the positives and use them as a guide - and keep in mind, sometimes sh*t just happens, regardless of the efforts you had put forth.
+- You may be called to scale back or cut out unnecessary memberships or subscriptions, as you shift your focus to the things that truly matter to you.
+- This transit may bring about a flurry of new information that may shake up your reality and leave you feeling a bit scattered.
+- Family might need more from you than usual, which may trigger old wounds, but also help you heal and break free of old limitations.
+- It may be a challenging time, as we may find it difficult to tap into our inner wisdom and we may struggle with self-doubt.
+- It may be difficult to be compassionate to yourself, and you may find yourself judging and criticizing yourself for feeling emotions.
+- This may include finding balance between our passions and reason, and cultivating patience as we navigate this time of introspection and self-discovery.
+- This transit may bring about a sense of feeling trapped in our current circumstances, and may lead us to question our own beliefs and moral values.
+- Turn to your spiritual practices and faith to help guide you through any challenges that may arise during this time.
+- We all need a little extra support sometimes, or it's possible some project, tasks, and life goals can only be achieved by a group effort.
+- It may be a time of fresh beginnings and new opportunities, but it's also a time to be humble, listen to others, and accept the lessons you must learn.
+- This is a time to practice self-compassion and self-care and to nurture and cultivate the light within us.
+- This is a time to examine your personal brand, how you present yourself, and how it aligns with your inner truth.
+- Consider how your surroundings and relationships with others are impacting your mental clarity and well-being.
+- This is a time to be mindful of the thoughts and ideas you are allowing to influence how you see the world.
+- Take a moment to reflect on whether the things you care about align with what truly matters to you.
+- You can also add herbs, essential oils, or other magical ingredients to the water to enhance its properties.
+- It is a good time to share these ideas with others because networking will be successful for you now.
+- Be sure to take that creative energy and use it on something that you can offer others.
+- Consider how you are expressing yourself and how it is being received by those around you.
+- Use this time to figure out which direction you want to take in your career and move forward.
+- This is a time to set the intention to align your career with your core values and interests.
+- This is a time to break out of any routines that have held you back, try new things, and cultivate patience.
+- Take time to reflect on how you want to show up in the world and what kind of story you want to tell.
+- This is a time to be mindful of your needs and to take concrete steps to fulfill them.
+- Remember to be grateful for the abundance that you already have, and to share it with others when possible.
+- Make sure that whatever you put your energy into, it aligns with your values and is building toward your future.
+- Use this as a time of celebration and embrace all that you are, your transformations, and your strength.
+- Consider the instance of a past relationship that ended in heartbreak, leaving you with lingering emotional wounds.
+- Take some time to sit with the question of what you can release in your life to create more space and abundance.
+- Take some time to reflect on your beliefs and values and consider whether they are still serving you.
+- This is a time to prioritize your mental, emotional, and physical health over the next six months.
+- Use this time to figure out which direction you want to be heading in with your career and move forward.
+- This is a time to set intentions to call-in people and moments that bring you contentment and fulfillment.
+- Take some time to reflect on your family dynamics in your journal and see what insights come up for you.
+- Consider what you can release or let go of in order to create more balance and harmony between these two energies.
+- Consider how the structure you have created supports or undermines your emotional well-being.
+- This is a time to set intentions for a full makeover of your identity and how you want to meet the world.
+- Consider how you are expressing yourself and how it’s being received by those around you.
+- Make sure that whatever you put your energy into, aligns with your values and is building toward your future.
+- Use this time to appreciate the people, places, and experiences that helped you on your journey.
+- This is a time to trust your intuition and be open to receiving messages from the universe.
+- Take a moment to reflect on your lifestyle and find the balance that works best for you.
+- Take a moment to visualize your relatives as children and send them compassion and love.
+- Consider what you can do to improve communication, cooperation, and understanding with others.
+- This is a time to be proactive and to make conscious choices that align with your goals and values.
+- Remember to take care of yourself and to invest in the people and things that bring you joy and comfort.
+- This is a time to consider how you identify with these areas of your life and how they shape you.
+- This is a time to let go of any self-doubt or insecurity and embrace your unique talents and gifts.
+- Remember to take care of yourself and to stay connected to what brings you joy and fulfillment.
+- Remember to focus on your own needs and to create a self-care regimen that helps you feel grounded and energized.
+- This is a time to assert your needs and to set the intention to be compensated for your efforts.
+- Now is the time to take stock of what you have and what you need to create a sense of security and belonging.
+- Remember to recenter yourself and connect with your element, water, when things get overwhelming.
+- Consider exploring your family history and learning more about the people who came before you.
+- Consider any healing, like new buds blossoming, you've been able to achieve in this area of your life.
+- Take time for your creative gifts and relationships, as they will bring nourishment to your soul.
+- Take a moment to reflect on the connection you have with yourself and how you show up in your relationships.
+- Take a moment to reflect on your own personal power and how you use it in your relationships.
+- Consider the visions and goals you have for your future self, and what steps you can take to move closer to them.
+- Remember to keep a dream journal and document your dream symbols, feelings, and impressions.
+- Take some time to reflect on your ancestors and the role they have played in your life.
+- This is a time to release your fears of failure and success and the pressure you place on yourself.
+- Now is the time to take a look at your life and ask yourself what your greater purpose is.
+- Take some time to think about the power of creative energy and how it can transform your life.
+- Use this asset to keep you clear, centered, and focused as you reflect and regenerate.
+- Consider what steps you can take to embrace change and uncertainty in your journey towards growth and exploration.
+- Take a moment to reflect on your most deeply held values and how they are perceived by those around you.
+- This is a time to fine-tune your social media presence (or altogether remove yourself from specific platforms).
+- Take some time to think about what mountains you want to climb and what outcomes you want to achieve.
+- Make sure your mind stays focused on the positive, even for short moments throughout the day.
+- Take time to reflect on your communication style, and trust in the power of your intuition to guide you.
+- Consider ways to share your passions and interests with others through creative and writing projects.
+- Consider how your relationship with yourself and others has expanded over the past year.
+- Use this time to figure out which direction you want to head in with your career and move forward.
+- Consider setting intentions to commit to your career and support your professional growth.
+- Make sure you're open to feedback and collaboration (it will help you refine your ideas).
+- Consider what you believe in most strongly and how you can align your actions with your values.
+- Take some time to reflect on your approach to receiving feedback and how you use it to learn and grow.
+- Remember to be gentle with yourself as you embrace the transformative energy of this lunar phase.
+- Take time to define and realign your values, which is critical to your emotional well-being.
+- Now is the time to set intentions that align with your desire for personal growth and well-being.
+- Take time to reflect on what you truly want and need from a healthy, happy relationship.
+- This is a time to re-organize and restore order to unbalanced aspects of your daily life.
+- This is a time to disconnect from the constant chatter in your mind and focus on your well-being.
+- This is a time to heal the relationships in your life; especially the relationship you have with yourself.
+- Consider seeking the guidance of a therapist or coach to help you work through any challenges you may be facing.
+- By completing this exercise, you can see which areas may require more attention, ritual, or development.
+- Perhaps learning gentle, energetic practices like Qi Gong, Yoga, and Tai Chi may help revitalize and inspire you.
+- Changes in your status, responsibilities, or direction may arise, and may seem confusing at first.
+- Remember to start small, as the power of intention and alignment with the lunar cycle will guide you on your path to manifesting your desires.
+- Take time to meditate and connect with your inner self to understand what it is that you truly wish to manifest in your life.
+- Remember to keep your intention succinct, written in the present tense, and to refer back to it regularly to stay focused and committed to your manifestation process.
+- Take a few deep breaths and center your thoughts, this will clear your mind and set the scene for your visualization.
+- This is a time to confidently step into our power and take control of our lives, while also developing a positive self-image and taking responsibility for ourselves.
+- This is a time to reflect on if your sense of self is dependent on external factors or if you have a strong sense of self-regardless of what you possess.
+- Consider how invested you are in the communities you belong to and whether they nourish your sense of belonging and purpose.
+- Take a small pinch of iron shavings, which are magnetic and draw your intention to you, and a drop of honey to 'sweeten' your offering after taking a small taste.
+- This is a time to focus on setting limits, respecting yourself and others, and learning how to navigate difficult conversations.
+- Take time to manage any anxiety that arises from not being in control of your loved ones and any challenges they face.
+- Use this opportunity to boost your confidence in your love life and examine any buried emotions holding you back from fully embracing your power.
+- This is a time to align your career and ambitions with your core values and interests and to redefine your sense of purpose and mission in life.
+- This is a time to step firmly into your authority and power, cultivating a healthy self-image and personal responsibility.
+- Take some time to reflect on what changes you would like to make and set the intention to embrace or release control as needed.
+- Now is the time to reevaluate your financial foundation and identify the steps you need to take to feel more secure.
+- This is a time to advocate for yourself and become comfortable with being seen and having your magick felt by others.
+- Take a moment to reflect on the activities that distract you and take steps to empower yourself by reclaiming the real estate in your mind.
+- This is a time to release any resistance to integrating parts of your unique personality into your public-facing career persona.
+- Take some time to reflect on the things in your life that you are grateful for and set the intention to cultivate an attitude of gratitude.
+- Take some time to reflect on your passions and interests and consider how you can align your actions with your higher purpose.
+- Take a moment and see what activities bring you the most distraction, and take steps to empower yourself - reclaim the real estate in your head.
+- This is a time to let go of any inhibitions and allow your inner child to lead the way toward creative expression and self-discovery.
+- Remember to offer kind words of appreciation to yourself and others, and to take the time to create more order and structure in your life.
+- Take time to connect with your emotions and be vulnerable and open as you immerse yourself in the magic of the cosmos.
+- Use this special time to reflect on your relationships, discover what makes them unique, and find ways to connect through play.
+- This is a time to examine the balance in our relationships, and to ensure that our needs and wants are being met in a way that is fair and equitable for all parties involved.
+- Take time to meditate, journal, or practice other forms of self-reflection to help you stay centered and grounded during this time of heightened focus on relationships.
+- This is a time to dig deep and unearth your deepest desires and to be honest with yourself about what you truly want and need.
+- Remember to be open-minded to others’ ideas and perspectives, and to seek out feedback and input to further refine and develop your own ideas.
+- This is a time to reassess the relationships and groups you are a part of and ensure that they are supporting and uplifting you.
+- This is a time to expand your spiritual awareness and connect with your divine wisdom, and also to use that wisdom to heal yourself and others.
+- This is a time to delve into the depths of the Underworld, to connect with your ancestors, and confront the source of your deepest wounds.
+- Remember to take care of yourself, emotionally and physically, in order to be the best version of yourself in all your relationships.
+- Use this time to reflect on the relationships in your life and consider what you would like to see in your friendships and community.
+- This is a time to examine your patterns and find the courage to break free from limiting beliefs to embrace deeper connections and greater fulfillment.
+- Try not to miss the possibilities in a fog of depression, illusion, or that chronic itch for independence that you have.
+- Take some time to consider how you've been holding space for your partner and how your partner has been holding space for you.
+- Consider how you can use your natural curiosity and desire for growth to step outside of your comfort zone and pursue these things.
+- Take some time to reflect on how you handle these things and what strategies have been effective for you in the past.
+- Now is the time to release any resistance to integrating parts of your unique personality into your public-facing career persona.
+- This is a time to stay the course and persevere, to let your actions speak louder than your words, and to manifest your desired future.
+- Take a class or workshop on communication or public speaking, as this can help you to be more authentic and true to yourself.
+- Take some time to reflect on what you've learned about the power of creative energy and how you can create more space for the things you love.
+- Consider committing to creative projects that align with your passions and interests, and find ways to make more time to express yourself.
+- Use this time to connect with your spiritual and artistic side, let yourself dream and meditate, and be open to inspiration.
+- Take some time to delve into your past and current lives, to reconnect with your family and friends, to honor your culture and ancestral roots.
+- This is a time to create more stability in your life and take stock of the financial lessons (positive and negative) you’ve learned this past year.
+- Make sure you take the time to check in with yourself, recognize where you are overextending yourself, and practice self-care.
+- Consider what causes are important to you and how you can use your skills and resources to make a positive impact in the world.
+- Take some time to reflect on how you handle unexpected changes or challenges, and what strategies you have found helpful in adapting and moving forward.
+- Take some time to reflect on how you navigate this balance, and what strategies you have found helpful in maintaining it.
+- This is a time to let go of any negativity or drains on your energy and to focus on the things that bring joy and growth into your life.
+- Consider building relationships with others in your field or industry, volunteering for leadership roles, and seeking feedback and guidance from mentors or colleagues.
+- Consider setting aside some time each day for quiet contemplation or meditation to help you connect with your inner self.
+- Take some time to reflect on your experiences with lucid dreaming, or consider trying to have a lucid dream for the first time.
+- Consider setting an intention for your lucid dream, such as working through a personal issue or exploring a specific location.
+- Take a step back and re-evaluate your social network, letting go of any false friendships or networks that are hindering your progress.
+- Use this time for introspection and reflection, and cultivate relationships that bring you closer to your true self and highest potential.
+- Take accountability for your actions, both the positives and negatives from this past year, and make adjustments where needed.
+- Use this time to reflect on your progress in your professional and personal growth and see where you are in your journey.
+- Take action to step into your authority and own your power – This might involve setting boundaries, speaking up for yourself, or taking charge of your own life.
+- It's a good time to set boundaries and recognize behaviors in family members or others you may have been enabling out of fear of saying no.
+- Take a moment to reflect on any debt or shared resources that may be holding you back, and take steps to address how you can free yourself from these obligations.
+- Perhaps it even helped you discover an inner strength you didn't know you possessed, the fortitude to recover, rebuild, and open your heart to love again.
+- This may involve seeking support from friends, loved ones, or a therapist and finding healthy outlets for your emotions, like exercise or creative expression.
+- There's possibly a big reveal happening in your life at this time, and communication, perspective shifts, and new information stream into and swirl around you now.
+- This could include areas of friendships, creative projects, children, finances, values, and love relationships that impact our own sense of self-worth.
+- This could include areas of friendships, creative projects, children, finances, values, and love relationships that impact our sense of self-worth.
+- Emotions may run deep, like a vast ocean, and it's important to let yourself swim in those feelings, but be mindful not to drown in them.
+- As you look back, you may find yourself reminiscing on old relationships, replaying a difficult breakup, a family member's death, or missed career opportunities.
+- Perhaps not by words, but by their actions, especially if these actions require you to fall back into old habits and patterns, you’re putting effort into breaking.
+- Perhaps you are questioning your judgment, whether that means your choice in career, partners, investments, or friends.
+- With each choice, you travel down a path, sometimes choosing one you have already taken, and sometimes venturing into the unknown.
+- Any unhealthy or abusive behaviors, whether within yourself or from others, need to be let go of, or you may experience some shocking moments that will force transformation.
+- Changes in status, responsibility, or direction may arise, even if they are unclear at the moment, but ultimately they are meant to help you grow.
+- You may not be able to understand what's happening, why, or the outcome, but eventually, things will become more apparent.
+- Over the past year, you may have been through a lot of ups and downs, but you have also had the opportunity to explore spirituality, philosophy, and fairness.
+- Consider engaging in activities that bring you joy and fulfillment, such as hobbies, exercise, or volunteering.
+- This is a time to reconnect to your resources, finances, security, and your sense of self-worth.
+- Remember to have patience with yourself and your journey during this time – Allow yourself the emotional space to process, release, learn, develop, and heal.
+- Now is the time to invite more positivity into your life through mindful activities like meditating, exercising, eating nourishing foods, and reading inspiring books.
+- Consider how you can contribute to the world around you, whether it's through volunteering, donating, or spreading kindness to those around you.
+- This is a time to analyze our actions daily to identify unhealthy patterns or behaviors that may hold us back.
+- Now is the time to let go of any daily habits or activities that may be causing harm to your health.
+- This is a time to consider how your unwillingness to commit or make concrete decisions in the past may have led you down unhealthy roads and into unhealthy relationships.
+- Consider whether you might be acting selfishly or stubbornly, and consider whether you could benefit from seeing another's perspective.
+- Consider exploring gentle energetic practices like Qi Gong, Yoga, and Tai Chi - they may help you tap into your inner wellspring of inspiration and vitality.
+- Consider any emotions that may be difficult for you to process or express, and brainstorm ways to better understand and manage them.
+- Take a moment to reflect on your daily routines and habits and identify which ones may be causing the most distraction or stress.
+- Be sure to jot down any ideas that come to you, as they may be the seeds of your next book, screenplay, or business venture.

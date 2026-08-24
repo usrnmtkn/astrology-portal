@@ -1,4 +1,4 @@
-// apps/web/src/content/fallbackArchitectureV3/resolver/renderFallback.browser.ts
+// resolver/renderFallback.browser.ts
 var SourceGapError = class extends Error {
 };
 var RoleViolationError = class extends Error {
@@ -400,7 +400,7 @@ function normalizeAspect(input) {
   return map[k] ?? null;
 }
 
-// apps/web/src/content/fallbackArchitectureV3/resolver/dailyGlanceVoice.browser.ts
+// resolver/dailyGlanceVoice.browser.ts
 var SECOND_PERSON = /\b(?:you|your|yours|yourself|yourselves)\b/giu;
 var DIRECT_IMPERATIVE = /(?:^|[.!?]\s+)(?:don't|do not|stop|keep|let|give|take|check|say|ask|make|go|trust|put|use|change|tell|be|try|finish|clear|get|notice|remember|decide|write|walk|sit|come|pick|start|see|rest|reschedule|lead|treat|reduce|stay|run|choose|review|pay|complete|separate|begin|send|follow|hold|bring|count|read|skip|look|call|move|leave|delay|spend|accept|speak|expect|know|direct)\b/giu;
 var PERSON_SLOT = /\{\{([\w.]+)\}\}/gu;
@@ -453,7 +453,7 @@ function fillDailyGlancePersonSlots(bodyThey, slots) {
   });
 }
 
-// apps/web/src/content/fallbackArchitectureV3/resolver/readerEligibility.browser.ts
+// resolver/readerEligibility.browser.ts
 var READER_ELIGIBLE_REVIEW_STATUSES = /* @__PURE__ */ new Set([
   "approved",
   "approved_reuse",
@@ -461,6 +461,8 @@ var READER_ELIGIBLE_REVIEW_STATUSES = /* @__PURE__ */ new Set([
 ]);
 var EXACT_APPROVAL_REQUIRED_PREFIXES = [
   "authored/transit-",
+  "authored/book-ritual-and-the-moon/lunation-horoscope/eclipse-",
+  "authored/lunation-eclipse-section/",
   "fallback-hook/daily-",
   "fallback-hook/natal-aspect-lived/",
   "fallback-hook/synastry-pair/",
@@ -527,12 +529,12 @@ function isGovernedReaderEligible(row, { allowUnreviewed = false } = {}) {
   return !requiresExactOwnerApproval(row.contentKey) || hasExactOwnerApproval(row);
 }
 
-// apps/web/src/content/fallbackArchitectureV3/resolver/lunationNormalization.mjs
+// resolver/lunationNormalization.mjs
 function normalizeLunationSign(value) {
   return String(value ?? "").trim().toLowerCase();
 }
 
-// apps/web/src/content/fallbackArchitectureV3/resolver/renderTransitSynastry.browser.ts
+// resolver/renderTransitSynastry.browser.ts
 var TRUE_LILITH_KEY_DATES_INTRO = "True Black Moon Lilith stations about once a month, so it crosses the same degrees several times before it finally moves on.";
 function skyPlacementKeyDates({
   planet,
@@ -621,6 +623,28 @@ var WINDOW_RETRO = { mercury: "For about three weeks", venus: "For about six wee
 var ORD2 = { 1: "1st", 2: "2nd", 3: "3rd" };
 var ordinal2 = (n) => ORD2[n] ?? `${n}th`;
 var title2 = (s) => s.split("-").map((p) => p[0].toUpperCase() + p.slice(1)).join(" ");
+function localizedLunationDateParts(exactAt, timeZone, label) {
+  const date = new Date(exactAt);
+  if (!Number.isFinite(date.getTime())) {
+    throw new SourceGapError(`SOURCE_GAP: invalid ${label} timestamp ${exactAt}`);
+  }
+  try {
+    const parts = new Intl.DateTimeFormat("en-US", {
+      timeZone,
+      year: "numeric",
+      month: "long",
+      day: "numeric"
+    }).formatToParts(date);
+    const value = (type) => parts.find((part) => part.type === type)?.value ?? "";
+    const year = Number(value("year"));
+    const month = value("month");
+    const day = Number(value("day"));
+    if (!year || !month || !day) throw new Error("missing calendar date part");
+    return { year, month, day };
+  } catch {
+    throw new SourceGapError(`SOURCE_GAP: invalid reader timezone ${timeZone}`);
+  }
+}
 var NEEDS_ARTICLE = /* @__PURE__ */ new Set(["sun", "moon", "north-node", "south-node"]);
 var transitRef = (planet, sign) => `${NEEDS_ARTICLE.has(planet) ? "the " : ""}${title2(planet)}${sign ? ` in ${title2(sign)}` : ""}`;
 var fill = (body, ctx) => body.replace(/\{\{([\w.]+)\}\}/g, (_, k) => ctx[k] ?? `{{${k}}}`).replace(/\s{2,}/g, " ").trim();
@@ -2411,46 +2435,132 @@ ${passHook}`;
     ruler,
     rulerHouse,
     rulerRetrograde,
+    timeZone = "UTC",
     weekly = false
   }) {
     const isEclipse = kind === "eclipse-solar" || kind === "eclipse-lunar";
     const which = kind === "new-moon" || kind === "eclipse-solar" ? "new" : "full";
     const h = moonHouse ?? house ?? (SIGN_ORDER.indexOf(sign) - SIGN_ORDER.indexOf(risingSign) + 12) % 12 + 1;
-    const frame = hooks.get(`fallback-hook/lunation-horoscope/${which}`)?.body_you;
+    const bookCellKey = `authored/book-ritual-and-the-moon/lunation-horoscope/${kind}/${sign}/rising-${risingSign}/house-${h}`;
+    const exactBookCell = card(bookCellKey);
+    const exactEclipsePreview = isEclipse && allowUnreviewed ? exactBookCell : null;
+    const evergreenKind = kind === "eclipse-lunar" ? "full-moon" : kind === "eclipse-solar" ? "new-moon" : null;
+    const evergreenBookCellKey = evergreenKind ? `authored/book-ritual-and-the-moon/lunation-horoscope/${evergreenKind}/${sign}/rising-${risingSign}/house-${h}` : null;
+    const evergreenBookCell = evergreenBookCellKey ? card(evergreenBookCellKey) : null;
+    const bookCell = isEclipse ? exactEclipsePreview : exactBookCell;
+    const eclipseSectionPrefix = `authored/lunation-eclipse-section/${sign}/rising-${risingSign}/house-${h}`;
+    const sharedEclipseSections = /* @__PURE__ */ new Set(["nature", "mechanics", "recommendation", "close"]);
+    const eclipseSectionKey = (id) => sharedEclipseSections.has(id) ? `authored/lunation-eclipse-section/${sign}/shared/${id}` : `${eclipseSectionPrefix}/${id}`;
+    const eclipseSection = (id) => isEclipse ? card(eclipseSectionKey(id)) : null;
     const jurisdiction = vocab.get(`fallback-vocab/house-jurisdiction/${h}`)?.body;
-    if (!frame || !jurisdiction) throw new SourceGapError(`SOURCE_GAP: lunation horoscope ${which}/${risingSign} (house ${h})`);
-    const houseFrame = fill(frame, { houseOrdinal: ordinal2(h), jurisdiction });
-    const opening = hooks.get(`fallback-hook/lunation-opening-situation/${h}`)?.body_you;
-    const paras = [opening ? `${opening} ${houseFrame}` : houseFrame];
-    if (kind === "full-moon") {
+    const paras = [];
+    const reviewFlags = [];
+    const flagOmittedSection = (sectionId, omittedContentKey, fallbackContentKey = null) => {
+      reviewFlags.push({
+        id: "conditional-section-omitted",
+        status: "needs_review",
+        sectionId,
+        omittedContentKey,
+        fallbackContentKey,
+        reason: "missing-or-ineligible"
+      });
+    };
+    let matchingNewMoonSlotCache = null;
+    const matchingNewMoonSlots = () => {
+      if (matchingNewMoonSlotCache) return matchingNewMoonSlotCache;
       const anchor = hooks.get("fallback-hook/lunation-matching-new-moon-anchor/full")?.body_you;
-      const fullMoonDateKey = eventDate?.trim().slice(0, 10) ?? "";
-      const newMoonDateKey = matchingNewMoon?.exactAt.trim().slice(0, 10) ?? "";
-      const fullMoonMatch = /^(\d{4})-(\d{2})-(\d{2})$/u.exec(fullMoonDateKey);
-      const newMoonMatch = /^(\d{4})-(\d{2})-(\d{2})$/u.exec(newMoonDateKey);
-      if (!anchor || !fullMoonMatch || !newMoonMatch || normalizeLunationSign(matchingNewMoon?.sign) !== normalizeLunationSign(sign) || newMoonDateKey >= fullMoonDateKey) {
-        throw new SourceGapError(`SOURCE_GAP: invalid matching New Moon for Full Moon ${eventDate ?? "unknown-date"}/${sign}`);
+      const fullMoonTime = Date.parse(eventDate ?? "");
+      const newMoonTime = Date.parse(matchingNewMoon?.exactAt ?? "");
+      const label2 = kind === "eclipse-lunar" ? "Lunar Eclipse" : "Full Moon";
+      if (!anchor || !Number.isFinite(fullMoonTime) || !Number.isFinite(newMoonTime) || normalizeLunationSign(matchingNewMoon?.sign) !== normalizeLunationSign(sign) || newMoonTime >= fullMoonTime) {
+        throw new SourceGapError(`SOURCE_GAP: invalid matching New Moon for ${label2} ${eventDate ?? "unknown-date"}/${sign}`);
       }
-      const monthIndex = Number(newMoonMatch[2]) - 1;
-      const monthName = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"][monthIndex];
-      if (!monthName) throw new SourceGapError(`SOURCE_GAP: invalid matching New Moon date ${newMoonDateKey}`);
-      const crossYear = newMoonMatch[1] !== fullMoonMatch[1];
-      const matchingNewMoonDate = `${monthName} ${Number(newMoonMatch[3])}${crossYear ? `, ${newMoonMatch[1]}` : ""}`;
-      paras.push(fill(anchor, {
+      const fullMoonLocal = localizedLunationDateParts(eventDate, timeZone, label2);
+      const newMoonLocal = localizedLunationDateParts(matchingNewMoon.exactAt, timeZone, "matching New Moon");
+      const crossYear = newMoonLocal.year !== fullMoonLocal.year;
+      matchingNewMoonSlotCache = {
         matchingNewMoonSign: title2(normalizeLunationSign(matchingNewMoon.sign)),
-        matchingNewMoonDate
-      }));
+        matchingNewMoonDate: `${newMoonLocal.month} ${newMoonLocal.day}${crossYear ? `, ${newMoonLocal.year}` : ""}`
+      };
+      return matchingNewMoonSlotCache;
+    };
+    const renderStoredBody = (stored) => {
+      const needsMatchingNewMoon = /\{\{matchingNewMoon(?:Sign|Date)\}\}/u.test(stored.body ?? "");
+      const renderedBookBody = needsMatchingNewMoon ? fill(stored.body, matchingNewMoonSlots()) : stored.body;
+      if (/\{\{/u.test(renderedBookBody)) {
+        throw new SourceGapError(`SOURCE_GAP: unresolved lunation book slot in ${stored.contentKey}`);
+      }
+      return renderedBookBody;
+    };
+    const pushEclipseSection = (id) => {
+      const key = eclipseSectionKey(id);
+      const stored = eclipseSection(id);
+      if (!stored?.body) {
+        flagOmittedSection(id, key);
+        return null;
+      }
+      paras.push(renderStoredBody(stored));
+      return stored;
+    };
+    let authoredBodyUsed = false;
+    let suppressCycleAnchor = false;
+    if (bookCell?.body) {
+      paras.push(renderStoredBody(bookCell));
+      authoredBodyUsed = true;
+    } else if (isEclipse) {
+      pushEclipseSection("opening");
+      pushEclipseSection("nature");
+      pushEclipseSection("mechanics");
+      const bodyKey = `${eclipseSectionPrefix}/evergreen-body`;
+      const eclipseBody = eclipseSection("evergreen-body");
+      if (eclipseBody?.body) {
+        paras.push(renderStoredBody(eclipseBody));
+        authoredBodyUsed = true;
+        suppressCycleAnchor = eclipseBody.suppress_cycle_anchor === true;
+      } else if (evergreenBookCell?.body) {
+        paras.push(renderStoredBody(evergreenBookCell));
+        authoredBodyUsed = true;
+        flagOmittedSection("evergreen-body", bodyKey, evergreenBookCell.contentKey);
+      }
+    } else if (evergreenBookCell?.body) {
+      paras.push(renderStoredBody(evergreenBookCell));
+      authoredBodyUsed = true;
     }
-    const signCompact = hooks.get(`fallback-hook/lunation-sign-compact/${which}-moon/${sign}`)?.body_you ?? (which === "full" ? hooks.get(`fallback-hook/lunation-sign-compact/${sign}`)?.body_you : null);
+    if (!authoredBodyUsed) {
+      const frame = hooks.get(`fallback-hook/lunation-horoscope/${which}`)?.body_you;
+      if (!frame || !jurisdiction) throw new SourceGapError(`SOURCE_GAP: lunation horoscope ${which}/${risingSign} (house ${h})`);
+      const houseFrame = fill(frame, { houseOrdinal: ordinal2(h), jurisdiction });
+      const opening = hooks.get(`fallback-hook/lunation-opening-situation/${h}`)?.body_you;
+      paras.push(opening ? `${opening} ${houseFrame}` : houseFrame);
+    }
+    if (kind === "eclipse-solar" && !bookCell) {
+      const solarHouseLayerKey = `authored/lunation-eclipse-house-layer/solar/house-${h}`;
+      const solarHouseLayer = card(solarHouseLayerKey);
+      if (solarHouseLayer?.body) {
+        paras.push(renderStoredBody(solarHouseLayer));
+      } else {
+        flagOmittedSection("eclipse-house-layer", solarHouseLayerKey);
+      }
+    }
+    if ((kind === "full-moon" || kind === "eclipse-lunar") && !(isEclipse && bookCell) && !suppressCycleAnchor) {
+      const anchor = hooks.get("fallback-hook/lunation-matching-new-moon-anchor/full")?.body_you;
+      if (!anchor) throw new SourceGapError("SOURCE_GAP: missing Full Moon cycle anchor");
+      paras.push(fill(anchor, matchingNewMoonSlots()));
+    } else if ((kind === "new-moon" || kind === "eclipse-solar") && !(isEclipse && bookCell)) {
+      const anchor = hooks.get("fallback-hook/lunation-cycle-anchor/new")?.body_you;
+      if (!anchor) throw new SourceGapError("SOURCE_GAP: missing New Moon cycle anchor");
+      paras.push(anchor);
+    }
+    const signCompact = !authoredBodyUsed ? hooks.get(`fallback-hook/lunation-sign-compact/${which}-moon/${sign}`)?.body_you ?? (which === "full" ? hooks.get(`fallback-hook/lunation-sign-compact/${sign}`)?.body_you : null) : null;
     if (signCompact) paras.push(signCompact);
-    if (which === "full" && sunHouse && sunHouse !== h) {
+    if (!authoredBodyUsed && which === "full" && sunHouse && sunHouse !== h && jurisdiction) {
       const sunJurisdiction = vocab.get(`fallback-vocab/house-jurisdiction/${sunHouse}`)?.body;
       if (sunJurisdiction) {
         const counterpoint = `The friction this week runs between your ${ordinal2(sunHouse)} house of ${sunJurisdiction} and your ${ordinal2(h)} house of ${jurisdiction}. The immediate demands on one side can compete with what is becoming undeniable on the other, so let the tension show you what needs to change.`;
         paras[paras.length - 1] = `${paras[paras.length - 1]} ${counterpoint}`;
       }
     }
-    if (ruler && rulerHouse && ruler !== "sun" && ruler !== "moon") {
+    if ((!authoredBodyUsed || isEclipse || rulerRetrograde) && ruler && rulerHouse && ruler !== "sun" && ruler !== "moon") {
       const rulerHouseBody = hooks.get(`fallback-hook/lunation-ruler-house/${rulerHouse}`)?.body_you;
       if (rulerHouseBody) {
         const lunationLabel = isEclipse ? which === "new" ? "Solar Eclipse" : "Lunar Eclipse" : which === "new" ? "New Moon" : "Full Moon";
@@ -2459,17 +2569,32 @@ ${passHook}`;
         if (rulerRetrograde) {
           const retroOverlay = hooks.get("fallback-hook/lunation-ruler-retro")?.body_you;
           if (!retroOverlay) {
-            throw new SourceGapError("SOURCE_GAP: missing retrograde lunation ruler overlay");
+            flagOmittedSection(
+              "ruler-retrograde",
+              "fallback-hook/lunation-ruler-retro"
+            );
+          } else {
+            rulerParagraph += ` ${fill(retroOverlay, { rulerTitle })}`;
           }
-          rulerParagraph += ` ${fill(retroOverlay, { rulerTitle })}`;
         }
         paras.push(rulerParagraph);
       }
     }
-    const weekLayer = weekly ? hooks.get("fallback-hook/lunation-week-layer")?.body_you : null;
+    if (isEclipse && !bookCell) {
+      pushEclipseSection("recommendation");
+      pushEclipseSection("close");
+    }
+    const weekLayer = weekly && !authoredBodyUsed ? hooks.get("fallback-hook/lunation-week-layer")?.body_you : null;
     if (weekLayer) paras.push(weekLayer);
     const label = isEclipse ? which === "new" ? "Solar Eclipse" : "Lunar Eclipse" : which === "new" ? "New Moon" : "Full Moon";
-    return { headline: `${label} for ${title2(risingSign)} Rising`, body: paras.join("\n\n"), parts: paras, templateKey: "fallback-template/sky.lunation-horoscope" };
+    return {
+      headline: bookCell?.headline || `${label} for ${title2(risingSign)} Rising`,
+      body: paras.join("\n\n"),
+      parts: paras,
+      templateKey: bookCell?.contentKey || "fallback-template/sky.lunation-horoscope",
+      contentKey: bookCell?.contentKey,
+      reviewFlags: reviewFlags.length > 0 ? reviewFlags : void 0
+    };
   }
   function renderLunationEventCard({
     eventDate,
@@ -2601,7 +2726,7 @@ ${passHook}`;
   return { renderTransitHouse, renderTransitHouseEvent, renderTransitAspect, renderTransitLabel, renderTransitReturn, renderTransitRetro, renderCompat, renderSynastryAspect, renderSkySeason, renderSkyHoroscope, renderSkyLunation, renderSkyPlacement, renderSkyPlacementHouseCore, renderSkyAspectCard, renderCircleStory, renderPairDaily, formatCircleNames, renderCalendarPhase, renderVoidOfCourse, renderSeasonMarker, renderWeeklyMoon, renderBondTransit, renderLunationMacro, renderLunationHoroscope, renderLunationEventCard, renderDoDont, renderDailyGlance };
 }
 
-// apps/web/src/content/fallbackArchitectureV3/resolver/knowledgeMatrixV9.browser.ts
+// resolver/knowledgeMatrixV9.browser.ts
 var EXCLUDED_PREFIX = "[EXCLUDE FROM FALLBACK]";
 var OWNER_APPROVED = "owner-approved";
 function normalizedKeyPart(value) {
@@ -2702,7 +2827,7 @@ function createKnowledgeMatrixV9Resolver(manifest, rowsFile, buildReport) {
   });
 }
 
-// apps/web/src/content/fallbackArchitectureV3/resolver/knowledgeMatrixV13.browser.ts
+// resolver/knowledgeMatrixV13.browser.ts
 var ALLOWED_GOVERNANCE = [
   "owner-approved-v13-direct-language",
   "owner-lived-experience-ll-v9-owner-approved",
@@ -2794,8 +2919,8 @@ function createKnowledgeMatrixV13Resolver(file) {
   });
 }
 
-// apps/web/src/content/fallbackArchitectureV3/resolver/index.browser.ts
-var PACKAGE_VERSION = "v3-2026-08-23l";
+// resolver/index.browser.ts
+var PACKAGE_VERSION = "v3-2026-08-24b";
 function stablePackageValue(value) {
   if (Array.isArray(value)) {
     return value.map(stablePackageValue);
