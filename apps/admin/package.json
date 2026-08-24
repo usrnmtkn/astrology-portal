@@ -6,7 +6,7 @@
   "scripts": {
     "predev": "node ../../scripts/build-admin-hook-catalog.mjs",
     "dev": "vite --host 127.0.0.1 --port 5174",
-    "build": "node ../../scripts/build-admin-hook-catalog.mjs && node ../../scripts/test-sky-90-day-review-horizon.mjs && node --import tsx ../../scripts/test-sky-owner-review-actions.mjs && node --import tsx ../../scripts/test-admin-sky-fallback-workspace.mts && tsc && vite build",
+    "build": "node ../../scripts/build-admin-hook-catalog.mjs && node ../../scripts/test-sky-90-day-review-horizon.mjs && node --import tsx ../../scripts/test-sky-owner-review-actions.mjs && node --import tsx ../../scripts/test-admin-sky-fallback-workspace.mts && node --import tsx ../../scripts/test-admin-fallback-hook-titles.mts && tsc && vite build",
     "preview": "vite preview --host 127.0.0.1 --port 4174",
     "typecheck": "tsc --noEmit"
   },
