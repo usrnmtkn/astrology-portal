@@ -181,6 +181,7 @@ assert.match(viteSource, /fallback-content-sky-core/u, "The eager Sky source par
 assert.match(viteSource, /fallback-content-deferred-core/u, "The deferred natal and relationship source partition must have a stable cache chunk.");
 assert.match(viteSource, /fallback-content-empty-house/u, "Empty-house content must have a stable on-demand cache chunk.");
 assert.match(viteSource, /fallback-content-sky-placement/u, "The on-demand Sky Placement source partition must have a stable cache chunk.");
+assert.match(viteSource, /fallback-content-lunation-book/u, "The on-demand protected lunation book must have a stable cache chunk.");
 assert.match(
   viteSource,
   /tldr-trim-swiss-ephemeris-web-data/u,

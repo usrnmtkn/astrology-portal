@@ -1255,6 +1255,33 @@ test.describe("client-facing user flow case studies", () => {
     await assertNoClientErrors();
   });
 
+  test("You serves the protected book card on an exact lunation day", async ({ page }) => {
+    const assertNoClientErrors = await expectNoClientErrors(page);
+
+    await seedClientState(page, {
+      profile: true,
+      preloadProfileNatalSky: true,
+      now: "2026-07-29T12:00:00.000Z"
+    });
+    await expectClientRouteLoads(page, "/#you");
+
+    const bookCard = page.getByRole("button", {
+      name: /^Aquarius Full Moon for Aries Rising/u
+    });
+    await expect(bookCard).toBeVisible({ timeout: 30_000 });
+    await bookCard.click();
+
+    const article = page.locator(".article-page");
+    await expect(article).toBeVisible();
+    await expect(article).toContainText(
+      "The Aquarius full moon illuminates your 11th house of friendship."
+    );
+    await expect(article).toContainText(
+      "You deserve to be surrounded by people who genuinely believe in you and want to see you happy and successful."
+    );
+    await assertNoClientErrors();
+  });
+
   test("You and Friends share a date picker for past and future transits", async ({ page }) => {
     const assertNoClientErrors = await expectNoClientErrors(page);
 
