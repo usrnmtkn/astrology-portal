@@ -240,6 +240,17 @@ assert.match(
 );
 assert.match(appSource, /getMatchingNewMoonForFullMoon/u);
 assert.match(appSource, /matchingNewMoon,/u);
+assert.match(appSource, /lunationEventOccursOnLocalDate/u);
+assert.match(
+  appSource,
+  /loadLunationBookFallbackArchitectureV3Bundle\(\)[\s\S]*?\.then\(\(\) => \{[\s\S]*?setFallbackArchitectureV3Version/u,
+  "An already-loaded lunation bundle must still refresh the reader after a sky-calculation race."
+);
+assert.doesNotMatch(
+  appSource,
+  /moonEvent\.days !== 0/u,
+  "Exact-day lunation routing must compare localized calendar dates instead of fractional days."
+);
 assert.match(appSource, /qualifyingTransits: qualifyingDailyTransits\.map/u);
 assert.match(youPageSource, />Areas of Your Life</u);
 assert.match(youPageSource, />Behind this Forecast</u);

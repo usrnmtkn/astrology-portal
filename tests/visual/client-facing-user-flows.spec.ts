@@ -1283,6 +1283,32 @@ test.describe("client-facing user flow case studies", () => {
     await assertNoClientErrors();
   });
 
+  test("You serves the shared lunar-eclipse layer from the sign-neutral namespace", async ({ page }) => {
+    const assertNoClientErrors = await expectNoClientErrors(page);
+
+    await seedClientState(page, {
+      profile: true,
+      preloadProfileNatalSky: true,
+      now: "2026-08-28T16:00:00.000Z"
+    });
+    await expectClientRouteLoads(page, "/#you");
+
+    const eclipseSection = page.locator(".daily-special-section").filter({
+      hasText: "Lunar Eclipse for Aries Rising"
+    });
+    await expect(eclipseSection).toBeVisible({ timeout: 30_000 });
+    await expect(eclipseSection).toContainText(
+      "The Pisces lunar eclipse shines upon your 12th house of karma, subconscious, and endings."
+    );
+    await expect(eclipseSection).toContainText(
+      "Lunar eclipses are portals into your soul."
+    );
+    await expect(eclipseSection).toContainText(
+      "Not everything that changes now needs an immediate response."
+    );
+    await assertNoClientErrors();
+  });
+
   test("You and Friends share a date picker for past and future transits", async ({ page }) => {
     const assertNoClientErrors = await expectNoClientErrors(page);
 
