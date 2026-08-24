@@ -1,0 +1,28 @@
+{
+  "schema": "pisces-lunar-eclipse-intention-span-candidates/v1",
+  "status": "owner_approved",
+  "serving": false,
+  "rule": "These are stored review candidates, never runtime pattern matches. A candidate may be omitted from an eclipse variant only after the owner approves its exact start, end, text, and SHA-256 hash.",
+  "spans": [
+    {
+      "contentKey": "authored/book-ritual-and-the-moon/lunation-horoscope/full-moon/pisces/rising-sagittarius/house-4",
+      "start": 2911,
+      "end": 3025,
+      "sha256": "c163398ad7a8d5759ce6479b1f31c722565972bb515e4e70c08da2fc16ceb55d",
+      "text": "This month's full moon intention is to find home and comfort within yourself despite any chaos that surrounds you.",
+      "ownerApproved": true,
+      "approvedAt": "2026-08-24",
+      "review": "APPROVED"
+    },
+    {
+      "contentKey": "authored/book-ritual-and-the-moon/lunation-horoscope/full-moon/pisces/rising-aries/house-12",
+      "start": 2859,
+      "end": 3145,
+      "sha256": "6c10abe19a969debd98412781d378bbe937c71e8d4b7d9eec5fd716b3b8898b2",
+      "text": "Your intention for this full moon is, \"I'm wiser and more capable now, but that doesn't mean I'll never be able to experience that same sense of liberation again. My wildness will return one day. Until then, I'll cherish every lesson I've learned from the pain and uncertainty I faced.\"",
+      "ownerApproved": true,
+      "approvedAt": "2026-08-24",
+      "review": "APPROVED"
+    }
+  ]
+}

@@ -144,6 +144,7 @@ import {
   type WeeklyHoroscopeAssembly,
   type WeeklyHoroscopeReading
 } from "./services/weeklyHoroscope";
+import { reportLiveOmittedSections } from "./services/conditionalSectionReviewReporter";
 import { SKY_BODY_ORDER, skyBodyOrderIndex, transitToNatalOrbLimit } from "./astrologyConfig";
 import {
   SkyAspectGroup,
@@ -17007,12 +17008,17 @@ function ProfileView({
     if (!currentSky?.moonEvent || currentSky.moonEvent.days !== 0 || !displayRising) return [];
 
     try {
-      const kind = currentSky.moonEvent.name === "New Moon" ? "new-moon" : "full-moon";
-      const matchingNewMoon = kind === "full-moon"
+      const kind = currentSky.moonEvent.eclipseType
+        ? `eclipse-${currentSky.moonEvent.eclipseType}` as const
+        : currentSky.moonEvent.name === "New Moon"
+          ? "new-moon" as const
+          : "full-moon" as const;
+      const isFullPhase = kind === "full-moon" || kind === "eclipse-lunar";
+      const matchingNewMoon = isFullPhase
         && dailyMatchingNewMoon?.fullMoonEventDate === currentSky.moonEvent.occursAt
         ? dailyMatchingNewMoon.fact
         : undefined;
-      if (kind === "full-moon" && lunationBlendYouFallbackEnabled && !matchingNewMoon) return [];
+      if (isFullPhase && lunationBlendYouFallbackEnabled && !matchingNewMoon) return [];
       const rendered = transitSynastryFallbackRendererV3.renderLunationEventCard({
         eventDate: currentSky.moonEvent.occursAt,
         blendFallbackEnabled: lunationBlendYouFallbackEnabled,
@@ -17020,6 +17026,7 @@ function ProfileView({
         sign: normalizeContentIdPart(currentSky.moonEvent.sign),
         risingSign: normalizeContentIdPart(displayRising),
         matchingNewMoon,
+        timeZone: currentSky.location.timeZone || Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC",
         ...lunationBlendFacts(
           currentSky,
           currentSky.moonEvent.sign,
@@ -17028,7 +17035,11 @@ function ProfileView({
         )
       });
       assertLunationBodyMatchesEventSky(rendered.body, currentSky);
-      return [{ headline: rendered.headline, body: rendered.body }];
+      return [{
+        headline: rendered.headline,
+        body: rendered.body,
+        reviewFlags: rendered.reviewFlags as Array<Record<string, unknown>> | undefined
+      }];
     } catch (error) {
       if (!(error instanceof FallbackV3SourceGapError)) throw error;
       console.warn("Daily special-day source gap; hiding surface.", error);
@@ -17045,6 +17056,7 @@ function ProfileView({
       localNoon: true,
       headliner: dailyIsHeadliner,
       areaCap: dailyIsHeadliner ? 3 : 4,
+      contentReviewFlags: dailySpecialSections.flatMap((section) => section.reviewFlags ?? []),
       qualifyingTransits: qualifyingDailyTransits.map((transit) => ({
         id: transit.id,
         transitPlanet: transit.transitPlanet,
@@ -17070,6 +17082,35 @@ function ProfileView({
         : null
     }
   };
+  const dailyOmittedReviewFlagsJson = JSON.stringify(
+    dailySpecialSections.flatMap((section) => section.reviewFlags ?? [])
+  );
+  useEffect(() => {
+    const moonEvent = currentSky?.moonEvent;
+    if (!moonEvent || !displayRising || dailyOmittedReviewFlagsJson === "[]") return;
+    const kind = moonEvent.eclipseType
+      ? `eclipse-${moonEvent.eclipseType}`
+      : moonEvent.name === "New Moon"
+        ? "new-moon"
+        : "full-moon";
+    void reportLiveOmittedSections(JSON.parse(dailyOmittedReviewFlagsJson), {
+      surface: "you-daily",
+      headline: dailySpecialSections[0]?.headline ?? `${moonEvent.name} for ${displayRising} Rising`,
+      eventDate: moonEvent.occursAt,
+      eventKind: kind,
+      sign: normalizeContentIdPart(moonEvent.sign),
+      risingSign: normalizeContentIdPart(displayRising),
+      timeZone: currentSky.location.timeZone || Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC"
+    });
+  }, [
+    currentSky?.moonEvent?.eclipseType,
+    currentSky?.moonEvent?.name,
+    currentSky?.moonEvent?.occursAt,
+    currentSky?.moonEvent?.sign,
+    currentSky?.location.timeZone,
+    dailyOmittedReviewFlagsJson,
+    displayRising
+  ]);
   const dailyTimingContent = personalTimingGenerated;
   const generatedDailyHeadline = dailyTimingContent?.headline?.trim();
   const generatedDailySummary = liveGeneratedSummaryIfPresent(dailyTimingContent);

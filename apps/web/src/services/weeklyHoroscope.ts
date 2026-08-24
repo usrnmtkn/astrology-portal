@@ -13,6 +13,8 @@ import {
   resolveCmsSurfaceOverride,
   type CmsGeneratedContentMap
 } from "../content/cmsSurfaceOverrides";
+import type { ConditionalSectionReviewFlag } from "./conditionalSectionReviewQueue";
+import { reportLiveOmittedSections } from "./conditionalSectionReviewReporter";
 
 export type WeeklyHoroscopeWeekType =
   | "eclipse"
@@ -35,6 +37,7 @@ export type WeeklyHoroscopeSection = {
   unit: string;
   orb?: number;
   house?: number;
+  reviewFlags?: ConditionalSectionReviewFlag[];
 };
 
 export type WeeklyHoroscopeReading = {
@@ -49,6 +52,7 @@ export type WeeklyHoroscopeReading = {
   orb?: number;
   house?: number;
   sourceUnits: string[];
+  reviewFlags?: WeeklyHoroscopeSection["reviewFlags"];
 };
 
 export type CalendarWeeklyOverview = {
@@ -619,7 +623,8 @@ function renderLunation(
   event: LunarCalendarEvent,
   risingSign: string,
   eventSky: SkySnapshot,
-  matchingNewMoon?: MatchingNewMoonFact
+  matchingNewMoon?: MatchingNewMoonFact,
+  timeZone = "UTC"
 ) {
   const kind = lunationKind(event);
   const blendFacts = lunationBlendFacts(eventSky, event.sign ?? "", risingSign, kind);
@@ -629,15 +634,26 @@ function renderLunation(
     risingSign: normalizeId(risingSign),
     eventDate: event.startsAt,
     matchingNewMoon,
+    timeZone,
     ...blendFacts,
     weekly: true
   });
   assertLunationBodyMatchesEventSky(rendered.body, eventSky);
+  void reportLiveOmittedSections(rendered.reviewFlags, {
+    surface: "weekly-horoscope",
+    headline: rendered.headline,
+    eventDate: event.startsAt,
+    eventKind: kind,
+    sign: normalizeId(event.sign ?? ""),
+    risingSign: normalizeId(risingSign),
+    timeZone
+  });
 
   return {
     headline: rendered.headline,
     body: rendered.body,
-    source: "lunation" as const
+    source: "lunation" as const,
+    reviewFlags: rendered.reviewFlags
   };
 }
 
@@ -1248,7 +1264,8 @@ function composeWeeklyReading(sections: WeeklyHoroscopeSection[]): WeeklyHorosco
     source: dominant.source,
     orb: dominant.orb,
     house: dominant.house,
-    sourceUnits: [dominant.unit]
+    sourceUnits: [dominant.unit],
+    reviewFlags: dominant.reviewFlags
   };
 }
 
@@ -1346,7 +1363,8 @@ export async function buildWeeklyHoroscope({
             event,
             risingSign,
             eventSky,
-            matchingNewMoons.get(event.id)
+            matchingNewMoons.get(event.id),
+            timeZone
           );
           candidates.push({
             dateKey: event.dateKey,
@@ -1357,6 +1375,7 @@ export async function buildWeeklyHoroscope({
             tag: event.eclipseType ? `${title(event.eclipseType)} eclipse` : event.title,
             accented: false,
             source: rendered.source,
+            reviewFlags: rendered.reviewFlags,
             unit: `lunation:${event.id}`,
             priority: event.eclipseType ? 0 : 1,
             sortTime: event.startsAt

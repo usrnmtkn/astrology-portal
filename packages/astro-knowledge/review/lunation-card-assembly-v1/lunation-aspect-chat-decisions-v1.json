@@ -1,0 +1,369 @@
+{
+  "schema": "lunation-aspect-chat-decisions/v1",
+  "status": "partial-owner-review",
+  "servingAuthority": false,
+  "reviewStartedAt": "2026-08-24",
+  "phasePhrases": {
+    "new-moon": {
+      "value": "whatever is beginning now",
+      "decision": "APPROVE",
+      "approvalRecord": "Owner approved the phase-specific architecture in Codex chat on 2026-08-24."
+    },
+    "full-moon": {
+      "value": "whatever is coming to a head now",
+      "decision": "APPROVE",
+      "approvalRecord": "Owner approved the phase-specific architecture in Codex chat on 2026-08-24."
+    }
+  },
+  "planetAspectOpenings": [
+    {
+      "contentKey": "draft/lunation-aspect/planet-opening/saturn/conjunction",
+      "planet": "saturn",
+      "aspect": "conjunction",
+      "copy": "Saturn is conjunct this {{lunationKind}}, so {{phaseDevelopment}} has a consequence attached to it. A limit, responsibility, or reality you have been working around becomes part of the decision.",
+      "decision": "APPROVE",
+      "approvalRecord": "Owner supplied the Saturn direction and approved the phase phrase in Codex chat on 2026-08-24; redundant contact-light wording was removed by owner instruction."
+    },
+    {
+      "contentKey": "draft/lunation-aspect/planet-opening/saturn/opposition",
+      "planet": "saturn",
+      "aspect": "opposition",
+      "copy": "Saturn opposes this {{lunationKind}}, putting what you want or feel directly against a responsibility, limit, or demand that still has to be dealt with.",
+      "decision": "APPROVE",
+      "approvalRecord": "Owner supplied the Saturn direction in Codex chat on 2026-08-24; redundant contact-light wording was removed by owner instruction."
+    },
+    {
+      "contentKey": "draft/lunation-aspect/planet-opening/saturn/square",
+      "planet": "saturn",
+      "aspect": "square",
+      "copy": "Saturn squares this {{lunationKind}}, showing you where the current arrangement has reached its limit. Something that has been held together through extra effort may no longer be workable the same way.",
+      "decision": "APPROVE",
+      "approvalRecord": "Owner supplied the Saturn direction in Codex chat on 2026-08-24; redundant contact-light wording was removed by owner instruction."
+    },
+    {
+      "contentKey": "draft/lunation-aspect/planet-opening/saturn/trine",
+      "planet": "saturn",
+      "aspect": "trine",
+      "copy": "Saturn trines this {{lunationKind}}, making it easier to work with what is already solid, realistic, or built to last. The support is there, but it still depends on what you do with it.",
+      "decision": "APPROVE",
+      "approvalRecord": "Owner supplied the Saturn direction in Codex chat on 2026-08-24; redundant contact-light wording was removed by owner instruction."
+    },
+    {
+      "contentKey": "draft/lunation-aspect/planet-opening/saturn/sextile",
+      "planet": "saturn",
+      "aspect": "sextile",
+      "copy": "Saturn sextiles this {{lunationKind}}, giving you a chance to make a useful adjustment before the problem gets heavier or more complicated.",
+      "decision": "APPROVE",
+      "approvalRecord": "Owner supplied the Saturn direction in Codex chat on 2026-08-24; redundant contact-light wording was removed by owner instruction."
+    },
+    {
+      "contentKey": "draft/lunation-aspect/planet-opening/mercury/conjunction",
+      "planet": "mercury",
+      "aspect": "conjunction",
+      "copy": "Mercury is conjunct this {{lunationKind}}, so the conversation, message, or decision becomes part of {{phaseDevelopment}}. Something you have been thinking around may finally need a clear answer.",
+      "decision": "APPROVE",
+      "approvalRecord": "Owner approved the second Mercury set and phase phrase in Codex chat on 2026-08-24; redundant contact-light wording was removed by owner instruction."
+    },
+    {
+      "contentKey": "draft/lunation-aspect/planet-opening/mercury/opposition",
+      "planet": "mercury",
+      "aspect": "opposition",
+      "copy": "Mercury opposes this {{lunationKind}}, putting what makes sense on paper against what is actually being felt or experienced. A conversation can make the difference between the two impossible to ignore.",
+      "decision": "APPROVE",
+      "approvalRecord": "Owner approved the second Mercury set in Codex chat on 2026-08-24; redundant contact-light wording was removed by owner instruction."
+    },
+    {
+      "contentKey": "draft/lunation-aspect/planet-opening/mercury/square",
+      "planet": "mercury",
+      "aspect": "square",
+      "copy": "Mercury squares this {{lunationKind}}, showing you where the plan, timing, or message no longer fits what you know now. Something that sounded workable earlier may need to change.",
+      "decision": "APPROVE",
+      "approvalRecord": "Owner approved the second Mercury set in Codex chat on 2026-08-24; redundant contact-light wording was removed by owner instruction."
+    },
+    {
+      "contentKey": "draft/lunation-aspect/planet-opening/mercury/trine",
+      "planet": "mercury",
+      "aspect": "trine",
+      "copy": "Mercury trines this {{lunationKind}}, making it easier to understand what has been happening and put it into words. The missing piece may be a conversation, an answer, or information that finally connects the rest.",
+      "decision": "APPROVE",
+      "approvalRecord": "Owner approved the second Mercury set in Codex chat on 2026-08-24; redundant contact-light wording was removed by owner instruction."
+    },
+    {
+      "contentKey": "draft/lunation-aspect/planet-opening/mercury/sextile",
+      "planet": "mercury",
+      "aspect": "sextile",
+      "copy": "Mercury sextiles this {{lunationKind}}, creating an opening for a conversation, answer, or small change in the plan before the situation gets more complicated.",
+      "decision": "APPROVE",
+      "approvalRecord": "Owner approved the second Mercury set in Codex chat on 2026-08-24; reader copy intentionally omits the redundant contact-light wording."
+    },
+    {
+      "contentKey": "draft/lunation-aspect/planet-opening/venus/conjunction",
+      "planet": "venus",
+      "aspect": "conjunction",
+      "copy": "Venus is conjunct this {{lunationKind}}, so a relationship, money choice, or question of what something is worth becomes part of {{phaseDevelopment}}. You may finally see what has been worth the effort and what has not.",
+      "decision": "APPROVE",
+      "approvalRecord": "Owner supplied this Venus opening in Codex chat on 2026-08-24."
+    },
+    {
+      "contentKey": "draft/lunation-aspect/planet-opening/venus/opposition",
+      "planet": "venus",
+      "aspect": "opposition",
+      "copy": "Venus opposes this {{lunationKind}}, putting affection, comfort, or keeping the peace directly against what feels fair. A relationship can still matter to you and still be asking one person to give more than the other.",
+      "decision": "APPROVE",
+      "approvalRecord": "Owner supplied this Venus opening in Codex chat on 2026-08-24."
+    },
+    {
+      "contentKey": "draft/lunation-aspect/planet-opening/venus/square",
+      "planet": "venus",
+      "aspect": "square",
+      "copy": "Venus squares this {{lunationKind}}, showing you where attraction, comfort, or agreement has been making a problem easier to tolerate than it should be. Keeping things pleasant does not fix what still feels uneven.",
+      "decision": "APPROVE",
+      "approvalRecord": "Owner supplied this Venus opening in Codex chat on 2026-08-24."
+    },
+    {
+      "contentKey": "draft/lunation-aspect/planet-opening/venus/trine",
+      "planet": "venus",
+      "aspect": "trine",
+      "copy": "Venus trines this {{lunationKind}}, making it easier to see what is working in a relationship, agreement, or financial choice. Support may be easier to give and receive, and something that already feels mutual can become easier to trust.",
+      "decision": "APPROVE",
+      "approvalRecord": "Owner supplied this Venus opening in Codex chat on 2026-08-24."
+    },
+    {
+      "contentKey": "draft/lunation-aspect/planet-opening/venus/sextile",
+      "planet": "venus",
+      "aspect": "sextile",
+      "copy": "Venus sextiles this {{lunationKind}}, creating an opening to improve a relationship, agreement, or money decision before a small imbalance becomes a bigger one. A conversation, clearer terms, or one change in how the exchange works may be enough.",
+      "decision": "APPROVE",
+      "approvalRecord": "Owner supplied this Venus opening in Codex chat on 2026-08-24."
+    },
+    {
+      "contentKey": "draft/lunation-aspect/planet-opening/mars/conjunction",
+      "planet": "mars",
+      "aspect": "conjunction",
+      "copy": "Mars is conjunct this {{lunationKind}}, so {{phaseDevelopment}} needs somewhere to go. Anger, desire, ambition, or conflict that has been contained may come out through a decision you can no longer postpone.",
+      "phaseDevelopmentOverrides": {
+        "new-moon": "whatever is beginning now",
+        "full-moon": "whatever has been building now"
+      },
+      "decision": "APPROVE",
+      "approvalRecord": "Owner approved this Mars opening in Codex chat on 2026-08-24."
+    },
+    {
+      "contentKey": "draft/lunation-aspect/planet-opening/mars/opposition",
+      "planet": "mars",
+      "aspect": "opposition",
+      "copy": "Mars opposes this {{lunationKind}}, putting what you want to do against the person, demand, or circumstance pushing back. Notice where the conflict is about the actual problem and where it has become a fight over who gets to decide.",
+      "decision": "APPROVE",
+      "approvalRecord": "Owner approved this Mars opening in Codex chat on 2026-08-24."
+    },
+    {
+      "contentKey": "draft/lunation-aspect/planet-opening/mars/square",
+      "planet": "mars",
+      "aspect": "square",
+      "copy": "Mars squares this {{lunationKind}}, showing you where friction has been building because the current approach is not working. Pushing harder may get a reaction, but it does not automatically solve the problem underneath it.",
+      "decision": "APPROVE",
+      "approvalRecord": "Owner approved this Mars opening in Codex chat on 2026-08-24."
+    },
+    {
+      "contentKey": "draft/lunation-aspect/planet-opening/mars/trine",
+      "planet": "mars",
+      "aspect": "trine",
+      "copy": "Mars trines this {{lunationKind}}, making it easier to act on what you already know needs to happen. Use the momentum for the move that matters before it gets scattered across every irritation competing for your attention.",
+      "decision": "APPROVE",
+      "approvalRecord": "Owner approved this Mars opening in Codex chat on 2026-08-24."
+    },
+    {
+      "contentKey": "draft/lunation-aspect/planet-opening/mars/sextile",
+      "planet": "mars",
+      "aspect": "sextile",
+      "copy": "Mars sextiles this {{lunationKind}}, giving you a chance to address the problem while it is still manageable. One direct action or new boundary may be enough to change the momentum.",
+      "decision": "APPROVE",
+      "approvalRecord": "Owner approved this Mars opening in Codex chat on 2026-08-24."
+    },
+    {
+      "contentKey": "draft/lunation-aspect/planet-opening/jupiter/conjunction",
+      "planet": "jupiter",
+      "aspect": "conjunction",
+      "copy": "Jupiter is conjunct this {{lunationKind}}, so {{phaseDevelopment}} becomes larger, more visible, or harder to contain. The bigger version may still be worth choosing. Just do not pretend it will cost the same amount of time, money, or effort.",
+      "decision": "APPROVE",
+      "approvalRecord": "Owner supplied this Jupiter opening in Codex chat on 2026-08-24."
+    },
+    {
+      "contentKey": "draft/lunation-aspect/planet-opening/jupiter/opposition",
+      "planet": "jupiter",
+      "aspect": "opposition",
+      "copy": "Jupiter opposes this {{lunationKind}}, putting the promise of something bigger against what your current life can actually hold. You can want the bigger life without saying yes to every bigger option at once.",
+      "decision": "APPROVE",
+      "approvalRecord": "Owner supplied this Jupiter opening in Codex chat on 2026-08-24."
+    },
+    {
+      "contentKey": "draft/lunation-aspect/planet-opening/jupiter/square",
+      "planet": "jupiter",
+      "aspect": "square",
+      "copy": "Jupiter squares this {{lunationKind}}, showing you where optimism, excess, or a bigger promise has outgrown the plan supporting it. If the opportunity adds three more hours, another payment, or one more person depending on you, count that before you call it growth.",
+      "decision": "APPROVE",
+      "approvalRecord": "Owner supplied this Jupiter opening in Codex chat on 2026-08-24."
+    },
+    {
+      "contentKey": "draft/lunation-aspect/planet-opening/jupiter/trine",
+      "planet": "jupiter",
+      "aspect": "trine",
+      "copy": "Jupiter trines this {{lunationKind}}, making it easier to see the opportunity, support, or larger meaning in what is happening. Something may finally be working in your favor, but it still matters what you do with it.",
+      "decision": "APPROVE",
+      "approvalRecord": "Owner supplied this Jupiter opening in Codex chat on 2026-08-24."
+    },
+    {
+      "contentKey": "draft/lunation-aspect/planet-opening/jupiter/sextile",
+      "planet": "jupiter",
+      "aspect": "sextile",
+      "copy": "Jupiter sextiles this {{lunationKind}}, creating an opening to grow through one useful invitation, connection, or decision. One yes, introduction, or change in the plan may be enough to move things forward.",
+      "decision": "APPROVE",
+      "approvalRecord": "Owner supplied this Jupiter opening in Codex chat on 2026-08-24."
+    },
+    {
+      "contentKey": "draft/lunation-aspect/planet-opening/uranus/conjunction",
+      "planet": "uranus",
+      "aspect": "conjunction",
+      "copy": "Uranus is conjunct this {{lunationKind}}, so something that has been predictable may suddenly stop following the old pattern. The change may be inconvenient, useful, or both, but it shows you which part of the old setup was no longer working.",
+      "decision": "APPROVE",
+      "approvalRecord": "Owner supplied this Uranus opening and approved the scope edit in Codex chat on 2026-08-24."
+    },
+    {
+      "contentKey": "draft/lunation-aspect/planet-opening/uranus/opposition",
+      "planet": "uranus",
+      "aspect": "opposition",
+      "copy": "Uranus opposes this {{lunationKind}}, putting the need for more freedom directly against a person, agreement, or routine that still expects things to stay the same. You may not need to blow the whole thing up, but something about the current agreement has to change.",
+      "decision": "APPROVE",
+      "approvalRecord": "Owner supplied this Uranus opening in Codex chat on 2026-08-24."
+    },
+    {
+      "contentKey": "draft/lunation-aspect/planet-opening/uranus/square",
+      "planet": "uranus",
+      "aspect": "square",
+      "copy": "Uranus squares this {{lunationKind}}, showing you where the pressure has been building between keeping things the same and needing something to change. If it only works when the schedule, priorities, and expectations never change, it was never as stable as it looked.",
+      "decision": "APPROVE",
+      "approvalRecord": "Owner supplied this Uranus opening and approved the scope edit in Codex chat on 2026-08-24."
+    },
+    {
+      "contentKey": "draft/lunation-aspect/planet-opening/uranus/trine",
+      "planet": "uranus",
+      "aspect": "trine",
+      "copy": "Uranus trines this {{lunationKind}}, making it easier to try something different without losing what is already working. The change that helps may be smaller than you expected: a different schedule, a new way of doing something, or one decision that creates more room.",
+      "decision": "APPROVE",
+      "approvalRecord": "Owner supplied this Uranus opening and approved the scope edit in Codex chat on 2026-08-24."
+    },
+    {
+      "contentKey": "draft/lunation-aspect/planet-opening/uranus/sextile",
+      "planet": "uranus",
+      "aspect": "sextile",
+      "copy": "Uranus sextiles this {{lunationKind}}, giving you an opening to change one part of the pattern before frustration forces a bigger reaction. A different route, schedule, or agreement may be enough to make the situation workable again.",
+      "decision": "APPROVE",
+      "approvalRecord": "Owner supplied this Uranus opening in Codex chat on 2026-08-24."
+    },
+    {
+      "contentKey": "draft/lunation-aspect/planet-opening/neptune/conjunction",
+      "planet": "neptune",
+      "aspect": "conjunction",
+      "copy": "Neptune is conjunct this {{lunationKind}}, so something you have not been able to fully explain becomes part of {{phaseDevelopment}}. A hope, fear, or assumption may be affecting the decision before you have enough information to know what is true. Take the feeling seriously, but check what actually happened before you decide what it means.",
+      "decision": "APPROVE",
+      "approvalRecord": "Owner supplied and approved this Neptune opening in Codex chat on 2026-08-24; the agreed phase-development token replaces the phase-neutral draft wording."
+    },
+    {
+      "contentKey": "draft/lunation-aspect/planet-opening/neptune/opposition",
+      "planet": "neptune",
+      "aspect": "opposition",
+      "copy": "Neptune opposes this {{lunationKind}}, putting the version you hoped was true directly against what the situation is showing you now. Wanting the better explanation does not make the evidence pointing somewhere else disappear.",
+      "decision": "APPROVE",
+      "approvalRecord": "Owner supplied and approved this Neptune opening in Codex chat on 2026-08-24."
+    },
+    {
+      "contentKey": "draft/lunation-aspect/planet-opening/neptune/square",
+      "planet": "neptune",
+      "aspect": "square",
+      "copy": "Neptune squares this {{lunationKind}}, showing you where vague terms, wishful thinking, or missing information have made the situation harder to understand. Go back to what was actually promised, what happened, and what is still unclear before you agree to anything else.",
+      "decision": "APPROVE",
+      "approvalRecord": "Owner supplied and approved this Neptune opening in Codex chat on 2026-08-24."
+    },
+    {
+      "contentKey": "draft/lunation-aspect/planet-opening/neptune/trine",
+      "planet": "neptune",
+      "aspect": "trine",
+      "copy": "Neptune trines this {{lunationKind}}, making it easier to see something through imagination, intuition, or a different emotional perspective. The insight matters once you know what it changes in the actual situation.",
+      "decision": "APPROVE",
+      "approvalRecord": "Owner supplied and approved this Neptune opening in Codex chat on 2026-08-24."
+    },
+    {
+      "contentKey": "draft/lunation-aspect/planet-opening/neptune/sextile",
+      "planet": "neptune",
+      "aspect": "sextile",
+      "copy": "Neptune sextiles this {{lunationKind}}, giving you an opening to notice something you missed the first time. A second look, a direct question, or one piece of missing information may be enough to change how you understand what is happening.",
+      "decision": "APPROVE",
+      "approvalRecord": "Owner supplied and approved this Neptune opening in Codex chat on 2026-08-24."
+    },
+    {
+      "contentKey": "draft/lunation-aspect/planet-opening/pluto/conjunction",
+      "planet": "pluto",
+      "aspect": "conjunction",
+      "copy": "Pluto is conjunct this {{lunationKind}}, so a question of power, control, or who carries the consequences becomes part of {{phaseDevelopment}}. Something you have been keeping under control may no longer be manageable the same way. Decide what actually needs to change before the situation leaves you with fewer choices.",
+      "decision": "APPROVE",
+      "approvalRecord": "Owner supplied and approved this Pluto opening in Codex chat on 2026-08-24."
+    },
+    {
+      "contentKey": "draft/lunation-aspect/planet-opening/pluto/opposition",
+      "planet": "pluto",
+      "aspect": "opposition",
+      "copy": "Pluto opposes this {{lunationKind}}, putting your need to stay in control directly against a person or situation that is no longer responding the way it used to. Look at who gets to make the decision and who is expected to live with the consequences.",
+      "decision": "APPROVE",
+      "approvalRecord": "Owner supplied and approved this Pluto opening in Codex chat on 2026-08-24."
+    },
+    {
+      "contentKey": "draft/lunation-aspect/planet-opening/pluto/square",
+      "planet": "pluto",
+      "aspect": "square",
+      "copy": "Pluto squares this {{lunationKind}}, showing you where pressure has been building around something no one wants to name or change. If the arrangement only works because nobody talks about who is paying for it, that silence is already part of the problem.",
+      "decision": "APPROVE",
+      "approvalRecord": "Owner supplied and approved this Pluto opening in Codex chat on 2026-08-24."
+    },
+    {
+      "contentKey": "draft/lunation-aspect/planet-opening/pluto/trine",
+      "planet": "pluto",
+      "aspect": "trine",
+      "copy": "Pluto trines this {{lunationKind}}, making it easier to use what a difficult experience already taught you. You do not need another crisis to prove the lesson stuck. Make the decision differently this time.",
+      "decision": "APPROVE",
+      "approvalRecord": "Owner supplied and approved this Pluto opening in Codex chat on 2026-08-24."
+    },
+    {
+      "contentKey": "draft/lunation-aspect/planet-opening/pluto/sextile",
+      "planet": "pluto",
+      "aspect": "sextile",
+      "copy": "Pluto sextiles this {{lunationKind}}, giving you an opening to change a pattern before it becomes harder to get out of. One boundary, one admission, or one decision to stop repeating the same behavior may change more than another round of trying to control the whole situation.",
+      "decision": "APPROVE",
+      "approvalRecord": "Owner supplied and approved this Pluto opening in Codex chat on 2026-08-24."
+    }
+  ],
+  "nodeAxisArchitecture": {
+    "decision": "APPROVE",
+    "maximumRenderedBlocks": 1,
+    "rule": "Treat the North and South Nodes as one axis. Render one nodal-contact opening and do not create separate conjunction, opposition, square, trine, or sextile Node-axis openings.",
+    "omittedAspectOpenings": [
+      "conjunction",
+      "opposition",
+      "square",
+      "trine",
+      "sextile"
+    ],
+    "approvalRecord": "Owner approved the one-block Node-axis architecture in Codex chat on 2026-08-24."
+  },
+  "nodalContactOpenings": [
+    {
+      "contentKey": "draft/lunation-aspect/nodal-contact/lunar-node-axis",
+      "copy": "This {{lunationKind}} {{nodalPositionPhrase}}, bringing an old pattern up against a direction you have not fully lived into yet. The familiar choice may feel easier simply because you have made it before. That does not mean it still takes you where you want to go.",
+      "nodalPositionPhrases": {
+        "new-moon": "falls near the lunar nodes",
+        "full-moon": "falls across the lunar nodes"
+      },
+      "decision": "APPROVE",
+      "approvalRecord": "Owner supplied and approved this nodal-contact opening and the phase-specific position phrases in Codex chat on 2026-08-24."
+    }
+  ]
+}

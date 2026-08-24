@@ -26,6 +26,30 @@
         "full moon"
       ]
     },
+    "ECLIPSE_KIND": {
+      "values": [
+        "solar",
+        "lunar"
+      ],
+      "optional": true,
+      "note": "Solar maps to the matching New Moon cell; lunar maps to the matching Full Moon cell. The displayed title retains Solar Eclipse or Lunar Eclipse."
+    },
+    "ECLIPSE_NODE_POLARITY": {
+      "values": [
+        "north",
+        "south"
+      ],
+      "optional": true,
+      "computed": true,
+      "note": "Supplied by the event-time eclipse calculation. It may select an approved modifier but never generates prose by itself."
+    },
+    "ECLIPSE_VERB": {
+      "values": [
+        "shines upon"
+      ],
+      "optional": true,
+      "note": "The approved Pisces lunar-eclipse default is shines upon. Other eclipse contexts require an exact approved content row and are never randomly rotated."
+    },
     "ILLUMINATE_VERB": {
       "values": [
         "illuminates",
@@ -86,12 +110,105 @@
     "tarotFrame": "The {HOUSE_ORDINAL} house is ruled by {HOUSE_SIGN} and corresponds to {HOUSE_ARCANA} in the Major Arcana.",
     "signRuler": "{LUNATION_SIGN_TITLE} is ruled by {SIGN_RULER}.",
     "sunCounterweight": "the sun sits opposite in your {OPP_ORDINAL} house of {OPP_DOMAIN}",
-    "intention": "Your intention for this {LUNATION_SIGN_TITLE} {LUNATION_KIND} is, \"{INTENTION_TEXT}\""
+    "intention": "Your intention for this {LUNATION_SIGN_TITLE} {LUNATION_KIND} is, \"{INTENTION_TEXT}\"",
+    "eclipseHouseOpeningSolarCandidate": null,
+    "eclipseHouseOpeningLunarCandidate": "The {LUNATION_SIGN_TITLE} lunar eclipse shines upon your {HOUSE_ORDINAL} house of {HOUSE_DOMAIN}.",
+    "eclipseNatureDefaultCandidate": "Eclipses warp time and shift the course of events in ways you can't yet see.",
+    "eclipseMechanicsCandidate": "Lunar eclipses are portals into your soul. When they come around, they can help you uncover the truth and allow you to gain knowledge that will steer your life, changing your path to a better one.",
+    "eclipseMechanicsBothKindsCandidate": "Eclipse cycles are amplified New and Full Moons that arrive in pairs or triplets, with themes that are revisited during eclipses six months later. A solar eclipse is an amplified new moon; a lunar eclipse is an amplified full moon. Both are three times as strong as a traditional new/full moon.",
+    "eclipseNoRitualCandidate": "Eclipses are not the recommended time for ritual, manifestation, or intention setting. They happen along the Lunar Nodes, and part of the work is letting the situation unfold before deciding what it is supposed to become.",
+    "eclipseKindSolarCandidate": "Solar eclipses usually start new things.",
+    "eclipseKindLunarCandidate": "Lunar eclipses help us see what needs to go and let it go.",
+    "eclipseAdviceCandidate": "You can't control it, and you shouldn't try. Not everything that changes now needs an immediate response."
   },
   "templateNotes": {
     "opening": "Matches 179 of 265 book entries. 86 open some other way.",
     "sunCounterweight": "Full moon only. For a new moon the sun is in the same house.",
-    "intention": "44 of 265 entries close with one. Format is formulaic, text is not."
+    "intention": "44 of 265 entries close with one. Format is formulaic, text is not.",
+    "openingSelector": "The book body's first sentence is the only opening on regular and eclipse paths. Do not generate a separate system opening. An eclipse variant stores an owner-reviewed replacement for that first sentence; lunar uses 'lunar eclipse' and solar uses 'solar eclipse'.",
+    "eclipseKind": "After the eclipse opening, use the solar or lunar mechanic. A South Node solar eclipse requires a separately approved reversal modifier; no modifier is currently written.",
+    "eclipseMechanics": "Render the lunar-scoped passage on lunar eclipse cards. Use eclipseMechanicsBothKindsCandidate only where the card must distinguish solar and lunar eclipses.",
+    "eclipseNoRitual": "Render only for eclipses. Explicit declared Full Moon intention blocks are omitted only through stored, owner-approved start/end spans and hashes. Incidental intention language remains. A card with an unapproved required span fails closed.",
+    "eclipseChallenge": "Optional. Render only from an approved habit-and-consequence pair selected by computed context. Never generate the two slots live.",
+    "eclipseSeason": "Axis, corridor dates, and series position are computed facts. They may fill only separately approved prose frames.",
+    "eclipseAdvice": "Append only on eclipses. The non-serving candidate requires owner approval as a complete composition plus one rendered sample before promotion."
+  },
+  "eclipseCandidateFields": {
+    "reviewStatus": "needs_review",
+    "serving": false,
+    "eclipseNature": {
+      "default": "Eclipses warp time and shift the course of events in ways you can't yet see.",
+      "candidates": [
+        "Eclipses warp time and shift the course of events in ways you can't yet see.",
+        "Eclipses bring fated events, sudden shifts, and doors closing permanently.",
+        "You will not leave this eclipse unmarked."
+      ],
+      "selectionRule": "Use default for every eclipse. The other candidates require separately approved exact contexts.",
+      "exactRowOnly": [
+        "Eclipses bring fated events, sudden shifts, and doors closing permanently.",
+        "You will not leave this eclipse unmarked."
+      ]
+    },
+    "eclipseKind": {
+      "solar": "Solar eclipses usually start new things.",
+      "lunar": "Lunar eclipses help us see what needs to go and let it go.",
+      "southNodeSolarModifier": null,
+      "gate": "The owner must supply and approve the exact South Node reversal sentence."
+    },
+    "eclipseMechanics": "Lunar eclipses are portals into your soul. When they come around, they can help you uncover the truth and allow you to gain knowledge that will steer your life, changing your path to a better one.",
+    "eclipseMechanicsScope": "lunar_only",
+    "eclipseNoRitual": "Eclipses are not the recommended time for ritual, manifestation, or intention setting. They happen along the Lunar Nodes, and part of the work is letting the situation unfold before deciding what it is supposed to become.",
+    "eclipseNoRitualApproval": {
+      "status": "owner_approved",
+      "date": "2026-08-24",
+      "promotionAuthorized": false
+    },
+    "intentionPreservation": {
+      "preserveWhenEclipse": [
+        "bookBodyOutsideApprovedDeclaredIntentionSpans",
+        "incidentalIntentionLanguage",
+        "actionsIntentions",
+        "closing"
+      ],
+      "rule": "Preserve the regular source. Omit only a stored, owner-approved declared Full Moon intention span from an eclipse variant. Never pattern-match at runtime; an affected unapproved cell fails closed."
+    },
+    "eclipseVerb": {
+      "default": "shines upon",
+      "observedCounts": {
+        "hits": 5,
+        "reveals": 5,
+        "activates": 4,
+        "illuminates": 3,
+        "shows": 5,
+        "demands": 2
+      },
+      "exactRowOnly": [
+        "strips away",
+        "cuts through",
+        "torches",
+        "rips the veil away",
+        "revokes",
+        "ends that contract",
+        "makes the cut for you"
+      ],
+      "rule": "Pisces lunar-eclipse book-opening replacements use shines upon in all twelve houses per the owner ruling of 2026-08-24. Other eclipse kinds or exceptions require separately approved exact rows."
+    },
+    "eclipseChallenge": {
+      "frame": "If you're still {ECLIPSE_HABIT}, this eclipse {ECLIPSE_CONSEQUENCE}.",
+      "approvedPairs": [],
+      "rule": "Omit unless a complete habit-and-consequence pair is approved for the computed context."
+    },
+    "eclipseSeason": {
+      "computedInputs": [
+        "eclipseAxis",
+        "seasonStart",
+        "seasonEnd",
+        "seriesPosition"
+      ],
+      "approvedFrames": [],
+      "rule": "The engine supplies every fact. Omit when no complete approved frame matches."
+    },
+    "eclipseAdvice": "You can't control it, and you shouldn't try. Not everything that changes now needs an immediate response."
   },
   "houses": [
     {
