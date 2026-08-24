@@ -4,6 +4,7 @@ import {
   getLunarCalendarWeek,
   type LunarCalendarDetailLevel
 } from "../apps/web/src/services/ephemeris.js";
+import { zonedDateTimeToUtc } from "../apps/web/src/services/timezones.js";
 import type { LocationInput } from "../apps/web/src/types.js";
 
 type CalendarViewMode = "week" | "month";
@@ -36,12 +37,17 @@ function parseDetail(value: string | null): LunarCalendarDetailLevel {
   return value === "full" ? "full" : "basic";
 }
 
-function parseAnchor(value: string | null) {
+function parseAnchor(value: string | null, timeZone: string) {
   if (!value) return new Date();
 
-  const date = new Date(`${value}T00:00:00`);
-
-  return Number.isNaN(date.getTime()) ? new Date() : date;
+  try {
+    // Calendar dates are civil dates in the selected location. Parsing the
+    // value as server-local or UTC midnight can move it to the previous day in
+    // western time zones and make a requested week return the prior week.
+    return zonedDateTimeToUtc(value, "12:00 PM", timeZone);
+  } catch {
+    return new Date();
+  }
 }
 
 function parseLocation(url: URL): LocationInput {
@@ -70,8 +76,8 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     const requestUrl = new URL(req.url ?? "/api/calendar", "http://localhost");
     const mode = parseMode(requestUrl.searchParams.get("mode"));
     const detail = parseDetail(requestUrl.searchParams.get("detail"));
-    const anchor = parseAnchor(requestUrl.searchParams.get("date"));
     const location = parseLocation(requestUrl);
+    const anchor = parseAnchor(requestUrl.searchParams.get("date"), location.timeZone ?? "UTC");
     const calendar = mode === "week"
       ? await getLunarCalendarWeek(location, anchor, { detail })
       : await getLunarCalendarMonth(location, anchor, { detail });
