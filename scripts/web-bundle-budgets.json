@@ -8,6 +8,7 @@
   "skyDetailChunkGzipBytes": 5000,
   "reportRouteChunkGzipBytes": 4500,
   "skyPlacementFallbackChunkGzipBytes": 150000,
+  "lunationBookFallbackChunkGzipBytes": 210000,
   "transitFallbackChunkGzipBytes": 330000,
   "relationshipFallbackChunkGzipBytes": 230000,
   "signupChunkGzipBytes": 4000,

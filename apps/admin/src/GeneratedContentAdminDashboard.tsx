@@ -24,6 +24,11 @@ import type { KeyboardEvent as ReactKeyboardEvent } from "react";
 import { isReaderFacingCopy } from "../../web/src/content/readerSafety";
 import { renderCmsTemplatePreview, validateCmsTemplate } from "../../web/src/content/cmsTemplateValidation";
 import { announceContentUpdate } from "../../web/src/services/contentUpdateSignal";
+import {
+  readLiveOmittedSectionQueue,
+  subscribeToLiveOmittedSectionQueue,
+  type LiveOmittedSectionReviewItem
+} from "../../web/src/services/conditionalSectionReviewQueue";
 import { adminCredentialHeaders, adminSecretStorageKey, normalizeAdminSecret } from "./adminSecret";
 import { loadOwnerSessionAccessToken, watchOwnerSessionAccessToken } from "./ownerSession";
 import {
@@ -142,7 +147,7 @@ type AdminSkyWriteupSubjectFilter = "all" | "planet" | "angle" | "point";
 type AdminCompatibilitySectionFilter = "all" | "content" | "fallback-hooks" | "vocabulary" | "slots";
 type AdminCompatibilitySort = "updated-desc" | "updated-asc" | "title-asc" | "status" | "source";
 type AdminCompatibilityCreateKind = "content" | "vocabulary" | "fallback-hook" | "template";
-type SkyVoiceQueueView = "all" | "composite" | "upcoming" | "needs-review" | "audit";
+type SkyVoiceQueueView = "all" | "composite" | "upcoming" | "needs-review" | "audit" | "live-omissions";
 type ContentLibraryView = "all" | "compatibility";
 type SkyReviewHorizonOccurrence = {
   kind: "aspect" | "placement";
@@ -263,6 +268,22 @@ type AdminUserGeneratedContentRow = {
   created_at?: string | null;
 };
 
+type AdminContentReviewEventRow = {
+  fingerprint: string;
+  surface: LiveOmittedSectionReviewItem["surface"];
+  event_date: string;
+  event_kind: string | null;
+  sign: string | null;
+  rising_sign: string | null;
+  section_id: string;
+  omitted_content_key: string;
+  fallback_content_key: string | null;
+  reason: "missing-or-ineligible";
+  first_seen_at: string;
+  last_seen_at: string;
+  occurrence_count: number;
+};
+
 type AdminContentFact = {
   id?: string;
   content_key?: string;
@@ -343,6 +364,61 @@ type AdminVocabularyCategoryFilter = AdminVocabularySection;
 
 function getLocalContentGenerationSecret() {
   return (globalThis as typeof globalThis & { __LOCAL_CONTENT_GENERATION_SECRET__?: string }).__LOCAL_CONTENT_GENERATION_SECRET__ ?? "";
+}
+
+function liveOmissionSurfaceLabel(surface: LiveOmittedSectionReviewItem["surface"]) {
+  return surface === "you-daily" ? "You daily" : "Weekly horoscope";
+}
+
+function liveOmissionDateLabel(item: LiveOmittedSectionReviewItem) {
+  const date = new Date(item.eventDate);
+  if (!Number.isFinite(date.getTime())) return item.eventDate;
+  try {
+    return new Intl.DateTimeFormat(undefined, {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+      timeZone: item.timeZone || "UTC"
+    }).format(date);
+  } catch {
+    return item.eventDate;
+  }
+}
+
+function liveOmissionIdentity(item: LiveOmittedSectionReviewItem) {
+  return [item.surface, item.eventDate.slice(0, 10), item.risingSign ?? "", item.sectionId, item.omittedContentKey].join("|");
+}
+
+function sharedLiveOmissionItem(row: AdminContentReviewEventRow): LiveOmittedSectionReviewItem {
+  const eventKind = row.event_kind ?? undefined;
+  const risingSign = row.rising_sign ?? undefined;
+  const eventLabel = eventKind === "eclipse-solar"
+    ? "Solar Eclipse"
+    : eventKind === "eclipse-lunar"
+      ? "Lunar Eclipse"
+      : eventKind === "new-moon"
+        ? "New Moon"
+        : eventKind === "full-moon"
+          ? "Full Moon"
+          : "Horoscope";
+  return {
+    queueId: row.fingerprint,
+    id: "conditional-section-omitted",
+    status: "needs_review",
+    surface: row.surface,
+    headline: risingSign ? `${eventLabel} for ${risingSign.replace(/(^|-)([a-z])/gu, (_match, separator, letter) => `${separator}${letter.toUpperCase()}`)} Rising` : eventLabel,
+    eventDate: `${row.event_date}T12:00:00.000Z`,
+    eventKind,
+    sign: row.sign ?? undefined,
+    risingSign,
+    sectionId: row.section_id,
+    omittedContentKey: row.omitted_content_key,
+    fallbackContentKey: row.fallback_content_key,
+    reason: row.reason,
+    firstSeenAt: row.first_seen_at,
+    lastSeenAt: row.last_seen_at,
+    occurrenceCount: row.occurrence_count
+  };
 }
 
 const vocabularySections: Array<{ key: AdminVocabularySection; label: string; description: string }> = [
@@ -2032,6 +2108,9 @@ export function GeneratedContentAdminDashboard() {
   const [contentLibraryView, setContentLibraryView] = useState<ContentLibraryView>("all");
   const [reviewStatusFilter, setReviewStatusFilter] = useState<GeneratedContentStatus | "all">("all");
   const [skyVoiceQueueView, setSkyVoiceQueueView] = useState<SkyVoiceQueueView>("all");
+  const [liveOmittedSections, setLiveOmittedSections] = useState<LiveOmittedSectionReviewItem[]>(() => readLiveOmittedSectionQueue());
+  const [sharedLiveOmittedSections, setSharedLiveOmittedSections] = useState<LiveOmittedSectionReviewItem[]>([]);
+  const [sharedLiveOmittedSectionsLoaded, setSharedLiveOmittedSectionsLoaded] = useState(false);
   const [skyReviewHorizon, setSkyReviewHorizon] = useState<SkyReviewHorizon | null>(null);
   const [skyReviewHorizonError, setSkyReviewHorizonError] = useState<string | null>(null);
   const [contentClassFilter, setContentClassFilter] = useState<AdminContentClassFilter>("all");
@@ -2086,6 +2165,19 @@ export function GeneratedContentAdminDashboard() {
   const hookBodyRequestsRef = useRef(new Map<GeneratedContentSurface, Promise<Map<string, string>>>());
   const skyArticleAutosaveSequenceRef = useRef(0);
   const skyArticleWorkspaceAutosaveSequenceRef = useRef(0);
+
+  useEffect(() => {
+    setLiveOmittedSections(readLiveOmittedSectionQueue());
+    return subscribeToLiveOmittedSectionQueue(setLiveOmittedSections);
+  }, []);
+
+  const visibleLiveOmittedSections = useMemo(() => {
+    const sharedIdentities = new Set(sharedLiveOmittedSections.map(liveOmissionIdentity));
+    return [
+      ...sharedLiveOmittedSections,
+      ...liveOmittedSections.filter((item) => !sharedIdentities.has(liveOmissionIdentity(item)))
+    ].sort((left, right) => right.lastSeenAt.localeCompare(left.lastSeenAt));
+  }, [liveOmittedSections, sharedLiveOmittedSections]);
 
   const visibleRows = useMemo(() => rows.filter((row) => (
     (showReferenceRows
@@ -2500,7 +2592,11 @@ export function GeneratedContentAdminDashboard() {
 
       setCategoryFilter(category && categoryFilters.some((filter) => filter.key === category) ? category : "all");
       setContentLibraryView(page === "content" && view === "compatibility" ? "compatibility" : "all");
-      setSkyVoiceQueueView(page === "reviewQueue" && view === "composite" ? "composite" : "all");
+      setSkyVoiceQueueView(
+        page === "reviewQueue" && ["composite", "upcoming", "needs-review", "audit", "live-omissions"].includes(view ?? "")
+          ? view as SkyVoiceQueueView
+          : "all"
+      );
       setContentClassFilter(source && contentClassFilters.some((filter) => filter.key === source) ? source : "all");
       setQuery(search ?? "");
       setFallbackSectionFilter(section && fallbackSections.some((filter) => filter.key === section) ? section : "all");
@@ -2800,11 +2896,12 @@ export function GeneratedContentAdminDashboard() {
     setIsLoading(true);
     try {
       const needsExtendedInventory = isCompositionPage(activePage) || showReferenceRows || showRetiredRows;
-      const [generatedResult, reviewResult, usersResult, sourceDraftResult] = await Promise.allSettled([
+      const [generatedResult, reviewResult, usersResult, sourceDraftResult, runtimeReviewResult] = await Promise.allSettled([
         loadAllGeneratedContentRows(normalizedSecret, needsExtendedInventory ? "all" : "editorial"),
         adminJsonRequest<{ ok: boolean; rows?: AdminReviewRecord[]; records?: AdminReviewRecord[]; counts?: unknown }>("/api/admin/review-records?surface=upcomingAspects&status=all", normalizedSecret),
         adminJsonRequest<{ ok: boolean; rows: AdminUserGeneratedContentRow[] }>("/api/admin/user-generated-content?status=all&limit=100", normalizedSecret),
-        loadAdminSourceDraftCatalog(normalizedSecret)
+        loadAdminSourceDraftCatalog(normalizedSecret),
+        adminJsonRequest<{ ok: boolean; rows: AdminContentReviewEventRow[] }>("/api/admin/content-review-events?limit=250", normalizedSecret)
       ]);
 
       if (generatedResult.status === "rejected") {
@@ -2822,6 +2919,13 @@ export function GeneratedContentAdminDashboard() {
         return { ...record, rawGlobalRow };
       }));
       setUserRows(usersPayload.rows ?? []);
+      if (runtimeReviewResult.status === "fulfilled") {
+        setSharedLiveOmittedSections(runtimeReviewResult.value.rows.map(sharedLiveOmissionItem));
+        setSharedLiveOmittedSectionsLoaded(true);
+      } else {
+        setSharedLiveOmittedSections([]);
+        setSharedLiveOmittedSectionsLoaded(false);
+      }
       if (sourceDraftResult.status === "fulfilled") {
         setSourceDrafts(sourceDraftResult.value);
         setSourceDraftLoadState("loaded");
@@ -4047,6 +4151,10 @@ export function GeneratedContentAdminDashboard() {
               <button type="button" className={skyVoiceQueueView === "all" ? "active" : ""} onClick={() => setSkyVoiceQueueView("all")}>
                 All review
               </button>
+              <button type="button" className={skyVoiceQueueView === "live-omissions" ? "active" : ""} onClick={() => setSkyVoiceQueueView("live-omissions")}>
+                Live with omitted sections
+                <strong>{visibleLiveOmittedSections.length}</strong>
+              </button>
               <button type="button" className={skyVoiceQueueView === "composite" ? "active" : ""} onClick={() => setSkyVoiceQueueView("composite")}>
                 Composite
                 <strong>{filteredCompositeReviewRows.length}</strong>
@@ -4104,6 +4212,7 @@ export function GeneratedContentAdminDashboard() {
             </section>}
             {(skyVoiceQueueView === "all" || skyVoiceQueueView === "composite") && renderBulkBar()}
             {skyVoiceQueueView === "all" && renderReviewTable(filteredReviewRows)}
+            {skyVoiceQueueView === "live-omissions" && renderLiveOmittedSectionsQueue()}
             {skyVoiceQueueView === "composite" && renderReviewTable(filteredCompositeReviewRows)}
             {skyVoiceQueueView === "upcoming" && renderSkyReviewHorizon()}
             {skyVoiceQueueView === "needs-review" && renderSkyVoiceQueue(skyVoiceNeedsReviewRows, "Cards held by the judge for a fast editorial decision.")}
@@ -5146,6 +5255,48 @@ export function GeneratedContentAdminDashboard() {
             );
           })}
           {tableRows.length === 0 && <p className="admin-empty">No review rows match these filters.</p>}
+        </div>
+      </section>
+    );
+  }
+
+  function renderLiveOmittedSectionsQueue() {
+    return (
+      <section className="admin-sky-voice-queue" aria-label="Live with omitted sections">
+        <p className="admin-sky-voice-description">
+          Read-only runtime QA. Each horoscope listed here stayed live with its approved evergreen copy; only the unavailable conditional section was omitted. {sharedLiveOmittedSectionsLoaded ? "Authenticated observations are shared across production, with this device's local fallback merged in." : "The shared endpoint is unavailable, so this view is showing this device's local fallback."} Review metadata is never exposed to readers.
+        </p>
+        <div className="admin-sky-voice-cards">
+          {visibleLiveOmittedSections.map((item) => (
+            <article key={item.queueId} className="admin-sky-voice-card">
+              <header>
+                <div>
+                  <h3>{item.headline || "Horoscope served with an omitted section"}</h3>
+                  <code>{item.omittedContentKey}</code>
+                </div>
+                <div className="admin-review-queue-meta-strip">
+                  <span className="ui-pill admin-status status-live">Horoscope stayed live</span>
+                  <span className="ui-pill admin-status status-reviewed">Needs copy review</span>
+                </div>
+              </header>
+              <dl className="admin-sky-voice-facts">
+                <div><dt>Surface</dt><dd>{liveOmissionSurfaceLabel(item.surface)}</dd></div>
+                <div><dt>Event date</dt><dd>{liveOmissionDateLabel(item)}</dd></div>
+                <div><dt>Section omitted</dt><dd>{item.sectionId}</dd></div>
+                <div><dt>Seen</dt><dd>{item.occurrenceCount} {item.occurrenceCount === 1 ? "time" : "times"}</dd></div>
+                <div><dt>Sign</dt><dd>{item.sign || "Not recorded"}</dd></div>
+                <div><dt>Rising sign</dt><dd>{item.risingSign || "Not recorded"}</dd></div>
+              </dl>
+              <div className="admin-sky-voice-judge">
+                <p><strong>Reason</strong>{item.reason === "missing-or-ineligible" ? "The conditional source row was missing or not reader-eligible." : item.reason}</p>
+                <p><strong>Fallback</strong>{item.fallbackContentKey || "No replacement section was inserted; approved evergreen copy continued without it."}</p>
+                <p><strong>Last seen</strong>{new Date(item.lastSeenAt).toLocaleString()}</p>
+              </div>
+            </article>
+          ))}
+          {visibleLiveOmittedSections.length === 0 && (
+            <p className="admin-empty">No live horoscope has omitted a conditional section in the available review history.</p>
+          )}
         </div>
       </section>
     );

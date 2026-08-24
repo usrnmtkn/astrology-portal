@@ -57,6 +57,7 @@ import {
   installSkyPlacementFallbackArchitectureV3Bundle,
   loadDeferredFallbackArchitectureV3Bundle,
   loadEmptyHouseFallbackArchitectureV3Bundle,
+  loadLunationBookFallbackArchitectureV3Bundle,
   loadRelationshipFallbackArchitectureV3Bundle,
   loadSkyPlacementFallbackArchitectureV3Bundle,
   fallbackArchitectureV3PackageVersion,
@@ -73,7 +74,12 @@ import {
 } from "./content/fallbackArchitectureV3Runtime";
 import { natalPlacementReaderSectionCopy } from "./content/natalPlacementReaderSections";
 import { preserveProtectedOwnerSkyPlacementPassage } from "./content/protectedOwnerSkyPlacementPassages";
-import { firstReaderFacingCopy, isReaderFacingCopy, readerFacingParagraphs } from "./content/readerSafety";
+import {
+  firstReaderFacingCopy,
+  fullDetailReaderFacingCopy,
+  isReaderFacingCopy,
+  readerFacingParagraphs
+} from "./content/readerSafety";
 import {
   skyArticleAspectPassageForTransit
 } from "./content/skyArticleTemplateCompiler";
@@ -138,6 +144,7 @@ import {
   type WeeklyHoroscopeAssembly,
   type WeeklyHoroscopeReading
 } from "./services/weeklyHoroscope";
+import { reportLiveOmittedSections } from "./services/conditionalSectionReviewReporter";
 import { SKY_BODY_ORDER, skyBodyOrderIndex, transitToNatalOrbLimit } from "./astrologyConfig";
 import {
   SkyAspectGroup,
@@ -4132,7 +4139,7 @@ function sourceGroundedNatalAspectNormalizedSection(
       planetB: normalizeContentIdPart(aspect.to),
       voice: ownerContext?.ownerName ?? "you"
     });
-    const body = readerFacingParagraphs(rendered.parts).join("\n\n");
+    const body = fullDetailReaderFacingCopy(rendered.parts) ?? "";
 
     if (!body || !isReaderFacingCopy(body)) {
       return null;
@@ -4331,7 +4338,7 @@ function reviewedSkyAspectWritingSection(
       return null;
     }
 
-    const body = readerFacingParagraphs(rendered.parts).join("\n\n");
+    const body = fullDetailReaderFacingCopy(rendered.parts) ?? "";
 
     if (!body || !isReaderFacingCopy(body)) {
       return null;
@@ -4801,7 +4808,7 @@ function skyPlacementWritingSection(
     && allRenderedParagraphs.at(-1) === rendered.closingCharge
     ? allRenderedParagraphs.slice(0, -1)
     : allRenderedParagraphs;
-  const body = readerFacingParagraphs(renderedParagraphs).join("\n\n");
+  const body = fullDetailReaderFacingCopy(renderedParagraphs) ?? "";
 
   if (!body || !isReaderFacingCopy(body)) {
     return null;
@@ -6727,7 +6734,7 @@ function normalizeEmptyHouseDetailSurface({
       sign: normalizeContentIdPart(sign),
       voice
     }, { includeEmptyHouseBridge: true });
-    const body = readerFacingParagraphs(rendered.parts).join("\n\n");
+    const body = fullDetailReaderFacingCopy(rendered.parts) ?? "";
     const section = normalizedEmptyHouseSection(
       "house-sign",
       rendered.headline || `${ordinalHouse(house)} house sign`,
@@ -7340,7 +7347,7 @@ function personalTransitPackageSection(
   ) {
     try {
       const renderedReturn = transitSynastryFallbackRendererV3.renderTransitReturn({ planet: returnPlanet });
-      const returnBody = readerFacingParagraphs(renderedReturn.parts).join("\n\n");
+      const returnBody = fullDetailReaderFacingCopy(renderedReturn.parts) ?? "";
 
       if (returnBody && isReaderFacingCopy(returnBody)) {
         const legacyContinuity = renderedReturn.provenanceTier === "legacy-reviewed";
@@ -7413,7 +7420,7 @@ function personalTransitPackageSection(
         voice,
         window: windowLabel
       });
-      const body = readerFacingParagraphs(renderedEvent.parts).join("\n\n");
+      const body = fullDetailReaderFacingCopy(renderedEvent.parts) ?? "";
 
       if (body && isReaderFacingCopy(body)) {
         return {
@@ -7451,7 +7458,7 @@ function personalTransitPackageSection(
       window: windowLabel,
       voice
     });
-    const body = readerFacingParagraphs(rendered.parts).join("\n\n");
+    const body = fullDetailReaderFacingCopy(rendered.parts) ?? "";
 
     if (!rendered.templateKey.startsWith("authored/") || !body || !isReaderFacingCopy(body)) {
       return null;
@@ -7627,7 +7634,7 @@ function normalizeTransitHouseSurface(
         : [])
     ].filter(Boolean);
     detailSections = (rendered.parts as string[]).flatMap((part: string, index: number): NormalizedTransitHouseSection[] => {
-      const partBody = readerFacingParagraphs([part]).join("\n\n");
+      const partBody = fullDetailReaderFacingCopy([part]) ?? "";
 
       return partBody
         ? [{
@@ -7738,7 +7745,7 @@ function renderReaderDirectedSynastryContact(
       romanticAllowed: options.romanticAllowed ?? false,
       relationshipType: options.relationshipType ?? null
     });
-    const body = readerFacingParagraphs(rendered.parts).join("\n\n");
+    const body = fullDetailReaderFacingCopy(rendered.parts) ?? "";
 
     if (!body || !isReaderFacingCopy(body)) {
       return null;
@@ -11112,6 +11119,30 @@ export function App() {
     skyDetailRoutePath,
     userProfile?.rising
   ]);
+
+  useEffect(() => {
+    let cancelled = false;
+    const lunationRising = profileNatalSky?.ascendant ?? userProfile?.rising;
+    if (!sky?.moonEvent || sky.moonEvent.days !== 0 || !lunationRising) {
+      return () => {
+        cancelled = true;
+      };
+    }
+
+    loadLunationBookFallbackArchitectureV3Bundle()
+      .then((installed) => {
+        if (installed && !cancelled) {
+          setFallbackArchitectureV3Version((version) => version + 1);
+        }
+      })
+      .catch((error) => {
+        console.warn("Lunation book content failed to load; existing row fallback remains active.", error);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [profileNatalSky?.ascendant, sky?.moonEvent, userProfile?.rising]);
 
   useEffect(() => {
     let cancelled = false;
@@ -14544,7 +14575,7 @@ function natalAngleFallbackV3NormalizedSections(position: PlanetPosition, ownerC
       sign,
       voice: ownerContext?.ownerName ?? "you"
     });
-    const body = readerFacingParagraphs(rendered.parts).join("\n\n");
+    const body = fullDetailReaderFacingCopy(rendered.parts) ?? "";
 
     if (!body || !isReaderFacingCopy(body)) {
       return [];
@@ -16203,7 +16234,7 @@ function ProfileView({
     targetDate
   ]);
   const lunationBlendYouFallbackEnabled = String(
-    import.meta.env.VITE_ENABLE_LUNATION_BLEND_YOU_FALLBACK ?? "false"
+    import.meta.env.VITE_ENABLE_LUNATION_BLEND_YOU_FALLBACK ?? "true"
   ).toLowerCase() === "true";
   useEffect(() => {
     const moonEvent = currentSky?.moonEvent;
@@ -16977,12 +17008,17 @@ function ProfileView({
     if (!currentSky?.moonEvent || currentSky.moonEvent.days !== 0 || !displayRising) return [];
 
     try {
-      const kind = currentSky.moonEvent.name === "New Moon" ? "new-moon" : "full-moon";
-      const matchingNewMoon = kind === "full-moon"
+      const kind = currentSky.moonEvent.eclipseType
+        ? `eclipse-${currentSky.moonEvent.eclipseType}` as const
+        : currentSky.moonEvent.name === "New Moon"
+          ? "new-moon" as const
+          : "full-moon" as const;
+      const isFullPhase = kind === "full-moon" || kind === "eclipse-lunar";
+      const matchingNewMoon = isFullPhase
         && dailyMatchingNewMoon?.fullMoonEventDate === currentSky.moonEvent.occursAt
         ? dailyMatchingNewMoon.fact
         : undefined;
-      if (kind === "full-moon" && lunationBlendYouFallbackEnabled && !matchingNewMoon) return [];
+      if (isFullPhase && lunationBlendYouFallbackEnabled && !matchingNewMoon) return [];
       const rendered = transitSynastryFallbackRendererV3.renderLunationEventCard({
         eventDate: currentSky.moonEvent.occursAt,
         blendFallbackEnabled: lunationBlendYouFallbackEnabled,
@@ -16990,6 +17026,7 @@ function ProfileView({
         sign: normalizeContentIdPart(currentSky.moonEvent.sign),
         risingSign: normalizeContentIdPart(displayRising),
         matchingNewMoon,
+        timeZone: currentSky.location.timeZone || Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC",
         ...lunationBlendFacts(
           currentSky,
           currentSky.moonEvent.sign,
@@ -16998,7 +17035,11 @@ function ProfileView({
         )
       });
       assertLunationBodyMatchesEventSky(rendered.body, currentSky);
-      return [{ headline: rendered.headline, body: rendered.body }];
+      return [{
+        headline: rendered.headline,
+        body: rendered.body,
+        reviewFlags: rendered.reviewFlags as Array<Record<string, unknown>> | undefined
+      }];
     } catch (error) {
       if (!(error instanceof FallbackV3SourceGapError)) throw error;
       console.warn("Daily special-day source gap; hiding surface.", error);
@@ -17015,6 +17056,7 @@ function ProfileView({
       localNoon: true,
       headliner: dailyIsHeadliner,
       areaCap: dailyIsHeadliner ? 3 : 4,
+      contentReviewFlags: dailySpecialSections.flatMap((section) => section.reviewFlags ?? []),
       qualifyingTransits: qualifyingDailyTransits.map((transit) => ({
         id: transit.id,
         transitPlanet: transit.transitPlanet,
@@ -17040,6 +17082,35 @@ function ProfileView({
         : null
     }
   };
+  const dailyOmittedReviewFlagsJson = JSON.stringify(
+    dailySpecialSections.flatMap((section) => section.reviewFlags ?? [])
+  );
+  useEffect(() => {
+    const moonEvent = currentSky?.moonEvent;
+    if (!moonEvent || !displayRising || dailyOmittedReviewFlagsJson === "[]") return;
+    const kind = moonEvent.eclipseType
+      ? `eclipse-${moonEvent.eclipseType}`
+      : moonEvent.name === "New Moon"
+        ? "new-moon"
+        : "full-moon";
+    void reportLiveOmittedSections(JSON.parse(dailyOmittedReviewFlagsJson), {
+      surface: "you-daily",
+      headline: dailySpecialSections[0]?.headline ?? `${moonEvent.name} for ${displayRising} Rising`,
+      eventDate: moonEvent.occursAt,
+      eventKind: kind,
+      sign: normalizeContentIdPart(moonEvent.sign),
+      risingSign: normalizeContentIdPart(displayRising),
+      timeZone: currentSky.location.timeZone || Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC"
+    });
+  }, [
+    currentSky?.moonEvent?.eclipseType,
+    currentSky?.moonEvent?.name,
+    currentSky?.moonEvent?.occursAt,
+    currentSky?.moonEvent?.sign,
+    currentSky?.location.timeZone,
+    dailyOmittedReviewFlagsJson,
+    displayRising
+  ]);
   const dailyTimingContent = personalTimingGenerated;
   const generatedDailyHeadline = dailyTimingContent?.headline?.trim();
   const generatedDailySummary = liveGeneratedSummaryIfPresent(dailyTimingContent);

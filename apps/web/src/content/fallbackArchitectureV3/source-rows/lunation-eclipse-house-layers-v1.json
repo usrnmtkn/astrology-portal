@@ -1,0 +1,334 @@
+{
+  "schema": "lunation-eclipse-house-layers/v1",
+  "version": "solar-eclipse-house-layer-v1",
+  "status": "owner-approved-reuse",
+  "source_artifact": "packages/astro-knowledge/review/lunation-card-assembly-v1/source/solar-eclipse-house-layer-v1.json",
+  "source_sha256": "8381a691e61bdde897a6edb67988f2d037c7b1fe471e2c5ab50b16ec6b464369",
+  "count": 12,
+  "authoredCards": [
+    {
+      "contentKey": "authored/lunation-eclipse-house-layer/solar/house-1",
+      "content_role": "full_copy",
+      "body": "The New Moon in the 1st house is a powerful time for self-discovery and new beginnings. The 1st house corresponds to the emergence of self and the human experience, including your mannerisms and perceptions. This aligns with new people, social status or popularity, experiences, and appearances. The phrase \"New Moon, New You\" comes to mind. The 1st house, ruled by Aries, aligns with the Emperor in the Major Arcana, urging us to assert our individuality and personal authority. Aries brings new beginnings and karmic cycles, while the Emperor represents breaking free from societal norms. This is a time to confidently step into our power and take control of our lives, while also developing a positive self-image and taking responsibility for ourselves. The Tower card represents unexpected change, shaking up long-held beliefs and patterns. Mars, the planetary ruler of Aries, known as the Awakener, bestows energy and self-expression, reminding us to let go of what no longer serves us. Trust in the transformative power of the Universe and in our own strength to navigate this change. Embrace new possibilities and trust the path the universe is leading you to. Trust that this change, no matter how difficult it may seem, is for your highest good and aligns with your soul's purpose.",
+      "review_status": "approved_reuse",
+      "owner_authored": true,
+      "lunation_kind": "eclipse-solar",
+      "house": 1,
+      "source_keys": [
+        "packages/astro-knowledge/review/lunation-card-assembly-v1/source/solar-eclipse-house-layer-v1.json"
+      ],
+      "source_release": "solar-eclipse-house-layer-v1",
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/lunation-card-assembly-v1/source/solar-eclipse-house-layer-v1.json",
+        "payloadSha256": "1ac32858ec98568558cad620af4dbb691e26585efe77fcce3f91badba26e26b7",
+        "approvedAt": "2026-08-24"
+      },
+      "promotion_authorized": true,
+      "protected_content": {
+        "policy": "owner-approved-source-reuse-with-declared-omissions",
+        "body_sha256": "1ac32858ec98568558cad620af4dbb691e26585efe77fcce3f91badba26e26b7",
+        "word_count": 210,
+        "char_count": 1290,
+        "template_slots": []
+      }
+    },
+    {
+      "contentKey": "authored/lunation-eclipse-house-layer/solar/house-2",
+      "content_role": "full_copy",
+      "body": "The second house is all about establishing a foundation, earning money, and amassing possessions and wealth through your talents and ancestral gifts. This is a powerful time to focus on increasing your income, developing talents that can increase your earning potential, re-examining your views on money and finances, and identifying opportunities to invest in your future, stability and legacy. Ruled by Taurus and corresponding to The Hierophant in the Major Arcana of Tarot, the 2nd House of Finances and Foundation represents structure, consistency, and guidance; all essential elements in achieving financial stability and success. The Hierophant can be considered a mentor or guide, someone with the experience and knowledge to help you navigate the path to success. If you're seeking help setting proper financial goals, it may be beneficial to seek the guidance of a mentor or financial advisor who can provide direction and assistance. Trust in the natural flow of abundance and let the universe guide you towards financial stability and success. The Empress in the tarot corresponds to Venus, and symbolizes growth and abundance, embodying the energy of the Mother Goddess and the cycle of creation and fertility. She represents the power of motherhood, the ability to bring new life and growth, and the power to manifest abundance in all areas of life. The Empress is connected to the element of earth, representing material and physical reality. As a symbol of creation, the Empress represents the ability to bring things to fruition, from seed to fruition. She is a reminder of the power of manifestation, and the ability to bring our desires to fruition through the power of love and attraction. Her presence encourages us to nurture and care for ourselves and our relationships, and to trust in the natural rhythms of life. The Empress is a powerful reminder to stay grounded and connected to the earth, and to tap into our inner goddess to manifest our hearts desires.",
+      "review_status": "approved_reuse",
+      "owner_authored": true,
+      "lunation_kind": "eclipse-solar",
+      "house": 2,
+      "source_keys": [
+        "packages/astro-knowledge/review/lunation-card-assembly-v1/source/solar-eclipse-house-layer-v1.json"
+      ],
+      "source_release": "solar-eclipse-house-layer-v1",
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/lunation-card-assembly-v1/source/solar-eclipse-house-layer-v1.json",
+        "payloadSha256": "1e01ea5cf6f77508da5d3b33409f196fdea981359a7605e211cdc0e0e1334135",
+        "approvedAt": "2026-08-24"
+      },
+      "promotion_authorized": true,
+      "protected_content": {
+        "policy": "owner-approved-source-reuse-with-declared-omissions",
+        "body_sha256": "1e01ea5cf6f77508da5d3b33409f196fdea981359a7605e211cdc0e0e1334135",
+        "word_count": 321,
+        "char_count": 1984,
+        "template_slots": []
+      }
+    },
+    {
+      "contentKey": "authored/lunation-eclipse-house-layer/solar/house-3",
+      "content_role": "full_copy",
+      "body": "The third house, ruled by the twin energies of Gemini and Mercury, holds within it the magick of connections and the power of early education, self-expression, and communication within our community; Focus on developing more friendships within your neighborhood or opening up communication with a specific person or group. The third house is ruled by Gemini (The Lovers) and Mercury (The Magician) as its planetary ruler. The Lovers and The Magician allude to the magick and power of connections. The Lovers and The Magician remind us of the ever-evolving dance between connection, relationships, and choices. The Lovers card represents the beauty and power of love and attraction, the pull of the heart, and the importance of making choices that align with our truest selves. It also reminds us of the strength of commitment and loyalty and the delicate balance between the heart and mind. The Magician card speaks to the power of words and communication, the magic of manifestation through intention and action. It represents the power of creativity, resourcefulness, and the ability to use our unique talents and tools to manifest our desires. It also reminds us of the importance of self-expression and the power of our words to create change. The Magician calls forth the reality that you can make what you want to happen by mastering your willpower, asking you to gather your tools and resources (community) for support towards manifesting.",
+      "review_status": "approved_reuse",
+      "owner_authored": true,
+      "lunation_kind": "eclipse-solar",
+      "house": 3,
+      "source_keys": [
+        "packages/astro-knowledge/review/lunation-card-assembly-v1/source/solar-eclipse-house-layer-v1.json"
+      ],
+      "source_release": "solar-eclipse-house-layer-v1",
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/lunation-card-assembly-v1/source/solar-eclipse-house-layer-v1.json",
+        "payloadSha256": "58248134424ec7e9571c50c86b5fd0393b12ad0e646044d46087737f0a37d05d",
+        "approvedAt": "2026-08-24"
+      },
+      "promotion_authorized": true,
+      "protected_content": {
+        "policy": "owner-approved-source-reuse-with-declared-omissions",
+        "body_sha256": "58248134424ec7e9571c50c86b5fd0393b12ad0e646044d46087737f0a37d05d",
+        "word_count": 234,
+        "char_count": 1446,
+        "template_slots": []
+      }
+    },
+    {
+      "contentKey": "authored/lunation-eclipse-house-layer/solar/house-4",
+      "content_role": "full_copy",
+      "body": "The fourth house of home, family, and foundation makes feelings related to security and \"rootedness\" important, representing your home, family, emotions, and roots. The new moon in the fourth house signifies the time to nurture your family relationships, find your home, and heal old wounds. It's the perfect time to make those home improvements you've been dreaming of and to create a sense of belonging and feeling rooted. The fourth house, ruled by the nurturing energy of Cancer, corresponds to The Chariot in the Major Arcana. This may be when you feel a strong desire to take control of your life and steer it in the direction you desire. The Chariot reminds you that you are in charge of your actions, reactions, and momentum and that you have the power to shape your own destiny. This is a time to focus on creating a space for emotional security and stability, particularly within the sanctuary of your home. Your home is like a chariot, a safe and secure container that transports you and your belongings from one life event to another. It's important to have a sense of belonging and emotional security in order to navigate life's journey with grace and ease. The fourth house, guided by the energy of Cancer and The Chariot, reminds us to take charge of our lives, to create a sense of emotional security and stability and to cultivate a sense of belonging in order to navigate life's journey with confidence and self-assurance. The High Priestess, guardian of the doorway to your intuition, sits poised on a crescent moon, representing the power of knowledge before action. She offers you the energetic support and lessons to improve, heal, and unlock your emotional and karmic blockages. The High Priestess corresponds to Luna, the Moon, and through channeling her energy, the High Priestess / Luna will guide you in deepening your capacity for reading subtle nuances and developing your intuition. The High Priestess, with her crescent moon, reminds us to listen to our inner wisdom and to trust in the power of intuition. She encourages us to take the time to understand the subtle nuances of our emotions and to work on healing and unlocking any blockages that may be holding us back. By following the guidance of the High Priestess, we can deepen our understanding of ourselves and the world around us, and live more fully in alignment with our true selves.",
+      "review_status": "approved_reuse",
+      "owner_authored": true,
+      "lunation_kind": "eclipse-solar",
+      "house": 4,
+      "source_keys": [
+        "packages/astro-knowledge/review/lunation-card-assembly-v1/source/solar-eclipse-house-layer-v1.json"
+      ],
+      "source_release": "solar-eclipse-house-layer-v1",
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/lunation-card-assembly-v1/source/solar-eclipse-house-layer-v1.json",
+        "payloadSha256": "936c14472eff02594c69b4509df3db6a2e26842aad6317fc853e71e77b8939cd",
+        "approvedAt": "2026-08-24"
+      },
+      "promotion_authorized": true,
+      "protected_content": {
+        "policy": "owner-approved-source-reuse-with-declared-omissions",
+        "body_sha256": "936c14472eff02594c69b4509df3db6a2e26842aad6317fc853e71e77b8939cd",
+        "word_count": 404,
+        "char_count": 2375,
+        "template_slots": []
+      }
+    },
+    {
+      "contentKey": "authored/lunation-eclipse-house-layer/solar/house-5",
+      "content_role": "full_copy",
+      "body": "While the fourth house is the house of home and the roots, what emerges from this foundation is given a space to be curious, play, and be strong. It is also primed for matters relating to flirtation, romance, and children. This part of you wants to be recognized and adored. The 5th house, ruled by the fiery energy of Leo, corresponds to the Strength card in the Major Arcana. The Strength card reminds you of a sacred power, grounded in inner-strength and trust, that comes from emotional mastery. It illustrates the Fool sitting poised, channeling the energy of the Universe, with the lion symbolizing the primal energies of the emotional body and the flames referencing its burning passions. The Strength card symbolizes the power of being in tune with your inner creative flow, where time seems to stand still. Sol, the planetary ruler of Leo, corresponds to The Sun in the Major Arcana. Sol is the Universal source of energy, builds self-confidence, clears or burns away the clouds of depression. It represents the ability to channel the Source, to tap into a field of awareness that unlocks all the infinite possibilities of creation. When you focus on creating from a place of pure presence, your work will come alive and flow through you, not just by you. The 5th house, guided by the energy of Leo and Strength, reminds us to tap into our inner creative flow and channel the energy of the universe. It encourages us to focus on emotional mastery, self-confidence and to trust in the power of our own inner strength. By channeling our creative energy, we can tap into the infinite possibilities of creation and bring our work to life in a powerful and meaningful way.",
+      "review_status": "approved_reuse",
+      "owner_authored": true,
+      "lunation_kind": "eclipse-solar",
+      "house": 5,
+      "source_keys": [
+        "packages/astro-knowledge/review/lunation-card-assembly-v1/source/solar-eclipse-house-layer-v1.json"
+      ],
+      "source_release": "solar-eclipse-house-layer-v1",
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/lunation-card-assembly-v1/source/solar-eclipse-house-layer-v1.json",
+        "payloadSha256": "5ff0e5cebfc56978f243e73a5c72f3e92107b2b3f44437a8587ca6c4aebdb61c",
+        "approvedAt": "2026-08-24"
+      },
+      "promotion_authorized": true,
+      "protected_content": {
+        "policy": "owner-approved-source-reuse-with-declared-omissions",
+        "body_sha256": "5ff0e5cebfc56978f243e73a5c72f3e92107b2b3f44437a8587ca6c4aebdb61c",
+        "word_count": 290,
+        "char_count": 1676,
+        "template_slots": []
+      }
+    },
+    {
+      "contentKey": "authored/lunation-eclipse-house-layer/solar/house-6",
+      "content_role": "full_copy",
+      "body": "The sixth house shifts focus onto daily habits, health, and well-being as the house of overcoming, re-organizing devotion, and self-surrender. The 6th house corresponds to the Hermit in the Major Arcana. The Hermit signals a time to take space and remove oneself from the outside world's noise, distractions, and opinions. The Hermit teaches you that the key to mastering the Self is to observe, be still, and practice silence. The Hermit signals a time to re-evaluate any challenging situations, relationship dynamics, or personal goals that require focus and attention. In this stage of the journey, you're being asked to be more attentive to details, looking at how you give too much of yourself and are left feeling drained and under-appreciated.To be the best version of yourself, you need to take the time to \"fill your own cup.\" Stop and ask yourself what you truly need, then do it. The Hermit is willing to explore the shadows and bring what is hidden into the light. Her lessons bring you to wholeness and authenticity. The Magician corresponds to the planetary ruler of the 6th house, speaks to the power of words and communication, the magic of manifestation through intention and action. It represents the power of creativity, resourcefulness, and the ability to use our unique talents and tools to manifest our desires. It also reminds us of the importance of self-expression and the power of our words to create change. The Magician calls forth the reality that we can manifest change, both internally and externally. The 6th house, guided by the energy of Virgo and The Hermit, reminds us to take the time to focus on ourselves, to be mindful of our daily rituals, and to use our willpower and resources to create positive change in our lives.",
+      "review_status": "approved_reuse",
+      "owner_authored": true,
+      "lunation_kind": "eclipse-solar",
+      "house": 6,
+      "source_keys": [
+        "packages/astro-knowledge/review/lunation-card-assembly-v1/source/solar-eclipse-house-layer-v1.json"
+      ],
+      "source_release": "solar-eclipse-house-layer-v1",
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/lunation-card-assembly-v1/source/solar-eclipse-house-layer-v1.json",
+        "payloadSha256": "1e2ee21a0379db6dd1fa3b5b9971e5aece392082f55b76fb2c211878f6a0f865",
+        "approvedAt": "2026-08-24"
+      },
+      "promotion_authorized": true,
+      "protected_content": {
+        "policy": "owner-approved-source-reuse-with-declared-omissions",
+        "body_sha256": "1e2ee21a0379db6dd1fa3b5b9971e5aece392082f55b76fb2c211878f6a0f865",
+        "word_count": 296,
+        "char_count": 1759,
+        "template_slots": []
+      }
+    },
+    {
+      "contentKey": "authored/lunation-eclipse-house-layer/solar/house-7",
+      "content_role": "full_copy",
+      "body": "The seventh house highlights relational dynamics, power dynamics, trust issues, and codependency. Libra rules the 7th house and corresponds to Justice in the Major Arcana. Justice wants you to find clarity, emotional balance, and fairness in relationships. Sometimes it's easier to be more compassionate to those in your intimate relationship than yourself. You can lend a sounding ear to your partner but then judge and criticize yourself for feeling emotional. Feeling bad is complicated enough on its own. Trying to repress or suppress those feelings only makes things worse. Instead, try accepting your emotions. Give yourself the same emotional support you would give another. Don't try to change or suppress your emotions \\- just allow them to be and allow yourself to feel them. Free up space to let your feelings pass through you without holding on to them or judging yourself for their intensity. The Lovers symbolize unions and the harmonious blending and flow of energy. Libra is ruled by Venus, who adores beauty and harmony. The Empress card in the tarot is a reminder of the divine feminine energy of Venus, representing growth, beauty, and abundance. Trust in the natural cycles of life and the power of manifestation. As Venus being in Libra, the Empress also encourages you to nurture yourself and your relationships with balance and harmony. Her presence encourages us to nurture and care for ourselves and our relationships, and to trust in the natural rhythms of life. The Empress is a powerful reminder to stay grounded and connected to the earth, and to tap into our inner goddess to manifest our hearts desires.",
+      "review_status": "approved_reuse",
+      "owner_authored": true,
+      "lunation_kind": "eclipse-solar",
+      "house": 7,
+      "source_keys": [
+        "packages/astro-knowledge/review/lunation-card-assembly-v1/source/solar-eclipse-house-layer-v1.json"
+      ],
+      "source_release": "solar-eclipse-house-layer-v1",
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/lunation-card-assembly-v1/source/solar-eclipse-house-layer-v1.json",
+        "payloadSha256": "770783c53478e078c849e712e0ed4588598a930594b59861fdef34b3bd7545c1",
+        "approvedAt": "2026-08-24"
+      },
+      "promotion_authorized": true,
+      "protected_content": {
+        "policy": "owner-approved-source-reuse-with-declared-omissions",
+        "body_sha256": "770783c53478e078c849e712e0ed4588598a930594b59861fdef34b3bd7545c1",
+        "word_count": 268,
+        "char_count": 1634,
+        "template_slots": []
+      }
+    },
+    {
+      "contentKey": "authored/lunation-eclipse-house-layer/solar/house-8",
+      "content_role": "full_copy",
+      "body": "The eighth house focuses on other people's money, including gifts, with additional themes of ancestral healing, rites of passage around life and death, and releasing the past. This includes the baggage we have collected — both emotional and physical — from our past relationships. The 8th house of the Zodiac, ruled by Scorpio, corresponds to the Death card in the major arcana. This energy brings about separation or 'death' from one's old self or old life, a drastic and necessary change in lifestyle, or a time to explore your shadow and fears to allow for release and transformation. The Judgement card in the tarot, associated with Pluto, the ruler of Scorpio, symbolizes endings, rebirth and the power of purification. It represents the deconstruction of the ego and the integration of spiritual energy (kundalini) into the body. Trust in the journey of awakening kundalini, as it brings potential for transcendence. The Tower card, also associated with Scorpio, symbolizes unexpected and dramatic change, shaking up long-held beliefs and patterns. Mars, the awakener, brings intensity, depth, and power to this change, forcing us to let go of what no longer serves us. Trust in the transformative power of the Universe, and in your own strength to navigate this change. Trust that this change, no matter how difficult it may seem, is for your highest good and aligns with your soul's purpose",
+      "review_status": "approved_reuse",
+      "owner_authored": true,
+      "lunation_kind": "eclipse-solar",
+      "house": 8,
+      "source_keys": [
+        "packages/astro-knowledge/review/lunation-card-assembly-v1/source/solar-eclipse-house-layer-v1.json"
+      ],
+      "source_release": "solar-eclipse-house-layer-v1",
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/lunation-card-assembly-v1/source/solar-eclipse-house-layer-v1.json",
+        "payloadSha256": "45dfd50d6cf8998900baf64592488561bea9cd75b86bfa0b1e8638bb93c690cf",
+        "approvedAt": "2026-08-24"
+      },
+      "promotion_authorized": true,
+      "protected_content": {
+        "policy": "owner-approved-source-reuse-with-declared-omissions",
+        "body_sha256": "45dfd50d6cf8998900baf64592488561bea9cd75b86bfa0b1e8638bb93c690cf",
+        "word_count": 228,
+        "char_count": 1398,
+        "template_slots": []
+      }
+    },
+    {
+      "contentKey": "authored/lunation-eclipse-house-layer/solar/house-9",
+      "content_role": "full_copy",
+      "body": "The ninth house concerns expanding the higher self through religion, abstract thinking, philosophy, travel, and higher education. The 9th house is ruled by Sagittarius and corresponds to Temperance in the Major Arcana. Temperance guides you to find the balance between the Mundane & Spiritual Worlds. If you live too anchored in the mundane, invite in more of life's mysteries. If you find yourself deep into Spiritual studies, ground yourself back down to earthly matters. If you can successfully find that perfect balance between your spiritual pursuits and your life on the ground, you can use the wisdom to unlock the mysteries to live an enchanted life. Temperance symbolizes the merging of the spiritual and mundane worlds, discovering our purpose or meaning, mindfulness of over indulging or drinking, moderation, the balance of passion and reason, and cultivating patience. Jupiter corresponds to The Wheel of Fortune is the tenth key of the Major Arcana, the time when the Fool re-emerges into the outer world after the isolation and introspection with the Hermit. Also known as The Rota Fortunae, the Wheel of Fortune, represents life's patterns of expansion and contraction; the upward movement represents spiritual ascension, while downward movement reflects spiritual descent or regression. The highs and lows of good and bad luck; and the spiral movements of kundalini energy in the chakras. The Wheel of Fortune corresponds to Jupiter, a planet known to magnify whatever it encounters — whether positive or negative. Gifting either a positive reward, or exacerbating a negative situation, the planet ensures that our journey through life is colored with peaks and valleys to learn from.",
+      "review_status": "approved_reuse",
+      "owner_authored": true,
+      "lunation_kind": "eclipse-solar",
+      "house": 9,
+      "source_keys": [
+        "packages/astro-knowledge/review/lunation-card-assembly-v1/source/solar-eclipse-house-layer-v1.json"
+      ],
+      "source_release": "solar-eclipse-house-layer-v1",
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/lunation-card-assembly-v1/source/solar-eclipse-house-layer-v1.json",
+        "payloadSha256": "036eeedba1db1b0ee1927b0e4f3c329ecc58d9197c37d0d007dda20400bf2f21",
+        "approvedAt": "2026-08-24"
+      },
+      "promotion_authorized": true,
+      "protected_content": {
+        "policy": "owner-approved-source-reuse-with-declared-omissions",
+        "body_sha256": "036eeedba1db1b0ee1927b0e4f3c329ecc58d9197c37d0d007dda20400bf2f21",
+        "word_count": 267,
+        "char_count": 1701,
+        "template_slots": []
+      }
+    },
+    {
+      "contentKey": "authored/lunation-eclipse-house-layer/solar/house-10",
+      "content_role": "full_copy",
+      "body": "The tenth house is where you discover your purpose and participation in the Universal collective. The new moon here reflects how you are publicly received and recognized. The 10th house is ruled by Capricorn and corresponds to the Devil in the Major Arcana. The Devil/Capricorn speaks to any false belief that you are trapped or stuck in your current circumstances. The Devil usually symbolizes struggles with a moral problem — a choice between lust or love, and it’s essential to identify and stay clear of any romantic obsessions or fantasies within the workplace that could potentially thwart your means of financial freedom. The Devil/Capricorn reminds you that you have agency in your life and that no matter our current circumstances, you always have the power to make a change. The World card in the tarot corresponds to Saturn, a planet of maturity, responsibility and the process of growing up. Saturn, also known as the taskmaster, represents the lessons we must learn, the tasks we must complete, and the responsibilities we must take on in order to evolve. The World card indicates that the Fool's journey has reached a time of completion, where situations and cycles are drawing to a close. It's a moment to reflect on the lessons learned and responsibilities taken on during this spiritual gestation period; which has been a time of growth and development. The World signals of time of completion, when situations and cycles are drawing to a close.",
+      "review_status": "approved_reuse",
+      "owner_authored": true,
+      "lunation_kind": "eclipse-solar",
+      "house": 10,
+      "source_keys": [
+        "packages/astro-knowledge/review/lunation-card-assembly-v1/source/solar-eclipse-house-layer-v1.json"
+      ],
+      "source_release": "solar-eclipse-house-layer-v1",
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/lunation-card-assembly-v1/source/solar-eclipse-house-layer-v1.json",
+        "payloadSha256": "f8813c9e73048fd009e6e5c926a609d0ee35f233fa11edd37c67a04fcf7dff58",
+        "approvedAt": "2026-08-24"
+      },
+      "promotion_authorized": true,
+      "protected_content": {
+        "policy": "owner-approved-source-reuse-with-declared-omissions",
+        "body_sha256": "f8813c9e73048fd009e6e5c926a609d0ee35f233fa11edd37c67a04fcf7dff58",
+        "word_count": 243,
+        "char_count": 1462,
+        "template_slots": []
+      }
+    },
+    {
+      "contentKey": "authored/lunation-eclipse-house-layer/solar/house-11",
+      "content_role": "full_copy",
+      "body": "The eleventh house corresponds to power and friendships, making the new moon a time to broaden your network of friends and business associates with a focus on helping humanity at large. The 11th house is ruled by Aquarius which corresponds to The Star in the Major Arcana. The star that symbolizes a wish granted, hope, inspiration, and faith. The star brings with it strength and free flow of energy that is necessary to inspire large groups of people. Let it remind you of the beauty that surrounds you and the broader vision of the future. The Star is a card of one's wish being granted, as she rules over the Law of Attraction. The World card in the tarot corresponds to Saturn, a planet of maturity, responsibility and the process of growing up. Saturn, also known as the taskmaster, represents the lessons we must learn, the tasks we must complete, and the responsibilities we must take on in order to evolve. The World card indicates that the Fool's journey has reached a time of completion, where situations and cycles are drawing to a close. It's a moment to reflect on the lessons learned, tasks completed and responsibilities taken on during this spiritual gestation period, which has been a time of growth and development. The World signals of time of completion. The World is a time when situations and cycles are drawing to a close. The Fool, a blank canvas of innocence, represents the Spirit's descent into the physical realm. Her naked form, unshaped by the experiences of life, symbolizes the purity and potential of the soul. As she takes her first steps on her journey, she leans on her faith, trusting that the Universe and divine Source will guide her every step of the way. Her journey will shape her character and mold her into the person she is meant to be. With Uranus as her cosmic companion, the Fool is imbued with the energy of rebellion, revolution and enormous change.. She is unafraid to take risks, to innovate, and to break through boundaries, embracing limitlessness and change. She is the embodiment of faith over fear, daring to step into the unknown with confidence and trust in the journey ahead.",
+      "review_status": "approved_reuse",
+      "owner_authored": true,
+      "lunation_kind": "eclipse-solar",
+      "house": 11,
+      "source_keys": [
+        "packages/astro-knowledge/review/lunation-card-assembly-v1/source/solar-eclipse-house-layer-v1.json"
+      ],
+      "source_release": "solar-eclipse-house-layer-v1",
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/lunation-card-assembly-v1/source/solar-eclipse-house-layer-v1.json",
+        "payloadSha256": "69c7f502ca3c8b2ef2e081b2be45c4424521c18ed492e995f0896144ce0f1761",
+        "approvedAt": "2026-08-24"
+      },
+      "promotion_authorized": true,
+      "protected_content": {
+        "policy": "owner-approved-source-reuse-with-declared-omissions",
+        "body_sha256": "69c7f502ca3c8b2ef2e081b2be45c4424521c18ed492e995f0896144ce0f1761",
+        "word_count": 370,
+        "char_count": 2136,
+        "template_slots": []
+      }
+    },
+    {
+      "contentKey": "authored/lunation-eclipse-house-layer/solar/house-12",
+      "content_role": "full_copy",
+      "body": "The twelfth house completes the cycle of the human experience, karma, and the subconscious. However, it is also the seed of rebirth. The 12th house is ruled by Pisces and corresponds to the Moon in the major arcana. The Moon symbolizes mysticism, lunar rituals, and being drawn to the magick of the Moon. With the new moon in the 12th house, you are asked to expand spiritually, connect with your divine wisdom, and heal others. Pisces gives access to the unseen worlds in which healing and regeneration occur, allowing you to be still within the oneness of the cosmos, remembering that you are more than just a physical being. Jupiter corresponds to The Wheel of Fortune is the tenth key of the Major Arcana, the time when the Fool re-emerges into the outer world after the isolation and introspection with the Hermit. Also known as The Rota Fortunae, the Wheel of Fortune, represents life's patterns of expansion and contraction; the upward movement represents spiritual ascension, while downward movement reflects spiritual descent or regression. The highs and lows of good and bad luck; and the spiral movements of kundalini energy in the chakras. The Wheel of Fortune corresponds to Jupiter, a planet known to magnify whatever it encounters — whether positive or negative. Gifting either a positive reward, or exacerbating a negative situation, the planet ensures that our journey through life is colored with peaks and valleys to learn from. The Hanged Man, associated with Neptune, Pisces, and the 12th house, signals the end of a cycle. It's a time for reflection, whether positive or negative, depending on where you are in your journey. The Hanged Man asks you to confront what you may have been avoiding, release your fears and pressure on yourself, and take a moment for contemplation and meditation. This card may force you to slow down, take care of your health and get enough sleep, particularly if you haven't been inclined to do so on your own. It also represents a moment of brief enlightenment where a spark of inspiration or knowledge comes from above.",
+      "review_status": "approved_reuse",
+      "owner_authored": true,
+      "lunation_kind": "eclipse-solar",
+      "house": 12,
+      "source_keys": [
+        "packages/astro-knowledge/review/lunation-card-assembly-v1/source/solar-eclipse-house-layer-v1.json"
+      ],
+      "source_release": "solar-eclipse-house-layer-v1",
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/lunation-card-assembly-v1/source/solar-eclipse-house-layer-v1.json",
+        "payloadSha256": "304e5cdf922c02732b9420b5e1b592ed1a0375556115d9ca37fcd8621ea59ccf",
+        "approvedAt": "2026-08-24"
+      },
+      "promotion_authorized": true,
+      "protected_content": {
+        "policy": "owner-approved-source-reuse-with-declared-omissions",
+        "body_sha256": "304e5cdf922c02732b9420b5e1b592ed1a0375556115d9ca37fcd8621ea59ccf",
+        "word_count": 348,
+        "char_count": 2072,
+        "template_slots": []
+      }
+    }
+  ]
+}

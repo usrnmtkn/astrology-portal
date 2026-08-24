@@ -240,6 +240,9 @@ export default defineConfig(({ mode }) => {
             if (id.includes("fallbackArchitectureV3/bundled-sky-placement-house-rows-v3.json")) {
               return "fallback-content-sky-horoscopes";
             }
+            if (id.includes("fallbackArchitectureV3/source-rows/lunation-book-cards-v1.json")) {
+              return "fallback-content-lunation-book";
+            }
             if (
               id.includes("fallbackArchitectureV3/bundled-sky-core-rows-v3.json")
               || id.includes("fallbackArchitectureV3/bundled-sky-authored-cards-v3.json")
