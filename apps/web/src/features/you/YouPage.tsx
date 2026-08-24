@@ -916,8 +916,8 @@ function YouTransitArticlePage({
   const aspectSections = sections.filter((section) => section.role === "aspect");
   const relatedAspectGroups = displayArticle.relatedAspects?.grouping === "counterpart"
     ? ([
-        { key: "planets", label: "Planetary Aspects" },
-        { key: "points", label: "Angles and Points" }
+        { key: "planets", label: "Planetary aspects" },
+        { key: "points", label: "Angles and points" }
       ]).map((group) => ({
         ...group,
         rows: displayArticle.relatedAspects?.rows.filter((row) => (
@@ -1027,10 +1027,8 @@ function YouTransitArticlePage({
                 </section>
               ) : null}
               {displayArticle.relatedAspects?.rows.length ? (
-                <section className="article-related-aspects" aria-labelledby="you-transit-related-aspects-title">
-                  <h2 className="eyebrow section-label article-related-aspects__label" id="you-transit-related-aspects-title">
-                    {displayArticle.relatedAspects.heading}
-                  </h2>
+                <section className="article-related-aspects" aria-label="Placement aspects">
+                  <h2 className="sr-only">Placement aspects</h2>
                   {relatedAspectGroups.map((group) => (
                     <div className="article-related-aspects__group" key={group.key}>
                       {group.label ? (

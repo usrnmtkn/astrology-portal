@@ -18,6 +18,7 @@ import {
 type SeedOptions = {
   profile?: boolean;
   profileBirthDate?: string;
+  profileBirthTime?: string;
   preloadProfileNatalSky?: boolean;
   friends?: boolean;
   theme?: "light" | "dark";
@@ -91,7 +92,7 @@ async function seedClientState(page: Page, options: SeedOptions = {}) {
   const profileBirthDate = options.profileBirthDate ?? "1979-02-18";
   const profileBirthDateTime = zonedDateTimeToUtc(
     profileBirthDate,
-    "8:24 AM",
+    options.profileBirthTime ?? "8:24 AM",
     fixtureLocation.timeZone
   );
   const preloadedNatalCache = options.profile && options.preloadProfileNatalSky
@@ -230,7 +231,7 @@ async function seedClientState(page: Page, options: SeedOptions = {}) {
         name: "Marie Satori",
         type: "Birth chart",
         birthDate: options.profileBirthDate ?? "1979-02-18",
-        birthTime: "8:24 AM",
+        birthTime: options.profileBirthTime ?? "8:24 AM",
         birthCity: fixtureLocation.label,
         birthLocation: fixtureLocation
       }]
@@ -2861,6 +2862,25 @@ test.describe("client-facing user flow case studies", () => {
 
     await page.getByRole("button", { name: "Back to updates" }).click();
     await expect(page.getByRole("region", { name: "You", exact: true })).toBeVisible();
+    await assertNoClientErrors();
+  });
+
+  test("You natal placement detail preserves the complete approved house passage", async ({ page }) => {
+    const assertNoClientErrors = await expectNoClientErrors(page);
+
+    await seedClientState(page, { profile: true, profileBirthTime: "10:24 AM" });
+    await expectClientRouteLoads(page, "/#you/placement/sun-aquarius-9h");
+
+    const article = page.getByRole("region", { name: "Sun in Aquarius in the 9th house" });
+    await expect(article).toBeVisible();
+    await expect(article).toContainText(
+      "Your Sun is in your 9th house, meaning this side of you comes out through travel, study, belief, and the big questions."
+    );
+    await expect(article).toContainText(
+      "A philosophy has more value after it has survived contact with a larger world."
+    );
+    await expect(article.getByText("Natal aspects", { exact: true })).toHaveCount(0);
+    await expect(article.getByRole("heading", { level: 3, name: "Planetary aspects", exact: true })).toHaveCount(1);
     await assertNoClientErrors();
   });
 
