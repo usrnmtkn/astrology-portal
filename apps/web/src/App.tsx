@@ -74,7 +74,12 @@ import {
 } from "./content/fallbackArchitectureV3Runtime";
 import { natalPlacementReaderSectionCopy } from "./content/natalPlacementReaderSections";
 import { preserveProtectedOwnerSkyPlacementPassage } from "./content/protectedOwnerSkyPlacementPassages";
-import { firstReaderFacingCopy, isReaderFacingCopy, readerFacingParagraphs } from "./content/readerSafety";
+import {
+  firstReaderFacingCopy,
+  fullDetailReaderFacingCopy,
+  isReaderFacingCopy,
+  readerFacingParagraphs
+} from "./content/readerSafety";
 import {
   skyArticleAspectPassageForTransit
 } from "./content/skyArticleTemplateCompiler";
@@ -4133,7 +4138,7 @@ function sourceGroundedNatalAspectNormalizedSection(
       planetB: normalizeContentIdPart(aspect.to),
       voice: ownerContext?.ownerName ?? "you"
     });
-    const body = readerFacingParagraphs(rendered.parts).join("\n\n");
+    const body = fullDetailReaderFacingCopy(rendered.parts) ?? "";
 
     if (!body || !isReaderFacingCopy(body)) {
       return null;
@@ -4332,7 +4337,7 @@ function reviewedSkyAspectWritingSection(
       return null;
     }
 
-    const body = readerFacingParagraphs(rendered.parts).join("\n\n");
+    const body = fullDetailReaderFacingCopy(rendered.parts) ?? "";
 
     if (!body || !isReaderFacingCopy(body)) {
       return null;
@@ -4802,7 +4807,7 @@ function skyPlacementWritingSection(
     && allRenderedParagraphs.at(-1) === rendered.closingCharge
     ? allRenderedParagraphs.slice(0, -1)
     : allRenderedParagraphs;
-  const body = readerFacingParagraphs(renderedParagraphs).join("\n\n");
+  const body = fullDetailReaderFacingCopy(renderedParagraphs) ?? "";
 
   if (!body || !isReaderFacingCopy(body)) {
     return null;
@@ -6728,7 +6733,7 @@ function normalizeEmptyHouseDetailSurface({
       sign: normalizeContentIdPart(sign),
       voice
     }, { includeEmptyHouseBridge: true });
-    const body = readerFacingParagraphs(rendered.parts).join("\n\n");
+    const body = fullDetailReaderFacingCopy(rendered.parts) ?? "";
     const section = normalizedEmptyHouseSection(
       "house-sign",
       rendered.headline || `${ordinalHouse(house)} house sign`,
@@ -7341,7 +7346,7 @@ function personalTransitPackageSection(
   ) {
     try {
       const renderedReturn = transitSynastryFallbackRendererV3.renderTransitReturn({ planet: returnPlanet });
-      const returnBody = readerFacingParagraphs(renderedReturn.parts).join("\n\n");
+      const returnBody = fullDetailReaderFacingCopy(renderedReturn.parts) ?? "";
 
       if (returnBody && isReaderFacingCopy(returnBody)) {
         const legacyContinuity = renderedReturn.provenanceTier === "legacy-reviewed";
@@ -7414,7 +7419,7 @@ function personalTransitPackageSection(
         voice,
         window: windowLabel
       });
-      const body = readerFacingParagraphs(renderedEvent.parts).join("\n\n");
+      const body = fullDetailReaderFacingCopy(renderedEvent.parts) ?? "";
 
       if (body && isReaderFacingCopy(body)) {
         return {
@@ -7452,7 +7457,7 @@ function personalTransitPackageSection(
       window: windowLabel,
       voice
     });
-    const body = readerFacingParagraphs(rendered.parts).join("\n\n");
+    const body = fullDetailReaderFacingCopy(rendered.parts) ?? "";
 
     if (!rendered.templateKey.startsWith("authored/") || !body || !isReaderFacingCopy(body)) {
       return null;
@@ -7628,7 +7633,7 @@ function normalizeTransitHouseSurface(
         : [])
     ].filter(Boolean);
     detailSections = (rendered.parts as string[]).flatMap((part: string, index: number): NormalizedTransitHouseSection[] => {
-      const partBody = readerFacingParagraphs([part]).join("\n\n");
+      const partBody = fullDetailReaderFacingCopy([part]) ?? "";
 
       return partBody
         ? [{
@@ -7739,7 +7744,7 @@ function renderReaderDirectedSynastryContact(
       romanticAllowed: options.romanticAllowed ?? false,
       relationshipType: options.relationshipType ?? null
     });
-    const body = readerFacingParagraphs(rendered.parts).join("\n\n");
+    const body = fullDetailReaderFacingCopy(rendered.parts) ?? "";
 
     if (!body || !isReaderFacingCopy(body)) {
       return null;
@@ -14569,7 +14574,7 @@ function natalAngleFallbackV3NormalizedSections(position: PlanetPosition, ownerC
       sign,
       voice: ownerContext?.ownerName ?? "you"
     });
-    const body = readerFacingParagraphs(rendered.parts).join("\n\n");
+    const body = fullDetailReaderFacingCopy(rendered.parts) ?? "";
 
     if (!body || !isReaderFacingCopy(body)) {
       return [];
