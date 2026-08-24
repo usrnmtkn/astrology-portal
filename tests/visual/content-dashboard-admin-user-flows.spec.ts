@@ -1430,6 +1430,147 @@ test.describe("content dashboard admin user flow case studies", () => {
     await assertNoBrowserErrors();
   });
 
+  test("package vocabulary rows expose one editable variable value instead of empty article fields", async ({ page }) => {
+    const assertNoBrowserErrors = await expectNoBrowserErrors(page);
+    const writes: Array<{ method: string; payload: Record<string, unknown> }> = [];
+    const vocabularyRow = {
+      ...generatedContentRows[0],
+      id: "qa-pisces-moon-caution",
+      content_key: "fallback-vocab/dodont-moon-dont/pisces",
+      surface: "modifier",
+      mode: "feed",
+      status: "DRAFT",
+      event_type: "fallback-vocabulary",
+      headline: "Pisces",
+      summary: "",
+      body: "",
+      lane: "reference",
+      review_state: "fallback-system-reference",
+      block_type: null,
+      facts: { fallbackArchitectureV3: true, review_status: "approved" },
+      source_snapshot: {
+        sourcePackage: "tldrastro-fallback-architecture-v3",
+        content_role: "vocabulary",
+        review_status: "approved"
+      },
+      sections: {
+        packageRecord: {
+          contentKey: "fallback-vocab/dodont-moon-dont/pisces",
+          content_role: "vocabulary",
+          body: "Saying yes on autopilot",
+          body_you: "",
+          body_they: "",
+          review_status: "approved"
+        }
+      },
+      provider: "tldrastro-fallback-architecture-v3"
+    };
+    await seedAdminApi(page, {
+      generatedRows: [vocabularyRow],
+      onGeneratedContentWrite: (write) => writes.push(write)
+    });
+    await expectAdminRouteLoads(page, "/admin/content#vocabulary?category=signs&q=pisces");
+
+    const listRow = page.locator(".admin-content-row", { hasText: "fallback-vocab/dodont-moon-dont/pisces" });
+    await expect(listRow).toHaveCount(1);
+    await listRow.getByRole("button", { name: "Edit" }).click();
+
+    const editor = page.locator(".admin-editor-panel");
+    await expect(editor.getByLabel("Phrase authoring guidance")).toContainText("Edit this variable value");
+    await expect(editor.getByRole("region", { name: "Variable usage" })).toContainText("Daily Moon caution");
+    await expect(editor.getByRole("region", { name: "Variable usage" })).toContainText("Moon is in Pisces");
+    await expect(editor.getByLabel("Variable value")).toHaveValue("Saying yes on autopilot");
+    await expect(editor.getByLabel("Variable approval")).toHaveValue("approved");
+    await expect(editor.getByLabel("Summary")).toHaveCount(0);
+    await expect(editor.getByLabel("body_you")).toHaveCount(0);
+    await expect(editor.getByLabel("body_they")).toHaveCount(0);
+    await expect(editor.getByLabel("Status")).toHaveCount(0);
+    await expect(editor.getByLabel("Surface")).toHaveCount(0);
+    await expect(editor.getByText("Fallback ingredient check")).toHaveCount(0);
+    await expect(editor.getByText("Internal source details")).toBeVisible();
+
+    await page.setViewportSize({ width: 390, height: 844 });
+    await expect(editor.getByLabel("Variable value")).toBeVisible();
+    const mobileEditorBox = await editor.boundingBox();
+    expect(mobileEditorBox).not.toBeNull();
+    expect(mobileEditorBox!.x).toBeGreaterThanOrEqual(0);
+    expect(mobileEditorBox!.width).toBeLessThanOrEqual(390);
+
+    await editor.getByLabel("Variable value").fill("Agreeing before checking your capacity");
+    await editor.getByRole("button", { name: "Save", exact: true }).click();
+    await expect.poll(() => writes.length).toBe(1);
+    expect(writes[0].method).toBe("PATCH");
+    expect(writes[0].payload.body).toBe("Agreeing before checking your capacity");
+    expect((writes[0].payload.sections as { packageRecord: { body: string } }).packageRecord.body)
+      .toBe("Agreeing before checking your capacity");
+
+    await assertNoBrowserErrors();
+  });
+
+  test("audience-aware vocabulary rows expose editable you and they versions", async ({ page }) => {
+    const assertNoBrowserErrors = await expectNoBrowserErrors(page);
+    const writes: Array<{ method: string; payload: Record<string, unknown> }> = [];
+    const vocabularyRow = {
+      ...generatedContentRows[0],
+      id: "qa-sun-function-voices",
+      content_key: "fallback-vocab/planet-function/sun",
+      surface: "modifier",
+      mode: "feed",
+      status: "DRAFT",
+      event_type: "fallback-vocabulary",
+      headline: "Sun",
+      summary: "",
+      body: "",
+      lane: "reference",
+      review_state: "fallback-system-reference",
+      block_type: null,
+      facts: { fallbackArchitectureV3: true, review_status: "approved_reuse" },
+      source_snapshot: {
+        sourcePackage: "tldrastro-fallback-architecture-v3",
+        content_role: "vocabulary",
+        review_status: "approved_reuse"
+      },
+      sections: {
+        packageRecord: {
+          contentKey: "fallback-vocab/planet-function/sun",
+          content_role: "vocabulary",
+          body: "identity, vitality, and where you're meant to shine",
+          body_you: "",
+          body_they: "identity, vitality, and where they're meant to shine",
+          review_status: "approved_reuse"
+        }
+      },
+      provider: "tldrastro-fallback-architecture-v3"
+    };
+    await seedAdminApi(page, {
+      generatedRows: [vocabularyRow],
+      onGeneratedContentWrite: (write) => writes.push(write)
+    });
+    await expectAdminRouteLoads(page, "/admin/content#vocabulary?category=planets&q=sun");
+
+    const listRow = page.locator(".admin-content-row", { hasText: "fallback-vocab/planet-function/sun" });
+    await listRow.getByRole("button", { name: "Edit" }).click();
+
+    const editor = page.locator(".admin-editor-panel");
+    await expect(editor.getByLabel("You version")).toHaveValue("identity, vitality, and where you're meant to shine");
+    await expect(editor.getByLabel("They version")).toHaveValue("identity, vitality, and where they're meant to shine");
+    await expect(editor.getByLabel("body_you")).toHaveCount(0);
+    await expect(editor.getByLabel("body_they")).toHaveCount(0);
+
+    await editor.getByLabel("You version").fill("identity, purpose, and where you take up space");
+    await editor.getByLabel("They version").fill("identity, purpose, and where they take up space");
+    await editor.getByRole("button", { name: "Save", exact: true }).click();
+    await expect.poll(() => writes.length).toBe(1);
+    expect(writes[0].payload.body).toBe("identity, purpose, and where you take up space");
+    expect((writes[0].payload.sections as { packageRecord: { body: string; body_they: string } }).packageRecord)
+      .toMatchObject({
+        body: "identity, purpose, and where you take up space",
+        body_they: "identity, purpose, and where they take up space"
+      });
+
+    await assertNoBrowserErrors();
+  });
+
   test("content library and publish filters expose writing QA controls", async ({ page }) => {
     const assertNoBrowserErrors = await expectNoBrowserErrors(page);
     await seedAdminApi(page);

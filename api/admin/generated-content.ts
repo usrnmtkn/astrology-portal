@@ -364,6 +364,7 @@ function applyFallbackArchitectureV3ReviewPatch(row: ExistingGeneratedContentRow
     record.summary = patch.summary;
   }
   const topLevelBodyChanged = typeof patch.body === "string" && patch.body !== (row.body ?? "");
+  const packageRole = stringFrom(record.content_role);
   const incomingBodyYouChanged = typeof incomingRecord.body_you === "string"
     && incomingRecord.body_you !== v3PackageRecord(row).body_you;
   const sectionBodyYouChanged = typeof sections.body_you === "string"
@@ -372,7 +373,9 @@ function applyFallbackArchitectureV3ReviewPatch(row: ExistingGeneratedContentRow
     if (record.render_policy === "sky-placement-continuous-v2") {
       throw new Error("Continuous Sky write-ups must be edited in Opening, Tension, Development, and Close so the reader structure stays intact.");
     }
-    if (typeof record.body_you === "string") {
+    if (packageRole === "vocabulary") {
+      record.body = patch.body;
+    } else if (typeof record.body_you === "string") {
       record.body_you = patch.body;
       sections.body_you = patch.body;
     } else {
@@ -392,7 +395,9 @@ function applyFallbackArchitectureV3ReviewPatch(row: ExistingGeneratedContentRow
       .join("\n\n");
   }
 
-  const readerBody = record.render_policy === "sky-placement-continuous-v2" && typeof record.body_you !== "string"
+  const readerBody = packageRole === "vocabulary"
+    ? stringFrom(record.body)
+    : record.render_policy === "sky-placement-continuous-v2" && typeof record.body_you !== "string"
     ? [
         record.opening,
         record.tension,

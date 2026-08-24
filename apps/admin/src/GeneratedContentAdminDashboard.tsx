@@ -659,7 +659,11 @@ function vocabularyContentKey(section: AdminVocabularySection, headline: string)
 }
 
 function draftIsVocabulary(draft: AdminDraft) {
-  return draft.blockType === "vocabulary_phrase" || draft.contentKey.startsWith("vocab/");
+  return draft.blockType === "vocabulary_phrase"
+    || draft.contentKey.startsWith("vocab/")
+    || draft.contentKey.startsWith("fallback-vocab/")
+    || draftPackageRecord(draft).content_role === "vocabulary"
+    || draft.sourceSnapshot?.content_role === "vocabulary";
 }
 
 function draftIsArticle(draft: AdminDraft) {
@@ -1248,6 +1252,59 @@ function titleFromKey(contentKey: string) {
     ?.replace(/[-_]/g, " ")
     .replace(/\b\w/g, (match) => match.toUpperCase())
     || contentKey;
+}
+
+function vocabularyUsageDetails(contentKey: string) {
+  const [, family = "", ...subjectParts] = contentKey.split("/");
+  const subject = subjectParts.map(titleFromKey).join(" / ");
+  const uses: Record<string, { label: string; description: string }> = {
+    "dodont-moon-do": {
+      label: "Daily Moon suggestion",
+      description: `Can appear in the Do list when the Moon is in ${subject}.`
+    },
+    "dodont-moon-dont": {
+      label: "Daily Moon caution",
+      description: `Can appear in the Don't list when the Moon is in ${subject}.`
+    },
+    "dodont-do": {
+      label: "Daily transit suggestion",
+      description: `Can appear in a personalized Do list when ${subject || "this placement"} is selected.`
+    },
+    "dodont-shadow": {
+      label: "Daily transit caution",
+      description: `Can appear in a personalized Don't list when ${subject || "this placement"} is selected.`
+    },
+    "house-jurisdiction": {
+      label: "House topic",
+      description: `Supplies the topic for ${subject ? `${subject} house` : "a calculated house"} fallback copy.`
+    },
+    "house-topic": {
+      label: "House topic",
+      description: `Supplies the topic for ${subject ? `${subject} house` : "a calculated house"} fallback copy.`
+    },
+    "planet-function": {
+      label: "Natal planet meaning",
+      description: `Supplies reusable meaning for ${subject || "a calculated planet"} in natal fallback copy.`
+    },
+    "sky-planet-function": {
+      label: "Sky planet meaning",
+      description: `Supplies reusable meaning for ${subject || "a calculated planet"} in current-Sky fallback copy.`
+    },
+    "sign-need": {
+      label: "Sign need",
+      description: `Supplies the core need associated with ${subject || "a calculated sign"}.`
+    },
+    "sign-style": {
+      label: "Sign style",
+      description: `Supplies reusable style language for ${subject || "a calculated sign"}.`
+    }
+  };
+  return uses[family] ?? {
+    label: titleFromKey(family || "Reusable phrase"),
+    description: subject
+      ? `The fallback system can insert this saved phrase when it selects ${subject}.`
+      : "The fallback system can insert this saved phrase into a complete reader passage."
+  };
 }
 
 function templateDestinationLabel(contentKey: string) {
@@ -1859,6 +1916,11 @@ function assertRowsPayload<T>(payload: { rows?: T[] }, endpoint: string): T[] {
 }
 
 function draftFromRow(row: AdminGeneratedContentRow): AdminDraft {
+  const packageRecord = rowPackageRecord(row);
+  const isVocabularyRow = row.block_type === "vocabulary_phrase"
+    || row.content_key.startsWith("vocab/")
+    || row.content_key.startsWith("fallback-vocab/")
+    || packageRecord.content_role === "vocabulary";
   return {
     id: row.id,
     contentKey: row.content_key,
@@ -1870,7 +1932,8 @@ function draftFromRow(row: AdminGeneratedContentRow): AdminDraft {
       houseHoroscopeCoreHeadline(row.content_key, normalizeText(row.headline))
     ),
     summary: normalizeText(row.summary),
-    body: normalizeText(row.body),
+    body: normalizeText(row.body)
+      || (isVocabularyRow && typeof packageRecord.body === "string" ? normalizeText(packageRecord.body) : ""),
     lane: row.lane ?? "serving",
     reviewState: row.review_state ?? "",
     blockType: row.block_type ?? "",
@@ -5294,10 +5357,13 @@ export function GeneratedContentAdminDashboard() {
       ? renderWorkspacePreview(skyFallbackEditor.fields, skyFallbackPreviewFacts)
       : [];
     const packageRole = typeof packageRecord.content_role === "string" ? packageRecord.content_role : "";
+    const vocabularyUsage = isVocabularyDraft ? vocabularyUsageDetails(currentDraft.contentKey) : null;
+    const vocabularyTheyValue = isVocabularyDraft ? packageFieldString(currentDraft, "body_they") : "";
+    const vocabularyHasTheyVersion = vocabularyTheyValue.trim().length > 0;
     const isContinuousSkyPackage = isPackageDraft && packageRecord.render_policy === "sky-placement-continuous-v2";
-    const showPackageBodyYou = isPackageDraft && !isContinuousSkyPackage && ("body_you" in packageRecord || "body_you" in (currentDraft.sections ?? {}));
-    const showPackageBodyThey = isPackageDraft && ("body_they" in packageRecord || "body_they" in (currentDraft.sections ?? {}));
-    const showGenericBody = !isPackageDraft || (!showPackageBodyYou && !isContinuousSkyPackage);
+    const showPackageBodyYou = isPackageDraft && !isVocabularyDraft && !isContinuousSkyPackage && ("body_you" in packageRecord || "body_you" in (currentDraft.sections ?? {}));
+    const showPackageBodyThey = isPackageDraft && !isVocabularyDraft && ("body_they" in packageRecord || "body_they" in (currentDraft.sections ?? {}));
+    const showGenericBody = isVocabularyDraft || !isPackageDraft || (!showPackageBodyYou && !isContinuousSkyPackage);
     const skyWriteupParent = skyWriteupParentId ? rows.find((row) => row.id === skyWriteupParentId) ?? null : null;
     const skyWriteupContext = selectedRow ? skyWriteupContextForRow(selectedRow) : null;
     const skyLunationContext = selectedRow ? skyLunationContextForRow(selectedRow) : null;
@@ -5368,6 +5434,21 @@ export function GeneratedContentAdminDashboard() {
         ...currentDraft,
         headline,
         contentKey: isVocabularyDraft && isNewDraft ? vocabularyContentKey(vocabularySection, headline) : currentDraft.contentKey
+      });
+    };
+    const updateVocabularyBody = (body: string) => {
+      setDraft({
+        ...currentDraft,
+        body,
+        sections: isPackageDraft
+          ? {
+              ...(currentDraft.sections ?? {}),
+              packageRecord: {
+                ...draftPackageRecord(currentDraft),
+                body
+              }
+            }
+          : currentDraft.sections
       });
     };
     const updateSkyArticleFields = (next: Partial<SkyArticleEditableFields>) => {
@@ -5561,9 +5642,21 @@ export function GeneratedContentAdminDashboard() {
         <section className="admin-post-editor">
           {isVocabularyDraft && (
             <div className="admin-editor-guidance" aria-label="Phrase authoring guidance">
-              <strong>How vocabulary phrases are organized</strong>
-              <p>Choose a section, name the phrase, then write the reusable wording. The internal key is generated from the section and title so phrases stay grouped in the dashboard.</p>
+              <strong>{isPackageDraft ? "Edit this variable value" : "Create a reusable phrase"}</strong>
+              <p>{isPackageDraft
+                ? "This is one saved ingredient the app can insert into a larger fallback passage. Edit the variable value below; the empty article fields and publishing controls do not apply to this row."
+                : "Choose a section, name the phrase, then write the reusable wording. The internal key is generated from the section and title so phrases stay grouped in the dashboard."}</p>
             </div>
+          )}
+          {isVocabularyDraft && vocabularyUsage && (
+            <section className="admin-content-role-panel admin-vocabulary-usage" aria-label="Variable usage">
+              <div>
+                <p className="admin-eyebrow">Used by the app as</p>
+                <h3>{vocabularyUsage.label}</h3>
+              </div>
+              <p>{vocabularyUsage.description}</p>
+              <p><strong>Reader behavior:</strong> the app combines this phrase with other approved ingredients. It is not shown as a standalone article.</p>
+            </section>
           )}
           {isFallbackHookDraft && !skyFallbackEditor && (
             <div className="admin-editor-guidance" aria-label="Fallback hook guidance">
@@ -6107,10 +6200,10 @@ export function GeneratedContentAdminDashboard() {
             <label className="admin-title-field">
               <span>{isVocabularyDraft ? "Phrase title" : "Headline"}</span>
               <input aria-label={isVocabularyDraft ? "Phrase title" : "Headline"} value={currentDraft.headline} onChange={(event) => updateHeadline(event.target.value)} placeholder={isVocabularyDraft ? "Example: Moon phase / Balsamic / Reflection" : undefined} />
-              {isVocabularyDraft && <small className="admin-field-hint">This is the human name editors see in the table. New rows use it to generate the internal key.</small>}
+              {isVocabularyDraft && <small className="admin-field-hint">{isPackageDraft ? "This label helps editors find the phrase. The stable source key remains unchanged." : "This is the human name editors see in the table. New rows use it to generate the internal key."}</small>}
             </label>
           )}
-          {!compiledSkyArticleEdition && !skyFallbackEditor && (
+          {!compiledSkyArticleEdition && !skyFallbackEditor && !(isVocabularyDraft && isPackageDraft) && (
             <label className="admin-review-copy-editor">
               <span>{isVocabularyDraft ? "Editor note or grouping detail" : isSkyArticleSourceDraft ? "TL;DR" : "Summary"}</span>
               <textarea aria-label={isVocabularyDraft ? "Editor note or grouping detail" : isSkyArticleSourceDraft ? "Sky article TL;DR" : "Summary"} value={currentDraft.summary} onChange={(event) => setDraft({ ...currentDraft, summary: event.target.value })} placeholder={isVocabularyDraft ? "Optional: where this phrase should be used, tone notes, or related variants." : isSkyArticleSourceDraft ? "Write the explicit TL;DR for this article edition." : undefined} />
@@ -6146,8 +6239,32 @@ export function GeneratedContentAdminDashboard() {
           )}
           {!compiledSkyArticleEdition && showGenericBody && !skyFallbackEditor && (
             <label className="admin-review-copy-editor">
-              <span>{isVocabularyDraft ? "Reusable phrase text" : "Body"}</span>
-              <textarea aria-label={isVocabularyDraft ? "Reusable phrase text" : "Body"} value={currentDraft.body} onChange={(event) => setDraft({ ...currentDraft, body: event.target.value })} placeholder={isVocabularyDraft ? "Write the reusable wording or phrase pattern here." : undefined} />
+              <span>{isVocabularyDraft && isPackageDraft
+                ? vocabularyHasTheyVersion ? "You version" : "Variable value"
+                : isVocabularyDraft ? "Reusable phrase text" : "Body"}</span>
+              <textarea
+                aria-label={isVocabularyDraft && isPackageDraft
+                  ? vocabularyHasTheyVersion ? "You version" : "Variable value"
+                  : isVocabularyDraft ? "Reusable phrase text" : "Body"}
+                value={currentDraft.body}
+                onChange={(event) => isVocabularyDraft ? updateVocabularyBody(event.target.value) : setDraft({ ...currentDraft, body: event.target.value })}
+                placeholder={isVocabularyDraft ? "Write the reusable wording or phrase pattern here." : undefined}
+              />
+              {isVocabularyDraft && isPackageDraft && <small className="admin-field-hint">{vocabularyHasTheyVersion
+                ? "Used when the app speaks directly to the person reading their own chart."
+                : "This is the exact editable phrase the fallback resolver reads. Saving updates the stored package value and its dashboard copy together."}</small>}
+            </label>
+          )}
+          {isVocabularyDraft && isPackageDraft && vocabularyHasTheyVersion && !skyFallbackEditor && (
+            <label className="admin-review-copy-editor">
+              <span>They version</span>
+              <textarea
+                aria-label="They version"
+                value={vocabularyTheyValue}
+                onChange={(event) => setDraft(setPackageSectionField(currentDraft, "body_they", event.target.value))}
+                placeholder="Write the version used when the app describes another person."
+              />
+              <small className="admin-field-hint">Used when the app describes someone else in Friends, Compatibility, or another person-focused view.</small>
             </label>
           )}
           {skyWriteupContext && selectedRow && (
@@ -6305,7 +6422,7 @@ export function GeneratedContentAdminDashboard() {
               )}
             </section>
           )}
-          {fallbackDiagnostic && (
+          {fallbackDiagnostic && !isVocabularyDraft && (
             <section className="admin-fallback-diagnostic-panel" aria-label="Fallback composition check">
               <div className="admin-fallback-diagnostic-heading">
                 <div>
@@ -6336,7 +6453,25 @@ export function GeneratedContentAdminDashboard() {
               <p><strong>Fix path:</strong> {fallbackDiagnostic.action}</p>
             </section>
           )}
-          {isPackageDraft && (
+          {isPackageDraft && (isVocabularyDraft ? (
+            <section className="admin-package-edit-panel admin-vocabulary-settings" aria-label="Variable settings">
+              <label>
+                <span>Approval</span>
+                <select aria-label="Variable approval" value={packageReviewStatus} onChange={(event) => updatePackageReviewStatus(event.target.value)}>
+                  {fallbackArchitectureV3ReviewStatuses.map((reviewStatus) => (
+                    <option key={reviewStatus} value={reviewStatus}>
+                      {reviewStatus === "needs_review" ? "Needs review" : reviewStatus === "approved_reuse" ? "Approved for reuse" : "Approved for use"}
+                    </option>
+                  ))}
+                </select>
+                <small className="admin-field-hint">Approval allows the resolver to use this phrase as an ingredient. It does not turn it into a standalone article.</small>
+              </label>
+              <label className="admin-package-notes-field">
+                <span>Editor notes (optional)</span>
+                <textarea aria-label="Editor notes" value={packageEditorialNotesForDraft(currentDraft)} onChange={(event) => updatePackageEditorialNotes(event.target.value)} placeholder="Add context for another editor; readers never see these notes." />
+              </label>
+            </section>
+          ) : (
             <section className="admin-package-edit-panel" aria-label="Package row details">
               <div>
                 <span>content key</span>
@@ -6358,14 +6493,15 @@ export function GeneratedContentAdminDashboard() {
                 <textarea aria-label="Editorial notes" value={packageEditorialNotesForDraft(currentDraft)} onChange={(event) => updatePackageEditorialNotes(event.target.value)} />
               </label>
             </section>
-          )}
+          ))}
           <details className="admin-advanced admin-editor-key-details" open={!isVocabularyDraft}>
-            <summary>{isVocabularyDraft ? "Internal generated key" : "Content key"}</summary>
+            <summary>{isVocabularyDraft && isPackageDraft ? "Internal source details" : isVocabularyDraft ? "Internal generated key" : "Content key"}</summary>
             <label className="admin-title-field">
-              <span>{isVocabularyDraft ? "Generated key" : "Content key"}</span>
-              <input aria-label={isVocabularyDraft ? "Generated key" : "Content key"} value={currentDraft.contentKey} onChange={(event) => setDraft({ ...currentDraft, contentKey: event.target.value })} disabled={Boolean(currentDraft.id) || isVocabularyDraft || isPackageDraft} />
-              {isVocabularyDraft && <small className="admin-field-hint">Generated from section + title. Existing rows keep their original key so published content stays connected.</small>}
+              <span>{isVocabularyDraft && isPackageDraft ? "Source key" : isVocabularyDraft ? "Generated key" : "Content key"}</span>
+              <input aria-label={isVocabularyDraft && isPackageDraft ? "Source key" : isVocabularyDraft ? "Generated key" : "Content key"} value={currentDraft.contentKey} onChange={(event) => setDraft({ ...currentDraft, contentKey: event.target.value })} disabled={Boolean(currentDraft.id) || isVocabularyDraft || isPackageDraft} />
+              {isVocabularyDraft && <small className="admin-field-hint">{isPackageDraft ? "The app uses this stable key to request the phrase. It cannot be renamed from Content Studio." : "Generated from section + title. Existing rows keep their original key so published content stays connected."}</small>}
             </label>
+            {isVocabularyDraft && isPackageDraft && <p className="admin-field-hint">Package role: <code>{packageRole || "vocabulary"}</code></p>}
           </details>
           {isArticleDraft && (
             <section className="admin-display-source-panel" aria-label="Article content system">
@@ -6385,7 +6521,7 @@ export function GeneratedContentAdminDashboard() {
               </small>
             </section>
           )}
-          <fieldset className="admin-metadata-fields">
+          {!(isVocabularyDraft && isPackageDraft) && <fieldset className="admin-metadata-fields">
             <label className="admin-metadata-field">
               <span>Status</span>
               <select aria-label="Status" value={currentDraft.status} onChange={(event) => setDraft({ ...currentDraft, status: event.target.value as GeneratedContentStatus })} disabled={isPackageDraft || Boolean(compiledSkyArticleEdition)}>
@@ -6432,7 +6568,7 @@ export function GeneratedContentAdminDashboard() {
               <span>Block type</span>
               <input aria-label="Block type" value={currentDraft.blockType} onChange={(event) => setDraft({ ...currentDraft, blockType: event.target.value })} disabled={isPackageDraft} />
             </label>
-          </fieldset>
+          </fieldset>}
           {!compiledSkyArticleEdition && <div className="admin-toolbar-actions">
             <button className="admin-primary-button" type="button" onClick={() => void saveDraft(isCmsSurfaceDraft && currentDraft.status === "LIVE" ? "DRAFT" : undefined)} disabled={isLoading || Boolean(compiledSkyArticleEdition)}>
               <Save size={16} aria-hidden="true" />
