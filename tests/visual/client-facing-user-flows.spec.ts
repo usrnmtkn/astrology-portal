@@ -2879,6 +2879,8 @@ test.describe("client-facing user flow case studies", () => {
     await expect(article).toContainText(
       "A philosophy has more value after it has survived contact with a larger world."
     );
+    await expect(article.getByText("Natal aspects", { exact: true })).toHaveCount(0);
+    await expect(article.getByRole("heading", { level: 3, name: "Planetary aspects", exact: true })).toHaveCount(1);
     await assertNoClientErrors();
   });
 
