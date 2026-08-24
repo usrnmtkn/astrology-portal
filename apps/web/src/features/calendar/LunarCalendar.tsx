@@ -28,7 +28,11 @@ import {
   SourceGapError as FallbackV3SourceGapError,
   transitSynastryFallbackRendererV3 as calendarFallbackRendererV3
 } from "../../content/fallbackArchitectureV3Runtime";
-import { firstReaderFacingCopy, isReaderFacingCopy, readerFacingParagraphs } from "../../content/readerSafety";
+import {
+  firstReaderFacingCopy,
+  fullDetailReaderFacingCopy,
+  isReaderFacingCopy
+} from "../../content/readerSafety";
 import { cmsSurfaceKeys, resolveCmsSurfaceOverride } from "../../content/cmsSurfaceOverrides";
 import { slugContentPart } from "../../services/generatedContentKeys";
 import { resolveSkyAspectGeneratedContent } from "../../services/skyAspectContent";
@@ -1193,7 +1197,7 @@ function calendarSkyAspectPackageCandidates(
       bSign: event.toSign ? slugContentPart(event.toSign) : undefined,
       dateLine
     });
-    const body = readerFacingParagraphs(rendered.parts).join("\n\n");
+    const body = fullDetailReaderFacingCopy(rendered.parts) ?? "";
 
     if (!body) {
       return empty;
