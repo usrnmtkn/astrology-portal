@@ -62,5 +62,20 @@ assert.match(
   /const sections = dedupeArticleSectionHeadings\(\s*rawSections,/u,
   "The You detail renderer must deduplicate its article headings."
 );
+assert.doesNotMatch(
+  skyDetailArticleSource,
+  /detail\.relatedAspects(?:\?)?\.heading/u,
+  "The shared detail renderer must not add an umbrella aspect heading above the contextual group title."
+);
+assert.doesNotMatch(
+  youPageSource,
+  /displayArticle\.relatedAspects\.heading/u,
+  "The You detail renderer must not add an umbrella aspect heading above the contextual group title."
+);
+assert.match(
+  youPageSource,
+  /<h3 className="eyebrow section-label article-related-aspects__label article-related-aspects__group-label">/u,
+  "The contextual You aspect-group label must be the single section heading."
+);
 
 console.log("article heading deduplication checks passed");
