@@ -85,3 +85,16 @@ export function allReaderFacingCopy(values: Array<string | null | undefined>) {
   const paragraphs = readerFacingParagraphs(values);
   return paragraphs.length > 0 ? paragraphs.join("\n\n") : null;
 }
+
+/**
+ * Full-detail surfaces must preserve every eligible paragraph. Preview and
+ * summary surfaces intentionally use firstReaderFacingCopy instead.
+ */
+export function fullDetailReaderFacingParagraphs(values: Array<string | null | undefined>) {
+  return readerFacingParagraphs(values);
+}
+
+export function fullDetailReaderFacingCopy(values: Array<string | null | undefined>) {
+  const paragraphs = fullDetailReaderFacingParagraphs(values);
+  return paragraphs.length > 0 ? paragraphs.join("\n\n") : null;
+}
