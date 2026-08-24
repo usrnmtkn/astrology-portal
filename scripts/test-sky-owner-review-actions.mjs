@@ -281,6 +281,8 @@ const bodyOnlyPackageRow = existingRow({
       contentKey: "fallback-vocab/sky-planet-function/jupiter",
       content_role: "vocabulary",
       body: "Original body-only phrase.",
+      body_you: "",
+      body_they: "",
       review_status: "approved"
     }
   },
@@ -304,6 +306,43 @@ const bodyOnlyEdit = await invoke({
 assert.equal(bodyOnlyEdit.status, 200);
 assert.equal(bodyOnlyEdit.patches[0].body, "Updated body-only phrase.");
 assert.equal(bodyOnlyEdit.patches[0].sections.packageRecord.body, "Updated body-only phrase.");
+assert.equal(bodyOnlyEdit.patches[0].sections.packageRecord.body_you, "", "Empty voice mirrors must not replace a vocabulary phrase.");
+assert.equal(bodyOnlyEdit.patches[0].sections.packageRecord.body_they, "", "Vocabulary edits must not invent a friend version.");
+
+const audienceVocabularyRow = existingRow({
+  ...bodyOnlyPackageRow,
+  content_key: "fallback-vocab/planet-function/sun",
+  body: "identity and where you shine",
+  sections: {
+    packageRecord: {
+      contentKey: "fallback-vocab/planet-function/sun",
+      content_role: "vocabulary",
+      body: "identity and where you shine",
+      body_they: "identity and where they shine",
+      review_status: "approved_reuse"
+    }
+  }
+});
+const audienceVocabularyEdit = await invoke({
+  id: "sky-row",
+  body: "identity and where you take up space",
+  sections: {
+    ...audienceVocabularyRow.sections,
+    body_they: "identity and where they take up space",
+    packageRecord: {
+      ...audienceVocabularyRow.sections.packageRecord,
+      body: "identity and where you take up space",
+      body_they: "identity and where they take up space"
+    }
+  },
+  facts: audienceVocabularyRow.facts,
+  sourceSnapshot: audienceVocabularyRow.source_snapshot,
+  reviewStatus: "approved_reuse"
+}, audienceVocabularyRow);
+assert.equal(audienceVocabularyEdit.status, 200);
+assert.equal(audienceVocabularyEdit.patches[0].body, "identity and where you take up space");
+assert.equal(audienceVocabularyEdit.patches[0].sections.packageRecord.body, "identity and where you take up space");
+assert.equal(audienceVocabularyEdit.patches[0].sections.packageRecord.body_they, "identity and where they take up space");
 
 const compiledEdition = await compileSkyArticleEdition({
   templateBody: "# Pluto Enters {{sign}}\n\n{{opener}}\n\n## Horoscopes for Pluto in {{sign}}\n\n{{risingBlocks}}",
