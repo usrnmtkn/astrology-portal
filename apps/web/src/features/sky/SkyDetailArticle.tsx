@@ -8,7 +8,10 @@ import {
   zodiacAssetHref,
   zodiacSignIconFiles
 } from "../../components/charts/chartAssets";
-import { isReaderFacingCopy, readerFacingParagraphs } from "../../content/readerSafety";
+import {
+  fullDetailReaderFacingParagraphs,
+  isReaderFacingCopy
+} from "../../content/readerSafety";
 import type { GeneratedContentDrilldown } from "../../services/generatedContent";
 import { zodiacSignGlyphs, zodiacSigns } from "../../services/chartMath";
 import { dedupeArticleSectionHeadings } from "../../utils/articleHeadings";
@@ -404,7 +407,7 @@ export function SkyDetailArticle({
       ...paragraphs.filter((paragraph): paragraph is string => typeof paragraph === "string"),
       ...generatedSections.flatMap((section) => (
         typeof section.body === "string"
-          ? section.body.split(/\n{2,}/)
+          ? fullDetailReaderFacingParagraphs([section.body])
           : []
       ))
     ]
@@ -425,7 +428,7 @@ export function SkyDetailArticle({
     return comparableText(stripLegacySkyArticleScaffoldPrefix(section.body)) !== articleSubComparable;
   });
   const firstDisplaySectionParagraphs = typeof rawDisplaySections[0]?.body === "string"
-    ? rawDisplaySections[0].body.split(/\n{2,}/).map((paragraph) => paragraph.trim()).filter(Boolean)
+    ? fullDetailReaderFacingParagraphs([rawDisplaySections[0].body])
     : [];
   const leadingSectionDate = skyPlacementDateLine(firstDisplaySectionParagraphs[0]);
   const displaySections = leadingSectionDate
@@ -491,7 +494,7 @@ export function SkyDetailArticle({
             <h3 className="sky-rising-horoscope__title">
               {entry.risingSign} &amp; {entry.risingSign} Rising
             </h3>
-            {readerFacingParagraphs([entry.body]).map((paragraph) => (
+            {fullDetailReaderFacingParagraphs([entry.body]).map((paragraph) => (
               <p key={paragraph}>{paragraph}</p>
             ))}
           </div>
@@ -570,7 +573,7 @@ export function SkyDetailArticle({
                   ) : null}
                   {displaySections.map((section, index) => {
                     const bodyParagraphs = typeof section.body === "string"
-                      ? section.body.split(/\n{2,}/).map((paragraph) => stripLegacySkyArticleScaffoldPrefix(paragraph)).filter(Boolean)
+                      ? fullDetailReaderFacingParagraphs([section.body]).map((paragraph) => stripLegacySkyArticleScaffoldPrefix(paragraph)).filter(Boolean)
                       : [];
                     const sectionHeading = typeof section.heading === "string" ? section.heading : "";
                     const sourceTag = inferredSectionQaSourceTag(section);
@@ -697,7 +700,7 @@ export function SkyDetailArticle({
                   <div className="article-related-aspects__copy-list">
                     {group.sections.map((section) => {
                       const bodyParagraphs = typeof section.body === "string"
-                        ? section.body.split(/\n{2,}/).map((paragraph) => stripLegacySkyArticleScaffoldPrefix(paragraph)).filter(Boolean)
+                        ? fullDetailReaderFacingParagraphs([section.body]).map((paragraph) => stripLegacySkyArticleScaffoldPrefix(paragraph)).filter(Boolean)
                         : [];
                       const sectionHeading = typeof section.heading === "string" ? section.heading : "";
                       const glyphParts = sectionHeading ? articleAspectGlyphPartsFromHeading(sectionHeading) : null;

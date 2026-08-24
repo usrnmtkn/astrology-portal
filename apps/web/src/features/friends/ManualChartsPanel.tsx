@@ -39,8 +39,8 @@ import {
   transitSynastryFallbackRendererV3
 } from "../../content/fallbackArchitectureV3Runtime";
 import {
-  isReaderFacingCopy,
-  readerFacingParagraphs
+  fullDetailReaderFacingCopy,
+  isReaderFacingCopy
 } from "../../content/readerSafety";
 import { isDisplayRetrograde } from "../../services/astrologyDisplay";
 import {
@@ -692,9 +692,9 @@ export function ManualChartsPanel({
           transitPlanet: group.activation.transitPlanet,
           transitSign: group.activation.transitSign ?? "",
           timingRange,
-          body: readerFacingParagraphs(rendered.parts).join("\n\n"),
+          body: fullDetailReaderFacingCopy(rendered.parts) ?? "",
           effectBody: rendered.parts[0] ?? "",
-          activationBody: readerFacingParagraphs(rendered.parts.slice(1)).join("\n\n")
+          activationBody: fullDetailReaderFacingCopy(rendered.parts.slice(1)) ?? ""
         }];
       } catch (error) {
         if (error instanceof FallbackV3SourceGapError) {
