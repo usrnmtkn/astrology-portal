@@ -1,4 +1,4 @@
-import { allReaderFacingCopy } from "./readerSafety";
+import { fullDetailReaderFacingCopy } from "./readerSafety";
 
 export function natalPlacementReaderSectionCopy(
   value: string | null | undefined,
@@ -8,7 +8,7 @@ export function natalPlacementReaderSectionCopy(
   // reader. Never interpret an internal paragraph boundary as a preview
   // boundary: doing so silently discarded the remainder of approved
   // placement-sign, placement-house, and generic lived rows.
-  const readerCopy = allReaderFacingCopy([value]);
+  const readerCopy = fullDetailReaderFacingCopy([value]);
 
   // Source blocks retain their governed boundaries and hashes. The natal
   // placement article presents each semantic section as one paragraph:
