@@ -113,6 +113,7 @@ export type SkySnapshot = {
     sign: string;
     occursAt: string;
     days: number;
+    eclipseType?: "solar" | "lunar";
   };
   solarDaylight?: SolarDaylight;
   dominantElement: "Fire" | "Earth" | "Air" | "Water";

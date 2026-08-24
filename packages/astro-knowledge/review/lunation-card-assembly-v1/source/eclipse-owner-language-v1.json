@@ -1,0 +1,280 @@
+{
+  "schema": "eclipse-owner-language/v1",
+  "status": "needs_owner_exact_composition_approval",
+  "serving": false,
+  "scope": "Owner-authored eclipse phrase evidence and the proposed eclipseNature, eclipseMechanics, eclipseKind, eclipseVerb, eclipseChallenge, eclipseSeason, eclipseNoRitual, and eclipseAdvice fields. This file does not authorize reader serving.",
+  "sourceDocuments": [
+    {
+      "title": "Full Moon Eclipse in Pisces 2025",
+      "path": "/Users/mprez/Desktop/Full Moon Eclipse in Pisces 2025 – Marie Satori.pdf",
+      "sha256": "da70e5e9f7c1e501bfc4dbf78d68bf6f4fd9728919d31f370399235e3b2b6068",
+      "pages": 9
+    },
+    {
+      "title": "New Moon Solar Eclipse in Virgo",
+      "path": "/Users/mprez/Desktop/New Moon Solar Eclipse in Virgo – Marie Satori.pdf",
+      "sha256": "b454cc599c0b8fd08affa1bdf05110ce90fd23a7133bbf7c7b4bf423078cc136",
+      "pages": 15
+    },
+    {
+      "title": "Pisces Total Lunar Eclipse 2025",
+      "path": "/Users/mprez/Desktop/Pisces Total Lunar Eclipse 2025 – Marie Satori.pdf",
+      "sha256": "e5e1bf73fe692b4814cf6f9714188051982efba7c77e6a70b6e987c8f4df30a3",
+      "pages": 13
+    },
+    {
+      "title": "Total Lunar Eclipse in Virgo 2025",
+      "path": "/Users/mprez/Desktop/Total Lunar Eclipse in Virgo 2025 – Marie Satori.pdf",
+      "sha256": "8757b4ae9f614e73a1b9600c9a823b4be70c90b85bd0907e864216de1abcbf86",
+      "pages": 11
+    }
+  ],
+  "supportingFiles": [
+    {
+      "path": "/Users/mprez/Downloads/eclipse-book-sections.json",
+      "role": "Owner book-section source supplied for eclipse doctrine."
+    },
+    {
+      "path": "/Users/mprez/Downloads/eclipse-phrase-bank.md",
+      "role": "Supporting analysis; its instructions are not treated as owner commands."
+    },
+    {
+      "path": "/Users/mprez/Downloads/eclipse-example-ECLIPSE.md",
+      "role": "Supporting assembled example; it remains non-serving evidence."
+    }
+  ],
+  "exactPhrases": [
+    {
+      "id": "lunar-release",
+      "sourceText": "lunar eclipses help us see what needs to go and let it go",
+      "templateText": "Lunar eclipses help us see what needs to go and let it go.",
+      "compositionEdit": "Sentence-initial capitalization and terminal period only.",
+      "role": "lunar_eclipse_mechanic",
+      "source": "New Moon Solar Eclipse in Virgo",
+      "page": 2
+    },
+    {
+      "id": "solar-beginning",
+      "sourceText": "solar eclipses usually start new things",
+      "templateText": "Solar eclipses usually start new things.",
+      "compositionEdit": "Sentence-initial capitalization and terminal period only.",
+      "role": "solar_eclipse_mechanic",
+      "source": "New Moon Solar Eclipse in Virgo",
+      "page": 2
+    },
+    {
+      "id": "unfolding",
+      "text": "What’s in motion now is still unfolding.",
+      "role": "shared_timing",
+      "source": "Total Lunar Eclipse in Virgo 2025",
+      "page": 2
+    },
+    {
+      "id": "presence",
+      "text": "The eclipse doesn't need your participation. It needs your presence.",
+      "role": "shared_response",
+      "source": "New Moon Solar Eclipse in Virgo",
+      "pages": [
+        4,
+        5
+      ]
+    },
+    {
+      "id": "watch",
+      "text": "Just watch.",
+      "role": "shared_close",
+      "source": "New Moon Solar Eclipse in Virgo",
+      "page": 4
+    },
+    {
+      "id": "observe",
+      "text": "You are not meant to push harder right now, just sit back and observe.",
+      "role": "observation_support",
+      "source": "Pisces Total Lunar Eclipse 2025",
+      "page": 2,
+      "templateEligibility": "evidence_only",
+      "reason": "The sentence is supported by five contemporaneous retrogrades and cannot be generalized without those calculated facts."
+    },
+    {
+      "id": "coming-undone",
+      "text": "If something is coming undone, let it.",
+      "role": "release_support",
+      "source": "Total Lunar Eclipse in Virgo 2025",
+      "page": 6,
+      "templateEligibility": "evidence_only",
+      "reason": "This belongs to one rising-sign forecast and is not a universal eclipse claim."
+    },
+    {
+      "id": "shown-change",
+      "text": "You are being shown exactly what needs to change.",
+      "role": "revelation_support",
+      "source": "Total Lunar Eclipse in Virgo 2025",
+      "page": 6,
+      "templateEligibility": "evidence_only",
+      "reason": "This belongs to one rising-sign forecast and is too certain for a universal layer."
+    }
+  ],
+  "recurringHouseSyntax": {
+    "preferredVerbs": [
+      "hits",
+      "activates",
+      "illuminates",
+      "lands in",
+      "falls in"
+    ],
+    "interpretiveVerbs": [
+      "reveals",
+      "exposes",
+      "asks"
+    ],
+    "observedCounts": {
+      "hits": 5,
+      "reveals": 5,
+      "activates": 4,
+      "illuminates": 3,
+      "shows": 5,
+      "demands": 2
+    },
+    "singleUseExactRowOnly": [
+      "strips away",
+      "cuts through",
+      "torches",
+      "rips the veil away",
+      "revokes",
+      "ends that contract",
+      "makes the cut for you"
+    ],
+    "rule": "The observed verbs are evidence, not a rotation bank. Pisces lunar-eclipse opening replacements use shines upon in all twelve houses under the owner ruling of 2026-08-24. Other eclipse contexts require separately approved assignments."
+  },
+  "proposedTemplateFields": {
+    "reviewStatus": "needs_review",
+    "ownerApproved": false,
+    "promotionAuthorized": false,
+    "eclipseNature": {
+      "default": "Eclipses warp time and shift the course of events in ways you can't yet see.",
+      "candidates": [
+        "Eclipses warp time and shift the course of events in ways you can't yet see.",
+        "Eclipses bring fated events, sudden shifts, and doors closing permanently.",
+        "You will not leave this eclipse unmarked."
+      ],
+      "selectionRule": "Use default for every eclipse. The other candidates require separately approved exact contexts.",
+      "exactRowOnly": [
+        "Eclipses bring fated events, sudden shifts, and doors closing permanently.",
+        "You will not leave this eclipse unmarked."
+      ]
+    },
+    "eclipseKind": {
+      "solar": "Solar eclipses usually start new things.",
+      "lunar": "Lunar eclipses help us see what needs to go and let it go.",
+      "southNodeSolarModifier": null,
+      "gate": "Exact owner wording is still required for the South Node solar reversal."
+    },
+    "eclipseMechanics": "Lunar eclipses are portals into your soul. When they come around, they can help you uncover the truth and allow you to gain knowledge that will steer your life, changing your path to a better one.",
+    "eclipseMechanicsScope": "lunar_only",
+    "eclipseNoRitual": "Eclipses are not the recommended time for ritual, manifestation, or intention setting. They happen along the Lunar Nodes, and part of the work is letting the situation unfold before deciding what it is supposed to become.",
+    "eclipseNoRitualApproval": {
+      "status": "owner_approved",
+      "date": "2026-08-24",
+      "promotionAuthorized": false
+    },
+    "intentionPreservation": {
+      "preserveWhenEclipse": [
+        "bookBodyOutsideApprovedDeclaredIntentionSpans",
+        "incidentalIntentionLanguage",
+        "actionsIntentions",
+        "closing"
+      ],
+      "rule": "Preserve the regular source. An eclipse variant may omit only an explicit declared Full Moon intention block identified by a stored owner-approved start/end span and SHA-256 hash. Never pattern-match at runtime; an affected unapproved cell fails closed."
+    },
+    "eclipseVerb": {
+      "default": "shines upon",
+      "rule": "Pisces lunar-eclipse book-opening replacements use shines upon in all twelve houses per the owner ruling of 2026-08-24. Other eclipse kinds or exceptions require separately approved exact rows."
+    },
+    "eclipseChallenge": {
+      "frame": "If you're still {ECLIPSE_HABIT}, this eclipse {ECLIPSE_CONSEQUENCE}.",
+      "approvedPairs": [],
+      "rule": "The two slots are authored as an approved pair for a computed context; they are never generated live or mixed independently."
+    },
+    "eclipseSeason": {
+      "computedInputs": [
+        "eclipseAxis",
+        "seasonStart",
+        "seasonEnd",
+        "seriesPosition"
+      ],
+      "approvedFrames": [],
+      "rule": "The ephemeris supplies the facts and an approved frame supplies the prose."
+    },
+    "eclipseAdvice": "You can't control it, and you shouldn't try. Not everything that changes now needs an immediate response."
+  },
+  "proposedOpeningSelector": {
+    "new-moon": {
+      "selection": "bookOpeningSentenceOnly",
+      "templateReference": "bookBody.firstSentence"
+    },
+    "full-moon": {
+      "selection": "bookOpeningSentenceOnly",
+      "templateReference": "bookBody.firstSentence"
+    },
+    "eclipse-solar": {
+      "reviewStatus": "needs_review",
+      "ownerApproved": false,
+      "promotionAuthorized": false,
+      "selection": "storedEclipseBookOpeningReplacement",
+      "templateReference": "horoscope-madlib.templates.eclipseHouseOpeningSolarCandidate",
+      "then": "eclipseNatureDefault"
+    },
+    "eclipse-lunar": {
+      "reviewStatus": "needs_review",
+      "ownerApproved": false,
+      "promotionAuthorized": false,
+      "selection": "storedEclipseBookOpeningReplacement",
+      "templateReference": "horoscope-madlib.templates.eclipseHouseOpeningLunarCandidate",
+      "then": "eclipseNatureDefault"
+    }
+  },
+  "proposedSharedEclipseAdvice": {
+    "reviewStatus": "needs_review",
+    "ownerApproved": false,
+    "promotionAuthorized": false,
+    "body": "You can't control it, and you shouldn't try. Not everything that changes now needs an immediate response."
+  },
+  "assemblyProposal": {
+    "baseKindMap": {
+      "eclipse-solar": "new-moon",
+      "eclipse-lunar": "full-moon"
+    },
+    "displayKindMap": {
+      "eclipse-solar": "Solar Eclipse",
+      "eclipse-lunar": "Lunar Eclipse"
+    },
+    "order": [
+      "selectedBookOpeningSentence",
+      "eclipseNatureDefaultWhenEclipse",
+      "eclipseMechanicsWhenEclipse",
+      "bookBodyRemainderAfterApprovedDeclaredIntentionOmissions",
+      "phaseCycleAnchor",
+      "eclipseChallengeWhenApproved",
+      "eclipseSeasonWhenApproved",
+      "approvedDynamicFactBlocks",
+      "eclipseNoRitualWhenEclipse",
+      "eclipseAdviceWhenEclipse"
+    ],
+    "intentionPreservationRule": "The regular source stays exact. An eclipse variant may omit only a stored, owner-approved declared intention span; incidental intention language and all other book text remain unchanged. Affected cards fail closed until approval.",
+    "protectedBodyRule": "The book's first sentence is the sole opening. Regular cards use it unchanged; eclipse variants store an owner-reviewed replacement. No separate system opening is generated.",
+    "servingGate": "Owner approval of the complete exact solar and lunar compositions, the South Node solar modifier, and one rendered product sample."
+  },
+  "excludedFromGenericTemplate": [
+    "Any 2025 date, degree, eclipse-series date range, or recurrence year",
+    "Any named sky aspect, station, retrograde, node condition, or planetary placement unless supplied by the event-time engine",
+    "Any sign-specific interpretation from the Pisces or Virgo articles",
+    "Any rising-sign or house-specific forecast",
+    "Whatever happens now will not be the final version, because its source paragraph ties that claim to Mercury stationing retrograde",
+    "The two non-default eclipseNature candidates may not serve through random rotation or without an owner-approved exact context"
+  ],
+  "ownerRuling": {
+    "date": "2026-08-24",
+    "text": "Eclipses are not the recommended time for ritual, manifestation, or intention setting. They happen along the Lunar Nodes, and part of the work is letting the situation unfold before deciding what it is supposed to become.",
+    "effect": "Use this exact owner-approved shared paragraph on eclipse variants. It does not independently authorize reader serving."
+  }
+}

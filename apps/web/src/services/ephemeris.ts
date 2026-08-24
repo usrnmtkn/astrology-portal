@@ -1226,12 +1226,14 @@ function nextMoonEvent(swe: SwissEphInstance, date: Date): MoonEvent {
 
   const occursAt = new Date((lower.getTime() + upper.getTime()) / 2);
   const moonLongitude = exactPlanetLongitude(swe, swe.SE_MOON, occursAt);
+  const eclipseType = eclipseTypeForLunation(swe, occursAt, targetPhase === 360 ? 0 : targetPhase);
 
   return {
     name,
     sign: signForLongitude(moonLongitude).sign,
     occursAt: occursAt.toISOString(),
-    days: Math.max(0, (occursAt.getTime() - date.getTime()) / 86_400_000)
+    days: Math.max(0, (occursAt.getTime() - date.getTime()) / 86_400_000),
+    eclipseType: eclipseType ?? undefined
   };
 }
 
