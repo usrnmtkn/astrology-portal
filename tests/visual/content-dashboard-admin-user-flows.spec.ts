@@ -1904,11 +1904,11 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(list.getByRole("heading", { name: "Supporting fallback rows" })).toBeVisible();
 
     await sort.selectOption("title-asc");
-    await expect(list.locator(".admin-content-row-title")).toHaveText(["Alpha fallback", "Jupiter in Leo", "Zeta fallback"]);
+    await expect(list.locator(".admin-content-row-title")).toHaveText(["Alpha · Qa", "Jupiter in Leo", "Zeta · Qa"]);
     await sort.selectOption("title-desc");
-    await expect(list.locator(".admin-content-row-title")).toHaveText(["Zeta fallback", "Jupiter in Leo", "Alpha fallback"]);
+    await expect(list.locator(".admin-content-row-title")).toHaveText(["Zeta · Qa", "Jupiter in Leo", "Alpha · Qa"]);
 
-    await list.locator(".admin-content-row", { hasText: "Alpha fallback" }).getByRole("button", { name: "Edit" }).click();
+    await list.locator(".admin-content-row", { hasText: "Alpha · Qa" }).getByRole("button", { name: "Edit" }).click();
     await expect(page.getByLabel("Fallback hook guidance")).toContainText("Edit the Headline, Summary, or Body below");
     await expect(page.getByLabel("Fallback hook guidance")).toContainText("Sign Off makes it reader-eligible");
     await assertNoBrowserErrors();
