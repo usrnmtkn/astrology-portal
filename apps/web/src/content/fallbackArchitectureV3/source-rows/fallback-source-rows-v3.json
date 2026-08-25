@@ -11812,6 +11812,30 @@
    "distribution_lane": "serving"
   },
   {
+   "contentKey": "fallback-hook/natal-you-placement-complete-final/lilith/gemini/3",
+   "content_role": "full_copy",
+   "grammar_frame": "complete_sentence",
+   "headline": "Lilith in Gemini in the 3rd house",
+   "body": "Lilith in Gemini in the 3rd house can make you especially sensitive to what happens when someone tries to pin you to one version of what you said, thought, or believed. You may have learned early that asking too many questions made people impatient, changing your mind made you look inconsistent, or noticing the contradiction turned you into the difficult person in the conversation. Gemini needs room to think out loud, follow the new information, and revise the answer when something changes. The rage can come when someone quotes an old opinion back at you like a contract, talks down to you because you do not know something yet, or expects you to keep defending an answer you have already outgrown.\n\nSiblings, school, neighbors, and the environment you grew up in can make this even sharper. Maybe you competed to be heard, learned to argue quickly because the conversation moved fast, or became very good at finding the missing detail because people around you were constantly changing the story. You may also have learned that information is power: knowing who said what, catching the inconsistency, or having the message nobody else has seen can give you an advantage when communication feels unreliable. The challenge is knowing when curiosity is helping you understand something and when collecting more information has become a way of staying inside a conflict that would be better handled directly.\n\nThe deeper shift is giving yourself permission to be curious without having to turn every question into a case you need to win. You can say, “I was wrong,” “I changed my mind,” or “I need more information,” without treating any of those sentences like a failure of intelligence. You stop letting other people use an older version of your words to decide what you are allowed to think now, and you become more selective about which conversations deserve another explanation. Lilith in Gemini in the 3rd house becomes less about having the quickest answer and more about trusting yourself enough to keep thinking, questioning, and changing your mind when the information gets more complicated.",
+   "reader_only": true,
+   "render_policy": "reader-only-exact-lived-v1",
+   "review_status": "approved",
+   "source_keys": [
+    "owner-authored/lilith-gemini-3/2026-08-25"
+   ],
+   "approval": {
+    "approvalLevel": "exact_owner_approved",
+    "recordPath": "owner-authored/lilith-gemini-3/2026-08-25",
+    "approvedAt": "2026-08-25"
+   },
+   "source_release": "owner-authored-natal-placement-complete-v1",
+   "runtime_family": "natal-you-placement-complete-final",
+   "runtime_key": "lilith|gemini|3",
+   "governance": "owner-approved-natal-placement-complete-v1",
+   "owner_approved": true,
+   "distribution_lane": "serving"
+  },
+  {
    "contentKey": "fallback-hook/natal-you-placement-complete-final/lilith/taurus/3",
    "content_role": "full_copy",
    "grammar_frame": "complete_sentence",
