@@ -7,10 +7,21 @@ import { ownerRejectedExactTexts } from "../src/astro-writing/ownerEvidenceRejec
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const packageRoot = path.join(repoRoot, "apps/web/src/content/fallbackArchitectureV3");
+const checkOnly = process.argv.includes("--check");
 const readJson = (relativePath) => JSON.parse(fs.readFileSync(path.join(packageRoot, relativePath), "utf8"));
 const readRepoJson = (relativePath) => JSON.parse(fs.readFileSync(path.join(repoRoot, relativePath), "utf8"));
-const writeJsonl = (relativePath, rows) => fs.writeFileSync(
-  path.join(repoRoot, relativePath),
+const writeOrCheck = (relativePath, content) => {
+  const filePath = path.join(repoRoot, relativePath);
+  if (checkOnly) {
+    if (!fs.existsSync(filePath) || fs.readFileSync(filePath, "utf8") !== content) {
+      throw new Error(`Generated writing-harness artifact is stale: ${relativePath}`);
+    }
+    return;
+  }
+  fs.writeFileSync(filePath, content);
+};
+const writeJsonl = (relativePath, rows) => writeOrCheck(
+  relativePath,
   `${rows.map((row) => JSON.stringify(row)).join("\n")}\n`
 );
 const readJsonl = (relativePath) => fs.readFileSync(path.join(repoRoot, relativePath), "utf8")
@@ -224,11 +235,12 @@ const generatedPolicy = {
   ])].sort(),
   bannedPhrases: [...new Set([...bannedPhrasesSource, ...literalConstructions])].sort()
 };
-fs.writeFileSync(
-  path.join(repoRoot, "src/astro-writing/policyData.generated.mjs"),
+writeOrCheck(
+  "src/astro-writing/policyData.generated.mjs",
   `// Generated from canonical voice policy JSON. Do not edit by hand.\nexport const WRITING_POLICY_DATA = Object.freeze(${JSON.stringify(generatedPolicy, null, 2)});\n`
 );
 console.log(JSON.stringify({
+  mode: checkOnly ? "check" : "write",
   servingApproved: servingApproved.length,
   emptyHouseV14Keys: emptyHouseRows.length,
   emptyHouseV14DualVoiceExamples: emptyHouseV14Approved.length,

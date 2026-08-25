@@ -7,7 +7,9 @@ import { fileURLToPath } from "node:url";
 import {
   buildSharedEvidenceIndex,
   buildExtendedEvidenceCoverage,
+  exactDelimitedPassage,
   ownerLockedLilithV5Evidence,
+  ownerPositiveEvidenceFromApprovedTaskPassages,
   ownerPositiveEvidenceFromSurfaceQualifiedPool,
   ownerPositiveEvidenceFromVoiceIndex
 } from "../src/astro-writing/index.mjs";
@@ -42,13 +44,26 @@ const matrixCoverage = readJson("data/writing/matrix-evidence-index/TLDR-Matrix-
 const llMatrixV13Rows = readJson("packages/astro-knowledge/voice/tldr-astro/satori-writer/ll-matrix-v13/ll-matrix-v13.json").rows;
 const llMatrixV13ManifestRows = readJson("packages/astro-knowledge/review/ll-matrix-v13-runtime-manifest.json").rows;
 const registerGoldExamples = readJson("data/writing/owner-register-gold.json");
+const approvedTaskPassageManifest = readJson("data/writing/owner-supplied-structural-exemplars.json");
 const phraseExamples = readJsonl("data/writing/phrase-evidence-index/owner-phrase-evidence-v1.jsonl");
 const skyPointMeaningRows = readJson("tldr-astro-phrasebank/phrasebank/cc-sky-points-authored.json").reviewed;
 const lilithV5Rows = readJson("packages/astro-knowledge/review/lilith-placements-v5/lilith-placements-v5-staged-rows.json").rows;
+const approvedTaskPassages = ownerPositiveEvidenceFromApprovedTaskPassages(
+  approvedTaskPassageManifest.entries.map((entry) => ({
+    ...entry,
+    text: (() => {
+      const text = exactDelimitedPassage(entry, fs.readFileSync(path.join(repoRoot, entry.sourcePath), "utf8"));
+      const digest = crypto.createHash("sha256").update(text).digest("hex");
+      if (digest !== entry.exactTextSha256) throw new Error(`OWNER_TASK_PASSAGE_HASH_MISMATCH:${entry.id}`);
+      return text;
+    })()
+  }))
+);
 const registerExamples = [
   ...ownerPositiveEvidenceFromVoiceIndex(voiceIndex),
   ...ownerPositiveEvidenceFromSurfaceQualifiedPool(surfacePool),
-  ...ownerLockedLilithV5Evidence(lilithV5Rows)
+  ...ownerLockedLilithV5Evidence(lilithV5Rows),
+  ...approvedTaskPassages
 ];
 const dedupedRegister = [...new Map(registerExamples.map((entry) => [entry.id, entry])).values()];
 const index = buildSharedEvidenceIndex({
@@ -100,6 +115,7 @@ const artifact = {
       "packages/astro-knowledge/voice/tldr-astro/satori-writer/surface-qualified-positive-exemplars-v2.json",
       "data/writing/OWNER_APPROVED_EXAMPLES.jsonl",
       "data/writing/owner-register-gold.json",
+      "data/writing/owner-supplied-structural-exemplars.json",
       "data/writing/phrase-evidence-index/owner-phrase-evidence-v1.jsonl",
       "tldr-astro-phrasebank/phrasebank/cc-sky-points-authored.json",
       "packages/astro-knowledge/review/lilith-placements-v5/lilith-placements-v5-staged-rows.json",

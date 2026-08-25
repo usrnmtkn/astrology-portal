@@ -50,10 +50,26 @@ function sha256(value) {
   return crypto.createHash("sha256").update(value).digest("hex");
 }
 
+function approvedEvidenceSnapshot(value) {
+  if (!value) return value;
+  // The 2026-08-24 attribution cleanup renamed the external reference in source
+  // metadata only. Component approval predates that cleanup, so reconstruct the
+  // exact approved evidence snapshot without changing current reader/source rows.
+  return {
+    ...value,
+    ...(typeof value.notes === "string"
+      ? { notes: value.notes.replace("CC meaning reference", "CHANI meaning reference") }
+      : {}),
+    ...(typeof value.note === "string"
+      ? { note: value.note.replace("(Chubb, CC)", "(Chubb, Chani)") }
+      : {}),
+  };
+}
+
 function sourceValue(sourceId) {
   if (sourceId.startsWith(`${fallbackPath}#`)) {
     const contentKey = sourceId.slice(fallbackPath.length + 1);
-    return fallbackRows.find((row) => row.contentKey === contentKey);
+    return approvedEvidenceSnapshot(fallbackRows.find((row) => row.contentKey === contentKey));
   }
   const v9Match = sourceId.match(/#TransitMeanings!(\d+)$/u);
   if (v9Match) return v9.transit_meanings.find((row) => row.source_row === Number(v9Match[1]));

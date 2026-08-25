@@ -73,6 +73,7 @@ Before drafting or editing, read these files completely:
 5. `../../docs/writing/REVIEW_RUBRIC.md`
 6. `../../docs/writing/OWNER_CORRECTIONS.md`
 7. `../../docs/writing/SHARED_EVIDENCE_STANDARD.md`
+8. `../../docs/writing/ARGUMENT_DEVELOPMENT_STANDARD.md`
 
 Use `../../src/astro-writing/runWritingPipeline.mjs` for generated prose. Its order is binding:
 
@@ -91,6 +92,15 @@ Use `../../src/astro-writing/runWritingPipeline.mjs` for generated prose. Its or
 5. draft from the approved argument, the spine, and governed astrology;
 6. run deterministic validation;
 7. return the prose to the owner for judgment.
+
+For developed natal placements, Chiron interpretations, and other long-form
+recurring-pattern passages, apply the argument-development standard before
+drafting. Its movement is a reasoning audit, not a reader-copy template. Treat
+the supplied Chiron example as owner-authored, exact-owner-approved positive
+REGISTER evidence for prose behavior. Its governed manifest is
+`../../data/writing/owner-supplied-structural-exemplars.json`. It remains
+non-serving and is not phrase evidence; do not copy its wording, paragraph
+count, hinge, or ending.
 
 Spine slots are semantic checks, not reader-copy templates. Their labels must not become
 sentences that announce `the job of`, `this is a period for`, or `the collective lesson is`.

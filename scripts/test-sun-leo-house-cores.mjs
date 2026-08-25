@@ -36,15 +36,13 @@ for (const [index, row] of source.rows.entries()) {
   assert.equal(rendered.body, row.body_you, `${row.contentKey} must render without truncation or punctuation changes.`);
 }
 
+const expandedApprovedCore = renderSkyPlacementHouseCore({ planet: "sun", sign: "virgo", house: 1 });
+assert.equal(expandedApprovedCore.contentKey, "house-horoscope-core/sun/virgo/house-1");
+assert.ok(expandedApprovedCore.body, "An approved post-pilot Sun/sign core must render from the governed package.");
 assert.throws(
-  () => renderSkyPlacementHouseCore({ planet: "sun", sign: "virgo", house: 1 }),
-  (error) => error instanceof SourceGapError && /SOURCE_GAP: house horoscope core sun\/virgo\/house-1/u.test(error.message),
-  "A non-pilot sign must fail closed."
-);
-assert.throws(
-  () => renderSkyPlacementHouseCore({ planet: "moon", sign: "leo", house: 1 }),
-  (error) => error instanceof SourceGapError && /SOURCE_GAP: house horoscope core moon\/leo\/house-1/u.test(error.message),
-  "A non-pilot planet must fail closed."
+  () => renderSkyPlacementHouseCore({ planet: "uranus", sign: "taurus", house: 1 }),
+  (error) => error instanceof SourceGapError && /SOURCE_GAP: house horoscope core uranus\/taurus\/house-1/u.test(error.message),
+  "A planet-sign combination without a governed core must fail closed."
 );
 
 assert.match(
@@ -58,8 +56,8 @@ assert.match(
   /console\.warn\(error instanceof Error \? error\.message : String\(error\)\);[\s\S]*?personalizedPlacement: null/u,
   "A non-pilot SOURCE_GAP must be logged and render no personalized block."
 );
-assert.match(article, /Aspects to the planet[\s\S]*?detail\.personalizedPlacement/u);
-assert.match(article, /Where it lands for you/u);
+assert.match(article, /<h2[\s\S]*?detail\.personalizedPlacement\.heading[\s\S]*?<\/h2>/u);
 assert.match(article, /<p>\{detail\.personalizedPlacement\.body\}<\/p>/u);
+assert.match(article, /<h3>Aspects to the natal chart<\/h3>/u);
 
-console.log("Sun in Leo house cores preserve all 12 approved V13 bodies and fail closed outside the pilot.");
+console.log("Sun in Leo house cores preserve all 12 approved V13 bodies, expanded governed coverage renders, and unsupported combinations fail closed.");

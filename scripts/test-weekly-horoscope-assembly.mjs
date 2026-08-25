@@ -866,8 +866,11 @@ try {
   assert.match(realWeek.horoscope.driverLabel, /Full Moon in Aquarius/u);
   assert.ok(realWeek.horoscope.body.trim().length > 0);
   assert.equal(realWeek.horoscope.sourceUnits.length, 1);
-  assert.match(realWeek.horoscope.body, /9th house/u);
-  assert.match(realWeek.horoscope.body, /3rd house/u);
+  assert.match(realWeek.horoscope.body, /9th house/iu);
+  assert.match(
+    realWeek.horoscope.body,
+    /this lunar cycle began with the New Moon in Aquarius on February 17\./u
+  );
   assert.match(
     realWeek.horoscope.body,
     /Saturn rules this Full Moon from your 11th house, so friends, organizations, professional contacts, and shared commitments are part of the answer\./u
@@ -880,13 +883,15 @@ try {
     realWeek.horoscope.body,
     /Uranus in your 1st house adds a more personal element of change/u
   );
-  assert.match(
+  assert.doesNotMatch(
     realWeek.horoscope.body,
-    /An Aquarius Full Moon shows you how the arrangement actually works/u
+    /An Aquarius Full Moon shows you how the arrangement actually works/u,
+    "Exact owner-book cells must not be padded with the generic sign-compact layer."
   );
-  assert.match(
+  assert.doesNotMatch(
     realWeek.horoscope.body,
-    /This week, the missing information arrives, someone gives their answer, or the practical cost of the plan becomes harder to ignore\./u
+    /This week, the missing information arrives, someone gives their answer, or the practical cost of the plan becomes harder to ignore\./u,
+    "Exact owner-book cells must not be padded with the generic weekly layer."
   );
   assert.doesNotMatch(
     realWeek.horoscope.body,

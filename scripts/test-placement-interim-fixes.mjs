@@ -18,10 +18,12 @@ const baseTemplates = readJson("templates/fallback-templates-v3.json");
 const transitLibrary = readJson("source-rows/transit-synastry-rows-v1.json");
 const interim = readJson("source-rows/placement-interim-fixes-v1.json");
 const skySignCopySun = readJson("source-rows/sky-sign-copy-sun-v1.json");
+const skyArticleSource = readJson("source-rows/sky-article-v1.json");
 const rows = {
   ...baseRows,
   hookRows: [
     ...baseRows.hookRows,
+    ...skyArticleSource.hookRows,
     ...skySignCopySun.rows
   ],
   vocabularyRows: [
@@ -204,7 +206,7 @@ for (const planet of [
         ? { entryDate: "July 22", exitDate: "August 23" }
         : planet === "moon"
           ? { entryDate: "August 4", exitDate: "August 7" }
-          : {})
+          : { entryDate: "March 20", exitDate: "April 20" })
     });
     assert.doesNotMatch(rendered.body, /\{\{|\}\}/u);
     skyRenderCount++;

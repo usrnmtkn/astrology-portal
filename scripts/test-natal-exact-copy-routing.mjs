@@ -112,8 +112,8 @@ for (const [name, renderPlacement] of [
 }
 
 const youPage = fs.readFileSync(path.join(repoRoot, "apps/web/src/features/you/YouPage.tsx"), "utf8");
-assert.match(youPage, /label: "Planetary Aspects"/u);
-assert.match(youPage, /label: "Angles and Points"/u);
+assert.match(youPage, /label: "Planetary aspects"/u);
+assert.match(youPage, /label: "Angles and points"/u);
 assert.match(youPage, /article-related-aspects__group-label/u);
 assert.match(
   youPage,

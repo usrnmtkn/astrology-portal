@@ -254,14 +254,15 @@
       },
       "extended": {
         "meaning": 15,
-        "register": 10,
+        "register": 11,
         "scene": 0,
         "argument": 7,
         "phrase": 0
       },
       "sceneBySource": {},
       "registerBySource": {
-        "owner-approved-knowledge-matrix-register": 10
+        "owner-approved-knowledge-matrix-register": 10,
+        "owner-corpus-passage": 1
       }
     },
     {
@@ -3782,7 +3783,7 @@
         "meaning": 15,
         "register": 11,
         "scene": 1,
-        "argument": 9,
+        "argument": 8,
         "phrase": 0
       },
       "sceneBySource": {
@@ -4682,14 +4683,15 @@
       },
       "extended": {
         "meaning": 15,
-        "register": 10,
+        "register": 11,
         "scene": 0,
         "argument": 7,
         "phrase": 0
       },
       "sceneBySource": {},
       "registerBySource": {
-        "owner-approved-knowledge-matrix-register": 10
+        "owner-approved-knowledge-matrix-register": 10,
+        "owner-corpus-passage": 1
       }
     },
     {
@@ -8976,7 +8978,7 @@
         "meaning": 15,
         "register": 11,
         "scene": 1,
-        "argument": 9,
+        "argument": 8,
         "phrase": 0
       },
       "sceneBySource": {
