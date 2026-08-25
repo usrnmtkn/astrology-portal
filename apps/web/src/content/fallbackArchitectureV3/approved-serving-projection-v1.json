@@ -22,6 +22,13 @@
     "keyManifestHash": "99eb8426034838fad0ec2fc09ba59476",
     "keyCount": 9155
   },
+  "lineage": {
+    "file": "approved-serving-lineage-v1.json",
+    "sha256": "a18ac3178da26f12bbc3bfaada42abe784504db050767db846b6c156a05f3364",
+    "count": 9719,
+    "emissionCount": 9795,
+    "exactSourceMatchCount": 8678
+  },
   "partitions": {
     "skyCore": {
       "file": "bundled-sky-core-rows-v3.json",
