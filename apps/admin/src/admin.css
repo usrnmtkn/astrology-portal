@@ -10669,16 +10669,6 @@ body,
   color: var(--admin-muted);
 }
 
-.admin-dashboard .admin-unresolved-actions {
-  align-items: stretch;
-  display: grid;
-  gap: var(--admin-space-md);
-}
-
-.admin-dashboard .admin-unresolved-actions .admin-edit-row-button {
-  white-space: normal;
-}
-
 @media (max-width: 720px) {
   .admin-dashboard .admin-unresolved-content-table {
     min-width: 0;
