@@ -12,6 +12,12 @@ import type {
 
 const NEW_MOON_MACRO_OPEN = "New Moons begin a six-month cycle, and what starts now grows on the terms you set first.";
 const FULL_MOON_MACRO_OPEN = "Full Moons bring what has been building into clearer view.";
+const OWNER_BOOK_MACRO_OPENS = new Map([
+  [
+    "authored/sky-lunation-macro/full-moon/pisces",
+    "Full moons are about illuminating that unconscious and that which is unseen."
+  ]
+]);
 const fallbackSourceRowsV3 = {
   hookRows: [
     ...bundledSkyCoreRowsV3.hookRows,
@@ -34,9 +40,10 @@ function assertLunationBlendImport() {
   );
 
   for (const macro of fixedFrameMacros) {
-    const expectedOpen = macro.contentKey.includes("/new-moon/")
-      ? NEW_MOON_MACRO_OPEN
-      : FULL_MOON_MACRO_OPEN;
+    const expectedOpen = OWNER_BOOK_MACRO_OPENS.get(macro.contentKey)
+      ?? (macro.contentKey.includes("/new-moon/")
+        ? NEW_MOON_MACRO_OPEN
+        : FULL_MOON_MACRO_OPEN);
 
     if (!macro.body.startsWith(expectedOpen)) {
       throw new Error(`Lunation macro frame mismatch: ${macro.contentKey}`);
@@ -67,9 +74,19 @@ function assertLunationBlendImport() {
   const batchThree = allRows.filter((row) => row.source_keys?.includes(
     "Lunation sign packages batch 3 — the next three events"
   ));
+  const piscesBookMacro = allAuthoredCards.find((row) => (
+    row.contentKey === "authored/sky-lunation-macro/full-moon/pisces"
+    && row.source_keys?.includes(
+      "packages/astro-knowledge/review/lunation-card-assembly-v1/source/book-sections-v1.json#Pisces full moon horoscopes & tarotscopes"
+    )
+  ));
 
-  if (batchThree.length !== 9 || batchThree.some((row) => row.review_status !== "approved")) {
-    throw new Error("Batch 3 lunation import must contain exactly nine approved rows.");
+  if (
+    batchThree.length !== 8
+    || batchThree.some((row) => row.review_status !== "approved")
+    || piscesBookMacro?.review_status !== "approved"
+  ) {
+    throw new Error("Batch 3 lunation import must contain eight approved legacy rows plus the approved direct-book Pisces macro.");
   }
 
   const fallbackSet = allRows.filter((row) => row.source_keys?.includes(fallbackSetSource));

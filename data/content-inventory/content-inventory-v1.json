@@ -1,12 +1,12 @@
 {
   "schemaVersion": "content-inventory-v1",
   "generatedOn": "2026-08-10",
-  "sourceCommit": "f977118abf6d38db10b9ed21344b184ee9e2dd2c",
+  "sourceCommit": "7ff516befc578bcfe55a634fa0ab66fc42151042",
   "authorityRule": "Only owner-approved and owner-locked records may serve or export.",
-  "contentFingerprint": "2b5e3234057dcbcf7965ed121ff10e0c8e6048edf4ae16bd71c3d22e24af2bc0",
-  "recordCount": 10804,
+  "contentFingerprint": "1611bc41d3e12283b5b83220033fde14b09579c767d08a2653968422dc2af069",
+  "recordCount": 10826,
   "statusCounts": {
-    "owner-approved": 10804
+    "owner-approved": 10826
   },
   "familyCounts": {
     "approved/calendar-weekly-overview": 1,
@@ -103,7 +103,7 @@
     "fallback-hook/transit-retro-aspect": 1,
     "house-activation": 1017,
     "house-horoscope-core": 984,
-    "lunation": 411,
+    "lunation": 433,
     "natal-aspect": 253,
     "natal-placement": 252,
     "sky": 26,
@@ -465,6 +465,36 @@
         "lunation_kind": "full-moon",
         "lunation_sign": "aquarius",
         "rising_sign": "taurus",
+        "objects": [],
+        "signs": [
+          "aquarius"
+        ],
+        "aspects": [],
+        "events": [],
+        "houses": []
+      }
+    },
+    {
+      "contentKey": "authored/book-ritual-and-the-moon/lunation-horoscope/full-moon/aquarius/rising-virgo/house-6",
+      "contentFamily": "lunation",
+      "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/lunation-book-cards-v1.json",
+      "runtimeBucket": "authored-deferred",
+      "status": "owner-approved",
+      "sourceStatus": "approved",
+      "provenance": "owner-authored",
+      "sourceAuthor": "OWN",
+      "approvalRecord": "packages/astro-knowledge/review/lunation-card-assembly-v1/source/recovered-lunation-copy-corrections-v1.json",
+      "approvalVersionDate": "2026-08-24",
+      "contentHash": "3c07312f66fca8e23694e86a43f23464dd6a395113f9166aaefa636414bbaae5",
+      "wording": {
+        "headline": "Aquarius Full Moon for Virgo Rising",
+        "body": "The Aquarius full moon illuminates your 6th house of health and being of service. This is the time to release any daily habits or activities that harm your nervous system and overall well-being. The smallest of daily shifts can help build impactful change. This full moon highlights the need to create a new self-care regimen that supports daily routines to release stress and anxiety. How can you use technology to make healthy shifts in your day-to-day life (ex: track your sleep health with a sleeping app)? How can you create daily practices to support your nervous system: drink chamomile tea, join a meditation group, etc.? How can you develop daily routines to give yourself more freedom and choice? Can you create a new daily practice that supports your mental health? This is a time to reflect. Where have you been giving away too much of yourself and your energy? Are you overextending yourself out of a desire to belong? This full moon brings you an important reminder: Humans have an instinctive need to belong. From an evolutionary perspective, group relationships increased the chance of survival. You want to belong. It's ingrained in your DNA for survival. So take this time to reflect on what belonging looks and feels like. Disrupt any outdated models that no longer serve you, and honor the effort you have put into creating your life. It's easy to forget to honor the efforts you put into your work, self-care, and volunteering. During this full moon, take a moment to recognize all the hard work you've done. Your full moon intention is: \"Slow down and focus on the details of health, work, and daily habits.\""
+      },
+      "astrology": {
+        "house": 6,
+        "lunation_kind": "full-moon",
+        "lunation_sign": "aquarius",
+        "rising_sign": "virgo",
         "objects": [],
         "signs": [
           "aquarius"
@@ -1105,6 +1135,36 @@
       }
     },
     {
+      "contentKey": "authored/book-ritual-and-the-moon/lunation-horoscope/full-moon/cancer/rising-scorpio/house-9",
+      "contentFamily": "lunation",
+      "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/lunation-book-cards-v1.json",
+      "runtimeBucket": "authored-deferred",
+      "status": "owner-approved",
+      "sourceStatus": "approved",
+      "provenance": "owner-authored",
+      "sourceAuthor": "OWN",
+      "approvalRecord": "packages/astro-knowledge/review/lunation-card-assembly-v1/source/recovered-lunation-copy-corrections-v1.json",
+      "approvalVersionDate": "2026-08-24",
+      "contentHash": "f81c9c0224656e09246e4f33342d03af6a0c6a0966a0a68510a1054a6fef5e9a",
+      "wording": {
+        "headline": "Cancer Full Moon for Scorpio Rising",
+        "body": "You're exploring new ideas, concepts, cultures, and creative expressions with the Cancer full moon in your 9th house. You might be taking your creative work beyond your local community and reaching an international one now. The Cancer full moon in the 9th house guides you to see the higher truths and deeper meanings in all things. You may be very interested in deepening your understanding of the world around you and the universe beyond it. This can come from many different sources, such as books, lectures, art, music, travel, and even meditation. It may also include formal schooling or learning from mentors, teachers, or a significant relationship in your life. Wisdom can be learned in relationships, not only through books and traveling. Communicating your emotional needs clearly and listening to others' points of view and feelings during conversations are essential. Keep your heart and mind open to new perspectives, and new worlds open up. In any case, you will likely focus on finding the truth and meaning in how you feel, what you do, and how you live. Sagittarius assists in the search for meaning, truth, and wisdom from the darkness. The greater spiritual meaning is learned through the teachings of reincarnation. The question of greater purpose in life is answered by integrating lessons that must be mastered or repeated cyclically as karma. When the full moon is in the 9th house, more so than usual, you aspire to understand the truth and wisdom behind the mysteries. You may be struggling, seeking to understand the greater meanings of life, asking questions like, \"What is life? What did my soul come to learn this lifetime?\" You look for greater significance in the mundane day-to-day world, perhaps through something spiritual. You don't mind an easy life but want to feel spiritually fulfilled."
+      },
+      "astrology": {
+        "house": 9,
+        "lunation_kind": "full-moon",
+        "lunation_sign": "cancer",
+        "rising_sign": "scorpio",
+        "objects": [],
+        "signs": [
+          "cancer"
+        ],
+        "aspects": [],
+        "events": [],
+        "houses": []
+      }
+    },
+    {
       "contentKey": "authored/book-ritual-and-the-moon/lunation-horoscope/full-moon/cancer/rising-taurus/house-3",
       "contentFamily": "lunation",
       "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/lunation-book-cards-v1.json",
@@ -1425,6 +1485,36 @@
         "lunation_kind": "full-moon",
         "lunation_sign": "capricorn",
         "rising_sign": "sagittarius",
+        "objects": [],
+        "signs": [
+          "capricorn"
+        ],
+        "aspects": [],
+        "events": [],
+        "houses": []
+      }
+    },
+    {
+      "contentKey": "authored/book-ritual-and-the-moon/lunation-horoscope/full-moon/capricorn/rising-scorpio/house-3",
+      "contentFamily": "lunation",
+      "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/lunation-book-cards-v1.json",
+      "runtimeBucket": "authored-deferred",
+      "status": "owner-approved",
+      "sourceStatus": "approved",
+      "provenance": "owner-authored",
+      "sourceAuthor": "OWN",
+      "approvalRecord": "packages/astro-knowledge/review/lunation-card-assembly-v1/source/recovered-lunation-copy-corrections-v1.json",
+      "approvalVersionDate": "2026-08-24",
+      "contentHash": "caf7a9fcfe739ee72c70ae36a3b784013db1e91e64b717793fa487eeb59cf498",
+      "wording": {
+        "headline": "Capricorn Full Moon for Scorpio Rising",
+        "body": "Capricorn is the sign of hard work, responsibility, determination, and commitment. The Capricorn full moon illuminates your 3rd house of communication and early education, including how you express yourself and communicate in your own way with your community, siblings, and neighbors. This full moon shifts your focus to the power of your words and asks you to honor your verbal commitments. If you made a commitment you can no longer fulfill or no longer want to honor, Capricorn’s ruling planet, Saturn, pushes you to have a mature conversation and end the agreement. This full moon pushes you to look at your schedule, take responsibility and account for what you’re capable of tackling, and adjust accordingly."
+      },
+      "astrology": {
+        "house": 3,
+        "lunation_kind": "full-moon",
+        "lunation_sign": "capricorn",
+        "rising_sign": "scorpio",
         "objects": [],
         "signs": [
           "capricorn"
@@ -2125,6 +2215,36 @@
       }
     },
     {
+      "contentKey": "authored/book-ritual-and-the-moon/lunation-horoscope/full-moon/leo/rising-scorpio/house-10",
+      "contentFamily": "lunation",
+      "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/lunation-book-cards-v1.json",
+      "runtimeBucket": "authored-deferred",
+      "status": "owner-approved",
+      "sourceStatus": "approved",
+      "provenance": "owner-authored",
+      "sourceAuthor": "OWN",
+      "approvalRecord": "packages/astro-knowledge/review/lunation-card-assembly-v1/source/recovered-lunation-copy-corrections-v1.json",
+      "approvalVersionDate": "2026-08-24",
+      "contentHash": "24fa5fd4051a92ed742d05330125f0f593a1709536d9e61f8a3101d29aab16f3",
+      "wording": {
+        "headline": "Leo Full Moon for Scorpio Rising",
+        "body": "The Leo full moon illuminates your 10th house of career and purpose. You’ve been having many changes in your career and home life recently, making you question which direction you are heading and whether your current situation is fulfilling your needs. You require depth, connection, and conditions that encourage you to grow into your power and potential. This Leo full moon is asking you to step up in your work life and find that power and strength within you. Any conflicts arising may force you to take even more responsibility and allow you to excel in your field. Your intention for this Leo full moon is: “My integrity, insight, and determination make me a loyal partner, parent, and worker. I succeed when I stay connected to my truth and power and act in service to the highest good for all.”"
+      },
+      "astrology": {
+        "house": 10,
+        "lunation_kind": "full-moon",
+        "lunation_sign": "leo",
+        "rising_sign": "scorpio",
+        "objects": [],
+        "signs": [
+          "leo"
+        ],
+        "aspects": [],
+        "events": [],
+        "houses": []
+      }
+    },
+    {
       "contentKey": "authored/book-ritual-and-the-moon/lunation-horoscope/full-moon/leo/rising-taurus/house-4",
       "contentFamily": "lunation",
       "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/lunation-book-cards-v1.json",
@@ -2445,6 +2565,36 @@
         "lunation_kind": "full-moon",
         "lunation_sign": "libra",
         "rising_sign": "sagittarius",
+        "objects": [],
+        "signs": [
+          "libra"
+        ],
+        "aspects": [],
+        "events": [],
+        "houses": []
+      }
+    },
+    {
+      "contentKey": "authored/book-ritual-and-the-moon/lunation-horoscope/full-moon/libra/rising-scorpio/house-12",
+      "contentFamily": "lunation",
+      "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/lunation-book-cards-v1.json",
+      "runtimeBucket": "authored-deferred",
+      "status": "owner-approved",
+      "sourceStatus": "approved",
+      "provenance": "owner-authored",
+      "sourceAuthor": "OWN",
+      "approvalRecord": "packages/astro-knowledge/review/lunation-card-assembly-v1/source/recovered-lunation-copy-corrections-v1.json",
+      "approvalVersionDate": "2026-08-24",
+      "contentHash": "579a3cf4322425f12598bc77f573d95ed830e21e4163d2f778f133024a070aa4",
+      "wording": {
+        "headline": "Libra Full Moon for Scorpio Rising",
+        "body": "This full moon illuminates your 12th house, so let yourself explore the hidden parts of your psyche during this time for introspection. You may find peace in these moments; allow them to fill up every corner, like water filling an empty cup, until there is no room for doubt or fear. Find peace in exploring those parts of yourself that have been hidden away, and find love where there were scars or shame. This full moon invites you to heal and begin living in your truth. The full moon in the 12th house can signal a time for self-reflection, a time to find yourself after you've gotten lost in the busyness of life or numbed yourself by keeping busy. During this full moon, allow yourself to tune out the world and tune in to your body. If you've been feeling lost or like you're just going through the motions, this is the perfect time to find yourself again."
+      },
+      "astrology": {
+        "house": 12,
+        "lunation_kind": "full-moon",
+        "lunation_sign": "libra",
+        "rising_sign": "scorpio",
         "objects": [],
         "signs": [
           "libra"
@@ -3865,6 +4015,36 @@
       }
     },
     {
+      "contentKey": "authored/book-ritual-and-the-moon/lunation-horoscope/full-moon/taurus/rising-scorpio/house-7",
+      "contentFamily": "lunation",
+      "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/lunation-book-cards-v1.json",
+      "runtimeBucket": "authored-deferred",
+      "status": "owner-approved",
+      "sourceStatus": "approved",
+      "provenance": "owner-authored",
+      "sourceAuthor": "OWN",
+      "approvalRecord": "packages/astro-knowledge/review/lunation-card-assembly-v1/source/recovered-lunation-copy-corrections-v1.json",
+      "approvalVersionDate": "2026-08-24",
+      "contentHash": "6409f00dc441df00d0f3d66d39bb29a6fec5c92b477965e1ec3e6406f7a0b5fd",
+      "wording": {
+        "headline": "Taurus Full Moon for Scorpio Rising",
+        "body": "The Taurus full moon illuminates your 7th house of relationships. The power of relationships is that they mirror your ongoing explorations of self. Libra rules the 7th house, and its planetary ruler is Venus. This is also a time to enjoy fulfilling relationships with close friends and family and create space for a heart-centered home. While your ego may try to convince you that you are the focal point of your life’s story, in charge, and need to tackle life’s challenges alone, this full moon encourages you to be open to others and allow them to help you with your challenges. This full moon can also be an excellent time to reconnect with friends and family members you haven’t seen. You might also want to consider connecting with nature and spending time outdoors. Whether you connect with others or nature, this is a valuable time for cultivating connections. Currently, you are exploring the reality and depth of intimacy in your relationships and the health of the boundaries you have created. The Scorpio Sun and Taurus Full Moon evoke a strong desire for connection and the fulfillment of your desires. However, this desire may be blocked by a recurring pattern of fear and rejection of affection that leads to an inability to open up. As you face feelings of vulnerability and insecurity, it's important to consider whether you choose to expand your heart or contract your energy in fear and pain. This is a time to examine your patterns and find the courage to break free from limiting beliefs and embrace deeper connections and greater fulfillment. This full moon helps you recognize the gift of co-creating and commitment; it asks that you honor your promise to others and your commitment to yourself. Relationships evolve, and it’s possible you need to take this time to review your core values (having children, living close to family, stay-at-home mom or dad, selling your business, creating a nonprofit, etc.) and see if the long-term relationship in your life has evolved with you. Scorpio season is a time for transformation, and you may be investing time in your healing journey. You may also be noticing that the people you have cultivated relationships with aren’t as supportive of your healing. Their lack of support may show up through their actions, especially if those actions require you to fall back into old habits and patterns you’re working to break. Not everyone needs to change at the same pace as you do, but often people don’t change at all. If you desire to grow, you could discover that the other person in your relationship is set in their ways. You will likely grow apart and move further from those who want you to remain the same. Can you both navigate the path forward to reach a place of shared core values? With this Taurus full moon shining a guiding light on your way forward, emotions you have hidden from others or even from yourself will begin to emerge, directing you to more compassionate relationships. This full moon will bring more focus and clarity around your emotions and desires and help you choose which relationships serve your highest purpose and evolution and which to let go of."
+      },
+      "astrology": {
+        "house": 7,
+        "lunation_kind": "full-moon",
+        "lunation_sign": "taurus",
+        "rising_sign": "scorpio",
+        "objects": [],
+        "signs": [
+          "taurus"
+        ],
+        "aspects": [],
+        "events": [],
+        "houses": []
+      }
+    },
+    {
       "contentKey": "authored/book-ritual-and-the-moon/lunation-horoscope/full-moon/taurus/rising-taurus/house-1",
       "contentFamily": "lunation",
       "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/lunation-book-cards-v1.json",
@@ -5275,6 +5455,36 @@
       }
     },
     {
+      "contentKey": "authored/book-ritual-and-the-moon/lunation-horoscope/new-moon/cancer/rising-scorpio/house-9",
+      "contentFamily": "lunation",
+      "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/lunation-book-cards-v1.json",
+      "runtimeBucket": "authored-deferred",
+      "status": "owner-approved",
+      "sourceStatus": "approved",
+      "provenance": "owner-authored",
+      "sourceAuthor": "OWN",
+      "approvalRecord": "packages/astro-knowledge/review/lunation-card-assembly-v1/source/recovered-lunation-copy-corrections-v1.json",
+      "approvalVersionDate": "2026-08-24",
+      "contentHash": "9490bb6e893d52d0617284449084555300813e2824a8495ca44e4ac48f80d18b",
+      "wording": {
+        "headline": "Cancer New Moon for Scorpio Rising",
+        "body": "Use this New Moon to broaden your horizons both internally and externally to help you see life in a new and fresh way. Creativity is ignited and you're ready to share your gifts with others through performance or teaching. Teaching, sharing, communicating, and learning are the best uses of your time during this New Moon. Higher education boosts your knowledge and expands your perspectives, but it doesn't always address personal and spiritual growth. Are you looking for a way to deepen and enrich your spiritual practice? Whether it's through volunteering with a local program, taking part in sustainability initiatives, or donating to a cause that speaks to you, giving of yourself opens you to new possibilities and makes you part of a collective spirit. Your intention for this New Moon is: “To allow your perspective to be opened and allow new truths and understandings to feed your spirit.”"
+      },
+      "astrology": {
+        "house": 9,
+        "lunation_kind": "new-moon",
+        "lunation_sign": "cancer",
+        "rising_sign": "scorpio",
+        "objects": [],
+        "signs": [
+          "cancer"
+        ],
+        "aspects": [],
+        "events": [],
+        "houses": []
+      }
+    },
+    {
       "contentKey": "authored/book-ritual-and-the-moon/lunation-horoscope/new-moon/cancer/rising-taurus/house-3",
       "contentFamily": "lunation",
       "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/lunation-book-cards-v1.json",
@@ -5595,6 +5805,36 @@
         "lunation_kind": "new-moon",
         "lunation_sign": "capricorn",
         "rising_sign": "sagittarius",
+        "objects": [],
+        "signs": [
+          "capricorn"
+        ],
+        "aspects": [],
+        "events": [],
+        "houses": []
+      }
+    },
+    {
+      "contentKey": "authored/book-ritual-and-the-moon/lunation-horoscope/new-moon/capricorn/rising-scorpio/house-3",
+      "contentFamily": "lunation",
+      "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/lunation-book-cards-v1.json",
+      "runtimeBucket": "authored-deferred",
+      "status": "owner-approved",
+      "sourceStatus": "approved",
+      "provenance": "owner-authored",
+      "sourceAuthor": "OWN",
+      "approvalRecord": "packages/astro-knowledge/review/lunation-card-assembly-v1/source/recovered-lunation-copy-corrections-v1.json",
+      "approvalVersionDate": "2026-08-24",
+      "contentHash": "171c10083ac3a4ab5711ca020727d51f3e4068aa7ae0a05f148611e7b36c5cc4",
+      "wording": {
+        "headline": "Capricorn New Moon for Scorpio Rising",
+        "body": "The Capricorn new moon activates your 3rd house of early education, how you process information, and how you communicate with your community, siblings, and neighbors. The Capricorn new moon illuminates your house of communication, inviting you to explore your passions and interests more deeply. This is a powerful time to reflect on your communication style and consider ways to improve it. Take a class or workshop on communication or public speaking, as this can help you to be more authentic and true to yourself. Remember, it's not about being perfect but about being open to feedback and vulnerability. This is an important step towards growth. This new moon may bring challenges in expressing yourself; others may try to tell you that you are too intense, making you either explode or avoid important conversations completely. However, these challenges allow you to learn more about communication and your internal thought processes. Take time to reflect on your communication style, and trust in the power of your intuition to guide you. Consider ways to share your passions and interests with others through creative projects and writing. Be mindful of your needs and communicate them directly and honestly, and surround yourself with those who can appreciate and support your unique talents and gifts. Trust in the power of your words and speak from the heart, releasing those who cannot understand or appreciate your beauty. Your intention for this New Moon is to communicate authentically, share your knowledge and skills with others, and trust in the power of your words to connect and inspire."
+      },
+      "astrology": {
+        "house": 3,
+        "lunation_kind": "new-moon",
+        "lunation_sign": "capricorn",
+        "rising_sign": "scorpio",
         "objects": [],
         "signs": [
           "capricorn"
@@ -6295,6 +6535,36 @@
       }
     },
     {
+      "contentKey": "authored/book-ritual-and-the-moon/lunation-horoscope/new-moon/leo/rising-scorpio/house-10",
+      "contentFamily": "lunation",
+      "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/lunation-book-cards-v1.json",
+      "runtimeBucket": "authored-deferred",
+      "status": "owner-approved",
+      "sourceStatus": "approved",
+      "provenance": "owner-authored",
+      "sourceAuthor": "OWN",
+      "approvalRecord": "packages/astro-knowledge/review/lunation-card-assembly-v1/source/recovered-lunation-copy-corrections-v1.json",
+      "approvalVersionDate": "2026-08-24",
+      "contentHash": "332ff8acee12fb5948dd782da7f59a5e2edaf56a670cc76bceb87288b1866365",
+      "wording": {
+        "headline": "Leo New Moon for Scorpio Rising",
+        "body": "Career is your main focus now. You’re discovering more and more about yourself on a daily basis and wondering if all the different parts of yourself are being honored and acknowledged in your work. This question might eventually lead you to take on a new career path, or maybe even a promotion. You don’t always like being in leadership roles, but now you’re seeing that taking on some extra responsibility, whether that be in your current work or forging a path on your own, is a necessary step to feeling fulfilled. Sudden changes in status, responsibility, or direction will further your growth, even if it’s unclear how at the moment. Your ability to feel secure and confident in your work will determine the outcome. Avoid scattered thinking. Take a step back from this current timeline and focus on the long-range details. Make sure that whatever you put your energy into aligns with your values and is building toward your future. You may not have defined your values or beliefs and have taken on the beliefs of others that are misleading you about what will fulfill you. Perhaps you prefer to switch careers to focus more energy on your family. Maybe you prefer not to have children and find fulfillment in other areas of your life. Perhaps you have no idea what you want, and you need to take this time to listen to your heart and reconnect to your core values."
+      },
+      "astrology": {
+        "house": 10,
+        "lunation_kind": "new-moon",
+        "lunation_sign": "leo",
+        "rising_sign": "scorpio",
+        "objects": [],
+        "signs": [
+          "leo"
+        ],
+        "aspects": [],
+        "events": [],
+        "houses": []
+      }
+    },
+    {
       "contentKey": "authored/book-ritual-and-the-moon/lunation-horoscope/new-moon/leo/rising-taurus/house-4",
       "contentFamily": "lunation",
       "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/lunation-book-cards-v1.json",
@@ -6615,6 +6885,36 @@
         "lunation_kind": "new-moon",
         "lunation_sign": "libra",
         "rising_sign": "sagittarius",
+        "objects": [],
+        "signs": [
+          "libra"
+        ],
+        "aspects": [],
+        "events": [],
+        "houses": []
+      }
+    },
+    {
+      "contentKey": "authored/book-ritual-and-the-moon/lunation-horoscope/new-moon/libra/rising-scorpio/house-12",
+      "contentFamily": "lunation",
+      "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/lunation-book-cards-v1.json",
+      "runtimeBucket": "authored-deferred",
+      "status": "owner-approved",
+      "sourceStatus": "approved",
+      "provenance": "owner-authored",
+      "sourceAuthor": "OWN",
+      "approvalRecord": "packages/astro-knowledge/review/lunation-card-assembly-v1/source/recovered-lunation-copy-corrections-v1.json",
+      "approvalVersionDate": "2026-08-24",
+      "contentHash": "10ff4847903bbfd49cdd6e11712c9ab2657fc39240b7df462320ed4b29900156",
+      "wording": {
+        "headline": "Libra New Moon for Scorpio Rising",
+        "body": "The Libra new moon illuminates your 12th house of karma, subconscious, and endings. This New Moon is in your 12th house, the Pisces house. If you feel like you’re underwater, know that this will pass soon, and use this time to connect to your spiritual and artistic side. Let yourself dream, meditate, and be inspired by all that’s coming through to you right now. Try not to make any solid decisions because not everything is as it seems with Pisces. This energy is more about exploring your internal landscape and expressing it creatively as a manifestation of the divine. You may receive downloads of information from past lifetimes or your ancestral lineage about trauma that needs to be healed and cleared. Focus on how this makes you feel. You need to move and feel your way through this. Do not try to escape. Let your creative outlet and faith in something higher than yourself become a path toward healing. Reflect on your purpose, and hold it in your heart, regardless of how much suffering surrounds you. Everything will pass, and everything is temporary. Turn to your spiritual practices and faith to help you through any challenges. If you’re experiencing loss or grief, allow yourself to feel it. You may be called to explore the mystical and magical aspects of your spirituality. The Moon symbolizes lunar rituals, mysticism, and a connection to the magick of the Moon. This is a time to expand your spiritual awareness and connect with your divine wisdom, using that wisdom to heal yourself and others. The energy of Pisces gives you access to the unseen worlds where healing and regeneration can occur, reminding you that you are more than just a physical being. If you are feeling blocked or uninspired, try cleansing your energy and creating an altar to honor your magick. This can help recharge your spiritual batteries and provide you with inspiration. Stay open, be still, and surrender to the wisdom and healing that may come to you. Your New Moon intention is: “To allow the cycle of endings and beginnings to unfold without grasping at the expectation of the dream. Your faith, trust, and creative expression will nurture you.”"
+      },
+      "astrology": {
+        "house": 12,
+        "lunation_kind": "new-moon",
+        "lunation_sign": "libra",
+        "rising_sign": "scorpio",
         "objects": [],
         "signs": [
           "libra"
@@ -7758,6 +8058,366 @@
         "objects": [],
         "signs": [
           "scorpio"
+        ],
+        "aspects": [],
+        "events": [],
+        "houses": []
+      }
+    },
+    {
+      "contentKey": "authored/book-ritual-and-the-moon/lunation-horoscope/new-moon/taurus/rising-aquarius/house-4",
+      "contentFamily": "lunation",
+      "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/lunation-book-cards-v1.json",
+      "runtimeBucket": "authored-deferred",
+      "status": "owner-approved",
+      "sourceStatus": "approved",
+      "provenance": "owner-authored",
+      "sourceAuthor": "OWN",
+      "approvalRecord": "packages/astro-knowledge/review/lunation-card-assembly-v1/source/recovered-lunation-copy-corrections-v1.json",
+      "approvalVersionDate": "2026-08-24",
+      "contentHash": "4ca8d89761e550a2815d91d02be28747736531afe5cdad9daeaae22d87d59f13",
+      "wording": {
+        "headline": "Taurus New Moon for Aquarius Rising",
+        "body": "The Taurus new moon illuminates your 4th house of home and family. Think about what makes you feel secure and safe without getting stuck in stagnancy. The new moon in the 4th house may have you rethink how you want to put down roots or take steps to deepen the roots you already have. Take this time to consider how family fits into your future, and what steps you can take toward cultivating a deeper family connection. It’s possible you’re in the process of moving or rethinking your home environment. This change brings you to a location that better supports your work-life balance, making it easier for you to invest time in your career without pulling energy away from cultivating a loving and peaceful home life. You could be seeing some changes to your home and family situation right now, or assessing what provides a sense of comfort and security, emotionally as well as physically. Family might need more from you than usual, and this may trigger old wounds, but also help you heal and break free of old limitations. Your Taurus new moon intention is: “Everything I build has the power, integrity, and foundation that can last generations to come.”"
+      },
+      "astrology": {
+        "house": 4,
+        "lunation_kind": "new-moon",
+        "lunation_sign": "taurus",
+        "rising_sign": "aquarius",
+        "objects": [],
+        "signs": [
+          "taurus"
+        ],
+        "aspects": [],
+        "events": [],
+        "houses": []
+      }
+    },
+    {
+      "contentKey": "authored/book-ritual-and-the-moon/lunation-horoscope/new-moon/taurus/rising-aries/house-2",
+      "contentFamily": "lunation",
+      "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/lunation-book-cards-v1.json",
+      "runtimeBucket": "authored-deferred",
+      "status": "owner-approved",
+      "sourceStatus": "approved",
+      "provenance": "owner-authored",
+      "sourceAuthor": "OWN",
+      "approvalRecord": "packages/astro-knowledge/review/lunation-card-assembly-v1/source/recovered-lunation-copy-corrections-v1.json",
+      "approvalVersionDate": "2026-08-24",
+      "contentHash": "ed68672e6cac7c73d4220ec0b5e9779130193b16ef1da0a3623487d76eca8508",
+      "wording": {
+        "headline": "Taurus New Moon for Aries Rising",
+        "body": "The Taurus new moon illuminates your 2nd house of disposable income and foundation. There’s been a lot of activity in your sign over the last few weeks, and you are emerging with a new sense of who you are and what direction you want to take. Any behind-the-scenes work you’ve been doing will soon be noticed. This is great if it’s been moving you in a positive direction, but also know that any secrets, addictions, or underhanded behavior will also come to light soon. How much you value yourself is apparent in what you’re manifesting externally. Honoring your values, reworking your finances, and exploring your senses and sensuality are most important to you now. This new moon can signal a time to find a mentor or advisor, someone to help you save time and effort while staying motivated and learning from their experience. While having a mentor or guide can be helpful, it’s key to remember that the power lies within you to take action on the guidance you receive. The more you commit to yourself in the next six months, the more you’ll see your investments, income, and self-worth grow. Keep showing up for yourself and believing in your talents, and your beauty, compassion, and creativity will be seen. Your intention for the Taurus new moon is: “Even when my patience is tested, I find strength in envisioning my future goals.”"
+      },
+      "astrology": {
+        "house": 2,
+        "lunation_kind": "new-moon",
+        "lunation_sign": "taurus",
+        "rising_sign": "aries",
+        "objects": [],
+        "signs": [
+          "taurus"
+        ],
+        "aspects": [],
+        "events": [],
+        "houses": []
+      }
+    },
+    {
+      "contentKey": "authored/book-ritual-and-the-moon/lunation-horoscope/new-moon/taurus/rising-cancer/house-11",
+      "contentFamily": "lunation",
+      "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/lunation-book-cards-v1.json",
+      "runtimeBucket": "authored-deferred",
+      "status": "owner-approved",
+      "sourceStatus": "approved",
+      "provenance": "owner-authored",
+      "sourceAuthor": "OWN",
+      "approvalRecord": "packages/astro-knowledge/review/lunation-card-assembly-v1/source/recovered-lunation-copy-corrections-v1.json",
+      "approvalVersionDate": "2026-08-24",
+      "contentHash": "c29f36a2dac90d5dba45757fab883f83f8f5b99d03596b675c5fdb8b5aab10df",
+      "wording": {
+        "headline": "Taurus New Moon for Cancer Rising",
+        "body": "The Taurus new moon illuminates your 11th house of friendship. Good friends are good for your health, and this new moon illuminates the importance of those you surround yourself with. Surround yourself with friends and people who share your values and vision for the future. Stay close to those you trust. Community and networking are a big focus for you now. Friendships may be changing, and you might find yourself working with groups that are new and different for you. This can help you explore new sides of yourself and be exposed to new ideas and visions. Whatever you put your intention toward, you can bring into your reality. If you are looking to be discovered and seen for your art and talents - now is the time to take action and set those intentions. This starts with being intentional with your thoughts, feelings, and who you surround yourself with. If you are a writer, musician, actor, or another kind of artist, this is a time to set the intention to have yourself and your work seen. If you have an established network, use it. If you are starting to build your network and community - put energy into being seen and discovered for your art and talents."
+      },
+      "astrology": {
+        "house": 11,
+        "lunation_kind": "new-moon",
+        "lunation_sign": "taurus",
+        "rising_sign": "cancer",
+        "objects": [],
+        "signs": [
+          "taurus"
+        ],
+        "aspects": [],
+        "events": [],
+        "houses": []
+      }
+    },
+    {
+      "contentKey": "authored/book-ritual-and-the-moon/lunation-horoscope/new-moon/taurus/rising-capricorn/house-5",
+      "contentFamily": "lunation",
+      "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/lunation-book-cards-v1.json",
+      "runtimeBucket": "authored-deferred",
+      "status": "owner-approved",
+      "sourceStatus": "approved",
+      "provenance": "owner-authored",
+      "sourceAuthor": "OWN",
+      "approvalRecord": "packages/astro-knowledge/review/lunation-card-assembly-v1/source/recovered-lunation-copy-corrections-v1.json",
+      "approvalVersionDate": "2026-08-24",
+      "contentHash": "7717280a55cd81dd0dad033c4a5258930cfa2a935014f2d928a3b13437ee31d9",
+      "wording": {
+        "headline": "Taurus New Moon for Capricorn Rising",
+        "body": "The Taurus new moon illuminates your 5th house of fun, passion, and creativity. Love, pleasure, relationships, children, creativity, and self-expression are at the forefront for you. Take this opportunity to promise yourself that you will allow and encourage more passion to flow into your life with this New Moon. Does your desire to receive love and validation lead you to abandon a part of yourself that you would otherwise cherish? Returning to an old hobby or enjoyable pastime may lift your spirits. By doing so, you will be able to reintegrate parts of yourself that you may have abandoned. It’s important for you to stay connected to what you love. The lion is a metaphor for the primal energies of the emotional body, with the flames representing its burning passions. When you focus on creating from a place of pure presence, you can tap into a field of awareness that unlocks all the infinite possibilities of creation. Your work will come alive and flow through you—not just by you. Your new moon intention is: “My humor, charisma, and optimism magnetize love and new opportunities to connect.”"
+      },
+      "astrology": {
+        "house": 5,
+        "lunation_kind": "new-moon",
+        "lunation_sign": "taurus",
+        "rising_sign": "capricorn",
+        "objects": [],
+        "signs": [
+          "taurus"
+        ],
+        "aspects": [],
+        "events": [],
+        "houses": []
+      }
+    },
+    {
+      "contentKey": "authored/book-ritual-and-the-moon/lunation-horoscope/new-moon/taurus/rising-gemini/house-12",
+      "contentFamily": "lunation",
+      "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/lunation-book-cards-v1.json",
+      "runtimeBucket": "authored-deferred",
+      "status": "owner-approved",
+      "sourceStatus": "approved",
+      "provenance": "owner-authored",
+      "sourceAuthor": "OWN",
+      "approvalRecord": "packages/astro-knowledge/review/lunation-card-assembly-v1/source/recovered-lunation-copy-corrections-v1.json",
+      "approvalVersionDate": "2026-08-24",
+      "contentHash": "cd7b9e0d0cad1d29534d87b1456a08d1bb878398d4cc9a52997100e1b335c5cb",
+      "wording": {
+        "headline": "Taurus New Moon for Gemini Rising",
+        "body": "The Taurus new moon illuminates your 12th house of karma, subconscious, and endings. This New Moon is in your 12th house, the Pisces house. If you feel like you’re underwater, there may be a habitual pattern that’s creating resistance within you and keeping you from slowing down and getting the rest you need. Use this time to connect to your spiritual and artistic side. Let yourself dream, meditate, and be inspired by all that’s coming through to you right now. Reflect on your purpose and hold it in your heart, regardless of how much suffering seems to surround you. Everything will pass and everything is temporary. The 12th house is ruled by Pisces, which symbolizes endings. You may be in the process of rebuilding one of the structures in your life, such as finding yourself after the ending of a significant relationship/marriage, mourning the loss of a loved one, transitioning and rebuilding your life after a significant change in your career (bankruptcy, selling a business, retirement, layoff, or other change in your career). After expending so much energy in an area of your life, you could feel relief once the shock abates and you release what couldn’t be fixed. Learning to let go can be hard, especially since the brain can experience cognitive tension if a task is left unfinished. Sometimes we exhaust ourselves trying to fix, heal or complete something that's beyond our control or simply doesn't need to be fixed. The new moon in Taurus guides you in understanding that you did the best you could do with what you had. When it comes to what was out of your control, it’s ok to let go and move on. It’s a process, but allowing yourself to not be consumed by the what-ifs frees up energy for the next cycle to begin. The new moon in the 12th house teaches you that life is all about flow, and when you center yourself within this infinite energy you can trust that it will guide you. No time is wasted, even if you feel like you may have lost months or years on something that recently ended. Remember, when you are in flow with the Universe, you are constantly guided towards a life built on truth and your true happiness."
+      },
+      "astrology": {
+        "house": 12,
+        "lunation_kind": "new-moon",
+        "lunation_sign": "taurus",
+        "rising_sign": "gemini",
+        "objects": [],
+        "signs": [
+          "taurus"
+        ],
+        "aspects": [],
+        "events": [],
+        "houses": []
+      }
+    },
+    {
+      "contentKey": "authored/book-ritual-and-the-moon/lunation-horoscope/new-moon/taurus/rising-leo/house-10",
+      "contentFamily": "lunation",
+      "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/lunation-book-cards-v1.json",
+      "runtimeBucket": "authored-deferred",
+      "status": "owner-approved",
+      "sourceStatus": "approved",
+      "provenance": "owner-authored",
+      "sourceAuthor": "OWN",
+      "approvalRecord": "packages/astro-knowledge/review/lunation-card-assembly-v1/source/recovered-lunation-copy-corrections-v1.json",
+      "approvalVersionDate": "2026-08-24",
+      "contentHash": "d998eaecb14ed0f908db4dac5f56032d13a4a3af5300f21e60884b749a656e82",
+      "wording": {
+        "headline": "Taurus New Moon for Leo Rising",
+        "body": "The Taurus new moon illuminates your 10th house of career and purpose. Career is your main focus now. You’re discovering more and more about yourself daily and wondering if all the different parts of yourself are being honored and acknowledged in your career. Sudden changes in status, responsibility, or direction will further your growth, even if it’s unclear how at the moment. Take a step back from this current timeline and focus on the long-range details. Make sure that whatever you put your energy into, it aligns with your values and is building toward your future. You may realize that your values and beliefs have shifted or that you have taken on the views of others that are misleading you about what will fulfill you. This is a time to set the intention to align your career with your core values and interests. If you've ever struggled with ambition, life direction, status, public identity, life mission, authority, or responsibility, then this Taurus new moon is a time to renew and rebirth who you are. It's time for a personal quest that will lead you to discover what matters most to you and how you can use your strengths to help others. It's time to stop waiting for someone else to permit you and start taking ownership of your life. Take time each day to unpack how you want to show up. What story do you want? What experience do you want? Redefine your core values and ensure everything that comes after aligns with those values. Aspire to grow in genuine and meaningful ways, so your ambition isn't just a means to an end but part of a larger purpose."
+      },
+      "astrology": {
+        "house": 10,
+        "lunation_kind": "new-moon",
+        "lunation_sign": "taurus",
+        "rising_sign": "leo",
+        "objects": [],
+        "signs": [
+          "taurus"
+        ],
+        "aspects": [],
+        "events": [],
+        "houses": []
+      }
+    },
+    {
+      "contentKey": "authored/book-ritual-and-the-moon/lunation-horoscope/new-moon/taurus/rising-libra/house-8",
+      "contentFamily": "lunation",
+      "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/lunation-book-cards-v1.json",
+      "runtimeBucket": "authored-deferred",
+      "status": "owner-approved",
+      "sourceStatus": "approved",
+      "provenance": "owner-authored",
+      "sourceAuthor": "OWN",
+      "approvalRecord": "packages/astro-knowledge/review/lunation-card-assembly-v1/source/recovered-lunation-copy-corrections-v1.json",
+      "approvalVersionDate": "2026-08-24",
+      "contentHash": "77128ce913c47288438528f29c44a0af9d33b6a4173b6be1b32771ddfcde590b",
+      "wording": {
+        "headline": "Taurus New Moon for Libra Rising",
+        "body": "The Taurus new moon illuminates your 8th house of transformation, symbolism, shared resources, and other people's money. It’s a time of transformation and trusting in the unfolding of life. Areas of intimacy and shared resources are your focus as you learn to trust in yourself most of all. What you thought gave you security may not be so anymore as you learn to access your deeper inner resources to pull you through challenges. Your natural flexibility will help you ride the waves. You are much more expansive and empowered than you realize, and being in connection with another may remind you of this, whether it’s birthed out of a deep connection or a lesson of disempowerment. Power dynamics that haven’t been addressed are now arising and asking for changes in your relationships. Be open to new solutions to old patterns, however uncomfortable or painful the solutions may seem. This energy can manifest as a sudden desire for a necessary lifestyle change. You may realize your current lifestyle is not sustainable or is blocking you from reaching your personal goals. The new moon in your 8th house can signal a time to delve deep into the mysteries of life and explore all the hidden corners of your soul. You may even decide to become a healer or a teacher."
+      },
+      "astrology": {
+        "house": 8,
+        "lunation_kind": "new-moon",
+        "lunation_sign": "taurus",
+        "rising_sign": "libra",
+        "objects": [],
+        "signs": [
+          "taurus"
+        ],
+        "aspects": [],
+        "events": [],
+        "houses": []
+      }
+    },
+    {
+      "contentKey": "authored/book-ritual-and-the-moon/lunation-horoscope/new-moon/taurus/rising-pisces/house-3",
+      "contentFamily": "lunation",
+      "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/lunation-book-cards-v1.json",
+      "runtimeBucket": "authored-deferred",
+      "status": "owner-approved",
+      "sourceStatus": "approved",
+      "provenance": "owner-authored",
+      "sourceAuthor": "OWN",
+      "approvalRecord": "packages/astro-knowledge/review/lunation-card-assembly-v1/source/recovered-lunation-copy-corrections-v1.json",
+      "approvalVersionDate": "2026-08-24",
+      "contentHash": "993cf3e87ec97823b2e28c76334c414288d6737f9bd4780135bfa4d918a084f6",
+      "wording": {
+        "headline": "Taurus New Moon for Pisces Rising",
+        "body": "The Taurus new moon illuminates your 3rd house of early education, communication, community, siblings, and neighbors. With the new moon in your 3rd house, you may find that your social life is more active and demanding. You may feel inspired to create more structure in your community by identifying a need that, if addressed, could bring more flow and harmony to your local community. This new moon may provide you with information and the truth about something you’ve been seeking. The new moon in the 3rd house invites you to seek and give support in your local community. Connect with friends, family, and neighbors to provide support and receive help in return. This may mean taking on a new project, opening a local business, sparking a creative idea, or simply finding someone to talk to who offers you a sense of belonging. If you're fortunate enough to have your needs met and still have the capacity to give back, then why not share it with your local community? You may find yourself offering to help build strength within your local community. This could mean raising funds, offering legal counsel, organizing a board, or providing labor and resources for the construction of a needed community building (library, hospital, fire station, school, shelter, local shop, etc.). With the new moon in the 3rd house, choose to find those who can help keep your energetic momentum growing, creating a harmonious flow of energy. Your Taurus new moon intention is: “My word is my gift, and sharing it brings me fulfillment.”"
+      },
+      "astrology": {
+        "house": 3,
+        "lunation_kind": "new-moon",
+        "lunation_sign": "taurus",
+        "rising_sign": "pisces",
+        "objects": [],
+        "signs": [
+          "taurus"
+        ],
+        "aspects": [],
+        "events": [],
+        "houses": []
+      }
+    },
+    {
+      "contentKey": "authored/book-ritual-and-the-moon/lunation-horoscope/new-moon/taurus/rising-sagittarius/house-6",
+      "contentFamily": "lunation",
+      "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/lunation-book-cards-v1.json",
+      "runtimeBucket": "authored-deferred",
+      "status": "owner-approved",
+      "sourceStatus": "approved",
+      "provenance": "owner-authored",
+      "sourceAuthor": "OWN",
+      "approvalRecord": "packages/astro-knowledge/review/lunation-card-assembly-v1/source/recovered-lunation-copy-corrections-v1.json",
+      "approvalVersionDate": "2026-08-24",
+      "contentHash": "e4d3666d16e012a8b0f601ff5c1feb90fe63893c375bc7638b22b5ba7fbb677f",
+      "wording": {
+        "headline": "Taurus New Moon for Sagittarius Rising",
+        "body": "The Taurus new moon illuminates your 6th house of health and being of service. You may find that your health, work, and daily routines are changing as new information challenges stuck patterns and helps you change them. The best thing you can do is be flexible. Anything arising right now is here to help you break through disharmony and find your way back to health and service. If you’ve been giving too much, now’s the time to focus on yourself. With patience, contemplation, and observation, you can make small changes in your daily routines which can add up to create more stability and structure in your life. Your new moon intention is: “I am fully appreciated for the service and compassion I offer to others.”"
+      },
+      "astrology": {
+        "house": 6,
+        "lunation_kind": "new-moon",
+        "lunation_sign": "taurus",
+        "rising_sign": "sagittarius",
+        "objects": [],
+        "signs": [
+          "taurus"
+        ],
+        "aspects": [],
+        "events": [],
+        "houses": []
+      }
+    },
+    {
+      "contentKey": "authored/book-ritual-and-the-moon/lunation-horoscope/new-moon/taurus/rising-scorpio/house-7",
+      "contentFamily": "lunation",
+      "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/lunation-book-cards-v1.json",
+      "runtimeBucket": "authored-deferred",
+      "status": "owner-approved",
+      "sourceStatus": "approved",
+      "provenance": "owner-authored",
+      "sourceAuthor": "OWN",
+      "approvalRecord": "packages/astro-knowledge/review/lunation-card-assembly-v1/source/recovered-lunation-copy-corrections-v1.json",
+      "approvalVersionDate": "2026-08-24",
+      "contentHash": "943ba1d5cd39da62c04cfc2b3a247167e72fb27cc6d44fb368ce4b0e4a5d73fe",
+      "wording": {
+        "headline": "Taurus New Moon for Scorpio Rising",
+        "body": "The Taurus new moon illuminates your 7th house of relationships. Relationships bring reflection. Fall in love with yourself and the rest will follow. Ask yourself: what am I afraid of when it comes to commitment or abandonment? Face your feelings with courage and honesty and allow yourself to be vulnerable. Don't be afraid to ask for support from the people around you. The Taurus new moon is giving you the opportunity to make necessary changes to help you evolve as a person and as a partner. Sometimes it's easier to show compassion to someone in an intimate relationship than to yourself. Give yourself the same emotional support you would give another. Don't try to change or suppress your emotions - just allow them to be and allow yourself to feel them. Free up space to let your feelings pass through you without holding on to them or judging yourself for their intensity. If you're feeling stuck, ask yourself where you might be avoiding or denying the truth in your emotions. Then, take some time to look inside and get to the root of these issues. You can do this with the support of your friends and family and with a bit of self-compassion."
+      },
+      "astrology": {
+        "house": 7,
+        "lunation_kind": "new-moon",
+        "lunation_sign": "taurus",
+        "rising_sign": "scorpio",
+        "objects": [],
+        "signs": [
+          "taurus"
+        ],
+        "aspects": [],
+        "events": [],
+        "houses": []
+      }
+    },
+    {
+      "contentKey": "authored/book-ritual-and-the-moon/lunation-horoscope/new-moon/taurus/rising-taurus/house-1",
+      "contentFamily": "lunation",
+      "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/lunation-book-cards-v1.json",
+      "runtimeBucket": "authored-deferred",
+      "status": "owner-approved",
+      "sourceStatus": "approved",
+      "provenance": "owner-authored",
+      "sourceAuthor": "OWN",
+      "approvalRecord": "packages/astro-knowledge/review/lunation-card-assembly-v1/source/recovered-lunation-copy-corrections-v1.json",
+      "approvalVersionDate": "2026-08-24",
+      "contentHash": "6cf333335c791aa84d269df765faae5bcb41e8c395961b84d0bad03253c4adc4",
+      "wording": {
+        "headline": "Taurus New Moon for Taurus Rising",
+        "body": "The Taurus new moon is illuminating your 1st house of Self. This new moon is a reminder to honor yourself and all you are. This new moon in your home sign creates some dynamic tension between home, work, and your identity, or how you view yourself within these areas of your life. Maybe a new version of yourself is being birthed, and a reorganization in your external world is underway. Focus on who you are and how you want to express yourself. The chaos of change will eventually subside, and consistency will set in again. This is a time to step firmly into your authority and power, cultivating a healthy self-image and personal responsibility. The Taurus new moon wants you to be your own source of recognition and control instead of letting others dictate your worth and value. Concentrate on how you picture yourself rather than how others see you; draw upon your own wellspring of internal support. This is the time to clarify what you want to call in, what talents you want to develop, and which direction you want to take in life. If you have experienced setbacks this past year, this is the time to strategize how to face and solve any challenges. With a New Moon in your sign, it’s time to focus on new beginnings and releasing old unhealthy patterns. This is a time of rebirth and redirection. You’re moving to a new experience and will need the self-confidence to get there. Channel the energy of Taurus and Venus to step into your self-worth and walk confidently."
+      },
+      "astrology": {
+        "house": 1,
+        "lunation_kind": "new-moon",
+        "lunation_sign": "taurus",
+        "rising_sign": "taurus",
+        "objects": [],
+        "signs": [
+          "taurus"
+        ],
+        "aspects": [],
+        "events": [],
+        "houses": []
+      }
+    },
+    {
+      "contentKey": "authored/book-ritual-and-the-moon/lunation-horoscope/new-moon/taurus/rising-virgo/house-9",
+      "contentFamily": "lunation",
+      "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/lunation-book-cards-v1.json",
+      "runtimeBucket": "authored-deferred",
+      "status": "owner-approved",
+      "sourceStatus": "approved",
+      "provenance": "owner-authored",
+      "sourceAuthor": "OWN",
+      "approvalRecord": "packages/astro-knowledge/review/lunation-card-assembly-v1/source/recovered-lunation-copy-corrections-v1.json",
+      "approvalVersionDate": "2026-08-24",
+      "contentHash": "dadf23b00ae21a4dcc329a1854daa61536a6d1c305ff722c1a11b4cf3c77c261",
+      "wording": {
+        "headline": "Taurus New Moon for Virgo Rising",
+        "body": "The Taurus new moon illuminates your 9th house of the higher self. Use this New Moon to broaden your horizons both internally and externally to help you see life in a new and fresh way. Other cultures and travel help give you perspective in situations in your life that may feel clogged and stifled. Keep your mind open to new perspectives, and new worlds begin to open up. Seeing the bigger picture isn’t always your strong point, but now you can begin to see the forest for the trees as new information and understanding help you gain perspective. Learn about new cultures, explore new ideas, and adopt new ways of thinking to expand your mind. What new opportunities and paths are you opening up to, and what can these new experiences teach you? If you live too anchored in the mundane, invite in more of life's mysteries. If you find yourself deep in spiritual studies, ground yourself in earthly matters. If you can successfully find that perfect balance between your spiritual pursuits and your life on the ground, you can use the wisdom to unlock mysteries and live an enchanted life. Your intention for this New Moon is: “How can I reconnect to my sense of purpose and spirituality so I can plan my path?”"
+      },
+      "astrology": {
+        "house": 9,
+        "lunation_kind": "new-moon",
+        "lunation_sign": "taurus",
+        "rising_sign": "virgo",
+        "objects": [],
+        "signs": [
+          "taurus"
         ],
         "aspects": [],
         "events": [],
@@ -39379,10 +40039,10 @@
       "sourceAuthor": "composed",
       "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
       "approvalVersionDate": "package-owner-approval",
-      "contentHash": "9dbdc3759f565f94bcac78f20804f8a140d74a5660e1e16eedb609aae09af2cf",
+      "contentHash": "fa30e69cf2abcf32f1cb09b630cd82f10675340636edbb9d658243955f9752fb",
       "wording": {
         "headline": "The Macro View: What the Pisces Full Moon Represents",
-        "body": "Full Moons bring what has been building into clearer view. In Pisces, what surfaces is usually whatever you have been absorbing without keeping score: the temporary help that turned into a permanent obligation, the empathy that became unpaid emotional labor, or the vague arrangement that drifted for months because naming the boundary felt unkind.\n\nPisces is a mutable water sign ruled by Jupiter, the planet of scale, belief, and generosity. That traditional rulership matters: this sign gives, forgives, and insists on finding a deeper meaning where other signs would just see a loss. At its best, that is faith working as designed. Taken too far, it is a refusal to look at plain facts because the fantasy version feels safer.\n\nThe Sun in Virgo sits directly opposite this Moon, holding the practical line: the budget, the physical body, the actual calendar, the real cost. The tension here is not between hope and cynicism; it is between what you want to believe about a situation and what you can actually verify.\n\nCheck the details without treating reality as a betrayal of the dream. What survives an honest look deserves your faith; what depended on vagueness to survive was already gone."
+        "body": "Full moons are about illuminating that unconscious and that which is unseen. The Pisces full moon asks you, \"what is fantasy and what is real?\" During this powerful Pisces full moon, the wall between your dreams, emotions, and reality may collide.\n\nPisces is a deeply intuitive and empathetic sign, with a strong connection to the spiritual realm. However, when not fully evolved, Pisces energy can manifest as suffering, with thin boundaries that make them vulnerable to the emotional turmoil of the world around them.\n\nThe Virgo sun and Pisces moon are here to be your source of wisdom, pushing you to be practical while at the same time infusing your heart with compassion and understanding. The Virgo sun lights your way, guiding you on practicality and self-care and showing you where you're doing something that is not in your best interests. Meanwhile, the Pisces moon brings gentle understanding, highlights where you are too hard on yourself, and when you need to bring compassion into your heart.\n\nThere may be some difficult emotions and unresolved issues you are forced to confront. Remember that the only way out of darkness is through it."
       },
       "astrology": {
         "objects": [],

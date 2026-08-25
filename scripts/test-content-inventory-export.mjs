@@ -45,7 +45,7 @@ for (const protectedRow of protectedOwnerSource.rows) {
   const inventoried = canonical.find((row) => row.contentKey === protectedRow.contentKey);
   assert.equal(inventoried?.wording?.body_you, protectedRow.body_you, `${protectedRow.contentKey} must inventory byte-for-byte.`);
 }
-assert.equal(lunationBookCards.length, 266, "The deferred lunation book must retain all protected owner-authored cards.");
+assert.equal(lunationBookCards.length, 288, "The deferred lunation book must retain all protected owner-authored cards.");
 for (const protectedCard of lunationBookCards) {
   const inventoried = canonical.find((row) => row.contentKey === protectedCard.contentKey);
   assert.equal(inventoried?.runtimeBucket, "authored-deferred", `${protectedCard.contentKey} must retain its lazy runtime boundary in inventory.`);
