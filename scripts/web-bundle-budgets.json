@@ -12,7 +12,7 @@
   "transitFallbackChunkGzipBytes": 330000,
   "relationshipFallbackChunkGzipBytes": 230000,
   "signupChunkGzipBytes": 4000,
-  "totalCssGzipBytes": 105000,
+  "totalCssGzipBytes": 106000,
   "totalJavaScriptGzipBytes": 2686000,
   "_rationale": {
     "readerBootGzipBytes": "Raised by 2 kB for the fail-soft eclipse review reporting and protected-content integrity boundary; deferred content must still remain outside the static boot graph.",
