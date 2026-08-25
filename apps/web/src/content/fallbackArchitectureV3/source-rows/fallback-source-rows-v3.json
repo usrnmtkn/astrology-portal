@@ -11572,6 +11572,30 @@
  },
  "hookRows": [
   {
+   "contentKey": "fallback-hook/natal-you-placement-complete-final/lilith/aries/4",
+   "content_role": "full_copy",
+   "grammar_frame": "complete_sentence",
+   "headline": "Lilith in Aries in the 4th house",
+   "body": "Lilith points to the part of you that knows exactly when compromise has turned into self-betrayal. In Aries, that line is often crossed through autonomy, anger, and the right to make your own decisions without first getting everyone else comfortable with them. You may have learned that being direct made you difficult, that anger created consequences, or that acting on your own instincts was something other people felt entitled to question. So you became more careful about when to push, when to wait, and how much frustration you were willing to show.\n\nAries does not like having their choices made for them. You may be perfectly willing to compromise when you feel like you had a real say in the decision. What gets under your skin is realizing that someone treated your flexibility like consent: they volunteered your time, decided what you would do, or assumed you would go along because you usually do. The inconvenience itself may be minor. What matters is that your choice disappeared before you got to make it. You want your yes to actually belong to you.\n\nAnger becomes important here because it often notices the loss of agency before you have fully explained it to yourself. You may agree in the moment, tell yourself it is not worth arguing about, and only realize later how much the decision bothered you. By then, irritation has had time to turn into resentment. What looks like an overreaction to one request may actually belong to several earlier moments when you went along with something you did not really choose.\n\nConflict avoidance can make the pattern harder to catch. You may hold back because you know exactly how the argument will go, or because you do not want to spend an hour defending a preference that should have been yours to make in the first place. The problem is that avoiding the smaller confrontation can create a much bigger one later. Lilith in Aries works better when anger gets to be information early, before it has to become the only thing strong enough to get your point across.\n\nWith Lilith in the 4th house, these patterns often begin inside the family system. Home may have taught you who was allowed to be angry, whose preferences set the schedule, and what happened when someone challenged the person with the most authority. Maybe one family member could explode while everyone else learned to work around them. Maybe disagreement was treated as disrespect. Maybe independence was encouraged until it interfered with what the family expected from you. You may have learned that having a will of your own could change the entire mood in the house.\n\nThat can create a family role where you are expected to be independent without becoming inconvenient. You can handle yourself, make your own way, and need very little, but the moment your independence changes the plan, someone may act as though you have become selfish or unreasonable. Boundary setting can expose how much of the family's idea of peace depended on you cooperating without making them ask.\n\nThe real change starts earlier, before anger has to do all the work. You correct the assumption when someone volunteers your time, say no before rearranging your day, and let another person be disappointed without taking that disappointment on as proof that you should change your answer. The point is not to become more confrontational. It is to stop waiting until resentment is the only thing strong enough to protect your choice.\n\nOver time, you stop treating independence like something you have to defend and start expecting your choices to be respected as part of the relationship. You notice who asks instead of assumes, who can hear no without punishing you for it, and who does not need an argument before they take you seriously. Home becomes a place where your decisions do not have to turn into conflicts before anyone respects them.",
+   "reader_only": true,
+   "render_policy": "reader-only-exact-lived-v1",
+   "review_status": "approved",
+   "source_keys": [
+    "owner-authored/lilith-aries-4/2026-08-25"
+   ],
+   "approval": {
+    "approvalLevel": "exact_owner_approved",
+    "recordPath": "owner-authored/lilith-aries-4/2026-08-25",
+    "approvedAt": "2026-08-25"
+   },
+   "source_release": "owner-authored-natal-placement-complete-v1",
+   "runtime_family": "natal-you-placement-complete-final",
+   "runtime_key": "lilith|aries|4",
+   "governance": "owner-approved-natal-placement-complete-v1",
+   "owner_approved": true,
+   "distribution_lane": "serving"
+  },
+  {
    "contentKey": "fallback-hook/natal-you-placement-complete-final/lilith/scorpio/4",
    "content_role": "full_copy",
    "grammar_frame": "complete_sentence",
