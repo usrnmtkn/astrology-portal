@@ -56,8 +56,10 @@ copy, scope, approval state, and source-code references are recorded in
 
 The protected book materializes to a dedicated production chunk named
 `fallback-content-lunation-book`. On the first verified production build it measured
-790.7 kB raw and 198.1 kB gzip. It does not enter the static App boot graph. The
-Friends workspace remained 9.8 kB gzip.
+790.7 kB raw and 198.1 kB gzip. After recovering the 22 complete owner-approved
+passages, it measures 863.2 kB raw and 211.8 kB gzip. Its explicit budget is 215 kB
+gzip. It does not enter the static App boot graph. The Friends workspace remains
+9.8 kB gzip.
 
 ## Verification
 
