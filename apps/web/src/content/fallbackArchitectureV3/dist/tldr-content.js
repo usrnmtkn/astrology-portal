@@ -548,10 +548,139 @@ var SHARED_ECLIPSE_SECTION_IDS = /* @__PURE__ */ new Set([
   "recommendation",
   "close"
 ]);
-function sharedLunationEclipseSectionKey(kind, sectionId) {
+function sharedLunationEclipseSectionKey(kind, sectionId, house = null) {
   if (!SHARED_ECLIPSE_SECTION_IDS.has(sectionId)) return null;
   const phase = kind === "eclipse-lunar" ? "lunar" : kind === "eclipse-solar" ? "solar" : null;
-  return phase ? `authored/lunation-eclipse-section/shared/${phase}/${sectionId}` : null;
+  const endingsVariant = phase === "lunar" && [4, 8, 12].includes(Number(house)) && (sectionId === "recommendation" || sectionId === "close");
+  const resolvedSectionId = endingsVariant ? `${sectionId}-endings` : sectionId;
+  return phase ? `authored/lunation-eclipse-section/shared/${phase}/${resolvedSectionId}` : null;
+}
+
+// apps/web/src/content/fallbackArchitectureV3/resolver/contentIntegrity.mjs
+var SHA256_CONSTANTS = [
+  1116352408,
+  1899447441,
+  3049323471,
+  3921009573,
+  961987163,
+  1508970993,
+  2453635748,
+  2870763221,
+  3624381080,
+  310598401,
+  607225278,
+  1426881987,
+  1925078388,
+  2162078206,
+  2614888103,
+  3248222580,
+  3835390401,
+  4022224774,
+  264347078,
+  604807628,
+  770255983,
+  1249150122,
+  1555081692,
+  1996064986,
+  2554220882,
+  2821834349,
+  2952996808,
+  3210313671,
+  3336571891,
+  3584528711,
+  113926993,
+  338241895,
+  666307205,
+  773529912,
+  1294757372,
+  1396182291,
+  1695183700,
+  1986661051,
+  2177026350,
+  2456956037,
+  2730485921,
+  2820302411,
+  3259730800,
+  3345764771,
+  3516065817,
+  3600352804,
+  4094571909,
+  275423344,
+  430227734,
+  506948616,
+  659060556,
+  883997877,
+  958139571,
+  1322822218,
+  1537002063,
+  1747873779,
+  1955562222,
+  2024104815,
+  2227730452,
+  2361852424,
+  2428436474,
+  2756734187,
+  3204031479,
+  3329325298
+];
+var rotateRight = (value, bits) => value >>> bits | value << 32 - bits;
+function sha256Text(value) {
+  const bytes = new TextEncoder().encode(String(value));
+  const paddedLength = Math.ceil((bytes.length + 9) / 64) * 64;
+  const padded = new Uint8Array(paddedLength);
+  padded.set(bytes);
+  padded[bytes.length] = 128;
+  const view = new DataView(padded.buffer);
+  const bitLength = bytes.length * 8;
+  view.setUint32(paddedLength - 8, Math.floor(bitLength / 4294967296));
+  view.setUint32(paddedLength - 4, bitLength >>> 0);
+  const state = [
+    1779033703,
+    3144134277,
+    1013904242,
+    2773480762,
+    1359893119,
+    2600822924,
+    528734635,
+    1541459225
+  ];
+  const words = new Uint32Array(64);
+  for (let offset = 0; offset < paddedLength; offset += 64) {
+    for (let index = 0; index < 16; index += 1) words[index] = view.getUint32(offset + index * 4);
+    for (let index = 16; index < 64; index += 1) {
+      const w15 = words[index - 15];
+      const w2 = words[index - 2];
+      const s0 = rotateRight(w15, 7) ^ rotateRight(w15, 18) ^ w15 >>> 3;
+      const s1 = rotateRight(w2, 17) ^ rotateRight(w2, 19) ^ w2 >>> 10;
+      words[index] = words[index - 16] + s0 + words[index - 7] + s1 >>> 0;
+    }
+    let [a, b, c, d, e, f, g, h] = state;
+    for (let index = 0; index < 64; index += 1) {
+      const s1 = rotateRight(e, 6) ^ rotateRight(e, 11) ^ rotateRight(e, 25);
+      const choice = e & f ^ ~e & g;
+      const temp1 = h + s1 + choice + SHA256_CONSTANTS[index] + words[index] >>> 0;
+      const s0 = rotateRight(a, 2) ^ rotateRight(a, 13) ^ rotateRight(a, 22);
+      const majority = a & b ^ a & c ^ b & c;
+      const temp2 = s0 + majority >>> 0;
+      h = g;
+      g = f;
+      f = e;
+      e = d + temp1 >>> 0;
+      d = c;
+      c = b;
+      b = a;
+      a = temp1 + temp2 >>> 0;
+    }
+    state[0] = state[0] + a >>> 0;
+    state[1] = state[1] + b >>> 0;
+    state[2] = state[2] + c >>> 0;
+    state[3] = state[3] + d >>> 0;
+    state[4] = state[4] + e >>> 0;
+    state[5] = state[5] + f >>> 0;
+    state[6] = state[6] + g >>> 0;
+    state[7] = state[7] + h >>> 0;
+  }
+  return state.map((word) => word.toString(16).padStart(8, "0")).join("");
 }
 
 // apps/web/src/content/fallbackArchitectureV3/resolver/renderTransitSynastry.browser.ts
@@ -2469,10 +2598,15 @@ ${passHook}`;
     const evergreenBookCell = evergreenBookCellKey ? card(evergreenBookCellKey) : null;
     const bookCell = isEclipse ? exactEclipsePreview : exactBookCell;
     const eclipseSectionPrefix = `authored/lunation-eclipse-section/${sign}/rising-${risingSign}/house-${h}`;
-    const eclipseSectionKey = (id) => sharedLunationEclipseSectionKey(kind, id) ?? `${eclipseSectionPrefix}/${id}`;
+    const eclipseSectionKey = (id) => sharedLunationEclipseSectionKey(kind, id, h) ?? `${eclipseSectionPrefix}/${id}`;
     const eclipseSection = (id) => isEclipse ? card(eclipseSectionKey(id)) : null;
     const jurisdiction = vocab.get(`fallback-vocab/house-jurisdiction/${h}`)?.body;
     const paras = [];
+    const partSourceKeys = [];
+    const pushPart = (body, sourceKeys) => {
+      paras.push(body);
+      partSourceKeys.push([...new Set(sourceKeys.filter((key) => Boolean(key)))]);
+    };
     const reviewFlags = [];
     const flagOmittedSection = (sectionId, omittedContentKey, fallbackContentKey = null) => {
       reviewFlags.push({
@@ -2511,6 +2645,44 @@ ${passHook}`;
       }
       return renderedBookBody;
     };
+    const assertStoredEclipseSectionIntegrity = (stored) => {
+      const body = stored.body ?? "";
+      const expectedHash = stored.protected_content?.body_sha256;
+      const actualHash = sha256Text(body);
+      if (!expectedHash || actualHash !== expectedHash || stored.approval?.payloadSha256 !== expectedHash || stored.approval?.approvalLevel !== "exact_owner_approved" || stored.promotion_authorized !== true) {
+        throw new SourceGapError(`ECLIPSE_SECTION_MODIFIED: ${stored.contentKey}`);
+      }
+    };
+    const assertProtectedEclipseBookBody = (stored, source) => {
+      assertStoredEclipseSectionIntegrity(stored);
+      const sourceBody = source.body ?? "";
+      const sourceHash = sha256Text(sourceBody);
+      const protectedSourceHash = source.protected_content?.body_sha256;
+      const integrity = stored.protected_content;
+      if (!sourceBody || !protectedSourceHash || sourceHash !== protectedSourceHash || integrity?.source_body_sha256 !== sourceHash) {
+        throw new SourceGapError(`BOOK_BODY_MODIFIED: ${source.contentKey}`);
+      }
+      let expectedBody = sourceBody;
+      const omissions = [...integrity.approved_omissions ?? []].sort((left, right) => right.start - left.start);
+      for (const omission of omissions) {
+        const actual = sourceBody.slice(omission.start, omission.end);
+        if (omission.ownerApproved !== true || actual !== omission.text || sha256Text(actual) !== omission.sha256) {
+          throw new SourceGapError(`BOOK_BODY_MODIFIED: ${source.contentKey}`);
+        }
+        expectedBody = `${expectedBody.slice(0, omission.start)}${expectedBody.slice(omission.end)}`;
+      }
+      const boundary = expectedBody.indexOf(". ");
+      const sourceBoundary = sourceBody.indexOf(". ");
+      if (boundary < 0 || sourceBoundary < 0) {
+        throw new SourceGapError(`BOOK_BODY_MODIFIED: ${source.contentKey}`);
+      }
+      const sourceOpening = sourceBody.slice(0, sourceBoundary + 1);
+      const sourceRemainder = sourceBody.slice(sourceOpening.length).trimStart();
+      const emittedRemainder = expectedBody.slice(boundary + 2);
+      if (integrity?.source_opening_sha256 !== sha256Text(sourceOpening) || integrity?.source_remainder_sha256 !== sha256Text(sourceRemainder) || integrity?.preservedBookRemainderSha256 !== sha256Text(emittedRemainder) || stored.body !== emittedRemainder) {
+        throw new SourceGapError(`BOOK_BODY_MODIFIED: ${source.contentKey}`);
+      }
+    };
     const pushEclipseSection = (id) => {
       const key = eclipseSectionKey(id);
       const stored = eclipseSection(id);
@@ -2518,8 +2690,9 @@ ${passHook}`;
         flagOmittedSection(id, key);
         return null;
       }
+      assertStoredEclipseSectionIntegrity(stored);
       try {
-        paras.push(renderStoredBody(stored));
+        pushPart(renderStoredBody(stored), [stored.contentKey, ...stored.source_keys ?? []]);
       } catch (error) {
         if (!(error instanceof SourceGapError)) throw error;
         flagOmittedSection(id, key);
@@ -2530,7 +2703,7 @@ ${passHook}`;
     let authoredBodyUsed = false;
     let suppressCycleAnchor = false;
     if (bookCell?.body) {
-      paras.push(renderStoredBody(bookCell));
+      pushPart(renderStoredBody(bookCell), [bookCell.contentKey, ...bookCell.source_keys ?? []]);
       authoredBodyUsed = true;
     } else if (isEclipse) {
       pushEclipseSection("opening");
@@ -2539,16 +2712,24 @@ ${passHook}`;
       const bodyKey = `${eclipseSectionPrefix}/evergreen-body`;
       const eclipseBody = eclipseSection("evergreen-body");
       if (eclipseBody?.body) {
-        paras.push(renderStoredBody(eclipseBody));
+        if (!evergreenBookCell?.body) {
+          throw new SourceGapError(`BOOK_BODY_MODIFIED: missing protected source ${evergreenBookCellKey}`);
+        }
+        assertProtectedEclipseBookBody(eclipseBody, evergreenBookCell);
+        pushPart(renderStoredBody(eclipseBody), [
+          eclipseBody.contentKey,
+          evergreenBookCell.contentKey,
+          ...eclipseBody.source_keys ?? []
+        ]);
         authoredBodyUsed = true;
         suppressCycleAnchor = eclipseBody.suppress_cycle_anchor === true;
       } else if (evergreenBookCell?.body) {
-        paras.push(renderStoredBody(evergreenBookCell));
+        pushPart(renderStoredBody(evergreenBookCell), [evergreenBookCell.contentKey, ...evergreenBookCell.source_keys ?? []]);
         authoredBodyUsed = true;
         flagOmittedSection("evergreen-body", bodyKey, evergreenBookCell.contentKey);
       }
     } else if (evergreenBookCell?.body) {
-      paras.push(renderStoredBody(evergreenBookCell));
+      pushPart(renderStoredBody(evergreenBookCell), [evergreenBookCell.contentKey, ...evergreenBookCell.source_keys ?? []]);
       authoredBodyUsed = true;
     }
     if (!authoredBodyUsed) {
@@ -2556,13 +2737,17 @@ ${passHook}`;
       if (!frame || !jurisdiction) throw new SourceGapError(`SOURCE_GAP: lunation horoscope ${which}/${risingSign} (house ${h})`);
       const houseFrame = fill(frame, { houseOrdinal: ordinal2(h), jurisdiction });
       const opening = hooks.get(`fallback-hook/lunation-opening-situation/${h}`)?.body_you;
-      paras.push(opening ? `${opening} ${houseFrame}` : houseFrame);
+      pushPart(opening ? `${opening} ${houseFrame}` : houseFrame, [
+        `fallback-hook/lunation-horoscope/${which}`,
+        `fallback-vocab/house-jurisdiction/${h}`,
+        opening ? `fallback-hook/lunation-opening-situation/${h}` : null
+      ]);
     }
     if (kind === "eclipse-solar" && !bookCell) {
       const solarHouseLayerKey = `authored/lunation-eclipse-house-layer/solar/house-${h}`;
       const solarHouseLayer = card(solarHouseLayerKey);
       if (solarHouseLayer?.body) {
-        paras.push(renderStoredBody(solarHouseLayer));
+        pushPart(renderStoredBody(solarHouseLayer), [solarHouseLayer.contentKey, ...solarHouseLayer.source_keys ?? []]);
       } else {
         flagOmittedSection("eclipse-house-layer", solarHouseLayerKey);
       }
@@ -2571,7 +2756,7 @@ ${passHook}`;
       const anchor = hooks.get("fallback-hook/lunation-matching-new-moon-anchor/full")?.body_you;
       if (!anchor) throw new SourceGapError("SOURCE_GAP: missing Full Moon cycle anchor");
       try {
-        paras.push(fill(anchor, matchingNewMoonSlots()));
+        pushPart(fill(anchor, matchingNewMoonSlots()), ["fallback-hook/lunation-matching-new-moon-anchor/full"]);
       } catch (error) {
         if (!(kind === "eclipse-lunar" && error instanceof SourceGapError)) throw error;
         flagOmittedSection("matching-new-moon-anchor", "fallback-hook/lunation-matching-new-moon-anchor/full");
@@ -2579,15 +2764,26 @@ ${passHook}`;
     } else if ((kind === "new-moon" || kind === "eclipse-solar") && !(isEclipse && bookCell)) {
       const anchor = hooks.get("fallback-hook/lunation-cycle-anchor/new")?.body_you;
       if (!anchor) throw new SourceGapError("SOURCE_GAP: missing New Moon cycle anchor");
-      paras.push(anchor);
+      pushPart(anchor, ["fallback-hook/lunation-cycle-anchor/new"]);
     }
     const signCompact = !authoredBodyUsed ? hooks.get(`fallback-hook/lunation-sign-compact/${which}-moon/${sign}`)?.body_you ?? (which === "full" ? hooks.get(`fallback-hook/lunation-sign-compact/${sign}`)?.body_you : null) : null;
-    if (signCompact) paras.push(signCompact);
+    if (signCompact) pushPart(signCompact, [
+      `fallback-hook/lunation-sign-compact/${which}-moon/${sign}`,
+      which === "full" ? `fallback-hook/lunation-sign-compact/${sign}` : null
+    ]);
     if (!authoredBodyUsed && which === "full" && sunHouse && sunHouse !== h && jurisdiction) {
       const sunJurisdiction = vocab.get(`fallback-vocab/house-jurisdiction/${sunHouse}`)?.body;
       if (sunJurisdiction) {
         const counterpoint = `The friction this week runs between your ${ordinal2(sunHouse)} house of ${sunJurisdiction} and your ${ordinal2(h)} house of ${jurisdiction}. The immediate demands on one side can compete with what is becoming undeniable on the other, so let the tension show you what needs to change.`;
         paras[paras.length - 1] = `${paras[paras.length - 1]} ${counterpoint}`;
+        partSourceKeys[partSourceKeys.length - 1] = [
+          .../* @__PURE__ */ new Set([
+            ...partSourceKeys[partSourceKeys.length - 1] ?? [],
+            `fallback-vocab/house-jurisdiction/${sunHouse}`,
+            `fallback-vocab/house-jurisdiction/${h}`,
+            "resolver/engine-computed-full-moon-counterpoint"
+          ])
+        ];
       }
     }
     if ((!authoredBodyUsed || isEclipse || rulerRetrograde) && ruler && rulerHouse && ruler !== "sun" && ruler !== "moon") {
@@ -2607,7 +2803,11 @@ ${passHook}`;
             rulerParagraph += ` ${fill(retroOverlay, { rulerTitle })}`;
           }
         }
-        paras.push(rulerParagraph);
+        pushPart(rulerParagraph, [
+          `fallback-hook/lunation-ruler-house/${rulerHouse}`,
+          rulerRetrograde ? "fallback-hook/lunation-ruler-retro" : null,
+          "resolver/engine-computed-ruler-frame"
+        ]);
       }
     }
     if (isEclipse && !bookCell) {
@@ -2615,12 +2815,17 @@ ${passHook}`;
       pushEclipseSection("close");
     }
     const weekLayer = weekly && !authoredBodyUsed ? hooks.get("fallback-hook/lunation-week-layer")?.body_you : null;
-    if (weekLayer) paras.push(weekLayer);
+    if (weekLayer) pushPart(weekLayer, ["fallback-hook/lunation-week-layer"]);
     const label = isEclipse ? which === "new" ? "Solar Eclipse" : "Lunar Eclipse" : which === "new" ? "New Moon" : "Full Moon";
+    const headline = isEclipse ? `${title2(sign)} ${label} Horoscope` : bookCell?.headline || `${label} for ${title2(risingSign)} Rising`;
+    if (isEclipse && (partSourceKeys.length !== paras.length || partSourceKeys.some((keys) => keys.length === 0))) {
+      throw new SourceGapError(`ECLIPSE_PROVENANCE_MISSING: ${kind}/${sign}/rising-${risingSign}/house-${h}`);
+    }
     return {
-      headline: bookCell?.headline || `${label} for ${title2(risingSign)} Rising`,
+      headline,
       body: paras.join("\n\n"),
       parts: paras,
+      partSourceKeys: isEclipse ? partSourceKeys : void 0,
       templateKey: bookCell?.contentKey || "fallback-template/sky.lunation-horoscope",
       contentKey: bookCell?.contentKey,
       reviewFlags: reviewFlags.length > 0 ? reviewFlags : void 0
@@ -2950,7 +3155,7 @@ function createKnowledgeMatrixV13Resolver(file) {
 }
 
 // apps/web/src/content/fallbackArchitectureV3/resolver/index.browser.ts
-var PACKAGE_VERSION = "v3-2026-08-24c";
+var PACKAGE_VERSION = "v3-2026-08-24d";
 function stablePackageValue(value) {
   if (Array.isArray(value)) {
     return value.map(stablePackageValue);

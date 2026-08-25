@@ -31,7 +31,7 @@ const flag = {
 };
 const context = {
   surface: "you-daily",
-  headline: "Pisces Lunar Eclipse for Sagittarius Rising",
+  headline: "Pisces Lunar Eclipse Horoscope",
   eventDate: "2025-09-07T18:08:00.000Z",
   eventKind: "eclipse-lunar",
   sign: "pisces",

@@ -217,16 +217,16 @@
   "schema": "tldr-astro-canonical-content-migration-report/v1",
   "sourceReachability": {
     "canonicalUnit": 378,
-    "compositionIngredient": 26,
-    "eligibleExactRows": 405,
-    "explicitAllowlist": 1,
+    "compositionIngredient": 24,
+    "eligibleExactRows": 402,
+    "explicitAllowlist": 0,
     "failures": 0,
     "original371": {
       "canonicalUnit": 354,
-      "compositionIngredient": 19,
+      "compositionIngredient": 17,
       "explicitAllowlist": 0,
       "failures": 0,
-      "total": 373
+      "total": 371
     }
   },
   "version": "global-foundation-natal-wave-1"

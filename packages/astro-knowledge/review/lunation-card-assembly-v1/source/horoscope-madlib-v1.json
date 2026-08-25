@@ -116,10 +116,12 @@
     "eclipseNatureDefaultCandidate": "Eclipses warp time and shift the course of events in ways you can't yet see.",
     "eclipseMechanicsCandidate": "Lunar eclipses are portals into your soul. When they come around, they can help you uncover the truth and allow you to gain knowledge that will steer your life, changing your path to a better one.",
     "eclipseMechanicsBothKindsCandidate": "Eclipse cycles are amplified New and Full Moons that arrive in pairs or triplets, with themes that are revisited during eclipses six months later. A solar eclipse is an amplified new moon; a lunar eclipse is an amplified full moon. Both are three times as strong as a traditional new/full moon.",
-    "eclipseNoRitualCandidate": "Eclipses are not the recommended time for ritual, manifestation, or intention setting. They happen along the Lunar Nodes, and part of the work is letting the situation unfold before deciding what it is supposed to become.",
+    "eclipseNoRitualCandidate": "Eclipses happen along the Lunar Nodes, and part of the work is letting the situation unfold before deciding what it's supposed to become.",
+    "eclipseEndingsRecommendationCandidate": "Eclipses happen along the Lunar Nodes, and change comes all the same, no matter how tightly you hold on.",
     "eclipseKindSolarCandidate": "Solar eclipses usually start new things.",
     "eclipseKindLunarCandidate": "Lunar eclipses help us see what needs to go and let it go.",
-    "eclipseAdviceCandidate": "You can't control it, and you shouldn't try. Not everything that changes now needs an immediate response."
+    "eclipseAdviceCandidate": "Release your need to be in control, and allow yourself to flow with the current of whatever is unfolding. Reflect on what you've experienced, and respond accordingly.",
+    "eclipseEndingsAdviceCandidate": "Release your need to be in control, allow for endings, mourn if needed, and allow yourself to flow with the current of whatever is unfolding, even if the destination is still unknown."
   },
   "templateNotes": {
     "opening": "Matches 179 of 265 book entries. 86 open some other way.",
@@ -157,7 +159,7 @@
     },
     "eclipseMechanics": "Lunar eclipses are portals into your soul. When they come around, they can help you uncover the truth and allow you to gain knowledge that will steer your life, changing your path to a better one.",
     "eclipseMechanicsScope": "lunar_only",
-    "eclipseNoRitual": "Eclipses are not the recommended time for ritual, manifestation, or intention setting. They happen along the Lunar Nodes, and part of the work is letting the situation unfold before deciding what it is supposed to become.",
+    "eclipseNoRitual": "Eclipses happen along the Lunar Nodes, and part of the work is letting the situation unfold before deciding what it's supposed to become.",
     "eclipseNoRitualApproval": {
       "status": "owner_approved",
       "date": "2026-08-24",
@@ -208,7 +210,9 @@
       "approvedFrames": [],
       "rule": "The engine supplies every fact. Omit when no complete approved frame matches."
     },
-    "eclipseAdvice": "You can't control it, and you shouldn't try. Not everything that changes now needs an immediate response."
+    "eclipseAdvice": "Release your need to be in control, and allow yourself to flow with the current of whatever is unfolding. Reflect on what you've experienced, and respond accordingly.",
+    "eclipseEndingsNoRitual": "Eclipses happen along the Lunar Nodes, and change comes all the same, no matter how tightly you hold on.",
+    "eclipseEndingsAdvice": "Release your need to be in control, allow for endings, mourn if needed, and allow yourself to flow with the current of whatever is unfolding, even if the destination is still unknown."
   },
   "houses": [
     {
