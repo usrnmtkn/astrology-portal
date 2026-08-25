@@ -41,7 +41,7 @@ const fallbackSourceRowsV3 = JSON.parse(readFileSync(
   path.resolve("apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json"),
   "utf8"
 )) as {
-  hookRows: Array<{ contentKey: string; body_you?: string }>;
+  hookRows: Array<{ contentKey: string; body_you?: string; body_they?: string }>;
 };
 const skyAspectPhrasebook = JSON.parse(readFileSync(
   path.resolve("apps/web/src/content/fallbackArchitectureV3/source-rows/sky-aspect-phrasebook-v1.json"),
@@ -57,6 +57,12 @@ const mercuryAscendantHardOpening = String(mercuryAscendantHardSource?.body_you 
   .replaceAll("{{holder1PossCap}}", "Your")
   .replaceAll("{{holder2Poss}}", "Alisa's")
   .replaceAll("{{holder2}}", "Alisa")
+  .concat(".");
+const ascendantMercuryHardOpening = String(mercuryAscendantHardSource?.body_they ?? "")
+  .split(". ")[0]
+  .replaceAll("{{holder1PossCap}}", "Alisa's")
+  .replaceAll("{{holder1Poss}}", "Alisa's")
+  .replaceAll("{{holder1}}", "Alisa")
   .concat(".");
 
 async function selectFriendDetailTab(
@@ -3334,13 +3340,18 @@ test.describe("client-facing user flow case studies", () => {
     await expect(authoredContact, "seeded synastry fixture exposes Ascendant square Mercury").toBeVisible();
     await authoredContact.click();
 
-    await expect(page.getByRole("heading", { name: /Ascendant square .*Mercury|Mercury square .*Ascendant/i })).toBeVisible();
+    const authoredHeading = page.getByRole("heading", { name: /Ascendant square .*Mercury|Mercury square .*Ascendant/i });
+    await expect(authoredHeading).toBeVisible();
     await expectNoDuplicateArticleHeadings(page, "Authored synastry detail");
     const detail = page.locator(".app-shell.mode-detail");
     const text = ((await detail.textContent()) ?? "").replace(/\s+/g, " ").trim();
 
     expect(mercuryAscendantHardSource, "V3 contains the approved Mercury-Ascendant hard-aspect source row").toBeTruthy();
-    expect(text, "synastry detail uses the approved V3 package wording").toContain(mercuryAscendantHardOpening);
+    const headingText = (await authoredHeading.innerText()).trim();
+    const expectedOpening = /^Your Ascendant square Alisa's Mercury$/i.test(headingText)
+      ? ascendantMercuryHardOpening
+      : mercuryAscendantHardOpening;
+    expect(text, "synastry detail uses the approved V3 package wording in the selected direction").toContain(expectedOpening);
     expect(text, "synastry detail does not show emergency stitched boilerplate").not.toMatch(/puts first impressions|Recurring friction that asks for an adjustment|how information gets processed/i);
     await assertNoClientErrors();
   });
