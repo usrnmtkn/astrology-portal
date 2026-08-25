@@ -26,12 +26,21 @@ export function unresolvedContentSurface(contentKey: string) {
 export function unresolvedContentIssues(items: Array<Record<string, unknown> & { contentKey: string; reason: string; surface: string }>) {
   const byKey = new Map<string, typeof items>();
   for (const item of items) byKey.set(item.contentKey, [...(byKey.get(item.contentKey) ?? []), item]);
-  return [...byKey.values()].map((records) => ({
-    contentKey: records[0].contentKey,
-    surface: records[0].surface,
-    kind: records.some((item) => item.reason === "known-current-contract-failure") ? "source-repair" : "editorial-review",
-    records
-  }));
+  return [...byKey.values()].map((records) => {
+    const contentKey = records[0].contentKey;
+    const sources = records.map((record) => `- ${record.reviewStatus}: ${record.sourcePath}${record.objectPath}`).join("\n");
+    const sourceRepair = records.some((item) => item.reason === "known-current-contract-failure");
+    const request = (task: string) => `Repo: tldrastro. Diagnose this Content Studio issue.\nContent key: ${contentKey}\nTask: ${task}\nSource records:\n${sources}\nDo not change serving copy or review_status values. Run the relevant governance checks and report the exact fix or proposal.`;
+    return {
+      contentKey,
+      surface: records[0].surface,
+      kind: sourceRepair ? "source-repair" : "editorial-review",
+      records,
+      aiRequest: request(sourceRepair
+        ? "Repair the source contract. Approval cannot clear this hold."
+        : "Find why no editable Content Library row exists and propose the exact governed import path.")
+    };
+  });
 }
 
 export function loadContentUnresolvedReport() {

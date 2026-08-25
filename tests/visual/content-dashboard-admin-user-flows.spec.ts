@@ -32,12 +32,16 @@ unresolvedItems.forEach((item) => unresolvedRecordsByKey.set(item.contentKey, [.
 const unresolvedQueue = {
   ...unresolvedQueueSource,
   items: unresolvedItems,
-  issues: [...unresolvedRecordsByKey.values()].map((records) => ({
-    contentKey: records[0].contentKey,
-    surface: records[0].surface,
-    kind: records.some((item) => item.reason === "known-current-contract-failure") ? "source-repair" : "editorial-review",
-    records
-  }))
+  issues: [...unresolvedRecordsByKey.values()].map((records) => {
+    const contentKey = records[0].contentKey;
+    return {
+      contentKey,
+      surface: records[0].surface,
+      kind: records.some((item) => item.reason === "known-current-contract-failure") ? "source-repair" : "editorial-review",
+      records,
+      aiRequest: records.some((item) => item.reason === "known-current-contract-failure") ? `Repair ${contentKey}` : `Investigate ${contentKey}`
+    };
+  })
 };
 const unresolvedIssueCount = new Set(unresolvedQueue.items.map((item) => item.contentKey)).size;
 
@@ -1643,6 +1647,7 @@ test.describe("content dashboard admin user flow case studies", () => {
   test("unresolved content shows the governed package inventory and links to Content Library", async ({ page }) => {
     const assertNoBrowserErrors = await expectNoBrowserErrors(page);
     const editableUnresolvedItem = unresolvedQueue.items.find((item) => item.reason === "review-status");
+    const missingUnresolvedItem = unresolvedQueue.items.find((item) => item.reason === "review-status" && item.contentKey !== editableUnresolvedItem?.contentKey);
     expect(editableUnresolvedItem).toBeTruthy();
     const editableUnresolvedRow = {
       ...generatedContentRows[0],
@@ -1662,6 +1667,7 @@ test.describe("content dashboard admin user flow case studies", () => {
 
     await expectAdminHeader(page, "Unresolved Content", "Admin / Publish / Unresolved content");
     await expect(page.getByRole("region", { name: "Unresolved content overview" })).toContainText("Resolve content holds");
+    await expect(page.getByRole("region", { name: "Unresolved content overview" })).toContainText("You approve wording. AI repairs source and import problems.");
     await expect(page.getByRole("region", { name: "Unresolved content records" })).toBeVisible();
     await expect(page.locator(".admin-unresolved-content-table tbody tr")).toHaveCount(unresolvedIssueCount);
 
@@ -1684,7 +1690,12 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(sourceRepairIssue).toContainText("Sky / Transits");
     await expect(sourceRepairIssue).toContainText("Source repair required");
     await expect(sourceRepairIssue.getByRole("button", { name: "Open exact row" })).toHaveCount(0);
-    await expect(sourceRepairIssue).toContainText("Give Codex the source record. Approval cannot fix this.");
+    await expect(sourceRepairIssue.getByRole("button", { name: "Copy AI repair request" })).toBeVisible();
+
+    await page.getByLabel("Search unresolved content").fill(missingUnresolvedItem?.contentKey ?? "");
+    const missingIssue = page.locator(".admin-unresolved-content-table tbody tr").first();
+    await expect(missingIssue).toContainText("Editable row missing");
+    await expect(missingIssue.getByRole("button", { name: "Copy AI investigation" })).toBeVisible();
 
     await page.getByLabel("Search unresolved content").fill(editableUnresolvedItem?.contentKey ?? "");
     const editableIssue = page.locator(".admin-unresolved-content-table tbody tr").first();
@@ -1698,7 +1709,7 @@ test.describe("content dashboard admin user flow case studies", () => {
 
     await page.getByRole("navigation", { name: "Content operations" }).getByRole("button", { name: "Unresolved Content" }).click();
     await page.getByLabel("Search unresolved content").fill("not-a-real-content-key");
-    await expect(page.getByText("No unresolved issues match these filters.")).toBeVisible();
+    await expect(page.getByText("No matching issues.")).toBeVisible();
 
     const headingLevels = await page.getByRole("main").getByRole("heading").evaluateAll((headings) => headings.map((heading) => ({
       level: Number(heading.tagName.slice(1)),
