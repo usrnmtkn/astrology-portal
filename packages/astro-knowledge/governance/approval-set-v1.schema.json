@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tldrastro.local/schemas/approval-set-v1.schema.json",
+  "title": "TLDR Astro owner approval set",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema", "decidedAt", "total", "decided", "complete", "decisions"],
+  "properties": {
+    "schema": { "const": "approval-set/v1" },
+    "decidedAt": { "type": "string", "format": "date-time" },
+    "total": { "type": "integer", "minimum": 0 },
+    "decided": { "type": "integer", "minimum": 0 },
+    "complete": { "type": "boolean" },
+    "decisions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "type", "choice", "approvedAt"],
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "type": { "enum": ["span", "domain", "verb", "intro", "errata", "author", "choice"] },
+          "choice": { "type": "string", "minLength": 1 },
+          "contentKey": { "type": "string" },
+          "sourceSha256": { "type": "string", "pattern": "^[a-f0-9]{16}$" },
+          "omitText": { "type": "string" },
+          "text": { "type": "string" },
+          "approvedAt": { "type": "string", "format": "date-time" }
+        }
+      }
+    }
+  }
+}
