@@ -25364,6 +25364,30 @@
       "distribution_lane": "serving"
     },
     {
+      "contentKey": "fallback-hook/natal-you-placement-house-final/lilith/3",
+      "content_role": "full_copy",
+      "grammar_frame": "complete_sentence",
+      "body": "Lilith in the 3rd house can make you especially sensitive to what happens when your words are dismissed, twisted, or used against you. You may have learned early that asking the wrong question created trouble, that pointing out a contradiction made people defensive, or that somebody else could speak with more confidence and suddenly their version carried more weight than yours. That can make you careful about when you speak, but it can also create real rage when someone interrupts you, talks down to you, or decides what you meant before giving you the chance to explain yourself. Siblings, school, neighbors, and the environment you grew up in can shape this strongly. Maybe you were compared to someone else, labeled as dramatic or difficult, or made to feel like noticing too much was the problem. Over time, you may become very good at reading what people are not saying, catching inconsistencies, and asking the question everyone else is avoiding. The challenge is knowing when that instinct is helping you see clearly and when it is pulling you into gossip, triangulation, or somebody else's conflict. The deeper shift is trusting your own perception without needing to win every argument. You correct the record when someone speaks for you, ask the direct question when the story does not add up, and let yourself change your mind when new information changes what you know. Lilith in the 3rd house becomes less about proving that your voice deserves space and more about using it without apologizing.",
+      "reader_only": true,
+      "render_policy": "reader-only-exact-lived-v1",
+      "review_status": "approved",
+      "source_keys": [
+        "owner-authored/lilith-third-house/2026-08-25"
+      ],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "owner-authored/lilith-third-house/2026-08-25",
+        "approvedAt": "2026-08-25"
+      },
+      "source_release": "owner-authored-natal-placement-house-v1",
+      "runtime_family": "natal-you-placement-house-final",
+      "runtime_key": "lilith|3rd house",
+      "governance": "owner-approved-natal-placement-house-v1",
+      "owner_approved": true,
+      "serving_precedence": "owner-approved-natal-final-v3",
+      "distribution_lane": "serving"
+    },
+    {
       "contentKey": "fallback-hook/natal-you-placement-house-final/moon/1",
       "content_role": "full_copy",
       "grammar_frame": "complete_sentence",
