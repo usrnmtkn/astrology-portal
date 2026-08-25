@@ -68,7 +68,7 @@ const relationshipMetaphor = validateCopy("The obligations are eating the warmth
   family: "synastry",
   register: "second_person"
 });
-assert.ok(relationshipMetaphor.violations.some((violation) => violation.category === "relationship_container_metaphor"));
+assert.ok(relationshipMetaphor.advisories.some((violation) => violation.category === "relationship_container_metaphor"));
 
 for (const allowed of ["Organize one room.", "Give the connection room to change."]) {
   const lint = validateCopy(allowed, {
@@ -76,7 +76,7 @@ for (const allowed of ["Organize one room.", "Give the connection room to change
     family: "synastry",
     register: "second_person"
   });
-  assert.ok(!lint.violations.some((violation) => violation.category === "relationship_container_metaphor"));
+  assert.ok(![...lint.violations, ...lint.advisories].some((violation) => violation.category === "relationship_container_metaphor"));
 }
 
 const ruling = fs.readFileSync(

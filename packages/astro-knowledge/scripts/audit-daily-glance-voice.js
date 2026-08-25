@@ -47,7 +47,7 @@ const auditMarkdownPath = path.join(packageRoot, "review", `daily-glance-voice-a
 const auditJsonPath = path.join(packageRoot, "review", `daily-glance-voice-audit-${dateKey}.json`);
 const dodontMarkdownPath = path.join(packageRoot, "review", `dodont-seed-inventory-${dateKey}.md`);
 const candidateDir = path.join(packageRoot, "review", `daily-glance-voice-audit-${dateKey}-candidates`);
-const candidateConfigPath = path.join(packageRoot, "config", "daily-glance-writer-sol-xhigh-batch-3-self-audit-v2.json");
+const candidateConfigPath = path.join(packageRoot, "config", "daily-glance-writer-sol-xhigh-batch-3-self-audit-v3.json");
 const TARGET_CUES = Object.freeze({
   sun: "identity|role|public|private|recognition|approve|present|composure",
   moon: "mood|feeling|need|rest|care|schedule|comfort",
@@ -281,6 +281,8 @@ async function writerCall(config, modelInput) {
   const { response, payload } = await callOpenAIResponses({
     apiKey: process.env.OPENAI_API_KEY,
     role: "WRITER",
+    surface: "daily",
+    family: "daily",
     request: {
       model: config.routing.model,
       input: modelInput,

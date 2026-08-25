@@ -276,6 +276,8 @@ async function main() {
   const { response, payload } = await callOpenAIResponses({
     apiKey: process.env.OPENAI_API_KEY,
     role: "WRITER",
+    surface: "sky-placement-page",
+    family: "sky-placement",
     request: requestBody
   });
   writeJson(path.join(outDir, "writer-provider-response.json"), {

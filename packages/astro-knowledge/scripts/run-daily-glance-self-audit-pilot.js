@@ -86,6 +86,8 @@ async function writerCall(config, modelInput) {
   const { response, payload } = await callOpenAIResponses({
     apiKey: process.env.OPENAI_API_KEY,
     role: "WRITER",
+    surface: "daily",
+    family: "daily",
     request: {
       model: config.routing.model,
       input: modelInput,

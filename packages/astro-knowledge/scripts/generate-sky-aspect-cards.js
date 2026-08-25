@@ -1028,6 +1028,8 @@ async function generateWithConfig(prompt, config, { temperature, beforeProviderC
   const { response, payload } = await callOpenAIResponses({
     apiKey: config.apiKey,
     role: config.role === "judge" ? "REVIEWER" : "WRITER",
+    surface: "card",
+    family: "sky-aspect",
     request: {
       model: config.model,
       input: prompt,

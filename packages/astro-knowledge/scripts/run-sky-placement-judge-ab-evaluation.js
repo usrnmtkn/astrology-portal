@@ -112,6 +112,8 @@ async function defaultRequest({ treatment, prompt, apiKey }) {
   const { response, payload } = await callOpenAIResponses({
     apiKey,
     role: "REVIEWER",
+    surface: "card",
+    family: "sky-placement",
     request: {
       model: treatment.model,
       input: prompt,

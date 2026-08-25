@@ -1,0 +1,12 @@
+{
+  "$extends": "daily-glance-writer-sol-xhigh-batch-3-self-audit-v2.json",
+  "schemaVersion": 1,
+  "configId": "daily-glance-writer-sol-xhigh-batch-3-self-audit-v3",
+  "packetVersion": "daily-glance-writer-packet-v11:ranked-owner-evidence+effective-rules",
+  "promptVersion": "daily-glance-writer-v11:effective-rule-registry",
+  "status": "owner-directed-rule-reconciliation-2026-08-25",
+  "authorities": [
+    "config/writing-effective-rules-v1.json"
+  ],
+  "selfAuditDirectivePath": "packages/astro-knowledge/config/daily-glance-writer-prompt-shell-v1.md"
+}

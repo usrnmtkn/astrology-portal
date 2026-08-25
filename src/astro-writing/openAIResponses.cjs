@@ -1,10 +1,9 @@
 "use strict";
 
 const {
-  candidateCardAstrologyWritingInstructions,
-  canonicalAstrologyReviewInstructions,
-  canonicalAstrologyWritingInstructions,
-  coldRenderedProseReviewInstructions
+  coldRenderedProseReviewInstructions,
+  effectiveAstrologyReviewInstructions,
+  effectiveAstrologyWritingInstructions
 } = require("./canonicalInstructions.cjs");
 const { assertProductionPreCallGate } = require("./productionPreCallGate.cjs");
 
@@ -14,17 +13,18 @@ This role is calibration-only and is not active in production. Apply only the su
 
 const ROLES = new Set(["MEANING_PLANNER", "WRITER", "COLD_REVIEWER", "REVIEWER", "REVISER", "CARD_WRITER_V3", "CARD_REVISER_V3", "CARD_REVIEWER_V3"]);
 
-function instructionsForRole(role, taskInstructions = "") {
+function instructionsForRole(role, taskInstructions = "", { surface = "generic", family = "" } = {}) {
   if (!ROLES.has(role)) throw new Error(`Unknown astrology prose role: ${role}`);
   const canonical = role === "COLD_REVIEWER"
     ? coldRenderedProseReviewInstructions
     : role === "CARD_REVIEWER_V3"
     ? CARD_REVIEWER_V3_CANDIDATE_INSTRUCTIONS
-    : role === "CARD_WRITER_V3" || role === "CARD_REVISER_V3"
-      ? candidateCardAstrologyWritingInstructions
-      : role === "REVIEWER"
-        ? canonicalAstrologyReviewInstructions
-        : canonicalAstrologyWritingInstructions;
+    : role === "REVIEWER"
+      ? effectiveAstrologyReviewInstructions({ surface, family })
+      : effectiveAstrologyWritingInstructions({
+          surface: role === "CARD_WRITER_V3" || role === "CARD_REVISER_V3" ? "card" : surface,
+          family
+        });
   return taskInstructions.trim() ? `${canonical}\n\n${taskInstructions.trim()}` : canonical;
 }
 
@@ -33,6 +33,8 @@ async function callOpenAIResponses({
   role,
   request,
   taskInstructions = "",
+  surface = "generic",
+  family = "",
   fetchImpl = globalThis.fetch
 }) {
   if (!apiKey) throw new Error("OpenAI Responses request requires an API key.");
@@ -46,7 +48,7 @@ async function callOpenAIResponses({
   }
   const body = {
     ...request,
-    instructions: instructionsForRole(role, taskInstructions)
+    instructions: instructionsForRole(role, taskInstructions, { surface, family })
   };
   const response = await fetchImpl("https://api.openai.com/v1/responses", {
     method: "POST",

@@ -1,10 +1,10 @@
 import {
-  canonicalAstrologyReviewInstructions,
   coldRenderedProseReviewInstructions,
-  HARD_REVISE_FIELDS,
+  effectiveAstrologyReviewInstructions,
   REVIEW_FIELDS
 } from "./canonicalInstructions.mjs";
 import { validateCopy } from "./validateCopy.mjs";
+import { normalizeWritingSurface, tierForFindingCategory } from "./effectiveRules.mjs";
 
 const CHECK_RESULT_SCHEMA = Object.freeze({
   type: "object",
@@ -112,11 +112,12 @@ function semanticPatternFailures(copy) {
   return failures;
 }
 
-function violationRecord(copy, category, reason, instruction, location = locationFor(copy, category)) {
-  const reviewField = canonicalCategory(category);
+function violationRecord(copy, category, reason, instruction, location = locationFor(copy, category), effectiveSurface = "generic") {
+  const tier = tierForFindingCategory(category, effectiveSurface);
   return {
     category,
-    severity: HARD_REVISE_FIELDS.includes(reviewField) ? "blocking" : "nonblocking",
+    severity: tier === "blocking" ? "blocking" : "nonblocking",
+    tier,
     location,
     text: valueAt(copy, location),
     reason,
@@ -140,22 +141,25 @@ export function deterministicEditorialReview({
   register,
   expectedPlaceholders,
   requiredFields,
-  protectedOwnerLines
+  protectedOwnerLines,
+  surface = "card"
 }) {
+  const effectiveSurface = normalizeWritingSurface({ surface, family });
   const lint = validateCopy(draft, {
     family,
     register,
+    surface,
     plan,
     expectedPlaceholders,
     requiredFields,
     protectedOwnerLines,
     ownerCorrections: context?.corrections ?? []
   });
-  const violations = lint.violations.map((item) => {
-    return violationRecord(draft, item.category, item.detail, `Correct only the failed ${locationFor(draft, item.category)} material.`);
+  const violations = [...lint.violations, ...lint.advisories].map((item) => {
+    return violationRecord(draft, item.category, item.detail, `Correct only the failed ${locationFor(draft, item.category)} material.`, locationFor(draft, item.category), effectiveSurface);
   });
   for (const failure of semanticPatternFailures(draft)) {
-    violations.push(violationRecord(draft, failure.category, failure.reason, failure.instruction, failure.location));
+    violations.push(violationRecord(draft, failure.category, failure.reason, failure.instruction, failure.location, effectiveSurface));
   }
   const deduped = [...new Map(violations.map((item) => [
     `${item.category}|${item.location}|${item.reason}`,
@@ -171,9 +175,12 @@ export function deterministicEditorialReview({
   const blocking = deduped.some((item) => item.severity === "blocking");
   return {
     ...checks,
-    decision: blocking || deduped.length > 0 ? "REVISE" : "PASS",
+    decision: blocking ? "REVISE" : "PASS",
     violations: deduped,
-    required_revisions: deduped.map((item) => ({ field: item.location, instruction: item.revision_instruction }))
+    required_revisions: deduped
+      .filter((item) => item.severity === "blocking")
+      .map((item) => ({ field: item.location, instruction: item.revision_instruction })),
+    advisory_findings: deduped.filter((item) => item.severity !== "blocking")
   };
 }
 
@@ -223,27 +230,31 @@ export async function reviewDraft({
   context,
   family = "sky-placement",
   register = "collective",
+  surface = "card",
   modelClient,
   expectedPlaceholders = [],
   requiredFields = ["tagline", "hook", "lived", "turn"],
   protectedOwnerLines = []
 }) {
   const mechanical = deterministicEditorialReview({
-    draft, plan, context, family, register, expectedPlaceholders, requiredFields, protectedOwnerLines
+    draft, plan, context, family, register, surface, expectedPlaceholders, requiredFields, protectedOwnerLines
   });
   if (!modelClient) {
     const missingColdReview = violationRecord(
       draft,
       "cold_rendered_prose",
       "A context-isolated semantic cold read has not run.",
-      "Run the rendered copy through the cold-rendered-prose reviewer before approval."
+      "Run the rendered copy through the cold-rendered-prose reviewer before approval.",
+      locationFor(draft, "cold_rendered_prose"),
+      normalizeWritingSurface({ surface, family })
     );
     return {
       ...mechanical,
       cold_rendered_prose: { status: "FAIL", reason: missingColdReview.reason },
       decision: mechanical.decision,
       violations: [...mechanical.violations, missingColdReview],
-      required_revisions: mechanical.required_revisions
+      required_revisions: mechanical.required_revisions,
+      advisory_findings: [...mechanical.advisory_findings, missingColdReview]
     };
   }
 
@@ -259,15 +270,26 @@ export async function reviewDraft({
   const modelReview = await modelClient({
     stage: "review",
     role: "REVIEWER",
-    instructions: canonicalAstrologyReviewInstructions,
+    instructions: effectiveAstrologyReviewInstructions({ surface, family }),
     input: JSON.stringify({ plan, family, register, draft }, null, 2),
     schema: REVIEW_SCHEMA
   });
   validateModelReview(modelReview);
+  const effectiveSurface = normalizeWritingSurface({ surface, family });
+  const normalizedModelViolations = modelReview.violations
+    .filter((item) => item.category !== "cold_rendered_prose")
+    .map((item) => ({
+      ...item,
+      tier: tierForFindingCategory(item.category, effectiveSurface),
+      reportedTier: tierForFindingCategory(item.category, effectiveSurface),
+      severity: "nonblocking",
+      advisory: true,
+      authority: "model-review-advisory-only"
+    }));
   const mergedViolations = [...new Map([
     ...mechanical.violations,
     ...coldModelReview.violations,
-    ...modelReview.violations.filter((item) => item.category !== "cold_rendered_prose")
+    ...normalizedModelViolations
   ].map((item) => [`${item.category}|${item.location}|${item.reason}`, item])).values()];
   const failed = new Set(mergedViolations.map((item) => canonicalCategory(item.category)));
   const checks = Object.fromEntries(REVIEW_FIELDS.map((field) => [field, {
@@ -279,17 +301,14 @@ export async function reviewDraft({
       field === "cold_rendered_prose" ? coldModelReview[field].reason : modelReview[field].reason
     ].filter(Boolean).join(" ")
   }]));
-  const blocking = mergedViolations.some((item) => item.severity === "blocking")
-    || HARD_REVISE_FIELDS.some((field) => checks[field].status === "FAIL");
-  const anyFailedCheck = REVIEW_FIELDS.some((field) => field !== "cold_rendered_prose" && checks[field].status === "FAIL");
-  const actionableViolation = mergedViolations.some((item) => item.category !== "cold_rendered_prose");
+  const blocking = mergedViolations.some((item) => item.severity === "blocking");
   return {
     ...checks,
-    decision: blocking
-      || anyFailedCheck
-      || actionableViolation
-      || modelReview.decision !== "PASS" ? "REVISE" : "PASS",
+    decision: blocking ? "REVISE" : "PASS",
     violations: mergedViolations,
-    required_revisions: mergedViolations.map((item) => ({ field: item.location, instruction: item.revision_instruction }))
+    required_revisions: mergedViolations
+      .filter((item) => item.severity === "blocking")
+      .map((item) => ({ field: item.location, instruction: item.revision_instruction })),
+    advisory_findings: mergedViolations.filter((item) => item.severity !== "blocking")
   };
 }

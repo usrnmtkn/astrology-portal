@@ -1,6 +1,6 @@
 {
   "version": "shared-evidence-standard-v1-2026-08-13",
-  "generatedAt": "2026-08-24T23:09:07.006Z",
+  "generatedAt": "2026-08-25T06:20:42.683Z",
   "keyFormat": "planet|sign; *|* is globally eligible register evidence",
   "rolePriority": {
     "scene": [
@@ -17,11 +17,11 @@
     "data/writing/owner-register-gold.json"
   ],
   "counts": {
-    "entries": 5923,
+    "entries": 5922,
     "meaning": 2224,
     "register": 1757,
     "scene": 415,
-    "argument": 1181,
+    "argument": 1180,
     "phrase": 346,
     "planetSignKeys": 247
   },
@@ -3337,8 +3337,7 @@
         "argument:fallback-hook/sky-placement-hook/sun/virgo",
         "argument:fallback-hook/sky-placement-lived/sun/virgo",
         "argument:fallback-hook/sky-placement-tagline/sun/virgo",
-        "argument:fallback-hook/sky-placement-turn/sun/virgo",
-        "argument:fallback-hook/sky-sign-copy/sun/virgo"
+        "argument:fallback-hook/sky-placement-turn/sun/virgo"
       ],
       "phrase": []
     },
@@ -162810,33 +162809,6 @@
       "text": "After moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, the Sun enters Taurus on {{entryDate}}, and attention shifts to what can be built slowly enough to last. The Sun governs identity, vitality, and who we are beneath the roles. Taurus is the sign of steadiness, comfort, and the tangible pleasures of life. We give a loose idea a solid shape. We repair what is useful, return to something we are making, and keep a small practice long enough to feel its effect. Confidence grows through visible results rather than speed or applause.\n\nThat patience has a cost when any interruption starts to feel like a threat. We keep the routine after it stops restoring energy. We defend a preference as though changing it would erase the self that chose it. We make one more adjustment to an unfinished piece, then another, because finished means visible. Each decision preserves comfort for another day while making change harder.\n\nWe protect the familiar in one small choice after another. A useful object becomes too precious to use. A familiar method survives because learning another one feels wasteful. A plan keeps its old shape even after the conditions around it change. Each choice avoids discomfort today. Together they send energy into preserving what exists, while the creation that still matters remains unfinished.\n\nBefore {{exitDate}}, what we refuse to release can consume more energy than the change we were trying to avoid."
     },
     {
-      "id": "argument:fallback-hook/sky-sign-copy/sun/virgo",
-      "indexKey": "sun|virgo",
-      "planet": "sun",
-      "sign": "virgo",
-      "role": "argument",
-      "sourcePath": "data/writing/OWNER_APPROVED_EXAMPLES.jsonl",
-      "contentKey": "fallback-hook/sky-sign-copy/sun/virgo",
-      "family": "fallback-hook/sky-sign-copy",
-      "governanceTier": "owner-approved-serving",
-      "ownerApproved": true,
-      "ownerAuthored": false,
-      "generated": false,
-      "evidenceRole": "argument",
-      "sourceKind": "current-owner-approved-placement-article",
-      "house": null,
-      "eventType": null,
-      "register": "collective",
-      "store": null,
-      "themes": [],
-      "subjectTags": [],
-      "failureTags": [],
-      "copySha": null,
-      "sceneNouns": [],
-      "eligibleForWriterRegister": true,
-      "text": "After moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, the Sun enters Virgo on {{entryDate}}, and unfinished details become hard to ignore. The Sun governs identity, vitality, and who we are beneath the roles. Virgo is the sign of precision, service, and the details that keep life working. We sew on the loose button. We rewrite confusing instructions. We simplify a routine that drains energy. The Sun in Virgo finds purpose in this kind of care, where skill produces a visible result.\n\nThe list of improvements keeps growing. We fix one flaw and immediately find the next. We reopen a finished task because one line could be cleaner. An offer to help meets so many corrections that the helper backs away. Soon the same scrutiny is aimed at the self. Confidence depends on being useful, while every mistake becomes proof that more work is required.\n\nThe Sun moved through Virgo from {{previousResidencyEntryDateWithYear}} to {{previousResidencyExitDateWithYear}}. This pass can expose the same exhausting bargain: life will finally feel manageable once every weak spot has been handled. It appears when a small repair becomes a full overhaul, a useful idea stays hidden until it is flawless, or care for the body becomes another test to pass. The result may improve, but energy drops when attention stays fixed on defects. Repeated correction makes help less likely. If every attempt to help meets another fix, others stop stepping in, and we end up carrying more alone.\n\nBefore {{exitDate}}, the result can keep improving while our confidence wears down under a standard that keeps moving."
-    },
-    {
       "id": "argument:fallback-hook/sky-sign-copy/uranus/gemini",
       "indexKey": "uranus|gemini",
       "planet": "uranus",
@@ -176407,6 +176379,7 @@
       "fallback-hook/house-glossary",
       "fallback-hook/house-lived",
       "fallback-hook/house-meaning",
+      "fallback-hook/lunation-cycle-anchor",
       "fallback-hook/lunation-higher-path",
       "fallback-hook/lunation-horoscope",
       "fallback-hook/lunation-matching-new-moon-anchor",
@@ -176592,6 +176565,7 @@
       "fallback-hook/house-cusp",
       "fallback-hook/house-glossary",
       "fallback-hook/house-meaning",
+      "fallback-hook/lunation-cycle-anchor",
       "fallback-hook/lunation-higher-path",
       "fallback-hook/lunation-matching-new-moon-anchor",
       "fallback-hook/lunation-moment",

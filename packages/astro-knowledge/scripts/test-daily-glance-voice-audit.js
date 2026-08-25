@@ -40,7 +40,7 @@ const {
 const packageRoot = path.resolve(__dirname, "..");
 const repoRoot = path.resolve(packageRoot, "..", "..");
 const sourceRows = JSON.parse(fs.readFileSync(path.join(repoRoot, "apps", "web", "src", "content", "fallbackArchitectureV3", "source-rows", "fallback-source-rows-v3.json"), "utf8"));
-const config = readJson(path.join(packageRoot, "config", "daily-glance-writer-sol-xhigh-batch-3-self-audit-v2.json"));
+const config = readJson(path.join(packageRoot, "config", "daily-glance-writer-sol-xhigh-batch-3-self-audit-v3.json"));
 const pilotDir = path.join(packageRoot, "review", "daily-glance-sol-directive-pilot-2026-08-10");
 const disposition = JSON.parse(fs.readFileSync(path.join(pilotDir, "owner-disposition-2026-08-11.json"), "utf8"));
 assert.strictEqual(disposition.candidateCount, 12);
@@ -139,23 +139,30 @@ for (const target of config.keys) {
   const directiveInput = renderSelfAuditWriterInput(packet, config, examples, sceneContext);
   const currentPair = servingPairs(sourceRows).find((pair) => pair.key === target.key);
   assert.strictEqual(examples.length, 3);
-  assert(examples.every((example) => example.key !== target.key && example.key.split("/")[0] === target.key.split("/")[0]));
+  assert(examples.every((example) => example.key !== target.key && example.headlineStatus === "approved" && example.bodyStatus === "approved" && Number.isFinite(example.ranking.score)));
+  assert(examples.some((example) => example.ranking.selectionReason === "closest-same-group-register"));
+  assert(examples.ownerCorrections.length >= 3);
+  assert(examples.ownerCorrections.every((entry) => entry.sourceId && entry.decisionDate));
   assert(!directiveInput.includes("{{TRANSIT_KEY}}"));
   assert(!directiveInput.includes("Pipeline notes"));
   assert(!directiveInput.includes(currentPair.headline));
   assert(!directiveInput.includes(currentPair.body));
-  assert(directiveInput.includes("Write exactly one candidate"));
+  assert(directiveInput.includes("Write exactly one UNAPPROVED Daily Glance candidate"));
   assert(directiveInput.includes('"screenshot_line"'));
   assert(!directiveInput.includes("portability_check"));
   assert(!directiveInput.includes("OWNER-TEST-specificity"));
   assert(directiveInput.includes("Scene specificity must be earned by resolved astrology."));
   assert(directiveInput.includes("Concrete does not mean domain-specific."));
   assert(directiveInput.includes("The writer does not choose where the astrology happens. The chart resolver does."));
-  assert(directiveInput.includes("[BLOCKING] DG-R13:"));
+  assert(directiveInput.includes("[ADVISORY] DG-R13:"));
+  assert(directiveInput.includes("## Ranked current owner corrections"));
   assert.strictEqual((directiveInput.match(/SOL-DIRECTIVE-output-schema/gu) || []).length, 1);
-  assert.strictEqual((directiveInput.match(/### Transit mechanism/gu) || []).length, 1);
+  assert.strictEqual((directiveInput.match(/## Verified transit mechanism/gu) || []).length, 1);
   assert.strictEqual(selfAuditPacketLint(packet, directiveInput, config, examples, currentPair, sceneContext).passed, true, `${target.key} directive packet self-lint`);
 }
+
+const relevanceOrderedExamples = approvedGoodExamples("square/sun", sourceRows).map((entry) => entry.key);
+assert.notDeepStrictEqual(relevanceOrderedExamples, relevanceOrderedExamples.slice().sort(), "Approved passages must be ranked by relevance and recency, not alphabetically.");
 
 {
   const packet = buildPacket("square/sun", config);
@@ -180,9 +187,9 @@ const invalidDirectiveLint = lintSelfAuditCandidate({
   body: "You may leave. You might return. Usually, you wait.",
   screenshot_line: "This sentence is absent."
 }, "square/sun", scheduledCandidateConfig(["square/sun"]));
-assert.strictEqual(invalidDirectiveLint.passed, false);
-assert(invalidDirectiveLint.checks.some((check) => check.id === "SOL-DIRECTIVE-hedging" && !check.passed));
-assert(invalidDirectiveLint.checks.some((check) => check.id === "SOL-DIRECTIVE-screenshot" && !check.passed));
+assert.strictEqual(invalidDirectiveLint.passed, true);
+assert(invalidDirectiveLint.checks.some((check) => check.id === "SOL-DIRECTIVE-hedging" && !check.passed && check.advisory));
+assert(invalidDirectiveLint.checks.some((check) => check.id === "SOL-DIRECTIVE-screenshot" && !check.passed && check.advisory));
 const fakeCandidates = [
   { sample: 1, candidate: { headline: "fail" }, lint: { passed: false }, judge: { skipped: true } },
   { sample: 2, candidate: { headline: "pass" }, lint: { passed: true }, judge: { skipped: false, score: 2, dimScore: 5 } }

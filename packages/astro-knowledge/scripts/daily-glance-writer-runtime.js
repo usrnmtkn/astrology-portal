@@ -14,6 +14,8 @@ const voiceIndexPath = path.join(packageRoot, "voice", "tldr-astro", "satori-wri
 const bannedWordsPath = path.join(packageRoot, "voice", "banned-words.json");
 const placementVoicePath = path.join(packageRoot, "voice", "tldr-astro", "sky-placement.json");
 const servingLintPolicyPath = path.join(packageRoot, "config", "daily-glance-writer-lint-policy-v3.json");
+const { tierForEnforcementId } = require("../../../src/astro-writing/effectiveRules.cjs");
+const { grammarFindings } = require("../../../src/astro-writing/corpusGrammarChecks.cjs");
 const { POLICY_CLASSES, findingForEntry, normalizePolicyEntry } = require("./banned-word-policy.js");
 const knowledgeResolver = require("./knowledge-resolver.js");
 
@@ -45,23 +47,8 @@ function wordCount(value) {
   return (String(value).match(/[\p{L}\p{N}]+(?:[’'][\p{L}\p{N}]+)*/gu) || []).length;
 }
 
-function lintTierForRule(ruleId, { batch = false, policy = readJson(servingLintPolicyPath) } = {}) {
-  if (batch) return policy.batchRuleTiers[ruleId] || policy.governance.unknownRuleDefault;
-  const aliases = {
-    "DG-R2": "DG-R2-register",
-    "B1-L2": "B1-L2-may-inner-states-only",
-    "B1-L3": "B1-L3+L4-headline-group-grammar",
-    "B1-L4": "B1-L3+L4-headline-group-grammar",
-    "SOL-DIRECTIVE-body-length": "P4-body-word-count"
-  };
-  const normalizedRuleId = /-BAN-\d+$/u.test(ruleId)
-    ? "global+VC-016+DG+SM-output-bans"
-    : aliases[ruleId] || ruleId;
-  const failureCount = policy.baseline.ruleFailureCounts[normalizedRuleId];
-  if (failureCount === undefined) return policy.governance.unknownRuleDefault;
-  return failureCount / policy.baseline.cardCount > policy.baseline.advisoryWhenFailureRateGreaterThan
-    ? "advisory"
-    : "blocking";
+function lintTierForRule(ruleId) {
+  return tierForEnforcementId(ruleId, "daily");
 }
 
 function applyLintTiers(checks, options = {}) {
@@ -192,6 +179,25 @@ function verifyFact(fact) {
   }
 }
 
+function verifiedFactRecord(fact, index) {
+  verifyFact(fact);
+  const absolute = path.join(repoRoot, fact.sourcePath);
+  const record = {
+    text: fact.text,
+    field: `facts.${index}.text`,
+    path: fact.sourcePath,
+    authorityClass: "factual-evidence",
+    sourceReference: {
+      path: fact.sourcePath,
+      selector: fact.selector,
+      match: fact.match ?? null
+    },
+    sourceSha256: crypto.createHash("sha256").update(fs.readFileSync(absolute)).digest("hex")
+  };
+  record.evidenceSha256 = sha256(JSON.stringify(record));
+  return record;
+}
+
 function verifyWarmthHarvest(target, config) {
   const harvest = target.warmthHarvest;
   if (!harvest && !isGovernedBatch(config)) {
@@ -294,14 +300,26 @@ function verifySceneEvidence(target, config) {
 function compileDailyPacket(key, config = readJson(configPath)) {
   const target = config.keys.find((entry) => entry.key === key);
   if (!target) throw new Error(`Unknown Daily At-a-Glance writer key: ${key}.`);
-  target.facts.forEach(verifyFact);
-  const governedEvidence = knowledgeResolver.buildPacket(`daily/${key}`, {
-    surface: "daily",
-    register: "daily",
-    maxChars: 8000,
-    includeRelated: false
-  });
-  const verifiedAstrology = [...governedEvidence.evidence]
+  const directFactEvidence = target.facts.map(verifiedFactRecord);
+  let governedEvidence;
+  try {
+    governedEvidence = knowledgeResolver.buildPacket(`daily/${key}`, {
+      surface: "daily",
+      register: "daily",
+      maxChars: 8000,
+      includeRelated: false
+    });
+  } catch (error) {
+    if (!String(error?.message ?? error).startsWith(`KNOWLEDGE_OBJECT_UNRESOLVED: daily/${key}.`)) throw error;
+    governedEvidence = {
+      id: `daily/${key}`,
+      kind: "daily-event",
+      temporality: "temporary-window",
+      evidence: directFactEvidence,
+      evidenceSource: "verified-target-facts"
+    };
+  }
+  const verifiedAstrology = [...directFactEvidence]
     .sort((a, b) => Number(a.field.split(".")[1]) - Number(b.field.split(".")[1]))
     .map((record) => ({
     text: record.text,
@@ -667,6 +685,8 @@ function lintOutput(candidate, key, config = readJson(configPath)) {
   const lintSkeleton = ((config.keys || []).find((entry) => entry.key === key) || {}).skeleton || "consequence-close";
   const lastSentence = bodySentences.at(-1) || "";
   const banFindings = lintTextAgainstBans(`${candidate.headline}\n${candidate.body}`, config);
+  const grammar = grammarFindings(`${candidate.headline}\n${candidate.body}`);
+  const unresolvedPlaceholders = `${candidate.headline}\n${candidate.body}`.match(/\{\{[^}]+\}\}/gu) || [];
   const register = groupRegisterCheck(candidate, key, config);
   const headlineGrammar = headlineGrammarCheck(candidate.headline, key, config);
   const timeAnchors = timeAnchorMatches(candidate.body);
@@ -684,10 +704,19 @@ function lintOutput(candidate, key, config = readJson(configPath)) {
   const normalizedBody = candidate.body.toLowerCase().replace(/[^\p{L}\p{N}\s]/gu, " ").replace(/\s+/gu, " ").trim();
   const closer = lastSentence.toLowerCase();
   const closerSlogan = /\b(?:future[-‑]you|you deserve|trust the process|everything happens for a reason|this is your moment)\b/iu.test(closer);
-  const outcomePromise = /\b(?:will|always|guarantee[sd]?|definitely|certainly)\b[^.!?]{0,50}\b(?:work|heal|succeed|land|resolve|improve)\w*\b/iu.test(`${candidate.headline} ${candidate.body}`);
+  const outcomeText = `${candidate.headline} ${candidate.body}`;
+  const outcomePromiseMatch = /\b(?:will|always|guarantee[sd]?|definitely|certainly)\b[^.!?]{0,50}\b(?:work|heal|succeed|land|resolve|improve)\w*\b/iu.exec(outcomeText);
+  const outcomePromiseContext = outcomePromiseMatch
+    ? outcomeText.slice(Math.max(0, outcomePromiseMatch.index - 50), outcomePromiseMatch.index + outcomePromiseMatch[0].length)
+    : "";
+  const outcomePromise = Boolean(outcomePromiseMatch)
+    && !/\bhow\b[^.!?]{0,50}\bwill\s+work\b/iu.test(outcomePromiseContext);
   const fixedOpener = /^For the next few hours\b/iu.test(bodySentences[0] || "");
   const enumeratedInstruction = /\bone\b[^.!?]{0,100}\bone\b/iu.test(lastSentence);
   const checks = applyLintTiers([
+    { id: "grammar", passed: grammar.length === 0, details: grammar.length ? grammar : "No deterministic grammar findings." },
+    { id: "placeholder-integrity", passed: unresolvedPlaceholders.length === 0, details: unresolvedPlaceholders.length ? unresolvedPlaceholders : "No unresolved placeholders." },
+    { id: "engine-hidden", passed: !banFindings.some((finding) => finding.id === "engine-hidden"), details: banFindings.filter((finding) => finding.id === "engine-hidden") },
     { id: "P4-headline-one-declarative-sentence", passed: headlineSentences.length === 1 && candidate.headline.endsWith(".") && !/[?!]/u.test(candidate.headline), details: `${headlineSentences.length} sentence(s)` },
     { id: "P4-headline-word-count", passed: headlineWords >= config.output.headline.minimumWords && headlineWords <= config.output.headline.maximumWords, details: `${headlineWords} words` },
     { id: "P4-body-sentence-count", passed: bodySentences.length >= config.output.body.minimumSentences && bodySentences.length <= config.output.body.maximumSentences, details: `${bodySentences.length} sentences` },
@@ -703,7 +732,7 @@ function lintOutput(candidate, key, config = readJson(configPath)) {
     { id: "B1-L1-time-anchor-max-once", passed: timeAnchors.length <= 1, details: timeAnchors.length ? timeAnchors : "No time-anchor phrase used." },
     { id: "B1-L2-may-inner-states-only", passed: mayFindings.length === 0, details: mayFindings.length ? mayFindings : "Every may clause is an inner state, or may is absent." },
     { id: "B1-L3+L4-headline-group-grammar", passed: headlineGrammar.passed, details: headlineGrammar.details },
-    { id: "SM-DG-2-no-diagnostic-history", passed: !/\byou(?:'ve| have) (?:always|never|spent|made yourself|confused)\b/iu.test(`${candidate.headline} ${candidate.body}`), details: "No diagnostic reader-history frame detected." },
+    { id: "SM-DG-2-no-diagnostic-history", passed: !/\byou(?:'ve| have) (?:always|never)\b/iu.test(`${candidate.headline} ${candidate.body}`), details: "No unsupported always/never reader-history frame detected." },
     { id: "DG-R11-unhedged-headline", passed: !/\bmay\b/iu.test(candidate.headline), details: /\bmay\b/iu.test(candidate.headline) ? "Headline contains may." : "Headline makes an unhedged claim." },
     { id: "DG-R12-no-time-anchor-opener", passed: timeAnchorOpener.length === 0, details: timeAnchorOpener.length ? timeAnchorOpener : "Body opens inside the scene." },
     { id: "DG-R13-may-max-once", passed: mayCount <= 1, details: `${mayCount} may usage(s)` },

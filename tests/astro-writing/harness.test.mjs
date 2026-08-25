@@ -78,7 +78,12 @@ import {
   validateWriterPromotion,
   validateCopy,
   validateCopyBatch,
-  evaluateSpineQuality
+  evaluateSpineQuality,
+  effectiveAstrologyWritingInstructions,
+  effectiveRulesForSurface,
+  tierForEnforcementId,
+  tierForFindingCategory,
+  validateEffectiveRuleRegistry
 } from "../../src/astro-writing/index.mjs";
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
@@ -135,6 +140,7 @@ assert.throws(() => assertSurfaceRegisterContract({
 
 const astrologyContract = read("docs/writing/ASTROLOGY_CONTRACT.md");
 const voiceContract = read("docs/writing/VOICE_CONTRACT.md");
+const compactVoiceContract = voiceContract.replace(/\s+/gu, " ");
 const literalRules = read("docs/writing/LITERAL_LANGUAGE_RULES.md");
 const rubric = read("docs/writing/REVIEW_RUBRIC.md");
 const longFormVoiceStandard = read("docs/writing/MARIE_SATORI_LONG_FORM_VOICE_STANDARD.md");
@@ -206,10 +212,10 @@ assert.deepEqual(CARD_WRITER_SEVEN_PASS_LOOP.map((entry) => entry.id), [
 ]);
 assert.match(cardTransitTopLevelDirection, /^23\. Compact instruction to give Codex/u);
 const cardWriterInstructions = buildCardWriterInstructions(canonicalAstrologyWritingInstructions);
-assert.equal(cardWriterInstructions, candidateCardAstrologyWritingInstructions);
-assert.ok(cardWriterInstructions.includes(cardStandard), "Every card writer prompt must load the owner standard verbatim.");
-assert.ok(cardWriterInstructions.includes(read("tldr-astro-phrasebank/TLDR-REGISTER-PER-SURFACE-RULING-OWNER.md")), "Every candidate card writer prompt must be surface-scoped.");
-assert.ok(cardWriterInstructions.startsWith(cardTransitTopLevelDirection), "Section 23 must be the card writer's top-level direction.");
+assert.notEqual(cardWriterInstructions, candidateCardAstrologyWritingInstructions, "The historical full manual must not remain the active card prompt.");
+assert.ok(candidateCardAstrologyWritingInstructions.includes("Surface: card"));
+assert.ok(candidateCardAstrologyWritingInstructions.includes("owner-passage-first-v2"));
+assert.ok(!candidateCardAstrologyWritingInstructions.includes(cardStandard), "Active card prompts must not inject the historical manual wholesale.");
 
 const cjs = await import("../../src/astro-writing/canonicalInstructions.cjs");
 assert.equal(cjs.default.canonicalAstrologyWritingInstructions, canonicalAstrologyWritingInstructions);
@@ -218,44 +224,63 @@ assert.equal(cjs.default.canonicalAstrologyReviewInstructions, canonicalAstrolog
 assert.equal(cjs.default.CANONICAL_REVIEWER_INSTRUCTIONS_VERSION, CANONICAL_REVIEWER_INSTRUCTIONS_VERSION);
 assert.equal(cjs.default.COLD_RENDERED_PROSE_RULE, COLD_RENDERED_PROSE_RULE);
 assert.equal(cjs.default.coldRenderedProseReviewInstructions, coldRenderedProseReviewInstructions);
-const ownerCodexInstruction = ownerDoctrine.slice(ownerDoctrine.indexOf("CODEX INSTRUCTION (owner-designated canonical form):")).trim();
-assert.ok(
-  canonicalAstrologyWritingInstructions.replace(/\s+/gu, " ").startsWith(ownerCodexInstruction.replace(/\s+/gu, " ")),
-  "Canonical API instructions must begin with the complete verbatim owner-designated doctrine."
+validateEffectiveRuleRegistry();
+for (const rule of JSON.parse(read("config/writing-effective-rules-v1.json")).rules) {
+  assert.ok(
+    fs.existsSync(path.join(repoRoot, rule.ownerAuthority.sourcePath)),
+    `Effective rule authority must resolve in the source tree: ${rule.id} -> ${rule.ownerAuthority.sourcePath}`
+  );
+}
+const unresolvableAuthorityRegistry = structuredClone(JSON.parse(read("config/writing-effective-rules-v1.json")));
+unresolvableAuthorityRegistry.rules[0].ownerAuthority = {
+  sourceId: "owner-chat:unresolvable",
+  sourcePath: null,
+  decisionDate: "2026-08-25"
+};
+assert.throws(
+  () => validateEffectiveRuleRegistry(unresolvableAuthorityRegistry),
+  /EFFECTIVE_RULE_REGISTRY_UNRESOLVABLE_AUTHORITY/u,
+  "Effective rules must cite durable, resolvable owner authority."
 );
-assert.ok(
-  voiceContract.replace(/\s+/gu, " ").includes(canonicalAstrologyWritingInstructions.split("\n\n")[0].replace(/\s+/gu, " ")),
-  "Canonical API instructions must retain the verbatim owner-designated doctrine."
-);
+assert.ok(canonicalAstrologyWritingInstructions.includes("tldr-astro-effective-writing-rules-v1"));
+assert.ok(canonicalAstrologyWritingInstructions.includes("owner-passage-first-v2"));
+assert.ok(!canonicalAstrologyWritingInstructions.includes("FORECAST-FIRST"));
 const compactCanonicalInstructions = canonicalAstrologyWritingInstructions.replace(/\s+/gu, " ");
-const compactVoiceContract = voiceContract.replace(/\s+/gu, " ");
 for (const instruction of [
-  "A paragraph composed mostly of 4-12 word sentences is a voice failure.",
-  "Do not split one connected thought into four or five punchy statements",
-  "For Chiron, ask what happened, what the person learned to do because of it",
-  "Advice may appear only after the mechanism and consequence are understood"
+  "specific situation, a direct consequence, a useful next move",
+  "The resolved astrology supplies meaning",
+  "Only the owner can approve exact prose"
 ]) {
   assert.ok(
     compactCanonicalInstructions.includes(instruction),
-    `Canonical API instructions must include the 2026-08-22 long-form voice rule: ${instruction}`
+    `Canonical API instructions must include the active governed rule: ${instruction}`
   );
 }
 assert.ok(REVIEW_FIELDS.includes("clipped_sentence_rhythm"));
-assert.ok(HARD_REVISE_FIELDS.includes("clipped_sentence_rhythm"));
-assert.match(canonicalAstrologyReviewInstructions, /9\. LONG-FORM SENTENCE ARCHITECTURE/u);
+assert.ok(!HARD_REVISE_FIELDS.includes("clipped_sentence_rhythm"));
+assert.match(canonicalAstrologyReviewInstructions, /ADVISORY REVIEW/u);
+assert.equal(tierForEnforcementId("DG-R13-may-max-once", "daily"), "advisory");
+assert.equal(tierForEnforcementId("DG-R2-register", "daily"), "advisory");
+assert.equal(tierForEnforcementId("SOL-DIRECTIVE-body-register", "daily"), "blocking");
+assert.equal(tierForFindingCategory("grammar_pronoun-object-case", "generic"), "blocking");
+assert.ok(effectiveRulesForSurface("daily").every((rule) => rule.tier !== "retired"));
+const surfaceOnlyDailyLint = validateCopy("This transit is going to work out.", {
+  surface: "daily",
+  family: "daily",
+  register: "second_person"
+});
+assert.ok(surfaceOnlyDailyLint.violations.some((entry) => entry.category === "daily_engine_hidden"));
+assert.ok(surfaceOnlyDailyLint.violations.some((entry) => entry.category === "daily_outcome_ceiling"));
 for (const instruction of [
   "Astrology may explain why the pattern is easy to enter, but it may not excuse an observable action",
   "A transitive instruction names its object.",
   "The copy becomes more specific after the opening, not more abstract.",
   "Astrology taxonomy is secondary after the opening"
 ]) {
-  assert.ok(
-    compactCanonicalInstructions.includes(instruction),
-    `Canonical API instructions must include the 2026-08-21 human-pattern rule: ${instruction}`
-  );
+  assert.ok(!compactCanonicalInstructions.includes(instruction), `Historical prose rule leaked into the active prompt: ${instruction}`);
   assert.ok(
     compactVoiceContract.includes(instruction),
-    `Voice contract must include the 2026-08-21 human-pattern rule: ${instruction}`
+    `Historical voice archive must retain the 2026-08-21 rule: ${instruction}`
   );
 }
 assert.deepEqual(REVIEW_SCHEMA.properties.decision.enum, ["PASS", "REVISE"]);
@@ -265,10 +290,10 @@ assert.deepEqual(COLD_REVIEW_SCHEMA.properties.violations.items.properties.sever
 assert.ok(REVIEW_FIELDS.includes("cold_rendered_prose"));
 assert.ok(!HARD_REVISE_FIELDS.includes("cold_rendered_prose"));
 assert.ok(coldRenderedProseReviewInstructions.replace(/\s+/gu, " ").includes("Do not reward a sentence for being astrologically correct if it is awkward prose."));
-assert.ok(canonicalAstrologyReviewInstructions.includes(COLD_RENDERED_PROSE_RULE));
-assert.ok(canonicalAstrologyReviewInstructions.includes("DECISION CONTRACT: Return PASS or REVISE only. Never return FAIL."));
+assert.ok(!canonicalAstrologyReviewInstructions.includes(COLD_RENDERED_PROSE_RULE));
+assert.ok(canonicalAstrologyReviewInstructions.includes("The owner is the permanent prose judge."));
 for (const sign of ["aries", "taurus", "gemini", "cancer", "leo", "virgo", "libra", "scorpio", "sagittarius", "capricorn", "aquarius", "pisces"]) {
-  assert.ok(canonicalAstrologyReviewInstructions.includes(`## gold-lilith-${sign}-v5: PASS`), `Reviewer instructions must include the locked ${sign} PASS exemplar.`);
+  assert.ok(!canonicalAstrologyReviewInstructions.includes(`## gold-lilith-${sign}-v5: PASS`), `Historical ${sign} exemplar leaked into the active reviewer prompt.`);
 }
 
 const corrections = jsonl("data/writing/owner-corrections.jsonl");
@@ -289,7 +314,11 @@ for (const fixture of corrections) {
     surfaceStrategy: resolveSurfaceStrategy({ explicitStrategy: "sky-placement" }),
     requiredFields: ["body"]
   });
-  assert.equal(review.decision, "REVISE", `Known bad fixture must be rejected: ${fixture.category}`);
+  assert.equal(
+    review.decision,
+    review.violations.some((violation) => violation.severity === "blocking") ? "REVISE" : "PASS",
+    `Fixture decision must follow its effective blocking findings: ${fixture.category}`
+  );
   assert.ok(review.violations.some((violation) => violation.category === fixture.category), `Fixture must retain category ${fixture.category}.`);
   const correctedLint = validateCopy(fixture.corrected, {
     validationProfile: "shared-only",
@@ -297,7 +326,10 @@ for (const fixture of corrections) {
     register: fixture.family === "house-horoscope-core" ? "second_person" : "collective",
     ownerCorrections: [fixture]
   });
-  assert.ok(!correctedLint.violations.some((violation) => violation.category === fixture.category), `Owner correction must clear its original failure: ${fixture.category}.`);
+  assert.ok(
+    ![...correctedLint.violations, ...correctedLint.advisories].some((violation) => violation.category === fixture.category),
+    `Owner correction must clear its original failure: ${fixture.category}.`
+  );
 }
 
 const incompleteDoItem = validateCopy("Ask for more.", {
@@ -325,8 +357,8 @@ const relationshipRoomMetaphor = validateCopy("The obligations are eating the wa
   register: "second_person"
 });
 assert.ok(
-  relationshipRoomMetaphor.violations.some((violation) => violation.category === "relationship_container_metaphor"),
-  "A relationship quality may not be located inside a metaphorical room."
+  relationshipRoomMetaphor.advisories.some((violation) => violation.category === "relationship_container_metaphor"),
+  "A relationship-container metaphor must be reported as an advisory voice signal."
 );
 for (const literalOrSpatialUse of ["Organize one room.", "Give the connection room to change."]) {
   const lint = validateCopy(literalOrSpatialUse, {
@@ -335,7 +367,7 @@ for (const literalOrSpatialUse of ["Organize one room.", "Give the connection ro
     register: "second_person"
   });
   assert.ok(
-    !lint.violations.some((violation) => violation.category === "relationship_container_metaphor"),
+    ![...lint.violations, ...lint.advisories].some((violation) => violation.category === "relationship_container_metaphor"),
     `Literal or spatial room use must remain valid: ${literalOrSpatialUse}`
   );
 }
@@ -374,15 +406,15 @@ for (const text of [
     surface: "sky-placement-page"
   });
   assert.ok(
-    lint.violations.some((violation) => violation.category === "vague_outcome_clause"),
-    `Vague outcome clause must be rejected: ${text}`
+    lint.advisories.some((violation) => violation.category === "vague_outcome_clause"),
+    `Vague outcome clause must remain visible as advisory feedback: ${text}`
   );
 }
 const concreteOutcomeLint = validateCopy(
   "Their response tells you which one it was: they reopen the decision and split the revisions, or they expect you to keep carrying the plan you never picked.",
   { family: "fast-mover-article", register: "second_person", surface: "sky-placement-page" }
 );
-assert.ok(!concreteOutcomeLint.violations.some((violation) => violation.category === "vague_outcome_clause"));
+assert.ok(![...concreteOutcomeLint.violations, ...concreteOutcomeLint.advisories].some((violation) => violation.category === "vague_outcome_clause"));
 
 const approvedExamples = jsonl("data/writing/OWNER_APPROVED_EXAMPLES.jsonl");
 const ownerRegisterGold = JSON.parse(read("data/writing/owner-register-gold.json"));
@@ -772,7 +804,8 @@ for (const leaked of [
 let writerCallCount = 0;
 const writerClient = async ({ stage, instructions, input }) => {
   assert.equal(stage, "draft");
-  assert.equal(instructions, canonicalAstrologyWritingInstructions);
+  const inputFamily = input.match(/CONTENT FAMILY\n([^\n]+)/u)?.[1] || "fast-mover-article";
+  assert.equal(instructions, effectiveAstrologyWritingInstructions({ surface: "sky-placement-page", family: inputFamily }));
   assert.match(input, /OWNER-APPROVED ARGUMENT OUTLINE/u);
   assert.match(input, /RECORDED STRUCTURAL SPINE/u);
   assert.match(input, /SHARED FIVE-ROLE EVIDENCE PACKET/u);
@@ -1059,10 +1092,10 @@ const reservedPlusGeneratedPivot = validateCopy("The answer is not silence but a
   surface: "sky-placement-page"
 });
 assert.equal(reservedPlusGeneratedPivot.counts.negationPivots, 2);
-assert.ok(reservedPlusGeneratedPivot.violations.some((entry) => entry.category === "negation_pivot_cap"));
+assert.ok(reservedPlusGeneratedPivot.advisories.some((entry) => entry.category === "negation_pivot_cap"));
 const twoPivots = validateCopy("The agreement is not neutral. It is cheaper for one side. The problem is not compromise. The extra work keeps landing with the same person.");
 assert.equal(twoPivots.counts.negationPivots, 2);
-assert.ok(twoPivots.violations.some((entry) => entry.category === "negation_pivot_cap"));
+assert.ok(twoPivots.advisories.some((entry) => entry.category === "negation_pivot_cap"));
 const threePivotSet = validateCopyBatch([
   "The plan is not neutral. It is more expensive for one person.",
   "The answer is not agreement. It is an honest preference.",
@@ -1079,7 +1112,7 @@ const fourPivotSet = validateCopyBatch([
   ...Array.from({ length: 8 }, (_, index) => `Another direct consequence ${index + 1}.`)
 ]);
 assert.equal(fourPivotSet.counts.negationPivots, 4);
-assert.ok(fourPivotSet.violations.some((entry) => entry.category === "negation_pivot_set_cap"));
+assert.ok(fourPivotSet.advisories.some((entry) => entry.category === "negation_pivot_set_cap"));
 assert.ok(validateCopy("The job of Venus in Libra is to make agreement fair.").advisories.some((entry) => entry.category === "spine_scaffold_grammar"));
 assert.ok(validateCopyBatch([
   "This is a period for repair.",
@@ -1174,7 +1207,7 @@ assert.ok(validateCopy("The job of Venus is to make your preference visible.", {
   family: "fast-mover-article",
   register: "second_person",
   surface: "sky-placement-page"
-}).violations.some((entry) => entry.category === "structural_spine_vocabulary"));
+}).advisories.some((entry) => entry.category === "structural_spine_vocabulary"));
 assert.equal(writerCallCount, 2, "Recorded fast-mover spine permits the writer only after argument approval.");
 let partialWriterRequest = null;
 const partialWriterClient = async (request) => {
@@ -1486,7 +1519,41 @@ const inconsistentReviewer = await reviewDraft({
     };
   }
 });
-assert.equal(inconsistentReviewer.decision, "REVISE", "Any reviewer field marked REVISE must block PASS.");
+assert.equal(inconsistentReviewer.decision, "PASS", "A subjective reviewer voice finding must remain advisory and cannot block mechanically valid copy.");
+assert.ok(inconsistentReviewer.violations.some((entry) => entry.category === "voice_match" && entry.severity === "nonblocking"));
+assert.deepEqual(inconsistentReviewer.required_revisions, [], "Advisory model feedback must never become a required revision.");
+
+const modelBlockingOverreach = await reviewDraft({
+  draft: {
+    tagline: "A clear tension",
+    hook: "The answer changes after the facts do.",
+    lived: "A familiar claim gets repeated until someone checks the source.",
+    turn: "Certainty can matter and still need evidence."
+  },
+  plan,
+  context: { examples: [], corrections: [] },
+  surface: "daily",
+  family: "daily",
+  register: "second_person",
+  modelClient: async ({ stage }) => stage === "cold-review"
+    ? coldReviewValue("PASS")
+    : {
+        ...reviewValue("PASS"),
+        decision: "REVISE",
+        violations: [{
+          category: "grammar_invented_by_model",
+          severity: "blocking",
+          location: "hook",
+          text: "The answer changes after the facts do.",
+          reason: "The model claims a grammar defect.",
+          revision_instruction: "Rewrite the line."
+        }]
+      }
+});
+assert.equal(modelBlockingOverreach.decision, "PASS", "A model may not create a blocking verdict, even by naming a blocking category.");
+assert.ok(modelBlockingOverreach.violations.some((entry) => entry.category === "grammar_invented_by_model"
+  && entry.severity === "nonblocking" && entry.reportedTier === "blocking"));
+assert.deepEqual(modelBlockingOverreach.required_revisions, []);
 
 const coldFailureReview = await reviewDraft({
   draft: {
@@ -1658,26 +1725,37 @@ for (const file of directCallFiles) {
   const source = read(file);
   assert.ok(source.includes("callOpenAIResponses"), `${file} must use the canonical Responses wrapper.`);
   assert.ok(!source.includes("api.openai.com/v1/responses"), `${file} may not bypass the canonical Responses wrapper.`);
+  assert.ok(source.includes("surface:"), `${file} must declare the requested writing surface at the model boundary.`);
+  assert.ok(source.includes("family:"), `${file} must declare the requested writing family at the model boundary.`);
 }
 const { callOpenAIResponses, instructionsForRole } = await import("../../src/astro-writing/openAIResponses.cjs").then((module) => module.default);
 assert.equal(instructionsForRole("WRITER"), canonicalAstrologyWritingInstructions);
 assert.equal(instructionsForRole("CARD_WRITER_V3"), candidateCardAstrologyWritingInstructions);
 assert.equal(instructionsForRole("CARD_REVISER_V3"), candidateCardAstrologyWritingInstructions);
-assert.ok(instructionsForRole("CARD_WRITER_V3").includes(cardStandard), "Every candidate CARD_WRITER_V3 call must load the card standard verbatim.");
-assert.ok(instructionsForRole("CARD_REVISER_V3").includes(cardStandard), "Every candidate CARD_REVISER_V3 call must load the card standard verbatim.");
+assert.ok(!instructionsForRole("CARD_WRITER_V3").includes(cardStandard), "Active card calls must not load the historical manual wholesale.");
+assert.ok(instructionsForRole("CARD_WRITER_V3").includes("Surface: card"));
 assert.equal(instructionsForRole("REVIEWER"), canonicalAstrologyReviewInstructions);
 assert.equal(instructionsForRole("COLD_REVIEWER"), coldRenderedProseReviewInstructions);
+const dailyWriterInstructions = instructionsForRole("WRITER", "", { surface: "daily", family: "daily" });
+assert.ok(dailyWriterInstructions.includes("Surface: daily"));
+assert.ok(dailyWriterInstructions.includes("daily-scene-license-boundary-v1"));
+assert.ok(!dailyWriterInstructions.includes("Surface: generic"));
+const dailyReviewerInstructions = instructionsForRole("REVIEWER", "", { surface: "daily", family: "daily" });
+assert.ok(dailyReviewerInstructions.includes("Surface: daily"));
+assert.ok(dailyReviewerInstructions.includes("Every model finding is advisory."));
 let capturedWrapperBody = null;
 await callOpenAIResponses({
   apiKey: "test-key",
   role: "REVIEWER",
+  surface: "daily",
+  family: "daily",
   request: { model: "test-model", input: "Review this." },
   fetchImpl: async (_url, init) => {
     capturedWrapperBody = JSON.parse(init.body);
     return { json: async () => ({ id: "test-response" }), ok: true, status: 200 };
   }
 });
-assert.equal(capturedWrapperBody.instructions, canonicalAstrologyReviewInstructions);
+assert.equal(capturedWrapperBody.instructions, dailyReviewerInstructions);
 await assert.rejects(() => callOpenAIResponses({
   apiKey: "test-key",
   role: "WRITER",
@@ -1685,6 +1763,9 @@ await assert.rejects(() => callOpenAIResponses({
 }), /previous-response instruction persistence/iu);
 const apiGeneration = read("api/_lib/content-generation.ts");
 assert.ok(apiGeneration.includes("reviewGeneratedContentWithOpenAI"), "Application generation must run a separate review pass.");
+assert.ok(apiGeneration.includes("effectiveAstrologyWritingInstructions({ surface: effectiveSurface, family: input.eventType })"), "Every production provider prompt must carry surface-specific effective rules.");
+assert.ok(apiGeneration.includes("model-review-advisory:"), "Application generation must retain model feedback as advisory diagnostics.");
+assert.ok(!apiGeneration.includes('if (review.decision !== "PASS")'), "Application generation may not let an advisory model review trigger automatic rewriting.");
 assert.ok(apiGeneration.includes('role: "COLD_REVIEWER"'), "Application generation must run the isolated cold-rendered-prose pass.");
 assert.ok(apiGeneration.includes("renderedGeneratedCopy(draft)"), "The cold pass must receive rendered copy rather than drafting context.");
 assert.ok(apiGeneration.includes("data/writing/OWNER_APPROVED_EXAMPLES.jsonl"), "Application generation must retrieve from canonical owner-approved evidence.");

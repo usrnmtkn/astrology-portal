@@ -67,6 +67,8 @@ async function callJudge(prompt) {
   const { response, payload } = await callOpenAIResponses({
     apiKey: process.env.OPENAI_API_KEY,
     role: "REVIEWER",
+    surface: "daily",
+    family: "daily",
     request: {
       model: JUDGE_MODEL,
       input: prompt,

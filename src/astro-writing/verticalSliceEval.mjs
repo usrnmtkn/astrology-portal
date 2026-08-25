@@ -31,14 +31,16 @@ function evaluateNegative(fixture) {
   });
   const categories = [...new Set(review.violations.map((item) => item.category))];
   const missed = fixture.expected_failures.filter((category) => !categories.includes(category));
+  const matchingFindings = review.violations.filter((item) => fixture.expected_failures.includes(item.category));
   return {
     fixtureId: fixture.fixture_id,
-    expected: "REVISE_OR_FAIL",
+    expected: "FLAG",
     actual: review.decision,
     expectedCategories: fixture.expected_failures,
     categories,
     missed,
-    passed: review.decision !== "PASS" && missed.length === 0
+    detectionTier: matchingFindings.some((item) => item.severity === "blocking") ? "blocking" : "advisory",
+    passed: missed.length === 0
   };
 }
 
@@ -54,7 +56,7 @@ export function evaluateLilithVerticalSlice({ gold, negatives }) {
     negativePassed: negativeResults.length - falseNegatives,
     falsePositives,
     falseNegatives,
-    blockingRegressions: falsePositives + falseNegatives,
+    blockingRegressions: falsePositives,
     passed: goldResults.length === 12
       && negativeResults.length === 8
       && falsePositives === 0
