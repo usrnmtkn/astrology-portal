@@ -11,6 +11,10 @@ const { natalPlacementReaderSectionCopy } = await tsImport(
   "../apps/web/src/content/natalPlacementReaderSections.ts",
   import.meta.url
 );
+const fallbackRuntime = await tsImport(
+  "../apps/web/src/content/fallbackArchitectureV3Runtime.ts",
+  import.meta.url
+);
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const readJson = (relativePath) => JSON.parse(fs.readFileSync(path.join(repoRoot, relativePath), "utf8"));
@@ -245,6 +249,30 @@ assert.match(
   /fallback-hook\/natal-you-placement-house-final\//u,
   "The app must classify the final Moon house row as exact house copy."
 );
+assert.match(
+  appSource,
+  /activePlacementRouteId,\s*fallbackArchitectureV3Version,\s*generatedContent,/u,
+  "An open natal placement must refresh after its deferred exact-copy bundle loads."
+);
+
+fallbackRuntime.installFallbackArchitectureV3Bundle({
+  transitLib: { authoredCards: [] },
+  templatesFile: { templates: [] },
+  rowsFile: { hookRows: [], vocabularyRows: [] }
+});
+await fallbackRuntime.loadDeferredFallbackArchitectureV3Bundle();
+const dashboardHydratedExactLilith = fallbackRuntime.fallbackRendererV3.renderNatalPlacement({
+  planet: "lilith",
+  sign: "virgo",
+  house: 4,
+  voice: "you"
+});
+assert.equal(
+  dashboardHydratedExactLilith.templateKey,
+  exactLilithVirgoFourth.contentKey,
+  "CMS hydration must layer over, not replace, the bundled exact natal-placement source."
+);
+assert.deepEqual(dashboardHydratedExactLilith.parts, [exactLilithVirgoFourth.body]);
 
 console.log(
   `Natal placement truncation QA passed: ${governedPlacementRows.length} governed rows, `
