@@ -12820,66 +12820,6 @@
       "review_status": "approved"
     },
     {
-      "notes": "Empty-house V3 M2 variant A. Deterministically selected from the empty-house number.",
-      "body_you": "Because {{signTitle}} is ruled by {{rulerRef}}, what happens here is guided by where your {{rulerTitle}} sits: in {{rulerSignTitle}}, in your {{rulerHouseOrdinal}} house of {{rulerHouseJurisdiction}}.",
-      "body_they": "Because {{signTitle}} is ruled by {{rulerRef}}, what happens here is guided by where their {{rulerTitle}} sits: in {{rulerSignTitle}}, in their {{rulerHouseOrdinal}} house of {{rulerHouseJurisdiction}}.",
-      "contentKey": "fallback-hook/empty-house-ruler-v3/a",
-      "approved_via": "",
-      "content_role": "fallback_hook",
-      "grammar_frame": "complete_sentence",
-      "review_status": "needs_review"
-    },
-    {
-      "notes": "Empty-house V3 M2 variant B. Deterministically selected from the empty-house number.",
-      "body_you": "{{signTitle}} is ruled by {{rulerRef}}, so this house follows {{rulerPossessive}} lead from {{rulerSignTitle}}, in your {{rulerHouseOrdinal}} house of {{rulerHouseJurisdiction}}.",
-      "body_they": "{{signTitle}} is ruled by {{rulerRef}}, so this house follows {{rulerPossessive}} lead from {{rulerSignTitle}}, in their {{rulerHouseOrdinal}} house of {{rulerHouseJurisdiction}}.",
-      "contentKey": "fallback-hook/empty-house-ruler-v3/b",
-      "approved_via": "",
-      "content_role": "fallback_hook",
-      "grammar_frame": "complete_sentence",
-      "review_status": "needs_review"
-    },
-    {
-      "notes": "Empty-house V3 M2 variant C. Deterministically selected from the empty-house number.",
-      "body_you": "The planet in charge here is {{rulerRef}}, {{signTitle}}'s ruler, and yours sits in {{rulerSignTitle}}, in your {{rulerHouseOrdinal}} house of {{rulerHouseJurisdiction}}.",
-      "body_they": "The planet in charge here is {{rulerRef}}, {{signTitle}}'s ruler, and theirs sits in {{rulerSignTitle}}, in their {{rulerHouseOrdinal}} house of {{rulerHouseJurisdiction}}.",
-      "contentKey": "fallback-hook/empty-house-ruler-v3/c",
-      "approved_via": "",
-      "content_role": "fallback_hook",
-      "grammar_frame": "complete_sentence",
-      "review_status": "needs_review"
-    },
-    {
-      "notes": "Empty-house V3 M2 variant D. Deterministically selected from the empty-house number.",
-      "body_you": "{{rulerRefCap}} rules {{signTitle}}, which connects this house to your {{rulerTitle}} in {{rulerSignTitle}}, in your {{rulerHouseOrdinal}} house of {{rulerHouseJurisdiction}}.",
-      "body_they": "{{rulerRefCap}} rules {{signTitle}}, which connects this house to their {{rulerTitle}} in {{rulerSignTitle}}, in their {{rulerHouseOrdinal}} house of {{rulerHouseJurisdiction}}.",
-      "contentKey": "fallback-hook/empty-house-ruler-v3/d",
-      "approved_via": "",
-      "content_role": "fallback_hook",
-      "grammar_frame": "complete_sentence",
-      "review_status": "needs_review"
-    },
-    {
-      "notes": "Empty-house V3 M2 variant E. Deterministically selected from the empty-house number.",
-      "body_you": "To read this house, look to {{rulerRef}}, {{signTitle}}'s ruler; yours is in {{rulerSignTitle}}, in your {{rulerHouseOrdinal}} house of {{rulerHouseJurisdiction}}.",
-      "body_they": "To read this house, look to {{rulerRef}}, {{signTitle}}'s ruler; theirs is in {{rulerSignTitle}}, in their {{rulerHouseOrdinal}} house of {{rulerHouseJurisdiction}}.",
-      "contentKey": "fallback-hook/empty-house-ruler-v3/e",
-      "approved_via": "",
-      "content_role": "fallback_hook",
-      "grammar_frame": "complete_sentence",
-      "review_status": "needs_review"
-    },
-    {
-      "notes": "Empty-house V3 M2 variant F. Deterministically selected from the empty-house number.",
-      "body_you": "{{rulerRefCap}} rules {{signTitle}}, so the real activity for this house runs through your {{rulerTitle}} in {{rulerSignTitle}}, in your {{rulerHouseOrdinal}} house of {{rulerHouseJurisdiction}}.",
-      "body_they": "{{rulerRefCap}} rules {{signTitle}}, so the real activity for this house runs through their {{rulerTitle}} in {{rulerSignTitle}}, in their {{rulerHouseOrdinal}} house of {{rulerHouseJurisdiction}}.",
-      "contentKey": "fallback-hook/empty-house-ruler-v3/f",
-      "approved_via": "",
-      "content_role": "fallback_hook",
-      "grammar_frame": "complete_sentence",
-      "review_status": "needs_review"
-    },
-    {
       "notes": "Owner-approved empty-house V3 M3 ruler-method row. Method, not portrait.",
       "body_you": "You grow through the network and the new idea: communities, causes, and experiments that outrun convention. The stretch is committing to one vision instead of orbiting ten.",
       "body_they": "They grow through the network and the new idea: communities, causes, and experiments that outrun convention. The stretch is committing to one vision instead of orbiting ten.",
@@ -23826,40 +23766,6 @@
       "distribution_lane": "serving"
     },
     {
-      "contentKey": "fallback-hook/natal-moon-phase-lived/balsamic",
-      "content_role": "source_material",
-      "grammar_frame": "complete_sentence",
-      "body": "Balsamic Moon births can outgrow purely personal goals once they see what the same effort might contribute to a group, cause, or future larger than the self. Humanitarian work, metaphysical questions, history, prophecy, and the meaning of life may feel unusually important. A sense of destiny can become strong.\n\nThat sense of destiny matters more once it has a real task attached to it. Ideals need a community, practice, project, or contribution that can absorb the feeling. Otherwise destiny stays an idea you never act on.",
-      "reader_only": false,
-      "render_policy": "reference-only-never-serve-verbatim",
-      "review_status": "superseded",
-      "source_keys": [
-        "tldr-astro-phrasebank/TLDR-LL-KNOWLEDGE-MATRIX-V13-DIRECT-LANGUAGE-OWNER-APPROVED.xlsx",
-        "packages/astro-knowledge/voice/tldr-astro/marie-satori-writer/ll-matrix-v13/knowledge-matrix-v13-owner-approved-locked.json"
-      ],
-      "approval": {
-        "approvalLevel": "exact_owner_approved",
-        "recordPath": "packages/astro-knowledge/voice/tldr-astro/marie-satori-writer/ll-matrix-v13/knowledge-matrix-v13-owner-approved-locked.json",
-        "payloadSha256": "a3860ff3dfd4efbe9a360de5a573e3084fc59f260d70a89a9f08e67edf48ee8f",
-        "approvedAt": "2026-08-10"
-      },
-      "source_release": "ll-matrix-v13-owner-approved-runtime",
-      "runtime_family": "natal-moon-phase-lived",
-      "runtime_key": "balsamic-moon",
-      "source_sheet": "NodesPhasesFortune",
-      "source_workbook_row": 9,
-      "source_workbook_sha256": "937549e74eb8e68f8c7e884db6789aeaa79368e53dba5b6ef1c4be697dddb41c",
-      "governance": "owner-retired-unwired-2026-08-23",
-      "owner_approved": false,
-      "precedence": "Owner retired this unwired natal Moon-phase row on 2026-08-23; retain wording only as historical source material.",
-      "distribution_lane": "reference",
-      "retirement": {
-        "retiredAt": "2026-08-23",
-        "reason": "No live natal Moon-phase resolver requests this key.",
-        "disposition": "historical-source-material"
-      }
-    },
-    {
       "contentKey": "fallback-hook/placement-house-lived/part-of-fortune/4",
       "content_role": "full_copy",
       "grammar_frame": "complete_sentence",
@@ -25270,7 +25176,7 @@
   "dailyGlanceVariants": {
     "schema": "tldrastro-daily-glance-variants-v1",
     "version": "1.0.0",
-    "note": "Primary pairs mirror the shipped owner-approved rows. Imported alternatives are review_needed and cannot serve until the owner approves both their text and an explicit headline/body pairing.",
+    "note": "Generated approved-only serving projection. Pending text and pairings are intentionally absent.",
     "keys": {
       "conjunction/chiron": {
         "pairing_policy": "explicit_pairs_only",
@@ -25750,15 +25656,6 @@
             "provenance": {
               "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
               "content_key": "fallback-hook/daily-headline/conjunction/venus"
-            }
-          },
-          {
-            "id": "headline-affection-shows-up-in-small-practical-ways",
-            "text": "Affection shows up in small, practical ways.",
-            "review_status": "review_needed",
-            "provenance": {
-              "source_path": "packages/astro-knowledge/review/daily-glance-batch-4-writing-briefs-2026-08-05.md",
-              "locator": "PL TITLE governed mirror; original phrase-library file absent from main"
             }
           }
         ],
@@ -26372,15 +26269,6 @@
               "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
               "content_key": "fallback-hook/daily-headline/opposition/mercury"
             }
-          },
-          {
-            "id": "headline-youre-reading-too-much-into-a-short-message",
-            "text": "You're reading too much into a short message.",
-            "review_status": "review_needed",
-            "provenance": {
-              "source_path": "packages/astro-knowledge/review/daily-glance-batch-4-writing-briefs-2026-08-05.md",
-              "locator": "PL TITLE governed mirror; original phrase-library file absent from main"
-            }
           }
         ],
         "bodies": [
@@ -26417,42 +26305,6 @@
               "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
               "content_key": "fallback-hook/daily-headline/opposition/moon"
             }
-          },
-          {
-            "id": "headline-someone-elses-mood-is-rewriting-your-schedule",
-            "text": "Someone else's mood is rewriting your schedule.",
-            "review_status": "review_needed",
-            "provenance": {
-              "source_path": "packages/astro-knowledge/review/daily-glance-batch-4-owner-authored-2026-08-05.md",
-              "locator": "preserved owner-supplied alternative title hook"
-            }
-          },
-          {
-            "id": "headline-offer-support-not-your-last-reserve",
-            "text": "Offer support, not your last reserve.",
-            "review_status": "review_needed",
-            "provenance": {
-              "source_path": "packages/astro-knowledge/review/daily-glance-batch-4-owner-authored-2026-08-05.md",
-              "locator": "preserved owner-supplied alternative title hook"
-            }
-          },
-          {
-            "id": "headline-their-impatience-is-not-your-emergency",
-            "text": "Their impatience is not your emergency.",
-            "review_status": "review_needed",
-            "provenance": {
-              "source_path": "packages/astro-knowledge/review/daily-glance-batch-4-owner-authored-2026-08-05.md",
-              "locator": "preserved owner-supplied alternative title hook"
-            }
-          },
-          {
-            "id": "headline-you-dont-have-to-abandon-your-day-to-prove-you-care",
-            "text": "You don't have to abandon your day to prove you care.",
-            "review_status": "review_needed",
-            "provenance": {
-              "source_path": "packages/astro-knowledge/review/daily-glance-batch-4-owner-authored-2026-08-05.md",
-              "locator": "preserved owner-supplied alternative title hook"
-            }
           }
         ],
         "bodies": [
@@ -26488,15 +26340,6 @@
             "provenance": {
               "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
               "content_key": "fallback-hook/daily-headline/opposition/neptune"
-            }
-          },
-          {
-            "id": "headline-you-dont-have-to-figure-everyone-out-today",
-            "text": "You don't have to figure everyone out today.",
-            "review_status": "review_needed",
-            "provenance": {
-              "source_path": "packages/astro-knowledge/review/daily-glance-batch-4-writing-briefs-2026-08-05.md",
-              "locator": "PL TITLE governed mirror; original phrase-library file absent from main"
             }
           }
         ],
@@ -26606,51 +26449,6 @@
               "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
               "content_key": "fallback-hook/daily-headline/opposition/saturn"
             }
-          },
-          {
-            "id": "headline-what-youre-building-is-being-tested-not-torn-down",
-            "text": "What you're building is being tested, not torn down.",
-            "review_status": "review_needed",
-            "provenance": {
-              "source_path": "packages/astro-knowledge/review/daily-glance-batch-4-owner-authored-2026-08-05.md",
-              "locator": "preserved owner-supplied alternative title hook"
-            }
-          },
-          {
-            "id": "headline-their-mood-is-not-a-measure-of-your-effort",
-            "text": "Their mood is not a measure of your effort.",
-            "review_status": "review_needed",
-            "provenance": {
-              "source_path": "packages/astro-knowledge/review/daily-glance-batch-4-owner-authored-2026-08-05.md",
-              "locator": "preserved owner-supplied alternative title hook"
-            }
-          },
-          {
-            "id": "headline-stop-working-harder-for-a-response-they-never-promised-t",
-            "text": "Stop working harder for a response they never promised to give.",
-            "review_status": "review_needed",
-            "provenance": {
-              "source_path": "packages/astro-knowledge/review/daily-glance-batch-4-owner-authored-2026-08-05.md",
-              "locator": "preserved owner-supplied alternative title hook"
-            }
-          },
-          {
-            "id": "headline-are-you-meeting-shared-expectations-or-chasing-a-moving-",
-            "text": "Are you meeting shared expectations or chasing a moving standard?",
-            "review_status": "review_needed",
-            "provenance": {
-              "source_path": "packages/astro-knowledge/review/daily-glance-batch-4-owner-authored-2026-08-05.md",
-              "locator": "preserved owner-supplied alternative title hook"
-            }
-          },
-          {
-            "id": "headline-feeling-forgotten-doesnt-mean-youve-been-left",
-            "text": "Feeling forgotten doesn't mean you've been left.",
-            "review_status": "review_needed",
-            "provenance": {
-              "source_path": "packages/astro-knowledge/review/daily-glance-batch-4-writing-briefs-2026-08-05.md",
-              "locator": "PL TITLE governed mirror; original phrase-library file absent from main"
-            }
           }
         ],
         "bodies": [
@@ -26661,15 +26459,6 @@
             "provenance": {
               "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
               "content_key": "fallback-hook/daily-body/opposition/saturn"
-            }
-          },
-          {
-            "id": "body-someone-elses-emotional-distance-or-rigid-expectations-c",
-            "text": "Someone else's emotional distance or rigid expectations can make you feel as though every effort is being graded. You show up, follow through, and still wonder what you missed, working harder for a response they never promised to give. Look at the dynamic honestly: are you meeting shared expectations, or is one person moving the standard every time you get close?",
-            "review_status": "review_needed",
-            "provenance": {
-              "source_path": "packages/astro-knowledge/review/daily-glance-batch-4-owner-authored-2026-08-05.md",
-              "locator": "preserved non-canonical body"
             }
           }
         ],
@@ -26768,15 +26557,6 @@
               "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
               "content_key": "fallback-hook/daily-headline/opposition/uranus"
             }
-          },
-          {
-            "id": "headline-the-surprise-is-doing-you-a-favor",
-            "text": "The surprise is doing you a favor.",
-            "review_status": "review_needed",
-            "provenance": {
-              "source_path": "packages/astro-knowledge/review/daily-glance-batch-4-writing-briefs-2026-08-05.md",
-              "locator": "PL TITLE governed mirror; original phrase-library file absent from main"
-            }
           }
         ],
         "bodies": [
@@ -26812,15 +26592,6 @@
             "provenance": {
               "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
               "content_key": "fallback-hook/daily-headline/opposition/venus"
-            }
-          },
-          {
-            "id": "headline-you-want-comfort-more-than-company",
-            "text": "You want comfort more than company.",
-            "review_status": "review_needed",
-            "provenance": {
-              "source_path": "packages/astro-knowledge/review/daily-glance-batch-4-writing-briefs-2026-08-05.md",
-              "locator": "PL TITLE governed mirror; original phrase-library file absent from main"
             }
           }
         ],
@@ -26893,33 +26664,6 @@
             "provenance": {
               "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
               "content_key": "fallback-hook/daily-headline/soft/jupiter"
-            }
-          },
-          {
-            "id": "headline-things-are-leaning-your-way",
-            "text": "Things are leaning your way.",
-            "review_status": "review_needed",
-            "provenance": {
-              "source_path": "packages/astro-knowledge/review/daily-glance-batch-4-writing-briefs-2026-08-05.md",
-              "locator": "PL TITLE governed mirror; original phrase-library file absent from main"
-            }
-          },
-          {
-            "id": "headline-its-a-good-time-to-ask-for-what-you-want",
-            "text": "It's a good time to ask for what you want.",
-            "review_status": "review_needed",
-            "provenance": {
-              "source_path": "packages/astro-knowledge/review/daily-glance-batch-4-writing-briefs-2026-08-05.md",
-              "locator": "PL TITLE governed mirror; original phrase-library file absent from main"
-            }
-          },
-          {
-            "id": "headline-room-to-grow-just-opened-up",
-            "text": "Room to grow just opened up.",
-            "review_status": "review_needed",
-            "provenance": {
-              "source_path": "packages/astro-knowledge/review/daily-glance-batch-4-writing-briefs-2026-08-05.md",
-              "locator": "PL TITLE governed mirror; original phrase-library file absent from main"
             }
           }
         ],
@@ -27065,24 +26809,6 @@
               "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
               "content_key": "fallback-hook/daily-headline/soft/moon"
             }
-          },
-          {
-            "id": "headline-drop-the-guard-and-trust-in-the-flow",
-            "text": "Drop the guard and trust in the flow",
-            "review_status": "review_needed",
-            "provenance": {
-              "source_path": "packages/astro-knowledge/review/daily-glance-batch-4-owner-authored-2026-08-05.md",
-              "locator": "preserved owner-supplied alternative title hook"
-            }
-          },
-          {
-            "id": "headline-old-feelings-are-visiting-not-moving-back-in",
-            "text": "Old feelings are visiting, not moving back in.",
-            "review_status": "review_needed",
-            "provenance": {
-              "source_path": "packages/astro-knowledge/review/daily-glance-batch-4-writing-briefs-2026-08-05.md",
-              "locator": "PL TITLE governed mirror; original phrase-library file absent from main"
-            }
           }
         ],
         "bodies": [
@@ -27227,15 +26953,6 @@
               "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
               "content_key": "fallback-hook/daily-headline/soft/saturn"
             }
-          },
-          {
-            "id": "headline-a-quiet-day-still-counts-as-progress",
-            "text": "A quiet day still counts as progress.",
-            "review_status": "review_needed",
-            "provenance": {
-              "source_path": "packages/astro-knowledge/review/daily-glance-batch-4-writing-briefs-2026-08-05.md",
-              "locator": "PL TITLE governed mirror; original phrase-library file absent from main"
-            }
           }
         ],
         "bodies": [
@@ -27379,15 +27096,6 @@
             "provenance": {
               "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
               "content_key": "fallback-hook/daily-headline/soft/venus"
-            }
-          },
-          {
-            "id": "headline-let-someone-make-things-easy-for-you",
-            "text": "Let someone make things easy for you.",
-            "review_status": "review_needed",
-            "provenance": {
-              "source_path": "packages/astro-knowledge/review/daily-glance-batch-4-writing-briefs-2026-08-05.md",
-              "locator": "PL TITLE governed mirror; original phrase-library file absent from main"
             }
           }
         ],
@@ -27580,15 +27288,6 @@
               "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
               "content_key": "fallback-hook/daily-body/square/mercury"
             }
-          },
-          {
-            "id": "body-your-thoughts-are-moving-faster-than-your-judgment-creat",
-            "text": "Your thoughts are moving faster than your judgment, creating an urge to answer before you have the full story. A missing detail, delayed response, or misunderstood message can push you toward a conclusion that has not earned your certainty. Are you trying to win the argument, or be understood? Slow down before you reply. Don't make permanent choices with temporary information.",
-            "review_status": "review_needed",
-            "provenance": {
-              "source_path": "packages/astro-knowledge/review/daily-glance-batch-4-owner-authored-2026-08-05.md",
-              "locator": "preserved non-canonical body"
-            }
           }
         ],
         "pairings": [
@@ -27649,15 +27348,6 @@
             "provenance": {
               "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
               "content_key": "fallback-hook/daily-headline/square/neptune"
-            }
-          },
-          {
-            "id": "headline-the-plan-looks-blurry-because-its-still-forming-not-fail",
-            "text": "The plan looks blurry because it's still forming, not failing.",
-            "review_status": "review_needed",
-            "provenance": {
-              "source_path": "packages/astro-knowledge/review/daily-glance-batch-4-writing-briefs-2026-08-05.md",
-              "locator": "PL TITLE governed mirror; original phrase-library file absent from main"
             }
           }
         ],
@@ -27731,15 +27421,6 @@
               "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
               "content_key": "fallback-hook/daily-headline/square/pluto"
             }
-          },
-          {
-            "id": "headline-what-you-cant-control-is-not-yours-to-carry",
-            "text": "What you can't control is not yours to carry.",
-            "review_status": "review_needed",
-            "provenance": {
-              "source_path": "packages/astro-knowledge/review/daily-glance-batch-4-writing-briefs-2026-08-05.md",
-              "locator": "PL TITLE governed mirror; original phrase-library file absent from main"
-            }
           }
         ],
         "bodies": [
@@ -27776,51 +27457,6 @@
               "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
               "content_key": "fallback-hook/daily-headline/square/saturn"
             }
-          },
-          {
-            "id": "headline-today-feels-heavier-than-it-actually-is",
-            "text": "Today feels heavier than it actually is.",
-            "review_status": "review_needed",
-            "provenance": {
-              "source_path": "packages/astro-knowledge/review/daily-glance-batch-4-owner-authored-2026-08-05.md",
-              "locator": "preserved owner-supplied alternative title hook"
-            }
-          },
-          {
-            "id": "headline-stop-moving-the-finish-line",
-            "text": "Stop moving the finish line.",
-            "review_status": "review_needed",
-            "provenance": {
-              "source_path": "packages/astro-knowledge/review/daily-glance-batch-4-owner-authored-2026-08-05.md",
-              "locator": "preserved owner-supplied alternative title hook"
-            }
-          },
-          {
-            "id": "headline-rest-does-not-need-to-be-earned",
-            "text": "Rest does not need to be earned.",
-            "review_status": "review_needed",
-            "provenance": {
-              "source_path": "packages/astro-knowledge/review/daily-glance-batch-4-owner-authored-2026-08-05.md",
-              "locator": "preserved owner-supplied alternative title hook"
-            }
-          },
-          {
-            "id": "headline-perfection-is-a-moving-target",
-            "text": "Perfection is a moving target.",
-            "review_status": "review_needed",
-            "provenance": {
-              "source_path": "packages/astro-knowledge/review/daily-glance-batch-4-owner-authored-2026-08-05.md",
-              "locator": "preserved owner-supplied alternative title hook"
-            }
-          },
-          {
-            "id": "headline-this-heaviness-is-a-phase-with-an-end-date",
-            "text": "This heaviness is a phase with an end date.",
-            "review_status": "review_needed",
-            "provenance": {
-              "source_path": "packages/astro-knowledge/review/daily-glance-batch-4-writing-briefs-2026-08-05.md",
-              "locator": "PL TITLE governed mirror; original phrase-library file absent from main"
-            }
           }
         ],
         "bodies": [
@@ -27831,15 +27467,6 @@
             "provenance": {
               "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
               "content_key": "fallback-hook/daily-body/square/saturn"
-            }
-          },
-          {
-            "id": "body-a-slow-start-or-unfinished-task-can-make-the-whole-day-f",
-            "text": "A slow start or unfinished task can make the whole day feel like proof that you are falling behind. You may respond by working through exhaustion, treating every minor delay as proof that you don't have it together. The standard keeps moving because the goal is no longer to finish the work. It is to silence the part of you that thinks rest must be earned. Choose the one task that matters today and stop moving the finish line.",
-            "review_status": "review_needed",
-            "provenance": {
-              "source_path": "packages/astro-knowledge/review/daily-glance-batch-4-owner-authored-2026-08-05.md",
-              "locator": "preserved non-canonical body"
             }
           }
         ],
@@ -27912,15 +27539,6 @@
             "provenance": {
               "source_path": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
               "content_key": "fallback-hook/daily-body/square/sun"
-            }
-          },
-          {
-            "id": "body-what-would-happen-if-you-stopped-managing-everyones-perc",
-            "text": "What would happen if you stopped managing everyone's perception of you? A quiet conflict is running under your day between who you know yourself to be and the version you present so people will take you seriously, approve of you, or leave you alone. That version may have helped you avoid criticism, rejection, or conflict. But it is exhausting to keep presenting yourself as agreeable, capable, or unaffected when that is not how you actually feel.",
-            "review_status": "review_needed",
-            "provenance": {
-              "source_path": "packages/astro-knowledge/review/daily-glance-batch-4-owner-authored-2026-08-05.md",
-              "locator": "preserved non-canonical body"
             }
           }
         ],

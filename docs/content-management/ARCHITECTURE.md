@@ -211,6 +211,12 @@ reviewed
 `needs_review` is available to admin workflows but is filtered out of the
 reader bundle.
 
+The generated local package strengthens this boundary with an approved-serving
+projection. Pending and otherwise ineligible rows remain in authoring sources,
+but are absent from generated reader partitions. The runtime validates the
+projection manifest before constructing renderers and retains the review filter
+as defense in depth. See [GOVERNED-APPROVALS.md](./GOVERNED-APPROVALS.md).
+
 ## 6. Content-key design
 
 Keys encode the narrowest stable selection facts:

@@ -6,6 +6,7 @@ import {
   createPackageManifest,
   PACKAGE_VERSION
 } from "../apps/web/src/content/fallbackArchitectureV3/dist/tldr-content.js";
+import { isGovernedReaderEligible } from "../apps/web/src/content/fallbackArchitectureV3/resolver/readerEligibility.mjs";
 
 const repoRoot = path.resolve(path.dirname(new URL(import.meta.url).pathname), "..");
 const packageDir = path.join(repoRoot, "apps/web/src/content/fallbackArchitectureV3");
@@ -483,6 +484,7 @@ function editorialSourceBankRecords(bank) {
 
 function readPackageSources() {
   const sourceRows = readJson("source-rows/fallback-source-rows-v3.json");
+  const dailyGlanceVariants = readJson("source-rows/daily-glance-variants-v1.json");
   const editorialSourceBank = readJson("source-rows/editorial-source-bank-v1.json");
   const authoredRows = readJson("source-rows/transit-synastry-rows-v1.json");
   const bondLanguagePass2 = readJson("source-rows/bond-language-pass-2.json");
@@ -516,6 +518,7 @@ function readPackageSources() {
 
   return {
     sourceRows,
+    dailyGlanceVariants,
     editorialSourceBank,
     authoredRows,
     bondLanguagePass2,
@@ -550,10 +553,14 @@ function readerEligibleReviewStatus(row, allowBlank = false) {
       && distributionRelease.approved_keys?.includes(contentKey)
     );
 
-  return (
+  const editoriallyEligible = (
     ["approved", "approved_reuse", "reviewed"].includes(reviewStatus)
     || (allowBlank && !reviewStatus)
-  ) && distributionEligible;
+  );
+
+  return editoriallyEligible
+    && distributionEligible
+    && (allowBlank && !reviewStatus ? true : isGovernedReaderEligible(row));
 }
 
 function packageRowsWithLatestEligibleOverride(rows, allowBlank = false) {
@@ -581,6 +588,38 @@ function skyPlacementHouseTemplateReaderRows(rows) {
     ...(row.source_release ? { source_release: row.source_release } : {}),
     ...(row.copy_protection ? { copy_protection: row.copy_protection } : {})
   }));
+}
+
+function approvedDailyGlanceVariants(source) {
+  const keys = Object.fromEntries(Object.entries(source.keys ?? {}).map(([contentKey, set]) => {
+    const eligible = (kind, item) => isGovernedReaderEligible({
+      ...item,
+      contentKey: `daily-glance-variant/${contentKey}/${kind}/${item.id}`
+    });
+    const headlines = (set.headlines ?? []).filter((item) => eligible("headline", item));
+    const bodies = (set.bodies ?? []).filter((item) => eligible("body", item));
+    const headlineIds = new Set(headlines.map((item) => item.id));
+    const bodyIds = new Set(bodies.map((item) => item.id));
+    const pairings = (set.pairings ?? []).filter((item) => (
+      eligible("pairing", item)
+      && headlineIds.has(item.headline_id)
+      && bodyIds.has(item.body_id)
+    ));
+
+    return [contentKey, {
+      pairing_policy: set.pairing_policy,
+      headlines,
+      bodies,
+      pairings
+    }];
+  }));
+
+  return {
+    schema: source.schema,
+    version: source.version,
+    note: "Generated approved-only serving projection. Pending text and pairings are intentionally absent.",
+    keys
+  };
 }
 
 function readerPackageBundle(sources) {
@@ -625,7 +664,8 @@ function readerPackageBundle(sources) {
         ...sources.sourceRows.vocabularyRows,
         ...sources.placementInterimRows.vocabularyRows,
         ...sources.skyArticleRows.vocabularyRows
-      ])
+      ]),
+      dailyGlanceVariants: approvedDailyGlanceVariants(sources.dailyGlanceVariants)
     },
     templatesFile: {
       templates: packageRowsWithLatestEligibleOverride([

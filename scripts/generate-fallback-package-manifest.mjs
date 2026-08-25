@@ -3,6 +3,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import process from "node:process";
+import { isDeepStrictEqual } from "node:util";
 import { fileURLToPath } from "node:url";
 import {
   createPackageManifest,
@@ -24,8 +25,16 @@ const relationshipAuthoredOutputPath = path.join(packageRoot, "bundled-relations
 const skyAuthoredOutputPath = path.join(packageRoot, "bundled-sky-authored-cards-v3.json");
 const skyPlacementOutputPath = path.join(packageRoot, "bundled-sky-placement-rows-v3.json");
 const skyPlacementHouseOutputPath = path.join(packageRoot, "bundled-sky-placement-house-rows-v3.json");
+const initialReaderOutputPath = path.join(packageRoot, "bundled-initial-reader-rows-v3.json");
+const lunationBookReaderOutputPath = path.join(packageRoot, "bundled-lunation-book-cards-v3.json");
+const lunationEclipseSectionsReaderOutputPath = path.join(packageRoot, "bundled-lunation-eclipse-sections-v3.json");
+const lunationEclipseHouseLayersReaderOutputPath = path.join(packageRoot, "bundled-lunation-eclipse-house-layers-v3.json");
 const coreManifestOutputPath = path.join(packageRoot, "bundled-core-manifest-v3.json");
 const skyPlacementManifestOutputPath = path.join(packageRoot, "bundled-sky-placement-manifest-v3.json");
+const approvedServingProjectionOutputPath = path.join(
+  packageRoot,
+  "approved-serving-projection-v1.json"
+);
 const skyPlacementOwnerApprovedReaderOutputPath = path.join(
   packageRoot,
   "bundled-sky-placement-owner-approved-reader-v1.json"
@@ -178,7 +187,9 @@ function isReaderEligible(row, allowBlank = false) {
   return (
     ["approved", "approved_reuse", "reviewed"].includes(status)
     || (allowBlank && !status)
-  ) && isDistributionEligible(row);
+  )
+    && isDistributionEligible(row)
+    && (allowBlank && !status ? true : isGovernedReaderEligible(row));
 }
 
 function latestReaderEligible(rows, allowBlank = false) {
@@ -193,6 +204,38 @@ function latestReaderEligible(rows, allowBlank = false) {
   return [...candidates.values()]
     .map((keyed) => [...keyed].reverse().find((row) => isReaderEligible(row, allowBlank)))
     .filter(Boolean);
+}
+
+function approvedDailyGlanceVariants(source) {
+  const keys = Object.fromEntries(Object.entries(source.keys ?? {}).map(([contentKey, set]) => {
+    const eligible = (kind, item) => isGovernedReaderEligible({
+      ...item,
+      contentKey: `daily-glance-variant/${contentKey}/${kind}/${item.id}`
+    });
+    const headlines = (set.headlines ?? []).filter((item) => eligible("headline", item));
+    const bodies = (set.bodies ?? []).filter((item) => eligible("body", item));
+    const headlineIds = new Set(headlines.map((item) => item.id));
+    const bodyIds = new Set(bodies.map((item) => item.id));
+    const pairings = (set.pairings ?? []).filter((item) => (
+      eligible("pairing", item)
+      && headlineIds.has(item.headline_id)
+      && bodyIds.has(item.body_id)
+    ));
+
+    return [contentKey, {
+      pairing_policy: set.pairing_policy,
+      headlines,
+      bodies,
+      pairings
+    }];
+  }));
+
+  return {
+    schema: source.schema,
+    version: source.version,
+    note: "Generated approved-only serving projection. Pending text and pairings are intentionally absent.",
+    keys
+  };
 }
 
 function isSkyCoreHook(row) {
@@ -217,7 +260,9 @@ function isRelationshipAuthoredCard(row) {
 
 function fullReaderBundle() {
   const sourceRows = readJson("source-rows/fallback-source-rows-v3.json");
-  const dailyGlanceVariants = readJson("source-rows/daily-glance-variants-v1.json");
+  const dailyGlanceVariants = approvedDailyGlanceVariants(
+    readJson("source-rows/daily-glance-variants-v1.json")
+  );
   const transitRows = readJson("source-rows/transit-synastry-rows-v1.json");
   const bondLanguage = readJson("source-rows/bond-language-pass-2.json");
   const lunationRows = readJson("source-rows/lunation-blend-units-v1.json");
@@ -284,7 +329,9 @@ function fullReaderBundle() {
 
 const manifest = createPackageManifest(fullReaderBundle(), PACKAGE_VERSION);
 const sourceRows = readJson("source-rows/fallback-source-rows-v3.json");
-const dailyGlanceVariants = readJson("source-rows/daily-glance-variants-v1.json");
+const dailyGlanceVariants = approvedDailyGlanceVariants(
+  readJson("source-rows/daily-glance-variants-v1.json")
+);
 const transitRows = readJson("source-rows/transit-synastry-rows-v1.json");
 const pairDailyFrames = readJson("source-rows/pair-daily-frames-v1.json");
 const pairDailyClauses = readJson("source-rows/pair-daily-clauses-v1.json");
@@ -298,52 +345,140 @@ const sunLeoHouseCoreRows = readJson("source-rows/sun-leo-house-cores-v1.json").
 const venusLibraHouseCoreRows = readJson("source-rows/venus-libra-house-cores-v1.json").rows
   .map(({ notes: _notes, source_keys: _sourceKeys, approved_via: _approvedVia, ...row }) => row);
 const skySignCopyRows = readSkySignCopySources().flatMap((source) => source.rows ?? []);
+const lunationBlendRows = readJson("source-rows/lunation-blend-units-v1.json");
+const placementInterimRows = readJson("source-rows/placement-interim-fixes-v1.json");
+const skyArticleRows = readJson("source-rows/sky-article-v1.json");
+const timingEventReaderRows = readJson("source-rows/timing-event-reader-copy-v2.json");
+const weeklySourceRows = readJson("source-rows/station-cards-week-openers-v1.json");
+const fallbackTemplateRows = readJson("templates/fallback-templates-v3.json");
+const lunationBookRows = readJson("source-rows/lunation-book-cards-v1.json");
+const lunationEclipseSectionRows = readJson("source-rows/lunation-eclipse-sections-v1.json");
+const lunationEclipseHouseLayerRows = readJson("source-rows/lunation-eclipse-house-layers-v1.json");
+
+function assertAuthoringSourceIntegrity() {
+  const articles = skyArticleRows.authoredCards;
+  const articleKeys = new Set(articles.map((row) => row.contentKey));
+  const skyVocabulary = skyArticleRows.vocabularyRows;
+  const skyVocabularyKeys = new Set(skyVocabulary.map((row) => row.contentKey));
+  if (
+    articles.length !== articleKeys.size
+    || skyVocabulary.length !== 25
+    || skyVocabularyKeys.size !== 25
+    || skyVocabulary.some((row) => !row.contentKey.startsWith("fallback-vocab/sky-"))
+    || skyArticleRows.hookRows.length !== 14
+    || skyArticleRows.hookRows.some((row) => row.review_status !== "approved")
+    || skyVocabulary.some((row) => row.review_status !== "approved")
+  ) {
+    throw new Error("Sky article authoring source integrity failed.");
+  }
+  const literalSkyRowDate = /\b(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:t(?:ember)?)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?|\d{4})\b/u;
+  if (skyArticleRows.hookRows.some((row) => literalSkyRowDate.test(row.body_you))) {
+    throw new Error("Sky article authoring source contains a literal date in a reusable hook.");
+  }
+  const saturnArchive = articles.find((row) => row.contentKey === "sky-article/saturn/pisces/2023");
+  const saturnAries = articles.find((row) => row.contentKey === "sky-article/saturn/aries/2026");
+  if (
+    !saturnArchive
+    || saturnArchive.archive_only !== true
+    || saturnArchive.key_dates.length !== 9
+    || !saturnAries
+    || saturnAries.review_status !== "approved"
+    || saturnAries.article_variant !== "retrograde"
+    || saturnAries.key_dates_mode !== "engine"
+  ) {
+    throw new Error("Sky article Saturn calibration integrity failed.");
+  }
+
+  const phrasebookRows = skyAspectPhrasebookRows.hookRows;
+  const expectedFamilies = new Map([
+    ["fallback-hook/sky-aspect-pair/", 30],
+    ["fallback-hook/sky-aspect-exact/", 4],
+    ["fallback-hook/sky-placement-sign/", 36],
+    ["fallback-hook/sky-aspect-sign/", 78]
+  ]);
+  if (phrasebookRows.length !== 148 || phrasebookRows.some((row) => !["reviewed", "approved"].includes(row.review_status))) {
+    throw new Error("Sky aspect phrasebook authoring source integrity failed.");
+  }
+  for (const [prefix, expected] of expectedFamilies) {
+    if (phrasebookRows.filter((row) => row.contentKey.startsWith(prefix)).length !== expected) {
+      throw new Error(`Sky aspect phrasebook ${prefix} coverage mismatch.`);
+    }
+  }
+
+  const timingCards = timingEventReaderRows.authoredCards;
+  if (
+    timingEventReaderRows.version !== "timing-event-reader-copy-v2"
+    || timingCards.length !== 4
+    || new Set(timingCards.map((card) => card.contentKey)).size !== 4
+    || timingCards.some((card) => card.review_status !== "approved")
+    || timingCards.some((card) => card.content_role !== "full_copy")
+    || timingCards.some((card) => !card.owner_authored)
+    || timingCards.some((card) => !card.headline.trim() || !card.body.includes("\n\n"))
+    || timingCards.some((card) => !card.source_keys.includes("owner/timing-event-reader-copy-v2-approved"))
+  ) {
+    throw new Error("Timing-event reader copy authoring source integrity failed.");
+  }
+
+  const stagedRulers = lunationBlendRows.hookRows.filter((row) => row.contentKey.startsWith("fallback-hook/lunation-ruler-house/"));
+  if (
+    stagedRulers.length !== 12
+    || stagedRulers.filter((row) => row.review_status === "needs_review").length !== 11
+    || stagedRulers.filter((row) => row.review_status === "approved").map((row) => row.contentKey).join("") !== "fallback-hook/lunation-ruler-house/11"
+  ) {
+    throw new Error("Lunation ruler authoring staging integrity failed.");
+  }
+}
+
+assertAuthoringSourceIntegrity();
 const skyCoreRows = {
-  hookRows: sourceRows.hookRows.filter((row) => isSkyCoreHook(row) && !isSkyPlacementDeferredHook(row)),
+  hookRows: latestReaderEligible(
+    sourceRows.hookRows.filter((row) => isSkyCoreHook(row) && !isSkyPlacementDeferredHook(row))
+  ),
   // Several reader modules construct shared vocabulary constants at module
   // evaluation time. Keep this relatively small bank eager until those
   // constants become route-local.
-  vocabularyRows: sourceRows.vocabularyRows
+  vocabularyRows: latestReaderEligible(sourceRows.vocabularyRows)
 };
 const deferredCoreRows = {
-  hookRows: [
+  hookRows: latestReaderEligible([
     ...sourceRows.hookRows.filter((row) => (
       !isSkyCoreHook(row)
       && !isEmptyHouseHook(row)
       && !isSharedPlacementHook(row)
       && !isRelationshipHook(row)
     ))
-  ],
+  ]),
   vocabularyRows: [],
   dailyGlanceVariants
 };
 const sharedPlacementRows = {
-  hookRows: sourceRows.hookRows.filter(isSharedPlacementHook),
+  hookRows: latestReaderEligible(sourceRows.hookRows.filter(isSharedPlacementHook)),
   vocabularyRows: []
 };
 const relationshipHookRows = {
-  hookRows: [
+  hookRows: latestReaderEligible([
     ...sourceRows.hookRows.filter(isRelationshipHook),
     ...pairDailyFrames.rows,
     ...pairDailyClauses.rows
-  ],
+  ]),
   vocabularyRows: []
 };
 const emptyHouseRows = {
-  hookRows: sourceRows.hookRows.filter(isEmptyHouseHook),
+  hookRows: latestReaderEligible(sourceRows.hookRows.filter(isEmptyHouseHook)),
   vocabularyRows: []
 };
 const transitCoreAuthoredCards = {
-  // Keep the source order and historical candidates intact. The runtime's
-  // readerEligibleBundle applies the same latest-eligible precedence after
-  // all partitions are recomposed.
-  authoredCards: transitRows.authoredCards.filter((row) => !isRelationshipAuthoredCard(row))
+  authoredCards: latestReaderEligible(
+    transitRows.authoredCards.filter((row) => !isRelationshipAuthoredCard(row))
+  )
 };
 const relationshipAuthoredCards = {
-  authoredCards: transitRows.authoredCards.filter(isRelationshipAuthoredCard)
+  authoredCards: latestReaderEligible(transitRows.authoredCards.filter(isRelationshipAuthoredCard))
 };
 const skyAuthoredCards = {
-  authoredCards: transitRows.authoredCards.filter((row) => row.contentKey.startsWith("authored/sky-"))
+  authoredCards: latestReaderEligible(
+    transitRows.authoredCards.filter((row) => row.contentKey.startsWith("authored/sky-"))
+  )
 };
 const skyPlacementBaseRows = {
   hookRows: latestReaderEligible([
@@ -373,6 +508,104 @@ const skyPlacementRows = {
   ]),
   vocabularyRows: []
 };
+function approvedSupplement(baseRows, additionalRows) {
+  const baseByKey = new Map(baseRows.map((row) => [row.contentKey, row]));
+  return latestReaderEligible([...baseRows, ...additionalRows]).filter((row) => {
+    const base = baseByKey.get(row.contentKey);
+    return !base || !isDeepStrictEqual(base, row);
+  });
+}
+const initialReaderRows = {
+  authoredCards: latestReaderEligible([
+    ...lunationBlendRows.authoredCards,
+    ...skyArticleRows.authoredCards,
+    ...weeklySourceRows,
+    ...timingEventReaderRows.authoredCards
+  ]),
+  hookRows: approvedSupplement(skyCoreRows.hookRows, [
+    ...lunationBlendRows.hookRows,
+    ...skyArticleRows.hookRows,
+    ...skyAspectPhrasebookRows.hookRows.filter(
+      (row) => !row.contentKey.startsWith("fallback-hook/sky-placement-sign/")
+    )
+  ]),
+  vocabularyRows: approvedSupplement(skyCoreRows.vocabularyRows, [
+    ...placementInterimRows.vocabularyRows,
+    ...skyArticleRows.vocabularyRows
+  ]),
+  templates: latestReaderEligible([
+    ...fallbackTemplateRows.templates,
+    ...placementInterimRows.templates
+  ], true)
+};
+const lunationBookReaderRows = {
+  schema: "tldrastro-approved-lunation-book-reader/v1",
+  packageVersion: PACKAGE_VERSION,
+  sources: {
+    book: { schema: lunationBookRows.schema, count: lunationBookRows.count },
+    eclipseSections: { schema: lunationEclipseSectionRows.schema, count: lunationEclipseSectionRows.count },
+    eclipseHouseLayers: { schema: lunationEclipseHouseLayerRows.schema, count: lunationEclipseHouseLayerRows.count }
+  },
+  bookCards: latestReaderEligible(lunationBookRows.authoredCards),
+  eclipseSections: latestReaderEligible(lunationEclipseSectionRows.authoredCards),
+  eclipseHouseLayers: latestReaderEligible(lunationEclipseHouseLayerRows.authoredCards)
+};
+
+function assertApprovedOnlyRows(label, rows, { allowBlank = false } = {}) {
+  const ineligible = rows.filter((row) => !isReaderEligible(row, allowBlank));
+  if (ineligible.length > 0) {
+    throw new Error(
+      `${label} contains non-serving rows: ${ineligible.slice(0, 5).map((row) => row.contentKey).join(", ")}`
+    );
+  }
+}
+
+function assertApprovedOnlyVariants(source) {
+  for (const [contentKey, set] of Object.entries(source.keys ?? {})) {
+    const headlineIds = new Set(set.headlines.map((item) => item.id));
+    const bodyIds = new Set(set.bodies.map((item) => item.id));
+    const all = [
+      ...set.headlines.map((item) => ["headline", item]),
+      ...set.bodies.map((item) => ["body", item]),
+      ...set.pairings.map((item) => ["pairing", item])
+    ];
+    for (const [kind, item] of all) {
+      if (!isGovernedReaderEligible({
+        ...item,
+        contentKey: `daily-glance-variant/${contentKey}/${kind}/${item.id}`
+      })) {
+        throw new Error(`Approved serving projection contains an ineligible daily variant: ${contentKey}/${kind}/${item.id}`);
+      }
+    }
+    for (const pairing of set.pairings) {
+      if (!headlineIds.has(pairing.headline_id) || !bodyIds.has(pairing.body_id)) {
+        throw new Error(`Approved serving projection contains an unresolved daily pairing: ${contentKey}/${pairing.id}`);
+      }
+    }
+  }
+}
+
+assertApprovedOnlyRows("sky core hooks", skyCoreRows.hookRows);
+assertApprovedOnlyRows("sky core vocabulary", skyCoreRows.vocabularyRows);
+assertApprovedOnlyRows("deferred core hooks", deferredCoreRows.hookRows);
+assertApprovedOnlyRows("shared placement hooks", sharedPlacementRows.hookRows);
+assertApprovedOnlyRows("relationship hooks", relationshipHookRows.hookRows);
+assertApprovedOnlyRows("empty-house hooks", emptyHouseRows.hookRows);
+assertApprovedOnlyRows("transit authored cards", transitCoreAuthoredCards.authoredCards);
+assertApprovedOnlyRows("relationship authored cards", relationshipAuthoredCards.authoredCards);
+assertApprovedOnlyRows("sky authored cards", skyAuthoredCards.authoredCards);
+assertApprovedOnlyRows("sky-placement hooks", skyPlacementRows.hookRows);
+assertApprovedOnlyRows("initial reader authored cards", initialReaderRows.authoredCards);
+assertApprovedOnlyRows("initial reader hooks", initialReaderRows.hookRows);
+assertApprovedOnlyRows("initial reader vocabulary", initialReaderRows.vocabularyRows);
+assertApprovedOnlyRows("initial reader templates", initialReaderRows.templates, { allowBlank: true });
+assertApprovedOnlyRows("lunation book reader cards", [
+  ...lunationBookReaderRows.bookCards,
+  ...lunationBookReaderRows.eclipseSections,
+  ...lunationBookReaderRows.eclipseHouseLayers
+]);
+assertApprovedOnlyVariants(dailyGlanceVariants);
+
 const skyPlacementKeySet = new Set(skyPlacementRows.hookRows.map((row) => row.contentKey));
 const completeReaderBundle = fullReaderBundle();
 const coreReaderBundle = {
@@ -422,10 +655,113 @@ const serializedRelationshipAuthored = `${JSON.stringify(relationshipAuthoredCar
 const serializedSkyAuthored = `${JSON.stringify(skyAuthoredCards, null, 2)}\n`;
 const serializedSkyPlacement = `${JSON.stringify(skyPlacementBaseRows, null, 2)}\n`;
 const serializedSkyPlacementHouses = `${JSON.stringify(skyPlacementHouseRows, null, 2)}\n`;
+const serializedInitialReader = `${JSON.stringify(initialReaderRows, null, 2)}\n`;
+const serializedLunationBookReader = `${JSON.stringify({
+  schema: "tldrastro-approved-lunation-book-cards/v1",
+  packageVersion: PACKAGE_VERSION,
+  source: lunationBookReaderRows.sources.book,
+  authoredCards: lunationBookReaderRows.bookCards
+}, null, 2)}\n`;
+const serializedLunationEclipseSectionsReader = `${JSON.stringify({
+  schema: "tldrastro-approved-lunation-eclipse-sections/v1",
+  packageVersion: PACKAGE_VERSION,
+  source: lunationBookReaderRows.sources.eclipseSections,
+  authoredCards: lunationBookReaderRows.eclipseSections
+}, null, 2)}\n`;
+const serializedLunationEclipseHouseLayersReader = `${JSON.stringify({
+  schema: "tldrastro-approved-lunation-eclipse-house-layers/v1",
+  packageVersion: PACKAGE_VERSION,
+  source: lunationBookReaderRows.sources.eclipseHouseLayers,
+  authoredCards: lunationBookReaderRows.eclipseHouseLayers
+}, null, 2)}\n`;
 const serializedCoreManifest = `${JSON.stringify(coreManifest, null, 2)}\n`;
 const serializedSkyPlacementManifest = `${JSON.stringify(skyPlacementManifest, null, 2)}\n`;
 const skyPlacementOwnerApprovedReader = skyPlacementOwnerApprovedReaderRows();
 const serializedSkyPlacementOwnerApprovedReader = `${JSON.stringify(skyPlacementOwnerApprovedReader, null, 2)}\n`;
+const approvedServingProjection = {
+  schema: "tldrastro-approved-serving-projection/v1",
+  packageVersion: PACKAGE_VERSION,
+  policy: {
+    eligibleReviewStatuses: ["approved", "approved_reuse", "reviewed"],
+    exactApprovalPrefixes: [
+      "authored/transit-",
+      "fallback-hook/daily-",
+      "fallback-hook/natal-aspect-lived/",
+      "fallback-hook/synastry-pair/",
+      "daily-glance-variant/"
+    ],
+    pendingRowsPresent: false,
+    runtimeFilter: "defense-in-depth"
+  },
+  manifest: {
+    contentHash: manifest.contentHash,
+    keyManifestHash: manifest.keyManifestHash,
+    keyCount: manifest.keyCount
+  },
+  partitions: {
+    skyCore: {
+      file: "bundled-sky-core-rows-v3.json",
+      hookRows: skyCoreRows.hookRows.length,
+      vocabularyRows: skyCoreRows.vocabularyRows.length
+    },
+    deferredCore: {
+      file: "bundled-deferred-core-rows-v3.json",
+      hookRows: deferredCoreRows.hookRows.length
+    },
+    sharedPlacement: {
+      file: "bundled-shared-placement-rows-v3.json",
+      hookRows: sharedPlacementRows.hookRows.length
+    },
+    relationshipHooks: {
+      file: "bundled-relationship-hook-rows-v3.json",
+      hookRows: relationshipHookRows.hookRows.length
+    },
+    emptyHouses: {
+      file: "bundled-empty-house-rows-v3.json",
+      hookRows: emptyHouseRows.hookRows.length
+    },
+    transitCards: {
+      file: "bundled-transit-core-authored-cards-v3.json",
+      authoredCards: transitCoreAuthoredCards.authoredCards.length
+    },
+    relationshipCards: {
+      file: "bundled-relationship-authored-cards-v3.json",
+      authoredCards: relationshipAuthoredCards.authoredCards.length
+    },
+    skyCards: {
+      file: "bundled-sky-authored-cards-v3.json",
+      authoredCards: skyAuthoredCards.authoredCards.length
+    },
+    skyPlacementBase: {
+      file: "bundled-sky-placement-rows-v3.json",
+      hookRows: skyPlacementBaseRows.hookRows.length
+    },
+    skyPlacementHouses: {
+      file: "bundled-sky-placement-house-rows-v3.json",
+      hookRows: skyPlacementHouseRows.hookRows.length
+    },
+    initialReader: {
+      file: "bundled-initial-reader-rows-v3.json",
+      authoredCards: initialReaderRows.authoredCards.length,
+      hookRows: initialReaderRows.hookRows.length,
+      vocabularyRows: initialReaderRows.vocabularyRows.length,
+      templates: initialReaderRows.templates.length
+    },
+    lunationBookReader: {
+      file: "bundled-lunation-book-cards-v3.json",
+      authoredCards: lunationBookReaderRows.bookCards.length
+    },
+    lunationEclipseSectionsReader: {
+      file: "bundled-lunation-eclipse-sections-v3.json",
+      authoredCards: lunationBookReaderRows.eclipseSections.length
+    },
+    lunationEclipseHouseLayersReader: {
+      file: "bundled-lunation-eclipse-house-layers-v3.json",
+      authoredCards: lunationBookReaderRows.eclipseHouseLayers.length
+    }
+  }
+};
+const serializedApprovedServingProjection = `${JSON.stringify(approvedServingProjection, null, 2)}\n`;
 
 if (checkOnly) {
   const existing = fs.existsSync(outputPath) ? fs.readFileSync(outputPath, "utf8") : "";
@@ -442,10 +778,21 @@ if (checkOnly) {
   const existingSkyPlacementHouses = fs.existsSync(skyPlacementHouseOutputPath)
     ? fs.readFileSync(skyPlacementHouseOutputPath, "utf8")
     : "";
+  const existingInitialReader = fs.existsSync(initialReaderOutputPath) ? fs.readFileSync(initialReaderOutputPath, "utf8") : "";
+  const existingLunationBookReader = fs.existsSync(lunationBookReaderOutputPath) ? fs.readFileSync(lunationBookReaderOutputPath, "utf8") : "";
+  const existingLunationEclipseSectionsReader = fs.existsSync(lunationEclipseSectionsReaderOutputPath)
+    ? fs.readFileSync(lunationEclipseSectionsReaderOutputPath, "utf8")
+    : "";
+  const existingLunationEclipseHouseLayersReader = fs.existsSync(lunationEclipseHouseLayersReaderOutputPath)
+    ? fs.readFileSync(lunationEclipseHouseLayersReaderOutputPath, "utf8")
+    : "";
   const existingCoreManifest = fs.existsSync(coreManifestOutputPath) ? fs.readFileSync(coreManifestOutputPath, "utf8") : "";
   const existingSkyPlacementManifest = fs.existsSync(skyPlacementManifestOutputPath) ? fs.readFileSync(skyPlacementManifestOutputPath, "utf8") : "";
   const existingSkyPlacementOwnerApprovedReader = fs.existsSync(skyPlacementOwnerApprovedReaderOutputPath)
     ? fs.readFileSync(skyPlacementOwnerApprovedReaderOutputPath, "utf8")
+    : "";
+  const existingApprovedServingProjection = fs.existsSync(approvedServingProjectionOutputPath)
+    ? fs.readFileSync(approvedServingProjectionOutputPath, "utf8")
     : "";
 
   if (
@@ -461,9 +808,14 @@ if (checkOnly) {
     || existingSkyAuthored !== serializedSkyAuthored
     || existingSkyPlacement !== serializedSkyPlacement
     || existingSkyPlacementHouses !== serializedSkyPlacementHouses
+    || existingInitialReader !== serializedInitialReader
+    || existingLunationBookReader !== serializedLunationBookReader
+    || existingLunationEclipseSectionsReader !== serializedLunationEclipseSectionsReader
+    || existingLunationEclipseHouseLayersReader !== serializedLunationEclipseHouseLayersReader
     || existingCoreManifest !== serializedCoreManifest
     || existingSkyPlacementManifest !== serializedSkyPlacementManifest
     || existingSkyPlacementOwnerApprovedReader !== serializedSkyPlacementOwnerApprovedReader
+    || existingApprovedServingProjection !== serializedApprovedServingProjection
   ) {
     console.error("Bundled fallback manifest is stale. Run npm run build:fallback-manifest.");
     process.exit(1);
@@ -483,9 +835,14 @@ if (checkOnly) {
   fs.writeFileSync(skyAuthoredOutputPath, serializedSkyAuthored);
   fs.writeFileSync(skyPlacementOutputPath, serializedSkyPlacement);
   fs.writeFileSync(skyPlacementHouseOutputPath, serializedSkyPlacementHouses);
+  fs.writeFileSync(initialReaderOutputPath, serializedInitialReader);
+  fs.writeFileSync(lunationBookReaderOutputPath, serializedLunationBookReader);
+  fs.writeFileSync(lunationEclipseSectionsReaderOutputPath, serializedLunationEclipseSectionsReader);
+  fs.writeFileSync(lunationEclipseHouseLayersReaderOutputPath, serializedLunationEclipseHouseLayersReader);
   fs.writeFileSync(coreManifestOutputPath, serializedCoreManifest);
   fs.writeFileSync(skyPlacementManifestOutputPath, serializedSkyPlacementManifest);
   fs.writeFileSync(skyPlacementOwnerApprovedReaderOutputPath, serializedSkyPlacementOwnerApprovedReader);
+  fs.writeFileSync(approvedServingProjectionOutputPath, serializedApprovedServingProjection);
   console.log(`Wrote ${path.relative(repoRoot, outputPath)} (${manifest.keyCount} keys).`);
   console.log(`Wrote ${path.relative(repoRoot, summaryOutputPath)}.`);
   console.log(`Wrote ${path.relative(repoRoot, skyCoreOutputPath)} (${skyCoreRows.hookRows.length} hooks, ${skyCoreRows.vocabularyRows.length} vocabulary rows).`);
@@ -498,7 +855,12 @@ if (checkOnly) {
   console.log(`Wrote ${path.relative(repoRoot, skyAuthoredOutputPath)} (${skyAuthoredCards.authoredCards.length} authored cards).`);
   console.log(`Wrote ${path.relative(repoRoot, skyPlacementOutputPath)} (${skyPlacementBaseRows.hookRows.length} hooks).`);
   console.log(`Wrote ${path.relative(repoRoot, skyPlacementHouseOutputPath)} (${skyPlacementHouseRows.hookRows.length} hooks).`);
+  console.log(`Wrote ${path.relative(repoRoot, initialReaderOutputPath)} (${initialReaderRows.authoredCards.length} cards, ${initialReaderRows.hookRows.length} hooks).`);
+  console.log(`Wrote ${path.relative(repoRoot, lunationBookReaderOutputPath)} (${lunationBookReaderRows.bookCards.length} cards).`);
+  console.log(`Wrote ${path.relative(repoRoot, lunationEclipseSectionsReaderOutputPath)} (${lunationBookReaderRows.eclipseSections.length} cards).`);
+  console.log(`Wrote ${path.relative(repoRoot, lunationEclipseHouseLayersReaderOutputPath)} (${lunationBookReaderRows.eclipseHouseLayers.length} cards).`);
   console.log(`Wrote ${path.relative(repoRoot, coreManifestOutputPath)} (${coreManifest.keyCount} keys).`);
   console.log(`Wrote ${path.relative(repoRoot, skyPlacementManifestOutputPath)} (${skyPlacementManifest.keyCount} keys).`);
   console.log(`Wrote ${path.relative(repoRoot, skyPlacementOwnerApprovedReaderOutputPath)} (${skyPlacementOwnerApprovedReader.rows.length} metadata-free reader rows).`);
+  console.log(`Wrote ${path.relative(repoRoot, approvedServingProjectionOutputPath)} (approved-only partition contract).`);
 }

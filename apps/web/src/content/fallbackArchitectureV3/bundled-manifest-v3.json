@@ -1,8 +1,8 @@
 {
   "packageVersion": "v3-2026-08-24d",
-  "contentHash": "8bf89f38b556834c38291f3ae9d27c88",
-  "keyManifestHash": "727cde026a95c27edb22867c24f70fb2",
-  "keyCount": 9156,
+  "contentHash": "7987c7131e8fee0fd658d0cd59df47c3",
+  "keyManifestHash": "99eb8426034838fad0ec2fc09ba59476",
+  "keyCount": 9155,
   "keys": [
     "authored:approved/calendar-weekly-overview/2026-08-03",
     "authored:authored/calendar-weekly-moon/aquarius",
@@ -6297,7 +6297,6 @@
     "hook:fallback-hook/sky-sign-copy/sun/sagittarius",
     "hook:fallback-hook/sky-sign-copy/sun/scorpio",
     "hook:fallback-hook/sky-sign-copy/sun/taurus",
-    "hook:fallback-hook/sky-sign-copy/sun/virgo",
     "hook:fallback-hook/sky-sign-copy/uranus/gemini",
     "hook:fallback-hook/sky-sign-copy/venus/aquarius",
     "hook:fallback-hook/sky-sign-copy/venus/aries",
