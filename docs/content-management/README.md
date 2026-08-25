@@ -18,6 +18,8 @@ The short version:
   rules for complete fields, author-final copy, and refusal behavior.
 - [Content architecture](./ARCHITECTURE.md): ownership, runtime flow, surface
   wiring, dashboard hydration, and worked examples.
+- [Governed approvals](./GOVERNED-APPROVALS.md): atomic owner decisions,
+  unresolved queues, and the generated approved-only serving projection.
 - [Sky aspect surface contract](./SKY-ASPECT-SURFACE-CONTRACT.md): required
   fallback precedence, card behavior, and regression checks for the Sky aspect
   list.

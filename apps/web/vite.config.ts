@@ -240,12 +240,16 @@ export default defineConfig(({ mode }) => {
             if (id.includes("fallbackArchitectureV3/bundled-sky-placement-house-rows-v3.json")) {
               return "fallback-content-sky-horoscopes";
             }
-            if (id.includes("fallbackArchitectureV3/source-rows/lunation-book-cards-v1.json")) {
+            if (
+              id.includes("fallbackArchitectureV3/source-rows/lunation-book-cards-v1.json")
+              || id.includes("fallbackArchitectureV3/bundled-lunation-book-cards-v3.json")
+            ) {
               return "fallback-content-lunation-book";
             }
             if (
               id.includes("fallbackArchitectureV3/bundled-sky-core-rows-v3.json")
               || id.includes("fallbackArchitectureV3/bundled-sky-authored-cards-v3.json")
+              || id.includes("fallbackArchitectureV3/bundled-initial-reader-rows-v3.json")
             ) {
               return "fallback-content-sky-core";
             }
@@ -253,6 +257,7 @@ export default defineConfig(({ mode }) => {
               id.includes("fallbackArchitectureV3/source-rows/sky-")
               || id.includes("fallbackArchitectureV3/source-rows/lunation-")
               || id.includes("fallbackArchitectureV3/source-rows/station-cards-")
+              || id.includes("fallbackArchitectureV3/bundled-lunation-eclipse-")
             ) {
               return "fallback-content-sky";
             }
