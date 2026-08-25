@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tldrastro.local/schemas/content-promotion-receipt-v1.schema.json",
+  "title": "TLDR Astro governed content promotion receipt",
+  "type": "object",
+  "additionalProperties": true,
+  "required": ["schema", "mode", "planSha256", "applicationSha256", "sourcePath", "sourceBeforeSha256", "sourceAfterSha256", "changes"],
+  "properties": {
+    "schema": { "enum": ["tldrastro-content-promotion-plan/v1", "tldrastro-content-promotion-receipt/v1"] },
+    "mode": { "enum": ["dry-run", "applied"] },
+    "planSha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "applicationSha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "sourcePath": { "type": "string", "minLength": 1 },
+    "sourceBeforeSha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "sourceAfterSha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "changes": { "type": "array", "minItems": 1 },
+    "unrelatedApprovedRowsChanged": { "type": "array", "maxItems": 0 }
+  }
+}

@@ -10,6 +10,7 @@ import {
   PACKAGE_VERSION
 } from "../apps/web/src/content/fallbackArchitectureV3/dist/tldr-content.js";
 import { isGovernedReaderEligible } from "../apps/web/src/content/fallbackArchitectureV3/resolver/readerEligibility.mjs";
+import { canonicalSha256 } from "./lib/content-approval-governance.mjs";
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const packageRoot = path.join(repoRoot, "apps/web/src/content/fallbackArchitectureV3");
@@ -35,6 +36,10 @@ const approvedServingProjectionOutputPath = path.join(
   packageRoot,
   "approved-serving-projection-v1.json"
 );
+const approvedServingLineageOutputPath = path.join(
+  packageRoot,
+  "approved-serving-lineage-v1.json"
+);
 const skyPlacementOwnerApprovedReaderOutputPath = path.join(
   packageRoot,
   "bundled-sky-placement-owner-approved-reader-v1.json"
@@ -43,6 +48,65 @@ const checkOnly = process.argv.includes("--check");
 
 function readJson(relativePath) {
   return JSON.parse(fs.readFileSync(path.join(packageRoot, relativePath), "utf8"));
+}
+
+function pointerToken(value) {
+  return String(value).replaceAll("~", "~0").replaceAll("/", "~1");
+}
+
+function buildAuthoringSourceIndex() {
+  const index = new Map();
+  const files = [
+    ...fs.readdirSync(path.join(packageRoot, "source-rows"))
+      .filter((name) => name.endsWith(".json"))
+      .map((name) => `source-rows/${name}`),
+    "templates/fallback-templates-v3.json"
+  ].sort();
+  function add(contentKey, row, sourcePath, objectPath) {
+    if (!contentKey) return;
+    const matches = index.get(contentKey) ?? [];
+    matches.push({
+      sourcePath,
+      objectPath: objectPath || "/",
+      sourceRowSha256: canonicalSha256(row),
+      ...(row.review_status ? { reviewStatus: row.review_status } : {}),
+      ...(row.approval ? { approval: {
+        approvalLevel: row.approval.approvalLevel ?? null,
+        recordPath: row.approval.recordPath ?? null,
+        payloadSha256: row.approval.payloadSha256 ?? null,
+        approvedAt: row.approval.approvedAt ?? null
+      } } : {}),
+      ...(row.source_keys?.length ? { sourceKeys: row.source_keys } : {})
+    });
+    index.set(contentKey, matches);
+  }
+  function visit(value, sourcePath, pointer = "") {
+    if (Array.isArray(value)) {
+      value.forEach((item, indexValue) => visit(item, sourcePath, `${pointer}/${indexValue}`));
+      return;
+    }
+    if (!value || typeof value !== "object") return;
+    if (typeof value.contentKey === "string") add(value.contentKey, value, sourcePath, pointer);
+    for (const [key, child] of Object.entries(value)) visit(child, sourcePath, `${pointer}/${pointerToken(key)}`);
+  }
+  for (const relative of files) {
+    visit(readJson(relative), `apps/web/src/content/fallbackArchitectureV3/${relative}`);
+  }
+  const variantRelative = "source-rows/daily-glance-variants-v1.json";
+  const variants = readJson(variantRelative);
+  for (const [contentKey, set] of Object.entries(variants.keys ?? {})) {
+    for (const [kind, collectionName] of [["headline", "headlines"], ["body", "bodies"], ["pairing", "pairings"]]) {
+      for (const [indexValue, item] of (set[collectionName] ?? []).entries()) {
+        add(
+          `daily-glance-variant/${contentKey}/${kind}/${item.id}`,
+          item,
+          `apps/web/src/content/fallbackArchitectureV3/${variantRelative}`,
+          `/keys/${pointerToken(contentKey)}/${collectionName}/${indexValue}`
+        );
+      }
+    }
+  }
+  return index;
 }
 
 function readSkySignCopySources() {
@@ -678,6 +742,86 @@ const serializedCoreManifest = `${JSON.stringify(coreManifest, null, 2)}\n`;
 const serializedSkyPlacementManifest = `${JSON.stringify(skyPlacementManifest, null, 2)}\n`;
 const skyPlacementOwnerApprovedReader = skyPlacementOwnerApprovedReaderRows();
 const serializedSkyPlacementOwnerApprovedReader = `${JSON.stringify(skyPlacementOwnerApprovedReader, null, 2)}\n`;
+const authoringSourceIndex = buildAuthoringSourceIndex();
+function lineageEntry(partition, collection, row, contentKey = row.contentKey) {
+  const rowSha256 = canonicalSha256(row);
+  return {
+    contentKey,
+    rowSha256,
+    emissions: [{ partition, collection }],
+    ...(row.review_status ? { reviewStatus: row.review_status } : {}),
+    ...(row.approval ? { approval: {
+      approvalLevel: row.approval.approvalLevel ?? null,
+      recordPath: row.approval.recordPath ?? null,
+      payloadSha256: row.approval.payloadSha256 ?? null,
+      approvedAt: row.approval.approvedAt ?? null
+    } } : {}),
+    ...(row.source_keys?.length ? { declaredSourceKeys: row.source_keys } : {}),
+    authoringSources: (authoringSourceIndex.get(contentKey) ?? []).map((source) => {
+      const { approval, sourceKeys, ...identity } = source;
+      return {
+        ...identity,
+        ...(!row.approval && approval ? { approval } : {}),
+        ...(!row.source_keys?.length && sourceKeys?.length ? { sourceKeys } : {}),
+        exactValueMatch: source.sourceRowSha256 === rowSha256
+      };
+    })
+  };
+}
+function partitionLineage(partition, document) {
+  const entries = [];
+  for (const collection of ["hookRows", "vocabularyRows", "authoredCards", "templates", "bookCards", "eclipseSections", "eclipseHouseLayers"]) {
+    for (const row of document[collection] ?? []) entries.push(lineageEntry(partition, collection, row));
+  }
+  for (const [contentKey, set] of Object.entries(document.dailyGlanceVariants?.keys ?? {})) {
+    for (const [kind, collectionName] of [["headline", "headlines"], ["body", "bodies"], ["pairing", "pairings"]]) {
+      for (const item of set[collectionName] ?? []) {
+        entries.push(lineageEntry(
+          partition,
+          `dailyGlanceVariants.${collectionName}`,
+          item,
+          `daily-glance-variant/${contentKey}/${kind}/${item.id}`
+        ));
+      }
+    }
+  }
+  return entries;
+}
+const approvedServingLineageEntries = [
+  ...partitionLineage("skyCore", skyCoreRows),
+  ...partitionLineage("deferredCore", deferredCoreRows),
+  ...partitionLineage("sharedPlacement", sharedPlacementRows),
+  ...partitionLineage("relationshipHooks", relationshipHookRows),
+  ...partitionLineage("emptyHouses", emptyHouseRows),
+  ...partitionLineage("transitCards", transitCoreAuthoredCards),
+  ...partitionLineage("relationshipCards", relationshipAuthoredCards),
+  ...partitionLineage("skyCards", skyAuthoredCards),
+  ...partitionLineage("skyPlacementBase", skyPlacementBaseRows),
+  ...partitionLineage("skyPlacementHouses", skyPlacementHouseRows),
+  ...partitionLineage("initialReader", initialReaderRows),
+  ...partitionLineage("lunationBookReader", { bookCards: lunationBookReaderRows.bookCards }),
+  ...partitionLineage("lunationEclipseSectionsReader", { eclipseSections: lunationBookReaderRows.eclipseSections }),
+  ...partitionLineage("lunationEclipseHouseLayersReader", { eclipseHouseLayers: lunationBookReaderRows.eclipseHouseLayers })
+];
+const compactApprovedServingLineageEntries = [...approvedServingLineageEntries.reduce((groups, entry) => {
+  const identity = `${entry.contentKey}|${entry.rowSha256}`;
+  const existing = groups.get(identity);
+  if (existing) existing.emissions.push(...entry.emissions);
+  else groups.set(identity, entry);
+  return groups;
+}, new Map()).values()];
+const approvedServingLineage = {
+  schema: "tldrastro-approved-serving-lineage/v1",
+  packageVersion: PACKAGE_VERSION,
+  note: "Generated row-level lineage for the approved serving projection. This governance metadata is not imported by reader runtime code.",
+  count: compactApprovedServingLineageEntries.length,
+  emissionCount: approvedServingLineageEntries.length,
+  exactSourceMatchCount: compactApprovedServingLineageEntries.filter((entry) => entry.authoringSources.some((source) => source.exactValueMatch)).length,
+  entries: compactApprovedServingLineageEntries
+};
+// Keep the governance index compact: it is machine-read metadata with nearly
+// ten thousand row records and is intentionally not a hand-edited source file.
+const serializedApprovedServingLineage = `${JSON.stringify(approvedServingLineage)}\n`;
 const approvedServingProjection = {
   schema: "tldrastro-approved-serving-projection/v1",
   packageVersion: PACKAGE_VERSION,
@@ -697,6 +841,13 @@ const approvedServingProjection = {
     contentHash: manifest.contentHash,
     keyManifestHash: manifest.keyManifestHash,
     keyCount: manifest.keyCount
+  },
+  lineage: {
+    file: "approved-serving-lineage-v1.json",
+    sha256: canonicalSha256(approvedServingLineage),
+    count: approvedServingLineage.count,
+    emissionCount: approvedServingLineage.emissionCount,
+    exactSourceMatchCount: approvedServingLineage.exactSourceMatchCount
   },
   partitions: {
     skyCore: {
@@ -794,6 +945,9 @@ if (checkOnly) {
   const existingApprovedServingProjection = fs.existsSync(approvedServingProjectionOutputPath)
     ? fs.readFileSync(approvedServingProjectionOutputPath, "utf8")
     : "";
+  const existingApprovedServingLineage = fs.existsSync(approvedServingLineageOutputPath)
+    ? fs.readFileSync(approvedServingLineageOutputPath, "utf8")
+    : "";
 
   if (
     existing !== serialized
@@ -816,6 +970,7 @@ if (checkOnly) {
     || existingSkyPlacementManifest !== serializedSkyPlacementManifest
     || existingSkyPlacementOwnerApprovedReader !== serializedSkyPlacementOwnerApprovedReader
     || existingApprovedServingProjection !== serializedApprovedServingProjection
+    || existingApprovedServingLineage !== serializedApprovedServingLineage
   ) {
     console.error("Bundled fallback manifest is stale. Run npm run build:fallback-manifest.");
     process.exit(1);
@@ -843,6 +998,7 @@ if (checkOnly) {
   fs.writeFileSync(skyPlacementManifestOutputPath, serializedSkyPlacementManifest);
   fs.writeFileSync(skyPlacementOwnerApprovedReaderOutputPath, serializedSkyPlacementOwnerApprovedReader);
   fs.writeFileSync(approvedServingProjectionOutputPath, serializedApprovedServingProjection);
+  fs.writeFileSync(approvedServingLineageOutputPath, serializedApprovedServingLineage);
   console.log(`Wrote ${path.relative(repoRoot, outputPath)} (${manifest.keyCount} keys).`);
   console.log(`Wrote ${path.relative(repoRoot, summaryOutputPath)}.`);
   console.log(`Wrote ${path.relative(repoRoot, skyCoreOutputPath)} (${skyCoreRows.hookRows.length} hooks, ${skyCoreRows.vocabularyRows.length} vocabulary rows).`);
@@ -863,4 +1019,5 @@ if (checkOnly) {
   console.log(`Wrote ${path.relative(repoRoot, skyPlacementManifestOutputPath)} (${skyPlacementManifest.keyCount} keys).`);
   console.log(`Wrote ${path.relative(repoRoot, skyPlacementOwnerApprovedReaderOutputPath)} (${skyPlacementOwnerApprovedReader.rows.length} metadata-free reader rows).`);
   console.log(`Wrote ${path.relative(repoRoot, approvedServingProjectionOutputPath)} (approved-only partition contract).`);
+  console.log(`Wrote ${path.relative(repoRoot, approvedServingLineageOutputPath)} (${approvedServingLineage.count} row lineage entries).`);
 }

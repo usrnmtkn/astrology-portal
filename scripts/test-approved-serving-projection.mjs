@@ -5,6 +5,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { isGovernedReaderEligible } from "../apps/web/src/content/fallbackArchitectureV3/resolver/readerEligibility.mjs";
+import { canonicalSha256 } from "./lib/content-approval-governance.mjs";
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const packageRoot = path.join(repoRoot, "apps/web/src/content/fallbackArchitectureV3");
@@ -16,6 +17,15 @@ assert.equal(projection.policy.pendingRowsPresent, false);
 assert.equal(projection.manifest.contentHash, summary.contentHash);
 assert.equal(projection.manifest.keyManifestHash, summary.keyManifestHash);
 assert.equal(projection.manifest.keyCount, summary.keyCount);
+const lineage = JSON.parse(fs.readFileSync(path.join(packageRoot, projection.lineage.file), "utf8"));
+assert.equal(lineage.schema, "tldrastro-approved-serving-lineage/v1");
+assert.equal(lineage.count, projection.lineage.count);
+assert.equal(lineage.emissionCount, projection.lineage.emissionCount);
+assert.equal(lineage.exactSourceMatchCount, projection.lineage.exactSourceMatchCount);
+assert.equal(canonicalSha256(lineage), projection.lineage.sha256);
+assert.equal(lineage.entries.length, lineage.count);
+assert.equal(lineage.entries.reduce((count, entry) => count + entry.emissions.length, 0), lineage.emissionCount);
+assert.equal(lineage.entries.every((entry) => entry.authoringSources.length > 0), true, "every serving row must identify an authoring source");
 
 for (const [partitionName, descriptor] of Object.entries(projection.partitions)) {
   const document = JSON.parse(fs.readFileSync(path.join(packageRoot, descriptor.file), "utf8"));
@@ -34,6 +44,10 @@ for (const [partitionName, descriptor] of Object.entries(projection.partitions))
       : !document.templates?.includes(row)
   ));
   assert.deepEqual(ineligible.map((row) => row.contentKey), [], `${partitionName} must be approved-only`);
+  for (const row of rows.filter((candidate) => candidate.review_status)) {
+    assert.equal(isGovernedReaderEligible({ ...row, review_status: "needs_review" }), false, `${partitionName}/${row.contentKey} must reject pending status`);
+    assert.equal(isGovernedReaderEligible({ ...row, review_status: "superseded" }), false, `${partitionName}/${row.contentKey} must reject superseded status`);
+  }
   if (typeof descriptor.hookRows === "number") assert.equal(document.hookRows?.length ?? 0, descriptor.hookRows);
   if (typeof descriptor.vocabularyRows === "number") assert.equal(document.vocabularyRows?.length ?? 0, descriptor.vocabularyRows);
   if (typeof descriptor.authoredCards === "number") assert.equal(document.authoredCards?.length ?? 0, descriptor.authoredCards);
@@ -59,6 +73,24 @@ for (const [partitionName, descriptor] of Object.entries(projection.partitions))
       assert.equal(bodyIds.has(pairing.body_id), true);
     }
   }
+}
+
+for (const contentKey of [
+  "authored/book-ritual-and-the-moon/lunation-horoscope/eclipse-fixture",
+  "authored/lunation-eclipse-section/fixture",
+  "fallback-hook/natal-aspect-lived/sun/square/saturn"
+]) {
+  assert.equal(isGovernedReaderEligible({ contentKey, review_status: "approved" }), false, `${contentKey} must reject approval-by-label without evidence`);
+  assert.equal(isGovernedReaderEligible({
+    contentKey,
+    review_status: "approved",
+    approval: {
+      approvalLevel: "exact_owner_approved",
+      recordPath: "review/fixture.md",
+      payloadSha256: "stale",
+      approvedAt: "2026-08-25"
+    }
+  }), false, `${contentKey} must reject malformed approval evidence`);
 }
 
 const sourceVariants = JSON.parse(fs.readFileSync(path.join(packageRoot, "source-rows/daily-glance-variants-v1.json"), "utf8"));
