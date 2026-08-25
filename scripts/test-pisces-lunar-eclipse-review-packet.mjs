@@ -13,12 +13,8 @@ const bodyEditCatalog = JSON.parse(fs.readFileSync(`${reviewDir}/source/pisces-l
 const continuityCatalog = JSON.parse(fs.readFileSync(`${reviewDir}/source/pisces-lunar-eclipse-continuity-candidates-v1.json`, "utf8"));
 const sourceByKey = new Map(source.entries.map((entry) => [entry.contentKey, entry]));
 const spansByKey = new Map(spanCatalog.spans.map((span) => [span.contentKey, span]));
-const bodyEditsByKey = new Map();
-for (const edit of bodyEditCatalog.edits) {
-  const edits = bodyEditsByKey.get(edit.contentKey) ?? [];
-  edits.push(edit);
-  bodyEditsByKey.set(edit.contentKey, edits);
-}
+assert.equal(bodyEditCatalog.status, "superseded_non_serving");
+assert.equal(bodyEditCatalog.historicalBodyEdits.length, 2);
 const continuityByKey = new Map();
 for (const edit of continuityCatalog.candidates) {
   const edits = continuityByKey.get(edit.contentKey) ?? [];
@@ -46,30 +42,18 @@ for (const card of packet.cards) {
   const originalOpening = card.original.bookOpeningSentence;
   const originalRemainder = sourceEntry.body.slice(originalOpening.length + 1);
   assert.equal(card.proposed.sourceBookRemainderSha256, hash(originalRemainder));
-  assert.deepEqual(
-    card.proposed.removedSentences,
-    card.house === 4
-      ? ["Home is where the heart is.", "Each full moon has a theme that helps you understand your past in a new way."]
-      : []
-  );
+  assert.deepEqual(card.proposed.removedSentences, []);
   assert.equal(card.proposed.replacedSentences.length, 1);
   assert.equal(card.proposed.replacedSentences[0].from, originalOpening);
   const approvedSpan = spansByKey.get(card.sourceContentKey);
-  const approvedBodyEdits = bodyEditsByKey.get(card.sourceContentKey) ?? [];
+  const approvedBodyEdits = [];
   const reviewContinuityEdits = continuityByKey.get(card.sourceContentKey) ?? [];
   let expectedSourceBody = sourceEntry.body;
   const operations = [
-    ...(approvedSpan ? [{ ...approvedSpan, replacement: "" }] : []),
-    ...approvedBodyEdits,
-    ...reviewContinuityEdits
+    ...(approvedSpan ? [{ ...approvedSpan, replacement: "" }] : [])
   ].sort((a, b) => b.start - a.start);
   for (const operation of operations) {
-    if (operation.reviewStatus === "needs_owner_exact_review") {
-      assert.equal(operation.ownerApproved, false);
-      assert.equal(operation.promotionAuthorized, false);
-    } else {
-      assert.equal(operation.ownerApproved, true);
-    }
+    assert.equal(operation.ownerApproved, true);
     assert.equal(sourceEntry.body.slice(operation.start, operation.end), operation.text);
     assert.equal(hash(operation.text), operation.sha256);
     expectedSourceBody = `${expectedSourceBody.slice(0, operation.start)}${operation.replacement}${expectedSourceBody.slice(operation.end)}`;
@@ -90,15 +74,7 @@ for (const card of packet.cards) {
   } else {
     assert.deepEqual(card.proposed.omittedDeclaredIntentionBlocks, []);
   }
-  assert.deepEqual(card.proposed.approvedBodyEdits, approvedBodyEdits.map((edit) => ({
-    start: edit.start,
-    end: edit.end,
-    sha256: edit.sha256,
-    text: edit.text,
-    replacement: edit.replacement,
-    ownerApproved: true,
-    approvedAt: edit.approvedAt
-  })));
+  assert.deepEqual(card.proposed.approvedBodyEdits, []);
   assert.deepEqual(card.proposed.reviewContinuityEdits, reviewContinuityEdits.map((edit) => ({
     start: edit.start,
     end: edit.end,
@@ -129,26 +105,32 @@ for (const card of packet.cards) {
   );
   assert.equal(card.proposed.continuityReview.candidateEditCount, reviewContinuityEdits.length);
   assert.deepEqual(
+    [...card.proposed.sections.find((section) => section.id === "bookBodyRemainder").text.matchAll(expandedReminderPattern)].map((match) => match[0]),
     [...expectedRemainder.matchAll(expandedReminderPattern)].map((match) => match[0]),
-    [],
-    `House ${card.house} still re-announces the lunation after the eclipse opening.`
+    `House ${card.house} protected remainder must retain unapproved continuity language.`
   );
   assert.ok(!card.proposed.completeBookBody.includes(originalOpening));
   assert.equal(card.review.bookOpeningSentence, "OWNER_APPROVED_2026_08_24");
   assert.match(card.proposed.sections[0].text, /^The Pisces lunar eclipse shines upon your /);
   assert.doesNotMatch(card.proposed.sections[0].text, /\bhits\b/u);
   if (card.house === 4) assert.equal(card.proposed.sections[0].text, "The Pisces lunar eclipse shines upon your 4th house of home, family, and generational karma.");
-  assert.equal(card.proposed.cycleAnchorSuppressed, card.house === 10);
-  assert.equal(card.proposed.sections.find((section) => section.id === "cycleAnchor").text, card.house === 10 ? null : packet.sharedLayers.cycleAnchor);
+  assert.equal(card.proposed.cycleAnchorSuppressed, false);
+  assert.equal(card.proposed.sections.find((section) => section.id === "cycleAnchor").text, packet.sharedLayers.cycleAnchor);
   assert.equal(card.proposed.sections.find((section) => section.id === "eclipseNature").text, madlib.templates.eclipseNatureDefaultCandidate);
   assert.equal(card.proposed.sections.find((section) => section.id === "eclipseMechanics").text, madlib.templates.eclipseMechanicsCandidate);
-  assert.equal(card.proposed.sections.find((section) => section.id === "eclipseNoRitual").text, madlib.templates.eclipseNoRitualCandidate);
-  assert.equal(card.proposed.sections.find((section) => section.id === "eclipseClose").text, madlib.templates.eclipseAdviceCandidate);
+  const endingsHouse = [4, 8, 12].includes(card.house);
+  assert.equal(card.proposed.sections.find((section) => section.id === "eclipseNoRitual").text, endingsHouse ? madlib.templates.eclipseEndingsRecommendationCandidate : madlib.templates.eclipseNoRitualCandidate);
+  assert.equal(card.proposed.sections.find((section) => section.id === "eclipseClose").text, endingsHouse ? madlib.templates.eclipseEndingsAdviceCandidate : madlib.templates.eclipseAdviceCandidate);
+  if (card.house === 10) {
+    assert.doesNotMatch(card.proposed.sections[0].text, /starting the Pisces new moon/u);
+    assert.match(card.proposed.sections.find((section) => section.id === "bookBodyRemainder").text, /Invest in yourself and watch magick happen\./u);
+    assert.doesNotMatch(card.proposed.sections.find((section) => section.id === "bookBodyRemainder").text, /A title, project, or opportunity/u);
+  }
 }
 
 assert.equal(packet.cards.reduce((sum, card) => sum + card.proposed.omittedDeclaredIntentionBlocks.length, 0), 2);
 assert.equal(packet.cards.reduce((sum, card) => sum + card.proposed.reviewContinuityEdits.length, 0), 40);
-assert.equal(packet.cards.reduce((sum, card) => sum + card.proposed.continuityReview.repeatedLunationReminderCount, 0), 0);
+assert.equal(packet.cards.reduce((sum, card) => sum + card.proposed.continuityReview.repeatedLunationReminderCount, 0), 43);
 for (const edit of continuityCatalog.candidates) {
   assert.equal(edit.reviewStatus, "needs_owner_exact_review");
   assert.equal(edit.ownerApproved, false);
@@ -172,20 +154,20 @@ assert.deepEqual(trial.flow, ["intro", "protectedBodyRemainder", "matchingNewMoo
 for (const card of trial.cards) {
   assert.match(card.intro, /Pisces lunar eclipse/u);
   assert.doesNotMatch(card.intro, /\bhits\b|full moon eclipse/iu);
-  assert.equal(card.recommendation, madlib.templates.eclipseNoRitualCandidate);
-  assert.equal(card.close, madlib.templates.eclipseAdviceCandidate);
+  const endingsHouse = [4, 8, 12].includes(card.house);
+  assert.equal(card.recommendation, endingsHouse ? madlib.templates.eclipseEndingsRecommendationCandidate : madlib.templates.eclipseNoRitualCandidate);
+  assert.equal(card.close, endingsHouse ? madlib.templates.eclipseEndingsAdviceCandidate : madlib.templates.eclipseAdviceCandidate);
   const introCarriesExactCycleAnchor = card.introVariant === 3 || card.introVariant === 4;
-  assert.equal(card.cycleAnchorSuppressed, introCarriesExactCycleAnchor || card.house === 10);
-  assert.equal(card.cycleAnchor, introCarriesExactCycleAnchor || card.house === 10 ? null : "Six months ago, this lunar cycle began with the New Moon in Pisces on {{matchingNewMoonDate}}.");
+  assert.equal(card.cycleAnchorSuppressed, introCarriesExactCycleAnchor);
+  assert.equal(card.cycleAnchor, introCarriesExactCycleAnchor ? null : "Six months ago, this lunar cycle began with the New Moon in Pisces on {{matchingNewMoonDate}}.");
 }
 assert.equal(trial.cards.find((card) => card.house === 4).houseTopics, "home and family");
 const trialHouseFour = trial.cards.find((card) => card.house === 4);
-assert.match(trialHouseFour.protectedBodyRemainder, /^Home isn't just a place - it's a feeling\./u);
-assert.doesNotMatch(trialHouseFour.protectedBodyRemainder, /Home is where the heart is|Pisces full moon|this full moon|full moon energy|Each full moon|During this lunation/iu);
-assert.match(trialHouseFour.protectedBodyRemainder, /where their story ends and yours begins\./u);
-assert.match(trialHouseFour.protectedBodyRemainder, /Understanding them does not mean you have to keep repeating them\./u);
+assert.match(trialHouseFour.protectedBodyRemainder, /^Home is where the heart is\. Home isn't just a place - it's a feeling\./u);
+assert.match(trialHouseFour.protectedBodyRemainder, /The Pisces full moon is a time to reflect/u);
+assert.doesNotMatch(trialHouseFour.protectedBodyRemainder, /This month's full moon intention is/u);
 assert.equal(
   trialHouseFour.intro,
   "Your 4th house of home and family is where this Pisces lunar eclipse is doing its work. A situation that has been developing since the New Moon in Pisces on March 18 may reach a conclusion, change direction, or reveal information you did not have when it began."
 );
-console.log("Pisces lunar-eclipse review packet passed: exact matching-New-Moon dates in variants 3/4, 2 approved intention omissions, duplicate anchors suppressed.");
+console.log("Pisces lunar-eclipse review packet passed: protected book remainders retained, 2 approved intention omissions applied, and all continuity candidates remain non-serving.");

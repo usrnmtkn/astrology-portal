@@ -98,7 +98,7 @@ copy remains unapproved until the owner explicitly approves its exact wording.
 
 The correction pool combines `owner-corrections.jsonl` and
 `owner-feedback-corpus.jsonl`, deduplicated by normalized bad text. The current pool contains
-57 unique corrections. Selection ranks exact family first, then the same surface family,
+59 unique corrections. Selection ranks exact family first, then the same surface family,
 explicitly requested failure modes, that family's historical category frequency, adjacent
 families, and stable source order.
 
