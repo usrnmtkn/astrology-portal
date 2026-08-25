@@ -20,9 +20,9 @@ Canonical workbook changed: **no**
 - Approved V13 source rows: **302**
 - Runtime-manifest rows: **301**
 - Rows added to the shared evidence index: **301**
-- Shared-index entries: **4861 → 5930**
+- Shared-index entries: **4861 → 5933**
 - Meaning entries: **1876 → 2224**
-- Scene entries after education cleanup: **419 → 422**
+- Scene entries after education cleanup: **419 → 425**
 - Argument entries after approved four-slot cards were indexed: **510 → 1180**
 
 Alias normalization covers **123** Lilith/node rows
@@ -44,7 +44,7 @@ register-gold page.
 ## Extended role counts by source
 
 - `approved_house_horoscope_core`: meaning 0, register 0, scene 23, argument 0, phrase 0
-- `approved_serving_row`: meaning 0, register 0, scene 230, argument 0, phrase 0
+- `approved_serving_row`: meaning 0, register 0, scene 233, argument 0, phrase 0
 - `current-owner-approved-placement-article`: meaning 0, register 0, scene 0, argument 55, phrase 0
 - `current-owner-approved-placement-card`: meaning 0, register 0, scene 0, argument 672, phrase 0
 - `owner_corpus_fixture_scene`: meaning 0, register 0, scene 3, argument 0, phrase 0

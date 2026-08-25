@@ -319,7 +319,7 @@ assert.match(app, /aspects: canonicalNatalAspectsForSnapshot\(natalSky\)/u, "You
 assert.match(app, /uniqueNatalAspectRows\(canonicalNatalAspectsForSnapshot\(natalSky\)\)/u, "You natal aspect lists must use the natal-only boundary.");
 assert.match(youPage, /aspects=\{natalOnlyAspects\}/u, "The You natal wheel must use canonical natal-only aspects.");
 assert.doesNotMatch(youPage, /aspects=\{natalSky\.aspects\}/u, "The You natal wheel must not trust the snapshot aspect list.");
-assert.match(friendPanel, /groupFriendNatalAspects\(canonicalNatalAspectsForSnapshot\(selectedChart\.natalChart\)\)/u, "Friend natal lists must use the natal-only boundary.");
+assert.match(friendPanel, /groupFriendNatalAspects\(canonicalNatalAspectsForSnapshot\(selectedFriendReadyNatalChart\)\)/u, "Friend natal lists must use the completed-chart natal-only boundary.");
 assert.match(friendPanel, /natalPlacementDetailArticle\(position, natalSky,/u, "Friend placement details must use the shared natal-only article boundary.");
 assert.match(friendRail, /aspects=\{canonicalNatalAspectsForSnapshot\(natalSky\)\}/u, "The Friend natal wheel must use the natal-only boundary.");
 assert.doesNotMatch(friendRail, /aspects=\{natalSky\.aspects\}/u, "The Friend natal wheel must not trust the snapshot aspect list.");
