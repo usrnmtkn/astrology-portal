@@ -2,11 +2,7 @@
 
 import assert from "node:assert/strict";
 import fs from "node:fs";
-import {
-  filterUnresolvedContentItems,
-  loadUnresolvedContentReport,
-  type UnresolvedContentReport
-} from "../apps/admin/src/UnresolvedContentReview";
+import { loadUnresolvedContentReport, type UnresolvedContentReport } from "../apps/admin/src/UnresolvedContentReview";
 import {
   loadContentUnresolvedReport,
   unresolvedContentSurface
@@ -30,10 +26,13 @@ assert.equal(unresolvedContentSurface("authored/book/lunation-horoscope/eclipse-
 assert.equal(unresolvedContentSurface("fallback-hook/sky-sign-copy/sun/virgo"), "Sky / Transits");
 assert.equal(unresolvedContentSurface("fallback-hook/natal/venus/libra"), "Natal / Placements");
 
-const contractFailures = filterUnresolvedContentItems(report.items, "sun/virgo");
-assert.ok(contractFailures.length > 0, "The Studio filters must expose known contract failures by key and surface.");
-assert.ok(contractFailures.every((item) => item.reason === "known-current-contract-failure"));
-assert.equal(filterUnresolvedContentItems(report.items, "not-a-real-content-key").length, 0);
+const groupedIssues = report.issues;
+assert.ok(groupedIssues.length < report.items.length, "Duplicate source records must be grouped into one owner-facing issue.");
+const sunVirgoIssue = groupedIssues.find((issue) => issue.contentKey === "fallback-hook/sky-sign-copy/sun/virgo");
+assert.ok(sunVirgoIssue, "The known Sun in Virgo source issue must be present.");
+assert.equal(sunVirgoIssue.kind, "source-repair");
+assert.equal(sunVirgoIssue.records.length, 3, "All duplicate source records must remain available under issue details.");
+assert.equal(groupedIssues.filter((issue) => issue.contentKey.includes("sun/virgo")).length, 1);
 
 const loadedReport = await loadUnresolvedContentReport(
   "header.payload.signature",
@@ -44,13 +43,16 @@ const loadedReport = await loadUnresolvedContentReport(
 );
 assert.equal(loadedReport.count, report.count, "The authenticated Studio loader must return the governed queue.");
 
-assert.match(reviewSource, /Everything still waiting for resolution/u);
-assert.match(reviewSource, /Loading unresolved records/u);
-assert.match(reviewSource, /No unresolved records match these filters\./u, "The page must include a clear empty-state message.");
+assert.match(reviewSource, /Resolve content holds/u);
+assert.match(reviewSource, /Approval will not clear this hold\./u);
+assert.match(reviewSource, /Not in Content Library\./u);
+assert.match(reviewSource, /No unresolved issues match these filters\./u, "The page must include a clear empty-state message.");
 
 assert.match(dashboardSource, /unresolvedContent:\s*"unresolved-content"/u, "The Studio must expose a stable unresolved-content route.");
 assert.match(dashboardSource, /label:\s*"Unresolved Content"/u, "The Studio navigation must expose the governed inventory.");
-assert.match(dashboardSource, /new URLSearchParams\(\{ q: contentKey \}\)/u, "Inventory rows must link into Content Library by exact key.");
+assert.match(dashboardSource, /new URLSearchParams\(\{ q: contentKey, from: "unresolved" \}\)/u, "Inventory rows must link into Content Library by exact key and resolution context.");
+assert.match(dashboardSource, /setShowReferenceRows\(true\)/u, "Exact-row links must reveal reference rows.");
+assert.match(dashboardSource, /setShowRetiredRows\(true\)/u, "Exact-row links must reveal retired rows.");
 assert.doesNotMatch(reviewSource, /\badminJsonRequest\s*\(/u, "The governed inventory must not use a mutation-capable admin client.");
 assert.match(endpointSource, /req\.method !== "GET"/u, "The unresolved-content endpoint must be GET-only.");
 assert.match(endpointSource, /await isContentAdminAuthorized\(req\)/u, "The unresolved-content endpoint must require verified owner access.");
