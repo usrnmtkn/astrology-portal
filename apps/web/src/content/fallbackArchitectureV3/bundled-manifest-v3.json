@@ -1,8 +1,8 @@
 {
   "packageVersion": "v3-2026-08-25a",
-  "contentHash": "d0b89bf0d21b3de43767f8dae29e4c60",
-  "keyManifestHash": "fbad0bf8909b24ecb292446690e26c28",
-  "keyCount": 9169,
+  "contentHash": "797d4ef17b8a6f85ae2ccdbfb5795f41",
+  "keyManifestHash": "c1de9c0aee741ea660ffb1109b3fcada",
+  "keyCount": 9170,
   "keys": [
     "authored:approved/calendar-weekly-overview/2026-08-03",
     "authored:authored/calendar-weekly-moon/aquarius",
@@ -4434,6 +4434,7 @@
     "hook:fallback-hook/natal-you-placement-complete-final/chiron/scorpio/12",
     "hook:fallback-hook/natal-you-placement-complete-final/chiron/taurus/12",
     "hook:fallback-hook/natal-you-placement-complete-final/chiron/virgo/12",
+    "hook:fallback-hook/natal-you-placement-complete-final/lilith/aries/4",
     "hook:fallback-hook/natal-you-placement-complete-final/lilith/scorpio/4",
     "hook:fallback-hook/natal-you-placement-complete-final/lilith/virgo/4",
     "hook:fallback-hook/natal-you-placement-house-final/moon/1",
