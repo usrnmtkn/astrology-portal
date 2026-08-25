@@ -3,6 +3,7 @@ import { normalizeBirthTime } from "./chartTime";
 import { defaultPronounChoice, normalizePronounChoice, type PronounChoice } from "./personReferences";
 import { normalizeRelationshipContextKey, relationshipContextStorageKey } from "./relationshipContext";
 import { isTldrAstroApiConfigured, resolveTimezone } from "./tldrastroApi";
+import { natalChartHasCompletePlacements } from "./natalChartCompleteness";
 import type { LocationInput, SkySnapshot } from "../types";
 
 export type ManualChartType = "person" | "event";
@@ -73,12 +74,13 @@ export async function resolvedManualChartBirthLocationForRepair(chart: ManualCha
 }
 
 export function manualChartNeedsNatalRepair(chart: ManualChart) {
-  if (chart.birthTimeUnknown || !chart.birthTime || !chart.birthDate || !chart.birthLocation) {
+  if (!chart.birthDate || !chart.birthLocation || (!chart.birthTimeUnknown && !chart.birthTime)) {
     return false;
   }
 
-  // Complete charts should not trigger background timezone/natal API repair on page load.
-  return !chart.natalChart || !chart.birthLocation.timeZone;
+  // Never let a legacy partial snapshot masquerade as a complete chart.
+  return !chart.birthLocation.timeZone
+    || !natalChartHasCompletePlacements(chart.natalChart, chart.birthTimeUnknown);
 }
 
 export function manualChartNeedsBirthTime(chart: ManualChart) {

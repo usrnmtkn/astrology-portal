@@ -119,7 +119,9 @@ async function preparePage(page: Page, options: FixtureOptions = {}): Promise<Pr
       ["Mercury", "☿", "communication"], ["Venus", "♀", "values"],
       ["Mars", "♂", "energy"], ["Jupiter", "♃", "growth"],
       ["Saturn", "♄", "structure"], ["Uranus", "♅", "change"],
-      ["Neptune", "♆", "dreams"], ["Pluto", "♇", "power"]
+      ["Neptune", "♆", "dreams"], ["Pluto", "♇", "power"],
+      ["Chiron", "⚷", "repair"], ["Lilith", "⚸", "refusal"],
+      ["North Node", "☊", "growth edge"], ["South Node", "☋", "familiar pattern"]
     ];
     const fixtureSky = (signOffset: number) => ({
       location,

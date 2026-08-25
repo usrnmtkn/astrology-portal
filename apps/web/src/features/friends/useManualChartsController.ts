@@ -218,10 +218,6 @@ export function useManualChartsController({
           return null;
         }
 
-        if (chart.natalChart && chart.birthLocation.timeZone === birthLocation.timeZone) {
-          return null;
-        }
-
         const birthTimeForChart = twentyFourHourTimeToDisplay(chart.birthTime ?? "12:00");
         const birthDateTime = zonedDateTimeToUtc(chart.birthDate, birthTimeForChart, birthLocation.timeZone);
         const calculatedNatalChart = await calculateSky(birthLocation, birthDateTime);

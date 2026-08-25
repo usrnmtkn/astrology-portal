@@ -725,12 +725,12 @@ assert.match(
 );
 assert.match(
   manualChartsPanelSource,
-  /friendProfileWork\.transits && currentSky && selectedChart && !selectedChartIsEvent/u,
+  /friendProfileWork\.transits && currentSky && selectedChart && selectedFriendReadyNatalChart && !selectedChartIsEvent/u,
   "Friends transit calculation must remain scoped to its active tab."
 );
 assert.match(
   manualChartsPanelSource,
-  /friendProfileWork\.natal && selectedChart\?\.natalChart/u,
+  /friendProfileWork\.natal && selectedFriendReadyNatalChart/u,
   "Friends natal row calculation must remain scoped to its active tab."
 );
 assert.match(

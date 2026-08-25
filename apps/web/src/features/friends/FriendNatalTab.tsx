@@ -46,6 +46,7 @@ export function FriendNatalTab({
   friendName,
   hasNatalChart,
   isEventChart,
+  isNatalChartRepairing,
   onOpenAspect,
   onOpenEmptyHouse,
   onOpenPattern,
@@ -62,6 +63,7 @@ export function FriendNatalTab({
   friendName: string;
   hasNatalChart: boolean;
   isEventChart: boolean;
+  isNatalChartRepairing: boolean;
   onOpenAspect: (aspectId: string) => void;
   onOpenEmptyHouse: (house: number) => void;
   onOpenPattern: (item: NatalAspectPatternReaderItem, nestedItems: NatalAspectPatternReaderItem[]) => void;
@@ -72,6 +74,29 @@ export function FriendNatalTab({
   placementRows: SocialPlacementRow[];
 }) {
   const placementTitle = isEventChart ? "Event placements" : `${friendName}'s natal placements`;
+
+  if (isNatalChartRepairing) {
+    return (
+      <div
+        className="friend-tab-pane friend-compat-stage friend-natal-stage"
+        aria-busy="true"
+        aria-label="Natal"
+      >
+        <div className="friend-profile-copy-column">
+          <div
+            className="friends-search-skeleton"
+            aria-label={`Completing ${friendName}'s natal chart`}
+            aria-live="polite"
+            role="status"
+          >
+            {Array.from({ length: 6 }, (_, index) => (
+              <span className="friends-search-skeleton-row" key={`friend-natal-repair-${index}`} />
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="friend-tab-pane friend-compat-stage friend-natal-stage" aria-label="Natal">
