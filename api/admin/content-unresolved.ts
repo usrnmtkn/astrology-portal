@@ -23,6 +23,17 @@ export function unresolvedContentSurface(contentKey: string) {
   return "Other";
 }
 
+export function unresolvedContentIssues(items: Array<Record<string, unknown> & { contentKey: string; reason: string; surface: string }>) {
+  const byKey = new Map<string, typeof items>();
+  for (const item of items) byKey.set(item.contentKey, [...(byKey.get(item.contentKey) ?? []), item]);
+  return [...byKey.values()].map((records) => ({
+    contentKey: records[0].contentKey,
+    surface: records[0].surface,
+    kind: records.some((item) => item.reason === "known-current-contract-failure") ? "source-repair" : "editorial-review",
+    records
+  }));
+}
+
 export function loadContentUnresolvedReport() {
   if (!cachedReport) {
     const report = JSON.parse(fs.readFileSync(reportPath, "utf8")) as {
@@ -33,6 +44,7 @@ export function loadContentUnresolvedReport() {
     cachedReport = {
       ...report,
       items,
+      issues: unresolvedContentIssues(items as Array<Record<string, unknown> & { contentKey: string; reason: string; surface: string }>),
       surfaceCounts: Object.fromEntries([...new Set(items.map((item) => item.surface))].sort()
         .map((surface) => [surface, items.filter((item) => item.surface === surface).length]))
     };
