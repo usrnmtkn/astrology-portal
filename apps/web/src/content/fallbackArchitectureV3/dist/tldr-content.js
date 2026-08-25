@@ -534,6 +534,19 @@ function normalizeLunationSign(value) {
   return String(value ?? "").trim().toLowerCase();
 }
 
+// resolver/lunationEclipseSectionKeys.mjs
+var SHARED_ECLIPSE_SECTION_IDS = /* @__PURE__ */ new Set([
+  "nature",
+  "mechanics",
+  "recommendation",
+  "close"
+]);
+function sharedLunationEclipseSectionKey(kind, sectionId) {
+  if (!SHARED_ECLIPSE_SECTION_IDS.has(sectionId)) return null;
+  const phase = kind === "eclipse-lunar" ? "lunar" : kind === "eclipse-solar" ? "solar" : null;
+  return phase ? `authored/lunation-eclipse-section/shared/${phase}/${sectionId}` : null;
+}
+
 // resolver/renderTransitSynastry.browser.ts
 var TRUE_LILITH_KEY_DATES_INTRO = "True Black Moon Lilith stations about once a month, so it crosses the same degrees several times before it finally moves on.";
 function skyPlacementKeyDates({
@@ -2449,8 +2462,7 @@ ${passHook}`;
     const evergreenBookCell = evergreenBookCellKey ? card(evergreenBookCellKey) : null;
     const bookCell = isEclipse ? exactEclipsePreview : exactBookCell;
     const eclipseSectionPrefix = `authored/lunation-eclipse-section/${sign}/rising-${risingSign}/house-${h}`;
-    const sharedEclipseSections = /* @__PURE__ */ new Set(["nature", "mechanics", "recommendation", "close"]);
-    const eclipseSectionKey = (id) => sharedEclipseSections.has(id) ? `authored/lunation-eclipse-section/${sign}/shared/${id}` : `${eclipseSectionPrefix}/${id}`;
+    const eclipseSectionKey = (id) => sharedLunationEclipseSectionKey(kind, id) ?? `${eclipseSectionPrefix}/${id}`;
     const eclipseSection = (id) => isEclipse ? card(eclipseSectionKey(id)) : null;
     const jurisdiction = vocab.get(`fallback-vocab/house-jurisdiction/${h}`)?.body;
     const paras = [];
@@ -2499,7 +2511,13 @@ ${passHook}`;
         flagOmittedSection(id, key);
         return null;
       }
-      paras.push(renderStoredBody(stored));
+      try {
+        paras.push(renderStoredBody(stored));
+      } catch (error) {
+        if (!(error instanceof SourceGapError)) throw error;
+        flagOmittedSection(id, key);
+        return null;
+      }
       return stored;
     };
     let authoredBodyUsed = false;
@@ -2545,7 +2563,12 @@ ${passHook}`;
     if ((kind === "full-moon" || kind === "eclipse-lunar") && !(isEclipse && bookCell) && !suppressCycleAnchor) {
       const anchor = hooks.get("fallback-hook/lunation-matching-new-moon-anchor/full")?.body_you;
       if (!anchor) throw new SourceGapError("SOURCE_GAP: missing Full Moon cycle anchor");
-      paras.push(fill(anchor, matchingNewMoonSlots()));
+      try {
+        paras.push(fill(anchor, matchingNewMoonSlots()));
+      } catch (error) {
+        if (!(kind === "eclipse-lunar" && error instanceof SourceGapError)) throw error;
+        flagOmittedSection("matching-new-moon-anchor", "fallback-hook/lunation-matching-new-moon-anchor/full");
+      }
     } else if ((kind === "new-moon" || kind === "eclipse-solar") && !(isEclipse && bookCell)) {
       const anchor = hooks.get("fallback-hook/lunation-cycle-anchor/new")?.body_you;
       if (!anchor) throw new SourceGapError("SOURCE_GAP: missing New Moon cycle anchor");
@@ -2920,7 +2943,7 @@ function createKnowledgeMatrixV13Resolver(file) {
 }
 
 // resolver/index.browser.ts
-var PACKAGE_VERSION = "v3-2026-08-24b";
+var PACKAGE_VERSION = "v3-2026-08-24c";
 function stablePackageValue(value) {
   if (Array.isArray(value)) {
     return value.map(stablePackageValue);

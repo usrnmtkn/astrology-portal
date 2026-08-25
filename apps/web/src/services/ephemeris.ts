@@ -1237,6 +1237,38 @@ function nextMoonEvent(swe: SwissEphInstance, date: Date): MoonEvent {
   };
 }
 
+function moonEventForLocalDayOrNext(
+  swe: SwissEphInstance,
+  date: Date,
+  timeZone: string
+): MoonEvent {
+  const { start, end } = localDayRange(date, timeZone);
+  const searchPaddingMs = 12 * 60 * 60_000;
+  const selectedDateKey = localDateKey(date, timeZone);
+  const localDayEvent = findLunations(
+    swe,
+    new Date(start.getTime() - searchPaddingMs),
+    new Date(end.getTime() + searchPaddingMs),
+    timeZone
+  ).find((event) => (
+    event.primary
+    && event.dateKey === selectedDateKey
+    && (event.title.startsWith("New Moon") || event.title.startsWith("Full Moon"))
+  ));
+
+  if (!localDayEvent?.sign) return nextMoonEvent(swe, date);
+
+  const occursAt = new Date(localDayEvent.startsAt);
+
+  return {
+    name: localDayEvent.title.startsWith("New Moon") ? "New Moon" : "Full Moon",
+    sign: localDayEvent.sign,
+    occursAt: localDayEvent.startsAt,
+    days: Math.max(0, (occursAt.getTime() - date.getTime()) / 86_400_000),
+    eclipseType: localDayEvent.eclipseType
+  };
+}
+
 function localDateParts(date: Date, timeZone: string) {
   const parts = new Intl.DateTimeFormat("en-US", {
     timeZone,
@@ -3301,7 +3333,11 @@ export async function getAstrodienstSky(
     moonPhase: moonPhaseName(sun.longitude, moon.longitude),
     moonStatus: moonStatusFor(swe, date),
     moonSignTransition: moonSignTransitionForDay(swe, date, location.timeZone),
-    moonEvent: nextMoonEvent(swe, date),
+    moonEvent: moonEventForLocalDayOrNext(
+      swe,
+      date,
+      location.timeZone || Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC"
+    ),
     solarDaylight: solarDaylightForDay(swe, location, date),
     dominantElement: elementForSign(sun.sign),
     positions: displayPositions.map((position) => ({ ...position })),

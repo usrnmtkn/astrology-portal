@@ -77,6 +77,16 @@ for (const section of source.sectionCards) {
 }
 assert.equal(source.sectionCards.filter((section) => section.eclipse_section === "opening").length, 12);
 assert.equal(source.sectionCards.filter((section) => section.eclipse_section === "evergreen-body").length, 12);
+const sharedLunarSections = source.sectionCards.filter((section) => section.contentKey.startsWith(
+  "authored/lunation-eclipse-section/shared/lunar/"
+));
+assert.equal(sharedLunarSections.length, 4);
+assert.deepEqual(
+  sharedLunarSections.map((section) => section.eclipse_section).sort(),
+  ["close", "mechanics", "nature", "recommendation"]
+);
+assert.ok(sharedLunarSections.every((section) => section.lunation_sign === null));
+assert.ok(source.sectionCards.every((section) => !section.contentKey.includes("/pisces/shared/")));
 const houseFourBody = source.sectionCards.find((section) => section.house === 4 && section.eclipse_section === "evergreen-body");
 assert.match(houseFourBody.body, /^Home isn't just a place - it's a feeling\./u);
 assert.doesNotMatch(houseFourBody.body, /Home is where the heart is\./u);
