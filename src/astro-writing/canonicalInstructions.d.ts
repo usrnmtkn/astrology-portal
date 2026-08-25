@@ -3,6 +3,8 @@ export const COLD_RENDERED_PROSE_RULE: string;
 export const coldRenderedProseReviewInstructions: string;
 export const canonicalAstrologyWritingInstructions: string;
 export const candidateCardAstrologyWritingInstructions: string;
+export function effectiveAstrologyWritingInstructions(input?: { surface?: string; family?: string }): string;
+export function effectiveAstrologyReviewInstructions(input?: { surface?: string; family?: string }): string;
 export const canonicalAstrologyReviewInstructions: string;
 export const REVIEW_FIELDS: readonly string[];
 export const HARD_REVISE_FIELDS: readonly string[];

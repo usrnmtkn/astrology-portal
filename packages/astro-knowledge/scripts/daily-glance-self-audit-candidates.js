@@ -13,6 +13,7 @@ const {
   sha256,
   wordCount
 } = require("./daily-glance-writer-runtime.js");
+const { renderEffectiveRulesForPrompt } = require("../../../src/astro-writing/effectiveRules.cjs");
 
 const packageRoot = path.resolve(__dirname, "..");
 const repoRoot = path.resolve(packageRoot, "..", "..");
@@ -26,14 +27,34 @@ function sentences(value) {
 function loadDirective(config) {
   const sourcePath = path.join(repoRoot, config.selfAuditDirectivePath);
   const source = fs.readFileSync(sourcePath, "utf8");
-  const marker = "\n---\n\n## Pipeline notes (not part of Sol's packet)";
+  const marker = "\n---\n\n## Pipeline notes";
   const index = source.indexOf(marker);
   if (index < 0) throw new Error(`Self-audit directive is missing its pipeline-notes boundary: ${config.selfAuditDirectivePath}`);
   return source.slice(0, index).trim();
 }
 
-function approvedGoodExamples(key, sourceRows, limit = 3) {
-  const group = key.split("/")[0];
+const correctionSources = [
+  "data/writing/OWNER_CORRECTIONS.jsonl",
+  "data/writing/owner-corrections.jsonl",
+  "data/writing/owner-feedback-corpus.jsonl"
+];
+
+function words(value) {
+  return new Set(String(value ?? "").toLowerCase().match(/[a-z][a-z'-]{2,}/gu) || []);
+}
+
+function overlapScore(left, right) {
+  const rightWords = words(right);
+  let matches = 0;
+  for (const word of words(left)) if (rightWords.has(word)) matches += 1;
+  return matches;
+}
+
+function latestApprovalDate(notes) {
+  return (String(notes ?? "").match(/20\d{2}-\d{2}-\d{2}/gu) || []).sort().at(-1) || "0000-00-00";
+}
+
+function dailyPairs(sourceRows) {
   const pairs = new Map();
   for (const row of sourceRows.hookRows || []) {
     const match = row.contentKey.match(/^fallback-hook\/daily-(headline|body)\/(.+)$/u);
@@ -43,18 +64,81 @@ function approvedGoodExamples(key, sourceRows, limit = 3) {
     pair[kind] = row.body_you;
     pair[`${kind}Status`] = row.review_status;
     pair[`${kind}SourceId`] = row.contentKey;
+    pair[`${kind}Notes`] = row.notes || "";
     pairs.set(rowKey, pair);
   }
-  const examples = [...pairs.values()]
-    .filter((pair) => pair.key !== key
-      && pair.key.split("/")[0] === group
-      && pair.headlineStatus === "approved"
+  return [...pairs.values()].filter((pair) => pair.headlineStatus === "approved"
       && pair.bodyStatus === "approved"
       && pair.headline
-      && pair.body)
-    .sort((left, right) => left.key.localeCompare(right.key))
+      && pair.body);
+}
+
+function rankedOwnerCorrections(key, sourceRows, limit = 6) {
+  const target = dailyPairs(sourceRows).find((pair) => pair.key === key);
+  const [group, subject] = key.split("/");
+  const query = `${key} ${target?.headline || ""} ${target?.body || ""}`;
+  const deduplicated = new Map();
+  for (const sourcePath of correctionSources) {
+    const rows = fs.readFileSync(path.join(repoRoot, sourcePath), "utf8").split(/\n/u).filter(Boolean).map(JSON.parse);
+    rows.forEach((row, sourceIndex) => {
+      const normalizedBad = String(row.bad ?? row.before ?? "").trim().toLowerCase().replace(/\s+/gu, " ");
+      if (!normalizedBad) return;
+      const candidate = { ...row, sourcePath, sourceIndex };
+      const existing = deduplicated.get(normalizedBad);
+      if (!existing || sourcePath === "data/writing/owner-feedback-corpus.jsonl") deduplicated.set(normalizedBad, candidate);
+    });
+  }
+  return [...deduplicated.values()].map((entry) => {
+    const family = String(entry.family || "");
+    const exactSurface = /daily-glance|daily-horoscope/iu.test(family);
+    const adjacentHouse = group === "house" && family === "house-horoscope-core";
+    const subjectMatch = subject && new RegExp(`\\b${subject.replace(/[.*+?^${}()|[\]\\]/gu, "\\$&")}\\b`, "iu").test(`${entry.bad || ""} ${entry.corrected || ""} ${entry.why || entry.owner_reason || ""}`);
+    const lexicalOverlap = overlapScore(query, `${entry.bad || ""} ${entry.corrected || ""} ${entry.why || entry.owner_reason || ""}`);
+    const decisionDate = latestApprovalDate(JSON.stringify(entry));
+    const score = (exactSurface ? 120 : 0) + (adjacentHouse ? 90 : 0) + (subjectMatch ? 45 : 0) + Math.min(40, lexicalOverlap * 4) + (decisionDate >= "2026-08-08" ? 10 : 0) + Math.min(9, entry.sourceIndex / 10);
+    return {
+      ...entry,
+      sourceId: `${entry.sourcePath}#L${entry.sourceIndex + 1}`,
+      decisionDate,
+      ranking: { score, exactSurface, adjacentHouse, subjectMatch, lexicalOverlap, decisionDate, sourceRecencyOrder: entry.sourceIndex }
+    };
+  }).sort((left, right) => right.ranking.score - left.ranking.score
+      || right.decisionDate.localeCompare(left.decisionDate)
+      || right.ranking.sourceRecencyOrder - left.ranking.sourceRecencyOrder
+      || left.sourcePath.localeCompare(right.sourcePath))
     .slice(0, limit);
-  if (examples.length !== limit) throw new Error(`Expected ${limit} approved same-group examples for ${key}; found ${examples.length}.`);
+}
+
+function approvedGoodExamples(key, sourceRows, limit = 3) {
+  const [group, subject] = key.split("/");
+  const pairs = dailyPairs(sourceRows);
+  const target = pairs.find((pair) => pair.key === key);
+  const query = `${target?.headline || ""} ${target?.body || ""}`;
+  const ranked = pairs.filter((pair) => pair.key !== key).map((pair) => {
+    const [candidateGroup, candidateSubject] = pair.key.split("/");
+    const sameGroup = candidateGroup === group;
+    const sameSubject = candidateSubject === subject;
+    const lexicalOverlap = overlapScore(query, `${pair.headline} ${pair.body}`);
+    const approvalDate = [latestApprovalDate(pair.headlineNotes), latestApprovalDate(pair.bodyNotes)].sort().at(-1);
+    const score = (sameGroup ? 120 : 0) + (sameSubject ? 90 : 0) + Math.min(60, lexicalOverlap * 3) + (approvalDate >= "2026-08-14" ? 10 : 0);
+    return { ...pair, approvalDate, ranking: { score, sameGroup, sameSubject, lexicalOverlap } };
+  }).sort((left, right) => right.ranking.score - left.ranking.score
+      || right.approvalDate.localeCompare(left.approvalDate)
+      || left.key.localeCompare(right.key));
+  const examples = [];
+  const add = (entry, selectionReason) => {
+    if (!entry || examples.some((selected) => selected.key === entry.key) || examples.length >= limit) return;
+    examples.push({ ...entry, ranking: { ...entry.ranking, selectionReason } });
+  };
+  add(ranked.find((entry) => entry.ranking.sameGroup), "closest-same-group-register");
+  add(ranked.find((entry) => entry.ranking.sameSubject), "closest-same-subject-meaning");
+  for (const entry of ranked) add(entry, "next-highest-combined-score");
+  if (examples.length !== limit) throw new Error(`Expected ${limit} ranked approved examples for ${key}; found ${examples.length}.`);
+  Object.defineProperty(examples, "ownerCorrections", {
+    value: rankedOwnerCorrections(key, sourceRows),
+    enumerable: false,
+    writable: false
+  });
   return examples;
 }
 
@@ -65,6 +149,8 @@ function transitMechanism(packet) {
 
 function deterministicLintRules(packet, config) {
   const fixed = [
+    { id: "grammar", rule: "Rendered headline and body must pass deterministic pronoun-case and agreement checks." },
+    { id: "placeholder-integrity", rule: "Do not emit unresolved or unsupported template placeholders." },
     { id: "SOL-DIRECTIVE-output-schema", rule: "Return strict JSON with exactly transit_key, headline, body, and screenshot_line; transit_key must equal the requested key and every value must be a non-empty string." },
     { id: "SOL-DIRECTIVE-headline", rule: "Headline is one declarative sentence, ends with a period, contains 4–12 words, contains no question or exclamation mark, and is not a Notice/Allow/Pay attention command." },
     { id: "SOL-DIRECTIVE-body-length", rule: "Body contains 50–90 words in 3–5 sentences." },
@@ -92,11 +178,23 @@ function deterministicLintRules(packet, config) {
 
 function renderExamples(examples) {
   return examples.map((example, index) => [
-    `### Approved same-group card ${index + 1}: ${example.key}`,
+    `### Ranked approved card ${index + 1}: ${example.key}`,
+    `Ranking: ${JSON.stringify(example.ranking)}; latest approval date: ${example.approvalDate}`,
     `Headline source ID: ${example.headlineSourceId}`,
     example.headline,
     `Body source ID: ${example.bodySourceId}`,
     example.body
+  ].join("\n")).join("\n\n");
+}
+
+function renderCorrections(corrections) {
+  return corrections.map((entry, index) => [
+    `### Owner correction ${index + 1}`,
+    `Source ID: ${entry.sourceId}`,
+    `Ranking: ${JSON.stringify(entry.ranking)}`,
+    `Before: ${entry.bad ?? entry.before}`,
+    `After: ${entry.corrected ?? entry.after}`,
+    `Reason: ${entry.why ?? entry.owner_reason ?? entry.rule ?? entry.category}`
   ].join("\n")).join("\n\n");
 }
 
@@ -115,18 +213,18 @@ function renderSceneContext(sceneContext) {
 
 function renderSelfAuditWriterInput(packet, config, examples, sceneContext) {
   const directive = loadDirective(config);
-  const rules = deterministicLintRules(packet, config).map((entry) => `- [${entry.tier.toUpperCase()}] ${entry.id}: ${entry.rule}`).join("\n");
-  let modelInput = directive
-    .replace("- `{{TRANSIT_KEY}}` — e.g. `square/uranus`, `house/8`", `### Transit key\n${packet.target.key}`)
-    .replace("- `{{TRANSIT_MECHANISM}}` — one-paragraph description of what this transit specifically does", `### Transit mechanism\n${transitMechanism(packet)}`)
-    .replace("- `{{RESOLVED_CHART_CONTEXT}}` — the calculation-resolved chart factors and explicitly approved scene licenses for this reader and event", `### Resolved chart context and scene licenses\n${renderSceneContext(sceneContext)}`)
-    .replace("- `{{GOOD_EXAMPLES}}` — owner-approved cards. Match their register exactly.", `### Good examples\n${renderExamples(examples)}`)
-    .replace("- `{{LINT_RULES}}` — the deterministic lint spec, verbatim. Blocking failures discard the candidate; advisory failures are reported without blocking it.", `### Deterministic lint rules (blocking gates and advisory diagnostics)\n${rules}`);
-  modelInput = modelInput.split("{{TRANSIT_KEY}}").join(packet.target.key);
-  modelInput = modelInput.split("{{TRANSIT_MECHANISM}}").join("the transit mechanism supplied above");
-  modelInput = modelInput.split("{{RESOLVED_CHART_CONTEXT}}").join("the resolved chart context supplied above");
-  modelInput = modelInput.split("{{GOOD_EXAMPLES}}").join("the approved examples supplied above");
-  modelInput = modelInput.split("{{LINT_RULES}}").join("the deterministic lint spec supplied above");
+  const rules = [
+    renderEffectiveRulesForPrompt({ surface: "daily", family: "daily" }),
+    "## Exact deterministic implementations",
+    deterministicLintRules(packet, config).map((entry) => `- [${entry.tier.toUpperCase()}] ${entry.id}: ${entry.rule}`).join("\n")
+  ].join("\n\n");
+  const modelInput = directive
+    .split("{{TRANSIT_KEY}}").join(packet.target.key)
+    .split("{{TRANSIT_MECHANISM}}").join(transitMechanism(packet))
+    .split("{{RESOLVED_CHART_CONTEXT}}").join(renderSceneContext(sceneContext))
+    .split("{{GOOD_EXAMPLES}}").join(renderExamples(examples))
+    .split("{{OWNER_CORRECTIONS}}").join(renderCorrections(examples.ownerCorrections || []))
+    .split("{{LINT_RULES}}").join(rules);
   if (/\{\{[A-Z_]+\}\}/u.test(modelInput)) throw new Error(`Unresolved self-audit directive placeholder for ${packet.target.key}.`);
   return modelInput;
 }
@@ -135,13 +233,14 @@ function selfAuditPacketLint(packet, modelInput, config, examples, currentPair =
   const canonical = packetLint(packet, renderModelInput(packet), config);
   const checks = [
     { id: "canonical-packet-preflight", passed: canonical.passed, details: canonical.checks.filter((check) => !check.passed) },
-    { id: "owner-directive-loaded", passed: modelInput.startsWith("# Sol writing directive — daily-glance candidate (one per call)"), details: config.selfAuditDirectivePath },
+    { id: "effective-prompt-shell-loaded", passed: modelInput.startsWith("# Daily-glance writer candidate (one per call)"), details: config.selfAuditDirectivePath },
     { id: "pipeline-notes-excluded", passed: !modelInput.includes("Pipeline notes") && !modelInput.includes("Best-of-three ="), details: "Non-prompt pipeline notes are absent." },
-    { id: "one-candidate-contract", passed: modelInput.includes("Write exactly one candidate") && !modelInput.includes("Write 3 candidates"), details: "One candidate per independent call." },
+    { id: "one-candidate-contract", passed: modelInput.includes("Write exactly one UNAPPROVED Daily Glance candidate") && !modelInput.includes("Write 3 candidates"), details: "One candidate per independent call." },
     { id: "exact-output-schema", passed: modelInput.includes('"transit_key"') && modelInput.includes('"screenshot_line"') && !modelInput.includes('"portability_check"'), details: "Four-field owner schema included." },
-    { id: "resolved-chart-context", passed: sceneContext?.canGenerateContextualCandidate === true && sceneContext?.writerBoundary?.enabled === true && modelInput.includes('### Resolved chart context and scene licenses'), details: sceneContext?.chartContext || "missing" },
+    { id: "resolved-chart-context", passed: sceneContext?.canGenerateContextualCandidate === true && sceneContext?.writerBoundary?.enabled === true && modelInput.includes("## Resolved chart context and approved scene licenses"), details: sceneContext?.chartContext || "missing" },
     { id: "explicit-scene-license-approval", passed: (sceneContext?.licenses || []).length > 0 && sceneContext.licenses.every((license) => license.approval?.ownerApproved === true && license.approval?.writerEligible === true), details: (sceneContext?.licenses || []).map((license) => license.licenseId) },
-    { id: "same-group-approved-examples", passed: examples.length === 3 && examples.every((entry) => entry.key !== packet.target.key && entry.key.split("/")[0] === packet.target.key.split("/")[0] && entry.headlineStatus === "approved" && entry.bodyStatus === "approved"), details: examples.map((entry) => entry.key) },
+    { id: "ranked-current-approved-examples", passed: examples.length === 3 && examples.every((entry) => entry.key !== packet.target.key && entry.headlineStatus === "approved" && entry.bodyStatus === "approved" && Number.isFinite(entry.ranking?.score)), details: examples.map((entry) => ({ key: entry.key, ranking: entry.ranking })) },
+    { id: "ranked-owner-corrections", passed: (examples.ownerCorrections || []).length >= 3 && (examples.ownerCorrections || []).every((entry) => Number.isFinite(entry.ranking?.score) && entry.sourcePath), details: (examples.ownerCorrections || []).map((entry) => ({ sourcePath: entry.sourcePath, sourceIndex: entry.sourceIndex, ranking: entry.ranking })) },
     { id: "no-unresolved-placeholders", passed: !/\{\{[A-Z_]+\}\}/u.test(modelInput), details: "All directive inputs resolved." },
     { id: "deterministic-lint-spec", passed: deterministicLintRules(packet, config).every((entry) => modelInput.includes(`- [${entry.tier.toUpperCase()}] ${entry.id}: ${entry.rule}`)), details: `${deterministicLintRules(packet, config).length} exact tiered lint rules included.` },
     { id: "no-current-serving-copy", passed: !currentPair || (!modelInput.includes(currentPair.headline) && !modelInput.includes(currentPair.body)), details: currentPair ? "Target's current headline and body are absent." : "No current pair supplied for this check." },
@@ -211,6 +310,7 @@ module.exports = {
   lintSelfAuditCandidate,
   loadDirective,
   parseSelfAuditCandidate,
+  rankedOwnerCorrections,
   renderSelfAuditWriterInput,
   selectLintCleanWinner,
   selfAuditPacketLint,

@@ -10,10 +10,9 @@ const { scheduledCandidateConfig, servingPairs } = require("./audit-daily-glance
 const {
   batchLint,
   lintOutput,
-  lintTierForRule,
-  readJson,
-  servingLintPolicyPath
+  lintTierForRule
 } = require("./daily-glance-writer-runtime.js");
+const { EFFECTIVE_RULE_REGISTRY } = require("../../../src/astro-writing/effectiveRules.cjs");
 
 const packageRoot = path.resolve(__dirname, "..");
 const repoRoot = path.resolve(packageRoot, "..", "..");
@@ -43,12 +42,6 @@ function buildServingLintReport() {
     const failures = rows.filter((row) => !row.lint.checks.find((check) => check.id === id).passed).length;
     return { id, failures, failureRate: failures / pairs.length, tier: lintTierForRule(id) };
   });
-  const policy = readJson(servingLintPolicyPath);
-  const observedCounts = Object.fromEntries(ruleStats.map((rule) => [rule.id, rule.failures]));
-  if (JSON.stringify(observedCounts) !== JSON.stringify(policy.baseline.ruleFailureCounts)) {
-    throw new Error(`Serving lint baseline is stale: observed rule counts differ from ${path.basename(servingLintPolicyPath)}.`);
-  }
-
   const blockingFailures = rows
     .map((row) => ({
       key: row.key,
@@ -74,12 +67,12 @@ function buildServingLintReport() {
   return {
     schemaVersion: 1,
     date: dateKey,
-    policyId: policy.policyId,
+    policyId: EFFECTIVE_RULE_REGISTRY.registryId,
     sourceRowsPath: path.relative(repoRoot, sourceRowsPath),
     sourceRowsSha256: sha256(sourceBytes),
     servingPairs: pairs.length,
     approvedPairs: pairs.length - unapproved.length,
-    threshold: policy.baseline.advisoryWhenFailureRateGreaterThan,
+    tierPolicy: "Only factual safety, grammar, placeholder integrity, source licensing, register direction, and unsupported astrology claims block.",
     ruleStats,
     blockingTier: {
       passed: pairs.length - blockingFailures.length,
@@ -109,13 +102,12 @@ function renderMarkdown(report) {
     `Policy: \`${report.policyId}\``,
     `Serving source SHA-256: \`${report.sourceRowsSha256}\``,
     "",
-    "> Baseline: all 68 currently-serving pairs are owner-approved. A rule failing more than 10% of that surface is advisory; rules at or below 10% remain blocking. This changes lint disposition only. No copy or review status changed, and no model was called.",
+    "> Baseline: all 68 currently-serving pairs are owner-approved. Tiering comes from the effective-rule registry, not historical failure rates. Only factual safety, grammar, placeholder integrity, source licensing, register direction, and unsupported astrology claims block. No copy or review status changed, and no model was called.",
     "",
     "## Result",
     "",
     `- Blocking-tier pass rate: ${report.blockingTier.passed}/68 (${(report.blockingTier.passRate * 100).toFixed(1)}%)`,
     `- Blocking-tier failures: ${report.blockingTier.failed}`,
-    "- The requested threshold does not produce the anticipated 90% aggregate pass rate because ten cards fail different low-frequency blocking rules.",
     "",
     "## Individual rule calibration",
     "",

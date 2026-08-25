@@ -324,6 +324,8 @@ async function makeCall(packet, release) {
   const result = await callGovernedOpenAIResponses({
     apiKey: process.env.OPENAI_API_KEY,
     role: "WRITER",
+    surface: "card",
+    family: "sky-placement",
     request,
     productionGate: packet.productionGate,
     productionInput: packet.productionInput,

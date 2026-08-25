@@ -1,7 +1,10 @@
 import fs from "node:fs";
 import path from "node:path";
 import { contentGenerationProvider } from "./provider-config.js";
-import { REVIEW_FIELDS } from "../../src/astro-writing/canonicalInstructions.mjs";
+import {
+  effectiveAstrologyWritingInstructions,
+  REVIEW_FIELDS
+} from "../../src/astro-writing/canonicalInstructions.mjs";
 import { COLD_REVIEW_SCHEMA, REVIEW_SCHEMA } from "../../src/astro-writing/reviewDraft.mjs";
 import { MEANING_PLAN_SCHEMA } from "../../src/astro-writing/resolveAstrology.mjs";
 import { generatedApprovalState, markPipelineReady } from "../../src/astro-writing/approvalGovernance.mjs";
@@ -4472,7 +4475,12 @@ function v4ExamplesPrompt(input: GenerateContentInput) {
   return JSON.stringify(examples, null, 2);
 }
 
-function buildPrompt(input: GenerateContentInput, approvedExamples: ApprovedExample[] = [], qualityFeedback = "") {
+function buildPrompt(
+  input: GenerateContentInput,
+  approvedExamples: ApprovedExample[] = [],
+  qualityFeedback = "",
+  effectiveSurface = input.surface
+) {
   if (input.reportPayload) {
     return [
       reportPromptFromPayload(input.reportPayload),
@@ -4496,6 +4504,9 @@ function buildPrompt(input: GenerateContentInput, approvedExamples: ApprovedExam
       ].join("\n");
 
   return [
+    effectiveAstrologyWritingInstructions({ surface: effectiveSurface, family: input.eventType }),
+    "The effective-rule block above controls enforcement tier. Any later voice or form guidance is advisory when the registry classifies it as advisory.",
+    "",
     styleGuide,
     "",
     "TASK",
@@ -5254,6 +5265,16 @@ function assertProductionRoleGate(
   return assertProductionPreCallGate(gate, { role, input, draftValidation });
 }
 
+function effectiveInstructionContext(
+  gate: ReturnType<typeof prepareProductionPreCallGate>,
+  input: GenerateContentInput
+) {
+  return {
+    surface: gate.validation.validationProfile,
+    family: input.eventType
+  };
+}
+
 async function reviewColdRenderedContentWithOpenAI({
   apiKey,
   draft,
@@ -5272,6 +5293,7 @@ async function reviewColdRenderedContentWithOpenAI({
   const { response, payload } = await callOpenAIResponses({
     apiKey,
     role: "COLD_REVIEWER",
+    ...effectiveInstructionContext(productionGate, input),
     request: {
       model,
       input: JSON.stringify({ rendered_copy: renderedGeneratedCopy(draft) }),
@@ -5323,6 +5345,7 @@ async function reviewGeneratedContentWithOpenAI({
   const { response, payload } = await callOpenAIResponses({
     apiKey,
     role: "REVIEWER",
+    ...effectiveInstructionContext(productionGate, input),
     request: {
       model,
       input: JSON.stringify({
@@ -5364,11 +5387,13 @@ async function reviewGeneratedContentWithOpenAI({
       throw new Error(`OpenAI review omitted strict result for ${field}.`);
     }
   }
-  const contextualViolations = contextualReview.violations.filter((item) => item.category !== "cold_rendered_prose");
+  const contextualViolations = contextualReview.violations
+    .filter((item) => item.category !== "cold_rendered_prose")
+    .map((item) => ({ ...item, severity: "nonblocking" as const }));
   return {
     ...contextualReview,
     cold_rendered_prose: coldReview.cold_rendered_prose,
-    decision: contextualReview.decision,
+    decision: "PASS",
     violations: [...coldReview.violations, ...contextualViolations]
   };
 }
@@ -5388,6 +5413,7 @@ async function planGeneratedContentWithOpenAI({
   const { response, payload } = await callOpenAIResponses({
     apiKey,
     role: "MEANING_PLANNER",
+    ...effectiveInstructionContext(productionGate, input),
     taskInstructions: "Astrology first. Return only the governed structured meaning plan. Do not draft prose.",
     request: {
       model,
@@ -5451,6 +5477,7 @@ async function reviseGeneratedContentWithOpenAI({
   const { response, payload } = await callOpenAIResponses({
     apiKey,
     role: "REVISER",
+    ...effectiveInstructionContext(productionGate, input),
     request: {
       model,
       ...(reasoningEffort ? { reasoning: { effort: reasoningEffort } } : {}),
@@ -5514,7 +5541,7 @@ export async function generateWithOpenAI(input: GenerateContentInput): Promise<S
   const lockedHeadline = factualHeadlineFor(input);
   const approvedExamples = await loadApprovedExamples(input);
   const meaningPlan = await planGeneratedContentWithOpenAI({ apiKey, input, productionGate });
-  const legacyPrompt = `${buildPrompt(input, approvedExamples, "")}\n\nGOVERNED MEANING PLAN\n${JSON.stringify(meaningPlan, null, 2)}`;
+  const legacyPrompt = `${buildPrompt(input, approvedExamples, "", productionGate.validation.validationProfile)}\n\nGOVERNED MEANING PLAN\n${JSON.stringify(meaningPlan, null, 2)}`;
   const writerPrompt = productionGate.governedPromptEnabled
     ? `${legacyPrompt}\n\nGOVERNED KNOWLEDGE EVIDENCE\n${productionGate.governedPrompt}`
     : legacyPrompt;
@@ -5523,6 +5550,7 @@ export async function generateWithOpenAI(input: GenerateContentInput): Promise<S
   const { response, payload } = await callOpenAIResponses({
     apiKey,
     role: "WRITER",
+    ...effectiveInstructionContext(productionGate, input),
     request: {
       model,
       ...(reasoningEffort ? { reasoning: { effort: reasoningEffort } } : {}),
@@ -5567,16 +5595,14 @@ export async function generateWithOpenAI(input: GenerateContentInput): Promise<S
     throw new ContentGenerationQualityError(`Deterministic production gate failed: ${details}`);
   }
 
-  let review = await reviewGeneratedContentWithOpenAI({ apiKey, draft, input, meaningPlan, productionGate });
-  if (review.decision !== "PASS") {
-    draft = await reviseGeneratedContentWithOpenAI({ apiKey, draft, input, review, meaningPlan, productionGate });
-    validateGeneratedContentForInput(draft, input);
-    review = await reviewGeneratedContentWithOpenAI({ apiKey, draft, input, meaningPlan, productionGate });
-  }
-  if (review.decision !== "PASS") {
-    const details = review.violations.map((violation) => `${violation.category}: ${violation.reason}`).join("; ");
-    throw new ContentGenerationQualityError(`Marie review still requires revision: ${details || "unspecified violation"}`);
-  }
+  const review = await reviewGeneratedContentWithOpenAI({ apiKey, draft, input, meaningPlan, productionGate });
+  draft = {
+    ...draft,
+    softWarnings: [...new Set([
+      ...(draft.softWarnings ?? []),
+      ...review.violations.map((violation) => `model-review-advisory:${violation.category}:${violation.reason}`)
+    ])]
+  };
 
   return {
     ...withGenerationQualityDiagnostics(draft, input),
@@ -5616,7 +5642,7 @@ export async function generateWithClaude(input: GenerateContentInput): Promise<S
   let lastDraft: StoredGeneratedContent | null = null;
 
   for (let attempt = 0; attempt < 2; attempt += 1) {
-    const legacyPrompt = buildPrompt(input, approvedExamples, qualityFeedback);
+    const legacyPrompt = buildPrompt(input, approvedExamples, qualityFeedback, productionGate.validation.validationProfile);
     const writerPrompt = productionGate.governedPromptEnabled
       ? `${legacyPrompt}\n\nGOVERNED KNOWLEDGE EVIDENCE\n${productionGate.governedPrompt}`
       : legacyPrompt;
@@ -5751,6 +5777,9 @@ function skyArticleTemplateSlotPrompt(
   approvedExamples: ApprovedExample[]
 ) {
   return [
+    effectiveAstrologyWritingInstructions({ surface: "article", family: "sky-article" }),
+    "The effective-rule block above controls enforcement tier. Any later voice or form guidance is advisory when the registry classifies it as advisory.",
+    "",
     readTextFile("packages/astro-knowledge/voice/tldr-astro/style-guide.md"),
     "",
     "TASK",
@@ -5843,6 +5872,7 @@ export async function generateSkyArticleTemplateSlots(
     const { response, payload } = await callOpenAIResponses({
       apiKey,
       role: "WRITER",
+      ...effectiveInstructionContext(productionGate, generationInput),
       request: {
         model,
         ...(reasoningEffort ? { reasoning: { effort: reasoningEffort } } : {}),

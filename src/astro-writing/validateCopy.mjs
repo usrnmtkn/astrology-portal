@@ -2,6 +2,7 @@ import { WRITING_POLICY_DATA } from "./policyData.generated.mjs";
 import { evaluateSpineQuality } from "./spineQuality.mjs";
 import corpusGrammar from "./corpusGrammarChecks.cjs";
 import { assertValidationProfile } from "./validationProfiles.mjs";
+import { effectiveRulesForSurface, normalizeWritingSurface, tierForFindingCategory } from "./effectiveRules.mjs";
 
 const { grammarFindings } = corpusGrammar;
 
@@ -274,8 +275,9 @@ export function validateCopy(copy, {
   spineQualityConditionalLayers = {}
 } = {}) {
   const profile = validationProfile == null
-    ? { id: "legacy", baseRules: [], surfaceRules: [] }
+    ? { id: "legacy", effectiveSurface: normalizeWritingSurface({ surface, family }) }
     : assertValidationProfile(validationProfile);
+  const effectiveSurface = profile.effectiveSurface;
   const text = copyText(copy);
   const normalized = text.toLowerCase();
   const unprotectedText = protectedOwnerLines.reduce(
@@ -400,35 +402,35 @@ export function validateCopy(copy, {
   if (family.includes("placement") && /\b(?:will definitely|is guaranteed to)\b/iu.test(text)) {
     violations.push({ category: "astrology_integrity", detail: "Placement copy predicts an event instead of a recurring pattern." });
   }
-  if (profile.surfaceRules.includes("daily-engine-hidden")
+  if (effectiveSurface === "daily"
     && /\b(?:transit(?:ing)?|natal|conjunction|opposition|square|trine|sextile|quincunx|inconjunct|semi-?sextile|\d+(?:st|nd|rd|th) house)\b/iu.test(text)) {
     violations.push({ category: "daily_engine_hidden", detail: "Daily copy exposed engine terminology." });
   }
-  if (profile.surfaceRules.includes("daily-outcome-ceiling")
+  if (effectiveSurface === "daily"
     && /\b(?:will|is going to)\b[^.!?]{0,60}\b(?:work out|resolve|succeed|heal|improve|happen)\b/iu.test(text)) {
     violations.push({ category: "daily_outcome_ceiling", detail: "Daily copy promised an unsupported outcome." });
   }
-  if (profile.surfaceRules.includes("synastry-outcome-ceiling")
+  if (effectiveSurface === "synastry"
     && /\bwill\b[^.!?]{0,60}\b(?:leave|stay|marry|separate|break up|end the (?:bond|friendship|relationship))\b/iu.test(text)) {
     violations.push({ category: "synastry_outcome_ceiling", detail: "Synastry copy predicted a relationship outcome." });
   }
-  if (profile.surfaceRules.includes("synastry-fate-ban")
+  if (effectiveSurface === "synastry"
     && /\b(?:soulmates?|twin flames?|meant to be|destined (?:for|to be with))\b/iu.test(text)) {
     violations.push({ category: "synastry_fate_ban", detail: "Synastry copy used deterministic fate language." });
   }
-  if (profile.surfaceRules.includes("article-meta-scaffolding-ban")
+  if (effectiveSurface === "article"
     && /\b(?:in this article|this article will|as an ai|here(?:'s| is) what (?:you need to know|we will cover))\b/iu.test(text)) {
     violations.push({ category: "article_meta_scaffolding", detail: "Article copy exposed generic composition scaffolding." });
   }
-  if (profile.surfaceRules.includes("temporary-transit-register")
+  if (effectiveSurface === "friends-transit"
     && /\b(?:you tend to|you always|you usually|usually|generally|this is who you are)\b/iu.test(text)) {
     violations.push({ category: "temporary_transit_register", detail: "Friends transit copy used standing-pattern language." });
   }
-  if (profile.surfaceRules.includes("disconnected-stock-coaching")
+  if (effectiveSurface === "friends-transit"
     && /\b(?:give yourself permission|you are allowed|let yourself|allow yourself|take the win|protect your energy|honor your needs)\b/iu.test(text)) {
     violations.push({ category: "disconnected_stock_coaching", detail: "Friends transit copy used disconnected stock coaching." });
   }
-  if (profile.surfaceRules.includes("friends-variant-direction") && typeof copy === "object" && copy) {
+  if (effectiveSurface === "friends-transit" && typeof copy === "object" && copy) {
     if (typeof copy.body_you === "string" && copy.body_you.includes("{{Name}}")) {
       violations.push({ category: "friends_variant_direction", detail: "body_you must not contain {{Name}}." });
     }
@@ -477,14 +479,22 @@ export function validateCopy(copy, {
       })
     : null;
   if (spineQuality) advisories.push(...spineQuality.failures);
+  const blockingViolations = [];
+  const tieredAdvisories = [...advisories];
+  for (const finding of violations) {
+    const tier = tierForFindingCategory(finding.category, effectiveSurface);
+    const tiered = { ...finding, tier, advisory: tier === "advisory" };
+    if (tier === "blocking") blockingViolations.push(tiered);
+    else tieredAdvisories.push(tiered);
+  }
   return {
-    passed: violations.length === 0,
+    passed: blockingViolations.length === 0,
     completionStatus: spineQuality?.status === "spine-quality-incomplete" ? "spine-quality-incomplete" : "complete",
-    violations,
-    advisories,
+    violations: blockingViolations,
+    advisories: tieredAdvisories,
     spineQuality,
     validationProfile: profile.id,
-    rulesRun: [...profile.baseRules, ...profile.surfaceRules],
+    rulesRun: effectiveRulesForSurface(effectiveSurface).map((rule) => rule.id),
     counts: {
       negationPivots: negationPivotCount,
       negationPivotsDetected: negationPivotOccurrencesDetected.length,
@@ -515,7 +525,8 @@ const ANCHOR_PATTERNS = Object.freeze([
 export function validateCopyBatch(copies, {
   constructionCap = DEFAULT_BATCH_CONSTRUCTION_CAP,
   sceneNounCap = DEFAULT_BATCH_CONSTRUCTION_CAP,
-  negationPivotSetCap = NEGATION_PIVOT_SET_CAP
+  negationPivotSetCap = NEGATION_PIVOT_SET_CAP,
+  surface = "generic"
 } = {}) {
   const items = copies.map((copy, index) => ({ index, text: copyText(copy) }));
   const violations = [];
@@ -578,10 +589,18 @@ export function validateCopyBatch(copies, {
       });
     }
   }
+  const blockingViolations = [];
+  const tieredAdvisories = [...advisories];
+  for (const finding of violations) {
+    const tier = tierForFindingCategory(finding.category, surface);
+    const tiered = { ...finding, tier, advisory: tier === "advisory" };
+    if (tier === "blocking") blockingViolations.push(tiered);
+    else tieredAdvisories.push(tiered);
+  }
   return {
-    passed: violations.length === 0,
-    violations,
-    advisories,
+    passed: blockingViolations.length === 0,
+    violations: blockingViolations,
+    advisories: tieredAdvisories,
     counts: {
       negationPivots,
       negationPivotsByPage,

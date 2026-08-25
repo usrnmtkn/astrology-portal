@@ -1,5 +1,5 @@
 import { buildMeaningPlan } from "./buildMeaningPlan.mjs";
-import { canonicalAstrologyWritingInstructions } from "./canonicalInstructions.mjs";
+import { effectiveAstrologyWritingInstructions } from "./canonicalInstructions.mjs";
 
 export const MEANING_PLAN_SCHEMA = Object.freeze({
   type: "object",
@@ -34,12 +34,12 @@ export const MEANING_PLAN_SCHEMA = Object.freeze({
   }
 });
 
-export async function resolveAstrology(input, { plannerClient } = {}) {
+export async function resolveAstrology(input, { plannerClient, surface = "generic", family = "" } = {}) {
   if (!plannerClient) return buildMeaningPlan(input);
   const value = await plannerClient({
     stage: "meaning-plan",
     role: "MEANING_PLANNER",
-    instructions: `${canonicalAstrologyWritingInstructions}\n\nAstrology first. Return only the governed structured meaning plan. Do not draft prose.`,
+    instructions: `${effectiveAstrologyWritingInstructions({ surface, family })}\n\nAstrology first. Return only the governed structured meaning plan. Do not draft prose.`,
     input: JSON.stringify(input, null, 2),
     schema: MEANING_PLAN_SCHEMA
   });

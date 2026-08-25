@@ -1,0 +1,327 @@
+{
+  "schemaVersion": 1,
+  "registryId": "tldr-astro-effective-writing-rules-v1:2026-08-25",
+  "unknownRuleTier": "advisory",
+  "ownerGate": {
+    "authority": "owner-only",
+    "modelJudges": "advisory-only",
+    "generatedCopyStatus": "needs_review"
+  },
+  "rules": [
+    {
+      "id": "owner-passage-first-v2",
+      "surface": ["all"],
+      "introducedAt": "2026-08-21",
+      "supersedes": ["forecast-five-movement-template-v1", "mandatory-thesis-complication-solution-v1"],
+      "tier": "advisory",
+      "ownerAuthority": {
+        "sourceId": "owner-directive:owner-passage-first-2026-08-21",
+        "sourcePath": "docs/writing/VOICE_CONTRACT.md",
+        "decisionDate": "2026-08-21"
+      },
+      "prompt": true,
+      "promptText": "Write from the closest actual owner-authored passages in the REGISTER lane. The resolved astrology supplies meaning; the selected owner passages supply vocabulary, entry point, sentence movement, emphasis, and stopping point. Do not impose a generic balanced structure or explain an example after it has made the point."
+    },
+    {
+      "id": "lived-cause-consequence-v2",
+      "surface": ["all"],
+      "introducedAt": "2026-08-14",
+      "supersedes": [],
+      "tier": "advisory",
+      "ownerAuthority": {
+        "sourceId": "owner-directive:daily-glance-voice-standard-2026-08-14",
+        "sourcePath": "docs/writing/WRITING_RULE_RECONCILIATION_OWNER_RULING_2026-08-25.md",
+        "decisionDate": "2026-08-14"
+      },
+      "prompt": true,
+      "promptText": "Use a specific situation, a direct consequence, a useful next move, and enough personality to sound written rather than generated. Concrete means an observable action, decision, exchange, or consequence, not a decorative prop or an unsupported life domain."
+    },
+    {
+      "id": "factual-safety-v1",
+      "surface": ["all"],
+      "introducedAt": "2026-08-25",
+      "supersedes": [],
+      "tier": "blocking",
+      "ownerAuthority": {
+        "sourceId": "owner-directive:writing-rule-reconciliation-v1-2026-08-25",
+        "sourcePath": "docs/writing/WRITING_RULE_RECONCILIATION_OWNER_RULING_2026-08-25.md",
+        "decisionDate": "2026-08-25"
+      },
+      "prompt": true,
+      "promptText": "Do not invent dates, placements, life history, diagnoses, motives, crises, outcomes, or facts that the resolved packet does not supply.",
+      "findingCategoryPrefixes": ["internal_guard"],
+      "findingCategories": ["required_fields"],
+      "enforcementIds": ["SOL-DIRECTIVE-output-schema", "batch-output-count"]
+    },
+    {
+      "id": "grammar-v1",
+      "surface": ["all"],
+      "introducedAt": "2026-08-25",
+      "supersedes": [],
+      "tier": "blocking",
+      "ownerAuthority": {
+        "sourceId": "owner-directive:writing-rule-reconciliation-v1-2026-08-25",
+        "sourcePath": "docs/writing/WRITING_RULE_RECONCILIATION_OWNER_RULING_2026-08-25.md",
+        "decisionDate": "2026-08-25"
+      },
+      "prompt": true,
+      "promptText": "Every rendered sentence must be grammatical, including pronoun case and agreement.",
+      "findingCategoryPrefixes": ["grammar_", "vague_action_object"],
+      "enforcementIds": ["grammar"]
+    },
+    {
+      "id": "placeholder-integrity-v1",
+      "surface": ["all"],
+      "introducedAt": "2026-08-25",
+      "supersedes": [],
+      "tier": "blocking",
+      "ownerAuthority": {
+        "sourceId": "owner-directive:writing-rule-reconciliation-v1-2026-08-25",
+        "sourcePath": "docs/writing/WRITING_RULE_RECONCILIATION_OWNER_RULING_2026-08-25.md",
+        "decisionDate": "2026-08-25"
+      },
+      "prompt": true,
+      "promptText": "Preserve exactly the placeholders licensed by the render contract. Do not add, remove, rename, or expose unresolved placeholders.",
+      "findingCategories": ["placeholder_integrity", "friends_variant_direction"],
+      "enforcementIds": ["placeholder-integrity"]
+    },
+    {
+      "id": "source-licensing-v1",
+      "surface": ["all"],
+      "introducedAt": "2026-08-25",
+      "supersedes": [],
+      "tier": "blocking",
+      "ownerAuthority": {
+        "sourceId": "owner-directive:writing-rule-reconciliation-v1-2026-08-25",
+        "sourcePath": "docs/writing/WRITING_RULE_RECONCILIATION_OWNER_RULING_2026-08-25.md",
+        "decisionDate": "2026-08-25"
+      },
+      "prompt": true,
+      "promptText": "Use only governed meaning, register, scene, argument, phrase, and correction evidence supplied for this surface. Protected owner wording remains byte-exact.",
+      "findingCategories": ["owner_line_integrity", "literal_evidence_requirements"],
+      "enforcementIds": ["canonical-packet-preflight", "explicit-scene-license-approval", "resolved-chart-context"]
+    },
+    {
+      "id": "register-direction-v1",
+      "surface": ["all"],
+      "introducedAt": "2026-08-25",
+      "supersedes": [],
+      "tier": "blocking",
+      "ownerAuthority": {
+        "sourceId": "owner-directive:writing-rule-reconciliation-v1-2026-08-25",
+        "sourcePath": "docs/writing/WRITING_RULE_RECONCILIATION_OWNER_RULING_2026-08-25.md",
+        "decisionDate": "2026-08-25"
+      },
+      "prompt": true,
+      "promptText": "Keep the supplied surface register and subject direction. Do not expose engine terminology or break the fourth wall.",
+      "findingCategories": ["register_consistency", "fourth_wall", "daily_engine_hidden", "article_meta_scaffolding", "shared_ban"],
+      "enforcementIds": ["DG-R2", "engine-hidden", "SOL-DIRECTIVE-body-register"],
+      "enforcementIdPrefixes": ["engine-hidden-BAN-"]
+    },
+    {
+      "id": "unsupported-astrology-claims-v1",
+      "surface": ["all"],
+      "introducedAt": "2026-08-25",
+      "supersedes": [],
+      "tier": "blocking",
+      "ownerAuthority": {
+        "sourceId": "owner-directive:writing-rule-reconciliation-v1-2026-08-25",
+        "sourcePath": "docs/writing/WRITING_RULE_RECONCILIATION_OWNER_RULING_2026-08-25.md",
+        "decisionDate": "2026-08-25"
+      },
+      "prompt": true,
+      "promptText": "Keep every claim within the resolved astrology. A sign does not inherit its associated house, a transit does not become biography, and no aspect licenses a promised outcome.",
+      "findingCategories": ["astrology_integrity", "planet_or_point_function", "sign_house_separation", "example_proves_astrology", "invented_motive", "daily_outcome_ceiling", "synastry_outcome_ceiling", "synastry_fate_ban", "temporary_transit_register"],
+      "enforcementIds": ["DG-R4", "DG-R4-no-outcome-promise", "SM-DG-2", "SM-DG-2-no-diagnostic-history", "DG-R14", "DG-R14-scene-not-biographical"],
+      "enforcementIdPrefixes": ["DG-R4-BAN-"]
+    },
+    {
+      "id": "daily-scene-license-boundary-v1",
+      "surface": ["daily"],
+      "introducedAt": "2026-08-11",
+      "supersedes": ["daily-portability-test-v1"],
+      "tier": "blocking",
+      "ownerAuthority": {
+        "sourceId": "owner-ruling:daily-glance-scene-license-boundary-2026-08-11",
+        "sourcePath": "packages/astro-knowledge/review/daily-glance-sol-directive-pilot-2026-08-10/owner-disposition-2026-08-11.md",
+        "decisionDate": "2026-08-11"
+      },
+      "prompt": true,
+      "promptText": "Scene specificity must be earned by resolved astrology. The writer does not choose where the astrology happens. The chart resolver does. The writer chooses how to express that licensed experience clearly and naturally. Concrete does not mean domain-specific. When no domain is licensed, use a concrete cross-context human moment. Licensed vocabulary may be paraphrased naturally rather than embedded verbatim.",
+      "enforcementIds": ["resolved-chart-context", "explicit-scene-license-approval"]
+    },
+    {
+      "id": "daily-structure-advisory-v1",
+      "surface": ["daily"],
+      "introducedAt": "2026-08-25",
+      "supersedes": [],
+      "tier": "advisory",
+      "ownerAuthority": {
+        "sourceId": "owner-directive:writing-rule-reconciliation-v1-2026-08-25",
+        "sourcePath": "docs/writing/WRITING_RULE_RECONCILIATION_OWNER_RULING_2026-08-25.md",
+        "decisionDate": "2026-08-25"
+      },
+      "prompt": true,
+      "promptText": "Keep the card concise and coherent, but treat headline grammar, word count, sentence count, one-situation shape, final-instruction shape, and other structural preferences as editorial signals rather than quality verdicts.",
+      "enforcementIds": ["P4-headline-one-declarative-sentence", "P4-headline-word-count", "P4-body-sentence-count", "P4-body-word-count", "P4-one-final-instruction", "P4-body-supports-without-repeating", "SOL-DIRECTIVE-headline", "SOL-DIRECTIVE-body-length", "SOL-DIRECTIVE-one-situation", "SOL-DIRECTIVE-formula", "DG-R3-no-slogan-or-restatement-closer", "DG-R9-enumerated-instruction-allowed", "DG-R15-action-repairs-moment"]
+    },
+    {
+      "id": "daily-cadence-advisory-v1",
+      "surface": ["daily"],
+      "introducedAt": "2026-08-25",
+      "supersedes": [],
+      "tier": "advisory",
+      "ownerAuthority": {
+        "sourceId": "owner-directive:writing-rule-reconciliation-v1-2026-08-25",
+        "sourcePath": "docs/writing/WRITING_RULE_RECONCILIATION_OWNER_RULING_2026-08-25.md",
+        "decisionDate": "2026-08-25"
+      },
+      "prompt": true,
+      "promptText": "Cadence, a short blunt line, morning readability, quotation count, and repeated sentence frames are owner-review signals. Do not force them mechanically when the selected owner passages move differently.",
+      "enforcementIds": ["OWNER-DIRECTIVE-short-blunt-line", "OWNER-TEST-morning-read", "DG-R17-quoted-dialogue-max-one", "DG-R17-quoted-dialogue-earns-place-advisory", "DG-R1-recurring-sentence-frame"]
+    },
+    {
+      "id": "daily-hedging-advisory-v1",
+      "surface": ["daily"],
+      "introducedAt": "2026-08-25",
+      "supersedes": [],
+      "tier": "advisory",
+      "ownerAuthority": {
+        "sourceId": "owner-directive:writing-rule-reconciliation-v1-2026-08-25",
+        "sourcePath": "docs/writing/WRITING_RULE_RECONCILIATION_OWNER_RULING_2026-08-25.md",
+        "decisionDate": "2026-08-25"
+      },
+      "prompt": true,
+      "promptText": "Calibrate certainty naturally. Counts of may, might, or perhaps and the location of may are advisory; unsupported certainty remains blocked by the astrology-claim rule.",
+      "enforcementIds": ["B1-L2-may-inner-states-only", "DG-R11-unhedged-headline", "DG-R13-may-max-once", "SOL-DIRECTIVE-hedging"]
+    },
+    {
+      "id": "daily-opener-variety-advisory-v1",
+      "surface": ["daily"],
+      "introducedAt": "2026-08-25",
+      "supersedes": [],
+      "tier": "advisory",
+      "ownerAuthority": {
+        "sourceId": "owner-directive:writing-rule-reconciliation-v1-2026-08-25",
+        "sourcePath": "docs/writing/WRITING_RULE_RECONCILIATION_OWNER_RULING_2026-08-25.md",
+        "decisionDate": "2026-08-25"
+      },
+      "prompt": true,
+      "promptText": "Opener and headline variety are batch diagnostics, not single-candidate gates. Preserve a strong natural opening even when its construction appears elsewhere.",
+      "enforcementIds": ["DG-R7-varied-opener", "DG-R7-opener-variety", "DG-R12-no-time-anchor-opener", "B1-L1-time-anchor-max-once", "B1-L3+L4-headline-group-grammar"]
+    },
+    {
+      "id": "daily-screenshot-advisory-v1",
+      "surface": ["daily"],
+      "introducedAt": "2026-08-25",
+      "supersedes": [],
+      "tier": "advisory",
+      "ownerAuthority": {
+        "sourceId": "owner-directive:writing-rule-reconciliation-v1-2026-08-25",
+        "sourcePath": "docs/writing/WRITING_RULE_RECONCILIATION_OWNER_RULING_2026-08-25.md",
+        "decisionDate": "2026-08-25"
+      },
+      "prompt": true,
+      "promptText": "A memorable or sendable line is welcome but never required. Screenshot-line heuristics are advisory and cannot discard a clear card.",
+      "enforcementIds": ["OWNER-TEST-screenshot", "SOL-DIRECTIVE-screenshot"]
+    },
+    {
+      "id": "voice-and-language-signals-v1",
+      "surface": ["all"],
+      "introducedAt": "2026-08-25",
+      "supersedes": ["corpus-vocabulary-hard-fail-v1", "model-prose-gate-v1"],
+      "tier": "advisory",
+      "ownerAuthority": {
+        "sourceId": "owner-directive:writing-rule-reconciliation-v1-2026-08-25",
+        "sourcePath": "docs/writing/WRITING_RULE_RECONCILIATION_OWNER_RULING_2026-08-25.md",
+        "decisionDate": "2026-08-25"
+      },
+      "prompt": true,
+      "promptText": "Use plain, natural owner-supported language. Style bans, corpus vocabulary rarity, cadence, cleverness, permission language, and other voice signals are reported for owner review; they do not become machine quality verdicts.",
+      "findingCategories": ["em_dash", "en_dash", "ascii_only", "banned_language", "editorial_word_policy", "stock_trope", "vague_outcome_clause", "relationship_container_metaphor", "negation_pivot_cap", "structural_spine_vocabulary", "spine_scaffold_grammar"],
+      "enforcementIds": ["global+VC-016+DG+SM-output-bans", "DG-R2-register", "DG-R16-owner-reserved-construction", "OWNER-TEST-specificity", "OWNER-TEST-specificity-batch"],
+      "enforcementIdPrefixes": ["global-BAN-", "VC-016-minus-pronouns-BAN-", "SM-DG-5-BAN-", "SM-DG-6-BAN-", "DG-R1-BAN-", "DG-R5-BAN-", "DG-R6-BAN-", "DG-R15-BAN-", "DG-R16-BAN-"]
+    },
+    {
+      "id": "batch-pattern-signals-v1",
+      "surface": ["all"],
+      "introducedAt": "2026-08-25",
+      "supersedes": [],
+      "tier": "advisory",
+      "ownerAuthority": {
+        "sourceId": "owner-directive:writing-rule-reconciliation-v1-2026-08-25",
+        "sourcePath": "docs/writing/WRITING_RULE_RECONCILIATION_OWNER_RULING_2026-08-25.md",
+        "decisionDate": "2026-08-25"
+      },
+      "prompt": false,
+      "findingCategories": ["negation_pivot_page_cap", "negation_pivot_set_cap"],
+      "enforcementIds": ["DG-R1-recurring-sentence-frame"]
+    },
+    {
+      "id": "forecast-five-movement-template-v1",
+      "surface": ["all"],
+      "introducedAt": "2026-08-08",
+      "supersedes": [],
+      "tier": "retired",
+      "ownerAuthority": {
+        "sourceId": "owner-template:forecast-first-2026-08-08",
+        "sourcePath": "docs/writing/ASTROLOGY_CONTRACT.md",
+        "decisionDate": "2026-08-08"
+      },
+      "prompt": false
+    },
+    {
+      "id": "mandatory-thesis-complication-solution-v1",
+      "surface": ["all"],
+      "introducedAt": "2026-08-08",
+      "supersedes": [],
+      "tier": "retired",
+      "ownerAuthority": {
+        "sourceId": "historical-template:balanced-paragraph-architecture",
+        "sourcePath": "docs/writing/ASTROLOGY_CONTRACT.md",
+        "decisionDate": "2026-08-08"
+      },
+      "prompt": false
+    },
+    {
+      "id": "corpus-vocabulary-hard-fail-v1",
+      "surface": ["all"],
+      "introducedAt": "2026-08-08",
+      "supersedes": [],
+      "tier": "retired",
+      "ownerAuthority": {
+        "sourceId": "historical-rule:corpus-vocabulary-hard-fail",
+        "sourcePath": "docs/writing/LITERAL_LANGUAGE_RULES.md",
+        "decisionDate": "2026-08-08"
+      },
+      "prompt": false
+    },
+    {
+      "id": "model-prose-gate-v1",
+      "surface": ["all"],
+      "introducedAt": "2026-08-09",
+      "supersedes": [],
+      "tier": "retired",
+      "ownerAuthority": {
+        "sourceId": "historical-rule:model-prose-gate",
+        "sourcePath": "docs/writing/REVIEW_RUBRIC.md",
+        "decisionDate": "2026-08-09"
+      },
+      "prompt": false
+    },
+    {
+      "id": "daily-portability-test-v1",
+      "surface": ["daily"],
+      "introducedAt": "2026-08-10",
+      "supersedes": [],
+      "tier": "retired",
+      "ownerAuthority": {
+        "sourceId": "historical-rule:daily-portability-test",
+        "sourcePath": "packages/astro-knowledge/review/daily-glance-sol-writer-directive-v1.md",
+        "decisionDate": "2026-08-10"
+      },
+      "prompt": false,
+      "enforcementIds": ["OWNER-TEST-specificity", "OWNER-TEST-specificity-batch", "SOL-DIRECTIVE-portability"]
+    }
+  ]
+}

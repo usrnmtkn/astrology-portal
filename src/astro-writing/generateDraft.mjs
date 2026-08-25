@@ -1,7 +1,5 @@
-import { candidateCardAstrologyWritingInstructions, canonicalAstrologyWritingInstructions } from "./canonicalInstructions.mjs";
+import { effectiveAstrologyWritingInstructions } from "./canonicalInstructions.mjs";
 import {
-  buildCardWriterChain,
-  cardCritiqueChecklist,
   isCardWritingSurface
 } from "./cardWritingStandard.mjs";
 import { generatedApprovalState } from "./approvalGovernance.mjs";
@@ -156,8 +154,6 @@ export function buildDraftInput({
   ];
   if (isCardWritingSurface({ surface, family })) {
     sections.push(
-      `CARD WRITER SEVEN-PASS CHAIN\n${JSON.stringify(buildCardWriterChain({ familyContext }), null, 2)}`,
-      `CARD CRITIQUE CHECKLIST\n${cardCritiqueChecklist}`,
       "The meaning plan's DO_NOT_ASSUME and do_not_assume values are internal generation constraints. Never echo the label, guard text, or a reader-facing disclaimer derived from them.",
       `PLANETARY FAMILY CONTEXT\n${familyContext == null ? "NOT_SUPPLIED: passes 6 and 7 remain owner-review checks; do not claim family-level completion." : JSON.stringify(familyContext, null, 2)}`
     );
@@ -208,9 +204,7 @@ export async function generateDraft({
   const value = await modelClient({
     stage: "draft",
     role,
-    instructions: isCardWritingSurface({ surface, family })
-      ? candidateCardAstrologyWritingInstructions
-      : canonicalAstrologyWritingInstructions,
+    instructions: effectiveAstrologyWritingInstructions({ surface, family }),
     input: buildDraftInput({ plan, context, task, target: resolvedTarget, family, register, surface, familyContext, engineFacts, argumentSource, argumentOutline, spine }),
     schema: resolvedSchema
   });

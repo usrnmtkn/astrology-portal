@@ -1,7 +1,5 @@
-import { candidateCardAstrologyWritingInstructions, canonicalAstrologyWritingInstructions } from "./canonicalInstructions.mjs";
+import { effectiveAstrologyWritingInstructions } from "./canonicalInstructions.mjs";
 import {
-  buildCardWriterChain,
-  cardCritiqueChecklist,
   isCardWritingSurface
 } from "./cardWritingStandard.mjs";
 import { unapprovedDraft } from "./generateDraft.mjs";
@@ -32,9 +30,7 @@ export async function reviseDraft({
   const patch = await modelClient({
     stage: "revision",
     role: isCardWritingSurface({ surface, family }) ? "CARD_REVISER_V3" : "REVISER",
-    instructions: isCardWritingSurface({ surface, family })
-      ? candidateCardAstrologyWritingInstructions
-      : canonicalAstrologyWritingInstructions,
+    instructions: effectiveAstrologyWritingInstructions({ surface, family }),
     input: JSON.stringify({
       instruction: "Revise only the supplied failed lines. Return a JSON patch containing only those fields. Do not rewrite successful material.",
       surface,
@@ -43,8 +39,6 @@ export async function reviseDraft({
       failedLines: failedLines(draft, allowed),
       violations: relevantViolations,
       protectedOwnerLines,
-      cardCritiqueChecklist: isCardWritingSurface({ surface, family }) ? cardCritiqueChecklist : null,
-      writerChain: isCardWritingSurface({ surface, family }) ? buildCardWriterChain({ familyContext }) : null,
       familyContext
     }, null, 2),
     schema: {

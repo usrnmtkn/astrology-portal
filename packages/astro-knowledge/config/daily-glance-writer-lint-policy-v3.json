@@ -2,6 +2,8 @@
   "schemaVersion": 3,
   "policyId": "daily-glance-writer-lint-policy-v3:scene-license-boundary",
   "status": "owner-ruled-2026-08-11",
+  "runtimeStatus": "historical-calibration-only",
+  "supersededBy": "config/writing-effective-rules-v1.json",
   "baseline": {
     "surface": "68 currently-serving owner-approved daily-glance pairs",
     "cardCount": 68,

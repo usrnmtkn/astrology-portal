@@ -47,7 +47,7 @@ function outputText(payload) {
     .join("\n");
 }
 
-async function providerResponse({ request, config, apiKeys }) {
+async function providerResponse({ request, config, apiKeys, instructionContext }) {
   const { stage, role, instructions, input, schema } = request;
   if (!instructions) throw new Error(`Harness ${role} call omitted its canonical instruction contract.`);
   if (config.provider === "gemini") {
@@ -64,6 +64,8 @@ async function providerResponse({ request, config, apiKeys }) {
   const { response, payload } = await callOpenAIResponses({
     apiKey: apiKeys.OPENAI_API_KEY,
     role,
+    surface: instructionContext.surface,
+    family: instructionContext.family,
     request: {
       model: config.model,
       input,
@@ -78,13 +80,14 @@ async function providerResponse({ request, config, apiKeys }) {
   return { text, usage: payload.usage ?? null };
 }
 
-function modelClient(config, apiKeys, forceRole = null) {
+function modelClient(config, apiKeys, forceRole = null, instructionContext = { surface: "generic", family: "" }) {
   const client = async (request) => {
     client.lastRequest = request;
     const providerResult = await providerResponse({
       request: forceRole ? { ...request, role: forceRole } : request,
       config,
-      apiKeys
+      apiKeys,
+      instructionContext
     });
     const text = typeof providerResult === "string" ? providerResult : providerResult.text;
     client.lastUsage = providerResult?.usage ?? null;
@@ -222,7 +225,10 @@ for (const config of willDraft ? [writerConfig] : []) {
   const keyName = config.provider === "gemini" ? "GEMINI_API_KEY" : "OPENAI_API_KEY";
   if (!apiKeys[keyName]) throw new Error(`${keyName} is not configured in apps/web/.env.local.`);
 }
-const writerClient = willDraft ? modelClient(writerConfig, apiKeys) : null;
+const writerClient = willDraft ? modelClient(writerConfig, apiKeys, null, {
+  surface: request.surface,
+  family: request.family
+}) : null;
 const result = await runWritingPipeline({
   ...request,
   examples,

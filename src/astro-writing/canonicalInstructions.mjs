@@ -4,10 +4,10 @@
 // docs/writing/REVIEW_RUBRIC.md. Tests prevent these excerpts from drifting.
 
 import { REVIEWER_GOLD_EXEMPLARS } from "./reviewerGoldExemplars.generated.mjs";
-import { buildCardWriterInstructions } from "./cardWritingStandard.mjs";
+import { renderEffectiveRulesForPrompt } from "./effectiveRules.mjs";
 
-export const CANONICAL_WRITING_INSTRUCTIONS_VERSION = "tldr-astro-writing-v6-owner-long-form-sentence-architecture-2026-08-22";
-export const CARD_WRITING_INSTRUCTIONS_VERSION = "tldr-astro-card-writing-v3-owner-standard-candidate-2026-08-09";
+export const CANONICAL_WRITING_INSTRUCTIONS_VERSION = "tldr-astro-writing-v7-effective-rule-registry-2026-08-25";
+export const CARD_WRITING_INSTRUCTIONS_VERSION = "tldr-astro-card-writing-v4-effective-rule-registry-2026-08-25";
 export const CANONICAL_REVIEWER_INSTRUCTIONS_VERSION = "tldr-astro-editorial-gate-v4-cold-rendered-prose-2026-08-11";
 
 export const COLD_RENDERED_PROSE_RULE = `Read the copy cold, rendered, and line by line as prose. Judge the final text exactly as a
@@ -56,7 +56,7 @@ cold_rendered_prose finding are advisory evidence for the owner; they cannot blo
 approve, or serve copy. Do not rewrite the copy; identify the exact failed line and provide
 a narrowly scoped revision instruction.`;
 
-export const canonicalAstrologyWritingInstructions = `CODEX INSTRUCTION (owner-designated canonical form): Translate every astrological idea into lived cause and consequence. Begin with the specific human experience, behavior, conflict, decision, or consequence the astrology describes. Use concrete stakes such as work, money, home, body, time, access, recognition, and relationships. For aspects, show one force acting on another. For synastry, show one person doing something and the other reacting. For placements, describe the recurring behavior and need rather than predicting an event. Add perspective, warmth, or advice only after the truth has been clearly named. Never make the reader decode astrology language to understand what is happening.
+const archivedCanonicalAstrologyWritingInstructionsV6 = `CODEX INSTRUCTION (owner-designated canonical form): Translate every astrological idea into lived cause and consequence. Begin with the specific human experience, behavior, conflict, decision, or consequence the astrology describes. Use concrete stakes such as work, money, home, body, time, access, recognition, and relationships. For aspects, show one force acting on another. For synastry, show one person doing something and the other reacting. For placements, describe the recurring behavior and need rather than predicting an event. Add perspective, warmth, or advice only after the truth has been clearly named. Never make the reader decode astrology language to understand what is happening.
 
 OWNER-PASSAGE-FIRST RULE: Write from the actual owner passages in the REGISTER lane, never from a synthesized description of the owner's style. The astrology mechanism supplies meaning; retrieved owner prose supplies prose behavior. Generic examples and register gold may supplement relevant exact-planet-sign, same-sign, or same-planet passages but may never replace them. Register gold demonstrates specificity only and does not license its argument or paragraph architecture. Do not impose balanced paragraph design, a mandatory thesis/complication/solution sequence, or an explanation after an example has already made the point.
 
@@ -102,9 +102,18 @@ NEGATION-PIVOT CAP: the "X is not Y. It is Z." family, including "the problem is
 
 Governance: Never label generated or refined wording as owner-authored, owner-approved, exact, settled, or locked until the owner explicitly approves that exact wording.`;
 
-export const candidateCardAstrologyWritingInstructions = buildCardWriterInstructions(canonicalAstrologyWritingInstructions);
+export function effectiveAstrologyWritingInstructions({ surface = "generic", family = "" } = {}) {
+  return renderEffectiveRulesForPrompt({ surface, family });
+}
 
-export const canonicalAstrologyReviewInstructions = `# RUNTIME REVIEWER PROMPT (owner-authored, verbatim, 2026-08-09)
+export const canonicalAstrologyWritingInstructions = effectiveAstrologyWritingInstructions({ surface: "generic" });
+export const candidateCardAstrologyWritingInstructions = effectiveAstrologyWritingInstructions({ surface: "card" });
+
+// Historical v6 text remains available to repository archaeology only. It is
+// deliberately not exported or injected into a writer prompt.
+void archivedCanonicalAstrologyWritingInstructionsV6;
+
+const archivedCanonicalAstrologyReviewInstructionsV4 = `# RUNTIME REVIEWER PROMPT (owner-authored, verbatim, 2026-08-09)
 (The reviewer diagnoses only. The reviser is a separate call receiving only failed lines
 and the revision instructions.)
 
@@ -211,6 +220,20 @@ DECISION CONTRACT: Return PASS or REVISE only. Never return FAIL.
 
 ${REVIEWER_GOLD_EXEMPLARS}`;
 
+export function effectiveAstrologyReviewInstructions({ surface = "generic", family = "" } = {}) {
+  return `# TLDR ASTRO ADVISORY REVIEW
+
+The owner is the permanent prose judge. You may identify possible issues, but you may not approve, block, rewrite, stage, promote, or serve copy. Every model finding is advisory. Deterministic runtime checks alone enforce factual safety, grammar, placeholder integrity, source licensing, register direction, and unsupported astrology claims. Voice, cadence, screenshot quality, sentence count, may count, opener variety, and structure are advisory.
+
+${renderEffectiveRulesForPrompt({ surface, family })}
+
+Return the required structured review JSON. Use nonblocking severity for every model finding. The decision field summarizes your findings for triage only and carries no promotion authority.`;
+}
+
+export const canonicalAstrologyReviewInstructions = effectiveAstrologyReviewInstructions({ surface: "generic" });
+
+void archivedCanonicalAstrologyReviewInstructionsV4;
+
 export const REVIEW_FIELDS = Object.freeze([
   "cold_rendered_prose",
   "astrology_integrity",
@@ -236,12 +259,7 @@ export const HARD_REVISE_FIELDS = Object.freeze([
   "astrology_integrity",
   "planet_or_point_function",
   "sign_house_separation",
-  "literal_first_read_clarity",
-  "observable_behavior",
   "example_proves_astrology",
   "invented_motive",
-  "stock_trope",
-  "metaphor_requires_translation",
-  "tagline_stands_alone",
-  "clipped_sentence_rhythm"
+  "register_consistency"
 ]);

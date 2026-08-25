@@ -75,7 +75,7 @@ export async function runWritingPipeline({
   phraseEvidence = []
 }) {
   const resolvedTarget = assertSurfaceRegisterContract(target, { surface, register });
-  const plan = await resolveAstrology(meaningInput, { plannerClient });
+  const plan = await resolveAstrology(meaningInput, { plannerClient, surface, family });
   const resolvedRequiredFields = requiredFields ?? (["fast-mover-article", "slow-mover-article"].includes(family)
     ? ["opening", "tension", "development", "close"]
     : ["tagline", "hook", "lived", "turn"]);

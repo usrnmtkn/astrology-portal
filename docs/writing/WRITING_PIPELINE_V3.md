@@ -7,6 +7,23 @@ matches an indexed owner theme; and passes every retrieval precondition there.
 
 Status: owner-approved pipeline architecture, 2026-08-12.
 
+## Effective-rule resolution (owner-directed, 2026-08-25)
+
+The writing documents retain the decision history. They are not concatenated into prompts.
+`config/writing-effective-rules-v1.json` is the one effective-rule registry. Every entry records
+its surface, introduction date, supersessions, enforcement tier, and owner authority. Prompt
+builders and validators resolve only active rules for the requested surface.
+
+Only factual safety, grammar, placeholder integrity, source licensing, register direction,
+and unsupported astrology claims are blocking. Cadence, screenshot quality, sentence count,
+word count, `may` count, opener variety, structure, voice signals, and batch pattern checks are
+advisory. Model prose review remains advisory and cannot override these tiers or the owner gate.
+
+Daily Glance register evidence is ranked from current owner-approved serving passages by
+same-group register, same-target meaning, lexical relevance, and latest recorded approval.
+Relevant owner before/after corrections are ranked into the packet separately. Alphabetical
+selection is retired.
+
 ## Permanent governance
 
 Two blind calibration rounds proved model prose judgment unreliable. Nothing in this pipeline
@@ -97,8 +114,8 @@ The approved argument outline and its hash remain attached to the generated page
 copy remains unapproved until the owner explicitly approves its exact wording.
 
 The correction pool combines `owner-corrections.jsonl` and
-`owner-feedback-corpus.jsonl`, deduplicated by normalized bad text. The current pool contains
-59 unique corrections. Selection ranks exact family first, then the same surface family,
+`owner-feedback-corpus.jsonl`, deduplicated by normalized bad text. Its current count is
+computed at runtime rather than pinned in this document. Selection ranks exact family first, then the same surface family,
 explicitly requested failure modes, that family's historical category frequency, adjacent
 families, and stable source order.
 
@@ -166,9 +183,8 @@ house cores remain unrecorded as of this version.
 
 Register, protected-line integrity, and placeholder integrity are blocking mechanical checks.
 The negation-pivot family is counted per page and per set. More than one pivot on a page or
-more than three across a twelve-item set is blocking for new generated copy. The count covers
+more than three across a twelve-item set is reported as an advisory pattern signal. The count covers
 `X is not Y. It is Z.`, `the problem is not`, `X is not the problem`, and `not X but Y`.
 Synonym redundancy, scene-noun concentration, opening/anchor repetition, and vocabulary outside
-the owner corpus are initially advisory so the owner can inspect false positives before any
-future gating decision. Vocabulary outside the corpus is always advisory; uncommon does not
-mean wrong.
+the owner corpus are advisory so the owner can inspect them without a machine quality verdict.
+Vocabulary outside the corpus is always advisory; uncommon does not mean wrong.

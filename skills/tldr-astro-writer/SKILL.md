@@ -95,8 +95,8 @@ Use `../../src/astro-writing/runWritingPipeline.mjs` for generated prose. Its or
 Spine slots are semantic checks, not reader-copy templates. Their labels must not become
 sentences that announce `the job of`, `this is a period for`, or `the collective lesson is`.
 The prose must carry the content without narrating its own structure. Deterministic validation
-counts the negation-pivot family per page and per set: at most one per page and three across a
-twelve-item set.
+reports negation-pivot counts per page and per set as advisory pattern evidence; the counts do
+not block or rewrite copy.
 
 Structural presence is not completion. Apply the unified eight-element Sky Placement article
 spine in `../../docs/writing/ASTROLOGY_CONTRACT.md`; slow movers add era frame, recurrence,
@@ -109,6 +109,13 @@ older standard.
 No model prose gate is permitted. Prose judgment is an owner gate, permanently. A model may not
 approve, block, revise, stage, promote, or serve prose. Read `../../docs/writing/WRITING_PIPELINE_V3.md`
 for the binding v3 architecture.
+
+Resolve active prompt and validation rules through
+`../../config/writing-effective-rules-v1.json`. The writing documents preserve historical
+rulings; do not concatenate them into a model prompt. Only the active rules for the requested
+surface may be sent. Machine blocking is limited to factual safety, grammar, placeholder
+integrity, source licensing, register direction, and unsupported astrology claims. All other
+voice and form signals remain visible but advisory to the owner.
 
 Owner ruling, 2026-08-13, verbatim: "if the article does not go through both the writing-pipeline
 and the satori voice, fail the article and rewrite." An empty or below-floor positive evidence

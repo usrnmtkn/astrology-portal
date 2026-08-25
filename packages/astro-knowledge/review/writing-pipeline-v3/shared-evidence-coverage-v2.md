@@ -168,7 +168,7 @@ per role by `copy_sha`.
 | Sun|Scorpio (Decan 2) | 1 | 0 | 1 | 0 | 0 | 1 |
 | Sun|Scorpio (Third Decan) | 1 | 0 | 1 | 0 | 0 | 1 |
 | Sun|Taurus | 68 | 5 | 27 | 3 | 23 | 11 |
-| Sun|Virgo | 44 | 3 | 15 | 1 | 11 | 9 |
+| Sun|Virgo | 44 | 3 | 15 | 1 | 11 | 8 |
 | Uranus|Aquarius | 2 | 0 | 2 | 0 | 2 | 5 |
 | Uranus|Aries | 18 | 0 | 14 | 0 | 4 | 10 |
 | Uranus|Cancer | 2 | 1 | 2 | 1 | 2 | 5 |
@@ -398,7 +398,7 @@ per role by `copy_sha`.
 | sun|scorpio-(decan-2) | 0 | 0 | 1 | 0 | 0 | 1 |
 | sun|scorpio-(third-decan) | 0 | 0 | 1 | 0 | 0 | 1 |
 | sun|taurus | 0 | 0 | 27 | 3 | 23 | 11 |
-| sun|virgo | 0 | 0 | 15 | 1 | 11 | 9 |
+| sun|virgo | 0 | 0 | 15 | 1 | 11 | 8 |
 | uranus|10th-house | 0 | 0 | 1 | 0 | 0 | 0 |
 | uranus|aquarius | 0 | 0 | 2 | 0 | 2 | 5 |
 | uranus|aries | 0 | 0 | 14 | 0 | 4 | 10 |
