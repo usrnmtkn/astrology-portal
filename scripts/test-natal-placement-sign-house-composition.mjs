@@ -41,6 +41,9 @@ const expectedMercurySignBody = rows.hookRows.find(
 const expectedSunNinthHouseBody = rows.hookRows.find(
   (row) => row.contentKey === "fallback-hook/placement-house-lived/sun/9"
 )?.body;
+const exactLilithThirdHouse = rows.hookRows.find(
+  (row) => row.contentKey === "fallback-hook/natal-you-placement-house-final/lilith/3"
+);
 const exactChironTaurusTwelfth = rows.hookRows.find(
   (row) => row.contentKey === "fallback-hook/natal-you-placement-complete-final/chiron/taurus/12"
 );
@@ -123,6 +126,7 @@ assert.ok(expectedSignBody, "Moon-in-Scorpio approved sign copy must exist.");
 assert.ok(expectedHouseBody, "Moon-in-6th-house approved house copy must exist.");
 assert.ok(expectedMercurySignBody, "Mercury-in-Pisces approved sign copy must exist.");
 assert.ok(expectedSunNinthHouseBody, "The incremental owner-approved Sun-in-9th-house copy must exist.");
+assert.ok(exactLilithThirdHouse?.body, "The owner-approved general Lilith-in-the-3rd-house copy must exist.");
 assert.ok(exactChironTaurusTwelfth?.body, "The owner-approved complete Chiron-in-Taurus-in-the-12th-house copy must exist.");
 assert.ok(exactChironAriesTwelfth?.body, "The owner-approved complete Chiron-in-Aries-in-the-12th-house copy must exist.");
 assert.ok(exactChironGeminiTwelfth?.body, "The owner-approved complete Chiron-in-Gemini-in-the-12th-house copy must exist.");
@@ -164,7 +168,7 @@ const governedPlacementRows = rows.hookRows.filter((row) =>
 );
 const multiParagraphPlacementRows = governedPlacementRows.filter((row) => /\n{2,}/u.test(row.body ?? ""));
 
-assert.equal(governedPlacementRows.length, 177, "governed natal placement inventory changed; audit new rows before updating the gate");
+assert.equal(governedPlacementRows.length, 178, "governed natal placement inventory changed; audit new rows before updating the gate");
 assert.equal(multiParagraphPlacementRows.length, 167, "multi-paragraph natal placement inventory changed; audit truncation exposure before updating the gate");
 for (const row of governedPlacementRows) {
   assert.equal(
@@ -336,6 +340,20 @@ for (const [rendererName, renderPlacement] of [
   const exactLilithScorpioFriend = renderPlacement({ planet: "lilith", sign: "scorpio", house: 4, voice: "Alex" });
   assert.equal(exactLilithScorpioFriend.parts.length, 2, `${rendererName} Friend placement must continue using reusable sign and house sources.`);
   assert.notEqual(exactLilithScorpioFriend.templateKey, exactLilithScorpioFourth.contentKey);
+
+  const generalLilithThird = renderPlacement({ planet: "lilith", sign: "gemini", house: 3, voice: "you" });
+  assert.equal(generalLilithThird.parts.length, 2, `${rendererName} general Lilith house copy must follow its sign section.`);
+  assert.equal(
+    generalLilithThird.parts[1],
+    `Your Lilith is in your 3rd house, meaning this side of you comes out in how you talk, text, learn, and get through an ordinary day.\n\n${exactLilithThirdHouse.body}`
+  );
+  assert.equal(generalLilithThird.partKeys[1], exactLilithThirdHouse.contentKey);
+  assert.equal(generalLilithThird.templateKey, exactLilithThirdHouse.contentKey);
+
+  const generalLilithThirdFriend = renderPlacement({ planet: "lilith", sign: "gemini", house: 3, voice: "Alex" });
+  assert.equal(generalLilithThirdFriend.parts.length, 2, `${rendererName} Friend placement must retain reusable sign and house sources.`);
+  assert.notEqual(generalLilithThirdFriend.templateKey, exactLilithThirdHouse.contentKey);
+  assert.doesNotMatch(generalLilithThirdFriend.body, /\byou(?:r|rs|self)?\b/iu, `${rendererName} Friend placement must not leak second person.`);
 
   const you = renderPlacement({ planet: "moon", sign: "scorpio", house: 6, voice: "you" });
   assert.deepEqual(
