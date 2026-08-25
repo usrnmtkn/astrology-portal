@@ -80,6 +80,7 @@ import type {
   WritingSurfaceMapItem,
   WritingSurfaceSource
 } from "./writingSurfaceSourceMap";
+import { UnresolvedContentReview } from "./UnresolvedContentReview";
 import "./admin.css";
 
 const AspectPatternDiagnostics = lazy(async () => {
@@ -108,6 +109,7 @@ type AdminDashboardPage =
   | "compatibility"
   | "content"
   | "reviewQueue"
+  | "unresolvedContent"
   | "compositeByType"
   | "connection"
   | "vocabulary"
@@ -435,6 +437,7 @@ const adminPageHashKeys: Record<AdminDashboardPage, string> = {
   compatibility: "compatibility",
   content: "exact-content",
   reviewQueue: "review-queue",
+  unresolvedContent: "unresolved-content",
   compositeByType: "composite-review",
   connection: "connection",
   vocabulary: "vocabulary",
@@ -473,6 +476,7 @@ const compositionTabs: AdminNavItem[] = [
 ];
 const primaryAdminNavItems: AdminNavItem[] = [
   { page: "reviewQueue", label: "Review Queue", icon: Check },
+  { page: "unresolvedContent", label: "Unresolved Content", icon: Flag },
   { page: "content", label: "Content Library", icon: BookOpenText },
   { page: "skyWriteups", label: "Sky Write-ups", icon: Moon },
   { page: "articles", label: "Articles", icon: FileText },
@@ -606,6 +610,7 @@ function adminPageTitle(activePage: AdminDashboardPage) {
     case "compatibility": return "Compatibility";
     case "content": return "Content Library";
     case "reviewQueue": return "Review Queue";
+    case "unresolvedContent": return "Unresolved Content";
     case "compositeByType": return "Composite Review";
     case "connection": return "Connection";
     case "vocabulary": return "Vocabulary & Phrases";
@@ -630,6 +635,7 @@ function adminPageBreadcrumb(activePage: AdminDashboardPage) {
     case "compatibility": return "Admin / Write / Compatibility";
     case "content": return "Admin / Write / Content library";
     case "reviewQueue": return "Admin / Publish / Review queue";
+    case "unresolvedContent": return "Admin / Publish / Unresolved content";
     case "compositeByType": return "Admin / Write / Composite review";
     case "connection": return "Admin / Connection";
     case "vocabulary": return "Admin / Composition / Vocabulary & phrases";
@@ -655,6 +661,8 @@ function adminPageDescription(activePage: AdminDashboardPage) {
       return "Edit planetary placements, lunations, aspects, and horoscopes.";
     case "reviewQueue":
       return "Review, approve, and publish content.";
+    case "unresolvedContent":
+      return "See every package record that is still blocked from serving.";
     case "content":
       return "Find and edit every saved content row.";
     case "knowledge":
@@ -4219,6 +4227,16 @@ export function GeneratedContentAdminDashboard() {
             {skyVoiceQueueView === "audit" && renderSkyVoiceQueue(skyVoiceAuditRows, "Random auto-publish sample for periodic voice auditing. Refresh to draw another sample.")}
             {renderEditor()}
           </section>
+        )}
+
+        {activePage === "unresolvedContent" && (
+          <UnresolvedContentReview
+            credential={secret}
+            onFindInContentLibrary={(contentKey) => {
+              setQuery(contentKey);
+              navigateAdminPage("content", new URLSearchParams({ q: contentKey }));
+            }}
+          />
         )}
 
         {activePage === "content" && (

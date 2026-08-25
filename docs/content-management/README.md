@@ -183,6 +183,14 @@ Friends, Calendar, or Settings), then use the action on that surface to open
 the filtered article, exact-content, compatibility, vocabulary, template, or
 fallback workspace.
 
+To review the complete governed package backlog, open Content Studio >
+Unresolved Content (`/admin/content#unresolved-content`). This read-only page
+is generated from `content-unresolved-queue-v1.json` and includes file-backed
+records that are not materialized as editable CMS rows. Its **Find editable
+row** action opens Content Library with the exact content key; if no row is
+found, the source path and content key on the unresolved page remain the
+authoritative location for the package record.
+
 Every mapped reader surface now has a `Dashboard editable` route. Surfaces that
 still use a local reviewed fallback also expose a one-click CMS starter. Those
 rows use the reserved `cms/` namespace and resolve in this order:
