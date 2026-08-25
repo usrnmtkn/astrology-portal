@@ -16,7 +16,7 @@
     "content:apply-approvals": "node scripts/apply-content-approval-set.mjs",
     "content:promote-approved": "node scripts/promote-content-approval.mjs",
     "content:build-approval-desk": "node scripts/build-content-approval-desk.mjs",
-    "test:content-governance": "node scripts/test-content-approval-governance.mjs && node scripts/test-approved-serving-projection.mjs && npm run check:content-unresolved-dashboard",
+    "test:content-governance": "node scripts/test-content-approval-governance.mjs && node scripts/test-approved-serving-projection.mjs && node --import tsx scripts/test-content-unresolved-studio.mts && npm run check:content-unresolved-dashboard",
     "check:canonical-content": "node scripts/build-canonical-content-hub.mjs --check",
     "test:canonical-content": "node scripts/test-canonical-content-hub.mjs && node scripts/test-canonical-content-reachability.mjs && node --experimental-strip-types scripts/test-canonical-natal-adapter.mjs && node scripts/test-fallback-architecture-known-failures.mjs",
     "build:approved-collocations": "node scripts/build-approved-collocations.mjs",
