@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tldrastro.local/schemas/approval-queue-v1.schema.json",
+  "title": "TLDR Astro owner approval queue",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema", "items"],
+  "properties": {
+    "schema": { "const": "approval-queue/v1" },
+    "generatedFrom": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+    "items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": true,
+        "required": ["id", "type", "title", "options"],
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "type": { "enum": ["span", "domain", "verb", "intro", "errata", "author", "choice"] },
+          "title": { "type": "string", "minLength": 1 },
+          "contentKey": { "type": "string" },
+          "before": { "type": "string" },
+          "span": { "type": "string" },
+          "after": { "type": "string" },
+          "meta": { "type": "object" },
+          "flag": { "type": "boolean" },
+          "sha256": { "type": "string", "pattern": "^[a-f0-9]{16}$" },
+          "options": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "oneOf": [
+                { "type": "string", "minLength": 1 },
+                {
+                  "type": "object",
+                  "required": ["value"],
+                  "properties": {
+                    "value": { "type": "string", "minLength": 1 },
+                    "label": { "type": "string" }
+                  }
+                }
+              ]
+            }
+          }
+        }
+      }
+    }
+  }
+}
