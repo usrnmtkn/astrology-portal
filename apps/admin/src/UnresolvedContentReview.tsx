@@ -125,7 +125,7 @@ export function UnresolvedContentReview({
                   ? <small>Checking…</small>
                   : canOpen
                     ? <button className="admin-edit-row-button" type="button" onClick={() => onFindInContentLibrary(issue.contentKey)}>Open exact row</button>
-                    : <div className="admin-unresolved-actions"><button className="admin-edit-row-button" type="button" onClick={() => void navigator.clipboard.writeText(issue.aiRequest)}>{sourceRepair ? "Copy repair request" : "Copy investigation"}</button><button className="admin-edit-row-button" type="button" onClick={() => void recordResolution(credential)}>Record response</button></div>}</td>
+                    : <div className="admin-toolbar-actions"><button className="admin-edit-row-button" type="button" onClick={() => void navigator.clipboard.writeText(issue.aiRequest)}>{sourceRepair ? "Copy repair request" : "Copy investigation"}</button><button className="admin-edit-row-button" type="button" onClick={() => void recordResolution(credential)}>Record response</button></div>}</td>
               </tr>;
             })}</tbody>
           </table>
