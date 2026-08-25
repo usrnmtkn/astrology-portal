@@ -217,6 +217,30 @@
       "distribution_lane": "serving"
     },
     {
+      "contentKey": "fallback-hook/natal-you-placement-complete-final/lilith/pisces/3",
+      "content_role": "full_copy",
+      "grammar_frame": "complete_sentence",
+      "headline": "Lilith in Pisces in the 3rd house",
+      "body": "Lilith in Pisces in the 3rd house can make you especially sensitive to the gap between what someone says and what you can already feel underneath it. You notice the hesitation, the missing detail, the change in tone, or the explanation that technically makes sense but still leaves something unresolved. Because Pisces can imagine many possible reasons for another person's behavior, you may spend too long trying to decide which version is true, especially when compassion keeps supplying explanations for information that does not quite add up. The rage can come when someone treats your uncertainty like permission to keep you confused, dismisses what you noticed because you cannot prove it yet, or expects you to ignore the contradiction simply because they never said the quiet part out loud.\n\nSiblings, school, neighbors, and the environment you grew up in can shape this strongly. Maybe you were told you were too sensitive, too imaginative, dramatic, distracted, or reading too much into things, only to discover later that you had noticed something important. That can leave you questioning your own perception even when your instincts are good. You may reread the message, replay the conversation, or keep asking yourself what somebody really meant because you have learned not to trust the first thing you felt. The harder lesson is separating intuition from projection: a feeling deserves your attention, but it does not become a fact until something in the actual situation supports it.\n\nThe deeper shift is learning to let intuition and evidence work together instead of forcing yourself to choose between them. You ask the direct question when the story keeps changing, pay attention to whether someone's behavior matches what they are telling you, and stop inventing kinder explanations for patterns that have already become clear. You do not need to prove every impression immediately, but you also do not have to pretend you noticed nothing. Lilith in Pisces in the 3rd house becomes less about defending your perception and more about trusting yourself enough to check what is true, name what you see, and use your voice without apologizing.",
+      "reader_only": true,
+      "render_policy": "reader-only-exact-lived-v1",
+      "review_status": "approved",
+      "source_keys": [
+        "owner-authored/lilith-pisces-3/2026-08-25"
+      ],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "owner-authored/lilith-pisces-3/2026-08-25",
+        "approvedAt": "2026-08-25"
+      },
+      "source_release": "owner-authored-natal-placement-complete-v1",
+      "runtime_family": "natal-you-placement-complete-final",
+      "runtime_key": "lilith|pisces|3",
+      "governance": "owner-approved-natal-placement-complete-v1",
+      "owner_approved": true,
+      "distribution_lane": "serving"
+    },
+    {
       "contentKey": "fallback-hook/natal-you-placement-complete-final/lilith/pisces/4",
       "content_role": "full_copy",
       "grammar_frame": "complete_sentence",
