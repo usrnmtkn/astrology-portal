@@ -2,7 +2,10 @@
 
 import assert from "node:assert/strict";
 import fs from "node:fs";
-import { loadUnresolvedContentReport, type UnresolvedContentReport } from "../apps/admin/src/UnresolvedContentReview";
+import {
+  loadUnresolvedContentReport,
+  type UnresolvedContentReport
+} from "../apps/admin/src/UnresolvedContentReview";
 import {
   loadContentUnresolvedReport,
   unresolvedContentSurface
@@ -33,6 +36,11 @@ assert.ok(sunVirgoIssue, "The known Sun in Virgo source issue must be present.")
 assert.equal(sunVirgoIssue.kind, "source-repair");
 assert.equal(sunVirgoIssue.records.length, 3, "All duplicate source records must remain available under issue details.");
 assert.equal(groupedIssues.filter((issue) => issue.contentKey.includes("sun/virgo")).length, 1);
+const editorialIssue = groupedIssues.find((issue) => issue.kind === "editorial-review");
+assert.ok(editorialIssue);
+assert.match(sunVirgoIssue.aiRequest, /Approval cannot clear this hold/u);
+assert.match(sunVirgoIssue.aiRequest, /Do not change serving copy or review_status values/u);
+assert.match(editorialIssue.aiRequest, /no editable Content Library row exists/u);
 
 const loadedReport = await loadUnresolvedContentReport(
   "header.payload.signature",
@@ -45,8 +53,9 @@ assert.equal(loadedReport.count, report.count, "The authenticated Studio loader 
 
 assert.match(reviewSource, /Resolve content holds/u);
 assert.match(reviewSource, /Approval will not clear this hold\./u);
-assert.match(reviewSource, /Not in Content Library\./u);
-assert.match(reviewSource, /No unresolved issues match these filters\./u, "The page must include a clear empty-state message.");
+assert.match(reviewSource, /Copy AI repair request/u);
+assert.match(reviewSource, /Copy AI investigation/u);
+assert.match(reviewSource, /No matching issues\./u, "The page must include a clear empty-state message.");
 
 assert.match(dashboardSource, /unresolvedContent:\s*"unresolved-content"/u, "The Studio must expose a stable unresolved-content route.");
 assert.match(dashboardSource, /label:\s*"Unresolved Content"/u, "The Studio navigation must expose the governed inventory.");
