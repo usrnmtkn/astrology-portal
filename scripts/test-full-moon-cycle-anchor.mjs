@@ -38,6 +38,14 @@ try {
   assert.equal(crossYear?.sign, "Cancer");
   assert.equal(crossYear?.exactAt.slice(0, 10), "2025-06-25");
 
+  const eclipseAnchor = await ephemeris.getMatchingNewMoonForFullMoon(
+    location,
+    "2025-09-07T18:08:54.999Z",
+    "Pisces"
+  );
+  assert.equal(eclipseAnchor?.sign, "Pisces");
+  assert.equal(eclipseAnchor?.exactAt.slice(0, 10), "2025-02-28");
+
   assert.equal(
     ephemeris.matchingNewMoonForFullMoon([], "2026-07-29T12:00:00.000Z", "Aquarius"),
     null
