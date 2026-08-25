@@ -12,12 +12,10 @@ import {
 const adminScreenshotDir = path.join("test-results", "content-dashboard-admin-flow");
 const unresolvedQueueSource = JSON.parse(readFileSync(path.join(process.cwd(), "packages/astro-knowledge/generated/content-unresolved-queue-v1.json"), "utf8")) as {
   count: number;
-  items: Array<{ contentKey: string; [key: string]: unknown }>;
+  items: Array<{ contentKey: string; reason: string; [key: string]: unknown }>;
   [key: string]: unknown;
 };
-const unresolvedQueue = {
-  ...unresolvedQueueSource,
-  items: unresolvedQueueSource.items.map((item) => ({
+const unresolvedItems = unresolvedQueueSource.items.map((item) => ({
     ...item,
     surface: item.contentKey.includes("daily-") || item.contentKey.startsWith("daily-glance-variant/")
       ? "Daily Glance"
@@ -28,8 +26,20 @@ const unresolvedQueue = {
           : item.contentKey.includes("sky-") || item.contentKey.includes("transit") || item.contentKey.includes("timing")
             ? "Sky / Transits"
             : "Other"
+  }));
+const unresolvedRecordsByKey = new Map<string, typeof unresolvedItems>();
+unresolvedItems.forEach((item) => unresolvedRecordsByKey.set(item.contentKey, [...(unresolvedRecordsByKey.get(item.contentKey) ?? []), item]));
+const unresolvedQueue = {
+  ...unresolvedQueueSource,
+  items: unresolvedItems,
+  issues: [...unresolvedRecordsByKey.values()].map((records) => ({
+    contentKey: records[0].contentKey,
+    surface: records[0].surface,
+    kind: records.some((item) => item.reason === "known-current-contract-failure") ? "source-repair" : "editorial-review",
+    records
   }))
 };
+const unresolvedIssueCount = new Set(unresolvedQueue.items.map((item) => item.contentKey)).size;
 
 const adminPages = [
   { nav: "Review Queue", title: "Review Queue", breadcrumb: "Admin / Publish / Review queue", hash: "review-queue" },
@@ -1632,15 +1642,30 @@ test.describe("content dashboard admin user flow case studies", () => {
 
   test("unresolved content shows the governed package inventory and links to Content Library", async ({ page }) => {
     const assertNoBrowserErrors = await expectNoBrowserErrors(page);
-    await seedAdminApi(page);
+    const editableUnresolvedItem = unresolvedQueue.items.find((item) => item.reason === "review-status");
+    expect(editableUnresolvedItem).toBeTruthy();
+    const editableUnresolvedRow = {
+      ...generatedContentRows[0],
+      id: "qa-editable-unresolved-row",
+      content_key: editableUnresolvedItem?.contentKey,
+      status: "DRAFT",
+      lane: "reference",
+      review_state: "needs-review",
+      source_snapshot: {
+        sourceType: "owner-resource-review",
+        sourcePackage: "tldrastro-fallback-architecture-v3",
+        review_status: "needs_review"
+      }
+    };
+    await seedAdminApi(page, { generatedRows: [editableUnresolvedRow, ...generatedContentRows] });
     await expectAdminRouteLoads(page, "/admin/content#unresolved-content");
 
     await expectAdminHeader(page, "Unresolved Content", "Admin / Publish / Unresolved content");
-    await expect(page.getByRole("region", { name: "Unresolved content overview" })).toContainText("Everything still waiting for resolution");
+    await expect(page.getByRole("region", { name: "Unresolved content overview" })).toContainText("Resolve content holds");
     await expect(page.getByRole("region", { name: "Unresolved content records" })).toBeVisible();
-    await expect(page.locator(".admin-unresolved-content-table tbody tr")).toHaveCount(unresolvedQueue.count);
+    await expect(page.locator(".admin-unresolved-content-table tbody tr")).toHaveCount(unresolvedIssueCount);
 
-    const unresolvedHeadingStyle = await page.getByRole("heading", { name: "Everything still waiting for resolution" }).evaluate((heading) => {
+    const unresolvedHeadingStyle = await page.getByRole("heading", { name: "Resolve content holds" }).evaluate((heading) => {
       const style = getComputedStyle(heading);
       return [style.fontFamily, style.fontSize, style.fontWeight, style.lineHeight, style.letterSpacing, style.textAlign];
     });
@@ -1653,18 +1678,27 @@ test.describe("content dashboard admin user flow case studies", () => {
     await page.getByRole("navigation", { name: "Content operations" }).getByRole("button", { name: "Unresolved Content" }).click();
 
     await page.getByLabel("Search unresolved content").fill("sun/virgo");
-    await expect(page.locator(".admin-unresolved-content-table tbody tr")).toHaveCount(3);
-    const row = page.locator(".admin-unresolved-content-table tbody tr").first();
-    await expect(row).toContainText("fallback-hook/sky-sign-copy/sun/virgo");
-    await expect(row).toContainText("Sky / Transits");
+    await expect(page.locator(".admin-unresolved-content-table tbody tr")).toHaveCount(1);
+    const sourceRepairIssue = page.locator(".admin-unresolved-content-table tbody tr").first();
+    await expect(sourceRepairIssue).toContainText("fallback-hook/sky-sign-copy/sun/virgo");
+    await expect(sourceRepairIssue).toContainText("Sky / Transits");
+    await expect(sourceRepairIssue).toContainText("Source repair required");
+    await expect(sourceRepairIssue.getByRole("button", { name: "Open exact row" })).toHaveCount(0);
+    await expect(sourceRepairIssue).toContainText("Give Codex the source record. Approval cannot fix this.");
 
-    await row.getByRole("button", { name: "Find editable row" }).click();
+    await page.getByLabel("Search unresolved content").fill(editableUnresolvedItem?.contentKey ?? "");
+    const editableIssue = page.locator(".admin-unresolved-content-table tbody tr").first();
+    await expect(editableIssue).toContainText("Owner review required");
+    await editableIssue.getByRole("button", { name: "Open exact row" }).click();
     await expectAdminHeader(page, "Content Library", "Admin / Write / Content library");
-    await expect(page.getByLabel("Search content")).toHaveValue("fallback-hook/sky-sign-copy/sun/virgo");
+    await expect(page.getByLabel("Search content")).toHaveValue(editableUnresolvedItem?.contentKey ?? "");
+    await expect(page.locator(".admin-content-row")).toContainText(editableUnresolvedItem?.contentKey ?? "");
+    await expect(page.getByRole("button", { name: "Show reference" })).toHaveAttribute("aria-pressed", "true");
+    await expect(page.getByRole("button", { name: "Show retired" })).toHaveAttribute("aria-pressed", "true");
 
     await page.getByRole("navigation", { name: "Content operations" }).getByRole("button", { name: "Unresolved Content" }).click();
     await page.getByLabel("Search unresolved content").fill("not-a-real-content-key");
-    await expect(page.getByText("No unresolved records match these filters.")).toBeVisible();
+    await expect(page.getByText("No unresolved issues match these filters.")).toBeVisible();
 
     const headingLevels = await page.getByRole("main").getByRole("heading").evaluateAll((headings) => headings.map((heading) => ({
       level: Number(heading.tagName.slice(1)),
@@ -1672,17 +1706,15 @@ test.describe("content dashboard admin user flow case studies", () => {
     })));
     expect(headingLevels.slice(0, 2)).toEqual([
       { level: 1, text: "Unresolved Content" },
-      { level: 2, text: "Everything still waiting for resolution" }
+      { level: 2, text: "Resolve content holds" }
     ]);
 
     await page.setViewportSize({ width: 390, height: 844 });
     await expect(page.getByRole("heading", { name: "Unresolved Content", level: 1 })).toBeVisible();
-    await expect(page.getByRole("heading", { name: "Everything still waiting for resolution", level: 2 })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Resolve content holds", level: 2 })).toBeVisible();
     await expect(page.getByRole("region", { name: "Unresolved content search" })).toBeVisible();
-    const tableScrollsWithinViewport = await page.locator(".admin-content-table-scroll").last().evaluate((element) => (
-      element.clientWidth <= window.innerWidth && element.scrollWidth > element.clientWidth
-    ));
-    expect(tableScrollsWithinViewport).toBe(true);
+    const noHorizontalOverflow = await page.getByRole("main").evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth);
+    expect(noHorizontalOverflow).toBe(true);
 
     await assertNoBrowserErrors();
   });

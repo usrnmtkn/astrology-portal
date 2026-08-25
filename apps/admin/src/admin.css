@@ -1864,23 +1864,6 @@ body,
   grid-template-columns: minmax(0, 1fr);
 }
 
-.admin-unresolved-content-table {
-  min-width: 1080px;
-}
-
-.admin-unresolved-content-table .admin-content-title-cell {
-  min-width: 290px;
-}
-
-.admin-unresolved-source {
-  max-width: 340px;
-}
-
-.admin-unresolved-source code {
-  overflow-wrap: anywhere;
-  white-space: normal;
-}
-
 .admin-unresolved-content-page .admin-empty {
   padding: var(--admin-space-4xl);
   text-align: center;
@@ -10446,4 +10429,76 @@ body,
     width: 100%;
   }
 
+}
+
+.admin-dashboard .admin-unresolved-content-table {
+  min-width: 780px;
+  table-layout: fixed;
+  width: 100%;
+}
+
+.admin-dashboard .admin-unresolved-content-table :is(th, td):nth-child(1) { width: 32%; }
+.admin-dashboard .admin-unresolved-content-table :is(th, td):nth-child(2) { width: 24%; }
+.admin-dashboard .admin-unresolved-content-table :is(th, td):nth-child(3) { width: 26%; }
+.admin-dashboard .admin-unresolved-content-table :is(th, td):nth-child(4) { width: 18%; }
+
+.admin-dashboard .admin-unresolved-content-table :is(th, td) {
+  overflow: visible;
+  white-space: normal;
+}
+
+.admin-dashboard .admin-unresolved-content-table td {
+  vertical-align: top;
+}
+
+.admin-dashboard .admin-unresolved-content-table td:last-child,
+.admin-dashboard .admin-unresolved-content-table th:last-child {
+  overflow-wrap: anywhere;
+  text-align: left;
+}
+
+.admin-dashboard .admin-unresolved-content-table td > :is(strong, code, small) {
+  display: block;
+  overflow-wrap: anywhere;
+}
+
+.admin-dashboard .admin-unresolved-content-table td > code,
+.admin-dashboard .admin-unresolved-content-table td > small,
+.admin-dashboard .admin-unresolved-content-table details code {
+  color: var(--admin-muted);
+}
+
+@media (max-width: 720px) {
+  .admin-dashboard .admin-unresolved-content-table {
+    min-width: 0;
+  }
+
+  .admin-dashboard .admin-unresolved-content-table thead {
+    display: none;
+  }
+
+  .admin-dashboard .admin-unresolved-content-table,
+  .admin-dashboard .admin-unresolved-content-table tbody,
+  .admin-dashboard .admin-unresolved-content-table tr,
+  .admin-dashboard .admin-unresolved-content-table td {
+    display: block;
+    width: 100% !important;
+  }
+
+  .admin-dashboard .admin-unresolved-content-table tr {
+    border-bottom: 1px solid var(--admin-line);
+    padding: var(--admin-space-4xl);
+  }
+
+  .admin-dashboard .admin-unresolved-content-table td {
+    border: 0;
+    padding: var(--admin-space-xl) 0 0;
+  }
+
+  .admin-dashboard .admin-unresolved-content-table td::before {
+    color: var(--admin-muted);
+    content: attr(data-label);
+    display: block;
+    margin-bottom: var(--admin-space-md);
+  }
 }
