@@ -24,6 +24,7 @@ const args = new Set(process.argv.slice(2));
 const apply = args.has("--apply");
 const verify = args.has("--verify");
 const outPath = process.argv.find((arg) => arg.startsWith("--out="))?.slice("--out=".length) ?? defaultOutPath;
+const contentKeyFilter = process.argv.find((arg) => arg.startsWith("--content-key="))?.slice("--content-key=".length) ?? null;
 
 function unquoteEnvValue(value) {
   const trimmed = value.trim();
@@ -952,7 +953,13 @@ if (
 ) {
   throw new Error("Fallback package or partition manifests are stale. Run npm run build:fallback-manifest.");
 }
-const rows = materializeRows(packageSources);
+const allRows = materializeRows(packageSources);
+const rows = contentKeyFilter
+  ? allRows.filter((row) => row.content_key === contentKeyFilter)
+  : allRows;
+if (contentKeyFilter && rows.length !== 1) {
+  throw new Error(`Expected one materialized row for ${contentKeyFilter}, found ${rows.length}.`);
+}
 const counts = {
   authoredCards: countBy(rows, (row) => row.source_snapshot.contentType === "authored-content"),
   fallbackHooks: countBy(rows, (row) => row.source_snapshot.contentType === "fallback-system" && row.source_snapshot.content_role === "fallback_hook"),
@@ -980,11 +987,16 @@ console.log(JSON.stringify(counts, null, 2));
 if (apply) {
   const upserted = await upsertRows(rows);
   console.log(`upserted ${upserted.length} V3 dashboard rows into generated_interpretations`);
-  const deleted = await deleteStaleRows(rows);
-  console.log(`deleted ${deleted} stale V3 dashboard rows from generated_interpretations`);
+  if (!contentKeyFilter) {
+    const deleted = await deleteStaleRows(rows);
+    console.log(`deleted ${deleted} stale V3 dashboard rows from generated_interpretations`);
+  }
 }
 
 if (verify) {
+  if (contentKeyFilter) {
+    throw new Error("--verify checks the complete mirror and cannot be combined with --content-key.");
+  }
   const importedRows = await readImportedRows();
   const liveCounts = verifyImportedMirror(rows, counts, importedRows);
   console.log(`verified ${importedRows.length} imported V3 dashboard rows in generated_interpretations`);

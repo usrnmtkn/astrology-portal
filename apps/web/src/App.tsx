@@ -499,6 +499,11 @@ type NormalizedSurfaceArticle<Surface extends string = string, Slot extends stri
   sections: NormalizedSurfaceSection<Slot>[];
 };
 
+function normalizedSurfaceHasReaderDetail(article: Pick<NormalizedSurfaceArticle, "status" | "sections">) {
+  return article.status !== "not-servable"
+    && article.sections.some((section) => Boolean(fullDetailReaderFacingCopy([section.body])));
+}
+
 function contentSourceQaTag(section: Pick<NormalizedSurfaceSection<string>, "layer">) {
   void section;
 
@@ -16077,13 +16082,15 @@ function TransitDetail({ transit, form }: { transit: TransitItem; form: TransitF
           <text x="274" y="123">{arcDateLabel(arcEndDate)}</text>
         </svg>
       </div>
-      <article className="read-closely">
-        <span>Read it closely</span>
-        <h3>{readTitle}</h3>
-        {readParagraphs.map((paragraph, index) => (
-          <p key={`${transit.id}-detail-${index}`}>{paragraph}</p>
-        ))}
-      </article>
+      {readSection && readParagraphs.length > 0 ? (
+        <article className="read-closely">
+          <span>Read it closely</span>
+          <h3>{readTitle}</h3>
+          {readParagraphs.map((paragraph, index) => (
+            <p key={`${transit.id}-detail-${index}`}>{paragraph}</p>
+          ))}
+        </article>
+      ) : null}
     </section>
   );
 }
@@ -16546,9 +16553,24 @@ function ProfileView({
       );
     })
   }));
-  const updateAspectRows = aspectRows.map((transit) => {
+  const readerAspectRows = aspectRows.flatMap((transit) => {
     const personalizedContentKey = personalTransitGeneratedContentKey(transit, targetDate);
     const normalizedTransit = normalizePersonalTransitSurface(transit, targetDate);
+    const savedGeneratedContent = personalTransitGeneratedContent.get(personalizedContentKey) ?? null;
+
+    // A transit identity is not a reader detail by itself. Keep the row hidden
+    // until either exact directional authored copy or matching saved copy is
+    // available; otherwise the button opens a heading-only article.
+    return normalizedSurfaceHasReaderDetail(normalizedTransit) || hasReaderFacingGeneratedCopy(savedGeneratedContent)
+      ? [{ normalizedTransit, personalizedContentKey, savedGeneratedContent, transit }]
+      : [];
+  });
+  const updateAspectRows = readerAspectRows.map(({
+    normalizedTransit,
+    personalizedContentKey,
+    savedGeneratedContent,
+    transit
+  }) => {
     const rowSummary = transitCardPreview(normalizedSurfacePreview(normalizedTransit));
     const lifeAreaTags = transit.natalHouse
       ? houseLifeAreaKeywords(transit.natalHouse)
@@ -16580,7 +16602,7 @@ function ProfileView({
         subtitle: "",
         summary: "",
         sections: articleSections,
-        generatedContent: personalTransitGeneratedContent.get(personalizedContentKey) ?? null,
+        generatedContent: savedGeneratedContent,
         meta: [
           ...passDateMeta,
           { label: "Duration", value: timing.rangeLabel },
@@ -16719,20 +16741,40 @@ function ProfileView({
           window: personalTransitPackageWindow(transit, targetDate)
         });
 
+        const normalized = normalizePersonalTransitSurface(transit, targetDate);
+        const personalizedContentKey = personalTransitGeneratedContentKey(transit, targetDate);
+        const savedGeneratedContent = personalTransitGeneratedContent.get(personalizedContentKey) ?? null;
+        const detailAvailable = normalizedSurfaceHasReaderDetail(normalized)
+          || hasReaderFacingGeneratedCopy(savedGeneratedContent);
+        const labelContent = (
+          <>
+            <span>{rendered.label}</span>
+            <small>{rendered.window}</small>
+          </>
+        );
+
+        if (!detailAvailable) {
+          return [(
+            <article className="daily-forecast-label daily-forecast-label--static" key={`daily-label-${transit.id}`}>
+              {labelContent}
+            </article>
+          )];
+        }
+
         return [(
           <button
             className="daily-forecast-label"
             key={`daily-label-${transit.id}`}
             onClick={() => {
-              const normalized = normalizePersonalTransitSurface(transit, targetDate);
               setSelectedTransitId(transit.id);
               setActivePlacementRouteId(null);
               setTransitArticle({
-                id: personalTransitGeneratedContentKey(transit, targetDate),
+                id: personalizedContentKey,
                 title: `${transit.transitPlanet} ${transit.aspect} your ${transit.natalPoint}`,
                 glyph: pointGlyph(transit.transitPlanet),
                 subtitle: "",
                 summary: "",
+                generatedContent: savedGeneratedContent,
                 sections: normalized.sections.map((section) => ({
                   heading: section.heading,
                   tldr: "",
@@ -16746,8 +16788,7 @@ function ProfileView({
             }}
             type="button"
           >
-            <span>{rendered.label}</span>
-            <small>{rendered.window}</small>
+            {labelContent}
           </button>
         )];
       } catch (error) {
@@ -16783,6 +16824,11 @@ function ProfileView({
         ),
         generatedContent
       );
+
+      if (!normalizedSurfaceHasReaderDetail(normalizedHouseTransit)) {
+        return [];
+      }
+
       const renderedWindow = normalizedHouseTransit.sections[0]?.window ?? timingRange;
       const rowSummary = transitCardPreview(
         transitBodyWithoutRepeatedWindow(normalizedSurfacePreview(normalizedHouseTransit), renderedWindow)
@@ -16856,7 +16902,7 @@ function ProfileView({
     })
     : [];
   const activeTransitAspectIdentities = new Set(
-    aspectRows.map((transit) => transitAspectIdentity(
+    readerAspectRows.map(({ transit }) => transitAspectIdentity(
       transit.transitPlanet,
       transit.aspect,
       transit.natalPoint

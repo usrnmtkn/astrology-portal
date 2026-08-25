@@ -11,7 +11,7 @@ const bundled = JSON.parse(fs.readFileSync(
   "utf8"
 ));
 
-function assertGovernanceRecords(records, label) {
+function assertRetiredBalsamicRecord(records, label) {
   const row = records.find((candidate) => candidate.contentKey === "fallback-hook/natal-moon-phase-lived/balsamic");
 
   assert.ok(row, `The retired balsamic record must remain available as historical source material in ${label}.`);
@@ -22,7 +22,9 @@ function assertGovernanceRecords(records, label) {
   assert.equal(row.render_policy, "reference-only-never-serve-verbatim");
   assert.equal(row.owner_approved, false);
   assert.equal(row.retirement?.disposition, "historical-source-material");
+}
 
+function assertGenericAspectBaselines(records, label) {
   for (const contentKey of [
     "fallback-hook/aspect-lived/sextile",
     "fallback-hook/aspect-lived/quincunx"
@@ -40,7 +42,13 @@ function assertGovernanceRecords(records, label) {
   }
 }
 
-assertGovernanceRecords(rows, "canonical source rows");
-assertGovernanceRecords(bundled.hookRows, "the shipped deferred bundle");
+assertRetiredBalsamicRecord(rows, "canonical source rows");
+assert.equal(
+  bundled.hookRows.some((candidate) => candidate.contentKey === "fallback-hook/natal-moon-phase-lived/balsamic"),
+  false,
+  "The retired balsamic historical record must not ship in the reader bundle."
+);
+assertGenericAspectBaselines(rows, "canonical source rows");
+assertGenericAspectBaselines(bundled.hookRows, "the shipped deferred bundle");
 
-console.log("Unwired fallback governance test passed in canonical and shipped rows: balsamic copy is retired and generic aspect doctrine is source material only.");
+console.log("Unwired fallback governance test passed: balsamic copy remains canonical historical material without shipping, and generic aspect doctrine remains authoring source material.");
