@@ -13,7 +13,8 @@ export const REGISTER_SOURCE_STORES = Object.freeze([
   "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/reference-surfaces/",
   "tldr-astro-phrasebank/MARIE-VOICE-BANK.md",
   "tldr-astro-phrasebank/WRITING-STANDARD.md",
-  "data/writing/owner-register-gold.json"
+  "data/writing/owner-register-gold.json",
+  "data/writing/owner-supplied-structural-exemplars.json"
 ]);
 
 function token(value) {

@@ -6,7 +6,7 @@
 import { REVIEWER_GOLD_EXEMPLARS } from "./reviewerGoldExemplars.generated.mjs";
 import { buildCardWriterInstructions } from "./cardWritingStandard.mjs";
 
-export const CANONICAL_WRITING_INSTRUCTIONS_VERSION = "tldr-astro-writing-v6-owner-long-form-sentence-architecture-2026-08-22";
+export const CANONICAL_WRITING_INSTRUCTIONS_VERSION = "tldr-astro-writing-v7-argument-developed-interpretation-2026-08-25";
 export const CARD_WRITING_INSTRUCTIONS_VERSION = "tldr-astro-card-writing-v3-owner-standard-candidate-2026-08-09";
 export const CANONICAL_REVIEWER_INSTRUCTIONS_VERSION = "tldr-astro-editorial-gate-v4-cold-rendered-prose-2026-08-11";
 
@@ -65,6 +65,12 @@ LONG-FORM SENTENCE ARCHITECTURE (owner direction, 2026-08-22): This rule governs
 The prose must do more than name a feeling. Explain what is happening, why this astrology brings it up, what the person may notice in ordinary life, what experience may have taught them to do, how that response still affects current choices, and what becomes possible once the old response can be distinguished from the present situation. Astrology must explain the experience: planet is the process, sign is how it behaves or where sensitivity is expressed, and house is where it becomes visible. For Chiron, ask what happened, what the person learned to do because of it, and how that learned response still shapes choices now; do not reduce Chiron to generic healing.
 
 Connect sentences logically so each sentence answers or complicates the one before it. Prefer physical and observable language such as body, clothes, voice, photographs, posture, schedule, paycheck, title, credit, invitation, deadline, home, sleep, appointment, food, messages, meetings, responsibilities, bills, and time. Do not overwrite the astrology with poetry or switch into generic wellness, permission, motivational, or inspirational language. Advice may appear only after the mechanism and consequence are understood, and it must emerge from the interpretation rather than arrive as a slogan. Before returning long-form copy, reject any paragraph that reads like app notifications or social-media captions, could be pasted under a different placement, or lacks a traceable cause-and-consequence chain.
+
+ARGUMENT-DEVELOPED INTERPRETATION STANDARD (owner direction, 2026-08-25): Accurate placement information is not yet a developed interpretation. For full natal placement detail, Chiron, and other long-form recurring-pattern passages, reason through placement mechanism -> plausible adaptation -> competence earned through that adaptation -> the point where the competence keeps running after circumstances change -> hidden cost or contradiction -> the house-specific way the pattern operates -> changed behavior or operating assumptions. These are semantic movements, never required paragraph slots or reusable sentence constructions.
+
+Begin with the exact mechanism rather than a list of topics or traits. When governed astrology supports developmental interpretation, show why a response may once have been intelligent before naming its present cost. Do not invent a childhood event, trauma, diagnosis, or motive. Find the placement-specific contradiction that makes the costly behavior continue to feel reasonable. Integrate the house into where, how visibly, or how consciously the mechanism operates; never append a textbook house paragraph. End with what changes in a decision, assumption, request, or repeated behavior, not with confidence, empowerment, generic healing, or an advice slogan. Forecast surfaces preserve this causal depth without diagnosing a personal history. Synastry preserves directionality and may not assign either person an unsupported wound story. Short cards compress to mechanism, behavior, and consequence rather than imitating a long-form biography.
+
+The owner-authored, exact-owner-approved Chiron-in-Taurus-in-the-12th-house passage is governed REGISTER evidence for long-form natal prose behavior. It is not PHRASE evidence or reader-serving copy. Do not mine its phrases, copy its paragraph count, reuse its hinge, or imitate its ending.
 
 PLACEMENT-BREADTH RULE: The planet-sign mechanism owns the placement's scope. A chosen expression may organize the page but may not redefine the placement. Different scenes do not create breadth when they all prove the same narrow behavior or social thesis. Keep the broad mechanism distinct from the chosen lens; do not force every paragraph to prove one argument.
 
@@ -165,6 +171,9 @@ Reject cryptic compression.
 
 9. LONG-FORM SENTENCE ARCHITECTURE
 For long-form articles, transit-and-house interpretations, reports, and developed body paragraphs: is the paragraph mostly composed of short declarative sentences, or has one connected thought been split into a punchy sequence? Require medium and long natural sentences that carry the astrology through recognizable situation, behavior, reason, and consequence. A deliberate card hook or earned short landing is not a failure by itself.
+
+10. ARGUMENT DEVELOPMENT
+For full natal placement detail, Chiron, and other applicable long-form recurring-pattern passages: does the copy develop an argument from the placement mechanism into plausible adaptation, earned competence, continued operation after circumstances change, cost or contradiction, house-specific operation, and changed behavior or assumptions? These are semantic movements, not required paragraph slots. Do not require personal history on forecasts, relationship copy, or short cards. Fail under voice_match when the passage remains a trait list followed by generic advice; under invented_motive when it fabricates biography; under observable_behavior when the adaptation and change never become visible; or under generic_self_help when the ending does not emerge from the developed mechanism.
 
 OTHER CHECKS
 
