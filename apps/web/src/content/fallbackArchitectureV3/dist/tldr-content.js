@@ -1,4 +1,4 @@
-// apps/web/src/content/fallbackArchitectureV3/resolver/renderFallback.browser.ts
+// resolver/renderFallback.browser.ts
 var SourceGapError = class extends Error {
 };
 var RoleViolationError = class extends Error {
@@ -106,6 +106,18 @@ function createFallbackRenderer(templatesFile, rowsFile) {
   function renderNatalPlacement(facts, opts2 = {}) {
     const { planet, sign, house } = facts;
     const voice = facts.voice === "you" ? "you" : "they";
+    const exactCompleteLived = house ? getReaderLivedRow(`fallback-hook/natal-you-placement-complete-final/${planet}/${sign}/${house}`, voice, opts2) : null;
+    if (exactCompleteLived) {
+      const body = exactCompleteLived.body ?? "";
+      return {
+        headline: `${title(planet)} in ${title(sign)} in the ${ordinal(house)} house`,
+        parts: [body],
+        partKeys: [exactCompleteLived.contentKey],
+        body,
+        templateKey: exactCompleteLived.contentKey,
+        provenanceTier: "exact-owner-approved"
+      };
+    }
     const exactHouseLived = house ? getReaderLivedRow(`fallback-hook/natal-you-placement-house-final/${planet}/${house}`, voice, opts2) ?? getReaderLivedRow(`fallback-hook/placement-house-lived/${planet}/${house}`, voice, opts2) : null;
     const genericHouseLived = house ? getReaderLivedRow(`fallback-hook/house-lived/${house}`, voice, opts2) : null;
     const exactSignLived = getReaderLivedRow(`fallback-hook/natal-you-placement-sign-final/${planet}/${sign}`, voice, opts2) ?? getReaderLivedRow(`fallback-hook/placement-sign-lived/${planet}/${sign}`, voice, opts2);
@@ -400,7 +412,7 @@ function normalizeAspect(input) {
   return map[k] ?? null;
 }
 
-// apps/web/src/content/fallbackArchitectureV3/resolver/dailyGlanceVoice.browser.ts
+// resolver/dailyGlanceVoice.browser.ts
 var SECOND_PERSON = /\b(?:you|your|yours|yourself|yourselves)\b/giu;
 var DIRECT_IMPERATIVE = /(?:^|[.!?]\s+)(?:don't|do not|stop|keep|let|give|take|check|say|ask|make|go|trust|put|use|change|tell|be|try|finish|clear|get|notice|remember|decide|write|walk|sit|come|pick|start|see|rest|reschedule|lead|treat|reduce|stay|run|choose|review|pay|complete|separate|begin|send|follow|hold|bring|count|read|skip|look|call|move|leave|delay|spend|accept|speak|expect|know|direct)\b/giu;
 var PERSON_SLOT = /\{\{([\w.]+)\}\}/gu;
@@ -460,7 +472,7 @@ function fillDailyGlancePersonSlots(bodyThey, slots) {
   });
 }
 
-// apps/web/src/content/fallbackArchitectureV3/resolver/readerEligibility.browser.ts
+// resolver/readerEligibility.browser.ts
 var READER_ELIGIBLE_REVIEW_STATUSES = /* @__PURE__ */ new Set([
   "approved",
   "approved_reuse",
@@ -536,12 +548,12 @@ function isGovernedReaderEligible(row, { allowUnreviewed = false } = {}) {
   return !requiresExactOwnerApproval(row.contentKey) || hasExactOwnerApproval(row);
 }
 
-// apps/web/src/content/fallbackArchitectureV3/resolver/lunationNormalization.mjs
+// resolver/lunationNormalization.mjs
 function normalizeLunationSign(value) {
   return String(value ?? "").trim().toLowerCase();
 }
 
-// apps/web/src/content/fallbackArchitectureV3/resolver/lunationEclipseSectionKeys.mjs
+// resolver/lunationEclipseSectionKeys.mjs
 var SHARED_ECLIPSE_SECTION_IDS = /* @__PURE__ */ new Set([
   "nature",
   "mechanics",
@@ -556,7 +568,7 @@ function sharedLunationEclipseSectionKey(kind, sectionId, house = null) {
   return phase ? `authored/lunation-eclipse-section/shared/${phase}/${resolvedSectionId}` : null;
 }
 
-// apps/web/src/content/fallbackArchitectureV3/resolver/contentIntegrity.mjs
+// resolver/contentIntegrity.mjs
 var SHA256_CONSTANTS = [
   1116352408,
   1899447441,
@@ -683,7 +695,7 @@ function sha256Text(value) {
   return state.map((word) => word.toString(16).padStart(8, "0")).join("");
 }
 
-// apps/web/src/content/fallbackArchitectureV3/resolver/renderTransitSynastry.browser.ts
+// resolver/renderTransitSynastry.browser.ts
 var TRUE_LILITH_KEY_DATES_INTRO = "True Black Moon Lilith stations about once a month, so it crosses the same degrees several times before it finally moves on.";
 function skyPlacementKeyDates({
   planet,
@@ -2961,7 +2973,7 @@ ${passHook}`;
   return { renderTransitHouse, renderTransitHouseEvent, renderTransitAspect, renderTransitLabel, renderTransitReturn, renderTransitRetro, renderCompat, renderSynastryAspect, renderSkySeason, renderSkyHoroscope, renderSkyLunation, renderSkyPlacement, renderSkyPlacementHouseCore, renderSkyAspectCard, renderCircleStory, renderPairDaily, formatCircleNames, renderCalendarPhase, renderVoidOfCourse, renderSeasonMarker, renderWeeklyMoon, renderBondTransit, renderLunationMacro, renderLunationHoroscope, renderLunationEventCard, renderDoDont, renderDailyGlance };
 }
 
-// apps/web/src/content/fallbackArchitectureV3/resolver/knowledgeMatrixV9.browser.ts
+// resolver/knowledgeMatrixV9.browser.ts
 var EXCLUDED_PREFIX = "[EXCLUDE FROM FALLBACK]";
 var OWNER_APPROVED = "owner-approved";
 function normalizedKeyPart(value) {
@@ -3062,7 +3074,7 @@ function createKnowledgeMatrixV9Resolver(manifest, rowsFile, buildReport) {
   });
 }
 
-// apps/web/src/content/fallbackArchitectureV3/resolver/knowledgeMatrixV13.browser.ts
+// resolver/knowledgeMatrixV13.browser.ts
 var ALLOWED_GOVERNANCE = [
   "owner-approved-v13-direct-language",
   "owner-lived-experience-ll-v9-owner-approved",
@@ -3154,8 +3166,8 @@ function createKnowledgeMatrixV13Resolver(file) {
   });
 }
 
-// apps/web/src/content/fallbackArchitectureV3/resolver/index.browser.ts
-var PACKAGE_VERSION = "v3-2026-08-24d";
+// resolver/index.browser.ts
+var PACKAGE_VERSION = "v3-2026-08-25a";
 function stablePackageValue(value) {
   if (Array.isArray(value)) {
     return value.map(stablePackageValue);

@@ -1189,6 +1189,18 @@ function phrasebankRuntimeMapping(fileName, row) {
     };
   }
 
+  if (fileName === "cc-planetary-horoscope.json" && bodySlug(row.planet) === "moon" && row.house) {
+    return {
+      action: "SKIP",
+      targetTable: null,
+      targetDatabaseKey: null,
+      targetSurface: null,
+      family: "planetary-horoscope",
+      blockType: null,
+      reason: "House-only Moon copy is incomplete for the reader surface. Moon horoscopes require planet, zodiac sign, and rising-derived house."
+    };
+  }
+
   if (fileName === "cc-planetary-horoscope.json" && row.planet && row.house) {
     return {
       action: "NEW_CANONICAL_KEY",
