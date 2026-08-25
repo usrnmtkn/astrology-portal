@@ -11860,6 +11860,30 @@
    "distribution_lane": "serving"
   },
   {
+   "contentKey": "fallback-hook/natal-you-placement-complete-final/lilith/virgo/3",
+   "content_role": "full_copy",
+   "grammar_frame": "complete_sentence",
+   "headline": "Lilith in Virgo in the 3rd house",
+   "body": "Lilith in Virgo in the 3rd house can make you especially sensitive to being corrected, talked down to, or treated like one mistake cancels out everything you got right. You may have learned early that being prepared kept you from embarrassment, that catching the detail before anyone else noticed it made you harder to criticize, or that asking a question was safer once you had already thought through every possible answer. Virgo can become very precise with language because precision feels protective. The rage can come when someone nitpicks your wording instead of addressing your point, uses one small error to dismiss the rest of what you said, or expects you to keep proving that you know what you are talking about before they take you seriously.\n\nSiblings, school, neighbors, and the environment you grew up in can make this even sharper. Maybe you were compared to someone who seemed quicker or more naturally confident, praised for being the responsible one, or made to feel like mistakes were more revealing than they actually were. Over time, you may become the person who remembers the details, catches the contradiction, edits the message before sending it, or notices the problem everyone else missed. That skill can make you extremely clear and useful, but it can also create a habit of over-explaining, correcting yourself before anyone else can, or holding back until you are certain there is nothing in your argument somebody can pick apart.\n\nThe deeper shift is learning the difference between being corrected and being diminished. You can get one detail wrong without handing someone permission to dismiss the entire point, and you can change your wording without letting the conversation become a trial of whether you were precise enough to deserve being heard. Lilith in Virgo in the 3rd house gets louder when criticism stops being useful and starts becoming a way of keeping you busy defending every sentence instead of addressing what you actually said.",
+   "reader_only": true,
+   "render_policy": "reader-only-exact-lived-v1",
+   "review_status": "approved",
+   "source_keys": [
+    "owner-authored/lilith-virgo-3/2026-08-25"
+   ],
+   "approval": {
+    "approvalLevel": "exact_owner_approved",
+    "recordPath": "owner-authored/lilith-virgo-3/2026-08-25",
+    "approvedAt": "2026-08-25"
+   },
+   "source_release": "owner-authored-natal-placement-complete-v1",
+   "runtime_family": "natal-you-placement-complete-final",
+   "runtime_key": "lilith|virgo|3",
+   "governance": "owner-approved-natal-placement-complete-v1",
+   "owner_approved": true,
+   "distribution_lane": "serving"
+  },
+  {
    "contentKey": "fallback-hook/natal-you-placement-complete-final/lilith/taurus/3",
    "content_role": "full_copy",
    "grammar_frame": "complete_sentence",
