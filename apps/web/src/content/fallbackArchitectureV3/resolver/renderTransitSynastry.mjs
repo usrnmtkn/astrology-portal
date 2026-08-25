@@ -12,6 +12,7 @@ import {
 import { isGovernedReaderEligible, synastryReaderTier, transitReaderTier } from "./readerEligibility.mjs";
 import { normalizeLunationSign } from "./lunationNormalization.mjs";
 import { sharedLunationEclipseSectionKey } from "./lunationEclipseSectionKeys.mjs";
+import { sha256Text } from "./contentIntegrity.mjs";
 
 const here = path.dirname(url.fileURLToPath(import.meta.url));
 const lib = JSON.parse(fs.readFileSync(path.join(here, "../source-rows/transit-synastry-rows-v1.json"), "utf8"));
@@ -2299,12 +2300,17 @@ export function renderLunationHoroscope({ kind, sign, risingSign, eventDate, mat
   const bookCell = isEclipse ? exactEclipsePreview : exactBookCell;
   const eclipseSectionPrefix = `authored/lunation-eclipse-section/${sign}/rising-${risingSign}/house-${h}`;
   const eclipseSectionKey = (id) => (
-    sharedLunationEclipseSectionKey(kind, id)
+    sharedLunationEclipseSectionKey(kind, id, h)
     ?? `${eclipseSectionPrefix}/${id}`
   );
   const eclipseSection = (id) => isEclipse ? card(eclipseSectionKey(id)) : null;
   const jurisdiction = vocab.get(`fallback-vocab/house-jurisdiction/${h}`)?.body;
   const paras = [];
+  const partSourceKeys = [];
+  const pushPart = (body, sourceKeys) => {
+    paras.push(body);
+    partSourceKeys.push([...new Set(sourceKeys.filter(Boolean))]);
+  };
   const reviewFlags = [];
   const flagOmittedSection = (sectionId, omittedContentKey, fallbackContentKey = null) => {
     reviewFlags.push({
@@ -2351,6 +2357,67 @@ export function renderLunationHoroscope({ kind, sign, risingSign, eventDate, mat
     }
     return renderedBookBody;
   };
+  const assertStoredEclipseSectionIntegrity = (stored) => {
+    const body = stored.body ?? "";
+    const expectedHash = stored.protected_content?.body_sha256;
+    const actualHash = sha256Text(body);
+    if (
+      !expectedHash
+      || actualHash !== expectedHash
+      || stored.approval?.payloadSha256 !== expectedHash
+      || stored.approval?.approvalLevel !== "exact_owner_approved"
+      || stored.promotion_authorized !== true
+    ) {
+      throw new SourceGapError(`ECLIPSE_SECTION_MODIFIED: ${stored.contentKey}`);
+    }
+  };
+  const assertProtectedEclipseBookBody = (stored, source) => {
+    assertStoredEclipseSectionIntegrity(stored);
+    const sourceBody = source.body ?? "";
+    const sourceHash = sha256Text(sourceBody);
+    const protectedSourceHash = source.protected_content?.body_sha256;
+    const integrity = stored.protected_content;
+    if (
+      !sourceBody
+      || !protectedSourceHash
+      || sourceHash !== protectedSourceHash
+      || integrity?.source_body_sha256 !== sourceHash
+    ) {
+      throw new SourceGapError(`BOOK_BODY_MODIFIED: ${source.contentKey}`);
+    }
+
+    let expectedBody = sourceBody;
+    const omissions = [...(integrity.approved_omissions ?? [])]
+      .sort((left, right) => right.start - left.start);
+    for (const omission of omissions) {
+      const actual = sourceBody.slice(omission.start, omission.end);
+      if (
+        omission.ownerApproved !== true
+        || actual !== omission.text
+        || sha256Text(actual) !== omission.sha256
+      ) {
+        throw new SourceGapError(`BOOK_BODY_MODIFIED: ${source.contentKey}`);
+      }
+      expectedBody = `${expectedBody.slice(0, omission.start)}${expectedBody.slice(omission.end)}`;
+    }
+
+    const boundary = expectedBody.indexOf(". ");
+    const sourceBoundary = sourceBody.indexOf(". ");
+    if (boundary < 0 || sourceBoundary < 0) {
+      throw new SourceGapError(`BOOK_BODY_MODIFIED: ${source.contentKey}`);
+    }
+    const sourceOpening = sourceBody.slice(0, sourceBoundary + 1);
+    const sourceRemainder = sourceBody.slice(sourceOpening.length).trimStart();
+    const emittedRemainder = expectedBody.slice(boundary + 2);
+    if (
+      integrity?.source_opening_sha256 !== sha256Text(sourceOpening)
+      || integrity?.source_remainder_sha256 !== sha256Text(sourceRemainder)
+      || integrity?.preservedBookRemainderSha256 !== sha256Text(emittedRemainder)
+      || stored.body !== emittedRemainder
+    ) {
+      throw new SourceGapError(`BOOK_BODY_MODIFIED: ${source.contentKey}`);
+    }
+  };
   const pushEclipseSection = (id) => {
     const key = eclipseSectionKey(id);
     const stored = eclipseSection(id);
@@ -2358,8 +2425,9 @@ export function renderLunationHoroscope({ kind, sign, risingSign, eventDate, mat
       flagOmittedSection(id, key);
       return null;
     }
+    assertStoredEclipseSectionIntegrity(stored);
     try {
-      paras.push(renderStoredBody(stored));
+      pushPart(renderStoredBody(stored), [stored.contentKey, ...(stored.source_keys ?? [])]);
     } catch (error) {
       if (!(error instanceof SourceGapError)) throw error;
       flagOmittedSection(id, key);
@@ -2370,7 +2438,7 @@ export function renderLunationHoroscope({ kind, sign, risingSign, eventDate, mat
   let authoredBodyUsed = false;
   let suppressCycleAnchor = false;
   if (bookCell?.body) {
-    paras.push(renderStoredBody(bookCell));
+    pushPart(renderStoredBody(bookCell), [bookCell.contentKey, ...(bookCell.source_keys ?? [])]);
     authoredBodyUsed = true;
   } else if (isEclipse) {
     pushEclipseSection("opening");
@@ -2379,16 +2447,24 @@ export function renderLunationHoroscope({ kind, sign, risingSign, eventDate, mat
     const bodyKey = `${eclipseSectionPrefix}/evergreen-body`;
     const eclipseBody = eclipseSection("evergreen-body");
     if (eclipseBody?.body) {
-      paras.push(renderStoredBody(eclipseBody));
+      if (!evergreenBookCell?.body) {
+        throw new SourceGapError(`BOOK_BODY_MODIFIED: missing protected source ${evergreenBookCellKey}`);
+      }
+      assertProtectedEclipseBookBody(eclipseBody, evergreenBookCell);
+      pushPart(renderStoredBody(eclipseBody), [
+        eclipseBody.contentKey,
+        evergreenBookCell.contentKey,
+        ...(eclipseBody.source_keys ?? [])
+      ]);
       authoredBodyUsed = true;
       suppressCycleAnchor = eclipseBody.suppress_cycle_anchor === true;
     } else if (evergreenBookCell?.body) {
-      paras.push(renderStoredBody(evergreenBookCell));
+      pushPart(renderStoredBody(evergreenBookCell), [evergreenBookCell.contentKey, ...(evergreenBookCell.source_keys ?? [])]);
       authoredBodyUsed = true;
       flagOmittedSection("evergreen-body", bodyKey, evergreenBookCell.contentKey);
     }
   } else if (evergreenBookCell?.body) {
-    paras.push(renderStoredBody(evergreenBookCell));
+    pushPart(renderStoredBody(evergreenBookCell), [evergreenBookCell.contentKey, ...(evergreenBookCell.source_keys ?? [])]);
     authoredBodyUsed = true;
   }
   if (!authoredBodyUsed) {
@@ -2396,13 +2472,17 @@ export function renderLunationHoroscope({ kind, sign, risingSign, eventDate, mat
     if (!frame || !jurisdiction) throw new SourceGapError(`SOURCE_GAP: lunation horoscope ${which}/${risingSign} (house ${h})`);
     const houseFrame = fill(frame, { houseOrdinal: ordinal(h), jurisdiction });
     const opening = hooks.get(`fallback-hook/lunation-opening-situation/${h}`)?.body_you;
-    paras.push(opening ? `${opening} ${houseFrame}` : houseFrame);
+    pushPart(opening ? `${opening} ${houseFrame}` : houseFrame, [
+      `fallback-hook/lunation-horoscope/${which}`,
+      `fallback-vocab/house-jurisdiction/${h}`,
+      opening ? `fallback-hook/lunation-opening-situation/${h}` : null
+    ]);
   }
   if (kind === "eclipse-solar" && !bookCell) {
     const solarHouseLayerKey = `authored/lunation-eclipse-house-layer/solar/house-${h}`;
     const solarHouseLayer = card(solarHouseLayerKey);
     if (solarHouseLayer?.body) {
-      paras.push(renderStoredBody(solarHouseLayer));
+      pushPart(renderStoredBody(solarHouseLayer), [solarHouseLayer.contentKey, ...(solarHouseLayer.source_keys ?? [])]);
     } else {
       flagOmittedSection("eclipse-house-layer", solarHouseLayerKey);
     }
@@ -2411,7 +2491,7 @@ export function renderLunationHoroscope({ kind, sign, risingSign, eventDate, mat
     const anchor = hooks.get("fallback-hook/lunation-matching-new-moon-anchor/full")?.body_you;
     if (!anchor) throw new SourceGapError("SOURCE_GAP: missing Full Moon cycle anchor");
     try {
-      paras.push(fill(anchor, matchingNewMoonSlots()));
+      pushPart(fill(anchor, matchingNewMoonSlots()), ["fallback-hook/lunation-matching-new-moon-anchor/full"]);
     } catch (error) {
       if (!(kind === "eclipse-lunar" && error instanceof SourceGapError)) throw error;
       flagOmittedSection("matching-new-moon-anchor", "fallback-hook/lunation-matching-new-moon-anchor/full");
@@ -2419,7 +2499,7 @@ export function renderLunationHoroscope({ kind, sign, risingSign, eventDate, mat
   } else if ((kind === "new-moon" || kind === "eclipse-solar") && !(isEclipse && bookCell)) {
     const anchor = hooks.get("fallback-hook/lunation-cycle-anchor/new")?.body_you;
     if (!anchor) throw new SourceGapError("SOURCE_GAP: missing New Moon cycle anchor");
-    paras.push(anchor);
+    pushPart(anchor, ["fallback-hook/lunation-cycle-anchor/new"]);
   }
   // Per-rising cards use a compact, reviewed sign core. The full per-sign
   // section belongs to the Sky article and must never be copied into this card.
@@ -2430,12 +2510,23 @@ export function renderLunationHoroscope({ kind, sign, risingSign, eventDate, mat
     ? hooks.get(`fallback-hook/lunation-sign-compact/${which}-moon/${sign}`)?.body_you
       ?? (which === "full" ? hooks.get(`fallback-hook/lunation-sign-compact/${sign}`)?.body_you : null)
     : null;
-  if (signCompact) paras.push(signCompact);
+  if (signCompact) pushPart(signCompact, [
+    `fallback-hook/lunation-sign-compact/${which}-moon/${sign}`,
+    which === "full" ? `fallback-hook/lunation-sign-compact/${sign}` : null
+  ]);
   if (!authoredBodyUsed && which === "full" && sunHouse && sunHouse !== h && jurisdiction) {
     const sunJurisdiction = vocab.get(`fallback-vocab/house-jurisdiction/${sunHouse}`)?.body;
     if (sunJurisdiction) {
       const counterpoint = `The friction this week runs between your ${ordinal(sunHouse)} house of ${sunJurisdiction} and your ${ordinal(h)} house of ${jurisdiction}. The immediate demands on one side can compete with what is becoming undeniable on the other, so let the tension show you what needs to change.`;
       paras[paras.length - 1] = `${paras[paras.length - 1]} ${counterpoint}`;
+      partSourceKeys[partSourceKeys.length - 1] = [
+        ...new Set([
+          ...(partSourceKeys[partSourceKeys.length - 1] ?? []),
+          `fallback-vocab/house-jurisdiction/${sunHouse}`,
+          `fallback-vocab/house-jurisdiction/${h}`,
+          "resolver/engine-computed-full-moon-counterpoint"
+        ])
+      ];
     }
   }
   if ((!authoredBodyUsed || isEclipse || rulerRetrograde) && ruler && rulerHouse && ruler !== "sun" && ruler !== "moon") {
@@ -2454,7 +2545,11 @@ export function renderLunationHoroscope({ kind, sign, risingSign, eventDate, mat
           rulerParagraph += ` ${fill(retroOverlay, { rulerTitle })}`;
         }
       }
-      paras.push(rulerParagraph);
+      pushPart(rulerParagraph, [
+        `fallback-hook/lunation-ruler-house/${rulerHouse}`,
+        rulerRetrograde ? "fallback-hook/lunation-ruler-retro" : null,
+        "resolver/engine-computed-ruler-frame"
+      ]);
     }
   }
   if (isEclipse && !bookCell) {
@@ -2464,15 +2559,22 @@ export function renderLunationHoroscope({ kind, sign, risingSign, eventDate, mat
   const weekLayer = weekly && !authoredBodyUsed
     ? hooks.get("fallback-hook/lunation-week-layer")?.body_you
     : null;
-  if (weekLayer) paras.push(weekLayer);
+  if (weekLayer) pushPart(weekLayer, ["fallback-hook/lunation-week-layer"]);
   // The former manifestations, moment, Release/Shift, Higher Path, intention,
   // and eclipse-note stack is intentionally retired on per-rising cards. A
   // dedicated reviewed closer may be added later; never synthesize one here.
   const label = isEclipse ? (which === "new" ? "Solar Eclipse" : "Lunar Eclipse") : (which === "new" ? "New Moon" : "Full Moon");
+  const headline = isEclipse
+    ? `${title(sign)} ${label} Horoscope`
+    : bookCell?.headline || `${label} for ${title(risingSign)} Rising`;
+  if (isEclipse && (partSourceKeys.length !== paras.length || partSourceKeys.some((keys) => keys.length === 0))) {
+    throw new SourceGapError(`ECLIPSE_PROVENANCE_MISSING: ${kind}/${sign}/rising-${risingSign}/house-${h}`);
+  }
   return {
-    headline: bookCell?.headline || `${label} for ${title(risingSign)} Rising`,
+    headline,
     body: paras.join("\n\n"),
     parts: paras,
+    partSourceKeys: isEclipse ? partSourceKeys : undefined,
     templateKey: bookCell?.contentKey || "fallback-template/sky.lunation-horoscope",
     contentKey: bookCell?.contentKey,
     reviewFlags: reviewFlags.length > 0 ? reviewFlags : undefined

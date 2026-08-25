@@ -44482,12 +44482,13 @@
    "review_status": "approved"
   },
   {
-   "body": "Full Moons bring what has been building into clearer view. In Pisces, what surfaces is usually whatever you have been absorbing without keeping score: the temporary help that turned into a permanent obligation, the empathy that became unpaid emotional labor, or the vague arrangement that drifted for months because naming the boundary felt unkind.\n\nPisces is a mutable water sign ruled by Jupiter, the planet of scale, belief, and generosity. That traditional rulership matters: this sign gives, forgives, and insists on finding a deeper meaning where other signs would just see a loss. At its best, that is faith working as designed. Taken too far, it is a refusal to look at plain facts because the fantasy version feels safer.\n\nThe Sun in Virgo sits directly opposite this Moon, holding the practical line: the budget, the physical body, the actual calendar, the real cost. The tension here is not between hope and cynicism; it is between what you want to believe about a situation and what you can actually verify.\n\nCheck the details without treating reality as a betrayal of the dream. What survives an honest look deserves your faith; what depended on vagueness to survive was already gone.",
-   "notes": "Owner-final production import, batch 3 V2 locked (Jul 29 late rulings; register audit applied).",
+   "body": "Full moons are about illuminating that unconscious and that which is unseen. The Pisces full moon asks you, \"what is fantasy and what is real?\" During this powerful Pisces full moon, the wall between your dreams, emotions, and reality may collide.\n\nPisces is a deeply intuitive and empathetic sign, with a strong connection to the spiritual realm. However, when not fully evolved, Pisces energy can manifest as suffering, with thin boundaries that make them vulnerable to the emotional turmoil of the world around them.\n\nThe Virgo sun and Pisces moon are here to be your source of wisdom, pushing you to be practical while at the same time infusing your heart with compassion and understanding. The Virgo sun lights your way, guiding you on practicality and self-care and showing you where you're doing something that is not in your best interests. Meanwhile, the Pisces moon brings gentle understanding, highlights where you are too hard on yourself, and when you need to bring compassion into your heart.\n\nThere may be some difficult emotions and unresolved issues you are forced to confront. Remember that the only way out of darkness is through it.",
+   "notes": "Direct owner-book reuse for the Pisces Full Moon macro. Sentences are selected without paraphrase from the Pisces horoscope-set preamble and Pisces light-shadow section; the app-internal ritual/foundation tail is excluded.",
    "headline": "The Macro View: What the Pisces Full Moon Represents",
    "contentKey": "authored/sky-lunation-macro/full-moon/pisces",
    "source_keys": [
-    "Lunation sign packages batch 3 — the next three events"
+    "packages/astro-knowledge/review/lunation-card-assembly-v1/source/book-sections-v1.json#Pisces full moon horoscopes & tarotscopes",
+    "packages/astro-knowledge/review/lunation-card-assembly-v1/source/book-sections-v1.json#Pisces Light & Strength"
    ],
    "content_role": "authored_card",
    "review_status": "approved"

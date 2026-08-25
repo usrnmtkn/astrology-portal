@@ -17,60 +17,60 @@ Dynamic dates, Nodes, aspects, ruler state, and eclipse-series facts are deliber
 
 ## 1. Pisces rising · Pisces in the 1st house
 
-Source: `authored/book-ritual-and-the-moon/lunation-horoscope/full-moon/pisces/rising-pisces/house-1`  
+Source: `authored/book-ritual-and-the-moon/lunation-horoscope/full-moon/pisces/rising-pisces/house-1`
 Protected body: 360 words · SHA-256 `d6c3f619bcadf9d95495e26d3cf17b6839f9755b0957b039c1d1a55494ee1fd5`
 
 ### Original regular card
 
 The Pisces full moon is illuminating your 1st House of Self. Over the next six months, you will experience significant shifts in your daily routine, physical appearance, and long-term goals. You may experience extreme emotional upheavals that come in waves. This Pisces full moon encourages you to regain balance with your body; your recovery depends on maintaining a balance between effort and flow. You need moments of stillness in your life where you can be present and connected to your body. It could be anything from art to hiking to meditation. Whatever it is, it helps you remember that you can live in the moment and not worry about the past or future. So take a moment to reconnect with yourself and practice being present. What are your favorite activities that bring you back into your body and out of your head? What are you doing when time appears to stand still? When and where do you feel most present? Remember a time when you are not thinking about the past or future but instead fully immersed in a creative process and the present moment. If you need help thinking of something, explore new hobbies and approaches to access your individual state of flow. This Pisces full moon reminds you that your dreams must be reclaimed and safeguarded. Great dreams create great realities. Continue to grow into finding a balance between daydreaming and actualizing. Don't be afraid to keep dreaming big, no matter how impossible they may seem. Celebrate your unique power as a dreamer and embrace the hope and optimism that comes with it. Your big hopes and dreams are an integral part of who you are. Being a dreamer is special. You hold the keys to future achievement while preserving the hopes of your ancestors and inspiring future generations. This Pisces full moon is an opportunity to be guided for the next six months, to step into your creative power, and honor what makes you a muse. Leverage your gifts to elevate yourself from the masses, inspire, and be recognized for your unique talents and vision. Dreams have the power to transform you and the world around you.
 
-> **EXISTING DYNAMIC CYCLE ANCHOR**  
+> **EXISTING DYNAMIC CYCLE ANCHOR**
 > Six months ago, consciously or not, this lunar cycle began with the New Moon in Pisces on {{matchingNewMoonDate}}.
 
 ### Proposed eclipse composition
 
-> **REPLACED · BOOK OPENING SENTENCE**  
+> **REPLACED · BOOK OPENING SENTENCE**
 > The Pisces lunar eclipse shines upon your 1st House of Self.
 
-> **ADDED · ECLIPSE NATURE**  
+> **ADDED · ECLIPSE NATURE**
 > Eclipses warp time and shift the course of events in ways you can't yet see.
 
-> **ADDED · ECLIPSE MECHANICS**  
+> **ADDED · ECLIPSE MECHANICS**
 > Lunar eclipses are portals into your soul. When they come around, they can help you uncover the truth and allow you to gain knowledge that will steer your life, changing your path to a better one.
 
-**BOOK HOROSCOPE · REVIEW-HELD CONTINUITY EDITS APPLIED**
+**UNCHANGED · REMAINDER OF BOOK HOROSCOPE**
 
-Over the next six months, you will experience significant shifts in your daily routine, physical appearance, and long-term goals. You may experience extreme emotional upheavals that come in waves. Regain balance with your body; your recovery depends on maintaining a balance between effort and flow. You need moments of stillness in your life where you can be present and connected to your body. It could be anything from art to hiking to meditation. Whatever it is, it helps you remember that you can live in the moment and not worry about the past or future. So take a moment to reconnect with yourself and practice being present. What are your favorite activities that bring you back into your body and out of your head? What are you doing when time appears to stand still? When and where do you feel most present? Remember a time when you are not thinking about the past or future but instead fully immersed in a creative process and the present moment. If you need help thinking of something, explore new hobbies and approaches to access your individual state of flow. Your dreams must be reclaimed and safeguarded. Great dreams create great realities. Continue to grow into finding a balance between daydreaming and actualizing. Don't be afraid to keep dreaming big, no matter how impossible they may seem. Celebrate your unique power as a dreamer and embrace the hope and optimism that comes with it. Your big hopes and dreams are an integral part of who you are. Being a dreamer is special. You hold the keys to future achievement while preserving the hopes of your ancestors and inspiring future generations. Over the next six months, step into your creative power and honor what makes you a muse. Leverage your gifts to elevate yourself from the masses, inspire, and be recognized for your unique talents and vision. Dreams have the power to transform you and the world around you.
+Over the next six months, you will experience significant shifts in your daily routine, physical appearance, and long-term goals. You may experience extreme emotional upheavals that come in waves. This Pisces full moon encourages you to regain balance with your body; your recovery depends on maintaining a balance between effort and flow. You need moments of stillness in your life where you can be present and connected to your body. It could be anything from art to hiking to meditation. Whatever it is, it helps you remember that you can live in the moment and not worry about the past or future. So take a moment to reconnect with yourself and practice being present. What are your favorite activities that bring you back into your body and out of your head? What are you doing when time appears to stand still? When and where do you feel most present? Remember a time when you are not thinking about the past or future but instead fully immersed in a creative process and the present moment. If you need help thinking of something, explore new hobbies and approaches to access your individual state of flow. This Pisces full moon reminds you that your dreams must be reclaimed and safeguarded. Great dreams create great realities. Continue to grow into finding a balance between daydreaming and actualizing. Don't be afraid to keep dreaming big, no matter how impossible they may seem. Celebrate your unique power as a dreamer and embrace the hope and optimism that comes with it. Your big hopes and dreams are an integral part of who you are. Being a dreamer is special. You hold the keys to future achievement while preserving the hopes of your ancestors and inspiring future generations. This Pisces full moon is an opportunity to be guided for the next six months, to step into your creative power, and honor what makes you a muse. Leverage your gifts to elevate yourself from the masses, inspire, and be recognized for your unique talents and vision. Dreams have the power to transform you and the world around you.
 
-> **REVIEW REQUIRED · CONTINUITY EDIT · 258–400 · 081063b43cb2ccee77ec7841a7ccd53042f52ad6d745eb6cae04a3c8e69210df**  
-> Before: This Pisces full moon encourages you to regain balance with your body; your recovery depends on maintaining a balance between effort and flow.  
+> **REVIEW REQUIRED · CONTINUITY EDIT · 258–400 · 081063b43cb2ccee77ec7841a7ccd53042f52ad6d745eb6cae04a3c8e69210df**
+> Before: This Pisces full moon encourages you to regain balance with your body; your recovery depends on maintaining a balance between effort and flow.
 > After: Regain balance with your body; your recovery depends on maintaining a balance between effort and flow.
 
-> **REVIEW REQUIRED · CONTINUITY EDIT · 1175–1260 · 7ae0d12efd37c5762760dd8f92a00b12a025003fe0d7627cc6357ef8dbaf9f08**  
-> Before: This Pisces full moon reminds you that your dreams must be reclaimed and safeguarded.  
+> **REVIEW REQUIRED · CONTINUITY EDIT · 1175–1260 · 7ae0d12efd37c5762760dd8f92a00b12a025003fe0d7627cc6357ef8dbaf9f08**
+> Before: This Pisces full moon reminds you that your dreams must be reclaimed and safeguarded.
 > After: Your dreams must be reclaimed and safeguarded.
 
-> **REVIEW REQUIRED · CONTINUITY EDIT · 1758–1902 · 475c0888c3f20b0116b52ca405987d7f07e94c4116cd00c8b236c2397ff468ce**  
-> Before: This Pisces full moon is an opportunity to be guided for the next six months, to step into your creative power, and honor what makes you a muse.  
+> **REVIEW REQUIRED · CONTINUITY EDIT · 1758–1902 · 475c0888c3f20b0116b52ca405987d7f07e94c4116cd00c8b236c2397ff468ce**
+> Before: This Pisces full moon is an opportunity to be guided for the next six months, to step into your creative power, and honor what makes you a muse.
 > After: Over the next six months, step into your creative power and honor what makes you a muse.
 
-> **UNCHANGED · DYNAMIC CYCLE ANCHOR**  
+> **UNCHANGED · DYNAMIC CYCLE ANCHOR**
 > Six months ago, consciously or not, this lunar cycle began with the New Moon in Pisces on {{matchingNewMoonDate}}.
 
-> **ADDED · NO-RITUAL PARAGRAPH**  
-> Eclipses are not the recommended time for ritual, manifestation, or intention setting. They happen along the Lunar Nodes, and part of the work is letting the situation unfold before deciding what it is supposed to become.
+> **ADDED · NO-RITUAL PARAGRAPH**
+> Eclipses happen along the Lunar Nodes, and part of the work is letting the situation unfold before deciding what it's supposed to become.
 
-> **ADDED · ECLIPSE CLOSE**  
-> You can't control it, and you shouldn't try. Not everything that changes now needs an immediate response.
+> **ADDED · ECLIPSE CLOSE**
+> Release your need to be in control, and allow yourself to flow with the current of whatever is unfolding. Reflect on what you've experienced, and respond accordingly.
 
 ### Exact diff summary
 
 - Replaced: one book opening sentence → one eclipse opening sentence
 - Added: eclipse nature, mechanics, no-ritual paragraph, and close
 - Omitted declared intention blocks: **0**
-- Review-held continuity edits applied: **3**
+- Non-serving continuity candidates listed for later review: **3**
 - Dynamic cycle anchor suppressed as duplicate: **no**
-- Repeated lunation reminders remaining after the proposed edits: **0**
+- Repeated lunation reminders remaining after the proposed edits: **3**
 
 ### Owner review
 
@@ -80,60 +80,60 @@ Over the next six months, you will experience significant shifts in your daily r
 
 ## 2. Aquarius rising · Pisces in the 2nd house
 
-Source: `authored/book-ritual-and-the-moon/lunation-horoscope/full-moon/pisces/rising-aquarius/house-2`  
+Source: `authored/book-ritual-and-the-moon/lunation-horoscope/full-moon/pisces/rising-aquarius/house-2`
 Protected body: 409 words · SHA-256 `1c9a77314269e31eb098adc708d4e5631764075b82cc62cc3265686e70744a65`
 
 ### Original regular card
 
 The Pisces full moon illuminates your 2nd House of Disposable Income and Foundation. It's time to reevaluate your priorities. I am not suggesting that you have veered off course, but rather encouraging you to stay focused. That's why it's so important to take the time to reevaluate our priorities every now and then. Check-in with yourself and ensure you align with your values. The path to success can be winding, but with a firm vision of where you want to go, you know what to avoid in order to get there. Setbacks are an inevitable part of life, but they don't have to define you. Sometimes it can be hard to stay motivated and focused when life throws challenges your way. But it's important to remember that your worth and identity come from within, not from external sources. Take a moment to reflect on your lifestyle and find the balance that works best for you. Over these last six months, starting with the new moon in Pisces, you have learned much about your relationship with your money and assets. The Pisces full moon in the second house is a time to reflect on your income and security. Take this time to reflect on your financial lessons and rewards. Eliminate what is not essential, and focus on what offers the greatest return. This is a time to re-examine your financial dreams, views on self-worth, feelings of lack, debt, and any fears that come up around these themes to be worked through and shifted. As the full moon unfolds, it shifts your perspective on the parts of your work that make you feel alive. This full moon may also signal a time when you make a sizeable investment in your dreams: paying for marriage, a downpayment on a house, or paying to further your education are some examples. Be mindful if any financial planets, like Venus or Mercury, are retrograde at this time. Making financial decisions during a retrograde period can be tricky, but it is possible. Just take extra precautions and quadruple-check any relevant documents and contracts before signing them. This is the time to take control of your future and make the most of your potential. Take a chance on yourself. Invest in your goals and dreams over the next six months and watch the amazing things that can happen. You'll be surprised at how much your income, investments, and self-worth can grow when you commit to the work.
 
-> **EXISTING DYNAMIC CYCLE ANCHOR**  
+> **EXISTING DYNAMIC CYCLE ANCHOR**
 > Six months ago, consciously or not, this lunar cycle began with the New Moon in Pisces on {{matchingNewMoonDate}}.
 
 ### Proposed eclipse composition
 
-> **REPLACED · BOOK OPENING SENTENCE**  
+> **REPLACED · BOOK OPENING SENTENCE**
 > The Pisces lunar eclipse shines upon your 2nd House of Disposable Income and Foundation.
 
-> **ADDED · ECLIPSE NATURE**  
+> **ADDED · ECLIPSE NATURE**
 > Eclipses warp time and shift the course of events in ways you can't yet see.
 
-> **ADDED · ECLIPSE MECHANICS**  
+> **ADDED · ECLIPSE MECHANICS**
 > Lunar eclipses are portals into your soul. When they come around, they can help you uncover the truth and allow you to gain knowledge that will steer your life, changing your path to a better one.
 
-**BOOK HOROSCOPE · REVIEW-HELD CONTINUITY EDITS APPLIED**
+**UNCHANGED · REMAINDER OF BOOK HOROSCOPE**
 
-It's time to reevaluate your priorities. I am not suggesting that you have veered off course, but rather encouraging you to stay focused. That's why it's so important to take the time to reevaluate our priorities every now and then. Check-in with yourself and ensure you align with your values. The path to success can be winding, but with a firm vision of where you want to go, you know what to avoid in order to get there. Setbacks are an inevitable part of life, but they don't have to define you. Sometimes it can be hard to stay motivated and focused when life throws challenges your way. But it's important to remember that your worth and identity come from within, not from external sources. Take a moment to reflect on your lifestyle and find the balance that works best for you. Over these last six months, starting with the new moon in Pisces, you have learned much about your relationship with your money and assets. Reflect on your income and security. Take this time to reflect on your financial lessons and rewards. Eliminate what is not essential, and focus on what offers the greatest return. This is a time to re-examine your financial dreams, views on self-worth, feelings of lack, debt, and any fears that come up around these themes to be worked through and shifted. Notice the parts of your work that make you feel alive. You may also make a sizeable investment in your dreams: paying for marriage, a downpayment on a house, or paying to further your education are some examples. Be mindful if any financial planets, like Venus or Mercury, are retrograde at this time. Making financial decisions during a retrograde period can be tricky, but it is possible. Just take extra precautions and quadruple-check any relevant documents and contracts before signing them. This is the time to take control of your future and make the most of your potential. Take a chance on yourself. Invest in your goals and dreams over the next six months and watch the amazing things that can happen. You'll be surprised at how much your income, investments, and self-worth can grow when you commit to the work.
+It's time to reevaluate your priorities. I am not suggesting that you have veered off course, but rather encouraging you to stay focused. That's why it's so important to take the time to reevaluate our priorities every now and then. Check-in with yourself and ensure you align with your values. The path to success can be winding, but with a firm vision of where you want to go, you know what to avoid in order to get there. Setbacks are an inevitable part of life, but they don't have to define you. Sometimes it can be hard to stay motivated and focused when life throws challenges your way. But it's important to remember that your worth and identity come from within, not from external sources. Take a moment to reflect on your lifestyle and find the balance that works best for you. Over these last six months, starting with the new moon in Pisces, you have learned much about your relationship with your money and assets. The Pisces full moon in the second house is a time to reflect on your income and security. Take this time to reflect on your financial lessons and rewards. Eliminate what is not essential, and focus on what offers the greatest return. This is a time to re-examine your financial dreams, views on self-worth, feelings of lack, debt, and any fears that come up around these themes to be worked through and shifted. As the full moon unfolds, it shifts your perspective on the parts of your work that make you feel alive. This full moon may also signal a time when you make a sizeable investment in your dreams: paying for marriage, a downpayment on a house, or paying to further your education are some examples. Be mindful if any financial planets, like Venus or Mercury, are retrograde at this time. Making financial decisions during a retrograde period can be tricky, but it is possible. Just take extra precautions and quadruple-check any relevant documents and contracts before signing them. This is the time to take control of your future and make the most of your potential. Take a chance on yourself. Invest in your goals and dreams over the next six months and watch the amazing things that can happen. You'll be surprised at how much your income, investments, and self-worth can grow when you commit to the work.
 
-> **REVIEW REQUIRED · CONTINUITY EDIT · 1013–1103 · b1b5c8fe9faeaffcd01ade54596205fdfa74e5847f23d5f7dfd2df3baa963c1e**  
-> Before: The Pisces full moon in the second house is a time to reflect on your income and security.  
+> **REVIEW REQUIRED · CONTINUITY EDIT · 1013–1103 · b1b5c8fe9faeaffcd01ade54596205fdfa74e5847f23d5f7dfd2df3baa963c1e**
+> Before: The Pisces full moon in the second house is a time to reflect on your income and security.
 > After: Reflect on your income and security.
 
-> **REVIEW REQUIRED · CONTINUITY EDIT · 1426–1530 · f8895a283d1ce7dcfae4b37fbfe39465763d3a5d2a49ebbd669b93c919e52134**  
-> Before: As the full moon unfolds, it shifts your perspective on the parts of your work that make you feel alive.  
+> **REVIEW REQUIRED · CONTINUITY EDIT · 1426–1530 · f8895a283d1ce7dcfae4b37fbfe39465763d3a5d2a49ebbd669b93c919e52134**
+> Before: As the full moon unfolds, it shifts your perspective on the parts of your work that make you feel alive.
 > After: Notice the parts of your work that make you feel alive.
 
-> **REVIEW REQUIRED · CONTINUITY EDIT · 1531–1722 · ed9e1e8b6f2e62b59c97e615baa28dbab125d10c6a7613636b2cd1a7928948d4**  
-> Before: This full moon may also signal a time when you make a sizeable investment in your dreams: paying for marriage, a downpayment on a house, or paying to further your education are some examples.  
+> **REVIEW REQUIRED · CONTINUITY EDIT · 1531–1722 · ed9e1e8b6f2e62b59c97e615baa28dbab125d10c6a7613636b2cd1a7928948d4**
+> Before: This full moon may also signal a time when you make a sizeable investment in your dreams: paying for marriage, a downpayment on a house, or paying to further your education are some examples.
 > After: You may also make a sizeable investment in your dreams: paying for marriage, a downpayment on a house, or paying to further your education are some examples.
 
-> **UNCHANGED · DYNAMIC CYCLE ANCHOR**  
+> **UNCHANGED · DYNAMIC CYCLE ANCHOR**
 > Six months ago, consciously or not, this lunar cycle began with the New Moon in Pisces on {{matchingNewMoonDate}}.
 
-> **ADDED · NO-RITUAL PARAGRAPH**  
-> Eclipses are not the recommended time for ritual, manifestation, or intention setting. They happen along the Lunar Nodes, and part of the work is letting the situation unfold before deciding what it is supposed to become.
+> **ADDED · NO-RITUAL PARAGRAPH**
+> Eclipses happen along the Lunar Nodes, and part of the work is letting the situation unfold before deciding what it's supposed to become.
 
-> **ADDED · ECLIPSE CLOSE**  
-> You can't control it, and you shouldn't try. Not everything that changes now needs an immediate response.
+> **ADDED · ECLIPSE CLOSE**
+> Release your need to be in control, and allow yourself to flow with the current of whatever is unfolding. Reflect on what you've experienced, and respond accordingly.
 
 ### Exact diff summary
 
 - Replaced: one book opening sentence → one eclipse opening sentence
 - Added: eclipse nature, mechanics, no-ritual paragraph, and close
 - Omitted declared intention blocks: **0**
-- Review-held continuity edits applied: **3**
+- Non-serving continuity candidates listed for later review: **3**
 - Dynamic cycle anchor suppressed as duplicate: **no**
-- Repeated lunation reminders remaining after the proposed edits: **0**
+- Repeated lunation reminders remaining after the proposed edits: **3**
 
 ### Owner review
 
@@ -143,56 +143,56 @@ It's time to reevaluate your priorities. I am not suggesting that you have veere
 
 ## 3. Capricorn rising · Pisces in the 3rd house
 
-Source: `authored/book-ritual-and-the-moon/lunation-horoscope/full-moon/pisces/rising-capricorn/house-3`  
+Source: `authored/book-ritual-and-the-moon/lunation-horoscope/full-moon/pisces/rising-capricorn/house-3`
 Protected body: 359 words · SHA-256 `e6ceb6e0e2f3e633d0d284ec9ee62d3a322d7bc90286b648753435eccf799991`
 
 ### Original regular card
 
 The Pisces full moon illuminates your 3rd House of communication, early education, processing information, community, siblings, and neighbors. This full moon unlocks deeper insights and personal awareness. It's a great time to look at your relationships, clear any lingering karma, and heal any emotional wounds. Are you allowing yourself to be deceived by your environment or the people around you? It's easy to blame external forces for our current situation and circumstances. But sometimes, we need to step back and see how we've contributed to our struggles. Ask yourself if your mind is clear or if you're being fed misinformation or toxic rumors. Find learnings in this moment and use them to make better decisions. You may get clear about projections and illusions surrounding a person or specific situation. Which can leave you feeling disappointed and struggling to find the words to articulate your thoughts and feelings. It's also possible you're on the receiving end of a half-hearted apology or no apology. A genuine apology can heal, but not all are created equal. It can be confusing and invalidating if you're on the receiving end of a half-hearted apology or no apology. How someone responds to your feelings doesn't determine your worth. So if you're in a situation where you don't feel heard or respected, take a step back, disengage from the person or situation, and focus your energy elsewhere. It's the only way to restore balance and self-respect. Life can sometimes be tricky to navigate. You face uncertainty and obstacles daily, and knowing when and how to take action can be challenging. But you're good at assessing a situation and making the most of it. Refrain from getting stuck in a loop of uncertainty and resigning yourself to waiting forever. This full moon is a signal to take a break and process all the information and knowledge you've gathered in the last six months since the Pisces new moon. Take this time to think about what you want. Where do you want to invest your energy? What community and lifestyle do you want to be a part of? You can create the conditions, connections, and community you need.
 
-> **EXISTING DYNAMIC CYCLE ANCHOR**  
+> **EXISTING DYNAMIC CYCLE ANCHOR**
 > Six months ago, consciously or not, this lunar cycle began with the New Moon in Pisces on {{matchingNewMoonDate}}.
 
 ### Proposed eclipse composition
 
-> **REPLACED · BOOK OPENING SENTENCE**  
+> **REPLACED · BOOK OPENING SENTENCE**
 > The Pisces lunar eclipse shines upon your 3rd House of communication, early education, processing information, community, siblings, and neighbors.
 
-> **ADDED · ECLIPSE NATURE**  
+> **ADDED · ECLIPSE NATURE**
 > Eclipses warp time and shift the course of events in ways you can't yet see.
 
-> **ADDED · ECLIPSE MECHANICS**  
+> **ADDED · ECLIPSE MECHANICS**
 > Lunar eclipses are portals into your soul. When they come around, they can help you uncover the truth and allow you to gain knowledge that will steer your life, changing your path to a better one.
 
-**BOOK HOROSCOPE · REVIEW-HELD CONTINUITY EDITS APPLIED**
+**UNCHANGED · REMAINDER OF BOOK HOROSCOPE**
 
-You may uncover deeper insights and personal awareness. It's a great time to look at your relationships, clear any lingering karma, and heal any emotional wounds. Are you allowing yourself to be deceived by your environment or the people around you? It's easy to blame external forces for our current situation and circumstances. But sometimes, we need to step back and see how we've contributed to our struggles. Ask yourself if your mind is clear or if you're being fed misinformation or toxic rumors. Find learnings in this moment and use them to make better decisions. You may get clear about projections and illusions surrounding a person or specific situation. Which can leave you feeling disappointed and struggling to find the words to articulate your thoughts and feelings. It's also possible you're on the receiving end of a half-hearted apology or no apology. A genuine apology can heal, but not all are created equal. It can be confusing and invalidating if you're on the receiving end of a half-hearted apology or no apology. How someone responds to your feelings doesn't determine your worth. So if you're in a situation where you don't feel heard or respected, take a step back, disengage from the person or situation, and focus your energy elsewhere. It's the only way to restore balance and self-respect. Life can sometimes be tricky to navigate. You face uncertainty and obstacles daily, and knowing when and how to take action can be challenging. But you're good at assessing a situation and making the most of it. Refrain from getting stuck in a loop of uncertainty and resigning yourself to waiting forever. Take a break and process all the information and knowledge you've gathered in the last six months since the Pisces new moon. Take this time to think about what you want. Where do you want to invest your energy? What community and lifestyle do you want to be a part of? You can create the conditions, connections, and community you need.
+This full moon unlocks deeper insights and personal awareness. It's a great time to look at your relationships, clear any lingering karma, and heal any emotional wounds. Are you allowing yourself to be deceived by your environment or the people around you? It's easy to blame external forces for our current situation and circumstances. But sometimes, we need to step back and see how we've contributed to our struggles. Ask yourself if your mind is clear or if you're being fed misinformation or toxic rumors. Find learnings in this moment and use them to make better decisions. You may get clear about projections and illusions surrounding a person or specific situation. Which can leave you feeling disappointed and struggling to find the words to articulate your thoughts and feelings. It's also possible you're on the receiving end of a half-hearted apology or no apology. A genuine apology can heal, but not all are created equal. It can be confusing and invalidating if you're on the receiving end of a half-hearted apology or no apology. How someone responds to your feelings doesn't determine your worth. So if you're in a situation where you don't feel heard or respected, take a step back, disengage from the person or situation, and focus your energy elsewhere. It's the only way to restore balance and self-respect. Life can sometimes be tricky to navigate. You face uncertainty and obstacles daily, and knowing when and how to take action can be challenging. But you're good at assessing a situation and making the most of it. Refrain from getting stuck in a loop of uncertainty and resigning yourself to waiting forever. This full moon is a signal to take a break and process all the information and knowledge you've gathered in the last six months since the Pisces new moon. Take this time to think about what you want. Where do you want to invest your energy? What community and lifestyle do you want to be a part of? You can create the conditions, connections, and community you need.
 
-> **REVIEW REQUIRED · CONTINUITY EDIT · 143–205 · 9841aa8450eb9ccf2cdc746e809eb95188c28339454274033f9fef502416ac4f**  
-> Before: This full moon unlocks deeper insights and personal awareness.  
+> **REVIEW REQUIRED · CONTINUITY EDIT · 143–205 · 9841aa8450eb9ccf2cdc746e809eb95188c28339454274033f9fef502416ac4f**
+> Before: This full moon unlocks deeper insights and personal awareness.
 > After: You may uncover deeper insights and personal awareness.
 
-> **REVIEW REQUIRED · CONTINUITY EDIT · 1779–1933 · 66d625c9190e796dd309c43d6e248547b30ef140efc76fa1bfe9f29ee8ea694d**  
-> Before: This full moon is a signal to take a break and process all the information and knowledge you've gathered in the last six months since the Pisces new moon.  
+> **REVIEW REQUIRED · CONTINUITY EDIT · 1779–1933 · 66d625c9190e796dd309c43d6e248547b30ef140efc76fa1bfe9f29ee8ea694d**
+> Before: This full moon is a signal to take a break and process all the information and knowledge you've gathered in the last six months since the Pisces new moon.
 > After: Take a break and process all the information and knowledge you've gathered in the last six months since the Pisces new moon.
 
-> **UNCHANGED · DYNAMIC CYCLE ANCHOR**  
+> **UNCHANGED · DYNAMIC CYCLE ANCHOR**
 > Six months ago, consciously or not, this lunar cycle began with the New Moon in Pisces on {{matchingNewMoonDate}}.
 
-> **ADDED · NO-RITUAL PARAGRAPH**  
-> Eclipses are not the recommended time for ritual, manifestation, or intention setting. They happen along the Lunar Nodes, and part of the work is letting the situation unfold before deciding what it is supposed to become.
+> **ADDED · NO-RITUAL PARAGRAPH**
+> Eclipses happen along the Lunar Nodes, and part of the work is letting the situation unfold before deciding what it's supposed to become.
 
-> **ADDED · ECLIPSE CLOSE**  
-> You can't control it, and you shouldn't try. Not everything that changes now needs an immediate response.
+> **ADDED · ECLIPSE CLOSE**
+> Release your need to be in control, and allow yourself to flow with the current of whatever is unfolding. Reflect on what you've experienced, and respond accordingly.
 
 ### Exact diff summary
 
 - Replaced: one book opening sentence → one eclipse opening sentence
 - Added: eclipse nature, mechanics, no-ritual paragraph, and close
 - Omitted declared intention blocks: **0**
-- Review-held continuity edits applied: **2**
+- Non-serving continuity candidates listed for later review: **2**
 - Dynamic cycle anchor suppressed as duplicate: **no**
-- Repeated lunation reminders remaining after the proposed edits: **0**
+- Repeated lunation reminders remaining after the proposed edits: **2**
 
 ### Owner review
 
@@ -202,57 +202,51 @@ You may uncover deeper insights and personal awareness. It's a great time to loo
 
 ## 4. Sagittarius rising · Pisces in the 4th house
 
-Source: `authored/book-ritual-and-the-moon/lunation-horoscope/full-moon/pisces/rising-sagittarius/house-4`  
+Source: `authored/book-ritual-and-the-moon/lunation-horoscope/full-moon/pisces/rising-sagittarius/house-4`
 Protected body: 547 words · SHA-256 `26135885320852249aa2a3a44f5ea3ad58f052bdaa963177985ad04e75055073`
 
 ### Original regular card
 
 The Pisces full moon illuminates your 4th house of home and family. Home is where the heart is. Home isn't just a place - it's a feeling. It's the warmth of family and friends, the memories that remind you of your roots, a safe haven, a place where you can be yourself, unpack your emotional baggage, and be surrounded by love. The Pisces full moon is a time to reflect on the patterns and stories you may have inherited from your ancestors. Honor the stories that have been passed down, and use them as a source of strength and guidance. Take a moment to contemplate how your family history has shaped who you are today. The 4th house is a Karmic house. The pain and grief of what's arising is your teacher. During this Pisces full moon, you realize that you cannot alter the history of where you come from. You can't unburden your loved ones of their pain and the weight they carry, nor heal their trauma alone. It doesn't mean you can't be a source of strength and love for them. The fourth house governs your family dynamics, drawing them out to learn. During this lunation, there may also be important news, conversations, or turning points with family or close loved ones. Each full moon has a theme that helps you understand your past in a new way. Pisces is connected, empathetic, creative, intuitive, and compassionate. With Pisces's creative and compassionate energy, it's the perfect time to look back through old family photos and learn from their stories. Looking back at your ancestors can be a powerful reminder of how far you've come. Have you ever taken a moment to think about your ancestors and the journeys they took? Whether it was for security, opportunity, or something else, their stories are worth honoring. Take a moment to visualize your relatives as children and send them compassion and love. Picture their struggles and their resilience and honor their courage. You can help heal their inner child by sending them the sympathy, energy of stability, and safety they desperately sought. Honor their journeys, recognize their resilience, and be inspired by their courage. Take a moment to appreciate your family's journey and take stock of your own. Let the full moon energy help you break free from old patterns. Healing doesn't always mean going back. You don't need to revisit the past to heal and break habits. Instead, open yourself up to new ways of understanding old cycles. Find grace in imperfection. Understand that failure and challenging family dynamics are inescapable and not something to be ashamed of. We all need to feel that sense of belonging and peace, and that's why having a home is so important. You recently moved, need to move closer to family, or are settling into a new home. Whether you're moving, settling into a new home, or just looking to make changes, now is the perfect time to cultivate actions that will help you feel more comfortable and at home. This month's full moon intention is to find home and comfort within yourself despite any chaos that surrounds you. Over the next six months, cultivate actions that facilitate emotional support within your home and family environments and see your emotional foundation strengthen.
 
-> **EXISTING DYNAMIC CYCLE ANCHOR**  
+> **EXISTING DYNAMIC CYCLE ANCHOR**
 > Six months ago, consciously or not, this lunar cycle began with the New Moon in Pisces on {{matchingNewMoonDate}}.
 
 ### Proposed eclipse composition
 
-> **REPLACED · BOOK OPENING SENTENCE**  
+> **REPLACED · BOOK OPENING SENTENCE**
 > The Pisces lunar eclipse shines upon your 4th house of home, family, and generational karma.
 
-> **ADDED · ECLIPSE NATURE**  
+> **ADDED · ECLIPSE NATURE**
 > Eclipses warp time and shift the course of events in ways you can't yet see.
 
-> **ADDED · ECLIPSE MECHANICS**  
+> **ADDED · ECLIPSE MECHANICS**
 > Lunar eclipses are portals into your soul. When they come around, they can help you uncover the truth and allow you to gain knowledge that will steer your life, changing your path to a better one.
 
 **BOOK HOROSCOPE · APPROVED INTENTION BLOCK OMITTED**
 
-Home isn't just a place - it's a feeling. It's the family and friends who make you feel safe, the memories that connect you to where you came from, and the place where you can finally put everything down. You may find yourself thinking more about the patterns and stories you inherited from your family and how much of them you still carry. Some of those stories gave you strength. Others may explain why certain problems keep repeating.
+Home is where the heart is. Home isn't just a place - it's a feeling. It's the warmth of family and friends, the memories that remind you of your roots, a safe haven, a place where you can be yourself, unpack your emotional baggage, and be surrounded by love. The Pisces full moon is a time to reflect on the patterns and stories you may have inherited from your ancestors. Honor the stories that have been passed down, and use them as a source of strength and guidance. Take a moment to contemplate how your family history has shaped who you are today. The 4th house is a Karmic house. The pain and grief of what's arising is your teacher. During this Pisces full moon, you realize that you cannot alter the history of where you come from. You can't unburden your loved ones of their pain and the weight they carry, nor heal their trauma alone. It doesn't mean you can't be a source of strength and love for them. The fourth house governs your family dynamics, drawing them out to learn. During this lunation, there may also be important news, conversations, or turning points with family or close loved ones. Each full moon has a theme that helps you understand your past in a new way. Pisces is connected, empathetic, creative, intuitive, and compassionate. With Pisces's creative and compassionate energy, it's the perfect time to look back through old family photos and learn from their stories. Looking back at your ancestors can be a powerful reminder of how far you've come. Have you ever taken a moment to think about your ancestors and the journeys they took? Whether it was for security, opportunity, or something else, their stories are worth honoring. Take a moment to visualize your relatives as children and send them compassion and love. Picture their struggles and their resilience and honor their courage. You can help heal their inner child by sending them the sympathy, energy of stability, and safety they desperately sought. Honor their journeys, recognize their resilience, and be inspired by their courage. Take a moment to appreciate your family's journey and take stock of your own. Let the full moon energy help you break free from old patterns. Healing doesn't always mean going back. You don't need to revisit the past to heal and break habits. Instead, open yourself up to new ways of understanding old cycles. Find grace in imperfection. Understand that failure and challenging family dynamics are inescapable and not something to be ashamed of. We all need to feel that sense of belonging and peace, and that's why having a home is so important. You recently moved, need to move closer to family, or are settling into a new home. Whether you're moving, settling into a new home, or just looking to make changes, now is the perfect time to cultivate actions that will help you feel more comfortable and at home.  Over the next six months, cultivate actions that facilitate emotional support within your home and family environments and see your emotional foundation strengthen.
 
-The 4th house is a karmic house. The pain and grief of what's arising is your teacher. You cannot change the history of where you come from. You cannot take away the pain your family carries or heal it for them. You can love them, support them, and still recognize where their story ends and yours begins.
-
-There may also be important news, conversations, or turning points with family or someone close to you. Pisces brings more sensitivity to what has been passed down, especially the memories, sacrifices, and unfinished stories that still shape the way your family relates to one another.
-
-Some patterns make more sense once you understand where they came from. Understanding them does not mean you have to keep repeating them.
-
-> **OMITTED · OWNER-APPROVED DECLARED INTENTION BLOCK · 2911–3025 · c163398ad7a8d5759ce6479b1f31c722565972bb515e4e70c08da2fc16ceb55d**  
+> **OMITTED · OWNER-APPROVED DECLARED INTENTION BLOCK · 2911–3025 · c163398ad7a8d5759ce6479b1f31c722565972bb515e4e70c08da2fc16ceb55d**
 > This month's full moon intention is to find home and comfort within yourself despite any chaos that surrounds you.
 
-> **UNCHANGED · DYNAMIC CYCLE ANCHOR**  
+> **UNCHANGED · DYNAMIC CYCLE ANCHOR**
 > Six months ago, consciously or not, this lunar cycle began with the New Moon in Pisces on {{matchingNewMoonDate}}.
 
-> **ADDED · NO-RITUAL PARAGRAPH**  
-> Eclipses are not the recommended time for ritual, manifestation, or intention setting. They happen along the Lunar Nodes, and part of the work is letting the situation unfold before deciding what it is supposed to become.
+> **ADDED · NO-RITUAL PARAGRAPH**
+> Eclipses happen along the Lunar Nodes, and change comes all the same, no matter how tightly you hold on.
 
-> **ADDED · ECLIPSE CLOSE**  
-> You can't control it, and you shouldn't try. Not everything that changes now needs an immediate response.
+> **ADDED · ECLIPSE CLOSE**
+> Release your need to be in control, allow for endings, mourn if needed, and allow yourself to flow with the current of whatever is unfolding, even if the destination is still unknown.
 
 ### Exact diff summary
 
 - Replaced: one book opening sentence → one eclipse opening sentence
 - Added: eclipse nature, mechanics, no-ritual paragraph, and close
 - Omitted declared intention blocks: **1**
-- Review-held continuity edits applied: **0**
+- Non-serving continuity candidates listed for later review: **0**
 - Dynamic cycle anchor suppressed as duplicate: **no**
-- Repeated lunation reminders remaining after the proposed edits: **0**
+- Repeated lunation reminders remaining after the proposed edits: **5**
 
 ### Owner review
 
@@ -262,56 +256,56 @@ Some patterns make more sense once you understand where they came from. Understa
 
 ## 5. Scorpio rising · Pisces in the 5th house
 
-Source: `authored/book-ritual-and-the-moon/lunation-horoscope/full-moon/pisces/rising-scorpio/house-5`  
+Source: `authored/book-ritual-and-the-moon/lunation-horoscope/full-moon/pisces/rising-scorpio/house-5`
 Protected body: 280 words · SHA-256 `7c2a2a23f8553724e7de478ddc0f79b819b193ce759b4740a3fa5821b1f5fc21`
 
 ### Original regular card
 
 The Pisces full moon illuminates your 5th House of Fun, Children, and Creativity. It's easy to get caught up in your day-to-day responsibilities and forget why you do what you do. But tapping into your playful nature reminds you of the joy and excitement of creating. It's time to unplug, unwind, and explore the power of play. When was the last time you let yourself be genuinely free and creative? Whether it's making art, singing, or playing a game, it's essential to reconnect with your playful side and indulge in activities that bring you joy. Remember that playing is fun and has multiple cognitive, emotional, and physical benefits. So take a step back, get creative, and let your inner child shine. This celestial event is the perfect opportunity to channel your inner artist and explore your creative side. Let your imagination run wild, and don't be afraid to experiment. Try drawing something from around your home or one of your favorite tarot cards. Or why not try "non-dominant hand doodles" by drawing with your non-dominant hand? Whatever you do, let your flow take you where it wants to go. You can always make edits later. The full moon in the fifth house is a time for self-expression. If you're feeling blocked or restricted, art is the perfect creative outlet to help release stuck thoughts, energy, and emotions. Art can be a path to Self Discovery and connection - to yourself, your partners, and your children. Now is the perfect time to explore this relationship and express your internal joys. Use this special time to reflect on your relationships, discover what makes them unique, and find ways to connect through play.
 
-> **EXISTING DYNAMIC CYCLE ANCHOR**  
+> **EXISTING DYNAMIC CYCLE ANCHOR**
 > Six months ago, consciously or not, this lunar cycle began with the New Moon in Pisces on {{matchingNewMoonDate}}.
 
 ### Proposed eclipse composition
 
-> **REPLACED · BOOK OPENING SENTENCE**  
+> **REPLACED · BOOK OPENING SENTENCE**
 > The Pisces lunar eclipse shines upon your 5th House of Fun, Children, and Creativity.
 
-> **ADDED · ECLIPSE NATURE**  
+> **ADDED · ECLIPSE NATURE**
 > Eclipses warp time and shift the course of events in ways you can't yet see.
 
-> **ADDED · ECLIPSE MECHANICS**  
+> **ADDED · ECLIPSE MECHANICS**
 > Lunar eclipses are portals into your soul. When they come around, they can help you uncover the truth and allow you to gain knowledge that will steer your life, changing your path to a better one.
 
-**BOOK HOROSCOPE · REVIEW-HELD CONTINUITY EDITS APPLIED**
+**UNCHANGED · REMAINDER OF BOOK HOROSCOPE**
 
-It's easy to get caught up in your day-to-day responsibilities and forget why you do what you do. But tapping into your playful nature reminds you of the joy and excitement of creating. It's time to unplug, unwind, and explore the power of play. When was the last time you let yourself be genuinely free and creative? Whether it's making art, singing, or playing a game, it's essential to reconnect with your playful side and indulge in activities that bring you joy. Remember that playing is fun and has multiple cognitive, emotional, and physical benefits. So take a step back, get creative, and let your inner child shine. Channel your inner artist and explore your creative side. Let your imagination run wild, and don't be afraid to experiment. Try drawing something from around your home or one of your favorite tarot cards. Or why not try "non-dominant hand doodles" by drawing with your non-dominant hand? Whatever you do, let your flow take you where it wants to go. You can always make edits later. Make time for self-expression. If you're feeling blocked or restricted, art is the perfect creative outlet to help release stuck thoughts, energy, and emotions. Art can be a path to Self Discovery and connection - to yourself, your partners, and your children. Now is the perfect time to explore this relationship and express your internal joys. Use this special time to reflect on your relationships, discover what makes them unique, and find ways to connect through play.
+It's easy to get caught up in your day-to-day responsibilities and forget why you do what you do. But tapping into your playful nature reminds you of the joy and excitement of creating. It's time to unplug, unwind, and explore the power of play. When was the last time you let yourself be genuinely free and creative? Whether it's making art, singing, or playing a game, it's essential to reconnect with your playful side and indulge in activities that bring you joy. Remember that playing is fun and has multiple cognitive, emotional, and physical benefits. So take a step back, get creative, and let your inner child shine. This celestial event is the perfect opportunity to channel your inner artist and explore your creative side. Let your imagination run wild, and don't be afraid to experiment. Try drawing something from around your home or one of your favorite tarot cards. Or why not try "non-dominant hand doodles" by drawing with your non-dominant hand? Whatever you do, let your flow take you where it wants to go. You can always make edits later. The full moon in the fifth house is a time for self-expression. If you're feeling blocked or restricted, art is the perfect creative outlet to help release stuck thoughts, energy, and emotions. Art can be a path to Self Discovery and connection - to yourself, your partners, and your children. Now is the perfect time to explore this relationship and express your internal joys. Use this special time to reflect on your relationships, discover what makes them unique, and find ways to connect through play.
 
-> **REVIEW REQUIRED · CONTINUITY EDIT · 708–816 · 43ec679fd0bdc4cb25423361551d0461ffe7b2d2767bdc313f59240c0d3d02f2**  
-> Before: This celestial event is the perfect opportunity to channel your inner artist and explore your creative side.  
+> **REVIEW REQUIRED · CONTINUITY EDIT · 708–816 · 43ec679fd0bdc4cb25423361551d0461ffe7b2d2767bdc313f59240c0d3d02f2**
+> Before: This celestial event is the perfect opportunity to channel your inner artist and explore your creative side.
 > After: Channel your inner artist and explore your creative side.
 
-> **REVIEW REQUIRED · CONTINUITY EDIT · 1142–1205 · a9fd9f4788e6685b0a288ea2882700acc23ef777fe9b635e0c14eb6cdda6d435**  
-> Before: The full moon in the fifth house is a time for self-expression.  
+> **REVIEW REQUIRED · CONTINUITY EDIT · 1142–1205 · a9fd9f4788e6685b0a288ea2882700acc23ef777fe9b635e0c14eb6cdda6d435**
+> Before: The full moon in the fifth house is a time for self-expression.
 > After: Make time for self-expression.
 
-> **UNCHANGED · DYNAMIC CYCLE ANCHOR**  
+> **UNCHANGED · DYNAMIC CYCLE ANCHOR**
 > Six months ago, consciously or not, this lunar cycle began with the New Moon in Pisces on {{matchingNewMoonDate}}.
 
-> **ADDED · NO-RITUAL PARAGRAPH**  
-> Eclipses are not the recommended time for ritual, manifestation, or intention setting. They happen along the Lunar Nodes, and part of the work is letting the situation unfold before deciding what it is supposed to become.
+> **ADDED · NO-RITUAL PARAGRAPH**
+> Eclipses happen along the Lunar Nodes, and part of the work is letting the situation unfold before deciding what it's supposed to become.
 
-> **ADDED · ECLIPSE CLOSE**  
-> You can't control it, and you shouldn't try. Not everything that changes now needs an immediate response.
+> **ADDED · ECLIPSE CLOSE**
+> Release your need to be in control, and allow yourself to flow with the current of whatever is unfolding. Reflect on what you've experienced, and respond accordingly.
 
 ### Exact diff summary
 
 - Replaced: one book opening sentence → one eclipse opening sentence
 - Added: eclipse nature, mechanics, no-ritual paragraph, and close
 - Omitted declared intention blocks: **0**
-- Review-held continuity edits applied: **2**
+- Non-serving continuity candidates listed for later review: **2**
 - Dynamic cycle anchor suppressed as duplicate: **no**
-- Repeated lunation reminders remaining after the proposed edits: **0**
+- Repeated lunation reminders remaining after the proposed edits: **1**
 
 ### Owner review
 
@@ -321,64 +315,64 @@ It's easy to get caught up in your day-to-day responsibilities and forget why yo
 
 ## 6. Libra rising · Pisces in the 6th house
 
-Source: `authored/book-ritual-and-the-moon/lunation-horoscope/full-moon/pisces/rising-libra/house-6`  
+Source: `authored/book-ritual-and-the-moon/lunation-horoscope/full-moon/pisces/rising-libra/house-6`
 Protected body: 302 words · SHA-256 `0bf91f48205f17e672e7877bab031e4736cd4218d13c3bfc9f458d355cc9e319`
 
 ### Original regular card
 
 The Pisces full moon illuminates your 6th house of health, daily work, routine, and being of service. The Pisces full moon is here to remind you that you don't have to overexert yourself in order to be successful. This mystical moon reminds you that success does not require overexertion and that you must honor your physical, emotional, and spiritual needs to preserve your vitality. Listen to your body and take breaks when necessary, for self-care is not selfish - it is essential for your well-being. If you feel overwhelmed, drained, or burned out, the Pisces full moon calls upon you to take back control of your well-being. Create a routine that supports your mental and physical health, and practice moderation with substances that alter your perceptions. This is a time to address sleep issues and burnout by providing yourself with the rest your body requires, as everyone's needs are different. Burnout is a self-care alert, signaling that something in your life needs to change. Use this time to adopt different nurturing strategies and build resilience to better adapt to periods of stress, challenge, and trauma. Remember that resilience is about balance, and that you can still be passionate about your work while experiencing burnout due to a stressful environment or excessive investment in a mismatched job. As you redefine your day-to-day routine towards better health, approach yourself with compassion and self-love. This full moon is an opportunity to celebrate small victories and try new things. Embrace alternative healthcare services to address any health issues that may arise. Remember that you are still learning and growing, so be gentle with yourself like you would with a child trying something new. This mystical Pisces full moon calls upon you to build a more purposeful and healthy life, filled with love and compassion for yourself.
 
-> **EXISTING DYNAMIC CYCLE ANCHOR**  
+> **EXISTING DYNAMIC CYCLE ANCHOR**
 > Six months ago, consciously or not, this lunar cycle began with the New Moon in Pisces on {{matchingNewMoonDate}}.
 
 ### Proposed eclipse composition
 
-> **REPLACED · BOOK OPENING SENTENCE**  
+> **REPLACED · BOOK OPENING SENTENCE**
 > The Pisces lunar eclipse shines upon your 6th house of health, daily work, routine, and being of service.
 
-> **ADDED · ECLIPSE NATURE**  
+> **ADDED · ECLIPSE NATURE**
 > Eclipses warp time and shift the course of events in ways you can't yet see.
 
-> **ADDED · ECLIPSE MECHANICS**  
+> **ADDED · ECLIPSE MECHANICS**
 > Lunar eclipses are portals into your soul. When they come around, they can help you uncover the truth and allow you to gain knowledge that will steer your life, changing your path to a better one.
 
-**BOOK HOROSCOPE · REVIEW-HELD CONTINUITY EDITS APPLIED**
+**UNCHANGED · REMAINDER OF BOOK HOROSCOPE**
 
-You don't have to overexert yourself to be successful. Honor your physical, emotional, and spiritual needs to preserve your vitality. Listen to your body and take breaks when necessary, for self-care is not selfish - it is essential for your well-being. If you feel overwhelmed, drained, or burned out, take back control of your well-being. Create a routine that supports your mental and physical health, and practice moderation with substances that alter your perceptions. This is a time to address sleep issues and burnout by providing yourself with the rest your body requires, as everyone's needs are different. Burnout is a self-care alert, signaling that something in your life needs to change. Use this time to adopt different nurturing strategies and build resilience to better adapt to periods of stress, challenge, and trauma. Remember that resilience is about balance, and that you can still be passionate about your work while experiencing burnout due to a stressful environment or excessive investment in a mismatched job. As you redefine your day-to-day routine towards better health, approach yourself with compassion and self-love. Celebrate small victories and try new things. Embrace alternative healthcare services to address any health issues that may arise. Remember that you are still learning and growing, so be gentle with yourself like you would with a child trying something new. Build a more purposeful and healthy life, filled with love and compassion for yourself.
+The Pisces full moon is here to remind you that you don't have to overexert yourself in order to be successful. This mystical moon reminds you that success does not require overexertion and that you must honor your physical, emotional, and spiritual needs to preserve your vitality. Listen to your body and take breaks when necessary, for self-care is not selfish - it is essential for your well-being. If you feel overwhelmed, drained, or burned out, the Pisces full moon calls upon you to take back control of your well-being. Create a routine that supports your mental and physical health, and practice moderation with substances that alter your perceptions. This is a time to address sleep issues and burnout by providing yourself with the rest your body requires, as everyone's needs are different. Burnout is a self-care alert, signaling that something in your life needs to change. Use this time to adopt different nurturing strategies and build resilience to better adapt to periods of stress, challenge, and trauma. Remember that resilience is about balance, and that you can still be passionate about your work while experiencing burnout due to a stressful environment or excessive investment in a mismatched job. As you redefine your day-to-day routine towards better health, approach yourself with compassion and self-love. This full moon is an opportunity to celebrate small victories and try new things. Embrace alternative healthcare services to address any health issues that may arise. Remember that you are still learning and growing, so be gentle with yourself like you would with a child trying something new. This mystical Pisces full moon calls upon you to build a more purposeful and healthy life, filled with love and compassion for yourself.
 
-> **REVIEW REQUIRED · CONTINUITY EDIT · 102–384 · 1011b78f0210068b2da6fcab280606babe21f1da7b045b0e655b8db7ea739e4c**  
-> Before: The Pisces full moon is here to remind you that you don't have to overexert yourself in order to be successful. This mystical moon reminds you that success does not require overexertion and that you must honor your physical, emotional, and spiritual needs to preserve your vitality.  
+> **REVIEW REQUIRED · CONTINUITY EDIT · 102–384 · 1011b78f0210068b2da6fcab280606babe21f1da7b045b0e655b8db7ea739e4c**
+> Before: The Pisces full moon is here to remind you that you don't have to overexert yourself in order to be successful. This mystical moon reminds you that success does not require overexertion and that you must honor your physical, emotional, and spiritual needs to preserve your vitality.
 > After: You don't have to overexert yourself to be successful. Honor your physical, emotional, and spiritual needs to preserve your vitality.
 
-> **REVIEW REQUIRED · CONTINUITY EDIT · 505–630 · b4542ab9da4b8afa33bcada32570809a307da17e20b78dcdccbb6267d64db074**  
-> Before: If you feel overwhelmed, drained, or burned out, the Pisces full moon calls upon you to take back control of your well-being.  
+> **REVIEW REQUIRED · CONTINUITY EDIT · 505–630 · b4542ab9da4b8afa33bcada32570809a307da17e20b78dcdccbb6267d64db074**
+> Before: If you feel overwhelmed, drained, or burned out, the Pisces full moon calls upon you to take back control of your well-being.
 > After: If you feel overwhelmed, drained, or burned out, take back control of your well-being.
 
-> **REVIEW REQUIRED · CONTINUITY EDIT · 1438–1519 · 21c23b02811c4ca5d6d8e92538fd43469d46fc5c929303a6318f6ebbda15c36f**  
-> Before: This full moon is an opportunity to celebrate small victories and try new things.  
+> **REVIEW REQUIRED · CONTINUITY EDIT · 1438–1519 · 21c23b02811c4ca5d6d8e92538fd43469d46fc5c929303a6318f6ebbda15c36f**
+> Before: This full moon is an opportunity to celebrate small victories and try new things.
 > After: Celebrate small victories and try new things.
 
-> **REVIEW REQUIRED · CONTINUITY EDIT · 1732–1868 · dae52ca009c8464c91608d2cfdcd18270a90af33a1bf2fb9b32dd2c1722b9e02**  
-> Before: This mystical Pisces full moon calls upon you to build a more purposeful and healthy life, filled with love and compassion for yourself.  
+> **REVIEW REQUIRED · CONTINUITY EDIT · 1732–1868 · dae52ca009c8464c91608d2cfdcd18270a90af33a1bf2fb9b32dd2c1722b9e02**
+> Before: This mystical Pisces full moon calls upon you to build a more purposeful and healthy life, filled with love and compassion for yourself.
 > After: Build a more purposeful and healthy life, filled with love and compassion for yourself.
 
-> **UNCHANGED · DYNAMIC CYCLE ANCHOR**  
+> **UNCHANGED · DYNAMIC CYCLE ANCHOR**
 > Six months ago, consciously or not, this lunar cycle began with the New Moon in Pisces on {{matchingNewMoonDate}}.
 
-> **ADDED · NO-RITUAL PARAGRAPH**  
-> Eclipses are not the recommended time for ritual, manifestation, or intention setting. They happen along the Lunar Nodes, and part of the work is letting the situation unfold before deciding what it is supposed to become.
+> **ADDED · NO-RITUAL PARAGRAPH**
+> Eclipses happen along the Lunar Nodes, and part of the work is letting the situation unfold before deciding what it's supposed to become.
 
-> **ADDED · ECLIPSE CLOSE**  
-> You can't control it, and you shouldn't try. Not everything that changes now needs an immediate response.
+> **ADDED · ECLIPSE CLOSE**
+> Release your need to be in control, and allow yourself to flow with the current of whatever is unfolding. Reflect on what you've experienced, and respond accordingly.
 
 ### Exact diff summary
 
 - Replaced: one book opening sentence → one eclipse opening sentence
 - Added: eclipse nature, mechanics, no-ritual paragraph, and close
 - Omitted declared intention blocks: **0**
-- Review-held continuity edits applied: **4**
+- Non-serving continuity candidates listed for later review: **4**
 - Dynamic cycle anchor suppressed as duplicate: **no**
-- Repeated lunation reminders remaining after the proposed edits: **0**
+- Repeated lunation reminders remaining after the proposed edits: **3**
 
 ### Owner review
 
@@ -388,56 +382,56 @@ You don't have to overexert yourself to be successful. Honor your physical, emot
 
 ## 7. Virgo rising · Pisces in the 7th house
 
-Source: `authored/book-ritual-and-the-moon/lunation-horoscope/full-moon/pisces/rising-virgo/house-7`  
+Source: `authored/book-ritual-and-the-moon/lunation-horoscope/full-moon/pisces/rising-virgo/house-7`
 Protected body: 357 words · SHA-256 `14bdcd76fd4973954d575115a798bf1c2bb2521fef08fe397046931a0e33261d`
 
 ### Original regular card
 
 The Pisces full moon illuminates your 7th house of relationships. It's time to start focusing on your relationship with yourself. A relationship reflects your inner world — what you experience on the outside is a mirror of what's within. When you learn to appreciate and love yourself, it will show in your relationships with others. The Pisces full moon reminds you of the power of commitment and unions. The full moon in the seventh house is a time to celebrate your relationships and their capacity to shape your life. This period can bring deeper commitments like marriage, engagement, or co-founding a business. It's a reminder to cherish the connections in balance and be mindful of those that aren't, and the relationships where there is a lack of balance result in endings. Finding the perfect balance between intuition and information can take time and effort when making decisions. To achieve this balance, it's vital to remain aware of both the large pictures and the fine details. Focus on developing trust in your instincts and understanding your whys. Do this, and you will be able to trust your intuition and make relationship decisions with confidence. The full moon is the perfect time to repair and reconnect with those in your life. Take this moment to work together on unspoken issues and to build deeper trust and transparency. You can start by spending quality time together or going on a spiritual retreat/camping. Even the smallest of steps can signify your commitment and connection to the relationship. If you identify a specific long-term relationship that can't find common ground or compromise, you may need to let go of the idea that the relationship is salvageable. This doesn't mean you can't come back together at a later point or have a dignified, respectful end to the relationship, but expending your energy on something that isn't working, is more harmful than helpful. It doesn't mean you're giving up on the relationship, but rather, you're taking the time and space to heal, focus on yourself and what each of you want out of the relationship, or if it's not right, find something that is.
 
-> **EXISTING DYNAMIC CYCLE ANCHOR**  
+> **EXISTING DYNAMIC CYCLE ANCHOR**
 > Six months ago, consciously or not, this lunar cycle began with the New Moon in Pisces on {{matchingNewMoonDate}}.
 
 ### Proposed eclipse composition
 
-> **REPLACED · BOOK OPENING SENTENCE**  
+> **REPLACED · BOOK OPENING SENTENCE**
 > The Pisces lunar eclipse shines upon your 7th house of relationships.
 
-> **ADDED · ECLIPSE NATURE**  
+> **ADDED · ECLIPSE NATURE**
 > Eclipses warp time and shift the course of events in ways you can't yet see.
 
-> **ADDED · ECLIPSE MECHANICS**  
+> **ADDED · ECLIPSE MECHANICS**
 > Lunar eclipses are portals into your soul. When they come around, they can help you uncover the truth and allow you to gain knowledge that will steer your life, changing your path to a better one.
 
-**BOOK HOROSCOPE · REVIEW-HELD CONTINUITY EDITS APPLIED**
+**UNCHANGED · REMAINDER OF BOOK HOROSCOPE**
 
-It's time to start focusing on your relationship with yourself. A relationship reflects your inner world — what you experience on the outside is a mirror of what's within. When you learn to appreciate and love yourself, it will show in your relationships with others. Celebrate your relationships and their capacity to shape your life. This period can bring deeper commitments like marriage, engagement, or co-founding a business. It's a reminder to cherish the connections in balance and be mindful of those that aren't, and the relationships where there is a lack of balance result in endings. Finding the perfect balance between intuition and information can take time and effort when making decisions. To achieve this balance, it's vital to remain aware of both the large pictures and the fine details. Focus on developing trust in your instincts and understanding your whys. Do this, and you will be able to trust your intuition and make relationship decisions with confidence. Repair and reconnect with those in your life. Take this moment to work together on unspoken issues and to build deeper trust and transparency. You can start by spending quality time together or going on a spiritual retreat/camping. Even the smallest of steps can signify your commitment and connection to the relationship. If you identify a specific long-term relationship that can't find common ground or compromise, you may need to let go of the idea that the relationship is salvageable. This doesn't mean you can't come back together at a later point or have a dignified, respectful end to the relationship, but expending your energy on something that isn't working, is more harmful than helpful. It doesn't mean you're giving up on the relationship, but rather, you're taking the time and space to heal, focus on yourself and what each of you want out of the relationship, or if it's not right, find something that is.
+It's time to start focusing on your relationship with yourself. A relationship reflects your inner world — what you experience on the outside is a mirror of what's within. When you learn to appreciate and love yourself, it will show in your relationships with others. The Pisces full moon reminds you of the power of commitment and unions. The full moon in the seventh house is a time to celebrate your relationships and their capacity to shape your life. This period can bring deeper commitments like marriage, engagement, or co-founding a business. It's a reminder to cherish the connections in balance and be mindful of those that aren't, and the relationships where there is a lack of balance result in endings. Finding the perfect balance between intuition and information can take time and effort when making decisions. To achieve this balance, it's vital to remain aware of both the large pictures and the fine details. Focus on developing trust in your instincts and understanding your whys. Do this, and you will be able to trust your intuition and make relationship decisions with confidence. The full moon is the perfect time to repair and reconnect with those in your life. Take this moment to work together on unspoken issues and to build deeper trust and transparency. You can start by spending quality time together or going on a spiritual retreat/camping. Even the smallest of steps can signify your commitment and connection to the relationship. If you identify a specific long-term relationship that can't find common ground or compromise, you may need to let go of the idea that the relationship is salvageable. This doesn't mean you can't come back together at a later point or have a dignified, respectful end to the relationship, but expending your energy on something that isn't working, is more harmful than helpful. It doesn't mean you're giving up on the relationship, but rather, you're taking the time and space to heal, focus on yourself and what each of you want out of the relationship, or if it's not right, find something that is.
 
-> **REVIEW REQUIRED · CONTINUITY EDIT · 334–521 · 91d5224763cf52c2427d10d17c670f03fd625993212e10531920eac2187790a3**  
-> Before: The Pisces full moon reminds you of the power of commitment and unions. The full moon in the seventh house is a time to celebrate your relationships and their capacity to shape your life.  
+> **REVIEW REQUIRED · CONTINUITY EDIT · 334–521 · 91d5224763cf52c2427d10d17c670f03fd625993212e10531920eac2187790a3**
+> Before: The Pisces full moon reminds you of the power of commitment and unions. The full moon in the seventh house is a time to celebrate your relationships and their capacity to shape your life.
 > After: Celebrate your relationships and their capacity to shape your life.
 
-> **REVIEW REQUIRED · CONTINUITY EDIT · 1169–1251 · 20123beb70aa6bd2647388b17a559ee989bc07b04bdb64136b3bef11afc06fe8**  
-> Before: The full moon is the perfect time to repair and reconnect with those in your life.  
+> **REVIEW REQUIRED · CONTINUITY EDIT · 1169–1251 · 20123beb70aa6bd2647388b17a559ee989bc07b04bdb64136b3bef11afc06fe8**
+> Before: The full moon is the perfect time to repair and reconnect with those in your life.
 > After: Repair and reconnect with those in your life.
 
-> **UNCHANGED · DYNAMIC CYCLE ANCHOR**  
+> **UNCHANGED · DYNAMIC CYCLE ANCHOR**
 > Six months ago, consciously or not, this lunar cycle began with the New Moon in Pisces on {{matchingNewMoonDate}}.
 
-> **ADDED · NO-RITUAL PARAGRAPH**  
-> Eclipses are not the recommended time for ritual, manifestation, or intention setting. They happen along the Lunar Nodes, and part of the work is letting the situation unfold before deciding what it is supposed to become.
+> **ADDED · NO-RITUAL PARAGRAPH**
+> Eclipses happen along the Lunar Nodes, and part of the work is letting the situation unfold before deciding what it's supposed to become.
 
-> **ADDED · ECLIPSE CLOSE**  
-> You can't control it, and you shouldn't try. Not everything that changes now needs an immediate response.
+> **ADDED · ECLIPSE CLOSE**
+> Release your need to be in control, and allow yourself to flow with the current of whatever is unfolding. Reflect on what you've experienced, and respond accordingly.
 
 ### Exact diff summary
 
 - Replaced: one book opening sentence → one eclipse opening sentence
 - Added: eclipse nature, mechanics, no-ritual paragraph, and close
 - Omitted declared intention blocks: **0**
-- Review-held continuity edits applied: **2**
+- Non-serving continuity candidates listed for later review: **2**
 - Dynamic cycle anchor suppressed as duplicate: **no**
-- Repeated lunation reminders remaining after the proposed edits: **0**
+- Repeated lunation reminders remaining after the proposed edits: **3**
 
 ### Owner review
 
@@ -447,72 +441,72 @@ It's time to start focusing on your relationship with yourself. A relationship r
 
 ## 8. Leo rising · Pisces in the 8th house
 
-Source: `authored/book-ritual-and-the-moon/lunation-horoscope/full-moon/pisces/rising-leo/house-8`  
+Source: `authored/book-ritual-and-the-moon/lunation-horoscope/full-moon/pisces/rising-leo/house-8`
 Protected body: 705 words · SHA-256 `2d9e8170aece29a14119078e7188021e3f7b86f31bf72dd75fdf71096ceee881`
 
 ### Original regular card
 
 The Pisces full moon illuminates your 8th house of transformation, symbolism, and other people's money. The full moon in the 8th house shines a light on what people have done to support you. And allows you to give back to those who have helped you along your journey. It also reminds you that you don't have to carry the heavy baggage others give you—you can let it go and free yourself from the weight. Embrace the gifts of the Pisces full moon. It's a reminder that it's okay to feel grief and sadness. When sorrow comes, don't reject it. Don't be afraid to express yourself and share what you're feeling. The Pisces full moon wants you to dive into the depths of your emotions. Don't turn away from grief and pain; instead, allow yourself to feel it and swim in it. It's the only way to heal and find your way back to the shore. The eighth house governs your ability to transform, breaking through your subconscious and conscious patterns. You are being consumed by themes of trust, manipulation, deepening or widening intimacy, and shared resources now. Be aware of your worth, and don't allow yourself to be swayed into something that doesn't feel right. Transformation is always possible. It starts with being gentle and forgiving with yourself especially with the parts of you that you may prefer to hide away. Embrace these parts of yourself, and you'll be able to connect to your higher self more deeply. This full moon is the perfect time to reflect on the past and let go of any emotions holding you back. We all have moments that can be difficult to move on from. But if you take the time to acknowledge and accept what has happened, you can use them as a source of strength or information. As you look back, you may find yourself reminiscing on old relationships, replaying a difficult breakup, a family member's death, or missed career opportunities. It's okay to feel whatever emotions come up, but don't stay stuck in the what-ifs. Allow yourself to feel the weight of your pain and then use it as a motivator for change. You are never truly stuck in one place-- you have the power to find direction and create new patterns for yourself. This full moon is here to remind us that it's okay to keep going, even when things don't go as planned. If you believe that there is not enough to go around and that life is a zero-sum game, then you are more likely to act in ways that confirm that theory. The more you focus on what you don't have, the less you have. If you constantly feel like you don't have enough, you're more likely to make decisions that keep you in that position. A lack of mindset can be a heavy burden; you see obstacles at every turn, constantly on alert for people trying to take advantage of you, and you begin to think that the tarot deck is stacked against you. A lack mindset can also lead you to believe that the world is out to get you. While it is true that there are corrupt and unjust systems, it's important to remain determined and optimistic. This full moon helps you gain strength over a lack of mindset. Start where you are. Start with gratitude. Gratitude is an active process of acknowledging and appreciating what you do have in your life. When you focus on all the beautiful things in your life, and count your blessings, you open yourself up to a world of possibilities. So take a moment to appreciate everything you have and what is working for you. When you routinely bring your awareness back to what you're grateful for and what is working for you, you begin to lay the groundwork for a paradigm shift. When you cultivate gratitude and trust and rely on your own abilities. You start to realize what you have to work with and your infinite potential. The desire for growth will no longer be suppressed but expressed. You will begin to feel an internal desire for transformation. Built on gratitude, trust in yourself, and trust outside yourself will naturally follow.
 
-> **EXISTING DYNAMIC CYCLE ANCHOR**  
+> **EXISTING DYNAMIC CYCLE ANCHOR**
 > Six months ago, consciously or not, this lunar cycle began with the New Moon in Pisces on {{matchingNewMoonDate}}.
 
 ### Proposed eclipse composition
 
-> **REPLACED · BOOK OPENING SENTENCE**  
+> **REPLACED · BOOK OPENING SENTENCE**
 > The Pisces lunar eclipse shines upon your 8th house of transformation, symbolism, and other people's money.
 
-> **ADDED · ECLIPSE NATURE**  
+> **ADDED · ECLIPSE NATURE**
 > Eclipses warp time and shift the course of events in ways you can't yet see.
 
-> **ADDED · ECLIPSE MECHANICS**  
+> **ADDED · ECLIPSE MECHANICS**
 > Lunar eclipses are portals into your soul. When they come around, they can help you uncover the truth and allow you to gain knowledge that will steer your life, changing your path to a better one.
 
-**BOOK HOROSCOPE · REVIEW-HELD CONTINUITY EDITS APPLIED**
+**UNCHANGED · REMAINDER OF BOOK HOROSCOPE**
 
-Look at what people have done to support you, and consider how you can give back to those who have helped you. It also reminds you that you don't have to carry the heavy baggage others give you—you can let it go and free yourself from the weight. It's okay to feel grief and sadness. When sorrow comes, don't reject it. Don't be afraid to express yourself and share what you're feeling. Dive into the depths of your emotions. Don't turn away from grief and pain; instead, allow yourself to feel it and swim in it. It's the only way to heal and find your way back to the shore. The eighth house governs your ability to transform, breaking through your subconscious and conscious patterns. You are being consumed by themes of trust, manipulation, deepening or widening intimacy, and shared resources now. Be aware of your worth, and don't allow yourself to be swayed into something that doesn't feel right. Transformation is always possible. It starts with being gentle and forgiving with yourself especially with the parts of you that you may prefer to hide away. Embrace these parts of yourself, and you'll be able to connect to your higher self more deeply. Reflect on the past and let go of any emotions holding you back. We all have moments that can be difficult to move on from. But if you take the time to acknowledge and accept what has happened, you can use them as a source of strength or information. As you look back, you may find yourself reminiscing on old relationships, replaying a difficult breakup, a family member's death, or missed career opportunities. It's okay to feel whatever emotions come up, but don't stay stuck in the what-ifs. Allow yourself to feel the weight of your pain and then use it as a motivator for change. You are never truly stuck in one place-- you have the power to find direction and create new patterns for yourself. It's okay to keep going, even when things don't go as planned. If you believe that there is not enough to go around and that life is a zero-sum game, then you are more likely to act in ways that confirm that theory. The more you focus on what you don't have, the less you have. If you constantly feel like you don't have enough, you're more likely to make decisions that keep you in that position. A lack of mindset can be a heavy burden; you see obstacles at every turn, constantly on alert for people trying to take advantage of you, and you begin to think that the tarot deck is stacked against you. A lack mindset can also lead you to believe that the world is out to get you. While it is true that there are corrupt and unjust systems, it's important to remain determined and optimistic.  Start where you are. Start with gratitude. Gratitude is an active process of acknowledging and appreciating what you do have in your life. When you focus on all the beautiful things in your life, and count your blessings, you open yourself up to a world of possibilities. So take a moment to appreciate everything you have and what is working for you. When you routinely bring your awareness back to what you're grateful for and what is working for you, you begin to lay the groundwork for a paradigm shift. When you cultivate gratitude and trust and rely on your own abilities. You start to realize what you have to work with and your infinite potential. The desire for growth will no longer be suppressed but expressed. You will begin to feel an internal desire for transformation. Built on gratitude, trust in yourself, and trust outside yourself will naturally follow.
+The full moon in the 8th house shines a light on what people have done to support you. And allows you to give back to those who have helped you along your journey. It also reminds you that you don't have to carry the heavy baggage others give you—you can let it go and free yourself from the weight. Embrace the gifts of the Pisces full moon. It's a reminder that it's okay to feel grief and sadness. When sorrow comes, don't reject it. Don't be afraid to express yourself and share what you're feeling. The Pisces full moon wants you to dive into the depths of your emotions. Don't turn away from grief and pain; instead, allow yourself to feel it and swim in it. It's the only way to heal and find your way back to the shore. The eighth house governs your ability to transform, breaking through your subconscious and conscious patterns. You are being consumed by themes of trust, manipulation, deepening or widening intimacy, and shared resources now. Be aware of your worth, and don't allow yourself to be swayed into something that doesn't feel right. Transformation is always possible. It starts with being gentle and forgiving with yourself especially with the parts of you that you may prefer to hide away. Embrace these parts of yourself, and you'll be able to connect to your higher self more deeply. This full moon is the perfect time to reflect on the past and let go of any emotions holding you back. We all have moments that can be difficult to move on from. But if you take the time to acknowledge and accept what has happened, you can use them as a source of strength or information. As you look back, you may find yourself reminiscing on old relationships, replaying a difficult breakup, a family member's death, or missed career opportunities. It's okay to feel whatever emotions come up, but don't stay stuck in the what-ifs. Allow yourself to feel the weight of your pain and then use it as a motivator for change. You are never truly stuck in one place-- you have the power to find direction and create new patterns for yourself. This full moon is here to remind us that it's okay to keep going, even when things don't go as planned. If you believe that there is not enough to go around and that life is a zero-sum game, then you are more likely to act in ways that confirm that theory. The more you focus on what you don't have, the less you have. If you constantly feel like you don't have enough, you're more likely to make decisions that keep you in that position. A lack of mindset can be a heavy burden; you see obstacles at every turn, constantly on alert for people trying to take advantage of you, and you begin to think that the tarot deck is stacked against you. A lack mindset can also lead you to believe that the world is out to get you. While it is true that there are corrupt and unjust systems, it's important to remain determined and optimistic. This full moon helps you gain strength over a lack of mindset. Start where you are. Start with gratitude. Gratitude is an active process of acknowledging and appreciating what you do have in your life. When you focus on all the beautiful things in your life, and count your blessings, you open yourself up to a world of possibilities. So take a moment to appreciate everything you have and what is working for you. When you routinely bring your awareness back to what you're grateful for and what is working for you, you begin to lay the groundwork for a paradigm shift. When you cultivate gratitude and trust and rely on your own abilities. You start to realize what you have to work with and your infinite potential. The desire for growth will no longer be suppressed but expressed. You will begin to feel an internal desire for transformation. Built on gratitude, trust in yourself, and trust outside yourself will naturally follow.
 
-> **REVIEW REQUIRED · CONTINUITY EDIT · 104–267 · 5ba8f2cf0f8b13a10b0151eb4e40b27ad456b192ae0731d0b1890fe8e390de5f**  
-> Before: The full moon in the 8th house shines a light on what people have done to support you. And allows you to give back to those who have helped you along your journey.  
+> **REVIEW REQUIRED · CONTINUITY EDIT · 104–267 · 5ba8f2cf0f8b13a10b0151eb4e40b27ad456b192ae0731d0b1890fe8e390de5f**
+> Before: The full moon in the 8th house shines a light on what people have done to support you. And allows you to give back to those who have helped you along your journey.
 > After: Look at what people have done to support you, and consider how you can give back to those who have helped you.
 
-> **REVIEW REQUIRED · CONTINUITY EDIT · 404–504 · 78af7c0f22798614055d28f925525e9ee407671378a53923ab550925d934195e**  
-> Before: Embrace the gifts of the Pisces full moon. It's a reminder that it's okay to feel grief and sadness.  
+> **REVIEW REQUIRED · CONTINUITY EDIT · 404–504 · 78af7c0f22798614055d28f925525e9ee407671378a53923ab550925d934195e**
+> Before: Embrace the gifts of the Pisces full moon. It's a reminder that it's okay to feel grief and sadness.
 > After: It's okay to feel grief and sadness.
 
-> **REVIEW REQUIRED · CONTINUITY EDIT · 608–680 · 47744213ca01693f03af8b96abd1f4d3b8d7c9951c97e52ff787f7d5d4d512bd**  
-> Before: The Pisces full moon wants you to dive into the depths of your emotions.  
+> **REVIEW REQUIRED · CONTINUITY EDIT · 608–680 · 47744213ca01693f03af8b96abd1f4d3b8d7c9951c97e52ff787f7d5d4d512bd**
+> Before: The Pisces full moon wants you to dive into the depths of your emotions.
 > After: Dive into the depths of your emotions.
 
-> **REVIEW REQUIRED · CONTINUITY EDIT · 1414–1516 · 68c204a9c7cc13b4c23abdeb1ed45930f781bc0da8a3e0bcb9e40629f8d69371**  
-> Before: This full moon is the perfect time to reflect on the past and let go of any emotions holding you back.  
+> **REVIEW REQUIRED · CONTINUITY EDIT · 1414–1516 · 68c204a9c7cc13b4c23abdeb1ed45930f781bc0da8a3e0bcb9e40629f8d69371**
+> Before: This full moon is the perfect time to reflect on the past and let go of any emotions holding you back.
 > After: Reflect on the past and let go of any emotions holding you back.
 
-> **REVIEW REQUIRED · CONTINUITY EDIT · 2154–2257 · 9f5b4c214c4f3b7535c4630a3a707e5c20fb67f97ae42903bcff572dce9fa8d3**  
-> Before: This full moon is here to remind us that it's okay to keep going, even when things don't go as planned.  
+> **REVIEW REQUIRED · CONTINUITY EDIT · 2154–2257 · 9f5b4c214c4f3b7535c4630a3a707e5c20fb67f97ae42903bcff572dce9fa8d3**
+> Before: This full moon is here to remind us that it's okay to keep going, even when things don't go as planned.
 > After: It's okay to keep going, even when things don't go as planned.
 
-> **REVIEW REQUIRED · CONTINUITY EDIT · 2988–3050 · 6825586249b0c000203e31caa7f6ad69627929a7836e2c9fc96d510fcb7acca0**  
-> Before: This full moon helps you gain strength over a lack of mindset.  
+> **REVIEW REQUIRED · CONTINUITY EDIT · 2988–3050 · 6825586249b0c000203e31caa7f6ad69627929a7836e2c9fc96d510fcb7acca0**
+> Before: This full moon helps you gain strength over a lack of mindset.
 > After: [omit]
 
-> **UNCHANGED · DYNAMIC CYCLE ANCHOR**  
+> **UNCHANGED · DYNAMIC CYCLE ANCHOR**
 > Six months ago, consciously or not, this lunar cycle began with the New Moon in Pisces on {{matchingNewMoonDate}}.
 
-> **ADDED · NO-RITUAL PARAGRAPH**  
-> Eclipses are not the recommended time for ritual, manifestation, or intention setting. They happen along the Lunar Nodes, and part of the work is letting the situation unfold before deciding what it is supposed to become.
+> **ADDED · NO-RITUAL PARAGRAPH**
+> Eclipses happen along the Lunar Nodes, and change comes all the same, no matter how tightly you hold on.
 
-> **ADDED · ECLIPSE CLOSE**  
-> You can't control it, and you shouldn't try. Not everything that changes now needs an immediate response.
+> **ADDED · ECLIPSE CLOSE**
+> Release your need to be in control, allow for endings, mourn if needed, and allow yourself to flow with the current of whatever is unfolding, even if the destination is still unknown.
 
 ### Exact diff summary
 
 - Replaced: one book opening sentence → one eclipse opening sentence
 - Added: eclipse nature, mechanics, no-ritual paragraph, and close
 - Omitted declared intention blocks: **0**
-- Review-held continuity edits applied: **6**
+- Non-serving continuity candidates listed for later review: **6**
 - Dynamic cycle anchor suppressed as duplicate: **no**
-- Repeated lunation reminders remaining after the proposed edits: **0**
+- Repeated lunation reminders remaining after the proposed edits: **6**
 
 ### Owner review
 
@@ -522,56 +516,56 @@ Look at what people have done to support you, and consider how you can give back
 
 ## 9. Cancer rising · Pisces in the 9th house
 
-Source: `authored/book-ritual-and-the-moon/lunation-horoscope/full-moon/pisces/rising-cancer/house-9`  
+Source: `authored/book-ritual-and-the-moon/lunation-horoscope/full-moon/pisces/rising-cancer/house-9`
 Protected body: 290 words · SHA-256 `d23c2920df108d646028006f15fb9836a5b083d0b110b163050cc7b1605ce7d0`
 
 ### Original regular card
 
 The Pisces full moon shines upon your 9th House of Higher Self, making it a time to push past your comfort zone and expand your horizons. This past year has been filled with challenges and lessons. It's made you question your spirituality, philosophy, and the fairness of life. But you're learning that losing faith is part of the process. It's an opportunity to question and learn and to build trust in the unknown. And you're beginning to see that what you've experienced so far is only a partial picture of what life has to offer you. This full moon shifts your perspective from the micro to the macro. The full moon is a time for reflection, growth, and expansion. It's a time to look at your life from a bigger perspective and to recognize the potential you have within. But it is also crucial for you to not overreach or make hasty decisions. Higher education boosts your knowledge and expands your perspectives, but it doesn't always address personal and spiritual growth. Are you looking for a way to deepen and enrich your spiritual practice? Consider giving back to the global community. Whether it's through volunteering with a local program, taking part in sustainability initiatives, or donating to a cause that speaks to you - by giving of yourself, you open yourself up to new possibilities and become part of a collective spirit. This full moon may bring an unexpected moment of truth. Whether it's a culmination point for a project or receiving important insights, it's important not to rush to close any doors. Stay curious and ask questions -your truth comes from when you ask questions and integrate answers. Stay open to new ideas and ways of looking at things.
 
-> **EXISTING DYNAMIC CYCLE ANCHOR**  
+> **EXISTING DYNAMIC CYCLE ANCHOR**
 > Six months ago, consciously or not, this lunar cycle began with the New Moon in Pisces on {{matchingNewMoonDate}}.
 
 ### Proposed eclipse composition
 
-> **REPLACED · BOOK OPENING SENTENCE**  
+> **REPLACED · BOOK OPENING SENTENCE**
 > The Pisces lunar eclipse shines upon your 9th House of Higher Self, making it a time to push past your comfort zone and expand your horizons.
 
-> **ADDED · ECLIPSE NATURE**  
+> **ADDED · ECLIPSE NATURE**
 > Eclipses warp time and shift the course of events in ways you can't yet see.
 
-> **ADDED · ECLIPSE MECHANICS**  
+> **ADDED · ECLIPSE MECHANICS**
 > Lunar eclipses are portals into your soul. When they come around, they can help you uncover the truth and allow you to gain knowledge that will steer your life, changing your path to a better one.
 
-**BOOK HOROSCOPE · REVIEW-HELD CONTINUITY EDITS APPLIED**
+**UNCHANGED · REMAINDER OF BOOK HOROSCOPE**
 
-This past year has been filled with challenges and lessons. It's made you question your spirituality, philosophy, and the fairness of life. But you're learning that losing faith is part of the process. It's an opportunity to question and learn and to build trust in the unknown. And you're beginning to see that what you've experienced so far is only a partial picture of what life has to offer you.  It's a time to look at your life from a bigger perspective and to recognize the potential you have within. But it is also crucial for you to not overreach or make hasty decisions. Higher education boosts your knowledge and expands your perspectives, but it doesn't always address personal and spiritual growth. Are you looking for a way to deepen and enrich your spiritual practice? Consider giving back to the global community. Whether it's through volunteering with a local program, taking part in sustainability initiatives, or donating to a cause that speaks to you - by giving of yourself, you open yourself up to new possibilities and become part of a collective spirit. You may face an unexpected moment of truth. Whether it's a culmination point for a project or receiving important insights, it's important not to rush to close any doors. Stay curious and ask questions -your truth comes from when you ask questions and integrate answers. Stay open to new ideas and ways of looking at things.
+This past year has been filled with challenges and lessons. It's made you question your spirituality, philosophy, and the fairness of life. But you're learning that losing faith is part of the process. It's an opportunity to question and learn and to build trust in the unknown. And you're beginning to see that what you've experienced so far is only a partial picture of what life has to offer you. This full moon shifts your perspective from the micro to the macro. The full moon is a time for reflection, growth, and expansion. It's a time to look at your life from a bigger perspective and to recognize the potential you have within. But it is also crucial for you to not overreach or make hasty decisions. Higher education boosts your knowledge and expands your perspectives, but it doesn't always address personal and spiritual growth. Are you looking for a way to deepen and enrich your spiritual practice? Consider giving back to the global community. Whether it's through volunteering with a local program, taking part in sustainability initiatives, or donating to a cause that speaks to you - by giving of yourself, you open yourself up to new possibilities and become part of a collective spirit. This full moon may bring an unexpected moment of truth. Whether it's a culmination point for a project or receiving important insights, it's important not to rush to close any doors. Stay curious and ask questions -your truth comes from when you ask questions and integrate answers. Stay open to new ideas and ways of looking at things.
 
-> **REVIEW REQUIRED · CONTINUITY EDIT · 538–668 · aacb0f07acea6ea5bae150cb753c25c67399b6eb4d752c04f4ff3f31c6a41489**  
-> Before: This full moon shifts your perspective from the micro to the macro. The full moon is a time for reflection, growth, and expansion.  
+> **REVIEW REQUIRED · CONTINUITY EDIT · 538–668 · aacb0f07acea6ea5bae150cb753c25c67399b6eb4d752c04f4ff3f31c6a41489**
+> Before: This full moon shifts your perspective from the micro to the macro. The full moon is a time for reflection, growth, and expansion.
 > After: [omit]
 
-> **REVIEW REQUIRED · CONTINUITY EDIT · 1346–1401 · 38db12f39a4af1170899f6197337a28dbfdf3eb292adba9166ec84c278a63d62**  
-> Before: This full moon may bring an unexpected moment of truth.  
+> **REVIEW REQUIRED · CONTINUITY EDIT · 1346–1401 · 38db12f39a4af1170899f6197337a28dbfdf3eb292adba9166ec84c278a63d62**
+> Before: This full moon may bring an unexpected moment of truth.
 > After: You may face an unexpected moment of truth.
 
-> **UNCHANGED · DYNAMIC CYCLE ANCHOR**  
+> **UNCHANGED · DYNAMIC CYCLE ANCHOR**
 > Six months ago, consciously or not, this lunar cycle began with the New Moon in Pisces on {{matchingNewMoonDate}}.
 
-> **ADDED · NO-RITUAL PARAGRAPH**  
-> Eclipses are not the recommended time for ritual, manifestation, or intention setting. They happen along the Lunar Nodes, and part of the work is letting the situation unfold before deciding what it is supposed to become.
+> **ADDED · NO-RITUAL PARAGRAPH**
+> Eclipses happen along the Lunar Nodes, and part of the work is letting the situation unfold before deciding what it's supposed to become.
 
-> **ADDED · ECLIPSE CLOSE**  
-> You can't control it, and you shouldn't try. Not everything that changes now needs an immediate response.
+> **ADDED · ECLIPSE CLOSE**
+> Release your need to be in control, and allow yourself to flow with the current of whatever is unfolding. Reflect on what you've experienced, and respond accordingly.
 
 ### Exact diff summary
 
 - Replaced: one book opening sentence → one eclipse opening sentence
 - Added: eclipse nature, mechanics, no-ritual paragraph, and close
 - Omitted declared intention blocks: **0**
-- Review-held continuity edits applied: **2**
+- Non-serving continuity candidates listed for later review: **2**
 - Dynamic cycle anchor suppressed as duplicate: **no**
-- Repeated lunation reminders remaining after the proposed edits: **0**
+- Repeated lunation reminders remaining after the proposed edits: **3**
 
 ### Owner review
 
@@ -581,64 +575,64 @@ This past year has been filled with challenges and lessons. It's made you questi
 
 ## 10. Gemini rising · Pisces in the 10th house
 
-Source: `authored/book-ritual-and-the-moon/lunation-horoscope/full-moon/pisces/rising-gemini/house-10`  
+Source: `authored/book-ritual-and-the-moon/lunation-horoscope/full-moon/pisces/rising-gemini/house-10`
 Protected body: 316 words · SHA-256 `c2d0566052cdc9befae18229802a39888ca757146bae9738f380553818d548b9`
 
 ### Original regular card
 
 The Pisces full moon illuminates your 10th house of career and purpose, shining a light on your professional accomplishments and efforts over the last six months (starting the Pisces new moon). Your success depends on your inner well-being - and it all starts with taking care of your basic needs — food, shelter, water, warmth; and your spiritual needs - connection with others, creative expression, and a sense of belonging. If these fundamental needs are not attended to, it will pull energy from your career. Invest in yourself and watch magick happen. This full moon reminds you to stay true to yourself and your agenda. Don't let anyone pressure you into something you're not comfortable with. You are the only one who knows what feels right to you, and your needs are just as important as anyone else's. So take a break if you need one, and don't forget to be kind to yourself - life is too short to be anything else. The Sun in Virgo and Pisces full moon asks that you take inventory and establish the barriers necessary to care for your fundamental needs. Which, in time, builds your character. Full moons are often times of release, and this one is no different. Release any aspects of your career that do not align with your values and interests. The journey of cultivating a fruitful career is found in fulfilling your needs. The Pisces full moon is a beautiful reminder that your dreams are powerful. They connect you to your innermost self and help you better understand the deeper meanings of the things we experience. Dreams can help you make sense of your environment and the people you interact with, offering insight and understanding you wouldn't have otherwise. It's a beautiful reminder that sometimes straddling the line between dream and reality is what it takes to build bridges and create harmony between the two.
 
-> **EXISTING DYNAMIC CYCLE ANCHOR**  
+> **EXISTING DYNAMIC CYCLE ANCHOR**
 > Six months ago, consciously or not, this lunar cycle began with the New Moon in Pisces on {{matchingNewMoonDate}}.
 
 ### Proposed eclipse composition
 
-> **REPLACED · BOOK OPENING SENTENCE**  
-> The Pisces lunar eclipse shines upon your 10th house of career and purpose, shining a light on your professional accomplishments and efforts over the last six months (starting the Pisces new moon).
+> **REPLACED · BOOK OPENING SENTENCE**
+> The Pisces lunar eclipse shines upon your 10th house of career and purpose, shining a light on your professional accomplishments and efforts over the last six months.
 
-> **ADDED · ECLIPSE NATURE**  
+> **ADDED · ECLIPSE NATURE**
 > Eclipses warp time and shift the course of events in ways you can't yet see.
 
-> **ADDED · ECLIPSE MECHANICS**  
+> **ADDED · ECLIPSE MECHANICS**
 > Lunar eclipses are portals into your soul. When they come around, they can help you uncover the truth and allow you to gain knowledge that will steer your life, changing your path to a better one.
 
-**BOOK HOROSCOPE · REVIEW-HELD CONTINUITY EDITS APPLIED**
+**UNCHANGED · REMAINDER OF BOOK HOROSCOPE**
 
-Your success depends on your inner well-being - and it all starts with taking care of your basic needs — food, shelter, water, warmth; and your spiritual needs - connection with others, creative expression, and a sense of belonging. If these fundamental needs are not attended to, it will pull energy from your career. Invest in yourself and watch magick happen. Stay true to yourself and your agenda. Don't let anyone pressure you into something you're not comfortable with. You are the only one who knows what feels right to you, and your needs are just as important as anyone else's. So take a break if you need one, and don't forget to be kind to yourself - life is too short to be anything else. The Sun in Virgo asks you to take inventory and establish the barriers necessary to care for your fundamental needs. Which, in time, builds your character. Release any aspects of your career that do not align with your values and interests. The journey of cultivating a fruitful career is found in fulfilling your needs. Your dreams are powerful. They connect you to your innermost self and help you better understand the deeper meanings of the things we experience. Dreams can help you make sense of your environment and the people you interact with, offering insight and understanding you wouldn't have otherwise. It's a beautiful reminder that sometimes straddling the line between dream and reality is what it takes to build bridges and create harmony between the two.
+Your success depends on your inner well-being - and it all starts with taking care of your basic needs — food, shelter, water, warmth; and your spiritual needs - connection with others, creative expression, and a sense of belonging. If these fundamental needs are not attended to, it will pull energy from your career. Invest in yourself and watch magick happen. This full moon reminds you to stay true to yourself and your agenda. Don't let anyone pressure you into something you're not comfortable with. You are the only one who knows what feels right to you, and your needs are just as important as anyone else's. So take a break if you need one, and don't forget to be kind to yourself - life is too short to be anything else. The Sun in Virgo and Pisces full moon asks that you take inventory and establish the barriers necessary to care for your fundamental needs. Which, in time, builds your character. Full moons are often times of release, and this one is no different. Release any aspects of your career that do not align with your values and interests. The journey of cultivating a fruitful career is found in fulfilling your needs. The Pisces full moon is a beautiful reminder that your dreams are powerful. They connect you to your innermost self and help you better understand the deeper meanings of the things we experience. Dreams can help you make sense of your environment and the people you interact with, offering insight and understanding you wouldn't have otherwise. It's a beautiful reminder that sometimes straddling the line between dream and reality is what it takes to build bridges and create harmony between the two.
 
-> **REVIEW REQUIRED · CONTINUITY EDIT · 557–625 · c7c047895c1e551e08243037ef8e817b8dadab72c7ab7b54a1d6ae08911152dd**  
-> Before: This full moon reminds you to stay true to yourself and your agenda.  
+> **REVIEW REQUIRED · CONTINUITY EDIT · 557–625 · c7c047895c1e551e08243037ef8e817b8dadab72c7ab7b54a1d6ae08911152dd**
+> Before: This full moon reminds you to stay true to yourself and your agenda.
 > After: Stay true to yourself and your agenda.
 
-> **REVIEW REQUIRED · CONTINUITY EDIT · 925–1064 · 034f32e69df518a556f56f7f5d71e497975a763887ecebdd5bf85842db181ce1**  
-> Before: The Sun in Virgo and Pisces full moon asks that you take inventory and establish the barriers necessary to care for your fundamental needs.  
+> **REVIEW REQUIRED · CONTINUITY EDIT · 925–1064 · 034f32e69df518a556f56f7f5d71e497975a763887ecebdd5bf85842db181ce1**
+> Before: The Sun in Virgo and Pisces full moon asks that you take inventory and establish the barriers necessary to care for your fundamental needs.
 > After: The Sun in Virgo asks you to take inventory and establish the barriers necessary to care for your fundamental needs.
 
-> **REVIEW REQUIRED · CONTINUITY EDIT · 1104–1173 · 02c69dfe4ebc0c71413efc7f1b207fd919b1bc26c0be0d155fbda355fe528eaa**  
-> Before: Full moons are often times of release, and this one is no different.   
+> **REVIEW REQUIRED · CONTINUITY EDIT · 1104–1173 · 02c69dfe4ebc0c71413efc7f1b207fd919b1bc26c0be0d155fbda355fe528eaa**
+> Before: Full moons are often times of release, and this one is no different.
 > After: [omit]
 
-> **REVIEW REQUIRED · CONTINUITY EDIT · 1338–1413 · ec32eaff2d4c430eec37983bcd0af4ee250f41531b42580d29d893592f522b08**  
-> Before: The Pisces full moon is a beautiful reminder that your dreams are powerful.  
+> **REVIEW REQUIRED · CONTINUITY EDIT · 1338–1413 · ec32eaff2d4c430eec37983bcd0af4ee250f41531b42580d29d893592f522b08**
+> Before: The Pisces full moon is a beautiful reminder that your dreams are powerful.
 > After: Your dreams are powerful.
 
-> **SUPPRESSED · DUPLICATE DYNAMIC CYCLE ANCHOR**  
-> The book body already contains the Pisces New Moon callback.
+> **UNCHANGED · DYNAMIC CYCLE ANCHOR**
+> Six months ago, consciously or not, this lunar cycle began with the New Moon in Pisces on {{matchingNewMoonDate}}.
 
-> **ADDED · NO-RITUAL PARAGRAPH**  
-> Eclipses are not the recommended time for ritual, manifestation, or intention setting. They happen along the Lunar Nodes, and part of the work is letting the situation unfold before deciding what it is supposed to become.
+> **ADDED · NO-RITUAL PARAGRAPH**
+> Eclipses happen along the Lunar Nodes, and part of the work is letting the situation unfold before deciding what it's supposed to become.
 
-> **ADDED · ECLIPSE CLOSE**  
-> You can't control it, and you shouldn't try. Not everything that changes now needs an immediate response.
+> **ADDED · ECLIPSE CLOSE**
+> Release your need to be in control, and allow yourself to flow with the current of whatever is unfolding. Reflect on what you've experienced, and respond accordingly.
 
 ### Exact diff summary
 
 - Replaced: one book opening sentence → one eclipse opening sentence
 - Added: eclipse nature, mechanics, no-ritual paragraph, and close
 - Omitted declared intention blocks: **0**
-- Review-held continuity edits applied: **4**
-- Dynamic cycle anchor suppressed as duplicate: **yes**
-- Repeated lunation reminders remaining after the proposed edits: **0**
+- Non-serving continuity candidates listed for later review: **4**
+- Dynamic cycle anchor suppressed as duplicate: **no**
+- Repeated lunation reminders remaining after the proposed edits: **2**
 
 ### Owner review
 
@@ -648,60 +642,60 @@ Your success depends on your inner well-being - and it all starts with taking ca
 
 ## 11. Taurus rising · Pisces in the 11th house
 
-Source: `authored/book-ritual-and-the-moon/lunation-horoscope/full-moon/pisces/rising-taurus/house-11`  
+Source: `authored/book-ritual-and-the-moon/lunation-horoscope/full-moon/pisces/rising-taurus/house-11`
 Protected body: 348 words · SHA-256 `74a8b7670cfecde5f3d805d96d7c0e0e085562d756e3471000e061f6a6c2cf24`
 
 ### Original regular card
 
 The Pisces full moon illuminates your 11th house of friendships. Change can be a good thing, and that's especially true for your relationships and network groups. When things start to shift, it can be an opportunity to reassess what's working and what's not and how you can create something even better. This can be an opportunity to meet new people and build relationships with new perspectives. You're embracing changes, getting involved in new causes and interests, and actively seeking out social groups aligned with your values. You're excited to find like-minded people, explore different sides of yourself, and get exposed to new ideas and visions. You may discover that you desire to socially connect with others through art. Art of any form is a sacred process of turning ideas and dreams into reality and turning reality into something powerful. Whether seeking to control others or liberate yourselves, use your art wisely to connect to a larger community. Art binds people together physically (at galleries, museums, festivals, and performance spaces, for example) and culturally through its capacity to tell a community's shared story, inspire reflection, and connections that transcend differences. Who knows what fantastic things will come out of this journey? This Pisces full moon inspires you to dream bigger and take steps to make your dreams a reality. The 11th house is ruled by Aquarius, the energy of world builders, trendsetters, and visionaries. So if you're feeling drawn to shake things up and re-arrange your life better than it was before - go for it! This full moon sends an electric shock. What type of life do you want? How can you make changes in your network to help you take steps to actualize this dream? Find the kind of people who support and complement your life vision. Sometimes even the most resilient among us can get scared just like everyone else. But this full moon, you can look carefully at your desires and fears. You've already faced so much, including pain and hardship, that many things that used to scare you no longer have power over you.
 
-> **EXISTING DYNAMIC CYCLE ANCHOR**  
+> **EXISTING DYNAMIC CYCLE ANCHOR**
 > Six months ago, consciously or not, this lunar cycle began with the New Moon in Pisces on {{matchingNewMoonDate}}.
 
 ### Proposed eclipse composition
 
-> **REPLACED · BOOK OPENING SENTENCE**  
+> **REPLACED · BOOK OPENING SENTENCE**
 > The Pisces lunar eclipse shines upon your 11th house of friendships.
 
-> **ADDED · ECLIPSE NATURE**  
+> **ADDED · ECLIPSE NATURE**
 > Eclipses warp time and shift the course of events in ways you can't yet see.
 
-> **ADDED · ECLIPSE MECHANICS**  
+> **ADDED · ECLIPSE MECHANICS**
 > Lunar eclipses are portals into your soul. When they come around, they can help you uncover the truth and allow you to gain knowledge that will steer your life, changing your path to a better one.
 
-**BOOK HOROSCOPE · REVIEW-HELD CONTINUITY EDITS APPLIED**
+**UNCHANGED · REMAINDER OF BOOK HOROSCOPE**
 
-Change can be a good thing, and that's especially true for your relationships and network groups. When things start to shift, it can be an opportunity to reassess what's working and what's not and how you can create something even better. This can be an opportunity to meet new people and build relationships with new perspectives. You're embracing changes, getting involved in new causes and interests, and actively seeking out social groups aligned with your values. You're excited to find like-minded people, explore different sides of yourself, and get exposed to new ideas and visions. You may discover that you desire to socially connect with others through art. Art of any form is a sacred process of turning ideas and dreams into reality and turning reality into something powerful. Whether seeking to control others or liberate yourselves, use your art wisely to connect to a larger community. Art binds people together physically (at galleries, museums, festivals, and performance spaces, for example) and culturally through its capacity to tell a community's shared story, inspire reflection, and connections that transcend differences. Who knows what fantastic things will come out of this journey? Dream bigger and take steps to make your dreams a reality. The 11th house is ruled by Aquarius, the energy of world builders, trendsetters, and visionaries. So if you're feeling drawn to shake things up and re-arrange your life better than it was before - go for it! What type of life do you want? How can you make changes in your network to help you take steps to actualize this dream? Find the kind of people who support and complement your life vision. Sometimes even the most resilient among us can get scared just like everyone else. Look carefully at your desires and fears. You've already faced so much, including pain and hardship, that many things that used to scare you no longer have power over you.
+Change can be a good thing, and that's especially true for your relationships and network groups. When things start to shift, it can be an opportunity to reassess what's working and what's not and how you can create something even better. This can be an opportunity to meet new people and build relationships with new perspectives. You're embracing changes, getting involved in new causes and interests, and actively seeking out social groups aligned with your values. You're excited to find like-minded people, explore different sides of yourself, and get exposed to new ideas and visions. You may discover that you desire to socially connect with others through art. Art of any form is a sacred process of turning ideas and dreams into reality and turning reality into something powerful. Whether seeking to control others or liberate yourselves, use your art wisely to connect to a larger community. Art binds people together physically (at galleries, museums, festivals, and performance spaces, for example) and culturally through its capacity to tell a community's shared story, inspire reflection, and connections that transcend differences. Who knows what fantastic things will come out of this journey? This Pisces full moon inspires you to dream bigger and take steps to make your dreams a reality. The 11th house is ruled by Aquarius, the energy of world builders, trendsetters, and visionaries. So if you're feeling drawn to shake things up and re-arrange your life better than it was before - go for it! This full moon sends an electric shock. What type of life do you want? How can you make changes in your network to help you take steps to actualize this dream? Find the kind of people who support and complement your life vision. Sometimes even the most resilient among us can get scared just like everyone else. But this full moon, you can look carefully at your desires and fears. You've already faced so much, including pain and hardship, that many things that used to scare you no longer have power over you.
 
-> **REVIEW REQUIRED · CONTINUITY EDIT · 1276–1372 · 2934afee39eb03add70058a5ad0dfa01148ae204ef91187f361e1c04c883e93b**  
-> Before: This Pisces full moon inspires you to dream bigger and take steps to make your dreams a reality.  
+> **REVIEW REQUIRED · CONTINUITY EDIT · 1276–1372 · 2934afee39eb03add70058a5ad0dfa01148ae204ef91187f361e1c04c883e93b**
+> Before: This Pisces full moon inspires you to dream bigger and take steps to make your dreams a reality.
 > After: Dream bigger and take steps to make your dreams a reality.
 
-> **REVIEW REQUIRED · CONTINUITY EDIT · 1581–1621 · 422ed3dd07ef0880e63cac073c389982ac14ead883a23ebe93eb301ca8620212**  
-> Before: This full moon sends an electric shock.   
+> **REVIEW REQUIRED · CONTINUITY EDIT · 1581–1621 · 422ed3dd07ef0880e63cac073c389982ac14ead883a23ebe93eb301ca8620212**
+> Before: This full moon sends an electric shock.
 > After: [omit]
 
-> **REVIEW REQUIRED · CONTINUITY EDIT · 1893–1962 · 774bcfbae59b19563f3e07f610e285ffe8646d2fc6d1e2e1b27592bfd9244efd**  
-> Before: But this full moon, you can look carefully at your desires and fears.  
+> **REVIEW REQUIRED · CONTINUITY EDIT · 1893–1962 · 774bcfbae59b19563f3e07f610e285ffe8646d2fc6d1e2e1b27592bfd9244efd**
+> Before: But this full moon, you can look carefully at your desires and fears.
 > After: Look carefully at your desires and fears.
 
-> **UNCHANGED · DYNAMIC CYCLE ANCHOR**  
+> **UNCHANGED · DYNAMIC CYCLE ANCHOR**
 > Six months ago, consciously or not, this lunar cycle began with the New Moon in Pisces on {{matchingNewMoonDate}}.
 
-> **ADDED · NO-RITUAL PARAGRAPH**  
-> Eclipses are not the recommended time for ritual, manifestation, or intention setting. They happen along the Lunar Nodes, and part of the work is letting the situation unfold before deciding what it is supposed to become.
+> **ADDED · NO-RITUAL PARAGRAPH**
+> Eclipses happen along the Lunar Nodes, and part of the work is letting the situation unfold before deciding what it's supposed to become.
 
-> **ADDED · ECLIPSE CLOSE**  
-> You can't control it, and you shouldn't try. Not everything that changes now needs an immediate response.
+> **ADDED · ECLIPSE CLOSE**
+> Release your need to be in control, and allow yourself to flow with the current of whatever is unfolding. Reflect on what you've experienced, and respond accordingly.
 
 ### Exact diff summary
 
 - Replaced: one book opening sentence → one eclipse opening sentence
 - Added: eclipse nature, mechanics, no-ritual paragraph, and close
 - Omitted declared intention blocks: **0**
-- Review-held continuity edits applied: **3**
+- Non-serving continuity candidates listed for later review: **3**
 - Dynamic cycle anchor suppressed as duplicate: **no**
-- Repeated lunation reminders remaining after the proposed edits: **0**
+- Repeated lunation reminders remaining after the proposed edits: **3**
 
 ### Owner review
 
@@ -711,87 +705,87 @@ Change can be a good thing, and that's especially true for your relationships an
 
 ## 12. Aries rising · Pisces in the 12th house
 
-Source: `authored/book-ritual-and-the-moon/lunation-horoscope/full-moon/pisces/rising-aries/house-12`  
+Source: `authored/book-ritual-and-the-moon/lunation-horoscope/full-moon/pisces/rising-aries/house-12`
 Protected body: 538 words · SHA-256 `b072df2b6cd8bd04ee57b963a4dbcf87af4b3a00588aaf81a59846cb314b6095`
 
 ### Original regular card
 
 The Pisces full moon illuminates your 12th house of karma, subconscious, and endings. Full moons usually are a time of celebration; however, now may be a time to withdraw into a sanctuary of self-care and seclusion. The Pisces full moon signals a time of endings. It's not just about letting go of the past but also learning from it. Let this be an opportunity to reflect on your previous experiences and how they impacted your physical and emotional health, beliefs, behaviors, and relationships. It's a chance to process any trauma and address it at its root for healing. Everything in life has a beginning and an end, which is inevitable. You can learn how to navigate endings and loss by reflecting on your previous experiences. Difficult endings shape life, such as trauma and bereavement, and can impact physical health, emotional state, beliefs, behaviors, and relationship patterns. Reflecting on your previous experiences helps you to navigate through difficult endings and losses, and to heal the trauma that comes with them. Do you want to plunge into the depths of your soul? The Pisces full moon is the perfect time to let go of all the noise of the physical world, and expectations and surrender to the power of self-reflection. When you surrender to the Pisces full moon energy, you can gain access to a part of yourself that you previously was unaware of. Picture it as diving into the deep waters of your subconscious, leaving all superficial thoughts behind, and exploring your inner self. The Pisces full moon allows you to be still within the oneness of the cosmos and remember that you are more than just a physical being. This full moon also connects you deeper to the collective emotional turmoil of mankind, plants, animals, and periods beyond the present. There is collective suffering you have been dealing with for years, coupled with your anxiety and uncertainty. The energy of the Pisces full moon can be overwhelming. It is difficult to describe how overwhelmed this energy can make you feel at times. It's 'all too much is the only way to describe it. You have a few choices when dealing with overwhelming feelings: either check out, confront everything, or oscillate between the two. As your sensitivity increases during the Pisces full moon, you may feel that you have to confront the world's suffering and make sense of it. Journaling, art, and meditation can help you process and make sense of all that is happening to you. This full moon holds a challenging energy. It may feel like it's been years since you've had your old sense of fearlessness and adventure. But know those days will come back eventually. In the meantime, this full moon reminds you that you still have so much to learn. And when you do, you'll remember that these lessons are a vital part of your journey. In the meantime, focus on self-care and rest. Your intention for this full moon is, "I'm wiser and more capable now, but that doesn't mean I'll never be able to experience that same sense of liberation again. My wildness will return one day. Until then, I'll cherish every lesson I've learned from the pain and uncertainty I faced."
 
-> **EXISTING DYNAMIC CYCLE ANCHOR**  
+> **EXISTING DYNAMIC CYCLE ANCHOR**
 > Six months ago, consciously or not, this lunar cycle began with the New Moon in Pisces on {{matchingNewMoonDate}}.
 
 ### Proposed eclipse composition
 
-> **REPLACED · BOOK OPENING SENTENCE**  
+> **REPLACED · BOOK OPENING SENTENCE**
 > The Pisces lunar eclipse shines upon your 12th house of karma, subconscious, and endings.
 
-> **ADDED · ECLIPSE NATURE**  
+> **ADDED · ECLIPSE NATURE**
 > Eclipses warp time and shift the course of events in ways you can't yet see.
 
-> **ADDED · ECLIPSE MECHANICS**  
+> **ADDED · ECLIPSE MECHANICS**
 > Lunar eclipses are portals into your soul. When they come around, they can help you uncover the truth and allow you to gain knowledge that will steer your life, changing your path to a better one.
 
-**BOOK HOROSCOPE · REVIEW-HELD CONTINUITY EDITS APPLIED**
+**BOOK HOROSCOPE · APPROVED INTENTION BLOCK OMITTED**
 
-Full moons usually are a time of celebration; however, now may be a time to withdraw into a sanctuary of self-care and seclusion. Endings are not just about letting go of the past but also learning from it. Let this be an opportunity to reflect on your previous experiences and how they impacted your physical and emotional health, beliefs, behaviors, and relationships. It's a chance to process any trauma and address it at its root for healing. Everything in life has a beginning and an end, which is inevitable. You can learn how to navigate endings and loss by reflecting on your previous experiences. Difficult endings shape life, such as trauma and bereavement, and can impact physical health, emotional state, beliefs, behaviors, and relationship patterns. Reflecting on your previous experiences helps you to navigate through difficult endings and losses, and to heal the trauma that comes with them. Do you want to plunge into the depths of your soul? Let go of the noise of the physical world and other people's expectations, and surrender to the power of self-reflection. Self-reflection can reveal a part of yourself you were previously unaware of. Picture it as diving into the deep waters of your subconscious, leaving all superficial thoughts behind, and exploring your inner self. Be still within the oneness of the cosmos and remember that you are more than just a physical being. You may also feel more connected to the collective emotional turmoil of mankind, plants, animals, and periods beyond the present. There is collective suffering you have been dealing with for years, coupled with your anxiety and uncertainty. Your sensitivity can feel overwhelming at times. It's 'all too much is the only way to describe it. You have a few choices when dealing with overwhelming feelings: either check out, confront everything, or oscillate between the two. As your sensitivity increases, you may feel that you have to confront the world's suffering and make sense of it. Journaling, art, and meditation can help you process and make sense of all that is happening to you. It may feel like it's been years since you've had your old sense of fearlessness and adventure. But know those days will come back eventually. You still have so much to learn. And when you do, you'll remember that these lessons are a vital part of your journey. In the meantime, focus on self-care and rest. 
+Full moons usually are a time of celebration; however, now may be a time to withdraw into a sanctuary of self-care and seclusion. The Pisces full moon signals a time of endings. It's not just about letting go of the past but also learning from it. Let this be an opportunity to reflect on your previous experiences and how they impacted your physical and emotional health, beliefs, behaviors, and relationships. It's a chance to process any trauma and address it at its root for healing. Everything in life has a beginning and an end, which is inevitable. You can learn how to navigate endings and loss by reflecting on your previous experiences. Difficult endings shape life, such as trauma and bereavement, and can impact physical health, emotional state, beliefs, behaviors, and relationship patterns. Reflecting on your previous experiences helps you to navigate through difficult endings and losses, and to heal the trauma that comes with them. Do you want to plunge into the depths of your soul? The Pisces full moon is the perfect time to let go of all the noise of the physical world, and expectations and surrender to the power of self-reflection. When you surrender to the Pisces full moon energy, you can gain access to a part of yourself that you previously was unaware of. Picture it as diving into the deep waters of your subconscious, leaving all superficial thoughts behind, and exploring your inner self. The Pisces full moon allows you to be still within the oneness of the cosmos and remember that you are more than just a physical being. This full moon also connects you deeper to the collective emotional turmoil of mankind, plants, animals, and periods beyond the present. There is collective suffering you have been dealing with for years, coupled with your anxiety and uncertainty. The energy of the Pisces full moon can be overwhelming. It is difficult to describe how overwhelmed this energy can make you feel at times. It's 'all too much is the only way to describe it. You have a few choices when dealing with overwhelming feelings: either check out, confront everything, or oscillate between the two. As your sensitivity increases during the Pisces full moon, you may feel that you have to confront the world's suffering and make sense of it. Journaling, art, and meditation can help you process and make sense of all that is happening to you. This full moon holds a challenging energy. It may feel like it's been years since you've had your old sense of fearlessness and adventure. But know those days will come back eventually. In the meantime, this full moon reminds you that you still have so much to learn. And when you do, you'll remember that these lessons are a vital part of your journey. In the meantime, focus on self-care and rest.
 
-> **OMITTED · OWNER-APPROVED DECLARED INTENTION BLOCK · 2859–3145 · 6c10abe19a969debd98412781d378bbe937c71e8d4b7d9eec5fd716b3b8898b2**  
+> **OMITTED · OWNER-APPROVED DECLARED INTENTION BLOCK · 2859–3145 · 6c10abe19a969debd98412781d378bbe937c71e8d4b7d9eec5fd716b3b8898b2**
 > Your intention for this full moon is, "I'm wiser and more capable now, but that doesn't mean I'll never be able to experience that same sense of liberation again. My wildness will return one day. Until then, I'll cherish every lesson I've learned from the pain and uncertainty I faced."
 
-> **REVIEW REQUIRED · CONTINUITY EDIT · 216–333 · 7c4c19421113c2810654737fa42a65f72eb599d200d94cf12dea1d94571bc404**  
-> Before: The Pisces full moon signals a time of endings. It's not just about letting go of the past but also learning from it.  
+> **REVIEW REQUIRED · CONTINUITY EDIT · 216–333 · 7c4c19421113c2810654737fa42a65f72eb599d200d94cf12dea1d94571bc404**
+> Before: The Pisces full moon signals a time of endings. It's not just about letting go of the past but also learning from it.
 > After: Endings are not just about letting go of the past but also learning from it.
 
-> **REVIEW REQUIRED · CONTINUITY EDIT · 1088–1242 · e9237c5b6f268fc7ebed5c371db46379e974cb222c3b286b450c0f91daca75b4**  
-> Before: The Pisces full moon is the perfect time to let go of all the noise of the physical world, and expectations and surrender to the power of self-reflection.  
+> **REVIEW REQUIRED · CONTINUITY EDIT · 1088–1242 · e9237c5b6f268fc7ebed5c371db46379e974cb222c3b286b450c0f91daca75b4**
+> Before: The Pisces full moon is the perfect time to let go of all the noise of the physical world, and expectations and surrender to the power of self-reflection.
 > After: Let go of the noise of the physical world and other people's expectations, and surrender to the power of self-reflection.
 
-> **REVIEW REQUIRED · CONTINUITY EDIT · 1243–1371 · 03eb777cdd71e3a272ad648b8b1d8d33f8751ab07bda3dabf7b72feac680a09f**  
-> Before: When you surrender to the Pisces full moon energy, you can gain access to a part of yourself that you previously was unaware of.  
+> **REVIEW REQUIRED · CONTINUITY EDIT · 1243–1371 · 03eb777cdd71e3a272ad648b8b1d8d33f8751ab07bda3dabf7b72feac680a09f**
+> Before: When you surrender to the Pisces full moon energy, you can gain access to a part of yourself that you previously was unaware of.
 > After: Self-reflection can reveal a part of yourself you were previously unaware of.
 
-> **REVIEW REQUIRED · CONTINUITY EDIT · 1508–1643 · 82d9f1cf9c2c668baadf42bb91217658f630008709f092385f89ddd76d03120c**  
-> Before: The Pisces full moon allows you to be still within the oneness of the cosmos and remember that you are more than just a physical being.  
+> **REVIEW REQUIRED · CONTINUITY EDIT · 1508–1643 · 82d9f1cf9c2c668baadf42bb91217658f630008709f092385f89ddd76d03120c**
+> Before: The Pisces full moon allows you to be still within the oneness of the cosmos and remember that you are more than just a physical being.
 > After: Be still within the oneness of the cosmos and remember that you are more than just a physical being.
 
-> **REVIEW REQUIRED · CONTINUITY EDIT · 1644–1780 · fc08d0539e91e10cdfd1a4510deb8d8dd0ce30578ecb25af0e0fe28c45194f51**  
-> Before: This full moon also connects you deeper to the collective emotional turmoil of mankind, plants, animals, and periods beyond the present.  
+> **REVIEW REQUIRED · CONTINUITY EDIT · 1644–1780 · fc08d0539e91e10cdfd1a4510deb8d8dd0ce30578ecb25af0e0fe28c45194f51**
+> Before: This full moon also connects you deeper to the collective emotional turmoil of mankind, plants, animals, and periods beyond the present.
 > After: You may also feel more connected to the collective emotional turmoil of mankind, plants, animals, and periods beyond the present.
 
-> **REVIEW REQUIRED · CONTINUITY EDIT · 1892–2031 · 32f8db72c0a247eb960d455ca75fb75d2d823e7edf98df35c08349397c7cdd97**  
-> Before: The energy of the Pisces full moon can be overwhelming. It is difficult to describe how overwhelmed this energy can make you feel at times.  
+> **REVIEW REQUIRED · CONTINUITY EDIT · 1892–2031 · 32f8db72c0a247eb960d455ca75fb75d2d823e7edf98df35c08349397c7cdd97**
+> Before: The energy of the Pisces full moon can be overwhelming. It is difficult to describe how overwhelmed this energy can make you feel at times.
 > After: Your sensitivity can feel overwhelming at times.
 
-> **REVIEW REQUIRED · CONTINUITY EDIT · 2216–2357 · 8ffef9e3c9a2aa5b884170c3a5aa47a7f147934c6705e1a552305ca7df7562c8**  
-> Before: As your sensitivity increases during the Pisces full moon, you may feel that you have to confront the world's suffering and make sense of it.  
+> **REVIEW REQUIRED · CONTINUITY EDIT · 2216–2357 · 8ffef9e3c9a2aa5b884170c3a5aa47a7f147934c6705e1a552305ca7df7562c8**
+> Before: As your sensitivity increases during the Pisces full moon, you may feel that you have to confront the world's suffering and make sense of it.
 > After: As your sensitivity increases, you may feel that you have to confront the world's suffering and make sense of it.
 
-> **REVIEW REQUIRED · CONTINUITY EDIT · 2459–2502 · 96dbe3d0a339747a1c0f632d60ffa2cc1b6f9f0932b9c94a03ed37cd726ad7e8**  
-> Before: This full moon holds a challenging energy.   
+> **REVIEW REQUIRED · CONTINUITY EDIT · 2459–2502 · 96dbe3d0a339747a1c0f632d60ffa2cc1b6f9f0932b9c94a03ed37cd726ad7e8**
+> Before: This full moon holds a challenging energy.
 > After: [omit]
 
-> **REVIEW REQUIRED · CONTINUITY EDIT · 2645–2726 · 932ada27c6efadf2e7b132a396d0732c8681a1bb75c189d5361f6078ef8c909b**  
-> Before: In the meantime, this full moon reminds you that you still have so much to learn.  
+> **REVIEW REQUIRED · CONTINUITY EDIT · 2645–2726 · 932ada27c6efadf2e7b132a396d0732c8681a1bb75c189d5361f6078ef8c909b**
+> Before: In the meantime, this full moon reminds you that you still have so much to learn.
 > After: You still have so much to learn.
 
-> **UNCHANGED · DYNAMIC CYCLE ANCHOR**  
+> **UNCHANGED · DYNAMIC CYCLE ANCHOR**
 > Six months ago, consciously or not, this lunar cycle began with the New Moon in Pisces on {{matchingNewMoonDate}}.
 
-> **ADDED · NO-RITUAL PARAGRAPH**  
-> Eclipses are not the recommended time for ritual, manifestation, or intention setting. They happen along the Lunar Nodes, and part of the work is letting the situation unfold before deciding what it is supposed to become.
+> **ADDED · NO-RITUAL PARAGRAPH**
+> Eclipses happen along the Lunar Nodes, and change comes all the same, no matter how tightly you hold on.
 
-> **ADDED · ECLIPSE CLOSE**  
-> You can't control it, and you shouldn't try. Not everything that changes now needs an immediate response.
+> **ADDED · ECLIPSE CLOSE**
+> Release your need to be in control, allow for endings, mourn if needed, and allow yourself to flow with the current of whatever is unfolding, even if the destination is still unknown.
 
 ### Exact diff summary
 
 - Replaced: one book opening sentence → one eclipse opening sentence
 - Added: eclipse nature, mechanics, no-ritual paragraph, and close
 - Omitted declared intention blocks: **1**
-- Review-held continuity edits applied: **9**
+- Non-serving continuity candidates listed for later review: **9**
 - Dynamic cycle anchor suppressed as duplicate: **no**
-- Repeated lunation reminders remaining after the proposed edits: **0**
+- Repeated lunation reminders remaining after the proposed edits: **9**
 
 ### Owner review
 

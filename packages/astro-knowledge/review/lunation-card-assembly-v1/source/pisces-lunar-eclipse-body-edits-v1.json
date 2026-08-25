@@ -1,9 +1,10 @@
 {
   "schema": "pisces-lunar-eclipse-body-edits/v1",
-  "status": "owner_approved",
+  "status": "superseded_non_serving",
   "serving": false,
-  "rule": "Apply this complete, hash-checked house-body replacement only to the Pisces lunar-eclipse variant. The regular Pisces Full Moon source remains unchanged. The editorial jobs guide review; they are not runtime madlib slots.",
-  "edits": [
+  "rule": "Historical review record only. Complete house-body replacements are prohibited. Eclipse variants preserve the protected book remainder byte-for-byte except for exact owner-approved omission spans.",
+  "supersededBy": "protected-book-body-integrity-v1",
+  "historicalBodyEdits": [
     {
       "contentKey": "authored/book-ritual-and-the-moon/lunation-horoscope/full-moon/pisces/rising-sagittarius/house-4",
       "start": 68,
@@ -19,6 +20,22 @@
         "lived-examples",
         "optional-sign-bridge",
         "closing-movement"
+      ],
+      "ownerApproved": true,
+      "approvedAt": "2026-08-24",
+      "review": "APPROVED"
+    },
+    {
+      "contentKey": "authored/book-ritual-and-the-moon/lunation-horoscope/full-moon/pisces/rising-gemini/house-10",
+      "start": 194,
+      "end": 1839,
+      "sha256": "2adb5bded13e132fc68a55e20580544a02a9f4af239f3fe542f437a2457ea59d",
+      "text": "Your success depends on your inner well-being - and it all starts with taking care of your basic needs — food, shelter, water, warmth; and your spiritual needs - connection with others, creative expression, and a sense of belonging. If these fundamental needs are not attended to, it will pull energy from your career. Invest in yourself and watch magick happen. This full moon reminds you to stay true to yourself and your agenda. Don't let anyone pressure you into something you're not comfortable with. You are the only one who knows what feels right to you, and your needs are just as important as anyone else's. So take a break if you need one, and don't forget to be kind to yourself - life is too short to be anything else. The Sun in Virgo and Pisces full moon asks that you take inventory and establish the barriers necessary to care for your fundamental needs. Which, in time, builds your character. Full moons are often times of release, and this one is no different. Release any aspects of your career that do not align with your values and interests. The journey of cultivating a fruitful career is found in fulfilling your needs. The Pisces full moon is a beautiful reminder that your dreams are powerful. They connect you to your innermost self and help you better understand the deeper meanings of the things we experience. Dreams can help you make sense of your environment and the people you interact with, offering insight and understanding you wouldn't have otherwise. It's a beautiful reminder that sometimes straddling the line between dream and reality is what it takes to build bridges and create harmony between the two.",
+      "replacement": "Your success depends on your inner well-being - and it all starts with taking care of your basic needs — food, shelter, water, warmth; and your spiritual needs - connection with others, creative expression, and a sense of belonging. If these fundamental needs are not attended to, it will pull energy from your career. Invest in yourself and watch magick happen.\n\nStay true to yourself and your agenda. Don't let anyone pressure you into something you're not comfortable with. A title, project, or opportunity may still look promising and still ask for terms you are not willing to or no longer capable of accepting. You are the only one who knows what feels right to you, and your needs are just as important as anyone else's. So take a break if you need one, and don't forget to be kind to yourself - life is too short to be anything else.\n\nRelease any aspects of your career that do not align with your values and interests. The journey of cultivating a fruitful career is found in fulfilling your needs. Your dreams are powerful. They connect you to your innermost self and help you better understand the deeper meanings of the things we experience. Dreams can help you make sense of your environment and the people you interact with, offering insight and understanding you wouldn't have otherwise. It's a beautiful reminder that sometimes straddling the line between dream and reality is what it takes to build bridges and create harmony between the two.",
+      "editorialJobs": [
+        "book-body-direct-reuse",
+        "remove-repeated-lunation-labels",
+        "owner-approved-career-consequence"
       ],
       "ownerApproved": true,
       "approvedAt": "2026-08-24",

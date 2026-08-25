@@ -1,0 +1,982 @@
+{
+ "schema": "recovered-lunation-copy-corrections/v1",
+ "status": "owner-approved serving correction record",
+ "date": "2026-08-24",
+ "source": "packages/astro-knowledge/review/lunation-card-assembly-v1/source/ritual-and-the-moon-lunation-horoscopes-v1.json",
+ "scope": "Factual cross-reference errors, clear typos, broken grammar, and tarot-strip extraction artifacts in the 22 recovered lunation cells. Substantive book meaning, spiritual language, intentions, and house interpretation remain unchanged.",
+ "count": 22,
+ "approval": {
+  "approvalLevel": "exact_owner_approved",
+  "approvalStatement": "I approve the 22 corrected lunation passages in recovered-lunation-copy-corrections-v1.json for live serving.",
+  "ownerConfirmationSource": {
+   "channel": "Codex task owner message",
+   "taskId": "019fd6db-eb3c-7ae1-92c1-a9d00a46269a",
+   "date": "2026-08-24"
+  },
+  "ownerApproved": true,
+  "promotionAuthorized": true,
+  "servingAuthorized": true
+ },
+ "entries": [
+  {
+   "contentKey": "authored/book-ritual-and-the-moon/lunation-horoscope/new-moon/taurus/rising-aries/house-2",
+   "tuple": "new-moon/taurus/aries",
+   "originalBodySha256": "6b8cca2107c7dc240b3ead9f61fb5a3f7736c982c49b6504050a74d47735102b",
+   "correctedBodySha256": "fbed3844694e2a9fa0d7d9050c4e053b55401b19bd01d3393f7b58cd28e55fed",
+   "correctionCount": 3,
+   "corrections": [
+    {
+     "from": "Honoring your values, reworking your finances, and exploring your senses and sensuality is most important to you now.",
+     "to": "Honoring your values, reworking your finances, and exploring your senses and sensuality are most important to you now.",
+     "reason": "subject-verb agreement",
+     "count": 1
+    },
+    {
+     "from": "This new moon can signal a time to find a mentor or advisor. Someone to help you save time and effort while staying motivated and learning from their experience.",
+     "to": "This new moon can signal a time to find a mentor or advisor, someone to help you save time and effort while staying motivated and learning from their experience.",
+     "reason": "sentence fragment",
+     "count": 1
+    },
+    {
+     "from": "Your intention for the Taurus new moon is, “even",
+     "to": "Your intention for the Taurus new moon is: “Even",
+     "reason": "intention punctuation and capitalization",
+     "count": 1
+    }
+   ]
+  },
+  {
+   "contentKey": "authored/book-ritual-and-the-moon/lunation-horoscope/new-moon/taurus/rising-taurus/house-1",
+   "tuple": "new-moon/taurus/taurus",
+   "originalBodySha256": "c3b55d3deb30649f01e8d41c66a644c37c3be9f95f3d4c8725c832725cfd6f25",
+   "correctedBodySha256": "6fb4b9fd0cc950566acddcddeae6b2018d29c3813f50b5bb9df37805f1d9784e",
+   "correctionCount": 2,
+   "corrections": [
+    {
+     "from": "The Taurus new moon wants you to be your own source of recognition and control; instead of letting others dictate your worth and value.",
+     "to": "The Taurus new moon wants you to be your own source of recognition and control instead of letting others dictate your worth and value.",
+     "reason": "incorrect semicolon",
+     "count": 1
+    },
+    {
+     "from": "this is the time to strategize on how to face and solve any challenges",
+     "to": "this is the time to strategize how to face and solve any challenges",
+     "reason": "incorrect preposition",
+     "count": 1
+    }
+   ]
+  },
+  {
+   "contentKey": "authored/book-ritual-and-the-moon/lunation-horoscope/new-moon/taurus/rising-gemini/house-12",
+   "tuple": "new-moon/taurus/gemini",
+   "originalBodySha256": "6207bba0fdf0fa8b77e8e15650126022ab00a3dfe8995da69d8fb558a71cdae6",
+   "correctedBodySha256": "fe78d63ec33534b1e6dc52a353096d88ec5ce77f69ba30cf0772928f44c7226a",
+   "correctionCount": 14,
+   "corrections": [
+    {
+     "from": "there may be a habitual pattern that’s creating resistance within you, avoiding slowing down and getting the rest you need",
+     "to": "there may be a habitual pattern that’s creating resistance within you and keeping you from slowing down and getting the rest you need",
+     "reason": "broken modifier",
+     "count": 1
+    },
+    {
+     "from": "rebuilding one of the structures in your life: such as",
+     "to": "rebuilding one of the structures in your life, such as",
+     "reason": "incorrect colon",
+     "count": 1
+    },
+    {
+     "from": "morning the loss of a loved one",
+     "to": "mourning the loss of a loved one",
+     "reason": "typo",
+     "count": 1
+    },
+    {
+     "from": "retirement, layoff or other change",
+     "to": "retirement, layoff, or other change",
+     "reason": "missing series comma",
+     "count": 1
+    },
+    {
+     "from": "You could also be feeling a sense of relief after expending energy into an area of your life; and once the shock abates now that you release what couldn’t be fixed.",
+     "to": "You could also feel a sense of relief after expending so much energy in an area of your life, once the shock abates and you release what couldn’t be fixed.",
+     "reason": "broken sentence",
+     "count": 1
+    },
+    {
+     "from": "You could also feel a sense of relief after expending so much energy in an area of your life, once the shock abates and you release what couldn’t be fixed.",
+     "to": "After expending so much energy in an area of your life, you could feel relief once the shock abates and you release what couldn’t be fixed.",
+     "reason": "cold-read sentence repair",
+     "count": 1
+    },
+    {
+     "from": "Learning to let go can be hard; especially",
+     "to": "Learning to let go can be hard, especially",
+     "reason": "incorrect semicolon",
+     "count": 1
+    },
+    {
+     "from": "you did the best you could do; with what you had",
+     "to": "you did the best you could do with what you had",
+     "reason": "incorrect semicolon",
+     "count": 1
+    },
+    {
+     "from": "And, when it comes down to what was out of your control",
+     "to": "When it comes to what was out of your control",
+     "reason": "sentence opening",
+     "count": 1
+    },
+    {
+     "from": "consumed by the what-ifs, frees up energy",
+     "to": "consumed by the what-ifs frees up energy",
+     "reason": "subject-verb punctuation",
+     "count": 1
+    },
+    {
+     "from": "The new moon in the 12 house",
+     "to": "The new moon in the 12th house",
+     "reason": "missing ordinal",
+     "count": 1
+    },
+    {
+     "from": "lost months/years",
+     "to": "lost months or years",
+     "reason": "slash artifact",
+     "count": 1
+    },
+    {
+     "from": "something that recently ended or ended",
+     "to": "something that recently ended",
+     "reason": "duplicated wording",
+     "count": 1
+    },
+    {
+     "from": "a life built on truth, your greater and true happiness",
+     "to": "a life built on truth and your true happiness",
+     "reason": "broken parallel structure",
+     "count": 1
+    }
+   ]
+  },
+  {
+   "contentKey": "authored/book-ritual-and-the-moon/lunation-horoscope/new-moon/taurus/rising-cancer/house-11",
+   "tuple": "new-moon/taurus/cancer",
+   "originalBodySha256": "9bfd5477065d315d428b9009818857d1222d68091b483167c036860a9350c0c6",
+   "correctedBodySha256": "a3c1a9aedc1362ac2a4a834fddaa51247e6781561c7ec90ecca066ebbdfd8edc",
+   "correctionCount": 5,
+   "corrections": [
+    {
+     "from": "share your same values",
+     "to": "share your values",
+     "reason": "redundant wording",
+     "count": 1
+    },
+    {
+     "from": "This is good to help you explore new sides of yourself and get exposed to new ideas and visions.",
+     "to": "This can help you explore new sides of yourself and be exposed to new ideas and visions.",
+     "reason": "broken construction",
+     "count": 1
+    },
+    {
+     "from": "Whatever you put your intention towards",
+     "to": "Whatever you put your intention toward",
+     "reason": "incorrect preposition",
+     "count": 1
+    },
+    {
+     "from": "If you are an artist: writer, musician, artist, actor, etc., this is a time to set the intention to have yourself, and your work is seen.",
+     "to": "If you are a writer, musician, actor, or another kind of artist, this is a time to set the intention to have yourself and your work seen.",
+     "reason": "duplicated noun and broken construction",
+     "count": 1
+    },
+    {
+     "from": "being seen, and discovered",
+     "to": "being seen and discovered",
+     "reason": "unnecessary comma",
+     "count": 1
+    }
+   ]
+  },
+  {
+   "contentKey": "authored/book-ritual-and-the-moon/lunation-horoscope/new-moon/taurus/rising-leo/house-10",
+   "tuple": "new-moon/taurus/leo",
+   "originalBodySha256": "b427a16faafa107cea3cdad2f4165b27386c3aafc9d1480655558dfbc38f4197",
+   "correctedBodySha256": "fa11e072a4f6b166f335a8ae62e2868d5230c4d3756adf7b5913d142e0844436",
+   "correctionCount": 5,
+   "corrections": [
+    {
+     "from": "status, responsibility or direction",
+     "to": "status, responsibility, or direction",
+     "reason": "missing series comma",
+     "count": 1
+    },
+    {
+     "from": "Usually, Devils symbolize struggle with a moral problem - lust or love, so it's important to identify and steer clear of any romantic obsessions or fantasies at work which could sabotage your financial freedom. ",
+     "to": "",
+     "reason": "tarot-strip extraction artifact",
+     "count": 1
+    },
+    {
+     "from": "misleading you of your fulfillment",
+     "to": "misleading you about what will fulfill you",
+     "reason": "broken idiom",
+     "count": 1
+    },
+    {
+     "from": "this Aries new moon",
+     "to": "this Taurus new moon",
+     "reason": "incorrect lunation sign",
+     "count": 1
+    },
+    {
+     "from": "You may realize a shift in your values and beliefs or realize that you have taken on the views of others",
+     "to": "You may realize that your values and beliefs have shifted or that you have taken on the views of others",
+     "reason": "duplicated verb",
+     "count": 1
+    }
+   ]
+  },
+  {
+   "contentKey": "authored/book-ritual-and-the-moon/lunation-horoscope/new-moon/taurus/rising-virgo/house-9",
+   "tuple": "new-moon/taurus/virgo",
+   "originalBodySha256": "c5cf8c9ee33797451e1a36dbc6946d0c24e32d48dc5f7278e79639cb50e85e4b",
+   "correctedBodySha256": "7a30df3bae38cd4451bc6d06bf7402f2dee0b62036bdbbbe851025cfa04d0013",
+   "correctionCount": 9,
+   "corrections": [
+    {
+     "from": "Other cultures, and traveling helps give you perspective",
+     "to": "Other cultures and travel help give you perspective",
+     "reason": "subject-verb agreement",
+     "count": 1
+    },
+    {
+     "from": "Keep your mind open to new perspectives and new worlds begin to open up.",
+     "to": "Keep your mind open to new perspectives, and new worlds begin to open up.",
+     "reason": "missing clause comma",
+     "count": 1
+    },
+    {
+     "from": "Learn new cultures",
+     "to": "Learn about new cultures",
+     "reason": "missing preposition",
+     "count": 1
+    },
+    {
+     "from": "Which new opportunities and paths did you open up to, and what did these new experiences teach you?",
+     "to": "What new opportunities and paths are you opening up to, and what can these new experiences teach you?",
+     "reason": "inconsistent tense",
+     "count": 1
+    },
+    {
+     "from": "deep into Spiritual studies",
+     "to": "deep in spiritual studies",
+     "reason": "preposition and capitalization",
+     "count": 1
+    },
+    {
+     "from": "unlock the mysteries to live an enchanted life",
+     "to": "unlock mysteries and live an enchanted life",
+     "reason": "broken infinitive",
+     "count": 1
+    },
+    {
+     "from": "Seeing things in the bigger picture isn’t always your strong point",
+     "to": "Seeing the bigger picture isn’t always your strong point",
+     "reason": "broken idiom",
+     "count": 1
+    },
+    {
+     "from": "new information and understandings help you gain perspective",
+     "to": "new information and understanding help you gain perspective",
+     "reason": "number agreement",
+     "count": 1
+    },
+    {
+     "from": "Your intention for this New Moon is, “How",
+     "to": "Your intention for this New Moon is: “How",
+     "reason": "intention punctuation",
+     "count": 1
+    }
+   ]
+  },
+  {
+   "contentKey": "authored/book-ritual-and-the-moon/lunation-horoscope/new-moon/taurus/rising-libra/house-8",
+   "tuple": "new-moon/taurus/libra",
+   "originalBodySha256": "9d343a7c0869d303981600f500f8655987bcab7be5d8fdf2813bc7c62bde32ba",
+   "correctedBodySha256": "727b0f19f58bb632a164613ce2d8a2fcf80b5c7296e8e22af361b3cf67ed0240",
+   "correctionCount": 7,
+   "corrections": [
+    {
+     "from": "transformation, Symbolism, Shared Resources, and Other People's Money",
+     "to": "transformation, symbolism, shared resources, and other people's money",
+     "reason": "inconsistent capitalization",
+     "count": 1
+    },
+    {
+     "from": "Areas of Intimacy and shared resources",
+     "to": "Areas of intimacy and shared resources",
+     "reason": "inconsistent capitalization",
+     "count": 1
+    },
+    {
+     "from": "What you thought gave you security, may not be so anymore",
+     "to": "What you thought gave you security may not be so anymore",
+     "reason": "subject-verb punctuation",
+     "count": 1
+    },
+    {
+     "from": "may remind you of this whether it’s birthed",
+     "to": "may remind you of this, whether it’s birthed",
+     "reason": "missing clause comma",
+     "count": 1
+    },
+    {
+     "from": "are now arising asking for changes",
+     "to": "are now arising and asking for changes",
+     "reason": "missing conjunction",
+     "count": 1
+    },
+    {
+     "from": "This energy can manifest as a sudden desire for a necessary change in lifestyle; perhaps you realize your current lifestyle is not sustainable; or blocks you from reaching your personal life goals.",
+     "to": "This energy can manifest as a sudden desire for a necessary lifestyle change. You may realize your current lifestyle is not sustainable or is blocking you from reaching your personal goals.",
+     "reason": "broken sentence and incorrect semicolons",
+     "count": 1
+    },
+    {
+     "from": "may remind you of this, whether it’s birthed out of a deep connection, or a lesson of disempowerment",
+     "to": "may remind you of this, whether it’s birthed out of a deep connection or a lesson of disempowerment",
+     "reason": "unnecessary comma",
+     "count": 1
+    }
+   ]
+  },
+  {
+   "contentKey": "authored/book-ritual-and-the-moon/lunation-horoscope/new-moon/taurus/rising-scorpio/house-7",
+   "tuple": "new-moon/taurus/scorpio",
+   "originalBodySha256": "7024f0b01458961ad50ad6231a5c8d57daac7439488fff828e616f125794886e",
+   "correctedBodySha256": "e9b5051f01e200b21ac86e973b9014ab77760b45a526555db777700d4c5f0d83",
+   "correctionCount": 1,
+   "corrections": [
+    {
+     "from": "Sometimes it's easier to be more compassionate to those in your intimate relationship than yourself.",
+     "to": "Sometimes it's easier to show compassion to someone in an intimate relationship than to yourself.",
+     "reason": "broken comparison",
+     "count": 1
+    }
+   ]
+  },
+  {
+   "contentKey": "authored/book-ritual-and-the-moon/lunation-horoscope/new-moon/taurus/rising-sagittarius/house-6",
+   "tuple": "new-moon/taurus/sagittarius",
+   "originalBodySha256": "f84b01f19f2d335fbebcf5907ae0aeacb0b771750822009a8fc459b35735fcb8",
+   "correctedBodySha256": "e4f6b4b056bee3531adfbb42cad6c1de15360716e7510d1cf6fa5badf64e1a87",
+   "correctionCount": 8,
+   "corrections": [
+    {
+     "from": "as new information challenges and evolves stuck patterns",
+     "to": "as new information challenges and changes stuck patterns",
+     "reason": "incorrect verb",
+     "count": 1
+    },
+    {
+     "from": "Anything arising right now it to help you",
+     "to": "Anything arising right now is here to help you",
+     "reason": "missing words",
+     "count": 1
+    },
+    {
+     "from": "giving to much",
+     "to": "giving too much",
+     "reason": "typo",
+     "count": 1
+    },
+    {
+     "from": "Virgo and the Hermit observe. ",
+     "to": "",
+     "reason": "tarot-strip extraction artifact",
+     "count": 1
+    },
+    {
+     "from": "With patience, contemplation, and observation you can",
+     "to": "With patience, contemplation, and observation, you can",
+     "reason": "missing introductory comma",
+     "count": 1
+    },
+    {
+     "from": "Your new moon intentions, “I am",
+     "to": "Your new moon intention is, “I am",
+     "reason": "broken intention introduction",
+     "count": 1
+    },
+    {
+     "from": "as new information challenges and changes stuck patterns",
+     "to": "as new information challenges stuck patterns and helps you change them",
+     "reason": "cold-read verb repair",
+     "count": 1
+    },
+    {
+     "from": "Your new moon intention is, “I am",
+     "to": "Your new moon intention is: “I am",
+     "reason": "intention punctuation",
+     "count": 1
+    }
+   ]
+  },
+  {
+   "contentKey": "authored/book-ritual-and-the-moon/lunation-horoscope/new-moon/taurus/rising-capricorn/house-5",
+   "tuple": "new-moon/taurus/capricorn",
+   "originalBodySha256": "f77b0ee7d196a4cc39dee59d691f67c82b1e309b2314c01be5127c33acaa701f",
+   "correctedBodySha256": "bd3eb94c7f689e5383a1b279dee6bcf19576f3f3ffc6899932acca5c6ff63481",
+   "correctionCount": 5,
+   "corrections": [
+    {
+     "from": "Love, pleasure, relationships, children's creativity, and self-expression",
+     "to": "Love, pleasure, relationships, children, creativity, and self-expression",
+     "reason": "merged list items",
+     "count": 1
+    },
+    {
+     "from": "Your new moon intention, “my humor",
+     "to": "Your new moon intention is, “my humor",
+     "reason": "broken intention introduction",
+     "count": 1
+    },
+    {
+     "from": "allow and encourage more passions to flow",
+     "to": "allow and encourage more passion to flow",
+     "reason": "number agreement",
+     "count": 1
+    },
+    {
+     "from": "The lion is a metaphor for the primal energies of the emotional body, the flames referencing its burning passions.",
+     "to": "The lion is a metaphor for the primal energies of the emotional body, with the flames representing its burning passions.",
+     "reason": "broken modifier",
+     "count": 1
+    },
+    {
+     "from": "Your new moon intention is, “my humor",
+     "to": "Your new moon intention is: “My humor",
+     "reason": "intention punctuation and capitalization",
+     "count": 1
+    }
+   ]
+  },
+  {
+   "contentKey": "authored/book-ritual-and-the-moon/lunation-horoscope/new-moon/taurus/rising-aquarius/house-4",
+   "tuple": "new-moon/taurus/aquarius",
+   "originalBodySha256": "9f2e61d5a1cb565c3fbc4e5a797ce80feddd869e3821b5f0a36d27b127d5a47a",
+   "correctedBodySha256": "9c5483d81ea774784d6e72a07fe188652dd217f83d3e7345c5679d76e0d75bf4",
+   "correctionCount": 8,
+   "corrections": [
+    {
+     "from": "The new moon the 4th house",
+     "to": "The new moon in the 4th house",
+     "reason": "missing preposition",
+     "count": 1
+    },
+    {
+     "from": "how you want to set roots",
+     "to": "how you want to put down roots",
+     "reason": "broken idiom",
+     "count": 1
+    },
+    {
+     "from": "work-life balance; making it easier",
+     "to": "work-life balance, making it easier",
+     "reason": "incorrect semicolon",
+     "count": 1
+    },
+    {
+     "from": "time in your career, without pulling",
+     "to": "time in your career without pulling",
+     "reason": "unnecessary comma",
+     "count": 1
+    },
+    {
+     "from": "Your Taurus new moon intentions are",
+     "to": "Your Taurus new moon intention is",
+     "reason": "number agreement",
+     "count": 1
+    },
+    {
+     "from": "Think about what makes you feel secure and safe, without getting stuck in stagnancy.",
+     "to": "Think about what makes you feel secure and safe without getting stuck in stagnancy.",
+     "reason": "unnecessary comma",
+     "count": 1
+    },
+    {
+     "from": "rethink how you want to put down roots or take steps to nurture your roots deeper",
+     "to": "rethink how you want to put down roots or take steps to deepen the roots you already have",
+     "reason": "broken idiom",
+     "count": 1
+    },
+    {
+     "from": "Your Taurus new moon intention is, “everything",
+     "to": "Your Taurus new moon intention is: “Everything",
+     "reason": "intention punctuation and capitalization",
+     "count": 1
+    }
+   ]
+  },
+  {
+   "contentKey": "authored/book-ritual-and-the-moon/lunation-horoscope/new-moon/taurus/rising-pisces/house-3",
+   "tuple": "new-moon/taurus/pisces",
+   "originalBodySha256": "11efde05f57793cefcd7ce9d50c4ded3d4c2112ce1db2c3274c03b66b84524fe",
+   "correctedBodySha256": "c3a7accf95d3623d923e5e9642333917924698fd38407a2cb62f2aa6799d9f7f",
+   "correctionCount": 6,
+   "corrections": [
+    {
+     "from": "more active, and demanding",
+     "to": "more active and demanding",
+     "reason": "unnecessary comma",
+     "count": 1
+    },
+    {
+     "from": "You may feel inspired to create more structure in your community; by identifying a need; that, if corrected could bring more flow and harmony within your local community.",
+     "to": "You may feel inspired to create more structure in your community by identifying a need that, if addressed, could bring more flow and harmony to your local community.",
+     "reason": "broken sentence and incorrect semicolons",
+     "count": 1
+    },
+    {
+     "from": "Whether it's to take on a new project, open a local business, spark a creative idea, or just find someone to talk to who offers you a sense of belonging.",
+     "to": "This may mean taking on a new project, opening a local business, sparking a creative idea, or simply finding someone to talk to who offers you a sense of belonging.",
+     "reason": "sentence fragment",
+     "count": 1
+    },
+    {
+     "from": "This could be organizing raising funds, legal counsel, organizing a board to oversee or physically provide labor and resources to organize construction for a needed community building",
+     "to": "This could mean raising funds, offering legal counsel, organizing a board, or providing labor and resources for the construction of a needed community building",
+     "reason": "broken list construction",
+     "count": 1
+    },
+    {
+     "from": "momentum growing - creating",
+     "to": "momentum growing, creating",
+     "reason": "punctuation",
+     "count": 1
+    },
+    {
+     "from": "Your Taurus new moon intention is, “my word",
+     "to": "Your Taurus new moon intention is: “My word",
+     "reason": "intention punctuation and capitalization",
+     "count": 1
+    }
+   ]
+  },
+  {
+   "contentKey": "authored/book-ritual-and-the-moon/lunation-horoscope/new-moon/cancer/rising-scorpio/house-9",
+   "tuple": "new-moon/cancer/scorpio",
+   "originalBodySha256": "ca9d30641e8c2de294b6ec333e75b5ed6f596c53c67c5c39908b474d06e4b078",
+   "correctedBodySha256": "01ffdae54127659f3cb010264140904e769aa14963abcd955f1159e6dda6a443",
+   "correctionCount": 3,
+   "corrections": [
+    {
+     "from": "Teaching, sharing, communicating, and learning is the best use",
+     "to": "Teaching, sharing, communicating, and learning are the best uses",
+     "reason": "subject-verb agreement",
+     "count": 1
+    },
+    {
+     "from": "Whether it's through volunteering with a local program, taking part in sustainability initiatives, or donating to a cause that speaks to you - by giving of yourself, you open yourself up to new possibilities and become part of a collective spirit.",
+     "to": "Whether it's through volunteering with a local program, taking part in sustainability initiatives, or donating to a cause that speaks to you, giving of yourself opens you to new possibilities and makes you part of a collective spirit.",
+     "reason": "broken whether clause",
+     "count": 1
+    },
+    {
+     "from": "Your intention for this New Moon is “to allow",
+     "to": "Your intention for this New Moon is: “To allow",
+     "reason": "intention punctuation and capitalization",
+     "count": 1
+    }
+   ]
+  },
+  {
+   "contentKey": "authored/book-ritual-and-the-moon/lunation-horoscope/new-moon/leo/rising-scorpio/house-10",
+   "tuple": "new-moon/leo/scorpio",
+   "originalBodySha256": "b64e377db0023dc10b52d2773b753039dc7955db06508be0978dfcc5f1f14cf4",
+   "correctedBodySha256": "8e0425f520e57a8ac801fbd41ce1c61251333bb0c63a70ad9921a9cda67978d5",
+   "correctionCount": 4,
+   "corrections": [
+    {
+     "from": "whatever you put your energy into, aligns",
+     "to": "whatever you put your energy into aligns",
+     "reason": "subject-verb punctuation",
+     "count": 1
+    },
+    {
+     "from": "You may haven't defined",
+     "to": "You may not have defined",
+     "reason": "broken verb phrase",
+     "count": 1
+    },
+    {
+     "from": "misleading you of your fulfillment",
+     "to": "misleading you about what will fulfill you",
+     "reason": "broken idiom",
+     "count": 1
+    },
+    {
+     "from": "in your current work, or forging a path",
+     "to": "in your current work or forging a path",
+     "reason": "unnecessary comma",
+     "count": 1
+    }
+   ]
+  },
+  {
+   "contentKey": "authored/book-ritual-and-the-moon/lunation-horoscope/new-moon/libra/rising-scorpio/house-12",
+   "tuple": "new-moon/libra/scorpio",
+   "originalBodySha256": "ea2baee1009af3af591e89935870e3a4664ecf0ce0573ed6066269a638a7f0bc",
+   "correctedBodySha256": "e4d042cb5910c7bdc05ed0509b07c1f41fa1c0496ffbba01a7a0ff6985497557",
+   "correctionCount": 7,
+   "corrections": [
+    {
+     "from": "Cancer, Luna is your ruler. ",
+     "to": "",
+     "reason": "incorrect sign and ruler reference",
+     "count": 1
+    },
+    {
+     "from": "You may receive downloads of information from past lifetimes or ancestral lineage, the trauma that needs to be healed and cleared.",
+     "to": "You may receive downloads of information from past lifetimes or your ancestral lineage about trauma that needs to be healed and cleared.",
+     "reason": "broken sentence",
+     "count": 1
+    },
+    {
+     "from": "Use your creative outlet and faith in something higher than yourself to be the path towards healing.",
+     "to": "Let your creative outlet and faith in something higher than yourself become a path toward healing.",
+     "reason": "broken construction",
+     "count": 1
+    },
+    {
+     "from": "connect with your divine wisdom, and also to use that wisdom",
+     "to": "connect with your divine wisdom and use that wisdom",
+     "reason": "broken parallel structure",
+     "count": 1
+    },
+    {
+     "from": "Try not to make any solid decisions because not all is what it seems with Pisces.",
+     "to": "Try not to make any solid decisions because not everything is as it seems with Pisces.",
+     "reason": "broken idiom",
+     "count": 1
+    },
+    {
+     "from": "connect with your divine wisdom and use that wisdom",
+     "to": "connect with your divine wisdom, using that wisdom",
+     "reason": "repeated construction",
+     "count": 1
+    },
+    {
+     "from": "Your New Moon intention is, “To allow",
+     "to": "Your New Moon intention is: “To allow",
+     "reason": "intention punctuation",
+     "count": 1
+    }
+   ]
+  },
+  {
+   "contentKey": "authored/book-ritual-and-the-moon/lunation-horoscope/new-moon/capricorn/rising-scorpio/house-3",
+   "tuple": "new-moon/capricorn/scorpio",
+   "originalBodySha256": "e405e5b15d61a53499c2b70e25809584747b61af086658c3d79a40b8a1a53d8e",
+   "correctedBodySha256": "d8fd5790f5030ee7fe6b7c09e0cfb0259b53916c7cffd0cdb3ea8d17bd18a7e3",
+   "correctionCount": 3,
+   "corrections": [
+    {
+     "from": "your 3rd house of early education, how to process information, and communicate with your community",
+     "to": "your 3rd house of early education, how you process information, and how you communicate with your community",
+     "reason": "broken parallel structure",
+     "count": 1
+    },
+    {
+     "from": "Consider ways to share your passions and interests with others through creative and writing projects.",
+     "to": "Consider ways to share your passions and interests with others through creative projects and writing.",
+     "reason": "broken list construction",
+     "count": 1
+    },
+    {
+     "from": "Your intention for this new moon is to improve your communication skills and to trust in the power of authentic expression to deepen your connections with others. ",
+     "to": "",
+     "reason": "duplicated intention statement",
+     "count": 1
+    }
+   ]
+  },
+  {
+   "contentKey": "authored/book-ritual-and-the-moon/lunation-horoscope/full-moon/taurus/rising-scorpio/house-7",
+   "tuple": "full-moon/taurus/scorpio",
+   "originalBodySha256": "ebae74ebc1c4f8b06d8697838e995e3c3cddae86f62668299ed8b23d53e24f32",
+   "correctedBodySha256": "94c5b26a3028a311efe59513407bf2873861a6e914e33133cc20f1928d325f7e",
+   "correctionCount": 14,
+   "corrections": [
+    {
+     "from": "And to create space for a heart-centered home. While your ego",
+     "to": "This is also a time to enjoy fulfilling relationships with close friends and family and create space for a heart-centered home. While your ego",
+     "reason": "orphan left by tarot-strip extraction",
+     "count": 1
+    },
+    {
+     "from": "this full moon encourages you to be open to others. Allowing others to help you with your challenges.",
+     "to": "this full moon encourages you to be open to others and allow them to help you with your challenges.",
+     "reason": "sentence fragment",
+     "count": 1
+    },
+    {
+     "from": "With the Scorpio sun and Taurus full moon evoke",
+     "to": "The Scorpio Sun and Taurus Full Moon evoke",
+     "reason": "broken sentence",
+     "count": 1
+    },
+    {
+     "from": "break free from limiting beliefs to embrace",
+     "to": "break free from limiting beliefs and embrace",
+     "reason": "incorrect infinitive",
+     "count": 1
+    },
+    {
+     "from": "creating a non-for-profit",
+     "to": "creating a nonprofit",
+     "reason": "incorrect term",
+     "count": 1
+    },
+    {
+     "from": "the people you cultivated relationships with",
+     "to": "the people you have cultivated relationships with",
+     "reason": "missing auxiliary verb",
+     "count": 1
+    },
+    {
+     "from": "Perhaps not by words, but by their actions, especially if these actions require you to fall back into old habits and patterns, you’re putting effort into breaking.",
+     "to": "Perhaps not through their words but through their actions, especially if those actions require you to fall back into old habits and patterns you’re working to break.",
+     "reason": "broken sentence",
+     "count": 1
+    },
+    {
+     "from": "Everyone doesn’t need to change at the same pace as you do",
+     "to": "Not everyone needs to change at the same pace as you do",
+     "reason": "incorrect negation",
+     "count": 1
+    },
+    {
+     "from": "is committed in their ways",
+     "to": "is committed to their ways",
+     "reason": "incorrect preposition",
+     "count": 1
+    },
+    {
+     "from": "The relationship will likely grow apart; you will move further",
+     "to": "You will likely grow apart and move further",
+     "reason": "incorrect subject",
+     "count": 1
+    },
+    {
+     "from": "If not, can you both navigate",
+     "to": "Can you both navigate",
+     "reason": "unclear referent",
+     "count": 1
+    },
+    {
+     "from": "emotions that were hidden that you are hiding from others or even from yourself",
+     "to": "emotions you have hidden from others or even from yourself",
+     "reason": "duplicated wording",
+     "count": 1
+    },
+    {
+     "from": "Perhaps not through their words but through their actions, especially if those actions require you to fall back into old habits and patterns you’re working to break.",
+     "to": "Their lack of support may show up through their actions, especially if those actions require you to fall back into old habits and patterns you’re working to break.",
+     "reason": "sentence fragment and broken construction",
+     "count": 1
+    },
+    {
+     "from": "is committed to their ways",
+     "to": "is set in their ways",
+     "reason": "incorrect idiom",
+     "count": 1
+    }
+   ]
+  },
+  {
+   "contentKey": "authored/book-ritual-and-the-moon/lunation-horoscope/full-moon/cancer/rising-scorpio/house-9",
+   "tuple": "full-moon/cancer/scorpio",
+   "originalBodySha256": "1d1912f6bb8bf151c4c5fb7100861a172f64bca55acfa2aeb4a69b080bb77694",
+   "correctedBodySha256": "909c470d893b355abf19d52292dfe0df7d010b322ada8cd63feab04ea275eb0a",
+   "correctionCount": 5,
+   "corrections": [
+    {
+     "from": "You might be taking your creative works, expanding past your local community, and reaching an international one now.",
+     "to": "You might be taking your creative work beyond your local community and reaching an international one now.",
+     "reason": "broken construction",
+     "count": 1
+    },
+    {
+     "from": "The Cancer full moon in the 9th house chart guides you",
+     "to": "The Cancer full moon in the 9th house guides you",
+     "reason": "extraneous word",
+     "count": 1
+    },
+    {
+     "from": "formal schooling or learning from other mentors, teachers, or from a significant relationship",
+     "to": "formal schooling or learning from mentors, teachers, or a significant relationship",
+     "reason": "broken parallel structure",
+     "count": 1
+    },
+    {
+     "from": "When the full moon is in the 8th house",
+     "to": "When the full moon is in the 9th house",
+     "reason": "incorrect house reference",
+     "count": 1
+    },
+    {
+     "from": "asking questions like, \"what is life? What did",
+     "to": "asking questions like, \"What is life? What did",
+     "reason": "sentence capitalization",
+     "count": 1
+    }
+   ]
+  },
+  {
+   "contentKey": "authored/book-ritual-and-the-moon/lunation-horoscope/full-moon/leo/rising-scorpio/house-10",
+   "tuple": "full-moon/leo/scorpio",
+   "originalBodySha256": "97c9a49e42a7e92bc1a4165fb60636c762486845c6f0c0866134d61ec2fb1750",
+   "correctedBodySha256": "3786d02c53240478248e53a48b562252d785d199669dd4381df2d35342b1655f",
+   "correctionCount": 3,
+   "corrections": [
+    {
+     "from": "question what direction you head in",
+     "to": "question which direction you are heading",
+     "reason": "broken idiom",
+     "count": 1
+    },
+    {
+     "from": "Your intention for this Leo full moon is, “My integrity",
+     "to": "Your intention for this Leo full moon is: “My integrity",
+     "reason": "incorrect punctuation",
+     "count": 1
+    },
+    {
+     "from": "question which direction you are heading and if your current situation",
+     "to": "question which direction you are heading and whether your current situation",
+     "reason": "parallel structure",
+     "count": 1
+    }
+   ]
+  },
+  {
+   "contentKey": "authored/book-ritual-and-the-moon/lunation-horoscope/full-moon/libra/rising-scorpio/house-12",
+   "tuple": "full-moon/libra/scorpio",
+   "originalBodySha256": "a988126f623e8a4c796ea81e5b1653c4d0c59140ef7604574ebe61a2651fe3ac",
+   "correctedBodySha256": "9ab3205e8d57677e14c0815a13c8d7a0163fafb1298466e2a896522c40c77a2a",
+   "correctionCount": 1,
+   "corrections": [
+    {
+     "from": "after you've gotten lost in the busyness of life, or numbing yourself by keeping busy",
+     "to": "after you've gotten lost in the busyness of life or numbed yourself by keeping busy",
+     "reason": "broken parallel structure",
+     "count": 1
+    }
+   ]
+  },
+  {
+   "contentKey": "authored/book-ritual-and-the-moon/lunation-horoscope/full-moon/capricorn/rising-scorpio/house-3",
+   "tuple": "full-moon/capricorn/scorpio",
+   "originalBodySha256": "053cf67849a542607ee82ae92a40f466c1dc41f17b304eb82c43ae2ffcafb8e3",
+   "correctedBodySha256": "a8e3ddef9fc63c40f829717049fe9a72089ee1d1221ab70fe66c52264c5d8c52",
+   "correctionCount": 5,
+   "corrections": [
+    {
+     "from": "how to express yourselves",
+     "to": "how you express yourself",
+     "reason": "pronoun and construction",
+     "count": 1
+    },
+    {
+     "from": "This full moon shifts your focus to the power of your words and honors your words and verbal commitments.",
+     "to": "This full moon shifts your focus to the power of your words and asks you to honor your verbal commitments.",
+     "reason": "incorrect subject and repetition",
+     "count": 1
+    },
+    {
+     "from": "If you gave your comment and no longer can or desire to fulfill the verbal promise",
+     "to": "If you gave your commitment and can no longer or do not want to fulfill that verbal promise",
+     "reason": "typo and broken verb phrase",
+     "count": 1
+    },
+    {
+     "from": "your 3rd house of communication, early education, your understanding of how you express yourself, and your unique language to communicate with your community, siblings, and neighbors",
+     "to": "your 3rd house of communication and early education, including how you express yourself and communicate in your own way with your community, siblings, and neighbors",
+     "reason": "broken parallel structure",
+     "count": 1
+    },
+    {
+     "from": "If you gave your commitment and can no longer or do not want to fulfill that verbal promise, Capricorn’s ruling planet, Saturn, pushes you to have mature conversations to break the agreement.",
+     "to": "If you made a commitment you can no longer fulfill or no longer want to honor, Capricorn’s ruling planet, Saturn, pushes you to have a mature conversation and end the agreement.",
+     "reason": "cold-read sentence repair",
+     "count": 1
+    }
+   ]
+  },
+  {
+   "contentKey": "authored/book-ritual-and-the-moon/lunation-horoscope/full-moon/aquarius/rising-virgo/house-6",
+   "tuple": "full-moon/aquarius/virgo",
+   "originalBodySha256": "2428a86ec47cf48b8b4fe45f41d85187ce5191f274ad8b49d8d98a3ad37582ea",
+   "correctedBodySha256": "a94d48c9dd3a6885c855305fb498394358a693671e64be1a51aa0306b4f5ad18",
+   "correctionCount": 9,
+   "corrections": [
+    {
+     "from": "a new self-care regimen that supports creating daily routines",
+     "to": "a new self-care regimen that supports daily routines",
+     "reason": "duplicated construction",
+     "count": 1
+    },
+    {
+     "from": "drink ​​chamomile tea",
+     "to": "drink chamomile tea",
+     "reason": "invisible character artifact",
+     "count": 1
+    },
+    {
+     "from": "giving away too much of yourself and energy",
+     "to": "giving away too much of yourself and your energy",
+     "reason": "missing determiner",
+     "count": 1
+    },
+    {
+     "from": "overextending yourself for a desire to belong",
+     "to": "overextending yourself out of a desire to belong",
+     "reason": "incorrect preposition",
+     "count": 1
+    },
+    {
+     "from": "This full moon brings us an important reminder",
+     "to": "This full moon brings you an important reminder",
+     "reason": "register mismatch",
+     "count": 1
+    },
+    {
+     "from": "Evolutionary, the development of group relationships leads to increased survival.",
+     "to": "From an evolutionary perspective, group relationships increased the chance of survival.",
+     "reason": "broken adverbial construction",
+     "count": 1
+    },
+    {
+     "from": "This full moon, take a moment",
+     "to": "During this full moon, take a moment",
+     "reason": "broken introductory phrase",
+     "count": 1
+    },
+    {
+     "from": "Your full moon intention, \"Slow down",
+     "to": "Your full moon intention is: \"Slow down",
+     "reason": "broken intention introduction",
+     "count": 1
+    },
+    {
+     "from": "The Aquarius full moon illuminates your 6th House of Health and Being of Service.",
+     "to": "The Aquarius full moon illuminates your 6th house of health and being of service.",
+     "reason": "inconsistent capitalization",
+     "count": 1
+    }
+   ]
+  }
+ ]
+}
