@@ -1,17 +1,21 @@
 {
   "appBootGzipBytes": 420000,
   "appChunkGzipBytes": 180000,
-  "readerBootGzipBytes": 465000,
+  "readerBootGzipBytes": 467000,
   "readerInitialCssGzipBytes": 47000,
   "largestJavaScriptGzipBytes": 520000,
   "friendsWorkspaceChunkGzipBytes": 16500,
   "skyDetailChunkGzipBytes": 5000,
   "reportRouteChunkGzipBytes": 4500,
   "skyPlacementFallbackChunkGzipBytes": 150000,
-  "lunationBookFallbackChunkGzipBytes": 210000,
+  "lunationBookFallbackChunkGzipBytes": 215000,
   "transitFallbackChunkGzipBytes": 330000,
   "relationshipFallbackChunkGzipBytes": 230000,
   "signupChunkGzipBytes": 4000,
   "totalCssGzipBytes": 105000,
-  "totalJavaScriptGzipBytes": 2686000
+  "totalJavaScriptGzipBytes": 2686000,
+  "_rationale": {
+    "readerBootGzipBytes": "Raised by 2 kB for the fail-soft eclipse review reporting and protected-content integrity boundary; deferred content must still remain outside the static boot graph.",
+    "lunationBookFallbackChunkGzipBytes": "Raised by 5 kB for the 22 recovered, owner-approved full lunation book passages; the complete protected writing remains lazy-loaded and byte-exact."
+  }
 }
