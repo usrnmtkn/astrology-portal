@@ -1,4 +1,5 @@
 import { expect, test, type Locator, type Page } from "@playwright/test";
+import { readFileSync } from "node:fs";
 import { mkdir } from "node:fs/promises";
 import path from "node:path";
 import { writingSurfaceAdminAccess, writingSurfaceSourceMap } from "../../apps/admin/src/writingSurfaceSourceMap";
@@ -9,9 +10,30 @@ import {
 } from "./qaRuntimeGuards";
 
 const adminScreenshotDir = path.join("test-results", "content-dashboard-admin-flow");
+const unresolvedQueueSource = JSON.parse(readFileSync(path.join(process.cwd(), "packages/astro-knowledge/generated/content-unresolved-queue-v1.json"), "utf8")) as {
+  count: number;
+  items: Array<{ contentKey: string; [key: string]: unknown }>;
+  [key: string]: unknown;
+};
+const unresolvedQueue = {
+  ...unresolvedQueueSource,
+  items: unresolvedQueueSource.items.map((item) => ({
+    ...item,
+    surface: item.contentKey.includes("daily-") || item.contentKey.startsWith("daily-glance-variant/")
+      ? "Daily Glance"
+      : item.contentKey.includes("natal") || item.contentKey.includes("placement")
+        ? "Natal / Placements"
+        : item.contentKey.includes("lunation") || item.contentKey.includes("eclipse") || item.contentKey.includes("moon-phase")
+          ? "Lunations"
+          : item.contentKey.includes("sky-") || item.contentKey.includes("transit") || item.contentKey.includes("timing")
+            ? "Sky / Transits"
+            : "Other"
+  }))
+};
 
 const adminPages = [
   { nav: "Review Queue", title: "Review Queue", breadcrumb: "Admin / Publish / Review queue", hash: "review-queue" },
+  { nav: "Unresolved Content", title: "Unresolved Content", breadcrumb: "Admin / Publish / Unresolved content", hash: "unresolved-content" },
   { nav: "Content Library", title: "Content Library", breadcrumb: "Admin / Write / Content library", hash: "exact-content" },
   { nav: "Sky Write-ups", title: "Sky Write-ups", breadcrumb: "Admin / Write / Sky write-ups", hash: "sky-writeups" },
   { nav: "Articles", title: "Articles", breadcrumb: "Admin / Write / Articles", hash: "articles" },
@@ -502,6 +524,15 @@ async function seedAdminApi(
         status: 200,
         contentType: "application/json",
         body: JSON.stringify({ ok: true, horizon: skyReviewHorizonFixture })
+      });
+      return;
+    }
+
+    if (pathname.endsWith("/content-unresolved")) {
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify({ ok: true, report: unresolvedQueue })
       });
       return;
     }
@@ -1595,6 +1626,63 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(page.locator("section[aria-label='Review queue filters']")).toBeVisible();
     await expect(page.locator("section[aria-label='Review queue filters']").getByLabel("Status")).toBeVisible();
     await expect(page.locator("section[aria-label='Review queue filters']").getByLabel("Evergreen")).toBeVisible();
+
+    await assertNoBrowserErrors();
+  });
+
+  test("unresolved content shows the governed package inventory and links to Content Library", async ({ page }) => {
+    const assertNoBrowserErrors = await expectNoBrowserErrors(page);
+    await seedAdminApi(page);
+    await expectAdminRouteLoads(page, "/admin/content#unresolved-content");
+
+    await expectAdminHeader(page, "Unresolved Content", "Admin / Publish / Unresolved content");
+    await expect(page.getByRole("region", { name: "Unresolved content overview" })).toContainText("Everything still waiting for resolution");
+    await expect(page.getByRole("region", { name: "Unresolved content records" })).toBeVisible();
+    await expect(page.locator(".admin-unresolved-content-table tbody tr")).toHaveCount(unresolvedQueue.count);
+
+    const unresolvedHeadingStyle = await page.getByRole("heading", { name: "Everything still waiting for resolution" }).evaluate((heading) => {
+      const style = getComputedStyle(heading);
+      return [style.fontFamily, style.fontSize, style.fontWeight, style.lineHeight, style.letterSpacing, style.textAlign];
+    });
+    await page.getByRole("navigation", { name: "Content operations" }).getByRole("button", { name: "Review Queue" }).click();
+    const reviewHeadingStyle = await page.getByRole("heading", { name: "Review, sign off, publish" }).evaluate((heading) => {
+      const style = getComputedStyle(heading);
+      return [style.fontFamily, style.fontSize, style.fontWeight, style.lineHeight, style.letterSpacing, style.textAlign];
+    });
+    expect(unresolvedHeadingStyle).toEqual(reviewHeadingStyle);
+    await page.getByRole("navigation", { name: "Content operations" }).getByRole("button", { name: "Unresolved Content" }).click();
+
+    await page.getByLabel("Search unresolved content").fill("sun/virgo");
+    await expect(page.locator(".admin-unresolved-content-table tbody tr")).toHaveCount(3);
+    const row = page.locator(".admin-unresolved-content-table tbody tr").first();
+    await expect(row).toContainText("fallback-hook/sky-sign-copy/sun/virgo");
+    await expect(row).toContainText("Sky / Transits");
+
+    await row.getByRole("button", { name: "Find editable row" }).click();
+    await expectAdminHeader(page, "Content Library", "Admin / Write / Content library");
+    await expect(page.getByLabel("Search content")).toHaveValue("fallback-hook/sky-sign-copy/sun/virgo");
+
+    await page.getByRole("navigation", { name: "Content operations" }).getByRole("button", { name: "Unresolved Content" }).click();
+    await page.getByLabel("Search unresolved content").fill("not-a-real-content-key");
+    await expect(page.getByText("No unresolved records match these filters.")).toBeVisible();
+
+    const headingLevels = await page.getByRole("main").getByRole("heading").evaluateAll((headings) => headings.map((heading) => ({
+      level: Number(heading.tagName.slice(1)),
+      text: heading.textContent?.trim() ?? ""
+    })));
+    expect(headingLevels.slice(0, 2)).toEqual([
+      { level: 1, text: "Unresolved Content" },
+      { level: 2, text: "Everything still waiting for resolution" }
+    ]);
+
+    await page.setViewportSize({ width: 390, height: 844 });
+    await expect(page.getByRole("heading", { name: "Unresolved Content", level: 1 })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Everything still waiting for resolution", level: 2 })).toBeVisible();
+    await expect(page.getByRole("region", { name: "Unresolved content search" })).toBeVisible();
+    const tableScrollsWithinViewport = await page.locator(".admin-content-table-scroll").last().evaluate((element) => (
+      element.clientWidth <= window.innerWidth && element.scrollWidth > element.clientWidth
+    ));
+    expect(tableScrollsWithinViewport).toBe(true);
 
     await assertNoBrowserErrors();
   });
