@@ -18,15 +18,23 @@ sign tag, 6th-house placement, body opening, and surrounding Aquarius sequence a
 on Virgo rising. A trailing page-number artifact was excluded and the recovery is
 recorded on the canonical entry.
 
-Final coverage is 266 of 288 cells. The 22 absent cells remain explicit source gaps
-and use the existing approved row assembly; they never borrow another book cell.
+Final coverage is 288 of 288 cells. The 22 cells omitted by the original dedicated
+extractor were recovered from the owner-authored lunation import manuscripts. An
+owner-directed surgical pass then corrected factual cross-references, typos,
+broken grammar, and extraction artifacts through 127 recorded exact edits. The
+original and corrected hashes are retained in
+`source/recovered-lunation-copy-corrections-v1.json`. On 2026-08-24, the owner
+explicitly approved those 22 corrected passages for live serving. That correction
+ledger is the serving approval authority for their exact corrected hashes. They
+never borrow another book cell.
 
 ## Runtime behavior
 
 - The book is a deferred, lunation-only content partition.
 - The You-page serves the approved book fallback by default when no date-specific
   Satori card exists; an explicit false feature value remains a rollback switch.
-- An exact approved book cell leads the card byte-for-byte.
+- An approved canonical book cell leads the card byte-for-byte from the corrected
+  canonical source.
 - Ordinary New Moons append the approved forward cycle sentence.
 - Ordinary Full Moons append the engine-verified matching New Moon anchor, including
   the year only across a calendar-year boundary.
@@ -48,20 +56,22 @@ copy, scope, approval state, and source-code references are recorded in
 
 The protected book materializes to a dedicated production chunk named
 `fallback-content-lunation-book`. On the first verified production build it measured
-790.7 kB raw and 198.1 kB gzip. It does not enter the static App boot graph. The
-Friends workspace remained 9.8 kB gzip.
+790.7 kB raw and 198.1 kB gzip. After recovering the 22 complete owner-approved
+passages, it measures 863.2 kB raw and 211.8 kB gzip. Its explicit budget is 215 kB
+gzip. It does not enter the static App boot graph. The Friends workspace remains
+9.8 kB gzip.
 
 ## Verification
 
-- 266 source entries, 266 distinct tuples, 266 distinct content keys
+- 288 source entries, 288 distinct tuples, 288 distinct content keys
 - zero house/key/character-count mismatches
-- byte-exact source-to-materialized body checks for all 266 cells
+- byte-exact source-to-materialized body checks for all 288 cells
 - Node, browser-source, and shipped-dist lunation assembly parity
 - explicit recovered-cell and missing-cell fallback regressions
 - same-year and cross-year matching New Moon regressions
 - web typecheck and production build
 - web bundle budget and static-graph assertion
-- canonical inventory/export parity at 10,804 records, including all 266 deferred
+- canonical inventory/export parity including all 288 deferred
   book cells in the `authored-deferred` runtime bucket
 - fresh-preview Chromium regression that opens the You-page lunation card and
   verifies the protected book opening and final sentence

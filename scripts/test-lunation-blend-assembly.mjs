@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 import assert from "node:assert/strict";
+import crypto from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -32,12 +33,12 @@ const lunationBook = readJson("source-rows/lunation-book-cards-v1.json");
 const lunationEclipseVariants = readJson("source-rows/lunation-eclipse-variants-v1.json");
 const lunationEclipseHouseLayers = readJson("source-rows/lunation-eclipse-house-layers-v1.json");
 const templates = readJson("templates/fallback-templates-v3.json");
-const makeRenderer = ({ reader = false, allowUnreviewed = false } = {}) => createTransitSynastryRenderer(
+const makeRenderer = ({ reader = false, allowUnreviewed = false, includeBook = true } = {}) => createTransitSynastryRenderer(
   {
     authoredCards: [
       ...baseLibrary.authoredCards,
       ...blend.authoredCards,
-      ...lunationBook.authoredCards,
+      ...(includeBook ? lunationBook.authoredCards : []),
       ...lunationEclipseVariants.sectionCards,
       ...lunationEclipseHouseLayers.authoredCards,
       ...lunationEclipseVariants.authoredCards
@@ -55,6 +56,7 @@ const makeRenderer = ({ reader = false, allowUnreviewed = false } = {}) => creat
 );
 const qaRenderer = makeRenderer();
 const readerRenderer = makeRenderer({ reader: true });
+const noBookReaderRenderer = makeRenderer({ reader: true, includeBook: false });
 const eclipsePreviewRenderer = makeRenderer({ allowUnreviewed: true });
 const rulerRows = blend.hookRows.filter((row) => row.contentKey.includes("/lunation-ruler-house/"));
 const uranusRows = blend.hookRows.filter((row) => row.contentKey.includes("/lunation-uranus-layer/"));
@@ -234,13 +236,87 @@ const houseFourEvergreen = lunationBook.authoredCards.find((row) => row.contentK
 assert.ok(houseFourEvergreen, "The approved Pisces Full Moon evergreen fallback must exist.");
 assert.equal(heldPiscesEclipse.contentKey, undefined);
 assert.equal(heldPiscesEclipse.templateKey, "fallback-template/sky.lunation-horoscope");
-assert.equal(heldPiscesEclipse.headline, "Lunar Eclipse for Sagittarius Rising");
+assert.equal(heldPiscesEclipse.headline, "Pisces Lunar Eclipse Horoscope");
 assert.match(heldPiscesEclipse.parts[0], /^The Pisces lunar eclipse shines upon your 4th house/u);
-assert.match(heldPiscesEclipse.body, /Home isn't just a place - it's a feeling\./u);
-assert.doesNotMatch(heldPiscesEclipse.body, /Home is where the heart is\./u);
+assert.match(heldPiscesEclipse.body, /Home is where the heart is\. Home isn't just a place - it's a feeling\./u);
+assert.doesNotMatch(heldPiscesEclipse.body, /This month's full moon intention is/u);
 assert.match(heldPiscesEclipse.body, /New Moon in Pisces on March 18\./u);
-assert.match(heldPiscesEclipse.body, /Eclipses are not the recommended time for ritual/u);
+assert.match(heldPiscesEclipse.body, /change comes all the same, no matter how tightly you hold on/u);
+assert.match(heldPiscesEclipse.body, /allow for endings, mourn if needed/u);
 assert.equal(heldPiscesEclipse.reviewFlags, undefined);
+assert.equal(heldPiscesEclipse.partSourceKeys.length, heldPiscesEclipse.parts.length);
+assert.ok(heldPiscesEclipse.partSourceKeys.every((keys) => keys.length > 0));
+
+const geminiRisingPiscesEclipse = readerRenderer.renderLunationHoroscope({
+  ...piscesEclipseFacts,
+  risingSign: "gemini",
+  moonHouse: 10
+});
+assert.match(geminiRisingPiscesEclipse.parts[0], /^The Pisces lunar eclipse shines upon your 10th house of career and purpose/u);
+assert.match(geminiRisingPiscesEclipse.body, /Invest in yourself and watch magick happen\./u);
+assert.match(geminiRisingPiscesEclipse.body, /straddling the line between dream and reality/u);
+assert.doesNotMatch(geminiRisingPiscesEclipse.body, /A title, project, or opportunity|schedule, responsibilities, pay/u);
+assert.match(geminiRisingPiscesEclipse.body, /New Moon in Pisces on March 18\./u);
+assert.match(geminiRisingPiscesEclipse.body, /Reflect on what you've experienced, and respond accordingly\./u);
+assert.doesNotMatch(geminiRisingPiscesEclipse.body, /The Sun in Virgo asks for an honest inventory|The goal is not to stop dreaming/u);
+
+const tamperedSections = structuredClone(lunationEclipseVariants.sectionCards);
+const tamperedHouseTen = tamperedSections.find((row) => row.contentKey.endsWith("/rising-gemini/house-10/evergreen-body"));
+assert.ok(tamperedHouseTen, "House 10 eclipse body fixture must exist.");
+tamperedHouseTen.body = tamperedHouseTen.body.replace("Invest in yourself and watch magick happen.", "Invest in yourself.");
+const tamperedHash = crypto.createHash("sha256").update(tamperedHouseTen.body).digest("hex");
+tamperedHouseTen.approval.payloadSha256 = tamperedHash;
+tamperedHouseTen.protected_content.body_sha256 = tamperedHash;
+const tamperedRenderer = createTransitSynastryRenderer(
+  {
+    authoredCards: [
+      ...baseLibrary.authoredCards,
+      ...blend.authoredCards,
+      ...lunationBook.authoredCards,
+      ...tamperedSections,
+      ...lunationEclipseHouseLayers.authoredCards
+    ].filter(isReaderEligible)
+  },
+  templates,
+  {
+    ...baseRows,
+    hookRows: [...baseRows.hookRows, ...blend.hookRows].filter(isReaderEligible)
+  }
+);
+assert.throws(
+  () => tamperedRenderer.renderLunationHoroscope({
+    ...piscesEclipseFacts,
+    risingSign: "gemini",
+    moonHouse: 10
+  }),
+  /BOOK_BODY_MODIFIED/u,
+  "A rehashed paraphrase must still fail against the protected source remainder."
+);
+
+const staleHashSections = structuredClone(lunationEclipseVariants.sectionCards);
+const staleNature = staleHashSections.find((row) => row.contentKey === "authored/lunation-eclipse-section/shared/lunar/nature");
+assert.ok(staleNature, "Shared eclipse nature fixture must exist.");
+staleNature.body = `${staleNature.body} Changed.`;
+const staleHashRenderer = createTransitSynastryRenderer(
+  {
+    authoredCards: [
+      ...baseLibrary.authoredCards,
+      ...blend.authoredCards,
+      ...lunationBook.authoredCards,
+      ...staleHashSections
+    ].filter(isReaderEligible)
+  },
+  templates,
+  {
+    ...baseRows,
+    hookRows: [...baseRows.hookRows, ...blend.hookRows].filter(isReaderEligible)
+  }
+);
+assert.throws(
+  () => staleHashRenderer.renderLunationHoroscope(piscesEclipseFacts),
+  /ECLIPSE_SECTION_MODIFIED/u,
+  "Any changed approved eclipse section must hard-fail before rendering."
+);
 
 const aquariusLunarEclipse = readerRenderer.renderLunationHoroscope({
   ...aquariusFullMoonCycle,
@@ -253,8 +329,8 @@ const aquariusLunarEclipse = readerRenderer.renderLunationHoroscope({
 });
 assert.match(aquariusLunarEclipse.body, /Eclipses warp time and shift the course of events/u);
 assert.match(aquariusLunarEclipse.body, /Lunar eclipses are portals into your soul/u);
-assert.match(aquariusLunarEclipse.body, /Eclipses are not the recommended time for ritual/u);
-assert.match(aquariusLunarEclipse.body, /Not everything that changes now needs an immediate response/u);
+assert.match(aquariusLunarEclipse.body, /Eclipses happen along the Lunar Nodes, and part of the work is letting the situation unfold/u);
+assert.match(aquariusLunarEclipse.body, /Reflect on what you've experienced, and respond accordingly/u);
 assert.ok(
   !aquariusLunarEclipse.reviewFlags?.some((flag) => ["nature", "mechanics", "recommendation", "close"].includes(flag.sectionId)),
   "Sign-neutral approved lunar sections must resolve for eclipse signs beyond Pisces."
@@ -278,6 +354,7 @@ const virgoSolarEclipseFacts = {
   timeZone: "America/New_York"
 };
 const virgoSolarEclipse = readerRenderer.renderLunationHoroscope(virgoSolarEclipseFacts);
+assert.equal(virgoSolarEclipse.headline, "Virgo Solar Eclipse Horoscope");
 const solarHouseSix = lunationEclipseHouseLayers.authoredCards.find((row) => row.house === 6);
 assert.ok(solarHouseSix, "The approved solar eclipse House 6 layer must exist.");
 assert.ok(virgoSolarEclipse.parts.includes(solarHouseSix.body));
@@ -357,11 +434,12 @@ assert.deepEqual(retroOverlayFailure.reviewFlags, [{
 const previewPiscesEclipse = eclipsePreviewRenderer.renderLunationHoroscope(piscesEclipseFacts);
 const houseFourEclipseVariant = lunationEclipseVariants.authoredCards.find((row) => row.house === 4);
 assert.equal(previewPiscesEclipse.contentKey, houseFourEclipseVariant.contentKey);
+assert.equal(previewPiscesEclipse.headline, "Pisces Lunar Eclipse Horoscope");
 assert.equal(previewPiscesEclipse.parts.length, 1, "The exact reviewed template owns the complete eclipse composition.");
 assert.match(previewPiscesEclipse.body, /^The Pisces lunar eclipse shines upon your 4th house/u);
 assert.match(previewPiscesEclipse.body, /New Moon in Pisces on March 18\./u);
-assert.match(previewPiscesEclipse.body, /Home isn't just a place - it's a feeling\./u);
-assert.match(previewPiscesEclipse.body, /Understanding them does not mean you have to keep repeating them\./u);
+assert.match(previewPiscesEclipse.body, /Home is where the heart is\. Home isn't just a place - it's a feeling\./u);
+assert.doesNotMatch(previewPiscesEclipse.body, /This month's full moon intention is/u);
 assert.doesNotMatch(previewPiscesEclipse.body, /\{\{/u);
 assert.equal(previewPiscesEclipse.reviewFlags, undefined);
 assert.throws(
@@ -379,12 +457,12 @@ const eclipseWithoutCycleAnchor = readerRenderer.renderLunationHoroscope({
   kind: "eclipse-lunar",
   sign: "pisces",
   risingSign: "aries",
-  eventDate: "2025-09-07T18:08:54.999Z",
+  eventDate: "2026-08-28T04:00:00.000Z",
   timeZone: "America/New_York"
 });
 assert.match(eclipseWithoutCycleAnchor.body, /^The Pisces lunar eclipse shines upon/u);
 assert.match(eclipseWithoutCycleAnchor.body, /Lunar eclipses are portals into your soul/u);
-assert.match(eclipseWithoutCycleAnchor.body, /Not everything that changes now needs an immediate response/u);
+assert.match(eclipseWithoutCycleAnchor.body, /allow for endings, mourn if needed/u);
 assert.deepEqual(
   eclipseWithoutCycleAnchor.reviewFlags,
   [{
@@ -413,7 +491,7 @@ const recoveredCell = lunationBook.authoredCards.find((row) => row.contentKey.en
 assert.equal(recoveredAquariusVirgo.parts[0], recoveredCell.body);
 assert.equal(recoveredAquariusVirgo.contentKey, recoveredCell.contentKey);
 
-const missingTaurusNewMoon = readerRenderer.renderLunationHoroscope({
+const recoveredTaurusNewMoon = readerRenderer.renderLunationHoroscope({
   kind: "new-moon",
   sign: "taurus",
   risingSign: "aries",
@@ -422,10 +500,25 @@ const missingTaurusNewMoon = readerRenderer.renderLunationHoroscope({
   rulerHouse: 3,
   rulerRetrograde: false
 });
-assert.equal(missingTaurusNewMoon.contentKey, undefined);
-assert.equal(missingTaurusNewMoon.templateKey, "fallback-template/sky.lunation-horoscope");
-assert.match(missingTaurusNewMoon.parts[0], /2nd house/u);
-assert.ok(missingTaurusNewMoon.parts.includes(
+const recoveredTaurusCell = lunationBook.authoredCards.find((row) => row.contentKey.endsWith(
+  "/new-moon/taurus/rising-aries/house-2"
+));
+assert.equal(recoveredTaurusNewMoon.parts[0], recoveredTaurusCell.body);
+assert.equal(recoveredTaurusNewMoon.contentKey, recoveredTaurusCell.contentKey);
+
+const missingSourceFallback = noBookReaderRenderer.renderLunationHoroscope({
+  kind: "new-moon",
+  sign: "taurus",
+  risingSign: "aries",
+  moonHouse: 2,
+  ruler: "venus",
+  rulerHouse: 3,
+  rulerRetrograde: false
+});
+assert.equal(missingSourceFallback.contentKey, undefined);
+assert.equal(missingSourceFallback.templateKey, "fallback-template/sky.lunation-horoscope");
+assert.match(missingSourceFallback.parts[0], /2nd house/u);
+assert.ok(missingSourceFallback.parts.includes(
   "This New Moon begins a cycle that will develop over the next six months."
 ));
 
@@ -495,6 +588,10 @@ try {
 const ariesMacro = readerRenderer.renderLunationMacro({ kind: "full-moon", sign: "aries" });
 assert.match(ariesMacro.headline, /Aries Full Moon/u);
 assert.match(ariesMacro.body, /^Full Moons bring what has been building into clearer view\./u);
+const piscesMacro = readerRenderer.renderLunationMacro({ kind: "full-moon", sign: "pisces" });
+assert.match(piscesMacro.body, /^Full moons are about illuminating that unconscious and that which is unseen\./u);
+assert.match(piscesMacro.body, /The Pisces full moon asks you, "what is fantasy and what is real\?"/u);
+assert.doesNotMatch(piscesMacro.body, /temporary help that turned into a permanent obligation|unpaid emotional labor|The Sun in Virgo sits directly opposite/u);
 
 const skyArticle = readerRenderer.renderSkyLunation({
   kind: "full-moon",
@@ -507,5 +604,5 @@ assert.ok(
 );
 
 console.log(
-  "lunation blend assembly checks passed: 266 exact book cells, 28 approved lunar eclipse sections, 12 approved solar house layers, localized cycle anchors, resolver parity, independent section review flags, and evergreen fallback"
+  "lunation blend assembly checks passed: 288 exact book cells, 30 approved lunar eclipse sections, 12 approved solar house layers, localized cycle anchors, resolver parity, independent section review flags, and evergreen fallback"
 );

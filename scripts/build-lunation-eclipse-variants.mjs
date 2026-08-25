@@ -63,30 +63,52 @@ function applyApprovedOmissions(card) {
 }
 
 function evergreenBodySection(card) {
-  const hasApprovedBodyReplacement = card.proposed.approvedBodyEdits
-    .some((edit) => edit.ownerApproved === true);
-  if (hasApprovedBodyReplacement) {
-    return {
-      body: sectionById(card, "bookBodyRemainder").text,
-      reviewStatus: "approved",
-      policy: "exact-owner-approved-eclipse-body"
-    };
+  if (card.proposed.approvedBodyEdits.length > 0) {
+    throw new Error(`Complete eclipse body replacements are prohibited for house ${card.house}.`);
   }
 
+  if (sha256(card.original.bookBody) !== card.sourceBodySha256) {
+    throw new Error(`Protected source body drifted for house ${card.house}.`);
+  }
   const sourceBody = applyApprovedOmissions(card);
   const opening = card.original.bookOpeningSentence;
   if (!sourceBody.startsWith(opening)) {
     throw new Error(`Evergreen opening drifted for house ${card.house}.`);
   }
+  const sourceRemainder = card.original.bookBody.slice(opening.length).trimStart();
+  const emittedRemainder = sourceBody.slice(opening.length).trimStart();
+  if (sectionById(card, "bookBodyRemainder").text !== emittedRemainder) {
+    throw new Error(`Protected book remainder drifted in the review packet for house ${card.house}.`);
+  }
   return {
-    body: sourceBody.slice(opening.length).trimStart(),
+    body: emittedRemainder,
     reviewStatus: "approved_reuse",
-    policy: "exact-evergreen-remainder-reuse"
+    policy: card.proposed.omittedDeclaredIntentionBlocks.length > 0
+      ? "exact-evergreen-remainder-with-approved-omissions"
+      : "exact-evergreen-remainder-reuse",
+    protectedContent: {
+      source_body_sha256: card.sourceBodySha256,
+      source_opening_sha256: sha256(opening),
+      source_remainder_sha256: sha256(sourceRemainder),
+      preservedBookRemainderSha256: sha256(emittedRemainder),
+      approved_omissions: card.proposed.omittedDeclaredIntentionBlocks.map((span) => ({
+        start: span.start,
+        end: span.end,
+        sha256: span.sha256,
+        text: span.text,
+        ownerApproved: span.ownerApproved === true,
+        approvedAt: span.approvedAt
+      }))
+    }
   };
 }
 
 function approvedSectionCard(card, id, body, reviewStatus = "approved", extra = {}) {
-  const { policy = "exact-owner-approved-eclipse-section", ...metadata } = extra;
+  const {
+    policy = "exact-owner-approved-eclipse-section",
+    protectedContent = {},
+    ...metadata
+  } = extra;
   const contentKey = `authored/lunation-eclipse-section/pisces/rising-${card.risingSign}/house-${card.house}/${id}`;
   return {
     contentKey,
@@ -108,7 +130,8 @@ function approvedSectionCard(card, id, body, reviewStatus = "approved", extra = 
       body_sha256: sha256(body),
       word_count: wordCount(body),
       char_count: body.length,
-      template_slots: [...new Set([...body.matchAll(/\{\{([\w.]+)\}\}/gu)].map((match) => match[1]))]
+      template_slots: [...new Set([...body.matchAll(/\{\{([\w.]+)\}\}/gu)].map((match) => match[1]))],
+      ...protectedContent
     },
     ...metadata
   };
@@ -133,24 +156,26 @@ const cardSectionCards = packet.cards.flatMap((card) => {
     approvedSectionCard(card, "opening", sectionById(card, "opening").text),
     approvedSectionCard(card, "evergreen-body", evergreen.body, evergreen.reviewStatus, {
       policy: evergreen.policy,
+      protectedContent: evergreen.protectedContent,
       suppress_cycle_anchor: card.proposed.cycleAnchorSuppressed === true
     })
   ];
 });
 
 const sharedSectionDefinitions = [
-  ["nature", "eclipseNature"],
-  ["mechanics", "eclipseMechanics"],
-  ["recommendation", "eclipseNoRitual"],
-  ["close", "eclipseClose"]
+  { id: "nature", packetField: "nature" },
+  { id: "mechanics", packetField: "mechanics" },
+  { id: "recommendation", packetField: "noRitual" },
+  { id: "close", packetField: "close" },
+  { id: "recommendation", packetField: "endingsNoRitual", houseVariant: 4 },
+  { id: "close", packetField: "endingsClose", houseVariant: 4 }
 ];
-const sharedSectionCards = sharedSectionDefinitions.map(([id, packetId]) => {
-  const bodies = new Set(packet.cards.map((card) => sectionById(card, packetId).text));
-  if (bodies.size !== 1) throw new Error(`Shared ${id} section drifted across Pisces cards.`);
-  const body = [...bodies][0];
+const sharedSectionCards = sharedSectionDefinitions.map(({ id, packetField, houseVariant = null }) => {
+  const body = packet.sharedLayers[packetField];
+  if (!body) throw new Error(`Missing shared ${packetField} section.`);
   return {
     ...approvedSectionCard(packet.cards[0], id, body),
-    contentKey: sharedLunationEclipseSectionKey("eclipse-lunar", id),
+    contentKey: sharedLunationEclipseSectionKey("eclipse-lunar", id, houseVariant),
     lunation_sign: null,
     rising_sign: null,
     house: null,
@@ -168,7 +193,7 @@ const authoredCards = packet.cards.map((card) => {
   return {
     contentKey,
     content_role: "full_copy",
-    headline: `Pisces Lunar Eclipse for ${title(card.risingSign)} Rising`,
+    headline: "Pisces Lunar Eclipse Horoscope",
     body,
     review_status: "needs_review",
     owner_authored: true,

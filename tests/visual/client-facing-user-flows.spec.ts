@@ -1293,19 +1293,68 @@ test.describe("client-facing user flow case studies", () => {
     });
     await expectClientRouteLoads(page, "/#you");
 
-    const eclipseSection = page.locator(".daily-special-section").filter({
-      hasText: "Lunar Eclipse for Aries Rising"
-    });
-    await expect(eclipseSection).toBeVisible({ timeout: 30_000 });
-    await expect(eclipseSection).toContainText(
-      "The Pisces lunar eclipse shines upon your 12th house of karma, subconscious, and endings."
-    );
-    await expect(eclipseSection).toContainText(
-      "Lunar eclipses are portals into your soul."
-    );
-    await expect(eclipseSection).toContainText(
-      "Not everything that changes now needs an immediate response."
-    );
+    const titleTypography = new Map<string, Array<Record<string, string>>>();
+    for (const viewport of [
+      { name: "desktop", width: 1440, height: 1000 },
+      { name: "mobile", width: 390, height: 844 }
+    ] as const) {
+      await page.setViewportSize({ width: viewport.width, height: viewport.height });
+
+      for (const theme of ["light", "dark"] as const) {
+        await page.evaluate((nextTheme) => {
+          window.localStorage.setItem("tldrastro:theme", nextTheme);
+        }, theme);
+        await page.reload();
+        await expect(page.locator("main.app-shell")).toBeVisible({ timeout: routeReadyTimeoutMs });
+        await expect(page.locator(".app-shell")).toHaveClass(new RegExp(`theme-${theme}`));
+
+        const eclipseSection = page.locator(".daily-special-section").filter({
+          hasText: "Pisces Lunar Eclipse Horoscope"
+        });
+        const eclipseTitle = eclipseSection.getByRole("heading", {
+          level: 3,
+          name: "Pisces Lunar Eclipse Horoscope",
+          exact: true
+        });
+        await expect(eclipseSection).toBeVisible({ timeout: 30_000 });
+        await expect(eclipseTitle).toBeVisible();
+        await expect(eclipseTitle).not.toContainText("Rising");
+        await expect(eclipseSection).toContainText(
+          "The Pisces lunar eclipse shines upon your 12th house of karma, subconscious, and endings."
+        );
+        await expect(eclipseSection).toContainText(
+          "Lunar eclipses are portals into your soul."
+        );
+        await expect(eclipseSection).toContainText(
+          "Release your need to be in control, allow for endings, mourn if needed, and allow yourself to flow with the current of whatever is unfolding, even if the destination is still unknown."
+        );
+
+        const viewportTypography = titleTypography.get(viewport.name) ?? [];
+        viewportTypography.push(await eclipseTitle.evaluate((element) => {
+          const style = window.getComputedStyle(element);
+          return {
+            fontFamily: style.fontFamily,
+            fontSize: style.fontSize,
+            fontWeight: style.fontWeight,
+            letterSpacing: style.letterSpacing,
+            lineHeight: style.lineHeight,
+            marginTop: style.marginTop,
+            marginBottom: style.marginBottom,
+            textAlign: style.textAlign,
+            textTransform: style.textTransform
+          };
+        }));
+        titleTypography.set(viewport.name, viewportTypography);
+        await expectNoHorizontalOverflow(page, `${viewport.name} ${theme} eclipse horoscope title`);
+      }
+    }
+
+    for (const [viewport, typography] of titleTypography) {
+      expect(
+        typography,
+        `${viewport}: the established eclipse-card title typography remains identical in light and dark themes.`
+      ).toEqual(Array.from({ length: typography.length }, () => typography[0]));
+    }
     await assertNoClientErrors();
   });
 

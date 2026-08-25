@@ -53,11 +53,8 @@ for (const span of intentionSpans.spans) {
   list.push(span);
   spansByKey.set(span.contentKey, list);
 }
-const bodyEditsByKey = new Map();
-for (const edit of bodyEdits.edits) {
-  const list = bodyEditsByKey.get(edit.contentKey) ?? [];
-  list.push(edit);
-  bodyEditsByKey.set(edit.contentKey, list);
+if (bodyEdits.status !== "superseded_non_serving" || !Array.isArray(bodyEdits.historicalBodyEdits)) {
+  throw new Error("Complete eclipse body replacements must remain superseded and non-serving.");
 }
 const continuityCandidatesByKey = new Map();
 for (const edit of continuityCandidates.candidates) {
@@ -78,6 +75,8 @@ const shared = {
   mechanics: madlib.templates.eclipseMechanicsCandidate,
   noRitual: madlib.templates.eclipseNoRitualCandidate,
   close: madlib.templates.eclipseAdviceCandidate,
+  endingsNoRitual: madlib.templates.eclipseEndingsRecommendationCandidate,
+  endingsClose: madlib.templates.eclipseEndingsAdviceCandidate,
   cycleAnchor: cycleAnchorRow.body_you
     .replace("{{matchingNewMoonSign}}", "Pisces")
     .replace("{{matchingNewMoonDate}}", "{{matchingNewMoonDate}}")
@@ -100,22 +99,22 @@ const cards = rows.map((entry) => {
       "your 4th house of home, family, and generational karma."
     );
   }
+  if (entry.house === 10) {
+    eclipseOpening = eclipseOpening.replace(
+      " over the last six months (starting the Pisces new moon).",
+      " over the last six months."
+    );
+  }
 
   const approvedSpans = [...(spansByKey.get(entry.contentKey) ?? [])].sort((a, b) => b.start - a.start);
-  const approvedBodyEdits = [...(bodyEditsByKey.get(entry.contentKey) ?? [])];
+  const approvedBodyEdits = [];
   const reviewContinuityEdits = [...(continuityCandidatesByKey.get(entry.contentKey) ?? [])];
   const operations = [
-    ...approvedSpans.map((span) => ({ ...span, replacement: "", operation: "omit-intention" })),
-    ...approvedBodyEdits.map((edit) => ({ ...edit, operation: "replace-eclipse-body" })),
-    ...reviewContinuityEdits.map((edit) => ({ ...edit, operation: "review-continuity-edit" }))
+    ...approvedSpans.map((span) => ({ ...span, replacement: "", operation: "omit-intention" }))
   ].sort((a, b) => b.start - a.start);
   let bodyAfterOmissions = entry.body;
   for (const operation of operations) {
-    if (operation.operation === "review-continuity-edit") {
-      if (operation.ownerApproved || operation.reviewStatus !== "needs_owner_exact_review" || operation.promotionAuthorized) {
-        throw new Error(`Invalid review-held continuity operation for ${entry.contentKey}`);
-      }
-    } else if (!operation.ownerApproved) {
+    if (!operation.ownerApproved) {
       throw new Error(`Unapproved eclipse body operation for ${entry.contentKey}`);
     }
     const actual = entry.body.slice(operation.start, operation.end);
@@ -125,16 +124,19 @@ const cards = rows.map((entry) => {
   }
   const proposedBodyParts = splitOpeningSentence(bodyAfterOmissions);
   const proposedBookBody = `${eclipseOpening} ${proposedBodyParts.remainder}`;
-  const cycleAnchorSuppressed = entry.house === 10;
+  const cycleAnchorSuppressed = false;
+  const endingsHouse = [4, 8, 12].includes(entry.house);
+  const eclipseRecommendation = endingsHouse ? shared.endingsNoRitual : shared.noRitual;
+  const eclipseClose = endingsHouse ? shared.endingsClose : shared.close;
   const proposedSections = [
     { id: "opening", change: "replace-book-opening-sentence", text: eclipseOpening },
     { id: "eclipseNature", change: "added", text: shared.nature },
     { id: "eclipseMechanics", change: "added", text: shared.mechanics },
-    { id: "bookBodyRemainder", change: reviewContinuityEdits.length ? "review-held-eclipse-only-continuity-replacements" : approvedBodyEdits.length ? "approved-eclipse-only-editorial-replacements" : approvedSpans.length ? "unchanged-except-approved-declared-intention-omission" : "unchanged-byte-exact", text: proposedBodyParts.remainder },
+    { id: "bookBodyRemainder", change: approvedSpans.length ? "unchanged-except-approved-declared-intention-omission" : "unchanged-byte-exact", text: proposedBodyParts.remainder },
     { id: "cycleAnchor", change: cycleAnchorSuppressed ? "suppressed-duplicate-book-callback" : "unchanged-dynamic", text: cycleAnchorSuppressed ? null : shared.cycleAnchor },
     { id: "dynamicBlocks", change: "computed-not-rendered-in-packet", text: "Qualified aspects, Nodes, dates, ruler state, and eclipse-season facts remain engine supplied." },
-    { id: "eclipseNoRitual", change: "added", text: shared.noRitual },
-    { id: "eclipseClose", change: "added", text: shared.close }
+    { id: "eclipseNoRitual", change: endingsHouse ? "added-endings-house-variant" : "added", text: eclipseRecommendation },
+    { id: "eclipseClose", change: endingsHouse ? "added-endings-house-variant" : "added", text: eclipseClose }
   ];
   const completeCardTemplate = proposedSections
     .filter((section) => section.text)
@@ -165,9 +167,7 @@ const cards = rows.map((entry) => {
       sections: proposedSections,
       completeBookBody: proposedBookBody,
       replacedSentences: [{ from: bookBody.opening, to: eclipseOpening }],
-      removedSentences: entry.house === 4
-        ? ["Home is where the heart is.", "Each full moon has a theme that helps you understand your past in a new way."]
-        : [],
+      removedSentences: [],
       approvedBodyEdits: approvedBodyEdits.map((edit) => ({
         start: edit.start,
         end: edit.end,
@@ -211,7 +211,7 @@ const cards = rows.map((entry) => {
       bookOpeningSentence: "OWNER_APPROVED_2026_08_24",
       eclipseNature: "OWNER_APPROVED_2026_08_24",
       eclipseMechanics: "OWNER_APPROVED_2026_08_24",
-      bookBodyRemainder: reviewContinuityEdits.length ? "NEEDS_OWNER_EXACT_REVIEW" : approvedBodyEdits.length ? "OWNER_APPROVED_ECLIPSE_BODY_EDITS_2026_08_24" : approvedSpans.length ? "OWNER_APPROVED_INTENTION_OMISSION_2026_08_24" : "KEEP_UNCHANGED",
+      bookBodyRemainder: reviewContinuityEdits.length ? "NEEDS_OWNER_EXACT_REVIEW" : approvedSpans.length ? "OWNER_APPROVED_INTENTION_OMISSION_2026_08_24" : "KEEP_UNCHANGED",
       cycleAnchor: cycleAnchorSuppressed ? "OWNER_APPROVED_SUPPRESS_DUPLICATE_2026_08_24" : "KEEP_EXISTING",
       eclipseNoRitual: "OWNER_APPROVED_2026_08_24",
       eclipseClose: "OWNER_APPROVED_2026_08_24",
@@ -226,7 +226,7 @@ const packet = {
   serving: false,
   generatedAt: new Date().toISOString(),
   scope: "Twelve Pisces lunar-eclipse variants, one per rising sign and house.",
-  governingDecision: "The regular source remains intact. Pisces lunar-eclipse variants use approved eclipse layers, omit only two stored and owner-approved declared Full Moon intention blocks, apply Card 4's exact owner-approved eclipse-only continuity edits, stage review-held continuity candidates for the other eleven cards, suppress duplicate cycle anchors, and retain all changes as reversible variant metadata.",
+  governingDecision: "The regular source remains intact. Pisces lunar-eclipse variants use approved eclipse layers, omit only two stored and owner-approved declared Full Moon intention blocks, preserve every other byte of the protected book remainder, retain the localized matching-New-Moon anchor, and keep continuity candidates non-serving until separately approved.",
   source: {
     path: path.relative(root, sourcePath),
     sourceSchema: source.schema,
@@ -291,9 +291,7 @@ const markdown = [
     `> **ADDED · ECLIPSE MECHANICS**  `,
     `> ${shared.mechanics}`,
     "",
-    card.proposed.reviewContinuityEdits.length
-      ? "**BOOK HOROSCOPE · REVIEW-HELD CONTINUITY EDITS APPLIED**"
-      : card.proposed.omittedDeclaredIntentionBlocks.length
+    card.proposed.omittedDeclaredIntentionBlocks.length
         ? "**BOOK HOROSCOPE · APPROVED INTENTION BLOCK OMITTED**"
         : "**UNCHANGED · REMAINDER OF BOOK HOROSCOPE**",
     "",
@@ -318,17 +316,17 @@ const markdown = [
       : `> ${shared.cycleAnchor}`,
     "",
     `> **ADDED · NO-RITUAL PARAGRAPH**  `,
-    `> ${shared.noRitual}`,
+    `> ${card.proposed.sections.find((section) => section.id === "eclipseNoRitual").text}`,
     "",
     `> **ADDED · ECLIPSE CLOSE**  `,
-    `> ${shared.close}`,
+    `> ${card.proposed.sections.find((section) => section.id === "eclipseClose").text}`,
     "",
     "### Exact diff summary",
     "",
     `- Replaced: one book opening sentence → one eclipse opening sentence`,
     `- Added: eclipse nature, mechanics, no-ritual paragraph, and close`,
     `- Omitted declared intention blocks: **${card.proposed.omittedDeclaredIntentionBlocks.length}**`,
-    `- Review-held continuity edits applied: **${card.proposed.reviewContinuityEdits.length}**`,
+    `- Non-serving continuity candidates listed for later review: **${card.proposed.reviewContinuityEdits.length}**`,
     `- Dynamic cycle anchor suppressed as duplicate: **${card.proposed.cycleAnchorSuppressed ? "yes" : "no"}**`,
     `- Repeated lunation reminders remaining after the proposed edits: **${card.proposed.continuityReview.repeatedLunationReminderCount}**`,
     "",
@@ -355,8 +353,8 @@ const reviewCardsHtml = cards
         <p>${escapeHtml(shared.mechanics)}</p>
         ${remainder.split(/\n{2,}/u).map((paragraph) => `<p>${escapeHtml(paragraph)}</p>`).join("")}
         ${anchor.text ? `<p>${escapeHtml(anchor.text)}</p>` : `<p class="suppressed">The separate six-month anchor is suppressed because the book already carries the Pisces New Moon callback.</p>`}
-        <p>${escapeHtml(shared.noRitual)}</p>
-        <p>${escapeHtml(shared.close)}</p>
+        <p>${escapeHtml(card.proposed.sections.find((section) => section.id === "eclipseNoRitual").text)}</p>
+        <p>${escapeHtml(card.proposed.sections.find((section) => section.id === "eclipseClose").text)}</p>
         ${card.proposed.reviewContinuityEdits.length ? `<details class="edits"><summary>${card.proposed.reviewContinuityEdits.length} continuity edits awaiting exact approval</summary>${card.proposed.reviewContinuityEdits.map((edit) => `<div class="edit"><strong>Before</strong><p>${escapeHtml(edit.text)}</p><strong>After</strong><p>${escapeHtml(edit.replacement || "[omit]")}</p></div>`).join("")}</details>` : ""}
         <div class="meta">
           <span>Opening approved</span>
@@ -469,8 +467,8 @@ const trialCards = cards.map((card) => {
       : introCarriesExactCycleAnchor
         ? "exact-date-in-intro"
         : null,
-    recommendation: shared.noRitual,
-    close: shared.close
+    recommendation: [4, 8, 12].includes(card.house) ? shared.endingsNoRitual : shared.noRitual,
+    close: [4, 8, 12].includes(card.house) ? shared.endingsClose : shared.close
   };
 });
 const trialPacket = {
@@ -518,8 +516,8 @@ const trialHtml = `<!doctype html>
 </main></body></html>`;
 
 fs.writeFileSync(jsonOut, `${JSON.stringify(packet, null, 2)}\n`);
-fs.writeFileSync(markdownOut, `${markdown}\n`);
-fs.writeFileSync(htmlOut, html);
+fs.writeFileSync(markdownOut, `${markdown.replace(/[ \t]+$/gmu, "")}\n`);
+fs.writeFileSync(htmlOut, html.replace(/[ \t]+$/gmu, ""));
 fs.writeFileSync(trialJsonOut, `${JSON.stringify(trialPacket, null, 2)}\n`);
 fs.writeFileSync(trialHtmlOut, trialHtml);
 

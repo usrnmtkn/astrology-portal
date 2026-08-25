@@ -16,7 +16,7 @@ Three files are supplied with this spec:
 
 | File | Contents | Becomes |
 |---|---|---|
-| `ritual-and-the-moon-lunation-horoscopes.json` | 266 lunation horoscopes, verbatim | the `book-ritual-and-the-moon` store |
+| `ritual-and-the-moon-lunation-horoscopes.json` | Initial 266 lunation horoscopes; later completed with 22 manuscript recoveries and their owner-directed mechanical correction record | the `book-ritual-and-the-moon` store |
 | `book-sections.json` | 645 typed, sign-tagged sections from the same book | polar axis, light & shadow, actions & intentions, rituals, tarotscopes |
 | `horoscope-madlib.json` | house and sign tables derived from the original 265-entry extraction; the recovered 6th-house entry does not change its canonical domains | house domains, rulers, arcana, opposite-house map |
 
@@ -60,10 +60,12 @@ and leave the index stale.
 
 Assert these after ingest and report the numbers back:
 
-- 266 `lunation-horoscope` entries
-- 266 distinct `(kind, sign, rising)` cells out of a possible 288, with 22 absent:
-  the entire Taurus new moon set (12), four other Scorpio-rising new moons, five
-  Scorpio-rising full moons, and the Aquarius full moon for Virgo rising
+- 288 `lunation-horoscope` entries
+- 288 distinct `(kind, sign, rising)` cells: all 144 New Moon cells and all 144 Full Moon cells
+- 22 entries carry manuscript-recovery provenance because the original dedicated
+  cell extraction omitted them: the entire Taurus New Moon set (12), four other
+  Scorpio-rising New Moons, five Scorpio-rising Full Moons, and the Aquarius Full
+  Moon for Virgo rising
 - 645 sections in `book-sections.json`, typed as: horoscope 339, tarotscopes 162,
   horoscope-set 41, ritual 31, actions-intentions 25, polar-axis 12, ritual-timing 12,
   light-shadow 9, affirmations 8, journaling 6
@@ -76,11 +78,17 @@ distinct lunation cells. They collapse to 126 unique bodies and include duplicat
 partials, container headings, page markers, and headings parsed as bodies. The
 dedicated horoscope file remains the canonical cell source.
 
-The reconciliation recovered one real passage omitted by the original cell
-extractor: Aquarius New Moon, Virgo rising, 6th house. Its heading says "Scorpio
-Rising," but its Virgo sign tag, 6th-house placement, body, and position in the
-Aquarius sequence identify it as Virgo rising. It has been added to the canonical
-file with recovery provenance, bringing coverage from 265 to 266. Do not ingest
+The reconciliation first recovered Aquarius New Moon, Virgo rising, 6th house.
+Its heading says "Scorpio Rising," but its Virgo sign tag, 6th-house placement,
+body, and position in the Aquarius sequence identify it as Virgo rising. A later
+source audit recovered the remaining 22 cells from the owner-authored lunation
+import manuscripts in `tldr-astro-source-bundle.zip`, bringing coverage from 266
+to 288. The owner then directed a surgical correction pass for factual
+cross-references, typos, broken grammar, and extraction artifacts. The original
+and corrected hashes plus every exact edit are retained in
+`source/recovered-lunation-copy-corrections-v1.json`. The owner explicitly approved
+the 22 corrected passages for live serving on 2026-08-24; the correction ledger,
+not this general spec, is their exact-hash approval record. Do not ingest
 `type: horoscope` rows from `book-sections.json` as additional cells.
 
 ---
@@ -91,7 +99,7 @@ The lunation horoscope card stops being assembled from generic `fallback-hook/lu
 rows and becomes: the owner's book entry for that exact cell, plus a small number of
 calculated blocks. A per-user natal contact may be added in Phase 2.
 
-Source of truth for the body is `book-ritual-and-the-moon`, 266 authored entries.
+Source of truth for the body is `book-ritual-and-the-moon`, 288 authored entries.
 
 ---
 
@@ -278,14 +286,33 @@ closed. The two Pisces spans, in houses 4 and 12, were owner-approved on
 
 Card-specific Pisces rulings from 2026-08-24: Card 4's eclipse opening is `The
 Pisces lunar eclipse shines upon your 4th house of home, family, and generational
-karma.` Card 10 retains the book's Pisces New Moon callback and suppresses the
-separate dynamic cycle anchor so the six-month fact appears once.
+karma.` Card 10 removes the vague `(starting the Pisces new moon)` phrase from
+the eclipse opening and keeps the separate, localized matching-New-Moon anchor.
+
+### Protected book-body integrity gate
+
+Every source cell is hashed at ingest. A serving eclipse `evergreen-body` records
+the source-cell hash, source-opening hash, untouched source-remainder hash, and
+the hash of the exact remainder it may emit as `preservedBookRemainderSha256`.
+Runtime recomputes those hashes in
+both the browser and Node resolvers before adding the body to a card.
+
+The only permitted body transform is an omission whose exact start, end, text,
+text hash, and owner approval are stored with the serving section. Runtime
+replays those omissions against the protected source and hashes the result. A
+changed source, a paraphrased remainder, an unapproved omission, or stale
+approval metadata throws `BOOK_BODY_MODIFIED` and the card does not render.
+
+Every other approved eclipse section is also rehashed before rendering. A
+changed section throws `ECLIPSE_SECTION_MODIFIED`. Every emitted eclipse part
+must carry at least one source key; missing provenance throws
+`ECLIPSE_PROVENANCE_MISSING`. Review-held continuity candidates remain visible
+in review artifacts but are never applied by the packet builder or renderer.
 
 Owner-approved eclipse recommendation, 2026-08-24:
-`Eclipses are not the recommended time for ritual, manifestation, or intention
-setting. They happen along the Lunar Nodes, and part of the work is letting the
-situation unfold before deciding what it is supposed to become.` Approval of
-this shared paragraph does not authorize serving an unapproved complete card.
+`Eclipses happen along the Lunar Nodes, and part of the work is letting the
+situation unfold before deciding what it's supposed to become.` Approval of this
+shared paragraph does not authorize serving an unapproved complete card.
 
 The proposed layers are recorded in
 `source/eclipse-owner-language-v1.json` and in the madlib template. Every sentence
@@ -309,8 +336,8 @@ Reader lookup order is:
 
 1. verified, approved eclipse opening;
 2. approved eclipse nature and mechanics sections;
-3. approved eclipse-specific house body, or the exact evergreen New/Full Moon
-   body remainder when that body is not approved;
+3. the hash-verified exact evergreen New/Full Moon body remainder, after any
+   explicitly approved omission spans;
 4. the engine-derived cycle anchor when the book body does not already contain it;
 5. each eligible dynamic section independently;
 6. approved eclipse recommendation and close.
@@ -322,6 +349,10 @@ internal `needs_review` flag naming the omitted content key and the evergreen
 fallback key. Review flags are editorial metadata and never appear in reader copy.
 An unreviewed addition is never relabeled as approved merely because its evergreen
 fallback is live.
+
+This fail-soft rule applies to optional sections. A `BOOK_BODY_MODIFIED` failure
+means the required evergreen base itself cannot be trusted, so the complete card
+fails closed and does not render.
 
 The known eclipse opening is factual framing, not an optional editorial flourish.
 When the engine verifies eclipse kind, sign, rising sign, and house and an approved
@@ -350,14 +381,11 @@ section in an Aries lunation card is correct, because that section was written a
 the Aries/Libra axis. Taking a sentence from the Taurus Full Moon horoscope and
 putting it in an Aries card is not.
 
-22 cells have no entry:
-
-- all 12 Taurus New Moon rising-sign cells
-- Cancer, Leo, Libra, and Capricorn New Moons for Scorpio rising
-- Taurus, Cancer, Leo, Libra, and Capricorn Full Moons for Scorpio rising
-- Aquarius Full Moon for Virgo rising
-
-Those fall back to row assembly, never to a neighbouring cell.
+All 288 cells have an owner-book entry. The 22 cells missing from the first
+dedicated extraction were recovered from their matching owner-authored manuscript
+blocks and received the recorded owner-directed mechanical correction pass. A
+failed or missing exact-cell lookup still falls back to row assembly and never
+borrows from a neighbouring cell.
 
 Enforcement, three layers:
 
@@ -652,8 +680,11 @@ served output can be traced back to its approved inputs.
    marked canonical for each house in `horoscope-madlib.json`.
 4. **Lilith, Chiron, sect, dignity, minor aspects, applying/separating, and natal
    contacts: DEFERRED.** None are Phase 1 dependencies.
-5. **Missing cells: OPEN.** Decide whether to author the 22 absent cells. Until
-   then they use row fallback and never borrow from another book cell.
+5. **Missing cells: DECIDED.** All 22 omitted cells were recovered from the
+   owner-authored manuscripts and corrected under the recorded 2026-08-24 owner
+   directive. The owner explicitly approved all 22 corrected hashes for live
+   serving on 2026-08-24. Coverage is 288 of 288; a failed lookup still uses row
+   fallback and never borrows from another book cell.
 6. **Long-section excerpts: OPEN.** The exact boundaries for polar-axis,
    light-shadow, and actions-intentions excerpts require separate approval. Until
    approved, those optional slots omit.
