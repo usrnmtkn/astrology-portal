@@ -14,6 +14,7 @@ import {
   spanSha256,
   writeJsonAtomically
 } from "./lib/content-approval-governance.mjs";
+import { buildTemplateSlotPreflight } from "./lib/content-template-slot-governance.mjs";
 
 const span = "This exact source passage is awaiting an omission decision.";
 const queue = {
@@ -167,9 +168,72 @@ assert.equal(promoted.rows[0].review_status, "approved");
 assert.equal(promoted.rows[0].approval.approvalLevel, "exact_owner_approved");
 assert.deepEqual(promoted.rows[1], untouched, "unrelated approved rows must remain byte-equivalent as JSON values");
 assert.deepEqual(receipt.unrelatedApprovedRowsChanged, []);
+assert.equal(receipt.changes[0].slotPreflight.passed, true);
 assert.throws(
   () => buildContentPromotionPlan({ repoRoot: promotionRepo, application: promotionApplication }),
   /PROMOTION_SOURCE_TEXT_STALE/u
+);
+
+const friendSlotPreflight = buildTemplateSlotPreflight({
+  beforeText: "{{personPreferredName}} may reconsider the delay.",
+  afterText: "{{personPreferredName}} may reconsider once {{personSubject}} can see the full answer.",
+  contentKey: "fallback-hook/daily-body/soft/mars",
+  textField: "body_they"
+});
+assert.equal(friendSlotPreflight.renderPersonFixtures, true);
+assert.deepEqual(friendSlotPreflight.addedSlots, ["personSubject"]);
+assert.deepEqual(friendSlotPreflight.fixtures.map((fixture) => fixture.profile), ["she/her", "he/him", "they/them"]);
+assert.equal(friendSlotPreflight.fixtures.every((fixture) => !fixture.rendered.includes("{{")), true);
+
+assert.throws(
+  () => buildTemplateSlotPreflight({
+    beforeText: "{{houseTopic}} matters.",
+    afterText: "{{unsupportedArena}} matters.",
+    contentKey: "fallback-hook/transit-effect-house/sun",
+    textField: "body_you"
+  }),
+  /PROMOTION_UNSUPPORTED_TEMPLATE_SLOT/u
+);
+assert.throws(
+  () => buildTemplateSlotPreflight({
+    beforeText: "{{houseTopic}} matters.",
+    afterText: "{{houseTopic}} matters to {{newArena}}.",
+    contentKey: "fallback-hook/transit-effect-house/sun",
+    textField: "body_you",
+    slotContract: {
+      allowedSlots: ["houseTopic", "newArena"],
+      requiredSlots: ["houseTopic"]
+    },
+    familySupportedSlots: ["houseTopic"]
+  }),
+  /PROMOTION_SLOT_NOT_SUPPORTED_BY_FAMILY_CONTRACT/u
+);
+assert.throws(
+  () => buildTemplateSlotPreflight({
+    beforeText: "{{houseTopic}} matters.",
+    afterText: "This matters.",
+    contentKey: "fallback-hook/transit-effect-house/sun",
+    textField: "body_you"
+  }),
+  /PROMOTION_REQUIRED_TEMPLATE_SLOT_REMOVED/u
+);
+assert.throws(
+  () => buildTemplateSlotPreflight({
+    beforeText: "{{personPreferredName}} may wonder.",
+    afterText: "{{personPreferredName}} may wonder if {{personSubject}} were too much.",
+    contentKey: "fallback-hook/daily-body/soft/venus",
+    textField: "body_they"
+  }),
+  /PROMOTION_PERSON_FIXTURE_GRAMMAR_FAILED: she\/her/u
+);
+assert.throws(
+  () => buildTemplateSlotPreflight({
+    beforeText: "No slots.",
+    afterText: "A broken {{slot remains.",
+    contentKey: "fallback-hook/example",
+    textField: "body_you"
+  }),
+  /PROMOTION_MALFORMED_TEMPLATE_SLOT/u
 );
 
 console.log("Content approval governance tests passed.");
