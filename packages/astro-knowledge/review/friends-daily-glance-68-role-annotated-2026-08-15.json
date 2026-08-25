@@ -1,0 +1,1532 @@
+{
+  "schema": "tldrastro-friends-daily-glance-role-annotated-v1",
+  "version": "1.0.0",
+  "preparedAt": "2026-08-24",
+  "authoredAt": "2026-08-15",
+  "status": "OWNER_APPROVED_FOR_SERVING",
+  "ownerDirection": "Author the Friend sentence once, mark semantic person roles, and let the renderer supply the stored pronouns. Do not derive Friend copy from Self copy.",
+  "approvalBoundary": "Owner approval 2026-08-24: all 68 role-annotated Friend Daily Glance headline/body pairs in the review workbook, including the 65 agreement-sensitive recuts, are approved for serving. Legitimate integrity pins may be updated value-only.",
+  "ownerApproval": "I approve all 68 role-annotated Friend Daily Glance headline/body pairs in the review workbook, including the 65 agreement-sensitive recuts, for serving. Update legitimate integrity pins value-only.",
+  "promotionAuthorized": true,
+  "servingChanges": true,
+  "sourceWorkbooks": [
+    {
+      "path": "/Users/mprez/Downloads/friends-daily-glance-68-body-they-authored-2026-08-15.xlsx",
+      "sha256": "37b64c36c802e7deddaa54b4e9f83a0ab0bd8ec1adee1ceefe8ad785d7a40c7f",
+      "role": "owner-authored Friend headlines and bodies"
+    },
+    {
+      "path": "/Users/mprez/Code/outputs/friends-daily-role-annotated-2026-08-15/friends-daily-glance-68-role-annotated-review-2026-08-15.xlsx",
+      "sha256": "d59c40d23de48275838b2f2502f6d99d65e19e7c378e3263ee3274a3a2b9d4bc",
+      "role": "role-annotation and pronoun-render review"
+    }
+  ],
+  "migration": {
+    "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+    "keys": 68,
+    "fields": [
+      "body_they"
+    ],
+    "preservedFields": [
+      "body_you",
+      "review_status",
+      "contentKey",
+      "content_role",
+      "grammar_frame",
+      "notes"
+    ],
+    "agreementSensitiveRecuts": 65,
+    "cardsWithRecuts": 47,
+    "literalOtherPersonPronounCases": 3
+  },
+  "invariants": {
+    "secondPersonTokens": 0,
+    "unsupportedPersonSlots": 0,
+    "requiredRenderProfiles": [
+      "she/her",
+      "he/him",
+      "they/them"
+    ],
+    "bridgeRemovalRequiresAll68Passing": true
+  },
+  "records": [
+    {
+      "key": "conjunction/chiron",
+      "status": "OWNER_APPROVED",
+      "headlineContentKey": "fallback-hook/daily-headline/conjunction/chiron",
+      "bodyContentKey": "fallback-hook/daily-body/conjunction/chiron",
+      "sourceSelf": {
+        "headlineSha256": "13e228ff509edc38675baec2329edc92c36a63a88c93c9b8ed4ad40ddb91252e",
+        "bodySha256": "aab7a569a5da78c0e02e9234630a0e5f3ab78513010d8edc41f00e1aa18efcde"
+      },
+      "originalAuthoredFriend": {
+        "headline": "{{personPreferredName}} may want the care and still hesitate to take it.",
+        "body": "{{personPreferredName}} may type “I’m fine” after someone offers to call, even when part of them wants to say yes. Wanting the help and expecting disappointment can exist at the same time, which can make refusal feel safer than asking for what they need. If they change their mind and accept the call, the care has somewhere to land."
+      },
+      "roleAnnotatedFriend": {
+        "headline": "{{personPreferredName}} may want the care and still hesitate to take it.",
+        "body": "{{personPreferredName}} may type “I’m fine” after someone offers to call, even when part of {{personObject}} wants to say yes. Wanting the help and expecting disappointment can exist at the same time, which can make refusal feel safer than asking for what {{personPreferredName}} needs. If {{personPreferredName}} changes {{personPossessiveAdjective}} mind and accepts the call, the care has somewhere to land."
+      },
+      "agreementRecuts": [
+        "what they need -> what {{personPreferredName}} needs",
+        "If they change their mind and accept -> If {{personPreferredName}} changes {{personPossessiveAdjective}} mind and accepts"
+      ],
+      "literalOtherPersonPronouns": []
+    },
+    {
+      "key": "conjunction/jupiter",
+      "status": "OWNER_APPROVED",
+      "headlineContentKey": "fallback-hook/daily-headline/conjunction/jupiter",
+      "bodyContentKey": "fallback-hook/daily-body/conjunction/jupiter",
+      "sourceSelf": {
+        "headlineSha256": "d8a2be8932baa7797befee4097d4a1c4d461231ee24a3fe2257f9ba6f2310017",
+        "bodySha256": "057ca4223ab7d04c5a58611e2b2c3dbbb988ef1efb56d2d9c15e76b6db4d227b"
+      },
+      "originalAuthoredFriend": {
+        "headline": "Too much help can become another thing for {{personPreferredName}} to manage.",
+        "body": "{{personPreferredName}} may ask for a ride and end up with three offers, a meal plan, and enough enthusiasm to turn one quick errand into a group project. The support is genuine, but coordinating everyone can take more energy than the original task. The easiest version of the day is the one where they accept the offer that actually helps and let the rest go."
+      },
+      "roleAnnotatedFriend": {
+        "headline": "Too much help can become another thing for {{personPreferredName}} to manage.",
+        "body": "{{personPreferredName}} may ask for a ride and end up with three offers, a meal plan, and enough enthusiasm to turn one quick errand into a group project. The support is genuine, but coordinating everyone can take more energy than the original task. The easiest version of the day comes from accepting the offer that actually helps and letting the rest go."
+      },
+      "agreementRecuts": [
+        "The easiest version of the day is the one where they accept the offer that actually helps and let the rest go. -> The easiest version of the day comes from accepting the offer that actually helps and letting the rest go."
+      ],
+      "literalOtherPersonPronouns": []
+    },
+    {
+      "key": "conjunction/lilith",
+      "status": "OWNER_APPROVED",
+      "headlineContentKey": "fallback-hook/daily-headline/conjunction/lilith",
+      "bodyContentKey": "fallback-hook/daily-body/conjunction/lilith",
+      "sourceSelf": {
+        "headlineSha256": "7ce89ae5425e95bf703ae659468896f47d8631066451fa3002287c13a42b7a2d",
+        "bodySha256": "0fd47299e4f228c4e45fa905546c84ecae62e11218782c530d62d8553a359895"
+      },
+      "originalAuthoredFriend": {
+        "headline": "{{personPreferredName}} may keep circling back to the thing they said they did not want.",
+        "body": "{{personPreferredName}} can finish the task, close the tab, and then reopen the option they saved. A comfortable routine has not necessarily erased the part of them that wants something different. The useful clue is the thing they keep returning to after they have already talked themselves out of it once."
+      },
+      "roleAnnotatedFriend": {
+        "headline": "{{personPreferredName}} may keep circling back to the thing {{personSubject}} said {{personSubject}} did not want.",
+        "body": "{{personPreferredName}} can finish the task, close the tab, and then reopen the option {{personSubject}} saved. A comfortable routine has not necessarily erased the part of {{personObject}} that wants something different. The useful clue is the thing {{personPreferredName}} keeps returning to after already talking {{personReflexive}} out of it once."
+      },
+      "agreementRecuts": [
+        "the thing they keep returning to after they have already talked themselves out of it once -> the thing {{personPreferredName}} keeps returning to after already talking {{personReflexive}} out of it once"
+      ],
+      "literalOtherPersonPronouns": []
+    },
+    {
+      "key": "conjunction/mars",
+      "status": "OWNER_APPROVED",
+      "headlineContentKey": "fallback-hook/daily-headline/conjunction/mars",
+      "bodyContentKey": "fallback-hook/daily-body/conjunction/mars",
+      "sourceSelf": {
+        "headlineSha256": "399756a7f68fbd51f93ef14a459dedd2b2504e42d507c11cc291e4cc2e2c813c",
+        "bodySha256": "c64cf7a085f95e641baf9adec6b0edc8eeb9c1d61ed1aaa8c58e239f2792f6a3"
+      },
+      "originalAuthoredFriend": {
+        "headline": "{{personPreferredName}} may be moving before they have decided what the feeling needs.",
+        "body": "{{personPreferredName}} may walk out angry, make the worried call immediately, or jump into an argument that did not involve them. A fast response is not automatically the wrong response, but it gives them less time to tell whether they are solving the problem or making it bigger. A short pause can help them decide what they actually want the next ten minutes to accomplish."
+      },
+      "roleAnnotatedFriend": {
+        "headline": "{{personPreferredName}} may be moving before deciding what the feeling needs.",
+        "body": "{{personPreferredName}} may walk out angry, make the worried call immediately, or jump into an argument that did not involve {{personObject}}. A fast response is not automatically the wrong response, but it gives {{personObject}} less time to tell if the response is solving the problem or making it bigger. A short pause can help {{personObject}} decide what the next ten minutes should accomplish."
+      },
+      "agreementRecuts": [
+        "before they have decided what the feeling needs -> before deciding what the feeling needs",
+        "tell whether they are solving the problem or making it bigger -> tell if the response is solving the problem or making it bigger",
+        "what they actually want the next ten minutes to accomplish -> what the next ten minutes should accomplish"
+      ],
+      "literalOtherPersonPronouns": []
+    },
+    {
+      "key": "conjunction/mercury",
+      "status": "OWNER_APPROVED",
+      "headlineContentKey": "fallback-hook/daily-headline/conjunction/mercury",
+      "bodyContentKey": "fallback-hook/daily-body/conjunction/mercury",
+      "sourceSelf": {
+        "headlineSha256": "f907ce6203daf43cf7ad85e1bc24304e1dcea78c635a56247c2a95d041c17826",
+        "bodySha256": "7ae8002d8f12c06fc8f8ad938972b84359be6c1736c86f20658e55239e585da7"
+      },
+      "originalAuthoredFriend": {
+        "headline": "Once {{personPreferredName}} says what is really worrying them, the rest may come out quickly.",
+        "body": "{{personPreferredName}} may be trying to arrange who can take a family member to an appointment when they finally admit they do not think that person should go alone. Then the rest spills out: the work they would miss, who else could help, and why this keeps becoming their responsibility. It may be easier to settle who is going first and come back to the larger question once the immediate problem is handled."
+      },
+      "roleAnnotatedFriend": {
+        "headline": "Once {{personPreferredName}} says what is really worrying {{personObject}}, the rest may come out quickly.",
+        "body": "{{personPreferredName}} may be trying to arrange who can take a family member to an appointment when the real worry finally comes out: that person should not go alone. Then the rest spills out: the work {{personSubject}} would miss, who else could help, and why this keeps becoming {{personPossessiveAdjective}} responsibility. It may be easier to settle who is going first and come back to the larger question once the immediate problem is handled."
+      },
+      "agreementRecuts": [
+        "when they finally admit they do not think that person should go alone -> when the real worry finally comes out: that person should not go alone"
+      ],
+      "literalOtherPersonPronouns": []
+    },
+    {
+      "key": "conjunction/moon",
+      "status": "OWNER_APPROVED",
+      "headlineContentKey": "fallback-hook/daily-headline/conjunction/moon",
+      "bodyContentKey": "fallback-hook/daily-body/conjunction/moon",
+      "sourceSelf": {
+        "headlineSha256": "498d8433bbdace0a4c7dedf0be046fc53e4281156a20f916021ebfdc1c4057bb",
+        "bodySha256": "16a334fc41efec2a98b94d703dcd30801ed1fef79e3b3683c1dbe3b6035421bb"
+      },
+      "originalAuthoredFriend": {
+        "headline": "A changed plan may wear down {{personPreferredName}}’s patience faster than usual.",
+        "body": "When someone asks to reschedule, {{personPreferredName}} may get irritated or defensive before they have even processed the request. Listing every inconvenience can turn a simple change into a bigger emotional job. A straight answer about what they can and cannot do may be enough; they do not have to manage the other person’s reaction too."
+      },
+      "roleAnnotatedFriend": {
+        "headline": "A changed plan may wear down {{personPreferredName}}’s patience faster than usual.",
+        "body": "When someone asks to reschedule, {{personPreferredName}} may get irritated or defensive before processing the request. Listing every inconvenience can turn a simple change into a bigger emotional job. A straight answer about what {{personSubject}} can and cannot do may be enough. Managing the other person’s reaction is a separate job."
+      },
+      "agreementRecuts": [
+        "before they have even processed the request -> before processing the request",
+        "A straight answer about what they can and cannot do may be enough; they do not have to manage the other person’s reaction too. -> A straight answer about what {{personSubject}} can and cannot do may be enough. Managing the other person’s reaction is a separate job."
+      ],
+      "literalOtherPersonPronouns": []
+    },
+    {
+      "key": "conjunction/neptune",
+      "status": "OWNER_APPROVED",
+      "headlineContentKey": "fallback-hook/daily-headline/conjunction/neptune",
+      "bodyContentKey": "fallback-hook/daily-body/conjunction/neptune",
+      "sourceSelf": {
+        "headlineSha256": "42cde7b16c3a0e5ec3128e33ec78d3373b3bd42590a4fbe942b02c08500471b5",
+        "bodySha256": "b130f54c5bbe417bd94d6dec66aec92fdcf3bd136ac079b34b4a902598a9c00a"
+      },
+      "originalAuthoredFriend": {
+        "headline": "{{personPreferredName}} may need less noise before they know what they actually feel.",
+        "body": "A song can undo {{personPreferredName}}. An old memory can color the afternoon, or someone else’s mood can follow them home before they realize they picked it up. More quiet, fewer opinions, and a little time away from the decision can help them sort their own feeling from everything they absorbed. Writing, making something, showering, or simply staring out the window may give the day enough space to settle."
+      },
+      "roleAnnotatedFriend": {
+        "headline": "{{personPreferredName}} may need less noise to identify the feeling.",
+        "body": "A song can undo {{personPreferredName}}. An old memory can color the afternoon, or {{personPreferredName}} can carry someone else’s mood home without realizing it. More quiet, fewer opinions, and a little time away from the decision can help {{personObject}} sort {{personPossessiveAdjective}} own feeling from everything {{personSubject}} absorbed. Writing, making something, showering, or simply staring out the window may give the day enough space to settle."
+      },
+      "agreementRecuts": [
+        "{{personPreferredName}} may need less noise before they know what they actually feel. -> {{personPreferredName}} may need less noise to identify the feeling.",
+        "or someone else’s mood can follow them home before they realize they picked it up -> or {{personPreferredName}} can carry someone else’s mood home without realizing it"
+      ],
+      "literalOtherPersonPronouns": []
+    },
+    {
+      "key": "conjunction/north-node",
+      "status": "OWNER_APPROVED",
+      "headlineContentKey": "fallback-hook/daily-headline/conjunction/north-node",
+      "bodyContentKey": "fallback-hook/daily-body/conjunction/north-node",
+      "sourceSelf": {
+        "headlineSha256": "049dfe6fbec1b817ccb78faef3b60d5e9c99c61b9e5cfc9c23184046b9d5aeba",
+        "bodySha256": "0a8b978e941b8f8c332df13478446689853198e89face34e5932ec1fd6529717"
+      },
+      "originalAuthoredFriend": {
+        "headline": "{{personPreferredName}} keeps reopening a next step they said they were not ready for.",
+        "body": "The application, class, project, or responsibility {{personPreferredName}} keeps reopening probably deserves a closer look. That does not mean they need to overhaul their life. Repeated attention is information. If the same opportunity keeps pulling them back, the useful question is what about it still has their attention."
+      },
+      "roleAnnotatedFriend": {
+        "headline": "{{personPreferredName}} keeps reopening a next step {{personSubject}} said could wait.",
+        "body": "The application, class, project, or responsibility {{personPreferredName}} keeps reopening probably deserves a closer look. A closer look does not require a life overhaul. Repeated attention is information. If the same opportunity keeps pulling {{personObject}} back, the useful question is what about it still has {{personPossessiveAdjective}} attention."
+      },
+      "agreementRecuts": [
+        "a next step they said they were not ready for -> a next step {{personSubject}} said could wait",
+        "That does not mean they need to overhaul their life. -> A closer look does not require a life overhaul."
+      ],
+      "literalOtherPersonPronouns": []
+    },
+    {
+      "key": "conjunction/pluto",
+      "status": "OWNER_APPROVED",
+      "headlineContentKey": "fallback-hook/daily-headline/conjunction/pluto",
+      "bodyContentKey": "fallback-hook/daily-body/conjunction/pluto",
+      "sourceSelf": {
+        "headlineSha256": "fceb2b72b10a1e2890be501e3725a7fbcbeacdc8c62707c69a0f4e2b13d51e91",
+        "bodySha256": "c97a99a79188d742814aa9364f2da9d6e40b40ea56427396da9671b86d639945"
+      },
+      "originalAuthoredFriend": {
+        "headline": "{{personPreferredName}} may reach for control before admitting they are upset.",
+        "body": "A small reaction can show how strongly {{personPreferredName}} wants control, recognition, or certainty. They may push, withhold, test, or try to win because saying what actually hurt feels more exposing. The argument usually gets harder once the original feeling disappears underneath a fight about who has the upper hand."
+      },
+      "roleAnnotatedFriend": {
+        "headline": "{{personPreferredName}} may reach for control before admitting to being upset.",
+        "body": "A small reaction can show how strongly {{personPreferredName}} wants control, recognition, or certainty. {{personSubjectCapitalized}} may push, withhold, test, or try to win because saying what actually hurt feels more exposing. The argument usually gets harder once the original feeling disappears underneath a fight about who has the upper hand."
+      },
+      "agreementRecuts": [
+        "before admitting they are upset -> before admitting to being upset"
+      ],
+      "literalOtherPersonPronouns": []
+    },
+    {
+      "key": "conjunction/saturn",
+      "status": "OWNER_APPROVED",
+      "headlineContentKey": "fallback-hook/daily-headline/conjunction/saturn",
+      "bodyContentKey": "fallback-hook/daily-body/conjunction/saturn",
+      "sourceSelf": {
+        "headlineSha256": "b887c820105d12ff38e9b07558a554f8852915f5f16b0644d6c4781aa7cadb98",
+        "bodySha256": "bb7c6944c09d19ee88a4c44141de7ef294b5e91137118545892f7037179f5f07"
+      },
+      "originalAuthoredFriend": {
+        "headline": "Helping family may take more out of {{personPreferredName}} than the task itself.",
+        "body": "An appointment gets confirmed, so {{personPreferredName}} moves a work call and has to fit the rest of the day into fewer hours. Then another request arrives before they have adjusted to the first one. The burden is not only showing up; it is rearranging the whole day every time someone needs help. The most workable choice may be to decide what they can actually carry and let the rest wait."
+      },
+      "roleAnnotatedFriend": {
+        "headline": "Helping family may take more out of {{personPreferredName}} than the task itself.",
+        "body": "An appointment gets confirmed, so {{personPreferredName}} moves a work call and has to fit the rest of the day into fewer hours. Then another request arrives before {{personPreferredName}} has adjusted to the first one. The burden is not only showing up; it is rearranging the whole day every time someone needs help. The most workable choice may be to decide what {{personSubject}} can actually carry and let the rest wait."
+      },
+      "agreementRecuts": [
+        "before they have adjusted to the first one -> before {{personPreferredName}} has adjusted to the first one"
+      ],
+      "literalOtherPersonPronouns": []
+    },
+    {
+      "key": "conjunction/south-node",
+      "status": "OWNER_APPROVED",
+      "headlineContentKey": "fallback-hook/daily-headline/conjunction/south-node",
+      "bodyContentKey": "fallback-hook/daily-body/conjunction/south-node",
+      "sourceSelf": {
+        "headlineSha256": "7563eb1e10a996f684f2ce4d151919f82ed5376bf2b0a4038f3450c5f44544de",
+        "bodySha256": "b5bf4fa9f92987e67a9e4fd8a8b57624c5d95e6521dd08e93293d1b2557e4d41"
+      },
+      "originalAuthoredFriend": {
+        "headline": "Something familiar may look like a second chance to {{personPreferredName}}.",
+        "body": "An old employer reaches out. An ex checks in. A plan {{personPreferredName}} abandoned suddenly looks possible again. Because they recognize the pattern, their body may relax before their mind remembers what it cost. Familiarity can make an option feel safe without making it good. The useful question is whether they still want it or simply know how to survive it."
+      },
+      "roleAnnotatedFriend": {
+        "headline": "Something familiar may look like a second chance to {{personPreferredName}}.",
+        "body": "An old employer reaches out. An ex checks in. A plan {{personPreferredName}} abandoned suddenly looks possible again. Because {{personPreferredName}} recognizes the pattern, {{personPossessiveAdjective}} body may relax before {{personPossessiveAdjective}} mind remembers what it cost. Familiarity can make an option feel safe without making it good. The useful question is if {{personPreferredName}} still wants it or simply knows how to survive it."
+      },
+      "agreementRecuts": [
+        "Because they recognize the pattern -> Because {{personPreferredName}} recognizes the pattern",
+        "whether they still want it or simply know how to survive it -> if {{personPreferredName}} still wants it or simply knows how to survive it"
+      ],
+      "literalOtherPersonPronouns": []
+    },
+    {
+      "key": "conjunction/sun",
+      "status": "OWNER_APPROVED",
+      "headlineContentKey": "fallback-hook/daily-headline/conjunction/sun",
+      "bodyContentKey": "fallback-hook/daily-body/conjunction/sun",
+      "sourceSelf": {
+        "headlineSha256": "5a38a7f36118ceda97a00d20eed68191b9943f62a97b2e266b60927c9efbdbc3",
+        "bodySha256": "8772f75ea90f1b9a2ef3abf2aa08c437d30db9dddf0b405c62b8bf9c87e3498e"
+      },
+      "originalAuthoredFriend": {
+        "headline": "{{personPreferredName}}’s preference may be obvious even when they try to hide it.",
+        "body": "{{personPreferredName}} may hesitate over the plan they actually want to skip, or wait for someone else to say the answer they are hoping for. Acting fine with whatever happens can read as distance when the desire is already showing. The day gets simpler once they stop making everyone guess what they actually want."
+      },
+      "roleAnnotatedFriend": {
+        "headline": "What {{personPreferredName}} wants may be obvious despite the effort to hide it.",
+        "body": "{{personPreferredName}} may hesitate over the plan {{personPreferredName}} actually wants to skip, or wait for someone else to say the answer {{personPreferredName}} hopes for. Acting fine with whatever happens can read as distance when the desire is already showing. The day gets simpler once the preference is stated."
+      },
+      "agreementRecuts": [
+        "{{personPreferredName}}’s preference may be obvious even when they try to hide it. -> What {{personPreferredName}} wants may be obvious despite the effort to hide it.",
+        "the plan they actually want to skip -> the plan {{personPreferredName}} actually wants to skip",
+        "the answer they are hoping for -> the answer {{personPreferredName}} hopes for",
+        "The day gets simpler once they stop making everyone guess what they actually want. -> The day gets simpler once the preference is stated."
+      ],
+      "literalOtherPersonPronouns": []
+    },
+    {
+      "key": "conjunction/uranus",
+      "status": "OWNER_APPROVED",
+      "headlineContentKey": "fallback-hook/daily-headline/conjunction/uranus",
+      "bodyContentKey": "fallback-hook/daily-body/conjunction/uranus",
+      "sourceSelf": {
+        "headlineSha256": "9be30cc7fbd4cd490a8e2a370a0d2c156f0ac7d9f2fe7d0041674b9800aa0a51",
+        "bodySha256": "994c2a90093958707bd74affa847116496b43aeca99ff4b71b3c934d43d9aa1d"
+      },
+      "originalAuthoredFriend": {
+        "headline": "One unwelcome change may have {{personPreferredName}} questioning the whole routine.",
+        "body": "{{personPreferredName}} may open an app they use all the time, notice the price went up, and spend the next five minutes comparing replacements and reconsidering every routine built around it. The new price may justify a change, but it does not require dismantling everything at once. One workable alternative is enough before they decide what actually needs to go."
+      },
+      "roleAnnotatedFriend": {
+        "headline": "One unwelcome change may have {{personPreferredName}} questioning the whole routine.",
+        "body": "{{personPreferredName}} may open a familiar app, notice the price went up, and spend the next five minutes comparing replacements and reconsidering every routine built around it. The new price may justify a change, but it does not require dismantling everything at once. One workable alternative is enough before {{personPreferredName}} decides what actually needs to go."
+      },
+      "agreementRecuts": [
+        "an app they use all the time -> a familiar app",
+        "before they decide what actually needs to go -> before {{personPreferredName}} decides what actually needs to go"
+      ],
+      "literalOtherPersonPronouns": []
+    },
+    {
+      "key": "conjunction/venus",
+      "status": "OWNER_APPROVED",
+      "headlineContentKey": "fallback-hook/daily-headline/conjunction/venus",
+      "bodyContentKey": "fallback-hook/daily-body/conjunction/venus",
+      "sourceSelf": {
+        "headlineSha256": "1f24e57cf7cb05d6852936c92f9875a69dcbe2fa659b82f7bf35459887046029",
+        "bodySha256": "04679eef42dd0337f2639164c43c1579e028047710f9f3a41ae4c460d793b361"
+      },
+      "originalAuthoredFriend": {
+        "headline": "{{personPreferredName}} may notice love in the small things today.",
+        "body": "For {{personPreferredName}}, care may look ordinary: a saved seat, a remembered coffee order, or a text that arrives at exactly the right time. They may not need a grand gesture to know who is in their corner. The people who show up quietly may matter more than the ones who make the biggest display."
+      },
+      "roleAnnotatedFriend": {
+        "headline": "{{personPreferredName}} may notice love in the small things today.",
+        "body": "For {{personPreferredName}}, care may look ordinary: a saved seat, a remembered coffee order, or a text that arrives at exactly the right time. {{personSubjectCapitalized}} may not need a grand gesture to know who is in {{personPossessiveAdjective}} corner. The people who show up quietly may matter more than the ones who make the biggest display."
+      },
+      "agreementRecuts": [],
+      "literalOtherPersonPronouns": []
+    },
+    {
+      "key": "opposition/chiron",
+      "status": "OWNER_APPROVED",
+      "headlineContentKey": "fallback-hook/daily-headline/opposition/chiron",
+      "bodyContentKey": "fallback-hook/daily-body/opposition/chiron",
+      "sourceSelf": {
+        "headlineSha256": "96e74ecf83208a10e0364e38524192c3cc4d1bae8f74bcb6e9e1f5a28686522f",
+        "bodySha256": "271e32132d4d33d5b9a062efc107264111ae0a80cd32d81f8773a3f8e94dc926"
+      },
+      "originalAuthoredFriend": {
+        "headline": "{{personPreferredName}} may leave a need unsaid and still hope the other person understands.",
+        "body": "A loved one may ask why {{personPreferredName}} changed the evening plan, and they may stop halfway through the answer when the response makes them want to shut down. Waiting for the other person to notice what was left unsaid can deepen the disappointment. The conversation has a better chance once {{personPreferredName}} finishes the sentence and names what they needed."
+      },
+      "roleAnnotatedFriend": {
+        "headline": "{{personPreferredName}} may leave a need unsaid and still hope the other person understands.",
+        "body": "A loved one may ask why {{personPreferredName}} changed the evening plan, and {{personSubject}} may stop halfway through the answer when the response makes {{personObject}} want to shut down. Waiting for the other person to notice what was left unsaid can deepen the disappointment. The conversation has a better chance once {{personPreferredName}} finishes the sentence and names what {{personSubject}} needed."
+      },
+      "agreementRecuts": [],
+      "literalOtherPersonPronouns": []
+    },
+    {
+      "key": "opposition/jupiter",
+      "status": "OWNER_APPROVED",
+      "headlineContentKey": "fallback-hook/daily-headline/opposition/jupiter",
+      "bodyContentKey": "fallback-hook/daily-body/opposition/jupiter",
+      "sourceSelf": {
+        "headlineSha256": "fff2d9ef34dd6090218ea9f092bc23c8ef0e2cbdabfbba87b61970698ea0bd50",
+        "bodySha256": "b963d40e1c1ae3d3ebbeecc11374bf0dbb923e571c9cacba1ca8a710d960c49c"
+      },
+      "originalAuthoredFriend": {
+        "headline": "Someone else’s enthusiasm may make it harder for {{personPreferredName}} to notice when the plan is too much.",
+        "body": "A quick catch-up can turn into an afternoon of extra stops because someone keeps adding to the plan and {{personPreferredName}} keeps agreeing before checking what they still have time or money for. The additions may sound fun and still cost more than the day can hold. The best version is probably the part they actually wanted, without every extra idea attached."
+      },
+      "roleAnnotatedFriend": {
+        "headline": "Someone else’s enthusiasm may make it harder for {{personPreferredName}} to notice when the plan is too much.",
+        "body": "A quick catch-up can turn into an afternoon of extra stops because someone keeps adding to the plan and {{personPreferredName}} keeps agreeing before checking how much time or money is still available. The additions may sound fun and still cost more than the day can hold. The best version is probably the part {{personSubject}} actually wanted, without every extra idea attached."
+      },
+      "agreementRecuts": [
+        "before checking what they still have time or money for -> before checking how much time or money is still available"
+      ],
+      "literalOtherPersonPronouns": []
+    },
+    {
+      "key": "opposition/lilith",
+      "status": "OWNER_APPROVED",
+      "headlineContentKey": "fallback-hook/daily-headline/opposition/lilith",
+      "bodyContentKey": "fallback-hook/daily-body/opposition/lilith",
+      "sourceSelf": {
+        "headlineSha256": "bf64775912a4754dcb40c8030dbcd224c05d1144ccafb6fac585e620ff1ba738",
+        "bodySha256": "71f81605528716f10094f49a59bab73fa574fe6980f61d80b972c5900497301b"
+      },
+      "originalAuthoredFriend": {
+        "headline": "{{personPreferredName}} may be calling the relationship fine while giving up more than they admit.",
+        "body": "{{personPreferredName}} can keep the peace by avoiding the harder conversation, but the distance keeps growing while more of what they want gets set aside. Politeness may keep the evening calm without fixing the relationship. What happens next depends on whether the problem finally gets named."
+      },
+      "roleAnnotatedFriend": {
+        "headline": "{{personPreferredName}} may be calling the relationship fine while giving up more than {{personPreferredName}} admits.",
+        "body": "{{personPreferredName}} can keep the peace by avoiding the harder conversation, but the distance keeps growing while more of what {{personPreferredName}} wants gets set aside. Politeness may keep the evening calm without fixing the relationship. What happens next depends on whether the problem finally gets named."
+      },
+      "agreementRecuts": [
+        "more than they admit -> more than {{personPreferredName}} admits",
+        "more of what they want -> more of what {{personPreferredName}} wants"
+      ],
+      "literalOtherPersonPronouns": []
+    },
+    {
+      "key": "opposition/mars",
+      "status": "OWNER_APPROVED",
+      "headlineContentKey": "fallback-hook/daily-headline/opposition/mars",
+      "bodyContentKey": "fallback-hook/daily-body/opposition/mars",
+      "sourceSelf": {
+        "headlineSha256": "d7002543ad4a63b469d30007206e2e12f1609690362396b2a482fff32ee702ff",
+        "bodySha256": "566431f2cb6d8a4c751f7fc19951103fa9ddedd20450798149db20bdde4aafa6"
+      },
+      "originalAuthoredFriend": {
+        "headline": "Someone else’s pressure may pull a faster reaction out of {{personPreferredName}}.",
+        "body": "When someone pushes a boundary or questions {{personPreferredName}}’s judgment, the urge to fire back may arrive before they have heard the whole point. The other person’s tone can make defense feel urgent. One clear question and enough room for an answer may tell {{personPreferredName}} whether the comment deserves a response or not."
+      },
+      "roleAnnotatedFriend": {
+        "headline": "Someone else’s pressure may pull a faster reaction out of {{personPreferredName}}.",
+        "body": "When someone pushes a boundary or questions {{personPreferredName}}’s judgment, the urge to fire back may arrive before hearing the whole point. The other person’s tone can make defense feel urgent. One clear question and enough room for an answer may tell {{personPreferredName}} whether the comment deserves a response or not."
+      },
+      "agreementRecuts": [
+        "before they have heard the whole point -> before hearing the whole point"
+      ],
+      "literalOtherPersonPronouns": []
+    },
+    {
+      "key": "opposition/mercury",
+      "status": "OWNER_APPROVED",
+      "headlineContentKey": "fallback-hook/daily-headline/opposition/mercury",
+      "bodyContentKey": "fallback-hook/daily-body/opposition/mercury",
+      "sourceSelf": {
+        "headlineSha256": "1646295722a2ff82af7b8b56797d77eae9c4db12af5dc7e2a20a5af03246b52d",
+        "bodySha256": "1cb066ea7b2db3e7a8b96f1c188da46f86267f2b9258710fbdc7710bdb112279"
+      },
+      "originalAuthoredFriend": {
+        "headline": "{{personPreferredName}} may be answering more than the other person actually said.",
+        "body": "A short message can land badly, and five minutes later {{personPreferredName}} may be reacting to the tone, timing, and everything they think was meant underneath it. Crossed wires become a confrontation when the story in their head gets treated like the message itself. One clarifying question can keep the conversation from turning into an argument about something nobody actually said."
+      },
+      "roleAnnotatedFriend": {
+        "headline": "{{personPreferredName}} may be answering more than the other person actually said.",
+        "body": "A short message can land badly, and five minutes later {{personPreferredName}} may be reacting to the tone, timing, and everything the message seems to imply. Crossed wires become a confrontation when the story in {{personPossessiveAdjective}} head gets treated like the message itself. One clarifying question can keep the conversation from turning into an argument about something nobody actually said."
+      },
+      "agreementRecuts": [
+        "everything they think was meant underneath it -> everything the message seems to imply"
+      ],
+      "literalOtherPersonPronouns": []
+    },
+    {
+      "key": "opposition/moon",
+      "status": "OWNER_APPROVED",
+      "headlineContentKey": "fallback-hook/daily-headline/opposition/moon",
+      "bodyContentKey": "fallback-hook/daily-body/opposition/moon",
+      "sourceSelf": {
+        "headlineSha256": "d101bec7895c290225abf1c2d419851d9b6179c454ec893ebfb0410bf537a0bc",
+        "bodySha256": "534087a8d0ce1e2097a09e95d1d29a00be905cb0d9987328f6979d0144c6f726"
+      },
+      "originalAuthoredFriend": {
+        "headline": "Someone else’s urgency may be rewriting {{personPreferredName}}’s day.",
+        "body": "{{personPreferredName}} may start with a clear plan and end up rearranging it around someone else’s crisis. The other person needs time, reassurance, or attention, and {{personPreferredName}}’s first impulse may be to put their own day on hold. Caring is not the problem. The strain begins when the other person’s mood becomes the emergency and {{personPreferredName}}’s own plans become the afterthought."
+      },
+      "roleAnnotatedFriend": {
+        "headline": "Someone else’s urgency may be rewriting {{personPreferredName}}’s day.",
+        "body": "{{personPreferredName}} may start with a clear plan and end up rearranging it around someone else’s crisis. The other person needs time, reassurance, or attention, and {{personPreferredName}}’s first impulse may be to put {{personPossessiveAdjective}} own day on hold. Caring is not the problem. The strain begins when the other person’s mood becomes the emergency and {{personPreferredName}}’s own plans become the afterthought."
+      },
+      "agreementRecuts": [],
+      "literalOtherPersonPronouns": []
+    },
+    {
+      "key": "opposition/neptune",
+      "status": "OWNER_APPROVED",
+      "headlineContentKey": "fallback-hook/daily-headline/opposition/neptune",
+      "bodyContentKey": "fallback-hook/daily-body/opposition/neptune",
+      "sourceSelf": {
+        "headlineSha256": "4a2164666736b109785dc6795b9731dddf87990d32a91dc7908d34ab6f002020",
+        "bodySha256": "2bcac0a22c191c5b1d176c1583b107d4b6418f91383d2b8e63bf103618fa63f5"
+      },
+      "originalAuthoredFriend": {
+        "headline": "{{personPreferredName}} may need to trust the pattern more than the reassurance.",
+        "body": "Someone may give {{personPreferredName}} just enough reassurance to keep them from walking away or setting a boundary. The explanation is easier to accept than the pattern because the pattern asks for a harder decision. What the person actually does after the conversation will tell {{personPreferredName}} more than another promise about what could change."
+      },
+      "roleAnnotatedFriend": {
+        "headline": "{{personPreferredName}} may need to trust the pattern more than the reassurance.",
+        "body": "Someone may give {{personPreferredName}} just enough reassurance to keep {{personObject}} from walking away or setting a boundary. The explanation is easier to accept than the pattern because the pattern asks for a harder decision. What the person actually does after the conversation will tell {{personPreferredName}} more than another promise about what could change."
+      },
+      "agreementRecuts": [],
+      "literalOtherPersonPronouns": []
+    },
+    {
+      "key": "opposition/north-node",
+      "status": "OWNER_APPROVED",
+      "headlineContentKey": "fallback-hook/daily-headline/opposition/north-node",
+      "bodyContentKey": "fallback-hook/daily-body/opposition/north-node",
+      "sourceSelf": {
+        "headlineSha256": "24693fb901d6ab4caa4fa7f98ca23083b1eccc647bf3f3894b51e3c998de6ad6",
+        "bodySha256": "abe88fecbc8cd4e4bcf5eaa2860aab924fc3ed07a94486c9aaae64271bf917b1"
+      },
+      "originalAuthoredFriend": {
+        "headline": "The old excuse may be getting harder for {{personPreferredName}} to believe.",
+        "body": "Someone may point out the same habit {{personPreferredName}} thought they had already moved past, and avoiding that person can feel easier than looking at the pattern again. Familiar dynamics are comfortable because {{personPreferredName}} already knows how to behave inside them. The people who support the choices they are making now may matter more than the people who preferred an older version of them."
+      },
+      "roleAnnotatedFriend": {
+        "headline": "The old excuse may be getting harder for {{personPreferredName}} to believe.",
+        "body": "Someone may point out the same habit {{personPreferredName}} thought {{personSubject}} had already moved past, and avoiding that person can feel easier than looking at the pattern again. Familiar dynamics are comfortable because {{personPreferredName}} already knows how to behave inside them. The people who support the choices {{personPreferredName}} is making now may matter more than the people who preferred an older version of {{personObject}}."
+      },
+      "agreementRecuts": [
+        "the choices they are making now -> the choices {{personPreferredName}} is making now",
+        "inside them -> inside __OTHER_PERSON_OBJECT__"
+      ],
+      "literalOtherPersonPronouns": [
+        "them in ‘behave inside them’ (the familiar dynamics)"
+      ]
+    },
+    {
+      "key": "opposition/pluto",
+      "status": "OWNER_APPROVED",
+      "headlineContentKey": "fallback-hook/daily-headline/opposition/pluto",
+      "bodyContentKey": "fallback-hook/daily-body/opposition/pluto",
+      "sourceSelf": {
+        "headlineSha256": "63dd8b4d5b2efefe702a8df2095bc66b53b928a54136b8fabc4e63eb9f1812f1",
+        "bodySha256": "cb4a2aef5c862e5c29237819835c8fd4ce880b4478f3abe417a34260e30e31ba"
+      },
+      "originalAuthoredFriend": {
+        "headline": "Someone else having the final say does not erase {{personPreferredName}}’s need.",
+        "body": "{{personPreferredName}} may bring a private need to the person who controls the money, access, or family decision and immediately run into the power difference. Who keeps compromising, whose need becomes a problem, and who is expected to accept the answer can become obvious very quickly. {{personPreferredName}} can stay vulnerable without giving up their position in the conversation."
+      },
+      "roleAnnotatedFriend": {
+        "headline": "Someone else having the final say does not erase {{personPreferredName}}’s need.",
+        "body": "{{personPreferredName}} may bring a private need to the person who controls the money, access, or family decision and immediately run into the power difference. Who keeps compromising, whose need becomes a problem, and who is expected to accept the answer can become obvious very quickly. {{personPreferredName}} can stay vulnerable without giving up {{personPossessiveAdjective}} position in the conversation."
+      },
+      "agreementRecuts": [],
+      "literalOtherPersonPronouns": []
+    },
+    {
+      "key": "opposition/saturn",
+      "status": "OWNER_APPROVED",
+      "headlineContentKey": "fallback-hook/daily-headline/opposition/saturn",
+      "bodyContentKey": "fallback-hook/daily-body/opposition/saturn",
+      "sourceSelf": {
+        "headlineSha256": "e49fa6f8185b70bedb4917fe230a88dd539d321286ef7b6b4a53833196026df6",
+        "bodySha256": "ad44313b5aa81528a2f638efa2e9fb2f0e4f68dd278e0c31d11e4f6b562e633f"
+      },
+      "originalAuthoredFriend": {
+        "headline": "Someone else’s approval may be turning into extra work for {{personPreferredName}}.",
+        "body": "{{personPreferredName}} remembers the details, shows up when they said they would, and follows through, but still leaves wondering what they did wrong. The other person stays distant or points to one more standard that has not been met, so {{personPreferredName}} keeps trying harder for a response that was never promised. At some point, the problem is no longer their effort."
+      },
+      "roleAnnotatedFriend": {
+        "headline": "Someone else’s approval may be turning into extra work for {{personPreferredName}}.",
+        "body": "{{personPreferredName}} remembers the details, shows up when {{personSubject}} said {{personSubject}} would, and follows through, but still leaves wondering what {{personSubject}} did wrong. The other person stays distant or points to one more standard that has not been met, so {{personPreferredName}} keeps trying harder for a response that was never promised. At some point, the problem is no longer {{personPossessiveAdjective}} effort."
+      },
+      "agreementRecuts": [],
+      "literalOtherPersonPronouns": []
+    },
+    {
+      "key": "opposition/south-node",
+      "status": "OWNER_APPROVED",
+      "headlineContentKey": "fallback-hook/daily-headline/opposition/south-node",
+      "bodyContentKey": "fallback-hook/daily-body/opposition/south-node",
+      "sourceSelf": {
+        "headlineSha256": "0205e4afcad00422b332f2b0be44f05bc1ba3ee8cdd3045f00aa8933f5de2dd0",
+        "bodySha256": "0019fb12af1bd7b1c6e3bc1ffe3178ba46510be5118300d8d4f0230cd78e060f"
+      },
+      "originalAuthoredFriend": {
+        "headline": "{{personPreferredName}}’s automatic yes may be getting harder to live with.",
+        "body": "Someone asks {{personPreferredName}} for one more favor and the yes may come out before they check the time they had saved for themselves. The agreement keeps the other person happy and can leave {{personPreferredName}} resentful later. Care does not require them to take on every errand that lands in front of them."
+      },
+      "roleAnnotatedFriend": {
+        "headline": "{{personPreferredName}}’s automatic yes may be getting harder to live with.",
+        "body": "Someone asks {{personPreferredName}} for one more favor and the yes may come out before checking the time {{personPreferredName}} had saved for {{personReflexive}}. The agreement keeps the other person happy and can leave {{personPreferredName}} resentful later. Care does not require {{personObject}} to take on every errand that lands in front of {{personObject}}."
+      },
+      "agreementRecuts": [
+        "before they check the time they had saved for themselves -> before checking the time {{personPreferredName}} had saved for {{personReflexive}}"
+      ],
+      "literalOtherPersonPronouns": []
+    },
+    {
+      "key": "opposition/sun",
+      "status": "OWNER_APPROVED",
+      "headlineContentKey": "fallback-hook/daily-headline/opposition/sun",
+      "bodyContentKey": "fallback-hook/daily-body/opposition/sun",
+      "sourceSelf": {
+        "headlineSha256": "0c667ae217312b11933848afd14d9a9a677c778f5b06c00e3d80645c63a44735",
+        "bodySha256": "98289180b41f6b59a6515132944015760e4a5e51266bd42a4036bc52ed7246cc"
+      },
+      "originalAuthoredFriend": {
+        "headline": "{{personPreferredName}} may say yes in public and regret it in private.",
+        "body": "Someone asks for more, and {{personPreferredName}} may give the answer that keeps the peace before checking what it will cost. An hour later, they are resentful about a commitment they never wanted. The cleanest correction is simply admitting the first answer came too quickly and revising what they can actually take on."
+      },
+      "roleAnnotatedFriend": {
+        "headline": "{{personPreferredName}} may say yes in public and regret it in private.",
+        "body": "Someone asks for more, and {{personPreferredName}} may give the answer that keeps the peace before checking what it will cost. An hour later, that quick answer has become a commitment {{personSubject}} never wanted. The cleanest correction is simply admitting the first answer came too quickly and revising what {{personSubject}} can actually take on."
+      },
+      "agreementRecuts": [
+        "An hour later, they are resentful about a commitment they never wanted. -> An hour later, that quick answer has become a commitment {{personSubject}} never wanted."
+      ],
+      "literalOtherPersonPronouns": []
+    },
+    {
+      "key": "opposition/uranus",
+      "status": "OWNER_APPROVED",
+      "headlineContentKey": "fallback-hook/daily-headline/opposition/uranus",
+      "bodyContentKey": "fallback-hook/daily-body/opposition/uranus",
+      "sourceSelf": {
+        "headlineSha256": "b1ea8db78c8a56179621fbdd1be39c5cba05167e6cc89153d00a399f011032aa",
+        "bodySha256": "a40798d07b5b2ebe0060c0462a97c1c418dc5e23d444781567fd46ecd85dc0ec"
+      },
+      "originalAuthoredFriend": {
+        "headline": "Someone else changed the plan, but {{personPreferredName}} does not have to lose the whole day with it.",
+        "body": "{{personPreferredName}} may have reorganized the day for someone who then cancels, shifts the time, or goes quiet. The cancellation is frustrating; letting it take the rest of the day is optional. The hours they had set aside can still return to their own plans, even if the other person changed theirs."
+      },
+      "roleAnnotatedFriend": {
+        "headline": "Someone else changed the plan, but {{personPreferredName}} does not have to lose the whole day with it.",
+        "body": "{{personPreferredName}} may have reorganized the day for someone who then cancels, shifts the time, or goes quiet. The cancellation is frustrating; letting it take the rest of the day is optional. The hours {{personSubject}} had set aside can still return to {{personPossessiveAdjective}} own plans, even if the other person changed theirs."
+      },
+      "agreementRecuts": [
+        "the other person changed theirs -> the other person changed __OTHER_PERSON_POSSESSIVE_PRONOUN__"
+      ],
+      "literalOtherPersonPronouns": [
+        "theirs in ‘the other person changed theirs’"
+      ]
+    },
+    {
+      "key": "opposition/venus",
+      "status": "OWNER_APPROVED",
+      "headlineContentKey": "fallback-hook/daily-headline/opposition/venus",
+      "bodyContentKey": "fallback-hook/daily-body/opposition/venus",
+      "sourceSelf": {
+        "headlineSha256": "122152ae7471a95479dad08c3e0a2b6226914e91e23c466d7824514a7a67be1a",
+        "bodySha256": "fe1551b880237d78073d66715ebd19d27406ded816ffecc48e6a49c1ab0ef5b4"
+      },
+      "originalAuthoredFriend": {
+        "headline": "Being cared about and feeling cared for may not match for {{personPreferredName}} today.",
+        "body": "Someone can care about {{personPreferredName}} and still miss what they actually need. {{personPreferredName}} may hide the disappointment because saying it out loud feels difficult or risky. That keeps the other person comfortable but also leaves them blind to what is missing. The useful information is what happens after {{personPreferredName}} names the need."
+      },
+      "roleAnnotatedFriend": {
+        "headline": "Being cared about and feeling cared for may not match for {{personPreferredName}} today.",
+        "body": "Someone can care about {{personPreferredName}} and still miss what {{personPreferredName}} needs. {{personPreferredName}} may hide the disappointment because saying it out loud feels difficult or risky. That keeps the other person comfortable but also leaves them blind to what is missing. The useful information is what happens after {{personPreferredName}} names the need."
+      },
+      "agreementRecuts": [
+        "what they actually need -> what {{personPreferredName}} needs",
+        "leaves them blind -> leaves __OTHER_PERSON_OBJECT__ blind"
+      ],
+      "literalOtherPersonPronouns": [
+        "them in ‘leaves them blind’"
+      ]
+    },
+    {
+      "key": "square/chiron",
+      "status": "OWNER_APPROVED",
+      "headlineContentKey": "fallback-hook/daily-headline/square/chiron",
+      "bodyContentKey": "fallback-hook/daily-body/square/chiron",
+      "sourceSelf": {
+        "headlineSha256": "9b2280184f4ddbaedb4ff635803a966a2f6670c6be7d55eda4e62f581e383d35",
+        "bodySha256": "4e4f7d49f7cff8483bc43dd04cdc71afc844fd5b03fc23ed7dfb7c92c81dc797"
+      },
+      "originalAuthoredFriend": {
+        "headline": "Hints may leave {{personPreferredName}} feeling overlooked without giving anyone a fair chance to help.",
+        "body": "{{personPreferredName}} may text that the milk is gone, delete the line asking someone to stop at the store, and then feel ignored when the reply is about dinner instead. The hurt is still real, but the actual ask never made it into the conversation. The situation gets clearer once the need is stated instead of tested."
+      },
+      "roleAnnotatedFriend": {
+        "headline": "Hints may leave {{personPreferredName}} feeling overlooked without giving anyone a fair chance to help.",
+        "body": "{{personPreferredName}} may text that the milk is gone, delete the line asking someone to stop at the store, and then feel ignored when the reply is about dinner instead. The hurt is still real, but the actual ask never made it into the conversation. The situation gets clearer once the need is stated instead of tested."
+      },
+      "agreementRecuts": [],
+      "literalOtherPersonPronouns": []
+    },
+    {
+      "key": "square/jupiter",
+      "status": "OWNER_APPROVED",
+      "headlineContentKey": "fallback-hook/daily-headline/square/jupiter",
+      "bodyContentKey": "fallback-hook/daily-body/square/jupiter",
+      "sourceSelf": {
+        "headlineSha256": "d571a7858eb3da56f7563baf658e2f9b02ff5ea7999989861ee5f66914129799",
+        "bodySha256": "29e40b5aaee8edfe1db5faae9ab9095074da908240528aa3d98087fa14ff5af4"
+      },
+      "originalAuthoredFriend": {
+        "headline": "{{personPreferredName}} may want to say yes before they have seen the bill.",
+        "body": "A rush of optimism can make every idea look manageable and every invitation look easy to fit in. {{personPreferredName}} may add work, spend money, or promise time before finishing what is already in front of them. Their calendar, bank balance, and actual energy will give a better answer than the excitement alone."
+      },
+      "roleAnnotatedFriend": {
+        "headline": "{{personPreferredName}} may want to say yes before seeing the bill.",
+        "body": "A rush of optimism can make every idea look manageable and every invitation look easy to fit in. {{personPreferredName}} may add work, spend money, or promise time before finishing what is already in front of {{personObject}}. {{personPossessiveAdjectiveCapitalized}} calendar, bank balance, and actual energy will give a better answer than the excitement alone."
+      },
+      "agreementRecuts": [
+        "before they have seen the bill -> before seeing the bill"
+      ],
+      "literalOtherPersonPronouns": []
+    },
+    {
+      "key": "square/lilith",
+      "status": "OWNER_APPROVED",
+      "headlineContentKey": "fallback-hook/daily-headline/square/lilith",
+      "bodyContentKey": "fallback-hook/daily-body/square/lilith",
+      "sourceSelf": {
+        "headlineSha256": "525111f2238ced359c1740b4dbf0d499eb5daf71e1678dffe1bc70e0f9194247",
+        "bodySha256": "c3fdff1cc8a77761eb2fffccd54bdf3f99b866a8d41703fe0b6c344ef579e855"
+      },
+      "originalAuthoredFriend": {
+        "headline": "{{personPreferredName}} may keep choosing the easier option and thinking about the one they actually wanted.",
+        "body": "{{personPreferredName}} may say the plan is fine, close the tab, or decide it would be too disruptive to ask for more, then catch themselves returning to the other choice again. Comfort can be a quick substitute for admitting what they want. The repeated thought is usually the part worth paying attention to."
+      },
+      "roleAnnotatedFriend": {
+        "headline": "{{personPreferredName}} may keep choosing the easier option and thinking about the one {{personPreferredName}} actually wanted.",
+        "body": "{{personPreferredName}} may say the plan is fine, close the tab, or decide it would be too disruptive to ask for more, then catch {{personReflexive}} returning to the other choice again. Comfort can be a quick substitute for admitting what {{personPreferredName}} wants. The repeated thought is usually the part worth paying attention to."
+      },
+      "agreementRecuts": [
+        "the one they actually wanted -> the one {{personPreferredName}} actually wanted",
+        "admitting what they want -> admitting what {{personPreferredName}} wants"
+      ],
+      "literalOtherPersonPronouns": []
+    },
+    {
+      "key": "square/mars",
+      "status": "OWNER_APPROVED",
+      "headlineContentKey": "fallback-hook/daily-headline/square/mars",
+      "bodyContentKey": "fallback-hook/daily-body/square/mars",
+      "sourceSelf": {
+        "headlineSha256": "8015127035a1b8651193492cefb68d6958b736b5873e237c80c179d0a3df4fd0",
+        "bodySha256": "98ca099de4d498c47ecb54c7472075562163c08023c346d973100c799c0b80a5"
+      },
+      "originalAuthoredFriend": {
+        "headline": "A fast flash of anger may be showing how exhausted {{personPreferredName}} already is.",
+        "body": "A last-minute demand can land on an already strained day, and someone may push {{personPreferredName}} for an immediate answer while they are carrying private stress or sheer exhaustion. When their time is treated as unlimited, the disrespect can register fast and pull them into an argument that costs more energy than the task. A clear timeline and some distance from the fight may protect what is left of the day."
+      },
+      "roleAnnotatedFriend": {
+        "headline": "A fast flash of anger may be showing how exhausted {{personPreferredName}} already is.",
+        "body": "A last-minute demand can land on an already strained day, and someone may push {{personPreferredName}} for an immediate answer while {{personPreferredName}} is carrying private stress or sheer exhaustion. When {{personPossessiveAdjective}} time is treated as unlimited, the disrespect can register fast and pull {{personObject}} into an argument that costs more energy than the task. A clear timeline and some distance from the fight may protect what is left of the day."
+      },
+      "agreementRecuts": [
+        "while they are carrying private stress or sheer exhaustion -> while {{personPreferredName}} is carrying private stress or sheer exhaustion"
+      ],
+      "literalOtherPersonPronouns": []
+    },
+    {
+      "key": "square/mercury",
+      "status": "OWNER_APPROVED",
+      "headlineContentKey": "fallback-hook/daily-headline/square/mercury",
+      "bodyContentKey": "fallback-hook/daily-body/square/mercury",
+      "sourceSelf": {
+        "headlineSha256": "c64a6705594b7bb080d261a85b30035a8adf3d74e587b35b45c8d36638b4658a",
+        "bodySha256": "a9b47ff8ac6633f1c54bedc44e00a336510a86b579b402172746bac9e7453a30"
+      },
+      "originalAuthoredFriend": {
+        "headline": "{{personPreferredName}}’s thoughts may be moving faster than their judgment.",
+        "body": "{{personPreferredName}} may jump to conclusions, fill in missing details with the worst version, or answer before they fully understand what is being said. The urge to respond can be stronger than the information available. A slower reply gives them a better chance of getting the situation right instead of merely winning the moment."
+      },
+      "roleAnnotatedFriend": {
+        "headline": "{{personPreferredName}}’s thoughts may be moving faster than {{personPossessiveAdjective}} judgment.",
+        "body": "{{personPreferredName}} may jump to conclusions, fill in missing details with the worst version, or answer before fully understanding what is being said. The urge to respond can be stronger than the information available. A slower reply gives {{personObject}} a better chance of getting the situation right instead of merely winning the moment."
+      },
+      "agreementRecuts": [
+        "before they fully understand what is being said -> before fully understanding what is being said"
+      ],
+      "literalOtherPersonPronouns": []
+    },
+    {
+      "key": "square/moon",
+      "status": "OWNER_APPROVED",
+      "headlineContentKey": "fallback-hook/daily-headline/square/moon",
+      "bodyContentKey": "fallback-hook/daily-body/square/moon",
+      "sourceSelf": {
+        "headlineSha256": "634ed8e59f4ab34c47b67c4eac22635eb0753d5fbf04af54e2717f8e7cf21b3b",
+        "bodySha256": "084a101b221620acbf78c03e98893f99a6986fc277c4e70bbf55788c3e10f5ef"
+      },
+      "originalAuthoredFriend": {
+        "headline": "The original plan may be asking more energy than {{personPreferredName}} actually has.",
+        "body": "{{personPreferredName}} may get halfway through the errands and realize the rest of the list is too much. Forcing the schedule can turn a normal day into a fight with their own body and mood. Changing the plan does not make them unreliable. Dropping one nonessential task may be enough to keep the rest of the day workable."
+      },
+      "roleAnnotatedFriend": {
+        "headline": "The original plan may be asking more energy than {{personPreferredName}} actually has.",
+        "body": "{{personPreferredName}} may get halfway through the errands and realize the rest of the list is too much. Forcing the schedule can turn a normal day into a fight with {{personPossessiveAdjective}} own body and mood. Changing the plan does not make {{personObject}} unreliable. Dropping one nonessential task may be enough to keep the rest of the day workable."
+      },
+      "agreementRecuts": [],
+      "literalOtherPersonPronouns": []
+    },
+    {
+      "key": "square/neptune",
+      "status": "OWNER_APPROVED",
+      "headlineContentKey": "fallback-hook/daily-headline/square/neptune",
+      "bodyContentKey": "fallback-hook/daily-body/square/neptune",
+      "sourceSelf": {
+        "headlineSha256": "5f567c26496cec692c738fbfc0f8cd19e54d655897a5fcae4f4156b30472f76d",
+        "bodySha256": "4aeb5c18ea8a293c59d034e38a921561ad845371959af54de151018f4844fcb5"
+      },
+      "originalAuthoredFriend": {
+        "headline": "{{personPreferredName}} may be filling the silence with the worst possible explanation.",
+        "body": "A delayed reply, vague plan, or conversation that suddenly feels off can leave enough room for {{personPreferredName}}’s imagination to write the ending. They may reread the message, study the wording, and connect the silence to every earlier disappointment. The second message, canceled plan, or final decision can wait until the other person has actually answered."
+      },
+      "roleAnnotatedFriend": {
+        "headline": "{{personPreferredName}} may be filling the silence with the worst possible explanation.",
+        "body": "A delayed reply, vague plan, or conversation that suddenly feels off can leave enough room for {{personPreferredName}}’s imagination to write the ending. {{personSubjectCapitalized}} may reread the message, study the wording, and connect the silence to every earlier disappointment. The second message, canceled plan, or final decision can wait until the other person has actually answered."
+      },
+      "agreementRecuts": [],
+      "literalOtherPersonPronouns": []
+    },
+    {
+      "key": "square/north-node",
+      "status": "OWNER_APPROVED",
+      "headlineContentKey": "fallback-hook/daily-headline/square/north-node",
+      "bodyContentKey": "fallback-hook/daily-body/square/north-node",
+      "sourceSelf": {
+        "headlineSha256": "3314fa69f4c136826648e37501879be8eed66b14b88b551e31685a6e477b85ab",
+        "bodySha256": "4085c3b73ba225123db3e1d0e8a5f2f1e7c45a02aa8aea23d31b0ac2356b501b"
+      },
+      "originalAuthoredFriend": {
+        "headline": "A familiar choice may be keeping {{personPreferredName}} comfortable and stuck at the same time.",
+        "body": "{{personPreferredName}} may keep choosing the same role, relationship pattern, or work arrangement because they already know how to survive it. Change would require being inexperienced for a while, which can make the old choice feel safer than it actually is. Being new at something does not mean they chose wrong."
+      },
+      "roleAnnotatedFriend": {
+        "headline": "A familiar choice may be keeping {{personPreferredName}} comfortable and stuck at the same time.",
+        "body": "{{personPreferredName}} may keep choosing the same role, relationship pattern, or work arrangement because {{personPreferredName}} already knows how to survive it. Change would require being inexperienced for a while, which can make the old choice feel safer than it actually is. Being new at something does not mean {{personSubject}} chose wrong."
+      },
+      "agreementRecuts": [
+        "because they already know -> because {{personPreferredName}} already knows"
+      ],
+      "literalOtherPersonPronouns": []
+    },
+    {
+      "key": "square/pluto",
+      "status": "OWNER_APPROVED",
+      "headlineContentKey": "fallback-hook/daily-headline/square/pluto",
+      "bodyContentKey": "fallback-hook/daily-body/square/pluto",
+      "sourceSelf": {
+        "headlineSha256": "e68a14e466a65d8ee2e2378958e3c0f21bfbd293b5bb0b3b1d9c5f30d3b70e23",
+        "bodySha256": "bc2b1de7c439f0f088d69cbb756fb199797df830ac7b6fece0d93036e69428cd"
+      },
+      "originalAuthoredFriend": {
+        "headline": "Checking again may give {{personPreferredName}} more to monitor, not more certainty.",
+        "body": "{{personPreferredName}} may reopen the account, reread the message, or ask one more question because uncertainty makes another piece of information feel necessary. Every new detail then creates something else to watch. The useful line is between checking what actually needs checking and trying to control an outcome they do not control."
+      },
+      "roleAnnotatedFriend": {
+        "headline": "Checking again may give {{personPreferredName}} more to monitor, not more certainty.",
+        "body": "{{personPreferredName}} may reopen the account, reread the message, or ask one more question because uncertainty makes another piece of information feel necessary. Every new detail then creates something else to watch. The useful line is between checking what actually needs checking and trying to control an outcome outside {{personPossessiveAdjective}} control."
+      },
+      "agreementRecuts": [
+        "an outcome they do not control -> an outcome outside {{personPossessiveAdjective}} control"
+      ],
+      "literalOtherPersonPronouns": []
+    },
+    {
+      "key": "square/saturn",
+      "status": "OWNER_APPROVED",
+      "headlineContentKey": "fallback-hook/daily-headline/square/saturn",
+      "bodyContentKey": "fallback-hook/daily-body/square/saturn",
+      "sourceSelf": {
+        "headlineSha256": "fff4df3a65734456aa281611881f0a2fc9146882b92802efc78794007bc4b43f",
+        "bodySha256": "d3e8a722683e6206342945ddfa9735b14b96e538cf51a3d3770d27cd2ada8ea3"
+      },
+      "originalAuthoredFriend": {
+        "headline": "The deadline does not mean {{personPreferredName}} should be doing three jobs at once.",
+        "body": "Someone may add another request to a week that was already full, and {{personPreferredName}}’s first response may be figuring out how to squeeze it in. That is how an unreasonable workload starts looking like a personal time-management problem. The new work makes more sense once the deadline, scope, or existing priorities are allowed to change with it."
+      },
+      "roleAnnotatedFriend": {
+        "headline": "The deadline does not mean {{personPreferredName}} should be doing three jobs at once.",
+        "body": "Someone may add another request to a week that was already full, and {{personPreferredName}}’s first response may be figuring out how to squeeze it in. That is how an unreasonable workload starts looking like a personal time-management problem. The new work makes more sense once the deadline, scope, or existing priorities are allowed to change with it."
+      },
+      "agreementRecuts": [],
+      "literalOtherPersonPronouns": []
+    },
+    {
+      "key": "square/south-node",
+      "status": "OWNER_APPROVED",
+      "headlineContentKey": "fallback-hook/daily-headline/square/south-node",
+      "bodyContentKey": "fallback-hook/daily-body/square/south-node",
+      "sourceSelf": {
+        "headlineSha256": "f16691cd065e5037d761631b49750d6a9dca5252f3e28ab1a9c8446c33c83308",
+        "bodySha256": "1bc100d5458830fa3d54f8768fae21b691f5dfe89d050bc3bd6a5a207fcfc725"
+      },
+      "originalAuthoredFriend": {
+        "headline": "Doing it themselves may be how the old burden lands back on {{personPreferredName}}.",
+        "body": "Pressure can pull {{personPreferredName}} straight into the old habit: retreat, take control, smooth it over, or handle the whole thing alone. That may end the argument quickly, but it leaves them carrying the same burden again. Past experience is useful; automatically taking the old role back is the part that can cost them."
+      },
+      "roleAnnotatedFriend": {
+        "headline": "Doing it {{personReflexive}} may be how the old burden lands back on {{personPreferredName}}.",
+        "body": "Pressure can pull {{personPreferredName}} straight into the old habit: retreat, take control, smooth it over, or handle the whole thing alone. That may end the argument quickly, but it leaves {{personObject}} carrying the same burden again. Past experience is useful; automatically taking the old role back is the part that can cost {{personObject}}."
+      },
+      "agreementRecuts": [],
+      "literalOtherPersonPronouns": []
+    },
+    {
+      "key": "square/sun",
+      "status": "OWNER_APPROVED",
+      "headlineContentKey": "fallback-hook/daily-headline/square/sun",
+      "bodyContentKey": "fallback-hook/daily-body/square/sun",
+      "sourceSelf": {
+        "headlineSha256": "e309b744fe1fe58ed3c3d10e14f4336387e239c3df8338b2cf95fedc0e13ca19",
+        "bodySha256": "984ee7b993ea3580791d61d847973ea20c44ed8969b3365c67c96c7c3903a112"
+      },
+      "originalAuthoredFriend": {
+        "headline": "{{personPreferredName}} may be working hard to look fine while another part of them is not fine at all.",
+        "body": "Part of {{personPreferredName}} knows what they actually feel, while another part is presenting the version that will be taken seriously, approved of, or left alone. That version may have helped them avoid criticism, rejection, or conflict. Holding that composure when they are burnt out, defensive, or uninspired can become exhausting."
+      },
+      "roleAnnotatedFriend": {
+        "headline": "{{personPreferredName}} may be working hard to look fine while another part of {{personObject}} is not fine at all.",
+        "body": "{{personPreferredName}} knows the honest answer, while another part is presenting the version that will be taken seriously, approved of, or left alone. That version may have helped {{personObject}} avoid criticism, rejection, or conflict. Holding that composure when {{personPreferredName}} is burnt out, defensive, or uninspired can become exhausting."
+      },
+      "agreementRecuts": [
+        "Part of {{personPreferredName}} knows what they actually feel -> {{personPreferredName}} knows the honest answer",
+        "when they are burnt out -> when {{personPreferredName}} is burnt out"
+      ],
+      "literalOtherPersonPronouns": []
+    },
+    {
+      "key": "square/uranus",
+      "status": "OWNER_APPROVED",
+      "headlineContentKey": "fallback-hook/daily-headline/square/uranus",
+      "bodyContentKey": "fallback-hook/daily-body/square/uranus",
+      "sourceSelf": {
+        "headlineSha256": "25c948f4635124e868842ddc1018a37585abea355ab808d89be0cd37e0b773ba",
+        "bodySha256": "21899d7d29f32737e112601532ac3ff494fc1b0dff6ec7eccafdd9a95a2ba399"
+      },
+      "originalAuthoredFriend": {
+        "headline": "One tedious obligation may have {{personPreferredName}} wanting to scrap the whole routine.",
+        "body": "{{personPreferredName}} may sit down with one administrative form or annoying task and, five minutes later, feel trapped by the entire day. One frustrating commitment can make the whole schedule look wrong. The useful change is probably the part actually causing the friction, not every routine around it."
+      },
+      "roleAnnotatedFriend": {
+        "headline": "One tedious obligation may have {{personPreferredName}} wanting to scrap the whole routine.",
+        "body": "{{personPreferredName}} may sit down with one administrative form or annoying task and, five minutes later, feel trapped by the entire day. One frustrating commitment can make the whole schedule look wrong. The useful change is probably the part actually causing the friction, not every routine around it."
+      },
+      "agreementRecuts": [],
+      "literalOtherPersonPronouns": []
+    },
+    {
+      "key": "square/venus",
+      "status": "OWNER_APPROVED",
+      "headlineContentKey": "fallback-hook/daily-headline/square/venus",
+      "bodyContentKey": "fallback-hook/daily-body/square/venus",
+      "sourceSelf": {
+        "headlineSha256": "8e3352109d924de3015a4ca6cdb34cda0f80c13aaa77934d2b68d27b78888f21",
+        "bodySha256": "c2f27b34326b9fdf7b096809c4e47b8f4a47c5e089471c366efb01a48304bfca"
+      },
+      "originalAuthoredFriend": {
+        "headline": "A quiet phone may feel much louder to {{personPreferredName}} than it actually is.",
+        "body": "{{personPreferredName}} may send a warm text, get silence back, and start wondering within minutes if they were too much. An impulse purchase can begin to look like a quick fix for the feeling. The slow reply has not said anything final about the relationship or {{personPreferredName}}’s worth."
+      },
+      "roleAnnotatedFriend": {
+        "headline": "A quiet phone may feel much louder to {{personPreferredName}} than it actually is.",
+        "body": "{{personPreferredName}} may send a warm text, get silence back, and start wondering within minutes if the message came on too strong. An impulse purchase can begin to look like a quick fix for the feeling. The slow reply has not said anything final about the relationship or {{personPreferredName}}’s worth."
+      },
+      "agreementRecuts": [
+        "and start wondering within minutes if they were too much -> and start wondering within minutes if the message came on too strong"
+      ],
+      "literalOtherPersonPronouns": []
+    },
+    {
+      "key": "soft/chiron",
+      "status": "OWNER_APPROVED",
+      "headlineContentKey": "fallback-hook/daily-headline/soft/chiron",
+      "bodyContentKey": "fallback-hook/daily-body/soft/chiron",
+      "sourceSelf": {
+        "headlineSha256": "f4b43f787039476e3ad236972c441181093c184fcd8c41a649d4d5d7c04ea463",
+        "bodySha256": "eb829af59238257bbc43e660eed6b9067be966facce2a72c2e15f1cd6ce6e3d3"
+      },
+      "originalAuthoredFriend": {
+        "headline": "{{personPreferredName}} may have an easier time letting care reach them.",
+        "body": "{{personPreferredName}} may be struggling with a difficult task or frustrating message when someone notices the stress and quietly offers to handle part of it. Their reflex may still be to refuse because being seen stuck feels exposing. Letting someone help does not erase their independence; it can simply make the hard moment easier to carry."
+      },
+      "roleAnnotatedFriend": {
+        "headline": "{{personPreferredName}} may have an easier time letting care reach {{personObject}}.",
+        "body": "{{personPreferredName}} may be struggling with a difficult task or frustrating message when someone notices the stress and quietly offers to handle part of it. {{personPossessiveAdjectiveCapitalized}} reflex may still be to refuse because being seen stuck feels exposing. Letting someone help does not erase {{personPossessiveAdjective}} independence; it can simply make the hard moment easier to carry."
+      },
+      "agreementRecuts": [],
+      "literalOtherPersonPronouns": []
+    },
+    {
+      "key": "soft/jupiter",
+      "status": "OWNER_APPROVED",
+      "headlineContentKey": "fallback-hook/daily-headline/soft/jupiter",
+      "bodyContentKey": "fallback-hook/daily-body/soft/jupiter",
+      "sourceSelf": {
+        "headlineSha256": "feb34452a9537ce1f05f0ee2e3a68d75851712a7f39e6e7b98c640d5121c6c67",
+        "bodySha256": "17c66bece0ce2af2b9c6fd882ab273f94abcb96dc9c5da7c49247372c6e621f3"
+      },
+      "originalAuthoredFriend": {
+        "headline": "An opening may make {{personPreferredName}}’s day easier than expected.",
+        "body": "{{personPreferredName}} may send the email expecting another delay and get a yes back. A meeting moves and gives them the hour they needed. The fee is lower than expected, or the right person offers an introduction without making them chase it. The day has a little more room in it, and that opening can be used while it is still available."
+      },
+      "roleAnnotatedFriend": {
+        "headline": "An opening may make {{personPreferredName}}’s day easier than expected.",
+        "body": "{{personPreferredName}} may send the email expecting another delay and get a yes back. A meeting moves and gives {{personObject}} the hour {{personSubject}} needed. The fee is lower than expected, or the right person offers an introduction without making {{personObject}} chase it. The day has a little more room in it, and that opening can be used while it is still available."
+      },
+      "agreementRecuts": [],
+      "literalOtherPersonPronouns": []
+    },
+    {
+      "key": "soft/lilith",
+      "status": "OWNER_APPROVED",
+      "headlineContentKey": "fallback-hook/daily-headline/soft/lilith",
+      "bodyContentKey": "fallback-hook/daily-body/soft/lilith",
+      "sourceSelf": {
+        "headlineSha256": "b6fd02d79e78072ca30f710a93dd25eb743c6bfcbe3b24162da3542a9ebceffa",
+        "bodySha256": "d9c9e44e409f274af95dca70e90eac4e0d128ba81f539a858cb7e69c7d703300"
+      },
+      "originalAuthoredFriend": {
+        "headline": "{{personPreferredName}} may find it easier to admit a small want instead of pretending they have none.",
+        "body": "When a partner opens the grocery order and asks what to add, {{personPreferredName}} may worry that one extra snack sounds demanding and say “nothing” instead. The item stays on their phone instead of going into the shared cart. Naming the snack and its price is a small way of letting a want exist without turning it into a bigger argument."
+      },
+      "roleAnnotatedFriend": {
+        "headline": "{{personPreferredName}} may find it easier to admit a small want instead of pretending not to have any.",
+        "body": "When a partner opens the grocery order and asks what to add, {{personPreferredName}} may worry that one extra snack sounds demanding and say “nothing” instead. The item stays on {{personPossessiveAdjective}} phone instead of going into the shared cart. Naming the snack and its price is a small way of letting a want exist without turning it into a bigger argument."
+      },
+      "agreementRecuts": [
+        "pretending they have none -> pretending not to have any"
+      ],
+      "literalOtherPersonPronouns": []
+    },
+    {
+      "key": "soft/mars",
+      "status": "OWNER_APPROVED",
+      "headlineContentKey": "fallback-hook/daily-headline/soft/mars",
+      "bodyContentKey": "fallback-hook/daily-body/soft/mars",
+      "sourceSelf": {
+        "headlineSha256": "10b6687e70b30eb9e46e2973a058d38be68142de10e72b08df09c9f7f77f159d",
+        "bodySha256": "d6efba9ba7e116b54a211571d7d0791f0cbe33eac70a95e85670e210021f26e6"
+      },
+      "originalAuthoredFriend": {
+        "headline": "Starting may cost {{personPreferredName}} less energy than continuing to avoid it.",
+        "body": "The task {{personPreferredName}} has been putting off may take less energy than all the time spent thinking about it. The conversation, decision, or errand can still be annoying and become much more manageable once they begin. Thirty focused minutes may be enough to change how heavy the task feels."
+      },
+      "roleAnnotatedFriend": {
+        "headline": "Starting may cost {{personPreferredName}} less energy than continuing to avoid it.",
+        "body": "The task {{personPreferredName}} has been putting off may take less energy than all the time spent thinking about it. The conversation, decision, or errand can still be annoying and become much more manageable once {{personPreferredName}} begins. Thirty focused minutes may be enough to change how heavy the task feels."
+      },
+      "agreementRecuts": [
+        "once they begin -> once {{personPreferredName}} begins"
+      ],
+      "literalOtherPersonPronouns": []
+    },
+    {
+      "key": "soft/mercury",
+      "status": "OWNER_APPROVED",
+      "headlineContentKey": "fallback-hook/daily-headline/soft/mercury",
+      "bodyContentKey": "fallback-hook/daily-body/soft/mercury",
+      "sourceSelf": {
+        "headlineSha256": "65bad4c71866feacc25098b7f8f804d6bdd139d0f2d39aca09e97151a59de8d9",
+        "bodySha256": "9264eaceb4b7a48d5bc8342aea52d7ea11d273821527baf4fd4cc04c2ac35a29"
+      },
+      "originalAuthoredFriend": {
+        "headline": "{{personPreferredName}} may finally have the words for the conversation that went wrong.",
+        "body": "{{personPreferredName}} may reach the exact reason the conversation went off the rails and know how to explain it without starting another argument. In a private meeting, voice note, or direct reply, they can name what upset them, what changed, and what answer they need. The cleanest version says the part that matters and stops before the explanation becomes another thing to fight over."
+      },
+      "roleAnnotatedFriend": {
+        "headline": "{{personPreferredName}} may finally have the words for the conversation that went wrong.",
+        "body": "{{personPreferredName}} may reach the exact reason the conversation went off the rails and know how to explain it without starting another argument. In a private meeting, voice note, or direct reply, {{personSubject}} can name what upset {{personObject}}, what changed, and what answer {{personPreferredName}} needs. The cleanest version says the part that matters and stops before the explanation becomes another thing to fight over."
+      },
+      "agreementRecuts": [
+        "what answer they need -> what answer {{personPreferredName}} needs"
+      ],
+      "literalOtherPersonPronouns": []
+    },
+    {
+      "key": "soft/moon",
+      "status": "OWNER_APPROVED",
+      "headlineContentKey": "fallback-hook/daily-headline/soft/moon",
+      "bodyContentKey": "fallback-hook/daily-body/soft/moon",
+      "sourceSelf": {
+        "headlineSha256": "26ea92b64b2d3a6e7a2974a128429a9e09eaf37996d545ef73dba57220a13460",
+        "bodySha256": "762d2c2e90495acbf70be6997d139576c02a8aef3baffe1322f3f1a6f4187888"
+      },
+      "originalAuthoredFriend": {
+        "headline": "A good day may feel unfamiliar enough that {{personPreferredName}} starts looking for the catch.",
+        "body": "When things are running smoothly, {{personPreferredName}} may brace for what is about to go wrong, search for the hidden problem, or deflect a simple compliment by listing everything they could have done better. Constantly preparing for trouble does not prevent it. It can simply make the quiet part of the day harder to enjoy."
+      },
+      "roleAnnotatedFriend": {
+        "headline": "A good day may feel unfamiliar enough that {{personPreferredName}} starts looking for the catch.",
+        "body": "When things are running smoothly, {{personPreferredName}} may brace for what is about to go wrong, search for the hidden problem, or deflect a simple compliment by listing everything {{personSubject}} could have done better. Constantly preparing for trouble does not prevent it. It can simply make the quiet part of the day harder to enjoy."
+      },
+      "agreementRecuts": [],
+      "literalOtherPersonPronouns": []
+    },
+    {
+      "key": "soft/neptune",
+      "status": "OWNER_APPROVED",
+      "headlineContentKey": "fallback-hook/daily-headline/soft/neptune",
+      "bodyContentKey": "fallback-hook/daily-body/soft/neptune",
+      "sourceSelf": {
+        "headlineSha256": "7f9df06052098b3d22c23f1f03381380db5c2620c56b85a0e27d11a5b977addb",
+        "bodySha256": "6f26d32770d34b8a30456e160a4c735b8f36b25382e39b1a5e5378b6ed7a2322"
+      },
+      "originalAuthoredFriend": {
+        "headline": "{{personPreferredName}} may get the idea before they understand what it is for.",
+        "body": "A sentence may arrive while {{personPreferredName}} is washing the dishes. An image can keep returning when their attention drifts, or a vague hunch can pull them toward something they cannot explain yet. Saving the line, image, or rough version gives the idea somewhere to live before it has to make sense. The structure can come later."
+      },
+      "roleAnnotatedFriend": {
+        "headline": "{{personPreferredName}} may get the idea before its purpose is clear.",
+        "body": "A sentence may arrive while {{personPreferredName}} is washing the dishes. An image can keep returning when {{personPossessiveAdjective}} attention drifts, or a vague hunch can pull {{personObject}} toward something {{personSubject}} cannot explain yet. Saving the line, image, or rough version gives the idea somewhere to live before it has to make sense. The structure can come later."
+      },
+      "agreementRecuts": [
+        "before they understand what it is for -> before its purpose is clear"
+      ],
+      "literalOtherPersonPronouns": []
+    },
+    {
+      "key": "soft/north-node",
+      "status": "OWNER_APPROVED",
+      "headlineContentKey": "fallback-hook/daily-headline/soft/north-node",
+      "bodyContentKey": "fallback-hook/daily-body/soft/north-node",
+      "sourceSelf": {
+        "headlineSha256": "7c220471fd9a8d0145b4cd3d307760cf2d0647bd33bada8921e3cf781030122a",
+        "bodySha256": "c941365efbcbe839d307d1ecaac1b09d82f47af52b74b8348384ff5f049b3725"
+      },
+      "originalAuthoredFriend": {
+        "headline": "{{personPreferredName}} may be making a new response feel more normal through repetition.",
+        "body": "{{personPreferredName}} may ask for help before they are overwhelmed, say no earlier, or choose the unfamiliar option without needing every step mapped first. Each repetition makes the newer response easier to reach next time. What once required a lot of courage can gradually become part of how they handle the situation."
+      },
+      "roleAnnotatedFriend": {
+        "headline": "{{personPreferredName}} may be making a new response feel more normal through repetition.",
+        "body": "{{personPreferredName}} may ask for help before reaching the point of overwhelm, say no earlier, or choose the unfamiliar option without needing every step mapped first. Each repetition makes the newer response easier to reach next time. What once required a lot of courage can gradually become part of how {{personPreferredName}} handles the situation."
+      },
+      "agreementRecuts": [
+        "before they are overwhelmed -> before reaching the point of overwhelm",
+        "how they handle the situation -> how {{personPreferredName}} handles the situation"
+      ],
+      "literalOtherPersonPronouns": []
+    },
+    {
+      "key": "soft/pluto",
+      "status": "OWNER_APPROVED",
+      "headlineContentKey": "fallback-hook/daily-headline/soft/pluto",
+      "bodyContentKey": "fallback-hook/daily-body/soft/pluto",
+      "sourceSelf": {
+        "headlineSha256": "d61713339bcb6a1321363df96d6b8730f1d8a07b1ad1d206f934f16c8011a92f",
+        "bodySha256": "2388c7cbdf1dafc772b945d0e07dd78c3c670bdac62211a4ecfe04f7e5e0ad86"
+      },
+      "originalAuthoredFriend": {
+        "headline": "{{personPreferredName}} may find it easier to acknowledge the feeling than keep minimizing it.",
+        "body": "Talking about something painful from the past does not have to become a fight about every detail. {{personPreferredName}} may be able to say what affected them without defending the whole story or demanding an answer from anyone else. Telling someone they trust what happened and how it felt can be enough for the moment."
+      },
+      "roleAnnotatedFriend": {
+        "headline": "{{personPreferredName}} may find it easier to acknowledge the feeling than keep minimizing it.",
+        "body": "Talking about something painful from the past does not have to become a fight about every detail. {{personPreferredName}} may be able to say what affected {{personObject}} without defending the whole story or demanding an answer from anyone else. Telling a trusted person what happened and how it felt can be enough for the moment."
+      },
+      "agreementRecuts": [
+        "Telling someone they trust -> Telling a trusted person"
+      ],
+      "literalOtherPersonPronouns": []
+    },
+    {
+      "key": "soft/saturn",
+      "status": "OWNER_APPROVED",
+      "headlineContentKey": "fallback-hook/daily-headline/soft/saturn",
+      "bodyContentKey": "fallback-hook/daily-body/soft/saturn",
+      "sourceSelf": {
+        "headlineSha256": "ca6563619813fe3ca12aed47cec40c883f35bd462588f46711f32e837b50c4aa",
+        "bodySha256": "7c86149ed0cd1a91facc415ed06ac384b3d77b0733a6941a277806f2e951cbb1"
+      },
+      "originalAuthoredFriend": {
+        "headline": "A small loose end may be easier for {{personPreferredName}} to finish than keep carrying.",
+        "body": "{{personPreferredName}} may open the email they have been avoiding and realize the reply takes five minutes. The bill gets paid, the appointment gets booked, or the form finally leaves the pile on the desk. None of it is exciting, but carrying it around mentally every day was taking more energy than finishing it."
+      },
+      "roleAnnotatedFriend": {
+        "headline": "A small loose end may be easier for {{personPreferredName}} to finish than keep carrying.",
+        "body": "{{personPreferredName}} may open the email {{personPreferredName}} has been avoiding and realize the reply takes five minutes. The bill gets paid, the appointment gets booked, or the form finally leaves the pile on the desk. None of it is exciting, but carrying it around mentally every day was taking more energy than finishing it."
+      },
+      "agreementRecuts": [
+        "the email they have been avoiding -> the email {{personPreferredName}} has been avoiding"
+      ],
+      "literalOtherPersonPronouns": []
+    },
+    {
+      "key": "soft/south-node",
+      "status": "OWNER_APPROVED",
+      "headlineContentKey": "fallback-hook/daily-headline/soft/south-node",
+      "bodyContentKey": "fallback-hook/daily-body/soft/south-node",
+      "sourceSelf": {
+        "headlineSha256": "96cb13da6d9f0e6af407d949c4db364d91b150d13829d0a1841e70494aeba431",
+        "bodySha256": "bf3cafcb25dca27aa9150541b55998d8afcf18d5e1e2ec93cd342fa967272ad3"
+      },
+      "originalAuthoredFriend": {
+        "headline": "{{personPreferredName}} may know exactly what to do when the room starts falling apart.",
+        "body": "Experience may have taught {{personPreferredName}} to spot the problem before anyone else does. When the plan falls apart, the deadline moves, or somebody else’s panic fills the room, they may already be answering messages, assigning next steps, and calming everyone down before deciding whether the job is actually theirs. The skill is useful. The old burden begins when helping turns back into holding everyone together."
+      },
+      "roleAnnotatedFriend": {
+        "headline": "{{personPreferredName}} may know exactly what to do when the room starts falling apart.",
+        "body": "Experience may have taught {{personPreferredName}} to spot the problem before anyone else does. When the plan falls apart, the deadline moves, or somebody else’s panic fills the room, {{personSubject}} may already be answering messages, assigning next steps, and calming everyone down before deciding whether the job is actually {{personPossessivePronoun}}. The skill is useful. The old burden begins when helping turns back into holding everyone together."
+      },
+      "agreementRecuts": [],
+      "literalOtherPersonPronouns": []
+    },
+    {
+      "key": "soft/sun",
+      "status": "OWNER_APPROVED",
+      "headlineContentKey": "fallback-hook/daily-headline/soft/sun",
+      "bodyContentKey": "fallback-hook/daily-body/soft/sun",
+      "sourceSelf": {
+        "headlineSha256": "6b74dd001894f73c69ceca48299882a67b5f310fa730e570e3c536fbf1805067",
+        "bodySha256": "3a28b5ec243624c38f0d93999b4cf28a45485fce9b1197eb42317fc4bb8551b7"
+      },
+      "originalAuthoredFriend": {
+        "headline": "{{personPreferredName}} may know what they want without needing a long explanation for it.",
+        "body": "{{personPreferredName}} may be able to ask for the opportunity, state the limit, or say yes without adding a paragraph to make the answer easier for everyone else to accept. Putting their name on the work or letting a simple answer stand may feel unusually straightforward today."
+      },
+      "roleAnnotatedFriend": {
+        "headline": "{{personPreferredName}} may know exactly what to ask for without needing a long explanation.",
+        "body": "{{personPreferredName}} may be able to ask for the opportunity, state the limit, or say yes without adding a paragraph to make the answer easier for everyone else to accept. Putting {{personPossessiveAdjective}} name on the work or letting a simple answer stand may feel unusually straightforward today."
+      },
+      "agreementRecuts": [
+        "{{personPreferredName}} may know what they want without needing a long explanation for it. -> {{personPreferredName}} may know exactly what to ask for without needing a long explanation."
+      ],
+      "literalOtherPersonPronouns": []
+    },
+    {
+      "key": "soft/uranus",
+      "status": "OWNER_APPROVED",
+      "headlineContentKey": "fallback-hook/daily-headline/soft/uranus",
+      "bodyContentKey": "fallback-hook/daily-body/soft/uranus",
+      "sourceSelf": {
+        "headlineSha256": "1fb4067094aaf0061840d5ddb1b60f8df13cc71cc8f706aaf7f7e45b3b271573",
+        "bodySha256": "33aff91ee77d7fe9673ca17d9176020c56dd4a19ae43dd4b71ab4dd2703e2929"
+      },
+      "originalAuthoredFriend": {
+        "headline": "A small change may give {{personPreferredName}} part of the day back.",
+        "body": "An unexpected gap can open in {{personPreferredName}}’s afternoon and create enough room for an errand or a small schedule change. Using that window for one practical thing may leave them with an extra hour later instead of another loose end following them into the evening."
+      },
+      "roleAnnotatedFriend": {
+        "headline": "A small change may give {{personPreferredName}} part of the day back.",
+        "body": "An unexpected gap can open in {{personPreferredName}}’s afternoon and create enough room for an errand or a small schedule change. Using that window for one practical thing may leave {{personObject}} with an extra hour later instead of another loose end following {{personObject}} into the evening."
+      },
+      "agreementRecuts": [],
+      "literalOtherPersonPronouns": []
+    },
+    {
+      "key": "soft/venus",
+      "status": "OWNER_APPROVED",
+      "headlineContentKey": "fallback-hook/daily-headline/soft/venus",
+      "bodyContentKey": "fallback-hook/daily-body/soft/venus",
+      "sourceSelf": {
+        "headlineSha256": "29756f24e9f06c5ce1485b7bc603ef4a57830dee71fc55a66ba2f2308c4cc300",
+        "bodySha256": "b47a87ca7c67f0a6c7b3dd3360d40d13ffb6f6b27af18a71590d12ac30e9834f"
+      },
+      "originalAuthoredFriend": {
+        "headline": "Someone may make {{personPreferredName}}’s day easier without asking for much in return.",
+        "body": "Someone may cover the errand, move the meeting, send the introduction, or take care of the part {{personPreferredName}} was already dreading. Their first instinct may be to say they are fine or immediately fill the open time with another obligation. The help works best when the relief is allowed to remain relief instead of becoming room for more work."
+      },
+      "roleAnnotatedFriend": {
+        "headline": "Someone may make {{personPreferredName}}’s day easier without asking for much in return.",
+        "body": "Someone may cover the errand, move the meeting, send the introduction, or take care of the part {{personPreferredName}} was already dreading. {{personPossessiveAdjectiveCapitalized}} first instinct may be to say everything is fine or immediately fill the open time with another obligation. The help works best when the relief is allowed to remain relief instead of becoming room for more work."
+      },
+      "agreementRecuts": [
+        "to say they are fine -> to say everything is fine"
+      ],
+      "literalOtherPersonPronouns": []
+    },
+    {
+      "key": "house/1",
+      "status": "OWNER_APPROVED",
+      "headlineContentKey": "fallback-hook/daily-headline/house/1",
+      "bodyContentKey": "fallback-hook/daily-body/house/1",
+      "sourceSelf": {
+        "headlineSha256": "ec771279a724f254100cb8d88330e794a497ca420a16e303379b1eed1adc7108",
+        "bodySha256": "0d37fa9ae518ce7d1323b57a94669e2e6d4dd64f2b93c64ba66cc0ebfb6247f1"
+      },
+      "originalAuthoredFriend": {
+        "headline": "{{personPreferredName}} may be editing themselves to make the first impression easier.",
+        "body": "{{personPreferredName}} may dress down to blend in or leave out the one detail they actually wanted to share. Staying neutral can help them avoid attention and also leave them feeling invisible. They may know exactly which version of themselves will go over well in the room. The detail they were about to hide may be the part that makes the interaction feel more like them."
+      },
+      "roleAnnotatedFriend": {
+        "headline": "{{personPreferredName}} may be editing {{personReflexive}} to make the first impression easier.",
+        "body": "{{personPreferredName}} may dress down to blend in or leave out the one detail {{personSubject}} actually wanted to share. Staying neutral can help {{personObject}} avoid attention and also leave {{personObject}} feeling invisible. {{personSubjectCapitalized}} may know exactly which version of {{personReflexive}} will go over well in the room. The detail {{personPreferredName}} was about to hide may be the part that makes the interaction feel more like {{personObject}}."
+      },
+      "agreementRecuts": [
+        "The detail they were about to hide -> The detail {{personPreferredName}} was about to hide"
+      ],
+      "literalOtherPersonPronouns": []
+    },
+    {
+      "key": "house/2",
+      "status": "OWNER_APPROVED",
+      "headlineContentKey": "fallback-hook/daily-headline/house/2",
+      "bodyContentKey": "fallback-hook/daily-body/house/2",
+      "sourceSelf": {
+        "headlineSha256": "ec305c80b1e57635b044002cca16bdeb91fe9bc9c14f0857ec9b4db5cfd720af",
+        "bodySha256": "08b7c83a6948ff8ed189eecbbafe686acc8450226bfd863c742a402ef9afbd7b"
+      },
+      "originalAuthoredFriend": {
+        "headline": "A number may be telling {{personPreferredName}} a much harsher story than it deserves to.",
+        "body": "{{personPreferredName}} may check their balance and feel their whole body tighten. A bill is due, half the workday list is unfinished, and suddenly the number starts sounding like proof that they are not responsible or productive enough. Money can show them what needs attention without deciding what they are worth. The practical problem is easier to handle when their character is left out of the calculation."
+      },
+      "roleAnnotatedFriend": {
+        "headline": "A number may be telling {{personPreferredName}} a much harsher story than it deserves to.",
+        "body": "{{personPreferredName}} may check {{personPossessiveAdjective}} balance and feel {{personPossessiveAdjective}} whole body tighten. A bill is due, half the workday list is unfinished, and suddenly the number starts sounding like proof that {{personPreferredName}} is not responsible or productive enough. Money can show {{personObject}} what needs attention without deciding {{personPreferredNamePossessive}} worth. The practical problem is easier to handle when {{personPossessiveAdjective}} character is left out of the calculation."
+      },
+      "agreementRecuts": [
+        "proof that they are not responsible or productive enough -> proof that {{personPreferredName}} is not responsible or productive enough",
+        "what they are worth -> {{personPreferredNamePossessive}} worth"
+      ],
+      "literalOtherPersonPronouns": []
+    },
+    {
+      "key": "house/3",
+      "status": "OWNER_APPROVED",
+      "headlineContentKey": "fallback-hook/daily-headline/house/3",
+      "bodyContentKey": "fallback-hook/daily-body/house/3",
+      "sourceSelf": {
+        "headlineSha256": "733a38a4df51e1ed4feab7a535a98ed40b3946f1fbc4ee9bd2136f8f00d78813",
+        "bodySha256": "f5f74420e60428b2fedc4ed50c2cfffe93fcf687e86edc997b0c161d60011eae"
+      },
+      "originalAuthoredFriend": {
+        "headline": "{{personPreferredName}} may lose more time to the back-and-forth than to the actual task.",
+        "body": "The group chat moves dinner from seven to eight and then back again. A quick email turns into six replies. {{personPreferredName}} can get halfway through an errand before realizing one key detail changed. A clear time, a direct answer, and one place for the important information can save them from spending the afternoon sorting out avoidable confusion."
+      },
+      "roleAnnotatedFriend": {
+        "headline": "{{personPreferredName}} may lose more time to the back-and-forth than to the actual task.",
+        "body": "The group chat moves dinner from seven to eight and then back again. A quick email turns into six replies. {{personPreferredName}} can get halfway through an errand before realizing one key detail changed. A clear time, a direct answer, and one place for the important information can save {{personObject}} from spending the afternoon sorting out avoidable confusion."
+      },
+      "agreementRecuts": [],
+      "literalOtherPersonPronouns": []
+    },
+    {
+      "key": "house/4",
+      "status": "OWNER_APPROVED",
+      "headlineContentKey": "fallback-hook/daily-headline/house/4",
+      "bodyContentKey": "fallback-hook/daily-body/house/4",
+      "sourceSelf": {
+        "headlineSha256": "6161e0f544861b4459116afb09baae7d0f664ae98115292c69df115705023612",
+        "bodySha256": "f9a97831dfe1044e08f1399fa0bc279b510c9005486ead5ea7e33e4efe197e35"
+      },
+      "originalAuthoredFriend": {
+        "headline": "Home may be asking {{personPreferredName}} for one practical fix instead of another workaround.",
+        "body": "{{personPreferredName}} may walk through the door and feel their body tighten before the keys are even down. The cabinet still will not close, the chair is buried again, or the conversation nobody wants to have is waiting at the kitchen table. The private problem they keep postponing may be taking more energy than dealing with one part of it. A working latch, a clear place to sit, or finally naming the tension can make home easier to live in."
+      },
+      "roleAnnotatedFriend": {
+        "headline": "Home may be asking {{personPreferredName}} for one practical fix instead of another workaround.",
+        "body": "{{personPreferredName}} may walk through the door and feel {{personPossessiveAdjective}} body tighten before the keys are even down. The cabinet still will not close, the chair is buried again, or the conversation nobody wants to have is waiting at the kitchen table. The private problem {{personPreferredName}} keeps postponing may be taking more energy than dealing with one part of it. A working latch, a clear place to sit, or finally naming the tension can make home easier to live in."
+      },
+      "agreementRecuts": [
+        "The private problem they keep postponing -> The private problem {{personPreferredName}} keeps postponing"
+      ],
+      "literalOtherPersonPronouns": []
+    },
+    {
+      "key": "house/5",
+      "status": "OWNER_APPROVED",
+      "headlineContentKey": "fallback-hook/daily-headline/house/5",
+      "bodyContentKey": "fallback-hook/daily-body/house/5",
+      "sourceSelf": {
+        "headlineSha256": "e3209d7dd2e61cf79ce427e9979dc9240cfbde94c69a12cb895f181e35611541",
+        "bodySha256": "6f639d3fe04815fd065275be6488626eb82ee7a39f54cacf3df2c11499af2556"
+      },
+      "originalAuthoredFriend": {
+        "headline": "{{personPreferredName}} may be editing the fun out of something that was supposed to feel like theirs.",
+        "body": "{{personPreferredName}} may draft a playful text or start making something, then hesitate right before sharing it and remove the exact line that sounds most like them. Protecting themselves from feeling exposed can also strip out the creative spark that made the thing enjoyable. Not everything they make has to impress an audience or become work before it is allowed to matter."
+      },
+      "roleAnnotatedFriend": {
+        "headline": "{{personPreferredName}} may be editing the fun out of something that was supposed to feel like {{personPossessivePronoun}}.",
+        "body": "{{personPreferredName}} may draft a playful text or start making something, then hesitate right before sharing it and remove the exact line that sounds most like {{personObject}}. Protecting {{personReflexive}} from feeling exposed can also strip out the creative spark that made the thing enjoyable. Not everything {{personPreferredName}} makes has to impress an audience or become work before it is allowed to matter."
+      },
+      "agreementRecuts": [
+        "everything they make -> everything {{personPreferredName}} makes"
+      ],
+      "literalOtherPersonPronouns": []
+    },
+    {
+      "key": "house/6",
+      "status": "OWNER_APPROVED",
+      "headlineContentKey": "fallback-hook/daily-headline/house/6",
+      "bodyContentKey": "fallback-hook/daily-body/house/6",
+      "sourceSelf": {
+        "headlineSha256": "f1293e707b672260d83db4a206180747124a8589c6b36e93fe38a26b14c3b6c0",
+        "bodySha256": "f4d74ba185f0b5ef7c606b11f4f3d5a6e1b4e7d4e57e200bea49b59e644e6359"
+      },
+      "originalAuthoredFriend": {
+        "headline": "{{personPreferredName}}’s day may be leaving basic care until there is no room left for it.",
+        "body": "{{personPreferredName}} may be building the day around other people’s deadlines and fitting food, medication, movement, or rest into whatever remains. Exhaustion that does not lift after one good night of sleep can be a sign that the schedule itself is the problem. One change to the workload may do more than asking their body to keep compensating."
+      },
+      "roleAnnotatedFriend": {
+        "headline": "{{personPreferredName}}’s day may be leaving basic care until there is no room left for it.",
+        "body": "{{personPreferredName}} may be building the day around other people’s deadlines and fitting food, medication, movement, or rest into whatever remains. Exhaustion that does not lift after one good night of sleep can be a sign that the schedule itself is the problem. One change to the workload may do more than asking {{personPossessiveAdjective}} body to keep compensating."
+      },
+      "agreementRecuts": [],
+      "literalOtherPersonPronouns": []
+    },
+    {
+      "key": "house/7",
+      "status": "OWNER_APPROVED",
+      "headlineContentKey": "fallback-hook/daily-headline/house/7",
+      "bodyContentKey": "fallback-hook/daily-body/house/7",
+      "sourceSelf": {
+        "headlineSha256": "7c5d55e0c8ca831e17c11238196edd9c96af6180cda2980249e92bc65f00cd7b",
+        "bodySha256": "468e6cd3958dfc84775236a8e852a9b66c94dff2b35b749ac35974410772a840"
+      },
+      "originalAuthoredFriend": {
+        "headline": "{{personPreferredName}} may realize the agreement costs more than it did when they first said yes.",
+        "body": "{{personPreferredName}} agreed because the plan sounded reasonable at the time. Then the follow-up work lands, the schedule changes, or they become the person expected to keep adjusting. The first version of an agreement is not sacred once the actual cost becomes clear. The relationship may need a second conversation about what no longer works."
+      },
+      "roleAnnotatedFriend": {
+        "headline": "{{personPreferredName}} may realize the agreement costs more than it did when {{personSubject}} first said yes.",
+        "body": "{{personPreferredName}} agreed because the plan sounded reasonable at the time. Then the follow-up work lands, the schedule changes, or {{personPreferredName}} becomes the person expected to keep adjusting. The first version of an agreement is not sacred once the actual cost becomes clear. The relationship may need a second conversation about what no longer works."
+      },
+      "agreementRecuts": [
+        "they become the person expected to keep adjusting -> {{personPreferredName}} becomes the person expected to keep adjusting"
+      ],
+      "literalOtherPersonPronouns": []
+    },
+    {
+      "key": "house/8",
+      "status": "OWNER_APPROVED",
+      "headlineContentKey": "fallback-hook/daily-headline/house/8",
+      "bodyContentKey": "fallback-hook/daily-body/house/8",
+      "sourceSelf": {
+        "headlineSha256": "b35f9052bb07d375daa4aba033576cf599f6b8fcea5093e05f67d0f65925db4d",
+        "bodySha256": "9074d06f335be05a7760f0bf36db2c5c2d4df06bbf70eee983ed6f349a4d562b"
+      },
+      "originalAuthoredFriend": {
+        "headline": "Shared money or access may need clearer terms around {{personPreferredName}} today.",
+        "body": "{{personPreferredName}} may split the check evenly after barely eating, stay quiet about a shared debt, or find that someone else holds the password, paperwork, or final say they need. The discomfort around asking can leave them carrying money, time, or risk without the information that should come with it. Clear numbers, access, and responsibility make the shared arrangement easier to trust."
+      },
+      "roleAnnotatedFriend": {
+        "headline": "Shared money or access may need clearer terms around {{personPreferredName}} today.",
+        "body": "{{personPreferredName}} may split the check evenly after barely eating, stay quiet about a shared debt, or find that someone else holds the password, paperwork, or final say {{personPreferredName}} needs. The discomfort around asking can leave {{personObject}} carrying money, time, or risk without the information that should come with it. Clear numbers, access, and responsibility make the shared arrangement easier to trust."
+      },
+      "agreementRecuts": [
+        "final say they need -> final say {{personPreferredName}} needs"
+      ],
+      "literalOtherPersonPronouns": []
+    },
+    {
+      "key": "house/9",
+      "status": "OWNER_APPROVED",
+      "headlineContentKey": "fallback-hook/daily-headline/house/9",
+      "bodyContentKey": "fallback-hook/daily-body/house/9",
+      "sourceSelf": {
+        "headlineSha256": "8b987faacbf908025c3995ef28d90bf0549c7287b25d511ac4f86e08a0badd69",
+        "bodySha256": "f72846e59a212c361954ae00defe7cccea29615e981713e4a3c37380c8f4d14d"
+      },
+      "originalAuthoredFriend": {
+        "headline": "{{personPreferredName}} may be learning something that changes an opinion they once felt sure about.",
+        "body": "{{personPreferredName}} may read something that changes their mind, hear a teacher explain the subject differently, or realize a rule they have been following no longer fits the life they are living. Revising the view does not make the earlier version foolish. New information is allowed to change the plan."
+      },
+      "roleAnnotatedFriend": {
+        "headline": "{{personPreferredName}} may be learning something that changes an opinion {{personSubject}} once felt sure about.",
+        "body": "{{personPreferredName}} may read something that changes {{personPossessiveAdjective}} mind, hear a teacher explain the subject differently, or realize an old rule no longer fits {{personPossessiveAdjective}} current life. Revising the view does not make the earlier version foolish. New information is allowed to change the plan."
+      },
+      "agreementRecuts": [
+        "a rule they have been following no longer fits the life they are living -> an old rule no longer fits {{personPossessiveAdjective}} current life"
+      ],
+      "literalOtherPersonPronouns": []
+    },
+    {
+      "key": "house/10",
+      "status": "OWNER_APPROVED",
+      "headlineContentKey": "fallback-hook/daily-headline/house/10",
+      "bodyContentKey": "fallback-hook/daily-body/house/10",
+      "sourceSelf": {
+        "headlineSha256": "f12a7c051969c32f0e02f2cf0cafb4148616e7a35b5a8ee4e88512959077d1ba",
+        "bodySha256": "87575e0421ebbff1b793e17967438e0a7a12a54e7b00bf77dd8764f0280b39a5"
+      },
+      "originalAuthoredFriend": {
+        "headline": "More responsibility only helps {{personPreferredName}} if something meaningful comes with it.",
+        "body": "A bigger project may land on {{personPreferredName}}’s desk because everyone knows they can handle it. The important question is what changes with the extra work. More money, authority, credit, or access can make the responsibility worth considering. The same title and pay with a larger pile is simply more work."
+      },
+      "roleAnnotatedFriend": {
+        "headline": "More responsibility only helps {{personPreferredName}} if something meaningful comes with it.",
+        "body": "A bigger project may land on {{personPreferredName}}’s desk because everyone knows {{personPreferredName}} can handle it. The important question is what changes with the extra work. More money, authority, credit, or access can make the responsibility worth considering. The same title and pay with a larger pile is simply more work."
+      },
+      "agreementRecuts": [
+        "everyone knows they can handle it -> everyone knows {{personPreferredName}} can handle it"
+      ],
+      "literalOtherPersonPronouns": []
+    },
+    {
+      "key": "house/11",
+      "status": "OWNER_APPROVED",
+      "headlineContentKey": "fallback-hook/daily-headline/house/11",
+      "bodyContentKey": "fallback-hook/daily-body/house/11",
+      "sourceSelf": {
+        "headlineSha256": "6644047001d2bd548542a2dcdc6ffe9c12df9bff3379389815a7d8551294f606",
+        "bodySha256": "775c76732cabbc79acfcf7d91300d4def17608e33ea3faf605d95dbaf76ea31d"
+      },
+      "originalAuthoredFriend": {
+        "headline": "{{personPreferredName}} may be responding to a plan everyone else decided before they had much say in it.",
+        "body": "The terms may already be in motion before {{personPreferredName}} gets a real chance to weigh in. That can leave them responding to expectations they did not choose and quietly absorbing whatever nobody else accounted for. The situation gets easier to assess once the actual requirements, changeable parts, and responsibilities are clear instead of assumed."
+      },
+      "roleAnnotatedFriend": {
+        "headline": "{{personPreferredName}} may be responding to a plan everyone else decided before {{personSubject}} had much say in it.",
+        "body": "The terms may already be in motion before {{personPreferredName}} gets a real chance to weigh in. That can leave {{personObject}} responding to expectations {{personSubject}} did not choose and quietly absorbing whatever nobody else accounted for. The situation gets easier to assess once the actual requirements, changeable parts, and responsibilities are clear instead of assumed."
+      },
+      "agreementRecuts": [],
+      "literalOtherPersonPronouns": []
+    },
+    {
+      "key": "house/12",
+      "status": "OWNER_APPROVED",
+      "headlineContentKey": "fallback-hook/daily-headline/house/12",
+      "bodyContentKey": "fallback-hook/daily-body/house/12",
+      "sourceSelf": {
+        "headlineSha256": "b1d38e75a506d61e4882017df993a877e654a6df13365900c529e258e1b0fe5f",
+        "bodySha256": "00e99b348d1126fc9b783649e681df427e8d58a0204148bec6e88fc9d560e878"
+      },
+      "originalAuthoredFriend": {
+        "headline": "{{personPreferredName}} may be giving away the quiet part of the day before it has even started.",
+        "body": "{{personPreferredName}} may wake up, reach for the phone, and start answering messages before anyone has asked for an immediate response. By breakfast, several conversations are open and three problems that could have waited are already taking up mental space. The cost is not only the minutes spent replying. It is how quickly their own morning disappears."
+      },
+      "roleAnnotatedFriend": {
+        "headline": "{{personPreferredName}} may be giving away the quiet part of the day before it has even started.",
+        "body": "{{personPreferredName}} may wake up, reach for the phone, and start answering messages before anyone has asked for an immediate response. By breakfast, several conversations are open and three problems that could have waited are already taking up mental space. The cost is not only the minutes spent replying. It is how quickly {{personPossessiveAdjective}} own morning disappears."
+      },
+      "agreementRecuts": [],
+      "literalOtherPersonPronouns": []
+    }
+  ]
+}

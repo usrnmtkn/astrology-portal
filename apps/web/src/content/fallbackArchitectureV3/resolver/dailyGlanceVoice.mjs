@@ -2,6 +2,14 @@ const SECOND_PERSON = /\b(?:you|your|yours|yourself|yourselves)\b/giu;
 const DIRECT_IMPERATIVE = /(?:^|[.!?]\s+)(?:don't|do not|stop|keep|let|give|take|check|say|ask|make|go|trust|put|use|change|tell|be|try|finish|clear|get|notice|remember|decide|write|walk|sit|come|pick|start|see|rest|reschedule|lead|treat|reduce|stay|run|choose|review|pay|complete|separate|begin|send|follow|hold|bring|count|read|skip|look|call|move|leave|delay|spend|accept|speak|expect|know|direct)\b/giu;
 const PERSON_SLOT = /\{\{([\w.]+)\}\}/gu;
 
+function isDeclarativeImperativeFalsePositive(bodyThey, match) {
+  const matchIndex = match.index ?? 0;
+  const verbOffset = match[0].search(/[A-Za-z]/u);
+  const sentence = bodyThey.slice(matchIndex + Math.max(0, verbOffset));
+
+  return /^(?:Change would require\b|Clear numbers, access, and responsibility make\b)/iu.test(sentence);
+}
+
 export const DAILY_GLANCE_PERSON_SLOT_KEYS = new Set([
   "personName",
   "personNamePossessive",
@@ -30,6 +38,7 @@ export function lintDailyGlanceFriendVoice(bodyThey) {
     findings.push({ id: "DG-THEY-NO-SECOND-PERSON", match: match[0] });
   }
   for (const match of bodyThey.matchAll(DIRECT_IMPERATIVE)) {
+    if (isDeclarativeImperativeFalsePositive(bodyThey, match)) continue;
     findings.push({ id: "DG-THEY-NO-DIRECT-IMPERATIVE", match: match[0].trim() });
   }
   for (const match of bodyThey.matchAll(PERSON_SLOT)) {
