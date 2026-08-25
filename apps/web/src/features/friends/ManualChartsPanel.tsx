@@ -43,6 +43,7 @@ import {
   isReaderFacingCopy
 } from "../../content/readerSafety";
 import { isDisplayRetrograde } from "../../services/astrologyDisplay";
+import { natalChartHasCompletePlacements } from "../../services/natalChartCompleteness";
 import {
   selectPairDailyDriver,
   stablePairDailyVariant
@@ -59,7 +60,10 @@ import {
 import { groupAspectsByGiftLesson } from "../../services/aspectGiftLesson";
 import { transitHouseContentKey } from "../../services/generatedContentKeys";
 import type { LiveGeneratedContent } from "../../services/generatedContent";
-import type { ManualChart } from "../../services/manualCharts";
+import {
+  manualChartNeedsNatalRepair,
+  type ManualChart
+} from "../../services/manualCharts";
 import {
   isSocialFriendChart,
   socialFriendToChart,
@@ -957,6 +961,17 @@ export function ManualChartsPanel({
   );
   const editingChart = charts.find((chart) => chart.id === editingChartId) ?? null;
   const selectedChart = allFriendCharts.find((chart) => chart.id === selectedChartId) ?? null;
+  const selectedFriendNatalChartComplete = selectedChart
+    ? natalChartHasCompletePlacements(selectedChart.natalChart, selectedChart.birthTimeUnknown)
+    : false;
+  const selectedFriendReadyNatalChart = selectedFriendNatalChartComplete
+    ? selectedChart?.natalChart ?? null
+    : null;
+  const selectedFriendNatalChartRepairing = Boolean(
+    selectedChart
+      && !selectedFriendNatalChartComplete
+      && manualChartNeedsNatalRepair(selectedChart)
+  );
   const selectedSocialFriend = selectedChart
     ? socialFriends.find((friend) => socialFriendToChart(friend).id === selectedChart.id) ?? null
     : null;
@@ -1011,7 +1026,9 @@ export function ManualChartsPanel({
     () => mergeGeneratedContentMaps(natalGeneratedContent, relationshipGeneratedContent),
     [natalGeneratedContent, relationshipGeneratedContent]
   );
-  const selectedFriendBigThree = selectedChart ? manualChartBigThree(selectedChart) : null;
+  const selectedFriendBigThree = selectedChart && selectedFriendReadyNatalChart
+    ? manualChartBigThree(selectedChart)
+    : null;
   const relationshipComparisonOptions = useMemo(() => buildRelationshipComparisonOptions({
     allFriendCharts,
     profileEmail: profile.email,
@@ -1051,7 +1068,7 @@ export function ManualChartsPanel({
     response: relationshipCompare,
     status: relationshipCompareStatus
   } = useRelationshipCompare({
-    enabled: friendProfileTab === "composite" && Boolean(selectedChart) && !selectedChartIsEvent,
+    enabled: friendProfileTab === "composite" && Boolean(selectedChart) && Boolean(selectedFriendReadyNatalChart) && !selectedChartIsEvent,
     personA: relationshipPersonA,
     personB: relationshipPersonB,
     relationshipType: selectedRelationshipContextType,
@@ -1059,7 +1076,7 @@ export function ManualChartsPanel({
   });
   const friendProfileWork = friendProfileWorkForTab(friendProfileTab);
   const selectedSynastryContacts = useMemo(() => {
-    if (!friendProfileWork.synastryContacts || !selectedChart || selectedChartIsEvent) {
+    if (!friendProfileWork.synastryContacts || !selectedChart || !selectedFriendReadyNatalChart || selectedChartIsEvent) {
       return [];
     }
 
@@ -1078,6 +1095,7 @@ export function ManualChartsPanel({
     relationshipComparisonSky,
     selectedChart,
     selectedChartIsEvent,
+    selectedFriendReadyNatalChart,
     selectedRelationshipContextType
   ]);
   const selectedSynastryAspectGroups = useMemo(() => (
@@ -1110,7 +1128,7 @@ export function ManualChartsPanel({
     }))
   ), [selectedChart?.displayName, selectedSynastryAspectGroups]);
   const selectedCompatibilityCards = useMemo(() => {
-    if (!friendProfileWork.compatibility || !selectedChart || selectedChartIsEvent) {
+    if (!friendProfileWork.compatibility || !selectedChart || !selectedFriendReadyNatalChart || selectedChartIsEvent) {
       return [];
     }
 
@@ -1133,15 +1151,21 @@ export function ManualChartsPanel({
     relationshipGeneratedContent,
     selectedChart,
     selectedChartIsEvent,
+    selectedFriendReadyNatalChart,
     selectedRelationshipContextType
   ]);
   const selectedCompatibilityIsLoading = Boolean(
     friendProfileWork.compatibility
     && selectedChart
     && !selectedChartIsEvent
-    && relationshipComparisonIsSelf
-    && relationshipPersonB
-    && !relationshipComparisonSky
+    && (
+      selectedFriendNatalChartRepairing
+      || (
+        relationshipComparisonIsSelf
+        && relationshipPersonB
+        && !relationshipComparisonSky
+      )
+    )
     && profileNatalCalculationStatus !== "error"
   );
   const selectedCompatibilityDynamics = useMemo(() => (
@@ -1165,7 +1189,7 @@ export function ManualChartsPanel({
     selectedSynastryContacts
   ]);
   const selectedSynastryAspectLines = useMemo<InterChartAspectLine[]>(() => (
-    (friendProfileWork.compatibility || friendProfileWork.synastry) && selectedChart && !selectedChartIsEvent
+    (friendProfileWork.compatibility || friendProfileWork.synastry) && selectedChart && selectedFriendReadyNatalChart && !selectedChartIsEvent
       ? synastryWheelAspectLines(relationshipComparisonSky, selectedChart)
       : []
   ), [
@@ -1173,13 +1197,14 @@ export function ManualChartsPanel({
     friendProfileWork.synastry,
     relationshipComparisonSky,
     selectedChart,
-    selectedChartIsEvent
+    selectedChartIsEvent,
+    selectedFriendReadyNatalChart
   ]);
   const selectedCompositeSky = useMemo(() => (
-    friendProfileWork.composite && selectedChart && !selectedChartIsEvent
+    friendProfileWork.composite && selectedChart && selectedFriendReadyNatalChart && !selectedChartIsEvent
       ? relationshipCompositeSky(relationshipComparisonSky, selectedChart)
       : null
-  ), [friendProfileWork.composite, relationshipComparisonSky, selectedChart, selectedChartIsEvent]);
+  ), [friendProfileWork.composite, relationshipComparisonSky, selectedChart, selectedChartIsEvent, selectedFriendReadyNatalChart]);
   const selectedCompositeAspectGroups = useMemo(() => (
     friendProfileWork.composite
       ? groupAspectsByGiftLesson(
@@ -1222,15 +1247,15 @@ export function ManualChartsPanel({
     selectedCompositeAspectGroups
   ]);
   const selectedFriendHasChartRail = friendProfileTab === "natal"
-    ? Boolean(selectedChart?.natalChart)
+    ? Boolean(selectedFriendReadyNatalChart)
     : friendProfileTab === "transits"
-      ? Boolean(selectedChart?.natalChart)
+      ? Boolean(selectedFriendReadyNatalChart)
     : selectedChartIsEvent
       ? false
       : friendProfileTab === "compatibility"
-      ? Boolean(selectedChart?.natalChart && relationshipComparisonSky)
+      ? Boolean(selectedFriendReadyNatalChart && relationshipComparisonSky)
       : friendProfileTab === "synastry"
-      ? Boolean(selectedChart?.natalChart && relationshipComparisonSky)
+      ? Boolean(selectedFriendReadyNatalChart && relationshipComparisonSky)
       : Boolean(selectedCompositeSky);
   const friendChartRailRenderKey = selectedFriendHasChartRail && selectedChart
     ? [selectedChart.id, friendProfileTab, selectedRelationshipComparison?.id ?? "self"].join(":")
@@ -1258,7 +1283,7 @@ export function ManualChartsPanel({
 
   const renderFriendChartRail = renderedFriendChartRailKey === friendChartRailRenderKey;
   const selectedFriendTransits = useMemo(() => (
-    (friendProfileWork.transits || friendProfileWork.compatibility) && currentSky && selectedChart && !selectedChartIsEvent
+    (friendProfileWork.transits || friendProfileWork.compatibility) && currentSky && selectedChart && selectedFriendReadyNatalChart && !selectedChartIsEvent
       ? dedupeSameBeatPersonalTransits(
           rankTransitsByLifeAreaFocus(rankedFriendTransits(currentSky, selectedChart, sunriseOrbDegrees), lifeAreaFocus),
           currentSky.generatedAt
@@ -1271,13 +1296,14 @@ export function ManualChartsPanel({
     lifeAreaFocus,
     selectedChart,
     selectedChartIsEvent,
+    selectedFriendReadyNatalChart,
     sunriseOrbDegrees
   ]);
   const selectedFriendDailyForecast = useMemo(() => (
-    currentSky && selectedChart?.natalChart && !selectedChartIsEvent
+    currentSky && selectedChart && selectedFriendReadyNatalChart && !selectedChartIsEvent
       ? friendDailyGlance(
           currentSky,
-          selectedChart.natalChart,
+          selectedFriendReadyNatalChart,
           selectedChart.displayName,
           selectedChart.firstName,
           selectedChart.pronouns,
@@ -1285,18 +1311,18 @@ export function ManualChartsPanel({
           selectedChart.id
         )
       : null
-  ), [currentSky, selectedChart, selectedChartIsEvent]);
+  ), [currentSky, selectedChart, selectedChartIsEvent, selectedFriendReadyNatalChart]);
   const selectedFriendDailyDoDont = useMemo(() => (
-    currentSky && selectedChart?.natalChart && !selectedChartIsEvent
-      ? friendDailyDoDont(currentSky, selectedChart.natalChart, selectedFriendTransits)
+    currentSky && selectedFriendReadyNatalChart && !selectedChartIsEvent
+      ? friendDailyDoDont(currentSky, selectedFriendReadyNatalChart, selectedFriendTransits)
       : null
-  ), [currentSky, selectedChart, selectedChartIsEvent, selectedFriendTransits]);
+  ), [currentSky, selectedChartIsEvent, selectedFriendReadyNatalChart, selectedFriendTransits]);
   const selectedFriendHouseTransitCards = useMemo(() => {
-    if (!friendProfileWork.transits || !currentSky || !selectedChart?.natalChart || selectedChartIsEvent) {
+    if (!friendProfileWork.transits || !currentSky || !selectedChart || !selectedFriendReadyNatalChart || selectedChartIsEvent) {
       return [];
     }
 
-    return currentSkyHouseActivations(currentSky, selectedChart.natalChart)
+    return currentSkyHouseActivations(currentSky, selectedFriendReadyNatalChart)
       .slice(0, 4)
       .map((activation) => {
         const transit = {
@@ -1340,6 +1366,7 @@ export function ManualChartsPanel({
     friendProfileWork.transits,
     selectedChart,
     selectedChartIsEvent,
+    selectedFriendReadyNatalChart,
     selectedFriendTransits
   ]);
   const selectedBondTransitCards = useMemo(() => (
@@ -1369,7 +1396,8 @@ export function ManualChartsPanel({
       || !relationshipComparisonIsSelf
       || !currentSky
       || !profileNatalSky
-      || !selectedChart?.natalChart
+      || !selectedChart
+      || !selectedFriendReadyNatalChart
       || selectedChartIsEvent
     ) {
       return null;
@@ -1390,7 +1418,7 @@ export function ManualChartsPanel({
     );
     const friendDriver = pairDailyDriver(
       currentSky,
-      selectedChart.natalChart,
+      selectedFriendReadyNatalChart,
       pairVariant,
       selectedChart.birthTimeUnknown
     );
@@ -1430,7 +1458,8 @@ export function ManualChartsPanel({
     relationshipComparisonIsSelf,
     selectedBondTransitCards,
     selectedChart,
-    selectedChartIsEvent
+    selectedChartIsEvent,
+    selectedFriendReadyNatalChart
   ]);
   const selectedPairDaily = useMemo(() => {
     if (!selectedPairDailySelection || !currentSky || !selectedChart) return null;
@@ -1483,10 +1512,10 @@ export function ManualChartsPanel({
     selectedSocialFriend?.handle
   ]);
   const selectedFriendTransitAspectLines = useMemo(() => (
-    friendProfileWork.transits && currentSky && selectedChart && !selectedChartIsEvent
-      ? transitWheelAspectLines(currentSky, selectedChart.natalChart ?? null, selectedFriendTransits)
+    friendProfileWork.transits && currentSky && selectedChart && selectedFriendReadyNatalChart && !selectedChartIsEvent
+      ? transitWheelAspectLines(currentSky, selectedFriendReadyNatalChart, selectedFriendTransits)
       : []
-  ), [currentSky, friendProfileWork.transits, selectedChart, selectedChartIsEvent, selectedFriendTransits]);
+  ), [currentSky, friendProfileWork.transits, selectedChart, selectedChartIsEvent, selectedFriendReadyNatalChart, selectedFriendTransits]);
   const selectedBondTransitViewCards = useMemo<FriendBondTransitView[]>(() => (
     selectedBondTransitCards.map((card) => ({
       id: card.id,
@@ -1560,11 +1589,11 @@ export function ManualChartsPanel({
     });
   }, [currentSky, relationshipGeneratedContent, selectedChart, selectedFriendTransits]);
   const selectedFriendPlacementRows = useMemo(() => {
-    if (!friendProfileWork.natal || !selectedChart?.natalChart) {
+    if (!friendProfileWork.natal || !selectedChart || !selectedFriendReadyNatalChart) {
       return [];
     }
 
-    const natalChart = selectedChart.natalChart;
+    const natalChart = selectedFriendReadyNatalChart;
     return socialPlacementRows(natalChart).map((row) => {
       const position = planetPositionFromSocialRow(row, natalChart);
       const detail = position
@@ -1592,6 +1621,7 @@ export function ManualChartsPanel({
     fallbackArchitectureV3Version,
     friendGeneratedContent,
     friendProfileWork.natal,
+    selectedFriendReadyNatalChart,
     selectedChart,
     selectedChartIsEvent
   ]);
@@ -1640,24 +1670,24 @@ export function ManualChartsPanel({
       : selectedFriendPlacementRows.filter((row) => !isSocialBigThreeRow(row))
   ), [selectedChartIsEvent, selectedFriendPlacementRows]);
   const selectedFriendNatalTableRows = useMemo(() => {
-    if (!friendProfileWork.natal || !selectedChart?.natalChart) {
+    if (!friendProfileWork.natal || !selectedFriendReadyNatalChart) {
       return [];
     }
 
     return completeNatalChartTableRows(
-      selectedChart.natalChart,
+      selectedFriendReadyNatalChart,
       selectedFriendPlacementRows.map(natalChartTableRowFromSocial)
     );
-  }, [friendProfileWork.natal, selectedChart?.natalChart, selectedFriendPlacementRows]);
+  }, [friendProfileWork.natal, selectedFriendPlacementRows, selectedFriendReadyNatalChart]);
   const selectedFriendNatalAspectGroups = useMemo(() => (
-    friendProfileWork.natal && selectedChart?.natalChart
-      ? groupFriendNatalAspects(canonicalNatalAspectsForSnapshot(selectedChart.natalChart))
+    friendProfileWork.natal && selectedFriendReadyNatalChart
+      ? groupFriendNatalAspects(canonicalNatalAspectsForSnapshot(selectedFriendReadyNatalChart))
       : []
-  ), [friendProfileWork.natal, selectedChart?.natalChart]);
+  ), [friendProfileWork.natal, selectedFriendReadyNatalChart]);
   const selectedFriendNatalAspectPatternItems = useMemo(() => (
     showFriendNatalAspectPatterns && (friendProfileWork.natal || friendProfileWork.transits) && selectedChart
       ? natalAspectPatternReaderItemsForOwner(
-          selectedChart.natalChart ?? null,
+          selectedFriendReadyNatalChart,
           selectedChart.displayName,
           selectedChartIsEvent ? "chart" : "person",
           selectedChart.pronouns
@@ -1668,6 +1698,7 @@ export function ManualChartsPanel({
     friendProfileWork.transits,
     selectedChart,
     selectedChartIsEvent,
+    selectedFriendReadyNatalChart,
     showFriendNatalAspectPatterns
   ]);
   const selectedFriendNatalAspectPatternTimingOverrides = useMemo(() => (
@@ -1684,30 +1715,30 @@ export function ManualChartsPanel({
     selectedFriendNatalAspectPatternItems,
     selectedFriendTransits
   ]);
-  const selectedFriendNatalAspectPatternStatus = friendProfileWork.natal && showFriendNatalAspectPatterns && selectedChart?.natalChart
+  const selectedFriendNatalAspectPatternStatus = friendProfileWork.natal && showFriendNatalAspectPatterns && selectedFriendReadyNatalChart
     ? natalAspectPatternReaderStatus(
         showFriendNatalAspectPatterns,
-        selectedChart.natalChart,
+        selectedFriendReadyNatalChart,
         false,
-        selectedChart.natalChart.aspectPatterns?.interpretationContexts ? "ready" : "unavailable"
+        selectedFriendReadyNatalChart.aspectPatterns?.interpretationContexts ? "ready" : "unavailable"
       )
     : undefined;
   const selectedFriendEmptyHouses = useMemo(() => {
-    if (!friendProfileWork.natal || !selectedChart?.natalChart || selectedChartIsEvent) {
+    if (!friendProfileWork.natal || !selectedFriendReadyNatalChart || selectedChartIsEvent) {
       return [];
     }
 
     const occupiedHouses = new Set(
-      selectedChart.natalChart.positions
+      selectedFriendReadyNatalChart.positions
         .filter((position) => ["Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune", "Pluto"].includes(position.planet))
         .map((position) => position.house)
         .filter((house): house is number => typeof house === "number")
     );
 
     return Array.from({ length: 12 }, (_, index) => index + 1).filter((house) => !occupiedHouses.has(house));
-  }, [friendProfileWork.natal, selectedChart?.natalChart, selectedChartIsEvent]);
+  }, [friendProfileWork.natal, selectedChartIsEvent, selectedFriendReadyNatalChart]);
   const selectedFriendEmptyHouseViewRows = useMemo<FriendNatalEmptyHouseRow[]>(() => {
-    const friendNatalChart = selectedChart?.natalChart;
+    const friendNatalChart = selectedFriendReadyNatalChart;
 
     if (!friendNatalChart || !selectedChart) {
       return [];
@@ -1751,7 +1782,7 @@ export function ManualChartsPanel({
         )
       };
     });
-  }, [fallbackArchitectureV3Version, friendGeneratedContent, selectedChart, selectedFriendEmptyHouses]);
+  }, [fallbackArchitectureV3Version, friendGeneratedContent, selectedChart, selectedFriendEmptyHouses, selectedFriendReadyNatalChart]);
   const selectedFriendNatalAspectViewGroups = useMemo<FriendNatalViewAspectGroup[]>(() => (
     selectedFriendNatalAspectGroups.map((group) => ({
       key: group.key,
@@ -1898,11 +1929,11 @@ export function ManualChartsPanel({
     });
   };
   const openFriendNatalPlacementDetail = (row: SocialPlacementRow) => {
-    if (!selectedChart?.natalChart) {
+    if (!selectedChart || !selectedFriendReadyNatalChart) {
       return;
     }
 
-    const position = planetPositionFromSocialRow(row, selectedChart.natalChart);
+    const position = planetPositionFromSocialRow(row, selectedFriendReadyNatalChart);
 
     if (!position) {
       return;
@@ -1911,7 +1942,7 @@ export function ManualChartsPanel({
     openFriendDetail({
       ...natalPlacementSkyDetail(
       position,
-      selectedChart.natalChart,
+      selectedFriendReadyNatalChart,
       null,
       friendGeneratedContent,
       openFriendNatalAspectDetail,
@@ -1925,13 +1956,13 @@ export function ManualChartsPanel({
     });
   };
   const openFriendEmptyHouseDetail = (house: number) => {
-    if (!selectedChart?.natalChart) {
+    if (!selectedChart || !selectedFriendReadyNatalChart) {
       return;
     }
 
     const article = emptyHouseDetailArticle(
       house,
-      selectedChart.natalChart,
+      selectedFriendReadyNatalChart,
       "friend",
       selectedChart.displayName,
       selectedChart.pronouns,
@@ -2271,7 +2302,7 @@ export function ManualChartsPanel({
       return;
     }
 
-    if (relationshipChartFullscreenMode === "synastry" && !(selectedChart.natalChart && relationshipComparisonSky)) {
+    if (relationshipChartFullscreenMode === "synastry" && !(selectedFriendReadyNatalChart && relationshipComparisonSky)) {
       setRelationshipChartFullscreenMode(null);
       return;
     }
@@ -2284,6 +2315,7 @@ export function ManualChartsPanel({
     relationshipComparisonSky,
     selectedChart,
     selectedChartIsEvent,
+    selectedFriendReadyNatalChart,
     selectedCompositeSky
   ]);
 
@@ -2527,7 +2559,7 @@ export function ManualChartsPanel({
           compositeSky={selectedCompositeSky}
           houseSignLabelStyle={houseSignLabelStyle}
           mode={relationshipChartFullscreenMode}
-          natalSky={selectedChart.natalChart ?? null}
+          natalSky={selectedFriendReadyNatalChart}
           onClose={() => {
             setRelationshipComparisonPickerOpen(false);
             setRelationshipChartFullscreenMode(null);
@@ -2560,7 +2592,7 @@ export function ManualChartsPanel({
               compositeSky={selectedCompositeSky}
               currentSkyPositions={currentSky?.positions ?? []}
               houseSignLabelStyle={houseSignLabelStyle}
-              natalSky={selectedChart.natalChart ?? null}
+              natalSky={selectedFriendReadyNatalChart}
               natalTableRows={selectedFriendNatalTableRows}
               natalViewMode={friendNatalChartViewMode}
               onComparisonSelect={(id) => {
@@ -2647,8 +2679,9 @@ export function ManualChartsPanel({
               birthTimeUnknown={selectedChart.birthTimeUnknown}
               emptyHouseRows={selectedFriendEmptyHouseViewRows}
               friendName={selectedChart.displayName}
-              hasNatalChart={Boolean(selectedChart.natalChart)}
+              hasNatalChart={Boolean(selectedFriendReadyNatalChart)}
               isEventChart={Boolean(selectedChartIsEvent)}
+              isNatalChartRepairing={selectedFriendNatalChartRepairing}
               onOpenAspect={openFriendNatalAspectById}
               onOpenEmptyHouse={openFriendEmptyHouseDetail}
               onOpenPattern={openFriendNatalAspectPatternDetail}
@@ -2688,7 +2721,7 @@ export function ManualChartsPanel({
               innerName={relationshipComparisonName}
               innerSky={relationshipComparisonSky}
               onOpenContact={openFriendSynastryContactDetail}
-              outerSky={selectedChart.natalChart}
+              outerSky={selectedFriendReadyNatalChart}
             />
           )}
 

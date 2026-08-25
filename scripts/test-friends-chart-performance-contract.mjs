@@ -121,8 +121,14 @@ assert.doesNotMatch(
 
 assert.match(
   repairBody,
-  /return\s+!chart\.natalChart\s*\|\|\s*!chart\.birthLocation\.timeZone;/,
-  "Friends chart repair must only run for records missing natal chart data or timezone data."
+  /!natalChartHasCompletePlacements\(chart\.natalChart, chart\.birthTimeUnknown\)/,
+  "Friends chart repair must include legacy snapshots missing canonical placements."
+);
+
+assert.doesNotMatch(
+  manualChartsControllerSource,
+  /if \(chart\.natalChart && chart\.birthLocation\.timeZone === birthLocation\.timeZone\) \{\s*return null;/,
+  "An unchanged timezone must not prevent an incomplete legacy chart from being repaired."
 );
 
 assert.match(
@@ -206,7 +212,7 @@ assert.match(
 );
 assert.match(
   manualChartsPanelSource,
-  /\(friendProfileWork\.compatibility \|\| friendProfileWork\.synastry\) && selectedChart && !selectedChartIsEvent/,
+  /\(friendProfileWork\.compatibility \|\| friendProfileWork\.synastry\) && selectedChart && selectedFriendReadyNatalChart && !selectedChartIsEvent/,
   "Compatibility and Synastry wheels must both receive their inspector aspect lines when active."
 );
 
