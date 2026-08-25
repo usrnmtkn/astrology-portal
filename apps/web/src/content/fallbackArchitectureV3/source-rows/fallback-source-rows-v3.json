@@ -11836,6 +11836,30 @@
    "distribution_lane": "serving"
   },
   {
+   "contentKey": "fallback-hook/natal-you-placement-complete-final/lilith/leo/3",
+   "content_role": "full_copy",
+   "grammar_frame": "complete_sentence",
+   "headline": "Lilith in Leo in the 3rd house",
+   "body": "Lilith in Leo in the 3rd house can make you especially sensitive to what happens when your voice is ignored, mocked, or only welcomed when it entertains somebody else. You may have learned early that speaking with confidence made you look full of yourself, that enthusiasm invited teasing, or that saying something personal gave other people a chance to embarrass you. That can make you careful about when you speak from the heart, but it can also create real rage when someone talks over you, steals your idea, makes you the joke, or expects you to keep smiling while they dismiss something that matters to you.\n\nSiblings, school, neighbors, and the environment you grew up in can make this even sharper. Maybe you competed for attention, learned that the funniest or loudest person controlled the room, or discovered that praise came easily when you said what people wanted to hear and disappeared when you had an opinion of your own. Leo wants their words to carry something personal, which means criticism can land differently when you actually care about what you said. Over time, you may become very good at holding a room, telling a story, or making your point memorable, while still wondering how much of your real voice people would want if it were not polished for them first.\n\nThe deeper shift is letting your voice matter before you know how it will be received. You share the idea before somebody else says it first, admit when something excites you without making fun of yourself for caring, and stop treating every awkward response like proof that you should have stayed quiet. Lilith in Leo in the 3rd house becomes less about making sure people notice you and more about saying what feels unmistakably yours, even when the room does not immediately know what to do with it.",
+   "reader_only": true,
+   "render_policy": "reader-only-exact-lived-v1",
+   "review_status": "approved",
+   "source_keys": [
+    "owner-authored/lilith-leo-3/2026-08-25"
+   ],
+   "approval": {
+    "approvalLevel": "exact_owner_approved",
+    "recordPath": "owner-authored/lilith-leo-3/2026-08-25",
+    "approvedAt": "2026-08-25"
+   },
+   "source_release": "owner-authored-natal-placement-complete-v1",
+   "runtime_family": "natal-you-placement-complete-final",
+   "runtime_key": "lilith|leo|3",
+   "governance": "owner-approved-natal-placement-complete-v1",
+   "owner_approved": true,
+   "distribution_lane": "serving"
+  },
+  {
    "contentKey": "fallback-hook/natal-you-placement-complete-final/lilith/taurus/3",
    "content_role": "full_copy",
    "grammar_frame": "complete_sentence",
