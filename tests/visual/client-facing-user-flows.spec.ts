@@ -1619,7 +1619,9 @@ test.describe("client-facing user flow case studies", () => {
       synastryPlacementHeaders.first(),
       "Synastry placement headings omit the horizontal rule"
     ).toHaveCSS("border-bottom-width", "0px");
-    const synastryContactCard = page.locator(".friend-aspect-row").first();
+    const synastryContactCard = page
+      .locator(".friend-aspect-row:has(.synastry-contact-description)")
+      .first();
     const synastryContactDescription = synastryContactCard.locator(".synastry-contact-description");
     const synastryContactTag = synastryContactCard.locator(".aspect-row-subtitle");
     await expect(synastryContactDescription).toBeVisible();
