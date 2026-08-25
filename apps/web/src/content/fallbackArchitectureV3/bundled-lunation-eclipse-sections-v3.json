@@ -1,0 +1,1024 @@
+{
+  "schema": "tldrastro-approved-lunation-eclipse-sections/v1",
+  "packageVersion": "v3-2026-08-24d",
+  "source": {
+    "schema": "lunation-eclipse-sections/v1",
+    "count": 30
+  },
+  "authoredCards": [
+    {
+      "contentKey": "authored/lunation-eclipse-section/pisces/rising-pisces/house-1/opening",
+      "content_role": "full_copy",
+      "body": "The Pisces lunar eclipse shines upon your 1st House of Self.",
+      "review_status": "approved",
+      "owner_authored": true,
+      "lunation_kind": "eclipse-lunar",
+      "lunation_sign": "pisces",
+      "rising_sign": "pisces",
+      "house": 1,
+      "eclipse_section": "opening",
+      "source_keys": [
+        "authored/book-ritual-and-the-moon/lunation-horoscope/full-moon/pisces/rising-pisces/house-1",
+        "packages/astro-knowledge/review/lunation-card-assembly-v1/pisces-lunar-eclipse-review-packet-v1.json"
+      ],
+      "source_release": "pisces-lunar-eclipse-review-packet-v1",
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/lunation-card-assembly-v1/pisces-lunar-eclipse-review-packet-v1.json",
+        "payloadSha256": "d3c189ac6c51efe0f275fb3398725d56166ada391a08cf67579239f12a364f75",
+        "approvedAt": "2026-08-24"
+      },
+      "promotion_authorized": true,
+      "protected_content": {
+        "policy": "exact-owner-approved-eclipse-section",
+        "body_sha256": "d3c189ac6c51efe0f275fb3398725d56166ada391a08cf67579239f12a364f75",
+        "word_count": 11,
+        "char_count": 60,
+        "template_slots": []
+      }
+    },
+    {
+      "contentKey": "authored/lunation-eclipse-section/pisces/rising-pisces/house-1/evergreen-body",
+      "content_role": "full_copy",
+      "body": "Over the next six months, you will experience significant shifts in your daily routine, physical appearance, and long-term goals. You may experience extreme emotional upheavals that come in waves. This Pisces full moon encourages you to regain balance with your body; your recovery depends on maintaining a balance between effort and flow. You need moments of stillness in your life where you can be present and connected to your body. It could be anything from art to hiking to meditation. Whatever it is, it helps you remember that you can live in the moment and not worry about the past or future. So take a moment to reconnect with yourself and practice being present. What are your favorite activities that bring you back into your body and out of your head? What are you doing when time appears to stand still? When and where do you feel most present? Remember a time when you are not thinking about the past or future but instead fully immersed in a creative process and the present moment. If you need help thinking of something, explore new hobbies and approaches to access your individual state of flow. This Pisces full moon reminds you that your dreams must be reclaimed and safeguarded. Great dreams create great realities. Continue to grow into finding a balance between daydreaming and actualizing. Don't be afraid to keep dreaming big, no matter how impossible they may seem. Celebrate your unique power as a dreamer and embrace the hope and optimism that comes with it. Your big hopes and dreams are an integral part of who you are. Being a dreamer is special. You hold the keys to future achievement while preserving the hopes of your ancestors and inspiring future generations. This Pisces full moon is an opportunity to be guided for the next six months, to step into your creative power, and honor what makes you a muse. Leverage your gifts to elevate yourself from the masses, inspire, and be recognized for your unique talents and vision. Dreams have the power to transform you and the world around you.",
+      "review_status": "approved_reuse",
+      "owner_authored": true,
+      "lunation_kind": "eclipse-lunar",
+      "lunation_sign": "pisces",
+      "rising_sign": "pisces",
+      "house": 1,
+      "eclipse_section": "evergreen-body",
+      "source_keys": [
+        "authored/book-ritual-and-the-moon/lunation-horoscope/full-moon/pisces/rising-pisces/house-1",
+        "packages/astro-knowledge/review/lunation-card-assembly-v1/pisces-lunar-eclipse-review-packet-v1.json"
+      ],
+      "source_release": "pisces-lunar-eclipse-review-packet-v1",
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/lunation-card-assembly-v1/pisces-lunar-eclipse-review-packet-v1.json",
+        "payloadSha256": "16bcdf122ecf6b87b748ea9d6e3351b3e658c251408d3649b8cef2328c6981c8",
+        "approvedAt": "2026-08-24"
+      },
+      "promotion_authorized": true,
+      "protected_content": {
+        "policy": "exact-evergreen-remainder-reuse",
+        "body_sha256": "16bcdf122ecf6b87b748ea9d6e3351b3e658c251408d3649b8cef2328c6981c8",
+        "word_count": 349,
+        "char_count": 2026,
+        "template_slots": [],
+        "source_body_sha256": "d6c3f619bcadf9d95495e26d3cf17b6839f9755b0957b039c1d1a55494ee1fd5",
+        "source_opening_sha256": "4939d131f58ed28debdea40ea01b23e6d56f05dd2f398eeb199e27c014dfbade",
+        "source_remainder_sha256": "16bcdf122ecf6b87b748ea9d6e3351b3e658c251408d3649b8cef2328c6981c8",
+        "preservedBookRemainderSha256": "16bcdf122ecf6b87b748ea9d6e3351b3e658c251408d3649b8cef2328c6981c8",
+        "approved_omissions": []
+      },
+      "suppress_cycle_anchor": false
+    },
+    {
+      "contentKey": "authored/lunation-eclipse-section/pisces/rising-aquarius/house-2/opening",
+      "content_role": "full_copy",
+      "body": "The Pisces lunar eclipse shines upon your 2nd House of Disposable Income and Foundation.",
+      "review_status": "approved",
+      "owner_authored": true,
+      "lunation_kind": "eclipse-lunar",
+      "lunation_sign": "pisces",
+      "rising_sign": "aquarius",
+      "house": 2,
+      "eclipse_section": "opening",
+      "source_keys": [
+        "authored/book-ritual-and-the-moon/lunation-horoscope/full-moon/pisces/rising-aquarius/house-2",
+        "packages/astro-knowledge/review/lunation-card-assembly-v1/pisces-lunar-eclipse-review-packet-v1.json"
+      ],
+      "source_release": "pisces-lunar-eclipse-review-packet-v1",
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/lunation-card-assembly-v1/pisces-lunar-eclipse-review-packet-v1.json",
+        "payloadSha256": "209a8724962c306550d5d7d820717ffb7386a33cd56398cda77b14a9e53dcdd5",
+        "approvedAt": "2026-08-24"
+      },
+      "promotion_authorized": true,
+      "protected_content": {
+        "policy": "exact-owner-approved-eclipse-section",
+        "body_sha256": "209a8724962c306550d5d7d820717ffb7386a33cd56398cda77b14a9e53dcdd5",
+        "word_count": 14,
+        "char_count": 88,
+        "template_slots": []
+      }
+    },
+    {
+      "contentKey": "authored/lunation-eclipse-section/pisces/rising-aquarius/house-2/evergreen-body",
+      "content_role": "full_copy",
+      "body": "It's time to reevaluate your priorities. I am not suggesting that you have veered off course, but rather encouraging you to stay focused. That's why it's so important to take the time to reevaluate our priorities every now and then. Check-in with yourself and ensure you align with your values. The path to success can be winding, but with a firm vision of where you want to go, you know what to avoid in order to get there. Setbacks are an inevitable part of life, but they don't have to define you. Sometimes it can be hard to stay motivated and focused when life throws challenges your way. But it's important to remember that your worth and identity come from within, not from external sources. Take a moment to reflect on your lifestyle and find the balance that works best for you. Over these last six months, starting with the new moon in Pisces, you have learned much about your relationship with your money and assets. The Pisces full moon in the second house is a time to reflect on your income and security. Take this time to reflect on your financial lessons and rewards. Eliminate what is not essential, and focus on what offers the greatest return. This is a time to re-examine your financial dreams, views on self-worth, feelings of lack, debt, and any fears that come up around these themes to be worked through and shifted. As the full moon unfolds, it shifts your perspective on the parts of your work that make you feel alive. This full moon may also signal a time when you make a sizeable investment in your dreams: paying for marriage, a downpayment on a house, or paying to further your education are some examples. Be mindful if any financial planets, like Venus or Mercury, are retrograde at this time. Making financial decisions during a retrograde period can be tricky, but it is possible. Just take extra precautions and quadruple-check any relevant documents and contracts before signing them. This is the time to take control of your future and make the most of your potential. Take a chance on yourself. Invest in your goals and dreams over the next six months and watch the amazing things that can happen. You'll be surprised at how much your income, investments, and self-worth can grow when you commit to the work.",
+      "review_status": "approved_reuse",
+      "owner_authored": true,
+      "lunation_kind": "eclipse-lunar",
+      "lunation_sign": "pisces",
+      "rising_sign": "aquarius",
+      "house": 2,
+      "eclipse_section": "evergreen-body",
+      "source_keys": [
+        "authored/book-ritual-and-the-moon/lunation-horoscope/full-moon/pisces/rising-aquarius/house-2",
+        "packages/astro-knowledge/review/lunation-card-assembly-v1/pisces-lunar-eclipse-review-packet-v1.json"
+      ],
+      "source_release": "pisces-lunar-eclipse-review-packet-v1",
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/lunation-card-assembly-v1/pisces-lunar-eclipse-review-packet-v1.json",
+        "payloadSha256": "a2095c045deddf34b05906a85dca2ccce98d8a746b9587fa37a60c64fb9e1908",
+        "approvedAt": "2026-08-24"
+      },
+      "promotion_authorized": true,
+      "protected_content": {
+        "policy": "exact-evergreen-remainder-reuse",
+        "body_sha256": "a2095c045deddf34b05906a85dca2ccce98d8a746b9587fa37a60c64fb9e1908",
+        "word_count": 396,
+        "char_count": 2247,
+        "template_slots": [],
+        "source_body_sha256": "1c9a77314269e31eb098adc708d4e5631764075b82cc62cc3265686e70744a65",
+        "source_opening_sha256": "dd425d1695f6927ff05ddc0cbbcd99df8c2c4aabc299c4c0c6bcd05fd3e324ff",
+        "source_remainder_sha256": "a2095c045deddf34b05906a85dca2ccce98d8a746b9587fa37a60c64fb9e1908",
+        "preservedBookRemainderSha256": "a2095c045deddf34b05906a85dca2ccce98d8a746b9587fa37a60c64fb9e1908",
+        "approved_omissions": []
+      },
+      "suppress_cycle_anchor": false
+    },
+    {
+      "contentKey": "authored/lunation-eclipse-section/pisces/rising-capricorn/house-3/opening",
+      "content_role": "full_copy",
+      "body": "The Pisces lunar eclipse shines upon your 3rd House of communication, early education, processing information, community, siblings, and neighbors.",
+      "review_status": "approved",
+      "owner_authored": true,
+      "lunation_kind": "eclipse-lunar",
+      "lunation_sign": "pisces",
+      "rising_sign": "capricorn",
+      "house": 3,
+      "eclipse_section": "opening",
+      "source_keys": [
+        "authored/book-ritual-and-the-moon/lunation-horoscope/full-moon/pisces/rising-capricorn/house-3",
+        "packages/astro-knowledge/review/lunation-card-assembly-v1/pisces-lunar-eclipse-review-packet-v1.json"
+      ],
+      "source_release": "pisces-lunar-eclipse-review-packet-v1",
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/lunation-card-assembly-v1/pisces-lunar-eclipse-review-packet-v1.json",
+        "payloadSha256": "12899f09e246b3512b932b2edc8a6ae2bbb7d0cc9b483ca9988bbd2b58773303",
+        "approvedAt": "2026-08-24"
+      },
+      "promotion_authorized": true,
+      "protected_content": {
+        "policy": "exact-owner-approved-eclipse-section",
+        "body_sha256": "12899f09e246b3512b932b2edc8a6ae2bbb7d0cc9b483ca9988bbd2b58773303",
+        "word_count": 19,
+        "char_count": 146,
+        "template_slots": []
+      }
+    },
+    {
+      "contentKey": "authored/lunation-eclipse-section/pisces/rising-capricorn/house-3/evergreen-body",
+      "content_role": "full_copy",
+      "body": "This full moon unlocks deeper insights and personal awareness. It's a great time to look at your relationships, clear any lingering karma, and heal any emotional wounds. Are you allowing yourself to be deceived by your environment or the people around you? It's easy to blame external forces for our current situation and circumstances. But sometimes, we need to step back and see how we've contributed to our struggles. Ask yourself if your mind is clear or if you're being fed misinformation or toxic rumors. Find learnings in this moment and use them to make better decisions. You may get clear about projections and illusions surrounding a person or specific situation. Which can leave you feeling disappointed and struggling to find the words to articulate your thoughts and feelings. It's also possible you're on the receiving end of a half-hearted apology or no apology. A genuine apology can heal, but not all are created equal. It can be confusing and invalidating if you're on the receiving end of a half-hearted apology or no apology. How someone responds to your feelings doesn't determine your worth. So if you're in a situation where you don't feel heard or respected, take a step back, disengage from the person or situation, and focus your energy elsewhere. It's the only way to restore balance and self-respect. Life can sometimes be tricky to navigate. You face uncertainty and obstacles daily, and knowing when and how to take action can be challenging. But you're good at assessing a situation and making the most of it. Refrain from getting stuck in a loop of uncertainty and resigning yourself to waiting forever. This full moon is a signal to take a break and process all the information and knowledge you've gathered in the last six months since the Pisces new moon. Take this time to think about what you want. Where do you want to invest your energy? What community and lifestyle do you want to be a part of? You can create the conditions, connections, and community you need.",
+      "review_status": "approved_reuse",
+      "owner_authored": true,
+      "lunation_kind": "eclipse-lunar",
+      "lunation_sign": "pisces",
+      "rising_sign": "capricorn",
+      "house": 3,
+      "eclipse_section": "evergreen-body",
+      "source_keys": [
+        "authored/book-ritual-and-the-moon/lunation-horoscope/full-moon/pisces/rising-capricorn/house-3",
+        "packages/astro-knowledge/review/lunation-card-assembly-v1/pisces-lunar-eclipse-review-packet-v1.json"
+      ],
+      "source_release": "pisces-lunar-eclipse-review-packet-v1",
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/lunation-card-assembly-v1/pisces-lunar-eclipse-review-packet-v1.json",
+        "payloadSha256": "aec4e14c96b5a56d96ccab120ee9ac794127dee9bfc6416166af8efd9c3385b6",
+        "approvedAt": "2026-08-24"
+      },
+      "promotion_authorized": true,
+      "protected_content": {
+        "policy": "exact-evergreen-remainder-reuse",
+        "body_sha256": "aec4e14c96b5a56d96ccab120ee9ac794127dee9bfc6416166af8efd9c3385b6",
+        "word_count": 341,
+        "char_count": 2002,
+        "template_slots": [],
+        "source_body_sha256": "e6ceb6e0e2f3e633d0d284ec9ee62d3a322d7bc90286b648753435eccf799991",
+        "source_opening_sha256": "011b158f0304c43e8e8bd5995a477e724c1f7f565a3b110c278f6d1653ece6e0",
+        "source_remainder_sha256": "aec4e14c96b5a56d96ccab120ee9ac794127dee9bfc6416166af8efd9c3385b6",
+        "preservedBookRemainderSha256": "aec4e14c96b5a56d96ccab120ee9ac794127dee9bfc6416166af8efd9c3385b6",
+        "approved_omissions": []
+      },
+      "suppress_cycle_anchor": false
+    },
+    {
+      "contentKey": "authored/lunation-eclipse-section/pisces/rising-sagittarius/house-4/opening",
+      "content_role": "full_copy",
+      "body": "The Pisces lunar eclipse shines upon your 4th house of home, family, and generational karma.",
+      "review_status": "approved",
+      "owner_authored": true,
+      "lunation_kind": "eclipse-lunar",
+      "lunation_sign": "pisces",
+      "rising_sign": "sagittarius",
+      "house": 4,
+      "eclipse_section": "opening",
+      "source_keys": [
+        "authored/book-ritual-and-the-moon/lunation-horoscope/full-moon/pisces/rising-sagittarius/house-4",
+        "packages/astro-knowledge/review/lunation-card-assembly-v1/pisces-lunar-eclipse-review-packet-v1.json"
+      ],
+      "source_release": "pisces-lunar-eclipse-review-packet-v1",
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/lunation-card-assembly-v1/pisces-lunar-eclipse-review-packet-v1.json",
+        "payloadSha256": "2895bba811c7e484eb07560c2163a3ecab488e8e84265b85c1c2b86e9f426a5d",
+        "approvedAt": "2026-08-24"
+      },
+      "promotion_authorized": true,
+      "protected_content": {
+        "policy": "exact-owner-approved-eclipse-section",
+        "body_sha256": "2895bba811c7e484eb07560c2163a3ecab488e8e84265b85c1c2b86e9f426a5d",
+        "word_count": 15,
+        "char_count": 92,
+        "template_slots": []
+      }
+    },
+    {
+      "contentKey": "authored/lunation-eclipse-section/pisces/rising-sagittarius/house-4/evergreen-body",
+      "content_role": "full_copy",
+      "body": "Home is where the heart is. Home isn't just a place - it's a feeling. It's the warmth of family and friends, the memories that remind you of your roots, a safe haven, a place where you can be yourself, unpack your emotional baggage, and be surrounded by love. The Pisces full moon is a time to reflect on the patterns and stories you may have inherited from your ancestors. Honor the stories that have been passed down, and use them as a source of strength and guidance. Take a moment to contemplate how your family history has shaped who you are today. The 4th house is a Karmic house. The pain and grief of what's arising is your teacher. During this Pisces full moon, you realize that you cannot alter the history of where you come from. You can't unburden your loved ones of their pain and the weight they carry, nor heal their trauma alone. It doesn't mean you can't be a source of strength and love for them. The fourth house governs your family dynamics, drawing them out to learn. During this lunation, there may also be important news, conversations, or turning points with family or close loved ones. Each full moon has a theme that helps you understand your past in a new way. Pisces is connected, empathetic, creative, intuitive, and compassionate. With Pisces's creative and compassionate energy, it's the perfect time to look back through old family photos and learn from their stories. Looking back at your ancestors can be a powerful reminder of how far you've come. Have you ever taken a moment to think about your ancestors and the journeys they took? Whether it was for security, opportunity, or something else, their stories are worth honoring. Take a moment to visualize your relatives as children and send them compassion and love. Picture their struggles and their resilience and honor their courage. You can help heal their inner child by sending them the sympathy, energy of stability, and safety they desperately sought. Honor their journeys, recognize their resilience, and be inspired by their courage. Take a moment to appreciate your family's journey and take stock of your own. Let the full moon energy help you break free from old patterns. Healing doesn't always mean going back. You don't need to revisit the past to heal and break habits. Instead, open yourself up to new ways of understanding old cycles. Find grace in imperfection. Understand that failure and challenging family dynamics are inescapable and not something to be ashamed of. We all need to feel that sense of belonging and peace, and that's why having a home is so important. You recently moved, need to move closer to family, or are settling into a new home. Whether you're moving, settling into a new home, or just looking to make changes, now is the perfect time to cultivate actions that will help you feel more comfortable and at home.  Over the next six months, cultivate actions that facilitate emotional support within your home and family environments and see your emotional foundation strengthen.",
+      "review_status": "approved_reuse",
+      "owner_authored": true,
+      "lunation_kind": "eclipse-lunar",
+      "lunation_sign": "pisces",
+      "rising_sign": "sagittarius",
+      "house": 4,
+      "eclipse_section": "evergreen-body",
+      "source_keys": [
+        "authored/book-ritual-and-the-moon/lunation-horoscope/full-moon/pisces/rising-sagittarius/house-4",
+        "packages/astro-knowledge/review/lunation-card-assembly-v1/pisces-lunar-eclipse-review-packet-v1.json"
+      ],
+      "source_release": "pisces-lunar-eclipse-review-packet-v1",
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/lunation-card-assembly-v1/pisces-lunar-eclipse-review-packet-v1.json",
+        "payloadSha256": "07bfba4e9ed442907b5c32c7e7c2f0cbe4b6eee25efdc43d7668ce55e76478ba",
+        "approvedAt": "2026-08-24"
+      },
+      "promotion_authorized": true,
+      "protected_content": {
+        "policy": "exact-evergreen-remainder-with-approved-omissions",
+        "body_sha256": "07bfba4e9ed442907b5c32c7e7c2f0cbe4b6eee25efdc43d7668ce55e76478ba",
+        "word_count": 516,
+        "char_count": 3008,
+        "template_slots": [],
+        "source_body_sha256": "26135885320852249aa2a3a44f5ea3ad58f052bdaa963177985ad04e75055073",
+        "source_opening_sha256": "c195d17e3cd23e8bc000395199ebc695babd139d7bdd671a47e06c0aa2aa0572",
+        "source_remainder_sha256": "f14221ccf1f3351d4be3494c02ff31bf9a765431b026a7995bc7379d56e9d9a4",
+        "preservedBookRemainderSha256": "07bfba4e9ed442907b5c32c7e7c2f0cbe4b6eee25efdc43d7668ce55e76478ba",
+        "approved_omissions": [
+          {
+            "start": 2911,
+            "end": 3025,
+            "sha256": "c163398ad7a8d5759ce6479b1f31c722565972bb515e4e70c08da2fc16ceb55d",
+            "text": "This month's full moon intention is to find home and comfort within yourself despite any chaos that surrounds you.",
+            "ownerApproved": true,
+            "approvedAt": "2026-08-24"
+          }
+        ]
+      },
+      "suppress_cycle_anchor": false
+    },
+    {
+      "contentKey": "authored/lunation-eclipse-section/pisces/rising-scorpio/house-5/opening",
+      "content_role": "full_copy",
+      "body": "The Pisces lunar eclipse shines upon your 5th House of Fun, Children, and Creativity.",
+      "review_status": "approved",
+      "owner_authored": true,
+      "lunation_kind": "eclipse-lunar",
+      "lunation_sign": "pisces",
+      "rising_sign": "scorpio",
+      "house": 5,
+      "eclipse_section": "opening",
+      "source_keys": [
+        "authored/book-ritual-and-the-moon/lunation-horoscope/full-moon/pisces/rising-scorpio/house-5",
+        "packages/astro-knowledge/review/lunation-card-assembly-v1/pisces-lunar-eclipse-review-packet-v1.json"
+      ],
+      "source_release": "pisces-lunar-eclipse-review-packet-v1",
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/lunation-card-assembly-v1/pisces-lunar-eclipse-review-packet-v1.json",
+        "payloadSha256": "728958fdc33dd5068a57c71353e2fd3b3076fe5db1df2cf6e65995ffa18f7a2b",
+        "approvedAt": "2026-08-24"
+      },
+      "promotion_authorized": true,
+      "protected_content": {
+        "policy": "exact-owner-approved-eclipse-section",
+        "body_sha256": "728958fdc33dd5068a57c71353e2fd3b3076fe5db1df2cf6e65995ffa18f7a2b",
+        "word_count": 14,
+        "char_count": 85,
+        "template_slots": []
+      }
+    },
+    {
+      "contentKey": "authored/lunation-eclipse-section/pisces/rising-scorpio/house-5/evergreen-body",
+      "content_role": "full_copy",
+      "body": "It's easy to get caught up in your day-to-day responsibilities and forget why you do what you do. But tapping into your playful nature reminds you of the joy and excitement of creating. It's time to unplug, unwind, and explore the power of play. When was the last time you let yourself be genuinely free and creative? Whether it's making art, singing, or playing a game, it's essential to reconnect with your playful side and indulge in activities that bring you joy. Remember that playing is fun and has multiple cognitive, emotional, and physical benefits. So take a step back, get creative, and let your inner child shine. This celestial event is the perfect opportunity to channel your inner artist and explore your creative side. Let your imagination run wild, and don't be afraid to experiment. Try drawing something from around your home or one of your favorite tarot cards. Or why not try \"non-dominant hand doodles\" by drawing with your non-dominant hand? Whatever you do, let your flow take you where it wants to go. You can always make edits later. The full moon in the fifth house is a time for self-expression. If you're feeling blocked or restricted, art is the perfect creative outlet to help release stuck thoughts, energy, and emotions. Art can be a path to Self Discovery and connection - to yourself, your partners, and your children. Now is the perfect time to explore this relationship and express your internal joys. Use this special time to reflect on your relationships, discover what makes them unique, and find ways to connect through play.",
+      "review_status": "approved_reuse",
+      "owner_authored": true,
+      "lunation_kind": "eclipse-lunar",
+      "lunation_sign": "pisces",
+      "rising_sign": "scorpio",
+      "house": 5,
+      "eclipse_section": "evergreen-body",
+      "source_keys": [
+        "authored/book-ritual-and-the-moon/lunation-horoscope/full-moon/pisces/rising-scorpio/house-5",
+        "packages/astro-knowledge/review/lunation-card-assembly-v1/pisces-lunar-eclipse-review-packet-v1.json"
+      ],
+      "source_release": "pisces-lunar-eclipse-review-packet-v1",
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/lunation-card-assembly-v1/pisces-lunar-eclipse-review-packet-v1.json",
+        "payloadSha256": "4e9287ebc28c1228750a5a36d9bad7c315d6c15952172bb39bcda977c34e0256",
+        "approvedAt": "2026-08-24"
+      },
+      "promotion_authorized": true,
+      "protected_content": {
+        "policy": "exact-evergreen-remainder-reuse",
+        "body_sha256": "4e9287ebc28c1228750a5a36d9bad7c315d6c15952172bb39bcda977c34e0256",
+        "word_count": 267,
+        "char_count": 1566,
+        "template_slots": [],
+        "source_body_sha256": "7c2a2a23f8553724e7de478ddc0f79b819b193ce759b4740a3fa5821b1f5fc21",
+        "source_opening_sha256": "b35ef8d3e000745526fa5e3b15067ec3f48c0e74e4c3ecac6503e08690778093",
+        "source_remainder_sha256": "4e9287ebc28c1228750a5a36d9bad7c315d6c15952172bb39bcda977c34e0256",
+        "preservedBookRemainderSha256": "4e9287ebc28c1228750a5a36d9bad7c315d6c15952172bb39bcda977c34e0256",
+        "approved_omissions": []
+      },
+      "suppress_cycle_anchor": false
+    },
+    {
+      "contentKey": "authored/lunation-eclipse-section/pisces/rising-libra/house-6/opening",
+      "content_role": "full_copy",
+      "body": "The Pisces lunar eclipse shines upon your 6th house of health, daily work, routine, and being of service.",
+      "review_status": "approved",
+      "owner_authored": true,
+      "lunation_kind": "eclipse-lunar",
+      "lunation_sign": "pisces",
+      "rising_sign": "libra",
+      "house": 6,
+      "eclipse_section": "opening",
+      "source_keys": [
+        "authored/book-ritual-and-the-moon/lunation-horoscope/full-moon/pisces/rising-libra/house-6",
+        "packages/astro-knowledge/review/lunation-card-assembly-v1/pisces-lunar-eclipse-review-packet-v1.json"
+      ],
+      "source_release": "pisces-lunar-eclipse-review-packet-v1",
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/lunation-card-assembly-v1/pisces-lunar-eclipse-review-packet-v1.json",
+        "payloadSha256": "73456811e54261dd40f4d3aa2f3db90803c812f2f3a31eb161e365b63481e4d0",
+        "approvedAt": "2026-08-24"
+      },
+      "promotion_authorized": true,
+      "protected_content": {
+        "policy": "exact-owner-approved-eclipse-section",
+        "body_sha256": "73456811e54261dd40f4d3aa2f3db90803c812f2f3a31eb161e365b63481e4d0",
+        "word_count": 18,
+        "char_count": 105,
+        "template_slots": []
+      }
+    },
+    {
+      "contentKey": "authored/lunation-eclipse-section/pisces/rising-libra/house-6/evergreen-body",
+      "content_role": "full_copy",
+      "body": "The Pisces full moon is here to remind you that you don't have to overexert yourself in order to be successful. This mystical moon reminds you that success does not require overexertion and that you must honor your physical, emotional, and spiritual needs to preserve your vitality. Listen to your body and take breaks when necessary, for self-care is not selfish - it is essential for your well-being. If you feel overwhelmed, drained, or burned out, the Pisces full moon calls upon you to take back control of your well-being. Create a routine that supports your mental and physical health, and practice moderation with substances that alter your perceptions. This is a time to address sleep issues and burnout by providing yourself with the rest your body requires, as everyone's needs are different. Burnout is a self-care alert, signaling that something in your life needs to change. Use this time to adopt different nurturing strategies and build resilience to better adapt to periods of stress, challenge, and trauma. Remember that resilience is about balance, and that you can still be passionate about your work while experiencing burnout due to a stressful environment or excessive investment in a mismatched job. As you redefine your day-to-day routine towards better health, approach yourself with compassion and self-love. This full moon is an opportunity to celebrate small victories and try new things. Embrace alternative healthcare services to address any health issues that may arise. Remember that you are still learning and growing, so be gentle with yourself like you would with a child trying something new. This mystical Pisces full moon calls upon you to build a more purposeful and healthy life, filled with love and compassion for yourself.",
+      "review_status": "approved_reuse",
+      "owner_authored": true,
+      "lunation_kind": "eclipse-lunar",
+      "lunation_sign": "pisces",
+      "rising_sign": "libra",
+      "house": 6,
+      "eclipse_section": "evergreen-body",
+      "source_keys": [
+        "authored/book-ritual-and-the-moon/lunation-horoscope/full-moon/pisces/rising-libra/house-6",
+        "packages/astro-knowledge/review/lunation-card-assembly-v1/pisces-lunar-eclipse-review-packet-v1.json"
+      ],
+      "source_release": "pisces-lunar-eclipse-review-packet-v1",
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/lunation-card-assembly-v1/pisces-lunar-eclipse-review-packet-v1.json",
+        "payloadSha256": "3e8a96cb732f2b00ea379b574da740c88a7ffdd8ea01d4b056eeafc667345fcf",
+        "approvedAt": "2026-08-24"
+      },
+      "promotion_authorized": true,
+      "protected_content": {
+        "policy": "exact-evergreen-remainder-reuse",
+        "body_sha256": "3e8a96cb732f2b00ea379b574da740c88a7ffdd8ea01d4b056eeafc667345fcf",
+        "word_count": 285,
+        "char_count": 1766,
+        "template_slots": [],
+        "source_body_sha256": "0bf91f48205f17e672e7877bab031e4736cd4218d13c3bfc9f458d355cc9e319",
+        "source_opening_sha256": "5ee0970bb0d29a706187e2ad2f6cfed1d7b38d4a0d2567d3ad7e90dfc3324956",
+        "source_remainder_sha256": "3e8a96cb732f2b00ea379b574da740c88a7ffdd8ea01d4b056eeafc667345fcf",
+        "preservedBookRemainderSha256": "3e8a96cb732f2b00ea379b574da740c88a7ffdd8ea01d4b056eeafc667345fcf",
+        "approved_omissions": []
+      },
+      "suppress_cycle_anchor": false
+    },
+    {
+      "contentKey": "authored/lunation-eclipse-section/pisces/rising-virgo/house-7/opening",
+      "content_role": "full_copy",
+      "body": "The Pisces lunar eclipse shines upon your 7th house of relationships.",
+      "review_status": "approved",
+      "owner_authored": true,
+      "lunation_kind": "eclipse-lunar",
+      "lunation_sign": "pisces",
+      "rising_sign": "virgo",
+      "house": 7,
+      "eclipse_section": "opening",
+      "source_keys": [
+        "authored/book-ritual-and-the-moon/lunation-horoscope/full-moon/pisces/rising-virgo/house-7",
+        "packages/astro-knowledge/review/lunation-card-assembly-v1/pisces-lunar-eclipse-review-packet-v1.json"
+      ],
+      "source_release": "pisces-lunar-eclipse-review-packet-v1",
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/lunation-card-assembly-v1/pisces-lunar-eclipse-review-packet-v1.json",
+        "payloadSha256": "e315af346ddc80c5bbb085d23a546918e9a7a9835cb9689204d3c177e27c05e4",
+        "approvedAt": "2026-08-24"
+      },
+      "promotion_authorized": true,
+      "protected_content": {
+        "policy": "exact-owner-approved-eclipse-section",
+        "body_sha256": "e315af346ddc80c5bbb085d23a546918e9a7a9835cb9689204d3c177e27c05e4",
+        "word_count": 11,
+        "char_count": 69,
+        "template_slots": []
+      }
+    },
+    {
+      "contentKey": "authored/lunation-eclipse-section/pisces/rising-virgo/house-7/evergreen-body",
+      "content_role": "full_copy",
+      "body": "It's time to start focusing on your relationship with yourself. A relationship reflects your inner world — what you experience on the outside is a mirror of what's within. When you learn to appreciate and love yourself, it will show in your relationships with others. The Pisces full moon reminds you of the power of commitment and unions. The full moon in the seventh house is a time to celebrate your relationships and their capacity to shape your life. This period can bring deeper commitments like marriage, engagement, or co-founding a business. It's a reminder to cherish the connections in balance and be mindful of those that aren't, and the relationships where there is a lack of balance result in endings. Finding the perfect balance between intuition and information can take time and effort when making decisions. To achieve this balance, it's vital to remain aware of both the large pictures and the fine details. Focus on developing trust in your instincts and understanding your whys. Do this, and you will be able to trust your intuition and make relationship decisions with confidence. The full moon is the perfect time to repair and reconnect with those in your life. Take this moment to work together on unspoken issues and to build deeper trust and transparency. You can start by spending quality time together or going on a spiritual retreat/camping. Even the smallest of steps can signify your commitment and connection to the relationship. If you identify a specific long-term relationship that can't find common ground or compromise, you may need to let go of the idea that the relationship is salvageable. This doesn't mean you can't come back together at a later point or have a dignified, respectful end to the relationship, but expending your energy on something that isn't working, is more harmful than helpful. It doesn't mean you're giving up on the relationship, but rather, you're taking the time and space to heal, focus on yourself and what each of you want out of the relationship, or if it's not right, find something that is.",
+      "review_status": "approved_reuse",
+      "owner_authored": true,
+      "lunation_kind": "eclipse-lunar",
+      "lunation_sign": "pisces",
+      "rising_sign": "virgo",
+      "house": 7,
+      "eclipse_section": "evergreen-body",
+      "source_keys": [
+        "authored/book-ritual-and-the-moon/lunation-horoscope/full-moon/pisces/rising-virgo/house-7",
+        "packages/astro-knowledge/review/lunation-card-assembly-v1/pisces-lunar-eclipse-review-packet-v1.json"
+      ],
+      "source_release": "pisces-lunar-eclipse-review-packet-v1",
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/lunation-card-assembly-v1/pisces-lunar-eclipse-review-packet-v1.json",
+        "payloadSha256": "55a0103bddeed8c9fcba7e73bd4cc8deab0e0eaaf7daaf68c03c5f4a1c8b173d",
+        "approvedAt": "2026-08-24"
+      },
+      "promotion_authorized": true,
+      "protected_content": {
+        "policy": "exact-evergreen-remainder-reuse",
+        "body_sha256": "55a0103bddeed8c9fcba7e73bd4cc8deab0e0eaaf7daaf68c03c5f4a1c8b173d",
+        "word_count": 347,
+        "char_count": 2063,
+        "template_slots": [],
+        "source_body_sha256": "14bdcd76fd4973954d575115a798bf1c2bb2521fef08fe397046931a0e33261d",
+        "source_opening_sha256": "c880cbda4a6c50e53fc44867cbac8a36ab0bac68ca734ea888a80dc55834040e",
+        "source_remainder_sha256": "55a0103bddeed8c9fcba7e73bd4cc8deab0e0eaaf7daaf68c03c5f4a1c8b173d",
+        "preservedBookRemainderSha256": "55a0103bddeed8c9fcba7e73bd4cc8deab0e0eaaf7daaf68c03c5f4a1c8b173d",
+        "approved_omissions": []
+      },
+      "suppress_cycle_anchor": false
+    },
+    {
+      "contentKey": "authored/lunation-eclipse-section/pisces/rising-leo/house-8/opening",
+      "content_role": "full_copy",
+      "body": "The Pisces lunar eclipse shines upon your 8th house of transformation, symbolism, and other people's money.",
+      "review_status": "approved",
+      "owner_authored": true,
+      "lunation_kind": "eclipse-lunar",
+      "lunation_sign": "pisces",
+      "rising_sign": "leo",
+      "house": 8,
+      "eclipse_section": "opening",
+      "source_keys": [
+        "authored/book-ritual-and-the-moon/lunation-horoscope/full-moon/pisces/rising-leo/house-8",
+        "packages/astro-knowledge/review/lunation-card-assembly-v1/pisces-lunar-eclipse-review-packet-v1.json"
+      ],
+      "source_release": "pisces-lunar-eclipse-review-packet-v1",
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/lunation-card-assembly-v1/pisces-lunar-eclipse-review-packet-v1.json",
+        "payloadSha256": "c50242455a557792c946b15aa6fd88089e4c2314cf4f3b53da6835694e4db8a9",
+        "approvedAt": "2026-08-24"
+      },
+      "promotion_authorized": true,
+      "protected_content": {
+        "policy": "exact-owner-approved-eclipse-section",
+        "body_sha256": "c50242455a557792c946b15aa6fd88089e4c2314cf4f3b53da6835694e4db8a9",
+        "word_count": 16,
+        "char_count": 107,
+        "template_slots": []
+      }
+    },
+    {
+      "contentKey": "authored/lunation-eclipse-section/pisces/rising-leo/house-8/evergreen-body",
+      "content_role": "full_copy",
+      "body": "The full moon in the 8th house shines a light on what people have done to support you. And allows you to give back to those who have helped you along your journey. It also reminds you that you don't have to carry the heavy baggage others give you—you can let it go and free yourself from the weight. Embrace the gifts of the Pisces full moon. It's a reminder that it's okay to feel grief and sadness. When sorrow comes, don't reject it. Don't be afraid to express yourself and share what you're feeling. The Pisces full moon wants you to dive into the depths of your emotions. Don't turn away from grief and pain; instead, allow yourself to feel it and swim in it. It's the only way to heal and find your way back to the shore. The eighth house governs your ability to transform, breaking through your subconscious and conscious patterns. You are being consumed by themes of trust, manipulation, deepening or widening intimacy, and shared resources now. Be aware of your worth, and don't allow yourself to be swayed into something that doesn't feel right. Transformation is always possible. It starts with being gentle and forgiving with yourself especially with the parts of you that you may prefer to hide away. Embrace these parts of yourself, and you'll be able to connect to your higher self more deeply. This full moon is the perfect time to reflect on the past and let go of any emotions holding you back. We all have moments that can be difficult to move on from. But if you take the time to acknowledge and accept what has happened, you can use them as a source of strength or information. As you look back, you may find yourself reminiscing on old relationships, replaying a difficult breakup, a family member's death, or missed career opportunities. It's okay to feel whatever emotions come up, but don't stay stuck in the what-ifs. Allow yourself to feel the weight of your pain and then use it as a motivator for change. You are never truly stuck in one place-- you have the power to find direction and create new patterns for yourself. This full moon is here to remind us that it's okay to keep going, even when things don't go as planned. If you believe that there is not enough to go around and that life is a zero-sum game, then you are more likely to act in ways that confirm that theory. The more you focus on what you don't have, the less you have. If you constantly feel like you don't have enough, you're more likely to make decisions that keep you in that position. A lack of mindset can be a heavy burden; you see obstacles at every turn, constantly on alert for people trying to take advantage of you, and you begin to think that the tarot deck is stacked against you. A lack mindset can also lead you to believe that the world is out to get you. While it is true that there are corrupt and unjust systems, it's important to remain determined and optimistic. This full moon helps you gain strength over a lack of mindset. Start where you are. Start with gratitude. Gratitude is an active process of acknowledging and appreciating what you do have in your life. When you focus on all the beautiful things in your life, and count your blessings, you open yourself up to a world of possibilities. So take a moment to appreciate everything you have and what is working for you. When you routinely bring your awareness back to what you're grateful for and what is working for you, you begin to lay the groundwork for a paradigm shift. When you cultivate gratitude and trust and rely on your own abilities. You start to realize what you have to work with and your infinite potential. The desire for growth will no longer be suppressed but expressed. You will begin to feel an internal desire for transformation. Built on gratitude, trust in yourself, and trust outside yourself will naturally follow.",
+      "review_status": "approved_reuse",
+      "owner_authored": true,
+      "lunation_kind": "eclipse-lunar",
+      "lunation_sign": "pisces",
+      "rising_sign": "leo",
+      "house": 8,
+      "eclipse_section": "evergreen-body",
+      "source_keys": [
+        "authored/book-ritual-and-the-moon/lunation-horoscope/full-moon/pisces/rising-leo/house-8",
+        "packages/astro-knowledge/review/lunation-card-assembly-v1/pisces-lunar-eclipse-review-packet-v1.json"
+      ],
+      "source_release": "pisces-lunar-eclipse-review-packet-v1",
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/lunation-card-assembly-v1/pisces-lunar-eclipse-review-packet-v1.json",
+        "payloadSha256": "f543ca7ec0df375050ff9345bbffd1758950c7ba62ca241b5a2487297d94f047",
+        "approvedAt": "2026-08-24"
+      },
+      "promotion_authorized": true,
+      "protected_content": {
+        "policy": "exact-evergreen-remainder-reuse",
+        "body_sha256": "f543ca7ec0df375050ff9345bbffd1758950c7ba62ca241b5a2487297d94f047",
+        "word_count": 690,
+        "char_count": 3819,
+        "template_slots": [],
+        "source_body_sha256": "2d9e8170aece29a14119078e7188021e3f7b86f31bf72dd75fdf71096ceee881",
+        "source_opening_sha256": "22e3e2b29b09f7f240443f178e26fe0aec916280b3be3ffa1c303d3cb7338497",
+        "source_remainder_sha256": "f543ca7ec0df375050ff9345bbffd1758950c7ba62ca241b5a2487297d94f047",
+        "preservedBookRemainderSha256": "f543ca7ec0df375050ff9345bbffd1758950c7ba62ca241b5a2487297d94f047",
+        "approved_omissions": []
+      },
+      "suppress_cycle_anchor": false
+    },
+    {
+      "contentKey": "authored/lunation-eclipse-section/pisces/rising-cancer/house-9/opening",
+      "content_role": "full_copy",
+      "body": "The Pisces lunar eclipse shines upon your 9th House of Higher Self, making it a time to push past your comfort zone and expand your horizons.",
+      "review_status": "approved",
+      "owner_authored": true,
+      "lunation_kind": "eclipse-lunar",
+      "lunation_sign": "pisces",
+      "rising_sign": "cancer",
+      "house": 9,
+      "eclipse_section": "opening",
+      "source_keys": [
+        "authored/book-ritual-and-the-moon/lunation-horoscope/full-moon/pisces/rising-cancer/house-9",
+        "packages/astro-knowledge/review/lunation-card-assembly-v1/pisces-lunar-eclipse-review-packet-v1.json"
+      ],
+      "source_release": "pisces-lunar-eclipse-review-packet-v1",
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/lunation-card-assembly-v1/pisces-lunar-eclipse-review-packet-v1.json",
+        "payloadSha256": "0e75e3ef193c94dbe923ee32b5ccb6aacebf09c615a4243db7a7655fcb017c89",
+        "approvedAt": "2026-08-24"
+      },
+      "promotion_authorized": true,
+      "protected_content": {
+        "policy": "exact-owner-approved-eclipse-section",
+        "body_sha256": "0e75e3ef193c94dbe923ee32b5ccb6aacebf09c615a4243db7a7655fcb017c89",
+        "word_count": 26,
+        "char_count": 141,
+        "template_slots": []
+      }
+    },
+    {
+      "contentKey": "authored/lunation-eclipse-section/pisces/rising-cancer/house-9/evergreen-body",
+      "content_role": "full_copy",
+      "body": "This past year has been filled with challenges and lessons. It's made you question your spirituality, philosophy, and the fairness of life. But you're learning that losing faith is part of the process. It's an opportunity to question and learn and to build trust in the unknown. And you're beginning to see that what you've experienced so far is only a partial picture of what life has to offer you. This full moon shifts your perspective from the micro to the macro. The full moon is a time for reflection, growth, and expansion. It's a time to look at your life from a bigger perspective and to recognize the potential you have within. But it is also crucial for you to not overreach or make hasty decisions. Higher education boosts your knowledge and expands your perspectives, but it doesn't always address personal and spiritual growth. Are you looking for a way to deepen and enrich your spiritual practice? Consider giving back to the global community. Whether it's through volunteering with a local program, taking part in sustainability initiatives, or donating to a cause that speaks to you - by giving of yourself, you open yourself up to new possibilities and become part of a collective spirit. This full moon may bring an unexpected moment of truth. Whether it's a culmination point for a project or receiving important insights, it's important not to rush to close any doors. Stay curious and ask questions -your truth comes from when you ask questions and integrate answers. Stay open to new ideas and ways of looking at things.",
+      "review_status": "approved_reuse",
+      "owner_authored": true,
+      "lunation_kind": "eclipse-lunar",
+      "lunation_sign": "pisces",
+      "rising_sign": "cancer",
+      "house": 9,
+      "eclipse_section": "evergreen-body",
+      "source_keys": [
+        "authored/book-ritual-and-the-moon/lunation-horoscope/full-moon/pisces/rising-cancer/house-9",
+        "packages/astro-knowledge/review/lunation-card-assembly-v1/pisces-lunar-eclipse-review-packet-v1.json"
+      ],
+      "source_release": "pisces-lunar-eclipse-review-packet-v1",
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/lunation-card-assembly-v1/pisces-lunar-eclipse-review-packet-v1.json",
+        "payloadSha256": "49c8b7daba890b72a3a28596ab56c6950b8e74884e9484d8a747382dd8812b14",
+        "approvedAt": "2026-08-24"
+      },
+      "promotion_authorized": true,
+      "protected_content": {
+        "policy": "exact-evergreen-remainder-reuse",
+        "body_sha256": "49c8b7daba890b72a3a28596ab56c6950b8e74884e9484d8a747382dd8812b14",
+        "word_count": 264,
+        "char_count": 1544,
+        "template_slots": [],
+        "source_body_sha256": "d23c2920df108d646028006f15fb9836a5b083d0b110b163050cc7b1605ce7d0",
+        "source_opening_sha256": "bd224b9f192fbf7ddf43905f6388954034093621ecb61299a3d91b22c364ceb8",
+        "source_remainder_sha256": "49c8b7daba890b72a3a28596ab56c6950b8e74884e9484d8a747382dd8812b14",
+        "preservedBookRemainderSha256": "49c8b7daba890b72a3a28596ab56c6950b8e74884e9484d8a747382dd8812b14",
+        "approved_omissions": []
+      },
+      "suppress_cycle_anchor": false
+    },
+    {
+      "contentKey": "authored/lunation-eclipse-section/pisces/rising-gemini/house-10/opening",
+      "content_role": "full_copy",
+      "body": "The Pisces lunar eclipse shines upon your 10th house of career and purpose, shining a light on your professional accomplishments and efforts over the last six months.",
+      "review_status": "approved",
+      "owner_authored": true,
+      "lunation_kind": "eclipse-lunar",
+      "lunation_sign": "pisces",
+      "rising_sign": "gemini",
+      "house": 10,
+      "eclipse_section": "opening",
+      "source_keys": [
+        "authored/book-ritual-and-the-moon/lunation-horoscope/full-moon/pisces/rising-gemini/house-10",
+        "packages/astro-knowledge/review/lunation-card-assembly-v1/pisces-lunar-eclipse-review-packet-v1.json"
+      ],
+      "source_release": "pisces-lunar-eclipse-review-packet-v1",
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/lunation-card-assembly-v1/pisces-lunar-eclipse-review-packet-v1.json",
+        "payloadSha256": "47aac833fbf59e5e4ced73af0ee0a627ea4fe68d58e9c8cb2b41ccce40e7e900",
+        "approvedAt": "2026-08-24"
+      },
+      "promotion_authorized": true,
+      "protected_content": {
+        "policy": "exact-owner-approved-eclipse-section",
+        "body_sha256": "47aac833fbf59e5e4ced73af0ee0a627ea4fe68d58e9c8cb2b41ccce40e7e900",
+        "word_count": 27,
+        "char_count": 166,
+        "template_slots": []
+      }
+    },
+    {
+      "contentKey": "authored/lunation-eclipse-section/pisces/rising-gemini/house-10/evergreen-body",
+      "content_role": "full_copy",
+      "body": "Your success depends on your inner well-being - and it all starts with taking care of your basic needs — food, shelter, water, warmth; and your spiritual needs - connection with others, creative expression, and a sense of belonging. If these fundamental needs are not attended to, it will pull energy from your career. Invest in yourself and watch magick happen. This full moon reminds you to stay true to yourself and your agenda. Don't let anyone pressure you into something you're not comfortable with. You are the only one who knows what feels right to you, and your needs are just as important as anyone else's. So take a break if you need one, and don't forget to be kind to yourself - life is too short to be anything else. The Sun in Virgo and Pisces full moon asks that you take inventory and establish the barriers necessary to care for your fundamental needs. Which, in time, builds your character. Full moons are often times of release, and this one is no different. Release any aspects of your career that do not align with your values and interests. The journey of cultivating a fruitful career is found in fulfilling your needs. The Pisces full moon is a beautiful reminder that your dreams are powerful. They connect you to your innermost self and help you better understand the deeper meanings of the things we experience. Dreams can help you make sense of your environment and the people you interact with, offering insight and understanding you wouldn't have otherwise. It's a beautiful reminder that sometimes straddling the line between dream and reality is what it takes to build bridges and create harmony between the two.",
+      "review_status": "approved_reuse",
+      "owner_authored": true,
+      "lunation_kind": "eclipse-lunar",
+      "lunation_sign": "pisces",
+      "rising_sign": "gemini",
+      "house": 10,
+      "eclipse_section": "evergreen-body",
+      "source_keys": [
+        "authored/book-ritual-and-the-moon/lunation-horoscope/full-moon/pisces/rising-gemini/house-10",
+        "packages/astro-knowledge/review/lunation-card-assembly-v1/pisces-lunar-eclipse-review-packet-v1.json"
+      ],
+      "source_release": "pisces-lunar-eclipse-review-packet-v1",
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/lunation-card-assembly-v1/pisces-lunar-eclipse-review-packet-v1.json",
+        "payloadSha256": "2adb5bded13e132fc68a55e20580544a02a9f4af239f3fe542f437a2457ea59d",
+        "approvedAt": "2026-08-24"
+      },
+      "promotion_authorized": true,
+      "protected_content": {
+        "policy": "exact-evergreen-remainder-reuse",
+        "body_sha256": "2adb5bded13e132fc68a55e20580544a02a9f4af239f3fe542f437a2457ea59d",
+        "word_count": 285,
+        "char_count": 1645,
+        "template_slots": [],
+        "source_body_sha256": "c2d0566052cdc9befae18229802a39888ca757146bae9738f380553818d548b9",
+        "source_opening_sha256": "5fa3ee6625598d1e1c1746f7a2583b65f96c2a177bff953cfe04c6e5bd0d97bd",
+        "source_remainder_sha256": "2adb5bded13e132fc68a55e20580544a02a9f4af239f3fe542f437a2457ea59d",
+        "preservedBookRemainderSha256": "2adb5bded13e132fc68a55e20580544a02a9f4af239f3fe542f437a2457ea59d",
+        "approved_omissions": []
+      },
+      "suppress_cycle_anchor": false
+    },
+    {
+      "contentKey": "authored/lunation-eclipse-section/pisces/rising-taurus/house-11/opening",
+      "content_role": "full_copy",
+      "body": "The Pisces lunar eclipse shines upon your 11th house of friendships.",
+      "review_status": "approved",
+      "owner_authored": true,
+      "lunation_kind": "eclipse-lunar",
+      "lunation_sign": "pisces",
+      "rising_sign": "taurus",
+      "house": 11,
+      "eclipse_section": "opening",
+      "source_keys": [
+        "authored/book-ritual-and-the-moon/lunation-horoscope/full-moon/pisces/rising-taurus/house-11",
+        "packages/astro-knowledge/review/lunation-card-assembly-v1/pisces-lunar-eclipse-review-packet-v1.json"
+      ],
+      "source_release": "pisces-lunar-eclipse-review-packet-v1",
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/lunation-card-assembly-v1/pisces-lunar-eclipse-review-packet-v1.json",
+        "payloadSha256": "4949dcdcfbc41f3c287ac05d2ca0be0ca6e5bf5d4a3639c8765ae9756376c626",
+        "approvedAt": "2026-08-24"
+      },
+      "promotion_authorized": true,
+      "protected_content": {
+        "policy": "exact-owner-approved-eclipse-section",
+        "body_sha256": "4949dcdcfbc41f3c287ac05d2ca0be0ca6e5bf5d4a3639c8765ae9756376c626",
+        "word_count": 11,
+        "char_count": 68,
+        "template_slots": []
+      }
+    },
+    {
+      "contentKey": "authored/lunation-eclipse-section/pisces/rising-taurus/house-11/evergreen-body",
+      "content_role": "full_copy",
+      "body": "Change can be a good thing, and that's especially true for your relationships and network groups. When things start to shift, it can be an opportunity to reassess what's working and what's not and how you can create something even better. This can be an opportunity to meet new people and build relationships with new perspectives. You're embracing changes, getting involved in new causes and interests, and actively seeking out social groups aligned with your values. You're excited to find like-minded people, explore different sides of yourself, and get exposed to new ideas and visions. You may discover that you desire to socially connect with others through art. Art of any form is a sacred process of turning ideas and dreams into reality and turning reality into something powerful. Whether seeking to control others or liberate yourselves, use your art wisely to connect to a larger community. Art binds people together physically (at galleries, museums, festivals, and performance spaces, for example) and culturally through its capacity to tell a community's shared story, inspire reflection, and connections that transcend differences. Who knows what fantastic things will come out of this journey? This Pisces full moon inspires you to dream bigger and take steps to make your dreams a reality. The 11th house is ruled by Aquarius, the energy of world builders, trendsetters, and visionaries. So if you're feeling drawn to shake things up and re-arrange your life better than it was before - go for it! This full moon sends an electric shock. What type of life do you want? How can you make changes in your network to help you take steps to actualize this dream? Find the kind of people who support and complement your life vision. Sometimes even the most resilient among us can get scared just like everyone else. But this full moon, you can look carefully at your desires and fears. You've already faced so much, including pain and hardship, that many things that used to scare you no longer have power over you.",
+      "review_status": "approved_reuse",
+      "owner_authored": true,
+      "lunation_kind": "eclipse-lunar",
+      "lunation_sign": "pisces",
+      "rising_sign": "taurus",
+      "house": 11,
+      "eclipse_section": "evergreen-body",
+      "source_keys": [
+        "authored/book-ritual-and-the-moon/lunation-horoscope/full-moon/pisces/rising-taurus/house-11",
+        "packages/astro-knowledge/review/lunation-card-assembly-v1/pisces-lunar-eclipse-review-packet-v1.json"
+      ],
+      "source_release": "pisces-lunar-eclipse-review-packet-v1",
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/lunation-card-assembly-v1/pisces-lunar-eclipse-review-packet-v1.json",
+        "payloadSha256": "5d5e79f5115996d12402b1c5f9fbad165d244287324ef8def625cc09c54da579",
+        "approvedAt": "2026-08-24"
+      },
+      "promotion_authorized": true,
+      "protected_content": {
+        "policy": "exact-evergreen-remainder-reuse",
+        "body_sha256": "5d5e79f5115996d12402b1c5f9fbad165d244287324ef8def625cc09c54da579",
+        "word_count": 338,
+        "char_count": 2027,
+        "template_slots": [],
+        "source_body_sha256": "74a8b7670cfecde5f3d805d96d7c0e0e085562d756e3471000e061f6a6c2cf24",
+        "source_opening_sha256": "c5785a9520b4eef3acef6826fdb8d2d839d69b758d35c666bd840649ab33318c",
+        "source_remainder_sha256": "5d5e79f5115996d12402b1c5f9fbad165d244287324ef8def625cc09c54da579",
+        "preservedBookRemainderSha256": "5d5e79f5115996d12402b1c5f9fbad165d244287324ef8def625cc09c54da579",
+        "approved_omissions": []
+      },
+      "suppress_cycle_anchor": false
+    },
+    {
+      "contentKey": "authored/lunation-eclipse-section/pisces/rising-aries/house-12/opening",
+      "content_role": "full_copy",
+      "body": "The Pisces lunar eclipse shines upon your 12th house of karma, subconscious, and endings.",
+      "review_status": "approved",
+      "owner_authored": true,
+      "lunation_kind": "eclipse-lunar",
+      "lunation_sign": "pisces",
+      "rising_sign": "aries",
+      "house": 12,
+      "eclipse_section": "opening",
+      "source_keys": [
+        "authored/book-ritual-and-the-moon/lunation-horoscope/full-moon/pisces/rising-aries/house-12",
+        "packages/astro-knowledge/review/lunation-card-assembly-v1/pisces-lunar-eclipse-review-packet-v1.json"
+      ],
+      "source_release": "pisces-lunar-eclipse-review-packet-v1",
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/lunation-card-assembly-v1/pisces-lunar-eclipse-review-packet-v1.json",
+        "payloadSha256": "7d745bdecfd480508ea811c16ac6977d9988725f3b5b585510518d6362404171",
+        "approvedAt": "2026-08-24"
+      },
+      "promotion_authorized": true,
+      "protected_content": {
+        "policy": "exact-owner-approved-eclipse-section",
+        "body_sha256": "7d745bdecfd480508ea811c16ac6977d9988725f3b5b585510518d6362404171",
+        "word_count": 14,
+        "char_count": 89,
+        "template_slots": []
+      }
+    },
+    {
+      "contentKey": "authored/lunation-eclipse-section/pisces/rising-aries/house-12/evergreen-body",
+      "content_role": "full_copy",
+      "body": "Full moons usually are a time of celebration; however, now may be a time to withdraw into a sanctuary of self-care and seclusion. The Pisces full moon signals a time of endings. It's not just about letting go of the past but also learning from it. Let this be an opportunity to reflect on your previous experiences and how they impacted your physical and emotional health, beliefs, behaviors, and relationships. It's a chance to process any trauma and address it at its root for healing. Everything in life has a beginning and an end, which is inevitable. You can learn how to navigate endings and loss by reflecting on your previous experiences. Difficult endings shape life, such as trauma and bereavement, and can impact physical health, emotional state, beliefs, behaviors, and relationship patterns. Reflecting on your previous experiences helps you to navigate through difficult endings and losses, and to heal the trauma that comes with them. Do you want to plunge into the depths of your soul? The Pisces full moon is the perfect time to let go of all the noise of the physical world, and expectations and surrender to the power of self-reflection. When you surrender to the Pisces full moon energy, you can gain access to a part of yourself that you previously was unaware of. Picture it as diving into the deep waters of your subconscious, leaving all superficial thoughts behind, and exploring your inner self. The Pisces full moon allows you to be still within the oneness of the cosmos and remember that you are more than just a physical being. This full moon also connects you deeper to the collective emotional turmoil of mankind, plants, animals, and periods beyond the present. There is collective suffering you have been dealing with for years, coupled with your anxiety and uncertainty. The energy of the Pisces full moon can be overwhelming. It is difficult to describe how overwhelmed this energy can make you feel at times. It's 'all too much is the only way to describe it. You have a few choices when dealing with overwhelming feelings: either check out, confront everything, or oscillate between the two. As your sensitivity increases during the Pisces full moon, you may feel that you have to confront the world's suffering and make sense of it. Journaling, art, and meditation can help you process and make sense of all that is happening to you. This full moon holds a challenging energy. It may feel like it's been years since you've had your old sense of fearlessness and adventure. But know those days will come back eventually. In the meantime, this full moon reminds you that you still have so much to learn. And when you do, you'll remember that these lessons are a vital part of your journey. In the meantime, focus on self-care and rest. ",
+      "review_status": "approved_reuse",
+      "owner_authored": true,
+      "lunation_kind": "eclipse-lunar",
+      "lunation_sign": "pisces",
+      "rising_sign": "aries",
+      "house": 12,
+      "eclipse_section": "evergreen-body",
+      "source_keys": [
+        "authored/book-ritual-and-the-moon/lunation-horoscope/full-moon/pisces/rising-aries/house-12",
+        "packages/astro-knowledge/review/lunation-card-assembly-v1/pisces-lunar-eclipse-review-packet-v1.json"
+      ],
+      "source_release": "pisces-lunar-eclipse-review-packet-v1",
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/lunation-card-assembly-v1/pisces-lunar-eclipse-review-packet-v1.json",
+        "payloadSha256": "4ba09f17b7960ea84a552f811c36cb0dc0c65e13394e638da54bf2fe0f4daa21",
+        "approvedAt": "2026-08-24"
+      },
+      "promotion_authorized": true,
+      "protected_content": {
+        "policy": "exact-evergreen-remainder-with-approved-omissions",
+        "body_sha256": "4ba09f17b7960ea84a552f811c36cb0dc0c65e13394e638da54bf2fe0f4daa21",
+        "word_count": 475,
+        "char_count": 2773,
+        "template_slots": [],
+        "source_body_sha256": "b072df2b6cd8bd04ee57b963a4dbcf87af4b3a00588aaf81a59846cb314b6095",
+        "source_opening_sha256": "d528f6d68e040ead7fe3863d436800642cd47f7b854d42297a32b49e955620ff",
+        "source_remainder_sha256": "7158070a842d9e98423a69b3f835be91596e417febb610147f635ac79c174b53",
+        "preservedBookRemainderSha256": "4ba09f17b7960ea84a552f811c36cb0dc0c65e13394e638da54bf2fe0f4daa21",
+        "approved_omissions": [
+          {
+            "start": 2859,
+            "end": 3145,
+            "sha256": "6c10abe19a969debd98412781d378bbe937c71e8d4b7d9eec5fd716b3b8898b2",
+            "text": "Your intention for this full moon is, \"I'm wiser and more capable now, but that doesn't mean I'll never be able to experience that same sense of liberation again. My wildness will return one day. Until then, I'll cherish every lesson I've learned from the pain and uncertainty I faced.\"",
+            "ownerApproved": true,
+            "approvedAt": "2026-08-24"
+          }
+        ]
+      },
+      "suppress_cycle_anchor": false
+    },
+    {
+      "contentKey": "authored/lunation-eclipse-section/shared/lunar/nature",
+      "content_role": "full_copy",
+      "body": "Eclipses warp time and shift the course of events in ways you can't yet see.",
+      "review_status": "approved",
+      "owner_authored": true,
+      "lunation_kind": "eclipse-lunar",
+      "lunation_sign": null,
+      "rising_sign": null,
+      "house": null,
+      "eclipse_section": "nature",
+      "source_keys": [
+        "packages/astro-knowledge/review/lunation-card-assembly-v1/pisces-lunar-eclipse-review-packet-v1.json"
+      ],
+      "source_release": "pisces-lunar-eclipse-review-packet-v1",
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/lunation-card-assembly-v1/pisces-lunar-eclipse-review-packet-v1.json",
+        "payloadSha256": "32ae2e2a085f2b02cfb342668369b6644ad0a85de08e88f435e84d29fdbcf77d",
+        "approvedAt": "2026-08-24"
+      },
+      "promotion_authorized": true,
+      "protected_content": {
+        "policy": "exact-owner-approved-eclipse-section",
+        "body_sha256": "32ae2e2a085f2b02cfb342668369b6644ad0a85de08e88f435e84d29fdbcf77d",
+        "word_count": 15,
+        "char_count": 76,
+        "template_slots": []
+      }
+    },
+    {
+      "contentKey": "authored/lunation-eclipse-section/shared/lunar/mechanics",
+      "content_role": "full_copy",
+      "body": "Lunar eclipses are portals into your soul. When they come around, they can help you uncover the truth and allow you to gain knowledge that will steer your life, changing your path to a better one.",
+      "review_status": "approved",
+      "owner_authored": true,
+      "lunation_kind": "eclipse-lunar",
+      "lunation_sign": null,
+      "rising_sign": null,
+      "house": null,
+      "eclipse_section": "mechanics",
+      "source_keys": [
+        "packages/astro-knowledge/review/lunation-card-assembly-v1/pisces-lunar-eclipse-review-packet-v1.json"
+      ],
+      "source_release": "pisces-lunar-eclipse-review-packet-v1",
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/lunation-card-assembly-v1/pisces-lunar-eclipse-review-packet-v1.json",
+        "payloadSha256": "64f0fd061000e520bbdb3ff71e29444da3826f857a48474c1b7b5afc92d04e99",
+        "approvedAt": "2026-08-24"
+      },
+      "promotion_authorized": true,
+      "protected_content": {
+        "policy": "exact-owner-approved-eclipse-section",
+        "body_sha256": "64f0fd061000e520bbdb3ff71e29444da3826f857a48474c1b7b5afc92d04e99",
+        "word_count": 36,
+        "char_count": 196,
+        "template_slots": []
+      }
+    },
+    {
+      "contentKey": "authored/lunation-eclipse-section/shared/lunar/recommendation",
+      "content_role": "full_copy",
+      "body": "Eclipses happen along the Lunar Nodes, and part of the work is letting the situation unfold before deciding what it's supposed to become.",
+      "review_status": "approved",
+      "owner_authored": true,
+      "lunation_kind": "eclipse-lunar",
+      "lunation_sign": null,
+      "rising_sign": null,
+      "house": null,
+      "eclipse_section": "recommendation",
+      "source_keys": [
+        "packages/astro-knowledge/review/lunation-card-assembly-v1/pisces-lunar-eclipse-review-packet-v1.json"
+      ],
+      "source_release": "pisces-lunar-eclipse-review-packet-v1",
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/lunation-card-assembly-v1/pisces-lunar-eclipse-review-packet-v1.json",
+        "payloadSha256": "e88f8fd246d11f4fa2bd030b667a604a9c6c8432020f95c53d458e42bac8aacb",
+        "approvedAt": "2026-08-24"
+      },
+      "promotion_authorized": true,
+      "protected_content": {
+        "policy": "exact-owner-approved-eclipse-section",
+        "body_sha256": "e88f8fd246d11f4fa2bd030b667a604a9c6c8432020f95c53d458e42bac8aacb",
+        "word_count": 23,
+        "char_count": 137,
+        "template_slots": []
+      }
+    },
+    {
+      "contentKey": "authored/lunation-eclipse-section/shared/lunar/close",
+      "content_role": "full_copy",
+      "body": "Release your need to be in control, and allow yourself to flow with the current of whatever is unfolding. Reflect on what you've experienced, and respond accordingly.",
+      "review_status": "approved",
+      "owner_authored": true,
+      "lunation_kind": "eclipse-lunar",
+      "lunation_sign": null,
+      "rising_sign": null,
+      "house": null,
+      "eclipse_section": "close",
+      "source_keys": [
+        "packages/astro-knowledge/review/lunation-card-assembly-v1/pisces-lunar-eclipse-review-packet-v1.json"
+      ],
+      "source_release": "pisces-lunar-eclipse-review-packet-v1",
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/lunation-card-assembly-v1/pisces-lunar-eclipse-review-packet-v1.json",
+        "payloadSha256": "e98c09c6f14c3f7d6e911bb98688a8e3493c5999a50f53bd2ba20b0724367024",
+        "approvedAt": "2026-08-24"
+      },
+      "promotion_authorized": true,
+      "protected_content": {
+        "policy": "exact-owner-approved-eclipse-section",
+        "body_sha256": "e98c09c6f14c3f7d6e911bb98688a8e3493c5999a50f53bd2ba20b0724367024",
+        "word_count": 27,
+        "char_count": 166,
+        "template_slots": []
+      }
+    },
+    {
+      "contentKey": "authored/lunation-eclipse-section/shared/lunar/recommendation-endings",
+      "content_role": "full_copy",
+      "body": "Eclipses happen along the Lunar Nodes, and change comes all the same, no matter how tightly you hold on.",
+      "review_status": "approved",
+      "owner_authored": true,
+      "lunation_kind": "eclipse-lunar",
+      "lunation_sign": null,
+      "rising_sign": null,
+      "house": null,
+      "eclipse_section": "recommendation",
+      "source_keys": [
+        "packages/astro-knowledge/review/lunation-card-assembly-v1/pisces-lunar-eclipse-review-packet-v1.json"
+      ],
+      "source_release": "pisces-lunar-eclipse-review-packet-v1",
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/lunation-card-assembly-v1/pisces-lunar-eclipse-review-packet-v1.json",
+        "payloadSha256": "87d7ec31c5fdb9d8f84d1467fbbeabf9611c196e51f6c1025dddc9e4ad9f56bc",
+        "approvedAt": "2026-08-24"
+      },
+      "promotion_authorized": true,
+      "protected_content": {
+        "policy": "exact-owner-approved-eclipse-section",
+        "body_sha256": "87d7ec31c5fdb9d8f84d1467fbbeabf9611c196e51f6c1025dddc9e4ad9f56bc",
+        "word_count": 19,
+        "char_count": 104,
+        "template_slots": []
+      }
+    },
+    {
+      "contentKey": "authored/lunation-eclipse-section/shared/lunar/close-endings",
+      "content_role": "full_copy",
+      "body": "Release your need to be in control, allow for endings, mourn if needed, and allow yourself to flow with the current of whatever is unfolding, even if the destination is still unknown.",
+      "review_status": "approved",
+      "owner_authored": true,
+      "lunation_kind": "eclipse-lunar",
+      "lunation_sign": null,
+      "rising_sign": null,
+      "house": null,
+      "eclipse_section": "close",
+      "source_keys": [
+        "packages/astro-knowledge/review/lunation-card-assembly-v1/pisces-lunar-eclipse-review-packet-v1.json"
+      ],
+      "source_release": "pisces-lunar-eclipse-review-packet-v1",
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/lunation-card-assembly-v1/pisces-lunar-eclipse-review-packet-v1.json",
+        "payloadSha256": "7187c725dbcbfb4e93a2f468a24301dd8bcb8ce6b56f7b3cd66e60e5e74dff70",
+        "approvedAt": "2026-08-24"
+      },
+      "promotion_authorized": true,
+      "protected_content": {
+        "policy": "exact-owner-approved-eclipse-section",
+        "body_sha256": "7187c725dbcbfb4e93a2f468a24301dd8bcb8ce6b56f7b3cd66e60e5e74dff70",
+        "word_count": 32,
+        "char_count": 183,
+        "template_slots": []
+      }
+    }
+  ]
+}

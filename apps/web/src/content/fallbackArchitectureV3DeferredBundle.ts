@@ -2,7 +2,6 @@ import bundledDeferredCoreRowsV3 from "./fallbackArchitectureV3/bundled-deferred
 import bundledSharedPlacementRowsV3 from "./fallbackArchitectureV3/bundled-shared-placement-rows-v3.json";
 import bundledSkyCoreRowsV3 from "./fallbackArchitectureV3/bundled-sky-core-rows-v3.json";
 import bundledTransitCoreAuthoredCardsV3 from "./fallbackArchitectureV3/bundled-transit-core-authored-cards-v3.json";
-import lunationBlendUnitsV1 from "./fallbackArchitectureV3/source-rows/lunation-blend-units-v1.json";
 import type {
   AuthoredCard,
   FallbackArchitectureV3Bundle,
@@ -27,8 +26,8 @@ const fallbackSourceRowsV3 = {
 };
 
 function assertLunationBlendImport() {
-  const allAuthoredCards = [...bundledTransitCoreAuthoredCardsV3.authoredCards, ...lunationBlendUnitsV1.authoredCards];
-  const allHookRows = [...fallbackSourceRowsV3.hookRows, ...lunationBlendUnitsV1.hookRows];
+  const allAuthoredCards = bundledTransitCoreAuthoredCardsV3.authoredCards;
+  const allHookRows = fallbackSourceRowsV3.hookRows;
   const allRows = [...allAuthoredCards, ...allHookRows];
   const fallbackSetSource = "Lunation fallback set — full sign coverage, 19 macros + 20 compact cores";
   const fixedFrameMacros = allAuthoredCards.filter(
@@ -47,27 +46,6 @@ function assertLunationBlendImport() {
 
     if (!macro.body.startsWith(expectedOpen)) {
       throw new Error(`Lunation macro frame mismatch: ${macro.contentKey}`);
-    }
-  }
-
-  const stagedRulerRows = lunationBlendUnitsV1.hookRows.filter((row) =>
-    row.contentKey.startsWith("fallback-hook/lunation-ruler-house/")
-  );
-  const primaryHooksByKey = new Map(fallbackSourceRowsV3.hookRows.map((row) => [row.contentKey, row]));
-
-  if (
-    stagedRulerRows.length !== 12
-    || stagedRulerRows.filter((row) => row.review_status === "needs_review").length !== 11
-    || stagedRulerRows.filter((row) => row.review_status === "approved").length !== 1
-  ) {
-    throw new Error("Lunation ruler staging must contain one approved row and 11 review-gated rows.");
-  }
-
-  for (const row of stagedRulerRows) {
-    const mirrored = primaryHooksByKey.get(row.contentKey);
-
-    if (!mirrored || mirrored.review_status !== row.review_status || mirrored.body_you !== row.body_you) {
-      throw new Error(`Lunation ruler mirror mismatch: ${row.contentKey}`);
     }
   }
 
@@ -114,9 +92,20 @@ function assertLunationBlendImport() {
     .filter((row) => row.contentKey.startsWith("fallback-hook/lunation-sign-compact/"))
     .map((row) => row.contentKey));
 
-  if (macroKeys.size !== 24 || compactKeys.size !== 24) {
+  const reviewGatedMacroKey = "authored/sky-lunation-macro/new-moon/aquarius";
+  const expectedServingMacroKeys = ["new-moon", "full-moon"].flatMap((phase) => [
+    "aries", "taurus", "gemini", "cancer", "leo", "virgo",
+    "libra", "scorpio", "sagittarius", "capricorn", "aquarius", "pisces"
+  ].map((sign) => `authored/sky-lunation-macro/${phase}/${sign}`))
+    .filter((contentKey) => contentKey !== reviewGatedMacroKey)
+    .sort();
+
+  if (
+    JSON.stringify([...macroKeys].sort()) !== JSON.stringify(expectedServingMacroKeys)
+    || compactKeys.size !== 24
+  ) {
     throw new Error(
-      `Lunation sign coverage incomplete: ${macroKeys.size}/24 macros, ${compactKeys.size}/24 compacts.`
+      `Approved lunation sign coverage mismatch: ${macroKeys.size}/24 macros, ${compactKeys.size}/24 compacts; only ${reviewGatedMacroKey} may be absent.`
     );
   }
 }

@@ -1,4 +1,4 @@
-import weeklySourceRows from "../content/fallbackArchitectureV3/source-rows/station-cards-week-openers-v1.json";
+import initialReaderRows from "../content/fallbackArchitectureV3/bundled-initial-reader-rows-v3.json";
 import {
   fallbackV3LunationCompact,
   loadLunationBookFallbackArchitectureV3Bundle,
@@ -189,7 +189,9 @@ type TransitContact = {
 
 type MajorAspect = "conjunction" | "sextile" | "square" | "trine" | "opposition";
 
-const sourceRows = weeklySourceRows as WeeklySourceRow[];
+const sourceRows = initialReaderRows.authoredCards.filter((row) => (
+  typeof row.surface === "string" && row.surface.startsWith("weekly-")
+)) as WeeklySourceRow[];
 const readerEligibleReviewStatuses = new Set(["approved", "approved_reuse", "reviewed"]);
 const exactAspects: Array<{ type: MajorAspect; degrees: number }> = [
   { type: "conjunction", degrees: 0 },

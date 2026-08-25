@@ -1,14 +1,15 @@
-import lunationBookCardsV1 from "./fallbackArchitectureV3/source-rows/lunation-book-cards-v1.json";
-import lunationEclipseSectionsV1 from "./fallbackArchitectureV3/source-rows/lunation-eclipse-sections-v1.json";
-import lunationEclipseHouseLayersV1 from "./fallbackArchitectureV3/source-rows/lunation-eclipse-house-layers-v1.json";
+import bundledLunationBookV3 from "./fallbackArchitectureV3/bundled-lunation-book-cards-v3.json";
+import bundledLunationEclipseSectionsV3 from "./fallbackArchitectureV3/bundled-lunation-eclipse-sections-v3.json";
+import bundledLunationEclipseHouseLayersV3 from "./fallbackArchitectureV3/bundled-lunation-eclipse-house-layers-v3.json";
 import type {
   AuthoredCard,
   FallbackArchitectureV3Bundle
 } from "./fallbackArchitectureV3Runtime";
+import { fallbackArchitectureV3PackageVersion } from "./fallbackArchitectureV3Runtime";
 
-const cards = lunationBookCardsV1.authoredCards;
-const eclipseSections = lunationEclipseSectionsV1.authoredCards;
-const eclipseHouseLayers = lunationEclipseHouseLayersV1.authoredCards;
+const cards = bundledLunationBookV3.authoredCards;
+const eclipseSections = bundledLunationEclipseSectionsV3.authoredCards;
+const eclipseHouseLayers = bundledLunationEclipseHouseLayersV3.authoredCards;
 const keys = new Set(cards.map((card) => card.contentKey));
 const eclipseSectionKeys = new Set(eclipseSections.map((card) => card.contentKey));
 const eclipseHouseLayerKeys = new Set(eclipseHouseLayers.map((card) => card.contentKey));
@@ -26,8 +27,10 @@ const isSha256 = (value: unknown): value is string => (
 );
 
 if (
-  lunationBookCardsV1.schema !== "lunation-book-cards/v1"
-  || lunationBookCardsV1.count !== 288
+  bundledLunationBookV3.schema !== "tldrastro-approved-lunation-book-cards/v1"
+  || bundledLunationBookV3.packageVersion !== fallbackArchitectureV3PackageVersion
+  || bundledLunationBookV3.source.schema !== "lunation-book-cards/v1"
+  || bundledLunationBookV3.source.count !== 288
   || cards.length !== 288
   || keys.size !== 288
   || cards.some((card) => (
@@ -43,8 +46,10 @@ if (
 }
 
 if (
-  lunationEclipseSectionsV1.schema !== "lunation-eclipse-sections/v1"
-  || lunationEclipseSectionsV1.count !== 30
+  bundledLunationEclipseSectionsV3.schema !== "tldrastro-approved-lunation-eclipse-sections/v1"
+  || bundledLunationEclipseSectionsV3.packageVersion !== fallbackArchitectureV3PackageVersion
+  || bundledLunationEclipseSectionsV3.source.schema !== "lunation-eclipse-sections/v1"
+  || bundledLunationEclipseSectionsV3.source.count !== 30
   || eclipseSections.length !== 30
   || eclipseSectionKeys.size !== 30
   || [...requiredSharedLunarEclipseSectionKeys].some((key) => !eclipseSectionKeys.has(key))
@@ -71,8 +76,10 @@ if (
 }
 
 if (
-  lunationEclipseHouseLayersV1.schema !== "lunation-eclipse-house-layers/v1"
-  || lunationEclipseHouseLayersV1.count !== 12
+  bundledLunationEclipseHouseLayersV3.schema !== "tldrastro-approved-lunation-eclipse-house-layers/v1"
+  || bundledLunationEclipseHouseLayersV3.packageVersion !== fallbackArchitectureV3PackageVersion
+  || bundledLunationEclipseHouseLayersV3.source.schema !== "lunation-eclipse-house-layers/v1"
+  || bundledLunationEclipseHouseLayersV3.source.count !== 12
   || eclipseHouseLayers.length !== 12
   || eclipseHouseLayerKeys.size !== 12
   || eclipseHouseLayers.some((card) => (
