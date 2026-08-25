@@ -12,6 +12,12 @@ const eclipseHouseLayers = lunationEclipseHouseLayersV1.authoredCards;
 const keys = new Set(cards.map((card) => card.contentKey));
 const eclipseSectionKeys = new Set(eclipseSections.map((card) => card.contentKey));
 const eclipseHouseLayerKeys = new Set(eclipseHouseLayers.map((card) => card.contentKey));
+const requiredSharedLunarEclipseSectionKeys = new Set([
+  "nature",
+  "mechanics",
+  "recommendation",
+  "close"
+].map((section) => `authored/lunation-eclipse-section/shared/lunar/${section}`));
 
 if (
   lunationBookCardsV1.schema !== "lunation-book-cards/v1"
@@ -35,6 +41,8 @@ if (
   || lunationEclipseSectionsV1.count !== 28
   || eclipseSections.length !== 28
   || eclipseSectionKeys.size !== 28
+  || [...requiredSharedLunarEclipseSectionKeys].some((key) => !eclipseSectionKeys.has(key))
+  || [...eclipseSectionKeys].some((key) => key.includes("/pisces/shared/"))
   || eclipseSections.some((card) => (
     card.content_role !== "full_copy"
     || !["approved", "approved_reuse"].includes(card.review_status)
