@@ -11566,7 +11566,7 @@
    12
   ],
   "placementRawDrafts": 135,
-  "hookRows": 16,
+  "hookRows": 17,
   "placementClauseRows": 16,
   "placementGerundRows": 39
  },
@@ -11687,6 +11687,30 @@
    "source_release": "owner-authored-natal-placement-complete-v1",
    "runtime_family": "natal-you-placement-complete-final",
    "runtime_key": "lilith|leo|4",
+   "governance": "owner-approved-natal-placement-complete-v1",
+   "owner_approved": true,
+   "distribution_lane": "serving"
+  },
+  {
+   "contentKey": "fallback-hook/natal-you-placement-complete-final/lilith/sagittarius/4",
+   "content_role": "full_copy",
+   "grammar_frame": "complete_sentence",
+   "headline": "Lilith in Sagittarius in the 4th house",
+   "body": "Lilith points to the part of you that knows exactly when compromise has turned into self-betrayal. In Sagittarius, that moment often comes when staying connected requires you to keep pretending you believe something you have already started questioning. You may be able to tolerate a lot of disagreement, uncertainty, and difference because you genuinely want to understand how other people arrived where they did. What becomes much harder is realizing that curiosity is only welcome as long as it does not threaten the conclusion everyone else has already agreed to.\n\nThat can make you unusually sensitive to hypocrisy. You notice when somebody talks about freedom but becomes controlling the moment you make a choice they dislike, preaches honesty while expecting certain facts to remain conveniently unspoken, or insists that everyone should think for themselves until your answer differs from theirs. The issue is not simply that people contradict themselves. It is what happens when you are expected to participate in the contradiction because pointing it out would make you disloyal, difficult, or disrespectful.\n\nSagittarius also needs the freedom to revise its beliefs as experience changes them. You may have once been completely certain about a relationship, religion, career path, political idea, teacher, or version of your future and later discover that you cannot believe in it the same way anymore. That can create a deep values conflict when other people are still invested in the person you were when you first made the choice. You can spend a long time trying to make the old belief fit the life you have now because changing your mind can feel like admitting that your earlier faith was misplaced. Sometimes it was. Sometimes you simply learned more.\n\nThis is where identity investment can keep you somewhere longer than conviction does. You gave years to the path, defended it to other people, built friendships around it, or made choices that only made sense because you believed the story would end a certain way. Walking away can feel like losing more than the belief itself. You may have to reconsider who you are without it. Lilith in Sagittarius becomes harder to ignore when defending the old story starts requiring more dishonesty than changing it would.\n\nWith Lilith in the 4th house, these questions often have roots in the family system. Home may have come with a strong explanation for who your family was, what kind of people you were supposed to be, what counted as success, what was morally right, or which traditions were beyond debate. Maybe religion shaped the household. Maybe education, culture, reputation, or one parent's worldview carried so much authority that questioning it felt like questioning the family itself. You may have learned that belonging came with an inherited story and that some questions could change your place inside it.\n\nThat can make growing into your own life surprisingly complicated. You choose a relationship your family does not understand, leave the career everyone was proud of, stop practicing a faith that once organized your life, move far from home, or build a future that no longer resembles the one you were taught to want. The disagreement can become much more emotionally charged than the decision itself because families often hear, “I want something different,” as “what you gave me was wrong.” Those are not the same statement.\n\nThe deeper change is learning that you do not have to reject your entire history in order to stop being ruled by it. You can love the people who taught you something and still decide they were wrong about part of it. You can keep a tradition because it still means something, leave another because it does not, and change your mind without turning your past into wasted time. Self-trust grows when you stop demanding that every choice remain correct forever and start trusting yourself to respond when your understanding changes.\n\nOver time, Lilith in Sagittarius becomes less interested in proving that you have found the truth and more interested in having enough freedom to keep looking for it.",
+   "reader_only": true,
+   "render_policy": "reader-only-exact-lived-v1",
+   "review_status": "approved",
+   "source_keys": [
+    "owner-authored/lilith-sagittarius-4/2026-08-25"
+   ],
+   "approval": {
+    "approvalLevel": "exact_owner_approved",
+    "recordPath": "owner-authored/lilith-sagittarius-4/2026-08-25",
+    "approvedAt": "2026-08-25"
+   },
+   "source_release": "owner-authored-natal-placement-complete-v1",
+   "runtime_family": "natal-you-placement-complete-final",
+   "runtime_key": "lilith|sagittarius|4",
    "governance": "owner-approved-natal-placement-complete-v1",
    "owner_approved": true,
    "distribution_lane": "serving"
