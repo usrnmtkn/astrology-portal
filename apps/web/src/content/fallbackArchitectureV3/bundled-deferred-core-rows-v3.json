@@ -169,6 +169,30 @@
       "distribution_lane": "serving"
     },
     {
+      "contentKey": "fallback-hook/natal-you-placement-complete-final/lilith/capricorn/4",
+      "content_role": "full_copy",
+      "grammar_frame": "complete_sentence",
+      "headline": "Lilith in Capricorn in the 4th house",
+      "body": "Lilith points to the part of you that knows exactly when compromise has turned into self-betrayal. In Capricorn, that moment often comes when being responsible starts meaning that everyone else gets to rely on your discipline while you are expected to carry the pressure without complaint. You may be able to handle difficult situations, think ahead, and keep going long after other people lose patience, but eventually you notice when your strength has become the reason nobody is asking whether too much has been placed on you.\n\nCapricorn is highly aware of responsibility, authority, and who is actually accountable when something goes wrong. You notice the person who gives orders but disappears when there are consequences, the one who expects maturity from everyone else while making exceptions for themselves, or the person who takes your reliability for granted because they know you will finish what they leave behind. That can create a particular kind of rage because you are rarely angry about responsibility itself. You are angry when responsibility and power have been separated, and the person carrying the consequences has the least say.\n\nOverfunctioning can hide inside that strength for a long time. You step in because you know how to solve the problem, take ownership because waiting for somebody else feels inefficient, or keep pushing because failure would affect more than just you. The more often you rescue the situation, the more other people start building their expectations around the fact that you will. Eventually, what began as competence becomes role overload, and the anger arrives when you realize that everybody has been admiring how much you can carry while quietly handing you more.\n\nCapricorn can also have a complicated relationship with respect. You may be willing to work hard for someone whose judgment you trust, follow rules that have a clear purpose, or accept limits when the person enforcing them is willing to live by the same standard. What becomes intolerable is arbitrary authority: being told to respect the title when the person holding it has not earned your trust, being expected to follow a rule nobody at the top follows, or being called difficult because you finally point out that the hierarchy protects some people from consequences while demanding discipline from everyone else. Lilith in Capricorn can carry years of controlled anger before deciding that respect is no longer something another person gets simply because they expect it.\n\nWith Lilith in the 4th house, these patterns often have roots in the family system. Home may have taught you very early who was in charge, who carried the consequences, and who was expected to grow up first. Maybe one parent was unreliable and somebody else had to compensate, or the family depended on you being mature because there was not enough room for you to be anything else. You may have become the responsible one before you were old enough to understand that responsibility was being assigned to you, and later found that everyone was so accustomed to your strength that they forgot it had ever cost you anything.\n\nParentification can become part of that story. You remember the appointment, take care of the younger sibling, manage the practical problem, keep track of money, or learn when not to add another worry to an already overwhelmed parent. Those skills can make you remarkably capable as an adult, while also leaving you with very little tolerance for people who expect to be rescued from responsibilities they are fully capable of handling themselves. The rage can be old: some part of you still remembers what it was like to be expected to handle things other people were allowed to avoid.\n\nFamily reputation can carry its own pressure. Maybe the household had to look respectable, successful, disciplined, or put together no matter what was happening behind closed doors. You knew which problems stayed private, what could embarrass the family, and how much effort went into making sure nobody outside the house saw the cracks. Lilith in the 4th house gets louder when protecting the family's image starts requiring you to protect people from consequences they have earned, or when being \"the strong one\" becomes another way of making sure nobody has to look too closely at what the family asked you to survive.\n\nThe deeper change is allowing responsibility to belong to the person who actually owns it. You stop automatically stepping in because you know you could handle the problem better, let another adult experience what happens when they do not follow through, and question the family rule that says your strength should always be available for everyone else's emergencies. Anger becomes useful when it shows you where capability has been turned into obligation.\n\nOver time, Lilith in Capricorn becomes less interested in proving how much you can withstand and more interested in who respects you when you stop carrying everything.",
+      "reader_only": true,
+      "render_policy": "reader-only-exact-lived-v1",
+      "review_status": "approved",
+      "source_keys": [
+        "owner-authored/lilith-capricorn-4/2026-08-25"
+      ],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "owner-authored/lilith-capricorn-4/2026-08-25",
+        "approvedAt": "2026-08-25"
+      },
+      "source_release": "owner-authored-natal-placement-complete-v1",
+      "runtime_family": "natal-you-placement-complete-final",
+      "runtime_key": "lilith|capricorn|4",
+      "governance": "owner-approved-natal-placement-complete-v1",
+      "owner_approved": true,
+      "distribution_lane": "serving"
+    },
+    {
       "contentKey": "fallback-hook/natal-you-placement-complete-final/lilith/scorpio/4",
       "content_role": "full_copy",
       "grammar_frame": "complete_sentence",
