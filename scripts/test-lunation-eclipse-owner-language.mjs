@@ -43,6 +43,8 @@ assert.equal(fields.eclipseKind.southNodeSolarModifier, null);
 assert.equal(madlib.templates.eclipseKindSolarCandidate, fields.eclipseKind.solar);
 assert.equal(madlib.templates.eclipseKindLunarCandidate, fields.eclipseKind.lunar);
 assert.equal(madlib.templates.eclipseAdviceCandidate, fields.eclipseAdvice);
+assert.equal(madlib.templates.eclipseEndingsRecommendationCandidate, fields.eclipseEndingsNoRitual);
+assert.equal(madlib.templates.eclipseEndingsAdviceCandidate, fields.eclipseEndingsAdvice);
 assert.deepEqual(madlib.eclipseCandidateFields.eclipseNature.candidates, fields.eclipseNature.candidates);
 assert.equal(madlib.eclipseCandidateFields.eclipseNature.default, fields.eclipseNature.default);
 assert.equal(madlib.templates.eclipseNatureDefaultCandidate, fields.eclipseNature.default);

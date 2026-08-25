@@ -171,7 +171,7 @@
     },
     "eclipseMechanics": "Lunar eclipses are portals into your soul. When they come around, they can help you uncover the truth and allow you to gain knowledge that will steer your life, changing your path to a better one.",
     "eclipseMechanicsScope": "lunar_only",
-    "eclipseNoRitual": "Eclipses are not the recommended time for ritual, manifestation, or intention setting. They happen along the Lunar Nodes, and part of the work is letting the situation unfold before deciding what it is supposed to become.",
+    "eclipseNoRitual": "Eclipses happen along the Lunar Nodes, and part of the work is letting the situation unfold before deciding what it's supposed to become.",
     "eclipseNoRitualApproval": {
       "status": "owner_approved",
       "date": "2026-08-24",
@@ -205,7 +205,9 @@
       "approvedFrames": [],
       "rule": "The ephemeris supplies the facts and an approved frame supplies the prose."
     },
-    "eclipseAdvice": "You can't control it, and you shouldn't try. Not everything that changes now needs an immediate response."
+    "eclipseAdvice": "Release your need to be in control, and allow yourself to flow with the current of whatever is unfolding. Reflect on what you've experienced, and respond accordingly.",
+    "eclipseEndingsNoRitual": "Eclipses happen along the Lunar Nodes, and change comes all the same, no matter how tightly you hold on.",
+    "eclipseEndingsAdvice": "Release your need to be in control, allow for endings, mourn if needed, and allow yourself to flow with the current of whatever is unfolding, even if the destination is still unknown."
   },
   "proposedOpeningSelector": {
     "new-moon": {
@@ -237,7 +239,7 @@
     "reviewStatus": "needs_review",
     "ownerApproved": false,
     "promotionAuthorized": false,
-    "body": "You can't control it, and you shouldn't try. Not everything that changes now needs an immediate response."
+    "body": "Release your need to be in control, and allow yourself to flow with the current of whatever is unfolding. Reflect on what you've experienced, and respond accordingly."
   },
   "assemblyProposal": {
     "baseKindMap": {
@@ -274,7 +276,7 @@
   ],
   "ownerRuling": {
     "date": "2026-08-24",
-    "text": "Eclipses are not the recommended time for ritual, manifestation, or intention setting. They happen along the Lunar Nodes, and part of the work is letting the situation unfold before deciding what it is supposed to become.",
-    "effect": "Use this exact owner-approved shared paragraph on eclipse variants. It does not independently authorize reader serving."
+    "text": "Eclipses happen along the Lunar Nodes, and part of the work is letting the situation unfold before deciding what it's supposed to become.",
+    "effect": "Use this exact owner-approved default recommendation followed by the approved default close. Houses 4, 8, and 12 use the separately recorded endings recommendation and close."
   }
 }

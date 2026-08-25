@@ -16,14 +16,20 @@ const requiredSharedLunarEclipseSectionKeys = new Set([
   "nature",
   "mechanics",
   "recommendation",
-  "close"
+  "close",
+  "recommendation-endings",
+  "close-endings"
 ].map((section) => `authored/lunation-eclipse-section/shared/lunar/${section}`));
+const eclipseEvergreenBodies = eclipseSections.filter((card) => card.eclipse_section === "evergreen-body");
+const isSha256 = (value: unknown): value is string => (
+  typeof value === "string" && /^[a-f0-9]{64}$/u.test(value)
+);
 
 if (
   lunationBookCardsV1.schema !== "lunation-book-cards/v1"
-  || lunationBookCardsV1.count !== 266
-  || cards.length !== 266
-  || keys.size !== 266
+  || lunationBookCardsV1.count !== 288
+  || cards.length !== 288
+  || keys.size !== 288
   || cards.some((card) => (
     card.content_role !== "full_copy"
     || card.review_status !== "approved"
@@ -33,15 +39,23 @@ if (
     || !/^[a-f0-9]{64}$/u.test(card.protected_content.body_sha256)
   ))
 ) {
-  throw new Error("Lunation book bundle must contain 266 protected owner-approved exact cells.");
+  throw new Error("Lunation book bundle must contain all 288 protected owner-approved exact cells.");
 }
 
 if (
   lunationEclipseSectionsV1.schema !== "lunation-eclipse-sections/v1"
-  || lunationEclipseSectionsV1.count !== 28
-  || eclipseSections.length !== 28
-  || eclipseSectionKeys.size !== 28
+  || lunationEclipseSectionsV1.count !== 30
+  || eclipseSections.length !== 30
+  || eclipseSectionKeys.size !== 30
   || [...requiredSharedLunarEclipseSectionKeys].some((key) => !eclipseSectionKeys.has(key))
+  || eclipseEvergreenBodies.length !== 12
+  || eclipseEvergreenBodies.some((card) => (
+    !isSha256(card.protected_content.source_body_sha256)
+    || !isSha256(card.protected_content.source_opening_sha256)
+    || !isSha256(card.protected_content.source_remainder_sha256)
+    || !isSha256(card.protected_content.preservedBookRemainderSha256)
+    || !Array.isArray(card.protected_content.approved_omissions)
+  ))
   || [...eclipseSectionKeys].some((key) => key.includes("/pisces/shared/"))
   || eclipseSections.some((card) => (
     card.content_role !== "full_copy"
@@ -53,7 +67,7 @@ if (
     || !/^[a-f0-9]{64}$/u.test(card.protected_content.body_sha256)
   ))
 ) {
-  throw new Error("Lunation eclipse section bundle must contain 28 protected owner-approved sections.");
+  throw new Error("Lunation eclipse section bundle must contain 30 protected owner-approved sections.");
 }
 
 if (
