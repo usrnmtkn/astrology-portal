@@ -40,6 +40,10 @@ const browser = createFallbackRenderer(
 const destinationPrefix = "fallback-hook/natal-aspect-lived/lilith/";
 const llMatrixV13Release = "ll-matrix-v13-owner-approved-runtime";
 const incrementalOwnerApprovalRelease = "ll-matrix-v13-incremental-owner-approval-2026-08-17";
+const postBaselineOwnerReleases = new Set([
+  "owner-authored-lilith-first-house-2026-08-25",
+  "owner-authored-lilith-second-house-2026-08-25",
+]);
 const recordPrefix = `${reviewRoot}/records/`;
 const sha256 = (value) => crypto.createHash("sha256").update(value, "utf8").digest("hex");
 
@@ -74,6 +78,7 @@ const existingApprovedRows = source.hookRows.filter((row) => (
   && row.source_release !== incrementalOwnerApprovalRelease
   && row.source_release !== "natal-moon-final-rendered-v3"
   && row.source_release !== "natal-sun-square-ascendant-owner-approved-runtime"
+  && !postBaselineOwnerReleases.has(row.source_release)
 )).map((row) => {
   // Preserve the frozen historical fingerprint while allowing the later,
   // separately hash-bound Friend house-bridge context release.
