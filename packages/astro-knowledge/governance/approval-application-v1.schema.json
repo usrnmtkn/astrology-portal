@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tldrastro.local/schemas/approval-application-v1.schema.json",
+  "title": "Atomically validated TLDR Astro approval application",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema", "decidedAt", "queueSha256", "approvalSetSha256", "complete", "decisions", "unresolved"],
+  "properties": {
+    "schema": { "const": "approval-application/v1" },
+    "decidedAt": { "type": "string", "format": "date-time" },
+    "queueSha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "approvalSetSha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "complete": { "type": "boolean" },
+    "decisions": { "type": "array" },
+    "unresolved": { "type": "array" }
+  }
+}

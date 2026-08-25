@@ -93,6 +93,7 @@ assert.match(
 
 const packageDir = "apps/web/src/content/fallbackArchitectureV3";
 const sourceRows = readJson(`${packageDir}/source-rows/fallback-source-rows-v3.json`);
+const dailyGlanceVariants = readJson(`${packageDir}/source-rows/daily-glance-variants-v1.json`);
 const transitRows = readJson(`${packageDir}/source-rows/transit-synastry-rows-v1.json`);
 const bondLanguagePass2 = readJson(`${packageDir}/source-rows/bond-language-pass-2.json`);
 const pairDailyFrames = readJson(`${packageDir}/source-rows/pair-daily-frames-v1.json`);
@@ -145,10 +146,14 @@ const eligible = (row, allowBlank = false) => {
   const requiresServingRelease = row.render_policy === "sky-placement-continuous-v2"
     || String(row.contentKey ?? "").startsWith("fallback-hook/sky-sign-copy/");
 
-  return editoriallyEligible && (
+  const distributionEligible = (
     !requiresServingRelease
     || servingReleaseByKey.get(row.contentKey)?.distribution_state === "serving"
   );
+
+  return editoriallyEligible
+    && distributionEligible
+    && (allowBlank && !row.review_status ? true : isGovernedReaderEligible(row));
 };
 const latestEligible = (rows, allowBlank = false) => {
   const candidates = new Map();
@@ -161,6 +166,28 @@ const latestEligible = (rows, allowBlank = false) => {
     .map((keyed) => [...keyed].reverse().find((row) => eligible(row, allowBlank)))
     .filter(Boolean);
 };
+const approvedDailyGlanceVariants = (source) => ({
+  schema: source.schema,
+  version: source.version,
+  note: "Generated approved-only serving projection. Pending text and pairings are intentionally absent.",
+  keys: Object.fromEntries(Object.entries(source.keys ?? {}).map(([contentKey, set]) => {
+    const eligibleVariant = (kind, item) => isGovernedReaderEligible({
+      ...item,
+      contentKey: `daily-glance-variant/${contentKey}/${kind}/${item.id}`
+    });
+    const headlines = (set.headlines ?? []).filter((item) => eligibleVariant("headline", item));
+    const bodies = (set.bodies ?? []).filter((item) => eligibleVariant("body", item));
+    const headlineIds = new Set(headlines.map((item) => item.id));
+    const bodyIds = new Set(bodies.map((item) => item.id));
+    const pairings = (set.pairings ?? []).filter((item) => (
+      eligibleVariant("pairing", item)
+      && headlineIds.has(item.headline_id)
+      && bodyIds.has(item.body_id)
+    ));
+    return [contentKey, { pairing_policy: set.pairing_policy, headlines, bodies, pairings }];
+  }))
+});
+const projectedDailyGlanceVariants = approvedDailyGlanceVariants(dailyGlanceVariants);
 const expectedManifest = createPackageManifest({
   transitLib: {
     authoredCards: latestEligible([
@@ -192,7 +219,8 @@ const expectedManifest = createPackageManifest({
       ...sourceRows.vocabularyRows,
       ...placementRows.vocabularyRows,
       ...skyArticleRows.vocabularyRows
-    ])
+    ]),
+    dailyGlanceVariants: projectedDailyGlanceVariants
   },
   templatesFile: {
     templates: latestEligible([...templates.templates, ...placementRows.templates], true)
@@ -254,7 +282,8 @@ const expectedCoreManifest = createPackageManifest({
       ...sourceRows.vocabularyRows,
       ...placementRows.vocabularyRows,
       ...skyArticleRows.vocabularyRows
-    ])
+    ]),
+    dailyGlanceVariants: projectedDailyGlanceVariants
   },
   templatesFile: {
     templates: latestEligible([...templates.templates, ...placementRows.templates], true)

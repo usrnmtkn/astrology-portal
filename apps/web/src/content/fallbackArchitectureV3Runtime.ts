@@ -1,13 +1,8 @@
+import bundledInitialReaderRowsV3 from "./fallbackArchitectureV3/bundled-initial-reader-rows-v3.json";
 import bundledSkyCoreRowsV3 from "./fallbackArchitectureV3/bundled-sky-core-rows-v3.json";
 import bundledSkyAuthoredCardsV3 from "./fallbackArchitectureV3/bundled-sky-authored-cards-v3.json";
-import fallbackTemplatesV3 from "./fallbackArchitectureV3/templates/fallback-templates-v3.json";
+import approvedServingProjectionV1 from "./fallbackArchitectureV3/approved-serving-projection-v1.json";
 import bundledManifestSummaryV3 from "./fallbackArchitectureV3/bundled-manifest-summary-v3.json";
-import lunationBlendUnitsV1 from "./fallbackArchitectureV3/source-rows/lunation-blend-units-v1.json";
-import placementInterimFixesV1 from "./fallbackArchitectureV3/source-rows/placement-interim-fixes-v1.json";
-import skyArticleV1 from "./fallbackArchitectureV3/source-rows/sky-article-v1.json";
-import skyAspectPhrasebookV1 from "./fallbackArchitectureV3/source-rows/sky-aspect-phrasebook-v1.json";
-import timingEventReaderCopyV2 from "./fallbackArchitectureV3/source-rows/timing-event-reader-copy-v2.json";
-import weeklySourceRowsV1 from "./fallbackArchitectureV3/source-rows/station-cards-week-openers-v1.json";
 import { isGovernedReaderEligible } from "./fallbackArchitectureV3/resolver/readerEligibility.browser";
 // The package ships a prebuilt ESM bundle. Keep resolver logic package-owned.
 // @ts-ignore Package bundle is JavaScript-only; app-facing types live below.
@@ -35,6 +30,21 @@ export {
   renderKnowledgeMatrixV13WorkbookKey
 } from "./knowledgeMatrixV13Runtime";
 export const fallbackArchitectureV3PackageVersion = PACKAGE_VERSION;
+
+function assertApprovedServingProjection() {
+  if (
+    approvedServingProjectionV1.schema !== "tldrastro-approved-serving-projection/v1"
+    || approvedServingProjectionV1.packageVersion !== PACKAGE_VERSION
+    || approvedServingProjectionV1.policy.pendingRowsPresent !== false
+    || approvedServingProjectionV1.manifest.contentHash !== bundledManifestSummaryV3.contentHash
+    || approvedServingProjectionV1.manifest.keyManifestHash !== bundledManifestSummaryV3.keyManifestHash
+    || approvedServingProjectionV1.manifest.keyCount !== bundledManifestSummaryV3.keyCount
+  ) {
+    throw new Error("Fallback V3 approved-serving projection is stale or invalid.");
+  }
+}
+
+assertApprovedServingProjection();
 
 export type ReviewStatus = "approved" | "approved_reuse" | "reviewed" | string;
 
@@ -206,6 +216,54 @@ export type AspectFacts = {
   [key: string]: unknown;
 };
 
+function latestByContentKey<T extends { contentKey: string }>(rows: T[]): T[] {
+  return [...new Map(rows.map((row) => [row.contentKey, row])).values()];
+}
+
+const approvedInitialAuthoredCards = latestByContentKey([
+  ...(bundledSkyAuthoredCardsV3.authoredCards as AuthoredCard[]),
+  ...(bundledInitialReaderRowsV3.authoredCards as AuthoredCard[])
+]);
+const approvedInitialHookRows = latestByContentKey([
+  ...(bundledSkyCoreRowsV3.hookRows as HookRow[]),
+  ...(bundledInitialReaderRowsV3.hookRows as HookRow[])
+]);
+const approvedInitialVocabularyRows = latestByContentKey([
+  ...(bundledSkyCoreRowsV3.vocabularyRows as VocabRow[]),
+  ...(bundledInitialReaderRowsV3.vocabularyRows as VocabRow[])
+]);
+const skyArticleV1 = {
+  authoredCards: approvedInitialAuthoredCards.filter((row) => row.contentKey.startsWith("sky-article/")),
+  hookRows: approvedInitialHookRows.filter((row) => /^fallback-hook\/sky-placement\/[^/]+$/u.test(row.contentKey)),
+  vocabularyRows: approvedInitialVocabularyRows.filter((row) => row.contentKey.startsWith("fallback-vocab/sky-"))
+};
+const skyAspectPhrasebookV1 = {
+  hookRows: approvedInitialHookRows.filter((row) => [
+    "fallback-hook/sky-aspect-pair/",
+    "fallback-hook/sky-aspect-exact/",
+    "fallback-hook/sky-placement-sign/",
+    "fallback-hook/sky-aspect-sign/"
+  ].some((prefix) => row.contentKey.startsWith(prefix)))
+};
+const timingEventReaderCopyV2 = {
+  version: "timing-event-reader-copy-v2",
+  authoredCards: approvedInitialAuthoredCards.filter((row) => (
+    Array.isArray(row.source_keys)
+    && row.source_keys.includes("owner/timing-event-reader-copy-v2-approved")
+  ))
+};
+const approvedInitialRulerRows = approvedInitialHookRows.filter((row) => (
+  row.contentKey.startsWith("fallback-hook/lunation-ruler-house/")
+));
+if (
+  approvedInitialRulerRows.length !== 1
+  || approvedInitialRulerRows[0]?.contentKey !== "fallback-hook/lunation-ruler-house/11"
+  || approvedInitialRulerRows[0]?.review_status !== "approved"
+  || !approvedInitialRulerRows[0]?.body_you?.trim()
+) {
+  throw new Error("Approved initial projection must contain only the complete house-11 lunation ruler row.");
+}
+
 function assertSkyArticleV1Import(
   registry: typeof skyArticleV1
 ) {
@@ -234,7 +292,7 @@ function assertSkyArticleV1Import(
   }
   const literalSkyRowDate = /\b(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:t(?:ember)?)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?|\d{4})\b/u;
   for (const row of hookRows) {
-    if (literalSkyRowDate.test(row.body_you)) {
+    if (typeof row.body_you !== "string" || literalSkyRowDate.test(row.body_you)) {
       throw new Error(`Sky placement V3 row contains a literal date: ${row.contentKey}`);
     }
   }
@@ -245,11 +303,13 @@ function assertSkyArticleV1Import(
     throw new Error("Sky article imports may not modify shared sign-style or planet-function banks.");
   }
   for (const article of articles) {
+    const validFrom = typeof article.valid_from === "string" ? article.valid_from : "";
+    const validTo = typeof article.valid_to === "string" ? article.valid_to : "";
     if (
       !/^sky-article\/[a-z-]+\/[a-z-]+\/\d{4}$/u.test(article.contentKey)
-      || !/^\d{4}-\d{2}-\d{2}$/u.test(article.valid_from)
-      || !/^\d{4}-\d{2}-\d{2}$/u.test(article.valid_to)
-      || article.valid_from > article.valid_to
+      || !/^\d{4}-\d{2}-\d{2}$/u.test(validFrom)
+      || !/^\d{4}-\d{2}-\d{2}$/u.test(validTo)
+      || validFrom > validTo
     ) {
       throw new Error(`Invalid sky article registry row: ${article.contentKey}`);
     }
@@ -259,6 +319,7 @@ function assertSkyArticleV1Import(
   if (
     !saturnArchive
     || saturnArchive.archive_only !== true
+    || !Array.isArray(saturnArchive.key_dates)
     || saturnArchive.key_dates.length !== 9
   ) {
     throw new Error("Saturn in Pisces must import as the nine-date archive calibration article.");
@@ -280,15 +341,14 @@ function assertSkyAspectPhrasebookV1Import(phrasebook: typeof skyAspectPhraseboo
   const expectedFamilies = new Map([
     ["fallback-hook/sky-aspect-pair/", 30],
     ["fallback-hook/sky-aspect-exact/", 4],
-    ["fallback-hook/sky-placement-sign/", 36],
     ["fallback-hook/sky-aspect-sign/", 78]
   ]);
 
   if (
-    rows.length !== 148
-    || rows.some((row) => !["reviewed", "approved"].includes(row.review_status))
+    rows.length !== 112
+    || rows.some((row) => !["reviewed", "approved"].includes(String(row.review_status ?? "")))
   ) {
-    throw new Error("Sky aspect phrasebook must contain exactly 148 editorially eligible rows.");
+    throw new Error("Initial approved projection must contain exactly 112 eager Sky aspect phrasebook rows.");
   }
 
   for (const [prefix, expected] of expectedFamilies) {
@@ -315,8 +375,9 @@ function assertTimingEventReaderCopyV2Import(
     || cards.some((card) => card.review_status !== "approved")
     || cards.some((card) => card.content_role !== "full_copy")
     || cards.some((card) => !card.owner_authored)
-    || cards.some((card) => !card.headline.trim() || !card.body.includes("\n\n"))
-    || cards.some((card) => !card.source_keys.includes("owner/timing-event-reader-copy-v2-approved"))
+    || cards.some((card) => typeof card.headline !== "string" || !card.headline.trim())
+    || cards.some((card) => typeof card.body !== "string" || !card.body.includes("\n\n"))
+    || cards.some((card) => !Array.isArray(card.source_keys) || !card.source_keys.includes("owner/timing-event-reader-copy-v2-approved"))
   ) {
     throw new Error("Timing-event reader copy V2 must contain four unique, owner-approved exact cards.");
   }
@@ -326,34 +387,14 @@ assertTimingEventReaderCopyV2Import(timingEventReaderCopyV2);
 
 const snapshotBundle: FallbackArchitectureV3Bundle = {
   transitLib: {
-    authoredCards: [
-      ...(bundledSkyAuthoredCardsV3.authoredCards as AuthoredCard[]),
-      ...(lunationBlendUnitsV1.authoredCards as AuthoredCard[]),
-      ...(skyArticleV1.authoredCards as AuthoredCard[]),
-      ...(weeklySourceRowsV1 as AuthoredCard[]),
-      ...(timingEventReaderCopyV2.authoredCards as AuthoredCard[])
-    ]
+    authoredCards: approvedInitialAuthoredCards
   },
   templatesFile: {
-    templates: [
-      ...((fallbackTemplatesV3 as TemplatesFile).templates ?? []),
-      ...(placementInterimFixesV1.templates as TemplateRow[])
-    ]
+    templates: bundledInitialReaderRowsV3.templates as TemplateRow[]
   },
   rowsFile: {
-    hookRows: [
-      ...((bundledSkyCoreRowsV3 as RowsFile).hookRows ?? []),
-      ...(lunationBlendUnitsV1.hookRows as HookRow[]),
-      ...(skyArticleV1.hookRows as HookRow[]),
-      ...(skyAspectPhrasebookV1.hookRows as HookRow[]).filter(
-        (row) => !row.contentKey.startsWith("fallback-hook/sky-placement-sign/")
-      )
-    ],
-    vocabularyRows: [
-      ...((bundledSkyCoreRowsV3 as RowsFile).vocabularyRows ?? []),
-      ...(placementInterimFixesV1.vocabularyRows as VocabRow[]),
-      ...(skyArticleV1.vocabularyRows as VocabRow[])
-    ]
+    hookRows: approvedInitialHookRows,
+    vocabularyRows: approvedInitialVocabularyRows
   }
 };
 

@@ -1,0 +1,87 @@
+{
+  "schema": "tldrastro-approved-serving-projection/v1",
+  "packageVersion": "v3-2026-08-24d",
+  "policy": {
+    "eligibleReviewStatuses": [
+      "approved",
+      "approved_reuse",
+      "reviewed"
+    ],
+    "exactApprovalPrefixes": [
+      "authored/transit-",
+      "fallback-hook/daily-",
+      "fallback-hook/natal-aspect-lived/",
+      "fallback-hook/synastry-pair/",
+      "daily-glance-variant/"
+    ],
+    "pendingRowsPresent": false,
+    "runtimeFilter": "defense-in-depth"
+  },
+  "manifest": {
+    "contentHash": "7987c7131e8fee0fd658d0cd59df47c3",
+    "keyManifestHash": "99eb8426034838fad0ec2fc09ba59476",
+    "keyCount": 9155
+  },
+  "partitions": {
+    "skyCore": {
+      "file": "bundled-sky-core-rows-v3.json",
+      "hookRows": 657,
+      "vocabularyRows": 720
+    },
+    "deferredCore": {
+      "file": "bundled-deferred-core-rows-v3.json",
+      "hookRows": 1530
+    },
+    "sharedPlacement": {
+      "file": "bundled-shared-placement-rows-v3.json",
+      "hookRows": 192
+    },
+    "relationshipHooks": {
+      "file": "bundled-relationship-hook-rows-v3.json",
+      "hookRows": 824
+    },
+    "emptyHouses": {
+      "file": "bundled-empty-house-rows-v3.json",
+      "hookRows": 541
+    },
+    "transitCards": {
+      "file": "bundled-transit-core-authored-cards-v3.json",
+      "authoredCards": 1756
+    },
+    "relationshipCards": {
+      "file": "bundled-relationship-authored-cards-v3.json",
+      "authoredCards": 1008
+    },
+    "skyCards": {
+      "file": "bundled-sky-authored-cards-v3.json",
+      "authoredCards": 49
+    },
+    "skyPlacementBase": {
+      "file": "bundled-sky-placement-rows-v3.json",
+      "hookRows": 808
+    },
+    "skyPlacementHouses": {
+      "file": "bundled-sky-placement-house-rows-v3.json",
+      "hookRows": 984
+    },
+    "initialReader": {
+      "file": "bundled-initial-reader-rows-v3.json",
+      "authoredCards": 33,
+      "hookRows": 127,
+      "vocabularyRows": 7,
+      "templates": 25
+    },
+    "lunationBookReader": {
+      "file": "bundled-lunation-book-cards-v3.json",
+      "authoredCards": 288
+    },
+    "lunationEclipseSectionsReader": {
+      "file": "bundled-lunation-eclipse-sections-v3.json",
+      "authoredCards": 30
+    },
+    "lunationEclipseHouseLayersReader": {
+      "file": "bundled-lunation-eclipse-house-layers-v3.json",
+      "authoredCards": 12
+    }
+  }
+}
