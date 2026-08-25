@@ -268,6 +268,7 @@ try {
     friendName: "Alex",
     hasNatalChart: true,
     isEventChart: false,
+    isNatalChartRepairing: false,
     onOpenAspect() {},
     onOpenEmptyHouse() {},
     onOpenPattern() {},
@@ -292,6 +293,28 @@ try {
   assert.match(natalTabHtml, /Empty 2nd House in Taurus/);
   assert.match(natalTabHtml, /Alex&#x27;s Sun trine Moon/);
   assert.match(natalTabHtml, /Feeling and purpose cooperate naturally/);
+
+  const repairingNatalTabHtml = renderToStaticMarkup(React.createElement(FriendNatalTab, {
+    aspectGroups: [],
+    bigThreeRows: [],
+    birthTimeUnknown: false,
+    emptyHouseRows: [],
+    friendName: "Alex",
+    hasNatalChart: false,
+    isEventChart: false,
+    isNatalChartRepairing: true,
+    onOpenAspect() {},
+    onOpenEmptyHouse() {},
+    onOpenPattern() {},
+    onOpenPlacement() {},
+    patternItems: [],
+    patternStatus: undefined,
+    patternTitle: "Patterns in Alex's chart",
+    placementRows: []
+  }));
+  assert.match(repairingNatalTabHtml, /aria-label="Completing Alex&#x27;s natal chart"/);
+  assert.match(repairingNatalTabHtml, /aria-busy="true"/);
+  assert.doesNotMatch(repairingNatalTabHtml, /Big three|Alex&#x27;s natal placements|Empty houses/);
 
   const emptyTransitsHtml = renderToStaticMarkup(React.createElement(FriendTransitsTab, {
     bondTransits: [],
