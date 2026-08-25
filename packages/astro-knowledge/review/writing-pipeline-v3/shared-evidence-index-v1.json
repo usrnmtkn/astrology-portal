@@ -1,6 +1,6 @@
 {
   "version": "shared-evidence-standard-v1-2026-08-13",
-  "generatedAt": "2026-08-24T23:09:07.006Z",
+  "generatedAt": "2026-08-25T08:57:37.324Z",
   "keyFormat": "planet|sign; *|* is globally eligible register evidence",
   "rolePriority": {
     "scene": [
@@ -14,14 +14,15 @@
     "packages/astro-knowledge/voice/tldr-astro/fixtures/sky-article-longform/owner-corpus/reference-surfaces/",
     "tldr-astro-phrasebank/MARIE-VOICE-BANK.md",
     "tldr-astro-phrasebank/WRITING-STANDARD.md",
-    "data/writing/owner-register-gold.json"
+    "data/writing/owner-register-gold.json",
+    "data/writing/owner-supplied-structural-exemplars.json"
   ],
   "counts": {
     "entries": 5923,
     "meaning": 2224,
-    "register": 1757,
+    "register": 1758,
     "scene": 415,
-    "argument": 1181,
+    "argument": 1180,
     "phrase": 346,
     "planetSignKeys": 247
   },
@@ -3337,8 +3338,7 @@
         "argument:fallback-hook/sky-placement-hook/sun/virgo",
         "argument:fallback-hook/sky-placement-lived/sun/virgo",
         "argument:fallback-hook/sky-placement-tagline/sun/virgo",
-        "argument:fallback-hook/sky-placement-turn/sun/virgo",
-        "argument:fallback-hook/sky-sign-copy/sun/virgo"
+        "argument:fallback-hook/sky-placement-turn/sun/virgo"
       ],
       "phrase": []
     },
@@ -5045,7 +5045,8 @@
         "register:matrix:register:ab02cd742308",
         "register:matrix:register:09693a6be8d3",
         "register:matrix:register:c2472c966260",
-        "register:matrix:register:db01ae7f7940"
+        "register:matrix:register:db01ae7f7940",
+        "register:structural-calibration-chiron-taurus-house-12-2026-08-25"
       ],
       "scene": [],
       "argument": [
@@ -135755,6 +135756,33 @@
       "text": "Pisces likes to dissolve, to blur the edges, but Lilith cuts through the fog. Past experience can make the options look like absorb everything or disappear. When those are the only two settings, every demand can start feeling like too much and checking out can start feeling like relief. Some people will keep taking support as long as it is available, then resent the person who finally runs out. A limit creates another option: staying present without absorbing everything."
     },
     {
+      "id": "register:structural-calibration-chiron-taurus-house-12-2026-08-25",
+      "indexKey": "chiron|taurus",
+      "planet": "chiron",
+      "sign": "taurus",
+      "role": "register",
+      "sourcePath": "docs/writing/ARGUMENT_DEVELOPMENT_STANDARD.md",
+      "contentKey": "owner-approved-task-passage/chiron/taurus/house-12",
+      "family": "natal-placement-detail",
+      "governanceTier": "owner-authored-final",
+      "ownerApproved": true,
+      "ownerAuthored": true,
+      "generated": false,
+      "evidenceRole": "owner_approved_task_passage",
+      "sourceKind": "owner-corpus-passage",
+      "house": 12,
+      "eventType": null,
+      "register": "second_person",
+      "store": null,
+      "themes": [],
+      "subjectTags": [],
+      "failureTags": [],
+      "copySha": "056a25aad4ed0846d06a19713db84d9871a90c9eb57cf87100871157b2e4eee9",
+      "sceneNouns": [],
+      "eligibleForWriterRegister": true,
+      "text": "Chiron points to the place where experience leaves a mark, even after you have become highly capable at living around it. In Taurus, that mark can form around money, stability, self-worth, and the basic question of what you are allowed to rely on. You may have learned early that having enough was not the same as being able to trust it. Money could disappear. Support could change. Something comfortable could be taken away. So you learned to stretch what you had, lower your expectations, prepare for the loss before it happened, and make yourself feel safe with less.\n\nThe difficult part is that survival skills do not automatically retire when the situation changes. You can become so good at protecting yourself from instability that stability itself starts to feel suspicious. You may hesitate to use resources you worked hard to build, stay with the familiar because uncertainty feels more dangerous than dissatisfaction, or keep proving that you can manage without asking whether managing should still be the goal. Chiron in Taurus can make scarcity feel more trustworthy than abundance because scarcity is familiar. You know what to do when there is not enough. The deeper work begins when there is enough and you have to learn how to live differently.\n\nThis can also affect the way you measure your own value. Taurus wants something tangible to point to: the money earned, the work completed, the thing you own, the result you can prove. When Chiron is here, it can be difficult to separate what you are worth from what you can produce, preserve, or provide. You may keep working after the point has already been made, hold yourself to a harsher financial standard than you would anyone else, or feel guilty receiving something you did not have to struggle for first. The wound is not simply about wanting more. It is about trusting that you can have something good without immediately preparing for its disappearance.\n\nWith Chiron in the 12th house, much of this happens where other people cannot easily see it. You may look completely capable while privately rehearsing every possible loss. You can carry fear for years without naming it because you have already figured out how to function with it. That is one of the strange things about the 12th house: what remains hidden can become so familiar that you stop recognizing how much influence it still has. A decision can look practical on the surface while an old fear is quietly choosing it for you.\n\nSolitude may have become one of the ways you learned to protect yourself. When something hurts, you go inward. You think about it, write about it, make sense of it privately, and usually come back out once you know how to carry it. There is strength in that. But there are experiences you cannot get a new perspective on while you are the only person in the conversation. An old shame can sound completely reasonable when no one else ever hears it.\n\nHealing here is less about becoming fearless than becoming more conscious of which fears are still making decisions for you. You may never become careless with money, trust, or stability, nor should you. The change is subtler than that. You stop treating every good thing as temporary. You stop assuming that needing support makes you vulnerable in the same way it once did. You let someone know when something is hard before you have already solved it by yourself. Over time, the life you built to protect yourself can become a life you are actually able to inhabit."
+    },
+    {
       "id": "register:register-gold:sky-placement:saturn-capricorn-v3",
       "indexKey": "*|*",
       "planet": null,
@@ -162810,33 +162838,6 @@
       "text": "After moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, the Sun enters Taurus on {{entryDate}}, and attention shifts to what can be built slowly enough to last. The Sun governs identity, vitality, and who we are beneath the roles. Taurus is the sign of steadiness, comfort, and the tangible pleasures of life. We give a loose idea a solid shape. We repair what is useful, return to something we are making, and keep a small practice long enough to feel its effect. Confidence grows through visible results rather than speed or applause.\n\nThat patience has a cost when any interruption starts to feel like a threat. We keep the routine after it stops restoring energy. We defend a preference as though changing it would erase the self that chose it. We make one more adjustment to an unfinished piece, then another, because finished means visible. Each decision preserves comfort for another day while making change harder.\n\nWe protect the familiar in one small choice after another. A useful object becomes too precious to use. A familiar method survives because learning another one feels wasteful. A plan keeps its old shape even after the conditions around it change. Each choice avoids discomfort today. Together they send energy into preserving what exists, while the creation that still matters remains unfinished.\n\nBefore {{exitDate}}, what we refuse to release can consume more energy than the change we were trying to avoid."
     },
     {
-      "id": "argument:fallback-hook/sky-sign-copy/sun/virgo",
-      "indexKey": "sun|virgo",
-      "planet": "sun",
-      "sign": "virgo",
-      "role": "argument",
-      "sourcePath": "data/writing/OWNER_APPROVED_EXAMPLES.jsonl",
-      "contentKey": "fallback-hook/sky-sign-copy/sun/virgo",
-      "family": "fallback-hook/sky-sign-copy",
-      "governanceTier": "owner-approved-serving",
-      "ownerApproved": true,
-      "ownerAuthored": false,
-      "generated": false,
-      "evidenceRole": "argument",
-      "sourceKind": "current-owner-approved-placement-article",
-      "house": null,
-      "eventType": null,
-      "register": "collective",
-      "store": null,
-      "themes": [],
-      "subjectTags": [],
-      "failureTags": [],
-      "copySha": null,
-      "sceneNouns": [],
-      "eligibleForWriterRegister": true,
-      "text": "After moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, the Sun enters Virgo on {{entryDate}}, and unfinished details become hard to ignore. The Sun governs identity, vitality, and who we are beneath the roles. Virgo is the sign of precision, service, and the details that keep life working. We sew on the loose button. We rewrite confusing instructions. We simplify a routine that drains energy. The Sun in Virgo finds purpose in this kind of care, where skill produces a visible result.\n\nThe list of improvements keeps growing. We fix one flaw and immediately find the next. We reopen a finished task because one line could be cleaner. An offer to help meets so many corrections that the helper backs away. Soon the same scrutiny is aimed at the self. Confidence depends on being useful, while every mistake becomes proof that more work is required.\n\nThe Sun moved through Virgo from {{previousResidencyEntryDateWithYear}} to {{previousResidencyExitDateWithYear}}. This pass can expose the same exhausting bargain: life will finally feel manageable once every weak spot has been handled. It appears when a small repair becomes a full overhaul, a useful idea stays hidden until it is flawless, or care for the body becomes another test to pass. The result may improve, but energy drops when attention stays fixed on defects. Repeated correction makes help less likely. If every attempt to help meets another fix, others stop stepping in, and we end up carrying more alone.\n\nBefore {{exitDate}}, the result can keep improving while our confidence wears down under a standard that keeps moving."
-    },
-    {
       "id": "argument:fallback-hook/sky-sign-copy/uranus/gemini",
       "indexKey": "uranus|gemini",
       "planet": "uranus",
@@ -176340,6 +176341,7 @@
       "packages/astro-knowledge/voice/tldr-astro/satori-writer/surface-qualified-positive-exemplars-v2.json",
       "data/writing/OWNER_APPROVED_EXAMPLES.jsonl",
       "data/writing/owner-register-gold.json",
+      "data/writing/owner-supplied-structural-exemplars.json",
       "data/writing/phrase-evidence-index/owner-phrase-evidence-v1.jsonl",
       "tldr-astro-phrasebank/phrasebank/cc-sky-points-authored.json",
       "packages/astro-knowledge/review/lilith-placements-v5/lilith-placements-v5-staged-rows.json",
@@ -176407,6 +176409,7 @@
       "fallback-hook/house-glossary",
       "fallback-hook/house-lived",
       "fallback-hook/house-meaning",
+      "fallback-hook/lunation-cycle-anchor",
       "fallback-hook/lunation-higher-path",
       "fallback-hook/lunation-horoscope",
       "fallback-hook/lunation-matching-new-moon-anchor",
@@ -176592,6 +176595,7 @@
       "fallback-hook/house-cusp",
       "fallback-hook/house-glossary",
       "fallback-hook/house-meaning",
+      "fallback-hook/lunation-cycle-anchor",
       "fallback-hook/lunation-higher-path",
       "fallback-hook/lunation-matching-new-moon-anchor",
       "fallback-hook/lunation-moment",

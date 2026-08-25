@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 
+import crypto from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
 import process from "node:process";
@@ -8,6 +9,8 @@ import { resolveAstrology } from "../src/astro-writing/resolveAstrology.mjs";
 import { retrieveOwnerContext } from "../src/astro-writing/retrieveOwnerContext.mjs";
 import { assertPositiveOwnerEvidenceContext, OwnerEvidencePreconditionError } from "../src/astro-writing/ownerEvidencePolicy.mjs";
 import {
+  exactDelimitedPassage,
+  ownerPositiveEvidenceFromApprovedTaskPassages,
   ownerPositiveEvidenceFromSurfaceQualifiedPool,
   ownerLockedLilithV5Evidence,
   ownerApprovedMatrixRoleEvidenceForTarget,
@@ -116,6 +119,21 @@ const surfaceQualifiedPool = JSON.parse(fs.readFileSync(
   path.resolve("packages/astro-knowledge/voice/tldr-astro/satori-writer/surface-qualified-positive-exemplars-v2.json"),
   "utf8"
 ));
+const approvedTaskPassageManifest = JSON.parse(fs.readFileSync(
+  path.resolve("data/writing/owner-supplied-structural-exemplars.json"),
+  "utf8"
+));
+const approvedTaskPassages = ownerPositiveEvidenceFromApprovedTaskPassages(
+  approvedTaskPassageManifest.entries.map((entry) => ({
+    ...entry,
+    text: (() => {
+      const text = exactDelimitedPassage(entry, fs.readFileSync(path.resolve(entry.sourcePath), "utf8"));
+      const digest = crypto.createHash("sha256").update(text).digest("hex");
+      if (digest !== entry.exactTextSha256) throw new Error(`OWNER_TASK_PASSAGE_HASH_MISMATCH:${entry.id}`);
+      return text;
+    })()
+  }))
+);
 const rawVoiceIndex = JSON.parse(fs.readFileSync(
   path.resolve("packages/astro-knowledge/voice/tldr-astro/satori-writer/voice-index.json"),
   "utf8"
@@ -144,6 +162,7 @@ const relevantOwnerEvidence = ownerRelevantEvidenceFromVoiceIndex(voiceIndex, {
 });
 const examples = [
   ...ownerPositiveEvidenceFromSurfaceQualifiedPool(surfaceQualifiedPool),
+  ...approvedTaskPassages,
   ...ownerLockedLilithV5Evidence(lilithV5Rows),
   ...relevantOwnerEvidence.selected,
   ...ownerPositiveEvidenceFromVoiceIndexBySourceIds(
