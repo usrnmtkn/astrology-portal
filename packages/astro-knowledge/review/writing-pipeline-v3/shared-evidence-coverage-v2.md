@@ -25,7 +25,7 @@ per role by `copy_sha`.
 | Chiron|Pisces | 3 | 0 | 4 | 0 | 2 | 5 |
 | Chiron|Sagittarius | 2 | 0 | 3 | 0 | 2 | 5 |
 | Chiron|Scorpio | 2 | 0 | 3 | 0 | 2 | 5 |
-| Chiron|Taurus | 17 | 0 | 15 | 0 | 10 | 7 |
+| Chiron|Taurus | 17 | 0 | 15 | 0 | 11 | 7 |
 | Chiron|Virgo | 2 | 0 | 3 | 1 | 1 | 5 |
 | Jupiter|Aquarius | 7 | 0 | 6 | 0 | 2 | 4 |
 | Jupiter|Aries | 16 | 1 | 17 | 1 | 11 | 7 |
@@ -168,7 +168,7 @@ per role by `copy_sha`.
 | Sun|Scorpio (Decan 2) | 1 | 0 | 1 | 0 | 0 | 1 |
 | Sun|Scorpio (Third Decan) | 1 | 0 | 1 | 0 | 0 | 1 |
 | Sun|Taurus | 68 | 5 | 27 | 3 | 23 | 11 |
-| Sun|Virgo | 44 | 3 | 15 | 1 | 11 | 9 |
+| Sun|Virgo | 44 | 3 | 15 | 1 | 11 | 8 |
 | Uranus|Aquarius | 2 | 0 | 2 | 0 | 2 | 5 |
 | Uranus|Aries | 18 | 0 | 14 | 0 | 4 | 10 |
 | Uranus|Cancer | 2 | 1 | 2 | 1 | 2 | 5 |
@@ -204,7 +204,7 @@ per role by `copy_sha`.
 | chiron|pisces | 0 | 0 | 4 | 0 | 2 | 5 |
 | chiron|sagittarius | 0 | 0 | 3 | 0 | 2 | 5 |
 | chiron|scorpio | 0 | 0 | 3 | 0 | 2 | 5 |
-| chiron|taurus | 0 | 0 | 15 | 0 | 10 | 7 |
+| chiron|taurus | 0 | 0 | 15 | 0 | 11 | 7 |
 | chiron|virgo | 0 | 0 | 3 | 1 | 1 | 5 |
 | jupiter|10th-house | 0 | 0 | 1 | 0 | 0 | 0 |
 | jupiter|11th-house | 0 | 0 | 1 | 0 | 0 | 0 |
@@ -398,7 +398,7 @@ per role by `copy_sha`.
 | sun|scorpio-(decan-2) | 0 | 0 | 1 | 0 | 0 | 1 |
 | sun|scorpio-(third-decan) | 0 | 0 | 1 | 0 | 0 | 1 |
 | sun|taurus | 0 | 0 | 27 | 3 | 23 | 11 |
-| sun|virgo | 0 | 0 | 15 | 1 | 11 | 9 |
+| sun|virgo | 0 | 0 | 15 | 1 | 11 | 8 |
 | uranus|10th-house | 0 | 0 | 1 | 0 | 0 | 0 |
 | uranus|aquarius | 0 | 0 | 2 | 0 | 2 | 5 |
 | uranus|aries | 0 | 0 | 14 | 0 | 4 | 10 |

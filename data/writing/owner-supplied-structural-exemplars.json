@@ -1,0 +1,53 @@
+{
+  "schemaVersion": 2,
+  "updatedAt": "2026-08-25",
+  "entries": [
+    {
+      "id": "structural-calibration-chiron-taurus-house-12-2026-08-25",
+      "subject": "Chiron in Taurus in the 12th house",
+      "surface": "full natal placement detail",
+      "register": "second_person",
+      "sourcePath": "docs/writing/ARGUMENT_DEVELOPMENT_STANDARD.md",
+      "exactTextSha256": "056a25aad4ed0846d06a19713db84d9871a90c9eb57cf87100871157b2e4eee9",
+      "contentKey": "owner-approved-task-passage/chiron/taurus/house-12",
+      "family": "natal-placement-detail",
+      "planet": "chiron",
+      "sign": "taurus",
+      "house": 12,
+      "startMarker": "<!-- BEGIN EXACT CALIBRATION PASSAGE -->",
+      "endMarker": "<!-- END EXACT CALIBRATION PASSAGE -->",
+      "authorityClass": "owner_authored_final",
+      "ownerAuthorshipAsserted": true,
+      "ownerExactApprovalAsserted": true,
+      "ownerApprovalDate": "2026-08-25",
+      "ownerApprovalRecord": "User confirmation in the active Codex task: 'I confirmation that I authored and approve that exact passage.'",
+      "ownerApprovedServingCopy": false,
+      "readerEligible": false,
+      "positiveRegisterEvidence": true,
+      "phraseEvidence": false,
+      "allowedUses": [
+        "argument-development calibration",
+        "structural review regression",
+        "surface-appropriate causal-depth guidance",
+        "positive owner-voice retrieval for long-form natal placement writing",
+        "REGISTER evidence for prose behavior"
+      ],
+      "prohibitedUses": [
+        "reader serving",
+        "phrase mining",
+        "mechanical paragraph templating",
+        "copying memorable lines into another placement"
+      ],
+      "semanticMovement": [
+        "placement mechanism",
+        "adaptation",
+        "earned competence",
+        "continued operation after circumstances change",
+        "hidden cost",
+        "placement-specific contradiction",
+        "house mechanism",
+        "behavioral change"
+      ]
+    }
+  ]
+}

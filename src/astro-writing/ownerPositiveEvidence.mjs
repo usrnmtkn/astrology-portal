@@ -222,6 +222,51 @@ export function ownerPositiveEvidenceFromSurfaceQualifiedPool(pool) {
     }));
 }
 
+export function exactDelimitedPassage(entry, sourceText) {
+  const startMarker = String(entry?.startMarker ?? "");
+  const endMarker = String(entry?.endMarker ?? "");
+  if (!startMarker || !endMarker) throw new Error(`OWNER_TASK_PASSAGE_MARKERS_MISSING:${entry?.id ?? "unknown"}`);
+  const start = String(sourceText ?? "").indexOf(startMarker);
+  const end = String(sourceText ?? "").indexOf(endMarker, start + startMarker.length);
+  if (start < 0 || end < 0) throw new Error(`OWNER_TASK_PASSAGE_NOT_FOUND:${entry?.id ?? "unknown"}`);
+  return String(sourceText).slice(start + startMarker.length, end).replace(/^\r?\n|\r?\n$/gu, "");
+}
+
+export function ownerPositiveEvidenceFromApprovedTaskPassages(entries) {
+  return (entries ?? [])
+    .filter((entry) => (
+      entry?.authorityClass === "owner_authored_final"
+      && entry.ownerAuthorshipAsserted === true
+      && entry.ownerExactApprovalAsserted === true
+      && entry.positiveRegisterEvidence === true
+      && entry.phraseEvidence === false
+      && entry.readerEligible === false
+      && typeof entry.text === "string"
+      && entry.text.trim()
+    ))
+    .map((entry) => Object.freeze({
+      id: entry.id,
+      contentKey: entry.contentKey,
+      family: entry.family,
+      sourceFamily: "owner-approved-task-passage",
+      register: entry.register ?? inferredRegister(entry.text),
+      text: entry.text,
+      sourcePath: entry.sourcePath,
+      sourceRecordSha256: entry.exactTextSha256,
+      planet: entry.planet ?? null,
+      sign: entry.sign ?? null,
+      house: entry.house ?? null,
+      structuralFunction: "owner-approved full natal placement passage",
+      authorityClass: entry.authorityClass,
+      ownerAuthored: true,
+      ownerApproved: true,
+      useAsPositiveVoiceEvidence: true,
+      useAsPhraseEvidence: false,
+      readerEligible: false,
+      evidenceRole: "owner_approved_task_passage"
+    }));
+}
+
 export function ownerLockedLilithV5Evidence(rows) {
   return (rows ?? [])
     .filter((entry) => (
