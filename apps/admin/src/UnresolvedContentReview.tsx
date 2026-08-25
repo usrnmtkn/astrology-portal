@@ -18,29 +18,22 @@ export type UnresolvedContentReport = {
   reasonCounts: Record<string, number>;
   surfaceCounts: Record<string, number>;
   items: UnresolvedContentItem[];
+  issues: UnresolvedContentIssue[];
 };
 
 type UnresolvedContentReviewProps = {
   credential: string;
+  contentLibraryReady: boolean;
+  editableContentKeys: ReadonlySet<string>;
   onFindInContentLibrary: (contentKey: string) => void;
 };
 
-export function filterUnresolvedContentItems(
-  items: UnresolvedContentItem[],
-  queryValue: string
-) {
-  const query = queryValue.trim().toLowerCase();
-  return items.filter((item) => {
-    const matchesQuery = !query || [
-      item.contentKey,
-      item.reason,
-      item.sourcePath,
-      item.objectPath,
-      item.surface
-    ].join(" ").toLowerCase().includes(query);
-    return matchesQuery;
-  });
-}
+export type UnresolvedContentIssue = {
+  contentKey: string;
+  surface: string;
+  kind: "source-repair" | "editorial-review";
+  records: UnresolvedContentItem[];
+};
 
 export async function loadUnresolvedContentReport(
   credential: string,
@@ -56,11 +49,17 @@ export async function loadUnresolvedContentReport(
   return payload.report;
 }
 
-export function UnresolvedContentReview({ credential, onFindInContentLibrary }: UnresolvedContentReviewProps) {
+export function UnresolvedContentReview({
+  credential,
+  contentLibraryReady,
+  editableContentKeys,
+  onFindInContentLibrary
+}: UnresolvedContentReviewProps) {
   const [reportState, setReportState] = useState<UnresolvedContentReport | false | null>(null);
   const [query, setQuery] = useState("");
   const report = reportState || null;
-  const filteredItems = filterUnresolvedContentItems(report?.items ?? [], query);
+  const issues = report?.issues ?? [];
+  const filteredIssues = query.trim() ? issues.filter((issue) => JSON.stringify(issue).toLowerCase().includes(query.trim().toLowerCase())) : issues;
 
   useEffect(() => {
     void loadUnresolvedContentReport(credential)
@@ -72,13 +71,11 @@ export function UnresolvedContentReview({ credential, onFindInContentLibrary }: 
     <section className="admin-template-page admin-unresolved-content-page">
       <section className="admin-content-toolbar" aria-label="Unresolved content overview">
         <div className="admin-content-toolbar-copy">
-          <p className="admin-eyebrow">Governed package inventory</p>
-          <h2>Everything still waiting for resolution</h2>
-          <p>Every package record held by serving eligibility, with an exact-key path into Content Library when an editable row exists.</p>
+          <h2>Resolve content holds</h2>
         </div>
-        <div className="admin-unresolved-total" aria-label={report ? `${report.count} unresolved records` : "Loading unresolved records"}>
-          <strong>{report?.count ?? "…"}</strong>
-          <span>unresolved records</span>
+        <div className="admin-unresolved-total">
+          <strong>{report ? issues.length : "…"}</strong>
+          <span>issues</span>
         </div>
       </section>
 
@@ -88,7 +85,7 @@ export function UnresolvedContentReview({ credential, onFindInContentLibrary }: 
           <div className="admin-search-input-shell">
             <input
               aria-label="Search unresolved content"
-              placeholder="Content key, source, role, or status"
+              placeholder="Key, file, or status"
               value={query}
               onChange={(event) => setQuery(event.target.value)}
             />
@@ -96,51 +93,30 @@ export function UnresolvedContentReview({ credential, onFindInContentLibrary }: 
         </div>
       </section>
 
-      <div className="admin-filter-result-count" role="status" aria-live="polite">
-        {report ? <><strong>{filteredItems.length}</strong> of {report.count} records shown</> : "Loading unresolved records…"}
-      </div>
-
       <section className="admin-list-panel" aria-label="Unresolved content records">
         <div className="admin-content-table-scroll">
-          {reportState === false && <p className="admin-empty" role="alert">Unresolved content could not be loaded. Reload Content Studio to try again.</p>}
+          {reportState === false && <p className="admin-empty" role="alert">Could not load. Try again.</p>}
           <table className="admin-content-table admin-unresolved-content-table">
-            <thead className="admin-content-table-head">
-              <tr>
-                <th scope="col">Content</th>
-                <th scope="col">Surface</th>
-                <th scope="col">Reason</th>
-                <th scope="col">Review status</th>
-                <th scope="col">Source record</th>
-                <th scope="col">Review path</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredItems.map((item) => (
-                <tr key={item.id}>
-                  <td className="admin-content-title-cell">
-                    <code className="admin-content-row-key">{item.contentKey}</code>
-                  </td>
-                  <td className="admin-content-location"><strong>{item.surface}</strong></td>
-                  <td><span className={`ui-pill admin-status ${item.reason === "known-current-contract-failure" ? "status-error" : "status-draft"}`}>{item.reason}</span></td>
-                  <td>{item.reviewStatus}</td>
-                  <td className="admin-unresolved-source">
-                    <code>{item.sourcePath}</code>
-                  </td>
-                  <td>
-                    <button className="admin-edit-row-button" type="button" onClick={() => onFindInContentLibrary(item.contentKey)}>
-                      Find editable row
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
+            <thead><tr><th>Content</th><th>What it means</th><th>Source records</th><th>Next step</th></tr></thead>
+            <tbody>{filteredIssues.map((issue) => {
+              const sourceRepair = issue.kind === "source-repair";
+              const canOpen = contentLibraryReady && editableContentKeys.has(issue.contentKey) && !sourceRepair;
+              return <tr key={issue.contentKey}>
+                <td data-label="Content"><strong>{issue.surface}</strong><code>{issue.contentKey}</code></td>
+                <td data-label="What it means">
+                  <span className={`ui-pill admin-status ${sourceRepair ? "status-error" : "status-draft"}`}>{sourceRepair ? "Source repair required" : "Owner review required"}</span>
+                  <small>{sourceRepair ? "Approval will not clear this hold." : `Review status: ${issue.records[0].reviewStatus}`}</small>
+                </td>
+                <td data-label="Source records"><details><summary>{issue.records.length} record(s)</summary>{issue.records.map((record) => <code key={record.id}>{record.reviewStatus}: {record.sourcePath}{record.objectPath}</code>)}</details></td>
+                <td data-label="Next step">{!contentLibraryReady
+                  ? <small>Checking…</small>
+                  : canOpen
+                    ? <button className="admin-edit-row-button" type="button" onClick={() => onFindInContentLibrary(issue.contentKey)}>Open exact row</button>
+                    : <small>{sourceRepair ? "Give Codex the source record. Approval cannot fix this." : "Not in Content Library. Give Codex the source record."}</small>}</td>
+              </tr>;
+            })}</tbody>
           </table>
-          {report && filteredItems.length === 0 && (
-            <div className="admin-empty" role="status">
-              <strong>No unresolved records match these filters.</strong>
-              <p>Clear the filters or search for another content key.</p>
-            </div>
-          )}
+          {report && filteredIssues.length === 0 && <p className="admin-empty" role="status">No unresolved issues match these filters.</p>}
         </div>
       </section>
     </section>
