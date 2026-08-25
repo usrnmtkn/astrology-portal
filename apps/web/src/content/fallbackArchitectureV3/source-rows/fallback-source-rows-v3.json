@@ -11884,6 +11884,30 @@
    "distribution_lane": "serving"
   },
   {
+   "contentKey": "fallback-hook/natal-you-placement-complete-final/lilith/scorpio/3",
+   "content_role": "full_copy",
+   "grammar_frame": "complete_sentence",
+   "headline": "Lilith in Scorpio in the 3rd house",
+   "body": "Lilith in Scorpio in the 3rd house can make you especially sensitive to what happens when information is withheld, distorted, or used as leverage. You may have learned early that people do not always say what they mean, that the most important part of a conversation is sometimes what somebody avoids answering, or that revealing too much can leave you exposed later. That can make you very good at noticing omissions, contradictions, and changes in tone, but it can also create real rage when someone lies to your face, repeats something you told them privately, or expects you to pretend not to notice that the story keeps changing.\n\nSiblings, school, neighbors, and the environment you grew up in can make this even sharper. Maybe secrets moved through side conversations, somebody always seemed to know more than they were admitting, or you learned that information could change who had power in the room. You may become highly protective of what you know and who gets access to it, especially after trust has been broken. The harder part is recognizing when discernment has turned into hypervigilance, and you are reading every pause, deleted message, or missing detail as evidence that somebody is hiding something before you actually know that they are.\n\nThe deeper shift is becoming more direct about what you need to know instead of trying to uncover everything on your own. You ask the question when something does not add up, tell someone when their story has changed, and become much more selective about who gets access to information you consider private.",
+   "reader_only": true,
+   "render_policy": "reader-only-exact-lived-v1",
+   "review_status": "approved",
+   "source_keys": [
+    "owner-authored/lilith-scorpio-3/2026-08-25"
+   ],
+   "approval": {
+    "approvalLevel": "exact_owner_approved",
+    "recordPath": "owner-authored/lilith-scorpio-3/2026-08-25",
+    "approvedAt": "2026-08-25"
+   },
+   "source_release": "owner-authored-natal-placement-complete-v1",
+   "runtime_family": "natal-you-placement-complete-final",
+   "runtime_key": "lilith|scorpio|3",
+   "governance": "owner-approved-natal-placement-complete-v1",
+   "owner_approved": true,
+   "distribution_lane": "serving"
+  },
+  {
    "contentKey": "fallback-hook/natal-you-placement-complete-final/lilith/taurus/3",
    "content_role": "full_copy",
    "grammar_frame": "complete_sentence",
