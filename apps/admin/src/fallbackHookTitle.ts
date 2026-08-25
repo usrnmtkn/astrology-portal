@@ -31,6 +31,7 @@ const purposeLabels: Record<string, string> = {
   "house-glossary": "House glossary",
   "house-meaning": "House meaning",
   "natal-aspect-lived": "Natal aspect passage",
+  "natal-you-placement-complete-final": "Complete natal placement",
   "natal-you-placement-house-final": "Final natal house passage",
   "natal-you-placement-sign-final": "Final natal sign passage",
   "placement-house-lived": "Placement house passage",
@@ -98,6 +99,10 @@ export function fallbackHookDisplayTitle(contentKey: string) {
 
   if (["placement-house-lived", "natal-you-placement-house-final"].includes(family) && args.length >= 2) {
     return `${words(args[0])} in the ${ordinalHouse(args[1])} · ${familyLabel(family)}${args.length > 2 ? ` · ${args.slice(2).map(variant).join(" · ")}` : ""}`;
+  }
+
+  if (family === "natal-you-placement-complete-final" && args.length >= 3) {
+    return `${words(args[0])} in ${words(args[1])} in the ${ordinalHouse(args[2])} · ${familyLabel(family)}`;
   }
 
   if (["placement-sentence", "placement-sign-lived", "natal-you-placement-sign-final"].includes(family) && args.length >= 2) {

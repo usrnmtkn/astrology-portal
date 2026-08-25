@@ -167,6 +167,20 @@ export function renderNatalPlacement(facts, opts = {}) {
   const { planet, sign, house } = facts;
   const allowUnreviewed = opts.allowUnreviewed ?? false;
   const voice = facts.voice === "you" ? "you" : "they";
+  const exactCompleteLived = house
+    ? getReaderLivedRow(`fallback-hook/natal-you-placement-complete-final/${planet}/${sign}/${house}`, voice, { allowUnreviewed })
+    : null;
+  if (exactCompleteLived) {
+    const body = exactCompleteLived.body ?? "";
+    return {
+      headline: `${title(planet)} in ${title(sign)} in the ${ordinal(house)} house`,
+      parts: [body],
+      partKeys: [exactCompleteLived.contentKey],
+      body,
+      templateKey: exactCompleteLived.contentKey,
+      provenanceTier: "exact-owner-approved",
+    };
+  }
   // Resolution order for each part is narrowest first:
   //   1. the placement-specific authored lived row (names the planet)
   //   2. the composed template (names the planet through its slots)

@@ -2123,6 +2123,54 @@ body,
   display: block;
 }
 
+.admin-wiring-state.connected {
+  color: #7cd9a7;
+}
+
+.admin-wiring-cell {
+  min-width: 13rem;
+}
+
+.admin-wiring-state.not-connected {
+  color: #e5ae62;
+}
+
+.admin-wiring-state.not-serving,
+.admin-wiring-state.unknown {
+  color: var(--admin-muted);
+}
+
+.admin-wiring-notice {
+  align-items: start;
+  background: rgba(103, 75, 31, 0.18);
+  border: 1px solid rgba(229, 174, 98, 0.38);
+  border-radius: var(--admin-radius-lg);
+  display: grid;
+  gap: var(--admin-space-3xl);
+  grid-template-columns: minmax(0, 1fr) minmax(16rem, 0.75fr);
+  margin: 0 0 var(--admin-space-5xl);
+  padding: var(--admin-space-5xl);
+}
+
+.admin-wiring-notice h3,
+.admin-wiring-notice p {
+  margin: 0;
+}
+
+.admin-wiring-notice code {
+  background: rgba(5, 10, 9, 0.42);
+  border-radius: var(--admin-radius-md);
+  overflow-wrap: anywhere;
+  padding: var(--admin-space-xl);
+  white-space: normal;
+}
+
+@media (max-width: 900px) {
+  .admin-wiring-notice {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
 .admin-title-field {
   flex: 1 1 100%;
 }
@@ -10371,6 +10419,159 @@ body,
   .admin-dashboard .admin-variable-reference-panel {
     max-width: 100vw !important;
     width: 100vw !important;
+  }
+}
+
+/* Natal reader pages are assembled from several exact source rows. This
+   finder keeps the dependency map readable without mixing it into the table. */
+.admin-dashboard .admin-natal-placement-finder {
+  background: var(--admin-ui-surface);
+  border: 1px solid var(--admin-ui-border);
+  border-radius: var(--admin-ui-radius-xl);
+  display: grid;
+  gap: 22px;
+  padding: 22px;
+}
+
+.admin-dashboard .admin-natal-placement-finder-heading {
+  align-items: start;
+  display: flex;
+  gap: 20px;
+  justify-content: space-between;
+}
+
+.admin-dashboard .admin-natal-placement-finder-heading h3,
+.admin-dashboard .admin-natal-source-group h3,
+.admin-dashboard .admin-natal-source-card h4 {
+  color: var(--admin-ui-text);
+  margin: 0;
+}
+
+.admin-dashboard .admin-natal-placement-finder-heading p:not(.admin-eyebrow),
+.admin-dashboard .admin-natal-source-group header p,
+.admin-dashboard .admin-natal-source-advanced > p,
+.admin-dashboard .admin-natal-source-card p,
+.admin-dashboard .admin-natal-placement-prompt {
+  color: var(--admin-ui-muted);
+  line-height: 1.55;
+  margin: 6px 0 0;
+}
+
+.admin-dashboard .admin-natal-placement-finder-heading > code {
+  background: var(--admin-ui-surface-2);
+  border: 1px solid var(--admin-ui-border);
+  border-radius: var(--admin-ui-radius-md);
+  color: var(--admin-ui-muted);
+  max-width: 46%;
+  overflow-wrap: anywhere;
+  padding: 9px 11px;
+}
+
+.admin-dashboard .admin-natal-placement-selectors {
+  display: grid;
+  gap: 14px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.admin-dashboard .admin-natal-placement-selectors label {
+  display: grid;
+  gap: 7px;
+}
+
+.admin-dashboard .admin-natal-placement-selectors label > span {
+  color: var(--admin-ui-subtle);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.admin-dashboard .admin-natal-source-group {
+  border-top: 1px solid var(--admin-ui-border);
+  display: grid;
+  gap: 14px;
+  padding-top: 20px;
+}
+
+.admin-dashboard .admin-natal-source-grid {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.admin-dashboard .admin-natal-source-card {
+  align-content: space-between;
+  background: var(--admin-ui-surface-2);
+  border: 1px solid var(--admin-ui-border);
+  border-radius: var(--admin-ui-radius-lg);
+  display: grid;
+  gap: 16px;
+  min-width: 0;
+  padding: 16px;
+}
+
+.admin-dashboard .admin-natal-source-card-copy,
+.admin-dashboard .admin-natal-source-card-heading {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+}
+
+.admin-dashboard .admin-natal-source-card-heading {
+  align-items: start;
+  grid-template-columns: minmax(0, 1fr) auto;
+}
+
+.admin-dashboard .admin-natal-source-card code {
+  color: var(--admin-ui-subtle);
+  overflow-wrap: anywhere;
+}
+
+.admin-dashboard .admin-natal-source-card blockquote {
+  border-left: 2px solid var(--admin-ui-border-strong);
+  color: var(--admin-ui-text);
+  display: -webkit-box;
+  line-height: 1.5;
+  margin: 4px 0 0;
+  max-height: 7.5em;
+  overflow: hidden;
+  padding-left: 12px;
+  white-space: pre-wrap;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 5;
+}
+
+.admin-dashboard .admin-natal-source-card blockquote.missing {
+  color: var(--admin-ui-subtle);
+  font-style: italic;
+}
+
+.admin-dashboard .admin-natal-source-card > button {
+  background: var(--admin-ui-accent-soft);
+  border-color: var(--admin-ui-border-strong);
+  color: var(--admin-ui-text);
+  width: 100%;
+}
+
+.admin-dashboard .admin-natal-source-advanced summary {
+  color: var(--admin-ui-text);
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+@media (max-width: 900px) {
+  .admin-dashboard .admin-natal-placement-finder-heading {
+    display: grid;
+  }
+
+  .admin-dashboard .admin-natal-placement-finder-heading > code {
+    max-width: none;
+  }
+
+  .admin-dashboard .admin-natal-placement-selectors,
+  .admin-dashboard .admin-natal-source-grid {
+    grid-template-columns: 1fr;
   }
 }
 

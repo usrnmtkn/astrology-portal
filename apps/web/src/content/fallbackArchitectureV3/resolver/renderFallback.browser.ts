@@ -279,6 +279,20 @@ export function createFallbackRenderer(templatesFile: TemplatesFile, rowsFile: R
   function renderNatalPlacement(facts: PlacementFacts, opts: RenderOpts = {}): RenderResult {
     const { planet, sign, house } = facts;
     const voice: "you" | "they" = facts.voice === "you" ? "you" : "they";
+    const exactCompleteLived = house
+      ? getReaderLivedRow(`fallback-hook/natal-you-placement-complete-final/${planet}/${sign}/${house}`, voice, opts)
+      : null;
+    if (exactCompleteLived) {
+      const body = exactCompleteLived.body ?? "";
+      return {
+        headline: `${title(planet)} in ${title(sign)} in the ${ordinal(house)} house`,
+        parts: [body],
+        partKeys: [exactCompleteLived.contentKey],
+        body,
+        templateKey: exactCompleteLived.contentKey,
+        provenanceTier: "exact-owner-approved",
+      };
+    }
     // Resolution order is narrowest first: placement-specific authored row,
     // complete composition, generic sign/house floor, then SOURCE_GAP.
     const exactHouseLived = house

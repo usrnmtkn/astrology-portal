@@ -74,7 +74,19 @@ import {
 } from "./skyFallbackWorkspace";
 import { templateVariableReferences } from "./templateVariableReference";
 import { articleAppDestination, isSkyWriteupContentRow } from "./articleWorkspace";
+import { contentWiringStatus, isPublishedButUnwired } from "./contentWiringStatus";
 import { fallbackHookDisplayTitle } from "./fallbackHookTitle";
+import {
+  natalPlacementHouses,
+  natalPlacementLabel,
+  natalPlacementPlanets,
+  natalPlacementSelectionFromText,
+  natalPlacementSigns,
+  natalPlacementSourceGroups,
+  type NatalPlacementHouse,
+  type NatalPlacementPlanet,
+  type NatalPlacementSign
+} from "./natalPlacementSources";
 import type {
   WritingSurfaceAdminAccess,
   WritingSurfaceMapItem,
@@ -2127,6 +2139,9 @@ export function GeneratedContentAdminDashboard() {
   const [showReferenceRows, setShowReferenceRows] = useState(false);
   const [showRetiredRows, setShowRetiredRows] = useState(false);
   const [query, setQuery] = useState("");
+  const [natalPlacementPlanet, setNatalPlacementPlanet] = useState<NatalPlacementPlanet | "">("");
+  const [natalPlacementSign, setNatalPlacementSign] = useState<NatalPlacementSign | "">("");
+  const [natalPlacementHouse, setNatalPlacementHouse] = useState<NatalPlacementHouse | "">("");
   const [fallbackSectionFilter, setFallbackSectionFilter] = useState<AdminFallbackHookSectionFilter>("all");
   const [fallbackRowSort, setFallbackRowSort] = useState<AdminFallbackRowSort>("type");
   const [surfaceAreaFilter, setSurfaceAreaFilter] = useState<WritingSurfaceAreaFilter>("all");
@@ -2235,6 +2250,10 @@ export function GeneratedContentAdminDashboard() {
       || skyWriteupSubjectTypeForRow(row) === skyWriteupSubjectFilter
     )),
     [skyWriteupRows, skyWriteupSubjectFilter]
+  );
+  const publishedButUnwiredSkyRows = useMemo(
+    () => skyWriteupRows.filter(isPublishedButUnwired),
+    [skyWriteupRows]
   );
   const filteredArticleRows = useMemo(() => articleRows.filter((row) => {
     return (articleStatusFilter === "all" || row.status === articleStatusFilter)
@@ -2599,6 +2618,9 @@ export function GeneratedContentAdminDashboard() {
       const compatibilityPlanet = params.get("planet") as AdminArticlePointFilter | null;
       const compatibilitySortParam = params.get("sort") as AdminCompatibilitySort | null;
       const openedFromUnresolved = page === "content" && params.get("from") === "unresolved";
+      const natalPlanet = params.get("planet") as NatalPlacementPlanet | null;
+      const natalSign = params.get("sign") as NatalPlacementSign | null;
+      const natalHouse = params.get("house") as NatalPlacementHouse | null;
 
       setCategoryFilter(category && categoryFilters.some((filter) => filter.key === category) ? category : "all");
       setContentLibraryView(page === "content" && view === "compatibility" ? "compatibility" : "all");
@@ -2612,6 +2634,9 @@ export function GeneratedContentAdminDashboard() {
         revealUnresolvedContentRow();
       }
       setQuery(search ?? "");
+      setNatalPlacementPlanet(page === "content" && natalPlanet && natalPlacementPlanets.includes(natalPlanet) ? natalPlanet : "");
+      setNatalPlacementSign(page === "content" && natalSign && natalPlacementSigns.includes(natalSign) ? natalSign : "");
+      setNatalPlacementHouse(page === "content" && natalHouse && natalPlacementHouses.includes(natalHouse) ? natalHouse : "");
       setFallbackSectionFilter(section && fallbackSections.some((filter) => filter.key === section) ? section : "all");
       setSurfaceAreaFilter(area && ["all", "sky", "you", "friends", "calendar", "settings"].includes(area) ? area : "all");
       setSurfaceStatusFilter(status && ["all", "complete", "partial", "missing"].includes(status) ? status : "all");
@@ -3437,6 +3462,25 @@ export function GeneratedContentAdminDashboard() {
       saveState: "idle",
       workspaceId: null
     } : null);
+  }
+
+  async function openContentKeyRow(contentKey: string, label: string) {
+    setIsLoading(true);
+    try {
+      const existing = rows.find((row) => row.content_key === contentKey);
+      const row = existing ?? (await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>(
+        `/api/admin/generated-content?status=all&visibility=all&contentKey=${encodeURIComponent(contentKey)}&limit=1`,
+        secret
+      )).rows?.find((candidate) => candidate.content_key === contentKey);
+      if (!row) throw new Error(`${label} is not materialized in Content Studio (${contentKey}).`);
+      if (!existing) setRows((current) => [row, ...current]);
+      openRow(row);
+      setMessage(`Opened ${label}. The source card explains which other natal pages use this writing.`);
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : `Could not open ${label}.`);
+    } finally {
+      setIsLoading(false);
+    }
   }
 
   async function openServingFallbackRow(contentKey: string, occurrence: SkyReviewHorizonOccurrence) {
@@ -4281,6 +4325,7 @@ export function GeneratedContentAdminDashboard() {
               </div>
             </section>
             {renderContentFilters()}
+            {renderNatalPlacementSourceFinder()}
             <section className="admin-reader-safety-panel" aria-label="App visibility status">
               <div>
                 <p className="admin-eyebrow">App visibility</p>
@@ -4299,7 +4344,7 @@ export function GeneratedContentAdminDashboard() {
             <section className="admin-workbench admin-review-workspace">
               {renderEditor()}
               <aside className="admin-list-panel" aria-label="Generated content records">
-                {renderContentTable(filteredRows)}
+                {renderContentTable(filteredRows, false, true)}
               </aside>
             </section>
           </section>
@@ -4335,11 +4380,21 @@ export function GeneratedContentAdminDashboard() {
                 </p>
               </div>
             </section>
+            {publishedButUnwiredSkyRows.length > 0 && (
+              <section className="admin-wiring-notice" aria-label="Published Sky write-ups not connected to the app">
+                <div>
+                  <p className="admin-eyebrow">Published but not connected</p>
+                  <h3>{publishedButUnwiredSkyRows.length} approved write-ups have no reader call site</h3>
+                  <p>These rows are reported separately from retired content. They are not safe-deletion candidates: publishing finished the editorial step, but the app integration was never completed.</p>
+                </div>
+                <code>{publishedButUnwiredSkyRows.slice(0, 3).map((row) => row.content_key).join(" · ")}</code>
+              </section>
+            )}
             <section className="admin-workbench admin-review-workspace">
               {renderEditor()}
               <aside className="admin-list-panel" aria-label="Sky write-up rows">
                 {filteredSkyWriteupRows.length > 0
-                  ? renderContentTable(filteredSkyWriteupRows)
+                  ? renderContentTable(filteredSkyWriteupRows, false, true)
                   : <p className="admin-empty">No Sky write-ups match this type.</p>}
               </aside>
             </section>
@@ -4455,7 +4510,7 @@ export function GeneratedContentAdminDashboard() {
                 {fallbackRowSort === "type"
                   ? renderFallbackContentGroups(filteredFallbackRows)
                   : filteredFallbackRows.length > 0
-                    ? renderContentTable(filteredFallbackRows)
+                    ? renderContentTable(filteredFallbackRows, false, true)
                     : <p className="admin-empty">No rows match these filters.</p>}
               </aside>
             </section>
@@ -4871,6 +4926,120 @@ export function GeneratedContentAdminDashboard() {
     </main>
   );
 
+  function updateNatalPlacementSelection(next: {
+    planet?: NatalPlacementPlanet | "";
+    sign?: NatalPlacementSign | "";
+    house?: NatalPlacementHouse | "";
+  }) {
+    const planet = next.planet ?? natalPlacementPlanet;
+    const sign = next.sign ?? natalPlacementSign;
+    const house = next.house ?? natalPlacementHouse;
+    setNatalPlacementPlanet(planet);
+    setNatalPlacementSign(sign);
+    setNatalPlacementHouse(house);
+
+    const params = new URLSearchParams();
+    params.set("category", "Natal Chart");
+    if (query.trim()) params.set("q", query.trim());
+    if (planet) params.set("planet", planet);
+    if (sign) params.set("sign", sign);
+    if (house) params.set("house", house);
+    setAdminHash(adminHashForPage("content", params), "replace");
+  }
+
+  function handleContentSearchChange(value: string) {
+    setQuery(value);
+    if (categoryFilter !== "Natal Chart") return;
+    const selection = natalPlacementSelectionFromText(value);
+    if (selection.planet || selection.sign || selection.house) {
+      updateNatalPlacementSelection(selection);
+    }
+  }
+
+  function renderNatalPlacementSourceFinder() {
+    if (categoryFilter !== "Natal Chart") return null;
+    const selectionComplete = natalPlacementPlanet && natalPlacementSign && natalPlacementHouse;
+    const groups = selectionComplete
+      ? natalPlacementSourceGroups(natalPlacementPlanet, natalPlacementSign, natalPlacementHouse)
+      : [];
+
+    const renderSource = (source: ReturnType<typeof natalPlacementSourceGroups>[number]["sources"][number]) => {
+      const savedRow = rows.find((row) => row.content_key === source.key);
+      const preview = savedRow
+        ? normalizeText(savedRow.body) || normalizeText(savedRow.summary) || normalizeText(savedRow.headline)
+        : "Load this exact source to view and edit its saved writing.";
+      return (
+        <article className="admin-natal-source-card" key={source.key}>
+          <div className="admin-natal-source-card-copy">
+            <div className="admin-natal-source-card-heading">
+              <h4>{source.label}</h4>
+              {savedRow && <span className={`ui-pill admin-status status-${savedRow.status.toLowerCase()}`}>{contentStatusLabel(savedRow.status)}</span>}
+            </div>
+            <p>{source.scope}</p>
+            <code>{source.key}</code>
+            <blockquote className={!savedRow ? "missing" : ""}>{preview}</blockquote>
+          </div>
+          <button type="button" onClick={() => void openContentKeyRow(source.key, source.label)} disabled={isLoading}>
+            {savedRow ? "Edit source" : "Load and edit"}
+          </button>
+        </article>
+      );
+    };
+
+    return (
+      <section className="admin-natal-placement-finder" aria-label="Find natal placement source writing">
+        <div className="admin-natal-placement-finder-heading">
+          <div>
+            <p className="admin-eyebrow">Natal placement source finder</p>
+            <h3>{selectionComplete ? natalPlacementLabel(natalPlacementPlanet, natalPlacementSign, natalPlacementHouse) : "Choose the full natal placement"}</h3>
+            <p>The reader page combines planet, sign, and house source rows. These are different from rows about a planet currently transiting a house.</p>
+          </div>
+          {selectionComplete && <code>you/placement/{natalPlacementPlanet}-{natalPlacementSign}-{natalPlacementHouse}h</code>}
+        </div>
+        <div className="admin-natal-placement-selectors">
+          <label>
+            <span>Planet or point</span>
+            <select aria-label="Natal placement planet or point" value={natalPlacementPlanet} onChange={(event) => updateNatalPlacementSelection({ planet: event.target.value as NatalPlacementPlanet | "" })}>
+              <option value="">Choose planet or point</option>
+              {natalPlacementPlanets.map((planet) => <option value={planet} key={planet}>{titleFromKey(planet)}</option>)}
+            </select>
+          </label>
+          <label>
+            <span>Zodiac sign</span>
+            <select aria-label="Natal placement zodiac sign" value={natalPlacementSign} onChange={(event) => updateNatalPlacementSelection({ sign: event.target.value as NatalPlacementSign | "" })}>
+              <option value="">Choose sign</option>
+              {natalPlacementSigns.map((sign) => <option value={sign} key={sign}>{titleFromKey(sign)}</option>)}
+            </select>
+          </label>
+          <label>
+            <span>House</span>
+            <select aria-label="Natal placement house" value={natalPlacementHouse} onChange={(event) => updateNatalPlacementSelection({ house: event.target.value as NatalPlacementHouse | "" })}>
+              <option value="">Choose house</option>
+              {natalPlacementHouses.map((house) => <option value={house} key={house}>{house}</option>)}
+            </select>
+          </label>
+        </div>
+        {!selectionComplete && <p className="admin-natal-placement-prompt">Choose all three values to see the exact rows that build the reader page.</p>}
+        {groups.filter((group) => group.key !== "structure").map((group) => (
+          <section className="admin-natal-source-group" key={group.key}>
+            <header>
+              <h3>{group.label}</h3>
+              <p>{group.description}</p>
+            </header>
+            <div className="admin-natal-source-grid">{group.sources.map(renderSource)}</div>
+          </section>
+        ))}
+        {groups.filter((group) => group.key === "structure").map((group) => (
+          <details className="admin-natal-source-group admin-natal-source-advanced" key={group.key}>
+            <summary>{group.label}</summary>
+            <p>{group.description}</p>
+            <div className="admin-natal-source-grid">{group.sources.map(renderSource)}</div>
+          </details>
+        ))}
+      </section>
+    );
+  }
+
   function renderContentFilters() {
     return (
       <section className="admin-content-filters" aria-label="Content list filters">
@@ -4911,7 +5080,7 @@ export function GeneratedContentAdminDashboard() {
           </label>
           <label>
             <span>Search content</span>
-            <input aria-label="Search content" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Title, surface, kind, content key" />
+            <input aria-label="Search content" value={query} onChange={(event) => handleContentSearchChange(event.target.value)} placeholder="Title, surface, kind, content key" />
           </label>
           <button type="button" onClick={() => void loadDashboardData()} disabled={isLoading}>
             <RefreshCw size={16} aria-hidden="true" />
@@ -4934,6 +5103,9 @@ export function GeneratedContentAdminDashboard() {
               setShowReferenceRows(false);
               setShowRetiredRows(false);
               setQuery("");
+              setNatalPlacementPlanet("");
+              setNatalPlacementSign("");
+              setNatalPlacementHouse("");
             }}
           >
             Clear filters
@@ -5166,7 +5338,7 @@ export function GeneratedContentAdminDashboard() {
                 <h3>{group.label}</h3>
                 <p>{rows.length} rows</p>
               </div>
-              {renderContentTable(rows)}
+              {renderContentTable(rows, false, true)}
             </section>
           );
         })}
@@ -5174,7 +5346,11 @@ export function GeneratedContentAdminDashboard() {
     );
   }
 
-  function renderContentTable(tableRows: AdminGeneratedContentRow[], showArticleDestination = false) {
+  function renderContentTable(
+    tableRows: AdminGeneratedContentRow[],
+    showArticleDestination = false,
+    showWiringReason = false
+  ) {
     return (
       <div className="admin-content-table-scroll">
         <table className="admin-content-table">
@@ -5185,6 +5361,7 @@ export function GeneratedContentAdminDashboard() {
               <th scope="col">App visibility</th>
               <th scope="col">Editorial</th>
               {showArticleDestination && <th scope="col">App destination</th>}
+              {showWiringReason && <th scope="col">App connection</th>}
               <th scope="col">Surface</th>
               <th scope="col">Kind</th>
               <th scope="col">Updated</th>
@@ -5198,6 +5375,7 @@ export function GeneratedContentAdminDashboard() {
               const rowClass = contentClassForRow(row);
               const rowRole = contentRoleDetails(contentRoleForRecord(row));
               const destination = showArticleDestination ? articleAppDestination(row) : null;
+              const wiring = showWiringReason ? contentWiringStatus(row) : null;
               return (
                 <tr key={row.id} className={`admin-content-row ${selectedRowId === row.id ? "selected" : ""}`} onClick={() => openRow(row)}>
                   <td onClick={(event) => event.stopPropagation()}>
@@ -5216,6 +5394,12 @@ export function GeneratedContentAdminDashboard() {
                     <td className="admin-content-location">
                       <strong>{destination.label}</strong>
                       <small>{destination.detail}</small>
+                    </td>
+                  )}
+                  {wiring && (
+                    <td className="admin-content-location admin-wiring-cell">
+                      <strong className={`admin-wiring-state ${wiring.state}`}>{wiring.label}</strong>
+                      <small title={wiring.detail}>{wiring.detail}</small>
                     </td>
                   )}
                   <td className="admin-content-location"><strong>{row.surface}</strong><small>{row.mode}</small></td>
