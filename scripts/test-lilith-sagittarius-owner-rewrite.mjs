@@ -15,11 +15,12 @@ const staged = readJson("packages/astro-knowledge/review/lilith-placements-v5/li
 const source = readJson("apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json");
 const bundled = readJson("apps/web/src/content/fallbackArchitectureV3/bundled-sky-placement-rows-v3.json");
 const aspectSource = readJson("apps/web/src/content/fallbackArchitectureV3/source-rows/sky-aspect-phrasebook-v1.json");
+const skyArticleSource = readJson("apps/web/src/content/fallbackArchitectureV3/source-rows/sky-article-v1.json");
 const transitSource = readJson("apps/web/src/content/fallbackArchitectureV3/source-rows/transit-synastry-rows-v1.json");
 const templateSource = readJson("apps/web/src/content/fallbackArchitectureV3/templates/fallback-templates-v3.json");
 const browserRenderer = createTransitSynastryRenderer(transitSource, templateSource, {
   ...source,
-  hookRows: [...source.hookRows, ...aspectSource.hookRows]
+  hookRows: [...source.hookRows, ...skyArticleSource.hookRows, ...aspectSource.hookRows]
 });
 
 const lilithKeyPattern = /^fallback-hook\/sky-placement-(?:tagline|hook|lived|turn)\/lilith\/([a-z-]+)$/u;
@@ -72,12 +73,12 @@ for (const sign of signs) {
   assert.throws(
     () => renderSkyPlacement({ ...facts, exitDate: null }),
     (error) => error instanceof SourceGapError
-      && new RegExp(`SOURCE_GAP: sky placement pair slots lilith/${sign}`, "u").test(error.message),
+      && new RegExp(`SOURCE_GAP: sky placement(?: pair slots)? lilith/${sign}`, "u").test(error.message),
     `${sign} must fail closed when the true-Lilith context omits exitDate.`
   );
   assert.throws(
     () => browserRenderer.renderSkyPlacement({ ...facts, exitDate: null }),
-    new RegExp(`SOURCE_GAP: sky placement pair slots lilith/${sign}`, "u"),
+    new RegExp(`SOURCE_GAP: sky placement(?: pair slots)? lilith/${sign}`, "u"),
     `${sign} browser rendering must fail closed when the true-Lilith context omits exitDate.`
   );
 }

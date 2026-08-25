@@ -25,6 +25,22 @@ Assistant-generated prose, summaries of owner style, and derived style guidance 
 REGISTER evidence. A request that omits available relevant owner passages fails retrieval before
 credentials or billing.
 
+## Owner-supplied calibration requires explicit authority
+
+Task-supplied examples may establish a reasoning or review standard without
+establishing authorship. The governed structural-calibration manifest is
+`data/writing/owner-supplied-structural-exemplars.json`. An entry may enter
+REGISTER only when it records owner authorship, exact approval, and
+positive-register authorization. PHRASE and reader-serving authority remain
+separate and must be recorded separately. The approved
+Chiron-in-Taurus-in-the-12th-house passage is REGISTER evidence only: it may
+guide prose behavior but may not be mined for reusable lines or served as app
+copy.
+
+Structural movements are semantic audits, not prose templates. A writer may not
+copy the exemplar's paragraph count, hinge sentence, contrast, or close merely
+because the example passed structural review.
+
 ## Placement-breadth rule (2026-08-21)
 
 The planet-sign mechanism owns the scope of a placement. One strong expression may organize a

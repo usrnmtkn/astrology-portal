@@ -22,9 +22,9 @@
   "deduplicatedSharedIndexCounts": {
     "entries": 5923,
     "meaning": 2224,
-    "register": 1757,
+    "register": 1758,
     "scene": 415,
-    "argument": 1181,
+    "argument": 1180,
     "phrase": 346,
     "planetSignKeys": 247
   },
@@ -73,7 +73,7 @@
     },
     "owner-corpus-passage": {
       "meaning": 0,
-      "register": 530,
+      "register": 531,
       "scene": 0,
       "argument": 0,
       "phrase": 0
@@ -117,7 +117,7 @@
       "meaning": 0,
       "register": 0,
       "scene": 0,
-      "argument": 56,
+      "argument": 55,
       "phrase": 0
     },
     "owner-approved-voice-bank-phrase": {
@@ -155,9 +155,9 @@
   "afterCounts": {
     "entries": 5923,
     "meaning": 2224,
-    "register": 1757,
+    "register": 1758,
     "scene": 415,
-    "argument": 1181,
+    "argument": 1180,
     "phrase": 346,
     "planetSignKeys": 247
   },

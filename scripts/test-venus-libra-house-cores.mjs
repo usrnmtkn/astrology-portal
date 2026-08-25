@@ -14,6 +14,7 @@ const sourceText = read("apps/web/src/content/fallbackArchitectureV3/source-rows
 const stagedText = read("packages/astro-knowledge/review/venus-libra-house-cores-v1/venus-libra-house-cores-staged-rows.json");
 const source = JSON.parse(sourceText);
 const staged = JSON.parse(stagedText);
+const approvedHouseTemplates = JSON.parse(read("apps/web/src/content/fallbackArchitectureV3/source-rows/sky-placement-house-templates-v1.json"));
 const ownerPackage = read("packages/astro-knowledge/review/venus-libra-house-cores-v1/venus-libra-house-cores-owner-package.md");
 const ordinals = ["1st", "2nd", "3rd", "4th", "5th", "6th", "7th", "8th", "9th", "10th", "11th", "12th"];
 const browserRenderer = createTransitSynastryRenderer(
@@ -59,11 +60,11 @@ for (const [index, row] of source.rows.entries()) {
   if (house === 5) {
     assert.equal(row.review_status, "needs_review", "The owner-rejected 5th-house passage must not remain approved.");
     assert.match(row.approved_via, /revoked by explicit owner correction 2026-08-22/u);
-    assert.throws(
-      () => renderSkyPlacementHouseCore({ planet: "venus", sign: "libra", house }),
-      (error) => error instanceof SourceGapError && /SOURCE_GAP: house horoscope core venus\/libra\/house-5/u.test(error.message),
-      "The rejected 5th-house passage must not render from the reader bundle."
-    );
+    const approvedReplacement = approvedHouseTemplates.rows.find((candidate) => candidate.contentKey === row.contentKey);
+    assert.equal(approvedReplacement?.review_status, "approved_reuse");
+    const renderedReplacement = renderSkyPlacementHouseCore({ planet: "venus", sign: "libra", house });
+    assert.equal(renderedReplacement.body, approvedReplacement.body_you, "The governed approved-reuse replacement must render instead of the revoked passage.");
+    assert.notEqual(renderedReplacement.body, row.body_you, "The explicitly rejected historical passage must remain excluded.");
     assert.throws(
       () => browserRenderer.renderSkyPlacementHouseCore({ planet: "venus", sign: "libra", house }),
       (error) => error instanceof Error && /SOURCE_GAP: house horoscope core venus\/libra\/house-5/u.test(error.message),
@@ -84,14 +85,9 @@ for (const [index, row] of source.rows.entries()) {
 }
 
 assert.throws(
-  () => renderSkyPlacementHouseCore({ planet: "venus", sign: "scorpio", house: 1 }),
-  (error) => error instanceof SourceGapError && /SOURCE_GAP: house horoscope core venus\/scorpio\/house-1/u.test(error.message),
-  "A non-approved Venus sign must fail closed."
-);
-assert.throws(
-  () => renderSkyPlacementHouseCore({ planet: "mercury", sign: "libra", house: 1 }),
-  (error) => error instanceof SourceGapError && /SOURCE_GAP: house horoscope core mercury\/libra\/house-1/u.test(error.message),
-  "A non-approved Libra planet must fail closed."
+  () => renderSkyPlacementHouseCore({ planet: "uranus", sign: "taurus", house: 1 }),
+  (error) => error instanceof SourceGapError && /SOURCE_GAP: house horoscope core uranus\/taurus\/house-1/u.test(error.message),
+  "A planet-sign combination without a governed core must fail closed."
 );
 
 const genericApprovedRenderer = createTransitSynastryRenderer(
@@ -114,4 +110,4 @@ assert.equal(
   "The resolver must accept any governed exact house core instead of hard-coding two placement pairs."
 );
 
-console.log("Venus in Libra preserves the historical V3 bodies, revokes house 5, and supports generic governed exact-core routing.");
+console.log("Venus in Libra preserves the historical V3 bodies, excludes the revoked house-5 passage, serves its governed replacement, and supports generic exact-core routing.");

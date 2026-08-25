@@ -46,6 +46,8 @@ import {
   ownerApprovedMatrixEvidenceForTarget,
   ownerApprovedMatrixRoleEvidenceForTarget,
   ownerRelevantEvidenceFromVoiceIndex,
+  exactDelimitedPassage,
+  ownerPositiveEvidenceFromApprovedTaskPassages,
   ownerPositiveEvidenceFromSurfaceQualifiedPool,
   ownerLockedLilithV5Evidence,
   generatedApprovalState,
@@ -389,6 +391,13 @@ const ownerRegisterGold = JSON.parse(read("data/writing/owner-register-gold.json
 const ownerPositiveEvidence = ownerPositiveEvidenceFromSurfaceQualifiedPool(JSON.parse(read(
   "packages/astro-knowledge/voice/tldr-astro/satori-writer/surface-qualified-positive-exemplars-v2.json"
 )));
+const approvedTaskPassageManifest = JSON.parse(read("data/writing/owner-supplied-structural-exemplars.json"));
+const ownerApprovedTaskPassages = ownerPositiveEvidenceFromApprovedTaskPassages(
+  approvedTaskPassageManifest.entries.map((entry) => ({
+    ...entry,
+    text: exactDelimitedPassage(entry, read(entry.sourcePath))
+  }))
+);
 const ownerLockedLilithEvidence = ownerLockedLilithV5Evidence(JSON.parse(read(
   "packages/astro-knowledge/review/lilith-placements-v5/lilith-placements-v5-staged-rows.json"
 )).rows);
@@ -507,7 +516,7 @@ const venusLibraHouseCoreScenes = samePlanetSignHouseCoreScenes(approvedExamples
 const venusLibraSceneEvidence = sceneEvidenceForTarget({
   approvedExamples,
   matrixEvidenceRows,
-  registerExamples: ownerPositiveEvidence,
+  registerExamples: [...ownerPositiveEvidence, ...ownerApprovedTaskPassages],
   sceneNounLexicon: matrixSceneNounLexicon(matrixEvidenceRows),
   plan: {
     object: "venus",
@@ -539,7 +548,7 @@ const sharedEvidenceIndex = buildSharedEvidenceIndex({
   llMatrixV13Rows,
   llMatrixV13ManifestRows,
   approvedExamples,
-  registerExamples: ownerPositiveEvidence,
+  registerExamples: [...ownerPositiveEvidence, ...ownerApprovedTaskPassages],
   registerGoldExamples: ownerRegisterGold,
   phraseExamples: ownerPhraseEvidence,
   skyPointMeaningRows
@@ -551,6 +560,11 @@ assert.ok(sharedEvidenceIndex.counts.scene > 400);
 assert.ok(sharedEvidenceIndex.byPlanetSign["venus|libra"].meaning.length >= 20);
 assert.ok(sharedEvidenceIndex.byPlanetSign["venus|libra"].scene.length >= 12);
 assert.ok(sharedEvidenceIndex.byPlanetSign["venus|libra"].argument.length >= 1);
+assert.ok(sharedEvidenceIndex.byPlanetSign["chiron|taurus"].register.includes("register:structural-calibration-chiron-taurus-house-12-2026-08-25"));
+const approvedTaskRegister = sharedEvidenceIndex.entries.find((entry) => entry.id === "register:structural-calibration-chiron-taurus-house-12-2026-08-25");
+assert.equal(approvedTaskRegister?.ownerAuthored, true);
+assert.equal(approvedTaskRegister?.ownerApproved, true);
+assert.equal(approvedTaskRegister?.sourceKind, "owner-corpus-passage");
 assert.equal(sharedEvidenceIndex.entries.filter((entry) => entry.sourceKind === "owner-approved-ll-matrix-v13").length, 301);
 assert.ok(sharedEvidenceIndex.byPlanetSign["moon|cancer"].meaning.some((id) => id.startsWith("ll-matrix-v13:")));
 assert.ok(sharedEvidenceIndex.byPlanetSign["moon|aquarius"].meaning.some((id) => id.startsWith("ll-matrix-v13:")));

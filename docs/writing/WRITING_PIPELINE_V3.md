@@ -113,6 +113,16 @@ recurrence, conditional older analogs, and collective lesson. These fields state
 proposed page intends to meet the element-quality gate; they are planning records and must
 never become reader-copy scaffolding.
 
+For developed natal placement, Chiron, and other recurring-pattern work, the
+outline also receives the semantic audit in
+`docs/writing/ARGUMENT_DEVELOPMENT_STANDARD.md`. The proposed argument must
+distinguish the placement mechanism from its topic list, respect adaptation as
+an earned competence, identify when that competence becomes costly, integrate
+the house into how the mechanism operates, and describe development as changed
+behavior or operating assumptions. This is not a new fixed sequence of reader
+paragraphs. Short cards and current forecasts preserve their surface-specific
+movement and may not invent personal history to imitate long-form depth.
+
 ## Spine coverage
 
 The canonical Sky Placement article spine is: planet, condition, handoff, thesis, lived
