@@ -2187,6 +2187,7 @@ export function GeneratedContentAdminDashboard() {
     ].sort((left, right) => right.lastSeenAt.localeCompare(left.lastSeenAt));
   }, [liveOmittedSections, sharedLiveOmittedSections]);
 
+  const editableContentKeys = useMemo(() => new Set(rows.map((row) => row.content_key)), [rows]);
   const visibleRows = useMemo(() => rows.filter((row) => (
     (showReferenceRows
       || (showRetiredRows && isRetiredAdminRow(row))
@@ -2553,7 +2554,7 @@ export function GeneratedContentAdminDashboard() {
   }, [activePage]);
 
   useEffect(() => {
-    const needsExtendedInventory = activePage === "skyWriteups" || isCompositionPage(activePage) || showReferenceRows || showRetiredRows;
+    const needsExtendedInventory = activePage === "skyWriteups" || activePage === "unresolvedContent" || isCompositionPage(activePage) || showReferenceRows || showRetiredRows;
     if (!needsExtendedInventory || allRowsLoaded || loadState !== "loaded" || !secret.trim()) return;
     let cancelled = false;
     setIsLoading(true);
@@ -2597,6 +2598,7 @@ export function GeneratedContentAdminDashboard() {
       const compatibilitySection = params.get("section") as AdminCompatibilitySectionFilter | null;
       const compatibilityPlanet = params.get("planet") as AdminArticlePointFilter | null;
       const compatibilitySortParam = params.get("sort") as AdminCompatibilitySort | null;
+      const openedFromUnresolved = page === "content" && params.get("from") === "unresolved";
 
       setCategoryFilter(category && categoryFilters.some((filter) => filter.key === category) ? category : "all");
       setContentLibraryView(page === "content" && view === "compatibility" ? "compatibility" : "all");
@@ -2606,6 +2608,9 @@ export function GeneratedContentAdminDashboard() {
           : "all"
       );
       setContentClassFilter(source && contentClassFilters.some((filter) => filter.key === source) ? source : "all");
+      if (openedFromUnresolved) {
+        revealUnresolvedContentRow();
+      }
       setQuery(search ?? "");
       setFallbackSectionFilter(section && fallbackSections.some((filter) => filter.key === section) ? section : "all");
       setSurfaceAreaFilter(area && ["all", "sky", "you", "friends", "calendar", "settings"].includes(area) ? area : "all");
@@ -2836,6 +2841,13 @@ export function GeneratedContentAdminDashboard() {
     setSkyArticleEditor(null);
   }
 
+  function revealUnresolvedContentRow() {
+    setContentStatusFilter("all");
+    setTierFilter("all");
+    setShowReferenceRows(true);
+    setShowRetiredRows(true);
+  }
+
   function navigateAdminPage(page: AdminDashboardPage, params?: URLSearchParams, options: { keepEditorOpen?: boolean } = {}) {
     setIsCreateMenuOpen(false);
     window.scrollTo({ top: 0, left: 0, behavior: "auto" });
@@ -2903,7 +2915,7 @@ export function GeneratedContentAdminDashboard() {
     setSourceDraftError(null);
     setIsLoading(true);
     try {
-      const needsExtendedInventory = isCompositionPage(activePage) || showReferenceRows || showRetiredRows;
+      const needsExtendedInventory = activePage === "unresolvedContent" || isCompositionPage(activePage) || showReferenceRows || showRetiredRows;
       const [generatedResult, reviewResult, usersResult, sourceDraftResult, runtimeReviewResult] = await Promise.allSettled([
         loadAllGeneratedContentRows(normalizedSecret, needsExtendedInventory ? "all" : "editorial"),
         adminJsonRequest<{ ok: boolean; rows?: AdminReviewRecord[]; records?: AdminReviewRecord[]; counts?: unknown }>("/api/admin/review-records?surface=upcomingAspects&status=all", normalizedSecret),
@@ -4232,9 +4244,12 @@ export function GeneratedContentAdminDashboard() {
         {activePage === "unresolvedContent" && (
           <UnresolvedContentReview
             credential={secret}
+            contentLibraryReady={allRowsLoaded && loadState === "loaded"}
+            editableContentKeys={editableContentKeys}
             onFindInContentLibrary={(contentKey) => {
+              revealUnresolvedContentRow();
               setQuery(contentKey);
-              navigateAdminPage("content", new URLSearchParams({ q: contentKey }));
+              navigateAdminPage("content", new URLSearchParams({ q: contentKey, from: "unresolved" }));
             }}
           />
         )}
