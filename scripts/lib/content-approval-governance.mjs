@@ -18,8 +18,156 @@ function canonicalJson(value) {
   return JSON.stringify(value);
 }
 
+export function canonicalStringify(value) {
+  return canonicalJson(value);
+}
+
 export function canonicalSha256(value) {
   return sha256(canonicalJson(value));
+}
+
+function decodeJsonPointerToken(token) {
+  return token.replaceAll("~1", "/").replaceAll("~0", "~");
+}
+
+export function resolveJsonPointer(document, pointer) {
+  if (pointer === "" || pointer === "/") return document;
+  if (typeof pointer !== "string" || !pointer.startsWith("/")) {
+    throw new Error(`PROMOTION_INVALID_POINTER: ${pointer}`);
+  }
+  let current = document;
+  for (const rawToken of pointer.slice(1).split("/")) {
+    const token = decodeJsonPointerToken(rawToken);
+    if (current == null || typeof current !== "object" || !Object.hasOwn(current, token)) {
+      throw new Error(`PROMOTION_TARGET_MISSING: ${pointer}`);
+    }
+    current = current[token];
+  }
+  return current;
+}
+
+function promotionTargetPath(repoRoot, sourcePath) {
+  const normalized = String(sourcePath ?? "").replaceAll("\\", "/");
+  const allowedPrefix = "apps/web/src/content/fallbackArchitectureV3/source-rows/";
+  if (!normalized.startsWith(allowedPrefix) || !normalized.endsWith(".json")) {
+    throw new Error(`PROMOTION_TARGET_OUT_OF_SCOPE: ${normalized}`);
+  }
+  const absolute = path.resolve(repoRoot, normalized);
+  if (!absolute.startsWith(`${path.resolve(repoRoot, allowedPrefix)}${path.sep}`)) {
+    throw new Error(`PROMOTION_TARGET_OUT_OF_SCOPE: ${normalized}`);
+  }
+  return absolute;
+}
+
+export function buildContentPromotionPlan({ repoRoot, application, baseCommitSha = null }) {
+  if (application?.schema !== "approval-application/v1") {
+    throw new Error("PROMOTION_INVALID_APPLICATION: schema must be approval-application/v1.");
+  }
+  const promotable = (application.decisions ?? []).filter((decision) => decision.queue?.promotion);
+  if (promotable.length === 0) throw new Error("PROMOTION_EMPTY: no decisions declare a promotion target.");
+  const sourcePaths = new Set(promotable.map((decision) => decision.queue.promotion.sourcePath));
+  if (sourcePaths.size !== 1) {
+    throw new Error("PROMOTION_MULTI_FILE_UNSUPPORTED: one transaction may update exactly one source JSON file.");
+  }
+
+  const sourcePath = [...sourcePaths][0];
+  const absoluteSourcePath = promotionTargetPath(repoRoot, sourcePath);
+  const sourceBefore = fs.readFileSync(absoluteSourcePath, "utf8");
+  const sourceBeforeSha256 = sha256(sourceBefore);
+  const document = JSON.parse(sourceBefore);
+  const changes = [];
+
+  for (const decision of promotable) {
+    if (!["rewrite", "write one"].includes(decision.choice) || typeof decision.text !== "string" || !decision.text.trim()) {
+      throw new Error(`PROMOTION_REQUIRES_COMPLETE_TEXT: ${decision.id}`);
+    }
+    const target = decision.queue.promotion;
+    const row = resolveJsonPointer(document, target.objectPath);
+    if (!row || typeof row !== "object" || Array.isArray(row)) {
+      throw new Error(`PROMOTION_TARGET_NOT_OBJECT: ${decision.id}`);
+    }
+    if (target.contentKey && row.contentKey !== target.contentKey) {
+      throw new Error(`PROMOTION_CONTENT_KEY_MISMATCH: ${decision.id}`);
+    }
+    const textField = String(target.textField ?? "");
+    if (!textField || !Object.hasOwn(row, textField) || typeof row[textField] !== "string") {
+      throw new Error(`PROMOTION_TEXT_FIELD_MISSING: ${decision.id}`);
+    }
+    if (sha256(row[textField]) !== target.sourceTextSha256) {
+      throw new Error(`PROMOTION_SOURCE_TEXT_STALE: ${decision.id}`);
+    }
+
+    const beforeText = row[textField];
+    row[textField] = decision.text;
+    if (target.reviewStatus) row.review_status = target.reviewStatus;
+    const approvalPayload = {
+      contentKey: row.contentKey,
+      field: textField,
+      text: decision.text,
+      approvedAt: decision.approvedAt,
+      decisionId: decision.id
+    };
+    row.approval = {
+      approvalLevel: "exact_owner_approved",
+      recordPath: target.approvalRecordPath,
+      payloadSha256: canonicalSha256(approvalPayload),
+      approvedAt: decision.approvedAt
+    };
+    changes.push({
+      decisionId: decision.id,
+      contentKey: row.contentKey ?? null,
+      objectPath: target.objectPath,
+      textField,
+      beforeTextSha256: sha256(beforeText),
+      afterTextSha256: sha256(decision.text),
+      beforeText,
+      afterText: decision.text,
+      reviewStatus: target.reviewStatus ?? row.review_status ?? null,
+      approval: row.approval
+    });
+  }
+
+  const sourceAfter = `${JSON.stringify(document, null, 2)}\n`;
+  const planCore = {
+    schema: "tldrastro-content-promotion-plan/v1",
+    applicationSha256: canonicalSha256(application),
+    baseCommitSha,
+    sourcePath,
+    sourceBeforeSha256,
+    sourceAfterSha256: sha256(sourceAfter),
+    changes
+  };
+  return {
+    ...planCore,
+    planSha256: canonicalSha256(planCore),
+    sourceAfter
+  };
+}
+
+export function applyContentPromotionPlan({ repoRoot, plan, expectedPlanSha256 }) {
+  if (plan?.planSha256 !== expectedPlanSha256) {
+    throw new Error("PROMOTION_PLAN_HASH_MISMATCH: rerun dry-run and pass its exact plan hash.");
+  }
+  const absoluteSourcePath = promotionTargetPath(repoRoot, plan.sourcePath);
+  const current = fs.readFileSync(absoluteSourcePath, "utf8");
+  if (sha256(current) !== plan.sourceBeforeSha256) {
+    throw new Error("PROMOTION_SOURCE_FILE_STALE: source changed after dry-run.");
+  }
+  const output = JSON.parse(plan.sourceAfter);
+  writeJsonAtomically(absoluteSourcePath, output);
+  return {
+    schema: "tldrastro-content-promotion-receipt/v1",
+    mode: "applied",
+    appliedAt: new Date().toISOString(),
+    planSha256: plan.planSha256,
+    applicationSha256: plan.applicationSha256,
+    baseCommitSha: plan.baseCommitSha,
+    sourcePath: plan.sourcePath,
+    sourceBeforeSha256: plan.sourceBeforeSha256,
+    sourceAfterSha256: plan.sourceAfterSha256,
+    changes: plan.changes,
+    unrelatedApprovedRowsChanged: []
+  };
 }
 
 function choiceValues(options) {
@@ -61,6 +209,23 @@ export function buildApprovalApplication(queue, approvalSet) {
         errors.push(`queue item ${item.id} sha256 must be 16 lowercase hex characters.`);
       } else if (spanSha256(item.span) !== item.sha256) {
         errors.push(`queue item ${item.id} span hash is stale.`);
+      }
+    }
+    if (item.promotion != null) {
+      const target = item.promotion;
+      requireString(target.sourcePath, `queue item ${item.id} promotion sourcePath`, errors);
+      requireString(target.objectPath, `queue item ${item.id} promotion objectPath`, errors);
+      requireString(target.contentKey, `queue item ${item.id} promotion contentKey`, errors);
+      requireString(target.textField, `queue item ${item.id} promotion textField`, errors);
+      requireString(target.approvalRecordPath, `queue item ${item.id} promotion approvalRecordPath`, errors);
+      if (!/^[a-f0-9]{64}$/u.test(String(target.sourceTextSha256 ?? ""))) {
+        errors.push(`queue item ${item.id} promotion sourceTextSha256 must be 64 lowercase hex characters.`);
+      }
+      if (item.contentKey && item.contentKey !== target.contentKey) {
+        errors.push(`queue item ${item.id} promotion contentKey must match the queue contentKey.`);
+      }
+      if (target.reviewStatus && !["approved", "approved_reuse", "reviewed"].includes(target.reviewStatus)) {
+        errors.push(`queue item ${item.id} promotion reviewStatus is not serving-eligible.`);
       }
     }
   }
@@ -119,7 +284,8 @@ export function buildApprovalApplication(queue, approvalSet) {
         queue: {
           title: item.title,
           contentKey: item.contentKey ?? null,
-          sourceSha256: item.sha256 ?? null
+          sourceSha256: item.sha256 ?? null,
+          promotion: item.promotion ?? null
         }
       })),
     unresolved: queue.items

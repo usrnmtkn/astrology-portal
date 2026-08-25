@@ -25,6 +25,20 @@
           "meta": { "type": "object" },
           "flag": { "type": "boolean" },
           "sha256": { "type": "string", "pattern": "^[a-f0-9]{16}$" },
+          "promotion": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["sourcePath", "objectPath", "contentKey", "textField", "sourceTextSha256", "approvalRecordPath"],
+            "properties": {
+              "sourcePath": { "type": "string", "pattern": "^apps/web/src/content/fallbackArchitectureV3/source-rows/.+\\.json$" },
+              "objectPath": { "type": "string", "pattern": "^/" },
+              "contentKey": { "type": "string", "minLength": 1 },
+              "textField": { "type": "string", "minLength": 1 },
+              "sourceTextSha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+              "reviewStatus": { "enum": ["approved", "approved_reuse", "reviewed"] },
+              "approvalRecordPath": { "type": "string", "minLength": 1 }
+            }
+          },
           "options": {
             "type": "array",
             "minItems": 1,
