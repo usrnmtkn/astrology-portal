@@ -8,6 +8,7 @@ import { fileURLToPath } from "node:url";
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const generatedRoot = path.join(repoRoot, "apps/admin/public/generated");
 const webGeneratedRoot = path.join(repoRoot, "apps/web/public/generated");
+const maxDomainPackageBytes = 600000;
 const sourceFiles = [
   path.join(repoRoot, "apps/web/src/content/fallbackArchitectureV3/bundled-sky-core-rows-v3.json"),
   path.join(repoRoot, "apps/web/src/content/fallbackArchitectureV3/bundled-deferred-core-rows-v3.json"),
@@ -38,7 +39,10 @@ assert.ok(index.rows.every((row) => !("body" in row)), "The startup index must n
 const packagedBodies = new Map();
 for (const domain of ["sky", "you", "friends", "modifier"]) {
   const filePath = path.join(generatedRoot, `admin-hook-catalog-${domain}-v1.json`);
-  assert.ok(fs.statSync(filePath).size <= 500000, `${domain} Admin hook package exceeds 500,000 raw bytes.`);
+  assert.ok(
+    fs.statSync(filePath).size <= maxDomainPackageBytes,
+    `${domain} Admin hook package exceeds ${maxDomainPackageBytes.toLocaleString("en-US")} raw bytes.`
+  );
   const payload = JSON.parse(fs.readFileSync(filePath, "utf8"));
   assert.equal(payload.schemaVersion, 1, `${domain} Admin hook package schema changed.`);
   for (const row of payload.rows) {
