@@ -92,7 +92,6 @@ import type {
   WritingSurfaceMapItem,
   WritingSurfaceSource
 } from "./writingSurfaceSourceMap";
-import { UnresolvedContentReview } from "./UnresolvedContentReview";
 import "./admin.css";
 
 const AspectPatternDiagnostics = lazy(async () => {
@@ -110,6 +109,10 @@ const ReportFulfillmentAdminPanel = lazy(async () => {
 const TemplateVariableReviewPanels = lazy(async () => {
   const module = await import("./TemplateVariableReviewPanels");
   return { default: module.TemplateVariableReviewPanels };
+});
+const UnresolvedContentReview = lazy(async () => {
+  const module = await import("./UnresolvedContentReview");
+  return { default: module.UnresolvedContentReview };
 });
 
 type GeneratedContentStatus = "DRAFT" | "REVIEWED" | "LIVE" | "ARCHIVED" | "ERROR";
@@ -4286,16 +4289,18 @@ export function GeneratedContentAdminDashboard() {
         )}
 
         {activePage === "unresolvedContent" && (
-          <UnresolvedContentReview
-            credential={secret}
-            contentLibraryReady={allRowsLoaded && loadState === "loaded"}
-            editableContentKeys={editableContentKeys}
-            onFindInContentLibrary={(contentKey) => {
-              revealUnresolvedContentRow();
-              setQuery(contentKey);
-              navigateAdminPage("content", new URLSearchParams({ q: contentKey, from: "unresolved" }));
-            }}
-          />
+          <Suspense fallback={null}>
+            <UnresolvedContentReview
+              credential={secret}
+              contentLibraryReady={allRowsLoaded && loadState === "loaded"}
+              editableContentKeys={editableContentKeys}
+              onFindInContentLibrary={(contentKey) => {
+                revealUnresolvedContentRow();
+                setQuery(contentKey);
+                navigateAdminPage("content", new URLSearchParams({ q: contentKey, from: "unresolved" }));
+              }}
+            />
+          </Suspense>
         )}
 
         {activePage === "content" && (
