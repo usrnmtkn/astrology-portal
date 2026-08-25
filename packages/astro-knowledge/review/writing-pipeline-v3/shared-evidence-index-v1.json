@@ -1,6 +1,6 @@
 {
   "version": "shared-evidence-standard-v1-2026-08-13",
-  "generatedAt": "2026-08-25T15:05:24.681Z",
+  "generatedAt": "2026-08-25T18:45:45.662Z",
   "keyFormat": "planet|sign; *|* is globally eligible register evidence",
   "rolePriority": {
     "scene": [
@@ -18,10 +18,10 @@
     "data/writing/owner-supplied-structural-exemplars.json"
   ],
   "counts": {
-    "entries": 5929,
+    "entries": 5930,
     "meaning": 2224,
     "register": 1758,
-    "scene": 421,
+    "scene": 422,
     "argument": 1180,
     "phrase": 346,
     "planetSignKeys": 247
@@ -7320,6 +7320,7 @@
         "scene:serving:fallback-hook/natal-you-placement-complete-final/chiron/aquarius/12",
         "scene:serving:fallback-hook/natal-you-placement-complete-final/chiron/cancer/12",
         "scene:serving:fallback-hook/natal-you-placement-complete-final/chiron/capricorn/12",
+        "scene:serving:fallback-hook/natal-you-placement-complete-final/lilith/gemini/3",
         "scene:serving:fallback-hook/natal-you-placement-complete-final/lilith/gemini/4",
         "scene:serving:fallback-hook/natal-you-placement-complete-final/lilith/libra/4",
         "scene:serving:fallback-hook/natal-you-placement-complete-final/lilith/virgo/4",
@@ -141558,6 +141559,37 @@
       "text": "Chiron points to the place where you learned to become skilled before you ever felt completely secure. In Capricorn, that often means becoming very good at being responsible, competent, and dependable because you learned that being prepared was safer than being caught without an answer. You may have become the person who handles the problem, thinks three steps ahead, keeps the deadline in mind, or takes responsibility before anyone has formally decided whose responsibility it is.\n\nThat ability can take you far. You know how to work toward something slowly, tolerate frustration, and keep going after the excitement has worn off. You may be especially good in situations where other people need structure, leadership, or someone who will actually follow through. The problem begins when responsibility stops being something you choose and starts becoming the role you automatically occupy. You can become so accustomed to being the reliable one that asking who else should be carrying this does not occur to you until you are already exhausted.\n\nOverfunctioning can look very respectable in Capricorn. You take the extra assignment because you know you can do it properly. You stay late because the deadline still exists even if everyone else has gone home. You step into the leadership gap because leaving the problem unresolved feels worse than taking on more work. Other people may call you capable while quietly becoming accustomed to how much you compensate for. Career burnout often starts this way: not with one impossible demand, but with a long series of reasonable ones that keep landing on the same person.\n\nChiron in Capricorn can also make achievement feel unusually personal. A missed deadline, stalled promotion, professional criticism, or period when you are not progressing may hit harder than the event itself because work has become one of the places where you prove to yourself that you are doing okay. You may be able to tolerate enormous amounts of pressure when there is a clear goal at the end of it, then feel strangely lost once the goal is reached. The achievement matters, but it may not answer the deeper question of when you are finally allowed to feel like you have done enough.\n\nThat can create achievement-based self-worth without you realizing it. Rest feels better after you have earned it. Receiving help feels easier when you can prove you genuinely could not do it alone. A quiet period can make you uneasy because there is no obvious measure of progress. You may turn free time into another project, set a new goal immediately after completing the last one, or judge a slower season as failure when nothing is actually wrong. Capricorn is good at building toward the future. Chiron here can make the future into a moving finish line.\n\nAuthority can carry its own history. You may be highly sensitive to being underestimated, micromanaged, dismissed, or treated as though you have not earned your position. If you had to become responsible before you felt ready, you may have little patience for leaders who avoid responsibility now. You notice the manager who takes credit without making decisions, the parent who expects maturity they never modeled, or the institution that demands accountability from everyone except the people at the top. Those situations can hit an old nerve because they bring you back to the experience of having consequences without having enough power.\n\nThe response can go in two directions. You may work twice as hard to make yourself impossible to question, or you may become reluctant to trust authority at all. In a career, that can mean staying overly independent, struggling to delegate, or feeling more comfortable being the person everyone depends on than the person who has to depend on someone else. Delegation requires accepting that another person may do the job differently, make a mistake, or need clarification. If control has become part of how you protect yourself from being let down, handing over responsibility can feel much riskier than simply doing the work yourself.\n\nWith Chiron in the 12th house, much of this pressure can remain invisible. You may look calm, organized, and completely in control while privately carrying a constant sense that something still needs to be handled. You think about work after the workday ends. You remember the task nobody followed up on. You anticipate the consequence before anyone else recognizes there is a problem. Because you are used to functioning under that pressure, you may not call it stress. It can simply feel like being responsible.\n\nThe 12th house can also hide how much fear is sitting underneath ambition. You may tell yourself you are working this hard because the goal matters, when part of you is also afraid of what would happen if you slowed down. What if somebody passes you? What if the money changes? What if people realize you are not as necessary as you have made yourself? What if the structure you built does not hold without your constant attention? Those fears do not make the ambition false. They do change the price you are willing to pay for it.\n\nCareer burnout can become especially difficult to recognize when competence keeps covering the symptoms. You still meet the deadline. You still answer the email. You still show up prepared. From the outside, everything appears functional. Internally, you may have lost interest months ago, become resentful of responsibilities you once wanted, or started fantasizing about walking away from work you spent years building. Burnout does not always mean you chose the wrong career. Sometimes it means the way you have been carrying the career is no longer sustainable.\n\nSolitude may be where you finally let some of that responsibility drop, but even there you may struggle to stop measuring yourself. You think about what should happen next, review what you could have done better, or use the quiet to catch up on work nobody knows you are doing. It can be difficult to experience rest as worthwhile on its own. The 12th house asks a harder question: who are you when nobody needs anything from you and there is nothing left to prove for the day?\n\nHealing Chiron in Capricorn is not about becoming less ambitious. It is about building a healthier relationship with responsibility, authority, and success. You delegate before you are overwhelmed. You ask what belongs to you before automatically taking ownership of the entire problem. You let a career plateau be information instead of treating it like an emergency. You set boundaries around work before burnout has to set them for you.\n\nIt also means separating leadership from self-sacrifice. Being capable does not make you the default solution to every problem. Being the most responsible person in the room does not mean everyone else's responsibilities become yours. Good leadership includes knowing what to carry, what to assign, and what to leave with the person who actually owns it.\n\nOver time, success stops being measured by how much pressure you can absorb before something breaks. You become less interested in being indispensable and more interested in building a life that does not depend on your constant overfunctioning. You can lead without rescuing, delegate without assuming the work will fall apart, and let other people experience the consequences of what they fail to carry."
     },
     {
+      "id": "scene:serving:fallback-hook/natal-you-placement-complete-final/lilith/gemini/3",
+      "indexKey": "*|*",
+      "planet": null,
+      "sign": null,
+      "role": "scene",
+      "sourcePath": "data/writing/OWNER_APPROVED_EXAMPLES.jsonl",
+      "contentKey": "fallback-hook/natal-you-placement-complete-final/lilith/gemini/3",
+      "family": "owner-approved-scene-evidence",
+      "governanceTier": "serving-review-status-approved",
+      "ownerApproved": true,
+      "ownerAuthored": false,
+      "generated": false,
+      "evidenceRole": "approved_serving_scene",
+      "sourceKind": "approved_serving_row",
+      "house": null,
+      "eventType": null,
+      "register": "second_person",
+      "store": null,
+      "themes": [],
+      "subjectTags": [],
+      "failureTags": [],
+      "copySha": null,
+      "sceneNouns": [
+        "contract",
+        "message",
+        "shift"
+      ],
+      "eligibleForWriterRegister": true,
+      "text": "Lilith in Gemini in the 3rd house can make you especially sensitive to what happens when someone tries to pin you to one version of what you said, thought, or believed. You may have learned early that asking too many questions made people impatient, changing your mind made you look inconsistent, or noticing the contradiction turned you into the difficult person in the conversation. Gemini needs room to think out loud, follow the new information, and revise the answer when something changes. The rage can come when someone quotes an old opinion back at you like a contract, talks down to you because you do not know something yet, or expects you to keep defending an answer you have already outgrown.\n\nSiblings, school, neighbors, and the environment you grew up in can make this even sharper. Maybe you competed to be heard, learned to argue quickly because the conversation moved fast, or became very good at finding the missing detail because people around you were constantly changing the story. You may also have learned that information is power: knowing who said what, catching the inconsistency, or having the message nobody else has seen can give you an advantage when communication feels unreliable. The challenge is knowing when curiosity is helping you understand something and when collecting more information has become a way of staying inside a conflict that would be better handled directly.\n\nThe deeper shift is giving yourself permission to be curious without having to turn every question into a case you need to win. You can say, “I was wrong,” “I changed my mind,” or “I need more information,” without treating any of those sentences like a failure of intelligence. You stop letting other people use an older version of your words to decide what you are allowed to think now, and you become more selective about which conversations deserve another explanation. Lilith in Gemini in the 3rd house becomes less about having the quickest answer and more about trusting yourself enough to keep thinking, questioning, and changing your mind when the information gets more complicated."
+    },
+    {
       "id": "scene:serving:fallback-hook/natal-you-placement-complete-final/lilith/gemini/4",
       "indexKey": "*|*",
       "planet": null,
@@ -142719,7 +142751,7 @@
         "schedule"
       ],
       "eligibleForWriterRegister": true,
-      "text": "For nearly two years, decisions blur at the edges. Deadlines stretch or dissolve because someone trusts a hunch over a schedule. Conversations circle back like lazy rivers, revealing what logic skips. We lean into moments when plans slip and instead notice the threads of connection, the moods that color a room, or the quiet pulse beneath the noise."
+      "text": "For eighteen months, decisions blur at the edges. Deadlines stretch or dissolve because someone trusts a hunch over a schedule. Conversations circle back like lazy rivers, revealing what logic skips. We lean into moments when plans slip and instead notice the threads of connection, the moods that color a room, or the quiet pulse beneath the noise."
     },
     {
       "id": "scene:serving:fallback-hook/sky-placement-lived/north-node/virgo",
@@ -142750,7 +142782,7 @@
         "meeting"
       ],
       "eligibleForWriterRegister": true,
-      "text": "For nearly two years, we sift through details that shape what actually gets done. Meetings run smoother when agendas tighten. Group projects hit fewer snags when roles clarify. You see more emails answered on time, tasks crossed off with care, and health habits that aren't just ideas but actions. It's about the grind that builds the story, not the flash that interrupts it."
+      "text": "For eighteen months, we sift through details that shape what actually gets done. Meetings run smoother when agendas tighten. Group projects hit fewer snags when roles clarify. You see more emails answered on time, tasks crossed off with care, and health habits that aren't just ideas but actions. It's about the grind that builds the story, not the flash that interrupts it."
     },
     {
       "id": "scene:serving:fallback-hook/sky-placement-lived/pluto/gemini",
@@ -142939,7 +142971,7 @@
         "meeting"
       ],
       "eligibleForWriterRegister": true,
-      "text": "For nearly two years, conversations loop back on themselves, and meetings feel like rehearsals. You notice how the same few stories, emails, or ideas keep showing up - sometimes in different voices but with the same core. We spend less time gathering new details and more time patching together what we already know, like fixing a familiar puzzle rather than starting a new one."
+      "text": "For eighteen months, conversations loop back on themselves, and meetings feel like rehearsals. You notice how the same few stories, emails, or ideas keep showing up - sometimes in different voices but with the same core. We spend less time gathering new details and more time patching together what we already know, like fixing a familiar puzzle rather than starting a new one."
     },
     {
       "id": "scene:serving:fallback-hook/sky-placement-lived/south-node/virgo",
@@ -146155,7 +146187,7 @@
       "copySha": null,
       "sceneNouns": [],
       "eligibleForWriterRegister": true,
-      "text": "You're scrolling through facts and opinions faster than you can respond. The North Node in Gemini pulls us into a year and a half of gathering pieces, not locking answers. It's not about knowing better yet - it's about knowing more."
+      "text": "You're scrolling through facts and opinions faster than you can respond. The North Node in Gemini pulls us into eighteen months of gathering pieces, not locking answers. It's not about knowing better yet - it's about knowing more."
     },
     {
       "id": "argument:fallback-hook/sky-placement-hook/north-node/leo",
@@ -146317,7 +146349,7 @@
       "copySha": null,
       "sceneNouns": [],
       "eligibleForWriterRegister": true,
-      "text": "You keep adding to your pile of things that feel like yours, like a quiet rebellion against chaos. The North Node in Taurus stretches over a year and a half, asking us to slow the chase and trust what we can hold onto for real."
+      "text": "You keep adding to your pile of things that feel like yours, like a quiet rebellion against chaos. The North Node in Taurus stretches over eighteen months, asking us to slow the chase and trust what we can hold onto for real."
     },
     {
       "id": "argument:fallback-hook/sky-placement-hook/north-node/virgo",
@@ -147289,7 +147321,7 @@
       "copySha": null,
       "sceneNouns": [],
       "eligibleForWriterRegister": true,
-      "text": "Someone's still clutching the same old safety net from years ago. The South Node in Taurus makes us notice how tightly we hold what no longer holds us. It's a slow shift - nearly two years of unlearning comfort as control."
+      "text": "Someone's still clutching the same old safety net from years ago. The South Node in Taurus makes us notice how tightly we hold what no longer holds us. It's a slow shift - eighteen months of unlearning comfort as control."
     },
     {
       "id": "argument:fallback-hook/sky-placement-hook/south-node/virgo",
@@ -147316,7 +147348,7 @@
       "copySha": null,
       "sceneNouns": [],
       "eligibleForWriterRegister": true,
-      "text": "You're still fixing what's already good enough. The South Node in Virgo rolls up sleeves for nearly two years, nudging us to stop polishing and start releasing. It's less about perfecting and more about tolerating imperfection."
+      "text": "You're still fixing what's already good enough. The South Node in Virgo rolls up sleeves for eighteen months, nudging us to stop polishing and start releasing. It's less about perfecting and more about tolerating imperfection."
     },
     {
       "id": "argument:fallback-hook/sky-placement-hook/sun/aquarius",
@@ -150772,7 +150804,7 @@
       "copySha": null,
       "sceneNouns": [],
       "eligibleForWriterRegister": true,
-      "text": "For nearly two years, decisions blur at the edges. Deadlines stretch or dissolve because someone trusts a hunch over a schedule. Conversations circle back like lazy rivers, revealing what logic skips. We lean into moments when plans slip and instead notice the threads of connection, the moods that color a room, or the quiet pulse beneath the noise."
+      "text": "For eighteen months, decisions blur at the edges. Deadlines stretch or dissolve because someone trusts a hunch over a schedule. Conversations circle back like lazy rivers, revealing what logic skips. We lean into moments when plans slip and instead notice the threads of connection, the moods that color a room, or the quiet pulse beneath the noise."
     },
     {
       "id": "argument:fallback-hook/sky-placement-lived/north-node/sagittarius",
@@ -150826,7 +150858,7 @@
       "copySha": null,
       "sceneNouns": [],
       "eligibleForWriterRegister": true,
-      "text": "For nearly two years, you lean into conversations that don't stay on the surface. We start to hand over the parts of ourselves we usually keep locked away - old grudges, secret fears, raw hopes - and watch how relationships change in response. The pace demands patience; trust builds in slow, uneven layers, not quick confessions or neat resolutions."
+      "text": "For eighteen months, you lean into conversations that don't stay on the surface. We start to hand over the parts of ourselves we usually keep locked away - old grudges, secret fears, raw hopes - and watch how relationships change in response. The pace demands patience; trust builds in slow, uneven layers, not quick confessions or neat resolutions."
     },
     {
       "id": "argument:fallback-hook/sky-placement-lived/north-node/taurus",
@@ -150853,7 +150885,7 @@
       "copySha": null,
       "sceneNouns": [],
       "eligibleForWriterRegister": true,
-      "text": "For nearly two years, we notice how much time we spend making a place or a thing truly ours - locking in routines, paying attention to the feel of daily life, and letting small comforts ground us. Someone might finally fix that leaky faucet or set aside quiet hours for a hobby that doesn't aim to impress anyone. This is about growing through solid steps that build something reliable underfoot, not flashy leaps forward."
+      "text": "For eighteen months, we notice how much time we spend making a place or a thing truly ours - locking in routines, paying attention to the feel of daily life, and letting small comforts ground us. Someone might finally fix that leaky faucet or set aside quiet hours for a hobby that doesn't aim to impress anyone. This is about growing through solid steps that build something reliable underfoot, not flashy leaps forward."
     },
     {
       "id": "argument:fallback-hook/sky-placement-lived/north-node/virgo",
@@ -150880,7 +150912,7 @@
       "copySha": null,
       "sceneNouns": [],
       "eligibleForWriterRegister": true,
-      "text": "For nearly two years, we sift through details that shape what actually gets done. Meetings run smoother when agendas tighten. Group projects hit fewer snags when roles clarify. You see more emails answered on time, tasks crossed off with care, and health habits that aren't just ideas but actions. It's about the grind that builds the story, not the flash that interrupts it."
+      "text": "For eighteen months, we sift through details that shape what actually gets done. Meetings run smoother when agendas tighten. Group projects hit fewer snags when roles clarify. You see more emails answered on time, tasks crossed off with care, and health habits that aren't just ideas but actions. It's about the grind that builds the story, not the flash that interrupts it."
     },
     {
       "id": "argument:fallback-hook/sky-placement-lived/pluto/aquarius",
@@ -151636,7 +151668,7 @@
       "copySha": null,
       "sceneNouns": [],
       "eligibleForWriterRegister": true,
-      "text": "For nearly two years, we keep showing up to the same meetings, filing the same reports, and defending the same status markers. Tasks that once felt like achievements start to wear thin, yet the impulse to push harder sticks around. You see it in the way we reset goals without changing direction, like running laps inside a glass box. The routine is familiar and the weight of duty feels like a habit that's harder to drop than a phone."
+      "text": "For eighteen months, we keep showing up to the same meetings, filing the same reports, and defending the same status markers. Tasks that once felt like achievements start to wear thin, yet the impulse to push harder sticks around. You see it in the way we reset goals without changing direction, like running laps inside a glass box. The routine is familiar and the weight of duty feels like a habit that's harder to drop than a phone."
     },
     {
       "id": "argument:fallback-hook/sky-placement-lived/south-node/gemini",
@@ -151663,7 +151695,7 @@
       "copySha": null,
       "sceneNouns": [],
       "eligibleForWriterRegister": true,
-      "text": "For nearly two years, conversations loop back on themselves, and meetings feel like rehearsals. You notice how the same few stories, emails, or ideas keep showing up - sometimes in different voices but with the same core. We spend less time gathering new details and more time patching together what we already know, like fixing a familiar puzzle rather than starting a new one."
+      "text": "For eighteen months, conversations loop back on themselves, and meetings feel like rehearsals. You notice how the same few stories, emails, or ideas keep showing up - sometimes in different voices but with the same core. We spend less time gathering new details and more time patching together what we already know, like fixing a familiar puzzle rather than starting a new one."
     },
     {
       "id": "argument:fallback-hook/sky-placement-lived/south-node/leo",
@@ -151717,7 +151749,7 @@
       "copySha": null,
       "sceneNouns": [],
       "eligibleForWriterRegister": true,
-      "text": "For nearly two years, you'll see how easy it is to fall back into the habit of making yourself small for the sake of balance. Meetings drag on because nobody wants to ruffle feathers. Decisions get delayed so everyone feels included. You'll watch groups hold the line on politeness while the real tension simmers underneath, unnoticed or ignored."
+      "text": "For eighteen months, you'll see how easy it is to fall back into the habit of making yourself small for the sake of balance. Meetings drag on because nobody wants to ruffle feathers. Decisions get delayed so everyone feels included. You'll watch groups hold the line on politeness while the real tension simmers underneath, unnoticed or ignored."
     },
     {
       "id": "argument:fallback-hook/sky-placement-lived/south-node/pisces",
@@ -157468,7 +157500,7 @@
       "copySha": null,
       "sceneNouns": [],
       "eligibleForWriterRegister": true,
-      "text": "The gift turns sharp when the hunger for approval turns into silent self-sabotage: staying stuck in roles that drain instead of challenge, refusing offers that feel unearned, or shrinking your voice because you're still tallying your worth. Chiron in Capricorn wounds by making you think you must always perform to justify your place. You don't get to belong only if you've checked every box - that's the bruise you have to name and ignore."
+      "text": "The gift turns sharp when the hunger for approval turns into silent self-sabotage: staying stuck in roles that drain instead of challenge, refusing offers that feel unearned, or shrinking your voice because you're still tallying your worth. Chiron in Capricorn wounds by making you think you must always perform to justify your place. You don't get to belong only if you've checked every box - that's the bruise you have to name, not ignore."
     },
     {
       "id": "argument:fallback-hook/sky-placement-turn/chiron/gemini",
