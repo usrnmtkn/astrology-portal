@@ -37,6 +37,48 @@ const expectedMercurySignBody = rows.hookRows.find(
 const expectedSunNinthHouseBody = rows.hookRows.find(
   (row) => row.contentKey === "fallback-hook/placement-house-lived/sun/9"
 )?.body;
+const exactChironTaurusTwelfth = rows.hookRows.find(
+  (row) => row.contentKey === "fallback-hook/natal-you-placement-complete-final/chiron/taurus/12"
+);
+const exactChironAriesTwelfth = rows.hookRows.find(
+  (row) => row.contentKey === "fallback-hook/natal-you-placement-complete-final/chiron/aries/12"
+);
+const exactChironGeminiTwelfth = rows.hookRows.find(
+  (row) => row.contentKey === "fallback-hook/natal-you-placement-complete-final/chiron/gemini/12"
+);
+const exactChironCancerTwelfth = rows.hookRows.find(
+  (row) => row.contentKey === "fallback-hook/natal-you-placement-complete-final/chiron/cancer/12"
+);
+const exactChironLeoTwelfth = rows.hookRows.find(
+  (row) => row.contentKey === "fallback-hook/natal-you-placement-complete-final/chiron/leo/12"
+);
+const exactChironVirgoTwelfth = rows.hookRows.find(
+  (row) => row.contentKey === "fallback-hook/natal-you-placement-complete-final/chiron/virgo/12"
+);
+const exactChironLibraTwelfth = rows.hookRows.find(
+  (row) => row.contentKey === "fallback-hook/natal-you-placement-complete-final/chiron/libra/12"
+);
+const exactChironScorpioTwelfth = rows.hookRows.find(
+  (row) => row.contentKey === "fallback-hook/natal-you-placement-complete-final/chiron/scorpio/12"
+);
+const exactChironSagittariusTwelfth = rows.hookRows.find(
+  (row) => row.contentKey === "fallback-hook/natal-you-placement-complete-final/chiron/sagittarius/12"
+);
+const exactChironCapricornTwelfth = rows.hookRows.find(
+  (row) => row.contentKey === "fallback-hook/natal-you-placement-complete-final/chiron/capricorn/12"
+);
+const exactChironAquariusTwelfth = rows.hookRows.find(
+  (row) => row.contentKey === "fallback-hook/natal-you-placement-complete-final/chiron/aquarius/12"
+);
+const exactChironPiscesTwelfth = rows.hookRows.find(
+  (row) => row.contentKey === "fallback-hook/natal-you-placement-complete-final/chiron/pisces/12"
+);
+const exactLilithVirgoFourth = rows.hookRows.find(
+  (row) => row.contentKey === "fallback-hook/natal-you-placement-complete-final/lilith/virgo/4"
+);
+const exactLilithScorpioFourth = rows.hookRows.find(
+  (row) => row.contentKey === "fallback-hook/natal-you-placement-complete-final/lilith/scorpio/4"
+);
 const expectedRenderedMoonHouseBody = expectedHouseBody?.replace(
   /^It's in your 6th house, meaning/u,
   "Your Moon is in your 6th house, meaning"
@@ -47,8 +89,23 @@ assert.ok(expectedSignBody, "Moon-in-Scorpio approved sign copy must exist.");
 assert.ok(expectedHouseBody, "Moon-in-6th-house approved house copy must exist.");
 assert.ok(expectedMercurySignBody, "Mercury-in-Pisces approved sign copy must exist.");
 assert.ok(expectedSunNinthHouseBody, "The incremental owner-approved Sun-in-9th-house copy must exist.");
+assert.ok(exactChironTaurusTwelfth?.body, "The owner-approved complete Chiron-in-Taurus-in-the-12th-house copy must exist.");
+assert.ok(exactChironAriesTwelfth?.body, "The owner-approved complete Chiron-in-Aries-in-the-12th-house copy must exist.");
+assert.ok(exactChironGeminiTwelfth?.body, "The owner-approved complete Chiron-in-Gemini-in-the-12th-house copy must exist.");
+assert.ok(exactChironCancerTwelfth?.body, "The owner-approved complete Chiron-in-Cancer-in-the-12th-house copy must exist.");
+assert.ok(exactChironLeoTwelfth?.body, "The owner-approved complete Chiron-in-Leo-in-the-12th-house copy must exist.");
+assert.ok(exactChironVirgoTwelfth?.body, "The owner-approved complete Chiron-in-Virgo-in-the-12th-house copy must exist.");
+assert.ok(exactChironLibraTwelfth?.body, "The owner-approved complete Chiron-in-Libra-in-the-12th-house copy must exist.");
+assert.ok(exactChironScorpioTwelfth?.body, "The owner-approved complete Chiron-in-Scorpio-in-the-12th-house copy must exist.");
+assert.ok(exactChironSagittariusTwelfth?.body, "The owner-approved complete Chiron-in-Sagittarius-in-the-12th-house copy must exist.");
+assert.ok(exactChironCapricornTwelfth?.body, "The owner-approved complete Chiron-in-Capricorn-in-the-12th-house copy must exist.");
+assert.ok(exactChironAquariusTwelfth?.body, "The owner-approved complete Chiron-in-Aquarius-in-the-12th-house copy must exist.");
+assert.ok(exactChironPiscesTwelfth?.body, "The owner-approved complete Chiron-in-Pisces-in-the-12th-house copy must exist.");
+assert.ok(exactLilithVirgoFourth?.body, "The owner-approved complete Lilith-in-Virgo-in-the-4th-house copy must exist.");
+assert.ok(exactLilithScorpioFourth?.body, "The owner-approved complete Lilith-in-Scorpio-in-the-4th-house copy must exist.");
 
 const placementReaderFamilies = [
+  "fallback-hook/natal-you-placement-complete-final/",
   "fallback-hook/natal-you-placement-sign-final/",
   "fallback-hook/natal-you-placement-house-final/",
   "fallback-hook/placement-sign-lived/",
@@ -63,8 +120,8 @@ const governedPlacementRows = rows.hookRows.filter((row) =>
 );
 const multiParagraphPlacementRows = governedPlacementRows.filter((row) => /\n{2,}/u.test(row.body ?? ""));
 
-assert.equal(governedPlacementRows.length, 153, "governed natal placement inventory changed; audit new rows before updating the gate");
-assert.equal(multiParagraphPlacementRows.length, 143, "multi-paragraph natal placement inventory changed; audit truncation exposure before updating the gate");
+assert.equal(governedPlacementRows.length, 167, "governed natal placement inventory changed; audit new rows before updating the gate");
+assert.equal(multiParagraphPlacementRows.length, 157, "multi-paragraph natal placement inventory changed; audit truncation exposure before updating the gate");
 for (const row of governedPlacementRows) {
   assert.equal(
     natalPlacementReaderSectionCopy(row.body, row.contentKey),
@@ -78,6 +135,54 @@ for (const [rendererName, renderPlacement] of [
   ["browser", renderBrowserPlacement],
   ["shipped dist", renderShippedPlacement]
 ]) {
+  for (const { sign, headline, row } of [
+    { sign: "taurus", headline: "Chiron in Taurus in the 12th house", row: exactChironTaurusTwelfth },
+    { sign: "aries", headline: "Chiron in Aries in the 12th house", row: exactChironAriesTwelfth },
+    { sign: "gemini", headline: "Chiron in Gemini in the 12th house", row: exactChironGeminiTwelfth },
+    { sign: "cancer", headline: "Chiron in Cancer in the 12th house", row: exactChironCancerTwelfth },
+    { sign: "leo", headline: "Chiron in Leo in the 12th house", row: exactChironLeoTwelfth },
+    { sign: "virgo", headline: "Chiron in Virgo in the 12th house", row: exactChironVirgoTwelfth },
+    { sign: "libra", headline: "Chiron in Libra in the 12th house", row: exactChironLibraTwelfth },
+    { sign: "scorpio", headline: "Chiron in Scorpio in the 12th house", row: exactChironScorpioTwelfth },
+    { sign: "sagittarius", headline: "Chiron in Sagittarius in the 12th house", row: exactChironSagittariusTwelfth },
+    { sign: "capricorn", headline: "Chiron in Capricorn in the 12th house", row: exactChironCapricornTwelfth },
+    { sign: "aquarius", headline: "Chiron in Aquarius in the 12th house", row: exactChironAquariusTwelfth },
+    { sign: "pisces", headline: "Chiron in Pisces in the 12th house", row: exactChironPiscesTwelfth }
+  ]) {
+    const exactChiron = renderPlacement({ planet: "chiron", sign, house: 12, voice: "you" });
+    assert.equal(exactChiron.headline, headline);
+    assert.deepEqual(exactChiron.parts, [row.body]);
+    assert.deepEqual(exactChiron.partKeys, [row.contentKey]);
+    assert.equal(exactChiron.templateKey, row.contentKey);
+    assert.equal(exactChiron.provenanceTier, "exact-owner-approved");
+
+    const exactChironFriend = renderPlacement({ planet: "chiron", sign, house: 12, voice: "Alex" });
+    assert.equal(exactChironFriend.parts.length, 2, `${rendererName} Friend placement must continue using reusable sign and house sources.`);
+    assert.notEqual(exactChironFriend.templateKey, row.contentKey);
+  }
+
+  const exactLilith = renderPlacement({ planet: "lilith", sign: "virgo", house: 4, voice: "you" });
+  assert.equal(exactLilith.headline, "Lilith in Virgo in the 4th house");
+  assert.deepEqual(exactLilith.parts, [exactLilithVirgoFourth.body]);
+  assert.deepEqual(exactLilith.partKeys, [exactLilithVirgoFourth.contentKey]);
+  assert.equal(exactLilith.templateKey, exactLilithVirgoFourth.contentKey);
+  assert.equal(exactLilith.provenanceTier, "exact-owner-approved");
+
+  const exactLilithFriend = renderPlacement({ planet: "lilith", sign: "virgo", house: 4, voice: "Alex" });
+  assert.equal(exactLilithFriend.parts.length, 2, `${rendererName} Friend placement must continue using reusable sign and house sources.`);
+  assert.notEqual(exactLilithFriend.templateKey, exactLilithVirgoFourth.contentKey);
+
+  const exactLilithScorpio = renderPlacement({ planet: "lilith", sign: "scorpio", house: 4, voice: "you" });
+  assert.equal(exactLilithScorpio.headline, "Lilith in Scorpio in the 4th house");
+  assert.deepEqual(exactLilithScorpio.parts, [exactLilithScorpioFourth.body]);
+  assert.deepEqual(exactLilithScorpio.partKeys, [exactLilithScorpioFourth.contentKey]);
+  assert.equal(exactLilithScorpio.templateKey, exactLilithScorpioFourth.contentKey);
+  assert.equal(exactLilithScorpio.provenanceTier, "exact-owner-approved");
+
+  const exactLilithScorpioFriend = renderPlacement({ planet: "lilith", sign: "scorpio", house: 4, voice: "Alex" });
+  assert.equal(exactLilithScorpioFriend.parts.length, 2, `${rendererName} Friend placement must continue using reusable sign and house sources.`);
+  assert.notEqual(exactLilithScorpioFriend.templateKey, exactLilithScorpioFourth.contentKey);
+
   const you = renderPlacement({ planet: "moon", sign: "scorpio", house: 6, voice: "you" });
   assert.deepEqual(
     you.parts,
