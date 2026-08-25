@@ -567,11 +567,11 @@ function recomposeReaderBundle() {
   const localCoreWithEmptyHouses = mergeReaderBundles(localCoreWithDeferred, localEmptyHouseReaderBundle);
   const localCoreWithRelationships = mergeReaderBundles(localCoreWithEmptyHouses, localRelationshipReaderBundle);
   const localCoreWithLunationBook = mergeReaderBundles(localCoreWithRelationships, localLunationBookReaderBundle);
-  const core = dashboardCoreReaderBundle
-    ? localLunationBookReaderBundle
-      ? mergeReaderBundles(localLunationBookReaderBundle, dashboardCoreReaderBundle)
-      : dashboardCoreReaderBundle
-    : localCoreWithLunationBook;
+  // The dashboard response is an override layer, not a complete replacement
+  // for the checked-in reader package. Replacing the local bundle here made
+  // approved deferred rows disappear whenever the CMS snapshot did not yet
+  // contain the same key (including exact natal sign + house passages).
+  const core = mergeReaderBundles(localCoreWithLunationBook, dashboardCoreReaderBundle);
   const placement = dashboardSkyPlacementReaderBundle ?? localSkyPlacementReaderBundle;
   activateReaderBundle(mergeReaderBundles(core, placement));
 }
@@ -766,17 +766,17 @@ export function installSkyPlacementFallbackArchitectureV3Bundle(
 }
 
 export function isDeferredFallbackArchitectureV3BundleLoaded() {
-  return Boolean(localDeferredReaderBundle || dashboardCoreReaderBundle);
+  return Boolean(localDeferredReaderBundle);
 }
 
 export async function loadDeferredFallbackArchitectureV3Bundle() {
-  if (localDeferredReaderBundle || dashboardCoreReaderBundle) {
+  if (localDeferredReaderBundle) {
     return false;
   }
 
   deferredFallbackBundlePromise ??= import("./fallbackArchitectureV3DeferredBundle")
     .then(({ deferredFallbackArchitectureV3Bundle }) => {
-      if (localDeferredReaderBundle || dashboardCoreReaderBundle) {
+      if (localDeferredReaderBundle) {
         return false;
       }
 

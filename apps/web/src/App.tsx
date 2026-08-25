@@ -13875,6 +13875,7 @@ export function App() {
                       personalTimingGeneratedStatus={personalTimingGeneratedStatus}
                       personalTimingStatus={personalTimingStatus}
                       personalTransitGeneratedContent={personalTransitGeneratedContent}
+                      fallbackArchitectureV3Version={fallbackArchitectureV3Version}
                       transitsDrawn={transitsDrawn}
                       selectedTransitId={selectedTransitId}
                       setSelectedTransitId={setSelectedTransitId}
@@ -16113,6 +16114,7 @@ function ProfileView({
   personalTimingGeneratedStatus,
   personalTimingStatus,
   personalTransitGeneratedContent,
+  fallbackArchitectureV3Version,
   transitsDrawn,
   selectedTransitId,
   setSelectedTransitId,
@@ -16136,6 +16138,7 @@ function ProfileView({
   personalTimingGeneratedStatus: PersonalTimingStatus;
   personalTimingStatus: PersonalTimingStatus;
   personalTransitGeneratedContent: GeneratedContentMap;
+  fallbackArchitectureV3Version: number;
   transitsDrawn: boolean;
   selectedTransitId: string;
   setSelectedTransitId: (id: string) => void;
@@ -16440,7 +16443,13 @@ function ProfileView({
       window.removeEventListener("popstate", syncPlacementRoute);
       window.removeEventListener("hashchange", syncPlacementRoute);
     };
-  }, [activePlacementRouteId, generatedContent, natalSky, routeableNatalPositions.map(natalPlacementRouteId).join("|")]);
+  }, [
+    activePlacementRouteId,
+    fallbackArchitectureV3Version,
+    generatedContent,
+    natalSky,
+    routeableNatalPositions.map(natalPlacementRouteId).join("|")
+  ]);
   const bigThreeRows = [
     <PlacementTableRow
       asButton={Boolean(natalSun)}
