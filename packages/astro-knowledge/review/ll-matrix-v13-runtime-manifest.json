@@ -38,7 +38,7 @@
   "invariants": {
     "existingApprovedRowsChanged": 0,
     "existingApprovedRowsSha256": "cef9eb86e536647fd32949431627a6d1c71454b164f3f6e6c521feb50ad5f683",
-    "readerPunctuationNormalizedExistingApprovedRowsSha256": "4594e22b18d4cd43122bac514184e027a6c40acedc2902d245be333f2f90e88f",
+    "readerPunctuationNormalizedExistingApprovedRowsSha256": "4ff6161ca8bad3e7fa9b1b0b2ee1c3741ea1b7e82d697c285628f30e7bed51aa",
     "snapshotRepin": "Container-only re-pin for v3-2026-08-11b after the owner-approved soft/Uranus revision changed exactly two approved daily rows; all 301 governed V13 rows remain byte-identical to the locked workbook projection.",
     "sameKeyRepairRecord": "packages/astro-knowledge/review/v13-duplicate-contentkey-repair-2026-08-11.json",
     "sourceExportSha256": "a85593bdfb90b136054768bfa9c3c4dbaabe5aee103f2ba371f2d42161c1cd03",
