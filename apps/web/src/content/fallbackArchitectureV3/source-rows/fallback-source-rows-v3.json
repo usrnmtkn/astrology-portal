@@ -11908,6 +11908,30 @@
    "distribution_lane": "serving"
   },
   {
+   "contentKey": "fallback-hook/natal-you-placement-complete-final/lilith/libra/3",
+   "content_role": "full_copy",
+   "grammar_frame": "complete_sentence",
+   "headline": "Lilith in Libra in the 3rd house",
+   "body": "Lilith in Libra in the 3rd house can make you especially sensitive to what happens when being understood depends on how gracefully you say something. You may have learned early that the same point was received differently depending on your tone, that disagreement was easier for other people to tolerate when you softened it, or that being liked could matter more than being accurately heard. That can make you unusually skilled at reading the conversation, choosing your words, and knowing how to de-escalate a difficult exchange, but it can also create real rage when someone ignores the substance of what you said and makes the entire issue about how you said it.\n\nSiblings, school, neighbors, and the environment you grew up in can make this even sharper. Maybe you were expected to be the diplomatic one between two people, learned to explain one side to the other, or watched the person who sounded calmer get treated as more reasonable even when they were not being fair. Over time, you may become very good at mediation and seeing both sides, while also learning to doubt your own position the moment somebody strongly disagrees with it. The harder pattern is realizing how often you have been asked to make your words easier for everyone else to hear while nobody was making the same effort to understand what you were actually saying.\n\nThe deeper shift is learning that disagreement does not mean you have to keep editing yourself until the other person is comfortable. You can say what you mean, correct the story when someone twists your words, and let a difficult conversation stay difficult without rushing to make it easier for everyone else.",
+   "reader_only": true,
+   "render_policy": "reader-only-exact-lived-v1",
+   "review_status": "approved",
+   "source_keys": [
+    "owner-authored/lilith-libra-3/2026-08-25"
+   ],
+   "approval": {
+    "approvalLevel": "exact_owner_approved",
+    "recordPath": "owner-authored/lilith-libra-3/2026-08-25",
+    "approvedAt": "2026-08-25"
+   },
+   "source_release": "owner-authored-natal-placement-complete-v1",
+   "runtime_family": "natal-you-placement-complete-final",
+   "runtime_key": "lilith|libra|3",
+   "governance": "owner-approved-natal-placement-complete-v1",
+   "owner_approved": true,
+   "distribution_lane": "serving"
+  },
+  {
    "contentKey": "fallback-hook/natal-you-placement-complete-final/lilith/taurus/3",
    "content_role": "full_copy",
    "grammar_frame": "complete_sentence",
