@@ -7,9 +7,9 @@ Index key: `planet|sign; *|* is globally eligible register evidence`
 ## Role counts
 
 - Meaning: **2224**
-- Register: **1757**
+- Register: **1758**
 - Scene: **415**
-- Argument: **1181**
+- Argument: **1180**
 - Phrase: **346**
 - Total entries: **5923** across **247** planet-sign keys
 
@@ -26,6 +26,7 @@ rows; knowledge-matrix scene rows. Governance precedence still applies within ea
 - `packages/astro-knowledge/voice/tldr-astro/satori-writer/surface-qualified-positive-exemplars-v2.json`
 - `data/writing/OWNER_APPROVED_EXAMPLES.jsonl`
 - `data/writing/owner-register-gold.json`
+- `data/writing/owner-supplied-structural-exemplars.json`
 - `data/writing/phrase-evidence-index/owner-phrase-evidence-v1.jsonl`
 - `tldr-astro-phrasebank/phrasebank/cc-sky-points-authored.json`
 - `packages/astro-knowledge/review/lilith-placements-v5/lilith-placements-v5-staged-rows.json`
@@ -77,6 +78,7 @@ None among the stores represented by the approved-example export.
 - `fallback-hook/house-cusp`
 - `fallback-hook/house-glossary`
 - `fallback-hook/house-meaning`
+- `fallback-hook/lunation-cycle-anchor`
 - `fallback-hook/lunation-higher-path`
 - `fallback-hook/lunation-matching-new-moon-anchor`
 - `fallback-hook/lunation-moment`
