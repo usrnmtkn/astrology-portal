@@ -217,6 +217,30 @@
       "distribution_lane": "serving"
     },
     {
+      "contentKey": "fallback-hook/natal-you-placement-complete-final/lilith/cancer/3",
+      "content_role": "full_copy",
+      "grammar_frame": "complete_sentence",
+      "headline": "Lilith in Cancer in the 3rd house",
+      "body": "Lilith in Cancer in the 3rd house can make you especially sensitive to the emotional weight behind words: the change in tone, the reply that feels colder than usual, the joke that lands like a criticism, or the conversation where somebody insists everything is fine while you can feel that it is not. You may have learned early that saying what hurt you could make you look too sensitive, that asking for reassurance invited eye rolls, or that your reaction became the problem instead of what was said in the first place. That can make you careful about what you reveal, but it can also create real rage when someone dismisses your feelings, uses something personal against you, or expects you to keep talking as though the conversation did not affect you.\n\nSiblings, school, neighbors, and the environment you grew up in can shape this strongly. Maybe teasing went further than anyone admitted, a sibling knew exactly which subject would get a reaction, or adults told you not to take things so personally when the words actually did change how safe or included you felt. Cancer remembers the emotional history of a conversation, which means you may still hear the old meaning underneath a familiar phrase long after everyone else has forgotten where it came from. The challenge is knowing when emotional memory is helping you recognize a pattern and when an old hurt is giving a new conversation more weight than it deserves.\n\nThe deeper shift is learning that sensitivity does not make your perception less credible, while also giving people the chance to tell you what they actually meant. You say when something landed badly instead of withdrawing and hoping they notice, ask the question before silence turns into a story about rejection, and become more careful about who gets access to the things you tell in confidence. Lilith in Cancer in the 3rd house becomes less about protecting yourself by saying less and more about having conversations where your feelings can be part of what is true without becoming the only truth in the room.",
+      "reader_only": true,
+      "render_policy": "reader-only-exact-lived-v1",
+      "review_status": "approved",
+      "source_keys": [
+        "owner-authored/lilith-cancer-3/2026-08-25"
+      ],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "owner-authored/lilith-cancer-3/2026-08-25",
+        "approvedAt": "2026-08-25"
+      },
+      "source_release": "owner-authored-natal-placement-complete-v1",
+      "runtime_family": "natal-you-placement-complete-final",
+      "runtime_key": "lilith|cancer|3",
+      "governance": "owner-approved-natal-placement-complete-v1",
+      "owner_approved": true,
+      "distribution_lane": "serving"
+    },
+    {
       "contentKey": "fallback-hook/natal-you-placement-complete-final/lilith/taurus/3",
       "content_role": "full_copy",
       "grammar_frame": "complete_sentence",
