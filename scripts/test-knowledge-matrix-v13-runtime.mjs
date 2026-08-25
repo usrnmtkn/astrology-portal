@@ -178,6 +178,8 @@ const postV13GovernedReleases = new Set([
   "ll-matrix-v13-incremental-owner-approval-2026-08-17",
   "natal-moon-final-rendered-v3",
   "natal-sun-square-ascendant-owner-approved-runtime",
+  "owner-authored-lilith-second-house-2026-08-25",
+  "owner-authored-lilith-first-house-2026-08-25",
 ]);
 const priorApprovedRows = sourceRows.hookRows.filter((row) => (
   row.source_release !== "ll-matrix-v13-owner-approved-runtime"
