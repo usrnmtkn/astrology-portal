@@ -32,12 +32,18 @@ unresolvedItems.forEach((item) => unresolvedRecordsByKey.set(item.contentKey, [.
 const unresolvedQueue = {
   ...unresolvedQueueSource,
   items: unresolvedItems,
-  issues: [...unresolvedRecordsByKey.values()].map((records) => ({
-    contentKey: records[0].contentKey,
-    surface: records[0].surface,
-    kind: records.some((item) => item.reason === "known-current-contract-failure") ? "source-repair" : "editorial-review",
-    records
-  }))
+  resolutionStoreReady: true,
+  issues: [...unresolvedRecordsByKey.values()].map((records, index) => {
+    const contentKey = records[0].contentKey;
+    return {
+      issueId: String(index).padStart(64, "0"),
+      contentKey,
+      surface: records[0].surface,
+      kind: records.some((item) => item.reason === "known-current-contract-failure") ? "source-repair" : "editorial-review",
+      records,
+      aiRequest: records.some((item) => item.reason === "known-current-contract-failure") ? `Repair ${contentKey}` : `Investigate ${contentKey}`
+    };
+  })
 };
 const unresolvedIssueCount = new Set(unresolvedQueue.items.map((item) => item.contentKey)).size;
 
@@ -462,6 +468,7 @@ async function seedAdminApi(
   page: Page,
   options: {
     onGeneratedContentWrite?: (write: { method: string; payload: Record<string, unknown> }) => void;
+    onResolutionWrite?: (payload: Record<string, unknown>) => void;
     initialSecret?: string;
     expectedSecret?: string;
     generatedRows?: Record<string, unknown>[];
@@ -543,6 +550,17 @@ async function seedAdminApi(
         status: 200,
         contentType: "application/json",
         body: JSON.stringify({ ok: true, report: unresolvedQueue })
+      });
+      return;
+    }
+
+    if (pathname.endsWith("/content-unresolved-resolutions")) {
+      const payload = route.request().postDataJSON() as Record<string, unknown>;
+      options.onResolutionWrite?.(payload);
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify({ ok: true, resolution: payload })
       });
       return;
     }
@@ -1643,6 +1661,7 @@ test.describe("content dashboard admin user flow case studies", () => {
   test("unresolved content shows the governed package inventory and links to Content Library", async ({ page }) => {
     const assertNoBrowserErrors = await expectNoBrowserErrors(page);
     const editableUnresolvedItem = unresolvedQueue.items.find((item) => item.reason === "review-status");
+    const missingUnresolvedItem = unresolvedQueue.items.find((item) => item.reason === "review-status" && item.contentKey !== editableUnresolvedItem?.contentKey);
     expect(editableUnresolvedItem).toBeTruthy();
     const editableUnresolvedRow = {
       ...generatedContentRows[0],
@@ -1662,6 +1681,7 @@ test.describe("content dashboard admin user flow case studies", () => {
 
     await expectAdminHeader(page, "Unresolved Content", "Admin / Publish / Unresolved content");
     await expect(page.getByRole("region", { name: "Unresolved content overview" })).toContainText("Resolve content holds");
+    await expect(page.getByRole("region", { name: "Unresolved content overview" })).toContainText("You approve wording. Send source problems to Codex, then refresh after deploy.");
     await expect(page.getByRole("region", { name: "Unresolved content records" })).toBeVisible();
     await expect(page.locator(".admin-unresolved-content-table tbody tr")).toHaveCount(unresolvedIssueCount);
 
@@ -1684,7 +1704,13 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(sourceRepairIssue).toContainText("Sky / Transits");
     await expect(sourceRepairIssue).toContainText("Source repair required");
     await expect(sourceRepairIssue.getByRole("button", { name: "Open exact row" })).toHaveCount(0);
-    await expect(sourceRepairIssue).toContainText("Give Codex the source record. Approval cannot fix this.");
+    await expect(sourceRepairIssue.getByRole("button", { name: "Copy repair request" })).toBeVisible();
+    await expect(sourceRepairIssue.getByRole("button", { name: "Record response" })).toBeVisible();
+
+    await page.getByLabel("Search unresolved content").fill(missingUnresolvedItem?.contentKey ?? "");
+    const missingIssue = page.locator(".admin-unresolved-content-table tbody tr").first();
+    await expect(missingIssue).toContainText("Editable row missing");
+    await expect(missingIssue.getByRole("button", { name: "Copy investigation" })).toBeVisible();
 
     await page.getByLabel("Search unresolved content").fill(editableUnresolvedItem?.contentKey ?? "");
     const editableIssue = page.locator(".admin-unresolved-content-table tbody tr").first();
@@ -1698,7 +1724,7 @@ test.describe("content dashboard admin user flow case studies", () => {
 
     await page.getByRole("navigation", { name: "Content operations" }).getByRole("button", { name: "Unresolved Content" }).click();
     await page.getByLabel("Search unresolved content").fill("not-a-real-content-key");
-    await expect(page.getByText("No unresolved issues match these filters.")).toBeVisible();
+    await expect(page.getByText("No matching issues.")).toBeVisible();
 
     const headingLevels = await page.getByRole("main").getByRole("heading").evaluateAll((headings) => headings.map((heading) => ({
       level: Number(heading.tagName.slice(1)),
@@ -1717,6 +1743,32 @@ test.describe("content dashboard admin user flow case studies", () => {
     expect(noHorizontalOverflow).toBe(true);
 
     await assertNoBrowserErrors();
+  });
+
+  test("unresolved content records a structured Codex response without editing content", async ({ page }) => {
+    let recorded: Record<string, unknown> | null = null;
+    await seedAdminApi(page, { onResolutionWrite: (payload) => { recorded = payload; } });
+    await expectAdminRouteLoads(page, "/admin/content#unresolved-content");
+    await page.getByLabel("Search unresolved content").fill("sun/virgo");
+    const issue = unresolvedQueue.issues.find((candidate) => candidate.contentKey === "fallback-hook/sky-sign-copy/sun/virgo");
+    expect(issue).toBeTruthy();
+    const response = {
+      schema: "content-studio-resolution/v1",
+      issueId: issue?.issueId,
+      contentKey: issue?.contentKey,
+      status: "diagnosis-only",
+      diagnosis: "The source contract is incomplete.",
+      proposedAction: "Repair the source contract in a scoped PR.",
+      filesInvolved: ["apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json"],
+      prUrl: null,
+      ownerDecisionRequired: true
+    };
+    page.on("dialog", async (dialog) => {
+      if (dialog.type() === "prompt") await dialog.accept(JSON.stringify(response));
+      else await dialog.dismiss();
+    });
+    await page.getByRole("button", { name: "Record response" }).click();
+    await expect.poll(() => recorded).toEqual(response);
   });
 
   test("review queue Edit opens the saved-row editor", async ({ page }) => {
