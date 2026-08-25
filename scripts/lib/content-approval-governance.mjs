@@ -1,6 +1,7 @@
 import crypto from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
+import { buildTemplateSlotPreflight, extractTemplateSlots } from "./content-template-slot-governance.mjs";
 
 export function sha256(value) {
   return crypto.createHash("sha256").update(value).digest("hex");
@@ -59,6 +60,32 @@ function promotionTargetPath(repoRoot, sourcePath) {
   return absolute;
 }
 
+function discoverFamilySupportedSlots(repoRoot, contentKey, textField) {
+  const sourceRoot = path.join(repoRoot, "apps/web/src/content/fallbackArchitectureV3/source-rows");
+  const segments = String(contentKey ?? "").split("/");
+  const familyPrefix = segments.length > 2 ? `${segments.slice(0, -1).join("/")}/` : null;
+  const supported = new Set();
+  function visit(value) {
+    if (Array.isArray(value)) {
+      value.forEach(visit);
+      return;
+    }
+    if (!value || typeof value !== "object") return;
+    const rowKey = String(value.contentKey ?? "");
+    if (
+      typeof value[textField] === "string"
+      && (rowKey === contentKey || (familyPrefix && rowKey.startsWith(familyPrefix)))
+    ) {
+      extractTemplateSlots(value[textField]).forEach((slot) => supported.add(slot));
+    }
+    Object.values(value).forEach(visit);
+  }
+  for (const fileName of fs.readdirSync(sourceRoot).filter((name) => name.endsWith(".json")).sort()) {
+    visit(JSON.parse(fs.readFileSync(path.join(sourceRoot, fileName), "utf8")));
+  }
+  return [...supported].sort();
+}
+
 export function buildContentPromotionPlan({ repoRoot, application, baseCommitSha = null }) {
   if (application?.schema !== "approval-application/v1") {
     throw new Error("PROMOTION_INVALID_APPLICATION: schema must be approval-application/v1.");
@@ -98,6 +125,16 @@ export function buildContentPromotionPlan({ repoRoot, application, baseCommitSha
     }
 
     const beforeText = row[textField];
+    const slotPreflight = buildTemplateSlotPreflight({
+      beforeText,
+      afterText: decision.text,
+      contentKey: row.contentKey,
+      textField,
+      slotContract: target.slotContract ?? null,
+      familySupportedSlots: /^fallback-hook\/daily-(?:headline|body)\//u.test(String(row.contentKey)) && textField === "body_they"
+        ? null
+        : discoverFamilySupportedSlots(repoRoot, row.contentKey, textField)
+    });
     row[textField] = decision.text;
     if (target.reviewStatus) row.review_status = target.reviewStatus;
     const approvalPayload = {
@@ -122,6 +159,7 @@ export function buildContentPromotionPlan({ repoRoot, application, baseCommitSha
       afterTextSha256: sha256(decision.text),
       beforeText,
       afterText: decision.text,
+      slotPreflight,
       reviewStatus: target.reviewStatus ?? row.review_status ?? null,
       approval: row.approval
     });
@@ -226,6 +264,26 @@ export function buildApprovalApplication(queue, approvalSet) {
       }
       if (target.reviewStatus && !["approved", "approved_reuse", "reviewed"].includes(target.reviewStatus)) {
         errors.push(`queue item ${item.id} promotion reviewStatus is not serving-eligible.`);
+      }
+      if (target.slotContract != null) {
+        const contract = target.slotContract;
+        for (const field of ["allowedSlots", "requiredSlots"]) {
+          if (contract[field] != null && (
+            !Array.isArray(contract[field])
+            || contract[field].some((slot) => typeof slot !== "string" || !/^[A-Za-z][A-Za-z0-9_.]*$/u.test(slot))
+            || new Set(contract[field]).size !== contract[field].length
+          )) {
+            errors.push(`queue item ${item.id} promotion slotContract.${field} must contain unique supported slot names.`);
+          }
+        }
+        if (contract.renderPersonFixtures != null && typeof contract.renderPersonFixtures !== "boolean") {
+          errors.push(`queue item ${item.id} promotion slotContract.renderPersonFixtures must be boolean.`);
+        }
+        if (Array.isArray(contract.allowedSlots) && Array.isArray(contract.requiredSlots)) {
+          const allowed = new Set(contract.allowedSlots);
+          const outside = contract.requiredSlots.filter((slot) => !allowed.has(slot));
+          if (outside.length > 0) errors.push(`queue item ${item.id} promotion requiredSlots are not allowed: ${outside.join(", ")}.`);
+        }
       }
     }
   }

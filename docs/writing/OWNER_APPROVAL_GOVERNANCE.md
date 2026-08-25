@@ -52,6 +52,15 @@ transaction deliberately supports only one source JSON file so a crash cannot le
 multi-file serving change partially applied. Generated bundles and integrity checks run after
 the source transaction through the normal isolated-worktree gate.
 
+Every promoted text field also receives a template-slot preflight. Existing slots are the
+default allowed and required contract: adding an unknown slot, removing a required slot, or
+leaving malformed braces fails before source is written. Added slots must already exist in the
+same fallback-hook family contract. A queue target may narrow that set with an exact
+`slotContract` when an approved change intentionally changes the contract. Friends Daily
+Glance `body_they` fields additionally use the runtime person-slot allowlist, observer-copy
+lint, and rendered she/her, he/him, and they/them fixtures. The dry-run receipt stores the
+before/after slot sets and fixture outputs so variable behavior is reviewable with the prose.
+
 The generated approved serving projection references
 `approved-serving-lineage-v1.json`. That governance-only file records each emitted partition
 row's hash, authoring source path and JSON pointer, declared source keys, review status, and

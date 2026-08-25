@@ -36,7 +36,16 @@
               "textField": { "type": "string", "minLength": 1 },
               "sourceTextSha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
               "reviewStatus": { "enum": ["approved", "approved_reuse", "reviewed"] },
-              "approvalRecordPath": { "type": "string", "minLength": 1 }
+              "approvalRecordPath": { "type": "string", "minLength": 1 },
+              "slotContract": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "allowedSlots": { "type": "array", "uniqueItems": true, "items": { "type": "string", "pattern": "^[A-Za-z][A-Za-z0-9_.]*$" } },
+                  "requiredSlots": { "type": "array", "uniqueItems": true, "items": { "type": "string", "pattern": "^[A-Za-z][A-Za-z0-9_.]*$" } },
+                  "renderPersonFixtures": { "type": "boolean" }
+                }
+              }
             }
           },
           "options": {
