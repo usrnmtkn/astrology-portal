@@ -83,6 +83,9 @@ const exactLilithVirgoFourth = rows.hookRows.find(
 const exactLilithAriesFourth = rows.hookRows.find(
   (row) => row.contentKey === "fallback-hook/natal-you-placement-complete-final/lilith/aries/4"
 );
+const exactLilithTaurusFourth = rows.hookRows.find(
+  (row) => row.contentKey === "fallback-hook/natal-you-placement-complete-final/lilith/taurus/4"
+);
 const exactLilithScorpioFourth = rows.hookRows.find(
   (row) => row.contentKey === "fallback-hook/natal-you-placement-complete-final/lilith/scorpio/4"
 );
@@ -109,6 +112,7 @@ assert.ok(exactChironCapricornTwelfth?.body, "The owner-approved complete Chiron
 assert.ok(exactChironAquariusTwelfth?.body, "The owner-approved complete Chiron-in-Aquarius-in-the-12th-house copy must exist.");
 assert.ok(exactChironPiscesTwelfth?.body, "The owner-approved complete Chiron-in-Pisces-in-the-12th-house copy must exist.");
 assert.ok(exactLilithAriesFourth?.body, "The owner-approved complete Lilith-in-Aries-in-the-4th-house copy must exist.");
+assert.ok(exactLilithTaurusFourth?.body, "The owner-approved complete Lilith-in-Taurus-in-the-4th-house copy must exist.");
 assert.ok(exactLilithVirgoFourth?.body, "The owner-approved complete Lilith-in-Virgo-in-the-4th-house copy must exist.");
 assert.ok(exactLilithScorpioFourth?.body, "The owner-approved complete Lilith-in-Scorpio-in-the-4th-house copy must exist.");
 
@@ -128,8 +132,8 @@ const governedPlacementRows = rows.hookRows.filter((row) =>
 );
 const multiParagraphPlacementRows = governedPlacementRows.filter((row) => /\n{2,}/u.test(row.body ?? ""));
 
-assert.equal(governedPlacementRows.length, 168, "governed natal placement inventory changed; audit new rows before updating the gate");
-assert.equal(multiParagraphPlacementRows.length, 158, "multi-paragraph natal placement inventory changed; audit truncation exposure before updating the gate");
+assert.equal(governedPlacementRows.length, 169, "governed natal placement inventory changed; audit new rows before updating the gate");
+assert.equal(multiParagraphPlacementRows.length, 159, "multi-paragraph natal placement inventory changed; audit truncation exposure before updating the gate");
 for (const row of governedPlacementRows) {
   assert.equal(
     natalPlacementReaderSectionCopy(row.body, row.contentKey),
@@ -190,6 +194,17 @@ for (const [rendererName, renderPlacement] of [
   const exactLilithAriesFriend = renderPlacement({ planet: "lilith", sign: "aries", house: 4, voice: "Alex" });
   assert.equal(exactLilithAriesFriend.parts.length, 2, `${rendererName} Friend placement must continue using reusable sign and house sources.`);
   assert.notEqual(exactLilithAriesFriend.templateKey, exactLilithAriesFourth.contentKey);
+
+  const exactLilithTaurus = renderPlacement({ planet: "lilith", sign: "taurus", house: 4, voice: "you" });
+  assert.equal(exactLilithTaurus.headline, "Lilith in Taurus in the 4th house");
+  assert.deepEqual(exactLilithTaurus.parts, [exactLilithTaurusFourth.body]);
+  assert.deepEqual(exactLilithTaurus.partKeys, [exactLilithTaurusFourth.contentKey]);
+  assert.equal(exactLilithTaurus.templateKey, exactLilithTaurusFourth.contentKey);
+  assert.equal(exactLilithTaurus.provenanceTier, "exact-owner-approved");
+
+  const exactLilithTaurusFriend = renderPlacement({ planet: "lilith", sign: "taurus", house: 4, voice: "Alex" });
+  assert.equal(exactLilithTaurusFriend.parts.length, 2, `${rendererName} Friend placement must continue using reusable sign and house sources.`);
+  assert.notEqual(exactLilithTaurusFriend.templateKey, exactLilithTaurusFourth.contentKey);
 
   const exactLilithScorpio = renderPlacement({ planet: "lilith", sign: "scorpio", house: 4, voice: "you" });
   assert.equal(exactLilithScorpio.headline, "Lilith in Scorpio in the 4th house");
