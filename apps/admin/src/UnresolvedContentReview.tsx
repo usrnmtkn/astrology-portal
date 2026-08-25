@@ -29,20 +29,29 @@ type UnresolvedContentReviewProps = {
 };
 
 export type UnresolvedContentIssue = {
+  issueId: string;
   contentKey: string;
   surface: string;
   kind: "source-repair" | "editorial-review";
   records: UnresolvedContentItem[];
   aiRequest: string;
+  resolution?: {
+    diagnosis: string;
+  } | null;
 };
+
+async function recordResolution(credential: string) {
+  const body = prompt("Paste the JSON returned by Codex.");
+  if (!body) return;
+  const response = await fetch("/api/admin/content-unresolved-resolutions", { method: "POST", headers: { "content-type": "application/json", ...adminCredentialHeaders(credential) }, body });
+  response.ok ? location.reload() : alert("Could not record response.");
+}
 
 export async function loadUnresolvedContentReport(
   credential: string,
   fetchImpl: typeof fetch = fetch
 ) {
-  const response = await fetchImpl("/api/admin/content-unresolved", {
-    headers: adminCredentialHeaders(credential)
-  });
+  const response = await fetchImpl("/api/admin/content-unresolved", { headers: adminCredentialHeaders(credential) });
   const payload = await response.json().catch(() => null) as { ok?: boolean; report?: UnresolvedContentReport; error?: string } | null;
   if (!payload?.ok || !payload.report) {
     throw new Error(payload?.error || "Unable to load unresolved content.");
@@ -73,7 +82,7 @@ export function UnresolvedContentReview({
       <section className="admin-content-toolbar" aria-label="Unresolved content overview">
         <div className="admin-content-toolbar-copy">
           <h2>Resolve content holds</h2>
-          <p>You approve wording. AI repairs source and import problems.</p>
+          <p>You approve wording. Send source problems to Codex, then refresh after deploy.</p>
         </div>
         <div className="admin-unresolved-total">
           <strong>{report ? issues.length : "…"}</strong>
@@ -109,13 +118,14 @@ export function UnresolvedContentReview({
                 <td data-label="What it means">
                   <span className={`ui-pill admin-status ${sourceRepair ? "status-error" : "status-draft"}`}>{sourceRepair ? "Source repair required" : missingRow ? "Editable row missing" : "Owner review required"}</span>
                   {sourceRepair && <small>Approval will not clear this hold.</small>}
+                  {issue.resolution && <small>Codex response: {issue.resolution.diagnosis}</small>}
                 </td>
                 <td data-label="Source records"><details><summary>{issue.records.length} record(s)</summary>{issue.records.map((record) => <code key={record.id}>{record.reviewStatus}: {record.sourcePath}{record.objectPath}</code>)}</details></td>
                 <td data-label="Next step">{!contentLibraryReady && !sourceRepair
                   ? <small>Checking…</small>
                   : canOpen
                     ? <button className="admin-edit-row-button" type="button" onClick={() => onFindInContentLibrary(issue.contentKey)}>Open exact row</button>
-                    : <button className="admin-edit-row-button" type="button" onClick={() => void navigator.clipboard.writeText(issue.aiRequest)}>{sourceRepair ? "Copy AI repair request" : "Copy AI investigation"}</button>}</td>
+                    : <div className="admin-unresolved-actions"><button className="admin-edit-row-button" type="button" onClick={() => void navigator.clipboard.writeText(issue.aiRequest)}>{sourceRepair ? "Copy repair request" : "Copy investigation"}</button><button className="admin-edit-row-button" type="button" onClick={() => void recordResolution(credential)}>Record response</button></div>}</td>
               </tr>;
             })}</tbody>
           </table>
