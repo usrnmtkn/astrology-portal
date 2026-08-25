@@ -217,6 +217,30 @@
       "distribution_lane": "serving"
     },
     {
+      "contentKey": "fallback-hook/natal-you-placement-complete-final/lilith/aries/3",
+      "content_role": "full_copy",
+      "grammar_frame": "complete_sentence",
+      "headline": "Lilith in Aries in the 3rd house",
+      "body": "Lilith in Aries in the 3rd house can make you especially sensitive to what happens when someone tries to control the conversation before you have had the chance to say what you actually think. You may have learned early that being direct made people defensive, that asking the blunt question created conflict, or that speaking before everyone else was ready could make you look impulsive or difficult. That can make you hesitate more than people realize, but it can also create real rage when someone interrupts you, talks over you, answers for you, or expects you to keep explaining a point you already made clearly.\n\nSiblings, school, neighbors, and the environment you grew up in can shape this strongly. Maybe you had to compete to be heard, learned that the loudest person usually controlled the conversation, or became the one who said what everyone else was thinking and then took the heat for saying it. Aries can make your mind fast and your reactions immediate, which means the challenge is not becoming less direct. It is learning the difference between speaking because something genuinely needs to be said and reacting because somebody made you feel dismissed, cornered, or underestimated.\n\nThe deeper shift is trusting that your voice does not need either permission or a fight before it counts. You say the thing before resentment turns it into something sharper, correct someone when they speak for you, and let yourself ask the uncomfortable question without turning every disagreement into a battle. Lilith in Aries in the 3rd house becomes less about proving that nobody can silence you and more about knowing you can speak plainly, hold your ground, and still choose which arguments actually deserve your fire.",
+      "reader_only": true,
+      "render_policy": "reader-only-exact-lived-v1",
+      "review_status": "approved",
+      "source_keys": [
+        "owner-authored/lilith-aries-3/2026-08-25"
+      ],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "owner-authored/lilith-aries-3/2026-08-25",
+        "approvedAt": "2026-08-25"
+      },
+      "source_release": "owner-authored-natal-placement-complete-v1",
+      "runtime_family": "natal-you-placement-complete-final",
+      "runtime_key": "lilith|aries|3",
+      "governance": "owner-approved-natal-placement-complete-v1",
+      "owner_approved": true,
+      "distribution_lane": "serving"
+    },
+    {
       "contentKey": "fallback-hook/natal-you-placement-complete-final/lilith/pisces/3",
       "content_role": "full_copy",
       "grammar_frame": "complete_sentence",
