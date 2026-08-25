@@ -1326,7 +1326,7 @@ test.describe("client-facing user flow case studies", () => {
           "Lunar eclipses are portals into your soul."
         );
         await expect(eclipseSection).toContainText(
-          "Not everything that changes now needs an immediate response."
+          "Release your need to be in control, allow for endings, mourn if needed, and allow yourself to flow with the current of whatever is unfolding, even if the destination is still unknown."
         );
 
         const viewportTypography = titleTypography.get(viewport.name) ?? [];
