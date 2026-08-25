@@ -18,16 +18,16 @@
     "runtimeFilter": "defense-in-depth"
   },
   "manifest": {
-    "contentHash": "d1897c00335f14bc5095eb5ae2801a10",
-    "keyManifestHash": "274008ed2beb9e11948e1c97b64ad6fd",
-    "keyCount": 9187
+    "contentHash": "5bfdfa31a109a4dd46287043c47a9901",
+    "keyManifestHash": "e1af12efb31bd7fb5b285301fd34faff",
+    "keyCount": 9188
   },
   "lineage": {
     "file": "approved-serving-lineage-v1.json",
-    "sha256": "54bd0f72cb73c9ae3b103487953b7474cccd8d0a15c9fb86b33a558d2b2c2fc8",
-    "count": 9751,
-    "emissionCount": 9827,
-    "exactSourceMatchCount": 8710
+    "sha256": "9e8ec32170c3c65ffe205bdcacce6ce6178fbb8baa9b2d95c70a1527f16f7333",
+    "count": 9752,
+    "emissionCount": 9828,
+    "exactSourceMatchCount": 8711
   },
   "partitions": {
     "skyCore": {
@@ -37,7 +37,7 @@
     },
     "deferredCore": {
       "file": "bundled-deferred-core-rows-v3.json",
-      "hookRows": 1562
+      "hookRows": 1563
     },
     "sharedPlacement": {
       "file": "bundled-shared-placement-rows-v3.json",
