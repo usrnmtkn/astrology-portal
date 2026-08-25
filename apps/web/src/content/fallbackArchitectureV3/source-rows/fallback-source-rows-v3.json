@@ -11566,7 +11566,7 @@
    12
   ],
   "placementRawDrafts": 135,
-  "hookRows": 19,
+  "hookRows": 20,
   "placementClauseRows": 16,
   "placementGerundRows": 39
  },
@@ -11759,6 +11759,30 @@
    "source_release": "owner-authored-natal-placement-complete-v1",
    "runtime_family": "natal-you-placement-complete-final",
    "runtime_key": "lilith|capricorn|4",
+   "governance": "owner-approved-natal-placement-complete-v1",
+   "owner_approved": true,
+   "distribution_lane": "serving"
+  },
+  {
+   "contentKey": "fallback-hook/natal-you-placement-complete-final/lilith/aquarius/4",
+   "content_role": "full_copy",
+   "grammar_frame": "complete_sentence",
+   "headline": "Lilith in Aquarius in the 4th house",
+   "body": "Lilith points to the part of you that knows exactly when compromise has turned into self-betrayal. In Aquarius, that moment often comes when belonging starts requiring you to become more predictable, agreeable, or familiar than you actually are. You may be perfectly capable of participating in a group, understanding its culture, and finding your place among very different people, but something changes when inclusion starts depending on you hiding the opinions, interests, choices, or parts of your identity that make other people uncomfortable.\n\nAquarius is highly sensitive to groupthink. You notice when a community celebrates individuality until somebody is different in a way the group did not approve in advance, when everyone claims to value open-mindedness but quietly punishes the person who questions the consensus, or when being accepted means knowing which opinions are safe to express. You may tolerate disagreement easily; what becomes much harder is realizing that the group only likes independent thinking when it arrives at the same conclusion they did.\n\nThat can create a complicated relationship with belonging. If you have been excluded, misunderstood, or treated like the odd one out before, you may learn to get ahead of rejection by needing less from groups altogether. Hyper-independence can feel powerful because nobody can leave you out of something you already decided you did not need. You build your own world, find your own people, or become comfortable moving between communities without depending too heavily on any of them. The harder part is admitting when you did want to be included and pretending otherwise was easier than feeling rejected.\n\nLilith in Aquarius can carry real rage around conditional acceptance. You may be welcomed because your ideas are interesting, your differences make the group look open-minded, or your perspective is useful, then discover that the same people become uncomfortable when your independence stops being decorative and starts affecting what you actually choose. The anger comes from realizing that people wanted the interesting version of you without having to deal with the inconvenient parts of your difference. Being celebrated for standing out means very little when the invitation disappears the moment you refuse to fall in line.\n\nThere can also be a strong instinct to detach once a group disappoints you. You see the hypocrisy, understand the social dynamics, and decide you are done investing emotionally. Detachment can protect you from social burnout, especially when you have spent too much time trying to find belonging in spaces that keep asking you to prove why you deserve it. But leaving first can become its own pattern if every disappointment becomes evidence that no group will ever have room for the full version of you. Sometimes the better question is not whether people will disappoint you. They will. It is who can handle difference without turning it into exile.\n\nWith Lilith in the 4th house, these patterns often begin inside the family system. You may have grown up feeling like the person who saw the family differently from everyone else, questioned traditions nobody else wanted examined, or imagined a life that did not fit the version your relatives understood. Maybe you became the black sheep, the unusual one, the person whose choices were always being explained to other relatives, or simply the one who learned that belonging to the family did not always mean feeling understood by it.\n\nFamilies can become very invested in sameness without calling it that. Everyone lives nearby. Everyone marries a certain kind of person. Everyone celebrates the same holidays, follows the same traditions, or understands loyalty in the same way. Your choices may create more reaction than they objectively deserve because they challenge an assumption nobody realized was an assumption until you stopped following it. Moving away, building a different kind of household, changing a tradition, or deciding that family does not automatically get unlimited access to your life can make you look rebellious when you are simply building something that fits you better.\n\nThat can create a painful push and pull between freedom and belonging. You may love your family and still feel more like yourself once you leave the room. You may dread returning to the version of yourself everyone expects you to become when you go home, or notice how quickly relatives bring up old stories that place you back in a role you outgrew years ago. Lilith in the 4th house becomes harder to ignore when keeping your place in the family starts requiring you to keep performing an identity that no longer belongs to you.\n\nThe deeper change is realizing that difference does not have to end in exile. You can stop defending every unconventional choice as though it were a case you need to win, let relatives misunderstand parts of your life without rearranging yourself to make them more comfortable, and build a home around the people, rhythms, and traditions that actually feel like yours. The rage becomes useful when it shows you where belonging has been offered only on the condition that you come back as somebody easier to recognize.\n\nOver time, Lilith in Aquarius becomes less interested in proving that you do not need anyone and more interested in finding the people with whom independence does not threaten connection.",
+   "reader_only": true,
+   "render_policy": "reader-only-exact-lived-v1",
+   "review_status": "approved",
+   "source_keys": [
+    "owner-authored/lilith-aquarius-4/2026-08-25"
+   ],
+   "approval": {
+    "approvalLevel": "exact_owner_approved",
+    "recordPath": "owner-authored/lilith-aquarius-4/2026-08-25",
+    "approvedAt": "2026-08-25"
+   },
+   "source_release": "owner-authored-natal-placement-complete-v1",
+   "runtime_family": "natal-you-placement-complete-final",
+   "runtime_key": "lilith|aquarius|4",
    "governance": "owner-approved-natal-placement-complete-v1",
    "owner_approved": true,
    "distribution_lane": "serving"
