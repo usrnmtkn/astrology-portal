@@ -156,6 +156,9 @@ const exactLilithScorpioThird = rows.hookRows.find(
 const exactLilithLibraThird = rows.hookRows.find(
   (row) => row.contentKey === "fallback-hook/natal-you-placement-complete-final/lilith/libra/3"
 );
+const exactLilithSagittariusThird = rows.hookRows.find(
+  (row) => row.contentKey === "fallback-hook/natal-you-placement-complete-final/lilith/sagittarius/3"
+);
 const exactLilithSagittariusFourth = rows.hookRows.find(
   (row) => row.contentKey === "fallback-hook/natal-you-placement-complete-final/lilith/sagittarius/4"
 );
@@ -230,6 +233,14 @@ assert.ok(exactLilithLeoThird?.body, "The owner-approved complete Lilith-in-Leo-
 assert.ok(exactLilithVirgoThird?.body, "The owner-approved complete Lilith-in-Virgo-in-the-3rd-house copy must exist.");
 assert.ok(exactLilithScorpioThird?.body, "The owner-approved complete Lilith-in-Scorpio-in-the-3rd-house copy must exist.");
 assert.ok(exactLilithLibraThird?.body, "The owner-approved complete Lilith-in-Libra-in-the-3rd-house copy must exist.");
+assert.ok(exactLilithSagittariusThird?.body, "The owner-approved complete Lilith-in-Sagittarius-in-the-3rd-house copy must exist.");
+assert.equal(exactLilithSagittariusThird.word_count, 315, "The protected Lilith-in-Sagittarius-in-the-3rd-house word count must remain exact.");
+assert.equal(exactLilithSagittariusThird.body.trim().split(/\s+/u).length, exactLilithSagittariusThird.word_count, "The protected Lilith-in-Sagittarius-in-the-3rd-house word-count metadata must match its body.");
+assert.equal(
+  crypto.createHash("sha256").update(exactLilithSagittariusThird.body).digest("hex"),
+  exactLilithSagittariusThird.exact_text_sha256,
+  "The protected Lilith-in-Sagittarius-in-the-3rd-house copy must remain byte-identical."
+);
 assert.ok(exactChironTaurusTwelfth?.body, "The owner-approved complete Chiron-in-Taurus-in-the-12th-house copy must exist.");
 assert.ok(exactChironAriesTwelfth?.body, "The owner-approved complete Chiron-in-Aries-in-the-12th-house copy must exist.");
 assert.ok(exactChironGeminiTwelfth?.body, "The owner-approved complete Chiron-in-Gemini-in-the-12th-house copy must exist.");
@@ -271,8 +282,8 @@ const governedPlacementRows = rows.hookRows.filter((row) =>
 );
 const multiParagraphPlacementRows = governedPlacementRows.filter((row) => /\n{2,}/u.test(row.body ?? ""));
 
-assert.equal(governedPlacementRows.length, 193, "governed natal placement inventory changed; audit new rows before updating the gate");
-assert.equal(multiParagraphPlacementRows.length, 182, "multi-paragraph natal placement inventory changed; audit truncation exposure before updating the gate");
+assert.equal(governedPlacementRows.length, 194, "governed natal placement inventory changed; audit new rows before updating the gate");
+assert.equal(multiParagraphPlacementRows.length, 183, "multi-paragraph natal placement inventory changed; audit truncation exposure before updating the gate");
 for (const row of governedPlacementRows) {
   assert.equal(
     natalPlacementReaderSectionCopy(row.body, row.contentKey),
@@ -624,6 +635,18 @@ for (const [rendererName, renderPlacement] of [
   assert.equal(exactLilithLibraThirdFriend.parts.length, 2, `${rendererName} Friend placement must continue using reusable sign and house sources.`);
   assert.notEqual(exactLilithLibraThirdFriend.templateKey, exactLilithLibraThird.contentKey);
   assert.doesNotMatch(exactLilithLibraThirdFriend.body, /\byou(?:r|rs|self)?\b/iu, `${rendererName} Friend placement must not leak second person.`);
+
+  const exactLilithSagittariusThirdPlacement = renderPlacement({ planet: "lilith", sign: "sagittarius", house: 3, voice: "you" });
+  assert.equal(exactLilithSagittariusThirdPlacement.headline, "Lilith in Sagittarius in the 3rd house");
+  assert.deepEqual(exactLilithSagittariusThirdPlacement.parts, [exactLilithSagittariusThird.body]);
+  assert.deepEqual(exactLilithSagittariusThirdPlacement.partKeys, [exactLilithSagittariusThird.contentKey]);
+  assert.equal(exactLilithSagittariusThirdPlacement.templateKey, exactLilithSagittariusThird.contentKey);
+  assert.equal(exactLilithSagittariusThirdPlacement.provenanceTier, "exact-owner-approved");
+
+  const exactLilithSagittariusThirdFriend = renderPlacement({ planet: "lilith", sign: "sagittarius", house: 3, voice: "Alex" });
+  assert.equal(exactLilithSagittariusThirdFriend.parts.length, 2, `${rendererName} Friend placement must continue using reusable sign and house sources.`);
+  assert.notEqual(exactLilithSagittariusThirdFriend.templateKey, exactLilithSagittariusThird.contentKey);
+  assert.doesNotMatch(exactLilithSagittariusThirdFriend.body, /\byou(?:r|rs|self)?\b/iu, `${rendererName} Friend placement must not leak second person.`);
 
   const exactLilithPiscesThirdPlacement = renderPlacement({ planet: "lilith", sign: "pisces", house: 3, voice: "you" });
   assert.equal(exactLilithPiscesThirdPlacement.headline, "Lilith in Pisces in the 3rd house");
