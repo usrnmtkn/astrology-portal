@@ -1,12 +1,12 @@
 {
   "schemaVersion": "content-inventory-v1",
   "generatedOn": "2026-08-10",
-  "sourceCommit": "5ad280a3a3ad7489cc13362c0691a38ec84b6763",
+  "sourceCommit": "bb47bc36e319fc6d81ed88b7d018507166a5f464",
   "authorityRule": "Only owner-approved and owner-locked records may serve or export.",
-  "contentFingerprint": "0ecf1d5c5f3135f11486db663c150ffedd743eb309a4f5730f2f124687b6e17d",
-  "recordCount": 10866,
+  "contentFingerprint": "6596a772099ad906e231e097f8c491a28757dd8e8cb08982604e17460df0dd21",
+  "recordCount": 10867,
   "statusCounts": {
-    "owner-approved": 10866
+    "owner-approved": 10867
   },
   "familyCounts": {
     "approved/calendar-weekly-overview": 1,
@@ -109,7 +109,7 @@
     "sky": 26,
     "sky-article/saturn": 2,
     "sky-aspect": 112,
-    "sky-placement": 821,
+    "sky-placement": 822,
     "sky.ingress.jupiter.leo": 1,
     "sky.retrograde.venus.scorpio.retrograde_passage": 1,
     "sky.station.chiron.taurus.retrograde": 1,
@@ -187075,6 +187075,39 @@
         ],
         "signs": [
           "taurus"
+        ],
+        "aspects": [],
+        "events": [],
+        "houses": []
+      }
+    },
+    {
+      "contentKey": "fallback-hook/sky-sign-copy/sun/virgo",
+      "contentFamily": "sky-placement",
+      "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/sky-placement-owner-approved-fallbacks-v1.json",
+      "runtimeBucket": "hook",
+      "status": "owner-approved",
+      "sourceStatus": "approved",
+      "provenance": "source-archive",
+      "sourceAuthor": "composed",
+      "approvalRecord": "packages/astro-knowledge/review/sun-virgo-spine-rewrite-v1/OWNER-APPROVAL-2026-08-27.json",
+      "approvalVersionDate": "2026-08-27",
+      "contentHash": "9a6bc198562314e328e022781650a88e375c7f44f3f58887e7a3079ede22a281",
+      "wording": {
+        "body_you": "After moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, the Sun enters Virgo on {{entryDate}}, and the difference between how something is supposed to work and how it actually works stops being easy to ignore. The Sun governs identity, vitality, and who you are underneath the roles you perform. Virgo is not tidiness. Virgo is the standard: the part of you that checks the invoice against the contract, notices the schedule needs nine hours in an eight-hour day, and reads the instructions everyone else skipped. While the Sun is here, being the one who notices can start to feel like who you are. That holds up until noticing becomes the job.\n\nCatching a mistake is useful, and useful gets remembered. Once you are the person who spots the error, the errors start arriving addressed to you. Drafts show up in your inbox to be read before they go out. A colleague stops checking their own numbers because you will catch it anyway. You may be working a second job nobody named, assembled from other people's near misses, and the reward is that nobody else has to think about it. The corrections still land on somebody, and that somebody starts to brace when your name appears on the message.\n\nThe Sun moved through Virgo from {{previousResidencyEntryDateWithYear}} to {{previousResidencyExitDateWithYear}}. If you were the one checking then, you probably still are, and the list is longer now.\n\nWatch what a small repair does. A cabinet door hangs crooked, so you take it off to fix the hinge, and with the door off you can see the frame is out of square, and once you are looking at the frame you notice the paint. Two hours later the door is on the floor and the kitchen is worse than when you started. A document does the same thing. You open it to fix one line, rewrite the section, find that the section above no longer matches, and send at midnight a version better than the four o'clock one in ways nobody will notice or pay for.\n\nIt shows up again in help you turn down. Someone offers to take a task, you explain how you do it, they do it their way, and you redo it once they have gone. They stop offering. You never asked them to stop. You made offering pointless.\n\nLeave one thing at good enough this month and see who complains. Name the hour a task should take before you start, then stop when the hour is up. Let someone else's version ship. Then watch what actually breaks, and who besides you can tell.\n\nBefore {{exitDate}}, the work will be better than it needed to be. You may be the only person who can tell.",
+        "opening": "After moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, the Sun enters Virgo on {{entryDate}}, and the difference between how something is supposed to work and how it actually works stops being easy to ignore. The Sun governs identity, vitality, and who you are underneath the roles you perform. Virgo is not tidiness. Virgo is the standard: the part of you that checks the invoice against the contract, notices the schedule needs nine hours in an eight-hour day, and reads the instructions everyone else skipped. While the Sun is here, being the one who notices can start to feel like who you are. That holds up until noticing becomes the job.",
+        "tension": "Catching a mistake is useful, and useful gets remembered. Once you are the person who spots the error, the errors start arriving addressed to you. Drafts show up in your inbox to be read before they go out. A colleague stops checking their own numbers because you will catch it anyway. You may be working a second job nobody named, assembled from other people's near misses, and the reward is that nobody else has to think about it. The corrections still land on somebody, and that somebody starts to brace when your name appears on the message.",
+        "development": "The Sun moved through Virgo from {{previousResidencyEntryDateWithYear}} to {{previousResidencyExitDateWithYear}}. If you were the one checking then, you probably still are, and the list is longer now.\n\nWatch what a small repair does. A cabinet door hangs crooked, so you take it off to fix the hinge, and with the door off you can see the frame is out of square, and once you are looking at the frame you notice the paint. Two hours later the door is on the floor and the kitchen is worse than when you started. A document does the same thing. You open it to fix one line, rewrite the section, find that the section above no longer matches, and send at midnight a version better than the four o'clock one in ways nobody will notice or pay for.\n\nIt shows up again in help you turn down. Someone offers to take a task, you explain how you do it, they do it their way, and you redo it once they have gone. They stop offering. You never asked them to stop. You made offering pointless.\n\nLeave one thing at good enough this month and see who complains. Name the hour a task should take before you start, then stop when the hour is up. Let someone else's version ship. Then watch what actually breaks, and who besides you can tell.",
+        "close": "Before {{exitDate}}, the work will be better than it needed to be. You may be the only person who can tell.",
+        "fact_line": "{{entryDate}} to {{exitDate}}",
+        "aspect_insert": "{{aspectInsert}}"
+      },
+      "astrology": {
+        "objects": [
+          "sun"
+        ],
+        "signs": [
+          "virgo"
         ],
         "aspects": [],
         "events": [],

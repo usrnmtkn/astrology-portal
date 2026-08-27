@@ -172,7 +172,7 @@ const counts = {
   sourceMaterial: sourceRows.fallbackSourceRows.length
 };
 
-assert.equal(PACKAGE_VERSION, "v3-2026-08-25c");
+assert.equal(PACKAGE_VERSION, "v3-2026-08-27a");
 assert.ok(counts.authoredCards > 0, "Package must include authored transit/synastry cards.");
 assert.ok(counts.fallbackHooks > 0, "Package must include fallback hooks.");
 assert.ok(counts.vocabulary > 0, "Package must include vocabulary rows.");
@@ -191,8 +191,8 @@ assert.deepEqual(
   ["authored/sky-lunation-macro/new-moon/aquarius"],
   "Only the explicitly staged Aquarius New Moon article may stay review-gated."
 );
-assert.equal(needsReviewHooks.length, 93, "The reconciled package must preserve all 93 explicitly staged, non-serving hooks.");
-assert.equal(needsReviewRows.length, 108, "The primary package must retain its 108 staged authored, hook, and template rows; interim overrides are gated separately.");
+assert.equal(needsReviewHooks.length, 92, "The reconciled package must preserve all 92 explicitly staged, non-serving hooks after the Sun-in-Virgo duplicate is removed.");
+assert.equal(needsReviewRows.length, 107, "The primary package must retain its 107 staged authored, hook, and template rows; interim overrides are gated separately.");
 
 const friendVoiceRows = [
   ...transitRows.authoredCards,

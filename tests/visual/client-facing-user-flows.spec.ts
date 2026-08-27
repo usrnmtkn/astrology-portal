@@ -3086,6 +3086,20 @@ test.describe("client-facing user flow case studies", () => {
     await assertNoClientErrors();
   });
 
+  test("Sun in Virgo detail serves the exact owner-approved source repair", async ({ page }) => {
+    const assertNoClientErrors = await expectNoClientErrors(page);
+
+    await seedClientState(page, { now: "2026-08-27T16:00:00.000Z" });
+    await expectClientRouteLoads(page, "/#sky/placement/sun");
+
+    const article = page.locator(".sky-detail-article");
+    await expect(article).toBeVisible();
+    await expect(article).toContainText("Virgo is not tidiness. Virgo is the standard");
+    await expect(article).toContainText("You may be the only person who can tell.");
+    await expectNoDuplicateArticleHeadings(page, "Sun in Virgo placement detail");
+    await assertNoClientErrors();
+  });
+
   test("content hydration does not downgrade reader-facing surfaces to stale fallback copy", async ({ page }) => {
     test.setTimeout(60_000);
     const assertNoClientErrors = await expectNoClientErrors(page);

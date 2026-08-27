@@ -1,42 +1,11 @@
 {
   "schema": "tldrastro-content-unresolved-queue/v1",
   "generatedFrom": "apps/web/src/content/fallbackArchitectureV3/source-rows",
-  "count": 215,
+  "count": 212,
   "reasonCounts": {
-    "known-current-contract-failure": 3,
     "review-status": 212
   },
   "items": [
-    {
-      "id": "unresolved-9e1dd33031515bd6",
-      "contentKey": "fallback-hook/sky-sign-copy/sun/virgo",
-      "contentRole": "fallback_hook",
-      "reviewStatus": "needs_review",
-      "reason": "known-current-contract-failure",
-      "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
-      "objectPath": "/hookRows/3507",
-      "sourceSha256": "908392cb2f30aaf1151b6627fc3f9c4f074b2777c158b2cc751a338b7bf8fcd7"
-    },
-    {
-      "id": "unresolved-033ad88748b633a7",
-      "contentKey": "fallback-hook/sky-sign-copy/sun/virgo",
-      "contentRole": "fallback_hook",
-      "reviewStatus": "approved",
-      "reason": "known-current-contract-failure",
-      "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/sky-placement-owner-approved-fallbacks-v1.json",
-      "objectPath": "/rows/37",
-      "sourceSha256": "7543764ab633d2de9aa1158aba0feb5ea7dca3d14e366f993995c01c26854cc4"
-    },
-    {
-      "id": "unresolved-d9c4a3f9aae5379c",
-      "contentKey": "fallback-hook/sky-sign-copy/sun/virgo",
-      "contentRole": "fallback_hook",
-      "reviewStatus": "superseded",
-      "reason": "known-current-contract-failure",
-      "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/sky-sign-copy-sun-v1.json",
-      "objectPath": "/superseded_rows/5",
-      "sourceSha256": "c4dc52f8f3dee22f80e46cd58d56e959093495b48f98405ac43b81a59dd22d64"
-    },
     {
       "id": "unresolved-701f69b38087a6a6",
       "contentKey": "authored/book-ritual-and-the-moon/lunation-horoscope/eclipse-lunar/pisces/rising-aquarius/house-2",
