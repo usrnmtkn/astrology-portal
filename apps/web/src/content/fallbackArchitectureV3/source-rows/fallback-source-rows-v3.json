@@ -60155,18 +60155,6 @@
    "review_status": "needs_review"
   },
   {
-   "note": "Sky article planet-in-sign modules 4-6 plus the sign-specific close.",
-   "body_you": "The Sun in Virgo turns the light on how everything actually works. This can look like: the closet finally sorted, the appointment booked after a year of meaning to, the spreadsheet that reveals where the money goes, the coworker who quietly fixes what three meetings could not.\n\nThe useful version is repair. Virgo light finds the loose screw before it becomes the broken shelf, and the sign's real gift is service without an announcement: help that shows up as a finished task.\n\nThe distortion is correction as a personality. The diet becomes punishment, the feedback becomes a hobby, and the flaw in the work becomes the only visible part of it.\n\nFix one system you rely on daily. Small working order, repeated, carries more than one grand overhaul.",
-   "body_they": "The Sun in Virgo turns the light on how everything actually works. This can look like: the closet finally sorted, the appointment booked after a year of meaning to, the spreadsheet that reveals where the money goes, the coworker who quietly fixes what three meetings could not.\n\nThe useful version is repair. Virgo light finds the loose screw before it becomes the broken shelf, and the sign's real gift is service without an announcement: help that shows up as a finished task.\n\nThe distortion is correction as a personality. The diet becomes punishment, the feedback becomes a hobby, and the flaw in the work becomes the only visible part of it.\n\nFix one system you rely on daily. Small working order, repeated, carries more than one grand overhaul.",
-   "contentKey": "fallback-hook/sky-sign-copy/sun/virgo",
-   "source_keys": [
-    "TLDR-Sky-Sign-Copy-Sun-Batch-REVIEW.md"
-   ],
-   "content_role": "fallback_hook",
-   "grammar_frame": "complete_sentence",
-   "review_status": "needs_review"
-  },
-  {
    "contentKey": "fallback-hook/natal-aspect-lived/lilith/conjunction/sun",
    "content_role": "fallback_hook",
    "grammar_frame": "complete_sentence",

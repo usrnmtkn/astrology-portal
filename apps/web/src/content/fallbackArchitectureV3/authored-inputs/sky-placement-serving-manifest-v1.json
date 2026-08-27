@@ -272,6 +272,14 @@
           "approved_at": "2026-08-14",
           "source": "packages/astro-knowledge/review/venus-libra-owner-approved-v1/OWNER-APPROVAL-2026-08-14.md",
           "approved_render_sha256": "2306bbd9d80e99c9dc1c1939c0c82ca962263b3bdf0e778d2c46085352b39d8e"
+        },
+        {
+          "contentKey": "fallback-hook/sky-sign-copy/sun/virgo",
+          "statement": "I approve the exact Sun in Virgo replacement identified by SHA-256 b71f6fd51aef49409624ae408b315c237176ef78f9328ee60648e2e95c72b28e and authorize it to replace the held source in the next fallback-package deployment.",
+          "approved_at": "2026-08-27",
+          "source": "packages/astro-knowledge/review/sun-virgo-spine-rewrite-v1/OWNER-APPROVAL-2026-08-27.json",
+          "approved_payload_sha256": "b71f6fd51aef49409624ae408b315c237176ef78f9328ee60648e2e95c72b28e",
+          "payload_hash_algorithm": "sha256(JSON.stringify({ article, body }))"
         }
       ]
     }
