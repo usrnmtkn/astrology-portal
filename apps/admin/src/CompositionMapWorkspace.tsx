@@ -1,4 +1,4 @@
-import { BookOpenText, Database, FileText, Flag, Search, Sparkles, X } from "lucide-react";
+import { Flag, Search, X } from "lucide-react";
 import { useMemo, useState, type ReactNode } from "react";
 import { buildCompositionMap, type CompositionMapRow } from "./compositionMap";
 
@@ -68,7 +68,7 @@ export default function CompositionMapWorkspace({ editor, onEditRow, rows }: Pro
         <aside className="admin-composition-template-list" aria-label="Composition templates">
           <header>
             <div><p className="admin-eyebrow">Choose a template</p><strong>{filtered.length} of {map.length}</strong></div>
-            <small>Choose one to read its representative surface.</small>
+            <small>Choose one to read its surface.</small>
             <div className="admin-composition-template-tools">
               <span className="admin-composition-search-shell">
                 <Search size={15} aria-hidden="true" />
@@ -85,7 +85,6 @@ export default function CompositionMapWorkspace({ editor, onEditRow, rows }: Pro
                   className={`admin-composition-issues-filter ${issuesOnly ? "active" : ""}`}
                   aria-label="Show only templates that need IA review"
                   aria-pressed={issuesOnly}
-                  title="Show only templates that need IA review"
                   onClick={() => setIssuesOnly((current) => !current)}
                 >
                   <Flag size={16} aria-hidden="true" /> Review
@@ -133,7 +132,7 @@ export default function CompositionMapWorkspace({ editor, onEditRow, rows }: Pro
                   <p>{selected.description}</p>
                 </div>
                 <button type="button" className="admin-primary-button" onClick={() => onEditRow(selected.row)}>
-                  <Sparkles size={16} aria-hidden="true" /> Edit main template
+                  Edit main template
                 </button>
               </header>
 
@@ -162,7 +161,7 @@ export default function CompositionMapWorkspace({ editor, onEditRow, rows }: Pro
                     <div>
                       <p className="admin-eyebrow">Representative surface preview</p>
                       <h3>What the reader sees</h3>
-                      <p>Sample chart facts and documented slot examples are used below. When a slot has one canonical source, its exact saved wording is shown. This is a writing preview, not a live chart reading.</p>
+                      <p>Example chart facts are used below. Exact wording appears for a single canonical source. This is not a live chart reading.</p>
                     </div>
                     <span className="ui-pill admin-status status-reviewed">Example data</span>
                   </header>
@@ -203,7 +202,6 @@ export default function CompositionMapWorkspace({ editor, onEditRow, rows }: Pro
                       <div className="admin-composition-preview-sources">
                         {selected.preview.sources.map((source) => (
                           <button type="button" key={source.row.id} onClick={() => onEditRow(source.row)}>
-                            {source.kind === "phrase" ? <BookOpenText size={16} aria-hidden="true" /> : <FileText size={16} aria-hidden="true" />}
                             <span><small>{source.kind === "phrase" ? "Phrase" : "Hook"}</small><strong>{source.label}</strong></span>
                             <span>Edit source</span>
                           </button>
@@ -227,7 +225,7 @@ export default function CompositionMapWorkspace({ editor, onEditRow, rows }: Pro
                 <section className="admin-composition-template-workbench" aria-label="Main template">
                   <header>
                     <div><p className="admin-eyebrow">Main template</p><h3>Structure and fixed wording</h3><p>This is the template the resolver fills. Tokens in braces are supplied by saved sources or calculated facts.</p><code>{selected.row.content_key}</code></div>
-                    <button type="button" onClick={() => onEditRow(selected.row)}><Sparkles size={16} aria-hidden="true" /> Edit template</button>
+                    <button type="button" onClick={() => onEditRow(selected.row)}>Edit template</button>
                   </header>
                   <div className="admin-composition-template-fields">
                     {selected.preview.fields.map((field) => (
@@ -270,14 +268,12 @@ export default function CompositionMapWorkspace({ editor, onEditRow, rows }: Pro
 
                     {slot.sourceKind === "runtime" ? (
                       <div className="admin-composition-runtime-source">
-                        <Database size={16} aria-hidden="true" />
                         <span><strong>Provided by the app</strong><small>Read-only · {slot.source}</small></span>
                       </div>
                     ) : slot.sources.length > 0 ? (
                       <div className="admin-composition-sources" aria-label={`Saved sources for ${slot.label}`}>
                         {slot.sources.map((source) => (
                           <button type="button" key={source.row.id} onClick={() => onEditRow(source.row)}>
-                            {source.kind === "phrase" ? <BookOpenText size={16} aria-hidden="true" /> : <FileText size={16} aria-hidden="true" />}
                             <span><small>{source.kind === "phrase" ? "Phrase" : "Hook"}</small><strong>{source.label}</strong><code>{source.row.content_key}</code></span>
                             <span>Open editor</span>
                           </button>
