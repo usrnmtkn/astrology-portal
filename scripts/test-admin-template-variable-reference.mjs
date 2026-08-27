@@ -38,7 +38,17 @@ const sourceRows = [
   { id: "leo-adverb", content_key: "fallback-vocab/sign-adverb/leo" },
   { id: "jupiter-aries", content_key: "fallback-hook/placement-sentence/jupiter/aries" },
   { id: "jupiter-leo", content_key: "fallback-hook/placement-sentence/jupiter/leo" },
-  { id: "mars-leo", content_key: "fallback-hook/placement-sentence/mars/leo" }
+  { id: "mars-leo", content_key: "fallback-hook/placement-sentence/mars/leo" },
+  { id: "placement-gerund", content_key: "fallback-vocab/placement-gerund/jupiter/leo/0" },
+  { id: "compat-domain", content_key: "fallback-hook/compat-domain/venus" },
+  { id: "transit-type", content_key: "fallback-hook/transit-aspect-type/square" },
+  { id: "transit-effect", content_key: "fallback-hook/transit-effect-hard/saturn/mars" },
+  { id: "retro-meaning", content_key: "fallback-hook/transit-retro/mercury" },
+  { id: "sky-sign-copy", content_key: "fallback-hook/sky-sign-copy/jupiter/leo" },
+  { id: "sky-window", content_key: "fallback-hook/sky-placement/jupiter" },
+  { id: "sky-aspect", content_key: "fallback-hook/sky-aspect-exact/jupiter/trine/saturn" },
+  { id: "sky-planet-frame", content_key: "fallback-hook/sky-placement-frame/jupiter" },
+  { id: "sky-sign-lore", content_key: "fallback-hook/sky-placement-lore/leo" }
 ];
 const planetVerbReference = references.find((reference) => reference.name === "planetVerb");
 assert.ok(planetVerbReference);
@@ -56,6 +66,26 @@ assert.deepEqual(
 const runtimeReference = references.find((reference) => reference.name === "planetTitle");
 assert.ok(runtimeReference);
 assert.deepEqual(templateVariableSourceCandidates(runtimeReference, sourceRows, "fallback-template/natal.planet-in-sign/sun"), []);
+
+const mappedSourceSlots = {
+  placementGerundText: "placement-gerund",
+  compatDomain: "compat-domain",
+  transitTypeLine: "transit-type",
+  transitEffectLine: "transit-effect",
+  retroMeaning: "retro-meaning",
+  signCopy: "sky-sign-copy",
+  windowFrame: "sky-window",
+  currentAspects: "sky-aspect",
+  planetFrame: "sky-planet-frame",
+  signLore: "sky-sign-lore"
+};
+for (const [slot, expectedId] of Object.entries(mappedSourceSlots)) {
+  const reference = templateVariableReferences({ body: `{{${slot}}}` })[0];
+  assert.ok(
+    templateVariableSourceCandidates(reference, sourceRows, "fallback-template/audit").some((row) => row.id === expectedId),
+    `${slot} should link to its canonical saved-source namespace.`
+  );
+}
 
 const unknownReference = templateVariableReferences({ body: "Visible from {{customTransitDate}}." })[0];
 assert.equal(unknownReference.name, "customTransitDate");

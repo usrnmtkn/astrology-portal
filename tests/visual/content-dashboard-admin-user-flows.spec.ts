@@ -55,7 +55,7 @@ const adminPages = [
   { nav: "Articles", title: "Articles", breadcrumb: "Admin / Write / Articles", hash: "articles" },
   { nav: "Compatibility", title: "Compatibility", breadcrumb: "Admin / Write / Compatibility", hash: "compatibility" },
   { nav: "Composite Review", title: "Composite Review", breadcrumb: "Admin / Write / Composite review", hash: "composite-review" },
-  { nav: "Templates", title: "Templates", breadcrumb: "Admin / Composition / Templates", hash: "templates" },
+  { nav: "Composition", title: "Composition Map", breadcrumb: "Admin / Composition / Map", hash: "composition-map" },
   { nav: "Aspect Patterns", title: "Aspect Patterns", breadcrumb: "Admin / Language System / Aspect Patterns", hash: "content/aspect-patterns" }
 ];
 
@@ -2016,6 +2016,14 @@ test.describe("content dashboard admin user flow case studies", () => {
       await expectAdminRouteLoads(page, `/admin/content?qaCompositionSurface=${deepLinkLoadIndex++}${hash}`);
     };
 
+    await openAdminDeepLink("#composition-map");
+    await expectAdminHeader(page, "Composition Map", "Admin / Composition / Map");
+    await expect(page.getByRole("heading", { name: "From destination to editable source" })).toBeVisible();
+    await expect(page.getByRole("complementary", { name: "Composition templates" })).toContainText("Friends & relationships");
+    await expect(page.getByRole("region", { name: "Selected template composition" }).getByRole("heading", { name: "Planet card" })).toBeVisible();
+    await expect(page.getByRole("region", { name: "Template slots" })).toContainText("Reader Sign");
+    await expect(page.getByRole("region", { name: "Template slots" })).toContainText("Provided by the app");
+
     await openAdminDeepLink("#templates");
     await expectAdminHeader(page, "Templates", "Admin / Composition / Templates");
     await expect(page.getByRole("heading", { name: "Reader copy templates" })).toBeVisible();
@@ -2042,6 +2050,63 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expectAdminHeader(page, "Surface Map", "Admin / Composition / Surface map");
     await expect(page.getByText(/reader surface directory|mapped surfaces/i).first()).toBeVisible();
 
+    await assertNoBrowserErrors();
+  });
+
+  test("composition map opens canonical templates and saved hook sources for editing", async ({ page }) => {
+    const assertNoBrowserErrors = await expectNoBrowserErrors(page);
+    const templateSeed = generatedContentRows.find((row) => row.content_key === "slot-template/compatibility/planet-card")!;
+    const hookSeed = generatedContentRows.find((row) => row.content_key === "fallback-hook/friends.compatibility.planet-card")!;
+    const templateRow = {
+      ...templateSeed,
+      id: "qa-composition-map-template",
+      content_key: "slot-template/compatibility/closing-card",
+      headline: "Compatibility closing card template",
+      body: "{{readerSign}} and {{otherSign}} can return to this: {{closingLine}}",
+      source_snapshot: { ...templateSeed.source_snapshot, contentFamily: "friends.compatibility.closing-card" }
+    };
+    const hookRow = {
+      ...hookSeed,
+      id: "qa-composition-map-hook",
+      content_key: "fallback-hook/compatibility-closing/shared",
+      headline: "Shared compatibility closing",
+      body: "The connection works best when both people say what they need directly."
+    };
+    await seedAdminApi(page, { generatedRows: [templateRow, hookRow] });
+    await expectAdminRouteLoads(page, "/admin/content#composition-map");
+    const compositionNotification = page.getByRole("button", { name: "Dismiss notification" });
+    if (await compositionNotification.isVisible()) await compositionNotification.click();
+
+    const detail = page.getByRole("region", { name: "Selected template composition" });
+    await expect(detail.getByRole("heading", { name: "Closing card" })).toBeVisible();
+    await expect(detail.getByText("Provided by the app").first()).toBeVisible();
+    await expect(detail.getByRole("button", { name: /Shared compatibility closing/ })).toBeVisible();
+    await expectNoHorizontalOverflow(page, "Composition Map desktop");
+    await mkdir(adminScreenshotDir, { recursive: true });
+    await page.screenshot({
+      animations: "disabled",
+      fullPage: true,
+      path: path.join(adminScreenshotDir, "desktop-composition-map.png")
+    });
+
+    await page.setViewportSize({ width: 390, height: 844 });
+    await expect(detail.getByRole("heading", { name: "Closing card" })).toBeVisible();
+    await expect(detail.getByRole("button", { name: /Shared compatibility closing/ })).toBeVisible();
+    await expectNoHorizontalOverflow(page, "Composition Map mobile");
+    await page.screenshot({
+      animations: "disabled",
+      fullPage: true,
+      path: path.join(adminScreenshotDir, "mobile-composition-map.png")
+    });
+
+    await detail.getByRole("button", { name: "Edit template copy" }).click();
+    let editor = page.getByRole("dialog", { name: "Generated content editor" });
+    await expect(editor.getByLabel("Content key")).toHaveValue("slot-template/compatibility/closing-card");
+    await editor.getByRole("button", { name: "Close" }).click();
+
+    await detail.getByRole("button", { name: /Shared compatibility closing/ }).click();
+    editor = page.getByRole("dialog", { name: "Generated content editor" });
+    await expect(editor.getByLabel("Content key")).toHaveValue("fallback-hook/compatibility-closing/shared");
     await assertNoBrowserErrors();
   });
 
@@ -2264,8 +2329,15 @@ test.describe("content dashboard admin user flow case studies", () => {
 
     await page.setViewportSize({ width: 390, height: 844 });
     await expectAdminRouteLoads(page, "/admin/content");
-    await expect(page.getByRole("navigation", { name: "Content operations" })).toBeVisible();
     await expectAdminHeader(page, "Review Queue", "Admin / Publish / Review queue");
+    const mobileNavigation = page.getByRole("navigation", { name: "Content operations" });
+    await expect(mobileNavigation).toBeHidden();
+    await page.getByRole("button", { name: "Open Content Studio navigation" }).click();
+    await expect(mobileNavigation).toBeVisible();
+    await page.getByRole("button", { name: "Close Content Studio navigation" }).click();
+    await expect(mobileNavigation).toBeHidden();
+    const mobileNotification = page.getByRole("button", { name: "Dismiss notification" });
+    if (await mobileNotification.isVisible()) await mobileNotification.click();
     await expectNoHorizontalOverflow(page, "Admin mobile home");
     await expect(page.getByRole("button", { name: "Studio Home" })).toHaveCount(0);
     await page.screenshot({ animations: "disabled", fullPage: true, path: path.join(adminScreenshotDir, "mobile-review-queue.png") });
