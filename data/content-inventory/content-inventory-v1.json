@@ -1,12 +1,12 @@
 {
   "schemaVersion": "content-inventory-v1",
   "generatedOn": "2026-08-10",
-  "sourceCommit": "bb47bc36e319fc6d81ed88b7d018507166a5f464",
+  "sourceCommit": "5923cf942bacbea5fbdf6a776531346b80d238ff",
   "authorityRule": "Only owner-approved and owner-locked records may serve or export.",
-  "contentFingerprint": "6596a772099ad906e231e097f8c491a28757dd8e8cb08982604e17460df0dd21",
-  "recordCount": 10867,
+  "contentFingerprint": "b26a4ff03a70fd80e317c2564a11fbc77902d8bedc48ca4b0331b16a35403800",
+  "recordCount": 10890,
   "statusCounts": {
-    "owner-approved": 10867
+    "owner-approved": 10890
   },
   "familyCounts": {
     "approved/calendar-weekly-overview": 1,
@@ -105,16 +105,17 @@
     "house-horoscope-core": 984,
     "lunation": 433,
     "natal-aspect": 253,
-    "natal-placement": 293,
+    "natal-placement": 308,
     "sky": 26,
     "sky-article/saturn": 2,
     "sky-aspect": 112,
-    "sky-placement": 822,
+    "sky-placement": 823,
     "sky.ingress.jupiter.leo": 1,
     "sky.retrograde.venus.scorpio.retrograde_passage": 1,
     "sky.station.chiron.taurus.retrograde": 1,
     "sky.station.mercury.pisces.retrograde": 1,
-    "synastry": 1786,
+    "synastry": 1789,
+    "template": 4,
     "transit-meaning": 365,
     "vocabulary": 717
   },
@@ -218921,6 +218922,564 @@
         "objects": [
           "venus"
         ],
+        "signs": [],
+        "aspects": [],
+        "events": [],
+        "houses": []
+      }
+    },
+    {
+      "contentKey": "fallback-template/compat.cross-sign",
+      "contentFamily": "synastry",
+      "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/templates/fallback-templates-v3.json",
+      "runtimeBucket": "template",
+      "status": "owner-approved",
+      "sourceStatus": "package-approved",
+      "provenance": "generated",
+      "sourceAuthor": "composed",
+      "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
+      "approvalVersionDate": "package-owner-approval",
+      "contentHash": "ea96e87d2a2e793648b517a4856aebbba27cef8a915e7c5fd79b1e584142cf40",
+      "wording": {
+        "headline": "Your {{planetTitle}} in {{signATitle}} with {{otherName}}'s {{planetTitle}} in {{signBTitle}}",
+        "body": "{{compatDomain}} Your {{planetTitle}} is in {{signATitle}}. {{readerBlock}} {{otherName}}'s {{planetTitle}} is in {{signBTitle}}. {{friendBlock}} {{elementPattern}}"
+      },
+      "astrology": {
+        "objects": [],
+        "signs": [],
+        "aspects": [],
+        "events": [],
+        "houses": []
+      }
+    },
+    {
+      "contentKey": "fallback-template/compat.same-sign",
+      "contentFamily": "synastry",
+      "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/templates/fallback-templates-v3.json",
+      "runtimeBucket": "template",
+      "status": "owner-approved",
+      "sourceStatus": "package-approved",
+      "provenance": "generated",
+      "sourceAuthor": "composed",
+      "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
+      "approvalVersionDate": "package-owner-approval",
+      "contentHash": "6206f16be0aecf3cd91642ac86d04bb19745016f19082dfd6d33484ee117caa1",
+      "wording": {
+        "headline": "Your {{planetTitle}} in {{signATitle}} with {{otherName}}'s {{planetTitle}} in {{signATitle}}",
+        "body": "{{compatDomain}} Your {{planetTitle}} and {{otherName}}'s {{planetTitle}} are both in {{signATitle}}, so the same description fits you both. {{readerBlock}} {{otherName}} runs the same pattern in their own way, and you will recognize it fast. {{elementPattern}}"
+      },
+      "astrology": {
+        "objects": [],
+        "signs": [],
+        "aspects": [],
+        "events": [],
+        "houses": []
+      }
+    },
+    {
+      "contentKey": "fallback-template/natal.angle-in-sign",
+      "contentFamily": "natal-placement",
+      "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/templates/fallback-templates-v3.json",
+      "runtimeBucket": "template",
+      "status": "owner-approved",
+      "sourceStatus": "package-approved",
+      "provenance": "generated",
+      "sourceAuthor": "composed",
+      "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
+      "approvalVersionDate": "package-owner-approval",
+      "contentHash": "6367df9d98bc1c11aea3d6be040cf49f41a216c34d2fc799e39f2a5310f2c6a4",
+      "wording": {
+        "headline": "{{angleTitle}} in {{signTitle}}",
+        "body": "{{angleIntro}} {{possessive}} {{angleTitle}} is in {{signTitle}}. {{angleSignSentences}}{{#modifierSentences}} {{.}}{{/modifierSentences}}"
+      },
+      "astrology": {
+        "objects": [],
+        "signs": [],
+        "aspects": [],
+        "events": [],
+        "houses": []
+      }
+    },
+    {
+      "contentKey": "fallback-template/natal.aspect",
+      "contentFamily": "natal-placement",
+      "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/templates/fallback-templates-v3.json",
+      "runtimeBucket": "template",
+      "status": "owner-approved",
+      "sourceStatus": "package-approved",
+      "provenance": "generated",
+      "sourceAuthor": "composed",
+      "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
+      "approvalVersionDate": "package-owner-approval",
+      "contentHash": "1d128e446feab613ba260aeab52ed63f9d65432e5ee4271b91d9eb5278ef27d9",
+      "wording": {
+        "headline": "{{possessive}} {{planetATitle}} {{aspectName}} {{planetBTitle}}",
+        "body": "{{possessive}} {{planetATitle}} is {{aspectAdj}} your {{planetBTitle}}, meaning {{planetACore}} and {{planetBCore}} are wired together in you. {{aspectTypeLine}}{{#pairSentences}} {{pairSentences}}{{/pairSentences}}",
+        "body_you": "{{#pairSentences}}{{pairSentences}} That's {{possessiveLow}} {{planetATitle}} {{aspectAdj}} {{planetBTitle}}: {{planetACore}} and {{planetBCore}} {{aspectMotion}}.{{/pairSentences}}{{^pairSentences}}{{possessive}} {{planetATitle}} is {{aspectAdj}} your {{planetBTitle}}: {{planetACore}} meeting {{planetBCore}}. {{aspectTypeLine}}{{/pairSentences}}",
+        "body_they": "{{#pairSentences}}{{pairSentences}} That's {{possessiveLow}} {{planetATitle}} {{aspectAdj}} {{planetBTitle}}: {{planetACore}} and {{planetBCore}} {{aspectMotion}}.{{/pairSentences}}{{^pairSentences}}{{possessive}} {{planetATitle}} is {{aspectAdj}} their {{planetBTitle}}: {{planetACore}} meeting {{planetBCore}}. {{aspectTypeLine}}{{/pairSentences}}"
+      },
+      "astrology": {
+        "objects": [],
+        "signs": [],
+        "aspects": [],
+        "events": [],
+        "houses": []
+      }
+    },
+    {
+      "contentKey": "fallback-template/natal.chart-ruler",
+      "contentFamily": "natal-placement",
+      "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/templates/fallback-templates-v3.json",
+      "runtimeBucket": "template",
+      "status": "owner-approved",
+      "sourceStatus": "package-approved",
+      "provenance": "generated",
+      "sourceAuthor": "composed",
+      "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
+      "approvalVersionDate": "package-owner-approval",
+      "contentHash": "640bfc1891b31a5ff550d98b1d79856d2f78a16352efe3a0253f373f62ae215e",
+      "wording": {
+        "body": "Because the Ascendant is {{signTitle}}, {{rulerTitle}} is the chart ruler. With {{rulerTitle}} in {{rulerSignTitle}} in the {{rulerHouseOrdinal}} house, the chart keeps returning to {{rulerHouseTopic}}."
+      },
+      "astrology": {
+        "objects": [],
+        "signs": [],
+        "aspects": [],
+        "events": [],
+        "houses": []
+      }
+    },
+    {
+      "contentKey": "fallback-template/natal.house-context",
+      "contentFamily": "natal-placement",
+      "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/templates/fallback-templates-v3.json",
+      "runtimeBucket": "template",
+      "status": "owner-approved",
+      "sourceStatus": "package-approved",
+      "provenance": "generated",
+      "sourceAuthor": "composed",
+      "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
+      "approvalVersionDate": "package-owner-approval",
+      "contentHash": "1c4e7bf702812427ddfe7298b6f5f9bc07e839ec3abb3d4e58f55cd1ebe21b83",
+      "wording": {
+        "headline": "{{planetTitle}} in {{signTitle}} in the {{houseOrdinal}} house",
+        "body": "{{houseMeaning}}{{#placementHouseSentences}} {{placementHouseSentences}}{{/placementHouseSentences}}{{#modifierSentences}} {{.}}{{/modifierSentences}}"
+      },
+      "astrology": {
+        "objects": [],
+        "signs": [],
+        "aspects": [],
+        "events": [],
+        "houses": []
+      }
+    },
+    {
+      "contentKey": "fallback-template/natal.modifier.dignity-detriment",
+      "contentFamily": "natal-placement",
+      "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/templates/fallback-templates-v3.json",
+      "runtimeBucket": "template",
+      "status": "owner-approved",
+      "sourceStatus": "package-approved",
+      "provenance": "generated",
+      "sourceAuthor": "composed",
+      "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
+      "approvalVersionDate": "package-owner-approval",
+      "contentHash": "b98b6701a1fad75780e4b1f46dbcd60d3054828a04df0a6e01c99490d909bcb6",
+      "wording": {
+        "body": "Astrologers consider {{planetRef}} uncomfortable in {{signTitle}}, meaning {{planetCore}} did not come naturally to you, so you figured it out on purpose. That usually makes you more thoughtful about it than people who never had to try.",
+        "body_you": "Astrologers consider {{planetRef}} uncomfortable in {{signTitle}}, meaning {{planetCore}} did not come naturally to you, so you figured it out on purpose. That usually makes you more thoughtful about it than people who never had to try.",
+        "body_they": "Astrologers consider {{planetRef}} uncomfortable in {{signTitle}}, meaning {{planetCore}} did not come naturally to them, so they figured it out on purpose. That usually makes them more thoughtful about it than people who never had to try."
+      },
+      "astrology": {
+        "objects": [],
+        "signs": [],
+        "aspects": [],
+        "events": [],
+        "houses": []
+      }
+    },
+    {
+      "contentKey": "fallback-template/natal.modifier.dignity-domicile",
+      "contentFamily": "natal-placement",
+      "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/templates/fallback-templates-v3.json",
+      "runtimeBucket": "template",
+      "status": "owner-approved",
+      "sourceStatus": "package-approved",
+      "provenance": "generated",
+      "sourceAuthor": "composed",
+      "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
+      "approvalVersionDate": "package-owner-approval",
+      "contentHash": "a5e3f988947799da12cffe6e133e8e540fee8556bec473068776c85f1c9cff58",
+      "wording": {
+        "body": "{{planetRefCap}} is in its home sign here. This part of you knows what it is doing: when you trust it, things tend to work.",
+        "body_you": "{{planetRefCap}} is in its home sign here. This part of you knows what it is doing: when you trust it, things tend to work.",
+        "body_they": "{{planetRefCap}} is in its home sign here. This part of them knows what it is doing: when they trust it, things tend to work."
+      },
+      "astrology": {
+        "objects": [],
+        "signs": [],
+        "aspects": [],
+        "events": [],
+        "houses": []
+      }
+    },
+    {
+      "contentKey": "fallback-template/natal.modifier.dignity-exaltation",
+      "contentFamily": "natal-placement",
+      "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/templates/fallback-templates-v3.json",
+      "runtimeBucket": "template",
+      "status": "owner-approved",
+      "sourceStatus": "package-approved",
+      "provenance": "generated",
+      "sourceAuthor": "composed",
+      "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
+      "approvalVersionDate": "package-owner-approval",
+      "contentHash": "38c75aad8b24620ef914f428b38cab037ec15c72a62587054c35afa35e10e6a9",
+      "wording": {
+        "body": "Astrologers count {{signTitle}} as one of the strongest signs for {{planetRef}}. Your best qualities here come out with less effort than most people need.",
+        "body_you": "Astrologers count {{signTitle}} as one of the strongest signs for {{planetRef}}. Your best qualities here come out with less effort than most people need.",
+        "body_they": "Astrologers count {{signTitle}} as one of the strongest signs for {{planetRef}}. Their best qualities here come out with less effort than most people need."
+      },
+      "astrology": {
+        "objects": [],
+        "signs": [],
+        "aspects": [],
+        "events": [],
+        "houses": []
+      }
+    },
+    {
+      "contentKey": "fallback-template/natal.modifier.dignity-fall",
+      "contentFamily": "natal-placement",
+      "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/templates/fallback-templates-v3.json",
+      "runtimeBucket": "template",
+      "status": "owner-approved",
+      "sourceStatus": "package-approved",
+      "provenance": "generated",
+      "sourceAuthor": "composed",
+      "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
+      "approvalVersionDate": "package-owner-approval",
+      "contentHash": "08384b7e12905e9cd3340b3c5aaa172118b9061ce18f204448ef6dd58d3b4a37",
+      "wording": {
+        "body": "Astrologers call {{planetRef}} 'in fall' in {{signTitle}}, meaning {{planetCore}} takes more work for you than anyone can see, and you probably give yourself less credit for it than you deserve.",
+        "body_you": "Astrologers call {{planetRef}} 'in fall' in {{signTitle}}, meaning {{planetCore}} takes more work for you than anyone can see, and you probably give yourself less credit for it than you deserve.",
+        "body_they": "Astrologers call {{planetRef}} 'in fall' in {{signTitle}}, meaning {{planetCore}} takes more work for them than anyone can see, and they probably give themselves less credit for it than they deserve."
+      },
+      "astrology": {
+        "objects": [],
+        "signs": [],
+        "aspects": [],
+        "events": [],
+        "houses": []
+      }
+    },
+    {
+      "contentKey": "fallback-template/natal.modifier.retrograde",
+      "contentFamily": "natal-placement",
+      "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/templates/fallback-templates-v3.json",
+      "runtimeBucket": "template",
+      "status": "owner-approved",
+      "sourceStatus": "package-approved",
+      "provenance": "generated",
+      "sourceAuthor": "composed",
+      "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
+      "approvalVersionDate": "package-owner-approval",
+      "contentHash": "4cc3c5be528bf46273df15531becfcd9e9f2b500d6a6355802b7dbffb57c169b",
+      "wording": {
+        "body": "Because {{planetRef}} is retrograde in the birth chart, the pattern runs inward first, rehearsed privately and revised more than once before it shows."
+      },
+      "astrology": {
+        "objects": [],
+        "signs": [],
+        "aspects": [],
+        "events": [],
+        "houses": []
+      }
+    },
+    {
+      "contentKey": "fallback-template/natal.modifier.sect-day",
+      "contentFamily": "natal-placement",
+      "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/templates/fallback-templates-v3.json",
+      "runtimeBucket": "template",
+      "status": "owner-approved",
+      "sourceStatus": "package-approved",
+      "provenance": "generated",
+      "sourceAuthor": "composed",
+      "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
+      "approvalVersionDate": "package-owner-approval",
+      "contentHash": "a81e25d3ba93adec3b8e7eb8196735926e3bdc5a4fb32c0d6fdee0a6de2dbd6b",
+      "wording": {
+        "body": "In a day chart, {{planetRef}} tends toward {{sectEffect}}."
+      },
+      "astrology": {
+        "objects": [],
+        "signs": [],
+        "aspects": [],
+        "events": [],
+        "houses": []
+      }
+    },
+    {
+      "contentKey": "fallback-template/natal.modifier.sect-night",
+      "contentFamily": "natal-placement",
+      "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/templates/fallback-templates-v3.json",
+      "runtimeBucket": "template",
+      "status": "owner-approved",
+      "sourceStatus": "package-approved",
+      "provenance": "generated",
+      "sourceAuthor": "composed",
+      "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
+      "approvalVersionDate": "package-owner-approval",
+      "contentHash": "789f5cd6a3a0432a39da2a263c28cc86a3788d8adbf72c25b57b3ca65c73e351",
+      "wording": {
+        "body": "In a night chart, {{planetRef}} tends toward {{sectEffect}}."
+      },
+      "astrology": {
+        "objects": [],
+        "signs": [],
+        "aspects": [],
+        "events": [],
+        "houses": []
+      }
+    },
+    {
+      "contentKey": "fallback-template/natal.node-in-sign",
+      "contentFamily": "natal-placement",
+      "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/templates/fallback-templates-v3.json",
+      "runtimeBucket": "template",
+      "status": "owner-approved",
+      "sourceStatus": "package-approved",
+      "provenance": "generated",
+      "sourceAuthor": "composed",
+      "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
+      "approvalVersionDate": "package-owner-approval",
+      "contentHash": "48c5f130a0e82b496cdb8ce5b5ea8b953a70d289e91a285521ab51aae5b2a5ae",
+      "wording": {
+        "headline": "{{planetTitle}} in {{signTitle}}",
+        "body": "{{#planetIntro}}{{planetIntro}}{{/planetIntro}} {{possessive}} {{planetTitle}} is in {{signTitle}}, meaning you {{planetVerb}} {{signAdverb}}, and what you want most is {{signNeed}}.{{#placementSentences}} {{placementSentences}}{{/placementSentences}} {{nodeJourney}}{{#modifierSentences}} {{.}}{{/modifierSentences}}",
+        "body_you": "{{#planetIntro}}{{planetIntro}}{{/planetIntro}} {{possessive}} {{planetTitle}} is in {{signTitle}}, meaning you {{planetVerb}} {{signAdverb}}, and what you want most is {{signNeed}}.{{#placementSentences}} {{placementSentences}}{{/placementSentences}} {{nodeJourney}}{{#modifierSentences}} {{.}}{{/modifierSentences}}",
+        "body_they": "{{#planetIntro}}{{planetIntro}}{{/planetIntro}} {{possessive}} {{planetTitle}} is in {{signTitle}}, meaning they {{planetVerb}} {{signAdverb}}, and what they want most is {{signNeed}}.{{#placementSentences}} {{placementSentences}}{{/placementSentences}} {{nodeJourney}}{{#modifierSentences}} {{.}}{{/modifierSentences}}"
+      },
+      "astrology": {
+        "objects": [],
+        "signs": [],
+        "aspects": [],
+        "events": [],
+        "houses": []
+      }
+    },
+    {
+      "contentKey": "fallback-template/natal.planet-in-sign",
+      "contentFamily": "natal-placement",
+      "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/templates/fallback-templates-v3.json",
+      "runtimeBucket": "template",
+      "status": "owner-approved",
+      "sourceStatus": "package-approved",
+      "provenance": "generated",
+      "sourceAuthor": "composed",
+      "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
+      "approvalVersionDate": "package-owner-approval",
+      "contentHash": "8fbe662971ef31d6d3be4c243963ca02add55ef7ea49a62aad908b1b4e92091e",
+      "wording": {
+        "headline": "{{planetTitle}} in {{signTitle}}",
+        "body": "{{#planetIntro}}{{planetIntro}}{{/planetIntro}} {{possessive}} {{planetTitle}} is in {{signTitle}}, meaning you {{planetVerb}} {{signAdverb}}, and what you want most is {{signNeed}}.{{#placementSentences}} {{placementSentences}}{{/placementSentences}}{{#placementGerundText}} Day to day, that can look like {{placementGerundText}}.{{/placementGerundText}} Pushed too far, this side of you can tip into {{planetExcess}}. {{planetBest}}{{#modifierSentences}} {{.}}{{/modifierSentences}}",
+        "body_you": "{{#planetIntro}}{{planetIntro}}{{/planetIntro}} {{possessive}} {{planetTitle}} is in {{signTitle}}, meaning you {{planetVerb}} {{signAdverb}}, and what you want most is {{signNeed}}.{{#placementSentences}} {{placementSentences}}{{/placementSentences}}{{#placementGerundText}} Day to day, that can look like {{placementGerundText}}.{{/placementGerundText}} Pushed too far, this side of you can tip into {{planetExcess}}. {{planetBest}}{{#modifierSentences}} {{.}}{{/modifierSentences}}",
+        "body_they": "{{#planetIntro}}{{planetIntro}}{{/planetIntro}} {{possessive}} {{planetTitle}} is in {{signTitle}}, meaning they {{planetVerb}} {{signAdverb}}, and what they want most is {{signNeed}}.{{#placementSentences}} {{placementSentences}}{{/placementSentences}}{{#placementGerundText}} Day to day, that can look like {{placementGerundText}}.{{/placementGerundText}} Pushed too far, this side of them can tip into {{planetExcess}}. {{planetBest}}{{#modifierSentences}} {{.}}{{/modifierSentences}}"
+      },
+      "astrology": {
+        "objects": [],
+        "signs": [],
+        "aspects": [],
+        "events": [],
+        "houses": []
+      }
+    },
+    {
+      "contentKey": "fallback-template/natal.ruler-bridge",
+      "contentFamily": "natal-placement",
+      "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/templates/fallback-templates-v3.json",
+      "runtimeBucket": "template",
+      "status": "owner-approved",
+      "sourceStatus": "package-approved",
+      "provenance": "generated",
+      "sourceAuthor": "composed",
+      "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
+      "approvalVersionDate": "package-owner-approval",
+      "contentHash": "fb9290dc1a36f5090b3b8b854fad22b320f3081cd14479f0ee4a3472352af836",
+      "wording": {
+        "body": "{{signTitle}} answers to {{rulerTitle}} here. With {{rulerTitle}} in {{rulerSignTitle}} in the {{rulerHouseOrdinal}} house, the placement keeps developing through {{rulerHouseTopic}}."
+      },
+      "astrology": {
+        "objects": [],
+        "signs": [],
+        "aspects": [],
+        "events": [],
+        "houses": []
+      }
+    },
+    {
+      "contentKey": "fallback-template/natal.synthesis",
+      "contentFamily": "natal-placement",
+      "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/templates/fallback-templates-v3.json",
+      "runtimeBucket": "template",
+      "status": "owner-approved",
+      "sourceStatus": "package-approved",
+      "provenance": "generated",
+      "sourceAuthor": "composed",
+      "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
+      "approvalVersionDate": "package-owner-approval",
+      "contentHash": "6536a4adee3ef3151ba2380c0daa42de166b2eea4f65718da1cd233d562491e7",
+      "wording": {
+        "body": "Taken together: {{possessive}} {{planetTitle}} in {{signTitle}} in the {{houseOrdinal}} house brings {{planetFunction}} into {{houseTopic}}: one pattern, seen from three angles."
+      },
+      "astrology": {
+        "objects": [],
+        "signs": [],
+        "aspects": [],
+        "events": [],
+        "houses": []
+      }
+    },
+    {
+      "contentKey": "fallback-template/sky-placement-frame-v3",
+      "contentFamily": "sky-placement",
+      "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/templates/fallback-templates-v3.json",
+      "runtimeBucket": "template",
+      "status": "owner-approved",
+      "sourceStatus": "package-approved",
+      "provenance": "generated",
+      "sourceAuthor": "composed",
+      "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
+      "approvalVersionDate": "package-owner-approval",
+      "contentHash": "3bf1ebce1e675126a2f6b2fb616eb4c12990f3dbb317118e427e1035a08d4881",
+      "wording": {
+        "headline": "{{planetTitle}} in {{signTitle}}",
+        "body": "{{windowFrame}}\n\n{{planetFrame}}\n\n{{signLore}}\n\n{{signCopy}}\n\n{{currentAspects}}"
+      },
+      "astrology": {
+        "objects": [],
+        "signs": [],
+        "aspects": [],
+        "events": [],
+        "houses": []
+      }
+    },
+    {
+      "contentKey": "fallback-template/synastry.aspect-v3",
+      "contentFamily": "synastry",
+      "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/templates/fallback-templates-v3.json",
+      "runtimeBucket": "template",
+      "status": "owner-approved",
+      "sourceStatus": "package-approved",
+      "provenance": "generated",
+      "sourceAuthor": "composed",
+      "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
+      "approvalVersionDate": "package-owner-approval",
+      "contentHash": "c98a0d5c272d0f5f59d1e7df269d226cdff17331e7340ec9433e179d0666530d",
+      "wording": {
+        "headline": "Your {{planetATitle}} {{aspectAdj}} {{otherName}}'s {{planetBTitle}}",
+        "body": "{{pairSentences}}"
+      },
+      "astrology": {
+        "objects": [],
+        "signs": [],
+        "aspects": [],
+        "events": [],
+        "houses": []
+      }
+    },
+    {
+      "contentKey": "fallback-template/transit.aspect",
+      "contentFamily": "template",
+      "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/templates/fallback-templates-v3.json",
+      "runtimeBucket": "template",
+      "status": "owner-approved",
+      "sourceStatus": "package-approved",
+      "provenance": "generated",
+      "sourceAuthor": "composed",
+      "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
+      "approvalVersionDate": "package-owner-approval",
+      "contentHash": "6fb22b57e69d91a602ff54f6f83c7fb93cf593a1f2128798df7fb2f8d0a61fdd",
+      "wording": {
+        "headline": "{{transitTitle}} {{aspectName}} your {{natalTitle}}",
+        "body": "{{timeOpen}}, {{transitRef}} is {{aspectAdj}} your natal {{natalTitle}}. In plain terms: this {{aspectVerb}} right now. {{transitTypeLine}}",
+        "body_they": "{{transitRef}} {{aspectAdj}} {{otherPoss}} natal {{natalTitle}} {{timeInline}}. In plain terms: this {{aspectVerb}} right now. {{transitEffectLine}}"
+      },
+      "astrology": {
+        "objects": [],
+        "signs": [],
+        "aspects": [],
+        "events": [],
+        "houses": []
+      }
+    },
+    {
+      "contentKey": "fallback-template/transit.house",
+      "contentFamily": "template",
+      "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/templates/fallback-templates-v3.json",
+      "runtimeBucket": "template",
+      "status": "owner-approved",
+      "sourceStatus": "package-approved",
+      "provenance": "generated",
+      "sourceAuthor": "composed",
+      "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
+      "approvalVersionDate": "package-owner-approval",
+      "contentHash": "10caa2ddbc5c2bd200b881c78bcc09bcc626f97ddacfd3ebe0826fa27c54cffd",
+      "wording": {
+        "headline": "{{transitTitle}} moving through your {{houseOrdinal}} house",
+        "body": "{{timeOpen}}, {{transitRef}} is moving through your {{houseOrdinal}} house. While it is there, {{houseEffect}}.",
+        "body_they": "{{timeOpen}}, {{transitRef}} is moving through {{otherPoss}} {{houseOrdinal}} house. While it is there, {{houseEffect}}."
+      },
+      "astrology": {
+        "objects": [],
+        "signs": [],
+        "aspects": [],
+        "events": [],
+        "houses": []
+      }
+    },
+    {
+      "contentKey": "fallback-template/transit.retrograde",
+      "contentFamily": "template",
+      "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/templates/fallback-templates-v3.json",
+      "runtimeBucket": "template",
+      "status": "owner-approved",
+      "sourceStatus": "package-approved",
+      "provenance": "generated",
+      "sourceAuthor": "composed",
+      "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
+      "approvalVersionDate": "package-owner-approval",
+      "contentHash": "aa5954748a3976d4654df99879975bcc5d33455f363ffa2178d882342513df9b",
+      "wording": {
+        "headline": "{{transitTitle}} Retrograde",
+        "body": "{{timeOpen}}, {{transitRef}} is retrograde. {{retroMeaning}}"
+      },
+      "astrology": {
+        "objects": [],
+        "signs": [],
+        "aspects": [],
+        "events": [],
+        "houses": []
+      }
+    },
+    {
+      "contentKey": "fallback-template/transit.retrograde-article",
+      "contentFamily": "template",
+      "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/templates/fallback-templates-v3.json",
+      "runtimeBucket": "template",
+      "status": "owner-approved",
+      "sourceStatus": "package-approved",
+      "provenance": "generated",
+      "sourceAuthor": "composed",
+      "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
+      "approvalVersionDate": "package-owner-approval",
+      "contentHash": "3d564397ad25720dbe8cbe379b95967109914d7d89c6102d7cec6cd11a3ad12d",
+      "wording": {
+        "headline": "{{articleHeadline}}",
+        "body": "{{articleBody}}"
+      },
+      "astrology": {
+        "objects": [],
         "signs": [],
         "aspects": [],
         "events": [],
