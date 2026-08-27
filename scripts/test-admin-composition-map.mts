@@ -83,6 +83,36 @@ const audienceMap = buildCompositionMap([{
 assert.equal(audienceMap[0].preview.fields.find((field) => field.key === "body_they")?.rendered, "Maya's Sun is in Leo.", "Third-person previews should read naturally instead of exposing a generic possessive example.");
 assert.equal(audienceMap[0].preview.fields.find((field) => field.key === "body_you")?.rendered, "Your Sun is in Leo and connects with natal Venus.", "Representative examples should not duplicate qualifiers already present in the template.");
 
+const transitTemplate: CompositionMapRow = {
+  ...baseRow,
+  id: "transit-template",
+  content_key: "fallback-template/transit.aspect",
+  headline: "{{transitTitle}} {{aspectName}} your {{natalTitle}}",
+  surface: "sky",
+  block_type: "fallback_template",
+  sections: { packageRecord: {
+    content_role: "template",
+    headline: "{{transitTitle}} {{aspectName}} your {{natalTitle}}",
+    headline_they: "{{transitTitle}} {{aspectName}} {{otherPoss}} {{natalTitle}}",
+    body: "{{transitRef}} is {{aspectAdj}} your natal {{natalTitle}}. {{transitTypeLine}}",
+    body_they: "{{transitRef}} is {{aspectAdj}} {{otherPoss}} natal {{natalTitle}}. {{transitTypeLine}}"
+  } }
+};
+const transitMap = buildCompositionMap([
+  transitTemplate,
+  ...["conjunction", "trine"].map((aspect): CompositionMapRow => ({
+    ...baseRow,
+    id: `aspect-${aspect}`,
+    content_key: `fallback-hook/transit-aspect-type/${aspect}`,
+    sections: { packageRecord: { content_role: "fallback_hook", body_you: `${aspect} works for you.`, body_they: `${aspect} works for them.` } }
+  }))
+]);
+assert.equal(transitMap[0].preview.fields.find((field) => field.key === "body")?.rendered, "transiting Saturn is trine your natal Venus. trine works for you.", "A trine preview should select trine source copy and direct-reader voice.");
+assert.equal(transitMap[0].preview.fields.find((field) => field.key === "body_they")?.rendered, "transiting Saturn is trine Maya's natal Venus. trine works for them.", "The third-person preview should keep its possessive and source voice consistent.");
+assert.equal(transitMap[0].preview.fields.find((field) => field.key === "headline_they")?.rendered, "Saturn trine Maya's Venus", "Third-person previews should use their third-person headline.");
+assert.equal(transitMap[0].preview.fields.find((field) => field.key === "body")?.audience, "you", "The main direct-reader passage should not appear in third-person previews.");
+assert.equal(transitMap[0].preview.fields.find((field) => field.key === "body_they")?.audience, "they", "The third-person passage should not appear in direct-reader previews.");
+
 const jupiterMap = buildCompositionMap([{
   ...baseRow,
   id: "jupiter-template",

@@ -31,6 +31,7 @@ export type CompositionMapSlot = TemplateVariableReference & {
 };
 
 export type CompositionPreviewField = {
+  audience?: "you" | "they";
   key: string;
   label: string;
   rendered: string;
@@ -158,13 +159,35 @@ function representativeExampleForRow(row: CompositionMapRow, name: string, examp
   return representativeExample(name, example);
 }
 
-function previewSourceText(source: CompositionMapSource) {
+function previewSourceText(source: CompositionMapSource, audience: "you" | "they") {
   const packageRecord = packageRecordForRow(source.row);
-  return text(packageRecord.body)
-    || text(packageRecord.body_you)
+  const sections = objectRecord(source.row.sections) ?? {};
+  const audienceCopy = audience === "they"
+    ? text(packageRecord.body_they) || text(sections.body_they)
+    : text(packageRecord.body_you) || text(sections.body_you);
+  return audienceCopy
+    || text(packageRecord.body)
+    || text(sections.body)
     || text(source.row.body)
     || text(source.row.summary)
     || text(source.row.headline);
+}
+
+function representativeSource(slot: CompositionMapSlot, slots: CompositionMapSlot[], values: Map<string, string>) {
+  if (slot.requirement === "Optional" || !slot.sources.length) return null;
+  if (slot.sources.length === 1) return slot.sources[0];
+  const anchors = slots.filter((candidate) => candidate.sourceKind === "runtime")
+    .flatMap((candidate) => (values.get(candidate.name) ?? "").toLowerCase().match(/[a-z]+/gu) ?? []);
+  const houseNumber = values.get("houseOrdinal")?.match(/^\d+/u)?.[0];
+  if (houseNumber) anchors.push(houseNumber);
+  const group = anchors.includes("trine") || anchors.includes("sextile")
+    ? "soft"
+    : anchors.some((anchor) => ["square", "opposition", "opposite"].includes(anchor)) ? "hard" : "";
+  const ranked = slot.sources.map((source) => {
+    const parts = [...new Set(source.row.content_key.toLowerCase().split(/[\/.\-_]+/u))];
+    return { source, score: parts.reduce((total, part) => total + (anchors.includes(part) ? 2 : part === group ? 1 : 0), 0) };
+  }).sort((left, right) => right.score - left.score);
+  return ranked[0]?.score ? ranked[0].source : null;
 }
 
 function fallbackPreviewValue(name: string) {
@@ -197,26 +220,35 @@ function renderPreviewText(template: string, values: Map<string, string>, seen =
     .replace(/\{\{[^}]+\}\}/gu, "")
     .replace(/[ \t]+\n/gu, "\n")
     .replace(/[ \t]{2,}/gu, " ")
+    .replace(/([.!?])\1+/gu, "$1")
     .replace(/\n{3,}/gu, "\n\n")
     .trim();
 }
 
 function compositionPreviewFields(row: CompositionMapRow) {
   const packageRecord = packageRecordForRow(row);
-  const candidates: Array<{ key: string; label: string; value: string }> = [];
-  const add = (key: string, label: string, value: unknown) => {
+  const candidates: Array<{ audience?: "you" | "they"; key: string; label: string; value: string }> = [];
+  const add = (key: string, label: string, value: unknown, audience?: "you" | "they") => {
     const normalized = text(value);
     if (!normalized || candidates.some((candidate) => candidate.value === normalized)) return;
-    candidates.push({ key, label, value: normalized });
+    candidates.push({ audience, key, label, value: normalized });
   };
   const packageHeadline = text(packageRecord.headline);
+  const theyHeadline = text(packageRecord.headline_they);
   const rowHeadline = text(row.headline);
-  if (packageHeadline || rowHeadline.includes("{{")) {
-    add("headline", "Headline", packageHeadline || rowHeadline);
+  const headline = packageHeadline || (rowHeadline.includes("{{") ? rowHeadline : "");
+  const splitHeadline = Boolean(theyHeadline && theyHeadline !== headline);
+  if (headline) {
+    add("headline", "Headline", headline, splitHeadline ? "you" : undefined);
   }
-  add("body_you", "Direct-to-reader version", packageRecord.body_you);
-  add("body_they", "Third-person version", packageRecord.body_they);
-  add("body", "Main passage", packageRecord.body || row.body);
+  if (splitHeadline) add("headline_they", "Headline", theyHeadline, "they");
+  const youBody = text(packageRecord.body_you);
+  const theyBody = text(packageRecord.body_they);
+  const mainBody = text(packageRecord.body || row.body);
+  const splitBody = Boolean(theyBody && theyBody !== (youBody || mainBody));
+  add("body_you", "Passage", youBody, splitBody ? "you" : undefined);
+  if (splitBody) add("body_they", "Passage", theyBody, "they");
+  add("body", youBody ? "Main passage" : "Passage", mainBody, splitBody && !youBody ? "you" : undefined);
   ([
     ["opening", "Opening"],
     ["tension", "Tension"],
@@ -229,23 +261,31 @@ function compositionPreviewFields(row: CompositionMapRow) {
 function buildCompositionPreview(row: CompositionMapRow, slots: CompositionMapSlot[]): CompositionPreview {
   const values = new Map<string, string>();
   slots.forEach((slot) => {
-    const sourceValue = slot.requirement !== "Optional" && slot.sources.length === 1
-      ? previewSourceText(slot.sources[0])
-      : "";
     values.set(slot.name, slot.requirement === "Optional"
       ? ""
-      : sourceValue || representativeExampleForRow(row, slot.name, slot.example));
+      : representativeExampleForRow(row, slot.name, slot.example));
   });
-  const sources = slots.flatMap((slot) => slot.requirement !== "Optional" && slot.sources.length === 1 ? slot.sources : [])
-    .filter((source, index, list) => list.findIndex((candidate) => candidate.row.id === source.row.id) === index);
+  const sources: CompositionMapSource[] = [];
   return {
     fields: compositionPreviewFields(row).map((field) => {
       const fieldValues = new Map(values);
-      if (field.key === "body_they") {
+      const audience = field.audience === "they" ? "they" : "you";
+      slots.forEach((slot) => {
+        const source = representativeSource(slot, slots, values);
+        if (!source) return;
+        fieldValues.set(slot.name, previewSourceText(source, audience));
+        if (!sources.some((candidate) => candidate.row.content_key === source.row.content_key)) sources.push(source);
+      });
+      if (!fieldValues.has("transitTopic")) fieldValues.set("transitTopic", `${values.get("transitTitle") ?? "Transit"}'s focus`);
+      if (!fieldValues.has("natalCore")) fieldValues.set("natalCore", `${values.get("natalTitle") ?? "natal"} themes`);
+      if (!fieldValues.has("natalArea")) fieldValues.set("natalArea", `${values.get("natalTitle") ?? "Natal"} themes`);
+      if (!fieldValues.has("transitEffect") && fieldValues.get("transitEffectLine")) fieldValues.set("transitEffect", fieldValues.get("transitEffectLine") ?? "");
+      if (audience === "they") {
         fieldValues.set("possessive", "Maya's");
         fieldValues.set("possessiveLow", "Maya's");
       }
       return {
+        audience: field.audience,
         key: field.key,
         label: field.label,
         template: field.value,
