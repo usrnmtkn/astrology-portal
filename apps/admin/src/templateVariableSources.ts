@@ -50,21 +50,7 @@ const sourcePrefixExceptions: Record<string, string[]> = {
 };
 
 const sourceSelectionNotes: Record<string, string> = {
-  modifierSentences: "The resolver selects these saved templates from the placement's calculated modifiers.",
   transitTopic: "The resolver selects one planet-topic phrase using the transiting planet.",
-  natalCore: "The resolver selects the natal planet or angle. A natal-core hook is preferred; planet-core vocabulary is the fallback.",
-  natalArea: "The resolver selects planet-topic vocabulary for planets and angle-area vocabulary for chart angles.",
-  transitEffect: "The resolver selects a soft or hard effect using the aspect family, transiting planet, natal target, audience, and available variant.",
-  modeA: "The resolver selects this row using the first chart point in the synastry contact.",
-  modeB: "The resolver selects this row using the second chart point in the synastry contact.",
-  askA: "The resolver selects this row using the first chart point in the synastry contact.",
-  askB: "The resolver selects this row using the second chart point in the synastry contact.",
-  gratesA: "The resolver selects this row using the first chart point in the synastry contact.",
-  gratesB: "The resolver selects this row using the second chart point in the synastry contact.",
-  sceneA: "The resolver selects this row using the first chart point in the synastry contact.",
-  sceneB: "The resolver selects this row using the second chart point in the synastry contact.",
-  oppositeDirection: "The resolver selects the direction phrase for the sign opposite the current lunar-node placement.",
-  aspectInsert: "The resolver assembles this passage from the exact reviewed Sky aspect rows active during the placement."
 };
 
 export type TemplateVariableSourceRow = {
@@ -100,8 +86,10 @@ export function templateVariableSourceKeyPrefixes(reference: Pick<TemplateVariab
 }
 
 export function templateVariableSourceSelectionNote(reference: Pick<TemplateVariableReference, "name" | "sourceKind">) {
+  const synastrySide = reference.name.match(/^(?:mode|ask|grates|scene)(A|B)$/u)?.[1];
+  if (synastrySide) return `The resolver selects this row using the ${synastrySide === "A" ? "first" : "second"} chart point in the synastry contact.`;
   return sourceSelectionNotes[reference.name]
-    ?? (reference.sourceKind === "saved-copy" ? "The resolver selects among these saved rows using the current chart and template context." : null);
+    ?? (reference.sourceKind === "saved-copy" ? "Selected using chart and template context." : null);
 }
 
 export function templateVariableSourceCandidates<T extends TemplateVariableSourceRow>(

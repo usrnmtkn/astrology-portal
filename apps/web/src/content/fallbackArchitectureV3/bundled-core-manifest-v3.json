@@ -1,8 +1,8 @@
 {
-  "packageVersion": "v3-2026-08-27a",
-  "contentHash": "62de5103a9a3e8ef0ccf0efdafff27f3",
-  "keyManifestHash": "020e330f039e523b420021cd8f76ffff",
-  "keyCount": 7404,
+  "packageVersion": "v3-2026-08-27b",
+  "contentHash": "8b87dd0d4529b3c9a69975c7c903759d",
+  "keyManifestHash": "878538ea878c437645fbf0f00764ccfa",
+  "keyCount": 7427,
   "keys": [
     "authored:approved/calendar-weekly-overview/2026-08-03",
     "authored:authored/calendar-weekly-moon/aquarius",
@@ -7407,6 +7407,29 @@
     "vocabulary:fallback-vocab/transit-label-noun/uranus",
     "vocabulary:fallback-vocab/transit-label-noun/venus",
     "template:fallback-hook/empty-house/bridge-template/house-1",
-    "template:fallback-hook/empty-house/bridge-template/standard"
+    "template:fallback-hook/empty-house/bridge-template/standard",
+    "template:fallback-template/compat.cross-sign",
+    "template:fallback-template/compat.same-sign",
+    "template:fallback-template/natal.angle-in-sign",
+    "template:fallback-template/natal.aspect",
+    "template:fallback-template/natal.chart-ruler",
+    "template:fallback-template/natal.house-context",
+    "template:fallback-template/natal.modifier.dignity-detriment",
+    "template:fallback-template/natal.modifier.dignity-domicile",
+    "template:fallback-template/natal.modifier.dignity-exaltation",
+    "template:fallback-template/natal.modifier.dignity-fall",
+    "template:fallback-template/natal.modifier.retrograde",
+    "template:fallback-template/natal.modifier.sect-day",
+    "template:fallback-template/natal.modifier.sect-night",
+    "template:fallback-template/natal.node-in-sign",
+    "template:fallback-template/natal.planet-in-sign",
+    "template:fallback-template/natal.ruler-bridge",
+    "template:fallback-template/natal.synthesis",
+    "template:fallback-template/sky-placement-frame-v3",
+    "template:fallback-template/synastry.aspect-v3",
+    "template:fallback-template/transit.aspect",
+    "template:fallback-template/transit.house",
+    "template:fallback-template/transit.retrograde",
+    "template:fallback-template/transit.retrograde-article"
   ]
 }
