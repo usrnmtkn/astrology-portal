@@ -11512,7 +11512,7 @@ body,
   background: rgba(8, 11, 10, 0.34);
   display: grid;
   gap: var(--admin-space-lg);
-  grid-template-columns: auto minmax(0, 1fr) auto;
+  grid-template-columns: minmax(0, 1fr) auto;
   justify-content: stretch;
   padding: var(--admin-space-lg);
   text-align: left;
@@ -11761,7 +11761,7 @@ body,
   background: rgba(8, 11, 10, 0.34);
   display: grid;
   gap: var(--admin-space-xl);
-  grid-template-columns: auto minmax(0, 1fr) auto;
+  grid-template-columns: minmax(0, 1fr) auto;
   justify-content: stretch;
   min-height: 72px;
   padding: var(--admin-space-xl);
@@ -11898,11 +11898,11 @@ body,
   }
 
   .admin-dashboard .admin-composition-sources > button {
-    grid-template-columns: auto minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1fr) auto;
   }
 
   .admin-dashboard .admin-composition-sources > button > span:last-child {
-    grid-column: 2;
+    grid-column: auto;
   }
 
   .admin-dashboard .admin-composition-preview-copy {
@@ -11914,11 +11914,11 @@ body,
   }
 
   .admin-dashboard .admin-composition-preview-sources button {
-    grid-template-columns: auto minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1fr) auto;
   }
 
   .admin-dashboard .admin-composition-preview-sources button > span:last-child {
-    grid-column: 2;
+    grid-column: auto;
   }
 
   .admin-dashboard .admin-composition-preview-context dl div {
