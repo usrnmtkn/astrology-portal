@@ -2,6 +2,7 @@ import { expect, test, type Locator, type Page } from "@playwright/test";
 import { readFileSync } from "node:fs";
 import { mkdir } from "node:fs/promises";
 import path from "node:path";
+import { contentSourceRepairPlan } from "../../api/admin/content-source-repair-plans";
 import { writingSurfaceAdminAccess, writingSurfaceSourceMap } from "../../apps/admin/src/writingSurfaceSourceMap";
 import {
   expectRouteLoadsWithin,
@@ -35,13 +36,16 @@ const unresolvedQueue = {
   resolutionStoreReady: true,
   issues: [...unresolvedRecordsByKey.values()].map((records, index) => {
     const contentKey = records[0].contentKey;
+    const sourceRepair = records.some((item) => item.reason === "known-current-contract-failure");
     return {
       issueId: String(index).padStart(64, "0"),
       contentKey,
       surface: records[0].surface,
-      kind: records.some((item) => item.reason === "known-current-contract-failure") ? "source-repair" : "editorial-review",
+      kind: sourceRepair ? "source-repair" : "editorial-review",
       records,
-      aiRequest: records.some((item) => item.reason === "known-current-contract-failure") ? `Repair ${contentKey}` : `Investigate ${contentKey}`
+      repairPlan: sourceRepair ? contentSourceRepairPlan(contentKey) : null,
+      sourceDecision: null,
+      aiRequest: sourceRepair ? `Repair ${contentKey}` : `Investigate ${contentKey}`
     };
   })
 };
@@ -469,6 +473,7 @@ async function seedAdminApi(
   options: {
     onGeneratedContentWrite?: (write: { method: string; payload: Record<string, unknown> }) => void;
     onResolutionWrite?: (payload: Record<string, unknown>) => void;
+    onSourceDecisionWrite?: (payload: Record<string, unknown>) => void;
     initialSecret?: string;
     expectedSecret?: string;
     generatedRows?: Record<string, unknown>[];
@@ -561,6 +566,30 @@ async function seedAdminApi(
         status: 200,
         contentType: "application/json",
         body: JSON.stringify({ ok: true, resolution: payload })
+      });
+      return;
+    }
+
+    if (pathname.endsWith("/content-source-repair-decisions")) {
+      const payload = route.request().postDataJSON() as Record<string, unknown>;
+      options.onSourceDecisionWrite?.(payload);
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify({
+          ok: true,
+          decision: {
+            decision_id: "a".repeat(64),
+            issue_id: payload.issueId,
+            content_key: payload.contentKey,
+            decision_status: "approved-for-implementation",
+            action: payload.action,
+            candidate_path: contentSourceRepairPlan(String(payload.contentKey))?.candidatePath,
+            candidate_sha256: payload.candidateSha256,
+            owner_statement: payload.approvalStatement,
+            approved_at: now
+          }
+        })
       });
       return;
     }
@@ -1666,6 +1695,7 @@ test.describe("content dashboard admin user flow case studies", () => {
 
   test("unresolved content shows the governed package inventory and links to Content Library", async ({ page }) => {
     const assertNoBrowserErrors = await expectNoBrowserErrors(page);
+    let sourceDecision: Record<string, unknown> | null = null;
     const editableUnresolvedItem = unresolvedQueue.items.find((item) => item.reason === "review-status");
     const missingUnresolvedItem = unresolvedQueue.items.find((item) => item.reason === "review-status" && item.contentKey !== editableUnresolvedItem?.contentKey);
     expect(editableUnresolvedItem).toBeTruthy();
@@ -1682,12 +1712,15 @@ test.describe("content dashboard admin user flow case studies", () => {
         review_status: "needs_review"
       }
     };
-    await seedAdminApi(page, { generatedRows: [editableUnresolvedRow, ...generatedContentRows] });
+    await seedAdminApi(page, {
+      generatedRows: [editableUnresolvedRow, ...generatedContentRows],
+      onSourceDecisionWrite: (payload) => { sourceDecision = payload; }
+    });
     await expectAdminRouteLoads(page, "/admin/content#unresolved-content");
 
     await expectAdminHeader(page, "Unresolved Content", "Admin / Publish / Unresolved content");
     await expect(page.getByRole("region", { name: "Unresolved content overview" })).toContainText("Resolve content holds");
-    await expect(page.getByRole("region", { name: "Unresolved content overview" })).toContainText("You approve wording. Send source problems to Codex, then refresh after deploy.");
+    await expect(page.getByRole("region", { name: "Unresolved content overview" })).toContainText("Review exact replacements and authorize source repairs here.");
     await expect(page.getByRole("region", { name: "Unresolved content records" })).toBeVisible();
     await expect(page.locator(".admin-unresolved-content-table tbody tr")).toHaveCount(unresolvedIssueCount);
 
@@ -1710,8 +1743,29 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(sourceRepairIssue).toContainText("Sky / Transits");
     await expect(sourceRepairIssue).toContainText("Source repair required");
     await expect(sourceRepairIssue.getByRole("button", { name: "Open exact row" })).toHaveCount(0);
-    await expect(sourceRepairIssue.getByRole("button", { name: "Copy repair request" })).toBeVisible();
-    await expect(sourceRepairIssue.getByRole("button", { name: "Record response" })).toBeVisible();
+    await expect(sourceRepairIssue.getByRole("button", { name: "Review replacement" })).toBeVisible();
+    await sourceRepairIssue.getByRole("button", { name: "Review replacement" }).click();
+    const repairDialog = page.getByRole("dialog", { name: "Review replacement for fallback-hook/sky-sign-copy/sun/virgo" });
+    await expect(repairDialog).toBeVisible();
+    await expect(repairDialog).toContainText("Sun in Virgo replacement");
+    await expect(repairDialog).toContainText("Virgo is not tidiness. Virgo is the standard");
+    await expect(repairDialog).toContainText("packages/astro-knowledge/review/sun-virgo-spine-rewrite-v1/candidate.json");
+    const approveReplacement = repairDialog.getByRole("button", { name: "Approve exact replacement" });
+    await expect(approveReplacement).toBeDisabled();
+    await repairDialog.getByRole("checkbox").check();
+    await expect(approveReplacement).toBeEnabled();
+    await approveReplacement.click();
+    await expect.poll(() => sourceDecision).not.toBeNull();
+    expect(sourceDecision).toMatchObject({
+      schema: "content-studio-source-decision/v1",
+      contentKey: "fallback-hook/sky-sign-copy/sun/virgo",
+      action: "approve-replacement",
+      confirmExactText: true
+    });
+    await expect(repairDialog).toContainText("Approved for implementation");
+    await repairDialog.getByRole("button", { name: "Close", exact: true }).click();
+    await expect(sourceRepairIssue).toContainText("Owner approved");
+    await expect(sourceRepairIssue.getByRole("button", { name: "Copy implementation request" })).toBeVisible();
 
     await page.getByLabel("Search unresolved content").fill(missingUnresolvedItem?.contentKey ?? "");
     const missingIssue = page.locator(".admin-unresolved-content-table tbody tr").first();
@@ -1755,9 +1809,9 @@ test.describe("content dashboard admin user flow case studies", () => {
     let recorded: Record<string, unknown> | null = null;
     await seedAdminApi(page, { onResolutionWrite: (payload) => { recorded = payload; } });
     await expectAdminRouteLoads(page, "/admin/content#unresolved-content");
-    await page.getByLabel("Search unresolved content").fill("sun/virgo");
-    const issue = unresolvedQueue.issues.find((candidate) => candidate.contentKey === "fallback-hook/sky-sign-copy/sun/virgo");
+    const issue = unresolvedQueue.issues.find((candidate) => candidate.kind === "editorial-review");
     expect(issue).toBeTruthy();
+    await page.getByLabel("Search unresolved content").fill(issue?.contentKey ?? "");
     const response = {
       schema: "content-studio-resolution/v1",
       issueId: issue?.issueId,
