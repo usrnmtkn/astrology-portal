@@ -4,6 +4,9 @@ export type DailyMoonContext = {
   topic: string | null;
 };
 
+// Keep the context data wired while the reader-facing tags are temporarily hidden.
+export const DAILY_MOON_CONTEXT_TAGS_VISIBLE = false;
+
 function capitalizeTag(label: string) {
   return label ? `${label[0].toUpperCase()}${label.slice(1)}` : label;
 }
@@ -25,6 +28,10 @@ export function dailyMoonContextTagLabels(context: DailyMoonContext) {
 }
 
 export function DailyMoonContextTags({ context }: { context: DailyMoonContext }) {
+  if (!DAILY_MOON_CONTEXT_TAGS_VISIBLE) {
+    return null;
+  }
+
   const labels = dailyMoonContextTagLabels(context);
 
   return (
