@@ -2128,12 +2128,37 @@ test.describe("content dashboard admin user flow case studies", () => {
       headline: "Shared compatibility closing",
       body: "The connection works best when both people say what they need directly."
     };
-    await seedAdminApi(page, { generatedRows: [templateRow, hookRow] });
+    const jupiterTemplateRow = {
+      ...templateSeed,
+      id: "qa-composition-map-jupiter-template",
+      content_key: "fallback-template/natal.planet-in-sign/jupiter",
+      headline: "Jupiter in {{signTitle}}",
+      body: "Your {{planetTitle}} is in {{signTitle}}.",
+      surface: "natal",
+      block_type: "fallback_template",
+      sections: {
+        packageRecord: {
+          content_role: "template",
+          headline: "Jupiter in {{signTitle}}",
+          body_you: "Your {{planetTitle}} is in {{signTitle}}."
+        }
+      }
+    };
+    await seedAdminApi(page, { generatedRows: [templateRow, hookRow, jupiterTemplateRow] });
     await expectAdminRouteLoads(page, "/admin/content#composition-map");
     const compositionNotification = page.getByRole("button", { name: "Dismiss notification" });
     if (await compositionNotification.isVisible()) await compositionNotification.click();
 
     const detail = page.getByRole("region", { name: "Selected template composition" });
+    await expect(detail.getByRole("heading", { name: "Closing card" })).toBeVisible();
+    const templateList = page.getByRole("complementary", { name: "Composition templates" });
+    const jupiterTemplate = templateList.getByRole("button").filter({ hasText: "Jupiter in any sign" });
+    await expect(jupiterTemplate).toContainText("Jupiter in any sign");
+    await expect(jupiterTemplate).not.toContainText("{{signTitle}}");
+    await jupiterTemplate.click();
+    await expect(detail.getByRole("heading", { name: "Jupiter in any sign" })).toBeVisible();
+    await expect(page.getByRole("region", { name: "Reader surface preview" })).toContainText("Jupiter in Leo");
+    await templateList.getByRole("button").filter({ hasText: "Closing card" }).click();
     await expect(detail.getByRole("heading", { name: "Closing card" })).toBeVisible();
     const preview = page.getByRole("region", { name: "Reader surface preview" });
     await expect(preview.getByRole("heading", { name: "What the reader sees" })).toBeVisible();
