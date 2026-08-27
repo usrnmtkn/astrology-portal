@@ -83,6 +83,11 @@ const sunVirgoFacts = {
   sign: "virgo",
   entryDate: "August 22, 2026",
   exitDate: "September 22, 2026",
+  priorSign: "leo",
+  priorSignEntryDate: "July 22, 2026",
+  priorSignExitDate: "August 22, 2026",
+  previousResidencyEntryDate: "August 23, 2025",
+  previousResidencyExitDate: "September 22, 2025",
   events: []
 };
 
@@ -155,13 +160,13 @@ assert.match(
   /Let people love you loudly this year/u
 );
 const sunVirgoAfter = runtime.transitSynastryFallbackRendererV3.renderSkyPlacement(sunVirgoFacts);
-assert.equal(sunVirgoAfter.templateKey, "sky-placement-frame-v3");
-assert.equal(sunVirgoAfter.contentKey, "fallback-hook/sky-placement-sign/sun/virgo");
-assert.equal(sunVirgoAfter.parts.length, 4);
-assert.match(sunVirgoAfter.parts[0], /August 22, 2026 to September 22, 2026/u);
-assert.match(sunVirgoAfter.parts[1], /The Sun puts one part of life under direct light/u);
-assert.match(sunVirgoAfter.parts[2], /Virgo is the sixth sign, mutable earth ruled by Mercury/u);
-assert.match(sunVirgoAfter.parts[3], /confidence to usefulness, accuracy, and the work that improves an ordinary day/u);
+assert.equal(sunVirgoAfter.templateKey, "sky-placement-continuous-v2");
+assert.equal(sunVirgoAfter.contentKey, "fallback-hook/sky-sign-copy/sun/virgo");
+assert.match(sunVirgoAfter.parts[0], /August 22 to September 22, 2026/u);
+assert.match(sunVirgoAfter.body, /After moving through Leo from July 22 to August 22, the Sun enters Virgo on August 22/u);
+assert.match(sunVirgoAfter.body, /Virgo is not tidiness\. Virgo is the standard/u);
+assert.match(sunVirgoAfter.body, /The Sun moved through Virgo from August 23, 2025 to September 22, 2025/u);
+assert.match(sunVirgoAfter.body, /You may be the only person who can tell\.$/u);
 assert.doesNotMatch(sunVirgoAfter.body, /\{\{/u);
 assert.equal(await runtime.loadSkyPlacementFallbackArchitectureV3Bundle(), false);
 
