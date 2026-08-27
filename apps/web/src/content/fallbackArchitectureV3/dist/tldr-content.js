@@ -3165,7 +3165,7 @@ function createKnowledgeMatrixV13Resolver(file) {
 }
 
 // apps/web/src/content/fallbackArchitectureV3/resolver/index.browser.ts
-var PACKAGE_VERSION = "v3-2026-08-27a";
+var PACKAGE_VERSION = "v3-2026-08-27b";
 function stablePackageValue(value) {
   if (Array.isArray(value)) {
     return value.map(stablePackageValue);
@@ -3177,7 +3177,7 @@ function stablePackageValue(value) {
     Object.keys(value).filter((key) => key !== "review_status" && key !== "reviewStatus").sort().map((key) => [key, stablePackageValue(value[key])])
   );
 }
-function packageRowsByKey(rows) {
+function packageRowsByKey(rows, allowRowsWithoutReviewState = false) {
   const readerEligible = /* @__PURE__ */ new Set(["approved_reuse", "approved", "reviewed"]);
   const candidates = /* @__PURE__ */ new Map();
   for (const row of rows) {
@@ -3185,7 +3185,7 @@ function packageRowsByKey(rows) {
     keyed.push(row);
     candidates.set(row.contentKey, keyed);
   }
-  return [...candidates.values()].map((keyed) => [...keyed].reverse().find((row) => readerEligible.has(String(row.review_status ?? row.reviewStatus ?? "")))).filter((row) => Boolean(row)).sort((first, second) => first.contentKey.localeCompare(second.contentKey));
+  return [...candidates.values()].map((keyed) => [...keyed].reverse().find((row) => allowRowsWithoutReviewState || readerEligible.has(String(row.review_status ?? row.reviewStatus ?? "")))).filter((row) => Boolean(row)).sort((first, second) => first.contentKey.localeCompare(second.contentKey));
 }
 function packageDailyGlanceVariantRows(variants) {
   return Object.entries(variants?.keys ?? {}).flatMap(([dailyKey, set]) => [
@@ -3213,7 +3213,10 @@ function createPackageManifest(bundle, packageVersion = PACKAGE_VERSION) {
     ...packageRowsByKey(bundle.rowsFile.hookRows ?? []).map((row) => ({ bucket: "hook", row })),
     ...packageRowsByKey(bundle.rowsFile.vocabularyRows ?? []).map((row) => ({ bucket: "vocabulary", row })),
     ...packageRowsByKey(packageDailyGlanceVariantRows(bundle.rowsFile.dailyGlanceVariants)).map((row) => ({ bucket: "daily-glance-variant", row })),
-    ...packageRowsByKey(bundle.templatesFile.templates).map((row) => ({ bucket: "template", row }))
+    // Templates are package-owned structural contracts and do not carry the
+    // row-level review status used by authored prose. They must still enter the
+    // hash so a slot or body change invalidates stale dashboard/cache bundles.
+    ...packageRowsByKey(bundle.templatesFile.templates, true).map((row) => ({ bucket: "template", row }))
   ];
   const keys = records.map(({ bucket, row }) => `${bucket}:${row.contentKey}`);
   return {

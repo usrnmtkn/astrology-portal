@@ -2440,6 +2440,47 @@ test.describe("content dashboard admin user flow case studies", () => {
     await assertNoBrowserErrors();
   });
 
+  test("nested resolver variables open their atomic saved sources", async ({ page }) => {
+    const assertNoBrowserErrors = await expectNoBrowserErrors(page);
+    const sourceRow = (id: string, contentKey: string, headline: string, body: string, role: string) => ({
+      ...generatedContentRows[0],
+      id,
+      content_key: contentKey,
+      headline,
+      body,
+      block_type: role === "vocabulary" ? "vocabulary_phrase" : "fallback_hook",
+      provider: "tldrastro-fallback-architecture-v3",
+      sections: { packageRecord: { contentKey, content_role: role, body, review_status: "approved" } }
+    });
+    const aspectVerb = sourceRow("qa-aspect-verb", "fallback-vocab/aspect-verb/trine", "Trine", "puts {{transitTopic}} solidly behind {{natalCore}}", "vocabulary");
+    const saturnTopic = sourceRow("qa-saturn-topic", "fallback-vocab/planet-topic/saturn", "Saturn topic", "structure and limits", "vocabulary");
+    const venusTopic = sourceRow("qa-venus-topic", "fallback-vocab/planet-topic/venus", "Venus topic", "love, value, and relationship choices", "vocabulary");
+    const venusNatalCore = sourceRow("qa-venus-natal-core", "fallback-hook/natal-core/venus", "Venus natal core", "what you love and value", "fallback_hook");
+    const venusCoreFallback = sourceRow("qa-venus-core", "fallback-vocab/planet-core/venus", "Venus core fallback", "relationship needs and values", "vocabulary");
+    await seedAdminApi(page, { generatedRows: [aspectVerb, saturnTopic, venusTopic, venusNatalCore, venusCoreFallback] });
+    await expectAdminRouteLoads(page, "/admin/content#vocabulary");
+
+    const phrase = page.locator(".admin-content-row", { hasText: "fallback-vocab/aspect-verb/trine" });
+    await phrase.getByRole("button", { name: "Edit" }).click();
+    const editor = page.getByRole("dialog", { name: "Generated content editor" });
+    await editor.getByRole("button", { name: "Variables (2)" }).click();
+    const variableGuide = page.getByRole("dialog", { name: "Template variable reference" });
+    const transitTopicCard = variableGuide.locator(".admin-variable-reference-card", { hasText: "{{transitTopic}}" });
+    await expect(transitTopicCard).toContainText("Planet-topic vocabulary selected by the transit resolver");
+    await transitTopicCard.getByRole("button", { name: "Review source writing" }).click();
+
+    const transitTopicDetails = page.getByRole("dialog", { name: "Transit topic variable details" });
+    await expect(transitTopicDetails).toContainText("The resolver selects one planet-topic phrase using the transiting planet.");
+    await expect(transitTopicDetails).toContainText("fallback-vocab/planet-topic/saturn");
+    await expect(transitTopicDetails).toContainText("fallback-vocab/planet-topic/venus");
+    await expect(transitTopicDetails).not.toContainText("No saved passage to review");
+    await transitTopicDetails.locator(".admin-variable-source-row", { hasText: "Saturn topic" }).click();
+    await transitTopicDetails.getByRole("button", { name: "Edit source" }).click();
+    await expect(editor.getByLabel("Phrase title")).toHaveValue("Saturn topic");
+    await expect(editor.getByLabel("Variable value")).toHaveValue("structure and limits");
+    await assertNoBrowserErrors();
+  });
+
   test("admin responsive web and mobile views stay readable", async ({ page }) => {
     const assertNoBrowserErrors = await expectNoBrowserErrors(page);
     await mkdir(adminScreenshotDir, { recursive: true });

@@ -6,12 +6,14 @@ export type TemplateVariableReference = {
   meaning: string;
   example: string;
   source: string;
-  sourceKind: "saved-copy" | "runtime";
+  sourceKind: "saved-copy" | "runtime" | "unmapped";
   requirement: TemplateVariableRequirement;
   fields: string[];
 };
 
-type VariableDefinition = Pick<TemplateVariableReference, "meaning" | "example" | "source">;
+type VariableDefinition = Pick<TemplateVariableReference, "meaning" | "example" | "source"> & {
+  sourceKind?: TemplateVariableReference["sourceKind"];
+};
 
 const variableDefinitions: Record<string, VariableDefinition> = {
   possessive: {
@@ -117,7 +119,8 @@ const variableDefinitions: Record<string, VariableDefinition> = {
   modifierSentences: {
     meaning: "Optional complete sentences added for modifiers such as retrograde motion, dignity, or chart sect. Inside this block, {{.}} means the current sentence.",
     example: "A retrograde or dignity sentence",
-    source: "Calculated modifier templates"
+    source: "Saved modifier templates selected from calculated chart conditions",
+    sourceKind: "saved-copy"
   },
   houseTopic: {
     meaning: "A short phrase naming the life area governed by the calculated house.",
@@ -305,9 +308,58 @@ const variableDefinitions: Record<string, VariableDefinition> = {
     source: "Reviewed synastry hook"
   },
   closingLine: {
-    meaning: "The approved final sentence for the assembled compatibility passage.",
-    example: "The connection works best when both people say what they need directly.",
-    source: "Reviewed compatibility hook"
+    meaning: "The editable final sentence for a compatibility passage.",
+    example: "A reviewed relationship closing",
+    source: "Reviewed compatibility closing hook",
+    sourceKind: "saved-copy"
+  },
+  modeA: {
+    meaning: "The editable phrase describing how the first person's planet tends to operate.",
+    example: "leading visibly",
+    source: "Reviewed planet-mode hook selected for the first chart point",
+    sourceKind: "saved-copy"
+  },
+  modeB: {
+    meaning: "The editable phrase describing how the second person's planet tends to operate.",
+    example: "seeking steadiness",
+    source: "Reviewed planet-mode hook selected for the second chart point",
+    sourceKind: "saved-copy"
+  },
+  askA: {
+    meaning: "The editable phrase naming what the first chart point asks for in a relationship.",
+    example: "room to act directly",
+    source: "Planet-ask vocabulary selected for the first chart point",
+    sourceKind: "saved-copy"
+  },
+  askB: {
+    meaning: "The editable phrase naming what the second chart point asks for in a relationship.",
+    example: "clear reassurance",
+    source: "Planet-ask vocabulary selected for the second chart point",
+    sourceKind: "saved-copy"
+  },
+  gratesA: {
+    meaning: "The editable friction phrase associated with the first chart point.",
+    example: "being rushed before the feeling is clear",
+    source: "Reviewed planet-friction hook selected for the first chart point",
+    sourceKind: "saved-copy"
+  },
+  gratesB: {
+    meaning: "The editable friction phrase associated with the second chart point.",
+    example: "waiting while the decision stays open",
+    source: "Reviewed planet-friction hook selected for the second chart point",
+    sourceKind: "saved-copy"
+  },
+  sceneA: {
+    meaning: "The editable everyday-life example associated with the first chart point.",
+    example: "one person making the plan before checking in",
+    source: "Planet-scene vocabulary selected for the first chart point",
+    sourceKind: "saved-copy"
+  },
+  sceneB: {
+    meaning: "The editable everyday-life example associated with the second chart point.",
+    example: "the other person revisiting an agreement later",
+    source: "Planet-scene vocabulary selected for the second chart point",
+    sourceKind: "saved-copy"
   },
   compatDomain: {
     meaning: "The relationship area emphasized by the calculated compatibility pattern.",
@@ -368,6 +420,30 @@ const variableDefinitions: Record<string, VariableDefinition> = {
     meaning: "The display name of the transiting planet or point.",
     example: "Saturn",
     source: "Calculated transit fact"
+  },
+  transitTopic: {
+    meaning: "The editable life-topic phrase selected for the transiting planet.",
+    example: "Saturn's focus on structure and responsibility",
+    source: "Planet-topic vocabulary selected by the transit resolver",
+    sourceKind: "saved-copy"
+  },
+  natalCore: {
+    meaning: "The editable phrase naming the natal planet or angle function receiving the transit.",
+    example: "your relationship needs and values",
+    source: "Reviewed natal-core hook with planet-core vocabulary fallback",
+    sourceKind: "saved-copy"
+  },
+  natalArea: {
+    meaning: "The editable life-area phrase inserted into a transit effect or type sentence.",
+    example: "relationships, values, and what feels worth choosing",
+    source: "Planet-topic or angle-area vocabulary selected by the transit resolver",
+    sourceKind: "saved-copy"
+  },
+  transitEffect: {
+    meaning: "The editable transit-effect passage selected for the aspect family, transiting planet, and natal target.",
+    example: "relationship choices become easier to see clearly",
+    source: "Reviewed soft or hard transit-effect hook",
+    sourceKind: "saved-copy"
   },
   transitTypeLine: {
     meaning: "A complete reviewed sentence explaining the general type of transit contact.",
@@ -433,6 +509,24 @@ const variableDefinitions: Record<string, VariableDefinition> = {
     meaning: "Optional paragraphs assembled from the exact aspects currently made by this Sky placement.",
     example: "Jupiter square Uranus adds pressure to change direction quickly.",
     source: "Reviewed current Sky aspect rows"
+  },
+  aspectInsert: {
+    meaning: "The optional current-aspect passage inserted into a continuous Sky placement article.",
+    example: "A dated aspect paragraph relevant to this placement",
+    source: "Reviewed current Sky aspect rows selected by the resolver",
+    sourceKind: "saved-copy"
+  },
+  other_name: {
+    meaning: "The selected other person's display name used by legacy relationship copy.",
+    example: "Maya",
+    source: "Selected relationship profile",
+    sourceKind: "runtime"
+  },
+  priorSign: {
+    meaning: "The sign occupied immediately before the current calculated Sky placement.",
+    example: "Cancer",
+    source: "Calculated transit history",
+    sourceKind: "runtime"
   }
 };
 
@@ -445,11 +539,13 @@ function humanizeVariable(name: string) {
 
 function genericDefinition(name: string): VariableDefinition {
   const label = humanizeVariable(name).toLowerCase();
-  if (/date$/iu.test(name)) return { meaning: `The calculated ${label} used for this reading.`, example: "A formatted calendar date", source: "Calculated runtime fact" };
+  if (/date(?:withyear)?$/iu.test(name)) return { meaning: `The calculated ${label} used for this reading.`, example: "A formatted calendar date", source: "Calculated runtime fact" };
+  if (/^holder\d(?:poss(?:cap)?|subject|object|pronounposs)?$/iu.test(name)) return { meaning: `The calculated ${label} used to keep relationship voice and perspective consistent.`, example: "A reader or relationship-profile name or pronoun", source: "Calculated relationship context" };
   if (/title$/iu.test(name)) return { meaning: `The display name for the calculated ${label.replace(/ title$/u, "")}.`, example: "A reader-facing name", source: "Calculated runtime fact" };
+  if (/(?:sign|theme)$/iu.test(name)) return { meaning: `The calculated ${label} used for this reading.`, example: "A reader-facing chart value", source: "Calculated runtime fact" };
   if (/sentences?$/iu.test(name)) return { meaning: `Reviewed sentence copy supplied for ${label.replace(/ sentences?$/u, "")}.`, example: "One or more complete sentences", source: "Reviewed fallback source" };
   if (/^(is|has)[A-Z]/u.test(name)) return { meaning: `Whether the calculated chart has ${label.replace(/^(is|has) /u, "")}.`, example: "Yes or no", source: "Calculated runtime fact" };
-  return { meaning: `The ${label} value supplied when the app renders this template.`, example: "Varies with the chart or selected source row", source: "Runtime resolver" };
+  return { meaning: `The ${label} value declared by this template does not have a documented provider.`, example: "No canonical value is wired", source: "No canonical provider", sourceKind: "unmapped" };
 }
 
 function stringArray(value: unknown) {
@@ -479,6 +575,12 @@ export function templateVariableReferences(
   collectTemplateStrings(fields, "", strings);
   collectTemplateStrings(packageRecord, "Package", strings);
 
+  // Resolver dependencies can be declared in requiredSlots/optionalSlots even
+  // when they are consumed inside another saved phrase instead of appearing in
+  // the outer template. They still need to be visible and editable in the map.
+  required.forEach((name) => usages.set(name, { fields: new Set(["Resolver dependency"]), conditional: false }));
+  optional.forEach((name) => usages.set(name, { fields: new Set(["Resolver dependency"]), conditional: true }));
+
   strings.forEach(({ field, value }) => {
     for (const match of value.matchAll(/\{\{\s*([#\/^]?)\s*([\w.-]+|\.)\s*\}\}/gu)) {
       const marker = match[1];
@@ -503,7 +605,7 @@ export function templateVariableReferences(
         name,
         label: humanizeVariable(name),
         ...definition,
-        sourceKind: (/^(Calculated|Runtime|Selected relationship|Relationship renderer)/u.test(definition.source)
+        sourceKind: definition.sourceKind ?? (/^(Calculated|Runtime|Selected relationship|Relationship renderer)/u.test(definition.source)
           ? "runtime"
           : "saved-copy") as TemplateVariableReference["sourceKind"],
         requirement,

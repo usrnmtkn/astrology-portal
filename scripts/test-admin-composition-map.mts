@@ -92,10 +92,11 @@ const transitTemplate: CompositionMapRow = {
   block_type: "fallback_template",
   sections: { packageRecord: {
     content_role: "template",
+    requiredSlots: ["transitTopic", "natalCore", "aspectVerb"],
     headline: "{{transitTitle}} {{aspectName}} your {{natalTitle}}",
     headline_they: "{{transitTitle}} {{aspectName}} {{otherPoss}} {{natalTitle}}",
-    body: "{{transitRef}} is {{aspectAdj}} your natal {{natalTitle}}. {{transitTypeLine}}",
-    body_they: "{{transitRef}} is {{aspectAdj}} {{otherPoss}} natal {{natalTitle}}. {{transitTypeLine}}"
+    body: "{{transitRef}} is {{aspectAdj}} your natal {{natalTitle}}. This {{aspectVerb}}. {{transitTypeLine}}",
+    body_they: "{{transitRef}} is {{aspectAdj}} {{otherPoss}} natal {{natalTitle}}. This {{aspectVerb}}. {{transitTypeLine}}"
   } }
 };
 const transitMap = buildCompositionMap([
@@ -105,16 +106,68 @@ const transitMap = buildCompositionMap([
     id: `aspect-${aspect}`,
     content_key: `fallback-hook/transit-aspect-type/${aspect}`,
     sections: { packageRecord: { content_role: "fallback_hook", body_you: `${aspect} works for you.`, body_they: `${aspect} works for them.` } }
-  }))
+  })),
+  {
+    ...baseRow,
+    id: "aspect-verb-trine",
+    content_key: "fallback-vocab/aspect-verb/trine",
+    body: "puts {{transitTopic}} solidly behind {{natalCore}}",
+    block_type: "vocabulary_phrase"
+  },
+  {
+    ...baseRow,
+    id: "saturn-topic",
+    content_key: "fallback-vocab/planet-topic/saturn",
+    body: "Saturn's focus",
+    block_type: "vocabulary_phrase"
+  },
+  {
+    ...baseRow,
+    id: "venus-core",
+    content_key: "fallback-hook/natal-core/venus",
+    body: "Venus themes",
+    block_type: "fallback_hook"
+  }
 ]);
-assert.equal(transitMap[0].preview.fields.find((field) => field.key === "body")?.rendered, "transiting Saturn is trine your natal Venus. trine works for you.", "A trine preview should select trine source copy and direct-reader voice.");
-assert.equal(transitMap[0].preview.fields.find((field) => field.key === "body_they")?.rendered, "transiting Saturn is trine Maya's natal Venus. trine works for them.", "The third-person preview should keep its possessive and source voice consistent.");
+assert.equal(transitMap[0].preview.fields.find((field) => field.key === "body")?.rendered, "transiting Saturn is trine your natal Venus. This puts Saturn's focus solidly behind Venus themes. trine works for you.", "A trine preview should select nested saved phrases and direct-reader voice.");
+assert.equal(transitMap[0].preview.fields.find((field) => field.key === "body_they")?.rendered, "transiting Saturn is trine Maya's natal Venus. This puts Saturn's focus solidly behind Venus themes. trine works for them.", "The third-person preview should keep its possessive and nested sources consistent.");
 assert.equal(transitMap[0].preview.fields.find((field) => field.key === "headline_they")?.rendered, "Saturn trine Maya's Venus", "Third-person previews should use their third-person headline.");
 assert.equal(transitMap[0].preview.fields.find((field) => field.key === "body")?.audience, "you", "The main direct-reader passage should not appear in third-person previews.");
 assert.equal(transitMap[0].preview.fields.find((field) => field.key === "body_they")?.audience, "they", "The third-person passage should not appear in direct-reader previews.");
 const transitSegments = transitMap[0].preview.fields.find((field) => field.key === "body")?.paragraphs.flat() ?? [];
 assert.equal(transitSegments.find((segment) => segment.name === "transitRef")?.kind, "fact", "Calculated preview values should carry their fact color group.");
 assert.equal(transitSegments.find((segment) => segment.name === "transitTypeLine")?.source?.row.content_key, "fallback-hook/transit-aspect-type/trine", "Rendered hook text should deep-link to the matching editable source.");
+assert.equal(transitMap[0].slots.find((slot) => slot.name === "transitTopic")?.sourceKind, "saved-copy", "Resolver-selected planet topics should be editable slots.");
+assert.equal(transitMap[0].slots.find((slot) => slot.name === "natalCore")?.sources[0]?.row.content_key, "fallback-hook/natal-core/venus", "Declared nested dependencies should link to their saved source family.");
+assert.equal(transitSegments.find((segment) => segment.name === "transitTopic")?.source?.row.content_key, "fallback-vocab/planet-topic/saturn", "Nested preview text should deep-link to the exact transiting-planet vocabulary row.");
+assert.equal(transitSegments.find((segment) => segment.name === "natalCore")?.source?.row.content_key, "fallback-hook/natal-core/venus", "Nested preview text should deep-link to the preferred natal-core hook.");
+
+const transitFallbackMap = buildCompositionMap([
+  transitTemplate,
+  {
+    ...baseRow,
+    id: "fallback-aspect-verb-trine",
+    content_key: "fallback-vocab/aspect-verb/trine",
+    body: "puts {{transitTopic}} solidly behind {{natalCore}}",
+    block_type: "vocabulary_phrase"
+  },
+  {
+    ...baseRow,
+    id: "fallback-saturn-topic",
+    content_key: "fallback-vocab/planet-topic/saturn",
+    body: "Saturn's focus",
+    block_type: "vocabulary_phrase"
+  },
+  {
+    ...baseRow,
+    id: "venus-core-vocabulary-fallback",
+    content_key: "fallback-vocab/planet-core/venus",
+    body: "Venus themes from vocabulary",
+    block_type: "vocabulary_phrase"
+  }
+]);
+const fallbackSegments = transitFallbackMap[0].preview.fields.find((field) => field.key === "body")?.paragraphs.flat() ?? [];
+assert.equal(fallbackSegments.find((segment) => segment.name === "natalCore")?.source?.row.content_key, "fallback-vocab/planet-core/venus", "When the preferred natal-core hook is absent, the preview should deep-link to the resolver's vocabulary fallback.");
 
 const jupiterMap = buildCompositionMap([{
   ...baseRow,

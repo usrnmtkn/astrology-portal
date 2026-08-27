@@ -19,7 +19,7 @@ const generatedContentSource = read("apps/web/src/services/generatedContent.ts")
 const materializerSource = read("scripts/materialize-fallback-architecture-v3-dashboard-rows.mjs");
 const appSource = read("apps/web/src/App.tsx");
 
-assert.equal(PACKAGE_VERSION, "v3-2026-08-27a");
+assert.equal(PACKAGE_VERSION, "v3-2026-08-27b");
 assert.match(
   runtimeSource,
   /export const fallbackArchitectureV3BundledManifestSummary = bundledManifestSummaryV3 as FallbackArchitectureV3PackageManifestSummary/u,
@@ -226,6 +226,19 @@ const expectedManifest = createPackageManifest({
     templates: latestEligible([...templates.templates, ...placementRows.templates], true)
   }
 }, PACKAGE_VERSION);
+const templateHashFixture = (body) => createPackageManifest({
+  transitLib: { authoredCards: [] },
+  rowsFile: {},
+  templatesFile: { templates: [{ contentKey: "fallback-template/hash-fixture", body }] }
+}, "fixture");
+const templateHashBefore = templateHashFixture("{{firstSlot}}");
+const templateHashAfter = templateHashFixture("{{secondSlot}}");
+assert.deepEqual(templateHashBefore.keys, ["template:fallback-template/hash-fixture"]);
+assert.notEqual(
+  templateHashBefore.contentHash,
+  templateHashAfter.contentHash,
+  "Changing a template body must change the package content hash."
+);
 const bundledManifest = readJson(`${packageDir}/bundled-manifest-v3.json`);
 const bundledManifestSummary = readJson(`${packageDir}/bundled-manifest-summary-v3.json`);
 const isSkyPlacementPartitionRow = (row) => (
