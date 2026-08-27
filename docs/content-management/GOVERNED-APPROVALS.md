@@ -97,6 +97,15 @@ writes `packages/astro-knowledge/generated/content-unresolved-queue-v1.json`.
 This report is an inventory, not an approval grant. It records source paths, object
 paths, statuses, reasons, and source hashes for rows excluded by reader governance.
 
+Known source-contract failures may declare a hash-bound replacement plan through
+`api/admin/content-source-repair-plans.ts`. Content Studio displays the complete
+candidate and records the owner's explicit exact-text decision in
+`content_studio_source_decisions`. This decision authorizes a package repair; it
+does not modify source JSON, review status, distribution manifests, or reader
+eligibility. The hold clears only after the approved payload is applied to the
+repository, generated artifacts are rebuilt, governance passes, and the resulting
+package is deployed.
+
 ## Cards and semantic retrieval
 
 Horoscope cards continue to resolve by calculated astrology and canonical content

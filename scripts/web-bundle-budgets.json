@@ -12,11 +12,11 @@
   "transitFallbackChunkGzipBytes": 330000,
   "relationshipFallbackChunkGzipBytes": 230000,
   "signupChunkGzipBytes": 4000,
-  "totalCssGzipBytes": 108000,
+  "totalCssGzipBytes": 110000,
   "totalJavaScriptGzipBytes": 2686000,
   "_rationale": {
+    "totalCssGzipBytes": "Raised by 4 kB for the deferred Content Studio form, Composition Map, and governed source-repair workflows; reader startup CSS remains separately capped at 47 kB.",
     "readerBootGzipBytes": "Raised by 2 kB for the fail-soft eclipse review reporting and protected-content integrity boundary; deferred content must still remain outside the static boot graph.",
-    "lunationBookFallbackChunkGzipBytes": "Raised by 5 kB for the 22 recovered, owner-approved full lunation book passages; the complete protected writing remains lazy-loaded and byte-exact.",
-    "totalCssGzipBytes": "Raised by 2 kB for the editable Content Studio Composition Map and compact responsive admin navigation."
+    "lunationBookFallbackChunkGzipBytes": "Raised by 5 kB for the 22 recovered, owner-approved full lunation book passages; the complete protected writing remains lazy-loaded and byte-exact."
   }
 }
