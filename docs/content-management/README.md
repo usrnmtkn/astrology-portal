@@ -186,14 +186,15 @@ fallback workspace.
 ## Reviewing composition naming and architecture
 
 Open Content Studio > Composition (`/admin/content#composition-map`). The map
-groups templates by reader destination, then traces each template through its
-slots to either a calculated runtime fact or an editable saved hook or phrase.
+groups templates by reader destination and begins with a representative reader
+preview. Use **Main template** to inspect the raw pattern, then **Assembly** to
+trace each slot to either a calculated runtime fact or an editable saved hook or phrase.
 Use **Needs IA review** to find templates without a reader destination,
 templates without detectable slots, missing saved-copy sources, and opaque
 legacy template IDs. Edit actions always open the canonical saved row: template
 and copy-source rows are editable, while calculated facts remain read-only.
 
-Review the map in this order: reader destination, human template name, slot
+Review the map in this order: rendered reader surface, main template, slot
 meaning, source type, then canonical key. This keeps the information
 architecture reader-first while preserving stable machine identifiers.
 See the dated [Composition Map naming and IA audit](../qa/composition-map-ia-audit.md)
