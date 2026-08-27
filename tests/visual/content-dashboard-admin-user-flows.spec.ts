@@ -1761,11 +1761,15 @@ test.describe("content dashboard admin user flow case studies", () => {
     const sourceRepairIssue = page.locator(".admin-unresolved-content-table tbody tr").first();
     await expect(sourceRepairIssue).toContainText("fallback-hook/sky-sign-copy/sun/virgo");
     await expect(sourceRepairIssue).toContainText("Sky / Transits");
-    await expect(sourceRepairIssue).toContainText("Source repair required");
+    await expect(sourceRepairIssue).toContainText("Action needed");
+    await expect(sourceRepairIssue).toContainText("Review the exact replacement");
+    await expect(sourceRepairIssue).toContainText("Responsible now: You");
+    await expect(sourceRepairIssue.getByRole("list", { name: /Resolution progress/ })).toContainText("Diagnose conflict");
+    await expect(sourceRepairIssue.getByRole("list", { name: /Resolution progress/ })).toContainText("Review replacement");
     await expect(sourceRepairIssue.getByRole("button", { name: "Open exact row" })).toHaveCount(0);
-    await expect(sourceRepairIssue.getByRole("button", { name: "Review replacement" })).toBeVisible();
+    await expect(sourceRepairIssue.getByRole("button", { name: "Review replacement now" })).toBeVisible();
     await expect(sourceRepairIssue.getByRole("button", { name: "Copy investigation" })).toBeVisible();
-    await sourceRepairIssue.getByRole("button", { name: "Review replacement" }).click();
+    await sourceRepairIssue.getByRole("button", { name: "Review replacement now" }).click();
     const repairDialog = page.getByRole("dialog", { name: "Review replacement for fallback-hook/sky-sign-copy/sun/virgo" });
     await expect(repairDialog).toBeVisible();
     await expect(repairDialog).toContainText("Sun in Virgo replacement");
@@ -1785,19 +1789,19 @@ test.describe("content dashboard admin user flow case studies", () => {
     });
     await expect(repairDialog).toContainText("Approved for implementation");
     await repairDialog.getByRole("button", { name: "Close", exact: true }).click();
-    await expect(sourceRepairIssue).toContainText("Owner approved");
-    await expect(sourceRepairIssue).toContainText("Next, copy the implementation request into Codex");
+    await expect(sourceRepairIssue).toContainText("Implement the approved repair");
+    await expect(sourceRepairIssue).toContainText("The exact replacement is approved");
     await expect(sourceRepairIssue.getByRole("button", { name: "Copy implementation request" })).toBeVisible();
 
     await page.getByLabel("Search unresolved content").fill(missingUnresolvedItem?.contentKey ?? "");
     const missingIssue = page.locator(".admin-unresolved-content-table tbody tr").first();
-    await expect(missingIssue).toContainText("Editable row missing");
-    await expect(missingIssue.getByRole("button", { name: "Copy investigation" })).toBeVisible();
+    await expect(missingIssue).toContainText("Diagnose the missing editable row");
+    await expect(missingIssue.getByRole("button", { name: "Copy investigation request" })).toBeVisible();
 
     await page.getByLabel("Search unresolved content").fill(editableUnresolvedItem?.contentKey ?? "");
     const editableIssue = page.locator(".admin-unresolved-content-table tbody tr").first();
-    await expect(editableIssue).toContainText("Owner review required");
-    await editableIssue.getByRole("button", { name: "Open exact row" }).click();
+    await expect(editableIssue).toContainText("Review the copy in Content Library");
+    await editableIssue.getByRole("button", { name: "Open exact row to review" }).click();
     await expectAdminHeader(page, "Content Library", "Admin / Write / Content library");
     await expect(page.getByLabel("Search content")).toHaveValue(editableUnresolvedItem?.contentKey ?? "");
     await expect(page.locator(".admin-content-row")).toContainText(editableUnresolvedItem?.contentKey ?? "");
@@ -1849,7 +1853,7 @@ test.describe("content dashboard admin user flow case studies", () => {
       if (dialog.type() === "prompt") await dialog.accept(JSON.stringify(response));
       else await dialog.dismiss();
     });
-    await page.getByRole("button", { name: "Record response" }).click();
+    await page.getByRole("button", { name: "Record an existing response" }).click();
     await expect.poll(() => recorded).toEqual(response);
   });
 
