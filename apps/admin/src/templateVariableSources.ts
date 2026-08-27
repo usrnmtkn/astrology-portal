@@ -9,6 +9,10 @@ const sourcePrefixExceptions: Record<string, string[]> = {
   placementSentences: ["fallback-hook/placement-sentence/"],
   placementGerundText: ["fallback-vocab/placement-gerund/"],
   modifierSentences: ["fallback-template/natal.modifier."],
+  transitTopic: ["fallback-vocab/planet-topic/"],
+  natalCore: ["fallback-hook/natal-core/", "fallback-vocab/planet-core/"],
+  natalArea: ["fallback-vocab/planet-topic/", "fallback-vocab/angle-area/"],
+  transitEffect: ["fallback-hook/transit-effect-soft/", "fallback-hook/transit-effect-hard/", "fallback-hook/transit-effect/"],
   houseLivedBehavior: ["fallback-hook/placement-house-lived/", "fallback-hook/house-lived/"],
   placementHouseSentences: ["fallback-hook/placement-house-sentence/"],
   topicN: ["fallback-vocab/house-topic/"],
@@ -17,10 +21,19 @@ const sourcePrefixExceptions: Record<string, string[]> = {
   aspectTypeLine: ["fallback-hook/aspect-type/"],
   planetACore: ["fallback-vocab/planet-core/"],
   planetBCore: ["fallback-vocab/planet-core/"],
-  pairSentences: ["fallback-hook/aspect-pair/"],
+  pairSentences: ["fallback-hook/synastry-pair/", "fallback-hook/aspect-pair/"],
   rulerHouseTopic: ["fallback-vocab/house-topic/"],
-  synAspectLine: ["fallback-hook/synastry-"],
+  oppositeDirection: ["fallback-vocab/node-direction/"],
+  synAspectLine: ["fallback-hook/synastry-aspect-type/"],
   closingLine: ["fallback-hook/compatibility-closing/", "fallback-hook/relationship-closing/"],
+  modeA: ["fallback-hook/planet-mode/"],
+  modeB: ["fallback-hook/planet-mode/"],
+  askA: ["fallback-vocab/planet-ask/"],
+  askB: ["fallback-vocab/planet-ask/"],
+  gratesA: ["fallback-hook/planet-grates/"],
+  gratesB: ["fallback-hook/planet-grates/"],
+  sceneA: ["fallback-vocab/planet-scene/"],
+  sceneB: ["fallback-vocab/planet-scene/"],
   compatDomain: ["fallback-hook/compat-domain/", "fallback-vocab/compatibility-", "fallback-vocab/relationship-"],
   elementPattern: ["fallback-vocab/element-pattern/", "fallback-hook/element-pattern/"],
   transitTypeLine: ["fallback-hook/transit-aspect-type/", "fallback-hook/transit-type/"],
@@ -30,10 +43,15 @@ const sourcePrefixExceptions: Record<string, string[]> = {
   signCopy: ["fallback-hook/sky-sign-copy/", "fallback-hook/sky-placement-sign/"],
   windowFrame: ["fallback-hook/sky-placement/"],
   currentAspects: ["fallback-hook/sky-aspect-sign/", "fallback-hook/sky-aspect-exact/", "fallback-hook/sky-aspect-pair/", "fallback-hook/sky-placement-aspect/"],
+  aspectInsert: ["fallback-hook/sky-aspect-sign/", "fallback-hook/sky-aspect-exact/", "fallback-hook/sky-aspect-pair/", "fallback-hook/sky-placement-aspect/"],
   planetFrame: ["fallback-hook/sky-placement-frame/", "fallback-hook/sky-placement-retro-frame/"],
   signLore: ["fallback-hook/sky-placement-lore/"],
   articleHeadline: ["sky-article/"],
   articleBody: ["sky-article/"]
+};
+
+const sourceSelectionNotes: Record<string, string> = {
+  transitTopic: "The resolver selects one planet-topic phrase using the transiting planet.",
 };
 
 export type TemplateVariableSourceRow = {
@@ -57,9 +75,10 @@ function templateContextTokens(contentKey: string) {
     .filter((part) => contextualValues.has(part));
 }
 
-export function templateVariableSourceKeyPrefixes(reference: Pick<TemplateVariableReference, "name" | "source">) {
+export function templateVariableSourceKeyPrefixes(reference: Pick<TemplateVariableReference, "name" | "source" | "sourceKind">) {
   const exception = sourcePrefixExceptions[reference.name];
   if (exception) return exception;
+  if (reference.sourceKind !== "saved-copy") return [];
   const keyPart = reference.name
     .replace(/([a-z0-9])([A-Z])/gu, "$1-$2")
     .replace(/-sentences?$/u, "")
@@ -67,8 +86,13 @@ export function templateVariableSourceKeyPrefixes(reference: Pick<TemplateVariab
   return [`fallback-${/vocabulary/iu.test(reference.source) ? "vocab" : "hook"}/${keyPart}/`];
 }
 
+export function templateVariableSourceSelectionNote(reference: Pick<TemplateVariableReference, "name" | "sourceKind">) {
+  return sourceSelectionNotes[reference.name]
+    ?? null;
+}
+
 export function templateVariableSourceCandidates<T extends TemplateVariableSourceRow>(
-  reference: Pick<TemplateVariableReference, "name" | "source">,
+  reference: Pick<TemplateVariableReference, "name" | "source" | "sourceKind">,
   rows: T[],
   templateContentKey: string
 ): T[] {
