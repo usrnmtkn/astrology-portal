@@ -1,4 +1,3 @@
-import { Flag, Search, X } from "lucide-react";
 import { useMemo, useState, type ReactNode } from "react";
 import { buildCompositionMap, type CompositionMapRow } from "./compositionMap";
 
@@ -41,12 +40,10 @@ export default function CompositionMapWorkspace({ editor, onEditRow, rows }: Pro
   const selected = filtered.find((template) => template.row.content_key === selectedKey) ?? filtered[0];
   const selectedEditableSources = selected?.slots.reduce((total, slot) => total + slot.sources.length, 0) ?? 0;
   const selectedRuntimeSlots = selected?.slots.filter((slot) => slot.sourceKind === "runtime").length ?? 0;
-  const selectedHasAudienceVariants = Boolean(selected?.preview.fields.some((field) => field.key === "body_you")
-    && selected?.preview.fields.some((field) => field.key === "body_they"));
+  const selectedHasAudienceVariants = Boolean(selected?.preview.fields.some((field) => field.audience === "you")
+    && selected?.preview.fields.some((field) => field.audience === "they"));
   const visiblePreviewFields = selected?.preview.fields.filter((field) => (
-    !selectedHasAudienceVariants
-    || !["body_you", "body_they"].includes(field.key)
-    || field.key === `body_${previewAudience}`
+    !field.audience || field.audience === previewAudience
   )) ?? [];
   const hasFilters = destinationFilter !== "all" || issuesOnly || Boolean(query.trim());
 
@@ -71,9 +68,8 @@ export default function CompositionMapWorkspace({ editor, onEditRow, rows }: Pro
             <small>Choose one to read its surface.</small>
             <div className="admin-composition-template-tools">
               <span className="admin-composition-search-shell">
-                <Search size={15} aria-hidden="true" />
                 <input aria-label="Search the composition map" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Find a template or source" />
-                {query && <button type="button" aria-label="Clear composition search" onClick={() => setQuery("")}><X size={14} aria-hidden="true" /></button>}
+                {query && <button type="button" aria-label="Clear composition search" onClick={() => setQuery("")}>×</button>}
               </span>
               <div className="admin-composition-template-filters">
                 <select aria-label="Reader destination" value={destinationFilter} onChange={(event) => setDestinationFilter(event.target.value)}>
@@ -87,7 +83,7 @@ export default function CompositionMapWorkspace({ editor, onEditRow, rows }: Pro
                   aria-pressed={issuesOnly}
                   onClick={() => setIssuesOnly((current) => !current)}
                 >
-                  <Flag size={16} aria-hidden="true" /> Review
+                  Review
                 </button>
               </div>
             </div>
@@ -150,7 +146,7 @@ export default function CompositionMapWorkspace({ editor, onEditRow, rows }: Pro
 
               {selected.issues.length > 0 && (
                 <section className="admin-composition-issues" aria-label="Naming and information architecture issues">
-                  <div><Flag size={17} aria-hidden="true" /><strong>Naming &amp; IA review</strong></div>
+                  <div><strong>Naming &amp; IA review</strong></div>
                   <ul>{selected.issues.map((issue) => <li key={issue}>{issue}</li>)}</ul>
                 </section>
               )}
@@ -160,8 +156,8 @@ export default function CompositionMapWorkspace({ editor, onEditRow, rows }: Pro
                   <header>
                     <div>
                       <p className="admin-eyebrow">Representative surface preview</p>
-                      <h3>What the reader sees</h3>
-                      <p>Example chart facts are used below. Exact wording appears for a single canonical source. This is not a live chart reading.</p>
+                      <h3>Example reader rendering</h3>
+                      <p>A coherent sample is assembled from one audience, matching saved sources, and example chart facts. It is not a live chart reading.</p>
                     </div>
                     <span className="ui-pill admin-status status-reviewed">Example data</span>
                   </header>
@@ -181,7 +177,7 @@ export default function CompositionMapWorkspace({ editor, onEditRow, rows }: Pro
                         <section className={`admin-composition-preview-field field-${field.key}`} key={field.key}>
                           <span>{field.label}</span>
                           {field.rendered.split(/\n{2,}/u).map((paragraph, index) => (
-                            field.key === "headline"
+                            field.key.startsWith("headline")
                               ? <h3 key={`${field.key}-${index}`}>{paragraph}</h3>
                               : <p key={`${field.key}-${index}`}>{paragraph}</p>
                           ))}
@@ -281,7 +277,6 @@ export default function CompositionMapWorkspace({ editor, onEditRow, rows }: Pro
                       </div>
                     ) : (
                       <div className="admin-composition-missing-source" role="note">
-                        <Flag size={16} aria-hidden="true" />
                         <span><strong>Saved source not mapped</strong><small>{slot.source}</small></span>
                         <button type="button" onClick={() => onEditRow(selected.row)}>Edit slot in template</button>
                       </div>

@@ -2161,7 +2161,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await templateList.getByRole("button").filter({ hasText: "Closing card" }).click();
     await expect(detail.getByRole("heading", { name: "Closing card" })).toBeVisible();
     const preview = page.getByRole("region", { name: "Reader surface preview" });
-    await expect(preview.getByRole("heading", { name: "What the reader sees" })).toBeVisible();
+    await expect(preview.getByRole("heading", { name: "Example reader rendering" })).toBeVisible();
     await expect(preview).toContainText("Leo and Aquarius can return to this: The connection works best when both people say what they need directly.");
     const renderedCopyBounds = await preview.getByText("Leo and Aquarius can return to this: The connection works best when both people say what they need directly.").boundingBox();
     expect(renderedCopyBounds?.y).toBeLessThan(900);
