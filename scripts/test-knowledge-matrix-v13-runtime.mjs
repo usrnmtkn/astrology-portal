@@ -181,9 +181,13 @@ const postV13GovernedReleases = new Set([
   "owner-authored-lilith-second-house-2026-08-25",
   "owner-authored-lilith-first-house-2026-08-25",
 ]);
+const postV13GovernedContentKeys = new Set([
+  "fallback-hook/natal-you-placement-complete-final/lilith/sagittarius/3",
+]);
 const priorApprovedRows = sourceRows.hookRows.filter((row) => (
   row.source_release !== "ll-matrix-v13-owner-approved-runtime"
   && !postV13GovernedReleases.has(row.source_release)
+  && !postV13GovernedContentKeys.has(row.contentKey)
   && !row.contentKey.startsWith("fallback-hook/empty-house/")
   && servingApprovedReviews.has(row.review_status)
 )).map((row) => {
