@@ -2183,8 +2183,19 @@ test.describe("content dashboard admin user flow case studies", () => {
     await templateList.getByRole("button").filter({ hasText: "Closing card" }).click();
     await expect(detail.getByRole("heading", { name: "Closing card" })).toBeVisible();
     const preview = page.getByRole("region", { name: "Reader surface preview" });
-    await expect(preview.getByRole("heading", { name: "What the reader sees" })).toBeVisible();
+    await expect(preview.getByRole("heading", { name: "Example reader rendering" })).toBeVisible();
     await expect(preview).toContainText("Leo and Aquarius can return to this: The connection works best when both people say what they need directly.");
+    await expect(preview.locator(".admin-composition-variable.variable-fact").first()).toBeVisible();
+    const inlineHook = preview.locator(".admin-composition-variable.variable-hook").filter({ hasText: "The connection works best" });
+    await expect(inlineHook).toHaveAttribute("data-variable-action", /Edit Closing line/);
+    await inlineHook.hover();
+    await inlineHook.click();
+    let editor = page.getByRole("dialog", { name: "Generated content editor" });
+    await expect(editor.getByLabel("Content key")).toHaveValue("fallback-hook/compatibility-closing/shared");
+    await editor.getByRole("button", { name: "Close" }).click();
+    await detail.getByRole("tab", { name: "Main template" }).click();
+    await expect(detail.locator(".admin-composition-variable-token.variable-hook")).toHaveAttribute("data-variable-action", /Edit Closing line/);
+    await detail.getByRole("tab", { name: "Reader preview" }).click();
     const renderedCopyBounds = await preview.getByText("Leo and Aquarius can return to this: The connection works best when both people say what they need directly.").boundingBox();
     expect(renderedCopyBounds?.y).toBeLessThan(900);
     await expect(preview.getByRole("button", { name: /Shared compatibility closing/ })).toBeVisible();
@@ -2207,7 +2218,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     });
 
     await detail.getByRole("button", { name: "Edit main template" }).click();
-    let editor = page.getByRole("dialog", { name: "Generated content editor" });
+    editor = page.getByRole("dialog", { name: "Generated content editor" });
     await expect(editor.getByLabel("Content key")).toHaveValue("slot-template/compatibility/closing-card");
     await editor.getByRole("button", { name: "Close" }).click();
 
