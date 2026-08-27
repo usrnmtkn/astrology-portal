@@ -1,5 +1,8 @@
 import { templateVariableReferences, type TemplateVariableReference } from "./templateVariableReference";
 import { templateVariableSourceCandidates } from "./templateVariableSources";
+import { isCompositionTemplateRow } from "./compositionTemplateClassifier";
+
+export { isCompositionTemplateRow } from "./compositionTemplateClassifier";
 
 export type CompositionMapRow = {
   id: string;
@@ -27,11 +30,31 @@ export type CompositionMapSlot = TemplateVariableReference & {
   issue: string | null;
 };
 
+export type CompositionPreviewField = {
+  key: string;
+  label: string;
+  rendered: string;
+  template: string;
+};
+
+export type CompositionPreviewFact = {
+  label: string;
+  name: string;
+  value: string;
+};
+
+export type CompositionPreview = {
+  facts: CompositionPreviewFact[];
+  fields: CompositionPreviewField[];
+  sources: CompositionMapSource[];
+};
+
 export type CompositionMapTemplate = {
   destination: string;
   description: string;
   issues: string[];
   label: string;
+  preview: CompositionPreview;
   row: CompositionMapRow;
   slots: CompositionMapSlot[];
 };
@@ -63,18 +86,6 @@ function rowRole(row: CompositionMapRow) {
   const packageRole = text(packageRecordForRow(row).content_role);
   const snapshotRole = text(objectRecord(row.source_snapshot)?.content_role);
   return packageRole || snapshotRole;
-}
-
-export function isCompositionTemplateRow(row: CompositionMapRow) {
-  const role = rowRole(row);
-  if (role === "template") return true;
-  if (row.content_key.startsWith("fallback-hook/")
-    || row.content_key.startsWith("fallback-vocab/")
-    || row.content_key.startsWith("vocab/")) return false;
-  return row.content_key.startsWith("slot-template/")
-    || row.content_key.startsWith("fallback-template/")
-    || row.block_type === "template"
-    || row.block_type === "fallback_template";
 }
 
 export function compositionDestination(row: CompositionMapRow) {
@@ -119,6 +130,120 @@ function sourceLabel(row: CompositionMapRow) {
   return text(row.headline) || humanize(row.content_key.split("/").slice(-2).join(" "));
 }
 
+function representativeExample(name: string, example: string) {
+  if (name === "natalTitle") return "Venus";
+  const normalized = text(example);
+  if (!normalized || /^varies with /iu.test(normalized)) return humanize(name).toLowerCase();
+  if (normalized.split(/\s+/u).length <= 7 && /,\s+(?:and|or)\s+/iu.test(normalized)) return normalized.split(",")[0].trim();
+  if (/\s+or\s+/iu.test(normalized)) return normalized.split(/\s+or\s+/iu)[0].trim();
+  return normalized;
+}
+
+function previewSourceText(source: CompositionMapSource) {
+  const packageRecord = packageRecordForRow(source.row);
+  return text(packageRecord.body)
+    || text(packageRecord.body_you)
+    || text(source.row.body)
+    || text(source.row.summary)
+    || text(source.row.headline);
+}
+
+function fallbackPreviewValue(name: string) {
+  const reference = templateVariableReferences({ Preview: `{{${name}}}` })[0];
+  return representativeExample(name, reference?.example ?? humanize(name));
+}
+
+function renderPreviewText(template: string, values: Map<string, string>, seen = new Set<string>()): string {
+  const resolve = (name: string) => {
+    if (seen.has(name)) return fallbackPreviewValue(name);
+    if (!values.has(name)) return fallbackPreviewValue(name);
+    const raw = values.get(name) ?? "";
+    if (!raw) return "";
+    return renderPreviewText(raw, values, new Set([...seen, name]));
+  };
+  let rendered = template;
+  const sectionPattern = /\{\{\s*([#^])\s*([\w.-]+)\s*\}\}([\s\S]*?)\{\{\s*\/\s*\2\s*\}\}/gu;
+  for (let pass = 0; pass < 4 && sectionPattern.test(rendered); pass += 1) {
+    sectionPattern.lastIndex = 0;
+    rendered = rendered.replace(sectionPattern, (_match, marker: string, name: string, content: string) => {
+      const value = resolve(name);
+      const include = marker === "#" ? Boolean(value) : !value;
+      return include
+        ? ` ${renderPreviewText(content.replace(/\{\{\s*\.\s*\}\}/gu, value), values, new Set([...seen, name]))} `
+        : "";
+    });
+  }
+  return rendered
+    .replace(/\{\{\s*([\w.-]+)\s*\}\}/gu, (_match, name: string) => resolve(name))
+    .replace(/\{\{[^}]+\}\}/gu, "")
+    .replace(/[ \t]+\n/gu, "\n")
+    .replace(/[ \t]{2,}/gu, " ")
+    .replace(/\n{3,}/gu, "\n\n")
+    .trim();
+}
+
+function compositionPreviewFields(row: CompositionMapRow) {
+  const packageRecord = packageRecordForRow(row);
+  const candidates: Array<{ key: string; label: string; value: string }> = [];
+  const add = (key: string, label: string, value: unknown) => {
+    const normalized = text(value);
+    if (!normalized || candidates.some((candidate) => candidate.value === normalized)) return;
+    candidates.push({ key, label, value: normalized });
+  };
+  const packageHeadline = text(packageRecord.headline);
+  const rowHeadline = text(row.headline);
+  if (packageHeadline || rowHeadline.includes("{{")) {
+    add("headline", "Headline", packageHeadline || rowHeadline);
+  }
+  add("body_you", "Direct-to-reader version", packageRecord.body_you);
+  add("body_they", "Third-person version", packageRecord.body_they);
+  add("body", "Main passage", packageRecord.body || row.body);
+  ([
+    ["opening", "Opening"],
+    ["tension", "Tension"],
+    ["development", "Development"],
+    ["close", "Close"]
+  ] as const).forEach(([key, label]) => add(key, label, packageRecord[key]));
+  return candidates;
+}
+
+function buildCompositionPreview(row: CompositionMapRow, slots: CompositionMapSlot[]): CompositionPreview {
+  const values = new Map<string, string>();
+  slots.forEach((slot) => {
+    const sourceValue = slot.requirement !== "Optional" && slot.sources.length === 1
+      ? previewSourceText(slot.sources[0])
+      : "";
+    values.set(slot.name, slot.requirement === "Optional"
+      ? ""
+      : sourceValue || representativeExample(slot.name, slot.example));
+  });
+  const sources = slots.flatMap((slot) => slot.requirement !== "Optional" && slot.sources.length === 1 ? slot.sources : [])
+    .filter((source, index, list) => list.findIndex((candidate) => candidate.row.id === source.row.id) === index);
+  return {
+    fields: compositionPreviewFields(row).map((field) => {
+      const fieldValues = new Map(values);
+      if (field.key === "body_they") {
+        fieldValues.set("possessive", "Maya's");
+        fieldValues.set("possessiveLow", "Maya's");
+      }
+      return {
+        key: field.key,
+        label: field.label,
+        template: field.value,
+        rendered: renderPreviewText(field.value, fieldValues)
+      };
+    }),
+    facts: slots
+      .filter((slot) => slot.sourceKind === "runtime")
+      .map((slot) => ({
+        label: slot.label,
+        name: slot.name,
+        value: representativeExample(slot.name, slot.example)
+      })),
+    sources
+  };
+}
+
 export function buildCompositionMap(rows: CompositionMapRow[]): CompositionMapTemplate[] {
   const templates = rows.filter(isCompositionTemplateRow);
   return templates.map((row) => {
@@ -158,6 +283,7 @@ export function buildCompositionMap(rows: CompositionMapRow[]): CompositionMapTe
       description: text(row.summary) || "No editor-facing template description has been saved.",
       issues,
       label: compositionTemplateLabel(row),
+      preview: buildCompositionPreview(row, slots),
       row,
       slots
     };
