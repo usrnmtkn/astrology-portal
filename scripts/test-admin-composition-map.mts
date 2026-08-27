@@ -112,6 +112,9 @@ assert.equal(transitMap[0].preview.fields.find((field) => field.key === "body_th
 assert.equal(transitMap[0].preview.fields.find((field) => field.key === "headline_they")?.rendered, "Saturn trine Maya's Venus", "Third-person previews should use their third-person headline.");
 assert.equal(transitMap[0].preview.fields.find((field) => field.key === "body")?.audience, "you", "The main direct-reader passage should not appear in third-person previews.");
 assert.equal(transitMap[0].preview.fields.find((field) => field.key === "body_they")?.audience, "they", "The third-person passage should not appear in direct-reader previews.");
+const transitSegments = transitMap[0].preview.fields.find((field) => field.key === "body")?.paragraphs.flat() ?? [];
+assert.equal(transitSegments.find((segment) => segment.name === "transitRef")?.kind, "fact", "Calculated preview values should carry their fact color group.");
+assert.equal(transitSegments.find((segment) => segment.name === "transitTypeLine")?.source?.row.content_key, "fallback-hook/transit-aspect-type/trine", "Rendered hook text should deep-link to the matching editable source.");
 
 const jupiterMap = buildCompositionMap([{
   ...baseRow,
