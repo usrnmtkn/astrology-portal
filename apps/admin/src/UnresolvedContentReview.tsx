@@ -39,9 +39,194 @@ export type UnresolvedContentIssue = {
   repairPlan?: ContentSourceRepairPlan | null;
   sourceDecision?: ContentSourceDecision | null;
   resolution?: {
+    result_status: "diagnosis-only" | "implemented";
     diagnosis: string;
+    proposed_action: string;
+    pr_url: string | null;
+    owner_decision_required: boolean;
   } | null;
 };
+
+type UnresolvedWorkflowStepState = "complete" | "current" | "waiting";
+
+export type UnresolvedWorkflow = {
+  status: "action" | "waiting";
+  statusLabel: string;
+  currentStep: string;
+  explanation: string;
+  responsibleParty: string;
+  steps: Array<{
+    label: string;
+    state: UnresolvedWorkflowStepState;
+  }>;
+};
+
+type UnresolvedWorkflowContext = {
+  contentLibraryReady: boolean;
+  hasEditableRow: boolean;
+  requestCopied: boolean;
+};
+
+export function unresolvedIssueWorkflow(
+  issue: UnresolvedContentIssue,
+  { contentLibraryReady, hasEditableRow, requestCopied }: UnresolvedWorkflowContext
+): UnresolvedWorkflow {
+  const step = (label: string, state: UnresolvedWorkflowStepState) => ({ label, state });
+
+  if (issue.kind === "source-repair") {
+    const hasPlan = Boolean(issue.repairPlan);
+    const ownerApproved = Boolean(issue.sourceDecision);
+    const implementationRecorded = issue.resolution?.result_status === "implemented";
+
+    if (!hasPlan) {
+      return {
+        status: requestCopied ? "waiting" : "action",
+        statusLabel: requestCopied ? "Waiting for Codex" : "Action needed",
+        currentStep: "Diagnose the source conflict",
+        explanation: requestCopied
+          ? "The investigation request is copied. Paste it into Codex, then record the JSON response here."
+          : "Copy the investigation request and send it to Codex. No approval decision is available yet.",
+        responsibleParty: requestCopied ? "Codex" : "You",
+        steps: [
+          step("Diagnose conflict", "current"),
+          step("Review replacement", "waiting"),
+          step("Implement repair", "waiting"),
+          step("Deploy package", "waiting")
+        ]
+      };
+    }
+
+    if (!ownerApproved) {
+      return {
+        status: "action",
+        statusLabel: "Action needed",
+        currentStep: "Review the exact replacement",
+        explanation: "The diagnosis and replacement plan are ready. Review the exact wording and approve it only if it is correct.",
+        responsibleParty: "You",
+        steps: [
+          step("Diagnose conflict", "complete"),
+          step("Review replacement", "current"),
+          step("Implement repair", "waiting"),
+          step("Deploy package", "waiting")
+        ]
+      };
+    }
+
+    if (implementationRecorded) {
+      return {
+        status: "waiting",
+        statusLabel: "Waiting for deployment",
+        currentStep: "Deploy and verify the repaired package",
+        explanation: "The implementation response is recorded. This row will clear after the repaired package is deployed and the inventory refreshes.",
+        responsibleParty: "Deployment",
+        steps: [
+          step("Diagnose conflict", "complete"),
+          step("Review replacement", "complete"),
+          step("Implement repair", "complete"),
+          step("Deploy package", "current")
+        ]
+      };
+    }
+
+    return {
+      status: requestCopied ? "waiting" : "action",
+      statusLabel: requestCopied ? "Waiting for Codex" : "Action needed",
+      currentStep: "Implement the approved repair",
+      explanation: requestCopied
+        ? "The implementation request is copied. Paste it into Codex, then record the JSON response here."
+        : "The exact replacement is approved. Copy the implementation request and send it to Codex.",
+      responsibleParty: requestCopied ? "Codex" : "You",
+      steps: [
+        step("Diagnose conflict", "complete"),
+        step("Review replacement", "complete"),
+        step("Implement repair", "current"),
+        step("Deploy package", "waiting")
+      ]
+    };
+  }
+
+  if (!contentLibraryReady) {
+    return {
+      status: "waiting",
+      statusLabel: "Checking",
+      currentStep: "Check for an editable row",
+      explanation: "Content Studio is checking the Content Library. No action is needed while this check runs.",
+      responsibleParty: "Content Studio",
+      steps: [
+        step("Check source", "current"),
+        step("Import editable row", "waiting"),
+        step("Review copy", "waiting"),
+        step("Publish", "waiting")
+      ]
+    };
+  }
+
+  if (hasEditableRow) {
+    return {
+      status: "action",
+      statusLabel: "Action needed",
+      currentStep: "Review the copy in Content Library",
+      explanation: "The governed editable row is available. Open the exact row to review and edit it.",
+      responsibleParty: "You",
+      steps: [
+        step("Diagnose source", "complete"),
+        step("Import editable row", "complete"),
+        step("Review copy", "current"),
+        step("Publish", "waiting")
+      ]
+    };
+  }
+
+  if (issue.resolution?.result_status === "implemented") {
+    return {
+      status: "waiting",
+      statusLabel: "Waiting for import",
+      currentStep: "Deploy and sync the editable row",
+      explanation: "The code repair is recorded, but the editable row is not visible yet. Refresh after deployment or database materialization finishes.",
+      responsibleParty: "Deployment",
+      steps: [
+        step("Diagnose source", "complete"),
+        step("Import editable row", "current"),
+        step("Review copy", "waiting"),
+        step("Publish", "waiting")
+      ]
+    };
+  }
+
+  if (issue.resolution) {
+    return {
+      status: requestCopied ? "waiting" : "action",
+      statusLabel: requestCopied ? "Waiting for Codex" : "Action needed",
+      currentStep: "Implement the governed import",
+      explanation: requestCopied
+        ? "The implementation request is copied. Paste it into Codex, then record the JSON response here."
+        : "The diagnosis is recorded. Copy the implementation request to create the missing editable row without changing its review status.",
+      responsibleParty: requestCopied ? "Codex" : "You",
+      steps: [
+        step("Diagnose source", "complete"),
+        step("Import editable row", "current"),
+        step("Review copy", "waiting"),
+        step("Publish", "waiting")
+      ]
+    };
+  }
+
+  return {
+    status: requestCopied ? "waiting" : "action",
+    statusLabel: requestCopied ? "Waiting for Codex" : "Action needed",
+    currentStep: "Diagnose the missing editable row",
+    explanation: requestCopied
+      ? "The investigation request is copied. Paste it into Codex, then record the JSON response here."
+      : "Copy the investigation request and send it to Codex to find the governed import path.",
+    responsibleParty: requestCopied ? "Codex" : "You",
+    steps: [
+      step("Diagnose source", "current"),
+      step("Import editable row", "waiting"),
+      step("Review copy", "waiting"),
+      step("Publish", "waiting")
+    ]
+  };
+}
 
 type ContentSourceRepairPlan = {
   schema: "content-studio-source-repair-plan/v1";
@@ -85,6 +270,11 @@ function sourceImplementationRequest(issue: UnresolvedContentIssue) {
   return `Repo: tldrastro. Implement the owner-approved Content Studio source repair.\nIssue ID: ${issue.issueId}\nContent key: ${issue.contentKey}\nApproved replacement: ${plan.candidatePath}\nCandidate SHA-256: ${decision.candidate_sha256}\nOwner statement: ${decision.owner_statement}\nRepair the conflicting source lineage, preserve superseded history, rebuild generated fallback artifacts, and run the relevant governance and reader-path checks. Do not revise the approved replacement wording.`;
 }
 
+function editorialImplementationRequest(issue: UnresolvedContentIssue) {
+  if (!issue.resolution) return issue.aiRequest;
+  return `Repo: tldrastro. Implement the diagnosed Content Studio import repair.\nIssue ID: ${issue.issueId}\nContent key: ${issue.contentKey}\nRecorded diagnosis: ${issue.resolution.diagnosis}\nRequired repair: ${issue.resolution.proposed_action}\nCreate the governed editable Content Library row, preserve its exact source copy and review_status, and run the relevant governance and reader-path checks. Return one JSON object using schema content-studio-resolution/v1 with status implemented.`;
+}
+
 export async function loadUnresolvedContentReport(
   credential: string,
   fetchImpl: typeof fetch = fetch
@@ -109,15 +299,29 @@ export function UnresolvedContentReview({
   const [exactTextConfirmed, setExactTextConfirmed] = useState(false);
   const [decisionSaving, setDecisionSaving] = useState(false);
   const [decisionError, setDecisionError] = useState("");
+  const [refreshToken, setRefreshToken] = useState(0);
+  const [refreshing, setRefreshing] = useState(false);
+  const [copiedRequest, setCopiedRequest] = useState<{ issueId: string; kind: "investigation" | "implementation" } | null>(null);
   const report = reportState || null;
   const issues = report?.issues ?? [];
   const filteredIssues = issues.filter((issue) => !query.trim() || JSON.stringify(issue).toLowerCase().includes(query.trim().toLowerCase()));
 
   useEffect(() => {
+    setRefreshing(true);
     void loadUnresolvedContentReport(credential)
       .then(setReportState)
-      .catch(() => setReportState(false));
-  }, [credential]);
+      .catch(() => setReportState(false))
+      .finally(() => setRefreshing(false));
+  }, [credential, refreshToken]);
+
+  async function copyRequest(issue: UnresolvedContentIssue, kind: "investigation" | "implementation", request: string) {
+    try {
+      await navigator.clipboard.writeText(request);
+      setCopiedRequest({ issueId: issue.issueId, kind });
+    } catch {
+      alert("Could not copy the request. Check browser clipboard access and try again.");
+    }
+  }
 
   function openRepairReview(issue: UnresolvedContentIssue) {
     setRepairIssue(issue);
@@ -175,12 +379,18 @@ export function UnresolvedContentReview({
       <section className="admin-content-toolbar" aria-label="Unresolved content overview">
         <div className="admin-content-toolbar-copy">
           <h2>Resolve content holds</h2>
-          <p>Review exact replacements and authorize source repairs here. Reader copy stays held until the governed package deployment finishes.</p>
+          <p>Review exact replacements and authorize source repairs here. Each row shows the current step, who needs to act, and what must finish before the next step unlocks.</p>
         </div>
         <div className="admin-unresolved-total">
           <strong>{report ? issues.length : "…"}</strong>
           <span>issues</span>
         </div>
+      </section>
+
+      <section className="admin-unresolved-guide" aria-label="Workflow status guide">
+        <div><span className="admin-unresolved-state is-action">Action needed</span><p>A button is ready for you now.</p></div>
+        <div><span className="admin-unresolved-state is-waiting">Waiting</span><p>Another person or system must finish first.</p></div>
+        <button className="admin-edit-row-button" type="button" onClick={() => setRefreshToken((current) => current + 1)} disabled={refreshing}>{refreshing ? "Refreshing…" : "Refresh status"}</button>
       </section>
 
       <section className="admin-filter-toolbar admin-unresolved-filters" aria-label="Unresolved content search">
@@ -206,22 +416,42 @@ export function UnresolvedContentReview({
               const sourceRepair = issue.kind === "source-repair";
               const sourceApproved = sourceRepair && Boolean(issue.sourceDecision);
               const canOpen = !sourceRepair && editableContentKeys.has(issue.contentKey);
-              const missingRow = contentLibraryReady && !sourceRepair && !canOpen;
+              const expectedRequestKind = sourceRepair
+                ? sourceApproved ? "implementation" : "investigation"
+                : issue.resolution ? "implementation" : "investigation";
+              const requestCopied = copiedRequest?.issueId === issue.issueId && copiedRequest.kind === expectedRequestKind;
+              const workflow = unresolvedIssueWorkflow(issue, {
+                contentLibraryReady,
+                hasEditableRow: canOpen,
+                requestCopied
+              });
               return <tr key={issue.contentKey}>
                 <td data-label="Content"><strong>{issue.surface}</strong><code>{issue.contentKey}</code></td>
                 <td data-label="What it means">
-                  <span className={`ui-pill admin-status ${sourceApproved ? "status-ready" : sourceRepair ? "status-error" : "status-draft"}`}>{sourceApproved ? "Owner approved" : sourceRepair ? "Source repair required" : missingRow ? "Editable row missing" : "Owner review required"}</span>
-                  {sourceRepair && <small>{sourceApproved ? "Approval is complete. Next, copy the implementation request into Codex. After the repaired package is deployed, this row will disappear." : issue.repairPlan ? "Review and authorize the governed replacement here." : "A governed replacement plan is still required."}</small>}
+                  <div className="admin-unresolved-current-step">
+                    <span className={`admin-unresolved-state is-${workflow.status}`}>{workflow.statusLabel}</span>
+                    <strong>{workflow.currentStep}</strong>
+                    <small>{workflow.explanation}</small>
+                    <span className="admin-unresolved-owner">Responsible now: <strong>{workflow.responsibleParty}</strong></span>
+                  </div>
+                  <ol className="admin-unresolved-progress" aria-label={`Resolution progress for ${issue.contentKey}`}>
+                    {workflow.steps.map((workflowStep, index) => <li className={`is-${workflowStep.state}`} key={workflowStep.label} aria-current={workflowStep.state === "current" ? "step" : undefined}>
+                      <span aria-hidden="true">{workflowStep.state === "complete" ? "✓" : index + 1}</span>
+                      <small>{workflowStep.label}</small>
+                    </li>)}
+                  </ol>
                   {issue.resolution && <details className="admin-unresolved-diagnosis"><summary>Codex diagnosis</summary><small>{issue.resolution.diagnosis}</small></details>}
                 </td>
                 <td data-label="Source records"><details><summary>{issue.records.length} record(s)</summary>{issue.records.map((record) => <code key={record.id}>{record.reviewStatus}: {record.sourcePath}{record.objectPath}</code>)}</details></td>
                 <td data-label="Next step">{sourceRepair && issue.repairPlan
-                  ? <div className="admin-toolbar-actions"><button className="admin-edit-row-button" type="button" onClick={() => openRepairReview(issue)}>{sourceApproved ? "View approved replacement" : "Review replacement"}</button><button className="admin-edit-row-button" type="button" onClick={() => void navigator.clipboard.writeText(issue.aiRequest)}>Copy investigation</button>{sourceApproved && <button className="admin-edit-row-button" type="button" onClick={() => void navigator.clipboard.writeText(sourceImplementationRequest(issue))}>Copy implementation request</button>}</div>
+                  ? <div className="admin-unresolved-actions"><span className={`admin-unresolved-action-state is-${workflow.status}`}>{workflow.statusLabel}</span><div className="admin-toolbar-actions"><button className={`admin-edit-row-button ${!sourceApproved ? "is-primary" : ""}`} type="button" onClick={() => openRepairReview(issue)}>{sourceApproved ? "View approved replacement" : "Review replacement now"}</button>{sourceApproved && issue.resolution?.result_status !== "implemented" && <button className="admin-edit-row-button is-primary" type="button" onClick={() => void copyRequest(issue, "implementation", sourceImplementationRequest(issue))}>{requestCopied ? "Copy implementation request again" : "Copy implementation request"}</button>}<button className="admin-edit-row-button" type="button" onClick={() => void copyRequest(issue, "investigation", issue.aiRequest)}>Copy investigation</button>{requestCopied && <button className="admin-edit-row-button is-primary" type="button" onClick={() => void recordResolution(credential)}>Record Codex response</button>}</div></div>
                   : !contentLibraryReady && !sourceRepair
-                  ? <small>Checking…</small>
+                  ? <div className="admin-unresolved-actions"><span className="admin-unresolved-action-state is-waiting">Waiting</span><button className="admin-edit-row-button" type="button" disabled>Checking Content Library…</button></div>
                   : canOpen
-                    ? <button className="admin-edit-row-button" type="button" onClick={() => onFindInContentLibrary(issue.contentKey)}>Open exact row</button>
-                    : <div className="admin-toolbar-actions"><button className="admin-edit-row-button" type="button" onClick={() => void navigator.clipboard.writeText(issue.aiRequest)}>{sourceRepair ? "Copy repair request" : "Copy investigation"}</button><button className="admin-edit-row-button" type="button" onClick={() => void recordResolution(credential)}>Record response</button></div>}</td>
+                    ? <div className="admin-unresolved-actions"><span className="admin-unresolved-action-state is-action">Action needed</span><button className="admin-edit-row-button is-primary" type="button" onClick={() => onFindInContentLibrary(issue.contentKey)}>Open exact row to review</button></div>
+                    : issue.resolution?.result_status === "implemented"
+                      ? <div className="admin-unresolved-actions"><span className="admin-unresolved-action-state is-waiting">Waiting for import</span><button className="admin-edit-row-button" type="button" onClick={() => setRefreshToken((current) => current + 1)} disabled={refreshing}>{refreshing ? "Refreshing…" : "Refresh status"}</button></div>
+                      : <div className="admin-unresolved-actions"><span className={`admin-unresolved-action-state is-${workflow.status}`}>{workflow.statusLabel}</span><div className="admin-toolbar-actions"><button className="admin-edit-row-button is-primary" type="button" onClick={() => void copyRequest(issue, issue.resolution ? "implementation" : "investigation", issue.resolution ? editorialImplementationRequest(issue) : issue.aiRequest)}>{requestCopied ? `Copy ${issue.resolution ? "implementation" : "investigation"} request again` : `Copy ${issue.resolution ? "implementation" : "investigation"} request`}</button><button className={`admin-edit-row-button ${requestCopied ? "is-primary" : ""}`} type="button" onClick={() => void recordResolution(credential)}>{requestCopied ? "Record Codex response" : "Record an existing response"}</button></div></div>}</td>
               </tr>;
             })}</tbody>
           </table>
