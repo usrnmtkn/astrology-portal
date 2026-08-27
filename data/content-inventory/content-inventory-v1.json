@@ -1,12 +1,12 @@
 {
   "schemaVersion": "content-inventory-v1",
   "generatedOn": "2026-08-10",
-  "sourceCommit": "8b08365eb8616a36da5896a669f0d183adad0489",
+  "sourceCommit": "ff6eae1de57085267d2ecdf36a57300b6cc93f74",
   "authorityRule": "Only owner-approved and owner-locked records may serve or export.",
-  "contentFingerprint": "dadf4667b02d25b701fb0701d5f55d4d9cc7179e2e906232d3851f85814049f0",
-  "recordCount": 10865,
+  "contentFingerprint": "0f19e1452cab16308d369eb84ffc1c1d47f46eda7f6c9babf696d4235b118370",
+  "recordCount": 10867,
   "statusCounts": {
-    "owner-approved": 10865
+    "owner-approved": 10867
   },
   "familyCounts": {
     "approved/calendar-weekly-overview": 1,
@@ -105,11 +105,11 @@
     "house-horoscope-core": 984,
     "lunation": 433,
     "natal-aspect": 253,
-    "natal-placement": 292,
+    "natal-placement": 293,
     "sky": 26,
     "sky-article/saturn": 2,
     "sky-aspect": 112,
-    "sky-placement": 821,
+    "sky-placement": 822,
     "sky.ingress.jupiter.leo": 1,
     "sky.retrograde.venus.scorpio.retrograde_passage": 1,
     "sky.station.chiron.taurus.retrograde": 1,
@@ -134298,6 +134298,36 @@
       }
     },
     {
+      "contentKey": "fallback-hook/natal-you-placement-complete-final/lilith/sagittarius/3",
+      "contentFamily": "natal-placement",
+      "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+      "runtimeBucket": "hook",
+      "status": "owner-approved",
+      "sourceStatus": "approved",
+      "provenance": "source-archive",
+      "sourceAuthor": "composed",
+      "approvalRecord": "packages/astro-knowledge/review/lilith-sagittarius-third-house-owner-approval-2026-08-25.md",
+      "approvalVersionDate": "2026-08-25",
+      "contentHash": "920e9a020da05a5d7224934a894b170acbc52ce4528eec2cc0d42d2e0fdc0806",
+      "wording": {
+        "headline": "Lilith in Sagittarius in the 3rd house",
+        "body": "Lilith in Sagittarius in the 3rd house can make you especially sensitive to what happens when someone tries to tell you what you are allowed to think, question, or say out loud. You may have learned early that asking why made people defensive, that challenging a teacher, sibling, or authority figure could be treated like disrespect, or that honesty was welcome only when it did not threaten anyone else's beliefs. That can make you fiercely protective of your intellectual freedom, but it can also create real rage when someone talks down to you, expects you to repeat an explanation you no longer believe, or acts as though disagreement is proof that you simply do not understand.\n\nSiblings, school, neighbors, and the environment you grew up in can make this even sharper. Maybe one person's opinions carried more authority than everyone else's, certain beliefs were treated as unquestionable, or you became known as the one who always had to challenge the story. Sagittarius needs room to test ideas against experience, which means you may change your mind dramatically once something no longer holds up. The harder part is knowing when you are speaking because something genuinely needs to be challenged and when certainty has turned into its own kind of defensiveness, making it harder to hear anything that complicates the conclusion you already reached.\n\nThe deeper shift is learning that freedom of thought does not require you to turn every disagreement into a fight. You can ask the question nobody wants to answer, say when an explanation no longer makes sense to you, and change your mind without treating the old belief like wasted time. Lilith in Sagittarius in the 3rd house becomes less about proving that nobody can tell you what to think and more about keeping your mind open enough to follow the truth even when it takes you somewhere you did not expect."
+      },
+      "astrology": {
+        "objects": [
+          "lilith"
+        ],
+        "signs": [
+          "sagittarius"
+        ],
+        "aspects": [],
+        "events": [],
+        "houses": [
+          3
+        ]
+      }
+    },
+    {
       "contentKey": "fallback-hook/natal-you-placement-complete-final/lilith/sagittarius/4",
       "contentFamily": "natal-placement",
       "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
@@ -187045,6 +187075,39 @@
         ],
         "signs": [
           "taurus"
+        ],
+        "aspects": [],
+        "events": [],
+        "houses": []
+      }
+    },
+    {
+      "contentKey": "fallback-hook/sky-sign-copy/sun/virgo",
+      "contentFamily": "sky-placement",
+      "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/sky-placement-owner-approved-fallbacks-v1.json",
+      "runtimeBucket": "hook",
+      "status": "owner-approved",
+      "sourceStatus": "approved",
+      "provenance": "source-archive",
+      "sourceAuthor": "composed",
+      "approvalRecord": "packages/astro-knowledge/review/sun-virgo-spine-rewrite-v1/OWNER-APPROVAL-2026-08-27.json",
+      "approvalVersionDate": "2026-08-27",
+      "contentHash": "9a6bc198562314e328e022781650a88e375c7f44f3f58887e7a3079ede22a281",
+      "wording": {
+        "body_you": "After moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, the Sun enters Virgo on {{entryDate}}, and the difference between how something is supposed to work and how it actually works stops being easy to ignore. The Sun governs identity, vitality, and who you are underneath the roles you perform. Virgo is not tidiness. Virgo is the standard: the part of you that checks the invoice against the contract, notices the schedule needs nine hours in an eight-hour day, and reads the instructions everyone else skipped. While the Sun is here, being the one who notices can start to feel like who you are. That holds up until noticing becomes the job.\n\nCatching a mistake is useful, and useful gets remembered. Once you are the person who spots the error, the errors start arriving addressed to you. Drafts show up in your inbox to be read before they go out. A colleague stops checking their own numbers because you will catch it anyway. You may be working a second job nobody named, assembled from other people's near misses, and the reward is that nobody else has to think about it. The corrections still land on somebody, and that somebody starts to brace when your name appears on the message.\n\nThe Sun moved through Virgo from {{previousResidencyEntryDateWithYear}} to {{previousResidencyExitDateWithYear}}. If you were the one checking then, you probably still are, and the list is longer now.\n\nWatch what a small repair does. A cabinet door hangs crooked, so you take it off to fix the hinge, and with the door off you can see the frame is out of square, and once you are looking at the frame you notice the paint. Two hours later the door is on the floor and the kitchen is worse than when you started. A document does the same thing. You open it to fix one line, rewrite the section, find that the section above no longer matches, and send at midnight a version better than the four o'clock one in ways nobody will notice or pay for.\n\nIt shows up again in help you turn down. Someone offers to take a task, you explain how you do it, they do it their way, and you redo it once they have gone. They stop offering. You never asked them to stop. You made offering pointless.\n\nLeave one thing at good enough this month and see who complains. Name the hour a task should take before you start, then stop when the hour is up. Let someone else's version ship. Then watch what actually breaks, and who besides you can tell.\n\nBefore {{exitDate}}, the work will be better than it needed to be. You may be the only person who can tell.",
+        "opening": "After moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, the Sun enters Virgo on {{entryDate}}, and the difference between how something is supposed to work and how it actually works stops being easy to ignore. The Sun governs identity, vitality, and who you are underneath the roles you perform. Virgo is not tidiness. Virgo is the standard: the part of you that checks the invoice against the contract, notices the schedule needs nine hours in an eight-hour day, and reads the instructions everyone else skipped. While the Sun is here, being the one who notices can start to feel like who you are. That holds up until noticing becomes the job.",
+        "tension": "Catching a mistake is useful, and useful gets remembered. Once you are the person who spots the error, the errors start arriving addressed to you. Drafts show up in your inbox to be read before they go out. A colleague stops checking their own numbers because you will catch it anyway. You may be working a second job nobody named, assembled from other people's near misses, and the reward is that nobody else has to think about it. The corrections still land on somebody, and that somebody starts to brace when your name appears on the message.",
+        "development": "The Sun moved through Virgo from {{previousResidencyEntryDateWithYear}} to {{previousResidencyExitDateWithYear}}. If you were the one checking then, you probably still are, and the list is longer now.\n\nWatch what a small repair does. A cabinet door hangs crooked, so you take it off to fix the hinge, and with the door off you can see the frame is out of square, and once you are looking at the frame you notice the paint. Two hours later the door is on the floor and the kitchen is worse than when you started. A document does the same thing. You open it to fix one line, rewrite the section, find that the section above no longer matches, and send at midnight a version better than the four o'clock one in ways nobody will notice or pay for.\n\nIt shows up again in help you turn down. Someone offers to take a task, you explain how you do it, they do it their way, and you redo it once they have gone. They stop offering. You never asked them to stop. You made offering pointless.\n\nLeave one thing at good enough this month and see who complains. Name the hour a task should take before you start, then stop when the hour is up. Let someone else's version ship. Then watch what actually breaks, and who besides you can tell.",
+        "close": "Before {{exitDate}}, the work will be better than it needed to be. You may be the only person who can tell.",
+        "fact_line": "{{entryDate}} to {{exitDate}}",
+        "aspect_insert": "{{aspectInsert}}"
+      },
+      "astrology": {
+        "objects": [
+          "sun"
+        ],
+        "signs": [
+          "virgo"
         ],
         "aspects": [],
         "events": [],

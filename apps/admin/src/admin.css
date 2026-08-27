@@ -10658,6 +10658,16 @@ body,
   text-align: left;
 }
 
+.admin-dashboard .admin-unresolved-content-table td:last-child .admin-toolbar-actions {
+  align-items: stretch;
+  flex-direction: column;
+}
+
+.admin-dashboard .admin-unresolved-content-table td:last-child .admin-toolbar-actions button {
+  inline-size: 100%;
+  white-space: normal;
+}
+
 .admin-dashboard .admin-unresolved-content-table td > :is(strong, code, small) {
   display: block;
   overflow-wrap: anywhere;

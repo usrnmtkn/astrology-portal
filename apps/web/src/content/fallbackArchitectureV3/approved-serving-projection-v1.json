@@ -1,6 +1,6 @@
 {
   "schema": "tldrastro-approved-serving-projection/v1",
-  "packageVersion": "v3-2026-08-25c",
+  "packageVersion": "v3-2026-08-27a",
   "policy": {
     "eligibleReviewStatuses": [
       "approved",
@@ -18,15 +18,15 @@
     "runtimeFilter": "defense-in-depth"
   },
   "manifest": {
-    "contentHash": "0d1d6854809d4f20c95d50eae19e7e04",
-    "keyManifestHash": "24baf72e2904e28a491d9d2809a7b01e",
-    "keyCount": 9196
+    "contentHash": "6a77a5a2363b8fde24e9915c47530d72",
+    "keyManifestHash": "ae6b8a5a32a2f96e130c5614f9692eaa",
+    "keyCount": 9197
   },
   "lineage": {
     "file": "approved-serving-lineage-v1.json",
-    "sha256": "f604de41f874bb57333d1cb8097f3225931412484395bc48285f1d1924577380",
-    "count": 9760,
-    "emissionCount": 9836,
+    "sha256": "57face4c8262698581bb44250eb9b9b0396d690d74c117e04ea48e1d437644ce",
+    "count": 9761,
+    "emissionCount": 9837,
     "exactSourceMatchCount": 8719
   },
   "partitions": {
@@ -65,7 +65,7 @@
     },
     "skyPlacementBase": {
       "file": "bundled-sky-placement-rows-v3.json",
-      "hookRows": 808
+      "hookRows": 809
     },
     "skyPlacementHouses": {
       "file": "bundled-sky-placement-house-rows-v3.json",
