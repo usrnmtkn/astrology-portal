@@ -18,6 +18,7 @@ export type CompositionMapRow = {
 };
 
 export type CompositionMapSourceKind = "hook" | "phrase";
+export type CompositionPreviewVariableKind = CompositionMapSourceKind | "copy" | "fact";
 
 export type CompositionMapSource = {
   kind: CompositionMapSourceKind;
@@ -34,8 +35,16 @@ export type CompositionPreviewField = {
   audience?: "you" | "they";
   key: string;
   label: string;
+  paragraphs: CompositionPreviewSegment[][];
   rendered: string;
   template: string;
+};
+
+export type CompositionPreviewSegment = {
+  kind?: CompositionPreviewVariableKind;
+  name?: string;
+  source?: CompositionMapSource;
+  text: string;
 };
 
 export type CompositionPreviewFact = {
@@ -195,13 +204,14 @@ function fallbackPreviewValue(name: string) {
   return representativeExample(name, reference?.example ?? humanize(name));
 }
 
-function renderPreviewText(template: string, values: Map<string, string>, seen = new Set<string>()): string {
+function renderPreviewText(template: string, values: Map<string, string>, seen = new Set<string>(), mark?: (name: string, value: string) => string): string {
   const resolve = (name: string) => {
     if (seen.has(name)) return fallbackPreviewValue(name);
     if (!values.has(name)) return fallbackPreviewValue(name);
     const raw = values.get(name) ?? "";
     if (!raw) return "";
-    return renderPreviewText(raw, values, new Set([...seen, name]));
+    const value = renderPreviewText(raw, values, new Set([...seen, name]), mark);
+    return mark ? mark(name, value) : value;
   };
   let rendered = template;
   const sectionPattern = /\{\{\s*([#^])\s*([\w.-]+)\s*\}\}([\s\S]*?)\{\{\s*\/\s*\2\s*\}\}/gu;
@@ -211,7 +221,7 @@ function renderPreviewText(template: string, values: Map<string, string>, seen =
       const value = resolve(name);
       const include = marker === "#" ? Boolean(value) : !value;
       return include
-        ? ` ${renderPreviewText(content.replace(/\{\{\s*\.\s*\}\}/gu, value), values, new Set([...seen, name]))} `
+        ? ` ${renderPreviewText(content.replace(/\{\{\s*\.\s*\}\}/gu, value), values, new Set([...seen, name]), mark)} `
         : "";
     });
   }
@@ -223,6 +233,52 @@ function renderPreviewText(template: string, values: Map<string, string>, seen =
     .replace(/([.!?])\1+/gu, "$1")
     .replace(/\n{3,}/gu, "\n\n")
     .trim();
+}
+
+function previewSegments(template: string, values: Map<string, string>, slots: CompositionMapSlot[], sourceByName: Map<string, CompositionMapSource>) {
+  const rendered = renderPreviewText(template, values, new Set(), (name, value) => `\uE000${name}\uE001${value}\uE002`);
+  const segments: CompositionPreviewSegment[] = [];
+  const stack: string[] = [];
+  let cursor = 0;
+  while (cursor < rendered.length) {
+    if (rendered[cursor] === "\uE000") {
+      const separator = rendered.indexOf("\uE001", cursor);
+      stack.push(rendered.slice(cursor + 1, separator));
+      cursor = separator + 1;
+      continue;
+    }
+    if (rendered[cursor] === "\uE002") {
+      stack.pop();
+      cursor += 1;
+      continue;
+    }
+    const boundary = [rendered.indexOf("\uE000", cursor), rendered.indexOf("\uE002", cursor)]
+      .filter((index) => index >= 0).sort((left, right) => left - right)[0] ?? rendered.length;
+    const rawName = [...stack].reverse().find((name) => name === "transitEffect" || slots.some((slot) => slot.name === name));
+    const name = rawName === "transitEffect" ? "transitEffectLine" : rawName;
+    const source = name ? sourceByName.get(name) : undefined;
+    const slot = slots.find((candidate) => candidate.name === name);
+    const segment = {
+      kind: name ? source?.kind ?? (slot?.sourceKind === "runtime" ? "fact" : "copy") : undefined,
+      name,
+      source,
+      text: rendered.slice(cursor, boundary)
+    } satisfies CompositionPreviewSegment;
+    const previous = segments.at(-1);
+    if (previous && previous.name === segment.name && previous.source === segment.source) previous.text += segment.text;
+    else segments.push(segment);
+    cursor = boundary;
+  }
+  return segments;
+}
+
+function previewParagraphs(segments: CompositionPreviewSegment[]) {
+  const paragraphs: CompositionPreviewSegment[][] = [[]];
+  segments.forEach((segment) => segment.text.split(/\n{2,}/u).forEach((part, index) => {
+    if (index) paragraphs.push([]);
+    if (part) paragraphs.at(-1)?.push({ ...segment, text: part });
+  }));
+  return paragraphs.filter((paragraph) => paragraph.length);
 }
 
 function compositionPreviewFields(row: CompositionMapRow) {
@@ -269,11 +325,13 @@ function buildCompositionPreview(row: CompositionMapRow, slots: CompositionMapSl
   return {
     fields: compositionPreviewFields(row).map((field) => {
       const fieldValues = new Map(values);
+      const sourceByName = new Map<string, CompositionMapSource>();
       const audience = field.audience === "they" ? "they" : "you";
       slots.forEach((slot) => {
         const source = representativeSource(slot, slots, values);
         if (!source) return;
         fieldValues.set(slot.name, previewSourceText(source, audience));
+        sourceByName.set(slot.name, source);
         if (!sources.some((candidate) => candidate.row.content_key === source.row.content_key)) sources.push(source);
       });
       if (!fieldValues.has("transitTopic")) fieldValues.set("transitTopic", `${values.get("transitTitle") ?? "Transit"}'s focus`);
@@ -284,12 +342,14 @@ function buildCompositionPreview(row: CompositionMapRow, slots: CompositionMapSl
         fieldValues.set("possessive", "Maya's");
         fieldValues.set("possessiveLow", "Maya's");
       }
+      const segments = previewSegments(field.value, fieldValues, slots, sourceByName);
       return {
         audience: field.audience,
         key: field.key,
         label: field.label,
+        paragraphs: previewParagraphs(segments),
         template: field.value,
-        rendered: renderPreviewText(field.value, fieldValues)
+        rendered: segments.map((segment) => segment.text).join("")
       };
     }),
     facts: slots

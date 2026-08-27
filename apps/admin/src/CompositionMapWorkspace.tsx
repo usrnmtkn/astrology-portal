@@ -1,5 +1,11 @@
 import { useMemo, useState, type ReactNode } from "react";
-import { buildCompositionMap, type CompositionMapRow } from "./compositionMap";
+import {
+  buildCompositionMap,
+  type CompositionMapRow,
+  type CompositionMapSource,
+  type CompositionPreviewSegment,
+  type CompositionPreviewVariableKind
+} from "./compositionMap";
 
 type Props = {
   editor: ReactNode;
@@ -12,6 +18,10 @@ type CompositionView = "preview" | "template" | "assembly";
 function matchesSearch(values: string[], query: string) {
   const terms = query.toLowerCase().trim().split(/\s+/u).filter(Boolean);
   return terms.every((term) => values.join(" ").toLowerCase().includes(term));
+}
+
+function templateParts(template: string) {
+  return template.split(/(\{\{\s*[#^/]?\s*[\w.-]+\s*\}\})/gu).filter(Boolean);
 }
 
 export default function CompositionMapWorkspace({ editor, onEditRow, rows }: Props) {
@@ -57,6 +67,42 @@ export default function CompositionMapWorkspace({ editor, onEditRow, rows }: Pro
     setSelectedKey(contentKey);
     setView("preview");
     setPreviewAudience("you");
+  }
+
+  function sourceForVariable(name: string) {
+    return selected?.preview.fields.flatMap((field) => field.paragraphs.flat())
+      .find((segment) => segment.name === name && segment.source)?.source;
+  }
+
+  function openVariable(name: string, source?: CompositionMapSource) {
+    if (source) {
+      onEditRow(source.row);
+      return;
+    }
+    setView("assembly");
+    setTimeout(() => {
+      const target = document.getElementById(`composition-slot-${name}`);
+      target?.scrollIntoView({ behavior: "smooth", block: "center" });
+      target?.focus({ preventScroll: true });
+    });
+  }
+
+  function variableButton(segment: CompositionPreviewSegment, key: string) {
+    if (!segment.name || !segment.kind) return segment.text;
+    const slot = selected?.slots.find((candidate) => candidate.name === segment.name);
+    const action = segment.source ? `Edit ${slot?.label ?? segment.name}` : `Inspect ${slot?.label ?? segment.name}`;
+    return (
+      <button
+        type="button"
+        key={key}
+        className={`admin-composition-variable variable-${segment.kind}`}
+        data-variable-action={`${action} →`}
+        aria-label={`${segment.text}. ${action}`}
+        onClick={() => openVariable(segment.name!, segment.source)}
+      >
+        {segment.text}
+      </button>
+    );
   }
 
   return (
@@ -162,6 +208,13 @@ export default function CompositionMapWorkspace({ editor, onEditRow, rows }: Pro
                     <span className="ui-pill admin-status status-reviewed">Example data</span>
                   </header>
 
+                  <div className="admin-composition-variable-legend" aria-label="Variable color key">
+                    <span className="variable-fact">Calculated fact</span>
+                    <span className="variable-phrase">Reusable phrase</span>
+                    <span className="variable-hook">Authored hook</span>
+                    <span className="variable-copy">Saved copy</span>
+                  </div>
+
                   <div className="admin-composition-preview-surface">
                     <div className="admin-composition-preview-chrome">
                       <span>{selected.destination}</span>
@@ -176,11 +229,12 @@ export default function CompositionMapWorkspace({ editor, onEditRow, rows }: Pro
                       {visiblePreviewFields.map((field) => (
                         <section className={`admin-composition-preview-field field-${field.key}`} key={field.key}>
                           <span>{field.label}</span>
-                          {field.rendered.split(/\n{2,}/u).map((paragraph, index) => (
-                            field.key.startsWith("headline")
-                              ? <h3 key={`${field.key}-${index}`}>{paragraph}</h3>
-                              : <p key={`${field.key}-${index}`}>{paragraph}</p>
-                          ))}
+                          {field.paragraphs.map((paragraph, paragraphIndex) => {
+                            const copy = paragraph.map((segment, segmentIndex) => variableButton(segment, `${field.key}-${paragraphIndex}-${segmentIndex}`));
+                            return field.key.startsWith("headline")
+                              ? <h3 key={`${field.key}-${paragraphIndex}`}>{copy}</h3>
+                              : <p key={`${field.key}-${paragraphIndex}`}>{copy}</p>;
+                          })}
                         </section>
                       ))}
                       {!selected.preview.fields.length && (
@@ -227,7 +281,16 @@ export default function CompositionMapWorkspace({ editor, onEditRow, rows }: Pro
                     {selected.preview.fields.map((field) => (
                       <article key={field.key}>
                         <span>{field.label}</span>
-                        <pre>{field.template}</pre>
+                        <pre>{templateParts(field.template).map((part, index) => {
+                          if (!part.startsWith("{{")) return part;
+                          const name = part.replace(/[{}#^/\s]/gu, "");
+                          const slot = selected.slots.find((candidate) => candidate.name === name);
+                          if (!slot) return part;
+                          const source = sourceForVariable(name);
+                          const kind: CompositionPreviewVariableKind = source?.kind ?? (slot.sourceKind === "runtime" ? "fact" : "copy");
+                          const action = source ? `Edit ${slot.label}` : `Inspect ${slot.label}`;
+                          return <button type="button" key={`${name}-${index}`} className={`admin-composition-variable-token variable-${kind}`} data-variable-action={`${action} →`} aria-label={`${part}. ${action}`} onClick={() => openVariable(name, source)}>{part}</button>;
+                        })}</pre>
                       </article>
                     ))}
                   </div>
@@ -249,7 +312,7 @@ export default function CompositionMapWorkspace({ editor, onEditRow, rows }: Pro
                   </div>
                 </header>
                 {selected.slots.map((slot) => (
-                  <article className={`admin-composition-slot ${slot.issue ? "has-issue" : ""}`} key={slot.name}>
+                  <article id={`composition-slot-${slot.name}`} tabIndex={-1} className={`admin-composition-slot ${slot.issue ? "has-issue" : ""}`} key={slot.name}>
                     <header>
                       <div><span className="admin-composition-connector" aria-hidden="true" /><div><strong>{slot.label}</strong><code>{`{{${slot.name}}}`}</code></div></div>
                       <div className="admin-composition-slot-badges">
