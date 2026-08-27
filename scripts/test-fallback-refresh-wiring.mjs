@@ -884,8 +884,8 @@ assert.match(
 );
 assert.match(
   dashboardImportSource,
-  /function verifyImportedMirror[\s\S]*?Dashboard mirror count mismatch[\s\S]*?Dashboard mirror key mismatch[\s\S]*?Dashboard mirror row mismatch/u,
-  "Dashboard verification must fail on count, key, or total-row drift."
+  /function verifyImportedMirror[\s\S]*?countMismatches[\s\S]*?missingKeys[\s\S]*?staleKeys[\s\S]*?changedKeys[\s\S]*?Dashboard mirror mismatch:/u,
+  "Dashboard verification must report count, missing-key, stale-key, and exact-row drift together."
 );
 assert.match(
   dashboardImportSource,
@@ -904,7 +904,7 @@ assert.match(
 );
 assert.match(
   dashboardImportSource,
-  /Dashboard mirror content mismatch/u,
+  /changedKeys[\s\S]*JSON\.stringify\(mirrorComparable/u,
   "Dashboard verification must compare row content, not counts and keys alone."
 );
 

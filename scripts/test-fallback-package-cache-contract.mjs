@@ -77,8 +77,8 @@ assert.match(
 );
 assert.match(
   materializerSource,
-  /Dashboard mirror content mismatch/u,
-  "Mirror verification must compare exact row content."
+  /Dashboard mirror mismatch:[\s\S]*changedCount[\s\S]*changedKeys/u,
+  "Mirror verification must report exact row-content drift alongside missing and stale keys."
 );
 assert.match(
   appSource,
