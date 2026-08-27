@@ -5,6 +5,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { isContentAdminAuthorized } from "../_lib/admin-auth.js";
 import { loadLocalWebEnv } from "../_lib/local-env.js";
+import { contentSourceRepairPlan } from "./content-source-repair-plans.js";
 
 loadLocalWebEnv();
 
@@ -25,6 +26,23 @@ async function recordedResolutions() {
     limit: "1000"
   });
   const response = await fetch(`${url}/rest/v1/content_studio_issue_resolutions?${params}`, {
+    headers: { apikey: key, authorization: `Bearer ${key}` }
+  });
+  const rows = await response.json().catch(() => null);
+  if (!response.ok) return { ready: false, rows: [] as Array<Record<string, unknown>> };
+  return { ready: true, rows: Array.isArray(rows) ? rows as Array<Record<string, unknown>> : [] };
+}
+
+async function recordedSourceDecisions() {
+  const url = (process.env.SUPABASE_URL ?? process.env.VITE_SUPABASE_URL ?? "").replace(/\/$/u, "");
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY ?? "";
+  if (!url || !key) return { ready: false, rows: [] as Array<Record<string, unknown>> };
+  const params = new URLSearchParams({
+    select: "decision_id,issue_id,content_key,decision_status,action,candidate_path,candidate_sha256,owner_statement,approved_at",
+    order: "approved_at.desc",
+    limit: "1000"
+  });
+  const response = await fetch(`${url}/rest/v1/content_studio_source_decisions?${params}`, {
     headers: { apikey: key, authorization: `Bearer ${key}` }
   });
   const rows = await response.json().catch(() => null);
@@ -66,6 +84,7 @@ export function unresolvedContentIssues(items: Array<Record<string, unknown> & {
       surface: records[0].surface,
       kind: issueKind,
       records,
+      repairPlan: sourceRepair ? contentSourceRepairPlan(contentKey) : null,
       aiRequest: request(sourceRepair
         ? "Repair the source contract. Approval cannot clear this hold."
         : "Find why no editable Content Library row exists and propose the exact governed import path.")
@@ -110,14 +129,29 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
 
   try {
     const report = loadContentUnresolvedReport() as { issues: Array<{ issueId: string }> } & Record<string, unknown>;
-    const resolutionStore = await recordedResolutions();
+    const [resolutionStore, sourceDecisionStore] = await Promise.all([
+      recordedResolutions(),
+      recordedSourceDecisions()
+    ]);
     const byIssueId = new Map(resolutionStore.rows.map((row) => [row.issue_id, row]));
+    const sourceDecisionByContentKey = new Map<string, Record<string, unknown>>();
+    for (const row of sourceDecisionStore.rows) {
+      const contentKey = typeof row.content_key === "string" ? row.content_key : "";
+      if (contentKey && !sourceDecisionByContentKey.has(contentKey)) {
+        sourceDecisionByContentKey.set(contentKey, row);
+      }
+    }
     sendJson(res, 200, {
       ok: true,
       report: {
         ...report,
         resolutionStoreReady: resolutionStore.ready,
-        issues: report.issues.map((issue) => ({ ...issue, resolution: byIssueId.get(issue.issueId) ?? null }))
+        sourceDecisionStoreReady: sourceDecisionStore.ready,
+        issues: report.issues.map((issue) => ({
+          ...issue,
+          resolution: byIssueId.get(issue.issueId) ?? null,
+          sourceDecision: sourceDecisionByContentKey.get(issue.contentKey) ?? null
+        }))
       }
     });
   } catch (error) {
