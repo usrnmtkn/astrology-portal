@@ -490,6 +490,7 @@ function readPackageSources() {
   const authoredRows = readJson("source-rows/transit-synastry-rows-v1.json");
   const bondLanguagePass2 = readJson("source-rows/bond-language-pass-2.json");
   const lunationBlendRows = readJson("source-rows/lunation-blend-units-v1.json");
+  const lunationEclipseVariants = readJson("source-rows/lunation-eclipse-variants-v1.json");
   const placementInterimRows = readJson("source-rows/placement-interim-fixes-v1.json");
   const pairDailyFrames = readJson("source-rows/pair-daily-frames-v1.json");
   const pairDailyClauses = readJson("source-rows/pair-daily-clauses-v1.json");
@@ -524,6 +525,7 @@ function readPackageSources() {
     authoredRows,
     bondLanguagePass2,
     lunationBlendRows,
+    lunationEclipseVariants,
     placementInterimRows,
     pairDailyFrames,
     pairDailyClauses,
@@ -681,6 +683,7 @@ function materializeRows(sources) {
   const rows = [
     ...sources.authoredRows.authoredCards.map((row) => mapPackageRecord(row, "authored-content")),
     ...sources.lunationBlendRows.authoredCards.map((row) => mapPackageRecord(row, "authored-content")),
+    ...sources.lunationEclipseVariants.authoredCards.map((row) => mapPackageRecord(row, "authored-content")),
     ...sources.skyArticleRows.authoredCards.map((row) => mapPackageRecord(row, "authored-content")),
     ...sources.weeklyRows.map((row) => mapPackageRecord(row, "authored-content")),
     ...sources.timingEventRows.authoredCards.map((row) => mapPackageRecord(row, "authored-content")),
@@ -999,10 +1002,8 @@ if (apply) {
 }
 
 if (verify) {
-  if (contentKeyFilter) {
-    throw new Error("--verify checks the complete mirror and cannot be combined with --content-key.");
-  }
-  const importedRows = await readImportedRows();
+  const importedRows = (await readImportedRows())
+    .filter((row) => !contentKeyFilter || row.content_key === contentKeyFilter);
   const liveCounts = verifyImportedMirror(rows, counts, importedRows);
   console.log(`verified ${importedRows.length} imported V3 dashboard rows in generated_interpretations`);
   console.log(JSON.stringify(liveCounts, null, 2));
