@@ -2388,14 +2388,11 @@
         "planetBTitle",
         "aspectAdj",
         "otherName",
-        "synAspectLine"
+        "pairSentences"
       ],
-      "optionalSlots": [
-        "pairSentences",
-        "closingLine"
-      ],
-      "body": "Your {{planetATitle}} is {{aspectAdj}} {{otherName}}'s {{planetBTitle}}, {{synAspectLine}}{{#closingLine}} {{closingLine}}{{/closingLine}}",
-      "note": "Synastry aspect fallback. synAspectLine = aspect-type hook with modeA/modeB/otherName filled (direction, flip side, repeat loop, advice). pairSentences = optional authored per-pair enrichment. Understanding the other person as an individual belongs to the compat placement cards, not this surface. 2026-07-23: assembled fallback now ends with the signature closing formula (cores + motion) when available; authored pair rows return standalone before this template runs.",
+      "optionalSlots": [],
+      "body": "{{pairSentences}}",
+      "note": "Synastry aspect authored-unit contract. The resolver selects an eligible exact or grouped synastry-pair row, renders its complete audience voice with holder variables, and returns that approved body verbatim. This template supplies the shared headline shape and documents the selected pair body as the required reader unit. Understanding the other person as an individual belongs to the compatibility placement cards, not this surface.",
       "replaces": "fallback-hook/friends.synastry-contact"
     },
     {

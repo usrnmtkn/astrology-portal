@@ -27,6 +27,8 @@ export type CompositionMapSource = {
 };
 
 export type CompositionMapSlot = TemplateVariableReference & {
+  depth: number;
+  parents: string[];
   sources: CompositionMapSource[];
   issue: string | null;
 };
@@ -90,6 +92,76 @@ function humanize(value: string) {
 function packageRecordForRow(row: CompositionMapRow) {
   const sections = objectRecord(row.sections);
   return objectRecord(sections?.packageRecord) ?? {};
+}
+
+function variableFieldsForRow(row: CompositionMapRow) {
+  const sections = objectRecord(row.sections) ?? {};
+  const packageRecord = packageRecordForRow(row);
+  return {
+    Headline: row.headline ?? "",
+    Summary: row.summary ?? "",
+    Body: row.body ?? "",
+    body: packageRecord.body ?? sections.body ?? "",
+    body_you: packageRecord.body_you ?? sections.body_you ?? "",
+    body_they: packageRecord.body_they ?? sections.body_they ?? ""
+  };
+}
+
+type AtomicReference = TemplateVariableReference & { depth: number; parents: string[] };
+type AtomicVariableCaches = {
+  candidates: Map<string, CompositionMapRow[]>;
+  nested: Map<string, TemplateVariableReference[]>;
+};
+
+function sourceCandidates(reference: TemplateVariableReference, rows: CompositionMapRow[], templateKey: string, cache: AtomicVariableCaches) {
+  const key = `${templateKey}\u0000${reference.name}`;
+  let candidates = cache.candidates.get(key);
+  if (!candidates) {
+    candidates = templateVariableSourceCandidates(reference, rows, templateKey);
+    cache.candidates.set(key, candidates);
+  }
+  return candidates;
+}
+
+function atomicVariableReferences(row: CompositionMapRow, rows: CompositionMapRow[], cache: AtomicVariableCaches) {
+  const roots = templateVariableReferences(variableFieldsForRow(row), packageRecordForRow(row));
+  const references = new Map<string, AtomicReference>();
+  const queue: AtomicReference[] = roots.map((reference) => ({ ...reference, depth: 0, parents: [] }));
+
+  while (queue.length) {
+    const reference = queue.shift()!;
+    const existing = references.get(reference.name);
+    if (existing) {
+      existing.depth = Math.min(existing.depth, reference.depth);
+      existing.parents = [...new Set([...existing.parents, ...reference.parents])].sort();
+      existing.fields = [...new Set([...existing.fields, ...reference.fields])].sort();
+      continue;
+    }
+    references.set(reference.name, reference);
+    if (reference.depth >= 6 || reference.sourceKind === "runtime") continue;
+
+    const candidates = sourceCandidates(reference, rows, row.content_key, cache);
+    candidates.forEach((candidate) => {
+      const candidateKey = candidate.id || candidate.content_key;
+      let nested = cache.nested.get(candidateKey);
+      if (!nested) {
+        nested = templateVariableReferences(variableFieldsForRow(candidate), packageRecordForRow(candidate));
+        cache.nested.set(candidateKey, nested);
+      }
+      nested.forEach((dependency) => {
+        if (dependency.name === reference.name) return;
+        queue.push({
+          ...dependency,
+          depth: reference.depth + 1,
+          fields: [`Inside {{${reference.name}}}`],
+          parents: [reference.name]
+        });
+      });
+    });
+  }
+
+  return [...references.values()].sort((left, right) => left.depth - right.depth
+    || left.label.localeCompare(right.label, undefined, { sensitivity: "base" }));
 }
 
 function rowRole(row: CompositionMapRow) {
@@ -185,15 +257,51 @@ function previewSourceText(source: CompositionMapSource, audience: "you" | "they
 function representativeSource(slot: CompositionMapSlot, slots: CompositionMapSlot[], values: Map<string, string>) {
   if (slot.requirement === "Optional" || !slot.sources.length) return null;
   if (slot.sources.length === 1) return slot.sources[0];
-  const anchors = slots.filter((candidate) => candidate.sourceKind === "runtime")
+  const anchorSlotNames = slot.name === "transitTopic"
+    ? ["transitTitle"]
+    : slot.name === "natalCore" || slot.name === "natalArea"
+      ? ["natalTitle"]
+      : ["aspectAdj", "aspectVerb", "synAspectLine"].includes(slot.name)
+        ? ["aspectName", "aspectAdj"]
+        : slot.name === "elementPattern"
+          ? ["signATitle", "signBTitle"]
+          : slot.name === "rulerHouseTopic"
+            ? ["rulerHouseOrdinal"]
+            : slot.name === "topicN"
+              ? ["houseN"]
+              : slot.name === "topicM"
+                ? ["houseM"]
+        : ["transitTypeLine", "transitEffectLine", "transitEffect"].includes(slot.name)
+          ? ["aspectName", "transitTitle", "natalTitle"]
+          : slot.name === "pairSentences"
+            ? ["planetATitle", "planetBTitle", "aspectAdj"]
+            : /A$/u.test(slot.name) && ["modeA", "askA", "gratesA", "sceneA"].includes(slot.name)
+              ? ["planetATitle"]
+              : /B$/u.test(slot.name) && ["modeB", "askB", "gratesB", "sceneB"].includes(slot.name)
+                ? ["planetBTitle"]
+                : null;
+  const anchors = slots.filter((candidate) => anchorSlotNames ? anchorSlotNames.includes(candidate.name) : candidate.sourceKind === "runtime")
     .flatMap((candidate) => (values.get(candidate.name) ?? "").toLowerCase().match(/[a-z]+/gu) ?? []);
-  const houseNumber = values.get("houseOrdinal")?.match(/^\d+/u)?.[0];
-  if (houseNumber) anchors.push(houseNumber);
+  const numericAnchorNames = anchorSlotNames ?? ["houseOrdinal"];
+  numericAnchorNames.forEach((name) => anchors.push(...(values.get(name)?.match(/\d+/gu) ?? [])));
+  if (slot.name === "elementPattern") {
+    const elements: Record<string, string> = {
+      aries: "fire", leo: "fire", sagittarius: "fire",
+      taurus: "earth", virgo: "earth", capricorn: "earth",
+      gemini: "air", libra: "air", aquarius: "air",
+      cancer: "water", scorpio: "water", pisces: "water"
+    };
+    ["signATitle", "signBTitle"].forEach((name) => {
+      const element = elements[(values.get(name) ?? "").toLowerCase()];
+      if (element) anchors.push(element);
+    });
+  }
   const group = anchors.includes("trine") || anchors.includes("sextile")
     ? "soft"
     : anchors.some((anchor) => ["square", "opposition", "opposite"].includes(anchor)) ? "hard" : "";
   const ranked = slot.sources.map((source) => {
-    const parts = [...new Set(source.row.content_key.toLowerCase().split(/[\/.\-_]+/u))];
+    const rawParts = source.row.content_key.toLowerCase().split(/[\/.\-_]+/u);
+    const parts = slot.name === "elementPattern" ? rawParts : [...new Set(rawParts)];
     return { source, score: parts.reduce((total, part) => total + (anchors.includes(part) ? 2 : part === group ? 1 : 0), 0) };
   }).sort((left, right) => right.score - left.score);
   return ranked[0]?.score ? ranked[0].source : null;
@@ -254,8 +362,7 @@ function previewSegments(template: string, values: Map<string, string>, slots: C
     }
     const boundary = [rendered.indexOf("\uE000", cursor), rendered.indexOf("\uE002", cursor)]
       .filter((index) => index >= 0).sort((left, right) => left - right)[0] ?? rendered.length;
-    const rawName = [...stack].reverse().find((name) => name === "transitEffect" || slots.some((slot) => slot.name === name));
-    const name = rawName === "transitEffect" ? "transitEffectLine" : rawName;
+    const name = [...stack].reverse().find((candidate) => slots.some((slot) => slot.name === candidate));
     const source = name ? sourceByName.get(name) : undefined;
     const slot = slots.find((candidate) => candidate.name === name);
     const segment = {
@@ -332,7 +439,6 @@ function buildCompositionPreview(row: CompositionMapRow, slots: CompositionMapSl
         if (!source) return;
         fieldValues.set(slot.name, previewSourceText(source, audience));
         sourceByName.set(slot.name, source);
-        if (!sources.some((candidate) => candidate.row.content_key === source.row.content_key)) sources.push(source);
       });
       if (!fieldValues.has("transitTopic")) fieldValues.set("transitTopic", `${values.get("transitTitle") ?? "Transit"}'s focus`);
       if (!fieldValues.has("natalCore")) fieldValues.set("natalCore", `${values.get("natalTitle") ?? "natal"} themes`);
@@ -343,6 +449,9 @@ function buildCompositionPreview(row: CompositionMapRow, slots: CompositionMapSl
         fieldValues.set("possessiveLow", "Maya's");
       }
       const segments = previewSegments(field.value, fieldValues, slots, sourceByName);
+      segments.forEach((segment) => {
+        if (segment.source && !sources.some((candidate) => candidate.row.content_key === segment.source?.row.content_key)) sources.push(segment.source);
+      });
       return {
         audience: field.audience,
         key: field.key,
@@ -365,17 +474,12 @@ function buildCompositionPreview(row: CompositionMapRow, slots: CompositionMapSl
 
 export function buildCompositionMap(rows: CompositionMapRow[]): CompositionMapTemplate[] {
   const templates = rows.filter(isCompositionTemplateRow);
+  const cache: AtomicVariableCaches = { candidates: new Map(), nested: new Map() };
   return templates.map((row) => {
     const packageRecord = packageRecordForRow(row);
-    const references = templateVariableReferences({
-      Headline: row.headline ?? "",
-      Summary: row.summary ?? "",
-      Body: row.body ?? ""
-    }, packageRecord);
+    const references = atomicVariableReferences(row, rows, cache);
     const slots = references.map((reference): CompositionMapSlot => {
-      const candidates = reference.sourceKind === "saved-copy"
-        ? templateVariableSourceCandidates(reference, rows, row.content_key)
-        : [];
+      const candidates = sourceCandidates(reference, rows, row.content_key, cache);
       const sources = candidates.map((candidate) => ({
         kind: sourceKind(candidate),
         label: sourceLabel(candidate),
@@ -384,9 +488,13 @@ export function buildCompositionMap(rows: CompositionMapRow[]): CompositionMapTe
       return {
         ...reference,
         sources,
-        issue: reference.sourceKind === "saved-copy" && sources.length === 0
+        issue: reference.sourceKind === "unmapped" && sources.length === 0
+          ? "Declared by the template, but no canonical source row or active resolver value is wired."
+          : reference.sourceKind === "saved-copy" && sources.length === 0
           ? "No saved hook or phrase is linked to this slot."
-          : null
+          : reference.source === "Runtime resolver"
+            ? "This runtime value does not have an atomic provenance definition."
+            : null
       };
     });
     const issues = slots.flatMap((slot) => slot.issue ? [`${slot.label}: ${slot.issue}`] : []);
