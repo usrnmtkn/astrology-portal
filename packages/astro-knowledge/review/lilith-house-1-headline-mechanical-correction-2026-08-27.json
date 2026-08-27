@@ -1,0 +1,13 @@
+{
+  "schemaVersion": "mechanical-copy-correction-v1",
+  "recordedAt": "2026-08-27",
+  "authority": "User-authorized editorial QA repair",
+  "contentKey": "authored/transit-house/lilith/1",
+  "field": "headline",
+  "before": "The version of you you muted",
+  "after": "The version of yourself you muted",
+  "classification": "repeated-word grammar correction",
+  "meaningChanged": false,
+  "historicalApprovalChanged": false,
+  "note": "The correction removes an accidental adjacent-word repetition. The 2026-08-13 owner-signoff ruling remains a historical record and its frozen payload is reconstructed only inside its regression test."
+}
