@@ -96,10 +96,22 @@ export async function getVerifiedAuthUser(client?: SupabaseClient | null) {
   }
 
   if (verifiedAuthUserRequest?.accessToken !== accessToken) {
-    verifiedAuthUserRequest = {
+    const request = {
       accessToken,
-      promise: supabase.auth.getUser().then(({ data }) => data.user ?? null)
+      promise: supabase.auth.getUser().then(({ data, error }) => {
+        if (error) {
+          throw error;
+        }
+
+        return data.user ?? null;
+      })
     };
+    verifiedAuthUserRequest = request;
+    void request.promise.catch(() => {
+      if (verifiedAuthUserRequest === request) {
+        verifiedAuthUserRequest = null;
+      }
+    });
   }
 
   return verifiedAuthUserRequest.promise;

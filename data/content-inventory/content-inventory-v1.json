@@ -1,9 +1,9 @@
 {
   "schemaVersion": "content-inventory-v1",
   "generatedOn": "2026-08-10",
-  "sourceCommit": "ff6eae1de57085267d2ecdf36a57300b6cc93f74",
+  "sourceCommit": "bb47bc36e319fc6d81ed88b7d018507166a5f464",
   "authorityRule": "Only owner-approved and owner-locked records may serve or export.",
-  "contentFingerprint": "0f19e1452cab16308d369eb84ffc1c1d47f46eda7f6c9babf696d4235b118370",
+  "contentFingerprint": "6596a772099ad906e231e097f8c491a28757dd8e8cb08982604e17460df0dd21",
   "recordCount": 10867,
   "statusCounts": {
     "owner-approved": 10867
@@ -84983,9 +84983,9 @@
       "sourceAuthor": "composed",
       "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
       "approvalVersionDate": "2026-07-29",
-      "contentHash": "129755f74a1415f882a5ed716916233837c10a73d5d1e7ebf60db69de9662e00",
+      "contentHash": "f01d526fcc747d30bc4ebc22c545150d0869bf080b10f5881c2bb1af47e0b67e",
       "wording": {
-        "headline": "The version of you you muted",
+        "headline": "The version of yourself you muted",
         "body": "Black Moon Lilith spends about nine months in your 1st house, making it almost impossible to keep hiding the parts of yourself you toned down to please others. You might stop softening your opinions, refuse to dress for anyone else's approval, or stop laughing off things that bother you. That sudden edge is useful; it shows exactly where you have been compromising your personality.\n\nThe trap is picking fights just to prove a point. Acting out is not the same thing as being free. Restore the parts of yourself you hid because they belong to you, not just to shock an audience."
       },
       "astrology": {

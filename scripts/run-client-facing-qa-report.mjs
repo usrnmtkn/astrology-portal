@@ -22,6 +22,7 @@ const suites = [
       "--grep-invert",
       "content fallback copy|directional copy"
     ],
+    baseURL: "http://127.0.0.1:4173",
     logFile: "client-facing-user-flows.log"
   },
   {
@@ -37,6 +38,7 @@ const suites = [
       "-g",
       "content fallback copy|directional copy"
     ],
+    baseURL: "http://127.0.0.1:4174",
     logFile: "content-fallback-copy.log"
   }
 ];
@@ -51,7 +53,8 @@ const shellQuote = (value) => {
   return `"${value.replaceAll("\\", "\\\\").replaceAll('"', '\\"')}"`;
 };
 
-const commandLabel = (suite) => [suite.command, ...suite.args].map(shellQuote).join(" ");
+const commandLabel = (suite) =>
+  [`PLAYWRIGHT_BASE_URL=${suite.baseURL}`, suite.command, ...suite.args].map(shellQuote).join(" ");
 
 const countMatches = (output, pattern) => {
   const matches = [...output.matchAll(pattern)];
@@ -75,7 +78,7 @@ const runSuite = async (suite) =>
   new Promise((resolve) => {
     const child = spawn(suite.command, suite.args, {
       cwd: process.cwd(),
-      env: process.env,
+      env: { ...process.env, PLAYWRIGHT_BASE_URL: suite.baseURL },
       stdio: ["ignore", "pipe", "pipe"]
     });
 

@@ -238,6 +238,7 @@ export function SocialFriendsPanel({
   const [removedToastFriend, setRemovedToastFriend] = useState<ConnectedSocialFriend | null>(null);
   const [openFriendMenuId, setOpenFriendMenuId] = useState<string | null>(null);
   const [available, setAvailable] = useState<boolean | null>(null);
+  const [loadError, setLoadError] = useState("");
   const [actionPending, setActionPending] = useState(false);
   const [sharingPending, setSharingPending] = useState(false);
   const [inviteModalOpen, setInviteModalOpen] = useState(false);
@@ -254,12 +255,9 @@ export function SocialFriendsPanel({
   const searchSequence = useRef(0);
   const pendingRemovalRef = useRef<PendingRemoval | null>(null);
   const friendsRef = useRef<ConnectedSocialFriend[]>([]);
-  const initialViewResolvedRef = useRef(false);
   const activeViewRef = useRef(activeView);
-  const onSelectViewRef = useRef(onSelectView);
 
   activeViewRef.current = activeView;
-  onSelectViewRef.current = onSelectView;
 
   const incomingRequests = useMemo(
     () => requests.filter((request) => request.direction === "incoming"),
@@ -306,8 +304,13 @@ export function SocialFriendsPanel({
 
   const refreshSocialData = useCallback(async () => {
     const profileRequest = loadOwnSocialProfile()
-      .then(setProfile)
-      .catch(() => undefined);
+      .then((nextProfile) => {
+        setProfile(nextProfile);
+      })
+      .catch(() => {
+        // The friend list is independently authorized and remains usable when
+        // the optional own-profile header cannot hydrate.
+      });
     const loadedFriends = await listSocialFriends();
     const pendingRemoval = pendingRemovalRef.current?.friend.userId;
     const nextFriends = pendingRemoval
@@ -315,6 +318,7 @@ export function SocialFriendsPanel({
       : loadedFriends;
 
     publishFriends(nextFriends);
+    setLoadError("");
     void profileRequest;
     void listSocialFriendRequests()
       .then((nextRequests) => {
@@ -345,20 +349,12 @@ export function SocialFriendsPanel({
       .then((nextFriends) => {
         if (!cancelled) {
           setAvailable(true);
-
-          if (!initialViewResolvedRef.current) {
-            initialViewResolvedRef.current = true;
-
-            if (activeViewRef.current === "circle" && nextFriends.length === 0) {
-              onSelectViewRef.current("charts", "replace");
-            }
-          }
         }
       })
       .catch(() => {
         if (!cancelled) {
           setAvailable(false);
-          publishFriends([]);
+          setLoadError("Friends could not load. Your connections are still saved.");
           onPendingRequestCountChange?.(0);
         }
       });
@@ -367,12 +363,6 @@ export function SocialFriendsPanel({
       cancelled = true;
     };
   }, [onPendingRequestCountChange, publishFriends, refreshSocialData]);
-
-  useEffect(() => {
-    if (available === false && activeView !== "charts") {
-      onSelectView("charts", "replace");
-    }
-  }, [activeView, available, onSelectView]);
 
   useEffect(() => {
     let refreshTimer: number | undefined;
@@ -1095,16 +1085,16 @@ export function SocialFriendsPanel({
     );
   }
 
-  if (!available || !profile?.handle) {
+  if (available === false) {
     return (
       <section className="friends-unified-panel" aria-label="Social friends">
         <div className="friends-unified-tab-row">
           <span className="friends-unified-tabs" role="tablist" aria-label="Friends views">
             <button
-              className=""
+              className={activeView === "circle" ? "active" : ""}
               type="button"
               role="tab"
-              aria-selected={false}
+              aria-selected={activeView === "circle"}
               aria-controls="friends-circle-panel"
               id="friends-circle-tab"
               onClick={() => onSelectView("circle")}
@@ -1112,10 +1102,10 @@ export function SocialFriendsPanel({
               Circle · 0
             </button>
             <button
-              className="active"
+              className={activeView === "charts" ? "active" : ""}
               type="button"
               role="tab"
-              aria-selected={true}
+              aria-selected={activeView === "charts"}
               aria-controls="friends-charts-panel"
               id="friends-charts-tab"
               onClick={() => onSelectView("charts")}
@@ -1131,14 +1121,29 @@ export function SocialFriendsPanel({
         </div>
         <div
           className="friends-unified-content"
-          id="friends-charts-panel"
+          id={`friends-${activeView}-panel`}
           role="tabpanel"
-          aria-labelledby="friends-charts-tab"
+          aria-labelledby={`friends-${activeView}-tab`}
         >
-          {chartContent ? chartContent : (
-            <div className="friends-unified-empty">
-              <h2>Friends are unavailable.</h2>
-              <p>Sign in and finish setting up your profile to use social friends.</p>
+          {activeView === "charts" && chartContent ? chartContent : (
+            <div className="friends-unified-empty" role="alert">
+              <h2>Friends could not load.</h2>
+              <p>{loadError || "Your connections are still saved. Try loading them again."}</p>
+              <button
+                className="social-secondary-button"
+                type="button"
+                onClick={() => {
+                  setAvailable(null);
+                  void refreshSocialData()
+                    .then(() => setAvailable(true))
+                    .catch(() => {
+                      setAvailable(false);
+                      setLoadError("Friends could not load. Your connections are still saved.");
+                    });
+                }}
+              >
+                Try again
+              </button>
             </div>
           )}
         </div>
