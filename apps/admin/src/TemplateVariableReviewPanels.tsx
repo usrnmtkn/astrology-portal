@@ -1,5 +1,5 @@
 import type { TemplateVariableReference } from "./templateVariableReference";
-import { templateVariableSourceCandidates, templateVariableSourceKeyPrefixes } from "./templateVariableSources";
+import { templateVariableSourceCandidates, templateVariableSourceKeyPrefixes, templateVariableSourceSelectionNote } from "./templateVariableSources";
 
 type SourceRow = {
   id: string;
@@ -54,6 +54,8 @@ export function TemplateVariableReviewPanels({
   const variable = references.find((candidate) => candidate.name === selectedVariableName);
   if (!variable) return null;
   const sources = templateVariableSourceCandidates(variable, rows, templateContentKey);
+  const sourceSelectionNote = templateVariableSourceSelectionNote(variable);
+  const hasEditableSources = variable.sourceKind === "saved-copy" || sources.length > 0;
   const source = selectedSourceId ? sources.find((row) => row.id === selectedSourceId) ?? null : null;
   const copy = source ? readableCopy(source) : [];
   const back = () => source ? onSelectSource(null) : onBackToVariables();
@@ -85,12 +87,15 @@ export function TemplateVariableReviewPanels({
             <>
               <section className="admin-hook-detail-section admin-variable-source-summary">
                 <p>{variable.meaning}</p>
-                <p><strong>{variable.sourceKind === "runtime" ? "Calculated by app" : "Saved writing"}</strong> · {variable.source}</p>
+                <p><strong>{hasEditableSources ? "Editable saved writing" : variable.sourceKind === "unmapped" ? "Wiring gap" : "Calculated by app"}</strong> · {variable.source}</p>
               </section>
-              {variable.sourceKind === "runtime" ? (
+              {variable.sourceKind === "unmapped" && !sources.length ? (
+                <div className="admin-empty-state admin-variable-runtime-note"><strong>Not connected to a source row</strong><p>This slot is declared by the template, but the current catalog and resolver do not provide editable writing for it.</p></div>
+              ) : !hasEditableSources ? (
                 <div className="admin-empty-state admin-variable-runtime-note"><strong>No saved passage to review</strong><p>The app calculates this value from live chart, date, or person data.</p></div>
               ) : (
                 <section className="admin-variable-source-list" aria-label={`Source rows for ${variable.label}`}>
+                  {sourceSelectionNote && <p>{sourceSelectionNote}</p>}
                   <p>{sources.length === 1 ? "1 source row" : `${sources.length} source rows`} can fill this variable.</p>
                   {sources.map((row) => <button type="button" className="admin-variable-source-row" key={row.id} onClick={() => onSelectSource(row.id)}><span><strong>{title(row)}</strong><code>{row.content_key}</code></span><span className="ui-pill admin-status">{status(row)}</span></button>)}
                   {sources.length === 0 && <p>No matching rows. Expected <code>{templateVariableSourceKeyPrefixes(variable).join(" or ")}</code></p>}

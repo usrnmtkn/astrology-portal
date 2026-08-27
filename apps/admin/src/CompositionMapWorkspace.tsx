@@ -296,7 +296,7 @@ export default function CompositionMapWorkspace({ editor, onEditRow, rows }: Pro
                   </div>
                   <section className="admin-composition-template-tokens" aria-label="Template tokens">
                     <p className="admin-eyebrow">Tokens used</p>
-                    <div>{selected.slots.map((slot) => <button type="button" key={slot.name} onClick={() => setView("assembly")}>{`{{${slot.name}}}`}<small>{slot.sourceKind === "runtime" ? "Calculated" : "Saved copy"}</small></button>)}</div>
+                    <div>{selected.slots.map((slot) => <button type="button" key={slot.name} onClick={() => setView("assembly")}>{`{{${slot.name}}}`}<small>{slot.sourceKind === "runtime" ? "Calculated" : slot.sourceKind === "unmapped" ? "Not wired" : "Saved copy"}</small></button>)}</div>
                   </section>
                 </section>
               )}
@@ -318,14 +318,19 @@ export default function CompositionMapWorkspace({ editor, onEditRow, rows }: Pro
                       <div className="admin-composition-slot-badges">
                         <span className="ui-pill admin-status">{slot.requirement === "Runtime" ? (slot.sourceKind === "runtime" ? "Dynamic" : "In template") : slot.requirement}</span>
                         <span className={`ui-pill admin-status ${slot.sourceKind === "runtime" ? "status-reviewed" : "status-draft"}`}>
-                          {slot.sourceKind === "runtime" ? "Calculated" : "Editable source"}
+                          {slot.sourceKind === "runtime" ? "Calculated" : slot.sourceKind === "unmapped" ? "Not wired" : "Editable source"}
                         </span>
                       </div>
                     </header>
                     <p>{slot.meaning}</p>
-                    <small>Used in {slot.fields.join(", ")} · Example: {slot.example}</small>
+                    <small>{slot.depth > 0 ? `Nested inside ${slot.parents.map((name) => `{{${name}}}`).join(", ")}` : `Used in ${slot.fields.join(", ")}`} · Example: {slot.example}</small>
 
-                    {slot.sourceKind === "runtime" ? (
+                    {slot.sourceKind === "unmapped" && !slot.sources.length ? (
+                      <div className="admin-composition-missing-source" role="note">
+                        <span><strong>Not wired to the reader</strong><small>{slot.source}</small></span>
+                        <button type="button" onClick={() => onEditRow(selected.row)}>Review template declaration</button>
+                      </div>
+                    ) : slot.sourceKind === "runtime" ? (
                       <div className="admin-composition-runtime-source">
                         <span><strong>Provided by the app</strong><small>Read-only · {slot.source}</small></span>
                       </div>

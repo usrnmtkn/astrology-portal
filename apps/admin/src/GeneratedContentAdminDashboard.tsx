@@ -2471,23 +2471,12 @@ export function GeneratedContentAdminDashboard() {
     [templateRows, query]
   );
   const vocabularyCategoryRows = useMemo(() => {
-    const categoryNeedles: Record<string, string[]> = {
-      planets: ["sun", "moon", "mercury", "venus", "mars", "jupiter", "saturn", "uranus", "neptune", "pluto", "north node", "south node", "chiron"],
-      signs: ["aries", "taurus", "gemini", "cancer", "leo", "virgo", "libra", "scorpio", "sagittarius", "capricorn", "aquarius", "pisces"],
-      natal: ["natal", "house", "ascendant", "midheaven", "ic", "descendant"],
-      relationship: ["relationship", "relationships", "synastry", "composite", "friends", "romantic", "family", "coworker", "coworkers", "exes"],
-      career: ["career", "work", "mission", "purpose", "money", "calling"]
-    };
-    const needles = categoryNeedles[vocabularyCategory] ?? [];
     return vocabRows.filter((row) => {
       const [, explicitSection] = row.content_key.split("/");
-      if (isVocabularySection(explicitSection) && explicitSection === vocabularyCategory) {
-        return true;
-      }
-      const haystack = `${row.content_key} ${row.headline ?? ""} ${row.summary ?? ""} ${row.body ?? ""} ${JSON.stringify(row.source_snapshot ?? {})}`
-        .toLowerCase()
-        .replace(/[-_/.:]+/g, " ");
-      return needles.length === 0 || needles.some((needle) => new RegExp(`(^|\\s)${needle.replace(/\s+/g, "\\s+")}(\\s|$)`).test(haystack));
+      const rowCategory = isVocabularySection(explicitSection)
+        ? explicitSection
+        : vocabularySectionFromKey(`${row.content_key}/${row.headline ?? ""}/${row.summary ?? ""}`);
+      return rowCategory === vocabularyCategory;
     });
   }, [vocabRows, vocabularyCategory]);
   const filteredVocabularyRows = useMemo(
@@ -7116,6 +7105,8 @@ export function GeneratedContentAdminDashboard() {
                       <dl className="admin-hook-pattern-list">
                         {variable.sourceKind === "runtime" ? (
                           <div><dt>Example value</dt><dd>{variable.example}</dd></div>
+                        ) : variable.sourceKind === "unmapped" ? (
+                          <div><dt>Wiring status</dt><dd>No canonical source row is currently connected.</dd></div>
                         ) : (
                           <div><dt>Saved writing</dt><dd>Open the source rows to read or edit the actual copy that can fill this variable.</dd></div>
                         )}
@@ -7132,7 +7123,7 @@ export function GeneratedContentAdminDashboard() {
                       >
                         {variable.sourceKind === "runtime"
                           ? "See how this value is filled"
-                          : "Review source writing"}
+                          : variable.sourceKind === "unmapped" ? "Review wiring" : "Review source writing"}
                       </button>
                     </article>
                 ))}

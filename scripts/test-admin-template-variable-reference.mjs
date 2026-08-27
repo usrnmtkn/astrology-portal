@@ -43,6 +43,16 @@ const sourceRows = [
   { id: "compat-domain", content_key: "fallback-hook/compat-domain/venus" },
   { id: "transit-type", content_key: "fallback-hook/transit-aspect-type/square" },
   { id: "transit-effect", content_key: "fallback-hook/transit-effect-hard/saturn/mars" },
+  { id: "saturn-topic", content_key: "fallback-vocab/planet-topic/saturn" },
+  { id: "venus-topic", content_key: "fallback-vocab/planet-topic/venus" },
+  { id: "venus-natal-core", content_key: "fallback-hook/natal-core/venus" },
+  { id: "venus-planet-core", content_key: "fallback-vocab/planet-core/venus" },
+  { id: "ascendant-area", content_key: "fallback-vocab/angle-area/ascendant" },
+  { id: "planet-mode", content_key: "fallback-hook/planet-mode/venus" },
+  { id: "planet-ask", content_key: "fallback-vocab/planet-ask/venus" },
+  { id: "planet-grates", content_key: "fallback-hook/planet-grates/venus" },
+  { id: "planet-scene", content_key: "fallback-vocab/planet-scene/venus" },
+  { id: "node-direction", content_key: "fallback-vocab/node-direction/aquarius" },
   { id: "retro-meaning", content_key: "fallback-hook/transit-retro/mercury" },
   { id: "sky-sign-copy", content_key: "fallback-hook/sky-sign-copy/jupiter/leo" },
   { id: "sky-window", content_key: "fallback-hook/sky-placement/jupiter" },
@@ -67,6 +77,20 @@ const runtimeReference = references.find((reference) => reference.name === "plan
 assert.ok(runtimeReference);
 assert.deepEqual(templateVariableSourceCandidates(runtimeReference, sourceRows, "fallback-template/natal.planet-in-sign/sun"), []);
 
+const transitDependencies = templateVariableReferences({}, {
+  requiredSlots: ["transitTopic", "natalCore"]
+});
+assert.deepEqual(transitDependencies.map((reference) => reference.name), ["natalCore", "transitTopic"], "Declared resolver dependencies should appear even when consumed inside another phrase.");
+assert.ok(transitDependencies.every((reference) => reference.sourceKind === "saved-copy"), "Resolver-selected vocabulary should remain editable saved writing.");
+assert.deepEqual(
+  templateVariableSourceCandidates(transitDependencies.find((reference) => reference.name === "transitTopic"), sourceRows, "fallback-template/transit.aspect").map((row) => row.id),
+  ["saturn-topic", "venus-topic"]
+);
+assert.deepEqual(
+  templateVariableSourceCandidates(transitDependencies.find((reference) => reference.name === "natalCore"), sourceRows, "fallback-template/transit.aspect").map((row) => row.id),
+  ["venus-natal-core", "venus-planet-core"]
+);
+
 const mappedSourceSlots = {
   placementGerundText: "placement-gerund",
   compatDomain: "compat-domain",
@@ -77,7 +101,12 @@ const mappedSourceSlots = {
   windowFrame: "sky-window",
   currentAspects: "sky-aspect",
   planetFrame: "sky-planet-frame",
-  signLore: "sky-sign-lore"
+  signLore: "sky-sign-lore",
+  modeA: "planet-mode",
+  askB: "planet-ask",
+  gratesA: "planet-grates",
+  sceneB: "planet-scene",
+  oppositeDirection: "node-direction"
 };
 for (const [slot, expectedId] of Object.entries(mappedSourceSlots)) {
   const reference = templateVariableReferences({ body: `{{${slot}}}` })[0];
@@ -86,6 +115,10 @@ for (const [slot, expectedId] of Object.entries(mappedSourceSlots)) {
     `${slot} should link to its canonical saved-source namespace.`
   );
 }
+
+const unwiredReference = templateVariableReferences({ body: "{{customUnwiredSlot}}" })[0];
+assert.equal(unwiredReference.sourceKind, "unmapped", "A declared slot with no canonical provider must not masquerade as calculated or editable.");
+assert.deepEqual(templateVariableSourceCandidates(unwiredReference, sourceRows, "fallback-template/synastry.aspect-v3"), []);
 
 const unknownReference = templateVariableReferences({ body: "Visible from {{customTransitDate}}." })[0];
 assert.equal(unknownReference.name, "customTransitDate");
@@ -102,7 +135,7 @@ const packageReferences = new Map(templatePackage.templates.flatMap((template) =
 const genericPackageReferences = [...packageReferences.values()].filter((reference) => (
   reference.source === "Runtime resolver" || reference.source === "Calculated runtime fact"
 ));
-assert.equal(packageReferences.size, 72, "The variable guide should cover every variable in the current fallback template package.");
+assert.equal(packageReferences.size, 72, "The variable guide should cover every variable and declared resolver dependency in the current fallback template package.");
 assert.deepEqual(genericPackageReferences, [], "Every packaged template variable should have a specific editorial definition, example, and source.");
 
 console.log(`Admin template variable reference tests passed (${packageReferences.size} packaged variables documented).`);
