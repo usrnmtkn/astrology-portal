@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "id": "sun-virgo-spine-rewrite-v1-owner-approval-2026-08-27",
+  "issueId": "5678d2c461d266372d0836503c818b29fccda7726b5595a3a5340dfde2193f7e",
+  "contentKey": "fallback-hook/sky-sign-copy/sun/virgo",
+  "candidatePath": "packages/astro-knowledge/review/sun-virgo-spine-rewrite-v1/candidate.json",
+  "candidateSha256": "b71f6fd51aef49409624ae408b315c237176ef78f9328ee60648e2e95c72b28e",
+  "candidateHashAlgorithm": "sha256(JSON.stringify({ article, body }))",
+  "bodySha256": "2de1cee3f2b5e501dc1079b9bd2abb7f64409cf78778b0d20edacdeff4ee5d93",
+  "wordCount": 454,
+  "ownerStatement": "I approve the exact Sun in Virgo replacement identified by SHA-256 b71f6fd51aef49409624ae408b315c237176ef78f9328ee60648e2e95c72b28e and authorize it to replace the held source in the next fallback-package deployment.",
+  "ownerApproved": true,
+  "promotionAuthorized": true,
+  "approvedAt": "2026-08-27",
+  "source": "Content Studio source decision for issue 5678d2c461d266372d0836503c818b29fccda7726b5595a3a5340dfde2193f7e"
+}

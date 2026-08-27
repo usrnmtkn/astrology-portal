@@ -2,7 +2,7 @@
 
 Status: **PASS with non-blocking editorial and coverage debt**
 
-This pass was run from a clean worktree based on the exact `origin/main` revision `5ad280a3`. The primary working folder at `/Users/mprez/Code/tldrastro` was not changed.
+This pass began in a clean worktree at `origin/main` revision `5ad280a3`. Five newer main commits through `7ee83e89` were then integrated, their Sun-in-Virgo approval artifacts were preserved, and every overlapping generated inventory was rebuilt. The primary working folder at `/Users/mprez/Code/tldrastro` was not changed.
 
 ## Release summary
 
@@ -37,21 +37,21 @@ Legacy generated placement prose remains prohibited by contract. An alternate so
 
 The production fallback mirror now verifies:
 
-- package version: `v3-2026-08-25c`;
+- package version: `v3-2026-08-27a`;
 - rows: 9,563;
 - authored records: 2,771;
 - hooks: 4,421;
 - vocabulary rows: 720;
 - templates: 39;
 - live-serving records: 4,093;
-- content hash: `ef7316e65ffd88a20738e0cc2c177b76`;
-- key-manifest hash: `24baf72e2904e28a491d9d2809a7b01`.
+- content hash: `46401f98dfb02b04a6e9058adde17c08`;
+- key-manifest hash: `ae6b8a5a32a2f96e130c5614f9692eaa`.
 
 ### Writing and canonical inventories
 
-- Unresolved queue/dashboard: 215 current items.
+- Unresolved queue/dashboard: 212 current items after integrating the approved Sun-in-Virgo repair from current main.
 - Canonical content: 2,906 units across 1,428 slots, with zero owner decisions outstanding.
-- Approved writing examples: 11,451 total (6,897 serving, 1,082 empty-house dual-register, and 3,472 matrix examples).
+- Approved writing examples: 11,452 total (6,898 serving, 1,082 empty-house dual-register, and 3,472 matrix examples).
 - The 39 exact sign-and-house natal placement records are explicitly represented in the canonical source-family allowlist rather than silently disappearing as unreferenced content.
 - Historical Lilith hashes remain historical; the newly approved exact row is handled through a narrow post-baseline allowlist.
 - Attribution policy now passes without changing historical hashes.
@@ -76,9 +76,9 @@ The report-article stylesheet was removed from the global startup stylesheet and
 | --- | ---: |
 | TypeScript | PASS |
 | Root/content/writing contracts | PASS |
-| Client browser report | 70/70 |
+| Client browser report | 71/71 |
 | Admin browser report | 37/37 |
-| Full saved visual/browser smoke | 118/118 |
+| Full saved visual/browser smoke | 119/119 |
 | Visual regression baselines | 3/3 |
 | Friends performance matrix | 7/7 |
 | Friends database/retention/model/auth contracts | PASS |
@@ -97,18 +97,18 @@ The report-article stylesheet was removed from the global startup stylesheet and
 | Largest JavaScript chunk | 308.9 kB gzip |
 | Relationship fallback | 194.7 kB gzip |
 | Total JavaScript | 2.59 MB gzip |
-| Total CSS | 108.2 kB gzip |
+| Total CSS | 108.7 kB gzip |
 
 Friends timing remained within every enforced budget:
 
-- cold list: 239 ms median, 251 ms maximum (800 ms budget);
-- warm detail: 61 ms median, 73 ms maximum (500 ms budget);
-- direct Synastry: 393 ms median, 404 ms maximum (1,500 ms budget);
-- mobile navigation: 135 ms median, 140 ms maximum (1,000 ms budget);
-- incomplete-chart repair: 1,665 ms median, 1,670 ms maximum (2,500 ms budget);
-- slow-network relationship content after the detail shell: 1,620 ms median, 1,635 ms maximum (2,200 ms budget).
+- cold list: 234 ms median, 245 ms maximum (800 ms budget);
+- warm detail: 64 ms median, 70 ms maximum (500 ms budget);
+- direct Synastry: 365 ms median, 380 ms maximum (1,500 ms budget);
+- mobile navigation: 134 ms median, 137 ms maximum (1,000 ms budget);
+- incomplete-chart repair: 1,651 ms median, 1,661 ms maximum (2,500 ms budget);
+- slow-network relationship content after the detail shell: 1,640 ms median, 1,647 ms maximum (2,200 ms budget).
 
-The diagnostic, deliberately ungated cold relationship calculation measured 5.599 seconds median. The reader still painted the loading state in 795 ms and the detail shell in 824 ms, both within budget.
+The diagnostic, deliberately ungated cold relationship calculation measured 5.608 seconds median. The reader still painted the loading state in 789 ms and the detail shell in 836 ms, both within budget.
 
 ## CSS and tokens
 
@@ -134,4 +134,3 @@ The CSS audit scanned 35 files and found:
 3. Expand report slow-transit manifestation coverage independently of reader-app serving content.
 4. Split or defer part of the lunation fallback before adding more content to that chunk.
 5. Keep the Friends transient-failure scenario and fallback-cache self-heal test in the release gate.
-

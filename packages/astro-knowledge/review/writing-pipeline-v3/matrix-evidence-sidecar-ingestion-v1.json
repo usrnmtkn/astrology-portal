@@ -20,11 +20,11 @@
     "argument_candidate": 787
   },
   "deduplicatedSharedIndexCounts": {
-    "entries": 5933,
+    "entries": 5935,
     "meaning": 2224,
     "register": 1758,
-    "scene": 425,
-    "argument": 1180,
+    "scene": 426,
+    "argument": 1181,
     "phrase": 346,
     "planetSignKeys": 247
   },
@@ -95,7 +95,7 @@
     "approved_serving_row": {
       "meaning": 0,
       "register": 0,
-      "scene": 233,
+      "scene": 234,
       "argument": 0,
       "phrase": 0
     },
@@ -117,7 +117,7 @@
       "meaning": 0,
       "register": 0,
       "scene": 0,
-      "argument": 55,
+      "argument": 56,
       "phrase": 0
     },
     "owner-approved-voice-bank-phrase": {
@@ -153,11 +153,11 @@
     "planetSignKeys": 190
   },
   "afterCounts": {
-    "entries": 5933,
+    "entries": 5935,
     "meaning": 2224,
     "register": 1758,
-    "scene": 425,
-    "argument": 1180,
+    "scene": 426,
+    "argument": 1181,
     "phrase": 346,
     "planetSignKeys": 247
   },

@@ -487,9 +487,7 @@ var EXACT_APPROVAL_REQUIRED_PREFIXES = [
   "fallback-hook/synastry-pair/",
   "daily-glance-variant/"
 ];
-var QUARANTINED_CONTENT_KEYS = /* @__PURE__ */ new Set([
-  "fallback-hook/sky-sign-copy/sun/virgo"
-]);
+var QUARANTINED_CONTENT_KEYS = /* @__PURE__ */ new Set([]);
 var EXACT_SYNASTRY_ASPECTS = /* @__PURE__ */ new Set([
   "conjunction",
   "opposition",
@@ -3167,7 +3165,7 @@ function createKnowledgeMatrixV13Resolver(file) {
 }
 
 // apps/web/src/content/fallbackArchitectureV3/resolver/index.browser.ts
-var PACKAGE_VERSION = "v3-2026-08-25c";
+var PACKAGE_VERSION = "v3-2026-08-27a";
 function stablePackageValue(value) {
   if (Array.isArray(value)) {
     return value.map(stablePackageValue);

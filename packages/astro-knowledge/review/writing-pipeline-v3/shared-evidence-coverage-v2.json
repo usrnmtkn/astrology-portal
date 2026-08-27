@@ -3782,11 +3782,12 @@
       "extended": {
         "meaning": 15,
         "register": 11,
-        "scene": 1,
-        "argument": 8,
+        "scene": 2,
+        "argument": 9,
         "phrase": 0
       },
       "sceneBySource": {
+        "approved_serving_row": 1,
         "owner-approved-knowledge-matrix-scene": 1
       },
       "registerBySource": {
@@ -8977,11 +8978,12 @@
       "extended": {
         "meaning": 15,
         "register": 11,
-        "scene": 1,
-        "argument": 8,
+        "scene": 2,
+        "argument": 9,
         "phrase": 0
       },
       "sceneBySource": {
+        "approved_serving_row": 1,
         "owner-approved-knowledge-matrix-scene": 1
       },
       "registerBySource": {
