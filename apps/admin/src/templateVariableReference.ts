@@ -307,6 +307,12 @@ const variableDefinitions: Record<string, VariableDefinition> = {
     example: "Your Moon trines Maya's Venus, making affection easier to express.",
     source: "Reviewed synastry hook"
   },
+  closingLine: {
+    meaning: "The editable final sentence for a compatibility passage.",
+    example: "A reviewed relationship closing",
+    source: "Reviewed compatibility closing hook",
+    sourceKind: "saved-copy"
+  },
   modeA: {
     meaning: "The editable phrase describing how the first person's planet tends to operate.",
     example: "leading visibly",
@@ -536,6 +542,7 @@ function genericDefinition(name: string): VariableDefinition {
   if (/date(?:withyear)?$/iu.test(name)) return { meaning: `The calculated ${label} used for this reading.`, example: "A formatted calendar date", source: "Calculated runtime fact" };
   if (/^holder\d(?:poss(?:cap)?|subject|object|pronounposs)?$/iu.test(name)) return { meaning: `The calculated ${label} used to keep relationship voice and perspective consistent.`, example: "A reader or relationship-profile name or pronoun", source: "Calculated relationship context" };
   if (/title$/iu.test(name)) return { meaning: `The display name for the calculated ${label.replace(/ title$/u, "")}.`, example: "A reader-facing name", source: "Calculated runtime fact" };
+  if (/(?:sign|theme)$/iu.test(name)) return { meaning: `The calculated ${label} used for this reading.`, example: "A reader-facing chart value", source: "Calculated runtime fact" };
   if (/sentences?$/iu.test(name)) return { meaning: `Reviewed sentence copy supplied for ${label.replace(/ sentences?$/u, "")}.`, example: "One or more complete sentences", source: "Reviewed fallback source" };
   if (/^(is|has)[A-Z]/u.test(name)) return { meaning: `Whether the calculated chart has ${label.replace(/^(is|has) /u, "")}.`, example: "Yes or no", source: "Calculated runtime fact" };
   return { meaning: `The ${label} value declared by this template does not have a documented provider.`, example: "No canonical value is wired", source: "No canonical provider", sourceKind: "unmapped" };

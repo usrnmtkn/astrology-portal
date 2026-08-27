@@ -25,6 +25,7 @@ const sourcePrefixExceptions: Record<string, string[]> = {
   rulerHouseTopic: ["fallback-vocab/house-topic/"],
   oppositeDirection: ["fallback-vocab/node-direction/"],
   synAspectLine: ["fallback-hook/synastry-aspect-type/"],
+  closingLine: ["fallback-hook/compatibility-closing/", "fallback-hook/relationship-closing/"],
   modeA: ["fallback-hook/planet-mode/"],
   modeB: ["fallback-hook/planet-mode/"],
   askA: ["fallback-vocab/planet-ask/"],
@@ -86,10 +87,8 @@ export function templateVariableSourceKeyPrefixes(reference: Pick<TemplateVariab
 }
 
 export function templateVariableSourceSelectionNote(reference: Pick<TemplateVariableReference, "name" | "sourceKind">) {
-  const synastrySide = reference.name.match(/^(?:mode|ask|grates|scene)(A|B)$/u)?.[1];
-  if (synastrySide) return `The resolver selects this row using the ${synastrySide === "A" ? "first" : "second"} chart point in the synastry contact.`;
   return sourceSelectionNotes[reference.name]
-    ?? (reference.sourceKind === "saved-copy" ? "Selected using chart and template context." : null);
+    ?? null;
 }
 
 export function templateVariableSourceCandidates<T extends TemplateVariableSourceRow>(
