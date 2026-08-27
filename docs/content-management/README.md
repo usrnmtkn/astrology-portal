@@ -201,12 +201,16 @@ See the dated [Composition Map naming and IA audit](../qa/composition-map-ia-aud
 for the current real-catalog baseline and the remaining owner decision.
 
 To review the complete governed package backlog, open Content Studio >
-Unresolved Content (`/admin/content#unresolved-content`). This read-only page
-is generated from `content-unresolved-queue-v1.json` and includes file-backed
-records that are not materialized as editable CMS rows. Its **Find editable
-row** action opens Content Library with the exact content key; if no row is
-found, the source path and content key on the unresolved page remain the
-authoritative location for the package record.
+Unresolved Content (`/admin/content#unresolved-content`). Its inventory is
+generated from `content-unresolved-queue-v1.json` and includes file-backed
+records that are not materialized as editable CMS rows. Editorial issues open
+the exact Content Library row when one exists. A source-repair issue with a
+registered replacement opens an exact-text approval panel in Content Studio:
+the owner reviews the complete candidate, confirms its hash-bound approval
+statement, and authorizes promotion. That decision is stored separately from
+serving content and cannot clear the reader hold by itself. The package repair
+must still be deployed; after the regenerated unresolved inventory no longer
+contains the issue, it disappears from Content Studio.
 
 Every mapped reader surface now has a `Dashboard editable` route. Surfaces that
 still use a local reviewed fallback also expose a one-click CMS starter. Those
