@@ -8,7 +8,6 @@ import {
 } from "../apps/admin/src/UnresolvedContentReview";
 import {
   loadContentUnresolvedReport,
-  unresolvedContentIssues,
   unresolvedContentSurface
 } from "../api/admin/content-unresolved";
 import {
@@ -46,36 +45,23 @@ assert.equal(unresolvedContentSurface("fallback-hook/natal/venus/libra"), "Natal
 const groupedIssues = report.issues;
 assert.ok(groupedIssues.length < report.items.length, "Duplicate source records must be grouped into one owner-facing issue.");
 const sunVirgoIssue = groupedIssues.find((issue) => issue.contentKey === "fallback-hook/sky-sign-copy/sun/virgo");
-assert.ok(sunVirgoIssue, "The known Sun in Virgo source issue must be present.");
-assert.equal(sunVirgoIssue.kind, "source-repair");
-assert.match(sunVirgoIssue.issueId, /^[a-f0-9]{64}$/u);
-assert.equal(sunVirgoIssue.records.length, 3, "All duplicate source records must remain available under issue details.");
-assert.equal(groupedIssues.filter((issue) => issue.contentKey.includes("sun/virgo")).length, 1);
+assert.equal(sunVirgoIssue, undefined, "The repaired Sun in Virgo source lineage must leave the unresolved inventory.");
+assert.equal(groupedIssues.filter((issue) => issue.kind === "source-repair").length, 0);
 const editorialIssue = groupedIssues.find((issue) => issue.kind === "editorial-review");
 assert.ok(editorialIssue);
-assert.match(sunVirgoIssue.aiRequest, /Approval cannot clear this hold/u);
-assert.match(sunVirgoIssue.aiRequest, new RegExp(`Issue ID: ${sunVirgoIssue.issueId}`, "u"));
-assert.match(sunVirgoIssue.aiRequest, /content-studio-resolution\/v1/u);
-assert.match(sunVirgoIssue.aiRequest, /Do not change serving copy or review_status values/u);
-const sunVirgoRepairPlan = contentSourceRepairPlan(sunVirgoIssue.contentKey);
-assert.ok(sunVirgoRepairPlan, "The known source repair must expose its governed replacement in Content Studio.");
-assert.equal(sunVirgoIssue.repairPlan?.candidateSha256, sunVirgoRepairPlan.candidateSha256);
+const sunVirgoRepairPlan = contentSourceRepairPlan("fallback-hook/sky-sign-copy/sun/virgo");
+assert.ok(sunVirgoRepairPlan, "The completed repair must retain its hash-bound replacement plan as provenance.");
 assert.equal(sunVirgoRepairPlan.reviewStatus, "needs_review");
 assert.equal(sunVirgoRepairPlan.ownerApproved, false);
 assert.equal(sunVirgoRepairPlan.promotionAuthorized, false);
 assert.match(sunVirgoRepairPlan.body, /Virgo is not tidiness\. Virgo is the standard/u);
 assert.equal(sunVirgoRepairPlan.body, Object.values(sunVirgoRepairPlan.article).join("\n\n"));
 assert.match(editorialIssue.aiRequest, /no editable Content Library row exists/u);
-assert.equal(
-  unresolvedContentIssues([...sunVirgoIssue.records].reverse() as typeof report.items)[0].issueId,
-  sunVirgoIssue.issueId,
-  "Issue IDs must not depend on source-record order."
-);
 
 const normalizedResolution = normalizeContentStudioResolution({
   schema: "content-studio-resolution/v1",
-  issueId: sunVirgoIssue.issueId,
-  contentKey: sunVirgoIssue.contentKey,
+  issueId: editorialIssue.issueId,
+  contentKey: editorialIssue.contentKey,
   status: "diagnosis-only",
   diagnosis: "The canonical source row is missing a required contract field.",
   proposedAction: "Repair the source field and rerun governance before asking for owner review.",
@@ -83,24 +69,28 @@ const normalizedResolution = normalizeContentStudioResolution({
   prUrl: null,
   ownerDecisionRequired: true
 });
-assert.equal(normalizedResolution.issueId, sunVirgoIssue.issueId);
+assert.equal(normalizedResolution.issueId, editorialIssue.issueId);
 assert.doesNotThrow(() => assertCurrentResolutionIssue(normalizedResolution));
 assert.throws(() => normalizeContentStudioResolution({ ...normalizedResolution, issueId: "wrong" }), /issueId is invalid/u);
 assert.throws(() => assertCurrentResolutionIssue({ ...normalizedResolution, contentKey: "wrong/key" }), /does not match/u);
 
 const normalizedSourceDecision = normalizeContentStudioSourceDecision({
   schema: "content-studio-source-decision/v1",
-  issueId: sunVirgoIssue.issueId,
-  contentKey: sunVirgoIssue.contentKey,
+  issueId: "5678d2c461d266372d0836503c818b29fccda7726b5595a3a5340dfde2193f7e",
+  contentKey: "fallback-hook/sky-sign-copy/sun/virgo",
   action: "approve-replacement",
   candidateSha256: sunVirgoRepairPlan.candidateSha256,
   approvalStatement: sunVirgoRepairPlan.approvalStatement,
   confirmExactText: true
 });
-assert.doesNotThrow(() => assertCurrentSourceDecision(normalizedSourceDecision));
 assert.throws(
-  () => assertCurrentSourceDecision({ ...normalizedSourceDecision, candidateSha256: "0".repeat(64) }),
-  /replacement changed/u
+  () => assertCurrentSourceDecision(normalizedSourceDecision),
+  /does not match a current source-repair issue/u,
+  "A completed source decision must not be accepted again after the repaired issue leaves the queue."
+);
+assert.throws(
+  () => normalizeContentStudioSourceDecision({ ...normalizedSourceDecision, candidateSha256: "wrong" }),
+  /candidateSha256 is invalid/u
 );
 assert.throws(
   () => normalizeContentStudioSourceDecision({ ...normalizedSourceDecision, confirmExactText: false }),

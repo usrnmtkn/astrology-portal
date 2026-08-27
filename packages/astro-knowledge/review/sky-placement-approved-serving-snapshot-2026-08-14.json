@@ -4,9 +4,18 @@
   "recordType": "derived_validation_snapshot",
   "articleCount": 58,
   "articlesSha256": "6d501ec1d2f6ccd914ab69c1ba61233c1d28d37e14c9befc937c15b6fd2f9069",
-  "readerPunctuationNormalizedArticlesSha256": "e1d725600c4e5a4435b2d57cb494ddefeb64e9addaf21c793d6a36b088889c52",
-  "priorReaderPunctuationNormalizedArticlesSha256": "6d92ec2963e8ff4162528dfc1d807f2707f786cb933e110c5a132cc12ab0cc32",
+  "readerPunctuationNormalizedArticlesSha256": "77c216fdb6748f7b1e169226594d9a9126247334984e127d20fc0e38e2bda8aa",
+  "priorReaderPunctuationNormalizedArticlesSha256": "e1d725600c4e5a4435b2d57cb494ddefeb64e9addaf21c793d6a36b088889c52",
   "revisions": [
+    {
+      "date": "2026-08-27",
+      "change": "Exact owner-approved Content Studio replacement of the held Sun in Virgo article, preserving the candidate payload byte-for-byte.",
+      "prosePreserved": false,
+      "affectedContentKeys": [
+        "fallback-hook/sky-sign-copy/sun/virgo"
+      ],
+      "ownerApprovalProvenance": "packages/astro-knowledge/review/sun-virgo-spine-rewrite-v1/OWNER-APPROVAL-2026-08-27.json"
+    },
     {
       "date": "2026-08-22",
       "change": "Owner-authored replacement of the Jupiter in Leo collective write-up, stored verbatim across its four continuous-renderer fields.",
@@ -42,7 +51,8 @@
   "approvalRecords": [
     "packages/astro-knowledge/review/sun-leo-fallback-v3/approval-record.json",
     "packages/astro-knowledge/review/saturn-capricorn-article-v3/OWNER-APPROVAL-2026-08-13.md",
-    "packages/astro-knowledge/review/venus-libra-owner-approved-v1/OWNER-APPROVAL-2026-08-14.md"
+    "packages/astro-knowledge/review/venus-libra-owner-approved-v1/OWNER-APPROVAL-2026-08-14.md",
+    "packages/astro-knowledge/review/sun-virgo-spine-rewrite-v1/OWNER-APPROVAL-2026-08-27.json"
   ],
   "note": "Derived validation record only. It combines existing explicit owner approvals and grants no new wording authority."
 }
