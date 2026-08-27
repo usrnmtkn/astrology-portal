@@ -59,6 +59,9 @@ const postBaselineOwnerReleases = new Set([
   "owner-authored-lilith-first-house-2026-08-25",
   "owner-authored-lilith-second-house-2026-08-25",
 ]);
+const postBaselineOwnerKeys = new Set([
+  "fallback-hook/natal-you-placement-complete-final/lilith/sagittarius/3",
+]);
 const signs = new Set([
   "aries", "taurus", "gemini", "cancer", "leo", "virgo",
   "libra", "scorpio", "sagittarius", "capricorn", "aquarius", "pisces",
@@ -109,6 +112,7 @@ const existingApprovedRows = source.hookRows.filter((row) => (
   && row.source_release !== "natal-moon-final-rendered-v3"
   && row.source_release !== "natal-sun-square-ascendant-owner-approved-runtime"
   && !postBaselineOwnerReleases.has(row.source_release)
+  && !postBaselineOwnerKeys.has(row.contentKey)
 )).map((row) => {
   // Preserve the frozen historical fingerprint while allowing the later,
   // separately hash-bound Friend house-bridge context release.

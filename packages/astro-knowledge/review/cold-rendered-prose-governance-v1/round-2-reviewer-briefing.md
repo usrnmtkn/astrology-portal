@@ -133,6 +133,12 @@ Lilith in Libra
 
 Keeping the peace stops being worth the cost
 
+Lilith, the far edge of the Moon's orbit, is in Libra from August 1, 2026 to August 21, 2026. While she is here, the refusals turn balanced, boundary-led, fair-minded: what people are done apologizing for, the no that stops explaining itself.
+
+Lilith holds the preference, anger, desire, or refusal you learned to keep quiet because too much depended on staying agreeable. It may show up through the opinion you soften, the role you keep accepting, or the no that turns into resentment because you never said it directly. The useful version gives the real position one honest outlet. The distortion keeps swallowing it until it comes out through withdrawal, a cancellation, or a sharper response than the moment required.
+
+Libra is the seventh sign, cardinal air ruled by Venus, and its symbol is the scales, the only symbol in the zodiac that is not a living creature. It begins at the autumn equinox, the day light and dark stand equal, and it governs partnership, fairness, and beauty as a form of order. The stereotype is indecision. The older story is the judge who takes every side seriously because the balance actually matters.
+
 Someone who usually agrees to avoid an argument finally says that the arrangement does not work for them. Lilith in Libra brings back the anger hidden underneath compromise, politeness, and being the person who always makes the relationship easier.
 
 Until August 21, 2026, the nice arrangements get renegotiated. Someone ends the even split with the person who never actually splits anything. The person who usually yields picks the restaurant, the city, the schedule, or the side of the argument they actually believe. Arrangements where one person keeps giving ground finally get named out loud. The correction can swing too far, until every compromise starts looking like a defeat.

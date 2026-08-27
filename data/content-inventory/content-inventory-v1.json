@@ -1,12 +1,12 @@
 {
   "schemaVersion": "content-inventory-v1",
   "generatedOn": "2026-08-10",
-  "sourceCommit": "8b08365eb8616a36da5896a669f0d183adad0489",
+  "sourceCommit": "5ad280a3a3ad7489cc13362c0691a38ec84b6763",
   "authorityRule": "Only owner-approved and owner-locked records may serve or export.",
-  "contentFingerprint": "dadf4667b02d25b701fb0701d5f55d4d9cc7179e2e906232d3851f85814049f0",
-  "recordCount": 10865,
+  "contentFingerprint": "0ecf1d5c5f3135f11486db663c150ffedd743eb309a4f5730f2f124687b6e17d",
+  "recordCount": 10866,
   "statusCounts": {
-    "owner-approved": 10865
+    "owner-approved": 10866
   },
   "familyCounts": {
     "approved/calendar-weekly-overview": 1,
@@ -105,7 +105,7 @@
     "house-horoscope-core": 984,
     "lunation": 433,
     "natal-aspect": 253,
-    "natal-placement": 292,
+    "natal-placement": 293,
     "sky": 26,
     "sky-article/saturn": 2,
     "sky-aspect": 112,
@@ -84983,9 +84983,9 @@
       "sourceAuthor": "composed",
       "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
       "approvalVersionDate": "2026-07-29",
-      "contentHash": "129755f74a1415f882a5ed716916233837c10a73d5d1e7ebf60db69de9662e00",
+      "contentHash": "f01d526fcc747d30bc4ebc22c545150d0869bf080b10f5881c2bb1af47e0b67e",
       "wording": {
-        "headline": "The version of you you muted",
+        "headline": "The version of yourself you muted",
         "body": "Black Moon Lilith spends about nine months in your 1st house, making it almost impossible to keep hiding the parts of yourself you toned down to please others. You might stop softening your opinions, refuse to dress for anyone else's approval, or stop laughing off things that bother you. That sudden edge is useful; it shows exactly where you have been compromising your personality.\n\nThe trap is picking fights just to prove a point. Acting out is not the same thing as being free. Restore the parts of yourself you hid because they belong to you, not just to shock an audience."
       },
       "astrology": {
@@ -134294,6 +134294,36 @@
         "events": [],
         "houses": [
           2
+        ]
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-you-placement-complete-final/lilith/sagittarius/3",
+      "contentFamily": "natal-placement",
+      "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+      "runtimeBucket": "hook",
+      "status": "owner-approved",
+      "sourceStatus": "approved",
+      "provenance": "source-archive",
+      "sourceAuthor": "composed",
+      "approvalRecord": "packages/astro-knowledge/review/lilith-sagittarius-third-house-owner-approval-2026-08-25.md",
+      "approvalVersionDate": "2026-08-25",
+      "contentHash": "920e9a020da05a5d7224934a894b170acbc52ce4528eec2cc0d42d2e0fdc0806",
+      "wording": {
+        "headline": "Lilith in Sagittarius in the 3rd house",
+        "body": "Lilith in Sagittarius in the 3rd house can make you especially sensitive to what happens when someone tries to tell you what you are allowed to think, question, or say out loud. You may have learned early that asking why made people defensive, that challenging a teacher, sibling, or authority figure could be treated like disrespect, or that honesty was welcome only when it did not threaten anyone else's beliefs. That can make you fiercely protective of your intellectual freedom, but it can also create real rage when someone talks down to you, expects you to repeat an explanation you no longer believe, or acts as though disagreement is proof that you simply do not understand.\n\nSiblings, school, neighbors, and the environment you grew up in can make this even sharper. Maybe one person's opinions carried more authority than everyone else's, certain beliefs were treated as unquestionable, or you became known as the one who always had to challenge the story. Sagittarius needs room to test ideas against experience, which means you may change your mind dramatically once something no longer holds up. The harder part is knowing when you are speaking because something genuinely needs to be challenged and when certainty has turned into its own kind of defensiveness, making it harder to hear anything that complicates the conclusion you already reached.\n\nThe deeper shift is learning that freedom of thought does not require you to turn every disagreement into a fight. You can ask the question nobody wants to answer, say when an explanation no longer makes sense to you, and change your mind without treating the old belief like wasted time. Lilith in Sagittarius in the 3rd house becomes less about proving that nobody can tell you what to think and more about keeping your mind open enough to follow the truth even when it takes you somewhere you did not expect."
+      },
+      "astrology": {
+        "objects": [
+          "lilith"
+        ],
+        "signs": [
+          "sagittarius"
+        ],
+        "aspects": [],
+        "events": [],
+        "houses": [
+          3
         ]
       }
     },
