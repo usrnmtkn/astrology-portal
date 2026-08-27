@@ -1,42 +1,11 @@
 {
   "schema": "tldrastro-content-unresolved-queue/v1",
   "generatedFrom": "apps/web/src/content/fallbackArchitectureV3/source-rows",
-  "count": 215,
+  "count": 212,
   "reasonCounts": {
-    "known-current-contract-failure": 3,
     "review-status": 212
   },
   "items": [
-    {
-      "id": "unresolved-025cc5368397eb94",
-      "contentKey": "fallback-hook/sky-sign-copy/sun/virgo",
-      "contentRole": "fallback_hook",
-      "reviewStatus": "needs_review",
-      "reason": "known-current-contract-failure",
-      "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
-      "objectPath": "/hookRows/3506",
-      "sourceSha256": "908392cb2f30aaf1151b6627fc3f9c4f074b2777c158b2cc751a338b7bf8fcd7"
-    },
-    {
-      "id": "unresolved-033ad88748b633a7",
-      "contentKey": "fallback-hook/sky-sign-copy/sun/virgo",
-      "contentRole": "fallback_hook",
-      "reviewStatus": "approved",
-      "reason": "known-current-contract-failure",
-      "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/sky-placement-owner-approved-fallbacks-v1.json",
-      "objectPath": "/rows/37",
-      "sourceSha256": "7543764ab633d2de9aa1158aba0feb5ea7dca3d14e366f993995c01c26854cc4"
-    },
-    {
-      "id": "unresolved-d9c4a3f9aae5379c",
-      "contentKey": "fallback-hook/sky-sign-copy/sun/virgo",
-      "contentRole": "fallback_hook",
-      "reviewStatus": "superseded",
-      "reason": "known-current-contract-failure",
-      "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/sky-sign-copy-sun-v1.json",
-      "objectPath": "/superseded_rows/5",
-      "sourceSha256": "c4dc52f8f3dee22f80e46cd58d56e959093495b48f98405ac43b81a59dd22d64"
-    },
     {
       "id": "unresolved-701f69b38087a6a6",
       "contentKey": "authored/book-ritual-and-the-moon/lunation-horoscope/eclipse-lunar/pisces/rising-aquarius/house-2",
@@ -488,183 +457,183 @@
       "sourceSha256": "8a6cf6df03583c0274f8788b001769234fc4443ebceca3a678495b4cc070c6ad"
     },
     {
-      "id": "unresolved-290f0e793e178906",
+      "id": "unresolved-1ba2fddc45d009eb",
       "contentKey": "fallback-hook/empty-house-ruler-v3/a",
       "contentRole": "fallback_hook",
       "reviewStatus": "needs_review",
       "reason": "review-status",
       "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
-      "objectPath": "/hookRows/3312",
+      "objectPath": "/hookRows/3313",
       "sourceSha256": "aa7da7a9e084ad6877af8d4e90d117cb27e8d3450cfe02fcd0428c5ef95566da"
     },
     {
-      "id": "unresolved-1ba2fddc45d009eb",
+      "id": "unresolved-3faaf680d6e6cb23",
       "contentKey": "fallback-hook/empty-house-ruler-v3/b",
       "contentRole": "fallback_hook",
       "reviewStatus": "needs_review",
       "reason": "review-status",
       "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
-      "objectPath": "/hookRows/3313",
+      "objectPath": "/hookRows/3314",
       "sourceSha256": "3f6306c9be1274293b689e00047ffd72a4b6a4f9a4083a1fb34cfbda68207168"
     },
     {
-      "id": "unresolved-3faaf680d6e6cb23",
+      "id": "unresolved-7014141729085ded",
       "contentKey": "fallback-hook/empty-house-ruler-v3/c",
       "contentRole": "fallback_hook",
       "reviewStatus": "needs_review",
       "reason": "review-status",
       "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
-      "objectPath": "/hookRows/3314",
+      "objectPath": "/hookRows/3315",
       "sourceSha256": "728174b9f114f2829a2ed83167edca4aa69c0c9949224b7fd753cd82828aa8ef"
     },
     {
-      "id": "unresolved-7014141729085ded",
+      "id": "unresolved-8638a3a17d85281a",
       "contentKey": "fallback-hook/empty-house-ruler-v3/d",
       "contentRole": "fallback_hook",
       "reviewStatus": "needs_review",
       "reason": "review-status",
       "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
-      "objectPath": "/hookRows/3315",
+      "objectPath": "/hookRows/3316",
       "sourceSha256": "8e8e1b6609c67c1e859c9a3b0c562229ce072945d7497bd9ee727c5dd8bdbb68"
     },
     {
-      "id": "unresolved-8638a3a17d85281a",
+      "id": "unresolved-6611b29db1800f50",
       "contentKey": "fallback-hook/empty-house-ruler-v3/e",
       "contentRole": "fallback_hook",
       "reviewStatus": "needs_review",
       "reason": "review-status",
       "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
-      "objectPath": "/hookRows/3316",
+      "objectPath": "/hookRows/3317",
       "sourceSha256": "3c54ffdfaf093ff6c6b5a838fd37552f25b2beeae60c2c750c79f258f83e14a7"
     },
     {
-      "id": "unresolved-6611b29db1800f50",
+      "id": "unresolved-386635d3d8f7a67c",
       "contentKey": "fallback-hook/empty-house-ruler-v3/f",
       "contentRole": "fallback_hook",
       "reviewStatus": "needs_review",
       "reason": "review-status",
       "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
-      "objectPath": "/hookRows/3317",
+      "objectPath": "/hookRows/3318",
       "sourceSha256": "1ed424cfd7a7ac5b1e01d2640f3b6b2e8488a5db82b8dbea5e093840cf9edfe4"
     },
     {
-      "id": "unresolved-386635d3d8f7a67c",
+      "id": "unresolved-bcd0e00cb39e880f",
       "contentKey": "fallback-hook/lunation-opening-situation/1",
       "contentRole": "fallback_hook",
       "reviewStatus": "needs_review",
       "reason": "review-status",
       "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
-      "objectPath": "/hookRows/3318",
+      "objectPath": "/hookRows/3319",
       "sourceSha256": "f99a3f4e635a68ea23052b37e060bb9ad43230832508db865011197abdd73ec2"
     },
     {
-      "id": "unresolved-bcd0e00cb39e880f",
+      "id": "unresolved-e34611a749277038",
       "contentKey": "fallback-hook/lunation-opening-situation/10",
       "contentRole": "fallback_hook",
       "reviewStatus": "needs_review",
       "reason": "review-status",
       "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
-      "objectPath": "/hookRows/3319",
+      "objectPath": "/hookRows/3320",
       "sourceSha256": "ec29fe6518e86391c51df4054974c5fbcdd071f5bd1056d5ec1152044c51101b"
     },
     {
-      "id": "unresolved-e34611a749277038",
+      "id": "unresolved-d4cdcdc4b5dcd579",
       "contentKey": "fallback-hook/lunation-opening-situation/11",
       "contentRole": "fallback_hook",
       "reviewStatus": "needs_review",
       "reason": "review-status",
       "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
-      "objectPath": "/hookRows/3320",
+      "objectPath": "/hookRows/3321",
       "sourceSha256": "79df63d8796d6eaa8530eb730eb4920b88c0c56a01478c91b0540ea4d2068c57"
     },
     {
-      "id": "unresolved-d4cdcdc4b5dcd579",
+      "id": "unresolved-13fea7e055f3c655",
       "contentKey": "fallback-hook/lunation-opening-situation/12",
       "contentRole": "fallback_hook",
       "reviewStatus": "needs_review",
       "reason": "review-status",
       "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
-      "objectPath": "/hookRows/3321",
+      "objectPath": "/hookRows/3322",
       "sourceSha256": "9d0df747039d0f0812b42092952282f8e617aa618e4c625191665f81e6e3349f"
     },
     {
-      "id": "unresolved-13fea7e055f3c655",
+      "id": "unresolved-9ec46e2d29c24d9d",
       "contentKey": "fallback-hook/lunation-opening-situation/2",
       "contentRole": "fallback_hook",
       "reviewStatus": "needs_review",
       "reason": "review-status",
       "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
-      "objectPath": "/hookRows/3322",
+      "objectPath": "/hookRows/3323",
       "sourceSha256": "b8d94e94894420a052cc09c6832a4236a786b36996b5f45004309162809a2741"
     },
     {
-      "id": "unresolved-9ec46e2d29c24d9d",
+      "id": "unresolved-35142921d5a8b915",
       "contentKey": "fallback-hook/lunation-opening-situation/3",
       "contentRole": "fallback_hook",
       "reviewStatus": "needs_review",
       "reason": "review-status",
       "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
-      "objectPath": "/hookRows/3323",
+      "objectPath": "/hookRows/3324",
       "sourceSha256": "1c06fc70e00ace5a4c913b1940f31d85f9438a7533dd005582a709060f241d9a"
     },
     {
-      "id": "unresolved-35142921d5a8b915",
+      "id": "unresolved-22e6a293551e53e4",
       "contentKey": "fallback-hook/lunation-opening-situation/4",
       "contentRole": "fallback_hook",
       "reviewStatus": "needs_review",
       "reason": "review-status",
       "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
-      "objectPath": "/hookRows/3324",
+      "objectPath": "/hookRows/3325",
       "sourceSha256": "6da1255a98fa3369787a51bfd31e0fc38f82fc0cc52404eca28ed7de66e444fd"
     },
     {
-      "id": "unresolved-22e6a293551e53e4",
+      "id": "unresolved-8f32a323daaad539",
       "contentKey": "fallback-hook/lunation-opening-situation/5",
       "contentRole": "fallback_hook",
       "reviewStatus": "needs_review",
       "reason": "review-status",
       "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
-      "objectPath": "/hookRows/3325",
+      "objectPath": "/hookRows/3326",
       "sourceSha256": "6145ba241f95bef0c192417d32cd1f05801386fe8c8f1afebd2fdbf4894d06ce"
     },
     {
-      "id": "unresolved-8f32a323daaad539",
+      "id": "unresolved-61869688890cd9c6",
       "contentKey": "fallback-hook/lunation-opening-situation/6",
       "contentRole": "fallback_hook",
       "reviewStatus": "needs_review",
       "reason": "review-status",
       "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
-      "objectPath": "/hookRows/3326",
+      "objectPath": "/hookRows/3327",
       "sourceSha256": "ba85e132c571999051a9bc220f48e8fd61e455e208ffe5657d7dffbd1c931895"
     },
     {
-      "id": "unresolved-61869688890cd9c6",
+      "id": "unresolved-e3ba653d20b7a410",
       "contentKey": "fallback-hook/lunation-opening-situation/7",
       "contentRole": "fallback_hook",
       "reviewStatus": "needs_review",
       "reason": "review-status",
       "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
-      "objectPath": "/hookRows/3327",
+      "objectPath": "/hookRows/3328",
       "sourceSha256": "ba394521b2693457daf14cd7f6cc9437c796bcae18a1311bfb565b7336e4851e"
     },
     {
-      "id": "unresolved-e3ba653d20b7a410",
+      "id": "unresolved-d0e8f5c8639ac903",
       "contentKey": "fallback-hook/lunation-opening-situation/8",
       "contentRole": "fallback_hook",
       "reviewStatus": "needs_review",
       "reason": "review-status",
       "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
-      "objectPath": "/hookRows/3328",
+      "objectPath": "/hookRows/3329",
       "sourceSha256": "1127bddbd31d4c98f3a043c54da4a8cd0b028d3ec296039ebf493055c54d1f4c"
     },
     {
-      "id": "unresolved-dfad48d2262d4f41",
+      "id": "unresolved-88891358be2942fb",
       "contentKey": "fallback-hook/lunation-ruler-house/1",
       "contentRole": "fallback_hook",
       "reviewStatus": "needs_review",
       "reason": "review-status",
       "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
-      "objectPath": "/hookRows/3330",
+      "objectPath": "/hookRows/3331",
       "sourceSha256": "633ca705f19684e0046d97e9e821ddf27ba728000c73cc83de9cadf57cdb3935"
     },
     {
@@ -678,13 +647,13 @@
       "sourceSha256": "5a841dbbcd225211b7e8e9124fdcf893472b13e6cd20f5a3b2d0f2e922fb51c3"
     },
     {
-      "id": "unresolved-88891358be2942fb",
+      "id": "unresolved-7df99aa0aab61ebd",
       "contentKey": "fallback-hook/lunation-ruler-house/10",
       "contentRole": "fallback_hook",
       "reviewStatus": "needs_review",
       "reason": "review-status",
       "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
-      "objectPath": "/hookRows/3331",
+      "objectPath": "/hookRows/3332",
       "sourceSha256": "8a20e56fff8876dd2779e3689a7826be82a30f678bdced73a1dd3d06296e4a63"
     },
     {
@@ -698,13 +667,13 @@
       "sourceSha256": "d237be08a4dfc4c0f7e1492e9e48885e68d6d85a7fd8ad22da877720360e819b"
     },
     {
-      "id": "unresolved-13caca491ee06b9e",
+      "id": "unresolved-3fc19d13cc51b8f5",
       "contentKey": "fallback-hook/lunation-ruler-house/12",
       "contentRole": "fallback_hook",
       "reviewStatus": "needs_review",
       "reason": "review-status",
       "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
-      "objectPath": "/hookRows/3333",
+      "objectPath": "/hookRows/3334",
       "sourceSha256": "81db86b59e03bf81c1d843c5f5993c529f8e678148c3252c7d5cf9a9c25d8dbd"
     },
     {
@@ -718,13 +687,13 @@
       "sourceSha256": "7bc4e80622fe500e5db51d9e18f3fc6ed4124c2c22b104b30dfb6f5ab573b59f"
     },
     {
-      "id": "unresolved-3fc19d13cc51b8f5",
+      "id": "unresolved-4e9e104e8b1a9925",
       "contentKey": "fallback-hook/lunation-ruler-house/2",
       "contentRole": "fallback_hook",
       "reviewStatus": "needs_review",
       "reason": "review-status",
       "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
-      "objectPath": "/hookRows/3334",
+      "objectPath": "/hookRows/3335",
       "sourceSha256": "911ee20239e9fa571519d9c6ff334abb19e0d40e83141c6f0e916af998623c44"
     },
     {
@@ -738,13 +707,13 @@
       "sourceSha256": "e96ccc80cb31fbb0ce2b959c2df0af6b3cb669c8db864d0696a3dbc0efafc6dc"
     },
     {
-      "id": "unresolved-4e9e104e8b1a9925",
+      "id": "unresolved-c73b4139c9453ec5",
       "contentKey": "fallback-hook/lunation-ruler-house/3",
       "contentRole": "fallback_hook",
       "reviewStatus": "needs_review",
       "reason": "review-status",
       "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
-      "objectPath": "/hookRows/3335",
+      "objectPath": "/hookRows/3336",
       "sourceSha256": "370b95e497928934e301fb11b3671064703ca1de8348b21c461372c230067ac0"
     },
     {
@@ -758,13 +727,13 @@
       "sourceSha256": "8a013e7eea19c14759d209cac1999c1067a4aa152e9b732b2fd5495915c24a84"
     },
     {
-      "id": "unresolved-c73b4139c9453ec5",
+      "id": "unresolved-94409fce62cca4b5",
       "contentKey": "fallback-hook/lunation-ruler-house/4",
       "contentRole": "fallback_hook",
       "reviewStatus": "needs_review",
       "reason": "review-status",
       "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
-      "objectPath": "/hookRows/3336",
+      "objectPath": "/hookRows/3337",
       "sourceSha256": "289b8dc74feec7671393d7b3ed74ff99217d9c5ffbf6a799f2231c5d3a8a0072"
     },
     {
@@ -778,13 +747,13 @@
       "sourceSha256": "eedb863094a97d784c7e5e28cfe261bc90a2e243472ab3501527ab6015641e03"
     },
     {
-      "id": "unresolved-94409fce62cca4b5",
+      "id": "unresolved-79fe88e42525a936",
       "contentKey": "fallback-hook/lunation-ruler-house/5",
       "contentRole": "fallback_hook",
       "reviewStatus": "needs_review",
       "reason": "review-status",
       "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
-      "objectPath": "/hookRows/3337",
+      "objectPath": "/hookRows/3338",
       "sourceSha256": "5b6df2cbcb401575fa6623c23b524db22bc3bd5900cb22f73cf44c7a9f93dc45"
     },
     {
@@ -798,13 +767,13 @@
       "sourceSha256": "40907e8145110aa8fca64064ca9ad2a339a884fde470dfb4fb4dd877e698d30a"
     },
     {
-      "id": "unresolved-79fe88e42525a936",
+      "id": "unresolved-49e39de2e5941ac3",
       "contentKey": "fallback-hook/lunation-ruler-house/6",
       "contentRole": "fallback_hook",
       "reviewStatus": "needs_review",
       "reason": "review-status",
       "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
-      "objectPath": "/hookRows/3338",
+      "objectPath": "/hookRows/3339",
       "sourceSha256": "5df86a7363facead22e5e20c5963c632a82e9c8c8766c1f96ec04eb8f7267fa2"
     },
     {
@@ -818,13 +787,13 @@
       "sourceSha256": "5ad1fa9d2d42928b4fa211afa021f6f2c03eeb5868cd3f1a35a9b6cacf2195c2"
     },
     {
-      "id": "unresolved-49e39de2e5941ac3",
+      "id": "unresolved-34bbd3201e4e3ffe",
       "contentKey": "fallback-hook/lunation-ruler-house/7",
       "contentRole": "fallback_hook",
       "reviewStatus": "needs_review",
       "reason": "review-status",
       "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
-      "objectPath": "/hookRows/3339",
+      "objectPath": "/hookRows/3340",
       "sourceSha256": "9d5f6fcea2fd0a74f595f86c78b47dceed8c6eb913467a00269d514c560b39b6"
     },
     {
@@ -838,13 +807,13 @@
       "sourceSha256": "f296aa3890d3581ffca021003055c096a733c799e3d5c27d1d322c60a593be9d"
     },
     {
-      "id": "unresolved-34bbd3201e4e3ffe",
+      "id": "unresolved-46f4866be225f2c8",
       "contentKey": "fallback-hook/lunation-ruler-house/8",
       "contentRole": "fallback_hook",
       "reviewStatus": "needs_review",
       "reason": "review-status",
       "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
-      "objectPath": "/hookRows/3340",
+      "objectPath": "/hookRows/3341",
       "sourceSha256": "b93f649bce00c8a5452d29adb443a4f348c5152c739e1f320793f0f831a7521e"
     },
     {
@@ -858,13 +827,13 @@
       "sourceSha256": "0f158a1f77153d0dcc4c86aa500e220b8577ea85c2b3b2357ecfe930feaef455"
     },
     {
-      "id": "unresolved-46f4866be225f2c8",
+      "id": "unresolved-ee5c0452bf3a4036",
       "contentKey": "fallback-hook/lunation-ruler-house/9",
       "contentRole": "fallback_hook",
       "reviewStatus": "needs_review",
       "reason": "review-status",
       "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
-      "objectPath": "/hookRows/3341",
+      "objectPath": "/hookRows/3342",
       "sourceSha256": "85b63087b9c5d07e6d6d9d7f839bd883951039f9af929ae9608958773658b03b"
     },
     {
@@ -878,123 +847,123 @@
       "sourceSha256": "4d87858a127649f9ca344fa0affff40dfdf96b252c8e03f63db26b3f25282dcc"
     },
     {
-      "id": "unresolved-99ed1decb17a37fc",
+      "id": "unresolved-d98239755505ada2",
       "contentKey": "fallback-hook/lunation-uranus-layer/10",
       "contentRole": "fallback_hook",
       "reviewStatus": "needs_review",
       "reason": "review-status",
       "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
-      "objectPath": "/hookRows/3368",
+      "objectPath": "/hookRows/3369",
       "sourceSha256": "eddd6aa4732832734b1517edd8003cde5f9baefd076cdffcfbacf668397f7ef5"
     },
     {
-      "id": "unresolved-d98239755505ada2",
+      "id": "unresolved-f3f8da9d0061678c",
       "contentKey": "fallback-hook/lunation-uranus-layer/11",
       "contentRole": "fallback_hook",
       "reviewStatus": "needs_review",
       "reason": "review-status",
       "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
-      "objectPath": "/hookRows/3369",
+      "objectPath": "/hookRows/3370",
       "sourceSha256": "18a96d2b4ab7ad6ff5607e72c831f0597a98ae98a7244c2d1cce7e8297537282"
     },
     {
-      "id": "unresolved-f3f8da9d0061678c",
+      "id": "unresolved-b3aafbe7f4d19df0",
       "contentKey": "fallback-hook/lunation-uranus-layer/12",
       "contentRole": "fallback_hook",
       "reviewStatus": "needs_review",
       "reason": "review-status",
       "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
-      "objectPath": "/hookRows/3370",
+      "objectPath": "/hookRows/3371",
       "sourceSha256": "6d69cb98e16bf7dea6ab5e7bb5598ecbc85d36c2deb66f68991467b682f4bbb2"
     },
     {
-      "id": "unresolved-b3aafbe7f4d19df0",
+      "id": "unresolved-9a2efb0663f79b29",
       "contentKey": "fallback-hook/lunation-uranus-layer/2",
       "contentRole": "fallback_hook",
       "reviewStatus": "needs_review",
       "reason": "review-status",
       "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
-      "objectPath": "/hookRows/3371",
+      "objectPath": "/hookRows/3372",
       "sourceSha256": "a72472f21f123dd1478ed183cc880bb9b133f571e7ab50519d765763164ce064"
     },
     {
-      "id": "unresolved-9a2efb0663f79b29",
+      "id": "unresolved-030e5e2f825147bc",
       "contentKey": "fallback-hook/lunation-uranus-layer/3",
       "contentRole": "fallback_hook",
       "reviewStatus": "needs_review",
       "reason": "review-status",
       "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
-      "objectPath": "/hookRows/3372",
+      "objectPath": "/hookRows/3373",
       "sourceSha256": "66ca66c0b6fde67c203f76841270e4514564d08c78e5ce9498b72460051047ec"
     },
     {
-      "id": "unresolved-030e5e2f825147bc",
+      "id": "unresolved-d191166a681671c9",
       "contentKey": "fallback-hook/lunation-uranus-layer/4",
       "contentRole": "fallback_hook",
       "reviewStatus": "needs_review",
       "reason": "review-status",
       "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
-      "objectPath": "/hookRows/3373",
+      "objectPath": "/hookRows/3374",
       "sourceSha256": "bcca8e1b85040e5d7408fadae7d47e8de4c47feff8acbac9bc8b98712982acf5"
     },
     {
-      "id": "unresolved-d191166a681671c9",
+      "id": "unresolved-68dcb59b63facc42",
       "contentKey": "fallback-hook/lunation-uranus-layer/5",
       "contentRole": "fallback_hook",
       "reviewStatus": "needs_review",
       "reason": "review-status",
       "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
-      "objectPath": "/hookRows/3374",
+      "objectPath": "/hookRows/3375",
       "sourceSha256": "44cffe66d58872bbdf95a730c6bbc6d2909a4c8870b0db4236b9e0a95fba81e9"
     },
     {
-      "id": "unresolved-68dcb59b63facc42",
+      "id": "unresolved-e4f0e5f06f0cf216",
       "contentKey": "fallback-hook/lunation-uranus-layer/6",
       "contentRole": "fallback_hook",
       "reviewStatus": "needs_review",
       "reason": "review-status",
       "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
-      "objectPath": "/hookRows/3375",
+      "objectPath": "/hookRows/3376",
       "sourceSha256": "4e45ef6cd95e54c9cc4fcbc756ce6cb16b24f30f0c4bc9cb678d64345fe4a3aa"
     },
     {
-      "id": "unresolved-e4f0e5f06f0cf216",
+      "id": "unresolved-a6a26880c5459c9d",
       "contentKey": "fallback-hook/lunation-uranus-layer/7",
       "contentRole": "fallback_hook",
       "reviewStatus": "needs_review",
       "reason": "review-status",
       "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
-      "objectPath": "/hookRows/3376",
+      "objectPath": "/hookRows/3377",
       "sourceSha256": "3f79fa85692b29ec8f7b4bc3445b4411e66b751476eb485651eb9210ff191357"
     },
     {
-      "id": "unresolved-a6a26880c5459c9d",
+      "id": "unresolved-51ea5fdcc520c487",
       "contentKey": "fallback-hook/lunation-uranus-layer/8",
       "contentRole": "fallback_hook",
       "reviewStatus": "needs_review",
       "reason": "review-status",
       "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
-      "objectPath": "/hookRows/3377",
+      "objectPath": "/hookRows/3378",
       "sourceSha256": "96fad948cb4cc7f5accc367784db736a71164365f159d5c296cff6d430ee2208"
     },
     {
-      "id": "unresolved-51ea5fdcc520c487",
+      "id": "unresolved-19490d2473672ae7",
       "contentKey": "fallback-hook/lunation-uranus-layer/9",
       "contentRole": "fallback_hook",
       "reviewStatus": "needs_review",
       "reason": "review-status",
       "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
-      "objectPath": "/hookRows/3378",
+      "objectPath": "/hookRows/3379",
       "sourceSha256": "ab8e9e00be01c70010a240ea78bd7fb95f1f1af63db3a283eb7de17d51141b0e"
     },
     {
-      "id": "unresolved-8518e2fdddae01a1",
+      "id": "unresolved-75e07994a2801752",
       "contentKey": "fallback-hook/sky-placement-practice/chiron",
       "contentRole": "fallback_hook",
       "reviewStatus": "needs_review",
       "reason": "review-status",
       "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
-      "objectPath": "/hookRows/1009",
+      "objectPath": "/hookRows/1010",
       "sourceSha256": "68e02ebc5eb2d3d793c1e440a85daddb79044f64eff135f2e9acbd9382975b34"
     },
     {
@@ -1008,13 +977,13 @@
       "sourceSha256": "bce050e5a43aaba376902baa6559d9143b2fa4637d15a5fd504427105506e82b"
     },
     {
-      "id": "unresolved-716f05e7f54273d0",
+      "id": "unresolved-ebcafa0100d26d06",
       "contentKey": "fallback-hook/sky-placement-practice/jupiter",
       "contentRole": "fallback_hook",
       "reviewStatus": "needs_review",
       "reason": "review-status",
       "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
-      "objectPath": "/hookRows/1004",
+      "objectPath": "/hookRows/1005",
       "sourceSha256": "4dcdd2597eb90a8adb2a05909c0430a597508a8214299b671851ec493ad4d6d6"
     },
     {
@@ -1028,13 +997,13 @@
       "sourceSha256": "29401fd2ed2336077a5ec6713ec6f2dd23ee36d87e57f72f355cbfaf19ceb9fe"
     },
     {
-      "id": "unresolved-1eb635e4c9ce82e8",
+      "id": "unresolved-33854417cf40e8e5",
       "contentKey": "fallback-hook/sky-placement-practice/lilith",
       "contentRole": "fallback_hook",
       "reviewStatus": "needs_review",
       "reason": "review-status",
       "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
-      "objectPath": "/hookRows/1085",
+      "objectPath": "/hookRows/1086",
       "sourceSha256": "8985f530f43499c93d1dfd53952e88c05f18610bbb58dc6037aadb14f0399af5"
     },
     {
@@ -1048,13 +1017,13 @@
       "sourceSha256": "6b587afd69d912a4e54a15e375cd032d768bbca6cb768b2483ca2261a3f7a6f1"
     },
     {
-      "id": "unresolved-21814d98301aded4",
+      "id": "unresolved-716f05e7f54273d0",
       "contentKey": "fallback-hook/sky-placement-practice/mars",
       "contentRole": "fallback_hook",
       "reviewStatus": "needs_review",
       "reason": "review-status",
       "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
-      "objectPath": "/hookRows/1003",
+      "objectPath": "/hookRows/1004",
       "sourceSha256": "a0aab9b506a52294417afdd322adc9fca67422c69d4aeaaa7aeca8f2323b81c1"
     },
     {
@@ -1068,13 +1037,13 @@
       "sourceSha256": "eaa3ea00d9e3611e3b8aa7862a8af28fcfc526f43de0c7a823e779f7a4973917"
     },
     {
-      "id": "unresolved-ee3b5d2efa9d9596",
+      "id": "unresolved-0f6dde7ef66bd8c6",
       "contentKey": "fallback-hook/sky-placement-practice/mercury",
       "contentRole": "fallback_hook",
       "reviewStatus": "needs_review",
       "reason": "review-status",
       "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
-      "objectPath": "/hookRows/1001",
+      "objectPath": "/hookRows/1002",
       "sourceSha256": "23beb80fd05b4b9d9edb9c798ba5a9aa2a4e17c5fe37963c7dd116d4995ed434"
     },
     {
@@ -1088,13 +1057,13 @@
       "sourceSha256": "f7ee6113e845ae63b1fff31f059bfc9e5ad760234514ecc42b0cd08df9b3aef2"
     },
     {
-      "id": "unresolved-b0e19bb40b126bbd",
+      "id": "unresolved-ee3b5d2efa9d9596",
       "contentKey": "fallback-hook/sky-placement-practice/moon",
       "contentRole": "fallback_hook",
       "reviewStatus": "needs_review",
       "reason": "review-status",
       "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
-      "objectPath": "/hookRows/1000",
+      "objectPath": "/hookRows/1001",
       "sourceSha256": "e2abfa6011e7cacc41d9088ce4851484f7dae1692f63a163c631fe115667dace"
     },
     {
@@ -1108,13 +1077,13 @@
       "sourceSha256": "2179d65678f065846c1c3f7a25e05bc4d0f2ace8aeedc083e6b5393f9f3acc6e"
     },
     {
-      "id": "unresolved-6e14f5a71b465948",
+      "id": "unresolved-f2ce201ffe88c964",
       "contentKey": "fallback-hook/sky-placement-practice/neptune",
       "contentRole": "fallback_hook",
       "reviewStatus": "needs_review",
       "reason": "review-status",
       "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
-      "objectPath": "/hookRows/1007",
+      "objectPath": "/hookRows/1008",
       "sourceSha256": "c990c385eba19730926c4fbbb3ba43bde75546a2106e814f231d5bc5924a777c"
     },
     {
@@ -1128,13 +1097,13 @@
       "sourceSha256": "3cb0edbfee431aef5d943393010178107cf484eaa7bf449469d7d735911fe106"
     },
     {
-      "id": "unresolved-75e07994a2801752",
+      "id": "unresolved-32fcd516db3a21ab",
       "contentKey": "fallback-hook/sky-placement-practice/north-node",
       "contentRole": "fallback_hook",
       "reviewStatus": "needs_review",
       "reason": "review-status",
       "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
-      "objectPath": "/hookRows/1010",
+      "objectPath": "/hookRows/1011",
       "sourceSha256": "9200bc13ca88cdaacb5c06be81e9917986c7850fa78e3ba2fd6c9460aa55e363"
     },
     {
@@ -1148,13 +1117,13 @@
       "sourceSha256": "30a9c339247c7c97389c8fa518c1ac2d0192c57e85d4a06d156c6542cccff538"
     },
     {
-      "id": "unresolved-f2ce201ffe88c964",
+      "id": "unresolved-8518e2fdddae01a1",
       "contentKey": "fallback-hook/sky-placement-practice/pluto",
       "contentRole": "fallback_hook",
       "reviewStatus": "needs_review",
       "reason": "review-status",
       "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
-      "objectPath": "/hookRows/1008",
+      "objectPath": "/hookRows/1009",
       "sourceSha256": "e6be47d61ad1697c6ccb664d17aa5334275d527eb5cb86502cf5e2299e4086b1"
     },
     {
@@ -1168,13 +1137,13 @@
       "sourceSha256": "501f7e0d576283c392214521bafad024874400fe91eb82a7771f9ac927fef5c8"
     },
     {
-      "id": "unresolved-ebcafa0100d26d06",
+      "id": "unresolved-0d722c3534a33f32",
       "contentKey": "fallback-hook/sky-placement-practice/saturn",
       "contentRole": "fallback_hook",
       "reviewStatus": "needs_review",
       "reason": "review-status",
       "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
-      "objectPath": "/hookRows/1005",
+      "objectPath": "/hookRows/1006",
       "sourceSha256": "c6979076f3e35dc810f0cbde9a90e59e5a51e52783af794c2ab65c27d308318f"
     },
     {
@@ -1188,13 +1157,13 @@
       "sourceSha256": "7f5f249fc64869d827e6f4b04c0369fc69121362c06aefef4f02babe7e0a0250"
     },
     {
-      "id": "unresolved-32fcd516db3a21ab",
+      "id": "unresolved-11881b4acb6a5f8e",
       "contentKey": "fallback-hook/sky-placement-practice/south-node",
       "contentRole": "fallback_hook",
       "reviewStatus": "needs_review",
       "reason": "review-status",
       "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
-      "objectPath": "/hookRows/1011",
+      "objectPath": "/hookRows/1012",
       "sourceSha256": "c0f5c7589f63fa142def2e526dbe44dc2cce6750ae2e854297bc9842bdaf8499"
     },
     {
@@ -1208,13 +1177,13 @@
       "sourceSha256": "725e918e03e58bd0ba0cfcdb13484571eddc63809538ea7e736dac893e62f686"
     },
     {
-      "id": "unresolved-12fe9fca66bf8831",
+      "id": "unresolved-b0e19bb40b126bbd",
       "contentKey": "fallback-hook/sky-placement-practice/sun",
       "contentRole": "fallback_hook",
       "reviewStatus": "needs_review",
       "reason": "review-status",
       "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
-      "objectPath": "/hookRows/999",
+      "objectPath": "/hookRows/1000",
       "sourceSha256": "86e205bb3f56762edbe39062875beba2cdd183b6c90a59674792118fdd185bb6"
     },
     {
@@ -1228,13 +1197,13 @@
       "sourceSha256": "6cbf27e42d3505e18fd8a2d8ef1261046f6af1bf7bb48499de5aed8bdc6c3136"
     },
     {
-      "id": "unresolved-0d722c3534a33f32",
+      "id": "unresolved-6e14f5a71b465948",
       "contentKey": "fallback-hook/sky-placement-practice/uranus",
       "contentRole": "fallback_hook",
       "reviewStatus": "needs_review",
       "reason": "review-status",
       "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
-      "objectPath": "/hookRows/1006",
+      "objectPath": "/hookRows/1007",
       "sourceSha256": "37f72471ad63e7db184ab8a996c38fbff5c78b68e0cccc92e9060626e290d539"
     },
     {
@@ -1248,13 +1217,13 @@
       "sourceSha256": "94bd9e9841ba619dfe08e73ae1a2517e11c74addbafff8ea0441732ef7a545f5"
     },
     {
-      "id": "unresolved-0f6dde7ef66bd8c6",
+      "id": "unresolved-21814d98301aded4",
       "contentKey": "fallback-hook/sky-placement-practice/venus",
       "contentRole": "fallback_hook",
       "reviewStatus": "needs_review",
       "reason": "review-status",
       "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
-      "objectPath": "/hookRows/1002",
+      "objectPath": "/hookRows/1003",
       "sourceSha256": "9e21d4cbac47e343e5f7745aef83c843e099b8f81fbbe20b969202cba2c177aa"
     },
     {
@@ -1268,13 +1237,13 @@
       "sourceSha256": "409d1b552f3d73003c8c19ccb41577e3adc6b9ad18125bbc9a97ea3f4279a412"
     },
     {
-      "id": "unresolved-0e2ad616dcfddda1",
+      "id": "unresolved-be0fd4d7e51ea82d",
       "contentKey": "fallback-hook/sky-placement-you/chiron",
       "contentRole": "fallback_hook",
       "reviewStatus": "needs_review",
       "reason": "review-status",
       "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
-      "objectPath": "/hookRows/996",
+      "objectPath": "/hookRows/997",
       "sourceSha256": "a303f6199bb29264e12d6d8498258f846db29ba723b989b6b266832ce2f4910c"
     },
     {
@@ -1288,13 +1257,13 @@
       "sourceSha256": "a731ae986a1baebcd1dff57c446752e809cc45d5160c1ac03bf2ba123a8ad973"
     },
     {
-      "id": "unresolved-d11b9440f880f219",
+      "id": "unresolved-0a359859ae27156e",
       "contentKey": "fallback-hook/sky-placement-you/jupiter",
       "contentRole": "fallback_hook",
       "reviewStatus": "needs_review",
       "reason": "review-status",
       "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
-      "objectPath": "/hookRows/991",
+      "objectPath": "/hookRows/992",
       "sourceSha256": "7c4dcde05c06a8e5ba88933be8d43d49dca0c074d70c38950bfb76517f07feab"
     },
     {
@@ -1308,13 +1277,13 @@
       "sourceSha256": "b4dfe3a3fcb0ea55a2827cfe32cbaf5ebad30fcac77d59f9d409fb3de00d76a0"
     },
     {
-      "id": "unresolved-9e55339898147c87",
+      "id": "unresolved-0a328453eabc4d24",
       "contentKey": "fallback-hook/sky-placement-you/lilith",
       "contentRole": "fallback_hook",
       "reviewStatus": "needs_review",
       "reason": "review-status",
       "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
-      "objectPath": "/hookRows/1083",
+      "objectPath": "/hookRows/1084",
       "sourceSha256": "f0e8f84c8babf1741d86f9301e33a014b2f21c8aee084f024cbf8d78d63b77ee"
     },
     {
@@ -1328,13 +1297,13 @@
       "sourceSha256": "01e4a10f4f05191c1885cd6b52f910cc09d2e175f42587a3b0174531ff8fd3e8"
     },
     {
-      "id": "unresolved-603b9d9cb2f6df55",
+      "id": "unresolved-d11b9440f880f219",
       "contentKey": "fallback-hook/sky-placement-you/mars",
       "contentRole": "fallback_hook",
       "reviewStatus": "needs_review",
       "reason": "review-status",
       "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
-      "objectPath": "/hookRows/990",
+      "objectPath": "/hookRows/991",
       "sourceSha256": "47c1be3273e321e555a7122574ea1497c72351a248170ab816792398b7996c6d"
     },
     {
@@ -1348,13 +1317,13 @@
       "sourceSha256": "955f33841dbc77dd84f6f1c751e05a3817269a36dfff742fd797e7e32cfd715c"
     },
     {
-      "id": "unresolved-4b6fd516856e71d2",
+      "id": "unresolved-9021de83aad4022b",
       "contentKey": "fallback-hook/sky-placement-you/mercury",
       "contentRole": "fallback_hook",
       "reviewStatus": "needs_review",
       "reason": "review-status",
       "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
-      "objectPath": "/hookRows/988",
+      "objectPath": "/hookRows/989",
       "sourceSha256": "146c33746c420f903ad48529e4c1c2c866c27d02bff21ad68f6cf5c75282444f"
     },
     {
@@ -1368,13 +1337,13 @@
       "sourceSha256": "aed4077f0eccf3c8adc9d5258cb0aa151726b2dd2fb841cf716d8e619dd29c60"
     },
     {
-      "id": "unresolved-6b091bdfcc25d944",
+      "id": "unresolved-4b6fd516856e71d2",
       "contentKey": "fallback-hook/sky-placement-you/moon",
       "contentRole": "fallback_hook",
       "reviewStatus": "needs_review",
       "reason": "review-status",
       "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
-      "objectPath": "/hookRows/987",
+      "objectPath": "/hookRows/988",
       "sourceSha256": "bb6ee62b65b5dca42124030acecf159458b6f240ffd2721a68af8cff8c7e301f"
     },
     {
@@ -1388,13 +1357,13 @@
       "sourceSha256": "aad37e5a07f94a6477677078d8af4a3eca9448508f805c25691719157a9fb577"
     },
     {
-      "id": "unresolved-a96d3fef96d2d40b",
+      "id": "unresolved-79690a2a38a2e22e",
       "contentKey": "fallback-hook/sky-placement-you/neptune",
       "contentRole": "fallback_hook",
       "reviewStatus": "needs_review",
       "reason": "review-status",
       "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
-      "objectPath": "/hookRows/994",
+      "objectPath": "/hookRows/995",
       "sourceSha256": "1adefa4559a91d6f41f23f469a64cb01c656f57a0558d231678532a626aa01da"
     },
     {
@@ -1408,13 +1377,13 @@
       "sourceSha256": "3e9c878a511379d285cad3136db50e1af3d0b328b2ff6bed39e7180482a08c09"
     },
     {
-      "id": "unresolved-be0fd4d7e51ea82d",
+      "id": "unresolved-91d8bb577dccfeda",
       "contentKey": "fallback-hook/sky-placement-you/north-node",
       "contentRole": "fallback_hook",
       "reviewStatus": "needs_review",
       "reason": "review-status",
       "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
-      "objectPath": "/hookRows/997",
+      "objectPath": "/hookRows/998",
       "sourceSha256": "560fa73e40326f2cbb34cbe420566cf8feaba353913d7160109c3022383ecab9"
     },
     {
@@ -1428,13 +1397,13 @@
       "sourceSha256": "187ca713281b6782a03487e53ece9e40b1a5c5a1823ddf44bd5eac26f799ecc7"
     },
     {
-      "id": "unresolved-79690a2a38a2e22e",
+      "id": "unresolved-0e2ad616dcfddda1",
       "contentKey": "fallback-hook/sky-placement-you/pluto",
       "contentRole": "fallback_hook",
       "reviewStatus": "needs_review",
       "reason": "review-status",
       "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
-      "objectPath": "/hookRows/995",
+      "objectPath": "/hookRows/996",
       "sourceSha256": "84fcbd74d49465f95bbed648004023d6b05ce5728771dc9aef71b41c725f183b"
     },
     {
@@ -1448,13 +1417,13 @@
       "sourceSha256": "c46d4cd966b23c08080fd49f68f19eee7a3bb129501c8c8876a9f70b51f61ec2"
     },
     {
-      "id": "unresolved-0a359859ae27156e",
+      "id": "unresolved-59e56ec0dde83c79",
       "contentKey": "fallback-hook/sky-placement-you/saturn",
       "contentRole": "fallback_hook",
       "reviewStatus": "needs_review",
       "reason": "review-status",
       "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
-      "objectPath": "/hookRows/992",
+      "objectPath": "/hookRows/993",
       "sourceSha256": "8ad1bbf5b646302bc9cd0fc67e6000d3534bbc10029a86b054451a65f2b689a4"
     },
     {
@@ -1468,13 +1437,13 @@
       "sourceSha256": "155077b2e0d1a468d1f176a7ed856f58b488c6ba60d623974509abf14fe27d8b"
     },
     {
-      "id": "unresolved-91d8bb577dccfeda",
+      "id": "unresolved-12fe9fca66bf8831",
       "contentKey": "fallback-hook/sky-placement-you/south-node",
       "contentRole": "fallback_hook",
       "reviewStatus": "needs_review",
       "reason": "review-status",
       "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
-      "objectPath": "/hookRows/998",
+      "objectPath": "/hookRows/999",
       "sourceSha256": "7d835092d01f459c9d617d964a25c350429ed200c52124ec735d822a977502b6"
     },
     {
@@ -1488,13 +1457,13 @@
       "sourceSha256": "59d09310ffbfe245f226f487bf0ca2425b5d7a630fd43d12d9a87e78665e9e4e"
     },
     {
-      "id": "unresolved-9c9f99a33f76a590",
+      "id": "unresolved-6b091bdfcc25d944",
       "contentKey": "fallback-hook/sky-placement-you/sun",
       "contentRole": "fallback_hook",
       "reviewStatus": "needs_review",
       "reason": "review-status",
       "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
-      "objectPath": "/hookRows/986",
+      "objectPath": "/hookRows/987",
       "sourceSha256": "7299b1692b6616bd71514454c80ce563a9cbc36430584022124ad0e7ef7b2e2d"
     },
     {
@@ -1508,13 +1477,13 @@
       "sourceSha256": "f9c59888a1fc297cca245a9742bcc92068473eefd529b33fa18173e104224ea3"
     },
     {
-      "id": "unresolved-59e56ec0dde83c79",
+      "id": "unresolved-a96d3fef96d2d40b",
       "contentKey": "fallback-hook/sky-placement-you/uranus",
       "contentRole": "fallback_hook",
       "reviewStatus": "needs_review",
       "reason": "review-status",
       "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
-      "objectPath": "/hookRows/993",
+      "objectPath": "/hookRows/994",
       "sourceSha256": "5f1818661c1adc6d76837eae89688deaea3adf91145ff418cb8ce64eab300bed"
     },
     {
@@ -1528,13 +1497,13 @@
       "sourceSha256": "25c10bf5da5943819cdcee788207b4a23ae133cce60d9d03617b8360da6ed489"
     },
     {
-      "id": "unresolved-9021de83aad4022b",
+      "id": "unresolved-603b9d9cb2f6df55",
       "contentKey": "fallback-hook/sky-placement-you/venus",
       "contentRole": "fallback_hook",
       "reviewStatus": "needs_review",
       "reason": "review-status",
       "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
-      "objectPath": "/hookRows/989",
+      "objectPath": "/hookRows/990",
       "sourceSha256": "5f9badadcd26078caf6e63d79d5690762adab0c57644885302cb5adcdc3a1973"
     },
     {
@@ -1548,13 +1517,13 @@
       "sourceSha256": "be608dcaf26d9a879a4d4429426cf33ddf1ba8470ac29ea886fa0374268c5a7c"
     },
     {
-      "id": "unresolved-f98c490585a746ab",
+      "id": "unresolved-ee946ab52b60e90d",
       "contentKey": "fallback-hook/sky-placement/chiron",
       "contentRole": "fallback_hook",
       "reviewStatus": "needs_review",
       "reason": "review-status",
       "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
-      "objectPath": "/hookRows/979",
+      "objectPath": "/hookRows/980",
       "sourceSha256": "4ba2f3b906253432083640d1edafbf86efe7b95361ea6626bdc094f1402ec1c4"
     },
     {
@@ -1568,13 +1537,13 @@
       "sourceSha256": "e41998a461d3bd3b855bf7b0b665ca996c146f002ea4bd97aefc4491ba6fec7c"
     },
     {
-      "id": "unresolved-d30e22da7cc8f46c",
+      "id": "unresolved-5215f4b6c969ae30",
       "contentKey": "fallback-hook/sky-placement/jupiter",
       "contentRole": "fallback_hook",
       "reviewStatus": "needs_review",
       "reason": "review-status",
       "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
-      "objectPath": "/hookRows/974",
+      "objectPath": "/hookRows/975",
       "sourceSha256": "df1747d43e286f4fe428875e46edde9077e80b338db040641c58097c0e34335c"
     },
     {
@@ -1588,13 +1557,13 @@
       "sourceSha256": "62645344419a3e5e0ccc191f8acf34592ae8b2da585312bd3dc534ef0b1dfc61"
     },
     {
-      "id": "unresolved-0a328453eabc4d24",
+      "id": "unresolved-1eb635e4c9ce82e8",
       "contentKey": "fallback-hook/sky-placement/lilith",
       "contentRole": "fallback_hook",
       "reviewStatus": "needs_review",
       "reason": "review-status",
       "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
-      "objectPath": "/hookRows/1084",
+      "objectPath": "/hookRows/1085",
       "sourceSha256": "e1e7a66758212bed632b358c250d65845dc0df6f75a7b5422bed1fdd21d757e4"
     },
     {
@@ -1608,13 +1577,13 @@
       "sourceSha256": "26f421f2399cf434d34d6282a690248fb09f9fb4a13eed17b2efe04e2279de6a"
     },
     {
-      "id": "unresolved-1253a7559093b6bf",
+      "id": "unresolved-d30e22da7cc8f46c",
       "contentKey": "fallback-hook/sky-placement/mars",
       "contentRole": "fallback_hook",
       "reviewStatus": "needs_review",
       "reason": "review-status",
       "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
-      "objectPath": "/hookRows/973",
+      "objectPath": "/hookRows/974",
       "sourceSha256": "b12a33e4b229a8ad88fc7c23bbc5dbb9db9e7d8beef9e1206a886e941e479266"
     },
     {
@@ -1628,13 +1597,13 @@
       "sourceSha256": "de9e7aaecb959e58ed6eba3bba68362382ba75cd1500f6e839b118a44442a228"
     },
     {
-      "id": "unresolved-1ca269a2bf1f6f43",
+      "id": "unresolved-13e736579414228f",
       "contentKey": "fallback-hook/sky-placement/mercury",
       "contentRole": "fallback_hook",
       "reviewStatus": "needs_review",
       "reason": "review-status",
       "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
-      "objectPath": "/hookRows/971",
+      "objectPath": "/hookRows/972",
       "sourceSha256": "02208e4a4175a469fb2452151a60724e3f70a225815636a8d7515273936d33f3"
     },
     {
@@ -1648,13 +1617,13 @@
       "sourceSha256": "0c7539d95d368a92af996625cb47312b23c948e830b8360ca09c9c1f33719e32"
     },
     {
-      "id": "unresolved-079d51f66366b147",
+      "id": "unresolved-1ca269a2bf1f6f43",
       "contentKey": "fallback-hook/sky-placement/moon",
       "contentRole": "fallback_hook",
       "reviewStatus": "needs_review",
       "reason": "review-status",
       "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
-      "objectPath": "/hookRows/970",
+      "objectPath": "/hookRows/971",
       "sourceSha256": "1042ea9ac54a7a2c4de8af8c495235b2adf3a564b0a7a4380f45d60dd2215078"
     },
     {
@@ -1668,13 +1637,13 @@
       "sourceSha256": "b33d86b274478a1d22fd07a74e79b224f026313e99537bad95eff8e597e235ef"
     },
     {
-      "id": "unresolved-9cd16cd4bad76be4",
+      "id": "unresolved-4be8f578b6f09453",
       "contentKey": "fallback-hook/sky-placement/neptune",
       "contentRole": "fallback_hook",
       "reviewStatus": "needs_review",
       "reason": "review-status",
       "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
-      "objectPath": "/hookRows/977",
+      "objectPath": "/hookRows/978",
       "sourceSha256": "f5cb5d415b3d30e3e81c322509ff35c53779e561f61913cd6daffad7286df0d7"
     },
     {
@@ -1688,13 +1657,13 @@
       "sourceSha256": "32e437938fc524838a1819a2abba81b6bf8ef3389b84b47ba54c9128db87f685"
     },
     {
-      "id": "unresolved-ee946ab52b60e90d",
+      "id": "unresolved-1f87cd9076c87d2e",
       "contentKey": "fallback-hook/sky-placement/north-node",
       "contentRole": "fallback_hook",
       "reviewStatus": "needs_review",
       "reason": "review-status",
       "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
-      "objectPath": "/hookRows/980",
+      "objectPath": "/hookRows/981",
       "sourceSha256": "17c760346c509f9a0fd1d62ca40e0f4a8fc97985bba0fdff7cd7e9d39fe06734"
     },
     {
@@ -1708,13 +1677,13 @@
       "sourceSha256": "3cbc160564646aefd27f1dfa1eca0e337ed0b976097fe3af19b44f73fb8f201d"
     },
     {
-      "id": "unresolved-4be8f578b6f09453",
+      "id": "unresolved-f98c490585a746ab",
       "contentKey": "fallback-hook/sky-placement/pluto",
       "contentRole": "fallback_hook",
       "reviewStatus": "needs_review",
       "reason": "review-status",
       "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
-      "objectPath": "/hookRows/978",
+      "objectPath": "/hookRows/979",
       "sourceSha256": "fb541e1b456a2c8859b2c8a27dd05df917ba36489c40583594c93a6bf7072824"
     },
     {
@@ -1728,13 +1697,13 @@
       "sourceSha256": "cb1bb287d2531b15a0f8764832eac586833fd5896a6fc49e17e398325797ddb5"
     },
     {
-      "id": "unresolved-5215f4b6c969ae30",
+      "id": "unresolved-0319b957c7cf76e9",
       "contentKey": "fallback-hook/sky-placement/saturn",
       "contentRole": "fallback_hook",
       "reviewStatus": "needs_review",
       "reason": "review-status",
       "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
-      "objectPath": "/hookRows/975",
+      "objectPath": "/hookRows/976",
       "sourceSha256": "be7c05a3cfdb570df67f1995c9e44f7771d5d03623ee65508649b9003c352ad9"
     },
     {
@@ -1748,13 +1717,13 @@
       "sourceSha256": "2b0d3fefc8a1238c3ce55b19eb1cef811e2af9c9d97f1c1d1b21e12291bd35ca"
     },
     {
-      "id": "unresolved-1f87cd9076c87d2e",
+      "id": "unresolved-adeb00a20f3f5af5",
       "contentKey": "fallback-hook/sky-placement/south-node",
       "contentRole": "fallback_hook",
       "reviewStatus": "needs_review",
       "reason": "review-status",
       "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
-      "objectPath": "/hookRows/981",
+      "objectPath": "/hookRows/982",
       "sourceSha256": "3704bcea06e79aaf4c7e49cb53c902edd4b93fb7ab21da9fd3a2179d7d0e96ce"
     },
     {
@@ -1768,13 +1737,13 @@
       "sourceSha256": "a0d4b5a05fa56eb87ef9a18cb4fcfbc3e9988e0c290a1d827187fc8ed96c448f"
     },
     {
-      "id": "unresolved-ae4669aa742d48a8",
+      "id": "unresolved-079d51f66366b147",
       "contentKey": "fallback-hook/sky-placement/sun",
       "contentRole": "fallback_hook",
       "reviewStatus": "needs_review",
       "reason": "review-status",
       "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
-      "objectPath": "/hookRows/969",
+      "objectPath": "/hookRows/970",
       "sourceSha256": "864c5e2adee3ed33bc83fc632ec135913d39ce9e93652002b87c45d09657d744"
     },
     {
@@ -1788,13 +1757,13 @@
       "sourceSha256": "41d64aaa883d1e49870124c1d37176c023146efffd82a7a7a14d4064bee41f70"
     },
     {
-      "id": "unresolved-0319b957c7cf76e9",
+      "id": "unresolved-9cd16cd4bad76be4",
       "contentKey": "fallback-hook/sky-placement/uranus",
       "contentRole": "fallback_hook",
       "reviewStatus": "needs_review",
       "reason": "review-status",
       "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
-      "objectPath": "/hookRows/976",
+      "objectPath": "/hookRows/977",
       "sourceSha256": "86ecf2b5343bfb6bb88c10eaff62c76c6a7ea15eeab155ad8cf8314df6ed11f7"
     },
     {
@@ -1808,13 +1777,13 @@
       "sourceSha256": "b877c6d87ff05b13227d4487d3c64a1c3d3296993d20e176d1b23062e3977c7b"
     },
     {
-      "id": "unresolved-13e736579414228f",
+      "id": "unresolved-1253a7559093b6bf",
       "contentKey": "fallback-hook/sky-placement/venus",
       "contentRole": "fallback_hook",
       "reviewStatus": "needs_review",
       "reason": "review-status",
       "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
-      "objectPath": "/hookRows/972",
+      "objectPath": "/hookRows/973",
       "sourceSha256": "b0630afd1ae0cc301b1775795afd707100d1a5f5e447a903dcf091149f1d2a80"
     },
     {
@@ -1828,113 +1797,113 @@
       "sourceSha256": "03ded008b10cda300b361fd23ce18f680af8eb47b0bd4560abe960dbea577697"
     },
     {
-      "id": "unresolved-da816073e7f72c5b",
+      "id": "unresolved-43f4485926fc0086",
       "contentKey": "fallback-hook/sky-sign-copy/sun/aquarius",
       "contentRole": "fallback_hook",
       "reviewStatus": "needs_review",
       "reason": "review-status",
       "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
-      "objectPath": "/hookRows/3495",
+      "objectPath": "/hookRows/3496",
       "sourceSha256": "f70f5b9c21ef61f87483c7e653b133faf1cbbdf1c8e82d21013b58a53cdf07ae"
     },
     {
-      "id": "unresolved-43f4485926fc0086",
+      "id": "unresolved-215ff9548bb49aa7",
       "contentKey": "fallback-hook/sky-sign-copy/sun/aries",
       "contentRole": "fallback_hook",
       "reviewStatus": "needs_review",
       "reason": "review-status",
       "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
-      "objectPath": "/hookRows/3496",
+      "objectPath": "/hookRows/3497",
       "sourceSha256": "9d23aaed90142dd8b5246d1654311d96e74f5cc45985f03813a3473cf4f0753d"
     },
     {
-      "id": "unresolved-215ff9548bb49aa7",
+      "id": "unresolved-40e147e2a22c356a",
       "contentKey": "fallback-hook/sky-sign-copy/sun/cancer",
       "contentRole": "fallback_hook",
       "reviewStatus": "needs_review",
       "reason": "review-status",
       "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
-      "objectPath": "/hookRows/3497",
+      "objectPath": "/hookRows/3498",
       "sourceSha256": "6a63d4c17dbfd247006e2bd31630ad47f1c098611a70300e035cf0d4429e2ac1"
     },
     {
-      "id": "unresolved-40e147e2a22c356a",
+      "id": "unresolved-0b69cee90f2b55ae",
       "contentKey": "fallback-hook/sky-sign-copy/sun/capricorn",
       "contentRole": "fallback_hook",
       "reviewStatus": "needs_review",
       "reason": "review-status",
       "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
-      "objectPath": "/hookRows/3498",
+      "objectPath": "/hookRows/3499",
       "sourceSha256": "91ed4b482117e1ca1ea94f56b5ab8bed548fbcc3b3fd77ce1fedfca7e44a1af4"
     },
     {
-      "id": "unresolved-0b69cee90f2b55ae",
+      "id": "unresolved-fb18aeff627bab7d",
       "contentKey": "fallback-hook/sky-sign-copy/sun/gemini",
       "contentRole": "fallback_hook",
       "reviewStatus": "needs_review",
       "reason": "review-status",
       "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
-      "objectPath": "/hookRows/3499",
+      "objectPath": "/hookRows/3500",
       "sourceSha256": "56519fe585e07be84a3e8bd09c0b1c0ff04d6d653905a7bfdaff2e3976bbe616"
     },
     {
-      "id": "unresolved-fb18aeff627bab7d",
+      "id": "unresolved-265891a71f6624cc",
       "contentKey": "fallback-hook/sky-sign-copy/sun/leo",
       "contentRole": "fallback_hook",
       "reviewStatus": "needs_review",
       "reason": "review-status",
       "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
-      "objectPath": "/hookRows/3500",
+      "objectPath": "/hookRows/3501",
       "sourceSha256": "1ecba4f9e96a9130a7aafd77048d91b4339b019e9ae5c8adb22fbc919c7008ae"
     },
     {
-      "id": "unresolved-265891a71f6624cc",
+      "id": "unresolved-aa4a604f98fbc7d1",
       "contentKey": "fallback-hook/sky-sign-copy/sun/libra",
       "contentRole": "fallback_hook",
       "reviewStatus": "needs_review",
       "reason": "review-status",
       "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
-      "objectPath": "/hookRows/3501",
+      "objectPath": "/hookRows/3502",
       "sourceSha256": "b56cc105a880cf4f0084b728d5c4b062d0529c0185f98ba769c17e493a342b99"
     },
     {
-      "id": "unresolved-aa4a604f98fbc7d1",
+      "id": "unresolved-d1f04ca5bcb1539d",
       "contentKey": "fallback-hook/sky-sign-copy/sun/pisces",
       "contentRole": "fallback_hook",
       "reviewStatus": "needs_review",
       "reason": "review-status",
       "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
-      "objectPath": "/hookRows/3502",
+      "objectPath": "/hookRows/3503",
       "sourceSha256": "0a62949314f1d970097042394272b7e9e67c408d655e8b961c0f029186b45372"
     },
     {
-      "id": "unresolved-d1f04ca5bcb1539d",
+      "id": "unresolved-398824ef810230f0",
       "contentKey": "fallback-hook/sky-sign-copy/sun/sagittarius",
       "contentRole": "fallback_hook",
       "reviewStatus": "needs_review",
       "reason": "review-status",
       "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
-      "objectPath": "/hookRows/3503",
+      "objectPath": "/hookRows/3504",
       "sourceSha256": "b07aba534613eb5d1dc03091d8f89a9ba3e0b6b3b351c7e536794e7999502ebb"
     },
     {
-      "id": "unresolved-398824ef810230f0",
+      "id": "unresolved-53c1a4f13235dd69",
       "contentKey": "fallback-hook/sky-sign-copy/sun/scorpio",
       "contentRole": "fallback_hook",
       "reviewStatus": "needs_review",
       "reason": "review-status",
       "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
-      "objectPath": "/hookRows/3504",
+      "objectPath": "/hookRows/3505",
       "sourceSha256": "84fa4492ab998eb4fdb4bec67137129621189872b2f7edfa34b0f1b5195adc45"
     },
     {
-      "id": "unresolved-53c1a4f13235dd69",
+      "id": "unresolved-025cc5368397eb94",
       "contentKey": "fallback-hook/sky-sign-copy/sun/taurus",
       "contentRole": "fallback_hook",
       "reviewStatus": "needs_review",
       "reason": "review-status",
       "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
-      "objectPath": "/hookRows/3505",
+      "objectPath": "/hookRows/3506",
       "sourceSha256": "29d9d9f4e908711859bee181799b1e7e365fa218b2c08c858d7e5b7b75eb9cf8"
     },
     {

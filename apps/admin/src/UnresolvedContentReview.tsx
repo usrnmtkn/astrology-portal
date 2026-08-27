@@ -211,12 +211,12 @@ export function UnresolvedContentReview({
                 <td data-label="Content"><strong>{issue.surface}</strong><code>{issue.contentKey}</code></td>
                 <td data-label="What it means">
                   <span className={`ui-pill admin-status ${sourceApproved ? "status-ready" : sourceRepair ? "status-error" : "status-draft"}`}>{sourceApproved ? "Owner approved" : sourceRepair ? "Source repair required" : missingRow ? "Editable row missing" : "Owner review required"}</span>
-                  {sourceRepair && <small>{sourceApproved ? "Exact replacement authorized. Package deployment pending." : issue.repairPlan ? "Review and authorize the governed replacement here." : "A governed replacement plan is still required."}</small>}
+                  {sourceRepair && <small>{sourceApproved ? "Approval is complete. Next, copy the implementation request into Codex. After the repaired package is deployed, this row will disappear." : issue.repairPlan ? "Review and authorize the governed replacement here." : "A governed replacement plan is still required."}</small>}
                   {issue.resolution && <details className="admin-unresolved-diagnosis"><summary>Codex diagnosis</summary><small>{issue.resolution.diagnosis}</small></details>}
                 </td>
                 <td data-label="Source records"><details><summary>{issue.records.length} record(s)</summary>{issue.records.map((record) => <code key={record.id}>{record.reviewStatus}: {record.sourcePath}{record.objectPath}</code>)}</details></td>
                 <td data-label="Next step">{sourceRepair && issue.repairPlan
-                  ? <div className="admin-toolbar-actions"><button className="admin-edit-row-button" type="button" onClick={() => openRepairReview(issue)}>{sourceApproved ? "View approved replacement" : "Review replacement"}</button>{sourceApproved && <button className="admin-edit-row-button" type="button" onClick={() => void navigator.clipboard.writeText(sourceImplementationRequest(issue))}>Copy implementation request</button>}</div>
+                  ? <div className="admin-toolbar-actions"><button className="admin-edit-row-button" type="button" onClick={() => openRepairReview(issue)}>{sourceApproved ? "View approved replacement" : "Review replacement"}</button><button className="admin-edit-row-button" type="button" onClick={() => void navigator.clipboard.writeText(issue.aiRequest)}>Copy investigation</button>{sourceApproved && <button className="admin-edit-row-button" type="button" onClick={() => void navigator.clipboard.writeText(sourceImplementationRequest(issue))}>Copy implementation request</button>}</div>
                   : !contentLibraryReady && !sourceRepair
                   ? <small>Checking…</small>
                   : canOpen

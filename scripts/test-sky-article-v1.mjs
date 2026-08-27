@@ -56,7 +56,7 @@ assert.ok(skySignCopySunV1.rows.every((row) => row.body_you === row.body_they));
 assert.ok(skySignCopySunV1.rows.every((row) => (
   row.contentKey.startsWith("fallback-hook/sky-sign-copy/sun/")
 )));
-assert.equal(skySignCopySunV1.superseded_rows.length, 13);
+assert.equal(skySignCopySunV1.superseded_rows.length, 14);
 assert.equal(new Set(skySignCopySunV1.superseded_rows.map((row) => row.contentKey)).size, 12);
 assert.ok(skySignCopySunV1.superseded_rows.every((row) => row.review_status === "superseded"));
 assert.ok(skyArticleV1.hookRows.every((row) => row.review_status === "approved"));
@@ -720,7 +720,7 @@ try {
 
 console.log(
   "Sky article v1 passed: 2 registry articles, 14 approved V3 slot rows, 23 approved three-beat frames, "
-  + "42 review-gated voice-pass rows, 1 approved continuous Sun unit, 13 superseded Sun rows, 25 approved vocab rows, "
+  + "42 review-gated voice-pass rows, 1 approved continuous Sun unit, 14 superseded Sun rows, 25 approved vocab rows, "
   + "9/9 archive ephemeris facts, wrong-station rejection, retrograde fallback, shared-bank hashes, "
   + "True Node sign-through, FINAL section order, article/slot exclusivity, twelve public rising blocks, "
   + "history/retrograde gates, and seeded punctuation/date/degree failures."

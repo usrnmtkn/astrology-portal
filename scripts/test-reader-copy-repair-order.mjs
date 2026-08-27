@@ -53,8 +53,7 @@ assert.equal(
 );
 
 const sunVirgo = fallback.hookRows.find((row) => row.contentKey === "fallback-hook/sky-sign-copy/sun/virgo");
-assert.ok(sunVirgo);
-assert.equal(readerEligibilityReason(sunVirgo), "known-current-contract-failure");
+assert.equal(sunVirgo, undefined, "The duplicate pending Sun-in-Virgo row must be removed after source repair.");
 
 const exactNatal = renderNatalAspect({
   planetA: "sun",

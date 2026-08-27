@@ -30,11 +30,31 @@ const unresolvedItems = unresolvedQueueSource.items.map((item) => ({
   }));
 const unresolvedRecordsByKey = new Map<string, typeof unresolvedItems>();
 unresolvedItems.forEach((item) => unresolvedRecordsByKey.set(item.contentKey, [...(unresolvedRecordsByKey.get(item.contentKey) ?? []), item]));
+const completedSourceRepairPlan = contentSourceRepairPlan("fallback-hook/sky-sign-copy/sun/virgo");
+if (!completedSourceRepairPlan) throw new Error("Sun in Virgo source-repair fixture is unavailable.");
+const sourceRepairFixture = {
+  issueId: "5678d2c461d266372d0836503c818b29fccda7726b5595a3a5340dfde2193f7e",
+  contentKey: "fallback-hook/sky-sign-copy/sun/virgo",
+  surface: "Sky / Transits",
+  kind: "source-repair",
+  records: [{
+    id: "completed-source-repair-fixture",
+    contentKey: "fallback-hook/sky-sign-copy/sun/virgo",
+    reviewStatus: "approved",
+    reason: "known-current-contract-failure",
+    sourcePath: "apps/web/src/content/fallbackArchitectureV3/source-rows/sky-placement-owner-approved-fallbacks-v1.json",
+    objectPath: "/rows/37",
+    surface: "Sky / Transits"
+  }],
+  repairPlan: completedSourceRepairPlan,
+  sourceDecision: null,
+  aiRequest: "Investigate the Sun in Virgo source lineage before implementing the governed replacement."
+};
 const unresolvedQueue = {
   ...unresolvedQueueSource,
   items: unresolvedItems,
   resolutionStoreReady: true,
-  issues: [...unresolvedRecordsByKey.values()].map((records, index) => {
+  issues: [sourceRepairFixture, ...[...unresolvedRecordsByKey.values()].map((records, index) => {
     const contentKey = records[0].contentKey;
     const sourceRepair = records.some((item) => item.reason === "known-current-contract-failure");
     return {
@@ -47,9 +67,9 @@ const unresolvedQueue = {
       sourceDecision: null,
       aiRequest: sourceRepair ? `Repair ${contentKey}` : `Investigate ${contentKey}`
     };
-  })
+  })]
 };
-const unresolvedIssueCount = new Set(unresolvedQueue.items.map((item) => item.contentKey)).size;
+const unresolvedIssueCount = unresolvedQueue.issues.length;
 
 const adminPages = [
   { nav: "Review Queue", title: "Review Queue", breadcrumb: "Admin / Publish / Review queue", hash: "review-queue" },
@@ -1744,6 +1764,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(sourceRepairIssue).toContainText("Source repair required");
     await expect(sourceRepairIssue.getByRole("button", { name: "Open exact row" })).toHaveCount(0);
     await expect(sourceRepairIssue.getByRole("button", { name: "Review replacement" })).toBeVisible();
+    await expect(sourceRepairIssue.getByRole("button", { name: "Copy investigation" })).toBeVisible();
     await sourceRepairIssue.getByRole("button", { name: "Review replacement" }).click();
     const repairDialog = page.getByRole("dialog", { name: "Review replacement for fallback-hook/sky-sign-copy/sun/virgo" });
     await expect(repairDialog).toBeVisible();
@@ -1765,6 +1786,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(repairDialog).toContainText("Approved for implementation");
     await repairDialog.getByRole("button", { name: "Close", exact: true }).click();
     await expect(sourceRepairIssue).toContainText("Owner approved");
+    await expect(sourceRepairIssue).toContainText("Next, copy the implementation request into Codex");
     await expect(sourceRepairIssue.getByRole("button", { name: "Copy implementation request" })).toBeVisible();
 
     await page.getByLabel("Search unresolved content").fill(missingUnresolvedItem?.contentKey ?? "");
