@@ -58,5 +58,28 @@ const map = buildCompositionMap([
 assert.equal(map.length, 1);
 assert.deepEqual(map[0].issues, [], "Canonical Sky source families should not create false IA flags.");
 assert.ok(map[0].slots.filter((slot) => slot.sourceKind === "saved-copy").every((slot) => slot.sources.length > 0), "Every saved-copy Sky slot should link to an editable source row.");
+assert.equal(map[0].preview.fields.find((field) => field.key === "headline")?.rendered, "Sun in Leo", "The default preview should resolve representative runtime facts.");
+assert.ok(map[0].preview.fields.find((field) => field.key === "body")?.rendered.includes("Fallback copy."), "The default preview should resolve representative saved copy.");
+assert.ok(map[0].preview.fields.every((field) => !field.rendered.includes("{{")), "The reader preview should not expose unresolved template tokens.");
+assert.equal(map[0].preview.sources.length, sourceKeys.length, "The preview should identify the canonical saved rows used in its representative rendering.");
+
+const audienceMap = buildCompositionMap([{
+  ...baseRow,
+  id: "audience-template",
+  content_key: "fallback-template/natal-planet-in-sign",
+  headline: "{{planetTitle}} in {{signTitle}}",
+  surface: "natal",
+  block_type: "fallback_template",
+  sections: {
+    packageRecord: {
+      content_role: "template",
+      headline: "{{planetTitle}} in {{signTitle}}",
+      body_you: "Your {{planetTitle}} is in {{signTitle}} and connects with natal {{natalTitle}}.",
+      body_they: "{{possessive}} {{planetTitle}} is in {{signTitle}}."
+    }
+  }
+}]);
+assert.equal(audienceMap[0].preview.fields.find((field) => field.key === "body_they")?.rendered, "Maya's Sun is in Leo.", "Third-person previews should read naturally instead of exposing a generic possessive example.");
+assert.equal(audienceMap[0].preview.fields.find((field) => field.key === "body_you")?.rendered, "Your Sun is in Leo and connects with natal Venus.", "Representative examples should not duplicate qualifiers already present in the template.");
 
 console.log("Admin Composition Map classification and source-link tests passed.");
