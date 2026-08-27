@@ -4,6 +4,7 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import {
   loadUnresolvedContentReport,
+  unresolvedIssueWorkflow,
   type UnresolvedContentReport
 } from "../apps/admin/src/UnresolvedContentReview";
 import {
@@ -58,6 +59,32 @@ assert.match(sunVirgoRepairPlan.body, /Virgo is not tidiness\. Virgo is the stan
 assert.equal(sunVirgoRepairPlan.body, Object.values(sunVirgoRepairPlan.article).join("\n\n"));
 assert.match(editorialIssue.aiRequest, /no editable Content Library row exists/u);
 
+const diagnosisWorkflow = unresolvedIssueWorkflow(editorialIssue, {
+  contentLibraryReady: true,
+  hasEditableRow: false,
+  requestCopied: false
+});
+assert.equal(diagnosisWorkflow.statusLabel, "Action needed");
+assert.equal(diagnosisWorkflow.currentStep, "Diagnose the missing editable row");
+assert.equal(diagnosisWorkflow.responsibleParty, "You");
+assert.deepEqual(diagnosisWorkflow.steps.map((step) => step.state), ["current", "waiting", "waiting", "waiting"]);
+
+const copiedWorkflow = unresolvedIssueWorkflow(editorialIssue, {
+  contentLibraryReady: true,
+  hasEditableRow: false,
+  requestCopied: true
+});
+assert.equal(copiedWorkflow.statusLabel, "Waiting for Codex");
+assert.equal(copiedWorkflow.responsibleParty, "Codex");
+
+const ownerReviewWorkflow = unresolvedIssueWorkflow(editorialIssue, {
+  contentLibraryReady: true,
+  hasEditableRow: true,
+  requestCopied: false
+});
+assert.equal(ownerReviewWorkflow.currentStep, "Review the copy in Content Library");
+assert.deepEqual(ownerReviewWorkflow.steps.map((step) => step.state), ["complete", "complete", "current", "waiting"]);
+
 const normalizedResolution = normalizeContentStudioResolution({
   schema: "content-studio-resolution/v1",
   issueId: editorialIssue.issueId,
@@ -111,7 +138,11 @@ assert.match(reviewSource, /Review exact replacements and authorize source repai
 assert.match(reviewSource, /Review replacement/u);
 assert.match(reviewSource, /Approve exact replacement/u);
 assert.match(reviewSource, /Copy implementation request/u);
-assert.match(reviewSource, /Record response/u);
+assert.match(reviewSource, /Record Codex response/u);
+assert.match(reviewSource, /Responsible now:/u);
+assert.match(reviewSource, /Waiting for Codex/u);
+assert.match(reviewSource, /Refresh status/u);
+assert.match(reviewSource, /Record Codex response/u);
 assert.match(reviewSource, /No matching issues\./u, "The page must include a clear empty-state message.");
 
 assert.match(dashboardSource, /unresolvedContent:\s*"unresolved-content"/u, "The Studio must expose a stable unresolved-content route.");
