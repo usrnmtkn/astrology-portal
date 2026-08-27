@@ -10,6 +10,7 @@ Audited the Content Studio dashboard surfaces:
 - Articles
 - Exact Content
 - Composite Review
+- Composition Map
 - Templates
 - Slots
 - Vocabulary & Phrases
@@ -91,6 +92,7 @@ Standard applied:
 ## Changes Made
 
 - Added a final admin UX/UI standard component layer in `apps/admin/src/admin.css`.
+- Added an editable, destination-first Composition Map linking templates and saved-copy slots to their canonical editors while keeping runtime facts read-only.
 - Standardized semantic color tokens for admin controls.
 - Normalized buttons, forms, focus states, segmented controls, popovers, nav, status pills, table headers, code pills, and warning surfaces.
 - Preserved existing page structure to avoid risky large markup rewrites.

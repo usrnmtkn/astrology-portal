@@ -76,6 +76,7 @@ import { templateVariableReferences } from "./templateVariableReference";
 import { articleAppDestination, isSkyWriteupContentRow } from "./articleWorkspace";
 import { contentWiringStatus, isPublishedButUnwired } from "./contentWiringStatus";
 import { fallbackHookDisplayTitle } from "./fallbackHookTitle";
+import { isCompositionTemplateRow } from "./compositionMap";
 import {
   natalPlacementHouses,
   natalPlacementLabel,
@@ -87,6 +88,7 @@ import {
   type NatalPlacementPlanet,
   type NatalPlacementSign
 } from "./natalPlacementSources";
+
 import type {
   WritingSurfaceAdminAccess,
   WritingSurfaceMapItem,
@@ -94,6 +96,7 @@ import type {
 } from "./writingSurfaceSourceMap";
 import "./admin.css";
 
+const CompositionMapWorkspace = lazy(() => import("./CompositionMapWorkspace"));
 const AspectPatternDiagnostics = lazy(async () => {
   const module = await import("./AspectPatternDiagnostics");
   return { default: module.AspectPatternDiagnostics };
@@ -127,6 +130,7 @@ type AdminDashboardPage =
   | "unresolvedContent"
   | "compositeByType"
   | "connection"
+  | "compositionMap"
   | "vocabulary"
   | "slotDictionary"
   | "knowledge"
@@ -455,6 +459,7 @@ const adminPageHashKeys: Record<AdminDashboardPage, string> = {
   unresolvedContent: "unresolved-content",
   compositeByType: "composite-review",
   connection: "connection",
+  compositionMap: "composition-map",
   vocabulary: "vocabulary",
   slotDictionary: "slots",
   knowledge: "fallback-hooks",
@@ -481,8 +486,9 @@ const adminPageByHashKey = {
 
 type AdminNavItem = { page: AdminDashboardPage; label: string; icon: typeof Check };
 
-const compositionPages: AdminDashboardPage[] = ["templates", "slotDictionary", "vocabulary", "knowledge", "hooks"];
+const compositionPages: AdminDashboardPage[] = ["compositionMap", "templates", "slotDictionary", "vocabulary", "knowledge", "hooks"];
 const compositionTabs: AdminNavItem[] = [
+  { page: "compositionMap", label: "Map", icon: Database },
   { page: "templates", label: "Templates", icon: Sparkles },
   { page: "slotDictionary", label: "Slots", icon: KeyRound },
   { page: "vocabulary", label: "Vocabulary", icon: BookOpenText },
@@ -497,7 +503,7 @@ const primaryAdminNavItems: AdminNavItem[] = [
   { page: "articles", label: "Articles", icon: FileText },
   { page: "compatibility", label: "Compatibility", icon: Users },
   { page: "compositeByType", label: "Composite Review", icon: Users },
-  { page: "templates", label: "Templates", icon: Sparkles },
+  { page: "compositionMap", label: "Composition", icon: Sparkles },
   { page: "aspectPatternCoverage", label: "Aspect Patterns", icon: BookOpenText }
 ];
 const advancedAdminNavItems: AdminNavItem[] = [
@@ -628,6 +634,7 @@ function adminPageTitle(activePage: AdminDashboardPage) {
     case "unresolvedContent": return "Unresolved Content";
     case "compositeByType": return "Composite Review";
     case "connection": return "Connection";
+    case "compositionMap": return "Composition Map";
     case "vocabulary": return "Vocabulary & Phrases";
     case "slotDictionary": return "Slots";
     case "knowledge": return "Fallback Articles & Passages";
@@ -653,6 +660,7 @@ function adminPageBreadcrumb(activePage: AdminDashboardPage) {
     case "unresolvedContent": return "Admin / Publish / Unresolved content";
     case "compositeByType": return "Admin / Write / Composite review";
     case "connection": return "Admin / Connection";
+    case "compositionMap": return "Admin / Composition / Map";
     case "vocabulary": return "Admin / Composition / Vocabulary & phrases";
     case "slotDictionary": return "Admin / Composition / Slots";
     case "knowledge": return "Admin / Composition / Fallback articles & passages";
@@ -680,6 +688,8 @@ function adminPageDescription(activePage: AdminDashboardPage) {
       return "See every package record that is still blocked from serving.";
     case "content":
       return "Find and edit every saved content row.";
+    case "compositionMap":
+      return "Trace and edit how templates, slots, hooks, phrases, and calculated facts assemble reader copy.";
     case "knowledge":
       return "Edit backup copy used when primary content is unavailable.";
     case "vocabulary":
@@ -2127,6 +2137,7 @@ export function GeneratedContentAdminDashboard() {
   const [loadDiagnostics, setLoadDiagnostics] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isCreateMenuOpen, setIsCreateMenuOpen] = useState(false);
+  const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
   const [contentStatusFilter, setContentStatusFilter] = useState<GeneratedContentStatus | "all">("all");
   const [contentLibraryView, setContentLibraryView] = useState<ContentLibraryView>("all");
   const [reviewStatusFilter, setReviewStatusFilter] = useState<GeneratedContentStatus | "all">("all");
@@ -2226,7 +2237,7 @@ export function GeneratedContentAdminDashboard() {
   const slotEditableRows = useMemo(
     () => visibleRows.filter((row) => {
       const contentClass = contentClassForRow(row);
-      return contentClass === "vocab" || contentClass === "fallback-hook" || row.content_key.startsWith("slot-template/");
+      return contentClass === "vocab" || contentClass === "fallback-hook" || isCompositionTemplateRow(row);
     }),
     [visibleRows]
   );
@@ -2452,7 +2463,7 @@ export function GeneratedContentAdminDashboard() {
     item.sourcePath
   ].join(" "), query)), [sourceDrafts, query]);
   const templateRows = useMemo(
-    () => rows.filter((row) => row.content_key.startsWith("slot-template/")),
+    () => rows.filter(isCompositionTemplateRow),
     [rows]
   );
   const filteredTemplateRows = useMemo(
@@ -2878,6 +2889,7 @@ export function GeneratedContentAdminDashboard() {
 
   function navigateAdminPage(page: AdminDashboardPage, params?: URLSearchParams, options: { keepEditorOpen?: boolean } = {}) {
     setIsCreateMenuOpen(false);
+    setIsMobileNavOpen(false);
     window.scrollTo({ top: 0, left: 0, behavior: "auto" });
     if (!options.keepEditorOpen) {
       closeEditor();
@@ -4059,7 +4071,7 @@ export function GeneratedContentAdminDashboard() {
   }
 
   const nav = (
-    <aside className="admin-sidebar">
+    <aside className="admin-sidebar" data-mobile-open={isMobileNavOpen ? "true" : "false"}>
       <a className="admin-brand" href="#review-queue" onClick={() => navigateAdminPage("reviewQueue")}>
         <span className="admin-brand-mark">TL</span>
         <span>
@@ -4067,12 +4079,25 @@ export function GeneratedContentAdminDashboard() {
           <small>Phrasebank admin</small>
         </span>
       </a>
-      <nav className="admin-nav" aria-label="Content operations">
+      <button
+        className="admin-mobile-nav-toggle"
+        type="button"
+        aria-controls="admin-content-navigation"
+        aria-expanded={isMobileNavOpen}
+        aria-label={isMobileNavOpen ? "Close Content Studio navigation" : "Open Content Studio navigation"}
+        onClick={() => setIsMobileNavOpen((open) => !open)}
+      >
+        <span>{adminPageTitle(activePage)}</span>
+        {isMobileNavOpen
+          ? <X size={18} aria-hidden="true" />
+          : <span className="admin-mobile-nav-icon" aria-hidden="true"><i /><i /><i /></span>}
+      </button>
+      <nav id="admin-content-navigation" className="admin-nav" aria-label="Content operations">
         <section className="admin-nav-section" aria-label="Content">
           <p className="admin-eyebrow">Content</p>
           {primaryAdminNavItems.map((item) => {
             const Icon = item.icon;
-            const isActive = item.page === "templates" ? isCompositionPage(activePage) : activePage === item.page;
+            const isActive = item.page === "compositionMap" ? isCompositionPage(activePage) : activePage === item.page;
             return (
               <button key={item.page} type="button" onClick={() => navigateAdminPage(item.page)} aria-current={isActive ? "page" : undefined}>
                 <Icon size={16} aria-hidden="true" />
@@ -4727,6 +4752,16 @@ export function GeneratedContentAdminDashboard() {
               </aside>
             </section>
           </section>
+        )}
+
+        {activePage === "compositionMap" && (
+          <Suspense fallback={<div className="admin-empty">Loading Composition Map…</div>}>
+            <CompositionMapWorkspace
+              rows={visibleRows}
+              onEditRow={(row) => openRow(row as AdminGeneratedContentRow)}
+              editor={renderEditor()}
+            />
+          </Suspense>
         )}
 
         {activePage === "templates" && (

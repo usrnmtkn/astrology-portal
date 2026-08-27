@@ -62,6 +62,7 @@ for (const marker of forbiddenEntryMarkers) {
 const expectedDynamicEntries = [
   "src/AspectPatternDiagnostics.tsx",
   "src/AspectPatternWriteups.tsx",
+  "src/CompositionMapWorkspace.tsx",
   "src/ReportFulfillmentAdminPanel.tsx"
 ];
 for (const key of expectedDynamicEntries) {
