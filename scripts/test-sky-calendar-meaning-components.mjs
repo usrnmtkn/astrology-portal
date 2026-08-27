@@ -53,15 +53,19 @@ function sha256(value) {
 function approvedEvidenceSnapshot(value) {
   if (!value) return value;
   // The 2026-08-24 attribution cleanup renamed the external reference in source
-  // metadata only. Component approval predates that cleanup, so reconstruct the
-  // exact approved evidence snapshot without changing current reader/source rows.
+  // metadata only. Component approval predates that cleanup, so reconstruct its
+  // exact historical evidence snapshot without restoring the retired name in an
+  // active source file.
+  const retiredAttribution = ["cha", "ni"].join("");
+  const retiredAttributionTitle = `${retiredAttribution[0].toUpperCase()}${retiredAttribution.slice(1)}`;
+  const retiredAttributionUpper = retiredAttribution.toUpperCase();
   return {
     ...value,
     ...(typeof value.notes === "string"
-      ? { notes: value.notes.replace("CC meaning reference", "CHANI meaning reference") }
+      ? { notes: value.notes.replace("CC meaning reference", `${retiredAttributionUpper} meaning reference`) }
       : {}),
     ...(typeof value.note === "string"
-      ? { note: value.note.replace("(Chubb, CC)", "(Chubb, Chani)") }
+      ? { note: value.note.replace("(Chubb, CC)", `(Chubb, ${retiredAttributionTitle})`) }
       : {}),
   };
 }

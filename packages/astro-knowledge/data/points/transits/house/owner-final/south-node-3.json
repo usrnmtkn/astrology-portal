@@ -16,7 +16,7 @@
   "approvalMarker": "exact_owner_approved",
   "provenance": {
     "sourcePath": "packages/astro-knowledge/sources/authored/four-body/TLDR-Node-Chiron-Lilith-House-Transits-FINAL.md",
-    "sourceSha256": "b7632ebb28e8bfdddf58af753ade101888bb5b857595e47ebc87521e8b60dbdd",
+    "sourceSha256": "9f366d0b67bff36d49907aa5dac4c4bd4667dc343f37a97ba83b50b72b47b785",
     "sourceHeading": "South Node — 3H",
     "generation": "deterministic-markdown-parse"
   },

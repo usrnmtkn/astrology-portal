@@ -66,10 +66,10 @@
   },
   "counts": {
     "byBucket": {
-      "AUTHORITY_RESOLVED": 366,
+      "AUTHORITY_RESOLVED": 368,
       "AUTO_MERGE_EXACT": 0,
       "AUTO_MERGE_NORMALIZED": 0,
-      "COMPOSED_ONLY": 2146,
+      "COMPOSED_ONLY": 2144,
       "OWNER_DECISION_REQUIRED": 0,
       "SINGLE_SOURCE": 0,
       "SOURCE_GAP": 394
@@ -93,8 +93,8 @@
         "gap": 547
       },
       "you": {
-        "authored": 366,
-        "composed": 2146,
+        "authored": 367,
+        "composed": 2145,
         "gap": 394
       }
     },
@@ -161,8 +161,8 @@
       "gap": 547
     },
     "you": {
-      "authored": 366,
-      "composed": 2146,
+      "authored": 367,
+      "composed": 2145,
       "gap": 394
     }
   },
@@ -216,10 +216,10 @@
   ],
   "schema": "tldr-astro-canonical-content-migration-report/v1",
   "sourceReachability": {
-    "canonicalUnit": 378,
+    "canonicalUnit": 380,
     "compositionIngredient": 24,
-    "eligibleExactRows": 402,
-    "explicitAllowlist": 0,
+    "eligibleExactRows": 443,
+    "explicitAllowlist": 39,
     "failures": 0,
     "original371": {
       "canonicalUnit": 354,

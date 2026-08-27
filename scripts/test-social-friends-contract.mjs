@@ -796,10 +796,15 @@ assert.match(
   /listSocialNotifications[\s\S]*accepted your request[\s\S]*dismissNotification/,
   "Acceptance notifications must be visible and dismissible."
 );
+assert.doesNotMatch(
+  socialFriendsPanel,
+  /nextFriends\.length === 0[\s\S]*onSelectView(?:Ref)?(?:\.current)?\("charts", "replace"\)/,
+  "An empty or transiently unavailable Circle must stay selected instead of masquerading as an empty friend list."
+);
 assert.match(
   socialFriendsPanel,
-  /initialViewResolvedRef[\s\S]*activeViewRef\.current === "circle" && nextFriends\.length === 0[\s\S]*onSelectViewRef\.current\("charts", "replace"\)/,
-  "Friends must default to Charts once when the initial Circle is empty without preventing later Circle selection."
+  /Friends could not load\. Your connections are still saved\.[\s\S]*Try again/,
+  "A failed Circle load must explain that connections remain saved and expose an explicit retry."
 );
 assert.match(
   socialFriendsPanel,

@@ -25,6 +25,11 @@ const viteSource = fs.readFileSync(path.join(repoRoot, "apps/web/vite.config.ts"
 const ephemerisSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/services/ephemeris.ts"), "utf8");
 const webSwissEphemerisData = fs.readFileSync(path.join(repoRoot, "apps/web/public/wasm/swisseph.data"));
 const readerStylesSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/styles.css"), "utf8");
+const reportRouteSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/routes/ReportRoute.tsx"), "utf8");
+const reportFixtureEntrySource = fs.readFileSync(
+  path.join(repoRoot, "apps/web/src/components/reports/ReportArticleFixtureEntry.tsx"),
+  "utf8"
+);
 const friendsStylesSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/styles/friends.css"), "utf8");
 const friendDetailStylesSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/styles/friends-detail.css"), "utf8");
 const friendChartModalStylesSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/styles/friends-chart-modal.css"), "utf8");
@@ -283,6 +288,21 @@ assert.doesNotMatch(
   readerStylesSource,
   /lunar-calendar\.css/u,
   "Calendar-only CSS must not remain in the reader startup stylesheet."
+);
+assert.doesNotMatch(
+  readerStylesSource,
+  /report-article\.css/u,
+  "Report-only CSS must not remain in the reader startup stylesheet."
+);
+assert.match(
+  reportRouteSource,
+  /import "\.\.\/styles\/report-article\.css";/u,
+  "The lazy report route must own its production article stylesheet."
+);
+assert.match(
+  reportFixtureEntrySource,
+  /import "\.\.\/\.\.\/styles\/report-article\.css";/u,
+  "The standalone report fixture must explicitly own its article stylesheet."
 );
 assert.match(
   readerStylesSource,

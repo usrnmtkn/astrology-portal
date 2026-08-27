@@ -204,7 +204,8 @@ function checkString({ filePath, source, fieldPath, value, exactOwnerApproved = 
         filePath,
         line,
         fieldPath,
-        excerpt: truncate(value)
+        excerpt: truncate(value),
+        exactOwnerApproved
       });
     }
   }
@@ -218,7 +219,8 @@ function checkString({ filePath, source, fieldPath, value, exactOwnerApproved = 
         filePath,
         line,
         fieldPath,
-        excerpt: truncate(value)
+        excerpt: truncate(value),
+        exactOwnerApproved
       });
     }
   }
@@ -233,7 +235,8 @@ function checkString({ filePath, source, fieldPath, value, exactOwnerApproved = 
       filePath,
       line,
       fieldPath,
-      excerpt: truncate(value)
+      excerpt: truncate(value),
+      exactOwnerApproved
     });
   }
 
@@ -246,7 +249,8 @@ function checkString({ filePath, source, fieldPath, value, exactOwnerApproved = 
       filePath,
       line,
       fieldPath,
-      excerpt: truncate(value)
+      excerpt: truncate(value),
+      exactOwnerApproved
     });
   }
 
@@ -363,6 +367,34 @@ for (const filePath of allFiles) {
 
 const blockers = allFindings.filter((finding) => finding.severity === "BLOCKER");
 const warnings = allFindings.filter((finding) => finding.severity === "WARNING");
+
+if (process.env.EDITORIAL_QA_SUMMARY_JSON === "1") {
+  const countBy = (values, keyFor) => Object.fromEntries(
+    [...values.reduce((counts, value) => {
+      const key = keyFor(value);
+      counts.set(key, (counts.get(key) ?? 0) + 1);
+      return counts;
+    }, new Map()).entries()].sort((left, right) => right[1] - left[1])
+  );
+  const warningFingerprints = new Set(warnings.map((finding) => `${finding.check}\u0000${finding.excerpt}`));
+
+  console.log(JSON.stringify({
+    filesScanned: allFiles.length,
+    stringsScanned: scannedStrings,
+    blockers: blockers.length,
+    warnings: warnings.length,
+    uniqueWarningFingerprints: warningFingerprints.size,
+    mirroredOrRepeatedWarnings: warnings.length - warningFingerprints.size,
+    exactOwnerApprovedWarnings: warnings.filter((finding) => finding.exactOwnerApproved).length,
+    exactOwnerApprovedWarningDetails: warnings.filter((finding) => finding.exactOwnerApproved),
+    byCheck: countBy(warnings, (finding) => finding.check),
+    byFile: countBy(warnings, (finding) => path.relative(root, finding.filePath)),
+    mechanicallyActionable: warnings.filter((finding) => (
+      finding.check === "repeated-word" || finding.check === "mechanical-pairing"
+    ))
+  }, null, 2));
+  process.exit(blockers.length > 0 ? 1 : 0);
+}
 
 if (process.env.EDITORIAL_QA_JSON === "1") {
   console.log(JSON.stringify({
