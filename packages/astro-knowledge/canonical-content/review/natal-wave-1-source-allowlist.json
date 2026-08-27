@@ -9,6 +9,13 @@
       "evidence": "The Phase-1 unit kinds are natal placement, natal aspect, natal angle-sign, and natal empty-house. The new-moon phase reader is a separately routed lunation surface."
     },
     {
+      "entryType": "source-row-family",
+      "sourceKeyPrefix": "fallback-hook/natal-you-placement-complete-final/",
+      "expectedSourceCount": 39,
+      "disposition": "runtime-composite-override-outside-atomic-placement-units",
+      "evidence": "renderFallback.mjs resolves these exact owner-approved sign-plus-house passages before the separate placement-sign and placement-house units. They are already routed reader content, but one composite passage cannot be represented as either atomic unit without changing its meaning or falsely splitting its approval."
+    },
+    {
       "entryType": "semantic-unit-family",
       "semanticIdentity": "natal/angle-sign/descendant/*",
       "expectedUnitCount": 12,

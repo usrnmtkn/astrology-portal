@@ -10,6 +10,9 @@ const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), ".."
 const readJson = (relativePath) => JSON.parse(fs.readFileSync(path.join(repoRoot, relativePath), "utf8"));
 const source = readJson("apps/web/src/content/fallbackArchitectureV3/source-rows/transit-synastry-rows-v1.json");
 const record = readJson("packages/astro-knowledge/review/friends-owner-signoff-untraced-ruling-2026-08-13.json");
+const mechanicalCorrection = readJson(
+  "packages/astro-knowledge/review/lilith-house-1-headline-mechanical-correction-2026-08-27.json"
+);
 const wordingFields = ["headline", "body", "body_you", "body_they", "body_sky"];
 const sha256 = (value) => crypto.createHash("sha256").update(value).digest("hex");
 const targetFamilies = Object.keys(record.counts.byFamily);
@@ -22,8 +25,19 @@ const targetRows = familyRows.filter((row) => (
 const postRulingRows = familyRows.filter((row) => row.approval?.approvedAt > record.recordedAt);
 const readerPayload = targetRows.map((row) => [
   row.contentKey,
-  Object.fromEntries(wordingFields.filter((field) => row[field] !== undefined).map((field) => [field, row[field]]))
+  Object.fromEntries(wordingFields.filter((field) => row[field] !== undefined).map((field) => [
+    field,
+    row.contentKey === mechanicalCorrection.contentKey && field === mechanicalCorrection.field
+      ? mechanicalCorrection.before
+      : row[field]
+  ]))
 ]);
+
+const correctedRow = familyRows.find((row) => row.contentKey === mechanicalCorrection.contentKey);
+assert.equal(mechanicalCorrection.authority, "User-authorized editorial QA repair");
+assert.equal(mechanicalCorrection.classification, "repeated-word grammar correction");
+assert.equal(mechanicalCorrection.meaningChanged, false);
+assert.equal(correctedRow?.headline, mechanicalCorrection.after);
 
 assert.equal(record.authority, "Owner ruling, 2026-08-13: accept both levels.");
 assert.deepEqual(record.acceptedLevels, ["exact_owner_approved", "owner_signoff_untraced"]);

@@ -20,6 +20,7 @@ const suites = [
       "playwright.config.ts",
       "tests/visual/content-dashboard-admin-user-flows.spec.ts"
     ],
+    baseURL: "http://127.0.0.1:4175",
     logFile: "content-dashboard-admin-user-flows.log"
   },
   {
@@ -41,7 +42,11 @@ const shellQuote = (value) => {
   return `"${value.replaceAll("\\", "\\\\").replaceAll('"', '\\"')}"`;
 };
 
-const commandLabel = (suite) => [suite.command, ...suite.args].map(shellQuote).join(" ");
+const commandLabel = (suite) =>
+  [suite.baseURL ? `PLAYWRIGHT_BASE_URL=${suite.baseURL}` : null, suite.command, ...suite.args]
+    .filter(Boolean)
+    .map(shellQuote)
+    .join(" ");
 
 const countMatches = (output, pattern) => {
   const matches = [...output.matchAll(pattern)];
@@ -77,7 +82,7 @@ const runSuite = async (suite) =>
   new Promise((resolve) => {
     const child = spawn(suite.command, suite.args, {
       cwd: process.cwd(),
-      env: process.env,
+      env: suite.baseURL ? { ...process.env, PLAYWRIGHT_BASE_URL: suite.baseURL } : process.env,
       stdio: ["ignore", "pipe", "pipe"]
     });
 

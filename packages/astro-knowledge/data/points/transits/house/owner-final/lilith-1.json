@@ -5,7 +5,7 @@
   "kind": "house",
   "transiting": "lilith",
   "house": 1,
-  "headline": "The version of you you muted",
+  "headline": "The version of yourself you muted",
   "body": "Black Moon Lilith spends about nine months in your 1st house, making it almost impossible to keep hiding the parts of yourself you toned down to please others. You might stop softening your opinions, refuse to dress for anyone else's approval, or stop laughing off things that bother you. That sudden edge is useful; it shows exactly where you have been compromising your personality.\n\nThe trap is picking fights just to prove a point. Acting out is not the same thing as being free. Restore the parts of yourself you hid because they belong to you, not just to shock an audience.",
   "authorityClass": "owner-approved-prose",
   "surfacePermission": [
@@ -16,7 +16,7 @@
   "approvalMarker": "exact_owner_approved",
   "provenance": {
     "sourcePath": "packages/astro-knowledge/sources/authored/four-body/TLDR-Node-Chiron-Lilith-House-Transits-FINAL.md",
-    "sourceSha256": "b7632ebb28e8bfdddf58af753ade101888bb5b857595e47ebc87521e8b60dbdd",
+    "sourceSha256": "9f366d0b67bff36d49907aa5dac4c4bd4667dc343f37a97ba83b50b72b47b785",
     "sourceHeading": "Lilith — 1H",
     "generation": "deterministic-markdown-parse"
   },

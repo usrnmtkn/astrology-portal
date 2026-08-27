@@ -909,30 +909,28 @@ function verifyImportedMirror(expectedRows, expectedCounts, importedRows) {
     && JSON.stringify(mirrorComparable(expectedByKey.get(key))) !== JSON.stringify(mirrorComparable(importedByKey.get(key)))
   ));
 
-  for (const [bucket, expected] of Object.entries(expectedCounts)) {
+  const countMismatches = Object.entries(expectedCounts).flatMap(([bucket, expected]) => {
     const actual = liveCounts[bucket];
-
-    if (actual !== expected) {
-      throw new Error(`Dashboard mirror count mismatch for ${bucket}: expected ${expected}, received ${actual}.`);
-    }
-  }
-
-  if (missingKeys.length || staleKeys.length) {
-    throw new Error(
-      `Dashboard mirror key mismatch: ${missingKeys.length} missing, ${staleKeys.length} stale.`
-    );
-  }
-
-  if (importedRows.length !== expectedRows.length) {
-    throw new Error(
-      `Dashboard mirror row mismatch: expected ${expectedRows.length}, received ${importedRows.length}.`
-    );
-  }
-
-  if (changedKeys.length) {
-    throw new Error(
-      `Dashboard mirror content mismatch: ${changedKeys.length} rows differ (${changedKeys.slice(0, 10).join(", ")}).`
-    );
+    return actual === expected ? [] : [{ bucket, expected, actual }];
+  });
+  if (
+    countMismatches.length
+    || missingKeys.length
+    || staleKeys.length
+    || importedRows.length !== expectedRows.length
+    || changedKeys.length
+  ) {
+    throw new Error(`Dashboard mirror mismatch:\n${JSON.stringify({
+      expectedRows: expectedRows.length,
+      importedRows: importedRows.length,
+      countMismatches,
+      missingCount: missingKeys.length,
+      missingKeys: missingKeys.slice(0, 50),
+      staleCount: staleKeys.length,
+      staleKeys: staleKeys.slice(0, 50),
+      changedCount: changedKeys.length,
+      changedKeys: changedKeys.slice(0, 50)
+    }, null, 2)}`);
   }
 
   return liveCounts;
@@ -981,7 +979,14 @@ fs.writeFileSync(outPath, `${JSON.stringify({
 }, null, 2)}\n`);
 
 console.log(`materialized ${rows.length} V3 dashboard rows -> ${path.relative(repoRoot, outPath)}`);
-console.log(JSON.stringify({ packageManifest }, null, 2));
+console.log(JSON.stringify({
+  packageManifest: {
+    packageVersion: packageManifest.packageVersion,
+    contentHash: packageManifest.contentHash,
+    keyManifestHash: packageManifest.keyManifestHash,
+    keyCount: packageManifest.keyCount
+  }
+}, null, 2));
 console.log(JSON.stringify(counts, null, 2));
 
 if (apply) {

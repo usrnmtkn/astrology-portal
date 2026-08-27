@@ -2187,14 +2187,14 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(preview).toContainText("Leo and Aquarius can return to this: The connection works best when both people say what they need directly.");
     await expect(preview.locator(".admin-composition-variable.variable-fact").first()).toBeVisible();
     const inlineHook = preview.locator(".admin-composition-variable.variable-hook").filter({ hasText: "The connection works best" });
-    await expect(inlineHook).toHaveAttribute("data-variable-action", /Edit Closing line/);
+    await expect(inlineHook).toHaveAttribute("data-variable-action", /Edit Closing Line/);
     await inlineHook.hover();
     await inlineHook.click();
     let editor = page.getByRole("dialog", { name: "Generated content editor" });
     await expect(editor.getByLabel("Content key")).toHaveValue("fallback-hook/compatibility-closing/shared");
     await editor.getByRole("button", { name: "Close" }).click();
     await detail.getByRole("tab", { name: "Main template" }).click();
-    await expect(detail.locator(".admin-composition-variable-token.variable-hook")).toHaveAttribute("data-variable-action", /Edit Closing line/);
+    await expect(detail.locator(".admin-composition-variable-token.variable-hook")).toHaveAttribute("data-variable-action", /Edit Closing Line/);
     await detail.getByRole("tab", { name: "Reader preview" }).click();
     const renderedCopyBounds = await preview.getByText("Leo and Aquarius can return to this: The connection works best when both people say what they need directly.").boundingBox();
     expect(renderedCopyBounds?.y).toBeLessThan(900);

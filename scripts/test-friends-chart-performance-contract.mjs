@@ -230,6 +230,16 @@ assert.match(
   "Friends data loading must reuse authentication verification for the active access token."
 );
 assert.match(
+  verifiedAuthUserMatch[0],
+  /if \(error\) \{\s*throw error;\s*\}/,
+  "A failed server verification must not be cached as a signed-out user."
+);
+assert.match(
+  verifiedAuthUserMatch[0],
+  /request\.promise\.catch\(\(\) => \{[\s\S]*verifiedAuthUserRequest = null;/,
+  "A failed server verification must clear the token cache so focus and Retry can recover."
+);
+assert.match(
   authSource,
   /export async function getAuthAccount\(\)[\s\S]*const user = await getVerifiedAuthUser\(supabase\);/,
   "Account bootstrap must reuse the shared verified-user request instead of repeating auth verification."
@@ -268,9 +278,19 @@ assert.doesNotMatch(
   /await Promise\.all\(\[\s*loadOwnSocialProfile\(\),\s*listSocialFriends\(\)/,
   "The visible Friends list must not wait for the own-profile query."
 );
+assert.doesNotMatch(
+  socialFriendsPanelSource,
+  /activeViewRef\.current === "circle" && nextFriends\.length === 0[\s\S]*"charts"/,
+  "An empty or recovering Circle must remain selectable instead of being silently replaced by Charts."
+);
+assert.match(
+  socialFriendsPanelSource,
+  /Friends could not load\. Your connections are still saved\.[\s\S]*Try again/,
+  "Transient Friends failures must preserve the selected view and offer a retry."
+);
 assert.match(
   socialCoreRefreshMatch.groups.body,
-  /publishFriends\(nextFriends\);\s*void profileRequest;\s*void listSocialFriendRequests\(\)/,
+  /publishFriends\(nextFriends\);\s*setLoadError\(""\);\s*void profileRequest;\s*void listSocialFriendRequests\(\)/,
   "Pending requests must start only after the visible Friends list is published."
 );
 assert.doesNotMatch(

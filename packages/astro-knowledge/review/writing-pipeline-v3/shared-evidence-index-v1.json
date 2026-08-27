@@ -1,6 +1,6 @@
 {
   "version": "shared-evidence-standard-v1-2026-08-13",
-  "generatedAt": "2026-08-25T21:21:16.618Z",
+  "generatedAt": "2026-08-27T16:44:15.817Z",
   "keyFormat": "planet|sign; *|* is globally eligible register evidence",
   "rolePriority": {
     "scene": [
@@ -18,11 +18,11 @@
     "data/writing/owner-supplied-structural-exemplars.json"
   ],
   "counts": {
-    "entries": 5933,
+    "entries": 5935,
     "meaning": 2224,
     "register": 1758,
-    "scene": 425,
-    "argument": 1180,
+    "scene": 426,
+    "argument": 1181,
     "phrase": 346,
     "planetSignKeys": 247
   },
@@ -3328,7 +3328,8 @@
         "register:matrix:register:8be9dfab74f2"
       ],
       "scene": [
-        "scene:matrix:scene:ec14c141c0c1"
+        "scene:matrix:scene:ec14c141c0c1",
+        "scene:serving:fallback-hook/sky-sign-copy/sun/virgo"
       ],
       "argument": [
         "argument:matrix:argument_candidate:827d9770e605",
@@ -3338,7 +3339,8 @@
         "argument:fallback-hook/sky-placement-hook/sun/virgo",
         "argument:fallback-hook/sky-placement-lived/sun/virgo",
         "argument:fallback-hook/sky-placement-tagline/sun/virgo",
-        "argument:fallback-hook/sky-placement-turn/sun/virgo"
+        "argument:fallback-hook/sky-placement-turn/sun/virgo",
+        "argument:fallback-hook/sky-sign-copy/sun/virgo"
       ],
       "phrase": []
     },
@@ -143445,6 +143447,39 @@
       "text": "After moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, the Sun enters Scorpio on {{entryDate}}, and what has been politely avoided becomes hard to ignore. The Sun governs identity, vitality, and who we are beneath the roles. Scorpio is the sign of depth, truth, and what happens beneath the surface. We ask a direct question about a vague unease. An old hurt is finally given its real name. The Sun in Scorpio keeps looking when an easy answer no longer explains what is happening. That focus can restore energy once the real problem is named.\n\nThat focus has a cost when uncertainty starts to feel intolerable. We study a short reply for what it left out, ask another question after a clear answer, or keep a crucial feeling private while waiting for someone else to prove they can be trusted. The search for truth becomes a test that was never explained. Each guarded response then looks like evidence that there was something to hide.\n\nThis transit can show where honesty restores strength and where pain hardens into control. We say less, watch more, and call the distance protection. A real concern becomes suspicion once every gap is filled with the worst explanation. Then the conversation shifts away from what happened and toward defending against an accusation.\n\nBy {{exitDate}}, repeated tests and withheld answers can leave the original concern unresolved and make us more guarded than before."
     },
     {
+      "id": "scene:serving:fallback-hook/sky-sign-copy/sun/virgo",
+      "indexKey": "sun|virgo",
+      "planet": "sun",
+      "sign": "virgo",
+      "role": "scene",
+      "sourcePath": "data/writing/OWNER_APPROVED_EXAMPLES.jsonl",
+      "contentKey": "fallback-hook/sky-sign-copy/sun/virgo",
+      "family": "owner-approved-scene-evidence",
+      "governanceTier": "serving-review-status-approved",
+      "ownerApproved": true,
+      "ownerAuthored": false,
+      "generated": false,
+      "evidenceRole": "approved_serving_scene",
+      "sourceKind": "approved_serving_row",
+      "house": null,
+      "eventType": null,
+      "register": "second_person",
+      "store": null,
+      "themes": [],
+      "subjectTags": [],
+      "failureTags": [],
+      "copySha": null,
+      "sceneNouns": [
+        "contract",
+        "inbox",
+        "kitchen",
+        "message",
+        "schedule"
+      ],
+      "eligibleForWriterRegister": true,
+      "text": "After moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, the Sun enters Virgo on {{entryDate}}, and the difference between how something is supposed to work and how it actually works stops being easy to ignore. The Sun governs identity, vitality, and who you are underneath the roles you perform. Virgo is not tidiness. Virgo is the standard: the part of you that checks the invoice against the contract, notices the schedule needs nine hours in an eight-hour day, and reads the instructions everyone else skipped. While the Sun is here, being the one who notices can start to feel like who you are. That holds up until noticing becomes the job.\n\nCatching a mistake is useful, and useful gets remembered. Once you are the person who spots the error, the errors start arriving addressed to you. Drafts show up in your inbox to be read before they go out. A colleague stops checking their own numbers because you will catch it anyway. You may be working a second job nobody named, assembled from other people's near misses, and the reward is that nobody else has to think about it. The corrections still land on somebody, and that somebody starts to brace when your name appears on the message.\n\nThe Sun moved through Virgo from {{previousResidencyEntryDateWithYear}} to {{previousResidencyExitDateWithYear}}. If you were the one checking then, you probably still are, and the list is longer now.\n\nWatch what a small repair does. A cabinet door hangs crooked, so you take it off to fix the hinge, and with the door off you can see the frame is out of square, and once you are looking at the frame you notice the paint. Two hours later the door is on the floor and the kitchen is worse than when you started. A document does the same thing. You open it to fix one line, rewrite the section, find that the section above no longer matches, and send at midnight a version better than the four o'clock one in ways nobody will notice or pay for.\n\nIt shows up again in help you turn down. Someone offers to take a task, you explain how you do it, they do it their way, and you redo it once they have gone. They stop offering. You never asked them to stop. You made offering pointless.\n\nLeave one thing at good enough this month and see who complains. Name the hour a task should take before you start, then stop when the hour is up. Let someone else's version ship. Then watch what actually breaks, and who besides you can tell.\n\nBefore {{exitDate}}, the work will be better than it needed to be. You may be the only person who can tell."
+    },
+    {
       "id": "scene:serving:fallback-hook/sky-sign-copy/uranus/gemini",
       "indexKey": "uranus|gemini",
       "planet": "uranus",
@@ -163161,6 +163196,33 @@
       "sceneNouns": [],
       "eligibleForWriterRegister": true,
       "text": "After moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, the Sun enters Taurus on {{entryDate}}, and attention shifts to what can be built slowly enough to last. The Sun governs identity, vitality, and who we are beneath the roles. Taurus is the sign of steadiness, comfort, and the tangible pleasures of life. We give a loose idea a solid shape. We repair what is useful, return to something we are making, and keep a small practice long enough to feel its effect. Confidence grows through visible results rather than speed or applause.\n\nThat patience has a cost when any interruption starts to feel like a threat. We keep the routine after it stops restoring energy. We defend a preference as though changing it would erase the self that chose it. We make one more adjustment to an unfinished piece, then another, because finished means visible. Each decision preserves comfort for another day while making change harder.\n\nWe protect the familiar in one small choice after another. A useful object becomes too precious to use. A familiar method survives because learning another one feels wasteful. A plan keeps its old shape even after the conditions around it change. Each choice avoids discomfort today. Together they send energy into preserving what exists, while the creation that still matters remains unfinished.\n\nBefore {{exitDate}}, what we refuse to release can consume more energy than the change we were trying to avoid."
+    },
+    {
+      "id": "argument:fallback-hook/sky-sign-copy/sun/virgo",
+      "indexKey": "sun|virgo",
+      "planet": "sun",
+      "sign": "virgo",
+      "role": "argument",
+      "sourcePath": "data/writing/OWNER_APPROVED_EXAMPLES.jsonl",
+      "contentKey": "fallback-hook/sky-sign-copy/sun/virgo",
+      "family": "fallback-hook/sky-sign-copy",
+      "governanceTier": "owner-approved-serving",
+      "ownerApproved": true,
+      "ownerAuthored": false,
+      "generated": false,
+      "evidenceRole": "argument",
+      "sourceKind": "current-owner-approved-placement-article",
+      "house": null,
+      "eventType": null,
+      "register": "second_person",
+      "store": null,
+      "themes": [],
+      "subjectTags": [],
+      "failureTags": [],
+      "copySha": null,
+      "sceneNouns": [],
+      "eligibleForWriterRegister": true,
+      "text": "After moving through {{priorSign}} from {{priorSignEntryDate}} to {{priorSignExitDate}}, the Sun enters Virgo on {{entryDate}}, and the difference between how something is supposed to work and how it actually works stops being easy to ignore. The Sun governs identity, vitality, and who you are underneath the roles you perform. Virgo is not tidiness. Virgo is the standard: the part of you that checks the invoice against the contract, notices the schedule needs nine hours in an eight-hour day, and reads the instructions everyone else skipped. While the Sun is here, being the one who notices can start to feel like who you are. That holds up until noticing becomes the job.\n\nCatching a mistake is useful, and useful gets remembered. Once you are the person who spots the error, the errors start arriving addressed to you. Drafts show up in your inbox to be read before they go out. A colleague stops checking their own numbers because you will catch it anyway. You may be working a second job nobody named, assembled from other people's near misses, and the reward is that nobody else has to think about it. The corrections still land on somebody, and that somebody starts to brace when your name appears on the message.\n\nThe Sun moved through Virgo from {{previousResidencyEntryDateWithYear}} to {{previousResidencyExitDateWithYear}}. If you were the one checking then, you probably still are, and the list is longer now.\n\nWatch what a small repair does. A cabinet door hangs crooked, so you take it off to fix the hinge, and with the door off you can see the frame is out of square, and once you are looking at the frame you notice the paint. Two hours later the door is on the floor and the kitchen is worse than when you started. A document does the same thing. You open it to fix one line, rewrite the section, find that the section above no longer matches, and send at midnight a version better than the four o'clock one in ways nobody will notice or pay for.\n\nIt shows up again in help you turn down. Someone offers to take a task, you explain how you do it, they do it their way, and you redo it once they have gone. They stop offering. You never asked them to stop. You made offering pointless.\n\nLeave one thing at good enough this month and see who complains. Name the hour a task should take before you start, then stop when the hour is up. Let someone else's version ship. Then watch what actually breaks, and who besides you can tell.\n\nBefore {{exitDate}}, the work will be better than it needed to be. You may be the only person who can tell."
     },
     {
       "id": "argument:fallback-hook/sky-sign-copy/uranus/gemini",

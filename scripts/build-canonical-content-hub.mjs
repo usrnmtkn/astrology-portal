@@ -694,6 +694,17 @@ for (const slot of slots) {
 const allowlistBySource = new Map(sourceAllowlist.entries
   .filter((entry) => entry.entryType === "source-row")
   .map((entry) => [entry.sourceKey, entry]));
+for (const entry of sourceAllowlist.entries.filter((candidate) => candidate.entryType === "source-row-family")) {
+  const matchingRows = (sourceRows.hookRows ?? []).filter((row) => row.contentKey.startsWith(entry.sourceKeyPrefix));
+  if (matchingRows.length !== entry.expectedSourceCount) {
+    throw new Error(
+      `SOURCE_ALLOWLIST_FAMILY_COUNT_MISMATCH: ${entry.sourceKeyPrefix} expected ${entry.expectedSourceCount}, found ${matchingRows.length}`
+    );
+  }
+  for (const row of matchingRows) {
+    allowlistBySource.set(row.contentKey, entry);
+  }
+}
 const readerEligibleExactRows = (sourceRows.hookRows ?? []).filter((row) => (
   row.reader_only === true
   && row.render_policy === "reader-only-exact-lived-v1"

@@ -273,7 +273,7 @@ This transit asks for quiet time, therapy, journaling, or just stepping away fro
 # BLACK MOON LILITH
 
 ## Lilith — 1H
-**The version of you you muted**
+**The version of yourself you muted**
 
 Black Moon Lilith spends about nine months in your 1st house, making it almost impossible to keep hiding the parts of yourself you toned down to please others. You might stop softening your opinions, refuse to dress for anyone else's approval, or stop laughing off things that bother you. That sudden edge is useful; it shows exactly where you have been compromising your personality.
 

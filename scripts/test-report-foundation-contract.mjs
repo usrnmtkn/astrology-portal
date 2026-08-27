@@ -11,7 +11,9 @@ const [
   providerConfig,
   contentGeneration,
   generatedContent,
-  styles
+  styles,
+  reportRoute,
+  reportFixtureEntry
 ] = await Promise.all([
   read("apps/web/supabase/migrations/20260808120000_report_mode_year_ahead_surface.sql"),
   read("apps/web/supabase/migrations/20260808121000_user_reports.sql"),
@@ -20,7 +22,9 @@ const [
   read("api/_lib/provider-config.ts"),
   read("api/_lib/content-generation.ts"),
   read("apps/web/src/services/generatedContent.ts"),
-  read("apps/web/src/styles.css")
+  read("apps/web/src/styles.css"),
+  read("apps/web/src/routes/ReportRoute.tsx"),
+  read("apps/web/src/components/reports/ReportArticleFixtureEntry.tsx")
 ]);
 
 for (const table of ["generated_interpretations", "user_generated_interpretations"]) {
@@ -69,6 +73,8 @@ for (const subjectType of reportSubjectTypes.filter((value) => value !== "relati
 assert.match(contentGeneration, /type ContentMode = "feed" \| "in_depth" \| "article" \| "report";/u);
 assert.match(contentGeneration, /type Surface = .*\| "year_ahead";/u);
 assert.match(generatedContent, /GeneratedContentMode = "feed" \| "in_depth" \| "article" \| "report";/u);
-assert.match(styles, /\.\/styles\/report-article\.css/u);
+assert.doesNotMatch(styles, /\.\/styles\/report-article\.css/u);
+assert.match(reportRoute, /\.\.\/styles\/report-article\.css/u);
+assert.match(reportFixtureEntry, /\.\.\/\.\.\/styles\/report-article\.css/u);
 
 console.log("report foundation migration, subject-type, provider, runtime-type, and style contracts passed");

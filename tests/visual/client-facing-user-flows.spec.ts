@@ -1658,6 +1658,25 @@ test.describe("client-facing user flow case studies", () => {
     await assertNoClientErrors();
   });
 
+  test("Friends Circle stays selectable and retryable when social loading fails", async ({ page }) => {
+    await seedClientState(page, { profile: true });
+    await expectClientRouteLoads(page, "/#friends?tab=circle");
+
+    const circleTab = page.getByRole("tab", { name: "Circle · 0" });
+    const chartsTab = page.getByRole("tab", { name: "Charts · 0" });
+    await expect(circleTab).toHaveAttribute("aria-selected", "true");
+    await expect(page.getByRole("alert")).toContainText(
+      "Friends could not load. Your connections are still saved."
+    );
+    await expect(page.getByRole("button", { name: "Try again" })).toBeVisible();
+
+    await chartsTab.click();
+    await expect(chartsTab).toHaveAttribute("aria-selected", "true");
+    await circleTab.click();
+    await expect(circleTab).toHaveAttribute("aria-selected", "true");
+    await expect(page).toHaveURL(/#friends\?tab=circle$/u);
+  });
+
   test("friend chart section pills and overflow menu fit a narrow viewport", async ({ page }) => {
     const assertNoClientErrors = await expectNoClientErrors(page);
 
