@@ -1022,6 +1022,9 @@ test.describe("content dashboard admin user flow case studies", () => {
     }).toPass({ timeout: routeReadyTimeoutMs });
     await expect(contentSystemPanel.getByText("Content Level", { exact: true })).toHaveCount(0);
     await expect(editor.getByLabel("App display source")).toHaveCount(0);
+    const savebar = editor.locator(".admin-editor-savebar");
+    await expect(savebar).toContainText("All changes saved");
+    expect(await savebar.evaluate((element) => getComputedStyle(element).position)).toBe("sticky");
     const relatedPassages = editor.getByRole("region", { name: "Related reader horoscope passages" });
     await expect(relatedPassages).toBeVisible();
     await expect(relatedPassages).toContainText("House horoscopes");
@@ -1052,6 +1055,9 @@ test.describe("content dashboard admin user flow case studies", () => {
     await editor.getByLabel("Headline").fill("Sun in Cancer QA edit");
     await editor.getByLabel("Summary").fill("Updated summary from the visual admin editor.");
     await editor.getByLabel("Body").fill("Updated body from the visual admin editor.");
+    await expect(savebar).toContainText("Unsaved changes");
+    await expect(editor.getByLabel("Summary").locator("xpath=following-sibling::*[contains(@class, 'admin-field-metrics')]")).toContainText("7 words");
+    await expect(editor.getByLabel("Body").locator("xpath=following-sibling::*[contains(@class, 'admin-field-metrics')]")).toContainText("7 words");
     await editor.getByRole("button", { name: "Save" }).click();
 
     await expect.poll(() => generatedContentWrite).toMatchObject({

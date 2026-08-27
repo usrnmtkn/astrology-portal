@@ -5687,6 +5687,10 @@ export function GeneratedContentAdminDashboard() {
     const isTemplateDraft = draftIsTemplate(currentDraft);
     const isPackageDraft = draftIsFallbackArchitectureV3(currentDraft);
     const isGovernedSkyDraft = ["sky_aspect", "sky_placement"].includes(currentDraft.blockType);
+    const persistedDraft = selectedRow ? draftFromRow(selectedRow) : null;
+    const draftHasUnsavedChanges = persistedDraft
+      ? JSON.stringify(currentDraft) !== JSON.stringify(persistedDraft)
+      : Boolean(currentDraft.headline.trim() || currentDraft.summary.trim() || currentDraft.body.trim());
     const skyDraftHasUnsavedCopy = Boolean(selectedRow && isGovernedSkyDraft && (
       currentDraft.headline !== (selectedRow.headline ?? "")
       || currentDraft.summary !== (selectedRow.summary ?? "")
@@ -5970,6 +5974,10 @@ export function GeneratedContentAdminDashboard() {
       });
     };
     const fallbackHookEditorTitle = fallbackHookDisplayTitle(currentDraft.contentKey);
+    const fieldMetrics = (value: string) => {
+      const wordCount = value.trim() ? value.trim().split(/\s+/u).length : 0;
+      return `${wordCount} ${wordCount === 1 ? "word" : "words"} · ${value.length} ${value.length === 1 ? "character" : "characters"}`;
+    };
 
     return (
       <>
@@ -6016,6 +6024,7 @@ export function GeneratedContentAdminDashboard() {
               </button>
             )}
             <button type="button" onClick={closeEditor}>
+              <X size={16} aria-hidden="true" />
               Close
             </button>
           </div>
@@ -6587,7 +6596,8 @@ export function GeneratedContentAdminDashboard() {
           {!compiledSkyArticleEdition && !skyFallbackEditor && !(isVocabularyDraft && isPackageDraft) && (
             <label className="admin-review-copy-editor">
               <span>{isVocabularyDraft ? "Editor note or grouping detail" : isSkyArticleSourceDraft ? "TL;DR" : "Summary"}</span>
-              <textarea aria-label={isVocabularyDraft ? "Editor note or grouping detail" : isSkyArticleSourceDraft ? "Sky article TL;DR" : "Summary"} value={currentDraft.summary} onChange={(event) => setDraft({ ...currentDraft, summary: event.target.value })} placeholder={isVocabularyDraft ? "Optional: where this phrase should be used, tone notes, or related variants." : isSkyArticleSourceDraft ? "Write the explicit TL;DR for this article edition." : undefined} />
+              <textarea className="admin-copy-field-summary" aria-label={isVocabularyDraft ? "Editor note or grouping detail" : isSkyArticleSourceDraft ? "Sky article TL;DR" : "Summary"} value={currentDraft.summary} onChange={(event) => setDraft({ ...currentDraft, summary: event.target.value })} placeholder={isVocabularyDraft ? "Optional: where this phrase should be used, tone notes, or related variants." : isSkyArticleSourceDraft ? "Write the explicit TL;DR for this article edition." : undefined} />
+              <small className="admin-field-metrics">{fieldMetrics(currentDraft.summary)}</small>
               {isSkyArticleSourceDraft && <small className="admin-field-hint">Saved as non-serving source copy until the complete edition is compiled, reviewed, and published.</small>}
             </label>
           )}
@@ -6624,6 +6634,7 @@ export function GeneratedContentAdminDashboard() {
                 ? vocabularyHasTheyVersion ? "You version" : "Variable value"
                 : isVocabularyDraft ? "Reusable phrase text" : "Body"}</span>
               <textarea
+                className="admin-copy-field-body"
                 aria-label={isVocabularyDraft && isPackageDraft
                   ? vocabularyHasTheyVersion ? "You version" : "Variable value"
                   : isVocabularyDraft ? "Reusable phrase text" : "Body"}
@@ -6631,6 +6642,7 @@ export function GeneratedContentAdminDashboard() {
                 onChange={(event) => isVocabularyDraft ? updateVocabularyBody(event.target.value) : setDraft({ ...currentDraft, body: event.target.value })}
                 placeholder={isVocabularyDraft ? "Write the reusable wording or phrase pattern here." : undefined}
               />
+              <small className="admin-field-metrics">{fieldMetrics(currentDraft.body)}</small>
               {isVocabularyDraft && isPackageDraft && <small className="admin-field-hint">{vocabularyHasTheyVersion
                 ? "Used when the app speaks directly to the person reading their own chart."
                 : "This is the exact editable phrase the fallback resolver reads. Saving updates the stored package value and its dashboard copy together."}</small>}
@@ -6950,7 +6962,10 @@ export function GeneratedContentAdminDashboard() {
               <input aria-label="Block type" value={currentDraft.blockType} onChange={(event) => setDraft({ ...currentDraft, blockType: event.target.value })} disabled={isPackageDraft} />
             </label>
           </fieldset>}
-          {!compiledSkyArticleEdition && <div className="admin-toolbar-actions">
+          {!compiledSkyArticleEdition && <div className="admin-toolbar-actions admin-editor-savebar">
+            <span className={`admin-editor-save-state ${draftHasUnsavedChanges || isNewDraft ? "is-unsaved" : "is-saved"}`} aria-live="polite">
+              {isLoading ? "Saving…" : isNewDraft ? "New draft" : draftHasUnsavedChanges ? "Unsaved changes" : "All changes saved"}
+            </span>
             <button className="admin-primary-button" type="button" onClick={() => void saveDraft(isCmsSurfaceDraft && currentDraft.status === "LIVE" ? "DRAFT" : undefined)} disabled={isLoading || Boolean(compiledSkyArticleEdition)}>
               <Save size={16} aria-hidden="true" />
               Save
@@ -6962,17 +6977,17 @@ export function GeneratedContentAdminDashboard() {
             )}
             {!isPackageDraft && (
               <>
-                <button type="button" onClick={() => void saveDraft("REVIEWED")} disabled={isLoading}>
+                <button className="admin-review-button" type="button" onClick={() => void saveDraft("REVIEWED")} disabled={isLoading}>
                   <Check size={16} aria-hidden="true" />
                   Reviewed
                 </button>
                 {isGovernedSkyDraft && selectedRow ? (
-                  <button type="button" onClick={() => void approveAndScheduleSkyRow(selectedRow)} disabled={isLoading || skyDraftHasUnsavedCopy} title={skyDraftHasUnsavedCopy ? "Save and revalidate copy edits before approval." : currentDraft.blockType === "sky_placement" ? "Approve this copy for governed package import. This does not publish it." : "Approve this reusable card for calculated matching Sky configurations."}>
+                  <button className="admin-publish-button" type="button" onClick={() => void approveAndScheduleSkyRow(selectedRow)} disabled={isLoading || skyDraftHasUnsavedCopy} title={skyDraftHasUnsavedCopy ? "Save and revalidate copy edits before approval." : currentDraft.blockType === "sky_placement" ? "Approve this copy for governed package import. This does not publish it." : "Approve this reusable card for calculated matching Sky configurations."}>
                     <Check size={16} aria-hidden="true" />
                     {currentDraft.blockType === "sky_placement" ? "Approve for package" : "Approve & schedule"}
                   </button>
                 ) : (
-                  <button type="button" onClick={() => void saveDraft("LIVE")} disabled={isLoading || !cmsCanSignOff} title={!cmsCanSignOff ? "Fix the CMS template errors before Sign Off." : undefined}>
+                  <button className="admin-publish-button" type="button" onClick={() => void saveDraft("LIVE")} disabled={isLoading || !cmsCanSignOff} title={!cmsCanSignOff ? "Fix the CMS template errors before Sign Off." : undefined}>
                     <Check size={16} aria-hidden="true" />
                     Sign Off
                   </button>

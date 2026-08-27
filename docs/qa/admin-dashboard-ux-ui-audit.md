@@ -116,3 +116,28 @@ Expected:
 - Replace older duplicated CSS blocks with component classes once the dashboard component is split into smaller files.
 - Convert repeated ad-hoc action groups into explicit component classes: primary, secondary, success, danger.
 - Add visual regression snapshots for each admin page after the final visual direction is approved.
+
+## Form Workspace Follow-Up — 2026-08-26
+
+The Content Studio editor forms were reviewed again at desktop, narrow-drawer,
+and mobile sizes. The follow-up found that long-form inputs had too little
+hierarchy, publishing metadata created an unnecessarily tall single column,
+and the save/review/publish controls disappeared below long related-content
+workspaces.
+
+Changes applied:
+
+- Summary and body fields now use distinct editing heights so short framing
+  copy and long-form prose no longer look interchangeable.
+- Summary and body fields show live word and character counts.
+- Technical publishing and routing fields use a two-column desktop layout and
+  return to one column on mobile.
+- The editor action bar remains visible while the form scrolls and reports
+  saved, unsaved, new-draft, and saving states.
+- Review and publish actions have distinct semantic treatments while Save
+  remains the primary draft action.
+- Form controls have larger targets, clearer hover/focus/disabled states, and
+  more compact mobile drawer chrome.
+
+Regression coverage now checks the sticky action bar, saved/unsaved state, and
+field metrics in the existing Content Studio editor flow.
