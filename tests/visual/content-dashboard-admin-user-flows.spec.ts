@@ -2018,9 +2018,11 @@ test.describe("content dashboard admin user flow case studies", () => {
 
     await openAdminDeepLink("#composition-map");
     await expectAdminHeader(page, "Composition Map", "Admin / Composition / Map");
-    await expect(page.getByRole("heading", { name: "From destination to editable source" })).toBeVisible();
+    await expect(page.getByText("Read a representative surface first, then inspect and edit the template, sources, and calculated facts behind it.")).toBeVisible();
     await expect(page.getByRole("complementary", { name: "Composition templates" })).toContainText("Friends & relationships");
     await expect(page.getByRole("region", { name: "Selected template composition" }).getByRole("heading", { name: "Planet card" })).toBeVisible();
+    await expect(page.getByRole("region", { name: "Reader surface preview" })).toBeVisible();
+    await page.getByRole("tab", { name: "Assembly" }).click();
     await expect(page.getByRole("region", { name: "Template slots" })).toContainText("Reader Sign");
     await expect(page.getByRole("region", { name: "Template slots" })).toContainText("Provided by the app");
 
@@ -2062,7 +2064,7 @@ test.describe("content dashboard admin user flow case studies", () => {
       id: "qa-composition-map-template",
       content_key: "slot-template/compatibility/closing-card",
       headline: "Compatibility closing card template",
-      body: "{{readerSign}} and {{otherSign}} can return to this: {{closingLine}}",
+      body: "{{signATitle}} and {{signBTitle}} can return to this: {{closingLine}}",
       source_snapshot: { ...templateSeed.source_snapshot, contentFamily: "friends.compatibility.closing-card" }
     };
     const hookRow = {
@@ -2079,8 +2081,12 @@ test.describe("content dashboard admin user flow case studies", () => {
 
     const detail = page.getByRole("region", { name: "Selected template composition" });
     await expect(detail.getByRole("heading", { name: "Closing card" })).toBeVisible();
-    await expect(detail.getByText("Provided by the app").first()).toBeVisible();
-    await expect(detail.getByRole("button", { name: /Shared compatibility closing/ })).toBeVisible();
+    const preview = page.getByRole("region", { name: "Reader surface preview" });
+    await expect(preview.getByRole("heading", { name: "What the reader sees" })).toBeVisible();
+    await expect(preview).toContainText("Leo and Aquarius can return to this: The connection works best when both people say what they need directly.");
+    const renderedCopyBounds = await preview.getByText("Leo and Aquarius can return to this: The connection works best when both people say what they need directly.").boundingBox();
+    expect(renderedCopyBounds?.y).toBeLessThan(900);
+    await expect(preview.getByRole("button", { name: /Shared compatibility closing/ })).toBeVisible();
     await expectNoHorizontalOverflow(page, "Composition Map desktop");
     await mkdir(adminScreenshotDir, { recursive: true });
     await page.screenshot({
@@ -2091,7 +2097,7 @@ test.describe("content dashboard admin user flow case studies", () => {
 
     await page.setViewportSize({ width: 390, height: 844 });
     await expect(detail.getByRole("heading", { name: "Closing card" })).toBeVisible();
-    await expect(detail.getByRole("button", { name: /Shared compatibility closing/ })).toBeVisible();
+    await expect(preview.getByRole("button", { name: /Shared compatibility closing/ })).toBeVisible();
     await expectNoHorizontalOverflow(page, "Composition Map mobile");
     await page.screenshot({
       animations: "disabled",
@@ -2099,14 +2105,20 @@ test.describe("content dashboard admin user flow case studies", () => {
       path: path.join(adminScreenshotDir, "mobile-composition-map.png")
     });
 
-    await detail.getByRole("button", { name: "Edit template copy" }).click();
+    await detail.getByRole("button", { name: "Edit main template" }).click();
     let editor = page.getByRole("dialog", { name: "Generated content editor" });
     await expect(editor.getByLabel("Content key")).toHaveValue("slot-template/compatibility/closing-card");
     await editor.getByRole("button", { name: "Close" }).click();
 
-    await detail.getByRole("button", { name: /Shared compatibility closing/ }).click();
+    await preview.getByRole("button", { name: /Shared compatibility closing/ }).click();
     editor = page.getByRole("dialog", { name: "Generated content editor" });
     await expect(editor.getByLabel("Content key")).toHaveValue("fallback-hook/compatibility-closing/shared");
+    await editor.getByRole("button", { name: "Close" }).click();
+
+    await page.getByRole("tab", { name: "Main template" }).click();
+    await expect(page.getByRole("region", { name: "Main template" })).toContainText("{{signATitle}} and {{signBTitle}}");
+    await page.getByRole("tab", { name: "Assembly" }).click();
+    await expect(page.getByRole("region", { name: "Template slots" })).toContainText("Provided by the app");
     await assertNoBrowserErrors();
   });
 
