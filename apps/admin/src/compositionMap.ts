@@ -106,7 +106,16 @@ export function compositionDestination(row: CompositionMapRow) {
 
 export function compositionTemplateLabel(row: CompositionMapRow) {
   const destination = compositionDestination(row);
-  let label = text(row.headline) || humanize(row.content_key.split("/").at(-1) ?? "Template");
+  const planetVariant = row.content_key.match(/^fallback-template\/natal\.planet-in-sign\/([^/]+)$/u)?.[1];
+  let label = row.content_key === "fallback-template/natal.planet-in-sign"
+    ? "Any planet in any sign"
+    : row.content_key === "fallback-template/natal.node-in-sign"
+      ? "Lunar Node in any sign"
+      : row.content_key === "fallback-template/sky-placement-frame-v3"
+        ? "Planet in any sign"
+        : planetVariant
+          ? `${humanize(planetVariant)} in any sign`
+          : text(row.headline) || humanize(row.content_key.split("/").at(-1) ?? "Template");
   label = label
     .replace(/^compatibility\s+/iu, "")
     .replace(/^current[- ]sky\s+(?:aspect:\s*)?/iu, "")
@@ -137,6 +146,16 @@ function representativeExample(name: string, example: string) {
   if (normalized.split(/\s+/u).length <= 7 && /,\s+(?:and|or)\s+/iu.test(normalized)) return normalized.split(",")[0].trim();
   if (/\s+or\s+/iu.test(normalized)) return normalized.split(/\s+or\s+/iu)[0].trim();
   return normalized;
+}
+
+function representativeExampleForRow(row: CompositionMapRow, name: string, example: string) {
+  if (name === "planetTitle") {
+    const planetVariant = row.content_key.match(/^fallback-template\/natal\.planet-in-sign\/([^/]+)$/u)?.[1];
+    if (planetVariant) return humanize(planetVariant);
+    if (row.content_key === "fallback-template/natal.node-in-sign") return "North Node";
+    if (row.content_key === "fallback-template/sky-placement-frame-v3") return "Jupiter";
+  }
+  return representativeExample(name, example);
 }
 
 function previewSourceText(source: CompositionMapSource) {
@@ -215,7 +234,7 @@ function buildCompositionPreview(row: CompositionMapRow, slots: CompositionMapSl
       : "";
     values.set(slot.name, slot.requirement === "Optional"
       ? ""
-      : sourceValue || representativeExample(slot.name, slot.example));
+      : sourceValue || representativeExampleForRow(row, slot.name, slot.example));
   });
   const sources = slots.flatMap((slot) => slot.requirement !== "Optional" && slot.sources.length === 1 ? slot.sources : [])
     .filter((source, index, list) => list.findIndex((candidate) => candidate.row.id === source.row.id) === index);
@@ -238,7 +257,7 @@ function buildCompositionPreview(row: CompositionMapRow, slots: CompositionMapSl
       .map((slot) => ({
         label: slot.label,
         name: slot.name,
-        value: representativeExample(slot.name, slot.example)
+        value: representativeExampleForRow(row, slot.name, slot.example)
       })),
     sources
   };
@@ -278,12 +297,13 @@ export function buildCompositionMap(rows: CompositionMapRow[]): CompositionMapTe
     if (/^slot-template\/[2-6][a-z]$/iu.test(row.content_key)) {
       issues.push("Legacy template ID needs an explicit human destination and name.");
     }
+    const preview = buildCompositionPreview(row, slots);
     return {
       destination: compositionDestination(row),
       description: text(row.summary) || "No editor-facing template description has been saved.",
       issues,
       label: compositionTemplateLabel(row),
-      preview: buildCompositionPreview(row, slots),
+      preview,
       row,
       slots
     };
