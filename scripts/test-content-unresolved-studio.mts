@@ -15,12 +15,19 @@ import {
   assertCurrentResolutionIssue,
   normalizeContentStudioResolution
 } from "../api/admin/content-unresolved-resolutions";
+import {
+  assertCurrentSourceDecision,
+  normalizeContentStudioSourceDecision
+} from "../api/admin/content-source-repair-decisions";
+import { contentSourceRepairPlan } from "../api/admin/content-source-repair-plans";
 
 const dashboardSource = fs.readFileSync(new URL("../apps/admin/src/GeneratedContentAdminDashboard.tsx", import.meta.url), "utf8");
 const reviewSource = fs.readFileSync(new URL("../apps/admin/src/UnresolvedContentReview.tsx", import.meta.url), "utf8");
 const endpointSource = fs.readFileSync(new URL("../api/admin/content-unresolved.ts", import.meta.url), "utf8");
 const resolutionEndpointSource = fs.readFileSync(new URL("../api/admin/content-unresolved-resolutions.ts", import.meta.url), "utf8");
+const sourceDecisionEndpointSource = fs.readFileSync(new URL("../api/admin/content-source-repair-decisions.ts", import.meta.url), "utf8");
 const resolutionMigration = fs.readFileSync(new URL("../apps/web/supabase/migrations/20260825100000_content_studio_issue_resolutions.sql", import.meta.url), "utf8");
+const sourceDecisionMigration = fs.readFileSync(new URL("../apps/web/supabase/migrations/20260827010000_content_studio_source_repair_decisions.sql", import.meta.url), "utf8");
 const report = loadContentUnresolvedReport() as UnresolvedContentReport;
 
 assert.equal(report.count, report.items.length, "The Studio inventory count must match the governed queue items.");
@@ -50,6 +57,14 @@ assert.match(sunVirgoIssue.aiRequest, /Approval cannot clear this hold/u);
 assert.match(sunVirgoIssue.aiRequest, new RegExp(`Issue ID: ${sunVirgoIssue.issueId}`, "u"));
 assert.match(sunVirgoIssue.aiRequest, /content-studio-resolution\/v1/u);
 assert.match(sunVirgoIssue.aiRequest, /Do not change serving copy or review_status values/u);
+const sunVirgoRepairPlan = contentSourceRepairPlan(sunVirgoIssue.contentKey);
+assert.ok(sunVirgoRepairPlan, "The known source repair must expose its governed replacement in Content Studio.");
+assert.equal(sunVirgoIssue.repairPlan?.candidateSha256, sunVirgoRepairPlan.candidateSha256);
+assert.equal(sunVirgoRepairPlan.reviewStatus, "needs_review");
+assert.equal(sunVirgoRepairPlan.ownerApproved, false);
+assert.equal(sunVirgoRepairPlan.promotionAuthorized, false);
+assert.match(sunVirgoRepairPlan.body, /Virgo is not tidiness\. Virgo is the standard/u);
+assert.equal(sunVirgoRepairPlan.body, Object.values(sunVirgoRepairPlan.article).join("\n\n"));
 assert.match(editorialIssue.aiRequest, /no editable Content Library row exists/u);
 assert.equal(
   unresolvedContentIssues([...sunVirgoIssue.records].reverse() as typeof report.items)[0].issueId,
@@ -73,6 +88,25 @@ assert.doesNotThrow(() => assertCurrentResolutionIssue(normalizedResolution));
 assert.throws(() => normalizeContentStudioResolution({ ...normalizedResolution, issueId: "wrong" }), /issueId is invalid/u);
 assert.throws(() => assertCurrentResolutionIssue({ ...normalizedResolution, contentKey: "wrong/key" }), /does not match/u);
 
+const normalizedSourceDecision = normalizeContentStudioSourceDecision({
+  schema: "content-studio-source-decision/v1",
+  issueId: sunVirgoIssue.issueId,
+  contentKey: sunVirgoIssue.contentKey,
+  action: "approve-replacement",
+  candidateSha256: sunVirgoRepairPlan.candidateSha256,
+  approvalStatement: sunVirgoRepairPlan.approvalStatement,
+  confirmExactText: true
+});
+assert.doesNotThrow(() => assertCurrentSourceDecision(normalizedSourceDecision));
+assert.throws(
+  () => assertCurrentSourceDecision({ ...normalizedSourceDecision, candidateSha256: "0".repeat(64) }),
+  /replacement changed/u
+);
+assert.throws(
+  () => normalizeContentStudioSourceDecision({ ...normalizedSourceDecision, confirmExactText: false }),
+  /Exact-text confirmation is required/u
+);
+
 const loadedReport = await loadUnresolvedContentReport(
   "header.payload.signature",
   async (_input, init) => {
@@ -83,8 +117,10 @@ const loadedReport = await loadUnresolvedContentReport(
 assert.equal(loadedReport.count, report.count, "The authenticated Studio loader must return the governed queue.");
 
 assert.match(reviewSource, /Resolve content holds/u);
-assert.match(reviewSource, /Approval will not clear this hold\./u);
-assert.match(reviewSource, /Copy repair request/u);
+assert.match(reviewSource, /Review exact replacements and authorize source repairs here/u);
+assert.match(reviewSource, /Review replacement/u);
+assert.match(reviewSource, /Approve exact replacement/u);
+assert.match(reviewSource, /Copy implementation request/u);
 assert.match(reviewSource, /Record response/u);
 assert.match(reviewSource, /No matching issues\./u, "The page must include a clear empty-state message.");
 
@@ -102,5 +138,9 @@ assert.match(resolutionEndpointSource, /assertCurrentResolutionIssue\(input\)/u,
 assert.doesNotMatch(resolutionEndpointSource, /review_status|review_state|headline|summary/u, "Resolution recording must not mutate editorial or serving fields.");
 assert.match(resolutionMigration, /revoke all on table public\.content_studio_issue_resolutions from public, anon, authenticated/u);
 assert.match(resolutionMigration, /cannot change serving copy or editorial approval state/u);
+assert.match(sourceDecisionEndpointSource, /confirmExactText/u, "Source decisions must require an explicit exact-text confirmation.");
+assert.match(sourceDecisionEndpointSource, /assertCurrentSourceDecision\(input\)/u, "Source decisions must match the current issue and replacement hash.");
+assert.match(sourceDecisionMigration, /revoke all on table public\.content_studio_source_decisions from public, anon, authenticated/u);
+assert.match(sourceDecisionMigration, /cannot directly mutate or serve copy/u);
 
 console.log(`Content Studio unresolved inventory contract passed (${report.count} items).`);

@@ -10669,6 +10669,229 @@ body,
   color: var(--admin-muted);
 }
 
+.admin-dashboard .admin-unresolved-diagnosis {
+  margin-top: var(--admin-space-md);
+}
+
+.admin-dashboard .admin-unresolved-diagnosis summary {
+  color: var(--admin-ui-muted);
+  cursor: pointer;
+  font-size: var(--admin-ui-type-hint);
+}
+
+.admin-dashboard .admin-unresolved-diagnosis small {
+  display: block;
+  margin-top: var(--admin-space-md);
+  max-width: 54ch;
+}
+
+.admin-dashboard .admin-source-repair-backdrop {
+  align-items: center;
+  background: rgba(3, 5, 4, 0.82);
+  display: flex;
+  inset: 0;
+  justify-content: center;
+  padding: 28px;
+  position: fixed;
+  z-index: 90;
+}
+
+.admin-dashboard .admin-source-repair-dialog {
+  background: var(--admin-ui-surface-1, #111513);
+  border: 1px solid var(--admin-ui-border-strong);
+  border-radius: var(--admin-ui-radius-lg);
+  box-shadow: 0 28px 80px rgba(0, 0, 0, 0.48);
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  max-height: min(920px, calc(100dvh - 56px));
+  max-width: 920px;
+  overflow: hidden;
+  width: 100%;
+}
+
+.admin-dashboard .admin-source-repair-header {
+  align-items: start;
+  border-bottom: 1px solid var(--admin-ui-border);
+  display: flex;
+  gap: var(--admin-space-xl);
+  justify-content: space-between;
+  padding: 22px 24px;
+}
+
+.admin-dashboard .admin-source-repair-header > div {
+  display: grid;
+  gap: var(--admin-space-sm);
+  min-width: 0;
+}
+
+.admin-dashboard .admin-source-repair-header span,
+.admin-dashboard .admin-source-repair-copy span,
+.admin-dashboard .admin-source-repair-provenance span {
+  color: var(--admin-ui-subtle);
+  font-family: var(--font-label);
+  font-size: var(--admin-ui-type-caption);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.admin-dashboard .admin-source-repair-header strong {
+  color: var(--admin-ui-text);
+  font-family: var(--font-heading);
+  font-size: clamp(1.3rem, 2vw, 1.75rem);
+  line-height: 1.15;
+}
+
+.admin-dashboard .admin-source-repair-header code,
+.admin-dashboard .admin-source-repair-provenance code,
+.admin-dashboard .admin-source-repair-approved code {
+  color: var(--admin-ui-muted);
+  overflow-wrap: anywhere;
+}
+
+.admin-dashboard .admin-source-repair-header > button {
+  align-items: center;
+  background: transparent;
+  border: 1px solid var(--admin-ui-border);
+  border-radius: 50%;
+  color: var(--admin-ui-muted);
+  display: inline-flex;
+  flex: 0 0 auto;
+  font-size: 1.4rem;
+  height: 38px;
+  justify-content: center;
+  line-height: 1;
+  padding: 0 0 2px;
+  width: 38px;
+}
+
+.admin-dashboard .admin-source-repair-body {
+  display: grid;
+  gap: 22px;
+  overflow-y: auto;
+  padding: 24px;
+}
+
+.admin-dashboard .admin-source-repair-provenance {
+  background: var(--admin-ui-surface-2);
+  border: 1px solid var(--admin-ui-border);
+  border-radius: var(--admin-ui-radius);
+  display: grid;
+  gap: var(--admin-space-lg);
+  padding: 18px;
+}
+
+.admin-dashboard .admin-source-repair-provenance > div {
+  display: grid;
+  gap: var(--admin-space-sm);
+}
+
+.admin-dashboard .admin-source-repair-provenance p {
+  color: var(--admin-ui-muted);
+  line-height: 1.55;
+  margin: 0;
+}
+
+.admin-dashboard .admin-source-repair-copy {
+  display: grid;
+  gap: 22px;
+}
+
+.admin-dashboard .admin-source-repair-copy > div {
+  border-bottom: 1px solid var(--admin-ui-border);
+  display: grid;
+  gap: var(--admin-space-md);
+  padding-bottom: 22px;
+}
+
+.admin-dashboard .admin-source-repair-copy p {
+  color: var(--admin-ui-text);
+  font-family: var(--font-body);
+  font-size: 1rem;
+  line-height: 1.65;
+  margin: 0;
+}
+
+.admin-dashboard .admin-source-repair-footer {
+  background: rgba(17, 21, 19, 0.98);
+  border-top: 1px solid var(--admin-ui-border);
+  display: grid;
+  gap: var(--admin-space-lg);
+  padding: 18px 24px;
+}
+
+.admin-dashboard .admin-source-repair-confirmation {
+  align-items: start;
+  color: var(--admin-ui-text);
+  display: grid;
+  gap: var(--admin-space-lg);
+  grid-template-columns: auto minmax(0, 1fr);
+  line-height: 1.5;
+}
+
+.admin-dashboard .admin-source-repair-confirmation input {
+  height: 18px;
+  margin: 3px 0 0;
+  width: 18px;
+}
+
+.admin-dashboard .admin-source-repair-approved {
+  background: var(--admin-ui-primary-soft);
+  border: 1px solid rgba(63, 207, 142, 0.3);
+  border-radius: var(--admin-ui-radius);
+  display: grid;
+  gap: var(--admin-space-sm);
+  padding: 14px 16px;
+}
+
+.admin-dashboard .admin-source-repair-approved strong {
+  color: var(--admin-ui-primary);
+}
+
+.admin-dashboard .admin-source-repair-approved span,
+.admin-dashboard .admin-source-repair-approved code {
+  font-size: var(--admin-ui-type-hint);
+}
+
+.admin-dashboard .admin-source-repair-error {
+  color: var(--admin-ui-danger, #f29a8f);
+  margin: 0;
+}
+
+.admin-dashboard .admin-source-repair-footer > .admin-toolbar-actions {
+  justify-content: flex-end;
+}
+
+@media (max-width: 720px) {
+  .admin-dashboard .admin-source-repair-backdrop {
+    align-items: end;
+    padding: 0;
+  }
+
+  .admin-dashboard .admin-source-repair-dialog {
+    border-bottom: 0;
+    border-left: 0;
+    border-radius: var(--admin-ui-radius-lg) var(--admin-ui-radius-lg) 0 0;
+    border-right: 0;
+    max-height: 94dvh;
+  }
+
+  .admin-dashboard .admin-source-repair-header,
+  .admin-dashboard .admin-source-repair-body,
+  .admin-dashboard .admin-source-repair-footer {
+    padding-left: 18px;
+    padding-right: 18px;
+  }
+
+  .admin-dashboard .admin-source-repair-footer {
+    padding-bottom: calc(18px + env(safe-area-inset-bottom));
+  }
+
+  .admin-dashboard .admin-source-repair-footer > .admin-toolbar-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
 @media (max-width: 720px) {
   .admin-dashboard .admin-unresolved-content-table {
     min-width: 0;
