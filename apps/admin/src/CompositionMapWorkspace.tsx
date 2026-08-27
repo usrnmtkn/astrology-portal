@@ -1,4 +1,4 @@
-import { BookOpenText, Code2, Database, Eye, FileText, Flag, Network, Search, Sparkles, X } from "lucide-react";
+import { BookOpenText, Database, FileText, Flag, Search, Sparkles, X } from "lucide-react";
 import { useMemo, useState, type ReactNode } from "react";
 import { buildCompositionMap, type CompositionMapRow } from "./compositionMap";
 
@@ -139,13 +139,13 @@ export default function CompositionMapWorkspace({ editor, onEditRow, rows }: Pro
 
               <div className="admin-composition-view-tabs" role="tablist" aria-label="Composition views">
                 <button type="button" role="tab" aria-selected={view === "preview"} className={view === "preview" ? "active" : ""} onClick={() => setView("preview")}>
-                  <Eye size={16} aria-hidden="true" /> Reader preview
+                  Reader preview
                 </button>
                 <button type="button" role="tab" aria-selected={view === "template"} className={view === "template" ? "active" : ""} onClick={() => setView("template")}>
-                  <Code2 size={16} aria-hidden="true" /> Main template
+                  Main template
                 </button>
                 <button type="button" role="tab" aria-selected={view === "assembly"} className={view === "assembly" ? "active" : ""} onClick={() => setView("assembly")}>
-                  <Network size={16} aria-hidden="true" /> Assembly
+                  Assembly
                 </button>
               </div>
 
