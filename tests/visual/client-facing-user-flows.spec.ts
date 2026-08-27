@@ -1180,6 +1180,10 @@ test.describe("client-facing user flow case studies", () => {
     await expect(page.getByLabel("Profile summary")).toBeVisible();
     await expect(page.getByText("Marie Satori")).toBeVisible();
     await expect(
+      page.locator(".daily-horoscope-summary__moon-tags"),
+      "Daily Moon context tags stay hidden on reader cards"
+    ).toHaveCount(0);
+    await expect(
       page.locator(".soul-roadmap-card, .career-archetype-card"),
       "Soul's Path and Career Directions stay hidden from the personal chart"
     ).toHaveCount(0);
