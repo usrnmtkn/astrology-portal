@@ -12,6 +12,8 @@ import skySignCopySunV1 from "../apps/web/src/content/fallbackArchitectureV3/sou
 import skyPlacementOwnerApprovedSourceV1 from "../apps/web/src/content/fallbackArchitectureV3/source-rows/sky-placement-owner-approved-fallbacks-v1.json" with { type: "json" };
 import skyPlacementOwnerApprovedFallbacksV1 from "../apps/web/src/content/fallbackArchitectureV3/bundled-sky-placement-owner-approved-reader-v1.json" with { type: "json" };
 import skyPlacementServingManifest from "../apps/web/src/content/fallbackArchitectureV3/authored-inputs/sky-placement-serving-manifest-v1.json" with { type: "json" };
+import sunVirgoCandidate from "../packages/astro-knowledge/review/sun-virgo-spine-rewrite-v1/candidate.json" with { type: "json" };
+import sunVirgoOwnerApproval from "../packages/astro-knowledge/review/sun-virgo-spine-rewrite-v1/OWNER-APPROVAL-2026-08-27.json" with { type: "json" };
 import contentRoleContract from "../apps/web/src/content/fallbackArchitectureV3/contracts/CONTENT-ROLE-CONTRACT.json" with { type: "json" };
 import {
   createTransitSynastryRenderer,
@@ -614,7 +616,12 @@ assert.match(
 );
 
 assert.equal(sunLeo.headline, "The Sun in Leo", "Package Sun-in-Leo headline must remain factual.");
-assert.equal(skySignCopySunV1.superseded_rows.length, 13);
+assert.equal(skySignCopySunV1.superseded_rows.length, 14);
+assert.equal(
+  skySignCopySunV1.superseded_rows.filter((row) => row.contentKey === "fallback-hook/sky-sign-copy/sun/virgo").length,
+  2,
+  "Both prior Sun-in-Virgo passages must remain in superseded history."
+);
 assert.ok(
   skySignCopySunV1.superseded_rows.some((row) => (
     row.contentKey === "fallback-hook/sky-sign-copy/sun/leo"
@@ -775,20 +782,54 @@ assert.equal(
   "2306bbd9d80e99c9dc1c1939c0c82ca962263b3bdf0e778d2c46085352b39d8e",
   "The rendered Venus-in-Libra article must retain its owner-approved SHA-256."
 );
+const sunVirgoV1 = skyPlacementOwnerApprovedSourceV1.rows.find((row) => (
+  row.contentKey === "fallback-hook/sky-sign-copy/sun/virgo"
+));
+assert.ok(sunVirgoV1, "The exact owner-approved Sun-in-Virgo source row must exist.");
+assert.equal(sunVirgoV1.review_status, "approved");
+assert.equal(Object.hasOwn(sunVirgoV1, "try_this"), false, "Sun in Virgo must not revive the retired Try this section.");
+assert.deepEqual(
+  {
+    opening: sunVirgoV1.opening,
+    tension: sunVirgoV1.tension,
+    development: sunVirgoV1.development,
+    close: sunVirgoV1.close
+  },
+  sunVirgoCandidate.article,
+  "The serving source must preserve every approved Sun-in-Virgo article field byte-for-byte."
+);
+assert.equal(sunVirgoV1.body_you, sunVirgoCandidate.body_you);
+assert.equal(sunVirgoV1.body_sha256, sunVirgoOwnerApproval.bodySha256);
+assert.equal(sunVirgoV1.word_count, sunVirgoOwnerApproval.wordCount);
+assert.equal(
+  crypto.createHash("sha256").update(JSON.stringify({ article: sunVirgoCandidate.article, body: sunVirgoV1.body_you })).digest("hex"),
+  sunVirgoOwnerApproval.candidateSha256,
+  "The promoted Sun-in-Virgo payload must retain the exact hash approved in Content Studio."
+);
 const sunVenusServingRelease = skyPlacementServingManifest.releases.find((release) => (
   release.release_id === "sky-placement-sun-venus-chiron-nodes-26"
 ));
 assert.ok(sunVenusServingRelease, "The existing Sun/Venus serving release must remain present.");
 assert.deepEqual(
   sunVenusServingRelease.approved_payload_replacements,
-  [{
-    contentKey: "fallback-hook/sky-sign-copy/venus/libra",
-    statement: "Owner approval, Venus in Libra, exact wording.",
-    approved_at: "2026-08-14",
-    source: "packages/astro-knowledge/review/venus-libra-owner-approved-v1/OWNER-APPROVAL-2026-08-14.md",
-    approved_render_sha256: "2306bbd9d80e99c9dc1c1939c0c82ca962263b3bdf0e778d2c46085352b39d8e"
-  }],
-  "The serving manifest must carry the exact owner-approved Venus replacement record."
+  [
+    {
+      contentKey: "fallback-hook/sky-sign-copy/venus/libra",
+      statement: "Owner approval, Venus in Libra, exact wording.",
+      approved_at: "2026-08-14",
+      source: "packages/astro-knowledge/review/venus-libra-owner-approved-v1/OWNER-APPROVAL-2026-08-14.md",
+      approved_render_sha256: "2306bbd9d80e99c9dc1c1939c0c82ca962263b3bdf0e778d2c46085352b39d8e"
+    },
+    {
+      contentKey: "fallback-hook/sky-sign-copy/sun/virgo",
+      statement: sunVirgoOwnerApproval.ownerStatement,
+      approved_at: sunVirgoOwnerApproval.approvedAt,
+      source: "packages/astro-knowledge/review/sun-virgo-spine-rewrite-v1/OWNER-APPROVAL-2026-08-27.json",
+      approved_payload_sha256: sunVirgoOwnerApproval.candidateSha256,
+      payload_hash_algorithm: sunVirgoOwnerApproval.candidateHashAlgorithm
+    }
+  ],
+  "The serving manifest must carry both exact owner-approved payload replacement records."
 );
 assert.equal(lilithAries.tagline, "Anger stops going somewhere else", "Owner-approved Lilith placement taglines must be reader-eligible.");
 assert.equal(
@@ -945,7 +986,6 @@ const fillOwnerFallback = (value, facts) => value.replace(/\{\{([\w.]+)\}\}/gu, 
 for (const row of skyPlacementOwnerApprovedFallbacksV1.rows.filter((candidate) => (
   candidate.render_policy === "sky-placement-continuous-v2"
   && candidate.contentKey !== "fallback-hook/sky-sign-copy/saturn/capricorn"
-  && candidate.contentKey !== "fallback-hook/sky-sign-copy/sun/virgo"
 ))) {
   const [, , planet, sign] = row.contentKey.split("/");
   const facts = {
@@ -988,11 +1028,10 @@ assert.match(
   /If you build your confidence entirely on applause, you will always need somebody nearby to provide it\.$/u
 );
 
-assert.throws(
-  () => renderer.renderSkyPlacement({ planet: "sun", sign: "virgo", ...ownerFallbackDateFacts }),
-  /SOURCE_GAP: continuous sky placement sign copy sun\/virgo/u,
-  "The known Sun in Virgo contract failure must stay quarantined until replacement prose is owner-approved."
-);
+const renderedSunVirgo = renderer.renderSkyPlacement({ planet: "sun", sign: "virgo", ...ownerFallbackDateFacts });
+assert.equal(renderedSunVirgo.contentKey, "fallback-hook/sky-sign-copy/sun/virgo");
+assert.match(renderedSunVirgo.body, /Virgo is not tidiness\. Virgo is the standard/u);
+assert.match(renderedSunVirgo.body, /You may be the only person who can tell\.$/u);
 
 const recoveredJupiterScorpio = renderer.renderSkyPlacement({
   planet: "jupiter",

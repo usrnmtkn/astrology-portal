@@ -25,12 +25,9 @@ const EXACT_APPROVAL_REQUIRED_PREFIXES = [
   "daily-glance-variant/"
 ];
 
-// These exact rows are known to fail the current owner writing contract. Keep
-// their historical approval intact, but do not distribute them while their
-// replacements remain needs_review.
-const QUARANTINED_CONTENT_KEYS = new Set([
-  "fallback-hook/sky-sign-copy/sun/virgo"
-]);
+// Rows with a known owner-writing-contract failure remain here until their
+// exact approved replacement is applied to the canonical source lineage.
+const QUARANTINED_CONTENT_KEYS = new Set<string>([]);
 
 const EXACT_SYNASTRY_ASPECTS = new Set([
   "conjunction",

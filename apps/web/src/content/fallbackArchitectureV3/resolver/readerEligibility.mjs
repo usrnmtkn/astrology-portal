@@ -14,9 +14,7 @@ const EXACT_APPROVAL_REQUIRED_PREFIXES = [
   "daily-glance-variant/"
 ];
 
-const QUARANTINED_CONTENT_KEYS = new Set([
-  "fallback-hook/sky-sign-copy/sun/virgo"
-]);
+const QUARANTINED_CONTENT_KEYS = new Set([]);
 
 const EXACT_SYNASTRY_ASPECTS = new Set([
   "conjunction",
