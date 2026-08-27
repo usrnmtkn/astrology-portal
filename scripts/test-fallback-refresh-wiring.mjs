@@ -11,6 +11,7 @@ import {
   createFallbackRenderer,
   createTransitSynastryRenderer
 } from "../apps/web/src/content/fallbackArchitectureV3/dist/tldr-content.js";
+import { renderSynastryAspect as renderSynastryAspectReference } from "../apps/web/src/content/fallbackArchitectureV3/resolver/renderTransitSynastry.mjs";
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const packageDir = path.join(repoRoot, "apps/web/src/content/fallbackArchitectureV3");
@@ -172,7 +173,7 @@ const counts = {
   sourceMaterial: sourceRows.fallbackSourceRows.length
 };
 
-assert.equal(PACKAGE_VERSION, "v3-2026-08-27a");
+assert.equal(PACKAGE_VERSION, "v3-2026-08-27b");
 assert.ok(counts.authoredCards > 0, "Package must include authored transit/synastry cards.");
 assert.ok(counts.fallbackHooks > 0, "Package must include fallback hooks.");
 assert.ok(counts.vocabulary > 0, "Package must include vocabulary rows.");
@@ -473,6 +474,26 @@ const outerConnection = transitRenderer.renderSynastryAspect({
   aspect: "trine",
   otherName: "Sofia"
 });
+const synastryTemplate = templates.templates.find((template) => template.contentKey === "fallback-template/synastry.aspect-v3");
+assert.ok(synastryTemplate, "The authored synastry-pair template contract must exist.");
+assert.deepEqual(
+  synastryTemplate.requiredSlots,
+  ["planetATitle", "planetBTitle", "aspectAdj", "otherName", "pairSentences"],
+  "The template must declare only the headline facts and selected authored pair body used by runtime."
+);
+assert.deepEqual(synastryTemplate.optionalSlots, []);
+assert.equal(synastryTemplate.body, "{{pairSentences}}");
+assert.doesNotMatch(JSON.stringify(synastryTemplate), /closingLine|synAspectLine/u);
+assert.deepEqual(
+  outerConnection,
+  renderSynastryAspectReference({
+    planetA: "venus",
+    planetB: "pluto",
+    aspect: "trine",
+    otherName: "Sofia"
+  }),
+  "The Node reference resolver and shipped browser artifact must return the same authored synastry unit."
+);
 assert.equal(outerConnection.headline, "Your Venus trine Sofia's Pluto");
 assert.equal(
   outerConnection.body,

@@ -10,7 +10,7 @@ export * from "./knowledgeMatrixV13.browser";
 // Version stamp: the app must surface this in its debug/about screen and the dashboard
 // admin must show it next to the import status, so the owner can verify at a glance
 // that the running app and the dashboard are on the current package.
-export const PACKAGE_VERSION = "v3-2026-08-27a";
+export const PACKAGE_VERSION = "v3-2026-08-27b";
 
 type PackageRow = {
   contentKey: string;
@@ -61,7 +61,7 @@ function stablePackageValue(value: unknown): unknown {
   );
 }
 
-function packageRowsByKey(rows: PackageRow[]) {
+function packageRowsByKey(rows: PackageRow[], allowRowsWithoutReviewState = false) {
   const readerEligible = new Set(["approved_reuse", "approved", "reviewed"]);
   const candidates = new Map<string, PackageRow[]>();
   for (const row of rows) {
@@ -73,7 +73,8 @@ function packageRowsByKey(rows: PackageRow[]) {
   return [...candidates.values()]
     .map((keyed) => [...keyed]
       .reverse()
-      .find((row) => readerEligible.has(String(row.review_status ?? row.reviewStatus ?? ""))))
+      .find((row) => allowRowsWithoutReviewState
+        || readerEligible.has(String(row.review_status ?? row.reviewStatus ?? ""))))
     .filter((row): row is PackageRow => Boolean(row))
     .sort((first, second) => first.contentKey.localeCompare(second.contentKey));
 }
@@ -112,7 +113,10 @@ export function createPackageManifest(
     ...packageRowsByKey(bundle.rowsFile.hookRows ?? []).map((row) => ({ bucket: "hook", row })),
     ...packageRowsByKey(bundle.rowsFile.vocabularyRows ?? []).map((row) => ({ bucket: "vocabulary", row })),
     ...packageRowsByKey(packageDailyGlanceVariantRows(bundle.rowsFile.dailyGlanceVariants)).map((row) => ({ bucket: "daily-glance-variant", row })),
-    ...packageRowsByKey(bundle.templatesFile.templates).map((row) => ({ bucket: "template", row }))
+    // Templates are package-owned structural contracts and do not carry the
+    // row-level review status used by authored prose. They must still enter the
+    // hash so a slot or body change invalidates stale dashboard/cache bundles.
+    ...packageRowsByKey(bundle.templatesFile.templates, true).map((row) => ({ bucket: "template", row }))
   ];
   const keys = records.map(({ bucket, row }) => `${bucket}:${row.contentKey}`);
 
