@@ -76,7 +76,7 @@ import { templateVariableReferences } from "./templateVariableReference";
 import { articleAppDestination, isSkyWriteupContentRow } from "./articleWorkspace";
 import { contentWiringStatus, isPublishedButUnwired } from "./contentWiringStatus";
 import { fallbackHookDisplayTitle } from "./fallbackHookTitle";
-import { isCompositionTemplateRow } from "./compositionMap";
+import { isCompositionTemplateRow } from "./compositionTemplateClassifier";
 import {
   natalPlacementHouses,
   natalPlacementLabel,
@@ -689,7 +689,7 @@ function adminPageDescription(activePage: AdminDashboardPage) {
     case "content":
       return "Find and edit every saved content row.";
     case "compositionMap":
-      return "Trace and edit how templates, slots, hooks, phrases, and calculated facts assemble reader copy.";
+      return "Read a representative surface first, then inspect and edit the template, sources, and calculated facts behind it.";
     case "knowledge":
       return "Edit backup copy used when primary content is unavailable.";
     case "vocabulary":
