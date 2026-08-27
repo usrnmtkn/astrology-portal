@@ -11485,6 +11485,119 @@ body,
   line-height: var(--leading-description);
 }
 
+.admin-dashboard .admin-composition-variable-legend {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--admin-space-lg);
+}
+
+.admin-dashboard .admin-composition-variable-legend span {
+  align-items: center;
+  color: var(--admin-ui-muted);
+  display: inline-flex;
+  font-size: var(--admin-ui-type-caption);
+  gap: var(--admin-space-sm);
+}
+
+.admin-dashboard .admin-composition-variable-legend span::before {
+  background: currentColor;
+  border-radius: var(--admin-radius-pill);
+  content: "";
+  height: 8px;
+  width: 8px;
+}
+
+.admin-dashboard .variable-fact {
+  --composition-variable-bg: rgba(56, 189, 248, 0.12);
+  --composition-variable-color: #7dd3fc;
+}
+
+.admin-dashboard .variable-phrase {
+  --composition-variable-bg: rgba(167, 139, 250, 0.13);
+  --composition-variable-color: #c4b5fd;
+}
+
+.admin-dashboard .variable-hook {
+  --composition-variable-bg: rgba(245, 158, 11, 0.13);
+  --composition-variable-color: #f6c177;
+}
+
+.admin-dashboard .variable-copy {
+  --composition-variable-bg: rgba(74, 222, 128, 0.12);
+  --composition-variable-color: #86efac;
+}
+
+.admin-dashboard .admin-composition-variable-legend [class*="variable-"] {
+  color: var(--composition-variable-color);
+}
+
+.admin-dashboard .admin-composition-variable,
+.admin-dashboard .admin-composition-variable-token {
+  background: var(--composition-variable-bg);
+  border: 0;
+  border-bottom: 1px dashed currentColor;
+  border-radius: 3px;
+  box-shadow: none;
+  color: var(--composition-variable-color);
+  display: inline;
+  font: inherit;
+  letter-spacing: inherit;
+  line-height: inherit;
+  margin: 0;
+  min-height: 0;
+  min-width: 0;
+  padding: 0 2px;
+  position: relative;
+  text-align: inherit;
+  text-transform: inherit;
+}
+
+.admin-dashboard .admin-composition-variable:hover,
+.admin-dashboard .admin-composition-variable:focus-visible,
+.admin-dashboard .admin-composition-variable-token:hover,
+.admin-dashboard .admin-composition-variable-token:focus-visible {
+  background: color-mix(in srgb, var(--composition-variable-color) 22%, transparent);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--composition-variable-color) 22%, transparent);
+  color: color-mix(in srgb, var(--composition-variable-color) 88%, white);
+  outline: 0;
+}
+
+.admin-dashboard .admin-composition-variable::after,
+.admin-dashboard .admin-composition-variable-token::after {
+  background: #202522;
+  border: 1px solid var(--admin-ui-border-strong);
+  border-radius: var(--admin-ui-radius);
+  bottom: calc(100% + 8px);
+  box-shadow: var(--admin-shadow-menu);
+  color: var(--admin-ui-text);
+  content: attr(data-variable-action);
+  font-family: var(--font-label);
+  font-size: var(--admin-ui-type-caption);
+  font-weight: 600;
+  left: 50%;
+  letter-spacing: 0;
+  line-height: 1.3;
+  max-width: min(260px, 70vw);
+  opacity: 0;
+  padding: var(--admin-space-sm) var(--admin-space-md);
+  pointer-events: none;
+  position: absolute;
+  text-transform: none;
+  transform: translate(-50%, 4px);
+  transition: opacity 120ms ease, transform 120ms ease;
+  white-space: nowrap;
+  z-index: 8;
+}
+
+.admin-dashboard .admin-composition-variable:hover::after,
+.admin-dashboard .admin-composition-variable:focus-visible::after,
+.admin-dashboard .admin-composition-variable-token:hover::after,
+.admin-dashboard .admin-composition-variable-token:focus-visible::after {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
 .admin-dashboard .admin-composition-preview-context {
   display: grid;
   gap: var(--admin-space-xl);
@@ -11599,6 +11712,10 @@ body,
   white-space: pre-wrap;
 }
 
+.admin-dashboard .admin-composition-variable-token {
+  font-family: var(--font-mono);
+}
+
 .admin-dashboard .admin-composition-template-tokens {
   display: grid;
   gap: var(--admin-space-lg);
@@ -11687,6 +11804,12 @@ body,
 
 .admin-dashboard .admin-composition-slot.has-issue {
   border-color: rgba(217, 161, 74, 0.28);
+}
+
+.admin-dashboard .admin-composition-slot:focus {
+  border-color: var(--admin-ui-primary);
+  box-shadow: var(--admin-ui-focus);
+  outline: 0;
 }
 
 .admin-dashboard .admin-composition-slot > header {
