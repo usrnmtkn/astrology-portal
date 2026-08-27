@@ -67,7 +67,7 @@ const diagnosisWorkflow = unresolvedIssueWorkflow(editorialIssue, {
 assert.equal(diagnosisWorkflow.statusLabel, "Action needed");
 assert.equal(diagnosisWorkflow.currentStep, "Diagnose the missing editable row");
 assert.equal(diagnosisWorkflow.responsibleParty, "You");
-assert.deepEqual(diagnosisWorkflow.steps.map((step) => step.state), ["current", "waiting", "waiting", "waiting"]);
+assert.deepEqual(diagnosisWorkflow.steps.map((step) => step.state), ["complete", "current", "waiting", "waiting", "waiting"]);
 
 const copiedWorkflow = unresolvedIssueWorkflow(editorialIssue, {
   contentLibraryReady: true,
@@ -77,13 +77,40 @@ const copiedWorkflow = unresolvedIssueWorkflow(editorialIssue, {
 assert.equal(copiedWorkflow.statusLabel, "Waiting for Codex");
 assert.equal(copiedWorkflow.responsibleParty, "Codex");
 
+const importRepairWorkflow = unresolvedIssueWorkflow({
+  ...editorialIssue,
+  resolution: {
+    result_status: "diagnosis-only",
+    diagnosis: "The governed source exists, but its editable mirror is missing.",
+    proposed_action: "Add the source collection to the Content Library materializer.",
+    pr_url: null,
+    owner_decision_required: false
+  }
+}, {
+  contentLibraryReady: true,
+  hasEditableRow: false,
+  requestCopied: false
+});
+assert.equal(importRepairWorkflow.currentStep, "Repair Content Library import");
+assert.equal(importRepairWorkflow.steps[1]?.state, "current");
+assert.equal(importRepairWorkflow.responsibleParty, "You");
+
 const ownerReviewWorkflow = unresolvedIssueWorkflow(editorialIssue, {
   contentLibraryReady: true,
   hasEditableRow: true,
   requestCopied: false
 });
 assert.equal(ownerReviewWorkflow.currentStep, "Review the copy in Content Library");
-assert.deepEqual(ownerReviewWorkflow.steps.map((step) => step.state), ["complete", "complete", "current", "waiting"]);
+assert.equal(ownerReviewWorkflow.statusLabel, "Ready for owner review");
+assert.deepEqual(ownerReviewWorkflow.steps.map((step) => step.state), ["complete", "complete", "current", "waiting", "waiting"]);
+assert.deepEqual(ownerReviewWorkflow.steps.map((step) => step.label), [
+  "Source found",
+  "Editable-row import",
+  "Owner copy review",
+  "Publication authorization",
+  "Deployment"
+]);
+assert.ok(ownerReviewWorkflow.completedChecks.includes("Editable row imported"));
 
 const normalizedResolution = normalizeContentStudioResolution({
   schema: "content-studio-resolution/v1",
@@ -138,6 +165,8 @@ assert.match(reviewSource, /Review exact replacements and authorize source repai
 assert.match(reviewSource, /Review replacement/u);
 assert.match(reviewSource, /Approve exact replacement/u);
 assert.match(reviewSource, /Copy implementation request/u);
+assert.match(reviewSource, /Repair Content Library import/u);
+assert.match(reviewSource, /Completed checks/u);
 assert.match(reviewSource, /Record Codex response/u);
 assert.match(reviewSource, /Responsible now:/u);
 assert.match(reviewSource, /Waiting for Codex/u);

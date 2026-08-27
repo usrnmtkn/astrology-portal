@@ -10834,6 +10834,33 @@ body,
   color: var(--admin-ui-primary);
 }
 
+.admin-dashboard .admin-unresolved-checks {
+  background: var(--admin-ui-surface-2);
+  border: 1px solid var(--admin-ui-border);
+  border-radius: var(--admin-ui-radius-sm);
+  margin-top: var(--admin-space-lg);
+  padding: var(--admin-space-md);
+}
+
+.admin-dashboard .admin-unresolved-checks > strong {
+  color: var(--admin-ui-text);
+  font-size: var(--admin-ui-type-hint);
+}
+
+.admin-dashboard .admin-unresolved-checks ul {
+  color: var(--admin-ui-muted);
+  display: grid;
+  font-size: var(--admin-ui-type-caption);
+  gap: var(--admin-space-xs);
+  list-style: none;
+  margin: var(--admin-space-sm) 0 0;
+  padding: 0;
+}
+
+.admin-dashboard .admin-unresolved-checks li::first-letter {
+  color: var(--admin-ui-primary);
+}
+
 .admin-dashboard .admin-unresolved-actions {
   display: grid;
   gap: var(--admin-space-md);

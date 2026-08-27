@@ -1,8 +1,11 @@
 #!/usr/bin/env node
 
 import assert from "node:assert/strict";
+import { execFileSync } from "node:child_process";
 import crypto from "node:crypto";
 import fs from "node:fs";
+import os from "node:os";
+import path from "node:path";
 import {
   isGovernedReaderEligible,
   readerEligibilityReason
@@ -122,7 +125,7 @@ assert.doesNotMatch(houseTenBody.body, /A title, project, or opportunity|schedul
 const runtimeBundleSource = fs.readFileSync("apps/web/src/content/fallbackArchitectureV3LunationBookBundle.ts", "utf8");
 assert.match(
   runtimeBundleSource,
-  /lunation-eclipse-sections-v1/u,
+  /bundled-lunation-eclipse-sections-v3/u,
   "The deferred reader bundle must include approved eclipse sections."
 );
 assert.doesNotMatch(
@@ -131,4 +134,32 @@ assert.doesNotMatch(
   "Review-held complete eclipse drafts must remain outside the reader bundle."
 );
 
-console.log("Lunation eclipse variants passed: 12 review-held templates remain dark while every serving evergreen section is hash-linked to its protected book source.");
+const materializerOutputDirectory = fs.mkdtempSync(path.join(os.tmpdir(), "tldrastro-lunation-eclipse-import-"));
+const materializerOutputPath = path.join(materializerOutputDirectory, "dashboard-rows.json");
+
+try {
+  execFileSync(process.execPath, [
+    "scripts/materialize-fallback-architecture-v3-dashboard-rows.mjs",
+    `--out=${materializerOutputPath}`
+  ], { stdio: "pipe" });
+
+  const materializedRows = JSON.parse(fs.readFileSync(materializerOutputPath, "utf8")).rows;
+  const materializedByKey = new Map(materializedRows.map((row) => [row.content_key, row]));
+
+  for (const card of source.authoredCards) {
+    const materialized = materializedByKey.get(card.contentKey);
+
+    assert.ok(materialized, `Content Library materializer must include ${card.contentKey}.`);
+    assert.equal(materialized.body, card.body);
+    assert.equal(materialized.status, "DRAFT");
+    assert.equal(materialized.lane, "reference");
+    assert.equal(materialized.review_state, "needs-review");
+    assert.equal(materialized.facts.review_status, "needs_review");
+    assert.equal(materialized.source_snapshot.review_status, "needs_review");
+    assert.deepEqual(materialized.sections.packageRecord, card);
+  }
+} finally {
+  fs.rmSync(materializerOutputDirectory, { recursive: true, force: true });
+}
+
+console.log("Lunation eclipse variants passed: 12 review-held templates remain dark, materialize unchanged for Content Library review, and keep every serving evergreen section hash-linked to its protected book source.");

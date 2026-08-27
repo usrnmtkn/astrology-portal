@@ -55,6 +55,7 @@ export type UnresolvedWorkflow = {
   currentStep: string;
   explanation: string;
   responsibleParty: string;
+  completedChecks: string[];
   steps: Array<{
     label: string;
     state: UnresolvedWorkflowStepState;
@@ -87,6 +88,7 @@ export function unresolvedIssueWorkflow(
           ? "The investigation request is copied. Paste it into Codex, then record the JSON response here."
           : "Copy the investigation request and send it to Codex. No approval decision is available yet.",
         responsibleParty: requestCopied ? "Codex" : "You",
+        completedChecks: ["Conflicting source records grouped"],
         steps: [
           step("Diagnose conflict", "current"),
           step("Review replacement", "waiting"),
@@ -103,6 +105,7 @@ export function unresolvedIssueWorkflow(
         currentStep: "Review the exact replacement",
         explanation: "The diagnosis and replacement plan are ready. Review the exact wording and approve it only if it is correct.",
         responsibleParty: "You",
+        completedChecks: ["Conflicting source records grouped", "Replacement hash verified"],
         steps: [
           step("Diagnose conflict", "complete"),
           step("Review replacement", "current"),
@@ -119,6 +122,7 @@ export function unresolvedIssueWorkflow(
         currentStep: "Deploy and verify the repaired package",
         explanation: "The implementation response is recorded. This row will clear after the repaired package is deployed and the inventory refreshes.",
         responsibleParty: "Deployment",
+        completedChecks: ["Replacement hash verified", "Owner authorization recorded", "Implementation response recorded"],
         steps: [
           step("Diagnose conflict", "complete"),
           step("Review replacement", "complete"),
@@ -136,6 +140,7 @@ export function unresolvedIssueWorkflow(
         ? "The implementation request is copied. Paste it into Codex, then record the JSON response here."
         : "The exact replacement is approved. Copy the implementation request and send it to Codex.",
       responsibleParty: requestCopied ? "Codex" : "You",
+      completedChecks: ["Replacement hash verified", "Owner authorization recorded"],
       steps: [
         step("Diagnose conflict", "complete"),
         step("Review replacement", "complete"),
@@ -152,11 +157,13 @@ export function unresolvedIssueWorkflow(
       currentStep: "Check for an editable row",
       explanation: "Content Studio is checking the Content Library. No action is needed while this check runs.",
       responsibleParty: "Content Studio",
+      completedChecks: ["Governed source record found", "Review hold preserved"],
       steps: [
-        step("Check source", "current"),
-        step("Import editable row", "waiting"),
-        step("Review copy", "waiting"),
-        step("Publish", "waiting")
+        step("Source found", "complete"),
+        step("Editable-row import", "current"),
+        step("Owner copy review", "waiting"),
+        step("Publication authorization", "waiting"),
+        step("Deployment", "waiting")
       ]
     };
   }
@@ -164,15 +171,17 @@ export function unresolvedIssueWorkflow(
   if (hasEditableRow) {
     return {
       status: "action",
-      statusLabel: "Action needed",
+      statusLabel: "Ready for owner review",
       currentStep: "Review the copy in Content Library",
       explanation: "The governed editable row is available. Open the exact row to review and edit it.",
       responsibleParty: "You",
+      completedChecks: ["Governed source record found", "Editable row imported", "Review hold preserved", "Reader serving unchanged"],
       steps: [
-        step("Diagnose source", "complete"),
-        step("Import editable row", "complete"),
-        step("Review copy", "current"),
-        step("Publish", "waiting")
+        step("Source found", "complete"),
+        step("Editable-row import", "complete"),
+        step("Owner copy review", "current"),
+        step("Publication authorization", "waiting"),
+        step("Deployment", "waiting")
       ]
     };
   }
@@ -184,11 +193,13 @@ export function unresolvedIssueWorkflow(
       currentStep: "Deploy and sync the editable row",
       explanation: "The code repair is recorded, but the editable row is not visible yet. Refresh after deployment or database materialization finishes.",
       responsibleParty: "Deployment",
+      completedChecks: ["Governed source record found", "Import repair recorded", "Review hold preserved"],
       steps: [
-        step("Diagnose source", "complete"),
-        step("Import editable row", "current"),
-        step("Review copy", "waiting"),
-        step("Publish", "waiting")
+        step("Source found", "complete"),
+        step("Editable-row import", "current"),
+        step("Owner copy review", "waiting"),
+        step("Publication authorization", "waiting"),
+        step("Deployment", "waiting")
       ]
     };
   }
@@ -197,16 +208,18 @@ export function unresolvedIssueWorkflow(
     return {
       status: requestCopied ? "waiting" : "action",
       statusLabel: requestCopied ? "Waiting for Codex" : "Action needed",
-      currentStep: "Implement the governed import",
+      currentStep: "Repair Content Library import",
       explanation: requestCopied
         ? "The implementation request is copied. Paste it into Codex, then record the JSON response here."
         : "The diagnosis is recorded. Copy the implementation request to create the missing editable row without changing its review status.",
       responsibleParty: requestCopied ? "Codex" : "You",
+      completedChecks: ["Governed source record found", "Import path diagnosed", "Review hold preserved", "Reader serving unchanged"],
       steps: [
-        step("Diagnose source", "complete"),
-        step("Import editable row", "current"),
-        step("Review copy", "waiting"),
-        step("Publish", "waiting")
+        step("Source found", "complete"),
+        step("Editable-row import", "current"),
+        step("Owner copy review", "waiting"),
+        step("Publication authorization", "waiting"),
+        step("Deployment", "waiting")
       ]
     };
   }
@@ -219,11 +232,13 @@ export function unresolvedIssueWorkflow(
       ? "The investigation request is copied. Paste it into Codex, then record the JSON response here."
       : "Copy the investigation request and send it to Codex to find the governed import path.",
     responsibleParty: requestCopied ? "Codex" : "You",
+    completedChecks: ["Governed source record found", "Review hold preserved"],
     steps: [
-      step("Diagnose source", "current"),
-      step("Import editable row", "waiting"),
-      step("Review copy", "waiting"),
-      step("Publish", "waiting")
+      step("Source found", "complete"),
+      step("Editable-row import", "current"),
+      step("Owner copy review", "waiting"),
+      step("Publication authorization", "waiting"),
+      step("Deployment", "waiting")
     ]
   };
 }
@@ -440,6 +455,10 @@ export function UnresolvedContentReview({
                       <small>{workflowStep.label}</small>
                     </li>)}
                   </ol>
+                  <div className="admin-unresolved-checks" aria-label="Completed governance checks">
+                    <strong>Completed checks</strong>
+                    <ul>{workflow.completedChecks.map((check) => <li key={check}>✓ {check}</li>)}</ul>
+                  </div>
                   {issue.resolution && <details className="admin-unresolved-diagnosis"><summary>Codex diagnosis</summary><small>{issue.resolution.diagnosis}</small></details>}
                 </td>
                 <td data-label="Source records"><details><summary>{issue.records.length} record(s)</summary>{issue.records.map((record) => <code key={record.id}>{record.reviewStatus}: {record.sourcePath}{record.objectPath}</code>)}</details></td>
@@ -451,7 +470,7 @@ export function UnresolvedContentReview({
                     ? <div className="admin-unresolved-actions"><span className="admin-unresolved-action-state is-action">Action needed</span><button className="admin-edit-row-button is-primary" type="button" onClick={() => onFindInContentLibrary(issue.contentKey)}>Open exact row to review</button></div>
                     : issue.resolution?.result_status === "implemented"
                       ? <div className="admin-unresolved-actions"><span className="admin-unresolved-action-state is-waiting">Waiting for import</span><button className="admin-edit-row-button" type="button" onClick={() => setRefreshToken((current) => current + 1)} disabled={refreshing}>{refreshing ? "Refreshing…" : "Refresh status"}</button></div>
-                      : <div className="admin-unresolved-actions"><span className={`admin-unresolved-action-state is-${workflow.status}`}>{workflow.statusLabel}</span><div className="admin-toolbar-actions"><button className="admin-edit-row-button is-primary" type="button" onClick={() => void copyRequest(issue, issue.resolution ? "implementation" : "investigation", issue.resolution ? editorialImplementationRequest(issue) : issue.aiRequest)}>{requestCopied ? `Copy ${issue.resolution ? "implementation" : "investigation"} request again` : `Copy ${issue.resolution ? "implementation" : "investigation"} request`}</button><button className={`admin-edit-row-button ${requestCopied ? "is-primary" : ""}`} type="button" onClick={() => void recordResolution(credential)}>{requestCopied ? "Record Codex response" : "Record an existing response"}</button></div></div>}</td>
+                      : <div className="admin-unresolved-actions"><span className={`admin-unresolved-action-state is-${workflow.status}`}>{workflow.statusLabel}</span><div className="admin-toolbar-actions"><button className={`admin-edit-row-button ${requestCopied ? "" : "is-primary"}`} type="button" onClick={() => void copyRequest(issue, issue.resolution ? "implementation" : "investigation", issue.resolution ? editorialImplementationRequest(issue) : issue.aiRequest)}>{requestCopied ? "Copy repair request again" : issue.resolution ? "Repair Content Library import" : "Copy investigation request"}</button><button className={`admin-edit-row-button ${requestCopied ? "is-primary" : ""}`} type="button" onClick={() => void recordResolution(credential)}>{requestCopied ? "Record Codex response" : "Record an existing response"}</button></div></div>}</td>
               </tr>;
             })}</tbody>
           </table>
