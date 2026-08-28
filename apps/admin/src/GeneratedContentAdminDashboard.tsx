@@ -113,6 +113,7 @@ const TemplateVariableReviewPanels = lazy(async () => {
   const module = await import("./TemplateVariableReviewPanels");
   return { default: module.TemplateVariableReviewPanels };
 });
+const TemplateReaderDrilldown = lazy(() => import("./TemplateReaderDrilldown"));
 const UnresolvedContentReview = lazy(async () => {
   const module = await import("./UnresolvedContentReview");
   return { default: module.UnresolvedContentReview };
@@ -5804,6 +5805,17 @@ export function GeneratedContentAdminDashboard() {
       body_you: packageFieldString(currentDraft, "body_you"),
       body_they: packageFieldString(currentDraft, "body_they")
     }, effectiveSkyFallback);
+    const templatePreviewRow = selectedRow && isTemplateDraft ? {
+      ...selectedRow,
+      headline: currentDraft.headline,
+      summary: currentDraft.summary,
+      body: currentDraft.body,
+      surface: currentDraft.surface,
+      status: currentDraft.status,
+      block_type: currentDraft.blockType,
+      sections: currentDraft.sections,
+      source_snapshot: currentDraft.sourceSnapshot
+    } : null;
     const normalizedTemplateVariableQuery = templateVariableQuery.trim().toLowerCase();
     const filteredVariableReferences = normalizedTemplateVariableQuery
       ? variableReferences.filter((variable) => [
@@ -6100,6 +6112,8 @@ export function GeneratedContentAdminDashboard() {
     const editorHeading = currentDraft.id
       ? isVocabularyDraft
         ? "Edit phrase"
+        : isTemplateDraft
+          ? `Edit ${selectedRow ? rowTitle(selectedRow) : currentDraft.headline || "template"}`
         : isArticleDraft
           ? `Edit ${currentDraft.headline || "article"}`
           : fallbackHookEditorTitle
@@ -6138,7 +6152,7 @@ export function GeneratedContentAdminDashboard() {
                 }}
               >
                 <Braces size={16} aria-hidden="true" />
-                Variables ({variableReferences.length})
+                {isTemplateDraft ? "Reader preview & variables" : "Variables"} ({variableReferences.length})
               </button>
             )}
             <button type="button" onClick={closeEditor}>
@@ -7179,7 +7193,7 @@ export function GeneratedContentAdminDashboard() {
           />
           <aside
             className="admin-editor-panel admin-variable-reference-panel"
-            style={{ maxWidth: "min(560px, 100vw)", width: "min(560px, 100vw)", zIndex: 81 }}
+            style={{ maxWidth: "min(720px, 100vw)", width: "min(720px, 100vw)", zIndex: 81 }}
             role="dialog"
             aria-modal="true"
             aria-label="Template variable reference"
@@ -7187,29 +7201,45 @@ export function GeneratedContentAdminDashboard() {
             <header className="admin-editor-toolbar">
               <div>
                 <p className="admin-eyebrow">Template help</p>
-                <h2>Variables in this template</h2>
-                <p className="admin-field-hint">These values are filled by the app when it builds a reader passage. Your draft stays open behind this guide.</p>
+                <h2>Reader write-up &amp; variables</h2>
+                <p className="admin-field-hint">Read the assembled result first, then click a colored value to follow it to editable saved writing or a calculated fact.</p>
               </div>
               <button type="button" onClick={() => setTemplateVariableReferenceOpen(false)}>Back to editor</button>
             </header>
             <div className="admin-post-editor">
-              <section className="admin-hook-detail-section admin-variable-syntax-guide" aria-label="Template syntax guide">
-                <h3>How to read the template</h3>
-                <dl className="admin-hook-pattern-list">
-                  <div>
-                    <dt><code>{"{{planetTitle}}"}</code></dt>
-                    <dd>Inserts one value, such as <em>Jupiter</em>.</dd>
-                  </div>
-                  <div>
-                    <dt><code>{"{{#planetIntro}}…{{/planetIntro}}"}</code></dt>
-                    <dd>Includes the whole block only when that optional copy is available.</dd>
-                  </div>
-                  <div>
-                    <dt><code>{"{{.}}"}</code></dt>
-                    <dd>Inserts the current sentence while the app moves through a list.</dd>
-                  </div>
-                </dl>
-              </section>
+              {templatePreviewRow && (
+                <Suspense fallback={<div className="admin-empty-state"><strong>Building reader preview…</strong></div>}>
+                  <TemplateReaderDrilldown
+                    rows={rows}
+                    templateRow={templatePreviewRow}
+                    onOpenVariable={(name, sourceId) => {
+                      setSelectedTemplateVariableName(name);
+                      setSelectedTemplateVariableSourceId(sourceId);
+                    }}
+                  />
+                </Suspense>
+              )}
+
+              <details className="admin-hook-detail-section admin-variable-syntax-guide" aria-label="Template syntax guide" role="region">
+                <summary>Template syntax help</summary>
+                <div>
+                  <h3>How to read the raw template</h3>
+                  <dl className="admin-hook-pattern-list">
+                    <div>
+                      <dt><code>{"{{planetTitle}}"}</code></dt>
+                      <dd>Inserts one value, such as <em>Jupiter</em>.</dd>
+                    </div>
+                    <div>
+                      <dt><code>{"{{#planetIntro}}…{{/planetIntro}}"}</code></dt>
+                      <dd>Includes the whole block only when that optional copy is available.</dd>
+                    </div>
+                    <div>
+                      <dt><code>{"{{.}}"}</code></dt>
+                      <dd>Inserts the current sentence while the app moves through a list.</dd>
+                    </div>
+                  </dl>
+                </div>
+              </details>
 
               <label className="admin-field-wide admin-variable-reference-search">
                 <span>Find a variable or meaning</span>
@@ -7279,6 +7309,18 @@ export function GeneratedContentAdminDashboard() {
             references={variableReferences}
             rows={rows}
             templateContentKey={currentDraft.contentKey}
+            templateRow={templatePreviewRow ?? {
+              id: currentDraft.id ?? "draft-template",
+              content_key: currentDraft.contentKey,
+              headline: currentDraft.headline,
+              summary: currentDraft.summary,
+              body: currentDraft.body,
+              surface: currentDraft.surface,
+              status: currentDraft.status,
+              block_type: currentDraft.blockType,
+              sections: currentDraft.sections,
+              source_snapshot: currentDraft.sourceSnapshot
+            }}
             selectedVariableName={selectedTemplateVariableName}
             selectedSourceId={selectedTemplateVariableSourceId}
             onBackToVariables={() => {
@@ -7286,6 +7328,10 @@ export function GeneratedContentAdminDashboard() {
               setSelectedTemplateVariableName(null);
             }}
             onSelectSource={setSelectedTemplateVariableSourceId}
+            onSelectVariable={(name) => {
+              setSelectedTemplateVariableSourceId(null);
+              setSelectedTemplateVariableName(name);
+            }}
             onEditSource={(row) => {
               setSelectedTemplateVariableSourceId(null);
               setSelectedTemplateVariableName(null);
