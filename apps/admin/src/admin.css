@@ -8882,7 +8882,7 @@ body,
 
 .admin-dashboard .admin-contextual-editor-guidance {
   display: grid;
-  gap: 8px;
+  gap: var(--admin-space-md);
 }
 
 .admin-dashboard .admin-contextual-editor-guidance > strong {
@@ -8892,11 +8892,11 @@ body,
 
 .admin-dashboard .admin-contextual-copy-example {
   background: var(--admin-ui-surface-2);
-  border: 1px solid var(--admin-ui-border);
+  border: var(--border-width-thin) solid var(--admin-ui-border);
   border-radius: var(--admin-ui-radius-md);
   display: grid;
-  gap: 4px;
-  padding: 10px 12px;
+  gap: var(--admin-space-xs);
+  padding: var(--admin-space-lg) var(--admin-space-xl);
 }
 
 .admin-dashboard .admin-contextual-copy-example span {
@@ -8915,10 +8915,10 @@ body,
 
 .admin-dashboard .admin-reader-sentence-context mark {
   background: color-mix(in srgb, var(--admin-ui-accent) 20%, transparent);
-  border-bottom: 1px solid var(--admin-ui-accent);
-  border-radius: 3px;
+  border-bottom: var(--border-width-thin) solid var(--admin-ui-accent);
+  border-radius: var(--admin-radius-2xs);
   color: var(--admin-ui-text);
-  padding: 1px 2px;
+  padding: var(--admin-space-hairline) var(--admin-space-micro);
 }
 
 .admin-dashboard .admin-sky-placement-composition {
@@ -11409,7 +11409,7 @@ body,
 
 .admin-dashboard .admin-composition-scope-tabs {
   background: var(--admin-ui-surface);
-  border: 1px solid var(--admin-ui-border);
+  border: var(--border-width-thin) solid var(--admin-ui-border);
   border-radius: var(--admin-ui-radius-lg);
   display: flex;
   flex: 0 0 auto;
@@ -11699,7 +11699,7 @@ body,
 .admin-dashboard .admin-composition-surface-provenance,
 .admin-dashboard .admin-composition-surface-limit > div {
   background: var(--admin-ui-neutral-soft);
-  border: 1px solid var(--admin-ui-border);
+  border: var(--border-width-thin) solid var(--admin-ui-border);
   border-radius: var(--admin-ui-radius-lg);
   display: grid;
   gap: var(--admin-space-lg);
@@ -11745,7 +11745,7 @@ body,
 .admin-dashboard .admin-composition-surface-parts span,
 .admin-dashboard .admin-composition-layer-order li {
   background: var(--admin-ui-bg);
-  border: 1px solid var(--admin-ui-border);
+  border: var(--border-width-thin) solid var(--admin-ui-border);
   border-radius: var(--admin-radius-pill);
   color: var(--admin-ui-muted);
   font-size: var(--admin-ui-type-caption);
@@ -11787,7 +11787,7 @@ body,
 .admin-dashboard .admin-composition-surface-provenance article {
   align-items: center;
   background: var(--admin-ui-bg);
-  border: 1px solid var(--admin-ui-border);
+  border: var(--border-width-thin) solid var(--admin-ui-border);
   border-radius: var(--admin-ui-radius);
   color: var(--admin-ui-text);
   display: flex;
@@ -11799,7 +11799,7 @@ body,
 
 .admin-dashboard .admin-composition-surface-route-list > a:hover,
 .admin-dashboard .admin-composition-surface-route-list > a.primary {
-  border-color: rgba(91, 220, 155, 0.42);
+  border-color: var(--admin-ui-primary-border-strong);
 }
 
 .admin-dashboard .admin-composition-surface-route-list > a > span:first-child,
@@ -11819,7 +11819,7 @@ body,
 }
 
 .admin-dashboard .admin-composition-cms-starters {
-  border-top: 1px solid var(--admin-ui-border);
+  border-top: var(--border-width-thin) solid var(--admin-ui-border);
   padding-top: var(--admin-space-lg);
 }
 
@@ -11883,9 +11883,9 @@ body,
 
 .admin-dashboard .admin-composition-lineage-warning {
   background: var(--admin-ui-warning-soft);
-  border: 1px solid rgba(217, 161, 74, 0.28);
+  border: var(--border-width-thin) solid var(--admin-warning-ui-border);
   border-radius: var(--admin-ui-radius-lg);
-  color: #efd09a;
+  color: var(--admin-ui-composition-warning);
   display: grid;
   gap: var(--admin-space-sm);
   padding: var(--admin-space-xl);
