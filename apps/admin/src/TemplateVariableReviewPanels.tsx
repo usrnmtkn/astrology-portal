@@ -154,7 +154,7 @@ export function TemplateVariableReviewPanels({
                   {sourceSelectionNote && <p>{sourceSelectionNote}</p>}
                   <p>{sources.length === 1 ? "1 source row" : `${sources.length} source rows`} can fill this variable.</p>
                   {sources.map((row) => <button type="button" className="admin-variable-source-row" key={row.id} onClick={() => onSelectSource(row.id)}><span><strong>{title(row)}</strong><code>{row.content_key}</code></span><span className="ui-pill admin-status">{status(row)}</span></button>)}
-                  {sources.length === 0 && <p>No matching rows. Expected <code>{templateVariableSourceKeyPrefixes(variable).join(" or ")}</code></p>}
+                  {sources.length === 0 && <p>No matching rows. Expected <code>{templateVariableSourceKeyPrefixes(variable, templateContentKey).join(" or ")}</code></p>}
                 </section>
               )}
             </>
