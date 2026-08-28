@@ -2579,7 +2579,23 @@ test.describe("content dashboard admin user flow case studies", () => {
         body_they: "The Sun describes their identity, purpose, and need to create."
       }
     };
-    await seedAdminApi(page, { generatedRows: [templateRow, planetIntroRow] });
+    const planetBestRow = {
+      ...planetIntroRow,
+      id: "qa-sun-planet-best",
+      content_key: "fallback-hook/planet-best/sun",
+      headline: "Sun at its best",
+      summary: "Reviewed constructive expression for the Sun.",
+      body: "At your best, {{planetTitle}} makes confidence generous.",
+      sections: {
+        packageRecord: {
+          contentKey: "fallback-hook/planet-best/sun",
+          content_role: "fallback_hook",
+          review_status: "approved",
+          body: "At your best, {{planetTitle}} makes confidence generous."
+        }
+      }
+    };
+    await seedAdminApi(page, { generatedRows: [templateRow, planetIntroRow, planetBestRow] });
     await expectAdminRouteLoads(page, "/admin/content#fallback-hooks");
 
     const savedRow = page.locator(".admin-content-row", { hasText: "fallback-template/natal.planet-in-sign/sun" });
@@ -2588,15 +2604,43 @@ test.describe("content dashboard admin user flow case studies", () => {
     await savedRow.getByRole("button", { name: "Edit" }).click();
 
     const editor = page.getByRole("dialog", { name: "Generated content editor" });
+    await expect(editor.getByRole("heading", { name: "Edit Sun in a Sign" })).toBeVisible();
     await expect(editor.getByLabel("Headline")).toHaveValue("Sun in {{signTitle}}");
     const editedBody = `${bodyYou} QA draft remains here.`;
     await editor.getByLabel("body_you").fill(editedBody);
-    await editor.getByRole("button", { name: /^Variables \(\d+\)$/u }).click();
+    await editor.getByRole("button", { name: /^Reader preview & variables \(\d+\)$/u }).click();
 
     const variableGuide = page.getByRole("dialog", { name: "Template variable reference" });
     await expect(variableGuide).toBeVisible();
-    await expect(variableGuide.getByRole("heading", { name: "Variables in this template" })).toBeVisible();
-    await expect(variableGuide.getByRole("region", { name: "Template syntax guide" })).toContainText("Includes the whole block only when that optional copy is available");
+    await expect(variableGuide.getByRole("heading", { name: "Reader write-up & variables" })).toBeVisible();
+    const readerWriteup = variableGuide.getByRole("region", { name: "Example reader write-up" });
+    await expect(readerWriteup.getByRole("heading", { name: "Read the assembled write-up" })).toBeVisible();
+    await expect(readerWriteup).toContainText("Sun in Leo");
+    await expect(readerWriteup).toContainText("QA draft remains here.");
+    await expect(readerWriteup).not.toContainText("{{planetTitle}}");
+    await expect(readerWriteup.locator(".variable-fact").first()).toBeVisible();
+    await expect(readerWriteup.locator(".variable-hook").first()).toBeVisible();
+    await mkdir(adminScreenshotDir, { recursive: true });
+    await page.screenshot({
+      animations: "disabled",
+      fullPage: true,
+      path: path.join(adminScreenshotDir, "desktop-template-reader-drilldown.png")
+    });
+
+    await readerWriteup.getByRole("button", { name: /At your best.*Open the saved source for Planet Best/u }).click();
+    let variableDetails = page.getByRole("dialog", { name: "Planet best variable details" });
+    await expect(variableDetails).toContainText("At your best,");
+    await expect(variableDetails.getByRole("region", { name: "Saved source copy" }).getByRole("button", { name: "{{planetTitle}}" })).toBeVisible();
+    await expect(variableDetails.getByRole("region", { name: "Variables inside Planet Best" })).toContainText("Planet Title");
+    await variableDetails.getByRole("region", { name: "Saved source copy" }).getByRole("button", { name: "{{planetTitle}}" }).click();
+    variableDetails = page.getByRole("dialog", { name: "Planet title variable details" });
+    await expect(variableDetails).toContainText("Calculated by app");
+    await expect(variableDetails).toContainText("No saved passage to review");
+    await variableDetails.getByRole("button", { name: "All variables" }).click();
+
+    const syntaxGuide = variableGuide.getByRole("region", { name: "Template syntax guide" });
+    await syntaxGuide.getByText("Template syntax help", { exact: true }).click();
+    await expect(syntaxGuide).toContainText("Includes the whole block only when that optional copy is available");
 
     const verbCard = variableGuide.locator(".admin-variable-reference-card", { hasText: "{{planetVerb}}" });
     await expect(verbCard).toContainText("Required");
@@ -2614,18 +2658,23 @@ test.describe("content dashboard admin user flow case studies", () => {
 
     await page.setViewportSize({ width: 390, height: 844 });
     await expectNoHorizontalOverflow(page, "Template variable reference mobile slide-out");
+    await page.screenshot({
+      animations: "disabled",
+      fullPage: true,
+      path: path.join(adminScreenshotDir, "mobile-template-reader-drilldown.png")
+    });
     await variableGuide.getByRole("button", { name: "Back to editor" }).click();
     await expect(variableGuide).toBeHidden();
     await expect(editor.getByLabel("body_you")).toHaveValue(editedBody);
     await expectNoHorizontalOverflow(page, "Template editor with variable action on mobile");
 
-    await editor.getByRole("button", { name: /^Variables \(\d+\)$/u }).click();
+    await editor.getByRole("button", { name: /^Reader preview & variables \(\d+\)$/u }).click();
     await variableGuide.getByRole("searchbox", { name: "Find a variable or meaning" }).fill("planet intro");
     await variableGuide.locator(".admin-variable-reference-card", { hasText: "{{planetIntro}}" })
       .getByRole("button", { name: "Review source writing" })
       .click();
 
-    const variableDetails = page.getByRole("dialog", { name: "Planet intro variable details" });
+    variableDetails = page.getByRole("dialog", { name: "Planet intro variable details" });
     await expect(variableDetails).toContainText("fallback-hook/planet-intro/sun");
     const detailToolbarBox = await variableDetails.locator(".admin-editor-toolbar").boundingBox();
     const detailBodyBox = await variableDetails.locator(".admin-post-editor").boundingBox();
