@@ -4,7 +4,7 @@ Date: 2026-08-27
 
 ## Scope
 
-Reviewed the materialized fallback architecture package (`v3-2026-08-25c`)
+Reviewed the materialized fallback architecture package (`v3-2026-08-27b`)
 through the Content Studio Composition Map rules:
 
 - 9,563 saved and package-backed rows
@@ -30,22 +30,27 @@ key. Stable machine keys are not renamed merely to improve display copy.
   editor; calculated values remain read-only.
 
 These repairs reduced false-positive IA flags from 24 across 19 templates to
-one flag on one template.
+zero wiring gaps across all 39 packaged templates and 396 reachable variables.
 
-## Remaining Owner Decision
+## Resolved Runtime Declaration
 
-`fallback-template/synastry.aspect-v3` declares optional `closingLine` copy,
-but no saved source row or resolver assignment currently supplies it. The
-runtime returns approved pair copy before this fallback template is used, so
-removing or repurposing the slot would be an editorial architecture decision,
-not a safe naming cleanup.
+`fallback-template/synastry.aspect-v3` previously declared `closingLine` and
+`synAspectLine` even though the resolver returns the approved authored pair as
+the complete body. Those unreachable declarations were removed from the
+template graph. The remaining nested holder variables are calculated
+relationship context, and every saved-copy variable now resolves to at least
+one governed source row.
 
-Choose one of these deliberate resolutions in a future content pass:
+The deterministic audit now verifies three separate claims:
 
-1. Remove `closingLine` from the template if the approved pair passage is the
-   complete canonical unit.
-2. Create a reviewed closing-source family and wire the resolver if a separate
-   reusable close is still desired.
+1. every packaged template is present in Composition Map;
+2. every reachable saved-copy variable maps to a governed source family; and
+3. every rendered saved-copy span deep-links to one exact source row.
 
-Until that decision is made, the Composition Map correctly keeps the template
-under **Needs IA review**.
+This 39-template/396-variable result is intentionally scoped to Fallback
+Architecture V3. The separate **Surfaces & systems** scope maps the broader app
+rendering inventory. It currently lists 24 surfaces and supporting systems,
+including Daily At-a-Glance, direct Sky content, calendar and weekly copy,
+reports, CMS overrides, compatibility highlights, and the Friends Circle feed.
+Code-composed or generated systems that still lack an atomic editor are marked
+as gaps instead of being counted as fully editable.

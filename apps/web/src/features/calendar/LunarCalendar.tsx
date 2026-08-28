@@ -3,13 +3,15 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import type { CSSProperties, KeyboardEvent } from "react";
 import { SegmentedControl } from "../../components/SegmentedControl";
 import {
-  getLunarCalendarMonth,
-  getLunarCalendarRangeEvents,
-  getLunarCalendarWeek,
   type LunarCalendarDay,
   type LunarCalendarEvent,
   type LunarCalendarMonth as LunarCalendarMonthData
 } from "../../services/ephemeris";
+import {
+  getLunarCalendarMonthOffMainThread as getLunarCalendarMonth,
+  getLunarCalendarRangeEventsOffMainThread as getLunarCalendarRangeEvents,
+  getLunarCalendarWeekOffMainThread as getLunarCalendarWeek
+} from "../../services/skyCalculationClient";
 import { getLunarCalendarFromApi } from "../../services/calendarApi";
 import {
   fallbackArchitectureV3AuthoredContentForKey,
@@ -157,41 +159,6 @@ function monthStart(date: Date) {
 
 function addMonths(date: Date, amount: number) {
   return new Date(date.getFullYear(), date.getMonth() + amount, 1);
-}
-
-function scheduleIdleTask(callback: () => void, timeout = 1_500) {
-  let cancelled = false;
-  let cleanup = () => {};
-  let firstFrame = 0;
-  let secondFrame = 0;
-
-  const runWhenIdle = () => {
-    if (cancelled) return;
-
-    if (typeof window.requestIdleCallback === "function") {
-      const task = window.requestIdleCallback(callback, { timeout });
-      cleanup = () => window.cancelIdleCallback(task);
-      return;
-    }
-
-    const task = window.setTimeout(callback, 600);
-    cleanup = () => window.clearTimeout(task);
-  };
-
-  if (typeof window.requestAnimationFrame === "function") {
-    firstFrame = window.requestAnimationFrame(() => {
-      secondFrame = window.requestAnimationFrame(runWhenIdle);
-    });
-  } else {
-    runWhenIdle();
-  }
-
-  return () => {
-    cancelled = true;
-    if (firstFrame) window.cancelAnimationFrame(firstFrame);
-    if (secondFrame) window.cancelAnimationFrame(secondFrame);
-    cleanup();
-  };
 }
 
 function dateKeyFromDate(date: Date) {
@@ -1891,7 +1858,6 @@ export function LunarCalendar({
 
   useEffect(() => {
     let cancelled = false;
-    let cancelHydration: (() => void) | null = null;
     const visibleAnchor = isWeekBasedView(viewMode)
       ? dateFromDateKey(visibleWeekDateKey, location.timeZone || "UTC")
       : visibleMonth;
@@ -1946,18 +1912,19 @@ export function LunarCalendar({
           return;
         }
 
-        cancelHydration = scheduleIdleTask(() => {
-          loadCalendarData(location, viewMode, visibleAnchor, "full")
-            .then((fullCalendar) => {
-              if (!cancelled) {
-                setCalendar(fullCalendar);
-                writeStoredCalendar(storedCalendarKey, fullCalendar);
-              }
-            })
-            .catch((error) => {
-              console.warn("Full lunar calendar details failed to load.", error);
-            });
-        });
+        // The detailed calculation runs in the astronomy worker, so queue it
+        // immediately after the basic paint. This preserves a fast shell while
+        // ensuring event rows are not starved behind lower-priority season work.
+        void loadCalendarData(location, viewMode, visibleAnchor, "full")
+          .then((fullCalendar) => {
+            if (!cancelled) {
+              setCalendar(fullCalendar);
+              writeStoredCalendar(storedCalendarKey, fullCalendar);
+            }
+          })
+          .catch((error) => {
+            console.warn("Full lunar calendar details failed to load.", error);
+          });
       })
       .catch((error) => {
         console.warn("Lunar calendar failed to load.", error);
@@ -1968,8 +1935,6 @@ export function LunarCalendar({
 
     return () => {
       cancelled = true;
-
-      cancelHydration?.();
     };
   }, [location, retryNonce, viewMode, visibleMonth, visibleWeekDateKey]);
 

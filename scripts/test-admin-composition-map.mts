@@ -183,4 +183,66 @@ assert.equal(jupiterMap[0].label, "Natal chart · Jupiter in any sign", "Planet-
 assert.equal(jupiterMap[0].preview.fields.find((field) => field.key === "headline")?.rendered, "Jupiter in Leo", "Planet-specific examples should show the correct planet and a concrete sign.");
 assert.equal(jupiterMap[0].preview.fields.find((field) => field.key === "body_you")?.rendered, "Your Jupiter is in Leo.", "Planet-specific bodies should not fall back to a Sun example.");
 
+const retroArticleMap = buildCompositionMap([
+  {
+    ...baseRow,
+    id: "retro-article-template",
+    content_key: "fallback-template/transit.retrograde-article",
+    headline: "{{articleHeadline}}",
+    body: "{{articleBody}}",
+    surface: "sky",
+    block_type: "fallback_template",
+    sections: {
+      packageRecord: {
+        content_role: "template",
+        requiredSlots: ["articleHeadline", "articleBody"],
+        headline: "{{articleHeadline}}",
+        body: "{{articleBody}}"
+      }
+    }
+  },
+  {
+    ...baseRow,
+    id: "saturn-retro-article",
+    content_key: "fallback-hook/transit-retro-article/saturn",
+    headline: "The shortcut always sends the bill later.",
+    body: "{{timeOpen}}, {{transitRef}} is retrograde. Review what can no longer run on autopilot.",
+    surface: "sky",
+    block_type: "fallback_hook",
+    sections: {
+      packageRecord: {
+        content_role: "fallback_hook",
+        headline: "The shortcut always sends the bill later.",
+        body_you: "{{timeOpen}}, {{transitRef}} is retrograde. Review what can no longer run on autopilot."
+      }
+    }
+  },
+  {
+    ...baseRow,
+    id: "saturn-placement-article",
+    content_key: "sky-article/saturn/aries/2026",
+    headline: "Saturn in Aries",
+    body: "Saturn stationed retrograde on July 27, 2026 in early Aries.",
+    surface: "sky"
+  }
+]);
+const retroArticle = retroArticleMap[0];
+assert.equal(retroArticle.label, "Current Sky · Planet retrograde article", "The template title should state its retrograde scope.");
+assert.equal(retroArticle.preview.lineage, "runtime-traceable", "The preview should be verified only when its template-specific resolver contract is present.");
+assert.equal(retroArticle.preview.fields.find((field) => field.key === "headline")?.rendered, "The shortcut always sends the bill later.");
+assert.equal(
+  retroArticle.preview.fields.find((field) => field.key === "body")?.rendered,
+  "From August 12 through September 3, Saturn in Aries is retrograde. Review what can no longer run on autopilot."
+);
+assert.deepEqual(
+  retroArticle.preview.sources.map((source) => source.row.content_key),
+  ["fallback-hook/transit-retro-article/saturn"],
+  "The verified preview must deep-link only to the source family the runtime resolver reads."
+);
+assert.equal(
+  retroArticle.preview.sources.some((source) => source.row.content_key.startsWith("sky-article/")),
+  false,
+  "A placement article must never masquerade as the retrograde template source."
+);
+
 console.log("Admin Composition Map classification and source-link tests passed.");

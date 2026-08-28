@@ -54,8 +54,8 @@ async function startApp() {
   const initialFriendProfileTab = initialFriendProfileContentRequest(window.location.href);
 
   if (shouldPreloadInitialFriendCalculationRuntime(initialFriendProfileTab)) {
-    void import("./services/ephemeris").then(({ preloadSwissEphemeris }) => (
-      preloadSwissEphemeris()
+    void import("./services/skyCalculationClient").then(({ preloadSwissEphemerisOffMainThread }) => (
+      preloadSwissEphemerisOffMainThread()
     )).catch(() => {
       // The demand-driven calculation reports any runtime failure in the active view.
     });

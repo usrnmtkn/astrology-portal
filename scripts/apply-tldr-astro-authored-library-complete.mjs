@@ -213,6 +213,7 @@ const FLOOR_AUTHORED_CONTENT_CATEGORIES = new Set([
 ]);
 
 function isServingFloorRow(row) {
+  if (row.retired === true) return false;
   if (row.serving_floor === true) return true;
 
   const bucket = row._bucket;
@@ -225,20 +226,23 @@ function isServingFloorRow(row) {
 }
 
 function statusForPackageRow(row, tier) {
+  if (row.retired === true) return "ARCHIVED";
   if (tier === "CONFIRMED") return "DRAFT";
   return isServingFloorRow(row) ? "LIVE" : "DRAFT";
 }
 
 function laneForPackageRow(row, status) {
-  return "serving";
+  return status === "ARCHIVED" ? "reference" : "serving";
 }
 
 function reviewStateForRow(status, tier) {
+  if (status === "ARCHIVED") return "retired-unused-template";
   if (status === "LIVE" || tier === "CONFIRMED") return null;
   return reviewStateForTier(tier);
 }
 
 function flagsForRow(status, tier) {
+  if (status === "ARCHIVED") return [];
   if (status === "LIVE" || tier === "CONFIRMED") return [];
   return flagsForTier(tier);
 }
@@ -282,6 +286,12 @@ function rowForPackageRow(row, bundle, batchId) {
     knowledge_ids: Array.isArray(row.knowledge_ids) && row.knowledge_ids.length ? row.knowledge_ids : [contentKey],
     source_snapshot: {
       ...sourceSnapshot,
+      ...(row.retired === true ? {
+        retirement: {
+          disposition: "historical-source-material",
+          reason: row.retirement_reason ?? "Retired legacy authored-library row."
+        }
+      } : {}),
       source: bundle.meta?.version ?? "authored-library-complete-v1",
       sourceFile: "tldr-astro-authored-library-COMPLETE.json",
       bucket: row._bucket ?? null,
@@ -293,7 +303,9 @@ function rowForPackageRow(row, bundle, batchId) {
       adminEditable: row.admin_editable ?? true,
       servingRule: servingFloor
         ? "Emergency-floor authored-library row serves with LIVE + lane=serving + review_state IS NULL."
-        : "Editorial authored-library row stays DRAFT until human promotion."
+        : status === "ARCHIVED"
+          ? "Retired authored-library row remains historical source material and never serves."
+          : "Editorial authored-library row stays DRAFT until human promotion."
     },
     prompt_version: row.prompt_version ?? bundle.meta?.version ?? "authored-library-complete-v1",
     provider: "manual",

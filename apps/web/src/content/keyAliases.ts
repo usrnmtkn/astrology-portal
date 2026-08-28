@@ -203,8 +203,7 @@ export function equivalentAstroContentKeys(key: string) {
     "slot-template/6K": ["fallback-hook/sky.station", "fallback-hook/sky.retrograde-section"],
     "slot-template/6L": ["fallback-hook/sky.retrograde-section"],
     "slot-template/6M": ["fallback-hook/sky.ingress"],
-    "slot-template/6N": ["fallback-hook/sky.aspect-detail"],
-    "slot-template/6O": ["fallback-hook/sky.aspect-row"]
+    "slot-template/6N": ["fallback-hook/sky.aspect-detail"]
   };
 
   (slotTemplateAliases[normalized] ?? []).forEach((alias) => addAlias(aliases, alias));
