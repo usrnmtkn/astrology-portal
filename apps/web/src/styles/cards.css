@@ -33,7 +33,7 @@
   display: grid;
   gap: 0;
   overflow: hidden;
-  border: 1px solid var(--card-border);
+  border: var(--border-width-thin) solid var(--card-border);
 }
 
 .natal-patterns-section,
@@ -43,7 +43,7 @@
 }
 
 .natal-pattern-card {
-  border: 1px solid var(--card-border);
+  border: var(--border-width-thin) solid var(--card-border);
   display: grid;
   gap: 0;
   overflow: hidden;
@@ -87,7 +87,7 @@
 }
 
 .natal-pattern-card__actions {
-  border-top: 1px solid var(--card-border);
+  border-top: var(--border-width-thin) solid var(--card-border);
   display: flex;
   justify-content: flex-end;
   padding: var(--space-3) var(--card-padding);
@@ -127,7 +127,7 @@
 }
 
 .natal-pattern-card__activation {
-  border-top: 1px solid var(--card-border);
+  border-top: var(--border-width-thin) solid var(--card-border);
   background: color-mix(in srgb, var(--card-bg) 88%, var(--card-title-color) 12%);
 }
 
@@ -177,7 +177,7 @@
 }
 
 .natal-pattern-card__activation-body {
-  border-top: 1px solid color-mix(in srgb, var(--card-border) 80%, transparent);
+  border-top: var(--border-width-thin) solid color-mix(in srgb, var(--card-border) 80%, transparent);
   display: grid;
   gap: var(--space-3);
   padding: var(--space-4) var(--card-padding);
@@ -239,7 +239,7 @@
   width: max-content;
   margin-left: var(--space-2);
   padding: calc(var(--space-1) / 2) var(--space-2);
-  border: 1px solid var(--card-border);
+  border: var(--border-width-thin) solid var(--card-border);
   border-radius: var(--radius-pill);
   background: var(--duration-badge-bg);
   color: var(--card-meta-color);
@@ -260,8 +260,8 @@
 .soul-roadmap-card__points {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  border-top: 1px solid var(--card-border);
-  border-bottom: 1px solid var(--card-border);
+  border-top: var(--border-width-thin) solid var(--card-border);
+  border-bottom: var(--border-width-thin) solid var(--card-border);
 }
 
 .soul-roadmap-card__points span {
@@ -272,7 +272,7 @@
 }
 
 .soul-roadmap-card__points span + span {
-  border-left: 1px solid var(--card-border);
+  border-left: var(--border-width-thin) solid var(--card-border);
 }
 
 .soul-roadmap-card__points strong {
@@ -320,7 +320,7 @@
   display: grid;
   gap: 0;
   overflow: hidden;
-  border: 1px solid var(--card-border);
+  border: var(--border-width-thin) solid var(--card-border);
 }
 
 .career-archetype-card__header {
@@ -374,8 +374,8 @@
 .career-archetype-card__factors {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  border-top: 1px solid var(--card-border);
-  border-bottom: 1px solid var(--card-border);
+  border-top: var(--border-width-thin) solid var(--card-border);
+  border-bottom: var(--border-width-thin) solid var(--card-border);
 }
 
 .career-archetype-card__factors span {
@@ -386,7 +386,7 @@
 }
 
 .career-archetype-card__factors span + span {
-  border-left: 1px solid var(--card-border);
+  border-left: var(--border-width-thin) solid var(--card-border);
 }
 
 .career-archetype-card__factors strong,
@@ -420,7 +420,7 @@
 }
 
 .career-archetype-card__sections article + article {
-  border-top: 1px solid var(--card-border);
+  border-top: var(--border-width-thin) solid var(--card-border);
 }
 
 .career-archetype-card__sections article > div {
@@ -443,7 +443,7 @@
 
   .career-archetype-card__factors span + span {
     border-left: 0;
-    border-top: 1px solid var(--card-border);
+    border-top: var(--border-width-thin) solid var(--card-border);
   }
 }
 
@@ -540,9 +540,18 @@
 .chart-frame > .sky-wheel {
   height: 100%;
 }
+.daily-dodont li {
+  margin: 0;
+  color: var(--card-body-color);
+  font-family: var(--font-body);
+  font-size: var(--text-body);
+  font-weight: var(--weight-regular);
+  letter-spacing: var(--tracking-body);
+  line-height: var(--leading-body);
+}
 .daily-dodont {
   background: var(--surface);
-  border: 1px solid var(--line);
+  border: var(--border-width-thin) solid var(--line);
   border-radius: var(--card-radius);
   display: grid;
   gap: 0;
@@ -557,7 +566,7 @@
 }
 
 .daily-dodont > div + div {
-  border-left: 1px solid var(--line);
+  border-left: var(--border-width-thin) solid var(--line);
 }
 
 .daily-dodont ul {
@@ -592,7 +601,7 @@
 .daily-forecast-label {
   align-items: center;
   background: var(--aspect-card-bg);
-  border: 1px solid var(--aspect-card-border);
+  border: var(--border-width-thin) solid var(--aspect-card-border);
   border-radius: var(--aspect-card-radius);
   box-shadow: var(--aspect-card-shadow);
   color: inherit;
@@ -663,6 +672,6 @@ button.daily-forecast-label:focus-visible {
 
   .daily-dodont > div + div {
     border-left: 0;
-    border-top: 1px solid var(--line);
+    border-top: var(--border-width-thin) solid var(--line);
   }
 }

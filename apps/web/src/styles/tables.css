@@ -64,16 +64,13 @@ button.placement-table-row {
 .placement-table-row__title {
   flex: 0 1 auto;
   min-width: 0;
-  color: var(--card-title-color);
-  font-family: var(--font-display);
   font-size: var(--text-table-title-size);
   font-weight: var(--weight-medium);
   line-height: var(--leading-title);
-  letter-spacing: var(--tracking-title);
 }
 
 .placement-table-row__rx {
-  --rx-label-tighten-offset: -2px;
+  --rx-label-tighten-offset: var(--ds-optical-offset-2);
 
   color: var(--card-meta-color);
   font-family: var(--font-body);
@@ -82,14 +79,6 @@ button.placement-table-row {
   line-height: var(--leading-label);
   margin-left: var(--rx-label-tighten-offset);
   vertical-align: 0.04em;
-}
-
-.placement-table-row__description {
-  color: var(--card-body-color);
-  font-family: var(--font-body);
-  font-size: var(--text-table-body-size);
-  font-weight: var(--weight-regular);
-  line-height: var(--leading-description);
 }
 
 .placement-table-row__meta {
@@ -102,8 +91,6 @@ button.placement-table-row {
   max-width: 100%;
   text-align: left;
   white-space: normal;
-  color: var(--card-meta-color);
-  font-family: var(--font-body);
   font-size: var(--text-table-meta-size);
   font-weight: var(--weight-medium);
   line-height: var(--leading-meta);
@@ -195,21 +182,12 @@ button.planet-placement-row {
   min-height: 22px;
   overflow-wrap: normal;
   word-break: normal;
-  color: var(--card-title-color);
-  font-family: var(--font-display);
   font-size: var(--type-xl);
   font-weight: var(--weight-medium);
   line-height: var(--leading-title);
-  letter-spacing: var(--tracking-title);
-}
-
-.planet-placement-row__degree,
-.planet-placement-row__meta {
-  color: var(--card-meta-color);
 }
 
 .planet-placement-row__degree {
-  font-family: var(--font-body);
   font-size: var(--text-placement-degree);
   font-weight: var(--weight-medium);
   line-height: var(--leading-meta);
@@ -222,11 +200,9 @@ button.planet-placement-row {
   align-items: center;
   gap: calc(var(--space-2) + var(--space-1) / 2);
   margin-top: 0;
-  font-family: var(--font-body);
   font-size: var(--type-meta-size);
   font-weight: var(--weight-regular);
   font-variant-numeric: tabular-nums;
-  letter-spacing: var(--tracking-number);
   line-height: var(--leading-meta);
   white-space: nowrap;
 }
@@ -271,7 +247,7 @@ button.planet-placement-row {
   position: relative;
   top: -1px;
   margin-right: 0;
-  border: 1px solid var(--duration-pill-border-color);
+  border: var(--border-width-thin) solid var(--duration-pill-border-color);
   background: var(--duration-pill-bg);
   color: var(--duration-pill-fg);
 }
@@ -398,7 +374,7 @@ button.planet-placement-row {
   box-sizing: border-box;
   max-width: min(340px, calc(100vw - 24px));
   padding: var(--space-3) calc(var(--space-3) + var(--space-1) / 2);
-  border: 1px solid var(--tooltip-border);
+  border: var(--border-width-thin) solid var(--tooltip-border);
   border-radius: var(--card-radius);
   background: var(--tooltip-bg);
   color: var(--tooltip-fg);
@@ -426,7 +402,7 @@ button.planet-placement-row {
 }
 
 .spl-status-item {
-  gap: 0.4em;
+  gap: var(--glyph-gap-md);
 }
 
 .placement-row-titleline {

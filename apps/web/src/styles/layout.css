@@ -31,11 +31,11 @@
 }
 
 .deferred-render-placeholder--table {
-  --deferred-placeholder-height: 320px;
+  --deferred-placeholder-height: var(--ds-layout-deferred-placeholder-height);
 }
 
 .deferred-render-placeholder--aspects {
-  --deferred-placeholder-height: 220px;
+  --deferred-placeholder-height: var(--ds-layout-deferred-placeholder-height-variant-2);
 }
 
 .chart-layout,
@@ -121,7 +121,7 @@
   gap: var(--sp-1);
   height: var(--top-control-height);
   padding: 0 var(--button-padding-x);
-  border: 1px solid var(--floating-button-border);
+  border: var(--border-width-thin) solid var(--floating-button-border);
   border-radius: var(--button-radius);
   background: var(--floating-button-bg);
   color: var(--app-text);
@@ -143,7 +143,7 @@
 }
 
 .floating-back-button:hover {
-  --floating-back-button-hover-lift: -1px;
+  --floating-back-button-hover-lift: var(--ds-optical-offset-1);
 
   border-color: var(--floating-button-border-hover);
   background: var(--floating-button-bg-hover);
@@ -196,7 +196,7 @@ body.modal-open {
   inset: 0;
   display: grid;
   place-items: center;
-  padding: clamp(20px, 4vw, 56px);
+  padding: var(--modal-content-padding);
   box-sizing: border-box;
   overflow-x: hidden;
   overflow-y: auto;
@@ -207,7 +207,7 @@ body.modal-open {
   max-height: min(780px, calc(100svh - 80px));
   overflow-x: hidden;
   overflow-y: auto;
-  border: 1px solid var(--modal-border);
+  border: var(--border-width-thin) solid var(--modal-border);
   border-radius: var(--modal-radius);
   background: var(--modal-bg);
   color: var(--app-text);
@@ -242,7 +242,7 @@ body.modal-open {
 
 .chart-modal-heading {
   display: grid;
-  gap: 8px;
+  gap: var(--space-2);
   margin-bottom: var(--space-6);
 }
 

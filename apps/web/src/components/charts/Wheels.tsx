@@ -202,11 +202,11 @@ export function aspectLegendSortValue(type: string) {
 function wholeSignAspectStyle(type: WholeSignInspectorAspectType, orb: number): CSSProperties {
   const base = aspectLineStyle(type, orb);
   const typeStyle: Record<WholeSignInspectorAspectType, { stroke: string; dash: string; widthBoost: number }> = {
-    conjunction: { stroke: "#252833", dash: "none", widthBoost: 0.2 },
-    sextile: { stroke: "#1d8fd7", dash: "3 6", widthBoost: 0 },
-    square: { stroke: "#e24eb9", dash: "9 4", widthBoost: 0.1 },
-    trine: { stroke: "#17a978", dash: "none", widthBoost: 0 },
-    opposition: { stroke: "#c5202f", dash: "none", widthBoost: 0.18 }
+    conjunction: { stroke: "var(--aspect-conjunction)", dash: "none", widthBoost: 0.2 },
+    sextile: { stroke: "var(--aspect-sextile)", dash: "3 6", widthBoost: 0 },
+    square: { stroke: "var(--aspect-square)", dash: "9 4", widthBoost: 0.1 },
+    trine: { stroke: "var(--aspect-trine)", dash: "none", widthBoost: 0 },
+    opposition: { stroke: "var(--aspect-opposition)", dash: "none", widthBoost: 0.18 }
   };
   const aspectStyle = typeStyle[type];
 

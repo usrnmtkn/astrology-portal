@@ -7,7 +7,7 @@
   max-width: 100%;
   min-width: 0;
   padding: var(--segmented-padding);
-  border: 1px solid var(--segmented-border);
+  border: var(--border-width-thin) solid var(--segmented-border);
   border-radius: var(--segmented-radius);
   background: var(--segmented-bg);
   box-shadow: var(--segmented-shadow, var(--shadow));
@@ -43,7 +43,7 @@
   height: var(--segmented-item-height);
   min-height: 0;
   padding: 0 var(--segmented-item-px);
-  border: 1px solid transparent;
+  border: var(--border-width-thin) solid transparent;
   border-radius: var(--segmented-item-radius);
   background: transparent;
   color: var(--segmented-inactive-fg);

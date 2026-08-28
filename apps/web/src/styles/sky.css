@@ -1,7 +1,7 @@
 .sky-detail-page {
   width: 100%;
   min-height: 100svh;
-  padding: clamp(116px, 15vh, 168px) clamp(18px, 5vw, 48px) 120px;
+  padding: var(--sky-page-padding);
   background: transparent;
   color: var(--ink);
   font-family: var(--font-body);
@@ -14,11 +14,6 @@
 
 .article-shell,
 .sky-detail-article {
-  /* Intentional Sky article reading-surface variant; softer than standard cards. */
-  --radius-article: 28px;
-  --radius-article-mobile: 22px;
-  --shadow-article: 0 30px 80px color-mix(in srgb, var(--ink) 10%, transparent);
-
   display: grid;
   width: min(var(--container-article), 100%);
   margin-inline: auto;
@@ -41,8 +36,8 @@
 .sky-detail-card {
   display: grid;
   gap: 0;
-  padding: clamp(40px, 5.4vw, 80px) clamp(26px, 6vw, 92px) clamp(52px, 6vw, 84px);
-  border: 1px solid var(--card-border);
+  padding: var(--sky-hero-padding);
+  border: var(--border-width-thin) solid var(--card-border);
   border-radius: var(--radius-article);
   background: var(--card-bg);
   box-shadow: var(--shadow-article);
@@ -73,7 +68,7 @@
 }
 
 .article-duration {
-  margin: clamp(var(--space-3), 1.5vw, var(--space-4)) 0 0;
+  margin: var(--sky-header-margin);
   color: var(--card-meta-color);
   font-family: var(--font-body);
   font-size: var(--type-meta-size);
@@ -87,8 +82,8 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 14px;
-  margin: 0 0 clamp(28px, 3vw, 38px);
+  gap: calc(var(--space-3) + var(--space-1) / 2);
+  margin: var(--sky-section-margin);
   color: var(--muted);
   font-family: var(--font-body);
   font-size: var(--type-label-size);
@@ -106,7 +101,7 @@
 .article-eyebrow__glyphs {
   display: inline-flex;
   align-items: center;
-  gap: 9px;
+  gap: calc(var(--space-2) + var(--space-1) / 4);
   color: var(--ink);
   font-family: var(--font-glyph);
   font-size: var(--type-body-size);
@@ -139,13 +134,13 @@
 .article-tldr {
   display: grid;
   justify-items: center;
-  gap: clamp(22px, 2.4vw, 30px);
+  gap: var(--sky-grid-gap);
   width: 100%;
-  margin-top: clamp(26px, 3.1vw, 36px);
+  margin-top: var(--sky-section-top-margin);
 }
 
 .article-tldr__label {
-  border: 1px solid var(--line);
+  border: var(--border-width-thin) solid var(--line);
   background: var(--card-bg);
   color: var(--muted);
 }
@@ -168,7 +163,7 @@
 }
 
 .sky-placement-hook-quote {
-  margin: 0 0 clamp(28px, 4vw, 44px);
+  margin: var(--sky-section-wide-margin);
   padding: 0;
   border: 0;
 }
@@ -178,7 +173,7 @@
   margin: 0;
   color: var(--card-title-color);
   font-family: var(--font-display);
-  font-size: clamp(1.35rem, 2.5vw, 1.8rem);
+  font-size: var(--sky-placement-hook-quote-size);
   font-weight: var(--weight-bold);
   letter-spacing: var(--tracking-tight);
   line-height: var(--leading-sky-quote);
@@ -187,13 +182,13 @@
 
 .article-tldr__copy {
   max-width: none;
-  font-size: var(--type-meta-size);
+  font-size: var(--text-body);
   line-height: var(--leading-body);
 }
 
 .article-rule {
   height: 1px;
-  margin: clamp(32px, 4vw, 48px) 0;
+  margin: var(--sky-section-block-margin);
   border: 0;
   background: var(--line);
 }
@@ -215,7 +210,7 @@
 .article-lens-hint {
   margin: 0 0 calc(var(--space-7) + var(--space-1));
   padding: var(--space-6) calc(var(--space-7) - var(--space-1)) calc(var(--space-6) + var(--space-1) / 2);
-  border: 1px solid color-mix(in srgb, var(--line) 82%, var(--ink) 8%);
+  border: var(--border-width-thin) solid color-mix(in srgb, var(--line) 82%, var(--ink) 8%);
   border-radius: var(--radius);
   background: color-mix(in srgb, var(--bg) 55%, var(--card-bg));
 }
@@ -224,7 +219,7 @@
   margin: 0;
   color: var(--muted);
   font-family: var(--font-body);
-  font-size: var(--type-meta-size);
+  font-size: var(--text-body);
   font-weight: var(--weight-regular);
   line-height: var(--leading-body);
   text-wrap: pretty;
@@ -242,7 +237,7 @@
   margin: 0;
   color: var(--card-body-color);
   font-family: var(--font-body);
-  font-size: var(--type-body-size);
+  font-size: var(--text-body);
   font-weight: var(--weight-regular);
   line-height: var(--leading-body);
   text-wrap: pretty;
@@ -310,7 +305,7 @@
 
 :is(.theme-dark, [data-theme="dark"]) .sky-detail-intro-section {
   background: color-mix(in srgb, var(--card-bg) 84%, white 4%);
-  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--line) 54%, transparent);
+  box-shadow: inset 0 0 0 var(--border-width-thin) color-mix(in srgb, var(--line) 54%, transparent);
 }
 
 .article-section h2,
@@ -350,7 +345,7 @@
 .sky-rising-horoscope__title {
   margin: 0 0 var(--sp-2);
   color: var(--ink);
-  font-family: var(--font-body);
+  font-family: var(--font-display);
   font-size: var(--text-section-heading-size);
   font-weight: var(--weight-medium);
   line-height: var(--leading-title);
@@ -366,12 +361,12 @@
   display: grid;
   gap: var(--space-5);
   margin-top: 0;
-  padding-top: clamp(40px, 5.4vw, 80px);
+  padding-top: var(--sky-hero-top-padding);
   border-top: 0;
 }
 
 .article-related-aspects.article-related-aspects-card {
-  padding: calc(var(--space-7) + var(--space-1) / 2) clamp(var(--space-6), 5vw, var(--space-8));
+  padding: var(--sky-content-padding);
 }
 
 .article-related-aspects__label {
@@ -387,14 +382,14 @@
 .article-related-aspects__label--outside {
   align-self: end;
   margin: var(--space-4) 0 calc(var(--space-1) * -1);
-  padding-inline: clamp(var(--space-4), 4vw, var(--space-8));
+  padding-inline: var(--sky-content-inline-padding);
 }
 
 .article-related-aspects__list {
   --aspect-row-gap: 0;
-  --aspect-row-glyph-width: 82px;
+  --aspect-row-glyph-width: var(--updates-aspect-glyph-width);
   --aspect-row-padding: calc(var(--space-4) + var(--space-1) / 2) 0;
-  --aspect-row-template: 82px minmax(0, 1fr) 42px;
+  --aspect-row-template: var(--ds-sky-aspect-row-template);
   gap: 0;
 }
 
@@ -410,7 +405,7 @@
 
 .article-related-aspects__copy {
   padding: calc(var(--space-5) + var(--space-1) / 2) 0;
-  border-bottom: 1px solid var(--line);
+  border-bottom: var(--border-width-thin) solid var(--line);
 }
 
 .article-related-aspects__copy:last-child {
@@ -448,7 +443,7 @@
   border: 0;
   border-radius: 0;
   background: transparent;
-  border-bottom: 1px solid var(--line);
+  border-bottom: var(--border-width-thin) solid var(--line);
   box-shadow: var(--shadow-flat);
 }
 
@@ -468,8 +463,8 @@
 .article-related-aspect-row .aspect-row-copy p {
   max-width: none;
   font-family: var(--font-body);
-  font-size: var(--aspect-card-body-size);
-  line-height: var(--aspect-card-body-line);
+  font-size: var(--text-body);
+  line-height: var(--leading-body);
 }
 
 .article-related-aspect-row .aspect-row-glyphs {
@@ -485,7 +480,7 @@
 
 @media (max-width: 700px) {
   .sky-detail-page {
-    padding: 104px var(--mobile-page-gutter) var(--mobile-page-gutter);
+    padding: var(--sky-mobile-page-padding);
   }
 
   .article-card,
@@ -508,26 +503,18 @@
 
   .article-eyebrow {
     flex-wrap: wrap;
-    gap: 10px;
+    gap: calc(var(--space-2) + var(--space-1) / 2);
     margin-bottom: var(--space-6);
   }
 
   .article-tldr {
-    gap: 18px;
+    gap: calc(var(--space-4) + var(--space-1) / 2);
     margin-top: var(--space-6);
   }
 
   .article-lens-hint {
     padding: calc(var(--space-4) + var(--space-1) / 2);
     border-radius: var(--radius);
-  }
-
-  .article-lens-hint p,
-  .article-section p,
-  .sky-detail-lede,
-    .sky-detail-section p,
-    .sky-detail-drilldown-body p {
-    font-size: var(--type-meta-size);
   }
 
   .article-rule {
@@ -557,10 +544,10 @@
   }
 
   .article-related-aspects__list {
-    --aspect-row-gap: 14px;
-    --aspect-row-glyph-width: 58px;
+    --aspect-row-gap: var(--ds-aspect-row-gap-wide);
+    --aspect-row-glyph-width: var(--ds-sky-aspect-row-glyph-width-variant-2);
     --aspect-row-padding: calc(var(--space-5) + var(--space-1) / 2) 0;
-    --aspect-row-template: 58px minmax(0, 1fr) 30px;
+    --aspect-row-template: var(--ds-sky-aspect-row-template-variant-2);
   }
 
   .article-related-aspect-row .aspect-row-glyphs {
@@ -587,7 +574,7 @@
 }
 
 .sky-detail-drilldown {
-  border-top: 1px solid var(--line);
+  border-top: var(--border-width-thin) solid var(--line);
   padding-top: var(--space-5);
 }
 
@@ -602,20 +589,20 @@
 
 .sky-detail-drilldown-body {
   display: grid;
-  gap: 16px;
+  gap: var(--space-4);
   margin-top: var(--space-4);
 }
 
 .sky-detail-drilldown-body dl {
   display: grid;
-  gap: 12px;
+  gap: var(--space-3);
   margin: 0;
 }
 
 .sky-detail-drilldown-body dl > div {
   display: grid;
-  gap: 4px;
-  border: 1px solid var(--card-border);
+  gap: var(--space-1);
+  border: var(--border-width-thin) solid var(--card-border);
   border-radius: var(--card-radius-sm);
   padding: calc(var(--space-3) + var(--space-1) / 2);
 }
@@ -631,7 +618,7 @@
 
 .sky-detail-drilldown-body dd {
   display: grid;
-  gap: 4px;
+  gap: var(--space-1);
   margin: 0;
   color: var(--card-body-color);
   font-family: var(--font-body);
@@ -651,11 +638,11 @@
   display: grid;
   max-height: none;
   overflow: visible;
-  gap: 16px;
+  gap: var(--space-4);
 }
 
 .ro-screen {
-  gap: 12px;
+  gap: var(--space-3);
 }
 
 .ro-group {
@@ -686,9 +673,9 @@
 
 .ro-sum {
   display: grid;
-  gap: 14px;
+  gap: calc(var(--space-3) + var(--space-1) / 2);
   padding: var(--space-5) calc(var(--space-5) + var(--space-1) / 2);
-  border: 1px solid var(--card-border);
+  border: var(--border-width-thin) solid var(--card-border);
   border-radius: var(--card-radius);
   background: var(--card-bg);
   box-shadow: var(--card-shadow);
@@ -698,7 +685,7 @@
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  gap: 16px;
+  gap: var(--space-4);
 }
 
 .ro-sum-n {
@@ -731,7 +718,7 @@
 
 .ro-cluster-badge,
 .ro-more-badge {
-  --retrograde-cluster-overlap: -10px;
+  --retrograde-cluster-overlap: var(--ds-sky-retrograde-cluster-overlap);
 
   display: grid;
   place-items: center;
@@ -759,10 +746,10 @@
   display: grid;
   grid-template-columns: auto minmax(0, 1fr) auto;
   align-items: center;
-  gap: 14px;
+  gap: calc(var(--space-3) + var(--space-1) / 2);
   width: 100%;
   padding: calc(var(--space-3) + var(--space-1) / 2) var(--space-4);
-  border: 1px solid var(--card-border);
+  border: var(--border-width-thin) solid var(--card-border);
   border-radius: var(--card-radius);
   background: var(--card-bg);
   box-shadow: var(--card-shadow);
@@ -772,7 +759,7 @@
 
 .ro-more-copy {
   display: grid;
-  gap: 4px;
+  gap: var(--space-1);
   min-width: 0;
 }
 
@@ -828,7 +815,7 @@
 .ro-screen .sky-pl-title {
   flex-wrap: wrap;
   align-items: baseline;
-  gap: var(--sp-1) 14px;
+  gap: var(--sp-1) calc(var(--space-3) + var(--space-1) / 2);
   font-family: var(--font-display);
   font-size: var(--retrograde-row-title-size);
   font-weight: var(--weight-regular);
@@ -858,9 +845,9 @@
   grid-template-columns: auto minmax(0, 1fr);
   align-items: start;
   width: 100%;
-  gap: clamp(18px, 2.4vw, 26px);
-  padding: clamp(24px, 3vw, 34px) clamp(24px, 3.4vw, 38px);
-  border: 1px solid var(--card-border);
+  gap: var(--sky-card-grid-gap);
+  padding: var(--sky-card-grid-padding);
+  border: var(--border-width-thin) solid var(--card-border);
   border-radius: var(--card-radius);
   background: var(--card-bg);
   box-shadow: var(--card-shadow);
@@ -878,12 +865,12 @@
   border-radius: var(--radius-circle);
   background: var(--retrograde-bg);
   color: var(--retrograde-accent);
-  font-size: calc(var(--text-glyph) + 8px);
+  font-size: var(--retrograde-badge-size);
   line-height: var(--leading-label);
 }
 
 .retro-badge .rx {
-  --retrograde-badge-rx-offset: -4px;
+  --retrograde-badge-rx-offset: var(--ds-sky-retrograde-badge-rx-offset);
 
   position: absolute;
   top: 0;
@@ -904,14 +891,14 @@
 .retro-main {
   display: grid;
   min-width: 0;
-  gap: 12px;
+  gap: var(--space-3);
 }
 
 .retro-top {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  gap: 24px;
+  gap: var(--space-6);
 }
 
 .retro-top strong {
@@ -989,7 +976,7 @@
 .sky-card {
   min-height: var(--sky-card-min-height);
   padding: var(--sky-card-padding);
-  border: 1px solid var(--card-border);
+  border: var(--border-width-thin) solid var(--card-border);
   border-radius: var(--radius-sm);
   border-top-left-radius: var(--radius-sm);
   border-top-right-radius: var(--radius-sm);
@@ -1032,7 +1019,7 @@
 
 .placement-section .planet-placement-row__meta {
   flex-wrap: wrap;
-  gap: var(--sp-1) 10px;
+  gap: var(--sp-1) calc(var(--space-2) + var(--space-1) / 2);
 }
 
 .placement-section .planet-placement-row__description {
@@ -1041,8 +1028,8 @@
   overflow: hidden;
   color: var(--card-body-color);
   font-family: var(--font-body);
-  font-size: var(--aspect-card-body-size);
-  line-height: var(--aspect-card-body-line);
+  font-size: var(--text-body);
+  line-height: var(--leading-body);
   text-wrap: pretty;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
@@ -1099,7 +1086,7 @@
 
 .sky-loading-wheel {
   display: grid;
-  width: min(100%, var(--chart-wheel-size));
+  width: min(100%, var(--shared-chart-size));
   aspect-ratio: 1;
   place-items: center;
   opacity: 0.15;
@@ -1143,10 +1130,10 @@
 .sky-loading-card {
   display: grid;
   grid-template-columns: 46px minmax(0, 1fr);
-  gap: clamp(16px, 2vw, 24px);
+  gap: var(--sky-ledger-gap);
   min-height: 188px;
-  padding: clamp(22px, 2.8vw, 34px);
-  border: 1px solid color-mix(in srgb, var(--card-border) 74%, transparent);
+  padding: var(--sky-ledger-padding);
+  border: var(--border-width-thin) solid color-mix(in srgb, var(--card-border) 74%, transparent);
   border-radius: var(--card-radius);
   background: color-mix(in srgb, var(--card-bg) 54%, transparent);
   box-shadow: var(--shadow-mobile-panel);
@@ -1174,11 +1161,11 @@
 }
 
 .sky-loading-card__main {
-  gap: 12px;
+  gap: var(--space-3);
 }
 
 .sky-loading-card__body {
-  gap: 12px;
+  gap: var(--space-3);
   margin-top: var(--space-2);
 }
 
@@ -1239,7 +1226,7 @@
 .sky-today-ledger {
   display: none;
   overflow: hidden;
-  border: 1px solid var(--line);
+  border: var(--border-width-thin) solid var(--line);
   border-radius: var(--radius);
   background: var(--surface);
   box-shadow: var(--shadow-flat);
@@ -1272,7 +1259,7 @@
 .sky-today-ledger__head p {
   display: grid;
   justify-items: end;
-  gap: 4px;
+  gap: var(--space-1);
   margin: 0;
   color: var(--muted);
   font-family: var(--font-body);
@@ -1285,13 +1272,13 @@
 
 .sky-today-ledger__row,
 .sky-today-ledger__foot {
-  border-top: 1px solid var(--line);
+  border-top: var(--border-width-thin) solid var(--line);
 }
 
 .sky-today-ledger__row {
   display: flex;
   align-items: center;
-  gap: 13px;
+  gap: calc(var(--space-3) + var(--space-1) / 4);
   padding: calc(var(--space-3) + var(--space-1) / 2) var(--space-5);
 }
 
@@ -1301,7 +1288,7 @@
   flex: 0 0 36px;
   width: 36px;
   height: 36px;
-  border: 1px solid var(--line);
+  border: var(--border-width-thin) solid var(--line);
   border-radius: var(--radius-circle);
   background: var(--surface-2);
   color: var(--wheel-glyph);
@@ -1339,7 +1326,7 @@
   display: grid;
   flex: 1 1 auto;
   min-width: 0;
-  gap: 3px;
+  gap: calc(var(--space-1) * 0.75);
   color: var(--ink);
   font-family: var(--font-body);
   line-height: var(--leading-title);
@@ -1389,7 +1376,7 @@
 .sky-today-ledger__foot {
   display: flex;
   align-items: center;
-  gap: 13px;
+  gap: calc(var(--space-3) + var(--space-1) / 4);
   width: 100%;
   border-right: 0;
   border-bottom: 0;
@@ -1437,7 +1424,7 @@
   flex: 0 0 32px;
   width: 32px;
   height: 32px;
-  border: 1px solid var(--line);
+  border: var(--border-width-thin) solid var(--line);
   border-radius: var(--radius-circle);
   background: var(--surface-2);
   color: var(--ink-2);
@@ -1477,7 +1464,7 @@
   width: var(--snap-icon-size);
   height: var(--snap-icon-size);
   flex: 0 0 var(--snap-icon-size);
-  border: 1px solid var(--card-border);
+  border: var(--border-width-thin) solid var(--card-border);
   border-radius: var(--radius-circle);
   background: color-mix(in srgb, var(--app-card) 82%, var(--app-text) 7%);
   color: var(--card-glyph-color);
@@ -1566,10 +1553,10 @@
   width: var(--snap-moon-disc-size);
   height: var(--snap-moon-disc-size);
   overflow: hidden;
-  border: 1px solid color-mix(in srgb, var(--app-text) 12%, transparent);
+  border: var(--border-width-thin) solid color-mix(in srgb, var(--app-text) 12%, transparent);
   border-radius: var(--radius-circle);
   background: var(--moon-phase-shadow);
-  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--app-text) 8%, transparent);
+  box-shadow: inset 0 0 0 var(--border-width-thin) color-mix(in srgb, var(--app-text) 8%, transparent);
 }
 
 .moon-phase-art::before {
@@ -1612,7 +1599,7 @@
 
 .moon-phase-art--waxing-gibbous::after,
 .moon-phase-art--waning-gibbous::after {
-  --moon-phase-mask-bleed: -1px;
+  --moon-phase-mask-bleed: var(--ds-optical-offset-1);
 
   content: "";
   position: absolute;

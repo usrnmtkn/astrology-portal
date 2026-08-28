@@ -32,7 +32,6 @@
 }
 
 .lunar-selected-card :where(
-  h2,
   p,
   em,
   strong,
@@ -53,6 +52,18 @@
   .lunar-selected-card__practice
 ) {
   font-family: var(--lunar-selected-font-body);
+}
+
+.lunar-selected-card h2 {
+  font-family: var(--lunar-selected-font-title);
+}
+
+.lunar-selected-card :where(
+  .lunar-selected-card__eyebrow,
+  .lunar-selected-card__meta,
+  .lunar-selected-card__meta-element
+) {
+  font-family: var(--lunar-selected-font-label);
 }
 
 .lunar-selected-card :where(
