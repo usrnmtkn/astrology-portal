@@ -8022,6 +8022,7 @@ body,
 
 .admin-dashboard .admin-breadcrumb-separator {
   color: var(--admin-ui-subtle);
+  margin-inline: var(--admin-space-md);
 }
 
 .admin-dashboard .admin-eyebrow {
