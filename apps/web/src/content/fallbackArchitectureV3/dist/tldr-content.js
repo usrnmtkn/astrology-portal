@@ -1506,7 +1506,11 @@ ${passHook}`;
     const verb = g === "conjunction" ? "transforming" : g === "hard" ? "challenging" : "boosting";
     const noun = vocab.get(`fallback-vocab/transit-label-noun/${natal}`)?.body;
     if (!noun) throw new SourceGapError(`SOURCE_GAP: no label noun for ${natal}`);
-    return { label: `${title2(transiting)} ${verb} ${noun}`, window: win ?? WINDOW_ASPECT[transiting] ?? "Currently" };
+    return {
+      label: `${title2(transiting)} ${verb} ${noun}`,
+      noun,
+      window: win ?? WINDOW_ASPECT[transiting] ?? "Currently"
+    };
   }
   function renderTransitReturn({ planet }) {
     const c = card(`authored/transit-return/${planet}`);
