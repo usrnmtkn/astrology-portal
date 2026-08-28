@@ -16728,7 +16728,7 @@ function ProfileView({
       throw error;
     }
   })();
-  const behindForecastRows = [
+  const behindForecastItems = [
     ...qualifyingDailyTransits.map((transit) => ({
       end: transitItemActiveWindow(transit, targetDate).end,
       transit
@@ -16739,12 +16739,16 @@ function ProfileView({
     .sort((first, second) => first.end.getTime() - second.end.getTime())
     .flatMap((entry) => {
       if ("moonLabel" in entry && entry.moonLabel) {
-        return [(
-          <article className="daily-forecast-label daily-forecast-label--static" key={`daily-label-${entry.moonLabel.id}`}>
-            <span>{entry.moonLabel.rendered.label}</span>
-            <small>{entry.moonLabel.rendered.window}</small>
-          </article>
-        )];
+        return [{
+          groupKey: entry.moonLabel.rendered.noun.toLocaleLowerCase(),
+          groupLabel: entry.moonLabel.rendered.noun,
+          node: (
+            <article className="daily-forecast-label daily-forecast-label--static" key={`daily-label-${entry.moonLabel.id}`}>
+              <span>{entry.moonLabel.rendered.label}</span>
+              <small>{entry.moonLabel.rendered.window}</small>
+            </article>
+          )
+        }];
       }
 
       if (!("transit" in entry)) return [];
@@ -16776,43 +16780,51 @@ function ProfileView({
         );
 
         if (!detailAvailable) {
-          return [(
-            <article className="daily-forecast-label daily-forecast-label--static" key={`daily-label-${transit.id}`}>
-              {labelContent}
-            </article>
-          )];
+          return [{
+            groupKey: rendered.noun.toLocaleLowerCase(),
+            groupLabel: rendered.noun,
+            node: (
+              <article className="daily-forecast-label daily-forecast-label--static" key={`daily-label-${transit.id}`}>
+                {labelContent}
+              </article>
+            )
+          }];
         }
 
-        return [(
-          <button
-            className="daily-forecast-label"
-            key={`daily-label-${transit.id}`}
-            onClick={() => {
-              setSelectedTransitId(transit.id);
-              setActivePlacementRouteId(null);
-              setTransitArticle({
-                id: personalizedContentKey,
-                title: `${transit.transitPlanet} ${transit.aspect} your ${transit.natalPoint}`,
-                glyph: pointGlyph(transit.transitPlanet),
-                subtitle: "",
-                summary: "",
-                generatedContent: savedGeneratedContent,
-                sections: normalized.sections.map((section) => ({
-                  heading: section.heading,
-                  tldr: "",
-                  body: taggedSectionBody(section)
-                })),
-                meta: [
-                  { label: "Duration", value: transitItemTimingDisplay(transit, targetDate).rangeLabel },
-                  { label: "Orb", value: wholeDegreeOrb(transitOrbValue(transit)) }
-                ]
-              });
-            }}
-            type="button"
-          >
-            {labelContent}
-          </button>
-        )];
+        return [{
+          groupKey: rendered.noun.toLocaleLowerCase(),
+          groupLabel: rendered.noun,
+          node: (
+            <button
+              className="daily-forecast-label"
+              key={`daily-label-${transit.id}`}
+              onClick={() => {
+                setSelectedTransitId(transit.id);
+                setActivePlacementRouteId(null);
+                setTransitArticle({
+                  id: personalizedContentKey,
+                  title: `${transit.transitPlanet} ${transit.aspect} your ${transit.natalPoint}`,
+                  glyph: pointGlyph(transit.transitPlanet),
+                  subtitle: "",
+                  summary: "",
+                  generatedContent: savedGeneratedContent,
+                  sections: normalized.sections.map((section) => ({
+                    heading: section.heading,
+                    tldr: "",
+                    body: taggedSectionBody(section)
+                  })),
+                  meta: [
+                    { label: "Duration", value: transitItemTimingDisplay(transit, targetDate).rangeLabel },
+                    { label: "Orb", value: wholeDegreeOrb(transitOrbValue(transit)) }
+                  ]
+                });
+              }}
+              type="button"
+            >
+              {labelContent}
+            </button>
+          )
+        }];
       } catch (error) {
         if (error instanceof FallbackV3SourceGapError) {
           console.warn("Daily transit label source gap; hiding surface.", { transitId: transit.id, error });
@@ -16822,6 +16834,21 @@ function ProfileView({
         throw error;
       }
     });
+  const behindForecastGroups = behindForecastItems.reduce<Array<{
+    key: string;
+    label: string;
+    rows: ReactNode[];
+  }>>((groups, item) => {
+    const existingGroup = groups.find((group) => group.key === item.groupKey);
+
+    if (existingGroup) {
+      existingGroup.rows.push(item.node);
+    } else {
+      groups.push({ key: item.groupKey, label: item.groupLabel, rows: [item.node] });
+    }
+
+    return groups;
+  }, []);
   const standaloneHouseTransitRows = currentSky && natalSky
     ? currentSkyHouseActivations(currentSky, natalSky).slice(0, 4).flatMap((activation) => {
       const { house, position } = activation;
@@ -17145,7 +17172,7 @@ function ProfileView({
     doItems: dailyDoDont?.do,
     dontItems: dailyDoDont?.dont,
     specialSections: dailySpecialSections.slice(0, 2),
-    behindForecastRows,
+    behindForecastGroups,
     derivation: {
       targetDate,
       localNoon: true,
