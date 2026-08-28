@@ -24,6 +24,10 @@ function templateParts(template: string) {
   return template.split(/(\{\{\s*[#^/]?\s*[\w.-]+\s*\}\})/gu).filter(Boolean);
 }
 
+function sourceKindLabel(source: CompositionMapSource) {
+  return source.kind === "phrase" ? "Phrase" : source.kind === "copy" ? "Saved copy" : "Hook";
+}
+
 export default function CompositionMapWorkspace({ editor, onEditRow, rows }: Props) {
   const [destinationFilter, setDestinationFilter] = useState("all");
   const [issuesOnly, setIssuesOnly] = useState(false);
@@ -98,9 +102,11 @@ export default function CompositionMapWorkspace({ editor, onEditRow, rows }: Pro
         className={`admin-composition-variable variable-${segment.kind}`}
         data-variable-action={`${action} →`}
         aria-label={`${segment.text}. ${action}`}
+        title={action}
         onClick={() => openVariable(segment.name!, segment.source)}
       >
         {segment.text}
+        {segment.source && <span className="admin-composition-inline-edit" aria-hidden="true">{action} →</span>}
       </button>
     );
   }
@@ -252,7 +258,7 @@ export default function CompositionMapWorkspace({ editor, onEditRow, rows }: Pro
                       <div className="admin-composition-preview-sources">
                         {selected.preview.sources.map((source) => (
                           <button type="button" key={source.row.id} onClick={() => onEditRow(source.row)}>
-                            <span><small>{source.kind === "phrase" ? "Phrase" : "Hook"}</small><strong>{source.label}</strong></span>
+                            <span><small>{sourceKindLabel(source)}</small><strong>{source.label}</strong></span>
                             <span>Edit source</span>
                           </button>
                         ))}
@@ -338,7 +344,7 @@ export default function CompositionMapWorkspace({ editor, onEditRow, rows }: Pro
                       <div className="admin-composition-sources" aria-label={`Saved sources for ${slot.label}`}>
                         {slot.sources.map((source) => (
                           <button type="button" key={source.row.id} onClick={() => onEditRow(source.row)}>
-                            <span><small>{source.kind === "phrase" ? "Phrase" : "Hook"}</small><strong>{source.label}</strong><code>{source.row.content_key}</code></span>
+                            <span><small>{sourceKindLabel(source)}</small><strong>{source.label}</strong><code>{source.row.content_key}</code></span>
                             <span>Open editor</span>
                           </button>
                         ))}
