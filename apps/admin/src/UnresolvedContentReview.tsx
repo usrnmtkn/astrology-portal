@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { adminCredentialHeaders } from "./adminSecret";
+import { AdminPaginatedCollection } from "./AdminPaginatedCollection";
 
 export type UnresolvedContentItem = {
   id: string;
@@ -485,9 +486,10 @@ export function UnresolvedContentReview({
       <section className="admin-list-panel" aria-label="Unresolved content records">
         <div className="admin-content-table-scroll">
           {reportState === false && <p className="admin-empty" role="alert">Load failed. Try again.</p>}
-          <table className="admin-content-table admin-unresolved-content-table">
+          <AdminPaginatedCollection items={filteredIssues} label="Unresolved content" pageSize={25} resetKey={`${query}:${filteredIssues.length}`}>
+            {(visibleIssues) => <table className="admin-content-table admin-unresolved-content-table">
             <thead><tr><th>Content</th><th>What it means</th><th>Source records</th><th>Next step</th></tr></thead>
-            <tbody>{filteredIssues.map((issue) => {
+            <tbody>{visibleIssues.map((issue) => {
               const sourceRepair = issue.kind === "source-repair";
               const sourceApproved = sourceRepair && Boolean(issue.sourceDecision);
               const editableRow = editableRowsByContentKey.get(issue.contentKey);
@@ -549,7 +551,8 @@ export function UnresolvedContentReview({
                       : <div className="admin-unresolved-actions"><span className={`admin-unresolved-action-state is-${workflow.status}`}>{workflow.statusLabel}</span><div className="admin-toolbar-actions"><button className={`admin-edit-row-button ${requestCopied ? "" : "is-primary"}`} type="button" onClick={() => void copyRequest(issue, issue.resolution ? "implementation" : "investigation", issue.resolution ? editorialImplementationRequest(issue) : issue.aiRequest)}>{requestCopied ? "Copy repair request again" : issue.resolution ? "Repair Content Library import" : "Copy investigation request"}</button><button className={`admin-edit-row-button ${requestCopied ? "is-primary" : ""}`} type="button" onClick={() => void recordResolution(credential)}>{requestCopied ? "Record Codex response" : "Record an existing response"}</button></div></div>}</td>
               </tr>;
             })}</tbody>
-          </table>
+            </table>}
+          </AdminPaginatedCollection>
           {report && filteredIssues.length === 0 && <p className="admin-empty" role="status">No matching issues.</p>}
         </div>
       </section>
