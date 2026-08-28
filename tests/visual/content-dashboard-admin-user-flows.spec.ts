@@ -505,9 +505,12 @@ async function seedAdminApi(
     expectedSecret?: string;
     generatedRows?: Record<string, unknown>[];
     generatedContentDelayMs?: number;
+    generatedContentFailuresBeforeSuccess?: number;
+    onGeneratedContentRead?: (url: URL) => void;
   } = {}
 ) {
   const apiGeneratedContentRows = options.generatedRows ?? generatedContentRows;
+  let generatedContentFailuresRemaining = options.generatedContentFailuresBeforeSuccess ?? 0;
   await page.route("https://tldrastro-api-27165565299.us-central1.run.app/**", async (route) => {
     await route.fulfill({
       status: 200,
@@ -667,6 +670,16 @@ async function seedAdminApi(
       if (options.generatedContentDelayMs) {
         await new Promise((resolve) => setTimeout(resolve, options.generatedContentDelayMs));
       }
+      options.onGeneratedContentRead?.(url);
+      if (generatedContentFailuresRemaining > 0) {
+        generatedContentFailuresRemaining -= 1;
+        await route.fulfill({
+          status: 503,
+          contentType: "application/json",
+          body: JSON.stringify({ ok: false, error: "Temporary generated-content read failure." })
+        });
+        return;
+      }
       await route.fulfill({
         status: 200,
         contentType: "application/json",
@@ -812,6 +825,21 @@ test.describe("content dashboard admin user flow case studies", () => {
     });
     await expect(page.getByRole("region", { name: "Loading saved content" })).toBeHidden();
     await expect(page.getByRole("navigation", { name: "Review queue views" })).toBeVisible();
+  });
+
+  test("initial CMS load retries a transient generated-content page failure", async ({ page }) => {
+    let generatedContentReads = 0;
+    await seedAdminApi(page, {
+      generatedContentFailuresBeforeSuccess: 1,
+      onGeneratedContentRead: () => {
+        generatedContentReads += 1;
+      }
+    });
+
+    await expectAdminRouteLoads(page, "/admin/content#review-queue");
+    await expect(page.getByRole("region", { name: "Admin status" })).toContainText(`${generatedContentRows.length} saved rows loaded`);
+    await expect(page.getByRole("region", { name: "Admin status" })).not.toContainText("Rows not loaded");
+    expect(generatedContentReads).toBe(2);
   });
 
   test("production-scale Content Library keeps the DOM bounded and search responsive", async ({ page }) => {
