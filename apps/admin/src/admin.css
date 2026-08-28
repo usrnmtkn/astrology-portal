@@ -10344,6 +10344,147 @@ body,
   width: 100%;
 }
 
+.admin-dashboard .admin-template-reader-drilldown {
+  background: var(--admin-ui-surface-2);
+  border: 1px solid var(--admin-ui-border-strong);
+  border-radius: var(--admin-ui-radius-lg);
+  display: grid;
+  gap: var(--admin-space-2xl);
+  padding: var(--admin-space-2xl);
+}
+
+.admin-dashboard .admin-template-reader-drilldown > header {
+  align-items: flex-start;
+  display: flex;
+  gap: var(--admin-space-2xl);
+  justify-content: space-between;
+}
+
+.admin-dashboard .admin-template-reader-drilldown > header > div {
+  display: grid;
+  gap: var(--admin-space-sm);
+}
+
+.admin-dashboard .admin-template-reader-drilldown h3,
+.admin-dashboard .admin-template-reader-drilldown p {
+  margin: 0;
+}
+
+.admin-dashboard .admin-template-reader-drilldown > header h3 {
+  font-size: var(--admin-type-18);
+  line-height: var(--leading-title);
+}
+
+.admin-dashboard .admin-template-reader-drilldown > header p:not(.admin-eyebrow) {
+  color: var(--admin-ui-muted);
+  line-height: var(--leading-description);
+}
+
+.admin-dashboard .admin-template-reader-surface {
+  background: #0a0d0c;
+  border: 1px solid var(--admin-ui-border-strong);
+  border-radius: var(--admin-ui-radius-lg);
+  overflow: hidden;
+}
+
+.admin-dashboard .admin-template-reader-copy {
+  display: grid;
+  gap: var(--admin-space-2xl);
+  padding: var(--admin-space-4xl);
+}
+
+.admin-dashboard .admin-template-reader-copy .admin-composition-preview-field h3 {
+  font-size: var(--admin-type-20);
+}
+
+.admin-dashboard .admin-template-reader-copy .admin-composition-preview-field p {
+  font-size: var(--admin-type-15);
+}
+
+.admin-dashboard .admin-template-reader-variable {
+  cursor: pointer;
+}
+
+.admin-dashboard .admin-variable-syntax-guide {
+  padding: 0;
+}
+
+.admin-dashboard .admin-variable-syntax-guide > summary {
+  cursor: pointer;
+  font-weight: var(--weight-semibold);
+  padding: var(--admin-space-2xl);
+}
+
+.admin-dashboard .admin-variable-syntax-guide > div {
+  border-top: 1px solid var(--admin-ui-border);
+  display: grid;
+  gap: var(--admin-space-xl);
+  padding: var(--admin-space-2xl);
+}
+
+.admin-dashboard .admin-variable-syntax-guide h3 {
+  margin: 0;
+}
+
+.admin-dashboard .admin-variable-source-token {
+  background: var(--composition-variable-bg);
+  border: 0;
+  border-bottom: 1px dashed currentColor;
+  border-radius: var(--admin-radius-xs);
+  box-shadow: none;
+  color: var(--composition-variable-color);
+  display: inline;
+  font: inherit;
+  margin: 0;
+  min-height: 0;
+  min-width: 0;
+  padding: 0 var(--admin-space-2xs);
+}
+
+.admin-dashboard .admin-variable-source-token:hover,
+.admin-dashboard .admin-variable-source-token:focus-visible {
+  background: color-mix(in srgb, var(--composition-variable-color) 22%, transparent);
+  outline: 2px solid color-mix(in srgb, var(--composition-variable-color) 35%, transparent);
+}
+
+.admin-dashboard .admin-variable-atomic-list {
+  display: grid;
+  gap: var(--admin-space-lg);
+}
+
+.admin-dashboard .admin-variable-atomic-list > div {
+  display: grid;
+  gap: var(--admin-space-sm);
+}
+
+.admin-dashboard .admin-variable-atomic-list h3,
+.admin-dashboard .admin-variable-atomic-list p {
+  margin: 0;
+}
+
+.admin-dashboard .admin-variable-atomic-list > button {
+  align-items: center;
+  background: var(--admin-ui-surface-2);
+  border: 1px solid var(--admin-ui-border);
+  border-radius: var(--admin-ui-radius-lg);
+  display: flex;
+  gap: var(--admin-space-2xl);
+  justify-content: space-between;
+  padding: var(--admin-space-2xl);
+  text-align: left;
+  width: 100%;
+}
+
+.admin-dashboard .admin-variable-atomic-list > button > span:first-child {
+  display: grid;
+  gap: var(--admin-space-xs);
+}
+
+.admin-dashboard .admin-variable-atomic-list > button > span:last-child {
+  color: var(--admin-ui-subtle);
+  font-size: var(--admin-ui-type-caption);
+}
+
 .admin-dashboard .admin-variable-detail-panel,
 .admin-dashboard .admin-variable-source-panel {
   box-shadow: -34px 0 90px rgba(0, 0, 0, 0.58);
@@ -10434,6 +10575,16 @@ body,
 }
 
 @media (max-width: 720px) {
+  .admin-dashboard .admin-template-reader-drilldown > header,
+  .admin-dashboard .admin-variable-atomic-list > button {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .admin-dashboard .admin-template-reader-copy {
+    padding: var(--admin-space-2xl);
+  }
+
   .admin-dashboard .admin-variable-source-row {
     align-items: flex-start;
     flex-direction: column;
