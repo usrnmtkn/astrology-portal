@@ -68,6 +68,13 @@ type UnresolvedWorkflowContext = {
   requestCopied: boolean;
 };
 
+export function editorialReviewSubject(contentKey: string) {
+  const match = contentKey.match(/eclipse-lunar\/([^/]+)\/rising-([^/]+)\/house-(\d+)$/u);
+  if (!match) return "this content row";
+  const title = (value: string) => value.split("-").map((part) => `${part.charAt(0).toUpperCase()}${part.slice(1)}`).join(" ");
+  return `${title(match[1])} lunar eclipse horoscope for ${title(match[2])} Rising · House ${match[3]}`;
+}
+
 export function unresolvedIssueWorkflow(
   issue: UnresolvedContentIssue,
   { contentLibraryReady, hasEditableRow, requestCopied }: UnresolvedWorkflowContext
@@ -169,11 +176,12 @@ export function unresolvedIssueWorkflow(
   }
 
   if (hasEditableRow) {
+    const reviewSubject = editorialReviewSubject(issue.contentKey);
     return {
       status: "action",
       statusLabel: "Ready for owner review",
-      currentStep: "Review the copy in Content Library",
-      explanation: "The governed editable row is available. Open the exact row to review and edit it.",
+      currentStep: `Review ${reviewSubject}`,
+      explanation: "Read the headline and full horoscope body. Check the astrology, voice, repetition, and any unfinished placeholders. Saving edits keeps this copy held for the later authorization step.",
       responsibleParty: "You",
       completedChecks: ["Governed source record found", "Editable row imported", "Review hold preserved", "Reader serving unchanged"],
       steps: [
@@ -467,7 +475,12 @@ export function UnresolvedContentReview({
                   : !contentLibraryReady && !sourceRepair
                   ? <div className="admin-unresolved-actions"><span className="admin-unresolved-action-state is-waiting">Waiting</span><button className="admin-edit-row-button" type="button" disabled>Checking Content Library…</button></div>
                   : canOpen
-                    ? <div className="admin-unresolved-actions"><span className="admin-unresolved-action-state is-action">Action needed</span><button className="admin-edit-row-button is-primary" type="button" onClick={() => onFindInContentLibrary(issue.contentKey)}>Open exact row to review</button></div>
+                    ? <div className="admin-unresolved-actions admin-unresolved-review-action">
+                        <strong>Your next action</strong>
+                        <button className="admin-edit-row-button is-primary" type="button" onClick={() => onFindInContentLibrary(issue.contentKey)}>Review this horoscope</button>
+                        <small><strong>Opens:</strong> the Content Library editor with this exact row already selected.</small>
+                        <small><strong>Review:</strong> the headline and full Body for accuracy, tone, repetition, and unfinished placeholders.</small>
+                      </div>
                     : issue.resolution?.result_status === "implemented"
                       ? <div className="admin-unresolved-actions"><span className="admin-unresolved-action-state is-waiting">Waiting for import</span><button className="admin-edit-row-button" type="button" onClick={() => setRefreshToken((current) => current + 1)} disabled={refreshing}>{refreshing ? "Refreshing…" : "Refresh status"}</button></div>
                       : <div className="admin-unresolved-actions"><span className={`admin-unresolved-action-state is-${workflow.status}`}>{workflow.statusLabel}</span><div className="admin-toolbar-actions"><button className={`admin-edit-row-button ${requestCopied ? "" : "is-primary"}`} type="button" onClick={() => void copyRequest(issue, issue.resolution ? "implementation" : "investigation", issue.resolution ? editorialImplementationRequest(issue) : issue.aiRequest)}>{requestCopied ? "Copy repair request again" : issue.resolution ? "Repair Content Library import" : "Copy investigation request"}</button><button className={`admin-edit-row-button ${requestCopied ? "is-primary" : ""}`} type="button" onClick={() => void recordResolution(credential)}>{requestCopied ? "Record Codex response" : "Record an existing response"}</button></div></div>}</td>
