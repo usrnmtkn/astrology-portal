@@ -2153,6 +2153,10 @@ export function GeneratedContentAdminDashboard() {
   const [showReferenceRows, setShowReferenceRows] = useState(false);
   const [showRetiredRows, setShowRetiredRows] = useState(false);
   const [query, setQuery] = useState("");
+  const [guidedReviewKey, setGuidedReviewKey] = useState<string | null>(() => {
+    const { page, params } = parseAdminHash();
+    return page === "content" && params.get("from") === "unresolved" ? params.get("q") : null;
+  });
   const [natalPlacementPlanet, setNatalPlacementPlanet] = useState<NatalPlacementPlanet | "">("");
   const [natalPlacementSign, setNatalPlacementSign] = useState<NatalPlacementSign | "">("");
   const [natalPlacementHouse, setNatalPlacementHouse] = useState<NatalPlacementHouse | "">("");
@@ -2196,6 +2200,7 @@ export function GeneratedContentAdminDashboard() {
   const [writingSurfaceAccess, setWritingSurfaceAccess] = useState<Record<string, WritingSurfaceAdminAccess>>({});
   const [writingSurfaceRoleLabels, setWritingSurfaceRoleLabels] = useState<Partial<Record<WritingSurfaceSource["role"], string>>>({});
   const handledHashRef = useRef("");
+  const guidedReviewOpenedRef = useRef("");
   const editorRef = useRef<HTMLElement | null>(null);
   const hookCatalogRequestRef = useRef<Promise<{ definitions: FallbackHookDefinition[]; packageVersion: string }> | null>(null);
   const hookBodyPackagesRef = useRef(new Map<GeneratedContentSurface, Map<string, string>>());
@@ -2636,6 +2641,8 @@ export function GeneratedContentAdminDashboard() {
       if (openedFromUnresolved) {
         revealUnresolvedContentRow();
       }
+      guidedReviewOpenedRef.current = "";
+      setGuidedReviewKey(openedFromUnresolved ? search : null);
       setQuery(search ?? "");
       setNatalPlacementPlanet(page === "content" && natalPlanet && natalPlacementPlanets.includes(natalPlanet) ? natalPlanet : "");
       setNatalPlacementSign(page === "content" && natalSign && natalPlacementSigns.includes(natalSign) ? natalSign : "");
@@ -2667,6 +2674,16 @@ export function GeneratedContentAdminDashboard() {
       window.removeEventListener("popstate", applyHash);
     };
   }, []);
+
+  useEffect(() => {
+    if (activePage !== "content" || !guidedReviewKey || !allRowsLoaded) return;
+    if (guidedReviewOpenedRef.current === guidedReviewKey) return;
+    const guidedRow = rows.find((row) => row.content_key === guidedReviewKey);
+    if (!guidedRow) return;
+    guidedReviewOpenedRef.current = guidedReviewKey;
+    openRow(guidedRow);
+    window.requestAnimationFrame(() => editorRef.current?.scrollIntoView({ block: "start", behavior: "auto" }));
+  }, [activePage, allRowsLoaded, guidedReviewKey, rows]);
 
   useEffect(() => {
     void refreshHookCatalog();
@@ -4310,6 +4327,8 @@ export function GeneratedContentAdminDashboard() {
               editableContentKeys={editableContentKeys}
               onFindInContentLibrary={(contentKey) => {
                 revealUnresolvedContentRow();
+                guidedReviewOpenedRef.current = "";
+                setGuidedReviewKey(contentKey);
                 setQuery(contentKey);
                 navigateAdminPage("content", new URLSearchParams({ q: contentKey, from: "unresolved" }));
               }}
@@ -6054,6 +6073,26 @@ export function GeneratedContentAdminDashboard() {
           </div>
         </div>
         <section className="admin-post-editor">
+          {guidedReviewKey === currentDraft.contentKey && (
+            <section className="admin-guided-content-review" aria-label="Guided unresolved-content review">
+              <div>
+                <p className="admin-eyebrow">Opened from Unresolved Content</p>
+                <h3>Review this exact horoscope</h3>
+                <p>You are in the Content Library editor for the row you selected. The <strong>Body</strong> field below contains the full reader-facing horoscope.</p>
+              </div>
+              <ol>
+                <li><strong>Read:</strong> the Headline and the complete Body from beginning to end.</li>
+                <li><strong>Check:</strong> astrological accuracy, your preferred voice, repeated ideas, and any unfinished placeholders.</li>
+                <li><strong>If you edit:</strong> click Save. The row stays held at <code>needs_review</code>.</li>
+                <li><strong>Do not publish here:</strong> copy approval and publication authorization happen in later governed steps.</li>
+              </ol>
+              <code>{currentDraft.contentKey}</code>
+              <button type="button" onClick={() => navigateAdminPage("unresolvedContent")}>
+                <ArrowLeft size={16} aria-hidden="true" />
+                Back to Unresolved Content
+              </button>
+            </section>
+          )}
           {isVocabularyDraft && (
             <div className="admin-editor-guidance" aria-label="Phrase authoring guidance">
               <strong>{isPackageDraft ? "Edit this variable value" : "Create a reusable phrase"}</strong>
