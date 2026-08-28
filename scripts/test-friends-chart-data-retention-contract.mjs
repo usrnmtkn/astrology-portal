@@ -2,6 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import assert from "node:assert/strict";
+import { profileBootstrapLocalOwnerIds } from "../apps/web/src/services/profileBootstrap.ts";
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const appSourcePath = path.join(repoRoot, "apps/web/src/App.tsx");
@@ -149,15 +150,24 @@ assert.match(
   /\.in\("id", chartIdsToDelete\)/,
   "Remote Friends chart delete must remove every duplicate manual_charts row so refresh cannot restore it."
 );
-assert.match(
-  appSource,
-  /migrateLocalManualChartsToRemote\(account\.id,\s*\[\s*cachedLocalProfile\?\.id,\s*persistedProfileId,\s*account\.id,\s*\.\.\.listLocalManualChartUserIds\(\)\s*\]\s*\)/s,
-  "Successful auth/profile loading must migrate charts from active, persisted, account, and legacy local owner ids before remote charts render."
+assert.deepEqual(
+  profileBootstrapLocalOwnerIds({
+    accountId: "account-id",
+    cachedProfileId: "cached-id",
+    persistedProfileId: "persisted-id",
+    legacyOwnerIds: ["legacy-a", "legacy-b"]
+  }),
+  ["cached-id", "persisted-id", "account-id", "legacy-a", "legacy-b"],
+  "Successful auth/profile loading must retain active, persisted, account, and legacy local owner ids for migration."
 );
-assert.match(
-  appSource,
-  /migrateLocalManualChartsToRemote\(account\.id,\s*\[\s*cachedLocalProfile\?\.id,\s*account\.id,\s*\.\.\.listLocalManualChartUserIds\(\)\s*\]\s*\)/s,
-  "Fallback auth/profile loading must still migrate charts from legacy local owner ids."
+assert.deepEqual(
+  profileBootstrapLocalOwnerIds({
+    accountId: "account-id",
+    cachedProfileId: "cached-id",
+    legacyOwnerIds: ["legacy-a"]
+  }),
+  ["cached-id", undefined, "account-id", "legacy-a"],
+  "Fallback auth/profile loading must still retain cached, account, and legacy local owner ids for migration."
 );
 console.log(JSON.stringify({
   status: "PASS",

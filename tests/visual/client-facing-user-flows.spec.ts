@@ -2630,6 +2630,7 @@ test.describe("client-facing user flow case studies", () => {
       await expect(page.getByPlaceholder("Search for a city")).toBeVisible();
       await expectPopoverTextNotBold(page, ".lunar-location-picker", `${viewport.name} Calendar location picker`);
       await page.getByRole("button", { name: /Portsmouth.*Eastern/i }).click();
+      await expect(page.locator(".lunar-selected-card__daily-event").first()).toBeVisible({ timeout: 15_000 });
       await expectSharedLabelContract(page, `${viewport.name} Calendar`, { requireLabels: false });
       await expectLunarSelectedCardMinimalFonts(page, `${viewport.name} Calendar`);
       await expectLunarSelectedCardEventAlignment(page, `${viewport.name} Calendar`);
