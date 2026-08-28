@@ -87,7 +87,7 @@
 .manual-chart-workspace-list-only {
   order: 4;
   display: grid;
-  gap: 18px;
+  gap: calc(var(--space-4) + var(--space-1) / 2);
   width: 100%;
   margin: 0 auto;
 }
@@ -110,14 +110,14 @@
 }
 
 .social-primary-button {
-  border: 1px solid var(--ink);
+  border: var(--border-width-thin) solid var(--ink);
   padding: 0 var(--space-5);
   background: var(--ink);
   color: var(--surface);
 }
 
 .social-secondary-button {
-  border: 1px solid var(--control-border);
+  border: var(--border-width-thin) solid var(--control-border);
   padding: 0 var(--space-4);
   background: transparent;
   color: var(--ink);
@@ -133,13 +133,13 @@
   position: relative;
   display: grid;
   gap: var(--space-5);
-  padding: clamp(24px, 5vw, 36px);
+  padding: var(--friends-form-padding);
 }
 
 .modal-panel.social-remove-modal {
   display: grid;
   gap: var(--space-5);
-  padding: clamp(24px, 5vw, 36px);
+  padding: var(--friends-form-padding);
 }
 
 .social-sharing-close {
@@ -150,7 +150,7 @@
   width: 40px;
   height: 40px;
   place-items: center;
-  border: 1px solid var(--control-border);
+  border: var(--border-width-thin) solid var(--control-border);
   border-radius: var(--radius-circle);
   background: var(--surface-2);
   color: var(--ink);
@@ -178,7 +178,7 @@
 .social-sharing-heading h2 {
   font-family: var(--font-display);
   font-size: var(--social-sharing-title-size);
-  line-height: var(--leading-heading);
+  line-height: var(--leading-h2);
 }
 
 .social-sharing-heading p,
@@ -190,8 +190,8 @@
 .social-sharing-details {
   display: grid;
   overflow: hidden;
-  border: 1px solid var(--card-border);
-  border-radius: calc(var(--card-radius) - 6px);
+  border: var(--border-width-thin) solid var(--card-border);
+  border-radius: var(--friends-card-inner-radius);
 }
 
 .social-sharing-details section {
@@ -204,19 +204,20 @@
 }
 
 .social-sharing-details section + section {
-  border-top: 1px solid var(--card-border);
+  border-top: var(--border-width-thin) solid var(--card-border);
   background: var(--surface-2);
 }
 
 .social-sharing-details h3 {
   margin: 0;
-  font-size: var(--text-body-size);
+  font-family: var(--font-display);
+  font-size: var(--text-card-title);
 }
 
 .social-sharing-details p {
   margin: var(--space-1) 0 0;
   color: var(--muted);
-  font-size: var(--text-meta-size);
+  font-size: var(--text-body);
   line-height: var(--leading-description);
 }
 
@@ -226,7 +227,7 @@
   width: 42px;
   height: 24px;
   padding: 0;
-  border: 1px solid var(--control-border);
+  border: var(--border-width-thin) solid var(--control-border);
   border-radius: var(--radius-pill);
   background: var(--surface-2);
 }
@@ -286,9 +287,9 @@
   width: 100%;
   min-height: 72px;
   margin: 0;
-  padding: var(--space-4) clamp(18px, 2.5vw, 24px);
+  padding: var(--friends-card-padding);
   overflow: visible;
-  border: 1px solid var(--card-border);
+  border: var(--border-width-thin) solid var(--card-border);
   border-radius: var(--card-radius);
   background: var(--card-bg);
   box-shadow: var(--card-shadow);
@@ -310,11 +311,11 @@
 .friends-birthday-chiclet {
   display: inline-flex;
   align-items: center;
-  gap: 11px;
+  gap: calc(var(--space-3) - var(--space-1) / 4);
   min-width: 0;
   margin-right: auto;
   padding: calc(var(--space-2) + var(--space-1) / 2) var(--space-3) calc(var(--space-2) + var(--space-1) / 2) var(--space-4);
-  border: 1px solid var(--control-border);
+  border: var(--border-width-thin) solid var(--control-border);
   border-radius: var(--radius-pill);
   background: var(--card-bg);
   color: var(--muted);
@@ -368,11 +369,11 @@
 
 .you-empty-state {
   display: grid;
-  gap: 18px;
+  gap: calc(var(--space-4) + var(--space-1) / 2);
   width: min(860px, calc(100vw - clamp(36px, 8vw, 136px)));
-  margin: clamp(56px, 8vh, 96px) auto 0;
-  padding: clamp(28px, 5vw, 48px);
-  border: 1px solid var(--card-border);
+  margin: var(--friends-page-margin);
+  padding: var(--friends-page-padding);
+  border: var(--border-width-thin) solid var(--card-border);
   border-radius: var(--card-radius);
   background: var(--card-bg);
   box-shadow: var(--card-shadow);
@@ -397,7 +398,7 @@
   grid-template-columns: auto minmax(0, 1fr);
   align-items: center;
   justify-self: start;
-  gap: 12px;
+  gap: var(--space-3);
   text-align: left;
 }
 
@@ -408,7 +409,7 @@
 
 .you-empty-cta-copy {
   display: grid;
-  gap: 3px;
+  gap: calc(var(--space-1) * 0.75);
 }
 
 .you-empty-cta-copy em {
@@ -419,18 +420,18 @@
 .you-empty-features {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px 16px;
+  gap: var(--space-2) var(--space-4);
   color: var(--card-title-color);
 }
 
 .you-empty-card,
 .friends-logic-card {
   display: grid;
-  gap: 10px;
+  gap: calc(var(--space-2) + var(--space-1) / 2);
   width: 100%;
   min-width: 0;
-  padding: clamp(22px, 3vw, 34px);
-  border: 1px solid var(--card-border);
+  padding: var(--friends-section-padding);
+  border: var(--border-width-thin) solid var(--card-border);
   border-radius: var(--card-radius);
   background: var(--card-bg);
 }
@@ -491,7 +492,7 @@
   gap: 0;
   padding: 0;
   overflow: visible;
-  border: 1px solid var(--card-border);
+  border: var(--border-width-thin) solid var(--card-border);
   border-radius: var(--card-radius);
   background: var(--card-bg);
   box-shadow: var(--card-shadow);
@@ -517,7 +518,7 @@
   width: 100%;
   min-width: 0;
   max-width: 100%;
-  gap: 24px;
+  gap: var(--space-6);
   padding: calc(var(--space-7) - var(--space-1)) var(--space-5) calc(var(--space-4) + var(--space-1) / 2) calc(var(--space-7) - var(--space-1));
   border: 0;
   background: transparent;
@@ -605,7 +606,7 @@
 .crb {
   display: grid;
   min-width: 0;
-  gap: 8px;
+  gap: var(--space-2);
 }
 
 .crt {
@@ -624,7 +625,7 @@
 .manual-chart-signatures {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px 15px;
+  gap: calc(var(--space-1) + var(--space-1) / 2) calc(var(--space-4) - var(--space-1) / 4);
   min-width: 0;
   color: var(--muted);
   font-size: var(--id-signature-size);
@@ -637,7 +638,7 @@
   display: inline-flex;
   align-items: baseline;
   justify-self: end;
-  gap: 0.45em;
+  gap: var(--glyph-gap-lg);
   color: var(--muted);
   font-family: var(--font-body);
   font-size: var(--text-placement-meta);
@@ -673,10 +674,10 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 9px;
+  gap: calc(var(--space-2) + var(--space-1) / 4);
   min-height: 42px;
   padding: 0 calc(var(--space-4) + var(--space-1) / 2);
-  border: 1.5px solid var(--ink);
+  border: var(--border-width-fine) solid var(--ink);
   border-radius: var(--radius-pill);
   background: transparent;
   color: var(--ink);
@@ -716,7 +717,7 @@
   min-width: 180px;
   max-width: min(260px, calc(100vw - 40px));
   padding: var(--space-2);
-  border: 1px solid var(--overlay-border);
+  border: var(--border-width-thin) solid var(--overlay-border);
   border-radius: var(--overlay-radius);
   background: var(--overlay-bg);
   box-shadow: var(--overlay-shadow);
@@ -732,7 +733,7 @@
 .manual-chart-overflow-menu button {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: calc(var(--space-2) + var(--space-1) / 2);
   border: 0;
   border-radius: var(--card-radius);
   background: transparent;
@@ -752,11 +753,11 @@
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto 24px;
   align-items: center;
-  gap: 34px;
+  gap: var(--friends-overlay-gap);
   min-height: 190px;
   padding: calc(var(--space-9) - var(--space-1) / 2) calc(var(--space-9) + var(--space-1));
   width: 100%;
-  border: 1px solid var(--card-border);
+  border: var(--border-width-thin) solid var(--card-border);
   border-radius: var(--radius);
   background: var(--card-bg);
 }
@@ -805,11 +806,11 @@
 .friends-feed-avatar {
   width: 58px;
   height: 58px;
-  border: 2px solid var(--surface);
+  border: var(--border-width-medium) solid var(--surface);
 }
 
 .friends-feed-avatar + .friends-feed-avatar {
-  --friends-feed-avatar-overlap: -14px;
+  --friends-feed-avatar-overlap: var(--ds-friends-friends-feed-avatar-overlap);
 
   margin-left: var(--friends-feed-avatar-overlap);
   background: var(--friend-avatar-secondary-bg);
@@ -828,7 +829,7 @@
 .friends-feed-card-body {
   display: grid;
   min-width: 0;
-  gap: 14px;
+  gap: calc(var(--space-3) + var(--space-1) / 2);
 }
 
 .friends-feed-card-body h3 {
@@ -863,9 +864,9 @@
   align-items: center;
   width: 100%;
   min-width: 0;
-  gap: 16px;
+  gap: var(--space-4);
   padding: var(--id-card-padding-y) max(var(--id-card-padding-x), calc(var(--space-10) + var(--space-3))) var(--id-card-padding-y) var(--id-card-padding-x);
-  border: 1px solid var(--card-border);
+  border: var(--border-width-thin) solid var(--card-border);
   border-radius: var(--id-card-radius);
   background: var(--card-bg);
   box-shadow: var(--card-shadow);
@@ -873,7 +874,7 @@
 }
 
 .friend-profile-card {
-  gap: 16px;
+  gap: var(--space-4);
   padding: calc(var(--space-4) + var(--space-1) / 2) var(--id-card-padding-x);
   border-color: var(--card-border);
   border-radius: var(--id-card-radius);
@@ -930,7 +931,7 @@
 .you-profile-copy {
   display: grid;
   min-width: 0;
-  gap: 5px;
+  gap: calc(var(--space-1) + var(--space-1) / 4);
 }
 
 .you-profile-name-row {
@@ -938,7 +939,7 @@
   align-items: baseline;
   flex-wrap: wrap;
   min-width: 0;
-  gap: 4px 12px;
+  gap: var(--space-1) var(--space-3);
 }
 
 .friend-hero-copy h2,
@@ -969,7 +970,7 @@
 .you-signature-row {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px 14px;
+  gap: calc(var(--space-1) + var(--space-1) / 2) calc(var(--space-3) + var(--space-1) / 2);
   min-width: 0;
   letter-spacing: var(--tracking-number);
 }
@@ -977,7 +978,7 @@
 .you-signature-row > span {
   display: inline-flex;
   align-items: baseline;
-  gap: 0.25em;
+  gap: var(--glyph-gap-xs);
 }
 
 .you-signature-row > span > span,
@@ -1026,14 +1027,14 @@
 
 .you-signatures-card {
   overflow: hidden;
-  border: 1px solid var(--card-border);
+  border: var(--border-width-thin) solid var(--card-border);
   border-radius: var(--card-radius);
   background: var(--card-bg);
 }
 
 .you-signatures-main {
   display: grid;
-  gap: 12px;
+  gap: var(--space-3);
   padding: calc(var(--space-6) + var(--space-1) / 2);
 }
 
@@ -1053,9 +1054,9 @@
 
 .elemental-balance {
   display: grid;
-  gap: 6px;
+  gap: calc(var(--space-1) + var(--space-1) / 2);
   padding: calc(var(--space-3) + var(--space-1) / 2) var(--card-padding) var(--space-4);
-  border-top: 1px solid var(--card-border);
+  border-top: var(--border-width-thin) solid var(--card-border);
   color: var(--card-body-color);
 }
 
@@ -1063,7 +1064,7 @@
   display: flex;
   align-items: baseline;
   justify-content: space-between;
-  gap: 10px 16px;
+  gap: calc(var(--space-2) + var(--space-1) / 2) var(--space-4);
   flex-wrap: wrap;
   min-width: 0;
 }
@@ -1117,11 +1118,11 @@
   overflow-x: hidden;
   overflow-y: auto;
   box-sizing: border-box;
-  border: 1px solid var(--overlay-border);
+  border: var(--border-width-thin) solid var(--overlay-border);
   border-radius: var(--overlay-radius);
   background: var(--overlay-bg);
   color: var(--ink);
-  padding: clamp(24px, 4vw, 32px);
+  padding: var(--friends-modal-padding);
   box-shadow: var(--modal-shadow);
   animation: modal-pop 160ms ease-out;
 }
@@ -1140,7 +1141,7 @@
 
 .add-chart-form {
   display: grid;
-  gap: 14px;
+  gap: calc(var(--space-3) + var(--space-1) / 2);
 }
 
 .add-chart-modal__close {
@@ -1192,7 +1193,7 @@
 }
 
 .friend-chart-delete-actions .secondary-button {
-  border: 1px solid var(--control-border);
+  border: var(--border-width-thin) solid var(--control-border);
   background: var(--surface);
   color: var(--ink);
 }
@@ -1216,7 +1217,7 @@
 .manual-chart-form-heading,
 .friend-chart-modal-heading {
   display: grid;
-  gap: 8px;
+  gap: var(--space-2);
   margin-bottom: var(--space-6);
 }
 

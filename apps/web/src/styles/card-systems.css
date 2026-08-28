@@ -4,17 +4,6 @@
   - Aspect cards: aspect-style rows and calendar transit cards.
 */
 
-.app-shell.mode-guest,
-.app-shell.mode-member,
-.app-shell.mode-calendar {
-  --natal-card-padding: var(--space-6) var(--space-5);
-  --natal-card-gap: var(--card-row-gap);
-  --natal-card-min-height: var(--card-row-min-height);
-  --aspect-card-padding: var(--space-6) calc(var(--space-5) + var(--space-1) / 2);
-  --aspect-card-gap: var(--card-row-gap);
-  --aspect-card-min-height: var(--card-row-min-height);
-}
-
 .placement-table-row,
 .planet-placement-row,
 .sky-pl,
@@ -30,7 +19,7 @@
 .friend-chart-page .composite-placements-section .friend-placement-row-compact .placement-table-row {
   min-height: var(--natal-card-min-height);
   padding: var(--natal-card-padding);
-  border: 1px solid var(--natal-card-border);
+  border: var(--border-width-thin) solid var(--natal-card-border);
   border-radius: var(--natal-card-radius);
   background: var(--natal-card-bg);
   box-shadow: var(--natal-card-shadow);
@@ -97,7 +86,7 @@
 .friend-chart-page .aspect-row-static {
   min-height: var(--aspect-card-min-height);
   padding: var(--aspect-card-padding);
-  border: 1px solid var(--aspect-card-border);
+  border: var(--border-width-thin) solid var(--aspect-card-border);
   border-radius: var(--aspect-card-radius);
   background: var(--aspect-card-bg);
   box-shadow: var(--aspect-card-shadow);

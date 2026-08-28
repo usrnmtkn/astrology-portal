@@ -1,0 +1,424 @@
+/* Admin design-system tokens. Component CSS must consume these variables instead of declaring raw visual values. */
+:root {
+  --admin-document-bg: #0a0a0f;
+}
+
+.admin-dashboard {
+  --admin-bg: var(--admin-document-bg);
+  --admin-sidebar: rgba(13, 12, 19, 0.9);
+  --admin-panel: rgba(20, 19, 28, 0.82);
+  --admin-panel-2: rgba(29, 26, 38, 0.86);
+  --admin-panel-3: #f7f7f4;
+  --admin-ink: #e8e0d0;
+  --admin-ink-dark: #171918;
+  --admin-muted: #c8c0b0;
+  --admin-muted-dark: #6f7278;
+  --admin-line: rgba(232, 224, 208, 0.12);
+  --admin-line-dark: rgba(23, 25, 24, 0.13);
+  --admin-accent: #c17f5a;
+  --admin-accent-2: #8a7a44;
+  --admin-danger: #c26f68;
+  --admin-surface-faint: rgba(255, 255, 255, 0.035);
+  --admin-surface-subtle: rgba(255, 255, 255, 0.025);
+  --admin-surface-soft: rgba(255, 255, 255, 0.04);
+  --admin-surface-raised: rgba(255, 255, 255, 0.06);
+  --admin-surface-hover: rgba(255, 255, 255, 0.08);
+  --admin-surface-active: rgba(255, 255, 255, 0.12);
+  --admin-on-accent: #fff;
+  --admin-text-soft: rgba(232, 224, 208, 0.82);
+  --admin-text-strong: rgba(245, 243, 238, 0.88);
+  --admin-muted-copy: rgba(200, 192, 176, 0.76);
+  --admin-line-faint: rgba(232, 224, 208, 0.08);
+  --admin-accent-soft: rgba(193, 127, 90, 0.16);
+  --admin-control-surface: rgba(244, 241, 234, 0.08);
+  --admin-control-border: rgba(244, 241, 234, 0.12);
+  --admin-dark-text: #111;
+  --admin-warning-text: #f0c38b;
+  --admin-code-surface: rgba(18, 26, 38, 0.58);
+  --admin-info-soft: rgba(124, 134, 255, 0.12);
+  --admin-success-text: #8fe2b8;
+  --admin-content-canvas: #0f1113;
+  --admin-content-border: rgba(231, 234, 238, 0.16);
+  --admin-content-text: #20242a;
+  --admin-content-accent-soft: rgba(130, 145, 170, 0.18);
+  --admin-content-surface: #151e2a;
+  --admin-warning-soft: rgba(246, 174, 93, 0.08);
+  --admin-content-overlay: rgba(7, 12, 18, 0.36);
+  --admin-success-canvas: #07110d;
+  --admin-success-surface: #0a0d0c;
+  --admin-success-overlay: rgba(8, 11, 10, 0.34);
+  --admin-surface-wash: rgba(255, 255, 255, 0.045);
+  --admin-surface-control: rgba(255, 255, 255, 0.1);
+  --admin-text-secondary: rgba(245, 243, 238, 0.78);
+  --admin-text-default: rgba(245, 243, 238, 0.82);
+  --admin-text-disabled: rgba(245, 243, 238, 0.58);
+  --admin-text-high: rgba(245, 243, 238, 0.9);
+  --admin-text-secondary-warm: rgba(232, 224, 208, 0.86);
+  --admin-text-strong-warm: rgba(232, 224, 208, 0.84);
+  --admin-text-light-muted: rgba(244, 241, 234, 0.72);
+  --admin-divider-light: rgba(245, 243, 238, 0.08);
+  --admin-line-warm: rgba(232, 224, 208, 0.14);
+  --admin-surface-warm: rgba(232, 224, 208, 0.06);
+  --admin-success-bg: rgba(43, 140, 120, 0.18);
+  --admin-success-bg-soft: rgba(40, 139, 92, 0.14);
+  --admin-success-border: rgba(96, 199, 161, 0.52);
+  --admin-success-border-strong: rgba(43, 140, 120, 0.42);
+  --admin-success-border-bright: rgba(93, 209, 153, 0.42);
+  --admin-success-copy: rgba(224, 255, 239, 0.96);
+  --admin-success-copy-muted: #d8f0d0;
+  --admin-danger-bg: rgba(215, 106, 91, 0.16);
+  --admin-danger-border: rgba(194, 111, 104, 0.4);
+  --admin-danger-copy: #ffd0ca;
+  --admin-info-bg: rgba(124, 134, 255, 0.16);
+  --admin-info-border: rgba(124, 134, 255, 0.32);
+  --admin-info-border-strong: rgba(124, 134, 255, 0.52);
+  --admin-info-border-active: rgba(124, 134, 255, 0.5);
+  --admin-neutral-border: rgba(174, 184, 202, 0.28);
+  --admin-accent-border: rgba(193, 127, 90, 0.55);
+  --admin-accent-bg-muted: rgba(193, 127, 90, 0.14);
+  --admin-accent-copy: #d69b78;
+  --admin-purple-bg-muted: rgba(87, 55, 137, 0.06);
+  --admin-overlay-bg: rgba(10, 10, 15, 0.72);
+  --admin-accent-copy-strong: #e2b18d;
+  --admin-accent-border-soft: rgba(193, 127, 90, 0.34);
+  --admin-warning-copy: #f3c06f;
+  --admin-warning-border: rgba(245, 179, 95, 0.42);
+  --admin-success-copy-bright: #8de0bc;
+  --admin-violet-bg: rgba(125, 129, 255, 0.16);
+  --admin-shadow-soft-color: rgba(0, 0, 0, 0.18);
+  --admin-control-text-muted: rgba(244, 241, 234, 0.58);
+  --admin-control-border-soft: rgba(244, 241, 234, 0.11);
+  --admin-control-border-muted: rgba(244, 241, 234, 0.1);
+  --admin-cool-border-muted: rgba(231, 234, 238, 0.1);
+  --admin-cool-text-muted: rgba(231, 234, 238, 0.62);
+  --admin-blue-surface: #334d73;
+  --admin-blue-copy: #f7faff;
+  --admin-blue-accent: #8ab4f8;
+  --admin-panel-overlay-strong: rgba(18, 20, 23, 0.98);
+  --admin-panel-overlay: rgba(18, 20, 23, 0.96);
+  --admin-cool-border: rgba(231, 234, 238, 0.12);
+  --admin-blue-bg: rgba(102, 151, 255, 0.16);
+  --admin-blue-border: rgba(102, 151, 255, 0.55);
+  --admin-blue-border-soft: rgba(102, 151, 255, 0.48);
+  --admin-slate-border: rgba(132, 148, 176, 0.25);
+  --admin-midnight-surface: #070b11;
+  --admin-warning-border-soft: rgba(246, 174, 93, 0.36);
+  --admin-primary-border: rgba(63, 207, 142, 0.38);
+  --admin-primary-border-soft: rgba(63, 207, 142, 0.3);
+  --admin-ui-neutral-hover: rgba(223, 229, 225, 0.075);
+  --admin-overlay-deep: rgba(4, 7, 6, 0.68);
+  --admin-shadow-deep-color: rgba(0, 0, 0, 0.44);
+  --admin-warning-ui-copy: #d9a14a;
+  --admin-success-ui-copy: #6fdda6;
+  --admin-success-ui-copy-strong: #7fe0af;
+  --admin-warning-ui-border: rgba(217, 161, 74, 0.28);
+  --admin-surface: var(--admin-panel);
+  --admin-surface-muted: var(--admin-panel-2);
+  --admin-text: var(--admin-ink);
+  --admin-ui-accent-soft: color-mix(in srgb, var(--admin-accent) 18%, transparent);
+  --admin-ui-border-soft: var(--admin-line);
+  --admin-ui-danger: var(--admin-danger);
+  --admin-ui-radius-sm: var(--admin-radius-sm);
+  --admin-ui-radius-md: var(--admin-radius-md);
+  --admin-ui-radius-xl: var(--admin-radius-xl);
+  --admin-ui-surface-1: var(--admin-panel);
+  --font-heading: var(--font-display);
+  --type-control-size: var(--type-body-size);
+  --type-section-title-size: var(--type-section-heading-size);
+  --admin-space-0: 0;
+  --admin-space-2xs: 3px;
+  --admin-space-xs: 4px;
+  --admin-space-5: 5px;
+  --admin-space-sm: 6px;
+  --admin-space-7: 7px;
+  --admin-space-md: 8px;
+  --admin-space-9: 9px;
+  --admin-space-lg: 10px;
+  --admin-space-11: 11px;
+  --admin-space-xl: 12px;
+  --admin-space-13: 13px;
+  --admin-space-2xl: 14px;
+  --admin-space-15: 15px;
+  --admin-space-3xl: 16px;
+  --admin-space-17: 17px;
+  --admin-space-4xl: 18px;
+  --admin-space-5xl: 20px;
+  --admin-space-6xl: 22px;
+  --admin-space-7xl: 24px;
+  --admin-space-26: 26px;
+  --admin-space-8xl: 28px;
+  --admin-space-9xl: 30px;
+  --admin-space-10xl: 32px;
+  --admin-space-34: 34px;
+  --admin-gap-optical: 0.4rem;
+  --admin-page-padding-fluid: clamp(var(--admin-space-5xl), 3vw, var(--admin-space-34));
+  --admin-drawer-inset-wide: min(28vw, calc(var(--space-10) * 8 + var(--space-2)));
+  --admin-drawer-inset-wider: min(34vw, calc(var(--space-10) * 9 + var(--space-8) + var(--space-1)));
+  --admin-drawer-inset-compact: min(16vw, calc(var(--space-10) * 4 + var(--space-8) + var(--space-1)));
+  --admin-main-padding-legacy: 46px clamp(var(--admin-space-34), 4vw, 68px);
+  --admin-main-padding-compact: var(--admin-space-34) clamp(var(--admin-space-8xl), 3vw, 48px);
+  --admin-main-padding: clamp(var(--admin-space-34), 4.4vw, 66px) clamp(40px, 6vw, 88px);
+  --admin-composition-detail-padding: clamp(var(--admin-space-3xl), 2vw, var(--admin-space-7xl));
+  --admin-composition-preview-padding: clamp(var(--admin-space-4xl), 3vw, var(--admin-space-9xl));
+  --admin-radius-hairline: 2px;
+  --admin-radius-2xs: 3px;
+  --admin-radius-xs: 4px;
+  --admin-radius-5: 5px;
+  --admin-radius-sm: 6px;
+  --admin-radius-7: 7px;
+  --admin-radius-md: 8px;
+  --admin-radius-lg: 10px;
+  --admin-radius-xl: 12px;
+  --admin-radius-2xl: 14px;
+  --admin-radius-3xl: 16px;
+  --admin-radius-4xl: 18px;
+  --admin-radius-5xl: 22px;
+  --admin-radius-pill: var(--radius-pill);
+  --admin-type-10: 10px;
+  --admin-type-11: var(--type-label-size);
+  --admin-type-12: var(--type-hint-size);
+  --admin-type-13: var(--type-meta-size);
+  --admin-type-14: var(--type-description-size);
+  --admin-type-15: var(--type-body-size);
+  --admin-type-16: var(--type-nav-size);
+  --admin-type-17: 17px;
+  --admin-type-18: var(--type-section-heading-size);
+  --admin-type-19: 19px;
+  --admin-type-20: var(--type-small-display-size);
+  --admin-type-22: var(--type-glyph-size);
+  --admin-type-23: 23px;
+  --admin-type-24: var(--type-large-title-size);
+  --admin-type-28: 28px;
+  --admin-type-29: 29px;
+  --admin-type-30: 30px;
+  --admin-control-height-xs: 32px;
+  --admin-control-height-sm: 34px;
+  --admin-control-height-md: 36px;
+  --admin-control-height-lg: 38px;
+  --admin-control-height-xl: 40px;
+  --admin-control-height-2xl: 42px;
+  --admin-control-height-3xl: 44px;
+  --admin-control-height-4xl: 46px;
+  --admin-panel-min-height: 54px;
+  --admin-card-min-height: 72px;
+  --admin-shadow-menu: 0 18px 46px rgba(0, 0, 0, 0.4);
+  --admin-shadow-toast: 0 18px 44px rgba(0, 0, 0, 0.34);
+  --admin-shadow-side-rail: -24px 0 80px rgba(0, 0, 0, 0.42);
+  --admin-shadow-side-rail-sm: -20px 0 70px rgba(0, 0, 0, 0.42);
+  --admin-shadow-status: 0 18px 48px rgba(0, 0, 0, 0.32);
+  --admin-shadow-success-ring: 0 0 0 5px rgba(91, 216, 159, 0.13);
+  --admin-shadow-focus: 0 0 0 3px rgba(125, 165, 255, 0.14);
+  --admin-shadow-accent-rail: inset 3px 0 0 #8ab4f8;
+  --admin-shadow-accent-rail-strong: inset 3px 0 0 #6f9eff;
+  --admin-shadow-soft-inset: inset 0 0 0 1px rgba(240, 166, 112, 0.08);
+  --admin-shadow-surface-line: 0 1px 0 rgba(255, 255, 255, 0.32);
+  --admin-shadow-selected-row: inset var(--border-width-thick) 0 0 var(--admin-accent);
+  --admin-shadow-editor-left: -24px 0 70px var(--admin-shadow-deep-color);
+  --admin-shadow-editor-top: 0 -24px 70px var(--admin-shadow-deep-color);
+  --admin-shadow-current-step: 0 0 0 var(--border-width-thick) var(--admin-ui-primary-soft);
+  --admin-ui-warning-ring: 0 0 0 var(--border-width-thick) var(--admin-ui-warning-soft);
+  --admin-shadow-active-rail: inset var(--border-width-thick) 0 0 var(--admin-ui-primary);
+  --admin-shadow-connector-ring: 0 0 0 var(--admin-space-xs) var(--admin-ui-primary-soft);
+  --duration-badge-bg: rgba(232, 224, 208, 0.055);
+  --duration-badge-fg: var(--admin-muted)
+}
+.admin-dashboard {
+  --admin-bg: #141414;
+  --admin-sidebar: #101010;
+  --admin-panel: #1b1b1a;
+  --admin-panel-2: #20201f;
+  --admin-ink: #f4f1ea;
+  --admin-muted: #aaa69d;
+  --admin-line: rgba(244, 241, 234, 0.11);
+  --admin-accent: #d28b63;
+  --admin-accent-2: #f2a66f;
+  --admin-danger: #ef7d73
+}
+.admin-dashboard {
+  --admin-bg: #111315;
+  --admin-sidebar: #242932;
+  --admin-panel: #151719;
+  --admin-panel-2: #1d2024;
+  --admin-ink: #e7eaee;
+  --admin-muted: #a9b0ba;
+  --admin-line: rgba(231, 234, 238, 0.14);
+  --admin-accent: #7da7ff;
+  --admin-accent-2: #9bbcff
+}
+.admin-dashboard {
+  --admin-radius: 8px;
+  --admin-radius-sm: 6px;
+  --admin-space-1: 6px;
+  --admin-space-2: 10px;
+  --admin-space-3: 14px;
+  --admin-space-4: 18px;
+  --admin-space-5: 24px;
+  --admin-field-height: 40px;
+  --admin-panel-bg: #151719;
+  --admin-panel-raised: #1b1e22;
+  --admin-panel-soft: rgba(255, 255, 255, 0.026)
+}
+.admin-dashboard {
+  --admin-bg: #090c12;
+  --admin-sidebar: #0b1018;
+  --admin-panel: #121923;
+  --admin-panel-dark: #090d13;
+  --admin-panel-raised: #172131;
+  --admin-panel-soft: #101720;
+  --admin-ink: #f4f7fb;
+  --admin-muted: #93a0b3;
+  --admin-border: rgba(130, 145, 170, 0.24);
+  --admin-line: rgba(130, 145, 170, 0.22);
+  --admin-accent: #6697ff;
+  --admin-good: #5bd89f;
+  --admin-warn: #e4a453;
+  --admin-danger: #e07668;
+  --admin-radius-lg: 16px;
+  --admin-radius: 10px;
+  --admin-field-height: 48px
+}
+.admin-dashboard {
+  --admin-radius-lg: 12px;
+  --admin-radius: 8px;
+  --admin-field-height: 38px
+}
+.admin-dashboard {
+  --admin-ui-bg: #111312;
+  --admin-ui-sidebar: #101211;
+  --admin-ui-surface: #151817;
+  --admin-ui-surface-2: #191d1b;
+  --admin-ui-surface-3: #1f2421;
+  --admin-ui-border: rgba(223, 229, 225, 0.105);
+  --admin-ui-border-strong: rgba(235, 241, 237, 0.18);
+  --admin-ui-text: #ededeb;
+  --admin-ui-muted: #a7ada9;
+  --admin-ui-subtle: #7f8782;
+  --admin-ui-primary: #2fa672;
+  --admin-ui-primary-hover: #3fcf8e;
+  --admin-ui-primary-soft: rgba(63, 207, 142, 0.12);
+  --admin-ui-success: var(--admin-success-ui-copy);
+  --admin-ui-warning: var(--admin-warning-ui-copy);
+  --admin-ui-info: var(--admin-blue-accent);
+  --admin-ui-danger: var(--admin-danger-copy);
+  --admin-ui-info-soft: var(--admin-blue-bg);
+  --admin-ui-info-border: var(--admin-blue-border-soft);
+  --admin-ui-on-primary: var(--admin-ui-bg);
+  --admin-ui-input-bg: var(--admin-ui-bg);
+  --admin-ui-row-hover: var(--admin-ui-primary-soft);
+  --admin-ui-code: var(--admin-ui-info);
+  --admin-ui-backdrop: rgba(0, 0, 0, 0.56);
+  --admin-ui-dashboard-backdrop: radial-gradient(circle at 12% 9%, rgba(87, 55, 137, 0.28), transparent 34%), radial-gradient(circle at 78% 4%, rgba(31, 59, 111, 0.26), transparent 32%), radial-gradient(circle at 58% 88%, rgba(193, 127, 90, 0.12), transparent 34%), var(--admin-bg);
+  --admin-ui-dashboard-pattern: radial-gradient(circle, rgba(232, 224, 208, 0.2) 0 var(--border-width-thin), transparent var(--border-width-thin)), radial-gradient(circle, var(--admin-accent-soft) 0 var(--border-width-thin), transparent var(--border-width-thin));
+  --admin-ui-brand-gradient: linear-gradient(135deg, var(--admin-panel-3), var(--admin-ui-info));
+  --admin-ui-brand-on-light: var(--admin-dark-text);
+  --admin-ui-success-surface: rgba(20, 38, 31, 0.96);
+  --admin-ui-success-surface-muted: rgba(20, 38, 31, 0.72);
+  --admin-ui-danger-surface: rgba(58, 27, 24, 0.72);
+  --admin-ui-fallback: rgba(217, 198, 246, 0.96);
+  --admin-ui-fallback-border: rgba(190, 160, 235, 0.32);
+  --admin-ui-drawer-backdrop: linear-gradient(90deg, rgba(10, 10, 15, 0.34), var(--admin-overlay-bg));
+  --admin-ui-drawer-bg: radial-gradient(circle at 18% 0%, rgba(87, 55, 137, 0.18), transparent 34%), linear-gradient(180deg, rgba(25, 23, 34, 0.98), rgba(13, 12, 19, 0.98));
+  --admin-ui-table-rail-shadow: -14px 0 var(--admin-space-7xl) var(--admin-content-overlay);
+  --admin-ui-dialog-shadow: 0 var(--admin-space-8xl) 80px rgba(0, 0, 0, 0.48);
+  --admin-ui-savebar-shadow: 0 calc(var(--admin-space-3xl) * -1) var(--admin-space-9xl) rgba(5, 7, 6, 0.28);
+  --admin-ui-preview-shadow: 0 var(--admin-space-5xl) 48px rgba(0, 0, 0, 0.28);
+  --admin-ui-side-panel-shadow: -34px 0 90px rgba(0, 0, 0, 0.58);
+  --admin-ui-menu-shadow: 0 18px 48px rgba(0, 0, 0, 0.42);
+  --admin-ui-sticky-rail-shadow: -10px 0 18px rgba(17, 19, 18, 0.72);
+  --admin-ui-release-date: rgba(245, 243, 238, 0.84);
+  --admin-ui-info-copy: #d8dcff;
+  --admin-ui-info-border-medium: rgba(124, 134, 255, 0.4);
+  --admin-ui-success-copy: #a7ead8;
+  --admin-ui-table-hover: rgba(118, 157, 255, 0.06);
+  --admin-ui-table-focus: rgba(118, 157, 255, 0.1);
+  --admin-ui-table-focus-outline: 2px solid rgba(118, 157, 255, 0.72);
+  --admin-ui-violet-border: rgba(125, 129, 255, 0.32);
+  --admin-ui-code-overlay: rgba(0, 0, 0, 0.22);
+  --admin-ui-selected-fallback: linear-gradient(90deg, rgba(193, 127, 90, 0.13), var(--admin-purple-bg-muted));
+  --admin-ui-warning-surface: rgba(193, 127, 90, 0.1);
+  --admin-ui-filter-active: rgba(118, 157, 255, 0.9);
+  --admin-ui-filter-active-border: rgba(118, 157, 255, 0.95);
+  --admin-ui-filter-active-copy: #f7f5f0;
+  --admin-ui-filled-border: rgba(97, 205, 152, 0.34);
+  --admin-ui-filled-copy: #8fe6b9;
+  --admin-ui-empty-border: rgba(255, 170, 107, 0.34);
+  --admin-ui-empty-copy: #f2b184;
+  --admin-ui-control-hover: #2b3138;
+  --admin-ui-table-heading: rgba(231, 234, 238, 0.74);
+  --admin-ui-table-divider: rgba(231, 234, 238, 0.13);
+  --admin-ui-row-selected: #202938;
+  --admin-ui-sticky-footer: linear-gradient(180deg, rgba(18, 20, 23, 0.86), var(--admin-panel-overlay-strong));
+  --admin-ui-field-border-subtle: rgba(231, 234, 238, 0.08);
+  --admin-ui-preview-copy: rgba(231, 234, 238, 0.76);
+  --admin-ui-muted-copy: rgba(231, 234, 238, 0.48);
+  --admin-ui-brand-surface: #182d23;
+  --admin-ui-brand-copy: #80e6b3;
+  --admin-ui-menu-surface: #161a18;
+  --admin-ui-control-surface: #0f1211;
+  --admin-ui-pill-surface: rgba(223, 229, 225, 0.06);
+  --admin-ui-live-border: rgba(63, 207, 142, 0.34);
+  --admin-ui-live-copy: #a9f2cb;
+  --admin-ui-reviewed-surface: rgba(88, 166, 255, 0.11);
+  --admin-ui-reviewed-border: rgba(88, 166, 255, 0.28);
+  --admin-ui-reviewed-copy: #b9d7ff;
+  --admin-ui-draft-border: rgba(217, 161, 74, 0.32);
+  --admin-ui-draft-copy: #f2d6a7;
+  --admin-ui-error-border: rgba(226, 104, 96, 0.32);
+  --admin-ui-error-copy: #ffc9c5;
+  --admin-ui-archived-surface: rgba(223, 229, 225, 0.035);
+  --admin-ui-code-surface: #101312;
+  --admin-ui-code-copy: #cbd5d1;
+  --admin-ui-diagnostic-surface: rgba(245, 158, 11, 0.12);
+  --admin-ui-diagnostic-border: var(--border-width-thin) solid rgba(245, 158, 11, 0.3);
+  --admin-ui-inline-error: #fca5a5;
+  --admin-ui-diagnostic-error-border: rgba(226, 104, 96, 0.36);
+  --admin-ui-action-border: rgba(63, 207, 142, 0.32);
+  --admin-ui-waiting-surface: rgba(235, 241, 237, 0.06);
+  --admin-ui-primary-contrast: #07110c;
+  --admin-ui-guided-review-surface: linear-gradient(135deg, rgba(63, 207, 142, 0.13), rgba(63, 207, 142, 0.04));
+  --admin-ui-guided-review-border: var(--border-width-thin) solid rgba(63, 207, 142, 0.42);
+  --admin-ui-modal-backdrop: rgba(3, 5, 4, 0.82);
+  --admin-ui-template-copy: #d7e2dc;
+  --admin-ui-composition-warning: #efd09a;
+  --admin-ui-success-soft: rgba(63, 207, 142, 0.14);
+  --admin-ui-warning-soft: rgba(217, 161, 74, 0.13);
+  --admin-ui-danger-soft: rgba(226, 104, 96, 0.13);
+  --admin-ui-neutral-soft: rgba(223, 229, 225, 0.055);
+  --admin-ui-focus: 0 0 0 3px rgba(63, 207, 142, 0.24);
+  --admin-ui-radius: 6px;
+  --admin-ui-radius-lg: 8px;
+  --admin-ui-type-label: var(--admin-type-11);
+  --admin-ui-type-caption: var(--admin-type-12);
+  --admin-ui-type-hint: var(--admin-type-13);
+  --admin-ui-type-body: var(--admin-type-14);
+  --admin-ui-type-lede: var(--admin-type-16);
+  --admin-ui-type-brand: var(--admin-type-18);
+  --admin-ui-type-panel-title: var(--admin-type-22);
+  --admin-ui-type-stat: calc(var(--admin-type-24) + var(--space-1) / 2);
+  --admin-sidebar: var(--admin-ui-sidebar);
+  --admin-panel: var(--admin-ui-surface);
+  --admin-panel-2: var(--admin-ui-surface-2);
+  --admin-ink: var(--admin-ui-text);
+  --admin-muted: var(--admin-ui-muted);
+  --admin-line: var(--admin-ui-border)
+}
+.admin-dashboard .variable-fact {
+  --composition-variable-bg: rgba(56, 189, 248, 0.12);
+  --composition-variable-color: #7dd3fc
+}
+.admin-dashboard .variable-phrase {
+  --composition-variable-bg: rgba(167, 139, 250, 0.13);
+  --composition-variable-color: #c4b5fd
+}
+.admin-dashboard .variable-hook {
+  --composition-variable-bg: rgba(245, 158, 11, 0.13);
+  --composition-variable-color: #f6c177
+}
+.admin-dashboard .variable-copy {
+  --composition-variable-bg: rgba(74, 222, 128, 0.12);
+  --composition-variable-color: #86efac
+}
+.admin-dashboard .admin-composition-variable,
+.admin-dashboard .admin-composition-variable-token {
+  --admin-shadow-variable-focus: 0 0 0 var(--border-width-medium) color-mix(in srgb, var(--composition-variable-color) 22%, transparent)
+}

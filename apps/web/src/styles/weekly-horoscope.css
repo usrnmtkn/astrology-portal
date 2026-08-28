@@ -7,7 +7,7 @@
 .weekly-horoscope--embedded {
   display: grid;
   gap: var(--card-list-gap);
-  padding-top: var(--section-label-gap-before);
+  padding-top: var(--section-label-gap-after);
 }
 
 .weekly-horoscope__macro,

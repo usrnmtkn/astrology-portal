@@ -11,7 +11,7 @@
 .sky-wheel-shell {
   display: grid;
   justify-items: center;
-  gap: 10px;
+  gap: calc(var(--space-2) + var(--space-1) / 2);
   position: relative;
   width: min(100%, var(--chart-size));
   min-width: 0;
@@ -71,7 +71,7 @@
 
 .aspect-inspector-summary__list {
   display: grid;
-  gap: 7px;
+  gap: calc(var(--space-2) - var(--space-1) / 4);
   margin: 0;
   padding: 0;
   list-style: none;
@@ -81,7 +81,7 @@
   display: grid;
   grid-template-columns: 38px minmax(0, 1fr) max-content;
   align-items: center;
-  gap: 8px;
+  gap: var(--space-2);
   min-width: 0;
   color: var(--muted);
   font-size: var(--type-sm);
@@ -108,7 +108,7 @@
   margin: 0;
   color: var(--muted);
   font-size: var(--type-sm);
-  line-height: var(--leading-copy);
+  line-height: var(--leading-body);
 }
 
 .aspect-wheel-legend__swatch {
@@ -393,7 +393,7 @@
 .floating-tooltip--planet {
   display: grid;
   max-width: min(var(--container-chart-mobile), calc(100vw - 32px));
-  gap: 5px;
+  gap: calc(var(--space-1) + var(--space-1) / 4);
 }
 
 .floating-tooltip--planet strong,
@@ -613,10 +613,10 @@
 }
 
 .sky-wheel-synastry {
-  --chart-sign-label-size: 11.5px;
-  --chart-house-label-size: 11.5px;
-  --chart-degree-size: 9.5px;
-  --chart-planet-glyph-size: 22px;
+  --chart-sign-label-size: var(--ds-chart-synastry-label-size);
+  --chart-house-label-size: var(--ds-chart-synastry-label-size);
+  --chart-degree-size: var(--ds-charts-chart-degree-size);
+  --chart-planet-glyph-size: var(--type-glyph-size);
 }
 
 .sky-wheel-synastry .sign-band {
@@ -748,7 +748,7 @@
   width: min(var(--container-wide), 100%);
   max-height: min(960px, calc(100svh - 28px));
   overflow: hidden;
-  border: 1px solid var(--modal-border);
+  border: var(--border-width-thin) solid var(--modal-border);
   border-radius: var(--radius);
   background: var(--bg);
   color: var(--ink);
@@ -756,33 +756,25 @@
 }
 
 .chart-fullscreen-overlay {
-  --chart-fullscreen-wheel-size: min(
-    calc(100svh - 220px),
-    calc(100vw - 180px),
-    820px
-  );
-  --chart-fullscreen-rail-width: min(var(--chart-fullscreen-wheel-size), 760px);
+  --chart-fullscreen-wheel-size: var(--ds-charts-chart-fullscreen-wheel-size);
+  --chart-fullscreen-rail-width: var(--ds-charts-chart-fullscreen-rail-width);
   display: grid;
   grid-template-rows: auto minmax(0, 1fr) auto;
-  gap: 14px;
+  gap: calc(var(--space-3) + var(--space-1) / 2);
   min-height: min(960px, calc(100svh - 28px));
-  padding: clamp(calc(var(--space-4) + var(--space-1) / 2), 3vw, calc(var(--space-7) - var(--space-1) / 2));
+  padding: var(--chart-dialog-padding);
   box-sizing: border-box;
 }
 
 .chart-fullscreen-overlay:has(.sky-wheel-shell--aspect-inspector.is-inspecting-aspects) {
-  --chart-fullscreen-wheel-size: min(
-    calc(100svh - 360px),
-    calc(100vw - 180px),
-    680px
-  );
+  --chart-fullscreen-wheel-size: var(--ds-charts-chart-fullscreen-wheel-size-variant-2);
 }
 
 .chart-fullscreen-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
+  gap: var(--space-4);
 }
 
 .chart-fullscreen-title {
@@ -801,7 +793,7 @@
   place-items: center;
   width: 44px;
   height: 44px;
-  border: 1px solid var(--control-border);
+  border: var(--border-width-thin) solid var(--control-border);
   border-radius: var(--radius-pill);
   background: var(--card-bg);
   color: var(--ink);
@@ -815,7 +807,7 @@
   min-width: 0;
   min-height: 0;
   overflow: hidden;
-  padding-top: clamp(var(--space-1), 1vh, var(--space-3));
+  padding-top: var(--chart-dialog-top-padding);
 }
 
 .chart-fullscreen-wheel-wrap:has(.sky-wheel-shell--aspect-inspector.is-inspecting-aspects) {
@@ -840,7 +832,7 @@
   display: grid;
   align-content: start;
   justify-items: center;
-  gap: 12px;
+  gap: var(--space-3);
 }
 
 .chart-fullscreen-controls,
@@ -855,7 +847,7 @@
 }
 
 .chart-fullscreen-footer .friend-chart-legend {
-  --chart-fullscreen-legend-optical-offset: -2px;
+  --chart-fullscreen-legend-optical-offset: var(--ds-optical-offset-2);
 
   margin-top: var(--chart-fullscreen-legend-optical-offset);
 }
@@ -895,18 +887,18 @@
   display: flex;
   align-items: center;
   min-height: calc(env(safe-area-inset-top, 0px) + 78px);
-  border-bottom: 1px solid var(--line);
-  padding: calc(env(safe-area-inset-top, 0px) + 14px) max(20px, env(safe-area-inset-left, 0px)) 14px;
+  border-bottom: var(--border-width-thin) solid var(--line);
+  padding: var(--chart-mobile-safe-padding);
 }
 
 .sky-full-chart-back {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: var(--space-2);
   min-width: 0;
   height: var(--top-control-height);
-  border: 1px solid var(--floating-button-border);
+  border: var(--border-width-thin) solid var(--floating-button-border);
   border-radius: var(--button-radius);
   background: var(--floating-button-bg);
   box-shadow: var(--nav-rest-shadow);
@@ -959,7 +951,7 @@
   min-width: 0;
   min-height: 0;
   overflow: auto;
-  padding: clamp(36px, 7vh, 72px) 18px 32px;
+  padding: var(--chart-empty-state-padding);
 }
 
 .sky-full-chart-shell {
@@ -1002,7 +994,7 @@
   width: 100%;
   min-width: 0;
   overflow: hidden;
-  border: 1px solid var(--line);
+  border: var(--border-width-thin) solid var(--line);
   border-radius: var(--card-radius);
   background: color-mix(in srgb, var(--surface) 76%, transparent);
 }
@@ -1015,13 +1007,13 @@
   color: var(--muted);
   font-family: var(--font-body);
   font-size: var(--text-description);
-  line-height: var(--leading-copy);
+  line-height: var(--leading-body);
 }
 
 .natal-chart-data-table th,
 .natal-chart-data-table td {
-  padding: var(--space-3) clamp(var(--space-2), 2vw, var(--space-4));
-  border-bottom: 1px solid var(--line);
+  padding: var(--chart-section-padding);
+  border-bottom: var(--border-width-thin) solid var(--line);
   text-align: left;
   vertical-align: middle;
   overflow-wrap: anywhere;
@@ -1040,7 +1032,7 @@
 
 .natal-chart-data-table td + td,
 .natal-chart-data-table th + th {
-  border-left: 1px solid var(--line);
+  border-left: var(--border-width-thin) solid var(--line);
 }
 
 .natal-chart-data-table tbody tr:last-child td {
