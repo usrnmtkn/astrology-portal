@@ -55,7 +55,11 @@ export type DailyHoroscopeAssembly = {
     body: string;
     reviewFlags?: Array<Record<string, unknown>>;
   }>;
-  behindForecastRows: ReactNode[];
+  behindForecastGroups: Array<{
+    key: string;
+    label: string;
+    rows: ReactNode[];
+  }>;
   derivation: Record<string, unknown>;
 };
 
@@ -638,11 +642,25 @@ function YouUpdatesTab({
           <button type="button" onClick={onCreateChart}>Edit details →</button>
         </section>
       )}
-      {hasSavedCurrentCity && dailyHoroscopeAssembly?.behindForecastRows.length ? (
+      {hasSavedCurrentCity && dailyHoroscopeAssembly?.behindForecastGroups.length ? (
         <>
           <span className="eyebrow section-label daily-behind-forecast-label">Behind this Forecast</span>
           <section className="daily-behind-forecast" aria-label="Behind this forecast">
-            <div>{dailyHoroscopeAssembly.behindForecastRows}</div>
+            <div className="daily-behind-forecast__groups">
+              {dailyHoroscopeAssembly.behindForecastGroups.map((group, index) => {
+                const headingId = `daily-forecast-group-${index}`;
+                const heading = group.label.charAt(0).toUpperCase() + group.label.slice(1);
+
+                return (
+                  <section className="daily-behind-forecast__group" aria-labelledby={headingId} key={group.key}>
+                    <h3 className="eyebrow section-label daily-behind-forecast__group-label" id={headingId}>
+                      {heading}
+                    </h3>
+                    <div className="daily-behind-forecast__list">{group.rows}</div>
+                  </section>
+                );
+              })}
+            </div>
           </section>
         </>
       ) : null}
