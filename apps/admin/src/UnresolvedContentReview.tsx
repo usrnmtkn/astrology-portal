@@ -25,8 +25,16 @@ export type UnresolvedContentReport = {
 type UnresolvedContentReviewProps = {
   credential: string;
   contentLibraryReady: boolean;
-  editableContentKeys: ReadonlySet<string>;
+  editableRowsByContentKey: ReadonlyMap<string, { sections?: unknown }>;
   onFindInContentLibrary: (contentKey: string) => void;
+};
+
+export type ContentStudioEditorialReviewDecision = {
+  schema: "content-studio-editorial-review/v1";
+  decision: "approved-exact-copy";
+  copySha256: string;
+  reviewedAt: string;
+  statement: string;
 };
 
 export type UnresolvedContentIssue = {
@@ -66,7 +74,25 @@ type UnresolvedWorkflowContext = {
   contentLibraryReady: boolean;
   hasEditableRow: boolean;
   requestCopied: boolean;
+  editorialDecision: ContentStudioEditorialReviewDecision | null;
 };
+
+function objectRecord(value: unknown): Record<string, unknown> | null {
+  return value && typeof value === "object" && !Array.isArray(value) ? value as Record<string, unknown> : null;
+}
+
+export function editorialReviewDecisionFromRow(row: { sections?: unknown } | undefined): ContentStudioEditorialReviewDecision | null {
+  const decision = objectRecord(objectRecord(row?.sections)?.contentStudioReview);
+  if (
+    decision?.schema !== "content-studio-editorial-review/v1"
+    || decision.decision !== "approved-exact-copy"
+    || typeof decision.copySha256 !== "string"
+    || !/^[a-f0-9]{64}$/u.test(decision.copySha256)
+    || typeof decision.reviewedAt !== "string"
+    || typeof decision.statement !== "string"
+  ) return null;
+  return decision as ContentStudioEditorialReviewDecision;
+}
 
 export function editorialReviewSubject(contentKey: string) {
   const match = contentKey.match(/eclipse-lunar\/([^/]+)\/rising-([^/]+)\/house-(\d+)$/u);
@@ -77,7 +103,7 @@ export function editorialReviewSubject(contentKey: string) {
 
 export function unresolvedIssueWorkflow(
   issue: UnresolvedContentIssue,
-  { contentLibraryReady, hasEditableRow, requestCopied }: UnresolvedWorkflowContext
+  { contentLibraryReady, hasEditableRow, requestCopied, editorialDecision }: UnresolvedWorkflowContext
 ): UnresolvedWorkflow {
   const step = (label: string, state: UnresolvedWorkflowStepState) => ({ label, state });
 
@@ -177,6 +203,25 @@ export function unresolvedIssueWorkflow(
 
   if (hasEditableRow) {
     const reviewSubject = editorialReviewSubject(issue.contentKey);
+    if (editorialDecision) {
+      return {
+        status: requestCopied ? "waiting" : "action",
+        statusLabel: requestCopied ? "Waiting for Codex" : "Owner review complete",
+        currentStep: "Implement the approved source copy",
+        explanation: requestCopied
+          ? "The exact-copy implementation request is copied. Paste it into Codex; this row remains held until the governed source package is updated and deployed."
+          : "Your exact-copy approval is recorded. Send the hash-bound implementation request to Codex to update the governed source and deploy it.",
+        responsibleParty: requestCopied ? "Codex" : "You",
+        completedChecks: ["Governed source record found", "Editable row imported", "Exact copy hash recorded", "Owner authorization recorded", "Reader serving unchanged"],
+        steps: [
+          step("Source found", "complete"),
+          step("Editable-row import", "complete"),
+          step("Owner copy review", "complete"),
+          step("Source implementation", "current"),
+          step("Deployment", "waiting")
+        ]
+      };
+    }
     return {
       status: "action",
       statusLabel: "Ready for owner review",
@@ -298,6 +343,13 @@ function editorialImplementationRequest(issue: UnresolvedContentIssue) {
   return `Repo: tldrastro. Implement the diagnosed Content Studio import repair.\nIssue ID: ${issue.issueId}\nContent key: ${issue.contentKey}\nRecorded diagnosis: ${issue.resolution.diagnosis}\nRequired repair: ${issue.resolution.proposed_action}\nCreate the governed editable Content Library row, preserve its exact source copy and review_status, and run the relevant governance and reader-path checks. Return one JSON object using schema content-studio-resolution/v1 with status implemented.`;
 }
 
+function editorialSourceImplementationRequest(
+  issue: UnresolvedContentIssue,
+  decision: ContentStudioEditorialReviewDecision
+) {
+  return `Repo: tldrastro. Implement the owner-approved Content Studio editorial repair.\nIssue ID: ${issue.issueId}\nContent key: ${issue.contentKey}\nApproved editable-row copy SHA-256: ${decision.copySha256}\nOwner statement: ${decision.statement}\nRead the exact saved Headline, Summary, and Body from the governed Content Library row, verify the SHA-256 over JSON.stringify({headline,summary,body}), apply that exact copy to its governed source record, preserve lineage, rebuild generated fallback artifacts, and run the relevant governance and reader-path checks. Do not rewrite the approved copy. The Content Studio decision itself must not be treated as a direct serving mutation.`;
+}
+
 export async function loadUnresolvedContentReport(
   credential: string,
   fetchImpl: typeof fetch = fetch
@@ -313,7 +365,7 @@ export async function loadUnresolvedContentReport(
 export function UnresolvedContentReview({
   credential,
   contentLibraryReady,
-  editableContentKeys,
+  editableRowsByContentKey,
   onFindInContentLibrary
 }: UnresolvedContentReviewProps) {
   const [reportState, setReportState] = useState<UnresolvedContentReport | false | null>(null);
@@ -438,15 +490,18 @@ export function UnresolvedContentReview({
             <tbody>{filteredIssues.map((issue) => {
               const sourceRepair = issue.kind === "source-repair";
               const sourceApproved = sourceRepair && Boolean(issue.sourceDecision);
-              const canOpen = !sourceRepair && editableContentKeys.has(issue.contentKey);
+              const editableRow = editableRowsByContentKey.get(issue.contentKey);
+              const canOpen = !sourceRepair && Boolean(editableRow);
+              const editorialDecision = sourceRepair ? null : editorialReviewDecisionFromRow(editableRow);
               const expectedRequestKind = sourceRepair
                 ? sourceApproved ? "implementation" : "investigation"
-                : issue.resolution ? "implementation" : "investigation";
+                : editorialDecision || issue.resolution ? "implementation" : "investigation";
               const requestCopied = copiedRequest?.issueId === issue.issueId && copiedRequest.kind === expectedRequestKind;
               const workflow = unresolvedIssueWorkflow(issue, {
                 contentLibraryReady,
                 hasEditableRow: canOpen,
-                requestCopied
+                requestCopied,
+                editorialDecision
               });
               return <tr key={issue.contentKey}>
                 <td data-label="Content"><strong>{issue.surface}</strong><code>{issue.contentKey}</code></td>
@@ -474,6 +529,14 @@ export function UnresolvedContentReview({
                   ? <div className="admin-unresolved-actions"><span className={`admin-unresolved-action-state is-${workflow.status}`}>{workflow.statusLabel}</span><div className="admin-toolbar-actions"><button className={`admin-edit-row-button ${!sourceApproved ? "is-primary" : ""}`} type="button" onClick={() => openRepairReview(issue)}>{sourceApproved ? "View approved replacement" : "Review replacement now"}</button>{sourceApproved && issue.resolution?.result_status !== "implemented" && <button className="admin-edit-row-button is-primary" type="button" onClick={() => void copyRequest(issue, "implementation", sourceImplementationRequest(issue))}>{requestCopied ? "Copy implementation request again" : "Copy implementation request"}</button>}<button className="admin-edit-row-button" type="button" onClick={() => void copyRequest(issue, "investigation", issue.aiRequest)}>Copy investigation</button>{requestCopied && <button className="admin-edit-row-button is-primary" type="button" onClick={() => void recordResolution(credential)}>Record Codex response</button>}</div></div>
                   : !contentLibraryReady && !sourceRepair
                   ? <div className="admin-unresolved-actions"><span className="admin-unresolved-action-state is-waiting">Waiting</span><button className="admin-edit-row-button" type="button" disabled>Checking Content Library…</button></div>
+                  : canOpen && editorialDecision
+                    ? <div className="admin-unresolved-actions admin-unresolved-review-action">
+                        <strong>Owner review is recorded</strong>
+                        <button className="admin-edit-row-button is-primary" type="button" onClick={() => void copyRequest(issue, "implementation", editorialSourceImplementationRequest(issue, editorialDecision))}>{requestCopied ? "Copy implementation request again" : "Copy source implementation request"}</button>
+                        <button className="admin-edit-row-button" type="button" onClick={() => onFindInContentLibrary(issue.contentKey)}>View reviewed copy</button>
+                        <small><strong>Approved hash:</strong> <code>{editorialDecision.copySha256}</code></small>
+                        <small>The copy remains held until Codex updates and deploys the governed source package.</small>
+                      </div>
                   : canOpen
                     ? <div className="admin-unresolved-actions admin-unresolved-review-action">
                         <strong>Your next action</strong>
