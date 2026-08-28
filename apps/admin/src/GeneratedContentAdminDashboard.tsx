@@ -6287,17 +6287,18 @@ export function GeneratedContentAdminDashboard() {
             </section>
           )}
           {compositionEditorContext && (
-            <section className="admin-editor-guidance admin-reader-sentence-context" aria-label="Reader sentence context">
-              <div>
-                <p className="admin-eyebrow">In the reader preview · {compositionEditorContext.audience === "they" ? "They" : "You"}</p>
-                <strong>{compositionEditorContext.templateLabel} · {compositionEditorContext.fieldLabel}</strong>
+            <section className="admin-editor-guidance admin-contextual-editor-guidance admin-reader-sentence-context" aria-label="Reader sentence context">
+              <p className="admin-eyebrow">In the reader preview · {compositionEditorContext.audience === "they" ? "They" : "You"}</p>
+              <strong>{compositionEditorContext.templateLabel} · {compositionEditorContext.fieldLabel}</strong>
+              <div className="admin-contextual-copy-example">
+                <span>Full reader sentence</span>
+                <q>
+                  {compositionEditorContext.before}
+                  <mark>{compositionContextValue || compositionEditorContext.active}</mark>
+                  {compositionEditorContext.after}
+                </q>
               </div>
-              <p className="admin-reader-sentence-context-copy">
-                <span>{compositionEditorContext.before}</span>
-                <mark>{compositionContextValue || compositionEditorContext.active}</mark>
-                <span>{compositionEditorContext.after}</span>
-              </p>
-              <small>The highlighted words are the source you are editing. The surrounding words come from the template and other variables.</small>
+              <p>The highlighted words are the source you are editing. The surrounding words come from the template and other variables.</p>
             </section>
           )}
           {isVocabularyDraft && (
