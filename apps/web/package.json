@@ -4,9 +4,9 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "predev": "node ../../scripts/build-admin-hook-catalog.mjs",
+    "predev": "node ../../scripts/build-admin-hook-catalog.mjs && node --import tsx ../../scripts/build-admin-writing-surface-map.mts",
     "dev": "VITE_ENABLE_NATAL_ASPECT_PATTERNS=true vite --host 127.0.0.1",
-    "prebuild": "node ../../scripts/test-reader-facing-content-contract.mjs && node ../../scripts/test-calendar-package-boundary.mjs && node ../../scripts/build-admin-hook-catalog.mjs",
+    "prebuild": "node ../../scripts/test-reader-facing-content-contract.mjs && node ../../scripts/test-calendar-package-boundary.mjs && node ../../scripts/build-admin-hook-catalog.mjs && node --import tsx ../../scripts/build-admin-writing-surface-map.mts",
     "build": "tsc && vite build",
     "preview": "vite preview --host 127.0.0.1",
     "typecheck": "tsc --noEmit"

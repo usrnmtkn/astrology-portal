@@ -94,7 +94,16 @@ export default defineConfig(({ command, mode }) => {
       exclude: ["swisseph-wasm"]
     },
     build: {
-      manifest: true
+      manifest: true,
+      minify: "terser",
+      terserOptions: {
+        compress: {
+          passes: 2
+        },
+        format: {
+          comments: false
+        }
+      }
     }
   }
 });
