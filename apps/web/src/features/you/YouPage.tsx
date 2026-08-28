@@ -3,7 +3,6 @@ import { ChevronLeft, MoreVertical, Pencil, Sparkles } from "lucide-react";
 import { DailyMoonContextTags, type DailyMoonContext } from "../../components/DailyMoonContextTags";
 import { ProfileAvatar } from "../../components/ProfileAvatar";
 import { SegmentedControl } from "../../components/SegmentedControl";
-import { AspectGiftLessonGroup } from "../../components/charts/AspectGiftLessonGroup";
 import { AspectGlyphs } from "../../components/charts/PlacementRows";
 import { NatalChartDataTable, type NatalChartDataTableRow } from "../../components/charts/NatalChartDataTable";
 import { SkyWheel, type HouseSignLabelStyle, type InterChartAspectLine } from "../../components/charts/Wheels";
@@ -11,7 +10,7 @@ import type { SkySnapshot } from "../../types";
 import type { NatalAspectPatternActivationTimingWindow, NatalAspectPatternReaderItem } from "../../services/natalAspectPatterns";
 import { isReaderFacingCopy } from "../../content/readerSafety";
 import { generatedContentParagraphs, generatedContentSections, type LiveGeneratedContent } from "../../services/generatedContent";
-import { aspectGiftOrLesson, type AspectGiftLessonGroup as GiftLessonGroup } from "../../services/aspectGiftLesson";
+import { aspectGiftOrLesson } from "../../services/aspectGiftLesson";
 import {
   NatalAspectPatternActivationsSection,
   NatalAspectPatternsSection,
@@ -118,7 +117,6 @@ export type YouPageProps = {
   currentSky: SkySnapshot | null;
   houseSignLabelStyle: HouseSignLabelStyle;
   updateTransitAspectLines: InterChartAspectLine[];
-  natalAspectGroups: GiftLessonGroup<ReactNode>[];
   natalTableRows: NatalChartDataTableRow[];
   onCreateChart: () => void;
   onCloseTransitArticle?: () => void;
@@ -403,7 +401,6 @@ function YouNatalTab({
   elementalSummaryLabel,
   elementalSummarySentence,
   emptyHouseRows,
-  natalAspectGroups,
   natalAspectPatternItems,
   natalAspectPatternStatus,
   onOpenNatalAspectPatternDetail,
@@ -416,7 +413,6 @@ function YouNatalTab({
   elementalSummaryLabel: string;
   elementalSummarySentence: string;
   emptyHouseRows: ReactNode[];
-  natalAspectGroups: GiftLessonGroup<ReactNode>[];
   natalAspectPatternItems?: NatalAspectPatternReaderItem[];
   natalAspectPatternStatus?: NatalAspectPatternsSectionStatus;
   onOpenNatalAspectPatternDetail: (item: NatalAspectPatternReaderItem, nestedItems: NatalAspectPatternReaderItem[]) => void;
@@ -477,17 +473,6 @@ function YouNatalTab({
         </>
       )}
 
-      {natalAspectGroups.map((group) => (
-        <AspectGiftLessonGroup
-          ariaLabel={`Your natal aspect ${group.label}`}
-          key={group.key}
-          label={group.label}
-          listAriaLabel={`Your natal ${group.label.toLowerCase()}`}
-          listClassName="natal-aspects-list"
-        >
-          {group.aspects}
-        </AspectGiftLessonGroup>
-      ))}
     </div>
   );
 }
@@ -1123,7 +1108,6 @@ export function YouPage({
   emptyHouseRows,
   hasSavedBirthDetails,
   hasSavedCurrentCity,
-  natalAspectGroups,
   natalAspectPatternItems,
   natalAspectPatternTimingOverrides,
   natalAspectPatternStatus,
@@ -1261,7 +1245,6 @@ export function YouPage({
               elementalSummaryLabel={elementalSummaryLabel}
               elementalSummarySentence={elementalSummarySentence}
               emptyHouseRows={emptyHouseRows}
-              natalAspectGroups={natalAspectGroups}
               natalAspectPatternItems={natalAspectPatternItems}
               natalAspectPatternStatus={natalAspectPatternStatus}
               onOpenNatalAspectPatternDetail={(item, nestedItems) => {
