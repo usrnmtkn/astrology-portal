@@ -697,40 +697,49 @@ try {
     /getLunarCalendarMonth/u,
     "Weekly assembly must not calculate the 42-day visual calendar."
   );
-  assert.match(
-    weeklySource,
-    /calculationDates\.map\(\(date\) => getAstrodienstSky\(location, date\)\)/u,
+  const weeklySkyCalls = [];
+  const dailySnapshots = await weekly.loadWeeklyDailySnapshots(
+    { latitude: 40.7128, longitude: -74.006, timeZone: "America/New_York" },
+    [new Date("2026-08-03T16:00:00Z"), new Date("2026-08-04T16:00:00Z")],
+    async (...args) => {
+      weeklySkyCalls.push(args);
+      return { positions: [] };
+    }
+  );
+  assert.equal(dailySnapshots.length, 2);
+  assert.equal(weeklySkyCalls.length, 2);
+  assert.ok(
+    weeklySkyCalls.every((args) => args[2] === undefined),
     "Weekly daily snapshots must skip transit-window enrichment."
   );
-  assert.doesNotMatch(
-    weeklySource,
-    /calculationDates\.map\(\(date\) => getAstrodienstSky\(location, date, \{ includeTransitWindows: true \}\)\)/u,
-    "Weekly daily snapshots must not pay for transit windows they do not consume."
+
+  const stationSkyCalls = [];
+  const stationPositions = await weekly.loadWeeklyStationPositions(
+    { latitude: 40.7128, longitude: -74.006, timeZone: "America/New_York" },
+    [{ ...stationEvent, phase: "station-retrograde" }],
+    async (...args) => {
+      stationSkyCalls.push(args);
+      return { positions: [{ planet: "Mercury", longitude: 120 }] };
+    }
   );
-  assert.match(
-    weeklySource,
-    /const stationPositionEntries[\s\S]*?events\.filter\(isExactStation\)[\s\S]*?includeTransitWindows: true[\s\S]*?const stationEventPositions/u,
-    "Exact station cards need the active house-pass window for the shared transit-card timing row."
-  );
-  assert.match(
-    weeklySource,
-    /aquarius:\s*"saturn"/u,
+  assert.equal(stationSkyCalls.length, 1);
+  assert.deepEqual(stationSkyCalls[0][2], { includeTransitWindows: true });
+  assert.equal(stationPositions.get(stationEvent.id)?.planet, "Mercury");
+  const traditionalRulerFixture = { positions: [] };
+  assert.equal(
+    weekly.lunationBlendFacts(traditionalRulerFixture, "Aquarius", "Aries", "new-moon").ruler,
+    "saturn",
     "Aquarius lunations must use Saturn as the default ruler."
   );
-  assert.match(
-    weeklySource,
-    /scorpio:\s*"mars"/u,
+  assert.equal(
+    weekly.lunationBlendFacts(traditionalRulerFixture, "Scorpio", "Aries", "new-moon").ruler,
+    "mars",
     "Scorpio lunations must use Mars as the default ruler."
   );
-  assert.match(
-    weeklySource,
-    /pisces:\s*"jupiter"/u,
+  assert.equal(
+    weekly.lunationBlendFacts(traditionalRulerFixture, "Pisces", "Aries", "new-moon").ruler,
+    "jupiter",
     "Pisces lunations must use Jupiter as the default ruler."
-  );
-  assert.doesNotMatch(
-    weeklySource,
-    /(?:aquarius:\s*"uranus"|scorpio:\s*"pluto"|pisces:\s*"neptune")/u,
-    "Modern planets must never enter the default lunation ruler canon."
   );
 
   const ephemeris = await vite.ssrLoadModule("/src/services/ephemeris.ts");

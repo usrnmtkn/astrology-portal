@@ -1,5 +1,9 @@
 import { templateVariableReferences, type TemplateVariableReference } from "./templateVariableReference";
-import { templateVariableSourceCandidates } from "./templateVariableSources";
+import {
+  templateVariableSourceCandidates,
+  templateVariableSourceContract,
+  type TemplateVariableSourceContract
+} from "./templateVariableSources";
 import { isCompositionTemplateRow } from "./compositionTemplateClassifier";
 
 export { isCompositionTemplateRow } from "./compositionTemplateClassifier";
@@ -29,6 +33,7 @@ export type CompositionMapSource = {
 export type CompositionMapSlot = TemplateVariableReference & {
   depth: number;
   parents: string[];
+  sourceContract: TemplateVariableSourceContract;
   sources: CompositionMapSource[];
   issue: string | null;
 };
@@ -58,6 +63,8 @@ export type CompositionPreviewFact = {
 export type CompositionPreview = {
   facts: CompositionPreviewFact[];
   fields: CompositionPreviewField[];
+  lineage: "runtime-traceable" | "not-traceable";
+  lineageNote: string;
   sources: CompositionMapSource[];
 };
 
@@ -117,7 +124,10 @@ function sourceCandidates(reference: TemplateVariableReference, rows: Compositio
   const key = `${templateKey}\u0000${reference.name}`;
   let candidates = cache.candidates.get(key);
   if (!candidates) {
-    candidates = templateVariableSourceCandidates(reference, rows, templateKey);
+    candidates = [...new Map(
+      templateVariableSourceCandidates(reference, rows, templateKey)
+        .map((candidate) => [candidate.content_key, candidate])
+    ).values()];
     cache.candidates.set(key, candidates);
   }
   return candidates;
@@ -195,6 +205,8 @@ export function compositionTemplateLabel(row: CompositionMapRow) {
       ? "Lunar Node in any sign"
       : row.content_key === "fallback-template/sky-placement-frame-v3"
         ? "Planet in any sign"
+        : row.content_key === "fallback-template/transit.retrograde-article"
+          ? "Planet retrograde article"
         : planetVariant
           ? `${humanize(planetVariant)} in any sign`
           : text(row.headline) || humanize(row.content_key.split("/").at(-1) ?? "Template");
@@ -232,6 +244,12 @@ function representativeExample(name: string, example: string) {
 }
 
 function representativeExampleForRow(row: CompositionMapRow, name: string, example: string) {
+  if (row.content_key === "fallback-template/transit.retrograde-article") {
+    if (name === "transitRef") return "Saturn in Aries";
+    if (name === "transitTitle") return "Saturn";
+    if (name === "signTitle") return "Aries";
+  }
+  if (name === "oppositeSignTitle") return "Aquarius";
   if (name === "planetTitle") {
     const planetVariant = row.content_key.match(/^fallback-template\/natal\.planet-in-sign\/([^/]+)$/u)?.[1];
     if (planetVariant) return humanize(planetVariant);
@@ -264,6 +282,61 @@ function previewSourceText(source: CompositionMapSource, audience: "you" | "they
 function representativeSource(slot: CompositionMapSlot, slots: CompositionMapSlot[], values: Map<string, string>) {
   if (slot.requirement === "Optional" || !slot.sources.length) return null;
   if (slot.sources.length === 1) return slot.sources[0];
+  const directAnchorNames: Record<string, string[]> = {
+    angleIntro: ["angleTitle"],
+    aspectAdj: ["aspectName"],
+    aspectMotion: ["aspectName"],
+    aspectVerb: ["aspectName"],
+    houseMeaning: ["houseOrdinal"],
+    houseTopic: ["houseOrdinal"],
+    natalCore: ["natalTitle"],
+    nodeJourney: ["planetTitle"],
+    oppositeDirection: ["oppositeSignTitle"],
+    planetACore: ["planetATitle"],
+    planetBCore: ["planetBTitle"],
+    planetBest: ["planetTitle"],
+    planetExcess: ["planetTitle"],
+    planetFunction: ["planetTitle"],
+    planetVerb: ["planetTitle"],
+    signAdverb: ["signTitle"],
+    signNeed: ["signTitle"],
+    transitTypeLine: ["aspectName"]
+  };
+  const directAnchors = (directAnchorNames[slot.name] ?? [])
+    .map((name) => (values.get(name) ?? "").toLowerCase().trim().replace(/\s+/gu, "-"))
+    .filter(Boolean);
+  for (const prefix of slot.sourceContract.prefixes) {
+    for (const anchor of directAnchors) {
+      const exact = slot.sources.find((source) => source.row.content_key === `${prefix}${anchor}`);
+      if (exact) return exact;
+    }
+  }
+  if (slot.name === "elementPattern") {
+    const elements: Record<string, string> = {
+      aries: "fire", leo: "fire", sagittarius: "fire",
+      taurus: "earth", virgo: "earth", capricorn: "earth",
+      gemini: "air", libra: "air", aquarius: "air",
+      cancer: "water", scorpio: "water", pisces: "water"
+    };
+    const elementA = elements[(values.get("signATitle") ?? "").toLowerCase()];
+    const elementB = elements[(values.get("signBTitle") ?? "").toLowerCase()];
+    if (elementA && elementB) {
+      for (const prefix of slot.sourceContract.prefixes) {
+        const exact = slot.sources.find((source) => source.row.content_key === `${prefix}${elementA}/${elementB}`);
+        if (exact) return exact;
+      }
+    }
+  }
+  if (["transitEffect", "transitEffectLine"].includes(slot.name)) {
+    const aspect = (values.get("aspectName") ?? "").toLowerCase();
+    const family = ["trine", "sextile"].includes(aspect)
+      ? "soft"
+      : ["square", "opposition"].includes(aspect) ? "hard" : aspect;
+    const transit = (values.get("transitTitle") ?? "").toLowerCase().replace(/\s+/gu, "-");
+    const natal = (values.get("natalTitle") ?? "").toLowerCase().replace(/\s+/gu, "-");
+    const exact = slot.sources.find((source) => source.row.content_key === `fallback-hook/transit-effect-${family}/${transit}/${natal}`);
+    if (exact) return exact;
+  }
   const anchorSlotNames = slot.name === "transitTopic"
     ? ["transitTitle"]
     : slot.name === "natalCore" || slot.name === "natalArea"
@@ -311,7 +384,10 @@ function representativeSource(slot: CompositionMapSlot, slots: CompositionMapSlo
     const parts = slot.name === "elementPattern" ? rawParts : [...new Set(rawParts)];
     return { source, score: parts.reduce((total, part) => total + (anchors.includes(part) ? 2 : part === group ? 1 : 0), 0) };
   }).sort((left, right) => right.score - left.score);
-  return ranked[0]?.score ? ranked[0].source : null;
+  const winner = ranked[0];
+  if (!winner?.score) return null;
+  if (ranked[1]?.score === winner.score) return null;
+  return winner.source;
 }
 
 function fallbackPreviewValue(name: string) {
@@ -437,8 +513,8 @@ function buildCompositionPreview(row: CompositionMapRow, slots: CompositionMapSl
       : representativeExampleForRow(row, slot.name, slot.example));
   });
   const sources: CompositionMapSource[] = [];
-  return {
-    fields: compositionPreviewFields(row).map((field) => {
+  const selectedSavedSlots = new Set<string>();
+  const fields = compositionPreviewFields(row).map((field) => {
       const fieldValues = new Map(values);
       const sourceByName = new Map<string, CompositionMapSource>();
       const audience = field.audience === "they" ? "they" : "you";
@@ -447,6 +523,7 @@ function buildCompositionPreview(row: CompositionMapRow, slots: CompositionMapSl
         if (!source) return;
         fieldValues.set(slot.name, previewSourceText(source, audience, slot.name));
         sourceByName.set(slot.name, source);
+        selectedSavedSlots.add(slot.name);
       });
       if (!fieldValues.has("transitTopic")) fieldValues.set("transitTopic", `${values.get("transitTitle") ?? "Transit"}'s focus`);
       if (!fieldValues.has("natalCore")) fieldValues.set("natalCore", `${values.get("natalTitle") ?? "natal"} themes`);
@@ -468,7 +545,14 @@ function buildCompositionPreview(row: CompositionMapRow, slots: CompositionMapSl
         template: field.value,
         rendered: segments.map((segment) => segment.text).join("")
       };
-    }),
+    });
+  const requiredSavedSlots = slots.filter((slot) => slot.requirement === "Required" && slot.sourceKind === "saved-copy");
+  const untraceableSlots = requiredSavedSlots.filter((slot) => (
+    slot.sourceContract.confidence === "inferred" || !selectedSavedSlots.has(slot.name)
+  ));
+  const lineage = untraceableSlots.length === 0 ? "runtime-traceable" : "not-traceable";
+  return {
+    fields,
     facts: slots
       .filter((slot) => slot.sourceKind === "runtime")
       .map((slot) => ({
@@ -476,6 +560,10 @@ function buildCompositionPreview(row: CompositionMapRow, slots: CompositionMapSl
         name: slot.name,
         value: representativeExampleForRow(row, slot.name, slot.example)
       })),
+    lineage,
+    lineageNote: lineage === "runtime-traceable"
+      ? "Every required saved-copy slot follows a declared resolver contract and resolves to one editable source for these sample facts."
+      : `The runtime source cannot be proven for ${untraceableSlots.map((slot) => `{{${slot.name}}}`).join(", ")}. The preview is incomplete until that lineage is declared.`,
     sources
   };
 }
@@ -489,6 +577,7 @@ function buildCompositionTemplateWithCache(
     const references = atomicVariableReferences(row, rows, cache);
     const slots = references.map((reference): CompositionMapSlot => {
       const candidates = sourceCandidates(reference, rows, row.content_key, cache);
+      const sourceContract = templateVariableSourceContract(reference, row.content_key);
       const sources = candidates.map((candidate) => ({
         kind: sourceKind(candidate),
         label: sourceLabel(candidate),
@@ -496,6 +585,7 @@ function buildCompositionTemplateWithCache(
       }));
       return {
         ...reference,
+        sourceContract,
         sources,
         issue: reference.sourceKind === "unmapped" && sources.length === 0
           ? "Declared by the template, but no canonical source row or active resolver value is wired."
@@ -503,6 +593,8 @@ function buildCompositionTemplateWithCache(
           ? "No saved hook or phrase is linked to this slot."
           : reference.source === "Runtime resolver"
             ? "This runtime value does not have an atomic provenance definition."
+            : sourceContract.confidence === "inferred"
+              ? "The source family was inferred from the variable name instead of declared by a resolver contract."
             : null
       };
     });
