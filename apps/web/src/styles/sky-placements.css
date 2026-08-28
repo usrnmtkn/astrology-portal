@@ -33,7 +33,7 @@
   display: flex;
   flex-wrap: wrap;
   align-items: baseline;
-  gap: 6px 10px;
+  gap: calc(var(--space-1) + var(--space-1) / 2) calc(var(--space-2) + var(--space-1) / 2);
 }
 
 .sky-pl-title {
@@ -42,31 +42,20 @@
   min-height: 22px;
   overflow-wrap: normal;
   word-break: normal;
-  color: var(--card-title-color);
-  font-family: var(--font-display);
   font-size: var(--type-title-size);
   font-weight: var(--weight-medium);
   line-height: var(--leading-title);
-  letter-spacing: var(--tracking-title);
 }
 
 .sky-pl-range {
   display: flex;
   flex-wrap: wrap;
   align-items: baseline;
-  gap: 0.6em;
+  gap: var(--glyph-gap-2xl);
   margin-top: calc(var(--space-1) + var(--space-1) / 4);
-  color: var(--card-meta-color);
-  font-family: var(--font-body);
   font-size: var(--type-meta-size);
   font-variant-numeric: tabular-nums;
-  letter-spacing: var(--tracking-number);
   line-height: var(--leading-meta);
-}
-
-.sky-pl-degree,
-.sky-pl-status {
-  color: var(--card-meta-color);
 }
 
 .sky-pl-rx {

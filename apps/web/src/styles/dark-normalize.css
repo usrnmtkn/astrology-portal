@@ -170,9 +170,9 @@
   .signup-form,
   .signup-story
 ) {
-  --surface-card-shadow: inset 0 0 0 1px var(--card-border), var(--card-shadow);
+  --surface-card-shadow: var(--ds-card-inset-shadow);
 
-  border: 1px solid transparent;
+  border: var(--border-width-thin) solid transparent;
   border-radius: var(--card-radius);
   background: var(--card-bg);
   background-clip: padding-box;
@@ -184,9 +184,9 @@
   .friend-placement-row .placement-table-row,
   .synastry-placement-table .planet-placement-row
 ) {
-  --surface-card-shadow: inset 0 0 0 1px var(--card-border), var(--card-shadow);
+  --surface-card-shadow: var(--ds-card-inset-shadow);
 
-  border: 1px solid transparent;
+  border: var(--border-width-thin) solid transparent;
   border-radius: var(--card-radius);
   background: var(--card-bg);
   background-clip: padding-box;

@@ -1,7 +1,7 @@
 .create-chart-flow,
 .create-chart-detail {
   display: grid;
-  gap: 24px;
+  gap: var(--space-6);
 }
 
 .create-chart-steps {
@@ -12,7 +12,7 @@
 .create-chart-step-row {
   display: grid;
   grid-template-columns: 32px minmax(0, 1fr);
-  gap: 14px;
+  gap: calc(var(--space-3) + var(--space-1) / 2);
 }
 
 .create-chart-step-row + .create-chart-step-row {
@@ -27,7 +27,7 @@
 }
 
 .create-chart-rail::before {
-  --create-chart-rail-link-overlap: -18px;
+  --create-chart-rail-link-overlap: var(--ds-overlap-18);
 
   content: "";
   position: absolute;
@@ -47,7 +47,7 @@
   width: 18px;
   height: 18px;
   margin-top: calc(var(--space-5) + var(--space-1) / 2);
-  border: 2px solid var(--line-strong);
+  border: var(--border-width-medium) solid var(--line-strong);
   border-radius: var(--radius-circle);
   background: var(--surface);
 }
@@ -62,10 +62,10 @@
   display: grid;
   grid-template-columns: 44px minmax(0, 1fr) auto;
   align-items: center;
-  gap: 14px;
+  gap: calc(var(--space-3) + var(--space-1) / 2);
   width: 100%;
   min-width: 0;
-  border: 1px solid var(--card-border);
+  border: var(--border-width-thin) solid var(--card-border);
   border-radius: var(--card-radius);
   background: var(--surface-2);
   color: var(--ink);
@@ -93,7 +93,7 @@
 .create-chart-step-copy {
   display: grid;
   min-width: 0;
-  gap: 4px;
+  gap: var(--space-1);
 }
 
 .create-chart-step-copy span {
@@ -110,7 +110,7 @@
 }
 
 .create-chart-fields {
-  gap: 18px;
+  gap: calc(var(--space-4) + var(--space-1) / 2);
 }
 
 .chart-modal .create-chart-fields .signup-grid {
@@ -132,7 +132,7 @@
   display: inline-grid;
   grid-template-columns: 44px minmax(0, 1fr);
   align-items: center;
-  gap: 14px;
+  gap: calc(var(--space-3) + var(--space-1) / 2);
   border: 0;
   border-radius: var(--radius-pill);
   background: var(--ink);
@@ -150,14 +150,14 @@
 .field-line,
 .city-search-field {
   display: grid;
-  gap: 8px;
+  gap: var(--space-2);
   min-width: 0;
 }
 
 .field-line label,
 .city-search-field label {
   display: grid;
-  gap: 8px;
+  gap: var(--space-2);
   min-width: 0;
   color: var(--muted);
   font-weight: var(--weight-medium);
@@ -169,7 +169,7 @@
 .city-search-field input {
   width: 100%;
   min-height: 60px;
-  border: 1px solid var(--input-border);
+  border: var(--border-width-thin) solid var(--input-border);
   border-radius: var(--radius);
   background: var(--surface-2);
   color: var(--ink);

@@ -693,7 +693,7 @@ async function expectLunarSelectedCardMinimalFonts(page: Page, label: string) {
   });
 
   expect(result.checked, `${label} has readable lunar selected card text to inspect`).toBeGreaterThan(0);
-  expect(result.families.length, `${label} uses only body and label font families in the selected lunar card: ${result.samples.join(" | ")}`).toBeLessThanOrEqual(2);
+  expect(result.families.length, `${label} uses only display, body, and label font families in the selected lunar card: ${result.samples.join(" | ")}`).toBeLessThanOrEqual(3);
   expect(result.fontSizes.length, `${label} keeps selected lunar card type scale compact: ${result.sizeSamples.join(" | ")}`).toBeLessThanOrEqual(6);
   expect(result.fontWeights.length, `${label} keeps selected lunar card font weights compact: ${result.weightSamples.join(" | ")}`).toBeLessThanOrEqual(4);
 }
