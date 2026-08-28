@@ -12558,7 +12558,7 @@ body,
   }
 
   .admin-dashboard .admin-composition-preview-field p {
-    font-size: var(--admin-ui-type-body);
+    font-size: var(--admin-ui-type-mobile-preview-body);
   }
 
   .admin-dashboard .admin-composition-preview-sources button {
