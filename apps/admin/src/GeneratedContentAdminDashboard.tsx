@@ -77,6 +77,7 @@ import { articleAppDestination, isSkyWriteupContentRow } from "./articleWorkspac
 import { contentWiringStatus, isPublishedButUnwired } from "./contentWiringStatus";
 import { fallbackHookDisplayTitle } from "./fallbackHookTitle";
 import { isCompositionTemplateRow } from "./compositionTemplateClassifier";
+import { AdminPaginatedCollection } from "./AdminPaginatedCollection";
 import {
   natalPlacementHouses,
   natalPlacementLabel,
@@ -118,6 +119,10 @@ const UnresolvedContentReview = lazy(async () => {
   const module = await import("./UnresolvedContentReview");
   return { default: module.UnresolvedContentReview };
 });
+
+const contentTablePageSize = 50;
+const reviewQueuePageSize = 25;
+const compositeReviewPageSize = 10;
 
 type GeneratedContentStatus = "DRAFT" | "REVIEWED" | "LIVE" | "ARCHIVED" | "ERROR";
 type GeneratedContentSurface = "sky" | "you" | "natal" | "synastry" | "composite" | "relationship" | "modifier" | "friends";
@@ -164,6 +169,12 @@ type AdminFallbackHookSectionFilter = "all" | "sky" | "you" | "friends" | "lunar
 type AdminFallbackRowSort = "title-asc" | "title-desc" | "type";
 type WritingSurfaceAreaFilter = "all" | "sky" | "you" | "friends" | "calendar" | "settings";
 type WritingSurfaceStatusFilter = "all" | "complete" | "partial" | "missing";
+type AdminWritingSurfaceMapPayload = {
+  schema: "admin-writing-surface-map/v1";
+  surfaces: WritingSurfaceMapItem[];
+  access: Record<string, WritingSurfaceAdminAccess>;
+  roleLabels: Partial<Record<WritingSurfaceSource["role"], string>>;
+};
 type AdminArticlePointFilter = "all" | "sun" | "moon" | "mercury" | "venus" | "mars" | "jupiter" | "saturn" | "uranus" | "neptune" | "pluto" | "other";
 type AdminSkyWriteupSubjectFilter = "all" | "planet" | "angle" | "point";
 type AdminCompatibilitySectionFilter = "all" | "content" | "fallback-hooks" | "vocabulary" | "slots";
@@ -2720,11 +2731,22 @@ export function GeneratedContentAdminDashboard() {
 
   useEffect(() => {
     void refreshHookCatalog();
-    void import("./writingSurfaceSourceMap").then((module) => {
-      setWritingSurfaces(module.writingSurfaceSourceMap);
-      setWritingSurfaceAccess(module.writingSurfaceAdminAccess);
-      setWritingSurfaceRoleLabels(module.writingSurfaceSourceRoleLabels);
-    });
+    void fetch("/generated/admin-writing-surface-map-v1.json")
+      .then(async (response) => {
+        if (!response.ok) throw new Error(`Writing surface map returned HTTP ${response.status}.`);
+        return response.json() as Promise<AdminWritingSurfaceMapPayload>;
+      })
+      .then((payload) => {
+        if (payload.schema !== "admin-writing-surface-map/v1") throw new Error("Writing surface map schema is unsupported.");
+        setWritingSurfaces(payload.surfaces);
+        setWritingSurfaceAccess(payload.access);
+        setWritingSurfaceRoleLabels(payload.roleLabels);
+      })
+      .catch(() => {
+        setWritingSurfaces([]);
+        setWritingSurfaceAccess({});
+        setWritingSurfaceRoleLabels({});
+      });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -4882,7 +4904,13 @@ export function GeneratedContentAdminDashboard() {
             <div className="admin-template-card-list">
               {compositeRows.length === 0 && <p className="admin-empty">No composite rows with relationship-type sections are loaded yet.</p>}
               {renderEditor()}
-              {compositeRows.map((row) => (
+              <AdminPaginatedCollection
+                items={compositeRows}
+                label="Composite Review"
+                pageSize={compositeReviewPageSize}
+                resetKey={`${compositeRows.length}:${compositeRows[0]?.id ?? ""}:${compositeRows.at(-1)?.id ?? ""}`}
+              >
+                {(visibleCompositeRows) => <>{visibleCompositeRows.map((row) => (
                 <article className="admin-template-card" key={row.id}>
                   <div className="admin-section-heading-row">
                     <div>
@@ -4908,7 +4936,8 @@ export function GeneratedContentAdminDashboard() {
                     })}
                   </div>
                 </article>
-              ))}
+                ))}</>}
+              </AdminPaginatedCollection>
             </div>
           </section>
         )}
@@ -5436,9 +5465,30 @@ export function GeneratedContentAdminDashboard() {
     showArticleDestination = false,
     showWiringReason = false
   ) {
+    const resetKey = [
+      activePage,
+      tableRows.length,
+      tableRows[0]?.id ?? "",
+      tableRows.at(-1)?.id ?? "",
+      query,
+      articleQuery,
+      compatibilityQuery,
+      contentStatusFilter,
+      reviewStatusFilter,
+      contentClassFilter,
+      tierFilter,
+      categoryFilter,
+      compatibilitySectionFilter,
+      compatibilityStatusFilter,
+      compatibilityPlanetFilter,
+      fallbackSectionFilter,
+      vocabularyCategory
+    ].join(":");
+
     return (
-      <div className="admin-content-table-scroll">
-        <table className="admin-content-table">
+      <AdminPaginatedCollection items={tableRows} label="Content rows" pageSize={contentTablePageSize} resetKey={resetKey}>
+        {(visibleTableRows) => <div className="admin-content-table-scroll">
+          <table className="admin-content-table">
           <thead className="admin-content-table-head">
             <tr>
               <th scope="col">Select</th>
@@ -5455,7 +5505,7 @@ export function GeneratedContentAdminDashboard() {
             </tr>
           </thead>
           <tbody>
-            {tableRows.map((row) => {
+            {visibleTableRows.map((row) => {
               const safety = readerSafetyForRow(row);
               const rowClass = contentClassForRow(row);
               const rowRole = contentRoleDetails(contentRoleForRecord(row));
@@ -5511,8 +5561,9 @@ export function GeneratedContentAdminDashboard() {
             })}
           </tbody>
         </table>
-        {tableRows.length === 0 && <p className="admin-empty">No rows match these filters.</p>}
-      </div>
+          {tableRows.length === 0 && <p className="admin-empty">No rows match these filters.</p>}
+        </div>}
+      </AdminPaginatedCollection>
     );
   }
 
@@ -5527,8 +5578,14 @@ export function GeneratedContentAdminDashboard() {
             </button>
           ))}
         </aside>
-        <div className="admin-review-queue-rows" aria-label="Review rows">
-          {tableRows.map((row) => {
+        <AdminPaginatedCollection
+          items={tableRows}
+          label="Review queue"
+          pageSize={reviewQueuePageSize}
+          resetKey={`${reviewStatusFilter}:${contentClassFilter}:${tierFilter}:${query}:${tableRows.length}`}
+        >
+          {(visibleTableRows) => <div className="admin-review-queue-rows" aria-label="Review rows">
+          {visibleTableRows.map((row) => {
             const safety = readerSafetyForRow(row);
             const saved = row.rawGlobalRow;
             const rowRole = contentRoleDetails(contentRoleForRecord(row));
@@ -5557,7 +5614,8 @@ export function GeneratedContentAdminDashboard() {
             );
           })}
           {tableRows.length === 0 && <p className="admin-empty">No review rows match these filters.</p>}
-        </div>
+          </div>}
+        </AdminPaginatedCollection>
       </section>
     );
   }

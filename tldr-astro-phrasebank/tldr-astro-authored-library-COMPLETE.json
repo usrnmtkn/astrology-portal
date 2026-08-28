@@ -23546,7 +23546,9 @@
    "content_key": "slot-template/6O",
    "surface": "sky",
    "mode": "feed",
-   "status": "LIVE",
+   "status": "ARCHIVED",
+   "retired": true,
+   "retirement_reason": "Unused legacy Calendar list template. The current Calendar renders calculated event metadata directly and has no provider for these compact date and time slots.",
    "event_type": "slot-template",
    "headline": "Calendar list row",
    "summary": "",
@@ -23573,8 +23575,8 @@
    "reviewer_notes": "",
    "tier": "REVIEWED",
    "_bucket": "slot-template",
-   "lane": "serving",
-   "serving_floor": true,
+   "lane": "reference",
+   "serving_floor": false,
    "admin_editable": true
   },
   {

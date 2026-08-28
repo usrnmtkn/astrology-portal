@@ -10,6 +10,14 @@ const generatedAt = new Date();
 
 const suites = [
   {
+    name: "Generated knowledge prerequisite",
+    description: "Builds the generated astrology knowledge required by the Content Studio and its browser test server.",
+    command: "npm",
+    args: ["run", "prepare:app-test-dependencies"],
+    summaryKind: "command",
+    logFile: "generated-knowledge-prerequisite.log"
+  },
+  {
     name: "Content dashboard admin user flows",
     description: "Admin navigation, authoring entry points, composition tools, publish filters, and responsive dashboard checks.",
     command: "npx",
@@ -53,7 +61,16 @@ const countMatches = (output, pattern) => {
   return matches.reduce((total, match) => total + Number(match[1]), 0);
 };
 
-const parseSummary = (suite, output) => {
+const parseSummary = (suite, output, exitCode) => {
+  if (suite.summaryKind === "command") {
+    return {
+      passed: exitCode === 0 ? 1 : 0,
+      failed: exitCode === 0 ? 0 : 1,
+      skipped: 0,
+      warnings: 0
+    };
+  }
+
   if (suite.name === "Editorial writing QA") {
     return {
       passed: output.match(/Blocking findings:\s+0\b/) ? 1 : 0,
@@ -107,7 +124,7 @@ const runSuite = async (suite) =>
         commandLabel: commandLabel(suite),
         exitCode,
         status: exitCode === 0 ? "PASS" : "OPEN FINDINGS",
-        summary: parseSummary(suite, cleanOutput),
+        summary: parseSummary(suite, cleanOutput, exitCode),
         findings: findingLines(cleanOutput),
         output: cleanOutput
       });
@@ -169,6 +186,8 @@ const buildReport = (results) => {
     "- Playwright artifacts: `test-results/playwright/`",
     "- Admin responsive screenshots: `test-results/content-dashboard-admin-flow/`",
     "- Suite logs: `test-results/content-dashboard-admin-qa-report/`",
+    "- Full editorial review queue: `test-results/editorial-writing-qa/review-queue.md`",
+    "- Machine-readable editorial findings: `test-results/editorial-writing-qa/latest.json`",
     "- Admin case studies: `docs/qa/content-dashboard-admin-user-flow-case-studies.md`",
     "",
     "## QA Notes",
