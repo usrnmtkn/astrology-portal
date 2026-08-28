@@ -18,9 +18,19 @@ import {
 
 type Props = {
   editor: ReactNode;
-  onEditRow: (row: CompositionMapRow) => void;
+  onEditRow: (row: CompositionMapRow, context?: CompositionEditorContext) => void;
   onStartCmsRow?: (surface: WritingSurfaceMapItem, starter: WritingSurfaceCmsStarter) => void;
   rows: CompositionMapRow[];
+};
+
+export type CompositionEditorContext = {
+  active: string;
+  after: string;
+  audience: "you" | "they";
+  before: string;
+  fieldLabel: string;
+  sourceField: "body_you" | "body_they" | "headline";
+  templateLabel: string;
 };
 
 type CompositionView = "preview" | "template" | "assembly";
@@ -264,9 +274,9 @@ export default function CompositionMapWorkspace({ editor, onEditRow, onStartCmsR
       .find((segment) => segment.name === name && segment.source)?.source;
   }
 
-  function openVariable(name: string, source?: CompositionMapSource) {
+  function openVariable(name: string, source?: CompositionMapSource, context?: CompositionEditorContext) {
     if (source) {
-      onEditRow(source.row);
+      onEditRow(source.row, context);
       return;
     }
     setView("assembly");
@@ -277,10 +287,26 @@ export default function CompositionMapWorkspace({ editor, onEditRow, onStartCmsR
     });
   }
 
-  function variableButton(segment: CompositionPreviewSegment, key: string) {
+  function variableButton(
+    segment: CompositionPreviewSegment,
+    key: string,
+    fieldLabel: string,
+    paragraph: CompositionPreviewSegment[],
+    segmentIndex: number,
+    audience: "you" | "they"
+  ) {
     if (!segment.name || !segment.kind) return segment.text;
     const slot = selected?.slots.find((candidate) => candidate.name === segment.name);
     const action = segment.source ? `Edit ${slot?.label ?? segment.name}` : `Inspect ${slot?.label ?? segment.name}`;
+    const context = segment.source && selected ? {
+      active: segment.text,
+      after: paragraph.slice(segmentIndex + 1).map((part) => part.text).join(""),
+      audience,
+      before: paragraph.slice(0, segmentIndex).map((part) => part.text).join(""),
+      fieldLabel,
+      sourceField: fieldLabel === "Headline" ? "headline" : audience === "they" ? "body_they" : "body_you",
+      templateLabel: selected.label
+    } satisfies CompositionEditorContext : undefined;
     return (
       <button
         type="button"
@@ -289,7 +315,7 @@ export default function CompositionMapWorkspace({ editor, onEditRow, onStartCmsR
         data-variable-action={`${action} →`}
         aria-label={`${segment.text}. ${action}`}
         title={action}
-        onClick={() => openVariable(segment.name!, segment.source)}
+        onClick={() => openVariable(segment.name!, segment.source, context)}
       >
         {segment.text}
       </button>
@@ -440,7 +466,15 @@ export default function CompositionMapWorkspace({ editor, onEditRow, onStartCmsR
                         <section className={`admin-composition-preview-field field-${field.key}`} key={field.key}>
                           <span>{field.label}</span>
                           {field.paragraphs.map((paragraph, paragraphIndex) => {
-                            const copy = paragraph.map((segment, segmentIndex) => variableButton(segment, `${field.key}-${paragraphIndex}-${segmentIndex}`));
+                            const audience = field.audience === "they" ? "they" : previewAudience;
+                            const copy = paragraph.map((segment, segmentIndex) => variableButton(
+                              segment,
+                              `${field.key}-${paragraphIndex}-${segmentIndex}`,
+                              field.label,
+                              paragraph,
+                              segmentIndex,
+                              audience
+                            ));
                             return field.key.startsWith("headline")
                               ? <h3 key={`${field.key}-${paragraphIndex}`}>{copy}</h3>
                               : <p key={`${field.key}-${paragraphIndex}`}>{copy}</p>;
