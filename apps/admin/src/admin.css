@@ -8357,6 +8357,31 @@ body,
   padding: 24px;
 }
 
+.admin-dashboard .admin-content-library-toolbar {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.admin-dashboard .admin-content-library-toolbar .admin-content-toolbar-copy {
+  max-width: 760px;
+  min-width: 0;
+  width: 100%;
+}
+
+.admin-dashboard .admin-content-library-toolbar .admin-new-actions {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: flex-start;
+  min-width: 0;
+  width: 100%;
+}
+
+.admin-dashboard .admin-content-library-toolbar .admin-new-actions button {
+  max-width: 100%;
+  white-space: normal;
+}
+
 .admin-dashboard .admin-content-toolbar-copy p:not(.admin-eyebrow),
 .admin-dashboard .admin-content-toolbar p,
 .admin-dashboard .admin-phrasebook-panel p,
@@ -12949,4 +12974,18 @@ body,
     max-width: none;
     width: 100%;
   }
+}
+.admin-pagination {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--admin-space-lg);
+  justify-content: space-between;
+  padding: var(--admin-space-xl) var(--admin-space-3xl);
+}
+
+.admin-pagination div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--admin-space-lg);
 }
