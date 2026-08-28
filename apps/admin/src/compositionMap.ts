@@ -414,7 +414,8 @@ function compositionPreviewFields(row: CompositionMapRow) {
   if (splitHeadline) add("headline_they", "Headline", theyHeadline, "they");
   const youBody = text(packageRecord.body_you);
   const theyBody = text(packageRecord.body_they);
-  const mainBody = text(packageRecord.body || row.body);
+  const packageBody = text(packageRecord.body);
+  const mainBody = packageBody || (!youBody && !theyBody ? text(row.body) : "");
   const splitBody = Boolean(theyBody && theyBody !== (youBody || mainBody));
   add("body_you", "Passage", youBody, splitBody ? "you" : undefined);
   if (splitBody) add("body_they", "Passage", theyBody, "they");
@@ -479,10 +480,11 @@ function buildCompositionPreview(row: CompositionMapRow, slots: CompositionMapSl
   };
 }
 
-export function buildCompositionMap(rows: CompositionMapRow[]): CompositionMapTemplate[] {
-  const templates = rows.filter(isCompositionTemplateRow);
-  const cache: AtomicVariableCaches = { candidates: new Map(), nested: new Map() };
-  return templates.map((row) => {
+function buildCompositionTemplateWithCache(
+  row: CompositionMapRow,
+  rows: CompositionMapRow[],
+  cache: AtomicVariableCaches
+): CompositionMapTemplate {
     const packageRecord = packageRecordForRow(row);
     const references = atomicVariableReferences(row, rows, cache);
     const slots = references.map((reference): CompositionMapSlot => {
@@ -522,6 +524,16 @@ export function buildCompositionMap(rows: CompositionMapRow[]): CompositionMapTe
       row,
       slots
     };
-  }).sort((left, right) => left.destination.localeCompare(right.destination)
+}
+
+export function buildCompositionTemplate(row: CompositionMapRow, rows: CompositionMapRow[]) {
+  return buildCompositionTemplateWithCache(row, rows, { candidates: new Map(), nested: new Map() });
+}
+
+export function buildCompositionMap(rows: CompositionMapRow[]): CompositionMapTemplate[] {
+  const templates = rows.filter(isCompositionTemplateRow);
+  const cache: AtomicVariableCaches = { candidates: new Map(), nested: new Map() };
+  return templates.map((row) => buildCompositionTemplateWithCache(row, rows, cache))
+    .sort((left, right) => left.destination.localeCompare(right.destination)
     || left.label.localeCompare(right.label));
 }
