@@ -126,6 +126,8 @@
   --type-control-size: var(--type-body-size);
   --type-section-title-size: var(--type-section-heading-size);
   --admin-space-0: 0;
+  --admin-space-hairline: 1px;
+  --admin-space-micro: 2px;
   --admin-space-2xs: 3px;
   --admin-space-xs: 4px;
   --admin-space-5: 5px;
@@ -296,6 +298,8 @@
   --admin-ui-primary: #2fa672;
   --admin-ui-primary-hover: #3fcf8e;
   --admin-ui-primary-soft: rgba(63, 207, 142, 0.12);
+  --admin-ui-accent: var(--admin-ui-primary);
+  --admin-ui-primary-border-strong: rgba(91, 220, 155, 0.42);
   --admin-ui-success: var(--admin-success-ui-copy);
   --admin-ui-warning: var(--admin-warning-ui-copy);
   --admin-ui-info: var(--admin-blue-accent);
