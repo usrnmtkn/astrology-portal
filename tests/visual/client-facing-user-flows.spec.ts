@@ -1401,26 +1401,55 @@ test.describe("client-facing user flow case studies", () => {
         await expect(page.locator("main.app-shell")).toBeVisible({ timeout: routeReadyTimeoutMs });
         await expect(page.locator(".app-shell")).toHaveClass(new RegExp(`theme-${theme}`));
 
-        const eclipseSection = page.locator(".daily-special-section").filter({
-          hasText: "Pisces Lunar Eclipse Horoscope"
+        const eclipseCard = page.getByRole("button", {
+          name: /^Pisces Lunar Eclipse Horoscope/u
         });
-        const eclipseTitle = eclipseSection.getByRole("heading", {
-          level: 3,
-          name: "Pisces Lunar Eclipse Horoscope",
-          exact: true
+        const eclipseTitle = eclipseCard.locator(".updates-aspect-row__title");
+        await expect(eclipseCard).toBeVisible({ timeout: 30_000 });
+        await expect(
+          eclipseCard,
+          "The exact-day horoscope uses the established interactive card layout"
+        ).toHaveClass(/\bweekly-transit-row\b/u);
+        await expect(
+          page.locator(".daily-special-section").filter({ hasText: "Pisces Lunar Eclipse Horoscope" }),
+          "The full inline horoscope does not duplicate the interactive card"
+        ).toHaveCount(0);
+        const eclipseCardStyle = await eclipseCard.evaluate((element) => {
+          const style = window.getComputedStyle(element);
+
+          return {
+            backgroundColor: style.backgroundColor,
+            borderRadius: Number.parseFloat(style.borderRadius),
+            borderStyle: style.borderTopStyle,
+            boxShadow: style.boxShadow,
+            paddingTop: Number.parseFloat(style.paddingTop)
+          };
         });
-        await expect(eclipseSection).toBeVisible({ timeout: 30_000 });
+        expect(eclipseCardStyle.backgroundColor, "Horoscope card has a visible surface").not.toBe("rgba(0, 0, 0, 0)");
+        expect(eclipseCardStyle.borderRadius, "Horoscope card has rounded corners").toBeGreaterThan(0);
+        expect(eclipseCardStyle.borderStyle, "Horoscope card has an outlined edge").toBe("solid");
+        expect(eclipseCardStyle.boxShadow, "Horoscope card has the established raised treatment").not.toBe("none");
+        expect(eclipseCardStyle.paddingTop, "Horoscope card uses inset card spacing").toBeGreaterThan(0);
+        await expect(
+          page.locator(".updates-aspect-row__title").filter({ hasText: /^Pisces Lunar Eclipse Horoscope$/u }),
+          "The exact-day eclipse appears in one card"
+        ).toHaveCount(1);
         await expect(eclipseTitle).toBeVisible();
         await expect(eclipseTitle).not.toContainText("Rising");
-        await expect(eclipseSection).toContainText(
+        await eclipseCard.click();
+        const eclipseArticle = page.locator(".article-page");
+        await expect(eclipseArticle).toBeVisible();
+        await expect(eclipseArticle).toContainText(
           "The Pisces lunar eclipse shines upon your 12th house of karma, subconscious, and endings."
         );
-        await expect(eclipseSection).toContainText(
+        await expect(eclipseArticle).toContainText(
           "Lunar eclipses are portals into your soul."
         );
-        await expect(eclipseSection).toContainText(
+        await expect(eclipseArticle).toContainText(
           "Release your need to be in control, allow for endings, mourn if needed, and allow yourself to flow with the current of whatever is unfolding, even if the destination is still unknown."
         );
+        await page.getByRole("button", { name: "Back" }).click();
+        await expect(page.getByRole("region", { name: "You", exact: true })).toBeVisible();
         await expectSharedBodyContract(page, `${viewport.name} ${theme} You page`, [
           ".daily-horoscope-summary > p",
           ".daily-dodont li",

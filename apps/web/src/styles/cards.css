@@ -10,6 +10,7 @@
   .natal-pattern-card,
   .friend-signature-card,
   .manual-chart-row,
+  .you-horoscope-card,
   .daily-horoscope-summary,
   .daily-horoscope-writeup,
   .personal-timing-summary,
@@ -539,24 +540,6 @@
 .chart-frame > .sky-wheel {
   height: 100%;
 }
-.daily-special-section {
-  background: var(--surface);
-  border: var(--border-width-thin) solid var(--line);
-  border-radius: var(--card-radius);
-  padding: var(--space-4) calc(var(--space-4) + var(--space-1) / 2);
-}
-
-.daily-special-section h3 {
-  margin: 0;
-  color: var(--card-title-color);
-  font-family: var(--font-display);
-  font-size: var(--text-card-title);
-  font-weight: var(--weight-medium);
-  letter-spacing: var(--tracking-title);
-  line-height: var(--leading-title);
-}
-
-.daily-special-section p,
 .daily-dodont li {
   margin: 0;
   color: var(--card-body-color);
@@ -566,7 +549,6 @@
   letter-spacing: var(--tracking-body);
   line-height: var(--leading-body);
 }
-
 .daily-dodont {
   background: var(--surface);
   border: var(--border-width-thin) solid var(--line);
