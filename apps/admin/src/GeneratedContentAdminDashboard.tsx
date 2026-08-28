@@ -76,7 +76,9 @@ import { templateVariableReferences } from "./templateVariableReference";
 import { articleAppDestination, isSkyWriteupContentRow } from "./articleWorkspace";
 import { contentWiringStatus, isPublishedButUnwired } from "./contentWiringStatus";
 import { fallbackHookDisplayTitle } from "./fallbackHookTitle";
+import { fallbackHookEditorGuidance } from "./fallbackHookEditorGuidance";
 import { isCompositionTemplateRow } from "./compositionTemplateClassifier";
+import { AdminPaginatedCollection } from "./AdminPaginatedCollection";
 import {
   natalPlacementHouses,
   natalPlacementLabel,
@@ -94,6 +96,7 @@ import type {
   WritingSurfaceMapItem,
   WritingSurfaceSource
 } from "./writingSurfaceSourceMap";
+import type { CompositionEditorContext } from "./CompositionMapWorkspace";
 import "./admin.css";
 
 const CompositionMapWorkspace = lazy(() => import("./CompositionMapWorkspace"));
@@ -118,6 +121,10 @@ const UnresolvedContentReview = lazy(async () => {
   const module = await import("./UnresolvedContentReview");
   return { default: module.UnresolvedContentReview };
 });
+
+const contentTablePageSize = 50;
+const reviewQueuePageSize = 25;
+const compositeReviewPageSize = 10;
 
 type GeneratedContentStatus = "DRAFT" | "REVIEWED" | "LIVE" | "ARCHIVED" | "ERROR";
 type GeneratedContentSurface = "sky" | "you" | "natal" | "synastry" | "composite" | "relationship" | "modifier" | "friends";
@@ -162,8 +169,14 @@ type AdminPhrasebankTierFilter = AdminPhrasebankTier | "all";
 type AdminContentCategoryFilter = "all" | "Sky" | "Natal Aspects" | "Natal Angles" | "Natal Chart" | "Relationship" | "Condition Modifiers" | "Fallback Hooks" | "Fallback Templates";
 type AdminFallbackHookSectionFilter = "all" | "sky" | "you" | "friends" | "lunar-calendar" | "settings";
 type AdminFallbackRowSort = "title-asc" | "title-desc" | "type";
-type WritingSurfaceAreaFilter = "all" | "sky" | "you" | "friends" | "calendar" | "settings";
+type WritingSurfaceAreaFilter = "all" | "sky" | "you" | "friends" | "calendar" | "reports" | "settings";
 type WritingSurfaceStatusFilter = "all" | "complete" | "partial" | "missing";
+type AdminWritingSurfaceMapPayload = {
+  schema: "admin-writing-surface-map/v1";
+  surfaces: WritingSurfaceMapItem[];
+  access: Record<string, WritingSurfaceAdminAccess>;
+  roleLabels: Partial<Record<WritingSurfaceSource["role"], string>>;
+};
 type AdminArticlePointFilter = "all" | "sun" | "moon" | "mercury" | "venus" | "mars" | "jupiter" | "saturn" | "uranus" | "neptune" | "pluto" | "other";
 type AdminSkyWriteupSubjectFilter = "all" | "planet" | "angle" | "point";
 type AdminCompatibilitySectionFilter = "all" | "content" | "fallback-hooks" | "vocabulary" | "slots";
@@ -690,7 +703,7 @@ function adminPageDescription(activePage: AdminDashboardPage) {
     case "content":
       return "Find and edit every saved content row.";
     case "compositionMap":
-      return "Read a representative surface first, then inspect and edit the template, sources, and calculated facts behind it.";
+      return "Start with any reader-facing surface in the app, then follow its editorial sources, runtime path, templates, and calculated facts.";
     case "knowledge":
       return "Edit backup copy used when primary content is unavailable.";
     case "vocabulary":
@@ -969,6 +982,7 @@ function packageFieldString(draft: AdminDraft, key: string) {
 function setPackageSectionField(draft: AdminDraft, key: string, value: string): AdminDraft {
   return {
     ...draft,
+    body: key === "body_you" ? value : draft.body,
     sections: {
       ...(draft.sections ?? {}),
       [key]: value,
@@ -1901,6 +1915,7 @@ function surfaceAreaForFallbackSection(section: AdminFallbackHookSectionFilter):
 function areaForWritingSurface(item: WritingSurfaceMapItem): WritingSurfaceAreaFilter {
   if (item.area === "Friends") return "friends";
   if (item.area === "Natal" || item.area === "Transits") return "you";
+  if (item.area === "Reports") return "reports";
   if (item.area === "System") return "settings";
   if (item.surface.includes("Calendar")) return "calendar";
   return "sky";
@@ -1909,7 +1924,7 @@ function areaForWritingSurface(item: WritingSurfaceMapItem): WritingSurfaceAreaF
 function statusForWritingSurface(item: WritingSurfaceMapItem, accessById: Record<string, WritingSurfaceAdminAccess>): WritingSurfaceStatusFilter {
   const access = accessById[item.id];
   if (!access) return "missing";
-  return access.editability === "editable" ? "complete" : "partial";
+  return access.editability === "editable" ? "complete" : access.editability === "partial" ? "partial" : "missing";
 }
 
 function canonicalFallbackContentKey(key: string) {
@@ -2215,6 +2230,7 @@ export function GeneratedContentAdminDashboard() {
   const [templateVariableQuery, setTemplateVariableQuery] = useState("");
   const [selectedTemplateVariableName, setSelectedTemplateVariableName] = useState<string | null>(null);
   const [selectedTemplateVariableSourceId, setSelectedTemplateVariableSourceId] = useState<string | null>(null);
+  const [compositionEditorContext, setCompositionEditorContext] = useState<CompositionEditorContext | null>(null);
   const [skyArticleEditionForm, setSkyArticleEditionForm] = useState<SkyArticleEditionForm | null>(null);
   const [skyArticleEditor, setSkyArticleEditor] = useState<SkyArticleEditorState | null>(null);
   const [draft, setDraft] = useState<AdminDraft | null>(null);
@@ -2677,7 +2693,7 @@ export function GeneratedContentAdminDashboard() {
       setNatalPlacementSign(page === "content" && natalSign && natalPlacementSigns.includes(natalSign) ? natalSign : "");
       setNatalPlacementHouse(page === "content" && natalHouse && natalPlacementHouses.includes(natalHouse) ? natalHouse : "");
       setFallbackSectionFilter(section && fallbackSections.some((filter) => filter.key === section) ? section : "all");
-      setSurfaceAreaFilter(area && ["all", "sky", "you", "friends", "calendar", "settings"].includes(area) ? area : "all");
+      setSurfaceAreaFilter(area && ["all", "sky", "you", "friends", "calendar", "reports", "settings"].includes(area) ? area : "all");
       setSurfaceStatusFilter(status && ["all", "complete", "partial", "missing"].includes(status) ? status : "all");
       setVocabularyCategory(vocabularyCategoryFromParams(page, params));
       if (page === "compatibility") {
@@ -2720,11 +2736,22 @@ export function GeneratedContentAdminDashboard() {
 
   useEffect(() => {
     void refreshHookCatalog();
-    void import("./writingSurfaceSourceMap").then((module) => {
-      setWritingSurfaces(module.writingSurfaceSourceMap);
-      setWritingSurfaceAccess(module.writingSurfaceAdminAccess);
-      setWritingSurfaceRoleLabels(module.writingSurfaceSourceRoleLabels);
-    });
+    void fetch("/generated/admin-writing-surface-map-v1.json")
+      .then(async (response) => {
+        if (!response.ok) throw new Error(`Writing surface map returned HTTP ${response.status}.`);
+        return response.json() as Promise<AdminWritingSurfaceMapPayload>;
+      })
+      .then((payload) => {
+        if (payload.schema !== "admin-writing-surface-map/v1") throw new Error("Writing surface map schema is unsupported.");
+        setWritingSurfaces(payload.surfaces);
+        setWritingSurfaceAccess(payload.access);
+        setWritingSurfaceRoleLabels(payload.roleLabels);
+      })
+      .catch(() => {
+        setWritingSurfaces([]);
+        setWritingSurfaceAccess({});
+        setWritingSurfaceRoleLabels({});
+      });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -2910,6 +2937,7 @@ export function GeneratedContentAdminDashboard() {
     setTemplateVariableQuery("");
     setSelectedTemplateVariableName(null);
     setSelectedTemplateVariableSourceId(null);
+    setCompositionEditorContext(null);
     setSelectedRowId(null);
     setDraft(null);
     setSkyWriteupParentId(null);
@@ -3487,12 +3515,13 @@ export function GeneratedContentAdminDashboard() {
     }
   }
 
-  function openRow(row: AdminGeneratedContentRow) {
+  function openRow(row: AdminGeneratedContentRow, compositionContext: CompositionEditorContext | null = null) {
     const nextDraft = draftFromRow(row);
     const edition = compiledSkyArticleEditionForDraft(nextDraft);
     const baseEdition = skyArticleRevisionBaseForDraft(nextDraft);
     setSelectedRowId(row.id);
     setDraft(nextDraft);
+    setCompositionEditorContext(compositionContext);
     setSkyWriteupParentId(null);
     setSkyRelatedAspectQuery("");
     setSkyFallbackPreviewFacts({});
@@ -4613,6 +4642,7 @@ export function GeneratedContentAdminDashboard() {
                 ["you", "You"],
                 ["friends", "Friends"],
                 ["calendar", "Calendar"],
+                ["reports", "Reports"],
                 ["settings", "Settings"]
               ].map(([key, label]) => (
                 <button key={key} type="button" aria-pressed={surfaceAreaFilter === key} className={surfaceAreaFilter === key ? "active" : ""} onClick={() => navigateSurfaceMapFilters({ area: key as WritingSurfaceAreaFilter })}>
@@ -4652,7 +4682,7 @@ export function GeneratedContentAdminDashboard() {
                       </span>
                     </div>
                     <p>{item.currentRenderPath}</p>
-                    {access?.editability === "partial" && <p className="admin-surface-warning"><strong>Still to wire:</strong> {item.nextAction}</p>}
+                    {access?.editability !== "editable" && <p className="admin-surface-warning"><strong>Still to wire:</strong> {item.nextAction}</p>}
                     <div className="admin-surface-actions" aria-label={`${item.surface} editing destinations`}>
                       {access?.routes.map((route) => (
                         <a key={`${item.id}-${route.hash}`} href={route.hash} className={route.purpose === "reader-copy" ? "admin-source-action admin-source-action-primary" : "admin-source-action"} title={route.note}>
@@ -4803,7 +4833,8 @@ export function GeneratedContentAdminDashboard() {
           <Suspense fallback={<div className="admin-empty">Loading Composition Map…</div>}>
             <CompositionMapWorkspace
               rows={visibleRows}
-              onEditRow={(row) => openRow(row as AdminGeneratedContentRow)}
+              onEditRow={(row, context) => openRow(row as AdminGeneratedContentRow, context ?? null)}
+              onStartCmsRow={openCmsStarter}
               editor={renderEditor()}
             />
           </Suspense>
@@ -4882,7 +4913,13 @@ export function GeneratedContentAdminDashboard() {
             <div className="admin-template-card-list">
               {compositeRows.length === 0 && <p className="admin-empty">No composite rows with relationship-type sections are loaded yet.</p>}
               {renderEditor()}
-              {compositeRows.map((row) => (
+              <AdminPaginatedCollection
+                items={compositeRows}
+                label="Composite Review"
+                pageSize={compositeReviewPageSize}
+                resetKey={`${compositeRows.length}:${compositeRows[0]?.id ?? ""}:${compositeRows.at(-1)?.id ?? ""}`}
+              >
+                {(visibleCompositeRows) => <>{visibleCompositeRows.map((row) => (
                 <article className="admin-template-card" key={row.id}>
                   <div className="admin-section-heading-row">
                     <div>
@@ -4908,7 +4945,8 @@ export function GeneratedContentAdminDashboard() {
                     })}
                   </div>
                 </article>
-              ))}
+                ))}</>}
+              </AdminPaginatedCollection>
             </div>
           </section>
         )}
@@ -5436,9 +5474,30 @@ export function GeneratedContentAdminDashboard() {
     showArticleDestination = false,
     showWiringReason = false
   ) {
+    const resetKey = [
+      activePage,
+      tableRows.length,
+      tableRows[0]?.id ?? "",
+      tableRows.at(-1)?.id ?? "",
+      query,
+      articleQuery,
+      compatibilityQuery,
+      contentStatusFilter,
+      reviewStatusFilter,
+      contentClassFilter,
+      tierFilter,
+      categoryFilter,
+      compatibilitySectionFilter,
+      compatibilityStatusFilter,
+      compatibilityPlanetFilter,
+      fallbackSectionFilter,
+      vocabularyCategory
+    ].join(":");
+
     return (
-      <div className="admin-content-table-scroll">
-        <table className="admin-content-table">
+      <AdminPaginatedCollection items={tableRows} label="Content rows" pageSize={contentTablePageSize} resetKey={resetKey}>
+        {(visibleTableRows) => <div className="admin-content-table-scroll">
+          <table className="admin-content-table">
           <thead className="admin-content-table-head">
             <tr>
               <th scope="col">Select</th>
@@ -5455,7 +5514,7 @@ export function GeneratedContentAdminDashboard() {
             </tr>
           </thead>
           <tbody>
-            {tableRows.map((row) => {
+            {visibleTableRows.map((row) => {
               const safety = readerSafetyForRow(row);
               const rowClass = contentClassForRow(row);
               const rowRole = contentRoleDetails(contentRoleForRecord(row));
@@ -5511,8 +5570,9 @@ export function GeneratedContentAdminDashboard() {
             })}
           </tbody>
         </table>
-        {tableRows.length === 0 && <p className="admin-empty">No rows match these filters.</p>}
-      </div>
+          {tableRows.length === 0 && <p className="admin-empty">No rows match these filters.</p>}
+        </div>}
+      </AdminPaginatedCollection>
     );
   }
 
@@ -5527,8 +5587,14 @@ export function GeneratedContentAdminDashboard() {
             </button>
           ))}
         </aside>
-        <div className="admin-review-queue-rows" aria-label="Review rows">
-          {tableRows.map((row) => {
+        <AdminPaginatedCollection
+          items={tableRows}
+          label="Review queue"
+          pageSize={reviewQueuePageSize}
+          resetKey={`${reviewStatusFilter}:${contentClassFilter}:${tierFilter}:${query}:${tableRows.length}`}
+        >
+          {(visibleTableRows) => <div className="admin-review-queue-rows" aria-label="Review rows">
+          {visibleTableRows.map((row) => {
             const safety = readerSafetyForRow(row);
             const saved = row.rawGlobalRow;
             const rowRole = contentRoleDetails(contentRoleForRecord(row));
@@ -5557,7 +5623,8 @@ export function GeneratedContentAdminDashboard() {
             );
           })}
           {tableRows.length === 0 && <p className="admin-empty">No review rows match these filters.</p>}
-        </div>
+          </div>}
+        </AdminPaginatedCollection>
       </section>
     );
   }
@@ -5805,6 +5872,22 @@ export function GeneratedContentAdminDashboard() {
       body_you: packageFieldString(currentDraft, "body_you"),
       body_they: packageFieldString(currentDraft, "body_they")
     }, effectiveSkyFallback);
+    const baseFallbackEditorGuidance = isFallbackHookDraft && !skyFallbackEditor
+      ? fallbackHookEditorGuidance({
+          contentKey: currentDraft.contentKey,
+          grammarFrame: typeof packageRecord.grammar_frame === "string" ? packageRecord.grammar_frame : undefined,
+          bodyYou: packageFieldString(currentDraft, "body_you") || currentDraft.body
+        })
+      : null;
+    const fallbackEditorGuidance = baseFallbackEditorGuidance && skyFallbackContentIdentity
+      ? {
+          ...baseFallbackEditorGuidance,
+          area: skyFallbackContentIdentity.groupLabel,
+          title: skyFallbackContentIdentity.title,
+          description: skyFallbackContentIdentity.description
+            ?? baseFallbackEditorGuidance.description
+        }
+      : baseFallbackEditorGuidance;
     const templatePreviewRow = selectedRow && isTemplateDraft ? {
       ...selectedRow,
       headline: currentDraft.headline,
@@ -6105,6 +6188,13 @@ export function GeneratedContentAdminDashboard() {
       });
     };
     const fallbackHookEditorTitle = fallbackHookDisplayTitle(currentDraft.contentKey);
+    const compositionContextValue = compositionEditorContext
+      ? compositionEditorContext.sourceField === "headline"
+        ? currentDraft.headline
+        : compositionEditorContext.sourceField === "body_they"
+          ? packageFieldString(currentDraft, "body_they") || currentDraft.body
+          : packageFieldString(currentDraft, "body_you") || currentDraft.body
+      : "";
     const fieldMetrics = (value: string) => {
       const wordCount = value.trim() ? value.trim().split(/\s+/u).length : 0;
       return `${wordCount} ${wordCount === 1 ? "word" : "words"} · ${value.length} ${value.length === 1 ? "character" : "characters"}`;
@@ -6196,6 +6286,21 @@ export function GeneratedContentAdminDashboard() {
               </div>
             </section>
           )}
+          {compositionEditorContext && (
+            <section className="admin-editor-guidance admin-contextual-editor-guidance admin-reader-sentence-context" aria-label="Reader sentence context">
+              <p className="admin-eyebrow">In the reader preview · {compositionEditorContext.audience === "they" ? "They" : "You"}</p>
+              <strong>{compositionEditorContext.templateLabel} · {compositionEditorContext.fieldLabel}</strong>
+              <div className="admin-contextual-copy-example">
+                <span>Full reader sentence</span>
+                <q>
+                  {compositionEditorContext.before}
+                  <mark>{compositionContextValue || compositionEditorContext.active}</mark>
+                  {compositionEditorContext.after}
+                </q>
+              </div>
+              <p>The highlighted words are the source you are editing. The surrounding words come from the template and other variables.</p>
+            </section>
+          )}
           {isVocabularyDraft && (
             <div className="admin-editor-guidance" aria-label="Phrase authoring guidance">
               <strong>{isPackageDraft ? "Edit this variable value" : "Create a reusable phrase"}</strong>
@@ -6214,12 +6319,19 @@ export function GeneratedContentAdminDashboard() {
               <p><strong>Reader behavior:</strong> the app combines this phrase with other approved ingredients. It is not shown as a standalone article.</p>
             </section>
           )}
-          {isFallbackHookDraft && !skyFallbackEditor && (
-            <div className="admin-editor-guidance" aria-label="Fallback hook guidance">
-              <strong>How to update this fallback</strong>
-              <p>Edit the Headline, Summary, or Body below. Keep names inside double braces, such as {"{{entryDate}}"}, because the app replaces them with live facts when it uses this fallback.</p>
-              <p><strong>Save</strong> keeps the current status. <strong>Reviewed</strong> records editorial review without publishing this standard row. <strong>Sign Off</strong> makes it reader-eligible, but it is still used only when higher-priority authored or generated copy is unavailable. The content key controls where it is used and normally should not be changed.</p>
-            </div>
+          {fallbackEditorGuidance && (
+            <section className="admin-editor-guidance admin-contextual-editor-guidance" aria-label="How this source is used">
+              <p className="admin-eyebrow">{fallbackEditorGuidance.area}</p>
+              <strong>{fallbackEditorGuidance.title}</strong>
+              <p>{fallbackEditorGuidance.description}</p>
+              {fallbackEditorGuidance.example && (
+                <div className="admin-contextual-copy-example">
+                  <span>Example in a reading</span>
+                  <q>{fallbackEditorGuidance.example}</q>
+                </div>
+              )}
+              <p><strong>Writing shape:</strong> {fallbackEditorGuidance.writingRule}</p>
+            </section>
           )}
           {isAuthoredPackageCard && (
             <div className="admin-editor-guidance" aria-label="Reader source guidance">
@@ -6288,7 +6400,7 @@ export function GeneratedContentAdminDashboard() {
               )}
             </div>
           )}
-          <section className="admin-content-role-panel" aria-label="Content role">
+          {!fallbackEditorGuidance && <section className="admin-content-role-panel" aria-label="Content role">
             <div>
               <p className="admin-eyebrow">Content role</p>
               <h3>{skyFallbackContentIdentity?.typeLabel ?? contentRole.label}</h3>
@@ -6300,7 +6412,7 @@ export function GeneratedContentAdminDashboard() {
             {contentRole.label === "Fallback source/helper" && (
               <p><strong>Reader rule:</strong> this text can support the fallback system, but it cannot appear as a standalone authored write-up.</p>
             )}
-          </section>
+          </section>}
           {skyFallbackContentIdentity?.typeLabel === "Sky Placement fallback article section" && (
             <section className="admin-content-role-panel" aria-label="Sky Placement fallback article structure">
               <div>
@@ -6760,23 +6872,26 @@ export function GeneratedContentAdminDashboard() {
           )}
           {!compiledSkyArticleEdition && !skyFallbackEditor && (
             <label className="admin-title-field">
-              <span>{isVocabularyDraft ? "Phrase title" : isAuthoredPackageCard ? "Article headline" : "Headline"}</span>
-              <input aria-label={isVocabularyDraft ? "Phrase title" : isAuthoredPackageCard ? "Article headline" : "Headline"} value={currentDraft.headline} onChange={(event) => updateHeadline(event.target.value)} placeholder={isVocabularyDraft ? "Example: Moon phase / Balsamic / Reflection" : undefined} />
+              <span>{fallbackEditorGuidance?.headlineLabel ?? (isVocabularyDraft ? "Phrase title" : isAuthoredPackageCard ? "Article headline" : "Headline")}</span>
+              <input aria-label={fallbackEditorGuidance?.headlineLabel ?? (isVocabularyDraft ? "Phrase title" : isAuthoredPackageCard ? "Article headline" : "Headline")} value={currentDraft.headline} onChange={(event) => updateHeadline(event.target.value)} placeholder={isVocabularyDraft ? "Example: Moon phase / Balsamic / Reflection" : undefined} />
+              {fallbackEditorGuidance && <small className="admin-field-hint">{fallbackEditorGuidance.headlineHint}</small>}
               {isVocabularyDraft && <small className="admin-field-hint">{isPackageDraft ? "This label helps editors find the phrase. The stable source key remains unchanged." : "This is the human name editors see in the table. New rows use it to generate the internal key."}</small>}
             </label>
           )}
           {!compiledSkyArticleEdition && !skyFallbackEditor && !(isVocabularyDraft && isPackageDraft) && showSummaryField && (
             <label className="admin-review-copy-editor">
-              <span>{isVocabularyDraft ? "Editor note or grouping detail" : isSkyArticleSourceDraft ? "TL;DR" : "Summary"}</span>
-              <textarea className="admin-copy-field-summary" aria-label={isVocabularyDraft ? "Editor note or grouping detail" : isSkyArticleSourceDraft ? "Sky article TL;DR" : "Summary"} value={currentDraft.summary} onChange={(event) => setDraft(invalidateContentStudioReview({ ...currentDraft, summary: event.target.value }))} placeholder={isVocabularyDraft ? "Optional: where this phrase should be used, tone notes, or related variants." : isSkyArticleSourceDraft ? "Write the explicit TL;DR for this article edition." : undefined} />
+              <span>{fallbackEditorGuidance?.summaryLabel ?? (isVocabularyDraft ? "Editor note or grouping detail" : isSkyArticleSourceDraft ? "TL;DR" : "Summary")}</span>
+              <textarea className="admin-copy-field-summary" aria-label={fallbackEditorGuidance?.summaryLabel ?? (isVocabularyDraft ? "Editor note or grouping detail" : isSkyArticleSourceDraft ? "Sky article TL;DR" : "Summary")} value={currentDraft.summary} onChange={(event) => setDraft(invalidateContentStudioReview({ ...currentDraft, summary: event.target.value }))} placeholder={isVocabularyDraft ? "Optional: where this phrase should be used, tone notes, or related variants." : isSkyArticleSourceDraft ? "Write the explicit TL;DR for this article edition." : undefined} />
               <small className="admin-field-metrics">{fieldMetrics(currentDraft.summary)}</small>
+              {fallbackEditorGuidance && <small className="admin-field-hint">{fallbackEditorGuidance.summaryHint}</small>}
               {isSkyArticleSourceDraft && <small className="admin-field-hint">Saved as non-serving source copy until the complete edition is compiled, reviewed, and published.</small>}
             </label>
           )}
           {showPackageBodyYou && !skyFallbackEditor && (
             <label className="admin-review-copy-editor">
-              <span>body_you</span>
-              <textarea aria-label="body_you" value={packageFieldString(currentDraft, "body_you")} onChange={(event) => setDraft(setPackageSectionField(currentDraft, "body_you", event.target.value))} />
+              <span>{fallbackEditorGuidance?.bodyYouLabel ?? "body_you"}</span>
+              <textarea aria-label={fallbackEditorGuidance?.bodyYouLabel ?? "body_you"} value={packageFieldString(currentDraft, "body_you")} onChange={(event) => setDraft(setPackageSectionField(currentDraft, "body_you", event.target.value))} />
+              {fallbackEditorGuidance && <small className="admin-field-hint">{fallbackEditorGuidance.bodyYouHint}</small>}
             </label>
           )}
           {isContinuousSkyPackage && !skyFallbackEditor && ([
@@ -6796,25 +6911,27 @@ export function GeneratedContentAdminDashboard() {
           ))}
           {showPackageBodyThey && !skyFallbackEditor && (
             <label className="admin-review-copy-editor">
-              <span>body_they</span>
-              <textarea aria-label="body_they" value={packageFieldString(currentDraft, "body_they")} onChange={(event) => setDraft(setPackageSectionField(currentDraft, "body_they", event.target.value))} />
+              <span>{fallbackEditorGuidance?.bodyTheyLabel ?? "body_they"}</span>
+              <textarea aria-label={fallbackEditorGuidance?.bodyTheyLabel ?? "body_they"} value={packageFieldString(currentDraft, "body_they")} onChange={(event) => setDraft(setPackageSectionField(currentDraft, "body_they", event.target.value))} />
+              {fallbackEditorGuidance && <small className="admin-field-hint">{fallbackEditorGuidance.bodyTheyHint}</small>}
             </label>
           )}
           {!compiledSkyArticleEdition && showGenericBody && !skyFallbackEditor && (
             <label className="admin-review-copy-editor">
               <span>{isVocabularyDraft && isPackageDraft
                 ? vocabularyHasTheyVersion ? "You version" : "Variable value"
-                : isVocabularyDraft ? "Reusable phrase text" : isAuthoredPackageCard ? "Article body" : "Body"}</span>
+                : isVocabularyDraft ? "Reusable phrase text" : isAuthoredPackageCard ? "Article body" : fallbackEditorGuidance?.bodyLabel ?? "Body"}</span>
               <textarea
                 className="admin-copy-field-body"
                 aria-label={isVocabularyDraft && isPackageDraft
                   ? vocabularyHasTheyVersion ? "You version" : "Variable value"
-                  : isVocabularyDraft ? "Reusable phrase text" : isAuthoredPackageCard ? "Article body" : "Body"}
+                  : isVocabularyDraft ? "Reusable phrase text" : isAuthoredPackageCard ? "Article body" : fallbackEditorGuidance?.bodyLabel ?? "Body"}
                 value={currentDraft.body}
                 onChange={(event) => isVocabularyDraft ? updateVocabularyBody(event.target.value) : updateGenericBody(event.target.value)}
                 placeholder={isVocabularyDraft ? "Write the reusable wording or phrase pattern here." : undefined}
               />
               <small className="admin-field-metrics">{fieldMetrics(currentDraft.body)}</small>
+              {fallbackEditorGuidance && <small className="admin-field-hint">{fallbackEditorGuidance.bodyHint}</small>}
               {isVocabularyDraft && isPackageDraft && <small className="admin-field-hint">{vocabularyHasTheyVersion
                 ? "Used when the app speaks directly to the person reading their own chart."
                 : "This is the exact editable phrase the fallback resolver reads. Saving updates the stored package value and its dashboard copy together."}</small>}

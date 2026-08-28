@@ -138,13 +138,8 @@ import {
   calendarEventGeneratedContentKeys,
   calendarTransitDetailContentKeys
 } from "./features/calendar/calendarContentKeys";
-import {
-  assertLunationBodyMatchesEventSky,
-  buildWeeklyHoroscope,
-  lunationBlendFacts,
-  type WeeklyHoroscopeAssembly,
-  type WeeklyHoroscopeReading
-} from "./services/weeklyHoroscope";
+import type { WeeklyHoroscopeAssembly, WeeklyHoroscopeReading } from "./services/weeklyHoroscope";
+import { assertLunationBodyMatchesEventSky, lunationBlendFacts } from "./services/lunationEphemerisFacts";
 import { reportLiveOmittedSections } from "./services/conditionalSectionReviewReporter";
 import { SKY_BODY_ORDER, skyBodyOrderIndex, transitToNatalOrbLimit } from "./astrologyConfig";
 import {
@@ -263,6 +258,11 @@ import {
   migrateLocalManualChartsToRemote
 } from "./services/manualCharts";
 import type { ManualChart } from "./services/manualCharts";
+import {
+  accountProfileBootstrapAction,
+  profileBootstrapLocalOwnerIds,
+  revealProfileAndScheduleEnhancements
+} from "./services/profileBootstrap";
 import {
   captureSocialInvitationFromUrl,
   clearPendingSocialInvitation,
@@ -10374,11 +10374,18 @@ const SkyDetailArticle = lazy(() =>
 
 
 async function getAstrodienstSky(
-  ...args: Parameters<typeof import("./services/ephemeris").getAstrodienstSky>
+  ...args: Parameters<typeof import("./services/skyCalculationClient").getAstrodienstSkyOffMainThread>
 ) {
-  const { getAstrodienstSky: calculateSky } = await import("./services/ephemeris");
+  const { getAstrodienstSkyOffMainThread: calculateSky } = await import("./services/skyCalculationClient");
 
   return calculateSky(...args);
+}
+
+async function buildWeeklyHoroscope(
+  ...args: Parameters<typeof import("./services/weeklyHoroscope").buildWeeklyHoroscope>
+) {
+  const { buildWeeklyHoroscope: build } = await import("./services/weeklyHoroscope");
+  return build(...args);
 }
 
 const NATAL_CHART_CALCULATION_TIMEOUT_MS = 15_000;
@@ -10404,9 +10411,15 @@ function withNatalChartCalculationTimeout(request: Promise<SkySnapshot>) {
   });
 }
 
-function FeatureLoadingFallback() {
+function FeatureLoadingFallback({ message }: { message?: string }) {
   return (
-    <div className="feature-loading-fallback" role="status" aria-label="Loading page">
+    <div className="feature-loading-fallback" role="status" aria-label="Loading page" aria-live="polite">
+      {message ? (
+        <div className="loading-milestone">
+          <span className="sky-loading-line sky-loading-line--medium" aria-hidden="true" />
+          <span>{message}</span>
+        </div>
+      ) : null}
       <span className="summary-skeleton feature-loading-fallback__lines" aria-hidden="true">
         <span />
         <span />
@@ -10546,6 +10559,7 @@ export function App() {
   const [socialInvitationStatus, setSocialInvitationStatus] = useState<"idle" | "loading">("idle");
   const [socialInvitationMessage, setSocialInvitationMessage] = useState("");
   const [authAccountChecked, setAuthAccountChecked] = useState(!isAuthConfigured);
+  const appActiveRef = useRef(true);
   const appliedAuthAccountIdRef = useRef<string | null>(null);
   const remoteProfileReadyRef = useRef(false);
   const [accountIntent, setAccountIntentState] = useState<AuthMode>(getInitialAccountIntent);
@@ -11955,6 +11969,8 @@ export function App() {
 
   useEffect(() => {
     let cancelled = false;
+    let coreSkyFrame = 0;
+    let coreSkyTimer = 0;
     let detailedSkyFrame = 0;
     let detailedSkyTimer = 0;
 
@@ -11968,6 +11984,9 @@ export function App() {
     const selectedDateTime = skyDateTimeFromInput(skyDate, skyLocation);
     const cacheKey = skySnapshotCacheKey(skyLocation, skyDate);
     const cachedSky = readCachedSkySnapshot(cacheKey);
+    // Give the lazy You route its first paint before starting CPU-heavy
+    // background astronomy. Sky itself still starts immediately.
+    const coreSkyDelayMs = mode === "profile" ? 500 : 0;
 
     if (cachedSky) {
       setSky(cachedSky);
@@ -12010,34 +12029,40 @@ export function App() {
       return true;
     };
 
-    getAstrodienstSky(skyLocation, selectedDateTime)
-      .then((nextSky) => {
-        if (!publishFreshSky(nextSky, { preserveCachedDetails: true })) {
-          return;
-        }
+    coreSkyFrame = window.requestAnimationFrame(() => {
+      coreSkyTimer = window.setTimeout(() => {
+        void getAstrodienstSky(skyLocation, selectedDateTime)
+          .then((nextSky) => {
+            if (!publishFreshSky(nextSky, { preserveCachedDetails: true })) {
+              return;
+            }
 
-        detailedSkyFrame = window.requestAnimationFrame(() => {
-          detailedSkyTimer = window.setTimeout(() => {
-            void getAstrodienstSky(skyLocation, selectedDateTime, { includeTransitWindows: true })
-              .then((detailedSky) => {
-                publishFreshSky(detailedSky);
-              })
-              .catch((error) => {
-                console.warn("Swiss Ephemeris transit-window enrichment failed; keeping the verified core sky.", error);
-              });
-          }, 0);
-        });
-      })
-      .catch((error) => {
-        console.warn("Swiss Ephemeris sky calculation failed; using only an exact-key verified cache entry when available.", error);
-        if (!cancelled) {
-          setSky(cachedSky);
-          setSkyStatus(cachedSky ? "stale" : "error");
-        }
-      });
+            detailedSkyFrame = window.requestAnimationFrame(() => {
+              detailedSkyTimer = window.setTimeout(() => {
+                void getAstrodienstSky(skyLocation, selectedDateTime, { includeTransitWindows: true })
+                  .then((detailedSky) => {
+                    publishFreshSky(detailedSky);
+                  })
+                  .catch((error) => {
+                    console.warn("Swiss Ephemeris transit-window enrichment failed; keeping the verified core sky.", error);
+                  });
+              }, 0);
+            });
+          })
+          .catch((error) => {
+            console.warn("Swiss Ephemeris sky calculation failed; using only an exact-key verified cache entry when available.", error);
+            if (!cancelled) {
+              setSky(cachedSky);
+              setSkyStatus(cachedSky ? "stale" : "error");
+            }
+          });
+      }, coreSkyDelayMs);
+    });
 
     return () => {
       cancelled = true;
+      window.cancelAnimationFrame(coreSkyFrame);
+      window.clearTimeout(coreSkyTimer);
       window.cancelAnimationFrame(detailedSkyFrame);
       window.clearTimeout(detailedSkyTimer);
     };
@@ -12639,14 +12664,26 @@ export function App() {
     userProfile?.charts[0]?.id
   ]);
 
-  const applyAuthAccount = useCallback(async (account: AuthAccount | null, isCancelled: () => boolean) => {
+  const applyAuthAccount = useCallback(async (account: AuthAccount | null) => {
+    const isCancelled = () => !appActiveRef.current;
+
     if (isCancelled()) {
       return;
     }
 
-    if (account && appliedAuthAccountIdRef.current === account.id && remoteProfileReadyRef.current) {
-      setAuthAccountChecked(true);
-      return;
+    if (account) {
+      const bootstrapAction = accountProfileBootstrapAction({
+        accountId: account.id,
+        appliedAccountId: appliedAuthAccountIdRef.current,
+        remoteProfileReady: remoteProfileReadyRef.current
+      });
+
+      if (bootstrapAction !== "start") {
+        if (bootstrapAction === "reuse-ready") {
+          setAuthAccountChecked(true);
+        }
+        return;
+      }
     }
 
     setAuthAccountChecked(false);
@@ -12690,6 +12727,37 @@ export function App() {
           console.warn("Social profile bootstrap failed; the profile header will continue without a handle.", socialProfileError);
         }
       }
+    };
+    const revealProfileAndContinueInBackground = (
+      profile: UserProfile,
+      localOwnerIds: Array<string | null | undefined>
+    ) => {
+      revealProfileAndScheduleEnhancements({
+        isCancelled,
+        revealProfile: () => {
+          clearPendingSignupForm();
+          setMode((currentMode) => authenticatedLandingMode(currentMode, restoredPortalModeRef.current));
+          setAuthAccountChecked(true);
+        },
+        enhancements: [
+          async () => {
+            try {
+              await migrateLocalManualChartsToRemote(account.id, localOwnerIds);
+            } catch (migrationError) {
+              console.warn("Local manual chart migration failed; charts will remain in the local cache.", migrationError);
+            } finally {
+              if (!isCancelled()) {
+                remoteProfileReadyRef.current = true;
+                setRemoteProfileReady(true);
+              }
+            }
+          },
+          () => hydrateBootstrapSocialProfile(profile)
+        ],
+        onEnhancementError: (error) => {
+          console.warn("Profile background hydration failed; the verified profile remains available.", error);
+        }
+      });
     };
 
     try {
@@ -12740,25 +12808,12 @@ export function App() {
         }
       }
 
-      try {
-        await migrateLocalManualChartsToRemote(account.id, [
-          cachedLocalProfile?.id,
-          persistedProfileId,
-          account.id,
-          ...listLocalManualChartUserIds()
-        ]);
-      } catch (migrationError) {
-        console.warn("Local manual chart migration failed; charts will remain in the local cache.", migrationError);
-      }
-      clearPendingSignupForm();
-      setMode((currentMode) => authenticatedLandingMode(currentMode, restoredPortalModeRef.current));
-      remoteProfileReadyRef.current = true;
-      setRemoteProfileReady(true);
-      await hydrateBootstrapSocialProfile(accountProfile);
-      if (isCancelled()) {
-        return;
-      }
-      setAuthAccountChecked(true);
+      revealProfileAndContinueInBackground(accountProfile, profileBootstrapLocalOwnerIds({
+        accountId: account.id,
+        cachedProfileId: cachedLocalProfile?.id,
+        persistedProfileId,
+        legacyOwnerIds: listLocalManualChartUserIds()
+      }));
     } catch (error) {
       if (isCancelled()) {
         return;
@@ -12771,25 +12826,16 @@ export function App() {
       if (isCancelled()) {
         return;
       }
-      try {
-        await migrateLocalManualChartsToRemote(account.id, [
-          cachedLocalProfile?.id,
-          account.id,
-          ...listLocalManualChartUserIds()
-        ]);
-      } catch (migrationError) {
-        console.warn("Local manual chart migration failed; charts will remain in the local cache.", migrationError);
-      }
-      clearPendingSignupForm();
-      setMode((currentMode) => authenticatedLandingMode(currentMode, restoredPortalModeRef.current));
-      remoteProfileReadyRef.current = true;
-      setRemoteProfileReady(true);
-      await hydrateBootstrapSocialProfile(accountProfile);
-      if (isCancelled()) {
-        return;
-      }
-      setAuthAccountChecked(true);
+      revealProfileAndContinueInBackground(accountProfile, profileBootstrapLocalOwnerIds({
+        accountId: account.id,
+        cachedProfileId: cachedLocalProfile?.id,
+        legacyOwnerIds: listLocalManualChartUserIds()
+      }));
     }
+  }, []);
+
+  useEffect(() => () => {
+    appActiveRef.current = false;
   }, []);
 
   useEffect(() => {
@@ -12799,11 +12845,12 @@ export function App() {
     }
 
     let cancelled = false;
-    const isCancelled = () => cancelled;
 
     getAuthAccount()
       .then((account) => {
-        void applyAuthAccount(account, isCancelled);
+        if (!cancelled) {
+          void applyAuthAccount(account);
+        }
       })
       .catch(() => {
         if (!cancelled) {
@@ -12822,13 +12869,12 @@ export function App() {
     }
 
     let cancelled = false;
-    const isCancelled = () => cancelled;
     const unsubscribe = onAuthAccountChange((account) => {
       if (cancelled) {
         return;
       }
 
-      void applyAuthAccount(account, isCancelled);
+      void applyAuthAccount(account);
     });
 
     return () => {
@@ -13856,7 +13902,7 @@ export function App() {
               {mode === "profile" && (
                 <YouRoute>
                   {isAuthConfigured && !authAccountChecked ? (
-                    <FeatureLoadingFallback />
+                    <FeatureLoadingFallback message="Loading your profile" />
                   ) : userProfile ? (
                     <ProfileView
                       profile={userProfile}
@@ -17289,6 +17335,9 @@ function ProfileView({
         weeklyTransitRows={weeklyTransitRows}
         transitArticle={transitArticle}
         transitDateLabel={formatSkyFullChartDate(targetDate)}
+        transitLoadingMessage={targetDate === dateInputValue()
+          ? "Adding today’s transits."
+          : `Calculating transits for ${formatSkyFullChartDate(targetDate)}…`}
         transitsLoading={currentSkyLoading}
       />
     </Suspense>

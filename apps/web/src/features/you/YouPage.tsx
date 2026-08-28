@@ -135,6 +135,7 @@ export type YouPageProps = {
   signaturesReady: boolean;
   standaloneTransitRows?: ReactNode[];
   transitDateLabel: string;
+  transitLoadingMessage?: string;
   transitsLoading?: boolean;
   weeklyTransitRows?: ReactNode[];
   transitArticle?: YouTransitArticle | null;
@@ -502,6 +503,7 @@ function YouUpdatesTab({
   onCreateChart,
   standaloneTransitRows = [],
   transitDateLabel,
+  transitLoadingMessage = "Adding today’s transits.",
   transitsLoading = false,
   weeklyTransitRows = []
 }: {
@@ -516,6 +518,7 @@ function YouUpdatesTab({
   personalTimingSummary?: PersonalTimingSummary | null;
   standaloneTransitRows?: ReactNode[];
   transitDateLabel: string;
+  transitLoadingMessage?: string;
   transitsLoading?: boolean;
   weeklyTransitRows?: ReactNode[];
 }) {
@@ -553,6 +556,12 @@ function YouUpdatesTab({
 
   return (
     <div className="subpane updates-section" id="sub-transits">
+      {hasSavedCurrentCity && transitsLoading && (
+        <div className="you-loading-milestone loading-milestone" role="status" aria-live="polite">
+          <span className="sky-loading-line sky-loading-line--medium" aria-hidden="true" />
+          <span>{transitLoadingMessage}</span>
+        </div>
+      )}
       {hasSavedCurrentCity && dailyUpdateSummary && (
         <section className={`daily-horoscope-summary${dailyUpdateSummary.status === "loading" ? " is-loading" : ""}`} aria-label="Daily horoscope summary">
           {showDailyHeadline ? <h3>{dailyHeadline}</h3> : null}
@@ -627,11 +636,6 @@ function YouUpdatesTab({
             {standaloneTransitRows}
           </div>
         </>
-      )}
-      {hasSavedCurrentCity && transitsLoading && (
-        <div className="feature-loading-fallback" role="status">
-          Calculating transits for {transitDateLabel}…
-        </div>
       )}
       {hasSavedCurrentCity && !transitsLoading && aspectRows.length === 0 && standaloneTransitRows.length === 0 && (
         <section className="you-empty-card" aria-label="Transit setup">
@@ -1137,6 +1141,7 @@ export function YouPage({
   signaturesReady,
   standaloneTransitRows = [],
   transitDateLabel,
+  transitLoadingMessage,
   transitsLoading = false,
   weeklyTransitRows = [],
   transitArticle
@@ -1274,6 +1279,7 @@ export function YouPage({
               personalTimingSummary={personalTimingSummary}
               standaloneTransitRows={standaloneTransitRows}
               transitDateLabel={transitDateLabel}
+              transitLoadingMessage={transitLoadingMessage}
               transitsLoading={transitsLoading}
               weeklyTransitRows={weeklyTransitRows}
             />

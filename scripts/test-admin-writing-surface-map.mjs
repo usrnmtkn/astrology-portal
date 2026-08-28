@@ -17,9 +17,15 @@ assert.deepEqual([...accessIds].sort(), [...surfaceIds].sort(), "Every reader su
 
 for (const surface of writingSurfaceSourceMap) {
   const access = writingSurfaceAdminAccess[surface.id];
-  assert.equal(access.editability, "editable", `${surface.id} must have a true reader-serving Admin path, not an inventory-only route.`);
+  assert.ok(["editable", "partial", "missing"].includes(access.editability), `${surface.id} must declare its actual Admin editability.`);
+  if (access.editability !== "editable") {
+    assert.ok(surface.risk.trim(), `${surface.id} must explain why its reader copy is not fully editable.`);
+    assert.ok(surface.nextAction.trim(), `${surface.id} must name the work required for a complete editorial path.`);
+  }
   assert.ok(access.readerLocation.trim(), `${surface.id} must name where readers see the content.`);
-  assert.ok(access.routes.length > 0, `${surface.id} must link to at least one Admin editing or review route.`);
+  if (access.editability !== "missing") {
+    assert.ok(access.routes.length > 0, `${surface.id} must link to at least one Admin editing or review route.`);
+  }
   for (const route of access.routes) {
     assert.match(route.hash, /^#[a-z0-9/-]+(?:\?.*)?$/u, `${surface.id} has an invalid Admin hash route.`);
     assert.ok(route.note.trim(), `${surface.id} route ${route.hash} must explain what the editor controls.`);
@@ -29,6 +35,26 @@ for (const surface of writingSurfaceSourceMap) {
     assert.ok(fs.existsSync(path.join(repoRoot, source.path)), `${surface.id} points to missing source path ${source.path}.`);
   }
 }
+
+for (const requiredSurfaceId of [
+  "sky-placement-detail",
+  "sky-calendar-event-cards",
+  "sky-calendar-day-cards",
+  "sky-horoscopes",
+  "daily-at-a-glance",
+  "generated-reports",
+  "friends-compatibility-highlights",
+  "friends-circle-feed"
+]) {
+  assert.ok(surfaceIds.has(requiredSurfaceId), `Composition surface coverage must include ${requiredSurfaceId}.`);
+}
+
+assert.equal(writingSurfaceAdminAccess["daily-at-a-glance"].editability, "editable", "Daily At-a-Glance hook copy must have a direct Admin editor path.");
+assert.ok(writingSurfaceAdminAccess["daily-at-a-glance"].routes.some((route) => route.hash.startsWith("#fallback-hooks")), "Daily At-a-Glance must open its governed daily hooks.");
+assert.equal(writingSurfaceAdminAccess["generated-reports"].editability, "partial", "Reports must not claim inline copy editing before a governed report inspection/editor flow exists.");
+assert.ok(writingSurfaceAdminAccess["generated-reports"].routes.some((route) => route.hash === "#report-fulfillment"), "Reports must link to their fulfillment and provenance workspace.");
+assert.equal(writingSurfaceAdminAccess["friends-compatibility-highlights"].editability, "missing", "Code-composed compatibility highlights must not claim an atomic editor.");
+assert.equal(writingSurfaceAdminAccess["friends-circle-feed"].editability, "missing", "Code-composed Circle feed prose must not claim an atomic editor.");
 
 const cmsSurfaceIds = [
   "sky-calendar-day-cards",
@@ -89,6 +115,7 @@ assert.match(dashboardSource, /contentSystem === "cms-surface-override" \|\| dra
 assert.match(dashboardSource, /contentType: "mustache-template"[\s\S]*contentSystem: "cms-surface-override"[\s\S]*contentLevel: "owner-authored"/u, "CMS rows must remain owner-authored Mustache templates after save.");
 assert.match(dashboardSource, /validateCmsTemplate/u, "The Admin editor must validate CMS placeholders before Sign Off.");
 assert.match(dashboardSource, /disabled=\{isLoading \|\| !cmsCanSignOff\}/u, "The Admin editor must block Sign Off for incomplete CMS templates.");
+assert.match(dashboardSource, /access\.editability === "partial" \? "partial" : "missing"/u, "The surface directory must keep known code-composed gaps in the missing-editor filter.");
 const generatedContentApiSource = fs.readFileSync(path.join(repoRoot, "api/admin/generated-content.ts"), "utf8");
 assert.match(generatedContentApiSource, /CMS template cannot be published/u, "The Admin API must reject incomplete CMS templates even when the UI is bypassed.");
 assert.match(generatedContentApiSource, /isCmsRow \? "manual-admin" : "claude"/u, "CMS rows must retain manual owner-authored provenance instead of being labeled as model output.");
@@ -96,6 +123,11 @@ const cmsTemplateValidationSource = fs.readFileSync(path.join(repoRoot, "apps/we
 assert.match(cmsTemplateValidationSource, /from "\.\.\/services\/templateInterpolation\.js"/u, "Shared CMS validator imports must retain a server-runtime-resolvable .js extension.");
 const surfaceMapSource = fs.readFileSync(path.join(repoRoot, "apps/admin/src/writingSurfaceSourceMap.ts"), "utf8");
 assert.doesNotMatch(surfaceMapSource, /apps\/web\/src\/services\/horoscopes\.ts|normalizeCalendarDaySurface|dayCardBody/u, "The surface directory must not retain removed horoscope or calendar render paths.");
+const compositionWorkspaceSource = fs.readFileSync(path.join(repoRoot, "apps/admin/src/CompositionMapWorkspace.tsx"), "utf8");
+assert.match(compositionWorkspaceSource, /writingSurfaceSourceMap/u, "Composition Map must consume the canonical app-wide reader-surface registry.");
+assert.match(compositionWorkspaceSource, /Surfaces &amp; systems/u, "Composition Map must begin with an app-wide surface-and-system view.");
+assert.match(compositionWorkspaceSource, /Template internals/u, "Composition Map must preserve the atomic fallback-template workspace as a separate scope.");
+assert.match(compositionWorkspaceSource, /onStartCmsRow/u, "Composition Map must preserve one-click governed CMS override authoring.");
 
 const heldSourceRoot = path.join(repoRoot, "packages/astro-knowledge/data/points/aspects/sky/four-body-unverified");
 const heldSources = fs.readdirSync(heldSourceRoot)
@@ -115,6 +147,13 @@ assert.match(generatedContentApi, /listHeldSkyAspectSourceDrafts/u, "The Admin A
 assert.match(generatedContentApi, /path\.dirname\(fileURLToPath\(import\.meta\.url\)\)[\s\S]*"\.\.\/\.\."[\s\S]*four-body-unverified/u, "The held source-draft catalog must resolve from the repository instead of the dev server working directory.");
 
 const appSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/App.tsx"), "utf8");
+const codeComposedRuntimeSurfaceIds = [...appSource.matchAll(/normalizedSurfacePreview\(normalizePackageCardSurface\(\{[\s\S]*?surface: "([^"]+)"/gu)].map((match) => match[1]);
+const mappedRuntimeSurfaceIds = new Set(writingSurfaceSourceMap.flatMap((surface) => surface.runtimeSurfaceIds ?? []));
+assert.deepEqual(
+  codeComposedRuntimeSurfaceIds.filter((surfaceId) => !mappedRuntimeSurfaceIds.has(surfaceId)),
+  [],
+  "Every code-composed package-card surface in App.tsx must remain visible in Composition Map."
+);
 const calendarSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/features/calendar/LunarCalendar.tsx"), "utf8");
 const weeklySource = fs.readFileSync(path.join(repoRoot, "apps/web/src/services/weeklyHoroscope.ts"), "utf8");
 const placementSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/components/charts/PlacementRows.tsx"), "utf8");
@@ -128,4 +167,4 @@ for (const [label, source] of [
 }
 assert.match(appSource, /subscribeToContentUpdates/u, "The reader app must refresh when Content Studio publishes or demotes a row.");
 
-console.log(`Admin writing surface map passed: ${surfaceIds.size} reader surfaces have explicit editorial destinations.`);
+console.log(`Admin writing surface map passed: ${surfaceIds.size} writing surfaces and systems have explicit editorial status.`);

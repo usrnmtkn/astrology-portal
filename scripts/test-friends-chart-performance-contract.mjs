@@ -12,6 +12,7 @@ import {
   sharedGeneratedContentCacheKey
 } from "../apps/web/src/services/sharedGeneratedContentCache.ts";
 import { activeFriendProfileContentRequest } from "../apps/web/src/features/friends/friendCalculationReadiness.ts";
+import { accountProfileBootstrapAction } from "../apps/web/src/services/profileBootstrap.ts";
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const appSourcePath = path.join(repoRoot, "apps/web/src/App.tsx");
@@ -244,10 +245,14 @@ assert.match(
   /export async function getAuthAccount\(\)[\s\S]*const user = await getVerifiedAuthUser\(supabase\);/,
   "Account bootstrap must reuse the shared verified-user request instead of repeating auth verification."
 );
-assert.match(
-  appSource,
-  /setRemoteProfileReady\(true\);\s*await hydrateBootstrapSocialProfile\(accountProfile\);/,
-  "Friends chart readiness must publish before the security-gated social-profile header request completes."
+assert.equal(
+  accountProfileBootstrapAction({
+    accountId: "member-1",
+    appliedAccountId: "member-1",
+    remoteProfileReady: false
+  }),
+  "reuse-pending",
+  "Repeated auth notifications must reuse an in-flight profile bootstrap while Friends migration completes."
 );
 assert.match(
   manualChartsSource,
