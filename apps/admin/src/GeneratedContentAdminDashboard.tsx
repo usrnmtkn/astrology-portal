@@ -2026,12 +2026,31 @@ async function adminJsonRequest<T>(path: string, secret: string, options: Reques
   return payload as T;
 }
 
+const generatedContentPageRetryDelaysMs = [250, 750];
+
+function isRetryableAdminReadError(error: unknown) {
+  if (!(error instanceof AdminRequestError)) return true;
+  return error.status === 408 || error.status === 429 || error.status >= 500;
+}
+
+async function loadGeneratedContentPage(path: string, secret: string) {
+  for (let attempt = 0; ; attempt += 1) {
+    try {
+      return await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>(path, secret);
+    } catch (error) {
+      const retryDelay = generatedContentPageRetryDelaysMs[attempt];
+      if (retryDelay === undefined || !isRetryableAdminReadError(error)) throw error;
+      await new Promise((resolve) => window.setTimeout(resolve, retryDelay));
+    }
+  }
+}
+
 async function loadAllGeneratedContentRows(secret: string, visibility: "editorial" | "all" = "editorial") {
   const pageSize = 1000;
   const allRows: AdminGeneratedContentRow[] = [];
 
   for (let offset = 0; offset < 50000; offset += pageSize) {
-    const result = await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>(
+    const result = await loadGeneratedContentPage(
       `/api/admin/generated-content?status=all&visibility=${visibility}&limit=${pageSize}&offset=${offset}`,
       secret
     );
