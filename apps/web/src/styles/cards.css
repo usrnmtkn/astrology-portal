@@ -10,6 +10,7 @@
   .natal-pattern-card,
   .friend-signature-card,
   .manual-chart-row,
+  .you-horoscope-card,
   .daily-horoscope-summary,
   .daily-horoscope-writeup,
   .personal-timing-summary,
@@ -539,13 +540,6 @@
 .chart-frame > .sky-wheel {
   height: 100%;
 }
-.daily-special-section {
-  background: var(--surface);
-  border: 1px solid var(--line);
-  border-radius: var(--card-radius);
-  padding: var(--space-4) calc(var(--space-4) + var(--space-1) / 2);
-}
-
 .daily-dodont {
   background: var(--surface);
   border: 1px solid var(--line);
