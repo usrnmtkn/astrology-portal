@@ -4869,10 +4869,6 @@ body,
 }
 
 @media (max-width: 1180px) {
-  .admin-dashboard {
-    grid-template-columns: 1fr;
-  }
-
   .admin-dashboard-header {
     grid-template-columns: 1fr;
   }
@@ -4887,15 +4883,6 @@ body,
 }
 
 @media (max-width: 760px) {
-  .admin-main,
-  .admin-sidebar {
-    padding: var(--admin-space-4xl);
-  }
-
-  .admin-drawer-backdrop {
-    padding-left: 0;
-  }
-
   .admin-editor-drawer {
     width: 100vw;
   }
@@ -4975,10 +4962,6 @@ body,
   background: #334d73;
   box-shadow: var(--admin-shadow-accent-rail);
   color: #f7faff;
-}
-
-.admin-public-link {
-  margin-top: auto;
 }
 
 .admin-main {
@@ -5169,10 +5152,6 @@ body,
   font-weight: var(--weight-semibold);
 }
 
-.admin-content-table {
-  min-width: 1032px;
-}
-
 .admin-content-table-head {
   background: #20242a;
   color: rgba(231, 234, 238, 0.74);
@@ -5253,10 +5232,6 @@ body,
 .admin-workbench {
   gap: var(--admin-space-xl);
   grid-template-columns: minmax(360px, 440px) minmax(0, 1fr);
-}
-
-.admin-review-workspace {
-  grid-template-columns: minmax(0, 1fr);
 }
 
 .admin-review-workspace .admin-list-panel {
@@ -5631,10 +5606,6 @@ body,
 }
 
 @media (max-width: 1180px) {
-  .admin-dashboard {
-    grid-template-columns: 1fr;
-  }
-
   .admin-sidebar {
     padding: var(--admin-space-4xl);
   }
@@ -6234,10 +6205,6 @@ body,
   grid-template-columns: 300px minmax(0, 1fr);
 }
 
-.admin-dashboard::before {
-  display: none;
-}
-
 .admin-sidebar {
   background: var(--admin-sidebar);
   border-right: 1px solid var(--admin-border);
@@ -6727,10 +6694,6 @@ body,
 }
 
 @media (max-width: 1180px) {
-  .admin-dashboard {
-    grid-template-columns: 1fr;
-  }
-
   .admin-sidebar {
     min-height: auto;
     position: relative;
@@ -6753,10 +6716,6 @@ body,
 
 .admin-content-col-select {
   width: 54px;
-}
-
-.admin-content-col-title {
-  width: auto;
 }
 
 .admin-content-col-status {
@@ -6960,10 +6919,6 @@ body,
   font-size: var(--admin-type-11);
   letter-spacing: var(--tracking-label);
   margin: var(--admin-space-3xl) var(--admin-space-2xl) var(--admin-space-sm);
-}
-
-.admin-nav {
-  gap: var(--admin-space-2xs);
 }
 
 .admin-nav button,
@@ -7964,10 +7919,6 @@ body,
   table-layout: fixed;
 }
 
-.admin-content-col-select {
-  width: 54px;
-}
-
 .admin-content-col-title {
   width: 390px;
 }
@@ -8030,10 +7981,6 @@ body,
 .admin-content-row.selected td:first-child,
 .admin-content-row.selected td:nth-child(2) {
   background: #1a2535;
-}
-
-.admin-content-title-cell {
-  min-width: 0;
 }
 
 .admin-content-row-title {
@@ -8112,10 +8059,6 @@ body,
 }
 
 @media (max-width: 980px) {
-  .admin-reader-safety-panel {
-    grid-template-columns: 1fr;
-  }
-
   .admin-reader-safety-grid {
     grid-template-columns: repeat(2, minmax(140px, 1fr));
   }
@@ -8164,10 +8107,6 @@ body,
   grid-template-columns: 276px minmax(0, 1fr);
   overflow-anchor: none;
   overflow-x: hidden;
-}
-
-.admin-dashboard::before {
-  display: none;
 }
 
 .admin-dashboard .admin-sidebar {
@@ -9150,43 +9089,12 @@ body,
   line-height: 1.45;
 }
 
-.admin-dashboard .admin-reader-sentence-context {
-  display: grid;
-  gap: 10px;
-}
-
-.admin-dashboard .admin-reader-sentence-context > div {
-  display: grid;
-  gap: 3px;
-}
-
-.admin-dashboard .admin-reader-sentence-context > div > strong {
-  font-size: var(--admin-ui-type-body);
-  line-height: 1.3;
-}
-
-.admin-dashboard .admin-reader-sentence-context-copy {
-  background: var(--admin-ui-surface-2);
-  border: 1px solid var(--admin-ui-border);
-  border-radius: var(--admin-ui-radius-md);
-  color: var(--admin-ui-text);
-  font-size: var(--admin-ui-type-body);
-  line-height: 1.55;
-  padding: 12px 14px;
-}
-
-.admin-dashboard .admin-reader-sentence-context-copy mark {
+.admin-dashboard .admin-reader-sentence-context mark {
   background: color-mix(in srgb, var(--admin-ui-accent) 20%, transparent);
   border-bottom: 1px solid var(--admin-ui-accent);
   border-radius: 3px;
   color: var(--admin-ui-text);
   padding: 1px 2px;
-}
-
-.admin-dashboard .admin-reader-sentence-context > small {
-  color: var(--admin-ui-muted);
-  font-size: var(--admin-ui-type-hint);
-  line-height: 1.4;
 }
 
 .admin-dashboard .admin-sky-placement-composition {
