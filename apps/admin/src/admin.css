@@ -12675,47 +12675,15 @@ body,
 }
 .admin-pagination {
   align-items: center;
-  background: var(--admin-panel);
-  border-top: 1px solid var(--admin-line);
   display: flex;
   flex-wrap: wrap;
-  gap: var(--admin-space-xl);
+  gap: var(--admin-space-lg);
   justify-content: space-between;
   padding: var(--admin-space-xl) var(--admin-space-3xl);
 }
 
-.admin-pagination > span,
-.admin-pagination div > span {
-  color: var(--admin-muted);
-  font-size: var(--type-hint-size);
-  line-height: var(--leading-title);
-}
-
 .admin-pagination div {
-  align-items: center;
   display: flex;
   flex-wrap: wrap;
   gap: var(--admin-space-lg);
-}
-
-.admin-pagination button {
-  min-height: var(--admin-control-height-sm);
-}
-
-@media (max-width: 640px) {
-  .admin-pagination {
-    align-items: stretch;
-    flex-direction: column;
-  }
-
-  .admin-pagination div {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .admin-pagination div > span {
-    grid-column: 1 / -1;
-    grid-row: 1;
-    text-align: center;
-  }
 }
