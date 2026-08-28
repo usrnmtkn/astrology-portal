@@ -1,16 +1,12 @@
-import type { AspectGiftLessonLabel } from "../../services/aspectGiftLesson";
 import type { NatalAspectPatternReaderItem } from "../../services/natalAspectPatterns";
 import type { SocialPlacementRow } from "../../components/charts/PlacementRows";
 import type { NatalAspectPatternsSectionStatus } from "../you/NatalAspectPatternsSection";
-import { AspectGiftLessonGroup } from "../../components/charts/AspectGiftLessonGroup";
 import {
-  AspectGlyphs,
   PlacementTableRow,
   dignitiesFor,
   friendPlacementDescription,
   placementTitleFromParts
 } from "../../components/charts/PlacementRows";
-import { wholeDegreeOrb } from "../sky/skyHelpers";
 import { NatalAspectPatternsSection } from "../you/NatalAspectPatternsSection";
 import { FriendPlacementTable } from "./FriendPlacementTables";
 
@@ -23,23 +19,7 @@ export type FriendNatalEmptyHouseRow = {
   detailAvailable?: boolean;
 };
 
-export type FriendNatalAspectGroup = {
-  key: string;
-  label: AspectGiftLessonLabel;
-  aspects: Array<{
-    id: string;
-    from: string;
-    type: string;
-    to: string;
-    orb: number;
-    title: string;
-    summary: string;
-    detailAvailable?: boolean;
-  }>;
-};
-
 export function FriendNatalTab({
-  aspectGroups,
   bigThreeRows,
   birthTimeUnknown,
   emptyHouseRows,
@@ -47,7 +27,6 @@ export function FriendNatalTab({
   hasNatalChart,
   isEventChart,
   isNatalChartRepairing,
-  onOpenAspect,
   onOpenEmptyHouse,
   onOpenPattern,
   onOpenPlacement,
@@ -56,7 +35,6 @@ export function FriendNatalTab({
   patternTitle,
   placementRows
 }: {
-  aspectGroups: FriendNatalAspectGroup[];
   bigThreeRows: SocialPlacementRow[];
   birthTimeUnknown: boolean;
   emptyHouseRows: FriendNatalEmptyHouseRow[];
@@ -64,7 +42,6 @@ export function FriendNatalTab({
   hasNatalChart: boolean;
   isEventChart: boolean;
   isNatalChartRepairing: boolean;
-  onOpenAspect: (aspectId: string) => void;
   onOpenEmptyHouse: (house: number) => void;
   onOpenPattern: (item: NatalAspectPatternReaderItem, nestedItems: NatalAspectPatternReaderItem[]) => void;
   onOpenPlacement: (row: SocialPlacementRow) => void;
@@ -173,38 +150,6 @@ export function FriendNatalTab({
             )}
           </>
         )}
-        {aspectGroups.map((group) => (
-          <AspectGiftLessonGroup
-            ariaLabel={`${friendName} natal aspect ${group.label}`}
-            key={group.key}
-            label={group.label}
-            listAriaLabel={`${friendName} natal ${group.label.toLowerCase()}`}
-            listClassName="friend-aspect-list friend-natal-aspects-list"
-          >
-            {group.aspects.map((aspect) => (
-              <button
-                aria-label={aspect.detailAvailable !== false
-                  ? `Open full entry for ${aspect.title}`
-                  : `${aspect.title} interpretation unavailable`}
-                className="aspect-row aspect-row-button friend-aspect-row"
-                key={aspect.id}
-                disabled={aspect.detailAvailable === false}
-                onClick={aspect.detailAvailable !== false ? () => onOpenAspect(aspect.id) : undefined}
-                type="button"
-              >
-                <AspectGlyphs from={aspect.from} aspect={aspect.type} to={aspect.to} />
-                <span className="aspect-row-copy">
-                  <h3>{aspect.title}</h3>
-                  {aspect.summary ? <p>{aspect.summary}</p> : null}
-                </span>
-                <span className="aspect-row-meta" aria-label={`${wholeDegreeOrb(aspect.orb)} orb`}>
-                  <span className="aspect-row-dot" aria-hidden="true" />
-                  <span>{wholeDegreeOrb(aspect.orb)}</span>
-                </span>
-              </button>
-            ))}
-          </AspectGiftLessonGroup>
-        ))}
       </div>
     </div>
   );

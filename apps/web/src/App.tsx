@@ -16418,9 +16418,6 @@ function ProfileView({
   );
   const emptyNatalHouses = Array.from({ length: 12 }, (_, index) => index + 1)
     .filter((house) => !occupiedNatalHouses.has(house));
-  const natalAspectRows = uniqueNatalAspectRows(canonicalNatalAspectsForSnapshot(natalSky))
-    .slice()
-    .sort((first, second) => first.orb - second.orb);
   const natalAspectPatternItems = showNatalAspectPatterns
     ? natalAspectPatternReaderItems(natalSky)
     : [];
@@ -16578,36 +16575,6 @@ function ProfileView({
       />
     );
   }) : [];
-  const natalAspectGroups = groupAspectsByGiftLesson(
-    natalAspectRows,
-    (aspect) => aspect.type,
-    (aspect) => aspect.orb
-  ).map((group) => ({
-    ...group,
-    aspects: group.aspects.map((aspect) => {
-      const rowSummary = normalizedSurfacePreview(normalizeNatalAspectSurface(aspect));
-
-      return (
-        <button
-          aria-label={`Read more about ${aspect.from} ${aspect.type} ${aspect.to}`}
-          className="aspect-row aspect-row-button"
-          key={`${aspect.from}-${aspect.type}-${aspect.to}`}
-          onClick={() => openNatalAspectArticle(aspect)}
-          type="button"
-        >
-          <AspectGlyphs from={aspect.from} aspect={aspect.type} to={aspect.to} />
-          <span className="aspect-row-copy">
-            <h3>{aspect.from} {aspect.type} {aspect.to}</h3>
-            {rowSummary ? <p>{rowSummary}</p> : null}
-          </span>
-          <span className="aspect-row-meta" aria-label={`${wholeDegreeOrb(aspect.orb)} orb`}>
-            <span className="aspect-row-dot" aria-hidden="true" />
-            <span>{wholeDegreeOrb(aspect.orb)}</span>
-          </span>
-        </button>
-      );
-    })
-  }));
   const readerAspectRows = aspectRows.flatMap((transit) => {
     const personalizedContentKey = personalTransitGeneratedContentKey(transit, targetDate);
     const normalizedTransit = normalizePersonalTransitSurface(transit, targetDate);
@@ -17304,7 +17271,6 @@ function ProfileView({
         hasSavedCurrentCity={hasSavedCurrentCity}
         currentSky={currentSky}
         houseSignLabelStyle={houseSignLabelStyle}
-        natalAspectGroups={natalAspectGroups}
         natalAspectPatternItems={natalAspectPatternItems}
         natalAspectPatternTimingOverrides={natalAspectPatternTimingOverrides}
         natalAspectPatternStatus={natalAspectPatternStatus}

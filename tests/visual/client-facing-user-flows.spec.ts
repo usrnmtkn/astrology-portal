@@ -3081,6 +3081,7 @@ test.describe("client-facing user flow case studies", () => {
     await selectYouNatalTab(page);
 
     await expect(page.getByRole("region", { name: "You", exact: true })).toBeVisible();
+    await expect(page.locator("#sub-chart .natal-aspects-list")).toHaveCount(0);
     await page.getByRole("button", { name: "Sun in Aquarius", exact: true }).click();
     await expect(page.getByRole("region", { name: "Sun in Aquarius in the 11th house" })).toBeVisible();
     await expect(page.locator("#you-transit-article-title")).toContainText("Sun in Aquarius in the 11th house");
@@ -3120,12 +3121,14 @@ test.describe("client-facing user flow case studies", () => {
     await expect(page.getByRole("region", { name: "Nikki chart profile" })).toBeVisible();
     await page.getByRole("tab", { name: "Natal" }).click();
     await expect(page.getByRole("tab", { name: "Natal" })).toHaveAttribute("aria-selected", "true");
+    await expect(page.locator(".friend-natal-stage .friend-natal-aspects-list")).toHaveCount(0);
 
     const bigThree = page.getByLabel("Nikki big three");
     await expect(bigThree).toBeVisible();
     await bigThree.getByRole("button").first().click();
     await expect(page.locator(".app-shell.mode-detail")).toBeVisible();
     await expect(page.getByRole("button", { name: "Close detail" })).toBeVisible();
+    await expect(page.getByRole("heading", { level: 3, name: "Planetary aspects", exact: true })).toBeVisible();
     await expectNoDuplicateArticleHeadings(page, "Friend natal placement detail");
 
     const bodyType = await page.evaluate(() => {
