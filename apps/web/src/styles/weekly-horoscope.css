@@ -7,7 +7,6 @@
 .weekly-horoscope--embedded {
   display: grid;
   gap: var(--card-list-gap);
-  padding-top: var(--section-label-gap-after);
 }
 
 .weekly-horoscope__macro,
@@ -17,5 +16,4 @@
 
 .weekly-horoscope__loading {
   min-height: 220px;
-  padding: var(--surface-card-padding) 0;
 }
