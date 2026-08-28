@@ -1076,7 +1076,7 @@ test.describe("content dashboard admin user flow case studies", () => {
         await savedRow.getByRole("button", { name: "Edit" }).click();
       }
       await expect(page.locator(".admin-editor-backdrop")).toBeVisible();
-      await expect(editor.getByRole("heading", { name: "Edit article" })).toBeVisible();
+      await expect(editor.getByRole("heading", { name: "Edit Sun in Cancer" })).toBeVisible();
       await expect(contentSystemPanel).toContainText("Authored");
     }).toPass({ timeout: routeReadyTimeoutMs });
     await expect(contentSystemPanel.getByText("Content Level", { exact: true })).toHaveCount(0);
@@ -1924,7 +1924,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await reviewRow.getByRole("button", { name: "Edit" }).click();
 
     const editor = page.getByRole("dialog", { name: "Generated content editor" });
-    await expect(editor.getByRole("heading", { name: "Edit article" })).toBeVisible();
+    await expect(editor.getByRole("heading", { name: "Edit Sun in Cancer" })).toBeVisible();
     await expect(editor.getByLabel("Content key")).toHaveValue("sky.placement.sun.cancer");
     await assertNoBrowserErrors();
   });
@@ -2292,6 +2292,155 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(page.getByRole("region", { name: "Main template" })).toContainText("{{signATitle}} and {{signBTitle}}");
     await page.getByRole("tab", { name: "Assembly" }).click();
     await expect(page.getByRole("region", { name: "Template slots" })).toContainText("Provided by the app");
+    await assertNoBrowserErrors();
+  });
+
+  test("composition map opens the exact populated article field behind highlighted copy", async ({ page }) => {
+    const assertNoBrowserErrors = await expectNoBrowserErrors(page);
+    const articleBody = "Opening article paragraph.\n\nClosing article paragraph.";
+    const templateRow = {
+      ...generatedContentRows[0],
+      id: "qa-retrograde-article-template",
+      content_key: "fallback-template/transit.retrograde-article",
+      headline: "{{articleHeadline}}",
+      summary: "Reader-facing retrograde article wrapper.",
+      body: "{{articleBody}}",
+      surface: "sky",
+      block_type: "fallback_template",
+      provider: "tldrastro-fallback-architecture-v3",
+      facts: { fallbackArchitectureV3: true, review_status: "approved" },
+      source_snapshot: {
+        sourcePackage: "tldrastro-fallback-architecture-v3",
+        readerDestination: "Current Sky",
+        review_status: "approved"
+      },
+      sections: {
+        packageRecord: {
+          contentKey: "fallback-template/transit.retrograde-article",
+          content_role: "template",
+          headline: "{{articleHeadline}}",
+          requiredSlots: ["articleHeadline", "articleBody"],
+          body: "{{articleBody}}",
+          review_status: "approved"
+        }
+      }
+    };
+    const articleRow = {
+      ...generatedContentRows[0],
+      id: "qa-saturn-aries-article",
+      content_key: "sky-article/saturn/aries/2026",
+      headline: "Saturn in Aries",
+      summary: null,
+      body: articleBody,
+      surface: "sky",
+      mode: "feed",
+      block_type: null,
+      provider: "tldrastro-fallback-architecture-v3",
+      facts: { fallbackArchitectureV3: true, review_status: "approved" },
+      source_snapshot: {
+        sourcePackage: "tldrastro-fallback-architecture-v3",
+        review_status: "approved"
+      },
+      sections: {
+        body_you: null,
+        body_they: null,
+        packageRecord: {
+          contentKey: "sky-article/saturn/aries/2026",
+          content_role: "authored_card",
+          headline: "Saturn in Aries",
+          body: articleBody,
+          review_status: "approved"
+        }
+      }
+    };
+    const writes: Array<{ method: string; payload: Record<string, unknown> }> = [];
+    await seedAdminApi(page, {
+      generatedRows: [templateRow, articleRow],
+      onGeneratedContentWrite: (write) => writes.push(write)
+    });
+    await expectAdminRouteLoads(page, "/admin/content#composition-map");
+
+    const preview = page.getByRole("region", { name: "Reader surface preview" });
+    await expect(preview.getByRole("heading", { name: "Saturn in Aries. Edit Article Headline" })).toBeVisible();
+    await expect(preview).toContainText("Opening article paragraph.");
+    await expect(preview).toContainText("Closing article paragraph.");
+    await expect(preview.getByRole("region", { name: "Saved copy used in preview" })).toContainText("Saved copy");
+    await expect(preview.getByRole("button", { name: /Saturn in Aries.*Edit Article Headline/u })).toContainText("Edit Article Headline");
+    await expect(preview.getByRole("button", { name: /Opening article paragraph.*Edit Article Body/u })).toContainText("Edit Article Body");
+
+    const desktopReviewTypography = await preview.evaluate((region) => {
+      const readStyle = (selector: string) => {
+        const element = region.querySelector<HTMLElement>(selector);
+        if (!element) return null;
+        const style = getComputedStyle(element);
+        return {
+          fontFamily: style.fontFamily,
+          fontSize: Number.parseFloat(style.fontSize),
+          fontWeight: Number.parseInt(style.fontWeight, 10),
+          lineHeight: Number.parseFloat(style.lineHeight),
+          letterSpacing: style.letterSpacing,
+          marginTop: style.marginTop,
+          marginBottom: style.marginBottom,
+          textTransform: style.textTransform,
+          textAlign: style.textAlign
+        };
+      };
+      return {
+        heading: readStyle(".admin-composition-preview-field h3"),
+        body: readStyle(".admin-composition-preview-field p")
+      };
+    });
+    expect(desktopReviewTypography.heading).toMatchObject({
+      fontSize: 22,
+      fontWeight: 700,
+      marginTop: "0px",
+      marginBottom: "0px",
+      textTransform: "none"
+    });
+    expect(desktopReviewTypography.heading?.fontFamily).toBeTruthy();
+    expect(desktopReviewTypography.heading?.lineHeight).toBeLessThanOrEqual(28);
+    expect(desktopReviewTypography.body).toMatchObject({
+      fontSize: 16,
+      fontWeight: 400,
+      marginTop: "0px",
+      marginBottom: "0px",
+      textTransform: "none"
+    });
+    expect(desktopReviewTypography.body?.fontFamily).toBeTruthy();
+    expect(desktopReviewTypography.body?.lineHeight).toBeLessThanOrEqual(25);
+
+    await page.setViewportSize({ width: 390, height: 844 });
+    const mobileReviewTypography = await preview.evaluate((region) => {
+      const heading = region.querySelector<HTMLElement>(".admin-composition-preview-field h3");
+      const body = region.querySelector<HTMLElement>(".admin-composition-preview-field p");
+      return {
+        headingSize: heading ? Number.parseFloat(getComputedStyle(heading).fontSize) : null,
+        bodySize: body ? Number.parseFloat(getComputedStyle(body).fontSize) : null
+      };
+    });
+    expect(mobileReviewTypography).toEqual({ headingSize: 20, bodySize: 14 });
+    await expectNoHorizontalOverflow(page, "Composition Map compact article preview mobile");
+    await page.setViewportSize({ width: 1308, height: 900 });
+
+    await preview.getByRole("button", { name: /Opening article paragraph.*Edit Article Body/u }).click();
+    const editor = page.getByRole("dialog", { name: "Generated content editor" });
+    await expect(editor.getByRole("heading", { name: "Edit Saturn in Aries" })).toBeVisible();
+    await expect(editor.getByLabel("Article headline")).toHaveValue("Saturn in Aries");
+    await expect(editor.getByLabel("Article body")).toHaveValue(articleBody);
+    await expect(editor.getByLabel("Summary")).toHaveCount(0);
+    await expect(editor.getByLabel("body_you")).toHaveCount(0);
+    await expect(editor.getByLabel("body_they")).toHaveCount(0);
+    await page.setViewportSize({ width: 390, height: 844 });
+    await expect(editor.getByRole("heading", { name: "Edit Saturn in Aries" })).toBeVisible();
+    await expectNoHorizontalOverflow(page, "Composition Map article source editor mobile");
+
+    const revisedBody = `${articleBody}\n\nA reversible QA edit.`;
+    await editor.getByLabel("Article body").fill(revisedBody);
+    await editor.getByRole("button", { name: "Save", exact: true }).click();
+    await expect.poll(() => writes.length).toBe(1);
+    expect(writes[0].method).toBe("PATCH");
+    expect(writes[0].payload.body).toBe(revisedBody);
+    expect((writes[0].payload.sections as { packageRecord?: { body?: string } }).packageRecord?.body).toBe(revisedBody);
     await assertNoBrowserErrors();
   });
 
