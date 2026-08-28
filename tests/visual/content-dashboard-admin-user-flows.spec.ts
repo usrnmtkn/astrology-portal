@@ -70,6 +70,13 @@ const unresolvedQueue = {
   })]
 };
 const unresolvedIssueCount = unresolvedQueue.issues.length;
+const guidedLunationContentKey = "authored/book-ritual-and-the-moon/lunation-horoscope/eclipse-lunar/pisces/rising-aquarius/house-2";
+const guidedLunationSource = JSON.parse(readFileSync(path.join(
+  process.cwd(),
+  "apps/web/src/content/fallbackArchitectureV3/source-rows/lunation-eclipse-variants-v1.json"
+), "utf8")) as { authoredCards: Array<Record<string, unknown>> };
+const guidedLunationRecord = guidedLunationSource.authoredCards.find((row) => row.contentKey === guidedLunationContentKey);
+if (!guidedLunationRecord || typeof guidedLunationRecord.body !== "string") throw new Error("Guided lunation review fixture is unavailable.");
 
 const adminPages = [
   { nav: "Review Queue", title: "Review Queue", breadcrumb: "Admin / Publish / Review queue", hash: "review-queue" },
@@ -627,23 +634,26 @@ async function seedAdminApi(
       if (method === "POST" || method === "PATCH") {
         const payload = route.request().postDataJSON() as Record<string, unknown>;
         options.onGeneratedContentWrite?.({ method, payload });
+        const existingRow = apiGeneratedContentRows.find((row) => row.id === payload.id) ?? generatedContentRows[0];
         const updatedRow = {
-          ...generatedContentRows[0],
-          id: typeof payload.id === "string" ? payload.id : generatedContentRows[0].id,
-          content_key: typeof payload.contentKey === "string" ? payload.contentKey : generatedContentRows[0].content_key,
-          surface: typeof payload.surface === "string" ? payload.surface : generatedContentRows[0].surface,
-          mode: typeof payload.mode === "string" ? payload.mode : generatedContentRows[0].mode,
-          status: typeof payload.status === "string" ? payload.status : generatedContentRows[0].status,
-          headline: typeof payload.headline === "string" ? payload.headline : generatedContentRows[0].headline,
-          summary: typeof payload.summary === "string" ? payload.summary : generatedContentRows[0].summary,
-          body: typeof payload.body === "string" ? payload.body : generatedContentRows[0].body,
+          ...existingRow,
+          id: typeof payload.id === "string" ? payload.id : existingRow.id,
+          content_key: typeof payload.contentKey === "string" ? payload.contentKey : existingRow.content_key,
+          surface: typeof payload.surface === "string" ? payload.surface : existingRow.surface,
+          mode: typeof payload.mode === "string" ? payload.mode : existingRow.mode,
+          status: typeof payload.status === "string" ? payload.status : existingRow.status,
+          headline: typeof payload.headline === "string" ? payload.headline : existingRow.headline,
+          summary: typeof payload.summary === "string" ? payload.summary : existingRow.summary,
+          body: typeof payload.body === "string" ? payload.body : existingRow.body,
+          sections: payload.sections && typeof payload.sections === "object" ? payload.sections : existingRow.sections,
+          facts: payload.facts && typeof payload.facts === "object" ? payload.facts : existingRow.facts,
           source_snapshot: payload.sourceSnapshot && typeof payload.sourceSnapshot === "object"
             ? payload.sourceSnapshot
-            : generatedContentRows[0].source_snapshot,
-          lane: typeof payload.lane === "string" ? payload.lane : generatedContentRows[0].lane,
+            : existingRow.source_snapshot,
+          lane: typeof payload.lane === "string" ? payload.lane : existingRow.lane,
           review_state: typeof payload.reviewState === "string" ? payload.reviewState : null,
-          block_type: typeof payload.blockType === "string" ? payload.blockType : generatedContentRows[0].block_type,
-          prompt_version: typeof payload.promptVersion === "string" ? payload.promptVersion : generatedContentRows[0].prompt_version
+          block_type: typeof payload.blockType === "string" ? payload.blockType : existingRow.block_type,
+          prompt_version: typeof payload.promptVersion === "string" ? payload.promptVersion : existingRow.prompt_version
         };
 
         await route.fulfill({
@@ -1716,7 +1726,8 @@ test.describe("content dashboard admin user flow case studies", () => {
   test("unresolved content shows the governed package inventory and links to Content Library", async ({ page }) => {
     const assertNoBrowserErrors = await expectNoBrowserErrors(page);
     let sourceDecision: Record<string, unknown> | null = null;
-    const editableUnresolvedItem = unresolvedQueue.items.find((item) => item.reason === "review-status");
+    let editorialReviewWrite: Record<string, unknown> | null = null;
+    const editableUnresolvedItem = unresolvedQueue.items.find((item) => item.contentKey === guidedLunationContentKey);
     const missingUnresolvedItem = unresolvedQueue.items.find((item) => item.reason === "review-status" && item.contentKey !== editableUnresolvedItem?.contentKey);
     expect(editableUnresolvedItem).toBeTruthy();
     const editableUnresolvedRow = {
@@ -1730,11 +1741,25 @@ test.describe("content dashboard admin user flow case studies", () => {
         sourceType: "owner-resource-review",
         sourcePackage: "tldrastro-fallback-architecture-v3",
         review_status: "needs_review"
+      },
+      headline: guidedLunationRecord.headline,
+      summary: "",
+      body: guidedLunationRecord.body,
+      block_type: "authored_content",
+      facts: { fallbackArchitectureV3: true, review_status: "needs_review" },
+      sections: {
+        packageRecord: { ...guidedLunationRecord },
+        body_you: null,
+        body_they: null
       }
     };
     await seedAdminApi(page, {
       generatedRows: [editableUnresolvedRow, ...generatedContentRows],
-      onSourceDecisionWrite: (payload) => { sourceDecision = payload; }
+      onSourceDecisionWrite: (payload) => { sourceDecision = payload; },
+      onGeneratedContentWrite: ({ payload }) => {
+        const review = (payload.sections as { contentStudioReview?: unknown } | undefined)?.contentStudioReview;
+        if (review && typeof review === "object") editorialReviewWrite = payload;
+      }
     });
     await expectAdminRouteLoads(page, "/admin/content#unresolved-content");
 
@@ -1803,8 +1828,13 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(editableIssue).toContainText("Your next action");
     await expect(editableIssue).toContainText("the Content Library editor with this exact row already selected");
     const guidedReviewButton = editableIssue.getByRole("button", { name: "Review this horoscope" });
+    await page.setViewportSize({ width: 1280, height: 900 });
     await expect(guidedReviewButton).toBeVisible();
+    await expect(guidedReviewButton).toBeInViewport();
     await expect.poll(() => guidedReviewButton.evaluate((button) => button.scrollWidth <= button.clientWidth)).toBe(true);
+    const guidedReviewButtonBox = await guidedReviewButton.boundingBox();
+    expect(guidedReviewButtonBox).not.toBeNull();
+    expect((guidedReviewButtonBox?.x ?? 0) + (guidedReviewButtonBox?.width ?? 0)).toBeLessThanOrEqual(1280);
     await guidedReviewButton.click();
     await expectAdminHeader(page, "Content Library", "Admin / Write / Content library");
     await expect(page.getByLabel("Search content")).toHaveValue(editableUnresolvedItem?.contentKey ?? "");
@@ -1813,10 +1843,28 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(page.getByRole("button", { name: "Show retired" })).toHaveAttribute("aria-pressed", "true");
     const guidedEditor = page.getByRole("dialog", { name: "Generated content editor" });
     await expect(guidedEditor).toBeVisible();
-    await expect(guidedEditor.getByRole("region", { name: "Guided unresolved-content review" })).toContainText("The Body field below contains the full reader-facing horoscope");
+    await expect(guidedEditor.getByRole("region", { name: "Guided unresolved-content review" })).toContainText("The populated Headline and Body fields below are the copy under review");
     await expect(guidedEditor.getByRole("region", { name: "Guided unresolved-content review" })).toContainText(editableUnresolvedItem?.contentKey ?? "");
+    await expect(guidedEditor.getByLabel("Body")).toHaveValue(String(guidedLunationRecord.body));
+    await expect(guidedEditor.getByLabel("body_you")).toHaveCount(0);
+    await expect(guidedEditor.getByLabel("body_they")).toHaveCount(0);
+    await expect(guidedEditor.getByLabel("Package review status")).toBeDisabled();
+    await expect(guidedEditor.getByRole("button", { name: "Save held draft" })).toBeDisabled();
+    await guidedEditor.getByRole("button", { name: "Record owner copy review" }).click();
+    await expect.poll(() => editorialReviewWrite).not.toBeNull();
+    expect(editorialReviewWrite).toMatchObject({ reviewStatus: "needs_review" });
+    expect((editorialReviewWrite?.sections as { contentStudioReview?: Record<string, unknown> }).contentStudioReview).toMatchObject({
+      schema: "content-studio-editorial-review/v1",
+      decision: "approved-exact-copy"
+    });
+    await expect(guidedEditor.getByText("Owner copy review recorded")).toBeVisible();
     await guidedEditor.getByRole("button", { name: "Back to Unresolved Content" }).click();
     await expectAdminHeader(page, "Unresolved Content", "Admin / Publish / Unresolved content");
+    await page.getByLabel("Search unresolved content").fill(guidedLunationContentKey);
+    const approvedEditorialIssue = page.locator(".admin-unresolved-content-table tbody tr").first();
+    await expect(approvedEditorialIssue).toContainText("Owner review complete");
+    await expect(approvedEditorialIssue).toContainText("Implement the approved source copy");
+    await expect(approvedEditorialIssue.getByRole("button", { name: "Copy source implementation request" })).toBeVisible();
 
     await page.getByLabel("Search unresolved content").fill("not-a-real-content-key");
     await expect(page.getByText("No matching issues.")).toBeVisible();

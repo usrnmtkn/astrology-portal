@@ -989,6 +989,28 @@ function setPackageRecordField(draft: AdminDraft, key: string, value: string): A
   };
 }
 
+function invalidateContentStudioReview(draft: AdminDraft): AdminDraft {
+  const sections = objectRecord(draft.sections) ?? {};
+  if (!objectRecord(sections.contentStudioReview)) return draft;
+  return {
+    ...draft,
+    sections: {
+      ...sections,
+      contentStudioReview: null
+    }
+  };
+}
+
+async function contentStudioReviewCopySha256(draft: AdminDraft) {
+  const payload = JSON.stringify({
+    headline: draft.headline,
+    summary: draft.summary,
+    body: draft.body
+  });
+  const digest = await window.crypto.subtle.digest("SHA-256", new TextEncoder().encode(payload));
+  return [...new Uint8Array(digest)].map((byte) => byte.toString(16).padStart(2, "0")).join("");
+}
+
 function normalizedSourceRole(snapshot: Record<string, unknown> | null | undefined) {
   return [
     sourceSnapshotString(snapshot, "contentRole"),
@@ -2221,7 +2243,7 @@ export function GeneratedContentAdminDashboard() {
     ].sort((left, right) => right.lastSeenAt.localeCompare(left.lastSeenAt));
   }, [liveOmittedSections, sharedLiveOmittedSections]);
 
-  const editableContentKeys = useMemo(() => new Set(rows.map((row) => row.content_key)), [rows]);
+  const editableRowsByContentKey = useMemo(() => new Map(rows.map((row) => [row.content_key, row])), [rows]);
   const visibleRows = useMemo(() => rows.filter((row) => (
     (showReferenceRows
       || (showRetiredRows && isRetiredAdminRow(row))
@@ -2682,7 +2704,11 @@ export function GeneratedContentAdminDashboard() {
     if (!guidedRow) return;
     guidedReviewOpenedRef.current = guidedReviewKey;
     openRow(guidedRow);
-    window.requestAnimationFrame(() => editorRef.current?.scrollIntoView({ block: "start", behavior: "auto" }));
+    window.requestAnimationFrame(() => {
+      if (!editorRef.current) return;
+      editorRef.current.scrollTop = 0;
+      editorRef.current.scrollIntoView({ block: "start", behavior: "auto" });
+    });
   }, [activePage, allRowsLoaded, guidedReviewKey, rows]);
 
   useEffect(() => {
@@ -3333,16 +3359,18 @@ export function GeneratedContentAdminDashboard() {
     }
   }
 
-  async function saveDraft(nextStatus?: GeneratedContentStatus) {
-    if (!draft) return;
-    const status = nextStatus ?? draft.status;
-    if (status === "LIVE" && draft.sourceSnapshot?.governanceState === "needs-owner-decision") {
+  async function saveDraft(nextStatus?: GeneratedContentStatus, draftOverride?: AdminDraft) {
+    const activeDraft = draftOverride ?? draft;
+    if (!activeDraft) return null;
+    const status = nextStatus ?? activeDraft.status;
+    if (status === "LIVE" && activeDraft.sourceSnapshot?.governanceState === "needs-owner-decision") {
       setMessage("This source draft still needs an explicit owner decision. Save it as Draft or Reviewed; the general editor cannot make it reader-serving.");
-      return;
+      return null;
     }
     setIsLoading(true);
-    const draftForSave = { ...draft, status };
+    const draftForSave = { ...activeDraft, status };
     const isPackageDraft = draftIsFallbackArchitectureV3(draftForSave);
+    const isGuidedHeldReview = isPackageDraft && guidedReviewKey === draftForSave.contentKey;
 
     try {
       const body = isPackageDraft
@@ -3355,7 +3383,7 @@ export function GeneratedContentAdminDashboard() {
             facts: draftForSave.facts ?? {},
             reviewerNotes: draftForSave.reviewerNotes,
             sourceSnapshot: draftSourceSnapshot(draftForSave),
-            reviewStatus: packageReviewStatusForDraft(draftForSave),
+            reviewStatus: isGuidedHeldReview ? "needs_review" : packageReviewStatusForDraft(draftForSave),
             editorialNotes: packageEditorialNotesForDraft(draftForSave)
           }
         : {
@@ -3394,8 +3422,10 @@ export function GeneratedContentAdminDashboard() {
         announceContentUpdate({ contentKey: saved.content_key, published: saved.status === "LIVE", updatedAt: saved.updated_at ?? new Date().toISOString() });
       }
       setMessage(`${draftForSave.contentKey} saved as ${contentStatusLabel(saved?.status ?? status)}.`);
+      return saved ?? null;
     } catch (error) {
       setMessage(dashboardErrorMessage(error));
+      return null;
     } finally {
       setIsLoading(false);
     }
@@ -4324,7 +4354,7 @@ export function GeneratedContentAdminDashboard() {
             <UnresolvedContentReview
               credential={secret}
               contentLibraryReady={allRowsLoaded && loadState === "loaded"}
-              editableContentKeys={editableContentKeys}
+              editableRowsByContentKey={editableRowsByContentKey}
               onFindInContentLibrary={(contentKey) => {
                 revealUnresolvedContentRow();
                 guidedReviewOpenedRef.current = "";
@@ -5729,6 +5759,8 @@ export function GeneratedContentAdminDashboard() {
     const isFallbackHookDraft = draftIsFallbackHook(currentDraft);
     const isTemplateDraft = draftIsTemplate(currentDraft);
     const isPackageDraft = draftIsFallbackArchitectureV3(currentDraft);
+    const isGuidedHeldReview = isPackageDraft && guidedReviewKey === currentDraft.contentKey;
+    const guidedReviewDecision = objectRecord(objectRecord(currentDraft.sections)?.contentStudioReview);
     const isGovernedSkyDraft = ["sky_aspect", "sky_placement"].includes(currentDraft.blockType);
     const persistedDraft = selectedRow ? draftFromRow(selectedRow) : null;
     const draftHasUnsavedChanges = persistedDraft
@@ -5786,8 +5818,13 @@ export function GeneratedContentAdminDashboard() {
     const vocabularyTheyValue = isVocabularyDraft ? packageFieldString(currentDraft, "body_they") : "";
     const vocabularyHasTheyVersion = vocabularyTheyValue.trim().length > 0;
     const isContinuousSkyPackage = isPackageDraft && packageRecord.render_policy === "sky-placement-continuous-v2";
-    const showPackageBodyYou = isPackageDraft && !isVocabularyDraft && !isContinuousSkyPackage && ("body_you" in packageRecord || "body_you" in (currentDraft.sections ?? {}));
-    const showPackageBodyThey = isPackageDraft && !isVocabularyDraft && ("body_they" in packageRecord || "body_they" in (currentDraft.sections ?? {}));
+    const showPackageBodyYou = isPackageDraft
+      && !isVocabularyDraft
+      && !isContinuousSkyPackage
+      && (typeof packageRecord.body_you === "string" || typeof objectRecord(currentDraft.sections)?.body_you === "string");
+    const showPackageBodyThey = isPackageDraft
+      && !isVocabularyDraft
+      && (typeof packageRecord.body_they === "string" || typeof objectRecord(currentDraft.sections)?.body_they === "string");
     const showGenericBody = isVocabularyDraft || !isPackageDraft || (!showPackageBodyYou && !isContinuousSkyPackage);
     const skyWriteupParent = skyWriteupParentId ? rows.find((row) => row.id === skyWriteupParentId) ?? null : null;
     const skyWriteupContext = selectedRow ? skyWriteupContextForRow(selectedRow) : null;
@@ -5855,11 +5892,11 @@ export function GeneratedContentAdminDashboard() {
       });
     };
     const updateHeadline = (headline: string) => {
-      setDraft({
+      setDraft(invalidateContentStudioReview({
         ...currentDraft,
         headline,
         contentKey: isVocabularyDraft && isNewDraft ? vocabularyContentKey(vocabularySection, headline) : currentDraft.contentKey
-      });
+      }));
     };
     const updateVocabularyBody = (body: string) => {
       setDraft({
@@ -5875,6 +5912,29 @@ export function GeneratedContentAdminDashboard() {
             }
           : currentDraft.sections
       });
+    };
+    const completeGuidedContentReview = async () => {
+      if (!isGuidedHeldReview || draftHasUnsavedChanges) {
+        setMessage("Save the exact copy before completing owner review.");
+        return;
+      }
+      const reviewedAt = new Date().toISOString();
+      const copySha256 = await contentStudioReviewCopySha256(currentDraft);
+      const reviewedDraft: AdminDraft = {
+        ...currentDraft,
+        sections: {
+          ...(currentDraft.sections ?? {}),
+          contentStudioReview: {
+            schema: "content-studio-editorial-review/v1",
+            decision: "approved-exact-copy",
+            copySha256,
+            reviewedAt,
+            statement: `I approve the exact held copy identified by SHA-256 ${copySha256} and authorize its governed source implementation in the next package deployment. This decision does not directly change serving state.`
+          }
+        }
+      };
+      const saved = await saveDraft(undefined, reviewedDraft);
+      if (saved) setMessage("Owner copy review recorded. The row is still held and ready for governed source implementation.");
     };
     const updateSkyArticleFields = (next: Partial<SkyArticleEditableFields>) => {
       setSkyArticleEditor((current) => current ? {
@@ -6078,19 +6138,33 @@ export function GeneratedContentAdminDashboard() {
               <div>
                 <p className="admin-eyebrow">Opened from Unresolved Content</p>
                 <h3>Review this exact horoscope</h3>
-                <p>You are in the Content Library editor for the row you selected. The <strong>Body</strong> field below contains the full reader-facing horoscope.</p>
+                <p>You are in the exact held row you selected. The populated <strong>Headline</strong> and <strong>Body</strong> fields below are the copy under review.</p>
               </div>
               <ol>
                 <li><strong>Read:</strong> the Headline and the complete Body from beginning to end.</li>
                 <li><strong>Check:</strong> astrological accuracy, your preferred voice, repeated ideas, and any unfinished placeholders.</li>
-                <li><strong>If you edit:</strong> click Save. The row stays held at <code>needs_review</code>.</li>
-                <li><strong>Do not publish here:</strong> copy approval and publication authorization happen in later governed steps.</li>
+                <li><strong>If you edit:</strong> click Save held draft, then reread the saved copy.</li>
+                <li><strong>When it is correct:</strong> record owner copy review below. The row stays at <code>needs_review</code> and cannot serve.</li>
               </ol>
+              <div className="admin-guided-review-decision" role="status">
+                <strong>{guidedReviewDecision ? "Owner copy review recorded" : draftHasUnsavedChanges ? "Save before completing review" : "Ready for your decision"}</strong>
+                <span>{guidedReviewDecision
+                  ? `Exact copy SHA-256: ${String(guidedReviewDecision.copySha256 ?? "unavailable")}`
+                  : draftHasUnsavedChanges
+                    ? "Your edits are only in this browser until you save them."
+                    : "This records approval of the exact held copy for a later governed source update. It does not publish."}</span>
+              </div>
               <code>{currentDraft.contentKey}</code>
-              <button type="button" onClick={() => navigateAdminPage("unresolvedContent")}>
-                <ArrowLeft size={16} aria-hidden="true" />
-                Back to Unresolved Content
-              </button>
+              <div className="admin-toolbar-actions">
+                {!guidedReviewDecision && <button className="admin-primary-button" type="button" onClick={() => void completeGuidedContentReview()} disabled={isLoading || draftHasUnsavedChanges || !currentDraft.body.trim()}>
+                  <Check size={16} aria-hidden="true" />
+                  Record owner copy review
+                </button>}
+                <button type="button" onClick={() => navigateAdminPage("unresolvedContent")}>
+                  <ArrowLeft size={16} aria-hidden="true" />
+                  Back to Unresolved Content
+                </button>
+              </div>
             </section>
           )}
           {isVocabularyDraft && (
@@ -6659,7 +6733,7 @@ export function GeneratedContentAdminDashboard() {
           {!compiledSkyArticleEdition && !skyFallbackEditor && !(isVocabularyDraft && isPackageDraft) && (
             <label className="admin-review-copy-editor">
               <span>{isVocabularyDraft ? "Editor note or grouping detail" : isSkyArticleSourceDraft ? "TL;DR" : "Summary"}</span>
-              <textarea className="admin-copy-field-summary" aria-label={isVocabularyDraft ? "Editor note or grouping detail" : isSkyArticleSourceDraft ? "Sky article TL;DR" : "Summary"} value={currentDraft.summary} onChange={(event) => setDraft({ ...currentDraft, summary: event.target.value })} placeholder={isVocabularyDraft ? "Optional: where this phrase should be used, tone notes, or related variants." : isSkyArticleSourceDraft ? "Write the explicit TL;DR for this article edition." : undefined} />
+              <textarea className="admin-copy-field-summary" aria-label={isVocabularyDraft ? "Editor note or grouping detail" : isSkyArticleSourceDraft ? "Sky article TL;DR" : "Summary"} value={currentDraft.summary} onChange={(event) => setDraft(invalidateContentStudioReview({ ...currentDraft, summary: event.target.value }))} placeholder={isVocabularyDraft ? "Optional: where this phrase should be used, tone notes, or related variants." : isSkyArticleSourceDraft ? "Write the explicit TL;DR for this article edition." : undefined} />
               <small className="admin-field-metrics">{fieldMetrics(currentDraft.summary)}</small>
               {isSkyArticleSourceDraft && <small className="admin-field-hint">Saved as non-serving source copy until the complete edition is compiled, reviewed, and published.</small>}
             </label>
@@ -6702,7 +6776,7 @@ export function GeneratedContentAdminDashboard() {
                   ? vocabularyHasTheyVersion ? "You version" : "Variable value"
                   : isVocabularyDraft ? "Reusable phrase text" : "Body"}
                 value={currentDraft.body}
-                onChange={(event) => isVocabularyDraft ? updateVocabularyBody(event.target.value) : setDraft({ ...currentDraft, body: event.target.value })}
+                onChange={(event) => isVocabularyDraft ? updateVocabularyBody(event.target.value) : setDraft(invalidateContentStudioReview({ ...currentDraft, body: event.target.value }))}
                 placeholder={isVocabularyDraft ? "Write the reusable wording or phrase pattern here." : undefined}
               />
               <small className="admin-field-metrics">{fieldMetrics(currentDraft.body)}</small>
@@ -6939,10 +7013,11 @@ export function GeneratedContentAdminDashboard() {
               </div>
               <label>
                 <span>review status</span>
-                <select aria-label="Package review status" value={packageReviewStatus} onChange={(event) => updatePackageReviewStatus(event.target.value)} disabled={Boolean(skyFallbackEditor)}>
+                <select aria-label="Package review status" value={packageReviewStatus} onChange={(event) => updatePackageReviewStatus(event.target.value)} disabled={Boolean(skyFallbackEditor) || isGuidedHeldReview}>
                   {fallbackArchitectureV3ReviewStatuses.map((reviewStatus) => <option key={reviewStatus} value={reviewStatus}>{reviewStatus}</option>)}
                 </select>
                 {skyFallbackEditor && <small className="admin-field-hint">Copy proposals stay at needs_review until the source diff receives separate owner approval.</small>}
+                {isGuidedHeldReview && <small className="admin-field-hint">Locked at needs_review in this review flow. Use “Record owner copy review” above when the exact copy is correct; publication remains a separate governed step.</small>}
               </label>
               <label className="admin-package-notes-field">
                 <span>editorial notes</span>
@@ -7029,11 +7104,11 @@ export function GeneratedContentAdminDashboard() {
             <span className={`admin-editor-save-state ${draftHasUnsavedChanges || isNewDraft ? "is-unsaved" : "is-saved"}`} aria-live="polite">
               {isLoading ? "Saving…" : isNewDraft ? "New draft" : draftHasUnsavedChanges ? "Unsaved changes" : "All changes saved"}
             </span>
-            <button className="admin-primary-button" type="button" onClick={() => void saveDraft(isCmsSurfaceDraft && currentDraft.status === "LIVE" ? "DRAFT" : undefined)} disabled={isLoading || Boolean(compiledSkyArticleEdition)}>
+            <button className="admin-primary-button" type="button" onClick={() => void saveDraft(isCmsSurfaceDraft && currentDraft.status === "LIVE" ? "DRAFT" : undefined)} disabled={isLoading || Boolean(compiledSkyArticleEdition) || (!isNewDraft && !draftHasUnsavedChanges)}>
               <Save size={16} aria-hidden="true" />
-              Save
+              {isGuidedHeldReview ? "Save held draft" : "Save"}
             </button>
-            {isPackageDraft && !skyFallbackEditor && (
+            {isPackageDraft && !skyFallbackEditor && draftHasUnsavedChanges && (
               <button type="button" onClick={revertPackageDraft} disabled={isLoading}>
                 Revert to package original
               </button>
