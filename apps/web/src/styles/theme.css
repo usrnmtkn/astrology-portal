@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;500;600;700&family=Newsreader:opsz,wght@6..72,400;6..72,500&family=Noto+Sans+Symbols:wght@400;500&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Geist+Mono:wght@400;500;600;700&family=Newsreader:opsz,wght@6..72,400;6..72,500&family=Noto+Sans+Symbols:wght@400;500&display=swap");
 
 :root {
   /*
@@ -19,7 +19,7 @@
   --color-ink-2: #4e5360;
   --color-gray-500: #6c7280;
   --color-muted: var(--color-gray-500);
-  --color-faint: #9aa0ae;
+  --color-faint: #717785;
   --color-soft: #d7dae3;
   --color-line: rgba(28, 32, 52, 0.09);
   --color-line-2: rgba(28, 32, 52, 0.055);
@@ -58,6 +58,15 @@
   --color-aspect-union: #8d8982;
   --color-aspect-muted: rgba(20, 20, 20, 0.22);
   --color-synastry-accent: var(--color-muted);
+  --color-interactive: #5448be;
+  --color-positive: #3f7550;
+  --color-positive-bg: #e5efe8;
+  --color-highlight: #f1d58a;
+  --color-aspect-conjunction: #252833;
+  --color-aspect-sextile: #1d71a8;
+  --color-aspect-square: #b3318e;
+  --color-aspect-trine: #117e5a;
+  --color-aspect-opposition: #a51b27;
 
   --serif: "Newsreader", Georgia, "Times New Roman", serif;
   --sans: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
@@ -77,6 +86,11 @@
   --size-6: 48px;
   --size-7: 56px;
   --size-8: 64px;
+
+  --border-width-thin: 1px;
+  --border-width-fine: 1.5px;
+  --border-width-medium: 2px;
+  --border-width-thick: 3px;
 
   /* 2. SEMANTIC TOKENS */
   --bg: var(--color-bg-warm);
@@ -144,6 +158,16 @@
   --aspect-union: var(--color-aspect-union);
   --aspect-muted: var(--color-aspect-muted);
   --synastry-accent: var(--color-synastry-accent);
+  --interactive: var(--color-interactive);
+  --positive: var(--color-positive);
+  --positive-bg: var(--color-positive-bg);
+  --highlight: var(--color-highlight);
+  --aspect-conjunction: var(--color-aspect-conjunction);
+  --aspect-sextile: var(--color-aspect-sextile);
+  --aspect-square: var(--color-aspect-square);
+  --aspect-trine: var(--color-aspect-trine);
+  --aspect-opposition: var(--color-aspect-opposition);
+  --focus-ring: color-mix(in srgb, var(--interactive) 78%, var(--ink));
   --synastry-row-bg: color-mix(in srgb, var(--surface-2) 62%, var(--card-bg));
   --elev-pill:
     0 1px 1px rgba(28, 32, 52, 0.05),
@@ -163,6 +187,7 @@
   --shadow-hero: var(--elev-hero);
   --shadow-topbar-scrolled: var(--elev-topbar-scrolled);
   --shadow-mobile-panel: var(--elev-mobile-panel);
+  --shadow-popover: var(--shadow-mobile-panel);
   --shadow-overlay:
     0 24px 70px rgba(28, 32, 52, 0.12),
     0 4px 16px rgba(28, 32, 52, 0.06);
@@ -300,9 +325,9 @@
   --lunar-selected-event-title-size: var(--lunar-type-body);
   --lunar-selected-glyph-size: var(--lunar-type-section-title);
   --lunar-selected-glyph-emphasis-size: var(--lunar-type-glyph-emphasis);
-  --lunar-selected-font-title: var(--font-body);
+  --lunar-selected-font-title: var(--font-display);
   --lunar-selected-font-body: var(--font-body);
-  --lunar-selected-font-label: var(--font-body);
+  --lunar-selected-font-label: var(--font-label);
   --lunar-selected-title-weight: var(--weight-medium);
   --lunar-selected-body-weight: var(--weight-regular);
   --lunar-selected-label-weight: var(--weight-medium);
@@ -316,6 +341,16 @@
   --lunar-selected-row-leading: var(--leading-label);
   --lunar-selected-row-title-leading-mobile: var(--leading-h1);
   --lunar-selected-compact-leading: var(--leading-label);
+  --lunar-card-radius: 18px;
+  --lunar-control-radius: 14px;
+  --lunar-element-air: #6ea8d8;
+  --lunar-element-earth: #6f9467;
+  --lunar-element-fire: #d18a54;
+  --lunar-element-water: #4f78b9;
+  --lunar-accent: var(--accent);
+  --lunar-moon-dark: #171923;
+  --lunar-moon-dark-edge: #0e1118;
+  --lunar-moon-dark-soft: #242735;
   --lunar-space-1: 1px;
   --lunar-space-2: 2px;
   --lunar-space-3: 3px;
@@ -590,8 +625,8 @@
   --natal-card-radius: var(--card-radius);
   --natal-card-shadow: var(--card-shadow);
   --natal-card-padding: var(--space-6) var(--space-5);
-  --natal-card-gap: var(--sp-2);
-  --natal-card-min-height: 0px;
+  --natal-card-gap: var(--card-row-gap);
+  --natal-card-min-height: var(--card-row-min-height);
   --natal-card-title-size: var(--text-card-title);
   --natal-card-title-weight: var(--weight-medium);
   --natal-card-title-line: var(--leading-title);
@@ -606,7 +641,7 @@
   --aspect-card-shadow: var(--card-shadow);
   --aspect-card-padding: var(--space-6) calc(var(--space-5) + var(--space-1) / 2);
   --aspect-card-gap: var(--card-row-gap);
-  --aspect-card-min-height: 0px;
+  --aspect-card-min-height: var(--card-row-min-height);
   --aspect-card-title-size: var(--text-card-title);
   --aspect-card-title-weight: var(--weight-medium);
   --aspect-card-title-line: var(--leading-title);
@@ -638,6 +673,7 @@
   --updates-aspect-row-gap: var(--space-4);
   --updates-aspect-copy-gap: calc(var(--space-2) - var(--space-1) / 4);
   --updates-aspect-row-glyph-size: calc(var(--aspect-row-glyph-size) + 2px);
+  --updates-aspect-row-padding: clamp(calc(var(--space-6) + var(--space-1) / 2), 3.4vw, 38px);
   --table-bg: var(--card-bg);
   --table-border: var(--card-border);
   --table-radius: var(--card-radius);
@@ -715,6 +751,27 @@
   --friend-danger-fg: var(--color-white);
   --friend-toast-bg: #151821;
   --friend-toast-fg: var(--color-white);
+  --relationship-wheel-size: var(--shared-chart-size);
+  --friend-detail-content-max: 720px;
+  --friend-detail-chart-max: var(--shared-chart-size);
+  --friend-wheel-stack-gap: var(--space-1);
+  --friend-detail-no-chart-max: 760px;
+  --friend-section-label-margin: var(--sp-1) 0 calc(var(--sp-1) * -1);
+  --friend-composite-row-template: 56px minmax(0, 1fr) auto;
+  --friend-composite-row-gap: 20px;
+  --friend-composite-row-padding: var(--space-6) calc(var(--space-7) - var(--space-1) / 2);
+  --friend-placement-column-title-padding: 0 0 var(--space-3);
+  --friend-placement-symbol-size: var(--text-glyph);
+  --friend-placement-label-size: var(--friend-row-title-size);
+  --friend-placement-meta-size: var(--text-placement-meta);
+  --friend-placement-summary-size: var(--text-description);
+  --friend-placement-compact-padding: var(--space-6) var(--space-5);
+  --friend-placement-row-gap: 12px;
+  --friend-placement-row-bg: var(--card-bg);
+  --friend-placement-row-border: var(--card-border);
+  --radius-article: 28px;
+  --radius-article-mobile: 22px;
+  --shadow-article: 0 30px 80px color-mix(in srgb, var(--ink) 10%, transparent);
   --friend-sharing-thumb-shadow: 0 1px 3px rgb(20 23 31 / 24%);
   --friend-directory-panel-radius: 20px;
   --friend-directory-row-radius: 12px;
@@ -864,6 +921,71 @@
   --top-nav-icon-size: 15px;
   --top-action-icon-size: 19px;
   --top-control-gap: 8px;
+
+  /* Responsive layout compositions. Components consume these as whole values. */
+  --auth-page-padding: clamp(72px, 8vh, 120px) clamp(var(--space-6), 5vw, 72px);
+  --auth-shell-padding: clamp(calc(var(--space-7) - var(--space-1)), 4vw, 48px);
+  --auth-dialog-padding: clamp(36px, 5vw, 64px);
+  --auth-card-padding: clamp(calc(var(--space-7) - var(--space-1) / 2), 5vw, 44px);
+  --auth-card-radius: calc(var(--card-radius) + 8px);
+  --input-inner-radius: calc(var(--input-radius) - 2px);
+  --chart-dialog-padding: clamp(calc(var(--space-4) + var(--space-1) / 2), 3vw, calc(var(--space-7) - var(--space-1) / 2));
+  --chart-dialog-top-padding: clamp(var(--space-1), 1vh, var(--space-3));
+  --chart-mobile-safe-padding: calc(env(safe-area-inset-top, 0px) + calc(var(--space-3) + var(--space-1) / 2)) max(var(--space-5), env(safe-area-inset-left, 0px)) calc(var(--space-3) + var(--space-1) / 2);
+  --chart-empty-state-padding: clamp(36px, 7vh, 72px) calc(var(--space-4) + var(--space-1) / 2) var(--space-7);
+  --chart-section-padding: var(--space-3) clamp(var(--space-2), 2vw, var(--space-4));
+  --glyph-gap-xs: 0.25em;
+  --glyph-gap-sm: 0.35em;
+  --glyph-gap-md: 0.4em;
+  --glyph-gap-lg: 0.45em;
+  --glyph-gap-xl: 0.58em;
+  --glyph-gap-2xl: 0.6em;
+  --friends-route-page-margin: clamp(46px, 5vw, 78px) auto 0;
+  --friends-route-column-gap: 55px;
+  --friends-route-profile-padding: clamp(var(--space-4), 2.5vw, calc(var(--space-5) + var(--space-1) / 2));
+  --friends-route-pane-padding: 0 clamp(calc(var(--space-4) + var(--space-1) / 2), 2.6vw, calc(var(--space-7) - var(--space-1)));
+  --friends-route-tab-padding: calc(var(--space-2) - var(--space-1) / 4) clamp(calc(var(--space-3) + var(--space-1) / 2), 2.3vw, var(--space-6));
+  --friends-form-padding: clamp(var(--space-6), 5vw, 36px);
+  --friends-card-inner-radius: calc(var(--card-radius) - 6px);
+  --friends-card-padding: var(--space-4) clamp(calc(var(--space-4) + var(--space-1) / 2), 2.5vw, var(--space-6));
+  --friends-page-margin: clamp(56px, 8vh, 96px) auto 0;
+  --friends-page-padding: clamp(calc(var(--space-7) - var(--space-1)), 5vw, 48px);
+  --friends-section-padding: clamp(calc(var(--space-5) + var(--space-1) / 2), 3vw, 34px);
+  --friends-overlay-gap: 34px;
+  --friends-modal-padding: clamp(var(--space-6), 4vw, var(--space-7));
+  --modal-content-padding: clamp(var(--space-5), 4vw, 56px);
+  --lunar-detail-gap: clamp(var(--space-6), 4vw, 44px);
+  --lunar-detail-padding: clamp(var(--space-6), 3.8vw, 44px);
+  --lunar-grid-gap: var(--lunar-space-10) clamp(var(--space-6), 3vw, 40px);
+  --lunar-grid-padding: clamp(var(--space-5), 2.5vw, calc(var(--space-7) - var(--space-1)));
+  --lunar-grid-aside-padding: clamp(var(--space-6), 3vw, 40px);
+  --lunar-card-inner-radius: calc(var(--lunar-card-radius) - 4px);
+  --report-page-padding: clamp(var(--space-9), 8vw, var(--space-10)) var(--page-gutter) var(--space-10);
+  --report-hero-padding: clamp(var(--space-8), 8vw, var(--space-10));
+  --report-section-padding: clamp(var(--space-7), 6vw, var(--space-10));
+  --report-callout-padding: var(--space-8);
+  --mobile-action-panel-shadow: 0 18px 38px color-mix(in srgb, var(--ink) 14%, transparent), 0 2px 8px color-mix(in srgb, var(--ink) 8%, transparent);
+  --mobile-top-safe-padding: calc(env(safe-area-inset-top, 0px) + var(--top-control-top)) var(--mobile-control-inset) 0;
+  --mobile-chart-top-padding: calc(env(safe-area-inset-top, 0px) + var(--top-control-top) + 85px);
+  --mobile-route-padding: 104px var(--mobile-page-gutter) calc(var(--mobile-page-gutter) + 88px + env(safe-area-inset-bottom, 0px));
+  --settings-panel-padding: clamp(var(--space-6), 5vw, 36px);
+  --settings-dialog-padding: clamp(calc(var(--space-6) + var(--space-1) / 2), 5vw, 40px);
+  --sky-page-padding: clamp(116px, 15vh, 168px) clamp(calc(var(--space-4) + var(--space-1) / 2), 5vw, 48px) 120px;
+  --sky-hero-padding: clamp(40px, 5.4vw, 80px) clamp(calc(var(--space-6) + var(--space-1) / 2), 6vw, 92px) clamp(52px, 6vw, 84px);
+  --sky-header-margin: clamp(var(--space-3), 1.5vw, var(--space-4)) 0 0;
+  --sky-section-margin: 0 0 clamp(calc(var(--space-7) - var(--space-1)), 3vw, 38px);
+  --sky-grid-gap: clamp(calc(var(--space-5) + var(--space-1) / 2), 2.4vw, calc(var(--space-7) - var(--space-1) / 2));
+  --sky-section-top-margin: clamp(calc(var(--space-6) + var(--space-1) / 2), 3.1vw, 36px);
+  --sky-section-wide-margin: 0 0 clamp(calc(var(--space-7) - var(--space-1)), 4vw, 44px);
+  --sky-section-block-margin: clamp(var(--space-7), 4vw, 48px) 0;
+  --sky-hero-top-padding: clamp(40px, 5.4vw, 80px);
+  --sky-content-padding: calc(var(--space-7) + var(--space-1) / 2) clamp(var(--space-6), 5vw, var(--space-8));
+  --sky-content-inline-padding: clamp(var(--space-4), 4vw, var(--space-8));
+  --sky-mobile-page-padding: 104px var(--mobile-page-gutter) var(--mobile-page-gutter);
+  --sky-card-grid-gap: clamp(calc(var(--space-4) + var(--space-1) / 2), 2.4vw, calc(var(--space-6) + var(--space-1) / 2));
+  --sky-card-grid-padding: clamp(var(--space-6), 3vw, 34px) clamp(var(--space-6), 3.4vw, 38px);
+  --sky-ledger-gap: clamp(var(--space-4), 2vw, var(--space-6));
+  --sky-ledger-padding: clamp(calc(var(--space-5) + var(--space-1) / 2), 2.8vw, 34px);
   --radius-card: var(--card-radius);
   --chart-layout-max: var(--container-chart-layout);
   --chart-column-width: minmax(560px, 720px);
@@ -875,6 +997,105 @@
   --chart-page-top: var(--chart-wheel-top-offset);
   --chart-content-width: min(var(--chart-layout-max), calc(100vw - var(--page-gutter) * 2));
   --chart-sticky-top: 0px;
+
+  /* Context values stay centralized here; components only select aliases. */
+  --ds-aspects-updates-aspect-row-padding: clamp(26px, 3.4vw, 38px);
+  --ds-auth-auth-subtitle-heading-overlap: -12px;
+  --ds-optical-offset-1: -1px;
+  --ds-chart-synastry-label-size: 11.5px;
+  --ds-charts-chart-degree-size: 9.5px;
+  --ds-charts-chart-fullscreen-wheel-size: min(
+    calc(100svh - 220px),
+    calc(100vw - 180px),
+    820px
+  );
+  --ds-charts-chart-fullscreen-rail-width: min(var(--chart-fullscreen-wheel-size), 760px);
+  --ds-charts-chart-fullscreen-wheel-size-variant-2: min(
+    calc(100svh - 360px),
+    calc(100vw - 180px),
+    680px
+  );
+  --ds-optical-offset-2: -2px;
+  --ds-overlap-18: -18px;
+  --ds-card-inset-shadow: inset 0 0 0 1px var(--card-border), var(--card-shadow);
+  --ds-friends-detail-friend-wheel-stack-gap: 18px;
+  --ds-friends-detail-synastry-placement-meta-width: 104px;
+  --ds-friends-detail-aspect-row-template: 82px minmax(0, 1fr) 30px;
+  --ds-aspect-row-gap-wide: 14px;
+  --ds-friends-detail-aspect-row-meta-width: 30px;
+  --ds-friends-route-friends-page-rail: min(1640px, calc(100vw - 96px));
+  --ds-friends-route-friend-detail-copy-width: minmax(480px, 532px);
+  --ds-friends-route-friend-detail-top-clearance: calc(var(--top-control-top) + var(--top-control-height) + clamp(58px, 5.5vw, 86px));
+  --ds-friends-route-aspect-row-glyph-gap: 4px;
+  --ds-friends-route-aspect-row-glyph-width: 68px;
+  --ds-friends-route-friends-page-rail-variant-2: min(100%, calc(100vw - var(--mobile-page-gutter) * 2));
+  --ds-friends-friends-feed-avatar-overlap: -14px;
+  --ds-layout-deferred-placeholder-height: 320px;
+  --ds-layout-deferred-placeholder-height-variant-2: 220px;
+  --ds-lunar-calendar-lunar-selected-content-width: 62ch;
+  --ds-lunar-calendar-lunar-calendar-title-size: clamp(32px, 8vw, 38px);
+  --ds-lunar-calendar-lunar-selected-title-size: clamp(26px, 8.5vw, 34px);
+  --ds-navigation-nav-icon-optical-offset-y: -0.5px;
+  --ds-navigation-hamburger-width: 23px;
+  --ds-navigation-hamburger-height: 18px;
+  --ds-navigation-hamburger-stroke: 2.5px;
+  --ds-navigation-hamburger-line-offset: 7px;
+  --ds-responsive-mobile-page-gutter: clamp(26px, 7.5vw, 32px);
+  --ds-responsive-sky-mobile-rail: min(100%, calc(100vw - var(--mobile-page-gutter) * 2));
+  --ds-responsive-sky-mobile-hero-title: clamp(30px, 8vw, 34px);
+  --ds-responsive-shared-chart-size: min(var(--tablet-chart-max), calc(100vw - var(--tablet-chart-edge)));
+  --ds-responsive-updates-aspect-glyph-width: 72px;
+  --ds-responsive-updates-aspect-row-gap: 12px;
+  --ds-responsive-updates-aspect-row-py: 20px;
+  --ds-responsive-chart-fullscreen-wheel-size: min(
+      calc(100svh - 206px),
+      calc(100vw - 32px)
+    );
+  --ds-sky-aspect-row-template: 82px minmax(0, 1fr) 42px;
+  --ds-sky-aspect-row-glyph-width-variant-2: 58px;
+  --ds-sky-aspect-row-template-variant-2: 58px minmax(0, 1fr) 30px;
+  --ds-sky-retrograde-cluster-overlap: -10px;
+  --ds-sky-retrograde-badge-rx-offset: -4px;
+}
+
+@media (max-width: 1320px) and (min-width: 1081px) {
+  :root {
+    --chart-size: clamp(500px, 43vw, 620px);
+    --chart-column-width: minmax(500px, 0.95fr);
+    --content-column-width: minmax(420px, 1fr);
+    --chart-layout-gap: clamp(32px, 3vw, 48px);
+  }
+}
+
+@media (max-width: 1080px) and (min-width: 801px) {
+  :root {
+    --chart-size: clamp(360px, 43vw, 500px);
+    --chart-column-width: minmax(360px, 0.95fr);
+    --content-column-width: minmax(330px, 1fr);
+    --chart-layout-gap: clamp(20px, 2.6vw, 28px);
+    --page-gutter: clamp(20px, 3vw, 32px);
+  }
+}
+
+@media (max-width: 800px) {
+  :root {
+    --chart-wheel-top-offset: calc(var(--top-control-height) + 72px);
+  }
+}
+
+@media (max-width: 720px) {
+  :root {
+    --top-control-top: 24px;
+    --top-control-height: 52px;
+    --top-icon-button-size: 52px;
+    --top-brand-size: 32px;
+    --top-nav-icon-size: 15px;
+    --top-action-icon-size: 19px;
+    --page-gutter: var(--mobile-page-gutter);
+    --page-top: calc(var(--top-control-height) + 76px);
+    --row-padding-y: var(--sp-2);
+    --row-padding-x: var(--sp-2);
+  }
 }
 
 :root[data-dyslexia-font="true"] {
@@ -913,8 +1134,8 @@
   --color-surface-3: #333844;
   --color-ink: #eceef2;
   --color-ink-2: #aeb2bd;
-  --color-muted: #888d99;
-  --color-faint: #696e7b;
+  --color-muted: #a2a7b2;
+  --color-faint: #9298a4;
   --color-soft: #363b47;
   --color-line: rgba(255, 255, 255, 0.08);
   --color-line-2: rgba(255, 255, 255, 0.05);
@@ -932,6 +1153,15 @@
   --color-wheel-glyph: #f2f2f1;
   --color-wheel-band: #1f222b;
   --color-wheel-band-line: rgba(255, 255, 255, 0.2);
+  --color-interactive: #b8b0ff;
+  --color-positive: #9fd1aa;
+  --color-positive-bg: #24372b;
+  --color-highlight: #8a743d;
+  --color-aspect-conjunction: #eceef2;
+  --color-aspect-sextile: #69bceb;
+  --color-aspect-square: #f083cf;
+  --color-aspect-trine: #67d9aa;
+  --color-aspect-opposition: #ff7d86;
   --bg-grad:
     radial-gradient(135% 105% at 14% -2%,
       rgba(58, 66, 74, 0.6) 0%, rgba(58, 66, 74, 0) 56%),

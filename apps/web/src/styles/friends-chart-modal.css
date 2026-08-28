@@ -2,7 +2,7 @@
 .add-chart-city-search {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: calc(var(--space-1) + var(--space-1) / 2);
   color: var(--muted);
   font-family: var(--font-body);
   font-size: var(--text-section-label-size);
@@ -28,7 +28,7 @@
 .add-chart-field > label,
 .add-chart-city-search label {
   display: grid;
-  gap: 6px;
+  gap: calc(var(--space-1) + var(--space-1) / 2);
 }
 
 .add-chart-field input:not([type="checkbox"]),
@@ -38,7 +38,7 @@
   width: 100%;
   min-height: 46px;
   box-sizing: border-box;
-  border: 1px solid var(--control-border);
+  border: var(--border-width-thin) solid var(--control-border);
   border-radius: var(--control-radius);
   background: var(--control-bg);
   color: var(--ink);
@@ -88,7 +88,7 @@
 
 .add-chart-pronouns {
   border: 0;
-  border-top: 1px solid var(--border);
+  border-top: var(--border-width-thin) solid var(--card-border);
   margin: 0;
   padding: calc(var(--space-4) + var(--space-1) / 2) 0 0;
 }
@@ -107,7 +107,7 @@
 .add-chart-pronoun-options {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px 16px;
+  gap: calc(var(--space-2) + var(--space-1) / 2) var(--space-4);
   margin-top: var(--space-3);
 }
 
@@ -119,7 +119,7 @@
   font-family: var(--font-body);
   font-size: var(--type-meta-size);
   font-weight: var(--weight-regular);
-  gap: 8px;
+  gap: var(--space-2);
 }
 
 .add-chart-pronoun-option input {
@@ -129,7 +129,7 @@
   height: 18px;
   margin: 0;
   width: 18px;
-  border: 1px solid var(--line-strong);
+  border: var(--border-width-thin) solid var(--line-strong);
   border-radius: var(--radius-circle);
   background: var(--control-bg);
 }
@@ -194,7 +194,7 @@
 }
 
 .add-chart-birth-grid {
-  gap: 12px;
+  gap: var(--space-3);
   align-items: start;
   grid-template-columns: minmax(0, 1fr);
 }
@@ -206,7 +206,7 @@
 .add-chart-form .checkbox-row {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--space-2);
   width: 100%;
   color: var(--card-meta-color);
   font-family: var(--font-body);
@@ -228,7 +228,7 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  border: 1px solid var(--line-strong);
+  border: var(--border-width-thin) solid var(--line-strong);
   border-radius: var(--radius-sm);
   background: var(--surface-2);
 }
@@ -239,13 +239,13 @@
 }
 
 .add-chart-form .checkbox-row input:checked::before {
-  --add-chart-checkmark-offset-y: -1px;
+  --add-chart-checkmark-offset-y: var(--ds-optical-offset-1);
 
   content: "";
   width: 8px;
   height: 5px;
-  border-bottom: 2px solid var(--surface);
-  border-left: 2px solid var(--surface);
+  border-bottom: var(--border-width-medium) solid var(--surface);
+  border-left: var(--border-width-medium) solid var(--surface);
   transform: rotate(-45deg) translateY(var(--add-chart-checkmark-offset-y));
 }
 
@@ -278,4 +278,3 @@
 .add-chart-submit:hover {
   opacity: 0.92;
 }
-

@@ -12,7 +12,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 20px;
+  gap: var(--space-5);
 }
 
 .settings-header h1,
@@ -46,7 +46,7 @@
 .settings-card,
 .settings-account-card {
   overflow: hidden;
-  border: 1px solid var(--card-border);
+  border: var(--border-width-thin) solid var(--card-border);
   border-radius: var(--card-radius);
   background: var(--card-bg);
 }
@@ -58,9 +58,9 @@
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
-  gap: 20px;
+  gap: var(--space-5);
   padding: var(--row-padding-y) var(--row-padding-x);
-  border-bottom: 1px solid var(--card-border);
+  border-bottom: var(--border-width-thin) solid var(--card-border);
   background: var(--card-bg);
 }
 
@@ -130,7 +130,7 @@ button.settings-signout-row {
   grid-auto-columns: minmax(0, auto);
   align-items: center;
   justify-content: end;
-  gap: 10px;
+  gap: calc(var(--space-2) + var(--space-1) / 2);
   min-width: 0;
 }
 
@@ -182,7 +182,7 @@ button.settings-signout-row {
 .settings-row-copy {
   display: grid;
   min-width: 0;
-  gap: 5px;
+  gap: calc(var(--space-1) + var(--space-1) / 4);
 }
 
 .settings-row-title {
@@ -216,7 +216,7 @@ button.settings-signout-row {
 
 .settings-blocked-copy {
   display: grid;
-  gap: 3px;
+  gap: calc(var(--space-1) * 0.75);
   min-width: 0;
 }
 
@@ -230,7 +230,7 @@ button.settings-signout-row {
 .settings-blocked-copy strong {
   color: var(--ink);
   font-family: var(--font-display);
-  font-size: var(--text-body-size);
+  font-size: var(--text-card-title);
   letter-spacing: var(--tracking-normal);
   text-transform: none;
 }
@@ -242,7 +242,7 @@ button.settings-signout-row {
 
 .settings-unblock-button {
   min-height: 40px;
-  border: 1px solid var(--control-border);
+  border: var(--border-width-thin) solid var(--control-border);
   border-radius: var(--radius-pill);
   background: transparent;
   padding: 0 var(--space-4);
@@ -271,7 +271,7 @@ button.settings-signout-row {
 .settings-social-message {
   margin: 0;
   padding: var(--space-3) var(--row-padding-x);
-  border-bottom: 1px solid var(--card-border);
+  border-bottom: var(--border-width-thin) solid var(--card-border);
   color: var(--muted);
   font-size: var(--text-meta-size);
   line-height: var(--leading-description);
@@ -301,7 +301,7 @@ button.settings-signout-row {
   position: relative;
   display: grid;
   gap: var(--space-4);
-  padding: clamp(24px, 5vw, 36px);
+  padding: var(--settings-panel-padding);
 }
 
 .account-delete-modal h2,
@@ -313,7 +313,7 @@ button.settings-signout-row {
   padding-right: var(--space-8);
   font-family: var(--font-display);
   font-size: var(--settings-dialog-title-size);
-  line-height: var(--leading-heading);
+  line-height: var(--leading-h2);
 }
 
 .account-delete-modal p {
@@ -330,7 +330,7 @@ button.settings-signout-row {
 
 .account-delete-modal input {
   min-height: 46px;
-  border: 1px solid var(--control-border);
+  border: var(--border-width-thin) solid var(--control-border);
   border-radius: var(--radius-sm);
   background: var(--surface-2);
   padding: 0 var(--space-3);
@@ -357,9 +357,9 @@ button.settings-signout-row {
 }
 
 .account-delete-confirm-button {
-  border: 1px solid var(--danger);
+  border: var(--border-width-thin) solid var(--danger);
   background: var(--danger);
-  color: #fff;
+  color: var(--color-white);
 }
 
 .account-delete-confirm-button:disabled {
@@ -369,7 +369,7 @@ button.settings-signout-row {
 
 .modal-panel.account-phone-modal {
   position: relative;
-  padding: clamp(26px, 5vw, 40px);
+  padding: var(--settings-dialog-padding);
 }
 
 .account-phone-modal form,
@@ -388,7 +388,7 @@ button.settings-signout-row {
   font-family: var(--font-display);
   font-size: var(--settings-dialog-title-size);
   font-weight: var(--weight-regular);
-  line-height: var(--leading-heading);
+  line-height: var(--leading-h2);
 }
 
 .account-phone-modal p {
@@ -410,7 +410,7 @@ button.settings-signout-row {
 .account-phone-modal label > input,
 .account-phone-modal .phone-auth-number-control > input {
   min-height: var(--input-height);
-  border: 1px solid var(--input-border);
+  border: var(--border-width-thin) solid var(--input-border);
   border-radius: var(--input-radius);
   background: var(--input-bg);
   padding: 0 var(--space-4);
@@ -449,7 +449,7 @@ button.settings-signout-row {
 }
 
 .account-phone-primary {
-  border: 1px solid var(--ink);
+  border: var(--border-width-thin) solid var(--ink);
   background: var(--ink);
   color: var(--surface);
 }
@@ -558,7 +558,7 @@ button.settings-signout-row {
   align-items: center;
   width: min(280px, 36vw);
   min-width: 0;
-  border: 1px solid var(--control-border);
+  border: var(--border-width-thin) solid var(--control-border);
   border-radius: var(--radius-pill);
   background: var(--control-bg);
   padding: calc(var(--space-2) + var(--space-1) / 2) var(--space-4);
@@ -567,7 +567,7 @@ button.settings-signout-row {
 
 .account-handle-input-wrap:focus-within {
   border-color: var(--ink);
-  box-shadow: 0 0 0 1px var(--ink);
+  box-shadow: 0 0 0 var(--border-width-thin) var(--ink);
 }
 
 .account-handle-input-wrap input {
@@ -589,7 +589,7 @@ button.settings-signout-row {
 .account-handle-cancel,
 .account-handle-save {
   min-height: 38px;
-  border: 1px solid var(--control-border);
+  border: var(--border-width-thin) solid var(--control-border);
   border-radius: var(--radius-pill);
   padding: var(--space-2) var(--space-4);
   font: inherit;
@@ -614,7 +614,7 @@ button.settings-signout-row {
 
 .account-handle-message {
   padding: var(--space-3) var(--row-padding-x);
-  border-bottom: 1px solid var(--card-border);
+  border-bottom: var(--border-width-thin) solid var(--card-border);
   background: var(--card-bg);
   color: var(--muted);
   font-size: var(--text-meta-size);
@@ -630,7 +630,7 @@ button.settings-signout-row {
   width: fit-content;
   max-width: 100%;
   justify-self: start;
-  border: 1px solid var(--control-border);
+  border: var(--border-width-thin) solid var(--control-border);
   border-radius: var(--radius-pill);
   background: var(--control-bg);
   padding: var(--space-1);
@@ -656,7 +656,7 @@ button.settings-signout-row {
   justify-content: flex-start;
   width: 72px;
   height: 38px;
-  border: 1px solid var(--control-border);
+  border: var(--border-width-thin) solid var(--control-border);
   border-radius: var(--radius-pill);
   background: var(--control-bg);
   padding: var(--space-1);

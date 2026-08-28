@@ -6,11 +6,11 @@
 .settings-location-actions {
   display: flex;
   flex-wrap: wrap;
-  gap: 12px;
+  gap: var(--space-3);
 }
 
 .settings-location-cancel {
-  border: 1px solid var(--button-border, var(--card-border));
+  border: var(--border-width-thin) solid var(--button-border, var(--card-border));
   border-radius: var(--radius-pill);
   background: var(--surface-2);
   color: var(--ink);

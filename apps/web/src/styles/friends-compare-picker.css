@@ -13,7 +13,7 @@
   min-width: 0;
   min-height: 46px;
   padding: calc(var(--space-2) - var(--space-1) / 4) calc(var(--space-3) + var(--space-1) / 2);
-  border: 1px solid var(--control-border);
+  border: var(--border-width-thin) solid var(--control-border);
   border-radius: var(--radius-pill);
   background: var(--control-bg);
   font-weight: var(--weight-regular);
@@ -28,7 +28,7 @@
   justify-content: center;
   max-width: 100%;
   min-width: 0;
-  gap: 11px;
+  gap: calc(var(--space-3) - var(--space-1) / 4);
 }
 
 .friend-compare-pill svg {
@@ -67,7 +67,7 @@
   z-index: var(--z-popover);
   width: min(460px, calc(100vw - 40px));
   transform: translateX(var(--friend-compare-popover-center-offset));
-  border: 1px solid var(--overlay-border);
+  border: var(--border-width-thin) solid var(--overlay-border);
   border-radius: var(--overlay-radius);
   background: var(--overlay-bg);
   box-shadow: var(--overlay-shadow);
@@ -102,7 +102,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 18px;
+  gap: calc(var(--space-4) + var(--space-1) / 2);
   margin-bottom: var(--space-4);
 }
 
@@ -128,7 +128,7 @@
   display: grid;
   overflow: hidden;
   margin-top: 0;
-  border: 1px solid var(--card-border);
+  border: var(--border-width-thin) solid var(--card-border);
   border-radius: var(--card-radius);
   background: var(--card-bg);
 }
@@ -138,10 +138,10 @@
   grid-template-columns: 44px minmax(0, 1fr) 28px;
   align-items: center;
   min-height: 82px;
-  gap: 16px;
+  gap: var(--space-4);
   padding: calc(var(--space-4) + var(--space-1) / 4) var(--space-5);
   border: 0;
-  border-bottom: 1px solid var(--table-row-border);
+  border-bottom: var(--border-width-thin) solid var(--table-row-border);
   background: transparent;
   text-align: left;
   font-weight: var(--weight-regular);
@@ -164,7 +164,7 @@
 .friend-compare-option-copy {
   display: grid;
   min-width: 0;
-  gap: 5px;
+  gap: calc(var(--space-1) + var(--space-1) / 4);
   line-height: var(--leading-title);
 }
 

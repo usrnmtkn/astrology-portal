@@ -1,6 +1,6 @@
 .report-article-page {
   min-height: 100svh;
-  padding: clamp(var(--space-9), 8vw, var(--space-10)) var(--page-gutter) var(--space-10);
+  padding: var(--report-page-padding);
   color: var(--ink);
   font-family: var(--font-body);
 }
@@ -16,7 +16,7 @@
 .report-chapter,
 .report-key-dates,
 .report-colophon {
-  border: 1px solid var(--card-border);
+  border: var(--border-width-thin) solid var(--card-border);
   border-radius: var(--card-radius);
   background: var(--card-bg);
   box-shadow: var(--card-shadow);
@@ -26,7 +26,7 @@
   display: grid;
   justify-items: center;
   gap: var(--space-5);
-  padding: clamp(var(--space-8), 8vw, var(--space-10));
+  padding: var(--report-hero-padding);
   text-align: center;
 }
 
@@ -111,7 +111,7 @@
   display: grid;
   align-content: center;
   gap: var(--space-4);
-  padding: clamp(var(--space-7), 6vw, var(--space-10));
+  padding: var(--report-section-padding);
 }
 
 .report-chapter__copy h2,
@@ -136,7 +136,7 @@
   align-items: flex-start;
   gap: var(--inline-gap);
   padding-top: var(--space-2);
-  border-top: 1px solid var(--card-border);
+  border-top: var(--border-width-thin) solid var(--card-border);
   color: var(--card-meta-color);
   font-family: var(--font-label);
   font-size: var(--text-meta-size);
@@ -162,7 +162,7 @@
 .report-colophon {
   display: grid;
   gap: var(--space-5);
-  padding: clamp(var(--space-7), 6vw, var(--space-10));
+  padding: var(--report-section-padding);
 }
 
 .report-key-dates__list {
@@ -176,7 +176,7 @@
   gap: var(--card-row-gap);
   width: 100%;
   padding: var(--card-row-padding);
-  border: 1px solid var(--card-border);
+  border: var(--border-width-thin) solid var(--card-border);
   border-radius: var(--card-radius-sm);
   background: var(--surface-2);
   color: var(--ink);
@@ -206,7 +206,7 @@
   grid-template-columns: minmax(var(--report-date-label-min-width), 1fr) minmax(0, 2fr);
   gap: var(--card-row-gap);
   padding-top: var(--space-3);
-  border-top: 1px solid var(--card-border);
+  border-top: var(--border-width-thin) solid var(--card-border);
 }
 
 .report-colophon dt,
@@ -285,6 +285,6 @@
   display: grid;
   min-height: 100vh;
   place-content: center;
-  padding: var(--space-8, 2rem);
+  padding: var(--report-callout-padding);
   text-align: center;
 }

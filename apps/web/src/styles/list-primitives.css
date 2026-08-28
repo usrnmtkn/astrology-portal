@@ -24,14 +24,6 @@
   gap: var(--card-list-gap);
 }
 
-.planet-placement-list {
-  overflow: visible;
-  border: 0;
-  border-radius: 0;
-  background: transparent;
-  box-shadow: var(--shadow-flat);
-}
-
 .placement-section .planet-placement-list,
 .placement-section .placement-table,
 .aspect-section .aspect-row-list {
