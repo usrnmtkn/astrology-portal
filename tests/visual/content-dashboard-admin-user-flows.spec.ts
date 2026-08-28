@@ -2700,6 +2700,22 @@ test.describe("content dashboard admin user flow case studies", () => {
 
     await page.getByRole("navigation", { name: "Content operations" }).getByRole("button", { name: "Content Library" }).click();
     await expect(page.locator("main.admin-dashboard")).not.toContainText(forbiddenReaderPreviewCopy);
+    const contentToolbar = page.getByRole("region", { name: "Content controls" });
+    const contentToolbarCopy = contentToolbar.locator(".admin-content-toolbar-copy");
+    const contentToolbarActions = contentToolbar.locator("[aria-label='Content admin shortcuts']");
+    const contentToolbarLayout = await Promise.all([
+      contentToolbar.boundingBox(),
+      contentToolbarCopy.boundingBox(),
+      contentToolbarActions.boundingBox()
+    ]);
+    const [toolbarBox, toolbarCopyBox, toolbarActionsBox] = contentToolbarLayout;
+    expect(toolbarBox).not.toBeNull();
+    expect(toolbarCopyBox).not.toBeNull();
+    expect(toolbarActionsBox).not.toBeNull();
+    expect(toolbarCopyBox!.width).toBeGreaterThanOrEqual(Math.min(760, toolbarBox!.width - 52));
+    expect(toolbarActionsBox!.y).toBeGreaterThan(toolbarCopyBox!.y);
+    await expect(contentToolbar.getByRole("heading", { name: "All editable content rows" })).toHaveCSS("white-space", "normal");
+    await expectNoHorizontalOverflow(page, "Content Library desktop");
     await page.screenshot({ animations: "disabled", fullPage: true, path: path.join(adminScreenshotDir, "desktop-exact-content.png") });
 
     await page.setViewportSize({ width: 390, height: 844 });

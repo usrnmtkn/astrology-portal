@@ -4374,7 +4374,7 @@ export function GeneratedContentAdminDashboard() {
 
         {activePage === "content" && (
           <section className="admin-template-page">
-            <section className="admin-content-toolbar" aria-label="Content controls">
+            <section className="admin-content-toolbar admin-content-library-toolbar" aria-label="Content controls">
               <div className="admin-content-toolbar-copy">
                 <p className="admin-eyebrow">Full content library</p>
                 <h2>All editable content rows</h2>
