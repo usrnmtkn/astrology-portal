@@ -15,6 +15,13 @@ import {
 } from "../content/cmsSurfaceOverrides";
 import type { ConditionalSectionReviewFlag } from "./conditionalSectionReviewQueue";
 import { reportLiveOmittedSections } from "./conditionalSectionReviewReporter";
+import {
+  assertLunationBodyMatchesEventSky,
+  lunationBlendFacts,
+  wholeSignHouse
+} from "./lunationEphemerisFacts";
+
+export { assertLunationBodyMatchesEventSky, lunationBlendFacts } from "./lunationEphemerisFacts";
 
 export type WeeklyHoroscopeWeekType =
   | "eclipse"
@@ -177,6 +184,12 @@ type WeeklyEphemerisData = {
   stationEventPositions: Map<string, PlanetPosition>;
 };
 
+type WeeklySkyLoader = (
+  location: LocationInput,
+  date: Date,
+  options?: { includeTransitWindows?: boolean }
+) => Promise<SkySnapshot>;
+
 type TransitContact = {
   transiting: string;
   natal: string;
@@ -215,25 +228,6 @@ const aspectRelations: Record<MajorAspect, string> = {
   trine: "trine",
   sextile: "sextile"
 };
-const signRulers: Record<string, string> = {
-  aries: "mars",
-  taurus: "venus",
-  gemini: "mercury",
-  cancer: "moon",
-  leo: "sun",
-  virgo: "mercury",
-  libra: "venus",
-  scorpio: "mars",
-  sagittarius: "jupiter",
-  capricorn: "saturn",
-  aquarius: "saturn",
-  pisces: "jupiter"
-};
-const signs = ["aries", "taurus", "gemini", "cancer", "leo", "virgo", "libra", "scorpio", "sagittarius", "capricorn", "aquarius", "pisces"];
-const skyBodyClaimPattern = new RegExp(
-  `\\b(Sun|Moon|Mercury|Venus|Mars|Jupiter|Saturn|Uranus|Neptune|Pluto|Chiron|Lilith|North Node|South Node)\\s+(?:(?:is\\s+)?(?:currently\\s+)?(?:retrograde|direct|Rx)\\s+|is\\s+)?in\\s+(${signs.join("|")})\\b`,
-  "giu"
-);
 const weeklyEphemerisCache = new Map<string, Promise<WeeklyEphemerisData>>();
 const maxWeeklyEphemerisCacheEntries = 12;
 
@@ -258,27 +252,6 @@ function contentSourceForRow(row: Pick<WeeklySourceRow, "approved_via">): Calend
 
 function normalizeId(value: string) {
   return value.trim().toLowerCase().replace(/\s+/g, "-");
-}
-
-export function assertLunationBodyMatchesEventSky(body: string, snapshot: SkySnapshot) {
-  const eventPositions = new Map(
-    snapshot.positions.map((position) => [normalizeId(position.planet), position])
-  );
-
-  for (const match of body.matchAll(skyBodyClaimPattern)) {
-    const planet = normalizeId(match[1] ?? "");
-    const claimedSign = normalizeId(match[2] ?? "");
-    const eventPosition = eventPositions.get(planet);
-    if (!eventPosition) {
-      throw new SourceGapError(`SOURCE_GAP: event-time position missing for ${planet}`);
-    }
-    const eventSign = normalizeId(eventPosition.sign);
-    if (claimedSign !== eventSign) {
-      throw new SourceGapError(
-        `SOURCE_GAP: stale-sky lunation claim says ${planet} in ${claimedSign}; event-time ephemeris says ${eventSign}`
-      );
-    }
-  }
 }
 
 function title(value: string) {
@@ -330,12 +303,6 @@ function angularSeparation(first: number, second: number) {
   return difference > 180 ? 360 - difference : difference;
 }
 
-function wholeSignHouse(sign: string, risingSign: string) {
-  const signIndex = signs.indexOf(normalizeId(sign));
-  const risingIndex = signs.indexOf(normalizeId(risingSign));
-  return signIndex < 0 || risingIndex < 0 ? null : ((signIndex - risingIndex + 12) % 12) + 1;
-}
-
 function ordinalHouse(house: number) {
   const remainder = house % 100;
   const suffix = remainder >= 11 && remainder <= 13
@@ -381,6 +348,40 @@ function weeklyEphemerisCacheKey(location: LocationInput, window: WeeklyWindow) 
   ].join("|");
 }
 
+export async function loadWeeklyDailySnapshots(
+  location: LocationInput,
+  calculationDates: Date[],
+  loadSky?: WeeklySkyLoader
+) {
+  const skyLoader = loadSky
+    ?? (await import("./skyCalculationClient")).getAstrodienstSkyOffMainThread;
+  return Promise.all(calculationDates.map((date) => skyLoader(location, date)));
+}
+
+export async function loadWeeklyStationPositions(
+  location: LocationInput,
+  events: LunarCalendarEvent[],
+  loadSky?: WeeklySkyLoader
+) {
+  const skyLoader = loadSky
+    ?? (await import("./skyCalculationClient")).getAstrodienstSkyOffMainThread;
+  const entries = await Promise.all(
+    events.filter(isExactStation).map(async (event) => {
+      const eventSky = await skyLoader(
+        location,
+        new Date(event.startsAt),
+        { includeTransitWindows: true }
+      );
+      const planet = normalizeId(event.planet ?? "");
+      const position = eventSky.positions.find((candidate) => normalizeId(candidate.planet) === planet);
+      return position ? [event.id, position] as const : null;
+    })
+  );
+  return new Map<string, PlanetPosition>(
+    entries.filter((entry): entry is readonly [string, PlanetPosition] => entry !== null)
+  );
+}
+
 async function loadWeeklyEphemeris(location: LocationInput, window: WeeklyWindow): Promise<WeeklyEphemerisData> {
   const key = weeklyEphemerisCacheKey(location, window);
   const cached = weeklyEphemerisCache.get(key);
@@ -390,10 +391,14 @@ async function loadWeeklyEphemeris(location: LocationInput, window: WeeklyWindow
     const calculationDates = window.dateKeys.map((dateKey) => new Date(`${dateKey}T16:00:00Z`));
     const rangeStart = new Date(`${window.weekStart}T00:00:00Z`);
     const rangeEnd = new Date(`${window.weekEnd}T23:59:59.999Z`);
-    const { getAstrodienstSky, getLunarCalendarRangeEvents, getMatchingNewMoonForFullMoon } = await import("./ephemeris");
-    const [rangeEvents, ...snapshots] = await Promise.all([
-      getLunarCalendarRangeEvents(location, rangeStart, rangeEnd),
-      ...calculationDates.map((date) => getAstrodienstSky(location, date))
+    const {
+      getAstrodienstSkyOffMainThread,
+      getLunarCalendarRangeEventsOffMainThread,
+      getMatchingNewMoonForFullMoonOffMainThread
+    } = await import("./skyCalculationClient");
+    const [rangeEvents, snapshots] = await Promise.all([
+      getLunarCalendarRangeEventsOffMainThread(location, rangeStart, rangeEnd),
+      loadWeeklyDailySnapshots(location, calculationDates, getAstrodienstSkyOffMainThread)
     ]);
     const dateKeySet = new Set(window.dateKeys);
     const events = rangeEvents
@@ -403,34 +408,22 @@ async function loadWeeklyEphemeris(location: LocationInput, window: WeeklyWindow
     const lunationEventSkies = new Map<string, SkySnapshot>(
       await Promise.all(lunationEvents.map(async (event) => [
         event.id,
-        await getAstrodienstSky(location, new Date(event.startsAt), { includeTransitWindows: true })
+        await getAstrodienstSkyOffMainThread(location, new Date(event.startsAt), { includeTransitWindows: true })
       ] as const))
     );
     const matchingNewMoons = new Map<string, MatchingNewMoonFact>(
       (await Promise.all(lunationEvents.map(async (event) => {
         if (lunationKind(event) !== "full-moon" || !event.sign) return null;
-        const match = await getMatchingNewMoonForFullMoon(location, event.startsAt, event.sign);
+        const match = await getMatchingNewMoonForFullMoonOffMainThread(location, event.startsAt, event.sign);
         return match ? [event.id, match] as const : null;
       }))).filter(
         (entry): entry is readonly [string, MatchingNewMoonFact] => entry !== null
       )
     );
-    const stationPositionEntries = await Promise.all(
-      events.filter(isExactStation).map(async (event) => {
-        const eventSky = await getAstrodienstSky(
-          location,
-          new Date(event.startsAt),
-          { includeTransitWindows: true }
-        );
-        const planet = normalizeId(event.planet ?? "");
-        const position = eventSky.positions.find((candidate) => normalizeId(candidate.planet) === planet);
-        return position ? [event.id, position] as const : null;
-      })
-    );
-    const stationEventPositions = new Map<string, PlanetPosition>(
-      stationPositionEntries.filter(
-        (entry): entry is readonly [string, PlanetPosition] => entry !== null
-      )
+    const stationEventPositions = await loadWeeklyStationPositions(
+      location,
+      events,
+      getAstrodienstSkyOffMainThread
     );
 
     return { events, snapshots, lunationEventSkies, matchingNewMoons, stationEventPositions };
@@ -449,41 +442,6 @@ async function loadWeeklyEphemeris(location: LocationInput, window: WeeklyWindow
   }
 
   return request;
-}
-
-export function lunationBlendFacts(
-  snapshot: SkySnapshot,
-  lunationSign: string,
-  risingSign: string,
-  kind: string
-) {
-  const normalizedSign = normalizeId(lunationSign);
-  const ruler = signRulers[normalizedSign] ?? null;
-  const moonHouse = wholeSignHouse(normalizedSign, risingSign);
-  const isFullMoon = kind === "full-moon" || kind === "eclipse-lunar";
-  const sun = isFullMoon
-    ? snapshot.positions.find((position) => normalizeId(position.planet) === "sun")
-    : null;
-  const sunHouse = sun ? wholeSignHouse(sun.sign, risingSign) : null;
-  const rulerPosition = ruler && ruler !== "sun" && ruler !== "moon"
-    ? snapshot.positions.find((position) => normalizeId(position.planet) === ruler)
-    : null;
-  const rulerHouse = rulerPosition ? wholeSignHouse(rulerPosition.sign, risingSign) : null;
-  const uranus = snapshot.positions.find((position) => normalizeId(position.planet) === "uranus");
-  const uranusHouse = uranus ? wholeSignHouse(uranus.sign, risingSign) : null;
-  // The Uranus-only lunation layer is retained in the content library but is
-  // intentionally non-serving. See docs/decisions/2026-08-23-remove-uranus-lunation-reader-layer.md.
-  const uranusLayerActive = false;
-
-  return {
-    moonHouse,
-    sunHouse,
-    ruler,
-    rulerHouse,
-    rulerRetrograde: rulerPosition?.motion === "retrograde",
-    uranusHouse,
-    uranusLayerActive
-  };
 }
 
 function aspectCandidates(transit: PlanetPosition, natalTargets: PlanetPosition[], orbLimit: number) {
@@ -1341,11 +1299,11 @@ export async function buildWeeklyHoroscope({
   const returnTimingEntries = [...closestContacts.entries()].filter(([, { contact }]) => (
     isEligibleTransitReturn(contact.transiting, contact.natal, contact.aspect)
   ));
-  const { natalTransitTimingFor } = await import("./ephemeris");
+  const { natalTransitTimingForOffMainThread } = await import("./skyCalculationClient");
   const returnTimings = new Map(await Promise.all(returnTimingEntries.map(async ([key, { contact, dayIndex }]) => {
     const natal = natalTargets.find((position) => normalizeId(position.planet) === contact.natal);
     const timing = typeof natal?.longitude === "number"
-      ? await natalTransitTimingFor(title(contact.transiting), natal.longitude, snapshots[dayIndex]?.generatedAt ?? now, {
+      ? await natalTransitTimingForOffMainThread(title(contact.transiting), natal.longitude, snapshots[dayIndex]?.generatedAt ?? now, {
           aspectDegrees: 0,
           presentationDegrees: 1,
           timeZone
