@@ -11581,7 +11581,7 @@ body,
 .admin-dashboard .admin-composition-detail {
   display: grid;
   gap: var(--admin-space-4xl);
-  padding: clamp(18px, 2.4vw, 28px);
+  padding: clamp(var(--admin-space-3xl), 2vw, var(--admin-space-7xl));
 }
 
 .admin-dashboard .admin-composition-detail-header {
@@ -11600,6 +11600,11 @@ body,
 .admin-dashboard .admin-composition-detail-header h2,
 .admin-dashboard .admin-composition-detail-header p {
   margin: 0;
+}
+
+.admin-dashboard .admin-composition-detail-header h2 {
+  font-size: var(--admin-type-20);
+  line-height: var(--leading-title);
 }
 
 .admin-dashboard .admin-composition-detail-header p:not(.admin-eyebrow) {
@@ -11693,6 +11698,12 @@ body,
   margin: 0;
 }
 
+.admin-dashboard .admin-composition-reader-preview > header h3,
+.admin-dashboard .admin-composition-template-workbench > header h3 {
+  font-size: var(--admin-type-18);
+  line-height: var(--leading-title);
+}
+
 .admin-dashboard .admin-composition-reader-preview > header p:not(.admin-eyebrow),
 .admin-dashboard .admin-composition-template-workbench > header p:not(.admin-eyebrow) {
   color: var(--admin-ui-muted);
@@ -11748,16 +11759,16 @@ body,
 
 .admin-dashboard .admin-composition-preview-copy {
   display: grid;
-  gap: var(--admin-space-3xl);
+  gap: var(--admin-space-2xl);
   margin: 0 auto;
-  max-width: 760px;
-  padding: clamp(var(--admin-space-7xl), 4vw, 52px);
+  max-width: 720px;
+  padding: clamp(var(--admin-space-4xl), 3vw, var(--admin-space-9xl));
   width: 100%;
 }
 
 .admin-dashboard .admin-composition-preview-field {
   display: grid;
-  gap: var(--admin-space-lg);
+  gap: var(--admin-space-md);
 }
 
 .admin-dashboard .admin-composition-preview-field > span {
@@ -11771,14 +11782,14 @@ body,
 .admin-dashboard .admin-composition-preview-field h3 {
   color: var(--admin-ui-text);
   font-family: var(--font-heading);
-  font-size: var(--admin-type-28);
-  line-height: var(--leading-display);
+  font-size: var(--admin-type-22);
+  line-height: var(--leading-title);
 }
 
 .admin-dashboard .admin-composition-preview-field p {
   color: #e0e5e2;
   font-family: var(--font-body);
-  font-size: var(--admin-type-18);
+  font-size: var(--admin-type-16);
   line-height: var(--leading-description);
 }
 
@@ -11837,6 +11848,7 @@ body,
   border-radius: 3px;
   box-shadow: none;
   color: var(--composition-variable-color);
+  cursor: pointer;
   display: inline;
   font: inherit;
   letter-spacing: inherit;
@@ -11848,6 +11860,18 @@ body,
   position: relative;
   text-align: inherit;
   text-transform: inherit;
+}
+
+.admin-dashboard .admin-composition-inline-edit {
+  color: color-mix(in srgb, var(--composition-variable-color) 86%, white);
+  display: inline-block;
+  font-family: var(--font-label);
+  font-size: var(--admin-ui-type-caption);
+  font-weight: var(--weight-semibold);
+  letter-spacing: 0;
+  margin-left: var(--admin-space-sm);
+  text-transform: none;
+  white-space: nowrap;
 }
 
 .admin-dashboard .admin-composition-variable:hover,
@@ -12337,6 +12361,10 @@ body,
 
   .admin-dashboard .admin-composition-preview-copy {
     padding: var(--admin-space-3xl) var(--admin-space-xl);
+  }
+
+  .admin-dashboard .admin-composition-preview-field h3 {
+    font-size: var(--admin-type-20);
   }
 
   .admin-dashboard .admin-composition-preview-field p {
