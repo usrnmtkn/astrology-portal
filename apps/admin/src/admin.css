@@ -9125,6 +9125,45 @@ body,
   line-height: 1.45;
 }
 
+.admin-dashboard .admin-reader-sentence-context {
+  display: grid;
+  gap: 10px;
+}
+
+.admin-dashboard .admin-reader-sentence-context > div {
+  display: grid;
+  gap: 3px;
+}
+
+.admin-dashboard .admin-reader-sentence-context > div > strong {
+  font-size: var(--admin-ui-type-body);
+  line-height: 1.3;
+}
+
+.admin-dashboard .admin-reader-sentence-context-copy {
+  background: var(--admin-ui-surface-2);
+  border: 1px solid var(--admin-ui-border);
+  border-radius: var(--admin-ui-radius-md);
+  color: var(--admin-ui-text);
+  font-size: var(--admin-ui-type-body);
+  line-height: 1.55;
+  padding: 12px 14px;
+}
+
+.admin-dashboard .admin-reader-sentence-context-copy mark {
+  background: color-mix(in srgb, var(--admin-ui-accent) 20%, transparent);
+  border-bottom: 1px solid var(--admin-ui-accent);
+  border-radius: 3px;
+  color: var(--admin-ui-text);
+  padding: 1px 2px;
+}
+
+.admin-dashboard .admin-reader-sentence-context > small {
+  color: var(--admin-ui-muted);
+  font-size: var(--admin-ui-type-hint);
+  line-height: 1.4;
+}
+
 .admin-dashboard .admin-sky-placement-composition {
   gap: 12px;
 }

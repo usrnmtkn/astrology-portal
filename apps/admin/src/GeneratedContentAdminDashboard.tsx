@@ -95,6 +95,7 @@ import type {
   WritingSurfaceMapItem,
   WritingSurfaceSource
 } from "./writingSurfaceSourceMap";
+import type { CompositionEditorContext } from "./CompositionMapWorkspace";
 import "./admin.css";
 
 const CompositionMapWorkspace = lazy(() => import("./CompositionMapWorkspace"));
@@ -2218,6 +2219,7 @@ export function GeneratedContentAdminDashboard() {
   const [templateVariableQuery, setTemplateVariableQuery] = useState("");
   const [selectedTemplateVariableName, setSelectedTemplateVariableName] = useState<string | null>(null);
   const [selectedTemplateVariableSourceId, setSelectedTemplateVariableSourceId] = useState<string | null>(null);
+  const [compositionEditorContext, setCompositionEditorContext] = useState<CompositionEditorContext | null>(null);
   const [skyArticleEditionForm, setSkyArticleEditionForm] = useState<SkyArticleEditionForm | null>(null);
   const [skyArticleEditor, setSkyArticleEditor] = useState<SkyArticleEditorState | null>(null);
   const [draft, setDraft] = useState<AdminDraft | null>(null);
@@ -2913,6 +2915,7 @@ export function GeneratedContentAdminDashboard() {
     setTemplateVariableQuery("");
     setSelectedTemplateVariableName(null);
     setSelectedTemplateVariableSourceId(null);
+    setCompositionEditorContext(null);
     setSelectedRowId(null);
     setDraft(null);
     setSkyWriteupParentId(null);
@@ -3490,12 +3493,13 @@ export function GeneratedContentAdminDashboard() {
     }
   }
 
-  function openRow(row: AdminGeneratedContentRow) {
+  function openRow(row: AdminGeneratedContentRow, compositionContext: CompositionEditorContext | null = null) {
     const nextDraft = draftFromRow(row);
     const edition = compiledSkyArticleEditionForDraft(nextDraft);
     const baseEdition = skyArticleRevisionBaseForDraft(nextDraft);
     setSelectedRowId(row.id);
     setDraft(nextDraft);
+    setCompositionEditorContext(compositionContext);
     setSkyWriteupParentId(null);
     setSkyRelatedAspectQuery("");
     setSkyFallbackPreviewFacts({});
@@ -4807,7 +4811,7 @@ export function GeneratedContentAdminDashboard() {
           <Suspense fallback={<div className="admin-empty">Loading Composition Map…</div>}>
             <CompositionMapWorkspace
               rows={visibleRows}
-              onEditRow={(row) => openRow(row as AdminGeneratedContentRow)}
+              onEditRow={(row, context) => openRow(row as AdminGeneratedContentRow, context ?? null)}
               onStartCmsRow={openCmsStarter}
               editor={renderEditor()}
             />
@@ -6126,6 +6130,13 @@ export function GeneratedContentAdminDashboard() {
       });
     };
     const fallbackHookEditorTitle = fallbackHookDisplayTitle(currentDraft.contentKey);
+    const compositionContextValue = compositionEditorContext
+      ? compositionEditorContext.sourceField === "headline"
+        ? currentDraft.headline
+        : compositionEditorContext.sourceField === "body_they"
+          ? packageFieldString(currentDraft, "body_they") || currentDraft.body
+          : packageFieldString(currentDraft, "body_you") || currentDraft.body
+      : "";
     const fieldMetrics = (value: string) => {
       const wordCount = value.trim() ? value.trim().split(/\s+/u).length : 0;
       return `${wordCount} ${wordCount === 1 ? "word" : "words"} · ${value.length} ${value.length === 1 ? "character" : "characters"}`;
@@ -6215,6 +6226,20 @@ export function GeneratedContentAdminDashboard() {
                   Back to Unresolved Content
                 </button>
               </div>
+            </section>
+          )}
+          {compositionEditorContext && (
+            <section className="admin-editor-guidance admin-reader-sentence-context" aria-label="Reader sentence context">
+              <div>
+                <p className="admin-eyebrow">In the reader preview · {compositionEditorContext.audience === "they" ? "They" : "You"}</p>
+                <strong>{compositionEditorContext.templateLabel} · {compositionEditorContext.fieldLabel}</strong>
+              </div>
+              <p className="admin-reader-sentence-context-copy">
+                <span>{compositionEditorContext.before}</span>
+                <mark>{compositionContextValue || compositionEditorContext.active}</mark>
+                <span>{compositionEditorContext.after}</span>
+              </p>
+              <small>The highlighted words are the source you are editing. The surrounding words come from the template and other variables.</small>
             </section>
           )}
           {isVocabularyDraft && (

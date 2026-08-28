@@ -2272,6 +2272,13 @@ test.describe("content dashboard admin user flow case studies", () => {
     await inlineHook.click();
     let editor = page.getByRole("dialog", { name: "Generated content editor" });
     await expect(editor.getByLabel("Content key")).toHaveValue("fallback-hook/compatibility-closing/shared");
+    const sentenceContext = editor.getByRole("region", { name: "Reader sentence context" });
+    await expect(sentenceContext).toContainText("Closing card · Passage");
+    await expect(sentenceContext).toContainText("Leo and Aquarius can return to this:");
+    await expect(sentenceContext.locator("mark")).toHaveText("The connection works best when both people say what they need directly.");
+    await expect(sentenceContext).toContainText("The highlighted words are the source you are editing.");
+    await editor.getByLabel("Reader copy").fill("Both people do better when they say what they need directly.");
+    await expect(sentenceContext.locator("mark")).toHaveText("Both people do better when they say what they need directly.");
     await editor.getByRole("button", { name: "Close" }).click();
     await detail.getByRole("tab", { name: "Main template" }).click();
     await expect(detail.locator(".admin-composition-variable-token.variable-hook")).toHaveAttribute("data-variable-action", /Edit Closing Line/);
