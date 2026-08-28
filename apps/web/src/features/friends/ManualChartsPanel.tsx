@@ -107,10 +107,7 @@ import type {
 } from "./CompatibilityTab";
 import type { FriendCompositeAspectGroup } from "./FriendCompositeTab";
 import type { FriendSynastryAspectGroup } from "./FriendSynastryTab";
-import type {
-  FriendNatalAspectGroup as FriendNatalViewAspectGroup,
-  FriendNatalEmptyHouseRow
-} from "./FriendNatalTab";
+import type { FriendNatalEmptyHouseRow } from "./FriendNatalTab";
 import type {
   FriendBondTransitView,
   FriendDailyForecastView,
@@ -139,7 +136,6 @@ import {
   apiSubjectFromManualChart,
   buildFriendChartListItems,
   buildRelationshipComparisonOptions,
-  groupFriendNatalAspects,
   isSocialBigThreeRow,
   manualChartBigThree,
   planetPositionFromSocialRow
@@ -149,7 +145,6 @@ import { useRelationshipCompare } from "./useRelationshipCompare";
 import { resolvedNatalAspectPatternSectionLabel } from "../you/natalAspectPatternLabels";
 import type { SkyDetail } from "../sky/SkyDetailArticle";
 import { wholeDegreeOrb } from "../sky/skyHelpers";
-import { canonicalNatalAspectsForSnapshot } from "../../services/natalAspectFacts";
 import { friendDetailHasReaderFacingContent } from "./friendDetailAvailability";
 import { scheduleFriendChartRepair } from "./friendChartLoading";
 
@@ -306,7 +301,6 @@ export function ManualChartsPanel({
     normalizeCompositeAspectSurface,
     normalizeCompositePlacementSurface,
     normalizeContentIdPart,
-    normalizeNatalAspectSurface,
     normalizePersonalTransitSurface,
     normalizeTransitHouseSurface,
     normalizedSurfacePreview,
@@ -1679,11 +1673,6 @@ export function ManualChartsPanel({
       selectedFriendPlacementRows.map(natalChartTableRowFromSocial)
     );
   }, [friendProfileWork.natal, selectedFriendPlacementRows, selectedFriendReadyNatalChart]);
-  const selectedFriendNatalAspectGroups = useMemo(() => (
-    friendProfileWork.natal && selectedFriendReadyNatalChart
-      ? groupFriendNatalAspects(canonicalNatalAspectsForSnapshot(selectedFriendReadyNatalChart))
-      : []
-  ), [friendProfileWork.natal, selectedFriendReadyNatalChart]);
   const selectedFriendNatalAspectPatternItems = useMemo(() => (
     showFriendNatalAspectPatterns && (friendProfileWork.natal || friendProfileWork.transits) && selectedChart
       ? natalAspectPatternReaderItemsForOwner(
@@ -1783,43 +1772,6 @@ export function ManualChartsPanel({
       };
     });
   }, [fallbackArchitectureV3Version, friendGeneratedContent, selectedChart, selectedFriendEmptyHouses, selectedFriendReadyNatalChart]);
-  const selectedFriendNatalAspectViewGroups = useMemo<FriendNatalViewAspectGroup[]>(() => (
-    selectedFriendNatalAspectGroups.map((group) => ({
-      key: group.key,
-      label: group.label,
-      aspects: group.aspects.map((aspect) => {
-        const normalized = normalizeNatalAspectSurface(aspect, {
-          ownerName: selectedChart?.displayName ?? "Friend",
-          ownerKind: selectedChartIsEvent ? "chart" : "person",
-          ownerPronouns: selectedChart?.pronouns
-        });
-        const renderedSection = normalized.sections[0];
-
-        return {
-          id: `${aspect.from}-${aspect.type}-${aspect.to}`,
-          from: aspect.from,
-          type: aspect.type,
-          to: aspect.to,
-          orb: aspect.orb,
-          title: renderedSection?.heading ?? `${selectedChart?.displayName ?? "Friend"}'s ${aspect.from} ${aspect.type} ${aspect.to}`,
-          summary: normalizedSurfacePreview(normalized),
-          detailAvailable: friendDetailHasReaderFacingContent({
-            body: [],
-            sections: normalized.sections.map((section) => ({
-              heading: section.heading,
-              body: section.body
-            }))
-          })
-        };
-      })
-    }))
-  ), [
-    fallbackArchitectureV3Version,
-    selectedChart?.displayName,
-    selectedChart?.pronouns,
-    selectedChartIsEvent,
-    selectedFriendNatalAspectGroups
-  ]);
   const openFriendDetail = (detail: SkyDetail) => {
     if (!friendDetailHasReaderFacingContent(detail)) {
       return false;
@@ -1876,15 +1828,6 @@ export function ManualChartsPanel({
       })),
       relatedAspects: article.relatedAspects
     });
-  };
-  const openFriendNatalAspectById = (aspectId: string) => {
-    const aspect = selectedFriendNatalAspectGroups
-      .flatMap((group) => group.aspects)
-      .find((candidate) => `${candidate.from}-${candidate.type}-${candidate.to}` === aspectId);
-
-    if (aspect) {
-      openFriendNatalAspectDetail(aspect);
-    }
   };
   const openFriendNatalAspectPatternDetail = (
     item: NatalAspectPatternReaderItem,
@@ -2674,7 +2617,6 @@ export function ManualChartsPanel({
 
           {friendProfileTab === "natal" && (
             <FriendNatalTab
-              aspectGroups={selectedFriendNatalAspectViewGroups}
               bigThreeRows={selectedFriendBigThreeDisplayRows}
               birthTimeUnknown={selectedChart.birthTimeUnknown}
               emptyHouseRows={selectedFriendEmptyHouseViewRows}
@@ -2682,7 +2624,6 @@ export function ManualChartsPanel({
               hasNatalChart={Boolean(selectedFriendReadyNatalChart)}
               isEventChart={Boolean(selectedChartIsEvent)}
               isNatalChartRepairing={selectedFriendNatalChartRepairing}
-              onOpenAspect={openFriendNatalAspectById}
               onOpenEmptyHouse={openFriendEmptyHouseDetail}
               onOpenPattern={openFriendNatalAspectPatternDetail}
               onOpenPlacement={openFriendNatalPlacementDetail}
