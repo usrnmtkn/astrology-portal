@@ -56,6 +56,39 @@ Before completing any heading or title change:
 - run the CSS/token audit plus the relevant browser flow. Typecheck, DOM
   semantics, or an unrelated visual baseline alone is not sufficient evidence.
 
+## Design-system and CSS integrity
+
+Every new or changed product surface must use the shared design system in
+`apps/web/src/styles/theme.css`. Do not introduce raw colors, spacing, radii,
+shadows, font families, font sizes, font weights, line heights, or tracking in
+component styles. A `clamp()` or `calc()` expression in a component stylesheet
+is still a hardcoded value; place the expression behind a documented semantic
+token first.
+
+Do not create a component-prefixed typography scale or alias merely to preserve
+a one-off visual value. Reuse the established semantic roles:
+
+- narrative paragraphs, card descriptions, previews, write-ups, and list items
+  use `--font-body`, `--text-body`, `--weight-regular`, `--leading-body`, and
+  `--tracking-body` at every breakpoint;
+- titles and visible headings use `--font-display` and an established title
+  size/leading token;
+- metadata uses the shared meta tokens and must not be used to shrink narrative
+  copy on compact or mobile layouts;
+- UI labels, data, pills, and navigation use the shared label/UI tokens; and
+- `--font-glyph` is reserved for symbols, not readable text.
+
+Before adding a token, confirm that no existing semantic token represents the
+role. A genuinely new global role belongs in `theme.css`, must map onto the
+canonical type and spacing scales, and must be covered by the CSS audit. Do not
+add page-local design tokens to bypass the shared contract.
+
+After CSS, component, or content-surface changes, run `npm run qa:css-audit`
+and the relevant browser flow. For typography work, verify computed font
+family, size, weight, line height, and letter spacing on desktop and mobile in
+light and dark themes. A source declaration containing `var()` is not proof
+that the correct semantic token was used.
+
 ## Content changes
 
 Before changing reader-facing astrology content, review state, resolver

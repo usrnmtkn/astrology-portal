@@ -33,7 +33,7 @@
   gap: var(--top-control-gap);
   padding: var(--space-4) var(--space-7) 0;
   pointer-events: none;
-  border-bottom: 1px solid transparent;
+  border-bottom: var(--border-width-thin) solid transparent;
   background: transparent;
   box-shadow: var(--shadow-flat);
   backdrop-filter: none;
@@ -59,13 +59,13 @@ html[data-scrolled] .topbar {
   pointer-events: auto;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--space-2);
   height: var(--top-control-height);
   min-height: var(--top-control-height);
   max-width: calc(100vw - 210px);
   overflow-x: auto;
   scrollbar-width: none;
-  border: 1px solid var(--nav-border);
+  border: var(--border-width-thin) solid var(--nav-border);
   border-radius: var(--nav-radius);
   background: var(--nav-surface);
   box-shadow: var(--nav-rest-shadow);
@@ -114,10 +114,7 @@ html[data-scrolled] .topbar {
   background: transparent;
   color: var(--ink);
   padding: 0;
-  font-family: var(--font-brand);
   font-size: var(--text-wordmark);
-  font-weight: var(--weight-semibold);
-  letter-spacing: var(--tracking-tight);
   line-height: var(--leading-label);
   white-space: nowrap;
 }
@@ -125,13 +122,13 @@ html[data-scrolled] .topbar {
 .site-nav {
   display: flex;
   align-items: center;
-  gap: 2px;
+  gap: calc(var(--space-1) / 2);
 }
 
 .site-nav button {
   display: inline-flex;
   align-items: center;
-  gap: 7px;
+  gap: calc(var(--space-2) - var(--space-1) / 4);
   border: 0;
   border-radius: var(--button-radius);
   background: transparent;
@@ -193,7 +190,7 @@ html[data-scrolled] .nav-pill {
 }
 
 .site-nav svg {
-  --nav-icon-optical-offset-y: -0.5px;
+  --nav-icon-optical-offset-y: var(--ds-navigation-nav-icon-optical-offset-y);
 
   width: var(--top-nav-icon-size);
   height: var(--top-nav-icon-size);
@@ -219,7 +216,7 @@ html[data-scrolled] .nav-pill {
   place-items: center;
   width: var(--top-icon-button-size);
   height: var(--top-icon-button-size);
-  border: 1px solid var(--floating-button-border);
+  border: var(--border-width-thin) solid var(--floating-button-border);
   border-radius: var(--button-radius);
   background: var(--floating-button-bg);
   color: var(--ink);
@@ -245,7 +242,7 @@ html[data-scrolled] .menu-toggle {
 
 .theme-toggle:hover,
 .menu-toggle:hover {
-  --floating-button-hover-lift: -1px;
+  --floating-button-hover-lift: var(--ds-optical-offset-1);
 
   border-color: var(--floating-button-border-hover);
   background: var(--floating-button-bg-hover);
@@ -286,7 +283,7 @@ html[data-scrolled] .menu-toggle {
 }
 
 html[data-scrolled] :is(.theme-dark, [data-theme="dark"]) .nav-pill {
-  border: 1px solid var(--nav-border);
+  border: var(--border-width-thin) solid var(--nav-border);
   background: var(--nav-surface);
   color: var(--ink);
   box-shadow: var(--nav-rest-shadow);
@@ -336,10 +333,10 @@ html[data-scrolled] :is(.theme-dark, [data-theme="dark"]) .brand-dot {
 }
 
 .hamburger-icon {
-  --hamburger-width: 23px;
-  --hamburger-height: 18px;
-  --hamburger-stroke: 2.5px;
-  --hamburger-line-offset: 7px;
+  --hamburger-width: var(--ds-navigation-hamburger-width);
+  --hamburger-height: var(--ds-navigation-hamburger-height);
+  --hamburger-stroke: var(--ds-navigation-hamburger-stroke);
+  --hamburger-line-offset: var(--ds-navigation-hamburger-line-offset);
 
   position: relative;
   display: block;
@@ -393,7 +390,7 @@ html[data-scrolled] :is(.theme-dark, [data-theme="dark"]) .brand-dot {
   gap: var(--sp-half);
   width: var(--mobile-menu-width);
   padding: var(--sp-1);
-  border: 1px solid var(--card-border);
+  border: var(--border-width-thin) solid var(--card-border);
   border-radius: var(--card-radius-sm);
   background: var(--card-bg);
   box-shadow: var(--card-shadow);
@@ -405,7 +402,7 @@ html[data-scrolled] :is(.theme-dark, [data-theme="dark"]) .brand-dot {
   display: inline-flex;
   align-items: center;
   justify-content: flex-start;
-  gap: 12px;
+  gap: var(--space-3);
   width: 100%;
   min-height: 52px;
   border: 0;
