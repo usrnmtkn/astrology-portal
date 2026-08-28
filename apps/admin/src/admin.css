@@ -10633,15 +10633,15 @@ body,
 }
 
 .admin-dashboard .admin-unresolved-content-table {
-  min-width: 940px;
+  min-width: 0;
   table-layout: fixed;
   width: 100%;
 }
 
-.admin-dashboard .admin-unresolved-content-table :is(th, td):nth-child(1) { width: 27%; }
-.admin-dashboard .admin-unresolved-content-table :is(th, td):nth-child(2) { width: 35%; }
-.admin-dashboard .admin-unresolved-content-table :is(th, td):nth-child(3) { width: 14%; }
-.admin-dashboard .admin-unresolved-content-table :is(th, td):nth-child(4) { width: 24%; }
+.admin-dashboard .admin-unresolved-content-table :is(th, td):nth-child(1) { width: 22%; }
+.admin-dashboard .admin-unresolved-content-table :is(th, td):nth-child(2) { width: 38%; }
+.admin-dashboard .admin-unresolved-content-table :is(th, td):nth-child(3) { width: 13%; }
+.admin-dashboard .admin-unresolved-content-table :is(th, td):nth-child(4) { width: 27%; }
 
 .admin-dashboard .admin-unresolved-content-table :is(th, td) {
   overflow: visible;
@@ -10661,10 +10661,13 @@ body,
 .admin-dashboard .admin-unresolved-content-table td:last-child .admin-toolbar-actions {
   align-items: stretch;
   flex-direction: column;
+  min-width: 0;
 }
 
 .admin-dashboard .admin-unresolved-content-table td:last-child .admin-toolbar-actions button {
-  inline-size: 100%;
+  inline-size: 180px;
+  max-inline-size: 100%;
+  min-width: 0;
   white-space: normal;
 }
 
@@ -10864,6 +10867,8 @@ body,
 .admin-dashboard .admin-unresolved-actions {
   display: grid;
   gap: var(--admin-space-md);
+  min-width: 0;
+  width: 100%;
 }
 
 .admin-dashboard .admin-unresolved-review-action > strong {
@@ -10879,9 +10884,11 @@ body,
 
 .admin-dashboard .admin-unresolved-review-action > .admin-edit-row-button {
   box-sizing: border-box;
-  inline-size: 100%;
+  inline-size: 180px;
   line-height: 1.25;
+  max-inline-size: 100%;
   min-block-size: 44px;
+  min-width: 0;
   overflow-wrap: anywhere;
   padding: 11px 14px;
   text-align: center;
@@ -10942,6 +10949,30 @@ body,
   color: var(--admin-ui-muted);
   overflow-wrap: anywhere;
   padding: 9px 11px;
+}
+
+.admin-dashboard .admin-guided-review-decision {
+  background: var(--admin-ui-surface-2);
+  border: 1px solid var(--admin-ui-border);
+  border-radius: var(--admin-ui-radius-sm);
+  display: grid;
+  gap: var(--admin-space-sm);
+  padding: 12px 14px;
+}
+
+.admin-dashboard .admin-guided-review-decision > strong {
+  color: var(--admin-ui-text);
+}
+
+.admin-dashboard .admin-guided-review-decision > span {
+  color: var(--admin-ui-muted);
+  font-size: var(--admin-ui-type-hint);
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+
+.admin-dashboard .admin-guided-content-review > .admin-toolbar-actions {
+  justify-content: flex-start;
 }
 
 .admin-dashboard .admin-guided-content-review > button {

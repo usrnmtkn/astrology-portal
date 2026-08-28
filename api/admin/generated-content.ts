@@ -1,4 +1,5 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
+import { createHash } from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath, URL } from "node:url";
@@ -412,6 +413,35 @@ function applyFallbackArchitectureV3ReviewPatch(row: ExistingGeneratedContentRow
   patch.body = readerBody;
   sections.body_you = record.body_you ?? null;
   sections.body_they = record.body_they ?? null;
+
+  const editorialReview = sections.contentStudioReview;
+  if (editorialReview !== undefined && editorialReview !== null) {
+    if (!isRecord(editorialReview)) throw new Error("Content Studio editorial review must be an object or null.");
+    const copySha256 = stringFrom(editorialReview.copySha256);
+    const reviewedAt = stringFrom(editorialReview.reviewedAt);
+    const statement = stringFrom(editorialReview.statement);
+    if (
+      editorialReview.schema !== "content-studio-editorial-review/v1"
+      || editorialReview.decision !== "approved-exact-copy"
+      || !/^[a-f0-9]{64}$/u.test(copySha256)
+      || !reviewedAt
+      || !Number.isFinite(Date.parse(reviewedAt))
+      || !statement.includes(copySha256)
+    ) {
+      throw new Error("Content Studio editorial review is invalid or incomplete.");
+    }
+    if (reviewStatus !== "needs_review") {
+      throw new Error("Content Studio editorial review can only be recorded while the row remains at needs_review.");
+    }
+    const currentCopySha256 = createHash("sha256").update(JSON.stringify({
+      headline: stringFrom(patch.headline ?? row.headline),
+      summary: stringFrom(patch.summary ?? row.summary),
+      body: readerBody
+    }), "utf8").digest("hex");
+    if (copySha256 !== currentCopySha256) {
+      throw new Error("Content Studio editorial review hash does not match the exact saved Headline, Summary, and Body.");
+    }
+  }
 
   if (!hasPackageDraft) record.review_status = reviewStatus;
   if (typeof body.editorialNotes === "string") {

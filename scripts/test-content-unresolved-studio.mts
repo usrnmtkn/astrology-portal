@@ -27,6 +27,7 @@ const reviewSource = fs.readFileSync(new URL("../apps/admin/src/UnresolvedConten
 const endpointSource = fs.readFileSync(new URL("../api/admin/content-unresolved.ts", import.meta.url), "utf8");
 const resolutionEndpointSource = fs.readFileSync(new URL("../api/admin/content-unresolved-resolutions.ts", import.meta.url), "utf8");
 const sourceDecisionEndpointSource = fs.readFileSync(new URL("../api/admin/content-source-repair-decisions.ts", import.meta.url), "utf8");
+const generatedContentEndpointSource = fs.readFileSync(new URL("../api/admin/generated-content.ts", import.meta.url), "utf8");
 const resolutionMigration = fs.readFileSync(new URL("../apps/web/supabase/migrations/20260825100000_content_studio_issue_resolutions.sql", import.meta.url), "utf8");
 const sourceDecisionMigration = fs.readFileSync(new URL("../apps/web/supabase/migrations/20260827010000_content_studio_source_repair_decisions.sql", import.meta.url), "utf8");
 const report = loadContentUnresolvedReport() as UnresolvedContentReport;
@@ -67,7 +68,8 @@ assert.match(editorialIssue.aiRequest, /no editable Content Library row exists/u
 const diagnosisWorkflow = unresolvedIssueWorkflow(editorialIssue, {
   contentLibraryReady: true,
   hasEditableRow: false,
-  requestCopied: false
+  requestCopied: false,
+  editorialDecision: null
 });
 assert.equal(diagnosisWorkflow.statusLabel, "Action needed");
 assert.equal(diagnosisWorkflow.currentStep, "Diagnose the missing editable row");
@@ -77,7 +79,8 @@ assert.deepEqual(diagnosisWorkflow.steps.map((step) => step.state), ["complete",
 const copiedWorkflow = unresolvedIssueWorkflow(editorialIssue, {
   contentLibraryReady: true,
   hasEditableRow: false,
-  requestCopied: true
+  requestCopied: true,
+  editorialDecision: null
 });
 assert.equal(copiedWorkflow.statusLabel, "Waiting for Codex");
 assert.equal(copiedWorkflow.responsibleParty, "Codex");
@@ -94,7 +97,8 @@ const importRepairWorkflow = unresolvedIssueWorkflow({
 }, {
   contentLibraryReady: true,
   hasEditableRow: false,
-  requestCopied: false
+  requestCopied: false,
+  editorialDecision: null
 });
 assert.equal(importRepairWorkflow.currentStep, "Repair Content Library import");
 assert.equal(importRepairWorkflow.steps[1]?.state, "current");
@@ -103,7 +107,8 @@ assert.equal(importRepairWorkflow.responsibleParty, "You");
 const ownerReviewWorkflow = unresolvedIssueWorkflow(editorialIssue, {
   contentLibraryReady: true,
   hasEditableRow: true,
-  requestCopied: false
+  requestCopied: false,
+  editorialDecision: null
 });
 assert.equal(ownerReviewWorkflow.currentStep, "Review Pisces lunar eclipse horoscope for Aquarius Rising · House 2");
 assert.equal(ownerReviewWorkflow.statusLabel, "Ready for owner review");
@@ -116,6 +121,22 @@ assert.deepEqual(ownerReviewWorkflow.steps.map((step) => step.label), [
   "Deployment"
 ]);
 assert.ok(ownerReviewWorkflow.completedChecks.includes("Editable row imported"));
+
+const approvedCopyWorkflow = unresolvedIssueWorkflow(editorialIssue, {
+  contentLibraryReady: true,
+  hasEditableRow: true,
+  requestCopied: false,
+  editorialDecision: {
+    schema: "content-studio-editorial-review/v1",
+    decision: "approved-exact-copy",
+    copySha256: "a".repeat(64),
+    reviewedAt: "2026-08-27T12:00:00.000Z",
+    statement: "I approve this exact held copy for governed source implementation."
+  }
+});
+assert.equal(approvedCopyWorkflow.statusLabel, "Owner review complete");
+assert.equal(approvedCopyWorkflow.currentStep, "Implement the approved source copy");
+assert.deepEqual(approvedCopyWorkflow.steps.map((step) => step.state), ["complete", "complete", "complete", "current", "waiting"]);
 
 const normalizedResolution = normalizeContentStudioResolution({
   schema: "content-studio-resolution/v1",
@@ -186,7 +207,12 @@ assert.match(dashboardSource, /label:\s*"Unresolved Content"/u, "The Studio navi
 assert.match(dashboardSource, /new URLSearchParams\(\{ q: contentKey, from: "unresolved" \}\)/u, "Inventory rows must link into Content Library by exact key and resolution context.");
 assert.match(dashboardSource, /openRow\(guidedRow\)/u, "The unresolved-content handoff must open the exact editor automatically.");
 assert.match(dashboardSource, /Opened from Unresolved Content/u, "The exact editor must explain why it opened.");
-assert.match(dashboardSource, /The <strong>Body<\/strong> field below contains the full reader-facing horoscope/u, "The guided review must identify the copy the owner should read.");
+assert.match(dashboardSource, /The populated <strong>Headline<\/strong> and <strong>Body<\/strong> fields below are the copy under review/u, "The guided review must identify the copy the owner should read.");
+assert.match(dashboardSource, /typeof packageRecord\.body_you === "string"/u, "Null split-body placeholders must not hide a populated single Body field.");
+assert.match(dashboardSource, /Record owner copy review/u, "The guided review must have an explicit non-serving completion action.");
+assert.match(dashboardSource, /isGuidedHeldReview \? "needs_review"/u, "The guided review save path must remain held regardless of package approval controls.");
+assert.match(generatedContentEndpointSource, /Content Studio editorial review hash does not match the exact saved Headline, Summary, and Body/u, "The API must bind owner review to the exact saved copy.");
+assert.match(generatedContentEndpointSource, /Content Studio editorial review can only be recorded while the row remains at needs_review/u, "The API must not convert an editorial decision into a serving-status mutation.");
 assert.match(dashboardSource, /setShowReferenceRows\(true\)/u, "Exact-row links must reveal reference rows.");
 assert.match(dashboardSource, /setShowRetiredRows\(true\)/u, "Exact-row links must reveal retired rows.");
 assert.doesNotMatch(reviewSource, /api\/admin\/generated-content/u, "Resolution recording must not use the serving-content mutation endpoint.");
