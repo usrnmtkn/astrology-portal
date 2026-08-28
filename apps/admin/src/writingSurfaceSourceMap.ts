@@ -10,7 +10,8 @@ export type WritingSurfaceSource = {
 export type WritingSurfaceMapItem = {
   id: string;
   surface: string;
-  area: "Friends" | "Natal" | "Sky" | "Transits" | "System";
+  area: "Friends" | "Natal" | "Sky" | "Transits" | "Reports" | "System";
+  runtimeSurfaceIds?: string[];
   status: WritingSurfaceStatus;
   requiredSlots: string[];
   visibleLayerOrder: WritingLayer[];
@@ -27,17 +28,19 @@ export type WritingSurfaceAdminRoute = {
   note: string;
 };
 
+export type WritingSurfaceCmsStarter = {
+  label: string;
+  contentKey: string;
+  surface: "sky" | "you" | "natal" | "relationship";
+  headline: string;
+  allowedSlots: string[];
+};
+
 export type WritingSurfaceAdminAccess = {
   readerLocation: string;
-  editability: "editable" | "partial";
+  editability: "editable" | "partial" | "missing";
   routes: WritingSurfaceAdminRoute[];
-  cmsStarters?: Array<{
-    label: string;
-    contentKey: string;
-    surface: "sky" | "you" | "natal" | "relationship";
-    headline: string;
-    allowedSlots: string[];
-  }>;
+  cmsStarters?: WritingSurfaceCmsStarter[];
 };
 
 export const personalTransitAspectAllowedSlots = [
@@ -175,6 +178,39 @@ export const writingSurfaceSourceMap: WritingSurfaceMapItem[] = [
     ]
   },
   {
+    id: "friends-compatibility-highlights",
+    surface: "Friends Compatibility: Overview Highlights",
+    area: "Friends",
+    runtimeSurfaceIds: ["compatibility-highlight"],
+    status: "partial",
+    requiredSlots: ["chart signature", "strongest contact", "relationship timing"],
+    visibleLayerOrder: ["source-grounded", "madlib-fallback"],
+    currentRenderPath: "compatibilityHighlights combines calculated chart facts, the strongest normalized synastry contact, and code-composed overview language for the selected friend.",
+    risk: "The normalized synastry contact is source-traceable, but the chart-signature and missing-chart overview sentences are still written directly in App.tsx and have no atomic Content Studio editor.",
+    nextAction: "Move the code-composed overview sentences into governed source rows, then expose their exact rendered spans and source links in Composition Map.",
+    sources: [
+      { label: "App.tsx", path: "apps/web/src/App.tsx", role: "renderer" },
+      { label: "fallback-source-rows-v3.json", path: "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json", role: "fallback-package" },
+      { label: "generatedContent.ts", path: "apps/web/src/services/generatedContent.ts", role: "stored-source" }
+    ]
+  },
+  {
+    id: "friends-circle-feed",
+    surface: "Friends Circle: Shared Timing Feed",
+    area: "Friends",
+    runtimeSurfaceIds: ["circle-feed", "circle-feed-preview"],
+    status: "partial",
+    requiredSlots: ["shared timing headline", "feed summary", "person-by-person detail"],
+    visibleLayerOrder: ["source-grounded", "madlib-fallback"],
+    currentRenderPath: "circleActivationCards and circleFeedPreviewCards calculate shared planet, house, profection, and lord-of-year patterns, then assemble the visible feed cards and detail passages directly in App.tsx.",
+    risk: "The astrology facts are calculated, but most connecting prose is code-composed and cannot yet be opened or edited as an atomic saved source in Content Studio.",
+    nextAction: "Extract the feed and detail prose into governed source families with calculated slots, then add a traceable reader preview and direct atomic editors.",
+    sources: [
+      { label: "App.tsx", path: "apps/web/src/App.tsx", role: "renderer" },
+      { label: "FriendCircleFeed.tsx", path: "apps/web/src/features/friends/FriendCircleFeed.tsx", role: "renderer" }
+    ]
+  },
+  {
     id: "natal-placement-detail",
     surface: "Natal Placement Detail Pages",
     area: "Natal",
@@ -294,6 +330,24 @@ export const writingSurfaceSourceMap: WritingSurfaceMapItem[] = [
     ]
   },
   {
+    id: "daily-at-a-glance",
+    surface: "You / Friends: Daily At-a-Glance",
+    area: "Transits",
+    status: "normalized",
+    requiredSlots: ["calculated daily driver", "daily headline", "daily body"],
+    visibleLayerOrder: ["source-grounded", "madlib-fallback"],
+    currentRenderPath: "The app calculates the tightest applying Moon-to-natal contact for the reader's civil day, or the Moon's reliable whole-sign house when no contact qualifies. renderDailyGlance then selects the matching reviewed daily headline and body hook; a source gap hides the card.",
+    risk: "The driver is calculated per chart and date. Editors can change the reviewed hook wording, but must not hard-code a planet, aspect, house, person, or date into reusable rows.",
+    nextAction: "Edit the daily headline/body hook families, then QA both You and friend voice against calculated aspect and house drivers.",
+    sources: [
+      { label: "App.tsx", path: "apps/web/src/App.tsx", role: "renderer" },
+      { label: "chartMath.ts", path: "apps/web/src/services/chartMath.ts", role: "renderer" },
+      { label: "renderTransitSynastry.browser.ts", path: "apps/web/src/content/fallbackArchitectureV3/resolver/renderTransitSynastry.browser.ts", role: "renderer" },
+      { label: "fallback-source-rows-v3.json", path: "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json", role: "fallback-package" },
+      { label: "daily-glance-variants-v1.json", path: "apps/web/src/content/fallbackArchitectureV3/source-rows/daily-glance-variants-v1.json", role: "source-grounded" }
+    ]
+  },
+  {
     id: "sky-calendar-event-cards",
     surface: "Sky Calendar: Event Cards",
     area: "Sky",
@@ -398,6 +452,27 @@ export const writingSurfaceSourceMap: WritingSurfaceMapItem[] = [
     ]
   },
   {
+    id: "generated-reports",
+    surface: "Purchased Reports: Delivered Report Article",
+    area: "Reports",
+    status: "partial",
+    requiredSlots: ["frozen chart facts", "owner prompt", "report units", "assembled chapters", "key dates"],
+    visibleLayerOrder: ["source-grounded", "generated"],
+    currentRenderPath: "The fulfillment service freezes report facts, selects governed source material and owner prompt versions, generates and validates each report unit, assembles the accepted units, and delivers the stored report through ReportDeliveryView and ReportArticle.",
+    risk: "Delivered report prose is generated per order. The Admin report page monitors provenance, validation, audits, and delivery, but it does not yet provide a reader-rendered report with paragraph-level source links or a safe inline correction workflow.",
+    nextAction: "Add a report inspection workspace that renders the delivered report, exposes each unit's frozen facts and prompt/source provenance, and supports governed replacement or regeneration without mutating an approved source silently.",
+    sources: [
+      { label: "ReportDeliveryView.tsx", path: "apps/web/src/components/reports/ReportDeliveryView.tsx", role: "renderer" },
+      { label: "ReportArticle.tsx", path: "apps/web/src/components/reports/ReportArticle.tsx", role: "renderer" },
+      { label: "report-generation.ts", path: "api/_lib/report-generation.ts", role: "source-grounded" },
+      { label: "report-writer-chain.ts", path: "api/_lib/report-writer-chain.ts", role: "renderer" },
+      { label: "report-assembly.ts", path: "api/_lib/report-assembly.ts", role: "renderer" },
+      { label: "ReportFulfillmentAdminPanel.tsx", path: "apps/admin/src/ReportFulfillmentAdminPanel.tsx", role: "stored-source" },
+      { label: "Owner report prompts", path: "tldr-astro-phrasebank", role: "source-grounded" },
+      { label: "Report manifestation sets", path: "packages/astro-knowledge/data/manifestation-sets", role: "knowledge" }
+    ]
+  },
+  {
     id: "surface-specs-builders",
     surface: "Phrasebank Specs And Builders",
     area: "System",
@@ -449,6 +524,16 @@ export const writingSurfaceAdminAccess: Record<string, WritingSurfaceAdminAccess
     editability: "editable",
     routes: [{ label: "Edit composite copy", hash: "#composite-review", purpose: "reader-copy", note: "Opens relationship-type composite variants in one editor." }]
   },
+  "friends-compatibility-highlights": {
+    readerLocation: "Friends > Compatibility > overview highlights",
+    editability: "missing",
+    routes: []
+  },
+  "friends-circle-feed": {
+    readerLocation: "Friends > Circle > shared timing feed and detail",
+    editability: "missing",
+    routes: []
+  },
   "natal-placement-detail": {
     readerLocation: "You or Friends > Birth chart > placement detail",
     editability: "editable",
@@ -496,6 +581,14 @@ export const writingSurfaceAdminAccess: Record<string, WritingSurfaceAdminAccess
     readerLocation: "Today or You > daily timing writeup",
     editability: "editable",
     routes: [{ label: "Edit daily timing", hash: "#exact-content?q=daily+timing", purpose: "reader-copy", note: "Opens stored daily timing sections." }]
+  },
+  "daily-at-a-glance": {
+    readerLocation: "You > Daily At-a-Glance; Friends > Daily At-a-Glance",
+    editability: "editable",
+    routes: [
+      { label: "Edit daily headline and body hooks", hash: "#fallback-hooks?section=you&q=daily", purpose: "reader-copy", note: "Opens the reviewed daily headline/body hook families used after the app calculates the day's driver." },
+      { label: "Inspect daily slots", hash: "#slots?q=daily", purpose: "supporting-copy", note: "Shows the daily template variables and whether each value is calculated or saved copy." }
+    ]
   },
   "sky-calendar-event-cards": {
     readerLocation: "Calendar > event cards",
@@ -557,6 +650,13 @@ export const writingSurfaceAdminAccess: Record<string, WritingSurfaceAdminAccess
     cmsStarters: [
       { label: "Start your transit-house template", contentKey: "cms/personal-transit-house/you/template", surface: "you", headline: "{{planet}} through your {{houseOrdinal}} house", allowedSlots: ["planet", "sign", "house", "houseOrdinal", "motion", "window", "owner", "ownerPossessive"] },
       { label: "Start friend transit-house template", contentKey: "cms/personal-transit-house/they/template", surface: "you", headline: "{{planet}} through {{ownerPossessive}} {{houseOrdinal}} house", allowedSlots: ["planet", "sign", "house", "houseOrdinal", "motion", "window", "owner", "ownerPossessive"] }
+    ]
+  },
+  "generated-reports": {
+    readerLocation: "Purchased report delivery > report cover, chapters, and key dates",
+    editability: "partial",
+    routes: [
+      { label: "Inspect report fulfillment", hash: "#report-fulfillment", purpose: "source-review", note: "Opens report orders, accepted units, validator outcomes, audits, provenance, and delivery state. Inline reader-copy editing is not available yet." }
     ]
   },
   "surface-specs-builders": {

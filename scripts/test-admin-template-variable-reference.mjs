@@ -58,7 +58,9 @@ const sourceRows = [
   { id: "sky-window", content_key: "fallback-hook/sky-placement/jupiter" },
   { id: "sky-aspect", content_key: "fallback-hook/sky-aspect-exact/jupiter/trine/saturn" },
   { id: "sky-planet-frame", content_key: "fallback-hook/sky-placement-frame/jupiter" },
-  { id: "sky-sign-lore", content_key: "fallback-hook/sky-placement-lore/leo" }
+  { id: "sky-sign-lore", content_key: "fallback-hook/sky-placement-lore/leo" },
+  { id: "saturn-retro-article", content_key: "fallback-hook/transit-retro-article/saturn" },
+  { id: "saturn-sky-article", content_key: "sky-article/saturn/aries/2026" }
 ];
 const planetVerbReference = references.find((reference) => reference.name === "planetVerb");
 assert.ok(planetVerbReference);
@@ -119,6 +121,18 @@ for (const [slot, expectedId] of Object.entries(mappedSourceSlots)) {
 const unwiredReference = templateVariableReferences({ body: "{{customUnwiredSlot}}" })[0];
 assert.equal(unwiredReference.sourceKind, "unmapped", "A declared slot with no canonical provider must not masquerade as calculated or editable.");
 assert.deepEqual(templateVariableSourceCandidates(unwiredReference, sourceRows, "fallback-template/synastry.aspect-v3"), []);
+
+const retroArticleReferences = templateVariableReferences({
+  headline: "{{articleHeadline}}",
+  body: "{{articleBody}}"
+});
+for (const reference of retroArticleReferences) {
+  assert.deepEqual(
+    templateVariableSourceCandidates(reference, sourceRows, "fallback-template/transit.retrograde-article").map((row) => row.id),
+    ["saturn-retro-article"],
+    `${reference.name} must follow the retrograde-article resolver and never fall through to a placement article.`
+  );
+}
 
 const unknownReference = templateVariableReferences({ body: "Visible from {{customTransitDate}}." })[0];
 assert.equal(unknownReference.name, "customTransitDate");
