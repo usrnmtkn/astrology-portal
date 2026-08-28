@@ -300,7 +300,7 @@
 }
 
 .planet-glyph-sun {
-  font-size: calc(var(--chart-planet-glyph-size) * 1.02);
+  font-size: var(--chart-sun-glyph-size);
   font-weight: var(--weight-semibold);
   stroke: none;
   paint-order: normal;
