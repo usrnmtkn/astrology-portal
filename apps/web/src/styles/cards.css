@@ -546,6 +546,27 @@
   padding: var(--space-4) calc(var(--space-4) + var(--space-1) / 2);
 }
 
+.daily-special-section h3 {
+  margin: 0;
+  color: var(--card-title-color);
+  font-family: var(--font-display);
+  font-size: var(--text-card-title);
+  font-weight: var(--weight-medium);
+  letter-spacing: var(--tracking-title);
+  line-height: var(--leading-title);
+}
+
+.daily-special-section p,
+.daily-dodont li {
+  margin: 0;
+  color: var(--card-body-color);
+  font-family: var(--font-body);
+  font-size: var(--text-body);
+  font-weight: var(--weight-regular);
+  letter-spacing: var(--tracking-body);
+  line-height: var(--leading-body);
+}
+
 .daily-dodont {
   background: var(--surface);
   border: 1px solid var(--line);

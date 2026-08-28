@@ -177,7 +177,7 @@
 
 .social-sharing-heading h2 {
   font-family: var(--font-display);
-  font-size: clamp(1.35rem, 4vw, 1.8rem);
+  font-size: var(--social-sharing-title-size);
   line-height: var(--leading-heading);
 }
 

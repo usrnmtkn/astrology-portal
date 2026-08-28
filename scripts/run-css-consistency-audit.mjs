@@ -19,6 +19,53 @@ const expectedEyebrow = {
   padding: "0"
 };
 
+const canonicalBodyContract = {
+  fontFamily: "var(--font-body)",
+  fontSize: "var(--text-body)",
+  fontWeight: "var(--weight-regular)",
+  lineHeight: "var(--leading-body)",
+  letterSpacing: "var(--tracking-body)"
+};
+
+const canonicalBodySelectors = [
+  ".daily-horoscope-summary p",
+  ".daily-horoscope-writeup p",
+  ".personal-timing-summary p",
+  ".daily-special-section p",
+  ".daily-dodont li",
+  ".updates-aspect-row__description",
+  ".updates-aspect-row__detail",
+  ".article-section p",
+  ".sky-detail-section p",
+  ".aspect-row-copy p",
+  ".placement-table-row__description",
+  ".planet-placement-row__description",
+  ".sky-pl-copy",
+  ".tx-body"
+];
+
+const validBodyFontSizes = new Set([
+  canonicalBodyContract.fontSize,
+  "var(--type-body-size)",
+  "var(--article-body-size)",
+  "var(--aspect-card-body-size)",
+  "var(--natal-card-body-size)",
+  "var(--text-row-body-size)"
+]);
+
+const requiredTypographyTokenValues = new Map([
+  ["--type-description-size", "var(--type-body-size)"],
+  ["--text-body", "var(--type-body-size)"],
+  ["--text-body-sm", "var(--text-body)"],
+  ["--text-description", "var(--text-body)"],
+  ["--text-row-body-size", "var(--text-body)"],
+  ["--text-table-body-size", "var(--text-body)"],
+  ["--article-body-size", "var(--text-body)"],
+  ["--natal-card-body-size", "var(--text-body)"],
+  ["--aspect-card-body-size", "var(--text-body)"],
+  ["--label-eyebrow-font-family", "var(--font-label)"]
+]);
+
 const canonicalEyebrowSelectors = [
   ".eyebrow",
   ".section-label",
@@ -46,8 +93,7 @@ const typographyOnlyEyebrowSelectors = new Set([
 
 const validEyebrowValues = {
   fontFamily: new Set([
-    expectedEyebrow.fontFamily,
-    "var(--label-eyebrow-font-family, var(--google-sans))"
+    expectedEyebrow.fontFamily
   ]),
   fontSize: new Set([
     expectedEyebrow.fontSize,
@@ -149,6 +195,28 @@ function collectDeclarationFindings({ pattern, source, relative, allowZero = tru
   while ((match = pattern.exec(source)) !== null) {
     const value = match[1].trim();
     if ((allowZero && value === "0") || isDesignTokenized(value) || !isRawNumericValue(value)) continue;
+
+    declarationFindings.push({
+      file: relative,
+      line: lineNumberFor(source, match.index),
+      declaration: match[0].trim()
+    });
+  }
+
+  return declarationFindings;
+}
+
+function collectComponentFontSizeFindings({ source, relative }) {
+  if (path.basename(relative) === "theme.css") return [];
+
+  const declarationFindings = [];
+  let match;
+
+  while ((match = fontSizeDeclarationPattern.exec(source)) !== null) {
+    const value = match[1].trim();
+    const isSingleToken = /^var\(--[a-z0-9-]+\)$/i.test(value);
+
+    if (value === "inherit" || isSingleToken) continue;
 
     declarationFindings.push({
       file: relative,
@@ -280,6 +348,9 @@ files.sort((first, second) => {
 const findings = [];
 const eyebrowRules = [];
 const activeEyebrowRules = new Map();
+const activeBodySelectors = new Set();
+const semanticBodyFindings = [];
+const typographyTokenFindings = [];
 const spacingFindings = [];
 const fontSizeFindings = [];
 const fontWeightFindings = [];
@@ -332,10 +403,67 @@ for (const filePath of files) {
         });
       }
     }
+
+    for (const target of canonicalBodySelectors) {
+      if (!selectorTargetsCanonical(block.selector, target)) continue;
+
+      const rule = {
+        file: relative,
+        line: lineNumberFor(source, block.index),
+        selector: block.selector.replace(/\s+/g, " "),
+        fontFamily: declarationValue(block.body, "font-family"),
+        fontSize: declarationValue(block.body, "font-size"),
+        fontWeight: declarationValue(block.body, "font-weight"),
+        lineHeight: declarationValue(block.body, "line-height"),
+        letterSpacing: declarationValue(block.body, "letter-spacing")
+      };
+
+      if (rule.fontSize) activeBodySelectors.add(target);
+
+      if (rule.fontFamily && rule.fontFamily !== canonicalBodyContract.fontFamily) {
+        semanticBodyFindings.push({
+          ...rule,
+          type: "body-font-family",
+          detail: `Expected ${canonicalBodyContract.fontFamily}, found ${rule.fontFamily}.`
+        });
+      }
+
+      if (rule.fontSize && !validBodyFontSizes.has(rule.fontSize)) {
+        semanticBodyFindings.push({
+          ...rule,
+          type: "body-font-size",
+          detail: `Expected a canonical body-size token, found ${rule.fontSize}.`
+        });
+      }
+
+      if (rule.fontWeight && rule.fontWeight !== canonicalBodyContract.fontWeight) {
+        semanticBodyFindings.push({
+          ...rule,
+          type: "body-font-weight",
+          detail: `Expected ${canonicalBodyContract.fontWeight}, found ${rule.fontWeight}.`
+        });
+      }
+
+      if (rule.lineHeight && rule.lineHeight !== canonicalBodyContract.lineHeight) {
+        semanticBodyFindings.push({
+          ...rule,
+          type: "body-line-height",
+          detail: `Expected ${canonicalBodyContract.lineHeight}, found ${rule.lineHeight}.`
+        });
+      }
+
+      if (rule.letterSpacing && !new Set([canonicalBodyContract.letterSpacing, "var(--tracking-normal)"]).has(rule.letterSpacing)) {
+        semanticBodyFindings.push({
+          ...rule,
+          type: "body-letter-spacing",
+          detail: `Expected ${canonicalBodyContract.letterSpacing}, found ${rule.letterSpacing}.`
+        });
+      }
+    }
   }
 
   spacingFindings.push(...collectDeclarationFindings({ pattern: spacingDeclarationPattern, source, relative }));
-  fontSizeFindings.push(...collectDeclarationFindings({ pattern: fontSizeDeclarationPattern, source, relative }));
+  fontSizeFindings.push(...collectComponentFontSizeFindings({ source, relative }));
   fontWeightFindings.push(...collectFontWeightFindings({ source, relative }));
   lineHeightFindings.push(...collectLineHeightFindings({ source, relative }));
   radiusFindings.push(...collectDeclarationFindings({ pattern: radiusDeclarationPattern, source, relative }));
@@ -343,6 +471,34 @@ for (const filePath of files) {
   trackingFindings.push(...collectDeclarationFindings({ pattern: trackingDeclarationPattern, source, relative }));
   surfaceFindings.push(...collectSurfaceFindings({ source, relative }));
   containerFindings.push(...collectContainerFindings({ source, relative }));
+}
+
+for (const target of canonicalBodySelectors) {
+  if (activeBodySelectors.has(target)) continue;
+
+  semanticBodyFindings.push({
+    type: "missing-body-contract",
+    file: "apps/web/src/styles",
+    line: 1,
+    selector: target,
+    detail: "No explicit canonical body-size declaration was found for this selector."
+  });
+}
+
+const themeSource = await readFile(path.join(cssRoot, "styles/theme.css"), "utf8");
+for (const [token, expectedValue] of requiredTypographyTokenValues) {
+  const match = themeSource.match(new RegExp(`${token.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\s*:\\s*([^;]+)`));
+  const actualValue = match?.[1]?.trim() ?? null;
+
+  if (actualValue === expectedValue) continue;
+
+  typographyTokenFindings.push({
+    type: "typography-token-contract",
+    file: "apps/web/src/styles/theme.css",
+    line: match ? lineNumberFor(themeSource, match.index ?? 0) : 1,
+    selector: token,
+    detail: `Expected ${expectedValue}, found ${actualValue ?? "missing"}.`
+  });
 }
 
 for (const target of canonicalEyebrowSelectors) {
@@ -406,6 +562,8 @@ const lines = [
   `- CSS files scanned: ${files.length}`,
   `- Eyebrow/section-label rules found: ${eyebrowRules.length}`,
   `- Eyebrow rule mismatches: ${findings.length}`,
+  `- Semantic body contract findings: ${semanticBodyFindings.length}`,
+  `- Typography token contract findings: ${typographyTokenFindings.length}`,
   `- Hardcoded spacing declarations: ${spacingFindings.length}`,
   `- Hardcoded font-size declarations: ${fontSizeFindings.length}`,
   `- Hardcoded font-weight declarations: ${fontWeightFindings.length}`,
@@ -442,6 +600,39 @@ if (findings.length === 0) {
   }
   if (findings.length > 40) {
     lines.push(`- ${findings.length - 40} additional eyebrow findings omitted.`);
+  }
+}
+
+lines.push(
+  "",
+  "## Semantic Body Contract",
+  "",
+  `- Font family: \`${canonicalBodyContract.fontFamily}\``,
+  `- Font size: \`${canonicalBodyContract.fontSize}\``,
+  `- Font weight: \`${canonicalBodyContract.fontWeight}\``,
+  `- Line height: \`${canonicalBodyContract.lineHeight}\``,
+  `- Letter spacing: \`${canonicalBodyContract.letterSpacing}\``,
+  ""
+);
+
+if (semanticBodyFindings.length === 0) {
+  lines.push("- No semantic body-role mismatches detected.");
+} else {
+  for (const finding of semanticBodyFindings.slice(0, 80)) {
+    lines.push(`- [${finding.type}] \`${finding.file}:${finding.line}\``);
+    lines.push(`  - Selector: \`${finding.selector}\``);
+    lines.push(`  - ${finding.detail}`);
+  }
+}
+
+lines.push("", "## Typography Token Contract", "");
+if (typographyTokenFindings.length === 0) {
+  lines.push("- Canonical typography aliases resolve to the required shared roles.");
+} else {
+  for (const finding of typographyTokenFindings) {
+    lines.push(`- [${finding.type}] \`${finding.file}:${finding.line}\``);
+    lines.push(`  - Token: \`${finding.selector}\``);
+    lines.push(`  - ${finding.detail}`);
   }
 }
 
@@ -535,6 +726,8 @@ console.log(`# CSS Consistency Audit
 CSS files scanned: ${files.length}
 Eyebrow/section-label rules found: ${eyebrowRules.length}
 Eyebrow rule mismatches: ${findings.length}
+Semantic body contract findings: ${semanticBodyFindings.length}
+Typography token contract findings: ${typographyTokenFindings.length}
 Hardcoded spacing declarations: ${spacingFindings.length}
 Hardcoded font-size declarations: ${fontSizeFindings.length}
 Hardcoded font-weight declarations: ${fontWeightFindings.length}
@@ -545,3 +738,18 @@ Hardcoded non-token letter-spacing declarations: ${trackingFindings.length}
 Raw component surface declarations: ${surfaceFindings.length}
 Untokenized container boundaries: ${containerFindings.length}
 Report: ${reportPath}`);
+
+const blockingFindingCount = findings.length
+  + semanticBodyFindings.length
+  + typographyTokenFindings.length
+  + spacingFindings.length
+  + fontSizeFindings.length
+  + fontWeightFindings.length
+  + lineHeightFindings.length
+  + radiusFindings.length
+  + shadowFindings.length
+  + trackingFindings.length
+  + surfaceFindings.length
+  + containerFindings.length;
+
+if (blockingFindingCount > 0) process.exitCode = 1;

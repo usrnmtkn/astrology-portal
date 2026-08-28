@@ -1274,8 +1274,14 @@
     line-height: var(--aspect-card-title-line);
   }
 
-  .mode-guest .aspect-section :where(.aspect-row-copy > span:not(.ui-pill), .aspect-row-copy p, .aspect-row-copy .aspect-row-subtitle, .aspect-row-meta),
-  .mode-member .aspect-section :where(.aspect-row-copy > span:not(.ui-pill), .aspect-row-copy p, .aspect-row-copy .aspect-row-subtitle, .aspect-row-meta) {
+  .mode-guest .aspect-section :where(.aspect-row-copy > span:not(.ui-pill), .aspect-row-copy p),
+  .mode-member .aspect-section :where(.aspect-row-copy > span:not(.ui-pill), .aspect-row-copy p) {
+    font-size: var(--text-body);
+    line-height: var(--leading-body);
+  }
+
+  .mode-guest .aspect-section :where(.aspect-row-copy .aspect-row-subtitle, .aspect-row-meta),
+  .mode-member .aspect-section :where(.aspect-row-copy .aspect-row-subtitle, .aspect-row-meta) {
     font-size: var(--sky-mobile-meta);
     line-height: var(--leading-meta);
   }

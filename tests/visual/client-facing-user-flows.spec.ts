@@ -551,6 +551,89 @@ async function expectSharedLabelContract(page: Page, label: string, options: { r
   expect(result.failures, `${label} keeps eyebrow and section label styling consistent`).toEqual([]);
 }
 
+async function expectSharedBodyContract(page: Page, label: string, selectors: string[]) {
+  const result = await page.evaluate((bodySelectors) => {
+    const rootStyle = getComputedStyle(document.documentElement);
+    const expectedProbe = document.createElement("p");
+    expectedProbe.style.position = "fixed";
+    expectedProbe.style.visibility = "hidden";
+    expectedProbe.style.fontFamily = rootStyle.getPropertyValue("--font-body").trim();
+    expectedProbe.style.fontSize = rootStyle.getPropertyValue("--text-body").trim();
+    expectedProbe.style.fontWeight = rootStyle.getPropertyValue("--weight-regular").trim();
+    expectedProbe.style.lineHeight = rootStyle.getPropertyValue("--leading-body").trim();
+    expectedProbe.style.letterSpacing = rootStyle.getPropertyValue("--tracking-body").trim();
+    expectedProbe.textContent = "Body contract probe";
+    document.body.append(expectedProbe);
+
+    const expectedStyle = getComputedStyle(expectedProbe);
+    const expected = {
+      fontFamily: expectedStyle.fontFamily,
+      fontSize: expectedStyle.fontSize,
+      fontWeight: expectedStyle.fontWeight,
+      lineHeight: expectedStyle.lineHeight,
+      letterSpacing: expectedStyle.letterSpacing
+    };
+    expectedProbe.remove();
+
+    const articleProbe = document.createElement("section");
+    articleProbe.className = "article-section";
+    articleProbe.style.position = "fixed";
+    articleProbe.style.visibility = "hidden";
+    const articleParagraph = document.createElement("p");
+    articleParagraph.textContent = "Article body contract probe";
+    articleProbe.append(articleParagraph);
+    document.body.append(articleProbe);
+
+    const isVisible = (element: Element) => {
+      const rect = element.getBoundingClientRect();
+      const style = getComputedStyle(element);
+      return rect.width > 0 && rect.height > 0 && style.visibility !== "hidden" && style.display !== "none";
+    };
+    const sampled = bodySelectors.flatMap((selector) => (
+      Array.from(document.querySelectorAll(selector))
+        .filter(isVisible)
+        .map((element) => ({ selector, element }))
+    ));
+    sampled.push({ selector: ".article-section p (probe)", element: articleParagraph });
+
+    const normalizeFamily = (value: string) => value.replaceAll('"', "").split(",")[0].trim();
+    const normalizePx = (value: string) => Number.parseFloat(value);
+    const failures: string[] = [];
+    for (const { selector, element } of sampled) {
+      const style = getComputedStyle(element);
+      const text = (element.textContent ?? "").replace(/\s+/g, " ").trim().slice(0, 60);
+      const prefix = `${selector} "${text}"`;
+
+      if (normalizeFamily(style.fontFamily) !== normalizeFamily(expected.fontFamily)) {
+        failures.push(`${prefix} font-family ${style.fontFamily} expected ${expected.fontFamily}`);
+      }
+      if (Math.abs(normalizePx(style.fontSize) - normalizePx(expected.fontSize)) > 0.2) {
+        failures.push(`${prefix} font-size ${style.fontSize} expected ${expected.fontSize}`);
+      }
+      if (style.fontWeight !== expected.fontWeight) {
+        failures.push(`${prefix} font-weight ${style.fontWeight} expected ${expected.fontWeight}`);
+      }
+      if (Math.abs(normalizePx(style.lineHeight) - normalizePx(expected.lineHeight)) > 0.5) {
+        failures.push(`${prefix} line-height ${style.lineHeight} expected ${expected.lineHeight}`);
+      }
+      if (Math.abs(normalizePx(style.letterSpacing) - normalizePx(expected.letterSpacing)) > 0.2) {
+        failures.push(`${prefix} letter-spacing ${style.letterSpacing} expected ${expected.letterSpacing}`);
+      }
+    }
+
+    articleProbe.remove();
+    return {
+      checked: sampled.length,
+      failures,
+      selectorsFound: bodySelectors.filter((selector) => sampled.some((sample) => sample.selector === selector))
+    };
+  }, selectors);
+
+  expect(result.checked, `${label} renders body typography to inspect`).toBeGreaterThan(1);
+  expect(result.selectorsFound.length, `${label} exercises multiple narrative surfaces`).toBeGreaterThanOrEqual(3);
+  expect(result.failures, `${label} keeps all narrative copy on the shared body contract`).toEqual([]);
+}
+
 async function expectLunarSelectedCardMinimalFonts(page: Page, label: string) {
   const result = await page.evaluate(() => {
     const card = document.querySelector(".lunar-selected-card");
@@ -1338,6 +1421,13 @@ test.describe("client-facing user flow case studies", () => {
         await expect(eclipseSection).toContainText(
           "Release your need to be in control, allow for endings, mourn if needed, and allow yourself to flow with the current of whatever is unfolding, even if the destination is still unknown."
         );
+        await expectSharedBodyContract(page, `${viewport.name} ${theme} You page`, [
+          ".daily-horoscope-summary > p",
+          ".daily-dodont li",
+          ".daily-special-section > p",
+          ".weekly-horoscope__macro > p",
+          ".updates-aspect-row__description"
+        ]);
 
         const viewportTypography = titleTypography.get(viewport.name) ?? [];
         viewportTypography.push(await eclipseTitle.evaluate((element) => {
