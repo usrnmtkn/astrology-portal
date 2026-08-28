@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "surface": "You loading milestones",
+  "approvalStatus": "owner_approved_exact",
+  "approvedAt": "2026-08-28",
+  "approvalSource": {
+    "type": "codex_thread",
+    "threadId": "019fdc94-03bd-7513-8375-550e3593d63a",
+    "ownerMessage": "yes, this is good: Use real milestone text such as ‘Loading your profile’ and ‘Adding today’s transits.’"
+  },
+  "approvedStrings": [
+    "Loading your profile",
+    "Adding today’s transits."
+  ],
+  "scope": "Reader-visible status text shown only while the authenticated You profile and current-day transits are loading."
+}

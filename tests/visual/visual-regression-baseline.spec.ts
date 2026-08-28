@@ -237,6 +237,9 @@ test.describe("visual regression baseline", () => {
 
     await expectRouteLoadsWithin(page, "/#calendar", "client calendar desktop light", async () => {
       await expect(page.getByLabel("Selected lunar day")).toBeVisible({ timeout: routeReadyTimeoutMs });
+      await expect(page.locator(".lunar-selected-card__daily-event").first()).toBeVisible({
+        timeout: routeReadyTimeoutMs
+      });
     });
     await expect(page).toHaveScreenshot("client-calendar-desktop-light.png", screenshotOptions);
 

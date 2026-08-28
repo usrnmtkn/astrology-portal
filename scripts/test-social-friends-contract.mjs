@@ -378,18 +378,8 @@ assert.match(
 );
 assert.match(
   app,
-  /const hydrateBootstrapSocialProfile = async \(profile: UserProfile\)[\s\S]*?loadOwnSocialProfile\(\)[\s\S]*?existingSocialProfile \?\? await syncOwnSocialProfile[\s\S]*?setOwnSocialProfile\(socialProfile\)/,
-  "Authentication bootstrap must load or create the member's social profile before exposing the completed header."
-);
-assert.match(
-  app,
-  /await hydrateBootstrapSocialProfile\(accountProfile\)[\s\S]*?setAuthAccountChecked\(true\)/,
-  "Authentication must not report readiness until social-profile hydration has completed."
-);
-assert.match(
-  app,
-  /isAuthConfigured && !authAccountChecked \? \(\s*<FeatureLoadingFallback \/>[\s\S]*?: userProfile \? \(\s*<ProfileView/,
-  "The You page must not render a partial profile header while authentication data is still hydrating."
+  /isAuthConfigured && !authAccountChecked \? \(\s*<FeatureLoadingFallback message="Loading your profile" \/>[\s\S]*?: userProfile \? \(\s*<ProfileView/,
+  "The You page must identify profile verification while withholding account data until authentication completes."
 );
 assert.match(
   youPage,

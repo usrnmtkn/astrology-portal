@@ -185,6 +185,13 @@ export default defineConfig(({ mode }) => {
       react()
     ],
     assetsInclude: ["**/*.wasm"],
+    worker: {
+      format: "es",
+      plugins: () => [
+        browserOnlySwissEphemerisPlugin(),
+        trimSwissEphemerisWebDataPlugin()
+      ]
+    },
     resolve: {
       dedupe: ["react", "react-dom"]
     },
