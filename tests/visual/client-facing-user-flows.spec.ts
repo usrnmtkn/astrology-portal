@@ -434,6 +434,29 @@ async function expectNoHorizontalOverflow(page: Page, label: string) {
   expect(maxScrollWidth, `${label} does not create horizontal overflow`).toBeLessThanOrEqual(dimensions.viewportWidth + 2);
 }
 
+async function expectBehindForecastGroupedByConcept(page: Page, label: string) {
+  const behindForecast = page.getByRole("region", { name: "Behind this forecast" });
+  await expect(behindForecast).toBeVisible();
+  const forecastGroups = behindForecast.locator(".daily-behind-forecast__group");
+  expect(await forecastGroups.count(), `${label} is split into concept groups`).toBeGreaterThan(1);
+  const groupLabels = await forecastGroups.getByRole("heading", { level: 3 }).allTextContents();
+  expect(new Set(groupLabels.map((groupLabel) => groupLabel.toLocaleLowerCase())).size).toBe(groupLabels.length);
+
+  for (const group of await forecastGroups.all()) {
+    const groupLabel = (await group.getByRole("heading", { level: 3 }).innerText()).trim().toLocaleLowerCase();
+    const cardLabels = await group.locator(".daily-forecast-label > span").allTextContents();
+    expect(cardLabels.length, `${groupLabel} has at least one forecast`).toBeGreaterThan(0);
+    for (const cardLabel of cardLabels) {
+      expect(
+        cardLabel.trim().toLocaleLowerCase().endsWith(groupLabel),
+        `${cardLabel} belongs in ${groupLabel}`
+      ).toBe(true);
+    }
+  }
+
+  await expectNoHorizontalOverflow(page, label);
+}
+
 async function expectLocatorInsideViewport(locator: Locator, viewportWidth: number, label: string) {
   await expect(locator).toBeVisible();
   await expect.poll(async () => (
@@ -1293,6 +1316,8 @@ test.describe("client-facing user flow case studies", () => {
         "Personal transit wheel omits the aspect inspector"
       ).toHaveCount(0);
 
+      await expectBehindForecastGroupedByConcept(page, "Behind this forecast");
+
       const houseTransitCard = page
         .getByLabel("House transits")
         .locator(".updates-aspect-row--house")
@@ -1347,6 +1372,26 @@ test.describe("client-facing user flow case studies", () => {
     }
 
     await assertNoClientErrors();
+  });
+
+  test("Behind this forecast groups cards by concept across desktop and mobile", async ({ browser }) => {
+    for (const viewport of [
+      { label: "desktop", width: 1440, height: 1000 },
+      { label: "mobile", width: 390, height: 844 }
+    ] as const) {
+      const context = await browser.newContext({ viewport: { width: viewport.width, height: viewport.height } });
+      const page = await context.newPage();
+      const assertNoClientErrors = await expectNoClientErrors(page);
+
+      await seedClientState(page, { profile: true });
+      await expectClientRouteLoads(page, "/#you");
+      const updatesTab = page.getByRole("tab", { name: /updates|transits/i });
+      await updatesTab.click();
+      await expect(updatesTab).toHaveAttribute("aria-selected", "true");
+      await expectBehindForecastGroupedByConcept(page, `${viewport.label} Behind this forecast`);
+      await assertNoClientErrors();
+      await context.close();
+    }
   });
 
   test("You serves the protected book card on an exact lunation day", async ({ page }) => {

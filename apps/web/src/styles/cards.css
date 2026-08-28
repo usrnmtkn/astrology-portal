@@ -593,7 +593,17 @@
   padding: 0;
 }
 
-.daily-behind-forecast > div {
+.daily-behind-forecast__groups {
+  display: grid;
+  gap: var(--space-6);
+}
+
+.daily-behind-forecast__group {
+  display: grid;
+  gap: var(--section-label-gap-after);
+}
+
+.daily-behind-forecast__list {
   display: grid;
   gap: var(--card-list-gap);
 }
