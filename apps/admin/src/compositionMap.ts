@@ -17,7 +17,7 @@ export type CompositionMapRow = {
   source_snapshot?: unknown;
 };
 
-export type CompositionMapSourceKind = "hook" | "phrase";
+export type CompositionMapSourceKind = "copy" | "hook" | "phrase";
 export type CompositionPreviewVariableKind = CompositionMapSourceKind | "copy" | "fact";
 
 export type CompositionMapSource = {
@@ -209,12 +209,13 @@ export function compositionTemplateLabel(row: CompositionMapRow) {
 
 function sourceKind(row: CompositionMapRow): CompositionMapSourceKind {
   const role = rowRole(row);
-  return row.content_key.startsWith("vocab/")
+  if (row.content_key.startsWith("vocab/")
     || row.content_key.startsWith("fallback-vocab/")
     || row.block_type === "vocabulary_phrase"
-    || role === "vocabulary"
-    ? "phrase"
-    : "hook";
+    || role === "vocabulary") return "phrase";
+  return row.content_key.startsWith("fallback-hook/") || row.block_type === "fallback_hook"
+    ? "hook"
+    : "copy";
 }
 
 function sourceLabel(row: CompositionMapRow) {
@@ -240,9 +241,15 @@ function representativeExampleForRow(row: CompositionMapRow, name: string, examp
   return representativeExample(name, example);
 }
 
-function previewSourceText(source: CompositionMapSource, audience: "you" | "they") {
+function previewSourceText(source: CompositionMapSource, audience: "you" | "they", slotName: string) {
   const packageRecord = packageRecordForRow(source.row);
   const sections = objectRecord(source.row.sections) ?? {};
+  if (/headline$/iu.test(slotName)) {
+    const audienceHeadline = audience === "they" ? text(packageRecord.headline_they) : "";
+    return audienceHeadline
+      || text(packageRecord.headline)
+      || text(source.row.headline);
+  }
   const audienceCopy = audience === "they"
     ? text(packageRecord.body_they) || text(sections.body_they)
     : text(packageRecord.body_you) || text(sections.body_you);
@@ -437,7 +444,7 @@ function buildCompositionPreview(row: CompositionMapRow, slots: CompositionMapSl
       slots.forEach((slot) => {
         const source = representativeSource(slot, slots, values);
         if (!source) return;
-        fieldValues.set(slot.name, previewSourceText(source, audience));
+        fieldValues.set(slot.name, previewSourceText(source, audience, slot.name));
         sourceByName.set(slot.name, source);
       });
       if (!fieldValues.has("transitTopic")) fieldValues.set("transitTopic", `${values.get("transitTitle") ?? "Transit"}'s focus`);
