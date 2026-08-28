@@ -2241,7 +2241,7 @@ a.tx-card.has-article:hover .tx-more {
   margin: 0;
   color: var(--ink);
   font-family: var(--font-display);
-  font-size: clamp(24px, 2.5vw, 30px);
+  font-size: var(--lunar-weekly-day-title-size);
   font-weight: var(--weight-regular);
   letter-spacing: var(--tracking-display);
   line-height: var(--leading-display);

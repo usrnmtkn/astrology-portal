@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;500;600;700&family=Google+Sans:wght@400;500;600;700&family=Newsreader:opsz,wght@6..72,400;6..72,500&family=Noto+Sans+Symbols:wght@400;500&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;500;600;700&family=Newsreader:opsz,wght@6..72,400;6..72,500&family=Noto+Sans+Symbols:wght@400;500&display=swap");
 
 :root {
   /*
@@ -61,7 +61,6 @@
 
   --serif: "Newsreader", Georgia, "Times New Roman", serif;
   --sans: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  --google-sans: "Google Sans", var(--sans);
   --mono: "Geist Mono", ui-monospace, "Space Mono", monospace;
   --symbols: "Apple Symbols", "Noto Sans Symbols 2", "Noto Sans Symbols", "Segoe UI Symbol", Symbola, serif;
   --font-serif: var(--serif);
@@ -253,7 +252,7 @@
   --type-h2-size: clamp(20px, 2.4vw, 24px);
   --type-title-size: 18px;
   --type-body-size: 15px;
-  --type-description-size: 14px;
+  --type-description-size: var(--type-body-size);
   --type-meta-size: 13px;
   --type-degree-size: 13px;
   --type-label-size: 11px;
@@ -271,26 +270,26 @@
   --sign-degree-offset-y: 0.02em;
   --lunar-card-copy-gap: var(--sp-1);
   --lunar-card-title-gap: var(--sp-1);
-  --lunar-type-micro: 8px;
-  --lunar-type-micro-plus: 8.5px;
-  --lunar-type-tiny: 9px;
-  --lunar-type-label: 10px;
-  --lunar-type-label-plus: 10.5px;
-  --lunar-type-eyebrow: 11px;
-  --lunar-type-caption: 12px;
-  --lunar-type-fine: 12.5px;
-  --lunar-type-meta: 13px;
-  --lunar-type-body: 14px;
-  --lunar-type-action: 15px;
-  --lunar-type-title: 16px;
-  --lunar-type-card-title: 16.5px;
-  --lunar-type-phase-title: 17px;
-  --lunar-type-section-title: 18px;
-  --lunar-type-large: 20px;
-  --lunar-type-moon-title: 21px;
-  --lunar-type-display: 22px;
-  --lunar-type-display-lg: 24px;
-  --lunar-type-display-xl: 25px;
+  --lunar-type-micro: var(--type-label-size);
+  --lunar-type-micro-plus: var(--type-label-size);
+  --lunar-type-tiny: var(--type-label-size);
+  --lunar-type-label: var(--type-label-size);
+  --lunar-type-label-plus: var(--type-label-size);
+  --lunar-type-eyebrow: var(--type-label-size);
+  --lunar-type-caption: var(--type-meta-size);
+  --lunar-type-fine: var(--type-meta-size);
+  --lunar-type-meta: var(--type-meta-size);
+  --lunar-type-body: var(--type-body-size);
+  --lunar-type-action: var(--type-body-size);
+  --lunar-type-title: var(--type-nav-size);
+  --lunar-type-card-title: var(--type-title-size);
+  --lunar-type-phase-title: var(--type-title-size);
+  --lunar-type-section-title: var(--type-title-size);
+  --lunar-type-large: var(--type-small-display-size);
+  --lunar-type-moon-title: var(--type-small-display-size);
+  --lunar-type-display: var(--type-glyph-size);
+  --lunar-type-display-lg: var(--type-large-title-size);
+  --lunar-type-display-xl: var(--type-large-title-size);
   --lunar-type-glyph-emphasis: 1.08em;
   --lunar-selected-title-size: clamp(26px, 2.4vw, 34px);
   --lunar-selected-subtitle-size: var(--lunar-type-body);
@@ -408,13 +407,13 @@
   --text-placement-meta: var(--type-meta-size);
   --article-title-size: var(--article-h2-size);
   --article-h2-size: clamp(20px, 2.4vw, 24px);
-  --article-body-size: var(--type-body-size);
+  --article-body-size: var(--text-body);
   --article-meta-size: var(--type-meta-size);
   --article-label-size: var(--type-label-size);
   --text-body: var(--type-body-size);
-  --text-body-sm: var(--type-description-size);
+  --text-body-sm: var(--text-body);
   --text-row-value: var(--type-body-size);
-  --text-description: var(--type-description-size);
+  --text-description: var(--text-body);
   --text-eyebrow: var(--type-label-size);
   --text-tiny: var(--type-label-size);
   --text-label: var(--text-eyebrow);
@@ -425,7 +424,7 @@
   --text-section-heading-size: var(--type-section-heading-size);
   --text-card-title-size: var(--text-card-title);
   --text-row-title-size: var(--text-card-title);
-  --text-row-body-size: var(--text-description);
+  --text-row-body-size: var(--text-body);
   --text-meta-size: var(--type-meta-size);
   --retrograde-row-glyph-size: var(--text-glyph);
   --retrograde-row-title-size: var(--text-row-title-size);
@@ -433,7 +432,7 @@
   --retrograde-row-body-size: var(--text-row-body-size);
   --text-button-size: var(--text-row-value);
   --text-table-title-size: var(--text-card-title);
-  --text-table-body-size: var(--text-description);
+  --text-table-body-size: var(--text-body);
   --text-table-meta-size: var(--text-placement-meta);
   --text-compact-title: var(--type-body-size);
   --text-compact-meta: var(--type-hint-size);
@@ -442,7 +441,7 @@
   --text-verification-code-size: 1.25rem;
   --text-auth-code-slot-size: 1.35rem;
   --text-nav-badge-size: 0.65rem;
-  --label-eyebrow-font-family: var(--google-sans);
+  --label-eyebrow-font-family: var(--font-label);
   --label-eyebrow-font-size: var(--text-section-label-size);
   --label-eyebrow-font-weight: var(--weight-semibold);
   --label-eyebrow-line-height: var(--leading-label);
@@ -481,9 +480,10 @@
   --weight-bold: 600;
 
   /*
-   * Type scale: 11, 12, 13, 14, 15, 16, 18, 20, 24,
-   * plus display clamp() values. Newsreader is for titles;
-   * Geist Mono is for body, UI, data, labels, and the wordmark.
+   * Type scale: 11, 12, 13, 15, 16, 18, 20, 22, 24,
+   * plus display clamp() values. Newsreader is for titles, the system sans
+   * stack is for narrative body copy, and Geist Mono is for UI, data, labels,
+   * and the wordmark.
    */
   --type-ui-size: var(--text-button-size);
   --type-caption-size: var(--type-hint-size);
@@ -595,7 +595,7 @@
   --natal-card-title-size: var(--text-card-title);
   --natal-card-title-weight: var(--weight-medium);
   --natal-card-title-line: var(--leading-title);
-  --natal-card-body-size: var(--text-description);
+  --natal-card-body-size: var(--text-body);
   --natal-card-body-line: var(--leading-description);
   --natal-card-meta-size: var(--type-meta-size);
   --natal-card-meta-weight: var(--weight-regular);
@@ -610,7 +610,7 @@
   --aspect-card-title-size: var(--text-card-title);
   --aspect-card-title-weight: var(--weight-medium);
   --aspect-card-title-line: var(--leading-title);
-  --aspect-card-body-size: var(--article-body-size);
+  --aspect-card-body-size: var(--text-body);
   --aspect-card-body-line: var(--leading-body);
   --aspect-card-meta-size: var(--type-meta-size);
   --aspect-card-meta-weight: var(--weight-regular);
@@ -646,10 +646,18 @@
   --table-row-border: var(--card-border);
   --table-row-gap: var(--sp-2);
   --chart-transit-degree-size: var(--chart-degree-size);
-  --chart-synastry-house-label-size: 10.5px;
-  --sky-ledger-title-size: 21px;
-  --sky-ledger-glyph-size: 17px;
-  --sky-ledger-meta-size: 11.5px;
+  --chart-synastry-house-label-size: var(--type-label-size);
+  --chart-sun-glyph-size: calc(var(--chart-planet-glyph-size) * 1.02);
+  --sky-ledger-title-size: var(--type-small-display-size);
+  --sky-ledger-glyph-size: var(--type-title-size);
+  --sky-ledger-meta-size: var(--type-hint-size);
+  --sky-placement-hook-quote-size: var(--type-large-title-size);
+  --retrograde-badge-size: var(--type-h1-size);
+  --social-sharing-title-size: var(--type-h2-size);
+  --friend-invite-title-size: clamp(26px, 4vw, 34px);
+  --lunar-weekly-day-title-size: clamp(24px, 2.5vw, 30px);
+  --settings-dialog-title-size: clamp(24px, 4vw, 34px);
+  --phone-auth-title-size: var(--type-display-size);
   --overlay-bg: var(--card-bg);
   --overlay-border: var(--card-border);
   --overlay-radius: var(--card-radius);
@@ -715,23 +723,23 @@
   --friend-directory-toast-radius: 10px;
   --friend-directory-invite-card-radius: 14px;
   --friend-directory-mark-radius: 3px;
-  --friend-directory-status-size: 0.78rem;
-  --friend-directory-control-size: 0.75rem;
-  --friend-directory-count-size: 0.68rem;
-  --friend-directory-group-label-size: 0.72rem;
-  --friend-directory-message-size: 0.85rem;
-  --friend-directory-avatar-size: 0.74rem;
-  --friend-directory-row-title-size: 1.05rem;
-  --friend-directory-tertiary-size: 0.7rem;
-  --friend-directory-pattern-size: 0.64rem;
-  --friend-directory-action-size: 0.76rem;
-  --friend-directory-menu-size: 0.8rem;
-  --friend-directory-empty-title-size: 1.25rem;
-  --friend-directory-dialog-title-size: 1.35rem;
-  --friend-directory-input-size: 0.9rem;
-  --friend-directory-section-title-size: 1.1rem;
-  --friend-directory-accept-title-size: 1.4rem;
-  --friend-directory-toast-avatar-size: 0.6rem;
+  --friend-directory-status-size: var(--type-meta-size);
+  --friend-directory-control-size: var(--type-hint-size);
+  --friend-directory-count-size: var(--type-label-size);
+  --friend-directory-group-label-size: var(--type-label-size);
+  --friend-directory-message-size: var(--type-body-size);
+  --friend-directory-avatar-size: var(--type-hint-size);
+  --friend-directory-row-title-size: var(--type-title-size);
+  --friend-directory-tertiary-size: var(--type-label-size);
+  --friend-directory-pattern-size: var(--type-label-size);
+  --friend-directory-action-size: var(--type-hint-size);
+  --friend-directory-menu-size: var(--type-meta-size);
+  --friend-directory-empty-title-size: var(--type-small-display-size);
+  --friend-directory-dialog-title-size: var(--type-large-title-size);
+  --friend-directory-input-size: var(--type-body-size);
+  --friend-directory-section-title-size: var(--type-title-size);
+  --friend-directory-accept-title-size: var(--type-large-title-size);
+  --friend-directory-toast-avatar-size: var(--type-label-size);
   --friend-directory-row-title-leading: 1.15;
   --friend-directory-dialog-copy-leading: 1.55;
   --friend-directory-heading-leading: 1.1;

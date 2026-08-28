@@ -178,7 +178,7 @@
   margin: 0;
   color: var(--card-title-color);
   font-family: var(--font-display);
-  font-size: clamp(1.35rem, 2.5vw, 1.8rem);
+  font-size: var(--sky-placement-hook-quote-size);
   font-weight: var(--weight-bold);
   letter-spacing: var(--tracking-tight);
   line-height: var(--leading-sky-quote);
@@ -242,7 +242,7 @@
   margin: 0;
   color: var(--card-body-color);
   font-family: var(--font-body);
-  font-size: var(--type-body-size);
+  font-size: var(--text-body);
   font-weight: var(--weight-regular);
   line-height: var(--leading-body);
   text-wrap: pretty;
@@ -350,7 +350,7 @@
 .sky-rising-horoscope__title {
   margin: 0 0 var(--sp-2);
   color: var(--ink);
-  font-family: var(--font-body);
+  font-family: var(--font-display);
   font-size: var(--text-section-heading-size);
   font-weight: var(--weight-medium);
   line-height: var(--leading-title);
@@ -468,8 +468,8 @@
 .article-related-aspect-row .aspect-row-copy p {
   max-width: none;
   font-family: var(--font-body);
-  font-size: var(--aspect-card-body-size);
-  line-height: var(--aspect-card-body-line);
+  font-size: var(--text-body);
+  line-height: var(--leading-body);
 }
 
 .article-related-aspect-row .aspect-row-glyphs {
@@ -520,14 +520,6 @@
   .article-lens-hint {
     padding: calc(var(--space-4) + var(--space-1) / 2);
     border-radius: var(--radius);
-  }
-
-  .article-lens-hint p,
-  .article-section p,
-  .sky-detail-lede,
-    .sky-detail-section p,
-    .sky-detail-drilldown-body p {
-    font-size: var(--type-meta-size);
   }
 
   .article-rule {
@@ -878,7 +870,7 @@
   border-radius: var(--radius-circle);
   background: var(--retrograde-bg);
   color: var(--retrograde-accent);
-  font-size: calc(var(--text-glyph) + 8px);
+  font-size: var(--retrograde-badge-size);
   line-height: var(--leading-label);
 }
 
@@ -1041,8 +1033,8 @@
   overflow: hidden;
   color: var(--card-body-color);
   font-family: var(--font-body);
-  font-size: var(--aspect-card-body-size);
-  line-height: var(--aspect-card-body-line);
+  font-size: var(--text-body);
+  line-height: var(--leading-body);
   text-wrap: pretty;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;

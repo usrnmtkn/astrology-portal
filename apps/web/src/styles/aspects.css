@@ -106,9 +106,9 @@
 .aspect-row-copy p {
   margin: 0;
   color: var(--aspect-row-copy-color, var(--card-body-color));
-  font-size: var(--aspect-row-copy-size);
+  font-size: var(--text-body);
   font-weight: var(--weight-regular);
-  line-height: var(--aspect-row-copy-line);
+  line-height: var(--leading-body);
 }
 
 .aspect-row-copy .aspect-row-subtitle:not(.ui-pill) {
@@ -326,7 +326,10 @@
 .personal-timing-summary p {
   margin: 0;
   color: var(--card-body-color);
-  font-size: var(--text-description);
+  font-family: var(--font-body);
+  font-size: var(--text-body);
+  font-weight: var(--weight-regular);
+  letter-spacing: var(--tracking-body);
   line-height: var(--leading-body);
 }
 
@@ -531,7 +534,7 @@
   display: block;
   color: var(--card-body-color);
   font-family: var(--font-body);
-  font-size: var(--text-description);
+  font-size: var(--text-body);
   font-weight: var(--weight-regular);
   line-height: var(--leading-body);
   text-wrap: pretty;
@@ -558,7 +561,7 @@
   padding-top: calc(var(--space-3) + var(--space-1) / 2);
   color: var(--card-body-color);
   font-family: var(--font-body);
-  font-size: var(--text-description);
+  font-size: var(--text-body);
   font-weight: var(--weight-regular);
   line-height: var(--leading-body);
   text-wrap: pretty;

@@ -87,9 +87,9 @@ button.placement-table-row {
 .placement-table-row__description {
   color: var(--card-body-color);
   font-family: var(--font-body);
-  font-size: var(--text-table-body-size);
+  font-size: var(--text-body);
   font-weight: var(--weight-regular);
-  line-height: var(--leading-description);
+  line-height: var(--leading-body);
 }
 
 .placement-table-row__meta {

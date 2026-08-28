@@ -192,7 +192,7 @@
   margin: 0;
   color: var(--app-text);
   font-family: var(--font-display);
-  font-size: clamp(2rem, 7vw, 2.65rem);
+  font-size: var(--phone-auth-title-size);
   font-weight: var(--weight-regular);
   letter-spacing: var(--tracking-display);
   line-height: var(--leading-auth-title);

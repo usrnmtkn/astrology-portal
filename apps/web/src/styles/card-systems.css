@@ -55,10 +55,10 @@
 .sky-pl-copy {
   color: var(--card-body-color);
   font-family: var(--font-body);
-  font-size: var(--natal-card-body-size);
+  font-size: var(--text-body);
   font-weight: var(--weight-regular);
   letter-spacing: var(--tracking-body);
-  line-height: var(--natal-card-body-line);
+  line-height: var(--leading-body);
 }
 
 .placement-table-row__meta,
@@ -145,10 +145,10 @@
 .friend-chart-page .aspect-row-copy p {
   color: var(--card-body-color);
   font-family: var(--font-body);
-  font-size: var(--aspect-card-body-size);
+  font-size: var(--text-body);
   font-weight: var(--weight-regular);
   letter-spacing: var(--tracking-body);
-  line-height: var(--aspect-card-body-line);
+  line-height: var(--leading-body);
 }
 
 .aspect-row-timing,
