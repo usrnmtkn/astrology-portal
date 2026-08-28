@@ -1066,7 +1066,7 @@ test.describe("content dashboard admin user flow case studies", () => {
         await savedRow.getByRole("button", { name: "Edit" }).click();
       }
       await expect(page.locator(".admin-editor-backdrop")).toBeVisible();
-      await expect(editor.getByRole("heading", { name: "Edit article" })).toBeVisible();
+      await expect(editor.getByRole("heading", { name: "Edit Sun in Cancer" })).toBeVisible();
       await expect(contentSystemPanel).toContainText("Authored");
     }).toPass({ timeout: routeReadyTimeoutMs });
     await expect(contentSystemPanel.getByText("Content Level", { exact: true })).toHaveCount(0);
@@ -1876,7 +1876,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await reviewRow.getByRole("button", { name: "Edit" }).click();
 
     const editor = page.getByRole("dialog", { name: "Generated content editor" });
-    await expect(editor.getByRole("heading", { name: "Edit article" })).toBeVisible();
+    await expect(editor.getByRole("heading", { name: "Edit Sun in Cancer" })).toBeVisible();
     await expect(editor.getByLabel("Content key")).toHaveValue("sky.placement.sun.cancer");
     await assertNoBrowserErrors();
   });
