@@ -1800,15 +1800,24 @@ test.describe("content dashboard admin user flow case studies", () => {
 
     await page.getByLabel("Search unresolved content").fill(editableUnresolvedItem?.contentKey ?? "");
     const editableIssue = page.locator(".admin-unresolved-content-table tbody tr").first();
-    await expect(editableIssue).toContainText("Review the copy in Content Library");
-    await editableIssue.getByRole("button", { name: "Open exact row to review" }).click();
+    await expect(editableIssue).toContainText("Your next action");
+    await expect(editableIssue).toContainText("the Content Library editor with this exact row already selected");
+    const guidedReviewButton = editableIssue.getByRole("button", { name: "Review this horoscope" });
+    await expect(guidedReviewButton).toBeVisible();
+    await expect.poll(() => guidedReviewButton.evaluate((button) => button.scrollWidth <= button.clientWidth)).toBe(true);
+    await guidedReviewButton.click();
     await expectAdminHeader(page, "Content Library", "Admin / Write / Content library");
     await expect(page.getByLabel("Search content")).toHaveValue(editableUnresolvedItem?.contentKey ?? "");
     await expect(page.locator(".admin-content-row")).toContainText(editableUnresolvedItem?.contentKey ?? "");
     await expect(page.getByRole("button", { name: "Show reference" })).toHaveAttribute("aria-pressed", "true");
     await expect(page.getByRole("button", { name: "Show retired" })).toHaveAttribute("aria-pressed", "true");
+    const guidedEditor = page.getByRole("dialog", { name: "Generated content editor" });
+    await expect(guidedEditor).toBeVisible();
+    await expect(guidedEditor.getByRole("region", { name: "Guided unresolved-content review" })).toContainText("The Body field below contains the full reader-facing horoscope");
+    await expect(guidedEditor.getByRole("region", { name: "Guided unresolved-content review" })).toContainText(editableUnresolvedItem?.contentKey ?? "");
+    await guidedEditor.getByRole("button", { name: "Back to Unresolved Content" }).click();
+    await expectAdminHeader(page, "Unresolved Content", "Admin / Publish / Unresolved content");
 
-    await page.getByRole("navigation", { name: "Content operations" }).getByRole("button", { name: "Unresolved Content" }).click();
     await page.getByLabel("Search unresolved content").fill("not-a-real-content-key");
     await expect(page.getByText("No matching issues.")).toBeVisible();
 
