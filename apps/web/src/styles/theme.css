@@ -62,6 +62,7 @@
   --color-positive: #3f7550;
   --color-positive-bg: #e5efe8;
   --color-highlight: #f1d58a;
+  --color-control-thumb-active: var(--color-surface);
   --color-aspect-conjunction: #252833;
   --color-aspect-sextile: #1d71a8;
   --color-aspect-square: #b3318e;
@@ -708,7 +709,7 @@
   --control-border: var(--line);
   --control-radius: var(--card-radius-sm);
   --control-thumb-bg: var(--surface);
-  --control-thumb-active-bg: var(--surface);
+  --control-thumb-active-bg: var(--color-control-thumb-active);
   --row-padding-y: var(--row-py);
   --row-padding-x: var(--row-px);
   --row-gap: var(--sp-2);
@@ -1157,6 +1158,7 @@
   --color-positive: #9fd1aa;
   --color-positive-bg: #24372b;
   --color-highlight: #8a743d;
+  --color-control-thumb-active: #888d99;
   --color-aspect-conjunction: #eceef2;
   --color-aspect-sextile: #69bceb;
   --color-aspect-square: #f083cf;
@@ -1299,7 +1301,7 @@
   --button-bg: var(--pill-bg);
   --button-fg: var(--pill-fg);
   --control-thumb-bg: var(--color-white);
-  --control-thumb-active-bg: var(--muted);
+  --control-thumb-active-bg: var(--color-control-thumb-active);
   --nav-surface: var(--surface);
   --nav-scrolled-bg: color-mix(in srgb, var(--bg) 76%, transparent);
   --nav-border: rgba(255, 255, 255, 0.08);
