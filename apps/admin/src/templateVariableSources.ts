@@ -4,11 +4,21 @@ import type { TemplateVariableReference } from "./templateVariableReference";
 // Content Studio take an editor from a template slot to the saved writing that
 // can fill it. Variables omitted here are calculated by the app and do not have
 // an editable content row.
-const sourcePrefixExceptions: Record<string, string[]> = {
+const resolverSourceFamilies: Record<string, string[]> = {
+  planetVerb: ["fallback-vocab/planet-verb/"],
+  signAdverb: ["fallback-vocab/sign-adverb/"],
+  signNeed: ["fallback-vocab/sign-need/"],
+  planetExcess: ["fallback-vocab/planet-excess/"],
+  planetBest: ["fallback-hook/planet-best/"],
   planetIntro: ["fallback-hook/planet-lived/", "fallback-hook/planet-intro/"],
   placementSentences: ["fallback-hook/placement-sentence/"],
   placementGerundText: ["fallback-vocab/placement-gerund/"],
   modifierSentences: ["fallback-template/natal.modifier."],
+  houseMeaning: ["fallback-hook/house-meaning/"],
+  angleIntro: ["fallback-hook/angle-intro/"],
+  nodeJourney: ["fallback-hook/node-journey/"],
+  planetFunction: ["fallback-vocab/planet-function/"],
+  houseTopic: ["fallback-vocab/house-topic/"],
   transitTopic: ["fallback-vocab/planet-topic/"],
   natalCore: ["fallback-hook/natal-core/", "fallback-vocab/planet-core/"],
   natalArea: ["fallback-vocab/planet-topic/", "fallback-vocab/angle-area/"],
@@ -19,6 +29,9 @@ const sourcePrefixExceptions: Record<string, string[]> = {
   topicM: ["fallback-vocab/house-topic/"],
   angleSignSentences: ["fallback-hook/angle-sign/"],
   aspectTypeLine: ["fallback-hook/aspect-type/"],
+  aspectAdj: ["fallback-vocab/aspect-adj/"],
+  aspectVerb: ["fallback-vocab/aspect-verb/"],
+  aspectMotion: ["fallback-vocab/aspect-motion/"],
   planetACore: ["fallback-vocab/planet-core/"],
   planetBCore: ["fallback-vocab/planet-core/"],
   pairSentences: ["fallback-hook/synastry-pair/", "fallback-hook/aspect-pair/"],
@@ -45,9 +58,20 @@ const sourcePrefixExceptions: Record<string, string[]> = {
   currentAspects: ["fallback-hook/sky-aspect-sign/", "fallback-hook/sky-aspect-exact/", "fallback-hook/sky-aspect-pair/", "fallback-hook/sky-placement-aspect/"],
   aspectInsert: ["fallback-hook/sky-aspect-sign/", "fallback-hook/sky-aspect-exact/", "fallback-hook/sky-aspect-pair/", "fallback-hook/sky-placement-aspect/"],
   planetFrame: ["fallback-hook/sky-placement-frame/", "fallback-hook/sky-placement-retro-frame/"],
-  signLore: ["fallback-hook/sky-placement-lore/"],
-  articleHeadline: ["sky-article/"],
-  articleBody: ["sky-article/"]
+  signLore: ["fallback-hook/sky-placement-lore/"]
+};
+
+const templateSourceContracts: Record<string, Record<string, string[]>> = {
+  "fallback-template/transit.retrograde-article": {
+    articleHeadline: ["fallback-hook/transit-retro-article/"],
+    articleBody: ["fallback-hook/transit-retro-article/"]
+  },
+  "fallback-template/synastry.aspect-v3": {
+    pairSentences: ["fallback-hook/synastry-pair/"]
+  },
+  "fallback-template/compat.cross-sign": {
+    elementPattern: ["fallback-hook/element-pattern/"]
+  }
 };
 
 const sourceSelectionNotes: Record<string, string> = {
@@ -57,6 +81,11 @@ const sourceSelectionNotes: Record<string, string> = {
 export type TemplateVariableSourceRow = {
   id: string;
   content_key: string;
+};
+
+export type TemplateVariableSourceContract = {
+  confidence: "template-specific" | "resolver-family" | "inferred" | "none";
+  prefixes: string[];
 };
 
 const contextualValues = new Set([
@@ -75,15 +104,30 @@ function templateContextTokens(contentKey: string) {
     .filter((part) => contextualValues.has(part));
 }
 
-export function templateVariableSourceKeyPrefixes(reference: Pick<TemplateVariableReference, "name" | "source" | "sourceKind">) {
-  const exception = sourcePrefixExceptions[reference.name];
-  if (exception) return exception;
-  if (reference.sourceKind !== "saved-copy") return [];
+export function templateVariableSourceContract(
+  reference: Pick<TemplateVariableReference, "name" | "source" | "sourceKind">,
+  templateContentKey = ""
+): TemplateVariableSourceContract {
+  const templatePrefixes = templateSourceContracts[templateContentKey]?.[reference.name];
+  if (templatePrefixes) return { confidence: "template-specific", prefixes: templatePrefixes };
+  const resolverPrefixes = resolverSourceFamilies[reference.name];
+  if (resolverPrefixes) return { confidence: "resolver-family", prefixes: resolverPrefixes };
+  if (reference.sourceKind !== "saved-copy") return { confidence: "none", prefixes: [] };
   const keyPart = reference.name
     .replace(/([a-z0-9])([A-Z])/gu, "$1-$2")
     .replace(/-sentences?$/u, "")
     .toLowerCase();
-  return [`fallback-${/vocabulary/iu.test(reference.source) ? "vocab" : "hook"}/${keyPart}/`];
+  return {
+    confidence: "inferred",
+    prefixes: [`fallback-${/vocabulary/iu.test(reference.source) ? "vocab" : "hook"}/${keyPart}/`]
+  };
+}
+
+export function templateVariableSourceKeyPrefixes(
+  reference: Pick<TemplateVariableReference, "name" | "source" | "sourceKind">,
+  templateContentKey = ""
+) {
+  return templateVariableSourceContract(reference, templateContentKey).prefixes;
 }
 
 export function templateVariableSourceSelectionNote(reference: Pick<TemplateVariableReference, "name" | "sourceKind">) {
@@ -96,7 +140,7 @@ export function templateVariableSourceCandidates<T extends TemplateVariableSourc
   rows: T[],
   templateContentKey: string
 ): T[] {
-  const prefixes = templateVariableSourceKeyPrefixes(reference);
+  const prefixes = templateVariableSourceKeyPrefixes(reference, templateContentKey);
   if (prefixes.length === 0) return [];
   const candidates = rows.filter((row) => prefixes.some((prefix) => row.content_key.startsWith(prefix)));
   const context = templateContextTokens(templateContentKey);

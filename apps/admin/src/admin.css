@@ -9092,6 +9092,39 @@ body,
   margin: 4px 0 0;
 }
 
+.admin-dashboard .admin-contextual-editor-guidance {
+  display: grid;
+  gap: 8px;
+}
+
+.admin-dashboard .admin-contextual-editor-guidance > strong {
+  font-size: var(--admin-ui-type-body);
+  line-height: 1.25;
+}
+
+.admin-dashboard .admin-contextual-copy-example {
+  background: var(--admin-ui-surface-2);
+  border: 1px solid var(--admin-ui-border);
+  border-radius: var(--admin-ui-radius-md);
+  display: grid;
+  gap: 4px;
+  padding: 10px 12px;
+}
+
+.admin-dashboard .admin-contextual-copy-example span {
+  color: var(--admin-ui-muted);
+  font-size: var(--admin-ui-type-label);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.admin-dashboard .admin-contextual-copy-example q {
+  color: var(--admin-ui-text);
+  font-size: var(--admin-ui-type-body);
+  line-height: 1.45;
+}
+
 .admin-dashboard .admin-sky-placement-composition {
   gap: 12px;
 }
@@ -11570,6 +11603,43 @@ body,
 }
 
 /* Editable Composition Map */
+.admin-dashboard .admin-composition-scope-header {
+  align-items: end;
+  display: flex;
+  gap: var(--admin-space-3xl);
+  justify-content: flex-start;
+  margin-bottom: var(--admin-space-3xl);
+}
+
+.admin-dashboard .admin-composition-scope-tabs {
+  background: var(--admin-ui-surface);
+  border: 1px solid var(--admin-ui-border);
+  border-radius: var(--admin-ui-radius-lg);
+  display: flex;
+  flex: 0 0 auto;
+  gap: var(--admin-space-sm);
+  padding: var(--admin-space-sm);
+}
+
+.admin-dashboard .admin-composition-scope-tabs button {
+  background: transparent;
+  border-color: transparent;
+  gap: var(--admin-space-md);
+  min-height: 38px;
+  padding: var(--admin-space-sm) var(--admin-space-xl);
+}
+
+.admin-dashboard .admin-composition-scope-tabs button.active {
+  background: var(--admin-ui-neutral-soft);
+  border-color: var(--admin-ui-border-strong);
+  color: var(--admin-ui-text);
+}
+
+.admin-dashboard .admin-composition-scope-tabs button span {
+  color: var(--admin-ui-subtle);
+  font-size: var(--admin-ui-type-caption);
+}
+
 .admin-dashboard .admin-composition-template-list .admin-eyebrow {
   color: var(--admin-ui-subtle);
   font-family: var(--font-label);
@@ -11820,6 +11890,159 @@ body,
   border-bottom-color: var(--admin-ui-primary);
 }
 
+.admin-dashboard .admin-composition-surface-summary,
+.admin-dashboard .admin-composition-surface-limit {
+  display: grid;
+  gap: var(--admin-space-xl);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.admin-dashboard .admin-composition-surface-summary > div,
+.admin-dashboard .admin-composition-surface-flow,
+.admin-dashboard .admin-composition-surface-actions,
+.admin-dashboard .admin-composition-surface-provenance,
+.admin-dashboard .admin-composition-surface-limit > div {
+  background: var(--admin-ui-neutral-soft);
+  border: 1px solid var(--admin-ui-border);
+  border-radius: var(--admin-ui-radius-lg);
+  display: grid;
+  gap: var(--admin-space-lg);
+  padding: var(--admin-space-2xl);
+}
+
+.admin-dashboard .admin-composition-surface-summary h3,
+.admin-dashboard .admin-composition-surface-flow h3,
+.admin-dashboard .admin-composition-surface-actions h3,
+.admin-dashboard .admin-composition-surface-provenance h3,
+.admin-dashboard .admin-composition-surface-summary p,
+.admin-dashboard .admin-composition-surface-flow p,
+.admin-dashboard .admin-composition-surface-actions p,
+.admin-dashboard .admin-composition-surface-provenance p,
+.admin-dashboard .admin-composition-surface-limit p {
+  margin: 0;
+}
+
+.admin-dashboard .admin-composition-surface-summary h3,
+.admin-dashboard .admin-composition-surface-flow h3,
+.admin-dashboard .admin-composition-surface-actions h3,
+.admin-dashboard .admin-composition-surface-provenance h3 {
+  font-size: var(--admin-type-16);
+  line-height: var(--leading-title);
+}
+
+.admin-dashboard .admin-composition-surface-flow > p:not(.admin-eyebrow),
+.admin-dashboard .admin-composition-surface-limit > div > p:last-child {
+  color: var(--admin-ui-muted);
+  line-height: var(--leading-description);
+}
+
+.admin-dashboard .admin-composition-surface-flow > span {
+  justify-self: start;
+}
+
+.admin-dashboard .admin-composition-surface-parts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--admin-space-sm);
+}
+
+.admin-dashboard .admin-composition-surface-parts span,
+.admin-dashboard .admin-composition-layer-order li {
+  background: var(--admin-ui-bg);
+  border: 1px solid var(--admin-ui-border);
+  border-radius: var(--admin-radius-pill);
+  color: var(--admin-ui-muted);
+  font-size: var(--admin-ui-type-caption);
+  padding: var(--admin-space-sm) var(--admin-space-lg);
+}
+
+.admin-dashboard .admin-composition-layer-order {
+  counter-reset: layer;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--admin-space-md);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.admin-dashboard .admin-composition-layer-order li::before {
+  color: var(--admin-ui-primary);
+  content: counter(layer) ". ";
+  counter-increment: layer;
+}
+
+.admin-dashboard .admin-composition-surface-actions > header,
+.admin-dashboard .admin-composition-surface-provenance > header {
+  align-items: start;
+  display: flex;
+  justify-content: space-between;
+}
+
+.admin-dashboard .admin-composition-surface-route-list,
+.admin-dashboard .admin-composition-cms-starters,
+.admin-dashboard .admin-composition-surface-provenance > div {
+  display: grid;
+  gap: var(--admin-space-md);
+}
+
+.admin-dashboard .admin-composition-surface-route-list > a,
+.admin-dashboard .admin-composition-cms-starters article,
+.admin-dashboard .admin-composition-surface-provenance article {
+  align-items: center;
+  background: var(--admin-ui-bg);
+  border: 1px solid var(--admin-ui-border);
+  border-radius: var(--admin-ui-radius);
+  color: var(--admin-ui-text);
+  display: flex;
+  gap: var(--admin-space-xl);
+  justify-content: space-between;
+  padding: var(--admin-space-lg);
+  text-decoration: none;
+}
+
+.admin-dashboard .admin-composition-surface-route-list > a:hover,
+.admin-dashboard .admin-composition-surface-route-list > a.primary {
+  border-color: rgba(91, 220, 155, 0.42);
+}
+
+.admin-dashboard .admin-composition-surface-route-list > a > span:first-child,
+.admin-dashboard .admin-composition-cms-starters article > div,
+.admin-dashboard .admin-composition-surface-provenance article {
+  display: grid;
+  gap: var(--admin-space-xs);
+}
+
+.admin-dashboard .admin-composition-surface-route-list small,
+.admin-dashboard .admin-composition-cms-starters small,
+.admin-dashboard .admin-composition-cms-starters code,
+.admin-dashboard .admin-composition-surface-provenance code {
+  color: var(--admin-ui-subtle);
+  font-size: var(--admin-ui-type-caption);
+  overflow-wrap: anywhere;
+}
+
+.admin-dashboard .admin-composition-cms-starters {
+  border-top: 1px solid var(--admin-ui-border);
+  padding-top: var(--admin-space-lg);
+}
+
+.admin-dashboard .admin-composition-cms-starters article button {
+  flex: 0 0 auto;
+}
+
+.admin-dashboard .admin-composition-surface-provenance article {
+  align-items: start;
+  justify-content: stretch;
+}
+
+.admin-dashboard .admin-composition-surface-provenance article > span {
+  color: var(--admin-ui-primary);
+  font-size: var(--admin-ui-type-label);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+}
+
 .admin-dashboard .admin-composition-reader-preview,
 .admin-dashboard .admin-composition-template-workbench {
   display: grid;
@@ -11860,6 +12083,21 @@ body,
   color: var(--admin-ui-muted);
   line-height: var(--leading-description);
   max-width: 68ch;
+}
+
+.admin-dashboard .admin-composition-lineage-warning {
+  background: var(--admin-ui-warning-soft);
+  border: 1px solid rgba(217, 161, 74, 0.28);
+  border-radius: var(--admin-ui-radius-lg);
+  color: #efd09a;
+  display: grid;
+  gap: var(--admin-space-sm);
+  padding: var(--admin-space-xl);
+}
+
+.admin-dashboard .admin-composition-lineage-warning p {
+  color: var(--admin-ui-muted);
+  line-height: var(--leading-description);
 }
 
 .admin-dashboard .admin-composition-preview-surface {
@@ -12011,18 +12249,6 @@ body,
   position: relative;
   text-align: inherit;
   text-transform: inherit;
-}
-
-.admin-dashboard .admin-composition-inline-edit {
-  color: color-mix(in srgb, var(--composition-variable-color) 86%, white);
-  display: inline-block;
-  font-family: var(--font-label);
-  font-size: var(--admin-ui-type-caption);
-  font-weight: var(--weight-semibold);
-  letter-spacing: 0;
-  margin-left: var(--admin-space-sm);
-  text-transform: none;
-  white-space: nowrap;
 }
 
 .admin-dashboard .admin-composition-variable:hover,
@@ -12325,6 +12551,13 @@ body,
   margin: 0;
 }
 
+.admin-dashboard .admin-composition-slot > .admin-composition-source-contract {
+  color: var(--admin-ui-subtle);
+  font-family: var(--font-mono);
+  font-size: var(--admin-ui-type-caption);
+  overflow-wrap: anywhere;
+}
+
 .admin-dashboard .admin-composition-slot-badges {
   display: flex;
   flex-wrap: wrap;
@@ -12433,9 +12666,39 @@ body,
     flex: 0 0 240px;
     scroll-snap-align: start;
   }
+
+  .admin-dashboard .admin-composition-scope-header {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .admin-dashboard .admin-composition-scope-tabs {
+    align-self: start;
+  }
 }
 
 @media (max-width: 620px) {
+  .admin-dashboard .admin-composition-scope-tabs,
+  .admin-dashboard .admin-composition-surface-summary,
+  .admin-dashboard .admin-composition-surface-limit {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-dashboard .admin-composition-scope-tabs {
+    display: grid;
+    width: 100%;
+  }
+
+  .admin-dashboard .admin-composition-surface-route-list > a,
+  .admin-dashboard .admin-composition-cms-starters article {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .admin-dashboard .admin-composition-cms-starters article button {
+    width: 100%;
+  }
+
   .admin-dashboard .admin-composition-view-tabs {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
