@@ -153,6 +153,11 @@ type AdminDashboardPage =
 type AdminContentClass = "phrasebank" | "generated" | "fallback-hook" | "vocab" | "reference" | "legacy" | "user-generated" | "other";
 type AdminContentClassFilter = AdminContentClass | "all";
 type AdminContentRole = "authored-content" | "generated-content" | "fallback-output" | "fallback-helper" | "source-material" | "legacy-generated" | "unknown";
+type AdminAspectContext = {
+  key: "sky-transit" | "transit-to-natal" | "natal" | "relationship" | "unknown";
+  label: string;
+  detail: string;
+};
 type AdminContentSystemFilter = "all" | "authored" | "generated" | "fallback";
 type AdminReaderReadinessKey = "reader-ready" | "draft-held" | "reference-held" | "review-held" | "fallback-needed" | "needs-source-material";
 type AdminFallbackCompositionDiagnostic = {
@@ -664,29 +669,34 @@ function adminPageTitle(activePage: AdminDashboardPage) {
   }
 }
 
-function adminPageBreadcrumb(activePage: AdminDashboardPage) {
+type AdminBreadcrumbItem = {
+  label: string;
+  page?: AdminDashboardPage;
+};
+
+function adminPageBreadcrumbItems(activePage: AdminDashboardPage): AdminBreadcrumbItem[] {
   switch (activePage) {
-    case "articles": return "Admin / Write / Articles";
-    case "skyWriteups": return "Admin / Write / Sky write-ups";
-    case "compatibility": return "Admin / Write / Compatibility";
-    case "content": return "Admin / Write / Content library";
-    case "reviewQueue": return "Admin / Publish / Review queue";
-    case "unresolvedContent": return "Admin / Publish / Unresolved content";
-    case "compositeByType": return "Admin / Write / Composite review";
-    case "connection": return "Admin / Connection";
-    case "compositionMap": return "Admin / Composition / Map";
-    case "vocabulary": return "Admin / Composition / Vocabulary & phrases";
-    case "slotDictionary": return "Admin / Composition / Slots";
-    case "knowledge": return "Admin / Composition / Fallback articles & passages";
-    case "templates": return "Admin / Composition / Templates";
-    case "hooks": return "Admin / Composition / Surface map";
-    case "sourceDrafts": return "Admin / App surfaces / Sky aspect drafts";
-    case "aspectPatternCoverage": return "Admin / Language System / Aspect Patterns";
-    case "aspectPatternActivationCoverage": return "Admin / Language System / Aspect Pattern Activation";
-    case "aspectDiagnostics": return "Admin / Diagnostics / Aspect patterns";
-    case "users": return "Admin / Users";
-    case "reportFulfillment": return "Admin / Operations / Report fulfillment";
-    default: return "Admin / Home";
+    case "articles": return [{ label: "Admin", page: "reviewQueue" }, { label: "Write", page: "content" }, { label: "Articles" }];
+    case "skyWriteups": return [{ label: "Admin", page: "reviewQueue" }, { label: "Write", page: "content" }, { label: "Sky write-ups" }];
+    case "compatibility": return [{ label: "Admin", page: "reviewQueue" }, { label: "Write", page: "content" }, { label: "Compatibility" }];
+    case "content": return [{ label: "Admin", page: "reviewQueue" }, { label: "Write", page: "content" }, { label: "Content library" }];
+    case "reviewQueue": return [{ label: "Admin", page: "reviewQueue" }, { label: "Publish", page: "reviewQueue" }, { label: "Review queue" }];
+    case "unresolvedContent": return [{ label: "Admin", page: "reviewQueue" }, { label: "Publish", page: "reviewQueue" }, { label: "Unresolved content" }];
+    case "compositeByType": return [{ label: "Admin", page: "reviewQueue" }, { label: "Write", page: "content" }, { label: "Composite review" }];
+    case "connection": return [{ label: "Admin", page: "reviewQueue" }, { label: "Connection" }];
+    case "compositionMap": return [{ label: "Admin", page: "reviewQueue" }, { label: "Composition", page: "compositionMap" }, { label: "Map" }];
+    case "vocabulary": return [{ label: "Admin", page: "reviewQueue" }, { label: "Composition", page: "compositionMap" }, { label: "Vocabulary & phrases" }];
+    case "slotDictionary": return [{ label: "Admin", page: "reviewQueue" }, { label: "Composition", page: "compositionMap" }, { label: "Slots" }];
+    case "knowledge": return [{ label: "Admin", page: "reviewQueue" }, { label: "Composition", page: "compositionMap" }, { label: "Fallback articles & passages" }];
+    case "templates": return [{ label: "Admin", page: "reviewQueue" }, { label: "Composition", page: "compositionMap" }, { label: "Templates" }];
+    case "hooks": return [{ label: "Admin", page: "reviewQueue" }, { label: "Composition", page: "compositionMap" }, { label: "Surface map" }];
+    case "sourceDrafts": return [{ label: "Admin", page: "reviewQueue" }, { label: "App surfaces", page: "compositionMap" }, { label: "Sky aspect drafts" }];
+    case "aspectPatternCoverage": return [{ label: "Admin", page: "reviewQueue" }, { label: "Language System", page: "aspectPatternCoverage" }, { label: "Aspect Patterns" }];
+    case "aspectPatternActivationCoverage": return [{ label: "Admin", page: "reviewQueue" }, { label: "Language System", page: "aspectPatternCoverage" }, { label: "Aspect Pattern Activation" }];
+    case "aspectDiagnostics": return [{ label: "Admin", page: "reviewQueue" }, { label: "Diagnostics", page: "aspectDiagnostics" }, { label: "Aspect patterns" }];
+    case "users": return [{ label: "Admin", page: "reviewQueue" }, { label: "Users" }];
+    case "reportFulfillment": return [{ label: "Admin", page: "reviewQueue" }, { label: "Operations", page: "connection" }, { label: "Report fulfillment" }];
+    default: return [{ label: "Admin", page: "reviewQueue" }, { label: "Home" }];
   }
 }
 
@@ -1316,6 +1326,7 @@ function visibleRowSearchText(row: AdminGeneratedContentRow) {
   return [
     row.content_key,
     rowTitle(row),
+    rowTypeLabel(row),
     row.headline,
     row.surface,
     row.mode,
@@ -1679,11 +1690,123 @@ function rowBody(row: AdminGeneratedContentRow | AdminReviewRecord | AdminUserGe
   return "content_key" in row ? normalizeText(row.body) : normalizeText(row.body);
 }
 
+function aspectContextForFields({
+  contentKey,
+  surface,
+  mode,
+  blockType,
+  eventType,
+  sourceSnapshot
+}: {
+  contentKey: string;
+  surface: GeneratedContentSurface;
+  mode: GeneratedContentMode;
+  blockType?: string | null;
+  eventType?: string | null;
+  sourceSnapshot?: Record<string, unknown> | null;
+}): AdminAspectContext | null {
+  const sourceContentType = sourceSnapshotString(sourceSnapshot, "contentType");
+  const sourceType = sourceSnapshotString(sourceSnapshot, "sourceType");
+  const marker = [contentKey, surface, mode, blockType, eventType, sourceContentType, sourceType]
+    .filter(Boolean)
+    .join(" ")
+    .toLowerCase();
+  const hasAspectMarker = /(?:^|[./_ -])aspect(?:$|[./_ -])/u.test(marker);
+
+  if (!hasAspectMarker) return null;
+
+  if (
+    surface === "synastry"
+    || surface === "relationship"
+    || /(?:^|[./_ -])(?:synastry|relationship)[./_ -].*aspect|aspect.*(?:synastry|relationship)/u.test(marker)
+  ) {
+    return {
+      key: "relationship",
+      label: "Relationship aspect · synastry",
+      detail: "A connection between placements in two people's charts."
+    };
+  }
+
+  if (
+    /personal[./_ -]transit[./_ -]aspect|transit[./_ -](?:to[./_ -])?natal|authored\/transit-aspect/u.test(marker)
+    || (/(?:^|[./_ -])transit[./_ -]aspect/u.test(marker) && surface !== "sky")
+  ) {
+    return {
+      key: "transit-to-natal",
+      label: "Transit aspect · natal contact",
+      detail: "A moving planet making an aspect to a placement in a person's natal chart."
+    };
+  }
+
+  if (
+    surface === "sky"
+    || contentKey.toLowerCase().startsWith("sky.aspect.")
+    || blockType === "sky_aspect"
+    || eventType === "collective-aspect-card"
+  ) {
+    return {
+      key: "sky-transit",
+      label: "Transit aspect · current sky",
+      detail: "Two bodies in the current sky making an aspect to each other."
+    };
+  }
+
+  if (
+    surface === "natal"
+    || /natal[./_ -]aspect|aspect[./_ -]natal/u.test(marker)
+  ) {
+    return {
+      key: "natal",
+      label: "Natal aspect · birth chart",
+      detail: "Two placements making an aspect within one natal chart."
+    };
+  }
+
+  return {
+    key: "unknown",
+    label: "Aspect · context not recorded",
+    detail: "This row is an aspect, but its saved metadata does not say whether it is natal, transit, or relationship copy."
+  };
+}
+
+function aspectContextForRow(row: AdminGeneratedContentRow | AdminReviewRecord) {
+  if ("content_key" in row) {
+    return aspectContextForFields({
+      contentKey: row.content_key,
+      surface: row.surface,
+      mode: row.mode,
+      blockType: row.block_type,
+      eventType: row.event_type,
+      sourceSnapshot: row.source_snapshot
+    });
+  }
+
+  return aspectContextForFields({
+    contentKey: row.contentKey,
+    surface: row.surface,
+    mode: row.mode,
+    blockType: row.blockType,
+    eventType: row.eventType,
+    sourceSnapshot: row.sourceSnapshot
+  });
+}
+
+function aspectContextForDraft(draft: AdminDraft) {
+  return aspectContextForFields({
+    contentKey: draft.contentKey,
+    surface: draft.surface,
+    mode: draft.mode,
+    blockType: draft.blockType,
+    sourceSnapshot: draft.sourceSnapshot
+  });
+}
+
 function rowTypeLabel(row: AdminGeneratedContentRow) {
   const structuredIdentity = skyFallbackIdentity(row.content_key);
   if (structuredIdentity) return structuredIdentity.typeLabel;
   if (row.content_key.startsWith("slot-template/")) return `Copy pattern for ${templateDestinationLabel(row.content_key).toLowerCase()}`;
-  if (row.content_key.startsWith("authored/career-natal-aspect/")) return "Natal aspect passage";
+  const aspectContext = aspectContextForRow(row);
+  if (aspectContext) return aspectContext.label;
   if (row.content_key.startsWith("authored/career-transit-house/")) return "Transit house passage";
   if (row.content_key.startsWith("authored/career-placement/")) return "Natal placement passage";
   if (row.content_key.startsWith("authored/career-transit/")) return "Personal transit passage";
@@ -2444,7 +2567,8 @@ export function GeneratedContentAdminDashboard() {
       && matchesAdminSearch(visibleRowSearchText(row), search);
   }), [visibleRows, contentLibraryView, contentStatusFilter, contentClassFilter, tierFilter, categoryFilter, query]);
   const filteredReviewRows = useMemo(() => reviewQueueRows.filter((row) => {
-    const haystack = [row.contentKey, row.title, row.summary, row.body, row.surface, row.mode, row.blockType].join(" ").toLowerCase();
+    const aspectContext = aspectContextForRow(row);
+    const haystack = [row.contentKey, row.title, row.summary, row.body, row.surface, row.mode, row.blockType, aspectContext?.label].join(" ").toLowerCase();
     return (reviewStatusFilter === "all" || row.status === reviewStatusFilter)
       && (contentClassFilter === "all" || contentClassForRow(row) === contentClassFilter)
       && (tierFilter === "all" || tierForRow(row) === tierFilter)
@@ -4236,7 +4360,28 @@ export function GeneratedContentAdminDashboard() {
       <section className="admin-main">
         <header className="admin-dashboard-header">
           <div>
-            <p className="admin-breadcrumb">{adminPageBreadcrumb(activePage)}</p>
+            <nav className="admin-breadcrumb" aria-label="Breadcrumb">
+              <ol>
+                {adminPageBreadcrumbItems(activePage).map((item, index) => (
+                  <li key={`${item.label}-${index}`}>
+                    {index > 0 && <span className="admin-breadcrumb-separator" aria-hidden="true"> / </span>}
+                    {item.page
+                      ? (
+                        <a
+                          href={adminHashForPage(item.page)}
+                          onClick={(event) => {
+                            event.preventDefault();
+                            navigateAdminPage(item.page as AdminDashboardPage);
+                          }}
+                        >
+                          {item.label}
+                        </a>
+                      )
+                      : <span aria-current="page">{item.label}</span>}
+                  </li>
+                ))}
+              </ol>
+            </nav>
             <h1>{adminPageTitle(activePage)}</h1>
             <p>{adminPageDescription(activePage)}</p>
           </div>
@@ -5617,6 +5762,7 @@ export function GeneratedContentAdminDashboard() {
             const safety = readerSafetyForRow(row);
             const saved = row.rawGlobalRow;
             const rowRole = contentRoleDetails(contentRoleForRecord(row));
+            const aspectContext = aspectContextForRow(row);
             return (
               <article key={row.id} className="admin-review-queue-row" onClick={() => saved && openRow(saved)}>
                 <div className="admin-review-queue-row-head">
@@ -5628,6 +5774,11 @@ export function GeneratedContentAdminDashboard() {
                     <code>{row.contentKey}</code>
                   </div>
                   <div className="admin-review-queue-meta-strip">
+                    {aspectContext && (
+                      <span className="ui-pill admin-status admin-aspect-context-pill" title={aspectContext.detail}>
+                        {aspectContext.label}
+                      </span>
+                    )}
                     <span className={`ui-pill admin-status status-${row.status.toLowerCase()}`}>{contentStatusLabel(row.status)}</span>
                     <span className="ui-pill admin-status">{contentClassLabel(contentClassForRow(row))}</span>
                     <span className="ui-pill admin-status" title={rowRole.detail}>{rowRole.label}</span>
@@ -5846,6 +5997,7 @@ export function GeneratedContentAdminDashboard() {
     if (!currentDraft) return null;
 
     const ownerApprovedArticleKey = ownerApprovedSkyPlacementArticleKey(currentDraft.contentKey);
+    const aspectContext = aspectContextForDraft(currentDraft);
 
     const isVocabularyDraft = draftIsVocabulary(currentDraft);
     const isArticleDraft = draftIsArticle(currentDraft);
@@ -6250,6 +6402,11 @@ export function GeneratedContentAdminDashboard() {
             <h2>{editorHeading}</h2>
           </div>
           <div className="admin-editor-toolbar-actions">
+            {aspectContext && (
+              <span className="ui-pill admin-status admin-aspect-context-pill" title={aspectContext.detail}>
+                {aspectContext.label}
+              </span>
+            )}
             <span className={`ui-pill admin-status status-${currentDraft.status.toLowerCase()}`}>{contentStatusLabel(currentDraft.status)}</span>
             {variableReferences.length > 0 && (
               <button

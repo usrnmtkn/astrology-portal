@@ -810,6 +810,29 @@ test.describe("content dashboard admin user flow case studies", () => {
     await assertNoBrowserErrors();
   });
 
+  test("header breadcrumbs link to parent Content Studio workspaces", async ({ page }) => {
+    const assertNoBrowserErrors = await expectNoBrowserErrors(page);
+    await seedAdminApi(page);
+    await expectAdminRouteLoads(page, "/admin/content#vocabulary");
+
+    const breadcrumb = page.getByRole("navigation", { name: "Breadcrumb" });
+    await expect(breadcrumb).toHaveText("Admin / Composition / Vocabulary & phrases");
+    await expect(breadcrumb.getByRole("link", { name: "Admin", exact: true })).toHaveAttribute("href", "#review-queue");
+    await expect(breadcrumb.getByRole("link", { name: "Composition", exact: true })).toHaveAttribute("href", "#composition-map");
+    await expect(breadcrumb.getByRole("link", { name: "Vocabulary & phrases", exact: true })).toHaveCount(0);
+    await expect(breadcrumb.getByText("Vocabulary & phrases", { exact: true })).toHaveAttribute("aria-current", "page");
+
+    await breadcrumb.getByRole("link", { name: "Composition", exact: true }).click();
+    await expectAdminHeader(page, "Composition Map", "Admin / Composition / Map");
+
+    await page.setViewportSize({ width: 390, height: 844 });
+    await expect(page.getByRole("navigation", { name: "Breadcrumb" }).getByRole("link", { name: "Admin", exact: true })).toBeVisible();
+    await expectNoHorizontalOverflow(page, "clickable header breadcrumbs");
+    await page.getByRole("navigation", { name: "Breadcrumb" }).getByRole("link", { name: "Admin", exact: true }).click();
+    await expectAdminHeader(page, "Review Queue", "Admin / Publish / Review queue");
+    await assertNoBrowserErrors();
+  });
+
   test("initial CMS load does not present zero counts as a ready dashboard", async ({ page }) => {
     await seedAdminApi(page, { generatedContentDelayMs: 1_000 });
     await page.goto("/admin/content");
@@ -1987,6 +2010,95 @@ test.describe("content dashboard admin user flow case studies", () => {
     const editor = page.getByRole("dialog", { name: "Generated content editor" });
     await expect(editor.getByRole("heading", { name: "Edit Sun in Cancer" })).toBeVisible();
     await expect(editor.getByLabel("Content key")).toHaveValue("sky.placement.sun.cancer");
+    await assertNoBrowserErrors();
+  });
+
+  test("aspect rows identify natal, transit, and relationship context before editing", async ({ page }) => {
+    const assertNoBrowserErrors = await expectNoBrowserErrors(page);
+    const aspectRows = [
+      {
+        ...generatedContentRows[0],
+        id: "qa-current-sky-aspect",
+        content_key: "sky.aspect.chiron.sextile.north-node.taurus.aquarius",
+        surface: "sky",
+        mode: "feed",
+        status: "DRAFT",
+        event_type: "collective-aspect-card",
+        headline: "Chiron sextile North Node",
+        summary: "Current-sky aspect fixture.",
+        body: "Current-sky transit aspect copy.",
+        block_type: "sky_aspect",
+        review_state: "needs-review"
+      },
+      {
+        ...generatedContentRows[0],
+        id: "qa-transit-to-natal-aspect",
+        content_key: "authored/transit-aspect/saturn/sun/square",
+        surface: "you",
+        mode: "card",
+        status: "DRAFT",
+        event_type: "transit-aspect",
+        headline: "Saturn square your Sun",
+        summary: "Transit-to-natal aspect fixture.",
+        body: "A moving Saturn makes contact with a natal Sun.",
+        block_type: "transit_aspect",
+        review_state: "needs-review"
+      },
+      {
+        ...generatedContentRows[0],
+        id: "qa-natal-aspect",
+        content_key: "natal.aspect.sun.square.moon",
+        surface: "natal",
+        mode: "card",
+        status: "DRAFT",
+        event_type: "natal_aspect",
+        headline: "Sun square Moon",
+        summary: "Natal aspect fixture.",
+        body: "Two placements within one birth chart.",
+        block_type: "natal_aspect",
+        review_state: "needs-review"
+      },
+      {
+        ...generatedContentRows[0],
+        id: "qa-synastry-aspect",
+        content_key: "synastry.sun.square.moon",
+        surface: "synastry",
+        mode: "synastry_aspect",
+        status: "DRAFT",
+        event_type: "synastry_aspect",
+        headline: "Sun square Moon",
+        summary: "Synastry aspect fixture.",
+        body: "A connection between two people's charts.",
+        block_type: "synastry_aspect",
+        review_state: "needs-review"
+      }
+    ];
+
+    await seedAdminApi(page, { generatedRows: aspectRows });
+    await expectAdminRouteLoads(page, "/admin/content#review-queue");
+
+    const currentSkyRow = page.locator(".admin-review-queue-row", { hasText: aspectRows[0].content_key });
+    const transitToNatalRow = page.locator(".admin-review-queue-row", { hasText: aspectRows[1].content_key });
+    const natalRow = page.locator(".admin-review-queue-row", { hasText: aspectRows[2].content_key });
+    const synastryRow = page.locator(".admin-review-queue-row", { hasText: aspectRows[3].content_key });
+
+    await expect(currentSkyRow.locator(".admin-aspect-context-pill")).toHaveText("Transit aspect · current sky");
+    await expect(transitToNatalRow.locator(".admin-aspect-context-pill")).toHaveText("Transit aspect · natal contact");
+    await expect(natalRow.locator(".admin-aspect-context-pill")).toHaveText("Natal aspect · birth chart");
+    await expect(synastryRow.locator(".admin-aspect-context-pill")).toHaveText("Relationship aspect · synastry");
+
+    await page.getByLabel("Search review queue").fill("Natal aspect birth chart");
+    await expect(page.locator(".admin-review-queue-row")).toHaveCount(1);
+    await expect(page.locator(".admin-review-queue-row")).toContainText(aspectRows[2].content_key);
+
+    await page.getByLabel("Search review queue").fill("");
+    await page.setViewportSize({ width: 390, height: 844 });
+    await expect(currentSkyRow.locator(".admin-aspect-context-pill")).toBeVisible();
+    await expectNoHorizontalOverflow(page, "aspect-context review rows");
+    await currentSkyRow.getByRole("button", { name: "Edit" }).click();
+    const editor = page.getByRole("dialog", { name: "Generated content editor" });
+    await expect(editor.locator(".admin-aspect-context-pill")).toHaveText("Transit aspect · current sky");
+    await expectNoHorizontalOverflow(page, "aspect-context editor");
     await assertNoBrowserErrors();
   });
 
