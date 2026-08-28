@@ -476,14 +476,16 @@ const variableDefinitions: Record<string, VariableDefinition> = {
     source: "Calculated transit timing"
   },
   articleHeadline: {
-    meaning: "The complete approved headline inserted into an article wrapper.",
-    example: "Jupiter in Leo",
-    source: "Selected article record"
+    meaning: "The approved aphorism from the planet-specific retrograde article source.",
+    example: "The shortcut always sends the bill later.",
+    source: "Planet-specific retrograde article hook",
+    sourceKind: "saved-copy"
   },
   articleBody: {
-    meaning: "The complete approved article copy inserted into an article wrapper.",
-    example: "The full multi-paragraph Sky write-up",
-    source: "Selected article record"
+    meaning: "The complete approved retrograde article copy for the calculated planet.",
+    example: "The planet-specific multi-paragraph retrograde passage",
+    source: "Planet-specific retrograde article hook",
+    sourceKind: "saved-copy"
   },
   windowFrame: {
     meaning: "The reviewed opening passage that explains the current planet's broader transit window.",

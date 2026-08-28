@@ -6,14 +6,25 @@ import {
   type CompositionPreviewSegment,
   type CompositionPreviewVariableKind
 } from "./compositionMap";
+import {
+  writingLayerLabels,
+  writingSurfaceAdminAccess,
+  writingSurfaceSourceMap,
+  writingSurfaceSourceRoleLabels,
+  writingSurfaceStatusLabels,
+  type WritingSurfaceCmsStarter,
+  type WritingSurfaceMapItem
+} from "./writingSurfaceSourceMap";
 
 type Props = {
   editor: ReactNode;
   onEditRow: (row: CompositionMapRow) => void;
+  onStartCmsRow?: (surface: WritingSurfaceMapItem, starter: WritingSurfaceCmsStarter) => void;
   rows: CompositionMapRow[];
 };
 
 type CompositionView = "preview" | "template" | "assembly";
+type CompositionScope = "surfaces" | "templates";
 
 function matchesSearch(values: string[], query: string) {
   const terms = query.toLowerCase().trim().split(/\s+/u).filter(Boolean);
@@ -28,7 +39,182 @@ function sourceKindLabel(source: CompositionMapSource) {
   return source.kind === "phrase" ? "Phrase" : source.kind === "copy" ? "Saved copy" : "Hook";
 }
 
-export default function CompositionMapWorkspace({ editor, onEditRow, rows }: Props) {
+function ReaderSurfaceWorkspace({
+  onStartCmsRow
+}: {
+  onStartCmsRow?: (surface: WritingSurfaceMapItem, starter: WritingSurfaceCmsStarter) => void;
+}) {
+  const [area, setArea] = useState<WritingSurfaceMapItem["area"] | "All">("All");
+  const [query, setQuery] = useState("");
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const areas = useMemo(
+    () => ["All", ...new Set(writingSurfaceSourceMap.map((surface) => surface.area))] as Array<WritingSurfaceMapItem["area"] | "All">,
+    []
+  );
+  const filtered = useMemo(() => writingSurfaceSourceMap.filter((surface) => {
+    const access = writingSurfaceAdminAccess[surface.id];
+    return (area === "All" || surface.area === area) && matchesSearch([
+      surface.surface,
+      surface.area,
+      surface.currentRenderPath,
+      surface.risk,
+      surface.nextAction,
+      ...(surface.runtimeSurfaceIds ?? []),
+      ...surface.requiredSlots,
+      ...surface.sources.flatMap((source) => [source.label, source.path, source.role]),
+      access?.readerLocation ?? "",
+      ...(access?.routes.flatMap((route) => [route.label, route.note]) ?? [])
+    ], query);
+  }), [area, query]);
+  const selected = filtered.find((surface) => surface.id === selectedId) ?? filtered[0];
+  const access = selected ? writingSurfaceAdminAccess[selected.id] : undefined;
+  const editorialStatus = access?.editability === "editable"
+    ? "Editable in Content Studio"
+    : access?.editability === "partial"
+      ? "Inspection only"
+      : "Editor not wired";
+
+  return (
+    <div className="admin-composition-map-layout admin-composition-surface-layout">
+      <aside className="admin-composition-template-list" aria-label="App surfaces and systems">
+        <header>
+          <div><p className="admin-eyebrow">Choose a surface or system</p><strong>{filtered.length} of {writingSurfaceSourceMap.length}</strong></div>
+          <small>Start where writing appears—or with a supporting system—then follow its editorial and runtime paths.</small>
+          <div className="admin-composition-template-tools">
+            <span className="admin-composition-search-shell">
+              <input aria-label="Search surfaces and systems" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Article, calendar, report…" />
+              {query && <button type="button" aria-label="Clear surface search" onClick={() => setQuery("")}>×</button>}
+            </span>
+            <select aria-label="Surface or system area" value={area} onChange={(event) => setArea(event.target.value as WritingSurfaceMapItem["area"] | "All")}>
+              {areas.map((itemArea) => <option key={itemArea} value={itemArea}>{itemArea === "All" ? "All app areas" : itemArea}</option>)}
+            </select>
+          </div>
+          <label className="admin-composition-template-mobile-picker">
+            <span>Selected surface</span>
+            <select value={selected?.id ?? ""} onChange={(event) => setSelectedId(event.target.value)}>
+              {filtered.map((surface) => <option key={surface.id} value={surface.id}>{surface.surface}</option>)}
+            </select>
+          </label>
+        </header>
+        <div className="admin-composition-template-items">
+          {filtered.map((surface) => {
+            const surfaceAccess = writingSurfaceAdminAccess[surface.id];
+            return (
+              <button
+                type="button"
+                key={surface.id}
+                className={selected?.id === surface.id ? "active" : ""}
+                aria-pressed={selected?.id === surface.id}
+                onClick={() => setSelectedId(surface.id)}
+              >
+                <span>{surface.area}</span>
+                <strong>{surface.surface}</strong>
+                <small>{surface.requiredSlots.length} content part{surface.requiredSlots.length === 1 ? "" : "s"} · {surfaceAccess?.editability === "editable" ? "editable" : surfaceAccess?.editability === "partial" ? "inspection only" : "editor not wired"}</small>
+              </button>
+            );
+          })}
+          {!filtered.length && (
+            <div className="admin-composition-empty">
+              <strong>No surfaces match</strong>
+              <p>Clear the search or choose another app area.</p>
+              <button type="button" onClick={() => { setArea("All"); setQuery(""); }}>Clear filters</button>
+            </div>
+          )}
+        </div>
+      </aside>
+
+      <section className="admin-composition-detail" aria-label="Selected app surface or system">
+        {selected && access ? (
+          <>
+            <header className="admin-composition-detail-header">
+              <div>
+                <p className="admin-eyebrow">{selected.area} / {selected.area === "System" ? "writing system" : "reader surface"}</p>
+                <h2>{selected.surface}</h2>
+                <p>{access.readerLocation}</p>
+              </div>
+              <span className={`ui-pill admin-status ${access.editability === "editable" ? "status-live" : access.editability === "missing" ? "status-error" : "status-draft"}`}>{editorialStatus}</span>
+            </header>
+
+            <section className="admin-composition-surface-summary" aria-label="Writing surface contract">
+              <div>
+                <p className="admin-eyebrow">Surface content</p>
+                <h3>Required content parts</h3>
+                <div className="admin-composition-surface-parts">
+                  {selected.requiredSlots.map((slot) => <span key={slot}>{slot}</span>)}
+                </div>
+              </div>
+              <div>
+                <p className="admin-eyebrow">How it is assembled</p>
+                <h3>Visible precedence</h3>
+                <ol className="admin-composition-layer-order">
+                  {selected.visibleLayerOrder.map((layer) => <li key={layer}>{writingLayerLabels[layer]}</li>)}
+                </ol>
+              </div>
+            </section>
+
+            <section className="admin-composition-surface-flow" aria-label="Runtime rendering path">
+              <p className="admin-eyebrow">Runtime rendering path</p>
+              <h3>Where the displayed copy comes from</h3>
+              <p>{selected.currentRenderPath}</p>
+              <span className="ui-pill admin-status">{writingSurfaceStatusLabels[selected.status]}</span>
+            </section>
+
+            <section className="admin-composition-surface-actions" aria-label="Editing destinations">
+              <header>
+                <div><p className="admin-eyebrow">Edit or inspect</p><h3>Open the workspace that owns this writing</h3></div>
+              </header>
+              <div className="admin-composition-surface-route-list">
+                {access.routes.map((route) => (
+                  <a key={`${selected.id}-${route.hash}`} href={route.hash} className={route.purpose === "reader-copy" ? "primary" : ""}>
+                    <span><strong>{route.label}</strong><small>{route.note}</small></span>
+                    <span aria-hidden="true">→</span>
+                  </a>
+                ))}
+                {access.routes.length === 0 && (
+                  <div className="admin-composition-missing-source" role="note">
+                    <span><strong>No atomic editor yet</strong><small>This surface is mapped so the gap is visible; its code-composed prose still needs governed source rows.</small></span>
+                  </div>
+                )}
+              </div>
+              {access.cmsStarters?.length ? (
+                <div className="admin-composition-cms-starters">
+                  <p className="admin-eyebrow">Create a governed surface override</p>
+                  {access.cmsStarters.map((starter) => (
+                    <article key={starter.contentKey}>
+                      <div><strong>{starter.label}</strong><code>{starter.contentKey}</code><small>Calculated slots: {starter.allowedSlots.join(", ") || "none"}</small></div>
+                      {onStartCmsRow && <button type="button" onClick={() => onStartCmsRow(selected, starter)}>Start draft</button>}
+                    </article>
+                  ))}
+                </div>
+              ) : null}
+            </section>
+
+            <section className="admin-composition-surface-provenance" aria-label="Surface provenance">
+              <header><div><p className="admin-eyebrow">Provenance</p><h3>Code and content sources</h3></div><strong>{selected.sources.length}</strong></header>
+              <div>
+                {selected.sources.map((source) => (
+                  <article key={`${selected.id}-${source.role}-${source.path}`}>
+                    <span>{writingSurfaceSourceRoleLabels[source.role]}</span>
+                    <strong>{source.label}</strong>
+                    <code>{source.path}</code>
+                  </article>
+                ))}
+              </div>
+            </section>
+
+            <section className="admin-composition-surface-limit" aria-label="Known limits">
+              <div><p className="admin-eyebrow">Known limit</p><p>{selected.risk}</p></div>
+              <div><p className="admin-eyebrow">Next QA action</p><p>{selected.nextAction}</p></div>
+            </section>
+          </>
+        ) : <div className="admin-empty">Choose a reader surface to inspect its composition.</div>}
+      </section>
+    </div>
+  );
+}
+
+export default function CompositionMapWorkspace({ editor, onEditRow, onStartCmsRow, rows }: Props) {
+  const [scope, setScope] = useState<CompositionScope>("surfaces");
   const [destinationFilter, setDestinationFilter] = useState("all");
   const [issuesOnly, setIssuesOnly] = useState(false);
   const [query, setQuery] = useState("");
@@ -106,14 +292,23 @@ export default function CompositionMapWorkspace({ editor, onEditRow, rows }: Pro
         onClick={() => openVariable(segment.name!, segment.source)}
       >
         {segment.text}
-        {segment.source && <span className="admin-composition-inline-edit" aria-hidden="true">{action} →</span>}
       </button>
     );
   }
 
   return (
     <section className="admin-template-page admin-composition-map-page">
-      <div className="admin-composition-map-layout">
+      <div className="admin-composition-scope-header">
+        <div className="admin-composition-scope-tabs" role="tablist" aria-label="Composition Map scope">
+          <button type="button" role="tab" aria-selected={scope === "surfaces"} className={scope === "surfaces" ? "active" : ""} onClick={() => setScope("surfaces")}>
+            Surfaces &amp; systems <span>{writingSurfaceSourceMap.length}</span>
+          </button>
+          <button type="button" role="tab" aria-selected={scope === "templates"} className={scope === "templates" ? "active" : ""} onClick={() => setScope("templates")}>
+            Template internals <span>{map.length}</span>
+          </button>
+        </div>
+      </div>
+      {scope === "surfaces" ? <ReaderSurfaceWorkspace onStartCmsRow={onStartCmsRow} /> : <div className="admin-composition-map-layout">
         <aside className="admin-composition-template-list" aria-label="Composition templates">
           <header>
             <div><p className="admin-eyebrow">Choose a template</p><strong>{filtered.length} of {map.length}</strong></div>
@@ -208,11 +403,20 @@ export default function CompositionMapWorkspace({ editor, onEditRow, rows }: Pro
                   <header>
                     <div>
                       <p className="admin-eyebrow">Representative surface preview</p>
-                      <h3>Example reader rendering</h3>
-                      <p>A coherent sample is assembled from one audience, matching saved sources, and example chart facts. It is not a live chart reading.</p>
+                      <h3>{selected.preview.lineage === "runtime-traceable" ? "Traceable reader rendering" : "Preview lineage is incomplete"}</h3>
+                      <p>{selected.preview.lineageNote} This uses sample chart facts, not a live chart.</p>
                     </div>
-                    <span className="ui-pill admin-status status-reviewed">Example data</span>
+                    <span className={`ui-pill admin-status ${selected.preview.lineage === "runtime-traceable" ? "status-reviewed" : "status-error"}`}>
+                      {selected.preview.lineage === "runtime-traceable" ? "Runtime-traceable" : "Not traceable"}
+                    </span>
                   </header>
+
+                  {selected.preview.lineage === "not-traceable" && (
+                    <div className="admin-composition-lineage-warning" role="alert">
+                      <strong>Do not use this as reader-copy evidence</strong>
+                      <p>Open Assembly to declare the missing source lineage. Content Studio will not present this sample as a verified rendering.</p>
+                    </div>
+                  )}
 
                   <div className="admin-composition-variable-legend" aria-label="Variable color key">
                     <span className="variable-fact">Calculated fact</span>
@@ -258,7 +462,7 @@ export default function CompositionMapWorkspace({ editor, onEditRow, rows }: Pro
                       <div className="admin-composition-preview-sources">
                         {selected.preview.sources.map((source) => (
                           <button type="button" key={source.row.id} onClick={() => onEditRow(source.row)}>
-                            <span><small>{sourceKindLabel(source)}</small><strong>{source.label}</strong></span>
+                            <span><small>{sourceKindLabel(source)}</small><strong>{source.label}</strong><code>{source.row.content_key}</code></span>
                             <span>Edit source</span>
                           </button>
                         ))}
@@ -330,6 +534,16 @@ export default function CompositionMapWorkspace({ editor, onEditRow, rows }: Pro
                     </header>
                     <p>{slot.meaning}</p>
                     <small>{slot.depth > 0 ? `Nested inside ${slot.parents.map((name) => `{{${name}}}`).join(", ")}` : `Used in ${slot.fields.join(", ")}`} · Example: {slot.example}</small>
+                    {slot.sourceKind === "saved-copy" && (
+                      <small className="admin-composition-source-contract">
+                        {slot.sourceContract.confidence === "template-specific"
+                          ? "Exact template contract"
+                          : slot.sourceContract.confidence === "resolver-family"
+                            ? "Declared resolver family"
+                            : "Inferred source family"}
+                        {slot.sourceContract.prefixes.length ? ` · ${slot.sourceContract.prefixes.join(" or ")}` : ""}
+                      </small>
+                    )}
 
                     {slot.sourceKind === "unmapped" && !slot.sources.length ? (
                       <div className="admin-composition-missing-source" role="note">
@@ -361,7 +575,7 @@ export default function CompositionMapWorkspace({ editor, onEditRow, rows }: Pro
             </>
           ) : <div className="admin-empty">Choose a template to inspect its composition.</div>}
         </section>
-      </div>
+      </div>}
       {editor}
     </section>
   );

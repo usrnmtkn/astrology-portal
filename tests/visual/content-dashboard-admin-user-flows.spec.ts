@@ -95,7 +95,7 @@ const adminCreateCases = [
   { action: "Create content row", hash: "exact-content", editorHeading: "Author new row", eventType: "essay", blockType: "essay", contentKey: "content/manual/new-row" },
   { action: "Create reusable phrase", hash: "vocabulary", editorHeading: "Create reusable phrase", eventType: "vocab", blockType: "vocabulary_phrase", contentKey: "vocab/planets/create-reusable-phrase-qa-row", phraseEditor: true },
   { action: "Create template", hash: "templates", editorHeading: "Author new row", eventType: "slot-template", blockType: "template", contentKey: "slot-template/manual/new-template" },
-  { action: "Create fallback hook", hash: "fallback-hooks", editorHeading: "Author new row", eventType: "fallback-hook", blockType: "fallback_hook", contentKey: "fallback-hook/manual/new-hook" }
+  { action: "Create fallback hook", hash: "fallback-hooks", editorHeading: "Author new row", eventType: "fallback-hook", blockType: "fallback_hook", contentKey: "fallback-hook/manual/new-hook", headlineLabel: "Editor label", bodyLabel: "Reader copy" }
 ];
 
 const forbiddenReaderPreviewCopy = /\b(?:Interpretation in review|Notice how this placement asks|puts first impressions, outward style|write a sentence|source framework|sourceSnapshot|templateVersion|Missing VITE|undefined|null|NaN)\b/i;
@@ -967,7 +967,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await firstHook.getByRole("button", { name: "Author" }).click();
 
     await expectAdminHeader(page, "Fallback Articles & Passages", "Admin / Composition / Fallback articles & passages");
-    await expect(page.getByLabel("Body")).not.toHaveValue("");
+    await expect(page.getByLabel("Reader copy")).not.toHaveValue("");
     expect(indexRequests).toBe(2);
     expect(skyBodyRequests).toBe(2);
   });
@@ -1037,8 +1037,8 @@ test.describe("content dashboard admin user flow case studies", () => {
         await fillAdminEditorField(editor, "Reusable phrase text", `${createCase.action} body copy for the dashboard admin save contract.`);
       } else {
         await expect(editor.getByLabel("Content key")).toHaveValue(createCase.contentKey);
-        await fillAdminEditorField(editor, "Headline", `${createCase.action} QA row`);
-        await fillAdminEditorField(editor, "Body", `${createCase.action} body copy for the dashboard admin save contract.`);
+        await fillAdminEditorField(editor, createCase.headlineLabel ?? "Headline", `${createCase.action} QA row`);
+        await fillAdminEditorField(editor, createCase.bodyLabel ?? "Body", `${createCase.action} body copy for the dashboard admin save contract.`);
       }
       await editor.getByRole("button", { name: "Save" }).evaluate((element) => {
         (element as HTMLButtonElement).click();
@@ -2155,7 +2155,25 @@ test.describe("content dashboard admin user flow case studies", () => {
 
     await openAdminDeepLink("#composition-map");
     await expectAdminHeader(page, "Composition Map", "Admin / Composition / Map");
-    await expect(page.getByText("Read a representative surface first, then inspect and edit the template, sources, and calculated facts behind it.")).toBeVisible();
+    await expect(page.getByText("Start with any reader-facing surface in the app, then follow its editorial sources, runtime path, templates, and calculated facts.")).toBeVisible();
+    await expect(page.getByRole("tab", { name: /Surfaces & systems 24/ })).toHaveAttribute("aria-selected", "true");
+    const surfaceList = page.getByRole("complementary", { name: "App surfaces and systems" });
+    await surfaceList.getByLabel("Search surfaces and systems").fill("Daily At-a-Glance");
+    await expect(surfaceList.getByRole("button", { name: /Daily At-a-Glance/ })).toBeVisible();
+    await surfaceList.getByRole("button", { name: /Daily At-a-Glance/ }).click();
+    await expect(page.getByRole("region", { name: "Selected app surface or system" })).toContainText("Edit daily headline and body hooks");
+    await surfaceList.getByLabel("Search surfaces and systems").fill("");
+    await surfaceList.getByLabel("Surface or system area").selectOption("Reports");
+    await expect(surfaceList.getByRole("button", { name: /Purchased Reports/ })).toBeVisible();
+    await surfaceList.getByRole("button", { name: /Purchased Reports/ }).click();
+    await expect(page.getByRole("region", { name: "Selected app surface or system" })).toContainText("Inspection only");
+    await expect(page.getByRole("region", { name: "Selected app surface or system" }).getByRole("link", { name: /Inspect report fulfillment/ })).toHaveAttribute("href", "#report-fulfillment");
+    await surfaceList.getByLabel("Surface or system area").selectOption("Friends");
+    await surfaceList.getByLabel("Search surfaces and systems").fill("Circle");
+    await surfaceList.getByRole("button", { name: /Friends Circle/ }).click();
+    await expect(page.getByRole("region", { name: "Selected app surface or system" })).toContainText("Editor not wired");
+    await expect(page.getByRole("region", { name: "Selected app surface or system" })).toContainText("No atomic editor yet");
+    await page.getByRole("tab", { name: /Template internals/ }).click();
     await expect(page.getByRole("complementary", { name: "Composition templates" })).toContainText("Friends & relationships");
     await expect(page.getByRole("region", { name: "Selected template composition" }).getByRole("heading", { name: "Planet card" })).toBeVisible();
     await expect(page.getByRole("region", { name: "Reader surface preview" })).toBeVisible();
@@ -2229,6 +2247,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     };
     await seedAdminApi(page, { generatedRows: [templateRow, hookRow, jupiterTemplateRow] });
     await expectAdminRouteLoads(page, "/admin/content#composition-map");
+    await page.getByRole("tab", { name: /Template internals/ }).click();
     const compositionNotification = page.getByRole("button", { name: "Dismiss notification" });
     if (await compositionNotification.isVisible()) await compositionNotification.click();
 
@@ -2244,7 +2263,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await templateList.getByRole("button").filter({ hasText: "Closing card" }).click();
     await expect(detail.getByRole("heading", { name: "Closing card" })).toBeVisible();
     const preview = page.getByRole("region", { name: "Reader surface preview" });
-    await expect(preview.getByRole("heading", { name: "Example reader rendering" })).toBeVisible();
+    await expect(preview.getByRole("heading", { name: "Traceable reader rendering" })).toBeVisible();
     await expect(preview).toContainText("Leo and Aquarius can return to this: The connection works best when both people say what they need directly.");
     await expect(preview.locator(".admin-composition-variable.variable-fact").first()).toBeVisible();
     const inlineHook = preview.locator(".admin-composition-variable.variable-hook").filter({ hasText: "The connection works best" });
@@ -2295,7 +2314,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await assertNoBrowserErrors();
   });
 
-  test("composition map opens the exact populated article field behind highlighted copy", async ({ page }) => {
+  test("composition map follows the runtime retrograde source and ignores a conflicting placement article", async ({ page }) => {
     const assertNoBrowserErrors = await expectNoBrowserErrors(page);
     const articleBody = "Opening article paragraph.\n\nClosing article paragraph.";
     const templateRow = {
@@ -2353,20 +2372,54 @@ test.describe("content dashboard admin user flow case studies", () => {
         }
       }
     };
+    const retrogradeHookBody = "{{timeOpen}}, {{transitRef}} is retrograde, and the inspection starts. Review what can no longer run on autopilot.";
+    const retrogradeHookRow = {
+      ...generatedContentRows[0],
+      id: "qa-saturn-retrograde-hook",
+      content_key: "fallback-hook/transit-retro-article/saturn",
+      headline: "The shortcut always sends the bill later.",
+      summary: "Planet-specific retrograde article used by the runtime resolver.",
+      body: retrogradeHookBody,
+      surface: "sky",
+      block_type: "fallback_hook",
+      provider: "tldrastro-fallback-architecture-v3",
+      facts: { fallbackArchitectureV3: true, review_status: "approved" },
+      source_snapshot: {
+        sourcePackage: "tldrastro-fallback-architecture-v3",
+        review_status: "approved",
+        content_role: "fallback_hook"
+      },
+      sections: {
+        body_you: retrogradeHookBody,
+        body_they: retrogradeHookBody,
+        packageRecord: {
+          contentKey: "fallback-hook/transit-retro-article/saturn",
+          content_role: "fallback_hook",
+          grammar_frame: "complete_sentence",
+          headline: "The shortcut always sends the bill later.",
+          body_you: retrogradeHookBody,
+          body_they: retrogradeHookBody,
+          review_status: "approved"
+        }
+      }
+    };
     const writes: Array<{ method: string; payload: Record<string, unknown> }> = [];
     await seedAdminApi(page, {
-      generatedRows: [templateRow, articleRow],
+      generatedRows: [templateRow, retrogradeHookRow, articleRow],
       onGeneratedContentWrite: (write) => writes.push(write)
     });
     await expectAdminRouteLoads(page, "/admin/content#composition-map");
+    await page.getByRole("tab", { name: /Template internals/ }).click();
 
     const preview = page.getByRole("region", { name: "Reader surface preview" });
-    await expect(preview.getByRole("heading", { name: "Saturn in Aries. Edit Article Headline" })).toBeVisible();
-    await expect(preview).toContainText("Opening article paragraph.");
-    await expect(preview).toContainText("Closing article paragraph.");
-    await expect(preview.getByRole("region", { name: "Saved copy used in preview" })).toContainText("Saved copy");
-    await expect(preview.getByRole("button", { name: /Saturn in Aries.*Edit Article Headline/u })).toContainText("Edit Article Headline");
-    await expect(preview.getByRole("button", { name: /Opening article paragraph.*Edit Article Body/u })).toContainText("Edit Article Body");
+    await expect(preview.locator(".admin-composition-preview-field.field-headline h3")).toContainText("The shortcut always sends the bill later.");
+    await expect(preview).toContainText("From August 12 through September 3, Saturn in Aries is retrograde, and the inspection starts.");
+    await expect(preview).not.toContainText("Opening article paragraph.");
+    await expect(preview.getByRole("region", { name: "Saved copy used in preview" })).toContainText("Hook");
+    await expect(preview.getByRole("region", { name: "Saved copy used in preview" })).toContainText("fallback-hook/transit-retro-article/saturn");
+    await expect(preview.getByRole("button", { name: /The shortcut always sends the bill later.*Edit Article Headline/u })).toHaveAttribute("data-variable-action", /Edit Article Headline/);
+    const highlightedHook = preview.locator(".admin-composition-variable.variable-hook").filter({ hasText: "is retrograde" });
+    await expect(highlightedHook).toBeVisible();
 
     const desktopReviewTypography = await preview.evaluate((region) => {
       const readStyle = (selector: string) => {
@@ -2422,29 +2475,27 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expectNoHorizontalOverflow(page, "Composition Map compact article preview mobile");
     await page.setViewportSize({ width: 1308, height: 900 });
 
-    await preview.getByRole("button", { name: /Opening article paragraph.*Edit Article Body/u }).click();
+    await highlightedHook.click();
     const editor = page.getByRole("dialog", { name: "Generated content editor" });
-    await expect(editor.getByRole("heading", { name: "Edit Saturn in Aries" })).toBeVisible();
-    await expect(editor.getByLabel("Article headline")).toHaveValue("Saturn in Aries");
-    await expect(editor.getByLabel("Article body")).toHaveValue(articleBody);
-    await expect(editor.getByLabel("Summary")).toHaveCount(0);
-    await expect(editor.getByLabel("body_you")).toHaveCount(0);
-    await expect(editor.getByLabel("body_they")).toHaveCount(0);
+    await expect(editor.getByRole("heading", { name: "Edit Saturn · Transit Retro Article" })).toBeVisible();
+    await expect(editor.getByLabel("Reader headline")).toHaveValue("The shortcut always sends the bill later.");
+    await expect(editor.getByLabel("Reader passage")).toHaveValue(retrogradeHookBody);
+    await expect(editor.getByLabel("Reference mirror · not rendered")).toHaveValue(retrogradeHookBody);
     await page.setViewportSize({ width: 390, height: 844 });
-    await expect(editor.getByRole("heading", { name: "Edit Saturn in Aries" })).toBeVisible();
-    await expectNoHorizontalOverflow(page, "Composition Map article source editor mobile");
+    await expect(editor.getByRole("heading", { name: "Edit Saturn · Transit Retro Article" })).toBeVisible();
+    await expectNoHorizontalOverflow(page, "Composition Map retrograde source editor mobile");
 
-    const revisedBody = `${articleBody}\n\nA reversible QA edit.`;
-    await editor.getByLabel("Article body").fill(revisedBody);
+    const revisedBody = `${retrogradeHookBody} A reversible QA edit.`;
+    await editor.getByLabel("Reader passage").fill(revisedBody);
     await editor.getByRole("button", { name: "Save", exact: true }).click();
     await expect.poll(() => writes.length).toBe(1);
     expect(writes[0].method).toBe("PATCH");
     expect(writes[0].payload.body).toBe(revisedBody);
-    expect((writes[0].payload.sections as { packageRecord?: { body?: string } }).packageRecord?.body).toBe(revisedBody);
+    expect((writes[0].payload.sections as { packageRecord?: { body_you?: string } }).packageRecord?.body_you).toBe(revisedBody);
     await assertNoBrowserErrors();
   });
 
-  test("fallback rows sort by title or reader-facing type and explain how to publish an edit", async ({ page }) => {
+  test("fallback rows sort by title and explain each atomic source in its reader context", async ({ page }) => {
     const assertNoBrowserErrors = await expectNoBrowserErrors(page);
     const fallbackSeed = generatedContentRows.find((row) => row.content_key === "fallback-hook/friends.compatibility.planet-card")!;
     await seedAdminApi(page, {
@@ -2469,6 +2520,27 @@ test.describe("content dashboard admin user flow case studies", () => {
           content_key: "fallback-hook/sky-sign-copy/jupiter/leo",
           headline: "Internal Jupiter fallback label",
           block_type: "fallback_hook"
+        },
+        {
+          ...fallbackSeed,
+          id: "qa-pluto-planet-mode",
+          content_key: "fallback-hook/planet-mode/pluto",
+          headline: "Pluto",
+          summary: "Plain 'what this planet is in your life' phrase for synastry aspect lines.",
+          body: "how you handle power and deep change",
+          block_type: "fallback_hook",
+          sections: {
+            body_you: "how you handle power and deep change",
+            body_they: "how they handle power and deep change",
+            packageRecord: {
+              contentKey: "fallback-hook/planet-mode/pluto",
+              content_role: "fallback_hook",
+              grammar_frame: "noun_phrase",
+              body_you: "how you handle power and deep change",
+              body_they: "how they handle power and deep change",
+              summary: "Plain 'what this planet is in your life' phrase for synastry aspect lines."
+            }
+          }
         }
       ]
     });
@@ -2481,13 +2553,57 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(list.getByRole("heading", { name: "Supporting fallback rows" })).toBeVisible();
 
     await sort.selectOption("title-asc");
-    await expect(list.locator(".admin-content-row-title")).toHaveText(["Alpha · Qa", "Jupiter in Leo", "Zeta · Qa"]);
+    await expect(list.locator(".admin-content-row-title")).toHaveText(["Alpha · Qa", "Jupiter in Leo", "Pluto · Relationship role phrase", "Zeta · Qa"]);
     await sort.selectOption("title-desc");
-    await expect(list.locator(".admin-content-row-title")).toHaveText(["Zeta · Qa", "Jupiter in Leo", "Alpha · Qa"]);
+    await expect(list.locator(".admin-content-row-title")).toHaveText(["Zeta · Qa", "Pluto · Relationship role phrase", "Jupiter in Leo", "Alpha · Qa"]);
 
-    await list.locator(".admin-content-row", { hasText: "Alpha · Qa" }).getByRole("button", { name: "Edit" }).click();
-    await expect(page.getByLabel("Fallback hook guidance")).toContainText("Edit the Headline, Summary, or Body below");
-    await expect(page.getByLabel("Fallback hook guidance")).toContainText("Sign Off makes it reader-eligible");
+    await list.locator(".admin-content-row", { hasText: "Pluto · Relationship role phrase" }).getByRole("button", { name: "Edit" }).click();
+    const editor = page.getByRole("dialog", { name: "Generated content editor" });
+    await expect(editor.getByRole("heading", { name: "Edit Pluto · Relationship role phrase" })).toBeVisible();
+    const guidance = editor.getByRole("region", { name: "How this source is used" });
+    await expect(guidance).toContainText("Compatibility and relationship readings");
+    await expect(guidance).toContainText("What Pluto represents for each person");
+    await expect(guidance).toContainText("an intense connection between how you handle power and deep change");
+    await expect(guidance).toContainText("Write a lowercase phrase");
+    await expect(editor.getByLabel("Editor label")).toHaveValue("Pluto");
+    await expect(editor.getByLabel("Purpose (editors only)")).toHaveValue("Plain 'what this planet is in your life' phrase for synastry aspect lines.");
+    await expect(editor.getByLabel("Reader phrase · You")).toHaveValue("how you handle power and deep change");
+    await expect(editor.getByLabel("Reader phrase · They")).toHaveValue("how they handle power and deep change");
+    expect((await editor.locator("label > span").allTextContents()).slice(0, 4)).toEqual([
+      "Editor label",
+      "Purpose (editors only)",
+      "Reader phrase · You",
+      "Reader phrase · They"
+    ]);
+    await expect(editor).not.toContainText("How to update this fallback");
+    await expect(editor.getByRole("region", { name: "Content role" })).toHaveCount(0);
+
+    const desktopEditorHeadingStyle = await editor.getByRole("heading", { name: "Edit Pluto · Relationship role phrase" }).evaluate((heading) => {
+      const style = getComputedStyle(heading);
+      return {
+        fontFamily: style.fontFamily,
+        fontSize: Number.parseFloat(style.fontSize),
+        fontWeight: Number.parseInt(style.fontWeight, 10),
+        lineHeight: Number.parseFloat(style.lineHeight),
+        letterSpacing: style.letterSpacing,
+        marginTop: style.marginTop,
+        textTransform: style.textTransform,
+        textAlign: style.textAlign
+      };
+    });
+    expect(desktopEditorHeadingStyle).toMatchObject({
+      fontSize: 22,
+      fontWeight: 500,
+      marginTop: "6px",
+      textTransform: "none",
+      textAlign: "start"
+    });
+    expect(desktopEditorHeadingStyle.fontFamily).toBeTruthy();
+    expect(desktopEditorHeadingStyle.lineHeight).toBeLessThanOrEqual(26);
+
+    await page.setViewportSize({ width: 390, height: 844 });
+    await expect(editor.getByRole("heading", { name: "Edit Pluto · Relationship role phrase" })).toBeVisible();
+    await expectNoHorizontalOverflow(page, "contextual fallback editor mobile");
     await assertNoBrowserErrors();
   });
 
@@ -2528,8 +2644,9 @@ test.describe("content dashboard admin user flow case studies", () => {
 
     await list.locator(".admin-content-row", { hasText: "Sun · Transit dates and opening" }).getByRole("button", { name: "Edit" }).click();
     const editor = page.getByRole("dialog", { name: "Generated content editor" });
-    await expect(editor.getByRole("region", { name: "Content role" })).toContainText("Transit dates and opening");
-    await expect(editor.getByRole("region", { name: "Content role" })).toContainText("Shared Sun opening with calculated sign, entry date, and exit date");
+    const sourceGuidance = editor.getByRole("region", { name: "How this source is used" });
+    await expect(sourceGuidance).toContainText("Sun · Transit dates and opening");
+    await expect(sourceGuidance).toContainText("Shared Sun opening with calculated sign, entry date, and exit date");
     await assertNoBrowserErrors();
   });
 
@@ -2691,7 +2808,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(variableDetails).toBeHidden();
     await expect(page.getByRole("dialog")).toHaveCount(1);
     await expect(editor.getByLabel("Content key")).toHaveValue("fallback-hook/planet-intro/sun");
-    await expect(editor.getByLabel("Body")).toHaveValue("The Sun describes identity, purpose, and the need to create.");
+    await expect(editor.getByLabel("Reader copy")).toHaveValue("The Sun describes identity, purpose, and the need to create.");
     await assertNoBrowserErrors();
   });
 
