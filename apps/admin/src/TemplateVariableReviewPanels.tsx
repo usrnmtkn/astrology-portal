@@ -1,24 +1,30 @@
 import type { TemplateVariableReference } from "./templateVariableReference";
 import { templateVariableSourceCandidates, templateVariableSourceKeyPrefixes, templateVariableSourceSelectionNote } from "./templateVariableSources";
+import { buildCompositionTemplate, type CompositionMapRow } from "./compositionMap";
 
 type SourceRow = {
   id: string;
   content_key: string;
+  surface: string;
   status: string;
   headline: string | null;
   summary: string | null;
   body: string | null;
+  block_type?: string | null;
   sections: unknown;
+  source_snapshot?: unknown;
 };
 
 type Props = {
   references: TemplateVariableReference[];
   rows: SourceRow[];
   templateContentKey: string;
+  templateRow: CompositionMapRow;
   selectedVariableName: string;
   selectedSourceId: string | null;
   onBackToVariables: () => void;
   onSelectSource: (id: string | null) => void;
+  onSelectVariable: (name: string) => void;
   onEditSource: (row: SourceRow) => void;
 };
 
@@ -47,17 +53,47 @@ function status(row: SourceRow) {
   return row.status === "LIVE" ? "Published" : row.status === "REVIEWED" ? "Reviewed" : "Draft";
 }
 
+function variableKind(reference: TemplateVariableReference) {
+  return reference.sourceKind === "runtime" ? "fact" : "copy";
+}
+
+function sourceCopyParts(value: string, references: TemplateVariableReference[], onSelectVariable: (name: string) => void) {
+  return value.split(/(\{\{\s*[#^/]?\s*[\w.-]+\s*\}\})/gu).filter(Boolean).map((part, index) => {
+    const token = part.match(/^\{\{\s*([#^/]?)\s*([\w.-]+)\s*\}\}$/u);
+    if (!token || token[2] === "." || token[1] === "/") return part;
+    const reference = references.find((candidate) => candidate.name === token[2]);
+    if (!reference) return <code key={`${part}-${index}`}>{part}</code>;
+    return (
+      <button
+        type="button"
+        className={`admin-variable-source-token variable-${variableKind(reference)}`}
+        key={`${part}-${index}`}
+        onClick={() => onSelectVariable(reference.name)}
+        title={`Inspect ${reference.label}`}
+      >
+        {part}
+      </button>
+    );
+  });
+}
+
 export function TemplateVariableReviewPanels({
-  references, rows, templateContentKey, selectedVariableName, selectedSourceId,
-  onBackToVariables, onSelectSource, onEditSource
+  references, rows, templateContentKey, templateRow, selectedVariableName, selectedSourceId,
+  onBackToVariables, onSelectSource, onSelectVariable, onEditSource
 }: Props) {
-  const variable = references.find((candidate) => candidate.name === selectedVariableName);
+  const atomicReferences = buildCompositionTemplate(templateRow, rows).slots;
+  const reviewReferences = atomicReferences.length ? atomicReferences : references;
+  const variable = reviewReferences.find((candidate) => candidate.name === selectedVariableName);
   if (!variable) return null;
   const sources = templateVariableSourceCandidates(variable, rows, templateContentKey);
   const sourceSelectionNote = templateVariableSourceSelectionNote(variable);
   const hasEditableSources = variable.sourceKind === "saved-copy" || sources.length > 0;
   const source = selectedSourceId ? sources.find((row) => row.id === selectedSourceId) ?? null : null;
   const copy = source ? readableCopy(source) : [];
+  const directDependencies = reviewReferences.filter((candidate) => {
+    const parents = "parents" in candidate && Array.isArray(candidate.parents) ? candidate.parents : [];
+    return parents.includes(variable.name);
+  });
   const back = () => source ? onSelectSource(null) : onBackToVariables();
 
   return (
@@ -80,8 +116,28 @@ export function TemplateVariableReviewPanels({
             <>
               <p><strong>{status(source)}</strong> · fills <code>{`{{${variable.name}}}`}</code></p>
               <section className="admin-variable-source-copy" aria-label="Saved source copy">
-                {copy.map(([label, value]) => <article className="admin-hook-detail-section" key={label}><p className="admin-eyebrow">{label}</p><div className="admin-variable-source-prose">{value}</div></article>)}
+                {copy.map(([label, value]) => (
+                  <article className="admin-hook-detail-section" key={label}>
+                    <p className="admin-eyebrow">{label}</p>
+                    <div className="admin-variable-source-prose">{sourceCopyParts(value, reviewReferences, onSelectVariable)}</div>
+                  </article>
+                ))}
               </section>
+              {directDependencies.length > 0 && (
+                <section className="admin-variable-atomic-list" aria-label={`Variables inside ${variable.label}`}>
+                  <div>
+                    <p className="admin-eyebrow">Continue to the atomic level</p>
+                    <h3>Variables inside this saved writing</h3>
+                    <p>Open a nested value to see whether it is calculated or backed by another editable source.</p>
+                  </div>
+                  {directDependencies.map((dependency) => (
+                    <button type="button" key={dependency.name} onClick={() => onSelectVariable(dependency.name)}>
+                      <span><code>{`{{${dependency.name}}}`}</code><strong>{dependency.label}</strong></span>
+                      <span>{dependency.sourceKind === "runtime" ? dependency.example : "Open source →"}</span>
+                    </button>
+                  ))}
+                </section>
+              )}
             </>
           ) : (
             <>
