@@ -266,12 +266,12 @@
   margin-top: calc(var(--section-label-gap-after) - var(--you-updates-gap));
 }
 
-.updates-section > :where(.daily-horoscope-summary, .daily-dodont, .daily-special-section)
-  + :where(.daily-dodont, .daily-special-section) {
+.updates-section > :where(.you-horoscope-card, .daily-dodont)
+  + :where(.you-horoscope-card, .daily-dodont) {
   margin-top: calc(var(--card-list-gap) - var(--you-updates-gap));
 }
 
-.daily-horoscope-summary,
+.you-horoscope-card,
 .personal-timing-summary {
   display: grid;
   gap: var(--section-label-gap-after);
@@ -280,7 +280,7 @@
   color: var(--ink);
 }
 
-.daily-horoscope-summary,
+.you-horoscope-card,
 .daily-horoscope-writeup {
   border: 1px solid var(--card-border);
   border-radius: var(--card-radius);
@@ -309,7 +309,7 @@
   border-top: 1px solid var(--card-border);
 }
 
-.daily-horoscope-summary h3,
+.you-horoscope-card h3,
 .daily-horoscope-writeup h3,
 .personal-timing-summary h3 {
   margin: 0;
@@ -321,7 +321,7 @@
   line-height: var(--leading-title);
 }
 
-.daily-horoscope-summary p,
+.you-horoscope-card p,
 .daily-horoscope-writeup p,
 .personal-timing-summary p {
   margin: 0;

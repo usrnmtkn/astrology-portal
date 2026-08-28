@@ -525,6 +525,14 @@ function YouUpdatesTab({
   const dailyHeadline = dailyUpdateSummary?.headline.trim();
   const showDailyHeadline = dailyHeadline && dailyHeadline.toLowerCase() !== "tldr";
   const dailyWriteup = dailyUpdateSummary?.writeup?.filter((section) => section.body.length > 0) ?? [];
+  const weeklyLunationCardOwnsExactDay = Boolean(
+    dailyHoroscopeAssembly?.specialSections.length
+    && weeklyHoroscopeAssembly?.status === "ready"
+    && weeklyHoroscopeAssembly.horoscope.source === "lunation"
+  );
+  const visibleDailySpecialSections = weeklyLunationCardOwnsExactDay
+    ? []
+    : dailyHoroscopeAssembly?.specialSections ?? [];
   const weeklyTransitSection = !hasSavedCurrentCity ? null : weeklyHoroscopeAssembly?.status === "error" ? (
     <section className="you-empty-card" aria-label="Weekly transits unavailable">
       <span>This week</span>
@@ -532,13 +540,13 @@ function YouUpdatesTab({
       <p>We could not calculate this week. Try again in a moment.</p>
     </section>
   ) : !weeklyHoroscopeAssembly || weeklyHoroscopeAssembly.status === "loading" ? (
-    <section className="weekly-horoscope__loading" aria-label="Loading weekly transits">
+    <section className="weekly-horoscope__loading you-horoscope-card" aria-label="Loading weekly transits">
       <span className="summary-skeleton" aria-hidden="true"><span /><span /></span>
     </section>
   ) : weeklyTransitRows.length === 0 && !weeklyHoroscopeAssembly.macro ? null : (
     <section className="weekly-horoscope weekly-horoscope--embedded" aria-label="This week's transits">
       {weeklyHoroscopeAssembly.macro ? (
-        <article className="weekly-horoscope__macro daily-horoscope-summary">
+        <article className="weekly-horoscope__macro daily-horoscope-summary you-horoscope-card">
           <span className="eyebrow section-label">The macro view</span>
           <h3>{weeklyHoroscopeAssembly.macro.headline}</h3>
           {weeklyHoroscopeAssembly.macro.body
@@ -563,7 +571,7 @@ function YouUpdatesTab({
         </div>
       )}
       {hasSavedCurrentCity && dailyUpdateSummary && (
-        <section className={`daily-horoscope-summary${dailyUpdateSummary.status === "loading" ? " is-loading" : ""}`} aria-label="Daily horoscope summary">
+        <section className={`daily-horoscope-summary you-horoscope-card${dailyUpdateSummary.status === "loading" ? " is-loading" : ""}`} aria-label="Daily horoscope summary">
           {showDailyHeadline ? <h3>{dailyHeadline}</h3> : null}
           <p>{dailyUpdateSummary.summary}</p>
           {dailyUpdateSummary.secondary ? <p className="daily-horoscope-summary__secondary">{dailyUpdateSummary.secondary}</p> : null}
@@ -604,8 +612,8 @@ function YouUpdatesTab({
             </div>
           </section>
         ) : null}
-      {dailyHoroscopeAssembly?.specialSections.map((section) => (
-        <section className="daily-special-section" key={section.headline}>
+      {visibleDailySpecialSections.map((section) => (
+        <section className="daily-special-section you-horoscope-card" key={section.headline}>
           <span className="eyebrow section-label">{transitDateLabel} sky</span>
           <h3>{section.headline}</h3>
           {section.body.split(/\n{2,}/).map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
