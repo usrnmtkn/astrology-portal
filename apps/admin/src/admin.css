@@ -12673,3 +12673,17 @@ body,
     width: 100%;
   }
 }
+.admin-pagination {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--admin-space-lg);
+  justify-content: space-between;
+  padding: var(--admin-space-xl) var(--admin-space-3xl);
+}
+
+.admin-pagination div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--admin-space-lg);
+}

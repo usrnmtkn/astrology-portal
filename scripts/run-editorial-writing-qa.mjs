@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 
 import assert from "node:assert/strict";
-import { readdir, readFile, stat } from "node:fs/promises";
+import { createHash } from "node:crypto";
+import { mkdir, readdir, readFile, stat, writeFile } from "node:fs/promises";
 import { createRequire } from "node:module";
 import path from "node:path";
 import process from "node:process";
@@ -367,6 +368,57 @@ for (const filePath of allFiles) {
 
 const blockers = allFindings.filter((finding) => finding.severity === "BLOCKER");
 const warnings = allFindings.filter((finding) => finding.severity === "WARNING");
+
+const reportFinding = (finding) => {
+  const relativePath = path.relative(root, finding.filePath);
+  const fingerprint = createHash("sha256")
+    .update([finding.severity, finding.check, relativePath, finding.fieldPath, finding.excerpt].join("\u0000"))
+    .digest("hex");
+  return { ...finding, filePath: relativePath, fingerprint };
+};
+
+const reportBlockers = blockers.map(reportFinding);
+const reportWarnings = warnings.map(reportFinding);
+const editorialReportDir = path.join(root, "test-results", "editorial-writing-qa");
+const warningGroups = [...Map.groupBy(reportWarnings, (finding) => finding.check).entries()]
+  .sort((left, right) => right[1].length - left[1].length || left[0].localeCompare(right[0]));
+const reviewQueueMarkdown = [
+  "# Editorial Writing Review Queue",
+  "",
+  `Generated: ${new Date().toISOString()}`,
+  `Blocking findings: ${reportBlockers.length}`,
+  `Human-review warnings: ${reportWarnings.length}`,
+  "",
+  "This queue is diagnostic. Do not bulk-rewrite owner-authored or governed copy. Review each item in source context and record an explicit editorial decision.",
+  "",
+  "## Warning groups",
+  "",
+  ...warningGroups.map(([check, findings]) => `- ${check}: ${findings.length}`),
+  "",
+  "## Review items",
+  "",
+  ...warningGroups.flatMap(([check, findings]) => [
+    `### ${check} (${findings.length})`,
+    "",
+    ...findings.flatMap((finding) => [
+      `- [ ] \`${finding.filePath}:${finding.line}\` · \`${finding.fieldPath}\` · \`${finding.fingerprint.slice(0, 12)}\``,
+      `  - ${finding.description}`,
+      `  - “${finding.excerpt.replaceAll("“", "\\“").replaceAll("”", "\\”")}”`
+    ]),
+    ""
+  ])
+].join("\n");
+
+await mkdir(editorialReportDir, { recursive: true });
+await writeFile(path.join(editorialReportDir, "latest.json"), `${JSON.stringify({
+  schema: "editorial-writing-review-queue/v1",
+  generatedAt: new Date().toISOString(),
+  filesScanned: allFiles.length,
+  stringsScanned: scannedStrings,
+  blockers: reportBlockers,
+  warnings: reportWarnings
+}, null, 2)}\n`);
+await writeFile(path.join(editorialReportDir, "review-queue.md"), `${reviewQueueMarkdown}\n`);
 
 if (process.env.EDITORIAL_QA_SUMMARY_JSON === "1") {
   const countBy = (values, keyFor) => Object.fromEntries(

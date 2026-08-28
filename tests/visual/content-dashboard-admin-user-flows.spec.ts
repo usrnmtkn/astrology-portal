@@ -814,6 +814,36 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(page.getByRole("navigation", { name: "Review queue views" })).toBeVisible();
   });
 
+  test("production-scale Content Library keeps the DOM bounded and search responsive", async ({ page }) => {
+    test.setTimeout(120_000);
+    const assertNoBrowserErrors = await expectNoBrowserErrors(page);
+    const scaleRows = Array.from({ length: 7_200 }, (_, index) => ({
+      ...generatedContentRows[0],
+      id: `qa-scale-row-${index}`,
+      content_key: `content/scale/row-${String(index).padStart(4, "0")}`,
+      headline: index === 7_199 ? "Production scale search target" : `Production scale row ${index}`,
+      summary: `Bounded rendering fixture ${index}.`,
+      body: `Production-scale Content Studio fixture body ${index}.`
+    }));
+
+    await seedAdminApi(page, { generatedRows: scaleRows });
+    await expectAdminRouteLoads(page, "/admin/content#exact-content");
+
+    await expect(page.locator(".admin-content-row")).toHaveCount(50);
+    await expect(page.getByRole("navigation", { name: "Content rows pagination" })).toContainText("Showing 1–50 of 7200");
+    expect(await page.locator("*").count(), "Content Library DOM remains bounded at production scale").toBeLessThan(10_000);
+
+    await page.getByRole("navigation", { name: "Content rows pagination" }).getByRole("button", { name: "Next" }).click();
+    await expect(page.getByRole("navigation", { name: "Content rows pagination" })).toContainText("Showing 51–100 of 7200");
+
+    const searchStartedAt = Date.now();
+    await page.getByRole("textbox", { name: "Search content" }).fill("Production scale search target");
+    await expect(page.locator(".admin-content-row")).toHaveCount(1, { timeout: 2_500 });
+    await expect(page.locator(".admin-content-row")).toContainText("content/scale/row-7199");
+    expect(Date.now() - searchStartedAt, "Content Library search resolves within the interaction budget").toBeLessThan(3_000);
+    await assertNoBrowserErrors();
+  });
+
   test("admin access validates pasted env assignments before saving them", async ({ page }) => {
     await seedAdminApi(page, {
       initialSecret: "stale-secret",
@@ -1767,7 +1797,10 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(page.getByRole("region", { name: "Unresolved content overview" })).toContainText("Resolve content holds");
     await expect(page.getByRole("region", { name: "Unresolved content overview" })).toContainText("Review exact replacements and authorize source repairs here.");
     await expect(page.getByRole("region", { name: "Unresolved content records" })).toBeVisible();
-    await expect(page.locator(".admin-unresolved-content-table tbody tr")).toHaveCount(unresolvedIssueCount);
+    await expect(page.locator(".admin-unresolved-content-table tbody tr")).toHaveCount(Math.min(25, unresolvedIssueCount));
+    if (unresolvedIssueCount > 25) {
+      await expect(page.getByRole("navigation", { name: "Unresolved content pagination" })).toContainText(`Showing 1–25 of ${unresolvedIssueCount}`);
+    }
 
     const unresolvedHeadingStyle = await page.getByRole("heading", { name: "Resolve content holds" }).evaluate((heading) => {
       const style = getComputedStyle(heading);
