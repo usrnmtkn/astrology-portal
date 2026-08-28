@@ -10633,15 +10633,15 @@ body,
 }
 
 .admin-dashboard .admin-unresolved-content-table {
-  min-width: 780px;
+  min-width: 940px;
   table-layout: fixed;
   width: 100%;
 }
 
-.admin-dashboard .admin-unresolved-content-table :is(th, td):nth-child(1) { width: 30%; }
-.admin-dashboard .admin-unresolved-content-table :is(th, td):nth-child(2) { width: 32%; }
-.admin-dashboard .admin-unresolved-content-table :is(th, td):nth-child(3) { width: 18%; }
-.admin-dashboard .admin-unresolved-content-table :is(th, td):nth-child(4) { width: 20%; }
+.admin-dashboard .admin-unresolved-content-table :is(th, td):nth-child(1) { width: 27%; }
+.admin-dashboard .admin-unresolved-content-table :is(th, td):nth-child(2) { width: 35%; }
+.admin-dashboard .admin-unresolved-content-table :is(th, td):nth-child(3) { width: 14%; }
+.admin-dashboard .admin-unresolved-content-table :is(th, td):nth-child(4) { width: 24%; }
 
 .admin-dashboard .admin-unresolved-content-table :is(th, td) {
   overflow: visible;
@@ -10866,6 +10866,28 @@ body,
   gap: var(--admin-space-md);
 }
 
+.admin-dashboard .admin-unresolved-review-action > strong {
+  color: var(--admin-ui-text);
+  font-size: var(--admin-ui-type-hint);
+}
+
+.admin-dashboard .admin-unresolved-review-action > small {
+  color: var(--admin-ui-muted);
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+
+.admin-dashboard .admin-unresolved-review-action > .admin-edit-row-button {
+  box-sizing: border-box;
+  inline-size: 100%;
+  line-height: 1.25;
+  min-block-size: 44px;
+  overflow-wrap: anywhere;
+  padding: 11px 14px;
+  text-align: center;
+  white-space: normal;
+}
+
 .admin-dashboard .admin-unresolved-actions .admin-edit-row-button.is-primary {
   background: var(--admin-ui-primary);
   border-color: var(--admin-ui-primary);
@@ -10876,6 +10898,57 @@ body,
 .admin-dashboard .admin-unresolved-actions .admin-edit-row-button.is-primary:hover:not(:disabled) {
   background: #6fdda6;
   border-color: #6fdda6;
+}
+
+.admin-dashboard .admin-guided-content-review {
+  background: linear-gradient(135deg, rgba(63, 207, 142, 0.13), rgba(63, 207, 142, 0.04));
+  border: 1px solid rgba(63, 207, 142, 0.42);
+  border-radius: var(--admin-ui-radius-lg);
+  display: grid;
+  gap: var(--admin-space-lg);
+  padding: 18px;
+}
+
+.admin-dashboard .admin-guided-content-review h3,
+.admin-dashboard .admin-guided-content-review p {
+  margin: 0;
+}
+
+.admin-dashboard .admin-guided-content-review h3 {
+  color: var(--admin-ui-text);
+  margin-bottom: var(--admin-space-sm);
+}
+
+.admin-dashboard .admin-guided-content-review p,
+.admin-dashboard .admin-guided-content-review li {
+  color: var(--admin-ui-muted);
+  line-height: 1.5;
+}
+
+.admin-dashboard .admin-guided-content-review ol {
+  display: grid;
+  gap: var(--admin-space-sm);
+  margin: 0;
+  padding-left: 22px;
+}
+
+.admin-dashboard .admin-guided-content-review li strong {
+  color: var(--admin-ui-text);
+}
+
+.admin-dashboard .admin-guided-content-review > code {
+  background: rgba(0, 0, 0, 0.18);
+  border-radius: var(--admin-ui-radius-sm);
+  color: var(--admin-ui-muted);
+  overflow-wrap: anywhere;
+  padding: 9px 11px;
+}
+
+.admin-dashboard .admin-guided-content-review > button {
+  align-items: center;
+  display: inline-flex;
+  gap: var(--admin-space-sm);
+  justify-self: start;
 }
 
 .admin-dashboard .admin-source-repair-backdrop {

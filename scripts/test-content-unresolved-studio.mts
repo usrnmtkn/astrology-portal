@@ -4,6 +4,7 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import {
   loadUnresolvedContentReport,
+  editorialReviewSubject,
   unresolvedIssueWorkflow,
   type UnresolvedContentReport
 } from "../apps/admin/src/UnresolvedContentReview";
@@ -42,6 +43,10 @@ assert.equal(unresolvedContentSurface("daily-glance-variant/square/moon/body/a")
 assert.equal(unresolvedContentSurface("authored/book/lunation-horoscope/eclipse-lunar/pisces"), "Lunations");
 assert.equal(unresolvedContentSurface("fallback-hook/sky-sign-copy/sun/virgo"), "Sky / Transits");
 assert.equal(unresolvedContentSurface("fallback-hook/natal/venus/libra"), "Natal / Placements");
+assert.equal(
+  editorialReviewSubject("authored/book-ritual-and-the-moon/lunation-horoscope/eclipse-lunar/pisces/rising-aquarius/house-2"),
+  "Pisces lunar eclipse horoscope for Aquarius Rising · House 2"
+);
 
 const groupedIssues = report.issues;
 assert.ok(groupedIssues.length < report.items.length, "Duplicate source records must be grouped into one owner-facing issue.");
@@ -100,7 +105,7 @@ const ownerReviewWorkflow = unresolvedIssueWorkflow(editorialIssue, {
   hasEditableRow: true,
   requestCopied: false
 });
-assert.equal(ownerReviewWorkflow.currentStep, "Review the copy in Content Library");
+assert.equal(ownerReviewWorkflow.currentStep, "Review Pisces lunar eclipse horoscope for Aquarius Rising · House 2");
 assert.equal(ownerReviewWorkflow.statusLabel, "Ready for owner review");
 assert.deepEqual(ownerReviewWorkflow.steps.map((step) => step.state), ["complete", "complete", "current", "waiting", "waiting"]);
 assert.deepEqual(ownerReviewWorkflow.steps.map((step) => step.label), [
@@ -167,6 +172,8 @@ assert.match(reviewSource, /Approve exact replacement/u);
 assert.match(reviewSource, /Copy implementation request/u);
 assert.match(reviewSource, /Repair Content Library import/u);
 assert.match(reviewSource, /Completed checks/u);
+assert.match(reviewSource, /Review this horoscope/u);
+assert.match(reviewSource, /the Content Library editor with this exact row already selected/u);
 assert.match(reviewSource, /Record Codex response/u);
 assert.match(reviewSource, /Responsible now:/u);
 assert.match(reviewSource, /Waiting for Codex/u);
@@ -177,6 +184,9 @@ assert.match(reviewSource, /No matching issues\./u, "The page must include a cle
 assert.match(dashboardSource, /unresolvedContent:\s*"unresolved-content"/u, "The Studio must expose a stable unresolved-content route.");
 assert.match(dashboardSource, /label:\s*"Unresolved Content"/u, "The Studio navigation must expose the governed inventory.");
 assert.match(dashboardSource, /new URLSearchParams\(\{ q: contentKey, from: "unresolved" \}\)/u, "Inventory rows must link into Content Library by exact key and resolution context.");
+assert.match(dashboardSource, /openRow\(guidedRow\)/u, "The unresolved-content handoff must open the exact editor automatically.");
+assert.match(dashboardSource, /Opened from Unresolved Content/u, "The exact editor must explain why it opened.");
+assert.match(dashboardSource, /The <strong>Body<\/strong> field below contains the full reader-facing horoscope/u, "The guided review must identify the copy the owner should read.");
 assert.match(dashboardSource, /setShowReferenceRows\(true\)/u, "Exact-row links must reveal reference rows.");
 assert.match(dashboardSource, /setShowRetiredRows\(true\)/u, "Exact-row links must reveal retired rows.");
 assert.doesNotMatch(reviewSource, /api\/admin\/generated-content/u, "Resolution recording must not use the serving-content mutation endpoint.");
