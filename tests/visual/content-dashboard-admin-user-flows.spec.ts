@@ -3147,6 +3147,30 @@ test.describe("content dashboard admin user flow case studies", () => {
     expect(toolbarCopyBox!.width).toBeGreaterThanOrEqual(Math.min(760, toolbarBox!.width - 52));
     expect(toolbarActionsBox!.y).toBeGreaterThan(toolbarCopyBox!.y);
     await expect(contentToolbar.getByRole("heading", { name: "All editable content rows" })).toHaveCSS("white-space", "normal");
+    const visibilityPanel = page.getByRole("region", { name: "App visibility status" });
+    const visibilityCopy = visibilityPanel.locator(":scope > div").first();
+    const visibilityGrid = visibilityPanel.locator(".admin-reader-safety-grid");
+    const [visibilityPanelBox, visibilityCopyBox, visibilityGridBox] = await Promise.all([
+      visibilityPanel.boundingBox(),
+      visibilityCopy.boundingBox(),
+      visibilityGrid.boundingBox()
+    ]);
+    expect(visibilityPanelBox).not.toBeNull();
+    expect(visibilityCopyBox).not.toBeNull();
+    expect(visibilityGridBox).not.toBeNull();
+    expect(visibilityCopyBox!.width, "App visibility explanation keeps a readable column").toBeGreaterThanOrEqual(220);
+    expect(
+      visibilityGridBox!.x,
+      "App visibility cards begin after the explanation instead of covering it"
+    ).toBeGreaterThanOrEqual(visibilityCopyBox!.x + visibilityCopyBox!.width);
+    const visibilityCardMetrics = await visibilityGrid.locator("article").evaluateAll((cards) => cards.map((card) => ({
+      clientWidth: card.clientWidth,
+      scrollWidth: card.scrollWidth
+    })));
+    for (const card of visibilityCardMetrics) {
+      expect(card.clientWidth, "App visibility cards keep a readable minimum width").toBeGreaterThanOrEqual(140);
+      expect(card.scrollWidth, "App visibility card copy stays inside its card").toBeLessThanOrEqual(card.clientWidth + 1);
+    }
     await expectNoHorizontalOverflow(page, "Content Library desktop");
     await page.screenshot({ animations: "disabled", fullPage: true, path: path.join(adminScreenshotDir, "desktop-exact-content.png") });
 
