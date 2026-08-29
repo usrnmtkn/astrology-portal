@@ -9,6 +9,7 @@ import {
   Flag,
   KeyRound,
   Moon,
+  Orbit,
   Plus,
   RefreshCw,
   Save,
@@ -152,7 +153,7 @@ type AdminDashboardPage =
   | "reportFulfillment";
 type AdminContentClass = "phrasebank" | "generated" | "fallback-hook" | "vocab" | "reference" | "legacy" | "user-generated" | "other";
 type AdminContentClassFilter = AdminContentClass | "all";
-type AdminContentRole = "authored-content" | "generated-content" | "fallback-output" | "fallback-helper" | "source-material" | "legacy-generated" | "unknown";
+type AdminContentRole = "authored-content" | "generated-content" | "fallback-output" | "fallback-helper" | "template-pattern" | "source-material" | "legacy-generated" | "unknown";
 type AdminAspectContext = {
   key: "sky-transit" | "transit-to-natal" | "natal" | "relationship" | "unknown";
   label: string;
@@ -503,7 +504,13 @@ const adminPageByHashKey = {
   "content/aspect-pattern-activation": "aspectPatternActivationCoverage"
 } as Record<string, AdminDashboardPage>;
 
-type AdminNavItem = { page: AdminDashboardPage; label: string; icon: typeof Check };
+type AdminNavItem = {
+  page: AdminDashboardPage;
+  label: string;
+  icon: typeof Check;
+  key?: string;
+  category?: AdminContentCategoryFilter;
+};
 
 const compositionPages: AdminDashboardPage[] = ["compositionMap", "templates", "slotDictionary", "vocabulary", "knowledge", "hooks"];
 const compositionTabs: AdminNavItem[] = [
@@ -518,6 +525,7 @@ const primaryAdminNavItems: AdminNavItem[] = [
   { page: "reviewQueue", label: "Review Queue", icon: Check },
   { page: "unresolvedContent", label: "Unresolved Content", icon: Flag },
   { page: "content", label: "Content Library", icon: BookOpenText },
+  { page: "content", label: "Natal Chart", icon: Orbit, key: "natal-chart", category: "Natal Chart" },
   { page: "skyWriteups", label: "Sky Write-ups", icon: Moon },
   { page: "articles", label: "Articles", icon: FileText },
   { page: "compatibility", label: "Compatibility", icon: Users },
@@ -619,7 +627,7 @@ const compatibilitySections: Array<{ key: AdminCompatibilitySectionFilter; label
 const compatibilitySortOptions: Array<{ key: AdminCompatibilitySort; label: string }> = [
   { key: "updated-desc", label: "Newest updated" },
   { key: "updated-asc", label: "Oldest updated" },
-  { key: "title-asc", label: "Title A-Z" },
+  { key: "title-asc", label: "Planet + sign pair A-Z" },
   { key: "status", label: "Status" },
   { key: "source", label: "Source class" }
 ];
@@ -808,7 +816,9 @@ function draftIsArticle(draft: AdminDraft) {
 }
 
 function draftIsFallbackHook(draft: AdminDraft) {
-  return draft.blockType === "fallback_hook" || draft.contentKey.startsWith("fallback-hook/");
+  return draft.blockType === "fallback_hook"
+    || draft.contentKey.startsWith("fallback-hook/")
+    || draftPackageRecord(draft).content_role === "fallback_hook";
 }
 
 function draftIsTemplate(draft: AdminDraft) {
@@ -1111,6 +1121,17 @@ function contentRoleForRecord(row: AdminGeneratedContentRow | AdminReviewRecord)
     return "fallback-helper";
   }
 
+  if (
+    blockType === "template" ||
+    blockType === "fallback_template" ||
+    contentKey.startsWith("slot-template/") ||
+    contentKey.startsWith("fallback-template/") ||
+    sourceRole === "template" ||
+    sourceContentType === "template"
+  ) {
+    return "template-pattern";
+  }
+
   const contentClass = contentClassForRow(row);
   if (sourceContentSystem === "authored") return "authored-content";
   if (sourceContentSystem === "generated" || contentClass === "generated") return "generated-content";
@@ -1147,36 +1168,49 @@ function contentRoleDetails(role: AdminContentRole) {
     case "authored-content":
       return {
         label: "Authored content",
+        shortLabel: "Authored",
         detail: "Finished reader-facing copy. When this row is published, it can serve as authored app content."
       };
     case "generated-content":
       return {
         label: "Generated content",
+        shortLabel: "Generated",
         detail: "AI-generated prose. A published row can serve only when the app has no higher-priority approved authored or reviewed package copy."
       };
     case "fallback-output":
       return {
         label: "Fallback hook/output",
+        shortLabel: "Fallback hook",
         detail: "Fallback-system copy or a fallback hook row. It is eligible only when its fallback review status is reviewed or approved."
       };
     case "fallback-helper":
       return {
         label: "Fallback source/helper",
+        shortLabel: "Fallback helper",
         detail: "Ingredient text for fallback generation. Helper clauses such as core_behavior and house_synthesis must not be promoted as authored write-ups by themselves."
+      };
+    case "template-pattern":
+      return {
+        label: "Template pattern",
+        shortLabel: "Template",
+        detail: "An assembly pattern that combines variables and reviewed source phrases into reader copy. It is a scaffold, not a finished article."
       };
     case "source-material":
       return {
         label: "Source material",
+        shortLabel: "Reference",
         detail: "Reference material for editors and resolvers. It should not render directly in the reader."
       };
     case "legacy-generated":
       return {
         label: "Legacy generated",
+        shortLabel: "Legacy",
         detail: "Older generated copy. Review carefully before promoting it to authored content."
       };
     default:
       return {
         label: "Unclassified",
+        shortLabel: "Unclassified",
         detail: "The dashboard cannot confidently classify this row yet."
       };
   }
@@ -1397,10 +1431,75 @@ function compatibilityPlanetForRow(row: AdminGeneratedContentRow): AdminArticleP
   return planet?.key ?? "other";
 }
 
+type CompatibilityBrowseIdentity = {
+  planet: string;
+  readerSign: string;
+  friendSign: string;
+  title: string;
+  detail: string;
+  sortValue: string;
+};
+
+function compatibilityBrowseIdentity(
+  contentKey: string,
+  facts: Record<string, unknown> | null | undefined = null,
+  sourceSnapshot: Record<string, unknown> | null | undefined = null
+): CompatibilityBrowseIdentity | null {
+  const slashMatch = contentKey.match(/^authored\/compat-(?:deep|pair)\/([^/]+)\/([^/]+)\/([^/]+)$/i);
+  const dotMatch = contentKey.match(/^compatibility[./]([^./]+)[./]([^./]+)[./]([^./]+)$/i);
+  const keyMatch = slashMatch ?? dotMatch;
+  const explicitPlanet = typeof sourceSnapshot?.planet === "string"
+    ? sourceSnapshot.planet
+    : typeof facts?.planet === "string"
+      ? facts.planet
+      : "";
+  const explicitReaderSign = typeof sourceSnapshot?.readerSign === "string"
+    ? sourceSnapshot.readerSign
+    : typeof facts?.readerSign === "string"
+      ? facts.readerSign
+      : "";
+  const explicitFriendSign = typeof sourceSnapshot?.otherSign === "string"
+    ? sourceSnapshot.otherSign
+    : typeof facts?.otherSign === "string"
+      ? facts.otherSign
+      : "";
+  const planetKey = keyMatch?.[1] || explicitPlanet;
+  const readerSignKey = keyMatch?.[2] || explicitReaderSign;
+  const friendSignKey = keyMatch?.[3] || explicitFriendSign;
+  if (!planetKey || !readerSignKey || !friendSignKey) return null;
+
+  const planet = titleFromKey(planetKey);
+  const readerSign = titleFromKey(readerSignKey);
+  const friendSign = titleFromKey(friendSignKey);
+  return {
+    planet,
+    readerSign,
+    friendSign,
+    title: `${planet} · ${readerSign} → ${friendSign}`,
+    detail: `You: ${readerSign} · Friend: ${friendSign}`,
+    sortValue: `${planet} ${readerSign} ${friendSign}`.toLowerCase()
+  };
+}
+
+function compatibilityBrowseIdentityForRow(row: AdminGeneratedContentRow) {
+  return compatibilityBrowseIdentity(row.content_key, row.facts, row.source_snapshot);
+}
+
+function compatibilityVisibleSearchText(row: AdminGeneratedContentRow) {
+  const identity = compatibilityBrowseIdentityForRow(row);
+  return [
+    visibleRowSearchText(row),
+    identity?.title,
+    identity?.detail,
+    identity ? `${identity.planet} ${identity.readerSign} ${identity.friendSign}` : ""
+  ].join(" ").toLowerCase();
+}
+
 function compatibilitySortValue(row: AdminGeneratedContentRow, sort: AdminCompatibilitySort) {
-  if (sort === "title-asc") return rowTitle(row).toLowerCase();
-  if (sort === "status") return `${row.status}-${rowTitle(row).toLowerCase()}`;
-  if (sort === "source") return `${contentClassForRow(row)}-${rowTitle(row).toLowerCase()}`;
+  const browseTitle = compatibilityBrowseIdentityForRow(row)?.sortValue ?? rowTitle(row).toLowerCase();
+  if (sort === "title-asc") return browseTitle;
+  if (sort === "status") return `${row.status}-${browseTitle}`;
+  if (sort === "source") return `${contentClassForRow(row)}-${browseTitle}`;
   return row.updated_at ?? row.created_at ?? "";
 }
 
@@ -2491,7 +2590,7 @@ export function GeneratedContentAdminDashboard() {
         (compatibilitySectionFilter === "all" || compatibilitySectionForRow(row) === compatibilitySectionFilter)
         && (compatibilityStatusFilter === "all" || row.status === compatibilityStatusFilter)
         && (compatibilityPlanetFilter === "all" || compatibilityPlanetForRow(row) === compatibilityPlanetFilter)
-        && matchesAdminSearch(visibleRowSearchText(row), compatibilitySearch)
+        && matchesAdminSearch(compatibilityVisibleSearchText(row), compatibilitySearch)
       ))
       .sort((a, b) => {
         if (compatibilitySort === "updated-desc") {
@@ -3109,6 +3208,24 @@ export function GeneratedContentAdminDashboard() {
     }
     setActivePage(page);
     setAdminHash(adminHashForPage(page, params));
+  }
+
+  function navigatePrimaryAdminItem(item: AdminNavItem) {
+    if (item.page === "content") {
+      setContentLibraryView("all");
+      setContentStatusFilter("all");
+      setContentClassFilter("all");
+      setTierFilter("all");
+      setCategoryFilter(item.category ?? "all");
+      setQuery("");
+      setNatalPlacementPlanet("");
+      setNatalPlacementSign("");
+      setNatalPlacementHouse("");
+    }
+    navigateAdminPage(
+      item.page,
+      item.category ? new URLSearchParams({ category: item.category }) : undefined
+    );
   }
 
   function navigateSurfaceMapFilters(nextFilters: {
@@ -3920,7 +4037,13 @@ export function GeneratedContentAdminDashboard() {
         sections: null,
         facts: null,
         reviewerNotes: "",
-        sourceSnapshot: null
+        sourceSnapshot: {
+          contentType: "authored-article",
+          contentSystem: "authored",
+          content_role: "authored-content",
+          contentLevel: "owner-authored",
+          authoringSource: "admin-dashboard"
+        }
       });
       return;
     }
@@ -3941,7 +4064,13 @@ export function GeneratedContentAdminDashboard() {
         sections: null,
         facts: null,
         reviewerNotes: "",
-        sourceSnapshot: null
+        sourceSnapshot: {
+          contentType: "authored-content",
+          contentSystem: "authored",
+          content_role: "authored-content",
+          contentLevel: "owner-authored",
+          authoringSource: "admin-dashboard"
+        }
       });
       return;
     }
@@ -3963,7 +4092,13 @@ export function GeneratedContentAdminDashboard() {
         sections: null,
         facts: null,
         reviewerNotes: "",
-        sourceSnapshot: null
+        sourceSnapshot: {
+          contentType: "vocab",
+          contentSystem: "fallback",
+          content_role: "vocabulary",
+          contentLevel: "source-grounded",
+          authoringSource: "admin-dashboard"
+        }
       });
       return;
     }
@@ -3984,7 +4119,13 @@ export function GeneratedContentAdminDashboard() {
         sections: null,
         facts: null,
         reviewerNotes: "",
-        sourceSnapshot: null
+        sourceSnapshot: {
+          contentType: "template",
+          contentSystem: "fallback",
+          content_role: "template",
+          contentLevel: "source-grounded",
+          authoringSource: "admin-dashboard"
+        }
       });
       return;
     }
@@ -4113,6 +4254,8 @@ export function GeneratedContentAdminDashboard() {
         reviewerNotes: "",
         sourceSnapshot: {
           contentType: "friends.compatibility.planet-card",
+          contentSystem: "authored",
+          content_role: "authored-content",
           contentLevel: "source-grounded",
           authoringSource: "admin-dashboard",
           route: "friends.compatibility",
@@ -4203,6 +4346,8 @@ export function GeneratedContentAdminDashboard() {
       reviewerNotes: "",
       sourceSnapshot: {
         contentType: "template",
+        contentSystem: "fallback",
+        content_role: "template",
         contentFamily: "friends.compatibility.planet-card",
         contentLevel: "source-grounded",
         authoringSource: "admin-dashboard",
@@ -4285,6 +4430,15 @@ export function GeneratedContentAdminDashboard() {
     setMessage(`Exported ${editedRows.length} edited package rows.`);
   }
 
+  const natalChartWorkspaceActive = activePage === "content" && categoryFilter === "Natal Chart";
+  const currentPageTitle = natalChartWorkspaceActive ? "Natal Chart Write-ups" : adminPageTitle(activePage);
+  const currentPageDescription = natalChartWorkspaceActive
+    ? "Find the exact writing for a planet or point in its sign and house."
+    : adminPageDescription(activePage);
+  const currentPageBreadcrumbs = natalChartWorkspaceActive
+    ? [{ label: "Admin", page: "reviewQueue" as AdminDashboardPage }, { label: "Write", page: "content" as AdminDashboardPage }, { label: "Natal chart" }]
+    : adminPageBreadcrumbItems(activePage);
+
   const nav = (
     <aside className="admin-sidebar" data-mobile-open={isMobileNavOpen ? "true" : "false"}>
       <a className="admin-brand" href="#review-queue" onClick={() => navigateAdminPage("reviewQueue")}>
@@ -4302,7 +4456,7 @@ export function GeneratedContentAdminDashboard() {
         aria-label={isMobileNavOpen ? "Close Content Studio navigation" : "Open Content Studio navigation"}
         onClick={() => setIsMobileNavOpen((open) => !open)}
       >
-        <span>{adminPageTitle(activePage)}</span>
+        <span>{currentPageTitle}</span>
         {isMobileNavOpen
           ? <X size={18} aria-hidden="true" />
           : <span className="admin-mobile-nav-icon" aria-hidden="true"><i /><i /><i /></span>}
@@ -4312,9 +4466,21 @@ export function GeneratedContentAdminDashboard() {
           <p className="admin-eyebrow">Content</p>
           {primaryAdminNavItems.map((item) => {
             const Icon = item.icon;
-            const isActive = item.page === "compositionMap" ? isCompositionPage(activePage) : activePage === item.page;
+            const isActive = item.category
+              ? activePage === item.page && categoryFilter === item.category
+              : item.page === "content"
+                ? activePage === "content" && categoryFilter !== "Natal Chart"
+                : item.page === "compositionMap"
+                  ? isCompositionPage(activePage)
+                  : activePage === item.page;
             return (
-              <button key={item.page} type="button" onClick={() => navigateAdminPage(item.page)} aria-current={isActive ? "page" : undefined}>
+              <button
+                key={item.key ?? item.page}
+                type="button"
+                title={item.category === "Natal Chart" ? "Planets and points in signs and houses" : undefined}
+                onClick={() => navigatePrimaryAdminItem(item)}
+                aria-current={isActive ? "page" : undefined}
+              >
                 <Icon size={16} aria-hidden="true" />
                 <span>{item.label}</span>
               </button>
@@ -4362,7 +4528,7 @@ export function GeneratedContentAdminDashboard() {
           <div>
             <nav className="admin-breadcrumb" aria-label="Breadcrumb">
               <ol>
-                {adminPageBreadcrumbItems(activePage).map((item, index) => (
+                {currentPageBreadcrumbs.map((item, index) => (
                   <li key={`${item.label}-${index}`}>
                     {index > 0 && <span className="admin-breadcrumb-separator" aria-hidden="true"> / </span>}
                     {item.page
@@ -4382,8 +4548,8 @@ export function GeneratedContentAdminDashboard() {
                 ))}
               </ol>
             </nav>
-            <h1>{adminPageTitle(activePage)}</h1>
-            <p>{adminPageDescription(activePage)}</p>
+            <h1>{currentPageTitle}</h1>
+            <p>{currentPageDescription}</p>
           </div>
           <div className="admin-create-menu">
             <button className="admin-create-button" type="button" onClick={() => setIsCreateMenuOpen((open) => !open)} aria-haspopup="menu" aria-expanded={isCreateMenuOpen}>
@@ -4570,9 +4736,11 @@ export function GeneratedContentAdminDashboard() {
           <section className="admin-template-page">
             <section className="admin-content-toolbar admin-content-library-toolbar" aria-label="Content controls">
               <div className="admin-content-toolbar-copy">
-                <p className="admin-eyebrow">Full content library</p>
-                <h2>All editable content rows</h2>
-                <p>{filteredRows.length} rows shown across articles, phrasebank copy, vocabulary, templates, fallback hooks, and source rows. Runtime serves only Published rows in the serving lane with no review hold.</p>
+                <p className="admin-eyebrow">{natalChartWorkspaceActive ? "Natal chart workspace" : "Full content library"}</p>
+                <h2>{natalChartWorkspaceActive ? "Find a planet, sign, and house write-up" : "All editable content rows"}</h2>
+                <p>{natalChartWorkspaceActive
+                  ? "Choose the complete placement below to see—and edit—the exact full write-up and every reusable source that builds it."
+                  : `${filteredRows.length} rows shown across articles, phrasebank copy, vocabulary, templates, fallback hooks, and source rows. Runtime serves only Published rows in the serving lane with no review hold.`}</p>
               </div>
               <div className="admin-new-actions" aria-label="Content admin shortcuts">
                 <button type="button" onClick={() => navigateAdminPage("reviewQueue")}>
@@ -4719,26 +4887,11 @@ export function GeneratedContentAdminDashboard() {
                 </button>
               </div>
             </section>
-            <section className="admin-reader-safety-panel" aria-label="Compatibility sections summary">
-              <div>
-                <p className="admin-eyebrow">Compatibility sections</p>
-                <h3>Search and edit the full support system</h3>
-                <p>Use this surface when a compatibility card needs app copy, reusable phrases, a simple fallback, or a template reviewed together.</p>
-              </div>
-              <div className="admin-reader-safety-grid admin-compatibility-summary-grid">
-                {compatibilitySections.filter((section) => section.key !== "all").map((section) => (
-                  <article key={section.key} className={compatibilityCounts[section.key] ? "reader-ready" : ""}>
-                    <span>{section.label}</span>
-                    <strong>{compatibilityCounts[section.key]}</strong>
-                  </article>
-                ))}
-              </div>
-            </section>
             {renderCompatibilityFilters()}
             <section className="admin-workbench admin-review-workspace">
               {renderEditor()}
               <aside className="admin-list-panel" aria-label="Compatibility rows">
-                {renderContentTable(filteredCompatibilityRows)}
+                {renderContentTable(filteredCompatibilityRows, false, false, true)}
               </aside>
             </section>
           </section>
@@ -5636,7 +5789,8 @@ export function GeneratedContentAdminDashboard() {
   function renderContentTable(
     tableRows: AdminGeneratedContentRow[],
     showArticleDestination = false,
-    showWiringReason = false
+    showWiringReason = false,
+    showCompatibilityIdentity = false
   ) {
     const resetKey = [
       activePage,
@@ -5661,20 +5815,17 @@ export function GeneratedContentAdminDashboard() {
     return (
       <AdminPaginatedCollection items={tableRows} label="Content rows" pageSize={contentTablePageSize} resetKey={resetKey}>
         {(visibleTableRows) => <div className="admin-content-table-scroll">
-          <table className="admin-content-table">
+          <table className="admin-content-table admin-content-table--browse">
           <thead className="admin-content-table-head">
             <tr>
-              <th scope="col">Select</th>
-              <th scope="col">Content</th>
-              <th scope="col">App visibility</th>
-              <th scope="col">Editorial</th>
-              {showArticleDestination && <th scope="col">App destination</th>}
-              {showWiringReason && <th scope="col">App connection</th>}
-              <th scope="col">Surface</th>
-              <th scope="col">Kind</th>
-              <th scope="col">Updated</th>
-              <th scope="col">Source</th>
-              <th scope="col">Edit</th>
+              <th className="admin-col-select" scope="col">Select</th>
+              <th className="admin-col-content" scope="col">Content</th>
+              <th className="admin-col-visibility" scope="col">App visibility</th>
+              <th className="admin-col-editorial" scope="col">Editorial</th>
+              {showArticleDestination && <th className="admin-col-destination" scope="col">App destination</th>}
+              {showWiringReason && <th className="admin-col-wiring" scope="col">App connection</th>}
+              <th className="admin-col-source" scope="col">Source</th>
+              <th className="admin-col-edit" scope="col">Edit</th>
             </tr>
           </thead>
           <tbody>
@@ -5684,40 +5835,52 @@ export function GeneratedContentAdminDashboard() {
               const rowRole = contentRoleDetails(contentRoleForRecord(row));
               const destination = showArticleDestination ? articleAppDestination(row) : null;
               const wiring = showWiringReason ? contentWiringStatus(row) : null;
+              const compatibilityIdentity = showCompatibilityIdentity ? compatibilityBrowseIdentityForRow(row) : null;
+              const displayTitle = compatibilityIdentity?.title ?? rowTitle(row);
               return (
-                <tr key={row.id} className={`admin-content-row ${selectedRowId === row.id ? "selected" : ""}`} onClick={() => openRow(row)}>
-                  <td onClick={(event) => event.stopPropagation()}>
+                <tr
+                  key={row.id}
+                  className={`admin-content-row ${selectedRowId === row.id ? "selected" : ""}`}
+                  onClick={() => openRow(row)}
+                  onKeyDown={(event) => {
+                    if (event.target !== event.currentTarget) return;
+                    if (event.key !== "Enter" && event.key !== " ") return;
+                    event.preventDefault();
+                    openRow(row);
+                  }}
+                  tabIndex={0}
+                >
+                  <td className="admin-col-select" onClick={(event) => event.stopPropagation()}>
                     <label className="admin-content-row-check">
-                      <input type="checkbox" checked={selectedIds.has(row.id)} onChange={() => toggleRowSelection(row.id)} aria-label={`Select ${rowTitle(row)}`} />
+                      <input type="checkbox" checked={selectedIds.has(row.id)} onChange={() => toggleRowSelection(row.id)} aria-label={`Select ${displayTitle}`} />
                     </label>
                   </td>
-                  <td className="admin-content-title-cell">
-                    <strong className="admin-content-row-title">{rowTitle(row)}</strong>
-                    <small className="admin-content-type-label admin-field-hint">{rowTypeLabel(row)}</small>
+                  <td className="admin-content-title-cell admin-col-content">
+                    <strong className="admin-content-row-title">{displayTitle}</strong>
+                    <small className="admin-content-type-label admin-field-hint">
+                      {compatibilityIdentity ? `${compatibilityIdentity.detail} · ${rowTypeLabel(row)}` : rowTypeLabel(row)}
+                    </small>
                     <code className="admin-content-row-key">{row.content_key}</code>
                   </td>
-                  <td><span className={`admin-reader-state-pill ${safety.key}`} title={safety.detail}>{safety.label}</span></td>
-                  <td><span className={`ui-pill admin-status status-${row.status.toLowerCase()}`}>{contentStatusLabel(row.status)}</span></td>
+                  <td className="admin-col-visibility"><span className={`admin-reader-state-pill admin-table-tag ${safety.key}`} title={safety.detail}>{safety.label}</span></td>
+                  <td className="admin-col-editorial"><span className={`ui-pill admin-status admin-table-tag status-${row.status.toLowerCase()}`}>{contentStatusLabel(row.status)}</span></td>
                   {destination && (
-                    <td className="admin-content-location">
+                    <td className="admin-content-location admin-col-destination">
                       <strong>{destination.label}</strong>
                       <small>{destination.detail}</small>
                     </td>
                   )}
                   {wiring && (
-                    <td className="admin-content-location admin-wiring-cell">
+                    <td className="admin-content-location admin-wiring-cell admin-col-wiring">
                       <strong className={`admin-wiring-state ${wiring.state}`}>{wiring.label}</strong>
                       <small title={wiring.detail}>{wiring.detail}</small>
                     </td>
                   )}
-                  <td className="admin-content-location"><strong>{row.surface}</strong><small>{row.mode}</small></td>
-                  <td>{row.block_type || row.event_type || "content"}</td>
-                  <td>{row.updated_at?.slice(0, 10) ?? row.created_at?.slice(0, 10) ?? "Local"}</td>
-                  <td>
-                    <span className="ui-pill admin-status" title={rowRole.detail}>{rowRole.label}</span>
+                  <td className="admin-col-source">
+                    <span className="ui-pill admin-status admin-table-tag" title={`${rowRole.label}. ${rowRole.detail}`}>{rowRole.shortLabel}</span>
                     <small>{contentClassLabel(rowClass)} · {tierForRow(row)}</small>
                   </td>
-                  <td>
+                  <td className="admin-col-edit">
                     <button
                       className="admin-edit-row-button"
                       type="button"
@@ -6359,6 +6522,111 @@ export function GeneratedContentAdminDashboard() {
       });
     };
     const fallbackHookEditorTitle = fallbackHookDisplayTitle(currentDraft.contentKey);
+    const compatibilityIdentity = compatibilityBrowseIdentity(
+      currentDraft.contentKey,
+      currentDraft.facts,
+      currentDraft.sourceSnapshot
+    );
+    const isCompatibilityCardDraft = currentDraft.blockType === "compatibility_planet_card" || Boolean(compatibilityIdentity);
+    const isCompatibilityWorkspaceDraft = isCompatibilityCardDraft
+      || sourceSnapshotString(currentDraft.sourceSnapshot, "route") === "friends.compatibility"
+      || sourceSnapshotString(currentDraft.sourceSnapshot, "contentFamily").includes("friends.compatibility")
+      || /compatibility|compat-/i.test(currentDraft.contentKey);
+    const authoringBrief = isNewDraft
+      ? isCompatibilityCardDraft
+        ? {
+            eyebrow: "Creating reader-facing copy",
+            title: "Compatibility card",
+            description: "Write the directional card shown to the reader whose sign is listed first. The reversed sign order is a separate record.",
+            required: "Compatibility write-up"
+          }
+        : isVocabularyDraft
+          ? {
+              eyebrow: "Creating a reusable ingredient",
+              title: isCompatibilityWorkspaceDraft ? "Compatibility phrase" : "Reusable phrase",
+              description: "Write a short phrase the app can combine with other reviewed copy. This is not a standalone article.",
+              required: "Reusable phrase"
+            }
+          : isFallbackHookDraft
+            ? {
+                eyebrow: "Creating emergency reader copy",
+                title: isCompatibilityWorkspaceDraft ? "Compatibility fallback" : "Fallback passage",
+                description: isCompatibilityWorkspaceDraft
+                  ? "Write the safe passage used only when the preferred authored compatibility copy is unavailable."
+                  : "Write safe reader copy used only when the preferred authored source is unavailable.",
+                required: "Fallback reader copy"
+              }
+            : isTemplateDraft
+              ? {
+                  eyebrow: "Creating an assembly pattern",
+                  title: isCompatibilityWorkspaceDraft ? "Compatibility template" : "Reader-copy template",
+                  description: isCompatibilityWorkspaceDraft
+                    ? "Arrange literal wording and {{variables}} into the pattern the app uses to build a compatibility card."
+                    : "Arrange literal wording and {{variables}} into the pattern the app uses to build reader copy.",
+                  required: "Template pattern"
+                }
+              : isArticleDraft
+                ? {
+                    eyebrow: "Creating reader-facing copy",
+                    title: "Article",
+                    description: "Write the complete standalone article, including its title, optional TL;DR, and full body.",
+                    required: "Article body"
+                  }
+              : {
+                  eyebrow: "Creating reader-facing copy",
+                  title: "Content row",
+                  description: "Name the row and write the main copy before moving it through editorial review.",
+                  required: "Full passage"
+                }
+      : null;
+    const headlineFieldLabel = fallbackEditorGuidance?.headlineLabel
+      ?? (isVocabularyDraft
+        ? "Phrase title"
+        : isAuthoredPackageCard || isArticleDraft
+          ? "Article title"
+          : isCompatibilityCardDraft
+            ? "Card title"
+            : isFallbackHookDraft
+              ? "Fallback name"
+              : isTemplateDraft
+                ? "Template name"
+                : "Title");
+    const summaryFieldLabel = fallbackEditorGuidance?.summaryLabel
+      ?? (isVocabularyDraft
+        ? "Editor note (optional)"
+        : isSkyArticleSourceDraft
+          ? "TL;DR"
+          : isCompatibilityCardDraft
+            ? "TL;DR (optional)"
+            : isFallbackHookDraft
+              ? "When this fallback is used (optional)"
+              : isTemplateDraft
+                ? "Template purpose (optional)"
+                : "TL;DR (optional)");
+    const bodyFieldLabel = isVocabularyDraft && isPackageDraft
+      ? vocabularyHasTheyVersion ? "You version" : "Variable value"
+      : isVocabularyDraft
+        ? "Reusable phrase"
+        : isAuthoredPackageCard || isArticleDraft
+          ? "Article body"
+          : fallbackEditorGuidance?.bodyLabel
+            ?? (isCompatibilityCardDraft
+              ? "Compatibility write-up"
+              : isFallbackHookDraft
+                ? "Fallback reader copy"
+                : isTemplateDraft
+                  ? "Template pattern"
+                  : "Full passage");
+    const bodyFieldPlaceholder = isVocabularyDraft
+      ? "Write the reusable wording or phrase pattern here."
+      : isTemplateDraft
+        ? "Example: {{readerSign}} and {{friendSign}} connect through…"
+        : isFallbackHookDraft
+          ? "Write the complete fallback passage readers can safely receive."
+          : isCompatibilityCardDraft
+            ? "Write the complete directional compatibility reading."
+            : undefined;
+    const publishReady = Boolean(currentDraft.body.trim()) && !isNewDraft;
     const compositionContextValue = compositionEditorContext
       ? compositionEditorContext.sourceField === "headline"
         ? currentDraft.headline
@@ -6373,6 +6641,8 @@ export function GeneratedContentAdminDashboard() {
     const editorHeading = currentDraft.id
       ? isVocabularyDraft
         ? "Edit phrase"
+        : compatibilityIdentity
+          ? `Edit ${compatibilityIdentity.title}`
         : isTemplateDraft
           ? `Edit ${selectedRow ? rowTitle(selectedRow) : currentDraft.headline || "template"}`
         : isArticleDraft
@@ -6384,7 +6654,13 @@ export function GeneratedContentAdminDashboard() {
         ? "Create reusable phrase"
         : isArticleDraft
           ? "Create article"
-          : "Author new row";
+          : isCompatibilityCardDraft
+            ? "Create compatibility card"
+            : isFallbackHookDraft
+              ? isCompatibilityWorkspaceDraft ? "Create compatibility fallback" : "Create fallback passage"
+              : isTemplateDraft
+                ? isCompatibilityWorkspaceDraft ? "Create compatibility template" : "Create reader-copy template"
+                : "Create saved row";
 
     return (
       <>
@@ -6462,6 +6738,18 @@ export function GeneratedContentAdminDashboard() {
               </div>
             </section>
           )}
+          {authoringBrief && (
+            <section className="admin-editor-guidance admin-authoring-brief" aria-label="What you are creating">
+              <p className="admin-eyebrow">{authoringBrief.eyebrow}</p>
+              <strong>{authoringBrief.title}</strong>
+              <p>{authoringBrief.description}</p>
+              <div className="admin-authoring-steps" role="list" aria-label="Authoring steps">
+                <span role="listitem"><b>1</b> Write {authoringBrief.required.toLowerCase()}</span>
+                <span role="listitem"><b>2</b> Save draft</span>
+                <span role="listitem"><b>3</b> Review, then publish</span>
+              </div>
+            </section>
+          )}
           {compositionEditorContext && (
             <section className="admin-editor-guidance admin-contextual-editor-guidance admin-reader-sentence-context" aria-label="Reader sentence context">
               <p className="admin-eyebrow">In the reader preview · {compositionEditorContext.audience === "they" ? "They" : "You"}</p>
@@ -6475,6 +6763,14 @@ export function GeneratedContentAdminDashboard() {
                 </q>
               </div>
               <p>The highlighted words are the source you are editing. The surrounding words come from the template and other variables.</p>
+            </section>
+          )}
+          {compatibilityIdentity && (
+            <section className="admin-editor-guidance admin-contextual-editor-guidance" aria-label="Compatibility record identity">
+              <p className="admin-eyebrow">Exact compatibility record</p>
+              <strong>{compatibilityIdentity.title}</strong>
+              <p><strong>You:</strong> {compatibilityIdentity.readerSign} · <strong>Friend:</strong> {compatibilityIdentity.friendSign}</p>
+              <p>The arrow shows the direction of the saved copy. Reversing the two signs opens a different record because the reader and friend wording changes.</p>
             </section>
           )}
           {isVocabularyDraft && (
@@ -6507,6 +6803,12 @@ export function GeneratedContentAdminDashboard() {
                 </div>
               )}
               <p><strong>Writing shape:</strong> {fallbackEditorGuidance.writingRule}</p>
+              {fallbackEditorGuidance.audienceLabel && (
+                <div className="admin-editor-audience-note" role="note" aria-label={fallbackEditorGuidance.audienceLabel}>
+                  <strong>{fallbackEditorGuidance.audienceLabel}</strong>
+                  <span>{fallbackEditorGuidance.audienceHint}</span>
+                </div>
+              )}
             </section>
           )}
           {isAuthoredPackageCard && (
@@ -6517,8 +6819,8 @@ export function GeneratedContentAdminDashboard() {
           )}
           {isTemplateDraft && (
             <div className="admin-editor-guidance" aria-label="Template source guidance">
-              <strong>Fallback source material</strong>
-              <p>Templates and slots assemble fallback language from reviewed source phrases. Edit them as scaffolds, not as final authored reader prose.</p>
+              <strong>Assembly pattern, not final prose</strong>
+              <p>The template pattern combines fixed words, <code>{"{{variables}}"}</code>, and reviewed source phrases. Use Reader Preview to check the complete result before publishing the pattern.</p>
             </div>
           )}
           {isSkyPlacementFrameTemplate && (
@@ -7048,19 +7350,21 @@ export function GeneratedContentAdminDashboard() {
           )}
           {!compiledSkyArticleEdition && !skyFallbackEditor && (
             <label className="admin-title-field">
-              <span>{fallbackEditorGuidance?.headlineLabel ?? (isVocabularyDraft ? "Phrase title" : isAuthoredPackageCard ? "Article headline" : "Headline")}</span>
-              <input aria-label={fallbackEditorGuidance?.headlineLabel ?? (isVocabularyDraft ? "Phrase title" : isAuthoredPackageCard ? "Article headline" : "Headline")} value={currentDraft.headline} onChange={(event) => updateHeadline(event.target.value)} placeholder={isVocabularyDraft ? "Example: Moon phase / Balsamic / Reflection" : undefined} />
+              <span>{headlineFieldLabel}</span>
+              <input aria-label={headlineFieldLabel} value={currentDraft.headline} onChange={(event) => updateHeadline(event.target.value)} placeholder={isVocabularyDraft ? "Example: Moon phase / Balsamic / Reflection" : undefined} />
               {fallbackEditorGuidance && <small className="admin-field-hint">{fallbackEditorGuidance.headlineHint}</small>}
               {isVocabularyDraft && <small className="admin-field-hint">{isPackageDraft ? "This label helps editors find the phrase. The stable source key remains unchanged." : "This is the human name editors see in the table. New rows use it to generate the internal key."}</small>}
+              {!fallbackEditorGuidance && !isVocabularyDraft && !isAuthoredPackageCard && <small className="admin-field-hint">{isTemplateDraft || isFallbackHookDraft ? "Editor-facing name used to find this source in Content Studio." : "Reader-facing title shown at the top of this card or write-up."}</small>}
             </label>
           )}
           {!compiledSkyArticleEdition && !skyFallbackEditor && !(isVocabularyDraft && isPackageDraft) && showSummaryField && (
             <label className="admin-review-copy-editor">
-              <span>{fallbackEditorGuidance?.summaryLabel ?? (isVocabularyDraft ? "Editor note or grouping detail" : isSkyArticleSourceDraft ? "TL;DR" : "Summary")}</span>
-              <textarea className="admin-copy-field-summary" aria-label={fallbackEditorGuidance?.summaryLabel ?? (isVocabularyDraft ? "Editor note or grouping detail" : isSkyArticleSourceDraft ? "Sky article TL;DR" : "Summary")} value={currentDraft.summary} onChange={(event) => setDraft(invalidateContentStudioReview({ ...currentDraft, summary: event.target.value }))} placeholder={isVocabularyDraft ? "Optional: where this phrase should be used, tone notes, or related variants." : isSkyArticleSourceDraft ? "Write the explicit TL;DR for this article edition." : undefined} />
+              <span>{summaryFieldLabel}</span>
+              <textarea className="admin-copy-field-summary" aria-label={summaryFieldLabel} value={currentDraft.summary} onChange={(event) => setDraft(invalidateContentStudioReview({ ...currentDraft, summary: event.target.value }))} placeholder={isVocabularyDraft ? "Optional: where this phrase should be used, tone notes, or related variants." : isSkyArticleSourceDraft ? "Write the explicit TL;DR for this article edition." : undefined} />
               <small className="admin-field-metrics">{fieldMetrics(currentDraft.summary)}</small>
               {fallbackEditorGuidance && <small className="admin-field-hint">{fallbackEditorGuidance.summaryHint}</small>}
               {isSkyArticleSourceDraft && <small className="admin-field-hint">Saved as non-serving source copy until the complete edition is compiled, reviewed, and published.</small>}
+              {!fallbackEditorGuidance && !isVocabularyDraft && !isSkyArticleSourceDraft && <small className="admin-field-hint">{isTemplateDraft || isFallbackHookDraft ? "Internal context for editors. Readers do not receive this field." : "Short reader-facing takeaway. Leave empty when this surface does not show a TL;DR."}</small>}
             </label>
           )}
           {showPackageBodyYou && !skyFallbackEditor && (
@@ -7094,20 +7398,17 @@ export function GeneratedContentAdminDashboard() {
           )}
           {!compiledSkyArticleEdition && showGenericBody && !skyFallbackEditor && (
             <label className="admin-review-copy-editor">
-              <span>{isVocabularyDraft && isPackageDraft
-                ? vocabularyHasTheyVersion ? "You version" : "Variable value"
-                : isVocabularyDraft ? "Reusable phrase text" : isAuthoredPackageCard ? "Article body" : fallbackEditorGuidance?.bodyLabel ?? "Body"}</span>
+              <span>{bodyFieldLabel} <em className="admin-required-marker">Required</em></span>
               <textarea
                 className="admin-copy-field-body"
-                aria-label={isVocabularyDraft && isPackageDraft
-                  ? vocabularyHasTheyVersion ? "You version" : "Variable value"
-                  : isVocabularyDraft ? "Reusable phrase text" : isAuthoredPackageCard ? "Article body" : fallbackEditorGuidance?.bodyLabel ?? "Body"}
+                aria-label={bodyFieldLabel}
                 value={currentDraft.body}
                 onChange={(event) => isVocabularyDraft ? updateVocabularyBody(event.target.value) : updateGenericBody(event.target.value)}
-                placeholder={isVocabularyDraft ? "Write the reusable wording or phrase pattern here." : undefined}
+                placeholder={bodyFieldPlaceholder}
               />
               <small className="admin-field-metrics">{fieldMetrics(currentDraft.body)}</small>
               {fallbackEditorGuidance && <small className="admin-field-hint">{fallbackEditorGuidance.bodyHint}</small>}
+              {!fallbackEditorGuidance && !isVocabularyDraft && !isAuthoredPackageCard && <small className="admin-field-hint">{isTemplateDraft ? "The assembly pattern the app renders. Keep variable names inside double braces." : "The complete reader-facing write-up."}</small>}
               {isVocabularyDraft && isPackageDraft && <small className="admin-field-hint">{vocabularyHasTheyVersion
                 ? "Used when the app speaks directly to the person reading their own chart."
                 : "This is the exact editable phrase the fallback resolver reads. Saving updates the stored package value and its dashboard copy together."}</small>}
@@ -7353,7 +7654,7 @@ export function GeneratedContentAdminDashboard() {
               </label>
             </section>
           ))}
-          <details className="admin-advanced admin-editor-key-details" open={!isVocabularyDraft}>
+          <details className="admin-advanced admin-editor-key-details">
             <summary>{isVocabularyDraft && isPackageDraft ? "Internal source details" : isVocabularyDraft ? "Internal generated key" : "Content key"}</summary>
             <label className="admin-title-field">
               <span>{isVocabularyDraft && isPackageDraft ? "Source key" : isVocabularyDraft ? "Generated key" : "Content key"}</span>
@@ -7380,7 +7681,9 @@ export function GeneratedContentAdminDashboard() {
               </small>
             </section>
           )}
-          {!(isVocabularyDraft && isPackageDraft) && <fieldset className="admin-metadata-fields">
+          {!(isVocabularyDraft && isPackageDraft) && <details className="admin-advanced admin-editor-settings">
+            <summary>Publishing and technical settings</summary>
+            <fieldset className="admin-metadata-fields">
             <label className="admin-metadata-field">
               <span>Status</span>
               <select aria-label="Status" value={currentDraft.status} onChange={(event) => setDraft({ ...currentDraft, status: event.target.value as GeneratedContentStatus })} disabled={isPackageDraft || Boolean(compiledSkyArticleEdition)}>
@@ -7427,7 +7730,8 @@ export function GeneratedContentAdminDashboard() {
               <span>Block type</span>
               <input aria-label="Block type" value={currentDraft.blockType} onChange={(event) => setDraft({ ...currentDraft, blockType: event.target.value })} disabled={isPackageDraft} />
             </label>
-          </fieldset>}
+            </fieldset>
+          </details>}
           {!compiledSkyArticleEdition && <div className="admin-toolbar-actions admin-editor-savebar">
             <span className={`admin-editor-save-state ${draftHasUnsavedChanges || isNewDraft ? "is-unsaved" : "is-saved"}`} aria-live="polite">
               {isLoading ? "Saving…" : isNewDraft ? "New draft" : draftHasUnsavedChanges ? "Unsaved changes" : "All changes saved"}
@@ -7441,11 +7745,14 @@ export function GeneratedContentAdminDashboard() {
                 Revert to package original
               </button>
             )}
-            {!isPackageDraft && (
+            {!isPackageDraft && isNewDraft && (
+              <span className="admin-savebar-next-step">Save this draft before review or publication.</span>
+            )}
+            {!isPackageDraft && !isNewDraft && (
               <>
-                <button className="admin-review-button" type="button" onClick={() => void saveDraft("REVIEWED")} disabled={isLoading}>
+                <button className="admin-review-button" type="button" onClick={() => void saveDraft("REVIEWED")} disabled={isLoading || !publishReady} title={!publishReady ? "Add the required main copy before review." : "Mark this saved copy as editorially reviewed."}>
                   <Check size={16} aria-hidden="true" />
-                  Reviewed
+                  Mark reviewed
                 </button>
                 {isGovernedSkyDraft && selectedRow ? (
                   <button className="admin-publish-button" type="button" onClick={() => void approveAndScheduleSkyRow(selectedRow)} disabled={isLoading || skyDraftHasUnsavedCopy} title={skyDraftHasUnsavedCopy ? "Save and revalidate copy edits before approval." : currentDraft.blockType === "sky_placement" ? "Approve this copy for governed package import. This does not publish it." : "Approve this reusable card for calculated matching Sky configurations."}>
@@ -7453,9 +7760,9 @@ export function GeneratedContentAdminDashboard() {
                     {currentDraft.blockType === "sky_placement" ? "Approve for package" : "Approve & schedule"}
                   </button>
                 ) : (
-                  <button className="admin-publish-button" type="button" onClick={() => void saveDraft("LIVE")} disabled={isLoading || !cmsCanSignOff} title={!cmsCanSignOff ? "Fix the CMS template errors before Sign Off." : undefined}>
+                  <button className="admin-publish-button" type="button" onClick={() => void saveDraft("LIVE")} disabled={isLoading || !cmsCanSignOff || !publishReady} title={!publishReady ? "Add the required main copy before publishing." : !cmsCanSignOff ? "Fix the CMS template errors before publishing." : "Make this reviewed source eligible for its app surface."}>
                     <Check size={16} aria-hidden="true" />
-                    Sign Off
+                    Publish to app
                   </button>
                 )}
               </>

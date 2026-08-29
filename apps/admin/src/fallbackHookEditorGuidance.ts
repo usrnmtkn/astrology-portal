@@ -20,11 +20,28 @@ export type FallbackHookEditorGuidance = {
   bodyYouHint: string;
   bodyTheyLabel: string;
   bodyTheyHint: string;
+  audienceLabel?: string;
+  audienceHint?: string;
 };
 
 const titleCase = (value: string) => value
   .replace(/[-_]/gu, " ")
   .replace(/\b\w/gu, (match) => match.toUpperCase());
+
+const houseLabel = (value: string) => {
+  const house = Number(value.replace(/^house-/u, ""));
+  if (!Number.isInteger(house) || house < 1 || house > 12) return titleCase(value);
+  const suffix = house >= 11 && house <= 13
+    ? "th"
+    : house % 10 === 1
+      ? "st"
+      : house % 10 === 2
+        ? "nd"
+        : house % 10 === 3
+          ? "rd"
+          : "th";
+  return `${house}${suffix} House`;
+};
 
 const grammarRule = (grammarFrame: string | undefined) => {
   if (grammarFrame === "noun_phrase") {
@@ -42,7 +59,10 @@ export function fallbackHookEditorGuidance({
   grammarFrame,
   bodyYou = ""
 }: FallbackHookEditorGuidanceInput): FallbackHookEditorGuidance {
-  const [, family = "fallback", subjectKey = "this item"] = contentKey.split("/");
+  const keyParts = contentKey.split("/");
+  const isFallbackHookNamespace = keyParts[0] === "fallback-hook";
+  const family = (isFallbackHookNamespace ? keyParts[1] : keyParts[0]) || "fallback";
+  const subjectKey = (isFallbackHookNamespace ? keyParts[2] : keyParts[1]) || "this item";
   const subject = titleCase(subjectKey);
   const shared = {
     headlineLabel: "Editor label",
@@ -54,6 +74,28 @@ export function fallbackHookEditorGuidance({
     bodyYouLabel: "Reader phrase · You",
     bodyTheyLabel: "Reader phrase · They"
   };
+
+  if (family === "house-horoscope-core") {
+    const [, planetKey = "planet", signKey = "sign", houseKey = "house"] = keyParts;
+    const planet = titleCase(planetKey);
+    const sign = titleCase(signKey);
+    const house = houseLabel(houseKey);
+
+    return {
+      ...shared,
+      area: "Current Sky · personal house horoscope",
+      title: `${planet} in ${sign} · ${house}`,
+      description: "This saved passage appears when this Sky placement activates the matching house in the signed-in reader’s chart.",
+      writingRule: "Write one complete second-person passage. Speak directly to the reader as “you” and make the house topic concrete.",
+      example: bodyYou.trim() || undefined,
+      bodyYouLabel: "Reader passage · You",
+      bodyYouHint: "Shown in the personal Sky feed after the app calculates which house this placement activates for the reader.",
+      bodyTheyLabel: "Not used for this source",
+      bodyTheyHint: "Friend and relationship readings use separate source families.",
+      audienceLabel: "Current source: You",
+      audienceHint: "This exact Current Sky record speaks to the signed-in reader. Friends also has horoscope content, but it uses separate They-facing transit-house and relationship sources; those records are edited separately."
+    };
+  }
 
   if (family === "transit-retro-article") {
     return {
