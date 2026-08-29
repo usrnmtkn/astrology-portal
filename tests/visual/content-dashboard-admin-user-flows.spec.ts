@@ -2515,13 +2515,13 @@ test.describe("content dashboard admin user flow case studies", () => {
     await surfaceList.getByLabel("Surface or system area").selectOption("Reports");
     await expect(surfaceList.getByRole("button", { name: /Purchased Reports/ })).toBeVisible();
     await surfaceList.getByRole("button", { name: /Purchased Reports/ }).click();
-    await expect(page.getByRole("region", { name: "Selected app surface or system" })).toContainText("Inspection only");
-    await expect(page.getByRole("region", { name: "Selected app surface or system" }).getByRole("link", { name: /Inspect report fulfillment/ })).toHaveAttribute("href", "#report-fulfillment");
+    await expect(page.getByRole("region", { name: "Selected app surface or system" })).toContainText("Editable in Content Studio");
+    await expect(page.getByRole("region", { name: "Selected app surface or system" }).getByRole("link", { name: /Preview and edit delivered reports/ })).toHaveAttribute("href", "#report-fulfillment");
     await surfaceList.getByLabel("Surface or system area").selectOption("Friends");
-    await surfaceList.getByLabel("Search surfaces and systems").fill("Circle");
-    await surfaceList.getByRole("button", { name: /Friends Circle/ }).click();
-    await expect(page.getByRole("region", { name: "Selected app surface or system" })).toContainText("Editor not wired");
-    await expect(page.getByRole("region", { name: "Selected app surface or system" })).toContainText("No atomic editor yet");
+    await surfaceList.getByLabel("Search surfaces and systems").fill("Today between you two");
+    await surfaceList.getByRole("button", { name: /Today Between You Two/ }).click();
+    await expect(page.getByRole("region", { name: "Selected app surface or system" })).toContainText("Editable in Content Studio");
+    await expect(page.getByRole("region", { name: "Selected app surface or system" }).getByRole("link", { name: /Edit Today between you two/ })).toHaveAttribute("href", "#fallback-hooks?section=friends&q=pair-daily");
     await page.getByRole("tab", { name: /Template internals/ }).click();
     await expect(page.getByRole("complementary", { name: "Composition templates" })).toContainText("Friends & relationships");
     await expect(page.getByRole("region", { name: "Selected template composition" }).getByRole("heading", { name: "Planet card" })).toBeVisible();
@@ -2851,6 +2851,105 @@ test.describe("content dashboard admin user flow case studies", () => {
     await assertNoBrowserErrors();
   });
 
+  test("delivered report copy can be previewed, staged privately, and explicitly published", async ({ page }) => {
+    const assertNoBrowserErrors = await expectNoBrowserErrors(page);
+    await seedAdminApi(page);
+    const reportId = "qa-report-1";
+    const unitId = "qa-report-unit-overview";
+    let stagedDraft: Record<string, unknown> | null = null;
+    const actions: Array<Record<string, unknown>> = [];
+    const metrics = {
+      orders: 1,
+      entitlementStatuses: { active: 1 },
+      fulfillmentStatuses: { live: 1 },
+      jobStates: { complete: 1 },
+      exceptionDepth: 0,
+      auditDepth: 0,
+      averageDeliveryMinutes: 3,
+      averageJudgeScore: 0.95,
+      averageAcceptedTokenCount: 1200,
+      averageTotalTokenCount: 1600,
+      averageEstimatedSpendUsd: 0.45,
+      validatorPassRate: 1,
+      judgePassRate: 1,
+      attemptDistribution: { "1": 1 },
+      judgeScoreDistribution: { "0.95": 1 }
+    };
+    const reportRow = {
+      id: reportId,
+      entitlement_id: "qa-entitlement-1",
+      entitlement_source: "comp",
+      report_domain: "general",
+      report_horizon: "12_months",
+      fulfillment_status: "live",
+      token_count: 1200,
+      token_count_total: 1600,
+      token_budget_lifetime: 1450000,
+      token_spend_usd_estimate: 0.45,
+      attempt_counts: { writer: 1 },
+      validator_results: [],
+      failure_history: []
+    };
+    await page.route("**/api/admin/report-fulfillment**", async (route) => {
+      const url = new URL(route.request().url());
+      if (route.request().method() === "POST") {
+        const payload = route.request().postDataJSON() as Record<string, unknown>;
+        actions.push(payload);
+        if (payload.action === "save_report_unit_draft") stagedDraft = payload;
+        if (payload.action === "discard_report_unit_draft" || payload.action === "publish_report_unit_correction") stagedDraft = null;
+        await route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ ok: true }) });
+        return;
+      }
+      if (url.searchParams.get("reportId")) {
+        await route.fulfill({
+          status: 200,
+          contentType: "application/json",
+          body: JSON.stringify({
+            report: { id: reportId, report_domain: "general", report_horizon: "12_months", fulfillment_status: "live" },
+            units: [{
+              id: unitId,
+              content_key: `report:${reportId}:overview`,
+              headline: "Your Year Ahead",
+              timing: "January through December",
+              summary: "The year asks for deliberate growth.",
+              body: "Build the structure that can hold the next chapter.",
+              sections: [{ heading: "First movement", body: "Start with the commitment already asking for form." }],
+              source_snapshot: stagedDraft ? { adminCorrectionDraft: stagedDraft } : {}
+            }]
+          })
+        });
+        return;
+      }
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify({ billingMode: "free_test", metrics, reports: [reportRow], audits: [], users: [], callEstimates: {} })
+      });
+    });
+
+    await expectAdminRouteLoads(page, "/admin/content#report-fulfillment");
+    await page.getByRole("button", { name: "Preview and edit" }).click();
+    const editor = page.getByRole("region", { name: "Report reader-copy editor" });
+    await expect(editor.getByLabel("Reader preview of this report section")).toContainText("Your Year Ahead");
+    await expect(editor.getByLabel("Title", { exact: true })).toHaveValue("Your Year Ahead");
+    await expect(editor.getByLabel("Timing line")).toHaveValue("January through December");
+    await expect(editor.getByLabel("TL;DR")).toHaveValue("The year asks for deliberate growth.");
+    await editor.getByLabel("Timing line").fill("February through December");
+    await editor.getByRole("textbox", { name: "Body", exact: true }).fill("A reviewed correction for the delivered reader passage.");
+    await editor.getByRole("button", { name: "Save correction draft" }).click();
+    await expect(editor.getByRole("button", { name: "Publish correction" })).toBeVisible();
+    expect(actions.at(-1)).toMatchObject({
+      action: "save_report_unit_draft",
+      reportId,
+      unitId,
+      timing: "February through December",
+      body: "A reviewed correction for the delivered reader passage."
+    });
+    await editor.getByRole("button", { name: "Publish correction" }).click();
+    expect(actions.at(-1)).toMatchObject({ action: "publish_report_unit_correction", reportId, unitId });
+    await assertNoBrowserErrors();
+  });
+
   test("fallback rows sort by title and explain each atomic source in its reader context", async ({ page }) => {
     const assertNoBrowserErrors = await expectNoBrowserErrors(page);
     const fallbackSeed = generatedContentRows.find((row) => row.content_key === "fallback-hook/friends.compatibility.planet-card")!;
@@ -2903,7 +3002,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expectAdminRouteLoads(page, "/admin/content#fallback-hooks");
 
     const sort = page.getByLabel("Sort fallback rows");
-    const list = page.getByRole("complementary", { name: "Saved fallback hook rows" });
+    const list = page.getByRole("complementary", { name: "Fallback hook rows and package sources" });
     await expect(sort).toHaveValue("type");
     await expect(list.getByRole("heading", { name: "Sky Placement articles" })).toBeVisible();
     await expect(list.getByRole("heading", { name: "Supporting fallback rows" })).toBeVisible();
@@ -2993,7 +3092,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     });
     await expectAdminRouteLoads(page, "/admin/content#fallback-hooks");
 
-    const list = page.getByRole("complementary", { name: "Saved fallback hook rows" });
+    const list = page.getByRole("complementary", { name: "Fallback hook rows and package sources" });
     await expect(list.getByText("Sun · Transit dates and opening", { exact: true })).toBeVisible();
     await expect(list.getByText("Sun · About the Sun", { exact: true })).toBeVisible();
     await expect(list.getByText("Sun in Virgo", { exact: true })).toBeVisible();
