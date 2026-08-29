@@ -2,6 +2,7 @@
 
 import { spawn } from "node:child_process";
 import { mkdir, writeFile } from "node:fs/promises";
+import { createConnection } from "node:net";
 import path from "node:path";
 import process from "node:process";
 
@@ -74,6 +75,29 @@ const failureLines = (output) =>
     .filter((line) => line.includes("✘") || /^\d+\)/.test(line))
     .slice(0, 12);
 
+const portIsAvailable = (baseURL) => new Promise((resolve) => {
+  const url = new URL(baseURL);
+  const socket = createConnection({ host: url.hostname, port: Number(url.port) });
+
+  socket.once("connect", () => {
+    socket.destroy();
+    resolve(false);
+  });
+  socket.once("error", () => resolve(true));
+});
+
+const waitForPortRelease = async (baseURL, timeoutMs = 10_000) => {
+  const deadline = Date.now() + timeoutMs;
+
+  while (!(await portIsAvailable(baseURL))) {
+    if (Date.now() >= deadline) {
+      throw new Error(`Timed out waiting for the QA preview server to release ${baseURL}.`);
+    }
+
+    await new Promise((resolve) => setTimeout(resolve, 100));
+  }
+};
+
 const runSuite = async (suite) =>
   new Promise((resolve) => {
     const child = spawn(suite.command, suite.args, {
@@ -98,15 +122,25 @@ const runSuite = async (suite) =>
 
     child.on("close", (exitCode) => {
       const cleanOutput = stripAnsi(output);
-      resolve({
-        ...suite,
-        commandLabel: commandLabel(suite),
-        exitCode,
-        status: exitCode === 0 ? "PASS" : "OPEN FINDINGS",
-        summary: parsePlaywrightSummary(cleanOutput),
-        failures: failureLines(cleanOutput),
-        output: cleanOutput
-      });
+      waitForPortRelease(suite.baseURL)
+        .then(() => resolve({
+          ...suite,
+          commandLabel: commandLabel(suite),
+          exitCode,
+          status: exitCode === 0 ? "PASS" : "OPEN FINDINGS",
+          summary: parsePlaywrightSummary(cleanOutput),
+          failures: failureLines(cleanOutput),
+          output: cleanOutput
+        }))
+        .catch((error) => resolve({
+          ...suite,
+          commandLabel: commandLabel(suite),
+          exitCode: exitCode || 1,
+          status: "OPEN FINDINGS",
+          summary: parsePlaywrightSummary(cleanOutput),
+          failures: [...failureLines(cleanOutput), String(error)],
+          output: `${cleanOutput}\n${String(error)}\n`
+        }));
     });
   });
 
