@@ -45,6 +45,17 @@ export function scheduleFriendChartRepair(
   return () => scheduler.clearTimeout(timeoutTask);
 }
 
+export function friendChartRepairBatch<Chart extends { id: string }>(
+  charts: Chart[],
+  selectedChartId: string | null
+) {
+  const selectedChart = selectedChartId
+    ? charts.find((chart) => chart.id === selectedChartId)
+    : null;
+
+  return selectedChart ? [selectedChart] : charts;
+}
+
 export async function enhanceFriendChartsAtomically<Chart>(
   charts: Chart[],
   enhance: (chart: Chart) => Promise<Chart | null>,

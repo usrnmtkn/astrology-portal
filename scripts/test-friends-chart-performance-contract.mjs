@@ -4,6 +4,7 @@ import { fileURLToPath } from "node:url";
 import assert from "node:assert/strict";
 import {
   enhanceFriendChartsAtomically,
+  friendChartRepairBatch,
   scheduleFriendChartRepair
 } from "../apps/web/src/features/friends/friendChartLoading.ts";
 import {
@@ -47,6 +48,10 @@ const socialFriendsPanelSourcePath = path.join(
   "apps/web/src/features/friends/SocialFriendsPanel.tsx"
 );
 const socialFriendsPanelSource = fs.readFileSync(socialFriendsPanelSourcePath, "utf8");
+const aspectsCssSource = fs.readFileSync(
+  path.join(repoRoot, "apps/web/src/styles/aspects.css"),
+  "utf8"
+);
 
 const createManualChartStart = manualChartsSource.indexOf(
   "export async function createManualChart"
@@ -134,8 +139,20 @@ assert.doesNotMatch(
 
 assert.match(
   manualChartsControllerSource,
-  /const chartsToRepair = charts\.filter\(manualChartNeedsNatalRepair\);/,
-  "Friends chart repair must filter incomplete charts before starting async repair work."
+  /const chartsToRepair = friendChartRepairBatch\(\s*charts\.filter\(manualChartNeedsNatalRepair\),\s*selectedChartId\s*\);/,
+  "Friends chart repair must filter incomplete charts and prioritize the selected chart before starting async repair work."
+);
+
+assert.match(
+  aspectsCssSource,
+  /\.daily-horoscope-summary,\s*\.personal-timing-summary\s*\{[\s\S]*?padding:/,
+  "Friends daily forecast summaries must retain the shared card padding contract."
+);
+
+assert.match(
+  aspectsCssSource,
+  /\.daily-horoscope-summary,\s*\.daily-horoscope-writeup\s*\{[\s\S]*?border:/,
+  "Friends daily forecast summaries must retain the shared card border contract."
 );
 
 const readyCacheHydrationMatch = manualChartsControllerSource.match(
@@ -482,6 +499,18 @@ assert.deepEqual(
   repairCommits,
   [[{ id: "first-repaired" }, { id: "second-repaired" }]],
   "Incomplete charts must paint their completed enhancements in one atomic commit."
+);
+
+const repairQueue = [{ id: "background-first" }, { id: "selected" }, { id: "background-last" }];
+assert.deepEqual(
+  friendChartRepairBatch(repairQueue, "selected"),
+  [{ id: "selected" }],
+  "An incomplete chart the reader opened must repair before the background batch."
+);
+assert.equal(
+  friendChartRepairBatch(repairQueue, "missing"),
+  repairQueue,
+  "Background repair keeps the complete batch when the selected chart does not need repair."
 );
 
 clearSharedGeneratedContentCache();

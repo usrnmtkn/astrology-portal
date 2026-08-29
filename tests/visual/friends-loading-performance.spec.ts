@@ -23,6 +23,7 @@ type PreparedPage = {
   delayedDeferredFallbackRequests: () => number;
   delayedRelationshipRequests: () => number;
   emptyHouseFallbackRequests: () => number;
+  timezoneResolutionRequests: () => number;
 };
 
 type TimedSample = {
@@ -44,6 +45,7 @@ async function preparePage(page: Page, options: FixtureOptions = {}): Promise<Pr
   let delayedRelationshipRequests = 0;
   let dashboardMirrorRequests = 0;
   let emptyHouseFallbackRequests = 0;
+  let timezoneResolutionRequests = 0;
 
   page.on("request", (request) => {
     const requestUrl = decodeURIComponent(request.url());
@@ -62,6 +64,9 @@ async function preparePage(page: Page, options: FixtureOptions = {}): Promise<Pr
     }
     if (/\/assets\/(?:fallback-content-transit|fallback-content-deferred-core)[^/]*\.js$/.test(requestUrl)) {
       delayedDeferredFallbackRequests += 1;
+    }
+    if (requestUrl.includes("/utils/timezone")) {
+      timezoneResolutionRequests += 1;
     }
   });
 
@@ -209,7 +214,8 @@ async function preparePage(page: Page, options: FixtureOptions = {}): Promise<Pr
     delayedCalculationRequests: () => delayedCalculationRequests,
     delayedDeferredFallbackRequests: () => delayedDeferredFallbackRequests,
     delayedRelationshipRequests: () => delayedRelationshipRequests,
-    emptyHouseFallbackRequests: () => emptyHouseFallbackRequests
+    emptyHouseFallbackRequests: () => emptyHouseFallbackRequests,
+    timezoneResolutionRequests: () => timezoneResolutionRequests
   };
 }
 
@@ -390,6 +396,10 @@ test.describe("Friends loading performance matrix", () => {
           elapsedMs: Math.round(performance.now() - startedAt)
         });
         expect(prepared.delayedCalculationRequests()).toBeGreaterThan(0);
+        expect(
+          prepared.timezoneResolutionRequests(),
+          "A saved chart with a known timezone repairs without a redundant remote lookup."
+        ).toBe(0);
       });
     }
 
