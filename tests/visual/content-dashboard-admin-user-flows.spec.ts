@@ -959,7 +959,19 @@ test.describe("content dashboard admin user flow case studies", () => {
 
   test("Natal Chart sidebar opens the placement source finder as a distinct workspace", async ({ page }) => {
     const assertNoBrowserErrors = await expectNoBrowserErrors(page);
-    await seedAdminApi(page);
+    const natalExactRow = {
+      ...generatedContentRows[3],
+      id: "qa-natal-exact-row",
+      content_key: "fallback-hook/natal-you-placement-complete-final/sun/cancer/1",
+      event_type: "natal_placement",
+      headline: "Sun in Cancer in the 1st house",
+      summary: "Complete natal placement write-up.",
+      body: "Your Sun in Cancer in the 1st house makes care, identity, and self-expression immediately visible.",
+      block_type: "fallback_hook",
+      source_snapshot: { contentType: "fallback-system", content_role: "fallback_hook", authoringSource: "qa-fixture" }
+    };
+    await seedAdminApi(page, { generatedRows: [natalExactRow, ...generatedContentRows] });
+    await page.setViewportSize({ width: 1365, height: 900 });
     await expectAdminRouteLoads(page, "/admin/content");
 
     const navigation = page.getByRole("navigation", { name: "Content operations" });
@@ -973,6 +985,38 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(page.getByLabel("Natal placement planet or point")).toBeVisible();
     await expect(page.getByLabel("Natal placement zodiac sign")).toBeVisible();
     await expect(page.getByLabel("Natal placement house")).toBeVisible();
+    await expect(page.getByRole("region", { name: "Content list filters" })).toHaveCount(0);
+    await expect(page.getByRole("region", { name: "App visibility status" })).toHaveCount(0);
+    await expect(page.getByRole("region", { name: "Generated content records" })).toHaveCount(0);
+    await expect(page.getByText("QA Mercury Hidden Body Search Trap")).toHaveCount(0);
+    await expect(page.getByText("Pick one value in each field. This workspace contains natal placements only; current transits and Sky placements are kept in Sky Write-ups.")).toBeVisible();
+
+    const sourceFinder = page.getByRole("region", { name: "Find natal placement source writing" });
+    const sourceFinderBox = await sourceFinder.boundingBox();
+    const selectorBoxes = await sourceFinder.locator(".admin-natal-placement-selectors label").evaluateAll((labels) => labels.map((label) => {
+      const box = label.getBoundingClientRect();
+      return { left: box.left, right: box.right, top: box.top, bottom: box.bottom };
+    }));
+    expect(sourceFinderBox).not.toBeNull();
+    expect(selectorBoxes).toHaveLength(3);
+    selectorBoxes.forEach((box, index) => {
+      expect(box.left).toBeGreaterThanOrEqual(sourceFinderBox!.x);
+      expect(box.right).toBeLessThanOrEqual(sourceFinderBox!.x + sourceFinderBox!.width);
+      if (index > 0) expect(box.left).toBeGreaterThanOrEqual(selectorBoxes[index - 1].right);
+    });
+    await expectNoHorizontalOverflow(page, "Natal Chart workspace");
+
+    await page.getByLabel("Natal placement planet or point").selectOption("sun");
+    await page.getByLabel("Natal placement zodiac sign").selectOption("cancer");
+    await page.getByLabel("Natal placement house").selectOption("1");
+    await expect(sourceFinder.locator(".admin-natal-placement-finder-heading h3")).toHaveText("Sun in Cancer in the 1st house");
+    await expect(sourceFinder.getByRole("heading", { name: "Complete Sun in Cancer in the 1st house write-up" })).toBeVisible();
+    await expect(sourceFinder.getByText("Your Sun in Cancer in the 1st house makes care, identity, and self-expression immediately visible.")).toBeVisible();
+    await sourceFinder.getByRole("button", { name: "Edit source" }).first().click();
+    await expect(page.getByRole("dialog", { name: "Generated content editor" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Edit Sun in Cancer in the 1st House · Complete natal placement" })).toBeVisible();
+    await expect(page.getByLabel("Editor label")).toHaveValue("Sun in Cancer in the 1st house");
+    await page.getByRole("button", { name: "Close", exact: true }).click();
 
     await navigation.getByRole("button", { name: "Content Library" }).click();
     await expectAdminHeader(page, "Content Library", "Admin / Write / Content library");
@@ -3123,10 +3167,33 @@ test.describe("content dashboard admin user flow case studies", () => {
     const assertNoBrowserErrors = await expectNoBrowserErrors(page);
     await mkdir(adminScreenshotDir, { recursive: true });
     await seedAdminApi(page);
+    const readPrimaryNavRhythm = () => page.getByRole("region", { name: "Content" }).evaluate((section) => {
+      const button = section.querySelector("button");
+      const sectionStyle = getComputedStyle(section);
+      const buttonStyle = button ? getComputedStyle(button) : null;
+      return {
+        rowGap: Number.parseFloat(sectionStyle.rowGap),
+        itemHeight: button?.getBoundingClientRect().height ?? 0,
+        fontFamily: buttonStyle?.fontFamily ?? "",
+        fontSize: Number.parseFloat(buttonStyle?.fontSize ?? "0"),
+        fontWeight: buttonStyle?.fontWeight ?? "",
+        lineHeight: buttonStyle?.lineHeight ?? "",
+        letterSpacing: buttonStyle?.letterSpacing ?? ""
+      };
+    });
 
     await page.setViewportSize({ width: 1440, height: 1000 });
     await expectAdminRouteLoads(page, "/admin/content");
     await expectAdminHeader(page, "Review Queue", "Admin / Publish / Review queue");
+    const desktopNavRhythm = await readPrimaryNavRhythm();
+    expect(desktopNavRhythm.rowGap).toBeLessThanOrEqual(8);
+    expect(desktopNavRhythm.itemHeight).toBeGreaterThanOrEqual(32);
+    expect(desktopNavRhythm.itemHeight).toBeLessThanOrEqual(40);
+    expect(desktopNavRhythm.fontFamily).toContain("system-ui");
+    expect(desktopNavRhythm.fontSize).toBe(15);
+    expect(desktopNavRhythm.fontWeight).toBe("500");
+    expect(desktopNavRhythm.lineHeight).toBe("normal");
+    expect(desktopNavRhythm.letterSpacing).toBe("normal");
     await expectNoHorizontalOverflow(page, "Admin desktop home");
     await page.screenshot({ animations: "disabled", fullPage: true, path: path.join(adminScreenshotDir, "desktop-review-queue.png") });
 
@@ -3157,6 +3224,8 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(mobileNavigation).toBeHidden();
     await page.getByRole("button", { name: "Open Content Studio navigation" }).click();
     await expect(mobileNavigation).toBeVisible();
+    const mobileNavRhythm = await readPrimaryNavRhythm();
+    expect(mobileNavRhythm).toEqual(desktopNavRhythm);
     await page.getByRole("button", { name: "Close Content Studio navigation" }).click();
     await expect(mobileNavigation).toBeHidden();
     const mobileNotification = page.getByRole("button", { name: "Dismiss notification" });
