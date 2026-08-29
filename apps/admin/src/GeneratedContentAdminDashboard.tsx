@@ -1,5 +1,6 @@
 import {
   ArrowLeft,
+  ArrowLeftRight,
   BarChart3,
   BookOpenText,
   Braces,
@@ -81,6 +82,11 @@ import { fallbackHookEditorGuidance } from "./fallbackHookEditorGuidance";
 import { isCompositionTemplateRow } from "./compositionTemplateClassifier";
 import { AdminPaginatedCollection } from "./AdminPaginatedCollection";
 import {
+  AdminAccessGate,
+  AdminFilterDisclosure,
+  AdminPageHeader
+} from "./AdminStudioPrimitives";
+import {
   natalPlacementHouses,
   natalPlacementPlanets,
   natalPlacementSelectionFromText,
@@ -98,6 +104,7 @@ import type {
 } from "./writingSurfaceSourceMap";
 import type { CompositionEditorContext } from "./CompositionMapWorkspace";
 import "./admin.css";
+import "./admin-components.css";
 
 const CompositionMapWorkspace = lazy(() => import("./CompositionMapWorkspace"));
 const AspectPatternDiagnostics = lazy(async () => {
@@ -1488,6 +1495,47 @@ function compatibilityBrowseIdentity(
 
 function compatibilityBrowseIdentityForRow(row: AdminGeneratedContentRow) {
   return compatibilityBrowseIdentity(row.content_key, row.facts, row.source_snapshot);
+}
+
+function reverseCompatibilityContentKey(contentKey: string) {
+  const slashMatch = contentKey.match(/^(authored\/compat-(?:deep|pair)\/[^/]+\/)([^/]+)\/([^/]+)$/i);
+  if (slashMatch) return `${slashMatch[1]}${slashMatch[3]}/${slashMatch[2]}`;
+
+  const compactMatch = contentKey.match(/^(compatibility)([./])([^./]+)([./])([^./]+)([./])([^./]+)$/i);
+  if (!compactMatch) return null;
+  return `${compactMatch[1]}${compactMatch[2]}${compactMatch[3]}${compactMatch[4]}${compactMatch[7]}${compactMatch[6]}${compactMatch[5]}`;
+}
+
+function reverseCompatibilityRow(
+  currentRow: AdminGeneratedContentRow,
+  candidateRows: AdminGeneratedContentRow[]
+) {
+  const currentIdentity = compatibilityBrowseIdentityForRow(currentRow);
+  if (!currentIdentity || currentIdentity.readerSign === currentIdentity.friendSign) return null;
+
+  const normalizeIdentityPart = (value: string) => value.trim().toLowerCase();
+  const currentPlanet = normalizeIdentityPart(currentIdentity.planet);
+  const reverseReaderSign = normalizeIdentityPart(currentIdentity.friendSign);
+  const reverseFriendSign = normalizeIdentityPart(currentIdentity.readerSign);
+  const exactReverseKey = reverseCompatibilityContentKey(currentRow.content_key)?.toLowerCase() ?? null;
+
+  return candidateRows
+    .filter((row) => row.id !== currentRow.id)
+    .map((row) => ({ row, identity: compatibilityBrowseIdentityForRow(row) }))
+    .filter(({ identity }) => identity
+      && normalizeIdentityPart(identity.planet) === currentPlanet
+      && normalizeIdentityPart(identity.readerSign) === reverseReaderSign
+      && normalizeIdentityPart(identity.friendSign) === reverseFriendSign)
+    .sort((left, right) => {
+      const leftExact = exactReverseKey && left.row.content_key.toLowerCase() === exactReverseKey ? 1 : 0;
+      const rightExact = exactReverseKey && right.row.content_key.toLowerCase() === exactReverseKey ? 1 : 0;
+      if (leftExact !== rightExact) return rightExact - leftExact;
+      const leftPublished = left.row.status === "LIVE" ? 1 : 0;
+      const rightPublished = right.row.status === "LIVE" ? 1 : 0;
+      if (leftPublished !== rightPublished) return rightPublished - leftPublished;
+      return (right.row.updated_at ?? right.row.created_at ?? "")
+        .localeCompare(left.row.updated_at ?? left.row.created_at ?? "");
+    })[0]?.row ?? null;
 }
 
 function compatibilityVisibleSearchText(row: AdminGeneratedContentRow) {
@@ -4549,70 +4597,59 @@ export function GeneratedContentAdminDashboard() {
   return (
     <main className="admin-dashboard">
       {nav}
-      <section className="admin-main">
-        <header className="admin-dashboard-header">
-          <div>
-            <nav className="admin-breadcrumb" aria-label="Breadcrumb">
-              <ol>
-                {currentPageBreadcrumbs.map((item, index) => (
-                  <li key={`${item.label}-${index}`}>
-                    {index > 0 && <span className="admin-breadcrumb-separator" aria-hidden="true"> / </span>}
-                    {item.page
-                      ? (
-                        <a
-                          href={adminHashForPage(item.page)}
-                          onClick={(event) => {
-                            event.preventDefault();
-                            navigateAdminPage(item.page as AdminDashboardPage);
-                          }}
-                        >
-                          {item.label}
-                        </a>
-                      )
-                      : <span aria-current="page">{item.label}</span>}
-                  </li>
-                ))}
-              </ol>
-            </nav>
-            <h1>{currentPageTitle}</h1>
-            <p>{currentPageDescription}</p>
-          </div>
-          <div className="admin-create-menu">
-            <button className="admin-create-button" type="button" onClick={() => setIsCreateMenuOpen((open) => !open)} aria-haspopup="menu" aria-expanded={isCreateMenuOpen}>
-              <Plus size={16} aria-hidden="true" />
-              Create
-            </button>
-            {isCreateMenuOpen && (
-              <div className="admin-create-menu-panel" role="menu">
-                <button type="button" role="menuitem" onClick={() => handleCreateAction("articles", "Create article opened in Articles.")}>
-                  <FileText size={16} aria-hidden="true" />
-                  <span>Create article</span>
-                  <small>Author a reader-facing row</small>
-                </button>
-                <button type="button" role="menuitem" onClick={() => handleCreateAction("content", "Create content row opened.")}>
-                  <BookOpenText size={16} aria-hidden="true" />
-                  <span>Create content row</span>
-                  <small>Add a saved row to the library</small>
-                </button>
-                <button type="button" role="menuitem" onClick={() => handleCreateAction("vocabulary", "Create reusable phrase opened in Vocabulary.")}>
-                  <Sparkles size={16} aria-hidden="true" />
-                  <span>Create reusable phrase</span>
-                  <small>Vocab namespace row</small>
-                </button>
-                <button type="button" role="menuitem" onClick={() => handleCreateAction("templates", "Create template opened.")}>
-                  <KeyRound size={16} aria-hidden="true" />
-                  <span>Create template</span>
-                  <small>Reusable reader-copy pattern</small>
-                </button>
-                <button type="button" role="menuitem" onClick={() => handleCreateAction("knowledge", "Create fallback hook opened.")}>
-                  <Flag size={16} aria-hidden="true" />
-                  <span>Create fallback hook</span>
-                  <small>Saved route fallback</small>
-                </button>
-              </div>
-            )}
-          </div>
-        </header>
+      <section className={`admin-main${isCreateMenuOpen ? " admin-create-menu-open" : ""}`}>
+        <AdminPageHeader
+          breadcrumbs={currentPageBreadcrumbs.map((item, index) => ({
+            key: `${item.label}-${index}`,
+            label: item.label,
+            current: !item.page,
+            href: item.page ? adminHashForPage(item.page) : undefined,
+            onSelect: item.page ? () => navigateAdminPage(item.page as AdminDashboardPage) : undefined
+          }))}
+          createActions={[
+            {
+              key: "article",
+              label: "Create article",
+              description: "Author a reader-facing row",
+              icon: FileText,
+              onSelect: () => handleCreateAction("articles", "Create article opened in Articles.")
+            },
+            {
+              key: "content",
+              label: "Create content row",
+              description: "Add a saved row to the library",
+              icon: BookOpenText,
+              onSelect: () => handleCreateAction("content", "Create content row opened.")
+            },
+            {
+              key: "vocabulary",
+              label: "Create reusable phrase",
+              description: "Vocab namespace row",
+              icon: Sparkles,
+              onSelect: () => handleCreateAction("vocabulary", "Create reusable phrase opened in Vocabulary.")
+            },
+            {
+              key: "template",
+              label: "Create template",
+              description: "Reusable reader-copy pattern",
+              icon: KeyRound,
+              onSelect: () => handleCreateAction("templates", "Create template opened.")
+            },
+            {
+              key: "fallback",
+              label: "Create fallback hook",
+              description: "Saved route fallback",
+              icon: Flag,
+              onSelect: () => handleCreateAction("knowledge", "Create fallback hook opened.")
+            }
+          ]}
+          createDisabled={hasAccessIssue || hasLoadFailure || isInitialDashboardLoad}
+          createMenuOpen={isCreateMenuOpen}
+          description={currentPageDescription}
+          onCloseCreateMenu={() => setIsCreateMenuOpen(false)}
+          onToggleCreateMenu={() => setIsCreateMenuOpen((open) => !open)}
+          title={currentPageTitle}
+        />
 
         {message && (
           <div className={`admin-save-toast ${loadState === "error" || loadState === "accessDenied" ? "is-error" : ""}`} role="status">
@@ -4622,7 +4659,14 @@ export function GeneratedContentAdminDashboard() {
             </button>
           </div>
         )}
-        {hasAccessIssue && activePage !== "connection" && renderAccessGate()}
+        {hasAccessIssue && activePage !== "connection" && (
+          <AdminAccessGate
+            disabled={isLoading || !normalizeAdminSecret(secretInput)}
+            onChange={setSecretInput}
+            onSubmit={submitAdminSecret}
+            value={secretInput}
+          />
+        )}
         {hasLoadFailure && renderLoadFailure()}
 
         {isInitialDashboardLoad && (
@@ -4636,6 +4680,7 @@ export function GeneratedContentAdminDashboard() {
           </section>
         )}
 
+        {(activePage === "connection" || (!hasAccessIssue && !hasLoadFailure)) && (
         <div className="admin-loaded-workspace" hidden={isInitialDashboardLoad} aria-busy={loadState === "loading"}>
 
         {isCompositionPage(activePage) && (
@@ -4650,11 +4695,11 @@ export function GeneratedContentAdminDashboard() {
 
         {activePage === "reviewQueue" && (
           <section className="admin-template-page">
-            <section className="admin-content-toolbar admin-review-queue-hero" aria-label="Review queue progress">
-              <div>
+            <section className="admin-review-queue-commandbar" aria-label="Review queue progress">
+              <div className="admin-review-queue-commandbar-copy">
                 <p className="admin-eyebrow">Editorial workflow</p>
                 <h2>Review, sign off, publish</h2>
-                <p>Drafts and review holds stay out of reader routes. Published is the admin label for LIVE serving rows.</p>
+                <span>Held copy stays out of reader routes.</span>
               </div>
               <div className="admin-new-actions">
                 <button type="button" onClick={() => void loadDashboardData()} disabled={isLoading}>
@@ -4667,7 +4712,7 @@ export function GeneratedContentAdminDashboard() {
                 </button>
               </div>
             </section>
-            <nav className="admin-sky-voice-tabs" aria-label="Review queue views">
+            <nav className="admin-sky-voice-tabs admin-review-view-tabs" aria-label="Review queue views">
               <button type="button" className={skyVoiceQueueView === "all" ? "active" : ""} onClick={() => setSkyVoiceQueueView("all")}>
                 All review
               </button>
@@ -4692,44 +4737,48 @@ export function GeneratedContentAdminDashboard() {
                 <strong>{skyVoiceAuditRows.length}</strong>
               </button>
             </nav>
-            {(skyVoiceQueueView === "all" || skyVoiceQueueView === "composite") && <section className="admin-content-filters admin-review-queue-filters" aria-label="Review queue filters">
-              <div className="admin-review-filter-grid">
-                <label>
-                  <span>Status</span>
-                  <select aria-label="Review status" value={reviewStatusFilter} onChange={(event) => setReviewStatusFilter(event.target.value as GeneratedContentStatus | "all")}>
-                    <option value="all">All statuses</option>
-                    {contentStatuses.map((status) => <option key={status} value={status}>{contentStatusLabel(status)}</option>)}
-                  </select>
-                </label>
-                <label>
-                  <span>Evergreen</span>
-                  <select aria-label="Evergreen">
-                    <option>All rows</option>
-                    <option>Evergreen only</option>
-                    <option>Hide evergreen</option>
-                  </select>
-                </label>
-                <label>
-                  <span>Content class</span>
-                  <select aria-label="Review content class" value={contentClassFilter} onChange={(event) => setContentClassFilter(event.target.value as AdminContentClassFilter)}>
-                    {contentClassFilters.map((filter) => <option key={filter.key} value={filter.key}>{filter.label}</option>)}
-                  </select>
-                </label>
-                <label>
-                  <span>Tier</span>
-                  <select aria-label="Review tier" value={tierFilter} onChange={(event) => setTierFilter(event.target.value as AdminPhrasebankTierFilter)}>
-                    {tierFilters.map((filter) => <option key={filter.key} value={filter.key}>{filter.label}</option>)}
-                  </select>
-                </label>
-                <label className="admin-review-queue-search">
-                  <span>Search</span>
-                  <div className="admin-search-input-shell">
-                    <Search size={15} aria-hidden="true" />
-                    <input aria-label="Search review queue" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Key, title, body, surface" />
+            {(skyVoiceQueueView === "all" || skyVoiceQueueView === "composite") && (
+              <AdminFilterDisclosure summary="Status, class, tier, and search">
+                <section className="admin-content-filters admin-review-queue-filters" aria-label="Review queue filters">
+                  <div className="admin-review-filter-grid">
+                    <label>
+                      <span>Status</span>
+                      <select aria-label="Review status" value={reviewStatusFilter} onChange={(event) => setReviewStatusFilter(event.target.value as GeneratedContentStatus | "all")}>
+                        <option value="all">All statuses</option>
+                        {contentStatuses.map((status) => <option key={status} value={status}>{contentStatusLabel(status)}</option>)}
+                      </select>
+                    </label>
+                    <label>
+                      <span>Evergreen</span>
+                      <select aria-label="Evergreen">
+                        <option>All rows</option>
+                        <option>Evergreen only</option>
+                        <option>Hide evergreen</option>
+                      </select>
+                    </label>
+                    <label>
+                      <span>Content class</span>
+                      <select aria-label="Review content class" value={contentClassFilter} onChange={(event) => setContentClassFilter(event.target.value as AdminContentClassFilter)}>
+                        {contentClassFilters.map((filter) => <option key={filter.key} value={filter.key}>{filter.label}</option>)}
+                      </select>
+                    </label>
+                    <label>
+                      <span>Tier</span>
+                      <select aria-label="Review tier" value={tierFilter} onChange={(event) => setTierFilter(event.target.value as AdminPhrasebankTierFilter)}>
+                        {tierFilters.map((filter) => <option key={filter.key} value={filter.key}>{filter.label}</option>)}
+                      </select>
+                    </label>
+                    <label className="admin-review-queue-search">
+                      <span>Search</span>
+                      <div className="admin-search-input-shell">
+                        <Search size={15} aria-hidden="true" />
+                        <input aria-label="Search review queue" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Key, title, body, surface" />
+                      </div>
+                    </label>
                   </div>
-                </label>
-              </div>
-            </section>}
+                </section>
+              </AdminFilterDisclosure>
+            )}
             {(skyVoiceQueueView === "all" || skyVoiceQueueView === "composite") && renderBulkBar()}
             {skyVoiceQueueView === "all" && renderReviewTable(filteredReviewRows)}
             {skyVoiceQueueView === "live-omissions" && renderLiveOmittedSectionsQueue()}
@@ -5413,6 +5462,7 @@ export function GeneratedContentAdminDashboard() {
         )}
 
         </div>
+        )}
 
       </section>
     </main>
@@ -5645,37 +5695,6 @@ export function GeneratedContentAdminDashboard() {
     );
   }
 
-  function renderAccessGate() {
-    return (
-      <section className="admin-content-toolbar admin-review-queue-hero" aria-label="Admin access required">
-        <div>
-          <p className="admin-eyebrow">Admin access required</p>
-          <h2>Content is hidden until the dashboard can call the admin API</h2>
-          <p>Sign in to TLDR Astro with the owner account. The emergency access key remains available if account access is unavailable.</p>
-        </div>
-        <label className="admin-access-inline-field">
-          <span>Emergency access key</span>
-          <input
-            aria-label="Secret"
-            type="password"
-            value={secretInput}
-            onChange={(event) => setSecretInput(event.target.value)}
-            onKeyDown={(event) => {
-              if (event.key === "Enter") {
-                submitAdminSecret();
-              }
-            }}
-            placeholder="Paste emergency access key"
-          />
-        </label>
-        <button type="button" onClick={submitAdminSecret} disabled={isLoading || !normalizeAdminSecret(secretInput)}>
-          <RefreshCw size={16} aria-hidden="true" />
-          Load content
-        </button>
-      </section>
-    );
-  }
-
   function renderLoadFailure() {
     return (
       <section className="admin-content-toolbar admin-review-queue-hero admin-load-failure" aria-label="Content load failed">
@@ -5711,6 +5730,8 @@ export function GeneratedContentAdminDashboard() {
   }
 
   function renderBulkBar() {
+    if (selectedIds.size === 0) return null;
+
     return (
       <div className="admin-content-bulk-bar" aria-label="Bulk row actions">
         <div>
@@ -6532,6 +6553,12 @@ export function GeneratedContentAdminDashboard() {
       currentDraft.facts,
       currentDraft.sourceSnapshot
     );
+    const reverseCompatibility = compatibilityIdentity && selectedRow
+      ? reverseCompatibilityRow(selectedRow, rows)
+      : null;
+    const reverseCompatibilityIdentity = reverseCompatibility
+      ? compatibilityBrowseIdentityForRow(reverseCompatibility)
+      : null;
     const isCompatibilityCardDraft = currentDraft.blockType === "compatibility_planet_card" || Boolean(compatibilityIdentity);
     const isCompatibilityWorkspaceDraft = isCompatibilityCardDraft
       || sourceSnapshotString(currentDraft.sourceSnapshot, "route") === "friends.compatibility"
@@ -6776,6 +6803,27 @@ export function GeneratedContentAdminDashboard() {
               <strong>{compatibilityIdentity.title}</strong>
               <p><strong>You:</strong> {compatibilityIdentity.readerSign} · <strong>Friend:</strong> {compatibilityIdentity.friendSign}</p>
               <p>The arrow shows the direction of the saved copy. Reversing the two signs opens a different record because the reader and friend wording changes.</p>
+              <div className="admin-toolbar-actions admin-compatibility-reverse-actions">
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (!reverseCompatibility) return;
+                    openRow(reverseCompatibility);
+                    setMessage(`${reverseCompatibilityIdentity?.title ?? "Reverse compatibility record"} opened.`);
+                  }}
+                  disabled={!reverseCompatibility || draftHasUnsavedChanges || isLoading}
+                  title={!reverseCompatibility
+                    ? "No saved reverse record is available for this planet and sign pair."
+                    : draftHasUnsavedChanges
+                      ? "Save your changes before opening the reverse record."
+                      : `Open ${reverseCompatibilityIdentity?.title ?? "the reverse compatibility record"}`}
+                >
+                  <ArrowLeftRight size={16} aria-hidden="true" />
+                  {reverseCompatibilityIdentity
+                    ? `Open reverse · ${reverseCompatibilityIdentity.readerSign} → ${reverseCompatibilityIdentity.friendSign}`
+                    : "Reverse record unavailable"}
+                </button>
+              </div>
             </section>
           )}
           {isVocabularyDraft && (
