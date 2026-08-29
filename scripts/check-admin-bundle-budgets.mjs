@@ -63,6 +63,7 @@ const expectedDynamicEntries = [
   "src/AspectPatternDiagnostics.tsx",
   "src/AspectPatternWriteups.tsx",
   "src/CompositionMapWorkspace.tsx",
+  "src/PackagedHookCatalogResults.tsx",
   "src/ReportFulfillmentAdminPanel.tsx"
 ];
 for (const key of expectedDynamicEntries) {

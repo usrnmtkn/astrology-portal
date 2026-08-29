@@ -38,25 +38,36 @@ for (const surface of writingSurfaceSourceMap) {
 
 for (const requiredSurfaceId of [
   "sky-placement-detail",
+  "sky-retrograde-summary",
   "sky-calendar-event-cards",
   "sky-calendar-day-cards",
   "sky-horoscopes",
   "daily-at-a-glance",
   "generated-reports",
-  "friends-compatibility-highlights",
-  "friends-circle-feed"
+  "friends-pair-daily",
+  "natal-aspect-patterns"
 ]) {
   assert.ok(surfaceIds.has(requiredSurfaceId), `Composition surface coverage must include ${requiredSurfaceId}.`);
 }
 
 assert.equal(writingSurfaceAdminAccess["daily-at-a-glance"].editability, "editable", "Daily At-a-Glance hook copy must have a direct Admin editor path.");
 assert.ok(writingSurfaceAdminAccess["daily-at-a-glance"].routes.some((route) => route.hash.startsWith("#fallback-hooks")), "Daily At-a-Glance must open its governed daily hooks.");
-assert.equal(writingSurfaceAdminAccess["generated-reports"].editability, "partial", "Reports must not claim inline copy editing before a governed report inspection/editor flow exists.");
+assert.equal(writingSurfaceAdminAccess["generated-reports"].editability, "editable", "Delivered reports must expose their governed correction editor.");
 assert.ok(writingSurfaceAdminAccess["generated-reports"].routes.some((route) => route.hash === "#report-fulfillment"), "Reports must link to their fulfillment and provenance workspace.");
-assert.equal(writingSurfaceAdminAccess["friends-compatibility-highlights"].editability, "missing", "Code-composed compatibility highlights must not claim an atomic editor.");
-assert.equal(writingSurfaceAdminAccess["friends-circle-feed"].editability, "missing", "Code-composed Circle feed prose must not claim an atomic editor.");
+assert.equal(writingSurfaceAdminAccess["friends-pair-daily"].editability, "editable", "Today between you two must have an atomic Content Studio editor.");
+assert.ok(writingSurfaceAdminAccess["friends-pair-daily"].routes.some((route) => route.hash.includes("pair-daily")), "Today between you two must open its pair-daily hook family.");
+assert.equal(writingSurfaceAdminAccess["natal-aspect-patterns"].editability, "editable", "Natal aspect-pattern copy must have a dedicated Content Studio editor.");
+
+for (const surface of writingSurfaceSourceMap.filter((candidate) => candidate.area !== "System")) {
+  assert.equal(
+    writingSurfaceAdminAccess[surface.id].editability,
+    "editable",
+    `${surface.id} is visible to readers and must have a complete Content Studio editing path.`
+  );
+}
 
 const cmsSurfaceIds = [
+  "sky-retrograde-summary",
   "sky-calendar-day-cards",
   "sky-horoscopes",
   "chart-placement-row-microcopy",
@@ -90,7 +101,8 @@ const requiredCmsStarterKeys = [
   "cms/natal-empty-house/detail/they/template",
   "cms/personal-transit-aspect/you/template",
   "cms/personal-transit-house/you/template",
-  "cms/personal-transit-house/they/template"
+  "cms/personal-transit-house/they/template",
+  "cms/sky-retrograde-summary"
 ];
 const cmsStarterKeys = new Set(Object.values(writingSurfaceAdminAccess).flatMap((access) => access.cmsStarters?.map((starter) => starter.contentKey) ?? []));
 for (const contentKey of requiredCmsStarterKeys) {
@@ -147,10 +159,15 @@ assert.match(generatedContentApi, /listHeldSkyAspectSourceDrafts/u, "The Admin A
 assert.match(generatedContentApi, /path\.dirname\(fileURLToPath\(import\.meta\.url\)\)[\s\S]*"\.\.\/\.\."[\s\S]*four-body-unverified/u, "The held source-draft catalog must resolve from the repository instead of the dev server working directory.");
 
 const appSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/App.tsx"), "utf8");
+assert.equal((appSource.match(/function compatibilityHighlights\(/gu) ?? []).length, 1, "Legacy compatibility helper should stay isolated until its removal contract is updated.");
+assert.doesNotMatch(appSource, /compatibilityHighlights\([^)]*\)[.;]/u, "The legacy compatibility highlight helper must not be presented as a live reader surface when it has no call site.");
+assert.equal((appSource.match(/circleFeedPreviewCards\(/gu) ?? []).length, 1, "Legacy Circle preview helper must have no live call site.");
+assert.equal((appSource.match(/circleActivationCards\(/gu) ?? []).length, 2, "Legacy Circle activation helper may be referenced only by its unused preview helper.");
 const codeComposedRuntimeSurfaceIds = [...appSource.matchAll(/normalizedSurfacePreview\(normalizePackageCardSurface\(\{[\s\S]*?surface: "([^"]+)"/gu)].map((match) => match[1]);
 const mappedRuntimeSurfaceIds = new Set(writingSurfaceSourceMap.flatMap((surface) => surface.runtimeSurfaceIds ?? []));
+const inactiveLegacySurfaceIds = new Set(["compatibility-highlight", "circle-feed", "circle-feed-preview"]);
 assert.deepEqual(
-  codeComposedRuntimeSurfaceIds.filter((surfaceId) => !mappedRuntimeSurfaceIds.has(surfaceId)),
+  codeComposedRuntimeSurfaceIds.filter((surfaceId) => !inactiveLegacySurfaceIds.has(surfaceId) && !mappedRuntimeSurfaceIds.has(surfaceId)),
   [],
   "Every code-composed package-card surface in App.tsx must remain visible in Composition Map."
 );
@@ -166,5 +183,7 @@ for (const [label, source] of [
   assert.match(source, /resolveCmsSurfaceOverride/u, `${label} must resolve reviewed CMS surface overrides.`);
 }
 assert.match(appSource, /subscribeToContentUpdates/u, "The reader app must refresh when Content Studio publishes or demotes a row.");
+assert.doesNotMatch(appSource, /void generatedContent;[\s\S]{0,300}retrogradeSummaryFallback/u, "The Sky retrograde summary must not ignore Content Studio content.");
+assert.match(appSource, /cmsSurfaceKeys\.retrogradeSummary\(\)/u, "The Sky retrograde summary must resolve its governed CMS surface.");
 
 console.log(`Admin writing surface map passed: ${surfaceIds.size} writing surfaces and systems have explicit editorial status.`);
