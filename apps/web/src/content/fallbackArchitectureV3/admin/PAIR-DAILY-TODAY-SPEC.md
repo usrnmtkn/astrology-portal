@@ -160,10 +160,24 @@ date sublabel. No feedback widget in v1.
 
 1. Opener frame tone: how playful may the experiment/do sentence get? (Co-Star's
    "phone with your eyes closed" register vs. house practical register.)
-2. When reader and friend share the same driver (same transit hits both), collapse
-   A+B into one "you both" clause, or keep two clauses? (Needs one extra frame row.)
-3. Should slot C prefer the bond transit even when it's a months-long window, or
+2. Should slot C prefer the bond transit even when it's a months-long window, or
    prefer the Moon because this surface is a daily? (Spec currently says bond first.)
+
+
+## Exact same-clause collapse (ratified 2026-08-28, owner review of live output)
+
+After the reader and friend clauses resolve through their approved voice and
+variant lanes, compare the final trimmed clause strings exactly. When they are
+byte-identical, slots A and B collapse into one approved relational opener:
+`{readerHandle}, both you and {friendHandle} are {sharedClause}.` When the reader
+has no handle, use the approved handle-free form: `Both you and {friendHandle}
+are {sharedClause}.`
+
+This is an exact-text seam repair, not a new astrology inference. Do not collapse
+near matches, semantically similar clauses, or clauses that differ between the
+complete `body_you` and `body_they` voice paths. Both daily drivers remain required,
+and both selected clause keys remain in resolver provenance. All other opener
+selection and stable variant behavior is unchanged.
 
 
 ## Bridge rule and bond-clause compression (ratified 2026-08-07, owner review of live output)
