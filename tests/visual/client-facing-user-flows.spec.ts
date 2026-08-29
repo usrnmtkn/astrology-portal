@@ -1712,6 +1712,13 @@ test.describe("client-facing user flow case studies", () => {
     await page.getByRole("tab", { name: "Transits" }).click();
     await expect(page.getByRole("tab", { name: "Transits" })).toHaveAttribute("aria-selected", "true");
     await expect(page.getByLabel("Nikki transit chart wheel")).toBeVisible();
+    const transitDailyForecast = page.locator(".friend-daily-forecast").first();
+    await expect(transitDailyForecast, "Transit daily forecast keeps its card inset").toBeVisible();
+    await expect(transitDailyForecast).toHaveCSS("border-top-style", "solid");
+    expect(
+      await transitDailyForecast.evaluate((element) => Number.parseFloat(getComputedStyle(element).paddingTop)),
+      "Transit daily forecast has visible internal padding"
+    ).toBeGreaterThan(0);
 
     const transitCard = page.locator(".friend-transit-row:has(.updates-aspect-row__orb)").first();
     await expect(transitCard).toBeVisible();
@@ -3092,6 +3099,15 @@ test.describe("client-facing user flow case studies", () => {
     await page.getByRole("button", { name: "Open River" }).click();
     await expect(page.getByRole("region", { name: "River chart profile" })).toBeVisible();
     await expect(page.getByRole("tab", { name: "Natal" })).toBeVisible();
+    await page.getByRole("tab", { name: "Transits" }).click();
+    const mobileDailyForecast = page.locator(".friend-daily-forecast").first();
+    await expect(mobileDailyForecast, "Mobile friend forecast keeps its card inset").toBeVisible();
+    await expect(mobileDailyForecast).toHaveCSS("border-top-style", "solid");
+    expect(
+      await mobileDailyForecast.evaluate((element) => Number.parseFloat(getComputedStyle(element).paddingTop)),
+      "Mobile friend forecast has visible internal padding"
+    ).toBeGreaterThan(0);
+    await expectNoHorizontalOverflow(page, "Mobile friend transit forecast");
     await assertNoClientErrors();
   });
 
