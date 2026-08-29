@@ -11606,6 +11606,7 @@ export function App() {
     ));
     const currentSkyContentKeys = [
       ...new Set([
+        ...cmsSurfaceKeys.retrogradeSummary(),
         ...aspectContentKeys,
         ...personalTransitAspectContentKeys
       ])
@@ -15008,14 +15009,25 @@ function retrogradeSummaryCaption(
   personal: PlanetPosition[],
   generatedContent: GeneratedContentMap
 ) {
-  void generatedContent;
   const fastestPlanet = personal[0] ?? retrogrades[0];
 
   if (!fastestPlanet) {
     return "";
   }
 
-  return retrogradeSummaryFallback();
+  const planetList = readableNameList(retrogrades.map(retrogradeCollapsedName));
+  const personalPlanetList = readableNameList(personal.map(retrogradeCollapsedName));
+
+  return resolveCmsSurfaceOverride(
+    generatedContent,
+    cmsSurfaceKeys.retrogradeSummary(),
+    {
+      count: retrogrades.length,
+      planetList,
+      personalCount: personal.length,
+      personalPlanetList
+    }
+  )?.body ?? retrogradeSummaryFallback();
 }
 
 function retrogradePlacementTitle(position: PlanetPosition) {

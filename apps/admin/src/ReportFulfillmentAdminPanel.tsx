@@ -42,19 +42,34 @@ type Dashboard = {
   }>;
 };
 
+type ReportUnitSection = { heading?: string; body?: string };
+type ReportUnitDraft = { headline: string; timing: string; summary: string; body: string; sections: ReportUnitSection[] };
+type ReportUnit = ReportUnitDraft & {
+  id: string;
+  content_key: string;
+  source_snapshot: ({ adminCorrectionDraft?: ReportUnitDraft & { savedAt?: string } } & Record<string, unknown>) | null;
+};
+type ReportInspection = {
+  report: Record<string, unknown>;
+  units: ReportUnit[];
+};
+
 export function ReportFulfillmentAdminPanel({ secret }: { secret: string }) {
   const [dashboard, setDashboard] = useState<Dashboard | null>(null);
   const [message, setMessage] = useState("");
   const [messageTone, setMessageTone] = useState<"success" | "error">("success");
   const [focusedReportId, setFocusedReportId] = useState("");
+  const [inspection, setInspection] = useState<ReportInspection | null>(null);
+  const [selectedUnitId, setSelectedUnitId] = useState("");
+  const [unitDraft, setUnitDraft] = useState<ReportUnitDraft | null>(null);
   const [lifetimeBudgets, setLifetimeBudgets] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
   const [grant, setGrant] = useState({ userId: "", reportDomain: "general", reportHorizon: "12_months", windowStart: new Date().toISOString().slice(0, 10) });
 
-  async function request(init?: RequestInit) {
+  async function request(init?: RequestInit, query = "") {
     setLoading(true);
     try {
-      const response = await fetch("/api/admin/report-fulfillment", {
+      const response = await fetch(`/api/admin/report-fulfillment${query}`, {
         ...init,
         headers: {
           ...adminCredentialHeaders(secret),
@@ -92,7 +107,7 @@ export function ReportFulfillmentAdminPanel({ secret }: { secret: string }) {
           setMessageTone("error");
           setMessage("The report was granted, but the fulfillment queue could not refresh. Use Refresh before granting anything else.");
         }
-        return;
+        return false;
       }
       if (actionName === "grant_comp") {
         const grantedReportId = result.reportId
@@ -111,10 +126,63 @@ export function ReportFulfillmentAdminPanel({ secret }: { secret: string }) {
       } else {
         setMessage("");
       }
+      return true;
     } catch (error) {
       setMessageTone("error");
       setMessage(error instanceof Error ? error.message : "Fulfillment action failed.");
+      return false;
     }
+  }
+
+  function editableUnit(unit: ReportUnit): ReportUnitDraft {
+    const staged = unit.source_snapshot?.adminCorrectionDraft;
+    return staged
+      ? { headline: staged.headline ?? "", timing: staged.timing ?? "", summary: staged.summary ?? "", body: staged.body ?? "", sections: staged.sections ?? [] }
+      : { headline: unit.headline ?? "", timing: unit.timing ?? "", summary: unit.summary ?? "", body: unit.body ?? "", sections: unit.sections ?? [] };
+  }
+
+  async function inspectReport(reportId: string, preferredUnitId = "") {
+    try {
+      const next = await request(undefined, `?reportId=${encodeURIComponent(reportId)}`) as ReportInspection;
+      setInspection(next);
+      setFocusedReportId(reportId);
+      const nextUnit = next.units.find((unit) => unit.id === preferredUnitId) ?? next.units[0] ?? null;
+      setSelectedUnitId(nextUnit?.id ?? "");
+      setUnitDraft(nextUnit ? editableUnit(nextUnit) : null);
+      setMessage("");
+    } catch (error) {
+      setMessageTone("error");
+      setMessage(error instanceof Error ? error.message : "Report preview unavailable.");
+    }
+  }
+
+  function chooseUnit(unit: ReportUnit) {
+    setSelectedUnitId(unit.id);
+    setUnitDraft(editableUnit(unit));
+  }
+
+  async function saveUnitDraft() {
+    if (!inspection || !selectedUnitId || !unitDraft) return;
+    if (!await action("save_report_unit_draft", String(inspection.report.id), undefined, { unitId: selectedUnitId, ...unitDraft })) return;
+    await inspectReport(String(inspection.report.id), selectedUnitId);
+    setMessageTone("success");
+    setMessage("Correction draft saved. Readers still see the currently published copy.");
+  }
+
+  async function publishUnitCorrection() {
+    if (!inspection || !selectedUnitId) return;
+    if (!await action("publish_report_unit_correction", String(inspection.report.id), undefined, { unitId: selectedUnitId })) return;
+    await inspectReport(String(inspection.report.id), selectedUnitId);
+    setMessageTone("success");
+    setMessage("The reviewed correction is now the report copy readers see.");
+  }
+
+  async function discardUnitDraft() {
+    if (!inspection || !selectedUnitId) return;
+    if (!await action("discard_report_unit_draft", String(inspection.report.id), undefined, { unitId: selectedUnitId })) return;
+    await inspectReport(String(inspection.report.id), selectedUnitId);
+    setMessageTone("success");
+    setMessage("Correction draft discarded. Published report copy was not changed.");
   }
 
   useEffect(() => { if (secret) void load(); }, [secret]);
@@ -184,6 +252,83 @@ export function ReportFulfillmentAdminPanel({ secret }: { secret: string }) {
           <article className="admin-status-card"><span>Judge distribution</span><strong><code>{JSON.stringify(metrics.judgeScoreDistribution)}</code></strong></article>
         </div>
       )}
+      {inspection && (
+        <section className="admin-content-toolbar" aria-label="Report reader-copy editor">
+          <div className="admin-field-wide">
+            <p className="admin-eyebrow">Report reader preview and editor</p>
+            <h3>{String(inspection.report.report_domain).replaceAll("_", " ")} · {String(inspection.report.report_horizon).replaceAll("_", " ")}</h3>
+            <p>Select a section to read the exact delivered copy. Save creates a private correction draft; only Publish correction changes what the reader sees.</p>
+            <label>Report section
+              <select value={selectedUnitId} onChange={(event) => {
+                const unit = inspection.units.find((candidate) => candidate.id === event.target.value);
+                if (unit) chooseUnit(unit);
+              }}>
+                {inspection.units.map((unit) => <option key={unit.id} value={unit.id}>{unit.headline || unit.content_key.split(":").at(-1)}</option>)}
+              </select>
+            </label>
+            {unitDraft && (
+              <>
+                <div className="admin-template-rendered-preview" aria-label="Reader preview of this report section">
+                  <article>
+                    <span>Reader preview</span>
+                    <h3>{unitDraft.headline || "Untitled section"}</h3>
+                    {unitDraft.timing && <p>{unitDraft.timing}</p>}
+                    {unitDraft.summary && <p>{unitDraft.summary}</p>}
+                    {unitDraft.body && <p>{unitDraft.body}</p>}
+                    {unitDraft.sections.map((section, index) => (
+                      <section key={`${selectedUnitId}-preview-${index}`}>
+                        {section.heading && <h3>{section.heading}</h3>}
+                        {section.body && <p>{section.body}</p>}
+                      </section>
+                    ))}
+                  </article>
+                </div>
+                <div className="admin-template-two-column">
+                <label>Title
+                  <input value={unitDraft.headline} onChange={(event) => setUnitDraft({ ...unitDraft, headline: event.target.value })} />
+                </label>
+                <label>TL;DR
+                  <textarea value={unitDraft.summary} onChange={(event) => setUnitDraft({ ...unitDraft, summary: event.target.value })} />
+                </label>
+                <label>Timing line
+                  <textarea value={unitDraft.timing} onChange={(event) => setUnitDraft({ ...unitDraft, timing: event.target.value })} />
+                </label>
+                <label className="admin-field-wide">Body
+                  <textarea value={unitDraft.body} onChange={(event) => setUnitDraft({ ...unitDraft, body: event.target.value })} />
+                </label>
+                {unitDraft.sections.map((section, index) => (
+                  <div className="admin-field-wide" key={`${selectedUnitId}-section-${index}`}>
+                    <label>Section {index + 1} title
+                      <input value={section.heading ?? ""} onChange={(event) => setUnitDraft({
+                        ...unitDraft,
+                        sections: unitDraft.sections.map((candidate, candidateIndex) => candidateIndex === index ? { ...candidate, heading: event.target.value } : candidate)
+                      })} />
+                    </label>
+                    <label>Section {index + 1} body
+                      <textarea value={section.body ?? ""} onChange={(event) => setUnitDraft({
+                        ...unitDraft,
+                        sections: unitDraft.sections.map((candidate, candidateIndex) => candidateIndex === index ? { ...candidate, body: event.target.value } : candidate)
+                      })} />
+                    </label>
+                  </div>
+                ))}
+                </div>
+              </>
+            )}
+          </div>
+          <div className="admin-toolbar-actions">
+            <span className="ui-pill admin-status">{String(inspection.report.fulfillment_status)}</span>
+            <button type="button" disabled={loading || !unitDraft} onClick={() => void saveUnitDraft()}>Save correction draft</button>
+            {inspection.units.find((unit) => unit.id === selectedUnitId)?.source_snapshot?.adminCorrectionDraft && (
+              <>
+                <button type="button" disabled={loading} onClick={() => void discardUnitDraft()}>Discard draft</button>
+                <button type="button" disabled={loading} onClick={() => void publishUnitCorrection()}>Publish correction</button>
+              </>
+            )}
+            <button type="button" onClick={() => { setInspection(null); setSelectedUnitId(""); setUnitDraft(null); }}>Close preview</button>
+          </div>
+        </section>
+      )}
       <div className="admin-content-table-scroll">
         <table className="admin-content-table">
           <thead><tr><th>Report</th><th>Source</th><th>Domain</th><th>Horizon</th><th>Status</th><th>Accepted / total tokens</th><th>Lifetime token cap</th><th>Estimated USD</th><th>Attempts</th><th>Assembly warnings</th><th>Last failure</th><th>Actions</th></tr></thead>
@@ -219,6 +364,7 @@ export function ReportFulfillmentAdminPanel({ secret }: { secret: string }) {
               <td><code>{JSON.stringify(Array.isArray(report.failure_history) ? report.failure_history.at(-1) ?? null : null)}</code></td>
               <td>
                 <div className="admin-toolbar-actions">
+                  <button type="button" onClick={() => void inspectReport(String(report.id))}>Preview and edit</button>
                   {report.fulfillment_status === "awaiting_authorization" && <button type="button" onClick={() => void action("authorize_generation", String(report.id), undefined, {
                     callBudget: Number(dashboard.callEstimates[String(report.report_horizon)]?.recommendedCallBudget ?? 44)
                   })}>Authorize {Number(dashboard.callEstimates[String(report.report_horizon)]?.recommendedCallBudget ?? 44)} calls</button>}
