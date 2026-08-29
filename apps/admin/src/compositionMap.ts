@@ -68,6 +68,11 @@ export type CompositionPreview = {
   sources: CompositionMapSource[];
 };
 
+export type CompositionPreviewOptions = {
+  exampleValues?: Record<string, string>;
+  includeOptionalSources?: boolean;
+};
+
 export type CompositionMapTemplate = {
   destination: string;
   description: string;
@@ -279,8 +284,13 @@ function previewSourceText(source: CompositionMapSource, audience: "you" | "they
     || text(source.row.headline);
 }
 
-function representativeSource(slot: CompositionMapSlot, slots: CompositionMapSlot[], values: Map<string, string>) {
-  if (slot.requirement === "Optional" || !slot.sources.length) return null;
+function representativeSource(
+  slot: CompositionMapSlot,
+  slots: CompositionMapSlot[],
+  values: Map<string, string>,
+  includeOptionalSources = false
+) {
+  if ((!includeOptionalSources && slot.requirement === "Optional") || !slot.sources.length) return null;
   if (slot.sources.length === 1) return slot.sources[0];
   const directAnchorNames: Record<string, string[]> = {
     angleIntro: ["angleTitle"],
@@ -412,7 +422,7 @@ function renderPreviewText(template: string, values: Map<string, string>, seen =
       const value = resolve(name);
       const include = marker === "#" ? Boolean(value) : !value;
       return include
-        ? ` ${renderPreviewText(content.replace(/\{\{\s*\.\s*\}\}/gu, value), values, new Set([...seen, name]), mark)} `
+        ? ` ${renderPreviewText(content.replace(/\{\{\s*\.\s*\}\}/gu, value), values, seen, mark)} `
         : "";
     });
   }
@@ -505,13 +515,18 @@ function compositionPreviewFields(row: CompositionMapRow) {
   return candidates;
 }
 
-function buildCompositionPreview(row: CompositionMapRow, slots: CompositionMapSlot[]): CompositionPreview {
+function buildCompositionPreview(
+  row: CompositionMapRow,
+  slots: CompositionMapSlot[],
+  options: CompositionPreviewOptions = {}
+): CompositionPreview {
   const values = new Map<string, string>();
   slots.forEach((slot) => {
     values.set(slot.name, slot.requirement === "Optional"
       ? ""
       : representativeExampleForRow(row, slot.name, slot.example));
   });
+  Object.entries(options.exampleValues ?? {}).forEach(([name, value]) => values.set(name, value));
   const sources: CompositionMapSource[] = [];
   const selectedSavedSlots = new Set<string>();
   const fields = compositionPreviewFields(row).map((field) => {
@@ -519,7 +534,7 @@ function buildCompositionPreview(row: CompositionMapRow, slots: CompositionMapSl
       const sourceByName = new Map<string, CompositionMapSource>();
       const audience = field.audience === "they" ? "they" : "you";
       slots.forEach((slot) => {
-        const source = representativeSource(slot, slots, values);
+        const source = representativeSource(slot, slots, values, options.includeOptionalSources);
         if (!source) return;
         fieldValues.set(slot.name, previewSourceText(source, audience, slot.name));
         sourceByName.set(slot.name, source);
@@ -558,7 +573,7 @@ function buildCompositionPreview(row: CompositionMapRow, slots: CompositionMapSl
       .map((slot) => ({
         label: slot.label,
         name: slot.name,
-        value: representativeExampleForRow(row, slot.name, slot.example)
+        value: values.get(slot.name) ?? representativeExampleForRow(row, slot.name, slot.example)
       })),
     lineage,
     lineageNote: lineage === "runtime-traceable"
@@ -571,7 +586,8 @@ function buildCompositionPreview(row: CompositionMapRow, slots: CompositionMapSl
 function buildCompositionTemplateWithCache(
   row: CompositionMapRow,
   rows: CompositionMapRow[],
-  cache: AtomicVariableCaches
+  cache: AtomicVariableCaches,
+  previewOptions: CompositionPreviewOptions = {}
 ): CompositionMapTemplate {
     const packageRecord = packageRecordForRow(row);
     const references = atomicVariableReferences(row, rows, cache);
@@ -606,7 +622,7 @@ function buildCompositionTemplateWithCache(
     if (/^slot-template\/[2-6][a-z]$/iu.test(row.content_key)) {
       issues.push("Legacy template ID needs an explicit human destination and name.");
     }
-    const preview = buildCompositionPreview(row, slots);
+    const preview = buildCompositionPreview(row, slots, previewOptions);
     return {
       destination: compositionDestination(row),
       description: text(row.summary) || "No editor-facing template description has been saved.",
@@ -618,8 +634,12 @@ function buildCompositionTemplateWithCache(
     };
 }
 
-export function buildCompositionTemplate(row: CompositionMapRow, rows: CompositionMapRow[]) {
-  return buildCompositionTemplateWithCache(row, rows, { candidates: new Map(), nested: new Map() });
+export function buildCompositionTemplate(
+  row: CompositionMapRow,
+  rows: CompositionMapRow[],
+  previewOptions: CompositionPreviewOptions = {}
+) {
+  return buildCompositionTemplateWithCache(row, rows, { candidates: new Map(), nested: new Map() }, previewOptions);
 }
 
 export function buildCompositionMap(rows: CompositionMapRow[]): CompositionMapTemplate[] {

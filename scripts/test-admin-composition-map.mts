@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { buildCompositionMap, isCompositionTemplateRow, type CompositionMapRow } from "../apps/admin/src/compositionMap";
+import { buildCompositionMap, buildCompositionTemplate, isCompositionTemplateRow, type CompositionMapRow } from "../apps/admin/src/compositionMap";
 
 const baseRow: CompositionMapRow = {
   id: "base",
@@ -182,6 +182,47 @@ const jupiterMap = buildCompositionMap([{
 assert.equal(jupiterMap[0].label, "Natal chart · Jupiter in any sign", "Planet-specific variants should name the planet and make their all-sign scope explicit.");
 assert.equal(jupiterMap[0].preview.fields.find((field) => field.key === "headline")?.rendered, "Jupiter in Leo", "Planet-specific examples should show the correct planet and a concrete sign.");
 assert.equal(jupiterMap[0].preview.fields.find((field) => field.key === "body_you")?.rendered, "Your Jupiter is in Leo.", "Planet-specific bodies should not fall back to a Sun example.");
+
+const contextualNatalTemplate: CompositionMapRow = {
+  ...baseRow,
+  id: "sun-sign-template",
+  content_key: "fallback-template/natal.planet-in-sign/sun",
+  headline: "Sun in {{signTitle}}",
+  body: "{{possessive}} {{planetTitle}} is in {{signTitle}}: you show up {{signAdverb}}.",
+  surface: "natal",
+  block_type: "fallback_template",
+  sections: { packageRecord: {
+    content_role: "template",
+    headline: "Sun in {{signTitle}}",
+    body_you: "{{possessive}} {{planetTitle}} is in {{signTitle}}: you show up {{signAdverb}}.{{#placementSentences}} {{placementSentences}}{{/placementSentences}}"
+  } }
+};
+const contextualNatalPreview = buildCompositionTemplate(contextualNatalTemplate, [
+  contextualNatalTemplate,
+  {
+    ...baseRow,
+    id: "aries-style",
+    content_key: "fallback-vocab/sign-adverb/aries",
+    body: "boldly",
+    block_type: "vocabulary_phrase"
+  },
+  {
+    ...baseRow,
+    id: "sun-aries-passage",
+    content_key: "fallback-hook/placement-sentence/sun/aries",
+    body: "You initiate before the room has finished deciding.",
+    block_type: "fallback_hook"
+  }
+], {
+  exampleValues: { planetTitle: "Sun", signTitle: "Aries", possessive: "Your" },
+  includeOptionalSources: true
+});
+const contextualNatalField = contextualNatalPreview.preview.fields.find((field) => field.key === "body_you");
+assert.equal(contextualNatalField?.rendered, "Your Sun is in Aries: you show up boldly. You initiate before the room has finished deciding.", "A contextual advanced-template preview should use the selected natal placement and include its deterministically matched optional passage.");
+const contextualNatalSegments = contextualNatalField?.paragraphs.flat() ?? [];
+assert.equal(contextualNatalSegments.find((segment) => segment.name === "signTitle")?.kind, "fact", "Selected chart facts should retain their calculated-fact color group.");
+assert.equal(contextualNatalSegments.find((segment) => segment.name === "signAdverb")?.kind, "phrase", "Matched vocabulary should retain its reusable-phrase color group.");
+assert.equal(contextualNatalSegments.find((segment) => segment.name === "placementSentences")?.kind, "hook", "Matched placement passages should retain their authored-hook color group.");
 
 const retroArticleMap = buildCompositionMap([
   {
