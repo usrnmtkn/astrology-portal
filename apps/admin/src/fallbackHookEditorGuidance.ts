@@ -2,6 +2,7 @@ type FallbackHookEditorGuidanceInput = {
   contentKey: string;
   grammarFrame?: string;
   bodyYou?: string;
+  displayTitle?: string;
 };
 
 export type FallbackHookEditorGuidance = {
@@ -57,7 +58,8 @@ const grammarRule = (grammarFrame: string | undefined) => {
 export function fallbackHookEditorGuidance({
   contentKey,
   grammarFrame,
-  bodyYou = ""
+  bodyYou = "",
+  displayTitle
 }: FallbackHookEditorGuidanceInput): FallbackHookEditorGuidance {
   const keyParts = contentKey.split("/");
   const isFallbackHookNamespace = keyParts[0] === "fallback-hook";
@@ -74,6 +76,106 @@ export function fallbackHookEditorGuidance({
     bodyYouLabel: "Reader phrase · You",
     bodyTheyLabel: "Reader phrase · They"
   };
+
+  if (family === "daily-headline" || family === "daily-body") {
+    const isHeadline = family === "daily-headline";
+    const context = keyParts[2] || "daily driver";
+    const subjectKey = keyParts[3] || "source";
+    const selector = context === "house"
+      ? `${houseLabel(subjectKey)} fallback`
+      : `${titleCase(subjectKey)} ${titleCase(context)} Moon contact`;
+
+    return {
+      ...shared,
+      area: `Daily At-a-Glance · ${isHeadline ? "headline" : "passage"}`,
+      title: displayTitle ?? `${selector} · Daily At-a-Glance`,
+      description: `Shown on You > Daily At-a-Glance and on a selected friend’s Daily card. The app first chooses the Moon’s tightest applying contact to a natal point; when none qualifies, it uses the Moon’s current house. This row is the ${isHeadline ? "headline" : "passage"} for the ${selector.toLowerCase()}.`,
+      writingRule: isHeadline
+        ? "Write one short, complete headline in plain language. Do not name the Moon, aspect, point, or house—the reader sees guidance, not the selection rule."
+        : "Write one complete, concrete daily passage in plain language. Do not name the Moon, aspect, point, or house—the reader sees guidance, not the selection rule.",
+      example: bodyYou.trim() || undefined,
+      summaryLabel: "Internal history",
+      summaryHint: "Package provenance and review history. Readers never see it; leave it unchanged unless you are documenting editorial provenance.",
+      bodyYouLabel: `${isHeadline ? "Headline" : "Passage"} · You`,
+      bodyYouHint: "Used on the signed-in reader’s Daily At-a-Glance card.",
+      bodyTheyLabel: `${isHeadline ? "Headline" : "Passage"} · Friend`,
+      bodyTheyHint: "Used for the selected person’s Daily card. Keep the meaning parallel to You; person-name variables are filled by the app.",
+      audienceLabel: "Assembly",
+      audienceHint: `Moon-driven selector → this ${isHeadline ? "headline" : "passage"} → Daily At-a-Glance card. The headline and passage are selected as a matching pair.`
+    };
+  }
+
+  if (family === "pair-daily") {
+    const piece = keyParts[2] || "source";
+    const pieceGuidance: Record<string, { area: string; description: string; writingRule: string; assembly: string; you: string; they: string }> = {
+      clause: {
+        area: "Today between you two · personal clause",
+        description: "One Moon-driven ingredient for Friends > selected person > Today between you two. The app selects one clause for you and one for your friend, then inserts both into an opening frame.",
+        writingRule: "Write a short clause that fits inside a larger sentence. Keep You and Friend parallel; do not add dates, transit windows, or a standalone headline.",
+        assembly: "Your daily driver + friend’s daily driver → two personal clauses → opening frame.",
+        you: "Inserted as your side of the shared daily sentence.",
+        they: "Inserted as the selected friend’s side of the shared daily sentence."
+      },
+      opener: {
+        area: "Today between you two · opening frame",
+        description: "The main sentence frame for the shared daily reading. The app fills it with the selected You and Friend clauses and, for some frames, a shared clause.",
+        writingRule: "Write a complete frame and preserve every {{slot}}. The app replaces the handles and clauses; removing a slot removes that part of the reading.",
+        assembly: "Selected personal clauses → this opening frame → optional shared bridge → optional closing advice.",
+        you: "Primary frame used for the reader-facing shared daily passage.",
+        they: "Parallel reference where supplied; the pair surface normally assembles one shared passage."
+      },
+      "shared-bond": {
+        area: "Today between you two · shared bond bridge",
+        description: "Optional shared context chosen when a current bond transit is the strongest shared signal between both charts.",
+        writingRule: "Write a complete bridge and preserve {{bondClause}}. It must follow the opening naturally and work without a date or transit-window explanation.",
+        assembly: "Strongest shared bond transit → this bridge + matching bond detail.",
+        you: "Shared bridge in the combined reading.",
+        they: "Parallel shared bridge where supplied."
+      },
+      "bond-clause": {
+        area: "Today between you two · bond detail",
+        description: "A planet-specific detail inserted into the matching soft or hard shared-bond bridge.",
+        writingRule: "Write a short phrase or clause that fits inside the shared bridge. Do not repeat the opening or add a date.",
+        assembly: "Strongest bond planet + soft/hard family → this detail → shared-bond bridge.",
+        you: "Inserted into the shared bridge.",
+        they: "Parallel detail where supplied."
+      },
+      "shared-moon": {
+        area: "Today between you two · shared Moon bridge",
+        description: "Optional shared context used when the current Moon contacts both charts and no stronger bond-transit bridge is selected.",
+        writingRule: "Write one complete shared sentence. Keep it relational and concrete; do not explain the underlying calculation.",
+        assembly: "Shared Moon element → this bridge after the opening.",
+        you: "Shared bridge in the combined reading.",
+        they: "Parallel shared bridge where supplied."
+      },
+      close: {
+        area: "Today between you two · closing advice",
+        description: "Optional final advice used only for a hard shared Saturn or Mercury bond signal.",
+        writingRule: "Write one concise, actionable closing sentence that can follow the shared bridge.",
+        assembly: "Hard Saturn or Mercury shared signal → this final sentence.",
+        you: "Closing advice in the combined reading.",
+        they: "Parallel closing advice where supplied."
+      }
+    };
+    const guidance = pieceGuidance[piece] ?? pieceGuidance.clause;
+
+    return {
+      ...shared,
+      area: guidance.area,
+      title: displayTitle ?? "Today between you two source",
+      description: guidance.description,
+      writingRule: guidance.writingRule,
+      example: bodyYou.trim() || undefined,
+      summaryLabel: "Internal history",
+      summaryHint: "Package provenance and review history. Readers never see it; leave it unchanged unless you are documenting editorial provenance.",
+      bodyYouLabel: piece === "clause" ? "Clause · You" : "Shared copy · You",
+      bodyYouHint: guidance.you,
+      bodyTheyLabel: piece === "clause" ? "Clause · Friend" : "Shared copy · Friend",
+      bodyTheyHint: guidance.they,
+      audienceLabel: "Assembly",
+      audienceHint: guidance.assembly
+    };
+  }
 
   if (family === "house-horoscope-core") {
     const [, planetKey = "planet", signKey = "sign", houseKey = "house"] = keyParts;

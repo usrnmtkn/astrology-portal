@@ -184,7 +184,7 @@ type AdminFallbackCompositionDiagnostic = {
 type AdminPhrasebankTier = "CONFIRMED" | "REVIEWED" | "SESSION_APPROVED_DRAFT" | "none";
 type AdminPhrasebankTierFilter = AdminPhrasebankTier | "all";
 type AdminContentCategoryFilter = "all" | "Sky" | "Natal Aspects" | "Natal Angles" | "Natal Chart" | "Relationship" | "Condition Modifiers" | "Fallback Hooks" | "Fallback Templates";
-type AdminFallbackHookSectionFilter = "all" | "sky" | "you" | "friends" | "lunar-calendar" | "settings";
+type AdminFallbackHookSectionFilter = "all" | "daily" | "sky" | "you" | "friends" | "lunar-calendar" | "settings";
 type AdminFallbackRowSort = "title-asc" | "title-desc" | "type";
 type WritingSurfaceAreaFilter = "all" | "sky" | "you" | "friends" | "calendar" | "reports" | "settings";
 type WritingSurfaceStatusFilter = "all" | "complete" | "partial" | "missing";
@@ -591,6 +591,7 @@ const categoryFilters: Array<{ key: AdminContentCategoryFilter; label: string }>
 ];
 const fallbackSections: Array<{ key: AdminFallbackHookSectionFilter; label: string }> = [
   { key: "all", label: "All saved" },
+  { key: "daily", label: "Daily" },
   { key: "sky", label: "Sky" },
   { key: "you", label: "Natal" },
   { key: "friends", label: "Friends" },
@@ -1826,7 +1827,6 @@ function rowTitle(row: AdminGeneratedContentRow | AdminReviewRecord | AdminUserG
   if ("content_key" in row) {
     const structuredIdentity = skyFallbackIdentity(row.content_key);
     if (structuredIdentity) return structuredIdentity.title;
-    if (row.content_key.startsWith("fallback-hook/pair-daily/") && normalizeText(row.headline)) return normalizeText(row.headline);
     const fallbackHookTitle = fallbackHookDisplayTitle(row.content_key);
     if (fallbackHookTitle) return fallbackHookTitle;
     if (row.content_key.startsWith("slot-template/")) return templateDisplayName(row.content_key, normalizeText(row.headline));
@@ -2180,9 +2180,9 @@ function housePassageAvailabilityLabel(availability: "Reader-ready" | "Source ca
 }
 
 function fallbackSectionForKey(key: string, surface?: string): Exclude<AdminFallbackHookSectionFilter, "all"> {
+  if (key.startsWith("fallback-hook/daily-headline/") || key.startsWith("fallback-hook/daily-body/") || key.startsWith("fallback-hook/pair-daily/")) return "daily";
   if (key.includes("lunar") || key.startsWith("lunation/") || key.startsWith("season/") || key.startsWith("season-arc/") || key.startsWith("transit-fallback/")) return "lunar-calendar";
   if (key.includes("settings") || surface === "settings") return "settings";
-  if (key.includes("pair-daily")) return "friends";
   if (key.includes("friends") || key.includes("synastry") || key.includes("relationship") || surface === "friends" || surface === "relationship" || surface === "synastry" || surface === "composite") return "friends";
   if (key.includes("natal") || key.includes("you") || surface === "you" || surface === "natal") return "you";
   return "sky";
@@ -2190,6 +2190,7 @@ function fallbackSectionForKey(key: string, surface?: string): Exclude<AdminFall
 
 function surfaceAreaForFallbackSection(section: AdminFallbackHookSectionFilter): WritingSurfaceAreaFilter {
   if (section === "lunar-calendar") return "calendar";
+  if (section === "daily") return "all";
   return section;
 }
 
@@ -5000,6 +5001,7 @@ export function GeneratedContentAdminDashboard() {
               </button>
             </section>
             {renderFallbackTabs()}
+            {renderDailyHookGuide()}
             <section className="admin-content-filters" aria-label="Fallback row controls">
               <div className="admin-review-filter-grid">
                 <label className="admin-field-wide">
@@ -5729,6 +5731,52 @@ export function GeneratedContentAdminDashboard() {
     );
   }
 
+  function showDailyHookFamily(nextQuery: "daily-headline" | "daily-body" | "pair-daily") {
+    setFallbackSectionFilter("daily");
+    setFallbackRowSort("type");
+    setQuery(nextQuery);
+    setSelectedRowId(null);
+  }
+
+  function renderDailyHookGuide() {
+    if (fallbackSectionFilter !== "daily") return null;
+
+    return (
+      <section className="admin-daily-hook-guide" aria-label="How daily content is assembled">
+        <div className="admin-daily-hook-guide-heading">
+          <div>
+            <p className="admin-eyebrow">Daily content map</p>
+            <h3>Start with the reader surface</h3>
+          </div>
+          <p>Daily rows are selected by the app; they are not complete standalone articles.</p>
+        </div>
+        <div className="admin-daily-hook-guide-grid">
+          <article>
+            <strong>Daily At-a-Glance</strong>
+            <span>You and a selected friend each receive their own card.</span>
+            <p><b>Moon-driven selector</b><i aria-hidden="true">→</i><b>matching headline</b><i aria-hidden="true">→</i><b>matching passage</b></p>
+            <div>
+              <button type="button" onClick={() => showDailyHookFamily("daily-headline")}>Browse headlines</button>
+              <button type="button" onClick={() => showDailyHookFamily("daily-body")}>Browse passages</button>
+            </div>
+          </article>
+          <article>
+            <strong>Today between you two</strong>
+            <span>One shared reading on Friends &gt; selected person.</span>
+            <p><b>your clause + friend clause</b><i aria-hidden="true">→</i><b>opening</b><i aria-hidden="true">→</i><b>optional shared bridge and close</b></p>
+            <div>
+              <button type="button" onClick={() => showDailyHookFamily("pair-daily")}>Browse shared daily sources</button>
+            </div>
+          </article>
+        </div>
+        <details className="admin-daily-hook-create-note">
+          <summary>Can I add a new daily row?</summary>
+          <p>Each row must match a selector the app already knows how to request. Edit an existing row to change current output. A newly invented key will not appear to readers until its selector or variant is wired into the resolver, so Content Studio does not offer a misleading free-form “add row” action here.</p>
+        </details>
+      </section>
+    );
+  }
+
   function renderBulkBar() {
     if (selectedIds.size === 0) return null;
 
@@ -5761,15 +5809,27 @@ export function GeneratedContentAdminDashboard() {
 
   function renderFallbackContentGroups(tableRows: AdminGeneratedContentRow[]) {
     const groups = [
-      { key: "articles", label: "Sky Placement articles" },
-      { key: "houses", label: "House horoscopes" },
-      { key: "sky-aspects", label: "Sky aspects" },
-      { key: "personal-transits", label: "Transits to natal" },
-      { key: "supporting", label: "Supporting fallback rows" }
+      { key: "daily-headlines", label: "Daily At-a-Glance headlines", description: "Short headlines selected for the signed-in reader or a selected friend." },
+      { key: "daily-passages", label: "Daily At-a-Glance passages", description: "Full passages selected by the same Moon-driven rule as the headline." },
+      { key: "pair-personal", label: "Between You Two · personal clauses", description: "You and Friend versions selected separately from each person’s daily driver." },
+      { key: "pair-assembly", label: "Between You Two · assembly frames", description: "Openings, optional shared bridges, bond details, and closing advice." },
+      { key: "articles", label: "Sky Placement articles", description: "Complete placement articles." },
+      { key: "houses", label: "House horoscopes", description: "House-specific reader passages." },
+      { key: "sky-aspects", label: "Sky aspects", description: "Current-sky aspect passages." },
+      { key: "personal-transits", label: "Transits to natal", description: "Personal transit passages." },
+      { key: "supporting", label: "Supporting fallback rows", description: "Other atomic sources used by fallback renderers." }
     ] as const;
     const groupedRows = new Map(groups.map((group) => [group.key, [] as AdminGeneratedContentRow[]]));
     tableRows.forEach((row) => {
-      const groupKey = skyFallbackIdentity(row.content_key)?.groupKey ?? "supporting";
+      const groupKey = row.content_key.startsWith("fallback-hook/daily-headline/")
+        ? "daily-headlines"
+        : row.content_key.startsWith("fallback-hook/daily-body/")
+          ? "daily-passages"
+          : row.content_key.startsWith("fallback-hook/pair-daily/clause/")
+            ? "pair-personal"
+            : row.content_key.startsWith("fallback-hook/pair-daily/")
+              ? "pair-assembly"
+              : skyFallbackIdentity(row.content_key)?.groupKey ?? "supporting";
       groupedRows.get(groupKey)?.push(row);
     });
     const visibleGroups = groups.filter((group) => (groupedRows.get(group.key)?.length ?? 0) > 0);
@@ -5783,7 +5843,10 @@ export function GeneratedContentAdminDashboard() {
           return (
             <section className="admin-hook-detail-section" aria-label={group.label} key={group.key}>
               <div className="admin-section-heading-row">
-                <h3>{group.label}</h3>
+                <div>
+                  <h3>{group.label}</h3>
+                  <p>{group.description}</p>
+                </div>
                 <p>{rows.length} rows</p>
               </div>
               {renderContentTable(rows, false, true)}
@@ -6218,7 +6281,8 @@ export function GeneratedContentAdminDashboard() {
       ? fallbackHookEditorGuidance({
           contentKey: currentDraft.contentKey,
           grammarFrame: typeof packageRecord.grammar_frame === "string" ? packageRecord.grammar_frame : undefined,
-          bodyYou: packageFieldString(currentDraft, "body_you") || currentDraft.body
+          bodyYou: packageFieldString(currentDraft, "body_you") || currentDraft.body,
+          displayTitle: fallbackHookDisplayTitle(currentDraft.contentKey) ?? undefined
         })
       : null;
     const fallbackEditorGuidance = baseFallbackEditorGuidance && skyFallbackContentIdentity
@@ -6545,9 +6609,7 @@ export function GeneratedContentAdminDashboard() {
         }
       });
     };
-    const fallbackHookEditorTitle = currentDraft.contentKey.startsWith("fallback-hook/pair-daily/")
-      ? currentDraft.headline
-      : fallbackHookDisplayTitle(currentDraft.contentKey);
+    const fallbackHookEditorTitle = fallbackHookDisplayTitle(currentDraft.contentKey);
     const compatibilityIdentity = compatibilityBrowseIdentity(
       currentDraft.contentKey,
       currentDraft.facts,
