@@ -80,12 +80,12 @@ export function natalPlacementSourceGroups(
     {
       key: "exact",
       label: `${planetLabel} in ${signLabel} in the ${houseLabel} house`,
-      description: "An approved full write-up for this exact planet, sign, and house replaces the composed sources below on the You page.",
+      description: "Optional exact override. If an approved full write-up exists, it replaces the composed sources below on the You page. Otherwise the app assembles the reader preview from the atomic sources shown here.",
       sources: [
         {
           key: `fallback-hook/natal-you-placement-complete-final/${planet}/${sign}/${house}`,
           label: `Complete ${planetLabel} in ${signLabel} in the ${houseLabel} house write-up`,
-          scope: `Used only for ${planetLabel} in ${signLabel} in the ${houseLabel} house.`
+          scope: `Optional full-copy override used only for ${planetLabel} in ${signLabel} in the ${houseLabel} house.`
         }
       ]
     },
