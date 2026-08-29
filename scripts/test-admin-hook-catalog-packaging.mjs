@@ -35,6 +35,31 @@ const index = JSON.parse(fs.readFileSync(path.join(generatedRoot, "admin-hook-ca
 assert.equal(index.schemaVersion, 1, "The Admin hook index must use schema version 1.");
 assert.equal(index.rows.length, sourceBodies.size, "The Admin hook index must cover every unique source hook.");
 assert.ok(index.rows.every((row) => !("body" in row)), "The startup index must not duplicate reader-visible bodies.");
+const pairDailyIndexRows = index.rows.filter((row) => row.key.startsWith("fallback-hook/pair-daily/"));
+assert.equal(pairDailyIndexRows.length, 140, "The Admin catalog must expose every pair-daily source phrase.");
+assert.ok(pairDailyIndexRows.every((row) => row.surface === "friends"), "Pair-daily sources must appear in the Friends workspace.");
+assert.ok(pairDailyIndexRows.every((row) => row.label?.startsWith("Today between you two · ")), "Pair-daily sources must ship with reader-facing browser titles.");
+const pairDailyLabels = new Map(pairDailyIndexRows.map((row) => [row.key, row.label]));
+assert.equal(
+  pairDailyLabels.get("fallback-hook/pair-daily/opener/variant-2"),
+  "Today between you two · Opening · Variant 2",
+  "Pair-daily opening variants need distinguishable browser titles."
+);
+assert.equal(
+  pairDailyLabels.get("fallback-hook/pair-daily/clause/conjunction/venus"),
+  "Today between you two · Venus conjunction · Personal daily clause",
+  "Pair-daily personal clauses need planet and aspect context."
+);
+assert.equal(
+  pairDailyLabels.get("fallback-hook/pair-daily/bond-clause/hard/saturn"),
+  "Today between you two · Saturn · Challenging bond clause",
+  "Pair-daily bond clauses need planet and tone context."
+);
+assert.equal(
+  pairDailyLabels.get("fallback-hook/pair-daily/shared-moon/water/variant-4"),
+  "Today between you two · Water Moon bridge · Variant 4",
+  "Pair-daily shared Moon variants need element and variant context."
+);
 
 const packagedBodies = new Map();
 for (const domain of ["sky", "you", "friends", "modifier"]) {
