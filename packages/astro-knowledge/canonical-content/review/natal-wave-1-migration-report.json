@@ -93,9 +93,9 @@
         "gap": 547
       },
       "you": {
-        "authored": 367,
-        "composed": 2145,
-        "gap": 394
+        "authored": 302,
+        "composed": 2207,
+        "gap": 397
       }
     },
     "total": 2906
@@ -161,9 +161,9 @@
       "gap": 547
     },
     "you": {
-      "authored": 367,
-      "composed": 2145,
-      "gap": 394
+      "authored": 302,
+      "composed": 2207,
+      "gap": 397
     }
   },
   "preservedBaselineSubstitutions": [

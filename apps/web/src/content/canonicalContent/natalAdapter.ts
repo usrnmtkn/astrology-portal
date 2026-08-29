@@ -11,6 +11,7 @@ type LegacyRender = {
   sourceKeys?: string[];
   note?: string | null;
   canonicalResolutionMode?: "authored" | "composed" | "gap";
+  provenanceTier?: string;
 };
 
 type LegacyNatalRenderer = {
@@ -92,6 +93,13 @@ function substituteName(value: string, voice?: string) {
   return value.replaceAll("{{Name}}", voice && voice !== "you" ? voice : "they");
 }
 
+function sameReaderContent(first: LegacyRender, second: LegacyRender) {
+  return first.headline === second.headline
+    && first.body === second.body
+    && first.parts.length === second.parts.length
+    && first.parts.every((part, index) => part === second.parts[index]);
+}
+
 function read(lookup: CanonicalLookup, unitId: string, voice?: string, variant?: string) {
   const perspective = perspectiveForVoice(voice);
   const unit = lookup(unitId, { surface: "natal", register: "natal", perspective });
@@ -129,31 +137,57 @@ export function createCanonicalNatalAdapter({
 
   return {
     renderNatalPlacement(facts, options) {
-      void options;
       if (facts.dignity || facts.isRetrograde || facts.sect?.hasReliableSect) {
         throw new Error("SOURCE_GAP: canonical natal modifier overlays are outside Wave 1");
       }
-      const signUnit = read(
-        getCanonicalUnit,
-        `natal/placement-sign/${body(facts.planet)}/${segment(facts.sign)}`,
-        facts.voice
-      );
-      if (!facts.house) return signUnit;
-      const houseUnit = read(
-        getCanonicalUnit,
-        `natal/placement-house/${body(facts.planet)}/${facts.house}`,
-        facts.voice
-      );
-      const parts = [...signUnit.parts, ...houseUnit.parts];
-      return {
-        headline: houseUnit.canonicalResolutionMode === "authored"
-          ? houseUnit.headline
-          : `${signUnit.headline} in the ${ordinal(facts.house)} house`,
-        body: parts.join("\n\n"),
-        parts,
-        partKeys: [signUnit.templateKey, houseUnit.templateKey],
-        templateKey: houseUnit.templateKey
-      };
+      let shippedPlacement: LegacyRender | null = null;
+      try {
+        shippedPlacement = legacyRenderer.renderNatalPlacement(facts, options);
+      } catch {
+        // The canonical path may still resolve a unit that the shipped package lacks.
+      }
+      if (
+        shippedPlacement?.provenanceTier === "exact-owner-approved"
+        && shippedPlacement.templateKey?.startsWith("fallback-hook/natal-you-placement-complete-final/")
+      ) {
+        return shippedPlacement;
+      }
+      try {
+        const signUnit = read(
+          getCanonicalUnit,
+          `natal/placement-sign/${body(facts.planet)}/${segment(facts.sign)}`,
+          facts.voice
+        );
+        const canonicalPlacement = !facts.house
+          ? signUnit
+          : (() => {
+              const houseUnit = read(
+                getCanonicalUnit,
+                `natal/placement-house/${body(facts.planet)}/${facts.house}`,
+                facts.voice
+              );
+              const parts = [...signUnit.parts, ...houseUnit.parts];
+              return {
+                headline: houseUnit.canonicalResolutionMode === "authored"
+                  ? houseUnit.headline
+                  : `${signUnit.headline} in the ${ordinal(facts.house)} house`,
+                body: parts.join("\n\n"),
+                parts,
+                partKeys: [signUnit.templateKey, houseUnit.templateKey],
+                templateKey: houseUnit.templateKey
+              };
+            })();
+        if (
+          shippedPlacement?.templateKey
+          && !sameReaderContent(canonicalPlacement, shippedPlacement)
+        ) {
+          return shippedPlacement;
+        }
+        return canonicalPlacement;
+      } catch (error) {
+        if (shippedPlacement?.templateKey) return shippedPlacement;
+        throw error;
+      }
     },
     renderNatalAspect(facts, options) {
       void options;
