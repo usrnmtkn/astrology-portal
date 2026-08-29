@@ -211,7 +211,7 @@
   --admin-drawer-inset-compact: min(16vw, calc(var(--space-10) * 4 + var(--space-8) + var(--space-1)));
   --admin-main-padding-legacy: 46px clamp(var(--admin-space-34), 4vw, 68px);
   --admin-main-padding-compact: var(--admin-space-34) clamp(var(--admin-space-8xl), 3vw, 48px);
-  --admin-main-padding: clamp(var(--admin-space-34), 4.4vw, 66px) clamp(40px, 6vw, 88px);
+  --admin-main-padding: clamp(var(--admin-space-34), 4.4vw, 66px) clamp(var(--admin-space-8xl), 3.4vw, 52px);
   --admin-composition-detail-padding: clamp(var(--admin-space-3xl), 2vw, var(--admin-space-7xl));
   --admin-composition-preview-padding: clamp(var(--admin-space-4xl), 3vw, var(--admin-space-9xl));
   --admin-radius-hairline: 2px;
@@ -255,6 +255,11 @@
   --admin-control-height-4xl: 46px;
   --admin-panel-min-height: 54px;
   --admin-card-min-height: 72px;
+  --admin-access-actions-min-width: 280px;
+  --admin-z-mobile-sidebar: 20;
+  --admin-z-overlay-host: 30;
+  --admin-z-create-backdrop: 80;
+  --admin-z-create-menu: 90;
   --admin-shadow-menu: 0 18px 46px rgba(0, 0, 0, 0.4);
   --admin-shadow-toast: 0 18px 44px rgba(0, 0, 0, 0.34);
   --admin-shadow-side-rail: -24px 0 80px rgba(0, 0, 0, 0.42);
