@@ -7970,7 +7970,7 @@ body,
 
 .admin-dashboard .admin-nav-section {
   display: grid;
-  gap: var(--admin-space-5);
+  gap: var(--admin-space-sm);
 }
 
 .admin-dashboard :where(.admin-breadcrumb, .admin-eyebrow, label span, .admin-metadata-field span, .admin-field-wide > span) {
@@ -10582,6 +10582,13 @@ body,
   text-transform: uppercase;
 }
 
+.admin-dashboard .admin-natal-placement-selectors label > small {
+  color: var(--admin-ui-muted);
+  font-size: var(--admin-ui-type-hint);
+  line-height: var(--leading-description);
+  margin-top: calc(-1 * var(--admin-space-xs));
+}
+
 .admin-dashboard .admin-natal-source-group {
   border-top: var(--border-width-thin) solid var(--admin-ui-border);
   display: grid;
@@ -12858,7 +12865,7 @@ body,
 }
 
 .admin-dashboard .admin-content-row:focus-visible {
-  box-shadow: inset 0 0 0 2px var(--admin-ui-primary);
+  box-shadow: var(--admin-ui-focus);
   outline: none;
 }
 
@@ -12908,7 +12915,7 @@ body,
   background: var(--admin-ui-surface);
   border: var(--border-width-thin) solid var(--admin-ui-border-strong);
   border-radius: 50%;
-  color: var(--admin-ui-copy);
+  color: var(--admin-ui-text);
   display: inline-flex;
   height: 22px;
   justify-content: center;
