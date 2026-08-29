@@ -8446,6 +8446,105 @@ body,
   font-weight: var(--weight-medium);
 }
 
+.admin-dashboard .admin-daily-hook-guide {
+  background: var(--admin-ui-surface-2);
+  border: var(--border-width-thin) solid var(--admin-ui-border);
+  border-radius: var(--admin-ui-radius-lg);
+  display: grid;
+  gap: var(--admin-space-xl);
+  padding: var(--admin-space-2xl);
+}
+
+.admin-dashboard .admin-daily-hook-guide-heading,
+.admin-dashboard .admin-daily-hook-guide-grid,
+.admin-dashboard .admin-daily-hook-guide article > div,
+.admin-dashboard .admin-section-heading-row > div {
+  min-width: 0;
+}
+
+.admin-dashboard .admin-daily-hook-guide-heading {
+  align-items: end;
+  display: flex;
+  gap: var(--admin-space-xl);
+  justify-content: space-between;
+}
+
+.admin-dashboard .admin-daily-hook-guide-heading h3,
+.admin-dashboard .admin-section-heading-row > div h3 {
+  margin: var(--admin-space-xs) 0 0;
+}
+
+.admin-dashboard .admin-daily-hook-guide-heading > p,
+.admin-dashboard .admin-daily-hook-guide article > span,
+.admin-dashboard .admin-section-heading-row > div p,
+.admin-dashboard .admin-daily-hook-create-note p {
+  color: var(--admin-ui-muted);
+  font-size: var(--admin-ui-type-hint);
+  line-height: 1.45;
+  margin: 0;
+}
+
+.admin-dashboard .admin-daily-hook-guide-grid {
+  display: grid;
+  gap: var(--admin-space-lg);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.admin-dashboard .admin-daily-hook-guide article {
+  background: var(--admin-ui-surface);
+  border: var(--border-width-thin) solid var(--admin-ui-border);
+  border-radius: var(--admin-ui-radius-md);
+  display: grid;
+  gap: var(--admin-space-md);
+  padding: var(--admin-space-xl);
+}
+
+.admin-dashboard .admin-daily-hook-guide article > p {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--admin-space-sm);
+  margin: 0;
+}
+
+.admin-dashboard .admin-daily-hook-guide article > p b {
+  background: var(--admin-ui-neutral-soft);
+  border-radius: var(--admin-ui-radius-sm);
+  font-size: var(--admin-ui-type-hint);
+  font-weight: var(--weight-medium);
+  padding: var(--admin-space-xs) var(--admin-space-sm);
+}
+
+.admin-dashboard .admin-daily-hook-guide article > p i {
+  color: var(--admin-ui-muted);
+  font-style: normal;
+}
+
+.admin-dashboard .admin-daily-hook-guide article > div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--admin-space-sm);
+}
+
+.admin-dashboard .admin-daily-hook-guide article button {
+  min-height: 36px;
+}
+
+.admin-dashboard .admin-daily-hook-create-note {
+  border-top: var(--border-width-thin) solid var(--admin-ui-border);
+  padding-top: var(--admin-space-lg);
+}
+
+.admin-dashboard .admin-daily-hook-create-note summary {
+  cursor: pointer;
+  font-weight: var(--weight-medium);
+}
+
+.admin-dashboard .admin-daily-hook-create-note p {
+  margin-top: var(--admin-space-md);
+  max-width: 78ch;
+}
+
 .admin-dashboard .admin-status-pills button.active,
 .admin-dashboard .admin-status-pills button[aria-selected="true"],
 .admin-dashboard .admin-template-tabs button.active,
@@ -13120,6 +13219,15 @@ body,
   }
 
   .admin-dashboard .admin-authoring-steps {
+    display: grid;
+  }
+
+  .admin-dashboard .admin-daily-hook-guide-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-dashboard .admin-daily-hook-guide-heading {
+    align-items: start;
     display: grid;
   }
 
