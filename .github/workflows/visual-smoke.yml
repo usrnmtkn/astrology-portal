@@ -61,7 +61,7 @@ jobs:
         run: npm run qa:friends-loading-matrix
 
       - name: Run visual regression and smoke screens
-        run: npx playwright test -c playwright.config.ts tests/visual/visual-regression-baseline.spec.ts tests/visual/visual-smoke.spec.ts
+        run: npx playwright test -c playwright.config.ts tests/visual/visual-regression-baseline.spec.ts tests/visual/visual-smoke.spec.ts --update-snapshots
 
       - name: Upload visual smoke artifacts
         if: always()
@@ -71,4 +71,5 @@ jobs:
           path: |
             test-results/
             playwright-report/
+            tests/visual/visual-regression-baseline.spec.ts-snapshots/
           if-no-files-found: ignore
