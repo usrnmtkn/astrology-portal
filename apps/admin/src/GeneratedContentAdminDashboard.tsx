@@ -6590,7 +6590,7 @@ export function GeneratedContentAdminDashboard() {
               ? "Fallback name"
               : isTemplateDraft
                 ? "Template name"
-                : "Title");
+                : "Title / headline");
     const summaryFieldLabel = fallbackEditorGuidance?.summaryLabel
       ?? (isVocabularyDraft
         ? "Editor note (optional)"
@@ -6602,7 +6602,7 @@ export function GeneratedContentAdminDashboard() {
               ? "When this fallback is used (optional)"
               : isTemplateDraft
                 ? "Template purpose (optional)"
-                : "TL;DR (optional)");
+                : "TL;DR / summary");
     const bodyFieldLabel = isVocabularyDraft && isPackageDraft
       ? vocabularyHasTheyVersion ? "You version" : "Variable value"
       : isVocabularyDraft
@@ -6616,7 +6616,7 @@ export function GeneratedContentAdminDashboard() {
                 ? "Fallback reader copy"
                 : isTemplateDraft
                   ? "Template pattern"
-                  : "Full passage");
+                  : "Full passage / body");
     const bodyFieldPlaceholder = isVocabularyDraft
       ? "Write the reusable wording or phrase pattern here."
       : isTemplateDraft
@@ -7354,7 +7354,7 @@ export function GeneratedContentAdminDashboard() {
               <input aria-label={headlineFieldLabel} value={currentDraft.headline} onChange={(event) => updateHeadline(event.target.value)} placeholder={isVocabularyDraft ? "Example: Moon phase / Balsamic / Reflection" : undefined} />
               {fallbackEditorGuidance && <small className="admin-field-hint">{fallbackEditorGuidance.headlineHint}</small>}
               {isVocabularyDraft && <small className="admin-field-hint">{isPackageDraft ? "This label helps editors find the phrase. The stable source key remains unchanged." : "This is the human name editors see in the table. New rows use it to generate the internal key."}</small>}
-              {!fallbackEditorGuidance && !isVocabularyDraft && !isAuthoredPackageCard && <small className="admin-field-hint">{isTemplateDraft || isFallbackHookDraft ? "Editor-facing name used to find this source in Content Studio." : "Reader-facing title shown at the top of this card or write-up."}</small>}
+              {!fallbackEditorGuidance && !isVocabularyDraft && !isAuthoredPackageCard && <small className="admin-field-hint">{isTemplateDraft || isFallbackHookDraft ? "Editor-facing name used to find this source in Content Studio." : "Reader-facing title shown at the top of this card or write-up. Stored internally as Headline."}</small>}
             </label>
           )}
           {!compiledSkyArticleEdition && !skyFallbackEditor && !(isVocabularyDraft && isPackageDraft) && showSummaryField && (
@@ -7364,7 +7364,7 @@ export function GeneratedContentAdminDashboard() {
               <small className="admin-field-metrics">{fieldMetrics(currentDraft.summary)}</small>
               {fallbackEditorGuidance && <small className="admin-field-hint">{fallbackEditorGuidance.summaryHint}</small>}
               {isSkyArticleSourceDraft && <small className="admin-field-hint">Saved as non-serving source copy until the complete edition is compiled, reviewed, and published.</small>}
-              {!fallbackEditorGuidance && !isVocabularyDraft && !isSkyArticleSourceDraft && <small className="admin-field-hint">{isTemplateDraft || isFallbackHookDraft ? "Internal context for editors. Readers do not receive this field." : "Short reader-facing takeaway. Leave empty when this surface does not show a TL;DR."}</small>}
+              {!fallbackEditorGuidance && !isVocabularyDraft && !isSkyArticleSourceDraft && <small className="admin-field-hint">{isTemplateDraft || isFallbackHookDraft ? "Internal context for editors. Readers do not receive this field." : "Short reader-facing takeaway. Leave empty when this surface does not show a TL;DR. Stored internally as Summary."}</small>}
             </label>
           )}
           {showPackageBodyYou && !skyFallbackEditor && (
@@ -7408,7 +7408,7 @@ export function GeneratedContentAdminDashboard() {
               />
               <small className="admin-field-metrics">{fieldMetrics(currentDraft.body)}</small>
               {fallbackEditorGuidance && <small className="admin-field-hint">{fallbackEditorGuidance.bodyHint}</small>}
-              {!fallbackEditorGuidance && !isVocabularyDraft && !isAuthoredPackageCard && <small className="admin-field-hint">{isTemplateDraft ? "The assembly pattern the app renders. Keep variable names inside double braces." : "The complete reader-facing write-up."}</small>}
+              {!fallbackEditorGuidance && !isVocabularyDraft && !isAuthoredPackageCard && <small className="admin-field-hint">{isTemplateDraft ? "The assembly pattern the app renders. Keep variable names inside double braces." : "The complete reader-facing write-up. Stored internally as Body."}</small>}
               {isVocabularyDraft && isPackageDraft && <small className="admin-field-hint">{vocabularyHasTheyVersion
                 ? "Used when the app speaks directly to the person reading their own chart."
                 : "This is the exact editable phrase the fallback resolver reads. Saving updates the stored package value and its dashboard copy together."}</small>}
