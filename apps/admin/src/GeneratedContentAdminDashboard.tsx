@@ -4739,10 +4739,10 @@ export function GeneratedContentAdminDashboard() {
                 <p className="admin-eyebrow">{natalChartWorkspaceActive ? "Natal chart workspace" : "Full content library"}</p>
                 <h2>{natalChartWorkspaceActive ? "Find a planet, sign, and house write-up" : "All editable content rows"}</h2>
                 <p>{natalChartWorkspaceActive
-                  ? "Choose the complete placement below to see—and edit—the exact full write-up and every reusable source that builds it."
+                  ? "Choose a planet or point, its zodiac sign, and its house. You will see the reader-facing write-up first, followed by the saved passages that build it."
                   : `${filteredRows.length} rows shown across articles, phrasebank copy, vocabulary, templates, fallback hooks, and source rows. Runtime serves only Published rows in the serving lane with no review hold.`}</p>
               </div>
-              <div className="admin-new-actions" aria-label="Content admin shortcuts">
+              {!natalChartWorkspaceActive && <div className="admin-new-actions" aria-label="Content admin shortcuts">
                 <button type="button" onClick={() => navigateAdminPage("reviewQueue")}>
                   <Check size={16} aria-hidden="true" />
                   Review Queue
@@ -4758,31 +4758,41 @@ export function GeneratedContentAdminDashboard() {
                 <button type="button" onClick={exportEditedFallbackArchitectureRows}>
                   Export edited rows
                 </button>
-              </div>
+              </div>}
             </section>
-            {renderContentFilters()}
-            {renderNatalPlacementSourceFinder()}
-            <section className="admin-reader-safety-panel" aria-label="App visibility status">
-              <div>
-                <p className="admin-eyebrow">App visibility</p>
-                <h3>What readers can see</h3>
-                <p>Published app copy can appear for readers. Drafts, internal references, and incomplete writing stay hidden.</p>
-              </div>
-              <div className="admin-reader-safety-grid">
-                <article className="reader-ready"><span>Available in app</span><strong>{readerCounts["reader-ready"]}</strong></article>
-                <article><span>Not published</span><strong>{readerCounts["draft-held"]}</strong></article>
-                <article><span>Internal or awaiting review</span><strong>{readerCounts["reference-held"] + readerCounts["review-held"]}</strong></article>
-                <article className={readerCounts["needs-source-material"] ? "needs-fallback" : ""}><span>Needs more source copy</span><strong>{readerCounts["needs-source-material"]}</strong></article>
-                <article className={readerCounts["fallback-needed"] ? "needs-fallback" : ""}><span>Copy missing</span><strong>{readerCounts["fallback-needed"]}</strong></article>
-              </div>
-            </section>
-            {renderBulkBar()}
-            <section className="admin-workbench admin-review-workspace">
-              {renderEditor()}
-              <aside className="admin-list-panel" aria-label="Generated content records">
-                {renderContentTable(filteredRows, false, true)}
-              </aside>
-            </section>
+            {natalChartWorkspaceActive
+              ? (
+                <>
+                  {renderNatalPlacementSourceFinder()}
+                  {renderEditor()}
+                </>
+              )
+              : (
+                <>
+                  {renderContentFilters()}
+                  <section className="admin-reader-safety-panel" aria-label="App visibility status">
+                    <div>
+                      <p className="admin-eyebrow">App visibility</p>
+                      <h3>What readers can see</h3>
+                      <p>Published app copy can appear for readers. Drafts, internal references, and incomplete writing stay hidden.</p>
+                    </div>
+                    <div className="admin-reader-safety-grid">
+                      <article className="reader-ready"><span>Available in app</span><strong>{readerCounts["reader-ready"]}</strong></article>
+                      <article><span>Not published</span><strong>{readerCounts["draft-held"]}</strong></article>
+                      <article><span>Internal or awaiting review</span><strong>{readerCounts["reference-held"] + readerCounts["review-held"]}</strong></article>
+                      <article className={readerCounts["needs-source-material"] ? "needs-fallback" : ""}><span>Needs more source copy</span><strong>{readerCounts["needs-source-material"]}</strong></article>
+                      <article className={readerCounts["fallback-needed"] ? "needs-fallback" : ""}><span>Copy missing</span><strong>{readerCounts["fallback-needed"]}</strong></article>
+                    </div>
+                  </section>
+                  {renderBulkBar()}
+                  <section className="admin-workbench admin-review-workspace">
+                    {renderEditor()}
+                    <aside className="admin-list-panel" aria-label="Generated content records">
+                      {renderContentTable(filteredRows, false, true)}
+                    </aside>
+                  </section>
+                </>
+              )}
           </section>
         )}
 
@@ -5432,34 +5442,37 @@ export function GeneratedContentAdminDashboard() {
           <div>
             <p className="admin-eyebrow">Natal placement source finder</p>
             <h3>{selectionComplete ? natalPlacementLabel(natalPlacementPlanet, natalPlacementSign, natalPlacementHouse) : "Choose the full natal placement"}</h3>
-            <p>The reader page combines planet, sign, and house source rows. These are different from rows about a planet currently transiting a house.</p>
+            <p>Pick one value in each field. This workspace contains natal placements only; current transits and Sky placements are kept in Sky Write-ups.</p>
           </div>
           {selectionComplete && <code>you/placement/{natalPlacementPlanet}-{natalPlacementSign}-{natalPlacementHouse}h</code>}
         </div>
         <div className="admin-natal-placement-selectors">
           <label>
-            <span>Planet or point</span>
+            <span>1. Planet or point</span>
+            <small>What is placed</small>
             <select aria-label="Natal placement planet or point" value={natalPlacementPlanet} onChange={(event) => updateNatalPlacementSelection({ planet: event.target.value as NatalPlacementPlanet | "" })}>
               <option value="">Choose planet or point</option>
               {natalPlacementPlanets.map((planet) => <option value={planet} key={planet}>{titleFromKey(planet)}</option>)}
             </select>
           </label>
           <label>
-            <span>Zodiac sign</span>
+            <span>2. Zodiac sign</span>
+            <small>How it expresses itself</small>
             <select aria-label="Natal placement zodiac sign" value={natalPlacementSign} onChange={(event) => updateNatalPlacementSelection({ sign: event.target.value as NatalPlacementSign | "" })}>
               <option value="">Choose sign</option>
               {natalPlacementSigns.map((sign) => <option value={sign} key={sign}>{titleFromKey(sign)}</option>)}
             </select>
           </label>
           <label>
-            <span>House</span>
+            <span>3. House</span>
+            <small>Where it shows up in life</small>
             <select aria-label="Natal placement house" value={natalPlacementHouse} onChange={(event) => updateNatalPlacementSelection({ house: event.target.value as NatalPlacementHouse | "" })}>
               <option value="">Choose house</option>
               {natalPlacementHouses.map((house) => <option value={house} key={house}>{house}</option>)}
             </select>
           </label>
         </div>
-        {!selectionComplete && <p className="admin-natal-placement-prompt">Choose all three values to see the exact rows that build the reader page.</p>}
+        {!selectionComplete && <p className="admin-natal-placement-prompt">Choose all three values to read the complete write-up and edit its individual source passages.</p>}
         {groups.filter((group) => group.key !== "structure").map((group) => (
           <section className="admin-natal-source-group" key={group.key}>
             <header>
