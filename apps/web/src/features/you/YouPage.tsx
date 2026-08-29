@@ -3,7 +3,6 @@ import { ChevronLeft, MoreVertical, Pencil, Sparkles } from "lucide-react";
 import { DailyMoonContextTags, type DailyMoonContext } from "../../components/DailyMoonContextTags";
 import { ProfileAvatar } from "../../components/ProfileAvatar";
 import { SegmentedControl } from "../../components/SegmentedControl";
-import { AspectGiftLessonGroup } from "../../components/charts/AspectGiftLessonGroup";
 import { AspectGlyphs } from "../../components/charts/PlacementRows";
 import { NatalChartDataTable, type NatalChartDataTableRow } from "../../components/charts/NatalChartDataTable";
 import { SkyWheel, type HouseSignLabelStyle, type InterChartAspectLine } from "../../components/charts/Wheels";
@@ -11,7 +10,7 @@ import type { SkySnapshot } from "../../types";
 import type { NatalAspectPatternActivationTimingWindow, NatalAspectPatternReaderItem } from "../../services/natalAspectPatterns";
 import { isReaderFacingCopy } from "../../content/readerSafety";
 import { generatedContentParagraphs, generatedContentSections, type LiveGeneratedContent } from "../../services/generatedContent";
-import { aspectGiftOrLesson, type AspectGiftLessonGroup as GiftLessonGroup } from "../../services/aspectGiftLesson";
+import { aspectGiftOrLesson } from "../../services/aspectGiftLesson";
 import {
   NatalAspectPatternActivationsSection,
   NatalAspectPatternsSection,
@@ -56,7 +55,11 @@ export type DailyHoroscopeAssembly = {
     body: string;
     reviewFlags?: Array<Record<string, unknown>>;
   }>;
-  behindForecastRows: ReactNode[];
+  behindForecastGroups: Array<{
+    key: string;
+    label: string;
+    rows: ReactNode[];
+  }>;
   derivation: Record<string, unknown>;
 };
 
@@ -118,7 +121,6 @@ export type YouPageProps = {
   currentSky: SkySnapshot | null;
   houseSignLabelStyle: HouseSignLabelStyle;
   updateTransitAspectLines: InterChartAspectLine[];
-  natalAspectGroups: GiftLessonGroup<ReactNode>[];
   natalTableRows: NatalChartDataTableRow[];
   onCreateChart: () => void;
   onCloseTransitArticle?: () => void;
@@ -403,7 +405,6 @@ function YouNatalTab({
   elementalSummaryLabel,
   elementalSummarySentence,
   emptyHouseRows,
-  natalAspectGroups,
   natalAspectPatternItems,
   natalAspectPatternStatus,
   onOpenNatalAspectPatternDetail,
@@ -416,7 +417,6 @@ function YouNatalTab({
   elementalSummaryLabel: string;
   elementalSummarySentence: string;
   emptyHouseRows: ReactNode[];
-  natalAspectGroups: GiftLessonGroup<ReactNode>[];
   natalAspectPatternItems?: NatalAspectPatternReaderItem[];
   natalAspectPatternStatus?: NatalAspectPatternsSectionStatus;
   onOpenNatalAspectPatternDetail: (item: NatalAspectPatternReaderItem, nestedItems: NatalAspectPatternReaderItem[]) => void;
@@ -477,17 +477,6 @@ function YouNatalTab({
         </>
       )}
 
-      {natalAspectGroups.map((group) => (
-        <AspectGiftLessonGroup
-          ariaLabel={`Your natal aspect ${group.label}`}
-          key={group.key}
-          label={group.label}
-          listAriaLabel={`Your natal ${group.label.toLowerCase()}`}
-          listClassName="natal-aspects-list"
-        >
-          {group.aspects}
-        </AspectGiftLessonGroup>
-      ))}
     </div>
   );
 }
@@ -653,11 +642,25 @@ function YouUpdatesTab({
           <button type="button" onClick={onCreateChart}>Edit details →</button>
         </section>
       )}
-      {hasSavedCurrentCity && dailyHoroscopeAssembly?.behindForecastRows.length ? (
+      {hasSavedCurrentCity && dailyHoroscopeAssembly?.behindForecastGroups.length ? (
         <>
           <span className="eyebrow section-label daily-behind-forecast-label">Behind this Forecast</span>
           <section className="daily-behind-forecast" aria-label="Behind this forecast">
-            <div>{dailyHoroscopeAssembly.behindForecastRows}</div>
+            <div className="daily-behind-forecast__groups">
+              {dailyHoroscopeAssembly.behindForecastGroups.map((group, index) => {
+                const headingId = `daily-forecast-group-${index}`;
+                const heading = group.label.charAt(0).toUpperCase() + group.label.slice(1);
+
+                return (
+                  <section className="daily-behind-forecast__group" aria-labelledby={headingId} key={group.key}>
+                    <h3 className="eyebrow section-label daily-behind-forecast__group-label" id={headingId}>
+                      {heading}
+                    </h3>
+                    <div className="daily-behind-forecast__list">{group.rows}</div>
+                  </section>
+                );
+              })}
+            </div>
           </section>
         </>
       ) : null}
@@ -1123,7 +1126,6 @@ export function YouPage({
   emptyHouseRows,
   hasSavedBirthDetails,
   hasSavedCurrentCity,
-  natalAspectGroups,
   natalAspectPatternItems,
   natalAspectPatternTimingOverrides,
   natalAspectPatternStatus,
@@ -1261,7 +1263,6 @@ export function YouPage({
               elementalSummaryLabel={elementalSummaryLabel}
               elementalSummarySentence={elementalSummarySentence}
               emptyHouseRows={emptyHouseRows}
-              natalAspectGroups={natalAspectGroups}
               natalAspectPatternItems={natalAspectPatternItems}
               natalAspectPatternStatus={natalAspectPatternStatus}
               onOpenNatalAspectPatternDetail={(item, nestedItems) => {

@@ -434,6 +434,29 @@ async function expectNoHorizontalOverflow(page: Page, label: string) {
   expect(maxScrollWidth, `${label} does not create horizontal overflow`).toBeLessThanOrEqual(dimensions.viewportWidth + 2);
 }
 
+async function expectBehindForecastGroupedByConcept(page: Page, label: string) {
+  const behindForecast = page.getByRole("region", { name: "Behind this forecast" });
+  await expect(behindForecast).toBeVisible();
+  const forecastGroups = behindForecast.locator(".daily-behind-forecast__group");
+  expect(await forecastGroups.count(), `${label} is split into concept groups`).toBeGreaterThan(1);
+  const groupLabels = await forecastGroups.getByRole("heading", { level: 3 }).allTextContents();
+  expect(new Set(groupLabels.map((groupLabel) => groupLabel.toLocaleLowerCase())).size).toBe(groupLabels.length);
+
+  for (const group of await forecastGroups.all()) {
+    const groupLabel = (await group.getByRole("heading", { level: 3 }).innerText()).trim().toLocaleLowerCase();
+    const cardLabels = await group.locator(".daily-forecast-label > span").allTextContents();
+    expect(cardLabels.length, `${groupLabel} has at least one forecast`).toBeGreaterThan(0);
+    for (const cardLabel of cardLabels) {
+      expect(
+        cardLabel.trim().toLocaleLowerCase().endsWith(groupLabel),
+        `${cardLabel} belongs in ${groupLabel}`
+      ).toBe(true);
+    }
+  }
+
+  await expectNoHorizontalOverflow(page, label);
+}
+
 async function expectLocatorInsideViewport(locator: Locator, viewportWidth: number, label: string) {
   await expect(locator).toBeVisible();
   await expect.poll(async () => (
@@ -1293,6 +1316,8 @@ test.describe("client-facing user flow case studies", () => {
         "Personal transit wheel omits the aspect inspector"
       ).toHaveCount(0);
 
+      await expectBehindForecastGroupedByConcept(page, "Behind this forecast");
+
       const houseTransitCard = page
         .getByLabel("House transits")
         .locator(".updates-aspect-row--house")
@@ -1347,6 +1372,26 @@ test.describe("client-facing user flow case studies", () => {
     }
 
     await assertNoClientErrors();
+  });
+
+  test("Behind this forecast groups cards by concept across desktop and mobile", async ({ browser }) => {
+    for (const viewport of [
+      { label: "desktop", width: 1440, height: 1000 },
+      { label: "mobile", width: 390, height: 844 }
+    ] as const) {
+      const context = await browser.newContext({ viewport: { width: viewport.width, height: viewport.height } });
+      const page = await context.newPage();
+      const assertNoClientErrors = await expectNoClientErrors(page);
+
+      await seedClientState(page, { profile: true });
+      await expectClientRouteLoads(page, "/#you");
+      const updatesTab = page.getByRole("tab", { name: /updates|transits/i });
+      await updatesTab.click();
+      await expect(updatesTab).toHaveAttribute("aria-selected", "true");
+      await expectBehindForecastGroupedByConcept(page, `${viewport.label} Behind this forecast`);
+      await assertNoClientErrors();
+      await context.close();
+    }
   });
 
   test("You serves the protected book card on an exact lunation day", async ({ page }) => {
@@ -1667,6 +1712,13 @@ test.describe("client-facing user flow case studies", () => {
     await page.getByRole("tab", { name: "Transits" }).click();
     await expect(page.getByRole("tab", { name: "Transits" })).toHaveAttribute("aria-selected", "true");
     await expect(page.getByLabel("Nikki transit chart wheel")).toBeVisible();
+    const transitDailyForecast = page.locator(".friend-daily-forecast").first();
+    await expect(transitDailyForecast, "Transit daily forecast keeps its card inset").toBeVisible();
+    await expect(transitDailyForecast).toHaveCSS("border-top-style", "solid");
+    expect(
+      await transitDailyForecast.evaluate((element) => Number.parseFloat(getComputedStyle(element).paddingTop)),
+      "Transit daily forecast has visible internal padding"
+    ).toBeGreaterThan(0);
 
     const transitCard = page.locator(".friend-transit-row:has(.updates-aspect-row__orb)").first();
     await expect(transitCard).toBeVisible();
@@ -3047,6 +3099,15 @@ test.describe("client-facing user flow case studies", () => {
     await page.getByRole("button", { name: "Open River" }).click();
     await expect(page.getByRole("region", { name: "River chart profile" })).toBeVisible();
     await expect(page.getByRole("tab", { name: "Natal" })).toBeVisible();
+    await page.getByRole("tab", { name: "Transits" }).click();
+    const mobileDailyForecast = page.locator(".friend-daily-forecast").first();
+    await expect(mobileDailyForecast, "Mobile friend forecast keeps its card inset").toBeVisible();
+    await expect(mobileDailyForecast).toHaveCSS("border-top-style", "solid");
+    expect(
+      await mobileDailyForecast.evaluate((element) => Number.parseFloat(getComputedStyle(element).paddingTop)),
+      "Mobile friend forecast has visible internal padding"
+    ).toBeGreaterThan(0);
+    await expectNoHorizontalOverflow(page, "Mobile friend transit forecast");
     await assertNoClientErrors();
   });
 
@@ -3081,6 +3142,7 @@ test.describe("client-facing user flow case studies", () => {
     await selectYouNatalTab(page);
 
     await expect(page.getByRole("region", { name: "You", exact: true })).toBeVisible();
+    await expect(page.locator("#sub-chart .natal-aspects-list")).toHaveCount(0);
     await page.getByRole("button", { name: "Sun in Aquarius", exact: true }).click();
     await expect(page.getByRole("region", { name: "Sun in Aquarius in the 11th house" })).toBeVisible();
     await expect(page.locator("#you-transit-article-title")).toContainText("Sun in Aquarius in the 11th house");
@@ -3120,12 +3182,14 @@ test.describe("client-facing user flow case studies", () => {
     await expect(page.getByRole("region", { name: "Nikki chart profile" })).toBeVisible();
     await page.getByRole("tab", { name: "Natal" }).click();
     await expect(page.getByRole("tab", { name: "Natal" })).toHaveAttribute("aria-selected", "true");
+    await expect(page.locator(".friend-natal-stage .friend-natal-aspects-list")).toHaveCount(0);
 
     const bigThree = page.getByLabel("Nikki big three");
     await expect(bigThree).toBeVisible();
     await bigThree.getByRole("button").first().click();
     await expect(page.locator(".app-shell.mode-detail")).toBeVisible();
     await expect(page.getByRole("button", { name: "Close detail" })).toBeVisible();
+    await expect(page.getByRole("heading", { level: 3, name: "Planetary aspects", exact: true })).toBeVisible();
     await expectNoDuplicateArticleHeadings(page, "Friend natal placement detail");
 
     const bodyType = await page.evaluate(() => {

@@ -27,6 +27,7 @@ import {
 import type { ManualChartForm } from "./manualChartForm";
 import {
   enhanceFriendChartsAtomically,
+  friendChartRepairBatch,
   scheduleFriendChartRepair
 } from "./friendChartLoading";
 
@@ -199,7 +200,10 @@ export function useManualChartsController({
       return;
     }
 
-    const chartsToRepair = charts.filter(manualChartNeedsNatalRepair);
+    const chartsToRepair = friendChartRepairBatch(
+      charts.filter(manualChartNeedsNatalRepair),
+      selectedChartId
+    );
 
     if (chartsToRepair.length === 0) {
       return;
@@ -265,7 +269,7 @@ export function useManualChartsController({
       cancelled = true;
       cancelScheduledRepair();
     };
-  }, [chartOwnerUserId, charts, chartsReady, showNatalAspectPatterns]);
+  }, [chartOwnerUserId, charts, chartsReady, selectedChartId, showNatalAspectPatterns]);
 
   function resetForm(nextMessage = "") {
     setForm(defaultManualChartForm);
