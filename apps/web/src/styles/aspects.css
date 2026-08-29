@@ -250,6 +250,7 @@
 }
 
 .you-horoscope-card,
+.daily-horoscope-summary,
 .personal-timing-summary {
   display: grid;
   gap: var(--section-label-gap-after);
@@ -259,6 +260,7 @@
 }
 
 .you-horoscope-card,
+.daily-horoscope-summary,
 .daily-horoscope-writeup {
   border: var(--border-width-thin) solid var(--card-border);
   border-radius: var(--card-radius);
