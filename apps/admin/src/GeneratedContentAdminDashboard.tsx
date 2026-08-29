@@ -1,5 +1,6 @@
 import {
   ArrowLeft,
+  ArrowLeftRight,
   BarChart3,
   BookOpenText,
   Braces,
@@ -1495,6 +1496,47 @@ function compatibilityBrowseIdentity(
 
 function compatibilityBrowseIdentityForRow(row: AdminGeneratedContentRow) {
   return compatibilityBrowseIdentity(row.content_key, row.facts, row.source_snapshot);
+}
+
+function reverseCompatibilityContentKey(contentKey: string) {
+  const slashMatch = contentKey.match(/^(authored\/compat-(?:deep|pair)\/[^/]+\/)([^/]+)\/([^/]+)$/i);
+  if (slashMatch) return `${slashMatch[1]}${slashMatch[3]}/${slashMatch[2]}`;
+
+  const compactMatch = contentKey.match(/^(compatibility)([./])([^./]+)([./])([^./]+)([./])([^./]+)$/i);
+  if (!compactMatch) return null;
+  return `${compactMatch[1]}${compactMatch[2]}${compactMatch[3]}${compactMatch[4]}${compactMatch[7]}${compactMatch[6]}${compactMatch[5]}`;
+}
+
+function reverseCompatibilityRow(
+  currentRow: AdminGeneratedContentRow,
+  candidateRows: AdminGeneratedContentRow[]
+) {
+  const currentIdentity = compatibilityBrowseIdentityForRow(currentRow);
+  if (!currentIdentity || currentIdentity.readerSign === currentIdentity.friendSign) return null;
+
+  const normalizeIdentityPart = (value: string) => value.trim().toLowerCase();
+  const currentPlanet = normalizeIdentityPart(currentIdentity.planet);
+  const reverseReaderSign = normalizeIdentityPart(currentIdentity.friendSign);
+  const reverseFriendSign = normalizeIdentityPart(currentIdentity.readerSign);
+  const exactReverseKey = reverseCompatibilityContentKey(currentRow.content_key)?.toLowerCase() ?? null;
+
+  return candidateRows
+    .filter((row) => row.id !== currentRow.id)
+    .map((row) => ({ row, identity: compatibilityBrowseIdentityForRow(row) }))
+    .filter(({ identity }) => identity
+      && normalizeIdentityPart(identity.planet) === currentPlanet
+      && normalizeIdentityPart(identity.readerSign) === reverseReaderSign
+      && normalizeIdentityPart(identity.friendSign) === reverseFriendSign)
+    .sort((left, right) => {
+      const leftExact = exactReverseKey && left.row.content_key.toLowerCase() === exactReverseKey ? 1 : 0;
+      const rightExact = exactReverseKey && right.row.content_key.toLowerCase() === exactReverseKey ? 1 : 0;
+      if (leftExact !== rightExact) return rightExact - leftExact;
+      const leftPublished = left.row.status === "LIVE" ? 1 : 0;
+      const rightPublished = right.row.status === "LIVE" ? 1 : 0;
+      if (leftPublished !== rightPublished) return rightPublished - leftPublished;
+      return (right.row.updated_at ?? right.row.created_at ?? "")
+        .localeCompare(left.row.updated_at ?? left.row.created_at ?? "");
+    })[0]?.row ?? null;
 }
 
 function compatibilityVisibleSearchText(row: AdminGeneratedContentRow) {
@@ -6587,6 +6629,12 @@ export function GeneratedContentAdminDashboard() {
       currentDraft.facts,
       currentDraft.sourceSnapshot
     );
+    const reverseCompatibility = compatibilityIdentity && selectedRow
+      ? reverseCompatibilityRow(selectedRow, rows)
+      : null;
+    const reverseCompatibilityIdentity = reverseCompatibility
+      ? compatibilityBrowseIdentityForRow(reverseCompatibility)
+      : null;
     const isCompatibilityCardDraft = currentDraft.blockType === "compatibility_planet_card" || Boolean(compatibilityIdentity);
     const isCompatibilityWorkspaceDraft = isCompatibilityCardDraft
       || sourceSnapshotString(currentDraft.sourceSnapshot, "route") === "friends.compatibility"
@@ -6831,6 +6879,27 @@ export function GeneratedContentAdminDashboard() {
               <strong>{compatibilityIdentity.title}</strong>
               <p><strong>You:</strong> {compatibilityIdentity.readerSign} · <strong>Friend:</strong> {compatibilityIdentity.friendSign}</p>
               <p>The arrow shows the direction of the saved copy. Reversing the two signs opens a different record because the reader and friend wording changes.</p>
+              <div className="admin-toolbar-actions admin-compatibility-reverse-actions">
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (!reverseCompatibility) return;
+                    openRow(reverseCompatibility);
+                    setMessage(`${reverseCompatibilityIdentity?.title ?? "Reverse compatibility record"} opened.`);
+                  }}
+                  disabled={!reverseCompatibility || draftHasUnsavedChanges || isLoading}
+                  title={!reverseCompatibility
+                    ? "No saved reverse record is available for this planet and sign pair."
+                    : draftHasUnsavedChanges
+                      ? "Save your changes before opening the reverse record."
+                      : `Open ${reverseCompatibilityIdentity?.title ?? "the reverse compatibility record"}`}
+                >
+                  <ArrowLeftRight size={16} aria-hidden="true" />
+                  {reverseCompatibilityIdentity
+                    ? `Open reverse · ${reverseCompatibilityIdentity.readerSign} → ${reverseCompatibilityIdentity.friendSign}`
+                    : "Reverse record unavailable"}
+                </button>
+              </div>
             </section>
           )}
           {isVocabularyDraft && (
