@@ -2,13 +2,15 @@ import { useMemo, useState } from "react";
 import {
   buildCompositionTemplate,
   type CompositionMapRow,
-  type CompositionPreviewSegment
+  type CompositionPreviewSegment,
+  type CompositionPreviewOptions
 } from "./compositionMap";
 
 type Props = {
   rows: CompositionMapRow[];
   templateRow: CompositionMapRow;
   onOpenVariable: (name: string, sourceId: string | null) => void;
+  previewOptions?: CompositionPreviewOptions;
 };
 
 function segmentButton(
@@ -38,9 +40,12 @@ function segmentButton(
   );
 }
 
-export default function TemplateReaderDrilldown({ rows, templateRow, onOpenVariable }: Props) {
+export default function TemplateReaderDrilldown({ rows, templateRow, onOpenVariable, previewOptions }: Props) {
   const [audience, setAudience] = useState<"you" | "they">("you");
-  const template = useMemo(() => buildCompositionTemplate(templateRow, rows), [rows, templateRow]);
+  const template = useMemo(
+    () => buildCompositionTemplate(templateRow, rows, previewOptions),
+    [previewOptions, rows, templateRow]
+  );
   const hasAudienceVariants = template.preview.fields.some((field) => field.audience === "you")
     && template.preview.fields.some((field) => field.audience === "they");
   const fields = template.preview.fields.filter((field) => !field.audience || field.audience === audience);

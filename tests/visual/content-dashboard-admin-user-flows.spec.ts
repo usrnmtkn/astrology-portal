@@ -970,7 +970,33 @@ test.describe("content dashboard admin user flow case studies", () => {
       block_type: "fallback_hook",
       source_snapshot: { contentType: "fallback-system", content_role: "fallback_hook", authoringSource: "qa-fixture" }
     };
-    await seedAdminApi(page, { generatedRows: [natalExactRow, ...generatedContentRows] });
+    const natalTemplateRow = {
+      ...natalExactRow,
+      id: "qa-natal-sun-sign-template",
+      content_key: "fallback-template/natal.planet-in-sign/sun",
+      headline: "Sun in {{signTitle}}",
+      body: "{{possessive}} {{planetTitle}} is in {{signTitle}}: you show up {{signAdverb}}.",
+      block_type: "fallback_template",
+      event_type: "fallback-template",
+      sections: { packageRecord: {
+        content_role: "template",
+        headline: "Sun in {{signTitle}}",
+        body_you: "{{possessive}} {{planetTitle}} is in {{signTitle}}: you show up {{signAdverb}}."
+      } },
+      source_snapshot: { contentType: "template", content_role: "template", authoringSource: "qa-fixture" }
+    };
+    const natalCancerStyleRow = {
+      ...natalExactRow,
+      id: "qa-natal-cancer-style",
+      content_key: "fallback-vocab/sign-adverb/cancer",
+      headline: "Cancer style phrase",
+      body: "protectively",
+      block_type: "vocabulary_phrase",
+      event_type: "vocab",
+      sections: { packageRecord: { content_role: "vocabulary", body: "protectively" } },
+      source_snapshot: { contentType: "vocabulary", content_role: "vocabulary", authoringSource: "qa-fixture" }
+    };
+    await seedAdminApi(page, { generatedRows: [natalExactRow, natalTemplateRow, natalCancerStyleRow, ...generatedContentRows] });
     await page.setViewportSize({ width: 1365, height: 900 });
     await expectAdminRouteLoads(page, "/admin/content");
 
@@ -1010,12 +1036,32 @@ test.describe("content dashboard admin user flow case studies", () => {
     await page.getByLabel("Natal placement zodiac sign").selectOption("cancer");
     await page.getByLabel("Natal placement house").selectOption("1");
     await expect(sourceFinder.locator(".admin-natal-placement-finder-heading h3")).toHaveText("Sun in Cancer in the 1st house");
+    await expect(sourceFinder.getByText("Reader path", { exact: true })).toBeVisible();
+    await expect(sourceFinder.getByText("Source key", { exact: true }).first()).toBeVisible();
     await expect(sourceFinder.getByRole("heading", { name: "Complete Sun in Cancer in the 1st house write-up" })).toBeVisible();
     await expect(sourceFinder.getByText("Your Sun in Cancer in the 1st house makes care, identity, and self-expression immediately visible.")).toBeVisible();
+    await expect(sourceFinder.getByText("Load this exact source to view and edit its saved writing.")).toHaveCount(0);
+    await expect(sourceFinder.getByRole("button", { name: "Load and edit" }).first()).toBeVisible();
     await sourceFinder.getByRole("button", { name: "Edit source" }).first().click();
     await expect(page.getByRole("dialog", { name: "Generated content editor" })).toBeVisible();
     await expect(page.getByRole("heading", { name: "Edit Sun in Cancer in the 1st House · Complete natal placement" })).toBeVisible();
     await expect(page.getByLabel("Editor label")).toHaveValue("Sun in Cancer in the 1st house");
+    await page.getByRole("button", { name: "Close", exact: true }).click();
+
+    await sourceFinder.getByText("Sentence structure (advanced)", { exact: true }).click();
+    await sourceFinder.getByRole("button", { name: "Preview template" }).first().click();
+    await expect(page.getByRole("dialog", { name: "Template variable reference" })).toBeVisible();
+    const templatePreview = page.getByRole("region", { name: "Example reader write-up" });
+    await expect(templatePreview).toBeVisible();
+    await expect(templatePreview.locator(".variable-fact")).toContainText(["Sun", "Cancer"]);
+    const stylePhrase = templatePreview.getByRole("button", { name: /protectively.*Open the saved source for Sign Adverb/u });
+    await expect(stylePhrase).toBeVisible();
+    await stylePhrase.click();
+    const variableDetails = page.getByRole("dialog", { name: "Sign adverb variable details" });
+    await expect(variableDetails.getByRole("region", { name: "Saved source copy" })).toContainText("protectively");
+    await variableDetails.getByRole("button", { name: "Sources" }).click();
+    await variableDetails.getByRole("button", { name: "All variables" }).click();
+    await page.getByRole("button", { name: "Back to editor" }).click();
     await page.getByRole("button", { name: "Close", exact: true }).click();
 
     await navigation.getByRole("button", { name: "Content Library" }).click();

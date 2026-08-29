@@ -10553,14 +10553,35 @@ body,
   margin: var(--admin-space-sm) 0 0;
 }
 
-.admin-dashboard .admin-natal-placement-finder-heading > code {
-  background: var(--admin-ui-surface-2);
-  border: var(--border-width-thin) solid var(--admin-ui-border);
-  border-radius: var(--admin-ui-radius-md);
-  color: var(--admin-ui-muted);
+.admin-dashboard .admin-natal-placement-key {
+  align-items: flex-end;
+  display: flex;
+  flex-direction: column;
+  gap: var(--admin-space-xs);
+  margin: 0;
   max-width: 46%;
+  min-width: 0;
+  text-align: right;
+}
+
+.admin-dashboard .admin-natal-placement-key > span,
+.admin-dashboard .admin-natal-source-key > span {
+  color: var(--admin-ui-subtle);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.admin-dashboard .admin-natal-placement-key code,
+.admin-dashboard .admin-natal-source-key code {
+  background: transparent;
+  border: 0;
+  color: var(--admin-ui-muted);
+  font-size: var(--admin-ui-type-caption);
   overflow-wrap: anywhere;
-  padding: var(--admin-space-9) var(--admin-space-11);
+  padding: 0;
+  white-space: normal;
 }
 
 .admin-dashboard .admin-natal-placement-selectors {
@@ -10625,9 +10646,12 @@ body,
   grid-template-columns: minmax(0, 1fr) auto;
 }
 
-.admin-dashboard .admin-natal-source-card code {
-  color: var(--admin-ui-subtle);
-  overflow-wrap: anywhere;
+.admin-dashboard .admin-natal-source-key {
+  align-items: baseline;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--admin-space-sm);
+  margin-top: var(--admin-space-md);
 }
 
 .admin-dashboard .admin-natal-source-card blockquote {
@@ -10642,11 +10666,6 @@ body,
   white-space: pre-wrap;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 5;
-}
-
-.admin-dashboard .admin-natal-source-card blockquote.missing {
-  color: var(--admin-ui-subtle);
-  font-style: italic;
 }
 
 .admin-dashboard .admin-natal-source-card > button {
@@ -10668,8 +10687,10 @@ body,
     display: grid;
   }
 
-  .admin-dashboard .admin-natal-placement-finder-heading > code {
+  .admin-dashboard .admin-natal-placement-key {
     max-width: none;
+    text-align: left;
+    align-items: flex-start;
   }
 
   .admin-dashboard .admin-natal-placement-selectors,
