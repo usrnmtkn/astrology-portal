@@ -25,6 +25,7 @@ if (!packageVersion) {
 }
 
 function hookSurface(key) {
+  if (key.includes("/pair-daily/")) return "friends";
   if (key.includes("/friends") || key.includes("/relationship") || key.includes("/synastry") || key.includes("/composite")) return "friends";
   if (key.includes("/you") || key.includes("/natal") || key.includes("/placement") || key.includes("/aspect")) return "you";
   if (key.includes("/settings")) return "modifier";
@@ -36,6 +37,24 @@ function hookBody(row) {
   if (typeof preferred === "string") return preferred;
   if (typeof row.body_they === "string") return row.body_they;
   return "";
+}
+
+function words(value = "") {
+  return value.replace(/[-_]/gu, " ").replace(/\b\w/gu, (match) => match.toUpperCase());
+}
+
+function pairDailyLabel(key) {
+  if (!key.startsWith("fallback-hook/pair-daily/")) return undefined;
+  const [kind, detail, subject, variant] = key.split("/").slice(2);
+  const suffix = (variant ?? subject)?.match(/^variant-(\d+)$/u)?.[1];
+  const variantLabel = suffix ? ` · Variant ${suffix}` : "";
+  if (kind === "opener") return `Today between you two · ${detail === "shared-clause" ? "Shared-day opening" : "Opening"}${detail === "no-reader-handle" || subject === "no-reader-handle" ? " · Without reader handle" : detail?.startsWith("variant-") ? ` · Variant ${detail.slice(8)}` : ""}`;
+  if (kind === "clause") return `Today between you two · ${detail === "house" ? `${subject}${subject === "1" ? "st" : subject === "2" ? "nd" : subject === "3" ? "rd" : "th"} House` : `${words(subject)} ${words(detail).toLowerCase()}`} · Personal daily clause${variantLabel}`;
+  if (kind === "bond-clause") return `Today between you two · ${words(subject)} · ${detail === "soft" ? "Supportive" : "Challenging"} bond clause`;
+  if (kind === "shared-bond") return `Today between you two · ${detail === "soft" ? "Supportive" : "Challenging"} shared-bond bridge${variantLabel}`;
+  if (kind === "shared-moon") return `Today between you two · ${words(detail)} Moon bridge${variantLabel}`;
+  if (kind === "close") return `Today between you two · ${words(detail)} closing advice`;
+  return `Today between you two · ${[kind, detail, subject, variant].filter(Boolean).map(words).join(" · ")}`;
 }
 
 const rowsByKey = new Map();
@@ -60,7 +79,7 @@ const rows = [...rowsByKey.values()].sort((first, second) => first.key.localeCom
 const indexPayload = {
   schemaVersion: 1,
   packageVersion,
-  rows: rows.map(({ key, surface }) => ({ key, surface }))
+  rows: rows.map(({ key, surface }) => ({ key, surface, label: pairDailyLabel(key) }))
 };
 const domainPayloads = {
   sky: { schemaVersion: 1, rows: [] },

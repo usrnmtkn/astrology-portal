@@ -7,6 +7,21 @@ import { releaseReviewedReport } from "../_lib/report-release.js";
 import { createSupabaseReportAdmin } from "../_lib/supabase-report-admin.js";
 import type { ReportHorizon } from "../_lib/report-types.js";
 
+type ReportUnitSection = { heading?: string; body?: string };
+type ReportUnitDraft = {
+  headline: string;
+  timing: string;
+  summary: string;
+  body: string;
+  sections: ReportUnitSection[];
+};
+
+type ReportUnitRow = ReportUnitDraft & {
+  id: string;
+  content_key: string;
+  source_snapshot: Record<string, unknown> | null;
+};
+
 function counts(values: string[]) {
   return Object.fromEntries([...new Set(values)].map((value) => [value, values.filter((candidate) => candidate === value).length]));
 }
@@ -21,7 +36,27 @@ function profileLabel(data: unknown, userId: string) {
   return name.trim() ? `${name.trim()} · ${userId}` : userId;
 }
 
-async function dashboard() {
+async function reportInspection(reportId: string) {
+  const admin = createSupabaseReportAdmin();
+  const report = await admin.selectOne<Record<string, unknown>>("user_reports", new URLSearchParams({
+    id: `eq.${reportId}`,
+    select: "id,user_id,report_domain,report_horizon,period_start,period_end,status,fulfillment_status,delivered_at,facts_engine,facts_hash"
+  }));
+  if (!report) throw new Error("Report not found.");
+  const units = await admin.request<ReportUnitRow[]>(`user_generated_interpretations?subject_id=eq.${encodeURIComponent(reportId)}&subject_type=eq.report_unit&select=id,content_key,headline,summary,body,sections,source_snapshot&order=content_key.asc`);
+  return {
+    report,
+    units: units.map((unit) => ({
+      ...unit,
+      timing: typeof (unit.source_snapshot?.renderMetadata as { timing?: unknown } | undefined)?.timing === "string"
+        ? (unit.source_snapshot?.renderMetadata as { timing: string }).timing
+        : ""
+    }))
+  };
+}
+
+async function dashboard(reportId = "") {
+  if (reportId) return reportInspection(reportId);
   const admin = createSupabaseReportAdmin();
   const [entitlements, reports, jobs, audits, profiles] = await Promise.all([
     admin.request<Array<Record<string, unknown>>>("report_entitlements?select=*&order=purchased_at.desc&limit=1000"),
@@ -82,6 +117,7 @@ async function dashboard() {
 async function action(body: {
   action?: string; reportId?: string; entitlementId?: string; userId?: string;
   reportDomain?: string; reportHorizon?: string; windowStart?: string; callBudget?: number; tokenBudget?: number; lifetimeTokenBudget?: number;
+  unitId?: string; headline?: string; timing?: string; summary?: string; body?: string; sections?: ReportUnitSection[];
 }, req: IncomingMessage) {
   const admin = createSupabaseReportAdmin();
   if (body.action === "pause_worker" || body.action === "resume_worker") {
@@ -115,6 +151,92 @@ async function action(body: {
     prompt_versions: Record<string, unknown>;
   }>("user_reports", new URLSearchParams({ id: `eq.${body.reportId}`, select: "id,user_id,entitlement_id,fulfillment_status,report_domain,report_horizon,prompt_versions" }));
   if (!report) throw new Error("Report not found.");
+  if (body.action === "save_report_unit_draft") {
+    if (!body.unitId) throw new Error("unitId is required.");
+    const unit = await admin.selectOne<ReportUnitRow>("user_generated_interpretations", new URLSearchParams({
+      id: `eq.${body.unitId}`,
+      subject_id: `eq.${report.id}`,
+      subject_type: "eq.report_unit",
+      select: "id,content_key,headline,summary,body,sections,source_snapshot"
+    }));
+    if (!unit) throw new Error("Report unit not found.");
+    const correctionDraft: ReportUnitDraft = {
+      headline: String(body.headline ?? ""),
+      timing: String(body.timing ?? ""),
+      summary: String(body.summary ?? ""),
+      body: String(body.body ?? ""),
+      sections: Array.isArray(body.sections)
+        ? body.sections.map((section) => ({ heading: String(section.heading ?? ""), body: String(section.body ?? "") }))
+        : []
+    };
+    const snapshot = unit.source_snapshot && typeof unit.source_snapshot === "object" ? unit.source_snapshot : {};
+    await admin.update("user_generated_interpretations", `id=eq.${encodeURIComponent(unit.id)}`, {
+      source_snapshot: {
+        ...snapshot,
+        adminCorrectionDraft: {
+          ...correctionDraft,
+          savedAt: new Date().toISOString()
+        }
+      }
+    });
+    return { ok: true };
+  }
+  if (body.action === "discard_report_unit_draft") {
+    if (!body.unitId) throw new Error("unitId is required.");
+    const unit = await admin.selectOne<ReportUnitRow>("user_generated_interpretations", new URLSearchParams({
+      id: `eq.${body.unitId}`,
+      subject_id: `eq.${report.id}`,
+      subject_type: "eq.report_unit",
+      select: "id,content_key,headline,summary,body,sections,source_snapshot"
+    }));
+    if (!unit) throw new Error("Report unit not found.");
+    const snapshot = unit.source_snapshot && typeof unit.source_snapshot === "object" ? { ...unit.source_snapshot } : {};
+    delete snapshot.adminCorrectionDraft;
+    await admin.update("user_generated_interpretations", `id=eq.${encodeURIComponent(unit.id)}`, { source_snapshot: snapshot });
+    return { ok: true };
+  }
+  if (body.action === "publish_report_unit_correction") {
+    if (!body.unitId) throw new Error("unitId is required.");
+    const unit = await admin.selectOne<ReportUnitRow>("user_generated_interpretations", new URLSearchParams({
+      id: `eq.${body.unitId}`,
+      subject_id: `eq.${report.id}`,
+      subject_type: "eq.report_unit",
+      select: "id,content_key,headline,summary,body,sections,source_snapshot"
+    }));
+    if (!unit) throw new Error("Report unit not found.");
+    const snapshot = unit.source_snapshot && typeof unit.source_snapshot === "object" ? { ...unit.source_snapshot } : {};
+    const draft = snapshot.adminCorrectionDraft;
+    if (!draft || typeof draft !== "object") throw new Error("Save a correction draft before publishing it.");
+    const correction = draft as Record<string, unknown>;
+    delete snapshot.adminCorrectionDraft;
+    const renderMetadata = snapshot.renderMetadata && typeof snapshot.renderMetadata === "object"
+      ? snapshot.renderMetadata as Record<string, unknown>
+      : {};
+    await admin.update("user_generated_interpretations", `id=eq.${encodeURIComponent(unit.id)}`, {
+      headline: String(correction.headline ?? ""),
+      summary: String(correction.summary ?? ""),
+      body: String(correction.body ?? ""),
+      sections: Array.isArray(correction.sections) ? correction.sections : [],
+      source_snapshot: {
+        ...snapshot,
+        renderMetadata: {
+          ...renderMetadata,
+          timing: String(correction.timing ?? "")
+        },
+        adminCorrection: {
+          publishedAt: new Date().toISOString(),
+          previous: {
+            headline: unit.headline ?? "",
+            timing: typeof renderMetadata.timing === "string" ? renderMetadata.timing : "",
+            summary: unit.summary ?? "",
+            body: unit.body ?? "",
+            sections: unit.sections ?? []
+          }
+        }
+      }
+    });
+    return { ok: true };
+  }
   if (body.action === "set_lifetime_token_budget") {
     if (!Number.isInteger(body.lifetimeTokenBudget) || Number(body.lifetimeTokenBudget) < 1) {
       throw new Error("A positive whole-number lifetime token budget is required.");
@@ -189,7 +311,10 @@ function adminFailure(error: unknown) {
 export default async function handler(req: IncomingMessage, res: ServerResponse) {
   if (!await requireReportAdmin(req)) return sendJson(res, 401, { error: "Unauthorized." });
   try {
-    if (req.method === "GET") return sendJson(res, 200, await dashboard());
+    if (req.method === "GET") {
+      const reportId = new URL(req.url ?? "/api/admin/report-fulfillment", "http://localhost").searchParams.get("reportId") ?? "";
+      return sendJson(res, 200, await dashboard(reportId));
+    }
     if (req.method === "POST") return sendJson(res, 200, await action(await jsonRequestBody(req), req));
     sendJson(res, 405, { error: "Use GET or POST." });
   } catch (error) {
