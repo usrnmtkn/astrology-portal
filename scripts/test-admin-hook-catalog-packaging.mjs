@@ -95,5 +95,8 @@ assert.equal(fs.existsSync(path.join(webGeneratedRoot, sourceDraftFileName)), fa
 
 const dashboardSource = fs.readFileSync(path.join(repoRoot, "apps/admin/src/GeneratedContentAdminDashboard.tsx"), "utf8");
 assert.doesNotMatch(dashboardSource, /from\s+["'][^"']*bundled-(?:deferred|sky)-core-rows-v3\.json["']/u, "Admin startup must not eagerly import full fallback packages.");
+assert.doesNotMatch(dashboardSource, /<PackagedHookCatalogResults[\s\S]{0,400}loading=\{isLoading\}/u, "A global dashboard request must not disable every packaged source action.");
+const hookCatalogSource = fs.readFileSync(path.join(repoRoot, "apps/admin/src/PackagedHookCatalogResults.tsx"), "utf8");
+assert.doesNotMatch(hookCatalogSource, /disabled=\{isLoading\}/u, "Loading the dashboard must not disable packaged source editing.");
 
 console.log(`Admin hook catalog packaging passed: ${sourceBodies.size} bodies remain byte-identical across four deduplicated domain packages.`);

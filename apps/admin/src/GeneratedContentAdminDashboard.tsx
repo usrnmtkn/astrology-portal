@@ -82,11 +82,9 @@ import { isCompositionTemplateRow } from "./compositionTemplateClassifier";
 import { AdminPaginatedCollection } from "./AdminPaginatedCollection";
 import {
   natalPlacementHouses,
-  natalPlacementLabel,
   natalPlacementPlanets,
   natalPlacementSelectionFromText,
   natalPlacementSigns,
-  natalPlacementSourceGroups,
   ordinalHouse,
   type NatalPlacementHouse,
   type NatalPlacementPlanet,
@@ -123,6 +121,7 @@ const TemplateVariableReviewPanels = lazy(async () => {
   return { default: module.TemplateVariableReviewPanels };
 });
 const TemplateReaderDrilldown = lazy(() => import("./TemplateReaderDrilldown"));
+const NatalPlacementSourceFinder = lazy(() => import("./NatalPlacementSourceFinder"));
 const UnresolvedContentReview = lazy(async () => {
   const module = await import("./UnresolvedContentReview");
   return { default: module.UnresolvedContentReview };
@@ -2918,57 +2917,7 @@ export function GeneratedContentAdminDashboard() {
       const { page, params } = parseAdminHash();
       window.scrollTo({ top: 0, left: 0, behavior: "auto" });
       closeEditor();
-      setActivePage(page);
-
-      const category = params.get("category") as AdminContentCategoryFilter | null;
-      const source = params.get("source") as AdminContentClassFilter | null;
-      const search = params.get("q");
-      const section = params.get("section") as AdminFallbackHookSectionFilter | null;
-      const area = params.get("area") as WritingSurfaceAreaFilter | null;
-      const status = params.get("status") as WritingSurfaceStatusFilter | null;
-      const view = params.get("view");
-      const compatibilitySection = params.get("section") as AdminCompatibilitySectionFilter | null;
-      const compatibilityPlanet = params.get("planet") as AdminArticlePointFilter | null;
-      const compatibilitySortParam = params.get("sort") as AdminCompatibilitySort | null;
-      const openedFromUnresolved = page === "content" && params.get("from") === "unresolved";
-      const natalPlanet = params.get("planet") as NatalPlacementPlanet | null;
-      const natalSign = params.get("sign") as NatalPlacementSign | null;
-      const natalHouse = params.get("house") as NatalPlacementHouse | null;
-
-      setCategoryFilter(category && categoryFilters.some((filter) => filter.key === category) ? category : "all");
-      setContentLibraryView(page === "content" && view === "compatibility" ? "compatibility" : "all");
-      setSkyVoiceQueueView(
-        page === "reviewQueue" && ["composite", "upcoming", "needs-review", "audit", "live-omissions"].includes(view ?? "")
-          ? view as SkyVoiceQueueView
-          : "all"
-      );
-      setContentClassFilter(source && contentClassFilters.some((filter) => filter.key === source) ? source : "all");
-      if (openedFromUnresolved) {
-        revealUnresolvedContentRow();
-      }
-      guidedReviewOpenedRef.current = "";
-      setGuidedReviewKey(openedFromUnresolved ? search : null);
-      setQuery(search ?? "");
-      setNatalPlacementPlanet(page === "content" && natalPlanet && natalPlacementPlanets.includes(natalPlanet) ? natalPlanet : "");
-      setNatalPlacementSign(page === "content" && natalSign && natalPlacementSigns.includes(natalSign) ? natalSign : "");
-      setNatalPlacementHouse(page === "content" && natalHouse && natalPlacementHouses.includes(natalHouse) ? natalHouse : "");
-      setFallbackSectionFilter(section && fallbackSections.some((filter) => filter.key === section) ? section : "all");
-      setSurfaceAreaFilter(area && ["all", "sky", "you", "friends", "calendar", "reports", "settings"].includes(area) ? area : "all");
-      setSurfaceStatusFilter(status && ["all", "complete", "partial", "missing"].includes(status) ? status : "all");
-      setVocabularyCategory(vocabularyCategoryFromParams(page, params));
-      if (page === "compatibility") {
-        setCompatibilitySectionFilter(compatibilitySection && compatibilitySections.some((filter) => filter.key === compatibilitySection) ? compatibilitySection : "all");
-        setCompatibilityStatusFilter(status && (status === "all" || contentStatuses.includes(status as GeneratedContentStatus)) ? status as GeneratedContentStatus | "all" : "all");
-        setCompatibilityPlanetFilter(compatibilityPlanet && articlePointFilters.some((filter) => filter.key === compatibilityPlanet) ? compatibilityPlanet : "all");
-        setCompatibilitySort(compatibilitySortParam && compatibilitySortOptions.some((filter) => filter.key === compatibilitySortParam) ? compatibilitySortParam : "updated-desc");
-        setCompatibilityQuery(search ?? "");
-      } else {
-        setCompatibilitySectionFilter("all");
-        setCompatibilityStatusFilter("all");
-        setCompatibilityPlanetFilter("all");
-        setCompatibilitySort("updated-desc");
-        setCompatibilityQuery("");
-      }
+      applyAdminRouteState(page, params);
     }
 
     applyHash();
@@ -3192,6 +3141,57 @@ export function GeneratedContentAdminDashboard() {
     handledHashRef.current = "";
   }
 
+  function applyAdminRouteState(page: AdminDashboardPage, params: URLSearchParams) {
+    const category = params.get("category") as AdminContentCategoryFilter | null;
+    const source = params.get("source") as AdminContentClassFilter | null;
+    const search = params.get("q");
+    const section = params.get("section") as AdminFallbackHookSectionFilter | null;
+    const area = params.get("area") as WritingSurfaceAreaFilter | null;
+    const status = params.get("status") as WritingSurfaceStatusFilter | null;
+    const view = params.get("view");
+    const compatibilitySection = params.get("section") as AdminCompatibilitySectionFilter | null;
+    const compatibilityPlanet = params.get("planet") as AdminArticlePointFilter | null;
+    const compatibilitySortParam = params.get("sort") as AdminCompatibilitySort | null;
+    const openedFromUnresolved = page === "content" && params.get("from") === "unresolved";
+    const natalPlanet = params.get("planet") as NatalPlacementPlanet | null;
+    const natalSign = params.get("sign") as NatalPlacementSign | null;
+    const natalHouse = params.get("house") as NatalPlacementHouse | null;
+
+    setActivePage(page);
+    setCategoryFilter(category && categoryFilters.some((filter) => filter.key === category) ? category : "all");
+    setContentLibraryView(page === "content" && view === "compatibility" ? "compatibility" : "all");
+    setSkyVoiceQueueView(
+      page === "reviewQueue" && ["composite", "upcoming", "needs-review", "audit", "live-omissions"].includes(view ?? "")
+        ? view as SkyVoiceQueueView
+        : "all"
+    );
+    setContentClassFilter(source && contentClassFilters.some((filter) => filter.key === source) ? source : "all");
+    if (openedFromUnresolved) revealUnresolvedContentRow();
+    guidedReviewOpenedRef.current = "";
+    setGuidedReviewKey(openedFromUnresolved ? search : null);
+    setQuery(search ?? "");
+    setNatalPlacementPlanet(page === "content" && natalPlanet && natalPlacementPlanets.includes(natalPlanet) ? natalPlanet : "");
+    setNatalPlacementSign(page === "content" && natalSign && natalPlacementSigns.includes(natalSign) ? natalSign : "");
+    setNatalPlacementHouse(page === "content" && natalHouse && natalPlacementHouses.includes(natalHouse) ? natalHouse : "");
+    setFallbackSectionFilter(section && fallbackSections.some((filter) => filter.key === section) ? section : "all");
+    setSurfaceAreaFilter(area && ["all", "sky", "you", "friends", "calendar", "reports", "settings"].includes(area) ? area : "all");
+    setSurfaceStatusFilter(status && ["all", "complete", "partial", "missing"].includes(status) ? status : "all");
+    setVocabularyCategory(vocabularyCategoryFromParams(page, params));
+    if (page === "compatibility") {
+      setCompatibilitySectionFilter(compatibilitySection && compatibilitySections.some((filter) => filter.key === compatibilitySection) ? compatibilitySection : "all");
+      setCompatibilityStatusFilter(status && (status === "all" || contentStatuses.includes(status as GeneratedContentStatus)) ? status as GeneratedContentStatus | "all" : "all");
+      setCompatibilityPlanetFilter(compatibilityPlanet && articlePointFilters.some((filter) => filter.key === compatibilityPlanet) ? compatibilityPlanet : "all");
+      setCompatibilitySort(compatibilitySortParam && compatibilitySortOptions.some((filter) => filter.key === compatibilitySortParam) ? compatibilitySortParam : "updated-desc");
+      setCompatibilityQuery(search ?? "");
+    } else {
+      setCompatibilitySectionFilter("all");
+      setCompatibilityStatusFilter("all");
+      setCompatibilityPlanetFilter("all");
+      setCompatibilitySort("updated-desc");
+      setCompatibilityQuery("");
+    }
+  }
+
   function closeEditor() {
     setTemplateVariableReferenceOpen(false);
     setTemplateVariableQuery("");
@@ -3221,10 +3221,7 @@ export function GeneratedContentAdminDashboard() {
     if (!options.keepEditorOpen) {
       closeEditor();
     }
-    if (page !== activePage && !params?.has("q")) {
-      setQuery("");
-    }
-    setActivePage(page);
+    applyAdminRouteState(page, params ?? new URLSearchParams());
     setAdminHash(adminHashForPage(page, params));
   }
 
@@ -3851,6 +3848,15 @@ export function GeneratedContentAdminDashboard() {
     }
   }
 
+  async function createNatalPlacementOverride(contentKey: string, label: string, body: string) {
+    const { natalPlacementOverrideDraft } = await import("./NatalPlacementSourceFinder");
+    setSelectedRowId(null);
+    setCompositionEditorContext(null);
+    setDraft(natalPlacementOverrideDraft(contentKey, label, body));
+    setMessage(`Created a draft exact override for ${label}. It will not replace the composed reader copy until it is reviewed and published.`);
+    scrollEditorToTop();
+  }
+
   async function openServingFallbackRow(contentKey: string, occurrence: SkyReviewHorizonOccurrence) {
     setIsLoading(true);
     try {
@@ -4008,16 +4014,17 @@ export function GeneratedContentAdminDashboard() {
   }
 
   async function openHookDraft(item: HookCatalogItem) {
-    const saved = savedFallbackRows.find((row) => row.content_key === canonicalFallbackContentKey(item.key) || hookKeyFromSavedRow(row) === item.key);
-    if (saved) {
-      navigateAdminPage("knowledge", undefined, { keepEditorOpen: true });
-      openRow(saved);
-      return;
-    }
-
-    setIsLoading(true);
+    const contentKey = canonicalFallbackContentKey(item.key);
     setMessage(`Loading source wording for ${item.label}…`);
     try {
+      const saved = savedFallbackRows.find((row) => row.content_key === contentKey || hookKeyFromSavedRow(row) === item.key);
+      if (saved) {
+        navigateAdminPage("knowledge", undefined, { keepEditorOpen: true });
+        openRow(saved);
+        setMessage(`Opened ${item.label}.`);
+        return;
+      }
+
       const body = await hookBodyFor(item);
       navigateAdminPage("knowledge", undefined, { keepEditorOpen: true });
       setSelectedRowId(null);
@@ -4031,8 +4038,6 @@ export function GeneratedContentAdminDashboard() {
       setMessage(`Source wording loaded for ${item.label}.`);
     } catch (error) {
       setMessage(error instanceof Error ? `${error.message} Select Author to retry.` : "Could not load source wording. Select Author to retry.");
-    } finally {
-      setIsLoading(false);
     }
   }
 
@@ -4973,7 +4978,6 @@ export function GeneratedContentAdminDashboard() {
                     <PackagedHookCatalogResults
                       items={filteredHookCatalog}
                       savedKeys={savedHookKeys}
-                      loading={isLoading}
                       resetKey={`hook-catalog:${fallbackSectionFilter}:${query}:${filteredHookCatalog.length}`}
                       onOpen={(item) => void openHookDraft(item as HookCatalogItem)}
                     />
@@ -5089,10 +5093,11 @@ export function GeneratedContentAdminDashboard() {
                 {hookCatalogLoadState === "error" && <div className="admin-empty-state" role="alert"><p>{hookCatalogError ?? "Could not load the hook catalog."}</p><button type="button" onClick={() => void refreshHookCatalog()}><RefreshCw size={15} aria-hidden="true" />Retry catalog</button></div>}
                 {filteredHookCatalog.map((item) => {
                   const saved = savedHookKeys.has(item.key) || savedHookKeys.has(canonicalFallbackContentKey(item.key));
+                  const itemKey = canonicalFallbackContentKey(item.key);
                   return (
                     <article key={`${item.type}-${item.key}`} className="admin-fallback-row" role="button" tabIndex={0} onClick={() => void openHookDraft(item)} onKeyDown={(event) => onCatalogKeyDown(event, item)}>
-                      <div className="admin-fallback-row-main"><p className="admin-eyebrow">{item.section} / {item.type}</p><h3>{item.label}</h3><code>{canonicalFallbackContentKey(item.key)}</code></div>
-                      <div className="admin-fallback-row-actions"><span className={`ui-pill admin-status ${saved ? "status-live" : "status-draft"}`}>{saved ? "Saved row" : "Needs row"}</span><button type="button" disabled={isLoading} onClick={(event) => { event.stopPropagation(); void openHookDraft(item); }}><Plus size={15} aria-hidden="true" />Author</button></div>
+                      <div className="admin-fallback-row-main"><p className="admin-eyebrow">{item.section} / {item.type}</p><h3>{item.label}</h3><code>{itemKey}</code></div>
+                      <div className="admin-fallback-row-actions"><span className={`ui-pill admin-status ${saved ? "status-live" : "status-draft"}`}>{saved ? "Saved row" : "Needs row"}</span><button type="button" onClick={(event) => { event.stopPropagation(); void openHookDraft(item); }}><Plus size={15} aria-hidden="true" />Author</button></div>
                     </article>
                   );
                 })}
@@ -5445,101 +5450,20 @@ export function GeneratedContentAdminDashboard() {
 
   function renderNatalPlacementSourceFinder() {
     if (categoryFilter !== "Natal Chart") return null;
-    const selectionComplete = natalPlacementPlanet && natalPlacementSign && natalPlacementHouse;
-    const groups = selectionComplete
-      ? natalPlacementSourceGroups(natalPlacementPlanet, natalPlacementSign, natalPlacementHouse)
-      : [];
-
-    const renderSource = (
-      source: ReturnType<typeof natalPlacementSourceGroups>[number]["sources"][number],
-      previewTemplate = false
-    ) => {
-      const savedRow = rows.find((row) => row.content_key === source.key);
-      const preview = savedRow
-        ? normalizeText(savedRow.body) || normalizeText(savedRow.summary) || normalizeText(savedRow.headline)
-        : "";
-      return (
-        <article className="admin-natal-source-card" key={source.key}>
-          <div className="admin-natal-source-card-copy">
-            <div className="admin-natal-source-card-heading">
-              <h4>{source.label}</h4>
-              {savedRow && <span className={`ui-pill admin-status status-${savedRow.status.toLowerCase()}`}>{contentStatusLabel(savedRow.status)}</span>}
-            </div>
-            <p>{source.scope}</p>
-            <p className="admin-natal-source-key">
-              <span>Source key</span>
-              <code>{source.key}</code>
-            </p>
-            {preview && <blockquote>{preview}</blockquote>}
-          </div>
-          <button type="button" onClick={() => void openContentKeyRow(source.key, source.label, previewTemplate)} disabled={isLoading}>
-            {previewTemplate
-              ? savedRow ? "Preview template" : "Load preview"
-              : savedRow ? "Edit source" : "Load and edit"}
-          </button>
-        </article>
-      );
-    };
-
     return (
-      <section className="admin-natal-placement-finder" aria-label="Find natal placement source writing">
-        <div className="admin-natal-placement-finder-heading">
-          <div>
-            <p className="admin-eyebrow">Natal placement source finder</p>
-            <h3>{selectionComplete ? natalPlacementLabel(natalPlacementPlanet, natalPlacementSign, natalPlacementHouse) : "Choose the full natal placement"}</h3>
-            <p>Pick one value in each field. This workspace contains natal placements only; current transits and Sky placements are kept in Sky Write-ups.</p>
-          </div>
-          {selectionComplete && (
-            <p className="admin-natal-placement-key">
-              <span>Reader path</span>
-              <code>you/placement/{natalPlacementPlanet}-{natalPlacementSign}-{natalPlacementHouse}h</code>
-            </p>
-          )}
-        </div>
-        <div className="admin-natal-placement-selectors">
-          <label>
-            <span>1. Planet or point</span>
-            <small>What is placed</small>
-            <select aria-label="Natal placement planet or point" value={natalPlacementPlanet} onChange={(event) => updateNatalPlacementSelection({ planet: event.target.value as NatalPlacementPlanet | "" })}>
-              <option value="">Choose planet or point</option>
-              {natalPlacementPlanets.map((planet) => <option value={planet} key={planet}>{titleFromKey(planet)}</option>)}
-            </select>
-          </label>
-          <label>
-            <span>2. Zodiac sign</span>
-            <small>How it expresses itself</small>
-            <select aria-label="Natal placement zodiac sign" value={natalPlacementSign} onChange={(event) => updateNatalPlacementSelection({ sign: event.target.value as NatalPlacementSign | "" })}>
-              <option value="">Choose sign</option>
-              {natalPlacementSigns.map((sign) => <option value={sign} key={sign}>{titleFromKey(sign)}</option>)}
-            </select>
-          </label>
-          <label>
-            <span>3. House</span>
-            <small>Where it shows up in life</small>
-            <select aria-label="Natal placement house" value={natalPlacementHouse} onChange={(event) => updateNatalPlacementSelection({ house: event.target.value as NatalPlacementHouse | "" })}>
-              <option value="">Choose house</option>
-              {natalPlacementHouses.map((house) => <option value={house} key={house}>{house}</option>)}
-            </select>
-          </label>
-        </div>
-        {!selectionComplete && <p className="admin-natal-placement-prompt">Choose all three values to read the complete write-up and edit its individual source passages.</p>}
-        {groups.filter((group) => group.key !== "structure").map((group) => (
-          <section className="admin-natal-source-group" key={group.key}>
-            <header>
-              <h3>{group.label}</h3>
-              <p>{group.description}</p>
-            </header>
-            <div className="admin-natal-source-grid">{group.sources.map((source) => renderSource(source))}</div>
-          </section>
-        ))}
-        {groups.filter((group) => group.key === "structure").map((group) => (
-          <details className="admin-natal-source-group admin-natal-source-advanced" key={group.key}>
-            <summary>{group.label}</summary>
-            <p>{group.description}</p>
-            <div className="admin-natal-source-grid">{group.sources.map((source) => renderSource(source, true))}</div>
-          </details>
-        ))}
-      </section>
+      <Suspense fallback={<div className="admin-empty-state" role="status"><strong>Loading natal placement finder…</strong></div>}>
+        <NatalPlacementSourceFinder
+          house={natalPlacementHouse}
+          isLoading={isLoading}
+          onCreateOverride={createNatalPlacementOverride}
+          onOpenSource={(contentKey, label, previewTemplate) => void openContentKeyRow(contentKey, label, previewTemplate)}
+          onSelectionChange={updateNatalPlacementSelection}
+          planet={natalPlacementPlanet}
+          rows={rows}
+          secret={secret}
+          sign={natalPlacementSign}
+        />
+      </Suspense>
     );
   }
 
