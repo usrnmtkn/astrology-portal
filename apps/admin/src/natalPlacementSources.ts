@@ -115,7 +115,7 @@ export function natalPlacementSourceGroups(
     {
       key: "structure",
       label: "Sentence structure (advanced)",
-      description: "These templates arrange the source writing above. Edit them only when you want to change many natal pages at once.",
+      description: "Preview the assembled reader copy before editing its structure. Colored sections link to the exact facts, phrases, and hooks used for this placement.",
       sources: [
         { key: `fallback-template/natal.planet-in-sign/${planet}`, label: `${planetLabel} sign template`, scope: `Controls the sentence order for every natal ${planetLabel} sign placement.` },
         { key: "fallback-template/natal.house-context", label: "Natal house template", scope: "Controls the sentence order for all natal placement house paragraphs." }

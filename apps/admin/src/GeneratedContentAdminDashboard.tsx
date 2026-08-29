@@ -87,6 +87,7 @@ import {
   natalPlacementSelectionFromText,
   natalPlacementSigns,
   natalPlacementSourceGroups,
+  ordinalHouse,
   type NatalPlacementHouse,
   type NatalPlacementPlanet,
   type NatalPlacementSign
@@ -3811,7 +3812,7 @@ export function GeneratedContentAdminDashboard() {
     } : null);
   }
 
-  async function openContentKeyRow(contentKey: string, label: string) {
+  async function openContentKeyRow(contentKey: string, label: string, openTemplatePreview = false) {
     setIsLoading(true);
     try {
       const existing = rows.find((row) => row.content_key === contentKey);
@@ -3822,7 +3823,10 @@ export function GeneratedContentAdminDashboard() {
       if (!row) throw new Error(`${label} is not materialized in Content Studio (${contentKey}).`);
       if (!existing) setRows((current) => [row, ...current]);
       openRow(row);
-      setMessage(`Opened ${label}. The source card explains which other natal pages use this writing.`);
+      if (openTemplatePreview) setTemplateVariableReferenceOpen(true);
+      setMessage(openTemplatePreview
+        ? `Opened the assembled reader preview for ${label}. Colored sections link to their atomic sources.`
+        : `Opened ${label}. The source card explains which other natal pages use this writing.`);
     } catch (error) {
       setMessage(error instanceof Error ? error.message : `Could not open ${label}.`);
     } finally {
@@ -5413,11 +5417,14 @@ export function GeneratedContentAdminDashboard() {
       ? natalPlacementSourceGroups(natalPlacementPlanet, natalPlacementSign, natalPlacementHouse)
       : [];
 
-    const renderSource = (source: ReturnType<typeof natalPlacementSourceGroups>[number]["sources"][number]) => {
+    const renderSource = (
+      source: ReturnType<typeof natalPlacementSourceGroups>[number]["sources"][number],
+      previewTemplate = false
+    ) => {
       const savedRow = rows.find((row) => row.content_key === source.key);
       const preview = savedRow
         ? normalizeText(savedRow.body) || normalizeText(savedRow.summary) || normalizeText(savedRow.headline)
-        : "Load this exact source to view and edit its saved writing.";
+        : "";
       return (
         <article className="admin-natal-source-card" key={source.key}>
           <div className="admin-natal-source-card-copy">
@@ -5426,11 +5433,16 @@ export function GeneratedContentAdminDashboard() {
               {savedRow && <span className={`ui-pill admin-status status-${savedRow.status.toLowerCase()}`}>{contentStatusLabel(savedRow.status)}</span>}
             </div>
             <p>{source.scope}</p>
-            <code>{source.key}</code>
-            <blockquote className={!savedRow ? "missing" : ""}>{preview}</blockquote>
+            <p className="admin-natal-source-key">
+              <span>Source key</span>
+              <code>{source.key}</code>
+            </p>
+            {preview && <blockquote>{preview}</blockquote>}
           </div>
-          <button type="button" onClick={() => void openContentKeyRow(source.key, source.label)} disabled={isLoading}>
-            {savedRow ? "Edit source" : "Load and edit"}
+          <button type="button" onClick={() => void openContentKeyRow(source.key, source.label, previewTemplate)} disabled={isLoading}>
+            {previewTemplate
+              ? savedRow ? "Preview template" : "Load preview"
+              : savedRow ? "Edit source" : "Load and edit"}
           </button>
         </article>
       );
@@ -5444,7 +5456,12 @@ export function GeneratedContentAdminDashboard() {
             <h3>{selectionComplete ? natalPlacementLabel(natalPlacementPlanet, natalPlacementSign, natalPlacementHouse) : "Choose the full natal placement"}</h3>
             <p>Pick one value in each field. This workspace contains natal placements only; current transits and Sky placements are kept in Sky Write-ups.</p>
           </div>
-          {selectionComplete && <code>you/placement/{natalPlacementPlanet}-{natalPlacementSign}-{natalPlacementHouse}h</code>}
+          {selectionComplete && (
+            <p className="admin-natal-placement-key">
+              <span>Reader path</span>
+              <code>you/placement/{natalPlacementPlanet}-{natalPlacementSign}-{natalPlacementHouse}h</code>
+            </p>
+          )}
         </div>
         <div className="admin-natal-placement-selectors">
           <label>
@@ -5479,14 +5496,14 @@ export function GeneratedContentAdminDashboard() {
               <h3>{group.label}</h3>
               <p>{group.description}</p>
             </header>
-            <div className="admin-natal-source-grid">{group.sources.map(renderSource)}</div>
+            <div className="admin-natal-source-grid">{group.sources.map((source) => renderSource(source))}</div>
           </section>
         ))}
         {groups.filter((group) => group.key === "structure").map((group) => (
           <details className="admin-natal-source-group admin-natal-source-advanced" key={group.key}>
             <summary>{group.label}</summary>
             <p>{group.description}</p>
-            <div className="admin-natal-source-grid">{group.sources.map(renderSource)}</div>
+            <div className="admin-natal-source-grid">{group.sources.map((source) => renderSource(source, true))}</div>
           </details>
         ))}
       </section>
@@ -6246,6 +6263,22 @@ export function GeneratedContentAdminDashboard() {
       sections: currentDraft.sections,
       source_snapshot: currentDraft.sourceSnapshot
     } : null;
+    const hasNatalTemplatePreviewContext = categoryFilter === "Natal Chart"
+      && Boolean(natalPlacementPlanet && natalPlacementSign && natalPlacementHouse)
+      && (currentDraft.contentKey === `fallback-template/natal.planet-in-sign/${natalPlacementPlanet}`
+        || currentDraft.contentKey === "fallback-template/natal.house-context");
+    const natalTemplatePreviewOptions = hasNatalTemplatePreviewContext ? {
+      exampleValues: {
+        planetTitle: titleFromKey(natalPlacementPlanet),
+        planetRef: `the ${titleFromKey(natalPlacementPlanet)}`,
+        planetRefCap: `The ${titleFromKey(natalPlacementPlanet)}`,
+        signTitle: titleFromKey(natalPlacementSign),
+        houseOrdinal: ordinalHouse(natalPlacementHouse as NatalPlacementHouse),
+        possessive: "Your",
+        possessiveLow: "your"
+      },
+      includeOptionalSources: true
+    } : undefined;
     const normalizedTemplateVariableQuery = templateVariableQuery.trim().toLowerCase();
     const filteredVariableReferences = normalizedTemplateVariableQuery
       ? variableReferences.filter((variable) => [
@@ -7825,6 +7858,7 @@ export function GeneratedContentAdminDashboard() {
                   <TemplateReaderDrilldown
                     rows={rows}
                     templateRow={templatePreviewRow}
+                    previewOptions={natalTemplatePreviewOptions}
                     onOpenVariable={(name, sourceId) => {
                       setSelectedTemplateVariableName(name);
                       setSelectedTemplateVariableSourceId(sourceId);
