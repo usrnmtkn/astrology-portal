@@ -63,6 +63,33 @@ assert.deepEqual(calls.slice(0, 2).map((call) => call.unitId), [
 assert.equal(placement.body.includes("{{Name}}"), false);
 assert.equal(placement.body.includes("Marie"), true);
 
+let protectedLookupAttempted = false;
+const protectedPlacement = createCanonicalNatalAdapter({
+  enabled: true,
+  getCanonicalUnit() {
+    protectedLookupAttempted = true;
+    throw new Error("protected complete copy must win before canonical composition");
+  },
+  legacyRenderer: {
+    ...legacyRenderer,
+    renderNatalPlacement() {
+      return {
+        headline: "Chiron in Aries in the 12th house",
+        body: "owner-approved complete passage",
+        parts: ["owner-approved complete passage"],
+        templateKey: "fallback-hook/natal-you-placement-complete-final/chiron/aries/12",
+        provenanceTier: "exact-owner-approved"
+      };
+    }
+  }
+}).renderNatalPlacement({ planet: "Chiron", sign: "Aries", house: 12, voice: "you" });
+assert.equal(protectedLookupAttempted, false);
+assert.equal(protectedPlacement.body, "owner-approved complete passage");
+assert.equal(
+  protectedPlacement.templateKey,
+  "fallback-hook/natal-you-placement-complete-final/chiron/aries/12"
+);
+
 adapter.renderNatalAspect({ planetA: "Venus", planetB: "Moon", aspect: "sext", voice: "you" });
 assert.equal(calls.at(-1).unitId, "natal/aspect/moon/venus/sextile");
 

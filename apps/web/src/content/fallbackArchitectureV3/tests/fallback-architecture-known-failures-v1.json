@@ -5,8 +5,8 @@
     "moonReaderOnlyRows": "PR #283 / owner approval record packages/astro-knowledge/review/natal-moon-final-owner-approval-2026-08-20.json: reader_only full_copy rows are valid You-only authored rows."
   },
   "maximumFailureCount": 846,
-  "expectedFailureCount": 245,
-  "failureMultisetSha256": "29f762f1248b64da40a69f6c3e0d2b6185ff693406a624ffe649cd6d7cbff6d5",
+  "expectedFailureCount": 243,
+  "failureMultisetSha256": "94aab67adecf9e226e28fea50cdfc4b06d96f6ad03e79f0a5ffdffbfa0cc38af",
   "bannedNonEverydayWordFailures": 0,
   "expectedNatalAspectSourceGaps": [
     "chiron|conjunction|north-node",
