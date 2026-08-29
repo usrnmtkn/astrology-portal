@@ -255,6 +255,11 @@
   --admin-control-height-4xl: 46px;
   --admin-panel-min-height: 54px;
   --admin-card-min-height: 72px;
+  --admin-access-actions-min-width: 280px;
+  --admin-z-mobile-sidebar: 20;
+  --admin-z-overlay-host: 30;
+  --admin-z-create-backdrop: 80;
+  --admin-z-create-menu: 90;
   --admin-shadow-menu: 0 18px 46px rgba(0, 0, 0, 0.4);
   --admin-shadow-toast: 0 18px 44px rgba(0, 0, 0, 0.34);
   --admin-shadow-side-rail: -24px 0 80px rgba(0, 0, 0, 0.42);
