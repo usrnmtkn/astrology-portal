@@ -80,6 +80,38 @@ function pairTitle(family: string, args: string[]) {
   return `${words(first)} + ${words(second)} · ${words(aspect)} · ${familyLabel(family)}${rest.length ? ` · ${rest.map(variant).join(" · ")}` : ""}`;
 }
 
+function pairDailyTitle(args: string[]) {
+  const [piece = "", first = "", second = "", ...rest] = args;
+  const trailing = rest.length ? ` · ${rest.map(variant).join(" · ")}` : "";
+
+  if (piece === "clause" && first === "house" && second) {
+    return `${ordinalHouse(second)} · Between You Two personal clause${trailing}`;
+  }
+  if (piece === "clause" && first && second) {
+    return `${words(second)} · ${words(first)} · Between You Two personal clause${trailing}`;
+  }
+  if (piece === "bond-clause" && first && second) {
+    return `${words(second)} · ${words(first)} bond detail${trailing}`;
+  }
+  if (piece === "opener") {
+    const openerParts = [first, second, ...rest].filter(Boolean);
+    if (first === "shared-clause") {
+      return `Between You Two · Shared-clause opening${second === "no-reader-handle" ? " · Without reader handle" : trailing}`;
+    }
+    return `Between You Two · Opening${openerParts.length ? ` · ${openerParts.map(variant).join(" · ")}` : ""}`;
+  }
+  if (piece === "shared-bond" && first) {
+    return `${words(first)} bond · Shared bridge${second ? ` · ${variant(second)}` : ""}${trailing}`;
+  }
+  if (piece === "shared-moon" && first) {
+    return `${words(first)} Moon · Shared bridge${second ? ` · ${variant(second)}` : ""}${trailing}`;
+  }
+  if (piece === "close" && first) {
+    return `${words(first)} bond · Closing advice${second ? ` · ${variant(second)}` : ""}${trailing}`;
+  }
+  return `Between You Two · ${[piece, first, second, ...rest].filter(Boolean).map(variant).join(" · ")}`;
+}
+
 /** Builds a stable editorial title from the hook's canonical identity. */
 export function fallbackHookDisplayTitle(contentKey: string) {
   const parts = contentKey.split("/").filter(Boolean);
@@ -87,6 +119,7 @@ export function fallbackHookDisplayTitle(contentKey: string) {
 
   const family = parts[1];
   const args = parts.slice(2);
+  if (family === "pair-daily") return pairDailyTitle(args);
   const pair = pairTitle(family, args);
   if (pair) return pair;
 

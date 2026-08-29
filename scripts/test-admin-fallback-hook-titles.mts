@@ -16,6 +16,10 @@ assert.equal(fallbackHookDisplayTitle("fallback-hook/natal-aspect-lived/lilith/c
 assert.equal(fallbackHookDisplayTitle("fallback-hook/synastry-pair/sun/moon/soft"), "Sun + Moon · Soft · Compatibility planet pair");
 assert.equal(fallbackHookDisplayTitle("fallback-hook/transit-effect-hard/sun/variant-2"), "Sun · Variant 2 · Hard transit effect");
 assert.equal(fallbackHookDisplayTitle("fallback-hook/planet-mode/pluto"), "Pluto · Relationship role phrase");
+assert.equal(fallbackHookDisplayTitle("fallback-hook/pair-daily/clause/house/1"), "1st House · Between You Two personal clause");
+assert.equal(fallbackHookDisplayTitle("fallback-hook/pair-daily/clause/square/venus/variant-2"), "Venus · Square · Between You Two personal clause · Variant 2");
+assert.equal(fallbackHookDisplayTitle("fallback-hook/pair-daily/opener"), "Between You Two · Opening");
+assert.equal(fallbackHookDisplayTitle("fallback-hook/pair-daily/shared-bond/soft/variant-2"), "Soft bond · Shared bridge · Variant 2");
 
 const planetModeGuidance = fallbackHookEditorGuidance({
   contentKey: "fallback-hook/planet-mode/pluto",
@@ -42,6 +46,29 @@ assert.equal(retroArticleGuidance.bodyYouLabel, "Reader passage");
 assert.equal(retroArticleGuidance.bodyTheyLabel, "Reference mirror · not rendered");
 assert.match(retroArticleGuidance.writingRule, /\{\{timeOpen\}\}.*\{\{transitRef\}\}/u);
 
+const dailyGuidance = fallbackHookEditorGuidance({
+  contentKey: "fallback-hook/daily-body/house/4",
+  grammarFrame: "complete_sentence",
+  bodyYou: "Tend to the part of home you keep postponing.",
+  displayTitle: fallbackHookDisplayTitle("fallback-hook/daily-body/house/4") ?? undefined
+});
+assert.equal(dailyGuidance.area, "Daily At-a-Glance · passage");
+assert.equal(dailyGuidance.summaryLabel, "Internal history");
+assert.equal(dailyGuidance.bodyYouLabel, "Passage · You");
+assert.equal(dailyGuidance.bodyTheyLabel, "Passage · Friend");
+assert.match(dailyGuidance.audienceHint ?? "", /Moon-driven selector/u);
+
+const pairDailyGuidance = fallbackHookEditorGuidance({
+  contentKey: "fallback-hook/pair-daily/clause/house/1",
+  grammarFrame: "sentence_fragment",
+  bodyYou: "keeping the one detail that still feels unmistakably yours",
+  displayTitle: fallbackHookDisplayTitle("fallback-hook/pair-daily/clause/house/1") ?? undefined
+});
+assert.equal(pairDailyGuidance.area, "Today between you two · personal clause");
+assert.equal(pairDailyGuidance.bodyYouLabel, "Clause · You");
+assert.equal(pairDailyGuidance.bodyTheyLabel, "Clause · Friend");
+assert.match(pairDailyGuidance.description, /Friends > selected person/u);
+
 const source = JSON.parse(fs.readFileSync(new URL("../apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json", import.meta.url), "utf8"));
 const hookRows = source.hookRows as Array<{ contentKey: string }>;
 assert.ok(hookRows.length > 4_000, "The exhaustive title check must cover the complete hook catalog.");
@@ -51,6 +78,18 @@ for (const row of hookRows) {
   assert.ok(title, `${row.contentKey} must have a display title.`);
   assert.doesNotMatch(title, /^\d+$/u, `${row.contentKey} must not display as a bare number.`);
   assert.ok(title.length >= 8, `${row.contentKey} must have a descriptive display title.`);
+}
+
+for (const relativePath of [
+  "../apps/web/src/content/fallbackArchitectureV3/source-rows/pair-daily-frames-v1.json",
+  "../apps/web/src/content/fallbackArchitectureV3/source-rows/pair-daily-clauses-v1.json"
+]) {
+  const pairSource = JSON.parse(fs.readFileSync(new URL(relativePath, import.meta.url), "utf8"));
+  for (const row of pairSource.rows as Array<{ contentKey: string }>) {
+    const title = fallbackHookDisplayTitle(row.contentKey);
+    assert.ok(title, `${row.contentKey} must have a display title.`);
+    assert.doesNotMatch(title, /^\d+$/u, `${row.contentKey} must not display as a bare number.`);
+  }
 }
 
 console.log(`Fallback-hook titles passed: ${hookRows.length} complete catalog rows have descriptive titles.`);

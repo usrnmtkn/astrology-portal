@@ -529,7 +529,7 @@ export const writingSurfaceAdminAccess: Record<string, WritingSurfaceAdminAccess
     readerLocation: "Friends > selected person > Today between you two",
     editability: "editable",
     routes: [
-      { label: "Edit Today between you two", hash: "#fallback-hooks?section=friends&q=pair-daily", purpose: "reader-copy", note: "Opens every reviewed opener, personal clause, shared bridge, and closing-advice source used by the pair-daily renderer." }
+      { label: "Edit Today between you two", hash: "#fallback-hooks?section=daily&q=pair-daily", purpose: "reader-copy", note: "Opens every reviewed opener, personal clause, shared bridge, and closing-advice source used by the pair-daily renderer." }
     ]
   },
   "natal-placement-detail": {
@@ -599,7 +599,7 @@ export const writingSurfaceAdminAccess: Record<string, WritingSurfaceAdminAccess
     readerLocation: "You > Daily At-a-Glance; Friends > Daily At-a-Glance",
     editability: "editable",
     routes: [
-      { label: "Edit daily headline and body hooks", hash: "#fallback-hooks?section=you&q=daily", purpose: "reader-copy", note: "Opens the reviewed daily headline/body hook families used after the app calculates the day's driver." },
+      { label: "Edit daily headline and body hooks", hash: "#fallback-hooks?section=daily&q=daily", purpose: "reader-copy", note: "Opens the reviewed daily headline/body hook families used after the app calculates the day's driver." },
       { label: "Inspect daily slots", hash: "#slots?q=daily", purpose: "supporting-copy", note: "Shows the daily template variables and whether each value is calculated or saved copy." }
     ]
   },

@@ -2581,7 +2581,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await surfaceList.getByLabel("Search surfaces and systems").fill("Today between you two");
     await surfaceList.getByRole("button", { name: /Today Between You Two/ }).click();
     await expect(page.getByRole("region", { name: "Selected app surface or system" })).toContainText("Editable in Content Studio");
-    await expect(page.getByRole("region", { name: "Selected app surface or system" }).getByRole("link", { name: /Edit Today between you two/ })).toHaveAttribute("href", "#fallback-hooks?section=friends&q=pair-daily");
+    await expect(page.getByRole("region", { name: "Selected app surface or system" }).getByRole("link", { name: /Edit Today between you two/ })).toHaveAttribute("href", "#fallback-hooks?section=daily&q=pair-daily");
     await page.getByRole("tab", { name: /Template internals/ }).click();
     await expect(page.getByRole("complementary", { name: "Composition templates" })).toContainText("Friends & relationships");
     await expect(page.getByRole("region", { name: "Selected template composition" }).getByRole("heading", { name: "Planet card" })).toBeVisible();
@@ -2589,6 +2589,15 @@ test.describe("content dashboard admin user flow case studies", () => {
     await page.getByRole("tab", { name: "Assembly" }).click();
     await expect(page.getByRole("region", { name: "Template slots" })).toContainText("Reader Sign");
     await expect(page.getByRole("region", { name: "Template slots" })).toContainText("Provided by the app");
+
+    await openAdminDeepLink("#fallback-hooks?section=daily&q=daily");
+    await expectAdminHeader(page, "Fallback Articles & Passages", "Admin / Composition / Fallback articles & passages");
+    await expect(page.getByRole("tab", { name: "Daily" })).toHaveAttribute("aria-selected", "true");
+    const dailyGuide = page.getByRole("region", { name: "How daily content is assembled" });
+    await expect(dailyGuide).toContainText("Daily At-a-Glance");
+    await expect(dailyGuide).toContainText("Today between you two");
+    await dailyGuide.getByRole("button", { name: "Browse shared daily sources" }).click();
+    await expect(page.getByLabel("Search fallback articles and passages")).toHaveValue("pair-daily");
 
     await openAdminDeepLink("#templates");
     await expectAdminHeader(page, "Templates", "Admin / Composition / Templates");
