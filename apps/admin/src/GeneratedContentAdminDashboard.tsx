@@ -120,6 +120,10 @@ const ReportFulfillmentAdminPanel = lazy(async () => {
   const module = await import("./ReportFulfillmentAdminPanel");
   return { default: module.ReportFulfillmentAdminPanel };
 });
+const PackagedHookCatalogResults = lazy(async () => {
+  const module = await import("./PackagedHookCatalogResults");
+  return { default: module.PackagedHookCatalogResults };
+});
 const TemplateVariableReviewPanels = lazy(async () => {
   const module = await import("./TemplateVariableReviewPanels");
   return { default: module.TemplateVariableReviewPanels };
@@ -343,7 +347,7 @@ type AdminContentFact = {
 };
 
 type HookCatalogItem =
-  { type: "fallback"; key: string; label: string; section: AdminFallbackHookSectionFilter; definition: FallbackHookDefinition };
+  { type: "fallback"; key: string; label: string; section: Exclude<AdminFallbackHookSectionFilter, "all">; definition: FallbackHookDefinition };
 type AdminLoadState = "idle" | "loading" | "loaded" | "accessDenied" | "error";
 
 type SkyArticleEditionFacts = {
@@ -1417,6 +1421,7 @@ function isCompatibilityRow(row: AdminGeneratedContentRow) {
     || row.block_type === "compatibility_planet_card"
     || /\bcompatibility\b/.test(identity)
     || /^fallback-hook\/(?:friends|relationship|synastry)[./-]/.test(row.content_key)
+    || row.content_key.startsWith("fallback-hook/pair-daily/")
     || row.content_key.startsWith("vocab/relationship/")
     || row.content_key.startsWith("slot-template/compatibility/");
 }
@@ -1698,10 +1703,11 @@ function skyArticleAspectPassage(row: AdminGeneratedContentRow, planet: string):
 }
 
 type AdminHookCatalogLoadState = "idle" | "loading" | "loaded" | "error";
+type AdminHookCatalogDomain = "sky" | "you" | "friends" | "modifier";
 type AdminHookCatalogIndexPayload = {
   schemaVersion: 1;
   packageVersion: string;
-  rows: Array<{ key: string; surface: GeneratedContentSurface }>;
+  rows: Array<{ key: string; surface: AdminHookCatalogDomain; label?: string }>;
 };
 type AdminHookCatalogBodyPayload = {
   schemaVersion: 1;
@@ -1741,12 +1747,15 @@ async function loadAdminHookCatalogIndex(): Promise<{ definitions: FallbackHookD
     throw new Error("Hook catalog index is missing its package version.");
   }
 
-  const definitions = payload.rows.map(({ key, surface }) => {
-    const label = titleFromKey(key);
+  const definitions = payload.rows.map(({ key, surface, label: packagedLabel }) => {
+    const label = packagedLabel ?? fallbackHookDisplayTitle(key) ?? titleFromKey(key);
+    const persistedSurface: GeneratedContentSurface = surface === "friends" ? "relationship" : surface;
     return {
       key,
       label,
-      surface,
+      // "friends" is the catalog section; persisted content uses the
+      // relationship surface so saved edits remain compatible with the API.
+      surface: persistedSurface,
       mode: "feed",
       copy: { headline: label, summary: "", body: "" }
     };
@@ -1754,7 +1763,7 @@ async function loadAdminHookCatalogIndex(): Promise<{ definitions: FallbackHookD
   return { definitions, packageVersion: payload.packageVersion };
 }
 
-async function loadAdminHookCatalogBodies(surface: GeneratedContentSurface): Promise<Map<string, string>> {
+async function loadAdminHookCatalogBodies(surface: AdminHookCatalogDomain): Promise<Map<string, string>> {
   const domain = surface === "modifier" ? "modifier" : surface;
   const payload = await adminHookCatalogJson<AdminHookCatalogBodyPayload>(`admin-hook-catalog-${domain}-v1.json`);
   if (payload.schemaVersion !== 1 || !Array.isArray(payload.rows)) {
@@ -1776,6 +1785,7 @@ function rowTitle(row: AdminGeneratedContentRow | AdminReviewRecord | AdminUserG
   if ("content_key" in row) {
     const structuredIdentity = skyFallbackIdentity(row.content_key);
     if (structuredIdentity) return structuredIdentity.title;
+    if (row.content_key.startsWith("fallback-hook/pair-daily/") && normalizeText(row.headline)) return normalizeText(row.headline);
     const fallbackHookTitle = fallbackHookDisplayTitle(row.content_key);
     if (fallbackHookTitle) return fallbackHookTitle;
     if (row.content_key.startsWith("slot-template/")) return templateDisplayName(row.content_key, normalizeText(row.headline));
@@ -2128,9 +2138,10 @@ function housePassageAvailabilityLabel(availability: "Reader-ready" | "Source ca
   return availability === "Reader-ready" ? "Complete horoscope" : "Supporting passage";
 }
 
-function fallbackSectionForKey(key: string, surface?: string): AdminFallbackHookSectionFilter {
+function fallbackSectionForKey(key: string, surface?: string): Exclude<AdminFallbackHookSectionFilter, "all"> {
   if (key.includes("lunar") || key.startsWith("lunation/") || key.startsWith("season/") || key.startsWith("season-arc/") || key.startsWith("transit-fallback/")) return "lunar-calendar";
   if (key.includes("settings") || surface === "settings") return "settings";
+  if (key.includes("pair-daily")) return "friends";
   if (key.includes("friends") || key.includes("synastry") || key.includes("relationship") || surface === "friends" || surface === "relationship" || surface === "synastry" || surface === "composite") return "friends";
   if (key.includes("natal") || key.includes("you") || surface === "you" || surface === "natal") return "you";
   return "sky";
@@ -2496,8 +2507,8 @@ export function GeneratedContentAdminDashboard() {
   const guidedReviewOpenedRef = useRef("");
   const editorRef = useRef<HTMLElement | null>(null);
   const hookCatalogRequestRef = useRef<Promise<{ definitions: FallbackHookDefinition[]; packageVersion: string }> | null>(null);
-  const hookBodyPackagesRef = useRef(new Map<GeneratedContentSurface, Map<string, string>>());
-  const hookBodyRequestsRef = useRef(new Map<GeneratedContentSurface, Promise<Map<string, string>>>());
+  const hookBodyPackagesRef = useRef(new Map<AdminHookCatalogDomain, Map<string, string>>());
+  const hookBodyRequestsRef = useRef(new Map<AdminHookCatalogDomain, Promise<Map<string, string>>>());
   const skyArticleAutosaveSequenceRef = useRef(0);
   const skyArticleWorkspaceAutosaveSequenceRef = useRef(0);
 
@@ -2829,7 +2840,13 @@ export function GeneratedContentAdminDashboard() {
   }
 
   async function hookBodyFor(item: HookCatalogItem) {
-    const surface = item.definition.surface;
+    const surface: AdminHookCatalogDomain = item.definition.surface === "relationship"
+      ? "friends"
+      : item.definition.surface === "modifier"
+        ? "modifier"
+        : item.definition.surface === "you"
+          ? "you"
+          : "sky";
     let bodies = hookBodyPackagesRef.current.get(surface);
     if (!bodies) {
       let request = hookBodyRequestsRef.current.get(surface);
@@ -4890,6 +4907,10 @@ export function GeneratedContentAdminDashboard() {
                 <p>{filteredCompatibilityRows.length} of {compatibilityRows.length} compatibility rows shown across content, fallback hooks, vocabulary, slots, and templates.</p>
               </div>
               <div className="admin-new-actions" aria-label="Compatibility shortcuts">
+                <button type="button" onClick={() => navigateAdminPage("knowledge", new URLSearchParams({ section: "friends", q: "pair-daily" }))}>
+                  <Users size={16} aria-hidden="true" />
+                  Daily between you two
+                </button>
                 <button type="button" onClick={() => handleCompatibilityCreateAction("content")}>
                   <Plus size={16} aria-hidden="true" />
                   Card copy
@@ -4948,12 +4969,24 @@ export function GeneratedContentAdminDashboard() {
             </section>
             <section className="admin-workbench admin-review-workspace">
               {renderEditor()}
-              <aside className="admin-list-panel" aria-label="Saved fallback hook rows">
-                {fallbackRowSort === "type"
-                  ? renderFallbackContentGroups(filteredFallbackRows)
-                  : filteredFallbackRows.length > 0
-                    ? renderContentTable(filteredFallbackRows, false, true)
-                    : <p className="admin-empty">No rows match these filters.</p>}
+              <aside className="admin-list-panel" aria-label="Fallback hook rows and package sources">
+                {filteredFallbackRows.length > 0 && (
+                  fallbackRowSort === "type"
+                    ? renderFallbackContentGroups(filteredFallbackRows)
+                    : renderContentTable(filteredFallbackRows, false, true)
+                )}
+                {filteredHookCatalog.length > 0 && (Boolean(query.trim()) || fallbackSectionFilter === "friends") && (
+                  <Suspense fallback={<p className="admin-empty">Loading packaged source phrases…</p>}>
+                    <PackagedHookCatalogResults
+                      items={filteredHookCatalog}
+                      savedKeys={savedHookKeys}
+                      loading={isLoading}
+                      resetKey={`hook-catalog:${fallbackSectionFilter}:${query}:${filteredHookCatalog.length}`}
+                      onOpen={(item) => void openHookDraft(item as HookCatalogItem)}
+                    />
+                  </Suspense>
+                )}
+                {filteredFallbackRows.length === 0 && (filteredHookCatalog.length === 0 || (!query.trim() && fallbackSectionFilter !== "friends")) && <p className="admin-empty">No rows match these filters.</p>}
               </aside>
             </section>
           </section>
@@ -6546,7 +6579,9 @@ export function GeneratedContentAdminDashboard() {
         }
       });
     };
-    const fallbackHookEditorTitle = fallbackHookDisplayTitle(currentDraft.contentKey);
+    const fallbackHookEditorTitle = currentDraft.contentKey.startsWith("fallback-hook/pair-daily/")
+      ? currentDraft.headline
+      : fallbackHookDisplayTitle(currentDraft.contentKey);
     const compatibilityIdentity = compatibilityBrowseIdentity(
       currentDraft.contentKey,
       currentDraft.facts,

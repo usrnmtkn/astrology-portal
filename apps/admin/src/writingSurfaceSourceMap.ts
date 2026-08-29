@@ -178,36 +178,20 @@ export const writingSurfaceSourceMap: WritingSurfaceMapItem[] = [
     ]
   },
   {
-    id: "friends-compatibility-highlights",
-    surface: "Friends Compatibility: Overview Highlights",
+    id: "friends-pair-daily",
+    surface: "Friends: Today Between You Two",
     area: "Friends",
-    runtimeSurfaceIds: ["compatibility-highlight"],
-    status: "partial",
-    requiredSlots: ["chart signature", "strongest contact", "relationship timing"],
-    visibleLayerOrder: ["source-grounded", "madlib-fallback"],
-    currentRenderPath: "compatibilityHighlights combines calculated chart facts, the strongest normalized synastry contact, and code-composed overview language for the selected friend.",
-    risk: "The normalized synastry contact is source-traceable, but the chart-signature and missing-chart overview sentences are still written directly in App.tsx and have no atomic Content Studio editor.",
-    nextAction: "Move the code-composed overview sentences into governed source rows, then expose their exact rendered spans and source links in Composition Map.",
+    status: "normalized",
+    requiredSlots: ["daily opener", "your daily clause", "friend daily clause", "shared bridge", "optional closing advice"],
+    visibleLayerOrder: ["source-grounded"],
+    currentRenderPath: "ManualChartsPanel calculates each person's daily driver and the shared Moon or bond context, then renderPairDaily fills reviewed pair-daily hooks. Every displayed prose span retains its fallback-hook source key.",
+    risk: "Planet, aspect, house, Moon element, and date remain calculated facts. Editors must change the reviewed hook wording without hard-coding those facts into reusable rows.",
+    nextAction: "Use the Friends pair-daily source browser, edit an atomic hook, and verify both direct-reader and friend voice in the reader preview.",
     sources: [
-      { label: "App.tsx", path: "apps/web/src/App.tsx", role: "renderer" },
-      { label: "fallback-source-rows-v3.json", path: "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json", role: "fallback-package" },
-      { label: "generatedContent.ts", path: "apps/web/src/services/generatedContent.ts", role: "stored-source" }
-    ]
-  },
-  {
-    id: "friends-circle-feed",
-    surface: "Friends Circle: Shared Timing Feed",
-    area: "Friends",
-    runtimeSurfaceIds: ["circle-feed", "circle-feed-preview"],
-    status: "partial",
-    requiredSlots: ["shared timing headline", "feed summary", "person-by-person detail"],
-    visibleLayerOrder: ["source-grounded", "madlib-fallback"],
-    currentRenderPath: "circleActivationCards and circleFeedPreviewCards calculate shared planet, house, profection, and lord-of-year patterns, then assemble the visible feed cards and detail passages directly in App.tsx.",
-    risk: "The astrology facts are calculated, but most connecting prose is code-composed and cannot yet be opened or edited as an atomic saved source in Content Studio.",
-    nextAction: "Extract the feed and detail prose into governed source families with calculated slots, then add a traceable reader preview and direct atomic editors.",
-    sources: [
-      { label: "App.tsx", path: "apps/web/src/App.tsx", role: "renderer" },
-      { label: "FriendCircleFeed.tsx", path: "apps/web/src/features/friends/FriendCircleFeed.tsx", role: "renderer" }
+      { label: "ManualChartsPanel.tsx", path: "apps/web/src/features/friends/ManualChartsPanel.tsx", role: "renderer" },
+      { label: "pairDaily.ts", path: "apps/web/src/services/pairDaily.ts", role: "renderer" },
+      { label: "pair-daily-frames-v1.json", path: "apps/web/src/content/fallbackArchitectureV3/source-rows/pair-daily-frames-v1.json", role: "source-grounded" },
+      { label: "pair-daily-clauses-v1.json", path: "apps/web/src/content/fallbackArchitectureV3/source-rows/pair-daily-clauses-v1.json", role: "source-grounded" }
     ]
   },
   {
@@ -247,18 +231,20 @@ export const writingSurfaceSourceMap: WritingSurfaceMapItem[] = [
     ]
   },
   {
-    id: "career-archetype-card",
-    surface: "You / Friends: Career Archetype Card",
+    id: "natal-aspect-patterns",
+    surface: "Natal / Friends: Aspect Patterns And Active Now",
     area: "Natal",
     status: "normalized",
-    requiredSlots: ["career pattern"],
-    visibleLayerOrder: ["source-grounded", "madlib-fallback"],
-    currentRenderPath: "resolveCareerArchetypeProfile loads LIVE serving ms/career/* dashboard rows first, assembles the visible Career Pattern section from matching Sun/Moon/Rising/MC/Saturn/North Node/hemisphere rows, and falls back to local Midheaven madlibs when stored rows are missing.",
-    risk: "Source-grounded quality now depends on reviewed ms/career/* row coverage and LIVE serving status; missing rows fall back locally.",
-    nextAction: "Keep reviewed ms/career/* rows LIVE serving and add QA coverage for source badge, fallback badge, and no-row fallback grammar.",
+    requiredSlots: ["pattern title", "pattern interpretation", "optional activation interpretation"],
+    visibleLayerOrder: ["source-grounded"],
+    currentRenderPath: "The astrology service detects and ranks chart patterns, then requests governed authored pattern and activation copy. YouPage and FriendNatalTab render only the server-resolved records returned with the calculated pattern facts.",
+    risk: "Pattern geometry and activation timing are calculated and cannot be edited as prose. Missing authored copy must remain unavailable rather than being replaced by an untracked local paragraph.",
+    nextAction: "Edit natal and Active Now pattern records in the dedicated Aspect Patterns workspace, then verify the shared You/Friends reader component.",
     sources: [
-      { label: "CareerArchetypeCard.tsx", path: "apps/web/src/components/charts/CareerArchetypeCard.tsx", role: "renderer" },
-      { label: "careerArchetype.ts", path: "apps/web/src/services/careerArchetype.ts", role: "madlib-material" }
+      { label: "NatalAspectPatternsSection.tsx", path: "apps/web/src/features/you/NatalAspectPatternsSection.tsx", role: "renderer" },
+      { label: "natalAspectPatterns.ts", path: "apps/web/src/services/natalAspectPatterns.ts", role: "renderer" },
+      { label: "AspectPatternWriteups.tsx", path: "apps/admin/src/AspectPatternWriteups.tsx", role: "stored-source" },
+      { label: "aspect-pattern-writeups.ts", path: "api/admin/aspect-pattern-writeups.ts", role: "stored-source" }
     ]
   },
   {
@@ -294,6 +280,21 @@ export const writingSurfaceSourceMap: WritingSurfaceMapItem[] = [
       { label: "dist/tldr-content.js", path: "apps/web/src/content/fallbackArchitectureV3/dist/tldr-content.js", role: "fallback-package" },
       { label: "dashboard materializer", path: "scripts/materialize-fallback-architecture-v3-dashboard-rows.mjs", role: "stored-source" },
       { label: "fallback-source-rows-v3.json", path: "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json", role: "fallback-package" }
+    ]
+  },
+  {
+    id: "sky-retrograde-summary",
+    surface: "Sky: Retrograde Summary",
+    area: "Sky",
+    status: "normalized",
+    requiredSlots: ["retrograde count", "planet list", "personal retrograde list"],
+    visibleLayerOrder: ["source-grounded", "madlib-fallback"],
+    currentRenderPath: "The Sky retrograde callout resolves a reviewed LIVE CMS summary first and keeps the active planet names and counts as calculated slots. If no reviewed override exists, the existing local sentence remains the fallback.",
+    risk: "The active retrograde list changes with the selected date. Editors may change only the surrounding sentence and must keep planet names and counts as slots when they are mentioned.",
+    nextAction: "Use the retrograde-summary starter, review the rendered example, and publish it when the wording is ready.",
+    sources: [
+      { label: "App.tsx", path: "apps/web/src/App.tsx", role: "renderer" },
+      { label: "cmsSurfaceOverrides.ts", path: "apps/web/src/content/cmsSurfaceOverrides.ts", role: "stored-source" }
     ]
   },
   {
@@ -455,12 +456,12 @@ export const writingSurfaceSourceMap: WritingSurfaceMapItem[] = [
     id: "generated-reports",
     surface: "Purchased Reports: Delivered Report Article",
     area: "Reports",
-    status: "partial",
+    status: "normalized",
     requiredSlots: ["frozen chart facts", "owner prompt", "report units", "assembled chapters", "key dates"],
     visibleLayerOrder: ["source-grounded", "generated"],
     currentRenderPath: "The fulfillment service freezes report facts, selects governed source material and owner prompt versions, generates and validates each report unit, assembles the accepted units, and delivers the stored report through ReportDeliveryView and ReportArticle.",
-    risk: "Delivered report prose is generated per order. The Admin report page monitors provenance, validation, audits, and delivery, but it does not yet provide a reader-rendered report with paragraph-level source links or a safe inline correction workflow.",
-    nextAction: "Add a report inspection workspace that renders the delivered report, exposes each unit's frozen facts and prompt/source provenance, and supports governed replacement or regeneration without mutating an approved source silently.",
+    risk: "Delivered report prose is generated per order. Corrections must be staged privately and explicitly published so an in-progress edit never changes the reader's live report.",
+    nextAction: "Use Preview and edit in Report Fulfillment to inspect each delivered unit, save a private correction draft, and explicitly publish the reviewed correction.",
     sources: [
       { label: "ReportDeliveryView.tsx", path: "apps/web/src/components/reports/ReportDeliveryView.tsx", role: "renderer" },
       { label: "ReportArticle.tsx", path: "apps/web/src/components/reports/ReportArticle.tsx", role: "renderer" },
@@ -524,15 +525,12 @@ export const writingSurfaceAdminAccess: Record<string, WritingSurfaceAdminAccess
     editability: "editable",
     routes: [{ label: "Edit composite copy", hash: "#composite-review", purpose: "reader-copy", note: "Opens relationship-type composite variants in one editor." }]
   },
-  "friends-compatibility-highlights": {
-    readerLocation: "Friends > Compatibility > overview highlights",
-    editability: "missing",
-    routes: []
-  },
-  "friends-circle-feed": {
-    readerLocation: "Friends > Circle > shared timing feed and detail",
-    editability: "missing",
-    routes: []
+  "friends-pair-daily": {
+    readerLocation: "Friends > selected person > Today between you two",
+    editability: "editable",
+    routes: [
+      { label: "Edit Today between you two", hash: "#fallback-hooks?section=friends&q=pair-daily", purpose: "reader-copy", note: "Opens every reviewed opener, personal clause, shared bridge, and closing-advice source used by the pair-daily renderer." }
+    ]
   },
   "natal-placement-detail": {
     readerLocation: "You or Friends > Birth chart > placement detail",
@@ -544,10 +542,13 @@ export const writingSurfaceAdminAccess: Record<string, WritingSurfaceAdminAccess
     editability: "editable",
     routes: [{ label: "Edit natal aspects", hash: "#exact-content?category=Natal+Aspects&q=aspect", purpose: "reader-copy", note: "Opens saved natal-aspect rows." }]
   },
-  "career-archetype-card": {
-    readerLocation: "You or Friends > Birth chart > Career Archetype",
+  "natal-aspect-patterns": {
+    readerLocation: "You or Friends > Birth chart > Patterns in your chart; Friends > Active Now",
     editability: "editable",
-    routes: [{ label: "Edit career copy", hash: "#exact-content?q=ms%2Fcareer", purpose: "reader-copy", note: "Opens the LIVE-first career content family." }]
+    routes: [
+      { label: "Edit natal aspect patterns", hash: "#content/aspect-patterns", purpose: "reader-copy", note: "Opens authored natal pattern records with coverage and preview tools." },
+      { label: "Edit Active Now patterns", hash: "#content/aspect-patterns/activation", purpose: "reader-copy", note: "Opens authored activation copy used when a current transit triggers a natal pattern." }
+    ]
   },
   "sky-placement-detail": {
     readerLocation: "Sky > placement detail > article and Rising-sign house horoscope",
@@ -564,6 +565,18 @@ export const writingSurfaceAdminAccess: Record<string, WritingSurfaceAdminAccess
       { label: "Review source drafts", hash: "#source-drafts", purpose: "source-review", note: "Searches all held Current Sky aspect passages, including drafts that are not allowed to serve." },
       { label: "Edit saved aspect rows", hash: "#exact-content?category=Sky&q=sky.", purpose: "reader-copy", note: "Opens saved exact-aspect rows in the editor." }
     ]
+  },
+  "sky-retrograde-summary": {
+    readerLocation: "Sky > retrograde callout > summary sentence",
+    editability: "editable",
+    routes: [{ label: "Edit retrograde summary", hash: "#exact-content?q=cms%2Fsky-retrograde-summary", purpose: "reader-copy", note: "Opens the reviewed LIVE-first summary template used above the retrograde planet cards." }],
+    cmsStarters: [{
+      label: "Start retrograde-summary template",
+      contentKey: "cms/sky-retrograde-summary",
+      surface: "sky",
+      headline: "Retrogrades",
+      allowedSlots: ["count", "planetList", "personalCount", "personalPlanetList"]
+    }]
   },
   "personal-transit-detail": {
     readerLocation: "Sky > placement detail > Aspects to the natal chart; You or Friends > personal transit detail",
@@ -654,9 +667,9 @@ export const writingSurfaceAdminAccess: Record<string, WritingSurfaceAdminAccess
   },
   "generated-reports": {
     readerLocation: "Purchased report delivery > report cover, chapters, and key dates",
-    editability: "partial",
+    editability: "editable",
     routes: [
-      { label: "Inspect report fulfillment", hash: "#report-fulfillment", purpose: "source-review", note: "Opens report orders, accepted units, validator outcomes, audits, provenance, and delivery state. Inline reader-copy editing is not available yet." }
+      { label: "Preview and edit delivered reports", hash: "#report-fulfillment", purpose: "reader-copy", note: "Opens the exact delivered title, TL;DR, body, and chapter sections. Corrections remain private until an editor explicitly publishes them." }
     ]
   },
   "surface-specs-builders": {
