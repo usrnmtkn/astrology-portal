@@ -907,6 +907,9 @@ test.describe("content dashboard admin user flow case studies", () => {
     });
     await expect(page.getByRole("status")).toContainText("Admin access was denied");
     await expect(page.getByRole("region", { name: "Admin status" })).toContainText("Access denied");
+    await expect(page.getByRole("region", { name: "Admin access required" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Review, sign off, publish" })).toHaveCount(0);
+    await expect(page.getByRole("button", { name: "Create" })).toBeDisabled();
     const secretInput = page.getByLabel("Secret");
     await expect(secretInput).toHaveValue("stale-secret");
     await expect(page.getByRole("button", { name: "Load content" })).toBeVisible();
@@ -1187,6 +1190,11 @@ test.describe("content dashboard admin user flow case studies", () => {
     await openCreateMenu(page);
     const createArticle = page.getByRole("menuitem", { name: /Create article/ });
     await expect(createArticle).toBeVisible();
+    await expect(createArticle).toBeFocused();
+    await createArticle.press("Escape");
+    await expect(createArticle).toBeHidden();
+    await expect(page.getByRole("button", { name: "Create" })).toBeFocused();
+    await openCreateMenu(page);
     await createArticle.click({ force: true });
     await expectAdminHeader(page, "Articles", "Admin / Write / Articles");
     await expect(page.locator(".admin-review-workspace, .admin-workbench").first()).toBeVisible();
@@ -3449,6 +3457,26 @@ test.describe("content dashboard admin user flow case studies", () => {
     expect(mobileNavRhythm).toEqual(desktopNavRhythm);
     await page.getByRole("button", { name: "Close Content Studio navigation" }).click();
     await expect(mobileNavigation).toBeHidden();
+    const mobileFilterToggle = page.getByRole("button", { name: /Filters/ });
+    const reviewQueueSearch = page.getByRole("textbox", { name: "Search review queue" });
+    await expect(mobileFilterToggle).toBeVisible();
+    await expect(mobileFilterToggle).toHaveAttribute("aria-expanded", "false");
+    await expect(reviewQueueSearch).toBeHidden();
+    await mobileFilterToggle.click();
+    await expect(mobileFilterToggle).toHaveAttribute("aria-expanded", "true");
+    await expect(reviewQueueSearch).toBeVisible();
+    await mobileFilterToggle.click();
+
+    await page.getByRole("button", { name: "Create" }).click();
+    const mobileCreateMenu = page.getByRole("menu");
+    await expect(mobileCreateMenu).toBeVisible();
+    const mobileCreateMenuBox = await mobileCreateMenu.boundingBox();
+    expect(mobileCreateMenuBox).not.toBeNull();
+    expect(mobileCreateMenuBox!.x).toBeGreaterThanOrEqual(0);
+    expect(mobileCreateMenuBox!.width).toBeLessThanOrEqual(390);
+    expect(mobileCreateMenuBox!.y + mobileCreateMenuBox!.height).toBeLessThanOrEqual(844);
+    await page.getByRole("button", { name: "Close create menu" }).click({ position: { x: 195, y: 200 } });
+    await expect(mobileCreateMenu).toBeHidden();
     const mobileNotification = page.getByRole("button", { name: "Dismiss notification" });
     if (await mobileNotification.isVisible()) await mobileNotification.click();
     await expectNoHorizontalOverflow(page, "Admin mobile home");
