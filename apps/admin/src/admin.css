@@ -12751,7 +12751,7 @@ body,
     padding: var(--admin-space-xl) var(--admin-space-3xl);
     position: sticky;
     top: 0;
-    z-index: 20;
+    z-index: var(--admin-z-mobile-sidebar);
   }
 
   .admin-dashboard .admin-brand {
