@@ -8943,6 +8943,15 @@ body,
   line-height: 1.25;
 }
 
+.admin-dashboard .admin-compatibility-reverse-actions {
+  justify-content: flex-start;
+  margin-top: var(--admin-space-md);
+}
+
+.admin-dashboard .admin-compatibility-reverse-actions button {
+  max-width: 100%;
+}
+
 .admin-dashboard .admin-contextual-copy-example {
   background: var(--admin-ui-surface-2);
   border: var(--border-width-thin) solid var(--admin-ui-border);
@@ -11557,6 +11566,10 @@ body,
     flex: 1 1 calc(33.333% - 8px);
     min-width: 0;
   }
+
+  .admin-dashboard .admin-compatibility-reverse-actions button {
+    width: 100%;
+  }
 }
 
 /* Editable Composition Map */
@@ -12865,6 +12878,10 @@ body,
 
 /* Content Studio audit: browsing rows prioritize editorial identity and keep
    operational settings in the editor instead of forcing a 9-column table. */
+.admin-dashboard .admin-template-page {
+  padding-inline: var(--admin-space-0);
+}
+
 .admin-dashboard .admin-reader-state-pill,
 .admin-dashboard .admin-status,
 .admin-dashboard .ui-pill {

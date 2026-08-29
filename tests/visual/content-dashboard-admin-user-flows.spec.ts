@@ -1106,6 +1106,17 @@ test.describe("content dashboard admin user flow case studies", () => {
     await openAdminDeepLink("#fallback-hooks?section=friends");
     await expectAdminHeader(page, "Fallback Articles & Passages", "Admin / Composition / Fallback articles & passages");
     await expect(page.getByRole("tab", { name: /Friends/ })).toHaveAttribute("aria-selected", "true");
+    const mainRail = await page.locator("section.admin-main").boundingBox();
+    const fallbackHeader = await page.locator(".admin-dashboard-header").boundingBox();
+    const fallbackRows = await page.locator(".admin-list-panel").first().boundingBox();
+    expect(mainRail, "Content Studio main rail has rendered geometry").not.toBeNull();
+    expect(fallbackHeader, "Fallback page header has rendered geometry").not.toBeNull();
+    expect(fallbackRows, "Fallback row panel has rendered geometry").not.toBeNull();
+    if (mainRail && fallbackHeader && fallbackRows) {
+      const contentInset = fallbackHeader.x - mainRail.x;
+      expect(contentInset, "desktop content inset leaves more width for rows").toBeLessThanOrEqual(54);
+      expect(fallbackRows.width, "fallback rows use the widened content rail").toBeGreaterThanOrEqual(mainRail.width - 108);
+    }
 
     await openAdminDeepLink("#surface-map?area=friends&status=partial");
     await expectAdminHeader(page, "Surface Map", "Admin / Composition / Surface map");
@@ -1593,7 +1604,13 @@ test.describe("content dashboard admin user flow case studies", () => {
       facts: {},
       source_snapshot: { contentSystem: "authored" }
     };
-    await seedAdminApi(page, { generatedRows: [...generatedContentRows, directionalCompatibilityRow] });
+    const reverseDirectionalCompatibilityRow = {
+      ...directionalCompatibilityRow,
+      id: "qa-reverse-directional-compatibility-content-row",
+      content_key: "authored/compat-deep/sun/aquarius/pisces",
+      headline: "Pisces"
+    };
+    await seedAdminApi(page, { generatedRows: [...generatedContentRows, directionalCompatibilityRow, reverseDirectionalCompatibilityRow] });
     await expectAdminRouteLoads(page, "/admin/content#compatibility");
 
     await expectAdminHeader(page, "Compatibility", "Admin / Write / Compatibility");
@@ -1620,9 +1637,44 @@ test.describe("content dashboard admin user flow case studies", () => {
     const compatibilityIdentity = compatibilityEditor.getByRole("region", { name: "Compatibility record identity" });
     await expect(compatibilityIdentity).toContainText("You: Pisces · Friend: Aquarius");
     await expect(compatibilityIdentity).toContainText("Reversing the two signs opens a different record");
+    const reverseButton = compatibilityIdentity.getByRole("button", { name: "Open reverse · Aquarius → Pisces" });
+    await expect(reverseButton).toBeEnabled();
+    await reverseButton.click();
+    await expect(compatibilityEditor.getByRole("heading", { name: "Edit Sun · Aquarius → Pisces" })).toBeVisible();
+    await expect(compatibilityIdentity).toContainText("You: Aquarius · Friend: Pisces");
+    await compatibilityIdentity.getByRole("button", { name: "Open reverse · Pisces → Aquarius" }).click();
+    await expect(compatibilityEditor.getByRole("heading", { name: "Edit Sun · Pisces → Aquarius" })).toBeVisible();
+    const compatibilityWriteup = compatibilityEditor.getByLabel("Compatibility write-up");
+    const originalCompatibilityWriteup = await compatibilityWriteup.inputValue();
+    await compatibilityWriteup.fill(`${originalCompatibilityWriteup} `);
+    await expect(compatibilityIdentity.getByRole("button", { name: "Open reverse · Aquarius → Pisces" })).toBeDisabled();
+    await compatibilityWriteup.fill(originalCompatibilityWriteup);
+    await expect(compatibilityIdentity.getByRole("button", { name: "Open reverse · Aquarius → Pisces" })).toBeEnabled();
+    await page.setViewportSize({ width: 390, height: 844 });
+    const mobileReverseButton = compatibilityIdentity.getByRole("button", { name: "Open reverse · Aquarius → Pisces" });
+    const [mobileIdentityBox, mobileReverseButtonBox] = await Promise.all([
+      compatibilityIdentity.boundingBox(),
+      mobileReverseButton.boundingBox()
+    ]);
+    expect(mobileIdentityBox).not.toBeNull();
+    expect(mobileReverseButtonBox).not.toBeNull();
+    expect(mobileReverseButtonBox!.width).toBeGreaterThanOrEqual(250);
+    expect(mobileReverseButtonBox!.width).toBeLessThanOrEqual(mobileIdentityBox!.width);
+    await expectNoHorizontalOverflow(page, "Compatibility reverse action on mobile");
+    await mkdir(adminScreenshotDir, { recursive: true });
+    await page.screenshot({
+      animations: "disabled",
+      path: path.join(adminScreenshotDir, "mobile-compatibility-reverse-button.png")
+    });
+    await page.setViewportSize({ width: 1440, height: 1000 });
     await expect(compatibilityEditor.getByLabel("Card title")).toHaveValue("Aquarius");
     await expect(compatibilityEditor.getByLabel("TL;DR (optional)")).toBeVisible();
-    await expect(compatibilityEditor.getByLabel("Compatibility write-up")).toBeVisible();
+    await expect(compatibilityWriteup).toBeVisible();
+    await compatibilityEditor.getByRole("button", { name: "Close" }).click();
+
+    await page.getByLabel("Search compatibility").fill("you aries friend libra");
+    await compatibilityRow.getByRole("button", { name: "Edit" }).click();
+    await expect(compatibilityEditor.getByRole("button", { name: "Reverse record unavailable" })).toBeDisabled();
     await compatibilityEditor.getByRole("button", { name: "Close" }).click();
 
     await page.locator(".admin-new-actions").getByRole("button", { name: "Template" }).click();
