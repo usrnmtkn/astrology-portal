@@ -24,6 +24,7 @@ function aspectGroup(value: string) {
 }
 
 export const cmsSurfaceKeys = {
+  retrogradeSummary: () => ["cms/sky-retrograde-summary"],
   soulRoadmap: (sun: string, moon: string, path: string) => [
     `cms/soul-roadmap/${keyPart(sun)}/${keyPart(moon)}/${keyPart(path)}`,
     "cms/soul-roadmap/template"
