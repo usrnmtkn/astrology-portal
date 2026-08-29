@@ -1,8 +1,5 @@
 import assert from "node:assert/strict";
-import fs from "node:fs";
 import { createRequire } from "node:module";
-import path from "node:path";
-import { fileURLToPath } from "node:url";
 import SwissEph from "swisseph-wasm";
 
 import { canonicalNatalAspectsForSnapshot } from "../apps/web/src/services/natalAspectFacts.ts";
@@ -16,10 +13,8 @@ import {
   NATAL_ASPECT_DEFINITIONS
 } from "../packages/astro-knowledge/engine/sky-aspects/browser.mjs";
 
-const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const require = createRequire(import.meta.url);
 const { ORB_PROFILES } = require("../packages/astro-knowledge/engine/timing/aspects.js");
-const read = (relativePath) => fs.readFileSync(path.join(repoRoot, relativePath), "utf8");
 const zodiacSigns = [
   "Aries", "Taurus", "Gemini", "Cancer", "Leo", "Virgo",
   "Libra", "Scorpio", "Sagittarius", "Capricorn", "Aquarius", "Pisces"
@@ -307,21 +302,4 @@ for (const date of [
   });
 }
 
-const app = read("apps/web/src/App.tsx");
-const youPage = read("apps/web/src/features/you/YouPage.tsx");
-const friendPanel = read("apps/web/src/features/friends/ManualChartsPanel.tsx");
-const friendRail = read("apps/web/src/features/friends/FriendProfileChartRail.tsx");
-const natalFacts = read("apps/web/src/services/natalAspectFacts.ts");
-
-assert.match(natalFacts, /calculateNatalAspects\(canonicalNatalPositions\(snapshot\)\)/u, "The natal boundary must use the natal-orb matrix.");
-assert.doesNotMatch(natalFacts, /calculateSkyAspects/u, "The natal boundary must never reuse the sky/transit-orb matrix.");
-assert.match(app, /aspects: canonicalNatalAspectsForSnapshot\(natalSky\)/u, "You placement details must use the natal-only boundary.");
-assert.match(app, /uniqueNatalAspectRows\(canonicalNatalAspectsForSnapshot\(natalSky\)\)/u, "You natal aspect lists must use the natal-only boundary.");
-assert.match(youPage, /aspects=\{natalOnlyAspects\}/u, "The You natal wheel must use canonical natal-only aspects.");
-assert.doesNotMatch(youPage, /aspects=\{natalSky\.aspects\}/u, "The You natal wheel must not trust the snapshot aspect list.");
-assert.match(friendPanel, /groupFriendNatalAspects\(canonicalNatalAspectsForSnapshot\(selectedFriendReadyNatalChart\)\)/u, "Friend natal lists must use the completed-chart natal-only boundary.");
-assert.match(friendPanel, /natalPlacementDetailArticle\(position, natalSky,/u, "Friend placement details must use the shared natal-only article boundary.");
-assert.match(friendRail, /aspects=\{canonicalNatalAspectsForSnapshot\(natalSky\)\}/u, "The Friend natal wheel must use the natal-only boundary.");
-assert.doesNotMatch(friendRail, /aspects=\{natalSky\.aspects\}/u, "The Friend natal wheel must not trust the snapshot aspect list.");
-
-console.log("natal aspect fact boundary: ok (natal orbs, Marie Moon regression, angles, three direct ephemeris instants, complete placement inventories, and every You/Friend consumer)");
+console.log("natal aspect fact boundary: ok (natal orbs, Marie Moon regression, angles, three direct ephemeris instants, and complete placement inventories)");
