@@ -1,5 +1,5 @@
 {
-  "description": "Pair-daily connective frames for the 'Today between you two' surface (PAIR-DAILY-TODAY-SPEC.md). OWNER-APPROVED 2026-08-06 (full 28-row set, exact wording). Serving is gated only on the renderPairDaily integration (CODEX-PAIR-DAILY-HANDOFF.md). Slots: {readerHandle} = the reader's @handle (when absent, serve opener/variant-3 which needs no handle); {friendHandle} = the friend's @handle (fallback display name, then 'your friend'); {readerClause}/{friendClause} = gerund-phrase clauses adapted from the approved daily At-a-Glance library; {bondClause} = the compressed effect line of the top-ranked bond transit. Computed facts never enter these frames.",
+  "description": "Pair-daily connective frames for the 'Today between you two' surface (PAIR-DAILY-TODAY-SPEC.md). OWNER-APPROVED 2026-08-06 (full 28-row set, exact wording), plus two owner-approved same-clause frames added 2026-08-28. Serving is gated only on the renderPairDaily integration (CODEX-PAIR-DAILY-HANDOFF.md). Slots: {readerHandle} = the reader's @handle (when absent, serve an opener which needs no handle); {friendHandle} = the friend's @handle (fallback display name, then 'your friend'); {readerClause}/{friendClause} = gerund-phrase clauses adapted from the approved daily At-a-Glance library; {sharedClause} = the exact clause shared by the reader and friend; {bondClause} = the compressed effect line of the top-ranked bond transit. Computed facts never enter these frames.",
   "rows": [
     {
       "contentKey": "fallback-hook/pair-daily/opener",
@@ -33,6 +33,28 @@
       "drafted_via": "assistant candidate; owner-directed V3 voice pass adopted 2026-08-06 (reader @handle kept, {bondClause} kept); not owner voice evidence",
       "spec": "PAIR-DAILY-TODAY-SPEC.md",
       "approved_via": "owner approval, cowork session 2026-08-06: 'i approve' given for the full 28-row set as written"
+    },
+    {
+      "contentKey": "fallback-hook/pair-daily/opener/shared-clause",
+      "content_role": "fallback_hook",
+      "grammar_frame": "slot_frame",
+      "body_you": "{readerHandle}, both you and {friendHandle} are {sharedClause}.",
+      "body_they": "{readerHandle}, both you and {friendHandle} are {sharedClause}.",
+      "review_status": "approved",
+      "drafted_via": "owner-directed exact same-clause collapse wording 2026-08-28",
+      "spec": "PAIR-DAILY-TODAY-SPEC.md",
+      "approved_via": "owner approval, cowork session 2026-08-28: when both people have the same exact sentence, say 'both you and name are' and ship the logic update"
+    },
+    {
+      "contentKey": "fallback-hook/pair-daily/opener/shared-clause/no-reader-handle",
+      "content_role": "fallback_hook",
+      "grammar_frame": "slot_frame",
+      "body_you": "Both you and {friendHandle} are {sharedClause}.",
+      "body_they": "Both you and {friendHandle} are {sharedClause}.",
+      "review_status": "approved",
+      "drafted_via": "owner-directed exact same-clause collapse wording 2026-08-28; reader-handle-free fallback",
+      "spec": "PAIR-DAILY-TODAY-SPEC.md",
+      "approved_via": "owner approval, cowork session 2026-08-28: when both people have the same exact sentence, say 'both you and name are' and ship the logic update"
     },
     {
       "contentKey": "fallback-hook/pair-daily/shared-bond/soft",

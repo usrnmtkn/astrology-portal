@@ -23,7 +23,7 @@ const templates = readPackageJson("templates/fallback-templates-v3.json");
 const pairFrames = readPackageJson("source-rows/pair-daily-frames-v1.json");
 const pairClauses = readPackageJson("source-rows/pair-daily-clauses-v1.json");
 
-assert.equal(pairFrames.rows.length, 28);
+assert.equal(pairFrames.rows.length, 30);
 assert.equal(pairClauses.rows.length, 110);
 assert.ok([...pairFrames.rows, ...pairClauses.rows].every((row) => row.review_status === "approved"));
 const bondClauses = pairClauses.rows.filter((row) => (
@@ -36,6 +36,14 @@ assert.ok(bondClauses.every((row) => row.source_key?.startsWith("fallback-hook/b
 assert.equal(
   pairFrames.rows.find((row) => row.contentKey === "fallback-hook/pair-daily/opener")?.body_you,
   "{readerHandle}, you are {readerClause}, while {friendHandle} is {friendClause}."
+);
+assert.equal(
+  pairFrames.rows.find((row) => row.contentKey === "fallback-hook/pair-daily/opener/shared-clause")?.body_you,
+  "{readerHandle}, both you and {friendHandle} are {sharedClause}."
+);
+assert.equal(
+  pairFrames.rows.find((row) => row.contentKey === "fallback-hook/pair-daily/opener/shared-clause/no-reader-handle")?.body_you,
+  "Both you and {friendHandle} are {sharedClause}."
 );
 assert.equal(
   pairFrames.rows.find((row) => row.contentKey === "fallback-hook/pair-daily/close/hard")?.body_you,
@@ -135,6 +143,67 @@ const genericFallback = renderer.renderPairDaily({
   variant: 1
 });
 assert.match(genericFallback.body, /while your friend is/u);
+
+const sameClauseFacts = {
+  reader: {
+    handle: "satori",
+    clauseKey: "fallback-hook/pair-daily/clause/opposition/saturn"
+  },
+  friend: {
+    handle: null,
+    displayName: "Alisa P",
+    clauseKey: "fallback-hook/pair-daily/clause/opposition/saturn"
+  },
+  shared: { kind: "bond", family: "hard", transiting: "jupiter" }
+};
+const sameClauseOutput = renderer.renderPairDaily({ ...sameClauseFacts, variant: 1 });
+const expectedSameClauseBody = "@satori, both you and Alisa P are noticing when trying harder is no longer fixing the problem. You are both stretched a little thin, so even something minor can start to feel personal. You are making plans for time, money, or energy neither of you actually has, so cut it back before the excitement becomes another obligation.";
+assert.equal(sameClauseOutput.body, expectedSameClauseBody);
+assert.deepEqual(sameClauseOutput.sourceKeys.slice(0, 3), [
+  "fallback-hook/pair-daily/opener/shared-clause",
+  sameClauseFacts.reader.clauseKey,
+  sameClauseFacts.friend.clauseKey
+]);
+assert.equal(
+  renderNodePairDaily({ ...sameClauseFacts, variant: 1 }).body,
+  expectedSameClauseBody,
+  "Node resolver must collapse exact duplicate clauses identically to the shipped browser dist resolver."
+);
+
+const sameClauseWithoutReaderHandle = renderer.renderPairDaily({
+  ...sameClauseFacts,
+  reader: { ...sameClauseFacts.reader, handle: null },
+  variant: 1
+});
+assert.match(
+  sameClauseWithoutReaderHandle.body,
+  /^Both you and Alisa P are noticing when trying harder is no longer fixing the problem\./u
+);
+assert.equal(
+  sameClauseWithoutReaderHandle.sourceKeys[0],
+  "fallback-hook/pair-daily/opener/shared-clause/no-reader-handle"
+);
+
+const sameKeyDifferentVoices = renderer.renderPairDaily({
+  ...baseFacts,
+  reader: {
+    ...baseFacts.reader,
+    clauseKey: "fallback-hook/pair-daily/clause/square/sun"
+  },
+  friend: {
+    ...baseFacts.friend,
+    clauseKey: "fallback-hook/pair-daily/clause/square/sun"
+  },
+  shared: { kind: null },
+  variant: 1
+});
+assert.match(sameKeyDifferentVoices.body, /version of yourself/u);
+assert.match(sameKeyDifferentVoices.body, /version of themselves/u);
+assert.equal(
+  sameKeyDifferentVoices.sourceKeys[0],
+  "fallback-hook/pair-daily/opener",
+  "A shared content key must not collapse when its complete you- and they-voice clauses differ."
+);
 
 const houseFallback = renderer.renderPairDaily({
   ...baseFacts,
