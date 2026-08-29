@@ -4,6 +4,7 @@ import {
   natalPlacementSelectionFromText,
   natalPlacementSourceGroups
 } from "../apps/admin/src/natalPlacementSources.ts";
+import { renderNatalPlacement } from "../apps/web/src/content/fallbackArchitectureV3/resolver/renderFallback.mjs";
 
 const selection = natalPlacementSelectionFromText("Chiron in Taurus in the 12th house");
 assert.deepEqual(selection, { planet: "chiron", sign: "taurus", house: "12" });
@@ -27,6 +28,7 @@ assert.ok(sources.some((source) => source.key === "fallback-hook/placement-sente
 assert.ok(sources.some((source) => source.key === "fallback-hook/placement-house-sentence/chiron/12"));
 assert.ok(sources.some((source) => source.key === "fallback-hook/house-meaning/12"));
 assert.ok(sources.some((source) => source.key === "fallback-template/natal.planet-in-sign/chiron"));
+assert.match(groups.find((group) => group.key === "exact")?.description ?? "", /Optional exact override/);
 assert.match(
   sources.find((source) => source.key === "fallback-hook/placement-sentence/chiron/taurus")?.scope ?? "",
   /Chiron in Taurus, across every house/
@@ -71,4 +73,15 @@ assert.ok(lilithVirgoFourthSources.some((source) => source.key === "fallback-hoo
 const lilithScorpioFourthSources = natalPlacementSourceGroups("lilith", "scorpio", "4").flatMap((group) => group.sources);
 assert.ok(lilithScorpioFourthSources.some((source) => source.key === "fallback-hook/natal-you-placement-complete-final/lilith/scorpio/4"));
 
-console.log("Natal placement source finder maps a reader page to its exact editable source rows.");
+const sunAriesFirst = renderNatalPlacement({ planet: "sun", sign: "aries", house: 1, voice: "you" });
+assert.equal(sunAriesFirst.headline, "Sun in Aries in the 1st house");
+assert.equal(sunAriesFirst.parts.length, 2, "A full natal placement preview must render both sign and house sections.");
+assert.equal(sunAriesFirst.partKeys.length, 2, "Every rendered natal section must retain source provenance.");
+assert.ok(sunAriesFirst.parts.every((part) => part.trim().length > 0));
+assert.doesNotMatch(sunAriesFirst.body, /\{\{|\}\}/, "Reader preview must not expose unresolved template variables.");
+
+const friendSunAriesFirst = renderNatalPlacement({ planet: "sun", sign: "aries", house: 1, voice: "Maya" });
+assert.match(friendSunAriesFirst.body, /Maya's Sun|they|them/i, "The natal preview must support the Friend voice.");
+assert.doesNotMatch(friendSunAriesFirst.body, /\{\{|\}\}/);
+
+console.log("Natal placement source finder maps optional overrides and renders effective You/Friend reader copy with source provenance.");
