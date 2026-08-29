@@ -10142,6 +10142,82 @@ body,
   position: static;
 }
 
+/* Content tables use semantic column classes because optional wiring columns
+   make positional nth-child sizing unreliable. Tags stay compact at every
+   horizontal scroll position instead of wrapping into tall pills. */
+.admin-dashboard .admin-content-table th.admin-col-select,
+.admin-dashboard .admin-content-table td.admin-col-select { width: 54px; }
+.admin-dashboard .admin-content-table th.admin-col-content,
+.admin-dashboard .admin-content-table td.admin-col-content { width: 340px; }
+.admin-dashboard .admin-content-table th.admin-col-visibility,
+.admin-dashboard .admin-content-table td.admin-col-visibility,
+.admin-dashboard .admin-content-table th.admin-col-editorial,
+.admin-dashboard .admin-content-table td.admin-col-editorial { width: 132px; }
+.admin-dashboard .admin-content-table th.admin-col-destination,
+.admin-dashboard .admin-content-table td.admin-col-destination,
+.admin-dashboard .admin-content-table th.admin-col-wiring,
+.admin-dashboard .admin-content-table td.admin-col-wiring { width: 178px; }
+.admin-dashboard .admin-content-table th.admin-col-surface,
+.admin-dashboard .admin-content-table td.admin-col-surface,
+.admin-dashboard .admin-content-table th.admin-col-kind,
+.admin-dashboard .admin-content-table td.admin-col-kind { width: 126px; }
+.admin-dashboard .admin-content-table th.admin-col-updated,
+.admin-dashboard .admin-content-table td.admin-col-updated { width: 116px; }
+.admin-dashboard .admin-content-table th.admin-col-source,
+.admin-dashboard .admin-content-table td.admin-col-source { width: 154px; }
+.admin-dashboard .admin-content-table th.admin-col-edit,
+.admin-dashboard .admin-content-table td.admin-col-edit { width: 92px; }
+
+.admin-dashboard .admin-content-table td {
+  display: table-cell;
+  white-space: normal;
+}
+
+.admin-dashboard .admin-content-table td.admin-col-content {
+  display: grid;
+}
+
+.admin-dashboard .admin-content-table td.admin-col-source {
+  line-height: 1.25;
+}
+
+.admin-dashboard .admin-content-table td.admin-col-source small {
+  color: var(--admin-ui-muted);
+  display: block;
+  margin-top: var(--admin-space-xs);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.admin-dashboard .admin-content-table .admin-table-tag {
+  border-radius: var(--admin-ui-radius-sm);
+  display: inline-flex;
+  font-size: var(--admin-ui-type-caption);
+  line-height: 1.15;
+  margin: 0;
+  max-width: 100%;
+  min-height: 24px;
+  overflow: hidden;
+  padding: var(--admin-space-2xs) var(--admin-space-md);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.admin-dashboard .admin-editor-audience-note {
+  align-items: start;
+  background: var(--admin-ui-neutral-soft);
+  border: var(--border-width-thin) solid var(--admin-ui-border);
+  border-radius: var(--admin-ui-radius-md);
+  display: grid;
+  gap: var(--admin-space-xs);
+  padding: var(--admin-space-lg);
+}
+
+.admin-dashboard .admin-editor-audience-note span {
+  color: var(--admin-ui-muted);
+}
+
 .admin-dashboard .admin-package-edit-panel {
   background: var(--admin-ui-surface-2);
   border: var(--border-width-thin) solid var(--admin-ui-border);
@@ -12740,4 +12816,153 @@ body,
   display: flex;
   flex-wrap: wrap;
   gap: var(--admin-space-lg);
+}
+
+/* Content Studio audit: browsing rows prioritize editorial identity and keep
+   operational settings in the editor instead of forcing a 9-column table. */
+.admin-dashboard .admin-reader-state-pill,
+.admin-dashboard .admin-status,
+.admin-dashboard .ui-pill {
+  border-radius: var(--admin-ui-radius-sm);
+  line-height: 1.15;
+  min-height: 26px;
+  padding: var(--admin-space-2xs) var(--admin-space-lg);
+  white-space: nowrap;
+}
+
+.admin-dashboard .admin-content-table.admin-content-table--browse {
+  min-width: 820px;
+  width: 100%;
+}
+
+.admin-dashboard .admin-content-table--browse th.admin-col-content,
+.admin-dashboard .admin-content-table--browse td.admin-col-content {
+  width: auto;
+}
+
+.admin-dashboard .admin-content-table--browse th.admin-col-visibility,
+.admin-dashboard .admin-content-table--browse td.admin-col-visibility,
+.admin-dashboard .admin-content-table--browse th.admin-col-editorial,
+.admin-dashboard .admin-content-table--browse td.admin-col-editorial {
+  width: 118px;
+}
+
+.admin-dashboard .admin-content-table--browse th.admin-col-source,
+.admin-dashboard .admin-content-table--browse td.admin-col-source {
+  width: 138px;
+}
+
+.admin-dashboard .admin-content-table--browse th.admin-col-edit,
+.admin-dashboard .admin-content-table--browse td.admin-col-edit {
+  width: 82px;
+}
+
+.admin-dashboard .admin-content-row:focus-visible {
+  box-shadow: inset 0 0 0 2px var(--admin-ui-primary);
+  outline: none;
+}
+
+.admin-dashboard .admin-content-row:hover,
+.admin-dashboard .admin-content-row:focus-visible {
+  background: var(--admin-ui-neutral-soft);
+}
+
+.admin-dashboard .admin-template-tabs {
+  gap: var(--admin-space-sm);
+}
+
+.admin-dashboard .admin-template-tabs button {
+  border-radius: var(--admin-ui-radius-md);
+  gap: var(--admin-space-md);
+  min-height: 38px;
+  padding: var(--admin-space-sm) var(--admin-space-lg);
+}
+
+.admin-dashboard .admin-template-tabs button strong {
+  color: var(--admin-ui-muted);
+  font-size: var(--admin-ui-type-caption);
+  font-variant-numeric: tabular-nums;
+}
+
+.admin-dashboard .admin-authoring-brief {
+  background: var(--admin-ui-info-soft);
+  border-color: var(--admin-ui-info-border);
+}
+
+.admin-dashboard .admin-authoring-steps {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--admin-space-md);
+}
+
+.admin-dashboard .admin-authoring-steps span {
+  align-items: center;
+  color: var(--admin-ui-muted);
+  display: inline-flex;
+  font-size: var(--admin-ui-type-hint);
+  gap: var(--admin-space-sm);
+}
+
+.admin-dashboard .admin-authoring-steps b {
+  align-items: center;
+  background: var(--admin-ui-surface);
+  border: var(--border-width-thin) solid var(--admin-ui-border-strong);
+  border-radius: 50%;
+  color: var(--admin-ui-copy);
+  display: inline-flex;
+  height: 22px;
+  justify-content: center;
+  width: 22px;
+}
+
+.admin-dashboard .admin-required-marker {
+  background: var(--admin-ui-warning-soft);
+  border-radius: var(--admin-ui-radius-sm);
+  color: var(--admin-warning-ui-copy);
+  font-family: var(--font-label);
+  font-size: var(--admin-ui-type-caption);
+  font-style: normal;
+  letter-spacing: 0;
+  margin-left: var(--admin-space-sm);
+  padding: var(--admin-space-2xs) var(--admin-space-sm);
+  text-transform: none;
+}
+
+.admin-dashboard .admin-editor-settings {
+  border: var(--border-width-thin) solid var(--admin-ui-border);
+  border-radius: var(--admin-ui-radius-lg);
+  overflow: hidden;
+}
+
+.admin-dashboard .admin-editor-settings > summary {
+  background: var(--admin-ui-surface-2);
+  cursor: pointer;
+  font-weight: 650;
+  padding: var(--admin-space-xl) var(--admin-space-2xl);
+}
+
+.admin-dashboard .admin-editor-settings .admin-metadata-fields {
+  border: 0;
+  border-radius: 0;
+}
+
+.admin-dashboard .admin-savebar-next-step {
+  color: var(--admin-ui-muted);
+  flex: 1 1 220px;
+  font-size: var(--admin-ui-type-hint);
+  text-align: right;
+}
+
+@media (max-width: 720px) {
+  .admin-dashboard .admin-content-table.admin-content-table--browse {
+    min-width: 720px;
+  }
+
+  .admin-dashboard .admin-authoring-steps {
+    display: grid;
+  }
+
+  .admin-dashboard .admin-savebar-next-step {
+    display: none;
+  }
 }

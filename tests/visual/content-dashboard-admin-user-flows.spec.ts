@@ -957,6 +957,31 @@ test.describe("content dashboard admin user flow case studies", () => {
     await assertNoBrowserErrors();
   });
 
+  test("Natal Chart sidebar opens the placement source finder as a distinct workspace", async ({ page }) => {
+    const assertNoBrowserErrors = await expectNoBrowserErrors(page);
+    await seedAdminApi(page);
+    await expectAdminRouteLoads(page, "/admin/content");
+
+    const navigation = page.getByRole("navigation", { name: "Content operations" });
+    await navigation.getByRole("button", { name: "Natal Chart" }).click();
+
+    await expectAdminHeader(page, "Natal Chart Write-ups", "Admin / Write / Natal chart");
+    await expect(page).toHaveURL(/#exact-content\?category=Natal\+Chart$/);
+    await expect(navigation.getByRole("button", { name: "Natal Chart" })).toHaveAttribute("aria-current", "page");
+    await expect(navigation.getByRole("button", { name: "Content Library" })).not.toHaveAttribute("aria-current", "page");
+    await expect(page.getByRole("region", { name: "Find natal placement source writing" })).toBeVisible();
+    await expect(page.getByLabel("Natal placement planet or point")).toBeVisible();
+    await expect(page.getByLabel("Natal placement zodiac sign")).toBeVisible();
+    await expect(page.getByLabel("Natal placement house")).toBeVisible();
+
+    await navigation.getByRole("button", { name: "Content Library" }).click();
+    await expectAdminHeader(page, "Content Library", "Admin / Write / Content library");
+    await expect(page.getByLabel("Category")).toHaveValue("all");
+    await expect(navigation.getByRole("button", { name: "Content Library" })).toHaveAttribute("aria-current", "page");
+
+    await assertNoBrowserErrors();
+  });
+
   test("admin dashboard deep links restore primary surfaces, filters, and history state", async ({ page }) => {
     test.setTimeout(120_000);
     const assertNoBrowserErrors = await expectNoBrowserErrors(page);
@@ -1118,6 +1143,14 @@ test.describe("content dashboard admin user flow case studies", () => {
         await fillAdminEditorField(editor, "Reusable phrase text", `${createCase.action} body copy for the dashboard admin save contract.`);
       } else {
         await expect(editor.getByLabel("Content key")).toHaveValue(createCase.contentKey);
+        if (createCase.action === "Create content row") {
+          await expect(editor.getByText("Title / headline", { exact: true })).toBeVisible();
+          await expect(editor.getByText("TL;DR / summary", { exact: true })).toBeVisible();
+          await expect(editor.getByText("Full passage / body", { exact: true })).toBeVisible();
+          await expect(editor.getByText(/Stored internally as Headline/)).toBeVisible();
+          await expect(editor.getByText(/Stored internally as Summary/)).toBeVisible();
+          await expect(editor.getByText(/Stored internally as Body/)).toBeVisible();
+        }
         await fillAdminEditorField(editor, createCase.headlineLabel ?? "Headline", `${createCase.action} QA row`);
         await fillAdminEditorField(editor, createCase.bodyLabel ?? "Body", `${createCase.action} body copy for the dashboard admin save contract.`);
       }
@@ -1460,13 +1493,59 @@ test.describe("content dashboard admin user flow case studies", () => {
 
   test("compatibility is a dedicated primary workspace", async ({ page }) => {
     const assertNoBrowserErrors = await expectNoBrowserErrors(page);
-    await seedAdminApi(page);
+    const directionalCompatibilityRow = {
+      ...generatedContentRows.find((row) => row.id === "qa-compatibility-content-row")!,
+      id: "qa-directional-compatibility-content-row",
+      content_key: "authored/compat-deep/sun/pisces/aquarius",
+      headline: "Aquarius",
+      summary: "",
+      body: "With your Sun in Pisces, you give your Aquarius friend room to choose their own direction.",
+      facts: {},
+      source_snapshot: { contentSystem: "authored" }
+    };
+    await seedAdminApi(page, { generatedRows: [...generatedContentRows, directionalCompatibilityRow] });
     await expectAdminRouteLoads(page, "/admin/content#compatibility");
 
     await expectAdminHeader(page, "Compatibility", "Admin / Write / Compatibility");
     const compatibilitySections = page.getByRole("tablist", { name: "Compatibility sections" });
     await expect(compatibilitySections.getByRole("tab", { name: /All compatibility/ })).toHaveAttribute("aria-selected", "true");
-    await expect(page.locator(".admin-content-row", { hasText: "compatibility.sun.aries.libra" })).toHaveCount(1);
+    await expect(page.getByRole("region", { name: "Compatibility sections summary" })).toHaveCount(0);
+    await expect(page.getByRole("columnheader", { name: "Surface" })).toHaveCount(0);
+    await expect(page.getByRole("columnheader", { name: "Kind" })).toHaveCount(0);
+    await expect(page.getByRole("columnheader", { name: "Updated" })).toHaveCount(0);
+    const compatibilityRow = page.locator(".admin-content-row", { hasText: "compatibility.sun.aries.libra" });
+    await expect(compatibilityRow).toHaveCount(1);
+    await expect(compatibilityRow.getByText("Sun · Aries → Libra", { exact: true })).toBeVisible();
+    await expect(compatibilityRow).toContainText("You: Aries · Friend: Libra");
+    await expect(page.getByLabel("Compatibility sort").locator("option:checked")).toHaveText("Newest updated");
+    await page.getByLabel("Compatibility sort").selectOption("title-asc");
+    await expect(page.getByLabel("Compatibility sort").locator("option:checked")).toHaveText("Planet + sign pair A-Z");
+    await page.getByLabel("Search compatibility").fill("you pisces friend aquarius");
+    const directionalCompatibilityResult = page.locator(".admin-content-row", { hasText: "authored/compat-deep/sun/pisces/aquarius" });
+    await expect(directionalCompatibilityResult.getByText("Sun · Pisces → Aquarius", { exact: true })).toBeVisible();
+    await expect(directionalCompatibilityResult).toContainText("You: Pisces · Friend: Aquarius");
+    await directionalCompatibilityResult.getByRole("button", { name: "Edit" }).click();
+    const compatibilityEditor = page.getByRole("dialog", { name: "Generated content editor" });
+    await expect(compatibilityEditor.getByRole("heading", { name: "Edit Sun · Pisces → Aquarius" })).toBeVisible();
+    const compatibilityIdentity = compatibilityEditor.getByRole("region", { name: "Compatibility record identity" });
+    await expect(compatibilityIdentity).toContainText("You: Pisces · Friend: Aquarius");
+    await expect(compatibilityIdentity).toContainText("Reversing the two signs opens a different record");
+    await expect(compatibilityEditor.getByLabel("Card title")).toHaveValue("Aquarius");
+    await expect(compatibilityEditor.getByLabel("TL;DR (optional)")).toBeVisible();
+    await expect(compatibilityEditor.getByLabel("Compatibility write-up")).toBeVisible();
+    await compatibilityEditor.getByRole("button", { name: "Close" }).click();
+
+    await page.locator(".admin-new-actions").getByRole("button", { name: "Template" }).click();
+    await expect(compatibilityEditor.getByRole("heading", { name: "Create compatibility template" })).toBeVisible();
+    await expect(compatibilityEditor.getByRole("region", { name: "What you are creating" })).toContainText("Creating an assembly pattern");
+    await expect(compatibilityEditor.getByRole("region", { name: "Content role" })).toContainText("Template pattern");
+    await expect(compatibilityEditor.getByLabel("Template name")).toBeVisible();
+    await expect(compatibilityEditor.getByLabel("Template purpose (optional)")).toBeVisible();
+    await expect(compatibilityEditor.getByLabel("Template pattern")).toBeVisible();
+    await expect(compatibilityEditor.getByRole("button", { name: "Mark reviewed" })).toHaveCount(0);
+    await expect(compatibilityEditor.getByRole("button", { name: "Publish to app" })).toHaveCount(0);
+    await expect(compatibilityEditor).toContainText("Save this draft before review or publication");
+    await compatibilityEditor.getByRole("button", { name: "Close" }).click();
     await expect(page.locator(".admin-content-row", { hasText: "Moon in Virgo" })).toHaveCount(0);
     await expect(page.getByRole("navigation", { name: "Content operations" }).getByRole("button", { name: "Compatibility" })).toHaveAttribute("aria-current", "page");
 
@@ -2245,13 +2324,22 @@ test.describe("content dashboard admin user flow case studies", () => {
     const houseGroup = page.getByRole("region", { name: "House horoscopes" });
     await expect(houseGroup.getByText("Jupiter in Leo · 10th House", { exact: true })).toBeVisible();
     await expect(houseGroup.getByText("House horoscope", { exact: true })).toBeVisible();
+    const compactTags = houseGroup.locator(".admin-table-tag");
+    await expect(compactTags.first()).toBeVisible();
+    const tagHeights = await compactTags.evaluateAll((elements) => elements.map((element) => Math.round(element.getBoundingClientRect().height)));
+    expect(tagHeights.length).toBeGreaterThan(0);
+    expect(Math.max(...tagHeights)).toBeLessThanOrEqual(24);
     await page.getByLabel("Search fallback articles and passages").fill("Jupiter in Leo 10th House");
     await expect(articleGroup).toBeHidden();
     await expect(houseGroup.getByText("Jupiter in Leo · 10th House", { exact: true })).toBeVisible();
     await houseGroup.getByRole("button", { name: "Edit" }).click();
-    await expect(page.getByRole("dialog", { name: "Generated content editor" }).getByLabel("Headline"))
+    const houseEditor = page.getByRole("dialog", { name: "Generated content editor" });
+    await expect(houseEditor.getByLabel("Editor label"))
       .toHaveValue("Jupiter in Leo · 10th House");
-    await page.getByRole("dialog", { name: "Generated content editor" }).getByRole("button", { name: "Close" }).click();
+    await expect(houseEditor.getByRole("note", { name: "Current source: You" })).toContainText("Friends also has horoscope content");
+    await expect(houseEditor.getByLabel("Reader passage · You")).toHaveValue("Jupiter in Leo moves through your 10th house.");
+    await expect(houseEditor.getByLabel(/They/)).toHaveCount(0);
+    await houseEditor.getByRole("button", { name: "Close" }).click();
 
     await page.getByLabel("Search fallback articles and passages").fill("no matching astrology row");
     await expect(page.getByText("No rows match these filters.", { exact: true })).toBeVisible();
