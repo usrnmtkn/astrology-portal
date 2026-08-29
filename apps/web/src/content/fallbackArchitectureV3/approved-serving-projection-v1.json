@@ -1,6 +1,6 @@
 {
   "schema": "tldrastro-approved-serving-projection/v1",
-  "packageVersion": "v3-2026-08-27b",
+  "packageVersion": "v3-2026-08-28a",
   "policy": {
     "eligibleReviewStatuses": [
       "approved",
@@ -18,16 +18,16 @@
     "runtimeFilter": "defense-in-depth"
   },
   "manifest": {
-    "contentHash": "ecbd8bfcddb0edd8446c658e2188e00c",
-    "keyManifestHash": "3fc68c87fa0a87eb6fcca871e524ab37",
-    "keyCount": 9220
+    "contentHash": "5b1c9c0d13e17d71d7e096df73c26d1d",
+    "keyManifestHash": "8055de00426ab8ac705b171e105c6a50",
+    "keyCount": 9222
   },
   "lineage": {
     "file": "approved-serving-lineage-v1.json",
-    "sha256": "4e8e5e341b63f0db9ff9bee1a6479107f10d3ef6a2161158de99d713b8cb885e",
-    "count": 9761,
-    "emissionCount": 9837,
-    "exactSourceMatchCount": 8719
+    "sha256": "efa904911a485688afcc62a7599622c3f48a24d553a267c94824c5fb12a1726a",
+    "count": 9763,
+    "emissionCount": 9839,
+    "exactSourceMatchCount": 8721
   },
   "partitions": {
     "skyCore": {
@@ -45,7 +45,7 @@
     },
     "relationshipHooks": {
       "file": "bundled-relationship-hook-rows-v3.json",
-      "hookRows": 824
+      "hookRows": 826
     },
     "emptyHouses": {
       "file": "bundled-empty-house-rows-v3.json",
