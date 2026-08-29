@@ -91,11 +91,11 @@ const adminPages = [
 ];
 
 const adminCreateCases = [
-  { action: "Create article", hash: "articles", editorHeading: "Create article", eventType: "sky_article", blockType: "essay", contentKey: "article/manual/new-row" },
-  { action: "Create content row", hash: "exact-content", editorHeading: "Author new row", eventType: "essay", blockType: "essay", contentKey: "content/manual/new-row" },
+  { action: "Create article", hash: "articles", editorHeading: "Create article", eventType: "sky_article", blockType: "essay", contentKey: "article/manual/new-row", headlineLabel: "Article title", bodyLabel: "Article body" },
+  { action: "Create content row", hash: "exact-content", editorHeading: "Create saved row", eventType: "essay", blockType: "essay", contentKey: "content/manual/new-row", headlineLabel: "Title / headline", bodyLabel: "Full passage / body" },
   { action: "Create reusable phrase", hash: "vocabulary", editorHeading: "Create reusable phrase", eventType: "vocab", blockType: "vocabulary_phrase", contentKey: "vocab/planets/create-reusable-phrase-qa-row", phraseEditor: true },
-  { action: "Create template", hash: "templates", editorHeading: "Author new row", eventType: "slot-template", blockType: "template", contentKey: "slot-template/manual/new-template" },
-  { action: "Create fallback hook", hash: "fallback-hooks", editorHeading: "Author new row", eventType: "fallback-hook", blockType: "fallback_hook", contentKey: "fallback-hook/manual/new-hook", headlineLabel: "Editor label", bodyLabel: "Reader copy" }
+  { action: "Create template", hash: "templates", editorHeading: "Create reader-copy template", eventType: "slot-template", blockType: "template", contentKey: "slot-template/manual/new-template", headlineLabel: "Template name", bodyLabel: "Template pattern" },
+  { action: "Create fallback hook", hash: "fallback-hooks", editorHeading: "Create fallback passage", eventType: "fallback-hook", blockType: "fallback_hook", contentKey: "fallback-hook/manual/new-hook", headlineLabel: "Editor label", bodyLabel: "Reader copy" }
 ];
 
 const forbiddenReaderPreviewCopy = /\b(?:Interpretation in review|Notice how this placement asks|puts first impressions, outward style|write a sentence|source framework|sourceSnapshot|templateVersion|Missing VITE|undefined|null|NaN)\b/i;
@@ -1140,19 +1140,19 @@ test.describe("content dashboard admin user flow case studies", () => {
       await expect(editor.getByRole("heading", { name: createCase.editorHeading })).toBeVisible();
       if (createCase.phraseEditor) {
         await fillAdminEditorField(editor, "Phrase title", `${createCase.action} QA row`);
-        await fillAdminEditorField(editor, "Reusable phrase text", `${createCase.action} body copy for the dashboard admin save contract.`);
+        await fillAdminEditorField(editor, "Reusable phrase", `${createCase.action} body copy for the dashboard admin save contract.`);
       } else {
         await expect(editor.getByLabel("Content key")).toHaveValue(createCase.contentKey);
         if (createCase.action === "Create content row") {
           await expect(editor.getByText("Title / headline", { exact: true })).toBeVisible();
           await expect(editor.getByText("TL;DR / summary", { exact: true })).toBeVisible();
-          await expect(editor.getByText("Full passage / body", { exact: true })).toBeVisible();
+          await expect(editor.getByLabel("Full passage / body")).toBeVisible();
           await expect(editor.getByText(/Stored internally as Headline/)).toBeVisible();
           await expect(editor.getByText(/Stored internally as Summary/)).toBeVisible();
           await expect(editor.getByText(/Stored internally as Body/)).toBeVisible();
         }
-        await fillAdminEditorField(editor, createCase.headlineLabel ?? "Headline", `${createCase.action} QA row`);
-        await fillAdminEditorField(editor, createCase.bodyLabel ?? "Body", `${createCase.action} body copy for the dashboard admin save contract.`);
+        await fillAdminEditorField(editor, createCase.headlineLabel, `${createCase.action} QA row`);
+        await fillAdminEditorField(editor, createCase.bodyLabel, `${createCase.action} body copy for the dashboard admin save contract.`);
       }
       await editor.getByRole("button", { name: "Save" }).evaluate((element) => {
         (element as HTMLButtonElement).click();
@@ -1208,9 +1208,9 @@ test.describe("content dashboard admin user flow case studies", () => {
     ]);
     await expect(relatedPassages.locator("details[open]")).toHaveCount(0);
     const editorReadingOrder = await editor.locator(".admin-post-editor").evaluate((postEditor) => {
-      const headline = postEditor.querySelector('[aria-label="Headline"]')?.closest("label");
-      const summary = postEditor.querySelector('[aria-label="Summary"]')?.closest("label");
-      const body = postEditor.querySelector('[aria-label="Body"]')?.closest("label");
+      const headline = postEditor.querySelector('[aria-label="Article title"]')?.closest("label");
+      const summary = postEditor.querySelector('[aria-label="TL;DR / summary"]')?.closest("label");
+      const body = postEditor.querySelector('[aria-label="Article body"]')?.closest("label");
       const related = postEditor.querySelector('[aria-label="Related reader horoscope passages"]');
       const nodes = [headline, summary, body, related];
       return nodes.every(Boolean) && nodes.every((node, index) => (
@@ -1225,12 +1225,12 @@ test.describe("content dashboard admin user flow case studies", () => {
       fullPage: true,
       path: path.join(adminScreenshotDir, "desktop-sky-related-passages.png")
     });
-    await editor.getByLabel("Headline").fill("Sun in Cancer QA edit");
-    await editor.getByLabel("Summary").fill("Updated summary from the visual admin editor.");
-    await editor.getByLabel("Body").fill("Updated body from the visual admin editor.");
+    await editor.getByLabel("Article title").fill("Sun in Cancer QA edit");
+    await editor.getByLabel("TL;DR / summary").fill("Updated summary from the visual admin editor.");
+    await editor.getByLabel("Article body").fill("Updated body from the visual admin editor.");
     await expect(savebar).toContainText("Unsaved changes");
-    await expect(editor.getByLabel("Summary").locator("xpath=following-sibling::*[contains(@class, 'admin-field-metrics')]")).toContainText("7 words");
-    await expect(editor.getByLabel("Body").locator("xpath=following-sibling::*[contains(@class, 'admin-field-metrics')]")).toContainText("7 words");
+    await expect(editor.getByLabel("TL;DR / summary").locator("xpath=following-sibling::*[contains(@class, 'admin-field-metrics')]")).toContainText("7 words");
+    await expect(editor.getByLabel("Article body").locator("xpath=following-sibling::*[contains(@class, 'admin-field-metrics')]")).toContainText("7 words");
     await editor.getByRole("button", { name: "Save" }).click();
 
     await expect.poll(() => generatedContentWrite).toMatchObject({
@@ -1300,9 +1300,9 @@ test.describe("content dashboard admin user flow case studies", () => {
       const postEditor = panel.querySelector<HTMLElement>(".admin-post-editor");
       const packagePanel = panel.querySelector<HTMLElement>(".admin-package-edit-panel");
       const fallbackGrid = panel.querySelector<HTMLElement>(".admin-fallback-diagnostic-grid");
-      const headline = panel.querySelector<HTMLElement>('[aria-label="Headline"]')?.closest("label");
-      const summary = panel.querySelector<HTMLElement>('[aria-label="Summary"]')?.closest("label");
-      const body = panel.querySelector<HTMLElement>('[aria-label="Body"]')?.closest("label");
+      const headline = panel.querySelector<HTMLElement>('[aria-label="Article title"]')?.closest("label");
+      const summary = panel.querySelector<HTMLElement>('[aria-label="TL;DR / summary"]')?.closest("label");
+      const body = panel.querySelector<HTMLElement>('[aria-label="Article body"]')?.closest("label");
       const related = panel.querySelector<HTMLElement>('[aria-label="Related reader horoscope passages"]');
       const topPositions = [headline, summary, body, related].map((node) => node?.getBoundingClientRect().top ?? -1);
       const packageChildren = packagePanel ? Array.from(packagePanel.children).map((node) => {
@@ -1427,14 +1427,14 @@ test.describe("content dashboard admin user flow case studies", () => {
 
     const editor = page.locator(".admin-editor-panel");
     const related = editor.getByRole("region", { name: "Related reader horoscope passages" });
-    await expect(editor.getByLabel("Body")).toHaveValue("Check the details without treating reality as a betrayal of the dream.");
+    await expect(editor.getByLabel("Article body")).toHaveValue("Check the details without treating reality as a betrayal of the dream.");
     await expect(related.locator("dl > div", { hasText: "Eclipse" })).toContainText("Lunar eclipse");
     await expect(related.locator("details > summary > span")).toHaveText([
       "Aspect passages",
       "Rising-sign horoscopes"
     ]);
     const readingOrder = await editor.locator(".admin-post-editor").evaluate((postEditor) => {
-      const body = postEditor.querySelector('[aria-label="Body"]')?.closest("label");
+      const body = postEditor.querySelector('[aria-label="Article body"]')?.closest("label");
       const relatedRegion = postEditor.querySelector('[aria-label="Related reader horoscope passages"]');
       const [aspects, horoscopes] = relatedRegion ? Array.from(relatedRegion.querySelectorAll(":scope > details")) : [];
       return Boolean(body && relatedRegion && aspects && horoscopes
@@ -1603,20 +1603,22 @@ test.describe("content dashboard admin user flow case studies", () => {
     const emptyHouseSurface = page.locator(".admin-surface-card", { hasText: "Empty House Cards And Detail Pages" });
     await emptyHouseSurface.getByRole("button", { name: "Start empty-house detail template" }).click();
     const editor = page.locator(".admin-editor-panel");
-    await expect(editor.getByRole("heading", { name: "Author new row" })).toBeVisible();
+    await expect(editor.getByRole("heading", { name: "Create saved row" })).toBeVisible();
     await expect(editor.getByLabel("Content key")).toHaveValue("cms/natal-empty-house/detail/you/template");
     await expect(editor.getByText("Reader-facing CMS override")).toBeVisible();
     await expect(editor.locator("p", { hasText: "Allowed slots:" })).toContainText("{{houseOrdinal}}");
-    await fillAdminEditorField(editor, "Body", "Your {{houseOrdinal}} house begins in {{missingTopic}}.");
+    await fillAdminEditorField(editor, "Full passage / body", "Your {{houseOrdinal}} house begins in {{missingTopic}}.");
     await expect(editor.getByRole("alert", { name: "CMS template errors" })).toContainText("{{missingTopic}}");
-    await expect(editor.getByRole("button", { name: "Sign Off" })).toBeDisabled();
-    await fillAdminEditorField(editor, "Body", "Your {{houseOrdinal}} house begins in {{sign}}. Review what you repeat here each month.");
+    await expect(editor.getByText("Save this draft before review or publication.")).toBeVisible();
+    await expect(editor.getByRole("button", { name: "Publish to app" })).toHaveCount(0);
+    await fillAdminEditorField(editor, "Full passage / body", "Your {{houseOrdinal}} house begins in {{sign}}. Review what you repeat here each month.");
     await expect(editor.getByRole("alert", { name: "CMS template errors" })).toHaveCount(0);
     await expect(editor.getByLabel("CMS template preview")).toContainText("Your 2nd house begins in Taurus.");
-    await expect(editor.getByRole("button", { name: "Sign Off" })).toBeEnabled();
     await editor.getByRole("button", { name: "Save", exact: true }).click();
     await expect(editor.getByText("Reader-facing CMS override")).toBeVisible();
     await expect(editor.locator(".admin-editor-toolbar")).toContainText("Draft");
+    await expect(editor.getByRole("button", { name: "Mark reviewed" })).toBeEnabled();
+    await expect(editor.getByRole("button", { name: "Publish to app" })).toBeEnabled();
     expect(cmsWrite?.method).toBe("POST");
     expect(cmsWrite?.payload.sourceSnapshot).toMatchObject({
       contentType: "mustache-template",
@@ -1644,18 +1646,14 @@ test.describe("content dashboard admin user flow case studies", () => {
     await sourceRow.getByRole("button", { name: "Open draft" }).click();
 
     const editor = page.locator(".admin-editor-panel");
-    await expect(editor.getByRole("heading", { name: "Author new row" })).toBeVisible();
+    await expect(editor.getByRole("heading", { name: "Create saved row" })).toBeVisible();
     await expect(editor.getByLabel("Content key")).toHaveValue("sky.sun.trine.chiron");
-    await expect(editor.getByLabel("Body")).toHaveValue(heldSkyAspectDrafts[0].body);
+    await expect(editor.getByLabel("Full passage / body")).toHaveValue(heldSkyAspectDrafts[0].body);
     await expect(editor.getByLabel("Lane")).toHaveValue("reference");
     await expect(editor.getByLabel("Review state")).toHaveValue("NEEDS_OWNER_DECISION");
 
-    await editor.getByLabel("Status").selectOption("LIVE");
-    await editor.getByRole("button", { name: "Save", exact: true }).click();
-    await expect(page.getByText(/still needs an explicit owner decision/)).toBeVisible();
-    expect(writes).toHaveLength(0);
-
-    await editor.getByLabel("Status").selectOption("DRAFT");
+    await expect(editor.getByLabel("Status")).not.toBeVisible();
+    await expect(editor.getByRole("button", { name: "Publish to app" })).toHaveCount(0);
     await editor.getByRole("button", { name: "Save", exact: true }).click();
     await expect.poll(() => writes.length).toBe(1);
     expect(writes[0].payload).toMatchObject({
@@ -1765,7 +1763,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(editor.getByRole("region", { name: "Variable usage" })).toContainText("Moon is in Pisces");
     await expect(editor.getByLabel("Variable value")).toHaveValue("Saying yes on autopilot");
     await expect(editor.getByLabel("Variable approval")).toHaveValue("approved");
-    await expect(editor.getByLabel("Summary")).toHaveCount(0);
+    await expect(editor.getByLabel("TL;DR / summary")).toHaveCount(0);
     await expect(editor.getByLabel("body_you")).toHaveCount(0);
     await expect(editor.getByLabel("body_they")).toHaveCount(0);
     await expect(editor.getByLabel("Status")).toHaveCount(0);
@@ -2008,7 +2006,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(guidedEditor).toBeVisible();
     await expect(guidedEditor.getByRole("region", { name: "Guided unresolved-content review" })).toContainText("The populated Headline and Body fields below are the copy under review");
     await expect(guidedEditor.getByRole("region", { name: "Guided unresolved-content review" })).toContainText(editableUnresolvedItem?.contentKey ?? "");
-    await expect(guidedEditor.getByLabel("Body")).toHaveValue(String(guidedLunationRecord.body));
+    await expect(guidedEditor.getByLabel("Full passage / body")).toHaveValue(String(guidedLunationRecord.body));
     await expect(guidedEditor.getByLabel("body_you")).toHaveCount(0);
     await expect(guidedEditor.getByLabel("body_they")).toHaveCount(0);
     await expect(guidedEditor.getByLabel("Package review status")).toBeDisabled();
@@ -2193,10 +2191,10 @@ test.describe("content dashboard admin user flow case studies", () => {
     await missingCard.getByRole("button", { name: "Create draft" }).click();
 
     const editor = page.getByRole("dialog", { name: "Generated content editor" });
-    await expect(editor.getByRole("heading", { name: "Author new row" })).toBeVisible();
+    await expect(editor.getByRole("heading", { name: "Create saved row" })).toBeVisible();
     await expect(editor.getByLabel("Content key")).toHaveValue("sky.aspect.sun.trine.chiron.leo.taurus");
     await expect(editor.getByLabel("Block type")).toHaveValue("sky_aspect");
-    await editor.getByLabel("Body").fill("Owner-authored fixture copy for this exact active Sky aspect.");
+    await editor.getByLabel("Full passage / body").fill("Owner-authored fixture copy for this exact active Sky aspect.");
     await editor.getByRole("button", { name: "Save", exact: true }).click();
 
     await expect.poll(() => writes.length).toBe(1);
@@ -2990,7 +2988,7 @@ test.describe("content dashboard admin user flow case studies", () => {
 
     const editor = page.getByRole("dialog", { name: "Generated content editor" });
     await expect(editor.getByRole("heading", { name: "Edit Sun in a Sign" })).toBeVisible();
-    await expect(editor.getByLabel("Headline")).toHaveValue("Sun in {{signTitle}}");
+    await expect(editor.getByLabel("Template name")).toHaveValue("Sun in {{signTitle}}");
     const editedBody = `${bodyYou} QA draft remains here.`;
     await editor.getByLabel("body_you").fill(editedBody);
     await editor.getByRole("button", { name: /^Reader preview & variables \(\d+\)$/u }).click();
