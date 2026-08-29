@@ -10,14 +10,13 @@ export type PackagedHookCatalogItem = {
 type Props = {
   items: PackagedHookCatalogItem[];
   savedKeys: Set<string>;
-  loading: boolean;
   resetKey: string;
   onOpen: (item: PackagedHookCatalogItem) => void;
 };
 
 const canonicalKey = (key: string) => key.startsWith("fallback-hook/") ? key : `fallback-hook/${key}`;
 
-export function PackagedHookCatalogResults({ items, savedKeys, loading, resetKey, onOpen }: Props) {
+export function PackagedHookCatalogResults({ items, savedKeys, resetKey, onOpen }: Props) {
   return (
     <section className="admin-hook-catalog-results" aria-label="Packaged fallback source phrases">
       <header className="admin-section-heading-row">
@@ -43,7 +42,7 @@ export function PackagedHookCatalogResults({ items, savedKeys, loading, resetKey
                   </div>
                   <div className="admin-fallback-row-actions">
                     <span className={`ui-pill admin-status ${saved ? "status-live" : "status-draft"}`}>{saved ? "Saved row" : "Package source"}</span>
-                    <button type="button" disabled={loading} onClick={() => onOpen(item)}>{saved ? "Edit" : "View and edit"}</button>
+                    <button type="button" onClick={() => onOpen(item)}>{saved ? "Edit" : "View and edit"}</button>
                   </div>
                 </article>
               );

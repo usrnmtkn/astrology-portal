@@ -78,6 +78,8 @@ assert.match(endpoint, /Cannot approve/);
 assert.doesNotMatch(endpoint, /detectGrandSquares|detectGrandTrines|detectKites|detectMysticRectangles|detectTSquares|detectYods/, "Admin write-up endpoint must not change or call individual detectors.");
 assert.match(styles, /aspect-writeups-page/);
 assert.match(styles, /aspect-writeups-compare/);
+assert.match(styles, /container-name:\s*aspect-writeups/);
+assert.match(styles, /@container aspect-writeups \(max-width:\s*1120px\)[\s\S]*?aspect-writeups-layout[\s\S]*?grid-template-columns:\s*1fr/u, "Aspect Patterns must collapse inside its available content container before it overflows a 1280px viewport.");
 
 const vite = await createServer({
   root: repoRoot,
