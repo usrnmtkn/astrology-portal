@@ -8943,6 +8943,15 @@ body,
   line-height: 1.25;
 }
 
+.admin-dashboard .admin-compatibility-reverse-actions {
+  justify-content: flex-start;
+  margin-top: var(--admin-space-md);
+}
+
+.admin-dashboard .admin-compatibility-reverse-actions button {
+  max-width: 100%;
+}
+
 .admin-dashboard .admin-contextual-copy-example {
   background: var(--admin-ui-surface-2);
   border: var(--border-width-thin) solid var(--admin-ui-border);
@@ -11556,6 +11565,10 @@ body,
   .admin-dashboard .admin-editor-savebar button {
     flex: 1 1 calc(33.333% - 8px);
     min-width: 0;
+  }
+
+  .admin-dashboard .admin-compatibility-reverse-actions button {
+    width: 100%;
   }
 }
 
