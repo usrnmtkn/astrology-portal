@@ -1,12 +1,12 @@
 {
   "schemaVersion": "content-inventory-v1",
   "generatedOn": "2026-08-10",
-  "sourceCommit": "5923cf942bacbea5fbdf6a776531346b80d238ff",
+  "sourceCommit": "b125598eb6b5fe4aec95b329851e30ff7b066fca",
   "authorityRule": "Only owner-approved and owner-locked records may serve or export.",
-  "contentFingerprint": "b26a4ff03a70fd80e317c2564a11fbc77902d8bedc48ca4b0331b16a35403800",
-  "recordCount": 10890,
+  "contentFingerprint": "a65d240b035092953338468268bf512e5a4f748cd0e436c8b186850da80dccfe",
+  "recordCount": 10892,
   "statusCounts": {
-    "owner-approved": 10890
+    "owner-approved": 10892
   },
   "familyCounts": {
     "approved/calendar-weekly-overview": 1,
@@ -114,7 +114,7 @@
     "sky.retrograde.venus.scorpio.retrograde_passage": 1,
     "sky.station.chiron.taurus.retrograde": 1,
     "sky.station.mercury.pisces.retrograde": 1,
-    "synastry": 1789,
+    "synastry": 1791,
     "template": 4,
     "transit-meaning": 365,
     "vocabulary": 717
@@ -138445,6 +138445,54 @@
       "wording": {
         "body_you": "{readerHandle}, you are {readerClause}, while {friendHandle} is {friendClause}.",
         "body_they": "{readerHandle}, you are {readerClause}, while {friendHandle} is {friendClause}."
+      },
+      "astrology": {
+        "objects": [],
+        "signs": [],
+        "aspects": [],
+        "events": [],
+        "houses": []
+      }
+    },
+    {
+      "contentKey": "fallback-hook/pair-daily/opener/shared-clause",
+      "contentFamily": "synastry",
+      "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/pair-daily-frames-v1.json",
+      "runtimeBucket": "hook",
+      "status": "owner-approved",
+      "sourceStatus": "approved",
+      "provenance": "generated",
+      "sourceAuthor": "composed",
+      "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
+      "approvalVersionDate": "owner approval, cowork session 2026-08-28: when both people have the same exact sentence, say 'both you and name are' and ship the logic update",
+      "contentHash": "043e89dc4ff59fc709a1ae433abc8e537f7c69ddd21c89426511086f46729c1d",
+      "wording": {
+        "body_you": "{readerHandle}, both you and {friendHandle} are {sharedClause}.",
+        "body_they": "{readerHandle}, both you and {friendHandle} are {sharedClause}."
+      },
+      "astrology": {
+        "objects": [],
+        "signs": [],
+        "aspects": [],
+        "events": [],
+        "houses": []
+      }
+    },
+    {
+      "contentKey": "fallback-hook/pair-daily/opener/shared-clause/no-reader-handle",
+      "contentFamily": "synastry",
+      "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/pair-daily-frames-v1.json",
+      "runtimeBucket": "hook",
+      "status": "owner-approved",
+      "sourceStatus": "approved",
+      "provenance": "generated",
+      "sourceAuthor": "composed",
+      "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
+      "approvalVersionDate": "owner approval, cowork session 2026-08-28: when both people have the same exact sentence, say 'both you and name are' and ship the logic update",
+      "contentHash": "67f31ef5f2bf73b4fdee93811a17bba863823dfc1b2ff8e84b9871cc761dd202",
+      "wording": {
+        "body_you": "Both you and {friendHandle} are {sharedClause}.",
+        "body_they": "Both you and {friendHandle} are {sharedClause}."
       },
       "astrology": {
         "objects": [],
