@@ -3,6 +3,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import assert from "node:assert/strict";
 import { profileBootstrapLocalOwnerIds } from "../apps/web/src/services/profileBootstrap.ts";
+import { localManualChartUserIdsFromStorage } from "../apps/web/src/services/manualChartLocalOwners.ts";
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const appSourcePath = path.join(repoRoot, "apps/web/src/App.tsx");
@@ -10,30 +11,22 @@ const manualChartsPath = path.join(repoRoot, "apps/web/src/services/manualCharts
 const appSource = fs.readFileSync(appSourcePath, "utf8");
 const manualChartsSource = fs.readFileSync(manualChartsPath, "utf8");
 
-assert.match(
-  manualChartsSource,
-  /const localManualChartsKeyPrefix = "tldrastro:manualCharts:";/,
-  "Friends data-retention QA requires a stable local manual-chart key prefix."
-);
-assert.match(
-  manualChartsSource,
-  /export function listLocalManualChartUserIds\(\)/,
-  "Friends data-retention QA requires a helper that enumerates all legacy local manual-chart owner ids."
-);
-assert.match(
-  manualChartsSource,
-  /window\.localStorage\.length/,
-  "Legacy local manual-chart owner discovery must use the Storage API length, not only enumerable object keys."
-);
-assert.match(
-  manualChartsSource,
-  /window\.localStorage\.key\(index\)/,
-  "Legacy local manual-chart owner discovery must read each Storage key."
-);
-assert.match(
-  manualChartsSource,
-  /key\?\.startsWith\(localManualChartsKeyPrefix\)/,
-  "Legacy local manual-chart owner discovery must only include TLDR manual-chart keys."
+const storageKeys = [
+  "unrelated:key",
+  "tldrastro:manualCharts:legacy-owner",
+  "tldrastro:manualCharts:",
+  "tldrastro:manualCharts:active-owner",
+  "tldrastro:profile:active-owner"
+];
+assert.deepEqual(
+  localManualChartUserIdsFromStorage({
+    length: storageKeys.length,
+    key(index) {
+      return storageKeys[index] ?? null;
+    }
+  }),
+  ["legacy-owner", "active-owner"],
+  "Legacy local manual-chart owner discovery must enumerate Storage keys, ignore unrelated keys, and exclude empty owner ids."
 );
 assert.match(
   manualChartsSource,

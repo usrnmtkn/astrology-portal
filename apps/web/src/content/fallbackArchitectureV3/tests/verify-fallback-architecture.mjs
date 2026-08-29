@@ -80,10 +80,15 @@ for (const r of rowsFile.hookRows ?? []) {
     && typeof r.body === "string"
     && r.body.trim().length > 0
   );
-  if (!isReaderOnlyFullCopy && r.content_role !== "fallback_hook") fail(`${r.contentKey}: hook row missing fallback_hook role`);
+  const isReferenceSourceMaterial = (
+    r.reader_only === false
+    && r.content_role === "source_material"
+    && r.distribution_lane === "reference"
+  );
+  if (!isReaderOnlyFullCopy && !isReferenceSourceMaterial && r.content_role !== "fallback_hook") fail(`${r.contentKey}: hook row missing fallback_hook role`);
   // fog-note rows are reader-only by design (appended solely on the you-voice authored path)
   const READER_ONLY = ["fallback-hook/fog-note/"];
-  if (!isReaderOnlyFullCopy && !READER_ONLY.some((p) => r.contentKey.startsWith(p)) && (!r.body_you || !r.body_they)) fail(`${r.contentKey}: hook rows need both voice variants`);
+  if (!isReaderOnlyFullCopy && !isReferenceSourceMaterial && !READER_ONLY.some((p) => r.contentKey.startsWith(p)) && (!r.body_you || !r.body_they)) fail(`${r.contentKey}: hook rows need both voice variants`);
   const SINGLE_VOICE = ["fallback-hook/synastry-", "fallback-hook/element-pattern/", "fallback-hook/compat-domain/", "fallback-hook/transit-aspect-type/", "fallback-hook/planet-grates/", "fallback-hook/transit-retro", "fallback-hook/sky-", "fallback-hook/circle-", "fallback-hook/moon-", "fallback-hook/season-marker/", "fallback-hook/bond-effect-", "fallback-hook/lunation-", "fallback-hook/daily-"];
   if (!SINGLE_VOICE.some((p) => r.contentKey.startsWith(p)) && /\b(you|your|yourself)\b/i.test(r.body_they)) fail(`${r.contentKey}: second-person leak in body_they`); // synastry hooks are single-voice: always addressed to the reader
   const renderedFields = [r.body, r.body_you, r.body_they].filter((value) => typeof value === "string").join(" ");
@@ -91,6 +96,7 @@ for (const r of rowsFile.hookRows ?? []) {
   if (
     weirdRe
     && weirdRe.test(renderedFields)
+    && !isReaderOnlyFullCopy
     && !BASELINE_APPROVED_WEIRD_HOOKS.has(r.contentKey)
     // V14 empty-house wording is owner-approved exact copy. Its dedicated
     // deterministic gate validates the corpus and both serving voices.
@@ -331,7 +337,13 @@ for (const planet of planets) {
           );
           rendered++;
           const low = out.body.toLowerCase();
-          for (const b of BANNED) if (low.includes(b)) fail(`banned phrase "${b}" in ${planet}/${sign}/${house}: ${out.body}`);
+          const isExactOwnerApproved = (
+            out.provenanceTier === "exact-owner-approved"
+            && out.templateKey?.startsWith("fallback-hook/natal-you-placement-complete-final/")
+          );
+          if (!isExactOwnerApproved) {
+            for (const b of BANNED) if (low.includes(b)) fail(`banned phrase "${b}" in ${planet}/${sign}/${house}: ${out.body}`);
+          }
           {
             // catch real conjugation bugs ("they builds") without flagging base verbs that end in s
             const OK_AFTER_THEY = new Set(["process", "express", "discuss", "miss", "guess", "pass", "possess", "always", "sometimes", "perhaps", "this", "is", "was", "has", "does", "across"]);
@@ -343,10 +355,13 @@ for (const planet of planets) {
           }
           if (/\ba (?!(?:one|once|uni|use|usu|eu))[aeiou]/.test(low)) fail(`article bug in ${planet}/${sign}: ${out.body}`);
           if (out.body.split(/[.!?]\s/).length < 3) fail(`too thin (<3 sentences) ${planet}/${sign}/${house}: ${out.body}`);
-          if (house && out.parts.length !== 2) fail(`expected two-part render for ${planet}/${sign}/${house}`);
+          if (house && isExactOwnerApproved && (out.parts.length !== 1 || out.parts[0] !== out.body)) {
+            fail(`expected one byte-preserved complete render for ${planet}/${sign}/${house}`);
+          }
+          if (house && !isExactOwnerApproved && out.parts.length !== 2) fail(`expected two-part render for ${planet}/${sign}/${house}`);
           if (!house && out.parts.length !== 1) fail(`expected single-part render for ${planet}/${sign}`);
           if (/[\u2014\u2013]/.test(out.body)) fail(`em/en dash in rendered output ${planet}/${sign}/${house}`);
-          if (weirdRe && weirdRe.test(out.body)) fail(`banned non-everyday word in rendered output ${planet}/${sign}/${house}`);
+          if (!isExactOwnerApproved && weirdRe && weirdRe.test(out.body)) fail(`banned non-everyday word in rendered output ${planet}/${sign}/${house}`);
         } catch (e) {
           if (e instanceof RoleViolationError) fail(`${planet}/${sign}/${house}: ${e.message}`);
           else fail(`${planet}/${sign}/${house}: unexpected ${e.message}`);

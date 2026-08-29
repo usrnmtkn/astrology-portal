@@ -41,7 +41,7 @@ const fallbackSourceRowsV3 = JSON.parse(readFileSync(
   path.resolve("apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json"),
   "utf8"
 )) as {
-  hookRows: Array<{ contentKey: string; body_you?: string; body_they?: string }>;
+  hookRows: Array<{ contentKey: string; body?: string; body_you?: string; body_they?: string }>;
 };
 const skyAspectPhrasebook = JSON.parse(readFileSync(
   path.resolve("apps/web/src/content/fallbackArchitectureV3/source-rows/sky-aspect-phrasebook-v1.json"),
@@ -64,6 +64,15 @@ const ascendantMercuryHardOpening = String(mercuryAscendantHardSource?.body_they
   .replaceAll("{{holder1Poss}}", "Alisa's")
   .replaceAll("{{holder1}}", "Alisa")
   .concat(".");
+const chironAries12ApprovedSource = fallbackSourceRowsV3.hookRows.find(
+  (row) => row.contentKey === "fallback-hook/natal-you-placement-complete-final/chiron/aries/12"
+);
+const chironAries12ApprovedBody = String(chironAries12ApprovedSource?.body ?? "");
+const chironAries12ApprovedOpening = chironAries12ApprovedBody.split(". ")[0].concat(".");
+const chironAries12ApprovedFinalSentence = chironAries12ApprovedBody
+  .trim()
+  .split(/(?<=[.!?])\s+/)
+  .at(-1) ?? "";
 
 async function selectFriendDetailTab(
   page: Page,
@@ -101,11 +110,15 @@ async function seedClientState(page: Page, options: SeedOptions = {}) {
     options.profileBirthTime ?? "8:24 AM",
     fixtureLocation.timeZone
   );
-  const preloadedNatalCache = options.profile && options.preloadProfileNatalSky
+  const shouldPreloadNatalSky = options.profile && options.preloadProfileNatalSky;
+  const preloadedNatalSnapshot = shouldPreloadNatalSky
+    ? await getAstrodienstSky(fixtureLocation, profileBirthDateTime)
+    : null;
+  const preloadedNatalCache = preloadedNatalSnapshot
     ? {
         schema: VERIFIED_SKY_CACHE_SCHEMA,
         cacheKey: natalSkySnapshotCacheKey(fixtureLocation, profileBirthDateTime),
-        snapshot: await getAstrodienstSky(fixtureLocation, profileBirthDateTime),
+        snapshot: preloadedNatalSnapshot,
         verifiedAt: requestedNow
       }
     : null;
@@ -3169,6 +3182,24 @@ test.describe("client-facing user flow case studies", () => {
     );
     await expect(article.getByText("Natal aspects", { exact: true })).toHaveCount(0);
     await expect(article.getByRole("heading", { level: 3, name: "Planetary aspects", exact: true })).toHaveCount(1);
+    await assertNoClientErrors();
+  });
+
+  test("You Chiron placement preserves the exact owner-approved complete passage", async ({ page }) => {
+    const assertNoClientErrors = await expectNoClientErrors(page);
+
+    await seedClientState(page, {
+      profile: true,
+      profileBirthDate: "1970-03-20",
+      profileBirthTime: "8:00 AM",
+      preloadProfileNatalSky: true
+    });
+    await expectClientRouteLoads(page, "/#you/placement/chiron-aries-12h");
+
+    const article = page.getByRole("region", { name: "Chiron in Aries in the 12th house" });
+    await expect(article).toBeVisible();
+    await expect(article).toContainText(chironAries12ApprovedOpening);
+    await expect(article).toContainText(chironAries12ApprovedFinalSentence);
     await assertNoClientErrors();
   });
 

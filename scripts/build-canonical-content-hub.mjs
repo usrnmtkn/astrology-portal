@@ -457,13 +457,6 @@ for (const body of PLACEMENT_POINTS) {
     const exactRow = exactRows[0] ?? null;
     const youResult = renderOrGap(() => renderer.renderNatalPlacement({ planet: body, sign: "aries", house, voice: "you" }));
     const theyResult = renderOrGap(() => renderer.renderNatalPlacement({ planet: body, sign: "aries", house, voice: "CANONICALNAME" }));
-    const perspectiveModes = {
-      you: !youResult ? "gap" : exactRows.some((row) => youResult.partKeys?.[1] === row.contentKey) ? "authored" : "composed",
-      they: !theyResult ? "gap" : exactRows.some((row) => theyResult.partKeys?.[1] === row.contentKey) ? "authored" : "composed"
-    };
-    const mode = Object.values(perspectiveModes).every((value) => value === "gap")
-      ? "gap"
-      : Object.values(perspectiveModes).every((value) => value === "authored") ? "authored" : "composed";
     const housePart = (result) => ({
       headline: exactRow
         ? (result.headline ?? "")
@@ -471,8 +464,19 @@ for (const body of PLACEMENT_POINTS) {
       body: result.parts?.[1] ?? "",
       parts: result.parts?.[1] ? [result.parts[1]] : []
     });
-    const youHouse = youResult ? housePart(youResult) : null;
-    const theyHouse = theyResult ? housePart(theyResult) : null;
+    const youHouse = youResult?.parts?.[1] ? housePart(youResult) : null;
+    const theyHouse = theyResult?.parts?.[1] ? housePart(theyResult) : null;
+    const perspectiveModes = {
+      you: !youHouse
+        ? "gap"
+        : exactRows.some((row) => youResult.partKeys?.[1] === row.contentKey && youHouse.body === row.body) ? "authored" : "composed",
+      they: !theyHouse
+        ? "gap"
+        : exactRows.some((row) => theyResult.partKeys?.[1] === row.contentKey && theyHouse.body === row.body) ? "authored" : "composed"
+    };
+    const mode = Object.values(perspectiveModes).every((value) => value === "gap")
+      ? "gap"
+      : Object.values(perspectiveModes).every((value) => value === "authored") ? "authored" : "composed";
     if (theyHouse) {
       theyHouse.headline = theyHouse.headline.replaceAll("CANONICALNAME", "{{Name}}");
       theyHouse.body = theyHouse.body.replaceAll("CANONICALNAME", "{{Name}}");

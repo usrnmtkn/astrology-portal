@@ -3,6 +3,11 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import assert from "node:assert/strict";
 import { resolveFriendChartLoadingState } from "../apps/web/src/features/friends/friendChartLoading.ts";
+import { listLocalManualChartUserIds } from "../apps/web/src/services/manualChartLocalOwners.ts";
+import {
+  accountProfileBootstrapAction,
+  profileBootstrapLocalOwnerIds
+} from "../apps/web/src/services/profileBootstrap.ts";
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const appSourcePath = path.join(repoRoot, "apps/web/src/App.tsx");
@@ -112,20 +117,43 @@ assert.match(
   /chartOwnerUserIdRef\.current !== chartOwnerUserId/,
   "ManualChartsPanel must detect owner changes so one user's visible chart list cannot linger for another owner."
 );
-assert.match(
-  manualChartsSource,
-  /export function listLocalManualChartUserIds\(\)/,
-  "Friend chart database QA must include a recovery path for older local manual-chart owner keys."
+const originalWindow = globalThis.window;
+const localStorageKeys = [
+  "tldrastro:manualCharts:legacy-a",
+  "unrelated:storage:key",
+  "tldrastro:manualCharts:legacy-b"
+];
+globalThis.window = {
+  localStorage: {
+    get length() { return localStorageKeys.length; },
+    key(index) { return localStorageKeys[index] ?? null; }
+  }
+};
+const legacyOwnerIds = listLocalManualChartUserIds();
+if (originalWindow === undefined) {
+  delete globalThis.window;
+} else {
+  globalThis.window = originalWindow;
+}
+assert.deepEqual(legacyOwnerIds, ["legacy-a", "legacy-b"]);
+assert.deepEqual(
+  profileBootstrapLocalOwnerIds({
+    accountId: "account-id",
+    cachedProfileId: "cached-id",
+    persistedProfileId: "persisted-id",
+    legacyOwnerIds
+  }),
+  ["cached-id", "persisted-id", "account-id", "legacy-a", "legacy-b"],
+  "Auth migration must behaviorally sweep older local manual-chart keys before showing the remote Friends chart list."
 );
-assert.match(
-  appSource,
-  /\.\.\.listLocalManualChartUserIds\(\)/,
-  "Auth migration must sweep older local manual-chart keys before showing the remote Friends chart list."
-);
-assert.match(
-  appSource,
-  /account && appliedAuthAccountIdRef\.current === account\.id && remoteProfileReadyRef\.current/,
-  "Repeated same-account auth wakeups must not reset remote profile readiness or reload Friends charts."
+assert.equal(
+  accountProfileBootstrapAction({
+    accountId: "account-id",
+    appliedAccountId: "account-id",
+    remoteProfileReady: true
+  }),
+  "reuse-ready",
+  "Repeated same-account auth wakeups must behaviorally retain the ready profile instead of reloading Friends charts."
 );
 assert.match(
   appSource,

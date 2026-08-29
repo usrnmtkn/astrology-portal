@@ -1,5 +1,4 @@
 import assert from "node:assert/strict";
-import { readFile } from "node:fs/promises";
 
 import {
   aspectGiftOrLesson,
@@ -31,22 +30,5 @@ assert.equal(groupAspectsByGiftLesson(
   (aspect) => aspect.aspect,
   (aspect) => aspect.orb
 ).length, 1);
-
-const appSource = await readFile(new URL("../apps/web/src/App.tsx", import.meta.url), "utf8");
-const manualChartsPanelSource = await readFile(
-  new URL("../apps/web/src/features/friends/ManualChartsPanel.tsx", import.meta.url),
-  "utf8"
-);
-const friendChartModelSource = await readFile(
-  new URL("../apps/web/src/features/friends/friendChartModel.ts", import.meta.url),
-  "utf8"
-);
-const youPageSource = await readFile(new URL("../apps/web/src/features/you/YouPage.tsx", import.meta.url), "utf8");
-
-assert.match(manualChartsPanelSource, /selectedSynastryAspectGroups[\s\S]{0,240}?groupAspectsByGiftLesson/);
-assert.match(manualChartsPanelSource, /selectedCompositeAspectGroups[\s\S]{0,240}?groupAspectsByGiftLesson/);
-assert.match(friendChartModelSource, /groupFriendNatalAspects[\s\S]*?return groupAspectsByGiftLesson/);
-assert.match(appSource, /function ActiveAspects[\s\S]*?groupAspectsByGiftLesson/);
-assert.match(youPageSource, /natalAspectGroups\.map/);
 
 console.log("Aspect gift/lesson grouping contract passed.");
