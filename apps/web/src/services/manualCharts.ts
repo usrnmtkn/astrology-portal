@@ -50,6 +50,10 @@ export type ManualChartInput = {
 };
 
 export async function resolvedManualChartBirthLocationForRepair(chart: ManualChart) {
+  if (chart.birthLocation.timeZone) {
+    return chart.birthLocation;
+  }
+
   if (isTldrAstroApiConfigured) {
     try {
       const response = await resolveTimezone({
@@ -70,7 +74,7 @@ export async function resolvedManualChartBirthLocationForRepair(chart: ManualCha
     }
   }
 
-  return chart.birthLocation.timeZone ? chart.birthLocation : null;
+  return null;
 }
 
 export function manualChartNeedsNatalRepair(chart: ManualChart) {

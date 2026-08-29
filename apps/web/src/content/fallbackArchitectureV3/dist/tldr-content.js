@@ -1506,7 +1506,11 @@ ${passHook}`;
     const verb = g === "conjunction" ? "transforming" : g === "hard" ? "challenging" : "boosting";
     const noun = vocab.get(`fallback-vocab/transit-label-noun/${natal}`)?.body;
     if (!noun) throw new SourceGapError(`SOURCE_GAP: no label noun for ${natal}`);
-    return { label: `${title2(transiting)} ${verb} ${noun}`, window: win ?? WINDOW_ASPECT[transiting] ?? "Currently" };
+    return {
+      label: `${title2(transiting)} ${verb} ${noun}`,
+      noun,
+      window: win ?? WINDOW_ASPECT[transiting] ?? "Currently"
+    };
   }
   function renderTransitReturn({ planet }) {
     const c = card(`authored/transit-return/${planet}`);
@@ -2383,15 +2387,19 @@ ${passHook}`;
       throw new SourceGapError("SOURCE_GAP: pair daily requires both daily clause keys");
     }
     const readerHandle = pairDailyHandle(reader.handle);
-    const openerKey = readerHandle ? pairDailyVariantKey("fallback-hook/pair-daily/opener", variant) : "fallback-hook/pair-daily/opener/variant-3";
     const readerClauseKey = pairDailyClauseVariantKey(reader.clauseKey, variant);
     const friendClauseKey = pairDailyClauseVariantKey(friend.clauseKey, variant);
+    const readerClause = pairDailyBody(readerClauseKey, "you");
+    const friendClause = pairDailyBody(friendClauseKey, "they");
+    const clausesMatch = readerClause === friendClause;
+    const openerKey = clausesMatch ? readerHandle ? "fallback-hook/pair-daily/opener/shared-clause" : "fallback-hook/pair-daily/opener/shared-clause/no-reader-handle" : readerHandle ? pairDailyVariantKey("fallback-hook/pair-daily/opener", variant) : "fallback-hook/pair-daily/opener/variant-3";
     const opener = pairDailyBody(openerKey, "you");
     const ctx = {
       readerHandle: readerHandle ?? "",
-      readerClause: pairDailyBody(readerClauseKey, "you"),
+      readerClause,
       friendHandle: pairDailyFriendReference(friend),
-      friendClause: pairDailyBody(friendClauseKey, "they")
+      friendClause,
+      sharedClause: clausesMatch ? readerClause : void 0
     };
     const parts = [pairDailyFill(opener, ctx)];
     const sourceKeys = [openerKey, readerClauseKey, friendClauseKey];
@@ -3165,7 +3173,7 @@ function createKnowledgeMatrixV13Resolver(file) {
 }
 
 // apps/web/src/content/fallbackArchitectureV3/resolver/index.browser.ts
-var PACKAGE_VERSION = "v3-2026-08-27b";
+var PACKAGE_VERSION = "v3-2026-08-28a";
 function stablePackageValue(value) {
   if (Array.isArray(value)) {
     return value.map(stablePackageValue);

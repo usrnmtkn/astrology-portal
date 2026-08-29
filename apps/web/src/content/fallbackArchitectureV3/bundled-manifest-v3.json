@@ -1,8 +1,8 @@
 {
-  "packageVersion": "v3-2026-08-27b",
-  "contentHash": "ecbd8bfcddb0edd8446c658e2188e00c",
-  "keyManifestHash": "3fc68c87fa0a87eb6fcca871e524ab37",
-  "keyCount": 9220,
+  "packageVersion": "v3-2026-08-28a",
+  "contentHash": "5b1c9c0d13e17d71d7e096df73c26d1d",
+  "keyManifestHash": "8055de00426ab8ac705b171e105c6a50",
+  "keyCount": 9222,
   "keys": [
     "authored:approved/calendar-weekly-overview/2026-08-03",
     "authored:authored/calendar-weekly-moon/aquarius",
@@ -4601,6 +4601,8 @@
     "hook:fallback-hook/pair-daily/clause/square/venus/variant-2",
     "hook:fallback-hook/pair-daily/close/hard",
     "hook:fallback-hook/pair-daily/opener",
+    "hook:fallback-hook/pair-daily/opener/shared-clause",
+    "hook:fallback-hook/pair-daily/opener/shared-clause/no-reader-handle",
     "hook:fallback-hook/pair-daily/opener/variant-2",
     "hook:fallback-hook/pair-daily/opener/variant-3",
     "hook:fallback-hook/pair-daily/shared-bond/hard",

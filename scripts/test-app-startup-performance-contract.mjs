@@ -750,7 +750,7 @@ assert.match(
 );
 assert.match(
   manualChartsPanelSource,
-  /friendProfileWork\.natal && selectedFriendReadyNatalChart/u,
+  /if \(!friendProfileWork\.natal \|\| !selectedFriendReadyNatalChart\)/u,
   "Friends natal row calculation must remain scoped to its active tab."
 );
 assert.match(
