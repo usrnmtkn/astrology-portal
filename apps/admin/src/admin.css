@@ -12878,6 +12878,10 @@ body,
 
 /* Content Studio audit: browsing rows prioritize editorial identity and keep
    operational settings in the editor instead of forcing a 9-column table. */
+.admin-dashboard .admin-template-page {
+  padding-inline: var(--admin-space-0);
+}
+
 .admin-dashboard .admin-reader-state-pill,
 .admin-dashboard .admin-status,
 .admin-dashboard .ui-pill {

@@ -1106,6 +1106,17 @@ test.describe("content dashboard admin user flow case studies", () => {
     await openAdminDeepLink("#fallback-hooks?section=friends");
     await expectAdminHeader(page, "Fallback Articles & Passages", "Admin / Composition / Fallback articles & passages");
     await expect(page.getByRole("tab", { name: /Friends/ })).toHaveAttribute("aria-selected", "true");
+    const mainRail = await page.locator("section.admin-main").boundingBox();
+    const fallbackHeader = await page.locator(".admin-dashboard-header").boundingBox();
+    const fallbackRows = await page.locator(".admin-list-panel").first().boundingBox();
+    expect(mainRail, "Content Studio main rail has rendered geometry").not.toBeNull();
+    expect(fallbackHeader, "Fallback page header has rendered geometry").not.toBeNull();
+    expect(fallbackRows, "Fallback row panel has rendered geometry").not.toBeNull();
+    if (mainRail && fallbackHeader && fallbackRows) {
+      const contentInset = fallbackHeader.x - mainRail.x;
+      expect(contentInset, "desktop content inset leaves more width for rows").toBeLessThanOrEqual(54);
+      expect(fallbackRows.width, "fallback rows use the widened content rail").toBeGreaterThanOrEqual(mainRail.width - 108);
+    }
 
     await openAdminDeepLink("#surface-map?area=friends&status=partial");
     await expectAdminHeader(page, "Surface Map", "Admin / Composition / Surface map");
