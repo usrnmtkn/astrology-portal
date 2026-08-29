@@ -4,7 +4,10 @@ import { defaultPronounChoice, normalizePronounChoice, type PronounChoice } from
 import { normalizeRelationshipContextKey, relationshipContextStorageKey } from "./relationshipContext";
 import { isTldrAstroApiConfigured, resolveTimezone } from "./tldrastroApi";
 import { natalChartHasCompletePlacements } from "./natalChartCompleteness";
+import { listLocalManualChartUserIds } from "./manualChartLocalOwners";
 import type { LocationInput, SkySnapshot } from "../types";
+
+export { listLocalManualChartUserIds } from "./manualChartLocalOwners";
 
 export type ManualChartType = "person" | "event";
 export type ManualChartSyncStatus = "synced" | "pending" | "failed" | "conflict";
@@ -122,7 +125,6 @@ type LocalManualChartRecord = Omit<ManualChart, "chartType" | "syncStatus"> & {
 };
 
 const localManualChartsKey = (userId: string) => `tldrastro:manualCharts:${userId}`;
-const localManualChartsKeyPrefix = "tldrastro:manualCharts:";
 const manualChartMetadataKey = "__tldrastroManualChart";
 
 type ManualChartMetadataSnapshot = SkySnapshot & {
@@ -490,30 +492,6 @@ function deleteLocalManualChart(userId: string, chartId: string) {
 
 export function listCachedManualCharts(userIds: string[]): ManualChart[] {
   return dedupeManualCharts(userIds.flatMap((userId) => readLocalManualCharts(userId)));
-}
-
-export function listLocalManualChartUserIds(): string[] {
-  try {
-    const userIds: string[] = [];
-
-    for (let index = 0; index < window.localStorage.length; index += 1) {
-      const key = window.localStorage.key(index);
-
-      if (!key?.startsWith(localManualChartsKeyPrefix)) {
-        continue;
-      }
-
-      const userId = key.slice(localManualChartsKeyPrefix.length);
-
-      if (userId) {
-        userIds.push(userId);
-      }
-    }
-
-    return userIds;
-  } catch {
-    return [];
-  }
 }
 
 function deleteLocalManualChartCopies(userId: string, deletedChart: ManualChart) {
