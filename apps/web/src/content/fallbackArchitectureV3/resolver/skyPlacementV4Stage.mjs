@@ -2,6 +2,14 @@ const ARTICLE_TEMPLATE_ID = "sky-placement-v4-article-compile";
 const PAGE_TEMPLATE_ID = "sky-placement-v4-page";
 const FALLBACK_TEMPLATE_ID = "sky-placement-v4-fallback";
 
+export const SKY_PLACEMENT_V4_SOURCE_VERIFIED_TEMPLATES = Object.freeze([
+  { template_id: PAGE_TEMPLATE_ID, purpose: "Canonical reader page", template: "# {{planetTitle}} in {{signTitle}}\n\n{{dateLine}}\n\n## TLDR\n\n**What:** {{tldrWhat}}\n\n**Takeaway:** {{tldrTakeaway}}\n\n{{#seasonalContext}}\n{{seasonalContext}}\n\n{{/seasonalContext}}\n{{placementArticle}}\n\n{{#hasCurrentConditions}}\n## What is shaping this transit now\n\n{{currentConditions}}\n{{/hasCurrentConditions}}" },
+  { template_id: ARTICLE_TEMPLATE_ID, purpose: "Deterministic article compilation", template: "{{opening}}\n\n{{tension}}\n\n{{development}}\n\n{{close}}" },
+  { template_id: FALLBACK_TEMPLATE_ID, purpose: "Exact planet-sign fallback only", template: "{{placementHook}}\n\n{{placementLived}}\n\n{{placementTurn}}" },
+  { template_id: "sky-placement-v4-current-conditions", purpose: "All active supported conditions", template: "{{#retrogradeConditions}}\n### {{headline}}\n{{dateLine}}\n\n{{body}}\n\n{{/retrogradeConditions}}\n{{#aspectConditions}}\n### {{headline}}\n{{dateLine}}\n\n{{body}}\n\n{{/aspectConditions}}" }
+]);
+const SOURCE_VERIFIED_TEMPLATES = new Map(SKY_PLACEMENT_V4_SOURCE_VERIFIED_TEMPLATES.map((entry) => [entry.template_id, entry.template]));
+
 function requiredText(value, label) {
   const text = String(value ?? "").trim();
   if (!text) throw new Error(`SKY_PLACEMENT_V4_STAGE_GAP: ${label}`);
@@ -14,8 +22,9 @@ function normalized(value) {
 
 function templateById(corpus, templateId) {
   const found = (corpus.templates ?? []).find((entry) => entry.template_id === templateId);
-  if (!found) throw new Error(`SKY_PLACEMENT_V4_STAGE_GAP: template ${templateId}`);
-  return found.template;
+  const template = found?.template ?? SOURCE_VERIFIED_TEMPLATES.get(templateId);
+  if (!template) throw new Error(`SKY_PLACEMENT_V4_STAGE_GAP: template ${templateId}`);
+  return template;
 }
 
 function fillScalarSlots(template, values) {
@@ -63,17 +72,33 @@ export function seasonalContextFor(corpus, sign, latitude) {
     : Number.isFinite(Number(latitude)) && Number(latitude) < 0
       ? "southern"
       : "neutral";
-  return (corpus.seasonal_contexts ?? []).find((entry) => (
+  return (corpus.seasonal_context ?? corpus.seasonal_contexts ?? []).find((entry) => (
     normalized(entry.sign) === signKey && entry.hemisphere === hemisphere
   ))?.copy ?? "";
 }
 
-export function renderSkyPlacementV4Conditions(conditions = []) {
+export function retrogradeModifierFor(corpus, planet) {
+  const planetKey = normalized(planet);
+  return (corpus.retrograde_modifiers ?? []).find((modifier) => (
+    normalized(modifier.planet) === planetKey
+    && modifier.owner_approved === true
+    && modifier.copy_policy === "exact"
+    && modifier.allow_paraphrase === false
+  )) ?? null;
+}
+
+export function renderSkyPlacementV4Conditions(corpus, planet, conditions = []) {
   const activeApproved = conditions.filter((condition) => condition?.approved === true && condition?.active === true);
   const signRetrogrades = activeApproved.filter((condition) => condition.kind === "retrograde" && condition.scope === "sign");
   const planetRetrogrades = activeApproved.filter((condition) => condition.kind === "retrograde" && condition.scope !== "sign");
   const aspects = activeApproved.filter((condition) => condition.kind !== "retrograde");
-  const selected = [...(signRetrogrades.length ? signRetrogrades : planetRetrogrades), ...aspects];
+  const exactPlanetModifier = retrogradeModifierFor(corpus, planet);
+  const selectedRetrogrades = signRetrogrades.length
+    ? signRetrogrades
+    : planetRetrogrades.map((condition) => exactPlanetModifier
+      ? { ...condition, body: exactPlanetModifier.copy, contentKey: exactPlanetModifier.content_key }
+      : condition);
+  const selected = [...selectedRetrogrades, ...aspects];
 
   return selected
     .sort((left, right) => String(left.exactDate ?? "").localeCompare(String(right.exactDate ?? "")))
@@ -111,14 +136,14 @@ export function resolveSkyPlacementV4Record(records, planet, sign) {
 }
 
 export function renderSkyPlacementV4Preview(corpus, input) {
-  if (corpus.editorial_status !== "proposed_v4" || corpus.implementation_status !== "stage_only" || corpus.owner_approved !== false) {
-    throw new Error("SKY_PLACEMENT_V4_STAGE_GOVERNANCE: preview accepts proposed_v4/stage_only/non-approved corpus only.");
+  if (corpus.status !== "proposed_v4_source_verified" || corpus.serving_enabled !== false) {
+    throw new Error("SKY_PLACEMENT_V4_STAGE_GOVERNANCE: preview accepts proposed_v4_source_verified/non-serving corpus only.");
   }
 
   const planet = normalized(input.planet);
   const sign = normalized(input.sign);
   const keys = skyPlacementV4ContentKeys(planet, sign);
-  const article = (corpus.sun_articles ?? []).find((entry) => (
+  const article = (corpus.sun_corpus ?? corpus.sun_articles ?? []).find((entry) => (
     normalized(entry.planet) === planet && normalized(entry.sign) === sign
   ));
   const facts = input.facts ?? {};
@@ -130,7 +155,7 @@ export function renderSkyPlacementV4Preview(corpus, input) {
       ? compileSkyPlacementV4Fallback(corpus, article, facts)
       : "";
   const resolution = fullArticleEligible ? "full-article" : fallbackEligible ? "exact-fallback" : "facts-only";
-  const currentConditions = renderSkyPlacementV4Conditions(input.conditions);
+  const currentConditions = renderSkyPlacementV4Conditions(corpus, planet, input.conditions);
   const seasonalContext = seasonalContextFor(corpus, sign, input.latitude);
   let page = templateById(corpus, PAGE_TEMPLATE_ID);
 
@@ -168,7 +193,7 @@ export function renderSkyPlacementV4Preview(corpus, input) {
       activeAspects: (input.conditions ?? []).filter((condition) => condition.kind !== "retrograde" && condition.active === true && condition.approved === true),
       contentKey: article?.content_key ?? keys.canonical,
       occurrenceId: `sky-placement/transit/${planet}/${sign}/${requiredText(input.cycleStartDate, "cycle start date")}`,
-      approvalStatus: article?.owner_approved === true ? "owner-approved" : "proposed_v4",
+      approvalStatus: article?.owner_approved === true ? "owner-approved" : corpus.status,
       dateModified: input.dateModified ?? null
     }
   };
