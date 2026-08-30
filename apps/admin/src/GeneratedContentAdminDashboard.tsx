@@ -78,7 +78,7 @@ import { templateVariableReferences } from "./templateVariableReference";
 import { articleAppDestination, isSkyWriteupContentRow } from "./articleWorkspace";
 import { contentWiringStatus, isPublishedButUnwired } from "./contentWiringStatus";
 import { fallbackHookDisplayTitle } from "./fallbackHookTitle";
-import { fallbackHookEditorGuidance } from "./fallbackHookEditorGuidance";
+import type { FallbackHookEditorGuidanceBuilder } from "./DailyFallbackWorkspaceGuide";
 import { isCompositionTemplateRow } from "./compositionTemplateClassifier";
 import { AdminPaginatedCollection } from "./AdminPaginatedCollection";
 import {
@@ -129,6 +129,7 @@ const TemplateVariableReviewPanels = lazy(async () => {
 });
 const TemplateReaderDrilldown = lazy(() => import("./TemplateReaderDrilldown"));
 const NatalPlacementSourceFinder = lazy(() => import("./NatalPlacementSourceFinder"));
+const DailyFallbackWorkspaceGuide = lazy(() => import("./DailyFallbackWorkspaceGuide"));
 const UnresolvedContentReview = lazy(async () => {
   const module = await import("./UnresolvedContentReview");
   return { default: module.UnresolvedContentReview };
@@ -2535,6 +2536,7 @@ export function GeneratedContentAdminDashboard() {
   const [skyArticleEditionForm, setSkyArticleEditionForm] = useState<SkyArticleEditionForm | null>(null);
   const [skyArticleEditor, setSkyArticleEditor] = useState<SkyArticleEditorState | null>(null);
   const [draft, setDraft] = useState<AdminDraft | null>(null);
+  const [fallbackHookEditorGuidanceBuilder, setFallbackHookEditorGuidanceBuilder] = useState<FallbackHookEditorGuidanceBuilder | null>(null);
   const [fallbackHookDefinitions, setFallbackHookDefinitions] = useState<FallbackHookDefinition[]>([]);
   const [hookCatalogPackageVersion, setHookCatalogPackageVersion] = useState("loading");
   const [hookCatalogLoadState, setHookCatalogLoadState] = useState<AdminHookCatalogLoadState>("idle");
@@ -2553,6 +2555,24 @@ export function GeneratedContentAdminDashboard() {
   const hookBodyRequestsRef = useRef(new Map<AdminHookCatalogDomain, Promise<Map<string, string>>>());
   const skyArticleAutosaveSequenceRef = useRef(0);
   const skyArticleWorkspaceAutosaveSequenceRef = useRef(0);
+
+  useEffect(() => {
+    if (!draft || !draftIsFallbackHook(draft)) return;
+
+    let active = true;
+    void import("./DailyFallbackWorkspaceGuide")
+      .then((module) => module.loadFallbackHookEditorGuidance())
+      .then((builder) => {
+        if (active) setFallbackHookEditorGuidanceBuilder(() => builder);
+      })
+      .catch(() => {
+        if (active) setFallbackHookEditorGuidanceBuilder(null);
+      });
+
+    return () => {
+      active = false;
+    };
+  }, [draft?.blockType, draft?.contentKey]);
 
   useEffect(() => {
     setLiveOmittedSections(readLiveOmittedSectionQueue());
@@ -5001,7 +5021,11 @@ export function GeneratedContentAdminDashboard() {
               </button>
             </section>
             {renderFallbackTabs()}
-            {renderDailyHookGuide()}
+            {fallbackSectionFilter === "daily" && (
+              <Suspense fallback={null}>
+                <DailyFallbackWorkspaceGuide onShowFamily={showDailyHookFamily} />
+              </Suspense>
+            )}
             <section className="admin-content-filters" aria-label="Fallback row controls">
               <div className="admin-review-filter-grid">
                 <label className="admin-field-wide">
@@ -5738,45 +5762,6 @@ export function GeneratedContentAdminDashboard() {
     setSelectedRowId(null);
   }
 
-  function renderDailyHookGuide() {
-    if (fallbackSectionFilter !== "daily") return null;
-
-    return (
-      <section className="admin-daily-hook-guide" aria-label="How daily content is assembled">
-        <div className="admin-daily-hook-guide-heading">
-          <div>
-            <p className="admin-eyebrow">Daily content map</p>
-            <h3>Start with the reader surface</h3>
-          </div>
-          <p>Daily rows are selected by the app; they are not complete standalone articles.</p>
-        </div>
-        <div className="admin-daily-hook-guide-grid">
-          <article>
-            <strong>Daily At-a-Glance</strong>
-            <span>You and a selected friend each receive their own card.</span>
-            <p><b>Moon-driven selector</b><i aria-hidden="true">→</i><b>matching headline</b><i aria-hidden="true">→</i><b>matching passage</b></p>
-            <div>
-              <button type="button" onClick={() => showDailyHookFamily("daily-headline")}>Browse headlines</button>
-              <button type="button" onClick={() => showDailyHookFamily("daily-body")}>Browse passages</button>
-            </div>
-          </article>
-          <article>
-            <strong>Today between you two</strong>
-            <span>One shared reading on Friends &gt; selected person.</span>
-            <p><b>your clause + friend clause</b><i aria-hidden="true">→</i><b>opening</b><i aria-hidden="true">→</i><b>optional shared bridge and close</b></p>
-            <div>
-              <button type="button" onClick={() => showDailyHookFamily("pair-daily")}>Browse shared daily sources</button>
-            </div>
-          </article>
-        </div>
-        <details className="admin-daily-hook-create-note">
-          <summary>Can I add a new daily row?</summary>
-          <p>Each row must match a selector the app already knows how to request. Edit an existing row to change current output. A newly invented key will not appear to readers until its selector or variant is wired into the resolver, so Content Studio does not offer a misleading free-form “add row” action here.</p>
-        </details>
-      </section>
-    );
-  }
-
   function renderBulkBar() {
     if (selectedIds.size === 0) return null;
 
@@ -6277,8 +6262,8 @@ export function GeneratedContentAdminDashboard() {
       body_you: packageFieldString(currentDraft, "body_you"),
       body_they: packageFieldString(currentDraft, "body_they")
     }, effectiveSkyFallback);
-    const baseFallbackEditorGuidance = isFallbackHookDraft && !skyFallbackEditor
-      ? fallbackHookEditorGuidance({
+    const baseFallbackEditorGuidance = isFallbackHookDraft && !skyFallbackEditor && fallbackHookEditorGuidanceBuilder
+      ? fallbackHookEditorGuidanceBuilder({
           contentKey: currentDraft.contentKey,
           grammarFrame: typeof packageRecord.grammar_frame === "string" ? packageRecord.grammar_frame : undefined,
           bodyYou: packageFieldString(currentDraft, "body_you") || currentDraft.body,

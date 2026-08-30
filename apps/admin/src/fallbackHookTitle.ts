@@ -20,6 +20,8 @@ function ordinalHouse(value: string) {
     : words(value);
 }
 
+export { ordinalHouse as fallbackHookHouseLabel, words as fallbackHookWords };
+
 function variant(value: string) {
   const match = value.match(/^variant-(\d+)$/u);
   return match ? `Variant ${match[1]}` : words(value);

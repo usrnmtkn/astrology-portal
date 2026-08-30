@@ -8,6 +8,8 @@ import { fileURLToPath } from "node:url";
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const generatedRoot = path.join(repoRoot, "apps/admin/public/generated");
 const webGeneratedRoot = path.join(repoRoot, "apps/web/public/generated");
+const editorGuidanceFileName = "admin-fallback-hook-editor-guidance-v1.json";
+const editorGuidanceSource = path.join(repoRoot, "apps/admin/content/fallback-hook-editor-guidance-v1.json");
 const maxDomainPackageBytes = 600000;
 const sourceFiles = [
   path.join(repoRoot, "apps/web/src/content/fallbackArchitectureV3/bundled-sky-core-rows-v3.json"),
@@ -86,6 +88,14 @@ for (const fileName of fs.readdirSync(generatedRoot).filter((file) => file.start
     fs.readFileSync(path.join(webGeneratedRoot, fileName), "utf8"),
     fs.readFileSync(path.join(generatedRoot, fileName), "utf8"),
     `${fileName} must remain byte-identical across the web and standalone Admin targets.`
+  );
+}
+
+for (const outputRoot of [generatedRoot, webGeneratedRoot]) {
+  assert.equal(
+    fs.readFileSync(path.join(outputRoot, editorGuidanceFileName), "utf8"),
+    fs.readFileSync(editorGuidanceSource, "utf8"),
+    `${editorGuidanceFileName} must remain byte-identical to its canonical Admin source.`
   );
 }
 

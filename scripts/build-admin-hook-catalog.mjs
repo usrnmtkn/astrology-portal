@@ -15,6 +15,7 @@ const sourceFiles = [
   path.join(repoRoot, "apps/web/src/content/fallbackArchitectureV3/bundled-shared-placement-rows-v3.json"),
   path.join(repoRoot, "apps/web/src/content/fallbackArchitectureV3/bundled-relationship-hook-rows-v3.json")
 ];
+const editorGuidanceSource = path.join(repoRoot, "apps/admin/content/fallback-hook-editor-guidance-v1.json");
 const resolverEntry = fs.readFileSync(
   path.join(repoRoot, "apps/web/src/content/fallbackArchitectureV3/resolver/index.browser.ts"),
   "utf8"
@@ -94,6 +95,7 @@ for (const { key, surface, body } of rows) {
 
 for (const outputRoot of outputRoots) {
   fs.mkdirSync(outputRoot, { recursive: true });
+  fs.copyFileSync(editorGuidanceSource, path.join(outputRoot, "admin-fallback-hook-editor-guidance-v1.json"));
   fs.rmSync(path.join(outputRoot, "admin-source-draft-catalog-v1.json"), { force: true });
   fs.writeFileSync(
     path.join(outputRoot, "admin-hook-catalog-index-v1.json"),
