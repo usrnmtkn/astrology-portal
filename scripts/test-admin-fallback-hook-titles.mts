@@ -1,7 +1,15 @@
 import assert from "node:assert/strict";
 import fs from "node:fs";
-import { fallbackHookEditorGuidance } from "../apps/admin/src/fallbackHookEditorGuidance.ts";
+import { fallbackHookEditorGuidance } from "../apps/admin/src/DailyFallbackWorkspaceGuide.tsx";
 import { fallbackHookDisplayTitle } from "../apps/admin/src/fallbackHookTitle.ts";
+
+const guidanceCopy = JSON.parse(fs.readFileSync(
+  new URL("../apps/admin/content/fallback-hook-editor-guidance-v1.json", import.meta.url),
+  "utf8"
+));
+const editorGuidance = (input: Parameters<typeof fallbackHookEditorGuidance>[0]) => (
+  fallbackHookEditorGuidance(input, guidanceCopy)
+);
 
 assert.equal(fallbackHookDisplayTitle("article/manual/example"), null);
 assert.equal(fallbackHookDisplayTitle("fallback-hook/daily-body/house/1"), "1st House · Daily passage");
@@ -21,7 +29,7 @@ assert.equal(fallbackHookDisplayTitle("fallback-hook/pair-daily/clause/square/ve
 assert.equal(fallbackHookDisplayTitle("fallback-hook/pair-daily/opener"), "Between You Two · Opening");
 assert.equal(fallbackHookDisplayTitle("fallback-hook/pair-daily/shared-bond/soft/variant-2"), "Soft bond · Shared bridge · Variant 2");
 
-const planetModeGuidance = fallbackHookEditorGuidance({
+const planetModeGuidance = editorGuidance({
   contentKey: "fallback-hook/planet-mode/pluto",
   grammarFrame: "noun_phrase",
   bodyYou: "how you handle power and deep change"
@@ -36,7 +44,7 @@ assert.equal(planetModeGuidance.bodyYouLabel, "Reader phrase · You");
 assert.equal(planetModeGuidance.bodyTheyLabel, "Reader phrase · They");
 assert.match(planetModeGuidance.example ?? "", /how you handle power and deep change/u);
 
-const retroArticleGuidance = fallbackHookEditorGuidance({
+const retroArticleGuidance = editorGuidance({
   contentKey: "fallback-hook/transit-retro-article/saturn",
   grammarFrame: "complete_sentence",
   bodyYou: "{{timeOpen}}, {{transitRef}} is retrograde."
@@ -46,7 +54,7 @@ assert.equal(retroArticleGuidance.bodyYouLabel, "Reader passage");
 assert.equal(retroArticleGuidance.bodyTheyLabel, "Reference mirror · not rendered");
 assert.match(retroArticleGuidance.writingRule, /\{\{timeOpen\}\}.*\{\{transitRef\}\}/u);
 
-const dailyGuidance = fallbackHookEditorGuidance({
+const dailyGuidance = editorGuidance({
   contentKey: "fallback-hook/daily-body/house/4",
   grammarFrame: "complete_sentence",
   bodyYou: "Tend to the part of home you keep postponing.",
@@ -58,7 +66,7 @@ assert.equal(dailyGuidance.bodyYouLabel, "Passage · You");
 assert.equal(dailyGuidance.bodyTheyLabel, "Passage · Friend");
 assert.match(dailyGuidance.audienceHint ?? "", /Moon-driven selector/u);
 
-const pairDailyGuidance = fallbackHookEditorGuidance({
+const pairDailyGuidance = editorGuidance({
   contentKey: "fallback-hook/pair-daily/clause/house/1",
   grammarFrame: "sentence_fragment",
   bodyYou: "keeping the one detail that still feels unmistakably yours",
