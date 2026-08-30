@@ -387,7 +387,7 @@ const generatedContentRows = [
     body: "When no reviewed compatibility card is saved yet, use the simple relationship pattern without inventing intimacy.",
     sections: [],
     block_type: "fallback_template",
-    lane: "serving",
+    lane: "reference",
     review_state: "reviewed",
     evergreen: true,
     evergreen_at: now,
@@ -417,7 +417,7 @@ const generatedContentRows = [
     body: "Name the mismatch without making either person the problem.",
     sections: [],
     block_type: "vocabulary_phrase",
-    lane: "serving",
+    lane: "reference",
     review_state: "reviewed",
     evergreen: true,
     evergreen_at: now,
@@ -680,10 +680,37 @@ async function seedAdminApi(
         });
         return;
       }
+      const servedRows = url.searchParams.get("scope") === "compatibility"
+        ? apiGeneratedContentRows.filter((row) => {
+            const key = String(row.content_key ?? "");
+            return key.startsWith("compatibility.")
+              || key.startsWith("compatibility/")
+              || key.startsWith("authored/compat-")
+              || key.startsWith("fallback-hook/friends")
+              || key.startsWith("fallback-hook/relationship")
+              || key.startsWith("fallback-hook/synastry")
+              || key.startsWith("fallback-hook/pair-daily/")
+              || key.startsWith("vocab/relationship/")
+              || key.startsWith("slot-template/compatibility/")
+              || row.event_type === "friends.compatibility.planet-card"
+              || row.block_type === "compatibility_planet_card";
+          })
+        : apiGeneratedContentRows;
+      const limit = Math.max(1, Number(url.searchParams.get("limit") ?? servedRows.length));
+      const cursor = url.searchParams.get("cursor");
+      const cursorIndex = cursor ? servedRows.findIndex((row) => row.id === cursor) : -1;
+      const offset = cursor ? Math.max(0, cursorIndex + 1) : Math.max(0, Number(url.searchParams.get("offset") ?? 0));
+      const pageRows = servedRows.slice(offset, offset + limit);
       await route.fulfill({
         status: 200,
         contentType: "application/json",
-        body: JSON.stringify({ ok: true, rows: apiGeneratedContentRows })
+        body: JSON.stringify({
+          ok: true,
+          rows: pageRows,
+          ...(url.searchParams.get("scope") === "compatibility"
+            ? { nextCursor: pageRows.length === limit ? String(pageRows.at(-1)?.id ?? "") : null }
+            : {})
+        })
       });
       return;
     }
@@ -863,6 +890,41 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(page.getByRole("region", { name: "Admin status" })).toContainText(`${generatedContentRows.length} saved rows loaded`);
     await expect(page.getByRole("region", { name: "Admin status" })).not.toContainText("Rows not loaded");
     expect(generatedContentReads).toBe(2);
+  });
+
+  test("production-scale Compatibility renders its first scoped page before the full editorial inventory", async ({ page }) => {
+    test.setTimeout(60_000);
+    const compatibilityRowsAtScale = Array.from({ length: 1_261 }, (_, index) => ({
+      ...generatedContentRows.find((row) => row.id === "qa-compatibility-content-row")!,
+      id: `qa-compat-scale-${index}`,
+      content_key: `authored/compat-pair/mars/aries/${index}`,
+      headline: `Compatibility scale ${index}`,
+      facts: { planet: "mars", readerSign: "aries", otherSign: "libra" },
+      source_snapshot: { contentSystem: "authored", planet: "mars", readerSign: "aries", otherSign: "libra" }
+    }));
+    const unrelatedEditorialRows = Array.from({ length: 7_500 }, (_, index) => ({
+      ...generatedContentRows[0],
+      id: `qa-unrelated-scale-${index}`,
+      content_key: `content/unrelated/${index}`,
+      headline: `Unrelated editorial row ${index}`
+    }));
+    const reads: URL[] = [];
+    await seedAdminApi(page, {
+      generatedRows: [...compatibilityRowsAtScale, ...unrelatedEditorialRows],
+      generatedContentDelayMs: 150,
+      onGeneratedContentRead: (url) => reads.push(url)
+    });
+
+    const startedAt = Date.now();
+    await page.goto("/admin/content#compatibility");
+    await expect(page.locator(".admin-content-row").first()).toBeVisible({ timeout: 3_000 });
+    expect(Date.now() - startedAt, "first Compatibility page becomes usable within 3 seconds").toBeLessThan(3_000);
+    expect(reads[0]?.searchParams.get("scope")).toBe("compatibility");
+    expect(reads[0]?.searchParams.get("limit")).toBe("500");
+
+    await expect(page.getByRole("region", { name: "Admin status" })).toContainText("1261 saved rows loaded", {
+      timeout: routeReadyTimeoutMs
+    });
   });
 
   test("production-scale Content Library keeps the DOM bounded and search responsive", async ({ page }) => {
@@ -1602,6 +1664,8 @@ test.describe("content dashboard admin user flow case studies", () => {
 
   test("compatibility is a dedicated primary workspace", async ({ page }) => {
     const assertNoBrowserErrors = await expectNoBrowserErrors(page);
+    const compatibilityReads: URL[] = [];
+    let compatibilityWrite: { method: string; payload: Record<string, unknown> } | null = null;
     const directionalCompatibilityRow = {
       ...generatedContentRows.find((row) => row.id === "qa-compatibility-content-row")!,
       id: "qa-directional-compatibility-content-row",
@@ -1618,21 +1682,44 @@ test.describe("content dashboard admin user flow case studies", () => {
       content_key: "authored/compat-deep/sun/aquarius/pisces",
       headline: "Pisces"
     };
-    await seedAdminApi(page, { generatedRows: [...generatedContentRows, directionalCompatibilityRow, reverseDirectionalCompatibilityRow] });
+    const copyContaminationRow = {
+      ...directionalCompatibilityRow,
+      id: "qa-jupiter-copy-contamination-row",
+      content_key: "authored/compat-deep/jupiter/libra/taurus",
+      headline: "Taurus",
+      body: "Jupiter between Libra and Taurus can still discuss Venus themes without becoming a Venus record.",
+      facts: { planet: "jupiter", readerSign: "libra", otherSign: "taurus" },
+      source_snapshot: { contentSystem: "authored", planet: "jupiter", readerSign: "libra", otherSign: "taurus" }
+    };
+    await seedAdminApi(page, {
+      generatedRows: [...generatedContentRows, directionalCompatibilityRow, reverseDirectionalCompatibilityRow, copyContaminationRow],
+      onGeneratedContentRead: (url) => compatibilityReads.push(url),
+      onGeneratedContentWrite: (write) => { compatibilityWrite = write; }
+    });
     await expectAdminRouteLoads(page, "/admin/content#compatibility");
 
     await expectAdminHeader(page, "Compatibility", "Admin / Write / Compatibility");
+    expect(compatibilityReads[0]?.searchParams.get("scope")).toBe("compatibility");
+    expect(compatibilityReads[0]?.searchParams.get("visibility")).toBe("all");
     const compatibilitySections = page.getByRole("tablist", { name: "Compatibility sections" });
     await expect(compatibilitySections.getByRole("tab", { name: /All compatibility/ })).toHaveAttribute("aria-selected", "true");
     await expect(page.getByRole("region", { name: "Compatibility sections summary" })).toHaveCount(0);
     await expect(page.getByRole("columnheader", { name: "Surface" })).toHaveCount(0);
     await expect(page.getByRole("columnheader", { name: "Kind" })).toHaveCount(0);
     await expect(page.getByRole("columnheader", { name: "Updated" })).toHaveCount(0);
+    await expect(compatibilitySections.getByRole("tab", { name: /Simple fallbacks 1/ })).toBeVisible();
+    await expect(compatibilitySections.getByRole("tab", { name: /Reusable phrases 1/ })).toBeVisible();
+    await expect(compatibilitySections.getByRole("tab", { name: /Templates & slots 1/ })).toBeVisible();
     const compatibilityRow = page.locator(".admin-content-row", { hasText: "compatibility.sun.aries.libra" });
     await expect(compatibilityRow).toHaveCount(1);
     await expect(compatibilityRow.getByText("Sun · Aries → Libra", { exact: true })).toBeVisible();
     await expect(compatibilityRow).toContainText("You: Aries · Friend: Libra");
     await expect(page.getByLabel("Compatibility sort").locator("option:checked")).toHaveText("Newest updated");
+    await page.getByLabel("Compatibility planet or point").selectOption("venus");
+    await expect(page.locator(".admin-content-row", { hasText: "authored/compat-deep/jupiter/libra/taurus" })).toHaveCount(0);
+    await page.getByLabel("Compatibility planet or point").selectOption("jupiter");
+    await expect(page.locator(".admin-content-row", { hasText: "authored/compat-deep/jupiter/libra/taurus" })).toHaveCount(1);
+    await page.getByLabel("Compatibility planet or point").selectOption("all");
     await page.getByLabel("Compatibility sort").selectOption("title-asc");
     await expect(page.getByLabel("Compatibility sort").locator("option:checked")).toHaveText("Planet + sign pair A-Z");
     await page.getByLabel("Search compatibility").fill("you pisces friend aquarius");
@@ -1679,23 +1766,76 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(compatibilityEditor.getByLabel("TL;DR (optional)")).toBeVisible();
     await expect(compatibilityWriteup).toBeVisible();
     await compatibilityEditor.getByRole("button", { name: "Close" }).click();
+    await expect(directionalCompatibilityResult.getByRole("button", { name: "Edit" })).toBeFocused();
 
     await page.getByLabel("Search compatibility").fill("you aries friend libra");
     await compatibilityRow.getByRole("button", { name: "Edit" }).click();
     await expect(compatibilityEditor.getByRole("button", { name: "Reverse record unavailable" })).toBeDisabled();
     await compatibilityEditor.getByRole("button", { name: "Close" }).click();
 
+    const createCardButton = page.locator(".admin-new-actions").getByRole("button", { name: "Card copy" });
+    await createCardButton.click();
+    await expect(compatibilityEditor.getByRole("heading", { name: "Create compatibility card" })).toBeVisible();
+    await expect(compatibilityEditor.getByRole("button", { name: /Reverse record/ })).toHaveCount(0);
+    await expect(compatibilityEditor.getByRole("button", { name: "Close" })).toBeFocused();
+    const newCardSave = compatibilityEditor.getByRole("button", { name: "Save", exact: true });
+    await expect(newCardSave).toBeDisabled();
+    await compatibilityEditor.getByLabel("Compatibility card planet").selectOption("mars");
+    await compatibilityEditor.getByLabel("Compatibility card reader sign").selectOption("pisces");
+    await compatibilityEditor.getByLabel("Compatibility card friend sign").selectOption("aquarius");
+    await expect(compatibilityEditor.getByLabel("Content key")).toHaveValue("authored/compat-pair/mars/pisces/aquarius");
+    await compatibilityEditor.getByLabel("Compatibility write-up").fill("Mars between Pisces and Aquarius needs room for both instinct and perspective.");
+    await expect(newCardSave).toBeEnabled();
+    await newCardSave.click();
+    expect(compatibilityWrite?.method).toBe("POST");
+    expect(compatibilityWrite?.payload).toMatchObject({
+      contentKey: "authored/compat-pair/mars/pisces/aquarius",
+      lane: "serving",
+      blockType: "compatibility_planet_card"
+    });
+    await compatibilityEditor.getByRole("button", { name: "Close" }).click();
+    await expect(page.locator(".admin-content-row", { hasText: "authored/compat-pair/mars/pisces/aquarius" })).toHaveCount(1);
+
+    await page.getByLabel("Search compatibility").fill("no-result-keyword");
+    const compatibilityEmpty = page.locator(".admin-compatibility-empty");
+    await expect(compatibilityEmpty).toContainText("Current filters:");
+    await compatibilityEmpty.getByRole("button", { name: "Clear Compatibility filters" }).click();
+    await expect(page.getByLabel("Search compatibility")).toHaveValue("");
+
     await page.locator(".admin-new-actions").getByRole("button", { name: "Template" }).click();
-    await expect(compatibilityEditor.getByRole("heading", { name: "Create compatibility template" })).toBeVisible();
-    await expect(compatibilityEditor.getByRole("region", { name: "What you are creating" })).toContainText("Creating an assembly pattern");
-    await expect(compatibilityEditor.getByRole("region", { name: "Content role" })).toContainText("Template pattern");
+    await expect(compatibilityEditor.getByRole("heading", { name: /Edit Compatibility planet card slot/ })).toBeVisible();
     await expect(compatibilityEditor.getByLabel("Template name")).toBeVisible();
     await expect(compatibilityEditor.getByLabel("Template purpose (optional)")).toBeVisible();
     await expect(compatibilityEditor.getByLabel("Template pattern")).toBeVisible();
-    await expect(compatibilityEditor.getByRole("button", { name: "Mark reviewed" })).toHaveCount(0);
-    await expect(compatibilityEditor.getByRole("button", { name: "Publish to app" })).toHaveCount(0);
-    await expect(compatibilityEditor).toContainText("Save this draft before review or publication");
     await compatibilityEditor.getByRole("button", { name: "Close" }).click();
+    await expect(compatibilityEditor).toHaveCount(0);
+
+    const createPhraseButton = page.locator(".admin-new-actions").getByRole("button", { name: "Phrase" });
+    await createPhraseButton.click();
+    await expect(compatibilityEditor.getByRole("heading", { name: "Create reusable phrase" })).toBeVisible();
+    await expect(compatibilityEditor.getByRole("region", { name: "Content role" })).toHaveCount(0);
+    await compatibilityEditor.getByLabel("Phrase title").fill("Repair timing phrase");
+    await compatibilityEditor.getByLabel("Reusable phrase").fill("Name the timing mismatch before assigning blame.");
+    await compatibilityEditor.getByRole("button", { name: "Save", exact: true }).click();
+    expect(compatibilityWrite?.payload).toMatchObject({
+      contentKey: "vocab/relationship/repair-timing-phrase",
+      lane: "reference",
+      blockType: "vocabulary_phrase"
+    });
+    await compatibilityEditor.getByRole("button", { name: "Close" }).click();
+    await expect(compatibilityEditor).toHaveCount(0);
+    await expect(page.locator(".admin-content-row", { hasText: "vocab/relationship/repair-timing-phrase" })).toHaveCount(1);
+
+    await createCardButton.click();
+    await compatibilityEditor.getByLabel("Compatibility card planet").selectOption("saturn");
+    page.once("dialog", async (dialog) => dialog.dismiss());
+    await compatibilityEditor.getByRole("button", { name: "Close" }).click();
+    await expect(compatibilityEditor).toBeVisible();
+    page.once("dialog", async (dialog) => dialog.accept());
+    await compatibilityEditor.press("Escape");
+    await expect(compatibilityEditor).toHaveCount(0);
+    await expect(createCardButton).toBeFocused();
+
     await expect(page.locator(".admin-content-row", { hasText: "Moon in Virgo" })).toHaveCount(0);
     await expect(page.getByRole("navigation", { name: "Content operations" }).getByRole("button", { name: "Compatibility" })).toHaveAttribute("aria-current", "page");
 
@@ -2697,7 +2837,12 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(sentenceContext).toContainText("The highlighted words are the source you are editing.");
     await editor.getByLabel("Reader copy").fill("Both people do better when they say what they need directly.");
     await expect(sentenceContext.locator("mark")).toHaveText("Both people do better when they say what they need directly.");
+    page.once("dialog", async (dialog) => {
+      expect(dialog.message()).toContain("Discard the unsaved changes");
+      await dialog.accept();
+    });
     await editor.getByRole("button", { name: "Close" }).click();
+    await expect(editor).toHaveCount(0);
     await detail.getByRole("tab", { name: "Main template" }).click();
     await expect(detail.locator(".admin-composition-variable-token.variable-hook")).toHaveAttribute("data-variable-action", /Edit Closing Line/);
     await detail.getByRole("tab", { name: "Reader preview" }).click();

@@ -689,6 +689,8 @@ async function listGeneratedContent(req: IncomingMessage) {
   const startDate = requestUrl.searchParams.get("startDate");
   const endDate = requestUrl.searchParams.get("endDate");
   const visibility = requestUrl.searchParams.get("visibility") ?? "all";
+  const scope = requestUrl.searchParams.get("scope") ?? "all";
+  const cursor = requestUrl.searchParams.get("cursor");
   const limit = Math.min(Number(requestUrl.searchParams.get("limit") ?? "50"), 1000);
   const offset = Math.max(Number(requestUrl.searchParams.get("offset") ?? "0"), 0);
   const selectColumns = [
@@ -727,13 +729,29 @@ async function listGeneratedContent(req: IncomingMessage) {
   ];
   const params = new URLSearchParams({
     select: selectColumns.join(","),
-    order: startDate || endDate ? "target_date.asc.nullslast" : "updated_at.desc",
+    order: scope === "compatibility" ? "id.asc" : startDate || endDate ? "target_date.asc.nullslast,id.desc" : "updated_at.desc,id.desc",
     limit: id ? "1" : String(limit),
     offset: id ? "0" : String(offset)
   });
 
   if (id) {
     params.set("id", `eq.${id}`);
+  } else if (scope === "compatibility") {
+    const compatibilityFilters = [
+      "content_key.like.compatibility.%",
+      "content_key.like.compatibility/%",
+      "content_key.like.authored/compat-%",
+      "content_key.like.fallback-hook/friends%",
+      "content_key.like.fallback-hook/relationship%",
+      "content_key.like.fallback-hook/synastry%",
+      "content_key.like.fallback-hook/pair-daily/%",
+      "content_key.like.vocab/relationship/%",
+      "content_key.like.slot-template/compatibility/%",
+      "event_type.eq.friends.compatibility.planet-card",
+      "block_type.eq.compatibility_planet_card"
+    ];
+    params.set("or", `(${compatibilityFilters.join(",")})`);
+    if (cursor) params.set("id", `gt.${cursor}`);
   } else if (visibility === "editorial") {
     params.set("lane", "eq.serving");
     params.set("status", "neq.ARCHIVED");
@@ -1602,7 +1620,15 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
         return;
       }
 
-      sendJson(res, 200, { ok: true, rows: await listGeneratedContent(req) });
+      const rows = await listGeneratedContent(req);
+      const requestLimit = Math.min(Number(requestUrl.searchParams.get("limit") ?? "50"), 1000);
+      sendJson(res, 200, {
+        ok: true,
+        rows,
+        ...(requestUrl.searchParams.get("scope") === "compatibility"
+          ? { nextCursor: rows.length === requestLimit ? rows.at(-1)?.id ?? null : null }
+          : {})
+      });
       return;
     }
 
