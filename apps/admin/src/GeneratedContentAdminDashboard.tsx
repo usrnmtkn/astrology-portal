@@ -645,7 +645,6 @@ const compatibilitySortOptions: Array<{ key: AdminCompatibilitySort; label: stri
   { key: "source", label: "Source class" }
 ];
 const relationshipTypes = ["romantic", "friendship", "family", "coworkers", "creative", "exes", "complicated"];
-
 function adminHashForPage(page: AdminDashboardPage, params?: URLSearchParams) {
   const query = params?.toString();
   return `#${adminPageHashKeys[page]}${query ? `?${query}` : ""}`;
@@ -1411,21 +1410,16 @@ function matchesAdminSearch(haystack: string, search: string) {
 }
 
 function isCompatibilityRow(row: AdminGeneratedContentRow) {
-  const identity = [
-    row.content_key,
-    row.event_type,
-    row.block_type,
-    row.prompt_version,
-    row.headline
-  ].join(" ").toLowerCase().replace(/[-_/.:]+/g, " ");
-  return row.content_key.startsWith("compatibility.")
+  const contentKey = row.content_key.toLowerCase();
+  return contentKey.startsWith("compatibility.")
+    || contentKey.startsWith("compatibility/")
+    || contentKey.startsWith("authored/compat-")
     || row.event_type === "friends.compatibility.planet-card"
     || row.block_type === "compatibility_planet_card"
-    || /\bcompatibility\b/.test(identity)
-    || /^fallback-hook\/(?:friends|relationship|synastry)[./-]/.test(row.content_key)
-    || row.content_key.startsWith("fallback-hook/pair-daily/")
-    || row.content_key.startsWith("vocab/relationship/")
-    || row.content_key.startsWith("slot-template/compatibility/");
+    || /^fallback-hook\/(?:friends|relationship|synastry)[./-]/.test(contentKey)
+    || contentKey.startsWith("fallback-hook/pair-daily/")
+    || contentKey.startsWith("vocab/relationship/")
+    || contentKey.startsWith("slot-template/compatibility/");
 }
 
 function compatibilitySectionForRow(row: AdminGeneratedContentRow): AdminCompatibilitySectionFilter {
@@ -1437,11 +1431,18 @@ function compatibilitySectionForRow(row: AdminGeneratedContentRow): AdminCompati
 }
 
 function compatibilityPlanetForRow(row: AdminGeneratedContentRow): AdminArticlePointFilter {
+  const identity = compatibilityBrowseIdentityForRow(row);
   const sourceSnapshot = row.source_snapshot ?? {};
   const facts = row.facts ?? {};
-  const explicitPlanet = typeof sourceSnapshot.planet === "string" ? sourceSnapshot.planet : typeof facts.planet === "string" ? facts.planet : "";
-  const normalized = `${explicitPlanet} ${rowSearchText(row)}`.toLowerCase().replace(/[-_/.:]+/g, " ");
-  const planet = articlePointFilters.find((filter) => filter.key !== "all" && filter.key !== "other" && new RegExp(`\\b${filter.key}\\b`).test(normalized));
+  const explicitPlanet = identity?.planet
+    || (typeof sourceSnapshot.planet === "string" ? sourceSnapshot.planet : "")
+    || (typeof facts.planet === "string" ? facts.planet : "");
+  const structuredIdentity = `${explicitPlanet} ${row.content_key}`.toLowerCase().replace(/[-_/.:]+/g, " ");
+  const planet = articlePointFilters.find((filter) => (
+    filter.key !== "all"
+    && filter.key !== "other"
+    && new RegExp(`\\b${filter.key}\\b`).test(structuredIdentity)
+  ));
   return planet?.key ?? "other";
 }
 
@@ -2319,7 +2320,7 @@ function isRetryableAdminReadError(error: unknown) {
 async function loadGeneratedContentPage(path: string, secret: string) {
   for (let attempt = 0; ; attempt += 1) {
     try {
-      return await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>(path, secret);
+      return await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[]; nextCursor?: string | null }>(path, secret);
     } catch (error) {
       const retryDelay = generatedContentPageRetryDelaysMs[attempt];
       if (retryDelay === undefined || !isRetryableAdminReadError(error)) throw error;
@@ -2328,21 +2329,30 @@ async function loadGeneratedContentPage(path: string, secret: string) {
   }
 }
 
-async function loadAllGeneratedContentRows(secret: string, visibility: "editorial" | "all" = "editorial") {
-  const pageSize = 1000;
+async function loadAllGeneratedContentRows(
+  secret: string,
+  visibility: "editorial" | "all" = "editorial",
+  scope: "all" | "compatibility" = "all",
+  onPage?: (rows: AdminGeneratedContentRow[], complete: boolean) => void
+) {
+  const pageSize = scope === "compatibility" ? 500 : 1000;
   const allRows: AdminGeneratedContentRow[] = [];
+  let cursor: string | null = null;
 
   for (let offset = 0; offset < 50000; offset += pageSize) {
     const result = await loadGeneratedContentPage(
-      `/api/admin/generated-content?status=all&visibility=${visibility}&limit=${pageSize}&offset=${offset}`,
+      `/api/admin/generated-content?status=all&visibility=${visibility}&scope=${scope}&limit=${pageSize}${scope === "compatibility" ? cursor ? `&cursor=${encodeURIComponent(cursor)}` : "" : `&offset=${offset}`}`,
       secret
     );
     const pageRows = assertRowsPayload(result, "/api/admin/generated-content");
 
     allRows.push(...pageRows);
-    if (pageRows.length < pageSize) {
+    const complete = scope === "compatibility" ? !result.nextCursor : pageRows.length < pageSize;
+    onPage?.(dedupeGeneratedContentRows(allRows), complete);
+    if (complete) {
       break;
     }
+    if (scope === "compatibility") cursor = result.nextCursor ?? null;
   }
 
   return dedupeGeneratedContentRows(allRows);
@@ -2550,6 +2560,8 @@ export function GeneratedContentAdminDashboard() {
   const handledHashRef = useRef("");
   const guidedReviewOpenedRef = useRef("");
   const editorRef = useRef<HTMLElement | null>(null);
+  const editorReturnFocusRef = useRef<HTMLElement | null>(null);
+  const editorBaselineRef = useRef<string | null>(null);
   const hookCatalogRequestRef = useRef<Promise<{ definitions: FallbackHookDefinition[]; packageVersion: string }> | null>(null);
   const hookBodyPackagesRef = useRef(new Map<AdminHookCatalogDomain, Map<string, string>>());
   const hookBodyRequestsRef = useRef(new Map<AdminHookCatalogDomain, Promise<Map<string, string>>>());
@@ -2647,8 +2659,8 @@ export function GeneratedContentAdminDashboard() {
       && matchesAdminSearch(visibleRowSearchText(row), articleQuery);
   }), [articleRows, articleStatusFilter, articlePointFilter, articleContentSystemFilter, articleQuery]);
   const compatibilityRows = useMemo(
-    () => visibleRows.filter(isCompatibilityRow),
-    [visibleRows]
+    () => rows.filter((row) => !isRetiredAdminRow(row) && isCompatibilityRow(row)),
+    [rows]
   );
   const compatibilityCounts = useMemo(() => {
     const counts: Record<AdminCompatibilitySectionFilter, number> = {
@@ -3262,6 +3274,17 @@ export function GeneratedContentAdminDashboard() {
   }
 
   function closeEditor() {
+    const persistedDraft = selectedRow ? draftFromRow(selectedRow) : null;
+    const hasUnsavedChanges = Boolean(draft && (
+      editorBaselineRef.current
+        ? JSON.stringify(draft) !== editorBaselineRef.current
+        : persistedDraft
+          ? JSON.stringify(draft) !== JSON.stringify(persistedDraft)
+        : draft.body.trim()
+    ));
+    if (hasUnsavedChanges && !window.confirm("Discard the unsaved changes in this editor?")) {
+      return false;
+    }
     setTemplateVariableReferenceOpen(false);
     setTemplateVariableQuery("");
     setSelectedTemplateVariableName(null);
@@ -3269,11 +3292,18 @@ export function GeneratedContentAdminDashboard() {
     setCompositionEditorContext(null);
     setSelectedRowId(null);
     setDraft(null);
+    editorBaselineRef.current = null;
     setSkyWriteupParentId(null);
     setSkyRelatedAspectQuery("");
     setSkyArticleEditionForm(null);
     skyArticleAutosaveSequenceRef.current += 1;
     setSkyArticleEditor(null);
+    window.requestAnimationFrame(() => {
+      const returnTarget = editorReturnFocusRef.current;
+      editorReturnFocusRef.current = null;
+      if (returnTarget?.isConnected) returnTarget.focus();
+    });
+    return true;
   }
 
   function revealUnresolvedContentRow() {
@@ -3288,7 +3318,7 @@ export function GeneratedContentAdminDashboard() {
     setIsMobileNavOpen(false);
     window.scrollTo({ top: 0, left: 0, behavior: "auto" });
     if (!options.keepEditorOpen) {
-      closeEditor();
+      if (!closeEditor()) return;
     }
     applyAdminRouteState(page, params ?? new URLSearchParams());
     setAdminHash(adminHashForPage(page, params));
@@ -3367,8 +3397,21 @@ export function GeneratedContentAdminDashboard() {
     setIsLoading(true);
     try {
       const needsExtendedInventory = activePage === "unresolvedContent" || isCompositionPage(activePage) || showReferenceRows || showRetiredRows;
+      const loadsCompatibilityFirst = activePage === "compatibility";
       const [generatedResult, reviewResult, usersResult, sourceDraftResult, runtimeReviewResult] = await Promise.allSettled([
-        loadAllGeneratedContentRows(normalizedSecret, needsExtendedInventory ? "all" : "editorial"),
+        loadAllGeneratedContentRows(
+          normalizedSecret,
+          needsExtendedInventory || loadsCompatibilityFirst ? "all" : "editorial",
+          loadsCompatibilityFirst ? "compatibility" : "all",
+          loadsCompatibilityFirst
+            ? (loadedRows, complete) => {
+                setRows(loadedRows);
+                setMessage(complete
+                  ? `Loaded ${loadedRows.length} compatibility records.`
+                  : `Loaded ${loadedRows.length} compatibility records…`);
+              }
+            : undefined
+        ),
         adminJsonRequest<{ ok: boolean; rows?: AdminReviewRecord[]; records?: AdminReviewRecord[]; counts?: unknown }>("/api/admin/review-records?surface=upcomingAspects&status=all", normalizedSecret),
         adminJsonRequest<{ ok: boolean; rows: AdminUserGeneratedContentRow[] }>("/api/admin/user-generated-content?status=all&limit=100", normalizedSecret),
         loadAdminSourceDraftCatalog(normalizedSecret),
@@ -3420,6 +3463,15 @@ export function GeneratedContentAdminDashboard() {
       ].filter(Boolean);
       setLoadState("loaded");
       setMessage(`Loaded ${generatedRows.length} saved rows, ${reviewRowsPayload.length} review records, and ${usersPayload.rows?.length ?? 0} user rows.${partialWarnings.length ? ` Partial load: ${partialWarnings.join(", ")}.` : ""}`);
+      if (loadsCompatibilityFirst) {
+        void loadAllGeneratedContentRows(normalizedSecret, "editorial")
+          .then((editorialRows) => {
+            setRows((current) => dedupeGeneratedContentRows([...current, ...editorialRows]));
+          })
+          .catch(() => {
+            // Compatibility is already usable. Other workspaces can retry their inventory on navigation or reload.
+          });
+      }
       return true;
     } catch (error) {
       const accessDenied = error instanceof AdminRequestError && error.status === 401;
@@ -3741,6 +3793,16 @@ export function GeneratedContentAdminDashboard() {
   async function saveDraft(nextStatus?: GeneratedContentStatus, draftOverride?: AdminDraft) {
     const activeDraft = draftOverride ?? draft;
     if (!activeDraft) return null;
+    const isNewCompatibilityCard = !activeDraft.id && activeDraft.blockType === "compatibility_planet_card";
+    const compatibilityIdentity = compatibilityBrowseIdentity(activeDraft.contentKey, activeDraft.facts, activeDraft.sourceSnapshot);
+    if (isNewCompatibilityCard && !compatibilityIdentity) {
+      setMessage("Choose the planet and both signs before saving.");
+      return null;
+    }
+    if (isNewCompatibilityCard && rows.some((row) => row.content_key === activeDraft.contentKey)) {
+      setMessage("That Compatibility card already exists. Open its saved row.");
+      return null;
+    }
     const status = nextStatus ?? activeDraft.status;
     if (status === "LIVE" && activeDraft.sourceSnapshot?.governanceState === "needs-owner-decision") {
       setMessage("This source draft still needs an explicit owner decision. Save it as Draft or Reviewed; the general editor cannot make it reader-serving.");
@@ -3792,12 +3854,14 @@ export function GeneratedContentAdminDashboard() {
       const savedRows = payload.rows ?? [];
       const saved = savedRows[0];
       if (saved) {
+        const savedDraft = draftFromRow(saved);
         setRows((current) => {
           const without = current.filter((row) => row.id !== saved.id);
           return [saved, ...without];
         });
         setSelectedRowId(saved.id);
-        setDraft(draftFromRow(saved));
+        setDraft(savedDraft);
+        editorBaselineRef.current = JSON.stringify(savedDraft);
         announceContentUpdate({ contentKey: saved.content_key, published: saved.status === "LIVE", updatedAt: saved.updated_at ?? new Date().toISOString() });
       }
       setMessage(`${draftForSave.contentKey} saved as ${contentStatusLabel(saved?.status ?? status)}.`);
@@ -3860,7 +3924,11 @@ export function GeneratedContentAdminDashboard() {
   }
 
   function openRow(row: AdminGeneratedContentRow, compositionContext: CompositionEditorContext | null = null) {
+    if (document.activeElement instanceof HTMLElement && !editorRef.current?.contains(document.activeElement)) {
+      editorReturnFocusRef.current = document.activeElement;
+    }
     const nextDraft = draftFromRow(row);
+    editorBaselineRef.current = JSON.stringify(nextDraft);
     const edition = compiledSkyArticleEditionForDraft(nextDraft);
     const baseEdition = skyArticleRevisionBaseForDraft(nextDraft);
     setSelectedRowId(row.id);
@@ -4318,27 +4386,34 @@ export function GeneratedContentAdminDashboard() {
   }
 
   function handleCompatibilityCreateAction(kind: AdminCompatibilityCreateKind) {
+    if (document.activeElement instanceof HTMLElement && !editorRef.current?.contains(document.activeElement)) {
+      editorReturnFocusRef.current = document.activeElement;
+    }
     navigateAdminPage("compatibility", undefined, { keepEditorOpen: true });
     setIsCreateMenuOpen(false);
     setSelectedRowId(null);
     setCompatibilitySectionFilter(kind === "fallback-hook" ? "fallback-hooks" : kind === "vocabulary" ? "vocabulary" : kind === "template" ? "slots" : "content");
-    setCompatibilityPlanetFilter("venus");
+    setCompatibilityPlanetFilter("all");
     setMessage(
       kind === "content" ? "New compatibility card copy started."
       : kind === "vocabulary" ? "New compatibility phrase started."
       : kind === "fallback-hook" ? "New compatibility fallback hook started."
       : "New compatibility template started."
     );
+    const openCompatibilityDraft = (nextDraft: AdminDraft) => {
+      editorBaselineRef.current = JSON.stringify(nextDraft);
+      setDraft(nextDraft);
+    };
 
     if (kind === "content") {
-      setDraft({
+      openCompatibilityDraft({
         id: null,
-        contentKey: "compatibility.venus.aries.libra",
+        contentKey: "authored/compat-pair/draft",
         surface: "relationship",
         mode: "card",
         status: "DRAFT",
-        headline: "Venus compatibility: Aries + Libra",
-        summary: "Reader-facing compatibility card copy for Venus between Aries and Libra.",
+        headline: "",
+        summary: "",
         body: "",
         lane: "serving",
         reviewState: "EDITORIAL_REVIEW_REQUIRED",
@@ -4354,22 +4429,34 @@ export function GeneratedContentAdminDashboard() {
           contentLevel: "source-grounded",
           authoringSource: "admin-dashboard",
           route: "friends.compatibility",
-          planet: "venus",
-          readerSign: "aries",
-          otherSign: "libra"
+          planet: "",
+          readerSign: "",
+          otherSign: ""
         }
       });
       return;
     }
 
+    const singletonKey = kind === "fallback-hook"
+      ? "fallback-hook/friends.compatibility.planet-card"
+      : kind === "template"
+        ? "slot-template/compatibility/planet-card"
+        : null;
+    const existingSingleton = singletonKey ? rows.find((row) => row.content_key === singletonKey) : null;
+    if (existingSingleton) {
+      openRow(existingSingleton);
+      setMessage(`${rowTitle(existingSingleton)} already exists. Its saved record is open.`);
+      return;
+    }
+
     if (kind === "vocabulary") {
-      setDraft({
+      openCompatibilityDraft({
         id: null,
-        contentKey: "vocab/relationship/compatibility-phrase",
+        contentKey: "vocab/relationship/draft",
         surface: "relationship",
         mode: "feed",
         status: "DRAFT",
-        headline: "Compatibility phrase",
+        headline: "",
         summary: "Reusable phrase for compatibility writing and templates.",
         body: "",
         lane: "reference",
@@ -4385,15 +4472,14 @@ export function GeneratedContentAdminDashboard() {
           contentLevel: "source-grounded",
           authoringSource: "admin-dashboard",
           family: "compatibility",
-          route: "friends.compatibility",
-          planet: "venus"
+          route: "friends.compatibility"
         }
       });
       return;
     }
 
     if (kind === "fallback-hook") {
-      setDraft({
+      openCompatibilityDraft({
         id: null,
         contentKey: "fallback-hook/friends.compatibility.planet-card",
         surface: "friends",
@@ -4423,7 +4509,7 @@ export function GeneratedContentAdminDashboard() {
       return;
     }
 
-    setDraft({
+    openCompatibilityDraft({
       id: null,
       contentKey: "slot-template/compatibility/planet-card",
       surface: "relationship",
@@ -5001,7 +5087,29 @@ export function GeneratedContentAdminDashboard() {
             <section className="admin-workbench admin-review-workspace">
               {renderEditor()}
               <aside className="admin-list-panel" aria-label="Compatibility rows">
-                {renderContentTable(filteredCompatibilityRows, false, false, true)}
+                {filteredCompatibilityRows.length > 0
+                  ? renderContentTable(filteredCompatibilityRows, false, false, true)
+                  : (
+                    <section className="admin-empty-state admin-compatibility-empty" aria-live="polite">
+                      <strong>No Compatibility rows match this view</strong>
+                      <p>
+                        {compatibilityRows.length === 0
+                          ? "No Compatibility records loaded. Retry the inventory or check the connection."
+                          : `Current filters: ${compatibilitySections.find((section) => section.key === compatibilitySectionFilter)?.label ?? "All compatibility"}, ${compatibilityStatusFilter === "all" ? "all statuses" : contentStatusLabel(compatibilityStatusFilter)}, ${compatibilityPlanetFilter === "all" ? "all planets" : titleFromKey(compatibilityPlanetFilter)}${compatibilityQuery.trim() ? `, search “${compatibilityQuery.trim()}”` : ""}.`}
+                      </p>
+                      <div className="admin-toolbar-actions">
+                        <button type="button" onClick={clearCompatibilityFilters}>
+                          Clear Compatibility filters
+                        </button>
+                        {compatibilityRows.length === 0 && (
+                          <button type="button" onClick={() => void loadDashboardData()} disabled={isLoading}>
+                            <RefreshCw size={16} aria-hidden="true" />
+                            Retry inventory
+                          </button>
+                        )}
+                      </div>
+                    </section>
+                  )}
               </aside>
             </section>
           </section>
@@ -5661,6 +5769,14 @@ export function GeneratedContentAdminDashboard() {
     );
   }
 
+  function clearCompatibilityFilters() {
+    setCompatibilitySectionFilter("all");
+    setCompatibilityStatusFilter("all");
+    setCompatibilityPlanetFilter("all");
+    setCompatibilitySort("updated-desc");
+    setCompatibilityQuery("");
+  }
+
   function renderCompatibilityFilters() {
     return (
       <section className="admin-content-filters" aria-label="Compatibility filters">
@@ -5706,13 +5822,7 @@ export function GeneratedContentAdminDashboard() {
           </label>
           <button
             type="button"
-            onClick={() => {
-              setCompatibilitySectionFilter("all");
-              setCompatibilityStatusFilter("all");
-              setCompatibilityPlanetFilter("all");
-              setCompatibilitySort("updated-desc");
-              setCompatibilityQuery("");
-            }}
+            onClick={clearCompatibilityFilters}
           >
             Clear filters
           </button>
@@ -6611,6 +6721,52 @@ export function GeneratedContentAdminDashboard() {
       || sourceSnapshotString(currentDraft.sourceSnapshot, "route") === "friends.compatibility"
       || sourceSnapshotString(currentDraft.sourceSnapshot, "contentFamily").includes("friends.compatibility")
       || /compatibility|compat-/i.test(currentDraft.contentKey);
+    const compatibilityDraftPlanet = sourceSnapshotString(currentDraft.sourceSnapshot, "planet")
+      || (typeof currentDraft.facts?.planet === "string" ? currentDraft.facts.planet : "");
+    const compatibilityDraftReaderSign = sourceSnapshotString(currentDraft.sourceSnapshot, "readerSign")
+      || (typeof currentDraft.facts?.readerSign === "string" ? currentDraft.facts.readerSign : "");
+    const compatibilityDraftFriendSign = sourceSnapshotString(currentDraft.sourceSnapshot, "otherSign")
+      || (typeof currentDraft.facts?.otherSign === "string" ? currentDraft.facts.otherSign : "");
+    const updateCompatibilityDraftIdentity = (field: "planet" | "readerSign" | "otherSign", value: string) => {
+      const nextIdentity = {
+        planet: field === "planet" ? value : compatibilityDraftPlanet,
+        readerSign: field === "readerSign" ? value : compatibilityDraftReaderSign,
+        otherSign: field === "otherSign" ? value : compatibilityDraftFriendSign
+      };
+      const isComplete = Boolean(nextIdentity.planet && nextIdentity.readerSign && nextIdentity.otherSign);
+      const planetTitle = titleFromKey(nextIdentity.planet);
+      const readerTitle = titleFromKey(nextIdentity.readerSign);
+      const friendTitle = titleFromKey(nextIdentity.otherSign);
+      setDraft({
+        ...currentDraft,
+        contentKey: isComplete
+          ? `authored/compat-pair/${nextIdentity.planet}/${nextIdentity.readerSign}/${nextIdentity.otherSign}`
+          : "authored/compat-pair/draft",
+        headline: isComplete ? `${planetTitle} compatibility: ${readerTitle} + ${friendTitle}` : "",
+        summary: currentDraft.summary,
+        facts: {
+          ...(currentDraft.facts ?? {}),
+          ...nextIdentity
+        },
+        sourceSnapshot: {
+          ...(currentDraft.sourceSnapshot ?? {}),
+          ...nextIdentity
+        }
+      });
+    };
+    const compatibilityDraftCollision = isNewDraft && compatibilityIdentity
+      ? rows.find((row) => row.content_key === currentDraft.contentKey) ?? null
+      : null;
+    const compatibilityDraftIdentityFields: Array<{
+      field: "planet" | "readerSign" | "otherSign";
+      label: string;
+      value: string;
+      options: readonly string[];
+    }> = [
+      { field: "planet", label: "Planet", value: compatibilityDraftPlanet, options: articlePointFilters.filter(({ key }) => key !== "all" && key !== "other").map(({ key }) => key) },
+      { field: "readerSign", label: "Reader sign", value: compatibilityDraftReaderSign, options: natalPlacementSigns },
+      { field: "otherSign", label: "Friend sign", value: compatibilityDraftFriendSign, options: natalPlacementSigns }
+    ];
     const authoringBrief = isNewDraft
       ? isCompatibilityCardDraft
         ? {
@@ -6706,6 +6862,11 @@ export function GeneratedContentAdminDashboard() {
             ? "Write the complete directional compatibility reading."
             : undefined;
     const publishReady = Boolean(currentDraft.body.trim()) && !isNewDraft;
+    const compatibilityNewDraftReady = !isNewDraft || !isCompatibilityWorkspaceDraft || Boolean(
+      currentDraft.headline.trim()
+      && currentDraft.body.trim()
+      && (!isCompatibilityCardDraft || (compatibilityIdentity && !compatibilityDraftCollision))
+    );
     const compositionContextValue = compositionEditorContext
       ? compositionEditorContext.sourceField === "headline"
         ? currentDraft.headline
@@ -6740,11 +6901,34 @@ export function GeneratedContentAdminDashboard() {
               : isTemplateDraft
                 ? isCompatibilityWorkspaceDraft ? "Create compatibility template" : "Create reader-copy template"
                 : "Create saved row";
+    const handleEditorKeyDown = (event: ReactKeyboardEvent<HTMLElement>) => {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        closeEditor();
+        return;
+      }
+      if (event.key !== "Tab") return;
+      const panel = editorRef.current;
+      if (!panel) return;
+      const focusable = Array.from(panel.querySelectorAll<HTMLElement>(
+        'button:not(:disabled), input:not(:disabled), select:not(:disabled), textarea:not(:disabled), summary, [href], [tabindex]:not([tabindex="-1"])'
+      )).filter((element) => element.offsetParent !== null);
+      const first = focusable[0];
+      const last = focusable.at(-1);
+      if (!first || !last) return;
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    };
 
     return (
       <>
       <button type="button" className="admin-editor-backdrop" aria-label="Close editor" onClick={closeEditor} />
-      <aside ref={editorRef} className="admin-editor-panel admin-review-detail" role="dialog" aria-modal="true" aria-label="Generated content editor">
+      <aside ref={editorRef} className="admin-editor-panel admin-review-detail" role="dialog" aria-modal="true" aria-label="Generated content editor" onKeyDown={handleEditorKeyDown}>
         {skyWriteupParent && (
           <button type="button" className="admin-sky-writeup-back" onClick={returnToSkyWriteup}>
             <ArrowLeft size={16} aria-hidden="true" />
@@ -6776,7 +6960,7 @@ export function GeneratedContentAdminDashboard() {
                 {isTemplateDraft ? "Reader preview & variables" : "Variables"} ({variableReferences.length})
               </button>
             )}
-            <button type="button" onClick={closeEditor}>
+            <button type="button" onClick={closeEditor} autoFocus>
               <X size={16} aria-hidden="true" />
               Close
             </button>
@@ -6817,6 +7001,33 @@ export function GeneratedContentAdminDashboard() {
               </div>
             </section>
           )}
+          {isNewDraft && isCompatibilityCardDraft && (
+            <fieldset className="admin-metadata-fields admin-compatibility-identity-fields" aria-label="Compatibility card identity">
+              <legend>Choose the exact card first</legend>
+              <p className="admin-field-hint">Choose the planet and direction. The reader sign comes first.</p>
+              {compatibilityDraftIdentityFields.map(({ field, label, value, options }) => (
+                <label className="admin-metadata-field" key={field}>
+                  <span>{label}</span>
+                  <select aria-label={`Compatibility card ${label.toLowerCase()}`} value={value} onChange={(event) => updateCompatibilityDraftIdentity(field, event.target.value)}>
+                    <option value="">Choose {label.toLowerCase()}</option>
+                    {options.map((option) => <option key={option} value={option}>{titleFromKey(option)}</option>)}
+                  </select>
+                </label>
+              ))}
+              {compatibilityIdentity && (
+                <div className="admin-compatibility-identity-preview" role="status">
+                  <strong>{compatibilityIdentity.title}</strong>
+                  <span>{compatibilityIdentity.detail}</span>
+                </div>
+              )}
+              {compatibilityDraftCollision && (
+                <div className="admin-inline-warning" role="alert">
+                  <strong>This card already exists.</strong>
+                  <button type="button" onClick={() => openRow(compatibilityDraftCollision)}>Open saved record</button>
+                </div>
+              )}
+            </fieldset>
+          )}
           {authoringBrief && (
             <section className="admin-editor-guidance admin-authoring-brief" aria-label="What you are creating">
               <p className="admin-eyebrow">{authoringBrief.eyebrow}</p>
@@ -6844,7 +7055,7 @@ export function GeneratedContentAdminDashboard() {
               <p>The highlighted words are the source you are editing. The surrounding words come from the template and other variables.</p>
             </section>
           )}
-          {compatibilityIdentity && (
+          {compatibilityIdentity && !isNewDraft && (
             <section className="admin-editor-guidance admin-contextual-editor-guidance" aria-label="Compatibility record identity">
               <p className="admin-eyebrow">Exact compatibility record</p>
               <strong>{compatibilityIdentity.title}</strong>
@@ -6873,7 +7084,7 @@ export function GeneratedContentAdminDashboard() {
               </div>
             </section>
           )}
-          {isVocabularyDraft && (
+          {isVocabularyDraft && !(isNewDraft && isCompatibilityWorkspaceDraft) && (
             <div className="admin-editor-guidance" aria-label="Phrase authoring guidance">
               <strong>{isPackageDraft ? "Edit this variable value" : "Create a reusable phrase"}</strong>
               <p>{isPackageDraft
@@ -6891,7 +7102,7 @@ export function GeneratedContentAdminDashboard() {
               <p><strong>Reader behavior:</strong> the app combines this phrase with other approved ingredients. It is not shown as a standalone article.</p>
             </section>
           )}
-          {fallbackEditorGuidance && (
+          {fallbackEditorGuidance && !(isNewDraft && isCompatibilityWorkspaceDraft) && (
             <section className="admin-editor-guidance admin-contextual-editor-guidance" aria-label="How this source is used">
               <p className="admin-eyebrow">{fallbackEditorGuidance.area}</p>
               <strong>{fallbackEditorGuidance.title}</strong>
@@ -6917,7 +7128,7 @@ export function GeneratedContentAdminDashboard() {
               <p>The article headline and body below are the saved fields used by the selected template. Saving updates this source row and the Composition Map preview together.</p>
             </div>
           )}
-          {isTemplateDraft && (
+          {isTemplateDraft && !(isNewDraft && isCompatibilityWorkspaceDraft) && (
             <div className="admin-editor-guidance" aria-label="Template source guidance">
               <strong>Assembly pattern, not final prose</strong>
               <p>The template pattern combines fixed words, <code>{"{{variables}}"}</code>, and reviewed source phrases. Use Reader Preview to check the complete result before publishing the pattern.</p>
@@ -6978,7 +7189,7 @@ export function GeneratedContentAdminDashboard() {
               )}
             </div>
           )}
-          {!fallbackEditorGuidance && <section className="admin-content-role-panel" aria-label="Content role">
+          {!fallbackEditorGuidance && !(isNewDraft && isCompatibilityWorkspaceDraft) && <section className="admin-content-role-panel" aria-label="Content role">
             <div>
               <p className="admin-eyebrow">Content role</p>
               <h3>{skyFallbackContentIdentity?.typeLabel ?? contentRole.label}</h3>
@@ -7836,7 +8047,13 @@ export function GeneratedContentAdminDashboard() {
             <span className={`admin-editor-save-state ${draftHasUnsavedChanges || isNewDraft ? "is-unsaved" : "is-saved"}`} aria-live="polite">
               {isLoading ? "Saving…" : isNewDraft ? "New draft" : draftHasUnsavedChanges ? "Unsaved changes" : "All changes saved"}
             </span>
-            <button className="admin-primary-button" type="button" onClick={() => void saveDraft(isCmsSurfaceDraft && currentDraft.status === "LIVE" ? "DRAFT" : undefined)} disabled={isLoading || Boolean(compiledSkyArticleEdition) || (!isNewDraft && !draftHasUnsavedChanges)}>
+            <button
+              className="admin-primary-button"
+              type="button"
+              onClick={() => void saveDraft(isCmsSurfaceDraft && currentDraft.status === "LIVE" ? "DRAFT" : undefined)}
+              disabled={isLoading || Boolean(compiledSkyArticleEdition) || !compatibilityNewDraftReady || (!isNewDraft && !draftHasUnsavedChanges)}
+              title={!compatibilityNewDraftReady ? "Complete the Compatibility identity and copy." : undefined}
+            >
               <Save size={16} aria-hidden="true" />
               {isGuidedHeldReview ? "Save held draft" : "Save"}
             </button>

@@ -83,6 +83,24 @@ let row = {
 };
 
 const requests = [];
+const compatibilitySupportRows = [
+  {
+    ...row,
+    id: "compatibility-reference-vocabulary",
+    content_key: "vocab/relationship/repair",
+    lane: "reference",
+    status: "DRAFT",
+    block_type: "vocabulary_phrase"
+  },
+  {
+    ...row,
+    id: "compatibility-reference-template",
+    content_key: "slot-template/compatibility/planet-card",
+    lane: "reference",
+    status: "REVIEWED",
+    block_type: "template"
+  }
+];
 
 function matchesFilter(params, name, value) {
   const filter = params.get(name);
@@ -116,6 +134,9 @@ globalThis.fetch = async (input, init = {}) => {
   }
 
   if (method === "GET") {
+    if (url.searchParams.has("or") && !url.searchParams.has("lane")) {
+      return Response.json(compatibilitySupportRows);
+    }
     const matches = [
       matchesFilter(url.searchParams, "id", row.id),
       matchesFilter(url.searchParams, "content_key", row.content_key),
@@ -194,6 +215,33 @@ const readBack = await invokeApi(
 assert.equal(readBack.status, 200);
 assert.equal(readBack.payload.rows.length, 1);
 assert.equal(readBack.payload.rows[0].body, editedCopy.body);
+
+const compatibilityInventory = await invokeApi(
+  "GET",
+  "/api/admin/generated-content?status=all&visibility=all&scope=compatibility&limit=2"
+);
+assert.equal(compatibilityInventory.status, 200);
+assert.equal(compatibilityInventory.payload.nextCursor, "compatibility-reference-template");
+await invokeApi(
+  "GET",
+  `/api/admin/generated-content?status=all&visibility=all&scope=compatibility&limit=2&cursor=${encodeURIComponent(compatibilityInventory.payload.nextCursor)}`
+);
+const compatibilityRequest = requests
+  .filter(({ method }) => method === "GET")
+  .map(({ url }) => new URL(url))
+  .find((url) => url.searchParams.get("limit") === "2" && url.searchParams.has("or") && !url.searchParams.has("id"));
+assert.ok(compatibilityRequest, "Compatibility must use a server-scoped inventory query.");
+assert.equal(compatibilityRequest.searchParams.has("lane"), false, "Compatibility inventory must include reference-lane support rows.");
+assert.deepEqual(
+  compatibilityInventory.payload.rows.map(({ id }) => id),
+  ["compatibility-reference-vocabulary", "compatibility-reference-template"],
+  "Reference-lane Compatibility support rows must remain discoverable through the API."
+);
+const compatibilityCursorRequest = requests
+  .filter(({ method }) => method === "GET")
+  .map(({ url }) => new URL(url))
+  .find((url) => url.searchParams.get("id") === "gt.compatibility-reference-template");
+assert.ok(compatibilityCursorRequest, "Compatibility pagination must continue from the stable server cursor.");
 
 const readerContent = await loadLiveGeneratedContentForKeys([contentKey]);
 assert.ok(readerContent.has(contentKey));
