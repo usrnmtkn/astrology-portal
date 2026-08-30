@@ -83,7 +83,8 @@ function isContinuousSkyPlacementRecord(record, contentKey) {
 }
 
 function isSkyPlacementPartitionKey(contentKey) {
-  return contentKey.startsWith("house-horoscope-core/")
+  return contentKey.startsWith("sky-placement/")
+    || contentKey.startsWith("house-horoscope-core/")
     || contentKey.startsWith("fallback-hook/sky-sign-copy/")
     || contentKey.startsWith("fallback-hook/sky-placement-sign/")
     || (
@@ -235,7 +236,7 @@ function surfaceForKey(key, explicitSurface) {
 }
 
 function modeForKey(key) {
-  if (key.includes("/sky-season/") || key.includes("/sky-newmoon/") || key.includes("/sky-fullmoon/") || key.includes("/sky-lunation-macro/")) return "article";
+  if (key.startsWith("sky-placement/article/") || key.startsWith("sky-placement/seasonal-context/") || key.includes("/sky-season/") || key.includes("/sky-newmoon/") || key.includes("/sky-fullmoon/") || key.includes("/sky-lunation-macro/")) return "article";
   if (key.includes("/compat-deep/") || key.includes("/empty-house/") || key.includes("/profection-year/")) return "in_depth";
   return "feed";
 }
@@ -245,6 +246,7 @@ function eventTypeForKey(key, role) {
   if (role === "vocabulary") return "vocab";
   if (role === "fallback_source") return "fallback-source";
   if (key.startsWith("fallback-hook/")) return "fallback-hook";
+  if (key.startsWith("sky-placement/article/") || key.startsWith("sky-placement/seasonal-context/")) return "planetary-ingress";
   if (key.includes("/compat-")) return "friends.compatibility";
   if (key.includes("/transit-aspect/")) return "transit-to-natal-aspect";
   if (key.includes("/sky-newmoon/")) return "sky-newmoon";
@@ -291,6 +293,7 @@ function requiresPlacementPositiveTest(record, contentKey, reviewStatus) {
 
 function blockTypeForPackageRecord(contentRole, contentKey) {
   if (contentRole === "template") return "fallback_template";
+  if (contentRole === "full_copy" || contentKey.startsWith("sky-placement/article/")) return "fallback_article";
   if (
     contentRole === "fallback_hook"
     || contentRole === "house_horoscope_core"
@@ -336,6 +339,7 @@ function mapPackageRecord(record, bucket) {
   }
 
   const contentRole = String(record.content_role ?? bucket).trim();
+  const stageOnly = bucket === "sky-placement-v4-stage";
   const sourceReviewStatus = String(record.review_status ?? "").trim();
   // Package templates without an explicit editorial status are already
   // reader-eligible in the bundled resolver. Normalize only the mirror
@@ -409,7 +413,10 @@ function mapPackageRecord(record, bucket) {
       content_role: contentRole,
       review_status: reviewStatus,
       positive_test: record.positive_test ?? null,
-      readerServing: serving.status === "LIVE" && serving.lane === "serving" && !serving.reviewState
+      readerServing: serving.status === "LIVE" && serving.lane === "serving" && !serving.reviewState,
+      stageOnly,
+      ownerApproved: record.owner_approved ?? null,
+      sourceSchemaVersion: record.source_schema_version ?? null
     },
     knowledge_ids: [],
     source_snapshot: {
@@ -420,7 +427,7 @@ function mapPackageRecord(record, bucket) {
       approved_via: record.approved_via ?? null,
       source_keys: record.source_keys ?? [],
       importBatchId,
-      sourcePackage: "tldrastro-fallback-architecture-v3",
+      sourcePackage: stageOnly ? "sky-placement-v4-sun-corpus-stage" : "tldrastro-fallback-architecture-v3",
       sourceFile: bucket,
       packageVersion: packageManifest.packageVersion,
       packageContentHash: packageManifest.contentHash,
@@ -432,7 +439,9 @@ function mapPackageRecord(record, bucket) {
       packagePartitionKeyCount: packagePartitionManifest.keyCount,
       distributionState: distributionRelease?.distribution_state ?? null,
       releaseBatch: distributionRelease?.release_batch ?? null,
-      note: "V3 package mirror for dashboard editing. fallback_source rows are source material and must never render directly."
+      note: stageOnly
+        ? "V4 stage-only review mirror. This record is not present in the reader package and cannot serve without exact owner approval plus a separate serving release."
+        : "V3 package mirror for dashboard editing. fallback_source rows are source material and must never render directly."
     },
     reviewer_notes: String(record.note ?? record.notes ?? "").trim(),
     prompt_version: importBatchId,
@@ -511,6 +520,7 @@ function readPackageSources() {
   const timingEventRows = readJson("source-rows/timing-event-reader-copy-v2.json");
   const weeklyRows = readJson("source-rows/station-cards-week-openers-v1.json");
   const templateRows = readJson("templates/fallback-templates-v3.json");
+  const skyPlacementV4SunStage = readJson("authored-inputs/sky-placement-v4-sun-corpus-stage-v1.json");
   continuousFallbackImportManifest = readJson("authored-inputs/sky-placement-continuous-v2-pending.json");
   ({
     manifest: skyPlacementServingManifest,
@@ -541,8 +551,60 @@ function readPackageSources() {
     skySignCopy,
     timingEventRows,
     weeklyRows,
-    templateRows
+    templateRows,
+    skyPlacementV4SunStage
   };
+}
+
+function skyPlacementV4StageRecords(source) {
+  if (
+    source.editorial_status !== "proposed_v4"
+    || source.implementation_status !== "stage_only"
+    || source.owner_approved !== false
+  ) {
+    throw new Error("Sky Placement V4 staging source must remain proposed_v4, stage_only, and not owner-approved.");
+  }
+
+  const common = {
+    surface: "sky",
+    review_status: "needs_review",
+    editorial_status: source.editorial_status,
+    implementation_status: source.implementation_status,
+    owner_approved: source.owner_approved,
+    source_schema_version: source.schema_version,
+    note: "Sky Placement V4 stage-only review record. It is excluded from every reader package until exact owner approval and a separate serving release."
+  };
+  const articles = (source.sun_articles ?? []).map((article) => ({
+    ...common,
+    ...article,
+    contentKey: article.content_key,
+    headline: `Sun in ${article.sign}`,
+    content_role: "full_copy",
+    body_you: article.placement_article,
+    summary: article.tldr_takeaway,
+    render_policy: "sky-placement-v4-stage-preview"
+  }));
+  const contexts = (source.seasonal_contexts ?? []).map((context) => ({
+    ...common,
+    ...context,
+    contentKey: context.content_key,
+    headline: `${context.sign} seasonal context (${context.hemisphere})`,
+    content_role: "fallback_hook",
+    body_you: context.copy,
+    source_keys: [context.source],
+    render_policy: "sky-placement-v4-stage-preview"
+  }));
+  const templates = (source.templates ?? []).map((template) => ({
+    ...common,
+    ...template,
+    contentKey: `fallback-template/stage/${template.template_id}`,
+    headline: template.purpose,
+    content_role: "template",
+    body_you: template.template,
+    render_policy: "sky-placement-v4-stage-preview"
+  }));
+
+  return [...articles, ...contexts, ...templates];
 }
 
 function readerEligibleReviewStatus(row, allowBlank = false) {
@@ -707,6 +769,8 @@ function materializeRows(sources) {
     ...sources.skyArticleRows.vocabularyRows.map((row) => mapPackageRecord(row, "fallback-system")),
     ...sources.templateRows.templates.map((row) => mapPackageRecord(row, "fallback-system")),
     ...sources.placementInterimRows.templates.map((row) => mapPackageRecord(row, "fallback-system")),
+    ...skyPlacementV4StageRecords(sources.skyPlacementV4SunStage)
+      .map((row) => mapPackageRecord(row, "sky-placement-v4-stage")),
     ...sources.sourceRows.fallbackSourceRows.map((row) => mapPackageRecord(row, "source-material")),
     ...editorialSourceBankRecords(sources.editorialSourceBank)
       .map((row) => mapPackageRecord(row, "editorial-source-bank"))
