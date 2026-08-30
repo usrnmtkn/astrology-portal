@@ -49,10 +49,22 @@ const failures = Object.entries(budgets).flatMap(([metric, limit]) => (
     : []
 ));
 
+const editorGuidanceAsset = path.join(distRoot, "generated/admin-fallback-hook-editor-guidance-v1.json");
+if (!fs.existsSync(editorGuidanceAsset)) {
+  failures.push("Admin fallback-editor guidance data asset is missing.");
+} else {
+  const guidancePayload = JSON.parse(fs.readFileSync(editorGuidanceAsset, "utf8"));
+  if (guidancePayload.schema !== "admin-fallback-hook-editor-guidance/v1") {
+    failures.push("Admin fallback-editor guidance data asset has an invalid schema.");
+  }
+}
+
 const forbiddenEntryMarkers = [
   "bundled-deferred-core-rows-v3",
   "bundled-sky-core-rows-v3",
-  "fallbackArchitectureV3Runtime"
+  "fallbackArchitectureV3Runtime",
+  "Daily content map",
+  "Today between you two · personal clause"
 ];
 const entrySource = entryItem ? fs.readFileSync(path.join(distRoot, entryItem.file), "utf8") : "";
 for (const marker of forbiddenEntryMarkers) {
@@ -63,6 +75,7 @@ const expectedDynamicEntries = [
   "src/AspectPatternDiagnostics.tsx",
   "src/AspectPatternWriteups.tsx",
   "src/CompositionMapWorkspace.tsx",
+  "src/DailyFallbackWorkspaceGuide.tsx",
   "src/NatalPlacementSourceFinder.tsx",
   "src/PackagedHookCatalogResults.tsx",
   "src/ReportFulfillmentAdminPanel.tsx"
