@@ -1361,6 +1361,47 @@ test.describe("content dashboard admin user flow case studies", () => {
     await assertNoBrowserErrors();
   });
 
+  test("Sky write-ups search and filter by editorial keywords", async ({ page }) => {
+    const assertNoBrowserErrors = await expectNoBrowserErrors(page);
+    await seedAdminApi(page);
+    await expectAdminRouteLoads(page, "/admin/content#sky-writeups");
+
+    const filters = page.getByRole("region", { name: "Sky write-up filters" });
+    const search = filters.getByLabel("Search Sky write-ups");
+    const type = filters.getByLabel("Sky write-up type");
+    const sunRow = page.locator(".admin-content-row", { hasText: "sky.placement.sun.cancer" });
+    const moonRow = page.locator(".admin-content-row", { hasText: "sky.placement.moon.virgo" });
+
+    await expect(search).toHaveAttribute("placeholder", "Title, sign, aspect, body text, or content key");
+    await expect(type).toHaveValue("all");
+    await expect(sunRow).toHaveCount(1);
+    await expect(moonRow).toHaveCount(1);
+
+    await search.fill("care belonging");
+    await expect(sunRow).toHaveCount(1);
+    await expect(moonRow).toHaveCount(0);
+
+    await search.fill("qa-moon-source");
+    await expect(sunRow).toHaveCount(0);
+    await expect(moonRow).toHaveCount(1);
+
+    await type.selectOption("point");
+    await expect(page.getByText("No Sky write-ups match “qa-moon-source”. Try another keyword or clear the filters.")).toBeVisible();
+    await expect(filters.locator(".admin-filter-result-count")).toContainText("0 of");
+
+    await filters.getByRole("button", { name: "Clear filters" }).click();
+    await expect(search).toHaveValue("");
+    await expect(type).toHaveValue("all");
+    await expect(sunRow).toHaveCount(1);
+    await expect(moonRow).toHaveCount(1);
+    await expect(filters.getByRole("button", { name: "Clear filters" })).toBeDisabled();
+    await page.setViewportSize({ width: 390, height: 844 });
+    await expect(search).toBeVisible();
+    await expect(filters.getByRole("button", { name: "Clear filters" })).toBeVisible();
+    await expectNoHorizontalOverflow(page, "Sky write-up keyword filters");
+    await assertNoBrowserErrors();
+  });
+
   test("Sky write-up editor stays single-column and orders aspects before house horoscopes", async ({ page }) => {
     const assertNoBrowserErrors = await expectNoBrowserErrors(page);
     await page.setViewportSize({ width: 1308, height: 900 });

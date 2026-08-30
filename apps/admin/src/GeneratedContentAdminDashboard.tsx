@@ -1384,6 +1384,15 @@ function visibleRowSearchText(row: AdminGeneratedContentRow) {
   ].join(" ").toLowerCase();
 }
 
+function skyWriteupSearchText(row: AdminGeneratedContentRow) {
+  return [
+    rowSearchText(row),
+    rowTitle(row),
+    ...(row.knowledge_ids ?? []),
+    row.reviewer_notes
+  ].join(" ").toLowerCase();
+}
+
 function fallbackHookVisibleSearchText(row: AdminGeneratedContentRow) {
   return [
     row.content_key,
@@ -2514,6 +2523,7 @@ export function GeneratedContentAdminDashboard() {
   const [articleStatusFilter, setArticleStatusFilter] = useState<GeneratedContentStatus | "all">("LIVE");
   const [articlePointFilter, setArticlePointFilter] = useState<AdminArticlePointFilter>("all");
   const [skyWriteupSubjectFilter, setSkyWriteupSubjectFilter] = useState<AdminSkyWriteupSubjectFilter>("all");
+  const [skyWriteupQuery, setSkyWriteupQuery] = useState("");
   const [articleContentSystemFilter, setArticleContentSystemFilter] = useState<AdminContentSystemFilter>("all");
   const [articleQuery, setArticleQuery] = useState("");
   const [compatibilitySectionFilter, setCompatibilitySectionFilter] = useState<AdminCompatibilitySectionFilter>("all");
@@ -2631,10 +2641,11 @@ export function GeneratedContentAdminDashboard() {
   );
   const filteredSkyWriteupRows = useMemo(
     () => skyWriteupRows.filter((row) => (
-      skyWriteupSubjectFilter === "all"
-      || skyWriteupSubjectTypeForRow(row) === skyWriteupSubjectFilter
+      (skyWriteupSubjectFilter === "all"
+        || skyWriteupSubjectTypeForRow(row) === skyWriteupSubjectFilter)
+      && matchesAdminSearch(skyWriteupSearchText(row), skyWriteupQuery)
     )),
-    [skyWriteupRows, skyWriteupSubjectFilter]
+    [skyWriteupRows, skyWriteupSubjectFilter, skyWriteupQuery]
   );
   const publishedButUnwiredSkyRows = useMemo(
     () => skyWriteupRows.filter(isPublishedButUnwired),
@@ -4917,6 +4928,26 @@ export function GeneratedContentAdminDashboard() {
                     ))}
                   </select>
                 </label>
+                <label>
+                  <span>Search by keyword</span>
+                  <input
+                    aria-label="Search Sky write-ups"
+                    type="search"
+                    value={skyWriteupQuery}
+                    onChange={(event) => setSkyWriteupQuery(event.target.value)}
+                    placeholder="Title, sign, aspect, body text, or content key"
+                  />
+                </label>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSkyWriteupSubjectFilter("all");
+                    setSkyWriteupQuery("");
+                  }}
+                  disabled={skyWriteupSubjectFilter === "all" && !skyWriteupQuery.trim()}
+                >
+                  Clear filters
+                </button>
                 <p className="admin-filter-result-count" aria-live="polite">
                   <strong>{filteredSkyWriteupRows.length}</strong> of {skyWriteupRows.length} shown
                 </p>
@@ -4937,7 +4968,13 @@ export function GeneratedContentAdminDashboard() {
               <aside className="admin-list-panel" aria-label="Sky write-up rows">
                 {filteredSkyWriteupRows.length > 0
                   ? renderContentTable(filteredSkyWriteupRows, false, true)
-                  : <p className="admin-empty">No Sky write-ups match this type.</p>}
+                  : (
+                    <p className="admin-empty">
+                      {skyWriteupQuery.trim()
+                        ? `No Sky write-ups match “${skyWriteupQuery.trim()}”. Try another keyword or clear the filters.`
+                        : "No Sky write-ups match this type. Try another type or clear the filters."}
+                    </p>
+                  )}
               </aside>
             </section>
           </section>
