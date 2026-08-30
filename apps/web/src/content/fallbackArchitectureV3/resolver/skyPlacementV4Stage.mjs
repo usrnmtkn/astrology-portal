@@ -28,6 +28,31 @@ function fallbackField(article, slot) {
   return article?.fallback?.[slot] ?? article?.[`fallback_${slot}`];
 }
 
+function articleContentKey(article) {
+  return article?.contentKey ?? article?.content_key;
+}
+
+export function skyPlacementV4Articles(corpus) {
+  const sunArticles = corpus.sun_corpus ?? corpus.sun_articles ?? [];
+  const planetBatches = Object.values(corpus.planets ?? {}).flatMap((articles) => (
+    Array.isArray(articles) ? articles : []
+  ));
+  return [...sunArticles, ...planetBatches];
+}
+
+function assertStageGovernance(corpus) {
+  const reviewedSunStage = corpus.status === "proposed_v4_source_verified"
+    && corpus.serving_enabled === false
+    && corpus.handoff_status === "reviewed_for_codex_staging";
+  const reviewedPlanetBatch = corpus.status === "reviewed_source_led_proposed"
+    && corpus.implementation_status === "next_codex_batch"
+    && corpus.owner_approved === false;
+
+  if (!reviewedSunStage && !reviewedPlanetBatch) {
+    throw new Error("SKY_PLACEMENT_V4_STAGE_GOVERNANCE: preview accepts reviewed, non-serving V4 staging corpora only.");
+  }
+}
+
 function templateById(corpus, templateId) {
   const found = (corpus.templates ?? []).find((entry) => entry.template_id === templateId);
   const template = found?.template ?? REVIEWED_TEMPLATES.get(templateId);
@@ -55,20 +80,22 @@ function assertResolved(rendered) {
 }
 
 export function compileSkyPlacementV4Article(corpus, article, facts = {}) {
+  const contentKey = articleContentKey(article);
   const compiled = fillScalarSlots(fillScalarSlots(templateById(corpus, ARTICLE_TEMPLATE_ID), {
-    opening: requiredText(article.opening, `${article.content_key} opening`),
-    tension: requiredText(article.tension, `${article.content_key} tension`),
-    development: requiredText(article.development, `${article.content_key} development`),
-    close: requiredText(article.close, `${article.content_key} close`)
+    opening: requiredText(article.opening, `${contentKey} opening`),
+    tension: requiredText(article.tension, `${contentKey} tension`),
+    development: requiredText(article.development, `${contentKey} development`),
+    close: requiredText(article.close, `${contentKey} close`)
   }), facts);
   return assertResolved(compiled);
 }
 
 export function compileSkyPlacementV4Fallback(corpus, article, facts = {}) {
+  const contentKey = articleContentKey(article);
   const compiled = fillScalarSlots(fillScalarSlots(templateById(corpus, FALLBACK_TEMPLATE_ID), {
-    placementHook: requiredText(fallbackField(article, "hook"), `${article.content_key} fallback hook`),
-    placementLived: requiredText(fallbackField(article, "lived"), `${article.content_key} fallback lived`),
-    placementTurn: requiredText(fallbackField(article, "turn"), `${article.content_key} fallback turn`)
+    placementHook: requiredText(fallbackField(article, "hook"), `${contentKey} fallback hook`),
+    placementLived: requiredText(fallbackField(article, "lived"), `${contentKey} fallback lived`),
+    placementTurn: requiredText(fallbackField(article, "turn"), `${contentKey} fallback turn`)
   }), facts);
   return assertResolved(compiled);
 }
@@ -155,14 +182,12 @@ export function resolveSkyPlacementV4Record(records, planet, sign) {
 }
 
 export function renderSkyPlacementV4Preview(corpus, input) {
-  if (corpus.status !== "proposed_v4_source_verified" || corpus.serving_enabled !== false) {
-    throw new Error("SKY_PLACEMENT_V4_STAGE_GOVERNANCE: preview accepts proposed_v4_source_verified/non-serving corpus only.");
-  }
+  assertStageGovernance(corpus);
 
   const planet = normalized(input.planet);
   const sign = normalized(input.sign);
   const keys = skyPlacementV4ContentKeys(planet, sign);
-  const article = (corpus.sun_corpus ?? corpus.sun_articles ?? []).find((entry) => (
+  const article = skyPlacementV4Articles(corpus).find((entry) => (
     normalized(entry.planet) === planet && normalized(entry.sign) === sign
   ));
   const facts = input.facts ?? {};
@@ -196,7 +221,7 @@ export function renderSkyPlacementV4Preview(corpus, input) {
 
   return {
     resolution,
-    contentKey: article?.content_key ?? keys.canonical,
+    contentKey: articleContentKey(article) ?? keys.canonical,
     resolverKeys: keys,
     page: assertResolved(page),
     publicUrl: skyPlacementV4PublicUrl(planet, sign, input.cycleStartDate),
@@ -210,7 +235,7 @@ export function renderSkyPlacementV4Preview(corpus, input) {
       currentMotion: input.currentMotion ?? null,
       retrogradeWindows: input.retrogradeWindows ?? [],
       activeAspects: (input.conditions ?? []).filter((condition) => condition.kind !== "retrograde" && condition.active === true && condition.approved === true),
-      contentKey: article?.content_key ?? keys.canonical,
+      contentKey: articleContentKey(article) ?? keys.canonical,
       occurrenceId: `sky-placement/transit/${planet}/${sign}/${requiredText(input.cycleStartDate, "cycle start date")}`,
       approvalStatus: article?.owner_approved === true ? "owner-approved" : corpus.status,
       dateModified: input.dateModified ?? null
