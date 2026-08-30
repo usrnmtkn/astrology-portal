@@ -7,7 +7,7 @@ import {
   PACKAGE_VERSION
 } from "../apps/web/src/content/fallbackArchitectureV3/dist/tldr-content.js";
 import { isGovernedReaderEligible } from "../apps/web/src/content/fallbackArchitectureV3/resolver/readerEligibility.mjs";
-import { SKY_PLACEMENT_V4_SOURCE_VERIFIED_TEMPLATES } from "../apps/web/src/content/fallbackArchitectureV3/resolver/skyPlacementV4Stage.mjs";
+import { SKY_PLACEMENT_V4_REVIEWED_TEMPLATES } from "../apps/web/src/content/fallbackArchitectureV3/resolver/skyPlacementV4Stage.mjs";
 
 const repoRoot = path.resolve(path.dirname(new URL(import.meta.url).pathname), "..");
 const packageDir = path.join(repoRoot, "apps/web/src/content/fallbackArchitectureV3");
@@ -428,7 +428,7 @@ function mapPackageRecord(record, bucket) {
       approved_via: record.approved_via ?? null,
       source_keys: record.source_keys ?? [],
       importBatchId,
-      sourcePackage: stageOnly ? "sky-placement-v4-sun-corpus-source-verified-stage" : "tldrastro-fallback-architecture-v3",
+      sourcePackage: stageOnly ? "sky-placement-v4-reviewed-for-codex-stage" : "tldrastro-fallback-architecture-v3",
       sourceFile: bucket,
       packageVersion: packageManifest.packageVersion,
       packageContentHash: packageManifest.contentHash,
@@ -521,7 +521,7 @@ function readPackageSources() {
   const timingEventRows = readJson("source-rows/timing-event-reader-copy-v2.json");
   const weeklyRows = readJson("source-rows/station-cards-week-openers-v1.json");
   const templateRows = readJson("templates/fallback-templates-v3.json");
-  const skyPlacementV4SunStage = readJson("authored-inputs/sky-placement-v4-sun-corpus-source-verified-stage-v1.json");
+  const skyPlacementV4SunStage = readJson("authored-inputs/sky-placement-v4-reviewed-for-codex-stage-v1.json");
   continuousFallbackImportManifest = readJson("authored-inputs/sky-placement-continuous-v2-pending.json");
   ({
     manifest: skyPlacementServingManifest,
@@ -561,19 +561,20 @@ function skyPlacementV4StageRecords(source) {
   if (
     source.status !== "proposed_v4_source_verified"
     || source.serving_enabled !== false
+    || source.handoff_status !== "reviewed_for_codex_staging"
   ) {
-    throw new Error("Sky Placement V4 staging source must remain proposed_v4_source_verified and non-serving.");
+    throw new Error("Sky Placement V4 staging source must remain reviewed-for-Codex, proposed_v4_source_verified, and non-serving.");
   }
 
   const common = {
     surface: "sky",
     review_status: "needs_review",
     editorial_status: source.status,
-    implementation_status: "stage_only",
+    implementation_status: source.handoff_status,
     owner_approved: false,
     serving_enabled: false,
     source_schema_version: source.version,
-    note: "Sky Placement V4 source-verified stage-only review record. It is excluded from every reader package until exact owner approval and a separate serving release."
+    note: "Sky Placement V4 reviewed-for-Codex stage-only review record. It is excluded from every reader package until exact owner approval and a separate serving release."
   };
   const articles = (source.sun_corpus ?? []).map((article) => ({
     ...common,
@@ -581,8 +582,8 @@ function skyPlacementV4StageRecords(source) {
     contentKey: article.content_key,
     headline: `Sun in ${article.sign}`,
     content_role: "full_copy",
-    body_you: article.placement_article,
-    summary: article.tldr_takeaway,
+    body_you: article.placementArticle,
+    summary: article.tldrTakeaway,
     render_policy: "sky-placement-v4-stage-preview"
   }));
   const contexts = (source.seasonal_context ?? []).map((context) => ({
@@ -595,7 +596,7 @@ function skyPlacementV4StageRecords(source) {
     source_keys: [context.source],
     render_policy: "sky-placement-v4-stage-preview"
   }));
-  const templates = SKY_PLACEMENT_V4_SOURCE_VERIFIED_TEMPLATES.map((template) => ({
+  const templates = SKY_PLACEMENT_V4_REVIEWED_TEMPLATES.map((template) => ({
     ...common,
     ...template,
     contentKey: `fallback-template/stage/${template.template_id}`,
@@ -610,11 +611,11 @@ function skyPlacementV4StageRecords(source) {
     contentKey: modifier.content_key,
     headline: `${modifier.planet} retrograde modifier`,
     content_role: "fallback_hook",
-    body_you: modifier.copy,
+    body_you: [modifier.canonical_short, modifier.body].filter(Boolean).join("\n\n"),
     review_status: "needs_review",
     serving_enabled: false,
     render_policy: "sky-placement-v4-stage-preview",
-    note: "Exact owner-supplied retrograde modifier staged as reference only. It remains outside reader packages until a separate serving release."
+    note: "Reviewed retrograde modifier staged with per-field approval metadata preserved. It remains outside reader packages until a separate serving release."
   }));
 
   return [...articles, ...contexts, ...templates, ...retrogradeModifiers];

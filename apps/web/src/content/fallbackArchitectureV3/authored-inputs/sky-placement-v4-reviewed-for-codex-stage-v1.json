@@ -1,0 +1,641 @@
+{
+  "version": "sky-placement-v4-reviewed-for-codex-2026-08-30",
+  "status": "proposed_v4_source_verified",
+  "serving_enabled": false,
+  "astrology": {
+    "zodiac_wording": "zodiac year",
+    "house_system": "whole-sign",
+    "framework": "hellenistic",
+    "traditional_rulership_structural": true,
+    "modern_associations_editorial": {
+      "Aquarius": "Uranus",
+      "Pisces": "Neptune",
+      "Scorpio": "Pluto"
+    }
+  },
+  "sun_corpus": [
+    {
+      "planet": "Sun",
+      "sign": "Aries",
+      "content_key": "sky-placement/article/sun/aries",
+      "tldrWhat": "The Sun in Aries begins the zodiac year and puts initiative, self-direction, courage, and the next beginning in the foreground.",
+      "tldrTakeaway": "What do you desire so fiercely that it can’t be ignored?",
+      "opening": "Aries is the spark that sets the wheel of the zodiac into motion. Its fire is unfiltered, unapologetic, and alive. The season puts you back in contact with the part of you that would rather begin imperfectly than spend another month waiting to feel completely ready.",
+      "tension": "Aries moves first and learns in motion. That is its gift and its risk. Acting because something matters is different from acting because waiting feels intolerable, and not every surge of anger, urgency, or excitement needs to become a permanent decision.",
+      "development": "Use this season to get clear on what is yours to decide, what boundary needs to be stated, and where you have been waiting for permission that is not coming. A first move gives you feedback. It shows you what works, what needs to change, and what you want badly enough to keep choosing after the first rush wears off.",
+      "close": "Start with the move you can stand behind. Let what happens next give you better information than another month of circling the decision.",
+      "placementArticle": "Aries is the spark that sets the wheel of the zodiac into motion. Its fire is unfiltered, unapologetic, and alive. The season puts you back in contact with the part of you that would rather begin imperfectly than spend another month waiting to feel completely ready.\n\nAries moves first and learns in motion. That is its gift and its risk. Acting because something matters is different from acting because waiting feels intolerable, and not every surge of anger, urgency, or excitement needs to become a permanent decision.\n\nUse this season to get clear on what is yours to decide, what boundary needs to be stated, and where you have been waiting for permission that is not coming. A first move gives you feedback. It shows you what works, what needs to change, and what you want badly enough to keep choosing after the first rush wears off.\n\nStart with the move you can stand behind. Let what happens next give you better information than another month of circling the decision.",
+      "fallback": {
+        "hook": "Aries is the spark that sets the wheel of the zodiac into motion.",
+        "lived": "A decision can stay theoretical long after you already know the first move.",
+        "turn": "Start with the move you can stand behind and learn from what happens next."
+      },
+      "editorial_status": "reviewed_for_codex_proposed",
+      "implementation_status": "ready_for_codex_stage",
+      "owner_approved": false,
+      "source_exact_status": "source_led_final_review",
+      "source_primary": "https://mariesatori.com/blogs/astrology/2025-overview",
+      "source_secondary": "https://mariesatori.com/blogs/astrology/saturn-enters-aries",
+      "owner_phrase_anchors": "Aries is the spark that sets the wheel of the zodiac into motion | unfiltered, unapologetic, and alive | What do you desire so fiercely that it can’t be ignored? | courage to begin again",
+      "final_review_notes": "Rebuilt from current website language. Keeps Aries centered on initiation, self-direction, boundaries, courage, and learning through action without repeating the earlier waiting/indecision hook.",
+      "qa_status": "PASS"
+    },
+    {
+      "planet": "Sun",
+      "sign": "Taurus",
+      "content_key": "sky-placement/article/sun/taurus",
+      "tldrWhat": "The Sun in Taurus turns attention toward what sustains you, what you value, and what deserves continued investment.",
+      "tldrTakeaway": "What do you truly value, and what are you willing to keep investing in?",
+      "opening": "The Sun enters Taurus, and your values become harder to separate from the way you spend your resources. What gets your time, money, attention, and care is what you are actively building, regardless of what you say matters to you. This month is a chance to put more behind the people, skills, work, and parts of your life you actually want to grow.",
+      "tension": "Something can be familiar and still be draining you. Taurus likes to preserve what already exists, which is useful until maintaining the familiar keeps taking resources from what you actually want to grow. History alone is not a reason to keep paying the same cost.",
+      "development": "Look at where your resources are going. Your calendar, bank account, attention, and care are already telling the truth about what you are supporting. Taurus reminds us that growth requires patience, care, and commitment to what matters most. Align your actions with your values, then give the things you want to flourish enough time to take root.",
+      "close": "Put more behind what you want to flourish. Stop feeding what only survives because you keep supplying it.",
+      "placementArticle": "The Sun enters Taurus, and your values become harder to separate from the way you spend your resources. What gets your time, money, attention, and care is what you are actively building, regardless of what you say matters to you. This month is a chance to put more behind the people, skills, work, and parts of your life you actually want to grow.\n\nSomething can be familiar and still be draining you. Taurus likes to preserve what already exists, which is useful until maintaining the familiar keeps taking resources from what you actually want to grow. History alone is not a reason to keep paying the same cost.\n\nLook at where your resources are going. Your calendar, bank account, attention, and care are already telling the truth about what you are supporting. Taurus reminds us that growth requires patience, care, and commitment to what matters most. Align your actions with your values, then give the things you want to flourish enough time to take root.\n\nPut more behind what you want to flourish. Stop feeding what only survives because you keep supplying it.",
+      "fallback": {
+        "hook": "What gets your time, money, attention, and care is what you are actively building.",
+        "lived": "Something can be familiar and still be draining the resources you need elsewhere.",
+        "turn": "Put more behind what you actually want to flourish."
+      },
+      "editorial_status": "reviewed_for_codex_proposed",
+      "implementation_status": "ready_for_codex_stage",
+      "owner_approved": false,
+      "source_exact_status": "source_led_final_review",
+      "source_primary": "https://mariesatori.com/blogs/astrology/2025-new-and-full-moons",
+      "source_secondary": "https://mariesatori.com/blogs/astrology/full-moon-in-taurus",
+      "owner_phrase_anchors": "reconnect with what sustains us | What do I truly value? | growth requires patience, care, and an unwavering commitment to what matters most | owner-selected three-sentence opening",
+      "final_review_notes": "Preserves the owner-selected opening exactly. Rest of row now stays on Taurus values/resources/cultivation rather than generic slowing-down language.",
+      "qa_status": "PASS"
+    },
+    {
+      "planet": "Sun",
+      "sign": "Gemini",
+      "content_key": "sky-placement/article/sun/gemini",
+      "tldrWhat": "The Sun in Gemini shifts attention toward movement, conversation, learning, and conscious curiosity.",
+      "tldrTakeaway": "Become your own filter. Stop letting other people think for you.",
+      "opening": "Gemini Season begins on {{entryDate}}, inviting a shift toward movement, conversation, learning, and conscious curiosity. This is a time to notice what you’re saying, what you avoid, and why. Words are choices that reveal alignment or avoidance.",
+      "tension": "Without grounding, curiosity becomes avoidance. Words become noise. Another article, opinion, conversation, or possibility can sharpen your thinking, or give you one more reason to keep every option open. More information is useful only when it changes what you understand.",
+      "development": "Why do you believe what you believe? Who taught you that? And is it still true? Gemini gives you room to revisit assumptions, hear another perspective, and change your mind without treating revision like failure. Information becomes wisdom when everything you have learned, questioned, discussed, and processed turns into something you can actually use.",
+      "close": "Speak with purpose. Ask for clarity. Choose words that create connection, not confusion.",
+      "placementArticle": "Gemini Season begins on {{entryDate}}, inviting a shift toward movement, conversation, learning, and conscious curiosity. This is a time to notice what you’re saying, what you avoid, and why. Words are choices that reveal alignment or avoidance.\n\nWithout grounding, curiosity becomes avoidance. Words become noise. Another article, opinion, conversation, or possibility can sharpen your thinking, or give you one more reason to keep every option open. More information is useful only when it changes what you understand.\n\nWhy do you believe what you believe? Who taught you that? And is it still true? Gemini gives you room to revisit assumptions, hear another perspective, and change your mind without treating revision like failure. Information becomes wisdom when everything you have learned, questioned, discussed, and processed turns into something you can actually use.\n\nSpeak with purpose. Ask for clarity. Choose words that create connection, not confusion.",
+      "fallback": {
+        "hook": "Gemini Season invites a shift toward movement, conversation, learning, and conscious curiosity.",
+        "lived": "Without grounding, curiosity becomes avoidance and words become noise.",
+        "turn": "Speak with purpose. Ask for clarity. Let the conversation lead somewhere."
+      },
+      "editorial_status": "reviewed_for_codex_proposed",
+      "implementation_status": "ready_for_codex_stage",
+      "owner_approved": false,
+      "source_exact_status": "source_led_final_review",
+      "source_primary": "https://mariesatori.com/blogs/astrology/gemini-season-2025",
+      "source_secondary": "https://mariesatori.com/blogs/astrology/gemini-new-moon-2025",
+      "owner_phrase_anchors": "OWNER-SELECTED EXACT OPENING | Without grounding, curiosity becomes avoidance. Words become noise. | Why do you believe what you believe? Who taught you that? And is it still true? | become your own filter",
+      "final_review_notes": "Opening remains owner-selected exact website wording with date token only. Supporting copy is source-led from the attached Gemini Season and Gemini New Moon PDFs.",
+      "qa_status": "PASS"
+    },
+    {
+      "planet": "Sun",
+      "sign": "Cancer",
+      "content_key": "sky-placement/article/sun/cancer",
+      "tldrWhat": "The Sun in Cancer brings home, family, emotional safety, care, rest, and belonging into focus.",
+      "tldrTakeaway": "What you build outward must be supported inward.",
+      "opening": "As the Sun enters Cancer, we’re invited to shift from doing to feeling. The energy encourages you to come home to yourself. Let softness lead. Let care become your compass.",
+      "tension": "Cancer rules home, family, and emotional safety, which is why old memories and family dynamics can become louder here. Care can also become a role you perform automatically, especially when you are always the one expected to remember, protect, adjust, or absorb the feeling in the room.",
+      "development": "What do you need to feel supported? What actually nourishes you? You don’t need to earn rest; it is part of the natural process. Home should give you somewhere to recover from the rest of life, not another place where you are always on call. Reflect on the patterns that are resurfacing without turning every feeling into a verdict.",
+      "close": "Come home to yourself. Let care include you.",
+      "placementArticle": "As the Sun enters Cancer, we’re invited to shift from doing to feeling. The energy encourages you to come home to yourself. Let softness lead. Let care become your compass.\n\nCancer rules home, family, and emotional safety, which is why old memories and family dynamics can become louder here. Care can also become a role you perform automatically, especially when you are always the one expected to remember, protect, adjust, or absorb the feeling in the room.\n\nWhat do you need to feel supported? What actually nourishes you? You don’t need to earn rest; it is part of the natural process. Home should give you somewhere to recover from the rest of life, not another place where you are always on call. Reflect on the patterns that are resurfacing without turning every feeling into a verdict.\n\nCome home to yourself. Let care include you.",
+      "fallback": {
+        "hook": "Cancer Season shifts the focus from doing to feeling.",
+        "lived": "What you build outward becomes harder to sustain when your foundation never gives anything back.",
+        "turn": "Come home to yourself. Let care include you."
+      },
+      "editorial_status": "reviewed_for_codex_proposed",
+      "implementation_status": "ready_for_codex_stage",
+      "owner_approved": false,
+      "source_exact_status": "source_led_final_review",
+      "source_primary": "https://mariesatori.com/blogs/astrology/summer-solstice",
+      "source_secondary": "https://mariesatori.com/blogs/astrology/2025-overview",
+      "owner_phrase_anchors": "shift from doing to feeling | come home to yourself | Let softness lead. Let care become your compass. | What you build outward must be supported inward | you don’t need to earn rest",
+      "final_review_notes": "Rebuilt almost entirely from current Cancer/Solstice language. Removed the generic 'expansion has a limit' moral that the owner rejected.",
+      "qa_status": "PASS"
+    },
+    {
+      "planet": "Sun",
+      "sign": "Leo",
+      "content_key": "sky-placement/article/sun/leo",
+      "tldrWhat": "The Sun in Leo brings creativity, self-expression, love, pleasure, recognition, and the courage to be seen into focus.",
+      "tldrTakeaway": "What makes your heart feel alive and radiant?",
+      "opening": "As we transition from Cancer to Leo season, a new self begins to take shape, one rooted in safety and revealed through joy. We’re not escaping our vulnerability; we’re creating from it. Leo brings a bold invitation to take center stage in your own life.",
+      "tension": "Being seen matters, especially when you care about what you created or how you showed up. If frustration is rising, notice the part of you that is seeking recognition. The response can become such a powerful measure that you lose contact with why you wanted the thing in the first place.",
+      "development": "When we feel safe in our bodies and environments, our creativity opens. We can relax, connect from a calmer place, and express ourselves without bracing for ridicule or rejection. Give art, love, pleasure, play, and the parts of you that feel most alive enough time and space to be expressed without turning every expression into a test of your worth.",
+      "close": "Take center stage in your own life. Give what makes your heart feel alive enough room to exist.",
+      "placementArticle": "As we transition from Cancer to Leo season, a new self begins to take shape, one rooted in safety and revealed through joy. We’re not escaping our vulnerability; we’re creating from it. Leo brings a bold invitation to take center stage in your own life.\n\nBeing seen matters, especially when you care about what you created or how you showed up. If frustration is rising, notice the part of you that is seeking recognition. The response can become such a powerful measure that you lose contact with why you wanted the thing in the first place.\n\nWhen we feel safe in our bodies and environments, our creativity opens. We can relax, connect from a calmer place, and express ourselves without bracing for ridicule or rejection. Give art, love, pleasure, play, and the parts of you that feel most alive enough time and space to be expressed without turning every expression into a test of your worth.\n\nTake center stage in your own life. Give what makes your heart feel alive enough room to exist.",
+      "fallback": {
+        "hook": "Leo Season brings a bold invitation to take center stage in your own life.",
+        "lived": "A quiet response can make you question something you loved before anyone else had an opinion about it.",
+        "turn": "Give what makes your heart feel alive enough room to exist."
+      },
+      "editorial_status": "reviewed_for_codex_proposed",
+      "implementation_status": "ready_for_codex_stage",
+      "owner_approved": false,
+      "source_exact_status": "source_led_final_review",
+      "source_primary": "https://mariesatori.com/blogs/astrology/leo-new-moon-2025",
+      "source_secondary": "https://mariesatori.com/blogs/astrology/2025-new-and-full-moons",
+      "owner_phrase_anchors": "rooted in safety and revealed through joy | We’re not escaping our vulnerability; we’re creating from it. | take center stage in your own life | What makes your heart feel alive and radiant?",
+      "final_review_notes": "Re-centered on the full Leo range the owner requested: heart, joy, creativity, love, pleasure, recognition, vulnerability, and visibility, not work/credit alone.",
+      "qa_status": "PASS"
+    },
+    {
+      "planet": "Sun",
+      "sign": "Virgo",
+      "content_key": "sky-placement/article/sun/virgo",
+      "tldrWhat": "The Sun in Virgo puts daily systems, work, health, service, and the small choices that keep life functioning under review.",
+      "tldrTakeaway": "The details matter, but not all equally. Practice discernment.",
+      "opening": "Welcome to Virgo season’s reality check. This is the month to recognize which systems actually support you and which ones are just daily punishment disguised as productivity. A routine is not useful because it looks disciplined; it is useful because it helps your life work.",
+      "tension": "Your wellness routine can become another way to fail. Some habits look like discipline from the outside but are just outdated agreements you forgot to renegotiate. Virgo’s attention to detail becomes exhausting when every imperfection turns into another task and every act of care becomes another standard to meet.",
+      "development": "Virgo’s deeper teaching is that the sacred lives in the mundane. Tending to the small things is how you heal the whole, but the small things still have to support you. Start with one system that feels more like a task than support. Pick one. Just one. Fix the repeat problem before you add another routine on top of it.",
+      "close": "Create one simple, sustainable practice you can maintain even on your worst days.",
+      "placementArticle": "Welcome to Virgo season’s reality check. This is the month to recognize which systems actually support you and which ones are just daily punishment disguised as productivity. A routine is not useful because it looks disciplined; it is useful because it helps your life work.\n\nYour wellness routine can become another way to fail. Some habits look like discipline from the outside but are just outdated agreements you forgot to renegotiate. Virgo’s attention to detail becomes exhausting when every imperfection turns into another task and every act of care becomes another standard to meet.\n\nVirgo’s deeper teaching is that the sacred lives in the mundane. Tending to the small things is how you heal the whole, but the small things still have to support you. Start with one system that feels more like a task than support. Pick one. Just one. Fix the repeat problem before you add another routine on top of it.\n\nCreate one simple, sustainable practice you can maintain even on your worst days.",
+      "fallback": {
+        "hook": "Welcome to Virgo season’s reality check.",
+        "lived": "Some habits look like discipline from the outside but are just outdated agreements you forgot to renegotiate.",
+        "turn": "Fix one system that feels more like a task than support."
+      },
+      "editorial_status": "reviewed_for_codex_proposed",
+      "implementation_status": "ready_for_codex_stage",
+      "owner_approved": false,
+      "source_exact_status": "source_led_final_review",
+      "source_primary": "https://mariesatori.com/blogs/astrology/virgo-season-2025",
+      "source_secondary": "https://mariesatori.com/blogs/astrology/virgo-new-moon-august-23rd-2025",
+      "owner_phrase_anchors": "reality check | systems actually support you | daily punishment disguised as productivity | outdated agreements you forgot to renegotiate | the sacred lives in the mundane",
+      "final_review_notes": "Rewritten directly from the current Virgo Season page. Removed generic 'efficient/inefficient' framing and kept the stronger systems/support/exhaustion thesis.",
+      "qa_status": "PASS"
+    },
+    {
+      "planet": "Sun",
+      "sign": "Libra",
+      "content_key": "sky-placement/article/sun/libra",
+      "tldrWhat": "The Sun in Libra brings relationships, fairness, compromise, boundaries, and the exchange between people into focus.",
+      "tldrTakeaway": "True balance isn’t about everyone being happy. It’s about honest assessment of who’s been carrying the weight.",
+      "opening": "Balance is a moment, not a state. It’s a pause in constant motion, not a destination you arrive at. The scales are supposed to move; that is how they measure actual weight, actual worth, and actual balance.",
+      "tension": "Libra wants harmony, but harmony without authenticity is just performance. Some conflicts are worth having because they lead to deeper understanding. If the arrangement only works when one person stays agreeable, gives in first, or makes themselves easier to live with, the problem is not the conflict.",
+      "development": "Look at who keeps adjusting, who gets accommodated, and who has been doing the work of keeping the peace. Healthy boundaries can create more intimacy, not less, because the relationship finally has two people in it instead of one person managing the comfort of both. The goal is not a perfectly still scale. It is an exchange that can keep recalibrating as people and circumstances change.",
+      "close": "Practice showing up as yourself in your relationships. This season teaches you the difference between keeping the peace and creating it.",
+      "placementArticle": "Balance is a moment, not a state. It’s a pause in constant motion, not a destination you arrive at. The scales are supposed to move; that is how they measure actual weight, actual worth, and actual balance.\n\nLibra wants harmony, but harmony without authenticity is just performance. Some conflicts are worth having because they lead to deeper understanding. If the arrangement only works when one person stays agreeable, gives in first, or makes themselves easier to live with, the problem is not the conflict.\n\nLook at who keeps adjusting, who gets accommodated, and who has been doing the work of keeping the peace. Healthy boundaries can create more intimacy, not less, because the relationship finally has two people in it instead of one person managing the comfort of both. The goal is not a perfectly still scale. It is an exchange that can keep recalibrating as people and circumstances change.\n\nPractice showing up as yourself in your relationships. This season teaches you the difference between keeping the peace and creating it.",
+      "fallback": {
+        "hook": "Balance is a moment, not a state.",
+        "lived": "A peaceful arrangement can still depend on one person doing most of the adjusting.",
+        "turn": "Look at who has been carrying the weight."
+      },
+      "editorial_status": "reviewed_for_codex_proposed",
+      "implementation_status": "ready_for_codex_stage",
+      "owner_approved": false,
+      "source_exact_status": "source_led_final_review",
+      "source_primary": "https://mariesatori.com/blogs/astrology/libra-season-autumn-equinox",
+      "source_secondary": "https://mariesatori.com/blogs/astrology/relationship-year-libra-2025-to-venus-rx-2026",
+      "owner_phrase_anchors": "balance is a moment, not a state | scales are supposed to move | honest assessment of who’s been carrying the weight | harmony without authenticity is just performance | keeping the peace and creating it",
+      "final_review_notes": "Uses the current Libra Season article as the core argument. Seasonal astronomy remains in the separate hemisphere module to avoid repeating the equinox twice.",
+      "qa_status": "PASS"
+    },
+    {
+      "planet": "Sun",
+      "sign": "Scorpio",
+      "content_key": "sky-placement/article/sun/scorpio",
+      "tldrWhat": "The Sun in Scorpio brings endings, intimacy, shared resources, power, and what has been kept below the surface into focus.",
+      "tldrTakeaway": "Scorpio doesn’t kill what’s alive. It names what’s already dead and asks why you’re still propping it up.",
+      "opening": "Here’s what Scorpio does: composting. Death, decay, the necessary rot that feeds new growth. Every year when the Sun enters Scorpio, we’re asked to identify what is already decomposing, even when the structure around it is still standing.",
+      "tension": "A relationship can end emotionally months before it ends logistically. A career can stop feeding you while you keep showing up. An identity can survive because you have been performing it out of habit. Scorpio makes the cost of preserving what has already ended much harder to ignore.",
+      "development": "Taurus wants peace, but Scorpio knows that peace can come after the confrontation, not instead of it. Shared money, intimacy, support, resentment, control, and the help you will not ask for can all show you where the deeper exchange has become stuck. The point is not to manufacture a crisis. It is to stop using familiarity as proof that something is still alive.",
+      "close": "Transformation isn’t the breakdown, refusing it will be.",
+      "placementArticle": "Here’s what Scorpio does: composting. Death, decay, the necessary rot that feeds new growth. Every year when the Sun enters Scorpio, we’re asked to identify what is already decomposing, even when the structure around it is still standing.\n\nA relationship can end emotionally months before it ends logistically. A career can stop feeding you while you keep showing up. An identity can survive because you have been performing it out of habit. Scorpio makes the cost of preserving what has already ended much harder to ignore.\n\nTaurus wants peace, but Scorpio knows that peace can come after the confrontation, not instead of it. Shared money, intimacy, support, resentment, control, and the help you will not ask for can all show you where the deeper exchange has become stuck. The point is not to manufacture a crisis. It is to stop using familiarity as proof that something is still alive.\n\nTransformation isn’t the breakdown, refusing it will be.",
+      "fallback": {
+        "hook": "Scorpio doesn’t kill what’s alive. It names what’s already dead.",
+        "lived": "A relationship, career, or identity can keep running after the part that made it meaningful has already ended.",
+        "turn": "Stop propping up what has already ended."
+      },
+      "editorial_status": "reviewed_for_codex_proposed",
+      "implementation_status": "ready_for_codex_stage",
+      "owner_approved": false,
+      "source_exact_status": "source_led_final_review",
+      "source_primary": "https://mariesatori.com/blogs/astrology/full-moon-in-taurus",
+      "source_secondary": "https://mariesatori.com/blogs/astrology/scorpio-full-moon-2025",
+      "owner_phrase_anchors": "Here’s what Scorpio does: composting. | necessary rot that feeds new growth | Scorpio doesn’t kill what’s alive. | relationship ended emotionally before logistically | Transformation isn’t the breakdown, refusing it will be.",
+      "final_review_notes": "Now follows the strongest current Scorpio writing almost directly: composting, endings already underway, confrontation, shared resources, and regeneration.",
+      "qa_status": "PASS"
+    },
+    {
+      "planet": "Sun",
+      "sign": "Sagittarius",
+      "content_key": "sky-placement/article/sun/sagittarius",
+      "tldrWhat": "The Sun in Sagittarius turns attention toward truth, belief, meaning, perspective, and the story you are using to choose a direction.",
+      "tldrTakeaway": "What do you know versus what do you believe?",
+      "opening": "Sagittarius is the sign of storytellers and philosophers. This season turns your attention to the stories that have come to define your life, especially the ones you have already outgrown. A story can give your life meaning for years and still stop fitting the person who is living it now.",
+      "tension": "Gemini asks, “What do I know right now?” Sagittarius replies, “But what does it mean in the bigger picture?” That larger view is useful until belief becomes more important than the facts that complicate it. Optimism can keep you moving, but it can also keep you loyal to a direction that no longer makes sense.",
+      "development": "What do you still claim to believe, and does your life reflect that belief? Travel, study, philosophy, teaching, religion, and unfamiliar perspectives can widen the frame, but expansion matters most when it changes how you live. Now is the time to reclaim authorship, speak the truth you have been editing out, and let go of the narratives that keep shrinking what you think is possible.",
+      "close": "Choose meaning. Choose direction. Choose yourself.",
+      "placementArticle": "Sagittarius is the sign of storytellers and philosophers. This season turns your attention to the stories that have come to define your life, especially the ones you have already outgrown. A story can give your life meaning for years and still stop fitting the person who is living it now.\n\nGemini asks, “What do I know right now?” Sagittarius replies, “But what does it mean in the bigger picture?” That larger view is useful until belief becomes more important than the facts that complicate it. Optimism can keep you moving, but it can also keep you loyal to a direction that no longer makes sense.\n\nWhat do you still claim to believe, and does your life reflect that belief? Travel, study, philosophy, teaching, religion, and unfamiliar perspectives can widen the frame, but expansion matters most when it changes how you live. Now is the time to reclaim authorship, speak the truth you have been editing out, and let go of the narratives that keep shrinking what you think is possible.\n\nChoose meaning. Choose direction. Choose yourself.",
+      "fallback": {
+        "hook": "Sagittarius confronts the stories you have outgrown.",
+        "lived": "A belief can keep guiding your choices after your life has stopped reflecting it.",
+        "turn": "Reclaim authorship and choose a direction that fits what you know now."
+      },
+      "editorial_status": "reviewed_for_codex_proposed",
+      "implementation_status": "ready_for_codex_stage",
+      "owner_approved": false,
+      "source_exact_status": "source_led_final_review",
+      "source_primary": "https://mariesatori.com/blogs/astrology/sagittarius-full-moon-2025",
+      "source_secondary": "USER-UPLOADED: [ShareOut] RatM-Part3.pdf — Sagittarius Season",
+      "owner_phrase_anchors": "stories we’ve outgrown | storytellers and philosophers | What do I know right now? / what does it mean in the bigger picture? | What do you still claim to believe, and does your life reflect that belief? | reclaim authorship",
+      "final_review_notes": "Rebuilt from the 2025 Sagittarius Full Moon and uploaded Sagittarius Season chapter. Keeps the Gemini/Sagittarius facts-versus-meaning axis and the story/belief/direction mechanism.",
+      "qa_status": "PASS"
+    },
+    {
+      "planet": "Sun",
+      "sign": "Capricorn",
+      "content_key": "sky-placement/article/sun/capricorn",
+      "tldrWhat": "The Sun in Capricorn brings responsibility, time, ambition, authority, and the structure underneath long-term goals into focus.",
+      "tldrTakeaway": "What legacy do you want to create, and what will it actually require from you?",
+      "opening": "Capricorn season brings accountability and pragmatism. This is a season of growth through action, where maturity means embracing responsibility and confronting the truth of where you stand. A goal changes once the time, money, limits, and consequences attached to it become part of the conversation.",
+      "tension": "With responsibility comes doubt. Look closely at what the doubt is pointing to before you dismiss it as fear. Sometimes it is showing you the weak part of the plan, the missing resource, or the responsibility nobody has accounted for. Ambition gets more expensive when responsibility keeps landing on the same person.",
+      "development": "Capricorn asks you to think beyond the immediate win. What can the structure support one year from now, five years from now, or ten? What needs to be redistributed, clarified, funded, or ended for the goal to remain worth pursuing? Long-term success is not just reaching the destination; it is building something that does not require you to sacrifice the rest of your life to keep it standing.",
+      "close": "Build the structure that can support the life around the goal.",
+      "placementArticle": "Capricorn season brings accountability and pragmatism. This is a season of growth through action, where maturity means embracing responsibility and confronting the truth of where you stand. A goal changes once the time, money, limits, and consequences attached to it become part of the conversation.\n\nWith responsibility comes doubt. Look closely at what the doubt is pointing to before you dismiss it as fear. Sometimes it is showing you the weak part of the plan, the missing resource, or the responsibility nobody has accounted for. Ambition gets more expensive when responsibility keeps landing on the same person.\n\nCapricorn asks you to think beyond the immediate win. What can the structure support one year from now, five years from now, or ten? What needs to be redistributed, clarified, funded, or ended for the goal to remain worth pursuing? Long-term success is not just reaching the destination; it is building something that does not require you to sacrifice the rest of your life to keep it standing.\n\nBuild the structure that can support the life around the goal.",
+      "fallback": {
+        "hook": "Capricorn season brings accountability and pragmatism.",
+        "lived": "A plan can look successful while the same person keeps absorbing the pressure required to make it work.",
+        "turn": "Build the structure that can support the life around the goal."
+      },
+      "editorial_status": "reviewed_for_codex_proposed",
+      "implementation_status": "ready_for_codex_stage",
+      "owner_approved": false,
+      "source_exact_status": "source_led_final_review",
+      "source_primary": "https://mariesatori.com/blogs/astrology/2025-new-and-full-moons",
+      "source_secondary": "https://mariesatori.com/blogs/astrology/2025-overview",
+      "owner_phrase_anchors": "accountability and pragmatism | growth through action | maturity means embracing responsibility | with responsibility comes doubt | long-term goals and practical steps | responsibility keeps landing on the same person",
+      "final_review_notes": "Re-centered on the current Capricorn source: accountability, pragmatism, time, doubt as information, responsibility, and long-range structure. Keeps the owner’s exact 'same person' correction.",
+      "qa_status": "PASS"
+    },
+    {
+      "planet": "Sun",
+      "sign": "Aquarius",
+      "content_key": "sky-placement/article/sun/aquarius",
+      "tldrWhat": "The Sun in Aquarius brings community, systems, individuality, collective responsibility, and the future we are building together into focus.",
+      "tldrTakeaway": "Who do you stand with, and what do you stand for?",
+      "opening": "The Sun in Aquarius illuminates the liminal space between what has been and what could be. This is the season to think big, dream wide, and build bridges that connect us to a better tomorrow. The future stops being abstract when your values begin changing how you participate in the present.",
+      "tension": "Aquarius season reveals which friendships and communities honor your individuality while connecting you to something greater. Seeing what is wrong with a system is not the same as changing it, and standing outside the group can protect independent thought while also making it easier to avoid responsibility for what happens inside it.",
+      "development": "Aquarius asks us to commit to a vision and to the ideals that shape our communities and the future we are building together. Its traditional Saturn rulership gives the sign a serious relationship to systems and collective responsibility; its modern association with Uranus adds disruption and experimentation. The useful question is not how different you can be. It is what your difference makes possible for other people.",
+      "close": "Build the bridge between who you’ve been and who you’re becoming, then bring something useful back to the collective.",
+      "placementArticle": "The Sun in Aquarius illuminates the liminal space between what has been and what could be. This is the season to think big, dream wide, and build bridges that connect us to a better tomorrow. The future stops being abstract when your values begin changing how you participate in the present.\n\nAquarius season reveals which friendships and communities honor your individuality while connecting you to something greater. Seeing what is wrong with a system is not the same as changing it, and standing outside the group can protect independent thought while also making it easier to avoid responsibility for what happens inside it.\n\nAquarius asks us to commit to a vision and to the ideals that shape our communities and the future we are building together. Its traditional Saturn rulership gives the sign a serious relationship to systems and collective responsibility; its modern association with Uranus adds disruption and experimentation. The useful question is not how different you can be. It is what your difference makes possible for other people.\n\nBuild the bridge between who you’ve been and who you’re becoming, then bring something useful back to the collective.",
+      "fallback": {
+        "hook": "The Sun in Aquarius illuminates the space between what has been and what could be.",
+        "lived": "A community matters more when it can make room for your individuality without asking you to detach from everyone else’s needs.",
+        "turn": "Turn the vision into something other people can use."
+      },
+      "editorial_status": "reviewed_for_codex_proposed",
+      "implementation_status": "ready_for_codex_stage",
+      "owner_approved": false,
+      "source_exact_status": "source_led_final_review",
+      "source_primary": "https://mariesatori.com/blogs/astrology/aquarius-season-2025",
+      "source_secondary": "https://mariesatori.com/blogs/astrology/2025-new-and-full-moons",
+      "owner_phrase_anchors": "liminal space between what has been and what could be | think big, dream wide, and build bridges | who we stand with and what we stand for | future we’re building together | traditionally ruled by Saturn and associated with Uranus",
+      "final_review_notes": "Uses the current Aquarius Season thesis. Modern Uranus language remains secondary to Saturn, matching the owner’s Hellenistic framework with selective modern associations.",
+      "qa_status": "PASS"
+    },
+    {
+      "planet": "Sun",
+      "sign": "Pisces",
+      "content_key": "sky-placement/article/sun/pisces",
+      "tldrWhat": "The Sun in Pisces brings endings, surrender, intuition, imagination, grief, and the space between one cycle and the next into focus.",
+      "tldrTakeaway": "This is the final tide before Aries season. Let it take what no longer belongs.",
+      "opening": "Pisces is the last sign. The end of the road, and the space between endings and beginnings. This season asks you to stay with what is dissolving long enough to understand what you are no longer meant to carry into the next cycle.",
+      "tension": "Not all dreams are meant to last. Some dissolve and leave only the lesson behind. Pisces can blur the line between intuition and longing, compassion and self-erasure, surrender and avoidance, which is why forcing a clean answer can create more confusion than giving the situation time to reveal what is actually there.",
+      "development": "Not everything can be thought through. Some paths require feeling, intuition, and surrender to the unknown. Give unfinished feelings, grief, old dreams, and the parts of your life that do not resolve on command enough room to move. If something is ending, you do not need to invent the next chapter before you are ready to close this one.",
+      "close": "Let what is ending finish. The next cycle does not need to carry everything this one could not resolve.",
+      "placementArticle": "Pisces is the last sign. The end of the road, and the space between endings and beginnings. This season asks you to stay with what is dissolving long enough to understand what you are no longer meant to carry into the next cycle.\n\nNot all dreams are meant to last. Some dissolve and leave only the lesson behind. Pisces can blur the line between intuition and longing, compassion and self-erasure, surrender and avoidance, which is why forcing a clean answer can create more confusion than giving the situation time to reveal what is actually there.\n\nNot everything can be thought through. Some paths require feeling, intuition, and surrender to the unknown. Give unfinished feelings, grief, old dreams, and the parts of your life that do not resolve on command enough room to move. If something is ending, you do not need to invent the next chapter before you are ready to close this one.\n\nLet what is ending finish. The next cycle does not need to carry everything this one could not resolve.",
+      "fallback": {
+        "hook": "Pisces is the last sign, the space between endings and beginnings.",
+        "lived": "Something can be ending before you have language for what comes next.",
+        "turn": "Let what is ending finish before you force the next beginning."
+      },
+      "editorial_status": "reviewed_for_codex_proposed",
+      "implementation_status": "ready_for_codex_stage",
+      "owner_approved": false,
+      "source_exact_status": "source_led_final_review",
+      "source_primary": "https://mariesatori.com/blogs/astrology/pisces-season-2025",
+      "source_secondary": "https://mariesatori.com/blogs/astrology/pisces-new-moon-2025",
+      "owner_phrase_anchors": "Pisces is the last sign | space between endings and beginnings | not all dreams are meant to last | not everything can be thought through | final tide before Aries season",
+      "final_review_notes": "Rebuilt around the current Pisces sources: final sign, dissolution, unfinished grief, dream versus reality, surrender, and the liminal space before Aries.",
+      "qa_status": "PASS"
+    }
+  ],
+  "retrograde_modifiers": [
+    {
+      "planet": "Mercury",
+      "content_key": "sky-placement/retrograde/mercury",
+      "canonical_short": "Mercury turns retrograde, bringing messages, decisions, schedules, and missing information back into revision.",
+      "body": "The most grounded response during Mercury Rx is to surrender. Sometimes the only move is to make peace with not knowing. No amount of overthinking will force clarity to arrive before it's ready.",
+      "short_status": "owner_approved_existing",
+      "body_status": "owner_site_exact_reuse_proposed",
+      "short_approved": true,
+      "body_approved": false,
+      "copy_policy": "short_exact; body_exact_source_reuse",
+      "allow_paraphrase": false,
+      "primary_source": "TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx · mercury|any|retrograde",
+      "secondary_source": "https://mariesatori.com/blogs/astrology/mercury-retrograde-in-leo",
+      "phrase_anchors": "messages, decisions, schedules, missing information | “The most grounded response during Mercury Rx is to surrender.” | “No amount of overthinking will force clarity to arrive before it's ready.”",
+      "notes": "Canonical short is already owner-approved. Body is exact MarieSatori.com language from a Mercury Rx article, reused in a new planet-level role and therefore remains proposed until owner approves that reuse."
+    },
+    {
+      "planet": "Venus",
+      "content_key": "sky-placement/retrograde/venus",
+      "canonical_short": "Venus turns retrograde, bringing a relationship, value, or money decision back for another look.",
+      "body": "Venus retrograde is a course correction of the heart. A necessary pause. An invitation to examine what we’ve been taught to want, who we’ve been conditioned to love, and what we’ve been told we deserve. This is not just about romance, it’s about self-worth. It’s about the contracts we’ve made, knowingly or not, with love, beauty, money, and desire.",
+      "short_status": "owner_approved_existing",
+      "body_status": "owner_site_exact_reuse_proposed",
+      "short_approved": true,
+      "body_approved": false,
+      "copy_policy": "short_exact; body_exact_source_reuse",
+      "allow_paraphrase": false,
+      "primary_source": "TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED / v8 locked · venus|any|retrograde",
+      "secondary_source": "https://mariesatori.com/blogs/astrology/venus-retrograde-2025",
+      "phrase_anchors": "“course correction of the heart” | “A necessary pause.” | self-worth | contracts with love, beauty, money, and desire",
+      "notes": "Body is exact opening language from Marie's Venus Rx article. It is excellent planet-level copy but is staged as exact-source reuse until owner approves using it generically."
+    },
+    {
+      "planet": "Mars",
+      "content_key": "sky-placement/retrograde/mars",
+      "canonical_short": "Mars retrograde reminds us that even the most blazing fires need time to rest and rekindle.",
+      "body": "Mars retrograde reminds us that even the most blazing fires need time to rest and rekindle. Mars retrograde invites us to slow down, and sometimes, our bodies enforce this lesson for us. When Mars, the planet of energy, drive, and vitality, moves backward, we’re asked to pause, reflect, and redirect. This can show up physically as illness, injury, or exhaustion, a clear signal that something needs our attention.",
+      "short_status": "owner_approved_exact_current",
+      "body_status": "owner_approved_exact_current",
+      "short_approved": true,
+      "body_approved": true,
+      "copy_policy": "exact",
+      "allow_paraphrase": false,
+      "primary_source": "Owner-supplied exact copy in chat, 2026-08-30",
+      "secondary_source": "https://mariesatori.com/blogs/astrology/uranus-direct-in-taurus-2025",
+      "phrase_anchors": "“even the most blazing fires need time to rest and rekindle” | slow down | bodies enforce this lesson | energy, drive, vitality | illness, injury, exhaustion",
+      "notes": "Canonical Mars Rx planet-level fallback. Preserve exactly. Sign-specific approved Mars Rx copy may override it."
+    },
+    {
+      "planet": "Jupiter",
+      "content_key": "sky-placement/retrograde/jupiter",
+      "canonical_short": "Jupiter turns retrograde, bringing an opportunity, promise, or excess back under review.",
+      "body": "Jupiter turns retrograde, and the work is to use what has already grown before adding another commitment. An opportunity can still be good without needing to become bigger right now. Make the current gain useful first.",
+      "short_status": "owner_approved_existing",
+      "body_status": "owner_approved_exact_existing",
+      "short_approved": true,
+      "body_approved": true,
+      "copy_policy": "exact",
+      "allow_paraphrase": false,
+      "primary_source": "TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED · jupiter|any|retrograde",
+      "secondary_source": "ac/astrology-jan410-blueprint · owner-approved exact copy",
+      "phrase_anchors": "opportunity, promise, excess | use what has already grown | not needing to become bigger | make the current gain useful",
+      "notes": "Both short and body already exist in owner-approved corpora."
+    },
+    {
+      "planet": "Saturn",
+      "content_key": "sky-placement/retrograde/saturn",
+      "canonical_short": "Saturn turns retrograde, bringing a limit, responsibility, or unfinished obligation back for another look.",
+      "body": "Saturn retrograde is a good time to review a responsibility you took on without fully agreeing to it, the way you'd reread a contract after signing it too fast. You might realize you've been keeping a promise nobody actually asked you to keep.",
+      "short_status": "owner_approved_existing",
+      "body_status": "owner_approved_existing",
+      "short_approved": true,
+      "body_approved": true,
+      "copy_policy": "exact_existing",
+      "allow_paraphrase": false,
+      "primary_source": "TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx · saturn|any|retrograde",
+      "secondary_source": "ml/astrologyblog/weeklyforecastmay17-may23-2021.html · owner-approved source-safe",
+      "phrase_anchors": "limit, responsibility, unfinished obligation | responsibility taken on without fully agreeing | promise nobody asked you to keep",
+      "notes": "Generic short and supporting lived passage are already governed as owner-approved in the V9 matrix."
+    },
+    {
+      "planet": "Uranus",
+      "content_key": "sky-placement/retrograde/uranus",
+      "canonical_short": "Uranus turns retrograde, bringing a change already underway back into revision.",
+      "body": "Uranus is the planet of disruption, innovation, and liberation. When retrograde, its shocks are internalized. It turns its rebellious nature inward, challenging us to confront where we’ve been clinging to outdated structures out of comfort or fear.",
+      "short_status": "owner_approved_existing",
+      "body_status": "owner_site_exact_reuse_proposed",
+      "short_approved": true,
+      "body_approved": false,
+      "copy_policy": "short_exact; body_exact_source_reuse",
+      "allow_paraphrase": false,
+      "primary_source": "transit-meanings-v8-owner-approved-locked.json · Uranus|Any|retrograde",
+      "secondary_source": "https://mariesatori.com/blogs/astrology/uranus-direct-in-taurus-2025",
+      "phrase_anchors": "change already underway back into revision | disruption, innovation, liberation | “its shocks are internalized” | outdated structures | comfort or fear",
+      "notes": "Short is existing governed copy. Body is exact MarieSatori.com language but originally appears inside a Uranus-in-Taurus cycle article, so generic reuse remains proposed."
+    },
+    {
+      "planet": "Neptune",
+      "content_key": "sky-placement/retrograde/neptune",
+      "canonical_short": "Neptune turns retrograde, bringing an old hope, assumption, or uncertainty back into view.",
+      "body": "Stepping back from a dream can show how much it has already changed expectations. Neptune turns retrograde, and some people may find the distance clarifying while others feel disappointed as the fantasy loses its hold. Either way, what is actually there becomes easier to see.",
+      "short_status": "owner_approved_existing",
+      "body_status": "owner_approved_exact_existing",
+      "short_approved": true,
+      "body_approved": true,
+      "copy_policy": "exact",
+      "allow_paraphrase": false,
+      "primary_source": "TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx · neptune|any|retrograde",
+      "secondary_source": "ac/astrology-of-sunday-june-17th-2018-2 · owner-approved exact copy",
+      "phrase_anchors": "old hope, assumption, uncertainty | stepping back from a dream | fantasy loses its hold | what is actually there",
+      "notes": "Both short and body are already owner-approved. Sign-specific Neptune Rx copy should override this when present."
+    },
+    {
+      "planet": "Pluto",
+      "content_key": "sky-placement/retrograde/pluto",
+      "canonical_short": "Pluto turns retrograde, bringing an unfinished question of power, leverage, or consequence back into view.",
+      "body": "Buried tension gets harder to ignore once it starts choosing the timing. Pluto turns retrograde, and a motive, power struggle, or pressure that stayed underneath the surface may begin forcing a confrontation. Nothing has to be invented here. The more important question is what had already been building before it became visible.",
+      "short_status": "owner_approved_existing",
+      "body_status": "owner_approved_exact_existing",
+      "short_approved": true,
+      "body_approved": true,
+      "copy_policy": "exact",
+      "allow_paraphrase": false,
+      "primary_source": "TLDR-CC-KNOWLEDGE-MATRIX-VOICED-AC-V9-OWNER-APPROVED-GOVERNANCE-LABELED.xlsx · pluto|any|retrograde",
+      "secondary_source": "ac/astrology-apr-20-29-taurus-i-full-moon-scorpio · owner-approved exact copy",
+      "phrase_anchors": "power, leverage, consequence | buried tension | motive, power struggle, pressure | what had already been building",
+      "notes": "Both short and body are owner-approved exact/current governed copy."
+    },
+    {
+      "planet": "Chiron",
+      "content_key": "sky-placement/retrograde/chiron",
+      "canonical_short": "Chiron retrograde extends the healing timeline beyond quick fixes.",
+      "body": "Retrogrades always bring the chance to rework what’s been unconscious. The body holds what the mind won’t. Chiron doesn’t promise that the wound disappears. It shows us how to carry it differently, so that healing is not about forgetting, but about reclaiming power from what once defined us.",
+      "short_status": "owner_site_exact_reuse_proposed",
+      "body_status": "owner_site_exact_reuse_proposed",
+      "short_approved": false,
+      "body_approved": false,
+      "copy_policy": "exact_source_reuse",
+      "allow_paraphrase": false,
+      "primary_source": "https://mariesatori.com/blogs/astrology/pisces-total-lunar-eclipse",
+      "secondary_source": "https://mariesatori.com/blogs/astrology/chiron-retrograde-in-aries",
+      "phrase_anchors": "“extends the healing timeline beyond quick fixes” | “rework what’s been unconscious” | “The body holds what the mind won’t.” | “carry it differently”",
+      "notes": "Exact MarieSatori.com phrases, newly assembled for a general Chiron Rx modifier. Proposed until owner approves this generic reuse."
+    }
+  ],
+  "seasonal_context": [
+    {
+      "sign": "Aries",
+      "hemisphere": "northern",
+      "content_key": "sky-placement/seasonal-context/aries/northern",
+      "copy": "The March equinox begins spring in the Northern Hemisphere. Day and night briefly meet at equal length before the days continue growing longer. Aries Season begins at the same moment, opening the zodiac year with the first spark of a new cycle.",
+      "source": "https://mariesatori.com/blogs/astrology/2025-overview"
+    },
+    {
+      "sign": "Aries",
+      "hemisphere": "southern",
+      "content_key": "sky-placement/seasonal-context/aries/southern",
+      "copy": "The March equinox begins autumn in the Southern Hemisphere. Day and night briefly meet at equal length before the nights continue growing longer. Aries Season begins at the same moment, opening the zodiac year even as the physical season turns toward autumn.",
+      "source": "https://mariesatori.com/blogs/astrology/2025-overview"
+    },
+    {
+      "sign": "Aries",
+      "hemisphere": "neutral",
+      "content_key": "sky-placement/seasonal-context/aries/neutral",
+      "copy": "The Sun enters Aries at the March equinox, when day and night briefly meet at equal length across the globe. Aries begins the zodiac year at this turning point of the solar cycle.",
+      "source": "https://mariesatori.com/blogs/astrology/2025-overview"
+    },
+    {
+      "sign": "Cancer",
+      "hemisphere": "northern",
+      "content_key": "sky-placement/seasonal-context/cancer/northern",
+      "copy": "The Summer Solstice marks the longest day of the year in the Northern Hemisphere, a turning point where light peaks, then slowly begins its descent. The Sun enters Cancer at the same moment.",
+      "source": "https://mariesatori.com/blogs/astrology/summer-solstice"
+    },
+    {
+      "sign": "Cancer",
+      "hemisphere": "southern",
+      "content_key": "sky-placement/seasonal-context/cancer/southern",
+      "copy": "The June Solstice marks the shortest day of the year in the Southern Hemisphere. Darkness reaches its peak and the light slowly begins to return as the Sun enters Cancer.",
+      "source": "https://mariesatori.com/blogs/astrology/summer-solstice"
+    },
+    {
+      "sign": "Cancer",
+      "hemisphere": "neutral",
+      "content_key": "sky-placement/seasonal-context/cancer/neutral",
+      "copy": "The Sun enters Cancer at the June solstice, one of the four turning points of the solar year. The balance of light changes direction across the globe as Cancer Season begins.",
+      "source": "https://mariesatori.com/blogs/astrology/summer-solstice"
+    },
+    {
+      "sign": "Libra",
+      "hemisphere": "northern",
+      "content_key": "sky-placement/seasonal-context/libra/northern",
+      "copy": "The September equinox begins autumn in the Northern Hemisphere. Day and night are equal for approximately one moment, then darkness begins to overtake light. Libra Season begins at the same turning point.",
+      "source": "https://mariesatori.com/blogs/astrology/libra-season-autumn-equinox"
+    },
+    {
+      "sign": "Libra",
+      "hemisphere": "southern",
+      "content_key": "sky-placement/seasonal-context/libra/southern",
+      "copy": "The September equinox begins spring in the Southern Hemisphere. Day and night are equal for approximately one moment, then light continues to overtake darkness. Libra Season begins at the same turning point.",
+      "source": "https://mariesatori.com/blogs/astrology/libra-season-autumn-equinox"
+    },
+    {
+      "sign": "Libra",
+      "hemisphere": "neutral",
+      "content_key": "sky-placement/seasonal-context/libra/neutral",
+      "copy": "The Sun enters Libra at the September equinox, when day and night are equal for approximately one moment before the balance shifts again.",
+      "source": "https://mariesatori.com/blogs/astrology/libra-season-autumn-equinox"
+    },
+    {
+      "sign": "Capricorn",
+      "hemisphere": "northern",
+      "content_key": "sky-placement/seasonal-context/capricorn/northern",
+      "copy": "The Winter Solstice marks the darkest day of the year in the Northern Hemisphere, a time of stillness and reflection. From here the light slowly begins to return as Capricorn Season begins.",
+      "source": "https://mariesatori.com/blogs/astrology/2025-overview"
+    },
+    {
+      "sign": "Capricorn",
+      "hemisphere": "southern",
+      "content_key": "sky-placement/seasonal-context/capricorn/southern",
+      "copy": "The December Solstice marks the longest day of the year in the Southern Hemisphere. From here the light slowly begins to recede as Capricorn Season begins.",
+      "source": "https://mariesatori.com/blogs/astrology/2025-overview"
+    },
+    {
+      "sign": "Capricorn",
+      "hemisphere": "neutral",
+      "content_key": "sky-placement/seasonal-context/capricorn/neutral",
+      "copy": "The Sun enters Capricorn at the December solstice, one of the four turning points of the solar year. The balance of light changes direction across the globe as Capricorn Season begins.",
+      "source": "https://mariesatori.com/blogs/astrology/2025-overview"
+    }
+  ],
+  "resolver": {
+    "priority": [
+      "sky-placement/article/{planet}/{sign}",
+      "sky-placement/fallback/{planet}/{sign}/{hook|lived|turn}",
+      "facts-only-safe-state"
+    ],
+    "retrograde": [
+      "sky-placement/retrograde/{planet}/{sign}",
+      "sky-placement/retrograde/{planet}"
+    ],
+    "aspect_policy": "render_all_relevant_supported_active_aspects_with_approved_copy"
+  },
+  "url": "/astrology/transits/{planet}-in-{sign}/{cycle-start-date}/",
+  "retrograde_rules": [
+    {
+      "id": "retrograde-resolution",
+      "scope": "all retrogrades",
+      "rule": "Resolve sign-specific approved retrograde copy first; then planet-level modifier. Never synthesize from keyword triplets.",
+      "reader_copy": "",
+      "governance": "implementation"
+    },
+    {
+      "id": "retrograde-current-condition",
+      "scope": "sky placement pages",
+      "rule": "Retrograde/shadow is a current-condition modifier to the base placement article, not a replacement introduction.",
+      "reader_copy": "",
+      "governance": "implementation"
+    },
+    {
+      "id": "retrograde-cross-sign",
+      "scope": "multi-sign cycles",
+      "rule": "When a retrograde crosses into a previous sign, treat the return as a second chapter with different sign-specific behavior/stakes. Do not write one continuous mood across both signs.",
+      "reader_copy": "",
+      "governance": "implementation"
+    },
+    {
+      "id": "mercury-pre-shadow",
+      "scope": "Mercury",
+      "rule": "Pre-shadow begins when Mercury first crosses the degrees it will later revisit; post-shadow ends when it clears them again.",
+      "reader_copy": "The shadow is where the reflection deepens, the patterns repeat, and the realignment begins.",
+      "governance": "owner-site exact source reuse; reader line proposed until approved for generic lifecycle use"
+    },
+    {
+      "id": "no-sun-moon-rx",
+      "scope": "Sun/Moon",
+      "rule": "Sun and Moon do not retrograde. Do not create retrograde modifier records for either.",
+      "reader_copy": "",
+      "governance": "astronomy/engine"
+    },
+    {
+      "id": "nodes-rx",
+      "scope": "Lunar Nodes",
+      "rule": "Regular nodal retrograde motion does not trigger a separate retrograde article modifier.",
+      "reader_copy": "",
+      "governance": "engine"
+    },
+    {
+      "id": "mean-lilith-rx",
+      "scope": "Mean Lilith",
+      "rule": "Mean Lilith does not use a separate retrograde modifier in the current architecture.",
+      "reader_copy": "",
+      "governance": "engine"
+    },
+    {
+      "id": "copy-integrity",
+      "scope": "approved modifiers",
+      "rule": "If CopyPolicy is exact or exact_existing, runtime must preserve wording and punctuation. Do not paraphrase or normalize it into generic prose.",
+      "reader_copy": "",
+      "governance": "governance"
+    },
+    {
+      "id": "serving-approval",
+      "scope": "new source reuse",
+      "rule": "Exact text copied from MarieSatori.com into a new content role is still staged until that reuse is explicitly owner-approved.",
+      "reader_copy": "",
+      "governance": "governance"
+    }
+  ],
+  "handoff_status": "reviewed_for_codex_staging"
+}

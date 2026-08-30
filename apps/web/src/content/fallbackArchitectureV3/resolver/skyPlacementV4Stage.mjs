@@ -2,13 +2,13 @@ const ARTICLE_TEMPLATE_ID = "sky-placement-v4-article-compile";
 const PAGE_TEMPLATE_ID = "sky-placement-v4-page";
 const FALLBACK_TEMPLATE_ID = "sky-placement-v4-fallback";
 
-export const SKY_PLACEMENT_V4_SOURCE_VERIFIED_TEMPLATES = Object.freeze([
+export const SKY_PLACEMENT_V4_REVIEWED_TEMPLATES = Object.freeze([
   { template_id: PAGE_TEMPLATE_ID, purpose: "Canonical reader page", template: "# {{planetTitle}} in {{signTitle}}\n\n{{dateLine}}\n\n## TLDR\n\n**What:** {{tldrWhat}}\n\n**Takeaway:** {{tldrTakeaway}}\n\n{{#seasonalContext}}\n{{seasonalContext}}\n\n{{/seasonalContext}}\n{{placementArticle}}\n\n{{#hasCurrentConditions}}\n## What is shaping this transit now\n\n{{currentConditions}}\n{{/hasCurrentConditions}}" },
   { template_id: ARTICLE_TEMPLATE_ID, purpose: "Deterministic article compilation", template: "{{opening}}\n\n{{tension}}\n\n{{development}}\n\n{{close}}" },
   { template_id: FALLBACK_TEMPLATE_ID, purpose: "Exact planet-sign fallback only", template: "{{placementHook}}\n\n{{placementLived}}\n\n{{placementTurn}}" },
   { template_id: "sky-placement-v4-current-conditions", purpose: "All active supported conditions", template: "{{#retrogradeConditions}}\n### {{headline}}\n{{dateLine}}\n\n{{body}}\n\n{{/retrogradeConditions}}\n{{#aspectConditions}}\n### {{headline}}\n{{dateLine}}\n\n{{body}}\n\n{{/aspectConditions}}" }
 ]);
-const SOURCE_VERIFIED_TEMPLATES = new Map(SKY_PLACEMENT_V4_SOURCE_VERIFIED_TEMPLATES.map((entry) => [entry.template_id, entry.template]));
+const REVIEWED_TEMPLATES = new Map(SKY_PLACEMENT_V4_REVIEWED_TEMPLATES.map((entry) => [entry.template_id, entry.template]));
 
 function requiredText(value, label) {
   const text = String(value ?? "").trim();
@@ -20,9 +20,17 @@ function normalized(value) {
   return String(value ?? "").trim().toLowerCase();
 }
 
+function articleField(article, camelName, legacyName) {
+  return article?.[camelName] ?? article?.[legacyName];
+}
+
+function fallbackField(article, slot) {
+  return article?.fallback?.[slot] ?? article?.[`fallback_${slot}`];
+}
+
 function templateById(corpus, templateId) {
   const found = (corpus.templates ?? []).find((entry) => entry.template_id === templateId);
-  const template = found?.template ?? SOURCE_VERIFIED_TEMPLATES.get(templateId);
+  const template = found?.template ?? REVIEWED_TEMPLATES.get(templateId);
   if (!template) throw new Error(`SKY_PLACEMENT_V4_STAGE_GAP: template ${templateId}`);
   return template;
 }
@@ -58,9 +66,9 @@ export function compileSkyPlacementV4Article(corpus, article, facts = {}) {
 
 export function compileSkyPlacementV4Fallback(corpus, article, facts = {}) {
   const compiled = fillScalarSlots(fillScalarSlots(templateById(corpus, FALLBACK_TEMPLATE_ID), {
-    placementHook: requiredText(article.fallback_hook, `${article.content_key} fallback hook`),
-    placementLived: requiredText(article.fallback_lived, `${article.content_key} fallback lived`),
-    placementTurn: requiredText(article.fallback_turn, `${article.content_key} fallback turn`)
+    placementHook: requiredText(fallbackField(article, "hook"), `${article.content_key} fallback hook`),
+    placementLived: requiredText(fallbackField(article, "lived"), `${article.content_key} fallback lived`),
+    placementTurn: requiredText(fallbackField(article, "turn"), `${article.content_key} fallback turn`)
   }), facts);
   return assertResolved(compiled);
 }
@@ -77,14 +85,22 @@ export function seasonalContextFor(corpus, sign, latitude) {
   ))?.copy ?? "";
 }
 
-export function retrogradeModifierFor(corpus, planet) {
+export function retrogradeModifierRecordFor(corpus, planet) {
   const planetKey = normalized(planet);
-  return (corpus.retrograde_modifiers ?? []).find((modifier) => (
-    normalized(modifier.planet) === planetKey
-    && modifier.owner_approved === true
-    && modifier.copy_policy === "exact"
-    && modifier.allow_paraphrase === false
-  )) ?? null;
+  return (corpus.retrograde_modifiers ?? []).find((modifier) => normalized(modifier.planet) === planetKey) ?? null;
+}
+
+export function retrogradeModifierFor(corpus, planet) {
+  const modifier = retrogradeModifierRecordFor(corpus, planet);
+  if (
+    !modifier
+    || modifier.body_approved !== true
+    || modifier.allow_paraphrase !== false
+    || !/^exact(?:_|$)/u.test(String(modifier.copy_policy ?? ""))
+  ) {
+    return null;
+  }
+  return { ...modifier, copy: requiredText(modifier.body, `${modifier.content_key} approved body`) };
 }
 
 export function renderSkyPlacementV4Conditions(corpus, planet, conditions = []) {
@@ -93,11 +109,14 @@ export function renderSkyPlacementV4Conditions(corpus, planet, conditions = []) 
   const planetRetrogrades = activeApproved.filter((condition) => condition.kind === "retrograde" && condition.scope !== "sign");
   const aspects = activeApproved.filter((condition) => condition.kind !== "retrograde");
   const exactPlanetModifier = retrogradeModifierFor(corpus, planet);
+  const governedPlanetModifier = retrogradeModifierRecordFor(corpus, planet);
   const selectedRetrogrades = signRetrogrades.length
     ? signRetrogrades
-    : planetRetrogrades.map((condition) => exactPlanetModifier
-      ? { ...condition, body: exactPlanetModifier.copy, contentKey: exactPlanetModifier.content_key }
-      : condition);
+    : planetRetrogrades.flatMap((condition) => exactPlanetModifier
+      ? [{ ...condition, body: exactPlanetModifier.copy, contentKey: exactPlanetModifier.content_key }]
+      : governedPlanetModifier
+        ? []
+        : [condition]);
   const selected = [...selectedRetrogrades, ...aspects];
 
   return selected
@@ -165,8 +184,8 @@ export function renderSkyPlacementV4Preview(corpus, input) {
     planetTitle: requiredText(input.planetTitle ?? input.planet, "planet title"),
     signTitle: requiredText(input.signTitle ?? input.sign, "sign title"),
     dateLine: requiredText(input.dateLine, "date line"),
-    tldrWhat: article?.tldr_what ?? "",
-    tldrTakeaway: article?.tldr_takeaway ?? "",
+    tldrWhat: articleField(article, "tldrWhat", "tldr_what") ?? "",
+    tldrTakeaway: articleField(article, "tldrTakeaway", "tldr_takeaway") ?? "",
     placementArticle,
     currentConditions,
     ...facts
