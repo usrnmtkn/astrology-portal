@@ -9051,6 +9051,48 @@ body,
   max-width: 100%;
 }
 
+.admin-dashboard .admin-compatibility-identity-fields {
+  align-items: start;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.admin-dashboard .admin-compatibility-identity-fields > legend,
+.admin-dashboard .admin-compatibility-identity-fields > .admin-field-hint,
+.admin-dashboard .admin-compatibility-identity-preview,
+.admin-dashboard .admin-compatibility-identity-fields > .admin-inline-warning {
+  grid-column: 1 / -1;
+}
+
+.admin-dashboard .admin-compatibility-identity-fields > legend {
+  color: var(--admin-ui-text);
+  font-family: var(--font-label);
+  font-size: var(--admin-ui-type-body);
+  font-weight: 700;
+  margin-bottom: var(--admin-space-md);
+}
+
+.admin-dashboard .admin-compatibility-identity-preview {
+  align-items: start;
+  background: var(--admin-ui-info-soft);
+  border: var(--border-width-thin) solid var(--admin-ui-info-border);
+  border-radius: var(--admin-ui-radius-md);
+  display: grid;
+  gap: var(--admin-space-xs);
+  padding: var(--admin-space-lg) var(--admin-space-xl);
+}
+
+.admin-dashboard .admin-compatibility-identity-preview span {
+  color: var(--admin-ui-muted);
+  font-size: var(--admin-ui-type-hint);
+}
+
+@media (max-width: 720px) {
+  .admin-dashboard .admin-compatibility-identity-fields {
+    grid-template-columns: 1fr;
+  }
+}
+
 .admin-dashboard .admin-contextual-copy-example {
   background: var(--admin-ui-surface-2);
   border: var(--border-width-thin) solid var(--admin-ui-border);

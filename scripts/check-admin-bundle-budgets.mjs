@@ -72,16 +72,28 @@ for (const marker of forbiddenEntryMarkers) {
 }
 
 const expectedDynamicEntries = [
-  "src/AspectPatternDiagnostics.tsx",
-  "src/AspectPatternWriteups.tsx",
   "src/CompositionMapWorkspace.tsx",
-  "src/DailyFallbackWorkspaceGuide.tsx",
-  "src/NatalPlacementSourceFinder.tsx",
-  "src/PackagedHookCatalogResults.tsx",
-  "src/ReportFulfillmentAdminPanel.tsx"
 ];
 for (const key of expectedDynamicEntries) {
   if (!manifest[key]?.isDynamicEntry) failures.push(`Expected lazy Admin entry is missing: ${key}`);
+}
+const expectedDeferredGroups = [
+  "admin-deferred-editor-tools",
+  "admin-deferred-fallback-tools",
+  "admin-deferred-review-tools"
+];
+const entryImports = new Set(entry.imports ?? []);
+const entryDynamicImports = new Set(entry.dynamicImports ?? []);
+for (const name of expectedDeferredGroups) {
+  const match = Object.entries(manifest).find(([, item]) => item?.name === name);
+  const [key, item] = match ?? [];
+  if (!key || !item?.isDynamicEntry) {
+    failures.push(`Expected lazy Admin group is missing: ${name}`);
+    continue;
+  }
+  if (entryImports.has(key) || !entryDynamicImports.has(key)) {
+    failures.push(`Admin group must remain deferred from the entry: ${name}`);
+  }
 }
 
 console.log("# Admin bundle budget");
