@@ -428,7 +428,9 @@ function mapPackageRecord(record, bucket) {
       approved_via: record.approved_via ?? null,
       source_keys: record.source_keys ?? [],
       importBatchId,
-      sourcePackage: stageOnly ? "sky-placement-v4-reviewed-for-codex-stage" : "tldrastro-fallback-architecture-v3",
+      sourcePackage: stageOnly
+        ? String(record.source_package ?? "sky-placement-v4-reviewed-for-codex-stage")
+        : "tldrastro-fallback-architecture-v3",
       sourceFile: bucket,
       packageVersion: packageManifest.packageVersion,
       packageContentHash: packageManifest.contentHash,
@@ -522,6 +524,7 @@ function readPackageSources() {
   const weeklyRows = readJson("source-rows/station-cards-week-openers-v1.json");
   const templateRows = readJson("templates/fallback-templates-v3.json");
   const skyPlacementV4SunStage = readJson("authored-inputs/sky-placement-v4-reviewed-for-codex-stage-v1.json");
+  const skyPlacementV4MercuryVenusStage = readJson("authored-inputs/sky-placement-v4-mercury-venus-next-batch-stage-v1.json");
   continuousFallbackImportManifest = readJson("authored-inputs/sky-placement-continuous-v2-pending.json");
   ({
     manifest: skyPlacementServingManifest,
@@ -553,37 +556,48 @@ function readPackageSources() {
     timingEventRows,
     weeklyRows,
     templateRows,
-    skyPlacementV4SunStage
+    skyPlacementV4SunStage,
+    skyPlacementV4MercuryVenusStage
   };
 }
 
-function skyPlacementV4StageRecords(source) {
-  if (
-    source.status !== "proposed_v4_source_verified"
-    || source.serving_enabled !== false
-    || source.handoff_status !== "reviewed_for_codex_staging"
-  ) {
-    throw new Error("Sky Placement V4 staging source must remain reviewed-for-Codex, proposed_v4_source_verified, and non-serving.");
+function skyPlacementV4StageRecords(source, { includeSupportRecords = true } = {}) {
+  const reviewedSunStage = source.status === "proposed_v4_source_verified"
+    && source.serving_enabled === false
+    && source.handoff_status === "reviewed_for_codex_staging";
+  const reviewedPlanetBatch = source.status === "reviewed_source_led_proposed"
+    && source.implementation_status === "next_codex_batch"
+    && source.owner_approved === false;
+  if (!reviewedSunStage && !reviewedPlanetBatch) {
+    throw new Error("Sky Placement V4 staging source must preserve its reviewed, non-serving package governance.");
   }
+
+  const implementationStatus = source.handoff_status ?? source.implementation_status;
+  const sourcePackage = source.version;
 
   const common = {
     surface: "sky",
     review_status: "needs_review",
     editorial_status: source.status,
-    implementation_status: source.handoff_status,
+    implementation_status: implementationStatus,
     owner_approved: false,
     serving_enabled: false,
     source_schema_version: source.version,
+    source_package: sourcePackage,
     note: "Sky Placement V4 reviewed-for-Codex stage-only review record. It is excluded from every reader package until exact owner approval and a separate serving release."
   };
-  const articles = (source.sun_corpus ?? []).map((article) => ({
+  const sourceArticles = [
+    ...(source.sun_corpus ?? []),
+    ...Object.values(source.planets ?? {}).flatMap((articles) => Array.isArray(articles) ? articles : [])
+  ];
+  const articles = sourceArticles.map((article) => ({
     ...common,
     ...article,
-    contentKey: article.content_key,
-    headline: `Sun in ${article.sign}`,
+    contentKey: article.contentKey ?? article.content_key,
+    headline: `${article.planet} in ${article.sign}`,
     content_role: "full_copy",
-    body_you: article.placementArticle,
-    summary: article.tldrTakeaway,
+    body_you: article.placementArticle ?? article.placement_article,
+    summary: article.tldrTakeaway ?? article.tldr_takeaway,
     render_policy: "sky-placement-v4-stage-preview"
   }));
   const contexts = (source.seasonal_context ?? []).map((context) => ({
@@ -618,7 +632,9 @@ function skyPlacementV4StageRecords(source) {
     note: "Reviewed retrograde modifier staged with per-field approval metadata preserved. It remains outside reader packages until a separate serving release."
   }));
 
-  return [...articles, ...contexts, ...templates, ...retrogradeModifiers];
+  return includeSupportRecords
+    ? [...articles, ...contexts, ...templates, ...retrogradeModifiers]
+    : articles;
 }
 
 function readerEligibleReviewStatus(row, allowBlank = false) {
@@ -784,6 +800,8 @@ function materializeRows(sources) {
     ...sources.templateRows.templates.map((row) => mapPackageRecord(row, "fallback-system")),
     ...sources.placementInterimRows.templates.map((row) => mapPackageRecord(row, "fallback-system")),
     ...skyPlacementV4StageRecords(sources.skyPlacementV4SunStage)
+      .map((row) => mapPackageRecord(row, "sky-placement-v4-stage")),
+    ...skyPlacementV4StageRecords(sources.skyPlacementV4MercuryVenusStage, { includeSupportRecords: false })
       .map((row) => mapPackageRecord(row, "sky-placement-v4-stage")),
     ...sources.sourceRows.fallbackSourceRows.map((row) => mapPackageRecord(row, "source-material")),
     ...editorialSourceBankRecords(sources.editorialSourceBank)
