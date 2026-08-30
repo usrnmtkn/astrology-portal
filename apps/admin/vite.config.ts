@@ -95,6 +95,22 @@ export default defineConfig(({ command, mode }) => {
     },
     build: {
       manifest: true,
+      rollupOptions: {
+        output: {
+          onlyExplicitManualChunks: true,
+          manualChunks(id) {
+            if (/apps\/admin\/src\/(?:NatalPlacementSourceFinder|TemplateReaderDrilldown|TemplateVariableReviewPanels)\.tsx$/u.test(id)) {
+              return "admin-deferred-editor-tools";
+            }
+            if (/apps\/admin\/src\/(?:AspectPatternDiagnostics|AspectPatternWriteups|ReportFulfillmentAdminPanel|UnresolvedContentReview)\.tsx$/u.test(id)) {
+              return "admin-deferred-review-tools";
+            }
+            if (/apps\/admin\/src\/(?:DailyFallbackWorkspaceGuide|PackagedHookCatalogResults)\.tsx$/u.test(id)) {
+              return "admin-deferred-fallback-tools";
+            }
+          }
+        }
+      },
       minify: "terser",
       terserOptions: {
         compress: {
