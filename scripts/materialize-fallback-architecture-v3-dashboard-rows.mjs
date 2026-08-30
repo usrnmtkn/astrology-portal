@@ -7,6 +7,7 @@ import {
   PACKAGE_VERSION
 } from "../apps/web/src/content/fallbackArchitectureV3/dist/tldr-content.js";
 import { isGovernedReaderEligible } from "../apps/web/src/content/fallbackArchitectureV3/resolver/readerEligibility.mjs";
+import { SKY_PLACEMENT_V4_SOURCE_VERIFIED_TEMPLATES } from "../apps/web/src/content/fallbackArchitectureV3/resolver/skyPlacementV4Stage.mjs";
 
 const repoRoot = path.resolve(path.dirname(new URL(import.meta.url).pathname), "..");
 const packageDir = path.join(repoRoot, "apps/web/src/content/fallbackArchitectureV3");
@@ -427,7 +428,7 @@ function mapPackageRecord(record, bucket) {
       approved_via: record.approved_via ?? null,
       source_keys: record.source_keys ?? [],
       importBatchId,
-      sourcePackage: stageOnly ? "sky-placement-v4-sun-corpus-stage" : "tldrastro-fallback-architecture-v3",
+      sourcePackage: stageOnly ? "sky-placement-v4-sun-corpus-source-verified-stage" : "tldrastro-fallback-architecture-v3",
       sourceFile: bucket,
       packageVersion: packageManifest.packageVersion,
       packageContentHash: packageManifest.contentHash,
@@ -440,7 +441,7 @@ function mapPackageRecord(record, bucket) {
       distributionState: distributionRelease?.distribution_state ?? null,
       releaseBatch: distributionRelease?.release_batch ?? null,
       note: stageOnly
-        ? "V4 stage-only review mirror. This record is not present in the reader package and cannot serve without exact owner approval plus a separate serving release."
+        ? "V4 source-verified stage-only review mirror. This record is not present in the reader package and cannot serve without exact owner approval plus a separate serving release."
         : "V3 package mirror for dashboard editing. fallback_source rows are source material and must never render directly."
     },
     reviewer_notes: String(record.note ?? record.notes ?? "").trim(),
@@ -520,7 +521,7 @@ function readPackageSources() {
   const timingEventRows = readJson("source-rows/timing-event-reader-copy-v2.json");
   const weeklyRows = readJson("source-rows/station-cards-week-openers-v1.json");
   const templateRows = readJson("templates/fallback-templates-v3.json");
-  const skyPlacementV4SunStage = readJson("authored-inputs/sky-placement-v4-sun-corpus-stage-v1.json");
+  const skyPlacementV4SunStage = readJson("authored-inputs/sky-placement-v4-sun-corpus-source-verified-stage-v1.json");
   continuousFallbackImportManifest = readJson("authored-inputs/sky-placement-continuous-v2-pending.json");
   ({
     manifest: skyPlacementServingManifest,
@@ -558,23 +559,23 @@ function readPackageSources() {
 
 function skyPlacementV4StageRecords(source) {
   if (
-    source.editorial_status !== "proposed_v4"
-    || source.implementation_status !== "stage_only"
-    || source.owner_approved !== false
+    source.status !== "proposed_v4_source_verified"
+    || source.serving_enabled !== false
   ) {
-    throw new Error("Sky Placement V4 staging source must remain proposed_v4, stage_only, and not owner-approved.");
+    throw new Error("Sky Placement V4 staging source must remain proposed_v4_source_verified and non-serving.");
   }
 
   const common = {
     surface: "sky",
     review_status: "needs_review",
-    editorial_status: source.editorial_status,
-    implementation_status: source.implementation_status,
-    owner_approved: source.owner_approved,
-    source_schema_version: source.schema_version,
-    note: "Sky Placement V4 stage-only review record. It is excluded from every reader package until exact owner approval and a separate serving release."
+    editorial_status: source.status,
+    implementation_status: "stage_only",
+    owner_approved: false,
+    serving_enabled: false,
+    source_schema_version: source.version,
+    note: "Sky Placement V4 source-verified stage-only review record. It is excluded from every reader package until exact owner approval and a separate serving release."
   };
-  const articles = (source.sun_articles ?? []).map((article) => ({
+  const articles = (source.sun_corpus ?? []).map((article) => ({
     ...common,
     ...article,
     contentKey: article.content_key,
@@ -584,7 +585,7 @@ function skyPlacementV4StageRecords(source) {
     summary: article.tldr_takeaway,
     render_policy: "sky-placement-v4-stage-preview"
   }));
-  const contexts = (source.seasonal_contexts ?? []).map((context) => ({
+  const contexts = (source.seasonal_context ?? []).map((context) => ({
     ...common,
     ...context,
     contentKey: context.content_key,
@@ -594,7 +595,7 @@ function skyPlacementV4StageRecords(source) {
     source_keys: [context.source],
     render_policy: "sky-placement-v4-stage-preview"
   }));
-  const templates = (source.templates ?? []).map((template) => ({
+  const templates = SKY_PLACEMENT_V4_SOURCE_VERIFIED_TEMPLATES.map((template) => ({
     ...common,
     ...template,
     contentKey: `fallback-template/stage/${template.template_id}`,
@@ -603,8 +604,20 @@ function skyPlacementV4StageRecords(source) {
     body_you: template.template,
     render_policy: "sky-placement-v4-stage-preview"
   }));
+  const retrogradeModifiers = (source.retrograde_modifiers ?? []).map((modifier) => ({
+    ...common,
+    ...modifier,
+    contentKey: modifier.content_key,
+    headline: `${modifier.planet} retrograde modifier`,
+    content_role: "fallback_hook",
+    body_you: modifier.copy,
+    review_status: "needs_review",
+    serving_enabled: false,
+    render_policy: "sky-placement-v4-stage-preview",
+    note: "Exact owner-supplied retrograde modifier staged as reference only. It remains outside reader packages until a separate serving release."
+  }));
 
-  return [...articles, ...contexts, ...templates];
+  return [...articles, ...contexts, ...templates, ...retrogradeModifiers];
 }
 
 function readerEligibleReviewStatus(row, allowBlank = false) {
