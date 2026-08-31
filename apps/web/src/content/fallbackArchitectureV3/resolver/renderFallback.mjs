@@ -104,7 +104,6 @@ function getHook(key, voice, { allowUnreviewed = false } = {}) {
 }
 
 function getReaderLivedRow(key, voice, { allowUnreviewed = false } = {}) {
-  if (voice !== "you") return null;
   const row = hooks.get(key);
   if (!row) return null;
   if (!["fallback_hook", "full_copy"].includes(row.content_role)) {
@@ -114,7 +113,18 @@ function getReaderLivedRow(key, voice, { allowUnreviewed = false } = {}) {
   if (row.reader_only !== true || row.render_policy !== "reader-only-exact-lived-v1") {
     throw new RoleViolationError(`Row ${key} is not a reader-only exact lived row.`);
   }
-  return typeof row.body === "string" && row.body.trim() ? row : null;
+  if (voice === "you") {
+    return typeof row.body === "string" && row.body.trim() ? row : null;
+  }
+  if (
+    typeof row.body_they !== "string"
+    || !row.body_they.trim()
+    || (!allowUnreviewed && !READER_ELIGIBLE_STATUS.has(row.body_they_review_status))
+    || row.body_they_approval?.approvalLevel !== "exact_owner_approved"
+  ) {
+    return null;
+  }
+  return { ...row, body: row.body_they };
 }
 
 function getVocabList(prefix, voice = "you", opts = {}) {
@@ -350,10 +360,11 @@ export function renderNatalAspect(facts, opts = {}) {
     getReaderLivedRow(`fallback-hook/natal-aspect-lived/${planetA}/${aspect}/${planetB}`, voice, { allowUnreviewed })
     ?? getReaderLivedRow(`fallback-hook/natal-aspect-lived/${planetB}/${aspect}/${planetA}`, voice, { allowUnreviewed });
   if (exactLived) {
+    const exactBody = mustache(exactLived.body, { Name: facts.voice });
     return {
       headline: `${title(planetA)} ${aspect} ${title(planetB)}`,
-      parts: [exactLived.body],
-      body: exactLived.body,
+      parts: [exactBody],
+      body: exactBody,
       astroHint: exactLived.astroHint,
       templateKey: exactLived.contentKey,
       provenanceTier: "exact-owner-approved",

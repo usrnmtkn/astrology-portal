@@ -20,10 +20,10 @@
     "argument_candidate": 787
   },
   "deduplicatedSharedIndexCounts": {
-    "entries": 5935,
+    "entries": 5937,
     "meaning": 2224,
     "register": 1758,
-    "scene": 426,
+    "scene": 428,
     "argument": 1181,
     "phrase": 346,
     "planetSignKeys": 247
@@ -95,7 +95,7 @@
     "approved_serving_row": {
       "meaning": 0,
       "register": 0,
-      "scene": 234,
+      "scene": 236,
       "argument": 0,
       "phrase": 0
     },
@@ -153,10 +153,10 @@
     "planetSignKeys": 190
   },
   "afterCounts": {
-    "entries": 5935,
+    "entries": 5937,
     "meaning": 2224,
     "register": 1758,
-    "scene": 426,
+    "scene": 428,
     "argument": 1181,
     "phrase": 346,
     "planetSignKeys": 247
