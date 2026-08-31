@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "id": "angle-aspects-60-v15-043",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_reviewed",
+  "provenanceNote": "The owner supplied exact wording approval for V15 and explicitly did not relabel collaboratively drafted copy as owner_authored.",
+  "contentKey": "fallback-hook/natal-aspect-lived/uranus/conjunction/ascendant",
+  "packetKey": "uranus|conjunction|ascendant",
+  "payloadSha256": "462b74722059f61f31377616fc33b3926ac0c39d81efb6f86301e53f0232cf77",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "You are willing to change the plan when you realize it no longer fits. New information, a better way of doing something, or simply wanting something different can be enough for you to reconsider a choice other people assumed was already decided.\n\nWhat feels like an obvious change to you can catch other people off guard because they usually hear about it after you have already spent time questioning what was no longer working.\n\nThe challenge is knowing when change is helping you build a life that fits better and when change itself has become the answer you reach for whenever something starts feeling too defined. Being known, expected, or counted on can feel restrictive even when nobody is actually preventing you from choosing differently.\n\nThe useful question is what changed. If your needs, priorities, information, or circumstances changed, the direction may need to change too. If the only problem is that someone now expects consistency from you, their expectation may still be having too much influence over the decision.",
+    "sourceMechanism": "Exact owner-approved copy transcribed byte-for-byte from the SHA-bound canonical V15 owner-approval artifact; collaborative authorship is preserved and sole owner authorship is not asserted."
+  },
+  "approvedAt": "2026-08-31",
+  "approvalEffect": "exact_wording_approval",
+  "sourceArtifact": {
+    "id": "angle-aspects-60-v15-owner-approval-candidate",
+    "path": "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md",
+    "sha256": "3bbcd3e611d72a9754e9fdb4f4390ec860a670bc53af6b059ea23a212d37bfd4",
+    "passageHeading": "Uranus conjunct Ascendant",
+    "passageOrdinal": 43,
+    "bodySha256": "339c4016e89b63764dcb52ca66e5891e96eeac2116e6868b4319f71dce3ac088"
+  },
+  "ownerConfirmationSource": {
+    "channel": "Codex task owner message",
+    "taskId": "01a04fc0-899b-7cd2-bb2e-98ad182391bb",
+    "date": "2026-08-31"
+  },
+  "replacementAuthorization": null,
+  "additionalBilledCalls": 0
+}

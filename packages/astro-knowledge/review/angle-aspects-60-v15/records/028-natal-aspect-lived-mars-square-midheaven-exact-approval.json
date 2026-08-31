@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "id": "angle-aspects-60-v15-028",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_reviewed",
+  "provenanceNote": "The owner supplied exact wording approval for V15 and explicitly did not relabel collaboratively drafted copy as owner_authored.",
+  "contentKey": "fallback-hook/natal-aspect-lived/mars/square/midheaven",
+  "packetKey": "mars|square|midheaven",
+  "payloadSha256": "eafe48c308475bc115b25992f6c245c4ea25c578c50054f67d41604417a9f2b5",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "You may spend part of your life learning the difference between working harder and having enough authority to make an impact. Being responsible for a visible result without much say over how it gets done can make effort feel like the only part you still control.\n\nA teacher sets the terms but expects your best work, a group wants you accountable without letting you change the plan, or an organization gives you responsibility while keeping the actual decision somewhere else. Your first response may be to prove yourself again by working harder, making the case one more time, or taking on another piece of the problem.\n\nThe challenge is that your effort can hide how unworkable the setup has become. Other people see that the result still gets produced and have very little reason to notice how much extra work it required from you.\n\nMore effort should change something. It should give you more authority, improve the terms, move the result forward, or make the next attempt easier. If all it changes is how much of yourself you have to spend getting there, the challenge may be authority, not effort.",
+    "sourceMechanism": "Exact owner-approved copy transcribed byte-for-byte from the SHA-bound canonical V15 owner-approval artifact; collaborative authorship is preserved and sole owner authorship is not asserted."
+  },
+  "approvedAt": "2026-08-31",
+  "approvalEffect": "exact_wording_approval",
+  "sourceArtifact": {
+    "id": "angle-aspects-60-v15-owner-approval-candidate",
+    "path": "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md",
+    "sha256": "3bbcd3e611d72a9754e9fdb4f4390ec860a670bc53af6b059ea23a212d37bfd4",
+    "passageHeading": "Mars square Midheaven",
+    "passageOrdinal": 28,
+    "bodySha256": "9a3bf1e76f4075aa55310150c2d0af404e93c7f6eff821956289166e19b9af7e"
+  },
+  "ownerConfirmationSource": {
+    "channel": "Codex task owner message",
+    "taskId": "01a04fc0-899b-7cd2-bb2e-98ad182391bb",
+    "date": "2026-08-31"
+  },
+  "replacementAuthorization": null,
+  "additionalBilledCalls": 0
+}

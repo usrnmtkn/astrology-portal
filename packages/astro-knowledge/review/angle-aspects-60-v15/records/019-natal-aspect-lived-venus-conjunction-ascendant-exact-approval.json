@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "id": "angle-aspects-60-v15-019",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_reviewed",
+  "provenanceNote": "The owner supplied exact wording approval for V15 and explicitly did not relabel collaboratively drafted copy as owner_authored.",
+  "contentKey": "fallback-hook/natal-aspect-lived/venus/conjunction/ascendant",
+  "packetKey": "venus|conjunction|ascendant",
+  "payloadSha256": "ada6c00f7a55c20264497725c665189438253ff56cf48eb4c00db8fcf0e5c1c8",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "Before people know you well, they often get a clear sense of what you like. It shows up in what you wear, how you arrange your home, what you order, and the things you choose to keep around you.\n\nYou usually know when something appeals to you. A place feels right, you like the way something looks, or a person immediately catches your attention. Your preferences tend to become visible because they keep showing up in the choices you make.\n\nOther people usually respond to this. They notice your style, find you attractive, compliment the choices you make, or start associating you with a certain look or way of carrying yourself. That response can feel good without needing to become the reason you keep choosing the same thing.\n\nBeing wanted and wanting the choice yourself are different experiences. Someone can find you attractive without being someone you would choose. Something can look perfect on you and still stop feeling like you. Other people's approval can tell you what they respond to, but it cannot tell you what you should keep choosing.",
+    "sourceMechanism": "Exact owner-approved copy transcribed byte-for-byte from the SHA-bound canonical V15 owner-approval artifact; collaborative authorship is preserved and sole owner authorship is not asserted."
+  },
+  "approvedAt": "2026-08-31",
+  "approvalEffect": "exact_wording_approval",
+  "sourceArtifact": {
+    "id": "angle-aspects-60-v15-owner-approval-candidate",
+    "path": "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md",
+    "sha256": "3bbcd3e611d72a9754e9fdb4f4390ec860a670bc53af6b059ea23a212d37bfd4",
+    "passageHeading": "Venus conjunct Ascendant",
+    "passageOrdinal": 19,
+    "bodySha256": "2b5e616adb8950ad1ec5e8b41f651481cd5a1020dc0981329b5d587681f5de72"
+  },
+  "ownerConfirmationSource": {
+    "channel": "Codex task owner message",
+    "taskId": "01a04fc0-899b-7cd2-bb2e-98ad182391bb",
+    "date": "2026-08-31"
+  },
+  "replacementAuthorization": null,
+  "additionalBilledCalls": 0
+}

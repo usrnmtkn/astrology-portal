@@ -300,11 +300,11 @@ function requiresPlacementPositiveTest(record, contentKey, reviewStatus) {
 
 function blockTypeForPackageRecord(contentRole, contentKey) {
   if (contentRole === "template") return "fallback_template";
+  if (contentKey.startsWith("fallback-hook/")) return "fallback_hook";
   if (contentRole === "full_copy" || contentKey.startsWith("sky-placement/article/")) return "fallback_article";
   if (
     contentRole === "fallback_hook"
     || contentRole === "house_horoscope_core"
-    || contentKey.startsWith("fallback-hook/")
   ) return "fallback_hook";
   return null;
 }
@@ -831,6 +831,9 @@ async function deleteStaleRows(currentRows) {
 
 async function readImportedRows() {
   const imported = [];
+  const contentKeyQuery = contentKeyFilter
+    ? `&content_key=eq.${encodeURIComponent(contentKeyFilter)}`
+    : "";
 
   for (const provider of [
     "tldrastro-fallback-architecture-v3",
@@ -838,7 +841,7 @@ async function readImportedRows() {
   ]) {
     for (let offset = 0; ; offset += 1000) {
       const response = await fetch(
-        `${supabaseUrl()}/rest/v1/generated_interpretations?select=id,content_key,surface,mode,status,lane,review_state,event_type,target_date,headline,summary,body,sections,block_type,facts,source_snapshot,prompt_version,provider,model&provider=eq.${provider}&order=content_key.asc,id.asc&limit=1000&offset=${offset}`,
+        `${supabaseUrl()}/rest/v1/generated_interpretations?select=id,content_key,surface,mode,status,lane,review_state,event_type,target_date,headline,summary,body,sections,block_type,facts,source_snapshot,prompt_version,provider,model&provider=eq.${provider}${contentKeyQuery}&order=content_key.asc,id.asc&limit=1000&offset=${offset}`,
         {
           method: "GET",
           headers: adminHeaders()

@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "id": "angle-aspects-60-v15-035",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_reviewed",
+  "provenanceNote": "The owner supplied exact wording approval for V15 and explicitly did not relabel collaboratively drafted copy as owner_authored.",
+  "contentKey": "fallback-hook/natal-aspect-lived/jupiter/opposition/ascendant",
+  "packetKey": "jupiter|opposition|ascendant",
+  "payloadSha256": "15340e615ab8078edc9666d4ab06598177cf5ed00a696fdf1ebf0d8944c96483",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "You are often drawn to people who make your life feel larger by introducing you to ideas, experiences, beliefs, or possibilities you would not have reached on your own. Being close to them can make you reconsider limits you had stopped questioning.\n\nThe relationship can expand your worldview because the other person brings something genuinely different to it. They have been somewhere you have not, know something you do not, or take an idea seriously enough that you begin looking at your own assumptions differently.\n\nTheir certainty can start carrying more authority than your judgment. Someone can be knowledgeable, experienced, inspiring, and still be wrong about what is right for you.\n\nAnother person can expand your sense of what is possible without deciding what you should want. A relationship makes your life larger when both people can keep growing, not when the person with the bigger vision becomes responsible for choosing the future.",
+    "sourceMechanism": "Exact owner-approved copy transcribed byte-for-byte from the SHA-bound canonical V15 owner-approval artifact; collaborative authorship is preserved and sole owner authorship is not asserted."
+  },
+  "approvedAt": "2026-08-31",
+  "approvalEffect": "exact_wording_approval",
+  "sourceArtifact": {
+    "id": "angle-aspects-60-v15-owner-approval-candidate",
+    "path": "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md",
+    "sha256": "3bbcd3e611d72a9754e9fdb4f4390ec860a670bc53af6b059ea23a212d37bfd4",
+    "passageHeading": "Jupiter opposition Ascendant",
+    "passageOrdinal": 35,
+    "bodySha256": "f79a538b0e17d5ff6f68bfa9a6a8765c52b0db023076eb95e306b704e2814af5"
+  },
+  "ownerConfirmationSource": {
+    "channel": "Codex task owner message",
+    "taskId": "01a04fc0-899b-7cd2-bb2e-98ad182391bb",
+    "date": "2026-08-31"
+  },
+  "replacementAuthorization": {
+    "explicitlyAuthorized": true,
+    "preservesHistoricalProvenance": true,
+    "priorApprovalRecordPath": "packages/astro-knowledge/voice/tldr-astro/marie-satori-writer/ll-matrix-v13/knowledge-matrix-v13-owner-approved-locked.json",
+    "priorPayloadSha256": "6302c531615c8a5640f84e8fd12a143adb85fadfff1363cdc8132978a61115d7",
+    "priorUpdatedAt": "2026-08-27T17:07:04.191206+00:00"
+  },
+  "additionalBilledCalls": 0
+}

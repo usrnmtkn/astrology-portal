@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "id": "angle-aspects-60-v15-040",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_reviewed",
+  "provenanceNote": "The owner supplied exact wording approval for V15 and explicitly did not relabel collaboratively drafted copy as owner_authored.",
+  "contentKey": "fallback-hook/natal-aspect-lived/saturn/square/midheaven",
+  "packetKey": "saturn|square|midheaven",
+  "payloadSha256": "b67cfd7d4f2010dc42c856982560c922ee92c930d35d0bb74609be982851327d",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "The work can be there long before the recognition is. You are already doing part of the job before you have the title, carrying responsibility without the authority to change the process, waiting on somebody else's approval, or watching a qualification, policy, or hierarchy decide how quickly you are allowed to move. The delay is real, but it does not automatically tell you what it means.\n\nSaturn brings time, limits, responsibility, and structure into tension with the Midheaven, which describes career, reputation, public responsibility, and the direction you are trying to build. Some of what slows you down is simply part of doing something that takes time. The challenge is knowing when patience has stopped being useful and started keeping you inside a structure that is not going to change.\n\nThat distinction matters because your first response to a delay may be to work harder. You take on another project, prove yourself again, or decide you should be even better before asking for the title, money, access, or authority you already need to do the job properly. The deadline is not proof that you should be doing three jobs at once. More work at the same level can keep you busy without moving you any closer to what you are waiting for.\n\nSome delays mean the work needs more time. Others are information about the structure around the work. Find out which problem you have before another year of patience becomes another year of doing the next job without receiving anything that comes with it.",
+    "sourceMechanism": "Exact owner-approved copy transcribed byte-for-byte from the SHA-bound canonical V15 owner-approval artifact; collaborative authorship is preserved and sole owner authorship is not asserted."
+  },
+  "approvedAt": "2026-08-31",
+  "approvalEffect": "exact_wording_approval",
+  "sourceArtifact": {
+    "id": "angle-aspects-60-v15-owner-approval-candidate",
+    "path": "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md",
+    "sha256": "3bbcd3e611d72a9754e9fdb4f4390ec860a670bc53af6b059ea23a212d37bfd4",
+    "passageHeading": "Saturn square Midheaven",
+    "passageOrdinal": 40,
+    "bodySha256": "7356accaafec3b135c19d6a04d29ec4e421206c733d7f8fdae17d98b14ac6613"
+  },
+  "ownerConfirmationSource": {
+    "channel": "Codex task owner message",
+    "taskId": "01a04fc0-899b-7cd2-bb2e-98ad182391bb",
+    "date": "2026-08-31"
+  },
+  "replacementAuthorization": null,
+  "additionalBilledCalls": 0
+}

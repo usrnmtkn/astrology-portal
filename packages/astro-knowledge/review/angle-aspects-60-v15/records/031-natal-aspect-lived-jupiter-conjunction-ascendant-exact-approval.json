@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "id": "angle-aspects-60-v15-031",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_reviewed",
+  "provenanceNote": "The owner supplied exact wording approval for V15 and explicitly did not relabel collaboratively drafted copy as owner_authored.",
+  "contentKey": "fallback-hook/natal-aspect-lived/jupiter/conjunction/ascendant",
+  "packetKey": "jupiter|conjunction|ascendant",
+  "payloadSha256": "e6a966d52744c9f1a5674ef83d2f4a18c400f78117720c489f61d40b9a18b839",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "You are quick to see what an idea, experience, or opportunity could grow into, and that sense of possibility can make life feel larger before you have worked out the details. One subject opens three more things you want to learn, and one new experience can make you question limits you had stopped noticing.\n\nYou often learn by entering the experience and finding out what it gives you rather than waiting until you can predict every outcome in advance. That openness can take you places excessive caution never would.\n\nThe challenge is that seeing the potential can make it easy to say yes before you know what deserves your time. You can see the value in several directions at once and still have only one life to fit them into. More options do not automatically mean more of them belong in the life you are building.\n\nNot every possibility deserves a yes. Pay attention to what this would actually add to your life, what it requires from you, and what you would still want once the excitement of imagining it has worn off.",
+    "sourceMechanism": "Exact owner-approved copy transcribed byte-for-byte from the SHA-bound canonical V15 owner-approval artifact; collaborative authorship is preserved and sole owner authorship is not asserted."
+  },
+  "approvedAt": "2026-08-31",
+  "approvalEffect": "exact_wording_approval",
+  "sourceArtifact": {
+    "id": "angle-aspects-60-v15-owner-approval-candidate",
+    "path": "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md",
+    "sha256": "3bbcd3e611d72a9754e9fdb4f4390ec860a670bc53af6b059ea23a212d37bfd4",
+    "passageHeading": "Jupiter conjunct Ascendant",
+    "passageOrdinal": 31,
+    "bodySha256": "e0eff5aa26dbca5c7147d94139aa40e5271860ab6097e24808ff1342b962f16b"
+  },
+  "ownerConfirmationSource": {
+    "channel": "Codex task owner message",
+    "taskId": "01a04fc0-899b-7cd2-bb2e-98ad182391bb",
+    "date": "2026-08-31"
+  },
+  "replacementAuthorization": null,
+  "additionalBilledCalls": 0
+}

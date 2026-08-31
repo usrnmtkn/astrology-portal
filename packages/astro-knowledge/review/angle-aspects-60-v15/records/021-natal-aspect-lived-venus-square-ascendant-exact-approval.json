@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "id": "angle-aspects-60-v15-021",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_reviewed",
+  "provenanceNote": "The owner supplied exact wording approval for V15 and explicitly did not relabel collaboratively drafted copy as owner_authored.",
+  "contentKey": "fallback-hook/natal-aspect-lived/venus/square/ascendant",
+  "packetKey": "venus|square|ascendant",
+  "payloadSha256": "02ba24112735ea6e00569428e4457efdeb258269ba2c2fd08a5559105b3334cb",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "You may spend part of your life learning the difference between what you genuinely like and what gets the best response from other people. You notice what gets compliments, which choices people say suit you, who seems attracted to you, and what version of you is easiest for other people to understand.\n\nThat feedback can be useful, especially while you are still figuring out your own taste. The problem starts when you know how to get approval before you have decided what you actually want. You choose the option everyone says looks right, stay interested because being wanted feels flattering, or keep showing people a version of yourself that gets a good response even after it has stopped feeling like you.\n\nThis aspect can teach you that being appealing and being accurately represented are not the same thing. Something can look right from the outside and still not feel like your choice. Being wanted does not tell you if you want the relationship. Other people's response gives you information, but it cannot decide what you value.\n\nThe more clearly you know what you like, the less you have to build your choices around approval. You are allowed to have preferences. You are allowed to change them. What suits you should reflect the person you actually are, not only the version other people find easiest to like.",
+    "sourceMechanism": "Exact owner-approved copy transcribed byte-for-byte from the SHA-bound canonical V15 owner-approval artifact; collaborative authorship is preserved and sole owner authorship is not asserted."
+  },
+  "approvedAt": "2026-08-31",
+  "approvalEffect": "exact_wording_approval",
+  "sourceArtifact": {
+    "id": "angle-aspects-60-v15-owner-approval-candidate",
+    "path": "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md",
+    "sha256": "3bbcd3e611d72a9754e9fdb4f4390ec860a670bc53af6b059ea23a212d37bfd4",
+    "passageHeading": "Venus square Ascendant",
+    "passageOrdinal": 21,
+    "bodySha256": "61d6d132788f34ae5c0a41ef8067a63cca75806879d12bee6b5c02fc237af0e9"
+  },
+  "ownerConfirmationSource": {
+    "channel": "Codex task owner message",
+    "taskId": "01a04fc0-899b-7cd2-bb2e-98ad182391bb",
+    "date": "2026-08-31"
+  },
+  "replacementAuthorization": null,
+  "additionalBilledCalls": 0
+}

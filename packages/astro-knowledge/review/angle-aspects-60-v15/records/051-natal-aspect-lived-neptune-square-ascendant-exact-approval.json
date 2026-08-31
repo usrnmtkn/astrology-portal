@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "id": "angle-aspects-60-v15-051",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_reviewed",
+  "provenanceNote": "The owner supplied exact wording approval for V15 and explicitly did not relabel collaboratively drafted copy as owner_authored.",
+  "contentKey": "fallback-hook/natal-aspect-lived/neptune/square/ascendant",
+  "packetKey": "neptune|square|ascendant",
+  "payloadSha256": "e3f0f64a2995152f17dc66877ec0194b6d77a045af646004ffe069b65ab79005",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "You may know how to keep an interaction pleasant even when the answer you are giving is becoming less accurate. You soften the no, leave out the part that might disappoint someone, or match their enthusiasm because changing the mood feels harder than letting the misunderstanding continue.\n\nOver time, that can leave you feeling unseen in situations where you were working very hard not to create conflict. The other person responds to what you said, how available you seemed, or the version of the situation you helped preserve, while you quietly keep track of everything you never actually agreed to.\n\nThe pattern becomes expensive when you expect someone to understand the answer you did not give. You know the plan does not work, know the relationship needs something different, or know you are already uncomfortable, but keep waiting for the other person to notice without making them responsible for the information they never received.\n\nClarity can change the mood. Sometimes that is exactly what needs to happen. The people who can actually know you need access to an answer that sounds like yours, even when that answer is less convenient than the one they were hoping to hear.",
+    "sourceMechanism": "Exact owner-approved copy transcribed byte-for-byte from the SHA-bound canonical V15 owner-approval artifact; collaborative authorship is preserved and sole owner authorship is not asserted."
+  },
+  "approvedAt": "2026-08-31",
+  "approvalEffect": "exact_wording_approval",
+  "sourceArtifact": {
+    "id": "angle-aspects-60-v15-owner-approval-candidate",
+    "path": "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md",
+    "sha256": "3bbcd3e611d72a9754e9fdb4f4390ec860a670bc53af6b059ea23a212d37bfd4",
+    "passageHeading": "Neptune square Ascendant",
+    "passageOrdinal": 51,
+    "bodySha256": "e03b6d93d18e2a8d668b7dc93c495c0a3c454af06df4eaa571ee3c174a8e9f12"
+  },
+  "ownerConfirmationSource": {
+    "channel": "Codex task owner message",
+    "taskId": "01a04fc0-899b-7cd2-bb2e-98ad182391bb",
+    "date": "2026-08-31"
+  },
+  "replacementAuthorization": null,
+  "additionalBilledCalls": 0
+}

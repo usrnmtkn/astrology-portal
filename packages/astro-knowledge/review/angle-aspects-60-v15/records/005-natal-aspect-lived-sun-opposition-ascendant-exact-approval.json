@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "id": "angle-aspects-60-v15-005",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_reviewed",
+  "provenanceNote": "The owner supplied exact wording approval for V15 and explicitly did not relabel collaboratively drafted copy as owner_authored.",
+  "contentKey": "fallback-hook/natal-aspect-lived/sun/opposition/ascendant",
+  "packetKey": "sun|opposition|ascendant",
+  "payloadSha256": "54241c7f71ab2c5d3e1a4e0576041fb3bc585354e39bca04086e337ebcb2d3ae",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "The people you are drawn to often make your own ambition, confidence, and sense of direction easier to see. You may be especially attracted to someone who says what they want, takes their goals seriously, or moves through life with enough certainty that qualities you are still developing in yourself become much more obvious.\n\nRelationships can make it clear when you admire a quality in someone else that you are not giving enough space in yourself. You take their ambition seriously while treating your own goals as optional, or appreciate how decisive they are while letting them make more of the shared choices because they seem more certain.\n\nAdmiration gets complicated when it starts giving the other person too much authority. Their priorities shape the plan, their confidence gives their answer more weight, and you can slowly end up living inside a future that sounds more like theirs than yours.\n\nBeing fully yourself and loving another person are not competing goals. A relationship works better when both people bring something they want to build instead of your partner supplying the direction while you keep adjusting to it.",
+    "sourceMechanism": "Exact owner-approved copy transcribed byte-for-byte from the SHA-bound canonical V15 owner-approval artifact; collaborative authorship is preserved and sole owner authorship is not asserted."
+  },
+  "approvedAt": "2026-08-31",
+  "approvalEffect": "exact_wording_approval",
+  "sourceArtifact": {
+    "id": "angle-aspects-60-v15-owner-approval-candidate",
+    "path": "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md",
+    "sha256": "3bbcd3e611d72a9754e9fdb4f4390ec860a670bc53af6b059ea23a212d37bfd4",
+    "passageHeading": "Sun opposition Ascendant",
+    "passageOrdinal": 5,
+    "bodySha256": "6223900ed73b30de1f3ee841dc0e3c8adca8307913604c5327dbbe94dc08a020"
+  },
+  "ownerConfirmationSource": {
+    "channel": "Codex task owner message",
+    "taskId": "01a04fc0-899b-7cd2-bb2e-98ad182391bb",
+    "date": "2026-08-31"
+  },
+  "replacementAuthorization": {
+    "explicitlyAuthorized": true,
+    "preservesHistoricalProvenance": true,
+    "priorApprovalRecordPath": "packages/astro-knowledge/voice/tldr-astro/marie-satori-writer/ll-matrix-v13/knowledge-matrix-v13-owner-approved-locked.json",
+    "priorPayloadSha256": "56820c6885706a24b15cec9c7746a5458cbd15bcca0dbdedc1b5f0001c4741c4",
+    "priorUpdatedAt": "2026-08-27T17:07:04.191206+00:00"
+  },
+  "additionalBilledCalls": 0
+}

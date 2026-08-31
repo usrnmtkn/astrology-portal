@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "id": "angle-aspects-60-v15-002",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_reviewed",
+  "provenanceNote": "The owner supplied exact wording approval for V15 and explicitly did not relabel collaboratively drafted copy as owner_authored.",
+  "contentKey": "fallback-hook/natal-aspect-lived/sun/conjunction/midheaven",
+  "packetKey": "sun|conjunction|midheaven",
+  "payloadSha256": "3abb43e25831367a77f350936c68db9c6d2b30ebae312582512df4a093aa8aac",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "You want to be known for something that actually reflects who you are, not simply for being good at the role people handed you. People may remember the project you led, the position you took, the standard you defended, or the thing you were willing to put your name on long before there is a formal title attached to any of it.\n\nThe Midheaven is where those choices become visible enough to build a reputation. What you keep showing up for, taking responsibility for, and putting your name on gradually tells other people what to expect from you. Visibility isn't just about being noticed. It's about being known for something that actually reflects who you are.\n\nRecognition can make changing direction harder because other people keep returning the role they already associate with you. You become the capable one, the leader, the expert, or the person who always takes the difficult part, and eventually their expectations can feel more established than your own interest in continuing.\n\nWhat you become known for should still be something you would choose once other people expect it from you. A public role can matter deeply without becoming the only version of you anyone is allowed to know.",
+    "sourceMechanism": "Exact owner-approved copy transcribed byte-for-byte from the SHA-bound canonical V15 owner-approval artifact; collaborative authorship is preserved and sole owner authorship is not asserted."
+  },
+  "approvedAt": "2026-08-31",
+  "approvalEffect": "exact_wording_approval",
+  "sourceArtifact": {
+    "id": "angle-aspects-60-v15-owner-approval-candidate",
+    "path": "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md",
+    "sha256": "3bbcd3e611d72a9754e9fdb4f4390ec860a670bc53af6b059ea23a212d37bfd4",
+    "passageHeading": "Sun conjunct Midheaven",
+    "passageOrdinal": 2,
+    "bodySha256": "8334187688621122e81d39ae570ba60be686478781396aa4607af9cc68cbaeab"
+  },
+  "ownerConfirmationSource": {
+    "channel": "Codex task owner message",
+    "taskId": "01a04fc0-899b-7cd2-bb2e-98ad182391bb",
+    "date": "2026-08-31"
+  },
+  "replacementAuthorization": null,
+  "additionalBilledCalls": 0
+}

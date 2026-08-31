@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "id": "angle-aspects-60-v15-050",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_reviewed",
+  "provenanceNote": "The owner supplied exact wording approval for V15 and explicitly did not relabel collaboratively drafted copy as owner_authored.",
+  "contentKey": "fallback-hook/natal-aspect-lived/neptune/conjunction/midheaven",
+  "packetKey": "neptune|conjunction|midheaven",
+  "payloadSha256": "9233abac2d0be8197265e7ef7a1f2b201b8f139ac64041741145773669b2b821",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "You want what you contribute to mean something. You may care about making something beautiful, helping people understand an experience, giving shape to an idea, or doing work that reaches people in a way that facts alone cannot. Even when the role itself is practical, you are usually more engaged when you believe there is a reason behind what you are doing.\n\nThat can become part of what people know you for long before there is a formal career attached to it. In school, creative projects, community work, public roles, or a profession, people may remember the thing you made, the person you helped, or the way you understood something they were having trouble putting into words.\n\nThe challenge is that meaning can make vague expectations easier to accept. You take on more because the project matters, stay involved because somebody needs you, or treat praise as evidence that clearer support, authority, credit, or resources will eventually follow. The more important the work feels, the easier it can be to excuse conditions you would question somewhere else.\n\nMeaning matters, but it does not replace clear terms. What you become known for should have enough structure that your sensitivity, imagination, and willingness to help do not become something everyone assumes they can keep asking for without giving anything back.",
+    "sourceMechanism": "Exact owner-approved copy transcribed byte-for-byte from the SHA-bound canonical V15 owner-approval artifact; collaborative authorship is preserved and sole owner authorship is not asserted."
+  },
+  "approvedAt": "2026-08-31",
+  "approvalEffect": "exact_wording_approval",
+  "sourceArtifact": {
+    "id": "angle-aspects-60-v15-owner-approval-candidate",
+    "path": "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md",
+    "sha256": "3bbcd3e611d72a9754e9fdb4f4390ec860a670bc53af6b059ea23a212d37bfd4",
+    "passageHeading": "Neptune conjunct Midheaven",
+    "passageOrdinal": 50,
+    "bodySha256": "dd747b8fff037aa5971772f0a5a5b8e7fe50363e4459a16f8319faa2909a793e"
+  },
+  "ownerConfirmationSource": {
+    "channel": "Codex task owner message",
+    "taskId": "01a04fc0-899b-7cd2-bb2e-98ad182391bb",
+    "date": "2026-08-31"
+  },
+  "replacementAuthorization": null,
+  "additionalBilledCalls": 0
+}

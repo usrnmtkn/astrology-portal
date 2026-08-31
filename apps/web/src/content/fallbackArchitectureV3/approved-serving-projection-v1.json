@@ -1,6 +1,6 @@
 {
   "schema": "tldrastro-approved-serving-projection/v1",
-  "packageVersion": "v3-2026-08-28a",
+  "packageVersion": "v3-2026-08-31a",
   "policy": {
     "eligibleReviewStatuses": [
       "approved",
@@ -18,16 +18,16 @@
     "runtimeFilter": "defense-in-depth"
   },
   "manifest": {
-    "contentHash": "5b1c9c0d13e17d71d7e096df73c26d1d",
-    "keyManifestHash": "8055de00426ab8ac705b171e105c6a50",
-    "keyCount": 9222
+    "contentHash": "8fc9347d68af8b890401958be929a80d",
+    "keyManifestHash": "ad3b78b91851349d48f78053cada7089",
+    "keyCount": 9271
   },
   "lineage": {
     "file": "approved-serving-lineage-v1.json",
-    "sha256": "efa904911a485688afcc62a7599622c3f48a24d553a267c94824c5fb12a1726a",
-    "count": 9763,
-    "emissionCount": 9839,
-    "exactSourceMatchCount": 8721
+    "sha256": "d0eb82fe072418b7d96755a415a2d1e89e4c307fc0e79ea79fee61baeb4de922",
+    "count": 9812,
+    "emissionCount": 9888,
+    "exactSourceMatchCount": 8770
   },
   "partitions": {
     "skyCore": {
@@ -37,7 +37,7 @@
     },
     "deferredCore": {
       "file": "bundled-deferred-core-rows-v3.json",
-      "hookRows": 1571
+      "hookRows": 1620
     },
     "sharedPlacement": {
       "file": "bundled-shared-placement-rows-v3.json",
