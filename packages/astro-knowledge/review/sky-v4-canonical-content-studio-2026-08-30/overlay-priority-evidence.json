@@ -1,0 +1,14 @@
+{
+  "contract": "Lower numeric Priority renders first. Suppression runs before priority and limit selection.",
+  "fullPageSelectedKeys": [
+    "sky-context/venus/aries/retrograde/mercury-retrograde-aries-priority-10",
+    "sky-context/venus/aries/retrograde/mercury-retrograde-aries-priority-20"
+  ],
+  "fallbackSelectedKeys": [
+    "sky-context/venus/aries/retrograde/mercury-retrograde-aries-priority-10"
+  ],
+  "selectedAfterSuppressingPriority10": [
+    "sky-context/venus/aries/retrograde/mercury-retrograde-aries-priority-20",
+    "sky-context/venus/aries/retrograde/mercury-retrograde-aries"
+  ]
+}

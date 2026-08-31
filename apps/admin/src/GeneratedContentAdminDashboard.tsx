@@ -80,10 +80,8 @@ import { contentWiringStatus, isPublishedButUnwired } from "./contentWiringStatu
 import { fallbackHookDisplayTitle } from "./fallbackHookTitle";
 import type { FallbackHookEditorGuidanceBuilder } from "./DailyFallbackWorkspaceGuide";
 import { isCompositionTemplateRow } from "./compositionTemplateClassifier";
-import { AdminPaginatedCollection } from "./AdminPaginatedCollection";
 import {
   AdminAccessGate,
-  AdminFilterDisclosure,
   AdminPageHeader
 } from "./AdminStudioPrimitives";
 import {
@@ -127,6 +125,9 @@ const TemplateVariableReviewPanels = lazy(async () => {
   const module = await import("./TemplateVariableReviewPanels");
   return { default: module.TemplateVariableReviewPanels };
 });
+const SkyV4StudioReviewPanel = lazy(() => import("./SkyV4StudioReviewPanel"));
+const AdminPaginatedCollection = lazy(() => import("./AdminPaginatedCollection")) as typeof import("./AdminPaginatedCollection").AdminPaginatedCollection;
+const AdminFilterDisclosure = lazy(() => import("./AdminFilterDisclosure"));
 const TemplateReaderDrilldown = lazy(() => import("./TemplateReaderDrilldown"));
 const NatalPlacementSourceFinder = lazy(() => import("./NatalPlacementSourceFinder"));
 const DailyFallbackWorkspaceGuide = lazy(() => import("./DailyFallbackWorkspaceGuide"));
@@ -4845,7 +4846,7 @@ export function GeneratedContentAdminDashboard() {
               </button>
             </nav>
             {(skyVoiceQueueView === "all" || skyVoiceQueueView === "composite") && (
-              <AdminFilterDisclosure summary="Status, class, tier, and search">
+              <Suspense fallback={null}><AdminFilterDisclosure summary="Status, class, tier, and search">
                 <section className="admin-content-filters admin-review-queue-filters" aria-label="Review queue filters">
                   <div className="admin-review-filter-grid">
                     <label>
@@ -4884,7 +4885,7 @@ export function GeneratedContentAdminDashboard() {
                     </label>
                   </div>
                 </section>
-              </AdminFilterDisclosure>
+              </AdminFilterDisclosure></Suspense>
             )}
             {(skyVoiceQueueView === "all" || skyVoiceQueueView === "composite") && renderBulkBar()}
             {skyVoiceQueueView === "all" && renderReviewTable(filteredReviewRows)}
@@ -5465,7 +5466,7 @@ export function GeneratedContentAdminDashboard() {
             <div className="admin-template-card-list">
               {compositeRows.length === 0 && <p className="admin-empty">No composite rows with relationship-type sections are loaded yet.</p>}
               {renderEditor()}
-              <AdminPaginatedCollection
+              <Suspense fallback={null}><AdminPaginatedCollection
                 items={compositeRows}
                 label="Composite Review"
                 pageSize={compositeReviewPageSize}
@@ -5498,7 +5499,7 @@ export function GeneratedContentAdminDashboard() {
                   </div>
                 </article>
                 ))}</>}
-              </AdminPaginatedCollection>
+              </AdminPaginatedCollection></Suspense>
             </div>
           </section>
         )}
@@ -5979,7 +5980,7 @@ export function GeneratedContentAdminDashboard() {
     ].join(":");
 
     return (
-      <AdminPaginatedCollection items={tableRows} label="Content rows" pageSize={contentTablePageSize} resetKey={resetKey}>
+      <Suspense fallback={null}><AdminPaginatedCollection items={tableRows} label="Content rows" pageSize={contentTablePageSize} resetKey={resetKey}>
         {(visibleTableRows) => <div className="admin-content-table-scroll">
           <table className="admin-content-table admin-content-table--browse">
           <thead className="admin-content-table-head">
@@ -6065,7 +6066,7 @@ export function GeneratedContentAdminDashboard() {
         </table>
           {tableRows.length === 0 && <p className="admin-empty">No rows match these filters.</p>}
         </div>}
-      </AdminPaginatedCollection>
+      </AdminPaginatedCollection></Suspense>
     );
   }
 
@@ -6080,7 +6081,7 @@ export function GeneratedContentAdminDashboard() {
             </button>
           ))}
         </aside>
-        <AdminPaginatedCollection
+        <Suspense fallback={null}><AdminPaginatedCollection
           items={tableRows}
           label="Review queue"
           pageSize={reviewQueuePageSize}
@@ -6123,7 +6124,7 @@ export function GeneratedContentAdminDashboard() {
           })}
           {tableRows.length === 0 && <p className="admin-empty">No review rows match these filters.</p>}
           </div>}
-        </AdminPaginatedCollection>
+        </AdminPaginatedCollection></Suspense>
       </section>
     );
   }
@@ -6365,6 +6366,10 @@ export function GeneratedContentAdminDashboard() {
       ? skyFallbackVariableTarget
       : skyFallbackEditor?.fields.find((field) => field.key === "fact_line")?.key ?? skyFallbackEditor?.fields[0]?.key ?? "";
     const effectiveSkyFallback = effectivePackageRecord(currentDraft.sections);
+    const isSkyV4OverlaySettings = currentDraft.contentKey === "sky-v4/settings/contextual-overlays";
+    const skyV4OverlaysEnabled = effectiveSkyFallback.contextualTransitOverlaysEnabled !== false;
+    const skyV4FallbackOverlayEnabled = effectiveSkyFallback.includeContextualOverlayInFallbackHook === true;
+    const isSkyV4StudioRecord = Boolean(effectiveSkyFallback.source_baseline_sha256 && effectiveSkyFallback.studio_source_baseline);
     const variableReferences = templateVariableReferences({
       Headline: currentDraft.headline,
       Summary: currentDraft.summary,
@@ -7166,6 +7171,39 @@ export function GeneratedContentAdminDashboard() {
               <p className="admin-field-hint"><strong>Review rule:</strong> changing a switch creates a non-serving package proposal. It does not change reader pages until the proposal is approved, regenerated, and deployed.</p>
             </section>
           )}
+          {isSkyV4OverlaySettings && (
+            <section className="admin-content-role-panel" aria-label="SKY V4 contextual overlay settings">
+              <div>
+                <p className="admin-eyebrow">SKY V4 preview settings</p>
+                <h3>Contextual transit overlays</h3>
+              </div>
+              <p>These independent switches affect the canonical stage preview only. They do not change stored Hook copy and cannot enable serving.</p>
+              <label className="admin-composition-option">
+                <input
+                  type="checkbox"
+                  checked={skyV4OverlaysEnabled}
+                  onChange={(event) => updateSkyFallbackField("contextualTransitOverlaysEnabled", event.target.checked)}
+                />
+                <span>
+                  <strong>Use contextual transit overlays</strong>
+                  <small>Default ON. Adds up to two exact, trigger-matched reviewed overlays to a full page.</small>
+                </span>
+              </label>
+              <label className="admin-composition-option">
+                <input
+                  type="checkbox"
+                  checked={skyV4FallbackOverlayEnabled}
+                  disabled={!skyV4OverlaysEnabled}
+                  onChange={(event) => updateSkyFallbackField("includeContextualOverlayInFallbackHook", event.target.checked)}
+                />
+                <span>
+                  <strong>Include transit context in fallback hook</strong>
+                  <small>Default OFF. Inserts at most one eligible overlay after Opening without modifying the saved fallback fields.</small>
+                </span>
+              </label>
+              <p className="admin-field-hint"><strong>Limits:</strong> two overlays on a full page; one in a fallback. Exact aspect and event suppression remains read-only.</p>
+            </section>
+          )}
           {isCmsSurfaceDraft && (
             <div className="admin-editor-guidance" aria-label="CMS surface template guidance">
               <strong>Reader-facing CMS override</strong>
@@ -7255,6 +7293,17 @@ export function GeneratedContentAdminDashboard() {
                 <strong>Safe editing boundary</strong>
                 <p>The package original remains immutable. Saving here creates a non-serving proposal with <code>needs_review</code> status. It does not change the app until the exact diff is owner-approved, landed in source, regenerated, and deployed.</p>
               </div>
+
+              {isSkyV4StudioRecord && (
+                <Suspense fallback={null}>
+                  <SkyV4StudioReviewPanel
+                    secret={secret}
+                    contentKey={currentDraft.contentKey}
+                    effectiveRecord={effectiveSkyFallback}
+                    disabled={isLoading}
+                  />
+                </Suspense>
+              )}
 
               <section className="admin-hook-detail-section admin-copy-preview" aria-label="Rendered fallback preview">
                 <p className="admin-eyebrow">Reader preview</p>

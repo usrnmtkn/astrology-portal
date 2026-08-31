@@ -50,3 +50,5 @@ export function AdminPaginatedCollection<T>({
     </>
   );
 }
+
+export default AdminPaginatedCollection;
