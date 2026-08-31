@@ -61,6 +61,7 @@ import {
   loadRelationshipFallbackArchitectureV3Bundle,
   loadSkyPlacementFallbackArchitectureV3Bundle,
   fallbackArchitectureV3PackageVersion,
+  skyV4ReaderRenderer,
   fallbackRendererV3,
   transitSynastryFallbackRendererV3,
   fallbackV3AspectFeel,
@@ -4809,6 +4810,42 @@ function skyPlacementWritingSection(
     console.warn("Sky placement source gap; omitting unavailable sign copy.", error);
     return null;
   }
+  try {
+    const skyV4 = skyV4ReaderRenderer.renderRoute({
+      route: "placement",
+      planet,
+      sign,
+      dateLine: `${formatPlacementTransitEndpoint(position, transitEndpoints.start, true)} to ${formatPlacementTransitEndpoint(position, finalResidencyExit, true)}`,
+      facts: {
+        entryDate: formatPlacementTransitEndpoint(position, transitEndpoints.start, true),
+        exitDate: formatPlacementTransitEndpoint(position, finalResidencyExit, true)
+      },
+      isRetrograde: hasRetrogradeGuidance,
+      stationSupported: planet === "lilith" && Boolean(position.residencyStations?.length),
+      aspects: []
+    }) as {
+      contentKey?: string;
+      readerParts?: string[];
+      servingEnabled?: boolean;
+      versionStatus?: string;
+    };
+    if (skyV4.servingEnabled === true && skyV4.versionStatus === "approved-serving-baseline" && skyV4.readerParts?.length) {
+      rendered = {
+        ...rendered,
+        tagline: null,
+        closingCharge: null,
+        body: skyV4.readerParts.join("\n\n"),
+        parts: skyV4.readerParts,
+        articleSections: [{ kind: "sky-v4-canonical-reader", heading: "", body: skyV4.readerParts.join("\n\n") }],
+        templateKey: "sky-v4-canonical-reader-v1",
+        contentKey: skyV4.contentKey
+      };
+    }
+  } catch (error) {
+    if (!(error instanceof Error) || !/^SKY_V4_(?:NOT_RELEASED|NOT_SERVABLE|SOURCE_GAP)/u.test(error.message)) {
+      throw error;
+    }
+  }
   const allRenderedParagraphs = rendered.parts.length ? rendered.parts : [rendered.body];
   const renderedParagraphs = rendered.closingCharge
     && allRenderedParagraphs.at(-1) === rendered.closingCharge
@@ -4825,6 +4862,7 @@ function skyPlacementWritingSection(
 
   const layer = (
     rendered.templateKey === "sky-placement-frame-v3"
+    || rendered.templateKey === "sky-v4-canonical-reader-v1"
     || rendered.templateKey === "sky-placement-article-v2"
     || rendered.templateKey === "sky-placement-continuous-v2"
     || rendered.contentKey?.startsWith("authored/")

@@ -24,7 +24,7 @@ assert.equal(new Set(approval.approved_keys).size, 120);
 assert.deepEqual(approved.map((row) => row.contentKey), approval.approved_keys);
 assert.equal(approved.length, 120);
 assert.ok(approved.every((row) => row.owner_approved === true));
-assert.ok(approved.every((row) => row.serving_enabled === false));
+assert.ok(approved.every((row) => row.serving_enabled === true));
 
 for (const source of corpus.content.continuous) {
   const record = approved.find((row) => row.contentKey === source.contentKey);
@@ -51,12 +51,11 @@ try {
   assert.equal(rows.length, 120);
   assert.ok(rows.every((row) => row.facts.review_status === "approved"));
   assert.ok(rows.every((row) => row.sections.packageRecord.owner_approved === true));
-  assert.ok(rows.every((row) => row.sections.packageRecord.serving_enabled === false));
-  assert.ok(rows.every((row) => row.status === "DRAFT"));
-  assert.ok(rows.every((row) => row.lane === "reference"));
-  assert.ok(rows.every((row) => row.review_state === "serving-disabled"));
+  assert.ok(rows.every((row) => row.sections.packageRecord.serving_enabled === true));
+  assert.ok(rows.every((row) => row.status === "LIVE"));
+  assert.ok(rows.every((row) => row.lane === "serving"));
 } finally {
   fs.rmSync(tempDir, { recursive: true, force: true });
 }
 
-console.log("SKY V4 continuous owner-approval lineage: PASS (120 retained; all six reader fields approved; copy drift 0; serving OFF)");
+console.log("SKY V4 continuous owner-approval lineage: PASS (120 retained; all six reader fields approved; copy drift 0; serving ON)");
