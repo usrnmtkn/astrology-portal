@@ -624,6 +624,30 @@ async function seedAdminApi(
       return;
     }
 
+    if (pathname.endsWith("/natal-placement-preview")) {
+      const payload = route.request().postDataJSON() as { house?: string; planet?: string; sign?: string };
+      const titleCase = (value: string) => value.split("-").map((part) => `${part.charAt(0).toUpperCase()}${part.slice(1)}`).join(" ");
+      const planetLabel = titleCase(payload.planet ?? "sun");
+      const signLabel = titleCase(payload.sign ?? "aries");
+      const signPart = `Your ${planetLabel} is in ${signLabel}, so the planet-in-sign write-up loads before a house is selected.`;
+      const housePart = payload.house ? `The ${payload.house} house adds the second placement paragraph.` : null;
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify({
+          ok: true,
+          rendered: {
+            headline: payload.house ? `${planetLabel} in ${signLabel} in the ${payload.house === "1" ? "1st" : `${payload.house}th`} house` : `${planetLabel} in ${signLabel}`,
+            parts: [signPart, ...(housePart ? [housePart] : [])],
+            partKeys: ["fallback-template/natal.planet-in-sign", ...(housePart ? ["fallback-template/natal.house-context"] : [])],
+            body: [signPart, housePart].filter(Boolean).join("\n\n"),
+            templateKey: payload.house ? "fallback-template/natal.placement" : "fallback-template/natal.planet-in-sign"
+          }
+        })
+      });
+      return;
+    }
+
     if (pathname.endsWith("/generated-content")) {
       const method = route.request().method();
       if (method === "GET" && url.searchParams.get("sourceDrafts") === "sky-aspects") {
@@ -1099,6 +1123,13 @@ test.describe("content dashboard admin user flow case studies", () => {
 
     await page.getByLabel("Natal placement planet or point").selectOption("sun");
     await page.getByLabel("Natal placement zodiac sign").selectOption("cancer");
+    await expect(sourceFinder.locator(".admin-natal-placement-finder-heading h3")).toHaveText("Sun in Cancer");
+    await expect(sourceFinder.getByRole("heading", { name: "What the reader sees" })).toBeVisible();
+    await expect(sourceFinder.getByText("Your Sun is in Cancer, so the planet-in-sign write-up loads before a house is selected.")).toBeVisible();
+    await expect(sourceFinder.getByText("The planet-in-sign write-up is shown below. Choose a house to add the house paragraph and exact full-placement override.")).toBeVisible();
+    await expect(sourceFinder.locator(".admin-natal-source-group").first().getByRole("heading", { name: "Sun in Cancer", exact: true })).toBeVisible();
+    await expect(sourceFinder.getByText("Optional exact override.")).toHaveCount(0);
+    await expect(sourceFinder.getByRole("button", { name: "Create exact override" })).toHaveCount(0);
     await page.getByLabel("Natal placement house").selectOption("1");
     await expect(sourceFinder.locator(".admin-natal-placement-finder-heading h3")).toHaveText("Sun in Cancer in the 1st house");
     await expect(sourceFinder.getByText("Reader path", { exact: true })).toBeVisible();

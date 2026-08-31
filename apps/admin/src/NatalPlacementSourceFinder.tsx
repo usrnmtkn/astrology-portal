@@ -3,6 +3,7 @@ import {
   natalPlacementHouses,
   natalPlacementLabel,
   natalPlacementPlanets,
+  natalPlacementSignLabel,
   natalPlacementSigns,
   natalPlacementSourceGroups,
   type NatalPlacementHouse,
@@ -50,9 +51,10 @@ function statusLabel(status: string) {
 }
 
 export default function NatalPlacementSourceFinder({ house, isLoading, onCreateOverride, onOpenSource, onSelectionChange, planet, rows, secret, sign }: Props) {
-  const selectionComplete = Boolean(planet && sign && house);
-  const groups = selectionComplete
-    ? natalPlacementSourceGroups(planet as NatalPlacementPlanet, sign as NatalPlacementSign, house as NatalPlacementHouse)
+  const signSelectionComplete = Boolean(planet && sign);
+  const fullSelectionComplete = Boolean(signSelectionComplete && house);
+  const groups = signSelectionComplete
+    ? natalPlacementSourceGroups(planet as NatalPlacementPlanet, sign as NatalPlacementSign, house)
     : [];
 
   const renderSource = (source: ReturnType<typeof natalPlacementSourceGroups>[number]["sources"][number], previewTemplate = false) => {
@@ -85,10 +87,14 @@ export default function NatalPlacementSourceFinder({ house, isLoading, onCreateO
       <div className="admin-natal-placement-finder-heading">
         <div>
           <p className="admin-eyebrow">Natal placement source finder</p>
-          <h3>{selectionComplete ? natalPlacementLabel(planet as NatalPlacementPlanet, sign as NatalPlacementSign, house as NatalPlacementHouse) : "Choose the full natal placement"}</h3>
+          <h3>{fullSelectionComplete
+            ? natalPlacementLabel(planet as NatalPlacementPlanet, sign as NatalPlacementSign, house as NatalPlacementHouse)
+            : signSelectionComplete
+              ? natalPlacementSignLabel(planet as NatalPlacementPlanet, sign as NatalPlacementSign)
+              : "Choose a natal placement"}</h3>
           <p>Pick one value in each field. This workspace contains natal placements only; current transits and Sky placements are kept in Sky Write-ups.</p>
         </div>
-        {selectionComplete && <p className="admin-natal-placement-key"><span>Reader path</span><code>you/placement/{planet}-{sign}-{house}h</code></p>}
+        {fullSelectionComplete && <p className="admin-natal-placement-key"><span>Reader path</span><code>you/placement/{planet}-{sign}-{house}h</code></p>}
       </div>
       <div className="admin-natal-placement-selectors">
         <label>
@@ -113,10 +119,11 @@ export default function NatalPlacementSourceFinder({ house, isLoading, onCreateO
           </select>
         </label>
       </div>
-      {!selectionComplete && <p className="admin-natal-placement-prompt">Choose all three values to read the complete write-up and edit its individual source passages.</p>}
-      {selectionComplete && (
+      {!signSelectionComplete && <p className="admin-natal-placement-prompt">Choose a planet or point and zodiac sign to read the planet-in-sign write-up.</p>}
+      {signSelectionComplete && !house && <p className="admin-natal-placement-prompt">The planet-in-sign write-up is shown below. Choose a house to add the house paragraph and exact full-placement override.</p>}
+      {signSelectionComplete && (
         <NatalPlacementReaderPreview
-          house={house as NatalPlacementHouse}
+          house={house}
           onCreateOverride={onCreateOverride}
           onOpenSource={onOpenSource}
           planet={planet as NatalPlacementPlanet}
