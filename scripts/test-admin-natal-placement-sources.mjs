@@ -20,9 +20,18 @@ assert.deepEqual(
 
 const groups = natalPlacementSourceGroups("chiron", "taurus", "12");
 assert.deepEqual(groups.map((group) => group.key), ["exact", "sign", "house", "structure"]);
+assert.match(groups.find((group) => group.key === "exact")?.label ?? "", /^Exact synthesis:/);
+assert.match(groups.find((group) => group.key === "exact")?.description ?? "", /must add what becomes distinctive/u);
+assert.match(groups.find((group) => group.key === "exact")?.description ?? "", /rather than mechanically restating the two baselines/u);
+assert.match(groups.find((group) => group.key === "sign")?.label ?? "", /^Sign baseline:/);
+assert.match(groups.find((group) => group.key === "sign")?.description ?? "", /stand on its own before any house is known/u);
+assert.match(groups.find((group) => group.key === "house")?.label ?? "", /^Planet-house baseline:/);
+assert.match(groups.find((group) => group.key === "house")?.description ?? "", /specific planet or point operates in the selected natal house/u);
+assert.match(groups.find((group) => group.key === "house")?.description ?? "", /not append a generic house definition/u);
 
 const signOnlyGroups = natalPlacementSourceGroups("sun", "aries");
 assert.deepEqual(signOnlyGroups.map((group) => group.key), ["sign", "structure"]);
+assert.match(signOnlyGroups.find((group) => group.key === "sign")?.label ?? "", /^Sign baseline:/);
 assert.ok(signOnlyGroups.flatMap((group) => group.sources).some((source) => source.key === "fallback-hook/placement-sentence/sun/aries"));
 assert.ok(signOnlyGroups.flatMap((group) => group.sources).some((source) => source.key === "fallback-template/natal.planet-in-sign/sun"));
 assert.ok(signOnlyGroups.flatMap((group) => group.sources).every((source) => !source.key.includes("house") && !source.key.includes("complete-final")));
@@ -97,4 +106,4 @@ const friendSunAriesFirst = renderNatalPlacement({ planet: "sun", sign: "aries",
 assert.match(friendSunAriesFirst.body, /Maya's Sun|they|them/i, "The natal preview must support the Friend voice.");
 assert.doesNotMatch(friendSunAriesFirst.body, /\{\{|\}\}/);
 
-console.log("Natal placement source finder maps optional overrides and renders effective You/Friend reader copy with source provenance.");
+console.log("Natal placement source finder maps the three-layer architecture and renders effective You/Friend reader copy with source provenance.");
