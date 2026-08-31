@@ -1,5 +1,6 @@
 import { createHash } from "node:crypto";
 import continuousOwnerApproval from "../authored-inputs/sky-v4-continuous-120-owner-approval-v1.json" with { type: "json" };
+import readerCopyOwnerApproval from "../authored-inputs/sky-v4-reader-copy-280-owner-approval-v1.json" with { type: "json" };
 
 export const SKY_V4_CANONICAL_PACKAGE_VERSION = "SKY-V4-CANONICAL-CODEX-HANDOFF-CONTENT-STUDIO-EDITABLE-2026-08-30";
 export const SKY_V4_CANONICAL_JSON_SHA256 = "9b91e715bea63a2c835001783240122aad1e000b3982d68bfebbb3cef690a750";
@@ -15,6 +16,8 @@ const CONTINUOUS_PLANETS = Object.freeze([
 ]);
 
 const CONTINUOUS_OWNER_APPROVED_KEYS = new Set(continuousOwnerApproval.approved_keys);
+const READER_COPY_OWNER_APPROVED_KEYS = new Set(readerCopyOwnerApproval.approved_keys);
+const SKY_V4_CONFIGURATION_TYPES = new Set(["template", "overlay-settings"]);
 
 export const SKY_V4_OVERLAY_DEFAULTS = Object.freeze({
   contextualTransitOverlaysEnabled: true,
@@ -132,6 +135,67 @@ export function assertSkyV4ContinuousOwnerApproval(corpus) {
   return continuousOwnerApproval;
 }
 
+export function assertSkyV4ReaderCopyOwnerApproval(corpus, records = []) {
+  assertSkyV4ContinuousOwnerApproval(corpus);
+  if (readerCopyOwnerApproval.canonical_package_version !== SKY_V4_CANONICAL_PACKAGE_VERSION) {
+    throw new Error("SKY_V4_GOVERNANCE: reader-copy approval package version mismatch.");
+  }
+  if (readerCopyOwnerApproval.canonical_json_sha256 !== SKY_V4_CANONICAL_JSON_SHA256) {
+    throw new Error("SKY_V4_GOVERNANCE: reader-copy approval canonical hash mismatch.");
+  }
+  if (
+    readerCopyOwnerApproval.review_status !== "approved"
+    || readerCopyOwnerApproval.owner_approved !== true
+    || readerCopyOwnerApproval.serving_enabled !== false
+  ) {
+    throw new Error("SKY_V4_GOVERNANCE: reader-copy approval lifecycle state is invalid.");
+  }
+  if (
+    readerCopyOwnerApproval.expected_approved_reader_records !== 280
+    || readerCopyOwnerApproval.expected_additional_reader_records !== 160
+    || READER_COPY_OWNER_APPROVED_KEYS.size !== 280
+  ) {
+    throw new Error("SKY_V4_GOVERNANCE: reader-copy approval must contain exactly 280 unique keys and 160 additions.");
+  }
+  for (const key of CONTINUOUS_OWNER_APPROVED_KEYS) {
+    if (!READER_COPY_OWNER_APPROVED_KEYS.has(key)) {
+      throw new Error(`SKY_V4_GOVERNANCE: expanded approval lost prior continuous key ${key}.`);
+    }
+  }
+  if (records.length) {
+    const recordsByKey = new Map(records.map((row) => [row.contentKey, row]));
+    const approvedRecords = records.filter((row) => row.owner_approved === true);
+    const configurationRecords = records.filter((row) => SKY_V4_CONFIGURATION_TYPES.has(row.studio_content_type));
+    if (records.length !== 305 || approvedRecords.length !== 280 || configurationRecords.length !== 25) {
+      throw new Error("SKY_V4_GOVERNANCE: expected 305 records: 280 reader-copy approvals and 25 configuration records.");
+    }
+    for (const key of READER_COPY_OWNER_APPROVED_KEYS) {
+      const row = recordsByKey.get(key);
+      if (!row) throw new Error(`SKY_V4_GOVERNANCE: approval contains non-canonical key ${key}.`);
+      const expectedFields = readerCopyOwnerApproval.approved_fields_by_content_type[row.studio_content_type];
+      const editableFields = row.studio_editable_fields.map((field) => field.path);
+      if (JSON.stringify(row.owner_approved_fields) !== JSON.stringify(expectedFields)) {
+        throw new Error(`SKY_V4_GOVERNANCE: approved-field mismatch for ${key}.`);
+      }
+      if (JSON.stringify(editableFields) !== JSON.stringify(expectedFields)) {
+        throw new Error(`SKY_V4_GOVERNANCE: editable-field contract drift for ${key}.`);
+      }
+    }
+    if (configurationRecords.some((row) => (
+      row.review_status !== "needs_review"
+      || row.owner_approved !== false
+      || row.serving_enabled !== false
+      || row.studio_review_category !== "configuration"
+    ))) {
+      throw new Error("SKY_V4_GOVERNANCE: templates and overlay settings must remain non-serving configuration, not approved prose.");
+    }
+    if (records.some((row) => row.serving_enabled !== false)) {
+      throw new Error("SKY_V4_GOVERNANCE: serving must remain disabled for every SKY V4 record.");
+    }
+  }
+  return readerCopyOwnerApproval;
+}
+
 function studioRecord({
   source,
   contentKey,
@@ -143,11 +207,15 @@ function studioRecord({
   readOnlyFields,
   sourceUrls = [],
   ownerPhraseAnchors = [],
-  contentRole = "full_copy",
-  approval = null
+  contentRole = "full_copy"
 }) {
   const baseline = structuredClone(source);
   const baselineJson = JSON.stringify(baseline);
+  const approvedFields = READER_COPY_OWNER_APPROVED_KEYS.has(contentKey)
+    ? readerCopyOwnerApproval.approved_fields_by_content_type[contentType] ?? []
+    : [];
+  const ownerApproved = approvedFields.length > 0;
+  const configuration = SKY_V4_CONFIGURATION_TYPES.has(contentType);
   return {
     ...source,
     contentKey,
@@ -155,7 +223,7 @@ function studioRecord({
     body_you: body,
     summary,
     content_role: contentRole,
-    review_status: approval?.review_status ?? "needs_review",
+    review_status: ownerApproved ? readerCopyOwnerApproval.review_status : "needs_review",
     surface: "sky",
     render_policy: "sky-v4-canonical-stage-preview",
     source_package: SKY_V4_CANONICAL_PACKAGE_VERSION,
@@ -167,17 +235,26 @@ function studioRecord({
     studio_owner_phrase_anchors: ownerPhraseAnchors.filter(Boolean),
     studio_source_baseline: baseline,
     studio_version_status: "draft",
-    owner_approved: approval?.owner_approved ?? false,
+    studio_review_category: configuration
+      ? "configuration"
+      : ownerApproved
+        ? "owner-approved-reader-copy"
+        : "reader-copy",
+    owner_approved: ownerApproved,
     serving_enabled: false,
-    ...(approval ? {
-      approved_via: approval.approval_record,
-      owner_approval_id: approval.approval_id,
-      owner_approved_fields: ["placementArticle", "tldrWhat", "tldrTakeaway"],
-      owner_unapproved_fields: ["fallback.hook", "fallback.lived", "fallback.turn"]
+    ...(ownerApproved ? {
+      approved_via: readerCopyOwnerApproval.approval_record,
+      owner_approval_id: readerCopyOwnerApproval.approval_id,
+      owner_approval_lineage: contentType === "continuous-placement"
+        ? [continuousOwnerApproval.approval_record, readerCopyOwnerApproval.approval_record]
+        : [readerCopyOwnerApproval.approval_record],
+      owner_approved_fields: approvedFields
     } : {}),
-    note: approval
-      ? "Canonical SKY V4 owner-approved continuous article. Serving remains disabled; fallback Hook/Lived/Turn fields remain outside this approval."
-      : "Canonical SKY V4 stage-only Content Studio record. The immutable package baseline is retained; edits create non-serving draft versions."
+    note: ownerApproved
+      ? "Canonical SKY V4 reader copy is owner-approved against the immutable package hash. Serving remains disabled; any edited version returns to needs_review."
+      : configuration
+        ? "Canonical SKY V4 configuration record. It is not reader prose and remains outside the writing-approval queue."
+        : "Canonical SKY V4 stage-only Content Studio record. The immutable package baseline is retained; edits create non-serving draft versions."
   };
 }
 
@@ -203,8 +280,7 @@ function continuousStudioRecords(corpus) {
     ],
     readOnlyFields: ["planet", "sign", "contentKey", "sourceExactStatus", "sourcePrimary", "sourceSecondary"],
     sourceUrls: [row.sourcePrimary, row.sourceSecondary],
-    ownerPhraseAnchors: anchors(row.ownerPhraseAnchors),
-    approval: CONTINUOUS_OWNER_APPROVED_KEYS.has(row.contentKey) ? continuousOwnerApproval : null
+    ownerPhraseAnchors: anchors(row.ownerPhraseAnchors)
   }));
 }
 
@@ -473,8 +549,7 @@ function templateStudioRecords(corpus) {
 
 export function skyV4ContentStudioRecords(corpus) {
   assertSkyV4CanonicalPackage(corpus);
-  assertSkyV4ContinuousOwnerApproval(corpus);
-  return [
+  const records = [
     ...continuousStudioRecords(corpus),
     ...newMoonStudioRecords(corpus),
     ...fullMoonStudioRecords(corpus),
@@ -488,6 +563,8 @@ export function skyV4ContentStudioRecords(corpus) {
     ...seasonalStudioRecords(corpus),
     ...templateStudioRecords(corpus)
   ];
+  assertSkyV4ReaderCopyOwnerApproval(corpus, records);
+  return records;
 }
 
 export function continuousArticleFor(corpus, planet, sign) {
