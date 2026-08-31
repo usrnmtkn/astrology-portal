@@ -3,10 +3,11 @@ import bundledSkyCoreRowsV3 from "./fallbackArchitectureV3/bundled-sky-core-rows
 import bundledSkyAuthoredCardsV3 from "./fallbackArchitectureV3/bundled-sky-authored-cards-v3.json";
 import approvedServingProjectionV1 from "./fallbackArchitectureV3/approved-serving-projection-v1.json";
 import bundledManifestSummaryV3 from "./fallbackArchitectureV3/bundled-manifest-summary-v3.json";
+import skyV4CanonicalCorpus from "./fallbackArchitectureV3/authored-inputs/sky-v4-canonical-content-studio-stage-v1.json";
 import { isGovernedReaderEligible } from "./fallbackArchitectureV3/resolver/readerEligibility.browser";
 // The package ships a prebuilt ESM bundle. Keep resolver logic package-owned.
 // @ts-ignore Package bundle is JavaScript-only; app-facing types live below.
-import { createFallbackRenderer, createPackageManifest, createTransitSynastryRenderer, normalizeAspect, PACKAGE_VERSION, SourceGapError } from "./fallbackArchitectureV3/dist/tldr-content.js";
+import { createFallbackRenderer, createPackageManifest, createTransitSynastryRenderer, normalizeAspect, PACKAGE_VERSION, renderSkyV4ReaderRoute, SourceGapError } from "./fallbackArchitectureV3/dist/tldr-content.js";
 
 export { normalizeAspect, SourceGapError };
 export {
@@ -30,6 +31,12 @@ export {
   renderKnowledgeMatrixV13WorkbookKey
 } from "./knowledgeMatrixV13Runtime";
 export const fallbackArchitectureV3PackageVersion = PACKAGE_VERSION;
+
+export const skyV4ReaderRenderer = {
+  renderRoute(input: Record<string, unknown>) {
+    return renderSkyV4ReaderRoute(skyV4CanonicalCorpus, input);
+  }
+};
 
 function assertApprovedServingProjection() {
   if (

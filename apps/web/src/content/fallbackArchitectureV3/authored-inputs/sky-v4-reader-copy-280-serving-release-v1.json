@@ -1,0 +1,32 @@
+{
+  "schema": "tldrastro-sky-v4-serving-release/v1",
+  "release_id": "sky-v4-reader-copy-280-serving-release-2026-08-31",
+  "owner_decision_date": "2026-08-31",
+  "canonical_package_version": "SKY-V4-CANONICAL-CODEX-HANDOFF-CONTENT-STUDIO-EDITABLE-2026-08-30",
+  "canonical_json_sha256": "9b91e715bea63a2c835001783240122aad1e000b3982d68bfebbb3cef690a750",
+  "approval_ledger": "apps/web/src/content/fallbackArchitectureV3/authored-inputs/sky-v4-reader-copy-280-owner-approval-v1.json",
+  "approval_id": "sky-v4-reader-copy-280-owner-approval-2026-08-31",
+  "released_keys_sha256": "b641e7bc7abe4bb8018500b7da8488ff08dfe83a6325d6df71d311f83e12f17b",
+  "expected_serving_records": 280,
+  "expected_counts_by_content_type": {
+    "continuous-placement": 120,
+    "new-moon": 12,
+    "full-moon": 12,
+    "eclipse-event": 4,
+    "eclipse-fallback": 48,
+    "generic-eclipse-fallback": 4,
+    "node-axis": 12,
+    "node-module": 24,
+    "node-education": 1,
+    "lilith": 12,
+    "lilith-station": 1,
+    "retrograde": 9,
+    "overlay": 9,
+    "seasonal": 12
+  },
+  "serving_enabled": true,
+  "resolver_conditional": true,
+  "configuration_records_excluded": 25,
+  "unrelated_aspect_records_excluded": true,
+  "release_record": "packages/astro-knowledge/review/sky-v4-reader-copy-280-serving-release-2026-08-31/OWNER-SERVING-DECISION.md"
+}

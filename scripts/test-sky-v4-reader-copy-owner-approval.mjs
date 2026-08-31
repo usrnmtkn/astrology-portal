@@ -45,7 +45,7 @@ assert.deepEqual(counts, approval.expected_counts_by_content_type);
 
 for (const row of approved) {
   assert.equal(row.review_status, "approved", `${row.contentKey} review_status`);
-  assert.equal(row.serving_enabled, false, `${row.contentKey} serving_enabled`);
+  assert.equal(row.serving_enabled, true, `${row.contentKey} serving_enabled`);
   assert.equal(row.studio_review_category, "owner-approved-reader-copy", `${row.contentKey} review category`);
   assert.deepEqual(
     row.owner_approved_fields,
@@ -76,7 +76,7 @@ assert.equal(configuration.filter((row) => row.studio_content_type === "overlay-
 assert.ok(configuration.every((row) => row.review_status === "needs_review"));
 assert.ok(configuration.every((row) => row.owner_approved === false));
 assert.ok(configuration.every((row) => row.serving_enabled === false));
-assert.ok(records.every((row) => row.serving_enabled === false));
+assert.equal(records.filter((row) => row.serving_enabled === true).length, 280);
 assert.equal(records.filter((row) => row.studio_content_type === "aspect").length, 0);
 assert.equal(approved.filter((row) => row.contentKey.includes("/template/")).length, 0);
 assert.equal(approved.filter((row) => row.contentKey === "sky-v4/settings/contextual-overlays").length, 0);
@@ -102,12 +102,12 @@ try {
   assert.equal(approvedRows.length, 280);
   assert.equal(configurationRows.length, 25);
   assert.ok(approvedRows.every((row) => row.facts.review_status === "approved"));
-  assert.ok(approvedRows.every((row) => row.status === "DRAFT"));
-  assert.ok(approvedRows.every((row) => row.lane === "reference"));
-  assert.ok(approvedRows.every((row) => row.review_state === "serving-disabled"));
+  assert.ok(approvedRows.every((row) => row.status === "LIVE"));
+  assert.ok(approvedRows.every((row) => row.lane === "serving"));
   assert.ok(configurationRows.every((row) => row.sections.packageRecord.review_status === "needs_review"));
   assert.ok(configurationRows.every((row) => row.sections.packageRecord.owner_approved === false));
-  assert.ok(skyV4Rows.every((row) => row.sections.packageRecord.serving_enabled === false));
+  assert.ok(approvedRows.every((row) => row.sections.packageRecord.serving_enabled === true));
+  assert.ok(configurationRows.every((row) => row.sections.packageRecord.serving_enabled === false));
 } finally {
   fs.rmSync(tempDir, { recursive: true, force: true });
 }
@@ -119,4 +119,4 @@ const generatedContentApi = fs.readFileSync(path.join(repoRoot, "api/admin/gener
 assert.match(generatedContentApi, /const reviewStatus = hasPackageDraft\s*\? "needs_review"/u);
 assert.match(generatedContentApi, /record\.owner_approved = isSkyV4OwnerApprovedReaderCopy && reviewStatus === "approved"/u);
 
-console.log("SKY V4 reader-copy owner approval: PASS (280 approved; 120 continuous with six fields; 160 additional; 25 configuration; copy drift 0; serving OFF)");
+console.log("SKY V4 reader-copy owner approval: PASS (280 approved and released; 120 continuous with six fields; 160 additional; 25 configuration dark; copy drift 0)");
