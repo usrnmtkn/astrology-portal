@@ -28,6 +28,18 @@ assert.match(groups.find((group) => group.key === "sign")?.description ?? "", /s
 assert.match(groups.find((group) => group.key === "house")?.label ?? "", /^Planet-house baseline:/);
 assert.match(groups.find((group) => group.key === "house")?.description ?? "", /specific planet or point operates in the selected natal house/u);
 assert.match(groups.find((group) => group.key === "house")?.description ?? "", /not append a generic house definition/u);
+assert.ok(
+  groups.find((group) => group.key === "house")?.sources.every((source) => !source.key.startsWith("fallback-hook/house-meaning/")),
+  "Generic house meaning must not be presented as Layer 2 planet-house meaning."
+);
+assert.ok(
+  groups.find((group) => group.key === "structure")?.sources.some((source) => source.key === "fallback-hook/house-meaning/12"),
+  "Current legacy house context must remain visible as a composition input while serving behavior is unchanged."
+);
+assert.match(
+  groups.find((group) => group.key === "structure")?.sources.find((source) => source.key === "fallback-hook/house-meaning/12")?.scope ?? "",
+  /not the planet-house baseline/u
+);
 
 const signOnlyGroups = natalPlacementSourceGroups("sun", "aries");
 assert.deepEqual(signOnlyGroups.map((group) => group.key), ["sign", "structure"]);
