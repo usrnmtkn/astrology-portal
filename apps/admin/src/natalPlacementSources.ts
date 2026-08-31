@@ -80,8 +80,8 @@ export function natalPlacementSourceGroups(
   const signLabel = titleCase(sign);
   const signGroup: NatalPlacementSourceGroup = {
     key: "sign",
-    label: `${planetLabel} in ${signLabel}`,
-    description: "These rows build the first paragraph about the planet or point in its zodiac sign.",
+    label: `Sign baseline: ${planetLabel} in ${signLabel}`,
+    description: "Layer 1. Complete birth-time-independent interpretation of how this planet or point operates through the sign. It must stand on its own before any house is known.",
     sources: [
       { key: `fallback-hook/planet-intro/${planet}`, label: `${planetLabel} introduction`, scope: `Used by every natal ${planetLabel} placement.` },
       { key: `fallback-vocab/planet-verb/${planet}`, label: `${planetLabel} action phrase`, scope: `Used by every natal ${planetLabel} sign placement.` },
@@ -113,8 +113,8 @@ export function natalPlacementSourceGroups(
   return [
     {
       key: "exact",
-      label: `${planetLabel} in ${signLabel} in the ${houseLabel} house`,
-      description: "Optional exact override. If an approved full write-up exists, it replaces the composed sources below on the You page. Otherwise the app assembles the reader preview from the atomic sources shown here.",
+      label: `Exact synthesis: ${planetLabel} in ${signLabel} in the ${houseLabel} house`,
+      description: "Layer 3. Optional exact override. An approved full write-up must add what becomes distinctive when this sign expression operates through this house, rather than mechanically restating the two baselines. If no approved exact synthesis exists, the app uses the approved sign and planet-house baselines below.",
       sources: [
         {
           key: `fallback-hook/natal-you-placement-complete-final/${planet}/${sign}/${house}`,
@@ -126,8 +126,8 @@ export function natalPlacementSourceGroups(
     signGroup,
     {
       key: "house",
-      label: `${planetLabel} in the ${houseLabel} house`,
-      description: "These rows build the second paragraph about how this placement works in the selected house.",
+      label: `Planet-house baseline: ${planetLabel} in the ${houseLabel} house`,
+      description: "Layer 2. Complete interpretation of how this specific planet or point operates in the selected natal house, across every zodiac sign. It must describe the planet functioning in that life area, not append a generic house definition.",
       sources: [
         { key: `fallback-hook/house-meaning/${house}`, label: `${houseLabel} house meaning`, scope: `Used by every natal placement in the ${houseLabel} house.` },
         { key: `fallback-hook/placement-house-sentence/${planet}/${house}`, label: `${planetLabel} in the ${houseLabel} house passage`, scope: `Used for ${planetLabel} in the ${houseLabel} house, across every zodiac sign.` }
