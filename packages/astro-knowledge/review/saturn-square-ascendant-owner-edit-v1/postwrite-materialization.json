@@ -1,0 +1,51 @@
+{
+  "schemaVersion": 1,
+  "operation": "saturn-square-ascendant-owner-edit-plus-targeted-angle-package-metadata-sync",
+  "capturedAt": "2026-08-31T18:01:49.260Z",
+  "exactOwnerEditKey": "fallback-hook/natal-aspect-lived/saturn/square/ascendant",
+  "exactMaterializerKeyCount": 60,
+  "invocationCounts": {
+    "successful": 60,
+    "failed": 0
+  },
+  "remoteOutcome": {
+    "rowsUpdated": 60,
+    "rowsCreated": 0,
+    "rowsDeleted": 0,
+    "rowsArchivedOrDemoted": 0,
+    "unrelatedRowsMutated": 0,
+    "liveServing": 60,
+    "blockTypeParity": 60,
+    "friendsBodyParity": 60,
+    "youBodyParity": 60,
+    "youRevisionParity": 2,
+    "saturnOwnerEditParity": 1,
+    "unchangedV15YouParity": 57,
+    "approvalAndProvenanceParity": 60
+  },
+  "package": {
+    "packageVersion": "v3-2026-08-31b",
+    "packageContentHash": "cbf89a6284d33736089d76300d863972",
+    "packageKeyManifestHash": "ad3b78b91851349d48f78053cada7089",
+    "packageKeyCount": 9271
+  },
+  "postwriteComparator": {
+    "exactKeysCompared": 60,
+    "bodyChanges": 0,
+    "statusChanges": 0,
+    "approvalDowngrades": 0,
+    "nonTimestampDifferencePaths": 0,
+    "timestampDifferencePaths": [
+      "evergreen_at",
+      "updated_at"
+    ]
+  },
+  "fullExecutionEvidence": {
+    "path": "/private/tmp/friends-v1-targeted-apply-report.json",
+    "sha256": "0b1eef934b346c65c1b18423a56133366f70eeae93d34e34322f68460370aa1b"
+  },
+  "fullComparatorEvidence": {
+    "path": "/private/tmp/friends-v1-targeted-impact-compare.json",
+    "sha256": "bda47b01bee14621f05879f4f7c956e39cc041a8d0f67d5ded8e2fafbeb000b4"
+  }
+}
