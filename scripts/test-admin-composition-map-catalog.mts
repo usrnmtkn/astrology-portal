@@ -24,7 +24,8 @@ try {
   for (const template of map) {
     assert.ok(template.preview.fields.length > 0, `${template.row.content_key} must expose at least one reader-facing field.`);
     for (const field of template.preview.fields) {
-      assert.ok(field.rendered.trim(), `${template.row.content_key}/${field.key} must not render empty.`);
+      const optionalSection = /^\{\{#[^}]+\}\}[\s\S]*\{\{\/[^}]+\}\}$/u.test(field.template.trim());
+      assert.ok(field.rendered.trim() || optionalSection, `${template.row.content_key}/${field.key} must not render empty unless the entire field is an optional section.`);
       assert.equal(field.rendered.includes("{{"), false, `${template.row.content_key}/${field.key} must not expose unresolved tokens.`);
     }
     for (const source of template.preview.sources) {

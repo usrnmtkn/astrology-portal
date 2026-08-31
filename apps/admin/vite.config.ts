@@ -99,13 +99,13 @@ export default defineConfig(({ command, mode }) => {
         output: {
           onlyExplicitManualChunks: true,
           manualChunks(id) {
-            if (/apps\/admin\/src\/(?:NatalPlacementSourceFinder|TemplateReaderDrilldown|TemplateVariableReviewPanels)\.tsx$/u.test(id)) {
+            if (/apps\/admin\/src\/(?:AdminFilterDisclosure|AdminPaginatedCollection|NatalPlacementSourceFinder|NatalPlacementReaderPreview|TemplateReaderDrilldown|TemplateVariableReviewPanels)\.tsx$|apps\/admin\/src\/(?:compositionMap|templateVariableSources)\.ts$/u.test(id)) {
               return "admin-deferred-editor-tools";
             }
             if (/apps\/admin\/src\/(?:AspectPatternDiagnostics|AspectPatternWriteups|ReportFulfillmentAdminPanel|UnresolvedContentReview)\.tsx$/u.test(id)) {
               return "admin-deferred-review-tools";
             }
-            if (/apps\/admin\/src\/(?:DailyFallbackWorkspaceGuide|PackagedHookCatalogResults)\.tsx$/u.test(id)) {
+            if (/apps\/admin\/src\/(?:DailyFallbackWorkspaceGuide|PackagedHookCatalogResults|SkyV4StudioReviewPanel)\.tsx$/u.test(id)) {
               return "admin-deferred-fallback-tools";
             }
           }

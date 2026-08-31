@@ -1,0 +1,3934 @@
+{
+  "packageVersion": "SKY-V4-CANONICAL-CODEX-HANDOFF-CONTENT-STUDIO-EDITABLE-2026-08-30",
+  "servingEnabled": false,
+  "sourceRecordCounts": {
+    "continuous": 120,
+    "newMoon": 12,
+    "fullMoon": 12,
+    "eclipseEvents": 4,
+    "eclipseFallbacks": 48,
+    "eclipseGenericFallbacks": 4,
+    "seasonalContext": 12,
+    "retrogradeGeneric": 9,
+    "retrogradeSignLookup": 108,
+    "nodeAxes": 12,
+    "northNodeModules": 12,
+    "southNodeModules": 12,
+    "nodeEducation": 1,
+    "lilith": 12,
+    "lilithCurrentConditions": 1,
+    "contextualTransitOverlays": 9
+  },
+  "studioRecordCount": 305,
+  "intentionalRuntimeAdditions": [
+    "Content Studio identity and editable-field metadata",
+    "Immutable per-record source baseline and SHA-256",
+    "needs_review / owner_approved=false / serving_enabled=false governance",
+    "Version status draft and provenance links"
+  ],
+  "wordingDrift": 0,
+  "mappings": [
+    {
+      "contentKey": "sky-placement/article/sun/aries",
+      "contentType": "continuous-placement",
+      "sourceBaselineSha256": "d53705f80c62f86ce4ad58349f80f31f62bec8783ddf4b2b68bc9bb62599d37c",
+      "editableFields": [
+        "tldrWhat",
+        "tldrTakeaway",
+        "placementArticle",
+        "fallback.hook",
+        "fallback.lived",
+        "fallback.turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-placement/article/sun/taurus",
+      "contentType": "continuous-placement",
+      "sourceBaselineSha256": "926dd8ed7567a8dd966e7818082db28e7e83aeb277ff4a0f0e7b03c03acde5d2",
+      "editableFields": [
+        "tldrWhat",
+        "tldrTakeaway",
+        "placementArticle",
+        "fallback.hook",
+        "fallback.lived",
+        "fallback.turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-placement/article/sun/gemini",
+      "contentType": "continuous-placement",
+      "sourceBaselineSha256": "e76b1855840fa3e0b769ca6e4c15350b661524375a15d27b3528d579d44b26b9",
+      "editableFields": [
+        "tldrWhat",
+        "tldrTakeaway",
+        "placementArticle",
+        "fallback.hook",
+        "fallback.lived",
+        "fallback.turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-placement/article/sun/cancer",
+      "contentType": "continuous-placement",
+      "sourceBaselineSha256": "a675087899c875bf9acf78c15ab6bb18480dbc4ca6b3fe1e298ede5662f9d117",
+      "editableFields": [
+        "tldrWhat",
+        "tldrTakeaway",
+        "placementArticle",
+        "fallback.hook",
+        "fallback.lived",
+        "fallback.turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-placement/article/sun/leo",
+      "contentType": "continuous-placement",
+      "sourceBaselineSha256": "6802c0bce3be070213a05efaa9813a78ea1d6b8c5d930822c459ad9d77a8495d",
+      "editableFields": [
+        "tldrWhat",
+        "tldrTakeaway",
+        "placementArticle",
+        "fallback.hook",
+        "fallback.lived",
+        "fallback.turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-placement/article/sun/virgo",
+      "contentType": "continuous-placement",
+      "sourceBaselineSha256": "5713d424089c0400a6685cfe8fed5473105f1c63092f09e85d5e2ec51b9b5f3b",
+      "editableFields": [
+        "tldrWhat",
+        "tldrTakeaway",
+        "placementArticle",
+        "fallback.hook",
+        "fallback.lived",
+        "fallback.turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-placement/article/sun/libra",
+      "contentType": "continuous-placement",
+      "sourceBaselineSha256": "aa66434905a78d7e5891d5d23870f7a8dba14e901d41c2f81e5bdd5b75dd5c9c",
+      "editableFields": [
+        "tldrWhat",
+        "tldrTakeaway",
+        "placementArticle",
+        "fallback.hook",
+        "fallback.lived",
+        "fallback.turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-placement/article/sun/scorpio",
+      "contentType": "continuous-placement",
+      "sourceBaselineSha256": "d5a35c242aa7b0046a772f22ff08e88f0e0d6122e50b4ffa779a265d14c8bf18",
+      "editableFields": [
+        "tldrWhat",
+        "tldrTakeaway",
+        "placementArticle",
+        "fallback.hook",
+        "fallback.lived",
+        "fallback.turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-placement/article/sun/sagittarius",
+      "contentType": "continuous-placement",
+      "sourceBaselineSha256": "8b7a2f757d82b494be238b31b4f8c9818bef239b304dc28eac438ada23138867",
+      "editableFields": [
+        "tldrWhat",
+        "tldrTakeaway",
+        "placementArticle",
+        "fallback.hook",
+        "fallback.lived",
+        "fallback.turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-placement/article/sun/capricorn",
+      "contentType": "continuous-placement",
+      "sourceBaselineSha256": "a2f09b832031b59a55ba0dce2554e75e7f97e91985a8257f1779d6f143611a4a",
+      "editableFields": [
+        "tldrWhat",
+        "tldrTakeaway",
+        "placementArticle",
+        "fallback.hook",
+        "fallback.lived",
+        "fallback.turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-placement/article/sun/aquarius",
+      "contentType": "continuous-placement",
+      "sourceBaselineSha256": "e58abb2ece238344cc4c5d1eefa1682e972baff643427c0333b1dc935e239754",
+      "editableFields": [
+        "tldrWhat",
+        "tldrTakeaway",
+        "placementArticle",
+        "fallback.hook",
+        "fallback.lived",
+        "fallback.turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-placement/article/sun/pisces",
+      "contentType": "continuous-placement",
+      "sourceBaselineSha256": "0f875ea2b19d496e0c820b7908a48239a43cfc9fc7e70573b7cc6e454866484a",
+      "editableFields": [
+        "tldrWhat",
+        "tldrTakeaway",
+        "placementArticle",
+        "fallback.hook",
+        "fallback.lived",
+        "fallback.turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-placement/article/mercury/aries",
+      "contentType": "continuous-placement",
+      "sourceBaselineSha256": "7ffdee691545b8c4e8f094e5758c74505b00ad199afa21d11411c8e925e29bff",
+      "editableFields": [
+        "tldrWhat",
+        "tldrTakeaway",
+        "placementArticle",
+        "fallback.hook",
+        "fallback.lived",
+        "fallback.turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-placement/article/mercury/taurus",
+      "contentType": "continuous-placement",
+      "sourceBaselineSha256": "97831fc40480d63e4ad36ebbde9b60c23b6b012636008aefbdfb6d5b5dfcbc55",
+      "editableFields": [
+        "tldrWhat",
+        "tldrTakeaway",
+        "placementArticle",
+        "fallback.hook",
+        "fallback.lived",
+        "fallback.turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-placement/article/mercury/gemini",
+      "contentType": "continuous-placement",
+      "sourceBaselineSha256": "9e8262db8cfb7ccb03fa1b4719c5a85cc3df3bc167cec1f5add5144a64088974",
+      "editableFields": [
+        "tldrWhat",
+        "tldrTakeaway",
+        "placementArticle",
+        "fallback.hook",
+        "fallback.lived",
+        "fallback.turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-placement/article/mercury/cancer",
+      "contentType": "continuous-placement",
+      "sourceBaselineSha256": "1bc40e16cc9252c5e5f6db891e6289713afd6e5e3e978b6fbd2663ba629a40a9",
+      "editableFields": [
+        "tldrWhat",
+        "tldrTakeaway",
+        "placementArticle",
+        "fallback.hook",
+        "fallback.lived",
+        "fallback.turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-placement/article/mercury/leo",
+      "contentType": "continuous-placement",
+      "sourceBaselineSha256": "84cb0c26179e155ac00d0c66c7c5ad8406f6c0affab709dce4ff544a07f1546b",
+      "editableFields": [
+        "tldrWhat",
+        "tldrTakeaway",
+        "placementArticle",
+        "fallback.hook",
+        "fallback.lived",
+        "fallback.turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-placement/article/mercury/virgo",
+      "contentType": "continuous-placement",
+      "sourceBaselineSha256": "f3f7c2a36dd2862c21863f607a5423c3180a9dd8e9dd11ea71bce52cef36bec8",
+      "editableFields": [
+        "tldrWhat",
+        "tldrTakeaway",
+        "placementArticle",
+        "fallback.hook",
+        "fallback.lived",
+        "fallback.turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-placement/article/mercury/libra",
+      "contentType": "continuous-placement",
+      "sourceBaselineSha256": "4991578aeb40a7765c292ea91b249cb7614b73899d3e37b704fa1b758ae3e289",
+      "editableFields": [
+        "tldrWhat",
+        "tldrTakeaway",
+        "placementArticle",
+        "fallback.hook",
+        "fallback.lived",
+        "fallback.turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-placement/article/mercury/scorpio",
+      "contentType": "continuous-placement",
+      "sourceBaselineSha256": "e76db81bfe141f36c94d4fc1d64614e1dc17e9768bb84b56486aaf05bdc83bf2",
+      "editableFields": [
+        "tldrWhat",
+        "tldrTakeaway",
+        "placementArticle",
+        "fallback.hook",
+        "fallback.lived",
+        "fallback.turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-placement/article/mercury/sagittarius",
+      "contentType": "continuous-placement",
+      "sourceBaselineSha256": "e56fae76dcc54fbdc42472826cc19d10f375c97da720062ec7e4a254df25a85c",
+      "editableFields": [
+        "tldrWhat",
+        "tldrTakeaway",
+        "placementArticle",
+        "fallback.hook",
+        "fallback.lived",
+        "fallback.turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-placement/article/mercury/capricorn",
+      "contentType": "continuous-placement",
+      "sourceBaselineSha256": "0e16b5cc03cdd3afffe944d795a16f723fbbc8534e393b437f21ce8617760fd1",
+      "editableFields": [
+        "tldrWhat",
+        "tldrTakeaway",
+        "placementArticle",
+        "fallback.hook",
+        "fallback.lived",
+        "fallback.turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-placement/article/mercury/aquarius",
+      "contentType": "continuous-placement",
+      "sourceBaselineSha256": "8879898b329c090ccd83de9729f1cd3d568bb8342497b95ff0e8b218a48b1999",
+      "editableFields": [
+        "tldrWhat",
+        "tldrTakeaway",
+        "placementArticle",
+        "fallback.hook",
+        "fallback.lived",
+        "fallback.turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-placement/article/mercury/pisces",
+      "contentType": "continuous-placement",
+      "sourceBaselineSha256": "56c653f9cafbe2510a7145ba77b8b1e0f8c19700183e9d7375e2191efc5d4f04",
+      "editableFields": [
+        "tldrWhat",
+        "tldrTakeaway",
+        "placementArticle",
+        "fallback.hook",
+        "fallback.lived",
+        "fallback.turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-placement/article/venus/aries",
+      "contentType": "continuous-placement",
+      "sourceBaselineSha256": "0794b58e0539ebbb9926532ce1e62860127269adc8a320b4e84a79b6de3a201e",
+      "editableFields": [
+        "tldrWhat",
+        "tldrTakeaway",
+        "placementArticle",
+        "fallback.hook",
+        "fallback.lived",
+        "fallback.turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-placement/article/venus/taurus",
+      "contentType": "continuous-placement",
+      "sourceBaselineSha256": "5ca932a5b786e2265e9d2f59ebf9079896531c8b5784366a238d75365075e48e",
+      "editableFields": [
+        "tldrWhat",
+        "tldrTakeaway",
+        "placementArticle",
+        "fallback.hook",
+        "fallback.lived",
+        "fallback.turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-placement/article/venus/gemini",
+      "contentType": "continuous-placement",
+      "sourceBaselineSha256": "68017672a6f9f5eb9a47c46f3a4b42f5054ec20cf0781f4d2febee9013496731",
+      "editableFields": [
+        "tldrWhat",
+        "tldrTakeaway",
+        "placementArticle",
+        "fallback.hook",
+        "fallback.lived",
+        "fallback.turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-placement/article/venus/cancer",
+      "contentType": "continuous-placement",
+      "sourceBaselineSha256": "039635ce8b710abd734a1cd31244bb8e993e31c8351cde28ace7021da72fbb12",
+      "editableFields": [
+        "tldrWhat",
+        "tldrTakeaway",
+        "placementArticle",
+        "fallback.hook",
+        "fallback.lived",
+        "fallback.turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-placement/article/venus/leo",
+      "contentType": "continuous-placement",
+      "sourceBaselineSha256": "40f689e88920530a433aef5bee0344d8f0576fc7b082931eac3b444b272ac535",
+      "editableFields": [
+        "tldrWhat",
+        "tldrTakeaway",
+        "placementArticle",
+        "fallback.hook",
+        "fallback.lived",
+        "fallback.turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-placement/article/venus/virgo",
+      "contentType": "continuous-placement",
+      "sourceBaselineSha256": "64a8f20917ad7ba58cdb1edad4c8dfabeed68cd9b338a2a026b8be45645e0e0e",
+      "editableFields": [
+        "tldrWhat",
+        "tldrTakeaway",
+        "placementArticle",
+        "fallback.hook",
+        "fallback.lived",
+        "fallback.turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-placement/article/venus/libra",
+      "contentType": "continuous-placement",
+      "sourceBaselineSha256": "ed7e5564579b54eeb4a95f97d46dac29f2ae91a462c7be37c5fcce623867a300",
+      "editableFields": [
+        "tldrWhat",
+        "tldrTakeaway",
+        "placementArticle",
+        "fallback.hook",
+        "fallback.lived",
+        "fallback.turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-placement/article/venus/scorpio",
+      "contentType": "continuous-placement",
+      "sourceBaselineSha256": "10e53d663a9c0ecffcb823afe0fb2830c5021a960e1c47d4b30214f75e84b1dd",
+      "editableFields": [
+        "tldrWhat",
+        "tldrTakeaway",
+        "placementArticle",
+        "fallback.hook",
+        "fallback.lived",
+        "fallback.turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-placement/article/venus/sagittarius",
+      "contentType": "continuous-placement",
+      "sourceBaselineSha256": "1baead5a18398adc876ca6af65b498b2ab34e80b4299f5bdda22d96538c32390",
+      "editableFields": [
+        "tldrWhat",
+        "tldrTakeaway",
+        "placementArticle",
+        "fallback.hook",
+        "fallback.lived",
+        "fallback.turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-placement/article/venus/capricorn",
+      "contentType": "continuous-placement",
+      "sourceBaselineSha256": "39e15f52aef8eac586e16d679eae999e6c564bfef36dce080f1e50454eb78a4c",
+      "editableFields": [
+        "tldrWhat",
+        "tldrTakeaway",
+        "placementArticle",
+        "fallback.hook",
+        "fallback.lived",
+        "fallback.turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-placement/article/venus/aquarius",
+      "contentType": "continuous-placement",
+      "sourceBaselineSha256": "ebc2800b563f7041d0088b861ea48b78d442df2c5c74aeb971a32a2591314ba9",
+      "editableFields": [
+        "tldrWhat",
+        "tldrTakeaway",
+        "placementArticle",
+        "fallback.hook",
+        "fallback.lived",
+        "fallback.turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-placement/article/venus/pisces",
+      "contentType": "continuous-placement",
+      "sourceBaselineSha256": "1d734af8ade432110fe2660853bbce25fba488f3633ec6e16d2dc317d73c12f5",
+      "editableFields": [
+        "tldrWhat",
+        "tldrTakeaway",
+        "placementArticle",
+        "fallback.hook",
+        "fallback.lived",
+        "fallback.turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-placement/article/mars/aries",
+      "contentType": "continuous-placement",
+      "sourceBaselineSha256": "1d3bc5056ddd810828a797fda5af5f9c97ac7790f0eb0ee667fae6a5fb1ab509",
+      "editableFields": [
+        "tldrWhat",
+        "tldrTakeaway",
+        "placementArticle",
+        "fallback.hook",
+        "fallback.lived",
+        "fallback.turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-placement/article/mars/taurus",
+      "contentType": "continuous-placement",
+      "sourceBaselineSha256": "9df17e422a9c8340565ab42a2848357953c4f839a00f7d09d3112f6aa1a30ff4",
+      "editableFields": [
+        "tldrWhat",
+        "tldrTakeaway",
+        "placementArticle",
+        "fallback.hook",
+        "fallback.lived",
+        "fallback.turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-placement/article/mars/gemini",
+      "contentType": "continuous-placement",
+      "sourceBaselineSha256": "72bc16488296906519ad537c95f25ee1ebc0010e8af63bf730e5661398f82d1b",
+      "editableFields": [
+        "tldrWhat",
+        "tldrTakeaway",
+        "placementArticle",
+        "fallback.hook",
+        "fallback.lived",
+        "fallback.turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-placement/article/mars/cancer",
+      "contentType": "continuous-placement",
+      "sourceBaselineSha256": "dd7717b51f54185283fefb5f99674b62ab21c7bbad716f515cd2e0080ab3a67d",
+      "editableFields": [
+        "tldrWhat",
+        "tldrTakeaway",
+        "placementArticle",
+        "fallback.hook",
+        "fallback.lived",
+        "fallback.turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-placement/article/mars/leo",
+      "contentType": "continuous-placement",
+      "sourceBaselineSha256": "1dccdbdc86230aa076a48439c281f95549df549f13afc71b60f4693e8bbfec28",
+      "editableFields": [
+        "tldrWhat",
+        "tldrTakeaway",
+        "placementArticle",
+        "fallback.hook",
+        "fallback.lived",
+        "fallback.turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-placement/article/mars/virgo",
+      "contentType": "continuous-placement",
+      "sourceBaselineSha256": "6d122f5fde54bf99cde7e8f86d9155942a13282b64ed81368c54b2452ec0d75d",
+      "editableFields": [
+        "tldrWhat",
+        "tldrTakeaway",
+        "placementArticle",
+        "fallback.hook",
+        "fallback.lived",
+        "fallback.turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-placement/article/mars/libra",
+      "contentType": "continuous-placement",
+      "sourceBaselineSha256": "12c7f5403854df3d5cb655ca8c0081c422d40621f2bfb80c85bb9b51d96251a7",
+      "editableFields": [
+        "tldrWhat",
+        "tldrTakeaway",
+        "placementArticle",
+        "fallback.hook",
+        "fallback.lived",
+        "fallback.turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-placement/article/mars/scorpio",
+      "contentType": "continuous-placement",
+      "sourceBaselineSha256": "f5ebc860ea807802ce046a3eb7629eef278fa2cbafbda17abadf77844beb9899",
+      "editableFields": [
+        "tldrWhat",
+        "tldrTakeaway",
+        "placementArticle",
+        "fallback.hook",
+        "fallback.lived",
+        "fallback.turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-placement/article/mars/sagittarius",
+      "contentType": "continuous-placement",
+      "sourceBaselineSha256": "e7b7cdd45549736d6f576e6077b1e0afa2c0c4f06d3da99fba102941e5436446",
+      "editableFields": [
+        "tldrWhat",
+        "tldrTakeaway",
+        "placementArticle",
+        "fallback.hook",
+        "fallback.lived",
+        "fallback.turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-placement/article/mars/capricorn",
+      "contentType": "continuous-placement",
+      "sourceBaselineSha256": "8ab3bd6d5adb40b72d138dc1f1ced8e8c7525e01952ca6998301b59606cc37e8",
+      "editableFields": [
+        "tldrWhat",
+        "tldrTakeaway",
+        "placementArticle",
+        "fallback.hook",
+        "fallback.lived",
+        "fallback.turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-placement/article/mars/aquarius",
+      "contentType": "continuous-placement",
+      "sourceBaselineSha256": "24e88f6ad4a89a0f38903d41441278a491de95f4e351b130ca96b7037a942205",
+      "editableFields": [
+        "tldrWhat",
+        "tldrTakeaway",
+        "placementArticle",
+        "fallback.hook",
+        "fallback.lived",
+        "fallback.turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-placement/article/mars/pisces",
+      "contentType": "continuous-placement",
+      "sourceBaselineSha256": "6ea9a63a57b27a718fc79b9f794237e613f7fd7a2ec70d2ce7c879318a1ed408",
+      "editableFields": [
+        "tldrWhat",
+        "tldrTakeaway",
+        "placementArticle",
+        "fallback.hook",
+        "fallback.lived",
+        "fallback.turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-placement/article/jupiter/aries",
+      "contentType": "continuous-placement",
+      "sourceBaselineSha256": "5c52f5384e428a0271769c5ffe8f83e76ea06a5b1bfa02b923f896e64320ad32",
+      "editableFields": [
+        "tldrWhat",
+        "tldrTakeaway",
+        "placementArticle",
+        "fallback.hook",
+        "fallback.lived",
+        "fallback.turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-placement/article/jupiter/taurus",
+      "contentType": "continuous-placement",
+      "sourceBaselineSha256": "a2a9b8904668365aa723f2bcef32c039a2e45fa51506a1b61d09cd8380657cf9",
+      "editableFields": [
+        "tldrWhat",
+        "tldrTakeaway",
+        "placementArticle",
+        "fallback.hook",
+        "fallback.lived",
+        "fallback.turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-placement/article/jupiter/gemini",
+      "contentType": "continuous-placement",
+      "sourceBaselineSha256": "a75e114ae5a6941d4b8b32a93db06bbc8503666d274d7ce6dc533bbd7fc0a6bb",
+      "editableFields": [
+        "tldrWhat",
+        "tldrTakeaway",
+        "placementArticle",
+        "fallback.hook",
+        "fallback.lived",
+        "fallback.turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-placement/article/jupiter/cancer",
+      "contentType": "continuous-placement",
+      "sourceBaselineSha256": "695cc623c025d2f6daf0290d07b1bf8ee0100fc69ccb10e2ebf0417fa1f84496",
+      "editableFields": [
+        "tldrWhat",
+        "tldrTakeaway",
+        "placementArticle",
+        "fallback.hook",
+        "fallback.lived",
+        "fallback.turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-placement/article/jupiter/leo",
+      "contentType": "continuous-placement",
+      "sourceBaselineSha256": "93587071a3471683dde1b076dbff8e08410f774a28b06c4b3750082ac66cf53d",
+      "editableFields": [
+        "tldrWhat",
+        "tldrTakeaway",
+        "placementArticle",
+        "fallback.hook",
+        "fallback.lived",
+        "fallback.turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-placement/article/jupiter/virgo",
+      "contentType": "continuous-placement",
+      "sourceBaselineSha256": "56f291c3500ec6cb8da1e753d0a079bd6ad651dd52d5ee747d09242d8c73c0a6",
+      "editableFields": [
+        "tldrWhat",
+        "tldrTakeaway",
+        "placementArticle",
+        "fallback.hook",
+        "fallback.lived",
+        "fallback.turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-placement/article/jupiter/libra",
+      "contentType": "continuous-placement",
+      "sourceBaselineSha256": "b5119a6d3666965299779b015c2e34bdf8723bbf8050488e5b83036124dd9c54",
+      "editableFields": [
+        "tldrWhat",
+        "tldrTakeaway",
+        "placementArticle",
+        "fallback.hook",
+        "fallback.lived",
+        "fallback.turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-placement/article/jupiter/scorpio",
+      "contentType": "continuous-placement",
+      "sourceBaselineSha256": "0ff272b174563026dab5c0595c2800c76dafdd4174c1417af2975bf2d6497c4a",
+      "editableFields": [
+        "tldrWhat",
+        "tldrTakeaway",
+        "placementArticle",
+        "fallback.hook",
+        "fallback.lived",
+        "fallback.turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-placement/article/jupiter/sagittarius",
+      "contentType": "continuous-placement",
+      "sourceBaselineSha256": "24c2829bce543043555404ee232fe492ef16a3bbab66f3fedac52118422336fe",
+      "editableFields": [
+        "tldrWhat",
+        "tldrTakeaway",
+        "placementArticle",
+        "fallback.hook",
+        "fallback.lived",
+        "fallback.turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-placement/article/jupiter/capricorn",
+      "contentType": "continuous-placement",
+      "sourceBaselineSha256": "f4398cd4791a80222d1b3bdb298ea3a4fa4e822ea99cebf6e92d604bc6a6fcef",
+      "editableFields": [
+        "tldrWhat",
+        "tldrTakeaway",
+        "placementArticle",
+        "fallback.hook",
+        "fallback.lived",
+        "fallback.turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-placement/article/jupiter/aquarius",
+      "contentType": "continuous-placement",
+      "sourceBaselineSha256": "218acbeb28ee606f6c7c611882a6b6624f07aca1b6c5204d4c9ded4f861358ca",
+      "editableFields": [
+        "tldrWhat",
+        "tldrTakeaway",
+        "placementArticle",
+        "fallback.hook",
+        "fallback.lived",
+        "fallback.turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-placement/article/jupiter/pisces",
+      "contentType": "continuous-placement",
+      "sourceBaselineSha256": "63d9a363a29bae3e7a3daea195ee12e957966c958cfbb71c413056630b08aff4",
+      "editableFields": [
+        "tldrWhat",
+        "tldrTakeaway",
+        "placementArticle",
+        "fallback.hook",
+        "fallback.lived",
+        "fallback.turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-placement/article/saturn/aries",
+      "contentType": "continuous-placement",
+      "sourceBaselineSha256": "4440ea9514ee418466999fb50835f8923807affd0027b9256500bced3aad3a4a",
+      "editableFields": [
+        "tldrWhat",
+        "tldrTakeaway",
+        "placementArticle",
+        "fallback.hook",
+        "fallback.lived",
+        "fallback.turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-placement/article/saturn/taurus",
+      "contentType": "continuous-placement",
+      "sourceBaselineSha256": "553ce7bd9a0eec13a824be0530cd59d9b68e03dbdd8fcd7c862ecb85627e6422",
+      "editableFields": [
+        "tldrWhat",
+        "tldrTakeaway",
+        "placementArticle",
+        "fallback.hook",
+        "fallback.lived",
+        "fallback.turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-placement/article/saturn/gemini",
+      "contentType": "continuous-placement",
+      "sourceBaselineSha256": "2de6143b9e79e10374a4ab19bf81dc9b940ccf76ebf4dfa8026801290306b98e",
+      "editableFields": [
+        "tldrWhat",
+        "tldrTakeaway",
+        "placementArticle",
+        "fallback.hook",
+        "fallback.lived",
+        "fallback.turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-placement/article/saturn/cancer",
+      "contentType": "continuous-placement",
+      "sourceBaselineSha256": "de540f8759c58dcae56d737828bce45dd4bd8c6c10cc56c93685567b44b19de0",
+      "editableFields": [
+        "tldrWhat",
+        "tldrTakeaway",
+        "placementArticle",
+        "fallback.hook",
+        "fallback.lived",
+        "fallback.turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-placement/article/saturn/leo",
+      "contentType": "continuous-placement",
+      "sourceBaselineSha256": "59f5ee19b25aa546cb553c2853efdc5ef4fd06a3c6facbc3b6da0f14df85a15d",
+      "editableFields": [
+        "tldrWhat",
+        "tldrTakeaway",
+        "placementArticle",
+        "fallback.hook",
+        "fallback.lived",
+        "fallback.turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-placement/article/saturn/virgo",
+      "contentType": "continuous-placement",
+      "sourceBaselineSha256": "3b48dd3ef039bd0ade16f38bf7544c4265cec76c09d0e0e968da202f9c67873f",
+      "editableFields": [
+        "tldrWhat",
+        "tldrTakeaway",
+        "placementArticle",
+        "fallback.hook",
+        "fallback.lived",
+        "fallback.turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-placement/article/saturn/libra",
+      "contentType": "continuous-placement",
+      "sourceBaselineSha256": "75a5d3af17471a88d8dd0a5ad13ab24eb71015e7aa09e04c2768b00cb9d955e6",
+      "editableFields": [
+        "tldrWhat",
+        "tldrTakeaway",
+        "placementArticle",
+        "fallback.hook",
+        "fallback.lived",
+        "fallback.turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-placement/article/saturn/scorpio",
+      "contentType": "continuous-placement",
+      "sourceBaselineSha256": "7e0b6395a64f2a4ba96792191f3b6d8e1fed06b0f112f8dfaae6b757296d5ca9",
+      "editableFields": [
+        "tldrWhat",
+        "tldrTakeaway",
+        "placementArticle",
+        "fallback.hook",
+        "fallback.lived",
+        "fallback.turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-placement/article/saturn/sagittarius",
+      "contentType": "continuous-placement",
+      "sourceBaselineSha256": "c75acb54a3b2aad5f2347d06c656488a239f7b6dc319705c635a0fa9cc83777e",
+      "editableFields": [
+        "tldrWhat",
+        "tldrTakeaway",
+        "placementArticle",
+        "fallback.hook",
+        "fallback.lived",
+        "fallback.turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-placement/article/saturn/capricorn",
+      "contentType": "continuous-placement",
+      "sourceBaselineSha256": "8c3a57b42f5b6d6f601968aafa80dcf44317e8dfadaaccc0241c2d00acc9b9b3",
+      "editableFields": [
+        "tldrWhat",
+        "tldrTakeaway",
+        "placementArticle",
+        "fallback.hook",
+        "fallback.lived",
+        "fallback.turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-placement/article/saturn/aquarius",
+      "contentType": "continuous-placement",
+      "sourceBaselineSha256": "ad99145f93943c69223e3036938147b2f3614579012ca61c3922d2c7afd4709e",
+      "editableFields": [
+        "tldrWhat",
+        "tldrTakeaway",
+        "placementArticle",
+        "fallback.hook",
+        "fallback.lived",
+        "fallback.turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-placement/article/saturn/pisces",
+      "contentType": "continuous-placement",
+      "sourceBaselineSha256": "ac4aac74bf0247474a7921bb3d9477e6b2587de415ff46f40dc09a5df525c2c3",
+      "editableFields": [
+        "tldrWhat",
+        "tldrTakeaway",
+        "placementArticle",
+        "fallback.hook",
+        "fallback.lived",
+        "fallback.turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-placement/article/uranus/aries",
+      "contentType": "continuous-placement",
+      "sourceBaselineSha256": "aa89a481309f300dbae5e08c9e32dc8f542dcb3cb0c2ee3fb24c9e8d765f1a6a",
+      "editableFields": [
+        "tldrWhat",
+        "tldrTakeaway",
+        "placementArticle",
+        "fallback.hook",
+        "fallback.lived",
+        "fallback.turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-placement/article/uranus/taurus",
+      "contentType": "continuous-placement",
+      "sourceBaselineSha256": "975b552558bc9bbda598ae3d710a5fe2615c85744ad925ed0dd64305d64cf924",
+      "editableFields": [
+        "tldrWhat",
+        "tldrTakeaway",
+        "placementArticle",
+        "fallback.hook",
+        "fallback.lived",
+        "fallback.turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-placement/article/uranus/gemini",
+      "contentType": "continuous-placement",
+      "sourceBaselineSha256": "9bd682e4e244bb9ec440ca1ef41d085e098e26d773ae2c2babb067e055b81594",
+      "editableFields": [
+        "tldrWhat",
+        "tldrTakeaway",
+        "placementArticle",
+        "fallback.hook",
+        "fallback.lived",
+        "fallback.turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-placement/article/uranus/cancer",
+      "contentType": "continuous-placement",
+      "sourceBaselineSha256": "8ba75ca831e411c64537cd3f42623dbb438a3779491b3996d84631b53c3259b9",
+      "editableFields": [
+        "tldrWhat",
+        "tldrTakeaway",
+        "placementArticle",
+        "fallback.hook",
+        "fallback.lived",
+        "fallback.turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-placement/article/uranus/leo",
+      "contentType": "continuous-placement",
+      "sourceBaselineSha256": "2fcce362de457f1f5dc1aa9ecb0508d9c195d88ab7add1494d2257109a15e15c",
+      "editableFields": [
+        "tldrWhat",
+        "tldrTakeaway",
+        "placementArticle",
+        "fallback.hook",
+        "fallback.lived",
+        "fallback.turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-placement/article/uranus/virgo",
+      "contentType": "continuous-placement",
+      "sourceBaselineSha256": "437b0276d584ec12d7f5e0f1118a4790225440b4a3178304d74c07be636769be",
+      "editableFields": [
+        "tldrWhat",
+        "tldrTakeaway",
+        "placementArticle",
+        "fallback.hook",
+        "fallback.lived",
+        "fallback.turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-placement/article/uranus/libra",
+      "contentType": "continuous-placement",
+      "sourceBaselineSha256": "79ea2edeb8980e2fb2b4dcc665e922c95df39b9b7b8c1ad4f5399039a3c6d07f",
+      "editableFields": [
+        "tldrWhat",
+        "tldrTakeaway",
+        "placementArticle",
+        "fallback.hook",
+        "fallback.lived",
+        "fallback.turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-placement/article/uranus/scorpio",
+      "contentType": "continuous-placement",
+      "sourceBaselineSha256": "41971e8f0fbb39bfd131d1ebb9c48f9d7b48d0f0b2b68ce694cdce34f87ae031",
+      "editableFields": [
+        "tldrWhat",
+        "tldrTakeaway",
+        "placementArticle",
+        "fallback.hook",
+        "fallback.lived",
+        "fallback.turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-placement/article/uranus/sagittarius",
+      "contentType": "continuous-placement",
+      "sourceBaselineSha256": "1f03f3d891ccd349dee11ccd36a6a627077d4f6bf7da77d5ca24b28a8c984290",
+      "editableFields": [
+        "tldrWhat",
+        "tldrTakeaway",
+        "placementArticle",
+        "fallback.hook",
+        "fallback.lived",
+        "fallback.turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-placement/article/uranus/capricorn",
+      "contentType": "continuous-placement",
+      "sourceBaselineSha256": "cc76b95cbbbdf9c5b3c87dc060b075bc8a5aa166b1bc16df086eb0abac2be8b0",
+      "editableFields": [
+        "tldrWhat",
+        "tldrTakeaway",
+        "placementArticle",
+        "fallback.hook",
+        "fallback.lived",
+        "fallback.turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-placement/article/uranus/aquarius",
+      "contentType": "continuous-placement",
+      "sourceBaselineSha256": "86cc3b29cd249db097451b53e9b2ff2fb409b23cf3a7dfe90884a6c9ad523dbd",
+      "editableFields": [
+        "tldrWhat",
+        "tldrTakeaway",
+        "placementArticle",
+        "fallback.hook",
+        "fallback.lived",
+        "fallback.turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-placement/article/uranus/pisces",
+      "contentType": "continuous-placement",
+      "sourceBaselineSha256": "14489c9236d112a654bf0ca06233a768d9151530cddd89279d39a3bba5fdacd2",
+      "editableFields": [
+        "tldrWhat",
+        "tldrTakeaway",
+        "placementArticle",
+        "fallback.hook",
+        "fallback.lived",
+        "fallback.turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-placement/article/neptune/aries",
+      "contentType": "continuous-placement",
+      "sourceBaselineSha256": "7b6da42208d6aab0ba4fb0b32a013c86262d0b67ad3718945c79df711c35116b",
+      "editableFields": [
+        "tldrWhat",
+        "tldrTakeaway",
+        "placementArticle",
+        "fallback.hook",
+        "fallback.lived",
+        "fallback.turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-placement/article/neptune/taurus",
+      "contentType": "continuous-placement",
+      "sourceBaselineSha256": "57a096ce83fc087a31c4a4f696ecd31416504f92b68560b1339e5e142d57f554",
+      "editableFields": [
+        "tldrWhat",
+        "tldrTakeaway",
+        "placementArticle",
+        "fallback.hook",
+        "fallback.lived",
+        "fallback.turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-placement/article/neptune/gemini",
+      "contentType": "continuous-placement",
+      "sourceBaselineSha256": "43fddfbad762430212bec50901c55bfdc449442d5c4a34af8df3fb06bb7e67cf",
+      "editableFields": [
+        "tldrWhat",
+        "tldrTakeaway",
+        "placementArticle",
+        "fallback.hook",
+        "fallback.lived",
+        "fallback.turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-placement/article/neptune/cancer",
+      "contentType": "continuous-placement",
+      "sourceBaselineSha256": "9d21e5323b2726506c7c4dee45a8251697a8155f90b464ac633d13360222376e",
+      "editableFields": [
+        "tldrWhat",
+        "tldrTakeaway",
+        "placementArticle",
+        "fallback.hook",
+        "fallback.lived",
+        "fallback.turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-placement/article/neptune/leo",
+      "contentType": "continuous-placement",
+      "sourceBaselineSha256": "bafebbfa7dea31b0a99a73c75f3e18234e4b0ccc42d53e6c0b45a4680de3c8e2",
+      "editableFields": [
+        "tldrWhat",
+        "tldrTakeaway",
+        "placementArticle",
+        "fallback.hook",
+        "fallback.lived",
+        "fallback.turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-placement/article/neptune/virgo",
+      "contentType": "continuous-placement",
+      "sourceBaselineSha256": "6d86476ca704798565b92b3fbd8e8ac62071fef1de70f28773abcef15815ab4e",
+      "editableFields": [
+        "tldrWhat",
+        "tldrTakeaway",
+        "placementArticle",
+        "fallback.hook",
+        "fallback.lived",
+        "fallback.turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-placement/article/neptune/libra",
+      "contentType": "continuous-placement",
+      "sourceBaselineSha256": "85e83f7cd6a48f1efe69632a86be970f51171b3f4ff6241b9913daedf70b2e59",
+      "editableFields": [
+        "tldrWhat",
+        "tldrTakeaway",
+        "placementArticle",
+        "fallback.hook",
+        "fallback.lived",
+        "fallback.turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-placement/article/neptune/scorpio",
+      "contentType": "continuous-placement",
+      "sourceBaselineSha256": "004972f92918cce3fb39a32d6e91ad5a7f179ecab4999615128e3c1124f50674",
+      "editableFields": [
+        "tldrWhat",
+        "tldrTakeaway",
+        "placementArticle",
+        "fallback.hook",
+        "fallback.lived",
+        "fallback.turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-placement/article/neptune/sagittarius",
+      "contentType": "continuous-placement",
+      "sourceBaselineSha256": "08ea7f35a784f2c63dd3f58a7b5d070e1533043e0dff3fb92c3d824b56d5c2d2",
+      "editableFields": [
+        "tldrWhat",
+        "tldrTakeaway",
+        "placementArticle",
+        "fallback.hook",
+        "fallback.lived",
+        "fallback.turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-placement/article/neptune/capricorn",
+      "contentType": "continuous-placement",
+      "sourceBaselineSha256": "ad962640d79de0aa72a4fb4fdd7803ea6b450d51b2b92b9b72e5683760397993",
+      "editableFields": [
+        "tldrWhat",
+        "tldrTakeaway",
+        "placementArticle",
+        "fallback.hook",
+        "fallback.lived",
+        "fallback.turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-placement/article/neptune/aquarius",
+      "contentType": "continuous-placement",
+      "sourceBaselineSha256": "4152c7d00f24aa263844bfe9d12ac5885d6a27f07cba7cb3045b7017480f40ae",
+      "editableFields": [
+        "tldrWhat",
+        "tldrTakeaway",
+        "placementArticle",
+        "fallback.hook",
+        "fallback.lived",
+        "fallback.turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-placement/article/neptune/pisces",
+      "contentType": "continuous-placement",
+      "sourceBaselineSha256": "6e63cb9053a905cd4eec387a73e1e4228bc78c9f6b7aa2eabe87cda24ba2377d",
+      "editableFields": [
+        "tldrWhat",
+        "tldrTakeaway",
+        "placementArticle",
+        "fallback.hook",
+        "fallback.lived",
+        "fallback.turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-placement/article/pluto/aries",
+      "contentType": "continuous-placement",
+      "sourceBaselineSha256": "104be83edd89e5c3f719e12b0dfaf356fe47f8ce2e82d7f89a60896fca871253",
+      "editableFields": [
+        "tldrWhat",
+        "tldrTakeaway",
+        "placementArticle",
+        "fallback.hook",
+        "fallback.lived",
+        "fallback.turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-placement/article/pluto/taurus",
+      "contentType": "continuous-placement",
+      "sourceBaselineSha256": "0402cda27d6e5bd22a15ef132a6327fd4147347dd948b5e63c88e20eb964a61b",
+      "editableFields": [
+        "tldrWhat",
+        "tldrTakeaway",
+        "placementArticle",
+        "fallback.hook",
+        "fallback.lived",
+        "fallback.turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-placement/article/pluto/gemini",
+      "contentType": "continuous-placement",
+      "sourceBaselineSha256": "7333955bb2615c68f5e2091ea78aa458536b1253a6f4afff5eabf2f1701530a4",
+      "editableFields": [
+        "tldrWhat",
+        "tldrTakeaway",
+        "placementArticle",
+        "fallback.hook",
+        "fallback.lived",
+        "fallback.turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-placement/article/pluto/cancer",
+      "contentType": "continuous-placement",
+      "sourceBaselineSha256": "22de0f897d4cf343abb891dce044ed22826108ede29327dc96bee5c801fd5973",
+      "editableFields": [
+        "tldrWhat",
+        "tldrTakeaway",
+        "placementArticle",
+        "fallback.hook",
+        "fallback.lived",
+        "fallback.turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-placement/article/pluto/leo",
+      "contentType": "continuous-placement",
+      "sourceBaselineSha256": "1a7b39ee81fd8d692b6c8e7e1db1b3c90618aa1162033a110112612b84b50927",
+      "editableFields": [
+        "tldrWhat",
+        "tldrTakeaway",
+        "placementArticle",
+        "fallback.hook",
+        "fallback.lived",
+        "fallback.turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-placement/article/pluto/virgo",
+      "contentType": "continuous-placement",
+      "sourceBaselineSha256": "cc46b357560a7265ff22de32658cd6be2715bd670314c3e4058786088c40ec0a",
+      "editableFields": [
+        "tldrWhat",
+        "tldrTakeaway",
+        "placementArticle",
+        "fallback.hook",
+        "fallback.lived",
+        "fallback.turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-placement/article/pluto/libra",
+      "contentType": "continuous-placement",
+      "sourceBaselineSha256": "efcea0ec81a25196a63956ab5e009e996a5c3782b03c24080fbb722379516ca3",
+      "editableFields": [
+        "tldrWhat",
+        "tldrTakeaway",
+        "placementArticle",
+        "fallback.hook",
+        "fallback.lived",
+        "fallback.turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-placement/article/pluto/scorpio",
+      "contentType": "continuous-placement",
+      "sourceBaselineSha256": "681529168dae2aab2c751d826b61a581afd1c0e5425fb65719344d5ac45370a7",
+      "editableFields": [
+        "tldrWhat",
+        "tldrTakeaway",
+        "placementArticle",
+        "fallback.hook",
+        "fallback.lived",
+        "fallback.turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-placement/article/pluto/sagittarius",
+      "contentType": "continuous-placement",
+      "sourceBaselineSha256": "c1a12a9df5158b9ef77d4ed321b4018851605c91a8b0814beab9136059800a4e",
+      "editableFields": [
+        "tldrWhat",
+        "tldrTakeaway",
+        "placementArticle",
+        "fallback.hook",
+        "fallback.lived",
+        "fallback.turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-placement/article/pluto/capricorn",
+      "contentType": "continuous-placement",
+      "sourceBaselineSha256": "0e50cb5bf470a4691781318553f358d490f24c1129395f67dbf4f172a912d18f",
+      "editableFields": [
+        "tldrWhat",
+        "tldrTakeaway",
+        "placementArticle",
+        "fallback.hook",
+        "fallback.lived",
+        "fallback.turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-placement/article/pluto/aquarius",
+      "contentType": "continuous-placement",
+      "sourceBaselineSha256": "38c6fda361f1e90ea4140e65bee0d609b1f6957cace7473f1d45b8d57662f068",
+      "editableFields": [
+        "tldrWhat",
+        "tldrTakeaway",
+        "placementArticle",
+        "fallback.hook",
+        "fallback.lived",
+        "fallback.turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-placement/article/pluto/pisces",
+      "contentType": "continuous-placement",
+      "sourceBaselineSha256": "7d842a798b4dfa0667d4821a3e51e181ccf2b964a598376bf493dc6a2931b5bc",
+      "editableFields": [
+        "tldrWhat",
+        "tldrTakeaway",
+        "placementArticle",
+        "fallback.hook",
+        "fallback.lived",
+        "fallback.turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-placement/article/chiron/aries",
+      "contentType": "continuous-placement",
+      "sourceBaselineSha256": "0e7e2170661868e971e725dac7c19f2b0f3b273385caba1e0cff67fc6f1acc72",
+      "editableFields": [
+        "tldrWhat",
+        "tldrTakeaway",
+        "placementArticle",
+        "fallback.hook",
+        "fallback.lived",
+        "fallback.turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-placement/article/chiron/taurus",
+      "contentType": "continuous-placement",
+      "sourceBaselineSha256": "645edb0d7ee2de44fde84c99919d62cca3ff0efb6d23adce221c854a3ebc4373",
+      "editableFields": [
+        "tldrWhat",
+        "tldrTakeaway",
+        "placementArticle",
+        "fallback.hook",
+        "fallback.lived",
+        "fallback.turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-placement/article/chiron/gemini",
+      "contentType": "continuous-placement",
+      "sourceBaselineSha256": "b728d9aaa57574a6d2c7f47a41968719414afd80fe7d902e93e468cbf317054d",
+      "editableFields": [
+        "tldrWhat",
+        "tldrTakeaway",
+        "placementArticle",
+        "fallback.hook",
+        "fallback.lived",
+        "fallback.turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-placement/article/chiron/cancer",
+      "contentType": "continuous-placement",
+      "sourceBaselineSha256": "6eb589b03694ee56d47c3bda14eec8fcc61a268d65c56e45961a9eb994c451e5",
+      "editableFields": [
+        "tldrWhat",
+        "tldrTakeaway",
+        "placementArticle",
+        "fallback.hook",
+        "fallback.lived",
+        "fallback.turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-placement/article/chiron/leo",
+      "contentType": "continuous-placement",
+      "sourceBaselineSha256": "b88e119d7484fbfd04beb90642f291aa913e37a6823f71e379f4babecc39956a",
+      "editableFields": [
+        "tldrWhat",
+        "tldrTakeaway",
+        "placementArticle",
+        "fallback.hook",
+        "fallback.lived",
+        "fallback.turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-placement/article/chiron/virgo",
+      "contentType": "continuous-placement",
+      "sourceBaselineSha256": "d4fbc00c806b714acf6609b424027c8cf62c1a9c636933a636e027a25148010a",
+      "editableFields": [
+        "tldrWhat",
+        "tldrTakeaway",
+        "placementArticle",
+        "fallback.hook",
+        "fallback.lived",
+        "fallback.turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-placement/article/chiron/libra",
+      "contentType": "continuous-placement",
+      "sourceBaselineSha256": "7f492b4227413b5ab962b7769d10c62c04a90cf86b3375d57787112bb73eb8a0",
+      "editableFields": [
+        "tldrWhat",
+        "tldrTakeaway",
+        "placementArticle",
+        "fallback.hook",
+        "fallback.lived",
+        "fallback.turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-placement/article/chiron/scorpio",
+      "contentType": "continuous-placement",
+      "sourceBaselineSha256": "b27e28bad6e1537c6f5a632727498fb76f19cfc35600c43cace48fd91153b407",
+      "editableFields": [
+        "tldrWhat",
+        "tldrTakeaway",
+        "placementArticle",
+        "fallback.hook",
+        "fallback.lived",
+        "fallback.turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-placement/article/chiron/sagittarius",
+      "contentType": "continuous-placement",
+      "sourceBaselineSha256": "332101025ff5d76373400efa0197113592848c33a21c88ce94f9a1bc37fddfb6",
+      "editableFields": [
+        "tldrWhat",
+        "tldrTakeaway",
+        "placementArticle",
+        "fallback.hook",
+        "fallback.lived",
+        "fallback.turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-placement/article/chiron/capricorn",
+      "contentType": "continuous-placement",
+      "sourceBaselineSha256": "224a9bc520e6474e3d4e335b28e0831204e96f191e7ad8e7a1228a89bc608be4",
+      "editableFields": [
+        "tldrWhat",
+        "tldrTakeaway",
+        "placementArticle",
+        "fallback.hook",
+        "fallback.lived",
+        "fallback.turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-placement/article/chiron/aquarius",
+      "contentType": "continuous-placement",
+      "sourceBaselineSha256": "0d0b38a0573a667107430a8d18cc843e06b6b97e5abf2308ad41fade2de9e6e5",
+      "editableFields": [
+        "tldrWhat",
+        "tldrTakeaway",
+        "placementArticle",
+        "fallback.hook",
+        "fallback.lived",
+        "fallback.turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-placement/article/chiron/pisces",
+      "contentType": "continuous-placement",
+      "sourceBaselineSha256": "e7c605666e397cb5c1250e6084facfbcf93b04fe4c01813dbe8eeb12a730a21f",
+      "editableFields": [
+        "tldrWhat",
+        "tldrTakeaway",
+        "placementArticle",
+        "fallback.hook",
+        "fallback.lived",
+        "fallback.turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-lunation/new-moon/aries",
+      "contentType": "new-moon",
+      "sourceBaselineSha256": "c2f80c665e759ea21d31269df7ad67ff1bb07b330766ff6130a4e4541537e46c",
+      "editableFields": [
+        "TLDR_What",
+        "TLDR_Takeaway",
+        "NewMoonArticle"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-lunation/new-moon/taurus",
+      "contentType": "new-moon",
+      "sourceBaselineSha256": "281705c81571ac601543bf5af18d8150e374fb232670d5997e9a2ea33e391772",
+      "editableFields": [
+        "TLDR_What",
+        "TLDR_Takeaway",
+        "NewMoonArticle"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-lunation/new-moon/gemini",
+      "contentType": "new-moon",
+      "sourceBaselineSha256": "f310654e0bdccffafd4c32e02157bdd00633c0234c461e2baeaa46a94bf19b75",
+      "editableFields": [
+        "TLDR_What",
+        "TLDR_Takeaway",
+        "NewMoonArticle"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-lunation/new-moon/cancer",
+      "contentType": "new-moon",
+      "sourceBaselineSha256": "af7690969643876b1aac0ced8d8653b8cd6267c8a9e6d6f88ae47cafaf596ae4",
+      "editableFields": [
+        "TLDR_What",
+        "TLDR_Takeaway",
+        "NewMoonArticle"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-lunation/new-moon/leo",
+      "contentType": "new-moon",
+      "sourceBaselineSha256": "74b9b80ccff6fc4c7b13b7496417146a142c981d8e1703d3b1f70e63ea2d99b9",
+      "editableFields": [
+        "TLDR_What",
+        "TLDR_Takeaway",
+        "NewMoonArticle"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-lunation/new-moon/virgo",
+      "contentType": "new-moon",
+      "sourceBaselineSha256": "5226371bdff0cae032a1d44dd89dd82b1e03ac04767439b2eed47d729ced1732",
+      "editableFields": [
+        "TLDR_What",
+        "TLDR_Takeaway",
+        "NewMoonArticle"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-lunation/new-moon/libra",
+      "contentType": "new-moon",
+      "sourceBaselineSha256": "4727480329d931261cc8b1bba01fd1bffce8fab3dc9f17c520d5dd6119a49a9f",
+      "editableFields": [
+        "TLDR_What",
+        "TLDR_Takeaway",
+        "NewMoonArticle"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-lunation/new-moon/scorpio",
+      "contentType": "new-moon",
+      "sourceBaselineSha256": "8b0f3fd8164f656160c48b798d0205a6a17e2d3283a30170077b1027b5f5a97e",
+      "editableFields": [
+        "TLDR_What",
+        "TLDR_Takeaway",
+        "NewMoonArticle"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-lunation/new-moon/sagittarius",
+      "contentType": "new-moon",
+      "sourceBaselineSha256": "fc61c39b7b5c113be5f56d2fb4ff22c7bfe3dd8beb3ee0af19cbc73f541091b5",
+      "editableFields": [
+        "TLDR_What",
+        "TLDR_Takeaway",
+        "NewMoonArticle"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-lunation/new-moon/capricorn",
+      "contentType": "new-moon",
+      "sourceBaselineSha256": "b3b29a7eaa1c056606adde88c118f759710a81296ee3ffd68c6306611fcd97ea",
+      "editableFields": [
+        "TLDR_What",
+        "TLDR_Takeaway",
+        "NewMoonArticle"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-lunation/new-moon/aquarius",
+      "contentType": "new-moon",
+      "sourceBaselineSha256": "9d203bd7c840d2026d85cc5f0f31c722b4f9bdbf03fba2f2fa362a4a2ade1802",
+      "editableFields": [
+        "TLDR_What",
+        "TLDR_Takeaway",
+        "NewMoonArticle"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-lunation/new-moon/pisces",
+      "contentType": "new-moon",
+      "sourceBaselineSha256": "8de5afb91f69293c493c200a90f376dfef3e9c5b4ddba43d91e44fd90eb3a5ce",
+      "editableFields": [
+        "TLDR_What",
+        "TLDR_Takeaway",
+        "NewMoonArticle"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-lunation/full-moon/aries",
+      "contentType": "full-moon",
+      "sourceBaselineSha256": "cda7f674a26206f07ec4c6b11e08477e793290e3c9c99647c12f21f0887eda41",
+      "editableFields": [
+        "TLDR_What",
+        "TLDR_Takeaway",
+        "FullMoonArticle"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-lunation/full-moon/taurus",
+      "contentType": "full-moon",
+      "sourceBaselineSha256": "dc82481e19977863e27be4a7b5f6c53d21d94970954caea3f93fd843d1e41623",
+      "editableFields": [
+        "TLDR_What",
+        "TLDR_Takeaway",
+        "FullMoonArticle"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-lunation/full-moon/gemini",
+      "contentType": "full-moon",
+      "sourceBaselineSha256": "4e814138a06e00b668200b6461b80bea74daa5752482cdc89c06466b77caab61",
+      "editableFields": [
+        "TLDR_What",
+        "TLDR_Takeaway",
+        "FullMoonArticle"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-lunation/full-moon/cancer",
+      "contentType": "full-moon",
+      "sourceBaselineSha256": "eb4511a3409e7e9566de9b58438861d2ac672672faa1812c1ef9942c6a9bfbb7",
+      "editableFields": [
+        "TLDR_What",
+        "TLDR_Takeaway",
+        "FullMoonArticle"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-lunation/full-moon/leo",
+      "contentType": "full-moon",
+      "sourceBaselineSha256": "6e75b17bafbe1823bb45b0feabb71f8696e1025014411e4b1d7cb3f9a1f49a4d",
+      "editableFields": [
+        "TLDR_What",
+        "TLDR_Takeaway",
+        "FullMoonArticle"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-lunation/full-moon/virgo",
+      "contentType": "full-moon",
+      "sourceBaselineSha256": "b64db810118ae206b71ddb3acbf92eb3669cc1d97b6678b65185041cf6a0ca63",
+      "editableFields": [
+        "TLDR_What",
+        "TLDR_Takeaway",
+        "FullMoonArticle"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-lunation/full-moon/libra",
+      "contentType": "full-moon",
+      "sourceBaselineSha256": "04be72f774b2fdc05489b1c120612a453293e96c75550e25f7c26ea50b82dc61",
+      "editableFields": [
+        "TLDR_What",
+        "TLDR_Takeaway",
+        "FullMoonArticle"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-lunation/full-moon/scorpio",
+      "contentType": "full-moon",
+      "sourceBaselineSha256": "17625ae09f68bcbc1c95a5a7d6c6ccb04c2dba88e36a5f0e994c5ad3541f5de2",
+      "editableFields": [
+        "TLDR_What",
+        "TLDR_Takeaway",
+        "FullMoonArticle"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-lunation/full-moon/sagittarius",
+      "contentType": "full-moon",
+      "sourceBaselineSha256": "f89aa7fe7db503a1361034500198b3272eb485d4ad7173c314db693242a9b112",
+      "editableFields": [
+        "TLDR_What",
+        "TLDR_Takeaway",
+        "FullMoonArticle"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-lunation/full-moon/capricorn",
+      "contentType": "full-moon",
+      "sourceBaselineSha256": "818cea5276bd979bcffc0a9bf99e714c5dde8f7d1bcc0be76406fd0bfee03ae5",
+      "editableFields": [
+        "TLDR_What",
+        "TLDR_Takeaway",
+        "FullMoonArticle"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-lunation/full-moon/aquarius",
+      "contentType": "full-moon",
+      "sourceBaselineSha256": "02a0fd8ae7a645cc14f0d7e5a5e8b4021ce41eeac7bd9a49a4534557fd5fc370",
+      "editableFields": [
+        "TLDR_What",
+        "TLDR_Takeaway",
+        "FullMoonArticle"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-lunation/full-moon/pisces",
+      "contentType": "full-moon",
+      "sourceBaselineSha256": "a7a98e87757d63338df042e7948ed78dc960f18bf5dff412d2d852abac89c679",
+      "editableFields": [
+        "TLDR_What",
+        "TLDR_Takeaway",
+        "FullMoonArticle"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-lunation/lunar-eclipse/2025-03-14-virgo",
+      "contentType": "eclipse-event",
+      "sourceBaselineSha256": "ccfca118caa80855795da39c950530d425db370d72f07b99978e804ab1a772f5",
+      "editableFields": [
+        "TLDR_What",
+        "TLDR_Takeaway",
+        "EventArticle"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-lunation/solar-eclipse/2025-03-29-aries",
+      "contentType": "eclipse-event",
+      "sourceBaselineSha256": "de5c1c6728a6345820548693c4848639f0f18885351c50f2594f9fc1d0081772",
+      "editableFields": [
+        "TLDR_What",
+        "TLDR_Takeaway",
+        "EventArticle"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-lunation/lunar-eclipse/2025-09-07-pisces",
+      "contentType": "eclipse-event",
+      "sourceBaselineSha256": "5d448fe6cab4e602b64c5ff3fb4f7873ba5856f638b198fd5ee6f7d3dbca9a3f",
+      "editableFields": [
+        "TLDR_What",
+        "TLDR_Takeaway",
+        "EventArticle"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-lunation/solar-eclipse/2025-09-21-virgo",
+      "contentType": "eclipse-event",
+      "sourceBaselineSha256": "a64d7bbe8cb0c026d80d6a7f10e57dee886495a1acd185125f6bf081a0366f97",
+      "editableFields": [
+        "TLDR_What",
+        "TLDR_Takeaway",
+        "EventArticle"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-lunation/fallback/solar-eclipse/north-node/aries",
+      "contentType": "eclipse-fallback",
+      "sourceBaselineSha256": "afadd128faca4ef8326e052cb9e6f5262caba5d21868bf9ce4a96b9dd513ad35",
+      "editableFields": [
+        "Hook",
+        "Lived",
+        "Turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-lunation/fallback/solar-eclipse/south-node/aries",
+      "contentType": "eclipse-fallback",
+      "sourceBaselineSha256": "d39e238385c74f356bad0ef319866a461be7998ff25d62bb8884b131463f5f38",
+      "editableFields": [
+        "Hook",
+        "Lived",
+        "Turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-lunation/fallback/lunar-eclipse/north-node/aries",
+      "contentType": "eclipse-fallback",
+      "sourceBaselineSha256": "7c4efcca08c849148be68ed6834321bcad99199e7de14194ca9a623ed9f18664",
+      "editableFields": [
+        "Hook",
+        "Lived",
+        "Turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-lunation/fallback/lunar-eclipse/south-node/aries",
+      "contentType": "eclipse-fallback",
+      "sourceBaselineSha256": "a826c2920e65f47c320f0f3bdbe6b20c196a2dea871d177222f24741c6c47567",
+      "editableFields": [
+        "Hook",
+        "Lived",
+        "Turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-lunation/fallback/solar-eclipse/north-node/taurus",
+      "contentType": "eclipse-fallback",
+      "sourceBaselineSha256": "9fd8736da8e6fe885851fb258c2351c20039bc63f4d72a57f52953db13437073",
+      "editableFields": [
+        "Hook",
+        "Lived",
+        "Turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-lunation/fallback/solar-eclipse/south-node/taurus",
+      "contentType": "eclipse-fallback",
+      "sourceBaselineSha256": "d410ccda1b40300a1abc9a7d855ede4b4f4a3f7aeecb577d527924247d012d3c",
+      "editableFields": [
+        "Hook",
+        "Lived",
+        "Turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-lunation/fallback/lunar-eclipse/north-node/taurus",
+      "contentType": "eclipse-fallback",
+      "sourceBaselineSha256": "fb5475952d7bc68b0f75e5dea1b4e1fac6b739e403bb7b15aaf0857da2e23a07",
+      "editableFields": [
+        "Hook",
+        "Lived",
+        "Turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-lunation/fallback/lunar-eclipse/south-node/taurus",
+      "contentType": "eclipse-fallback",
+      "sourceBaselineSha256": "8b8bee24edb5b616628dc45fe08265348256db1ca595be7a2f777f383432ebb6",
+      "editableFields": [
+        "Hook",
+        "Lived",
+        "Turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-lunation/fallback/solar-eclipse/north-node/gemini",
+      "contentType": "eclipse-fallback",
+      "sourceBaselineSha256": "9685d9ea45b99eb4e9708b0cb84f399a5c5dc6d906d21de6c1f579d1c0edb5f7",
+      "editableFields": [
+        "Hook",
+        "Lived",
+        "Turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-lunation/fallback/solar-eclipse/south-node/gemini",
+      "contentType": "eclipse-fallback",
+      "sourceBaselineSha256": "d2a1c7866176bf3b2e8d757fe3d242a44f19f3bc5b7d2edbe46989ef7f7c88f4",
+      "editableFields": [
+        "Hook",
+        "Lived",
+        "Turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-lunation/fallback/lunar-eclipse/north-node/gemini",
+      "contentType": "eclipse-fallback",
+      "sourceBaselineSha256": "43491b4aca5604409ccab802690296bf3a8b986cb4ec5f05d01e2b980ab67c38",
+      "editableFields": [
+        "Hook",
+        "Lived",
+        "Turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-lunation/fallback/lunar-eclipse/south-node/gemini",
+      "contentType": "eclipse-fallback",
+      "sourceBaselineSha256": "c2772539bed3001793e612629d464c79747657ef3fd08a19d58811eaa6a1f03b",
+      "editableFields": [
+        "Hook",
+        "Lived",
+        "Turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-lunation/fallback/solar-eclipse/north-node/cancer",
+      "contentType": "eclipse-fallback",
+      "sourceBaselineSha256": "2b4ce610695daea7a528a9454e37d321d3ee47fe666ca3088fcf4adbd162957e",
+      "editableFields": [
+        "Hook",
+        "Lived",
+        "Turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-lunation/fallback/solar-eclipse/south-node/cancer",
+      "contentType": "eclipse-fallback",
+      "sourceBaselineSha256": "422a86b02547a1766958fda39790f125fd895315a440ab5e9877ee547d856958",
+      "editableFields": [
+        "Hook",
+        "Lived",
+        "Turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-lunation/fallback/lunar-eclipse/north-node/cancer",
+      "contentType": "eclipse-fallback",
+      "sourceBaselineSha256": "8b9cc39c0bd9ee07ce7cd961c0a90a6dbfc023c59c864ce03942fb8b2376be4f",
+      "editableFields": [
+        "Hook",
+        "Lived",
+        "Turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-lunation/fallback/lunar-eclipse/south-node/cancer",
+      "contentType": "eclipse-fallback",
+      "sourceBaselineSha256": "ebf0e2232105b997668a9d8f2f4eeec7d5f626f9db2b8e1420e0784eecf0fb03",
+      "editableFields": [
+        "Hook",
+        "Lived",
+        "Turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-lunation/fallback/solar-eclipse/north-node/leo",
+      "contentType": "eclipse-fallback",
+      "sourceBaselineSha256": "a3da2668907f3f8c15a6a04ddedd8d248a818144e1b19ad9a7e98a0fa94d6a73",
+      "editableFields": [
+        "Hook",
+        "Lived",
+        "Turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-lunation/fallback/solar-eclipse/south-node/leo",
+      "contentType": "eclipse-fallback",
+      "sourceBaselineSha256": "582fdfc7bc85aa484eba94317c1b8eff1e8089f8c4fb391b5e8c3e7a2847a342",
+      "editableFields": [
+        "Hook",
+        "Lived",
+        "Turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-lunation/fallback/lunar-eclipse/north-node/leo",
+      "contentType": "eclipse-fallback",
+      "sourceBaselineSha256": "eddc7835b165ee161b61edcf1482cca12db626157f5ad6d92c77eee8daad59d4",
+      "editableFields": [
+        "Hook",
+        "Lived",
+        "Turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-lunation/fallback/lunar-eclipse/south-node/leo",
+      "contentType": "eclipse-fallback",
+      "sourceBaselineSha256": "67cc860d4a8d791896493d20e2f9e0e987b403524f69292e9f0e8a0cf6ff7e0e",
+      "editableFields": [
+        "Hook",
+        "Lived",
+        "Turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-lunation/fallback/solar-eclipse/north-node/virgo",
+      "contentType": "eclipse-fallback",
+      "sourceBaselineSha256": "b22c4ac56e74b251c022d961094d7cb99f88422b01268b26aa75ef405b278844",
+      "editableFields": [
+        "Hook",
+        "Lived",
+        "Turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-lunation/fallback/solar-eclipse/south-node/virgo",
+      "contentType": "eclipse-fallback",
+      "sourceBaselineSha256": "04492f4de675b997347d178876f45a5f44eb87cbf8004de0eb2aa800ead4641b",
+      "editableFields": [
+        "Hook",
+        "Lived",
+        "Turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-lunation/fallback/lunar-eclipse/north-node/virgo",
+      "contentType": "eclipse-fallback",
+      "sourceBaselineSha256": "7347128aa2762c8bb061559b075a426d3a8053c8826920926f69d48e1a948c17",
+      "editableFields": [
+        "Hook",
+        "Lived",
+        "Turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-lunation/fallback/lunar-eclipse/south-node/virgo",
+      "contentType": "eclipse-fallback",
+      "sourceBaselineSha256": "f755d393fbe85e2f344d6394f120f10d163b0b2f44163793e696fcb1ef0a7cef",
+      "editableFields": [
+        "Hook",
+        "Lived",
+        "Turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-lunation/fallback/solar-eclipse/north-node/libra",
+      "contentType": "eclipse-fallback",
+      "sourceBaselineSha256": "c821217a860e37e5dd9adafec561aae0a9b8faf5dffe8cb13c37d2f51c633fcc",
+      "editableFields": [
+        "Hook",
+        "Lived",
+        "Turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-lunation/fallback/solar-eclipse/south-node/libra",
+      "contentType": "eclipse-fallback",
+      "sourceBaselineSha256": "e8199f79f61dc27abe2c280d503c8abec055c7759f8e57a09a52ec31db9baa4f",
+      "editableFields": [
+        "Hook",
+        "Lived",
+        "Turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-lunation/fallback/lunar-eclipse/north-node/libra",
+      "contentType": "eclipse-fallback",
+      "sourceBaselineSha256": "1b2c02a4445b9c25edac412529e68ed7f175608c5f014d34007f96ef7e8c833d",
+      "editableFields": [
+        "Hook",
+        "Lived",
+        "Turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-lunation/fallback/lunar-eclipse/south-node/libra",
+      "contentType": "eclipse-fallback",
+      "sourceBaselineSha256": "2cf7edff0b833cda310eda3c1d3351d2295a6ff3baad68b3130b0d9baba2b049",
+      "editableFields": [
+        "Hook",
+        "Lived",
+        "Turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-lunation/fallback/solar-eclipse/north-node/scorpio",
+      "contentType": "eclipse-fallback",
+      "sourceBaselineSha256": "7e57f15fe8b81d3c4abf20c98255ec1c44ae47e50856c365da93e14eeeec2784",
+      "editableFields": [
+        "Hook",
+        "Lived",
+        "Turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-lunation/fallback/solar-eclipse/south-node/scorpio",
+      "contentType": "eclipse-fallback",
+      "sourceBaselineSha256": "2418cd97b303a45cbfec659462cd0dca482866e670ef8b5c2c19d5eb9998596b",
+      "editableFields": [
+        "Hook",
+        "Lived",
+        "Turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-lunation/fallback/lunar-eclipse/north-node/scorpio",
+      "contentType": "eclipse-fallback",
+      "sourceBaselineSha256": "694fe7568fd4b2bf728b96f0c98f81eb911a5333f4f18b6c14a3011bdfe3190d",
+      "editableFields": [
+        "Hook",
+        "Lived",
+        "Turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-lunation/fallback/lunar-eclipse/south-node/scorpio",
+      "contentType": "eclipse-fallback",
+      "sourceBaselineSha256": "834a47ae14d2342773efb0ea438d927cbc0718724aacf919d3e5fdc4d28c2096",
+      "editableFields": [
+        "Hook",
+        "Lived",
+        "Turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-lunation/fallback/solar-eclipse/north-node/sagittarius",
+      "contentType": "eclipse-fallback",
+      "sourceBaselineSha256": "3fe7be101f1fe4cacd3f485f4c10a7f145d9a57013b4f96b571cc3bad89968bc",
+      "editableFields": [
+        "Hook",
+        "Lived",
+        "Turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-lunation/fallback/solar-eclipse/south-node/sagittarius",
+      "contentType": "eclipse-fallback",
+      "sourceBaselineSha256": "69e447b70672e15d4acd7ba0c5dfaa8f8910aa4e3157b9836705f952389c7d45",
+      "editableFields": [
+        "Hook",
+        "Lived",
+        "Turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-lunation/fallback/lunar-eclipse/north-node/sagittarius",
+      "contentType": "eclipse-fallback",
+      "sourceBaselineSha256": "138c9a27af72c9bd3d4a5a0400154c7afb12eb0619ac803145f69c950a658ceb",
+      "editableFields": [
+        "Hook",
+        "Lived",
+        "Turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-lunation/fallback/lunar-eclipse/south-node/sagittarius",
+      "contentType": "eclipse-fallback",
+      "sourceBaselineSha256": "dd2d5894c809d3deb3e9b8439eeac20956705c949c6a993da6b662c87f02ad05",
+      "editableFields": [
+        "Hook",
+        "Lived",
+        "Turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-lunation/fallback/solar-eclipse/north-node/capricorn",
+      "contentType": "eclipse-fallback",
+      "sourceBaselineSha256": "1ecd1380db4c2a6ecf5d17c78f15f560b4e878cb765656faa403c5520ddf9751",
+      "editableFields": [
+        "Hook",
+        "Lived",
+        "Turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-lunation/fallback/solar-eclipse/south-node/capricorn",
+      "contentType": "eclipse-fallback",
+      "sourceBaselineSha256": "b1d192486398372cadaf0c8da7957e0feefa3cbeabe2fc9a175bbc797591ad64",
+      "editableFields": [
+        "Hook",
+        "Lived",
+        "Turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-lunation/fallback/lunar-eclipse/north-node/capricorn",
+      "contentType": "eclipse-fallback",
+      "sourceBaselineSha256": "e038082d462cf39b1477ea56adbbafbf8e03563295a3705cb2e332c5521738b7",
+      "editableFields": [
+        "Hook",
+        "Lived",
+        "Turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-lunation/fallback/lunar-eclipse/south-node/capricorn",
+      "contentType": "eclipse-fallback",
+      "sourceBaselineSha256": "bc9971d353c8098d9f52c8a26748528fcfae10418e149a64112e0f68eb722f67",
+      "editableFields": [
+        "Hook",
+        "Lived",
+        "Turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-lunation/fallback/solar-eclipse/north-node/aquarius",
+      "contentType": "eclipse-fallback",
+      "sourceBaselineSha256": "4f643369b2040a1e55f0278c42f3bd43b1309a08e335b3acaace0e44fd495e75",
+      "editableFields": [
+        "Hook",
+        "Lived",
+        "Turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-lunation/fallback/solar-eclipse/south-node/aquarius",
+      "contentType": "eclipse-fallback",
+      "sourceBaselineSha256": "b90824b86ad5500db84675fcac0abf84ca9eb333ae72dd1b076422408e0462fd",
+      "editableFields": [
+        "Hook",
+        "Lived",
+        "Turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-lunation/fallback/lunar-eclipse/north-node/aquarius",
+      "contentType": "eclipse-fallback",
+      "sourceBaselineSha256": "84b102b1e2b03fdcd34dcef16dba46fbcd80a78ebe5bb9a5eccf706a67c01093",
+      "editableFields": [
+        "Hook",
+        "Lived",
+        "Turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-lunation/fallback/lunar-eclipse/south-node/aquarius",
+      "contentType": "eclipse-fallback",
+      "sourceBaselineSha256": "c092ce1d49c7341364353f4538d992f0a980fc6cc25a3eb3bc7c0b8a3f4cb649",
+      "editableFields": [
+        "Hook",
+        "Lived",
+        "Turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-lunation/fallback/solar-eclipse/north-node/pisces",
+      "contentType": "eclipse-fallback",
+      "sourceBaselineSha256": "2362a219904a1fb5488312c220cd1800b276d70f76862df2246208e84fb8459f",
+      "editableFields": [
+        "Hook",
+        "Lived",
+        "Turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-lunation/fallback/solar-eclipse/south-node/pisces",
+      "contentType": "eclipse-fallback",
+      "sourceBaselineSha256": "1a1c629b341608e47c5eeac0f2c3f7d94ef43d5fca7c3e04f5bc9cb249e5c1e3",
+      "editableFields": [
+        "Hook",
+        "Lived",
+        "Turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-lunation/fallback/lunar-eclipse/north-node/pisces",
+      "contentType": "eclipse-fallback",
+      "sourceBaselineSha256": "906c25c8ee2913136289fbbd9923e2dc2b51fc38b7ed58a1b70355fe6cc51253",
+      "editableFields": [
+        "Hook",
+        "Lived",
+        "Turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-lunation/fallback/lunar-eclipse/south-node/pisces",
+      "contentType": "eclipse-fallback",
+      "sourceBaselineSha256": "f85d3834e725db7e3268c714bf9a734142b8776b972ff46952a53b1278b2fe82",
+      "editableFields": [
+        "Hook",
+        "Lived",
+        "Turn"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-v4/eclipse-generic/solar-eclipse/north-node",
+      "contentType": "generic-eclipse-fallback",
+      "sourceBaselineSha256": "79bb81d01917b371f4bb79863b43707888db3f980d6312e9dbf29361155000d0",
+      "editableFields": [
+        "TLDR_What",
+        "TLDR_Takeaway",
+        "ModifierArticle"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-v4/eclipse-generic/solar-eclipse/south-node",
+      "contentType": "generic-eclipse-fallback",
+      "sourceBaselineSha256": "ccff443e47044911159fc0750c5f24db9c815d92d442b73118704b94542e132d",
+      "editableFields": [
+        "TLDR_What",
+        "TLDR_Takeaway",
+        "ModifierArticle"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-v4/eclipse-generic/lunar-eclipse/north-node",
+      "contentType": "generic-eclipse-fallback",
+      "sourceBaselineSha256": "0efcdbf9310af9295ce990140917a79fe6cde205b987c218f5cc619fd48e0c2f",
+      "editableFields": [
+        "TLDR_What",
+        "TLDR_Takeaway",
+        "ModifierArticle"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-v4/eclipse-generic/lunar-eclipse/south-node",
+      "contentType": "generic-eclipse-fallback",
+      "sourceBaselineSha256": "260f520c5bd202b7de32d236708b2be7826e4ea159ada4c294b9910c3f70c3d1",
+      "editableFields": [
+        "TLDR_What",
+        "TLDR_Takeaway",
+        "ModifierArticle"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-nodes/axis/aries-libra",
+      "contentType": "node-axis",
+      "sourceBaselineSha256": "304ced7a6f737c3ccbaadaa2cc4a03fb717b2583f61219383affce8dbb8d4513",
+      "editableFields": [
+        "TLDR_What",
+        "TLDR_North",
+        "TLDR_South",
+        "TLDR_Takeaway",
+        "NodeAxisArticle"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-nodes/axis/taurus-scorpio",
+      "contentType": "node-axis",
+      "sourceBaselineSha256": "114813fb899c9fc751bd2426099a0687030650de4622a09935e73ee19a622158",
+      "editableFields": [
+        "TLDR_What",
+        "TLDR_North",
+        "TLDR_South",
+        "TLDR_Takeaway",
+        "NodeAxisArticle"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-nodes/axis/gemini-sagittarius",
+      "contentType": "node-axis",
+      "sourceBaselineSha256": "a0307f0db4848d9966d705268f5b1db3720b31deedaeef43c8527d48566e31fa",
+      "editableFields": [
+        "TLDR_What",
+        "TLDR_North",
+        "TLDR_South",
+        "TLDR_Takeaway",
+        "NodeAxisArticle"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-nodes/axis/cancer-capricorn",
+      "contentType": "node-axis",
+      "sourceBaselineSha256": "e54d319d9d20077d9075f224d668637fed5cff8096af850d131ead01c3b6f4cb",
+      "editableFields": [
+        "TLDR_What",
+        "TLDR_North",
+        "TLDR_South",
+        "TLDR_Takeaway",
+        "NodeAxisArticle"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-nodes/axis/leo-aquarius",
+      "contentType": "node-axis",
+      "sourceBaselineSha256": "6241a99c53c624a1cac5f587b5d926c22482f16113652bc814ce8e15bd130762",
+      "editableFields": [
+        "TLDR_What",
+        "TLDR_North",
+        "TLDR_South",
+        "TLDR_Takeaway",
+        "NodeAxisArticle"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-nodes/axis/virgo-pisces",
+      "contentType": "node-axis",
+      "sourceBaselineSha256": "92bdfbbfd67d0a4fb0960c748b8966595ddcafe0f1f41dd3d461767a9fd0682c",
+      "editableFields": [
+        "TLDR_What",
+        "TLDR_North",
+        "TLDR_South",
+        "TLDR_Takeaway",
+        "NodeAxisArticle"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-nodes/axis/libra-aries",
+      "contentType": "node-axis",
+      "sourceBaselineSha256": "823873cef26beb16e24eef9ff0b686c0f3bf1d587caa5581f89439ae12184666",
+      "editableFields": [
+        "TLDR_What",
+        "TLDR_North",
+        "TLDR_South",
+        "TLDR_Takeaway",
+        "NodeAxisArticle"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-nodes/axis/scorpio-taurus",
+      "contentType": "node-axis",
+      "sourceBaselineSha256": "002d02ea045716ddd1798ed57353a5c74d049fa5245bff71ba83d02972bc1ede",
+      "editableFields": [
+        "TLDR_What",
+        "TLDR_North",
+        "TLDR_South",
+        "TLDR_Takeaway",
+        "NodeAxisArticle"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-nodes/axis/sagittarius-gemini",
+      "contentType": "node-axis",
+      "sourceBaselineSha256": "3cce8b3ebf5f35fd47a1645f059c1fc5e11e4e0ad0117724f9d08605728fdc44",
+      "editableFields": [
+        "TLDR_What",
+        "TLDR_North",
+        "TLDR_South",
+        "TLDR_Takeaway",
+        "NodeAxisArticle"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-nodes/axis/capricorn-cancer",
+      "contentType": "node-axis",
+      "sourceBaselineSha256": "a992fbf692931fc1e831a09a99f2de8339cd8448c9fdf382ce1dc6ec2b883513",
+      "editableFields": [
+        "TLDR_What",
+        "TLDR_North",
+        "TLDR_South",
+        "TLDR_Takeaway",
+        "NodeAxisArticle"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-nodes/axis/aquarius-leo",
+      "contentType": "node-axis",
+      "sourceBaselineSha256": "c9489bf3f2abaddafea1cf0a0a2e01515306f17019734ac28cded22d921c2bd9",
+      "editableFields": [
+        "TLDR_What",
+        "TLDR_North",
+        "TLDR_South",
+        "TLDR_Takeaway",
+        "NodeAxisArticle"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-nodes/axis/pisces-virgo",
+      "contentType": "node-axis",
+      "sourceBaselineSha256": "0b8c7f567d82a62efaad5344aebff20488f7e5cc18bffd4bae1aba57bf3a970c",
+      "editableFields": [
+        "TLDR_What",
+        "TLDR_North",
+        "TLDR_South",
+        "TLDR_Takeaway",
+        "NodeAxisArticle"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-nodes/north-node/aries",
+      "contentType": "node-module",
+      "sourceBaselineSha256": "11186a1b35a0ea1548e20e867713a059df65ba490c8c4d3306f4b501a2b60b0e",
+      "editableFields": [
+        "ExactIngressCopy"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-nodes/north-node/taurus",
+      "contentType": "node-module",
+      "sourceBaselineSha256": "01d6d38f60154f37e0fc5ef7720a7807773d7ec685f9b3067c669196ce293a24",
+      "editableFields": [
+        "ExactIngressCopy"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-nodes/north-node/gemini",
+      "contentType": "node-module",
+      "sourceBaselineSha256": "b80279497c6bbc0a0777978e45eb8db23dfbfafdafcbf9c46267eb2dcd268b4e",
+      "editableFields": [
+        "ExactIngressCopy"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-nodes/north-node/cancer",
+      "contentType": "node-module",
+      "sourceBaselineSha256": "dc0eab68f48927fe9d656cb7f0cb74fb11febcf857cc711dde47344ff519e891",
+      "editableFields": [
+        "ExactIngressCopy"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-nodes/north-node/leo",
+      "contentType": "node-module",
+      "sourceBaselineSha256": "7eb9d1305d314ea6e2311e366611ee2cc35bc4b72e75b3ef3007e29aa665e5ed",
+      "editableFields": [
+        "ExactIngressCopy"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-nodes/north-node/virgo",
+      "contentType": "node-module",
+      "sourceBaselineSha256": "74849f263829c9187f0d73859bbff3287dbe4e22c96a33ba336458da78b01f1c",
+      "editableFields": [
+        "ExactIngressCopy"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-nodes/north-node/libra",
+      "contentType": "node-module",
+      "sourceBaselineSha256": "2d59c6fe79f3ea1effb2f1951021c660b513bfa3d04a977bffe77462e54ab8fc",
+      "editableFields": [
+        "ExactIngressCopy"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-nodes/north-node/scorpio",
+      "contentType": "node-module",
+      "sourceBaselineSha256": "9193f75218d1b1d2caca3461e172e296a6feebe9fc83fb81ff30665c03968b38",
+      "editableFields": [
+        "ExactIngressCopy"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-nodes/north-node/sagittarius",
+      "contentType": "node-module",
+      "sourceBaselineSha256": "3fb1cf6507162a642b12dd1f0264bd6dec57b482aa48952a6d2f8691e83af2bc",
+      "editableFields": [
+        "ExactIngressCopy"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-nodes/north-node/capricorn",
+      "contentType": "node-module",
+      "sourceBaselineSha256": "059f1870b89bdfe8b07ebeb65182573726f8909d7191e2cfb3440143912ae5d6",
+      "editableFields": [
+        "ExactIngressCopy"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-nodes/north-node/aquarius",
+      "contentType": "node-module",
+      "sourceBaselineSha256": "b80411f29bee9a7823b76c53338f409c5cbe0d57b8decfe92c59bc089978384c",
+      "editableFields": [
+        "ExactIngressCopy"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-nodes/north-node/pisces",
+      "contentType": "node-module",
+      "sourceBaselineSha256": "2f53de290196a6e07862cc7dffcfe017f583f1caf06bea42df7704ffb3fee3cf",
+      "editableFields": [
+        "ExactIngressCopy"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-nodes/south-node/aries",
+      "contentType": "node-module",
+      "sourceBaselineSha256": "54e1626884f927e2f92fb2804706cffe45ad987676f397c0f0454f56b7e20cb1",
+      "editableFields": [
+        "ExactIngressCopy"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-nodes/south-node/taurus",
+      "contentType": "node-module",
+      "sourceBaselineSha256": "e802106f133d4c30dca39db1b7428699fcdc6bdd02c2dca8e03ffa25e56751a3",
+      "editableFields": [
+        "ExactIngressCopy"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-nodes/south-node/gemini",
+      "contentType": "node-module",
+      "sourceBaselineSha256": "37117a6ed86a2a104c91e76c4fe0a43005f5c240e5b9ec06de66f0f1fa79869b",
+      "editableFields": [
+        "ExactIngressCopy"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-nodes/south-node/cancer",
+      "contentType": "node-module",
+      "sourceBaselineSha256": "f1c4c1887aa6f242ed0143a1a290722bd2b5c01a416d2740fec043f8434e11f9",
+      "editableFields": [
+        "ExactIngressCopy"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-nodes/south-node/leo",
+      "contentType": "node-module",
+      "sourceBaselineSha256": "9dc6c7498b7d79b1b3c41fec2787ce20d105044eaeb72c2d0f542faa999f85ad",
+      "editableFields": [
+        "ExactIngressCopy"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-nodes/south-node/virgo",
+      "contentType": "node-module",
+      "sourceBaselineSha256": "92e7abc1a6527a5c470616ffbf1df7b943eefbf53ba4e920d3a2f5b56cd2c074",
+      "editableFields": [
+        "ExactIngressCopy"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-nodes/south-node/libra",
+      "contentType": "node-module",
+      "sourceBaselineSha256": "49ac737375b7a7903c1cee9e95180fde70abe44d3d686ccd27b209a67405e124",
+      "editableFields": [
+        "ExactIngressCopy"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-nodes/south-node/scorpio",
+      "contentType": "node-module",
+      "sourceBaselineSha256": "2386927d3f0e063861c75f1e7ad789579d02408ddbb2883bce21d24b3e0dc1fc",
+      "editableFields": [
+        "ExactIngressCopy"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-nodes/south-node/sagittarius",
+      "contentType": "node-module",
+      "sourceBaselineSha256": "dfcfbdcf0c33e45bcb4210b2a9fc95fcd637e0ed5801f68f633e124eba596084",
+      "editableFields": [
+        "ExactIngressCopy"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-nodes/south-node/capricorn",
+      "contentType": "node-module",
+      "sourceBaselineSha256": "e7dbd440924811e8f29ae620b27cff8792eb0cee774f34a741a06586938a7e1c",
+      "editableFields": [
+        "ExactIngressCopy"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-nodes/south-node/aquarius",
+      "contentType": "node-module",
+      "sourceBaselineSha256": "14d62a3a4cb80408acd345ef3936319bbecbc523b5a288da0e131a41ec07e68c",
+      "editableFields": [
+        "ExactIngressCopy"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-nodes/south-node/pisces",
+      "contentType": "node-module",
+      "sourceBaselineSha256": "84dd8fed589e12da5656b57f23a7b1f6c2863dabb488fcd63bf1cb86a5b2031b",
+      "editableFields": [
+        "ExactIngressCopy"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-nodes/education",
+      "contentType": "node-education",
+      "sourceBaselineSha256": "b8c73bbf24f40036e871d3516be54235200b20fc33c98c44c417d1a16c986e1d",
+      "editableFields": [
+        "Article"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-lilith/article/aries",
+      "contentType": "lilith",
+      "sourceBaselineSha256": "765b489e1d5f44ef62b9fcf2841ac4ca344372faeee2ac57823b24dfedd4d075",
+      "editableFields": [
+        "TLDR_What",
+        "TLDR_Takeaway",
+        "LilithArticle"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-lilith/article/taurus",
+      "contentType": "lilith",
+      "sourceBaselineSha256": "c7b01916c1821958f752b577ec4e88de64131101a97ec74fd76184a489deee02",
+      "editableFields": [
+        "TLDR_What",
+        "TLDR_Takeaway",
+        "LilithArticle"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-lilith/article/gemini",
+      "contentType": "lilith",
+      "sourceBaselineSha256": "61035f8182c8411f0ffde03ea7b6e312ab492cfabc9de0e185a5c8a772144324",
+      "editableFields": [
+        "TLDR_What",
+        "TLDR_Takeaway",
+        "LilithArticle"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-lilith/article/cancer",
+      "contentType": "lilith",
+      "sourceBaselineSha256": "447bdfc4f96e70ae0c6e36202f5def27208947e6fde7a92e4c6914a0c373985a",
+      "editableFields": [
+        "TLDR_What",
+        "TLDR_Takeaway",
+        "LilithArticle"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-lilith/article/leo",
+      "contentType": "lilith",
+      "sourceBaselineSha256": "fa04bc1ba2ab02e66e34ab31df877541d854eee524208ae80056a80438814e6c",
+      "editableFields": [
+        "TLDR_What",
+        "TLDR_Takeaway",
+        "LilithArticle"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-lilith/article/virgo",
+      "contentType": "lilith",
+      "sourceBaselineSha256": "4a5b08e3f1cf744e9da8be1b2aff110b64cb6fb8c58b343bedee4c30c11d0f77",
+      "editableFields": [
+        "TLDR_What",
+        "TLDR_Takeaway",
+        "LilithArticle"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-lilith/article/libra",
+      "contentType": "lilith",
+      "sourceBaselineSha256": "31624939de43d26ee6a03fe62eac4dab9115c09bf45c34782397ff08cf730c44",
+      "editableFields": [
+        "TLDR_What",
+        "TLDR_Takeaway",
+        "LilithArticle"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-lilith/article/scorpio",
+      "contentType": "lilith",
+      "sourceBaselineSha256": "7612954b4eaea87f6614043479a6adcc8eafe75719c07083d67ad4c1e076f746",
+      "editableFields": [
+        "TLDR_What",
+        "TLDR_Takeaway",
+        "LilithArticle"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-lilith/article/sagittarius",
+      "contentType": "lilith",
+      "sourceBaselineSha256": "db1a0f2c70dd1cbea266fb2c8a2ac9109773230270e65e134b4510c703eceb47",
+      "editableFields": [
+        "TLDR_What",
+        "TLDR_Takeaway",
+        "LilithArticle"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-lilith/article/capricorn",
+      "contentType": "lilith",
+      "sourceBaselineSha256": "53bd3f63180fba3124c39230967b387b46dae2d0bddd68457559be7355eee104",
+      "editableFields": [
+        "TLDR_What",
+        "TLDR_Takeaway",
+        "LilithArticle"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-lilith/article/aquarius",
+      "contentType": "lilith",
+      "sourceBaselineSha256": "5150f7f74619499b83e36921e80a0f16e9feee431e59d94f02e7ad093f35d0b3",
+      "editableFields": [
+        "TLDR_What",
+        "TLDR_Takeaway",
+        "LilithArticle"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-lilith/article/pisces",
+      "contentType": "lilith",
+      "sourceBaselineSha256": "bbca1b92743c9b045a4b830918c32e04544dd5eb07ba2df21b2b813cd5d6d497",
+      "editableFields": [
+        "TLDR_What",
+        "TLDR_Takeaway",
+        "LilithArticle"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-lilith/station",
+      "contentType": "lilith-station",
+      "sourceBaselineSha256": "4dd6e452ed2acea9cad923395e018985fa86f1cce5f071006590a856d2892ac6",
+      "editableFields": [
+        "Headline",
+        "Body"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-placement/retrograde/mercury",
+      "contentType": "retrograde",
+      "sourceBaselineSha256": "3475171dd08d664254f49a25f2157cdcf94c2e5c6d2a7b3044bf1cef3f3cd8f7",
+      "editableFields": [
+        "CanonicalShort",
+        "Body"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-placement/retrograde/venus",
+      "contentType": "retrograde",
+      "sourceBaselineSha256": "38434f99f15b93e2aab042336460018022c282e15fb64bc1db149797a9109635",
+      "editableFields": [
+        "CanonicalShort",
+        "Body"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-placement/retrograde/mars",
+      "contentType": "retrograde",
+      "sourceBaselineSha256": "3f17822b64bdbe2a7dcc98b4a005a24dacb41db6cd99cc1237539fc1a89637ca",
+      "editableFields": [
+        "CanonicalShort",
+        "Body"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-placement/retrograde/jupiter",
+      "contentType": "retrograde",
+      "sourceBaselineSha256": "6719afdc48678fd3843899593d2da1568c45da2088faebf966687b49e242fc9f",
+      "editableFields": [
+        "CanonicalShort",
+        "Body"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-placement/retrograde/saturn",
+      "contentType": "retrograde",
+      "sourceBaselineSha256": "5b66b1a6d0b1dd67ecf2e20b3f1b5dbab32c8211c951c93a8c1e80956fc716c0",
+      "editableFields": [
+        "CanonicalShort",
+        "Body"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-placement/retrograde/uranus",
+      "contentType": "retrograde",
+      "sourceBaselineSha256": "61b48880ac3e56b42b8529ed72f42731aa9ea66b865f6683da1b5b86367d99c8",
+      "editableFields": [
+        "CanonicalShort",
+        "Body"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-placement/retrograde/neptune",
+      "contentType": "retrograde",
+      "sourceBaselineSha256": "9075cb7f2de97bf8ea9fdec24139245a61209d84c29c65e501efe7b2c14e1baa",
+      "editableFields": [
+        "CanonicalShort",
+        "Body"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-placement/retrograde/pluto",
+      "contentType": "retrograde",
+      "sourceBaselineSha256": "1b6f099819049a0b0f24b0da889f437f9df63bdaf707425bc801ab9d5f8830b6",
+      "editableFields": [
+        "CanonicalShort",
+        "Body"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-placement/retrograde/chiron",
+      "contentType": "retrograde",
+      "sourceBaselineSha256": "cf93459be05aa5f5159f508024f0076dd517bc15755f1e7cd897e38f50332b99",
+      "editableFields": [
+        "CanonicalShort",
+        "Body"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-context/venus/aries/retrograde/mercury-retrograde-aries",
+      "contentType": "overlay",
+      "sourceBaselineSha256": "5680bccab8b58e0fd2300a0f5b6d46e1fe748b93f958875c334c21f40f2ee871",
+      "editableFields": [
+        "OverlayBody",
+        "FallbackHookOverlay"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-context/venus/pisces/retrograde/mercury-retrograde-pisces",
+      "contentType": "overlay",
+      "sourceBaselineSha256": "3ff3997120b1c64bdae4cc0d6db0b13d738836cd62d7c552d8aa5487bb398064",
+      "editableFields": [
+        "OverlayBody",
+        "FallbackHookOverlay"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-context/venus/aries/retrograde/solar-eclipse-aries",
+      "contentType": "overlay",
+      "sourceBaselineSha256": "0201e6aa390720e14a5c46d68c5f4c62dd1fb42822c872d4799e94c20ffaf773",
+      "editableFields": [
+        "OverlayBody",
+        "FallbackHookOverlay"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-context/neptune/aries/direct/solar-eclipse-aries",
+      "contentType": "overlay",
+      "sourceBaselineSha256": "ba583d0653123a29dbc4f90fc56335304b65fb37730c01639851b157419796f7",
+      "editableFields": [
+        "OverlayBody",
+        "FallbackHookOverlay"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-context/new-moon/pisces/lunation/neptune-pisces",
+      "contentType": "overlay",
+      "sourceBaselineSha256": "f835de22392bd5ddcae8f52b248985c1ad4f68e2439703d82674b343a1b1da60",
+      "editableFields": [
+        "OverlayBody",
+        "FallbackHookOverlay"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-context/sun/pisces/direct/venus-retrograde-pisces",
+      "contentType": "overlay",
+      "sourceBaselineSha256": "fa8678f9b7c57133cdf4a5ec7282691b04a9bfb3217e29591abee613e4f0f92a",
+      "editableFields": [
+        "OverlayBody",
+        "FallbackHookOverlay"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-context/venus/pisces/retrograde/virgo-lunar-eclipse",
+      "contentType": "overlay",
+      "sourceBaselineSha256": "84032b8f507c34c99ab2b8404ddbb81d496556846b8b56bce83f78867ce88eab",
+      "editableFields": [
+        "OverlayBody",
+        "FallbackHookOverlay"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-context/venus/pisces/retrograde/neptune-ingress-aries",
+      "contentType": "overlay",
+      "sourceBaselineSha256": "721d02b5e24c7bb40c3cac04477fd9f16698209f33d539fc1988df602cae9968",
+      "editableFields": [
+        "OverlayBody",
+        "FallbackHookOverlay"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-context/mercury/aries/retrograde/virgo-lunar-eclipse",
+      "contentType": "overlay",
+      "sourceBaselineSha256": "a65f27305a54402b79e0a3bab4cc5f37891c6e083530e31d53f3f31b4aab2bc6",
+      "editableFields": [
+        "OverlayBody",
+        "FallbackHookOverlay"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-placement/seasonal-context/aries/northern",
+      "contentType": "seasonal",
+      "sourceBaselineSha256": "4535ee63c647863d435ac97a5786160067b6a7c74f2c65f702eb584312e06b75",
+      "editableFields": [
+        "Copy"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-placement/seasonal-context/aries/southern",
+      "contentType": "seasonal",
+      "sourceBaselineSha256": "9399a1c04fcdc2d01aa5e0fb79d174ad2773d123d58ab6d32a14efa4e75e8105",
+      "editableFields": [
+        "Copy"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-placement/seasonal-context/aries/neutral",
+      "contentType": "seasonal",
+      "sourceBaselineSha256": "0a02819153ac3b2e6825c0715dc97a6da227e6f387c87bdc3499b8417423dafd",
+      "editableFields": [
+        "Copy"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-placement/seasonal-context/cancer/northern",
+      "contentType": "seasonal",
+      "sourceBaselineSha256": "77ae203f183a24aeddbbf98e01f682e63209e40443443fe252aa7cd40a31f947",
+      "editableFields": [
+        "Copy"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-placement/seasonal-context/cancer/southern",
+      "contentType": "seasonal",
+      "sourceBaselineSha256": "30977a625e9173f7153ef89ea139e8e0150e284b2ba6579903a5d00dbe48791b",
+      "editableFields": [
+        "Copy"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-placement/seasonal-context/cancer/neutral",
+      "contentType": "seasonal",
+      "sourceBaselineSha256": "5fd03d0598321ba1424d5cbbbda683035eb12e12fb3c5e8e2445bc8fb4d46c30",
+      "editableFields": [
+        "Copy"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-placement/seasonal-context/libra/northern",
+      "contentType": "seasonal",
+      "sourceBaselineSha256": "ef00ffaa4645b924101b4925dcfe040bc347f6d276493918cb30f61aa94b27f2",
+      "editableFields": [
+        "Copy"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-placement/seasonal-context/libra/southern",
+      "contentType": "seasonal",
+      "sourceBaselineSha256": "397e155a3e555532665e7cd67dcae0af900af3bf62342a2f79a7282578e4a3e1",
+      "editableFields": [
+        "Copy"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-placement/seasonal-context/libra/neutral",
+      "contentType": "seasonal",
+      "sourceBaselineSha256": "9640ae689991b84744a0615a9442ed41a23a5a247fa679f826633050adcf4cb9",
+      "editableFields": [
+        "Copy"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-placement/seasonal-context/capricorn/northern",
+      "contentType": "seasonal",
+      "sourceBaselineSha256": "bd4218b0a6d677a5d9a9b95ff9fba3b15092b39656f66ca68a306c2cd3889565",
+      "editableFields": [
+        "Copy"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-placement/seasonal-context/capricorn/southern",
+      "contentType": "seasonal",
+      "sourceBaselineSha256": "11db4c64f630333e0fe8617a16b1e5c4637837e93ec1ddd7efd3a99032bc8881",
+      "editableFields": [
+        "Copy"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-placement/seasonal-context/capricorn/neutral",
+      "contentType": "seasonal",
+      "sourceBaselineSha256": "5c86d08455f4c52af28ddab271b8411ef1f23b64d6461e5298ea77ac8750331f",
+      "editableFields": [
+        "Copy"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-v4/template/continuous/sky-placement-v4-page",
+      "contentType": "template",
+      "sourceBaselineSha256": "41189d7d2a3d2624a79aa3901a7eb177b4556d02780794e312292dc7a140c9c5",
+      "editableFields": [
+        "Template"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-v4/template/continuous/sky-placement-v4-article-compile",
+      "contentType": "template",
+      "sourceBaselineSha256": "51946a8ec2f1a7155f65bd464ddd68d7b7b75d43ef85c48b01750440b9c876a4",
+      "editableFields": [
+        "Template"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-v4/template/continuous/sky-placement-v4-fallback",
+      "contentType": "template",
+      "sourceBaselineSha256": "bdc22143e3ea168f0b0d3cde16062aee584a5f2470fbf7b124af17fcc2fff0ff",
+      "editableFields": [
+        "Template"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-v4/template/continuous/sky-placement-v4-current-conditions",
+      "contentType": "template",
+      "sourceBaselineSha256": "c7a60f18e8893b921ca730cd32a17168369a3e716b0b6621261ededbfc48dba4",
+      "editableFields": [
+        "Template"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-v4/template/continuous/sky-placement-v4-aspects",
+      "contentType": "template",
+      "sourceBaselineSha256": "84b5a624cda74c71237562706fd56926f2d424f1ea1f19109da69b3dc543b7bc",
+      "editableFields": [
+        "Template"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-v4/template/continuous/Slot",
+      "contentType": "template",
+      "sourceBaselineSha256": "20497eb8603b4dbac254444fb69910208f95f91744a6b06fd564fc0cae79b752",
+      "editableFields": [
+        "Template"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-v4/template/continuous/planetTitle",
+      "contentType": "template",
+      "sourceBaselineSha256": "bfe0f5844a1f94ab06440c6c684278df13c1f446661ad3582fca8de9b6a106e1",
+      "editableFields": [
+        "Template"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-v4/template/continuous/signTitle",
+      "contentType": "template",
+      "sourceBaselineSha256": "435ee870cc195bda88f06b9097d7d8078bbf6b3655226936838a41e1293e8a58",
+      "editableFields": [
+        "Template"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-v4/template/continuous/dateLine",
+      "contentType": "template",
+      "sourceBaselineSha256": "5184ade3d2560076fd75e92b7271a6a41858ff9bbb9a517bc7adb82b5bda8163",
+      "editableFields": [
+        "Template"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-v4/template/continuous/tldrWhat",
+      "contentType": "template",
+      "sourceBaselineSha256": "d06f65b28bb2027fb2d7bf5fc55029e4066ed7c9fd48c766ff9fa24ba6f48195",
+      "editableFields": [
+        "Template"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-v4/template/continuous/tldrTakeaway",
+      "contentType": "template",
+      "sourceBaselineSha256": "6eb618141da29e33828e4cc5608b0cc33bcae58fd879fb5763460dea30fcaeb0",
+      "editableFields": [
+        "Template"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-v4/template/lunation/lunation-page-shell",
+      "contentType": "template",
+      "sourceBaselineSha256": "8a2b5f6d3bfa9ff769778d7ded41391a84206d51b401059ad2ae00c38a81d23b",
+      "editableFields": [
+        "Template"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-v4/template/lunation/new-moon-article",
+      "contentType": "template",
+      "sourceBaselineSha256": "ae6698aa2866ae15c4d1ae674d6e4386b192d96617b3743c7b840d90b660e80b",
+      "editableFields": [
+        "Template"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-v4/template/lunation/full-moon-article",
+      "contentType": "template",
+      "sourceBaselineSha256": "edfdf1b9abb13b0702ea738d3c6710c51d347ca9fedac310be350b48c01f97d3",
+      "editableFields": [
+        "Template"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-v4/template/lunation/solar-eclipse-article",
+      "contentType": "template",
+      "sourceBaselineSha256": "42489c09aa093794f18b3d5842e3abe928b191e49c9846b38853e655a2edcc28",
+      "editableFields": [
+        "Template"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-v4/template/lunation/lunar-eclipse-article",
+      "contentType": "template",
+      "sourceBaselineSha256": "046dd57dbbaa0709750396b99766ddc3edec34ef7f95dd273ec19f7627539c54",
+      "editableFields": [
+        "Template"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-v4/template/lunation/cycle-context",
+      "contentType": "template",
+      "sourceBaselineSha256": "a47d5a31967ba7f23be10ed959ed3d4c2f6f8d6b5ce619ccae9dfce1a49aaa5a",
+      "editableFields": [
+        "Template"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-v4/template/lunation/lunation-other-conditions",
+      "contentType": "template",
+      "sourceBaselineSha256": "d40a6d3a237557fa760beb4e4e4b3fcee7bfcba464b650c4f82b23b7a779cf45",
+      "editableFields": [
+        "Template"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-v4/template/lunation/lunation-key-aspects",
+      "contentType": "template",
+      "sourceBaselineSha256": "2477e70829bef622b885d79fac8c0e8e69d858859d48b6e9be9dec664925b141",
+      "editableFields": [
+        "Template"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-v4/template/nodes/node-axis-page",
+      "contentType": "template",
+      "sourceBaselineSha256": "ba0f2ec2a13c366e1ecb9735911bb87a2485326026f4a53735ab61341d44875b",
+      "editableFields": [
+        "Template"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-v4/template/nodes/north-focused-route",
+      "contentType": "template",
+      "sourceBaselineSha256": "a34b2a9df635299af0d998950dd0e2e32604724b909b87c0c6e79bb9d4381ab7",
+      "editableFields": [
+        "Template"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-v4/template/nodes/south-focused-route",
+      "contentType": "template",
+      "sourceBaselineSha256": "300d47e7a995cd7d54ff4335760681f9155ca2f1d4c19f65f8fc487c50993ebd",
+      "editableFields": [
+        "Template"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-v4/template/lilith/lilith-page",
+      "contentType": "template",
+      "sourceBaselineSha256": "779d2481bb108fba21ffa82b3cfec432dea45113499dfb8821a32950ab6fa7db",
+      "editableFields": [
+        "Template"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-v4/template/lilith/lilith-station",
+      "contentType": "template",
+      "sourceBaselineSha256": "86b9ab6edafedec8cf87ffda76907527b10e7e932cd986a9b3dac9288076a605",
+      "editableFields": [
+        "Template"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    },
+    {
+      "contentKey": "sky-v4/settings/contextual-overlays",
+      "contentType": "overlay-settings",
+      "sourceBaselineSha256": "baccda52e118e34b38c7322c0288dada92cafdfa49742cd6395cc4ac683eb18a",
+      "editableFields": [
+        "contextualTransitOverlaysEnabled",
+        "includeContextualOverlayInFallbackHook"
+      ],
+      "reviewStatus": "needs_review",
+      "servingEnabled": false
+    }
+  ]
+}
