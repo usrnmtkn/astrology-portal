@@ -94,6 +94,7 @@ import {
   type NatalPlacementPlanet,
   type NatalPlacementSign
 } from "./natalPlacementSources";
+import type { NatalAspectSelection } from "./natalAspectSources";
 
 import type {
   WritingSurfaceAdminAccess,
@@ -129,7 +130,9 @@ const SkyV4StudioReviewPanel = lazy(() => import("./SkyV4StudioReviewPanel"));
 const AdminPaginatedCollection = lazy(() => import("./AdminPaginatedCollection")) as typeof import("./AdminPaginatedCollection").AdminPaginatedCollection;
 const AdminFilterDisclosure = lazy(() => import("./AdminFilterDisclosure"));
 const TemplateReaderDrilldown = lazy(() => import("./TemplateReaderDrilldown"));
+const NatalPlacementReaderPreview = lazy(() => import("./NatalPlacementReaderPreview"));
 const NatalPlacementSourceFinder = lazy(() => import("./NatalPlacementSourceFinder"));
+const NatalAspectSourceFinder = lazy(() => import("./NatalAspectSourceFinder"));
 const DailyFallbackWorkspaceGuide = lazy(() => import("./DailyFallbackWorkspaceGuide"));
 const UnresolvedContentReview = lazy(async () => {
   const module = await import("./UnresolvedContentReview");
@@ -539,6 +542,7 @@ const primaryAdminNavItems: AdminNavItem[] = [
   { page: "unresolvedContent", label: "Unresolved Content", icon: Flag },
   { page: "content", label: "Content Library", icon: BookOpenText },
   { page: "content", label: "Natal Chart", icon: Orbit, key: "natal-chart", category: "Natal Chart" },
+  { page: "content", label: "Natal Aspects", icon: ArrowLeftRight, key: "natal-aspects", category: "Natal Aspects" },
   { page: "skyWriteups", label: "Sky Write-ups", icon: Moon },
   { page: "articles", label: "Articles", icon: FileText },
   { page: "compatibility", label: "Compatibility", icon: Users },
@@ -2517,6 +2521,9 @@ export function GeneratedContentAdminDashboard() {
   const [natalPlacementPlanet, setNatalPlacementPlanet] = useState<NatalPlacementPlanet | "">("");
   const [natalPlacementSign, setNatalPlacementSign] = useState<NatalPlacementSign | "">("");
   const [natalPlacementHouse, setNatalPlacementHouse] = useState<NatalPlacementHouse | "">("");
+  const [natalAspectFirst, setNatalAspectFirst] = useState("");
+  const [natalAspectName, setNatalAspectName] = useState("");
+  const [natalAspectSecond, setNatalAspectSecond] = useState("");
   const [fallbackSectionFilter, setFallbackSectionFilter] = useState<AdminFallbackHookSectionFilter>("all");
   const [fallbackRowSort, setFallbackRowSort] = useState<AdminFallbackRowSort>("type");
   const [surfaceAreaFilter, setSurfaceAreaFilter] = useState<WritingSurfaceAreaFilter>("all");
@@ -2967,7 +2974,12 @@ export function GeneratedContentAdminDashboard() {
   }, [activePage]);
 
   useEffect(() => {
-    const needsExtendedInventory = activePage === "skyWriteups" || activePage === "unresolvedContent" || isCompositionPage(activePage) || showReferenceRows || showRetiredRows;
+    const needsExtendedInventory = activePage === "skyWriteups"
+      || activePage === "unresolvedContent"
+      || isCompositionPage(activePage)
+      || (activePage === "content" && categoryFilter === "Natal Aspects")
+      || showReferenceRows
+      || showRetiredRows;
     if (!needsExtendedInventory || allRowsLoaded || loadState !== "loaded" || !secret.trim()) return;
     let cancelled = false;
     setIsLoading(true);
@@ -2976,7 +2988,7 @@ export function GeneratedContentAdminDashboard() {
         if (cancelled) return;
         setRows(allRows);
         setAllRowsLoaded(true);
-        setMessage(`Loaded the extended ${allRows.length}-row inventory for Composition and advanced visibility.`);
+        setMessage(`Loaded the extended ${allRows.length}-row content inventory.`);
       })
       .catch((error) => {
         if (cancelled) return;
@@ -2989,7 +3001,7 @@ export function GeneratedContentAdminDashboard() {
       cancelled = true;
       setIsLoading(false);
     };
-  }, [activePage, showReferenceRows, showRetiredRows, allRowsLoaded, loadState, secret]);
+  }, [activePage, categoryFilter, showReferenceRows, showRetiredRows, allRowsLoaded, loadState, secret]);
 
   useEffect(() => {
     function applyHash() {
@@ -3238,6 +3250,9 @@ export function GeneratedContentAdminDashboard() {
     const natalPlanet = params.get("planet") as NatalPlacementPlanet | null;
     const natalSign = params.get("sign") as NatalPlacementSign | null;
     const natalHouse = params.get("house") as NatalPlacementHouse | null;
+    const natalAspectFirstParam = params.get("first") ?? "";
+    const natalAspectNameParam = params.get("aspect") ?? "";
+    const natalAspectSecondParam = params.get("second") ?? "";
 
     setActivePage(page);
     setCategoryFilter(category && categoryFilters.some((filter) => filter.key === category) ? category : "all");
@@ -3255,6 +3270,9 @@ export function GeneratedContentAdminDashboard() {
     setNatalPlacementPlanet(page === "content" && natalPlanet && natalPlacementPlanets.includes(natalPlanet) ? natalPlanet : "");
     setNatalPlacementSign(page === "content" && natalSign && natalPlacementSigns.includes(natalSign) ? natalSign : "");
     setNatalPlacementHouse(page === "content" && natalHouse && natalPlacementHouses.includes(natalHouse) ? natalHouse : "");
+    setNatalAspectFirst(page === "content" && category === "Natal Aspects" ? natalAspectFirstParam : "");
+    setNatalAspectName(page === "content" && category === "Natal Aspects" ? natalAspectNameParam : "");
+    setNatalAspectSecond(page === "content" && category === "Natal Aspects" ? natalAspectSecondParam : "");
     setFallbackSectionFilter(section && fallbackSections.some((filter) => filter.key === section) ? section : "all");
     setSurfaceAreaFilter(area && ["all", "sky", "you", "friends", "calendar", "reports", "settings"].includes(area) ? area : "all");
     setSurfaceStatusFilter(status && ["all", "complete", "partial", "missing"].includes(status) ? status : "all");
@@ -3336,6 +3354,9 @@ export function GeneratedContentAdminDashboard() {
       setNatalPlacementPlanet("");
       setNatalPlacementSign("");
       setNatalPlacementHouse("");
+      setNatalAspectFirst("");
+      setNatalAspectName("");
+      setNatalAspectSecond("");
     }
     navigateAdminPage(
       item.page,
@@ -3397,7 +3418,11 @@ export function GeneratedContentAdminDashboard() {
     setSourceDraftError(null);
     setIsLoading(true);
     try {
-      const needsExtendedInventory = activePage === "unresolvedContent" || isCompositionPage(activePage) || showReferenceRows || showRetiredRows;
+      const needsExtendedInventory = activePage === "unresolvedContent"
+        || isCompositionPage(activePage)
+        || (activePage === "content" && categoryFilter === "Natal Aspects")
+        || showReferenceRows
+        || showRetiredRows;
       const loadsCompatibilityFirst = activePage === "compatibility";
       const [generatedResult, reviewResult, usersResult, sourceDraftResult, runtimeReviewResult] = await Promise.allSettled([
         loadAllGeneratedContentRows(
@@ -4613,13 +4638,22 @@ export function GeneratedContentAdminDashboard() {
   }
 
   const natalChartWorkspaceActive = activePage === "content" && categoryFilter === "Natal Chart";
-  const currentPageTitle = natalChartWorkspaceActive ? "Natal Chart Write-ups" : adminPageTitle(activePage);
+  const natalAspectWorkspaceActive = activePage === "content" && categoryFilter === "Natal Aspects";
+  const currentPageTitle = natalChartWorkspaceActive
+    ? "Natal Chart Write-ups"
+    : natalAspectWorkspaceActive
+      ? "Natal Aspect Write-ups"
+      : adminPageTitle(activePage);
   const currentPageDescription = natalChartWorkspaceActive
     ? "Find the exact writing for a planet or point in its sign and house."
-    : adminPageDescription(activePage);
+    : natalAspectWorkspaceActive
+      ? "Find and edit the exact writing for two natal bodies and their aspect."
+      : adminPageDescription(activePage);
   const currentPageBreadcrumbs = natalChartWorkspaceActive
     ? [{ label: "Admin", page: "reviewQueue" as AdminDashboardPage }, { label: "Write", page: "content" as AdminDashboardPage }, { label: "Natal chart" }]
-    : adminPageBreadcrumbItems(activePage);
+    : natalAspectWorkspaceActive
+      ? [{ label: "Admin", page: "reviewQueue" as AdminDashboardPage }, { label: "Write", page: "content" as AdminDashboardPage }, { label: "Natal aspects" }]
+      : adminPageBreadcrumbItems(activePage);
 
   const nav = (
     <aside className="admin-sidebar" data-mobile-open={isMobileNavOpen ? "true" : "false"}>
@@ -4651,7 +4685,7 @@ export function GeneratedContentAdminDashboard() {
             const isActive = item.category
               ? activePage === item.page && categoryFilter === item.category
               : item.page === "content"
-                ? activePage === "content" && categoryFilter !== "Natal Chart"
+                ? activePage === "content" && categoryFilter !== "Natal Chart" && categoryFilter !== "Natal Aspects"
                 : item.page === "compositionMap"
                   ? isCompositionPage(activePage)
                   : activePage === item.page;
@@ -4659,7 +4693,11 @@ export function GeneratedContentAdminDashboard() {
               <button
                 key={item.key ?? item.page}
                 type="button"
-                title={item.category === "Natal Chart" ? "Planets and points in signs and houses" : undefined}
+                title={item.category === "Natal Chart"
+                  ? "Planets and points in signs and houses"
+                  : item.category === "Natal Aspects"
+                    ? "Exact aspects between two natal planets or points"
+                    : undefined}
                 onClick={() => navigatePrimaryAdminItem(item)}
                 aria-current={isActive ? "page" : undefined}
               >
@@ -4919,13 +4957,23 @@ export function GeneratedContentAdminDashboard() {
           <section className="admin-template-page">
             <section className="admin-content-toolbar admin-content-library-toolbar" aria-label="Content controls">
               <div className="admin-content-toolbar-copy">
-                <p className="admin-eyebrow">{natalChartWorkspaceActive ? "Natal chart workspace" : "Full content library"}</p>
-                <h2>{natalChartWorkspaceActive ? "Find a planet, sign, and house write-up" : "All editable content rows"}</h2>
+                <p className="admin-eyebrow">{natalChartWorkspaceActive
+                  ? "Natal chart workspace"
+                  : natalAspectWorkspaceActive
+                    ? "Natal aspect workspace"
+                    : "Full content library"}</p>
+                <h2>{natalChartWorkspaceActive
+                  ? "Find a planet, sign, and house write-up"
+                  : natalAspectWorkspaceActive
+                    ? "Find an exact natal aspect write-up"
+                    : "All editable content rows"}</h2>
                 <p>{natalChartWorkspaceActive
                   ? "Choose a planet or point, its zodiac sign, and its house. You will see the reader-facing write-up first, followed by the saved passages that build it."
+                  : natalAspectWorkspaceActive
+                    ? "Choose the first planet or point, the aspect, and the second planet or point. Open any matching passage in the standard editor."
                   : `${filteredRows.length} rows shown across articles, phrasebank copy, vocabulary, templates, fallback hooks, and source rows. Runtime serves only Published rows in the serving lane with no review hold.`}</p>
               </div>
-              {!natalChartWorkspaceActive && <div className="admin-new-actions" aria-label="Content admin shortcuts">
+              {!natalChartWorkspaceActive && !natalAspectWorkspaceActive && <div className="admin-new-actions" aria-label="Content admin shortcuts">
                 <button type="button" onClick={() => navigateAdminPage("reviewQueue")}>
                   <Check size={16} aria-hidden="true" />
                   Review Queue
@@ -4950,6 +4998,13 @@ export function GeneratedContentAdminDashboard() {
                   {renderEditor()}
                 </>
               )
+              : natalAspectWorkspaceActive
+                ? (
+                  <>
+                    {renderNatalAspectSourceFinder()}
+                    {renderEditor()}
+                  </>
+                )
               : (
                 <>
                   {renderContentFilters()}
@@ -5647,6 +5702,38 @@ export function GeneratedContentAdminDashboard() {
           rows={rows}
           secret={secret}
           sign={natalPlacementSign}
+        />
+      </Suspense>
+    );
+  }
+
+  function updateNatalAspectSelection(next: Partial<NatalAspectSelection>) {
+    const first = next.first ?? natalAspectFirst;
+    const aspect = next.aspect ?? natalAspectName;
+    const second = next.second ?? natalAspectSecond;
+    setNatalAspectFirst(first);
+    setNatalAspectName(aspect);
+    setNatalAspectSecond(second);
+
+    const params = new URLSearchParams({ category: "Natal Aspects" });
+    if (first) params.set("first", first);
+    if (aspect) params.set("aspect", aspect);
+    if (second) params.set("second", second);
+    setAdminHash(adminHashForPage("content", params), "replace");
+  }
+
+  function renderNatalAspectSourceFinder() {
+    if (categoryFilter !== "Natal Aspects") return null;
+    return (
+      <Suspense fallback={<div className="admin-empty-state" role="status"><strong>Loading natal aspect finder…</strong></div>}>
+        <NatalAspectSourceFinder
+          aspect={natalAspectName}
+          first={natalAspectFirst}
+          isLoading={isLoading}
+          onOpenSource={(contentKey, label) => void openContentKeyRow(contentKey, label)}
+          onSelectionChange={updateNatalAspectSelection}
+          rows={rows}
+          second={natalAspectSecond}
         />
       </Suspense>
     );
@@ -6451,6 +6538,11 @@ export function GeneratedContentAdminDashboard() {
     const showPackageBodyThey = isPackageDraft
       && !isVocabularyDraft
       && (typeof packageRecord.body_they === "string" || typeof objectRecord(currentDraft.sections)?.body_they === "string");
+    const isYouOnlyNatalExactDraft = categoryFilter === "Natal Chart"
+      && packageRecord.reader_only === true
+      && packageRecord.render_policy === "reader-only-exact-lived-v1";
+    const showNatalFriendEditor = isYouOnlyNatalExactDraft
+      && Boolean(natalPlacementPlanet && natalPlacementSign && natalPlacementHouse);
     const showGenericBody = isVocabularyDraft || !isPackageDraft || (!showPackageBodyYou && !isContinuousSkyPackage);
     const showSummaryField = !isPackageDraft || typeof packageRecord.summary === "string" || Boolean(currentDraft.summary.trim());
     const skyWriteupParent = skyWriteupParentId ? rows.find((row) => row.id === skyWriteupParentId) ?? null : null;
@@ -6843,7 +6935,9 @@ export function GeneratedContentAdminDashboard() {
               : isTemplateDraft
                 ? "Template purpose (optional)"
                 : "TL;DR / summary");
-    const bodyFieldLabel = isVocabularyDraft && isPackageDraft
+    const bodyFieldLabel = isYouOnlyNatalExactDraft
+      ? "You view exact copy"
+      : isVocabularyDraft && isPackageDraft
       ? vocabularyHasTheyVersion ? "You version" : "Variable value"
       : isVocabularyDraft
         ? "Reusable phrase"
@@ -7728,10 +7822,11 @@ export function GeneratedContentAdminDashboard() {
             </label>
           )}
           {showPackageBodyYou && !skyFallbackEditor && (
-            <label className="admin-review-copy-editor">
-              <span>{fallbackEditorGuidance?.bodyYouLabel ?? "body_you"}</span>
-              <textarea aria-label={fallbackEditorGuidance?.bodyYouLabel ?? "body_you"} value={packageFieldString(currentDraft, "body_you")} onChange={(event) => setDraft(setPackageSectionField(currentDraft, "body_you", event.target.value))} />
+            <label className="admin-review-copy-editor" data-reader-audience="you">
+              <span>{fallbackEditorGuidance?.bodyYouLabel ?? "You view copy"}</span>
+              <textarea aria-label={fallbackEditorGuidance?.bodyYouLabel ?? "You view copy"} value={packageFieldString(currentDraft, "body_you")} onChange={(event) => setDraft(setPackageSectionField(currentDraft, "body_you", event.target.value))} />
               {fallbackEditorGuidance && <small className="admin-field-hint">{fallbackEditorGuidance.bodyYouHint}</small>}
+              {!fallbackEditorGuidance && <small className="admin-field-hint">Used when someone reads their own natal chart in You.</small>}
             </label>
           )}
           {isContinuousSkyPackage && !skyFallbackEditor && ([
@@ -7750,10 +7845,11 @@ export function GeneratedContentAdminDashboard() {
             </label>
           ))}
           {showPackageBodyThey && !skyFallbackEditor && (
-            <label className="admin-review-copy-editor">
-              <span>{fallbackEditorGuidance?.bodyTheyLabel ?? "body_they"}</span>
-              <textarea aria-label={fallbackEditorGuidance?.bodyTheyLabel ?? "body_they"} value={packageFieldString(currentDraft, "body_they")} onChange={(event) => setDraft(setPackageSectionField(currentDraft, "body_they", event.target.value))} />
+            <label className="admin-review-copy-editor" data-reader-audience="they">
+              <span>{fallbackEditorGuidance?.bodyTheyLabel ?? "Friend view copy"}</span>
+              <textarea aria-label={fallbackEditorGuidance?.bodyTheyLabel ?? "Friend view copy"} value={packageFieldString(currentDraft, "body_they")} onChange={(event) => setDraft(setPackageSectionField(currentDraft, "body_they", event.target.value))} />
               {fallbackEditorGuidance && <small className="admin-field-hint">{fallbackEditorGuidance.bodyTheyHint}</small>}
+              {!fallbackEditorGuidance && <small className="admin-field-hint">Used when the app describes this person to a friend or another chart viewer.</small>}
             </label>
           )}
           {!compiledSkyArticleEdition && showGenericBody && !skyFallbackEditor && (
@@ -7769,10 +7865,33 @@ export function GeneratedContentAdminDashboard() {
               <small className="admin-field-metrics">{fieldMetrics(currentDraft.body)}</small>
               {fallbackEditorGuidance && <small className="admin-field-hint">{fallbackEditorGuidance.bodyHint}</small>}
               {!fallbackEditorGuidance && !isVocabularyDraft && !isAuthoredPackageCard && <small className="admin-field-hint">{isTemplateDraft ? "The assembly pattern the app renders. Keep variable names inside double braces." : "The complete reader-facing write-up. Stored internally as Body."}</small>}
+              {isYouOnlyNatalExactDraft && <small className="admin-field-hint">This exact override is used only in You. The Friends version is composed from separate Friend source writing below.</small>}
               {isVocabularyDraft && isPackageDraft && <small className="admin-field-hint">{vocabularyHasTheyVersion
                 ? "Used when the app speaks directly to the person reading their own chart."
                 : "This is the exact editable phrase the fallback resolver reads. Saving updates the stored package value and its dashboard copy together."}</small>}
             </label>
+          )}
+          {showNatalFriendEditor && natalPlacementPlanet && natalPlacementSign && (
+            <section className="admin-editor-guidance admin-natal-friend-editor" aria-label="Friends natal copy and sources">
+              <div>
+                <p className="admin-eyebrow">Friends view</p>
+                <h3>Edit the copy a friend sees</h3>
+                <p>The exact copy above is You-only. Friends is composed from separate third-person passages. Open a colored section below to edit the source that actually supplies that part of the Friends write-up.</p>
+              </div>
+              <Suspense fallback={<div className="admin-empty-state" role="status"><strong>Loading Friends copy…</strong></div>}>
+                <NatalPlacementReaderPreview
+                  house={natalPlacementHouse}
+                  initialAudience="they"
+                  key={`friend-editor-${natalPlacementPlanet}-${natalPlacementSign}-${natalPlacementHouse}`}
+                  onCreateOverride={createNatalPlacementOverride}
+                  onOpenSource={(contentKey, label, previewTemplate) => void openContentKeyRow(contentKey, label, previewTemplate)}
+                  planet={natalPlacementPlanet}
+                  rows={rows}
+                  secret={secret}
+                  sign={natalPlacementSign}
+                />
+              </Suspense>
+            </section>
           )}
           {isVocabularyDraft && isPackageDraft && vocabularyHasTheyVersion && !skyFallbackEditor && (
             <label className="admin-review-copy-editor">

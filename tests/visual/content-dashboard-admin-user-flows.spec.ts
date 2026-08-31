@@ -1124,7 +1124,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await page.getByLabel("Natal placement planet or point").selectOption("sun");
     await page.getByLabel("Natal placement zodiac sign").selectOption("cancer");
     await expect(sourceFinder.locator(".admin-natal-placement-finder-heading h3")).toHaveText("Sun in Cancer");
-    await expect(sourceFinder.getByRole("heading", { name: "What the reader sees" })).toBeVisible();
+    await expect(sourceFinder.getByRole("heading", { name: "What you see" })).toBeVisible();
     await expect(sourceFinder.getByText("Your Sun is in Cancer, so the planet-in-sign write-up loads before a house is selected.")).toBeVisible();
     await expect(sourceFinder.getByText("The planet-in-sign write-up is shown below. Choose a house to add the house paragraph and exact full-placement override.")).toBeVisible();
     await expect(sourceFinder.locator(".admin-natal-source-group").first().getByRole("heading", { name: "Sun in Cancer", exact: true })).toBeVisible();
@@ -3424,7 +3424,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(editor.getByRole("heading", { name: "Edit Sun in a Sign" })).toBeVisible();
     await expect(editor.getByLabel("Template name")).toHaveValue("Sun in {{signTitle}}");
     const editedBody = `${bodyYou} QA draft remains here.`;
-    await editor.getByLabel("body_you").fill(editedBody);
+    await editor.getByLabel("You view copy").fill(editedBody);
     await editor.getByRole("button", { name: /^Reader preview & variables \(\d+\)$/u }).click();
 
     const variableGuide = page.getByRole("dialog", { name: "Template variable reference" });
@@ -3482,7 +3482,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     });
     await variableGuide.getByRole("button", { name: "Back to editor" }).click();
     await expect(variableGuide).toBeHidden();
-    await expect(editor.getByLabel("body_you")).toHaveValue(editedBody);
+    await expect(editor.getByLabel("You view copy")).toHaveValue(editedBody);
     await expectNoHorizontalOverflow(page, "Template editor with variable action on mobile");
 
     await editor.getByRole("button", { name: /^Reader preview & variables \(\d+\)$/u }).click();

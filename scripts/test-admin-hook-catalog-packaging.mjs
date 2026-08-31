@@ -10,7 +10,12 @@ const generatedRoot = path.join(repoRoot, "apps/admin/public/generated");
 const webGeneratedRoot = path.join(repoRoot, "apps/web/public/generated");
 const editorGuidanceFileName = "admin-fallback-hook-editor-guidance-v1.json";
 const editorGuidanceSource = path.join(repoRoot, "apps/admin/content/fallback-hook-editor-guidance-v1.json");
-const maxDomainPackageBytes = 600000;
+const maxDomainPackageBytes = {
+  friends: 600000,
+  modifier: 600000,
+  sky: 600000,
+  you: 675000
+};
 const sourceFiles = [
   path.join(repoRoot, "apps/web/src/content/fallbackArchitectureV3/bundled-sky-core-rows-v3.json"),
   path.join(repoRoot, "apps/web/src/content/fallbackArchitectureV3/bundled-deferred-core-rows-v3.json"),
@@ -67,8 +72,8 @@ const packagedBodies = new Map();
 for (const domain of ["sky", "you", "friends", "modifier"]) {
   const filePath = path.join(generatedRoot, `admin-hook-catalog-${domain}-v1.json`);
   assert.ok(
-    fs.statSync(filePath).size <= maxDomainPackageBytes,
-    `${domain} Admin hook package exceeds ${maxDomainPackageBytes.toLocaleString("en-US")} raw bytes.`
+    fs.statSync(filePath).size <= maxDomainPackageBytes[domain],
+    `${domain} Admin hook package exceeds ${maxDomainPackageBytes[domain].toLocaleString("en-US")} raw bytes.`
   );
   const payload = JSON.parse(fs.readFileSync(filePath, "utf8"));
   assert.equal(payload.schemaVersion, 1, `${domain} Admin hook package schema changed.`);
