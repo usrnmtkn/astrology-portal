@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "id": "angle-aspects-60-v15-044",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_reviewed",
+  "provenanceNote": "The owner supplied exact wording approval for V15 and explicitly did not relabel collaboratively drafted copy as owner_authored.",
+  "contentKey": "fallback-hook/natal-aspect-lived/uranus/conjunction/midheaven",
+  "packetKey": "uranus|conjunction|midheaven",
+  "payloadSha256": "7a2f8598c6497a82ef247526eff96ccb885c05e1940c5f7178b80f5ba1b36a0f",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "Questioning the established way can become part of what you are known for, especially when you can show that a different approach works better. You challenge the method everybody else accepts, take an unexpected path, or bring an idea into public view before other people have decided it belongs there.\n\nThat does not require an unconventional career. People may notice it in the way you approach a class, creative project, organization, public role, or profession: you are willing to question the established way when it no longer works.\n\nBeing different stops helping when the difference itself becomes more important than what the new approach actually improves. A new idea can get attention quickly, but eventually it still has to work, hold up, and give people something better than what it replaced.\n\nBeing first matters less than building something people still benefit from once the surprise is gone. What you become known for should reflect your independence without making being different the whole point.",
+    "sourceMechanism": "Exact owner-approved copy transcribed byte-for-byte from the SHA-bound canonical V15 owner-approval artifact; collaborative authorship is preserved and sole owner authorship is not asserted."
+  },
+  "approvedAt": "2026-08-31",
+  "approvalEffect": "exact_wording_approval",
+  "sourceArtifact": {
+    "id": "angle-aspects-60-v15-owner-approval-candidate",
+    "path": "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md",
+    "sha256": "3bbcd3e611d72a9754e9fdb4f4390ec860a670bc53af6b059ea23a212d37bfd4",
+    "passageHeading": "Uranus conjunct Midheaven",
+    "passageOrdinal": 44,
+    "bodySha256": "c115209c9d160489a4932e36d73681a52c0314c294b5725c31ace76c75e6e9ab"
+  },
+  "ownerConfirmationSource": {
+    "channel": "Codex task owner message",
+    "taskId": "01a04fc0-899b-7cd2-bb2e-98ad182391bb",
+    "date": "2026-08-31"
+  },
+  "replacementAuthorization": null,
+  "additionalBilledCalls": 0
+}

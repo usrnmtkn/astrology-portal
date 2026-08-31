@@ -10,11 +10,11 @@ const index = readJson("packages/astro-knowledge/canonical-content/index/canonic
 const report = readJson("packages/astro-knowledge/canonical-content/review/natal-wave-1-migration-report.json");
 const allowlist = readJson("packages/astro-knowledge/canonical-content/review/natal-wave-1-source-allowlist.json");
 
-assert.equal(report.sourceReachability.eligibleExactRows, 443);
+assert.equal(report.sourceReachability.eligibleExactRows, 492);
 assert.equal(report.sourceReachability.failures, 0);
 assert.deepEqual(report.sourceReachability.original371, {
-  total: 371,
-  canonicalUnit: 354,
+  total: 420,
+  canonicalUnit: 403,
   compositionIngredient: 17,
   explicitAllowlist: 0,
   failures: 0
@@ -39,4 +39,4 @@ for (const entry of semanticExclusions) {
   assert.match(entry.evidence, /fallbackArchitectureV3Runtime\.ts:610-613/u);
 }
 
-console.log("Canonical source reachability passed: 443 eligible exact rows classified; 39 routed composite overrides explicitly classified; legacy exact-row cohort fully reconciled; 2,765 authored keys inventoried without migration.");
+console.log("Canonical source reachability passed: 492 eligible exact rows classified; 39 routed composite overrides explicitly classified; legacy exact-row cohort fully reconciled; 2,765 authored keys inventoried without migration.");

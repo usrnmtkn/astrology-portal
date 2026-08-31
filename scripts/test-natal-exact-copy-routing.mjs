@@ -14,19 +14,23 @@ const readJson = (relativePath) => JSON.parse(fs.readFileSync(path.join(repoRoot
 const templates = readJson("apps/web/src/content/fallbackArchitectureV3/templates/fallback-templates-v3.json");
 const rows = readJson("apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json");
 const sunSquareAscendantApproval = readJson("packages/astro-knowledge/review/natal-sun-square-ascendant-owner-approval-2026-08-22.json");
+const angleV15BatchManifest = readJson("packages/astro-knowledge/review/angle-aspects-60-v15/shipping-manifest.json");
 const browserRenderer = createFallbackRenderer(templates, rows);
 
 const natalAspectRows = rows.hookRows
   .filter((row) => row.contentKey.startsWith("fallback-hook/natal-aspect-lived/"))
   .sort((a, b) => a.contentKey.localeCompare(b.contentKey));
-assert.equal(natalAspectRows.length, 242, "The protected exact natal-aspect calibration set must contain the 241-row baseline plus the owner-approved Sun square Ascendant row.");
+assert.equal(natalAspectRows.length, 291, "The protected exact natal-aspect set must contain 231 non-V15 rows and the 60-row V15 angle batch.");
 assert.ok(natalAspectRows.every((row) => row.review_status === "approved"));
 assert.ok(natalAspectRows.every((row) => row.approval?.approvalLevel === "exact_owner_approved"));
 assert.ok(natalAspectRows.every((row) => row.reader_only === true && row.render_policy === "reader-only-exact-lived-v1"));
 
 const sunSquareAscendantKey = "fallback-hook/natal-aspect-lived/sun/square/ascendant";
-const baselineNatalAspectRows = natalAspectRows.filter((row) => row.contentKey !== sunSquareAscendantKey);
-assert.equal(baselineNatalAspectRows.length, 241, "The pre-existing exact natal-aspect calibration set must remain intact.");
+const angleV15BatchKeys = new Set(angleV15BatchManifest.rows.map((row) => row.contentKey));
+assert.equal(angleV15BatchKeys.size, 60, "The V15 angle batch manifest must identify exactly 60 distinct content keys.");
+assert.equal(natalAspectRows.filter((row) => angleV15BatchKeys.has(row.contentKey)).length, 60, "Every V15 angle batch key must be present in the exact natal-aspect set.");
+const baselineNatalAspectRows = natalAspectRows.filter((row) => !angleV15BatchKeys.has(row.contentKey));
+assert.equal(baselineNatalAspectRows.length, 231, "The exact natal-aspect rows outside V15 must remain intact.");
 
 const aspectProjection = baselineNatalAspectRows.map(({
   contentKey, body, review_status, approval, governance, source_release, reader_only, render_policy
@@ -42,8 +46,8 @@ const aspectProjection = baselineNatalAspectRows.map(({
 }));
 assert.equal(
   createHash("sha256").update(JSON.stringify(aspectProjection)).digest("hex"),
-  "63b47f1b808d136ea53b0f74172aa3c3f0b5350df1c6dc44a520f5a7229643d1",
-  "Approved natal-aspect bodies or provenance changed outside owner approval."
+  "087d8486c7e82b66da9b5bb115114ef1e0780f36328ca7429c5a06b17e7147d1",
+  "Approved natal-aspect bodies or provenance changed outside the V15 batch."
 );
 
 function dashboardDescriptor(row) {
@@ -66,8 +70,13 @@ assert.equal(
   sunSquareAscendantApproval.payloadSha256,
   "The owner-approval record payload hash must match its exact wording."
 );
-assert.equal(sunSquareAscendant.body, sunSquareAscendantApproval.payload.body);
-assert.equal(sunSquareAscendant.approval.payloadSha256, sunSquareAscendantApproval.payloadSha256);
+assert.notEqual(sunSquareAscendant.body, sunSquareAscendantApproval.payload.body, "The explicitly authorized V15 replacement must supersede the historical Sun square Ascendant body without mutating its record.");
+const v15SunSquare = angleV15BatchManifest.rows.find((row) => row.contentKey === sunSquareAscendantKey);
+assert.ok(v15SunSquare, "V15 Sun square Ascendant approval is missing.");
+const v15SunSquareApproval = readJson(v15SunSquare.recordPath);
+assert.equal(sunSquareAscendant.body, v15SunSquareApproval.payload.body);
+assert.equal(sunSquareAscendant.approval.recordPath, v15SunSquare.recordPath);
+assert.equal(sunSquareAscendant.approval.payloadSha256, v15SunSquare.payloadSha256);
 
 for (const [name, renderAspect] of [
   ["Node", renderNodeAspect],
@@ -126,4 +135,4 @@ assert.doesNotMatch(
   "Natal aspect subgroup labels must not fall back to non-semantic spans."
 );
 
-console.log("natal exact-copy routing: ok (241-row frozen baseline plus owner-approved Sun square Ascendant, dashboard hook lane, contextual house bridges, matching subgroup labels)");
+console.log("natal exact-copy routing: ok (231-row frozen non-V15 baseline plus 60-row V15 angle batch; dashboard hook lane; contextual house bridges; matching subgroup labels)");

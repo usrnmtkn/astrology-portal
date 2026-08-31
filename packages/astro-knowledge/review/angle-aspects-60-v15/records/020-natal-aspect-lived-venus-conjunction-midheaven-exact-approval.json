@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "id": "angle-aspects-60-v15-020",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_reviewed",
+  "provenanceNote": "The owner supplied exact wording approval for V15 and explicitly did not relabel collaboratively drafted copy as owner_authored.",
+  "contentKey": "fallback-hook/natal-aspect-lived/venus/conjunction/midheaven",
+  "packetKey": "venus|conjunction|midheaven",
+  "payloadSha256": "999ea5909b89c03acddde8ee5b4f2737323257ee1f4be4608291a9cee76b6746",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "Your taste, judgment, and the care you bring to what you make, choose, or support can become part of what people remember about you. What you value becomes visible through the standards you keep returning to and the choices you are willing to stand behind.\n\nThat can make people seek out your opinion. They ask what you think, invite you back because they like having you involved, or trust you with the part where presentation, tone, or the quality of the exchange actually matters.\n\nBeing well received gets complicated when the role that earns the strongest response stops reflecting what you actually value. You keep saying yes because people appreciate you there, stay attached to something because it looks good from the outside, or accept praise as proof that the choice still fits.\n\nBeing appreciated and valuing the role are different things. What you become known for should still reflect what you actually care about, not only what other people have learned to praise you for.",
+    "sourceMechanism": "Exact owner-approved copy transcribed byte-for-byte from the SHA-bound canonical V15 owner-approval artifact; collaborative authorship is preserved and sole owner authorship is not asserted."
+  },
+  "approvedAt": "2026-08-31",
+  "approvalEffect": "exact_wording_approval",
+  "sourceArtifact": {
+    "id": "angle-aspects-60-v15-owner-approval-candidate",
+    "path": "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md",
+    "sha256": "3bbcd3e611d72a9754e9fdb4f4390ec860a670bc53af6b059ea23a212d37bfd4",
+    "passageHeading": "Venus conjunct Midheaven",
+    "passageOrdinal": 20,
+    "bodySha256": "801647d094de788aa633a23459dd7efabc37fdcb4c365ee0c846d520f31e8c10"
+  },
+  "ownerConfirmationSource": {
+    "channel": "Codex task owner message",
+    "taskId": "01a04fc0-899b-7cd2-bb2e-98ad182391bb",
+    "date": "2026-08-31"
+  },
+  "replacementAuthorization": null,
+  "additionalBilledCalls": 0
+}

@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "id": "angle-aspects-60-v15-008",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_reviewed",
+  "provenanceNote": "The owner supplied exact wording approval for V15 and explicitly did not relabel collaboratively drafted copy as owner_authored.",
+  "contentKey": "fallback-hook/natal-aspect-lived/moon/conjunction/midheaven",
+  "packetKey": "moon|conjunction|midheaven",
+  "payloadSha256": "1940f73ca5a0317f7c8d48cd9fa91f9f9fc114b7bb30b5e3ef7180604af4b817",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "You often notice what people need before they have to ask, and others may start relying on you to make the practical adjustments that keep things working. You catch when someone is overwhelmed, realize a group is losing track of the person who needs help, remember what somebody forgot, or see that the way things are being organized is making ordinary life harder than it needs to be.\n\nYou often end up handling the part that makes the situation work for actual people. You explain what was confusing, notice who has been left out, or recognize when something is technically functioning and still making life harder for everyone involved.\n\nThat contribution can become easy to depend on and easy to leave unnamed. You quietly compensate for what somebody else failed to handle, keep things moving when morale drops, or notice the need before anyone has decided whose responsibility it is. Then everyone remembers that things worked and forgets how much depended on you noticing first.\n\nIf people rely on this part of you, it counts as part of what you contribute. Care still takes time, judgment, and effort when nobody has bothered to name it. What you become known for should come with enough support that sensitivity does not quietly become another responsibility you are expected to carry for free.",
+    "sourceMechanism": "Exact owner-approved copy transcribed byte-for-byte from the SHA-bound canonical V15 owner-approval artifact; collaborative authorship is preserved and sole owner authorship is not asserted."
+  },
+  "approvedAt": "2026-08-31",
+  "approvalEffect": "exact_wording_approval",
+  "sourceArtifact": {
+    "id": "angle-aspects-60-v15-owner-approval-candidate",
+    "path": "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md",
+    "sha256": "3bbcd3e611d72a9754e9fdb4f4390ec860a670bc53af6b059ea23a212d37bfd4",
+    "passageHeading": "Moon conjunct Midheaven",
+    "passageOrdinal": 8,
+    "bodySha256": "70f215af3b4c21c7fe9de1569d14ebe083a5c28fe61025e5d56858309aa14a3b"
+  },
+  "ownerConfirmationSource": {
+    "channel": "Codex task owner message",
+    "taskId": "01a04fc0-899b-7cd2-bb2e-98ad182391bb",
+    "date": "2026-08-31"
+  },
+  "replacementAuthorization": null,
+  "additionalBilledCalls": 0
+}

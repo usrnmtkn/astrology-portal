@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "id": "angle-aspects-60-v15-015",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_reviewed",
+  "provenanceNote": "The owner supplied exact wording approval for V15 and explicitly did not relabel collaboratively drafted copy as owner_authored.",
+  "contentKey": "fallback-hook/natal-aspect-lived/mercury/square/ascendant",
+  "packetKey": "mercury|square|ascendant",
+  "payloadSha256": "f0a1cb29dc18b0eb6791c386a68b9f996aedf9373c1142ed3f006b042e2afafa",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "You may know what you mean, but getting it into words can take more effort than you expect. You think about the context, the exception, what the other person might misunderstand, and the detail that changes the meaning. By the time you land on the sentence you actually want to say, you may have already said much more than you needed to.\n\nYou are good at noticing what other people leave out. One missing fact can change how you understand the whole situation, and you may be unwilling to give a simple answer when you know the truth is more complicated than that. This can make you a thoughtful writer, speaker, or communicator because you learn how much one word or one piece of context can change what somebody hears.\n\nThe challenge is that being understood can start mattering more than saying what you actually think. You soften the point, add another explanation, or try to account for every possible reaction before the other person has even had one. Then your words become more careful than true.\n\nYou do not need to make your thinking simpler. You need to know which part you can stand behind. Say that clearly, and let the rest of the context support it instead of asking the explanation to protect you from every possible misunderstanding.",
+    "sourceMechanism": "Exact owner-approved copy transcribed byte-for-byte from the SHA-bound canonical V15 owner-approval artifact; collaborative authorship is preserved and sole owner authorship is not asserted."
+  },
+  "approvedAt": "2026-08-31",
+  "approvalEffect": "exact_wording_approval",
+  "sourceArtifact": {
+    "id": "angle-aspects-60-v15-owner-approval-candidate",
+    "path": "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md",
+    "sha256": "3bbcd3e611d72a9754e9fdb4f4390ec860a670bc53af6b059ea23a212d37bfd4",
+    "passageHeading": "Mercury square Ascendant",
+    "passageOrdinal": 15,
+    "bodySha256": "28dff5304f251b4f05a2518c095c172042fcfb5fcaac012dea1acb2ab388213e"
+  },
+  "ownerConfirmationSource": {
+    "channel": "Codex task owner message",
+    "taskId": "01a04fc0-899b-7cd2-bb2e-98ad182391bb",
+    "date": "2026-08-31"
+  },
+  "replacementAuthorization": null,
+  "additionalBilledCalls": 0
+}

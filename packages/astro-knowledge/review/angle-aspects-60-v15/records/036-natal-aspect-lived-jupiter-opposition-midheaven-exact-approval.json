@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "id": "angle-aspects-60-v15-036",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_reviewed",
+  "provenanceNote": "The owner supplied exact wording approval for V15 and explicitly did not relabel collaboratively drafted copy as owner_authored.",
+  "contentKey": "fallback-hook/natal-aspect-lived/jupiter/opposition/midheaven",
+  "packetKey": "jupiter|opposition|midheaven",
+  "payloadSha256": "0cf174320660f6f7b187ff0c0ce078a64d0b3b73a18774bc0207ed74101c2c9f",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "You may have grown up around strong ideas about what a good life is supposed to look like, especially around education, religion, money, marriage, loyalty, where you live, or what counts as success. Those beliefs can stay with you long after you are old enough to decide which ones you actually agree with.\n\nSome of them can give you a strong foundation. Others become harder to keep once your own experience gives you more information. You may value where you came from and still build a home, relationship, public role, or belief system that nobody there would have chosen for you.\n\nGratitude gets complicated when other people start treating it like agreement. A different choice can be interpreted as rejection simply because somebody else worked hard to give you the first version.\n\nYour roots can explain where you started without deciding where you have to end up. What you inherited matters, but so does what you have learned since then and what you actually want to build with it.",
+    "sourceMechanism": "Exact owner-approved copy transcribed byte-for-byte from the SHA-bound canonical V15 owner-approval artifact; collaborative authorship is preserved and sole owner authorship is not asserted."
+  },
+  "approvedAt": "2026-08-31",
+  "approvalEffect": "exact_wording_approval",
+  "sourceArtifact": {
+    "id": "angle-aspects-60-v15-owner-approval-candidate",
+    "path": "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md",
+    "sha256": "3bbcd3e611d72a9754e9fdb4f4390ec860a670bc53af6b059ea23a212d37bfd4",
+    "passageHeading": "Jupiter opposition Midheaven",
+    "passageOrdinal": 36,
+    "bodySha256": "816f951e5245fed9c010bf2c1311963ad22d343b5bd6f1970c5cd047e790792b"
+  },
+  "ownerConfirmationSource": {
+    "channel": "Codex task owner message",
+    "taskId": "01a04fc0-899b-7cd2-bb2e-98ad182391bb",
+    "date": "2026-08-31"
+  },
+  "replacementAuthorization": null,
+  "additionalBilledCalls": 0
+}

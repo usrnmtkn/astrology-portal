@@ -66,13 +66,13 @@
   },
   "counts": {
     "byBucket": {
-      "AUTHORITY_RESOLVED": 368,
+      "AUTHORITY_RESOLVED": 417,
       "AUTO_MERGE_EXACT": 0,
       "AUTO_MERGE_NORMALIZED": 0,
       "COMPOSED_ONLY": 2144,
       "OWNER_DECISION_REQUIRED": 0,
       "SINGLE_SOURCE": 0,
-      "SOURCE_GAP": 394
+      "SOURCE_GAP": 345
     },
     "byKind": {
       "angle-sign": 24,
@@ -83,8 +83,8 @@
     },
     "byMode": {
       "authored": 0,
-      "composed": 2512,
-      "gap": 394
+      "composed": 2561,
+      "gap": 345
     },
     "byPerspectiveMode": {
       "they": {
@@ -93,9 +93,9 @@
         "gap": 547
       },
       "you": {
-        "authored": 302,
+        "authored": 351,
         "composed": 2207,
-        "gap": 397
+        "gap": 348
       }
     },
     "total": 2906
@@ -161,9 +161,9 @@
       "gap": 547
     },
     "you": {
-      "authored": 302,
+      "authored": 351,
       "composed": 2207,
-      "gap": 397
+      "gap": 348
     }
   },
   "preservedBaselineSubstitutions": [
@@ -216,17 +216,17 @@
   ],
   "schema": "tldr-astro-canonical-content-migration-report/v1",
   "sourceReachability": {
-    "canonicalUnit": 380,
+    "canonicalUnit": 429,
     "compositionIngredient": 24,
-    "eligibleExactRows": 443,
+    "eligibleExactRows": 492,
     "explicitAllowlist": 39,
     "failures": 0,
     "original371": {
-      "canonicalUnit": 354,
+      "canonicalUnit": 403,
       "compositionIngredient": 17,
       "explicitAllowlist": 0,
       "failures": 0,
-      "total": 371
+      "total": 420
     }
   },
   "version": "global-foundation-natal-wave-1"
