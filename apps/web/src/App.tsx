@@ -250,6 +250,7 @@ import {
   compositeHouseContentKey,
   compositePointContentKey,
   compositeSignContentKey,
+  natalAspectContentKey,
   synastryAspectContentKey,
   transitHouseContentKey
 } from "./services/generatedContentKeys";
@@ -4195,9 +4196,34 @@ function generatedNatalAspectSection(
   aspect: SkySnapshot["aspects"][number],
   generatedContent: GeneratedContentMap
 ): NormalizedNatalAspectSection | null {
-  void aspect;
-  void generatedContent;
-  return null;
+  const first = normalizeContentIdPart(aspect.from);
+  const second = normalizeContentIdPart(aspect.to);
+  const normalizedAspect = normalizeContentIdPart(aspect.type);
+  const candidateKeys = [
+    `fallback-hook/natal-aspect-lived/${first}/${normalizedAspect}/${second}`,
+    `fallback-hook/natal-aspect-lived/${second}/${normalizedAspect}/${first}`,
+    natalAspectContentKey(first, normalizedAspect, second),
+    `natal-${first}-${normalizedAspect}-${second}`,
+    `natal-${second}-${normalizedAspect}-${first}`
+  ];
+  const generated = candidateKeys
+    .map((contentKey) => liveGeneratedContent(generatedContent, contentKey))
+    .find((content): content is LiveGeneratedContent => Boolean(content));
+  const body = fullDetailReaderFacingCopy(generatedContentParagraphs(generated)) ?? "";
+
+  if (!generated || !body || !isReaderFacingCopy(body)) {
+    return null;
+  }
+
+  return {
+    slot: "meaning",
+    required: true,
+    layer: "authored",
+    tier: "content-studio-approved-natal-aspect-v1",
+    sourceKeys: [generated.contentKey],
+    heading: generated.headline || natalAspectDisplayTitle(aspect),
+    body
+  };
 }
 
 function natalAspectDetailArticle(
