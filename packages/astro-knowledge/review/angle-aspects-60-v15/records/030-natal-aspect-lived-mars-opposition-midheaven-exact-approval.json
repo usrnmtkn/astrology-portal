@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "id": "angle-aspects-60-v15-030",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_reviewed",
+  "provenanceNote": "The owner supplied exact wording approval for V15 and explicitly did not relabel collaboratively drafted copy as owner_authored.",
+  "contentKey": "fallback-hook/natal-aspect-lived/mars/opposition/midheaven",
+  "packetKey": "mars|opposition|midheaven",
+  "payloadSha256": "8b0d5962917be6c9243a794a60757f55e99617a36acef77796a634ea9189ba2e",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "At home, you are often the person who acts first when something needs to be handled. You fix what broke, handle the urgent problem, deal with the difficult conversation, or step in because waiting for somebody else to take responsibility has already become more frustrating than doing it yourself.\n\nThat can make you highly capable in your private life. It can also create a pattern where everybody learns that eventually you will handle what nobody else wants to do. Your anger becomes the reminder, your frustration becomes the deadline, and action only happens once you are fed up enough to make it happen yourself.\n\nThe challenge is that being capable can hide how uneven the responsibility has become. You know you can take care of it, but being able to do something does not answer why you are always the person expected to.\n\nMore responsibility at home should come with more support, clearer expectations, or somebody else taking responsibility too. If things only get done once you are angry enough to handle them yourself, the pattern is not working. Being the person who can fix it does not automatically make it yours to keep fixing.",
+    "sourceMechanism": "Exact owner-approved copy transcribed byte-for-byte from the SHA-bound canonical V15 owner-approval artifact; collaborative authorship is preserved and sole owner authorship is not asserted."
+  },
+  "approvedAt": "2026-08-31",
+  "approvalEffect": "exact_wording_approval",
+  "sourceArtifact": {
+    "id": "angle-aspects-60-v15-owner-approval-candidate",
+    "path": "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md",
+    "sha256": "3bbcd3e611d72a9754e9fdb4f4390ec860a670bc53af6b059ea23a212d37bfd4",
+    "passageHeading": "Mars opposition Midheaven",
+    "passageOrdinal": 30,
+    "bodySha256": "472b65ef68181b49ad7e0761a39300bd3d2555d52ca5a2fe715f48a00315868a"
+  },
+  "ownerConfirmationSource": {
+    "channel": "Codex task owner message",
+    "taskId": "01a04fc0-899b-7cd2-bb2e-98ad182391bb",
+    "date": "2026-08-31"
+  },
+  "replacementAuthorization": null,
+  "additionalBilledCalls": 0
+}

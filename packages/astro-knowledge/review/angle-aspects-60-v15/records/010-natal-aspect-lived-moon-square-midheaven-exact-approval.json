@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "id": "angle-aspects-60-v15-010",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_reviewed",
+  "provenanceNote": "The owner supplied exact wording approval for V15 and explicitly did not relabel collaboratively drafted copy as owner_authored.",
+  "contentKey": "fallback-hook/natal-aspect-lived/moon/square/midheaven",
+  "packetKey": "moon|square|midheaven",
+  "payloadSha256": "34df0a9f9eb3a1bdb90b2a4eead8c551525aab0d32aba4e3ae63fae165a12e36",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "You may care deeply about being taken seriously, but visible responsibility can start costing you sleep, privacy, time, and the routines that keep the rest of your life workable. A demanding class takes the time you used to have after school, a leadership role fills the evenings, a public commitment keeps changing the schedule, or work follows you home long after everybody else considers the responsibility handled.\n\nThe Moon keeps bringing the question back to ordinary needs. Sleep, meals, privacy, time with people you care about, and the routines that help you feel like yourself do not become less important because the role is impressive or because other people are proud of what you are doing.\n\nEach demand can look manageable on paper. One late night, one extra meeting, one more task, one more person who needs you. Together they determine what your daily life actually feels like.\n\nYour needs belong in the decision about what you are building publicly. Recognition and achievement matter, but so do sleep, time, privacy, and the parts of your life that keep the rest of the week workable. A direction is more convincing when you can actually live inside it.",
+    "sourceMechanism": "Exact owner-approved copy transcribed byte-for-byte from the SHA-bound canonical V15 owner-approval artifact; collaborative authorship is preserved and sole owner authorship is not asserted."
+  },
+  "approvedAt": "2026-08-31",
+  "approvalEffect": "exact_wording_approval",
+  "sourceArtifact": {
+    "id": "angle-aspects-60-v15-owner-approval-candidate",
+    "path": "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md",
+    "sha256": "3bbcd3e611d72a9754e9fdb4f4390ec860a670bc53af6b059ea23a212d37bfd4",
+    "passageHeading": "Moon square Midheaven",
+    "passageOrdinal": 10,
+    "bodySha256": "81001492c15e6f0f87732d943560390fb0121922d0f51c830bf0a0e29bdea134"
+  },
+  "ownerConfirmationSource": {
+    "channel": "Codex task owner message",
+    "taskId": "01a04fc0-899b-7cd2-bb2e-98ad182391bb",
+    "date": "2026-08-31"
+  },
+  "replacementAuthorization": null,
+  "additionalBilledCalls": 0
+}

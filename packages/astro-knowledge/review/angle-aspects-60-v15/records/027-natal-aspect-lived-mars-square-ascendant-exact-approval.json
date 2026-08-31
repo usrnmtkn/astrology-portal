@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "id": "angle-aspects-60-v15-027",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_reviewed",
+  "provenanceNote": "The owner supplied exact wording approval for V15 and explicitly did not relabel collaboratively drafted copy as owner_authored.",
+  "contentKey": "fallback-hook/natal-aspect-lived/mars/square/ascendant",
+  "packetKey": "mars|square|ascendant",
+  "payloadSha256": "d9db0158c3f00bcfdb25c8de6c07592c1db3244f676d72b0d9500eb3f9b322d6",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "You can know something crossed a line and still wait so long to respond that your anger is much stronger by the time anyone else realizes there was a problem. You notice the irritation, tell yourself it is not worth making an issue of, or try to be reasonable about something that is already bothering you.\n\nThat delay can make your reaction look sudden when it has actually been building for a while. You let the first comment go, agree to the plan even though you do not like it, or keep handling something you are increasingly resentful about. By the time you finally respond, you are no longer answering only what just happened.\n\nOver time, you learn that the first irritation is often useful information about a limit you have not named yet. Anger may be the first sign that you wanted something different, that somebody asked too much, or that you agreed to something you did not really want. You do not have to wait until the feeling is impossible to ignore before you take it seriously.\n\nWhat are you fighting for? What are you defending? Anger is useful when it brings you back to the thing that actually matters. The earlier you know what needs to change, the easier it is to respond to the original problem instead of everything that built up because you kept letting it go.",
+    "sourceMechanism": "Exact owner-approved copy transcribed byte-for-byte from the SHA-bound canonical V15 owner-approval artifact; collaborative authorship is preserved and sole owner authorship is not asserted."
+  },
+  "approvedAt": "2026-08-31",
+  "approvalEffect": "exact_wording_approval",
+  "sourceArtifact": {
+    "id": "angle-aspects-60-v15-owner-approval-candidate",
+    "path": "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md",
+    "sha256": "3bbcd3e611d72a9754e9fdb4f4390ec860a670bc53af6b059ea23a212d37bfd4",
+    "passageHeading": "Mars square Ascendant",
+    "passageOrdinal": 27,
+    "bodySha256": "9a4f1312f376c59f2b8ce2e0f858a6057ec82b6fb4777768b4e55634be4147b4"
+  },
+  "ownerConfirmationSource": {
+    "channel": "Codex task owner message",
+    "taskId": "01a04fc0-899b-7cd2-bb2e-98ad182391bb",
+    "date": "2026-08-31"
+  },
+  "replacementAuthorization": null,
+  "additionalBilledCalls": 0
+}

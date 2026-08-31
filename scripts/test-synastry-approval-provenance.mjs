@@ -34,6 +34,10 @@ const v13RepairPath = path.join(
   repoRoot,
   "packages/astro-knowledge/review/v13-duplicate-contentkey-repair-2026-08-11.json",
 );
+const angleV15ManifestPath = path.join(
+  repoRoot,
+  "packages/astro-knowledge/review/angle-aspects-60-v15/shipping-manifest.json",
+);
 const batchApprovalPrefixes = [
   "packages/astro-knowledge/review/ascendant-batch-1-card-drafts-v1/",
   "packages/astro-knowledge/review/ascendant-batch-2-card-drafts-v1/",
@@ -108,6 +112,8 @@ const sourceText = fs.readFileSync(sourcePath, "utf8");
 const source = JSON.parse(sourceText);
 const manifest = JSON.parse(fs.readFileSync(manifestPath, "utf8"));
 const v13Repair = JSON.parse(fs.readFileSync(v13RepairPath, "utf8"));
+const angleV15Manifest = JSON.parse(fs.readFileSync(angleV15ManifestPath, "utf8"));
+const angleV15Keys = new Set(angleV15Manifest.rows.map((row) => row.contentKey));
 const lilithLivedPayloads = JSON.parse(fs.readFileSync(lilithLivedPayloadsPath, "utf8"));
 const lilithLivedPayloadsByContentKey = new Map(
   Object.entries(lilithLivedPayloads.payloads ?? {}).map(([workbookKey, entry]) => {
@@ -232,15 +238,16 @@ const livedRows = source.hookRows.filter((row) => (
 ));
 const lilithLivedRows = livedRows.filter((row) => row.contentKey.startsWith(lilithLivedPrefix));
 const sourceRowsByKey = new Map(source.hookRows.map((row) => [row.contentKey, row]));
-const lived108Rows = v13Repair.entries.map((entry) => sourceRowsByKey.get(entry.contentKey)).filter(Boolean);
-assert.equal(lived108Rows.length, 108, "Expected 108 V13-superseded lived-experience serving rows");
+const activeV13RepairEntries = v13Repair.entries.filter((entry) => !angleV15Keys.has(entry.contentKey));
+const lived108Rows = activeV13RepairEntries.map((entry) => sourceRowsByKey.get(entry.contentKey)).filter(Boolean);
+assert.equal(lived108Rows.length, 105, "Expected 105 V13-superseded lived-experience rows after three explicit V15 supersessions");
 for (const [index, row] of lived108Rows.entries()) {
-  const disposition = v13Repair.entries[index];
+  const disposition = activeV13RepairEntries[index];
   assert.equal(row.source_release, "ll-matrix-v13-owner-approved-runtime");
   assert.equal(sha256(JSON.stringify(row)), disposition.kept.rowSha256, `${row.contentKey}: V13 repair provenance drifted`);
 }
 assert.equal(lilithLivedRows.length, 78, "Expected 78 Lilith lived-experience serving rows");
-assert.equal(lived108Rows.length + lilithLivedRows.length, 186, "Expected 186 total lived-experience serving rows");
+assert.equal(lived108Rows.length + lilithLivedRows.length, 183, "Expected 183 retained V13/Lilith lived-experience rows after three explicit V15 supersessions");
 
 function assertExactLivedApproval(row) {
   const isLilith = row.contentKey.startsWith(lilithLivedPrefix);

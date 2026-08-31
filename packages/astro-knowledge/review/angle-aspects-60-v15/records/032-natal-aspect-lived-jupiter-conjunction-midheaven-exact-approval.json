@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "id": "angle-aspects-60-v15-032",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_reviewed",
+  "provenanceNote": "The owner supplied exact wording approval for V15 and explicitly did not relabel collaboratively drafted copy as owner_authored.",
+  "contentKey": "fallback-hook/natal-aspect-lived/jupiter/conjunction/midheaven",
+  "packetKey": "jupiter|conjunction|midheaven",
+  "payloadSha256": "0366363ab203b5247371761c3161919a91fb64f15babc9208b1aafd989ce63d4",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "You want what you are building publicly to keep giving you something to grow into, not just more attention for doing the same thing. Recognition matters most when it gives you more to learn, more influence over the result, or a wider reach for something you believe in.\n\nThe setting can change across your life. You may feel it in school, teaching, leadership, publishing, advocacy, or a career, but the pattern stays the same: you want your contribution to go somewhere.\n\nBigger is not automatically better. You take another credential, accept a more visible position, build a larger audience, or take on more responsibility and still end up with less time for the part that made you care in the first place.\n\nAsk what the next step would actually give you. More knowledge, access, authority, money, reach, or control over what you are building can matter. More people knowing your name only matters if the larger role gives you something worth doing with the attention.",
+    "sourceMechanism": "Exact owner-approved copy transcribed byte-for-byte from the SHA-bound canonical V15 owner-approval artifact; collaborative authorship is preserved and sole owner authorship is not asserted."
+  },
+  "approvedAt": "2026-08-31",
+  "approvalEffect": "exact_wording_approval",
+  "sourceArtifact": {
+    "id": "angle-aspects-60-v15-owner-approval-candidate",
+    "path": "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md",
+    "sha256": "3bbcd3e611d72a9754e9fdb4f4390ec860a670bc53af6b059ea23a212d37bfd4",
+    "passageHeading": "Jupiter conjunct Midheaven",
+    "passageOrdinal": 32,
+    "bodySha256": "8068eb2c2db0f14bb10076dd7a966f71435e6fb551e823d8ac1e4854e5ce55cc"
+  },
+  "ownerConfirmationSource": {
+    "channel": "Codex task owner message",
+    "taskId": "01a04fc0-899b-7cd2-bb2e-98ad182391bb",
+    "date": "2026-08-31"
+  },
+  "replacementAuthorization": null,
+  "additionalBilledCalls": 0
+}

@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "id": "angle-aspects-60-v15-045",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_reviewed",
+  "provenanceNote": "The owner supplied exact wording approval for V15 and explicitly did not relabel collaboratively drafted copy as owner_authored.",
+  "contentKey": "fallback-hook/natal-aspect-lived/uranus/square/ascendant",
+  "packetKey": "uranus|square|ascendant",
+  "payloadSha256": "00aed9826861515a6c36aecc5cd952242033951fc791395a4beefd0c0f27cda0",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "You can make something work for a long time before you admit how much you have been adjusting yourself to keep it going. You adapt, make exceptions, tell yourself it is manageable, and then reach a point where changing the plan feels easier than having one more conversation about what is not working.\n\nBy the time you finally say no, the decision may feel obvious to you. Other people can be surprised because they did not hear all the smaller objections that came before it, or because you kept treating each problem like something you could manage.\n\nThe challenge is that independence can become easiest to claim at the point of departure. By then, you may already be so finished with the situation that you no longer know if it could have changed once your actual needs were on the table.\n\nYou are allowed to change your direction as you learn more about who you are. The question is if the situation had a chance to respond to the person you actually are before leaving became the only answer that felt honest.",
+    "sourceMechanism": "Exact owner-approved copy transcribed byte-for-byte from the SHA-bound canonical V15 owner-approval artifact; collaborative authorship is preserved and sole owner authorship is not asserted."
+  },
+  "approvedAt": "2026-08-31",
+  "approvalEffect": "exact_wording_approval",
+  "sourceArtifact": {
+    "id": "angle-aspects-60-v15-owner-approval-candidate",
+    "path": "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md",
+    "sha256": "3bbcd3e611d72a9754e9fdb4f4390ec860a670bc53af6b059ea23a212d37bfd4",
+    "passageHeading": "Uranus square Ascendant",
+    "passageOrdinal": 45,
+    "bodySha256": "e48f44fee0ece69e0e9f6d00a191bc9ac61b2568c2009f448788f631b44cc127"
+  },
+  "ownerConfirmationSource": {
+    "channel": "Codex task owner message",
+    "taskId": "01a04fc0-899b-7cd2-bb2e-98ad182391bb",
+    "date": "2026-08-31"
+  },
+  "replacementAuthorization": null,
+  "additionalBilledCalls": 0
+}

@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "id": "angle-aspects-60-v15-055",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_reviewed",
+  "provenanceNote": "The owner supplied exact wording approval for V15 and explicitly did not relabel collaboratively drafted copy as owner_authored.",
+  "contentKey": "fallback-hook/natal-aspect-lived/pluto/conjunction/ascendant",
+  "packetKey": "pluto|conjunction|ascendant",
+  "payloadSha256": "875fc158800e783437ca35faedbc96c7125c244f55745fbf845b5ecd80d53a99",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "You are quick to notice when someone's words and behavior do not match, and once you register the gap it can be difficult to pretend you did not see it. You hear the hesitation, notice who is avoiding the question, or pick up on the part of a situation everybody else would rather leave alone.\n\nThat awareness makes you willing to look directly at uncomfortable motives, difficult dynamics, and the part of a problem other people would rather keep vague. You may understand what is really happening before anyone is ready to say it plainly.\n\nThe challenge is when knowing more starts feeling necessary before you can act. You keep asking because resistance makes you more suspicious, look for the hidden reason after the visible behavior has already told you enough, or wait for complete certainty before deciding where your own limit is. More information can explain the behavior without making the behavior acceptable.\n\nYou do not need complete access to make a decision. Sometimes the pattern is already clear enough. Knowing when you have enough information protects your time as much as knowing what is underneath the surface.",
+    "sourceMechanism": "Exact owner-approved copy transcribed byte-for-byte from the SHA-bound canonical V15 owner-approval artifact; collaborative authorship is preserved and sole owner authorship is not asserted."
+  },
+  "approvedAt": "2026-08-31",
+  "approvalEffect": "exact_wording_approval",
+  "sourceArtifact": {
+    "id": "angle-aspects-60-v15-owner-approval-candidate",
+    "path": "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md",
+    "sha256": "3bbcd3e611d72a9754e9fdb4f4390ec860a670bc53af6b059ea23a212d37bfd4",
+    "passageHeading": "Pluto conjunct Ascendant",
+    "passageOrdinal": 55,
+    "bodySha256": "d5ba3edf263a9df44cc3b02149ab811858e0b830b611b28a7a3d82799afd8d18"
+  },
+  "ownerConfirmationSource": {
+    "channel": "Codex task owner message",
+    "taskId": "01a04fc0-899b-7cd2-bb2e-98ad182391bb",
+    "date": "2026-08-31"
+  },
+  "replacementAuthorization": null,
+  "additionalBilledCalls": 0
+}

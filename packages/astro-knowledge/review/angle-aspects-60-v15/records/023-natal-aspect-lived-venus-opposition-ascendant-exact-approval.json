@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "id": "angle-aspects-60-v15-023",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_reviewed",
+  "provenanceNote": "The owner supplied exact wording approval for V15 and explicitly did not relabel collaboratively drafted copy as owner_authored.",
+  "contentKey": "fallback-hook/natal-aspect-lived/venus/opposition/ascendant",
+  "packetKey": "venus|opposition|ascendant",
+  "payloadSha256": "efad14a5dd2de0860fa17d3e20b90ce760505c503777ea835cc6d3d89bd42879",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "The people you are attracted to often make your own values easier to understand. Being close to someone shows you which kinds of affection matter to you, what you enjoy sharing, and what starts feeling wrong once another person's choices affect your time, money, attention, or plans.\n\nYou may be drawn to people who bring experiences or ways of loving into your world that you would not have found on your own. Their preferences can expand yours, while their different priorities make it clearer which values you are unwilling to negotiate.\n\nAttraction does not answer the compatibility question. A person can be exactly your type and still want a different relationship than you do. You can love being around them and dislike how they handle time, money, commitment, affection, or the future. None of that makes the attraction less true. It tells you what attraction cannot decide for you.\n\nWanting someone tells you why you moved toward them. What happens once you are together tells you what the relationship is made of. Love, pleasure, and chemistry matter, but so does the life the two of you are actually able to build around them.",
+    "sourceMechanism": "Exact owner-approved copy transcribed byte-for-byte from the SHA-bound canonical V15 owner-approval artifact; collaborative authorship is preserved and sole owner authorship is not asserted."
+  },
+  "approvedAt": "2026-08-31",
+  "approvalEffect": "exact_wording_approval",
+  "sourceArtifact": {
+    "id": "angle-aspects-60-v15-owner-approval-candidate",
+    "path": "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md",
+    "sha256": "3bbcd3e611d72a9754e9fdb4f4390ec860a670bc53af6b059ea23a212d37bfd4",
+    "passageHeading": "Venus opposition Ascendant",
+    "passageOrdinal": 23,
+    "bodySha256": "da7cd1baf1c8dac19c232c3b68cea77f4d3cd54a40a821a78caae23124d31894"
+  },
+  "ownerConfirmationSource": {
+    "channel": "Codex task owner message",
+    "taskId": "01a04fc0-899b-7cd2-bb2e-98ad182391bb",
+    "date": "2026-08-31"
+  },
+  "replacementAuthorization": null,
+  "additionalBilledCalls": 0
+}

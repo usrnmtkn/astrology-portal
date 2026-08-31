@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "id": "angle-aspects-60-v15-046",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_reviewed",
+  "provenanceNote": "The owner supplied exact wording approval for V15 and explicitly did not relabel collaboratively drafted copy as owner_authored.",
+  "contentKey": "fallback-hook/natal-aspect-lived/uranus/square/midheaven",
+  "packetKey": "uranus|square|midheaven",
+  "payloadSha256": "0cd4fcea6b802c46f1b83f00b77364d7f447db48953d1d6e47482bc4d1abddb2",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "You can do very well inside a structure and still feel constrained by how much was decided before you had any say in it, especially when recognition proves you are capable without giving you more authority to use your judgment. A school praises independent thinking until you challenge the assignment, an organization asks for initiative until your idea changes the approved method, or a workplace gives you ownership while keeping the decisions somewhere else.\n\nYou may keep trying to earn the freedom you need by proving yourself first. Better grades, stronger work, more responsibility, another title, or more recognition can seem like they should eventually give you enough freedom to do things differently.\n\nSometimes better work earns more freedom. Other times, the same restriction survives every accomplishment, which tells you something important about the place itself. A school, organization, or workplace can praise originality and still have very little interest in letting originality change anything important.\n\nPay attention to what recognition actually gives you. Being trusted, praised, promoted, or taken seriously matters if it gives you more authority to use your judgment. If the same limit remains in place no matter how much you prove, the setting may be telling you exactly what it is willing to let you become there.",
+    "sourceMechanism": "Exact owner-approved copy transcribed byte-for-byte from the SHA-bound canonical V15 owner-approval artifact; collaborative authorship is preserved and sole owner authorship is not asserted."
+  },
+  "approvedAt": "2026-08-31",
+  "approvalEffect": "exact_wording_approval",
+  "sourceArtifact": {
+    "id": "angle-aspects-60-v15-owner-approval-candidate",
+    "path": "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md",
+    "sha256": "3bbcd3e611d72a9754e9fdb4f4390ec860a670bc53af6b059ea23a212d37bfd4",
+    "passageHeading": "Uranus square Midheaven",
+    "passageOrdinal": 46,
+    "bodySha256": "cc05d374907e57e568e7c51e0b89ce55ba89bf71eac83023e8684d9c7b52c86a"
+  },
+  "ownerConfirmationSource": {
+    "channel": "Codex task owner message",
+    "taskId": "01a04fc0-899b-7cd2-bb2e-98ad182391bb",
+    "date": "2026-08-31"
+  },
+  "replacementAuthorization": null,
+  "additionalBilledCalls": 0
+}
