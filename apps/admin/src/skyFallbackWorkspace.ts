@@ -119,6 +119,36 @@ function ordinalHouse(value: string) {
 export function skyFallbackIdentity(contentKey: string): SkyFallbackIdentity | null {
   const parts = contentKey.split("/").filter(Boolean);
 
+  if (contentKey.startsWith("sky-placement/article/") && parts.length === 4) {
+    return {
+      title: `${words(parts[2])} in ${words(parts[3])}`,
+      typeLabel: "Canonical SKY V4 placement article",
+      description: "Stage-only canonical article with its exact planet-sign fallback, provenance, immutable source baseline, and versioned Content Studio draft.",
+      groupKey: "articles",
+      groupLabel: "Sky Placement articles"
+    };
+  }
+
+  if (contentKey.startsWith("sky-context/")) {
+    return {
+      title: parts.slice(1).map(words).join(" · "),
+      typeLabel: "Contextual transit overlay",
+      description: "Reviewed contextual copy with a fact-matched trigger. Trigger facts stay read-only; only the full-page and fallback overlay copy are editable drafts.",
+      groupKey: "supporting",
+      groupLabel: "Sky current conditions"
+    };
+  }
+
+  if (contentKey.startsWith("sky-v4/template/")) {
+    return {
+      title: words(parts.at(-1) ?? "SKY V4 template"),
+      typeLabel: "Canonical SKY V4 Mustache template",
+      description: "Stage-only template. Content Studio preview must resolve it through the same canonical resolver as production.",
+      groupKey: "supporting",
+      groupLabel: "SKY V4 templates"
+    };
+  }
+
   if (contentKey === skyPlacementFrameTemplateKey) {
     return {
       title: "Sky Placement fallback page template",
@@ -322,9 +352,17 @@ export function placeholdersInPackage(source: Record<string, unknown>) {
 export function skyFallbackWorkspace(contentKey: string, sections: unknown): SkyFallbackWorkspace | null {
   const source = effectivePackageRecord(sections);
   const renderPolicy = String(source.render_policy ?? "");
+  const studioFields = Array.isArray(source.studio_editable_fields)
+    ? source.studio_editable_fields
+      .map((value) => record(value))
+      .filter((value) => typeof value.path === "string" && typeof value.label === "string")
+      .map((value) => [String(value.path), String(value.label)] as const)
+    : [];
   const isArticle = contentKey.startsWith("fallback-hook/sky-sign-copy/") || renderPolicy === "sky-placement-continuous-v2";
   const isAspect = contentKey.includes("sky-aspect") || contentKey.includes("sky-placement-aspect");
-  const configuredFields = isArticle ? articleFieldOrder : isAspect ? aspectFieldOrder : [];
+  const configuredFields = studioFields.length
+    ? studioFields
+    : isArticle ? articleFieldOrder : isAspect ? aspectFieldOrder : [];
   const fields = configuredFields
     .filter(([key]) => packageValueAt(source, key) !== "")
     .map(([key, label]) => ({ key, label, value: packageValueAt(source, key) }));
@@ -332,8 +370,10 @@ export function skyFallbackWorkspace(contentKey: string, sections: unknown): Sky
   if (!fields.length) return null;
 
   return {
-    kind: isArticle ? "article" : isAspect ? "aspect" : "legacy",
-    title: isArticle ? "Sky Placement article workspace" : "Sky aspect workspace",
+    kind: studioFields.length || isArticle ? "article" : isAspect ? "aspect" : "legacy",
+    title: studioFields.length
+      ? `${String(source.studio_content_type ?? "SKY V4")} workspace`
+      : isArticle ? "Sky Placement article workspace" : "Sky aspect workspace",
     fields,
     variables: placeholdersInPackage(record(record(sections).packageRecord))
   };
