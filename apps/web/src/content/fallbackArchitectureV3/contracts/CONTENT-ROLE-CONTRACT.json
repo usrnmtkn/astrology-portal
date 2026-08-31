@@ -196,6 +196,10 @@
     "Renderer and validator reject any body or rendered output containing an em dash."
   ],
   "styleRules": {
+    "firstGlanceComprehension": "Reader-facing copy must be understandable before the reader translates astrological abstractions. Lead with a recognizable event, behavior, decision, consequence, or change. Technical correctness does not rescue a sentence that has to be reread to understand what is happening.",
+    "oneSentenceOneJob": "Do not stack the situation, astrology mechanism, warning, and advice into one sentence. Each sentence should advance one clear idea.",
+    "concreteNotNiche": "Concrete writing does not require a narrow invented scene. Use ordinary stakes such as time, money, workload, deadlines, responsibility, approval, recognition, conversations, and agreements when supported by the source meaning, but do not force a reader into one specific life situation.",
+    "forecastSequence": "For transit and forecast copy, lead with what may happen or become clearer, then explain the astrology in plain language, then name the specific risk, then give the practical response. Exact-day Calendar copy must not add unsupported week or month comparisons because the date already anchors the event.",
     "noEmDash": "Em dashes are prohibited in all reader-facing bodies (templates, vocabulary, hooks) and in rendered output. Use commas, colons, or separate sentences.",
     "noReaderExampleReuse": "Reader-provided example copy is structural reference only. Its phrasing must never be stored in rows or rendered.",
     "plainLanguage": "Use normal everyday words. Say 'upsets', not 'unsettles'; 'calm down', not 'regulate'; 'by feel', not 'impressionistically'. If a word would sound odd said out loud to a friend, do not store it.",
