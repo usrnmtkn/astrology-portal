@@ -20,8 +20,8 @@ import { resolvedNatalAspectPatternSectionLabel } from "./natalAspectPatternLabe
 import { dedupeArticleSectionHeadings } from "../../utils/articleHeadings";
 import type { WeeklyHoroscopeAssembly } from "../../services/weeklyHoroscope";
 import { canonicalNatalAspectsForSnapshot } from "../../services/natalAspectFacts";
+import { updateYouTabUrl, youTabFromUrl, type YouTab } from "./youRouting";
 
-type YouTab = "transits" | "chart";
 type NatalChartViewMode = "circle" | "table";
 type AspectToneBucket = "gifts" | "lessons";
 type RelatedAspectRow = {
@@ -1156,9 +1156,28 @@ export function YouPage({
   weeklyTransitRows = [],
   transitArticle
 }: YouPageProps) {
-  const [profileTab, setProfileTab] = useState<YouTab>("transits");
+  const [profileTab, setProfileTab] = useState<YouTab>(youTabFromUrl);
   const [natalChartViewMode, setNatalChartViewMode] = useState<NatalChartViewMode>("circle");
   const [natalAspectPatternDetail, setNatalAspectPatternDetail] = useState<NatalAspectPatternDetailSelection | null>(null);
+
+  useEffect(() => {
+    const syncProfileTab = () => {
+      setProfileTab(youTabFromUrl());
+    };
+
+    window.addEventListener("popstate", syncProfileTab);
+    window.addEventListener("hashchange", syncProfileTab);
+
+    return () => {
+      window.removeEventListener("popstate", syncProfileTab);
+      window.removeEventListener("hashchange", syncProfileTab);
+    };
+  }, []);
+
+  const selectProfileTab = (nextTab: YouTab) => {
+    setProfileTab(nextTab);
+    updateYouTabUrl(nextTab);
+  };
   const natalOnlyAspects = canonicalNatalAspectsForSnapshot(natalSky);
   const natalChart = natalSky ? (
     <div className="wheel natal-wheel chart-shell" id="wheel-natal" aria-label="Natal chart wheel">
@@ -1252,7 +1271,7 @@ export function YouPage({
               { value: "transits", label: "Transits" },
               { value: "chart", label: "Natal Chart" }
             ]}
-            onChange={setProfileTab}
+            onChange={selectProfileTab}
             ariaLabel="Profile sections"
             className="app-tabs profile-tabs you-profile-tabs you-chart-tabs"
           />
