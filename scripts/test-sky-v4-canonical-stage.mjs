@@ -3,8 +3,10 @@ import { createHash } from "node:crypto";
 import fs from "node:fs";
 import {
   SKY_V4_CANONICAL_PACKAGE_VERSION,
+  SKY_V4_CANONICAL_JSON_SHA256,
   SKY_V4_OVERLAY_DEFAULTS,
   assertSkyV4CanonicalPackage,
+  assertSkyV4ContinuousOwnerApproval,
   continuousArticleFor,
   renderSkyV4ContinuousPreview,
   renderSkyV4StudioPreview,
@@ -23,8 +25,10 @@ const corpus = JSON.parse(bytes);
 const lower = (value) => String(value ?? "").trim().toLowerCase();
 const title = (value) => String(value ?? "").replace(/[-_]+/gu, " ").replace(/\b\w/gu, (letter) => letter.toUpperCase());
 
-assert.equal(createHash("sha256").update(bytes).digest("hex"), "9b91e715bea63a2c835001783240122aad1e000b3982d68bfebbb3cef690a750");
+assert.equal(createHash("sha256").update(bytes).digest("hex"), SKY_V4_CANONICAL_JSON_SHA256);
 assert.equal(assertSkyV4CanonicalPackage(corpus), corpus);
+const ownerApproval = assertSkyV4ContinuousOwnerApproval(corpus);
+assert.equal(ownerApproval.approved_keys.length, 120);
 assert.equal(corpus.packageVersion, SKY_V4_CANONICAL_PACKAGE_VERSION);
 assert.equal(corpus.servingEnabled, false);
 
@@ -35,8 +39,18 @@ assert.equal(coverage.continuousCount, 120);
 assert.equal(coverage.fallbackCount, 120);
 assert.equal(coverage.compositionScenarioCount, 30);
 assert.equal(coverage.editingTestCount, 14);
-assert.ok(records.every((row) => row.review_status === "needs_review"));
-assert.ok(records.every((row) => row.owner_approved === false));
+const continuousRecords = records.filter((row) => row.studio_content_type === "continuous-placement");
+const otherRecords = records.filter((row) => row.studio_content_type !== "continuous-placement");
+assert.equal(continuousRecords.length, 120);
+assert.ok(continuousRecords.every((row) => row.review_status === "approved"));
+assert.ok(continuousRecords.every((row) => row.owner_approved === true));
+assert.ok(continuousRecords.every((row) => row.approved_via === ownerApproval.approval_record));
+assert.ok(continuousRecords.every((row) => row.serving_enabled === false));
+assert.ok(continuousRecords.every((row) => row.owner_approved_fields.join("|") === "placementArticle|tldrWhat|tldrTakeaway"));
+assert.ok(continuousRecords.every((row) => row.owner_unapproved_fields.join("|") === "fallback.hook|fallback.lived|fallback.turn"));
+assert.equal(otherRecords.length, 185);
+assert.ok(otherRecords.every((row) => row.review_status === "needs_review"));
+assert.ok(otherRecords.every((row) => row.owner_approved === false));
 assert.ok(records.every((row) => row.serving_enabled === false));
 assert.ok(records.every((row) => row.source_package === SKY_V4_CANONICAL_PACKAGE_VERSION));
 assert.equal(new Set(records.map((row) => row.contentKey)).size, records.length);
