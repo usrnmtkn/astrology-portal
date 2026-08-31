@@ -14,6 +14,7 @@ import {
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const reviewRoot = "packages/astro-knowledge/review/angle-aspects-60-friends-v1";
+const ownerEditRoot = "packages/astro-knowledge/review/saturn-square-ascendant-owner-edit-v1";
 const rowsPath = "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json";
 const templatesPath = "apps/web/src/content/fallbackArchitectureV3/templates/fallback-templates-v3.json";
 const read = (relativePath) => fs.readFileSync(path.join(repoRoot, relativePath), "utf8");
@@ -37,6 +38,9 @@ const authority = readJson(`${reviewRoot}/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPR
 const revisions = readJson(`${reviewRoot}/YOU-V15-TWO-OWNER-APPROVED-SUPERSESSIONS.json`);
 const manifest = readJson(`${reviewRoot}/shipping-manifest.json`);
 const v15Import = readJson("packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-CONTENT-STUDIO-IMPORT.json");
+const ownerEditAuthority = readJson(`${ownerEditRoot}/content-studio-owner-edit-authority.json`);
+const ownerEditManifest = readJson(`${ownerEditRoot}/shipping-manifest.json`);
+const ownerEditRecord = readJson(ownerEditManifest.approvalRecord.path);
 const rowsByKey = new Map(rowsFile.hookRows.map((row) => [row.contentKey, row]));
 const friendsByKey = new Map(authority.rows.map((row) => [row.base_content_key, row]));
 const revisionsByKey = new Map(revisions.revisions.map((row) => [row.content_key, row]));
@@ -59,31 +63,49 @@ let friendRenderChecks = 0;
 let youSourceParity = 0;
 let youRenderChecks = 0;
 let unchangedV15YouBodies = 0;
+let ownerEditSourceParity = 0;
 
 for (const friend of authority.rows) {
   const key = friend.base_content_key;
   const sourceRow = rowsByKey.get(key);
-  const friendManifest = manifest.friendsRecords.find((record) => record.contentKey === key);
+  const isOwnerEdit = key === ownerEditAuthority.contentKey;
+  const effectiveFriendBody = isOwnerEdit ? ownerEditAuthority.friends.body_they : friend.body;
+  const effectiveFriendSha256 = isOwnerEdit ? ownerEditAuthority.friends.sha256 : friend.body_sha256;
+  const friendManifest = isOwnerEdit
+    ? { recordPath: ownerEditManifest.approvalRecord.path }
+    : manifest.friendsRecords.find((record) => record.contentKey === key);
   assert.ok(sourceRow && friendManifest, `${key}: governed row or manifest record missing`);
-  assert.equal(sourceRow.body_they, friend.body, `${key}: Friends source parity`);
+  assert.equal(sourceRow.body_they, effectiveFriendBody, `${key}: Friends source parity`);
   assert.equal(sourceRow.body_they_review_status, "approved");
-  assert.equal(sourceRow.body_they_sha256, friend.body_sha256);
+  assert.equal(sourceRow.body_they_sha256, effectiveFriendSha256);
   assert.equal(sourceRow.body_they_approval.approvalLevel, "exact_owner_approved");
   assert.equal(sourceRow.body_they_approval.recordPath, friendManifest.recordPath);
-  assert.equal(sha256(sourceRow.body_they), friend.body_sha256);
+  assert.equal(sha256(sourceRow.body_they), effectiveFriendSha256);
   assert.match(sourceRow.body_they, /\{\{Name\}\}/u);
   assert.doesNotMatch(sourceRow.body_they, /(?:^|[^A-Za-z])(?:you|your|yours)(?=$|[^A-Za-z])/iu);
   const friendRecord = readJson(friendManifest.recordPath);
-  assert.equal(friendRecord.payload.body_they, friend.body);
+  assert.equal(friendRecord.payload.body_they, effectiveFriendBody);
   assert.equal(friendRecord.payloadSha256, sha256(JSON.stringify(friendRecord.payload)));
   assert.equal(friendRecord.payloadSha256, sourceRow.body_they_approval.payloadSha256);
+  if (isOwnerEdit) {
+    assert.equal(friendRecord.payload.body, ownerEditAuthority.you.body);
+    assert.ok(sourceRow.body_they_historical_approvals.some((approval) => approval.recordPath === ownerEditAuthority.supersedes.friends.approvalRecordPath));
+    ownerEditSourceParity += 1;
+  }
   friendSourceParity += 1;
 
   const [, , planet, aspect, angle] = key.split("/");
-  const expectedFriendBody = friend.body.replaceAll("{{Name}}", "Chris");
-  const expectedYouBody = revisionsByKey.get(key)?.body ?? v15ByKey.get(key)?.body;
+  const expectedFriendBody = effectiveFriendBody.replaceAll("{{Name}}", "Chris");
+  const expectedYouBody = isOwnerEdit
+    ? ownerEditAuthority.you.body
+    : revisionsByKey.get(key)?.body ?? v15ByKey.get(key)?.body;
   assert.ok(expectedYouBody, `${key}: You authority missing`);
-  if (revisionsByKey.has(key)) {
+  if (isOwnerEdit) {
+    assert.equal(sourceRow.body, ownerEditAuthority.you.body);
+    assert.equal(sourceRow.approval.recordPath, ownerEditManifest.approvalRecord.path);
+    assert.equal(sourceRow.approval.payloadSha256, ownerEditRecord.payloadSha256);
+    assert.ok(sourceRow.historical_approvals.some((approval) => approval.recordPath === ownerEditAuthority.supersedes.you.approvalRecordPath));
+  } else if (revisionsByKey.has(key)) {
     const revisionManifest = manifest.youRevisionRecords.find((record) => record.contentKey === key);
     assert.ok(revisionManifest, `${key}: You supersession manifest missing`);
     const revisionRecord = readJson(revisionManifest.recordPath);
@@ -129,7 +151,8 @@ assert.equal(friendSourceParity, 60);
 assert.equal(friendRenderChecks, 360, "60 Friends rows x 2 key orders x 3 resolver builds");
 assert.equal(youSourceParity, 60);
 assert.equal(youRenderChecks, 360, "60 You rows x 2 key orders x 3 resolver builds");
-assert.equal(unchangedV15YouBodies, 58);
+assert.equal(unchangedV15YouBodies, 57);
+assert.equal(ownerEditSourceParity, 1);
 
 const sunSquareMidheaven = friendsByKey.get("fallback-hook/natal-aspect-lived/sun/square/midheaven");
 const moonSquareMidheaven = friendsByKey.get("fallback-hook/natal-aspect-lived/moon/square/midheaven");
@@ -151,4 +174,4 @@ for (const [implementation, render, GapError] of [
   );
 }
 
-console.log("Friends natal angle aspects V1: ok (60/60 source parity; 360/360 Friends resolver checks; 2/2 You supersessions; 58/58 unchanged V15 You bodies; Pluto trine Midheaven remains SOURCE_GAP).");
+console.log("Friends natal angle aspects V1: ok (60/60 effective source parity; 360/360 Friends resolver checks; 2/2 earlier You supersessions; 1/1 Saturn owner-edit supersession; 57/57 other V15 You bodies unchanged; Pluto trine Midheaven remains SOURCE_GAP).");

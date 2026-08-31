@@ -95600,35 +95600,58 @@
    "contentKey": "fallback-hook/natal-aspect-lived/saturn/square/ascendant",
    "content_role": "full_copy",
    "grammar_frame": "complete_sentence",
-   "body": "You can be completely capable of doing something and still spend too much time trying to become ready for the beginning. You rewrite the introduction, wait another week to send the work, prepare for a meeting nobody else realized required preparation, or decide you should know more before you let anyone see what you are doing. Once you are actually in the situation, you usually have much more to work with than you expected.\n\nSaturn brings time, standards, responsibility, and limits into tension with the Ascendant, which describes how you enter a situation and how other people first experience you. The beginning can feel more consequential than it looks from the outside, so you may try to remove too much uncertainty before you move. Your inner critic can turn preparation into another requirement you have to satisfy before you begin. One more revision becomes one more week, and one more thing you should know becomes another reason not to send the work yet.\n\nThe cost is easy to miss because preparation often improves the result. The problem starts when the feedback that could have saved you two weeks arrives after you already spent the two weeks, or the opportunity goes to someone who was willing to answer before they knew everything. You can keep waiting until the work is good enough to withstand criticism when showing it earlier would have given you information you could actually use.\n\nPreparation should make it easier to begin, not move the beginning further away. If nobody can respond until you have already finished deciding everything yourself, preparation has started costing you useful feedback.",
-   "sourceMechanism": "Exact owner-approved copy transcribed byte-for-byte from the SHA-bound canonical V15 owner-approval artifact; collaborative authorship is preserved and sole owner authorship is not asserted.",
+   "body": "You can be completely capable and still spend way too much time just trying to get started. With Saturn in tension with your Ascendant, stepping into something new feels far more consequential to you than it looks to anyone else. The Ascendant is how you show up in the world. Saturn brings a heavy, demanding sense of responsibility to that very first step. Because you take your presence so seriously, you try to remove every ounce of uncertainty before you act.\n\nThis drive to over-prepare dictates how you handle almost every new beginning in your life, big or small. You delay a major life change until you can guarantee the outcome. You hold back a creative project until you are sure no one can criticize it. You wait to open up to a partner until you feel perfectly healed. Saturn convinces you that if you are flawless, you are safe. But your inner critic turns basic readiness into a wall. One more detail to figure out just becomes another way to hide.\n\nThe true cost is easy to ignore because preparing actually does improve the final result. But eventually, the isolation catches up with you. The feedback that could have saved you massive amounts of effort only arrives after you have done all the work alone. An opportunity goes to someone willing to step up before they knew everything. You keep waiting until you are bulletproof. In the process, you miss out on the exact messy experiences that would actually teach you what to do next.\n\nTo break this pattern, you have to let go of the need to be perfect before you begin. You cannot remove the vulnerability from a new situation, and trying to do so just keeps you on the sidelines. Decide what a rough draft looks like, and stop preparing the second you reach it. Put the unfinished work out into the world. Let people get to know you while you are still figuring things out. You do not need to be a finished product to take up space.",
+   "sourceMechanism": "Exact owner-edited You and Friends copy captured from Content Studio and explicitly reaffirmed as the latest authority in the owner's Codex instruction on 2026-08-31.",
    "reader_only": true,
    "render_policy": "reader-only-exact-lived-v1",
    "review_status": "approved",
    "source_keys": [
     "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md",
     "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.md",
-    "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.json"
+    "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.json",
+    "packages/astro-knowledge/review/saturn-square-ascendant-owner-edit-v1/content-studio-owner-edit-authority.json"
    ],
    "approval": {
     "approvalLevel": "exact_owner_approved",
-    "recordPath": "packages/astro-knowledge/review/angle-aspects-60-v15/records/039-natal-aspect-lived-saturn-square-ascendant-exact-approval.json",
-    "payloadSha256": "c7cc1c465ee9ba5868cfe2a1d277a6b0678e700a57f5b8ab868bee0693b2b27f",
+    "recordPath": "packages/astro-knowledge/review/saturn-square-ascendant-owner-edit-v1/saturn-square-ascendant-owner-edit-supersession.json",
+    "payloadSha256": "17d8c7b38825b82d7921e8b1b56d0114ae6d2627ab3ebe9204e970df0dfa61bd",
     "approvedAt": "2026-08-31"
    },
-   "body_they": "{{Name}} can be completely capable of doing something and still spend too much time trying to become ready for the beginning. They revise, prepare, learn more, and try to remove uncertainty before anyone else has had a chance to respond. Preparation often improves the result, which makes the cost easy to miss. Preparation should make it easier for them to begin, not keep moving the beginning further away.",
+   "body_they": "{{Name}} can be completely capable and still spend way too much time just trying to get started. With Saturn in tension with their Ascendant, stepping into something new feels far more consequential to them than it looks to anyone else. The Ascendant is how they show up in the world. Saturn brings a heavy, demanding sense of responsibility to that very first step. Because they take their presence so seriously, they try to remove every ounce of uncertainty before they act.\n\nThis drive to over-prepare dictates how they handle almost every new beginning in their life, big or small. They delay a major life change until they can guarantee the outcome. They hold back a creative project until they are sure no one can criticize it. They wait to open up to a partner until they feel perfectly healed. Saturn convinces them that if they are flawless, they are safe. But their inner critic turns basic readiness into a wall. One more detail to figure out just becomes another way to hide.\n\nThe true cost is easy to ignore because preparing actually does improve the final result. But eventually, the isolation catches up with them. The feedback that could have saved them massive amounts of effort only arrives after they have done all the work alone. An opportunity goes to someone willing to step up before they knew everything. They keep waiting until they are bulletproof. In the process, they miss out on the exact messy experiences that would actually teach them what to do next.\n\nTo break this pattern, they have to let go of the need to be perfect before they begin. They cannot remove the vulnerability from a new situation, and trying to do so just keeps them on the sidelines. They must decide what a rough draft looks like, and stop preparing the second they reach it. They need to put the unfinished work out into the world and let people get to know them while they are still figuring things out. They do not need to be a finished product to take up space.",
    "body_they_review_status": "approved",
-   "body_they_sha256": "6bcadb2f8e8771562b4e1fb950f482490a9bbcb26a5e64ebeaca86294dfdcb98",
-   "body_they_approved_via": "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.md",
-   "body_they_authorship": "collaborative_owner_approved",
+   "body_they_sha256": "1a0d569bc79559a7fd3958402ec2689577011457d21bf7ee70b3512257bf65e7",
+   "body_they_approved_via": "packages/astro-knowledge/review/saturn-square-ascendant-owner-edit-v1/content-studio-owner-edit-authority.json",
+   "body_they_authorship": "owner_edited_exact_approved",
    "body_they_name_variable": "{{Name}}",
-   "body_they_sourceMechanism": "Separately authored Friends copy transcribed byte-for-byte from the SHA-bound Friends V1 owner-approved artifact; no You-to-Friends transformation is permitted.",
+   "body_they_sourceMechanism": "Exact owner-edited You and Friends copy captured from Content Studio and explicitly reaffirmed as the latest authority in the owner's Codex instruction on 2026-08-31.",
    "body_they_approval": {
     "approvalLevel": "exact_owner_approved",
-    "recordPath": "packages/astro-knowledge/review/angle-aspects-60-friends-v1/records/039-natal-aspect-lived-saturn-square-ascendant-friends-exact-approval.json",
-    "payloadSha256": "ed02faa5b4f296edc6c4e715a7e4d77d63527e7ef70e53672ef3b2b89e99c967",
+    "recordPath": "packages/astro-knowledge/review/saturn-square-ascendant-owner-edit-v1/saturn-square-ascendant-owner-edit-supersession.json",
+    "payloadSha256": "17d8c7b38825b82d7921e8b1b56d0114ae6d2627ab3ebe9204e970df0dfa61bd",
     "approvedAt": "2026-08-31"
-   }
+   },
+   "historical_approvals": [
+    {
+     "approvalLevel": "exact_owner_approved",
+     "recordPath": "packages/astro-knowledge/review/angle-aspects-60-v15/records/039-natal-aspect-lived-saturn-square-ascendant-exact-approval.json",
+     "payloadSha256": "c7cc1c465ee9ba5868cfe2a1d277a6b0678e700a57f5b8ab868bee0693b2b27f",
+     "approvedAt": "2026-08-31",
+     "bodySha256": "c6551a689d8891c73fc9db4ec41386d06002b565567fb6d0768033c65bd134fb",
+     "textField": "body",
+     "supersededBy": "packages/astro-knowledge/review/saturn-square-ascendant-owner-edit-v1/saturn-square-ascendant-owner-edit-supersession.json"
+    }
+   ],
+   "body_they_historical_approvals": [
+    {
+     "approvalLevel": "exact_owner_approved",
+     "recordPath": "packages/astro-knowledge/review/angle-aspects-60-friends-v1/records/039-natal-aspect-lived-saturn-square-ascendant-friends-exact-approval.json",
+     "payloadSha256": "ed02faa5b4f296edc6c4e715a7e4d77d63527e7ef70e53672ef3b2b89e99c967",
+     "approvedAt": "2026-08-31",
+     "bodySha256": "6bcadb2f8e8771562b4e1fb950f482490a9bbcb26a5e64ebeaca86294dfdcb98",
+     "textField": "body_they",
+     "supersededBy": "packages/astro-knowledge/review/saturn-square-ascendant-owner-edit-v1/saturn-square-ascendant-owner-edit-supersession.json"
+    }
+   ]
   },
   {
    "contentKey": "fallback-hook/natal-aspect-lived/saturn/square/midheaven",
