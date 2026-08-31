@@ -134,8 +134,12 @@ assert.match(dashboardSource, /<NatalPlacementSourceFinder/u, "The natal workspa
 assert.match(dashboardSource, /createNatalPlacementOverride/u, "A missing exact natal write-up must offer an explicit draft-override workflow instead of a dead editor action.");
 const natalPreviewSource = fs.readFileSync(path.join(repoRoot, "apps/admin/src/NatalPlacementReaderPreview.tsx"), "utf8");
 assert.match(natalPreviewSource, /\/api\/admin\/natal-placement-preview/u, "The natal preview must render behind an admin API boundary instead of shipping the content corpus to the browser.");
-assert.match(natalPreviewSource, /What the reader sees/u);
+assert.match(natalPreviewSource, /What a friend sees/u);
+assert.match(natalPreviewSource, /separate third-person source writing/u, "The natal editor must explain that Friends copy is composed from separately editable sources.");
 assert.match(natalPreviewSource, /Create exact override/u);
+assert.match(dashboardSource, /You view exact copy/u, "You-only exact natal overrides must be labeled honestly in the editor.");
+assert.match(dashboardSource, /Friend view copy/u, "Dual-voice natal sources must expose a user-friendly Friends field.");
+assert.match(dashboardSource, /Edit the copy a friend sees/u, "The same natal edit slide-out must expose the effective Friends copy and its source links.");
 const natalPreviewApiSource = fs.readFileSync(path.join(repoRoot, "api/admin/natal-placement-preview.ts"), "utf8");
 assert.match(natalPreviewApiSource, /createFallbackRenderer/u, "The natal preview endpoint must reuse the production fallback resolver.");
 assert.match(natalPreviewApiSource, /isContentAdminAuthorized/u, "The natal preview endpoint must remain restricted to Content Studio administrators.");
