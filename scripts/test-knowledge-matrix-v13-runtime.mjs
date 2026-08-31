@@ -118,7 +118,21 @@ const retiredHistoricalSourceKeys = new Set([
   "fallback-hook/natal-moon-phase-lived/balsamic",
 ]);
 const referenceOnlySourceKeys = new Set([...genericAspectSourceMaterialKeys, ...retiredHistoricalSourceKeys]);
-assert.equal(sourceByReleaseKey.size, 301);
+const laterV15Supersessions = new Set([
+  "fallback-hook/natal-aspect-lived/sun/opposition/ascendant",
+  "fallback-hook/natal-aspect-lived/moon/opposition/ascendant",
+  "fallback-hook/natal-aspect-lived/jupiter/opposition/ascendant",
+  "fallback-hook/natal-aspect-lived/neptune/opposition/ascendant",
+  "fallback-hook/natal-aspect-lived/pluto/square/ascendant",
+  "fallback-hook/natal-aspect-lived/moon/opposition/midheaven",
+  "fallback-hook/natal-aspect-lived/mercury/opposition/midheaven",
+  "fallback-hook/natal-aspect-lived/venus/opposition/midheaven",
+  "fallback-hook/natal-aspect-lived/saturn/opposition/midheaven",
+  "fallback-hook/natal-aspect-lived/pluto/conjunction/midheaven",
+]);
+const sourceByKey = new Map(sourceRows.hookRows.map((row) => [row.contentKey, row]));
+assert.equal(sourceByReleaseKey.size, 291);
+assert.equal(sourceByReleaseKey.size + laterV15Supersessions.size, 301);
 assert.equal(manifest.rows.length, 301);
 const observedServingSubstitutions = new Set();
 for (const row of locked.rows) {
@@ -133,8 +147,16 @@ for (const row of locked.rows) {
   assert.equal(row.workbookProvenance.path, workbookRelativePath);
   assert.equal(row.workbookProvenance.sheet, row.sheet);
 
-  const servingRow = sourceByReleaseKey.get(row.contentKey);
+  const servingRow = sourceByReleaseKey.get(row.contentKey) ?? sourceByKey.get(row.contentKey);
   assert.ok(servingRow, `${row.contentKey}: V13 serving row missing`);
+  if (laterV15Supersessions.has(row.contentKey)) {
+    assert.match(servingRow.approval?.recordPath ?? "", /angle-aspects-60-v15\/records\//u);
+    assert.ok(
+      servingRow.source_keys?.includes("packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md"),
+      `${row.contentKey}: later V15 authority must remain explicit`,
+    );
+    continue;
+  }
   const expectedBody = expectedServingBody(row);
   assert.equal(servingRow.body, expectedBody);
   if (expectedBody !== row.copy) observedServingSubstitutions.add(row.contentKey);
@@ -188,6 +210,7 @@ const priorApprovedRows = sourceRows.hookRows.filter((row) => (
   row.source_release !== "ll-matrix-v13-owner-approved-runtime"
   && !postV13GovernedReleases.has(row.source_release)
   && !postV13GovernedContentKeys.has(row.contentKey)
+  && !row.source_keys?.includes("packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md")
   && !row.contentKey.startsWith("fallback-hook/empty-house/")
   && servingApprovedReviews.has(row.review_status)
 )).map((row) => {
@@ -271,6 +294,12 @@ try {
   assert.equal(v13Rows.filter(Boolean).length, 301);
   for (const [index, row] of v13Rows.entries()) {
     const lockedRow = locked.rows[index];
+    if (laterV15Supersessions.has(lockedRow.contentKey)) {
+      const servingRow = sourceByKey.get(lockedRow.contentKey);
+      assert.equal(row.body, servingRow.body, `${lockedRow.contentKey}: later exact V15 body must materialize.`);
+      assert.match(row.sections?.packageRecord?.approval?.recordPath ?? "", /angle-aspects-60-v15\/records\//u);
+      continue;
+    }
     assert.equal(
       row.body,
       expectedServingBody(lockedRow),

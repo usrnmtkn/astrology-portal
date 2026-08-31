@@ -1,12 +1,12 @@
 {
   "schemaVersion": "content-inventory-v1",
   "generatedOn": "2026-08-10",
-  "sourceCommit": "b125598eb6b5fe4aec95b329851e30ff7b066fca",
+  "sourceCommit": "43d2ebfebd2db366ae6dfb4fd89ee9b6b7cdc0fd",
   "authorityRule": "Only owner-approved and owner-locked records may serve or export.",
-  "contentFingerprint": "a65d240b035092953338468268bf512e5a4f748cd0e436c8b186850da80dccfe",
-  "recordCount": 10892,
+  "contentFingerprint": "9d60146cd9c1ad6a8f4b908a2818e80d5212798306f09d3875b8b58341ff9180",
+  "recordCount": 10941,
   "statusCounts": {
-    "owner-approved": 10892
+    "owner-approved": 10941
   },
   "familyCounts": {
     "approved/calendar-weekly-overview": 1,
@@ -104,7 +104,7 @@
     "house-activation": 1017,
     "house-horoscope-core": 984,
     "lunation": 433,
-    "natal-aspect": 253,
+    "natal-aspect": 302,
     "natal-placement": 308,
     "sky": 26,
     "sky-article/saturn": 2,
@@ -126034,6 +126034,68 @@
       }
     },
     {
+      "contentKey": "fallback-hook/natal-aspect-lived/jupiter/conjunction/ascendant",
+      "contentFamily": "natal-aspect",
+      "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+      "runtimeBucket": "hook",
+      "status": "owner-approved",
+      "sourceStatus": "approved",
+      "provenance": "source-archive",
+      "sourceAuthor": "composed",
+      "approvalRecord": "packages/astro-knowledge/review/angle-aspects-60-v15/records/031-natal-aspect-lived-jupiter-conjunction-ascendant-exact-approval.json",
+      "approvalVersionDate": "2026-08-31",
+      "contentHash": "90a801855836dd6352df3fd90b4182ad7cd9d8f0247db0307fa13bdbf25587ec",
+      "wording": {
+        "body": "You are quick to see what an idea, experience, or opportunity could grow into, and that sense of possibility can make life feel larger before you have worked out the details. One subject opens three more things you want to learn, and one new experience can make you question limits you had stopped noticing.\n\nYou often learn by entering the experience and finding out what it gives you rather than waiting until you can predict every outcome in advance. That openness can take you places excessive caution never would.\n\nThe challenge is that seeing the potential can make it easy to say yes before you know what deserves your time. You can see the value in several directions at once and still have only one life to fit them into. More options do not automatically mean more of them belong in the life you are building.\n\nNot every possibility deserves a yes. Pay attention to what this would actually add to your life, what it requires from you, and what you would still want once the excitement of imagining it has worn off.",
+        "body_they": "{{Name}} is quick to see what an idea, opportunity, or experience could grow into. That sense of possibility can take them places excessive caution would never reach, because they are often willing to enter the experience and learn from it. The complication is seeing value in several directions while still having one life to fit them into. Not every exciting possibility deserves a yes. What it adds and what it requires both matter."
+      },
+      "astrology": {
+        "objects": [
+          "jupiter",
+          "ascendant"
+        ],
+        "signs": [],
+        "aspects": [
+          "conjunction"
+        ],
+        "events": [
+          "conjunction"
+        ],
+        "houses": []
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-aspect-lived/jupiter/conjunction/midheaven",
+      "contentFamily": "natal-aspect",
+      "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+      "runtimeBucket": "hook",
+      "status": "owner-approved",
+      "sourceStatus": "approved",
+      "provenance": "source-archive",
+      "sourceAuthor": "composed",
+      "approvalRecord": "packages/astro-knowledge/review/angle-aspects-60-v15/records/032-natal-aspect-lived-jupiter-conjunction-midheaven-exact-approval.json",
+      "approvalVersionDate": "2026-08-31",
+      "contentHash": "a0100bfd00ad96018cf6d811ee92f178066c5206b9bfcca2b819174021f44a5c",
+      "wording": {
+        "body": "You want what you are building publicly to keep giving you something to grow into, not just more attention for doing the same thing. Recognition matters most when it gives you more to learn, more influence over the result, or a wider reach for something you believe in.\n\nThe setting can change across your life. You may feel it in school, teaching, leadership, publishing, advocacy, or a career, but the pattern stays the same: you want your contribution to go somewhere.\n\nBigger is not automatically better. You take another credential, accept a more visible position, build a larger audience, or take on more responsibility and still end up with less time for the part that made you care in the first place.\n\nAsk what the next step would actually give you. More knowledge, access, authority, money, reach, or control over what you are building can matter. More people knowing your name only matters if the larger role gives you something worth doing with the attention.",
+        "body_they": "{{Name}} wants what they are building publicly to keep giving them somewhere to grow. Recognition is more satisfying when it brings more knowledge, influence, access, reach, or authority rather than simply more attention for doing the same thing. Bigger is not automatically better. The next step matters when it gives them something useful to do with the larger role."
+      },
+      "astrology": {
+        "objects": [
+          "jupiter",
+          "midheaven"
+        ],
+        "signs": [],
+        "aspects": [
+          "conjunction"
+        ],
+        "events": [
+          "conjunction"
+        ],
+        "houses": []
+      }
+    },
+    {
       "contentKey": "fallback-hook/natal-aspect-lived/jupiter/conjunction/north-node",
       "contentFamily": "natal-aspect",
       "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
@@ -126072,16 +126134,48 @@
       "sourceStatus": "approved",
       "provenance": "source-archive",
       "sourceAuthor": "composed",
-      "approvalRecord": "packages/astro-knowledge/voice/tldr-astro/marie-satori-writer/ll-matrix-v13/knowledge-matrix-v13-owner-approved-locked.json",
-      "approvalVersionDate": "2026-08-10",
-      "contentHash": "6302c531615c8a5640f84e8fd12a143adb85fadfff1363cdc8132978a61115d7",
+      "approvalRecord": "packages/astro-knowledge/review/angle-aspects-60-v15/records/035-natal-aspect-lived-jupiter-opposition-ascendant-exact-approval.json",
+      "approvalVersionDate": "2026-08-31",
+      "contentHash": "4bb48039d230025616a78b3fafa0302011e95890ea526aba6fc159d098c5fadb",
       "wording": {
-        "body": "Relationships can become some of the best places you learn. You learn through people who make you laugh, challenge an assumption, know something you do not, or carry a worldview you would never have reached alone. One-on-one connection feels richest when both people are allowed to teach."
+        "body": "You are often drawn to people who make your life feel larger by introducing you to ideas, experiences, beliefs, or possibilities you would not have reached on your own. Being close to them can make you reconsider limits you had stopped questioning.\n\nThe relationship can expand your worldview because the other person brings something genuinely different to it. They have been somewhere you have not, know something you do not, or take an idea seriously enough that you begin looking at your own assumptions differently.\n\nTheir certainty can start carrying more authority than your judgment. Someone can be knowledgeable, experienced, inspiring, and still be wrong about what is right for you.\n\nAnother person can expand your sense of what is possible without deciding what you should want. A relationship makes your life larger when both people can keep growing, not when the person with the bigger vision becomes responsible for choosing the future.",
+        "body_they": "{{Name}} may be drawn to people who make life feel larger by introducing them to ideas, experiences, beliefs, or possibilities they would not have reached alone. Another person's knowledge can genuinely expand their worldview. The complication begins when that person's confidence starts carrying more authority than {{Name}}'s own judgment. Someone can be inspiring and experienced without automatically knowing what is right for them."
       },
       "astrology": {
         "objects": [
           "jupiter",
           "ascendant"
+        ],
+        "signs": [],
+        "aspects": [
+          "opposition"
+        ],
+        "events": [
+          "opposition"
+        ],
+        "houses": []
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-aspect-lived/jupiter/opposition/midheaven",
+      "contentFamily": "natal-aspect",
+      "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+      "runtimeBucket": "hook",
+      "status": "owner-approved",
+      "sourceStatus": "approved",
+      "provenance": "source-archive",
+      "sourceAuthor": "composed",
+      "approvalRecord": "packages/astro-knowledge/review/angle-aspects-60-v15/records/036-natal-aspect-lived-jupiter-opposition-midheaven-exact-approval.json",
+      "approvalVersionDate": "2026-08-31",
+      "contentHash": "01054b166c2b6ced0f927946b07cfaca573ee60428620cc44bebbdf952cb4ffc",
+      "wording": {
+        "body": "You may have grown up around strong ideas about what a good life is supposed to look like, especially around education, religion, money, marriage, loyalty, where you live, or what counts as success. Those beliefs can stay with you long after you are old enough to decide which ones you actually agree with.\n\nSome of them can give you a strong foundation. Others become harder to keep once your own experience gives you more information. You may value where you came from and still build a home, relationship, public role, or belief system that nobody there would have chosen for you.\n\nGratitude gets complicated when other people start treating it like agreement. A different choice can be interpreted as rejection simply because somebody else worked hard to give you the first version.\n\nYour roots can explain where you started without deciding where you have to end up. What you inherited matters, but so does what you have learned since then and what you actually want to build with it.",
+        "body_they": "{{Name}} may come from a family with strong ideas about education, money, religion, relationships, loyalty, or what a good life is supposed to look like. Some of those beliefs can give them a strong foundation, while others become harder to keep once their own experience gives them more information. Their roots explain where they started. They do not have to decide where {{Name}} ends up."
+      },
+      "astrology": {
+        "objects": [
+          "jupiter",
+          "midheaven"
         ],
         "signs": [],
         "aspects": [
@@ -126446,6 +126540,68 @@
         ],
         "events": [
           "sextile"
+        ],
+        "houses": []
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-aspect-lived/jupiter/square/ascendant",
+      "contentFamily": "natal-aspect",
+      "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+      "runtimeBucket": "hook",
+      "status": "owner-approved",
+      "sourceStatus": "approved",
+      "provenance": "source-archive",
+      "sourceAuthor": "composed",
+      "approvalRecord": "packages/astro-knowledge/review/angle-aspects-60-v15/records/033-natal-aspect-lived-jupiter-square-ascendant-exact-approval.json",
+      "approvalVersionDate": "2026-08-31",
+      "contentHash": "de4abb65a1ff2653c97dee25e6f3bb0e4c7689339844a1463b2a41c52d9fff0c",
+      "wording": {
+        "body": "You can become attached to the person you imagine becoming because of a choice, so potential may feel convincing before you know if the commitment fits the life you already have. A class becomes evidence of a future you want, a larger role makes you picture yourself with more influence, or a project feels important partly because of what completing it would say about the person you are becoming.\n\nYou can end up saying yes because of what the choice seems to promise about your future, even when the commitment itself does not fit your life very well. You trust yourself to work out the ordinary requirements later.\n\nThe challenge is not wanting more. It is letting the future version of your life answer questions the present one still needs to ask. Time, attention, responsibility, and follow-through still have to work inside the life you are actually living.\n\nThe future you can picture tells you something about what you want to grow into. It does not tell you which commitment belongs in your life now. You can want the larger life and still decide this is not the way you want to build it.",
+        "body_they": "{{Name}} can become attached to the person they imagine becoming because of a choice, so potential may feel convincing before they know if the commitment fits the life they already have. They can say yes because of what an opportunity seems to promise about their future and trust themselves to solve the ordinary requirements later. The future they can picture tells them something about what they want. It does not decide which commitment belongs in their life now."
+      },
+      "astrology": {
+        "objects": [
+          "jupiter",
+          "ascendant"
+        ],
+        "signs": [],
+        "aspects": [
+          "square"
+        ],
+        "events": [
+          "square"
+        ],
+        "houses": []
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-aspect-lived/jupiter/square/midheaven",
+      "contentFamily": "natal-aspect",
+      "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+      "runtimeBucket": "hook",
+      "status": "owner-approved",
+      "sourceStatus": "approved",
+      "provenance": "source-archive",
+      "sourceAuthor": "composed",
+      "approvalRecord": "packages/astro-knowledge/review/angle-aspects-60-v15/records/034-natal-aspect-lived-jupiter-square-midheaven-exact-approval.json",
+      "approvalVersionDate": "2026-08-31",
+      "contentHash": "ffcaf3a118448a21cd50ffce43e35dd7b7228066dc4de4987113780fca9a9638",
+      "wording": {
+        "body": "When you start questioning what you want to be known for next, your first response can be to find a bigger goal instead of asking if the current direction still fits. Another degree, a more impressive role, a larger audience, a new organization, or a more ambitious project gives you something to move toward.\n\nSometimes expansion changes the terms in a useful way. A credential creates access that was genuinely missing, a larger platform gives something you care about more reach, or a new responsibility lets you use judgment you were not able to use before.\n\nOther times, growth gives you something new to pursue while leaving the original question untouched. You keep adding qualifications, responsibility, visibility, or scale because choosing a different direction would mean admitting how much has changed.\n\nAsk what the next step actually changes. More access, authority, skill, money, or reach can give you something worth building with. If the larger move changes none of those, it may only be keeping you busy inside a direction you already know you need to reconsider.",
+        "body_they": "When {{Name}} starts questioning what they want to be known for next, they may reach for a bigger goal before asking if the current direction still fits. Another credential, larger role, or more ambitious project can give them something new to pursue. Sometimes expansion changes the terms in a useful way. Other times it keeps them busy inside a direction they already know they need to reconsider. The important question is what the next step actually changes."
+      },
+      "astrology": {
+        "objects": [
+          "jupiter",
+          "midheaven"
+        ],
+        "signs": [],
+        "aspects": [
+          "square"
+        ],
+        "events": [
+          "square"
         ],
         "houses": []
       }
@@ -128859,6 +129015,37 @@
       }
     },
     {
+      "contentKey": "fallback-hook/natal-aspect-lived/mars/conjunction/ascendant",
+      "contentFamily": "natal-aspect",
+      "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+      "runtimeBucket": "hook",
+      "status": "owner-approved",
+      "sourceStatus": "approved",
+      "provenance": "source-archive",
+      "sourceAuthor": "composed",
+      "approvalRecord": "packages/astro-knowledge/review/angle-aspects-60-v15/records/025-natal-aspect-lived-mars-conjunction-ascendant-exact-approval.json",
+      "approvalVersionDate": "2026-08-31",
+      "contentHash": "2f7ea6d95b42887c2fd9cb3f81816a5f4a67ed2f78ecd70b67aaf939c5299198",
+      "wording": {
+        "body": "You learn a lot about yourself by noticing what you are willing to do, pursue, defend, and say no to. When you want something, you are usually more comfortable moving toward it than waiting for someone else to decide what happens next.\n\nAction gives you information about what matters. You may not know how much you care until you find yourself fighting for it, making time for it, or refusing to let somebody else make the decision for you.\n\nWanting to act and knowing what the action is for are two different things. You can push harder because somebody is slowing you down, turn a disagreement into something you need to win, or keep spending effort on a problem simply because you have already committed to solving it.\n\nOver time, you learn that willingness to fight tells you something matters, but it does not tell you how long the fight deserves to continue. The more clearly you know what you actually want, the easier it becomes to tell the difference between protecting something important and spending more effort on a struggle that no longer changes anything.",
+        "body_they": "{{Name}} learns a lot about themselves by noticing what they are willing to pursue, defend, change, and say no to. Action gives them information about what matters. They may not know how strongly they care until they find themselves fighting for something or refusing to let someone else decide for them. The important distinction is between protecting something that still matters and continuing a struggle simply because they have already put so much effort into it."
+      },
+      "astrology": {
+        "objects": [
+          "mars",
+          "ascendant"
+        ],
+        "signs": [],
+        "aspects": [
+          "conjunction"
+        ],
+        "events": [
+          "conjunction"
+        ],
+        "houses": []
+      }
+    },
+    {
       "contentKey": "fallback-hook/natal-aspect-lived/mars/conjunction/jupiter",
       "contentFamily": "natal-aspect",
       "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
@@ -128877,6 +129064,37 @@
         "objects": [
           "mars",
           "jupiter"
+        ],
+        "signs": [],
+        "aspects": [
+          "conjunction"
+        ],
+        "events": [
+          "conjunction"
+        ],
+        "houses": []
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-aspect-lived/mars/conjunction/midheaven",
+      "contentFamily": "natal-aspect",
+      "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+      "runtimeBucket": "hook",
+      "status": "owner-approved",
+      "sourceStatus": "approved",
+      "provenance": "source-archive",
+      "sourceAuthor": "composed",
+      "approvalRecord": "packages/astro-knowledge/review/angle-aspects-60-v15/records/026-natal-aspect-lived-mars-conjunction-midheaven-exact-approval.json",
+      "approvalVersionDate": "2026-08-31",
+      "contentHash": "153dd5cbe1acee5335e3d0457df11dd68720ded074e1594a4025c67f8bbdb16f",
+      "wording": {
+        "body": "You tend to become known as the person who gets things moving when everyone else is still waiting for someone to decide what happens next. You step forward, take responsibility, say what needs to be said, or deal with the problem other people keep hoping somebody else will handle.\n\nThis can show up anywhere your effort is visible. In school, sports, leadership, community work, family responsibilities, public projects, or a career, people may start trusting you because they know you will act when something matters. Over time, initiative can become part of your reputation.\n\nThe challenge is that being capable under pressure can attract more pressure. You handle the difficult assignment well, so you get the next one. You solve the urgent problem, so people start assuming you will solve the next one too. Eventually, being the person who can handle it can become the reason more responsibility keeps finding you.\n\nMore responsibility should bring more authority, more influence over the outcome, more recognition, or enough support to make an actual impact. What you become known for should not only be how much pressure you can absorb. Your drive matters most when it gives you something worth building, leading, protecting, or changing.",
+        "body_they": "{{Name}} tends to become known as the person who acts when everyone else is still waiting for somebody to decide what happens next. Their initiative can make people trust them with visible responsibility, especially when something is difficult or urgent. The complication is that handling pressure well tends to attract more pressure. More responsibility should bring more authority, influence, support, recognition, or something meaningful they can actually build with."
+      },
+      "astrology": {
+        "objects": [
+          "mars",
+          "midheaven"
         ],
         "signs": [],
         "aspects": [
@@ -128949,6 +129167,37 @@
       }
     },
     {
+      "contentKey": "fallback-hook/natal-aspect-lived/mars/opposition/ascendant",
+      "contentFamily": "natal-aspect",
+      "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+      "runtimeBucket": "hook",
+      "status": "owner-approved",
+      "sourceStatus": "approved",
+      "provenance": "source-archive",
+      "sourceAuthor": "composed",
+      "approvalRecord": "packages/astro-knowledge/review/angle-aspects-60-v15/records/029-natal-aspect-lived-mars-opposition-ascendant-exact-approval.json",
+      "approvalVersionDate": "2026-08-31",
+      "contentHash": "b078921b27aac83ba4222b3ae24d6dc084ddd546011d8377fbcea4f0731fb5a2",
+      "wording": {
+        "body": "You tend to learn what you want most clearly when a partner wants something different, because disagreement forces you to notice where you will compromise and where you will not. You may be drawn to people who are direct, decisive, ambitious, or comfortable saying what they want.\n\nDifferences make your own position clearer. You find out what matters when someone moves faster than you do, wants a different outcome, or refuses to make the choice you hoped they would make.\n\nThe challenge is when the relationship starts organizing itself around whoever pushes harder. You let them choose because they seem more certain, or take over because waiting for them to act becomes more frustrating than making the decision yourself. Either way, the more forceful person's wants start carrying more weight.\n\nConflict can tell you something important about what each person wants. It does not have to decide who gets their way. The relationship works better when both people can say what they want, hear a no without turning it into a larger threat, and still have a direction of their own.",
+        "body_they": "{{Name}} often learns what they want most clearly when a partner wants something different. Disagreement makes it obvious where they are willing to compromise and where they are not. The complication comes when the relationship starts organizing itself around whichever person pushes harder. Conflict can reveal what both people want without deciding who automatically gets their way. The relationship works better when both people can have a direction of their own."
+      },
+      "astrology": {
+        "objects": [
+          "mars",
+          "ascendant"
+        ],
+        "signs": [],
+        "aspects": [
+          "opposition"
+        ],
+        "events": [
+          "opposition"
+        ],
+        "houses": []
+      }
+    },
+    {
       "contentKey": "fallback-hook/natal-aspect-lived/mars/opposition/jupiter",
       "contentFamily": "natal-aspect",
       "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
@@ -128967,6 +129216,37 @@
         "objects": [
           "mars",
           "jupiter"
+        ],
+        "signs": [],
+        "aspects": [
+          "opposition"
+        ],
+        "events": [
+          "opposition"
+        ],
+        "houses": []
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-aspect-lived/mars/opposition/midheaven",
+      "contentFamily": "natal-aspect",
+      "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+      "runtimeBucket": "hook",
+      "status": "owner-approved",
+      "sourceStatus": "approved",
+      "provenance": "source-archive",
+      "sourceAuthor": "composed",
+      "approvalRecord": "packages/astro-knowledge/review/angle-aspects-60-v15/records/030-natal-aspect-lived-mars-opposition-midheaven-exact-approval.json",
+      "approvalVersionDate": "2026-08-31",
+      "contentHash": "26a77d5e4c663a6ff4b9dff8739da0524a9d62bb80fad5459f94ec4433fec844",
+      "wording": {
+        "body": "At home, you are often the person who acts first when something needs to be handled. You fix what broke, handle the urgent problem, deal with the difficult conversation, or step in because waiting for somebody else to take responsibility has already become more frustrating than doing it yourself.\n\nThat can make you highly capable in your private life. It can also create a pattern where everybody learns that eventually you will handle what nobody else wants to do. Your anger becomes the reminder, your frustration becomes the deadline, and action only happens once you are fed up enough to make it happen yourself.\n\nThe challenge is that being capable can hide how uneven the responsibility has become. You know you can take care of it, but being able to do something does not answer why you are always the person expected to.\n\nMore responsibility at home should come with more support, clearer expectations, or somebody else taking responsibility too. If things only get done once you are angry enough to handle them yourself, the pattern is not working. Being the person who can fix it does not automatically make it yours to keep fixing.",
+        "body_they": "At home, {{Name}} may be the person who acts first when something needs to be handled. They fix what broke, deal with the difficult conversation, or step in because waiting has become more frustrating than doing it themselves. Over time, everyone can learn that eventually {{Name}} will handle what nobody else wants to do. Being capable of fixing something does not automatically make it theirs to keep fixing."
+      },
+      "astrology": {
+        "objects": [
+          "mars",
+          "midheaven"
         ],
         "signs": [],
         "aspects": [
@@ -129452,6 +129732,37 @@
       }
     },
     {
+      "contentKey": "fallback-hook/natal-aspect-lived/mars/square/ascendant",
+      "contentFamily": "natal-aspect",
+      "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+      "runtimeBucket": "hook",
+      "status": "owner-approved",
+      "sourceStatus": "approved",
+      "provenance": "source-archive",
+      "sourceAuthor": "composed",
+      "approvalRecord": "packages/astro-knowledge/review/angle-aspects-60-v15/records/027-natal-aspect-lived-mars-square-ascendant-exact-approval.json",
+      "approvalVersionDate": "2026-08-31",
+      "contentHash": "562f34aa2f0c1cdc206b77e453e0ce788ca322af7fc1df607126a147921ab254",
+      "wording": {
+        "body": "You can know something crossed a line and still wait so long to respond that your anger is much stronger by the time anyone else realizes there was a problem. You notice the irritation, tell yourself it is not worth making an issue of, or try to be reasonable about something that is already bothering you.\n\nThat delay can make your reaction look sudden when it has actually been building for a while. You let the first comment go, agree to the plan even though you do not like it, or keep handling something you are increasingly resentful about. By the time you finally respond, you are no longer answering only what just happened.\n\nOver time, you learn that the first irritation is often useful information about a limit you have not named yet. Anger may be the first sign that you wanted something different, that somebody asked too much, or that you agreed to something you did not really want. You do not have to wait until the feeling is impossible to ignore before you take it seriously.\n\nWhat are you fighting for? What are you defending? Anger is useful when it brings you back to the thing that actually matters. The earlier you know what needs to change, the easier it is to respond to the original problem instead of everything that built up because you kept letting it go.",
+        "body_they": "{{Name}} can know something crossed a line and still wait long enough to respond that their anger is much stronger by the time anybody else realizes there was a problem. Their irritation often contains useful information about a limit they have not named yet. The earlier they know what needs to change, the easier it becomes to respond to the original problem instead of everything that accumulated because they kept letting it go."
+      },
+      "astrology": {
+        "objects": [
+          "mars",
+          "ascendant"
+        ],
+        "signs": [],
+        "aspects": [
+          "square"
+        ],
+        "events": [
+          "square"
+        ],
+        "houses": []
+      }
+    },
+    {
       "contentKey": "fallback-hook/natal-aspect-lived/mars/square/jupiter",
       "contentFamily": "natal-aspect",
       "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
@@ -129470,6 +129781,37 @@
         "objects": [
           "mars",
           "jupiter"
+        ],
+        "signs": [],
+        "aspects": [
+          "square"
+        ],
+        "events": [
+          "square"
+        ],
+        "houses": []
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-aspect-lived/mars/square/midheaven",
+      "contentFamily": "natal-aspect",
+      "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+      "runtimeBucket": "hook",
+      "status": "owner-approved",
+      "sourceStatus": "approved",
+      "provenance": "source-archive",
+      "sourceAuthor": "composed",
+      "approvalRecord": "packages/astro-knowledge/review/angle-aspects-60-v15/records/028-natal-aspect-lived-mars-square-midheaven-exact-approval.json",
+      "approvalVersionDate": "2026-08-31",
+      "contentHash": "cb28300a4bdab1a7b2fa3f6f171e9775d87862f9d257b0f23deb844dff1d92eb",
+      "wording": {
+        "body": "You may spend part of your life learning the difference between working harder and having enough authority to make an impact. Being responsible for a visible result without much say over how it gets done can make effort feel like the only part you still control.\n\nA teacher sets the terms but expects your best work, a group wants you accountable without letting you change the plan, or an organization gives you responsibility while keeping the actual decision somewhere else. Your first response may be to prove yourself again by working harder, making the case one more time, or taking on another piece of the problem.\n\nThe challenge is that your effort can hide how unworkable the setup has become. Other people see that the result still gets produced and have very little reason to notice how much extra work it required from you.\n\nMore effort should change something. It should give you more authority, improve the terms, move the result forward, or make the next attempt easier. If all it changes is how much of yourself you have to spend getting there, the challenge may be authority, not effort.",
+        "body_they": "{{Name}} may spend part of their life learning the difference between working harder and having enough authority to make an impact. If they are responsible for the result but have little say over how it gets done, effort can become the only part they still control. More effort should change something: the terms, the authority, the outcome, or the next attempt. If it only changes how much of themselves they have to spend, the problem may be authority rather than effort."
+      },
+      "astrology": {
+        "objects": [
+          "mars",
+          "midheaven"
         ],
         "signs": [],
         "aspects": [
@@ -129542,6 +129884,68 @@
       }
     },
     {
+      "contentKey": "fallback-hook/natal-aspect-lived/mercury/conjunction/ascendant",
+      "contentFamily": "natal-aspect",
+      "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+      "runtimeBucket": "hook",
+      "status": "owner-approved",
+      "sourceStatus": "approved",
+      "provenance": "source-archive",
+      "sourceAuthor": "composed",
+      "approvalRecord": "packages/astro-knowledge/review/angle-aspects-60-v15/records/013-natal-aspect-lived-mercury-conjunction-ascendant-exact-approval.json",
+      "approvalVersionDate": "2026-08-31",
+      "contentHash": "452f42826631e2ee6febe7d1f66b52f1fc86062cd022f9b7f85328f72068cf56",
+      "wording": {
+        "body": "You often discover what you think by talking, writing, asking questions, or hearing yourself explain a decision out loud. The way you describe yourself matters too, because what you say you are doing, where you say you are headed, and the story you keep repeating can become part of how other people learn to see you.\n\nYour mind is close to the surface, so people usually get a sense of what interests you quickly. You ask questions, notice the detail that changes the meaning, or change your position when new information gives you a better answer. You do not need to pretend certainty just because you spoke first.\n\nWords can start defining you before you have finished defining yourself. Something you said while figuring it out becomes the story other people repeat back to you, or an old description keeps following you after your thinking has changed.\n\nPay attention to how you narrate your own life. You are allowed to know more now than you knew when you first described the plan. Say what you can stand behind, and let your language change when your thinking does.",
+        "body_they": "{{Name}} often discovers what they think by talking, writing, asking questions, or hearing themselves explain something out loud. Because their thinking is easy to see, something they say while figuring things out can quickly become part of how other people define them. They are allowed to know more now than they knew when they first described the plan. Their language should be able to change when their thinking does."
+      },
+      "astrology": {
+        "objects": [
+          "mercury",
+          "ascendant"
+        ],
+        "signs": [],
+        "aspects": [
+          "conjunction"
+        ],
+        "events": [
+          "conjunction"
+        ],
+        "houses": []
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-aspect-lived/mercury/conjunction/midheaven",
+      "contentFamily": "natal-aspect",
+      "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+      "runtimeBucket": "hook",
+      "status": "owner-approved",
+      "sourceStatus": "approved",
+      "provenance": "source-archive",
+      "sourceAuthor": "composed",
+      "approvalRecord": "packages/astro-knowledge/review/angle-aspects-60-v15/records/014-natal-aspect-lived-mercury-conjunction-midheaven-exact-approval.json",
+      "approvalVersionDate": "2026-08-31",
+      "contentHash": "9f50f38822cb9555308f66a70598f591445c4587f22aad419085f0cb43a8922b",
+      "wording": {
+        "body": "You have a way of putting the complicated part into words that other people remember. You ask the question that changes the discussion, notice what an explanation leaves out, or make something understandable enough that other people can finally decide what to do with it.\n\nThat ability can become part of your reputation early. A teacher asks you to explain it to the group, people want you to write the message, or a project starts depending on your ability to find the missing fact and make the distinction that matters.\n\nBeing the clearest person can also make you responsible for language that is not actually yours. You become the one asked to explain the rule, represent the group, clean up the confusion, or speak for a decision somebody else made.\n\nWhen your name is attached to the explanation, you need access to the facts and enough authority to correct what is wrong. Being known for clear thinking should give you something you can stand behind, not make you the permanent voice of decisions other people control.",
+        "body_they": "{{Name}} has a way of putting the complicated part into words other people remember. They ask the question that changes the discussion, notice what an explanation leaves out, or make something understandable enough for people to act on it. That can become part of their reputation. The complication is being asked to explain decisions they did not make. If their name is attached to the explanation, they need access to the facts and enough authority to correct what is wrong."
+      },
+      "astrology": {
+        "objects": [
+          "mercury",
+          "midheaven"
+        ],
+        "signs": [],
+        "aspects": [
+          "conjunction"
+        ],
+        "events": [
+          "conjunction"
+        ],
+        "houses": []
+      }
+    },
+    {
       "contentKey": "fallback-hook/natal-aspect-lived/mercury/nonagen/jupiter",
       "contentFamily": "natal-aspect",
       "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
@@ -129594,6 +129998,37 @@
       }
     },
     {
+      "contentKey": "fallback-hook/natal-aspect-lived/mercury/opposition/ascendant",
+      "contentFamily": "natal-aspect",
+      "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+      "runtimeBucket": "hook",
+      "status": "owner-approved",
+      "sourceStatus": "approved",
+      "provenance": "source-archive",
+      "sourceAuthor": "composed",
+      "approvalRecord": "packages/astro-knowledge/review/angle-aspects-60-v15/records/017-natal-aspect-lived-mercury-opposition-ascendant-exact-approval.json",
+      "approvalVersionDate": "2026-08-31",
+      "contentHash": "0d631521727c616b98248f8803e19f53ae031e7e2f7cb40308bd415557bd421a",
+      "wording": {
+        "body": "The way someone talks, listens, and disagrees matters a lot to how close you can become. The way another person thinks, listens, questions, and disagrees tells you a great deal about how close you can actually be, and you are often drawn to people who can tell you what they really think without making every difference feel dangerous.\n\nClose relationships sharpen your thinking because another person gives you something real to respond to. They remember the situation differently, catch the detail you missed, or make an argument strong enough that you have to decide what you actually believe instead of repeating the first answer that came to mind.\n\nA good explanation can carry more authority than it deserves. Someone can explain exactly why they behaved the way they did and still leave you living with the same behavior. You can understand their intentions, see their point, and know why the conversation went wrong without that understanding changing what you want from the relationship.\n\nWords tell you what another person understands. What they do afterward tells you what the relationship can actually hold. You need enough honesty in the conversation to know what you think, what they think, and what both of you are willing to do with that information.",
+        "body_they": "{{Name}} pays close attention to how another person talks, listens, asks questions, and disagrees. Close relationships can sharpen their thinking because another person gives them something substantial to respond to. But a convincing explanation is not the same as changed behavior. {{Name}} can understand exactly why someone did something and still decide they do not want to keep living with it. What happens after the conversation matters as much as how well the conversation went."
+      },
+      "astrology": {
+        "objects": [
+          "mercury",
+          "ascendant"
+        ],
+        "signs": [],
+        "aspects": [
+          "opposition"
+        ],
+        "events": [
+          "opposition"
+        ],
+        "houses": []
+      }
+    },
+    {
       "contentKey": "fallback-hook/natal-aspect-lived/mercury/opposition/midheaven",
       "contentFamily": "natal-aspect",
       "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
@@ -129602,11 +130037,12 @@
       "sourceStatus": "approved",
       "provenance": "source-archive",
       "sourceAuthor": "composed",
-      "approvalRecord": "packages/astro-knowledge/voice/tldr-astro/marie-satori-writer/ll-matrix-v13/knowledge-matrix-v13-owner-approved-locked.json",
-      "approvalVersionDate": "2026-08-10",
-      "contentHash": "7f16f6d787947793511e9cdb36c39aacd598494f526a1fbeb1d59ce2ee6a59bf",
+      "approvalRecord": "packages/astro-knowledge/review/angle-aspects-60-v15/records/018-natal-aspect-lived-mercury-opposition-midheaven-exact-approval.json",
+      "approvalVersionDate": "2026-08-31",
+      "contentHash": "63bd88a2f826cfac13bf4f474aa13265265afaf30799cae125ea9ae9f168106a",
       "wording": {
-        "body": "Mercury opposite the Midheaven can make one coworker's comment follow you home. By dinner, a rumor or criticism has started sounding louder than the career plan you were confident about that morning. Gossip gains power when people who do not have to live with your decision start deciding how you feel about it."
+        "body": "You tend to do some of your clearest thinking in private. Important decisions may need a kitchen table, a notebook, or enough quiet for the idea to stay unfinished while you figure out what you actually think before anybody else needs an answer.\n\nThe language you learned at home can stay with you for years. Certain phrases about money, responsibility, success, relationships, or what a person is supposed to do may start sounding like facts simply because you heard them often enough. You may also be the person who asks where those ideas came from, remembers what was said, or notices when the family story leaves something important out.\n\nBecause you can understand the history, the explanation can start doing more work than the choice. You know why someone acted that way, why nobody talked about it, or how a family pattern became normal, and still have to decide what you are willing to keep living with now.\n\nKnowing why something became normal can give you context. It does not mean you still have to build around it. The past is useful when it gives you more choice about what you say, accept, and build now.",
+        "body_they": "{{Name}} may do some of their clearest thinking in private, especially when an important decision needs time to remain unfinished before anyone else needs an answer. Family phrases about money, success, responsibility, or relationships can stay with them for years. Understanding where those ideas came from gives them context, but it does not require them to keep building around them. The past is most useful when it gives them more choice about what they accept now."
       },
       "astrology": {
         "objects": [
@@ -129892,6 +130328,37 @@
       }
     },
     {
+      "contentKey": "fallback-hook/natal-aspect-lived/mercury/square/ascendant",
+      "contentFamily": "natal-aspect",
+      "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+      "runtimeBucket": "hook",
+      "status": "owner-approved",
+      "sourceStatus": "approved",
+      "provenance": "source-archive",
+      "sourceAuthor": "composed",
+      "approvalRecord": "packages/astro-knowledge/review/angle-aspects-60-v15/records/015-natal-aspect-lived-mercury-square-ascendant-exact-approval.json",
+      "approvalVersionDate": "2026-08-31",
+      "contentHash": "8ea37e8d59968bc0123517d0109624a18086e4c6384d3c3f13fdba99c875a9ff",
+      "wording": {
+        "body": "You may know what you mean, but getting it into words can take more effort than you expect. You think about the context, the exception, what the other person might misunderstand, and the detail that changes the meaning. By the time you land on the sentence you actually want to say, you may have already said much more than you needed to.\n\nYou are good at noticing what other people leave out. One missing fact can change how you understand the whole situation, and you may be unwilling to give a simple answer when you know the truth is more complicated than that. This can make you a thoughtful writer, speaker, or communicator because you learn how much one word or one piece of context can change what somebody hears.\n\nThe challenge is that being understood can start mattering more than saying what you actually think. You soften the point, add another explanation, or try to account for every possible reaction before the other person has even had one. Then your words become more careful than true.\n\nYou do not need to make your thinking simpler. You need to know which part you can stand behind. Say that clearly, and let the rest of the context support it instead of asking the explanation to protect you from every possible misunderstanding.",
+        "body_they": "{{Name}} may know exactly what they mean and still spend more time than expected getting it into words. They notice context, exceptions, and the detail that changes the meaning, which can make them a thoughtful communicator. The complication is when being understood starts mattering more than saying what they actually think. Their strongest communication comes from knowing which part they can stand behind and saying that clearly."
+      },
+      "astrology": {
+        "objects": [
+          "mercury",
+          "ascendant"
+        ],
+        "signs": [],
+        "aspects": [
+          "square"
+        ],
+        "events": [
+          "square"
+        ],
+        "houses": []
+      }
+    },
+    {
       "contentKey": "fallback-hook/natal-aspect-lived/mercury/square/jupiter",
       "contentFamily": "natal-aspect",
       "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
@@ -129910,6 +130377,37 @@
         "objects": [
           "mercury",
           "jupiter"
+        ],
+        "signs": [],
+        "aspects": [
+          "square"
+        ],
+        "events": [
+          "square"
+        ],
+        "houses": []
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-aspect-lived/mercury/square/midheaven",
+      "contentFamily": "natal-aspect",
+      "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+      "runtimeBucket": "hook",
+      "status": "owner-approved",
+      "sourceStatus": "approved",
+      "provenance": "source-archive",
+      "sourceAuthor": "composed",
+      "approvalRecord": "packages/astro-knowledge/review/angle-aspects-60-v15/records/016-natal-aspect-lived-mercury-square-midheaven-exact-approval.json",
+      "approvalVersionDate": "2026-08-31",
+      "contentHash": "33fcd5b1c6ccf8236d6fa5ec0798d8f088ebcf9a529dcb012e8f2915886d55fa",
+      "wording": {
+        "body": "You tend to think carefully about what you say or put in writing when your name is attached to it. In school, group work, public roles, or a career, you may reread the application, prepare what you want to say, or document an agreement because once your name is attached to something, the wording can travel further than the original conversation.\n\nThat care can become a real strength. You notice the missing fact, separate what was agreed to from what somebody assumed, and understand when one careless sentence could change how a larger decision is understood.\n\nThe challenge is when managing how you are understood starts taking more attention than deciding what you actually want to be known for. You correct the record, keep refining the explanation, or spend too much time answering criticism when the larger question is if the direction itself still fits.\n\nBeing able to explain yourself is not the same as knowing this is still what you want to build your reputation around. Say what you can stand behind. Your words should support what you are building, not trap you inside a reputation you are trying to outgrow.",
+        "body_they": "{{Name}} tends to think carefully about what they say or put in writing when their name is attached to it. They notice the missing fact, document what was actually agreed to, and understand how one careless sentence can change a larger decision. The challenge is when managing how they are understood starts taking more attention than deciding what they actually want to be known for. Their words should support what they are building, not trap them inside an old reputation."
+      },
+      "astrology": {
+        "objects": [
+          "mercury",
+          "midheaven"
         ],
         "signs": [],
         "aspects": [
@@ -129982,6 +130480,37 @@
       }
     },
     {
+      "contentKey": "fallback-hook/natal-aspect-lived/moon/conjunction/ascendant",
+      "contentFamily": "natal-aspect",
+      "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+      "runtimeBucket": "hook",
+      "status": "owner-approved",
+      "sourceStatus": "approved",
+      "provenance": "source-archive",
+      "sourceAuthor": "composed",
+      "approvalRecord": "packages/astro-knowledge/review/angle-aspects-60-v15/records/007-natal-aspect-lived-moon-conjunction-ascendant-exact-approval.json",
+      "approvalVersionDate": "2026-08-31",
+      "contentHash": "39a97b8550a053af2eced2bf1395715f0ab8fb4d59cb667e4fa3a1ba704a0112",
+      "wording": {
+        "body": "Your feelings are close enough to the surface that other people often know something has affected you before you have decided what the feeling means. Your face changes, you become quieter, your attention shifts, or you need more space, and somebody close to you may notice the reaction before you have put words around it.\n\nFeelings are part of how you understand what is happening. You notice who puts you at ease, when the atmosphere changes, or when something that looked fine stops feeling fine once you are actually living it. When you are comfortable, that usually shows too.\n\nThe challenge is that everyone can start responding before you have had time to understand your own reaction. Somebody asks what is wrong, another person changes the plan, and suddenly you are managing everybody else's response to a feeling you were still trying to understand.\n\nTake the mood seriously, not literally. Your first reaction is information. Give yourself enough time to figure out what you actually need before the feeling becomes a decision everybody else is expected to organize around.",
+        "body_they": "{{Name}}'s feelings tend to show before they have decided exactly what the feeling means. Their face changes, they get quieter, their attention shifts, or they need more space, and people close to them may notice before they have words for it. Their first emotional response is useful information, but it is not always the final answer. They usually do better when they have enough time to understand what they actually need before everybody else starts responding to the mood."
+      },
+      "astrology": {
+        "objects": [
+          "moon",
+          "ascendant"
+        ],
+        "signs": [],
+        "aspects": [
+          "conjunction"
+        ],
+        "events": [
+          "conjunction"
+        ],
+        "houses": []
+      }
+    },
+    {
       "contentKey": "fallback-hook/natal-aspect-lived/moon/conjunction/jupiter",
       "contentFamily": "natal-aspect",
       "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
@@ -130042,6 +130571,37 @@
       }
     },
     {
+      "contentKey": "fallback-hook/natal-aspect-lived/moon/conjunction/midheaven",
+      "contentFamily": "natal-aspect",
+      "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+      "runtimeBucket": "hook",
+      "status": "owner-approved",
+      "sourceStatus": "approved",
+      "provenance": "source-archive",
+      "sourceAuthor": "composed",
+      "approvalRecord": "packages/astro-knowledge/review/angle-aspects-60-v15/records/008-natal-aspect-lived-moon-conjunction-midheaven-exact-approval.json",
+      "approvalVersionDate": "2026-08-31",
+      "contentHash": "529c925e16ac3511b1c645fac23d7de2f65b198889eb716db0103c06f1086225",
+      "wording": {
+        "body": "You often notice what people need before they have to ask, and others may start relying on you to make the practical adjustments that keep things working. You catch when someone is overwhelmed, realize a group is losing track of the person who needs help, remember what somebody forgot, or see that the way things are being organized is making ordinary life harder than it needs to be.\n\nYou often end up handling the part that makes the situation work for actual people. You explain what was confusing, notice who has been left out, or recognize when something is technically functioning and still making life harder for everyone involved.\n\nThat contribution can become easy to depend on and easy to leave unnamed. You quietly compensate for what somebody else failed to handle, keep things moving when morale drops, or notice the need before anyone has decided whose responsibility it is. Then everyone remembers that things worked and forgets how much depended on you noticing first.\n\nIf people rely on this part of you, it counts as part of what you contribute. Care still takes time, judgment, and effort when nobody has bothered to name it. What you become known for should come with enough support that sensitivity does not quietly become another responsibility you are expected to carry for free.",
+        "body_they": "{{Name}} often notices what people need before anyone has decided whose responsibility it is. They catch when someone is overwhelmed, explain what was confusing, or make the practical adjustment that keeps something working for actual people. That kind of care can become part of what they are known for, but it is easy for everyone to depend on it without naming the time and judgment it requires. If people rely on this part of them, it counts as part of what they contribute."
+      },
+      "astrology": {
+        "objects": [
+          "moon",
+          "midheaven"
+        ],
+        "signs": [],
+        "aspects": [
+          "conjunction"
+        ],
+        "events": [
+          "conjunction"
+        ],
+        "houses": []
+      }
+    },
+    {
       "contentKey": "fallback-hook/natal-aspect-lived/moon/conjunction/neptune",
       "contentFamily": "natal-aspect",
       "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
@@ -130080,11 +130640,12 @@
       "sourceStatus": "approved",
       "provenance": "source-archive",
       "sourceAuthor": "composed",
-      "approvalRecord": "packages/astro-knowledge/voice/tldr-astro/marie-satori-writer/ll-matrix-v13/knowledge-matrix-v13-owner-approved-locked.json",
-      "approvalVersionDate": "2026-08-10",
-      "contentHash": "456f587c8047f5cf798dffd4028720f7e2d96f2fdf9fdb9839e4ed238d136263",
+      "approvalRecord": "packages/astro-knowledge/review/angle-aspects-60-v15/records/011-natal-aspect-lived-moon-opposition-ascendant-exact-approval.json",
+      "approvalVersionDate": "2026-08-31",
+      "contentHash": "b824644b28a9f06e99728ff71ab7c182edb80e660d55d8326595e110e04d7784",
       "wording": {
-        "body": "Moon opposite the Ascendant can make another person's bad day become the schedule for yours. You cancel the plan, monitor their mood, change what you were going to do, and realize hours later that you never checked what you needed. Empathy gets costly when somebody else's mood keeps deciding the whole day."
+        "body": "You notice changes in the other person's mood quickly, and that can affect your own plans before either of you has said what is actually needed. You notice when they are quieter than usual, distracted, stressed, or holding something back, and you may start adjusting around them before the real conversation has happened.\n\nCare is one of the ways you build closeness. You remember the appointment, check in after a difficult day, notice when somebody needs space, or change something small because you know it will make their life easier. Those details matter because relationships are built through what people repeatedly do for each other.\n\nThis starts costing you when you become responsible for noticing everything first. You start the difficult conversation, remember what needs to happen, move your schedule around their mood, and keep track of needs the other person has never learned to name for themselves.\n\nCare should go both ways. Being good at noticing what someone needs does not make you responsible for meeting it before they ask. A relationship becomes more dependable when both people can say what they need and neither person's feelings automatically become the other person's job.",
+        "body_they": "{{Name}} notices changes in a partner's mood quickly and may start adjusting their own plans before either person has said what is actually needed. Care is one of the ways they build closeness, but being good at noticing does not make them responsible for noticing everything first. A relationship becomes more dependable when both people can name what they need and neither person's feelings automatically become the other person's job."
       },
       "astrology": {
         "objects": [
@@ -130110,11 +130671,12 @@
       "sourceStatus": "approved",
       "provenance": "source-archive",
       "sourceAuthor": "composed",
-      "approvalRecord": "packages/astro-knowledge/voice/tldr-astro/marie-satori-writer/ll-matrix-v13/knowledge-matrix-v13-owner-approved-locked.json",
-      "approvalVersionDate": "2026-08-10",
-      "contentHash": "1215eab782ca3577d7c194b01434da184f57412969c00730eb9bf5d6ce5086e2",
+      "approvalRecord": "packages/astro-knowledge/review/angle-aspects-60-v15/records/012-natal-aspect-lived-moon-opposition-midheaven-exact-approval.json",
+      "approvalVersionDate": "2026-08-31",
+      "contentHash": "d3ae93a722a89090162ddac55209bbcfeca354e550d564d906d32ccc6677d481",
       "wording": {
-        "body": "Moon opposite the Midheaven can make one hard meeting change how you feel about your whole career by lunchtime. A boss criticizes the work, a public moment goes badly, or you feel embarrassed, and suddenly quitting sounds like the only reasonable response. The feeling deserves attention. It does not always deserve the final career decision."
+        "body": "You need a home life with enough privacy and consistency to understand what you are feeling without constantly responding to everybody else first. Familiar routines, the people you live with, the amount of noise around you, and knowing when your time is actually your own can affect you more deeply than other people may realize.\n\nBelonging often comes through repetition for you. The meal you make without thinking, the person who knows when you need company and when to leave you alone, the morning routine that makes the day easier, or simply knowing who has access to your space can give you something you can rely on.\n\nFamiliarity can keep a bad setup in place. You keep hosting because everyone expects it, organize the household around somebody else's needs, or continue a family routine long after it has stopped working because changing it feels more serious than the inconvenience itself.\n\nA home can change without becoming less meaningful. Pay attention to what actually sustains you and what you keep doing only because it is familiar. Care, privacy, access, money, and responsibility all need to be things the people living there can talk about and change.",
+        "body_they": "{{Name}} needs enough privacy and consistency at home to understand what they are feeling without constantly responding to everyone else first. Familiar routines and knowing when their time is actually their own can matter more than people realize. Familiarity can also keep an arrangement going long after it stops working. Home becomes more supportive when care, privacy, access, money, and responsibility are things the people living there can actually discuss and change."
       },
       "astrology": {
         "objects": [
@@ -130493,6 +131055,37 @@
       }
     },
     {
+      "contentKey": "fallback-hook/natal-aspect-lived/moon/square/ascendant",
+      "contentFamily": "natal-aspect",
+      "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+      "runtimeBucket": "hook",
+      "status": "owner-approved",
+      "sourceStatus": "approved",
+      "provenance": "source-archive",
+      "sourceAuthor": "composed",
+      "approvalRecord": "packages/astro-knowledge/review/angle-aspects-60-v15/records/009-natal-aspect-lived-moon-square-ascendant-exact-approval.json",
+      "approvalVersionDate": "2026-08-31",
+      "contentHash": "c0b54d01fbdb8399df36575931ec316d077a7730ae226a0d1ed90395dae80fd8",
+      "wording": {
+        "body": "You can look easygoing while making so many small adjustments for other people that your own needs barely make it into the decision. You stay longer than you wanted to, change the time because it works better for them, soften what you meant to say, or agree before you have checked what the change will cost you.\n\nOther people's moods can reach your decision before your own needs do. You notice that someone is disappointed, stressed, impatient, or uncomfortable and start adjusting before anyone has actually asked you to.\n\nResentment tends to show up later, when you feel overlooked even though other people were working from the answer you gave them. If you kept saying the timing was fine or acting like the change did not matter, they may not know what you wanted instead.\n\nPay attention to the difference between choosing to be flexible and making yourself so flexible that nobody has to find out what works for you. You do not need to explain every feeling. You do need to let your actual needs enter the decision before the decision is already made.",
+        "body_they": "{{Name}} can look easygoing while making so many small adjustments for other people that their own needs barely enter the decision. They notice disappointment, stress, or discomfort quickly and may start accommodating it before anyone has asked. Resentment can arrive later, when other people were simply working from the answer {{Name}} gave them. The important difference is between choosing to be flexible and becoming so flexible that nobody has to find out what actually works for them."
+      },
+      "astrology": {
+        "objects": [
+          "moon",
+          "ascendant"
+        ],
+        "signs": [],
+        "aspects": [
+          "square"
+        ],
+        "events": [
+          "square"
+        ],
+        "houses": []
+      }
+    },
+    {
       "contentKey": "fallback-hook/natal-aspect-lived/moon/square/mars",
       "contentFamily": "natal-aspect",
       "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
@@ -130511,6 +131104,37 @@
         "objects": [
           "moon",
           "mars"
+        ],
+        "signs": [],
+        "aspects": [
+          "square"
+        ],
+        "events": [
+          "square"
+        ],
+        "houses": []
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-aspect-lived/moon/square/midheaven",
+      "contentFamily": "natal-aspect",
+      "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+      "runtimeBucket": "hook",
+      "status": "owner-approved",
+      "sourceStatus": "approved",
+      "provenance": "source-archive",
+      "sourceAuthor": "composed",
+      "approvalRecord": "packages/astro-knowledge/review/angle-aspects-60-friends-v1/you-supersessions/natal-aspect-lived-moon-square-midheaven-you-exact-supersession.json",
+      "approvalVersionDate": "2026-08-31",
+      "contentHash": "13272c14460402095fa3d754efa1363fd56722cb20aec263a18e05675ef24526",
+      "wording": {
+        "body": "It is normal to want to be taken seriously, but public achievement often comes at the expense of your private life. A demanding project takes your free time, a leadership role fills your evenings, and work follows you home. The Moon brings the focus back to your physical and emotional baseline. Sleep, meals, privacy, and the routines that anchor you do not lose their value just because people are proud of what you are doing. One extra meeting or one late night looks completely manageable on paper, but added together, they dictate what your everyday life actually feels like. Your basic needs have to factor into whatever you are building publicly. Recognition is great, but a path forward only makes sense if you can sustain living inside it.",
+        "body_they": "{{Name}} wants to be taken seriously, but public achievement can come at the expense of their private life. A demanding project takes their free time, a leadership role fills their evenings, and work follows them home. The Moon brings the focus back to their physical and emotional baseline. Sleep, meals, privacy, and the routines that anchor them do not lose their value just because people are proud of what they are doing. One extra meeting or one late night can look completely manageable on paper, but added together, they dictate what {{Name}}'s everyday life actually feels like. Their basic needs have to factor into whatever they are building publicly. Recognition is great, but a path forward only makes sense if they can sustain living inside it."
+      },
+      "astrology": {
+        "objects": [
+          "moon",
+          "midheaven"
         ],
         "signs": [],
         "aspects": [
@@ -130553,6 +131177,68 @@
       }
     },
     {
+      "contentKey": "fallback-hook/natal-aspect-lived/neptune/conjunction/ascendant",
+      "contentFamily": "natal-aspect",
+      "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+      "runtimeBucket": "hook",
+      "status": "owner-approved",
+      "sourceStatus": "approved",
+      "provenance": "source-archive",
+      "sourceAuthor": "composed",
+      "approvalRecord": "packages/astro-knowledge/review/angle-aspects-60-v15/records/049-natal-aspect-lived-neptune-conjunction-ascendant-exact-approval.json",
+      "approvalVersionDate": "2026-08-31",
+      "contentHash": "3023ff8e7358226c46d73c7d658089cc40d10d6fb26e41ae2d55a5119a383521",
+      "wording": {
+        "body": "People can read a lot into you before they know you very well. You listen, take your time answering, understand where someone is coming from, or leave enough space in the conversation that another person starts filling in the blanks for you.\n\nYou may be highly responsive to tone, atmosphere, and what people mean without saying directly. That can make you perceptive, especially when something feels off before you have enough information to explain why. It can also make your own position less obvious if you understand everybody else's perspective before you have said what you actually think.\n\nThe problem starts when another person's impression becomes easier to maintain than correcting it. You let them assume the plan works, keep answering as though you are comfortable, or stay available because disappointing them feels more difficult than giving a clear answer. Then you are living with an expectation you never meant to create.\n\nIntuition can tell you that something deserves your attention. It still needs facts before it becomes a conclusion. The same is true of other people's impressions of you. They may be responding to something real, but you still get to decide which version of you they are actually allowed to build expectations around.",
+        "body_they": "People can read a lot into {{Name}} before they know them well. They listen, understand where someone is coming from, and may leave enough space that the other person starts filling in the blanks. {{Name}} can be highly perceptive about tone and atmosphere, but understanding everyone else's perspective can make their own position less obvious. Other people's impressions may contain something true, but {{Name}} still gets to decide which expectations actually belong to them."
+      },
+      "astrology": {
+        "objects": [
+          "neptune",
+          "ascendant"
+        ],
+        "signs": [],
+        "aspects": [
+          "conjunction"
+        ],
+        "events": [
+          "conjunction"
+        ],
+        "houses": []
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-aspect-lived/neptune/conjunction/midheaven",
+      "contentFamily": "natal-aspect",
+      "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+      "runtimeBucket": "hook",
+      "status": "owner-approved",
+      "sourceStatus": "approved",
+      "provenance": "source-archive",
+      "sourceAuthor": "composed",
+      "approvalRecord": "packages/astro-knowledge/review/angle-aspects-60-v15/records/050-natal-aspect-lived-neptune-conjunction-midheaven-exact-approval.json",
+      "approvalVersionDate": "2026-08-31",
+      "contentHash": "3df1f5c05c0f8ad751c8fec39888d06da7109d281cb863f0f5dafdb42825abc8",
+      "wording": {
+        "body": "You want what you contribute to mean something. You may care about making something beautiful, helping people understand an experience, giving shape to an idea, or doing work that reaches people in a way that facts alone cannot. Even when the role itself is practical, you are usually more engaged when you believe there is a reason behind what you are doing.\n\nThat can become part of what people know you for long before there is a formal career attached to it. In school, creative projects, community work, public roles, or a profession, people may remember the thing you made, the person you helped, or the way you understood something they were having trouble putting into words.\n\nThe challenge is that meaning can make vague expectations easier to accept. You take on more because the project matters, stay involved because somebody needs you, or treat praise as evidence that clearer support, authority, credit, or resources will eventually follow. The more important the work feels, the easier it can be to excuse conditions you would question somewhere else.\n\nMeaning matters, but it does not replace clear terms. What you become known for should have enough structure that your sensitivity, imagination, and willingness to help do not become something everyone assumes they can keep asking for without giving anything back.",
+        "body_they": "{{Name}} wants what they contribute to mean something. They may care about making something beautiful, helping somebody understand an experience, giving shape to an idea, or contributing to something they believe matters. The complication is that meaningful work can make vague expectations easier to accept. Purpose does not replace clear terms. Their sensitivity and imagination need enough support, credit, authority, and structure that caring about the work does not become permission for everyone to keep asking for more."
+      },
+      "astrology": {
+        "objects": [
+          "neptune",
+          "midheaven"
+        ],
+        "signs": [],
+        "aspects": [
+          "conjunction"
+        ],
+        "events": [
+          "conjunction"
+        ],
+        "houses": []
+      }
+    },
+    {
       "contentKey": "fallback-hook/natal-aspect-lived/neptune/opposition/ascendant",
       "contentFamily": "natal-aspect",
       "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
@@ -130561,16 +131247,48 @@
       "sourceStatus": "approved",
       "provenance": "source-archive",
       "sourceAuthor": "composed",
-      "approvalRecord": "packages/astro-knowledge/voice/tldr-astro/marie-satori-writer/ll-matrix-v13/knowledge-matrix-v13-owner-approved-locked.json",
-      "approvalVersionDate": "2026-08-10",
-      "contentHash": "4b03f33ab8a6077c4ce3bd5857d9a66739839ef370c7b54cb7e0c0439d4aab59",
+      "approvalRecord": "packages/astro-knowledge/review/angle-aspects-60-v15/records/053-natal-aspect-lived-neptune-opposition-ascendant-exact-approval.json",
+      "approvalVersionDate": "2026-08-31",
+      "contentHash": "18064cce49c8e39f452bb423cec1f4feee5effa89f50ae3f26dc838fc7776850",
       "wording": {
-        "body": "A partner, teacher, or admired person can seem perfect until their ordinary limits become impossible to ignore. You can be deeply selfless and creative, but idealization makes disappointment harsher than it needs to be. Closeness becomes more durable when admiration leaves enough room for the person to remain human."
+        "body": "You may be especially drawn to relationships that feel meaningful before they have had much time to prove themselves. Someone understands what you meant without a long explanation, the chemistry feels unusually strong, or the connection seems to reach a part of you other relationships have not touched.\n\nThat feeling can be important. It can also make potential carry more weight than what is actually happening between you. You understand their circumstances, believe in who they could become, or keep giving the most generous explanation for inconsistency because the relationship feels too significant to judge by ordinary standards.\n\nThis is where Neptune can make longing sound like evidence. A profound connection does not necessarily solidify into a relationship. Someone can care about you and still not follow through, make the plan, communicate clearly, or include the relationship in the life they are actually living.\n\nFeeling understood and having something you can rely on are different forms of intimacy. Chemistry tells you the connection matters. Follow-through tells you what the two of you can actually build with it.",
+        "body_they": "{{Name}} may be drawn to relationships that feel meaningful before they have had much time to prove themselves. Strong chemistry or an unusual sense of understanding can make the connection feel important very quickly. The complication is letting that significance outweigh ordinary evidence about communication and follow-through. Feeling understood and having something dependable are different forms of intimacy. Chemistry tells {{Name}} that the connection matters. Follow-through tells them what the two of them can actually build."
       },
       "astrology": {
         "objects": [
           "neptune",
           "ascendant"
+        ],
+        "signs": [],
+        "aspects": [
+          "opposition"
+        ],
+        "events": [
+          "opposition"
+        ],
+        "houses": []
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-aspect-lived/neptune/opposition/midheaven",
+      "contentFamily": "natal-aspect",
+      "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+      "runtimeBucket": "hook",
+      "status": "owner-approved",
+      "sourceStatus": "approved",
+      "provenance": "source-archive",
+      "sourceAuthor": "composed",
+      "approvalRecord": "packages/astro-knowledge/review/angle-aspects-60-v15/records/054-natal-aspect-lived-neptune-opposition-midheaven-exact-approval.json",
+      "approvalVersionDate": "2026-08-31",
+      "contentHash": "20635e7a9bb25425e2d80ff7a758a8aa33ed0faf00cf129093cd4a55675de360",
+      "wording": {
+        "body": "You may need a home life with more quiet, privacy, and clear boundaries than other people understand. Conversations stay with you, other people's moods can take time to shake off, and a household where everyone has constant access to you can make it difficult to know when your time is actually your own.\n\nFamily stories can carry the same kind of blur. A memory gets repeated until it becomes the accepted explanation, somebody's sacrifice becomes the reason a family rule cannot be questioned, or everyone knows the emotional version of what happened while important facts remain unclear.\n\nYour compassion can make it difficult to decide where help should stop. Someone needs a place to stay, another chance, more support, or access to your time, and keeping the terms open can feel kinder than saying exactly what you can offer. Then a temporary exception quietly becomes part of how the household works.\n\nCompassion does not require making every exception permanent. You can care about someone and still need privacy, limits, and a home you can rely on. Clear access, time, money, and responsibility make it easier to help without disappearing from your own life.",
+        "body_they": "{{Name}} may need more privacy, quiet, and clear boundaries at home than other people realize. Other people's moods and conversations can stay with them, which makes constant access especially draining. Their compassion can also make temporary exceptions quietly become permanent responsibilities. Caring about somebody does not require leaving every term open. Clear expectations around access, time, money, and responsibility make it easier for {{Name}} to help without disappearing from their own life."
+      },
+      "astrology": {
+        "objects": [
+          "neptune",
+          "midheaven"
         ],
         "signs": [],
         "aspects": [
@@ -130745,6 +131463,68 @@
       }
     },
     {
+      "contentKey": "fallback-hook/natal-aspect-lived/neptune/square/ascendant",
+      "contentFamily": "natal-aspect",
+      "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+      "runtimeBucket": "hook",
+      "status": "owner-approved",
+      "sourceStatus": "approved",
+      "provenance": "source-archive",
+      "sourceAuthor": "composed",
+      "approvalRecord": "packages/astro-knowledge/review/angle-aspects-60-v15/records/051-natal-aspect-lived-neptune-square-ascendant-exact-approval.json",
+      "approvalVersionDate": "2026-08-31",
+      "contentHash": "5dc1c09e3a7672d9f8cadb9638e2b3222ae39154a7b30ac218a8848e52c3e60d",
+      "wording": {
+        "body": "You may know how to keep an interaction pleasant even when the answer you are giving is becoming less accurate. You soften the no, leave out the part that might disappoint someone, or match their enthusiasm because changing the mood feels harder than letting the misunderstanding continue.\n\nOver time, that can leave you feeling unseen in situations where you were working very hard not to create conflict. The other person responds to what you said, how available you seemed, or the version of the situation you helped preserve, while you quietly keep track of everything you never actually agreed to.\n\nThe pattern becomes expensive when you expect someone to understand the answer you did not give. You know the plan does not work, know the relationship needs something different, or know you are already uncomfortable, but keep waiting for the other person to notice without making them responsible for the information they never received.\n\nClarity can change the mood. Sometimes that is exactly what needs to happen. The people who can actually know you need access to an answer that sounds like yours, even when that answer is less convenient than the one they were hoping to hear.",
+        "body_they": "{{Name}} may know how to keep an interaction pleasant even when the answer they are giving is becoming less accurate. They soften the no, leave out the disappointing part, or match someone else's enthusiasm because changing the mood feels difficult. Then they can feel unseen by people who were simply responding to what {{Name}} appeared to agree to. The people who truly know them need access to an answer that actually sounds like theirs."
+      },
+      "astrology": {
+        "objects": [
+          "neptune",
+          "ascendant"
+        ],
+        "signs": [],
+        "aspects": [
+          "square"
+        ],
+        "events": [
+          "square"
+        ],
+        "houses": []
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-aspect-lived/neptune/square/midheaven",
+      "contentFamily": "natal-aspect",
+      "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+      "runtimeBucket": "hook",
+      "status": "owner-approved",
+      "sourceStatus": "approved",
+      "provenance": "source-archive",
+      "sourceAuthor": "composed",
+      "approvalRecord": "packages/astro-knowledge/review/angle-aspects-60-v15/records/052-natal-aspect-lived-neptune-square-midheaven-exact-approval.json",
+      "approvalVersionDate": "2026-08-31",
+      "contentHash": "d158882562ef76922bee33acbae24b8ff48bf3533b1400943df342c1cd320fd0",
+      "wording": {
+        "body": "You can become attached to what a path means before you have decided if you like the life that comes with it. The program sounds meaningful, the organization represents something you believe in, or the visible role gives you an identity you care about while the daily reality keeps asking for something very different.\n\nYou may stay connected to the potential long after the current version has stopped working. You remember why you chose it, know what it could become, or can still see the version that would make all the effort feel worthwhile. That hope can make it difficult to judge what is actually happening now.\n\nThe problem is when everything stays permanently almost right. The support will come later. The expectations will get clearer. The role will become what you thought you were choosing. Meanwhile, you are still living with the version that exists.\n\nPotential matters, but so does the life you have to live while you wait for it. Pay attention to the difference between believing in what something could become and wanting what it is asking from you now.",
+        "body_they": "{{Name}} can become attached to what a path means before they know if they like the life that comes with it. They may believe deeply in the program, organization, project, or visible role while the daily reality keeps asking for something different. Potential can keep them invested long after the current version has stopped working. Believing in what something could become and wanting what it is asking from them now are different questions."
+      },
+      "astrology": {
+        "objects": [
+          "neptune",
+          "midheaven"
+        ],
+        "signs": [],
+        "aspects": [
+          "square"
+        ],
+        "events": [
+          "square"
+        ],
+        "houses": []
+      }
+    },
+    {
       "contentKey": "fallback-hook/natal-aspect-lived/neptune/square/south-node",
       "contentFamily": "natal-aspect",
       "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
@@ -130860,6 +131640,37 @@
       }
     },
     {
+      "contentKey": "fallback-hook/natal-aspect-lived/pluto/conjunction/ascendant",
+      "contentFamily": "natal-aspect",
+      "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+      "runtimeBucket": "hook",
+      "status": "owner-approved",
+      "sourceStatus": "approved",
+      "provenance": "source-archive",
+      "sourceAuthor": "composed",
+      "approvalRecord": "packages/astro-knowledge/review/angle-aspects-60-v15/records/055-natal-aspect-lived-pluto-conjunction-ascendant-exact-approval.json",
+      "approvalVersionDate": "2026-08-31",
+      "contentHash": "88d06f3832374454e958fee6fb36809954740d539e716106ba61991301255373",
+      "wording": {
+        "body": "You are quick to notice when someone's words and behavior do not match, and once you register the gap it can be difficult to pretend you did not see it. You hear the hesitation, notice who is avoiding the question, or pick up on the part of a situation everybody else would rather leave alone.\n\nThat awareness makes you willing to look directly at uncomfortable motives, difficult dynamics, and the part of a problem other people would rather keep vague. You may understand what is really happening before anyone is ready to say it plainly.\n\nThe challenge is when knowing more starts feeling necessary before you can act. You keep asking because resistance makes you more suspicious, look for the hidden reason after the visible behavior has already told you enough, or wait for complete certainty before deciding where your own limit is. More information can explain the behavior without making the behavior acceptable.\n\nYou do not need complete access to make a decision. Sometimes the pattern is already clear enough. Knowing when you have enough information protects your time as much as knowing what is underneath the surface.",
+        "body_they": "{{Name}} is quick to notice when someone's words and behavior do not match, and once they see the gap it can be difficult to ignore. They are willing to look directly at motives and dynamics other people would rather leave vague. The complication is feeling as if they need the complete explanation before they can make a decision. More information can explain someone's behavior without making that behavior acceptable. Sometimes the pattern has already told {{Name}} enough."
+      },
+      "astrology": {
+        "objects": [
+          "pluto",
+          "ascendant"
+        ],
+        "signs": [],
+        "aspects": [
+          "conjunction"
+        ],
+        "events": [
+          "conjunction"
+        ],
+        "houses": []
+      }
+    },
+    {
       "contentKey": "fallback-hook/natal-aspect-lived/pluto/conjunction/midheaven",
       "contentFamily": "natal-aspect",
       "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
@@ -130868,11 +131679,12 @@
       "sourceStatus": "approved",
       "provenance": "source-archive",
       "sourceAuthor": "composed",
-      "approvalRecord": "packages/astro-knowledge/voice/tldr-astro/marie-satori-writer/ll-matrix-v13/knowledge-matrix-v13-owner-approved-locked.json",
-      "approvalVersionDate": "2026-08-10",
-      "contentHash": "3c4fe606568862ebe2d59142abde9d1a2a55552f1e6b3a60f1c533153d26406d",
+      "approvalRecord": "packages/astro-knowledge/review/angle-aspects-60-v15/records/056-natal-aspect-lived-pluto-conjunction-midheaven-exact-approval.json",
+      "approvalVersionDate": "2026-08-31",
+      "contentHash": "7fd1665c3fa9381f6b5b9477710af572d1d5fe29a33b318bc8bf7f8b4dc145d6",
       "wording": {
-        "body": "Career recognition can matter to you more than it does to other people. You want influence, authority, impact, or a role powerful enough to prove something significant about who you are. Ambition can be formidable. Notice when public success is serving your larger purpose and when it is being asked to prove your entire worth as a person."
+        "body": "You take visible responsibility seriously when your name is attached to the outcome, especially if other people will have to live with the consequences. You want to understand what is actually at stake, who will be affected, and what happens if the difficult part is ignored.\n\nPeople may trust you with things that carry weight because you do not look away from the difficult part. That can begin in a family, classroom, team, or community long before it becomes part of a formal role: you become the person people turn to when something requires discretion, depth, or a willingness to deal with what everybody else would rather avoid.\n\nBeing trusted can slowly turn into being needed for the part nobody else wants to carry. Being the person who knows everything, handles the difficult part, or can be trusted with the consequence can make leaving a role feel more complicated than choosing it ever did.\n\nBeing needed is not the same as being fulfilled. What you become known for should still be something you would choose if nobody depended on you to keep doing it.",
+        "body_they": "{{Name}} takes visible responsibility seriously when their name is attached to the outcome, especially if other people will have to live with the consequences. People may trust them with difficult things because they do not look away from what is actually at stake. Over time, being trusted can become being needed for the part nobody else wants to carry. Being needed is not the same as being fulfilled. What they become known for should still be something they would choose if nobody depended on them to keep doing it."
       },
       "astrology": {
         "objects": [
@@ -130885,6 +131697,68 @@
         ],
         "events": [
           "conjunction"
+        ],
+        "houses": []
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-aspect-lived/pluto/opposition/ascendant",
+      "contentFamily": "natal-aspect",
+      "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+      "runtimeBucket": "hook",
+      "status": "owner-approved",
+      "sourceStatus": "approved",
+      "provenance": "source-archive",
+      "sourceAuthor": "composed",
+      "approvalRecord": "packages/astro-knowledge/review/angle-aspects-60-v15/records/059-natal-aspect-lived-pluto-opposition-ascendant-exact-approval.json",
+      "approvalVersionDate": "2026-08-31",
+      "contentHash": "ee2bbb44ad70d56a7030afde3962908a8429b30dfaf6b73202ff7a5ae074e8d0",
+      "wording": {
+        "body": "You want to know where you stand with the people closest to you. Trust, loyalty, privacy, sex, money, shared responsibilities, and the things you tell each other in confidence can carry a lot of weight because once someone matters, their choices affect parts of your life that casual relationships never reach.\n\nYou are usually willing to have the difficult conversation if it helps you understand what is actually happening between you. You may ask direct questions, notice when someone's words and behavior do not match, or want to talk about the part of the relationship other people would rather leave alone.\n\nThe challenge is knowing when depth has turned into testing. You look for proof, ask another question, check again, or want complete access because uncertainty feels harder to tolerate when the relationship matters this much. But more information does not automatically create more trust.\n\nNot everyone earns access to all of you, and intimacy does not require complete access to another person either. Trust grows through what keeps happening: they respect your no, tell you when something changes, follow through, handle shared responsibilities fairly, and give you the same privacy they expect for themselves. What you can rely on matters more than knowing everything.",
+        "body_they": "{{Name}} wants to know where they stand with the people closest to them. Trust, loyalty, privacy, money, sex, and shared responsibilities can carry a lot of weight because another person's choices reach parts of their life casual relationships never touch. The challenge is knowing when depth has turned into testing. More information does not automatically create more trust. What {{Name}} can repeatedly rely on matters more than knowing everything."
+      },
+      "astrology": {
+        "objects": [
+          "pluto",
+          "ascendant"
+        ],
+        "signs": [],
+        "aspects": [
+          "opposition"
+        ],
+        "events": [
+          "opposition"
+        ],
+        "houses": []
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-aspect-lived/pluto/opposition/midheaven",
+      "contentFamily": "natal-aspect",
+      "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+      "runtimeBucket": "hook",
+      "status": "owner-approved",
+      "sourceStatus": "approved",
+      "provenance": "source-archive",
+      "sourceAuthor": "composed",
+      "approvalRecord": "packages/astro-knowledge/review/angle-aspects-60-v15/records/060-natal-aspect-lived-pluto-opposition-midheaven-exact-approval.json",
+      "approvalVersionDate": "2026-08-31",
+      "contentHash": "0427ebdd809934435f904752cc6fcf14e80f2656aaf82a16b65238fca931bafa",
+      "wording": {
+        "body": "Family and home can make power visible in very practical ways. Who owns the house, who pays, who has a key, who gets asked to help, who is allowed to say no, and who makes the final decision can matter more than the story everyone tells about how close the family is.\n\nYou may be especially aware of what gets inherited beyond money or property. Roles, silence, obligations, secrets, and old decisions can keep shaping a family long after the people involved have stopped talking about how those rules started.\n\nFamiliarity can make old family roles feel permanent. The same family member is still expected to help because they always have, somebody's opinion still carries more weight because of what happened years ago, or a family decision keeps shaping the present even though nobody would make the same choice now.\n\nHistory can explain why things work this way without deciding that they have to keep working this way. A family can acknowledge what happened without giving the past permanent control over who pays, who helps, who gets access, or who is allowed to make a different choice now.",
+        "body_they": "Family and home can make power very practical for {{Name}}: who owns something, who pays, who has access, who is expected to help, and who gets the final say. They may also notice how old roles, obligations, silence, and past decisions keep shaping the present long after anyone remembers why the rule started. History can explain how the family got here without deciding that the same person must keep paying, helping, yielding, or carrying the responsibility now."
+      },
+      "astrology": {
+        "objects": [
+          "pluto",
+          "midheaven"
+        ],
+        "signs": [],
+        "aspects": [
+          "opposition"
+        ],
+        "events": [
+          "opposition"
         ],
         "houses": []
       }
@@ -131065,11 +131939,12 @@
       "sourceStatus": "approved",
       "provenance": "source-archive",
       "sourceAuthor": "composed",
-      "approvalRecord": "packages/astro-knowledge/voice/tldr-astro/marie-satori-writer/ll-matrix-v13/knowledge-matrix-v13-owner-approved-locked.json",
-      "approvalVersionDate": "2026-08-10",
-      "contentHash": "3100e35443ddec812cf91354579df9543d550132cf69f54f6c0a72e4d677f4df",
+      "approvalRecord": "packages/astro-knowledge/review/angle-aspects-60-v15/records/057-natal-aspect-lived-pluto-square-ascendant-exact-approval.json",
+      "approvalVersionDate": "2026-08-31",
+      "contentHash": "042a9474fae8da91f705ad8ed904bb0b3a429b325f49e833c06aa987f06bab54",
       "wording": {
-        "body": "Intense feelings can stay hidden and still fill the room. You brood, withhold the vulnerable part, or keep information private because revealing it feels like giving away an advantage. Other people feel the pressure even when they do not know the reason. Relationships need enough compromise that every soft spot is not treated like a strategic weakness."
+        "body": "You notice quickly when another person has more control over the situation than you do. They decide when you get access, hold information you need, control money tied to the decision, change the terms, or have enough influence that your options start depending on what they are willing to allow.\n\nOnce you see the imbalance, it can be hard to leave it alone. You want the explanation, the correction, or some acknowledgement that the other person knows what they are doing. The more they avoid the issue, the more determined you can become to make the situation clear.\n\nThe problem is that the struggle can start taking up more of your life than the original problem. You send another message, gather more evidence, replay what happened, or keep trying to get someone to admit something their behavior has already shown you.\n\nControl is not the same as safety. You do not need them to admit what happened before you decide what you will do next. Sometimes the most useful thing you can do with the truth is stop giving the situation more access to your time, attention, money, or energy.",
+        "body_they": "{{Name}} notices quickly when another person has more control over a situation than they do, especially around access, money, information, or the terms of a decision. Once they see the imbalance, they may keep pushing for an explanation or acknowledgement long after the other person's behavior has already made the situation clear. They do not need somebody else to admit what happened before deciding what they will do next. Sometimes the useful choice is simply giving the situation less access to their time, attention, or money."
       },
       "astrology": {
         "objects": [
@@ -131082,6 +131957,99 @@
         ],
         "events": [
           "square"
+        ],
+        "houses": []
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-aspect-lived/pluto/square/midheaven",
+      "contentFamily": "natal-aspect",
+      "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+      "runtimeBucket": "hook",
+      "status": "owner-approved",
+      "sourceStatus": "approved",
+      "provenance": "source-archive",
+      "sourceAuthor": "composed",
+      "approvalRecord": "packages/astro-knowledge/review/angle-aspects-60-v15/records/058-natal-aspect-lived-pluto-square-midheaven-exact-approval.json",
+      "approvalVersionDate": "2026-08-31",
+      "contentHash": "00c0fb2a8be2f4be13d3ecf10d41b6c23335c0a4c3dc3ddecfd4bab7c6f9a646",
+      "wording": {
+        "body": "You notice quickly who actually has power, and official titles matter less to you than who can change the outcome. Wherever your contribution is visible, you pay attention to who controls the money, access, information, exceptions, or final decision.\n\nYou rarely take the official explanation at face value. You notice which rules are enforced, which ones quietly disappear for certain people, who gets heard without having to ask twice, and what the structure actually rewards even when its public explanation says something different.\n\nThe challenge is that power can become too central to the way you measure progress. You may keep trying to prove yourself to someone whose approval carries more weight than it should, make yourself indispensable because being needed feels safer than being replaceable, or stay engaged with a structure because you want it to acknowledge what you can already see clearly.\n\nYour relationship with ambition gets clearer when you ask what authority would actually change. More influence should give you more say over what gets built, protected, funded, ended, or made possible. If the title does not change what you can actually do, it may be giving you status without giving you much power.",
+        "body_they": "{{Name}} notices who actually has power, and official titles matter less to them than who can change the outcome. They pay attention to who controls access, money, information, exceptions, and final decisions. The complication is letting power become too central to the way they measure progress. More authority matters if it changes what they can actually build, fund, protect, end, or make possible. Status without meaningful influence may not give them much of what they were trying to gain."
+      },
+      "astrology": {
+        "objects": [
+          "pluto",
+          "midheaven"
+        ],
+        "signs": [],
+        "aspects": [
+          "square"
+        ],
+        "events": [
+          "square"
+        ],
+        "houses": []
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-aspect-lived/saturn/conjunction/ascendant",
+      "contentFamily": "natal-aspect",
+      "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+      "runtimeBucket": "hook",
+      "status": "owner-approved",
+      "sourceStatus": "approved",
+      "provenance": "source-archive",
+      "sourceAuthor": "composed",
+      "approvalRecord": "packages/astro-knowledge/review/angle-aspects-60-v15/records/037-natal-aspect-lived-saturn-conjunction-ascendant-exact-approval.json",
+      "approvalVersionDate": "2026-08-31",
+      "contentHash": "f152f56375ff29fd70001fb622a0c182bbe873d413ac1f36465dcbe018b7f79a",
+      "wording": {
+        "body": "You may walk into something new already thinking about what will be expected of you once the excitement wears off. Before you say yes to the job, the invitation, the project, or the relationship, you want to know how much time it will take, what you are responsible for, and what happens if the plan becomes more complicated than it looks right now. Other people may still be deciding if they are interested while you are already thinking about what agreeing would actually require.\n\nSaturn stands at the threshold where a choice becomes a consequence. On your Ascendant, you are often thinking about that consequence before everyone else has finished deciding how they feel about the beginning. You notice the weak point in the plan, the missing information, or the responsibility nobody has mentioned yet.\n\nThat judgment can save you from commitments that never made sense. It can also make every beginning carry the weight of everything that could happen afterward. You prepare for the interview as though you already have the job, hesitate over an invitation because you cannot see how it fits three months from now, or wait to introduce yourself until you feel more established. The first commitment is real. The problem is when you start treating it like a commitment to everything that could follow.\n\nYou should know what you are agreeing to. You do not need to decide every responsibility that might come later before you can make the decision in front of you.",
+        "body_they": "{{Name}} may enter something new already thinking about what will be expected once the excitement wears off. They want to know how much time it will take, what they are responsible for, and what happens if the plan becomes more complicated. That judgment can protect them from commitments that never made sense. It can also make the first decision carry the weight of everything that could possibly follow. They need to know what they are agreeing to without deciding every future responsibility before they can begin."
+      },
+      "astrology": {
+        "objects": [
+          "saturn",
+          "ascendant"
+        ],
+        "signs": [],
+        "aspects": [
+          "conjunction"
+        ],
+        "events": [
+          "conjunction"
+        ],
+        "houses": []
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-aspect-lived/saturn/conjunction/midheaven",
+      "contentFamily": "natal-aspect",
+      "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+      "runtimeBucket": "hook",
+      "status": "owner-approved",
+      "sourceStatus": "approved",
+      "provenance": "source-archive",
+      "sourceAuthor": "composed",
+      "approvalRecord": "packages/astro-knowledge/review/angle-aspects-60-v15/records/038-natal-aspect-lived-saturn-conjunction-midheaven-exact-approval.json",
+      "approvalVersionDate": "2026-08-31",
+      "contentHash": "3d334f56f680cfd6a3595757b1237f1e7bee84855629fbfd14e45c04ad0e9f1e",
+      "wording": {
+        "body": "You may spend a long time doing the work before the title catches up. People trust you with the difficult assignment, ask you to fix what somebody else left unfinished, or start relying on your judgment before anyone has formally acknowledged that your role has changed. By the time the promotion, title, or authority arrives, you may already have been doing some version of the job for years.\n\nSaturn describes time, responsibility, structure, and what has to hold up under pressure. The Midheaven describes what you become known for and the public direction you are building. With Saturn there, your reputation often develops through consistency. People learn what they can trust you with because they have watched you handle it more than once.\n\nThe problem is that competence attracts responsibility faster than it attracts support. You can get the role because you have already proved you can carry it, then discover that carrying it is also the reason nobody thinks you need more help, more money, or more authority. A reputation for handling difficult things can quietly become a guarantee that more difficult things will keep arriving. Success is not always evidence that something suits you. You can be very good at a role that now asks more from you than you want to keep giving.\n\nMore responsibility should come with something. That could mean more money, more authority, more control over your time, or a clearer path forward. Do not confuse overcommitment with excellence. What you become known for should still be work you would choose once everybody expects you to keep doing it.",
+        "body_they": "{{Name}} may spend a long time doing the work before the title or recognition catches up. People learn what they can trust them with because they have watched them handle it more than once. The complication is that competence can attract responsibility faster than it attracts support. More responsibility should come with something: more authority, money, control over their time, recognition, or a clearer path forward. Success is not always evidence that the role still suits them."
+      },
+      "astrology": {
+        "objects": [
+          "saturn",
+          "midheaven"
+        ],
+        "signs": [],
+        "aspects": [
+          "conjunction"
+        ],
+        "events": [
+          "conjunction"
         ],
         "houses": []
       }
@@ -131117,6 +132085,37 @@
       }
     },
     {
+      "contentKey": "fallback-hook/natal-aspect-lived/saturn/opposition/ascendant",
+      "contentFamily": "natal-aspect",
+      "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+      "runtimeBucket": "hook",
+      "status": "owner-approved",
+      "sourceStatus": "approved",
+      "provenance": "source-archive",
+      "sourceAuthor": "composed",
+      "approvalRecord": "packages/astro-knowledge/review/angle-aspects-60-v15/records/041-natal-aspect-lived-saturn-opposition-ascendant-exact-approval.json",
+      "approvalVersionDate": "2026-08-31",
+      "contentHash": "30691d4a422c6b0df1f54e7732d557768334602a676fda3846d3abc7c54ccaa6",
+      "wording": {
+        "body": "A relationship becomes more serious when the practical parts of two lives start affecting each other. Whose schedule changes? Who follows through when the plan gets difficult? What happens when one person has less time, less money, more responsibility, or something they cannot simply rearrange? With Saturn opposite your Ascendant, these questions are not separate from intimacy. They are often where you find out what the relationship can actually hold.\n\nSaturn deals with commitment, time, responsibility, limits, and what remains after something has been tested. Opposite the Ascendant, Saturn sits on the Descendant, where another person's choices start having consequences for you too. You may take commitment seriously because you understand that choosing someone eventually means living with parts of their life you did not choose yourself.\n\nThat can make you exceptionally reliable in a relationship. You know how to show up after the easy part is over, keep an agreement, and stay present when somebody is going through something difficult. The complication begins when being dependable turns into handling whatever would otherwise be left undone. Reliability should tell you something about the relationship, not become the entire relationship. Being able to carry something does not automatically make it yours to carry.\n\nA relationship that lasts should not rely entirely on your endurance. It should eventually show you what the other person is willing to carry too. Commitment matters because two people are building something together, not because one person proved they could keep it standing alone.",
+        "body_they": "{{Name}} takes the practical side of commitment seriously because they understand that another person's schedule, money, responsibilities, and limits eventually affect the relationship too. They can be exceptionally reliable once the easy part is over. The complication begins when dependability turns into handling whatever would otherwise be left undone. Being able to carry something does not automatically make it theirs to carry. A relationship that lasts should eventually show them what the other person is willing to carry too."
+      },
+      "astrology": {
+        "objects": [
+          "saturn",
+          "ascendant"
+        ],
+        "signs": [],
+        "aspects": [
+          "opposition"
+        ],
+        "events": [
+          "opposition"
+        ],
+        "houses": []
+      }
+    },
+    {
       "contentKey": "fallback-hook/natal-aspect-lived/saturn/opposition/midheaven",
       "contentFamily": "natal-aspect",
       "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
@@ -131125,11 +132124,12 @@
       "sourceStatus": "approved",
       "provenance": "source-archive",
       "sourceAuthor": "composed",
-      "approvalRecord": "packages/astro-knowledge/voice/tldr-astro/marie-satori-writer/ll-matrix-v13/knowledge-matrix-v13-owner-approved-locked.json",
-      "approvalVersionDate": "2026-08-10",
-      "contentHash": "ad9a13baf1e7f21fbf6230a23b45c4dd07f0fa24a3b89c8a49037f664c153aee",
+      "approvalRecord": "packages/astro-knowledge/review/angle-aspects-60-v15/records/042-natal-aspect-lived-saturn-opposition-midheaven-exact-approval.json",
+      "approvalVersionDate": "2026-08-31",
+      "contentHash": "8c6fed88f7c31ee30ad433fd7160fdc47d687bec08f6bec0f6b7246920845d6b",
       "wording": {
-        "body": "A small, trusted life can feel more meaningful than public acclaim. You may have little interest in being known widely if the price is less time for the people and responsibilities that actually matter to you. You do not have to live by society's definition of success for your own life to feel complete."
+        "body": "A home can be well managed and still not feel like somewhere you get to rest. The bills are paid, the appointments are handled, somebody remembered what needed to be repaired, and the family logistics keep moving because somebody keeps track of them. With Saturn opposite your Midheaven, responsibility can become part of the private life that nobody outside it sees.\n\nSaturn deals with responsibility, time, limits, and what has to keep working. Opposite the Midheaven, Saturn sits on the IC, the part of the chart connected to home, roots, family, and what your life is built on away from public view. Structure can be extremely useful here. You may need a home that functions, clear expectations with family, or routines that make ordinary life easier instead of leaving you constantly catching up.\n\nThe problem begins when a functioning home depends on you staying on top of everything. You handle the repairs, organize everybody's schedule, keep showing up for family, and realize that your main role at home has become keeping things running. A house that functions is not automatically a home where you get to rest. No amount of information or planning can substitute for actually feeling at home in your life.\n\nSome responsibilities at home are yours because you chose them. Others are still yours because everyone has gotten used to you being the person who handles them. You can honor your roots without living tangled in them. A home can require work without becoming another job.",
+        "body_they": "{{Name}} can be very good at keeping home and family responsibilities functioning, but a well-managed home is not automatically somewhere they get to rest. They may become the person who tracks the repairs, appointments, logistics, and responsibilities nobody else remembers. Some of those responsibilities are theirs because they chose them. Others remain theirs because everyone got used to them handling them. They can honor their roots without letting home become another job."
       },
       "astrology": {
         "objects": [
@@ -131451,6 +132451,68 @@
       }
     },
     {
+      "contentKey": "fallback-hook/natal-aspect-lived/saturn/square/ascendant",
+      "contentFamily": "natal-aspect",
+      "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+      "runtimeBucket": "hook",
+      "status": "owner-approved",
+      "sourceStatus": "approved",
+      "provenance": "source-archive",
+      "sourceAuthor": "composed",
+      "approvalRecord": "packages/astro-knowledge/review/angle-aspects-60-v15/records/039-natal-aspect-lived-saturn-square-ascendant-exact-approval.json",
+      "approvalVersionDate": "2026-08-31",
+      "contentHash": "09c9f03a3f56c2f9ac7d5292f3eb2882577472986ad4ac61bd6743ff8d5940d5",
+      "wording": {
+        "body": "You can be completely capable of doing something and still spend too much time trying to become ready for the beginning. You rewrite the introduction, wait another week to send the work, prepare for a meeting nobody else realized required preparation, or decide you should know more before you let anyone see what you are doing. Once you are actually in the situation, you usually have much more to work with than you expected.\n\nSaturn brings time, standards, responsibility, and limits into tension with the Ascendant, which describes how you enter a situation and how other people first experience you. The beginning can feel more consequential than it looks from the outside, so you may try to remove too much uncertainty before you move. Your inner critic can turn preparation into another requirement you have to satisfy before you begin. One more revision becomes one more week, and one more thing you should know becomes another reason not to send the work yet.\n\nThe cost is easy to miss because preparation often improves the result. The problem starts when the feedback that could have saved you two weeks arrives after you already spent the two weeks, or the opportunity goes to someone who was willing to answer before they knew everything. You can keep waiting until the work is good enough to withstand criticism when showing it earlier would have given you information you could actually use.\n\nPreparation should make it easier to begin, not move the beginning further away. If nobody can respond until you have already finished deciding everything yourself, preparation has started costing you useful feedback.",
+        "body_they": "{{Name}} can be completely capable of doing something and still spend too much time trying to become ready for the beginning. They revise, prepare, learn more, and try to remove uncertainty before anyone else has had a chance to respond. Preparation often improves the result, which makes the cost easy to miss. Preparation should make it easier for them to begin, not keep moving the beginning further away."
+      },
+      "astrology": {
+        "objects": [
+          "saturn",
+          "ascendant"
+        ],
+        "signs": [],
+        "aspects": [
+          "square"
+        ],
+        "events": [
+          "square"
+        ],
+        "houses": []
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-aspect-lived/saturn/square/midheaven",
+      "contentFamily": "natal-aspect",
+      "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+      "runtimeBucket": "hook",
+      "status": "owner-approved",
+      "sourceStatus": "approved",
+      "provenance": "source-archive",
+      "sourceAuthor": "composed",
+      "approvalRecord": "packages/astro-knowledge/review/angle-aspects-60-v15/records/040-natal-aspect-lived-saturn-square-midheaven-exact-approval.json",
+      "approvalVersionDate": "2026-08-31",
+      "contentHash": "262acb5fbcccbe30a495186c7a72b15d7750ff02823cc96ecfabf6daf9bfcf14",
+      "wording": {
+        "body": "The work can be there long before the recognition is. You are already doing part of the job before you have the title, carrying responsibility without the authority to change the process, waiting on somebody else's approval, or watching a qualification, policy, or hierarchy decide how quickly you are allowed to move. The delay is real, but it does not automatically tell you what it means.\n\nSaturn brings time, limits, responsibility, and structure into tension with the Midheaven, which describes career, reputation, public responsibility, and the direction you are trying to build. Some of what slows you down is simply part of doing something that takes time. The challenge is knowing when patience has stopped being useful and started keeping you inside a structure that is not going to change.\n\nThat distinction matters because your first response to a delay may be to work harder. You take on another project, prove yourself again, or decide you should be even better before asking for the title, money, access, or authority you already need to do the job properly. The deadline is not proof that you should be doing three jobs at once. More work at the same level can keep you busy without moving you any closer to what you are waiting for.\n\nSome delays mean the work needs more time. Others are information about the structure around the work. Find out which problem you have before another year of patience becomes another year of doing the next job without receiving anything that comes with it.",
+        "body_they": "{{Name}} may do the work long before the recognition arrives. They can carry responsibility without the authority to change the process, wait on somebody else's approval, or watch a hierarchy decide how quickly they are allowed to move. Their first response to delay may be to prove themselves again. Some delays mean the work needs more time. Others reveal something about the structure around the work. {{Name}} needs to know which one they are dealing with before patience becomes another year of doing the next job without receiving what comes with it."
+      },
+      "astrology": {
+        "objects": [
+          "saturn",
+          "midheaven"
+        ],
+        "signs": [],
+        "aspects": [
+          "square"
+        ],
+        "events": [
+          "square"
+        ],
+        "houses": []
+      }
+    },
+    {
       "contentKey": "fallback-hook/natal-aspect-lived/saturn/square/part-of-fortune",
       "contentFamily": "natal-aspect",
       "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
@@ -131655,6 +132717,68 @@
       }
     },
     {
+      "contentKey": "fallback-hook/natal-aspect-lived/sun/conjunction/ascendant",
+      "contentFamily": "natal-aspect",
+      "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+      "runtimeBucket": "hook",
+      "status": "owner-approved",
+      "sourceStatus": "approved",
+      "provenance": "source-archive",
+      "sourceAuthor": "composed",
+      "approvalRecord": "packages/astro-knowledge/review/angle-aspects-60-v15/records/001-natal-aspect-lived-sun-conjunction-ascendant-exact-approval.json",
+      "approvalVersionDate": "2026-08-31",
+      "contentHash": "794bc48636dc3691dc0c1889a7d48a84cf7e2699a0814f65721246b8d214724a",
+      "wording": {
+        "body": "People tend to get a read on you quickly. You have an opinion, take an interest, speak up, volunteer, or step forward when something matters, and other people start forming an idea of who you are from what they see. Sometimes they are right. The complication is that a first impression can turn into a role before you have decided you want the role.\n\nYou tend to learn who you are by doing. You may not know a job is wrong for you until you notice how much effort it takes to sound less opinionated, less ambitious, or less invested than you actually are. Another role can ask more from you and still feel easier because your judgment is part of why you are there. The same thing can happen in relationships and friendships. You find out which version of yourself fits by noticing what happens when you stop managing how much of yourself other people get to see.\n\nThat visibility can work in your favor. People notice what you are good at, trust you with responsibility, remember what you said, or ask you to take the lead. It can also create expectations quickly. You handle something once and it becomes your job. You seem confident and people assume you have already made up your mind. You become known for something you were still figuring out if you wanted to keep doing.\n\nA first impression can tell people something true about you without telling them the whole story. Pay attention to the roles that keep getting handed back to you because you were good at them once. Being recognized for something matters most when it is still something you would choose now.",
+        "body_they": "{{Name}} tends to make an impression quickly because what matters to them usually shows. They speak up, take an interest, volunteer, or step forward, and people start forming an idea of who they are from what they see. The complication is that being good at something once can turn into a role everyone keeps handing back to them. Being recognized matters most when the thing people recognize is still something they would choose now."
+      },
+      "astrology": {
+        "objects": [
+          "sun",
+          "ascendant"
+        ],
+        "signs": [],
+        "aspects": [
+          "conjunction"
+        ],
+        "events": [
+          "conjunction"
+        ],
+        "houses": []
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-aspect-lived/sun/conjunction/midheaven",
+      "contentFamily": "natal-aspect",
+      "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+      "runtimeBucket": "hook",
+      "status": "owner-approved",
+      "sourceStatus": "approved",
+      "provenance": "source-archive",
+      "sourceAuthor": "composed",
+      "approvalRecord": "packages/astro-knowledge/review/angle-aspects-60-v15/records/002-natal-aspect-lived-sun-conjunction-midheaven-exact-approval.json",
+      "approvalVersionDate": "2026-08-31",
+      "contentHash": "4d6b20aa4834e3726ccfa6d8f3f98133a88d5b687ef870671ce4d0f376f58566",
+      "wording": {
+        "body": "You want to be known for something that actually reflects who you are, not simply for being good at the role people handed you. People may remember the project you led, the position you took, the standard you defended, or the thing you were willing to put your name on long before there is a formal title attached to any of it.\n\nThe Midheaven is where those choices become visible enough to build a reputation. What you keep showing up for, taking responsibility for, and putting your name on gradually tells other people what to expect from you. Visibility isn't just about being noticed. It's about being known for something that actually reflects who you are.\n\nRecognition can make changing direction harder because other people keep returning the role they already associate with you. You become the capable one, the leader, the expert, or the person who always takes the difficult part, and eventually their expectations can feel more established than your own interest in continuing.\n\nWhat you become known for should still be something you would choose once other people expect it from you. A public role can matter deeply without becoming the only version of you anyone is allowed to know.",
+        "body_they": "{{Name}} wants to be known for something that actually reflects who they are. The projects they lead, positions they take, standards they defend, and responsibilities they are willing to put their name on gradually become part of their reputation. Recognition can make changing direction harder once other people have decided what they are good at. What they become known for should still be something they would choose after people start expecting it from them."
+      },
+      "astrology": {
+        "objects": [
+          "sun",
+          "midheaven"
+        ],
+        "signs": [],
+        "aspects": [
+          "conjunction"
+        ],
+        "events": [
+          "conjunction"
+        ],
+        "houses": []
+      }
+    },
+    {
       "contentKey": "fallback-hook/natal-aspect-lived/sun/conjunction/venus",
       "contentFamily": "natal-aspect",
       "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
@@ -131745,16 +132869,48 @@
       "sourceStatus": "approved",
       "provenance": "source-archive",
       "sourceAuthor": "composed",
-      "approvalRecord": "packages/astro-knowledge/voice/tldr-astro/marie-satori-writer/ll-matrix-v13/knowledge-matrix-v13-owner-approved-locked.json",
-      "approvalVersionDate": "2026-08-10",
-      "contentHash": "56820c6885706a24b15cec9c7746a5458cbd15bcca0dbdedc1b5f0001c4741c4",
+      "approvalRecord": "packages/astro-knowledge/review/angle-aspects-60-v15/records/005-natal-aspect-lived-sun-opposition-ascendant-exact-approval.json",
+      "approvalVersionDate": "2026-08-31",
+      "contentHash": "289c763eabd211f1810ead7ad69ed4be38f896bb8775c47d88d3d6809aa4f108",
       "wording": {
-        "body": "Identity can come alive in one-to-one contact. You feel more present with somebody to respond to, challenge, mirror, or collaborate with, and sociability may become a major route into knowing yourself. Other people are not a distraction from the development. Their reactions help you see what you are becoming."
+        "body": "The people you are drawn to often make your own ambition, confidence, and sense of direction easier to see. You may be especially attracted to someone who says what they want, takes their goals seriously, or moves through life with enough certainty that qualities you are still developing in yourself become much more obvious.\n\nRelationships can make it clear when you admire a quality in someone else that you are not giving enough space in yourself. You take their ambition seriously while treating your own goals as optional, or appreciate how decisive they are while letting them make more of the shared choices because they seem more certain.\n\nAdmiration gets complicated when it starts giving the other person too much authority. Their priorities shape the plan, their confidence gives their answer more weight, and you can slowly end up living inside a future that sounds more like theirs than yours.\n\nBeing fully yourself and loving another person are not competing goals. A relationship works better when both people bring something they want to build instead of your partner supplying the direction while you keep adjusting to it.",
+        "body_they": "{{Name}} is often drawn to people whose confidence, ambition, or sense of direction makes those same qualities easier to recognize in themselves. Admiration can become complicated if the other person's certainty starts carrying more authority than their own judgment. A relationship works better when both people bring a direction of their own, instead of {{Name}} slowly adjusting their life around the future the other person wants."
       },
       "astrology": {
         "objects": [
           "sun",
           "ascendant"
+        ],
+        "signs": [],
+        "aspects": [
+          "opposition"
+        ],
+        "events": [
+          "opposition"
+        ],
+        "houses": []
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-aspect-lived/sun/opposition/midheaven",
+      "contentFamily": "natal-aspect",
+      "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+      "runtimeBucket": "hook",
+      "status": "owner-approved",
+      "sourceStatus": "approved",
+      "provenance": "source-archive",
+      "sourceAuthor": "composed",
+      "approvalRecord": "packages/astro-knowledge/review/angle-aspects-60-v15/records/006-natal-aspect-lived-sun-opposition-midheaven-exact-approval.json",
+      "approvalVersionDate": "2026-08-31",
+      "contentHash": "2eae0e16796c4d0e1062005b1cff006571c2e1988208ce79997fbcc6395914c0",
+      "wording": {
+        "body": "You need a private life where you can recognize yourself without having to explain what you do, what you have achieved, or what other people expect from you. Family, privacy, familiar places, the people who have access to you, and what you do when nobody needs anything from you can shape your sense of self in ways other people may never see.\n\nWith the Sun on the IC, you may care deeply about family history, the place you come from, the people who knew you before any public role existed, or the kind of home that lets you stop explaining yourself and simply live.\n\nAn inherited role can become difficult to separate from who you think you have to remain. You are still the responsible one, the one who comes home, the one who keeps the tradition, or the one expected to carry a family identity that made sense before your own life became more complicated.\n\nYou can care deeply about where you came from without letting it decide who you still have to be. Home should give the person you are now somewhere to belong, not require you to keep acting like the version everyone there remembers.",
+        "body_they": "{{Name}} needs a private life where they can recognize themselves without having to explain what they do, what they have achieved, or what other people expect from them. Family history and old roles can carry a lot of weight, especially when people at home still relate to an earlier version of them. They can care deeply about where they came from without letting it decide who they still have to be."
+      },
+      "astrology": {
+        "objects": [
+          "sun",
+          "midheaven"
         ],
         "signs": [],
         "aspects": [
@@ -132041,16 +133197,48 @@
       "sourceStatus": "approved",
       "provenance": "source-archive",
       "sourceAuthor": "composed",
-      "approvalRecord": "packages/astro-knowledge/review/natal-sun-square-ascendant-owner-approval-2026-08-22.json",
-      "approvalVersionDate": "2026-08-22",
-      "contentHash": "53475aba515b86413d77c87552313bf779735f5ea6b5c17f18b65b4a3d8317d5",
+      "approvalRecord": "packages/astro-knowledge/review/angle-aspects-60-friends-v1/you-supersessions/natal-aspect-lived-sun-square-ascendant-you-exact-supersession.json",
+      "approvalVersionDate": "2026-08-31",
+      "contentHash": "22b6ff6e4ba1e263e0a1c618bf6f1b2aa0fca6f1ee3ae927c8046b3b53369054",
       "wording": {
-        "body": "A plan can make sense on paper, but feel completely off the moment you start living it. You find yourself doing the work, showing up to the meetings, and hitting the milestones, while privately wondering why none of it feels like yours anymore. The person everyone sees managing the role is no longer the person who has to live with the daily routine. When there is a gap between who you are and what you keep projecting, every decision feels like a course correction. Things get simpler once you stop forcing yourself to maintain a reputation, title, or expectation you outgrew six months ago. Align what you do with what you actually want right now, instead of keeping up an appearance for people who only know the older version of you."
+        "body": "You may know you have changed long before the people around you do, especially if you keep giving them the version of you they already understand. You keep taking the role everyone expects, soften a decision you have already made, or describe yourself through a title or responsibility that stopped feeling accurate because it is easier than explaining how much has changed.\n\nOther people can only respond to the person you keep showing them. You may know what you want and still sound as if you are asking for permission, or keep saying yes because being dependable has become part of how people understand you. Then it can feel frustrating when nobody notices that the person underneath the role has moved on.\n\nSometimes the opposite happens. You push a more accomplished or confident version of yourself forward because you want people to see where you are headed, then feel pressure to keep proving an identity you are still growing into. Either way, you are dealing with the mismatch between who you are right now and who people expect you to be.\n\nAnyone who actually knows you needs to see who you are today, not just the version of you that makes your life easier for them to understand. Your priorities changed, and your answers can change right along with them.",
+        "body_they": "{{Name}} may know they have changed long before the people around them do, especially if they keep giving everyone the version of themselves people already understand. They can keep taking the familiar role, soften a decision they have already made, or describe themselves through a title that stopped feeling accurate. Then it becomes frustrating when nobody notices they have moved on. People who know them well need access to who they are now, not only the version that once made everything easier."
       },
       "astrology": {
         "objects": [
           "sun",
           "ascendant"
+        ],
+        "signs": [],
+        "aspects": [
+          "square"
+        ],
+        "events": [
+          "square"
+        ],
+        "houses": []
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-aspect-lived/sun/square/midheaven",
+      "contentFamily": "natal-aspect",
+      "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+      "runtimeBucket": "hook",
+      "status": "owner-approved",
+      "sourceStatus": "approved",
+      "provenance": "source-archive",
+      "sourceAuthor": "composed",
+      "approvalRecord": "packages/astro-knowledge/review/angle-aspects-60-v15/records/004-natal-aspect-lived-sun-square-midheaven-exact-approval.json",
+      "approvalVersionDate": "2026-08-31",
+      "contentHash": "361e3e3af0cdab4bcbf091af65f88652f1f60712891fbca061ce3bdd1cb9cb6f",
+      "wording": {
+        "body": "You can succeed in a visible role and still realize that you do not want to keep building your life around it. People notice what you can do, start relying on you for it, and keep giving you more of the same because your competence makes the next step look obvious from the outside.\n\nRecognition can make the mismatch harder to admit. You keep proving yourself in the subject, position, responsibility, or public role that gets the strongest response even after you have started wanting something different. Being good at something and wanting to build your life around it are different questions.\n\nLook at what success keeps asking you to repeat. More responsibility may give you more authority and make the role worth growing into. More recognition may simply make it harder to disappoint people who have already decided what you should be known for.\n\nBeing good at the role does not mean the role still fits you. The right direction gives your ability somewhere you still want to go. What you are building matters more than how impressive the role looks from the outside.",
+        "body_they": "{{Name}} can become known for something they are very good at and then have a harder time admitting that the role people keep rewarding them for is no longer what they want to build their life around."
+      },
+      "astrology": {
+        "objects": [
+          "sun",
+          "midheaven"
         ],
         "signs": [],
         "aspects": [
@@ -132088,6 +133276,130 @@
         ],
         "events": [
           "square"
+        ],
+        "houses": []
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-aspect-lived/uranus/conjunction/ascendant",
+      "contentFamily": "natal-aspect",
+      "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+      "runtimeBucket": "hook",
+      "status": "owner-approved",
+      "sourceStatus": "approved",
+      "provenance": "source-archive",
+      "sourceAuthor": "composed",
+      "approvalRecord": "packages/astro-knowledge/review/angle-aspects-60-v15/records/043-natal-aspect-lived-uranus-conjunction-ascendant-exact-approval.json",
+      "approvalVersionDate": "2026-08-31",
+      "contentHash": "cb6a61d4d5f2b1d7e5111dc5d683a26473ae4a38de7fbedc85c0e3b0600b392d",
+      "wording": {
+        "body": "You are willing to change the plan when you realize it no longer fits. New information, a better way of doing something, or simply wanting something different can be enough for you to reconsider a choice other people assumed was already decided.\n\nWhat feels like an obvious change to you can catch other people off guard because they usually hear about it after you have already spent time questioning what was no longer working.\n\nThe challenge is knowing when change is helping you build a life that fits better and when change itself has become the answer you reach for whenever something starts feeling too defined. Being known, expected, or counted on can feel restrictive even when nobody is actually preventing you from choosing differently.\n\nThe useful question is what changed. If your needs, priorities, information, or circumstances changed, the direction may need to change too. If the only problem is that someone now expects consistency from you, their expectation may still be having too much influence over the decision.",
+        "body_they": "{{Name}} is willing to change the plan when new information, different needs, or a better way of doing something makes the old choice stop fitting. Other people can be surprised because they often hear about the change after {{Name}} has already spent time questioning what was no longer working. The useful question is what changed. A changed life may need a changed direction. Someone else's expectation of consistency is not, by itself, a reason to keep a choice that no longer fits."
+      },
+      "astrology": {
+        "objects": [
+          "uranus",
+          "ascendant"
+        ],
+        "signs": [],
+        "aspects": [
+          "conjunction"
+        ],
+        "events": [
+          "conjunction"
+        ],
+        "houses": []
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-aspect-lived/uranus/conjunction/midheaven",
+      "contentFamily": "natal-aspect",
+      "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+      "runtimeBucket": "hook",
+      "status": "owner-approved",
+      "sourceStatus": "approved",
+      "provenance": "source-archive",
+      "sourceAuthor": "composed",
+      "approvalRecord": "packages/astro-knowledge/review/angle-aspects-60-v15/records/044-natal-aspect-lived-uranus-conjunction-midheaven-exact-approval.json",
+      "approvalVersionDate": "2026-08-31",
+      "contentHash": "56e78f519a2a8e9354ee5d956b4ac0075548a6e767a65de272569938e39a06a7",
+      "wording": {
+        "body": "Questioning the established way can become part of what you are known for, especially when you can show that a different approach works better. You challenge the method everybody else accepts, take an unexpected path, or bring an idea into public view before other people have decided it belongs there.\n\nThat does not require an unconventional career. People may notice it in the way you approach a class, creative project, organization, public role, or profession: you are willing to question the established way when it no longer works.\n\nBeing different stops helping when the difference itself becomes more important than what the new approach actually improves. A new idea can get attention quickly, but eventually it still has to work, hold up, and give people something better than what it replaced.\n\nBeing first matters less than building something people still benefit from once the surprise is gone. What you become known for should reflect your independence without making being different the whole point.",
+        "body_they": "Questioning the established way can become part of what {{Name}} is known for, especially when they can show that another approach works better. They may challenge the accepted method in school, creative work, an organization, a public role, or a profession. Being different is useful when the difference improves something. What they become known for should reflect their independence without making novelty itself the entire point."
+      },
+      "astrology": {
+        "objects": [
+          "uranus",
+          "midheaven"
+        ],
+        "signs": [],
+        "aspects": [
+          "conjunction"
+        ],
+        "events": [
+          "conjunction"
+        ],
+        "houses": []
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-aspect-lived/uranus/opposition/ascendant",
+      "contentFamily": "natal-aspect",
+      "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+      "runtimeBucket": "hook",
+      "status": "owner-approved",
+      "sourceStatus": "approved",
+      "provenance": "source-archive",
+      "sourceAuthor": "composed",
+      "approvalRecord": "packages/astro-knowledge/review/angle-aspects-60-v15/records/047-natal-aspect-lived-uranus-opposition-ascendant-exact-approval.json",
+      "approvalVersionDate": "2026-08-31",
+      "contentHash": "a732941ee97c853bdc2392a1988835ee3a7f10ee59730a1ccd775e0e79eae6c3",
+      "wording": {
+        "body": "You tend to do best in relationships where closeness leaves both people enough independence to keep a life of their own. Friends, interests, schedules, money, or time alone do not have to disappear in order to prove that the relationship matters.\n\nYou may also be drawn to people who make you question the usual relationship rules. They choose a different schedule, reject a milestone everybody else assumes is necessary, or need enough independence that the two of you have to decide for yourselves what commitment is supposed to look like.\n\nFreedom gets complicated when it means something different to each person. One person thinks plans are flexible. The other thinks the agreement is dependable even if the schedule changes. One person wants independence inside the relationship. The other wants freedom from having to explain choices that affect both people.\n\nA relationship does not have to look conventional to be dependable. Both people still need to know what they can rely on, which decisions affect them both, and what independence means once two lives start having consequences for each other.",
+        "body_they": "{{Name}} tends to do best in relationships where closeness leaves both people enough independence to maintain a life of their own. They may be drawn to people who question conventional relationship rules, which makes the two of them define commitment for themselves. Freedom still needs a shared meaning. A relationship can look unconventional and remain dependable if both people know what they can rely on and which choices affect them both."
+      },
+      "astrology": {
+        "objects": [
+          "uranus",
+          "ascendant"
+        ],
+        "signs": [],
+        "aspects": [
+          "opposition"
+        ],
+        "events": [
+          "opposition"
+        ],
+        "houses": []
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-aspect-lived/uranus/opposition/midheaven",
+      "contentFamily": "natal-aspect",
+      "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+      "runtimeBucket": "hook",
+      "status": "owner-approved",
+      "sourceStatus": "approved",
+      "provenance": "source-archive",
+      "sourceAuthor": "composed",
+      "approvalRecord": "packages/astro-knowledge/review/angle-aspects-60-v15/records/048-natal-aspect-lived-uranus-opposition-midheaven-exact-approval.json",
+      "approvalVersionDate": "2026-08-31",
+      "contentHash": "81f25c441dd05b6fe5ce139267c2f31330d67d548330eede6c3e2fad16a301c7",
+      "wording": {
+        "body": "You need a home life that gives you enough freedom to decide how your space, time, and responsibilities are shared. Who has access, how often family is involved, what you are expected to take care of, and how much of your time belongs to the household can matter more to you than following a familiar idea of what home is supposed to look like.\n\nYou can care deeply about where you came from without wanting to reproduce it. A family role, household setup, tradition, or expectation may have made sense for the people who created it and still not fit the life you want to build.\n\nThe challenge is that changing the household can become easier than identifying the exact freedom you are missing. Another move, another reset, or another break from tradition may create space without answering what you actually need the space for.\n\nYou can honor where you came from without reproducing it. Home works better when there is enough freedom to change what no longer fits and enough consistency that the life you chose still gives you something you can rely on.",
+        "body_they": "{{Name}} needs enough freedom at home to decide how their space, time, access, and responsibilities are shared. They can care deeply about where they came from without wanting to reproduce the household or family rules they inherited. The complication is changing everything before identifying the exact freedom they were missing. Home works better when they can change what no longer fits while still building enough consistency to have something they can rely on."
+      },
+      "astrology": {
+        "objects": [
+          "uranus",
+          "midheaven"
+        ],
+        "signs": [],
+        "aspects": [
+          "opposition"
+        ],
+        "events": [
+          "opposition"
         ],
         "houses": []
       }
@@ -132368,6 +133680,68 @@
       }
     },
     {
+      "contentKey": "fallback-hook/natal-aspect-lived/uranus/square/ascendant",
+      "contentFamily": "natal-aspect",
+      "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+      "runtimeBucket": "hook",
+      "status": "owner-approved",
+      "sourceStatus": "approved",
+      "provenance": "source-archive",
+      "sourceAuthor": "composed",
+      "approvalRecord": "packages/astro-knowledge/review/angle-aspects-60-v15/records/045-natal-aspect-lived-uranus-square-ascendant-exact-approval.json",
+      "approvalVersionDate": "2026-08-31",
+      "contentHash": "09c4726b5310ee2dc6cbf901b77cab21ff05ef886fe5816c7eb389f09fcb4728",
+      "wording": {
+        "body": "You can make something work for a long time before you admit how much you have been adjusting yourself to keep it going. You adapt, make exceptions, tell yourself it is manageable, and then reach a point where changing the plan feels easier than having one more conversation about what is not working.\n\nBy the time you finally say no, the decision may feel obvious to you. Other people can be surprised because they did not hear all the smaller objections that came before it, or because you kept treating each problem like something you could manage.\n\nThe challenge is that independence can become easiest to claim at the point of departure. By then, you may already be so finished with the situation that you no longer know if it could have changed once your actual needs were on the table.\n\nYou are allowed to change your direction as you learn more about who you are. The question is if the situation had a chance to respond to the person you actually are before leaving became the only answer that felt honest.",
+        "body_they": "{{Name}} can make something work for a long time before admitting how much they have been adjusting themselves to keep it going. By the time they finally say no, the decision may look sudden to everyone else even though it has been building for months. Independence can become easiest to claim at the point of departure. The question is if the situation ever had a chance to respond to what {{Name}} actually needed before leaving became the only answer that felt honest."
+      },
+      "astrology": {
+        "objects": [
+          "uranus",
+          "ascendant"
+        ],
+        "signs": [],
+        "aspects": [
+          "square"
+        ],
+        "events": [
+          "square"
+        ],
+        "houses": []
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-aspect-lived/uranus/square/midheaven",
+      "contentFamily": "natal-aspect",
+      "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+      "runtimeBucket": "hook",
+      "status": "owner-approved",
+      "sourceStatus": "approved",
+      "provenance": "source-archive",
+      "sourceAuthor": "composed",
+      "approvalRecord": "packages/astro-knowledge/review/angle-aspects-60-v15/records/046-natal-aspect-lived-uranus-square-midheaven-exact-approval.json",
+      "approvalVersionDate": "2026-08-31",
+      "contentHash": "e57563dc364f440f844defba95aaeb2b47d6c2fe7bc0b2b589ef101c8272c1ad",
+      "wording": {
+        "body": "You can do very well inside a structure and still feel constrained by how much was decided before you had any say in it, especially when recognition proves you are capable without giving you more authority to use your judgment. A school praises independent thinking until you challenge the assignment, an organization asks for initiative until your idea changes the approved method, or a workplace gives you ownership while keeping the decisions somewhere else.\n\nYou may keep trying to earn the freedom you need by proving yourself first. Better grades, stronger work, more responsibility, another title, or more recognition can seem like they should eventually give you enough freedom to do things differently.\n\nSometimes better work earns more freedom. Other times, the same restriction survives every accomplishment, which tells you something important about the place itself. A school, organization, or workplace can praise originality and still have very little interest in letting originality change anything important.\n\nPay attention to what recognition actually gives you. Being trusted, praised, promoted, or taken seriously matters if it gives you more authority to use your judgment. If the same limit remains in place no matter how much you prove, the setting may be telling you exactly what it is willing to let you become there.",
+        "body_they": "{{Name}} can do very well inside a structure and still feel constrained by how much was decided before they had any say in it. They may keep trying to earn freedom through stronger work, more responsibility, or more recognition. Sometimes that works. Other times the same restriction survives every accomplishment. What matters is what recognition actually gives them. Praise means more when it comes with enough authority for their judgment to change something."
+      },
+      "astrology": {
+        "objects": [
+          "uranus",
+          "midheaven"
+        ],
+        "signs": [],
+        "aspects": [
+          "square"
+        ],
+        "events": [
+          "square"
+        ],
+        "houses": []
+      }
+    },
+    {
       "contentKey": "fallback-hook/natal-aspect-lived/uranus/square/pluto",
       "contentFamily": "natal-aspect",
       "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
@@ -132398,6 +133772,37 @@
       }
     },
     {
+      "contentKey": "fallback-hook/natal-aspect-lived/venus/conjunction/ascendant",
+      "contentFamily": "natal-aspect",
+      "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+      "runtimeBucket": "hook",
+      "status": "owner-approved",
+      "sourceStatus": "approved",
+      "provenance": "source-archive",
+      "sourceAuthor": "composed",
+      "approvalRecord": "packages/astro-knowledge/review/angle-aspects-60-v15/records/019-natal-aspect-lived-venus-conjunction-ascendant-exact-approval.json",
+      "approvalVersionDate": "2026-08-31",
+      "contentHash": "1d802d11d311d41dd4a41795bc716a1a6481d546bfc72d023ccb37a0e3ef65cb",
+      "wording": {
+        "body": "Before people know you well, they often get a clear sense of what you like. It shows up in what you wear, how you arrange your home, what you order, and the things you choose to keep around you.\n\nYou usually know when something appeals to you. A place feels right, you like the way something looks, or a person immediately catches your attention. Your preferences tend to become visible because they keep showing up in the choices you make.\n\nOther people usually respond to this. They notice your style, find you attractive, compliment the choices you make, or start associating you with a certain look or way of carrying yourself. That response can feel good without needing to become the reason you keep choosing the same thing.\n\nBeing wanted and wanting the choice yourself are different experiences. Someone can find you attractive without being someone you would choose. Something can look perfect on you and still stop feeling like you. Other people's approval can tell you what they respond to, but it cannot tell you what you should keep choosing.",
+        "body_they": "People often get a clear sense of what {{Name}} likes before they know them very well. Their taste shows up in what they wear, choose, keep around them, and the people or places they are drawn toward. Other people may respond strongly to that, but approval cannot tell {{Name}} what they should keep choosing. Being wanted and wanting something themselves are different experiences."
+      },
+      "astrology": {
+        "objects": [
+          "venus",
+          "ascendant"
+        ],
+        "signs": [],
+        "aspects": [
+          "conjunction"
+        ],
+        "events": [
+          "conjunction"
+        ],
+        "houses": []
+      }
+    },
+    {
       "contentKey": "fallback-hook/natal-aspect-lived/venus/conjunction/mars",
       "contentFamily": "natal-aspect",
       "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
@@ -132416,6 +133821,37 @@
         "objects": [
           "venus",
           "mars"
+        ],
+        "signs": [],
+        "aspects": [
+          "conjunction"
+        ],
+        "events": [
+          "conjunction"
+        ],
+        "houses": []
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-aspect-lived/venus/conjunction/midheaven",
+      "contentFamily": "natal-aspect",
+      "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+      "runtimeBucket": "hook",
+      "status": "owner-approved",
+      "sourceStatus": "approved",
+      "provenance": "source-archive",
+      "sourceAuthor": "composed",
+      "approvalRecord": "packages/astro-knowledge/review/angle-aspects-60-v15/records/020-natal-aspect-lived-venus-conjunction-midheaven-exact-approval.json",
+      "approvalVersionDate": "2026-08-31",
+      "contentHash": "324ba02e312b68336b7e48fbc7e6e5b79dda8801786ab612d63343d6858e1a9e",
+      "wording": {
+        "body": "Your taste, judgment, and the care you bring to what you make, choose, or support can become part of what people remember about you. What you value becomes visible through the standards you keep returning to and the choices you are willing to stand behind.\n\nThat can make people seek out your opinion. They ask what you think, invite you back because they like having you involved, or trust you with the part where presentation, tone, or the quality of the exchange actually matters.\n\nBeing well received gets complicated when the role that earns the strongest response stops reflecting what you actually value. You keep saying yes because people appreciate you there, stay attached to something because it looks good from the outside, or accept praise as proof that the choice still fits.\n\nBeing appreciated and valuing the role are different things. What you become known for should still reflect what you actually care about, not only what other people have learned to praise you for.",
+        "body_they": "{{Name}}'s taste, judgment, and the care they bring to what they make or support can become part of what people remember about them. Others may seek out their opinion because they trust the quality of their choices. Being appreciated gets complicated when the role receiving the most praise stops reflecting what {{Name}} actually values. What they become known for should still be connected to something they genuinely care about."
+      },
+      "astrology": {
+        "objects": [
+          "venus",
+          "midheaven"
         ],
         "signs": [],
         "aspects": [
@@ -132518,6 +133954,37 @@
       }
     },
     {
+      "contentKey": "fallback-hook/natal-aspect-lived/venus/opposition/ascendant",
+      "contentFamily": "natal-aspect",
+      "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+      "runtimeBucket": "hook",
+      "status": "owner-approved",
+      "sourceStatus": "approved",
+      "provenance": "source-archive",
+      "sourceAuthor": "composed",
+      "approvalRecord": "packages/astro-knowledge/review/angle-aspects-60-v15/records/023-natal-aspect-lived-venus-opposition-ascendant-exact-approval.json",
+      "approvalVersionDate": "2026-08-31",
+      "contentHash": "0b54737e04d42bf5f07e3195116d57f5fcac01e1da96d4fdcd074b9843472dd1",
+      "wording": {
+        "body": "The people you are attracted to often make your own values easier to understand. Being close to someone shows you which kinds of affection matter to you, what you enjoy sharing, and what starts feeling wrong once another person's choices affect your time, money, attention, or plans.\n\nYou may be drawn to people who bring experiences or ways of loving into your world that you would not have found on your own. Their preferences can expand yours, while their different priorities make it clearer which values you are unwilling to negotiate.\n\nAttraction does not answer the compatibility question. A person can be exactly your type and still want a different relationship than you do. You can love being around them and dislike how they handle time, money, commitment, affection, or the future. None of that makes the attraction less true. It tells you what attraction cannot decide for you.\n\nWanting someone tells you why you moved toward them. What happens once you are together tells you what the relationship is made of. Love, pleasure, and chemistry matter, but so does the life the two of you are actually able to build around them.",
+        "body_they": "The people {{Name}} is attracted to often make their own values easier to understand. Closeness shows them what kind of affection they enjoy, what they want to share, and what stops working once another person's choices affect their time, money, attention, or future. Attraction can be completely genuine without answering the compatibility question. What happens after two people choose each other tells {{Name}} what the relationship can actually support."
+      },
+      "astrology": {
+        "objects": [
+          "venus",
+          "ascendant"
+        ],
+        "signs": [],
+        "aspects": [
+          "opposition"
+        ],
+        "events": [
+          "opposition"
+        ],
+        "houses": []
+      }
+    },
+    {
       "contentKey": "fallback-hook/natal-aspect-lived/venus/opposition/midheaven",
       "contentFamily": "natal-aspect",
       "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
@@ -132526,11 +133993,12 @@
       "sourceStatus": "approved",
       "provenance": "source-archive",
       "sourceAuthor": "composed",
-      "approvalRecord": "packages/astro-knowledge/voice/tldr-astro/marie-satori-writer/ll-matrix-v13/knowledge-matrix-v13-owner-approved-locked.json",
-      "approvalVersionDate": "2026-08-10",
-      "contentHash": "8740c87cb5994182ada8b27e8d214a97f327e296663dce30b45cb3e992b14b17",
+      "approvalRecord": "packages/astro-knowledge/review/angle-aspects-60-v15/records/024-natal-aspect-lived-venus-opposition-midheaven-exact-approval.json",
+      "approvalVersionDate": "2026-08-31",
+      "contentHash": "bc90ca8b20338348a6af038a7a0534360d649cd7c44d3f1c1d26697fcd5e98af",
       "wording": {
-        "body": "Public success can become available without making it the thing you have to value most. You may know how to attract recognition and still prefer a beautiful home, close relationship, creative life, or private sense of pleasure over another promotion or title. The choice is real. Achievement does not have to be the thing you care about most."
+        "body": "You need your home life to reflect what you actually value, especially in the way money is spent, affection is shown, responsibilities are shared, and people treat each other in private. A home can look beautiful and still feel wrong if the life inside it asks you to keep living by values you do not respect.\n\nYou may show love through ordinary choices at home. You cook, remember what somebody likes, make the space welcoming, keep traditions people enjoy, or spend money on things that make daily life more comfortable.\n\nPreserving peace or beauty gets expensive when it starts requiring you to carry more than you want. You keep hosting because everyone loves coming over, keep an inherited object because somebody would be hurt if you let it go, or take on more of the planning and upkeep because you care more about how the home feels.\n\nA beautiful home is a lot less relaxing when you are the only one keeping the whole thing beautiful. Love can live in what you preserve, but it can also live in changing what no longer works for the people who actually live there.",
+        "body_they": "{{Name}} needs their home life to reflect what they actually value, especially in the way affection, money, responsibilities, and private treatment are handled. They may show love through cooking, remembering what people like, keeping traditions, or making daily life more comfortable. The complication is carrying more and more simply because they care about how the home feels. A beautiful home is much less relaxing when they are the only person responsible for keeping it that way."
       },
       "astrology": {
         "objects": [
@@ -132875,6 +134343,37 @@
       }
     },
     {
+      "contentKey": "fallback-hook/natal-aspect-lived/venus/square/ascendant",
+      "contentFamily": "natal-aspect",
+      "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+      "runtimeBucket": "hook",
+      "status": "owner-approved",
+      "sourceStatus": "approved",
+      "provenance": "source-archive",
+      "sourceAuthor": "composed",
+      "approvalRecord": "packages/astro-knowledge/review/angle-aspects-60-v15/records/021-natal-aspect-lived-venus-square-ascendant-exact-approval.json",
+      "approvalVersionDate": "2026-08-31",
+      "contentHash": "b752daa28de2c3974a67c335fed234f354951c15409eac63ea00777fb78d9e58",
+      "wording": {
+        "body": "You may spend part of your life learning the difference between what you genuinely like and what gets the best response from other people. You notice what gets compliments, which choices people say suit you, who seems attracted to you, and what version of you is easiest for other people to understand.\n\nThat feedback can be useful, especially while you are still figuring out your own taste. The problem starts when you know how to get approval before you have decided what you actually want. You choose the option everyone says looks right, stay interested because being wanted feels flattering, or keep showing people a version of yourself that gets a good response even after it has stopped feeling like you.\n\nThis aspect can teach you that being appealing and being accurately represented are not the same thing. Something can look right from the outside and still not feel like your choice. Being wanted does not tell you if you want the relationship. Other people's response gives you information, but it cannot decide what you value.\n\nThe more clearly you know what you like, the less you have to build your choices around approval. You are allowed to have preferences. You are allowed to change them. What suits you should reflect the person you actually are, not only the version other people find easiest to like.",
+        "body_they": "{{Name}} may spend part of their life learning the difference between what they genuinely like and what gets the best response from other people. They notice compliments, attraction, and what people say suits them, which can make approval easy to read before their own preference is fully clear. Something can look perfect from the outside and still not feel like their choice. Being wanted does not tell them if they want the relationship."
+      },
+      "astrology": {
+        "objects": [
+          "venus",
+          "ascendant"
+        ],
+        "signs": [],
+        "aspects": [
+          "square"
+        ],
+        "events": [
+          "square"
+        ],
+        "houses": []
+      }
+    },
+    {
       "contentKey": "fallback-hook/natal-aspect-lived/venus/square/mars",
       "contentFamily": "natal-aspect",
       "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
@@ -132893,6 +134392,37 @@
         "objects": [
           "venus",
           "mars"
+        ],
+        "signs": [],
+        "aspects": [
+          "square"
+        ],
+        "events": [
+          "square"
+        ],
+        "houses": []
+      }
+    },
+    {
+      "contentKey": "fallback-hook/natal-aspect-lived/venus/square/midheaven",
+      "contentFamily": "natal-aspect",
+      "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+      "runtimeBucket": "hook",
+      "status": "owner-approved",
+      "sourceStatus": "approved",
+      "provenance": "source-archive",
+      "sourceAuthor": "composed",
+      "approvalRecord": "packages/astro-knowledge/review/angle-aspects-60-v15/records/022-natal-aspect-lived-venus-square-midheaven-exact-approval.json",
+      "approvalVersionDate": "2026-08-31",
+      "contentHash": "050a51670402c6b2cb8ae8b8b631023bf022b88e4b78a4b13375d175ded75505",
+      "wording": {
+        "body": "Something can look desirable from the outside and still be wrong for the life you actually want. You may be praised for the path, chosen for the role, or surrounded by people who think the opportunity suits you while privately realizing that the life attached to it does not.\n\nPublic approval can make your own values harder to hear. You may stay longer because leaving something admired feels like wasting an opportunity, or keep trying to make a role fit because other people are convinced it suits you.\n\nThe challenge is noticing what the recognition is asking you to trade. You accept less autonomy, spend more time, give up creative control, or tolerate terms you would question somewhere else because the visible reward makes the exchange look more reasonable than it feels.\n\nWhat looks desirable from the outside and what you would actually choose are not always the same thing. Recognition matters most when the life attached to it is still one you want.",
+        "body_they": "Something can look desirable from the outside and still be wrong for the life {{Name}} actually wants. Praise, visibility, or an admired opportunity can make it harder to admit that the terms no longer suit them. The useful question is what the recognition is asking them to trade in time, autonomy, money, creative control, or ordinary quality of life. Recognition matters most when the life attached to it is still one they would choose."
+      },
+      "astrology": {
+        "objects": [
+          "venus",
+          "midheaven"
         ],
         "signs": [],
         "aspects": [

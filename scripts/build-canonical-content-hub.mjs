@@ -291,8 +291,11 @@ function exactAspectRows(first, second, sourceTypes) {
 function legacyEvidence(row) {
   if (!row) return [];
   const payload = row.approval?.payloadSha256 ?? null;
-  const calculated = payload ? sha256(JSON.stringify({ body: row.body })) : null;
-  return [sourceDescriptor({
+  const calculated = payload ? sha256(JSON.stringify({
+    body: row.body,
+    ...(row.sourceMechanism ? { sourceMechanism: row.sourceMechanism } : {})
+  })) : null;
+  const evidence = [sourceDescriptor({
     sourceId: row.contentKey,
     sourcePath: paths.rows,
     locator: row.contentKey,
@@ -302,6 +305,24 @@ function legacyEvidence(row) {
     payloadSha256: payload,
     provenanceStatus: payload ? (calculated === payload ? "VERIFIED" : "PROVENANCE_UNVERIFIED") : "NOT_CLAIMED"
   })];
+  if (typeof row.body_they === "string" && row.body_they.trim()) {
+    const friendPayload = row.body_they_approval?.payloadSha256 ?? null;
+    const friendCalculated = friendPayload ? sha256(JSON.stringify({
+      body_they: row.body_they,
+      ...(row.body_they_sourceMechanism ? { sourceMechanism: row.body_they_sourceMechanism } : {})
+    })) : null;
+    evidence.push(sourceDescriptor({
+      sourceId: `${row.contentKey}#body_they`,
+      sourcePath: paths.rows,
+      locator: `${row.contentKey}/body_they`,
+      text: row.body_they,
+      governance: row.body_they_approval?.approvalLevel ?? row.body_they_review_status ?? "unverified-friend-copy",
+      approvalState: row.body_they_review_status ?? row.review_status,
+      payloadSha256: friendPayload,
+      provenanceStatus: friendPayload ? (friendCalculated === friendPayload ? "VERIFIED" : "PROVENANCE_UNVERIFIED") : "NOT_CLAIMED"
+    }));
+  }
+  return evidence;
 }
 
 function unitRecord({ unitId, kind, mode, perspectiveModes, contentByPerspective, recipeId = null, slotIds = [], exactRow = null, candidateSources = [], mechanism }) {
@@ -330,7 +351,13 @@ function unitRecord({ unitId, kind, mode, perspectiveModes, contentByPerspective
             ? "source-gap"
             : "deterministic-approved-composition",
       approvalState: renderEligible ? "approved" : "needs_review",
-      approvalMetadata: exactRow?.approval ?? {}
+      approvalMetadata: exactRow ? {
+        ...exactRow.approval,
+        perspectives: {
+          you: exactRow.approval ?? null,
+          they: exactRow.body_they_approval ?? null
+        }
+      } : {}
     },
     lineage: {
       supersedes: [], supersededBy: [],
