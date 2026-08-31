@@ -1,5 +1,5 @@
 import { Plus, RefreshCw, type LucideIcon } from "lucide-react";
-import { useEffect, useRef, useState, type KeyboardEvent, type ReactNode } from "react";
+import { useEffect, useRef, type KeyboardEvent } from "react";
 
 export type AdminBreadcrumb = {
   current?: boolean;
@@ -163,41 +163,6 @@ export function AdminAccessGate({ disabled, onChange, onSubmit, value }: AdminAc
           <RefreshCw size={16} aria-hidden="true" />
           Load content
         </button>
-      </div>
-    </section>
-  );
-}
-
-type AdminFilterDisclosureProps = {
-  children: ReactNode;
-  summary: string;
-};
-
-export function AdminFilterDisclosure({ children, summary }: AdminFilterDisclosureProps) {
-  const [open, setOpen] = useState(() => (
-    typeof window === "undefined" || !window.matchMedia("(max-width: 860px)").matches
-  ));
-
-  useEffect(() => {
-    const compactViewport = window.matchMedia("(max-width: 860px)");
-    const syncViewport = () => setOpen(!compactViewport.matches);
-    compactViewport.addEventListener("change", syncViewport);
-    return () => compactViewport.removeEventListener("change", syncViewport);
-  }, []);
-
-  return (
-    <section className="admin-filter-disclosure" data-open={open ? "true" : "false"}>
-      <button
-        className="admin-filter-disclosure-toggle"
-        type="button"
-        aria-expanded={open}
-        onClick={() => setOpen((current) => !current)}
-      >
-        <span>Filters</span>
-        <small>{summary}</small>
-      </button>
-      <div className="admin-filter-disclosure-content" hidden={!open}>
-        {children}
       </div>
     </section>
   );

@@ -18,6 +18,20 @@ const roots = [
 const extensions = new Set([".cjs", ".css", ".html", ".js", ".json", ".md", ".mjs", ".mts", ".sql", ".ts", ".tsx", ".yaml", ".yml"]);
 const ignoredDirectories = new Set([".git", "dist", "node_modules"]);
 const factualSourceUrlFile = "packages/astro-knowledge/voice/tldr-astro/satori-writer/knowledge-matrix-v8/transit-meanings-v8-owner-approved-locked.json";
+const skyV4SourceProvenanceFile = "apps/web/src/content/fallbackArchitectureV3/authored-inputs/sky-v4-canonical-content-studio-stage-v1.json";
+
+function readerFacingText(filePath) {
+  const relative = path.relative(repoRoot, filePath);
+  if (relative !== skyV4SourceProvenanceFile) return fs.readFileSync(filePath, "utf8");
+  const stripProvenance = (value) => {
+    if (Array.isArray(value)) return value.map(stripProvenance);
+    if (!value || typeof value !== "object") return value;
+    return Object.fromEntries(Object.entries(value)
+      .filter(([key]) => !/(?:source|governance|comparison|notes?)/iu.test(key))
+      .map(([key, child]) => [key, stripProvenance(child)]));
+  };
+  return JSON.stringify(stripProvenance(JSON.parse(fs.readFileSync(filePath, "utf8"))));
+}
 
 function filesUnder(relativePath) {
   // Historical review packets are immutable audit evidence and are never bundled or shown in Content Studio.
@@ -38,7 +52,7 @@ const checked = roots.flatMap(filesUnder);
 const violations = checked
   // Keep factual, non-rendered provenance URLs intact; changing their path would fabricate a source.
   .filter((filePath) => path.relative(repoRoot, filePath) !== factualSourceUrlFile)
-  .filter((filePath) => prohibitedPattern.test(fs.readFileSync(filePath, "utf8")))
+  .filter((filePath) => prohibitedPattern.test(readerFacingText(filePath)))
   .map((filePath) => path.relative(repoRoot, filePath));
 
 assert.deepEqual(violations, [], `Active app/content files must use CC instead of the prohibited attribution:\n${violations.join("\n")}`);

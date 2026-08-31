@@ -229,7 +229,7 @@ const eclipseWithConditions = renderSkyV4StudioPreview(corpus, {
   aspects: [{ id: "event-aspect", bodyA: "Mercury", bodyB: "Saturn", approved: true, exactDateTime: "2026-01-01", orb: 1, headline: "Mercury square Saturn", dateLine: "Engine date", body: "Approved event aspect." }],
   eventContextAspectIds: ["event-aspect"]
 }).page;
-tokenOrder(eclipseWithConditions, [exactEclipse.EventArticle, "## What is shaping this transit now", "## Aspects shaping this transit"]);
+tokenOrder(eclipseWithConditions, [exactEclipse.EventArticle, "## Other Conditions", "## Key aspects"]);
 mark("C-022");
 assert.deepEqual(selectSkyV4Aspects([{ id: "unapproved", approved: false, bodyA: "Sun", bodyB: "Moon" }], { subjectBody: "sun" }), []);
 mark("C-023");
@@ -285,12 +285,77 @@ assert.equal(resolveSkyV4ContextualOverlays(corpus, [venusAriesContext], { conte
 executedContextual.add("CTX-011");
 const clonedCorpus = structuredClone(corpus);
 const baseOverlay = clonedCorpus.content.contextualTransitOverlays.find((row) => row.OverlayKey === matchedOverlays[0].OverlayKey);
+baseOverlay.Priority = 30;
 clonedCorpus.content.contextualTransitOverlays.push(
-  { ...baseOverlay, OverlayKey: `${baseOverlay.OverlayKey}-two`, Priority: Number(baseOverlay.Priority) - 1 },
-  { ...baseOverlay, OverlayKey: `${baseOverlay.OverlayKey}-three`, Priority: Number(baseOverlay.Priority) - 2 }
+  { ...baseOverlay, OverlayKey: `${baseOverlay.OverlayKey}-priority-10`, Priority: 10 },
+  { ...baseOverlay, OverlayKey: `${baseOverlay.OverlayKey}-priority-20`, Priority: 20 }
 );
-assert.equal(resolveSkyV4ContextualOverlays(clonedCorpus, [venusAriesContext]).length, 2);
+const prioritySelection = resolveSkyV4ContextualOverlays(clonedCorpus, [venusAriesContext]);
+assert.deepEqual(prioritySelection.map((row) => row.OverlayKey), [
+  `${baseOverlay.OverlayKey}-priority-10`, `${baseOverlay.OverlayKey}-priority-20`
+]);
+const fallbackPrioritySelection = resolveSkyV4ContextualOverlays(
+  clonedCorpus, [venusAriesContext], { includeContextualOverlayInFallbackHook: true }, {}, "fallback"
+);
+assert.deepEqual(fallbackPrioritySelection.map((row) => row.OverlayKey), [`${baseOverlay.OverlayKey}-priority-10`]);
+const suppressedPrioritySelection = resolveSkyV4ContextualOverlays(
+  clonedCorpus, [venusAriesContext], {}, { exactAspectDuplicateKeys: [`${baseOverlay.OverlayKey}-priority-10`] }
+);
+assert.deepEqual(suppressedPrioritySelection.map((row) => row.OverlayKey), [
+  `${baseOverlay.OverlayKey}-priority-20`, baseOverlay.OverlayKey
+]);
 executedContextual.add("CTX-012");
 assert.equal(executedContextual.size, 12, "All 12 contextual overlay scenarios must execute.");
+
+const newMoonWithCycle = renderSkyV4StudioPreview(corpus, {
+  contentKey: "sky-lunation/new-moon/gemini",
+  cycleContext: "Approved Gemini lunar-cycle context.",
+  aspects: [{
+    id: "new-moon-sun-mercury", bodyA: "Sun", bodyB: "Mercury", approved: true,
+    exactDateTime: "2026-06-01", orb: 1, headline: "Sun conjunct Mercury",
+    dateLine: "June 1, 2026", body: "Approved direct luminary aspect."
+  }]
+});
+tokenOrder(newMoonWithCycle.page, ["## TLDR", "Approved Gemini lunar-cycle context.", "## Key aspects"]);
+
+const fullMoonWithAxis = renderSkyV4StudioPreview(corpus, {
+  contentKey: "sky-lunation/full-moon/taurus",
+  cycleContext: "Approved Taurus–Scorpio cycle context.",
+  aspects: [{
+    id: "full-moon-axis", bodyA: "Moon", bodyB: "Sun", approved: true,
+    exactDateTime: "2026-11-01", orb: 0, headline: "Moon opposite Sun",
+    dateLine: "November 1, 2026", body: "Approved axis aspect."
+  }]
+});
+assert.deepEqual(fullMoonWithAxis.axis, { moonSign: "Taurus", sunSign: "Scorpio", axis: "Taurus–Scorpio" });
+assert.match(fullMoonWithAxis.page, /## Key aspects/u);
+
+const exactEclipseParity = renderSkyV4StudioPreview(corpus, {
+  contentKey: exactEclipse.ContentKey,
+  cycleContext: "Approved eclipse cycle context.",
+  eclipseContext: "Approved node and eclipse-series context.",
+  motionConditions: [{ headline: "Mercury retrograde", dateLine: "Engine date", body: "Approved condition." }],
+  aspects: [{ id: "exact-eclipse-aspect", bodyA: "Moon", bodyB: "Saturn", approved: true, exactDateTime: "2025-03-14", orb: 1, headline: "Moon opposite Saturn", dateLine: "March 14, 2025", body: "Approved eclipse aspect." }]
+});
+assert.equal(exactEclipseParity.resolution, "exact-event");
+tokenOrder(exactEclipseParity.page, [exactEclipse.EventArticle, "Approved eclipse cycle context.", "Approved node and eclipse-series context.", "## Other Conditions", "## Key aspects"]);
+
+const eclipseFallbackParity = renderSkyV4StudioPreview(corpus, {
+  contentKey: exactEclipse.ContentKey,
+  exactAvailable: false
+});
+assert.equal(eclipseFallbackParity.resolution, "sign-aware-fallback");
+
+const continuousStacked = renderSkyV4StudioPreview(corpus, {
+  contentKey: "sky-placement/article/venus/aries",
+  dateLine: "Engine dates",
+  contexts: [venusAriesContext],
+  motionConditions: [{ headline: "Venus retrograde", dateLine: "Engine station dates", body: "Approved retrograde condition." }],
+  aspects
+});
+tokenOrder(continuousStacked.page, ["## TLDR", matchedOverlays[0].OverlayBody, "## What is shaping this transit now", "## Aspects shaping this transit"]);
+
+const zeroOptional = renderSkyV4StudioPreview(corpus, { contentKey: "sky-lunation/new-moon/gemini" });
+assert.doesNotMatch(zeroOptional.page, /## (Other Conditions|Key aspects)/u);
 
 console.log(`SKY V4 canonical stage: PASS (${records.length} records; ${coverage.continuousCount} continuous articles; serving OFF)`);

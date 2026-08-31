@@ -1624,6 +1624,34 @@ async function updateGeneratedContent(req: IncomingMessage) {
     applyFallbackArchitectureV3ReviewPatch(existing, body, patch);
   }
 
+  const existingPackageRecord = existing ? v3PackageRecord(existing) : {};
+  const forksGovernedAspectDraft = Boolean(
+    isPackageRow
+    && existing
+    && existing.status === "LIVE"
+    && stringFrom(existingPackageRecord.studio_content_type) === "aspect"
+    && isRecord((patch.sections as Record<string, unknown> | undefined)?.packageDraft)
+  );
+  if (forksGovernedAspectDraft && existing) {
+    return upsertGeneratedContentRow({
+      content_key: existing.content_key,
+      surface: existing.surface,
+      target_date: existing.target_date,
+      mode: "studio-draft",
+      event_type: "sky-v4-governed-aspect-draft",
+      block_type: existing.block_type,
+      provider: "owner-content-studio",
+      prompt_version: "sky-v4-governed-aspect-draft-v1",
+      reviewer_notes: "Versioned reader-copy draft. The approved governed aspect baseline remains LIVE and unchanged.",
+      knowledge_ids: [],
+      ...patch,
+      status: "DRAFT",
+      lane: "reference",
+      review_state: "owner-review-required",
+      published_at: null
+    });
+  }
+
   const response = await fetch(`${supabaseUrl()}/rest/v1/generated_interpretations?id=eq.${encodeURIComponent(body.id)}`, {
     method: "PATCH",
     headers: {

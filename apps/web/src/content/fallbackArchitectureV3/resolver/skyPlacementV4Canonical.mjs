@@ -460,17 +460,20 @@ function overlayMatches(overlay, input) {
     && lower(overlay.ContextCondition) === lower(input.contextCondition);
 }
 
-export function resolveSkyV4ContextualOverlays(corpus, contexts = [], settings = {}, suppressions = {}) {
+export function resolveSkyV4ContextualOverlays(corpus, contexts = [], settings = {}, suppressions = {}, scope = "full-page") {
   assertSkyV4CanonicalPackage(corpus);
   const options = { ...SKY_V4_OVERLAY_DEFAULTS, ...settings };
   if (!options.contextualTransitOverlaysEnabled) return [];
+  const fallbackScope = scope === "fallback";
+  const limit = fallbackScope ? options.maxFallbackOverlays : options.maxFullPageOverlays;
 
   return corpus.content.contextualTransitOverlays
     .filter((overlay) => contexts.some((context) => overlayMatches(overlay, context)))
     .filter((overlay) => !(overlay.SuppressIfExactAspectDuplicate && suppressions.exactAspectDuplicateKeys?.includes(overlay.OverlayKey)))
     .filter((overlay) => !(overlay.SuppressIfEventArticleOwnsMechanism && suppressions.eventOwnedMechanismKeys?.includes(overlay.OverlayKey)))
-    .sort((left, right) => Number(right.Priority) - Number(left.Priority) || left.OverlayKey.localeCompare(right.OverlayKey))
-    .slice(0, options.maxFullPageOverlays);
+    .filter((overlay) => !fallbackScope || overlay.FallbackHookEligible === true)
+    .sort((left, right) => Number(left.Priority) - Number(right.Priority) || left.OverlayKey.localeCompare(right.OverlayKey))
+    .slice(0, Math.max(0, Number(limit) || 0));
 }
 
 export function selectSkyV4Aspects(aspects = [], { subjectBody, eventContextAspectIds = [], lumination = false } = {}) {
@@ -552,14 +555,17 @@ function renderAspect(aspect) {
 }
 
 export function renderSkyV4ContinuousPreview(corpus, input) {
-  const article = continuousArticleFor(corpus, input.planet, input.sign);
+  const article = input.articleOverride ?? continuousArticleFor(corpus, input.planet, input.sign);
   const facts = input.facts ?? {};
   const fullArticle = article && input.articleAvailable !== false
     ? withoutUnresolvedSlots(fillFacts(article.placementArticle, facts))
     : "";
   const overlays = resolveSkyV4ContextualOverlays(corpus, input.contexts, input.overlaySettings, input.overlaySuppressions);
+  const fallbackOverlays = resolveSkyV4ContextualOverlays(
+    corpus, input.contexts, input.overlaySettings, input.overlaySuppressions, "fallback"
+  );
   const fallbackOverlay = input.overlaySettings?.includeContextualOverlayInFallbackHook
-    ? overlays.find((overlay) => overlay.FallbackHookEligible)?.FallbackHookOverlay ?? ""
+    ? fallbackOverlays[0]?.FallbackHookOverlay ?? ""
     : "";
   const fallback = article && input.fallbackAvailable !== false
     ? [article.fallback?.hook, fallbackOverlay, article.fallback?.lived, article.fallback?.turn]
@@ -570,10 +576,8 @@ export function renderSkyV4ContinuousPreview(corpus, input) {
   const mainBody = fullArticle || fallback;
   const resolution = fullArticle ? "canonical-article" : fallback ? "exact-fallback" : "facts-only";
   const aspects = selectSkyV4Aspects(input.aspects, { subjectBody: input.planet });
-  const blocks = [
-    `# ${title(input.planet)} in ${title(input.sign)}`,
-    required(input.dateLine, "date line")
-  ];
+  const blocks = [`# ${title(input.planet)} in ${title(input.sign)}`];
+  if (text(input.dateLine).trim()) blocks.push(input.dateLine);
   if (mainBody) {
     blocks.push(`## TLDR\n\n**What:** ${article.tldrWhat}\n\n**Takeaway:** ${article.tldrTakeaway}`);
     if (input.seasonalContext) blocks.push(input.seasonalContext);
@@ -589,6 +593,126 @@ export function renderSkyV4ContinuousPreview(corpus, input) {
   return {
     contentKey: article?.contentKey ?? `sky-placement/article/${lower(input.planet)}/${lower(input.sign)}`,
     resolution,
+    selectedOverlayKeys: overlays.map((overlay) => overlay.OverlayKey),
+    selectedFallbackOverlayKeys: fallbackOverlays.map((overlay) => overlay.OverlayKey),
+    selectedAspectIds: aspects.map((aspect) => aspect.id),
+    page: blocks.join("\n\n").trim()
+  };
+}
+
+function nodeRelationSlug(value) {
+  const normalized = slug(value);
+  if (normalized.includes("south-node")) return "south-node";
+  if (normalized.includes("north-node")) return "north-node";
+  return normalized;
+}
+
+function tldrFor(source) {
+  const what = text(source.TLDR_What || source.tldrWhat).trim();
+  const takeaway = text(source.TLDR_Takeaway || source.tldrTakeaway || source.TLDR).trim();
+  if (!what && !takeaway) return "";
+  return `## TLDR\n\n${what ? `**What:** ${what}` : ""}${what && takeaway ? "\n\n" : ""}${takeaway ? `**Takeaway:** ${takeaway}` : ""}`;
+}
+
+function renderFamilyConditions(conditions = []) {
+  return conditions.length ? `## Other Conditions\n\n${conditions.map(renderCondition).join("\n\n")}` : "";
+}
+
+function renderFamilyAspects(aspects = []) {
+  return aspects.length ? `## Key aspects\n\n${aspects.map(renderAspect).join("\n\n")}` : "";
+}
+
+function matchingOverlayContexts(source, input) {
+  if (input.contexts?.length) return input.contexts;
+  const body = source.Sign ? "New Moon" : source.MoonSign ? "Full Moon" : source.Type?.includes("solar") ? "Solar Eclipse" : "Lunar Eclipse";
+  const sign = source.Sign || source.MoonSign || source.EclipseSign || "";
+  return [{
+    subjectFamily: source.Type ? "eclipse" : "lunation",
+    subjectBody: body,
+    subjectSign: sign,
+    subjectCondition: source.Type || source.EclipseType || "",
+    contextKind: "", contextBodyOrEvent: "", contextSign: "", contextCondition: ""
+  }];
+}
+
+function renderSkyV4LunationStudioPreview(corpus, source, input) {
+  const isFull = source.studio_content_type === "full-moon";
+  const body = withoutUnresolvedSlots(fillFacts(isFull ? source.FullMoonArticle : source.NewMoonArticle, record(input.facts)));
+  const overlays = resolveSkyV4ContextualOverlays(
+    corpus, matchingOverlayContexts(source, input), input.overlaySettings, input.overlaySuppressions
+  );
+  const aspects = selectSkyV4Aspects(input.aspects, {
+    subjectBody: isFull ? "moon" : "moon",
+    eventContextAspectIds: input.eventContextAspectIds,
+    lumination: true
+  });
+  const blocks = [`# ${source.headline}`];
+  if (text(input.dateLine).trim()) blocks.push(input.dateLine);
+  const tldr = tldrFor(source);
+  if (tldr) blocks.push(tldr);
+  if (body) blocks.push(body);
+  if (overlays.length) blocks.push(overlays.map((overlay) => overlay.OverlayBody).join("\n\n"));
+  if (text(input.cycleContext).trim()) blocks.push(input.cycleContext);
+  const conditions = renderFamilyConditions(input.motionConditions ?? []);
+  if (conditions) blocks.push(conditions);
+  const keyAspects = renderFamilyAspects(aspects);
+  if (keyAspects) blocks.push(keyAspects);
+  return {
+    resolution: "canonical-lunation",
+    axis: isFull ? { moonSign: source.MoonSign, sunSign: source.SunSign, axis: source.Axis } : null,
+    selectedOverlayKeys: overlays.map((overlay) => overlay.OverlayKey),
+    selectedAspectIds: aspects.map((aspect) => aspect.id),
+    page: blocks.join("\n\n").trim()
+  };
+}
+
+function renderSkyV4EclipseStudioPreview(corpus, source, input) {
+  const exact = source.studio_content_type === "eclipse-event";
+  const signFallback = source.studio_content_type === "eclipse-fallback";
+  const eclipseType = source.Type || source.EclipseType;
+  const eclipseSign = source.MoonSign || source.EclipseSign;
+  const nodeRelation = nodeRelationSlug(source.NodeRelation);
+  let resolved;
+  if (exact && input.exactAvailable !== false) {
+    resolved = { resolution: "exact-event", contentKey: source.ContentKey, body: source.EventArticle };
+  } else if (signFallback) {
+    resolved = { resolution: "sign-aware-fallback", contentKey: source.ContentKey, body: [source.Hook, source.Lived, source.Turn].filter(Boolean).join("\n\n") };
+  } else if (source.studio_content_type === "generic-eclipse-fallback") {
+    resolved = { resolution: "generic-type-node-fallback", contentKey: source.contentKey, body: source.ModifierArticle };
+  } else {
+    resolved = resolveSkyV4EclipseMainBody(corpus, {
+      exactEventKey: source.ContentKey,
+      eclipseType,
+      nodeRelation,
+      eclipseSign,
+      exactAvailable: false,
+      signFallbackAvailable: input.signFallbackAvailable !== false,
+      genericFallbackAvailable: input.genericFallbackAvailable !== false
+    });
+  }
+  const body = resolved.body ? withoutUnresolvedSlots(fillFacts(resolved.body, record(input.facts))) : "";
+  const overlays = resolveSkyV4ContextualOverlays(
+    corpus, matchingOverlayContexts(source, input), input.overlaySettings, input.overlaySuppressions
+  );
+  const aspects = selectSkyV4Aspects(input.aspects, {
+    subjectBody: "moon",
+    eventContextAspectIds: input.eventContextAspectIds,
+    lumination: true
+  });
+  const blocks = [`# ${source.headline}`];
+  if (text(input.dateLine).trim()) blocks.push(input.dateLine);
+  const tldr = tldrFor(source);
+  if (tldr) blocks.push(tldr);
+  if (body) blocks.push(body);
+  if (overlays.length) blocks.push(overlays.map((overlay) => overlay.OverlayBody).join("\n\n"));
+  if (text(input.cycleContext).trim()) blocks.push(input.cycleContext);
+  if (text(input.eclipseContext).trim()) blocks.push(input.eclipseContext);
+  const conditions = renderFamilyConditions(input.motionConditions ?? []);
+  if (conditions) blocks.push(conditions);
+  const keyAspects = renderFamilyAspects(aspects);
+  if (keyAspects) blocks.push(keyAspects);
+  return {
+    resolution: resolved.resolution,
     selectedOverlayKeys: overlays.map((overlay) => overlay.OverlayKey),
     selectedAspectIds: aspects.map((aspect) => aspect.id),
     page: blocks.join("\n\n").trim()
@@ -622,8 +746,95 @@ function studioReaderBody(source) {
   return fallback || text(source.body_you);
 }
 
+export function skyV4GovernedAspectStudioRecord(sourceRow) {
+  if (!sourceRow || sourceRow.review_status !== "approved") return null;
+  const parts = text(sourceRow.contentKey).split("/");
+  if (parts.length !== 7 || parts[0] !== "fallback-hook" || parts[1] !== "sky-aspect-sign") return null;
+  const [, , bodyA, signA, aspectType, bodyB, signB] = parts;
+  const headline = `${title(bodyA)} in ${title(signA)} ${lower(aspectType)} ${title(bodyB)} in ${title(signB)}`;
+  const baseline = {
+    ...structuredClone(sourceRow),
+    Headline: headline,
+    Body: sourceRow.body_you,
+    BodyA: bodyA,
+    SignA: signA,
+    BodyB: bodyB,
+    SignB: signB,
+    AspectType: aspectType
+  };
+  return {
+    ...sourceRow,
+    Headline: headline,
+    Body: sourceRow.body_you,
+    BodyA: bodyA,
+    SignA: signA,
+    BodyB: bodyB,
+    SignB: signB,
+    AspectType: aspectType,
+    contentKey: sourceRow.contentKey,
+    headline,
+    studio_content_type: "aspect",
+    studio_editable_fields: [
+      { path: "Headline", label: "Headline" },
+      { path: "Body", label: "Body" }
+    ],
+    studio_read_only_fields: [
+      "contentKey", "BodyA", "SignA", "BodyB", "SignB", "AspectType",
+      "calculatedDate", "calculatedOrb", "review_status", "source_keys", "approved_via"
+    ],
+    studio_source_baseline: baseline,
+    studio_governed_source_record: structuredClone(sourceRow),
+    source_baseline_sha256: sha256(JSON.stringify(baseline)),
+    studio_provenance: {
+      reviewStatus: sourceRow.review_status,
+      approvedVia: sourceRow.approved_via,
+      sourceKeys: sourceRow.source_keys ?? []
+    },
+    studio_version_status: "approved-baseline",
+    owner_approved: true,
+    serving_enabled: true,
+    studio_preview_requires: ["calculatedDate", "calculatedOrb"],
+    note: "Existing governed aspect corpus record. Reader fields create a separate non-serving draft; identity, runtime facts, governance, and approved baseline remain immutable."
+  };
+}
+
+function aspectMatchesSurface(source, surface = {}, eventContextAspectIds = []) {
+  const ids = new Set(eventContextAspectIds.map(String));
+  if (ids.has(text(source.contentKey))) return true;
+  const subject = lower(surface.subjectBody);
+  const subjectSign = lower(surface.subjectSign);
+  return [lower(source.BodyA), lower(source.BodyB)].includes(subject)
+    && (!subjectSign || [lower(source.SignA), lower(source.SignB)].includes(subjectSign));
+}
+
+function renderGovernedAspectStudioPreview(source, input) {
+  if (!aspectMatchesSurface(source, record(input.previewSurface), input.eventContextAspectIds ?? [])) {
+    return { resolution: "unsupported-aspect-omitted", selectedAspectIds: [], page: "" };
+  }
+  const surface = record(input.previewSurface);
+  const calculatedDate = required(surface.calculatedDate, "calculated aspect date");
+  const calculatedOrb = required(surface.calculatedOrb, "calculated aspect orb");
+  const aspect = {
+    id: source.contentKey,
+    approved: true,
+    bodyA: source.BodyA,
+    bodyB: source.BodyB,
+    headline: source.Headline,
+    dateLine: `${calculatedDate} · ${calculatedOrb}`,
+    body: source.Body
+  };
+  const lunation = ["lunation", "eclipse"].includes(lower(surface.kind));
+  const heading = lunation ? "Key aspects" : "Aspects shaping this transit";
+  return {
+    resolution: "governed-aspect-on-valid-surface",
+    selectedAspectIds: [source.contentKey],
+    page: `## ${heading}\n\n${renderAspect(aspect)}`
+  };
+}
+
 export function renderSkyV4StudioPreview(corpus, input) {
-  const source = skyV4ContentStudioRecords(corpus).find((row) => row.contentKey === input.contentKey);
+  const source = skyV4ContentStudioRecords(corpus).find((row) => row.contentKey === input.contentKey)
+    ?? (input.governedAspectSource ? skyV4GovernedAspectStudioRecord(input.governedAspectSource) : null);
   if (!source) throw new Error(`SKY_V4_SOURCE_GAP: ${input.contentKey}`);
   const allowed = new Set(source.studio_editable_fields.map((field) => field.path));
   const draftFields = record(input.draftFields);
@@ -633,6 +844,51 @@ export function renderSkyV4StudioPreview(corpus, input) {
     (current, [path, nextValue]) => setValueAt(current, path, nextValue),
     structuredClone(source)
   );
+  if (effective.studio_content_type === "aspect") {
+    const result = renderGovernedAspectStudioPreview(effective, input);
+    return {
+      contentKey: input.contentKey,
+      contentType: effective.studio_content_type,
+      sourceBaselineSha256: effective.source_baseline_sha256,
+      servingEnabled: false,
+      ...result
+    };
+  }
+  if (["new-moon", "full-moon"].includes(effective.studio_content_type)) {
+    const result = renderSkyV4LunationStudioPreview(corpus, effective, input);
+    return {
+      contentKey: input.contentKey,
+      contentType: effective.studio_content_type,
+      sourceBaselineSha256: effective.source_baseline_sha256,
+      servingEnabled: false,
+      ...result
+    };
+  }
+  if (["eclipse-event", "eclipse-fallback", "generic-eclipse-fallback"].includes(effective.studio_content_type)) {
+    const result = renderSkyV4EclipseStudioPreview(corpus, effective, input);
+    return {
+      contentKey: input.contentKey,
+      contentType: effective.studio_content_type,
+      sourceBaselineSha256: effective.source_baseline_sha256,
+      servingEnabled: false,
+      ...result
+    };
+  }
+  if (effective.studio_content_type === "continuous-placement") {
+    const result = renderSkyV4ContinuousPreview(corpus, {
+      ...input,
+      planet: effective.planet,
+      sign: effective.sign,
+      articleOverride: effective
+    });
+    return {
+      ...result,
+      contentKey: input.contentKey,
+      contentType: effective.studio_content_type,
+      sourceBaselineSha256: effective.source_baseline_sha256,
+      servingEnabled: false
+    };
+  }
   const facts = record(input.facts);
   const body = withoutUnresolvedSlots(fillFacts(studioReaderBody(effective), facts));
   const blocks = [`# ${text(effective.headline) || title(input.contentKey)}`, body];

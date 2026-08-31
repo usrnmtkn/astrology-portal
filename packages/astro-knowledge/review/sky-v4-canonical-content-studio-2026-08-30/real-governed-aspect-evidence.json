@@ -1,0 +1,81 @@
+{
+  "contentKey": "fallback-hook/sky-aspect-sign/venus/virgo/trine/saturn/capricorn",
+  "approvedBaseline": {
+    "contentKey": "fallback-hook/sky-aspect-sign/venus/virgo/trine/saturn/capricorn",
+    "content_role": "fallback_hook",
+    "grammar_frame": "complete_sentence",
+    "body_you": "Venus in Virgo trine Saturn in Capricorn puts affection into the details people can actually rely on. The edit gets finished, the appointment is kept, and the small responsibility is handled before it becomes someone else's emergency. People notice when your work makes their day easier. A finished task can feel surprisingly affectionate when it takes one burden off someone else's list.",
+    "body_they": "Venus in Virgo trine Saturn in Capricorn puts affection into the details people can actually rely on. The edit gets finished, the appointment is kept, and the small responsibility is handled before it becomes someone else's emergency. People notice when your work makes their day easier. A finished task can feel surprisingly affectionate when it takes one burden off someone else's list.",
+    "review_status": "approved",
+    "source_keys": [
+      "packages/astro-knowledge/review/saturn-capricorn-article-v3/OWNER-APPROVAL-2026-08-13.md"
+    ],
+    "approved_via": "packages/astro-knowledge/review/saturn-capricorn-article-v3/OWNER-APPROVAL-2026-08-13.md",
+    "note": "Exact owner-approved Venus in Virgo trine Saturn in Capricorn replacement.",
+    "Headline": "Venus in Virgo trine Saturn in Capricorn",
+    "Body": "Venus in Virgo trine Saturn in Capricorn puts affection into the details people can actually rely on. The edit gets finished, the appointment is kept, and the small responsibility is handled before it becomes someone else's emergency. People notice when your work makes their day easier. A finished task can feel surprisingly affectionate when it takes one burden off someone else's list.",
+    "BodyA": "venus",
+    "SignA": "virgo",
+    "BodyB": "saturn",
+    "SignB": "capricorn",
+    "AspectType": "trine"
+  },
+  "provenance": {
+    "reviewStatus": "approved",
+    "approvedVia": "packages/astro-knowledge/review/saturn-capricorn-article-v3/OWNER-APPROVAL-2026-08-13.md",
+    "sourceKeys": [
+      "packages/astro-knowledge/review/saturn-capricorn-article-v3/OWNER-APPROVAL-2026-08-13.md"
+    ]
+  },
+  "editableFields": [
+    {
+      "path": "Headline",
+      "label": "Headline"
+    },
+    {
+      "path": "Body",
+      "label": "Body"
+    }
+  ],
+  "readOnlyFields": [
+    "contentKey",
+    "BodyA",
+    "SignA",
+    "BodyB",
+    "SignB",
+    "AspectType",
+    "calculatedDate",
+    "calculatedOrb",
+    "review_status",
+    "source_keys",
+    "approved_via"
+  ],
+  "draftDiff": {
+    "Body": {
+      "before": "Venus in Virgo trine Saturn in Capricorn puts affection into the details people can actually rely on. The edit gets finished, the appointment is kept, and the small responsibility is handled before it becomes someone else's emergency. People notice when your work makes their day easier. A finished task can feel surprisingly affectionate when it takes one burden off someone else's list.",
+      "after": "Preview-only versioned draft body."
+    }
+  },
+  "validSurfacePreview": {
+    "contentKey": "fallback-hook/sky-aspect-sign/venus/virgo/trine/saturn/capricorn",
+    "contentType": "aspect",
+    "sourceBaselineSha256": "72f8f1306c625b9b71c4d507571e5903e9ef5a29b23c4ad6b11f8d634881c6e3",
+    "servingEnabled": false,
+    "resolution": "governed-aspect-on-valid-surface",
+    "selectedAspectIds": [
+      "fallback-hook/sky-aspect-sign/venus/virgo/trine/saturn/capricorn"
+    ],
+    "page": "## Aspects shaping this transit\n\n### Venus in Virgo trine Saturn in Capricorn\nSeptember 3, 2026 · 1°\n\nPreview-only versioned draft body."
+  },
+  "unsupportedSurfacePreview": {
+    "contentKey": "fallback-hook/sky-aspect-sign/venus/virgo/trine/saturn/capricorn",
+    "contentType": "aspect",
+    "sourceBaselineSha256": "72f8f1306c625b9b71c4d507571e5903e9ef5a29b23c4ad6b11f8d634881c6e3",
+    "servingEnabled": false,
+    "resolution": "unsupported-aspect-omitted",
+    "selectedAspectIds": [],
+    "page": ""
+  },
+  "draftStatus": "needs_review",
+  "canServeAutomatically": false
+}
