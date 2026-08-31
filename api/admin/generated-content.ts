@@ -15,6 +15,7 @@ import {
 } from "../../apps/web/src/content/skyArticleTemplateCompiler.js";
 import { validateCmsTemplate } from "../../apps/web/src/content/cmsTemplateValidation.js";
 import skyV4ReaderCopyOwnerApproval from "../../apps/web/src/content/fallbackArchitectureV3/authored-inputs/sky-v4-reader-copy-280-owner-approval-v1.json" with { type: "json" };
+import skyV4ReaderCopyServingRelease from "../../apps/web/src/content/fallbackArchitectureV3/authored-inputs/sky-v4-reader-copy-280-serving-release-v1.json" with { type: "json" };
 
 loadLocalWebEnv();
 
@@ -142,6 +143,9 @@ const fallbackArchitectureV3EligibleReviews = new Set(["approved", "approved_reu
 const fallbackArchitectureV3ReviewStatuses = new Set(["needs_review", "approved", "approved_reuse"]);
 const skyV4CanonicalStagePackage = "SKY-V4-CANONICAL-CODEX-HANDOFF-CONTENT-STUDIO-EDITABLE-2026-08-30";
 const skyV4OwnerApprovedReaderCopyKeys = new Set(skyV4ReaderCopyOwnerApproval.approved_keys);
+const skyV4ServingReleasedReaderCopyKeys = skyV4ReaderCopyServingRelease.serving_enabled === true
+  ? skyV4OwnerApprovedReaderCopyKeys
+  : new Set<string>();
 const personalizedSampleSurfaces = new Set<GeneratedContentSurface>(["you", "natal", "synastry", "composite", "relationship"]);
 const sampleOnlyReviewerNote = "INTERNAL CONTENT TEST. This row is for testing templates, voice, and knowledge hooks. Do not publish it as global app content. Real You, Synastry, Composite, and Relationship content must be generated from user-specific chart or bond facts.";
 let contentRoleContractCache: { styleRules?: { bannedWords?: string[] } } | null = null;
@@ -505,7 +509,9 @@ function applyFallbackArchitectureV3ReviewPatch(row: ExistingGeneratedContentRow
   if (!hasPackageDraft) record.review_status = reviewStatus;
   if (isSkyV4CanonicalStage) {
     record.owner_approved = isSkyV4OwnerApprovedReaderCopy && reviewStatus === "approved";
-    record.serving_enabled = false;
+    record.serving_enabled = record.owner_approved
+      && skyV4ServingReleasedReaderCopyKeys.has(contentKey)
+      && !hasPackageDraft;
   }
   if (typeof body.editorialNotes === "string") {
     record.editorial_notes = body.editorialNotes;
@@ -1648,17 +1654,28 @@ async function updateGeneratedContent(req: IncomingMessage) {
     && stringFrom(existingPackageRecord.studio_content_type) === "aspect"
     && isRecord((patch.sections as Record<string, unknown> | undefined)?.packageDraft)
   );
-  if (forksGovernedAspectDraft && existing) {
+  const forksSkyV4ServingDraft = Boolean(
+    isPackageRow
+    && existing
+    && existing.status === "LIVE"
+    && stringFrom(existingPackageRecord.source_package) === skyV4CanonicalStagePackage
+    && skyV4ServingReleasedReaderCopyKeys.has(existing.content_key)
+    && isRecord((patch.sections as Record<string, unknown> | undefined)?.packageDraft)
+  );
+  if ((forksGovernedAspectDraft || forksSkyV4ServingDraft) && existing) {
+    const skyV4ReaderDraft = forksSkyV4ServingDraft && !forksGovernedAspectDraft;
     return upsertGeneratedContentRow({
       content_key: existing.content_key,
       surface: existing.surface,
       target_date: existing.target_date,
       mode: "studio-draft",
-      event_type: "sky-v4-governed-aspect-draft",
+      event_type: skyV4ReaderDraft ? "sky-v4-reader-copy-draft" : "sky-v4-governed-aspect-draft",
       block_type: existing.block_type,
       provider: "owner-content-studio",
-      prompt_version: "sky-v4-governed-aspect-draft-v1",
-      reviewer_notes: "Versioned reader-copy draft. The approved governed aspect baseline remains LIVE and unchanged.",
+      prompt_version: skyV4ReaderDraft ? "sky-v4-reader-copy-draft-v1" : "sky-v4-governed-aspect-draft-v1",
+      reviewer_notes: skyV4ReaderDraft
+        ? "Versioned reader-copy draft. The approved SKY V4 serving baseline remains LIVE and unchanged."
+        : "Versioned reader-copy draft. The approved governed aspect baseline remains LIVE and unchanged.",
       knowledge_ids: [],
       ...patch,
       status: "DRAFT",

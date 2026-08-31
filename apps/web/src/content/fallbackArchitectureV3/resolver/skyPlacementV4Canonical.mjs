@@ -1,6 +1,7 @@
-import { createHash } from "node:crypto";
+import { sha256Text } from "./contentIntegrity.mjs";
 import continuousOwnerApproval from "../authored-inputs/sky-v4-continuous-120-owner-approval-v1.json" with { type: "json" };
 import readerCopyOwnerApproval from "../authored-inputs/sky-v4-reader-copy-280-owner-approval-v1.json" with { type: "json" };
+import readerCopyServingRelease from "../authored-inputs/sky-v4-reader-copy-280-serving-release-v1.json" with { type: "json" };
 
 export const SKY_V4_CANONICAL_PACKAGE_VERSION = "SKY-V4-CANONICAL-CODEX-HANDOFF-CONTENT-STUDIO-EDITABLE-2026-08-30";
 export const SKY_V4_CANONICAL_JSON_SHA256 = "9b91e715bea63a2c835001783240122aad1e000b3982d68bfebbb3cef690a750";
@@ -17,6 +18,7 @@ const CONTINUOUS_PLANETS = Object.freeze([
 
 const CONTINUOUS_OWNER_APPROVED_KEYS = new Set(continuousOwnerApproval.approved_keys);
 const READER_COPY_OWNER_APPROVED_KEYS = new Set(readerCopyOwnerApproval.approved_keys);
+const READER_COPY_SERVING_KEYS = new Set(readerCopyOwnerApproval.approved_keys);
 const SKY_V4_CONFIGURATION_TYPES = new Set(["template", "overlay-settings"]);
 
 export const SKY_V4_OVERLAY_DEFAULTS = Object.freeze({
@@ -50,7 +52,7 @@ function record(value) {
 }
 
 function sha256(value) {
-  return createHash("sha256").update(value, "utf8").digest("hex");
+  return sha256Text(value);
 }
 
 function valueAt(source, path) {
@@ -189,11 +191,34 @@ export function assertSkyV4ReaderCopyOwnerApproval(corpus, records = []) {
     ))) {
       throw new Error("SKY_V4_GOVERNANCE: templates and overlay settings must remain non-serving configuration, not approved prose.");
     }
-    if (records.some((row) => row.serving_enabled !== false)) {
-      throw new Error("SKY_V4_GOVERNANCE: serving must remain disabled for every SKY V4 record.");
+    const servingRecords = records.filter((row) => row.serving_enabled === true);
+    if (servingRecords.length !== 280 || servingRecords.some((row) => !READER_COPY_SERVING_KEYS.has(row.contentKey))) {
+      throw new Error("SKY_V4_GOVERNANCE: exactly the 280 explicitly released reader records must be serving-enabled.");
     }
   }
   return readerCopyOwnerApproval;
+}
+
+export function assertSkyV4ReaderCopyServingRelease(corpus) {
+  assertSkyV4ReaderCopyOwnerApproval(corpus);
+  const releasedKeysSha256 = sha256(JSON.stringify(readerCopyOwnerApproval.approved_keys));
+  const expectedCounts = readerCopyOwnerApproval.expected_counts_by_content_type;
+  if (
+    readerCopyServingRelease.schema !== "tldrastro-sky-v4-serving-release/v1"
+    || readerCopyServingRelease.canonical_package_version !== SKY_V4_CANONICAL_PACKAGE_VERSION
+    || readerCopyServingRelease.canonical_json_sha256 !== SKY_V4_CANONICAL_JSON_SHA256
+    || readerCopyServingRelease.approval_id !== readerCopyOwnerApproval.approval_id
+    || readerCopyServingRelease.expected_serving_records !== 280
+    || readerCopyServingRelease.serving_enabled !== true
+    || readerCopyServingRelease.resolver_conditional !== true
+    || readerCopyServingRelease.configuration_records_excluded !== 25
+    || readerCopyServingRelease.released_keys_sha256 !== releasedKeysSha256
+    || JSON.stringify(readerCopyServingRelease.expected_counts_by_content_type) !== JSON.stringify(expectedCounts)
+    || READER_COPY_SERVING_KEYS.size !== 280
+  ) {
+    throw new Error("SKY_V4_GOVERNANCE: reader-copy serving release is invalid or stale.");
+  }
+  return readerCopyServingRelease;
 }
 
 function studioRecord({
@@ -215,6 +240,7 @@ function studioRecord({
     ? readerCopyOwnerApproval.approved_fields_by_content_type[contentType] ?? []
     : [];
   const ownerApproved = approvedFields.length > 0;
+  const servingEnabled = ownerApproved && READER_COPY_SERVING_KEYS.has(contentKey);
   const configuration = SKY_V4_CONFIGURATION_TYPES.has(contentType);
   return {
     ...source,
@@ -234,14 +260,14 @@ function studioRecord({
     studio_source_urls: sourceUrls.filter(Boolean),
     studio_owner_phrase_anchors: ownerPhraseAnchors.filter(Boolean),
     studio_source_baseline: baseline,
-    studio_version_status: "draft",
+    studio_version_status: servingEnabled ? "approved-serving-baseline" : "draft",
     studio_review_category: configuration
       ? "configuration"
       : ownerApproved
         ? "owner-approved-reader-copy"
         : "reader-copy",
     owner_approved: ownerApproved,
-    serving_enabled: false,
+    serving_enabled: servingEnabled,
     ...(ownerApproved ? {
       approved_via: readerCopyOwnerApproval.approval_record,
       owner_approval_id: readerCopyOwnerApproval.approval_id,
@@ -251,7 +277,7 @@ function studioRecord({
       owner_approved_fields: approvedFields
     } : {}),
     note: ownerApproved
-      ? "Canonical SKY V4 reader copy is owner-approved against the immutable package hash. Serving remains disabled; any edited version returns to needs_review."
+      ? "Canonical SKY V4 reader copy is owner-approved and explicitly released against the immutable package hash. Any edit creates a separate non-serving draft; the approved serving baseline remains unchanged."
       : configuration
         ? "Canonical SKY V4 configuration record. It is not reader prose and remains outside the writing-approval queue."
         : "Canonical SKY V4 stage-only Content Studio record. The immutable package baseline is retained; edits create non-serving draft versions."
@@ -549,6 +575,7 @@ function templateStudioRecords(corpus) {
 
 export function skyV4ContentStudioRecords(corpus) {
   assertSkyV4CanonicalPackage(corpus);
+  assertSkyV4ReaderCopyServingRelease(corpus);
   const records = [
     ...continuousStudioRecords(corpus),
     ...newMoonStudioRecords(corpus),
@@ -651,7 +678,11 @@ export function resolveSkyV4EclipseMainBody(corpus, {
   const generic = genericFallbackAvailable ? corpus.content.eclipseGenericFallbacks.find((row) => (
     slug(row.EclipseType) === slug(eclipseType) && slug(row.NodeRelation) === slug(nodeRelation)
   )) : null;
-  if (generic) return { resolution: "generic-type-node-fallback", contentKey: generic.ContentKey ?? null, body: generic.ModifierArticle };
+  if (generic) return {
+    resolution: "generic-type-node-fallback",
+    contentKey: `sky-v4/eclipse-generic/${lower(generic.EclipseType)}/${lower(generic.NodeRelation)}`.replace(/\s+/gu, "-"),
+    body: generic.ModifierArticle
+  };
   return { resolution: "facts-only", contentKey: null, body: "" };
 }
 
@@ -1035,6 +1066,100 @@ export function renderSkyV4StudioPreview(corpus, input) {
     servingEnabled: false,
     selectedAspectIds: aspects.map((aspect) => aspect.id),
     page: blocks.join("\n\n").trim()
+  };
+}
+
+function releasedReaderRecord(corpus, contentKey) {
+  assertSkyV4ReaderCopyServingRelease(corpus);
+  if (!READER_COPY_SERVING_KEYS.has(contentKey)) {
+    throw new Error(`SKY_V4_NOT_RELEASED: ${contentKey}`);
+  }
+  const row = skyV4ContentStudioRecords(corpus).find((candidate) => candidate.contentKey === contentKey);
+  if (!row || row.owner_approved !== true || row.serving_enabled !== true) {
+    throw new Error(`SKY_V4_NOT_SERVABLE: ${contentKey}`);
+  }
+  return row;
+}
+
+function nodePlacementKey(body, sign) {
+  const normalized = lower(body);
+  if (normalized === "north-node" || normalized === "north node") return `sky-nodes/north-node/${lower(sign)}`;
+  if (normalized === "south-node" || normalized === "south node") return `sky-nodes/south-node/${lower(sign)}`;
+  return null;
+}
+
+/**
+ * Production reader boundary for the hash-bound SKY V4 release. It accepts
+ * calculated facts and governed aspect records, but never a Content Studio
+ * draft. Selection remains conditional and configuration rows cannot resolve.
+ */
+export function renderSkyV4ReaderRoute(corpus, input) {
+  if (input.draftFields && Object.keys(input.draftFields).length) {
+    throw new Error("SKY_V4_READER_BOUNDARY: drafts cannot render on reader routes.");
+  }
+  let contentKey = text(input.contentKey).trim();
+  let resolution = "exact-canonical-key";
+  const route = lower(input.route);
+  if (!contentKey && route === "placement") {
+    const body = lower(input.planet);
+    contentKey = body === "lilith" || body === "black-moon-lilith"
+      ? `sky-lilith/article/${lower(input.sign)}`
+      : nodePlacementKey(body, input.sign)
+        ?? `sky-placement/article/${body}/${lower(input.sign)}`;
+  } else if (!contentKey && route === "new-moon") {
+    contentKey = `sky-lunation/new-moon/${lower(input.sign)}`;
+  } else if (!contentKey && route === "full-moon") {
+    contentKey = `sky-lunation/full-moon/${lower(input.sign)}`;
+  } else if (!contentKey && route === "eclipse") {
+    const selected = resolveSkyV4EclipseMainBody(corpus, input);
+    resolution = selected.resolution;
+    if (!selected.contentKey) {
+      return {
+        route,
+        resolution: "facts-only",
+        contentKey: null,
+        servingEnabled: false,
+        versionStatus: "facts-only",
+        page: "",
+        readerParts: []
+      };
+    }
+    contentKey = selected.contentKey;
+  } else if (!contentKey && route === "node-axis") {
+    contentKey = `sky-nodes/axis/${lower(input.northSign)}-${lower(input.southSign)}`;
+  } else if (!contentKey && route === "lilith-station") {
+    if (input.stationSupported !== true) {
+      return { route, resolution: "unsupported-condition-omitted", contentKey: null, servingEnabled: false, page: "", readerParts: [] };
+    }
+    contentKey = "sky-lilith/station";
+  } else if (!contentKey && route === "seasonal") {
+    contentKey = `sky-placement/seasonal-context/${lower(input.sign)}/${lower(input.hemisphere)}`;
+  }
+  const source = releasedReaderRecord(corpus, contentKey);
+  const preview = renderSkyV4StudioPreview(corpus, { ...input, contentKey, draftFields: {} });
+  const baseBody = studioReaderBody(source);
+  const readerParts = [];
+  const what = text(source.TLDR_What || source.tldrWhat).trim();
+  const takeaway = text(source.TLDR_Takeaway || source.tldrTakeaway || source.TLDR).trim();
+  if (what) readerParts.push(what);
+  if (takeaway) readerParts.push(takeaway);
+  if (baseBody) readerParts.push(withoutUnresolvedSlots(fillFacts(baseBody, record(input.facts))));
+  if (route === "placement" && input.isRetrograde === true) {
+    const retrograde = resolveSkyV4Retrograde(corpus, { body: input.planet, sign: input.sign, stationSupported: input.stationSupported });
+    if (retrograde.body && retrograde.lookupKey && READER_COPY_SERVING_KEYS.has(retrograde.lookupKey)) {
+      readerParts.push(withoutUnresolvedSlots(fillFacts(retrograde.body, record(input.facts))));
+    }
+  }
+  return {
+    ...preview,
+    route,
+    resolution: resolution === "exact-canonical-key" ? preview.resolution : resolution,
+    contentKey,
+    servingEnabled: true,
+    versionStatus: "approved-serving-baseline",
+    sourceBaselineSha256: source.source_baseline_sha256,
+    readerParts,
+    page: preview.page
   };
 }
 
