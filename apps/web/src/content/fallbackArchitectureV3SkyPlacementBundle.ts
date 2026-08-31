@@ -27,10 +27,20 @@ export const skyPlacementFallbackArchitectureV3Manifest =
   bundledSkyPlacementManifestV3 as FallbackArchitectureV3PackageManifest;
 
 export async function loadCanonicalSkyV4ReaderRoute() {
-  const response = await fetch(skyV4CanonicalCorpusUrl);
-  if (!response.ok) {
-    throw new Error(`SKY_V4_SOURCE_GAP: canonical reader package returned ${response.status}.`);
+  // Vite resolves `?url` to an on-demand asset URL in the reader build. The
+  // Node/esbuild parity harness resolves the same import to the parsed JSON
+  // module. Support both representations so verification exercises the same
+  // deferred boundary without teaching production to accept a thin fallback.
+  const importedCorpus = skyV4CanonicalCorpusUrl as unknown;
+  let corpus: unknown;
+  if (typeof importedCorpus === "string") {
+    const response = await fetch(importedCorpus);
+    if (!response.ok) {
+      throw new Error(`SKY_V4_SOURCE_GAP: canonical reader package returned ${response.status}.`);
+    }
+    corpus = await response.json();
+  } else {
+    corpus = (importedCorpus as { default?: unknown })?.default ?? importedCorpus;
   }
-  const corpus = await response.json();
   return (input: Record<string, unknown>) => renderSkyV4ReaderRoute(corpus, input);
 }
