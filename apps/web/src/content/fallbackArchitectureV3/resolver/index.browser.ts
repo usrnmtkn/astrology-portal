@@ -6,6 +6,7 @@ export * from "./renderFallback.browser";
 export * from "./renderTransitSynastry.browser";
 export * from "./knowledgeMatrixV9.browser";
 export * from "./knowledgeMatrixV13.browser";
+export * from "./skyPlacementV4Canonical.mjs";
 
 // Version stamp: the app must surface this in its debug/about screen and the dashboard
 // admin must show it next to the import status, so the owner can verify at a glance
