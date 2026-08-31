@@ -685,11 +685,7 @@ export function SkyDetailArticle({
 
         {hasAspectCard ? (
           <>
-            <h2 className="sr-only">
-              {detail.kicker === "Lunation" || detail.kicker === "Eclipse"
-                ? "Key aspects"
-                : "Aspects shaping this transit"}
-            </h2>
+            <h2 className="sr-only">Aspect details</h2>
             {aspectGroups.map((group) => (
               <Fragment key={group.id}>
                 <h3
