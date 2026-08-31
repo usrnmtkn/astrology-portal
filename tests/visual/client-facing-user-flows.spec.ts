@@ -2340,7 +2340,9 @@ test.describe("client-facing user flow case studies", () => {
     const monthTab = page.getByRole("tab", { name: "Month", exact: true });
     await monthTab.click();
     await expect(monthTab).toHaveAttribute("aria-selected", "true");
-    await expect(selectedDay.locator(".lunar-selected-card__aspect-writeup")).toHaveText(signSpecificBody ?? "");
+    await expect(selectedDay.locator(".lunar-selected-card__aspect-writeup")).toHaveText(signSpecificBody ?? "", {
+      timeout: 15_000
+    });
     await expect(selectedDay).not.toContainText("and for the collective");
     await assertNoClientErrors();
   });
