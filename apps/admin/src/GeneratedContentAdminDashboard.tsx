@@ -66,6 +66,7 @@ import {
   natalPlanetInSignTemplateHeadline,
   natalPlanetInSignTemplateTitle,
   packageDraftChanges,
+  packageValueAt,
   renderWorkspacePreview,
   setPackageValueAt,
   skyFallbackIdentity,
@@ -2546,6 +2547,8 @@ export function GeneratedContentAdminDashboard() {
   const [skyArticleEditionForm, setSkyArticleEditionForm] = useState<SkyArticleEditionForm | null>(null);
   const [skyArticleEditor, setSkyArticleEditor] = useState<SkyArticleEditorState | null>(null);
   const [draft, setDraft] = useState<AdminDraft | null>(null);
+  const [skyV4ResolverPreview, setSkyV4ResolverPreview] = useState<{ contentKey: string; page: string; servingEnabled: boolean } | null>(null);
+  const [skyV4ResolverPreviewError, setSkyV4ResolverPreviewError] = useState<string | null>(null);
   const [fallbackHookEditorGuidanceBuilder, setFallbackHookEditorGuidanceBuilder] = useState<FallbackHookEditorGuidanceBuilder | null>(null);
   const [fallbackHookDefinitions, setFallbackHookDefinitions] = useState<FallbackHookDefinition[]>([]);
   const [hookCatalogPackageVersion, setHookCatalogPackageVersion] = useState("loading");
@@ -6365,6 +6368,32 @@ export function GeneratedContentAdminDashboard() {
       ? skyFallbackVariableTarget
       : skyFallbackEditor?.fields.find((field) => field.key === "fact_line")?.key ?? skyFallbackEditor?.fields[0]?.key ?? "";
     const effectiveSkyFallback = effectivePackageRecord(currentDraft.sections);
+    const isSkyV4OverlaySettings = currentDraft.contentKey === "sky-v4/settings/contextual-overlays";
+    const skyV4OverlaysEnabled = effectiveSkyFallback.contextualTransitOverlaysEnabled !== false;
+    const skyV4FallbackOverlayEnabled = effectiveSkyFallback.includeContextualOverlayInFallbackHook === true;
+    const skyV4StudioContentType = typeof effectiveSkyFallback.studio_content_type === "string"
+      ? effectiveSkyFallback.studio_content_type
+      : "";
+    const skyV4SourceUrls = Array.isArray(effectiveSkyFallback.studio_source_urls)
+      ? effectiveSkyFallback.studio_source_urls.map(String).filter(Boolean)
+      : [];
+    const skyV4OwnerPhraseAnchors = Array.isArray(effectiveSkyFallback.studio_owner_phrase_anchors)
+      ? effectiveSkyFallback.studio_owner_phrase_anchors.map(String).filter(Boolean)
+      : [];
+    const skyV4ReadOnlyFields = Array.isArray(effectiveSkyFallback.studio_read_only_fields)
+      ? effectiveSkyFallback.studio_read_only_fields.map(String).filter(Boolean)
+      : [];
+    const isSkyV4StudioRecord = typeof effectiveSkyFallback.source_package === "string"
+      && effectiveSkyFallback.source_package === "SKY-V4-CANONICAL-CODEX-HANDOFF-CONTENT-STUDIO-EDITABLE-2026-08-30";
+    const skyV4DraftFields = Object.fromEntries(
+      (Array.isArray(effectiveSkyFallback.studio_editable_fields) ? effectiveSkyFallback.studio_editable_fields : [])
+        .flatMap((value) => {
+          const field = objectRecord(value);
+          return field && typeof field.path === "string"
+            ? [[String(field.path), packageValueAt(effectiveSkyFallback, String(field.path))]]
+            : [];
+        })
+    );
     const variableReferences = templateVariableReferences({
       Headline: currentDraft.headline,
       Summary: currentDraft.summary,
@@ -7166,6 +7195,39 @@ export function GeneratedContentAdminDashboard() {
               <p className="admin-field-hint"><strong>Review rule:</strong> changing a switch creates a non-serving package proposal. It does not change reader pages until the proposal is approved, regenerated, and deployed.</p>
             </section>
           )}
+          {isSkyV4OverlaySettings && (
+            <section className="admin-content-role-panel" aria-label="SKY V4 contextual overlay settings">
+              <div>
+                <p className="admin-eyebrow">SKY V4 preview settings</p>
+                <h3>Contextual transit overlays</h3>
+              </div>
+              <p>These independent switches affect the canonical stage preview only. They do not change stored Hook copy and cannot enable serving.</p>
+              <label className="admin-composition-option">
+                <input
+                  type="checkbox"
+                  checked={skyV4OverlaysEnabled}
+                  onChange={(event) => updateSkyFallbackField("contextualTransitOverlaysEnabled", event.target.checked)}
+                />
+                <span>
+                  <strong>Use contextual transit overlays</strong>
+                  <small>Default ON. Adds up to two exact, trigger-matched reviewed overlays to a full page.</small>
+                </span>
+              </label>
+              <label className="admin-composition-option">
+                <input
+                  type="checkbox"
+                  checked={skyV4FallbackOverlayEnabled}
+                  disabled={!skyV4OverlaysEnabled}
+                  onChange={(event) => updateSkyFallbackField("includeContextualOverlayInFallbackHook", event.target.checked)}
+                />
+                <span>
+                  <strong>Include transit context in fallback hook</strong>
+                  <small>Default OFF. Inserts at most one eligible overlay after Opening without modifying the saved fallback fields.</small>
+                </span>
+              </label>
+              <p className="admin-field-hint"><strong>Limits:</strong> two overlays on a full page; one in a fallback. Exact aspect and event suppression remains read-only.</p>
+            </section>
+          )}
           {isCmsSurfaceDraft && (
             <div className="admin-editor-guidance" aria-label="CMS surface template guidance">
               <strong>Reader-facing CMS override</strong>
@@ -7255,6 +7317,70 @@ export function GeneratedContentAdminDashboard() {
                 <strong>Safe editing boundary</strong>
                 <p>The package original remains immutable. Saving here creates a non-serving proposal with <code>needs_review</code> status. It does not change the app until the exact diff is owner-approved, landed in source, regenerated, and deployed.</p>
               </div>
+
+              {isSkyV4StudioRecord && (
+                <section className="admin-hook-detail-section" aria-label="Production-parity SKY V4 preview">
+                  <div>
+                    <p className="admin-eyebrow">Canonical resolver preview</p>
+                    <h3>Render this draft through SKY V4</h3>
+                    <p>This calls the shared canonical resolver. It never promotes or serves the draft.</p>
+                  </div>
+                  <button
+                    type="button"
+                    disabled={isLoading}
+                    onClick={() => {
+                      setSkyV4ResolverPreviewError(null);
+                      void adminJsonRequest<{ ok: true; rendered: { contentKey: string; page: string; servingEnabled: boolean } }>(
+                        "/api/admin/sky-v4-preview",
+                        secret,
+                        { method: "POST", body: JSON.stringify({ contentKey: currentDraft.contentKey, draftFields: skyV4DraftFields }) }
+                      ).then((payload) => setSkyV4ResolverPreview(payload.rendered)).catch((error) => {
+                        setSkyV4ResolverPreview(null);
+                        setSkyV4ResolverPreviewError(dashboardErrorMessage(error));
+                      });
+                    }}
+                  >
+                    Render canonical preview
+                  </button>
+                  {skyV4ResolverPreviewError && <p role="alert">{skyV4ResolverPreviewError}</p>}
+                  {skyV4ResolverPreview?.contentKey === currentDraft.contentKey && (
+                    <div className="admin-editor-guidance" aria-label="Rendered SKY V4 reader preview">
+                      <strong>{skyV4ResolverPreview.servingEnabled ? "Serving" : "Stage preview · serving OFF"}</strong>
+                      <pre>{skyV4ResolverPreview.page}</pre>
+                    </div>
+                  )}
+                </section>
+              )}
+
+              {skyV4StudioContentType && (
+                <section className="admin-hook-detail-section" aria-label="SKY V4 source provenance">
+                  <div>
+                    <p className="admin-eyebrow">Immutable source and provenance</p>
+                    <h3>{skyV4StudioContentType.replace(/-/gu, " ")}</h3>
+                    <p>The canonical package baseline remains unchanged. Content Studio saves a separate versioned draft and keeps the current serving version untouched.</p>
+                  </div>
+                  <dl className="admin-hook-pattern-list">
+                    <div><dt>Baseline SHA-256</dt><dd><code>{String(effectiveSkyFallback.source_baseline_sha256 ?? "Missing")}</code></dd></div>
+                    <div><dt>Version status</dt><dd>{String(effectiveSkyFallback.studio_version_status ?? "draft")}</dd></div>
+                    <div><dt>Serving</dt><dd>{effectiveSkyFallback.serving_enabled === true ? "Enabled" : "OFF — owner review wall"}</dd></div>
+                  </dl>
+                  {skyV4SourceUrls.length > 0 && (
+                    <div>
+                      <strong>Source URLs</strong>
+                      <ul>{skyV4SourceUrls.map((url) => <li key={url}><a href={url} target="_blank" rel="noreferrer">{url}</a></li>)}</ul>
+                    </div>
+                  )}
+                  {skyV4OwnerPhraseAnchors.length > 0 && (
+                    <div>
+                      <strong>Owner/source phrase anchors</strong>
+                      <ul>{skyV4OwnerPhraseAnchors.map((anchor) => <li key={anchor}>{anchor}</li>)}</ul>
+                    </div>
+                  )}
+                  {skyV4ReadOnlyFields.length > 0 && (
+                    <p className="admin-field-hint"><strong>Read-only identity:</strong> {skyV4ReadOnlyFields.join(", ")}</p>
+                  )}
+                </section>
+              )}
 
               <section className="admin-hook-detail-section admin-copy-preview" aria-label="Rendered fallback preview">
                 <p className="admin-eyebrow">Reader preview</p>
