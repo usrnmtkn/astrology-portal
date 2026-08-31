@@ -31,6 +31,17 @@ export {
 } from "./knowledgeMatrixV13Runtime";
 export const fallbackArchitectureV3PackageVersion = PACKAGE_VERSION;
 
+let loadedSkyV4ReaderRoute: ((input: Record<string, unknown>) => unknown) | null = null;
+
+export const skyV4ReaderRenderer = {
+  renderRoute(input: Record<string, unknown>) {
+    if (!loadedSkyV4ReaderRoute) {
+      throw new Error("SKY_V4_SOURCE_GAP: canonical reader package has not loaded.");
+    }
+    return loadedSkyV4ReaderRoute(input);
+  }
+};
+
 function assertApprovedServingProjection() {
   if (
     approvedServingProjectionV1.schema !== "tldrastro-approved-serving-projection/v1"
@@ -851,12 +862,13 @@ export function isSkyPlacementFallbackArchitectureV3BundleLoaded() {
 }
 
 export async function loadSkyPlacementFallbackArchitectureV3Bundle() {
-  if (localSkyPlacementReaderBundle || dashboardSkyPlacementReaderBundle) {
+  if (loadedSkyV4ReaderRoute && (localSkyPlacementReaderBundle || dashboardSkyPlacementReaderBundle)) {
     return false;
   }
 
   skyPlacementFallbackBundlePromise ??= import("./fallbackArchitectureV3SkyPlacementBundle")
-    .then(({ skyPlacementFallbackArchitectureV3Bundle }) => {
+    .then(async ({ skyPlacementFallbackArchitectureV3Bundle, loadCanonicalSkyV4ReaderRoute }) => {
+      loadedSkyV4ReaderRoute = await loadCanonicalSkyV4ReaderRoute();
       if (localSkyPlacementReaderBundle || dashboardSkyPlacementReaderBundle) {
         return false;
       }
