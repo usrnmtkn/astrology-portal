@@ -74,6 +74,9 @@ const replacements = readJson(`${reviewRoot}/replacement-before-after.json`);
 const friendsV1Manifest = readJson("packages/astro-knowledge/review/angle-aspects-60-friends-v1/shipping-manifest.json");
 const youSupersessions = readJson("packages/astro-knowledge/review/angle-aspects-60-friends-v1/YOU-V15-TWO-OWNER-APPROVED-SUPERSESSIONS.json");
 const youSupersessionByKey = new Map(youSupersessions.revisions.map((row) => [row.content_key, row]));
+const ownerEditRoot = "packages/astro-knowledge/review/saturn-square-ascendant-owner-edit-v1";
+const ownerEditAuthority = readJson(`${ownerEditRoot}/content-studio-owner-edit-authority.json`);
+const ownerEditManifest = readJson(`${ownerEditRoot}/shipping-manifest.json`);
 const sourceBytes = fs.readFileSync(path.join(repoRoot, manifest.sourceArtifact.path));
 const importBytes = fs.readFileSync(path.join(repoRoot, manifest.regeneratedImportArtifact.path));
 const passages = parsePassages(sourceBytes.toString("utf8"));
@@ -135,9 +138,16 @@ for (const [index, manifestRow] of manifest.rows.entries()) {
   const servingRow = rowsByKey.get(manifestRow.contentKey);
   assert.ok(servingRow, `${manifestRow.contentKey}: serving row missing.`);
   const supersession = youSupersessionByKey.get(manifestRow.contentKey);
-  const expectedServingBody = supersession?.body ?? record.payload.body;
+  const isOwnerEdit = manifestRow.contentKey === ownerEditAuthority.contentKey;
+  const expectedServingBody = isOwnerEdit ? ownerEditAuthority.you.body : supersession?.body ?? record.payload.body;
   assert.equal(servingRow.body, expectedServingBody, `${manifestRow.contentKey}: current serving body`);
-  if (supersession) {
+  if (isOwnerEdit) {
+    const currentRecord = readJson(ownerEditManifest.approvalRecord.path);
+    assert.equal(servingRow.sourceMechanism, currentRecord.payload.sourceMechanism);
+    assert.equal(servingRow.approval.recordPath, ownerEditManifest.approvalRecord.path);
+    assert.equal(servingRow.approval.payloadSha256, ownerEditManifest.approvalRecord.payloadSha256);
+    assert.ok(servingRow.historical_approvals.some((approval) => approval.recordPath === manifestRow.recordPath));
+  } else if (supersession) {
     const currentManifestRow = friendsV1Manifest.youRevisionRecords.find((row) => row.contentKey === manifestRow.contentKey);
     assert.ok(currentManifestRow, `${manifestRow.contentKey}: later You supersession manifest row missing`);
     const currentRecord = readJson(currentManifestRow.recordPath);
@@ -173,4 +183,4 @@ for (const [index, manifestRow] of manifest.rows.entries()) {
 }
 
 assert.equal(exactResolverVerificationCount, 360, "60 rows x 2 key orders x 3 resolver builds must pass exact verification.");
-console.log("V15 natal angle aspects: ok (60/60 immutable V15 Markdown/import/packet/record parity; 2 later You supersessions preserved separately; 360 current exact resolver checks; zero non-target source-row drift).");
+console.log("V15 natal angle aspects: ok (60/60 immutable historical V15 Markdown/import/packet/record parity; 2 earlier You supersessions plus 1 Saturn owner-edit supersession preserved separately; 360 current exact resolver checks; zero non-target source-row drift).");

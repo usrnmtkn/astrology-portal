@@ -1,0 +1,51 @@
+{
+  "schemaVersion": 1,
+  "id": "saturn-square-ascendant-owner-edit-supersession-2026-08-31",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_edited_exact_approved",
+  "provenanceNote": "The owner explicitly confirmed both separately edited Content Studio fields as the latest authority. Earlier V15 and Friends V1 approval records remain immutable historical evidence.",
+  "contentKey": "fallback-hook/natal-aspect-lived/saturn/square/ascendant",
+  "textFields": [
+    "body",
+    "body_they"
+  ],
+  "payloadSha256": "17d8c7b38825b82d7921e8b1b56d0114ae6d2627ab3ebe9204e970df0dfa61bd",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "You can be completely capable and still spend way too much time just trying to get started. With Saturn in tension with your Ascendant, stepping into something new feels far more consequential to you than it looks to anyone else. The Ascendant is how you show up in the world. Saturn brings a heavy, demanding sense of responsibility to that very first step. Because you take your presence so seriously, you try to remove every ounce of uncertainty before you act.\n\nThis drive to over-prepare dictates how you handle almost every new beginning in your life, big or small. You delay a major life change until you can guarantee the outcome. You hold back a creative project until you are sure no one can criticize it. You wait to open up to a partner until you feel perfectly healed. Saturn convinces you that if you are flawless, you are safe. But your inner critic turns basic readiness into a wall. One more detail to figure out just becomes another way to hide.\n\nThe true cost is easy to ignore because preparing actually does improve the final result. But eventually, the isolation catches up with you. The feedback that could have saved you massive amounts of effort only arrives after you have done all the work alone. An opportunity goes to someone willing to step up before they knew everything. You keep waiting until you are bulletproof. In the process, you miss out on the exact messy experiences that would actually teach you what to do next.\n\nTo break this pattern, you have to let go of the need to be perfect before you begin. You cannot remove the vulnerability from a new situation, and trying to do so just keeps you on the sidelines. Decide what a rough draft looks like, and stop preparing the second you reach it. Put the unfinished work out into the world. Let people get to know you while you are still figuring things out. You do not need to be a finished product to take up space.",
+    "body_they": "{{Name}} can be completely capable and still spend way too much time just trying to get started. With Saturn in tension with their Ascendant, stepping into something new feels far more consequential to them than it looks to anyone else. The Ascendant is how they show up in the world. Saturn brings a heavy, demanding sense of responsibility to that very first step. Because they take their presence so seriously, they try to remove every ounce of uncertainty before they act.\n\nThis drive to over-prepare dictates how they handle almost every new beginning in their life, big or small. They delay a major life change until they can guarantee the outcome. They hold back a creative project until they are sure no one can criticize it. They wait to open up to a partner until they feel perfectly healed. Saturn convinces them that if they are flawless, they are safe. But their inner critic turns basic readiness into a wall. One more detail to figure out just becomes another way to hide.\n\nThe true cost is easy to ignore because preparing actually does improve the final result. But eventually, the isolation catches up with them. The feedback that could have saved them massive amounts of effort only arrives after they have done all the work alone. An opportunity goes to someone willing to step up before they knew everything. They keep waiting until they are bulletproof. In the process, they miss out on the exact messy experiences that would actually teach them what to do next.\n\nTo break this pattern, they have to let go of the need to be perfect before they begin. They cannot remove the vulnerability from a new situation, and trying to do so just keeps them on the sidelines. They must decide what a rough draft looks like, and stop preparing the second they reach it. They need to put the unfinished work out into the world and let people get to know them while they are still figuring things out. They do not need to be a finished product to take up space.",
+    "sourceMechanism": "Exact owner-edited You and Friends copy captured from Content Studio and explicitly reaffirmed as the latest authority in the owner's Codex instruction on 2026-08-31."
+  },
+  "bodySha256": "9ee6460ea6ccfa9fe1a9d74ba9d5f756b365b146c54db30f6118456a81091946",
+  "bodyTheySha256": "1a0d569bc79559a7fd3958402ec2689577011457d21bf7ee70b3512257bf65e7",
+  "approvedAt": "2026-08-31",
+  "approvalEffect": "exact_wording_supersession",
+  "sourceArtifact": {
+    "id": "saturn-square-ascendant-content-studio-owner-edit-2026-08-31",
+    "path": "packages/astro-knowledge/review/saturn-square-ascendant-owner-edit-v1/content-studio-owner-edit-authority.json",
+    "sha256": "78869f35b923b845324c503b4b69b0b9da090f4f1c4be3479d3af3c07783b8f4",
+    "remoteUpdatedAt": "2026-08-31T16:29:17.528048+00:00"
+  },
+  "supersedes": {
+    "you": {
+      "approvalLevel": "exact_owner_approved",
+      "recordPath": "packages/astro-knowledge/review/angle-aspects-60-v15/records/039-natal-aspect-lived-saturn-square-ascendant-exact-approval.json",
+      "payloadSha256": "c7cc1c465ee9ba5868cfe2a1d277a6b0678e700a57f5b8ab868bee0693b2b27f",
+      "bodySha256": "c6551a689d8891c73fc9db4ec41386d06002b565567fb6d0768033c65bd134fb",
+      "historicalRecordPreserved": true
+    },
+    "friends": {
+      "approvalLevel": "exact_owner_approved",
+      "recordPath": "packages/astro-knowledge/review/angle-aspects-60-friends-v1/records/039-natal-aspect-lived-saturn-square-ascendant-friends-exact-approval.json",
+      "payloadSha256": "ed02faa5b4f296edc6c4e715a7e4d77d63527e7ef70e53672ef3b2b89e99c967",
+      "bodySha256": "6bcadb2f8e8771562b4e1fb950f482490a9bbcb26a5e64ebeaca86294dfdcb98",
+      "historicalRecordPreserved": true
+    }
+  },
+  "ownerConfirmationSource": {
+    "channel": "Codex task owner message",
+    "taskId": "01a04fc0-899b-7cd2-bb2e-98ad182391bb",
+    "date": "2026-08-31"
+  },
+  "additionalBilledCalls": 0
+}
