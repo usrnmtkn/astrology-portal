@@ -686,6 +686,11 @@ export function SkyDetailArticle({
         {hasAspectCard ? (
           <>
             <h2 className="sr-only">Aspect details</h2>
+            {relatedAspectGrouping !== "event" && detail.relatedAspects?.heading ? (
+              <p className="eyebrow section-label article-related-aspects__section-label">
+                {detail.relatedAspects.heading}
+              </p>
+            ) : null}
             {aspectGroups.map((group) => (
               <Fragment key={group.id}>
                 <h3
