@@ -1,7 +1,5 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
-import fallbackRows from "../../apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json";
-import placementInterim from "../../apps/web/src/content/fallbackArchitectureV3/source-rows/placement-interim-fixes-v1.json";
-import fallbackTemplates from "../../apps/web/src/content/fallbackArchitectureV3/templates/fallback-templates-v3.json";
+import { createRequire } from "node:module";
 // The generated package bundle is the production renderer used by the reader app.
 // @ts-ignore The generated JavaScript bundle intentionally has no declaration file.
 import { createFallbackRenderer } from "../../apps/web/src/content/fallbackArchitectureV3/dist/tldr-content.js";
@@ -14,6 +12,19 @@ type PackageRow = Record<string, unknown> & {
   contentKey: string;
   content_role: string;
   review_status: string;
+};
+
+const require = createRequire(import.meta.url);
+const fallbackRows = require("../../apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json") as {
+  hookRows: PackageRow[];
+  vocabularyRows: PackageRow[];
+};
+const placementInterim = require("../../apps/web/src/content/fallbackArchitectureV3/source-rows/placement-interim-fixes-v1.json") as {
+  templates: PackageRow[];
+  vocabularyRows: PackageRow[];
+};
+const fallbackTemplates = require("../../apps/web/src/content/fallbackArchitectureV3/templates/fallback-templates-v3.json") as {
+  templates: PackageRow[];
 };
 
 const planets = new Set(["sun", "moon", "mercury", "venus", "mars", "jupiter", "saturn", "uranus", "neptune", "pluto", "chiron", "lilith", "north-node", "south-node"]);
@@ -38,14 +49,16 @@ async function readJsonBody(req: IncomingMessage) {
   return JSON.parse(Buffer.concat(chunks).toString("utf8")) as unknown;
 }
 
-function normalizeInput(value: unknown) {
+export function normalizeNatalPlacementPreviewInput(value: unknown) {
   if (!value || typeof value !== "object" || Array.isArray(value)) throw new Error("Preview selection is missing.");
   const input = value as Record<string, unknown>;
   const planet = typeof input.planet === "string" ? input.planet : "";
   const sign = typeof input.sign === "string" ? input.sign : "";
   const house = typeof input.house === "string" ? input.house : "";
   const audience = input.audience === "they" ? "they" : "you";
-  if (!planets.has(planet) || !signs.has(sign) || !/^(?:[1-9]|1[0-2])$/u.test(house)) throw new Error("Choose a valid planet, sign, and house.");
+  if (!planets.has(planet) || !signs.has(sign) || (house && !/^(?:[1-9]|1[0-2])$/u.test(house))) {
+    throw new Error("Choose a valid planet and sign. If provided, the house must be between 1 and 12.");
+  }
   if (!Array.isArray(input.overrides) || input.overrides.length > 32) throw new Error("Preview source overrides are invalid.");
   const overrides = input.overrides.filter((candidate): candidate is PackageRow => {
     if (!candidate || typeof candidate !== "object" || Array.isArray(candidate)) return false;
@@ -58,7 +71,7 @@ function normalizeInput(value: unknown) {
   return { audience, house, overrides, planet, sign };
 }
 
-function renderPreview(input: ReturnType<typeof normalizeInput>) {
+export function renderNatalPlacementPreview(input: ReturnType<typeof normalizeNatalPlacementPreviewInput>) {
   const hooks = new Map((fallbackRows.hookRows as unknown as PackageRow[]).map((row) => [row.contentKey, row]));
   const vocabulary = new Map(([
     ...(fallbackRows.vocabularyRows as unknown as PackageRow[]),
@@ -80,7 +93,7 @@ function renderPreview(input: ReturnType<typeof normalizeInput>) {
     { hookRows: [...hooks.values()], vocabularyRows: [...vocabulary.values()] }
   );
   return renderer.renderNatalPlacement({
-    house: Number(input.house),
+    ...(input.house ? { house: Number(input.house) } : {}),
     planet: input.planet,
     sign: input.sign,
     voice: input.audience === "you" ? "you" : "Maya"
@@ -97,7 +110,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     return;
   }
   try {
-    const rendered = renderPreview(normalizeInput(await readJsonBody(req)));
+    const rendered = renderNatalPlacementPreview(normalizeNatalPlacementPreviewInput(await readJsonBody(req)));
     sendJson(res, 200, { ok: true, rendered });
   } catch (error) {
     sendJson(res, 400, { ok: false, error: error instanceof Error ? error.message : "The reader preview could not be assembled." });

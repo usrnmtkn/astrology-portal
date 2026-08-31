@@ -21,6 +21,12 @@ assert.deepEqual(
 const groups = natalPlacementSourceGroups("chiron", "taurus", "12");
 assert.deepEqual(groups.map((group) => group.key), ["exact", "sign", "house", "structure"]);
 
+const signOnlyGroups = natalPlacementSourceGroups("sun", "aries");
+assert.deepEqual(signOnlyGroups.map((group) => group.key), ["sign", "structure"]);
+assert.ok(signOnlyGroups.flatMap((group) => group.sources).some((source) => source.key === "fallback-hook/placement-sentence/sun/aries"));
+assert.ok(signOnlyGroups.flatMap((group) => group.sources).some((source) => source.key === "fallback-template/natal.planet-in-sign/sun"));
+assert.ok(signOnlyGroups.flatMap((group) => group.sources).every((source) => !source.key.includes("house") && !source.key.includes("complete-final")));
+
 const sources = groups.flatMap((group) => group.sources);
 assert.equal(sources.length, 12);
 assert.ok(sources.some((source) => source.key === "fallback-hook/natal-you-placement-complete-final/chiron/taurus/12"));
@@ -79,6 +85,13 @@ assert.equal(sunAriesFirst.parts.length, 2, "A full natal placement preview must
 assert.equal(sunAriesFirst.partKeys.length, 2, "Every rendered natal section must retain source provenance.");
 assert.ok(sunAriesFirst.parts.every((part) => part.trim().length > 0));
 assert.doesNotMatch(sunAriesFirst.body, /\{\{|\}\}/, "Reader preview must not expose unresolved template variables.");
+
+const sunAries = renderNatalPlacement({ planet: "sun", sign: "aries", voice: "you" });
+assert.equal(sunAries.headline, "Sun in Aries");
+assert.equal(sunAries.parts.length, 1, "Planet and sign must render the first natal paragraph before a house is selected.");
+assert.equal(sunAries.partKeys.length, 1, "The sign-only paragraph must retain source provenance.");
+assert.ok(sunAries.body.trim().length > 0);
+assert.doesNotMatch(sunAries.body, /\{\{|\}\}/);
 
 const friendSunAriesFirst = renderNatalPlacement({ planet: "sun", sign: "aries", house: 1, voice: "Maya" });
 assert.match(friendSunAriesFirst.body, /Maya's Sun|they|them/i, "The natal preview must support the Friend voice.");

@@ -3,6 +3,7 @@ import { adminCredentialHeaders } from "./adminSecret";
 import { effectivePackageRecord } from "./skyFallbackWorkspace";
 import {
   natalPlacementLabel,
+  natalPlacementSignLabel,
   natalPlacementSourceGroups,
   type NatalPlacementHouse,
   type NatalPlacementPlanet,
@@ -28,7 +29,7 @@ type NatalRender = {
 };
 
 type Props = {
-  house: NatalPlacementHouse;
+  house: NatalPlacementHouse | "";
   onCreateOverride: (contentKey: string, label: string, body: string) => void;
   onOpenSource: (contentKey: string, label: string, previewTemplate?: boolean) => void;
   planet: NatalPlacementPlanet;
@@ -123,7 +124,7 @@ export default function NatalPlacementReaderPreview({ house, onCreateOverride, o
     void fetch("/api/admin/natal-placement-preview", {
       method: "POST",
       headers: { "content-type": "application/json", ...adminCredentialHeaders(secret) },
-      body: JSON.stringify({ audience, house, overrides, planet, sign }),
+      body: JSON.stringify({ audience, ...(house ? { house } : {}), overrides, planet, sign }),
       signal: controller.signal
     }).then(async (response) => {
       const payload = await response.json().catch(() => null) as { error?: string; rendered?: NatalRender } | null;
@@ -136,10 +137,10 @@ export default function NatalPlacementReaderPreview({ house, onCreateOverride, o
     return () => controller.abort();
   }, [audience, house, overrides, planet, secret, sign]);
 
-  const exactKey = `fallback-hook/natal-you-placement-complete-final/${planet}/${sign}/${house}`;
-  const exactSaved = rows.some((row) => row.content_key === exactKey);
-  const exactServing = preview.rendered?.provenanceTier === "exact-owner-approved";
-  const label = natalPlacementLabel(planet, sign, house);
+  const exactKey = house ? `fallback-hook/natal-you-placement-complete-final/${planet}/${sign}/${house}` : "";
+  const exactSaved = Boolean(exactKey && rows.some((row) => row.content_key === exactKey));
+  const exactServing = Boolean(house && preview.rendered?.provenanceTier === "exact-owner-approved");
+  const label = house ? natalPlacementLabel(planet, sign, house) : natalPlacementSignLabel(planet, sign);
 
   return (
     <section className="admin-natal-reader-preview" aria-label={`Reader preview for ${label}`}>
@@ -184,7 +185,7 @@ export default function NatalPlacementReaderPreview({ house, onCreateOverride, o
             <span className={`ui-pill admin-status ${exactServing ? "status-live" : "status-reviewed"}`}>
               {exactServing ? "Exact authored override" : "Composed from atomic sources"}
             </span>
-            {audience === "you" && !exactServing && (
+            {house && audience === "you" && !exactServing && (
               exactSaved
                 ? <button type="button" onClick={() => onOpenSource(exactKey, `Exact ${label} override`)}>Open draft override</button>
                 : <button type="button" onClick={() => onCreateOverride(exactKey, label, preview.rendered?.body ?? "")}>Create exact override</button>
