@@ -2577,10 +2577,23 @@ export function LunarCalendar({
             {seasonEyebrowForDay(selectedDay, zone, arcEvents)}
           </span>
           <h2>
-            {selectedPackagePhase?.headline
-              ?? (selectedDayPhase
-                ? calculatedPhaseTitle(selectedDayPhase, selectedDayPhaseSign)
-                : titleForDay(selectedDay))}
+            {selectedPrimaryLunation && onOpenTransit ? (
+              <button
+                className="lunar-selected-card__lunation-link"
+                onClick={() => onOpenTransit(selectedPrimaryLunation)}
+                type="button"
+              >
+                {selectedPackagePhase?.headline
+                  ?? (selectedDayPhase
+                    ? calculatedPhaseTitle(selectedDayPhase, selectedDayPhaseSign)
+                    : titleForDay(selectedDay))}
+              </button>
+            ) : (
+              selectedPackagePhase?.headline
+                ?? (selectedDayPhase
+                  ? calculatedPhaseTitle(selectedDayPhase, selectedDayPhaseSign)
+                  : titleForDay(selectedDay))
+            )}
           </h2>
           {selectedPackagePhase?.tagline && (
             <small className="lunar-selected-card__phase-tagline">{selectedPackagePhase.tagline}</small>
