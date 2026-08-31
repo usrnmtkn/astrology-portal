@@ -97,6 +97,16 @@ for (const row of serving) {
 assert.equal(directReachability.length, 280);
 assert.equal(new Set(directReachability).size, 280);
 
+const productSurfaceFamilies = {
+  directPageOrSection: new Set(["continuous-placement", "new-moon", "full-moon", "node-axis", "node-education", "node-module", "lilith"]),
+  conditionalSection: new Set(["eclipse-event", "eclipse-fallback", "generic-eclipse-fallback", "lilith-station", "overlay", "retrograde", "seasonal"])
+};
+const directProductSurfaceRecords = serving.filter((row) => productSurfaceFamilies.directPageOrSection.has(row.studio_content_type));
+const conditionalProductSurfaceRecords = serving.filter((row) => productSurfaceFamilies.conditionalSection.has(row.studio_content_type));
+assert.equal(directProductSurfaceRecords.length, 193);
+assert.equal(conditionalProductSurfaceRecords.length, 87);
+assert.equal(directProductSurfaceRecords.length + conditionalProductSurfaceRecords.length, 280);
+
 assert.deepEqual(evidence.find((row) => row.name === "venus-overlay").overlays, ["sky-context/venus/aries/retrograde/mercury-retrograde-aries"]);
 assert.deepEqual(evidence.find((row) => row.name === "governed-aspect").aspects, [governedAspectRow.contentKey]);
 assert.equal(evidence.find((row) => row.name === "exact-eclipse").resolution, "exact-event");
@@ -105,9 +115,26 @@ assert.equal(evidence.find((row) => row.name === "generic-eclipse").resolution, 
 
 const venusOverlayPage = renderSkyV4ReaderRoute(corpus, routes.find(([name]) => name === "venus-overlay")[1]).page;
 assert.ok(venusOverlayPage.indexOf("## TLDR") < venusOverlayPage.indexOf("Mercury retrograde"), "Contextual overlay must follow the base TLDR/article.");
+const venusOverlayReader = renderSkyV4ReaderRoute(corpus, routes.find(([name]) => name === "venus-overlay")[1]);
+assert.ok(venusOverlayReader.readerParts.some((part) => /Mercury retrograde/iu.test(part)), "Reader parts must include the selected contextual overlay.");
+const nodeReader = renderSkyV4ReaderRoute(corpus, {
+  route: "placement", planet: "north-node", sign: "aries", northSign: "aries", southSign: "libra", aspects: []
+});
+assert.ok(nodeReader.readerParts.length >= 3, "Node placement must compose education, current axis, and matching module.");
 const governedAspectPage = renderSkyV4ReaderRoute(corpus, routes.find(([name]) => name === "governed-aspect")[1]).page;
 assert.match(governedAspectPage, /## Aspects shaping this transit/u);
 assert.doesNotMatch(governedAspectPage, /## Key aspects/u);
+const lilithStationPlacement = renderSkyV4ReaderRoute(corpus, {
+  route: "placement",
+  planet: "lilith",
+  sign: "sagittarius",
+  stationSupported: true,
+  aspects: []
+});
+assert.ok(
+  lilithStationPlacement.readerParts.some((part) => /Black Moon Lilith stations/u.test(part)),
+  "A calculated Lilith station must compose the released station record into its placement page."
+);
 
 assert.throws(() => renderSkyV4ReaderRoute(corpus, {
   route: "placement", planet: "sun", sign: "leo", draftFields: { placementArticle: "Draft" }
@@ -123,6 +150,11 @@ console.log(JSON.stringify({
     counts[row.studio_content_type] = (counts[row.studio_content_type] ?? 0) + 1;
     return counts;
   }, {})).sort(([left], [right]) => left.localeCompare(right))),
-  directlyReachableServingRecords: directReachability.length,
+  resolverReachableServingRecords: directReachability.length,
+  productSurfaceReachability: {
+    directPageOrSection: directProductSurfaceRecords.length,
+    conditionalSection: conditionalProductSurfaceRecords.length,
+    total: directProductSurfaceRecords.length + conditionalProductSurfaceRecords.length
+  },
   routes: evidence
 }, null, 2));
