@@ -10,9 +10,14 @@ import {
   validateSkyV4TransitPov,
   type SkyV4VersionedRecord
 } from "../apps/admin/src/skyV4ContentStudio.ts";
-import { renderSkyV4StudioPreview, skyV4ContentStudioRecords } from "../apps/web/src/content/fallbackArchitectureV3/resolver/skyPlacementV4Canonical.mjs";
+import {
+  renderSkyV4StudioPreview,
+  skyV4ContentStudioRecords,
+  skyV4GovernedAspectStudioRecord
+} from "../apps/web/src/content/fallbackArchitectureV3/resolver/skyPlacementV4Canonical.mjs";
 
 const corpus = JSON.parse(fs.readFileSync(new URL("../apps/web/src/content/fallbackArchitectureV3/authored-inputs/sky-v4-canonical-content-studio-stage-v1.json", import.meta.url), "utf8"));
+const governedAspectCorpus = JSON.parse(fs.readFileSync(new URL("../apps/web/src/content/fallbackArchitectureV3/source-rows/sky-aspect-phrasebook-v1.json", import.meta.url), "utf8"));
 const records = skyV4ContentStudioRecords(corpus);
 const executed = new Set<string>();
 
@@ -84,19 +89,54 @@ assert.ok(overlay);
 const overlayEdit = editOne(String(overlay.contentKey), "OverlayBody", "Draft contextual overlay.", "CS-EDIT-009");
 assert.equal(overlayEdit.next.TriggerMode, overlay.TriggerMode);
 
-const aspectSource: Record<string, any> = {
-  contentKey: "fallback-hook/sky-aspect-sign/venus/aries/conjunction/mercury/aries",
-  Headline: "Venus conjunct Mercury", Body: "Approved aspect body.", BodyA: "Venus", BodyB: "Mercury",
-  AspectType: "conjunction", ExactDate: "2026-04-01", studio_content_type: "aspect",
-  studio_editable_fields: [{ path: "Headline", label: "Headline" }, { path: "Body", label: "Body" }],
-  studio_read_only_fields: ["contentKey", "BodyA", "BodyB", "AspectType", "ExactDate"],
-  studio_source_baseline: {}, source_baseline_sha256: "aspect-baseline"
-};
-aspectSource.studio_source_baseline = structuredClone(aspectSource);
+const governedAspectRow = governedAspectCorpus.hookRows.find((row: Record<string, unknown>) => row.contentKey === "fallback-hook/sky-aspect-sign/venus/virgo/trine/saturn/capricorn");
+assert.ok(governedAspectRow, "Missing real governed Venus in Virgo trine Saturn in Capricorn aspect.");
+const aspectSource = skyV4GovernedAspectStudioRecord(governedAspectRow) as Record<string, any>;
+assert.ok(aspectSource, "Approved governed aspect must integrate with Content Studio.");
+assert.equal(aspectSource.studio_source_baseline.body_you, governedAspectRow.body_you);
+assert.equal(aspectSource.studio_provenance.approvedVia, governedAspectRow.approved_via);
+assert.deepEqual(aspectSource.studio_editable_fields.map((field: Record<string, unknown>) => field.path), ["Headline", "Body"]);
+assert.ok(aspectSource.studio_read_only_fields.includes("AspectType"));
+assert.ok(aspectSource.studio_read_only_fields.includes("calculatedDate"));
+assert.ok(aspectSource.studio_read_only_fields.includes("calculatedOrb"));
 const aspectDraft = applySkyV4ReaderFieldDraft(aspectSource, { Headline: aspectSource.Headline, Body: "Draft aspect body." });
 assert.equal(aspectDraft.Body, "Draft aspect body.");
-assert.equal(aspectDraft.AspectType, "conjunction");
+assert.equal(aspectDraft.AspectType, "trine");
 assert.throws(() => applySkyV4ReaderFieldDraft(aspectSource, { AspectType: "square" }), /SKY_V4_STRUCTURE_LOCK/u);
+const aspectVersioned: SkyV4VersionedRecord = {
+  contentKey: aspectSource.contentKey,
+  contentType: "aspect",
+  editableFields: aspectSource.studio_editable_fields,
+  readOnlyFields: aspectSource.studio_read_only_fields,
+  sourceBaseline: aspectSource.studio_source_baseline,
+  sourceBaselineSha256: aspectSource.source_baseline_sha256,
+  servingVersionId: "approved-baseline",
+  versions: []
+};
+const aspectDraftVersion = createSkyV4DraftVersion(
+  aspectVersioned,
+  { Headline: aspectSource.Headline, Body: "Draft aspect body." },
+  { versionId: "aspect-draft-1", createdAt: "2026-08-30T12:00:00.000Z", editor: "owner" }
+);
+assert.deepEqual(aspectDraftVersion.versions[0].changedFields, ["Body"]);
+assert.equal(aspectDraftVersion.versions[0].status, "draft");
+assert.equal(aspectDraftVersion.servingVersionId, "approved-baseline");
+assert.throws(() => transitionSkyV4Version(aspectDraftVersion, "aspect-draft-1", "serving"), /SKY_V4_STATUS_TRANSITION/u);
+const validAspectPreview = renderSkyV4StudioPreview(corpus, {
+  contentKey: aspectSource.contentKey,
+  governedAspectSource: governedAspectRow,
+  draftFields: { Body: "Draft aspect body." },
+  previewSurface: { kind: "continuous", subjectBody: "venus", subjectSign: "virgo", calculatedDate: "September 3, 2026", calculatedOrb: "1°" }
+});
+assert.match(validAspectPreview.page, /Aspects shaping this transit[\s\S]*Draft aspect body\./u);
+assert.deepEqual(validAspectPreview.selectedAspectIds, [aspectSource.contentKey]);
+const unsupportedAspectPreview = renderSkyV4StudioPreview(corpus, {
+  contentKey: aspectSource.contentKey,
+  governedAspectSource: governedAspectRow,
+  previewSurface: { kind: "continuous", subjectBody: "mars", subjectSign: "aries", calculatedDate: "September 3, 2026", calculatedOrb: "1°" }
+});
+assert.equal(unsupportedAspectPreview.page, "");
+assert.deepEqual(unsupportedAspectPreview.selectedAspectIds, []);
 executed.add("CS-EDIT-010");
 
 const versioned: SkyV4VersionedRecord = {
@@ -126,16 +166,43 @@ executed.add("CS-EDIT-012");
 assert.ok(records.every((row: Record<string, unknown>) => typeof row.source_baseline_sha256 === "string" && typeof row.studio_source_baseline === "object" && Array.isArray(row.studio_read_only_fields)));
 executed.add("CS-EDIT-013");
 
-const exactEclipse = records.find((row: Record<string, unknown>) => row.studio_content_type === "eclipse-event");
+const exactEclipse = records.find((row: Record<string, unknown>) => row.contentKey === "sky-lunation/lunar-eclipse/2025-03-14-virgo");
 assert.ok(exactEclipse);
 const productionParity = renderSkyV4StudioPreview(corpus, {
   contentKey: exactEclipse.contentKey,
   draftFields: { EventArticle: `${String(exactEclipse.EventArticle)}\n\nPreview-only draft.` },
+  cycleContext: "Approved eclipse-cycle context.",
+  eclipseContext: "Approved node and series context.",
   motionConditions: [{ headline: "Mercury retrograde", dateLine: "Engine date", body: "Approved condition." }],
-  aspects: [{ id: "event-aspect", bodyA: "Mars", bodyB: "Saturn", approved: true, exactDateTime: "2026-01-01", orb: 1, headline: "Mars square Saturn", dateLine: "Engine date", body: "Approved aspect." }],
-  eventContextAspectIds: ["event-aspect"]
+  aspects: [{ id: "event-aspect", bodyA: "Moon", bodyB: "Saturn", approved: true, exactDateTime: "2026-01-01", orb: 1, headline: "Moon opposite Saturn", dateLine: "Engine date", body: "Approved aspect." }]
 });
-assert.match(productionParity.page, /Preview-only draft\.[\s\S]*What is shaping this transit now[\s\S]*Aspects shaping this transit/u);
+assert.match(productionParity.page, /## TLDR[\s\S]*Preview-only draft\.[\s\S]*Approved eclipse-cycle context\.[\s\S]*Approved node and series context\.[\s\S]*## Other Conditions[\s\S]*## Key aspects/u);
+assert.doesNotMatch(productionParity.page, /Aspects shaping this transit/u);
+assert.equal(productionParity.resolution, "exact-event");
+const exactFallback = renderSkyV4StudioPreview(corpus, { contentKey: exactEclipse.contentKey, exactAvailable: false });
+assert.equal(exactFallback.resolution, "sign-aware-fallback");
+const newMoonParity = renderSkyV4StudioPreview(corpus, {
+  contentKey: "sky-lunation/new-moon/gemini",
+  cycleContext: "Approved cycle context.",
+  aspects: [{ id: "new-moon-aspect", bodyA: "Sun", bodyB: "Mercury", approved: true, exactDateTime: "2026-06-01", orb: 1, headline: "Sun conjunct Mercury", dateLine: "Engine date", body: "Approved aspect." }]
+});
+assert.match(newMoonParity.page, /Approved cycle context\.[\s\S]*## Key aspects/u);
+const fullMoonParity = renderSkyV4StudioPreview(corpus, {
+  contentKey: "sky-lunation/full-moon/taurus",
+  aspects: [{ id: "full-moon-axis", bodyA: "Moon", bodyB: "Sun", approved: true, exactDateTime: "2026-11-01", orb: 0, headline: "Moon opposite Sun", dateLine: "Engine date", body: "Approved axis aspect." }]
+});
+assert.deepEqual(fullMoonParity.axis, { moonSign: "Taurus", sunSign: "Scorpio", axis: "Taurus–Scorpio" });
+assert.match(fullMoonParity.page, /## Key aspects/u);
+const continuousParity = renderSkyV4StudioPreview(corpus, {
+  contentKey: "sky-placement/article/venus/aries",
+  dateLine: "Engine dates",
+  contexts: [{ subjectFamily: "continuous", subjectBody: "Venus", subjectSign: "Aries", subjectCondition: "retrograde", contextKind: "co-present-motion", contextBodyOrEvent: "Mercury", contextSign: "Aries", contextCondition: "retrograde" }],
+  motionConditions: [{ headline: "Venus retrograde", dateLine: "Engine date", body: "Approved condition." }],
+  aspects: [{ id: "venus-aspect", bodyA: "Venus", bodyB: "Saturn", approved: true, exactDateTime: "2026-04-01", orb: 1, headline: "Venus trine Saturn", dateLine: "Engine date", body: "Approved aspect." }]
+});
+assert.match(continuousParity.page, /Mercury retrograde[\s\S]*What is shaping this transit now[\s\S]*Aspects shaping this transit/u);
+const zeroOptional = renderSkyV4StudioPreview(corpus, { contentKey: "sky-lunation/new-moon/gemini" });
+assert.doesNotMatch(zeroOptional.page, /## (Other Conditions|Key aspects)/u);
 assert.equal(productionParity.servingEnabled, false);
 executed.add("CS-EDIT-014");
 
