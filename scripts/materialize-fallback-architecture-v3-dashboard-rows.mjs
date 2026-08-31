@@ -7,6 +7,11 @@ import {
   PACKAGE_VERSION
 } from "../apps/web/src/content/fallbackArchitectureV3/dist/tldr-content.js";
 import { isGovernedReaderEligible } from "../apps/web/src/content/fallbackArchitectureV3/resolver/readerEligibility.mjs";
+import {
+  SKY_V4_CANONICAL_PACKAGE_VERSION,
+  skyV4ContentStudioRecords,
+  skyV4GovernedAspectStudioRecord
+} from "../apps/web/src/content/fallbackArchitectureV3/resolver/skyPlacementV4Canonical.mjs";
 
 const repoRoot = path.resolve(path.dirname(new URL(import.meta.url).pathname), "..");
 const packageDir = path.join(repoRoot, "apps/web/src/content/fallbackArchitectureV3");
@@ -83,7 +88,10 @@ function isContinuousSkyPlacementRecord(record, contentKey) {
 }
 
 function isSkyPlacementPartitionKey(contentKey) {
-  return contentKey.startsWith("house-horoscope-core/")
+  return contentKey.startsWith("sky-placement/")
+    || contentKey.startsWith("sky-context/")
+    || contentKey.startsWith("sky-v4/")
+    || contentKey.startsWith("house-horoscope-core/")
     || contentKey.startsWith("fallback-hook/sky-sign-copy/")
     || contentKey.startsWith("fallback-hook/sky-placement-sign/")
     || (
@@ -235,7 +243,7 @@ function surfaceForKey(key, explicitSurface) {
 }
 
 function modeForKey(key) {
-  if (key.includes("/sky-season/") || key.includes("/sky-newmoon/") || key.includes("/sky-fullmoon/") || key.includes("/sky-lunation-macro/")) return "article";
+  if (key.startsWith("sky-placement/article/") || key.startsWith("sky-v4/") || key.includes("/sky-season/") || key.includes("/sky-newmoon/") || key.includes("/sky-fullmoon/") || key.includes("/sky-lunation-macro/")) return "article";
   if (key.includes("/compat-deep/") || key.includes("/empty-house/") || key.includes("/profection-year/")) return "in_depth";
   return "feed";
 }
@@ -291,6 +299,7 @@ function requiresPlacementPositiveTest(record, contentKey, reviewStatus) {
 
 function blockTypeForPackageRecord(contentRole, contentKey) {
   if (contentRole === "template") return "fallback_template";
+  if (contentRole === "full_copy" || contentKey.startsWith("sky-placement/article/")) return "fallback_article";
   if (
     contentRole === "fallback_hook"
     || contentRole === "house_horoscope_core"
@@ -368,6 +377,7 @@ function mapPackageRecord(record, bucket) {
     throw new Error(`${contentKey} must carry positive_test="${placementSentencePositiveTest}" before dashboard import.`);
   }
 
+  const isSkyV4Stage = bucket === "sky-v4-canonical-stage";
   return {
     content_key: contentKey,
     surface,
@@ -409,7 +419,9 @@ function mapPackageRecord(record, bucket) {
       content_role: contentRole,
       review_status: reviewStatus,
       positive_test: record.positive_test ?? null,
-      readerServing: serving.status === "LIVE" && serving.lane === "serving" && !serving.reviewState
+      readerServing: serving.status === "LIVE" && serving.lane === "serving" && !serving.reviewState,
+      stageOnly: isSkyV4Stage,
+      sourceSchemaVersion: isSkyV4Stage ? SKY_V4_CANONICAL_PACKAGE_VERSION : null
     },
     knowledge_ids: [],
     source_snapshot: {
@@ -420,7 +432,7 @@ function mapPackageRecord(record, bucket) {
       approved_via: record.approved_via ?? null,
       source_keys: record.source_keys ?? [],
       importBatchId,
-      sourcePackage: "tldrastro-fallback-architecture-v3",
+      sourcePackage: isSkyV4Stage ? SKY_V4_CANONICAL_PACKAGE_VERSION : "tldrastro-fallback-architecture-v3",
       sourceFile: bucket,
       packageVersion: packageManifest.packageVersion,
       packageContentHash: packageManifest.contentHash,
@@ -432,7 +444,9 @@ function mapPackageRecord(record, bucket) {
       packagePartitionKeyCount: packagePartitionManifest.keyCount,
       distributionState: distributionRelease?.distribution_state ?? null,
       releaseBatch: distributionRelease?.release_batch ?? null,
-      note: "V3 package mirror for dashboard editing. fallback_source rows are source material and must never render directly."
+      note: isSkyV4Stage
+        ? "Canonical SKY V4 stage-only Content Studio row. It is excluded from reader serving until a separate exact owner approval and serving release."
+        : "V3 package mirror for dashboard editing. fallback_source rows are source material and must never render directly."
     },
     reviewer_notes: String(record.note ?? record.notes ?? "").trim(),
     prompt_version: importBatchId,
@@ -511,6 +525,7 @@ function readPackageSources() {
   const timingEventRows = readJson("source-rows/timing-event-reader-copy-v2.json");
   const weeklyRows = readJson("source-rows/station-cards-week-openers-v1.json");
   const templateRows = readJson("templates/fallback-templates-v3.json");
+  const skyV4CanonicalStage = readJson("authored-inputs/sky-v4-canonical-content-studio-stage-v1.json");
   continuousFallbackImportManifest = readJson("authored-inputs/sky-placement-continuous-v2-pending.json");
   ({
     manifest: skyPlacementServingManifest,
@@ -541,7 +556,8 @@ function readPackageSources() {
     skySignCopy,
     timingEventRows,
     weeklyRows,
-    templateRows
+    templateRows,
+    skyV4CanonicalStage
   };
 }
 
@@ -693,7 +709,10 @@ function materializeRows(sources) {
     ...sources.pairDailyFrames.rows.map((row) => mapPackageRecord(row, "fallback-system")),
     ...sources.pairDailyClauses.rows.map((row) => mapPackageRecord(row, "fallback-system")),
     ...sources.skyArticleRows.hookRows.map((row) => mapPackageRecord(row, "fallback-system")),
-    ...sources.skyAspectPhrasebook.hookRows.map((row) => mapPackageRecord(row, "fallback-system")),
+    ...sources.skyAspectPhrasebook.hookRows.map((row) => mapPackageRecord(
+      skyV4GovernedAspectStudioRecord(row) ?? row,
+      "fallback-system"
+    )),
     ...sources.skyPlanetFrames.rows.map((row) => mapPackageRecord(row, "fallback-system")),
     ...sources.skyPlacementVoicePass.rows.map((row) => mapPackageRecord(row, "fallback-system")),
     ...(sources.skySignCopy.superseded_rows ?? []).map((row) => mapPackageRecord(row, "fallback-system")),
@@ -706,6 +725,8 @@ function materializeRows(sources) {
     ...sources.placementInterimRows.vocabularyRows.map((row) => mapPackageRecord(row, "fallback-system")),
     ...sources.skyArticleRows.vocabularyRows.map((row) => mapPackageRecord(row, "fallback-system")),
     ...sources.templateRows.templates.map((row) => mapPackageRecord(row, "fallback-system")),
+    ...skyV4ContentStudioRecords(sources.skyV4CanonicalStage)
+      .map((row) => mapPackageRecord(row, "sky-v4-canonical-stage")),
     ...sources.placementInterimRows.templates.map((row) => mapPackageRecord(row, "fallback-system")),
     ...sources.sourceRows.fallbackSourceRows.map((row) => mapPackageRecord(row, "source-material")),
     ...editorialSourceBankRecords(sources.editorialSourceBank)
@@ -850,7 +871,7 @@ function importedCounts(rows) {
     authoredCards: countBy(rows, (row) => packageBucket(row) === "authored-content"),
     fallbackHooks: countBy(rows, (row) => packageBucket(row) === "fallback-system" && packageRole(row) === "fallback_hook"),
     vocabulary: countBy(rows, (row) => packageBucket(row) === "fallback-system" && packageRole(row) === "vocabulary"),
-    templates: countBy(rows, (row) => packageBucket(row) === "fallback-system" && packageRole(row) === "template"),
+    templates: countBy(rows, (row) => packageRole(row) === "template"),
     sourceMaterial: countBy(rows, (row) => packageBucket(row) === "source-material"),
     liveServing: countBy(rows, (row) => row.status === "LIVE" && row.lane === "serving" && row.review_state === null)
   };
@@ -965,7 +986,7 @@ const counts = {
   authoredCards: countBy(rows, (row) => row.source_snapshot.contentType === "authored-content"),
   fallbackHooks: countBy(rows, (row) => row.source_snapshot.contentType === "fallback-system" && row.source_snapshot.content_role === "fallback_hook"),
   vocabulary: countBy(rows, (row) => row.source_snapshot.contentType === "fallback-system" && row.source_snapshot.content_role === "vocabulary"),
-  templates: countBy(rows, (row) => row.source_snapshot.contentType === "fallback-system" && row.source_snapshot.content_role === "template"),
+  templates: countBy(rows, (row) => row.source_snapshot.content_role === "template"),
   sourceMaterial: countBy(rows, (row) => row.source_snapshot.contentType === "source-material"),
   liveServing: countBy(rows, (row) => row.status === "LIVE" && row.lane === "serving" && row.review_state === null)
 };

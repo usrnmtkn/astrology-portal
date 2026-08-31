@@ -139,6 +139,7 @@ const reviewStatuses: ReviewStatus[] = ["DRAFT", "REVIEWED", "LIVE", "ARCHIVED",
 const fallbackArchitectureV3Provider = "tldrastro-fallback-architecture-v3";
 const fallbackArchitectureV3EligibleReviews = new Set(["approved", "approved_reuse"]);
 const fallbackArchitectureV3ReviewStatuses = new Set(["needs_review", "approved", "approved_reuse"]);
+const skyV4CanonicalStagePackage = "SKY-V4-CANONICAL-CODEX-HANDOFF-CONTENT-STUDIO-EDITABLE-2026-08-30";
 const personalizedSampleSurfaces = new Set<GeneratedContentSurface>(["you", "natal", "synastry", "composite", "relationship"]);
 const sampleOnlyReviewerNote = "INTERNAL CONTENT TEST. This row is for testing templates, voice, and knowledge hooks. Do not publish it as global app content. Real You, Synastry, Composite, and Relationship content must be generated from user-specific chart or bond facts.";
 let contentRoleContractCache: { styleRules?: { bannedWords?: string[] } } | null = null;
@@ -219,14 +220,47 @@ function packageStringFields(value: unknown, prefix = ""): Array<[string, string
   return Object.entries(value).flatMap(([key, child]) => packageStringFields(child, prefix ? `${prefix}.${key}` : key));
 }
 
+function packageLeafFields(value: unknown, prefix = ""): Array<[string, unknown]> {
+  if (!isRecord(value)) return [[prefix, value]];
+  return Object.entries(value).flatMap(([key, child]) => packageLeafFields(child, prefix ? `${prefix}.${key}` : key));
+}
+
 function packageValueAt(value: unknown, path: string) {
   return path.split(".").reduce<unknown>((current, part) => isRecord(current) ? current[part] : undefined, value);
 }
 
-function isEditablePackageCopyPath(path: string) {
-  return ["fact_line", "opening", "tension", "development", "close", "body", "body_you", "body_they"]
+function isEditablePackageCopyPath(path: string, packageRecord?: Record<string, unknown>) {
+  const studioPaths = Array.isArray(packageRecord?.studio_editable_fields)
+    ? packageRecord.studio_editable_fields
+      .filter(isRecord)
+      .map((field) => stringFrom(field.path))
+      .filter(Boolean)
+    : [];
+  return studioPaths.includes(path)
+    || ["fact_line", "opening", "tension", "development", "close", "body", "body_you", "body_they"]
     .includes(path)
     || path.startsWith("era_layer.");
+}
+
+function validateSkyV4TransitPovCopy(record: Record<string, unknown>, packageDraft: Record<string, unknown> | null) {
+  if (stringFrom(record.source_package) !== skyV4CanonicalStagePackage) return { passed: true, hardFailures: [] as string[] };
+  const effective = packageDraft ?? record;
+  const fields = Array.isArray(record.studio_editable_fields)
+    ? record.studio_editable_fields.filter(isRecord).map((field) => stringFrom(field.path)).filter(Boolean)
+    : [];
+  const copy = fields.map((path) => packageValueAt(effective, path)).filter((value) => typeof value === "string").join("\n\n");
+  const hardFailures: string[] = [];
+  if (/\byou have (?:a|an) (?:gift|talent|natural ability|instinct)\b/iu.test(copy)) {
+    hardFailures.push("STP-02 natal-trait framing");
+  }
+  if (/\b(?:sun|moon|mercury|venus|mars|jupiter|saturn|uranus|neptune|pluto|chiron|lilith|north node|south node) in [a-z-]+ (?:people|person|native|individuals)\b/iu.test(copy)) {
+    hardFailures.push("STP-01 planet-in-sign identity language");
+  }
+  if (/\bright now,? you are\b/iu.test(copy)) hardFailures.push("STP-10 time-adverb trait sentence");
+  if (record.studio_content_type === "continuous-placement" && !/(?:\benters?\b|\breaches?\b|\bmoves? (?:through|into)\b|\btransit(?:s|ing)? through\b|\bduring this transit\b|\bseason\b|\bcurrent cycle\b|\b(?:while|during|when|with)\b[^.!?]{0,80}\b(?:in|through|reaches?)\b)/iu.test(copy)) {
+    hardFailures.push("STP-03 missing current-sky anchor");
+  }
+  return { passed: hardFailures.length === 0, hardFailures };
 }
 
 function validateFallbackArchitectureV3Copy(row: ExistingGeneratedContentRow, patch: Record<string, unknown>) {
@@ -242,7 +276,14 @@ function validateFallbackArchitectureV3Copy(row: ExistingGeneratedContentRow, pa
   editableFields.push(["body_they", sections.body_they, record.body_they]);
   const packageDraft = isRecord(sections.packageDraft) ? sections.packageDraft : null;
   if (packageDraft) {
-    for (const [field, value] of packageStringFields(packageDraft).filter(([field]) => isEditablePackageCopyPath(field))) {
+    const changedPaths = packageLeafFields(packageDraft)
+      .filter(([field, value]) => JSON.stringify(value) !== JSON.stringify(packageValueAt(record, field)))
+      .map(([field]) => field);
+    const structuralChanges = changedPaths.filter((field) => !isEditablePackageCopyPath(field, record));
+    if (structuralChanges.length) {
+      throw new Error(`Package proposals cannot change read-only fields: ${structuralChanges.join(", ")}.`);
+    }
+    for (const [field, value] of packageStringFields(packageDraft).filter(([field]) => isEditablePackageCopyPath(field, record))) {
       editableFields.push([`packageDraft.${field}`, value, packageValueAt(record, field)]);
     }
     for (const field of ["contentKey", "content_role", "grammar_frame", "render_policy"]) {
@@ -320,9 +361,14 @@ function applyFallbackArchitectureV3ReviewPatch(row: ExistingGeneratedContentRow
   const reviewStatus = hasPackageDraft
     ? "needs_review"
     : packageReviewStatus(row, body.reviewStatus || stringFrom(sourceSnapshot.review_status));
+  const isSkyV4CanonicalStage = stringFrom(record.source_package) === skyV4CanonicalStagePackage
+    || stringFrom(sourceSnapshot.sourcePackage) === skyV4CanonicalStagePackage;
 
   if (!fallbackArchitectureV3ReviewStatuses.has(reviewStatus)) {
     throw new Error("review_status must be needs_review, approved, or approved_reuse.");
+  }
+  if (isSkyV4CanonicalStage && reviewStatus !== "needs_review") {
+    throw new Error("SKY V4 canonical content is stage-only. Owner approval and serving require a separate governed package release.");
   }
 
   if (body.revertToPackageOriginal) {
@@ -413,10 +459,15 @@ function applyFallbackArchitectureV3ReviewPatch(row: ExistingGeneratedContentRow
   patch.body = readerBody;
   sections.body_you = record.body_you ?? null;
   sections.body_they = record.body_they ?? null;
+  const skyV4Validation = validateSkyV4TransitPovCopy(record, hasPackageDraft ? sections.packageDraft : null);
+  if (isSkyV4CanonicalStage) sections.skyV4Validation = skyV4Validation;
 
   const editorialReview = sections.contentStudioReview;
   if (editorialReview !== undefined && editorialReview !== null) {
     if (!isRecord(editorialReview)) throw new Error("Content Studio editorial review must be an object or null.");
+    if (!skyV4Validation.passed) {
+      throw new Error(`SKY V4 POV validation failed: ${skyV4Validation.hardFailures.join(", ")}.`);
+    }
     const copySha256 = stringFrom(editorialReview.copySha256);
     const reviewedAt = stringFrom(editorialReview.reviewedAt);
     const statement = stringFrom(editorialReview.statement);
@@ -450,27 +501,39 @@ function applyFallbackArchitectureV3ReviewPatch(row: ExistingGeneratedContentRow
 
   sections.packageRecord = record;
   sections.packageOriginalRecord = packageOriginalRecord;
+  const versionId = `draft-${String(patch.updated_at).replace(/[^0-9]/gu, "")}`;
   sections.dashboardEditHistory = [
     ...(Array.isArray(sections.dashboardEditHistory) ? sections.dashboardEditHistory : []),
     {
+      versionId,
+      versionStatus: "draft",
       editedAt: patch.updated_at,
       headline: row.headline ?? "",
       summary: row.summary ?? "",
       body: row.body ?? "",
-      review_status: packageReviewStatus(row)
+      review_status: packageReviewStatus(row),
+      sourceBaselineSha256: stringFrom(record.source_baseline_sha256),
+      packageDraft: hasPackageDraft ? structuredClone(sections.packageDraft) : null,
+      changedFields: hasPackageDraft
+        ? packageStringFields(sections.packageDraft)
+          .filter(([field]) => isEditablePackageCopyPath(field, record))
+          .filter(([field, value]) => JSON.stringify(value) !== JSON.stringify(packageValueAt(packageOriginalRecord, field)))
+          .map(([field]) => field)
+        : []
     }
   ].slice(-25);
 
   facts.review_status = reviewStatus;
-  facts.readerServing = readerServingForPackageReview(reviewStatus);
+  facts.readerServing = isSkyV4CanonicalStage ? false : readerServingForPackageReview(reviewStatus);
   sourceSnapshot.review_status = reviewStatus;
 
   patch.sections = sections;
   patch.facts = facts;
   patch.source_snapshot = sourceSnapshot;
-  patch.status = readerServingForPackageReview(reviewStatus) ? "LIVE" : "DRAFT";
-  patch.lane = readerServingForPackageReview(reviewStatus) ? "serving" : "reference";
-  patch.review_state = readerServingForPackageReview(reviewStatus) ? null : "needs-review";
+  const readerServing = !isSkyV4CanonicalStage && readerServingForPackageReview(reviewStatus);
+  patch.status = readerServing ? "LIVE" : "DRAFT";
+  patch.lane = readerServing ? "serving" : "reference";
+  patch.review_state = readerServing ? null : "needs-review";
   validateFallbackArchitectureV3Copy(row, patch);
 }
 
@@ -1559,6 +1622,34 @@ async function updateGeneratedContent(req: IncomingMessage) {
 
   if (isPackageRow && existing) {
     applyFallbackArchitectureV3ReviewPatch(existing, body, patch);
+  }
+
+  const existingPackageRecord = existing ? v3PackageRecord(existing) : {};
+  const forksGovernedAspectDraft = Boolean(
+    isPackageRow
+    && existing
+    && existing.status === "LIVE"
+    && stringFrom(existingPackageRecord.studio_content_type) === "aspect"
+    && isRecord((patch.sections as Record<string, unknown> | undefined)?.packageDraft)
+  );
+  if (forksGovernedAspectDraft && existing) {
+    return upsertGeneratedContentRow({
+      content_key: existing.content_key,
+      surface: existing.surface,
+      target_date: existing.target_date,
+      mode: "studio-draft",
+      event_type: "sky-v4-governed-aspect-draft",
+      block_type: existing.block_type,
+      provider: "owner-content-studio",
+      prompt_version: "sky-v4-governed-aspect-draft-v1",
+      reviewer_notes: "Versioned reader-copy draft. The approved governed aspect baseline remains LIVE and unchanged.",
+      knowledge_ids: [],
+      ...patch,
+      status: "DRAFT",
+      lane: "reference",
+      review_state: "owner-review-required",
+      published_at: null
+    });
   }
 
   const response = await fetch(`${supabaseUrl()}/rest/v1/generated_interpretations?id=eq.${encodeURIComponent(body.id)}`, {
