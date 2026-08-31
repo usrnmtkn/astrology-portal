@@ -100,10 +100,21 @@ export function natalPlacementSourceGroups(
   const structureGroup = (includeHouse: boolean): NatalPlacementSourceGroup => ({
     key: "structure",
     label: "Sentence structure (advanced)",
-    description: "Preview the assembled reader copy before editing its structure. Colored sections link to the exact facts, phrases, and hooks used for this placement.",
+    description: "Preview the assembled reader copy before editing its structure. Legacy composition inputs stay visible here without being mislabeled as Layer 1 or Layer 2 meaning.",
     sources: [
       signStructure,
-      ...(includeHouse ? [{ key: "fallback-template/natal.house-context", label: "Natal house template", scope: "Controls the sentence order for all natal placement house paragraphs." }] : [])
+      ...(includeHouse && house ? [
+        {
+          key: `fallback-hook/house-meaning/${house}`,
+          label: `Legacy ${ordinalHouse(house)} house context`,
+          scope: "Current composed-fallback input. This generic house definition is under architecture review and is not the planet-house baseline."
+        },
+        {
+          key: "fallback-template/natal.house-context",
+          label: "Natal house template",
+          scope: "Controls the current composed natal house paragraph while the Layer 2 replacement floor is reviewed."
+        }
+      ] : [])
     ]
   });
 
@@ -129,7 +140,6 @@ export function natalPlacementSourceGroups(
       label: `Planet-house baseline: ${planetLabel} in the ${houseLabel} house`,
       description: "Layer 2. Complete interpretation of how this specific planet or point operates in the selected natal house, across every zodiac sign. It must describe the planet functioning in that life area, not append a generic house definition.",
       sources: [
-        { key: `fallback-hook/house-meaning/${house}`, label: `${houseLabel} house meaning`, scope: `Used by every natal placement in the ${houseLabel} house.` },
         { key: `fallback-hook/placement-house-sentence/${planet}/${house}`, label: `${planetLabel} in the ${houseLabel} house passage`, scope: `Used for ${planetLabel} in the ${houseLabel} house, across every zodiac sign.` }
       ]
     },
