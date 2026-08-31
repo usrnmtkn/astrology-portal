@@ -84,7 +84,8 @@ function readSkySignCopySources() {
 
 function isContinuousSkyPlacementRecord(record, contentKey) {
   return record.render_policy === "sky-placement-continuous-v2"
-    || contentKey.startsWith("fallback-hook/sky-sign-copy/");
+    || contentKey.startsWith("fallback-hook/sky-sign-copy/")
+    || contentKey.startsWith("sky-placement/article/");
 }
 
 function isSkyPlacementPartitionKey(contentKey) {
@@ -360,7 +361,9 @@ function mapPackageRecord(record, bucket) {
     : null;
   const distributionApproved = distributionRelease?.distribution_state === "serving"
     && distributionRelease.approved_keys?.includes(contentKey);
-  const serving = requiresServingManifest && !distributionRelease
+  const serving = record.serving_enabled === false
+    ? { status: "DRAFT", lane: "reference", reviewState: "serving-disabled" }
+    : requiresServingManifest && !distributionRelease
     ? { status: "DRAFT", lane: "reference", reviewState: "serving-manifest-required" }
     : !distributionApproved && requiresServingManifest
       ? { status: "DRAFT", lane: "reference", reviewState: "serving-awaiting-owner-approval" }
