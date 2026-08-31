@@ -9,7 +9,8 @@ import {
 import { isGovernedReaderEligible } from "../apps/web/src/content/fallbackArchitectureV3/resolver/readerEligibility.mjs";
 import {
   SKY_V4_CANONICAL_PACKAGE_VERSION,
-  skyV4ContentStudioRecords
+  skyV4ContentStudioRecords,
+  skyV4GovernedAspectStudioRecord
 } from "../apps/web/src/content/fallbackArchitectureV3/resolver/skyPlacementV4Canonical.mjs";
 
 const repoRoot = path.resolve(path.dirname(new URL(import.meta.url).pathname), "..");
@@ -708,7 +709,10 @@ function materializeRows(sources) {
     ...sources.pairDailyFrames.rows.map((row) => mapPackageRecord(row, "fallback-system")),
     ...sources.pairDailyClauses.rows.map((row) => mapPackageRecord(row, "fallback-system")),
     ...sources.skyArticleRows.hookRows.map((row) => mapPackageRecord(row, "fallback-system")),
-    ...sources.skyAspectPhrasebook.hookRows.map((row) => mapPackageRecord(row, "fallback-system")),
+    ...sources.skyAspectPhrasebook.hookRows.map((row) => mapPackageRecord(
+      skyV4GovernedAspectStudioRecord(row) ?? row,
+      "fallback-system"
+    )),
     ...sources.skyPlanetFrames.rows.map((row) => mapPackageRecord(row, "fallback-system")),
     ...sources.skyPlacementVoicePass.rows.map((row) => mapPackageRecord(row, "fallback-system")),
     ...(sources.skySignCopy.superseded_rows ?? []).map((row) => mapPackageRecord(row, "fallback-system")),
@@ -867,7 +871,7 @@ function importedCounts(rows) {
     authoredCards: countBy(rows, (row) => packageBucket(row) === "authored-content"),
     fallbackHooks: countBy(rows, (row) => packageBucket(row) === "fallback-system" && packageRole(row) === "fallback_hook"),
     vocabulary: countBy(rows, (row) => packageBucket(row) === "fallback-system" && packageRole(row) === "vocabulary"),
-    templates: countBy(rows, (row) => packageBucket(row) === "fallback-system" && packageRole(row) === "template"),
+    templates: countBy(rows, (row) => packageRole(row) === "template"),
     sourceMaterial: countBy(rows, (row) => packageBucket(row) === "source-material"),
     liveServing: countBy(rows, (row) => row.status === "LIVE" && row.lane === "serving" && row.review_state === null)
   };
@@ -982,7 +986,7 @@ const counts = {
   authoredCards: countBy(rows, (row) => row.source_snapshot.contentType === "authored-content"),
   fallbackHooks: countBy(rows, (row) => row.source_snapshot.contentType === "fallback-system" && row.source_snapshot.content_role === "fallback_hook"),
   vocabulary: countBy(rows, (row) => row.source_snapshot.contentType === "fallback-system" && row.source_snapshot.content_role === "vocabulary"),
-  templates: countBy(rows, (row) => row.source_snapshot.contentType === "fallback-system" && row.source_snapshot.content_role === "template"),
+  templates: countBy(rows, (row) => row.source_snapshot.content_role === "template"),
   sourceMaterial: countBy(rows, (row) => row.source_snapshot.contentType === "source-material"),
   liveServing: countBy(rows, (row) => row.status === "LIVE" && row.lane === "serving" && row.review_state === null)
 };
