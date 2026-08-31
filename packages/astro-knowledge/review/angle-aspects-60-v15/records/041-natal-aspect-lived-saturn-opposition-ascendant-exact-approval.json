@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "id": "angle-aspects-60-v15-041",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_reviewed",
+  "provenanceNote": "The owner supplied exact wording approval for V15 and explicitly did not relabel collaboratively drafted copy as owner_authored.",
+  "contentKey": "fallback-hook/natal-aspect-lived/saturn/opposition/ascendant",
+  "packetKey": "saturn|opposition|ascendant",
+  "payloadSha256": "03120a270b9410f8c56c6f8b38c2b10dd80dc1561b30576897c913c5e8fa3aa3",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "A relationship becomes more serious when the practical parts of two lives start affecting each other. Whose schedule changes? Who follows through when the plan gets difficult? What happens when one person has less time, less money, more responsibility, or something they cannot simply rearrange? With Saturn opposite your Ascendant, these questions are not separate from intimacy. They are often where you find out what the relationship can actually hold.\n\nSaturn deals with commitment, time, responsibility, limits, and what remains after something has been tested. Opposite the Ascendant, Saturn sits on the Descendant, where another person's choices start having consequences for you too. You may take commitment seriously because you understand that choosing someone eventually means living with parts of their life you did not choose yourself.\n\nThat can make you exceptionally reliable in a relationship. You know how to show up after the easy part is over, keep an agreement, and stay present when somebody is going through something difficult. The complication begins when being dependable turns into handling whatever would otherwise be left undone. Reliability should tell you something about the relationship, not become the entire relationship. Being able to carry something does not automatically make it yours to carry.\n\nA relationship that lasts should not rely entirely on your endurance. It should eventually show you what the other person is willing to carry too. Commitment matters because two people are building something together, not because one person proved they could keep it standing alone.",
+    "sourceMechanism": "Exact owner-approved copy transcribed byte-for-byte from the SHA-bound canonical V15 owner-approval artifact; collaborative authorship is preserved and sole owner authorship is not asserted."
+  },
+  "approvedAt": "2026-08-31",
+  "approvalEffect": "exact_wording_approval",
+  "sourceArtifact": {
+    "id": "angle-aspects-60-v15-owner-approval-candidate",
+    "path": "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md",
+    "sha256": "3bbcd3e611d72a9754e9fdb4f4390ec860a670bc53af6b059ea23a212d37bfd4",
+    "passageHeading": "Saturn opposition Ascendant",
+    "passageOrdinal": 41,
+    "bodySha256": "83a749dd9b7c7bac4869f0c3aff801a7ae109f2da6872fccdcb898d7e6c36d47"
+  },
+  "ownerConfirmationSource": {
+    "channel": "Codex task owner message",
+    "taskId": "01a04fc0-899b-7cd2-bb2e-98ad182391bb",
+    "date": "2026-08-31"
+  },
+  "replacementAuthorization": null,
+  "additionalBilledCalls": 0
+}

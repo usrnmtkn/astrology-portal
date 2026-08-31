@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "id": "angle-aspects-60-v15-037",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_reviewed",
+  "provenanceNote": "The owner supplied exact wording approval for V15 and explicitly did not relabel collaboratively drafted copy as owner_authored.",
+  "contentKey": "fallback-hook/natal-aspect-lived/saturn/conjunction/ascendant",
+  "packetKey": "saturn|conjunction|ascendant",
+  "payloadSha256": "3d5b0fd7ab0db7b864ada4ef2da3d4460813db066a64c7de6c5cef6d5f68dc49",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "You may walk into something new already thinking about what will be expected of you once the excitement wears off. Before you say yes to the job, the invitation, the project, or the relationship, you want to know how much time it will take, what you are responsible for, and what happens if the plan becomes more complicated than it looks right now. Other people may still be deciding if they are interested while you are already thinking about what agreeing would actually require.\n\nSaturn stands at the threshold where a choice becomes a consequence. On your Ascendant, you are often thinking about that consequence before everyone else has finished deciding how they feel about the beginning. You notice the weak point in the plan, the missing information, or the responsibility nobody has mentioned yet.\n\nThat judgment can save you from commitments that never made sense. It can also make every beginning carry the weight of everything that could happen afterward. You prepare for the interview as though you already have the job, hesitate over an invitation because you cannot see how it fits three months from now, or wait to introduce yourself until you feel more established. The first commitment is real. The problem is when you start treating it like a commitment to everything that could follow.\n\nYou should know what you are agreeing to. You do not need to decide every responsibility that might come later before you can make the decision in front of you.",
+    "sourceMechanism": "Exact owner-approved copy transcribed byte-for-byte from the SHA-bound canonical V15 owner-approval artifact; collaborative authorship is preserved and sole owner authorship is not asserted."
+  },
+  "approvedAt": "2026-08-31",
+  "approvalEffect": "exact_wording_approval",
+  "sourceArtifact": {
+    "id": "angle-aspects-60-v15-owner-approval-candidate",
+    "path": "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md",
+    "sha256": "3bbcd3e611d72a9754e9fdb4f4390ec860a670bc53af6b059ea23a212d37bfd4",
+    "passageHeading": "Saturn conjunct Ascendant",
+    "passageOrdinal": 37,
+    "bodySha256": "fef1b07f49e547307c2b52357d72f03b8e499542a5c4f481a84794f549abeeca"
+  },
+  "ownerConfirmationSource": {
+    "channel": "Codex task owner message",
+    "taskId": "01a04fc0-899b-7cd2-bb2e-98ad182391bb",
+    "date": "2026-08-31"
+  },
+  "replacementAuthorization": null,
+  "additionalBilledCalls": 0
+}

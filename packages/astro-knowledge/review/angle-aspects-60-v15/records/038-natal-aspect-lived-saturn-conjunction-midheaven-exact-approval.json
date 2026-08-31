@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "id": "angle-aspects-60-v15-038",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_reviewed",
+  "provenanceNote": "The owner supplied exact wording approval for V15 and explicitly did not relabel collaboratively drafted copy as owner_authored.",
+  "contentKey": "fallback-hook/natal-aspect-lived/saturn/conjunction/midheaven",
+  "packetKey": "saturn|conjunction|midheaven",
+  "payloadSha256": "1c1da7802f831def5145e9c14d370309e6840073c22ad5ab00d8bd989cab3f45",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "You may spend a long time doing the work before the title catches up. People trust you with the difficult assignment, ask you to fix what somebody else left unfinished, or start relying on your judgment before anyone has formally acknowledged that your role has changed. By the time the promotion, title, or authority arrives, you may already have been doing some version of the job for years.\n\nSaturn describes time, responsibility, structure, and what has to hold up under pressure. The Midheaven describes what you become known for and the public direction you are building. With Saturn there, your reputation often develops through consistency. People learn what they can trust you with because they have watched you handle it more than once.\n\nThe problem is that competence attracts responsibility faster than it attracts support. You can get the role because you have already proved you can carry it, then discover that carrying it is also the reason nobody thinks you need more help, more money, or more authority. A reputation for handling difficult things can quietly become a guarantee that more difficult things will keep arriving. Success is not always evidence that something suits you. You can be very good at a role that now asks more from you than you want to keep giving.\n\nMore responsibility should come with something. That could mean more money, more authority, more control over your time, or a clearer path forward. Do not confuse overcommitment with excellence. What you become known for should still be work you would choose once everybody expects you to keep doing it.",
+    "sourceMechanism": "Exact owner-approved copy transcribed byte-for-byte from the SHA-bound canonical V15 owner-approval artifact; collaborative authorship is preserved and sole owner authorship is not asserted."
+  },
+  "approvedAt": "2026-08-31",
+  "approvalEffect": "exact_wording_approval",
+  "sourceArtifact": {
+    "id": "angle-aspects-60-v15-owner-approval-candidate",
+    "path": "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md",
+    "sha256": "3bbcd3e611d72a9754e9fdb4f4390ec860a670bc53af6b059ea23a212d37bfd4",
+    "passageHeading": "Saturn conjunct Midheaven",
+    "passageOrdinal": 38,
+    "bodySha256": "17c5f453af9776a73b0a6d7b300e875f3e54c7422405ac51556730c86ddd0d90"
+  },
+  "ownerConfirmationSource": {
+    "channel": "Codex task owner message",
+    "taskId": "01a04fc0-899b-7cd2-bb2e-98ad182391bb",
+    "date": "2026-08-31"
+  },
+  "replacementAuthorization": null,
+  "additionalBilledCalls": 0
+}

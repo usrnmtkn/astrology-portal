@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "id": "angle-aspects-60-v15-025",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_reviewed",
+  "provenanceNote": "The owner supplied exact wording approval for V15 and explicitly did not relabel collaboratively drafted copy as owner_authored.",
+  "contentKey": "fallback-hook/natal-aspect-lived/mars/conjunction/ascendant",
+  "packetKey": "mars|conjunction|ascendant",
+  "payloadSha256": "4778f44b06b80a54ee6095a4ab04a65b4d6dc244c2a43f4dd93225bcd2ffd4db",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "You learn a lot about yourself by noticing what you are willing to do, pursue, defend, and say no to. When you want something, you are usually more comfortable moving toward it than waiting for someone else to decide what happens next.\n\nAction gives you information about what matters. You may not know how much you care until you find yourself fighting for it, making time for it, or refusing to let somebody else make the decision for you.\n\nWanting to act and knowing what the action is for are two different things. You can push harder because somebody is slowing you down, turn a disagreement into something you need to win, or keep spending effort on a problem simply because you have already committed to solving it.\n\nOver time, you learn that willingness to fight tells you something matters, but it does not tell you how long the fight deserves to continue. The more clearly you know what you actually want, the easier it becomes to tell the difference between protecting something important and spending more effort on a struggle that no longer changes anything.",
+    "sourceMechanism": "Exact owner-approved copy transcribed byte-for-byte from the SHA-bound canonical V15 owner-approval artifact; collaborative authorship is preserved and sole owner authorship is not asserted."
+  },
+  "approvedAt": "2026-08-31",
+  "approvalEffect": "exact_wording_approval",
+  "sourceArtifact": {
+    "id": "angle-aspects-60-v15-owner-approval-candidate",
+    "path": "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md",
+    "sha256": "3bbcd3e611d72a9754e9fdb4f4390ec860a670bc53af6b059ea23a212d37bfd4",
+    "passageHeading": "Mars conjunct Ascendant",
+    "passageOrdinal": 25,
+    "bodySha256": "b41a8c805aa6cb32160095e004fb77455b4b29f1fe1631d9ffbaef7e2908e9a6"
+  },
+  "ownerConfirmationSource": {
+    "channel": "Codex task owner message",
+    "taskId": "01a04fc0-899b-7cd2-bb2e-98ad182391bb",
+    "date": "2026-08-31"
+  },
+  "replacementAuthorization": null,
+  "additionalBilledCalls": 0
+}
