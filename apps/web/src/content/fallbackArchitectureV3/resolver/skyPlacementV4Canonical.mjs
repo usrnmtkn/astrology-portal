@@ -1,6 +1,8 @@
 import { createHash } from "node:crypto";
+import continuousOwnerApproval from "../authored-inputs/sky-v4-continuous-120-owner-approval-v1.json" with { type: "json" };
 
 export const SKY_V4_CANONICAL_PACKAGE_VERSION = "SKY-V4-CANONICAL-CODEX-HANDOFF-CONTENT-STUDIO-EDITABLE-2026-08-30";
+export const SKY_V4_CANONICAL_JSON_SHA256 = "9b91e715bea63a2c835001783240122aad1e000b3982d68bfebbb3cef690a750";
 
 const SIGNS = Object.freeze([
   "aries", "taurus", "gemini", "cancer", "leo", "virgo",
@@ -11,6 +13,8 @@ const CONTINUOUS_PLANETS = Object.freeze([
   "sun", "mercury", "venus", "mars", "jupiter",
   "saturn", "uranus", "neptune", "pluto", "chiron"
 ]);
+
+const CONTINUOUS_OWNER_APPROVED_KEYS = new Set(continuousOwnerApproval.approved_keys);
 
 export const SKY_V4_OVERLAY_DEFAULTS = Object.freeze({
   contextualTransitOverlaysEnabled: true,
@@ -96,6 +100,38 @@ export function assertSkyV4CanonicalPackage(corpus) {
   return corpus;
 }
 
+export function assertSkyV4ContinuousOwnerApproval(corpus) {
+  assertSkyV4CanonicalPackage(corpus);
+  const continuousKeys = new Set(corpus.content.continuous.map((row) => row.contentKey));
+  if (continuousOwnerApproval.canonical_package_version !== SKY_V4_CANONICAL_PACKAGE_VERSION) {
+    throw new Error("SKY_V4_GOVERNANCE: continuous approval package version mismatch.");
+  }
+  if (continuousOwnerApproval.canonical_json_sha256 !== SKY_V4_CANONICAL_JSON_SHA256) {
+    throw new Error("SKY_V4_GOVERNANCE: continuous approval canonical hash mismatch.");
+  }
+  if (
+    continuousOwnerApproval.review_status !== "approved"
+    || continuousOwnerApproval.owner_approved !== true
+    || continuousOwnerApproval.serving_enabled !== false
+  ) {
+    throw new Error("SKY_V4_GOVERNANCE: continuous approval lifecycle state is invalid.");
+  }
+  if (CONTINUOUS_OWNER_APPROVED_KEYS.size !== 120) {
+    throw new Error("SKY_V4_GOVERNANCE: continuous approval must contain 120 unique keys.");
+  }
+  for (const key of CONTINUOUS_OWNER_APPROVED_KEYS) {
+    if (!continuousKeys.has(key)) {
+      throw new Error(`SKY_V4_GOVERNANCE: approval contains non-canonical key ${key}.`);
+    }
+  }
+  for (const key of continuousKeys) {
+    if (!CONTINUOUS_OWNER_APPROVED_KEYS.has(key)) {
+      throw new Error(`SKY_V4_GOVERNANCE: canonical continuous key lacks explicit approval ${key}.`);
+    }
+  }
+  return continuousOwnerApproval;
+}
+
 function studioRecord({
   source,
   contentKey,
@@ -107,7 +143,8 @@ function studioRecord({
   readOnlyFields,
   sourceUrls = [],
   ownerPhraseAnchors = [],
-  contentRole = "full_copy"
+  contentRole = "full_copy",
+  approval = null
 }) {
   const baseline = structuredClone(source);
   const baselineJson = JSON.stringify(baseline);
@@ -118,7 +155,7 @@ function studioRecord({
     body_you: body,
     summary,
     content_role: contentRole,
-    review_status: "needs_review",
+    review_status: approval?.review_status ?? "needs_review",
     surface: "sky",
     render_policy: "sky-v4-canonical-stage-preview",
     source_package: SKY_V4_CANONICAL_PACKAGE_VERSION,
@@ -130,9 +167,17 @@ function studioRecord({
     studio_owner_phrase_anchors: ownerPhraseAnchors.filter(Boolean),
     studio_source_baseline: baseline,
     studio_version_status: "draft",
-    owner_approved: false,
+    owner_approved: approval?.owner_approved ?? false,
     serving_enabled: false,
-    note: "Canonical SKY V4 stage-only Content Studio record. The immutable package baseline is retained; edits create non-serving draft versions."
+    ...(approval ? {
+      approved_via: approval.approval_record,
+      owner_approval_id: approval.approval_id,
+      owner_approved_fields: ["placementArticle", "tldrWhat", "tldrTakeaway"],
+      owner_unapproved_fields: ["fallback.hook", "fallback.lived", "fallback.turn"]
+    } : {}),
+    note: approval
+      ? "Canonical SKY V4 owner-approved continuous article. Serving remains disabled; fallback Hook/Lived/Turn fields remain outside this approval."
+      : "Canonical SKY V4 stage-only Content Studio record. The immutable package baseline is retained; edits create non-serving draft versions."
   };
 }
 
@@ -158,7 +203,8 @@ function continuousStudioRecords(corpus) {
     ],
     readOnlyFields: ["planet", "sign", "contentKey", "sourceExactStatus", "sourcePrimary", "sourceSecondary"],
     sourceUrls: [row.sourcePrimary, row.sourceSecondary],
-    ownerPhraseAnchors: anchors(row.ownerPhraseAnchors)
+    ownerPhraseAnchors: anchors(row.ownerPhraseAnchors),
+    approval: CONTINUOUS_OWNER_APPROVED_KEYS.has(row.contentKey) ? continuousOwnerApproval : null
   }));
 }
 
@@ -427,6 +473,7 @@ function templateStudioRecords(corpus) {
 
 export function skyV4ContentStudioRecords(corpus) {
   assertSkyV4CanonicalPackage(corpus);
+  assertSkyV4ContinuousOwnerApproval(corpus);
   return [
     ...continuousStudioRecords(corpus),
     ...newMoonStudioRecords(corpus),
