@@ -37,7 +37,7 @@ assert.match(
 );
 assert.match(
   generatedContentSource,
-  /fallbackArchitectureV3BundleCacheSchema = "fallback-architecture-v3-dashboard-cache-v4"/u,
+  /fallbackArchitectureV3BundleCacheSchema = "fallback-architecture-v3-dashboard-cache-v5"/u,
   "Browser cache envelopes must use the hash-aware schema."
 );
 assert.match(
@@ -47,8 +47,8 @@ assert.match(
 );
 assert.match(
   generatedContentSource,
-  /manifest\.contentHash !== bundledManifest\.contentHash[\s\S]*?manifest\.contentHash !== metadata\.contentHash/u,
-  "Database partitions must exactly match both their bundled manifest and mirror metadata."
+  /allowEditorialContentOverrides[\s\S]*?manifest\.keyManifestHash !== bundledManifest\.keyManifestHash[\s\S]*?manifest\.keyManifestHash !== metadata\.keyManifestHash/u,
+  "Database partitions must retain the bundled key topology while allowing approved editorial copy overrides."
 );
 assert.match(
   generatedContentSource,

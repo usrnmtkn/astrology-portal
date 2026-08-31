@@ -107,10 +107,10 @@ const fallbackArchitectureV3SkyPlacementProvider = "tldrastro-fallback-architect
 const fallbackArchitectureV3ApprovedReviews = new Set(["approved", "approved_reuse", "reviewed"]);
 const fallbackArchitectureV3BundleCacheKey = "tldrastro:fallbackArchitectureV3:dashboardBundle";
 const fallbackArchitectureV3BundleVersionKey = "tldrastro:fallbackArchitectureV3:dashboardBundleVersion";
-const fallbackArchitectureV3BundleCacheSchema = "fallback-architecture-v3-dashboard-cache-v4";
+const fallbackArchitectureV3BundleCacheSchema = "fallback-architecture-v3-dashboard-cache-v5";
 const fallbackArchitectureV3SkyPlacementBundleCacheKey = "tldrastro:fallbackArchitectureV3:skyPlacementDashboardBundle";
 const fallbackArchitectureV3SkyPlacementBundleVersionKey = "tldrastro:fallbackArchitectureV3:skyPlacementDashboardBundleVersion";
-const fallbackArchitectureV3SkyPlacementBundleCacheSchema = "fallback-architecture-v3-sky-placement-dashboard-cache-v1";
+const fallbackArchitectureV3SkyPlacementBundleCacheSchema = "fallback-architecture-v3-sky-placement-dashboard-cache-v2";
 const fallbackArchitectureV3ImportBatchId = `fallback-architecture-${fallbackArchitectureV3PackageVersion}`;
 
 function isSkyPlacementFallbackPartitionKey(contentKey: string) {
@@ -1056,7 +1056,8 @@ function equalFallbackArchitectureV3MirrorMetadata(
 async function fallbackArchitectureV3BundleManifestIfValid(
   bundle: FallbackArchitectureV3Bundle,
   metadata: FallbackArchitectureV3MirrorMetadata,
-  loadBundledPartitionManifest: () => Promise<FallbackArchitectureV3PackageManifest>
+  loadBundledPartitionManifest: () => Promise<FallbackArchitectureV3PackageManifest>,
+  { allowEditorialContentOverrides = false }: { allowEditorialContentOverrides?: boolean } = {}
 ): Promise<FallbackArchitectureV3PackageManifest | null> {
   if (metadata.packageVersion !== fallbackArchitectureV3BundledManifestSummary.packageVersion) {
     return null;
@@ -1066,12 +1067,17 @@ async function fallbackArchitectureV3BundleManifestIfValid(
   const bundledManifest = await loadBundledPartitionManifest();
 
   if (
-    manifest.contentHash !== bundledManifest.contentHash
-    || manifest.keyManifestHash !== bundledManifest.keyManifestHash
+    manifest.keyManifestHash !== bundledManifest.keyManifestHash
     || manifest.keyCount !== bundledManifest.keyCount
-    || manifest.contentHash !== metadata.contentHash
     || manifest.keyManifestHash !== metadata.keyManifestHash
     || manifest.keyCount !== metadata.keyCount
+    || (
+      !allowEditorialContentOverrides
+      && (
+        manifest.contentHash !== bundledManifest.contentHash
+        || manifest.contentHash !== metadata.contentHash
+      )
+    )
   ) {
     return null;
   }
@@ -1178,7 +1184,8 @@ async function readCachedFallbackArchitectureV3Partition({
     const mirror = await fallbackArchitectureV3BundleManifestIfValid(
       bundle,
       mirrorMetadata,
-      loadManifest
+      loadManifest,
+      { allowEditorialContentOverrides: true }
     );
 
     if (!mirror) {
@@ -1511,7 +1518,8 @@ export async function loadFallbackArchitectureV3DashboardBundle(): Promise<Fallb
   const mirror = await fallbackArchitectureV3BundleManifestIfValid(
     candidateBundle,
     mirrorMetadata,
-    loadFallbackArchitectureV3BundledCoreManifest
+    loadFallbackArchitectureV3BundledCoreManifest,
+    { allowEditorialContentOverrides: true }
   );
 
   if (!mirror) {
@@ -1622,7 +1630,8 @@ export async function loadFallbackArchitectureV3SkyPlacementDashboardBundle(): P
   const mirror = await fallbackArchitectureV3BundleManifestIfValid(
     candidateBundle,
     metadata,
-    loadFallbackArchitectureV3BundledSkyPlacementManifest
+    loadFallbackArchitectureV3BundledSkyPlacementManifest,
+    { allowEditorialContentOverrides: true }
   );
 
   if (!mirror) {
