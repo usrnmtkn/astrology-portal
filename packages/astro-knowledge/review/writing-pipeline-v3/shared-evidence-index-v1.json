@@ -1,6 +1,6 @@
 {
   "version": "shared-evidence-standard-v1-2026-08-13",
-  "generatedAt": "2026-08-27T16:44:15.817Z",
+  "generatedAt": "2026-08-31T16:02:47.455Z",
   "keyFormat": "planet|sign; *|* is globally eligible register evidence",
   "rolePriority": {
     "scene": [
@@ -18,10 +18,10 @@
     "data/writing/owner-supplied-structural-exemplars.json"
   ],
   "counts": {
-    "entries": 5935,
+    "entries": 5937,
     "meaning": 2224,
     "register": 1758,
-    "scene": 426,
+    "scene": 428,
     "argument": 1181,
     "phrase": 346,
     "planetSignKeys": 247
@@ -7318,6 +7318,8 @@
         "scene:serving:fallback-hook/lunation-horoscope/eclipse-note",
         "scene:serving:fallback-hook/natal-aspect-lived/jupiter/quincunx/saturn",
         "scene:serving:fallback-hook/natal-aspect-lived/mars/quincunx/saturn",
+        "scene:serving:fallback-hook/natal-aspect-lived/moon/opposition/ascendant",
+        "scene:serving:fallback-hook/natal-aspect-lived/saturn/opposition/midheaven",
         "scene:serving:fallback-hook/natal-aspect-lived/uranus/quincunx/pluto",
         "scene:serving:fallback-hook/natal-you-placement-complete-final/chiron/aquarius/12",
         "scene:serving:fallback-hook/natal-you-placement-complete-final/chiron/cancer/12",
@@ -141436,6 +141438,69 @@
       ],
       "eligibleForWriterRegister": true,
       "text": "Mars inconjunct Saturn can spend the whole week doing what has to be done and then make everybody else's fun annoying. You finish the deadline, handle the caregiving, answer the messages, and look up to realize the day is gone. Resentment usually arrives before you admit how little time is left for anything you actually wanted."
+    },
+    {
+      "id": "scene:serving:fallback-hook/natal-aspect-lived/moon/opposition/ascendant",
+      "indexKey": "*|*",
+      "planet": null,
+      "sign": null,
+      "role": "scene",
+      "sourcePath": "data/writing/OWNER_APPROVED_EXAMPLES.jsonl",
+      "contentKey": "fallback-hook/natal-aspect-lived/moon/opposition/ascendant",
+      "family": "owner-approved-scene-evidence",
+      "governanceTier": "serving-review-status-approved",
+      "ownerApproved": true,
+      "ownerAuthored": false,
+      "generated": false,
+      "evidenceRole": "approved_serving_scene",
+      "sourceKind": "approved_serving_row",
+      "house": null,
+      "eventType": null,
+      "register": "second_person",
+      "store": null,
+      "themes": [],
+      "subjectTags": [],
+      "failureTags": [],
+      "copySha": null,
+      "sceneNouns": [
+        "appointment",
+        "meeting",
+        "schedule"
+      ],
+      "eligibleForWriterRegister": true,
+      "text": "You notice changes in the other person's mood quickly, and that can affect your own plans before either of you has said what is actually needed. You notice when they are quieter than usual, distracted, stressed, or holding something back, and you may start adjusting around them before the real conversation has happened.\n\nCare is one of the ways you build closeness. You remember the appointment, check in after a difficult day, notice when somebody needs space, or change something small because you know it will make their life easier. Those details matter because relationships are built through what people repeatedly do for each other.\n\nThis starts costing you when you become responsible for noticing everything first. You start the difficult conversation, remember what needs to happen, move your schedule around their mood, and keep track of needs the other person has never learned to name for themselves.\n\nCare should go both ways. Being good at noticing what someone needs does not make you responsible for meeting it before they ask. A relationship becomes more dependable when both people can say what they need and neither person's feelings automatically become the other person's job."
+    },
+    {
+      "id": "scene:serving:fallback-hook/natal-aspect-lived/saturn/opposition/midheaven",
+      "indexKey": "*|*",
+      "planet": null,
+      "sign": null,
+      "role": "scene",
+      "sourcePath": "data/writing/OWNER_APPROVED_EXAMPLES.jsonl",
+      "contentKey": "fallback-hook/natal-aspect-lived/saturn/opposition/midheaven",
+      "family": "owner-approved-scene-evidence",
+      "governanceTier": "serving-review-status-approved",
+      "ownerApproved": true,
+      "ownerAuthored": false,
+      "generated": false,
+      "evidenceRole": "approved_serving_scene",
+      "sourceKind": "approved_serving_row",
+      "house": null,
+      "eventType": null,
+      "register": "second_person",
+      "store": null,
+      "themes": [],
+      "subjectTags": [],
+      "failureTags": [],
+      "copySha": null,
+      "sceneNouns": [
+        "appointment",
+        "bill",
+        "bills",
+        "schedule"
+      ],
+      "eligibleForWriterRegister": true,
+      "text": "A home can be well managed and still not feel like somewhere you get to rest. The bills are paid, the appointments are handled, somebody remembered what needed to be repaired, and the family logistics keep moving because somebody keeps track of them. With Saturn opposite your Midheaven, responsibility can become part of the private life that nobody outside it sees.\n\nSaturn deals with responsibility, time, limits, and what has to keep working. Opposite the Midheaven, Saturn sits on the IC, the part of the chart connected to home, roots, family, and what your life is built on away from public view. Structure can be extremely useful here. You may need a home that functions, clear expectations with family, or routines that make ordinary life easier instead of leaving you constantly catching up.\n\nThe problem begins when a functioning home depends on you staying on top of everything. You handle the repairs, organize everybody's schedule, keep showing up for family, and realize that your main role at home has become keeping things running. A house that functions is not automatically a home where you get to rest. No amount of information or planning can substitute for actually feeling at home in your life.\n\nSome responsibilities at home are yours because you chose them. Others are still yours because everyone has gotten used to you being the person who handles them. You can honor your roots without living tangled in them. A home can require work without becoming another job."
     },
     {
       "id": "scene:serving:fallback-hook/natal-aspect-lived/uranus/quincunx/pluto",

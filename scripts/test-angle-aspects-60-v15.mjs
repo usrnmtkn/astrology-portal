@@ -71,6 +71,9 @@ const manifest = readJson(`${reviewRoot}/shipping-manifest.json`);
 const packet = readJson(`${reviewRoot}/angle-aspects-60-v15-payloads.json`);
 const importArtifact = readJson(`${reviewRoot}/ANGLE-ASPECTS-60-V15-CONTENT-STUDIO-IMPORT.json`);
 const replacements = readJson(`${reviewRoot}/replacement-before-after.json`);
+const friendsV1Manifest = readJson("packages/astro-knowledge/review/angle-aspects-60-friends-v1/shipping-manifest.json");
+const youSupersessions = readJson("packages/astro-knowledge/review/angle-aspects-60-friends-v1/YOU-V15-TWO-OWNER-APPROVED-SUPERSESSIONS.json");
+const youSupersessionByKey = new Map(youSupersessions.revisions.map((row) => [row.content_key, row]));
 const sourceBytes = fs.readFileSync(path.join(repoRoot, manifest.sourceArtifact.path));
 const importBytes = fs.readFileSync(path.join(repoRoot, manifest.regeneratedImportArtifact.path));
 const passages = parsePassages(sourceBytes.toString("utf8"));
@@ -131,10 +134,22 @@ for (const [index, manifestRow] of manifest.rows.entries()) {
 
   const servingRow = rowsByKey.get(manifestRow.contentKey);
   assert.ok(servingRow, `${manifestRow.contentKey}: serving row missing.`);
-  assert.equal(servingRow.body, record.payload.body, `${manifestRow.contentKey}: record to serving body`);
-  assert.equal(servingRow.sourceMechanism, record.payload.sourceMechanism);
-  assert.equal(servingRow.approval.recordPath, manifestRow.recordPath);
-  assert.equal(servingRow.approval.payloadSha256, entry.sha256);
+  const supersession = youSupersessionByKey.get(manifestRow.contentKey);
+  const expectedServingBody = supersession?.body ?? record.payload.body;
+  assert.equal(servingRow.body, expectedServingBody, `${manifestRow.contentKey}: current serving body`);
+  if (supersession) {
+    const currentManifestRow = friendsV1Manifest.youRevisionRecords.find((row) => row.contentKey === manifestRow.contentKey);
+    assert.ok(currentManifestRow, `${manifestRow.contentKey}: later You supersession manifest row missing`);
+    const currentRecord = readJson(currentManifestRow.recordPath);
+    assert.equal(servingRow.sourceMechanism, currentRecord.payload.sourceMechanism);
+    assert.equal(servingRow.approval.recordPath, currentManifestRow.recordPath);
+    assert.equal(servingRow.approval.payloadSha256, currentManifestRow.payloadSha256);
+    assert.ok(servingRow.historical_approvals.some((approval) => approval.recordPath === manifestRow.recordPath));
+  } else {
+    assert.equal(servingRow.sourceMechanism, record.payload.sourceMechanism);
+    assert.equal(servingRow.approval.recordPath, manifestRow.recordPath);
+    assert.equal(servingRow.approval.payloadSha256, entry.sha256);
+  }
 
   const [, , planet, aspect, angle] = manifestRow.contentKey.split("/");
   for (const [order, facts] of [
@@ -147,15 +162,15 @@ for (const [index, manifestRow] of manifest.rows.entries()) {
       ["shipped-dist", shippedRenderer.renderNatalAspect(facts)],
     ]) {
       assert.equal(rendered.templateKey, manifestRow.contentKey, `${manifestRow.packetKey}/${order}: ${implementation} content key`);
-      assert.equal(rendered.body, entry.payload.body, `${manifestRow.packetKey}/${order}: ${implementation} body`);
+      assert.equal(rendered.body, expectedServingBody, `${manifestRow.packetKey}/${order}: ${implementation} body`);
       assert.equal(rendered.provenanceTier, "exact-owner-approved", `${manifestRow.packetKey}/${order}: ${implementation} provenance tier`);
       const selectedRow = rowsByKey.get(rendered.templateKey);
-      assert.equal(selectedRow.approval.recordPath, manifestRow.recordPath, `${manifestRow.packetKey}/${order}: ${implementation} record path`);
-      assert.equal(selectedRow.approval.payloadSha256, manifestRow.payloadSha256, `${manifestRow.packetKey}/${order}: ${implementation} payload hash`);
+      assert.equal(selectedRow.approval.recordPath, servingRow.approval.recordPath, `${manifestRow.packetKey}/${order}: ${implementation} record path`);
+      assert.equal(selectedRow.approval.payloadSha256, servingRow.approval.payloadSha256, `${manifestRow.packetKey}/${order}: ${implementation} payload hash`);
       exactResolverVerificationCount += 1;
     }
   }
 }
 
 assert.equal(exactResolverVerificationCount, 360, "60 rows x 2 key orders x 3 resolver builds must pass exact verification.");
-console.log("V15 natal angle aspects: ok (60/60 Markdown/import/packet/record/serving parity; 360 exact resolver checks; 49 CREATE; 11 authorized REPLACE; zero non-target source-row drift).");
+console.log("V15 natal angle aspects: ok (60/60 immutable V15 Markdown/import/packet/record parity; 2 later You supersessions preserved separately; 360 current exact resolver checks; zero non-target source-row drift).");

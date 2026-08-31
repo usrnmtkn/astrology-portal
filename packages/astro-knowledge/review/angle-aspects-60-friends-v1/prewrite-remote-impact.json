@@ -1,0 +1,72 @@
+{
+  "capturedAt": "2026-08-31T15:37:05.366Z",
+  "authority": {
+    "friendsRows": 60,
+    "uniqueKeys": 60,
+    "canonicalMarkdownSha256": "186fc623066981bd66a1cb7f4f00e2062391572b5f94ab1ad68b7842c5c135f2",
+    "youRevisionRows": 2
+  },
+  "currentRemote": {
+    "exactTargetsFound": 60,
+    "missingKeys": [],
+    "duplicateRows": 0,
+    "liveServing": 60,
+    "unexpectedStates": [],
+    "existingFriendBodies": 0,
+    "friendAuthorityConflicts": [],
+    "blockTypes": [
+      "fallback_hook"
+    ],
+    "providers": [
+      "tldrastro-fallback-architecture-v3"
+    ]
+  },
+  "predictedTargetedMaterialization": {
+    "rowsUpdated": 60,
+    "rowsCreated": 0,
+    "rowsDeleted": 0,
+    "rowsArchivedOrDemoted": 0,
+    "exactKeyCount": 60,
+    "unrelatedKeysTouched": 0,
+    "topLevelBodyChanges": [
+      "fallback-hook/natal-aspect-lived/sun/square/ascendant",
+      "fallback-hook/natal-aspect-lived/moon/square/midheaven"
+    ],
+    "topLevelBodiesUnchanged": 58,
+    "friendBodiesAddedOrReplaced": 60,
+    "fieldsChangedForAll60": [
+      "sections.body_they",
+      "sections.packageRecord.body_they",
+      "sections.packageRecord.body_they_review_status",
+      "sections.packageRecord.body_they_sha256",
+      "sections.packageRecord.body_they_approved_via",
+      "sections.packageRecord.body_they_approval",
+      "sections.packageRecord.source_keys",
+      "source_snapshot",
+      "facts.packageVersion",
+      "facts.packageContentHash",
+      "facts.packageKeyManifestHash",
+      "prompt_version",
+      "evergreen_at",
+      "evergreen_by",
+      "updated_at"
+    ],
+    "fieldsChangedForTwoYouSupersessions": [
+      "body",
+      "sections.packageRecord.body",
+      "sections.packageRecord.sourceMechanism",
+      "sections.packageRecord.approval",
+      "sections.packageRecord.historical_approvals"
+    ],
+    "fieldsRequiredUnchanged": [
+      "content_key",
+      "status",
+      "lane",
+      "review_state",
+      "block_type",
+      "approval level",
+      "provider"
+    ]
+  },
+  "safeToProceed": true
+}

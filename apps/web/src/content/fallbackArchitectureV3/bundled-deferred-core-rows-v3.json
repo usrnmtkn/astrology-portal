@@ -25862,12 +25862,27 @@
       "render_policy": "reader-only-exact-lived-v1",
       "review_status": "approved",
       "source_keys": [
-        "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md"
+        "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md",
+        "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.md",
+        "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.json"
       ],
       "approval": {
         "approvalLevel": "exact_owner_approved",
         "recordPath": "packages/astro-knowledge/review/angle-aspects-60-v15/records/001-natal-aspect-lived-sun-conjunction-ascendant-exact-approval.json",
         "payloadSha256": "4c7b6dc0eb77c8dacc00b5e6bf89eaee04fa822af0ed4915b08fb29a9a581e8d",
+        "approvedAt": "2026-08-31"
+      },
+      "body_they": "{{Name}} tends to make an impression quickly because what matters to them usually shows. They speak up, take an interest, volunteer, or step forward, and people start forming an idea of who they are from what they see. The complication is that being good at something once can turn into a role everyone keeps handing back to them. Being recognized matters most when the thing people recognize is still something they would choose now.",
+      "body_they_review_status": "approved",
+      "body_they_sha256": "e4512b24119c7a36dc82f0913225d2818ab3b99574ba4adbfb8b6e5272bf8e82",
+      "body_they_approved_via": "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.md",
+      "body_they_authorship": "collaborative_owner_approved",
+      "body_they_name_variable": "{{Name}}",
+      "body_they_sourceMechanism": "Separately authored Friends copy transcribed byte-for-byte from the SHA-bound Friends V1 owner-approved artifact; no You-to-Friends transformation is permitted.",
+      "body_they_approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/angle-aspects-60-friends-v1/records/001-natal-aspect-lived-sun-conjunction-ascendant-friends-exact-approval.json",
+        "payloadSha256": "72be83f117930e4a98cbd25f81c4aac15f356a970172a514e3abc2375114ce86",
         "approvedAt": "2026-08-31"
       }
     },
@@ -25881,12 +25896,27 @@
       "render_policy": "reader-only-exact-lived-v1",
       "review_status": "approved",
       "source_keys": [
-        "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md"
+        "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md",
+        "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.md",
+        "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.json"
       ],
       "approval": {
         "approvalLevel": "exact_owner_approved",
         "recordPath": "packages/astro-knowledge/review/angle-aspects-60-v15/records/002-natal-aspect-lived-sun-conjunction-midheaven-exact-approval.json",
         "payloadSha256": "3abb43e25831367a77f350936c68db9c6d2b30ebae312582512df4a093aa8aac",
+        "approvedAt": "2026-08-31"
+      },
+      "body_they": "{{Name}} wants to be known for something that actually reflects who they are. The projects they lead, positions they take, standards they defend, and responsibilities they are willing to put their name on gradually become part of their reputation. Recognition can make changing direction harder once other people have decided what they are good at. What they become known for should still be something they would choose after people start expecting it from them.",
+      "body_they_review_status": "approved",
+      "body_they_sha256": "7a378df5f0aa6471346dcc95e9c5ed3b99e5603b15cdb3651d4fe2be9287b1cb",
+      "body_they_approved_via": "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.md",
+      "body_they_authorship": "collaborative_owner_approved",
+      "body_they_name_variable": "{{Name}}",
+      "body_they_sourceMechanism": "Separately authored Friends copy transcribed byte-for-byte from the SHA-bound Friends V1 owner-approved artifact; no You-to-Friends transformation is permitted.",
+      "body_they_approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/angle-aspects-60-friends-v1/records/002-natal-aspect-lived-sun-conjunction-midheaven-friends-exact-approval.json",
+        "payloadSha256": "ede744d567cb34a303288f9644b5ad19700627063740fa476952583063b9d7df",
         "approvedAt": "2026-08-31"
       }
     },
@@ -25894,20 +25924,46 @@
       "contentKey": "fallback-hook/natal-aspect-lived/sun/square/ascendant",
       "content_role": "full_copy",
       "grammar_frame": "complete_sentence",
-      "body": "You may know you have changed long before the people around you do, especially if you keep giving them the version of you they already understand. You keep taking the role everyone expects, soften a decision you have already made, or describe yourself through a title or responsibility that stopped feeling accurate because it is easier than explaining how much has changed.\n\nOther people can only respond to the person you keep showing them. You may know what you want and still sound as if you are asking for permission, or keep saying yes because being dependable has become part of how people understand you. Then it can feel frustrating when nobody notices that the person underneath the role has moved on.\n\nSometimes the opposite happens. You push a more accomplished or confident version of yourself forward because you want people to see where you are headed, then feel pressure to keep proving an identity you are still growing into. Either way, you are managing the gap between who you are becoming and who other people think they are dealing with.\n\nPeople who actually know you need access to the person you are now, not only the version of you that once made everything easier. When your priorities change, your answer is allowed to change too.",
-      "sourceMechanism": "Exact owner-approved copy transcribed byte-for-byte from the SHA-bound canonical V15 owner-approval artifact; collaborative authorship is preserved and sole owner authorship is not asserted.",
+      "body": "You may know you have changed long before the people around you do, especially if you keep giving them the version of you they already understand. You keep taking the role everyone expects, soften a decision you have already made, or describe yourself through a title or responsibility that stopped feeling accurate because it is easier than explaining how much has changed.\n\nOther people can only respond to the person you keep showing them. You may know what you want and still sound as if you are asking for permission, or keep saying yes because being dependable has become part of how people understand you. Then it can feel frustrating when nobody notices that the person underneath the role has moved on.\n\nSometimes the opposite happens. You push a more accomplished or confident version of yourself forward because you want people to see where you are headed, then feel pressure to keep proving an identity you are still growing into. Either way, you are dealing with the mismatch between who you are right now and who people expect you to be.\n\nAnyone who actually knows you needs to see who you are today, not just the version of you that makes your life easier for them to understand. Your priorities changed, and your answers can change right along with them.",
+      "sourceMechanism": "Later exact owner-approved You supersession transcribed byte-for-byte from the SHA-bound Friends V1 handoff revision artifact; historical V15 approval evidence is preserved.",
       "reader_only": true,
       "render_policy": "reader-only-exact-lived-v1",
       "review_status": "approved",
       "source_keys": [
-        "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md"
+        "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md",
+        "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.md",
+        "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.json",
+        "packages/astro-knowledge/review/angle-aspects-60-friends-v1/YOU-V15-TWO-OWNER-APPROVED-SUPERSESSIONS.json"
       ],
       "approval": {
         "approvalLevel": "exact_owner_approved",
-        "recordPath": "packages/astro-knowledge/review/angle-aspects-60-v15/records/003-natal-aspect-lived-sun-square-ascendant-exact-approval.json",
-        "payloadSha256": "7e1f1990885df5927898223b53c3203a07d00040586faf9dd264d178c5d5f0d1",
+        "recordPath": "packages/astro-knowledge/review/angle-aspects-60-friends-v1/you-supersessions/natal-aspect-lived-sun-square-ascendant-you-exact-supersession.json",
+        "payloadSha256": "9f17e4b4f6a013266399f3fc72e0632e911580a79694011ee74dff816421a2a7",
         "approvedAt": "2026-08-31"
-      }
+      },
+      "body_they": "{{Name}} may know they have changed long before the people around them do, especially if they keep giving everyone the version of themselves people already understand. They can keep taking the familiar role, soften a decision they have already made, or describe themselves through a title that stopped feeling accurate. Then it becomes frustrating when nobody notices they have moved on. People who know them well need access to who they are now, not only the version that once made everything easier.",
+      "body_they_review_status": "approved",
+      "body_they_sha256": "6fe9be1fc1d3fafec3de2cce5a4c204c069db6b644c6791cdfd34f17bf92eaf9",
+      "body_they_approved_via": "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.md",
+      "body_they_authorship": "collaborative_owner_approved",
+      "body_they_name_variable": "{{Name}}",
+      "body_they_sourceMechanism": "Separately authored Friends copy transcribed byte-for-byte from the SHA-bound Friends V1 owner-approved artifact; no You-to-Friends transformation is permitted.",
+      "body_they_approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/angle-aspects-60-friends-v1/records/003-natal-aspect-lived-sun-square-ascendant-friends-exact-approval.json",
+        "payloadSha256": "c565c9734b9a47b7f400082e4414c581ffd2b7bd44a866f787062139c8a0553f",
+        "approvedAt": "2026-08-31"
+      },
+      "historical_approvals": [
+        {
+          "approvalLevel": "exact_owner_approved",
+          "recordPath": "packages/astro-knowledge/review/angle-aspects-60-v15/records/003-natal-aspect-lived-sun-square-ascendant-exact-approval.json",
+          "payloadSha256": "7e1f1990885df5927898223b53c3203a07d00040586faf9dd264d178c5d5f0d1",
+          "approvedAt": "2026-08-31",
+          "bodySha256": "4082e351cba172016c30083ad98fd95c5739ba47b5187d93c51655d2de90aaae",
+          "supersededBy": "packages/astro-knowledge/review/angle-aspects-60-friends-v1/you-supersessions/natal-aspect-lived-sun-square-ascendant-you-exact-supersession.json"
+        }
+      ]
     },
     {
       "contentKey": "fallback-hook/natal-aspect-lived/sun/square/midheaven",
@@ -25919,12 +25975,27 @@
       "render_policy": "reader-only-exact-lived-v1",
       "review_status": "approved",
       "source_keys": [
-        "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md"
+        "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md",
+        "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.md",
+        "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.json"
       ],
       "approval": {
         "approvalLevel": "exact_owner_approved",
         "recordPath": "packages/astro-knowledge/review/angle-aspects-60-v15/records/004-natal-aspect-lived-sun-square-midheaven-exact-approval.json",
         "payloadSha256": "6078209df1b23e63fb33fccf6f46da89c3ceaaf4406ceca8879a58b95c923129",
+        "approvedAt": "2026-08-31"
+      },
+      "body_they": "{{Name}} can become known for something they are very good at and then have a harder time admitting that the role people keep rewarding them for is no longer what they want to build their life around.",
+      "body_they_review_status": "approved",
+      "body_they_sha256": "64798c29f7f4949323be49935644472211018fd435b978dfe0309b5837449ed5",
+      "body_they_approved_via": "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.md",
+      "body_they_authorship": "collaborative_owner_approved",
+      "body_they_name_variable": "{{Name}}",
+      "body_they_sourceMechanism": "Separately authored Friends copy transcribed byte-for-byte from the SHA-bound Friends V1 owner-approved artifact; no You-to-Friends transformation is permitted.",
+      "body_they_approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/angle-aspects-60-friends-v1/records/004-natal-aspect-lived-sun-square-midheaven-friends-exact-approval.json",
+        "payloadSha256": "2dc2d35e6274d65e25c835ef9f978038921ae3cd675d63b9d1d7c2009b36341f",
         "approvedAt": "2026-08-31"
       }
     },
@@ -25938,12 +26009,27 @@
       "render_policy": "reader-only-exact-lived-v1",
       "review_status": "approved",
       "source_keys": [
-        "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md"
+        "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md",
+        "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.md",
+        "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.json"
       ],
       "approval": {
         "approvalLevel": "exact_owner_approved",
         "recordPath": "packages/astro-knowledge/review/angle-aspects-60-v15/records/005-natal-aspect-lived-sun-opposition-ascendant-exact-approval.json",
         "payloadSha256": "54241c7f71ab2c5d3e1a4e0576041fb3bc585354e39bca04086e337ebcb2d3ae",
+        "approvedAt": "2026-08-31"
+      },
+      "body_they": "{{Name}} is often drawn to people whose confidence, ambition, or sense of direction makes those same qualities easier to recognize in themselves. Admiration can become complicated if the other person's certainty starts carrying more authority than their own judgment. A relationship works better when both people bring a direction of their own, instead of {{Name}} slowly adjusting their life around the future the other person wants.",
+      "body_they_review_status": "approved",
+      "body_they_sha256": "f78686822ac0c1983d79bb7ce6085a8a41dd0a4d1715c0ed3b6ab9f2b8a5fe0e",
+      "body_they_approved_via": "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.md",
+      "body_they_authorship": "collaborative_owner_approved",
+      "body_they_name_variable": "{{Name}}",
+      "body_they_sourceMechanism": "Separately authored Friends copy transcribed byte-for-byte from the SHA-bound Friends V1 owner-approved artifact; no You-to-Friends transformation is permitted.",
+      "body_they_approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/angle-aspects-60-friends-v1/records/005-natal-aspect-lived-sun-opposition-ascendant-friends-exact-approval.json",
+        "payloadSha256": "8f2a933fd5b7b3abcf5fc7dc08f9f4686428de619eb6434a8ae57db491f2edd1",
         "approvedAt": "2026-08-31"
       }
     },
@@ -25957,12 +26043,27 @@
       "render_policy": "reader-only-exact-lived-v1",
       "review_status": "approved",
       "source_keys": [
-        "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md"
+        "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md",
+        "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.md",
+        "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.json"
       ],
       "approval": {
         "approvalLevel": "exact_owner_approved",
         "recordPath": "packages/astro-knowledge/review/angle-aspects-60-v15/records/006-natal-aspect-lived-sun-opposition-midheaven-exact-approval.json",
         "payloadSha256": "695820b29d35e8f3136026a80fc31a24ac323d34cdd4a15d127737e4022edaa8",
+        "approvedAt": "2026-08-31"
+      },
+      "body_they": "{{Name}} needs a private life where they can recognize themselves without having to explain what they do, what they have achieved, or what other people expect from them. Family history and old roles can carry a lot of weight, especially when people at home still relate to an earlier version of them. They can care deeply about where they came from without letting it decide who they still have to be.",
+      "body_they_review_status": "approved",
+      "body_they_sha256": "450f8d0910b1910a49692ea1e61edbd6a52f4033819ab21dfed25cd4cf6cec37",
+      "body_they_approved_via": "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.md",
+      "body_they_authorship": "collaborative_owner_approved",
+      "body_they_name_variable": "{{Name}}",
+      "body_they_sourceMechanism": "Separately authored Friends copy transcribed byte-for-byte from the SHA-bound Friends V1 owner-approved artifact; no You-to-Friends transformation is permitted.",
+      "body_they_approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/angle-aspects-60-friends-v1/records/006-natal-aspect-lived-sun-opposition-midheaven-friends-exact-approval.json",
+        "payloadSha256": "a118343842dd90834a3dd0cf5fa6fe2d0d4925189b07a0b367aab50f6e6f610b",
         "approvedAt": "2026-08-31"
       }
     },
@@ -25976,12 +26077,27 @@
       "render_policy": "reader-only-exact-lived-v1",
       "review_status": "approved",
       "source_keys": [
-        "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md"
+        "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md",
+        "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.md",
+        "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.json"
       ],
       "approval": {
         "approvalLevel": "exact_owner_approved",
         "recordPath": "packages/astro-knowledge/review/angle-aspects-60-v15/records/007-natal-aspect-lived-moon-conjunction-ascendant-exact-approval.json",
         "payloadSha256": "ff9670154c0e5c1da6b8ee28d403a185d1622faaadafdf079df560fcdde70d40",
+        "approvedAt": "2026-08-31"
+      },
+      "body_they": "{{Name}}'s feelings tend to show before they have decided exactly what the feeling means. Their face changes, they get quieter, their attention shifts, or they need more space, and people close to them may notice before they have words for it. Their first emotional response is useful information, but it is not always the final answer. They usually do better when they have enough time to understand what they actually need before everybody else starts responding to the mood.",
+      "body_they_review_status": "approved",
+      "body_they_sha256": "6ece6562d95e8892e876162a0eab9617ef6f454a4caeef861610563ec579d743",
+      "body_they_approved_via": "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.md",
+      "body_they_authorship": "collaborative_owner_approved",
+      "body_they_name_variable": "{{Name}}",
+      "body_they_sourceMechanism": "Separately authored Friends copy transcribed byte-for-byte from the SHA-bound Friends V1 owner-approved artifact; no You-to-Friends transformation is permitted.",
+      "body_they_approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/angle-aspects-60-friends-v1/records/007-natal-aspect-lived-moon-conjunction-ascendant-friends-exact-approval.json",
+        "payloadSha256": "1605a8783db3511e2addfeefeb992c1f8af442456bef4d3b19ea4951b49259f9",
         "approvedAt": "2026-08-31"
       }
     },
@@ -25995,12 +26111,27 @@
       "render_policy": "reader-only-exact-lived-v1",
       "review_status": "approved",
       "source_keys": [
-        "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md"
+        "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md",
+        "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.md",
+        "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.json"
       ],
       "approval": {
         "approvalLevel": "exact_owner_approved",
         "recordPath": "packages/astro-knowledge/review/angle-aspects-60-v15/records/008-natal-aspect-lived-moon-conjunction-midheaven-exact-approval.json",
         "payloadSha256": "1940f73ca5a0317f7c8d48cd9fa91f9f9fc114b7bb30b5e3ef7180604af4b817",
+        "approvedAt": "2026-08-31"
+      },
+      "body_they": "{{Name}} often notices what people need before anyone has decided whose responsibility it is. They catch when someone is overwhelmed, explain what was confusing, or make the practical adjustment that keeps something working for actual people. That kind of care can become part of what they are known for, but it is easy for everyone to depend on it without naming the time and judgment it requires. If people rely on this part of them, it counts as part of what they contribute.",
+      "body_they_review_status": "approved",
+      "body_they_sha256": "b20eec9fd981f1b86d1ffd7fc91e07029158bbf771c4d3948030f3e55bc72b85",
+      "body_they_approved_via": "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.md",
+      "body_they_authorship": "collaborative_owner_approved",
+      "body_they_name_variable": "{{Name}}",
+      "body_they_sourceMechanism": "Separately authored Friends copy transcribed byte-for-byte from the SHA-bound Friends V1 owner-approved artifact; no You-to-Friends transformation is permitted.",
+      "body_they_approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/angle-aspects-60-friends-v1/records/008-natal-aspect-lived-moon-conjunction-midheaven-friends-exact-approval.json",
+        "payloadSha256": "c2da833d6e328dc524baffb6d904c072b4993a99c3fb67d5bbc4a0ce7d1d7362",
         "approvedAt": "2026-08-31"
       }
     },
@@ -26014,12 +26145,27 @@
       "render_policy": "reader-only-exact-lived-v1",
       "review_status": "approved",
       "source_keys": [
-        "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md"
+        "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md",
+        "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.md",
+        "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.json"
       ],
       "approval": {
         "approvalLevel": "exact_owner_approved",
         "recordPath": "packages/astro-knowledge/review/angle-aspects-60-v15/records/009-natal-aspect-lived-moon-square-ascendant-exact-approval.json",
         "payloadSha256": "6dfafa5f953470707902161a539cd59b6fa9976623245a30a1a517141a05b7b5",
+        "approvedAt": "2026-08-31"
+      },
+      "body_they": "{{Name}} can look easygoing while making so many small adjustments for other people that their own needs barely enter the decision. They notice disappointment, stress, or discomfort quickly and may start accommodating it before anyone has asked. Resentment can arrive later, when other people were simply working from the answer {{Name}} gave them. The important difference is between choosing to be flexible and becoming so flexible that nobody has to find out what actually works for them.",
+      "body_they_review_status": "approved",
+      "body_they_sha256": "a4ce8c449f4937509b18fe19d3d9356f5f29a3a453b3825b8235efdeccfaf18c",
+      "body_they_approved_via": "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.md",
+      "body_they_authorship": "collaborative_owner_approved",
+      "body_they_name_variable": "{{Name}}",
+      "body_they_sourceMechanism": "Separately authored Friends copy transcribed byte-for-byte from the SHA-bound Friends V1 owner-approved artifact; no You-to-Friends transformation is permitted.",
+      "body_they_approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/angle-aspects-60-friends-v1/records/009-natal-aspect-lived-moon-square-ascendant-friends-exact-approval.json",
+        "payloadSha256": "0eb5ba7f0be7cc10acb56429cbbe1ba5c8f8d1dc50faf648dac2285add8c4dd6",
         "approvedAt": "2026-08-31"
       }
     },
@@ -26027,20 +26173,46 @@
       "contentKey": "fallback-hook/natal-aspect-lived/moon/square/midheaven",
       "content_role": "full_copy",
       "grammar_frame": "complete_sentence",
-      "body": "You may care deeply about being taken seriously, but visible responsibility can start costing you sleep, privacy, time, and the routines that keep the rest of your life workable. A demanding class takes the time you used to have after school, a leadership role fills the evenings, a public commitment keeps changing the schedule, or work follows you home long after everybody else considers the responsibility handled.\n\nThe Moon keeps bringing the question back to ordinary needs. Sleep, meals, privacy, time with people you care about, and the routines that help you feel like yourself do not become less important because the role is impressive or because other people are proud of what you are doing.\n\nEach demand can look manageable on paper. One late night, one extra meeting, one more task, one more person who needs you. Together they determine what your daily life actually feels like.\n\nYour needs belong in the decision about what you are building publicly. Recognition and achievement matter, but so do sleep, time, privacy, and the parts of your life that keep the rest of the week workable. A direction is more convincing when you can actually live inside it.",
-      "sourceMechanism": "Exact owner-approved copy transcribed byte-for-byte from the SHA-bound canonical V15 owner-approval artifact; collaborative authorship is preserved and sole owner authorship is not asserted.",
+      "body": "It is normal to want to be taken seriously, but public achievement often comes at the expense of your private life. A demanding project takes your free time, a leadership role fills your evenings, and work follows you home. The Moon brings the focus back to your physical and emotional baseline. Sleep, meals, privacy, and the routines that anchor you do not lose their value just because people are proud of what you are doing. One extra meeting or one late night looks completely manageable on paper, but added together, they dictate what your everyday life actually feels like. Your basic needs have to factor into whatever you are building publicly. Recognition is great, but a path forward only makes sense if you can sustain living inside it.",
+      "sourceMechanism": "Later exact owner-approved You supersession transcribed byte-for-byte from the SHA-bound Friends V1 handoff revision artifact; historical V15 approval evidence is preserved.",
       "reader_only": true,
       "render_policy": "reader-only-exact-lived-v1",
       "review_status": "approved",
       "source_keys": [
-        "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md"
+        "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md",
+        "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.md",
+        "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.json",
+        "packages/astro-knowledge/review/angle-aspects-60-friends-v1/YOU-V15-TWO-OWNER-APPROVED-SUPERSESSIONS.json"
       ],
       "approval": {
         "approvalLevel": "exact_owner_approved",
-        "recordPath": "packages/astro-knowledge/review/angle-aspects-60-v15/records/010-natal-aspect-lived-moon-square-midheaven-exact-approval.json",
-        "payloadSha256": "34df0a9f9eb3a1bdb90b2a4eead8c551525aab0d32aba4e3ae63fae165a12e36",
+        "recordPath": "packages/astro-knowledge/review/angle-aspects-60-friends-v1/you-supersessions/natal-aspect-lived-moon-square-midheaven-you-exact-supersession.json",
+        "payloadSha256": "99d5a645be44626bf872e0db61ba41ef21089924c1e96577b3e6ef730757f508",
         "approvedAt": "2026-08-31"
-      }
+      },
+      "body_they": "{{Name}} wants to be taken seriously, but public achievement can come at the expense of their private life. A demanding project takes their free time, a leadership role fills their evenings, and work follows them home. The Moon brings the focus back to their physical and emotional baseline. Sleep, meals, privacy, and the routines that anchor them do not lose their value just because people are proud of what they are doing. One extra meeting or one late night can look completely manageable on paper, but added together, they dictate what {{Name}}'s everyday life actually feels like. Their basic needs have to factor into whatever they are building publicly. Recognition is great, but a path forward only makes sense if they can sustain living inside it.",
+      "body_they_review_status": "approved",
+      "body_they_sha256": "a8f0f2a690164a107ccd3498cd2dd9a20d017812e6119d60cd2af180ce0b13e3",
+      "body_they_approved_via": "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.md",
+      "body_they_authorship": "collaborative_owner_approved",
+      "body_they_name_variable": "{{Name}}",
+      "body_they_sourceMechanism": "Separately authored Friends copy transcribed byte-for-byte from the SHA-bound Friends V1 owner-approved artifact; no You-to-Friends transformation is permitted.",
+      "body_they_approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/angle-aspects-60-friends-v1/records/010-natal-aspect-lived-moon-square-midheaven-friends-exact-approval.json",
+        "payloadSha256": "3abf75bab247c117b9fd4423c5531a3e444ad1fcbedcf062a7a2499fb1b95323",
+        "approvedAt": "2026-08-31"
+      },
+      "historical_approvals": [
+        {
+          "approvalLevel": "exact_owner_approved",
+          "recordPath": "packages/astro-knowledge/review/angle-aspects-60-v15/records/010-natal-aspect-lived-moon-square-midheaven-exact-approval.json",
+          "payloadSha256": "34df0a9f9eb3a1bdb90b2a4eead8c551525aab0d32aba4e3ae63fae165a12e36",
+          "approvedAt": "2026-08-31",
+          "bodySha256": "81001492c15e6f0f87732d943560390fb0121922d0f51c830bf0a0e29bdea134",
+          "supersededBy": "packages/astro-knowledge/review/angle-aspects-60-friends-v1/you-supersessions/natal-aspect-lived-moon-square-midheaven-you-exact-supersession.json"
+        }
+      ]
     },
     {
       "contentKey": "fallback-hook/natal-aspect-lived/moon/opposition/ascendant",
@@ -26052,12 +26224,27 @@
       "render_policy": "reader-only-exact-lived-v1",
       "review_status": "approved",
       "source_keys": [
-        "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md"
+        "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md",
+        "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.md",
+        "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.json"
       ],
       "approval": {
         "approvalLevel": "exact_owner_approved",
         "recordPath": "packages/astro-knowledge/review/angle-aspects-60-v15/records/011-natal-aspect-lived-moon-opposition-ascendant-exact-approval.json",
         "payloadSha256": "ed35aa42844593077300d0898f553daed28dae4d4d1b45137df560e313ce080f",
+        "approvedAt": "2026-08-31"
+      },
+      "body_they": "{{Name}} notices changes in a partner's mood quickly and may start adjusting their own plans before either person has said what is actually needed. Care is one of the ways they build closeness, but being good at noticing does not make them responsible for noticing everything first. A relationship becomes more dependable when both people can name what they need and neither person's feelings automatically become the other person's job.",
+      "body_they_review_status": "approved",
+      "body_they_sha256": "ee65b707896a96108798df3eeb77f1ccd13ca1f632478de4bd51d759de9a2dda",
+      "body_they_approved_via": "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.md",
+      "body_they_authorship": "collaborative_owner_approved",
+      "body_they_name_variable": "{{Name}}",
+      "body_they_sourceMechanism": "Separately authored Friends copy transcribed byte-for-byte from the SHA-bound Friends V1 owner-approved artifact; no You-to-Friends transformation is permitted.",
+      "body_they_approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/angle-aspects-60-friends-v1/records/011-natal-aspect-lived-moon-opposition-ascendant-friends-exact-approval.json",
+        "payloadSha256": "fb3a3d1d9172336c46b28c72596b63c90897b3e9e9d540b97fc20d2b0e255f3a",
         "approvedAt": "2026-08-31"
       }
     },
@@ -26071,12 +26258,27 @@
       "render_policy": "reader-only-exact-lived-v1",
       "review_status": "approved",
       "source_keys": [
-        "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md"
+        "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md",
+        "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.md",
+        "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.json"
       ],
       "approval": {
         "approvalLevel": "exact_owner_approved",
         "recordPath": "packages/astro-knowledge/review/angle-aspects-60-v15/records/012-natal-aspect-lived-moon-opposition-midheaven-exact-approval.json",
         "payloadSha256": "3ad6fb127cc24b0926d239e7b1fe597ca3c162e877c8355ca8c5bd2188c866a6",
+        "approvedAt": "2026-08-31"
+      },
+      "body_they": "{{Name}} needs enough privacy and consistency at home to understand what they are feeling without constantly responding to everyone else first. Familiar routines and knowing when their time is actually their own can matter more than people realize. Familiarity can also keep an arrangement going long after it stops working. Home becomes more supportive when care, privacy, access, money, and responsibility are things the people living there can actually discuss and change.",
+      "body_they_review_status": "approved",
+      "body_they_sha256": "961483392248e0fa3682db3e7e96f5ed8fefe619c8d62024673ecd2e5c229957",
+      "body_they_approved_via": "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.md",
+      "body_they_authorship": "collaborative_owner_approved",
+      "body_they_name_variable": "{{Name}}",
+      "body_they_sourceMechanism": "Separately authored Friends copy transcribed byte-for-byte from the SHA-bound Friends V1 owner-approved artifact; no You-to-Friends transformation is permitted.",
+      "body_they_approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/angle-aspects-60-friends-v1/records/012-natal-aspect-lived-moon-opposition-midheaven-friends-exact-approval.json",
+        "payloadSha256": "e0ff98d5fe922bcbd296517c65a0539b043ab8f37fbe6f8f758bfa67191312c7",
         "approvedAt": "2026-08-31"
       }
     },
@@ -26090,12 +26292,27 @@
       "render_policy": "reader-only-exact-lived-v1",
       "review_status": "approved",
       "source_keys": [
-        "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md"
+        "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md",
+        "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.md",
+        "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.json"
       ],
       "approval": {
         "approvalLevel": "exact_owner_approved",
         "recordPath": "packages/astro-knowledge/review/angle-aspects-60-v15/records/013-natal-aspect-lived-mercury-conjunction-ascendant-exact-approval.json",
         "payloadSha256": "9a0b210ed8066c2a98f95eed46efb0c87064b1d7319106ba8ed162d0dbb80d6f",
+        "approvedAt": "2026-08-31"
+      },
+      "body_they": "{{Name}} often discovers what they think by talking, writing, asking questions, or hearing themselves explain something out loud. Because their thinking is easy to see, something they say while figuring things out can quickly become part of how other people define them. They are allowed to know more now than they knew when they first described the plan. Their language should be able to change when their thinking does.",
+      "body_they_review_status": "approved",
+      "body_they_sha256": "2d79ed78cb8bd0384af89ca96d7ae9cea13850b0fb4eb0b39c918324201af33b",
+      "body_they_approved_via": "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.md",
+      "body_they_authorship": "collaborative_owner_approved",
+      "body_they_name_variable": "{{Name}}",
+      "body_they_sourceMechanism": "Separately authored Friends copy transcribed byte-for-byte from the SHA-bound Friends V1 owner-approved artifact; no You-to-Friends transformation is permitted.",
+      "body_they_approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/angle-aspects-60-friends-v1/records/013-natal-aspect-lived-mercury-conjunction-ascendant-friends-exact-approval.json",
+        "payloadSha256": "e8e5c73462b80b7af3a1584e3b12a1c24d8dbc7c04adcbac7ddbd31f088c8895",
         "approvedAt": "2026-08-31"
       }
     },
@@ -26109,12 +26326,27 @@
       "render_policy": "reader-only-exact-lived-v1",
       "review_status": "approved",
       "source_keys": [
-        "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md"
+        "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md",
+        "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.md",
+        "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.json"
       ],
       "approval": {
         "approvalLevel": "exact_owner_approved",
         "recordPath": "packages/astro-knowledge/review/angle-aspects-60-v15/records/014-natal-aspect-lived-mercury-conjunction-midheaven-exact-approval.json",
         "payloadSha256": "43cb69b1375f3a74bc93165a425053ce9c93b6d35a26c85ff8b8eb0c0c43e560",
+        "approvedAt": "2026-08-31"
+      },
+      "body_they": "{{Name}} has a way of putting the complicated part into words other people remember. They ask the question that changes the discussion, notice what an explanation leaves out, or make something understandable enough for people to act on it. That can become part of their reputation. The complication is being asked to explain decisions they did not make. If their name is attached to the explanation, they need access to the facts and enough authority to correct what is wrong.",
+      "body_they_review_status": "approved",
+      "body_they_sha256": "5f26d0d539616dd8175cea62fa571364fc20108d5b8f00730257b56a58e512fe",
+      "body_they_approved_via": "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.md",
+      "body_they_authorship": "collaborative_owner_approved",
+      "body_they_name_variable": "{{Name}}",
+      "body_they_sourceMechanism": "Separately authored Friends copy transcribed byte-for-byte from the SHA-bound Friends V1 owner-approved artifact; no You-to-Friends transformation is permitted.",
+      "body_they_approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/angle-aspects-60-friends-v1/records/014-natal-aspect-lived-mercury-conjunction-midheaven-friends-exact-approval.json",
+        "payloadSha256": "2871e7c11254e614d496744142dabba2447b5becb77886fa5e76e3f4274d0cad",
         "approvedAt": "2026-08-31"
       }
     },
@@ -26128,12 +26360,27 @@
       "render_policy": "reader-only-exact-lived-v1",
       "review_status": "approved",
       "source_keys": [
-        "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md"
+        "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md",
+        "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.md",
+        "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.json"
       ],
       "approval": {
         "approvalLevel": "exact_owner_approved",
         "recordPath": "packages/astro-knowledge/review/angle-aspects-60-v15/records/015-natal-aspect-lived-mercury-square-ascendant-exact-approval.json",
         "payloadSha256": "f0a1cb29dc18b0eb6791c386a68b9f996aedf9373c1142ed3f006b042e2afafa",
+        "approvedAt": "2026-08-31"
+      },
+      "body_they": "{{Name}} may know exactly what they mean and still spend more time than expected getting it into words. They notice context, exceptions, and the detail that changes the meaning, which can make them a thoughtful communicator. The complication is when being understood starts mattering more than saying what they actually think. Their strongest communication comes from knowing which part they can stand behind and saying that clearly.",
+      "body_they_review_status": "approved",
+      "body_they_sha256": "d824af5b414886693b79dc17c6741330244e70337e9e1d65785f262c7d94bfef",
+      "body_they_approved_via": "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.md",
+      "body_they_authorship": "collaborative_owner_approved",
+      "body_they_name_variable": "{{Name}}",
+      "body_they_sourceMechanism": "Separately authored Friends copy transcribed byte-for-byte from the SHA-bound Friends V1 owner-approved artifact; no You-to-Friends transformation is permitted.",
+      "body_they_approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/angle-aspects-60-friends-v1/records/015-natal-aspect-lived-mercury-square-ascendant-friends-exact-approval.json",
+        "payloadSha256": "d3891e0d455f5df916d36b685e70e51663221c5698a88315238b065eee488b48",
         "approvedAt": "2026-08-31"
       }
     },
@@ -26147,12 +26394,27 @@
       "render_policy": "reader-only-exact-lived-v1",
       "review_status": "approved",
       "source_keys": [
-        "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md"
+        "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md",
+        "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.md",
+        "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.json"
       ],
       "approval": {
         "approvalLevel": "exact_owner_approved",
         "recordPath": "packages/astro-knowledge/review/angle-aspects-60-v15/records/016-natal-aspect-lived-mercury-square-midheaven-exact-approval.json",
         "payloadSha256": "2b7384ccded9a653e31ff01a7d72d475e0a8e912140403b9f7993350fd82a13e",
+        "approvedAt": "2026-08-31"
+      },
+      "body_they": "{{Name}} tends to think carefully about what they say or put in writing when their name is attached to it. They notice the missing fact, document what was actually agreed to, and understand how one careless sentence can change a larger decision. The challenge is when managing how they are understood starts taking more attention than deciding what they actually want to be known for. Their words should support what they are building, not trap them inside an old reputation.",
+      "body_they_review_status": "approved",
+      "body_they_sha256": "aa303ca312fd8b29520339f79d6ac42bf3ef31a0734812fa399843a7431e64f2",
+      "body_they_approved_via": "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.md",
+      "body_they_authorship": "collaborative_owner_approved",
+      "body_they_name_variable": "{{Name}}",
+      "body_they_sourceMechanism": "Separately authored Friends copy transcribed byte-for-byte from the SHA-bound Friends V1 owner-approved artifact; no You-to-Friends transformation is permitted.",
+      "body_they_approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/angle-aspects-60-friends-v1/records/016-natal-aspect-lived-mercury-square-midheaven-friends-exact-approval.json",
+        "payloadSha256": "8f17bc1d6998ae5f48ce9cc11a71ab469482bf344b41aa6a4c83310dd3bc8aaf",
         "approvedAt": "2026-08-31"
       }
     },
@@ -26166,12 +26428,27 @@
       "render_policy": "reader-only-exact-lived-v1",
       "review_status": "approved",
       "source_keys": [
-        "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md"
+        "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md",
+        "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.md",
+        "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.json"
       ],
       "approval": {
         "approvalLevel": "exact_owner_approved",
         "recordPath": "packages/astro-knowledge/review/angle-aspects-60-v15/records/017-natal-aspect-lived-mercury-opposition-ascendant-exact-approval.json",
         "payloadSha256": "bf26e2ffcffab01dab002727966d4eb66734bed887cf53b48d761c0bbd82e012",
+        "approvedAt": "2026-08-31"
+      },
+      "body_they": "{{Name}} pays close attention to how another person talks, listens, asks questions, and disagrees. Close relationships can sharpen their thinking because another person gives them something substantial to respond to. But a convincing explanation is not the same as changed behavior. {{Name}} can understand exactly why someone did something and still decide they do not want to keep living with it. What happens after the conversation matters as much as how well the conversation went.",
+      "body_they_review_status": "approved",
+      "body_they_sha256": "ca7a584df53e8eb10389f1e2bc8afb46c87454aa3feb5fb7df5d44c117498f7b",
+      "body_they_approved_via": "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.md",
+      "body_they_authorship": "collaborative_owner_approved",
+      "body_they_name_variable": "{{Name}}",
+      "body_they_sourceMechanism": "Separately authored Friends copy transcribed byte-for-byte from the SHA-bound Friends V1 owner-approved artifact; no You-to-Friends transformation is permitted.",
+      "body_they_approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/angle-aspects-60-friends-v1/records/017-natal-aspect-lived-mercury-opposition-ascendant-friends-exact-approval.json",
+        "payloadSha256": "606b4b1759fdaa766e845c3c45e38d6d622f469b4b64a553a4f4555322e1e733",
         "approvedAt": "2026-08-31"
       }
     },
@@ -26185,12 +26462,27 @@
       "render_policy": "reader-only-exact-lived-v1",
       "review_status": "approved",
       "source_keys": [
-        "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md"
+        "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md",
+        "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.md",
+        "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.json"
       ],
       "approval": {
         "approvalLevel": "exact_owner_approved",
         "recordPath": "packages/astro-knowledge/review/angle-aspects-60-v15/records/018-natal-aspect-lived-mercury-opposition-midheaven-exact-approval.json",
         "payloadSha256": "7184b362fd983d3de9691243656c1fb3906586ee86e51f0469d5f7721f3d9c3b",
+        "approvedAt": "2026-08-31"
+      },
+      "body_they": "{{Name}} may do some of their clearest thinking in private, especially when an important decision needs time to remain unfinished before anyone else needs an answer. Family phrases about money, success, responsibility, or relationships can stay with them for years. Understanding where those ideas came from gives them context, but it does not require them to keep building around them. The past is most useful when it gives them more choice about what they accept now.",
+      "body_they_review_status": "approved",
+      "body_they_sha256": "c24cbcc73e6647e3ebec5156b8d009c56a2ef5f4f7f47c067501beb71c702c02",
+      "body_they_approved_via": "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.md",
+      "body_they_authorship": "collaborative_owner_approved",
+      "body_they_name_variable": "{{Name}}",
+      "body_they_sourceMechanism": "Separately authored Friends copy transcribed byte-for-byte from the SHA-bound Friends V1 owner-approved artifact; no You-to-Friends transformation is permitted.",
+      "body_they_approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/angle-aspects-60-friends-v1/records/018-natal-aspect-lived-mercury-opposition-midheaven-friends-exact-approval.json",
+        "payloadSha256": "ce573eaa967e9a9d6d1888f445ee571fb79d0c648d56d468d615f6c7b25d16c4",
         "approvedAt": "2026-08-31"
       }
     },
@@ -26204,12 +26496,27 @@
       "render_policy": "reader-only-exact-lived-v1",
       "review_status": "approved",
       "source_keys": [
-        "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md"
+        "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md",
+        "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.md",
+        "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.json"
       ],
       "approval": {
         "approvalLevel": "exact_owner_approved",
         "recordPath": "packages/astro-knowledge/review/angle-aspects-60-v15/records/019-natal-aspect-lived-venus-conjunction-ascendant-exact-approval.json",
         "payloadSha256": "ada6c00f7a55c20264497725c665189438253ff56cf48eb4c00db8fcf0e5c1c8",
+        "approvedAt": "2026-08-31"
+      },
+      "body_they": "People often get a clear sense of what {{Name}} likes before they know them very well. Their taste shows up in what they wear, choose, keep around them, and the people or places they are drawn toward. Other people may respond strongly to that, but approval cannot tell {{Name}} what they should keep choosing. Being wanted and wanting something themselves are different experiences.",
+      "body_they_review_status": "approved",
+      "body_they_sha256": "e735dc707806d61184a283a5e0e0d6135a66ca60223c2cc7d46fa87d197e8013",
+      "body_they_approved_via": "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.md",
+      "body_they_authorship": "collaborative_owner_approved",
+      "body_they_name_variable": "{{Name}}",
+      "body_they_sourceMechanism": "Separately authored Friends copy transcribed byte-for-byte from the SHA-bound Friends V1 owner-approved artifact; no You-to-Friends transformation is permitted.",
+      "body_they_approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/angle-aspects-60-friends-v1/records/019-natal-aspect-lived-venus-conjunction-ascendant-friends-exact-approval.json",
+        "payloadSha256": "f8166f336c3bdd0a8fb84e04566d3a4d13314d1ba73c0070caec87db47cff249",
         "approvedAt": "2026-08-31"
       }
     },
@@ -26223,12 +26530,27 @@
       "render_policy": "reader-only-exact-lived-v1",
       "review_status": "approved",
       "source_keys": [
-        "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md"
+        "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md",
+        "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.md",
+        "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.json"
       ],
       "approval": {
         "approvalLevel": "exact_owner_approved",
         "recordPath": "packages/astro-knowledge/review/angle-aspects-60-v15/records/020-natal-aspect-lived-venus-conjunction-midheaven-exact-approval.json",
         "payloadSha256": "999ea5909b89c03acddde8ee5b4f2737323257ee1f4be4608291a9cee76b6746",
+        "approvedAt": "2026-08-31"
+      },
+      "body_they": "{{Name}}'s taste, judgment, and the care they bring to what they make or support can become part of what people remember about them. Others may seek out their opinion because they trust the quality of their choices. Being appreciated gets complicated when the role receiving the most praise stops reflecting what {{Name}} actually values. What they become known for should still be connected to something they genuinely care about.",
+      "body_they_review_status": "approved",
+      "body_they_sha256": "fd0aba2a835173479fc620850331ed3c6e04570c1b5865befc9cda25f114b314",
+      "body_they_approved_via": "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.md",
+      "body_they_authorship": "collaborative_owner_approved",
+      "body_they_name_variable": "{{Name}}",
+      "body_they_sourceMechanism": "Separately authored Friends copy transcribed byte-for-byte from the SHA-bound Friends V1 owner-approved artifact; no You-to-Friends transformation is permitted.",
+      "body_they_approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/angle-aspects-60-friends-v1/records/020-natal-aspect-lived-venus-conjunction-midheaven-friends-exact-approval.json",
+        "payloadSha256": "f41bdb69f92810768d0bfc69930d172aa7e934cc514bd14f5c7c95db28155ad2",
         "approvedAt": "2026-08-31"
       }
     },
@@ -26242,12 +26564,27 @@
       "render_policy": "reader-only-exact-lived-v1",
       "review_status": "approved",
       "source_keys": [
-        "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md"
+        "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md",
+        "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.md",
+        "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.json"
       ],
       "approval": {
         "approvalLevel": "exact_owner_approved",
         "recordPath": "packages/astro-knowledge/review/angle-aspects-60-v15/records/021-natal-aspect-lived-venus-square-ascendant-exact-approval.json",
         "payloadSha256": "02ba24112735ea6e00569428e4457efdeb258269ba2c2fd08a5559105b3334cb",
+        "approvedAt": "2026-08-31"
+      },
+      "body_they": "{{Name}} may spend part of their life learning the difference between what they genuinely like and what gets the best response from other people. They notice compliments, attraction, and what people say suits them, which can make approval easy to read before their own preference is fully clear. Something can look perfect from the outside and still not feel like their choice. Being wanted does not tell them if they want the relationship.",
+      "body_they_review_status": "approved",
+      "body_they_sha256": "980d9ec7befd64df0c7a056d560229e2c867b80a30f96a4968df95429bce8f58",
+      "body_they_approved_via": "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.md",
+      "body_they_authorship": "collaborative_owner_approved",
+      "body_they_name_variable": "{{Name}}",
+      "body_they_sourceMechanism": "Separately authored Friends copy transcribed byte-for-byte from the SHA-bound Friends V1 owner-approved artifact; no You-to-Friends transformation is permitted.",
+      "body_they_approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/angle-aspects-60-friends-v1/records/021-natal-aspect-lived-venus-square-ascendant-friends-exact-approval.json",
+        "payloadSha256": "3478e6c1da9d3611dc7c6635c2ef0e87617b17aebf722f3d182aba89dd495018",
         "approvedAt": "2026-08-31"
       }
     },
@@ -26261,12 +26598,27 @@
       "render_policy": "reader-only-exact-lived-v1",
       "review_status": "approved",
       "source_keys": [
-        "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md"
+        "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md",
+        "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.md",
+        "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.json"
       ],
       "approval": {
         "approvalLevel": "exact_owner_approved",
         "recordPath": "packages/astro-knowledge/review/angle-aspects-60-v15/records/022-natal-aspect-lived-venus-square-midheaven-exact-approval.json",
         "payloadSha256": "1e4d6b812864b84f161f72d39557dc88a8919baa09db87aa2093af974053947a",
+        "approvedAt": "2026-08-31"
+      },
+      "body_they": "Something can look desirable from the outside and still be wrong for the life {{Name}} actually wants. Praise, visibility, or an admired opportunity can make it harder to admit that the terms no longer suit them. The useful question is what the recognition is asking them to trade in time, autonomy, money, creative control, or ordinary quality of life. Recognition matters most when the life attached to it is still one they would choose.",
+      "body_they_review_status": "approved",
+      "body_they_sha256": "036e3162fd316ac7f42c6d8f27182c0c2b1042d232c6e47e6a57f564c3468791",
+      "body_they_approved_via": "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.md",
+      "body_they_authorship": "collaborative_owner_approved",
+      "body_they_name_variable": "{{Name}}",
+      "body_they_sourceMechanism": "Separately authored Friends copy transcribed byte-for-byte from the SHA-bound Friends V1 owner-approved artifact; no You-to-Friends transformation is permitted.",
+      "body_they_approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/angle-aspects-60-friends-v1/records/022-natal-aspect-lived-venus-square-midheaven-friends-exact-approval.json",
+        "payloadSha256": "7666285a39ca71693dc460c21c944314b32e2d3092e81ba49093c0c6849c20d0",
         "approvedAt": "2026-08-31"
       }
     },
@@ -26280,12 +26632,27 @@
       "render_policy": "reader-only-exact-lived-v1",
       "review_status": "approved",
       "source_keys": [
-        "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md"
+        "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md",
+        "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.md",
+        "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.json"
       ],
       "approval": {
         "approvalLevel": "exact_owner_approved",
         "recordPath": "packages/astro-knowledge/review/angle-aspects-60-v15/records/023-natal-aspect-lived-venus-opposition-ascendant-exact-approval.json",
         "payloadSha256": "efad14a5dd2de0860fa17d3e20b90ce760505c503777ea835cc6d3d89bd42879",
+        "approvedAt": "2026-08-31"
+      },
+      "body_they": "The people {{Name}} is attracted to often make their own values easier to understand. Closeness shows them what kind of affection they enjoy, what they want to share, and what stops working once another person's choices affect their time, money, attention, or future. Attraction can be completely genuine without answering the compatibility question. What happens after two people choose each other tells {{Name}} what the relationship can actually support.",
+      "body_they_review_status": "approved",
+      "body_they_sha256": "1278cad1fff25f436b5e208feb2ea84d388c4acf820a8a02621fdd72f41d1709",
+      "body_they_approved_via": "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.md",
+      "body_they_authorship": "collaborative_owner_approved",
+      "body_they_name_variable": "{{Name}}",
+      "body_they_sourceMechanism": "Separately authored Friends copy transcribed byte-for-byte from the SHA-bound Friends V1 owner-approved artifact; no You-to-Friends transformation is permitted.",
+      "body_they_approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/angle-aspects-60-friends-v1/records/023-natal-aspect-lived-venus-opposition-ascendant-friends-exact-approval.json",
+        "payloadSha256": "2636e1c3b4e654e5a91a757d603225351e63ce938266129f1a6e08b78bdf3f79",
         "approvedAt": "2026-08-31"
       }
     },
@@ -26299,12 +26666,27 @@
       "render_policy": "reader-only-exact-lived-v1",
       "review_status": "approved",
       "source_keys": [
-        "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md"
+        "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md",
+        "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.md",
+        "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.json"
       ],
       "approval": {
         "approvalLevel": "exact_owner_approved",
         "recordPath": "packages/astro-knowledge/review/angle-aspects-60-v15/records/024-natal-aspect-lived-venus-opposition-midheaven-exact-approval.json",
         "payloadSha256": "61f6429e622502969c7c030e6458aefd145274351c7556b5a0b06cdd64fdcbce",
+        "approvedAt": "2026-08-31"
+      },
+      "body_they": "{{Name}} needs their home life to reflect what they actually value, especially in the way affection, money, responsibilities, and private treatment are handled. They may show love through cooking, remembering what people like, keeping traditions, or making daily life more comfortable. The complication is carrying more and more simply because they care about how the home feels. A beautiful home is much less relaxing when they are the only person responsible for keeping it that way.",
+      "body_they_review_status": "approved",
+      "body_they_sha256": "57dd333ae2121543675025aab3d0a3f6f3ff350a97e7aac74b4c6bad6822c7cc",
+      "body_they_approved_via": "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.md",
+      "body_they_authorship": "collaborative_owner_approved",
+      "body_they_name_variable": "{{Name}}",
+      "body_they_sourceMechanism": "Separately authored Friends copy transcribed byte-for-byte from the SHA-bound Friends V1 owner-approved artifact; no You-to-Friends transformation is permitted.",
+      "body_they_approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/angle-aspects-60-friends-v1/records/024-natal-aspect-lived-venus-opposition-midheaven-friends-exact-approval.json",
+        "payloadSha256": "e97a7bf55c7d6df929f763b071c07b9324640d066a4f5e32873ceb3ccb6070f8",
         "approvedAt": "2026-08-31"
       }
     },
@@ -26318,12 +26700,27 @@
       "render_policy": "reader-only-exact-lived-v1",
       "review_status": "approved",
       "source_keys": [
-        "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md"
+        "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md",
+        "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.md",
+        "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.json"
       ],
       "approval": {
         "approvalLevel": "exact_owner_approved",
         "recordPath": "packages/astro-knowledge/review/angle-aspects-60-v15/records/025-natal-aspect-lived-mars-conjunction-ascendant-exact-approval.json",
         "payloadSha256": "4778f44b06b80a54ee6095a4ab04a65b4d6dc244c2a43f4dd93225bcd2ffd4db",
+        "approvedAt": "2026-08-31"
+      },
+      "body_they": "{{Name}} learns a lot about themselves by noticing what they are willing to pursue, defend, change, and say no to. Action gives them information about what matters. They may not know how strongly they care until they find themselves fighting for something or refusing to let someone else decide for them. The important distinction is between protecting something that still matters and continuing a struggle simply because they have already put so much effort into it.",
+      "body_they_review_status": "approved",
+      "body_they_sha256": "9341f496652fd88f7f2e2ba16fc00e57723d21b7378a9959c1eafd6d569fa525",
+      "body_they_approved_via": "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.md",
+      "body_they_authorship": "collaborative_owner_approved",
+      "body_they_name_variable": "{{Name}}",
+      "body_they_sourceMechanism": "Separately authored Friends copy transcribed byte-for-byte from the SHA-bound Friends V1 owner-approved artifact; no You-to-Friends transformation is permitted.",
+      "body_they_approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/angle-aspects-60-friends-v1/records/025-natal-aspect-lived-mars-conjunction-ascendant-friends-exact-approval.json",
+        "payloadSha256": "902cd5e127a448f9bc2d48cadabaf8cb58894431603aa449946781b5b86361d6",
         "approvedAt": "2026-08-31"
       }
     },
@@ -26337,12 +26734,27 @@
       "render_policy": "reader-only-exact-lived-v1",
       "review_status": "approved",
       "source_keys": [
-        "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md"
+        "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md",
+        "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.md",
+        "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.json"
       ],
       "approval": {
         "approvalLevel": "exact_owner_approved",
         "recordPath": "packages/astro-knowledge/review/angle-aspects-60-v15/records/026-natal-aspect-lived-mars-conjunction-midheaven-exact-approval.json",
         "payloadSha256": "1db7d82eebbd1d02536457ea1d1917cd05cf085fedae6374e25b3b44901a8ffe",
+        "approvedAt": "2026-08-31"
+      },
+      "body_they": "{{Name}} tends to become known as the person who acts when everyone else is still waiting for somebody to decide what happens next. Their initiative can make people trust them with visible responsibility, especially when something is difficult or urgent. The complication is that handling pressure well tends to attract more pressure. More responsibility should bring more authority, influence, support, recognition, or something meaningful they can actually build with.",
+      "body_they_review_status": "approved",
+      "body_they_sha256": "491a9bc8e798e8f4c5c38887123ebc00881f5de1fec201991466013e8277c7d9",
+      "body_they_approved_via": "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.md",
+      "body_they_authorship": "collaborative_owner_approved",
+      "body_they_name_variable": "{{Name}}",
+      "body_they_sourceMechanism": "Separately authored Friends copy transcribed byte-for-byte from the SHA-bound Friends V1 owner-approved artifact; no You-to-Friends transformation is permitted.",
+      "body_they_approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/angle-aspects-60-friends-v1/records/026-natal-aspect-lived-mars-conjunction-midheaven-friends-exact-approval.json",
+        "payloadSha256": "62f553ec15d8314ca6de8dbbc2b6307bc8e4f54d84092e94819bc8f597296ce6",
         "approvedAt": "2026-08-31"
       }
     },
@@ -26356,12 +26768,27 @@
       "render_policy": "reader-only-exact-lived-v1",
       "review_status": "approved",
       "source_keys": [
-        "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md"
+        "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md",
+        "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.md",
+        "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.json"
       ],
       "approval": {
         "approvalLevel": "exact_owner_approved",
         "recordPath": "packages/astro-knowledge/review/angle-aspects-60-v15/records/027-natal-aspect-lived-mars-square-ascendant-exact-approval.json",
         "payloadSha256": "d9db0158c3f00bcfdb25c8de6c07592c1db3244f676d72b0d9500eb3f9b322d6",
+        "approvedAt": "2026-08-31"
+      },
+      "body_they": "{{Name}} can know something crossed a line and still wait long enough to respond that their anger is much stronger by the time anybody else realizes there was a problem. Their irritation often contains useful information about a limit they have not named yet. The earlier they know what needs to change, the easier it becomes to respond to the original problem instead of everything that accumulated because they kept letting it go.",
+      "body_they_review_status": "approved",
+      "body_they_sha256": "c30c47b3bec952ef5bbdb4205bd6855baed700922e379efb60d64f5557b47a84",
+      "body_they_approved_via": "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.md",
+      "body_they_authorship": "collaborative_owner_approved",
+      "body_they_name_variable": "{{Name}}",
+      "body_they_sourceMechanism": "Separately authored Friends copy transcribed byte-for-byte from the SHA-bound Friends V1 owner-approved artifact; no You-to-Friends transformation is permitted.",
+      "body_they_approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/angle-aspects-60-friends-v1/records/027-natal-aspect-lived-mars-square-ascendant-friends-exact-approval.json",
+        "payloadSha256": "1edd1378e289fe24b996c9660a6eb187366ee74587d63c0642ae606793f6f403",
         "approvedAt": "2026-08-31"
       }
     },
@@ -26375,12 +26802,27 @@
       "render_policy": "reader-only-exact-lived-v1",
       "review_status": "approved",
       "source_keys": [
-        "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md"
+        "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md",
+        "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.md",
+        "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.json"
       ],
       "approval": {
         "approvalLevel": "exact_owner_approved",
         "recordPath": "packages/astro-knowledge/review/angle-aspects-60-v15/records/028-natal-aspect-lived-mars-square-midheaven-exact-approval.json",
         "payloadSha256": "eafe48c308475bc115b25992f6c245c4ea25c578c50054f67d41604417a9f2b5",
+        "approvedAt": "2026-08-31"
+      },
+      "body_they": "{{Name}} may spend part of their life learning the difference between working harder and having enough authority to make an impact. If they are responsible for the result but have little say over how it gets done, effort can become the only part they still control. More effort should change something: the terms, the authority, the outcome, or the next attempt. If it only changes how much of themselves they have to spend, the problem may be authority rather than effort.",
+      "body_they_review_status": "approved",
+      "body_they_sha256": "aef68ad9b505ea4f6bc4f0e52560917d757671dc8937e6d52f3bbc68a7b87dff",
+      "body_they_approved_via": "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.md",
+      "body_they_authorship": "collaborative_owner_approved",
+      "body_they_name_variable": "{{Name}}",
+      "body_they_sourceMechanism": "Separately authored Friends copy transcribed byte-for-byte from the SHA-bound Friends V1 owner-approved artifact; no You-to-Friends transformation is permitted.",
+      "body_they_approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/angle-aspects-60-friends-v1/records/028-natal-aspect-lived-mars-square-midheaven-friends-exact-approval.json",
+        "payloadSha256": "d04262c3430a9425fd9cc10e9f5ed52378bea6d8e1a9561a0e261a0f78b31d0b",
         "approvedAt": "2026-08-31"
       }
     },
@@ -26394,12 +26836,27 @@
       "render_policy": "reader-only-exact-lived-v1",
       "review_status": "approved",
       "source_keys": [
-        "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md"
+        "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md",
+        "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.md",
+        "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.json"
       ],
       "approval": {
         "approvalLevel": "exact_owner_approved",
         "recordPath": "packages/astro-knowledge/review/angle-aspects-60-v15/records/029-natal-aspect-lived-mars-opposition-ascendant-exact-approval.json",
         "payloadSha256": "580ce500ce9450d8a3c7bf30af0978a9dec9cf3af067803311a890bc6a73a46c",
+        "approvedAt": "2026-08-31"
+      },
+      "body_they": "{{Name}} often learns what they want most clearly when a partner wants something different. Disagreement makes it obvious where they are willing to compromise and where they are not. The complication comes when the relationship starts organizing itself around whichever person pushes harder. Conflict can reveal what both people want without deciding who automatically gets their way. The relationship works better when both people can have a direction of their own.",
+      "body_they_review_status": "approved",
+      "body_they_sha256": "799ebcb0d438b932fbc4e3208f7c727fc9f2f3ca6cc20cd5dfb86bb5a368f378",
+      "body_they_approved_via": "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.md",
+      "body_they_authorship": "collaborative_owner_approved",
+      "body_they_name_variable": "{{Name}}",
+      "body_they_sourceMechanism": "Separately authored Friends copy transcribed byte-for-byte from the SHA-bound Friends V1 owner-approved artifact; no You-to-Friends transformation is permitted.",
+      "body_they_approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/angle-aspects-60-friends-v1/records/029-natal-aspect-lived-mars-opposition-ascendant-friends-exact-approval.json",
+        "payloadSha256": "780163c709907aafeed6e43796d8da10f7fefe397ea8b39213cb3e64dac8ac61",
         "approvedAt": "2026-08-31"
       }
     },
@@ -26413,12 +26870,27 @@
       "render_policy": "reader-only-exact-lived-v1",
       "review_status": "approved",
       "source_keys": [
-        "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md"
+        "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md",
+        "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.md",
+        "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.json"
       ],
       "approval": {
         "approvalLevel": "exact_owner_approved",
         "recordPath": "packages/astro-knowledge/review/angle-aspects-60-v15/records/030-natal-aspect-lived-mars-opposition-midheaven-exact-approval.json",
         "payloadSha256": "8b0d5962917be6c9243a794a60757f55e99617a36acef77796a634ea9189ba2e",
+        "approvedAt": "2026-08-31"
+      },
+      "body_they": "At home, {{Name}} may be the person who acts first when something needs to be handled. They fix what broke, deal with the difficult conversation, or step in because waiting has become more frustrating than doing it themselves. Over time, everyone can learn that eventually {{Name}} will handle what nobody else wants to do. Being capable of fixing something does not automatically make it theirs to keep fixing.",
+      "body_they_review_status": "approved",
+      "body_they_sha256": "c2ef3d66747b36b74e0232494e10cd5b85b827ab5293309e0ec343633585361c",
+      "body_they_approved_via": "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.md",
+      "body_they_authorship": "collaborative_owner_approved",
+      "body_they_name_variable": "{{Name}}",
+      "body_they_sourceMechanism": "Separately authored Friends copy transcribed byte-for-byte from the SHA-bound Friends V1 owner-approved artifact; no You-to-Friends transformation is permitted.",
+      "body_they_approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/angle-aspects-60-friends-v1/records/030-natal-aspect-lived-mars-opposition-midheaven-friends-exact-approval.json",
+        "payloadSha256": "da368027e2a4698f1414c8625f50152dc1c5939381c6f036444caff1afde1881",
         "approvedAt": "2026-08-31"
       }
     },
@@ -26432,12 +26904,27 @@
       "render_policy": "reader-only-exact-lived-v1",
       "review_status": "approved",
       "source_keys": [
-        "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md"
+        "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md",
+        "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.md",
+        "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.json"
       ],
       "approval": {
         "approvalLevel": "exact_owner_approved",
         "recordPath": "packages/astro-knowledge/review/angle-aspects-60-v15/records/031-natal-aspect-lived-jupiter-conjunction-ascendant-exact-approval.json",
         "payloadSha256": "e6a966d52744c9f1a5674ef83d2f4a18c400f78117720c489f61d40b9a18b839",
+        "approvedAt": "2026-08-31"
+      },
+      "body_they": "{{Name}} is quick to see what an idea, opportunity, or experience could grow into. That sense of possibility can take them places excessive caution would never reach, because they are often willing to enter the experience and learn from it. The complication is seeing value in several directions while still having one life to fit them into. Not every exciting possibility deserves a yes. What it adds and what it requires both matter.",
+      "body_they_review_status": "approved",
+      "body_they_sha256": "b6f6549d027fa74b0fa3b0ab6db2a6abe1e0e4e8f0debb2ff24f83e36fbec180",
+      "body_they_approved_via": "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.md",
+      "body_they_authorship": "collaborative_owner_approved",
+      "body_they_name_variable": "{{Name}}",
+      "body_they_sourceMechanism": "Separately authored Friends copy transcribed byte-for-byte from the SHA-bound Friends V1 owner-approved artifact; no You-to-Friends transformation is permitted.",
+      "body_they_approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/angle-aspects-60-friends-v1/records/031-natal-aspect-lived-jupiter-conjunction-ascendant-friends-exact-approval.json",
+        "payloadSha256": "2496bdb64c5dc37c33ff00fe0687574537950e3a8337ae8a7c3bf660b67765f6",
         "approvedAt": "2026-08-31"
       }
     },
@@ -26451,12 +26938,27 @@
       "render_policy": "reader-only-exact-lived-v1",
       "review_status": "approved",
       "source_keys": [
-        "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md"
+        "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md",
+        "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.md",
+        "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.json"
       ],
       "approval": {
         "approvalLevel": "exact_owner_approved",
         "recordPath": "packages/astro-knowledge/review/angle-aspects-60-v15/records/032-natal-aspect-lived-jupiter-conjunction-midheaven-exact-approval.json",
         "payloadSha256": "0366363ab203b5247371761c3161919a91fb64f15babc9208b1aafd989ce63d4",
+        "approvedAt": "2026-08-31"
+      },
+      "body_they": "{{Name}} wants what they are building publicly to keep giving them somewhere to grow. Recognition is more satisfying when it brings more knowledge, influence, access, reach, or authority rather than simply more attention for doing the same thing. Bigger is not automatically better. The next step matters when it gives them something useful to do with the larger role.",
+      "body_they_review_status": "approved",
+      "body_they_sha256": "154e5242b1be26942d6b94244f59f8c760dea88979ded2ffc16c82a630f9dba4",
+      "body_they_approved_via": "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.md",
+      "body_they_authorship": "collaborative_owner_approved",
+      "body_they_name_variable": "{{Name}}",
+      "body_they_sourceMechanism": "Separately authored Friends copy transcribed byte-for-byte from the SHA-bound Friends V1 owner-approved artifact; no You-to-Friends transformation is permitted.",
+      "body_they_approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/angle-aspects-60-friends-v1/records/032-natal-aspect-lived-jupiter-conjunction-midheaven-friends-exact-approval.json",
+        "payloadSha256": "1494e7a485c0a664b6957770b315c71f3c7e3459fb1c7313050af2c0b28d34f7",
         "approvedAt": "2026-08-31"
       }
     },
@@ -26470,12 +26972,27 @@
       "render_policy": "reader-only-exact-lived-v1",
       "review_status": "approved",
       "source_keys": [
-        "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md"
+        "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md",
+        "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.md",
+        "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.json"
       ],
       "approval": {
         "approvalLevel": "exact_owner_approved",
         "recordPath": "packages/astro-knowledge/review/angle-aspects-60-v15/records/033-natal-aspect-lived-jupiter-square-ascendant-exact-approval.json",
         "payloadSha256": "da11875bb684763812ad1068b273a980ba3c2bcc74d6661a52d8ab16881be0df",
+        "approvedAt": "2026-08-31"
+      },
+      "body_they": "{{Name}} can become attached to the person they imagine becoming because of a choice, so potential may feel convincing before they know if the commitment fits the life they already have. They can say yes because of what an opportunity seems to promise about their future and trust themselves to solve the ordinary requirements later. The future they can picture tells them something about what they want. It does not decide which commitment belongs in their life now.",
+      "body_they_review_status": "approved",
+      "body_they_sha256": "3fc301e04076db1c4a3d5cfc48a5b2c9870b90d5da964a46d51ca08a9eb896de",
+      "body_they_approved_via": "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.md",
+      "body_they_authorship": "collaborative_owner_approved",
+      "body_they_name_variable": "{{Name}}",
+      "body_they_sourceMechanism": "Separately authored Friends copy transcribed byte-for-byte from the SHA-bound Friends V1 owner-approved artifact; no You-to-Friends transformation is permitted.",
+      "body_they_approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/angle-aspects-60-friends-v1/records/033-natal-aspect-lived-jupiter-square-ascendant-friends-exact-approval.json",
+        "payloadSha256": "007c08e803d8c2d10e5a75f3f0cc2e3ff9e949e0ea5499a70ae4ac8f3ab0cb7f",
         "approvedAt": "2026-08-31"
       }
     },
@@ -26489,12 +27006,27 @@
       "render_policy": "reader-only-exact-lived-v1",
       "review_status": "approved",
       "source_keys": [
-        "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md"
+        "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md",
+        "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.md",
+        "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.json"
       ],
       "approval": {
         "approvalLevel": "exact_owner_approved",
         "recordPath": "packages/astro-knowledge/review/angle-aspects-60-v15/records/034-natal-aspect-lived-jupiter-square-midheaven-exact-approval.json",
         "payloadSha256": "c232ff96e15a85ee316109d5869e48e8858334d8b66a04386a0af279b3ccff08",
+        "approvedAt": "2026-08-31"
+      },
+      "body_they": "When {{Name}} starts questioning what they want to be known for next, they may reach for a bigger goal before asking if the current direction still fits. Another credential, larger role, or more ambitious project can give them something new to pursue. Sometimes expansion changes the terms in a useful way. Other times it keeps them busy inside a direction they already know they need to reconsider. The important question is what the next step actually changes.",
+      "body_they_review_status": "approved",
+      "body_they_sha256": "5452d2f24b672c53bd431bbf1faf589466ca52daf69d039af652ce0b6cc32ae0",
+      "body_they_approved_via": "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.md",
+      "body_they_authorship": "collaborative_owner_approved",
+      "body_they_name_variable": "{{Name}}",
+      "body_they_sourceMechanism": "Separately authored Friends copy transcribed byte-for-byte from the SHA-bound Friends V1 owner-approved artifact; no You-to-Friends transformation is permitted.",
+      "body_they_approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/angle-aspects-60-friends-v1/records/034-natal-aspect-lived-jupiter-square-midheaven-friends-exact-approval.json",
+        "payloadSha256": "8c1d2a2c03ff202c8a682948c5c60a4a517dd046f650115b57e2a0a12f1b3b51",
         "approvedAt": "2026-08-31"
       }
     },
@@ -26508,12 +27040,27 @@
       "render_policy": "reader-only-exact-lived-v1",
       "review_status": "approved",
       "source_keys": [
-        "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md"
+        "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md",
+        "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.md",
+        "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.json"
       ],
       "approval": {
         "approvalLevel": "exact_owner_approved",
         "recordPath": "packages/astro-knowledge/review/angle-aspects-60-v15/records/035-natal-aspect-lived-jupiter-opposition-ascendant-exact-approval.json",
         "payloadSha256": "15340e615ab8078edc9666d4ab06598177cf5ed00a696fdf1ebf0d8944c96483",
+        "approvedAt": "2026-08-31"
+      },
+      "body_they": "{{Name}} may be drawn to people who make life feel larger by introducing them to ideas, experiences, beliefs, or possibilities they would not have reached alone. Another person's knowledge can genuinely expand their worldview. The complication begins when that person's confidence starts carrying more authority than {{Name}}'s own judgment. Someone can be inspiring and experienced without automatically knowing what is right for them.",
+      "body_they_review_status": "approved",
+      "body_they_sha256": "549a30e65eadbaa3909ecd6f4e2a4264d0549804d21bc8bb3d35da45c7f6791b",
+      "body_they_approved_via": "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.md",
+      "body_they_authorship": "collaborative_owner_approved",
+      "body_they_name_variable": "{{Name}}",
+      "body_they_sourceMechanism": "Separately authored Friends copy transcribed byte-for-byte from the SHA-bound Friends V1 owner-approved artifact; no You-to-Friends transformation is permitted.",
+      "body_they_approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/angle-aspects-60-friends-v1/records/035-natal-aspect-lived-jupiter-opposition-ascendant-friends-exact-approval.json",
+        "payloadSha256": "e87af5866761989f81e1b269dbf8d48f656de90e91c82586abe2072b308ee3b8",
         "approvedAt": "2026-08-31"
       }
     },
@@ -26527,12 +27074,27 @@
       "render_policy": "reader-only-exact-lived-v1",
       "review_status": "approved",
       "source_keys": [
-        "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md"
+        "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md",
+        "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.md",
+        "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.json"
       ],
       "approval": {
         "approvalLevel": "exact_owner_approved",
         "recordPath": "packages/astro-knowledge/review/angle-aspects-60-v15/records/036-natal-aspect-lived-jupiter-opposition-midheaven-exact-approval.json",
         "payloadSha256": "0cf174320660f6f7b187ff0c0ce078a64d0b3b73a18774bc0207ed74101c2c9f",
+        "approvedAt": "2026-08-31"
+      },
+      "body_they": "{{Name}} may come from a family with strong ideas about education, money, religion, relationships, loyalty, or what a good life is supposed to look like. Some of those beliefs can give them a strong foundation, while others become harder to keep once their own experience gives them more information. Their roots explain where they started. They do not have to decide where {{Name}} ends up.",
+      "body_they_review_status": "approved",
+      "body_they_sha256": "65a9ef08d9be12e788d4e7c17403f336f37599ea479d002683447a2f8c3d2f93",
+      "body_they_approved_via": "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.md",
+      "body_they_authorship": "collaborative_owner_approved",
+      "body_they_name_variable": "{{Name}}",
+      "body_they_sourceMechanism": "Separately authored Friends copy transcribed byte-for-byte from the SHA-bound Friends V1 owner-approved artifact; no You-to-Friends transformation is permitted.",
+      "body_they_approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/angle-aspects-60-friends-v1/records/036-natal-aspect-lived-jupiter-opposition-midheaven-friends-exact-approval.json",
+        "payloadSha256": "43c3f531ab7eb54e6043193b2403177b2fbb6469ec45669e64d02e85b2ee1be7",
         "approvedAt": "2026-08-31"
       }
     },
@@ -26546,12 +27108,27 @@
       "render_policy": "reader-only-exact-lived-v1",
       "review_status": "approved",
       "source_keys": [
-        "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md"
+        "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md",
+        "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.md",
+        "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.json"
       ],
       "approval": {
         "approvalLevel": "exact_owner_approved",
         "recordPath": "packages/astro-knowledge/review/angle-aspects-60-v15/records/037-natal-aspect-lived-saturn-conjunction-ascendant-exact-approval.json",
         "payloadSha256": "3d5b0fd7ab0db7b864ada4ef2da3d4460813db066a64c7de6c5cef6d5f68dc49",
+        "approvedAt": "2026-08-31"
+      },
+      "body_they": "{{Name}} may enter something new already thinking about what will be expected once the excitement wears off. They want to know how much time it will take, what they are responsible for, and what happens if the plan becomes more complicated. That judgment can protect them from commitments that never made sense. It can also make the first decision carry the weight of everything that could possibly follow. They need to know what they are agreeing to without deciding every future responsibility before they can begin.",
+      "body_they_review_status": "approved",
+      "body_they_sha256": "a2bb0f5018043f688d0741f938666c431d164866593b92e83b76694edca8b307",
+      "body_they_approved_via": "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.md",
+      "body_they_authorship": "collaborative_owner_approved",
+      "body_they_name_variable": "{{Name}}",
+      "body_they_sourceMechanism": "Separately authored Friends copy transcribed byte-for-byte from the SHA-bound Friends V1 owner-approved artifact; no You-to-Friends transformation is permitted.",
+      "body_they_approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/angle-aspects-60-friends-v1/records/037-natal-aspect-lived-saturn-conjunction-ascendant-friends-exact-approval.json",
+        "payloadSha256": "a134d0ed2a3f26926ea7cd96d300a0152f82dcd190d179ab42c0cb0a7596f38a",
         "approvedAt": "2026-08-31"
       }
     },
@@ -26565,12 +27142,27 @@
       "render_policy": "reader-only-exact-lived-v1",
       "review_status": "approved",
       "source_keys": [
-        "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md"
+        "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md",
+        "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.md",
+        "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.json"
       ],
       "approval": {
         "approvalLevel": "exact_owner_approved",
         "recordPath": "packages/astro-knowledge/review/angle-aspects-60-v15/records/038-natal-aspect-lived-saturn-conjunction-midheaven-exact-approval.json",
         "payloadSha256": "1c1da7802f831def5145e9c14d370309e6840073c22ad5ab00d8bd989cab3f45",
+        "approvedAt": "2026-08-31"
+      },
+      "body_they": "{{Name}} may spend a long time doing the work before the title or recognition catches up. People learn what they can trust them with because they have watched them handle it more than once. The complication is that competence can attract responsibility faster than it attracts support. More responsibility should come with something: more authority, money, control over their time, recognition, or a clearer path forward. Success is not always evidence that the role still suits them.",
+      "body_they_review_status": "approved",
+      "body_they_sha256": "2e56a4f62575ff53baf995ac78ed6d281a34e6c6485a79a553529654f570b999",
+      "body_they_approved_via": "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.md",
+      "body_they_authorship": "collaborative_owner_approved",
+      "body_they_name_variable": "{{Name}}",
+      "body_they_sourceMechanism": "Separately authored Friends copy transcribed byte-for-byte from the SHA-bound Friends V1 owner-approved artifact; no You-to-Friends transformation is permitted.",
+      "body_they_approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/angle-aspects-60-friends-v1/records/038-natal-aspect-lived-saturn-conjunction-midheaven-friends-exact-approval.json",
+        "payloadSha256": "3362ac38d59d4acd326006be54a2e6c36334f3071462185fbf4f2836ae368644",
         "approvedAt": "2026-08-31"
       }
     },
@@ -26584,12 +27176,27 @@
       "render_policy": "reader-only-exact-lived-v1",
       "review_status": "approved",
       "source_keys": [
-        "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md"
+        "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md",
+        "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.md",
+        "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.json"
       ],
       "approval": {
         "approvalLevel": "exact_owner_approved",
         "recordPath": "packages/astro-knowledge/review/angle-aspects-60-v15/records/039-natal-aspect-lived-saturn-square-ascendant-exact-approval.json",
         "payloadSha256": "c7cc1c465ee9ba5868cfe2a1d277a6b0678e700a57f5b8ab868bee0693b2b27f",
+        "approvedAt": "2026-08-31"
+      },
+      "body_they": "{{Name}} can be completely capable of doing something and still spend too much time trying to become ready for the beginning. They revise, prepare, learn more, and try to remove uncertainty before anyone else has had a chance to respond. Preparation often improves the result, which makes the cost easy to miss. Preparation should make it easier for them to begin, not keep moving the beginning further away.",
+      "body_they_review_status": "approved",
+      "body_they_sha256": "6bcadb2f8e8771562b4e1fb950f482490a9bbcb26a5e64ebeaca86294dfdcb98",
+      "body_they_approved_via": "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.md",
+      "body_they_authorship": "collaborative_owner_approved",
+      "body_they_name_variable": "{{Name}}",
+      "body_they_sourceMechanism": "Separately authored Friends copy transcribed byte-for-byte from the SHA-bound Friends V1 owner-approved artifact; no You-to-Friends transformation is permitted.",
+      "body_they_approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/angle-aspects-60-friends-v1/records/039-natal-aspect-lived-saturn-square-ascendant-friends-exact-approval.json",
+        "payloadSha256": "ed02faa5b4f296edc6c4e715a7e4d77d63527e7ef70e53672ef3b2b89e99c967",
         "approvedAt": "2026-08-31"
       }
     },
@@ -26603,12 +27210,27 @@
       "render_policy": "reader-only-exact-lived-v1",
       "review_status": "approved",
       "source_keys": [
-        "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md"
+        "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md",
+        "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.md",
+        "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.json"
       ],
       "approval": {
         "approvalLevel": "exact_owner_approved",
         "recordPath": "packages/astro-knowledge/review/angle-aspects-60-v15/records/040-natal-aspect-lived-saturn-square-midheaven-exact-approval.json",
         "payloadSha256": "b67cfd7d4f2010dc42c856982560c922ee92c930d35d0bb74609be982851327d",
+        "approvedAt": "2026-08-31"
+      },
+      "body_they": "{{Name}} may do the work long before the recognition arrives. They can carry responsibility without the authority to change the process, wait on somebody else's approval, or watch a hierarchy decide how quickly they are allowed to move. Their first response to delay may be to prove themselves again. Some delays mean the work needs more time. Others reveal something about the structure around the work. {{Name}} needs to know which one they are dealing with before patience becomes another year of doing the next job without receiving what comes with it.",
+      "body_they_review_status": "approved",
+      "body_they_sha256": "33eb5edc926b278022cdc3e17b016f7065c713aef234aed7269fa0d75b9a780d",
+      "body_they_approved_via": "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.md",
+      "body_they_authorship": "collaborative_owner_approved",
+      "body_they_name_variable": "{{Name}}",
+      "body_they_sourceMechanism": "Separately authored Friends copy transcribed byte-for-byte from the SHA-bound Friends V1 owner-approved artifact; no You-to-Friends transformation is permitted.",
+      "body_they_approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/angle-aspects-60-friends-v1/records/040-natal-aspect-lived-saturn-square-midheaven-friends-exact-approval.json",
+        "payloadSha256": "4071afaf16ee34368462356da9e53d89b5d1bfb794937d1003e687f9dd1f5252",
         "approvedAt": "2026-08-31"
       }
     },
@@ -26622,12 +27244,27 @@
       "render_policy": "reader-only-exact-lived-v1",
       "review_status": "approved",
       "source_keys": [
-        "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md"
+        "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md",
+        "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.md",
+        "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.json"
       ],
       "approval": {
         "approvalLevel": "exact_owner_approved",
         "recordPath": "packages/astro-knowledge/review/angle-aspects-60-v15/records/041-natal-aspect-lived-saturn-opposition-ascendant-exact-approval.json",
         "payloadSha256": "03120a270b9410f8c56c6f8b38c2b10dd80dc1561b30576897c913c5e8fa3aa3",
+        "approvedAt": "2026-08-31"
+      },
+      "body_they": "{{Name}} takes the practical side of commitment seriously because they understand that another person's schedule, money, responsibilities, and limits eventually affect the relationship too. They can be exceptionally reliable once the easy part is over. The complication begins when dependability turns into handling whatever would otherwise be left undone. Being able to carry something does not automatically make it theirs to carry. A relationship that lasts should eventually show them what the other person is willing to carry too.",
+      "body_they_review_status": "approved",
+      "body_they_sha256": "2fe88fdbff1fda1afb277f986946ac214dcab63defdfac9859850c40f6d99d2b",
+      "body_they_approved_via": "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.md",
+      "body_they_authorship": "collaborative_owner_approved",
+      "body_they_name_variable": "{{Name}}",
+      "body_they_sourceMechanism": "Separately authored Friends copy transcribed byte-for-byte from the SHA-bound Friends V1 owner-approved artifact; no You-to-Friends transformation is permitted.",
+      "body_they_approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/angle-aspects-60-friends-v1/records/041-natal-aspect-lived-saturn-opposition-ascendant-friends-exact-approval.json",
+        "payloadSha256": "11010ac74d035dd6eeae4c30b367f05c78ae54b408c1af4445a2594bf8b5e224",
         "approvedAt": "2026-08-31"
       }
     },
@@ -26641,12 +27278,27 @@
       "render_policy": "reader-only-exact-lived-v1",
       "review_status": "approved",
       "source_keys": [
-        "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md"
+        "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md",
+        "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.md",
+        "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.json"
       ],
       "approval": {
         "approvalLevel": "exact_owner_approved",
         "recordPath": "packages/astro-knowledge/review/angle-aspects-60-v15/records/042-natal-aspect-lived-saturn-opposition-midheaven-exact-approval.json",
         "payloadSha256": "25d69fb4a0b03fec2e0dd063889dedd5716ad388568235a2c2093dd4a7fea597",
+        "approvedAt": "2026-08-31"
+      },
+      "body_they": "{{Name}} can be very good at keeping home and family responsibilities functioning, but a well-managed home is not automatically somewhere they get to rest. They may become the person who tracks the repairs, appointments, logistics, and responsibilities nobody else remembers. Some of those responsibilities are theirs because they chose them. Others remain theirs because everyone got used to them handling them. They can honor their roots without letting home become another job.",
+      "body_they_review_status": "approved",
+      "body_they_sha256": "a33e361b9fa4407a4bf812f61f41fd44ba748c126a878f95792f3a77b969efcf",
+      "body_they_approved_via": "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.md",
+      "body_they_authorship": "collaborative_owner_approved",
+      "body_they_name_variable": "{{Name}}",
+      "body_they_sourceMechanism": "Separately authored Friends copy transcribed byte-for-byte from the SHA-bound Friends V1 owner-approved artifact; no You-to-Friends transformation is permitted.",
+      "body_they_approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/angle-aspects-60-friends-v1/records/042-natal-aspect-lived-saturn-opposition-midheaven-friends-exact-approval.json",
+        "payloadSha256": "0d13d002a381ab7bdbdfb96d8ce61e447bcf734e686bb2adcc1ab01a7d41a71e",
         "approvedAt": "2026-08-31"
       }
     },
@@ -26660,12 +27312,27 @@
       "render_policy": "reader-only-exact-lived-v1",
       "review_status": "approved",
       "source_keys": [
-        "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md"
+        "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md",
+        "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.md",
+        "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.json"
       ],
       "approval": {
         "approvalLevel": "exact_owner_approved",
         "recordPath": "packages/astro-knowledge/review/angle-aspects-60-v15/records/043-natal-aspect-lived-uranus-conjunction-ascendant-exact-approval.json",
         "payloadSha256": "462b74722059f61f31377616fc33b3926ac0c39d81efb6f86301e53f0232cf77",
+        "approvedAt": "2026-08-31"
+      },
+      "body_they": "{{Name}} is willing to change the plan when new information, different needs, or a better way of doing something makes the old choice stop fitting. Other people can be surprised because they often hear about the change after {{Name}} has already spent time questioning what was no longer working. The useful question is what changed. A changed life may need a changed direction. Someone else's expectation of consistency is not, by itself, a reason to keep a choice that no longer fits.",
+      "body_they_review_status": "approved",
+      "body_they_sha256": "f80d6dfaa044d7824e5054d3092fc76d08841d473ac626877f20bbac1e3b436d",
+      "body_they_approved_via": "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.md",
+      "body_they_authorship": "collaborative_owner_approved",
+      "body_they_name_variable": "{{Name}}",
+      "body_they_sourceMechanism": "Separately authored Friends copy transcribed byte-for-byte from the SHA-bound Friends V1 owner-approved artifact; no You-to-Friends transformation is permitted.",
+      "body_they_approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/angle-aspects-60-friends-v1/records/043-natal-aspect-lived-uranus-conjunction-ascendant-friends-exact-approval.json",
+        "payloadSha256": "a60a59ad546ac078605641ebf5b060a448554f845424654fd6c9f79538302d57",
         "approvedAt": "2026-08-31"
       }
     },
@@ -26679,12 +27346,27 @@
       "render_policy": "reader-only-exact-lived-v1",
       "review_status": "approved",
       "source_keys": [
-        "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md"
+        "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md",
+        "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.md",
+        "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.json"
       ],
       "approval": {
         "approvalLevel": "exact_owner_approved",
         "recordPath": "packages/astro-knowledge/review/angle-aspects-60-v15/records/044-natal-aspect-lived-uranus-conjunction-midheaven-exact-approval.json",
         "payloadSha256": "7a2f8598c6497a82ef247526eff96ccb885c05e1940c5f7178b80f5ba1b36a0f",
+        "approvedAt": "2026-08-31"
+      },
+      "body_they": "Questioning the established way can become part of what {{Name}} is known for, especially when they can show that another approach works better. They may challenge the accepted method in school, creative work, an organization, a public role, or a profession. Being different is useful when the difference improves something. What they become known for should reflect their independence without making novelty itself the entire point.",
+      "body_they_review_status": "approved",
+      "body_they_sha256": "372e6dfbcb6c0103bd76c5ce43e8c3394f1762404a552559f1a18e1ec53e74ab",
+      "body_they_approved_via": "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.md",
+      "body_they_authorship": "collaborative_owner_approved",
+      "body_they_name_variable": "{{Name}}",
+      "body_they_sourceMechanism": "Separately authored Friends copy transcribed byte-for-byte from the SHA-bound Friends V1 owner-approved artifact; no You-to-Friends transformation is permitted.",
+      "body_they_approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/angle-aspects-60-friends-v1/records/044-natal-aspect-lived-uranus-conjunction-midheaven-friends-exact-approval.json",
+        "payloadSha256": "13e0cb5cdafb006dc61951c38f29d86d81f5c9bc2a3ddb4d5c3cca9f3e3799cb",
         "approvedAt": "2026-08-31"
       }
     },
@@ -26698,12 +27380,27 @@
       "render_policy": "reader-only-exact-lived-v1",
       "review_status": "approved",
       "source_keys": [
-        "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md"
+        "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md",
+        "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.md",
+        "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.json"
       ],
       "approval": {
         "approvalLevel": "exact_owner_approved",
         "recordPath": "packages/astro-knowledge/review/angle-aspects-60-v15/records/045-natal-aspect-lived-uranus-square-ascendant-exact-approval.json",
         "payloadSha256": "00aed9826861515a6c36aecc5cd952242033951fc791395a4beefd0c0f27cda0",
+        "approvedAt": "2026-08-31"
+      },
+      "body_they": "{{Name}} can make something work for a long time before admitting how much they have been adjusting themselves to keep it going. By the time they finally say no, the decision may look sudden to everyone else even though it has been building for months. Independence can become easiest to claim at the point of departure. The question is if the situation ever had a chance to respond to what {{Name}} actually needed before leaving became the only answer that felt honest.",
+      "body_they_review_status": "approved",
+      "body_they_sha256": "ece6b5090bc1eacef1047e985c129867eb0d0e925ba125dbbb2c0b6792c3f9f6",
+      "body_they_approved_via": "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.md",
+      "body_they_authorship": "collaborative_owner_approved",
+      "body_they_name_variable": "{{Name}}",
+      "body_they_sourceMechanism": "Separately authored Friends copy transcribed byte-for-byte from the SHA-bound Friends V1 owner-approved artifact; no You-to-Friends transformation is permitted.",
+      "body_they_approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/angle-aspects-60-friends-v1/records/045-natal-aspect-lived-uranus-square-ascendant-friends-exact-approval.json",
+        "payloadSha256": "620e729f6f5f449ce90e6681bb69876748d2440d9bd296b76f7fe1d30b35a0d9",
         "approvedAt": "2026-08-31"
       }
     },
@@ -26717,12 +27414,27 @@
       "render_policy": "reader-only-exact-lived-v1",
       "review_status": "approved",
       "source_keys": [
-        "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md"
+        "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md",
+        "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.md",
+        "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.json"
       ],
       "approval": {
         "approvalLevel": "exact_owner_approved",
         "recordPath": "packages/astro-knowledge/review/angle-aspects-60-v15/records/046-natal-aspect-lived-uranus-square-midheaven-exact-approval.json",
         "payloadSha256": "0cd4fcea6b802c46f1b83f00b77364d7f447db48953d1d6e47482bc4d1abddb2",
+        "approvedAt": "2026-08-31"
+      },
+      "body_they": "{{Name}} can do very well inside a structure and still feel constrained by how much was decided before they had any say in it. They may keep trying to earn freedom through stronger work, more responsibility, or more recognition. Sometimes that works. Other times the same restriction survives every accomplishment. What matters is what recognition actually gives them. Praise means more when it comes with enough authority for their judgment to change something.",
+      "body_they_review_status": "approved",
+      "body_they_sha256": "91e66238cb34759c7eb4ef4d1eda83b3d8f99248b14976313b727231fb85af1e",
+      "body_they_approved_via": "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.md",
+      "body_they_authorship": "collaborative_owner_approved",
+      "body_they_name_variable": "{{Name}}",
+      "body_they_sourceMechanism": "Separately authored Friends copy transcribed byte-for-byte from the SHA-bound Friends V1 owner-approved artifact; no You-to-Friends transformation is permitted.",
+      "body_they_approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/angle-aspects-60-friends-v1/records/046-natal-aspect-lived-uranus-square-midheaven-friends-exact-approval.json",
+        "payloadSha256": "e9e7fd2a36ed98835bd8c1c572cff0532b5ecf28e8c52f9bd004c6666fb39e7f",
         "approvedAt": "2026-08-31"
       }
     },
@@ -26736,12 +27448,27 @@
       "render_policy": "reader-only-exact-lived-v1",
       "review_status": "approved",
       "source_keys": [
-        "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md"
+        "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md",
+        "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.md",
+        "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.json"
       ],
       "approval": {
         "approvalLevel": "exact_owner_approved",
         "recordPath": "packages/astro-knowledge/review/angle-aspects-60-v15/records/047-natal-aspect-lived-uranus-opposition-ascendant-exact-approval.json",
         "payloadSha256": "e73bfce00c5d0f991511fc60e46c9af9a5642b973c02aec90dc12bd84d6b928f",
+        "approvedAt": "2026-08-31"
+      },
+      "body_they": "{{Name}} tends to do best in relationships where closeness leaves both people enough independence to maintain a life of their own. They may be drawn to people who question conventional relationship rules, which makes the two of them define commitment for themselves. Freedom still needs a shared meaning. A relationship can look unconventional and remain dependable if both people know what they can rely on and which choices affect them both.",
+      "body_they_review_status": "approved",
+      "body_they_sha256": "755aecb1580267d6a9321e01b97ec5d8b068c135e5c720328c4320813c60b331",
+      "body_they_approved_via": "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.md",
+      "body_they_authorship": "collaborative_owner_approved",
+      "body_they_name_variable": "{{Name}}",
+      "body_they_sourceMechanism": "Separately authored Friends copy transcribed byte-for-byte from the SHA-bound Friends V1 owner-approved artifact; no You-to-Friends transformation is permitted.",
+      "body_they_approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/angle-aspects-60-friends-v1/records/047-natal-aspect-lived-uranus-opposition-ascendant-friends-exact-approval.json",
+        "payloadSha256": "c00547d6f6df3b4b2ebd4f600602dee1f1d1ca2538052b2f629c6066380e3c52",
         "approvedAt": "2026-08-31"
       }
     },
@@ -26755,12 +27482,27 @@
       "render_policy": "reader-only-exact-lived-v1",
       "review_status": "approved",
       "source_keys": [
-        "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md"
+        "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md",
+        "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.md",
+        "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.json"
       ],
       "approval": {
         "approvalLevel": "exact_owner_approved",
         "recordPath": "packages/astro-knowledge/review/angle-aspects-60-v15/records/048-natal-aspect-lived-uranus-opposition-midheaven-exact-approval.json",
         "payloadSha256": "2b9a37a939ee1efe9401446955c5da32d6c3f76488a292325115be6dce049a3f",
+        "approvedAt": "2026-08-31"
+      },
+      "body_they": "{{Name}} needs enough freedom at home to decide how their space, time, access, and responsibilities are shared. They can care deeply about where they came from without wanting to reproduce the household or family rules they inherited. The complication is changing everything before identifying the exact freedom they were missing. Home works better when they can change what no longer fits while still building enough consistency to have something they can rely on.",
+      "body_they_review_status": "approved",
+      "body_they_sha256": "1279be289590d8ec73dbf4ad96f5e774d7e4e4ae4812195a5108cfce6a089222",
+      "body_they_approved_via": "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.md",
+      "body_they_authorship": "collaborative_owner_approved",
+      "body_they_name_variable": "{{Name}}",
+      "body_they_sourceMechanism": "Separately authored Friends copy transcribed byte-for-byte from the SHA-bound Friends V1 owner-approved artifact; no You-to-Friends transformation is permitted.",
+      "body_they_approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/angle-aspects-60-friends-v1/records/048-natal-aspect-lived-uranus-opposition-midheaven-friends-exact-approval.json",
+        "payloadSha256": "62d5b41b7fd72d9920be7e0e4b2074575a527f66b964a1b39b28e7c19f6e865b",
         "approvedAt": "2026-08-31"
       }
     },
@@ -26774,12 +27516,27 @@
       "render_policy": "reader-only-exact-lived-v1",
       "review_status": "approved",
       "source_keys": [
-        "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md"
+        "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md",
+        "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.md",
+        "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.json"
       ],
       "approval": {
         "approvalLevel": "exact_owner_approved",
         "recordPath": "packages/astro-knowledge/review/angle-aspects-60-v15/records/049-natal-aspect-lived-neptune-conjunction-ascendant-exact-approval.json",
         "payloadSha256": "ef0efa756a8fd7113dca644e9b19a1ca13eca3638d4889d23a87c6a24a05f373",
+        "approvedAt": "2026-08-31"
+      },
+      "body_they": "People can read a lot into {{Name}} before they know them well. They listen, understand where someone is coming from, and may leave enough space that the other person starts filling in the blanks. {{Name}} can be highly perceptive about tone and atmosphere, but understanding everyone else's perspective can make their own position less obvious. Other people's impressions may contain something true, but {{Name}} still gets to decide which expectations actually belong to them.",
+      "body_they_review_status": "approved",
+      "body_they_sha256": "122de1dab28e8c86395835ffdb699ec7aff78768990b296dda48eb33fc916512",
+      "body_they_approved_via": "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.md",
+      "body_they_authorship": "collaborative_owner_approved",
+      "body_they_name_variable": "{{Name}}",
+      "body_they_sourceMechanism": "Separately authored Friends copy transcribed byte-for-byte from the SHA-bound Friends V1 owner-approved artifact; no You-to-Friends transformation is permitted.",
+      "body_they_approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/angle-aspects-60-friends-v1/records/049-natal-aspect-lived-neptune-conjunction-ascendant-friends-exact-approval.json",
+        "payloadSha256": "25d9d8c2e7d4a6d2a2f8025a94cd29cf5fa95c70de96bf0f5fa99720081601ad",
         "approvedAt": "2026-08-31"
       }
     },
@@ -26793,12 +27550,27 @@
       "render_policy": "reader-only-exact-lived-v1",
       "review_status": "approved",
       "source_keys": [
-        "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md"
+        "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md",
+        "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.md",
+        "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.json"
       ],
       "approval": {
         "approvalLevel": "exact_owner_approved",
         "recordPath": "packages/astro-knowledge/review/angle-aspects-60-v15/records/050-natal-aspect-lived-neptune-conjunction-midheaven-exact-approval.json",
         "payloadSha256": "9233abac2d0be8197265e7ef7a1f2b201b8f139ac64041741145773669b2b821",
+        "approvedAt": "2026-08-31"
+      },
+      "body_they": "{{Name}} wants what they contribute to mean something. They may care about making something beautiful, helping somebody understand an experience, giving shape to an idea, or contributing to something they believe matters. The complication is that meaningful work can make vague expectations easier to accept. Purpose does not replace clear terms. Their sensitivity and imagination need enough support, credit, authority, and structure that caring about the work does not become permission for everyone to keep asking for more.",
+      "body_they_review_status": "approved",
+      "body_they_sha256": "cdd32e492db9ef1a686c60f024d0969567663c70cfba5e7e22e5fd7be8649167",
+      "body_they_approved_via": "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.md",
+      "body_they_authorship": "collaborative_owner_approved",
+      "body_they_name_variable": "{{Name}}",
+      "body_they_sourceMechanism": "Separately authored Friends copy transcribed byte-for-byte from the SHA-bound Friends V1 owner-approved artifact; no You-to-Friends transformation is permitted.",
+      "body_they_approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/angle-aspects-60-friends-v1/records/050-natal-aspect-lived-neptune-conjunction-midheaven-friends-exact-approval.json",
+        "payloadSha256": "a0bfbaacca8dbb35270f625481ed4a38cd4c882ee5b493a385e63997b93f3e3c",
         "approvedAt": "2026-08-31"
       }
     },
@@ -26812,12 +27584,27 @@
       "render_policy": "reader-only-exact-lived-v1",
       "review_status": "approved",
       "source_keys": [
-        "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md"
+        "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md",
+        "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.md",
+        "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.json"
       ],
       "approval": {
         "approvalLevel": "exact_owner_approved",
         "recordPath": "packages/astro-knowledge/review/angle-aspects-60-v15/records/051-natal-aspect-lived-neptune-square-ascendant-exact-approval.json",
         "payloadSha256": "e3f0f64a2995152f17dc66877ec0194b6d77a045af646004ffe069b65ab79005",
+        "approvedAt": "2026-08-31"
+      },
+      "body_they": "{{Name}} may know how to keep an interaction pleasant even when the answer they are giving is becoming less accurate. They soften the no, leave out the disappointing part, or match someone else's enthusiasm because changing the mood feels difficult. Then they can feel unseen by people who were simply responding to what {{Name}} appeared to agree to. The people who truly know them need access to an answer that actually sounds like theirs.",
+      "body_they_review_status": "approved",
+      "body_they_sha256": "d9081e67c1dc0526ad9194894512f7337d50c218ddcedd3ffb31684a3e50dd2b",
+      "body_they_approved_via": "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.md",
+      "body_they_authorship": "collaborative_owner_approved",
+      "body_they_name_variable": "{{Name}}",
+      "body_they_sourceMechanism": "Separately authored Friends copy transcribed byte-for-byte from the SHA-bound Friends V1 owner-approved artifact; no You-to-Friends transformation is permitted.",
+      "body_they_approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/angle-aspects-60-friends-v1/records/051-natal-aspect-lived-neptune-square-ascendant-friends-exact-approval.json",
+        "payloadSha256": "77456eeab72683883dd091c11f9875d000f18cef62e98269d0649f3755510628",
         "approvedAt": "2026-08-31"
       }
     },
@@ -26831,12 +27618,27 @@
       "render_policy": "reader-only-exact-lived-v1",
       "review_status": "approved",
       "source_keys": [
-        "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md"
+        "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md",
+        "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.md",
+        "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.json"
       ],
       "approval": {
         "approvalLevel": "exact_owner_approved",
         "recordPath": "packages/astro-knowledge/review/angle-aspects-60-v15/records/052-natal-aspect-lived-neptune-square-midheaven-exact-approval.json",
         "payloadSha256": "8e997a0a17ebefc5bf4d0890afd720198751eba6f290accbd8a3ec49cad5ff56",
+        "approvedAt": "2026-08-31"
+      },
+      "body_they": "{{Name}} can become attached to what a path means before they know if they like the life that comes with it. They may believe deeply in the program, organization, project, or visible role while the daily reality keeps asking for something different. Potential can keep them invested long after the current version has stopped working. Believing in what something could become and wanting what it is asking from them now are different questions.",
+      "body_they_review_status": "approved",
+      "body_they_sha256": "bcfc16dfb92a1b1149251827cbcb9120a739ea70f892788bd8bb47e7ff321f04",
+      "body_they_approved_via": "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.md",
+      "body_they_authorship": "collaborative_owner_approved",
+      "body_they_name_variable": "{{Name}}",
+      "body_they_sourceMechanism": "Separately authored Friends copy transcribed byte-for-byte from the SHA-bound Friends V1 owner-approved artifact; no You-to-Friends transformation is permitted.",
+      "body_they_approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/angle-aspects-60-friends-v1/records/052-natal-aspect-lived-neptune-square-midheaven-friends-exact-approval.json",
+        "payloadSha256": "0a9849ede08c714ca6844ecdde7a82fde29b53dcc35060f352255799025fb8dd",
         "approvedAt": "2026-08-31"
       }
     },
@@ -26850,12 +27652,27 @@
       "render_policy": "reader-only-exact-lived-v1",
       "review_status": "approved",
       "source_keys": [
-        "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md"
+        "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md",
+        "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.md",
+        "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.json"
       ],
       "approval": {
         "approvalLevel": "exact_owner_approved",
         "recordPath": "packages/astro-knowledge/review/angle-aspects-60-v15/records/053-natal-aspect-lived-neptune-opposition-ascendant-exact-approval.json",
         "payloadSha256": "74d7a91576c4576a00db66104bb3a9f38feda3e1f9380100da11d1cb9a9cb8fb",
+        "approvedAt": "2026-08-31"
+      },
+      "body_they": "{{Name}} may be drawn to relationships that feel meaningful before they have had much time to prove themselves. Strong chemistry or an unusual sense of understanding can make the connection feel important very quickly. The complication is letting that significance outweigh ordinary evidence about communication and follow-through. Feeling understood and having something dependable are different forms of intimacy. Chemistry tells {{Name}} that the connection matters. Follow-through tells them what the two of them can actually build.",
+      "body_they_review_status": "approved",
+      "body_they_sha256": "1a2998bc0b0700ca531d3ddb9d9824c6c325ba15ee0d86dffd7f0735d3d782c9",
+      "body_they_approved_via": "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.md",
+      "body_they_authorship": "collaborative_owner_approved",
+      "body_they_name_variable": "{{Name}}",
+      "body_they_sourceMechanism": "Separately authored Friends copy transcribed byte-for-byte from the SHA-bound Friends V1 owner-approved artifact; no You-to-Friends transformation is permitted.",
+      "body_they_approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/angle-aspects-60-friends-v1/records/053-natal-aspect-lived-neptune-opposition-ascendant-friends-exact-approval.json",
+        "payloadSha256": "e579cc20f1a1fe3023e2b4b0b604646b08ff9112a52d39c4b012774dccdfa980",
         "approvedAt": "2026-08-31"
       }
     },
@@ -26869,12 +27686,27 @@
       "render_policy": "reader-only-exact-lived-v1",
       "review_status": "approved",
       "source_keys": [
-        "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md"
+        "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md",
+        "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.md",
+        "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.json"
       ],
       "approval": {
         "approvalLevel": "exact_owner_approved",
         "recordPath": "packages/astro-knowledge/review/angle-aspects-60-v15/records/054-natal-aspect-lived-neptune-opposition-midheaven-exact-approval.json",
         "payloadSha256": "f60f767a2983c739b45195ee5e889ebca6a328f122628d85d2abd26975352905",
+        "approvedAt": "2026-08-31"
+      },
+      "body_they": "{{Name}} may need more privacy, quiet, and clear boundaries at home than other people realize. Other people's moods and conversations can stay with them, which makes constant access especially draining. Their compassion can also make temporary exceptions quietly become permanent responsibilities. Caring about somebody does not require leaving every term open. Clear expectations around access, time, money, and responsibility make it easier for {{Name}} to help without disappearing from their own life.",
+      "body_they_review_status": "approved",
+      "body_they_sha256": "47ea2fc8d61baee10b31902c48853044b0dbfa2ab70043a59f1553d317bff19d",
+      "body_they_approved_via": "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.md",
+      "body_they_authorship": "collaborative_owner_approved",
+      "body_they_name_variable": "{{Name}}",
+      "body_they_sourceMechanism": "Separately authored Friends copy transcribed byte-for-byte from the SHA-bound Friends V1 owner-approved artifact; no You-to-Friends transformation is permitted.",
+      "body_they_approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/angle-aspects-60-friends-v1/records/054-natal-aspect-lived-neptune-opposition-midheaven-friends-exact-approval.json",
+        "payloadSha256": "b34554d673835fc2bd2f9a961d7c88bd1ae0991fe66853f9df90c55f68f7f8f1",
         "approvedAt": "2026-08-31"
       }
     },
@@ -26888,12 +27720,27 @@
       "render_policy": "reader-only-exact-lived-v1",
       "review_status": "approved",
       "source_keys": [
-        "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md"
+        "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md",
+        "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.md",
+        "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.json"
       ],
       "approval": {
         "approvalLevel": "exact_owner_approved",
         "recordPath": "packages/astro-knowledge/review/angle-aspects-60-v15/records/055-natal-aspect-lived-pluto-conjunction-ascendant-exact-approval.json",
         "payloadSha256": "875fc158800e783437ca35faedbc96c7125c244f55745fbf845b5ecd80d53a99",
+        "approvedAt": "2026-08-31"
+      },
+      "body_they": "{{Name}} is quick to notice when someone's words and behavior do not match, and once they see the gap it can be difficult to ignore. They are willing to look directly at motives and dynamics other people would rather leave vague. The complication is feeling as if they need the complete explanation before they can make a decision. More information can explain someone's behavior without making that behavior acceptable. Sometimes the pattern has already told {{Name}} enough.",
+      "body_they_review_status": "approved",
+      "body_they_sha256": "0f9e5bff84a12cf9b8e04543daa032c5bb99dc3facbbe9258894a412592208d2",
+      "body_they_approved_via": "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.md",
+      "body_they_authorship": "collaborative_owner_approved",
+      "body_they_name_variable": "{{Name}}",
+      "body_they_sourceMechanism": "Separately authored Friends copy transcribed byte-for-byte from the SHA-bound Friends V1 owner-approved artifact; no You-to-Friends transformation is permitted.",
+      "body_they_approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/angle-aspects-60-friends-v1/records/055-natal-aspect-lived-pluto-conjunction-ascendant-friends-exact-approval.json",
+        "payloadSha256": "62ab7551594cbd75a3ef2a2b7bbe3718981efc0c86dfddfb19f5f397bbcaba78",
         "approvedAt": "2026-08-31"
       }
     },
@@ -26907,12 +27754,27 @@
       "render_policy": "reader-only-exact-lived-v1",
       "review_status": "approved",
       "source_keys": [
-        "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md"
+        "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md",
+        "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.md",
+        "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.json"
       ],
       "approval": {
         "approvalLevel": "exact_owner_approved",
         "recordPath": "packages/astro-knowledge/review/angle-aspects-60-v15/records/056-natal-aspect-lived-pluto-conjunction-midheaven-exact-approval.json",
         "payloadSha256": "eded37796f4266490e818aab66deecbe698343dd9152bff766867e7380f86281",
+        "approvedAt": "2026-08-31"
+      },
+      "body_they": "{{Name}} takes visible responsibility seriously when their name is attached to the outcome, especially if other people will have to live with the consequences. People may trust them with difficult things because they do not look away from what is actually at stake. Over time, being trusted can become being needed for the part nobody else wants to carry. Being needed is not the same as being fulfilled. What they become known for should still be something they would choose if nobody depended on them to keep doing it.",
+      "body_they_review_status": "approved",
+      "body_they_sha256": "448bd2fba7d4a1364d0023020e591b4ca9ae680be0955d420de2485da4778809",
+      "body_they_approved_via": "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.md",
+      "body_they_authorship": "collaborative_owner_approved",
+      "body_they_name_variable": "{{Name}}",
+      "body_they_sourceMechanism": "Separately authored Friends copy transcribed byte-for-byte from the SHA-bound Friends V1 owner-approved artifact; no You-to-Friends transformation is permitted.",
+      "body_they_approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/angle-aspects-60-friends-v1/records/056-natal-aspect-lived-pluto-conjunction-midheaven-friends-exact-approval.json",
+        "payloadSha256": "9b8a77fcb2f2d91ff8b3fde4846f81a969fb022888ea0a94877d8e1d1ce78819",
         "approvedAt": "2026-08-31"
       }
     },
@@ -26926,12 +27788,27 @@
       "render_policy": "reader-only-exact-lived-v1",
       "review_status": "approved",
       "source_keys": [
-        "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md"
+        "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md",
+        "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.md",
+        "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.json"
       ],
       "approval": {
         "approvalLevel": "exact_owner_approved",
         "recordPath": "packages/astro-knowledge/review/angle-aspects-60-v15/records/057-natal-aspect-lived-pluto-square-ascendant-exact-approval.json",
         "payloadSha256": "ba4346f190b38dcf3d5a2f77c1762012d44ffabe9628b070cea4750bf1bb467e",
+        "approvedAt": "2026-08-31"
+      },
+      "body_they": "{{Name}} notices quickly when another person has more control over a situation than they do, especially around access, money, information, or the terms of a decision. Once they see the imbalance, they may keep pushing for an explanation or acknowledgement long after the other person's behavior has already made the situation clear. They do not need somebody else to admit what happened before deciding what they will do next. Sometimes the useful choice is simply giving the situation less access to their time, attention, or money.",
+      "body_they_review_status": "approved",
+      "body_they_sha256": "ed22f8304679e32501f7dad94d11ef69778f0ba2796ac9c762d8404822fb8a71",
+      "body_they_approved_via": "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.md",
+      "body_they_authorship": "collaborative_owner_approved",
+      "body_they_name_variable": "{{Name}}",
+      "body_they_sourceMechanism": "Separately authored Friends copy transcribed byte-for-byte from the SHA-bound Friends V1 owner-approved artifact; no You-to-Friends transformation is permitted.",
+      "body_they_approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/angle-aspects-60-friends-v1/records/057-natal-aspect-lived-pluto-square-ascendant-friends-exact-approval.json",
+        "payloadSha256": "8bacb687f0914c747b1664f6215c89b2562d8153c3e2e8349bc1ce01f8ef59a1",
         "approvedAt": "2026-08-31"
       }
     },
@@ -26945,12 +27822,27 @@
       "render_policy": "reader-only-exact-lived-v1",
       "review_status": "approved",
       "source_keys": [
-        "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md"
+        "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md",
+        "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.md",
+        "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.json"
       ],
       "approval": {
         "approvalLevel": "exact_owner_approved",
         "recordPath": "packages/astro-knowledge/review/angle-aspects-60-v15/records/058-natal-aspect-lived-pluto-square-midheaven-exact-approval.json",
         "payloadSha256": "a3787d37278f602a79a2f58435415f2e3f2228838390747b6c0a3c909e9544a7",
+        "approvedAt": "2026-08-31"
+      },
+      "body_they": "{{Name}} notices who actually has power, and official titles matter less to them than who can change the outcome. They pay attention to who controls access, money, information, exceptions, and final decisions. The complication is letting power become too central to the way they measure progress. More authority matters if it changes what they can actually build, fund, protect, end, or make possible. Status without meaningful influence may not give them much of what they were trying to gain.",
+      "body_they_review_status": "approved",
+      "body_they_sha256": "3f4b6f05cd22e90f00fb6c42aebf6566aef39a6a746cf84769188fb28da2801d",
+      "body_they_approved_via": "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.md",
+      "body_they_authorship": "collaborative_owner_approved",
+      "body_they_name_variable": "{{Name}}",
+      "body_they_sourceMechanism": "Separately authored Friends copy transcribed byte-for-byte from the SHA-bound Friends V1 owner-approved artifact; no You-to-Friends transformation is permitted.",
+      "body_they_approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/angle-aspects-60-friends-v1/records/058-natal-aspect-lived-pluto-square-midheaven-friends-exact-approval.json",
+        "payloadSha256": "40a8b553d24dc261a00d3bd7583b287d7f4f82c9fddf2cea3ca7befbc50b6ca4",
         "approvedAt": "2026-08-31"
       }
     },
@@ -26964,12 +27856,27 @@
       "render_policy": "reader-only-exact-lived-v1",
       "review_status": "approved",
       "source_keys": [
-        "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md"
+        "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md",
+        "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.md",
+        "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.json"
       ],
       "approval": {
         "approvalLevel": "exact_owner_approved",
         "recordPath": "packages/astro-knowledge/review/angle-aspects-60-v15/records/059-natal-aspect-lived-pluto-opposition-ascendant-exact-approval.json",
         "payloadSha256": "8a80a9c448f7f1e2b975cbf86a509db21f6572f020fa3b08c558a311020c5cf1",
+        "approvedAt": "2026-08-31"
+      },
+      "body_they": "{{Name}} wants to know where they stand with the people closest to them. Trust, loyalty, privacy, money, sex, and shared responsibilities can carry a lot of weight because another person's choices reach parts of their life casual relationships never touch. The challenge is knowing when depth has turned into testing. More information does not automatically create more trust. What {{Name}} can repeatedly rely on matters more than knowing everything.",
+      "body_they_review_status": "approved",
+      "body_they_sha256": "d4c25ee8901aad1425cf17f878584bc5238ac708ab9ed8401c4938ed85ad08f4",
+      "body_they_approved_via": "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.md",
+      "body_they_authorship": "collaborative_owner_approved",
+      "body_they_name_variable": "{{Name}}",
+      "body_they_sourceMechanism": "Separately authored Friends copy transcribed byte-for-byte from the SHA-bound Friends V1 owner-approved artifact; no You-to-Friends transformation is permitted.",
+      "body_they_approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/angle-aspects-60-friends-v1/records/059-natal-aspect-lived-pluto-opposition-ascendant-friends-exact-approval.json",
+        "payloadSha256": "4aff42a1beebd9d827878a45fc4fac0fcd2ef3cbfb5df2a5f5b8ce4de20511ba",
         "approvedAt": "2026-08-31"
       }
     },
@@ -26983,12 +27890,27 @@
       "render_policy": "reader-only-exact-lived-v1",
       "review_status": "approved",
       "source_keys": [
-        "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md"
+        "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md",
+        "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.md",
+        "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.json"
       ],
       "approval": {
         "approvalLevel": "exact_owner_approved",
         "recordPath": "packages/astro-knowledge/review/angle-aspects-60-v15/records/060-natal-aspect-lived-pluto-opposition-midheaven-exact-approval.json",
         "payloadSha256": "fa11da3337598f8e62963ec801515027c3c3c76b53f4142904015351ca994ac0",
+        "approvedAt": "2026-08-31"
+      },
+      "body_they": "Family and home can make power very practical for {{Name}}: who owns something, who pays, who has access, who is expected to help, and who gets the final say. They may also notice how old roles, obligations, silence, and past decisions keep shaping the present long after anyone remembers why the rule started. History can explain how the family got here without deciding that the same person must keep paying, helping, yielding, or carrying the responsibility now.",
+      "body_they_review_status": "approved",
+      "body_they_sha256": "990acfe0e5c1402f247757edb332831dd0dde7d1025dc020074c0020a57c337d",
+      "body_they_approved_via": "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.md",
+      "body_they_authorship": "collaborative_owner_approved",
+      "body_they_name_variable": "{{Name}}",
+      "body_they_sourceMechanism": "Separately authored Friends copy transcribed byte-for-byte from the SHA-bound Friends V1 owner-approved artifact; no You-to-Friends transformation is permitted.",
+      "body_they_approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "packages/astro-knowledge/review/angle-aspects-60-friends-v1/records/060-natal-aspect-lived-pluto-opposition-midheaven-friends-exact-approval.json",
+        "payloadSha256": "9e7a0ed358ceeb5aa88936f5ed5fa15d31e18283944cd5459f8b24c6b8ff8c00",
         "approvedAt": "2026-08-31"
       }
     }
