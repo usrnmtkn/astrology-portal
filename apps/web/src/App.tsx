@@ -4769,6 +4769,13 @@ function skyPlacementWritingSection(
     && ["mercury", "venus", "mars", "jupiter", "saturn", "uranus", "neptune", "pluto", "chiron"].includes(planet);
   const transitEndpoints = placementTransitEndpoints(position, generatedAt);
   const finalResidencyExit = placementFinalResidencyExit(position, transitEndpoints.end);
+  const canonicalEntryDate = formatPlacementTransitEndpoint(position, transitEndpoints.start, true);
+  const canonicalExitDate = formatPlacementTransitEndpoint(position, finalResidencyExit, true);
+  const entryYear = canonicalEntryDate.match(/, (\d{4})$/u)?.[1] ?? null;
+  const exitYear = canonicalExitDate.match(/, (\d{4})$/u)?.[1] ?? null;
+  const canonicalDateLine = entryYear && entryYear === exitYear
+    ? `${canonicalEntryDate.replace(/, \d{4}$/u, "")} to ${canonicalExitDate}`
+    : `${canonicalEntryDate} to ${canonicalExitDate}`;
   let rendered: ReturnType<typeof transitSynastryFallbackRendererV3.renderSkyPlacement>;
 
   try {
@@ -4779,8 +4786,8 @@ function skyPlacementWritingSection(
       asOfDate: generatedAt,
       articleMode: articleOptions?.articleMode ?? "current",
       articleKey: articleOptions?.articleKey ?? null,
-      entryDate: formatPlacementTransitEndpoint(position, transitEndpoints.start, true),
-      exitDate: formatPlacementTransitEndpoint(position, finalResidencyExit, true),
+      entryDate: canonicalEntryDate,
+      exitDate: canonicalExitDate,
       residencyPasses: position.residencyPasses,
       residencyStations: position.residencyStations,
       priorSign: position.priorTransitSign ? normalizeContentIdPart(position.priorTransitSign) : null,
@@ -4815,10 +4822,10 @@ function skyPlacementWritingSection(
       route: "placement",
       planet,
       sign,
-      dateLine: `${formatPlacementTransitEndpoint(position, transitEndpoints.start, true)} to ${formatPlacementTransitEndpoint(position, finalResidencyExit, true)}`,
+      dateLine: canonicalDateLine,
       facts: {
-        entryDate: formatPlacementTransitEndpoint(position, transitEndpoints.start, true),
-        exitDate: formatPlacementTransitEndpoint(position, finalResidencyExit, true)
+        entryDate: canonicalEntryDate,
+        exitDate: canonicalExitDate
       },
       isRetrograde: hasRetrogradeGuidance,
       stationSupported: planet === "lilith" && Boolean(position.residencyStations?.length),
@@ -4836,7 +4843,11 @@ function skyPlacementWritingSection(
         closingCharge: null,
         body: skyV4.readerParts.join("\n\n"),
         parts: skyV4.readerParts,
-        articleSections: [{ kind: "sky-v4-canonical-reader", heading: "", body: skyV4.readerParts.join("\n\n") }],
+        articleSections: [{
+          kind: "sky-v4-canonical-reader",
+          heading: "",
+          body: `${canonicalDateLine}\n\n${skyV4.readerParts.join("\n\n")}`
+        }],
         templateKey: "sky-v4-canonical-reader-v1",
         contentKey: skyV4.contentKey
       };
@@ -11294,7 +11305,6 @@ export function App() {
       .then((dashboardBundle) => {
         if (!dashboardBundle || cancelled) return false;
         installSkyPlacementFallbackArchitectureV3Bundle(dashboardBundle);
-        markAvailable();
         return true;
       });
 

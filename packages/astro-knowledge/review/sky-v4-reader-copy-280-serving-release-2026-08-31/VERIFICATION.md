@@ -82,4 +82,6 @@ The 24 template records and `sky-v4/settings/contextual-overlays` remain configu
 - Content Studio API round trip: PASS; draft hidden from reader.
 - TypeScript: PASS.
 - Production web build: PASS.
+- Web bundle budget: PASS. The immutable canonical corpus is emitted as an on-demand JSON asset; it is not part of the reader boot graph. App boot is `382.2 kB` gzip, reader boot is `429.1 kB` gzip, and total JavaScript is `2.68 MB` gzip.
+- Full local browser suite: PASS (`4/4` You loading, `7/7` Friends loading, `130/130` visual/user-flow tests).
 - GitHub CI: pending after push; merge remains blocked at the final serving review wall.
