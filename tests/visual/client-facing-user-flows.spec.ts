@@ -3301,7 +3301,7 @@ test.describe("client-facing user flow case studies", () => {
     await assertNoClientErrors();
   });
 
-  test("Sun in Virgo detail serves the exact owner-approved source repair", async ({ page }) => {
+  test("Sun in Virgo detail serves the exact canonical V4 owner-approved article", async ({ page }) => {
     const assertNoClientErrors = await expectNoClientErrors(page);
 
     await seedClientState(page, { now: "2026-08-27T16:00:00.000Z" });
@@ -3309,8 +3309,8 @@ test.describe("client-facing user flow case studies", () => {
 
     const article = page.locator(".sky-detail-article");
     await expect(article).toBeVisible();
-    await expect(article).toContainText("Virgo is not tidiness. Virgo is the standard");
-    await expect(article).toContainText("You may be the only person who can tell.");
+    await expect(article).toContainText("Welcome to Virgo season’s reality check.");
+    await expect(article).toContainText("The best repair may be the one that removes work instead of teaching you to tolerate more of it.");
     await expectNoDuplicateArticleHeadings(page, "Sun in Virgo placement detail");
     await assertNoClientErrors();
   });
@@ -3329,13 +3329,14 @@ test.describe("client-facing user flow case studies", () => {
     await expect(page.locator(".app-shell.mode-detail")).toBeVisible();
     await expectNoDuplicateArticleHeadings(page, "Sky placement detail");
     await expect(page.locator(".sky-detail-article")).toContainText(/The Sun in Leo/i);
+    await expect(page.locator(".sky-detail-article")).toContainText(/Leo brings a bold invitation to take center stage in your own life/u);
     await expect(page.locator(".sky-detail-article")).not.toContainText(/active here|current emphasis|timing, mood/i);
     await expectHydrationKeepsReaderCopyStable(
       page,
       page.locator(".sky-detail-article"),
       "Sky placement detail copy",
       {
-        excludedSelector: "#sky-rising-horoscopes, #sky-personalized-placement",
+        excludedSelector: "#sky-rising-horoscopes, #sky-personalized-placement, .article-related-aspects",
         minLength: 180
       }
     );
@@ -3466,16 +3467,16 @@ test.describe("client-facing user flow case studies", () => {
     await assertNoClientErrors();
   });
 
-  test("Pluto retrograde in Aquarius keeps approved placement copy when pre-1800 recurrence facts are unavailable", async ({ page }) => {
+  test("Pluto retrograde in Aquarius serves canonical V4 copy without invented recurrence facts", async ({ page }) => {
     const assertNoClientErrors = await expectNoClientErrors(page);
 
     await seedClientState(page, { now: "2026-08-22T16:00:00.000Z" });
     await expectClientRouteLoads(page, "/#sky/placement/pluto/aquarius");
 
     await expect(page.getByRole("heading", { name: /Pluto(?: Rx)? in Aquarius/u })).toBeVisible();
-    await expect(page.getByText(/Pluto governs power and transformation/u)).toBeVisible();
-    await expect(page.getByText(/These systems can connect a group quickly/u)).toBeVisible();
-    await expect(page.getByText(/By .*a network that treats agreement as proof of truth/u)).toBeVisible();
+    await expect(page.getByText(/Pluto moves into Aquarius, putting more pressure on power, control, and consequences/u)).toBeVisible();
+    await expect(page.getByText(/Pluto in Aquarius magnifies the shadows of group dynamics/u)).toBeVisible();
+    await expect(page.getByText(/who gains leverage after it changes/u)).toBeVisible();
     await expect(page.getByText(/Pluto previously moved through Aquarius/u)).toHaveCount(0);
     await assertNoClientErrors();
   });
