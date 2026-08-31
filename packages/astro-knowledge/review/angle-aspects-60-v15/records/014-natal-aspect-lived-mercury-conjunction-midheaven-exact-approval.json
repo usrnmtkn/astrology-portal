@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "id": "angle-aspects-60-v15-014",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_reviewed",
+  "provenanceNote": "The owner supplied exact wording approval for V15 and explicitly did not relabel collaboratively drafted copy as owner_authored.",
+  "contentKey": "fallback-hook/natal-aspect-lived/mercury/conjunction/midheaven",
+  "packetKey": "mercury|conjunction|midheaven",
+  "payloadSha256": "43cb69b1375f3a74bc93165a425053ce9c93b6d35a26c85ff8b8eb0c0c43e560",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "You have a way of putting the complicated part into words that other people remember. You ask the question that changes the discussion, notice what an explanation leaves out, or make something understandable enough that other people can finally decide what to do with it.\n\nThat ability can become part of your reputation early. A teacher asks you to explain it to the group, people want you to write the message, or a project starts depending on your ability to find the missing fact and make the distinction that matters.\n\nBeing the clearest person can also make you responsible for language that is not actually yours. You become the one asked to explain the rule, represent the group, clean up the confusion, or speak for a decision somebody else made.\n\nWhen your name is attached to the explanation, you need access to the facts and enough authority to correct what is wrong. Being known for clear thinking should give you something you can stand behind, not make you the permanent voice of decisions other people control.",
+    "sourceMechanism": "Exact owner-approved copy transcribed byte-for-byte from the SHA-bound canonical V15 owner-approval artifact; collaborative authorship is preserved and sole owner authorship is not asserted."
+  },
+  "approvedAt": "2026-08-31",
+  "approvalEffect": "exact_wording_approval",
+  "sourceArtifact": {
+    "id": "angle-aspects-60-v15-owner-approval-candidate",
+    "path": "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md",
+    "sha256": "3bbcd3e611d72a9754e9fdb4f4390ec860a670bc53af6b059ea23a212d37bfd4",
+    "passageHeading": "Mercury conjunct Midheaven",
+    "passageOrdinal": 14,
+    "bodySha256": "e4355fef7bc493d30ce0b8d6a1a675adf2edc80802a0770855a15e37a1adeab0"
+  },
+  "ownerConfirmationSource": {
+    "channel": "Codex task owner message",
+    "taskId": "01a04fc0-899b-7cd2-bb2e-98ad182391bb",
+    "date": "2026-08-31"
+  },
+  "replacementAuthorization": null,
+  "additionalBilledCalls": 0
+}

@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "id": "angle-aspects-60-v15-042",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_reviewed",
+  "provenanceNote": "The owner supplied exact wording approval for V15 and explicitly did not relabel collaboratively drafted copy as owner_authored.",
+  "contentKey": "fallback-hook/natal-aspect-lived/saturn/opposition/midheaven",
+  "packetKey": "saturn|opposition|midheaven",
+  "payloadSha256": "25d69fb4a0b03fec2e0dd063889dedd5716ad388568235a2c2093dd4a7fea597",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "A home can be well managed and still not feel like somewhere you get to rest. The bills are paid, the appointments are handled, somebody remembered what needed to be repaired, and the family logistics keep moving because somebody keeps track of them. With Saturn opposite your Midheaven, responsibility can become part of the private life that nobody outside it sees.\n\nSaturn deals with responsibility, time, limits, and what has to keep working. Opposite the Midheaven, Saturn sits on the IC, the part of the chart connected to home, roots, family, and what your life is built on away from public view. Structure can be extremely useful here. You may need a home that functions, clear expectations with family, or routines that make ordinary life easier instead of leaving you constantly catching up.\n\nThe problem begins when a functioning home depends on you staying on top of everything. You handle the repairs, organize everybody's schedule, keep showing up for family, and realize that your main role at home has become keeping things running. A house that functions is not automatically a home where you get to rest. No amount of information or planning can substitute for actually feeling at home in your life.\n\nSome responsibilities at home are yours because you chose them. Others are still yours because everyone has gotten used to you being the person who handles them. You can honor your roots without living tangled in them. A home can require work without becoming another job.",
+    "sourceMechanism": "Exact owner-approved copy transcribed byte-for-byte from the SHA-bound canonical V15 owner-approval artifact; collaborative authorship is preserved and sole owner authorship is not asserted."
+  },
+  "approvedAt": "2026-08-31",
+  "approvalEffect": "exact_wording_approval",
+  "sourceArtifact": {
+    "id": "angle-aspects-60-v15-owner-approval-candidate",
+    "path": "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md",
+    "sha256": "3bbcd3e611d72a9754e9fdb4f4390ec860a670bc53af6b059ea23a212d37bfd4",
+    "passageHeading": "Saturn opposition Midheaven",
+    "passageOrdinal": 42,
+    "bodySha256": "8616709827120c194c6cf1970e97a189ed87a85582ff35e04713a82cc93cd89a"
+  },
+  "ownerConfirmationSource": {
+    "channel": "Codex task owner message",
+    "taskId": "01a04fc0-899b-7cd2-bb2e-98ad182391bb",
+    "date": "2026-08-31"
+  },
+  "replacementAuthorization": {
+    "explicitlyAuthorized": true,
+    "preservesHistoricalProvenance": true,
+    "priorApprovalRecordPath": "packages/astro-knowledge/voice/tldr-astro/marie-satori-writer/ll-matrix-v13/knowledge-matrix-v13-owner-approved-locked.json",
+    "priorPayloadSha256": "ad9a13baf1e7f21fbf6230a23b45c4dd07f0fa24a3b89c8a49037f664c153aee",
+    "priorUpdatedAt": "2026-08-27T17:07:04.191206+00:00"
+  },
+  "additionalBilledCalls": 0
+}

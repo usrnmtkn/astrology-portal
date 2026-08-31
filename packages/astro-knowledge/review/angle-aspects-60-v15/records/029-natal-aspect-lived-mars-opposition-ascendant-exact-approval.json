@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "id": "angle-aspects-60-v15-029",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_reviewed",
+  "provenanceNote": "The owner supplied exact wording approval for V15 and explicitly did not relabel collaboratively drafted copy as owner_authored.",
+  "contentKey": "fallback-hook/natal-aspect-lived/mars/opposition/ascendant",
+  "packetKey": "mars|opposition|ascendant",
+  "payloadSha256": "580ce500ce9450d8a3c7bf30af0978a9dec9cf3af067803311a890bc6a73a46c",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "You tend to learn what you want most clearly when a partner wants something different, because disagreement forces you to notice where you will compromise and where you will not. You may be drawn to people who are direct, decisive, ambitious, or comfortable saying what they want.\n\nDifferences make your own position clearer. You find out what matters when someone moves faster than you do, wants a different outcome, or refuses to make the choice you hoped they would make.\n\nThe challenge is when the relationship starts organizing itself around whoever pushes harder. You let them choose because they seem more certain, or take over because waiting for them to act becomes more frustrating than making the decision yourself. Either way, the more forceful person's wants start carrying more weight.\n\nConflict can tell you something important about what each person wants. It does not have to decide who gets their way. The relationship works better when both people can say what they want, hear a no without turning it into a larger threat, and still have a direction of their own.",
+    "sourceMechanism": "Exact owner-approved copy transcribed byte-for-byte from the SHA-bound canonical V15 owner-approval artifact; collaborative authorship is preserved and sole owner authorship is not asserted."
+  },
+  "approvedAt": "2026-08-31",
+  "approvalEffect": "exact_wording_approval",
+  "sourceArtifact": {
+    "id": "angle-aspects-60-v15-owner-approval-candidate",
+    "path": "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md",
+    "sha256": "3bbcd3e611d72a9754e9fdb4f4390ec860a670bc53af6b059ea23a212d37bfd4",
+    "passageHeading": "Mars opposition Ascendant",
+    "passageOrdinal": 29,
+    "bodySha256": "b808638f56a57c512013db75dabf392294e34ddbff6c928b7e00bbf5c63730e4"
+  },
+  "ownerConfirmationSource": {
+    "channel": "Codex task owner message",
+    "taskId": "01a04fc0-899b-7cd2-bb2e-98ad182391bb",
+    "date": "2026-08-31"
+  },
+  "replacementAuthorization": null,
+  "additionalBilledCalls": 0
+}

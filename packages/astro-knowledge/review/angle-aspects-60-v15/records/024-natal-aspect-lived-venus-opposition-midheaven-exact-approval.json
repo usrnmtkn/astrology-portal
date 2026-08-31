@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "id": "angle-aspects-60-v15-024",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_reviewed",
+  "provenanceNote": "The owner supplied exact wording approval for V15 and explicitly did not relabel collaboratively drafted copy as owner_authored.",
+  "contentKey": "fallback-hook/natal-aspect-lived/venus/opposition/midheaven",
+  "packetKey": "venus|opposition|midheaven",
+  "payloadSha256": "61f6429e622502969c7c030e6458aefd145274351c7556b5a0b06cdd64fdcbce",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "You need your home life to reflect what you actually value, especially in the way money is spent, affection is shown, responsibilities are shared, and people treat each other in private. A home can look beautiful and still feel wrong if the life inside it asks you to keep living by values you do not respect.\n\nYou may show love through ordinary choices at home. You cook, remember what somebody likes, make the space welcoming, keep traditions people enjoy, or spend money on things that make daily life more comfortable.\n\nPreserving peace or beauty gets expensive when it starts requiring you to carry more than you want. You keep hosting because everyone loves coming over, keep an inherited object because somebody would be hurt if you let it go, or take on more of the planning and upkeep because you care more about how the home feels.\n\nA beautiful home is a lot less relaxing when you are the only one keeping the whole thing beautiful. Love can live in what you preserve, but it can also live in changing what no longer works for the people who actually live there.",
+    "sourceMechanism": "Exact owner-approved copy transcribed byte-for-byte from the SHA-bound canonical V15 owner-approval artifact; collaborative authorship is preserved and sole owner authorship is not asserted."
+  },
+  "approvedAt": "2026-08-31",
+  "approvalEffect": "exact_wording_approval",
+  "sourceArtifact": {
+    "id": "angle-aspects-60-v15-owner-approval-candidate",
+    "path": "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md",
+    "sha256": "3bbcd3e611d72a9754e9fdb4f4390ec860a670bc53af6b059ea23a212d37bfd4",
+    "passageHeading": "Venus opposition Midheaven",
+    "passageOrdinal": 24,
+    "bodySha256": "a0a82b498ca34b2af7cb9c66fec95af4c5bb0b9bb4713a2e0818894f6289ed53"
+  },
+  "ownerConfirmationSource": {
+    "channel": "Codex task owner message",
+    "taskId": "01a04fc0-899b-7cd2-bb2e-98ad182391bb",
+    "date": "2026-08-31"
+  },
+  "replacementAuthorization": {
+    "explicitlyAuthorized": true,
+    "preservesHistoricalProvenance": true,
+    "priorApprovalRecordPath": "packages/astro-knowledge/voice/tldr-astro/marie-satori-writer/ll-matrix-v13/knowledge-matrix-v13-owner-approved-locked.json",
+    "priorPayloadSha256": "8740c87cb5994182ada8b27e8d214a97f327e296663dce30b45cb3e992b14b17",
+    "priorUpdatedAt": "2026-08-27T17:07:04.191206+00:00"
+  },
+  "additionalBilledCalls": 0
+}

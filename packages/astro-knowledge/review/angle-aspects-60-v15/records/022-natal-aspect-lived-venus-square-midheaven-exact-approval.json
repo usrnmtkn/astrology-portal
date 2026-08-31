@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "id": "angle-aspects-60-v15-022",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_reviewed",
+  "provenanceNote": "The owner supplied exact wording approval for V15 and explicitly did not relabel collaboratively drafted copy as owner_authored.",
+  "contentKey": "fallback-hook/natal-aspect-lived/venus/square/midheaven",
+  "packetKey": "venus|square|midheaven",
+  "payloadSha256": "1e4d6b812864b84f161f72d39557dc88a8919baa09db87aa2093af974053947a",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "Something can look desirable from the outside and still be wrong for the life you actually want. You may be praised for the path, chosen for the role, or surrounded by people who think the opportunity suits you while privately realizing that the life attached to it does not.\n\nPublic approval can make your own values harder to hear. You may stay longer because leaving something admired feels like wasting an opportunity, or keep trying to make a role fit because other people are convinced it suits you.\n\nThe challenge is noticing what the recognition is asking you to trade. You accept less autonomy, spend more time, give up creative control, or tolerate terms you would question somewhere else because the visible reward makes the exchange look more reasonable than it feels.\n\nWhat looks desirable from the outside and what you would actually choose are not always the same thing. Recognition matters most when the life attached to it is still one you want.",
+    "sourceMechanism": "Exact owner-approved copy transcribed byte-for-byte from the SHA-bound canonical V15 owner-approval artifact; collaborative authorship is preserved and sole owner authorship is not asserted."
+  },
+  "approvedAt": "2026-08-31",
+  "approvalEffect": "exact_wording_approval",
+  "sourceArtifact": {
+    "id": "angle-aspects-60-v15-owner-approval-candidate",
+    "path": "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md",
+    "sha256": "3bbcd3e611d72a9754e9fdb4f4390ec860a670bc53af6b059ea23a212d37bfd4",
+    "passageHeading": "Venus square Midheaven",
+    "passageOrdinal": 22,
+    "bodySha256": "4934bed84631a17ff032de5d1635e2f7c784fbd2a639afe2916c07c302c92266"
+  },
+  "ownerConfirmationSource": {
+    "channel": "Codex task owner message",
+    "taskId": "01a04fc0-899b-7cd2-bb2e-98ad182391bb",
+    "date": "2026-08-31"
+  },
+  "replacementAuthorization": null,
+  "additionalBilledCalls": 0
+}

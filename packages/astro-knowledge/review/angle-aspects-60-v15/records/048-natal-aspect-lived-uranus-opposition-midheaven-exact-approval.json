@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "id": "angle-aspects-60-v15-048",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_reviewed",
+  "provenanceNote": "The owner supplied exact wording approval for V15 and explicitly did not relabel collaboratively drafted copy as owner_authored.",
+  "contentKey": "fallback-hook/natal-aspect-lived/uranus/opposition/midheaven",
+  "packetKey": "uranus|opposition|midheaven",
+  "payloadSha256": "2b9a37a939ee1efe9401446955c5da32d6c3f76488a292325115be6dce049a3f",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "You need a home life that gives you enough freedom to decide how your space, time, and responsibilities are shared. Who has access, how often family is involved, what you are expected to take care of, and how much of your time belongs to the household can matter more to you than following a familiar idea of what home is supposed to look like.\n\nYou can care deeply about where you came from without wanting to reproduce it. A family role, household setup, tradition, or expectation may have made sense for the people who created it and still not fit the life you want to build.\n\nThe challenge is that changing the household can become easier than identifying the exact freedom you are missing. Another move, another reset, or another break from tradition may create space without answering what you actually need the space for.\n\nYou can honor where you came from without reproducing it. Home works better when there is enough freedom to change what no longer fits and enough consistency that the life you chose still gives you something you can rely on.",
+    "sourceMechanism": "Exact owner-approved copy transcribed byte-for-byte from the SHA-bound canonical V15 owner-approval artifact; collaborative authorship is preserved and sole owner authorship is not asserted."
+  },
+  "approvedAt": "2026-08-31",
+  "approvalEffect": "exact_wording_approval",
+  "sourceArtifact": {
+    "id": "angle-aspects-60-v15-owner-approval-candidate",
+    "path": "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md",
+    "sha256": "3bbcd3e611d72a9754e9fdb4f4390ec860a670bc53af6b059ea23a212d37bfd4",
+    "passageHeading": "Uranus opposition Midheaven",
+    "passageOrdinal": 48,
+    "bodySha256": "bfbb38fbd7441299af3d0852c4566d0c67bb298b9e6a620e145292a09486b185"
+  },
+  "ownerConfirmationSource": {
+    "channel": "Codex task owner message",
+    "taskId": "01a04fc0-899b-7cd2-bb2e-98ad182391bb",
+    "date": "2026-08-31"
+  },
+  "replacementAuthorization": null,
+  "additionalBilledCalls": 0
+}

@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "id": "angle-aspects-60-v15-060",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_reviewed",
+  "provenanceNote": "The owner supplied exact wording approval for V15 and explicitly did not relabel collaboratively drafted copy as owner_authored.",
+  "contentKey": "fallback-hook/natal-aspect-lived/pluto/opposition/midheaven",
+  "packetKey": "pluto|opposition|midheaven",
+  "payloadSha256": "fa11da3337598f8e62963ec801515027c3c3c76b53f4142904015351ca994ac0",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "Family and home can make power visible in very practical ways. Who owns the house, who pays, who has a key, who gets asked to help, who is allowed to say no, and who makes the final decision can matter more than the story everyone tells about how close the family is.\n\nYou may be especially aware of what gets inherited beyond money or property. Roles, silence, obligations, secrets, and old decisions can keep shaping a family long after the people involved have stopped talking about how those rules started.\n\nFamiliarity can make old family roles feel permanent. The same family member is still expected to help because they always have, somebody's opinion still carries more weight because of what happened years ago, or a family decision keeps shaping the present even though nobody would make the same choice now.\n\nHistory can explain why things work this way without deciding that they have to keep working this way. A family can acknowledge what happened without giving the past permanent control over who pays, who helps, who gets access, or who is allowed to make a different choice now.",
+    "sourceMechanism": "Exact owner-approved copy transcribed byte-for-byte from the SHA-bound canonical V15 owner-approval artifact; collaborative authorship is preserved and sole owner authorship is not asserted."
+  },
+  "approvedAt": "2026-08-31",
+  "approvalEffect": "exact_wording_approval",
+  "sourceArtifact": {
+    "id": "angle-aspects-60-v15-owner-approval-candidate",
+    "path": "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md",
+    "sha256": "3bbcd3e611d72a9754e9fdb4f4390ec860a670bc53af6b059ea23a212d37bfd4",
+    "passageHeading": "Pluto opposition Midheaven",
+    "passageOrdinal": 60,
+    "bodySha256": "efcb053fee33d2d9c6e60a70523e32d207e2a3d93bfe5b580de34251cc99f722"
+  },
+  "ownerConfirmationSource": {
+    "channel": "Codex task owner message",
+    "taskId": "01a04fc0-899b-7cd2-bb2e-98ad182391bb",
+    "date": "2026-08-31"
+  },
+  "replacementAuthorization": null,
+  "additionalBilledCalls": 0
+}

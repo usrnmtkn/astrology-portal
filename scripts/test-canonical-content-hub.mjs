@@ -67,7 +67,7 @@ for (const perspective of ["you", "they"]) {
     index.counts.total
   );
 }
-assert.equal(index.counts.byPerspectiveMode.you.authored, 302);
+assert.equal(index.counts.byPerspectiveMode.you.authored, 351);
 assert.equal(index.counts.byPerspectiveMode.they.authored, 0);
 assert.equal(index.counts.byKind["angle-sign"], 24);
 assert.equal(index.counts.byKind.aspect, 938);

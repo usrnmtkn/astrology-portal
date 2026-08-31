@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "id": "angle-aspects-60-v15-001",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_authored",
+  "provenanceNote": "Prior explicit owner authorship for this exact passage is preserved; the current V15 decision supplies exact wording approval.",
+  "contentKey": "fallback-hook/natal-aspect-lived/sun/conjunction/ascendant",
+  "packetKey": "sun|conjunction|ascendant",
+  "payloadSha256": "4c7b6dc0eb77c8dacc00b5e6bf89eaee04fa822af0ed4915b08fb29a9a581e8d",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "People tend to get a read on you quickly. You have an opinion, take an interest, speak up, volunteer, or step forward when something matters, and other people start forming an idea of who you are from what they see. Sometimes they are right. The complication is that a first impression can turn into a role before you have decided you want the role.\n\nYou tend to learn who you are by doing. You may not know a job is wrong for you until you notice how much effort it takes to sound less opinionated, less ambitious, or less invested than you actually are. Another role can ask more from you and still feel easier because your judgment is part of why you are there. The same thing can happen in relationships and friendships. You find out which version of yourself fits by noticing what happens when you stop managing how much of yourself other people get to see.\n\nThat visibility can work in your favor. People notice what you are good at, trust you with responsibility, remember what you said, or ask you to take the lead. It can also create expectations quickly. You handle something once and it becomes your job. You seem confident and people assume you have already made up your mind. You become known for something you were still figuring out if you wanted to keep doing.\n\nA first impression can tell people something true about you without telling them the whole story. Pay attention to the roles that keep getting handed back to you because you were good at them once. Being recognized for something matters most when it is still something you would choose now.",
+    "sourceMechanism": "Exact owner-authored and owner-approved copy transcribed byte-for-byte from the SHA-bound canonical V15 owner-approval artifact."
+  },
+  "approvedAt": "2026-08-31",
+  "approvalEffect": "exact_wording_approval",
+  "sourceArtifact": {
+    "id": "angle-aspects-60-v15-owner-approval-candidate",
+    "path": "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md",
+    "sha256": "3bbcd3e611d72a9754e9fdb4f4390ec860a670bc53af6b059ea23a212d37bfd4",
+    "passageHeading": "Sun conjunct Ascendant",
+    "passageOrdinal": 1,
+    "bodySha256": "0a6fe548c9b59a7b32b3d2eebddda5745dc5594acc19ccf9046fab23587783ad"
+  },
+  "ownerConfirmationSource": {
+    "channel": "Codex task owner message",
+    "taskId": "01a04fc0-899b-7cd2-bb2e-98ad182391bb",
+    "date": "2026-08-31"
+  },
+  "replacementAuthorization": null,
+  "additionalBilledCalls": 0
+}

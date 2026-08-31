@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "id": "angle-aspects-60-v15-059",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_reviewed",
+  "provenanceNote": "The owner supplied exact wording approval for V15 and explicitly did not relabel collaboratively drafted copy as owner_authored.",
+  "contentKey": "fallback-hook/natal-aspect-lived/pluto/opposition/ascendant",
+  "packetKey": "pluto|opposition|ascendant",
+  "payloadSha256": "8a80a9c448f7f1e2b975cbf86a509db21f6572f020fa3b08c558a311020c5cf1",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "You want to know where you stand with the people closest to you. Trust, loyalty, privacy, sex, money, shared responsibilities, and the things you tell each other in confidence can carry a lot of weight because once someone matters, their choices affect parts of your life that casual relationships never reach.\n\nYou are usually willing to have the difficult conversation if it helps you understand what is actually happening between you. You may ask direct questions, notice when someone's words and behavior do not match, or want to talk about the part of the relationship other people would rather leave alone.\n\nThe challenge is knowing when depth has turned into testing. You look for proof, ask another question, check again, or want complete access because uncertainty feels harder to tolerate when the relationship matters this much. But more information does not automatically create more trust.\n\nNot everyone earns access to all of you, and intimacy does not require complete access to another person either. Trust grows through what keeps happening: they respect your no, tell you when something changes, follow through, handle shared responsibilities fairly, and give you the same privacy they expect for themselves. What you can rely on matters more than knowing everything.",
+    "sourceMechanism": "Exact owner-approved copy transcribed byte-for-byte from the SHA-bound canonical V15 owner-approval artifact; collaborative authorship is preserved and sole owner authorship is not asserted."
+  },
+  "approvedAt": "2026-08-31",
+  "approvalEffect": "exact_wording_approval",
+  "sourceArtifact": {
+    "id": "angle-aspects-60-v15-owner-approval-candidate",
+    "path": "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md",
+    "sha256": "3bbcd3e611d72a9754e9fdb4f4390ec860a670bc53af6b059ea23a212d37bfd4",
+    "passageHeading": "Pluto opposition Ascendant",
+    "passageOrdinal": 59,
+    "bodySha256": "8eafafadbbe882b5908303757f7eb2cb35975f5f59bde078d47994ab487c60d8"
+  },
+  "ownerConfirmationSource": {
+    "channel": "Codex task owner message",
+    "taskId": "01a04fc0-899b-7cd2-bb2e-98ad182391bb",
+    "date": "2026-08-31"
+  },
+  "replacementAuthorization": null,
+  "additionalBilledCalls": 0
+}

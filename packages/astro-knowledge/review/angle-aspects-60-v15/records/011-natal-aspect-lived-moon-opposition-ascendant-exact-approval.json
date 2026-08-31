@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "id": "angle-aspects-60-v15-011",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_reviewed",
+  "provenanceNote": "The owner supplied exact wording approval for V15 and explicitly did not relabel collaboratively drafted copy as owner_authored.",
+  "contentKey": "fallback-hook/natal-aspect-lived/moon/opposition/ascendant",
+  "packetKey": "moon|opposition|ascendant",
+  "payloadSha256": "ed35aa42844593077300d0898f553daed28dae4d4d1b45137df560e313ce080f",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "You notice changes in the other person's mood quickly, and that can affect your own plans before either of you has said what is actually needed. You notice when they are quieter than usual, distracted, stressed, or holding something back, and you may start adjusting around them before the real conversation has happened.\n\nCare is one of the ways you build closeness. You remember the appointment, check in after a difficult day, notice when somebody needs space, or change something small because you know it will make their life easier. Those details matter because relationships are built through what people repeatedly do for each other.\n\nThis starts costing you when you become responsible for noticing everything first. You start the difficult conversation, remember what needs to happen, move your schedule around their mood, and keep track of needs the other person has never learned to name for themselves.\n\nCare should go both ways. Being good at noticing what someone needs does not make you responsible for meeting it before they ask. A relationship becomes more dependable when both people can say what they need and neither person's feelings automatically become the other person's job.",
+    "sourceMechanism": "Exact owner-approved copy transcribed byte-for-byte from the SHA-bound canonical V15 owner-approval artifact; collaborative authorship is preserved and sole owner authorship is not asserted."
+  },
+  "approvedAt": "2026-08-31",
+  "approvalEffect": "exact_wording_approval",
+  "sourceArtifact": {
+    "id": "angle-aspects-60-v15-owner-approval-candidate",
+    "path": "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md",
+    "sha256": "3bbcd3e611d72a9754e9fdb4f4390ec860a670bc53af6b059ea23a212d37bfd4",
+    "passageHeading": "Moon opposition Ascendant",
+    "passageOrdinal": 11,
+    "bodySha256": "af0ae19518d22445ceda39d315d756b80e05d6e891adc2b0c3e7c2b72834cb34"
+  },
+  "ownerConfirmationSource": {
+    "channel": "Codex task owner message",
+    "taskId": "01a04fc0-899b-7cd2-bb2e-98ad182391bb",
+    "date": "2026-08-31"
+  },
+  "replacementAuthorization": {
+    "explicitlyAuthorized": true,
+    "preservesHistoricalProvenance": true,
+    "priorApprovalRecordPath": "packages/astro-knowledge/voice/tldr-astro/marie-satori-writer/ll-matrix-v13/knowledge-matrix-v13-owner-approved-locked.json",
+    "priorPayloadSha256": "456f587c8047f5cf798dffd4028720f7e2d96f2fdf9fdb9839e4ed238d136263",
+    "priorUpdatedAt": "2026-08-27T17:07:04.191206+00:00"
+  },
+  "additionalBilledCalls": 0
+}

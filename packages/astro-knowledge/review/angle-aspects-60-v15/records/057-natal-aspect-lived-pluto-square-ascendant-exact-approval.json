@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "id": "angle-aspects-60-v15-057",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_reviewed",
+  "provenanceNote": "The owner supplied exact wording approval for V15 and explicitly did not relabel collaboratively drafted copy as owner_authored.",
+  "contentKey": "fallback-hook/natal-aspect-lived/pluto/square/ascendant",
+  "packetKey": "pluto|square|ascendant",
+  "payloadSha256": "ba4346f190b38dcf3d5a2f77c1762012d44ffabe9628b070cea4750bf1bb467e",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "You notice quickly when another person has more control over the situation than you do. They decide when you get access, hold information you need, control money tied to the decision, change the terms, or have enough influence that your options start depending on what they are willing to allow.\n\nOnce you see the imbalance, it can be hard to leave it alone. You want the explanation, the correction, or some acknowledgement that the other person knows what they are doing. The more they avoid the issue, the more determined you can become to make the situation clear.\n\nThe problem is that the struggle can start taking up more of your life than the original problem. You send another message, gather more evidence, replay what happened, or keep trying to get someone to admit something their behavior has already shown you.\n\nControl is not the same as safety. You do not need them to admit what happened before you decide what you will do next. Sometimes the most useful thing you can do with the truth is stop giving the situation more access to your time, attention, money, or energy.",
+    "sourceMechanism": "Exact owner-approved copy transcribed byte-for-byte from the SHA-bound canonical V15 owner-approval artifact; collaborative authorship is preserved and sole owner authorship is not asserted."
+  },
+  "approvedAt": "2026-08-31",
+  "approvalEffect": "exact_wording_approval",
+  "sourceArtifact": {
+    "id": "angle-aspects-60-v15-owner-approval-candidate",
+    "path": "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md",
+    "sha256": "3bbcd3e611d72a9754e9fdb4f4390ec860a670bc53af6b059ea23a212d37bfd4",
+    "passageHeading": "Pluto square Ascendant",
+    "passageOrdinal": 57,
+    "bodySha256": "6294debec9cb624da38e77c343b4765ce1cb9cc76d884d75d66191d8c9f5efea"
+  },
+  "ownerConfirmationSource": {
+    "channel": "Codex task owner message",
+    "taskId": "01a04fc0-899b-7cd2-bb2e-98ad182391bb",
+    "date": "2026-08-31"
+  },
+  "replacementAuthorization": {
+    "explicitlyAuthorized": true,
+    "preservesHistoricalProvenance": true,
+    "priorApprovalRecordPath": "packages/astro-knowledge/voice/tldr-astro/marie-satori-writer/ll-matrix-v13/knowledge-matrix-v13-owner-approved-locked.json",
+    "priorPayloadSha256": "3100e35443ddec812cf91354579df9543d550132cf69f54f6c0a72e4d677f4df",
+    "priorUpdatedAt": "2026-08-27T17:07:04.191206+00:00"
+  },
+  "additionalBilledCalls": 0
+}

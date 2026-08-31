@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "id": "angle-aspects-60-v15-016",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_reviewed",
+  "provenanceNote": "The owner supplied exact wording approval for V15 and explicitly did not relabel collaboratively drafted copy as owner_authored.",
+  "contentKey": "fallback-hook/natal-aspect-lived/mercury/square/midheaven",
+  "packetKey": "mercury|square|midheaven",
+  "payloadSha256": "2b7384ccded9a653e31ff01a7d72d475e0a8e912140403b9f7993350fd82a13e",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "You tend to think carefully about what you say or put in writing when your name is attached to it. In school, group work, public roles, or a career, you may reread the application, prepare what you want to say, or document an agreement because once your name is attached to something, the wording can travel further than the original conversation.\n\nThat care can become a real strength. You notice the missing fact, separate what was agreed to from what somebody assumed, and understand when one careless sentence could change how a larger decision is understood.\n\nThe challenge is when managing how you are understood starts taking more attention than deciding what you actually want to be known for. You correct the record, keep refining the explanation, or spend too much time answering criticism when the larger question is if the direction itself still fits.\n\nBeing able to explain yourself is not the same as knowing this is still what you want to build your reputation around. Say what you can stand behind. Your words should support what you are building, not trap you inside a reputation you are trying to outgrow.",
+    "sourceMechanism": "Exact owner-approved copy transcribed byte-for-byte from the SHA-bound canonical V15 owner-approval artifact; collaborative authorship is preserved and sole owner authorship is not asserted."
+  },
+  "approvedAt": "2026-08-31",
+  "approvalEffect": "exact_wording_approval",
+  "sourceArtifact": {
+    "id": "angle-aspects-60-v15-owner-approval-candidate",
+    "path": "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md",
+    "sha256": "3bbcd3e611d72a9754e9fdb4f4390ec860a670bc53af6b059ea23a212d37bfd4",
+    "passageHeading": "Mercury square Midheaven",
+    "passageOrdinal": 16,
+    "bodySha256": "c37d59ad3214f1547d432b6e4d23b5bf1058e6e63e00ce97119558be97f7c667"
+  },
+  "ownerConfirmationSource": {
+    "channel": "Codex task owner message",
+    "taskId": "01a04fc0-899b-7cd2-bb2e-98ad182391bb",
+    "date": "2026-08-31"
+  },
+  "replacementAuthorization": null,
+  "additionalBilledCalls": 0
+}

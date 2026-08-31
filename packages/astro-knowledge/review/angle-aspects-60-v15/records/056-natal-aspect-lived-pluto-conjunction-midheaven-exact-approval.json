@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "id": "angle-aspects-60-v15-056",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_reviewed",
+  "provenanceNote": "The owner supplied exact wording approval for V15 and explicitly did not relabel collaboratively drafted copy as owner_authored.",
+  "contentKey": "fallback-hook/natal-aspect-lived/pluto/conjunction/midheaven",
+  "packetKey": "pluto|conjunction|midheaven",
+  "payloadSha256": "eded37796f4266490e818aab66deecbe698343dd9152bff766867e7380f86281",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "You take visible responsibility seriously when your name is attached to the outcome, especially if other people will have to live with the consequences. You want to understand what is actually at stake, who will be affected, and what happens if the difficult part is ignored.\n\nPeople may trust you with things that carry weight because you do not look away from the difficult part. That can begin in a family, classroom, team, or community long before it becomes part of a formal role: you become the person people turn to when something requires discretion, depth, or a willingness to deal with what everybody else would rather avoid.\n\nBeing trusted can slowly turn into being needed for the part nobody else wants to carry. Being the person who knows everything, handles the difficult part, or can be trusted with the consequence can make leaving a role feel more complicated than choosing it ever did.\n\nBeing needed is not the same as being fulfilled. What you become known for should still be something you would choose if nobody depended on you to keep doing it.",
+    "sourceMechanism": "Exact owner-approved copy transcribed byte-for-byte from the SHA-bound canonical V15 owner-approval artifact; collaborative authorship is preserved and sole owner authorship is not asserted."
+  },
+  "approvedAt": "2026-08-31",
+  "approvalEffect": "exact_wording_approval",
+  "sourceArtifact": {
+    "id": "angle-aspects-60-v15-owner-approval-candidate",
+    "path": "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md",
+    "sha256": "3bbcd3e611d72a9754e9fdb4f4390ec860a670bc53af6b059ea23a212d37bfd4",
+    "passageHeading": "Pluto conjunct Midheaven",
+    "passageOrdinal": 56,
+    "bodySha256": "50f4cadd80fa579410c74efa7e1d85ad020a8f7f2befc394ce466845bdc354b5"
+  },
+  "ownerConfirmationSource": {
+    "channel": "Codex task owner message",
+    "taskId": "01a04fc0-899b-7cd2-bb2e-98ad182391bb",
+    "date": "2026-08-31"
+  },
+  "replacementAuthorization": {
+    "explicitlyAuthorized": true,
+    "preservesHistoricalProvenance": true,
+    "priorApprovalRecordPath": "packages/astro-knowledge/voice/tldr-astro/marie-satori-writer/ll-matrix-v13/knowledge-matrix-v13-owner-approved-locked.json",
+    "priorPayloadSha256": "3c4fe606568862ebe2d59142abde9d1a2a55552f1e6b3a60f1c533153d26406d",
+    "priorUpdatedAt": "2026-08-27T17:07:04.191206+00:00"
+  },
+  "additionalBilledCalls": 0
+}

@@ -1,0 +1,663 @@
+{
+  "schemaVersion": 1,
+  "release": "angle-aspects-60-v15",
+  "approvedAt": "2026-08-31",
+  "sourceArtifact": {
+    "id": "angle-aspects-60-v15-owner-approval-candidate",
+    "path": "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md",
+    "sha256": "3bbcd3e611d72a9754e9fdb4f4390ec860a670bc53af6b059ea23a212d37bfd4",
+    "suppliedPath": "/Users/mprez/Downloads/TLDR-ASTRO-NATAL-ANGLE-ASPECTS-V15-CODEX-HANDOFF.zip#ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md",
+    "passageCount": 60,
+    "authority": "owner-approved exact V15 wording authority"
+  },
+  "regeneratedImportArtifact": {
+    "path": "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-CONTENT-STUDIO-IMPORT.json",
+    "sha256": "dcf82ed0f6474d7c49226550cc034c686d437774ee818ff248240e7bb273d7df",
+    "rowCount": 60,
+    "markdownToImportBodyParity": "60/60",
+    "defectiveCandidateUsed": false
+  },
+  "payloadsPath": "packages/astro-knowledge/review/angle-aspects-60-v15/angle-aspects-60-v15-payloads.json",
+  "replacementDiffPath": "packages/astro-knowledge/review/angle-aspects-60-v15/replacement-before-after.json",
+  "rowCount": 60,
+  "insertionCount": 49,
+  "replacementCount": 11,
+  "preWrite": {
+    "branch": "codex/node-rows-21-20260829",
+    "head": "88c4ace2efee4ab7b3cf82096be4eeed648bf7b3",
+    "worktreeSignature": "1ba011deb66857821e5e509d91ee17a3c8cfb256ead16fea4163b3401d578008",
+    "liveOccupancy": {
+      "free": 49,
+      "occupied": 11,
+      "unexpectedState": 0
+    }
+  },
+  "invariants": {
+    "nonTargetSourceRowsSha256Before": "367ebf51321ddf16faf789beb10c76004ae1df1588189be5be21d307e082eeec",
+    "nonTargetSourceRowsSha256After": "367ebf51321ddf16faf789beb10c76004ae1df1588189be5be21d307e082eeec",
+    "nonTargetSourceRowsChanged": 0,
+    "focusedCommitNonTargetSourceRowsSha256": "e4eaf2a6edc6a0336e7897baf8d36862fef94b6f209006d5f79982de3685e611",
+    "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+    "sourceArtifactSha256": "3bbcd3e611d72a9754e9fdb4f4390ec860a670bc53af6b059ea23a212d37bfd4",
+    "ownerAuthoredAssertions": 1,
+    "scaffoldingBodies": 0
+  },
+  "ownerConfirmationSource": {
+    "channel": "Codex task owner message",
+    "taskId": "01a04fc0-899b-7cd2-bb2e-98ad182391bb",
+    "date": "2026-08-31"
+  },
+  "materialization": {
+    "appliedAt": "2026-08-31",
+    "method": "normal filtered package-to-Content-Studio materializer",
+    "appliedRows": 60,
+    "verifiedRows": 60,
+    "packagePromptVersion": "fallback-architecture-v3-2026-08-31a",
+    "liveServingRows": 60,
+    "newPackageVersionRows": 60,
+    "newPackageVersionOutsideAuthorizedSet": 0,
+    "staleRowDeletionPathEntered": false
+  },
+  "rows": [
+    {
+      "batchOrdinal": 1,
+      "sourceOrdinal": 1,
+      "packetKey": "sun|conjunction|ascendant",
+      "contentKey": "fallback-hook/natal-aspect-lived/sun/conjunction/ascendant",
+      "disposition": "insertion",
+      "recordPath": "packages/astro-knowledge/review/angle-aspects-60-v15/records/001-natal-aspect-lived-sun-conjunction-ascendant-exact-approval.json",
+      "payloadSha256": "4c7b6dc0eb77c8dacc00b5e6bf89eaee04fa822af0ed4915b08fb29a9a581e8d",
+      "bodySha256": "0a6fe548c9b59a7b32b3d2eebddda5745dc5594acc19ccf9046fab23587783ad"
+    },
+    {
+      "batchOrdinal": 2,
+      "sourceOrdinal": 2,
+      "packetKey": "sun|conjunction|midheaven",
+      "contentKey": "fallback-hook/natal-aspect-lived/sun/conjunction/midheaven",
+      "disposition": "insertion",
+      "recordPath": "packages/astro-knowledge/review/angle-aspects-60-v15/records/002-natal-aspect-lived-sun-conjunction-midheaven-exact-approval.json",
+      "payloadSha256": "3abb43e25831367a77f350936c68db9c6d2b30ebae312582512df4a093aa8aac",
+      "bodySha256": "8334187688621122e81d39ae570ba60be686478781396aa4607af9cc68cbaeab"
+    },
+    {
+      "batchOrdinal": 3,
+      "sourceOrdinal": 3,
+      "packetKey": "sun|square|ascendant",
+      "contentKey": "fallback-hook/natal-aspect-lived/sun/square/ascendant",
+      "disposition": "replacement",
+      "recordPath": "packages/astro-knowledge/review/angle-aspects-60-v15/records/003-natal-aspect-lived-sun-square-ascendant-exact-approval.json",
+      "payloadSha256": "7e1f1990885df5927898223b53c3203a07d00040586faf9dd264d178c5d5f0d1",
+      "bodySha256": "4082e351cba172016c30083ad98fd95c5739ba47b5187d93c51655d2de90aaae"
+    },
+    {
+      "batchOrdinal": 4,
+      "sourceOrdinal": 4,
+      "packetKey": "sun|square|midheaven",
+      "contentKey": "fallback-hook/natal-aspect-lived/sun/square/midheaven",
+      "disposition": "insertion",
+      "recordPath": "packages/astro-knowledge/review/angle-aspects-60-v15/records/004-natal-aspect-lived-sun-square-midheaven-exact-approval.json",
+      "payloadSha256": "6078209df1b23e63fb33fccf6f46da89c3ceaaf4406ceca8879a58b95c923129",
+      "bodySha256": "053fa98cd45955d3d50e6b0a04948f635ee3834f1e1ed3a0e66b068731c9bdd4"
+    },
+    {
+      "batchOrdinal": 5,
+      "sourceOrdinal": 5,
+      "packetKey": "sun|opposition|ascendant",
+      "contentKey": "fallback-hook/natal-aspect-lived/sun/opposition/ascendant",
+      "disposition": "replacement",
+      "recordPath": "packages/astro-knowledge/review/angle-aspects-60-v15/records/005-natal-aspect-lived-sun-opposition-ascendant-exact-approval.json",
+      "payloadSha256": "54241c7f71ab2c5d3e1a4e0576041fb3bc585354e39bca04086e337ebcb2d3ae",
+      "bodySha256": "6223900ed73b30de1f3ee841dc0e3c8adca8307913604c5327dbbe94dc08a020"
+    },
+    {
+      "batchOrdinal": 6,
+      "sourceOrdinal": 6,
+      "packetKey": "sun|opposition|midheaven",
+      "contentKey": "fallback-hook/natal-aspect-lived/sun/opposition/midheaven",
+      "disposition": "insertion",
+      "recordPath": "packages/astro-knowledge/review/angle-aspects-60-v15/records/006-natal-aspect-lived-sun-opposition-midheaven-exact-approval.json",
+      "payloadSha256": "695820b29d35e8f3136026a80fc31a24ac323d34cdd4a15d127737e4022edaa8",
+      "bodySha256": "a6cb40808abea4b482ad7fe6cf2e169773486b61d946523111318927e0998331"
+    },
+    {
+      "batchOrdinal": 7,
+      "sourceOrdinal": 7,
+      "packetKey": "moon|conjunction|ascendant",
+      "contentKey": "fallback-hook/natal-aspect-lived/moon/conjunction/ascendant",
+      "disposition": "insertion",
+      "recordPath": "packages/astro-knowledge/review/angle-aspects-60-v15/records/007-natal-aspect-lived-moon-conjunction-ascendant-exact-approval.json",
+      "payloadSha256": "ff9670154c0e5c1da6b8ee28d403a185d1622faaadafdf079df560fcdde70d40",
+      "bodySha256": "c1c5036cc6842e9ea7227bf05a01818cece4fb8d79b2faaf689b91acb7c7c8a6"
+    },
+    {
+      "batchOrdinal": 8,
+      "sourceOrdinal": 8,
+      "packetKey": "moon|conjunction|midheaven",
+      "contentKey": "fallback-hook/natal-aspect-lived/moon/conjunction/midheaven",
+      "disposition": "insertion",
+      "recordPath": "packages/astro-knowledge/review/angle-aspects-60-v15/records/008-natal-aspect-lived-moon-conjunction-midheaven-exact-approval.json",
+      "payloadSha256": "1940f73ca5a0317f7c8d48cd9fa91f9f9fc114b7bb30b5e3ef7180604af4b817",
+      "bodySha256": "70f215af3b4c21c7fe9de1569d14ebe083a5c28fe61025e5d56858309aa14a3b"
+    },
+    {
+      "batchOrdinal": 9,
+      "sourceOrdinal": 9,
+      "packetKey": "moon|square|ascendant",
+      "contentKey": "fallback-hook/natal-aspect-lived/moon/square/ascendant",
+      "disposition": "insertion",
+      "recordPath": "packages/astro-knowledge/review/angle-aspects-60-v15/records/009-natal-aspect-lived-moon-square-ascendant-exact-approval.json",
+      "payloadSha256": "6dfafa5f953470707902161a539cd59b6fa9976623245a30a1a517141a05b7b5",
+      "bodySha256": "162e837dd5ab67fb252c91518ed57f2ce8de16cab38fc52c44cd724ce8d517ef"
+    },
+    {
+      "batchOrdinal": 10,
+      "sourceOrdinal": 10,
+      "packetKey": "moon|square|midheaven",
+      "contentKey": "fallback-hook/natal-aspect-lived/moon/square/midheaven",
+      "disposition": "insertion",
+      "recordPath": "packages/astro-knowledge/review/angle-aspects-60-v15/records/010-natal-aspect-lived-moon-square-midheaven-exact-approval.json",
+      "payloadSha256": "34df0a9f9eb3a1bdb90b2a4eead8c551525aab0d32aba4e3ae63fae165a12e36",
+      "bodySha256": "81001492c15e6f0f87732d943560390fb0121922d0f51c830bf0a0e29bdea134"
+    },
+    {
+      "batchOrdinal": 11,
+      "sourceOrdinal": 11,
+      "packetKey": "moon|opposition|ascendant",
+      "contentKey": "fallback-hook/natal-aspect-lived/moon/opposition/ascendant",
+      "disposition": "replacement",
+      "recordPath": "packages/astro-knowledge/review/angle-aspects-60-v15/records/011-natal-aspect-lived-moon-opposition-ascendant-exact-approval.json",
+      "payloadSha256": "ed35aa42844593077300d0898f553daed28dae4d4d1b45137df560e313ce080f",
+      "bodySha256": "af0ae19518d22445ceda39d315d756b80e05d6e891adc2b0c3e7c2b72834cb34"
+    },
+    {
+      "batchOrdinal": 12,
+      "sourceOrdinal": 12,
+      "packetKey": "moon|opposition|midheaven",
+      "contentKey": "fallback-hook/natal-aspect-lived/moon/opposition/midheaven",
+      "disposition": "replacement",
+      "recordPath": "packages/astro-knowledge/review/angle-aspects-60-v15/records/012-natal-aspect-lived-moon-opposition-midheaven-exact-approval.json",
+      "payloadSha256": "3ad6fb127cc24b0926d239e7b1fe597ca3c162e877c8355ca8c5bd2188c866a6",
+      "bodySha256": "da72aedbbba718725583ae0d9cf14a0a945d86f5ebe7a714c23639cb0ce08429"
+    },
+    {
+      "batchOrdinal": 13,
+      "sourceOrdinal": 13,
+      "packetKey": "mercury|conjunction|ascendant",
+      "contentKey": "fallback-hook/natal-aspect-lived/mercury/conjunction/ascendant",
+      "disposition": "insertion",
+      "recordPath": "packages/astro-knowledge/review/angle-aspects-60-v15/records/013-natal-aspect-lived-mercury-conjunction-ascendant-exact-approval.json",
+      "payloadSha256": "9a0b210ed8066c2a98f95eed46efb0c87064b1d7319106ba8ed162d0dbb80d6f",
+      "bodySha256": "094bbb87802ce4dfa8e3e74067c638670e64c7c218747a14bbdd21a0b5af9c57"
+    },
+    {
+      "batchOrdinal": 14,
+      "sourceOrdinal": 14,
+      "packetKey": "mercury|conjunction|midheaven",
+      "contentKey": "fallback-hook/natal-aspect-lived/mercury/conjunction/midheaven",
+      "disposition": "insertion",
+      "recordPath": "packages/astro-knowledge/review/angle-aspects-60-v15/records/014-natal-aspect-lived-mercury-conjunction-midheaven-exact-approval.json",
+      "payloadSha256": "43cb69b1375f3a74bc93165a425053ce9c93b6d35a26c85ff8b8eb0c0c43e560",
+      "bodySha256": "e4355fef7bc493d30ce0b8d6a1a675adf2edc80802a0770855a15e37a1adeab0"
+    },
+    {
+      "batchOrdinal": 15,
+      "sourceOrdinal": 15,
+      "packetKey": "mercury|square|ascendant",
+      "contentKey": "fallback-hook/natal-aspect-lived/mercury/square/ascendant",
+      "disposition": "insertion",
+      "recordPath": "packages/astro-knowledge/review/angle-aspects-60-v15/records/015-natal-aspect-lived-mercury-square-ascendant-exact-approval.json",
+      "payloadSha256": "f0a1cb29dc18b0eb6791c386a68b9f996aedf9373c1142ed3f006b042e2afafa",
+      "bodySha256": "28dff5304f251b4f05a2518c095c172042fcfb5fcaac012dea1acb2ab388213e"
+    },
+    {
+      "batchOrdinal": 16,
+      "sourceOrdinal": 16,
+      "packetKey": "mercury|square|midheaven",
+      "contentKey": "fallback-hook/natal-aspect-lived/mercury/square/midheaven",
+      "disposition": "insertion",
+      "recordPath": "packages/astro-knowledge/review/angle-aspects-60-v15/records/016-natal-aspect-lived-mercury-square-midheaven-exact-approval.json",
+      "payloadSha256": "2b7384ccded9a653e31ff01a7d72d475e0a8e912140403b9f7993350fd82a13e",
+      "bodySha256": "c37d59ad3214f1547d432b6e4d23b5bf1058e6e63e00ce97119558be97f7c667"
+    },
+    {
+      "batchOrdinal": 17,
+      "sourceOrdinal": 17,
+      "packetKey": "mercury|opposition|ascendant",
+      "contentKey": "fallback-hook/natal-aspect-lived/mercury/opposition/ascendant",
+      "disposition": "insertion",
+      "recordPath": "packages/astro-knowledge/review/angle-aspects-60-v15/records/017-natal-aspect-lived-mercury-opposition-ascendant-exact-approval.json",
+      "payloadSha256": "bf26e2ffcffab01dab002727966d4eb66734bed887cf53b48d761c0bbd82e012",
+      "bodySha256": "4e49a97463444d3411d9110cd94865b94f87de986cd2d400429138260db98761"
+    },
+    {
+      "batchOrdinal": 18,
+      "sourceOrdinal": 18,
+      "packetKey": "mercury|opposition|midheaven",
+      "contentKey": "fallback-hook/natal-aspect-lived/mercury/opposition/midheaven",
+      "disposition": "replacement",
+      "recordPath": "packages/astro-knowledge/review/angle-aspects-60-v15/records/018-natal-aspect-lived-mercury-opposition-midheaven-exact-approval.json",
+      "payloadSha256": "7184b362fd983d3de9691243656c1fb3906586ee86e51f0469d5f7721f3d9c3b",
+      "bodySha256": "5b5e6b6d4635869ff8543372be90cf285966bae7dc5e3221589ca6ce516eb60a"
+    },
+    {
+      "batchOrdinal": 19,
+      "sourceOrdinal": 19,
+      "packetKey": "venus|conjunction|ascendant",
+      "contentKey": "fallback-hook/natal-aspect-lived/venus/conjunction/ascendant",
+      "disposition": "insertion",
+      "recordPath": "packages/astro-knowledge/review/angle-aspects-60-v15/records/019-natal-aspect-lived-venus-conjunction-ascendant-exact-approval.json",
+      "payloadSha256": "ada6c00f7a55c20264497725c665189438253ff56cf48eb4c00db8fcf0e5c1c8",
+      "bodySha256": "2b5e616adb8950ad1ec5e8b41f651481cd5a1020dc0981329b5d587681f5de72"
+    },
+    {
+      "batchOrdinal": 20,
+      "sourceOrdinal": 20,
+      "packetKey": "venus|conjunction|midheaven",
+      "contentKey": "fallback-hook/natal-aspect-lived/venus/conjunction/midheaven",
+      "disposition": "insertion",
+      "recordPath": "packages/astro-knowledge/review/angle-aspects-60-v15/records/020-natal-aspect-lived-venus-conjunction-midheaven-exact-approval.json",
+      "payloadSha256": "999ea5909b89c03acddde8ee5b4f2737323257ee1f4be4608291a9cee76b6746",
+      "bodySha256": "801647d094de788aa633a23459dd7efabc37fdcb4c365ee0c846d520f31e8c10"
+    },
+    {
+      "batchOrdinal": 21,
+      "sourceOrdinal": 21,
+      "packetKey": "venus|square|ascendant",
+      "contentKey": "fallback-hook/natal-aspect-lived/venus/square/ascendant",
+      "disposition": "insertion",
+      "recordPath": "packages/astro-knowledge/review/angle-aspects-60-v15/records/021-natal-aspect-lived-venus-square-ascendant-exact-approval.json",
+      "payloadSha256": "02ba24112735ea6e00569428e4457efdeb258269ba2c2fd08a5559105b3334cb",
+      "bodySha256": "61d6d132788f34ae5c0a41ef8067a63cca75806879d12bee6b5c02fc237af0e9"
+    },
+    {
+      "batchOrdinal": 22,
+      "sourceOrdinal": 22,
+      "packetKey": "venus|square|midheaven",
+      "contentKey": "fallback-hook/natal-aspect-lived/venus/square/midheaven",
+      "disposition": "insertion",
+      "recordPath": "packages/astro-knowledge/review/angle-aspects-60-v15/records/022-natal-aspect-lived-venus-square-midheaven-exact-approval.json",
+      "payloadSha256": "1e4d6b812864b84f161f72d39557dc88a8919baa09db87aa2093af974053947a",
+      "bodySha256": "4934bed84631a17ff032de5d1635e2f7c784fbd2a639afe2916c07c302c92266"
+    },
+    {
+      "batchOrdinal": 23,
+      "sourceOrdinal": 23,
+      "packetKey": "venus|opposition|ascendant",
+      "contentKey": "fallback-hook/natal-aspect-lived/venus/opposition/ascendant",
+      "disposition": "insertion",
+      "recordPath": "packages/astro-knowledge/review/angle-aspects-60-v15/records/023-natal-aspect-lived-venus-opposition-ascendant-exact-approval.json",
+      "payloadSha256": "efad14a5dd2de0860fa17d3e20b90ce760505c503777ea835cc6d3d89bd42879",
+      "bodySha256": "da7cd1baf1c8dac19c232c3b68cea77f4d3cd54a40a821a78caae23124d31894"
+    },
+    {
+      "batchOrdinal": 24,
+      "sourceOrdinal": 24,
+      "packetKey": "venus|opposition|midheaven",
+      "contentKey": "fallback-hook/natal-aspect-lived/venus/opposition/midheaven",
+      "disposition": "replacement",
+      "recordPath": "packages/astro-knowledge/review/angle-aspects-60-v15/records/024-natal-aspect-lived-venus-opposition-midheaven-exact-approval.json",
+      "payloadSha256": "61f6429e622502969c7c030e6458aefd145274351c7556b5a0b06cdd64fdcbce",
+      "bodySha256": "a0a82b498ca34b2af7cb9c66fec95af4c5bb0b9bb4713a2e0818894f6289ed53"
+    },
+    {
+      "batchOrdinal": 25,
+      "sourceOrdinal": 25,
+      "packetKey": "mars|conjunction|ascendant",
+      "contentKey": "fallback-hook/natal-aspect-lived/mars/conjunction/ascendant",
+      "disposition": "insertion",
+      "recordPath": "packages/astro-knowledge/review/angle-aspects-60-v15/records/025-natal-aspect-lived-mars-conjunction-ascendant-exact-approval.json",
+      "payloadSha256": "4778f44b06b80a54ee6095a4ab04a65b4d6dc244c2a43f4dd93225bcd2ffd4db",
+      "bodySha256": "b41a8c805aa6cb32160095e004fb77455b4b29f1fe1631d9ffbaef7e2908e9a6"
+    },
+    {
+      "batchOrdinal": 26,
+      "sourceOrdinal": 26,
+      "packetKey": "mars|conjunction|midheaven",
+      "contentKey": "fallback-hook/natal-aspect-lived/mars/conjunction/midheaven",
+      "disposition": "insertion",
+      "recordPath": "packages/astro-knowledge/review/angle-aspects-60-v15/records/026-natal-aspect-lived-mars-conjunction-midheaven-exact-approval.json",
+      "payloadSha256": "1db7d82eebbd1d02536457ea1d1917cd05cf085fedae6374e25b3b44901a8ffe",
+      "bodySha256": "f9c417514fa11283a083f62f1fd2e01e4f0eb84b4e28de6db5e0c5b033c10c00"
+    },
+    {
+      "batchOrdinal": 27,
+      "sourceOrdinal": 27,
+      "packetKey": "mars|square|ascendant",
+      "contentKey": "fallback-hook/natal-aspect-lived/mars/square/ascendant",
+      "disposition": "insertion",
+      "recordPath": "packages/astro-knowledge/review/angle-aspects-60-v15/records/027-natal-aspect-lived-mars-square-ascendant-exact-approval.json",
+      "payloadSha256": "d9db0158c3f00bcfdb25c8de6c07592c1db3244f676d72b0d9500eb3f9b322d6",
+      "bodySha256": "9a4f1312f376c59f2b8ce2e0f858a6057ec82b6fb4777768b4e55634be4147b4"
+    },
+    {
+      "batchOrdinal": 28,
+      "sourceOrdinal": 28,
+      "packetKey": "mars|square|midheaven",
+      "contentKey": "fallback-hook/natal-aspect-lived/mars/square/midheaven",
+      "disposition": "insertion",
+      "recordPath": "packages/astro-knowledge/review/angle-aspects-60-v15/records/028-natal-aspect-lived-mars-square-midheaven-exact-approval.json",
+      "payloadSha256": "eafe48c308475bc115b25992f6c245c4ea25c578c50054f67d41604417a9f2b5",
+      "bodySha256": "9a3bf1e76f4075aa55310150c2d0af404e93c7f6eff821956289166e19b9af7e"
+    },
+    {
+      "batchOrdinal": 29,
+      "sourceOrdinal": 29,
+      "packetKey": "mars|opposition|ascendant",
+      "contentKey": "fallback-hook/natal-aspect-lived/mars/opposition/ascendant",
+      "disposition": "insertion",
+      "recordPath": "packages/astro-knowledge/review/angle-aspects-60-v15/records/029-natal-aspect-lived-mars-opposition-ascendant-exact-approval.json",
+      "payloadSha256": "580ce500ce9450d8a3c7bf30af0978a9dec9cf3af067803311a890bc6a73a46c",
+      "bodySha256": "b808638f56a57c512013db75dabf392294e34ddbff6c928b7e00bbf5c63730e4"
+    },
+    {
+      "batchOrdinal": 30,
+      "sourceOrdinal": 30,
+      "packetKey": "mars|opposition|midheaven",
+      "contentKey": "fallback-hook/natal-aspect-lived/mars/opposition/midheaven",
+      "disposition": "insertion",
+      "recordPath": "packages/astro-knowledge/review/angle-aspects-60-v15/records/030-natal-aspect-lived-mars-opposition-midheaven-exact-approval.json",
+      "payloadSha256": "8b0d5962917be6c9243a794a60757f55e99617a36acef77796a634ea9189ba2e",
+      "bodySha256": "472b65ef68181b49ad7e0761a39300bd3d2555d52ca5a2fe715f48a00315868a"
+    },
+    {
+      "batchOrdinal": 31,
+      "sourceOrdinal": 31,
+      "packetKey": "jupiter|conjunction|ascendant",
+      "contentKey": "fallback-hook/natal-aspect-lived/jupiter/conjunction/ascendant",
+      "disposition": "insertion",
+      "recordPath": "packages/astro-knowledge/review/angle-aspects-60-v15/records/031-natal-aspect-lived-jupiter-conjunction-ascendant-exact-approval.json",
+      "payloadSha256": "e6a966d52744c9f1a5674ef83d2f4a18c400f78117720c489f61d40b9a18b839",
+      "bodySha256": "e0eff5aa26dbca5c7147d94139aa40e5271860ab6097e24808ff1342b962f16b"
+    },
+    {
+      "batchOrdinal": 32,
+      "sourceOrdinal": 32,
+      "packetKey": "jupiter|conjunction|midheaven",
+      "contentKey": "fallback-hook/natal-aspect-lived/jupiter/conjunction/midheaven",
+      "disposition": "insertion",
+      "recordPath": "packages/astro-knowledge/review/angle-aspects-60-v15/records/032-natal-aspect-lived-jupiter-conjunction-midheaven-exact-approval.json",
+      "payloadSha256": "0366363ab203b5247371761c3161919a91fb64f15babc9208b1aafd989ce63d4",
+      "bodySha256": "8068eb2c2db0f14bb10076dd7a966f71435e6fb551e823d8ac1e4854e5ce55cc"
+    },
+    {
+      "batchOrdinal": 33,
+      "sourceOrdinal": 33,
+      "packetKey": "jupiter|square|ascendant",
+      "contentKey": "fallback-hook/natal-aspect-lived/jupiter/square/ascendant",
+      "disposition": "insertion",
+      "recordPath": "packages/astro-knowledge/review/angle-aspects-60-v15/records/033-natal-aspect-lived-jupiter-square-ascendant-exact-approval.json",
+      "payloadSha256": "da11875bb684763812ad1068b273a980ba3c2bcc74d6661a52d8ab16881be0df",
+      "bodySha256": "9d0a1c41aad426155a5ef1fc425cb62a1968d3d8a383e19ab3e86b1c30ec72c9"
+    },
+    {
+      "batchOrdinal": 34,
+      "sourceOrdinal": 34,
+      "packetKey": "jupiter|square|midheaven",
+      "contentKey": "fallback-hook/natal-aspect-lived/jupiter/square/midheaven",
+      "disposition": "insertion",
+      "recordPath": "packages/astro-knowledge/review/angle-aspects-60-v15/records/034-natal-aspect-lived-jupiter-square-midheaven-exact-approval.json",
+      "payloadSha256": "c232ff96e15a85ee316109d5869e48e8858334d8b66a04386a0af279b3ccff08",
+      "bodySha256": "c1de0d184505e95cbba97afe9247619cba226997a58f8b659702ba66adafb460"
+    },
+    {
+      "batchOrdinal": 35,
+      "sourceOrdinal": 35,
+      "packetKey": "jupiter|opposition|ascendant",
+      "contentKey": "fallback-hook/natal-aspect-lived/jupiter/opposition/ascendant",
+      "disposition": "replacement",
+      "recordPath": "packages/astro-knowledge/review/angle-aspects-60-v15/records/035-natal-aspect-lived-jupiter-opposition-ascendant-exact-approval.json",
+      "payloadSha256": "15340e615ab8078edc9666d4ab06598177cf5ed00a696fdf1ebf0d8944c96483",
+      "bodySha256": "f79a538b0e17d5ff6f68bfa9a6a8765c52b0db023076eb95e306b704e2814af5"
+    },
+    {
+      "batchOrdinal": 36,
+      "sourceOrdinal": 36,
+      "packetKey": "jupiter|opposition|midheaven",
+      "contentKey": "fallback-hook/natal-aspect-lived/jupiter/opposition/midheaven",
+      "disposition": "insertion",
+      "recordPath": "packages/astro-knowledge/review/angle-aspects-60-v15/records/036-natal-aspect-lived-jupiter-opposition-midheaven-exact-approval.json",
+      "payloadSha256": "0cf174320660f6f7b187ff0c0ce078a64d0b3b73a18774bc0207ed74101c2c9f",
+      "bodySha256": "816f951e5245fed9c010bf2c1311963ad22d343b5bd6f1970c5cd047e790792b"
+    },
+    {
+      "batchOrdinal": 37,
+      "sourceOrdinal": 37,
+      "packetKey": "saturn|conjunction|ascendant",
+      "contentKey": "fallback-hook/natal-aspect-lived/saturn/conjunction/ascendant",
+      "disposition": "insertion",
+      "recordPath": "packages/astro-knowledge/review/angle-aspects-60-v15/records/037-natal-aspect-lived-saturn-conjunction-ascendant-exact-approval.json",
+      "payloadSha256": "3d5b0fd7ab0db7b864ada4ef2da3d4460813db066a64c7de6c5cef6d5f68dc49",
+      "bodySha256": "fef1b07f49e547307c2b52357d72f03b8e499542a5c4f481a84794f549abeeca"
+    },
+    {
+      "batchOrdinal": 38,
+      "sourceOrdinal": 38,
+      "packetKey": "saturn|conjunction|midheaven",
+      "contentKey": "fallback-hook/natal-aspect-lived/saturn/conjunction/midheaven",
+      "disposition": "insertion",
+      "recordPath": "packages/astro-knowledge/review/angle-aspects-60-v15/records/038-natal-aspect-lived-saturn-conjunction-midheaven-exact-approval.json",
+      "payloadSha256": "1c1da7802f831def5145e9c14d370309e6840073c22ad5ab00d8bd989cab3f45",
+      "bodySha256": "17c5f453af9776a73b0a6d7b300e875f3e54c7422405ac51556730c86ddd0d90"
+    },
+    {
+      "batchOrdinal": 39,
+      "sourceOrdinal": 39,
+      "packetKey": "saturn|square|ascendant",
+      "contentKey": "fallback-hook/natal-aspect-lived/saturn/square/ascendant",
+      "disposition": "insertion",
+      "recordPath": "packages/astro-knowledge/review/angle-aspects-60-v15/records/039-natal-aspect-lived-saturn-square-ascendant-exact-approval.json",
+      "payloadSha256": "c7cc1c465ee9ba5868cfe2a1d277a6b0678e700a57f5b8ab868bee0693b2b27f",
+      "bodySha256": "c6551a689d8891c73fc9db4ec41386d06002b565567fb6d0768033c65bd134fb"
+    },
+    {
+      "batchOrdinal": 40,
+      "sourceOrdinal": 40,
+      "packetKey": "saturn|square|midheaven",
+      "contentKey": "fallback-hook/natal-aspect-lived/saturn/square/midheaven",
+      "disposition": "insertion",
+      "recordPath": "packages/astro-knowledge/review/angle-aspects-60-v15/records/040-natal-aspect-lived-saturn-square-midheaven-exact-approval.json",
+      "payloadSha256": "b67cfd7d4f2010dc42c856982560c922ee92c930d35d0bb74609be982851327d",
+      "bodySha256": "7356accaafec3b135c19d6a04d29ec4e421206c733d7f8fdae17d98b14ac6613"
+    },
+    {
+      "batchOrdinal": 41,
+      "sourceOrdinal": 41,
+      "packetKey": "saturn|opposition|ascendant",
+      "contentKey": "fallback-hook/natal-aspect-lived/saturn/opposition/ascendant",
+      "disposition": "insertion",
+      "recordPath": "packages/astro-knowledge/review/angle-aspects-60-v15/records/041-natal-aspect-lived-saturn-opposition-ascendant-exact-approval.json",
+      "payloadSha256": "03120a270b9410f8c56c6f8b38c2b10dd80dc1561b30576897c913c5e8fa3aa3",
+      "bodySha256": "83a749dd9b7c7bac4869f0c3aff801a7ae109f2da6872fccdcb898d7e6c36d47"
+    },
+    {
+      "batchOrdinal": 42,
+      "sourceOrdinal": 42,
+      "packetKey": "saturn|opposition|midheaven",
+      "contentKey": "fallback-hook/natal-aspect-lived/saturn/opposition/midheaven",
+      "disposition": "replacement",
+      "recordPath": "packages/astro-knowledge/review/angle-aspects-60-v15/records/042-natal-aspect-lived-saturn-opposition-midheaven-exact-approval.json",
+      "payloadSha256": "25d69fb4a0b03fec2e0dd063889dedd5716ad388568235a2c2093dd4a7fea597",
+      "bodySha256": "8616709827120c194c6cf1970e97a189ed87a85582ff35e04713a82cc93cd89a"
+    },
+    {
+      "batchOrdinal": 43,
+      "sourceOrdinal": 43,
+      "packetKey": "uranus|conjunction|ascendant",
+      "contentKey": "fallback-hook/natal-aspect-lived/uranus/conjunction/ascendant",
+      "disposition": "insertion",
+      "recordPath": "packages/astro-knowledge/review/angle-aspects-60-v15/records/043-natal-aspect-lived-uranus-conjunction-ascendant-exact-approval.json",
+      "payloadSha256": "462b74722059f61f31377616fc33b3926ac0c39d81efb6f86301e53f0232cf77",
+      "bodySha256": "339c4016e89b63764dcb52ca66e5891e96eeac2116e6868b4319f71dce3ac088"
+    },
+    {
+      "batchOrdinal": 44,
+      "sourceOrdinal": 44,
+      "packetKey": "uranus|conjunction|midheaven",
+      "contentKey": "fallback-hook/natal-aspect-lived/uranus/conjunction/midheaven",
+      "disposition": "insertion",
+      "recordPath": "packages/astro-knowledge/review/angle-aspects-60-v15/records/044-natal-aspect-lived-uranus-conjunction-midheaven-exact-approval.json",
+      "payloadSha256": "7a2f8598c6497a82ef247526eff96ccb885c05e1940c5f7178b80f5ba1b36a0f",
+      "bodySha256": "c115209c9d160489a4932e36d73681a52c0314c294b5725c31ace76c75e6e9ab"
+    },
+    {
+      "batchOrdinal": 45,
+      "sourceOrdinal": 45,
+      "packetKey": "uranus|square|ascendant",
+      "contentKey": "fallback-hook/natal-aspect-lived/uranus/square/ascendant",
+      "disposition": "insertion",
+      "recordPath": "packages/astro-knowledge/review/angle-aspects-60-v15/records/045-natal-aspect-lived-uranus-square-ascendant-exact-approval.json",
+      "payloadSha256": "00aed9826861515a6c36aecc5cd952242033951fc791395a4beefd0c0f27cda0",
+      "bodySha256": "e48f44fee0ece69e0e9f6d00a191bc9ac61b2568c2009f448788f631b44cc127"
+    },
+    {
+      "batchOrdinal": 46,
+      "sourceOrdinal": 46,
+      "packetKey": "uranus|square|midheaven",
+      "contentKey": "fallback-hook/natal-aspect-lived/uranus/square/midheaven",
+      "disposition": "insertion",
+      "recordPath": "packages/astro-knowledge/review/angle-aspects-60-v15/records/046-natal-aspect-lived-uranus-square-midheaven-exact-approval.json",
+      "payloadSha256": "0cd4fcea6b802c46f1b83f00b77364d7f447db48953d1d6e47482bc4d1abddb2",
+      "bodySha256": "cc05d374907e57e568e7c51e0b89ce55ba89bf71eac83023e8684d9c7b52c86a"
+    },
+    {
+      "batchOrdinal": 47,
+      "sourceOrdinal": 47,
+      "packetKey": "uranus|opposition|ascendant",
+      "contentKey": "fallback-hook/natal-aspect-lived/uranus/opposition/ascendant",
+      "disposition": "insertion",
+      "recordPath": "packages/astro-knowledge/review/angle-aspects-60-v15/records/047-natal-aspect-lived-uranus-opposition-ascendant-exact-approval.json",
+      "payloadSha256": "e73bfce00c5d0f991511fc60e46c9af9a5642b973c02aec90dc12bd84d6b928f",
+      "bodySha256": "59aa06e89874c97c7addf4b5deb207dde935af28458bb023b666cdacbbd22c9b"
+    },
+    {
+      "batchOrdinal": 48,
+      "sourceOrdinal": 48,
+      "packetKey": "uranus|opposition|midheaven",
+      "contentKey": "fallback-hook/natal-aspect-lived/uranus/opposition/midheaven",
+      "disposition": "insertion",
+      "recordPath": "packages/astro-knowledge/review/angle-aspects-60-v15/records/048-natal-aspect-lived-uranus-opposition-midheaven-exact-approval.json",
+      "payloadSha256": "2b9a37a939ee1efe9401446955c5da32d6c3f76488a292325115be6dce049a3f",
+      "bodySha256": "bfbb38fbd7441299af3d0852c4566d0c67bb298b9e6a620e145292a09486b185"
+    },
+    {
+      "batchOrdinal": 49,
+      "sourceOrdinal": 49,
+      "packetKey": "neptune|conjunction|ascendant",
+      "contentKey": "fallback-hook/natal-aspect-lived/neptune/conjunction/ascendant",
+      "disposition": "insertion",
+      "recordPath": "packages/astro-knowledge/review/angle-aspects-60-v15/records/049-natal-aspect-lived-neptune-conjunction-ascendant-exact-approval.json",
+      "payloadSha256": "ef0efa756a8fd7113dca644e9b19a1ca13eca3638d4889d23a87c6a24a05f373",
+      "bodySha256": "c423db248d1b743e66d38908f1472914be215bd1736ff06f7e83129e307f1765"
+    },
+    {
+      "batchOrdinal": 50,
+      "sourceOrdinal": 50,
+      "packetKey": "neptune|conjunction|midheaven",
+      "contentKey": "fallback-hook/natal-aspect-lived/neptune/conjunction/midheaven",
+      "disposition": "insertion",
+      "recordPath": "packages/astro-knowledge/review/angle-aspects-60-v15/records/050-natal-aspect-lived-neptune-conjunction-midheaven-exact-approval.json",
+      "payloadSha256": "9233abac2d0be8197265e7ef7a1f2b201b8f139ac64041741145773669b2b821",
+      "bodySha256": "dd747b8fff037aa5971772f0a5a5b8e7fe50363e4459a16f8319faa2909a793e"
+    },
+    {
+      "batchOrdinal": 51,
+      "sourceOrdinal": 51,
+      "packetKey": "neptune|square|ascendant",
+      "contentKey": "fallback-hook/natal-aspect-lived/neptune/square/ascendant",
+      "disposition": "insertion",
+      "recordPath": "packages/astro-knowledge/review/angle-aspects-60-v15/records/051-natal-aspect-lived-neptune-square-ascendant-exact-approval.json",
+      "payloadSha256": "e3f0f64a2995152f17dc66877ec0194b6d77a045af646004ffe069b65ab79005",
+      "bodySha256": "e03b6d93d18e2a8d668b7dc93c495c0a3c454af06df4eaa571ee3c174a8e9f12"
+    },
+    {
+      "batchOrdinal": 52,
+      "sourceOrdinal": 52,
+      "packetKey": "neptune|square|midheaven",
+      "contentKey": "fallback-hook/natal-aspect-lived/neptune/square/midheaven",
+      "disposition": "insertion",
+      "recordPath": "packages/astro-knowledge/review/angle-aspects-60-v15/records/052-natal-aspect-lived-neptune-square-midheaven-exact-approval.json",
+      "payloadSha256": "8e997a0a17ebefc5bf4d0890afd720198751eba6f290accbd8a3ec49cad5ff56",
+      "bodySha256": "9b74b7d0c9f6357f368547626ffc85625187643fbb3109d1f1862ea22034cae2"
+    },
+    {
+      "batchOrdinal": 53,
+      "sourceOrdinal": 53,
+      "packetKey": "neptune|opposition|ascendant",
+      "contentKey": "fallback-hook/natal-aspect-lived/neptune/opposition/ascendant",
+      "disposition": "replacement",
+      "recordPath": "packages/astro-knowledge/review/angle-aspects-60-v15/records/053-natal-aspect-lived-neptune-opposition-ascendant-exact-approval.json",
+      "payloadSha256": "74d7a91576c4576a00db66104bb3a9f38feda3e1f9380100da11d1cb9a9cb8fb",
+      "bodySha256": "8544d650509ebea48ee73576aeeaf233686eebaa10657f3fdde91b31980a8b3b"
+    },
+    {
+      "batchOrdinal": 54,
+      "sourceOrdinal": 54,
+      "packetKey": "neptune|opposition|midheaven",
+      "contentKey": "fallback-hook/natal-aspect-lived/neptune/opposition/midheaven",
+      "disposition": "insertion",
+      "recordPath": "packages/astro-knowledge/review/angle-aspects-60-v15/records/054-natal-aspect-lived-neptune-opposition-midheaven-exact-approval.json",
+      "payloadSha256": "f60f767a2983c739b45195ee5e889ebca6a328f122628d85d2abd26975352905",
+      "bodySha256": "96982482c523e41241ba6866b3cb52f9168eaeab42778220d8208dfbbb6b5d49"
+    },
+    {
+      "batchOrdinal": 55,
+      "sourceOrdinal": 55,
+      "packetKey": "pluto|conjunction|ascendant",
+      "contentKey": "fallback-hook/natal-aspect-lived/pluto/conjunction/ascendant",
+      "disposition": "insertion",
+      "recordPath": "packages/astro-knowledge/review/angle-aspects-60-v15/records/055-natal-aspect-lived-pluto-conjunction-ascendant-exact-approval.json",
+      "payloadSha256": "875fc158800e783437ca35faedbc96c7125c244f55745fbf845b5ecd80d53a99",
+      "bodySha256": "d5ba3edf263a9df44cc3b02149ab811858e0b830b611b28a7a3d82799afd8d18"
+    },
+    {
+      "batchOrdinal": 56,
+      "sourceOrdinal": 56,
+      "packetKey": "pluto|conjunction|midheaven",
+      "contentKey": "fallback-hook/natal-aspect-lived/pluto/conjunction/midheaven",
+      "disposition": "replacement",
+      "recordPath": "packages/astro-knowledge/review/angle-aspects-60-v15/records/056-natal-aspect-lived-pluto-conjunction-midheaven-exact-approval.json",
+      "payloadSha256": "eded37796f4266490e818aab66deecbe698343dd9152bff766867e7380f86281",
+      "bodySha256": "50f4cadd80fa579410c74efa7e1d85ad020a8f7f2befc394ce466845bdc354b5"
+    },
+    {
+      "batchOrdinal": 57,
+      "sourceOrdinal": 57,
+      "packetKey": "pluto|square|ascendant",
+      "contentKey": "fallback-hook/natal-aspect-lived/pluto/square/ascendant",
+      "disposition": "replacement",
+      "recordPath": "packages/astro-knowledge/review/angle-aspects-60-v15/records/057-natal-aspect-lived-pluto-square-ascendant-exact-approval.json",
+      "payloadSha256": "ba4346f190b38dcf3d5a2f77c1762012d44ffabe9628b070cea4750bf1bb467e",
+      "bodySha256": "6294debec9cb624da38e77c343b4765ce1cb9cc76d884d75d66191d8c9f5efea"
+    },
+    {
+      "batchOrdinal": 58,
+      "sourceOrdinal": 58,
+      "packetKey": "pluto|square|midheaven",
+      "contentKey": "fallback-hook/natal-aspect-lived/pluto/square/midheaven",
+      "disposition": "insertion",
+      "recordPath": "packages/astro-knowledge/review/angle-aspects-60-v15/records/058-natal-aspect-lived-pluto-square-midheaven-exact-approval.json",
+      "payloadSha256": "a3787d37278f602a79a2f58435415f2e3f2228838390747b6c0a3c909e9544a7",
+      "bodySha256": "f5567ad5bedc6da4289670c913b7541e11540f80d6b621dcac60dde83a01e962"
+    },
+    {
+      "batchOrdinal": 59,
+      "sourceOrdinal": 59,
+      "packetKey": "pluto|opposition|ascendant",
+      "contentKey": "fallback-hook/natal-aspect-lived/pluto/opposition/ascendant",
+      "disposition": "insertion",
+      "recordPath": "packages/astro-knowledge/review/angle-aspects-60-v15/records/059-natal-aspect-lived-pluto-opposition-ascendant-exact-approval.json",
+      "payloadSha256": "8a80a9c448f7f1e2b975cbf86a509db21f6572f020fa3b08c558a311020c5cf1",
+      "bodySha256": "8eafafadbbe882b5908303757f7eb2cb35975f5f59bde078d47994ab487c60d8"
+    },
+    {
+      "batchOrdinal": 60,
+      "sourceOrdinal": 60,
+      "packetKey": "pluto|opposition|midheaven",
+      "contentKey": "fallback-hook/natal-aspect-lived/pluto/opposition/midheaven",
+      "disposition": "insertion",
+      "recordPath": "packages/astro-knowledge/review/angle-aspects-60-v15/records/060-natal-aspect-lived-pluto-opposition-midheaven-exact-approval.json",
+      "payloadSha256": "fa11da3337598f8e62963ec801515027c3c3c76b53f4142904015351ca994ac0",
+      "bodySha256": "efcb053fee33d2d9c6e60a70523e32d207e2a3d93bfe5b580de34251cc99f722"
+    }
+  ]
+}

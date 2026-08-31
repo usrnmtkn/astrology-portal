@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "id": "angle-aspects-60-v15-018",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_reviewed",
+  "provenanceNote": "The owner supplied exact wording approval for V15 and explicitly did not relabel collaboratively drafted copy as owner_authored.",
+  "contentKey": "fallback-hook/natal-aspect-lived/mercury/opposition/midheaven",
+  "packetKey": "mercury|opposition|midheaven",
+  "payloadSha256": "7184b362fd983d3de9691243656c1fb3906586ee86e51f0469d5f7721f3d9c3b",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "You tend to do some of your clearest thinking in private. Important decisions may need a kitchen table, a notebook, or enough quiet for the idea to stay unfinished while you figure out what you actually think before anybody else needs an answer.\n\nThe language you learned at home can stay with you for years. Certain phrases about money, responsibility, success, relationships, or what a person is supposed to do may start sounding like facts simply because you heard them often enough. You may also be the person who asks where those ideas came from, remembers what was said, or notices when the family story leaves something important out.\n\nBecause you can understand the history, the explanation can start doing more work than the choice. You know why someone acted that way, why nobody talked about it, or how a family pattern became normal, and still have to decide what you are willing to keep living with now.\n\nKnowing why something became normal can give you context. It does not mean you still have to build around it. The past is useful when it gives you more choice about what you say, accept, and build now.",
+    "sourceMechanism": "Exact owner-approved copy transcribed byte-for-byte from the SHA-bound canonical V15 owner-approval artifact; collaborative authorship is preserved and sole owner authorship is not asserted."
+  },
+  "approvedAt": "2026-08-31",
+  "approvalEffect": "exact_wording_approval",
+  "sourceArtifact": {
+    "id": "angle-aspects-60-v15-owner-approval-candidate",
+    "path": "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md",
+    "sha256": "3bbcd3e611d72a9754e9fdb4f4390ec860a670bc53af6b059ea23a212d37bfd4",
+    "passageHeading": "Mercury opposition Midheaven",
+    "passageOrdinal": 18,
+    "bodySha256": "5b5e6b6d4635869ff8543372be90cf285966bae7dc5e3221589ca6ce516eb60a"
+  },
+  "ownerConfirmationSource": {
+    "channel": "Codex task owner message",
+    "taskId": "01a04fc0-899b-7cd2-bb2e-98ad182391bb",
+    "date": "2026-08-31"
+  },
+  "replacementAuthorization": {
+    "explicitlyAuthorized": true,
+    "preservesHistoricalProvenance": true,
+    "priorApprovalRecordPath": "packages/astro-knowledge/voice/tldr-astro/marie-satori-writer/ll-matrix-v13/knowledge-matrix-v13-owner-approved-locked.json",
+    "priorPayloadSha256": "7f16f6d787947793511e9cdb36c39aacd598494f526a1fbeb1d59ce2ee6a59bf",
+    "priorUpdatedAt": "2026-08-27T17:07:04.191206+00:00"
+  },
+  "additionalBilledCalls": 0
+}

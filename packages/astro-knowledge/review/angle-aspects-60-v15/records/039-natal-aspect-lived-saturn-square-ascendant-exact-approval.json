@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "id": "angle-aspects-60-v15-039",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_reviewed",
+  "provenanceNote": "The owner supplied exact wording approval for V15 and explicitly did not relabel collaboratively drafted copy as owner_authored.",
+  "contentKey": "fallback-hook/natal-aspect-lived/saturn/square/ascendant",
+  "packetKey": "saturn|square|ascendant",
+  "payloadSha256": "c7cc1c465ee9ba5868cfe2a1d277a6b0678e700a57f5b8ab868bee0693b2b27f",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "You can be completely capable of doing something and still spend too much time trying to become ready for the beginning. You rewrite the introduction, wait another week to send the work, prepare for a meeting nobody else realized required preparation, or decide you should know more before you let anyone see what you are doing. Once you are actually in the situation, you usually have much more to work with than you expected.\n\nSaturn brings time, standards, responsibility, and limits into tension with the Ascendant, which describes how you enter a situation and how other people first experience you. The beginning can feel more consequential than it looks from the outside, so you may try to remove too much uncertainty before you move. Your inner critic can turn preparation into another requirement you have to satisfy before you begin. One more revision becomes one more week, and one more thing you should know becomes another reason not to send the work yet.\n\nThe cost is easy to miss because preparation often improves the result. The problem starts when the feedback that could have saved you two weeks arrives after you already spent the two weeks, or the opportunity goes to someone who was willing to answer before they knew everything. You can keep waiting until the work is good enough to withstand criticism when showing it earlier would have given you information you could actually use.\n\nPreparation should make it easier to begin, not move the beginning further away. If nobody can respond until you have already finished deciding everything yourself, preparation has started costing you useful feedback.",
+    "sourceMechanism": "Exact owner-approved copy transcribed byte-for-byte from the SHA-bound canonical V15 owner-approval artifact; collaborative authorship is preserved and sole owner authorship is not asserted."
+  },
+  "approvedAt": "2026-08-31",
+  "approvalEffect": "exact_wording_approval",
+  "sourceArtifact": {
+    "id": "angle-aspects-60-v15-owner-approval-candidate",
+    "path": "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md",
+    "sha256": "3bbcd3e611d72a9754e9fdb4f4390ec860a670bc53af6b059ea23a212d37bfd4",
+    "passageHeading": "Saturn square Ascendant",
+    "passageOrdinal": 39,
+    "bodySha256": "c6551a689d8891c73fc9db4ec41386d06002b565567fb6d0768033c65bd134fb"
+  },
+  "ownerConfirmationSource": {
+    "channel": "Codex task owner message",
+    "taskId": "01a04fc0-899b-7cd2-bb2e-98ad182391bb",
+    "date": "2026-08-31"
+  },
+  "replacementAuthorization": null,
+  "additionalBilledCalls": 0
+}

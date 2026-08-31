@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "id": "angle-aspects-60-v15-009",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_reviewed",
+  "provenanceNote": "The owner supplied exact wording approval for V15 and explicitly did not relabel collaboratively drafted copy as owner_authored.",
+  "contentKey": "fallback-hook/natal-aspect-lived/moon/square/ascendant",
+  "packetKey": "moon|square|ascendant",
+  "payloadSha256": "6dfafa5f953470707902161a539cd59b6fa9976623245a30a1a517141a05b7b5",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "You can look easygoing while making so many small adjustments for other people that your own needs barely make it into the decision. You stay longer than you wanted to, change the time because it works better for them, soften what you meant to say, or agree before you have checked what the change will cost you.\n\nOther people's moods can reach your decision before your own needs do. You notice that someone is disappointed, stressed, impatient, or uncomfortable and start adjusting before anyone has actually asked you to.\n\nResentment tends to show up later, when you feel overlooked even though other people were working from the answer you gave them. If you kept saying the timing was fine or acting like the change did not matter, they may not know what you wanted instead.\n\nPay attention to the difference between choosing to be flexible and making yourself so flexible that nobody has to find out what works for you. You do not need to explain every feeling. You do need to let your actual needs enter the decision before the decision is already made.",
+    "sourceMechanism": "Exact owner-approved copy transcribed byte-for-byte from the SHA-bound canonical V15 owner-approval artifact; collaborative authorship is preserved and sole owner authorship is not asserted."
+  },
+  "approvedAt": "2026-08-31",
+  "approvalEffect": "exact_wording_approval",
+  "sourceArtifact": {
+    "id": "angle-aspects-60-v15-owner-approval-candidate",
+    "path": "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md",
+    "sha256": "3bbcd3e611d72a9754e9fdb4f4390ec860a670bc53af6b059ea23a212d37bfd4",
+    "passageHeading": "Moon square Ascendant",
+    "passageOrdinal": 9,
+    "bodySha256": "162e837dd5ab67fb252c91518ed57f2ce8de16cab38fc52c44cd724ce8d517ef"
+  },
+  "ownerConfirmationSource": {
+    "channel": "Codex task owner message",
+    "taskId": "01a04fc0-899b-7cd2-bb2e-98ad182391bb",
+    "date": "2026-08-31"
+  },
+  "replacementAuthorization": null,
+  "additionalBilledCalls": 0
+}

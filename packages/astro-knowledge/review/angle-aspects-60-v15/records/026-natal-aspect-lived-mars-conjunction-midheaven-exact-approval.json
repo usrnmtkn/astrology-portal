@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "id": "angle-aspects-60-v15-026",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_reviewed",
+  "provenanceNote": "The owner supplied exact wording approval for V15 and explicitly did not relabel collaboratively drafted copy as owner_authored.",
+  "contentKey": "fallback-hook/natal-aspect-lived/mars/conjunction/midheaven",
+  "packetKey": "mars|conjunction|midheaven",
+  "payloadSha256": "1db7d82eebbd1d02536457ea1d1917cd05cf085fedae6374e25b3b44901a8ffe",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "You tend to become known as the person who gets things moving when everyone else is still waiting for someone to decide what happens next. You step forward, take responsibility, say what needs to be said, or deal with the problem other people keep hoping somebody else will handle.\n\nThis can show up anywhere your effort is visible. In school, sports, leadership, community work, family responsibilities, public projects, or a career, people may start trusting you because they know you will act when something matters. Over time, initiative can become part of your reputation.\n\nThe challenge is that being capable under pressure can attract more pressure. You handle the difficult assignment well, so you get the next one. You solve the urgent problem, so people start assuming you will solve the next one too. Eventually, being the person who can handle it can become the reason more responsibility keeps finding you.\n\nMore responsibility should bring more authority, more influence over the outcome, more recognition, or enough support to make an actual impact. What you become known for should not only be how much pressure you can absorb. Your drive matters most when it gives you something worth building, leading, protecting, or changing.",
+    "sourceMechanism": "Exact owner-approved copy transcribed byte-for-byte from the SHA-bound canonical V15 owner-approval artifact; collaborative authorship is preserved and sole owner authorship is not asserted."
+  },
+  "approvedAt": "2026-08-31",
+  "approvalEffect": "exact_wording_approval",
+  "sourceArtifact": {
+    "id": "angle-aspects-60-v15-owner-approval-candidate",
+    "path": "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md",
+    "sha256": "3bbcd3e611d72a9754e9fdb4f4390ec860a670bc53af6b059ea23a212d37bfd4",
+    "passageHeading": "Mars conjunct Midheaven",
+    "passageOrdinal": 26,
+    "bodySha256": "f9c417514fa11283a083f62f1fd2e01e4f0eb84b4e28de6db5e0c5b033c10c00"
+  },
+  "ownerConfirmationSource": {
+    "channel": "Codex task owner message",
+    "taskId": "01a04fc0-899b-7cd2-bb2e-98ad182391bb",
+    "date": "2026-08-31"
+  },
+  "replacementAuthorization": null,
+  "additionalBilledCalls": 0
+}

@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "id": "angle-aspects-60-v15-033",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_reviewed",
+  "provenanceNote": "The owner supplied exact wording approval for V15 and explicitly did not relabel collaboratively drafted copy as owner_authored.",
+  "contentKey": "fallback-hook/natal-aspect-lived/jupiter/square/ascendant",
+  "packetKey": "jupiter|square|ascendant",
+  "payloadSha256": "da11875bb684763812ad1068b273a980ba3c2bcc74d6661a52d8ab16881be0df",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "You can become attached to the person you imagine becoming because of a choice, so potential may feel convincing before you know if the commitment fits the life you already have. A class becomes evidence of a future you want, a larger role makes you picture yourself with more influence, or a project feels important partly because of what completing it would say about the person you are becoming.\n\nYou can end up saying yes because of what the choice seems to promise about your future, even when the commitment itself does not fit your life very well. You trust yourself to work out the ordinary requirements later.\n\nThe challenge is not wanting more. It is letting the future version of your life answer questions the present one still needs to ask. Time, attention, responsibility, and follow-through still have to work inside the life you are actually living.\n\nThe future you can picture tells you something about what you want to grow into. It does not tell you which commitment belongs in your life now. You can want the larger life and still decide this is not the way you want to build it.",
+    "sourceMechanism": "Exact owner-approved copy transcribed byte-for-byte from the SHA-bound canonical V15 owner-approval artifact; collaborative authorship is preserved and sole owner authorship is not asserted."
+  },
+  "approvedAt": "2026-08-31",
+  "approvalEffect": "exact_wording_approval",
+  "sourceArtifact": {
+    "id": "angle-aspects-60-v15-owner-approval-candidate",
+    "path": "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md",
+    "sha256": "3bbcd3e611d72a9754e9fdb4f4390ec860a670bc53af6b059ea23a212d37bfd4",
+    "passageHeading": "Jupiter square Ascendant",
+    "passageOrdinal": 33,
+    "bodySha256": "9d0a1c41aad426155a5ef1fc425cb62a1968d3d8a383e19ab3e86b1c30ec72c9"
+  },
+  "ownerConfirmationSource": {
+    "channel": "Codex task owner message",
+    "taskId": "01a04fc0-899b-7cd2-bb2e-98ad182391bb",
+    "date": "2026-08-31"
+  },
+  "replacementAuthorization": null,
+  "additionalBilledCalls": 0
+}
