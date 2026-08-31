@@ -1387,6 +1387,37 @@ test.describe("client-facing user flow case studies", () => {
     await assertNoClientErrors();
   });
 
+  test("You restores the selected subtab after refresh and browser navigation", async ({ page }) => {
+    const assertNoClientErrors = await expectNoClientErrors(page);
+
+    await seedClientState(page, { profile: true });
+    await expectClientRouteLoads(page, "/#you");
+
+    const transitsTab = page.getByRole("tab", { name: "Transits", exact: true });
+    const natalTab = page.getByRole("tab", { name: "Natal Chart", exact: true });
+
+    await natalTab.click();
+    await expect(natalTab).toHaveAttribute("aria-selected", "true");
+    await expect(page).toHaveURL(/#you\?tab=chart$/u);
+
+    await page.reload();
+    await expect(page.getByRole("region", { name: "You", exact: true })).toBeVisible();
+    await expect(natalTab).toHaveAttribute("aria-selected", "true");
+
+    await transitsTab.click();
+    await expect(transitsTab).toHaveAttribute("aria-selected", "true");
+    await expect(page).toHaveURL(/#you$/u);
+
+    await page.goBack();
+    await expect(natalTab).toHaveAttribute("aria-selected", "true");
+    await expect(page).toHaveURL(/#you\?tab=chart$/u);
+
+    await page.goForward();
+    await expect(transitsTab).toHaveAttribute("aria-selected", "true");
+    await expect(page).toHaveURL(/#you$/u);
+    await assertNoClientErrors();
+  });
+
   test("Behind this forecast groups cards by concept across desktop and mobile", async ({ browser }) => {
     for (const viewport of [
       { label: "desktop", width: 1440, height: 1000 },
