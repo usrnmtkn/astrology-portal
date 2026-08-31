@@ -14,7 +14,7 @@ import {
   skyArticleEditionRecord
 } from "../../apps/web/src/content/skyArticleTemplateCompiler.js";
 import { validateCmsTemplate } from "../../apps/web/src/content/cmsTemplateValidation.js";
-import skyV4ContinuousOwnerApproval from "../../apps/web/src/content/fallbackArchitectureV3/authored-inputs/sky-v4-continuous-120-owner-approval-v1.json" with { type: "json" };
+import skyV4ReaderCopyOwnerApproval from "../../apps/web/src/content/fallbackArchitectureV3/authored-inputs/sky-v4-reader-copy-280-owner-approval-v1.json" with { type: "json" };
 
 loadLocalWebEnv();
 
@@ -141,7 +141,7 @@ const fallbackArchitectureV3Provider = "tldrastro-fallback-architecture-v3";
 const fallbackArchitectureV3EligibleReviews = new Set(["approved", "approved_reuse"]);
 const fallbackArchitectureV3ReviewStatuses = new Set(["needs_review", "approved", "approved_reuse"]);
 const skyV4CanonicalStagePackage = "SKY-V4-CANONICAL-CODEX-HANDOFF-CONTENT-STUDIO-EDITABLE-2026-08-30";
-const skyV4OwnerApprovedContinuousKeys = new Set(skyV4ContinuousOwnerApproval.approved_keys);
+const skyV4OwnerApprovedReaderCopyKeys = new Set(skyV4ReaderCopyOwnerApproval.approved_keys);
 const personalizedSampleSurfaces = new Set<GeneratedContentSurface>(["you", "natal", "synastry", "composite", "relationship"]);
 const sampleOnlyReviewerNote = "INTERNAL CONTENT TEST. This row is for testing templates, voice, and knowledge hooks. Do not publish it as global app content. Real You, Synastry, Composite, and Relationship content must be generated from user-specific chart or bond facts.";
 let contentRoleContractCache: { styleRules?: { bannedWords?: string[] } } | null = null;
@@ -365,8 +365,8 @@ function applyFallbackArchitectureV3ReviewPatch(row: ExistingGeneratedContentRow
     : packageReviewStatus(row, body.reviewStatus || stringFrom(sourceSnapshot.review_status));
   const isSkyV4CanonicalStage = stringFrom(record.source_package) === skyV4CanonicalStagePackage
     || stringFrom(sourceSnapshot.sourcePackage) === skyV4CanonicalStagePackage;
-  const isSkyV4OwnerApprovedContinuous = isSkyV4CanonicalStage
-    && skyV4OwnerApprovedContinuousKeys.has(row.content_key);
+  const isSkyV4OwnerApprovedReaderCopy = isSkyV4CanonicalStage
+    && skyV4OwnerApprovedReaderCopyKeys.has(row.content_key);
 
   if (!fallbackArchitectureV3ReviewStatuses.has(reviewStatus)) {
     throw new Error("review_status must be needs_review, approved, or approved_reuse.");
@@ -374,7 +374,7 @@ function applyFallbackArchitectureV3ReviewPatch(row: ExistingGeneratedContentRow
   if (
     isSkyV4CanonicalStage
     && reviewStatus !== "needs_review"
-    && !(isSkyV4OwnerApprovedContinuous && reviewStatus === "approved")
+    && !(isSkyV4OwnerApprovedReaderCopy && reviewStatus === "approved")
   ) {
     throw new Error("SKY V4 content may only use an approval state authorized by its hash-bound owner-approval ledger.");
   }
@@ -504,7 +504,7 @@ function applyFallbackArchitectureV3ReviewPatch(row: ExistingGeneratedContentRow
 
   if (!hasPackageDraft) record.review_status = reviewStatus;
   if (isSkyV4CanonicalStage) {
-    record.owner_approved = isSkyV4OwnerApprovedContinuous && reviewStatus === "approved";
+    record.owner_approved = isSkyV4OwnerApprovedReaderCopy && reviewStatus === "approved";
     record.serving_enabled = false;
   }
   if (typeof body.editorialNotes === "string") {
