@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "id": "angle-aspects-60-v15-054",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_reviewed",
+  "provenanceNote": "The owner supplied exact wording approval for V15 and explicitly did not relabel collaboratively drafted copy as owner_authored.",
+  "contentKey": "fallback-hook/natal-aspect-lived/neptune/opposition/midheaven",
+  "packetKey": "neptune|opposition|midheaven",
+  "payloadSha256": "f60f767a2983c739b45195ee5e889ebca6a328f122628d85d2abd26975352905",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "You may need a home life with more quiet, privacy, and clear boundaries than other people understand. Conversations stay with you, other people's moods can take time to shake off, and a household where everyone has constant access to you can make it difficult to know when your time is actually your own.\n\nFamily stories can carry the same kind of blur. A memory gets repeated until it becomes the accepted explanation, somebody's sacrifice becomes the reason a family rule cannot be questioned, or everyone knows the emotional version of what happened while important facts remain unclear.\n\nYour compassion can make it difficult to decide where help should stop. Someone needs a place to stay, another chance, more support, or access to your time, and keeping the terms open can feel kinder than saying exactly what you can offer. Then a temporary exception quietly becomes part of how the household works.\n\nCompassion does not require making every exception permanent. You can care about someone and still need privacy, limits, and a home you can rely on. Clear access, time, money, and responsibility make it easier to help without disappearing from your own life.",
+    "sourceMechanism": "Exact owner-approved copy transcribed byte-for-byte from the SHA-bound canonical V15 owner-approval artifact; collaborative authorship is preserved and sole owner authorship is not asserted."
+  },
+  "approvedAt": "2026-08-31",
+  "approvalEffect": "exact_wording_approval",
+  "sourceArtifact": {
+    "id": "angle-aspects-60-v15-owner-approval-candidate",
+    "path": "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md",
+    "sha256": "3bbcd3e611d72a9754e9fdb4f4390ec860a670bc53af6b059ea23a212d37bfd4",
+    "passageHeading": "Neptune opposition Midheaven",
+    "passageOrdinal": 54,
+    "bodySha256": "96982482c523e41241ba6866b3cb52f9168eaeab42778220d8208dfbbb6b5d49"
+  },
+  "ownerConfirmationSource": {
+    "channel": "Codex task owner message",
+    "taskId": "01a04fc0-899b-7cd2-bb2e-98ad182391bb",
+    "date": "2026-08-31"
+  },
+  "replacementAuthorization": null,
+  "additionalBilledCalls": 0
+}

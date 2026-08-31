@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "id": "angle-aspects-60-v15-047",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_reviewed",
+  "provenanceNote": "The owner supplied exact wording approval for V15 and explicitly did not relabel collaboratively drafted copy as owner_authored.",
+  "contentKey": "fallback-hook/natal-aspect-lived/uranus/opposition/ascendant",
+  "packetKey": "uranus|opposition|ascendant",
+  "payloadSha256": "e73bfce00c5d0f991511fc60e46c9af9a5642b973c02aec90dc12bd84d6b928f",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "You tend to do best in relationships where closeness leaves both people enough independence to keep a life of their own. Friends, interests, schedules, money, or time alone do not have to disappear in order to prove that the relationship matters.\n\nYou may also be drawn to people who make you question the usual relationship rules. They choose a different schedule, reject a milestone everybody else assumes is necessary, or need enough independence that the two of you have to decide for yourselves what commitment is supposed to look like.\n\nFreedom gets complicated when it means something different to each person. One person thinks plans are flexible. The other thinks the agreement is dependable even if the schedule changes. One person wants independence inside the relationship. The other wants freedom from having to explain choices that affect both people.\n\nA relationship does not have to look conventional to be dependable. Both people still need to know what they can rely on, which decisions affect them both, and what independence means once two lives start having consequences for each other.",
+    "sourceMechanism": "Exact owner-approved copy transcribed byte-for-byte from the SHA-bound canonical V15 owner-approval artifact; collaborative authorship is preserved and sole owner authorship is not asserted."
+  },
+  "approvedAt": "2026-08-31",
+  "approvalEffect": "exact_wording_approval",
+  "sourceArtifact": {
+    "id": "angle-aspects-60-v15-owner-approval-candidate",
+    "path": "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md",
+    "sha256": "3bbcd3e611d72a9754e9fdb4f4390ec860a670bc53af6b059ea23a212d37bfd4",
+    "passageHeading": "Uranus opposition Ascendant",
+    "passageOrdinal": 47,
+    "bodySha256": "59aa06e89874c97c7addf4b5deb207dde935af28458bb023b666cdacbbd22c9b"
+  },
+  "ownerConfirmationSource": {
+    "channel": "Codex task owner message",
+    "taskId": "01a04fc0-899b-7cd2-bb2e-98ad182391bb",
+    "date": "2026-08-31"
+  },
+  "replacementAuthorization": null,
+  "additionalBilledCalls": 0
+}

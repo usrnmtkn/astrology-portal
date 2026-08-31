@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "id": "angle-aspects-60-v15-007",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_reviewed",
+  "provenanceNote": "The owner supplied exact wording approval for V15 and explicitly did not relabel collaboratively drafted copy as owner_authored.",
+  "contentKey": "fallback-hook/natal-aspect-lived/moon/conjunction/ascendant",
+  "packetKey": "moon|conjunction|ascendant",
+  "payloadSha256": "ff9670154c0e5c1da6b8ee28d403a185d1622faaadafdf079df560fcdde70d40",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "Your feelings are close enough to the surface that other people often know something has affected you before you have decided what the feeling means. Your face changes, you become quieter, your attention shifts, or you need more space, and somebody close to you may notice the reaction before you have put words around it.\n\nFeelings are part of how you understand what is happening. You notice who puts you at ease, when the atmosphere changes, or when something that looked fine stops feeling fine once you are actually living it. When you are comfortable, that usually shows too.\n\nThe challenge is that everyone can start responding before you have had time to understand your own reaction. Somebody asks what is wrong, another person changes the plan, and suddenly you are managing everybody else's response to a feeling you were still trying to understand.\n\nTake the mood seriously, not literally. Your first reaction is information. Give yourself enough time to figure out what you actually need before the feeling becomes a decision everybody else is expected to organize around.",
+    "sourceMechanism": "Exact owner-approved copy transcribed byte-for-byte from the SHA-bound canonical V15 owner-approval artifact; collaborative authorship is preserved and sole owner authorship is not asserted."
+  },
+  "approvedAt": "2026-08-31",
+  "approvalEffect": "exact_wording_approval",
+  "sourceArtifact": {
+    "id": "angle-aspects-60-v15-owner-approval-candidate",
+    "path": "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md",
+    "sha256": "3bbcd3e611d72a9754e9fdb4f4390ec860a670bc53af6b059ea23a212d37bfd4",
+    "passageHeading": "Moon conjunct Ascendant",
+    "passageOrdinal": 7,
+    "bodySha256": "c1c5036cc6842e9ea7227bf05a01818cece4fb8d79b2faaf689b91acb7c7c8a6"
+  },
+  "ownerConfirmationSource": {
+    "channel": "Codex task owner message",
+    "taskId": "01a04fc0-899b-7cd2-bb2e-98ad182391bb",
+    "date": "2026-08-31"
+  },
+  "replacementAuthorization": null,
+  "additionalBilledCalls": 0
+}

@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "id": "angle-aspects-60-v15-006",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_reviewed",
+  "provenanceNote": "The owner supplied exact wording approval for V15 and explicitly did not relabel collaboratively drafted copy as owner_authored.",
+  "contentKey": "fallback-hook/natal-aspect-lived/sun/opposition/midheaven",
+  "packetKey": "sun|opposition|midheaven",
+  "payloadSha256": "695820b29d35e8f3136026a80fc31a24ac323d34cdd4a15d127737e4022edaa8",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "You need a private life where you can recognize yourself without having to explain what you do, what you have achieved, or what other people expect from you. Family, privacy, familiar places, the people who have access to you, and what you do when nobody needs anything from you can shape your sense of self in ways other people may never see.\n\nWith the Sun on the IC, you may care deeply about family history, the place you come from, the people who knew you before any public role existed, or the kind of home that lets you stop explaining yourself and simply live.\n\nAn inherited role can become difficult to separate from who you think you have to remain. You are still the responsible one, the one who comes home, the one who keeps the tradition, or the one expected to carry a family identity that made sense before your own life became more complicated.\n\nYou can care deeply about where you came from without letting it decide who you still have to be. Home should give the person you are now somewhere to belong, not require you to keep acting like the version everyone there remembers.",
+    "sourceMechanism": "Exact owner-approved copy transcribed byte-for-byte from the SHA-bound canonical V15 owner-approval artifact; collaborative authorship is preserved and sole owner authorship is not asserted."
+  },
+  "approvedAt": "2026-08-31",
+  "approvalEffect": "exact_wording_approval",
+  "sourceArtifact": {
+    "id": "angle-aspects-60-v15-owner-approval-candidate",
+    "path": "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md",
+    "sha256": "3bbcd3e611d72a9754e9fdb4f4390ec860a670bc53af6b059ea23a212d37bfd4",
+    "passageHeading": "Sun opposition Midheaven",
+    "passageOrdinal": 6,
+    "bodySha256": "a6cb40808abea4b482ad7fe6cf2e169773486b61d946523111318927e0998331"
+  },
+  "ownerConfirmationSource": {
+    "channel": "Codex task owner message",
+    "taskId": "01a04fc0-899b-7cd2-bb2e-98ad182391bb",
+    "date": "2026-08-31"
+  },
+  "replacementAuthorization": null,
+  "additionalBilledCalls": 0
+}

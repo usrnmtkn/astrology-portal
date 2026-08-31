@@ -19,7 +19,7 @@ const generatedContentSource = read("apps/web/src/services/generatedContent.ts")
 const materializerSource = read("scripts/materialize-fallback-architecture-v3-dashboard-rows.mjs");
 const appSource = read("apps/web/src/App.tsx");
 
-assert.equal(PACKAGE_VERSION, "v3-2026-08-28a");
+assert.equal(PACKAGE_VERSION, "v3-2026-08-31a");
 assert.match(
   runtimeSource,
   /export const fallbackArchitectureV3BundledManifestSummary = bundledManifestSummaryV3 as FallbackArchitectureV3PackageManifestSummary/u,
@@ -375,6 +375,30 @@ try {
     new Set(materialized.rows.map((row) => row.content_key)).size,
     "Materialization must emit one row per content key."
   );
+  const v15FullCopyHook = materialized.rows.find((row) => (
+    row.content_key === "fallback-hook/natal-aspect-lived/sun/conjunction/ascendant"
+  ));
+  assert.equal(v15FullCopyHook?.source_snapshot?.content_role, "full_copy");
+  assert.equal(
+    v15FullCopyHook?.block_type,
+    "fallback_hook",
+    "A fallback-hook/* package record must retain fallback_hook classification even when its content role is full_copy."
+  );
+  const unrelatedFullCopyArticle = materialized.rows.find((row) => (
+    row.source_snapshot?.content_role === "full_copy"
+    && !row.content_key.startsWith("fallback-hook/")
+  ));
+  assert.ok(unrelatedFullCopyArticle, "The regression fixture needs an unrelated full-copy article.");
+  assert.equal(unrelatedFullCopyArticle.block_type, "fallback_article");
+  const unrelatedTemplate = materialized.rows.find((row) => row.source_snapshot?.content_role === "template");
+  assert.ok(unrelatedTemplate, "The regression fixture needs an unrelated template.");
+  assert.equal(unrelatedTemplate.block_type, "fallback_template");
+  const unrelatedHook = materialized.rows.find((row) => (
+    row.source_snapshot?.content_role === "fallback_hook"
+    && row.content_key !== v15FullCopyHook.content_key
+  ));
+  assert.ok(unrelatedHook, "The regression fixture needs an unrelated fallback hook.");
+  assert.equal(unrelatedHook.block_type, "fallback_hook");
   const placementProviderRows = materialized.rows.filter((row) => (
     row.provider === "tldrastro-fallback-architecture-v3-sky-placement"
   ));

@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "id": "angle-aspects-60-v15-049",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_reviewed",
+  "provenanceNote": "The owner supplied exact wording approval for V15 and explicitly did not relabel collaboratively drafted copy as owner_authored.",
+  "contentKey": "fallback-hook/natal-aspect-lived/neptune/conjunction/ascendant",
+  "packetKey": "neptune|conjunction|ascendant",
+  "payloadSha256": "ef0efa756a8fd7113dca644e9b19a1ca13eca3638d4889d23a87c6a24a05f373",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "People can read a lot into you before they know you very well. You listen, take your time answering, understand where someone is coming from, or leave enough space in the conversation that another person starts filling in the blanks for you.\n\nYou may be highly responsive to tone, atmosphere, and what people mean without saying directly. That can make you perceptive, especially when something feels off before you have enough information to explain why. It can also make your own position less obvious if you understand everybody else's perspective before you have said what you actually think.\n\nThe problem starts when another person's impression becomes easier to maintain than correcting it. You let them assume the plan works, keep answering as though you are comfortable, or stay available because disappointing them feels more difficult than giving a clear answer. Then you are living with an expectation you never meant to create.\n\nIntuition can tell you that something deserves your attention. It still needs facts before it becomes a conclusion. The same is true of other people's impressions of you. They may be responding to something real, but you still get to decide which version of you they are actually allowed to build expectations around.",
+    "sourceMechanism": "Exact owner-approved copy transcribed byte-for-byte from the SHA-bound canonical V15 owner-approval artifact; collaborative authorship is preserved and sole owner authorship is not asserted."
+  },
+  "approvedAt": "2026-08-31",
+  "approvalEffect": "exact_wording_approval",
+  "sourceArtifact": {
+    "id": "angle-aspects-60-v15-owner-approval-candidate",
+    "path": "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md",
+    "sha256": "3bbcd3e611d72a9754e9fdb4f4390ec860a670bc53af6b059ea23a212d37bfd4",
+    "passageHeading": "Neptune conjunct Ascendant",
+    "passageOrdinal": 49,
+    "bodySha256": "c423db248d1b743e66d38908f1472914be215bd1736ff06f7e83129e307f1765"
+  },
+  "ownerConfirmationSource": {
+    "channel": "Codex task owner message",
+    "taskId": "01a04fc0-899b-7cd2-bb2e-98ad182391bb",
+    "date": "2026-08-31"
+  },
+  "replacementAuthorization": null,
+  "additionalBilledCalls": 0
+}

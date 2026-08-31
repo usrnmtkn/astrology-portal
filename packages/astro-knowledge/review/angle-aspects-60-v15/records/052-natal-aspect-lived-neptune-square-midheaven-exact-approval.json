@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "id": "angle-aspects-60-v15-052",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_reviewed",
+  "provenanceNote": "The owner supplied exact wording approval for V15 and explicitly did not relabel collaboratively drafted copy as owner_authored.",
+  "contentKey": "fallback-hook/natal-aspect-lived/neptune/square/midheaven",
+  "packetKey": "neptune|square|midheaven",
+  "payloadSha256": "8e997a0a17ebefc5bf4d0890afd720198751eba6f290accbd8a3ec49cad5ff56",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "You can become attached to what a path means before you have decided if you like the life that comes with it. The program sounds meaningful, the organization represents something you believe in, or the visible role gives you an identity you care about while the daily reality keeps asking for something very different.\n\nYou may stay connected to the potential long after the current version has stopped working. You remember why you chose it, know what it could become, or can still see the version that would make all the effort feel worthwhile. That hope can make it difficult to judge what is actually happening now.\n\nThe problem is when everything stays permanently almost right. The support will come later. The expectations will get clearer. The role will become what you thought you were choosing. Meanwhile, you are still living with the version that exists.\n\nPotential matters, but so does the life you have to live while you wait for it. Pay attention to the difference between believing in what something could become and wanting what it is asking from you now.",
+    "sourceMechanism": "Exact owner-approved copy transcribed byte-for-byte from the SHA-bound canonical V15 owner-approval artifact; collaborative authorship is preserved and sole owner authorship is not asserted."
+  },
+  "approvedAt": "2026-08-31",
+  "approvalEffect": "exact_wording_approval",
+  "sourceArtifact": {
+    "id": "angle-aspects-60-v15-owner-approval-candidate",
+    "path": "packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md",
+    "sha256": "3bbcd3e611d72a9754e9fdb4f4390ec860a670bc53af6b059ea23a212d37bfd4",
+    "passageHeading": "Neptune square Midheaven",
+    "passageOrdinal": 52,
+    "bodySha256": "9b74b7d0c9f6357f368547626ffc85625187643fbb3109d1f1862ea22034cae2"
+  },
+  "ownerConfirmationSource": {
+    "channel": "Codex task owner message",
+    "taskId": "01a04fc0-899b-7cd2-bb2e-98ad182391bb",
+    "date": "2026-08-31"
+  },
+  "replacementAuthorization": null,
+  "additionalBilledCalls": 0
+}
