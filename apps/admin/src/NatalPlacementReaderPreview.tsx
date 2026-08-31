@@ -30,6 +30,7 @@ type NatalRender = {
 
 type Props = {
   house: NatalPlacementHouse | "";
+  initialAudience?: "you" | "they";
   onCreateOverride: (contentKey: string, label: string, body: string) => void;
   onOpenSource: (contentKey: string, label: string, previewTemplate?: boolean) => void;
   planet: NatalPlacementPlanet;
@@ -109,8 +110,8 @@ export function natalPlacementOverrideDraft(contentKey: string, label: string, b
   };
 }
 
-export default function NatalPlacementReaderPreview({ house, onCreateOverride, onOpenSource, planet, rows, secret, sign }: Props) {
-  const [audience, setAudience] = useState<"you" | "they">("you");
+export default function NatalPlacementReaderPreview({ house, initialAudience = "you", onCreateOverride, onOpenSource, planet, rows, secret, sign }: Props) {
+  const [audience, setAudience] = useState<"you" | "they">(initialAudience);
   const [preview, setPreview] = useState<{ error: string | null; loading: boolean; rendered: NatalRender | null }>({ error: null, loading: true, rendered: null });
   const sourceKeys = useMemo(() => new Set(natalPlacementSourceGroups(planet, sign, house).flatMap((group) => group.sources.map((source) => source.key))), [house, planet, sign]);
   const overrides = useMemo(() => rows
@@ -147,8 +148,10 @@ export default function NatalPlacementReaderPreview({ house, onCreateOverride, o
       <header>
         <div>
           <p className="admin-eyebrow">Effective reader preview</p>
-          <h3>What the reader sees</h3>
-          <p>This is assembled by the same fallback resolver as the app. Each colored section opens the source structure that places it in the write-up.</p>
+          <h3>{audience === "they" ? "What a friend sees" : "What you see"}</h3>
+          <p>{audience === "they"
+            ? "The Friends version is composed from separate third-person source writing and calculated person details. Each colored section opens the actual editable source used to build it."
+            : "This is assembled by the same fallback resolver as the app. Each colored section opens the source structure that places it in the write-up."}</p>
         </div>
         <div className="admin-composition-preview-audience" role="group" aria-label="Natal preview audience">
           <button type="button" aria-pressed={audience === "you"} className={audience === "you" ? "active" : ""} onClick={() => setAudience("you")}>You</button>
@@ -183,7 +186,11 @@ export default function NatalPlacementReaderPreview({ house, onCreateOverride, o
           </div>
           <div className="admin-natal-reader-preview-provenance">
             <span className={`ui-pill admin-status ${exactServing ? "status-live" : "status-reviewed"}`}>
-              {exactServing ? "Exact authored override" : "Composed from atomic sources"}
+              {audience === "they"
+                ? "Composed from Friend sources"
+                : exactServing
+                  ? "Exact authored override"
+                  : "Composed from atomic sources"}
             </span>
             {house && audience === "you" && !exactServing && (
               exactSaved
