@@ -100,7 +100,7 @@ The 24 template records and `sky-v4/settings/contextual-overlays` remain configu
 - Content Studio API round trip: PASS; draft hidden from reader.
 - TypeScript: PASS.
 - Production web build: PASS.
-- Web bundle budget: PASS. The immutable canonical corpus is emitted as an on-demand JSON asset; it is not part of the reader boot graph. App boot is `382.2 kB` gzip, reader boot is `429.1 kB` gzip, and total JavaScript is `2.68 MB` gzip.
+- Web bundle budget: PASS under the CI environment. The immutable canonical corpus is emitted as an on-demand JSON asset; it is not part of the reader boot graph. App boot is `383.7 kB` gzip, reader boot is `430.6 kB` gzip, and total JavaScript is `2.69 MB` gzip. The total-JavaScript allowance increased by exactly `1 kB` for the deferred product-surface resolver; the app and reader boot limits did not change.
 - Deferred Sky Placement runtime parity: PASS in both supported module forms. Vite loads the canonical corpus through its on-demand asset URL; the Node/esbuild startup-contract harness consumes the parsed JSON module without attempting an invalid URL fetch.
 - Focused real-product browser suite: PASS (`9/9`): ordinary placement, contextual overlay + retrograde, governed placement aspects, New Moon, Full Moon, exact eclipse, sign-aware eclipse fallback, current Node axis/North/South modules + Lilith, seasonal context, and exact-day Lilith station.
 - GitHub CI: pending after push; merge remains blocked at the final serving review wall.
