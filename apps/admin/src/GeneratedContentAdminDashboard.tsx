@@ -892,9 +892,17 @@ function sourceSnapshotNumber(snapshot: Record<string, unknown> | null | undefin
 
 function generatedRowNeedsReviewQueue(row: AdminGeneratedContentRow) {
   const sourceType = sourceSnapshotString(row.source_snapshot, "sourceType");
+  const packageRecord = rowPackageRecord(row);
+  const skyV4ReviewCategory = typeof packageRecord.studio_review_category === "string"
+    ? packageRecord.studio_review_category
+    : "";
+  const outsideSkyV4WritingReview = skyV4ReviewCategory === "configuration"
+    || (skyV4ReviewCategory === "owner-approved-reader-copy" && packageRecord.owner_approved === true);
 
-  return sourceType === "owner-resource-review"
-    || (["DRAFT", "REVIEWED"].includes(row.status) && Boolean(row.review_state));
+  return !outsideSkyV4WritingReview && (
+    sourceType === "owner-resource-review"
+    || (["DRAFT", "REVIEWED"].includes(row.status) && Boolean(row.review_state))
+  );
 }
 
 const retiredReviewStates = new Set([
