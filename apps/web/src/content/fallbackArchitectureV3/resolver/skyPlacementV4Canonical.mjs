@@ -653,7 +653,11 @@ export function resolveSkyV4Retrograde(corpus, { body, sign, exactCopy = "", sta
   }
   if (["lilith", "black moon lilith"].includes(normalizedBody)) {
     const station = stationSupported ? corpus.content.lilithCurrentConditions[0] : null;
-    return { resolution: station ? "lilith-station" : "omit", body: station?.Body ?? "" };
+    return {
+      resolution: station ? "lilith-station" : "omit",
+      body: station?.Body ?? "",
+      lookupKey: station?.ContentKey ?? null
+    };
   }
   if (text(exactCopy).trim()) return { resolution: "exact-sign", body: exactCopy, lookupKey: `${normalizedBody}|${lower(sign)}|retrograde` };
   const generic = corpus.content.retrogradeGeneric.find((row) => lower(row.Planet) === normalizedBody);
@@ -1139,15 +1143,41 @@ export function renderSkyV4ReaderRoute(corpus, input) {
   const preview = renderSkyV4StudioPreview(corpus, { ...input, contentKey, draftFields: {} });
   const baseBody = studioReaderBody(source);
   const readerParts = [];
+  const pushReaderBody = (value) => {
+    const body = withoutUnresolvedSlots(fillFacts(text(value), record(input.facts))).trim();
+    if (body) readerParts.push(body);
+  };
   const what = text(source.TLDR_What || source.tldrWhat).trim();
   const takeaway = text(source.TLDR_Takeaway || source.tldrTakeaway || source.TLDR).trim();
   if (what) readerParts.push(what);
   if (takeaway) readerParts.push(takeaway);
-  if (baseBody) readerParts.push(withoutUnresolvedSlots(fillFacts(baseBody, record(input.facts))));
-  if (route === "placement" && input.isRetrograde === true) {
+  if (route === "placement" && text(input.seasonalContext).trim()) {
+    pushReaderBody(input.seasonalContext);
+  }
+  if (route === "placement" && nodePlacementKey(input.planet, input.sign)) {
+    const nodeEducation = releasedReaderRecord(corpus, "sky-nodes/education");
+    pushReaderBody(studioReaderBody(nodeEducation));
+    if (input.northSign && input.southSign) {
+      const axis = releasedReaderRecord(corpus, `sky-nodes/axis/${lower(input.northSign)}-${lower(input.southSign)}`);
+      pushReaderBody(studioReaderBody(axis));
+    }
+  }
+  if (baseBody) pushReaderBody(baseBody);
+  for (const overlayKey of preview.selectedOverlayKeys ?? []) {
+    const overlay = releasedReaderRecord(corpus, overlayKey);
+    pushReaderBody(overlay.OverlayBody);
+  }
+  if (route !== "placement") {
+    pushReaderBody(input.cycleContext);
+    pushReaderBody(input.eclipseContext);
+  }
+  for (const condition of input.motionConditions ?? []) {
+    pushReaderBody(condition.body);
+  }
+  if (route === "placement" && (input.isRetrograde === true || input.stationSupported === true)) {
     const retrograde = resolveSkyV4Retrograde(corpus, { body: input.planet, sign: input.sign, stationSupported: input.stationSupported });
     if (retrograde.body && retrograde.lookupKey && READER_COPY_SERVING_KEYS.has(retrograde.lookupKey)) {
-      readerParts.push(withoutUnresolvedSlots(fillFacts(retrograde.body, record(input.facts))));
+      pushReaderBody(retrograde.body);
     }
   }
   return {

@@ -1514,6 +1514,24 @@ a.tx-card.has-article:hover .tx-more {
   line-height: var(--lunar-selected-title-leading);
 }
 
+.lunar-selected-card__lunation-link {
+  appearance: none;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  font: inherit;
+  letter-spacing: inherit;
+  line-height: inherit;
+  text-align: left;
+}
+
+.lunar-selected-card__lunation-link:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 0.2em;
+}
+
 .lunar-selected-card h2 span {
   font-family: var(--font-glyph);
 }
