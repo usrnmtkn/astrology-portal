@@ -67,15 +67,49 @@ export function natalPlacementLabel(planet: NatalPlacementPlanet, sign: NatalPla
   return `${titleCase(planet)} in ${titleCase(sign)} in the ${ordinalHouse(house)} house`;
 }
 
+export function natalPlacementSignLabel(planet: NatalPlacementPlanet, sign: NatalPlacementSign) {
+  return `${titleCase(planet)} in ${titleCase(sign)}`;
+}
+
 export function natalPlacementSourceGroups(
   planet: NatalPlacementPlanet,
   sign: NatalPlacementSign,
-  house: NatalPlacementHouse
+  house?: NatalPlacementHouse | ""
 ): NatalPlacementSourceGroup[] {
   const planetLabel = titleCase(planet);
   const signLabel = titleCase(sign);
-  const houseLabel = ordinalHouse(house);
+  const signGroup: NatalPlacementSourceGroup = {
+    key: "sign",
+    label: `${planetLabel} in ${signLabel}`,
+    description: "These rows build the first paragraph about the planet or point in its zodiac sign.",
+    sources: [
+      { key: `fallback-hook/planet-intro/${planet}`, label: `${planetLabel} introduction`, scope: `Used by every natal ${planetLabel} placement.` },
+      { key: `fallback-vocab/planet-verb/${planet}`, label: `${planetLabel} action phrase`, scope: `Used by every natal ${planetLabel} sign placement.` },
+      { key: `fallback-vocab/sign-adverb/${sign}`, label: `${signLabel} style phrase`, scope: `Used by every natal placement in ${signLabel}.` },
+      { key: `fallback-vocab/sign-need/${sign}`, label: `${signLabel} need`, scope: `Used by every natal placement in ${signLabel}.` },
+      { key: `fallback-hook/placement-sentence/${planet}/${sign}`, label: `${planetLabel} in ${signLabel} passage`, scope: `Used for ${planetLabel} in ${signLabel}, across every house.` },
+      { key: `fallback-vocab/planet-excess/${planet}`, label: `${planetLabel} challenge`, scope: `Used by every natal ${planetLabel} placement.` },
+      { key: `fallback-hook/planet-best/${planet}`, label: `${planetLabel} strength`, scope: `Used by every natal ${planetLabel} placement.` }
+    ]
+  };
+  const signStructure: NatalPlacementSource = {
+    key: `fallback-template/natal.planet-in-sign/${planet}`,
+    label: `${planetLabel} sign template`,
+    scope: `Controls the sentence order for every natal ${planetLabel} sign placement.`
+  };
+  const structureGroup = (includeHouse: boolean): NatalPlacementSourceGroup => ({
+    key: "structure",
+    label: "Sentence structure (advanced)",
+    description: "Preview the assembled reader copy before editing its structure. Colored sections link to the exact facts, phrases, and hooks used for this placement.",
+    sources: [
+      signStructure,
+      ...(includeHouse ? [{ key: "fallback-template/natal.house-context", label: "Natal house template", scope: "Controls the sentence order for all natal placement house paragraphs." }] : [])
+    ]
+  });
 
+  if (!house) return [signGroup, structureGroup(false)];
+
+  const houseLabel = ordinalHouse(house);
   return [
     {
       key: "exact",
@@ -89,20 +123,7 @@ export function natalPlacementSourceGroups(
         }
       ]
     },
-    {
-      key: "sign",
-      label: `${planetLabel} in ${signLabel}`,
-      description: "These rows build the first paragraph about the planet or point in its zodiac sign.",
-      sources: [
-        { key: `fallback-hook/planet-intro/${planet}`, label: `${planetLabel} introduction`, scope: `Used by every natal ${planetLabel} placement.` },
-        { key: `fallback-vocab/planet-verb/${planet}`, label: `${planetLabel} action phrase`, scope: `Used by every natal ${planetLabel} sign placement.` },
-        { key: `fallback-vocab/sign-adverb/${sign}`, label: `${signLabel} style phrase`, scope: `Used by every natal placement in ${signLabel}.` },
-        { key: `fallback-vocab/sign-need/${sign}`, label: `${signLabel} need`, scope: `Used by every natal placement in ${signLabel}.` },
-        { key: `fallback-hook/placement-sentence/${planet}/${sign}`, label: `${planetLabel} in ${signLabel} passage`, scope: `Used for ${planetLabel} in ${signLabel}, across every house.` },
-        { key: `fallback-vocab/planet-excess/${planet}`, label: `${planetLabel} challenge`, scope: `Used by every natal ${planetLabel} placement.` },
-        { key: `fallback-hook/planet-best/${planet}`, label: `${planetLabel} strength`, scope: `Used by every natal ${planetLabel} placement.` }
-      ]
-    },
+    signGroup,
     {
       key: "house",
       label: `${planetLabel} in the ${houseLabel} house`,
@@ -112,15 +133,7 @@ export function natalPlacementSourceGroups(
         { key: `fallback-hook/placement-house-sentence/${planet}/${house}`, label: `${planetLabel} in the ${houseLabel} house passage`, scope: `Used for ${planetLabel} in the ${houseLabel} house, across every zodiac sign.` }
       ]
     },
-    {
-      key: "structure",
-      label: "Sentence structure (advanced)",
-      description: "Preview the assembled reader copy before editing its structure. Colored sections link to the exact facts, phrases, and hooks used for this placement.",
-      sources: [
-        { key: `fallback-template/natal.planet-in-sign/${planet}`, label: `${planetLabel} sign template`, scope: `Controls the sentence order for every natal ${planetLabel} sign placement.` },
-        { key: "fallback-template/natal.house-context", label: "Natal house template", scope: "Controls the sentence order for all natal placement house paragraphs." }
-      ]
-    }
+    structureGroup(true)
   ];
 }
 
