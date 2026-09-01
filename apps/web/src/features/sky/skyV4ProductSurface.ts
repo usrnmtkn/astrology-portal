@@ -48,24 +48,7 @@ export function skyV4NodeAxis(positions: PlanetPosition[]) {
   };
 }
 
-function eclipseContext(
-  moonEvent: SkySnapshot["moonEvent"] | null | undefined,
-  generatedAt: string,
-  timeZone: string
-) {
-  if (
-    !moonEvent?.eclipseType
-    || !sameCalendarDayAtZone(moonEvent.occursAt, generatedAt, timeZone)
-  ) return [];
-  return [{
-    contextKind: "eclipse",
-    contextBodyOrEvent: moonEvent.eclipseType === "solar" ? "Solar Eclipse" : "Lunar Eclipse",
-    contextSign: moonEvent.sign,
-    contextCondition: "eclipse"
-  }];
-}
-
-function placementLunarEventContext(
+function placementLunarContexts(
   moonEvent: SkySnapshot["moonEvent"] | null | undefined,
   generatedAt: string,
   timeZone: string
@@ -84,12 +67,19 @@ function placementLunarEventContext(
 
   if (!eventType) return [];
 
-  return [{
+  const contexts = [{
     contextKind: "placement-lunar-event",
     contextBodyOrEvent: eventType,
     contextSign: moonEvent.sign,
     contextCondition: moonEvent.eclipseType ? "eclipse" : "lunation"
   }];
+  if (moonEvent.eclipseType) contexts.push({
+    contextKind: "eclipse",
+    contextBodyOrEvent: moonEvent.eclipseType === "solar" ? "Solar Eclipse" : "Lunar Eclipse",
+    contextSign: moonEvent.sign,
+    contextCondition: "eclipse"
+  });
+  return contexts;
 }
 
 export function skyV4PlacementContexts({
@@ -133,8 +123,7 @@ export function skyV4PlacementContexts({
     }));
   return [
     ...motion,
-    ...placementLunarEventContext(moonEvent, generatedAt, eventTimeZone).map((context) => ({ ...base, ...context })),
-    ...eclipseContext(moonEvent, generatedAt, eventTimeZone).map((context) => ({ ...base, ...context })),
+    ...placementLunarContexts(moonEvent, generatedAt, eventTimeZone).map((context) => ({ ...base, ...context })),
     ...ingresses
   ];
 }
