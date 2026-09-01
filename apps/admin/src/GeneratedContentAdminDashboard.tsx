@@ -582,6 +582,7 @@ const fallbackHookReviewStatuses = ["needs_review", "reviewed", "approved", "app
 const fallbackArchitectureV3Provider = "tldrastro-fallback-architecture-v3";
 const fallbackArchitectureV3ReviewStatuses = ["needs_review", "approved", "approved_reuse"] as const;
 const fallbackArchitectureV3ReaderEligibleReviews = new Set<string>(["approved", "approved_reuse"]);
+const skyV4CanonicalStagePackage = "SKY-V4-CANONICAL-CODEX-HANDOFF-CONTENT-STUDIO-EDITABLE-2026-08-30";
 const contentClassFilters: Array<{ key: AdminContentClassFilter; label: string }> = [
   { key: "all", label: "All classes" },
   { key: "phrasebank", label: "Authored app copy" },
@@ -1021,6 +1022,15 @@ function draftPackageRecord(draft: AdminDraft) {
   return objectRecord(sections?.packageRecord) ?? {};
 }
 
+function draftPackageProposal(draft: AdminDraft) {
+  const sections = objectRecord(draft.sections);
+  return objectRecord(sections?.packageDraft);
+}
+
+function draftEditablePackageRecord(draft: AdminDraft) {
+  return draftPackageProposal(draft) ?? draftPackageRecord(draft);
+}
+
 function draftPackageOriginalRecord(draft: AdminDraft) {
   const sections = objectRecord(draft.sections);
   return objectRecord(sections?.packageOriginalRecord) ?? draftPackageRecord(draft);
@@ -1047,32 +1057,45 @@ function draftIsFallbackArchitectureV3(draft: AdminDraft) {
 }
 
 function packageReviewStatusForDraft(draft: AdminDraft) {
+  if (objectRecord(objectRecord(draft.sections)?.packageDraft)) return "needs_review";
   return sourceSnapshotString(draft.sourceSnapshot, "review_status")
     || (typeof draft.facts?.review_status === "string" ? draft.facts.review_status : "")
     || (typeof draftPackageRecord(draft).review_status === "string" ? draftPackageRecord(draft).review_status as string : "")
     || "needs_review";
 }
 
+function draftHasPackageProposal(draft: AdminDraft) {
+  return Boolean(objectRecord(objectRecord(draft.sections)?.packageDraft));
+}
+
 function packageEditorialNotesForDraft(draft: AdminDraft) {
-  return typeof draftPackageRecord(draft).editorial_notes === "string" ? draftPackageRecord(draft).editorial_notes as string : "";
+  const editableRecord = draftEditablePackageRecord(draft);
+  return typeof editableRecord.editorial_notes === "string" ? editableRecord.editorial_notes as string : "";
 }
 
 function packageFieldString(draft: AdminDraft, key: string) {
   const sections = objectRecord(draft.sections);
+  const proposalValue = draftPackageProposal(draft)?.[key];
   const sectionValue = sections?.[key];
   const packageValue = draftPackageRecord(draft)[key];
-  return typeof sectionValue === "string" ? sectionValue : typeof packageValue === "string" ? packageValue : "";
+  return typeof proposalValue === "string"
+    ? proposalValue
+    : typeof sectionValue === "string"
+      ? sectionValue
+      : typeof packageValue === "string"
+        ? packageValue
+        : "";
 }
 
 function setPackageSectionField(draft: AdminDraft, key: string, value: string): AdminDraft {
+  const proposal = draftPackageProposal(draft) ?? structuredClone(draftPackageRecord(draft));
   return {
     ...draft,
     body: key === "body_you" ? value : draft.body,
     sections: {
       ...(draft.sections ?? {}),
-      [key]: value,
-      packageRecord: {
-        ...draftPackageRecord(draft),
+      packageDraft: {
+        ...proposal,
         [key]: value
       }
     }
@@ -1080,12 +1103,13 @@ function setPackageSectionField(draft: AdminDraft, key: string, value: string): 
 }
 
 function setPackageRecordField(draft: AdminDraft, key: string, value: string): AdminDraft {
+  const proposal = draftPackageProposal(draft) ?? structuredClone(draftPackageRecord(draft));
   return {
     ...draft,
     sections: {
       ...(draft.sections ?? {}),
-      packageRecord: {
-        ...draftPackageRecord(draft),
+      packageDraft: {
+        ...proposal,
         [key]: value
       }
     }
@@ -2437,13 +2461,19 @@ function assertRowsPayload<T>(payload: { rows?: T[] }, endpoint: string): T[] {
 
 function draftFromRow(row: AdminGeneratedContentRow): AdminDraft {
   const packageRecord = rowPackageRecord(row);
+  const packageDraft = objectRecord(objectRecord(row.sections)?.packageDraft);
+  const editablePackageRecord = packageDraft ?? packageRecord;
   const isVocabularyRow = row.block_type === "vocabulary_phrase"
     || row.content_key.startsWith("vocab/")
     || row.content_key.startsWith("fallback-vocab/")
     || packageRecord.content_role === "vocabulary";
-  const canonicalHeadline = typeof packageRecord.headline === "string" ? packageRecord.headline : normalizeText(row.headline);
-  const canonicalSummary = typeof packageRecord.summary === "string" ? packageRecord.summary : normalizeText(row.summary);
-  const canonicalBody = typeof packageRecord.body === "string" ? packageRecord.body : normalizeText(row.body);
+  const canonicalHeadline = typeof editablePackageRecord.headline === "string" ? editablePackageRecord.headline : normalizeText(row.headline);
+  const canonicalSummary = typeof editablePackageRecord.summary === "string" ? editablePackageRecord.summary : normalizeText(row.summary);
+  const canonicalBody = typeof editablePackageRecord.body === "string"
+    ? editablePackageRecord.body
+    : typeof editablePackageRecord.body_you === "string"
+      ? editablePackageRecord.body_you
+      : normalizeText(row.body);
   return {
     id: row.id,
     contentKey: row.content_key,
@@ -2456,7 +2486,7 @@ function draftFromRow(row: AdminGeneratedContentRow): AdminDraft {
     ),
     summary: canonicalSummary,
     body: canonicalBody
-      || (isVocabularyRow && typeof packageRecord.body === "string" ? packageRecord.body : ""),
+      || (isVocabularyRow && typeof editablePackageRecord.body === "string" ? editablePackageRecord.body : ""),
     lane: row.lane ?? "serving",
     reviewState: row.review_state ?? "",
     blockType: row.block_type ?? "",
@@ -2622,6 +2652,7 @@ export function GeneratedContentAdminDashboard() {
   const editorRef = useRef<HTMLElement | null>(null);
   const editorReturnFocusRef = useRef<HTMLElement | null>(null);
   const editorBaselineRef = useRef<string | null>(null);
+  const editorSavedInputRef = useRef<string | null>(null);
   const hookCatalogRequestRef = useRef<Promise<{ definitions: FallbackHookDefinition[]; packageVersion: string }> | null>(null);
   const hookBodyPackagesRef = useRef(new Map<AdminHookCatalogDomain, Map<string, string>>());
   const hookBodyRequestsRef = useRef(new Map<AdminHookCatalogDomain, Promise<Map<string, string>>>());
@@ -2770,7 +2801,11 @@ export function GeneratedContentAdminDashboard() {
     () => hookCatalogItems.filter((item) => savedHookKeys.has(item.key) || savedHookKeys.has(canonicalFallbackContentKey(item.key))).length,
     [hookCatalogItems, savedHookKeys]
   );
-  const selectedRow = visibleRows.find((row) => row.id === selectedRowId) ?? null;
+  // Keep an open editor attached to its canonical saved row even when a save
+  // changes status/lane metadata and the row no longer matches the current
+  // visible filters. Otherwise a successful save can make `selectedRow`
+  // disappear, leaving the editor permanently marked as unsaved.
+  const selectedRow = rows.find((row) => row.id === selectedRowId) ?? null;
   const reviewQueueRows = useMemo(() => {
     const rowsByKey = new Map<string, AdminReviewRecord>();
 
@@ -3176,7 +3211,10 @@ export function GeneratedContentAdminDashboard() {
           if (!saved) throw new Error("The saved article revision was not returned.");
           setRows((current) => [saved, ...current.filter((row) => row.id !== saved.id)]);
           setSelectedRowId(saved.id);
-          setDraft(draftFromRow(saved));
+          const savedDraft = draftFromRow(saved);
+          setDraft(savedDraft);
+          editorBaselineRef.current = JSON.stringify(savedDraft);
+          editorSavedInputRef.current = JSON.stringify(savedDraft);
           setSkyArticleEditor((current) => current ? {
             ...current,
             rowId: saved.id,
@@ -3345,14 +3383,21 @@ export function GeneratedContentAdminDashboard() {
   }
 
   function closeEditor() {
+    if (isLoading) return false;
     const persistedDraft = selectedRow ? draftFromRow(selectedRow) : null;
-    const hasUnsavedChanges = Boolean(draft && (
-      editorBaselineRef.current
-        ? JSON.stringify(draft) !== editorBaselineRef.current
-        : persistedDraft
-          ? JSON.stringify(draft) !== JSON.stringify(persistedDraft)
-        : draft.body.trim()
+    const serializedDraft = draft ? JSON.stringify(draft) : "";
+    const matchesSavedDraft = Boolean(draft && (
+      serializedDraft === editorBaselineRef.current
+      || serializedDraft === editorSavedInputRef.current
+      || (!editorBaselineRef.current && persistedDraft && serializedDraft === JSON.stringify(persistedDraft))
     ));
+    const hasDraftContent = Boolean(draft && (
+      persistedDraft
+      || draft.headline.trim()
+      || draft.summary.trim()
+      || draft.body.trim()
+    ));
+    const hasUnsavedChanges = Boolean(draft && !matchesSavedDraft && hasDraftContent);
     if (hasUnsavedChanges && !window.confirm("Discard the unsaved changes in this editor?")) {
       return false;
     }
@@ -3364,6 +3409,7 @@ export function GeneratedContentAdminDashboard() {
     setSelectedRowId(null);
     setDraft(null);
     editorBaselineRef.current = null;
+    editorSavedInputRef.current = null;
     setSkyWriteupParentId(null);
     setSkyRelatedAspectQuery("");
     setSkyArticleEditionForm(null);
@@ -3615,7 +3661,12 @@ export function GeneratedContentAdminDashboard() {
       const saved = payload.rows?.[0];
       if (saved) {
         setRows((current) => current.map((candidate) => candidate.id === saved.id ? saved : candidate));
-        if (selectedRowId === saved.id) setDraft(draftFromRow(saved));
+        if (selectedRowId === saved.id) {
+          const savedDraft = draftFromRow(saved);
+          setDraft(savedDraft);
+          editorBaselineRef.current = JSON.stringify(savedDraft);
+          editorSavedInputRef.current = JSON.stringify(savedDraft);
+        }
         announceContentUpdate({ contentKey: saved.content_key, published: saved.status === "LIVE", updatedAt: saved.updated_at ?? new Date().toISOString() });
         setSkyReviewHorizon((current) => current ? {
           ...current,
@@ -3824,7 +3875,10 @@ export function GeneratedContentAdminDashboard() {
       const saved = payload.rows?.[0];
       if (!saved) throw new Error("The approved edition was not returned by the content API.");
       setRows((current) => current.map((candidate) => candidate.id === saved.id ? saved : candidate));
-      setDraft(draftFromRow(saved));
+      const savedDraft = draftFromRow(saved);
+      setDraft(savedDraft);
+      editorBaselineRef.current = JSON.stringify(savedDraft);
+      editorSavedInputRef.current = JSON.stringify(savedDraft);
       announceContentUpdate({ contentKey: saved.content_key, published: saved.status === "LIVE", updatedAt: saved.updated_at ?? new Date().toISOString() });
       setMessage(`${saved.content_key} is approved and reader-eligible for its calculated validity window.`);
     } catch (error) {
@@ -3951,6 +4005,7 @@ export function GeneratedContentAdminDashboard() {
         setSelectedRowId(saved.id);
         setDraft(savedDraft);
         editorBaselineRef.current = JSON.stringify(savedDraft);
+        editorSavedInputRef.current = JSON.stringify(draftForSave);
         announceContentUpdate({ contentKey: saved.content_key, published: saved.status === "LIVE", updatedAt: saved.updated_at ?? new Date().toISOString() });
       }
       setMessage(`${draftForSave.contentKey} saved as ${contentStatusLabel(saved?.status ?? status)}.`);
@@ -3963,18 +4018,86 @@ export function GeneratedContentAdminDashboard() {
     }
   }
 
-  async function applyBulkStatus() {
-    if (selectedSavedRows.length === 0) return;
+  async function approvePackageRevision(row: AdminGeneratedContentRow) {
     setIsLoading(true);
     try {
-      const updates = await Promise.all(selectedSavedRows.map((row) => adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>("/api/admin/generated-content", secret, {
+      const payload = await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>("/api/admin/generated-content", secret, {
         method: "PATCH",
-        body: JSON.stringify({
-          id: row.id,
-          status: bulkStatus,
-          reviewState: bulkStatus === "LIVE" || bulkStatus === "REVIEWED" ? null : row.review_state ?? null
-        })
-      })));
+        body: JSON.stringify({ id: row.id, ownerAction: "approve-package-revision" })
+      });
+      const published = payload.rows?.[0];
+      if (!published) throw new Error("The API did not return the published package row.");
+      const publishedDraft = draftFromRow(published);
+      setRows((current) => [published, ...current.filter((item) => item.id !== published.id && item.id !== row.id)]);
+      setSelectedRowId(published.id);
+      setDraft(publishedDraft);
+      editorBaselineRef.current = JSON.stringify(publishedDraft);
+      editorSavedInputRef.current = JSON.stringify(publishedDraft);
+      announceContentUpdate({
+        contentKey: published.content_key,
+        published: published.status === "LIVE",
+        updatedAt: published.updated_at ?? new Date().toISOString()
+      });
+      setMessage(`${published.content_key} approved and published to the app.`);
+    } catch (error) {
+      setMessage(dashboardErrorMessage(error));
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  async function applyBulkStatus() {
+    if (selectedSavedRows.length === 0) return;
+    const packageRows = selectedSavedRows.filter(rowIsFallbackArchitectureV3);
+    if (packageRows.length > 0 && !["DRAFT", "LIVE"].includes(bulkStatus)) {
+      setMessage("Package rows support Draft or Published in bulk. Reviewed and Archived require their governed package workflow.");
+      return;
+    }
+    if (bulkStatus === "LIVE") {
+      const nonServingSourceRows = packageRows.filter((row) => {
+        const snapshot = sourceSnapshotForRow(row);
+        const facts = objectRecord("facts" in row ? row.facts : null);
+        const role = String(
+          rowPackageRecord(row).content_role
+          ?? snapshot?.content_role
+          ?? facts?.content_role
+          ?? ""
+        ).trim().toLowerCase().replace(/-/g, "_");
+        return ["fallback_source", "source_material"].includes(role);
+      });
+      if (nonServingSourceRows.length > 0) {
+        setMessage(`${nonServingSourceRows.length} selected source-material row${nonServingSourceRows.length === 1 ? " is" : "s are"} an ingredient, not exact reader copy. Remove ${nonServingSourceRows.length === 1 ? "it" : "them"} from the selection before publishing.`);
+        return;
+      }
+      const governedSkyRows = packageRows.filter((row) => {
+        const record = rowPackageRecord(row);
+        return record.source_package === skyV4CanonicalStagePackage
+          || sourceSnapshotString(sourceSnapshotForRow(row), "sourcePackage") === skyV4CanonicalStagePackage;
+      });
+      if (governedSkyRows.length > 0) {
+        setMessage(`${governedSkyRows.length} selected SKY V4 row${governedSkyRows.length === 1 ? " requires" : "s require"} the hash-bound owner approval flow and cannot use bulk publish.`);
+        return;
+      }
+    }
+    setIsLoading(true);
+    try {
+      const updates = await Promise.all(selectedSavedRows.map((row) => {
+        const isPackageRow = rowIsFallbackArchitectureV3(row);
+        const hasProposal = Boolean(objectRecord(objectRecord(row.sections)?.packageDraft));
+        const requestBody = isPackageRow
+          ? bulkStatus === "LIVE" && hasProposal
+            ? { id: row.id, ownerAction: "approve-package-revision" }
+            : { id: row.id, reviewStatus: bulkStatus === "LIVE" ? "approved" : "needs_review" }
+          : {
+              id: row.id,
+              status: bulkStatus,
+              reviewState: bulkStatus === "LIVE" || bulkStatus === "REVIEWED" ? null : row.review_state ?? null
+            };
+        return adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>("/api/admin/generated-content", secret, {
+          method: "PATCH",
+          body: JSON.stringify(requestBody)
+        });
+      }));
       const updatedRows = updates.flatMap((payload) => payload.rows ?? []);
       updatedRows.forEach((row) => announceContentUpdate({
         contentKey: row.content_key,
@@ -3983,7 +4106,7 @@ export function GeneratedContentAdminDashboard() {
       }));
       setRows((current) => current.map((row) => updatedRows.find((updated) => updated.id === row.id) ?? row));
       setSelectedIds(new Set());
-      setMessage(`Updated ${updatedRows.length} rows to ${contentStatusLabel(bulkStatus)}.`);
+      setMessage(`Updated ${updatedRows.length} rows to ${contentStatusLabel(bulkStatus)}${packageRows.length ? " using package approval rules" : ""}.`);
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "Could not update selected rows.");
     } finally {
@@ -4018,6 +4141,7 @@ export function GeneratedContentAdminDashboard() {
     }
     const nextDraft = draftFromRow(row);
     editorBaselineRef.current = JSON.stringify(nextDraft);
+    editorSavedInputRef.current = JSON.stringify(nextDraft);
     const edition = compiledSkyArticleEditionForDraft(nextDraft);
     const baseEdition = skyArticleRevisionBaseForDraft(nextDraft);
     setSelectedRowId(row.id);
@@ -4227,9 +4351,12 @@ export function GeneratedContentAdminDashboard() {
   }
 
   function openRelatedSkyRow(parentId: string, row: AdminGeneratedContentRow) {
+    const nextDraft = draftFromRow(row);
     setSkyWriteupParentId(parentId);
     setSelectedRowId(row.id);
-    setDraft(draftFromRow(row));
+    setDraft(nextDraft);
+    editorBaselineRef.current = JSON.stringify(nextDraft);
+    editorSavedInputRef.current = JSON.stringify(nextDraft);
     scrollEditorToTop();
   }
 
@@ -4240,8 +4367,11 @@ export function GeneratedContentAdminDashboard() {
       setSkyWriteupParentId(null);
       return;
     }
+    const nextDraft = draftFromRow(parent);
     setSelectedRowId(parent.id);
-    setDraft(draftFromRow(parent));
+    setDraft(nextDraft);
+    editorBaselineRef.current = JSON.stringify(nextDraft);
+    editorSavedInputRef.current = JSON.stringify(nextDraft);
     setSkyWriteupParentId(null);
     setSkyRelatedAspectQuery("");
     scrollEditorToTop();
@@ -4499,6 +4629,7 @@ export function GeneratedContentAdminDashboard() {
     );
     const openCompatibilityDraft = (nextDraft: AdminDraft) => {
       editorBaselineRef.current = JSON.stringify(nextDraft);
+      editorSavedInputRef.current = JSON.stringify(nextDraft);
       setDraft(nextDraft);
     };
 
@@ -6520,9 +6651,14 @@ export function GeneratedContentAdminDashboard() {
     const guidedReviewDecision = objectRecord(objectRecord(currentDraft.sections)?.contentStudioReview);
     const isGovernedSkyDraft = ["sky_aspect", "sky_placement"].includes(currentDraft.blockType);
     const persistedDraft = selectedRow ? draftFromRow(selectedRow) : null;
-    const draftHasUnsavedChanges = persistedDraft
-      ? JSON.stringify(currentDraft) !== JSON.stringify(persistedDraft)
-      : Boolean(currentDraft.headline.trim() || currentDraft.summary.trim() || currentDraft.body.trim());
+    const serializedCurrentDraft = JSON.stringify(currentDraft);
+    const draftMatchesSavedState = serializedCurrentDraft === editorBaselineRef.current
+      || serializedCurrentDraft === editorSavedInputRef.current;
+    const draftHasUnsavedChanges = editorBaselineRef.current || editorSavedInputRef.current
+      ? !draftMatchesSavedState
+      : persistedDraft
+        ? serializedCurrentDraft !== JSON.stringify(persistedDraft)
+        : Boolean(currentDraft.headline.trim() || currentDraft.summary.trim() || currentDraft.body.trim());
     const skyDraftHasUnsavedCopy = Boolean(selectedRow && isGovernedSkyDraft && (
       currentDraft.headline !== (selectedRow.headline ?? "")
       || currentDraft.summary !== (selectedRow.summary ?? "")
@@ -6540,6 +6676,7 @@ export function GeneratedContentAdminDashboard() {
       || fallbackHookReviewStatusForDraft(currentDraft);
     const packageReviewStatus = packageReviewStatusForDraft(currentDraft);
     const packageRecord = draftPackageRecord(currentDraft);
+    const editablePackageRecord = draftEditablePackageRecord(currentDraft);
     const isSkyPlacementFrameTemplate = currentDraft.contentKey === skyPlacementFrameTemplateKey;
     const isExactNatalAspectDraft = currentDraft.contentKey.startsWith(natalAspectContentKeyPrefix);
     const skyPlacementTemplateOptions = skyPlacementCompositionOptions(effectivePackageRecord(currentDraft.sections));
@@ -6553,17 +6690,37 @@ export function GeneratedContentAdminDashboard() {
     const skyV4OverlaysEnabled = effectiveSkyFallback.contextualTransitOverlaysEnabled !== false;
     const skyV4FallbackOverlayEnabled = effectiveSkyFallback.includeContextualOverlayInFallbackHook === true;
     const isSkyV4StudioRecord = Boolean(effectiveSkyFallback.source_baseline_sha256 && effectiveSkyFallback.studio_source_baseline);
+    const packageHasProposal = draftHasPackageProposal(currentDraft);
+    const packageIsSkyV4Governed = packageRecord.source_package === skyV4CanonicalStagePackage
+      || sourceSnapshotString(currentDraft.sourceSnapshot, "sourcePackage") === skyV4CanonicalStagePackage;
+    const packageContentRole = String(
+      packageRecord.content_role
+      ?? currentDraft.sourceSnapshot?.content_role
+      ?? objectRecord(currentDraft.facts)?.content_role
+      ?? ""
+    ).trim().toLowerCase().replace(/-/g, "_");
+    const packageRoleCanServeExactCopy = !["fallback_source", "source_material"].includes(packageContentRole);
+    const packageCanApproveRevision = isPackageDraft
+      && packageHasProposal
+      && !packageIsSkyV4Governed
+      && packageRoleCanServeExactCopy;
     const packageApprovalPublishes = isPackageDraft
-      && !skyFallbackEditor
+      && !packageHasProposal
       && !isGuidedHeldReview
+      && !packageIsSkyV4Governed
+      && packageRoleCanServeExactCopy
       && fallbackArchitectureV3ReaderEligibleReviews.has(packageReviewStatus);
     const packageStatusAfterSave: GeneratedContentStatus = packageApprovalPublishes ? "LIVE" : "DRAFT";
     const packageWillPublishOnSave = packageApprovalPublishes && currentDraft.status !== "LIVE";
-    const packageReaderStatusLabel = packageWillPublishOnSave
-      ? "Will go live on Save"
-      : currentDraft.status === "LIVE"
-        ? "Live"
-        : "Not live";
+    const packageReaderStatusLabel = packageHasProposal
+      ? currentDraft.status === "LIVE"
+        ? "Current copy live; revision pending"
+        : "Revision not live"
+      : packageWillPublishOnSave
+        ? "Will go live on Save"
+        : currentDraft.status === "LIVE"
+          ? "Live"
+          : "Not live";
     const variableReferences = templateVariableReferences({
       Headline: currentDraft.headline,
       Summary: currentDraft.summary,
@@ -6588,6 +6745,16 @@ export function GeneratedContentAdminDashboard() {
             ?? baseFallbackEditorGuidance.description
         }
       : baseFallbackEditorGuidance;
+    const templatePreviewPackage = isPackageDraft
+      ? {
+          ...draftEditablePackageRecord(currentDraft),
+          headline: currentDraft.headline,
+          summary: currentDraft.summary,
+          body: currentDraft.body,
+          body_you: packageFieldString(currentDraft, "body_you") || currentDraft.body,
+          body_they: packageFieldString(currentDraft, "body_they")
+        }
+      : null;
     const templatePreviewRow = selectedRow && isTemplateDraft ? {
       ...selectedRow,
       headline: currentDraft.headline,
@@ -6596,7 +6763,9 @@ export function GeneratedContentAdminDashboard() {
       surface: currentDraft.surface,
       status: currentDraft.status,
       block_type: currentDraft.blockType,
-      sections: currentDraft.sections,
+      sections: templatePreviewPackage
+        ? { ...(currentDraft.sections ?? {}), packageRecord: templatePreviewPackage }
+        : currentDraft.sections,
       source_snapshot: currentDraft.sourceSnapshot
     } : null;
     const hasNatalTemplatePreviewContext = categoryFilter === "Natal Chart"
@@ -6630,7 +6799,7 @@ export function GeneratedContentAdminDashboard() {
     const skyFallbackPreview = skyFallbackEditor
       ? renderWorkspacePreview(skyFallbackEditor.fields, skyFallbackPreviewFacts)
       : [];
-    const packageRole = typeof packageRecord.content_role === "string" ? packageRecord.content_role : "";
+    const packageRole = packageContentRole;
     const isAuthoredPackageCard = isPackageDraft
       && packageRole === "authored_card"
       && currentDraft.contentKey.startsWith("sky-article/");
@@ -6641,17 +6810,17 @@ export function GeneratedContentAdminDashboard() {
     const showPackageBodyYou = isPackageDraft
       && !isVocabularyDraft
       && !isContinuousSkyPackage
-      && (typeof packageRecord.body_you === "string" || typeof objectRecord(currentDraft.sections)?.body_you === "string");
+      && (typeof editablePackageRecord.body_you === "string" || typeof objectRecord(currentDraft.sections)?.body_you === "string");
     const showPackageBodyThey = isPackageDraft
       && !isVocabularyDraft
-      && (typeof packageRecord.body_they === "string" || typeof objectRecord(currentDraft.sections)?.body_they === "string");
+      && (typeof editablePackageRecord.body_they === "string" || typeof objectRecord(currentDraft.sections)?.body_they === "string");
     const isYouOnlyNatalExactDraft = categoryFilter === "Natal Chart"
       && packageRecord.reader_only === true
       && packageRecord.render_policy === "reader-only-exact-lived-v1";
     const showNatalFriendEditor = isYouOnlyNatalExactDraft
       && Boolean(natalPlacementPlanet && natalPlacementSign && natalPlacementHouse);
     const showGenericBody = isVocabularyDraft || !isPackageDraft || (!showPackageBodyYou && !isContinuousSkyPackage);
-    const showSummaryField = !isPackageDraft || typeof packageRecord.summary === "string" || Boolean(currentDraft.summary.trim());
+    const showSummaryField = !isPackageDraft || typeof editablePackageRecord.summary === "string" || Boolean(currentDraft.summary.trim());
     const skyWriteupParent = skyWriteupParentId ? rows.find((row) => row.id === skyWriteupParentId) ?? null : null;
     const skyWriteupContext = selectedRow ? skyWriteupContextForRow(selectedRow) : null;
     const skyLunationContext = selectedRow ? skyLunationContextForRow(selectedRow) : null;
@@ -6718,26 +6887,20 @@ export function GeneratedContentAdminDashboard() {
       });
     };
     const updateHeadline = (headline: string) => {
-      setDraft(invalidateContentStudioReview({
+      const nextDraft = invalidateContentStudioReview({
         ...currentDraft,
         headline,
         contentKey: isVocabularyDraft && isNewDraft ? vocabularyContentKey(vocabularySection, headline) : currentDraft.contentKey
-      }));
+      });
+      setDraft(isPackageDraft ? setPackageRecordField(nextDraft, "headline", headline) : nextDraft);
+    };
+    const updateSummary = (summary: string) => {
+      const nextDraft = invalidateContentStudioReview({ ...currentDraft, summary });
+      setDraft(isPackageDraft ? setPackageRecordField(nextDraft, "summary", summary) : nextDraft);
     };
     const updateVocabularyBody = (body: string) => {
-      setDraft({
-        ...currentDraft,
-        body,
-        sections: isPackageDraft
-          ? {
-              ...(currentDraft.sections ?? {}),
-              packageRecord: {
-                ...draftPackageRecord(currentDraft),
-                body
-              }
-            }
-          : currentDraft.sections
-      });
+      const nextDraft = { ...currentDraft, body };
+      setDraft(isPackageDraft ? setPackageRecordField(nextDraft, "body", body) : nextDraft);
     };
     const completeGuidedContentReview = async () => {
       if (!isGuidedHeldReview || draftHasUnsavedChanges) {
@@ -6764,7 +6927,7 @@ export function GeneratedContentAdminDashboard() {
     };
     const updateGenericBody = (body: string) => {
       const nextDraft = invalidateContentStudioReview({ ...currentDraft, body });
-      setDraft(isPackageDraft && typeof packageRecord.body === "string"
+      setDraft(isPackageDraft && typeof editablePackageRecord.body === "string"
         ? setPackageRecordField(nextDraft, "body", body)
         : nextDraft);
     };
@@ -6821,16 +6984,7 @@ export function GeneratedContentAdminDashboard() {
       });
     };
     const updatePackageEditorialNotes = (editorialNotes: string) => {
-      setDraft({
-        ...currentDraft,
-        sections: {
-          ...(currentDraft.sections ?? {}),
-          packageRecord: {
-            ...draftPackageRecord(currentDraft),
-            editorial_notes: editorialNotes
-          }
-        }
-      });
+      setDraft(setPackageRecordField(currentDraft, "editorial_notes", editorialNotes));
     };
     const updateSkyFallbackField = (field: string, value: unknown) => {
       const sections = objectRecord(currentDraft.sections) ?? {};
@@ -6864,7 +7018,21 @@ export function GeneratedContentAdminDashboard() {
     const discardSkyFallbackProposal = () => {
       const sections = objectRecord(currentDraft.sections) ?? {};
       const { packageDraft: _discarded, ...withoutDraft } = sections;
-      setDraft({ ...currentDraft, sections: withoutDraft });
+      const originalReviewStatus = typeof draftPackageRecord(currentDraft).review_status === "string"
+        ? draftPackageRecord(currentDraft).review_status as string
+        : "needs_review";
+      setDraft({
+        ...currentDraft,
+        sections: withoutDraft,
+        sourceSnapshot: {
+          ...(currentDraft.sourceSnapshot ?? {}),
+          review_status: originalReviewStatus
+        },
+        facts: {
+          ...(currentDraft.facts ?? {}),
+          review_status: originalReviewStatus
+        }
+      });
     };
     const exportSkyFallbackProposal = () => {
       const sections = objectRecord(currentDraft.sections) ?? {};
@@ -6887,13 +7055,14 @@ export function GeneratedContentAdminDashboard() {
     };
     const revertPackageDraft = () => {
       const original = draftPackageOriginalRecord(currentDraft);
+      const { packageDraft: _discarded, ...sectionsWithoutDraft } = currentDraft.sections ?? {};
       setDraft({
         ...currentDraft,
         headline: typeof original.headline === "string" ? original.headline : currentDraft.headline,
         summary: typeof original.summary === "string" ? original.summary : currentDraft.summary,
         body: typeof original.body === "string" ? original.body : typeof original.body_you === "string" ? original.body_you : currentDraft.body,
         sections: {
-          ...(currentDraft.sections ?? {}),
+          ...sectionsWithoutDraft,
           body_you: original.body_you ?? null,
           body_they: original.body_they ?? null,
           packageRecord: original
@@ -7110,6 +7279,7 @@ export function GeneratedContentAdminDashboard() {
     const handleEditorKeyDown = (event: ReactKeyboardEvent<HTMLElement>) => {
       if (event.key === "Escape") {
         event.preventDefault();
+        if (isLoading) return;
         closeEditor();
         return;
       }
@@ -7133,10 +7303,10 @@ export function GeneratedContentAdminDashboard() {
 
     return (
       <>
-      <button type="button" className="admin-editor-backdrop" aria-label="Close editor" onClick={closeEditor} />
-      <aside ref={editorRef} className="admin-editor-panel admin-review-detail" role="dialog" aria-modal="true" aria-label="Generated content editor" onKeyDown={handleEditorKeyDown}>
+      <button type="button" className="admin-editor-backdrop" aria-label="Close editor" onClick={closeEditor} disabled={isLoading} />
+      <aside ref={editorRef} className="admin-editor-panel admin-review-detail" role="dialog" aria-modal="true" aria-label="Generated content editor" aria-busy={isLoading} onKeyDown={handleEditorKeyDown}>
         {skyWriteupParent && (
-          <button type="button" className="admin-sky-writeup-back" onClick={returnToSkyWriteup}>
+          <button type="button" className="admin-sky-writeup-back" onClick={returnToSkyWriteup} disabled={isLoading}>
             <ArrowLeft size={16} aria-hidden="true" />
             Back to {rowTitle(skyWriteupParent)}
           </button>
@@ -7185,7 +7355,7 @@ export function GeneratedContentAdminDashboard() {
                 {isTemplateDraft ? "Reader preview & variables" : "Variables"} ({variableReferences.length})
               </button>
             )}
-            <button type="button" onClick={closeEditor} autoFocus>
+            <button type="button" onClick={closeEditor} disabled={isLoading} autoFocus>
               <X size={16} aria-hidden="true" />
               Close
             </button>
@@ -7940,7 +8110,7 @@ export function GeneratedContentAdminDashboard() {
           {!compiledSkyArticleEdition && !skyFallbackEditor && !(isVocabularyDraft && isPackageDraft) && showSummaryField && (
             <label className="admin-review-copy-editor">
               <span>{summaryFieldLabel}</span>
-              <textarea className="admin-copy-field-summary" aria-label={summaryFieldLabel} value={currentDraft.summary} onChange={(event) => setDraft(invalidateContentStudioReview({ ...currentDraft, summary: event.target.value }))} placeholder={isVocabularyDraft ? "Optional: where this phrase should be used, tone notes, or related variants." : isSkyArticleSourceDraft ? "Write the explicit TL;DR for this article edition." : undefined} />
+              <textarea className="admin-copy-field-summary" aria-label={summaryFieldLabel} value={currentDraft.summary} onChange={(event) => updateSummary(event.target.value)} placeholder={isVocabularyDraft ? "Optional: where this phrase should be used, tone notes, or related variants." : isSkyArticleSourceDraft ? "Write the explicit TL;DR for this article edition." : undefined} />
               <small className="admin-field-metrics">{fieldMetrics(currentDraft.summary)}</small>
               {fallbackEditorGuidance && <small className="admin-field-hint">{fallbackEditorGuidance.summaryHint}</small>}
               {isSkyArticleSourceDraft && <small className="admin-field-hint">Saved as non-serving source copy until the complete edition is compiled, reviewed, and published.</small>}
@@ -7965,7 +8135,7 @@ export function GeneratedContentAdminDashboard() {
               <span>{label}</span>
               <textarea
                 aria-label={`Continuous Sky ${label}`}
-                value={typeof packageRecord[field] === "string" ? packageRecord[field] as string : ""}
+                value={typeof editablePackageRecord[field] === "string" ? editablePackageRecord[field] as string : ""}
                 onChange={(event) => setDraft(setPackageRecordField(currentDraft, field, event.target.value))}
               />
             </label>
@@ -8258,11 +8428,14 @@ export function GeneratedContentAdminDashboard() {
               </div>
               <label>
                 <span>Approval</span>
-                <select aria-label="Approval" value={packageReviewStatus} onChange={(event) => updatePackageReviewStatus(event.target.value)} disabled={Boolean(skyFallbackEditor) || isGuidedHeldReview}>
+                <select aria-label="Approval" value={packageReviewStatus} onChange={(event) => updatePackageReviewStatus(event.target.value)} disabled={packageHasProposal || isGuidedHeldReview || packageIsSkyV4Governed}>
                   {fallbackArchitectureV3ReviewStatuses.map((reviewStatus) => <option key={reviewStatus} value={reviewStatus}>{packageReviewStatusLabel(reviewStatus)}</option>)}
                 </select>
-                {!skyFallbackEditor && !isGuidedHeldReview && <small className="admin-field-hint">Approved copy becomes live when Save &amp; publish completes.</small>}
-                {skyFallbackEditor && <small className="admin-field-hint">Copy proposals stay at needs_review until the source diff receives separate owner approval.</small>}
+                {!packageHasProposal && !isGuidedHeldReview && !packageIsSkyV4Governed && packageRoleCanServeExactCopy && <small className="admin-field-hint">Approved copy becomes live when Save &amp; publish completes.</small>}
+                {!packageHasProposal && !isGuidedHeldReview && !packageIsSkyV4Governed && !packageRoleCanServeExactCopy && <small className="admin-field-hint">This row is source material. Approval makes it available to the resolver as an ingredient; it cannot publish as exact reader copy.</small>}
+                {packageHasProposal && !packageIsSkyV4Governed && packageRoleCanServeExactCopy && <small className="admin-field-hint">Save the revision as a draft, then use “Approve &amp; publish revision” below to make the revised copy live.</small>}
+                {packageHasProposal && !packageIsSkyV4Governed && !packageRoleCanServeExactCopy && <small className="admin-field-hint">Save this source-material revision for review. Source ingredients cannot publish as exact reader copy.</small>}
+                {packageIsSkyV4Governed && <small className="admin-field-hint">This Sky V4 row uses its hash-bound owner-approval workflow; its status cannot be changed here.</small>}
                 {isGuidedHeldReview && <small className="admin-field-hint">Locked at needs_review in this review flow. Use “Record owner copy review” above when the exact copy is correct; publication remains a separate governed step.</small>}
               </label>
               <label className="admin-package-notes-field">
@@ -8308,7 +8481,11 @@ export function GeneratedContentAdminDashboard() {
               </select>
               <small className="admin-field-hint">
                 {isPackageDraft
-                  ? packageWillPublishOnSave
+                  ? packageHasProposal
+                    ? packageRoleCanServeExactCopy
+                      ? "Save the revision first, then approve and publish it with the dedicated action below."
+                      : "This saved revision is source material and cannot become exact reader copy."
+                    : packageWillPublishOnSave
                     ? "This copy is approved. Save to publish it to readers."
                     : currentDraft.status === "LIVE"
                       ? "This approved copy is live for readers."
@@ -8368,7 +8545,19 @@ export function GeneratedContentAdminDashboard() {
         </section>
         {!compiledSkyArticleEdition && <div className="admin-toolbar-actions admin-editor-savebar">
           <span className={`admin-editor-save-state ${draftHasUnsavedChanges || isNewDraft || packageWillPublishOnSave ? "is-unsaved" : "is-saved"}`} aria-live="polite">
-            {isLoading ? "Saving…" : packageWillPublishOnSave ? "Ready to publish" : isNewDraft ? "New draft" : draftHasUnsavedChanges ? "Unsaved changes" : "All changes saved"}
+            {isLoading
+              ? "Saving…"
+              : packageHasProposal
+                ? draftHasUnsavedChanges
+                  ? "Unsaved revision"
+                  : "Revision saved; awaiting approval"
+                : packageWillPublishOnSave
+                  ? "Ready to publish"
+                  : isNewDraft
+                    ? "New draft"
+                    : draftHasUnsavedChanges
+                      ? "Unsaved changes"
+                      : "All changes saved"}
           </span>
           <button
             className="admin-primary-button"
@@ -8378,8 +8567,29 @@ export function GeneratedContentAdminDashboard() {
             title={!compatibilityNewDraftReady ? "Complete the Compatibility identity and copy." : undefined}
           >
             <Save size={16} aria-hidden="true" />
-            {isGuidedHeldReview ? "Save held draft" : packageWillPublishOnSave ? "Save & publish" : "Save"}
+            {isGuidedHeldReview
+              ? "Save held draft"
+              : packageHasProposal
+                ? "Save revision"
+                : packageWillPublishOnSave
+                  ? "Save & publish"
+                  : "Save"}
           </button>
+          {isPackageDraft && packageCanApproveRevision && selectedRow && (
+            <button
+              className="admin-publish-button"
+              type="button"
+              onClick={() => void approvePackageRevision(selectedRow)}
+              disabled={isLoading || draftHasUnsavedChanges}
+              title={draftHasUnsavedChanges ? "Save the revision before approving and publishing it." : "Approve this saved revision and make it available to readers."}
+            >
+              <Check size={16} aria-hidden="true" />
+              Approve &amp; publish revision
+            </button>
+          )}
+          {isPackageDraft && packageHasProposal && !packageCanApproveRevision && !packageIsSkyV4Governed && (
+            <span className="admin-savebar-next-step">This row is source material; save it for review rather than publishing it as exact reader copy.</span>
+          )}
           {isPackageDraft && !skyFallbackEditor && draftHasUnsavedChanges && (
             <button type="button" onClick={revertPackageDraft} disabled={isLoading}>
               Revert to package original
