@@ -37,7 +37,7 @@ import {
 } from "../../content/readerSafety";
 import { cmsSurfaceKeys, resolveCmsSurfaceOverride } from "../../content/cmsSurfaceOverrides";
 import { slugContentPart } from "../../services/generatedContentKeys";
-import { resolveSkyAspectGeneratedContent } from "../../services/skyAspectContent";
+import { resolveSkyAspectContentStudioExact, resolveSkyAspectGeneratedContent } from "../../services/skyAspectContent";
 import {
   resolveApprovedExactSkyAspectCopy,
   resolveComposedSkyCalendarCard,
@@ -947,6 +947,20 @@ function liveCalendarEventContent(
 
     const [first, second] = event.planets;
 
+    const exactStudio = resolveSkyAspectContentStudioExact({
+      generatedContent,
+      first,
+      second,
+      aspect: event.aspect,
+      firstSign: event.fromSign,
+      secondSign: event.toSign,
+      targetDate: event.dateKey || event.startsAt.slice(0, 10)
+    });
+
+    if (exactStudio) {
+      return exactStudio.content;
+    }
+
     return resolveSkyAspectGeneratedContent({
       generatedContent,
       first,
@@ -1282,10 +1296,29 @@ export function normalizeCalendarEventSurface(
           tier: "generated-sky-aspect-lint-v1"
         }
       : null;
+    const studioExactResolved = content && event.fromSign && event.toSign
+      ? resolveSkyAspectContentStudioExact({
+          generatedContent: new Map([[content.contentKey, content]]),
+          first,
+          second,
+          aspect: event.aspect,
+          firstSign: event.fromSign,
+          secondSign: event.toSign,
+          targetDate: event.dateKey || event.startsAt.slice(0, 10)
+        })
+      : null;
+    const studioExact = studioExactResolved
+      ? {
+          body: studioExactResolved.body,
+          layer: "authored" as const,
+          sourceKeys: [studioExactResolved.content.contentKey],
+          tier: "content-studio-exact-sky-aspect-v1"
+        }
+      : null;
     const selected = selectSkyAspectCopyByPrecedence<CalendarSkyAspectCandidate>({
       composed,
       signSpecific: packageCandidates.signSpecific,
-      exact,
+      exact: studioExact ?? exact,
       phrasebook: packageCandidates.phrasebook,
       generated
     });
