@@ -21,7 +21,7 @@ import {
   Users,
   X
 } from "lucide-react";
-import { lazy, Suspense, useEffect, useMemo, useRef, useState } from "react";
+import { Fragment, lazy, Suspense, useEffect, useMemo, useRef, useState } from "react";
 import type { KeyboardEvent as ReactKeyboardEvent } from "react";
 import { isReaderFacingCopy } from "../../web/src/content/readerSafety";
 import { renderCmsTemplatePreview, validateCmsTemplate } from "../../web/src/content/cmsTemplateValidation";
@@ -110,6 +110,32 @@ import {
   type ContentMotionFilter,
   type ContentPlacementSort
 } from "./contentMotion";
+import {
+  renderTransitNatalPreview,
+  transitNatalAspects,
+  transitNatalHouses,
+  transitNatalLabel,
+  transitNatalPlanets,
+  transitNatalPoints,
+  transitNatalSigns,
+  transitNatalSourceGroups,
+  type TransitNatalAspect,
+  type TransitNatalHouse,
+  type TransitNatalPlanet,
+  type TransitNatalPoint,
+  type TransitNatalSelection,
+  type TransitNatalSign
+} from "./transitNatalSources";
+import {
+  houseTransitHouses,
+  houseTransitLabel,
+  houseTransitPlanets,
+  houseTransitSigns,
+  houseTransitSourceGroups,
+  renderHouseTransitPreview,
+  type HouseTransitMotion,
+  type HouseTransitSelection
+} from "./houseTransitSources";
 
 import type {
   WritingSurfaceAdminAccess,
@@ -203,7 +229,7 @@ type AdminFallbackCompositionDiagnostic = {
 };
 type AdminPhrasebankTier = "CONFIRMED" | "REVIEWED" | "SESSION_APPROVED_DRAFT" | "none";
 type AdminPhrasebankTierFilter = AdminPhrasebankTier | "all";
-type AdminContentCategoryFilter = "all" | "Sky" | "Natal Aspects" | "Natal Angles" | "Natal Chart" | "Relationship" | "Condition Modifiers" | "Fallback Hooks" | "Fallback Templates";
+type AdminContentCategoryFilter = "all" | "Sky" | "Personal Transits" | "House Transits" | "Natal Aspects" | "Natal Angles" | "Natal Chart" | "Relationship" | "Condition Modifiers" | "Fallback Hooks" | "Fallback Templates";
 type AdminFallbackHookSectionFilter = "all" | "daily" | "sky" | "you" | "friends" | "lunar-calendar" | "settings";
 type AdminFallbackRowSort = "title-asc" | "title-desc" | "type";
 type WritingSurfaceAreaFilter = "all" | "sky" | "you" | "friends" | "calendar" | "reports" | "settings";
@@ -216,6 +242,7 @@ type AdminWritingSurfaceMapPayload = {
 };
 type AdminArticlePointFilter = "all" | "sun" | "moon" | "mercury" | "venus" | "mars" | "jupiter" | "saturn" | "uranus" | "neptune" | "pluto" | "other";
 type AdminSkyWriteupSubjectFilter = "all" | "planet" | "angle" | "point";
+type SkyWriteupWorkspaceView = "catalog" | "transits-to-natal" | "house-transits";
 type AdminCompatibilitySectionFilter = "all" | "content" | "fallback-hooks" | "vocabulary" | "slots";
 type AdminCompatibilitySort = "updated-desc" | "updated-asc" | "title-asc" | "status" | "source";
 type AdminCompatibilityCreateKind = "content" | "vocabulary" | "fallback-hook" | "template";
@@ -580,7 +607,7 @@ function isCompositionPage(page: AdminDashboardPage) {
 const contentStatuses: GeneratedContentStatus[] = ["DRAFT", "REVIEWED", "LIVE", "ARCHIVED", "ERROR"];
 const fallbackHookReviewStatuses = ["needs_review", "reviewed", "approved", "approved_reuse", "deprecated", "rejected"] as const;
 const fallbackArchitectureV3Provider = "tldrastro-fallback-architecture-v3";
-const fallbackArchitectureV3ReviewStatuses = ["needs_review", "approved", "approved_reuse"] as const;
+const fallbackArchitectureV3ReviewStatuses = ["needs_review", "approved", "approved_reuse", "deprecated"] as const;
 const fallbackArchitectureV3ReaderEligibleReviews = new Set<string>(["approved", "approved_reuse"]);
 const skyV4CanonicalStagePackage = "SKY-V4-CANONICAL-CODEX-HANDOFF-CONTENT-STUDIO-EDITABLE-2026-08-30";
 const contentClassFilters: Array<{ key: AdminContentClassFilter; label: string }> = [
@@ -604,6 +631,8 @@ const tierFilters: Array<{ key: AdminPhrasebankTierFilter; label: string }> = [
 const categoryFilters: Array<{ key: AdminContentCategoryFilter; label: string }> = [
   { key: "all", label: "All categories" },
   { key: "Sky", label: "Sky" },
+  { key: "Personal Transits", label: "Personal Transits (Transit to Natal)" },
+  { key: "House Transits", label: "House Transits" },
   { key: "Natal Aspects", label: "Natal Aspects" },
   { key: "Natal Angles", label: "Natal Angles" },
   { key: "Natal Chart", label: "Natal Chart" },
@@ -2227,6 +2256,22 @@ function contentCategoryForRow(row: AdminGeneratedContentRow | AdminReviewRecord
   const surface = "content_key" in row ? row.surface : row.surface;
   const blockType = "content_key" in row ? row.block_type : row.blockType;
 
+  if (
+    contentKey.startsWith("fallback-hook/transit-house-event-")
+    || contentKey.startsWith("fallback-hook/transit-effect-hard/")
+    || contentKey.startsWith("fallback-hook/transit-effect-soft/")
+    || contentKey.startsWith("authored/transit-aspect/")
+    || contentKey === "fallback-template/transit.aspect"
+    || contentKey.startsWith("cms/personal-transit-aspect")
+  ) return "Personal Transits";
+  if (
+    contentKey.startsWith("authored/transit-house/")
+    || contentKey.startsWith("authored/transit-house-intro/")
+    || contentKey.startsWith("authored/transit-house-sign/")
+    || contentKey.startsWith("fallback-hook/transit-house-retro-overlay/")
+    || contentKey.startsWith("fallback-hook/transit-effect-house/")
+    || contentKey === "fallback-template/transit.house"
+  ) return "House Transits";
   if (contentKey.startsWith("fallback-hook/") || blockType === "fallback_hook") return "Fallback Hooks";
   if (blockType === "fallback_template" || contentKey.startsWith("slot-template/")) return "Fallback Templates";
   if (surface === "sky" || contentKey.startsWith("sky")) return "Sky";
@@ -2359,15 +2404,44 @@ function dashboardErrorMessage(error: unknown) {
 async function adminJsonRequest<T>(path: string, secret: string, options: RequestInit = {}) {
   const method = options.method ?? "GET";
   const normalizedSecret = normalizeAdminSecret(secret);
-  const response = await fetch(path, {
-    ...options,
-    headers: {
-      "content-type": "application/json",
-      ...adminCredentialHeaders(normalizedSecret),
-      ...options.headers
+  const controller = new AbortController();
+  const externalSignal = options.signal;
+  let timedOut = false;
+  const abortFromCaller = () => controller.abort(externalSignal?.reason);
+  if (externalSignal?.aborted) abortFromCaller();
+  else externalSignal?.addEventListener("abort", abortFromCaller, { once: true });
+  const timeout = window.setTimeout(() => {
+    timedOut = true;
+    controller.abort();
+  }, 10_000);
+  let response: Response;
+  let payload: unknown;
+
+  try {
+    response = await fetch(path, {
+      ...options,
+      signal: controller.signal,
+      headers: {
+        "content-type": "application/json",
+        ...adminCredentialHeaders(normalizedSecret),
+        ...options.headers
+      }
+    });
+    payload = await response.json().catch(() => null);
+  } catch (error) {
+    if (timedOut) {
+      throw new AdminRequestError(`${path} timed out. Your edit was not reported as saved.`, {
+        status: 408,
+        path,
+        method,
+        details: "The API did not respond within 10 seconds. Reload before retrying so you do not overwrite a late response."
+      });
     }
-  });
-  const payload = await response.json().catch(() => null);
+    throw error;
+  } finally {
+    window.clearTimeout(timeout);
+    externalSignal?.removeEventListener("abort", abortFromCaller);
+  }
 
   if (!response.ok) {
     const details = payload && typeof payload === "object" && "error" in payload ? String(payload.error) : `Request failed with ${response.status}`;
@@ -2387,7 +2461,7 @@ async function adminJsonRequest<T>(path: string, secret: string, options: Reques
   return payload as T;
 }
 
-const generatedContentPageRetryDelaysMs = [250, 750];
+const generatedContentPageRetryDelaysMs = [350];
 
 function isRetryableAdminReadError(error: unknown) {
   if (!(error instanceof AdminRequestError)) return true;
@@ -2614,6 +2688,18 @@ export function GeneratedContentAdminDashboard() {
   const [skyWriteupMotionFilter, setSkyWriteupMotionFilter] = useState<ContentMotionFilter>("all");
   const [skyWriteupDestinationFilter, setSkyWriteupDestinationFilter] = useState<ContentDestinationFilter>("all");
   const [skyWriteupSort, setSkyWriteupSort] = useState<ContentPlacementSort>("updated-desc");
+  const [skyWriteupWorkspaceView, setSkyWriteupWorkspaceView] = useState<SkyWriteupWorkspaceView>("catalog");
+  const [transitNatalPlanet, setTransitNatalPlanet] = useState<TransitNatalPlanet | "">("");
+  const [transitNatalSign, setTransitNatalSign] = useState<TransitNatalSign | "">("");
+  const [transitNatalTransitHouse, setTransitNatalTransitHouse] = useState<TransitNatalHouse | "">("");
+  const [transitNatalAspect, setTransitNatalAspect] = useState<TransitNatalAspect | "">("");
+  const [transitNatalPoint, setTransitNatalPoint] = useState<TransitNatalPoint | "">("");
+  const [transitNatalNatalHouse, setTransitNatalNatalHouse] = useState<TransitNatalHouse | "">("");
+  const [houseTransitPlanet, setHouseTransitPlanet] = useState<TransitNatalPlanet | "">("");
+  const [houseTransitSign, setHouseTransitSign] = useState<TransitNatalSign | "">("");
+  const [houseTransitHouse, setHouseTransitHouse] = useState<TransitNatalHouse | "">("");
+  const [houseTransitMotion, setHouseTransitMotion] = useState<HouseTransitMotion>("direct");
+  const [transitNatalSourceBodies, setTransitNatalSourceBodies] = useState<Map<string, string>>(() => new Map());
   const [articleContentSystemFilter, setArticleContentSystemFilter] = useState<AdminContentSystemFilter>("all");
   const [articleQuery, setArticleQuery] = useState("");
   const [compatibilitySectionFilter, setCompatibilitySectionFilter] = useState<AdminCompatibilitySectionFilter>("all");
@@ -2850,6 +2936,13 @@ export function GeneratedContentAdminDashboard() {
       && (categoryFilter === "all" || rowCategory === categoryFilter)
       && matchesAdminSearch(visibleRowSearchText(row), search);
   }), [visibleRows, contentLibraryView, contentStatusFilter, contentClassFilter, tierFilter, categoryFilter, query]);
+  const normalizedContentLibraryQuery = query.trim().toLowerCase();
+  const contentLibraryTransitShortcut: "transits-to-natal" | "house-transits" | null = categoryFilter === "Personal Transits"
+    || /(?:personal[- /]transit|transit[- /]to[- /]natal)/u.test(normalizedContentLibraryQuery)
+      ? "transits-to-natal"
+      : categoryFilter === "House Transits" || /house[- /]transit/u.test(normalizedContentLibraryQuery)
+        ? "house-transits"
+        : null;
   const filteredReviewRows = useMemo(() => reviewQueueRows.filter((row) => {
     const aspectContext = aspectContextForRow(row);
     const haystack = [row.contentKey, row.title, row.summary, row.body, row.surface, row.mode, row.blockType, aspectContext?.label].join(" ").toLowerCase();
@@ -3144,6 +3237,19 @@ export function GeneratedContentAdminDashboard() {
   }, []);
 
   useEffect(() => {
+    if (activePage !== "skyWriteups" || skyWriteupWorkspaceView === "catalog" || transitNatalSourceBodies.size > 0) return;
+    let cancelled = false;
+    void loadAdminHookCatalogBodies("sky")
+      .then((bodies) => {
+        if (!cancelled) setTransitNatalSourceBodies(bodies);
+      })
+      .catch((error) => {
+        if (!cancelled) setMessage(error instanceof Error ? error.message : "Could not load transit-to-natal source rows.");
+      });
+    return () => { cancelled = true; };
+  }, [activePage, skyWriteupWorkspaceView, transitNatalSourceBodies.size]);
+
+  useEffect(() => {
     const emergencySecret = secret;
     let cancelled = false;
     let activeSessionToken = "";
@@ -3342,6 +3448,13 @@ export function GeneratedContentAdminDashboard() {
     const natalAspectFirstParam = params.get("first") ?? "";
     const natalAspectNameParam = params.get("aspect") ?? "";
     const natalAspectSecondParam = params.get("second") ?? "";
+    const transitPlanet = params.get("transit") as TransitNatalPlanet | null;
+    const transitSign = params.get("sign") as TransitNatalSign | null;
+    const transitHouse = params.get("transitHouse") as TransitNatalHouse | null;
+    const transitAspect = params.get("aspect") as TransitNatalAspect | null;
+    const natalPoint = params.get("natal") as TransitNatalPoint | null;
+    const transitNatalHouse = params.get("natalHouse") as TransitNatalHouse | null;
+    const houseTransitMotionParam = params.get("motion") as HouseTransitMotion | null;
 
     setActivePage(page);
     setCategoryFilter(category && categoryFilters.some((filter) => filter.key === category) ? category : "all");
@@ -3363,6 +3476,23 @@ export function GeneratedContentAdminDashboard() {
     setNatalAspectFirst(page === "content" && category === "Natal Aspects" ? natalAspectFirstParam : "");
     setNatalAspectName(page === "content" && category === "Natal Aspects" ? natalAspectNameParam : "");
     setNatalAspectSecond(page === "content" && category === "Natal Aspects" ? natalAspectSecondParam : "");
+    setSkyWriteupWorkspaceView(
+      page === "skyWriteups" && view === "transits-to-natal"
+        ? "transits-to-natal"
+        : page === "skyWriteups" && view === "house-transits"
+          ? "house-transits"
+          : "catalog"
+    );
+    setTransitNatalPlanet(page === "skyWriteups" && transitPlanet && transitNatalPlanets.includes(transitPlanet) ? transitPlanet : "");
+    setTransitNatalSign(page === "skyWriteups" && transitSign && transitNatalSigns.includes(transitSign) ? transitSign : "");
+    setTransitNatalTransitHouse(page === "skyWriteups" && transitHouse && transitNatalHouses.includes(transitHouse) ? transitHouse : "");
+    setTransitNatalAspect(page === "skyWriteups" && transitAspect && transitNatalAspects.includes(transitAspect) ? transitAspect : "");
+    setTransitNatalPoint(page === "skyWriteups" && natalPoint && transitNatalPoints.includes(natalPoint) ? natalPoint : "");
+    setTransitNatalNatalHouse(page === "skyWriteups" && transitNatalHouse && transitNatalHouses.includes(transitNatalHouse) ? transitNatalHouse : "");
+    setHouseTransitPlanet(page === "skyWriteups" && view === "house-transits" && transitPlanet && houseTransitPlanets.includes(transitPlanet) ? transitPlanet : "");
+    setHouseTransitSign(page === "skyWriteups" && view === "house-transits" && transitSign && houseTransitSigns.includes(transitSign) ? transitSign : "");
+    setHouseTransitHouse(page === "skyWriteups" && view === "house-transits" && transitHouse && houseTransitHouses.includes(transitHouse) ? transitHouse : "");
+    setHouseTransitMotion(page === "skyWriteups" && view === "house-transits" && houseTransitMotionParam === "retrograde" ? "retrograde" : "direct");
     setFallbackSectionFilter(section && fallbackSections.some((filter) => filter.key === section) ? section : "all");
     setSurfaceAreaFilter(area && ["all", "sky", "you", "friends", "calendar", "reports", "settings"].includes(area) ? area : "all");
     setSurfaceStatusFilter(status && ["all", "complete", "partial", "missing"].includes(status) ? status : "all");
@@ -3922,7 +4052,11 @@ export function GeneratedContentAdminDashboard() {
     }
   }
 
-  async function saveDraft(nextStatus?: GeneratedContentStatus, draftOverride?: AdminDraft) {
+  async function saveDraft(
+    nextStatus?: GeneratedContentStatus,
+    draftOverride?: AdminDraft,
+    sourceLifecycleAction?: "archive" | "restore"
+  ) {
     const activeDraft = draftOverride ?? draft;
     if (!activeDraft) return null;
     const isNewCompatibilityCard = !activeDraft.id && activeDraft.blockType === "compatibility_planet_card";
@@ -3953,12 +4087,12 @@ export function GeneratedContentAdminDashboard() {
               contentKey: draftForSave.contentKey,
               surface: draftForSave.surface === "friends" ? "relationship" : draftForSave.surface,
               mode: draftForSave.mode,
-              status,
-              lane: draftForSave.lane,
-              reviewState: draftForSave.reviewState || null,
+              status: "DRAFT" as GeneratedContentStatus,
+              eventType: draftEventType(draftForSave),
               blockType: draftForSave.blockType || null,
-              promptVersion: draftForSave.promptVersion || "manual-admin",
-              eventType: draftEventType(draftForSave)
+              lane: "reference",
+              reviewState: "needs-review",
+              promptVersion: draftForSave.promptVersion || "manual-admin"
             } : {}),
             headline: draftForSave.headline,
             summary: draftForSave.summary,
@@ -3968,6 +4102,7 @@ export function GeneratedContentAdminDashboard() {
             reviewerNotes: draftForSave.reviewerNotes,
             sourceSnapshot: draftSourceSnapshot(draftForSave),
             reviewStatus: isGuidedHeldReview ? "needs_review" : packageReviewStatusForDraft(draftForSave),
+            sourceLifecycleAction,
             editorialNotes: packageEditorialNotesForDraft(draftForSave)
           }
         : {
@@ -3994,22 +4129,26 @@ export function GeneratedContentAdminDashboard() {
         method,
         body: JSON.stringify(body)
       });
-      const savedRows = payload.rows ?? [];
-      const saved = savedRows[0];
-      if (saved) {
-        const savedDraft = draftFromRow(saved);
-        setRows((current) => {
-          const without = current.filter((row) => row.id !== saved.id);
-          return [saved, ...without];
-        });
-        setSelectedRowId(saved.id);
-        setDraft(savedDraft);
-        editorBaselineRef.current = JSON.stringify(savedDraft);
-        editorSavedInputRef.current = JSON.stringify(draftForSave);
-        announceContentUpdate({ contentKey: saved.content_key, published: saved.status === "LIVE", updatedAt: saved.updated_at ?? new Date().toISOString() });
+      const saved = payload.ok && Array.isArray(payload.rows) ? payload.rows[0] : null;
+      if (!saved || saved.content_key !== draftForSave.contentKey) {
+        throw new Error(`${method} ${draftForSave.contentKey} did not return the saved row. The edit remains unsaved; reload before trying again.`);
       }
-      setMessage(`${draftForSave.contentKey} saved as ${contentStatusLabel(saved?.status ?? status)}.`);
-      return saved ?? null;
+      const savedDraft = draftFromRow(saved);
+      setRows((current) => {
+        const without = current.filter((row) => row.id !== saved.id);
+        return [saved, ...without];
+      });
+      setSelectedRowId(saved.id);
+      setDraft(savedDraft);
+      editorBaselineRef.current = JSON.stringify(savedDraft);
+      editorSavedInputRef.current = JSON.stringify(draftForSave);
+      announceContentUpdate({ contentKey: saved.content_key, published: saved.status === "LIVE", updatedAt: saved.updated_at ?? new Date().toISOString() });
+      setMessage(sourceLifecycleAction === "archive"
+        ? `${draftForSave.contentKey} archived. It no longer serves and can be restored here.`
+        : sourceLifecycleAction === "restore"
+          ? `${draftForSave.contentKey} restored as a non-serving draft for review.`
+          : `${draftForSave.contentKey} saved as ${contentStatusLabel(saved.status)}.`);
+      return saved;
     } catch (error) {
       setMessage(dashboardErrorMessage(error));
       return null;
@@ -4190,7 +4329,7 @@ export function GeneratedContentAdminDashboard() {
       if (openTemplatePreview) setTemplateVariableReferenceOpen(true);
       setMessage(openTemplatePreview
         ? `Opened the assembled reader preview for ${label}. Colored sections link to their atomic sources.`
-        : `Opened ${label}. The source card explains which other natal pages use this writing.`);
+        : `Opened ${label}. The source card explains which other reader pages use this writing.`);
     } catch (error) {
       setMessage(error instanceof Error ? error.message : `Could not open ${label}.`);
     } finally {
@@ -4890,22 +5029,43 @@ export function GeneratedContentAdminDashboard() {
                 ? activePage === "content" && categoryFilter !== "Natal Chart" && categoryFilter !== "Natal Aspects"
                 : item.page === "compositionMap"
                   ? isCompositionPage(activePage)
+                  : item.page === "skyWriteups"
+                    ? activePage === item.page && skyWriteupWorkspaceView === "catalog"
                   : activePage === item.page;
             return (
-              <button
-                key={item.key ?? item.page}
-                type="button"
-                title={item.category === "Natal Chart"
-                  ? "Planets and points in signs and houses"
-                  : item.category === "Natal Aspects"
-                    ? "Exact aspects between two natal planets or points"
-                    : undefined}
-                onClick={() => navigatePrimaryAdminItem(item)}
-                aria-current={isActive ? "page" : undefined}
-              >
-                <Icon size={16} aria-hidden="true" />
-                <span>{item.label}</span>
-              </button>
+              <Fragment key={item.key ?? item.page}>
+                <button
+                  type="button"
+                  title={item.category === "Natal Chart"
+                    ? "Planets and points in signs and houses"
+                    : item.category === "Natal Aspects"
+                      ? "Exact aspects between two natal planets or points"
+                      : undefined}
+                  onClick={() => navigatePrimaryAdminItem(item)}
+                  aria-current={isActive ? "page" : undefined}
+                >
+                  <Icon size={16} aria-hidden="true" />
+                  <span>{item.label}</span>
+                </button>
+                {item.page === "skyWriteups" && (
+                  <div className="admin-nav-workspace-group" aria-label="Sky Write-ups sections">
+                    <button
+                      type="button"
+                      onClick={() => navigateAdminPage("skyWriteups", new URLSearchParams({ view: "transits-to-natal" }))}
+                      aria-current={activePage === "skyWriteups" && skyWriteupWorkspaceView === "transits-to-natal" ? "page" : undefined}
+                    >
+                      <span>Transit to Natal Charts</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => navigateAdminPage("skyWriteups", new URLSearchParams({ view: "house-transits" }))}
+                      aria-current={activePage === "skyWriteups" && skyWriteupWorkspaceView === "house-transits" ? "page" : undefined}
+                    >
+                      <span>House Transits</span>
+                    </button>
+                  </div>
+                )}
+              </Fragment>
             );
           })}
         </section>
@@ -5209,6 +5369,20 @@ export function GeneratedContentAdminDashboard() {
                 )
               : (
                 <>
+                  {contentLibraryTransitShortcut && (
+                    <section className="admin-reader-safety-panel" aria-label="Transit writing workspace shortcut">
+                      <div>
+                        <p className="admin-eyebrow">Assembled transit writing</p>
+                        <h3>{contentLibraryTransitShortcut === "transits-to-natal" ? "Transit to Natal Charts" : "House Transits"}</h3>
+                        <p>These reader cards are assembled from several reusable rows. Open the dedicated workspace to preview the complete card and edit every passage inside it.</p>
+                      </div>
+                      <div className="admin-new-actions">
+                        <button type="button" onClick={() => navigateAdminPage("skyWriteups", new URLSearchParams({ view: contentLibraryTransitShortcut }))}>
+                          Open {contentLibraryTransitShortcut === "transits-to-natal" ? "Transit to Natal Charts" : "House Transits"}
+                        </button>
+                      </div>
+                    </section>
+                  )}
                   {renderContentFilters()}
                   <section className="admin-reader-safety-panel" aria-label="App visibility status">
                     <div>
@@ -5241,67 +5415,119 @@ export function GeneratedContentAdminDashboard() {
             <section className="admin-content-toolbar">
               <div>
                 <p className="admin-eyebrow">Sky editorial workspace</p>
-                <h2>Placements and lunations</h2>
+                <h2>Placements, lunations, and transits</h2>
                 <p>
-                  {skyWriteupRows.filter((row) => !skyLunationContextForRow(row)).length} planetary placement write-ups and {skyWriteupRows.filter((row) => skyLunationContextForRow(row)).length} lunation write-ups. Open one row to review its main copy, aspects, and personalized horoscopes in reading order.
+                  Review collective Sky writing, Personal Transits to natal points, and planets moving through the reader's houses.
                 </p>
               </div>
             </section>
-            <section className="admin-content-filters" aria-label="Sky write-up filters">
-              <div className="admin-review-filter-grid">
-                <label>
-                  <span>Planet, angle, or point</span>
-                  <select
-                    aria-label="Sky write-up type"
-                    value={skyWriteupSubjectFilter}
-                    onChange={(event) => setSkyWriteupSubjectFilter(event.target.value as AdminSkyWriteupSubjectFilter)}
-                  >
-                    {skyWriteupSubjectFilters.map((filter) => (
-                      <option key={filter.key} value={filter.key}>{filter.label}</option>
-                    ))}
-                  </select>
-                </label>
-                <label>
-                  <span>Motion</span>
-                  <select aria-label="Sky write-up motion" value={skyWriteupMotionFilter} onChange={(event) => setSkyWriteupMotionFilter(event.target.value as ContentMotionFilter)}>
-                    {skyWriteupMotionFilters.map((filter) => <option key={filter.key} value={filter.key}>{filter.label}</option>)}
-                  </select>
-                </label>
-                <label>
-                  <span>Reader use</span>
-                  <select aria-label="Sky write-up reader use" value={skyWriteupDestinationFilter} onChange={(event) => setSkyWriteupDestinationFilter(event.target.value as ContentDestinationFilter)}>
-                    {skyWriteupDestinationFilters.map((filter) => <option key={filter.key} value={filter.key}>{filter.label}</option>)}
-                  </select>
-                </label>
-                <label>
-                  <span>Sort</span>
-                  <select aria-label="Sort Sky write-ups" value={skyWriteupSort} onChange={(event) => setSkyWriteupSort(event.target.value as ContentPlacementSort)}>
-                    {skyWriteupSortOptions.map((option) => <option key={option.key} value={option.key}>{option.label}</option>)}
-                  </select>
-                </label>
-                <p className="admin-filter-result-count" aria-live="polite">
-                  <strong>{filteredSkyWriteupRows.length}</strong> of {skyWriteupRows.length} shown
-                </p>
-              </div>
+            <section className="admin-template-tabs" role="tablist" aria-label="Sky Write-ups workspaces">
+              <button
+                type="button"
+                role="tab"
+                aria-selected={skyWriteupWorkspaceView === "catalog"}
+                className={skyWriteupWorkspaceView === "catalog" ? "active" : ""}
+                onClick={() => {
+                  setSkyWriteupWorkspaceView("catalog");
+                  setAdminHash(adminHashForPage("skyWriteups"));
+                }}
+              >
+                Placements &amp; lunations
+              </button>
+              <button
+                type="button"
+                role="tab"
+                aria-selected={skyWriteupWorkspaceView === "transits-to-natal"}
+                className={skyWriteupWorkspaceView === "transits-to-natal" ? "active" : ""}
+                onClick={() => {
+                  setSkyWriteupWorkspaceView("transits-to-natal");
+                  setAdminHash(adminHashForPage("skyWriteups", new URLSearchParams({ view: "transits-to-natal" })));
+                }}
+              >
+                Personal Transits
+              </button>
+              <button
+                type="button"
+                role="tab"
+                aria-selected={skyWriteupWorkspaceView === "house-transits"}
+                className={skyWriteupWorkspaceView === "house-transits" ? "active" : ""}
+                onClick={() => {
+                  setSkyWriteupWorkspaceView("house-transits");
+                  setAdminHash(adminHashForPage("skyWriteups", new URLSearchParams({ view: "house-transits" })));
+                }}
+              >
+                House Transits
+              </button>
             </section>
-            {publishedButUnwiredSkyRows.length > 0 && (
-              <section className="admin-wiring-notice" aria-label="Published Sky write-ups not connected to the app">
-                <div>
-                  <p className="admin-eyebrow">Published but not connected</p>
-                  <h3>{publishedButUnwiredSkyRows.length} approved write-ups have no reader call site</h3>
-                  <p>These rows are reported separately from retired content. They are not safe-deletion candidates: publishing finished the editorial step, but the app integration was never completed.</p>
-                </div>
-                <code>{publishedButUnwiredSkyRows.slice(0, 3).map((row) => row.content_key).join(" · ")}</code>
-              </section>
+            {skyWriteupWorkspaceView === "transits-to-natal" ? (
+              <>
+                {renderTransitNatalSourceFinder()}
+                {renderEditor()}
+              </>
+            ) : skyWriteupWorkspaceView === "house-transits" ? (
+              <>
+                {renderHouseTransitSourceFinder()}
+                {renderEditor()}
+              </>
+            ) : (
+              <>
+                <section className="admin-content-filters" aria-label="Sky write-up filters">
+                  <div className="admin-review-filter-grid">
+                    <label>
+                      <span>Planet, angle, or point</span>
+                      <select
+                        aria-label="Sky write-up type"
+                        value={skyWriteupSubjectFilter}
+                        onChange={(event) => setSkyWriteupSubjectFilter(event.target.value as AdminSkyWriteupSubjectFilter)}
+                      >
+                        {skyWriteupSubjectFilters.map((filter) => (
+                          <option key={filter.key} value={filter.key}>{filter.label}</option>
+                        ))}
+                      </select>
+                    </label>
+                    <label>
+                      <span>Motion</span>
+                      <select aria-label="Sky write-up motion" value={skyWriteupMotionFilter} onChange={(event) => setSkyWriteupMotionFilter(event.target.value as ContentMotionFilter)}>
+                        {skyWriteupMotionFilters.map((filter) => <option key={filter.key} value={filter.key}>{filter.label}</option>)}
+                      </select>
+                    </label>
+                    <label>
+                      <span>Reader use</span>
+                      <select aria-label="Sky write-up reader use" value={skyWriteupDestinationFilter} onChange={(event) => setSkyWriteupDestinationFilter(event.target.value as ContentDestinationFilter)}>
+                        {skyWriteupDestinationFilters.map((filter) => <option key={filter.key} value={filter.key}>{filter.label}</option>)}
+                      </select>
+                    </label>
+                    <label>
+                      <span>Sort</span>
+                      <select aria-label="Sort Sky write-ups" value={skyWriteupSort} onChange={(event) => setSkyWriteupSort(event.target.value as ContentPlacementSort)}>
+                        {skyWriteupSortOptions.map((option) => <option key={option.key} value={option.key}>{option.label}</option>)}
+                      </select>
+                    </label>
+                    <p className="admin-filter-result-count" aria-live="polite">
+                      <strong>{filteredSkyWriteupRows.length}</strong> of {skyWriteupRows.length} shown
+                    </p>
+                  </div>
+                </section>
+                {publishedButUnwiredSkyRows.length > 0 && (
+                  <section className="admin-wiring-notice" aria-label="Published Sky write-ups not connected to the app">
+                    <div>
+                      <p className="admin-eyebrow">Published but not connected</p>
+                      <h3>{publishedButUnwiredSkyRows.length} approved write-ups have no reader call site</h3>
+                      <p>These rows are reported separately from retired content. They are not safe-deletion candidates: publishing finished the editorial step, but the app integration was never completed.</p>
+                    </div>
+                    <code>{publishedButUnwiredSkyRows.slice(0, 3).map((row) => row.content_key).join(" · ")}</code>
+                  </section>
+                )}
+                <section className="admin-workbench admin-review-workspace">
+                  {renderEditor()}
+                  <aside className="admin-list-panel" aria-label="Sky write-up rows">
+                    {filteredSkyWriteupRows.length > 0
+                      ? renderContentTable(filteredSkyWriteupRows, false, true)
+                      : <p className="admin-empty">No Sky write-ups match this type.</p>}
+                  </aside>
+                </section>
+              </>
             )}
-            <section className="admin-workbench admin-review-workspace">
-              {renderEditor()}
-              <aside className="admin-list-panel" aria-label="Sky write-up rows">
-                {filteredSkyWriteupRows.length > 0
-                  ? renderContentTable(filteredSkyWriteupRows, false, true)
-                  : <p className="admin-empty">No Sky or Calendar write-ups match these filters.</p>}
-              </aside>
-            </section>
           </section>
         )}
 
@@ -5962,6 +6188,362 @@ export function GeneratedContentAdminDashboard() {
           second={natalAspectSecond}
         />
       </Suspense>
+    );
+  }
+
+  function skySourceForCandidates(candidateKeys: string[]) {
+    for (const contentKey of candidateKeys) {
+      const savedRow = rows.find((row) => row.content_key === contentKey);
+      const savedReviewStatus = savedRow ? sourceSnapshotString(savedRow.source_snapshot, "review_status") : "";
+      if (savedRow?.body && savedRow.status !== "ARCHIVED" && savedReviewStatus !== "deprecated") {
+        return { contentKey, text: savedRow.body, savedRow };
+      }
+      const body = transitNatalSourceBodies.get(contentKey);
+      if (body) return { contentKey, text: body, savedRow: null };
+    }
+    return null;
+  }
+
+  function renderSkyAssemblySource(source: {
+    id: string;
+    label: string;
+    scope: string;
+    candidateKeys: string[];
+    optional?: boolean;
+  }) {
+    const resolved = skySourceForCandidates(source.candidateKeys);
+    return (
+      <article className="admin-natal-source-card" key={source.id}>
+        <div className="admin-natal-source-card-copy">
+          <div className="admin-natal-source-card-heading">
+            <h4>{source.label}</h4>
+            {resolved?.savedRow
+              ? <span className={`ui-pill admin-status status-${resolved.savedRow.status.toLowerCase()}`}>{contentStatusLabel(resolved.savedRow.status)}</span>
+              : resolved
+                ? <span className="ui-pill admin-status status-live">Approved package source</span>
+                : source.optional && <span className="ui-pill admin-status status-draft">Optional</span>}
+          </div>
+          <p>{source.scope}</p>
+          <code>{resolved?.contentKey ?? source.candidateKeys.join(" → ")}</code>
+          <blockquote className={!resolved ? "missing" : ""}>{resolved?.text ?? (source.optional ? "No optional passage is saved for this selection." : "No saved passage is available for this source path.")}</blockquote>
+        </div>
+        <button
+          type="button"
+          onClick={() => resolved && void openSkySourceRow(resolved.contentKey, source.label)}
+          disabled={!resolved || isLoading}
+        >
+          {resolved ? "Edit source row" : source.optional ? "Optional row unavailable" : "Source row unavailable"}
+        </button>
+      </article>
+    );
+  }
+
+  function updateTransitNatalSelection(next: Partial<{
+    planet: TransitNatalPlanet | "";
+    sign: TransitNatalSign | "";
+    transitHouse: TransitNatalHouse | "";
+    aspect: TransitNatalAspect | "";
+    natalPoint: TransitNatalPoint | "";
+    natalHouse: TransitNatalHouse | "";
+  }>) {
+    const planet = next.planet ?? transitNatalPlanet;
+    const sign = next.sign ?? transitNatalSign;
+    const transitHouse = next.transitHouse ?? transitNatalTransitHouse;
+    const aspect = next.aspect ?? transitNatalAspect;
+    const natalPoint = next.natalPoint ?? transitNatalPoint;
+    const natalHouse = next.natalHouse ?? transitNatalNatalHouse;
+
+    setTransitNatalPlanet(planet);
+    setTransitNatalSign(sign);
+    setTransitNatalTransitHouse(transitHouse);
+    setTransitNatalAspect(aspect);
+    setTransitNatalPoint(natalPoint);
+    setTransitNatalNatalHouse(natalHouse);
+
+    const params = new URLSearchParams({ view: "transits-to-natal" });
+    if (planet) params.set("transit", planet);
+    if (sign) params.set("sign", sign);
+    if (transitHouse) params.set("transitHouse", transitHouse);
+    if (aspect) params.set("aspect", aspect);
+    if (natalPoint) params.set("natal", natalPoint);
+    if (natalHouse) params.set("natalHouse", natalHouse);
+    setAdminHash(adminHashForPage("skyWriteups", params), "replace");
+  }
+
+  async function openSkySourceRow(contentKey: string, label: string) {
+    const savedRow = rows.find((row) => row.content_key === contentKey);
+    if (savedRow) {
+      openRow(savedRow);
+      setMessage(`Opened ${label}.`);
+      return;
+    }
+
+    const definition = fallbackHookDefinitions.find((candidate) => candidate.key === contentKey);
+    const body = transitNatalSourceBodies.get(contentKey);
+    if (!definition || !body) {
+      setMessage(`${label} is not available as an editable Content Studio source (${contentKey}).`);
+      return;
+    }
+
+    setSelectedRowId(null);
+    setDraft(emptyDraftForHook({
+      type: "fallback",
+      key: contentKey,
+      label,
+      section: fallbackSectionForKey(contentKey, definition.surface),
+      definition: {
+        ...definition,
+        copy: { ...definition.copy, body }
+      }
+    }));
+    setMessage(`Opened ${label}. Saving creates the editable Content Studio row; it does not publish unreviewed wording.`);
+  }
+
+  function renderTransitNatalSourceFinder() {
+    const selectionComplete = Boolean(
+      transitNatalPlanet
+      && transitNatalSign
+      && transitNatalTransitHouse
+      && transitNatalAspect
+      && transitNatalPoint
+      && transitNatalNatalHouse
+    );
+    const selection = selectionComplete ? {
+      planet: transitNatalPlanet,
+      sign: transitNatalSign,
+      transitHouse: transitNatalTransitHouse,
+      aspect: transitNatalAspect,
+      natalPoint: transitNatalPoint,
+      natalHouse: transitNatalNatalHouse
+    } as TransitNatalSelection : null;
+    const groups = selection ? transitNatalSourceGroups(selection) : [];
+    const preview = selection ? renderTransitNatalPreview(selection, (candidateKeys) => {
+      const source = skySourceForCandidates(candidateKeys);
+      return source ? { key: source.contentKey, text: source.text } : null;
+    }) : null;
+
+    return (
+      <section className="admin-natal-placement-finder" aria-label="Personal Transits source finder">
+        <div className="admin-natal-placement-finder-heading">
+          <div>
+            <p className="admin-eyebrow">Personal Transits workspace</p>
+            <h3>{selection ? transitNatalLabel(selection) : "Find a Personal Transit write-up"}</h3>
+            <p>Choose the current placement and the natal point it contacts. The reader sees one paragraph; Content Studio shows that paragraph first, followed by the four reusable passages inside it. You do not need to search Fallback Hooks.</p>
+            <p><strong>Editable lifecycle:</strong> open a passage to read it, Save to create or update it, Archive to remove it from active use, and Restore to reopen it as a non-serving draft.</p>
+          </div>
+          {selection && <code>transit/{selection.planet}-{selection.sign}-{selection.transitHouse}h/{selection.aspect}/{selection.natalPoint}-{selection.natalHouse}h</code>}
+        </div>
+
+        <div className="admin-natal-placement-selectors">
+          <label>
+            <span>1. Transiting planet</span>
+            <select aria-label="Transiting planet" value={transitNatalPlanet} onChange={(event) => updateTransitNatalSelection({ planet: event.target.value as TransitNatalPlanet | "" })}>
+              <option value="">Choose transiting planet</option>
+              {transitNatalPlanets.map((planet) => <option value={planet} key={planet}>{titleFromKey(planet)}</option>)}
+            </select>
+          </label>
+          <label>
+            <span>2. Current sign</span>
+            <select aria-label="Transit zodiac sign" value={transitNatalSign} onChange={(event) => updateTransitNatalSelection({ sign: event.target.value as TransitNatalSign | "" })}>
+              <option value="">Choose current sign</option>
+              {transitNatalSigns.map((sign) => <option value={sign} key={sign}>{titleFromKey(sign)}</option>)}
+            </select>
+          </label>
+          <label>
+            <span>3. Transit house</span>
+            <select aria-label="Transit house" value={transitNatalTransitHouse} onChange={(event) => updateTransitNatalSelection({ transitHouse: event.target.value as TransitNatalHouse | "" })}>
+              <option value="">Choose transit house</option>
+              {transitNatalHouses.map((house) => <option value={house} key={house}>{house}</option>)}
+            </select>
+          </label>
+          <label>
+            <span>4. Aspect</span>
+            <select aria-label="Transit to natal aspect" value={transitNatalAspect} onChange={(event) => updateTransitNatalSelection({ aspect: event.target.value as TransitNatalAspect | "" })}>
+              <option value="">Choose aspect</option>
+              {transitNatalAspects.map((aspect) => <option value={aspect} key={aspect}>{titleFromKey(aspect)}</option>)}
+            </select>
+          </label>
+          <label>
+            <span>5. Natal planet or point</span>
+            <select aria-label="Natal planet or point" value={transitNatalPoint} onChange={(event) => updateTransitNatalSelection({ natalPoint: event.target.value as TransitNatalPoint | "" })}>
+              <option value="">Choose natal planet or point</option>
+              {transitNatalPoints.map((point) => <option value={point} key={point}>{titleFromKey(point)}</option>)}
+            </select>
+          </label>
+          <label>
+            <span>6. Natal house</span>
+            <select aria-label="Natal point house" value={transitNatalNatalHouse} onChange={(event) => updateTransitNatalSelection({ natalHouse: event.target.value as TransitNatalHouse | "" })}>
+              <option value="">Choose natal house</option>
+              {transitNatalHouses.map((house) => <option value={house} key={house}>{house}</option>)}
+            </select>
+          </label>
+        </div>
+
+        {!selection && <p className="admin-natal-placement-prompt">Choose all six values to preview the write-up and open its exact source rows.</p>}
+        {selection && preview && (
+          <section className="admin-natal-source-group" aria-label="Effective transit to natal reader preview">
+            <header>
+              <p className="admin-eyebrow">Effective reader preview</p>
+              <h3>What you see</h3>
+              <p>The houses and end date are calculated facts. The highlighted language comes from the editable rows listed below.</p>
+            </header>
+            <article className="admin-natal-source-card">
+              <div className="admin-natal-source-card-copy">
+                <div className="admin-natal-source-card-heading">
+                  <h4>{preview.headline}</h4>
+                  <span className={`ui-pill admin-status ${preview.complete ? "status-live" : "status-draft"}`}>{preview.complete ? "Complete composition" : "Fallback required"}</span>
+                </div>
+                <blockquote>{preview.body}</blockquote>
+                <code>{preview.sourceKeys.join(" · ")}</code>
+                {!preview.complete && <p>Missing: {preview.missing.join(", ")}</p>}
+              </div>
+            </article>
+          </section>
+        )}
+
+        {groups.filter((group) => group.key === "composition").map((group) => (
+          <section className="admin-natal-source-group" key={group.key}>
+            <header><h3>{group.label}</h3><p>{group.description}</p></header>
+            <div className="admin-natal-source-grid">{group.sources.map(renderSkyAssemblySource)}</div>
+          </section>
+        ))}
+        {groups.filter((group) => group.key === "fallback").map((group) => (
+          <details className="admin-natal-source-group admin-natal-source-advanced" key={group.key}>
+            <summary>{group.label}</summary>
+            <p>{group.description}</p>
+            <div className="admin-natal-source-grid">{group.sources.map(renderSkyAssemblySource)}</div>
+          </details>
+        ))}
+      </section>
+    );
+  }
+
+  function updateHouseTransitSelection(next: Partial<{
+    planet: TransitNatalPlanet | "";
+    sign: TransitNatalSign | "";
+    house: TransitNatalHouse | "";
+    motion: HouseTransitMotion;
+  }>) {
+    const planet = next.planet ?? houseTransitPlanet;
+    const sign = next.sign ?? houseTransitSign;
+    const house = next.house ?? houseTransitHouse;
+    const motion = next.motion ?? houseTransitMotion;
+
+    setHouseTransitPlanet(planet);
+    setHouseTransitSign(sign);
+    setHouseTransitHouse(house);
+    setHouseTransitMotion(motion);
+
+    const params = new URLSearchParams({ view: "house-transits", motion });
+    if (planet) params.set("transit", planet);
+    if (sign) params.set("sign", sign);
+    if (house) params.set("transitHouse", house);
+    setAdminHash(adminHashForPage("skyWriteups", params), "replace");
+  }
+
+  function renderHouseTransitSourceFinder() {
+    const selectionComplete = Boolean(houseTransitPlanet && houseTransitSign && houseTransitHouse);
+    const selection = selectionComplete ? {
+      planet: houseTransitPlanet,
+      sign: houseTransitSign,
+      house: houseTransitHouse,
+      motion: houseTransitMotion
+    } as HouseTransitSelection : null;
+    const groups = selection ? houseTransitSourceGroups(selection) : [];
+    const preview = selection ? renderHouseTransitPreview(selection, (candidateKeys) => {
+      const source = skySourceForCandidates(candidateKeys);
+      return source ? { key: source.contentKey, text: source.text } : null;
+    }) : null;
+    const compositionGroup = groups.find((group) => group.key === "composition");
+    const alternateGroup = groups.find((group) => group.key === "alternate");
+    const legacySource = alternateGroup?.sources.find((source) => source.id === "legacy");
+    const servingLegacy = Boolean(legacySource && preview?.sourceKeys.some((key) => legacySource.candidateKeys.includes(key)));
+    const visibleCompositionSources = servingLegacy && legacySource ? [legacySource] : compositionGroup?.sources ?? [];
+    const advancedSources = alternateGroup?.sources.filter((source) => !servingLegacy || source.id !== "legacy") ?? [];
+
+    return (
+      <section className="admin-natal-placement-finder" aria-label="House Transits source finder">
+        <div className="admin-natal-placement-finder-heading">
+          <div>
+            <p className="admin-eyebrow">House Transits workspace</p>
+            <h3>{selection ? houseTransitLabel(selection) : "Find a House Transit write-up"}</h3>
+            <p>Choose the transiting planet, its current sign, and the reader's house. The complete card appears first, followed by the evergreen house passage, sign-specific passage, and any retrograde passage inside it.</p>
+            <p><strong>Editable lifecycle:</strong> open a passage to read it, Save to create or update it, Archive to remove it from active use, and Restore to reopen it as a non-serving draft.</p>
+          </div>
+          {selection && <code>transit/{selection.planet}-{selection.sign}/{selection.house}h/{selection.motion}</code>}
+        </div>
+
+        <div className="admin-natal-placement-selectors">
+          <label>
+            <span>1. Transiting planet</span>
+            <select aria-label="House Transit planet" value={houseTransitPlanet} onChange={(event) => updateHouseTransitSelection({ planet: event.target.value as TransitNatalPlanet | "" })}>
+              <option value="">Choose transiting planet</option>
+              {houseTransitPlanets.map((planet) => <option value={planet} key={planet}>{titleFromKey(planet)}</option>)}
+            </select>
+          </label>
+          <label>
+            <span>2. Current sign</span>
+            <select aria-label="House Transit zodiac sign" value={houseTransitSign} onChange={(event) => updateHouseTransitSelection({ sign: event.target.value as TransitNatalSign | "" })}>
+              <option value="">Choose current sign</option>
+              {houseTransitSigns.map((sign) => <option value={sign} key={sign}>{titleFromKey(sign)}</option>)}
+            </select>
+          </label>
+          <label>
+            <span>3. Reader's house</span>
+            <select aria-label="House Transit house" value={houseTransitHouse} onChange={(event) => updateHouseTransitSelection({ house: event.target.value as TransitNatalHouse | "" })}>
+              <option value="">Choose reader's house</option>
+              {houseTransitHouses.map((house) => <option value={house} key={house}>{house}</option>)}
+            </select>
+          </label>
+          <label>
+            <span>4. Current motion</span>
+            <select aria-label="House Transit motion" value={houseTransitMotion} onChange={(event) => updateHouseTransitSelection({ motion: event.target.value as HouseTransitMotion })}>
+              <option value="direct">Direct</option>
+              <option value="retrograde">Retrograde</option>
+            </select>
+          </label>
+        </div>
+
+        {!selection && <p className="admin-natal-placement-prompt">Choose the planet, sign, and house to preview the reader's House Transit and open its exact source rows.</p>}
+        {selection && preview && (
+          <section className="admin-natal-source-group" aria-label="Effective House Transit reader preview">
+            <header>
+              <p className="admin-eyebrow">Effective reader preview</p>
+              <h3>What you see</h3>
+              <p>The dates and motion are calculated facts. The writing comes from the editable passages listed below.</p>
+            </header>
+            <article className="admin-natal-source-card">
+              <div className="admin-natal-source-card-copy">
+                <div className="admin-natal-source-card-heading">
+                  <h4>{preview.headline}</h4>
+                  <span className={`ui-pill admin-status ${preview.complete ? "status-live" : "status-draft"}`}>{preview.complete ? "Complete composition" : "Source passage required"}</span>
+                </div>
+                <blockquote>{preview.body}</blockquote>
+                <code>{preview.sourceKeys.join(" · ")}</code>
+                {!preview.complete && <p>Missing: {preview.missing.join(", ")}</p>}
+                {preview.optionalMissing.length > 0 && <p>Optional passage omitted: {preview.optionalMissing.join(", ")}</p>}
+              </div>
+            </article>
+          </section>
+        )}
+
+        {compositionGroup && (
+          <section className="admin-natal-source-group">
+            <header>
+              <h3>{compositionGroup.label}</h3>
+              <p>{servingLegacy ? "This reader card is currently stored as one complete editable passage." : compositionGroup.description}</p>
+            </header>
+            <div className="admin-natal-source-grid">{visibleCompositionSources.map(renderSkyAssemblySource)}</div>
+          </section>
+        )}
+        {alternateGroup && advancedSources.length > 0 && (
+          <details className="admin-natal-source-group admin-natal-source-advanced">
+            <summary>{alternateGroup.label}</summary>
+            <p>{alternateGroup.description}</p>
+            <div className="admin-natal-source-grid">{advancedSources.map(renderSkyAssemblySource)}</div>
+          </details>
+        )}
+      </section>
     );
   }
 
@@ -6675,6 +7257,9 @@ export function GeneratedContentAdminDashboard() {
       || sourceSnapshotString(currentDraft.sourceSnapshot, "reviewStatus")
       || fallbackHookReviewStatusForDraft(currentDraft);
     const packageReviewStatus = packageReviewStatusForDraft(currentDraft);
+    const sourceIsArchived = isPackageDraft
+      ? packageReviewStatus === "deprecated"
+      : currentDraft.status === "ARCHIVED";
     const packageRecord = draftPackageRecord(currentDraft);
     const editablePackageRecord = draftEditablePackageRecord(currentDraft);
     const isSkyPlacementFrameTemplate = currentDraft.contentKey === skyPlacementFrameTemplateKey;
@@ -6982,6 +7567,15 @@ export function GeneratedContentAdminDashboard() {
           }
         }
       });
+    };
+    const updateSourceLifecycle = async () => {
+      if (!currentDraft.id) return;
+      const lifecycleAction = sourceIsArchived ? "restore" : "archive";
+      if (isPackageDraft) {
+        await saveDraft(undefined, currentDraft, lifecycleAction);
+      } else {
+        await saveDraft(sourceIsArchived ? "DRAFT" : "ARCHIVED", currentDraft, lifecycleAction);
+      }
     };
     const updatePackageEditorialNotes = (editorialNotes: string) => {
       setDraft(setPackageRecordField(currentDraft, "editorial_notes", editorialNotes));
@@ -8405,7 +8999,7 @@ export function GeneratedContentAdminDashboard() {
                 <select aria-label="Variable approval" value={packageReviewStatus} onChange={(event) => updatePackageReviewStatus(event.target.value)}>
                   {fallbackArchitectureV3ReviewStatuses.map((reviewStatus) => (
                     <option key={reviewStatus} value={reviewStatus}>
-                      {reviewStatus === "needs_review" ? "Needs review" : reviewStatus === "approved_reuse" ? "Approved for reuse" : "Approved for use"}
+                      {reviewStatus === "needs_review" ? "Needs review" : reviewStatus === "approved_reuse" ? "Approved for reuse" : reviewStatus === "deprecated" ? "Archived" : "Approved for use"}
                     </option>
                   ))}
                 </select>
@@ -8593,6 +9187,17 @@ export function GeneratedContentAdminDashboard() {
           {isPackageDraft && !skyFallbackEditor && draftHasUnsavedChanges && (
             <button type="button" onClick={revertPackageDraft} disabled={isLoading}>
               Revert to package original
+            </button>
+          )}
+          {currentDraft.id && (
+            <button
+              className={sourceIsArchived ? undefined : "admin-danger-button"}
+              type="button"
+              onClick={() => void updateSourceLifecycle()}
+              disabled={isLoading || draftHasUnsavedChanges}
+              title={draftHasUnsavedChanges ? "Save or revert your changes before changing this source's lifecycle." : undefined}
+            >
+              {sourceIsArchived ? "Restore as draft" : "Archive source"}
             </button>
           )}
           {!isPackageDraft && isNewDraft && (
