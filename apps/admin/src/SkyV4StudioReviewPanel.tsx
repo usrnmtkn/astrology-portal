@@ -270,7 +270,11 @@ export default function SkyV4StudioReviewPanel(props: Props) {
     });
     const payload = await response.json() as unknown;
     if (!response.ok) throw new Error(record(payload).error as string || `Draft save failed (${response.status}).`);
-    announceContentUpdate();
+    announceContentUpdate({
+      contentKey: row.content_key,
+      published: false,
+      updatedAt: new Date().toISOString()
+    });
     return payload;
   }
 
