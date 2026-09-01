@@ -1,4 +1,4 @@
-# Sky Calendar composed-card first-glance rewrite review
+# Sky Calendar composed-card consequence-first rewrite review
 
 Date: 2026-08-31
 
@@ -6,112 +6,114 @@ Scope: the 24 currently serving sign-specific composed Calendar aspect forecasts
 
 This is a review-wall artifact. It does **not** change serving copy. The canonical cards remain untouched until the owner approves the rewritten forecasts. `details` are unchanged in this pass.
 
-The rewrite standard is now recorded in the global writing guide and content-role contract:
+The first draft in this review folder was rejected as too abstract. This replacement batch was rewritten from the astrology mechanisms rather than polished from those rejected sentences.
 
-1. What may happen or become clearer.
-2. Plain-language astrology mechanism.
-3. Specific risk.
-4. Practical response.
+The global standard is now stricter:
 
-The first sentence must make sense without astrology knowledge. Concrete does not mean niche. Exact-day copy should not invent weekly or monthly framing when the date already anchors the event.
+1. Get to the normal human consequence immediately.
+2. Name the transit and explain why it produces that consequence in plain language.
+3. Name the specific mistake or complication.
+4. End with a useful response in normal language.
+
+The first sentence must make sense without astrology knowledge. If a reader could reasonably ask "what does that mean?" after the first sentence, it fails. Name the thing instead of writing around it. Concrete does not mean niche. Personality comes from precision, not jokes, mystical language, cute phrasing, or novelty examples.
 
 ## Proposed forecasts
 
 ### 1. Neptune in Aries sextile Pluto in Aquarius
 
-a cause or idea you believe in may get more support, especially if other people are already questioning how the current system works. Neptune in Aries sextile Pluto in Aquarius can make it easier to turn conviction into collective pressure for change. The risk is assuming that agreement means the plan has been proved or will happen on its own. Pick one specific change people can act on.
+a cause people care about may get enough support to push for a concrete change. Neptune in Aries sextile Pluto in Aquarius can turn shared conviction into pressure on a rule or system that is no longer working. The risk is assuming support alone will change anything. Decide what you want changed and what action would actually move it.
 
 ### 2. Uranus in Gemini sextile Neptune in Aries
 
-new information may make a plan you had almost ruled out look possible again. Uranus in Gemini sextile Neptune in Aries can connect a change in the facts with the confidence to try a different route. The risk is moving so quickly on encouraging news that nobody checks if it holds up. Use what changed, but decide when you will verify it again.
+new information may give you a way forward on a plan that had seemed out of reach. Uranus in Gemini sextile Neptune in Aries can make a changed fact feel like permission to act. The risk is treating encouraging news as settled before anyone checks it. Use the new information, then verify it before you build the whole plan around it.
 
 ### 3. Uranus in Gemini trine Pluto in Aquarius
 
-a new piece of information or a better explanation may help a stuck argument finally move. Uranus in Gemini trine Pluto in Aquarius can make it easier to rethink rules or systems people have already been trying to change. The risk is everyone agreeing so quickly that a bad assumption slips through. Before rewriting the plan, name what the new version actually has to fix.
+a new fact or explanation may finally move an argument that has been stuck. Uranus in Gemini trine Pluto in Aquarius can make it easier to change a rule or system people have already been trying to fix. The risk is agreeing on new wording before everyone agrees on the problem the rule needs to solve. Name that problem before you rewrite the plan.
 
 ### 4. Jupiter in Leo trine Saturn in Aries
 
-something you want to move forward may get the support it needs, but the deadline, budget, or amount of work involved will also make it clearer what can be done. Jupiter in Leo trine Saturn in Aries can help you use new support to build something you can finish. The risk is taking on more just because people are excited about it. Agree to the version you can deliver.
+something you have been working on may finally make meaningful progress. Jupiter in Leo trine Saturn in Aries can bring more support, approval, or opportunity while a deadline, budget, or workload makes the limits clear. Take the progress seriously, but do not make the project bigger just because people are excited about it. Agree to what you can finish.
 
 ### 5. Saturn in Aries sextile Pluto in Aquarius
 
-a deadline may force people to deal with a problem in a system or agreement that has been left alone for too long. Saturn in Aries sextile Pluto in Aquarius can make it easier to turn pressure into a concrete change in how responsibility or power is handled. The risk is assuming somebody else will raise the issue. Name the limit the new plan has to respect before everyone falls back into the old setup.
+a deadline may finally force a group to fix a rule, process, or agreement that has not been working. Saturn in Aries sextile Pluto in Aquarius can turn time pressure into a chance to change who has control or who carries the consequences. The risk is waiting for someone else to raise the problem. Say what has to change before the deadline passes and the old setup stays in place.
 
 ### 6. Mars conjunct Jupiter in Leo
 
-stepping up may bring more attention, more responsibility, or a bigger role very quickly. Mars conjunct Jupiter in Leo can turn visible effort into an opportunity to do more. The risk is saying yes before you separate the opportunity from the workload that comes with it. Decide what you can personally carry before other people start treating your extra effort as the new expectation.
+doing a good job may get you noticed and handed more responsibility. Mars conjunct Jupiter in Leo can make visible effort turn quickly into a bigger role or opportunity. The risk is accepting the extra work before anyone says what comes off your plate. Decide what you can carry before your extra effort becomes expected.
 
 ### 7. Saturn in Aries sextile Uranus in Gemini
 
-you may have to make a decision before all the information stops changing. Saturn in Aries sextile Uranus in Gemini can help you commit to a plan while leaving a clear way to revise it if the facts change again. The risk is either waiting too long for certainty or locking yourself into an answer that no longer fits. Decide what would be enough reason to change the plan later.
+you may need to make a decision while the facts are still changing. Saturn in Aries sextile Uranus in Gemini can help you choose a plan that can be revised later. The risk is waiting for perfect certainty or pretending today's answer can never change. Make the decision, and decide what new information would be enough to revisit it.
 
 ### 8. Mars in Leo trine Saturn in Aries
 
-a deadline may make it easier to finish something because responsibility is clear and the work has a defined end point. Mars in Leo trine Saturn in Aries can give focused effort enough structure to produce a result. The risk is assuming that moving quickly means you agreed to a reasonable amount of work. Finish what fits the time available instead of stretching the promise to match the enthusiasm.
+a clear deadline may help you finish work that has been dragging. Mars in Leo trine Saturn in Aries can focus your effort when responsibility is clear and the end point is defined. The risk is taking on too much because the work is moving quickly. Finish the amount that fits the time you actually have.
 
 ### 9. Venus in Scorpio square Pluto in Aquarius
 
-a relationship, agreement, or group decision may get tense over how much information someone is expected to share and who gets control once it is shared. Venus in Scorpio square Pluto in Aquarius can turn trust and privacy into a power struggle. The risk is trying to solve the problem by explaining the same request more carefully when the disagreement is about access and control. Say what is private, what needs to be shared, and who gets to decide.
+a relationship or agreement may hit a fight over privacy: what someone has to share, who gets access, and who decides what happens with the information. Venus in Scorpio square Pluto in Aquarius can turn a request for more openness into a struggle over control. The risk is arguing over wording when the real disagreement is about access. Say what is private, what must be shared, and who gets to decide.
 
 ### 10. Venus in Libra sextile Jupiter in Leo
 
-more support or recognition for one person may change what feels fair in an agreement. Venus in Libra sextile Jupiter in Leo can make generosity easier, but it can also make the original split of money, credit, time, or responsibility feel outdated. The risk is leaving the agreement untouched because everyone is happy about the good news. Adjust the terms while the support is growing, not after resentment starts.
+one person's recognition or extra support may make an old agreement feel unfair. Venus in Libra sextile Jupiter in Leo can show when money, credit, time, or responsibility no longer matches what each person is contributing. The risk is leaving the terms alone because the good news feels positive. Update the agreement before the imbalance becomes resentment.
 
 ### 11. Mercury in Gemini sextile Saturn in Aries
 
-a decision that has stayed open may finally need an answer because a deadline has arrived. Mercury in Gemini sextile Saturn in Aries can help you choose without pretending you have every fact. The risk is treating more information as a reason to postpone the decision again. Make the best call you can now and set a date to review it if the situation changes.
+a deadline may force an answer on a decision you have kept open. Mercury in Gemini sextile Saturn in Aries can help you choose without having every fact. The risk is using one more piece of information as a reason to delay again. Make the best call with what you know, and set a date to review it.
 
 ### 12. Sun in Leo sextile Mars in Libra
 
-someone may be ready to put their work forward at the same time that a disagreement finally gets said out loud. The Sun in Leo sextile Mars in Libra can make it easier to stand behind a contribution without turning every objection into a fight. The risk is keeping the peace by making the disagreement so vague that nobody knows what needs to change. Say what the problem is and keep the conversation about the work.
+putting your work in front of people may bring out a disagreement that was easier to avoid while it stayed private. The Sun in Leo sextile Mars in Libra can help you stand behind your contribution without turning the objection into a fight. The risk is softening the disagreement until nobody knows what needs to change. Say what you disagree with and keep it about the work.
 
 ### 13. Mercury in Gemini sextile Jupiter in Leo
 
-a promising idea may get support before the details have stopped changing. Mercury in Gemini sextile Jupiter in Leo can help an idea travel quickly and attract interest while several versions are still being considered. The risk is talking about an option so confidently that other people hear it as a promise. Be clear about what is still being discussed and what you have agreed to.
+a good idea may get attention before the details are finished. Mercury in Gemini sextile Jupiter in Leo can help ideas spread quickly and attract support while the options are still changing. The risk is talking about a possibility like it has already been promised. Say what is decided and what is still being discussed.
 
 ### 14. Sun in Virgo sextile Mars in Cancer
 
-a problem may be easier to fix when one person catches the practical mistake and another makes sure nobody gets hurt by the correction. The Sun in Virgo sextile Mars in Cancer can help careful problem-solving work with the need to protect the people involved. The risk is fixing the immediate issue without talking about what caused it. Make the correction, then deal with the reason someone felt they had to cover for it.
+a mistake may be easier to fix when the person who notices it can correct the problem without throwing someone else under the bus. The Sun in Virgo sextile Mars in Cancer can help solve the practical problem while protecting the person affected by it. The risk is covering for someone so completely that the cause never gets addressed. Fix the mistake, then talk about why it happened.
 
 ### 15. Venus in Libra sextile Mars in Leo
 
-once someone puts their name and effort behind a plan, it may become much easier to see if the agreement around the work is fair. Venus in Libra sextile Mars in Leo can help people renegotiate credit, effort, or responsibility without losing momentum. The risk is letting the most visible person keep carrying more because the split was never made explicit. Put the division of work into words before the extra work becomes expected.
+once one person is visibly doing more of the work, it may become obvious that the agreement is no longer fair. Venus in Libra sextile Mars in Leo can help people renegotiate credit, workload, or responsibility without stopping the work. The risk is letting the person who stepped up keep carrying the extra work by default. Agree on the split before extra effort turns into a permanent job.
 
 ### 16. Mercury in Aquarius opposite Jupiter in Leo
 
-a plan that works on paper may run into a promise that has already been made, and both can make sense even if they cannot both happen as written. Mercury in Aquarius opposite Jupiter in Leo can put the practical design of something directly against the version people are already excited about. The risk is arguing about which side is right instead of checking what time, money, or resources can support. Rewrite the promise around what can be delivered.
+a plan that works on paper may not match what someone already promised. Mercury in Aquarius opposite Jupiter in Leo can put the practical limits of a plan directly against the outcome people are expecting. The risk is arguing about which side is right instead of checking the time, money, or resources available. Change the promise to fit what can actually be delivered.
 
 ### 17. Sun conjunct Venus in Leo
 
-recognition may matter more than usual, but people may be asking for two different things: credit for what they did and appreciation for who they are. The Sun conjunct Venus in Leo can make praise, affection, and visibility feel closely tied together. The risk is assuming one kind of acknowledgment automatically covers the other. Give credit for the work and appreciation to the person instead of treating them as the same thing.
+someone may want credit for what they did and also want to feel personally appreciated. Those are not the same thing. The Sun conjunct Venus in Leo can make recognition, affection, and visibility matter at the same time. The risk is assuming praise for the work replaces personal appreciation, or the other way around. Name the work, then tell the person what you value about them.
 
 ### 18. Mercury in Scorpio square Pluto in Aquarius
 
-a conversation or message may keep getting rewritten because everyone knows the answer could change who gets to decide what happens next. Mercury in Scorpio square Pluto in Aquarius can make every word matter more when control is already part of the issue. The risk is polishing the wording while avoiding the request underneath it. Say what decision you need and who needs to make it.
+a message may be rewritten over and over because sending it could change who gets to make the decision. Mercury in Scorpio square Pluto in Aquarius can make every word feel consequential when control is already part of the disagreement. The risk is polishing the language instead of saying what you want decided. State the decision you are asking for and who needs to make it.
 
 ### 19. Mercury in Scorpio square Jupiter in Leo
 
-what has been promised may be bigger than what has been confirmed. Mercury in Scorpio square Jupiter in Leo can expose the gap between information people are still handling carefully and the confident version already being repeated out loud. The risk is using enthusiasm to fill in details nobody has verified. Separate what you know from what you hope will happen before the promise gets any bigger.
+someone may make a big promise before all the facts are known. Mercury in Scorpio square Jupiter in Leo can make people sound certain while important details are still private, incomplete, or unconfirmed. The risk is letting a possibility get repeated as if it has already been decided. Check what is actually confirmed before you make or repeat the promise.
 
 ### 20. Mercury in Scorpio square Mars in Leo
 
-a conversation can get tense because one person wants time to choose their words and another wants an answer now. Mercury in Scorpio square Mars in Leo can make caution look evasive and pressure look disrespectful, which quickly turns the argument personal. The risk is spending the whole conversation defending tone while the decision goes nowhere. Answer the decision first, then deal separately with what felt disrespectful.
+a conversation can turn into a fight because one person wants an answer now and the other wants time to think before speaking. Mercury in Scorpio square Mars in Leo can make caution look evasive and pressure look disrespectful. The risk is arguing about tone while the decision goes nowhere. Answer the actual question first, then deal with the disrespect separately.
 
 ### 21. Mars in Leo sextile Uranus in Gemini
 
-new information may give you a better way to do something you have already committed to. Mars in Leo sextile Uranus in Gemini can make it easier to change the route without abandoning the goal. The risk is letting the adjustment look like you are backing away from the original commitment. Say what is not changing, then update the part that needs a different approach.
+new information may give you a better way to finish something you have already committed to. Mars in Leo sextile Uranus in Gemini can help you change the method without changing the goal. The risk is letting the adjustment look like you are backing out. Say what you are still committed to, then explain what needs to change.
 
 ### 22. Venus in Scorpio sextile Mars in Virgo
 
-something difficult may be easier to repair once it is said plainly and the other person responds with action instead of reassurance alone. Venus in Scorpio sextile Mars in Virgo can connect trust with the practical work of fixing what went wrong. The risk is treating the repair as proof that the deeper issue no longer matters. Fix the part you can fix and keep the reason it mattered in the conversation.
+a private or difficult conversation may lead to a practical fix. Venus in Scorpio sextile Mars in Virgo can make trust easier to rebuild when the response includes action, not reassurance alone. The risk is fixing one problem and assuming the deeper issue is gone. Make the repair and keep talking about why it mattered.
 
 ### 23. Mercury in Aquarius sextile Venus in Sagittarius
 
-a rule or agreement may need more flexibility, and a small example can make the better version easier for everyone to understand. Mercury in Aquarius sextile Venus in Sagittarius can help a group stay connected without requiring everyone to make the same choice. The risk is arguing about freedom in the abstract. Show how the new arrangement would work in practice.
+a group may find a way to keep one agreement while giving people more freedom to do things differently. Mercury in Aquarius sextile Venus in Sagittarius can help a rule work for the group without forcing everyone to make the same choice. The risk is debating flexibility in theory instead of finding out if the change works. Try the new rule on a small case and see what happens.
 
 ### 24. Mars in Libra trine Pluto in Aquarius
 
-a difficult disagreement may finally move because people can say what is wrong without blowing up the whole plan. Mars in Libra trine Pluto in Aquarius can help a group confront who benefits from the current setup while keeping the conversation productive. The risk is everyone agreeing on careful wording while imagining different solutions. Agree on the change itself, not only the sentence describing it.
+a disagreement may finally lead to change because people can say what is wrong without ending the whole discussion. Mars in Libra trine Pluto in Aquarius can help people challenge who benefits from a rule or agreement while keeping the conversation moving. The risk is everyone agreeing on careful wording while still wanting different outcomes. Agree on what will actually change, not only how to describe the problem.
 
 ## Shipping wall
 
