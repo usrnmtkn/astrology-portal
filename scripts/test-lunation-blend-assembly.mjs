@@ -587,7 +587,32 @@ try {
 
 const ariesMacro = readerRenderer.renderLunationMacro({ kind: "full-moon", sign: "aries" });
 assert.match(ariesMacro.headline, /Aries Full Moon/u);
-assert.match(ariesMacro.body, /^Full Moons bring what has been building into clearer view\./u);
+assert.match(ariesMacro.body, /^Full Moons bring what was happening in the background into the light\./u);
+for (const sign of [
+  "aquarius",
+  "aries",
+  "cancer",
+  "capricorn",
+  "gemini",
+  "leo",
+  "libra",
+  "sagittarius",
+  "scorpio",
+  "taurus",
+  "virgo"
+]) {
+  const macro = readerRenderer.renderLunationMacro({ kind: "full-moon", sign });
+  assert.match(
+    macro.body,
+    /^Full Moons bring what was happening in the background into the light\./u,
+    `The ${sign} Full Moon macro must use the owner-approved opening.`
+  );
+  assert.doesNotMatch(
+    macro.body,
+    /Full Moons bring what has been building into clearer view\./u,
+    `The ${sign} Full Moon macro must retire the superseded opening.`
+  );
+}
 const piscesMacro = readerRenderer.renderLunationMacro({ kind: "full-moon", sign: "pisces" });
 assert.match(piscesMacro.body, /^Full moons are about illuminating that unconscious and that which is unseen\./u);
 assert.match(piscesMacro.body, /The Pisces full moon asks you, "what is fantasy and what is real\?"/u);

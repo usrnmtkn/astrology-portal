@@ -869,7 +869,10 @@ try {
   assert.equal(realWeek.weekEnd, "2026-08-02");
   assert.equal(realWeek.weekType, "lunation");
   assert.equal(realWeek.macro?.headline, "The Macro View: What the Aquarius Full Moon Represents");
-  assert.match(realWeek.macro?.body ?? "", /^Full Moons bring what has been building/u);
+  assert.match(
+    realWeek.macro?.body ?? "",
+    /^Full Moons bring what was happening in the background into the light\./u
+  );
   assert.ok(realWeek.horoscope.headline.trim().length > 0);
   assert.notEqual(realWeek.horoscope.headline, "Full Moon week");
   assert.match(realWeek.horoscope.driverLabel, /Full Moon in Aquarius/u);
