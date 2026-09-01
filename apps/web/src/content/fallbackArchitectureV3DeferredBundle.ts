@@ -10,7 +10,7 @@ import type {
 } from "./fallbackArchitectureV3Runtime";
 
 const NEW_MOON_MACRO_OPEN = "New Moons begin a six-month cycle, and what starts now grows on the terms you set first.";
-const FULL_MOON_MACRO_OPEN = "Full Moons bring what has been building into clearer view.";
+const FULL_MOON_MACRO_OPEN = "Full Moons bring what was happening in the background into the light.";
 const OWNER_BOOK_MACRO_OPENS = new Map([
   [
     "authored/sky-lunation-macro/full-moon/pisces",
