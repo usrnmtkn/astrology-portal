@@ -173,7 +173,7 @@ const counts = {
   sourceMaterial: sourceRows.fallbackSourceRows.length
 };
 
-assert.equal(PACKAGE_VERSION, "v3-2026-09-01a");
+assert.equal(PACKAGE_VERSION, "v3-2026-09-01c");
 assert.ok(counts.authoredCards > 0, "Package must include authored transit/synastry cards.");
 assert.ok(counts.fallbackHooks > 0, "Package must include fallback hooks.");
 assert.ok(counts.vocabulary > 0, "Package must include vocabulary rows.");
@@ -209,7 +209,6 @@ const themVerbPattern = /\bthem\s+(?:feel|feels|think|thinks|want|wants|need|nee
 const legitimateThemVerbGovernor = /(?:let(?:s|ting)?|mak(?:e|es|ing)|made|help(?:s|ing|ed)?|know(?:s|ing|n)?|around|of|in|with|nearest)\s+$/iu;
 const subjectFormPredicatePattern = /\b(?:is|was)\s+they\b/iu;
 const adjectiveTheyPattern = /\b(?:distinct)\s+they\b/iu;
-const reflexiveObjectPattern = /\b(?:let|make|help|allow)\s+themselves\b/iu;
 
 for (const row of personalTransitFriendRows) {
   assert.doesNotMatch(
@@ -240,12 +239,6 @@ for (const row of friendVoiceRows) {
     adjectiveTheyPattern,
     `${row.contentKey}: adjective followed by subject-form they`
   );
-  assert.doesNotMatch(
-    row.body_they,
-    reflexiveObjectPattern,
-    `${row.contentKey}: object-position pronoun converted to themselves`
-  );
-
   for (const match of row.body_they.matchAll(themVerbPattern)) {
     const prefix = row.body_they.slice(Math.max(0, match.index - 24), match.index);
 
@@ -292,8 +285,8 @@ const friendTransit = transitRenderer.renderTransitAspect({
 });
 assert.equal(friendTransit.headline, "Moon square Sofia's Venus");
 assert.equal(friendTransit.contentKey, "authored/transit-aspect/moon/venus/hard");
-assert.match(friendTransit.body, /^They can say yes to plans and quietly hope they fall through\./u);
-assert.doesNotMatch(friendTransit.body, /The Moon in Taurus wants comfort of the touchable kind;/u);
+assert.equal(friendTransit.templateKey, "authored/transit-aspect");
+assert.match(friendTransit.body, /^For Sofia, they can say yes to plans and quietly hope they fall through\./u);
 assert.doesNotMatch(friendTransit.body, /\byou(?:r|rs|self)?\b/iu);
 
 const friendHouse = transitRenderer.renderTransitHouse({

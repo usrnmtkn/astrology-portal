@@ -21,6 +21,7 @@ await build({
     contents: `
       export {
         loadDeferredFallbackArchitectureV3Bundle,
+        loadRelationshipFallbackArchitectureV3Bundle,
         transitSynastryFallbackRendererV3,
         transitV3SameBeatKeyForContentKey
       } from "./apps/web/src/content/fallbackArchitectureV3Runtime.ts";
@@ -29,7 +30,10 @@ await build({
 });
 
 const runtime = await import(pathToFileURL(outFile));
-await runtime.loadDeferredFallbackArchitectureV3Bundle();
+await Promise.all([
+  runtime.loadDeferredFallbackArchitectureV3Bundle(),
+  runtime.loadRelationshipFallbackArchitectureV3Bundle()
+]);
 const { transitSynastryFallbackRendererV3, transitV3SameBeatKeyForContentKey } = runtime;
 
 function render(transiting, aspect, natal) {
@@ -134,10 +138,10 @@ const friendSunMars = transitSynastryFallbackRendererV3.renderTransitAspect({
   window: "Until July 30"
 });
 assert.equal(friendSunMars.contentKey, "authored/transit-aspect/sun/mars/hard");
-assert.match(renderedParts(friendSunMars), /The temper is close to the surface/u);
-assert.match(renderedParts(friendSunMars), /The Sun square Chris's Mars until July 30/u);
+assert.equal(friendSunMars.templateKey, "authored/transit-aspect");
+assert.match(renderedParts(friendSunMars), /^For Chris, the temper is close to the surface/u);
 assert.doesNotMatch(renderedParts(friendSunMars), /\byou(?:r|rs|self)?\b/iu);
-assert.doesNotMatch(renderedParts(friendSunMars), /wants the spotlight to land and stay/u);
+assert.match(renderedParts(friendSunMars), /The Sun square their Mars until July 30/u);
 
 const friendSunSun = transitSynastryFallbackRendererV3.renderTransitAspect({
   transiting: "sun",
@@ -147,7 +151,9 @@ const friendSunSun = transitSynastryFallbackRendererV3.renderTransitAspect({
   window: "Until July 31"
 });
 assert.equal(friendSunSun.contentKey, "authored/transit-aspect/sun/sun/hard");
-assert.match(renderedParts(friendSunSun), /A plan they assumed was finished gets handed back with questions/u);
+assert.equal(friendSunSun.templateKey, "authored/transit-aspect");
+assert.match(renderedParts(friendSunSun), /^For Chris, a plan they assumed was finished/u);
+assert.match(renderedParts(friendSunSun), /The Sun opposite their Sun until July 31/u);
 assert.notEqual(
   renderedParts(friendSunSun),
   renderedParts(friendSunMars),
@@ -166,7 +172,7 @@ const friendBond = transitSynastryFallbackRendererV3.renderBondTransit({
 });
 assert.match(
   renderedParts(friendBond),
-  /^It is easier to say the opinion, preference, or refusal you usually soften around each other/u
+  /^Chris tells you what they actually want instead of agreeing first and becoming irritated later/u
 );
 assert.match(
   renderedParts(friendBond),
@@ -201,8 +207,8 @@ const friendLilithAscendant = transitSynastryFallbackRendererV3.renderTransitAsp
   voice: "Chris",
   window: "Until August 1"
 });
-assert.match(renderedParts(friendLilithAscendant), /^Their first impressions, the style they lead with, and how they meet the world drop the polite filter/u);
-assert.match(renderedParts(friendLilithAscendant), /Lilith in Sagittarius is trining Chris's natal Ascendant through August 1\.$/u);
+assert.match(renderedParts(friendLilithAscendant), /^Lilith in Sagittarius is trining Chris's natal Ascendant through August 1\./u);
+assert.match(renderedParts(friendLilithAscendant), /Their first impressions, the style they lead with, and how they meet the world drop the polite filter/u);
 assert.doesNotMatch(renderedParts(friendLilithAscendant), /In plain terms/u);
 
 console.log("Transit aspect V3 selection contract passed.");

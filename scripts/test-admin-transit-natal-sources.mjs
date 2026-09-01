@@ -75,9 +75,12 @@ assert.match(dashboard, /Personal Transits/u, "Sky Write-ups must expose the rea
 assert.match(dashboard, /Personal Transits workspace/u, "The workspace must identify its reader-copy purpose.");
 assert.match(dashboard, /renderTransitNatalPreview/u, "The workspace must show the assembled reader passage before its ingredients.");
 assert.match(dashboard, /Edit source row/u, "Every resolved ingredient must open its individual source editor.");
-assert.match(dashboard, /The houses and end date are calculated facts/u, "The workspace must keep chart facts separate from editable prose.");
-assert.match(dashboard, /You do not need to search Fallback Hooks/u, "Editors must not need to know the internal fallback taxonomy to find Personal Transit copy.");
-assert.match(dashboard, /Transit to Natal Charts/u, "The left navigation and legacy Content Library searches must name the destination directly.");
+assert.match(dashboard, /The app separately calculates and displays the natal sign, houses, dates, orb/u, "The workspace must keep runtime chart facts separate from editable prose.");
+assert.match(dashboard, /Edit the exact You or Friends passage/u, "Editors must be directed to the exact reader passage before shared house-aware ingredients.");
+assert.match(dashboard, /Personal Transit reader version/u, "The exact passage must provide an explicit You/Friends version switch.");
+assert.match(dashboard, /Personal Transits require it in the first sentence/u, "Friends copy must explain its required name anchor.");
+assert.match(dashboard, /Use the advanced house-aware section/u, "Shared house-aware ingredients must be clearly marked as an advanced path.");
+assert.match(dashboard, /<span>Personal Transits<\/span>/u, "The left navigation must use the same reader-facing name as the workspace.");
 assert.match(dashboard, /cms\/personal-transit-aspect/u, "The old CMS search term must route editors toward the assembled workspace.");
 
 console.log("Transit-to-natal Content Studio source finder passed.");

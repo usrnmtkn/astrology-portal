@@ -279,9 +279,24 @@ function packageRoleCanServeExactCopy(contentRole: string) {
   return !["fallback_source", "source_material"].includes(contentRole);
 }
 
-function normalizeNatalAspectTheyNameVariable(contentKey: string | undefined, value: unknown) {
-  if (!contentKey?.startsWith("fallback-hook/natal-aspect-lived/") || typeof value !== "string") return value;
+function usesFriendNameVariable(contentKey: string | undefined) {
+  return Boolean(
+    contentKey?.startsWith("fallback-hook/natal-aspect-lived/")
+    || contentKey?.startsWith("authored/transit-aspect/")
+  );
+}
+
+function normalizeTheyNameVariable(contentKey: string | undefined, value: unknown) {
+  if (!usesFriendNameVariable(contentKey) || typeof value !== "string") return value;
   return value.replace(/\{\{Name\}\}|\{Name\}/gu, "{{Name}}");
+}
+
+function assertPersonalTransitFriendNameAnchor(contentKey: string | undefined, value: unknown) {
+  if (!contentKey?.startsWith("authored/transit-aspect/") || typeof value !== "string" || !value.trim()) return;
+  const firstSentence = value.match(/^[\s\S]*?[.!?](?:\s|$)/u)?.[0] ?? value;
+  if (!/\{\{Name\}\}/u.test(firstSentence)) {
+    throw new Error("Personal Transit Friends copy must include {{Name}} in its first sentence.");
+  }
 }
 
 function fallbackArchitectureV3CreateState(body: GeneratedContentWriteBody) {
@@ -315,7 +330,8 @@ function fallbackArchitectureV3CreateState(body: GeneratedContentWriteBody) {
   }
 
   if (!hasPackageDraft) record.review_status = reviewStatus;
-  record.body_they = normalizeNatalAspectTheyNameVariable(body.contentKey, record.body_they);
+  record.body_they = normalizeTheyNameVariable(body.contentKey, record.body_they);
+  assertPersonalTransitFriendNameAnchor(body.contentKey, record.body_they);
   if (typeof record.body_they === "string") sections.body_they = record.body_they;
   sections.packageRecord = record;
   facts.review_status = reviewStatus;
@@ -591,15 +607,17 @@ function applyFallbackArchitectureV3ReviewPatch(row: ExistingGeneratedContentRow
     record.body_they = sections.body_they;
   }
   if (hasPackageDraft && isRecord(sections.packageDraft)) {
-    const normalizedDraftBodyThey = normalizeNatalAspectTheyNameVariable(
+    const normalizedDraftBodyThey = normalizeTheyNameVariable(
       row.content_key,
       sections.packageDraft.body_they
     );
+    assertPersonalTransitFriendNameAnchor(row.content_key, normalizedDraftBodyThey);
     sections.packageDraft = typeof normalizedDraftBodyThey === "string"
       ? { ...sections.packageDraft, body_they: normalizedDraftBodyThey }
       : sections.packageDraft;
   }
-  record.body_they = normalizeNatalAspectTheyNameVariable(row.content_key, record.body_they);
+  record.body_they = normalizeTheyNameVariable(row.content_key, record.body_they);
+  assertPersonalTransitFriendNameAnchor(row.content_key, record.body_they);
   if (typeof record.body_they === "string") sections.body_they = record.body_they;
 
   if (record.render_policy === "sky-placement-continuous-v2" && typeof record.body_you === "string") {
@@ -1003,6 +1021,7 @@ async function listGeneratedContent(req: IncomingMessage) {
       "content_key.like.fallback-hook/friends%",
       "content_key.like.fallback-hook/relationship%",
       "content_key.like.fallback-hook/synastry%",
+      "content_key.like.fallback-hook/bond-effect-%",
       "content_key.like.fallback-hook/pair-daily/%",
       "content_key.like.vocab/relationship/%",
       "content_key.like.slot-template/compatibility/%",

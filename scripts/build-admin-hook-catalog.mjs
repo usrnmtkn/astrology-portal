@@ -15,6 +15,10 @@ const sourceFiles = [
   path.join(repoRoot, "apps/web/src/content/fallbackArchitectureV3/bundled-shared-placement-rows-v3.json"),
   path.join(repoRoot, "apps/web/src/content/fallbackArchitectureV3/bundled-relationship-hook-rows-v3.json")
 ];
+const transitAspectSourceFile = path.join(
+  repoRoot,
+  "apps/web/src/content/fallbackArchitectureV3/bundled-transit-core-authored-cards-v3.json"
+);
 const editorGuidanceSource = path.join(repoRoot, "apps/admin/content/fallback-hook-editor-guidance-v1.json");
 const resolverEntry = fs.readFileSync(
   path.join(repoRoot, "apps/web/src/content/fallbackArchitectureV3/resolver/index.browser.ts"),
@@ -77,6 +81,29 @@ for (const sourceFile of sourceFiles) {
 }
 
 const rows = [...rowsByKey.values()].sort((first, second) => first.key.localeCompare(second.key));
+const transitAspectRows = (JSON.parse(fs.readFileSync(transitAspectSourceFile, "utf8")).authoredCards ?? [])
+  .filter((row) => typeof row.contentKey === "string" && row.contentKey.startsWith("authored/transit-aspect/"))
+  .map((row) => ({
+    key: row.contentKey,
+    body: hookBody(row),
+    packageRecord: row
+  }))
+  .sort((first, second) => first.key.localeCompare(second.key));
+const relationshipPackageRows = (JSON.parse(fs.readFileSync(
+  path.join(repoRoot, "apps/web/src/content/fallbackArchitectureV3/bundled-relationship-hook-rows-v3.json"),
+  "utf8"
+)).hookRows ?? [])
+  .filter((row) => typeof row.contentKey === "string" && (
+    row.contentKey.startsWith("fallback-hook/bond-effect-")
+    || row.contentKey.startsWith("fallback-hook/synastry-pair/")
+    || row.contentKey.startsWith("fallback-hook/synastry-aspect-type/")
+  ))
+  .map((row) => ({
+    key: row.contentKey,
+    body: hookBody(row),
+    packageRecord: row
+  }))
+  .sort((first, second) => first.key.localeCompare(second.key));
 const indexPayload = {
   schemaVersion: 1,
   packageVersion,
@@ -107,6 +134,14 @@ for (const outputRoot of outputRoots) {
       `${JSON.stringify(payload)}\n`
     );
   }
+  fs.writeFileSync(
+    path.join(outputRoot, "admin-transit-aspect-catalog-v1.json"),
+    `${JSON.stringify({ schemaVersion: 1, packageVersion, rows: transitAspectRows })}\n`
+  );
+  fs.writeFileSync(
+    path.join(outputRoot, "admin-between-you-two-catalog-v1.json"),
+    `${JSON.stringify({ schemaVersion: 1, packageVersion, rows: relationshipPackageRows })}\n`
+  );
 }
 
-console.log(`Built Admin hook catalog: ${rows.length} unique rows across ${Object.keys(domainPayloads).length} domain packages for ${outputRoots.length} app targets.`);
+console.log(`Built Admin hook catalog: ${rows.length} unique hook rows, ${transitAspectRows.length} authored transit-aspect rows, and ${relationshipPackageRows.length} Between You Two rows for ${outputRoots.length} app targets.`);
