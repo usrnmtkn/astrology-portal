@@ -3,23 +3,16 @@ import { readFileSync } from "node:fs";
 
 import {
   composeSkyPlacementFallbackParagraphs,
-  readSkyPlacementPreviewMode,
-  shouldRenderCanonicalSkyV4Placement,
-  skyPlacementPreviewModeQueryKey
+  isFallbackOnlySkyPlacementPreview
 } from "../apps/web/src/features/sky/skyPlacementPreviewMode.ts";
 
-assert.equal(skyPlacementPreviewModeQueryKey, "skyPlacementPreview");
 assert.equal(
-  readSkyPlacementPreviewMode("https://tldrastro.vercel.app/?skyPlacementPreview=fallback#/sky/placement/sun/virgo"),
-  "fallback-only"
-);
-assert.equal(
-  shouldRenderCanonicalSkyV4Placement("https://tldrastro.vercel.app/?skyPlacementPreview=fallback#/sky/placement/sun/virgo"),
-  false
-);
-assert.equal(
-  shouldRenderCanonicalSkyV4Placement("https://tldrastro.vercel.app/#/sky/placement/sun/virgo"),
+  isFallbackOnlySkyPlacementPreview("https://tldrastro.vercel.app/?skyPlacementPreview=fallback#/sky/placement/sun/virgo"),
   true
+);
+assert.equal(
+  isFallbackOnlySkyPlacementPreview("https://tldrastro.vercel.app/#/sky/placement/sun/virgo"),
+  false
 );
 
 const selectedHooks = [
@@ -42,14 +35,14 @@ assert.deepEqual(
   "One or two source paragraphs must remain unchanged."
 );
 assert.equal(
-  shouldRenderCanonicalSkyV4Placement("https://tldrastro.vercel.app/?skyPlacementPreview=unknown#/sky/placement/sun/virgo"),
-  true
+  isFallbackOnlySkyPlacementPreview("https://tldrastro.vercel.app/?skyPlacementPreview=unknown#/sky/placement/sun/virgo"),
+  false
 );
 
 const appSource = readFileSync(new URL("../apps/web/src/App.tsx", import.meta.url), "utf8");
 assert.match(
   appSource,
-  /if \(!shouldRenderCanonicalSkyV4Placement\(\)\) \{[\s\S]*?SKY_V4_NOT_SERVABLE[\s\S]*?skyV4ReaderRenderer\.renderRoute\(\{/u,
+  /if \(isFallbackOnlySkyPlacementPreview\(\)\) \{[\s\S]*?SKY_V4_NOT_SERVABLE[\s\S]*?skyV4ReaderRenderer\.renderRoute\(\{/u,
   "The fallback-only preview must bypass only the canonical SKY V4 placement override."
 );
 assert.match(
