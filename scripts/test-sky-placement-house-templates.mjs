@@ -7,7 +7,11 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { createServer } from "vite";
 import { ownerRejectedExactTexts } from "../src/astro-writing/ownerEvidenceRejections.mjs";
-import { renderSkyPlacementHouseCore } from "../apps/web/src/content/fallbackArchitectureV3/resolver/renderTransitSynastry.mjs";
+import {
+  renderSkyPlacementHouseCore,
+  renderSkyPlacementRisingHoroscopeSet
+} from "../apps/web/src/content/fallbackArchitectureV3/resolver/renderTransitSynastry.mjs";
+import { requireUniformSkyPlacementHoroscopeSet } from "../apps/web/src/content/fallbackArchitectureV3/resolver/skyPlacementHoroscopeSetPolicy.mjs";
 import { createTransitSynastryRenderer as createShippedTransitSynastryRenderer } from "../apps/web/src/content/fallbackArchitectureV3/dist/tldr-content.js";
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
@@ -86,10 +90,45 @@ for (const row of source.rows) {
   assert.equal(row.review_status, "approved_reuse");
   assert.equal(row.content_role, "house_horoscope_core");
   assert.equal(row.grammar_frame, "second_person_block");
+  assert.ok(
+    ["full-owner-authored-horoscope", "compact-house-core"].includes(row.content_tier),
+    `${row.contentKey} must declare its reader-depth tier.`
+  );
   assert.equal(row.headline, expectedHeadline, `${row.contentKey} must have a searchable identity headline.`);
   assert.ok(row.body_you.trim());
   assert.equal(rejectedTexts.has(row.body_you.trim()), false, `${row.contentKey} must not restore owner-rejected text.`);
 }
+
+const syntheticSet = (contentTier) => Array.from({ length: 12 }, (_, index) => ({
+  risingSign: `Sign ${index + 1}`,
+  house: index + 1,
+  body: `Body ${index + 1}`,
+  contentKey: `test/house-${index + 1}`,
+  contentTier
+}));
+assert.equal(
+  requireUniformSkyPlacementHoroscopeSet(syntheticSet("compact-house-core"), {
+    planet: "test",
+    sign: "compact"
+  }).length,
+  12,
+  "A complete compact-only set remains reader-eligible."
+);
+assert.equal(
+  requireUniformSkyPlacementHoroscopeSet(syntheticSet("full-owner-authored-horoscope"), {
+    planet: "test",
+    sign: "full"
+  }).length,
+  12,
+  "A complete full-only set remains reader-eligible."
+);
+const mixedSyntheticSet = syntheticSet("compact-house-core");
+mixedSyntheticSet[4] = { ...mixedSyntheticSet[4], contentTier: "full-owner-authored-horoscope" };
+assert.throws(
+  () => requireUniformSkyPlacementHoroscopeSet(mixedSyntheticSet, { planet: "test", sign: "mixed" }),
+  /SOURCE_GAP: mixed or unknown house horoscope tiers test\/mixed/u,
+  "A mixed-depth twelve-sign set must fail closed."
+);
 
 for (let house = 1; house <= 12; house += 1) {
   const sourceRow = source.rows.find((row) => (
@@ -124,6 +163,29 @@ for (const house of [5, 7, 8, 9, 10, 11, 12]) {
     renderSkyPlacementHouseCore({ planet: "jupiter", sign: "leo", house }).body,
     sourceRow.body_you,
     `Jupiter in Leo house ${house} must render the recovered Content Studio copy verbatim.`
+  );
+}
+const risingSetEntries = Array.from({ length: 12 }, (_, index) => ({
+  risingSign: zodiacSignForTest(index),
+  house: index + 1
+}));
+function zodiacSignForTest(index) {
+  return ["Aries", "Taurus", "Gemini", "Cancer", "Leo", "Virgo", "Libra", "Scorpio", "Sagittarius", "Capricorn", "Aquarius", "Pisces"][index];
+}
+for (const renderSet of [
+  renderSkyPlacementRisingHoroscopeSet,
+  browserSourceRenderer.renderSkyPlacementRisingHoroscopeSet,
+  shippedRenderer.renderSkyPlacementRisingHoroscopeSet
+]) {
+  assert.throws(
+    () => renderSet({ planet: "jupiter", sign: "leo", entries: risingSetEntries }),
+    /SOURCE_GAP: mixed or unknown house horoscope tiers jupiter\/leo/u,
+    "The current seven-full/five-compact Jupiter in Leo set must not render as one completed horoscope set."
+  );
+  assert.equal(
+    renderSet({ planet: "uranus", sign: "gemini", entries: risingSetEntries }).length,
+    12,
+    "A uniform compact set must continue to render all twelve signs."
   );
 }
 const jupiterLeoHouseFive = renderSkyPlacementHouseCore({ planet: "jupiter", sign: "leo", house: 5 }).body;
@@ -182,6 +244,7 @@ assert.match(
 const app = read("apps/web/src/App.tsx");
 const article = read("apps/web/src/features/sky/SkyDetailArticle.tsx");
 assert.match(app, /heading: packageSection\?\.heading \|\| personalTransitDisplayTitle\(transit\)/u);
+assert.match(app, /renderSkyPlacementRisingHoroscopeSet/u);
 assert.match(app, /body: packageSection\?\.body \?\? compiledAspect\?\.body \?\? null/u);
 assert.match(article, /detail\.personalizedPlacement\.natalAspects\.map/u);
 assert.match(article, /<h4>\{aspect\.heading\}<\/h4>/u);

@@ -38,6 +38,7 @@ export interface ApprovalReference {
 export interface HookRow {
   contentKey: string;
   content_role: string;
+  content_tier?: "full-owner-authored-horoscope" | "compact-house-core";
   grammar_frame?: string;
   body?: string;
   body_you?: string;

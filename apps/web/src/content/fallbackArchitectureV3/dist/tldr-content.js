@@ -700,6 +700,24 @@ function sha256Text(value) {
   return state.map((word) => word.toString(16).padStart(8, "0")).join("");
 }
 
+// apps/web/src/content/fallbackArchitectureV3/resolver/skyPlacementHoroscopeSetPolicy.mjs
+var SKY_PLACEMENT_HOROSCOPE_TIERS = Object.freeze([
+  "full-owner-authored-horoscope",
+  "compact-house-core"
+]);
+function requireUniformSkyPlacementHoroscopeSet(entries, { planet, sign }) {
+  if (!Array.isArray(entries) || entries.length !== 12) {
+    throw new Error(`SOURCE_GAP: rising horoscope set ${planet}/${sign} requires 12 entries`);
+  }
+  const tiers = new Set(entries.map((entry) => entry.contentTier));
+  if (tiers.size !== 1 || !SKY_PLACEMENT_HOROSCOPE_TIERS.includes([...tiers][0])) {
+    throw new Error(
+      `SOURCE_GAP: mixed or unknown house horoscope tiers ${planet}/${sign} (${[...tiers].join(", ")})`
+    );
+  }
+  return entries;
+}
+
 // apps/web/src/content/fallbackArchitectureV3/resolver/renderTransitSynastry.browser.ts
 var TRUE_LILITH_KEY_DATES_INTRO = "True Black Moon Lilith stations about once a month, so it crosses the same degrees several times before it finally moves on.";
 function skyPlacementKeyDates({
@@ -988,15 +1006,31 @@ function createTransitSynastryRenderer(transitLib, templatesFile, rowsFile, opts
     const normalizedHouse = Number(house);
     const key = `house-horoscope-core/${normalizedPlanet}/${normalizedSign}/house-${normalizedHouse}`;
     const row = hooks.get(key);
-    if (!Number.isInteger(normalizedHouse) || normalizedHouse < 1 || normalizedHouse > 12 || !row || row.content_role !== "house_horoscope_core" || row.grammar_frame !== "second_person_block" || !row.body_you) {
+    if (!Number.isInteger(normalizedHouse) || normalizedHouse < 1 || normalizedHouse > 12 || !row || row.content_role !== "house_horoscope_core" || row.grammar_frame !== "second_person_block" || !["full-owner-authored-horoscope", "compact-house-core"].includes(String(row.content_tier)) || !row.body_you) {
       throw new SourceGapError(`SOURCE_GAP: house horoscope core ${normalizedPlanet}/${normalizedSign}/house-${normalizedHouse}`);
     }
     return {
       body: row.body_you,
       contentKey: row.contentKey,
+      contentTier: row.content_tier,
       house: normalizedHouse,
       templateKey: `house-horoscope-core/${normalizedPlanet}-${normalizedSign}-v1`
     };
+  }
+  function renderSkyPlacementRisingHoroscopeSet({
+    planet,
+    sign,
+    entries
+  }) {
+    const rendered = entries.map((entry) => ({
+      risingSign: entry.risingSign,
+      ...renderSkyPlacementHouseCore({ planet, sign, house: entry.house })
+    }));
+    try {
+      return requireUniformSkyPlacementHoroscopeSet(rendered, { planet, sign });
+    } catch (error) {
+      throw new SourceGapError(error instanceof Error ? error.message : String(error));
+    }
   }
   const tpl = (key) => {
     const t = templatesFile.templates.find((x) => x.contentKey === key);
@@ -2983,7 +3017,7 @@ ${passHook}`;
       templateKey: "fallback-template/daily.dodont"
     };
   }
-  return { renderTransitHouse, renderTransitHouseEvent, renderTransitAspect, renderTransitLabel, renderTransitReturn, renderTransitRetro, renderCompat, renderSynastryAspect, renderSkySeason, renderSkyHoroscope, renderSkyLunation, renderSkyPlacement, renderSkyPlacementHouseCore, renderSkyAspectCard, renderCircleStory, renderPairDaily, formatCircleNames, renderCalendarPhase, renderVoidOfCourse, renderSeasonMarker, renderWeeklyMoon, renderBondTransit, renderLunationMacro, renderLunationHoroscope, renderLunationEventCard, renderDoDont, renderDailyGlance };
+  return { renderTransitHouse, renderTransitHouseEvent, renderTransitAspect, renderTransitLabel, renderTransitReturn, renderTransitRetro, renderCompat, renderSynastryAspect, renderSkySeason, renderSkyHoroscope, renderSkyLunation, renderSkyPlacement, renderSkyPlacementHouseCore, renderSkyPlacementRisingHoroscopeSet, renderSkyAspectCard, renderCircleStory, renderPairDaily, formatCircleNames, renderCalendarPhase, renderVoidOfCourse, renderSeasonMarker, renderWeeklyMoon, renderBondTransit, renderLunationMacro, renderLunationHoroscope, renderLunationEventCard, renderDoDont, renderDailyGlance };
 }
 
 // apps/web/src/content/fallbackArchitectureV3/resolver/knowledgeMatrixV9.browser.ts
@@ -4890,7 +4924,7 @@ function skyV4FieldValue(source, path) {
 }
 
 // apps/web/src/content/fallbackArchitectureV3/resolver/index.browser.ts
-var PACKAGE_VERSION = "v3-2026-09-01a";
+var PACKAGE_VERSION = "v3-2026-09-01b";
 function stablePackageValue(value) {
   if (Array.isArray(value)) {
     return value.map(stablePackageValue);

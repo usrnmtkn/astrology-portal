@@ -5003,24 +5003,19 @@ function exactSkyPlacementRisingHoroscopes(
   risingHouseMap: Record<string, number>
 ) {
   try {
-    return zodiacSigns.map((risingSign) => {
+    const entries = zodiacSigns.map((risingSign) => {
       const house = risingHouseMap[normalizeContentIdPart(risingSign)];
       if (!house) {
         throw new FallbackV3SourceGapError(
           `SOURCE_GAP: house horoscope core ${planet}/${sign}/house-pending`
         );
       }
-      const rendered = transitSynastryFallbackRendererV3.renderSkyPlacementHouseCore({
-        planet,
-        sign,
-        house
-      });
-      return {
-        risingSign,
-        house,
-        body: rendered.body,
-        contentKey: rendered.contentKey
-      };
+      return { risingSign, house };
+    });
+    return transitSynastryFallbackRendererV3.renderSkyPlacementRisingHoroscopeSet({
+      planet,
+      sign,
+      entries
     });
   } catch (error) {
     if (!(error instanceof FallbackV3SourceGapError)) {
