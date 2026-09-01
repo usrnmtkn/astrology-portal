@@ -1,5 +1,14 @@
 import assert from "node:assert/strict";
 import fs from "node:fs";
+import { renderSkyV4ReaderRoute } from "../apps/web/src/content/fallbackArchitectureV3/resolver/skyPlacementV4Canonical.mjs";
+import {
+  applySkyV4ContinuousCorpusCorrection,
+  skyV4ContinuousCorrectionReleaseState
+} from "../apps/web/src/features/sky/skyV4ContinuousCorpusCorrection.ts";
+import {
+  applySkyV4PlacementLunarContext,
+  skyV4PlacementLunarContextReleaseState
+} from "../apps/web/src/features/sky/skyV4PlacementLunarContext.ts";
 import {
   skyV4Hemisphere,
   skyV4LunationContexts,
@@ -10,8 +19,27 @@ import {
 } from "../apps/web/src/features/sky/skyV4ProductSurface.ts";
 import { calendarSkyV4LunationContentKey } from "../apps/web/src/features/calendar/calendarContentKeys.ts";
 
+const corpus = JSON.parse(fs.readFileSync(
+  new URL("../apps/web/src/content/fallbackArchitectureV3/authored-inputs/sky-v4-canonical-content-studio-stage-v1.json", import.meta.url),
+  "utf8"
+));
+const correctedCorpus = applySkyV4ContinuousCorpusCorrection(corpus) as any;
+const correctionState = skyV4ContinuousCorrectionReleaseState();
+assert.equal(correctionState.expectedRecords, 120);
+assert.equal(correctionState.recordCount, 120);
+assert.equal(correctionState.ownerApproved, true);
+assert.equal(correctionState.servingEnabled, true);
+assert.equal(correctionState.reviewStatus, "approved");
+
+const correctedSunAries = correctedCorpus.content.continuous.find((row: any) => row.contentKey === "sky-placement/article/sun/aries");
+assert.equal(correctedSunAries.tldrWhat, "The Sun in Aries makes it harder to keep discussing what you already know you want to start.");
+assert.equal(correctedSunAries.fallback.hook, "The conversation may have gone on longer than the decision needed.");
+const correctedSunVirgo = correctedCorpus.content.continuous.find((row: any) => row.contentKey === "sky-placement/article/sun/virgo");
+assert.match(correctedSunVirgo.placementArticle, /invisible work of keeping things running harder to overlook/u);
+assert.doesNotMatch(correctedSunVirgo.placementArticle, /The details matter, but not all equally\. Practice discernment\./u);
+
 const positions = [
-  { planet: "Venus", sign: "Aries", motion: "retrograde" },
+  { planet: "Venus", sign: "Aries", motion: "retrograde", transitTimeZone: "America/New_York" },
   { planet: "Mercury", sign: "Aries", motion: "retrograde" },
   { planet: "Neptune", sign: "Pisces", motion: "direct" },
   { planet: "North Node", sign: "Aries", motion: "retrograde" },
@@ -37,6 +65,100 @@ const placementContexts = skyV4PlacementContexts({
 });
 assert.ok(placementContexts.some((context) => context.contextKind === "co-present-motion" && context.contextBodyOrEvent === "Mercury"));
 assert.ok(placementContexts.some((context) => context.contextKind === "eclipse" && context.contextBodyOrEvent === "Solar Eclipse"));
+assert.ok(placementContexts.some((context) => context.contextKind === "placement-lunar-event" && context.contextBodyOrEvent === "solar-eclipse"));
+assert.ok(!placementContexts.some((context) => context.contextKind === "placement-lunar-event" && context.contextBodyOrEvent === "new-moon"));
+
+const ordinaryNewMoonContexts = skyV4PlacementContexts({
+  position: positions[0],
+  positions,
+  generatedAt: "2026-02-18T01:00:00Z",
+  moonEvent: {
+    name: "New Moon",
+    sign: "Aquarius",
+    occursAt: "2026-02-17T23:30:00Z",
+    days: 0,
+    eclipseType: null
+  }
+});
+assert.ok(ordinaryNewMoonContexts.some((context) => (
+  context.contextKind === "placement-lunar-event"
+  && context.contextBodyOrEvent === "new-moon"
+  && context.contextSign === "Aquarius"
+)), "ordinary New Moon must alter placement context on the same local day");
+assert.ok(!ordinaryNewMoonContexts.some((context) => context.contextKind === "eclipse"));
+
+const ordinaryFullMoonContexts = skyV4PlacementContexts({
+  position: positions[0],
+  positions,
+  generatedAt: "2026-03-03T18:00:00Z",
+  moonEvent: {
+    name: "Full Moon",
+    sign: "Virgo",
+    occursAt: "2026-03-03T11:00:00Z",
+    days: 0,
+    eclipseType: null
+  }
+});
+assert.ok(ordinaryFullMoonContexts.some((context) => (
+  context.contextKind === "placement-lunar-event"
+  && context.contextBodyOrEvent === "full-moon"
+  && context.contextSign === "Virgo"
+)), "ordinary Full Moon must alter placement context on the exact event day");
+
+const offDayPlacementContexts = skyV4PlacementContexts({
+  position: positions[0],
+  positions,
+  generatedAt: "2026-03-04T18:00:00Z",
+  moonEvent: {
+    name: "Full Moon",
+    sign: "Virgo",
+    occursAt: "2026-03-03T11:00:00Z",
+    days: 1,
+    eclipseType: null
+  }
+});
+assert.ok(!offDayPlacementContexts.some((context) => context.contextKind === "placement-lunar-event"));
+
+const lunarContextRelease = skyV4PlacementLunarContextReleaseState();
+assert.equal(lunarContextRelease.expectedRecords, 40);
+assert.equal(lunarContextRelease.recordCount, 40);
+assert.equal(lunarContextRelease.ownerApproved, true);
+assert.equal(lunarContextRelease.servingEnabled, true);
+assert.equal(lunarContextRelease.reviewStatus, "approved");
+
+const fullMoonInput = {
+  route: "placement",
+  planet: "sun",
+  sign: "aries",
+  dateLine: "Engine dates",
+  facts: {},
+  contexts: [{
+    subjectFamily: "continuous",
+    subjectBody: "Sun",
+    subjectSign: "Aries",
+    subjectCondition: "direct",
+    contextKind: "placement-lunar-event",
+    contextBodyOrEvent: "full-moon",
+    contextSign: "Aries",
+    contextCondition: "lunation"
+  }],
+  aspects: []
+};
+const baseFullMoon = renderSkyV4ReaderRoute(correctedCorpus, fullMoonInput);
+const releasedFullMoon = applySkyV4PlacementLunarContext(baseFullMoon, fullMoonInput, correctedCorpus);
+assert.match(String(releasedFullMoon.page), /## What changes today/u);
+assert.match(String(releasedFullMoon.page), /Today’s Full Moon across Aries and Libra makes the consequence of the current story harder to keep in the background\./u);
+assert.equal(releasedFullMoon.placementLunarContextKey, "sky-placement/lunar-context/full-moon/sun");
+assert.ok(String(releasedFullMoon.page).indexOf(correctedSunAries.placementArticle) < String(releasedFullMoon.page).indexOf("## What changes today"));
+
+const fallbackInput = { ...fullMoonInput, articleAvailable: false };
+const baseFallback = renderSkyV4ReaderRoute(correctedCorpus, fallbackInput);
+assert.equal(baseFallback.resolution, "exact-fallback");
+const releasedFallback = applySkyV4PlacementLunarContext(baseFallback, fallbackInput, correctedCorpus);
+const fallbackCopy = (releasedFallback.readerParts as string[]).join("\n\n");
+assert.ok(fallbackCopy.indexOf(correctedSunAries.fallback.hook) < fallbackCopy.indexOf("Today’s Full Moon across Aries and Libra"));
+assert.ok(fallbackCopy.indexOf("Today’s Full Moon across Aries and Libra") < fallbackCopy.indexOf(correctedSunAries.fallback.lived));
+assert.ok(fallbackCopy.indexOf(correctedSunAries.fallback.lived) < fallbackCopy.indexOf(correctedSunAries.fallback.turn));
 
 const stationPosition = {
   planet: "Lilith",
@@ -91,4 +213,11 @@ assert.match(app, /skyV4PlacementContexts/u);
 assert.match(app, /skyV4StationSupported/u);
 assert.match(app, /skyV4Hemisphere/u);
 
-console.log("SKY V4 product-surface routing: PASS (placement contexts, seasonal hemisphere, exact-day Lilith station, node axis, Calendar lunation/eclipse keys, canonical detail composition, governed aspects)");
+const skyBundle = fs.readFileSync(new URL("../apps/web/src/content/fallbackArchitectureV3SkyPlacementBundle.ts", import.meta.url), "utf8");
+assert.match(skyBundle, /applySkyV4ContinuousCorpusCorrection/u);
+assert.match(skyBundle, /applySkyV4PlacementLunarContext/u);
+const lunarAdapter = fs.readFileSync(new URL("../apps/web/src/features/sky/skyV4PlacementLunarContext.ts", import.meta.url), "utf8");
+assert.match(lunarAdapter, /## What changes today/u);
+assert.doesNotMatch(lunarAdapter, /openai|anthropic|model call|generateText/iu);
+
+console.log("SKY V4 product-surface routing: PASS (120 owner-approved continuous corrections, 40 serving lunar contexts, ordinary New/Full Moon differentiation, eclipse precedence, exact local-day selection, seasonal hemisphere, Lilith station, node axis, Calendar keys)");
