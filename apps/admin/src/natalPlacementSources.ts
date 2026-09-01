@@ -31,10 +31,12 @@ export const natalPlacementSigns = [
 ] as const;
 
 export const natalPlacementHouses = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"] as const;
+export const natalPlacementMotions = ["direct", "retrograde"] as const;
 
 export type NatalPlacementPlanet = typeof natalPlacementPlanets[number];
 export type NatalPlacementSign = typeof natalPlacementSigns[number];
 export type NatalPlacementHouse = typeof natalPlacementHouses[number];
+export type NatalPlacementMotion = typeof natalPlacementMotions[number];
 
 export type NatalPlacementSource = {
   key: string;
@@ -43,7 +45,7 @@ export type NatalPlacementSource = {
 };
 
 export type NatalPlacementSourceGroup = {
-  key: "exact" | "sign" | "house" | "structure";
+  key: "exact" | "sign" | "house" | "motion" | "structure";
   label: string;
   description: string;
   sources: NatalPlacementSource[];
@@ -74,7 +76,8 @@ export function natalPlacementSignLabel(planet: NatalPlacementPlanet, sign: Nata
 export function natalPlacementSourceGroups(
   planet: NatalPlacementPlanet,
   sign: NatalPlacementSign,
-  house?: NatalPlacementHouse | ""
+  house?: NatalPlacementHouse | "",
+  motion: NatalPlacementMotion = "direct"
 ): NatalPlacementSourceGroup[] {
   const planetLabel = titleCase(planet);
   const signLabel = titleCase(sign);
@@ -107,7 +110,18 @@ export function natalPlacementSourceGroups(
     ]
   });
 
-  if (!house) return [signGroup, structureGroup(false)];
+  const motionGroup: NatalPlacementSourceGroup | null = motion === "retrograde" ? {
+    key: "motion",
+    label: `${planetLabel} retrograde modifier`,
+    description: "The app adds this reviewed modifier only when the birth-chart calculation says this placement is retrograde. Motion is a calculated fact, not an editorial setting.",
+    sources: [{
+      key: "fallback-template/natal.modifier.retrograde",
+      label: "Natal retrograde modifier",
+      scope: "Shared retrograde wording appended to composed natal placements. An exact full-copy override is verbatim and must include any retrograde treatment in its own copy."
+    }]
+  } : null;
+
+  if (!house) return [signGroup, ...(motionGroup ? [motionGroup] : []), structureGroup(false)];
 
   const houseLabel = ordinalHouse(house);
   return [
@@ -124,6 +138,7 @@ export function natalPlacementSourceGroups(
       ]
     },
     signGroup,
+    ...(motionGroup ? [motionGroup] : []),
     {
       key: "house",
       label: `${planetLabel} in the ${houseLabel} house`,
@@ -141,6 +156,7 @@ export function natalPlacementSelectionFromText(text: string): {
   planet?: NatalPlacementPlanet;
   sign?: NatalPlacementSign;
   house?: NatalPlacementHouse;
+  motion?: NatalPlacementMotion;
 } {
   const normalized = text.toLowerCase().replace(/[_/.]+/g, " ").replace(/-/g, "-");
   const planet = natalPlacementPlanets.find((value) => new RegExp(`\\b${value.replace("-", "[- ]")}\\b`).test(normalized));
@@ -149,9 +165,15 @@ export function natalPlacementSelectionFromText(text: string): {
   const house = houseMatch && natalPlacementHouses.includes(houseMatch[1] as NatalPlacementHouse)
     ? houseMatch[1] as NatalPlacementHouse
     : undefined;
+  const motion = /\b(?:retrograde|retro|rx)\b/u.test(normalized)
+    ? "retrograde"
+    : /\bdirect\b/u.test(normalized)
+      ? "direct"
+      : undefined;
   return {
     ...(planet ? { planet } : {}),
     ...(sign ? { sign } : {}),
-    ...(house ? { house } : {})
+    ...(house ? { house } : {}),
+    ...(motion ? { motion } : {})
   };
 }
