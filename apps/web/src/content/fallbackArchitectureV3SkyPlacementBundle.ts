@@ -4,6 +4,8 @@ import bundledSkyPlacementManifestV3 from "./fallbackArchitectureV3/bundled-sky-
 import skyV4CanonicalCorpusUrl from "./fallbackArchitectureV3/authored-inputs/sky-v4-canonical-content-studio-stage-v1.json?url";
 // @ts-ignore The governed resolver is shared ESM; its reader input is narrowed at this bundle boundary.
 import { renderSkyV4ReaderRoute } from "./fallbackArchitectureV3/resolver/skyPlacementV4Canonical.mjs";
+import { applySkyV4ContinuousCorpusCorrection } from "../features/sky/skyV4ContinuousCorpusCorrection";
+import { applySkyV4PlacementLunarContext } from "../features/sky/skyV4PlacementLunarContext";
 import type {
   FallbackArchitectureV3Bundle,
   FallbackArchitectureV3PackageManifest,
@@ -42,5 +44,10 @@ export async function loadCanonicalSkyV4ReaderRoute() {
   } else {
     corpus = (importedCorpus as { default?: unknown })?.default ?? importedCorpus;
   }
-  return (input: Record<string, unknown>) => renderSkyV4ReaderRoute(corpus, input);
+  const correctedCorpus = applySkyV4ContinuousCorpusCorrection(corpus);
+  return (input: Record<string, unknown>) => applySkyV4PlacementLunarContext(
+    renderSkyV4ReaderRoute(correctedCorpus, input),
+    input,
+    correctedCorpus
+  );
 }
