@@ -1160,6 +1160,74 @@ test.describe("content dashboard admin user flow case studies", () => {
     await assertNoBrowserErrors();
   });
 
+  test("Calendar Aspects navigation opens and edits the governed non-serving draft catalog", async ({ page }) => {
+    const assertNoBrowserErrors = await expectNoBrowserErrors(page);
+    let generatedContentWrite: { method: string; payload: Record<string, unknown> } | null = null;
+    const composedCard = {
+      ...generatedContentRows[0],
+      id: "qa-calendar-composed-card",
+      content_key: "sky-card/venus/libra/square/saturn/aries",
+      mode: "studio-draft",
+      status: "DRAFT",
+      event_type: "calendar-aspect-content-studio-draft",
+      headline: "Venus in Libra square Saturn in Aries",
+      body: "A composed Calendar aspect card held for owner review.",
+      lane: "reference",
+      review_state: "owner-review-required",
+      block_type: "fallback_hook",
+      prompt_version: "calendar-aspect-consequence-first-studio-draft-v1",
+      facts: { readerServing: false },
+      source_snapshot: { contentType: "fallback-system", content_role: "fallback_hook", authoringSource: "qa-fixture" }
+    };
+    const reusablePassage = {
+      ...composedCard,
+      id: "qa-calendar-reusable-passage",
+      content_key: "fallback-hook/sky-aspect-sign/venus/libra/square/saturn/aries",
+      headline: "Venus in Libra square Saturn in Aries passage",
+      body: "A reusable sign-specific Calendar aspect passage held outside reader serving.",
+      review_state: "serving-disabled",
+      prompt_version: "calendar-aspect-owner-approved-studio-draft-v1"
+    };
+    await seedAdminApi(page, {
+      generatedRows: [composedCard, reusablePassage, ...generatedContentRows],
+      onGeneratedContentWrite: (write) => {
+        generatedContentWrite = write;
+      }
+    });
+    await expectAdminRouteLoads(page, "/admin/content");
+
+    const navigation = page.getByRole("navigation", { name: "Content operations" });
+    await navigation.getByRole("button", { name: "Calendar Aspects", exact: true }).click();
+
+    await expectAdminHeader(page, "Calendar Aspect Cards", "Admin / Write / Calendar aspects");
+    await expect(page).toHaveURL(/#exact-content\?category=Calendar\+Aspects$/u);
+    await expect(navigation.getByRole("button", { name: "Calendar Aspects", exact: true })).toHaveAttribute("aria-current", "page");
+    await expect(navigation.getByRole("button", { name: "Content Library" })).not.toHaveAttribute("aria-current", "page");
+    await expect(page.getByRole("heading", { name: "Edit Calendar aspect cards" })).toBeVisible();
+    await expect(page.getByText("These drafts remain hidden from readers until a separate approval and release.")).toBeVisible();
+
+    const contentRows = page.locator(".admin-content-row");
+    await expect(contentRows).toHaveCount(2);
+    await expect(contentRows.filter({ hasText: composedCard.content_key })).toHaveCount(1);
+    await expect(contentRows.filter({ hasText: reusablePassage.content_key })).toHaveCount(1);
+    await expect(contentRows.filter({ hasText: generatedContentRows[0].content_key })).toHaveCount(0);
+
+    await contentRows.filter({ hasText: composedCard.content_key }).getByRole("button", { name: "Edit" }).click();
+    const editor = page.locator(".admin-editor-panel");
+    await expect(editor).toBeVisible();
+    await expect(editor.getByLabel("Reader copy")).toHaveValue(composedCard.body);
+    await editor.getByLabel("Reader copy").fill("Updated composed Calendar aspect copy for owner review.");
+    await editor.getByRole("button", { name: "Save" }).click();
+    await expect.poll(() => generatedContentWrite?.payload).toMatchObject({
+      id: composedCard.id,
+      contentKey: composedCard.content_key,
+      body: "Updated composed Calendar aspect copy for owner review.",
+      status: "DRAFT",
+      lane: "reference"
+    });
+    await assertNoBrowserErrors();
+  });
+
   test("Natal Chart sidebar opens the placement source finder as a distinct workspace", async ({ page }) => {
     const assertNoBrowserErrors = await expectNoBrowserErrors(page);
     const natalExactRow = {

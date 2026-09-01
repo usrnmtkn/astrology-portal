@@ -5,7 +5,9 @@ on:
     paths:
       - "apps/web/src/content/fallbackArchitectureV3/authored-inputs/calendar-aspect-content-studio-batch-2a-v1.json"
       - "scripts/seed-calendar-aspect-content-studio-drafts.mjs"
+      - "apps/admin/src/GeneratedContentAdminDashboard.tsx"
       - "scripts/test-calendar-aspect-content-studio-batch-2a.mjs"
+      - "tests/visual/content-dashboard-admin-user-flows.spec.ts"
       - "packages/astro-knowledge/review/sky-calendar-composed-first-glance-2026-08-31/batch-2a-venus-saturn-squares-owner-approval.json"
       - ".github/workflows/calendar-aspect-content-studio-batch-2a.yml"
   workflow_dispatch:

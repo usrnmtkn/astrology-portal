@@ -4,6 +4,7 @@ import {
   BarChart3,
   BookOpenText,
   Braces,
+  CalendarDays,
   Check,
   Database,
   FileText,
@@ -229,7 +230,7 @@ type AdminFallbackCompositionDiagnostic = {
 };
 type AdminPhrasebankTier = "CONFIRMED" | "REVIEWED" | "SESSION_APPROVED_DRAFT" | "none";
 type AdminPhrasebankTierFilter = AdminPhrasebankTier | "all";
-type AdminContentCategoryFilter = "all" | "Sky" | "Personal Transits" | "House Transits" | "Natal Aspects" | "Natal Angles" | "Natal Chart" | "Relationship" | "Condition Modifiers" | "Fallback Hooks" | "Fallback Templates";
+type AdminContentCategoryFilter = "all" | "Sky" | "Calendar Aspects" | "Personal Transits" | "House Transits" | "Natal Aspects" | "Natal Angles" | "Natal Chart" | "Relationship" | "Condition Modifiers" | "Fallback Hooks" | "Fallback Templates";
 type AdminFallbackHookSectionFilter = "all" | "daily" | "sky" | "you" | "friends" | "lunar-calendar" | "settings";
 type AdminFallbackRowSort = "title-asc" | "title-desc" | "type";
 type WritingSurfaceAreaFilter = "all" | "sky" | "you" | "friends" | "calendar" | "reports" | "settings";
@@ -586,6 +587,7 @@ const primaryAdminNavItems: AdminNavItem[] = [
   { page: "content", label: "Natal Chart", icon: Orbit, key: "natal-chart", category: "Natal Chart" },
   { page: "content", label: "Natal Aspects", icon: ArrowLeftRight, key: "natal-aspects", category: "Natal Aspects" },
   { page: "skyWriteups", label: "Sky Write-ups", icon: Moon },
+  { page: "content", label: "Calendar Aspects", icon: CalendarDays, key: "calendar-aspects", category: "Calendar Aspects" },
   { page: "articles", label: "Articles", icon: FileText },
   { page: "compatibility", label: "Compatibility", icon: Users },
   { page: "compositeByType", label: "Composite Review", icon: Users },
@@ -631,6 +633,7 @@ const tierFilters: Array<{ key: AdminPhrasebankTierFilter; label: string }> = [
 const categoryFilters: Array<{ key: AdminContentCategoryFilter; label: string }> = [
   { key: "all", label: "All categories" },
   { key: "Sky", label: "Sky" },
+  { key: "Calendar Aspects", label: "Calendar Aspects" },
   { key: "Personal Transits", label: "Personal Transits (Transit to Natal)" },
   { key: "House Transits", label: "House Transits" },
   { key: "Natal Aspects", label: "Natal Aspects" },
@@ -2251,10 +2254,18 @@ function tierForRow(row: AdminGeneratedContentRow | AdminReviewRecord): AdminPhr
   return raw === "CONFIRMED" || raw === "REVIEWED" || raw === "SESSION_APPROVED_DRAFT" ? raw : "none";
 }
 
+function isCalendarAspectContentRow(row: AdminGeneratedContentRow | AdminReviewRecord) {
+  const contentKey = "content_key" in row ? row.content_key : row.contentKey;
+  return contentKey.startsWith("sky-card/")
+    || contentKey.startsWith("fallback-hook/sky-aspect-sign/");
+}
+
 function contentCategoryForRow(row: AdminGeneratedContentRow | AdminReviewRecord): AdminContentCategoryFilter {
   const contentKey = "content_key" in row ? row.content_key : row.contentKey;
   const surface = "content_key" in row ? row.surface : row.surface;
   const blockType = "content_key" in row ? row.block_type : row.blockType;
+
+  if (isCalendarAspectContentRow(row)) return "Calendar Aspects";
 
   if (
     contentKey.startsWith("fallback-hook/transit-house-event-")
@@ -2779,12 +2790,13 @@ export function GeneratedContentAdminDashboard() {
   const editableRowsByContentKey = useMemo(() => new Map(rows.map((row) => [row.content_key, row])), [rows]);
   const visibleRows = useMemo(() => rows.filter((row) => (
     (showReferenceRows
+      || (activePage === "content" && categoryFilter === "Calendar Aspects")
       || (showRetiredRows && isRetiredAdminRow(row))
       || isCompositionPage(activePage)
       || (activePage === "skyWriteups" && isSkyWriteupLibraryRow(row))
       || !isPassiveReferenceAdminRow(row))
     && (showRetiredRows || !isRetiredAdminRow(row))
-  )), [rows, activePage, showReferenceRows, showRetiredRows]);
+  )), [rows, activePage, categoryFilter, showReferenceRows, showRetiredRows]);
   const savedFallbackRows = useMemo(
     () => visibleRows.filter((row) => contentClassForRow(row) === "fallback-hook"),
     [visibleRows]
@@ -3156,6 +3168,7 @@ export function GeneratedContentAdminDashboard() {
       || activePage === "unresolvedContent"
       || isCompositionPage(activePage)
       || (activePage === "content" && categoryFilter === "Natal Aspects")
+      || (activePage === "content" && categoryFilter === "Calendar Aspects")
       || showReferenceRows
       || showRetiredRows;
     if (!needsExtendedInventory || allRowsLoaded || loadState !== "loaded" || !secret.trim()) return;
@@ -3649,6 +3662,7 @@ export function GeneratedContentAdminDashboard() {
       const needsExtendedInventory = activePage === "unresolvedContent"
         || isCompositionPage(activePage)
         || (activePage === "content" && categoryFilter === "Natal Aspects")
+        || (activePage === "content" && categoryFilter === "Calendar Aspects")
         || showReferenceRows
         || showRetiredRows;
       const loadsCompatibilityFirst = activePage === "compatibility";
@@ -4980,20 +4994,27 @@ export function GeneratedContentAdminDashboard() {
 
   const natalChartWorkspaceActive = activePage === "content" && categoryFilter === "Natal Chart";
   const natalAspectWorkspaceActive = activePage === "content" && categoryFilter === "Natal Aspects";
+  const calendarAspectWorkspaceActive = activePage === "content" && categoryFilter === "Calendar Aspects";
   const currentPageTitle = natalChartWorkspaceActive
     ? "Natal Chart Write-ups"
     : natalAspectWorkspaceActive
       ? "Natal Aspect Write-ups"
-      : adminPageTitle(activePage);
+      : calendarAspectWorkspaceActive
+        ? "Calendar Aspect Cards"
+        : adminPageTitle(activePage);
   const currentPageDescription = natalChartWorkspaceActive
     ? "Find the exact writing for a planet or point in its sign and house."
     : natalAspectWorkspaceActive
       ? "Find and edit the exact writing for two natal bodies and their aspect."
-      : adminPageDescription(activePage);
+      : calendarAspectWorkspaceActive
+        ? "Edit composed Calendar cards and their reusable sign-specific aspect passages."
+        : adminPageDescription(activePage);
   const currentPageBreadcrumbs = natalChartWorkspaceActive
     ? [{ label: "Admin", page: "reviewQueue" as AdminDashboardPage }, { label: "Write", page: "content" as AdminDashboardPage }, { label: "Natal chart" }]
     : natalAspectWorkspaceActive
       ? [{ label: "Admin", page: "reviewQueue" as AdminDashboardPage }, { label: "Write", page: "content" as AdminDashboardPage }, { label: "Natal aspects" }]
+      : calendarAspectWorkspaceActive
+        ? [{ label: "Admin", page: "reviewQueue" as AdminDashboardPage }, { label: "Write", page: "content" as AdminDashboardPage }, { label: "Calendar aspects" }]
       : adminPageBreadcrumbItems(activePage);
 
   const nav = (
@@ -5026,7 +5047,7 @@ export function GeneratedContentAdminDashboard() {
             const isActive = item.category
               ? activePage === item.page && categoryFilter === item.category
               : item.page === "content"
-                ? activePage === "content" && categoryFilter !== "Natal Chart" && categoryFilter !== "Natal Aspects"
+                ? activePage === "content" && categoryFilter !== "Natal Chart" && categoryFilter !== "Natal Aspects" && categoryFilter !== "Calendar Aspects"
                 : item.page === "compositionMap"
                   ? isCompositionPage(activePage)
                   : item.page === "skyWriteups"
@@ -5323,19 +5344,25 @@ export function GeneratedContentAdminDashboard() {
                   ? "Natal chart workspace"
                   : natalAspectWorkspaceActive
                     ? "Natal aspect workspace"
+                    : calendarAspectWorkspaceActive
+                      ? "Calendar aspect workspace"
                     : "Full content library"}</p>
                 <h2>{natalChartWorkspaceActive
                   ? "Find a planet, sign, and house write-up"
                   : natalAspectWorkspaceActive
                     ? "Find an exact natal aspect write-up"
+                    : calendarAspectWorkspaceActive
+                      ? "Edit Calendar aspect cards"
                     : "All editable content rows"}</h2>
                 <p>{natalChartWorkspaceActive
                   ? "Choose a planet or point, its zodiac sign, and its house. You will see the reader-facing write-up first, followed by the saved passages that build it."
                   : natalAspectWorkspaceActive
                     ? "Choose the first planet or point, the aspect, and the second planet or point. Open any matching passage in the standard editor."
-                  : `${filteredRows.length} rows shown across articles, phrasebank copy, vocabulary, templates, fallback hooks, and source rows. Runtime serves only Published rows in the serving lane with no review hold.`}</p>
+                    : calendarAspectWorkspaceActive
+                      ? "Open a composed Calendar card or reusable sign-specific passage below. Astrology identity fields stay read-only; prose is editable. These drafts remain hidden from readers until a separate approval and release."
+                    : `${filteredRows.length} rows shown across articles, phrasebank copy, vocabulary, templates, fallback hooks, and source rows. Runtime serves only Published rows in the serving lane with no review hold.`}</p>
               </div>
-              {!natalChartWorkspaceActive && !natalAspectWorkspaceActive && <div className="admin-new-actions" aria-label="Content admin shortcuts">
+              {!natalChartWorkspaceActive && !natalAspectWorkspaceActive && !calendarAspectWorkspaceActive && <div className="admin-new-actions" aria-label="Content admin shortcuts">
                 <button type="button" onClick={() => navigateAdminPage("reviewQueue")}>
                   <Check size={16} aria-hidden="true" />
                   Review Queue
