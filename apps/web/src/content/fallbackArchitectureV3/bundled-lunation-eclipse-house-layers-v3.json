@@ -1,6 +1,6 @@
 {
   "schema": "tldrastro-approved-lunation-eclipse-house-layers/v1",
-  "packageVersion": "v3-2026-08-31b",
+  "packageVersion": "v3-2026-09-01a",
   "source": {
     "schema": "lunation-eclipse-house-layers/v1",
     "count": 12

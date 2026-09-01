@@ -28,24 +28,28 @@ assert.equal(fullPlacement.parts.length, 2, "Selecting a house must add the hous
 
 const retrogradeInput = normalizeNatalPlacementPreviewInput({
   audience: "you",
-  house: "3",
-  isRetrograde: true,
+  house: "6",
+  motion: "retrograde",
   overrides: [],
-  planet: "jupiter",
-  sign: "leo"
+  planet: "mercury",
+  sign: "virgo"
 });
+assert.equal(retrogradeInput.motion, "retrograde");
 const retrogradePlacement = renderNatalPlacementPreview(retrogradeInput);
-assert.equal(retrogradeInput.isRetrograde, true);
-assert.match(retrogradePlacement.body, /Jupiter is retrograde in the birth chart/u, "Retrograde previews must include the canonical natal modifier.");
+assert.match(
+  retrogradePlacement.body,
+  /retrograde in the birth chart/u,
+  "A retrograde preview must render the motion-specific passage."
+);
+assert.equal(retrogradePlacement.parts.length, 2, "The retrograde modifier is appended to the relevant sign or house paragraph.");
 
-const directOnlyInput = normalizeNatalPlacementPreviewInput({
+assert.equal(normalizeNatalPlacementPreviewInput({
   audience: "you",
   isRetrograde: true,
   overrides: [],
-  planet: "sun",
-  sign: "aries"
-});
-assert.equal(directOnlyInput.isRetrograde, false, "Sun, Moon, and lunar nodes must remain direct-only in the Studio preview.");
+  planet: "venus",
+  sign: "taurus"
+}).motion, "retrograde");
 
 assert.throws(
   () => normalizeNatalPlacementPreviewInput({ audience: "you", house: "13", overrides: [], planet: "sun", sign: "aries" }),

@@ -2,8 +2,7 @@ import assert from "node:assert/strict";
 import {
   natalPlacementLabel,
   natalPlacementSelectionFromText,
-  natalPlacementSourceGroups,
-  natalPlacementSupportsRetrograde
+  natalPlacementSourceGroups
 } from "../apps/admin/src/natalPlacementSources.ts";
 import { renderNatalPlacement } from "../apps/web/src/content/fallbackArchitectureV3/resolver/renderFallback.mjs";
 
@@ -19,28 +18,23 @@ assert.deepEqual(
   { planet: "chiron", sign: "aries", house: "12" }
 );
 assert.deepEqual(
-  natalPlacementSelectionFromText("Jupiter Rx in Leo in the 3rd house"),
-  { planet: "jupiter", sign: "leo", house: "3", motion: "retrograde" }
+  natalPlacementSelectionFromText("Mercury retrograde in Virgo in the 6th house"),
+  { planet: "mercury", sign: "virgo", house: "6", motion: "retrograde" }
 );
-assert.equal(natalPlacementLabel("jupiter", "leo", "3", true), "Jupiter Rx in Leo in the 3rd house");
-assert.equal(natalPlacementSupportsRetrograde("jupiter"), true);
-assert.equal(natalPlacementSupportsRetrograde("sun"), false);
-assert.equal(natalPlacementSupportsRetrograde("moon"), false);
-assert.equal(natalPlacementSupportsRetrograde("north-node"), false);
 
 const groups = natalPlacementSourceGroups("chiron", "taurus", "12");
 assert.deepEqual(groups.map((group) => group.key), ["exact", "sign", "house", "structure"]);
-
-const retrogradeGroups = natalPlacementSourceGroups("jupiter", "leo", "3", true);
-assert.deepEqual(retrogradeGroups.map((group) => group.key), ["sign", "motion", "house", "structure"]);
-assert.ok(retrogradeGroups.flatMap((group) => group.sources).some((source) => source.key === "fallback-template/natal.modifier.retrograde"));
-assert.ok(retrogradeGroups.flatMap((group) => group.sources).every((source) => !source.key.includes("complete-final")));
 
 const signOnlyGroups = natalPlacementSourceGroups("sun", "aries");
 assert.deepEqual(signOnlyGroups.map((group) => group.key), ["sign", "structure"]);
 assert.ok(signOnlyGroups.flatMap((group) => group.sources).some((source) => source.key === "fallback-hook/placement-sentence/sun/aries"));
 assert.ok(signOnlyGroups.flatMap((group) => group.sources).some((source) => source.key === "fallback-template/natal.planet-in-sign/sun"));
 assert.ok(signOnlyGroups.flatMap((group) => group.sources).every((source) => !source.key.includes("house") && !source.key.includes("complete-final")));
+
+const retrogradeGroups = natalPlacementSourceGroups("mercury", "virgo", "6", "retrograde");
+assert.deepEqual(retrogradeGroups.map((group) => group.key), ["exact", "sign", "motion", "house", "structure"]);
+assert.ok(retrogradeGroups.flatMap((group) => group.sources).some((source) => source.key === "fallback-template/natal.modifier.retrograde"));
+assert.match(retrogradeGroups.find((group) => group.key === "motion")?.description ?? "", /calculated fact/u);
 
 const sources = groups.flatMap((group) => group.sources);
 assert.equal(sources.length, 12);
@@ -111,5 +105,18 @@ assert.doesNotMatch(sunAries.body, /\{\{|\}\}/);
 const friendSunAriesFirst = renderNatalPlacement({ planet: "sun", sign: "aries", house: 1, voice: "Maya" });
 assert.match(friendSunAriesFirst.body, /Maya's Sun|they|them/i, "The natal preview must support the Friend voice.");
 assert.doesNotMatch(friendSunAriesFirst.body, /\{\{|\}\}/);
+
+const mercuryVirgoSixthRetrograde = renderNatalPlacement({
+  planet: "mercury",
+  sign: "virgo",
+  house: 6,
+  voice: "you",
+  isRetrograde: true
+});
+assert.match(
+  mercuryVirgoSixthRetrograde.body,
+  /retrograde in the birth chart/u,
+  "Exact sign and house passages must retain the calculated retrograde modifier."
+);
 
 console.log("Natal placement source finder maps optional overrides and renders effective You/Friend reader copy with source provenance.");
