@@ -215,6 +215,63 @@ function readerServingForPackageReview(reviewStatus: string) {
   return fallbackArchitectureV3EligibleReviews.has(reviewStatus);
 }
 
+function normalizeNatalAspectTheyNameVariable(contentKey: string | undefined, value: unknown) {
+  if (!contentKey?.startsWith("fallback-hook/natal-aspect-lived/") || typeof value !== "string") return value;
+  return value.replace(/\{\{Name\}\}|\{Name\}/gu, "{{Name}}");
+}
+
+function fallbackArchitectureV3CreateState(body: GeneratedContentWriteBody) {
+  const sections = isRecord(body.sections) ? { ...body.sections } : {};
+  const facts = isRecord(body.facts) ? { ...body.facts } : {};
+  const sourceSnapshot = isRecord(body.sourceSnapshot) ? { ...body.sourceSnapshot } : {};
+  const record = isRecord(sections.packageRecord) ? { ...sections.packageRecord } : {};
+  const isPackageRow = body.provider === fallbackArchitectureV3Provider
+    || stringFrom(sourceSnapshot.sourcePackage) === "tldrastro-fallback-architecture-v3"
+    || facts.fallbackArchitectureV3 === true
+    || Boolean(record.content_role);
+
+  if (!isPackageRow) return null;
+
+  const hasPackageDraft = isRecord(sections.packageDraft);
+  const reviewStatus = (hasPackageDraft
+    ? "needs_review"
+    : stringFrom(body.reviewStatus)
+      || stringFrom(sourceSnapshot.review_status)
+      || stringFrom(facts.review_status)
+      || stringFrom(record.review_status)
+      || "needs_review").trim();
+
+  if (!fallbackArchitectureV3ReviewStatuses.has(reviewStatus)) {
+    throw new Error("review_status must be needs_review, approved, or approved_reuse.");
+  }
+
+  const isSkyV4CanonicalStage = stringFrom(record.source_package) === skyV4CanonicalStagePackage
+    || stringFrom(sourceSnapshot.sourcePackage) === skyV4CanonicalStagePackage;
+  if (isSkyV4CanonicalStage && reviewStatus !== "needs_review") {
+    throw new Error("New SKY V4 package rows cannot be published outside the governed owner-approval flow.");
+  }
+
+  if (!hasPackageDraft) record.review_status = reviewStatus;
+  record.body_they = normalizeNatalAspectTheyNameVariable(body.contentKey, record.body_they);
+  if (typeof record.body_they === "string") sections.body_they = record.body_they;
+  sections.packageRecord = record;
+  facts.review_status = reviewStatus;
+  sourceSnapshot.review_status = reviewStatus;
+  const readerServing = !isSkyV4CanonicalStage && readerServingForPackageReview(reviewStatus);
+  facts.readerServing = readerServing;
+
+  return {
+    facts,
+    lane: readerServing ? "serving" : "reference",
+    provider: fallbackArchitectureV3Provider,
+    readerServing,
+    reviewState: readerServing ? null : "needs-review",
+    sections,
+    sourceSnapshot,
+    status: readerServing ? "LIVE" as const : "DRAFT" as const
+  };
+}
+
 function packagePlaceholders(value: unknown) {
   const matches = stringFrom(value).match(/{{\s*[\w.-]+\s*}}/g) ?? [];
   return new Set(matches.map((match) => match.replace(/\s+/g, "")));
@@ -316,6 +373,10 @@ function validateFallbackArchitectureV3Copy(row: ExistingGeneratedContentRow, pa
 
     const originalSlots = packagePlaceholders(original);
     for (const slot of packagePlaceholders(value)) {
+      const isRequiredNatalAspectName = row.content_key.startsWith("fallback-hook/natal-aspect-lived/")
+        && field.endsWith("body_they")
+        && slot === "{{Name}}";
+      if (isRequiredNatalAspectName) continue;
       if (!originalSlots.has(slot)) {
         throw new Error(`${field} contains unresolved placeholder ${slot} that was not in the package original.`);
       }
@@ -447,6 +508,8 @@ function applyFallbackArchitectureV3ReviewPatch(row: ExistingGeneratedContentRow
   if (typeof sections.body_they === "string") {
     record.body_they = sections.body_they;
   }
+  record.body_they = normalizeNatalAspectTheyNameVariable(row.content_key, record.body_they);
+  if (typeof record.body_they === "string") sections.body_they = record.body_they;
 
   if (record.render_policy === "sky-placement-continuous-v2" && typeof record.body_you === "string") {
     record.body_you = [record.opening, record.tension, record.development, record.close]
@@ -958,30 +1021,33 @@ async function createGeneratedContentFromBody(body: GeneratedContentWriteBody) {
 
   const blockType = normalizedGeneratedContentBlockType(body.blockType, body.surface, body.mode);
   const isCmsRow = isCmsGeneratedContentWriteBody(body);
+  const packageState = fallbackArchitectureV3CreateState(body);
+  const now = new Date().toISOString();
   const row = {
     content_key: body.contentKey.trim(),
     surface: body.surface,
     mode: body.mode,
-    status: "DRAFT",
+    status: packageState?.status ?? "DRAFT",
     event_type: body.eventType.trim(),
     target_date: body.targetDate || null,
-    facts: body.facts ?? {},
+    facts: packageState?.facts ?? body.facts ?? {},
     knowledge_ids: body.knowledgeIds ?? [],
-    source_snapshot: body.sourceSnapshot ?? {},
-    ...(typeof body.lane === "string" && body.lane.trim() ? { lane: body.lane.trim() } : {}),
-    ...(body.reviewState !== undefined ? { review_state: body.reviewState || null } : {}),
+    source_snapshot: packageState?.sourceSnapshot ?? body.sourceSnapshot ?? {},
+    ...(packageState ? { lane: packageState.lane } : typeof body.lane === "string" && body.lane.trim() ? { lane: body.lane.trim() } : {}),
+    ...(packageState ? { review_state: packageState.reviewState } : body.reviewState !== undefined ? { review_state: body.reviewState || null } : {}),
     evergreen: Boolean(body.evergreen),
     evergreen_at: body.evergreen ? body.evergreenAt ?? new Date().toISOString() : null,
     evergreen_by: body.evergreen ? body.evergreenBy ?? "admin" : null,
     ...(blockType ? { block_type: blockType } : {}),
     prompt_version: typeof body.promptVersion === "string" && body.promptVersion.trim() ? body.promptVersion.trim() : "manual-admin",
-    provider: isCmsRow ? "manual-admin" : "claude",
+    provider: packageState?.provider ?? (isCmsRow ? "manual-admin" : "claude"),
     model: "manual",
     headline: body.headline ?? "",
     summary: body.summary ?? "",
     body: body.body ?? "",
-    sections: body.sections ?? [],
-    reviewer_notes: body.reviewerNotes ?? (isSampleOnlyRow(body.surface, body.contentKey) ? sampleOnlyReviewerNote : "")
+    sections: packageState?.sections ?? body.sections ?? [],
+    reviewer_notes: body.reviewerNotes ?? (isSampleOnlyRow(body.surface, body.contentKey) ? sampleOnlyReviewerNote : ""),
+    ...(packageState?.readerServing ? { reviewed_at: now, published_at: now } : {})
   };
 
   const response = await fetch(`${supabaseUrl()}/rest/v1/generated_interpretations?on_conflict=content_key,target_date,mode`, {
