@@ -29,6 +29,13 @@ export function shouldHydrateFallbackDashboardContent(mode: FriendsContentLoadin
   return mode !== "friends";
 }
 
+export function shouldHydrateCompatibilityDashboardContent({
+  mode,
+  friendRelationshipContentRequests
+}: Pick<FriendsContentLoadingState, "mode" | "friendRelationshipContentRequests">) {
+  return mode === "friends" && friendRelationshipContentRequests.has("compatibility");
+}
+
 export function shouldLoadDeferredFallbackContent({
   mode,
   friendNatalContentRequested,

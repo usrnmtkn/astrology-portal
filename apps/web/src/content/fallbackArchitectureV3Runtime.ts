@@ -521,6 +521,7 @@ let localRelationshipReaderBundle: FallbackArchitectureV3Bundle | null = null;
 let localLunationBookReaderBundle: FallbackArchitectureV3Bundle | null = null;
 let localSkyPlacementReaderBundle: FallbackArchitectureV3Bundle | null = null;
 let dashboardCoreReaderBundle: FallbackArchitectureV3Bundle | null = null;
+let dashboardCompatibilityReaderBundle: FallbackArchitectureV3Bundle | null = null;
 let dashboardSkyPlacementReaderBundle: FallbackArchitectureV3Bundle | null = null;
 let deferredFallbackBundlePromise: Promise<boolean> | null = null;
 let emptyHouseFallbackBundlePromise: Promise<boolean> | null = null;
@@ -582,7 +583,8 @@ function recomposeReaderBundle() {
   // for the checked-in reader package. Replacing the local bundle here made
   // approved deferred rows disappear whenever the CMS snapshot did not yet
   // contain the same key (including exact natal sign + house passages).
-  const core = mergeReaderBundles(localCoreWithLunationBook, dashboardCoreReaderBundle);
+  const dashboardCore = mergeReaderBundles(localCoreWithLunationBook, dashboardCoreReaderBundle);
+  const core = mergeReaderBundles(dashboardCore, dashboardCompatibilityReaderBundle);
   const placement = dashboardSkyPlacementReaderBundle ?? localSkyPlacementReaderBundle;
   activateReaderBundle(mergeReaderBundles(core, placement));
 }
@@ -759,6 +761,18 @@ export function installFallbackArchitectureV3Bundle(
   const readerBundle = readerEligibleBundle(bundle);
   const manifest = fallbackArchitectureV3ManifestForBundle(readerBundle, packageVersion);
   dashboardCoreReaderBundle = readerBundle;
+  recomposeReaderBundle();
+
+  return manifest;
+}
+
+export function installCompatibilityFallbackArchitectureV3Bundle(
+  bundle: FallbackArchitectureV3Bundle,
+  packageVersion = bundle.packageManifest?.packageVersion ?? fallbackArchitectureV3PackageVersion
+) {
+  const readerBundle = readerEligibleBundle(bundle);
+  const manifest = fallbackArchitectureV3ManifestForBundle(readerBundle, packageVersion);
+  dashboardCompatibilityReaderBundle = readerBundle;
   recomposeReaderBundle();
 
   return manifest;
