@@ -1298,7 +1298,7 @@ function cacheFallbackArchitectureV3SkyPlacementBundle(
 function packageAuthoredCardFromRow(row: GeneratedContentRow): AuthoredCard | null {
   const record = packageRecord(row);
   const { role, reviewStatus } = generatedRowPackageRole(row);
-  const recordBody = stringFrom(record.body);
+  const recordBody = stringFrom(row.body, record.body);
   const recordBodyYou = stringFrom(record.body_you);
   const recordBodyThey = stringFrom(record.body_they);
 
@@ -1542,6 +1542,54 @@ export async function loadFallbackArchitectureV3DashboardBundle(): Promise<Fallb
   );
 
   return bundle;
+}
+
+export async function loadFallbackArchitectureV3CompatibilityDashboardBundle(): Promise<FallbackArchitectureV3Bundle | null> {
+  const supabase = await getSupabaseClient();
+  if (!supabase) return null;
+
+  const rows: GeneratedContentRow[] = [];
+  const pageSize = 1000;
+
+  for (let page = 0; page < 10; page += 1) {
+    const from = page * pageSize;
+    const to = from + pageSize - 1;
+    const { data, error } = await supabase
+      .from("generated_interpretations")
+      .select("id, content_key, surface, mode, status, lane, review_state, event_type, target_date, facts, source_snapshot, headline, summary, body, sections, block_type, flags, provider, judge_score, judge_gate, model, updated_at")
+      .like("content_key", "authored/compat-pair/%")
+      .order("updated_at", { ascending: false })
+      .order("id", { ascending: false })
+      .range(from, to)
+      .returns<GeneratedContentRow[]>();
+
+    if (error) {
+      console.warn("Compatibility dashboard content failed to load; bundled relationship copy remains active.", error);
+      return null;
+    }
+
+    rows.push(...(data ?? []));
+    if (!data || data.length < pageSize) break;
+  }
+
+  const seen = new Set<string>();
+  const authoredCards: AuthoredCard[] = [];
+  for (const row of rows) {
+    if (seen.has(row.content_key)) continue;
+    seen.add(row.content_key);
+    if (!row.provider || !isApprovedFallbackArchitectureV3Row(row, row.provider)) continue;
+    if (!isReaderServableGeneratedContentRow(row)) continue;
+    const card = packageAuthoredCardFromRow(row);
+    if (card) authoredCards.push(card);
+  }
+
+  if (!authoredCards.length) return null;
+
+  return {
+    transitLib: { authoredCards },
+    templatesFile: { templates: [] },
+    rowsFile: { hookRows: [], vocabularyRows: [] },
+  };
 }
 
 export async function loadFallbackArchitectureV3SkyPlacementDashboardBundle(): Promise<FallbackArchitectureV3Bundle | null> {

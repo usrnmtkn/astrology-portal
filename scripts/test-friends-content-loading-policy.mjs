@@ -5,6 +5,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import {
+  shouldHydrateCompatibilityDashboardContent,
   shouldHydrateFallbackDashboardContent,
   shouldLoadDeferredFallbackContent,
   shouldLoadEmptyHouseFallbackContent,
@@ -23,6 +24,10 @@ import {
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const packageRoot = path.join(repoRoot, "apps/web/src/content/fallbackArchitectureV3");
 const readJson = (relativePath) => JSON.parse(fs.readFileSync(path.join(packageRoot, relativePath), "utf8"));
+const generatedContentSource = fs.readFileSync(
+  path.join(repoRoot, "apps/web/src/services/generatedContent.ts"),
+  "utf8"
+);
 const relationshipTabs = (...tabs) => new Set(tabs);
 const loadingState = (tabs = [], overrides = {}) => ({
   mode: "friends",
@@ -125,6 +130,55 @@ for (const mode of ["guest", "member", "profile", "calendar", "account", "settin
     `${mode} must retain dashboard hydration.`
   );
 }
+
+assert.equal(
+  shouldHydrateCompatibilityDashboardContent(loadingState(["compatibility"])),
+  true,
+  "Friends Compatibility must hydrate its focused approved dashboard rows."
+);
+assert.equal(
+  shouldHydrateCompatibilityDashboardContent(loadingState(["synastry"])),
+  false,
+  "Friends Synastry must not download Compatibility dashboard rows."
+);
+assert.equal(
+  shouldHydrateCompatibilityDashboardContent(loadingState(["compatibility"], { mode: "profile" })),
+  false,
+  "The You profile must not run the Friends Compatibility hydration path."
+);
+
+const compatibilityLoaderStart = generatedContentSource.indexOf(
+  "export async function loadFallbackArchitectureV3CompatibilityDashboardBundle"
+);
+const compatibilityLoaderEnd = generatedContentSource.indexOf(
+  "export async function loadFallbackArchitectureV3SkyPlacementDashboardBundle",
+  compatibilityLoaderStart
+);
+const compatibilityLoaderSource = generatedContentSource.slice(
+  compatibilityLoaderStart,
+  compatibilityLoaderEnd
+);
+assert.ok(compatibilityLoaderStart >= 0 && compatibilityLoaderEnd > compatibilityLoaderStart);
+assert.match(
+  compatibilityLoaderSource,
+  /\.like\("content_key", "authored\/compat-pair\/%"\)/,
+  "Compatibility hydration must select the exact authored Compatibility namespace."
+);
+assert.doesNotMatch(
+  compatibilityLoaderSource,
+  /\.eq\("provider", fallbackArchitectureV3Provider\)/,
+  "Compatibility hydration must accept the approved materialization providers used by authored cards."
+);
+assert.match(
+  compatibilityLoaderSource,
+  /isApprovedFallbackArchitectureV3Row\(row, row\.provider\)/,
+  "Compatibility hydration must retain package approval checks for each row's actual provider."
+);
+assert.match(
+  generatedContentSource,
+  /const recordBody = stringFrom\(row\.body, record\.body\);/,
+  "A saved top-level body must override the stale packaged body when reader cards are hydrated."
+);
 
 assert.equal(shouldLoadDeferredFallbackContent(loadingState(["compatibility"])), false);
 assert.equal(shouldLoadDeferredFallbackContent(loadingState(["synastry"])), false);
