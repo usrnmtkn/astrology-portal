@@ -26,6 +26,31 @@ const fullPlacement = renderNatalPlacementPreview(fullInput);
 assert.equal(fullPlacement.headline, "Sun in Aries in the 1st house");
 assert.equal(fullPlacement.parts.length, 2, "Selecting a house must add the house paragraph.");
 
+const retrogradeInput = normalizeNatalPlacementPreviewInput({
+  audience: "you",
+  house: "6",
+  motion: "retrograde",
+  overrides: [],
+  planet: "mercury",
+  sign: "virgo"
+});
+assert.equal(retrogradeInput.motion, "retrograde");
+const retrogradePlacement = renderNatalPlacementPreview(retrogradeInput);
+assert.match(
+  retrogradePlacement.body,
+  /retrograde in the birth chart/u,
+  "A retrograde preview must render the motion-specific passage."
+);
+assert.equal(retrogradePlacement.parts.length, 2, "The retrograde modifier is appended to the relevant sign or house paragraph.");
+
+assert.equal(normalizeNatalPlacementPreviewInput({
+  audience: "you",
+  isRetrograde: true,
+  overrides: [],
+  planet: "venus",
+  sign: "taurus"
+}).motion, "retrograde");
+
 assert.throws(
   () => normalizeNatalPlacementPreviewInput({ audience: "you", house: "13", overrides: [], planet: "sun", sign: "aries" }),
   /house must be between 1 and 12/u
