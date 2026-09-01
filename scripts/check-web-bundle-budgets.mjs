@@ -194,7 +194,7 @@ console.log(`On-demand transit fallback: ${formatBytes(measurements.transitFallb
 console.log(`Largest on-demand relationship fallback chunk: ${formatBytes(measurements.relationshipFallbackChunkGzipBytes)} gzip across ${deferredRelationshipFallbackItems.length} files`);
 console.log(`Deferred signup chunk: ${formatBytes(measurements.signupChunkGzipBytes)} gzip`);
 console.log(`Largest JavaScript: ${largestJavaScript?.file ?? "none"} (${formatBytes(measurements.largestJavaScriptGzipBytes)} gzip)`);
-console.log(`All JavaScript: ${formatBytes(measurements.totalJavaScriptGzipBytes)} gzip across ${javaScriptFiles.length} files`);
+console.log(`All JavaScript: ${formatBytes(measurements.totalJavaScriptGzipBytes)} gzip (${measurements.totalJavaScriptGzipBytes} bytes) across ${javaScriptFiles.length} files`);
 console.log(`All CSS: ${formatBytes(measurements.totalCssGzipBytes)} gzip across ${cssFiles.length} files`);
 console.log("");
 console.log("Largest JavaScript chunks:");
