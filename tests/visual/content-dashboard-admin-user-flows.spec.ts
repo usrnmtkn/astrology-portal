@@ -1204,11 +1204,11 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expectAdminRouteLoads(page, "/admin/content");
 
     const navigation = page.getByRole("navigation", { name: "Content operations" });
-    await navigation.getByRole("button", { name: "Natal Chart" }).click();
+    await navigation.getByRole("button", { name: "Natal Chart", exact: true }).click();
 
     await expectAdminHeader(page, "Natal Chart Write-ups", "Admin / Write / Natal chart");
     await expect(page).toHaveURL(/#exact-content\?category=Natal\+Chart$/);
-    await expect(navigation.getByRole("button", { name: "Natal Chart" })).toHaveAttribute("aria-current", "page");
+    await expect(navigation.getByRole("button", { name: "Natal Chart", exact: true })).toHaveAttribute("aria-current", "page");
     await expect(navigation.getByRole("button", { name: "Content Library" })).not.toHaveAttribute("aria-current", "page");
     await expect(page.getByRole("region", { name: "Find natal placement source writing" })).toBeVisible();
     await expect(page.getByLabel("Natal placement planet or point")).toBeVisible();
