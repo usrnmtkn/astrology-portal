@@ -1,0 +1,23 @@
+{
+  "schema": "tldrastro-sky-v4-continuous-corpus-correction/v1",
+  "package_version": "SKY-V4-CONTINUOUS-CORPUS-CORRECTION-OWNER-APPROVED-2026-09-01",
+  "parent_canonical_package_version": "SKY-V4-CANONICAL-CODEX-HANDOFF-CONTENT-STUDIO-EDITABLE-2026-08-30",
+  "parent_canonical_json_sha256": "9b91e715bea63a2c835001783240122aad1e000b3982d68bfebbb3cef690a750",
+  "approval_id": "sky-v4-continuous-corpus-correction-owner-approval-2026-09-01",
+  "approved_on": "2026-09-01",
+  "approval_record": "packages/astro-knowledge/review/sky-v4-continuous-corpus-correction-2026-09-01/OWNER-APPROVAL.md",
+  "release_id": "sky-v4-continuous-corpus-correction-serving-release-2026-09-01",
+  "release_record": "packages/astro-knowledge/review/sky-v4-continuous-corpus-correction-2026-09-01/VERIFICATION.md",
+  "review_status": "approved",
+  "owner_approved": true,
+  "serving_enabled": true,
+  "expected_records": 120,
+  "record_set_sha256": "7565cdd2f83cc45c7e62df73aa91856970d2807df11d1fec23969b5be9e4aa4f",
+  "copy_sha256": "825f970dcae52bcb424b23e4f11d65103f24e37342e85691f6f4d1b078fd59c2",
+  "chunk_files": [
+    "sky-v4-continuous-corpus-correction-v1-chunk-1.json",
+    "sky-v4-continuous-corpus-correction-v1-chunk-2.json",
+    "sky-v4-continuous-corpus-correction-v1-chunk-3.json",
+    "sky-v4-continuous-corpus-correction-v1-chunk-4.json"
+  ]
+}
