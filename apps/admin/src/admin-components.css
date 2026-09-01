@@ -197,9 +197,12 @@
    normal flex flow while only the form body scrolls. This prevents the action
    row from covering the last fields or falling below the visible viewport. */
 .admin-dashboard .admin-editor-panel {
+  bottom: 0;
+  box-sizing: border-box;
   height: 100dvh;
   max-height: 100dvh;
   overflow: hidden;
+  top: 0;
 }
 
 .admin-dashboard .admin-editor-panel > .admin-post-editor {
@@ -213,7 +216,7 @@
 .admin-dashboard .admin-editor-panel > .admin-editor-savebar {
   bottom: auto !important;
   flex: 0 0 auto;
-  position: static !important;
+  position: relative !important;
   width: 100%;
   z-index: 1;
 }
