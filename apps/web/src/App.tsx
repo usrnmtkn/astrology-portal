@@ -61,6 +61,7 @@ import {
   loadRelationshipFallbackArchitectureV3Bundle,
   loadSkyPlacementFallbackArchitectureV3Bundle,
   fallbackArchitectureV3PackageVersion,
+  skyV4ReaderRenderer,
   fallbackRendererV3,
   transitSynastryFallbackRendererV3,
   fallbackV3AspectFeel,
@@ -167,6 +168,18 @@ import {
   type SkyPlacementContentStatus
 } from "./features/sky/skyPlacementContentState";
 import {
+  composeSkyPlacementFallbackParagraphs,
+  isFallbackOnlySkyPlacementPreview
+} from "./features/sky/skyPlacementPreviewMode";
+import {
+  skyV4Hemisphere,
+  skyV4LunationContexts,
+  skyV4LunationRoute,
+  skyV4NodeAxis,
+  skyV4PlacementContexts,
+  skyV4StationSupported
+} from "./features/sky/skyV4ProductSurface";
+import {
   getAuthAccount,
   isAuthConfigured,
   loadPersistedProfile,
@@ -250,6 +263,7 @@ import {
   compositeHouseContentKey,
   compositePointContentKey,
   compositeSignContentKey,
+  natalAspectContentKey,
   synastryAspectContentKey,
   transitHouseContentKey
 } from "./services/generatedContentKeys";
@@ -4195,9 +4209,34 @@ function generatedNatalAspectSection(
   aspect: SkySnapshot["aspects"][number],
   generatedContent: GeneratedContentMap
 ): NormalizedNatalAspectSection | null {
-  void aspect;
-  void generatedContent;
-  return null;
+  const first = normalizeContentIdPart(aspect.from);
+  const second = normalizeContentIdPart(aspect.to);
+  const normalizedAspect = normalizeContentIdPart(aspect.type);
+  const candidateKeys = [
+    `fallback-hook/natal-aspect-lived/${first}/${normalizedAspect}/${second}`,
+    `fallback-hook/natal-aspect-lived/${second}/${normalizedAspect}/${first}`,
+    natalAspectContentKey(first, normalizedAspect, second),
+    `natal-${first}-${normalizedAspect}-${second}`,
+    `natal-${second}-${normalizedAspect}-${first}`
+  ];
+  const generated = candidateKeys
+    .map((contentKey) => liveGeneratedContent(generatedContent, contentKey))
+    .find((content): content is LiveGeneratedContent => Boolean(content));
+  const body = fullDetailReaderFacingCopy(generatedContentParagraphs(generated)) ?? "";
+
+  if (!generated || !body || !isReaderFacingCopy(body)) {
+    return null;
+  }
+
+  return {
+    slot: "meaning",
+    required: true,
+    layer: "authored",
+    tier: "content-studio-approved-natal-aspect-v1",
+    sourceKeys: [generated.contentKey],
+    heading: generated.headline || natalAspectDisplayTitle(aspect),
+    body
+  };
 }
 
 function natalAspectDetailArticle(
@@ -4735,6 +4774,10 @@ function skyPlacementWritingSection(
     articleMode?: "current" | "archive";
     articleKey?: string | null;
     hasPriorIngress?: boolean;
+    locationLatitude?: number | null;
+    locationTimeZone?: string | null;
+    moonEvent?: SkySnapshot["moonEvent"] | null;
+    positions?: PlanetPosition[];
   }
 ): NormalizedSkyPlacementSection | null {
   const planet = normalizeContentIdPart(position.planet);
@@ -4768,6 +4811,13 @@ function skyPlacementWritingSection(
     && ["mercury", "venus", "mars", "jupiter", "saturn", "uranus", "neptune", "pluto", "chiron"].includes(planet);
   const transitEndpoints = placementTransitEndpoints(position, generatedAt);
   const finalResidencyExit = placementFinalResidencyExit(position, transitEndpoints.end);
+  const canonicalEntryDate = formatPlacementTransitEndpoint(position, transitEndpoints.start, true);
+  const canonicalExitDate = formatPlacementTransitEndpoint(position, finalResidencyExit, true);
+  const entryYear = canonicalEntryDate.match(/, (\d{4})$/u)?.[1] ?? null;
+  const exitYear = canonicalExitDate.match(/, (\d{4})$/u)?.[1] ?? null;
+  const canonicalDateLine = entryYear && entryYear === exitYear
+    ? `${canonicalEntryDate.replace(/, \d{4}$/u, "")} to ${canonicalExitDate}`
+    : `${canonicalEntryDate} to ${canonicalExitDate}`;
   let rendered: ReturnType<typeof transitSynastryFallbackRendererV3.renderSkyPlacement>;
 
   try {
@@ -4778,8 +4828,8 @@ function skyPlacementWritingSection(
       asOfDate: generatedAt,
       articleMode: articleOptions?.articleMode ?? "current",
       articleKey: articleOptions?.articleKey ?? null,
-      entryDate: formatPlacementTransitEndpoint(position, transitEndpoints.start, true),
-      exitDate: formatPlacementTransitEndpoint(position, finalResidencyExit, true),
+      entryDate: canonicalEntryDate,
+      exitDate: canonicalExitDate,
       residencyPasses: position.residencyPasses,
       residencyStations: position.residencyStations,
       priorSign: position.priorTransitSign ? normalizeContentIdPart(position.priorTransitSign) : null,
@@ -4809,6 +4859,79 @@ function skyPlacementWritingSection(
     console.warn("Sky placement source gap; omitting unavailable sign copy.", error);
     return null;
   }
+  try {
+    if (isFallbackOnlySkyPlacementPreview()) {
+      throw new Error("SKY_V4_NOT_SERVABLE: fallback-only preview requested.");
+    }
+    let seasonalContext = "";
+    if (planet === "sun") {
+      try {
+        const seasonal = skyV4ReaderRenderer.renderRoute({
+          route: "seasonal",
+          sign,
+          hemisphere: skyV4Hemisphere(articleOptions?.locationLatitude)
+        }) as { readerParts?: string[] };
+        seasonalContext = seasonal.readerParts?.join("\n\n") ?? "";
+      } catch (error) {
+        if (!(error instanceof Error) || !/^SKY_V4_(?:NOT_RELEASED|NOT_SERVABLE|SOURCE_GAP)/u.test(error.message)) {
+          throw error;
+        }
+      }
+    }
+    const displayPositions = articleOptions?.positions ?? [];
+    const nodeAxis = skyV4NodeAxis(displayPositions);
+    const skyV4 = skyV4ReaderRenderer.renderRoute({
+      route: "placement",
+      planet,
+      sign,
+      dateLine: canonicalDateLine,
+      facts: {
+        entryDate: canonicalEntryDate,
+        exitDate: canonicalExitDate
+      },
+      isRetrograde: hasRetrogradeGuidance,
+      stationSupported: planet === "lilith" && skyV4StationSupported(
+        position,
+        generatedAt,
+        articleOptions?.locationTimeZone ?? position.transitTimeZone ?? "UTC"
+      ),
+      seasonalContext,
+      northSign: nodeAxis.northSign,
+      southSign: nodeAxis.southSign,
+      contexts: skyV4PlacementContexts({
+        position,
+        positions: displayPositions,
+        moonEvent: articleOptions?.moonEvent,
+        generatedAt
+      }),
+      aspects: []
+    }) as {
+      contentKey?: string;
+      readerParts?: string[];
+      servingEnabled?: boolean;
+      versionStatus?: string;
+    };
+    if (skyV4.servingEnabled === true && skyV4.versionStatus === "approved-serving-baseline" && skyV4.readerParts?.length) {
+      rendered = {
+        ...rendered,
+        tagline: null,
+        closingCharge: null,
+        body: skyV4.readerParts.join("\n\n"),
+        parts: skyV4.readerParts,
+        articleSections: [{
+          kind: "sky-v4-canonical-reader",
+          heading: "",
+          body: `${canonicalDateLine}\n\n${skyV4.readerParts.join("\n\n")}`
+        }],
+        templateKey: "sky-v4-canonical-reader-v1",
+        contentKey: skyV4.contentKey
+      };
+    }
+  } catch (error) {
+    if (!(error instanceof Error) || !/^SKY_V4_(?:NOT_RELEASED|NOT_SERVABLE|SOURCE_GAP)/u.test(error.message)) {
+      throw error;
+    }
+  }
   const allRenderedParagraphs = rendered.parts.length ? rendered.parts : [rendered.body];
   const renderedParagraphs = rendered.closingCharge
     && allRenderedParagraphs.at(-1) === rendered.closingCharge
@@ -4825,6 +4948,7 @@ function skyPlacementWritingSection(
 
   const layer = (
     rendered.templateKey === "sky-placement-frame-v3"
+    || rendered.templateKey === "sky-v4-canonical-reader-v1"
     || rendered.templateKey === "sky-placement-article-v2"
     || rendered.templateKey === "sky-placement-continuous-v2"
     || rendered.contentKey?.startsWith("authored/")
@@ -4920,6 +5044,10 @@ function normalizeSkyPlacementSurface(
     articleMode?: "current" | "archive";
     articleKey?: string | null;
     hasPriorIngress?: boolean;
+    locationLatitude?: number | null;
+    locationTimeZone?: string | null;
+    moonEvent?: SkySnapshot["moonEvent"] | null;
+    positions?: PlanetPosition[];
   }
 ): NormalizedSkyPlacementArticle {
   const fallbackSection = skyPlacementWritingSection(position, duration, beats, generatedAt, articleOptions);
@@ -4975,6 +5103,9 @@ function currentSkyPlacementDetailArticle({
   articleMode = "current",
   generatedAt,
   generatedContent,
+  locationLatitude,
+  locationTimeZone,
+  moonEvent,
   onOpenDetail,
   position,
   positions
@@ -4987,6 +5118,9 @@ function currentSkyPlacementDetailArticle({
   onOpenDetail?: (detail: SkyDetail) => void;
   position: PlanetPosition;
   positions: PlanetPosition[];
+  locationLatitude?: number | null;
+  locationTimeZone?: string | null;
+  moonEvent?: SkySnapshot["moonEvent"] | null;
 }): SkyDetail {
   const activeAspects = skyAspectsForPlacement(position.planet, aspects);
   const fallbackTitle = placementDetailTitle(position, activeAspects);
@@ -5010,7 +5144,11 @@ function currentSkyPlacementDetailArticle({
     {
       articleKey,
       articleMode,
-      hasPriorIngress: articleMode === "archive"
+      hasPriorIngress: articleMode === "archive",
+      locationLatitude,
+      locationTimeZone,
+      moonEvent,
+      positions
     }
   );
   const normalizedParagraphs = normalized.sections
@@ -5027,6 +5165,21 @@ function currentSkyPlacementDetailArticle({
         normalizedParagraphs
       )
     : normalizedParagraphs;
+  const isCanonicalSkyV4Article = placementSection?.sourceKeys.includes("sky-v4-canonical-reader-v1") ?? false;
+  const isFallbackOnlyPreview = isFallbackOnlySkyPlacementPreview();
+  const fallbackDateLine = body.find((paragraph) => (
+    typeof paragraph === "string"
+    && /^[A-Z][a-z]+ \d{1,2}(?:, \d{4})? to [A-Z][a-z]+ \d{1,2}, \d{4}$/u.test(paragraph.trim())
+  ))?.trim();
+  const fallbackBody = body.filter((paragraph): paragraph is string => (
+    typeof paragraph === "string"
+    && paragraph.trim() !== fallbackDateLine
+    && comparableText(paragraph) !== comparableText(placementSection?.articleWindow ?? "")
+    && comparableText(paragraph) !== comparableText(transitRangeLabel ?? "")
+  ));
+  const displayBody = isCanonicalSkyV4Article && !isFallbackOnlyPreview
+    ? body
+    : composeSkyPlacementFallbackParagraphs(fallbackBody);
   const relatedAspectSections = isRegistryArticle
     ? []
     : relatedSkyAspectSectionsForPlacement({
@@ -5056,6 +5209,7 @@ function currentSkyPlacementDetailArticle({
     body: section.body,
     role: "main" as const
   }));
+  const displayArticleSections = isFallbackOnlyPreview ? [] : articleSections;
   const effectiveTransitRangeLabel = placementSection?.articleWindow ?? transitRangeLabel;
   const historicalLookback = null;
   return {
@@ -5069,7 +5223,11 @@ function currentSkyPlacementDetailArticle({
       articleMode === "archive" ? null : formatPlacementPosition(position).toUpperCase(),
       isRegistryArticle || isContinuousFallback ? null : effectiveTransitRangeLabel
     ].filter(Boolean).join(" · "),
-    duration: isRegistryArticle || isContinuousFallback ? undefined : effectiveTransitRangeLabel ?? undefined,
+    duration: isFallbackOnlyPreview
+      ? fallbackDateLine ?? effectiveTransitRangeLabel ?? undefined
+      : isRegistryArticle || isContinuousFallback
+        ? undefined
+        : effectiveTransitRangeLabel ?? undefined,
     tagline: placementSection?.tagline ?? undefined,
     keyDates: placementSection?.keyDates ?? [],
     keyDatesIntro: placementSection?.keyDatesIntro ?? null,
@@ -5078,18 +5236,94 @@ function currentSkyPlacementDetailArticle({
     risingHoroscopes: placementSection?.risingHoroscopes,
     articleAspectPassages: placementSection?.articleAspectPassages,
     retrograde: isRetrograde,
-    plainBody: articleSections.length === 0
+    plainBody: displayArticleSections.length === 0
       && normalized.sections.some((section) => section.layer === "authored"),
     suppressTldr: !placementSection?.tldr && authoredBody.length > 0 && !isRetrograde,
-    body: articleSections.length > 0 ? [] : body,
-    sections: articleSections.length > 0 ? articleSections : relatedAspectSections,
+    body: displayArticleSections.length > 0 ? [] : displayBody,
+    sections: displayArticleSections.length > 0
+      ? [...displayArticleSections, ...relatedAspectSections]
+      : relatedAspectSections,
     relatedAspects: sourceGapAspectRows.length > 0
       ? {
-          heading: "Aspect details",
+          heading: "Aspects shaping this transit",
           rows: sourceGapAspectRows
         }
       : undefined,
     historicalLookback,
+    astrologyDrilldown: null
+  };
+}
+
+function currentSkyV4LunationDetailArticle({
+  event,
+  sky,
+  generatedContent
+}: {
+  event: LunarCalendarEvent;
+  sky: SkySnapshot;
+  generatedContent: GeneratedContentMap;
+}): SkyDetail {
+  const generatedAt = event.startsAt || sky.generatedAt;
+  const dateLine = new Intl.DateTimeFormat("en-US", {
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+    timeZone: sky.location.timeZone || "UTC"
+  }).format(new Date(generatedAt));
+  const routeInput = skyV4LunationRoute(event, skyNodeDisplayPositions(sky.positions));
+  let readerParts: string[] = [];
+  let resolution = "facts-only";
+  try {
+    const rendered = skyV4ReaderRenderer.renderRoute({
+      ...routeInput,
+      dateLine,
+      facts: {
+        eventDate: dateLine,
+        entryDate: dateLine,
+        exitDate: dateLine
+      },
+      contexts: skyV4LunationContexts(event, skyNodeDisplayPositions(sky.positions)),
+      aspects: []
+    }) as { readerParts?: string[]; contentKey?: string | null; resolution?: string };
+    readerParts = rendered.readerParts ?? [];
+    resolution = rendered.resolution ?? resolution;
+  } catch (error) {
+    if (!(error instanceof Error) || !/^SKY_V4_(?:NOT_RELEASED|NOT_SERVABLE|SOURCE_GAP)/u.test(error.message)) {
+      throw error;
+    }
+  }
+  const moonAspects = relatedSkyAspectSectionsForPlacement({
+    aspects: sky.aspects,
+    generatedAt,
+    generatedContent,
+    pointName: "Moon",
+    positions: sky.positions
+  });
+  const sunAspects = relatedSkyAspectSectionsForPlacement({
+    aspects: sky.aspects,
+    generatedAt,
+    generatedContent,
+    pointName: "Sun",
+    positions: sky.positions
+  });
+  const aspectSections = [...moonAspects, ...sunAspects]
+    .filter((section, index, all) => all.findIndex((candidate) => candidate.heading === section.heading) === index)
+    .slice(0, 2);
+
+  return {
+    routePath: `sky/lunation/${event.dateKey}/${normalizeContentIdPart(event.sign ?? "event")}`,
+    glyph: event.glyph,
+    kicker: event.eclipseType ? "Eclipse" : "Lunation",
+    title: event.title,
+    meta: `${dateLine} · ${resolution}`,
+    duration: dateLine,
+    suppressTldr: true,
+    body: readerParts,
+    sections: aspectSections,
+    relatedAspects: aspectSections.length > 0
+      ? { heading: "Key aspects", grouping: "event", rows: [] }
+      : undefined,
+    historicalLookback: null,
     astrologyDrilldown: null
   };
 }
@@ -5114,6 +5348,9 @@ function skyDetailFromRoutePath(
       aspects: sky.aspects,
       generatedAt: sky.generatedAt,
       generatedContent,
+      locationLatitude: sky.location.latitude,
+      locationTimeZone: sky.location.timeZone,
+      moonEvent: sky.moonEvent,
       onOpenDetail,
       position,
       positions: skyNodeDisplayPositions(sky.positions)
@@ -5138,6 +5375,9 @@ function skyDetailFromRoutePath(
       aspects: sky.aspects,
       generatedAt: sky.generatedAt,
       generatedContent,
+      locationLatitude: sky.location.latitude,
+      locationTimeZone: sky.location.timeZone,
+      moonEvent: sky.moonEvent,
       onOpenDetail,
       position: routedPosition,
       positions: displayPositions
@@ -5163,6 +5403,9 @@ function skyDetailFromRoutePath(
       articleMode: "archive",
       generatedAt: sky.generatedAt,
       generatedContent,
+      locationLatitude: sky.location.latitude,
+      locationTimeZone: sky.location.timeZone,
+      moonEvent: sky.moonEvent,
       onOpenDetail,
       position: routedPosition,
       positions: displayPositions
@@ -10961,8 +11204,12 @@ export function App() {
     generatedContent: GeneratedContentMap,
     description?: string
   ): SkyDetail | null {
-    if (!sky || event.type === "lunation") {
+    if (!sky) {
       return null;
+    }
+
+    if (event.type === "lunation") {
+      return currentSkyV4LunationDetailArticle({ event, sky, generatedContent });
     }
 
     const generatedAt = event.startsAt || sky.generatedAt;
@@ -11021,6 +11268,8 @@ export function App() {
       aspects: sky.aspects,
       generatedAt,
       generatedContent,
+      locationLatitude: sky.location.latitude,
+      moonEvent: sky.moonEvent,
       onOpenDetail: openSkyDetail,
       position: eventPosition,
       positions: sky.positions
@@ -11256,7 +11505,6 @@ export function App() {
       .then((dashboardBundle) => {
         if (!dashboardBundle || cancelled) return false;
         installSkyPlacementFallbackArchitectureV3Bundle(dashboardBundle);
-        markAvailable();
         return true;
       });
 
@@ -13834,6 +14082,24 @@ export function App() {
                           setMobileSkyControlsOpen(false);
                           setSkyFullChartOpen(true);
                         }}
+                        onOpenLunation={sky.moonEvent ? () => {
+                          const moonEvent = sky.moonEvent!;
+                          openSkyDetail(currentSkyV4LunationDetailArticle({
+                            event: {
+                              id: `lunation-${moonEvent.occursAt}`,
+                              type: "lunation",
+                              title: `${moonEvent.name} in ${moonEvent.sign}`,
+                              startsAt: moonEvent.occursAt,
+                              dateKey: moonEvent.occursAt.slice(0, 10),
+                              glyph: signGlyph(moonEvent.sign),
+                              primary: true,
+                              sign: moonEvent.sign,
+                              eclipseType: moonEvent.eclipseType
+                            },
+                            sky,
+                            generatedContent: skyGeneratedContent
+                          }));
+                        } : undefined}
                       />
                     ) : (
                       <div className="sky-card sky-card--empty" aria-live="polite">
@@ -13850,6 +14116,8 @@ export function App() {
                       positions={sky.positions}
                       generatedAt={sky.generatedAt}
                       generatedContent={skyGeneratedContent}
+                      locationLatitude={sky.location.latitude}
+                      moonEvent={sky.moonEvent}
                       onOpenDetail={openSkyDetail}
                     />
                   )}
@@ -13860,6 +14128,8 @@ export function App() {
                       generatedAt={sky.generatedAt}
                       generatedContent={skyGeneratedContent}
                       contentStatus={skyPlacementFallbackStatus}
+                      locationLatitude={sky.location.latitude}
+                      moonEvent={sky.moonEvent}
                       lifeAreaFocus={[]}
                       onOpenDetail={openSkyDetail}
                     />
@@ -13871,6 +14141,8 @@ export function App() {
                       generatedAt={sky.generatedAt}
                       generatedContent={skyGeneratedContent}
                       contentStatus={skyPlacementFallbackStatus}
+                      locationLatitude={sky.location.latitude}
+                      moonEvent={sky.moonEvent}
                       lifeAreaFocus={userLifeAreaFocus}
                       onOpenDetail={openSkyDetail}
                     />
@@ -15100,12 +15372,14 @@ function SkyCards({
   sky,
   dateLabel,
   locationLabel,
-  onOpenChart
+  onOpenChart,
+  onOpenLunation
 }: {
   sky: SkySnapshot;
   dateLabel: string;
   locationLabel: string;
   onOpenChart: () => void;
+  onOpenLunation?: () => void;
 }) {
   const sun = sky.positions.find((position) => position.planet === "Sun");
   const moon = sky.positions.find((position) => position.planet === "Moon");
@@ -15218,13 +15492,13 @@ function SkyCards({
             </span>
           </span>
         </div>
-        <NextLunationChicklet sky={sky} />
+        <NextLunationChicklet sky={sky} onOpenDetail={onOpenLunation} />
       </section>
     </>
   );
 }
 
-function NextLunationChicklet({ sky }: { sky: SkySnapshot }) {
+function NextLunationChicklet({ sky, onOpenDetail }: { sky: SkySnapshot; onOpenDetail?: () => void }) {
   const event = nextMoonEvent(sky);
   const exactAt = event?.occursAt;
   const selectedDate = new Date(sky.generatedAt);
@@ -15239,10 +15513,12 @@ function NextLunationChicklet({ sky }: { sky: SkySnapshot }) {
   const countdownLabel = lunationCountdownLabel(selectedDate, exactAt);
 
   return (
-    <div
+    <button
+      type="button"
       className="sky-card next-lun"
-      role="group"
       aria-label={`${title}, ${countdownLabel.toLowerCase()}, ${dateTimeLabel}`}
+      onClick={onOpenDetail}
+      disabled={!onOpenDetail}
     >
       <span className="nl-badge" aria-hidden="true">
         <span className="g">{glyph}</span>
@@ -15264,7 +15540,7 @@ function NextLunationChicklet({ sky }: { sky: SkySnapshot }) {
           {dateTimeLabel}
         </span>
       </div>
-    </div>
+    </button>
   );
 }
 
@@ -15273,12 +15549,16 @@ function RetrogradeCallout({
   positions,
   generatedAt,
   generatedContent,
+  locationLatitude,
+  moonEvent,
   onOpenDetail
 }: {
   aspects: SkySnapshot["aspects"];
   positions: PlanetPosition[];
   generatedAt: string;
   generatedContent: GeneratedContentMap;
+  locationLatitude?: number | null;
+  moonEvent?: SkySnapshot["moonEvent"] | null;
   onOpenDetail: (detail: SkyDetail) => void;
 }) {
   const retrogrades = activeRetrogradePositions(positions);
@@ -15302,6 +15582,8 @@ function RetrogradeCallout({
       aspects,
       generatedAt,
       generatedContent,
+      locationLatitude,
+      moonEvent,
       onOpenDetail,
       position,
       positions
@@ -15455,6 +15737,8 @@ function TodayView({
   generatedAt,
   generatedContent,
   contentStatus,
+  locationLatitude,
+  moonEvent,
   lifeAreaFocus,
   onOpenDetail
 }: {
@@ -15463,6 +15747,8 @@ function TodayView({
   generatedAt: string;
   generatedContent: GeneratedContentMap;
   contentStatus: SkyPlacementContentStatus;
+  locationLatitude?: number | null;
+  moonEvent?: SkySnapshot["moonEvent"] | null;
   lifeAreaFocus: LifeAreaFocus[];
   onOpenDetail: (detail: SkyDetail) => void;
 }) {
@@ -15475,6 +15761,8 @@ function TodayView({
           generatedAt={generatedAt}
           generatedContent={generatedContent}
           contentStatus={contentStatus}
+          locationLatitude={locationLatitude}
+          moonEvent={moonEvent}
           lifeAreaFocus={lifeAreaFocus}
           onOpenDetail={onOpenDetail}
         />
@@ -15590,6 +15878,8 @@ function PlacementTable({
   generatedAt,
   generatedContent,
   contentStatus,
+  locationLatitude,
+  moonEvent,
   lifeAreaFocus,
   onOpenDetail
 }: {
@@ -15598,6 +15888,8 @@ function PlacementTable({
   generatedAt: string;
   generatedContent: GeneratedContentMap;
   contentStatus: SkyPlacementContentStatus;
+  locationLatitude?: number | null;
+  moonEvent?: SkySnapshot["moonEvent"] | null;
   lifeAreaFocus: LifeAreaFocus[];
   onOpenDetail: (detail: SkyDetail) => void;
 }) {
@@ -15657,7 +15949,12 @@ function PlacementTable({
                 positions: displayPositions
               }),
               generatedAt,
-              { aspects, positions: displayPositions }
+              { aspects, positions: displayPositions },
+              {
+                locationLatitude,
+                moonEvent,
+                positions: displayPositions
+              }
             )
           );
           const descriptionState = skyPlacementDescriptionState(rowSummary, contentStatus);
@@ -15665,9 +15962,11 @@ function PlacementTable({
             aspects,
             generatedAt,
             generatedContent,
+            locationLatitude,
+            moonEvent,
             onOpenDetail,
             position,
-            positions
+            positions: displayPositions
           }));
 
           return (

@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "approvedAt": "2026-08-31",
+  "revisions": [
+    {
+      "content_key": "fallback-hook/natal-aspect-lived/sun/square/ascendant",
+      "body": "You may know you have changed long before the people around you do, especially if you keep giving them the version of you they already understand. You keep taking the role everyone expects, soften a decision you have already made, or describe yourself through a title or responsibility that stopped feeling accurate because it is easier than explaining how much has changed.\n\nOther people can only respond to the person you keep showing them. You may know what you want and still sound as if you are asking for permission, or keep saying yes because being dependable has become part of how people understand you. Then it can feel frustrating when nobody notices that the person underneath the role has moved on.\n\nSometimes the opposite happens. You push a more accomplished or confident version of yourself forward because you want people to see where you are headed, then feel pressure to keep proving an identity you are still growing into. Either way, you are dealing with the mismatch between who you are right now and who people expect you to be.\n\nAnyone who actually knows you needs to see who you are today, not just the version of you that makes your life easier for them to understand. Your priorities changed, and your answers can change right along with them.",
+      "body_sha256": "54369d98d998f79eb4dcc35bd3c920269d5b8d8f77677fcd7f6ea2dac5010d20",
+      "approval_level": "exact_owner_approved",
+      "supersedes": "V15 serving body"
+    },
+    {
+      "content_key": "fallback-hook/natal-aspect-lived/moon/square/midheaven",
+      "body": "It is normal to want to be taken seriously, but public achievement often comes at the expense of your private life. A demanding project takes your free time, a leadership role fills your evenings, and work follows you home. The Moon brings the focus back to your physical and emotional baseline. Sleep, meals, privacy, and the routines that anchor you do not lose their value just because people are proud of what you are doing. One extra meeting or one late night looks completely manageable on paper, but added together, they dictate what your everyday life actually feels like. Your basic needs have to factor into whatever you are building publicly. Recognition is great, but a path forward only makes sense if you can sustain living inside it.",
+      "body_sha256": "8e0ae20d731653e4ee6a4d1624fc7fc2d45fdf5ca895d92132b6a88058d03bc0",
+      "approval_level": "exact_owner_approved",
+      "supersedes": "V15 serving body"
+    }
+  ]
+}

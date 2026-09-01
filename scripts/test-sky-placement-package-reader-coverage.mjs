@@ -47,8 +47,8 @@ for (const planet of planets) {
 
 assert.equal(Object.values(counts).reduce((sum, count) => sum + count, 0), 168);
 assert.deepEqual(counts, {
-  "sky-placement-continuous-v2": 55,
-  "sky-placement-frame-v3": 101,
+  "sky-placement-continuous-v2": 56,
+  "sky-placement-frame-v3": 100,
   "sky-placement-moon-entry-v1": 12
 });
 console.log(JSON.stringify({ pages: 168, blanks: 0, unresolvedPlaceholders: 0, counts }, null, 2));

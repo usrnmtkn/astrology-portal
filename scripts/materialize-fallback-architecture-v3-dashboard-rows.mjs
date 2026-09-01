@@ -346,6 +346,7 @@ function mapPackageRecord(record, bucket) {
   }
 
   const contentRole = String(record.content_role ?? bucket).trim();
+  const isSkyV4Stage = bucket === "sky-v4-canonical-stage";
   const sourceReviewStatus = String(record.review_status ?? "").trim();
   // Package templates without an explicit editorial status are already
   // reader-eligible in the bundled resolver. Normalize only the mirror
@@ -354,6 +355,7 @@ function mapPackageRecord(record, bucket) {
     ? "approved_reuse"
     : sourceReviewStatus;
   const requiresServingManifest = isContinuousSkyPlacementRecord(record, contentKey)
+    && !isSkyV4Stage
     && reviewStatus !== "superseded";
   const distributionRelease = requiresServingManifest
     ? skyPlacementReleaseByKey.get(contentKey)
@@ -361,7 +363,9 @@ function mapPackageRecord(record, bucket) {
     : null;
   const distributionApproved = distributionRelease?.distribution_state === "serving"
     && distributionRelease.approved_keys?.includes(contentKey);
-  const serving = record.serving_enabled === false
+  const serving = isSkyV4Stage && record.serving_enabled === true
+    ? { status: "LIVE", lane: "serving", reviewState: null }
+    : record.serving_enabled === false
     ? { status: "DRAFT", lane: "reference", reviewState: "serving-disabled" }
     : requiresServingManifest && !distributionRelease
     ? { status: "DRAFT", lane: "reference", reviewState: "serving-manifest-required" }
@@ -380,7 +384,6 @@ function mapPackageRecord(record, bucket) {
     throw new Error(`${contentKey} must carry positive_test="${placementSentencePositiveTest}" before dashboard import.`);
   }
 
-  const isSkyV4Stage = bucket === "sky-v4-canonical-stage";
   return {
     content_key: contentKey,
     surface,

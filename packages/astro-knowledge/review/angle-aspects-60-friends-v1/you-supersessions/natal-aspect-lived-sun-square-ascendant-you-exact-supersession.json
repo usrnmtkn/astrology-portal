@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "id": "angle-aspects-60-friends-v1-you-supersession-natal-aspect-lived-sun-square-ascendant",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_reviewed",
+  "provenanceNote": "Later exact owner-approved You wording supersedes the serving V15 body without mutating the historical V15 record.",
+  "contentKey": "fallback-hook/natal-aspect-lived/sun/square/ascendant",
+  "textField": "body",
+  "payloadSha256": "9f17e4b4f6a013266399f3fc72e0632e911580a79694011ee74dff816421a2a7",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "You may know you have changed long before the people around you do, especially if you keep giving them the version of you they already understand. You keep taking the role everyone expects, soften a decision you have already made, or describe yourself through a title or responsibility that stopped feeling accurate because it is easier than explaining how much has changed.\n\nOther people can only respond to the person you keep showing them. You may know what you want and still sound as if you are asking for permission, or keep saying yes because being dependable has become part of how people understand you. Then it can feel frustrating when nobody notices that the person underneath the role has moved on.\n\nSometimes the opposite happens. You push a more accomplished or confident version of yourself forward because you want people to see where you are headed, then feel pressure to keep proving an identity you are still growing into. Either way, you are dealing with the mismatch between who you are right now and who people expect you to be.\n\nAnyone who actually knows you needs to see who you are today, not just the version of you that makes your life easier for them to understand. Your priorities changed, and your answers can change right along with them.",
+    "sourceMechanism": "Later exact owner-approved You supersession transcribed byte-for-byte from the SHA-bound Friends V1 handoff revision artifact; historical V15 approval evidence is preserved."
+  },
+  "approvedAt": "2026-08-31",
+  "approvalEffect": "exact_wording_supersession",
+  "sourceArtifact": {
+    "id": "you-v15-two-owner-approved-supersessions",
+    "path": "packages/astro-knowledge/review/angle-aspects-60-friends-v1/YOU-V15-TWO-OWNER-APPROVED-SUPERSESSIONS.json",
+    "sha256": "bba7b003351a7b145c16c17ec6b85226d74aba37124c53aa08a2da54f7f1b853",
+    "bodySha256": "54369d98d998f79eb4dcc35bd3c920269d5b8d8f77677fcd7f6ea2dac5010d20"
+  },
+  "supersedes": {
+    "priorApproval": {
+      "approvalLevel": "exact_owner_approved",
+      "recordPath": "packages/astro-knowledge/review/angle-aspects-60-v15/records/003-natal-aspect-lived-sun-square-ascendant-exact-approval.json",
+      "payloadSha256": "7e1f1990885df5927898223b53c3203a07d00040586faf9dd264d178c5d5f0d1",
+      "approvedAt": "2026-08-31"
+    },
+    "priorBodySha256": "4082e351cba172016c30083ad98fd95c5739ba47b5187d93c51655d2de90aaae",
+    "historicalRecordPreserved": true
+  },
+  "ownerConfirmationSource": {
+    "channel": "Codex task owner message and SHA-pinned handoff",
+    "taskId": "01a04fc0-899b-7cd2-bb2e-98ad182391bb",
+    "date": "2026-08-31"
+  },
+  "additionalBilledCalls": 0
+}

@@ -127,9 +127,21 @@ globalThis.fetch = async (input, init = {}) => {
   assert.equal(url.pathname, "/rest/v1/generated_interpretations");
 
   if (method === "PATCH") {
-    assert.equal(url.searchParams.get("id"), `eq.${rowId}`);
+    assert.equal(url.searchParams.get("id"), `eq.${row.id}`);
     const patch = JSON.parse(String(init.body));
     row = { ...row, ...patch };
+    return Response.json([row]);
+  }
+
+  if (method === "POST") {
+    const created = JSON.parse(String(init.body));
+    row = {
+      id: "content-studio-created-row",
+      target_date: null,
+      updated_at: "2026-09-01T04:00:00.000Z",
+      created_at: "2026-09-01T04:00:00.000Z",
+      ...created
+    };
     return Response.json([row]);
   }
 
@@ -258,6 +270,72 @@ assert.equal(demoted.payload.rows[0].status, "DRAFT");
 
 const hiddenFromReader = await loadLiveGeneratedContentForKeys([contentKey]);
 assert.equal(hiddenFromReader.size, 0, "Draft Content Studio rows must not reach the reader API.");
+
+const natalAspectContentKey = "fallback-hook/natal-aspect-lived/lilith/square/ascendant";
+const createdApprovedNatalAspect = await invokeApi("POST", "/api/admin/generated-content", {
+  contentKey: natalAspectContentKey,
+  surface: "you",
+  mode: "in_depth",
+  eventType: "fallback-hook",
+  blockType: "fallback_hook",
+  headline: "Lilith Square Ascendant",
+  summary: "Exact natal aspect writing for the reader's birth chart.",
+  body: "Exact reader copy.",
+  reviewStatus: "approved",
+  sections: {
+    packageRecord: {
+      contentKey: natalAspectContentKey,
+      content_role: "full_copy",
+      body_you: "Exact reader copy.",
+      body_they: "{Name} receives exact friend-view copy.",
+      review_status: "approved"
+    }
+  },
+  facts: { fallbackArchitectureV3: true },
+  sourceSnapshot: {
+    sourcePackage: "tldrastro-fallback-architecture-v3",
+    review_status: "approved"
+  }
+});
+assert.equal(createdApprovedNatalAspect.status, 200);
+assert.equal(createdApprovedNatalAspect.payload.rows[0].status, "LIVE", "A newly approved package row must publish on its first save.");
+assert.equal(createdApprovedNatalAspect.payload.rows[0].lane, "serving");
+assert.equal(createdApprovedNatalAspect.payload.rows[0].review_state, null);
+assert.equal(createdApprovedNatalAspect.payload.rows[0].provider, "tldrastro-fallback-architecture-v3");
+assert.equal(createdApprovedNatalAspect.payload.rows[0].facts.review_status, "approved");
+assert.equal(createdApprovedNatalAspect.payload.rows[0].source_snapshot.review_status, "approved");
+assert.equal(createdApprovedNatalAspect.payload.rows[0].sections.packageRecord.review_status, "approved");
+assert.equal(createdApprovedNatalAspect.payload.rows[0].sections.packageRecord.body_they, "{{Name}} receives exact friend-view copy.");
+assert.equal(createdApprovedNatalAspect.payload.rows[0].sections.body_they, "{{Name}} receives exact friend-view copy.");
+
+row = {
+  ...row,
+  status: "DRAFT",
+  lane: "reference",
+  review_state: "needs-review",
+  sections: {
+    ...row.sections,
+    body_they: "{Name} receives older saved friend-view copy.",
+    packageRecord: {
+      ...row.sections.packageRecord,
+      body_they: "{Name} receives older saved friend-view copy.",
+      review_status: "approved"
+    }
+  }
+};
+const recoveredApprovedNatalAspect = await invokeApi("PATCH", "/api/admin/generated-content", {
+  id: row.id,
+  headline: row.headline,
+  summary: row.summary,
+  body: row.body,
+  sections: row.sections,
+  facts: row.facts,
+  sourceSnapshot: row.source_snapshot,
+  reviewStatus: "approved"
+});
+assert.equal(recoveredApprovedNatalAspect.status, 200);
+assert.equal(recoveredApprovedNatalAspect.payload.rows[0].status, "LIVE", "An approved package row stuck in Draft must recover on Save & publish.");
+assert.equal(recoveredApprovedNatalAspect.payload.rows[0].sections.packageRecord.body_they, "{{Name}} receives older saved friend-view copy.");
 
 assert.ok(
   requests.some(({ method, url }) => method === "PATCH" && url.includes(`id=eq.${rowId}`)),
