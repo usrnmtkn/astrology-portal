@@ -27,6 +27,7 @@ import { isGovernedReaderEligible, synastryReaderTier, transitReaderTier, type S
 import { normalizeLunationSign } from "./lunationNormalization.mjs";
 import { sharedLunationEclipseSectionKey } from "./lunationEclipseSectionKeys.mjs";
 import { sha256Text } from "./contentIntegrity.mjs";
+import { requireUniformSkyPlacementHoroscopeSet } from "./skyPlacementHoroscopeSetPolicy.mjs";
 
 export interface AuthoredCard {
   contentKey: string;
@@ -185,6 +186,11 @@ export interface SkyPlacementFacts {
   includeSignLore?: boolean;
 }
 export interface SkyPlacementHouseCoreFacts { planet: string; sign: string; house: number }
+export interface SkyPlacementRisingHoroscopeSetFacts {
+  planet: string;
+  sign: string;
+  entries: Array<{ risingSign: string; house: number }>;
+}
 export interface SkyArticleKeyDate {
   date: string;
   endDate?: string;
@@ -593,6 +599,7 @@ export function createTransitSynastryRenderer(
       || !row
       || row.content_role !== "house_horoscope_core"
       || row.grammar_frame !== "second_person_block"
+      || !["full-owner-authored-horoscope", "compact-house-core"].includes(String(row.content_tier))
       || !row.body_you
     ) {
       throw new SourceGapError(`SOURCE_GAP: house horoscope core ${normalizedPlanet}/${normalizedSign}/house-${normalizedHouse}`);
@@ -601,9 +608,26 @@ export function createTransitSynastryRenderer(
     return {
       body: row.body_you,
       contentKey: row.contentKey,
+      contentTier: row.content_tier,
       house: normalizedHouse,
       templateKey: `house-horoscope-core/${normalizedPlanet}-${normalizedSign}-v1`
     };
+  }
+
+  function renderSkyPlacementRisingHoroscopeSet({
+    planet,
+    sign,
+    entries
+  }: SkyPlacementRisingHoroscopeSetFacts) {
+    const rendered = entries.map((entry) => ({
+      risingSign: entry.risingSign,
+      ...renderSkyPlacementHouseCore({ planet, sign, house: entry.house })
+    }));
+    try {
+      return requireUniformSkyPlacementHoroscopeSet(rendered, { planet, sign });
+    } catch (error) {
+      throw new SourceGapError(error instanceof Error ? error.message : String(error));
+    }
   }
 
   const tpl = (key: string) => {
@@ -3106,5 +3130,5 @@ export function createTransitSynastryRenderer(
     };
   }
 
-  return { renderTransitHouse, renderTransitHouseEvent, renderTransitAspect, renderTransitLabel, renderTransitReturn, renderTransitRetro, renderCompat, renderSynastryAspect, renderSkySeason, renderSkyHoroscope, renderSkyLunation, renderSkyPlacement, renderSkyPlacementHouseCore, renderSkyAspectCard, renderCircleStory, renderPairDaily, formatCircleNames, renderCalendarPhase, renderVoidOfCourse, renderSeasonMarker, renderWeeklyMoon, renderBondTransit, renderLunationMacro, renderLunationHoroscope, renderLunationEventCard, renderDoDont, renderDailyGlance };
+  return { renderTransitHouse, renderTransitHouseEvent, renderTransitAspect, renderTransitLabel, renderTransitReturn, renderTransitRetro, renderCompat, renderSynastryAspect, renderSkySeason, renderSkyHoroscope, renderSkyLunation, renderSkyPlacement, renderSkyPlacementHouseCore, renderSkyPlacementRisingHoroscopeSet, renderSkyAspectCard, renderCircleStory, renderPairDaily, formatCircleNames, renderCalendarPhase, renderVoidOfCourse, renderSeasonMarker, renderWeeklyMoon, renderBondTransit, renderLunationMacro, renderLunationHoroscope, renderLunationEventCard, renderDoDont, renderDailyGlance };
 }

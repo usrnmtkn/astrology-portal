@@ -13,6 +13,7 @@ import { isGovernedReaderEligible, synastryReaderTier, transitReaderTier } from 
 import { normalizeLunationSign } from "./lunationNormalization.mjs";
 import { sharedLunationEclipseSectionKey } from "./lunationEclipseSectionKeys.mjs";
 import { sha256Text } from "./contentIntegrity.mjs";
+import { requireUniformSkyPlacementHoroscopeSet } from "./skyPlacementHoroscopeSetPolicy.mjs";
 
 const here = path.dirname(url.fileURLToPath(import.meta.url));
 const lib = JSON.parse(fs.readFileSync(path.join(here, "../source-rows/transit-synastry-rows-v1.json"), "utf8"));
@@ -243,6 +244,7 @@ export function renderSkyPlacementHouseCore({ planet, sign, house }) {
     || !row
     || row.content_role !== "house_horoscope_core"
     || row.grammar_frame !== "second_person_block"
+    || !["full-owner-authored-horoscope", "compact-house-core"].includes(String(row.content_tier))
     || !row.body_you
   ) {
     throw new SourceGapError(`SOURCE_GAP: house horoscope core ${normalizedPlanet}/${normalizedSign}/house-${normalizedHouse}`);
@@ -251,9 +253,22 @@ export function renderSkyPlacementHouseCore({ planet, sign, house }) {
   return {
     body: row.body_you,
     contentKey: row.contentKey,
+    contentTier: row.content_tier,
     house: normalizedHouse,
     templateKey: `house-horoscope-core/${normalizedPlanet}-${normalizedSign}-v1`
   };
+}
+
+export function renderSkyPlacementRisingHoroscopeSet({ planet, sign, entries }) {
+  const rendered = entries.map((entry) => ({
+    risingSign: entry.risingSign,
+    ...renderSkyPlacementHouseCore({ planet, sign, house: entry.house })
+  }));
+  try {
+    return requireUniformSkyPlacementHoroscopeSet(rendered, { planet, sign });
+  } catch (error) {
+    throw new SourceGapError(error instanceof Error ? error.message : String(error));
+  }
 }
 
 

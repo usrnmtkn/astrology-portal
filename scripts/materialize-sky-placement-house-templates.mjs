@@ -237,6 +237,9 @@ for (const placementKey of placementKeys) {
       : transitRow
         ? "approved-transit-fallback"
         : "approved-template-composition";
+    const contentTier = protectedOwnerRow || ownerInventoryRow
+      ? "full-owner-authored-horoscope"
+      : "compact-house-core";
     selectionCounts[protectedOwnerRow
       ? "protectedOwnerAuthored"
       : ownerInventoryRow
@@ -250,6 +253,7 @@ for (const placementKey of placementKeys) {
       contentKey,
       headline: `${title(planet)} in ${title(sign)} · ${ordinal(house)} House`,
       content_role: "house_horoscope_core",
+      content_tier: contentTier,
       grammar_frame: "second_person_block",
       render_policy: "sky-placement-house-template-v1",
       body_you: body,
@@ -320,7 +324,8 @@ const artifact = {
       "Approved transit.house template composition when no complete approved passage exists."
     ],
     rejection: "Any exact text in the owner correction ledger is ineligible.",
-    preservation: "Author-final text is immutable. A protected passage may not be shortened, summarized, excerpted, paraphrased, or reconstructed from matrix evidence. Hash or word-count drift fails materialization."
+    preservation: "Author-final text is immutable. A protected passage may not be shortened, summarized, excerpted, paraphrased, or reconstructed from matrix evidence. Hash or word-count drift fails materialization.",
+    setCompleteness: "A reader-facing twelve-sign horoscope set may contain full owner-authored horoscopes or compact house cores, but never both. Mixed-tier sets fail closed until all twelve full passages are approved."
   },
   placementCount: placementKeys.length,
   rowCount: rows.length,
