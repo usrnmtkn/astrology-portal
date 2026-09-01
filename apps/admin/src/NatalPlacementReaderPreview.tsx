@@ -70,6 +70,7 @@ function packageRowFromSavedRow(row: PreviewRow) {
 function sourceLabel(contentKey: string) {
   if (contentKey.includes("planet-in-sign")) return "Planet-in-sign section";
   if (contentKey.includes("house-context")) return "House section";
+  if (contentKey.includes("natal.modifier.retrograde")) return "Retrograde modifier";
   if (contentKey.includes("complete-final")) return "Exact full write-up";
   return "Reader section";
 }

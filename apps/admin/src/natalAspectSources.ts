@@ -1,4 +1,5 @@
 export const natalAspectContentKeyPrefix = "fallback-hook/natal-aspect-lived/";
+export const natalAspectTheyNameVariable = "{{Name}}";
 
 export type NatalAspectSelection = {
   first: string;
