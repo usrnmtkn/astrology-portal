@@ -11,6 +11,10 @@ const distRoot = path.join(repoRoot, "apps/admin/dist");
 const manifestPath = path.join(distRoot, ".vite/manifest.json");
 const budgetsPath = path.join(repoRoot, "scripts/admin-bundle-budgets.json");
 
+// The entry allowance includes the Content Studio publishing controls plus the
+// Personal Transit and House Transit workspaces, their CRUD lifecycle, and
+// bounded API-failure handling. Deferred content markers remain forbidden.
+
 function formatBytes(value) {
   if (value < 1000) return `${value} B`;
   return `${(value / 1000).toFixed(1)} kB`;
