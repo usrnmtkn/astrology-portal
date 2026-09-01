@@ -13,8 +13,8 @@ const budgetsPath = path.join(repoRoot, "scripts/admin-bundle-budgets.json");
 
 // The entry allowance includes the Content Studio publishing controls plus the
 // Personal Transit, House Transit, and paired Daily At-a-Glance workspaces,
-// their CRUD lifecycle, and bounded API-failure handling. Deferred content
-// markers remain forbidden.
+// including its rendered Friend-variable guide, their CRUD lifecycle, and
+// bounded API-failure handling. Deferred content markers remain forbidden.
 
 function formatBytes(value) {
   if (value < 1000) return `${value} B`;
