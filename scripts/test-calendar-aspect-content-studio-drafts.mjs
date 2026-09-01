@@ -109,6 +109,15 @@ assert.match(generatedContentApi, /const readerServing = !stageKind/u);
 assert.match(generatedContentApi, /packageRoleCanServeExactCopy\(packageRole\)/u);
 assert.match(generatedContentApi, /facts\.readerServing = readerServing/u);
 
+const contentStudioDashboard = readText("apps/admin/src/GeneratedContentAdminDashboard.tsx");
+assert.match(contentStudioDashboard, /label: "Calendar Aspects"[\s\S]*?category: "Calendar Aspects"/u);
+assert.match(contentStudioDashboard, /contentKey\.startsWith\("sky-card\/"\)/u);
+assert.match(contentStudioDashboard, /contentKey\.startsWith\("fallback-hook\/sky-aspect-sign\/"\)/u);
+assert.match(contentStudioDashboard, /if \(isCalendarAspectContentRow\(row\)\) return "Calendar Aspects";/u);
+assert.match(contentStudioDashboard, /categoryFilter === "Calendar Aspects"/u);
+assert.match(contentStudioDashboard, /Edit Calendar aspect cards/u);
+assert.match(contentStudioDashboard, /These drafts remain hidden from readers until a separate approval and release\./u);
+
 const styleGuide = readText("apps/web/src/content/fallbackArchitectureV3/admin/WRITING-STYLE-GUIDE.md");
 assert.match(styleGuide, /Human consequence first/u);
 assert.match(styleGuide, /Name the thing/u);
