@@ -30,8 +30,6 @@ const lunarContextFields: FieldDefinition[] = [
   { path: "FallbackBody", label: "Fallback context", description: "Event-day context for fallback copy.", rows: 4 }
 ];
 const allContinuousFields = [...mainReaderFields, ...fallbackFields];
-const planetOrder = ["sun", "mercury", "venus", "mars", "jupiter", "saturn", "uranus", "neptune", "pluto", "chiron"];
-const signOrder = ["aries", "taurus", "gemini", "cancer", "leo", "virgo", "libra", "scorpio", "sagittarius", "capricorn", "aquarius", "pisces"];
 
 function valueAt(source: Record<string, unknown>, path: string): unknown { return path.split(".").reduce<unknown>((value, part) => record(value)[part], source); }
 function setValueAt(source: Record<string, unknown>, path: string, value: unknown) {
@@ -62,18 +60,6 @@ function preferredRow(left: AdminRow, right: AdminRow) {
   if (score(right) !== score(left)) return score(right) > score(left) ? right : left;
   return String(right.updated_at ?? "") > String(left.updated_at ?? "") ? right : left;
 }
-function uniqueContinuousRows(rows: AdminRow[]) {
-  const byKey = new Map<string, AdminRow>();
-  for (const row of rows) {
-    if (!continuousIdentity(row.content_key) || String(rowEffectiveRecord(row).studio_content_type ?? "") !== "continuous-placement") continue;
-    const previous = byKey.get(row.content_key); byKey.set(row.content_key, previous ? preferredRow(previous, row) : row);
-  }
-  return [...byKey.values()].sort((left, right) => {
-    const a = continuousIdentity(left.content_key)!; const b = continuousIdentity(right.content_key)!;
-    return planetOrder.indexOf(a.planet) - planetOrder.indexOf(b.planet) || signOrder.indexOf(a.sign) - signOrder.indexOf(b.sign);
-  });
-}
-
 function record(value: unknown): Record<string, unknown> {
   return value && typeof value === "object" && !Array.isArray(value) ? value as Record<string, unknown> : {};
 }
@@ -84,14 +70,6 @@ export default function SkyV4StudioReviewPanel(props: Props) {
   const [currentFields, setCurrentFields] = useState<Record<EditablePath, string>>(() => editableValues(props.effectiveRecord));
   const [savingCurrent, setSavingCurrent] = useState(false);
   const [currentSaveMessage, setCurrentSaveMessage] = useState<string | null>(null);
-  const [batchOpen, setBatchOpen] = useState(false);
-  const [batchLoading, setBatchLoading] = useState(false);
-  const [batchError, setBatchError] = useState<string | null>(null);
-  const [batchRows, setBatchRows] = useState<AdminRow[]>([]);
-  const [selectedBatchKey, setSelectedBatchKey] = useState("");
-  const [batchEdits, setBatchEdits] = useState<Partial<Record<EditablePath, string>>>({});
-  const [savingBatchKey, setSavingBatchKey] = useState<string | null>(null);
-  const [batchSaveMessage, setBatchSaveMessage] = useState<Record<string, string>>({});
 
   const provenance = record(props.effectiveRecord.studio_provenance);
   const contentType = String(props.effectiveRecord.studio_content_type ?? "");
@@ -125,8 +103,6 @@ export default function SkyV4StudioReviewPanel(props: Props) {
 
   const currentDirty = (isContinuousPlacement || isLunarContext)
     && currentFieldDefinitions.some((field) => currentFields[field.path] !== baselineFields[field.path]);
-  const continuousRows = useMemo(() => uniqueContinuousRows(batchRows), [batchRows]);
-  const selectedBatchRow = continuousRows.find((row) => row.content_key === selectedBatchKey) ?? continuousRows[0];
 
   async function generatedContentRows(url: string) {
     const response = await fetch(url, { headers: adminCredentialHeaders(props.secret) });
@@ -138,12 +114,10 @@ export default function SkyV4StudioReviewPanel(props: Props) {
 
   async function fetchCurrentStoredRow() {
     const rows = await generatedContentRows(`/api/admin/generated-content?status=all&visibility=all&contentKey=${encodeURIComponent(props.contentKey)}&limit=20`);
-    const exact = isContinuousPlacement
-      ? uniqueContinuousRows(rows).find((row) => row.content_key === props.contentKey)
-      : rows.filter((row) => row.content_key === props.contentKey).reduce<AdminRow | undefined>(
-        (preferred, row) => preferred ? preferredRow(preferred, row) : row,
-        undefined
-      );
+    const exact = rows.filter((row) => row.content_key === props.contentKey).reduce<AdminRow | undefined>(
+      (preferred, row) => preferred ? preferredRow(preferred, row) : row,
+      undefined
+    );
     if (!exact) throw new Error(`Could not load the stored Content Studio row for ${props.contentKey}.`);
     return exact;
   }
@@ -190,60 +164,6 @@ export default function SkyV4StudioReviewPanel(props: Props) {
       setError(reason instanceof Error ? reason.message : "The grouped SKY V4 draft could not be saved.");
     } finally {
       setSavingCurrent(false);
-    }
-  }
-
-  async function loadContinuousFallbacks() {
-    setBatchLoading(true);
-    setBatchError(null);
-    try {
-      const rows = await generatedContentRows("/api/admin/generated-content?status=all&visibility=all&surface=sky&limit=1000");
-      const continuous = uniqueContinuousRows(rows);
-      setBatchRows(continuous);
-      const initial = continuous.find((row) => row.content_key === props.contentKey) ?? continuous[0];
-      setSelectedBatchKey(initial?.content_key ?? "");
-      setBatchEdits(initial ? editableValues(rowEffectiveRecord(initial)) : {});
-      if (continuous.length !== 120) {
-        setBatchError(`Loaded ${continuous.length}/120 continuous placement records. Filters still work, but the batch review is incomplete.`);
-      }
-    } catch (reason) {
-      setBatchError(reason instanceof Error ? reason.message : "Continuous placement fallbacks could not be loaded.");
-    } finally {
-      setBatchLoading(false);
-    }
-  }
-
-  async function toggleBatchReview() {
-    const next = !batchOpen;
-    setBatchOpen(next);
-    if (next && !batchRows.length && !batchLoading) await loadContinuousFallbacks();
-  }
-
-  function selectBatchRow(contentKey: string) {
-    setSelectedBatchKey(contentKey);
-    const row = continuousRows.find((candidate) => candidate.content_key === contentKey);
-    setBatchEdits(row ? editableValues(rowEffectiveRecord(row)) : {});
-  }
-
-  async function saveBatchFallbackDraft(row: AdminRow) {
-    const changes: Partial<Record<EditablePath, string>> = {};
-    for (const field of fallbackFields) changes[field.path] = batchEdits[field.path] ?? "";
-    setSavingBatchKey(row.content_key);
-    setBatchError(null);
-    try {
-      await saveDraft(row, changes);
-      setBatchSaveMessage((current) => ({
-        ...current,
-        [row.content_key]: "Draft saved · serving baseline unchanged"
-      }));
-      await loadContinuousFallbacks();
-    } catch (reason) {
-      setBatchSaveMessage((current) => ({
-        ...current,
-        [row.content_key]: reason instanceof Error ? reason.message : "Draft save failed."
-      }));
-    } finally {
-      setSavingBatchKey(null);
     }
   }
 
@@ -323,40 +243,8 @@ export default function SkyV4StudioReviewPanel(props: Props) {
         <button type="button" disabled={props.disabled || savingCurrent || !currentDirty} onClick={() => void saveCurrentGroupedDraft()}>
           {savingCurrent ? "Saving draft…" : "Save grouped draft"}
         </button>
-        <button type="button" disabled={props.disabled || batchLoading} onClick={() => void toggleBatchReview()}>
-          {batchOpen ? "Hide continuous fallback review" : "Review all 120 continuous fallbacks"}
-        </button>
       </div>
       {currentSaveMessage && <p className="admin-editor-guidance">{currentSaveMessage}</p>}
-
-      {batchOpen && <section className="admin-hook-detail-section" aria-label="Continuous placement fallback batch review">
-        <div>
-          <p className="admin-eyebrow">Continuous placement fallbacks</p>
-          <h4>Review Hook · Lived · Turn across all 120 placements</h4>
-          <p>Choose one placement. Saving creates a non-serving draft and never overwrites the approved serving baseline.</p>
-        </div>
-        <div className="admin-fallback-row-actions">
-          <strong>{batchLoading ? "Loading…" : `${continuousRows.length}/120 loaded`}</strong>
-          <button type="button" disabled={batchLoading || props.disabled} onClick={() => void loadContinuousFallbacks()}>Refresh</button>
-        </div>
-        {batchError && <p role="alert">{batchError}</p>}
-        {selectedBatchRow && <article className="admin-hook-detail-section">
-          <select value={selectedBatchRow.content_key} onChange={(event) => selectBatchRow(event.target.value)}>
-            {continuousRows.map((row) => {
-              const rowIdentity = continuousIdentity(row.content_key)!;
-              return <option key={row.content_key} value={row.content_key}>{titlePart(rowIdentity.planet)} in {titlePart(rowIdentity.sign)}</option>;
-            })}
-          </select>
-          {fallbackFields.map((field) => <label key={field.path}>
-            <span><strong>{field.label}</strong> <code>{field.path}</code></span>
-            <textarea rows={4} value={batchEdits[field.path] ?? ""} disabled={props.disabled || savingBatchKey === selectedBatchRow.content_key} onChange={(event) => setBatchEdits((current) => ({ ...current, [field.path]: event.target.value }))} />
-          </label>)}
-          <button type="button" disabled={props.disabled || savingBatchKey === selectedBatchRow.content_key} onClick={() => void saveBatchFallbackDraft(selectedBatchRow)}>
-            {savingBatchKey === selectedBatchRow.content_key ? "Saving draft…" : "Save fallback draft"}
-          </button>
-          {batchSaveMessage[selectedBatchRow.content_key] && <small>{batchSaveMessage[selectedBatchRow.content_key]}</small>}
-        </article>}
-      </section>}
     </section>}
 
     {isLunarContext && <section className="admin-hook-detail-section" aria-label="SKY V4 placement lunar-context grouped editor">
