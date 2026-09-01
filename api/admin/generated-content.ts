@@ -181,6 +181,8 @@ const fallbackArchitectureV3Provider = "tldrastro-fallback-architecture-v3";
 const fallbackArchitectureV3EligibleReviews = new Set(["approved", "approved_reuse"]);
 const fallbackArchitectureV3ReviewStatuses = new Set(["needs_review", "approved", "approved_reuse", "deprecated"]);
 const skyV4CanonicalStagePackage = "SKY-V4-CANONICAL-CODEX-HANDOFF-CONTENT-STUDIO-EDITABLE-2026-08-30";
+const calendarAspectContentStudioStagePackage = "CALENDAR-ASPECT-CONSEQUENCE-FIRST-CONTENT-STUDIO-2026-09-01";
+const calendarAspectBatch2AId = "sky-calendar-batch-2a-venus-saturn-squares-2026-09-01";
 const skyV4OwnerApprovedReaderCopyKeys = new Set(skyV4ReaderCopyOwnerApproval.approved_keys);
 const skyV4ServingReleasedReaderCopyKeys = skyV4ReaderCopyServingRelease.serving_enabled === true
   ? skyV4OwnerApprovedReaderCopyKeys
@@ -254,6 +256,25 @@ function readerServingForPackageReview(reviewStatus: string) {
   return fallbackArchitectureV3EligibleReviews.has(reviewStatus);
 }
 
+function governedStageKind(
+  record: Record<string, unknown>,
+  sourceSnapshot: Record<string, unknown>,
+  facts: Record<string, unknown>
+) {
+  const packages = new Set([
+    stringFrom(record.source_package),
+    stringFrom(sourceSnapshot.sourcePackage)
+  ]);
+  if (packages.has(skyV4CanonicalStagePackage)) return "sky-v4" as const;
+  if (packages.has(calendarAspectContentStudioStagePackage)) return "calendar-aspect" as const;
+  const ownerApproval = isRecord(sourceSnapshot.ownerApproval) ? sourceSnapshot.ownerApproval : {};
+  if (
+    stringFrom(facts.calendarAspectBatch) === calendarAspectBatch2AId
+    || stringFrom(ownerApproval.batchId) === calendarAspectBatch2AId
+  ) return "calendar-aspect" as const;
+  return null;
+}
+
 function packageRoleCanServeExactCopy(contentRole: string) {
   return !["fallback_source", "source_material"].includes(contentRole);
 }
@@ -288,10 +309,9 @@ function fallbackArchitectureV3CreateState(body: GeneratedContentWriteBody) {
     throw new Error("review_status must be needs_review, approved, or approved_reuse.");
   }
 
-  const isSkyV4CanonicalStage = stringFrom(record.source_package) === skyV4CanonicalStagePackage
-    || stringFrom(sourceSnapshot.sourcePackage) === skyV4CanonicalStagePackage;
-  if (isSkyV4CanonicalStage && reviewStatus !== "needs_review") {
-    throw new Error("New SKY V4 package rows cannot be published outside the governed owner-approval flow.");
+  const stageKind = governedStageKind(record, sourceSnapshot, facts);
+  if (stageKind && reviewStatus !== "needs_review") {
+    throw new Error("Governed Content Studio stage rows cannot be published outside their explicit owner-approval and release flow.");
   }
 
   if (!hasPackageDraft) record.review_status = reviewStatus;
@@ -303,7 +323,7 @@ function fallbackArchitectureV3CreateState(body: GeneratedContentWriteBody) {
   const contentRole = stringFrom(record.content_role)
     || stringFrom(sourceSnapshot.content_role)
     || stringFrom(facts.content_role);
-  const readerServing = !isSkyV4CanonicalStage
+  const readerServing = !stageKind
     && packageRoleCanServeExactCopy(contentRole)
     && readerServingForPackageReview(reviewStatus);
   facts.readerServing = readerServing;
@@ -313,7 +333,7 @@ function fallbackArchitectureV3CreateState(body: GeneratedContentWriteBody) {
     lane: readerServing ? "serving" : "reference",
     provider: fallbackArchitectureV3Provider,
     readerServing,
-    reviewState: readerServing ? null : "needs-review",
+    reviewState: readerServing ? null : stageKind === "calendar-aspect" ? "owner-review-required" : "needs-review",
     sections,
     sourceSnapshot,
     status: readerServing ? "LIVE" as const : "DRAFT" as const
@@ -493,8 +513,9 @@ function applyFallbackArchitectureV3ReviewPatch(row: ExistingGeneratedContentRow
       : hasPackageDraft
         ? "needs_review"
         : packageReviewStatus(row, body.reviewStatus || stringFrom(sourceSnapshot.review_status));
-  const isSkyV4CanonicalStage = stringFrom(record.source_package) === skyV4CanonicalStagePackage
-    || stringFrom(sourceSnapshot.sourcePackage) === skyV4CanonicalStagePackage;
+  const stageKind = governedStageKind(record, sourceSnapshot, facts);
+  const isSkyV4CanonicalStage = stageKind === "sky-v4";
+  const isCalendarAspectStage = stageKind === "calendar-aspect";
   const isSkyV4OwnerApprovedReaderCopy = isSkyV4CanonicalStage
     && skyV4OwnerApprovedReaderCopyKeys.has(row.content_key);
 
@@ -507,6 +528,9 @@ function applyFallbackArchitectureV3ReviewPatch(row: ExistingGeneratedContentRow
     && !(isSkyV4OwnerApprovedReaderCopy && reviewStatus === "approved")
   ) {
     throw new Error("SKY V4 content may only use an approval state authorized by its hash-bound owner-approval ledger.");
+  }
+  if (isCalendarAspectStage && reviewStatus !== "needs_review") {
+    throw new Error("Calendar aspect drafts require a separate exact owner approval and serving release before promotion.");
   }
 
   if (body.revertToPackageOriginal) {
@@ -584,7 +608,12 @@ function applyFallbackArchitectureV3ReviewPatch(row: ExistingGeneratedContentRow
       .join("\n\n");
   }
 
-  const readerBody = packageRole === "vocabulary"
+  const calendarDraftBody = isCalendarAspectStage
+    ? stringFrom(packageValueAt(hasPackageDraft ? sections.packageDraft : null, "Body") ?? record.Body ?? record.CurrentServingBody)
+    : "";
+  const readerBody = isCalendarAspectStage
+    ? calendarDraftBody
+    : packageRole === "vocabulary"
     ? stringFrom(record.body)
     : record.render_policy === "sky-placement-continuous-v2" && typeof record.body_you !== "string"
     ? [
@@ -648,6 +677,11 @@ function applyFallbackArchitectureV3ReviewPatch(row: ExistingGeneratedContentRow
       && skyV4ServingReleasedReaderCopyKeys.has(row.content_key)
       && !hasPackageDraft;
   }
+  if (isCalendarAspectStage) {
+    record.owner_approved = false;
+    record.serving_enabled = false;
+    record.studio_version_status = "draft";
+  }
   if (typeof body.editorialNotes === "string") {
     record.editorial_notes = body.editorialNotes;
   }
@@ -677,10 +711,11 @@ function applyFallbackArchitectureV3ReviewPatch(row: ExistingGeneratedContentRow
   ].slice(-25);
 
   facts.review_status = reviewStatus;
-  const readerServing = !isSkyV4CanonicalStage
+  const readerServing = !stageKind
     && packageRoleCanServeExactCopy(packageRole)
     && readerServingForPackageReview(reviewStatus);
   facts.readerServing = readerServing;
+  if (isCalendarAspectStage) facts.stageOnly = true;
   sourceSnapshot.review_status = reviewStatus;
 
   patch.sections = sections;
@@ -690,7 +725,9 @@ function applyFallbackArchitectureV3ReviewPatch(row: ExistingGeneratedContentRow
   patch.lane = readerServing ? "serving" : "reference";
   patch.review_state = readerServing
     ? null
-    : isSkyV4CanonicalStage && reviewStatus === "approved"
+    : isCalendarAspectStage
+      ? "owner-review-required"
+      : isSkyV4CanonicalStage && reviewStatus === "approved"
       ? "serving-disabled"
       : "needs-review";
   validateFallbackArchitectureV3Copy(row, patch);
