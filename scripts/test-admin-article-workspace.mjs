@@ -8,7 +8,10 @@ const skyRows = [
   { content_key: "sky-article/jupiter/leo/2026", block_type: "sky_article", mode: "article" },
   { content_key: "sky/article-template/jupiter", block_type: "sky_article", mode: "article" },
   { content_key: "sky.placement.jupiter.leo", block_type: "sky_placement", mode: "feed" },
-  { content_key: "authored/sky-lunation-macro/full-moon/pisces", block_type: "essay", mode: "article" }
+  { content_key: "authored/sky-lunation-macro/full-moon/pisces", block_type: "essay", mode: "article" },
+  { content_key: "authored/sky-newmoon/libra", block_type: "essay", mode: "article" },
+  { content_key: "authored/sky-fullmoon/capricorn", block_type: "essay", mode: "article" },
+  { content_key: "authored/sky-eclipse/solar-virgo", block_type: "essay", mode: "article" }
 ];
 
 for (const row of skyRows) {

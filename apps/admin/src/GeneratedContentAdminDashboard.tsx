@@ -258,7 +258,7 @@ type AdminWritingSurfaceMapPayload = {
   roleLabels: Partial<Record<WritingSurfaceSource["role"], string>>;
 };
 type AdminArticlePointFilter = "all" | "sun" | "moon" | "mercury" | "venus" | "mars" | "jupiter" | "saturn" | "uranus" | "neptune" | "pluto" | "other";
-type AdminSkyWriteupSubjectFilter = "all" | "planet" | "angle" | "point";
+type AdminSkyWriteupSubjectFilter = "all" | "moon" | "planet" | "angle" | "point";
 type SkyWriteupWorkspaceView = "catalog" | "transits-to-natal" | "house-transits";
 type AdminCompatibilitySectionFilter = "all" | "content" | "fallback-hooks" | "vocabulary" | "slots";
 type AdminCompatibilitySort = "updated-desc" | "updated-asc" | "title-asc" | "status" | "source";
@@ -690,6 +690,7 @@ const articlePointFilters: Array<{ key: AdminArticlePointFilter; label: string }
 ];
 const skyWriteupSubjectFilters: Array<{ key: AdminSkyWriteupSubjectFilter; label: string }> = [
   { key: "all", label: "All planets, angles, and points" },
+  { key: "moon", label: "Moon and lunations" },
   { key: "planet", label: "Planets and lunations" },
   { key: "angle", label: "Angles" },
   { key: "point", label: "Points" }
@@ -2862,7 +2863,10 @@ export function GeneratedContentAdminDashboard() {
     [visibleRows]
   );
   const filteredSkyWriteupRows = useMemo(() => sortPlacementRows(skyWriteupRows.filter((row) => (
-    (skyWriteupSubjectFilter === "all" || skyWriteupSubjectTypeForRow(row) === skyWriteupSubjectFilter)
+    (skyWriteupSubjectFilter === "all"
+      || (skyWriteupSubjectFilter === "moon"
+        ? skyWriteupContextForRow(row)?.planet === "moon"
+        : skyWriteupSubjectTypeForRow(row) === skyWriteupSubjectFilter))
     && (skyWriteupMotionFilter === "all" || contentMotion(row) === skyWriteupMotionFilter)
     && (skyWriteupDestinationFilter === "all" || contentDestinations(row).has(skyWriteupDestinationFilter))
   )), skyWriteupSort), [skyWriteupDestinationFilter, skyWriteupMotionFilter, skyWriteupRows, skyWriteupSort, skyWriteupSubjectFilter]);

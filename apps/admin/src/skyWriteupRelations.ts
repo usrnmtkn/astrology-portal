@@ -141,6 +141,28 @@ function keyPlacementParts(contentKey: string) {
   return match ? { planet: match[1], sign: match[2] } : null;
 }
 
+function authoredLunationKeyParts(contentKey: string) {
+  const key = contentKey.toLowerCase();
+  const macro = key.match(/^authored\/sky-lunation-macro\/(new-moon|full-moon)\/([^/]+)$/u);
+  if (macro) return { kind: macro[1] as SkyLunationContext["kind"], eclipse: "none" as const, sign: macro[2] };
+
+  const legacy = key.match(/^authored\/sky-(newmoon|fullmoon)\/([^/]+)$/u);
+  if (legacy) return {
+    kind: legacy[1] === "newmoon" ? "new-moon" as const : "full-moon" as const,
+    eclipse: "none" as const,
+    sign: legacy[2].replace(/-year-end$/u, "")
+  };
+
+  const eclipse = key.match(/^authored\/sky-eclipse\/(solar|lunar)-([^/]+)$/u);
+  if (eclipse) return {
+    kind: eclipse[1] === "solar" ? "new-moon" as const : "full-moon" as const,
+    eclipse: eclipse[1] as "solar" | "lunar",
+    sign: eclipse[2]
+  };
+
+  return null;
+}
+
 function planetFromHeadline(headline: string) {
   const normalized = headline.toLowerCase().replace(/\bthe\s+/gu, "");
   return planets.find((planet) => normalized.includes(planet.replace(/-/g, " "))) ?? "";
@@ -196,7 +218,7 @@ export function skyWriteupSubjectTypeForRow(row: SkyWriteupRelationRow): SkyWrit
 
 export function skyWriteupContextForRow(row: SkyWriteupRelationRow): SkyWriteupContext | null {
   const keyParts = keyPlacementParts(row.content_key);
-  const lunationKeyParts = row.content_key.toLowerCase().match(/^authored\/sky-lunation-macro\/(?:new-moon|full-moon)\/([^/]+)$/u);
+  const lunationKeyParts = authoredLunationKeyParts(row.content_key);
   const isLunationLike = /(?:^|[./-])lunation(?:[./-]|$)/iu.test(row.content_key)
     || /\b(?:new|full) moon\b|\b(?:solar|lunar) eclipse\b/iu.test(row.headline ?? "");
   const keyPlanetOnly = row.content_key.toLowerCase().match(/^fallback-hook\/sky-placement\/([a-z_-]+)$/u)?.[1] ?? "";
@@ -211,7 +233,7 @@ export function skyWriteupContextForRow(row: SkyWriteupRelationRow): SkyWriteupC
   );
   const sign = normalizedToken(
     keyParts?.sign
-      || lunationKeyParts?.[1]
+      || lunationKeyParts?.sign
       || nestedString(row.facts, [["sign"], ["derivedFrom", "sign"], ["placementDerivation", "sign"]])
       || nestedString(row.source_snapshot, [["sign"], ["derivedFrom", "sign"], ["placementDerivation", "sign"]])
       || signFromHeadline(row.headline ?? "")
@@ -222,6 +244,8 @@ export function skyWriteupContextForRow(row: SkyWriteupRelationRow): SkyWriteupC
     || /^sky\.placement\./iu.test(row.content_key)
     || /^sky[./-](?:placement|article)[./-]/iu.test(row.content_key)
     || /^authored\/sky-lunation-macro\//iu.test(row.content_key)
+    || /^authored\/sky-(?:newmoon|fullmoon)\//iu.test(row.content_key)
+    || /^authored\/sky-eclipse\//iu.test(row.content_key)
     || /^fallback-hook\/sky-(?:placement|sign-copy)\//iu.test(row.content_key);
 
   if (!isSkyWriteup || !planetSet.has(planet)) return null;
@@ -230,7 +254,7 @@ export function skyWriteupContextForRow(row: SkyWriteupRelationRow): SkyWriteupC
 
 export function skyLunationContextForRow(row: SkyWriteupRelationRow): SkyLunationContext | null {
   const key = row.content_key.toLowerCase();
-  const keyMatch = key.match(/^authored\/sky-lunation-macro\/(new-moon|full-moon)\/([^/]+)$/u);
+  const keyMatch = authoredLunationKeyParts(key);
 
   const eventType = normalizedToken(nestedString(row.facts, [
     ["lunationKind"],
@@ -244,7 +268,7 @@ export function skyLunationContextForRow(row: SkyWriteupRelationRow): SkyLunatio
     ["moonEvent", "name"]
   ]));
   const headline = (row.headline ?? "").toLowerCase();
-  const keyKind = keyMatch?.[1] as SkyLunationContext["kind"] | undefined;
+  const keyKind = keyMatch?.kind;
   const kind = keyKind
     ?? (eventType.includes("new") || eventType.includes("solar") || /\bnew moon\b|\bsolar eclipse\b/u.test(headline)
       ? "new-moon"
@@ -262,7 +286,8 @@ export function skyLunationContextForRow(row: SkyWriteupRelationRow): SkyLunatio
     ["moonEvent", "eclipseType"],
     ["moonEvent", "eclipse_type"]
   ]));
-  const eclipse = eclipseType.includes("solar") || eventType.includes("solar") || /\bsolar eclipse\b/u.test(headline)
+  const eclipse = keyMatch && keyMatch.eclipse !== "none" ? keyMatch.eclipse
+    : eclipseType.includes("solar") || eventType.includes("solar") || /\bsolar eclipse\b/u.test(headline)
     ? "solar"
     : eclipseType.includes("lunar") || eventType.includes("lunar") || /\blunar eclipse\b/u.test(headline)
       ? "lunar"
@@ -270,8 +295,9 @@ export function skyLunationContextForRow(row: SkyWriteupRelationRow): SkyLunatio
         ? kind === "new-moon" ? "solar" : "lunar"
         : "none";
   const context = skyWriteupContextForRow(row);
-  const sign = normalizedToken(keyMatch?.[2]) || context?.sign || "";
+  const sign = normalizedToken(keyMatch?.sign) || context?.sign || "";
   const isLunationRow = /(?:^|[./-])lunation(?:[./-]|$)/u.test(key)
+    || /^authored\/sky-(?:newmoon|fullmoon|eclipse)\//u.test(key)
     || /\b(?:new|full) moon\b|\b(?:solar|lunar) eclipse\b/u.test(headline);
 
   return isLunationRow && kind && signSet.has(sign)
