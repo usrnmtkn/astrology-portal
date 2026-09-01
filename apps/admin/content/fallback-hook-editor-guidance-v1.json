@@ -8,10 +8,9 @@
       {
         "title": "Daily At-a-Glance",
         "description": "You and a selected friend each receive their own card.",
-        "steps": ["Moon-driven selector", "→", "matching headline", "→", "matching passage"],
+        "steps": ["Moon-driven selector", "→", "matching headline + passage"],
         "actions": [
-          { "label": "Browse headlines", "family": "daily-headline" },
-          { "label": "Browse passages", "family": "daily-body" }
+          { "label": "Browse complete write-ups", "family": "daily-headline" }
         ]
       },
       {

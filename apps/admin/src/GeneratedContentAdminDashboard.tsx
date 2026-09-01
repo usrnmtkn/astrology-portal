@@ -80,6 +80,14 @@ import { articleAppDestination, isSkyWriteupContentRow } from "./articleWorkspac
 import { contentWiringStatus, isPublishedButUnwired } from "./contentWiringStatus";
 import { fallbackHookDisplayTitle } from "./fallbackHookTitle";
 import type { FallbackHookEditorGuidanceBuilder } from "./DailyFallbackWorkspaceGuide";
+import type { DailyGlanceContext, DailyGlancePairEdits } from "./DailyGlanceStudio";
+import {
+  dailyGlanceContextSearchParams,
+  dailyGlancePackageField,
+  dailyGlancePairs,
+  dailyGlanceSelector,
+  type DailyGlancePair
+} from "./dailyGlanceAdmin";
 import { isCompositionTemplateRow } from "./compositionTemplateClassifier";
 import {
   AdminAccessGate,
@@ -176,6 +184,14 @@ const NatalPlacementReaderPreview = lazy(() => import("./NatalPlacementReaderPre
 const NatalPlacementSourceFinder = lazy(() => import("./NatalPlacementSourceFinder"));
 const NatalAspectSourceFinder = lazy(() => import("./NatalAspectSourceFinder"));
 const DailyFallbackWorkspaceGuide = lazy(() => import("./DailyFallbackWorkspaceGuide"));
+const DailyGlanceStudio = lazy(async () => {
+  const module = await import("./DailyGlanceStudio");
+  return { default: module.DailyGlanceStudio };
+});
+const DailyGlancePairEditor = lazy(async () => {
+  const module = await import("./DailyGlanceStudio");
+  return { default: module.DailyGlancePairEditor };
+});
 const UnresolvedContentReview = lazy(async () => {
   const module = await import("./UnresolvedContentReview");
   return { default: module.UnresolvedContentReview };
@@ -1497,11 +1513,14 @@ function fallbackHookVisibleSearchText(row: AdminGeneratedContentRow) {
     row.content_key,
     rowTitle(row),
     row.headline,
+    row.summary,
+    row.body,
     row.surface,
     row.mode,
     row.block_type,
     row.event_type,
-    fallbackSectionForKey(row.content_key, row.surface)
+    fallbackSectionForKey(row.content_key, row.surface),
+    JSON.stringify(row.sections ?? {})
   ].join(" ").toLowerCase();
 }
 
@@ -2721,6 +2740,10 @@ export function GeneratedContentAdminDashboard() {
   const [selectedIds, setSelectedIds] = useState<Set<string>>(() => new Set());
   const [bulkStatus, setBulkStatus] = useState<GeneratedContentStatus>("REVIEWED");
   const [selectedRowId, setSelectedRowId] = useState<string | null>(null);
+  const [dailyGlanceContext, setDailyGlanceContext] = useState<DailyGlanceContext | null>(null);
+  const [dailyGlanceContextError, setDailyGlanceContextError] = useState<string | null>(null);
+  const [dailyGlanceContextLoading, setDailyGlanceContextLoading] = useState(false);
+  const [dailyGlancePairSelector, setDailyGlancePairSelector] = useState<string | null>(null);
   const [skyWriteupParentId, setSkyWriteupParentId] = useState<string | null>(null);
   const [skyRelatedAspectQuery, setSkyRelatedAspectQuery] = useState("");
   const [skyFallbackPreviewFacts, setSkyFallbackPreviewFacts] = useState<Record<string, string>>({});
@@ -2801,6 +2824,13 @@ export function GeneratedContentAdminDashboard() {
     () => visibleRows.filter((row) => contentClassForRow(row) === "fallback-hook"),
     [visibleRows]
   );
+  const dailyGlanceWriteups = useMemo(
+    () => dailyGlancePairs(savedFallbackRows),
+    [savedFallbackRows]
+  );
+  const selectedDailyGlancePair = dailyGlancePairSelector
+    ? dailyGlanceWriteups.find((pair) => pair.selector === dailyGlancePairSelector) ?? null
+    : null;
   const savedContentKeys = useMemo(() => new Set(visibleRows.map((row) => row.content_key)), [visibleRows]);
   const vocabRows = useMemo(
     () => visibleRows.filter((row) => contentClassForRow(row) === "vocab"),
@@ -4172,6 +4202,118 @@ export function GeneratedContentAdminDashboard() {
     }
   }
 
+  async function loadDailyGlanceContext(input: { date: string; person: string; timeZone: string }) {
+    setDailyGlanceContextLoading(true);
+    setDailyGlanceContextError(null);
+
+    try {
+      const params = dailyGlanceContextSearchParams(input);
+      const payload = await adminJsonRequest<{
+        ok: boolean;
+        prompt?: string | null;
+        rows?: AdminReviewRecord[];
+        warnings?: string[];
+      }>(`/api/admin/review-records?${params.toString()}`, secret);
+      const record = payload.rows?.[0];
+      if (!record) {
+        throw new Error(payload.prompt || payload.warnings?.[0] || "No Daily At-a-Glance source was available for that chart and local date.");
+      }
+
+      const facts = objectRecord(record.facts);
+      const chart = objectRecord(facts?.chart);
+      const moon = objectRecord(facts?.moon);
+      const driver = objectRecord(facts?.driver);
+      const selector = typeof facts?.selector === "string" ? facts.selector : "";
+      const headlineKey = typeof facts?.headlineKey === "string" ? facts.headlineKey : "";
+      const passageKey = typeof facts?.passageKey === "string" ? facts.passageKey : "";
+      const detailLine = typeof facts?.detailLine === "string" ? facts.detailLine : "";
+      if (!chart || !moon || !driver || !selector || !headlineKey || !passageKey || !detailLine) {
+        throw new Error("The calculated Daily At-a-Glance response is missing its source identity or astrology facts.");
+      }
+
+      setDailyGlanceContext({
+        date: record.targetDate ?? input.date,
+        timeZone: typeof facts?.timeZone === "string" ? facts.timeZone : input.timeZone,
+        chart: {
+          id: String(chart.id ?? ""),
+          name: String(chart.name ?? input.person),
+          birthTimeKnown: chart.birthTimeKnown === true
+        },
+        moon: {
+          sign: String(moon.sign ?? ""),
+          degree: Number(moon.degree ?? 0)
+        },
+        driver: {
+          kind: driver.kind === "house" ? "house" : "aspect",
+          label: String(driver.label ?? "Daily source"),
+          ...(typeof driver.orb === "number" ? { orb: driver.orb } : {})
+        },
+        selector,
+        headlineKey,
+        passageKey,
+        detailLine
+      });
+    } catch (error) {
+      setDailyGlanceContext(null);
+      setDailyGlanceContextError(dashboardErrorMessage(error));
+    } finally {
+      setDailyGlanceContextLoading(false);
+    }
+  }
+
+  function openDailyGlancePair(selector: string) {
+    editorReturnFocusRef.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    setSelectedRowId(null);
+    setDraft(null);
+    setDailyGlancePairSelector(selector);
+  }
+
+  function closeDailyGlancePairEditor() {
+    setDailyGlancePairSelector(null);
+    window.requestAnimationFrame(() => editorReturnFocusRef.current?.focus());
+  }
+
+  async function saveDailyGlancePairEdits(pair: DailyGlancePair, edits: DailyGlancePairEdits) {
+    const headlineChanged = edits.headlineYou !== dailyGlancePackageField(pair.headlineRow, "body_you")
+      || edits.headlineThey !== dailyGlancePackageField(pair.headlineRow, "body_they");
+    const passageChanged = edits.passageYou !== dailyGlancePackageField(pair.passageRow, "body_you")
+      || edits.passageThey !== dailyGlancePackageField(pair.passageRow, "body_they");
+    if (!headlineChanged && !passageChanged) {
+      setMessage("The Daily At-a-Glance headline and passage already match the saved sources.");
+      return;
+    }
+
+    let headlineSaved = !headlineChanged;
+    let passageSaved = !passageChanged;
+    if (headlineChanged) {
+      const headlineDraft = setPackageSectionField(
+        setPackageSectionField(draftFromRow(pair.headlineRow as AdminGeneratedContentRow), "body_you", edits.headlineYou),
+        "body_they",
+        edits.headlineThey
+      );
+      headlineSaved = Boolean(await saveDraft(undefined, headlineDraft));
+    }
+    if (headlineSaved && passageChanged) {
+      const passageDraft = setPackageSectionField(
+        setPackageSectionField(draftFromRow(pair.passageRow as AdminGeneratedContentRow), "body_you", edits.passageYou),
+        "body_they",
+        edits.passageThey
+      );
+      passageSaved = Boolean(await saveDraft(undefined, passageDraft));
+    }
+
+    setSelectedRowId(null);
+    setDraft(null);
+    setDailyGlancePairSelector(pair.selector);
+    if (headlineSaved && passageSaved) {
+      setMessage("Daily At-a-Glance headline and passage saved together as review proposals.");
+    } else if (headlineSaved) {
+      setMessage("The headline saved, but the passage did not. Review the connection before retrying the passage.");
+    } else {
+      setMessage("The Daily At-a-Glance write-up was not saved.");
+    }
+  }
+
   async function approvePackageRevision(row: AdminGeneratedContentRow) {
     setIsLoading(true);
     try {
@@ -4298,6 +4440,7 @@ export function GeneratedContentAdminDashboard() {
     editorSavedInputRef.current = JSON.stringify(nextDraft);
     const edition = compiledSkyArticleEditionForDraft(nextDraft);
     const baseEdition = skyArticleRevisionBaseForDraft(nextDraft);
+    setDailyGlancePairSelector(null);
     setSelectedRowId(row.id);
     setDraft(nextDraft);
     setCompositionEditorContext(compositionContext);
@@ -5682,11 +5825,13 @@ export function GeneratedContentAdminDashboard() {
               {renderEditor()}
               <aside className="admin-list-panel" aria-label="Fallback hook rows and package sources">
                 {filteredFallbackRows.length > 0 && (
-                  fallbackRowSort === "type"
+                  fallbackRowSort === "type" || fallbackSectionFilter === "daily"
                     ? renderFallbackContentGroups(filteredFallbackRows)
                     : renderContentTable(filteredFallbackRows, false, true)
                 )}
-                {filteredHookCatalog.length > 0 && (Boolean(query.trim()) || fallbackSectionFilter === "friends") && (
+                {filteredHookCatalog.length > 0
+                  && (Boolean(query.trim()) || fallbackSectionFilter === "friends")
+                  && !(fallbackSectionFilter === "daily" && !query.includes("pair-daily")) && (
                   <Suspense fallback={<p className="admin-empty">Loading packaged source phrases…</p>}>
                     <PackagedHookCatalogResults
                       items={filteredHookCatalog}
@@ -6793,6 +6938,7 @@ export function GeneratedContentAdminDashboard() {
     setFallbackSectionFilter("daily");
     setFallbackRowSort("type");
     setQuery(nextQuery);
+    setDailyGlancePairSelector(null);
     setSelectedRowId(null);
   }
 
@@ -6828,8 +6974,6 @@ export function GeneratedContentAdminDashboard() {
 
   function renderFallbackContentGroups(tableRows: AdminGeneratedContentRow[]) {
     const groups = [
-      { key: "daily-headlines", label: "Daily At-a-Glance headlines", description: "Short headlines selected for the signed-in reader or a selected friend." },
-      { key: "daily-passages", label: "Daily At-a-Glance passages", description: "Full passages selected by the same Moon-driven rule as the headline." },
       { key: "pair-personal", label: "Between You Two · personal clauses", description: "You and Friend versions selected separately from each person’s daily driver." },
       { key: "pair-assembly", label: "Between You Two · assembly frames", description: "Openings, optional shared bridges, bond details, and closing advice." },
       { key: "articles", label: "Sky Placement articles", description: "Complete placement articles." },
@@ -6840,11 +6984,8 @@ export function GeneratedContentAdminDashboard() {
     ] as const;
     const groupedRows = new Map(groups.map((group) => [group.key, [] as AdminGeneratedContentRow[]]));
     tableRows.forEach((row) => {
-      const groupKey = row.content_key.startsWith("fallback-hook/daily-headline/")
-        ? "daily-headlines"
-        : row.content_key.startsWith("fallback-hook/daily-body/")
-          ? "daily-passages"
-          : row.content_key.startsWith("fallback-hook/pair-daily/clause/")
+      if (dailyGlanceSelector(row.content_key)) return;
+      const groupKey = row.content_key.startsWith("fallback-hook/pair-daily/clause/")
             ? "pair-personal"
             : row.content_key.startsWith("fallback-hook/pair-daily/")
               ? "pair-assembly"
@@ -6853,10 +6994,24 @@ export function GeneratedContentAdminDashboard() {
     });
     const visibleGroups = groups.filter((group) => (groupedRows.get(group.key)?.length ?? 0) > 0);
 
-    if (visibleGroups.length === 0) return <p className="admin-empty">No rows match these filters.</p>;
+    const showDailyGlanceStudio = fallbackSectionFilter === "daily";
+    if (visibleGroups.length === 0 && !showDailyGlanceStudio) return <p className="admin-empty">No rows match these filters.</p>;
 
     return (
       <div className="admin-sky-edition-fields" aria-label="Fallback content grouped by reader use">
+        {showDailyGlanceStudio && (
+          <Suspense fallback={<p className="admin-empty">Loading the paired Daily At-a-Glance editor…</p>}>
+            <DailyGlanceStudio
+              context={dailyGlanceContext}
+              contextError={dailyGlanceContextError}
+              contextLoading={dailyGlanceContextLoading}
+              pairs={dailyGlanceWriteups}
+              query={query}
+              onLoadContext={loadDailyGlanceContext}
+              onOpenPair={openDailyGlancePair}
+            />
+          </Suspense>
+        )}
         {visibleGroups.map((group) => {
           const rows = groupedRows.get(group.key) ?? [];
           return (
@@ -7242,6 +7397,19 @@ export function GeneratedContentAdminDashboard() {
   }
 
   function renderEditor() {
+    if (selectedDailyGlancePair) {
+      return (
+        <Suspense fallback={null}>
+          <DailyGlancePairEditor
+            context={dailyGlanceContext}
+            isSaving={isLoading}
+            pair={selectedDailyGlancePair}
+            onClose={closeDailyGlancePairEditor}
+            onSave={saveDailyGlancePairEdits}
+          />
+        </Suspense>
+      );
+    }
     if (!draft && !selectedRow) {
       return null;
     }
