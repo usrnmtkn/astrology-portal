@@ -16,6 +16,14 @@ import {
 import { validateCmsTemplate } from "../../apps/web/src/content/cmsTemplateValidation.js";
 import skyV4ReaderCopyOwnerApproval from "../../apps/web/src/content/fallbackArchitectureV3/authored-inputs/sky-v4-reader-copy-280-owner-approval-v1.json" with { type: "json" };
 import skyV4ReaderCopyServingRelease from "../../apps/web/src/content/fallbackArchitectureV3/authored-inputs/sky-v4-reader-copy-280-serving-release-v1.json" with { type: "json" };
+import skyV4CorrectionManifest from "../../apps/web/src/content/fallbackArchitectureV3/authored-inputs/sky-v4-continuous-corpus-correction-v1.json" with { type: "json" };
+import skyV4CorrectionChunk1 from "../../apps/web/src/content/fallbackArchitectureV3/authored-inputs/sky-v4-continuous-corpus-correction-v1-chunk-1.json" with { type: "json" };
+import skyV4CorrectionChunk2 from "../../apps/web/src/content/fallbackArchitectureV3/authored-inputs/sky-v4-continuous-corpus-correction-v1-chunk-2.json" with { type: "json" };
+import skyV4CorrectionChunk3 from "../../apps/web/src/content/fallbackArchitectureV3/authored-inputs/sky-v4-continuous-corpus-correction-v1-chunk-3.json" with { type: "json" };
+import skyV4CorrectionChunk4 from "../../apps/web/src/content/fallbackArchitectureV3/authored-inputs/sky-v4-continuous-corpus-correction-v1-chunk-4.json" with { type: "json" };
+import skyV4LunarManifest from "../../apps/web/src/content/fallbackArchitectureV3/authored-inputs/sky-v4-placement-lunar-context-v1.json" with { type: "json" };
+import skyV4LunarChunk1 from "../../apps/web/src/content/fallbackArchitectureV3/authored-inputs/sky-v4-placement-lunar-context-v1-chunk-1.json" with { type: "json" };
+import skyV4LunarChunk2 from "../../apps/web/src/content/fallbackArchitectureV3/authored-inputs/sky-v4-placement-lunar-context-v1-chunk-2.json" with { type: "json" };
 
 loadLocalWebEnv();
 
@@ -183,10 +191,18 @@ const fallbackArchitectureV3ReviewStatuses = new Set(["needs_review", "approved"
 const skyV4CanonicalStagePackage = "SKY-V4-CANONICAL-CODEX-HANDOFF-CONTENT-STUDIO-EDITABLE-2026-08-30";
 const calendarAspectContentStudioStagePackage = "CALENDAR-ASPECT-CONSEQUENCE-FIRST-CONTENT-STUDIO-2026-09-01";
 const calendarAspectBatch2AId = "sky-calendar-batch-2a-venus-saturn-squares-2026-09-01";
-const skyV4OwnerApprovedReaderCopyKeys = new Set(skyV4ReaderCopyOwnerApproval.approved_keys);
-const skyV4ServingReleasedReaderCopyKeys = skyV4ReaderCopyServingRelease.serving_enabled === true
-  ? skyV4OwnerApprovedReaderCopyKeys
-  : new Set<string>();
+const skyV4ContinuousCorrectionPackage = skyV4CorrectionManifest.package_version;
+const skyV4PlacementLunarContextPackage = skyV4LunarManifest.package_version;
+const newSkyV4Keys = [skyV4CorrectionChunk1, skyV4CorrectionChunk2, skyV4CorrectionChunk3, skyV4CorrectionChunk4, skyV4LunarChunk1, skyV4LunarChunk2]
+  .flatMap((chunk) => chunk.records.map((row) => row.ContentKey));
+const skyV4OwnerApprovedReaderCopyKeys = new Set([
+  ...skyV4ReaderCopyOwnerApproval.approved_keys,
+  ...newSkyV4Keys
+]);
+const skyV4ServingReleasedReaderCopyKeys = new Set([
+  ...(skyV4ReaderCopyServingRelease.serving_enabled === true ? skyV4ReaderCopyOwnerApproval.approved_keys : []),
+  ...(skyV4CorrectionManifest.serving_enabled === true && skyV4LunarManifest.serving_enabled === true ? newSkyV4Keys : [])
+]);
 const personalizedSampleSurfaces = new Set<GeneratedContentSurface>(["you", "natal", "synastry", "composite", "relationship"]);
 const sampleOnlyReviewerNote = "INTERNAL CONTENT TEST. This row is for testing templates, voice, and knowledge hooks. Do not publish it as global app content. Real You, Synastry, Composite, and Relationship content must be generated from user-specific chart or bond facts.";
 let contentRoleContractCache: { styleRules?: { bannedWords?: string[] } } | null = null;
@@ -231,6 +247,13 @@ function stringFrom(value: unknown) {
   return typeof value === "string" ? value : "";
 }
 
+function isGovernedSkyV4Package(value: unknown) {
+  const packageName = stringFrom(value);
+  return packageName === skyV4CanonicalStagePackage
+    || packageName === skyV4ContinuousCorrectionPackage
+    || packageName === skyV4PlacementLunarContextPackage;
+}
+
 function v3PackageRecord(row: Pick<ExistingGeneratedContentRow, "sections">) {
   const sections = isRecord(row.sections) ? row.sections : {};
   return isRecord(sections.packageRecord) ? sections.packageRecord : {};
@@ -265,7 +288,7 @@ function governedStageKind(
     stringFrom(record.source_package),
     stringFrom(sourceSnapshot.sourcePackage)
   ]);
-  if (packages.has(skyV4CanonicalStagePackage)) return "sky-v4" as const;
+  if ([...packages].some((packageName) => isGovernedSkyV4Package(packageName))) return "sky-v4" as const;
   if (packages.has(calendarAspectContentStudioStagePackage)) return "calendar-aspect" as const;
   const ownerApproval = isRecord(sourceSnapshot.ownerApproval) ? sourceSnapshot.ownerApproval : {};
   if (
@@ -387,7 +410,7 @@ function isEditablePackageCopyPath(path: string, packageRecord?: Record<string, 
 }
 
 function validateSkyV4TransitPovCopy(record: Record<string, unknown>, packageDraft: Record<string, unknown> | null) {
-  if (stringFrom(record.source_package) !== skyV4CanonicalStagePackage) return { passed: true, hardFailures: [] as string[] };
+  if (!isGovernedSkyV4Package(record.source_package)) return { passed: true, hardFailures: [] as string[] };
   const effective = packageDraft ?? record;
   const fields = Array.isArray(record.studio_editable_fields)
     ? record.studio_editable_fields.filter(isRecord).map((field) => stringFrom(field.path)).filter(Boolean)
@@ -1934,7 +1957,7 @@ async function updateGeneratedContent(req: IncomingMessage) {
     isPackageRow
     && existing
     && existing.status === "LIVE"
-    && stringFrom(existingPackageRecord.source_package) === skyV4CanonicalStagePackage
+    && isGovernedSkyV4Package(existingPackageRecord.source_package)
     && skyV4ServingReleasedReaderCopyKeys.has(existing.content_key)
     && isRecord((patch.sections as Record<string, unknown> | undefined)?.packageDraft)
   );

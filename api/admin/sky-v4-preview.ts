@@ -17,6 +17,10 @@ const corpus = require("../../apps/web/src/content/fallbackArchitectureV3/author
 const governedAspectCorpus = require("../../apps/web/src/content/fallbackArchitectureV3/source-rows/sky-aspect-phrasebook-v1.json");
 const calendarAspectDrafts = require("../../apps/web/src/content/fallbackArchitectureV3/authored-inputs/calendar-aspect-consequence-first-drafts-v1.json");
 const composedCalendarCards = require("../../packages/astro-knowledge/data/sky-calendar/composed-cards-v1.json");
+const placementLunarManifest = require("../../apps/web/src/content/fallbackArchitectureV3/authored-inputs/sky-v4-placement-lunar-context-v1.json");
+const placementLunarRecords = placementLunarManifest.chunk_files.flatMap((fileName: string) => (
+  require(`../../apps/web/src/content/fallbackArchitectureV3/authored-inputs/${fileName}`).records
+));
 
 function sendJson(res: ServerResponse, status: number, body: unknown) {
   res.statusCode = status;
@@ -85,11 +89,26 @@ export function normalizeSkyV4PreviewInput(value: unknown) {
   if (!calendarDraft && contentKey.startsWith("fallback-hook/sky-aspect-sign/") && !governedAspectSource) {
     throw new Error("Choose an approved governed aspect record or a staged Calendar aspect draft.");
   }
+  const placementLunarContextSource = contentKey.startsWith("sky-placement/lunar-context/")
+    ? placementLunarRecords.find((row: Record<string, unknown>) => row.ContentKey === contentKey)
+    : undefined;
   return {
     contentKey,
     draftFields,
     governedAspectSource,
     calendarAspectSource,
+    placementLunarContextSource: placementLunarContextSource ? {
+      ...placementLunarContextSource,
+      contentKey: placementLunarContextSource.ContentKey,
+      headline: `${placementLunarContextSource.Planet} · ${placementLunarContextSource.EventLabel}`,
+      studio_content_type: "placement-lunar-context",
+      studio_editable_fields: [
+        { path: "FullPageBody", label: "Full-page context" },
+        { path: "FallbackBody", label: "Fallback context" }
+      ],
+      source_baseline_sha256: placementLunarManifest.copy_sha256,
+      serving_enabled: false
+    } : undefined,
     dateLine: boundedString("dateLine"),
     cycleContext: boundedString("cycleContext"),
     eclipseContext: boundedString("eclipseContext"),

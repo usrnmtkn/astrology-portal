@@ -3,15 +3,14 @@
   "package_version": "SKY-V4-PLACEMENT-LUNAR-CONTEXT-OWNER-APPROVED-2026-09-01",
   "parent_canonical_package_version": "SKY-V4-CANONICAL-CODEX-HANDOFF-CONTENT-STUDIO-EDITABLE-2026-08-30",
   "parent_canonical_json_sha256": "9b91e715bea63a2c835001783240122aad1e000b3982d68bfebbb3cef690a750",
-  "approval_id": "sky-v4-placement-lunar-context-owner-approval-2026-09-01",
-  "approved_on": "2026-09-01",
-  "approval_record": "packages/astro-knowledge/review/sky-v4-placement-lunar-context-2026-09-01/OWNER-APPROVAL.md",
-  "release_id": "sky-v4-placement-lunar-context-serving-release-2026-09-01",
-  "release_record": "packages/astro-knowledge/review/sky-v4-placement-lunar-context-2026-09-01/VERIFICATION.md",
   "review_status": "approved",
   "owner_approved": true,
   "serving_enabled": true,
+  "approval_id": "sky-v4-placement-lunar-context-owner-approval-2026-09-01",
+  "release_id": "sky-v4-placement-lunar-context-serving-release-2026-09-01",
   "expected_records": 40,
+  "owner_review_source_json_sha256": "450eac515db908ea82a02869f308ac9ae5f97e272b2308c7c975e4c02245a08a",
+  "owner_review_workbook_sha256": "3551cb36c6f6181bf7f4f284999d40126f79b22661043ea2b7f585b9ee244418",
   "runtime_policy": {
     "selection": "exact-local-event-day",
     "precedence": [
@@ -33,5 +32,9 @@
   "chunk_files": [
     "sky-v4-placement-lunar-context-v1-chunk-1.json",
     "sky-v4-placement-lunar-context-v1-chunk-2.json"
-  ]
+  ],
+  "chunk_sha256": {
+    "sky-v4-placement-lunar-context-v1-chunk-1.json": "f7734e1ccdcabe2fecc2bcc49aec629d9973386b3ba82ef58251b5a048dc89cf",
+    "sky-v4-placement-lunar-context-v1-chunk-2.json": "3a081ad29d0e953bbdce173309ce616c49eebab00e5ae59d71cda977fbd56307"
+  }
 }

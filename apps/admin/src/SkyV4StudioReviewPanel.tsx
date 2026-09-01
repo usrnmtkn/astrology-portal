@@ -4,31 +4,9 @@ import { adminCredentialHeaders } from "./adminSecret";
 
 type Preview = { contentKey: string; page: string; servingEnabled: boolean };
 
-type AdminRow = {
-  id: string;
-  content_key: string;
-  status: string;
-  event_type?: string | null;
-  sections?: unknown;
-  updated_at?: string | null;
-};
-
-type EditablePath =
-  | "tldrWhat"
-  | "tldrTakeaway"
-  | "placementArticle"
-  | "fallback.hook"
-  | "fallback.lived"
-  | "fallback.turn";
-
-type FieldDefinition = {
-  path: EditablePath;
-  label: string;
-  description: string;
-  rows: number;
-};
-
-type BatchFieldFilter = "all" | "hook" | "lived" | "turn";
+type AdminRow = { id: string; content_key: string; status: string; event_type?: string | null; sections?: unknown; updated_at?: string | null };
+type EditablePath = "tldrWhat" | "tldrTakeaway" | "placementArticle" | "fallback.hook" | "fallback.lived" | "fallback.turn" | "FullPageBody" | "FallbackBody";
+type FieldDefinition = { path: EditablePath; label: string; description: string; rows: number };
 
 interface Props {
   secret: string;
@@ -38,146 +16,66 @@ interface Props {
 }
 
 const mainReaderFields: FieldDefinition[] = [
-  {
-    path: "tldrWhat",
-    label: "TLDR What",
-    description: "The current-sky mechanism. Keep it distinct from the article and fallback copy.",
-    rows: 3
-  },
-  {
-    path: "tldrTakeaway",
-    label: "TLDR Takeaway",
-    description: "The reader priority or consequence. It should add something rather than repeat the article.",
-    rows: 3
-  },
-  {
-    path: "placementArticle",
-    label: "Placement article",
-    description: "The long-form reader layer. Do not paste the TLDR or fallback sentences into this field.",
-    rows: 12
-  }
+  { path: "tldrWhat", label: "TLDR What", description: "Current-sky mechanism, distinct from the article.", rows: 3 },
+  { path: "tldrTakeaway", label: "TLDR Takeaway", description: "Reader priority or consequence.", rows: 3 },
+  { path: "placementArticle", label: "Placement article", description: "Long-form reader layer.", rows: 12 }
 ];
-
 const fallbackFields: FieldDefinition[] = [
-  {
-    path: "fallback.hook",
-    label: "Hook",
-    description: "Independent fallback opening. It should not be an excerpt from the placement article.",
-    rows: 4
-  },
-  {
-    path: "fallback.lived",
-    label: "Lived",
-    description: "Independent human consequence or recognizable situation.",
-    rows: 4
-  },
-  {
-    path: "fallback.turn",
-    label: "Turn",
-    description: "Independent turn or choice. Do not recycle the article close or TLDR takeaway.",
-    rows: 4
-  }
+  { path: "fallback.hook", label: "Hook", description: "Independent fallback opening.", rows: 4 },
+  { path: "fallback.lived", label: "Lived", description: "Recognizable human consequence.", rows: 4 },
+  { path: "fallback.turn", label: "Turn", description: "Independent turn or choice.", rows: 4 }
 ];
-
+const lunarContextFields: FieldDefinition[] = [
+  { path: "FullPageBody", label: "Full-page context", description: "Event-day context for the full article.", rows: 7 },
+  { path: "FallbackBody", label: "Fallback context", description: "Event-day context for fallback copy.", rows: 4 }
+];
 const allContinuousFields = [...mainReaderFields, ...fallbackFields];
 const planetOrder = ["sun", "mercury", "venus", "mars", "jupiter", "saturn", "uranus", "neptune", "pluto", "chiron"];
 const signOrder = ["aries", "taurus", "gemini", "cancer", "leo", "virgo", "libra", "scorpio", "sagittarius", "capricorn", "aquarius", "pisces"];
 
-function record(value: unknown): Record<string, unknown> {
-  return value && typeof value === "object" && !Array.isArray(value) ? value as Record<string, unknown> : {};
-}
-
-function valueAt(source: Record<string, unknown>, path: string): unknown {
-  return path.split(".").reduce<unknown>((current, part) => record(current)[part], source);
-}
-
+function valueAt(source: Record<string, unknown>, path: string): unknown { return path.split(".").reduce<unknown>((value, part) => record(value)[part], source); }
 function setValueAt(source: Record<string, unknown>, path: string, value: unknown) {
-  const next = structuredClone(source);
-  const parts = path.split(".");
-  let cursor = next;
-  for (const part of parts.slice(0, -1)) {
-    cursor[part] = { ...record(cursor[part]) };
-    cursor = cursor[part] as Record<string, unknown>;
-  }
-  cursor[parts.at(-1) ?? path] = value;
-  return next;
+  const next = structuredClone(source); const parts = path.split("."); let cursor = next;
+  for (const part of parts.slice(0, -1)) { cursor[part] = { ...record(cursor[part]) }; cursor = cursor[part] as Record<string, unknown>; }
+  cursor[parts.at(-1) ?? path] = value; return next;
 }
-
 function deepMerge(base: Record<string, unknown>, override: Record<string, unknown>): Record<string, unknown> {
   const next = structuredClone(base);
   for (const [key, value] of Object.entries(override)) {
     const current = next[key];
-    next[key] = current && value
-      && typeof current === "object" && !Array.isArray(current)
-      && typeof value === "object" && !Array.isArray(value)
-      ? deepMerge(record(current), record(value))
-      : structuredClone(value);
+    next[key] = current && value && typeof current === "object" && !Array.isArray(current) && typeof value === "object" && !Array.isArray(value)
+      ? deepMerge(record(current), record(value)) : structuredClone(value);
   }
   return next;
 }
-
-function editableValues(source: Record<string, unknown>) {
-  return Object.fromEntries(allContinuousFields.map((field) => [
-    field.path,
-    String(valueAt(source, field.path) ?? "")
-  ])) as Record<EditablePath, string>;
+function editableValues(source: Record<string, unknown>, definitions: FieldDefinition[] = allContinuousFields) {
+  return Object.fromEntries(definitions.map((field) => [field.path, String(valueAt(source, field.path) ?? "")])) as Record<EditablePath, string>;
 }
-
-function rowSections(row: AdminRow) {
-  return record(row.sections);
-}
-
-function rowEffectiveRecord(row: AdminRow) {
-  const sections = rowSections(row);
-  return deepMerge(record(sections.packageRecord), record(sections.packageDraft));
-}
-
-function rowHasDraft(row: AdminRow) {
-  return Object.keys(record(rowSections(row).packageDraft)).length > 0;
-}
-
-function continuousIdentity(contentKey: string) {
-  const match = contentKey.match(/^sky-placement\/article\/([^/]+)\/([^/]+)$/u);
-  return match ? { planet: match[1], sign: match[2] } : null;
-}
-
-function titlePart(value: string) {
-  return value.replace(/-/gu, " ").replace(/\b\w/gu, (letter) => letter.toUpperCase());
-}
-
+function rowSections(row: AdminRow) { return record(row.sections); }
+function rowEffectiveRecord(row: AdminRow) { const sections = rowSections(row); return deepMerge(record(sections.packageRecord), record(sections.packageDraft)); }
+function rowHasDraft(row: AdminRow) { return Object.keys(record(rowSections(row).packageDraft)).length > 0; }
+function continuousIdentity(key: string) { const match = key.match(/^sky-placement\/article\/([^/]+)\/([^/]+)$/u); return match ? { planet: match[1], sign: match[2] } : null; }
+function lunarContextIdentity(key: string) { const match = key.match(/^sky-placement\/lunar-context\/([^/]+)\/([^/]+)$/u); return match ? { eventType: match[1], planet: match[2] } : null; }
+function titlePart(value: string) { return value.replace(/-/gu, " ").replace(/\b\w/gu, (letter) => letter.toUpperCase()); }
 function preferredRow(left: AdminRow, right: AdminRow) {
-  const score = (row: AdminRow) => rowHasDraft(row)
-    ? 3
-    : row.event_type === "sky-v4-reader-copy-draft"
-      ? 2
-      : row.status === "LIVE"
-        ? 1
-        : 0;
-  const scoreDifference = score(right) - score(left);
-  if (scoreDifference) return scoreDifference > 0 ? right : left;
+  const score = (row: AdminRow) => rowHasDraft(row) ? 3 : row.event_type === "sky-v4-reader-copy-draft" ? 2 : row.status === "LIVE" ? 1 : 0;
+  if (score(right) !== score(left)) return score(right) > score(left) ? right : left;
   return String(right.updated_at ?? "") > String(left.updated_at ?? "") ? right : left;
 }
-
 function uniqueContinuousRows(rows: AdminRow[]) {
   const byKey = new Map<string, AdminRow>();
   for (const row of rows) {
-    const identity = continuousIdentity(row.content_key);
-    if (!identity) continue;
-    const effective = rowEffectiveRecord(row);
-    if (String(effective.studio_content_type ?? "") !== "continuous-placement") continue;
-    const previous = byKey.get(row.content_key);
-    byKey.set(row.content_key, previous ? preferredRow(previous, row) : row);
+    if (!continuousIdentity(row.content_key) || String(rowEffectiveRecord(row).studio_content_type ?? "") !== "continuous-placement") continue;
+    const previous = byKey.get(row.content_key); byKey.set(row.content_key, previous ? preferredRow(previous, row) : row);
   }
   return [...byKey.values()].sort((left, right) => {
-    const leftIdentity = continuousIdentity(left.content_key)!;
-    const rightIdentity = continuousIdentity(right.content_key)!;
-    return planetOrder.indexOf(leftIdentity.planet) - planetOrder.indexOf(rightIdentity.planet)
-      || signOrder.indexOf(leftIdentity.sign) - signOrder.indexOf(rightIdentity.sign);
+    const a = continuousIdentity(left.content_key)!; const b = continuousIdentity(right.content_key)!;
+    return planetOrder.indexOf(a.planet) - planetOrder.indexOf(b.planet) || signOrder.indexOf(a.sign) - signOrder.indexOf(b.sign);
   });
 }
 
-function fallbackPath(filter: Exclude<BatchFieldFilter, "all">): EditablePath {
-  return `fallback.${filter}` as EditablePath;
+function record(value: unknown): Record<string, unknown> {
+  return value && typeof value === "object" && !Array.isArray(value) ? value as Record<string, unknown> : {};
 }
 
 export default function SkyV4StudioReviewPanel(props: Props) {
@@ -190,30 +88,33 @@ export default function SkyV4StudioReviewPanel(props: Props) {
   const [batchLoading, setBatchLoading] = useState(false);
   const [batchError, setBatchError] = useState<string | null>(null);
   const [batchRows, setBatchRows] = useState<AdminRow[]>([]);
-  const [planetFilter, setPlanetFilter] = useState("all");
-  const [signFilter, setSignFilter] = useState("all");
-  const [fieldFilter, setFieldFilter] = useState<BatchFieldFilter>("all");
-  const [search, setSearch] = useState("");
-  const [batchEdits, setBatchEdits] = useState<Record<string, Partial<Record<EditablePath, string>>>>({});
+  const [selectedBatchKey, setSelectedBatchKey] = useState("");
+  const [batchEdits, setBatchEdits] = useState<Partial<Record<EditablePath, string>>>({});
   const [savingBatchKey, setSavingBatchKey] = useState<string | null>(null);
   const [batchSaveMessage, setBatchSaveMessage] = useState<Record<string, string>>({});
 
   const provenance = record(props.effectiveRecord.studio_provenance);
   const contentType = String(props.effectiveRecord.studio_content_type ?? "");
   const isContinuousPlacement = contentType === "continuous-placement" && Boolean(continuousIdentity(props.contentKey));
+  const isLunarContext = contentType === "placement-lunar-context" && Boolean(lunarContextIdentity(props.contentKey));
   const identity = continuousIdentity(props.contentKey);
+  const lunarIdentity = lunarContextIdentity(props.contentKey);
+  const currentFieldDefinitions = isLunarContext ? lunarContextFields : allContinuousFields;
   const values = (key: string) => Array.isArray(props.effectiveRecord[key]) ? (props.effectiveRecord[key] as unknown[]).map(String).filter(Boolean) : [];
   const readOnlyFields = values("studio_read_only_fields");
-  const baselineFields = useMemo(() => editableValues(props.effectiveRecord), [props.contentKey, props.effectiveRecord]);
+  const baselineFields = useMemo(
+    () => editableValues(props.effectiveRecord, contentType === "placement-lunar-context" ? lunarContextFields : allContinuousFields),
+    [props.contentKey, props.effectiveRecord, contentType]
+  );
 
   useEffect(() => {
-    setCurrentFields(editableValues(props.effectiveRecord));
+    setCurrentFields(editableValues(props.effectiveRecord, contentType === "placement-lunar-context" ? lunarContextFields : allContinuousFields));
     setCurrentSaveMessage(null);
   }, [props.contentKey, props.effectiveRecord]);
 
   const draftFields: Record<string, unknown> = {};
-  if (isContinuousPlacement) {
-    for (const field of allContinuousFields) draftFields[field.path] = currentFields[field.path];
+  if (isContinuousPlacement || isLunarContext) {
+    for (const field of currentFieldDefinitions) draftFields[field.path] = currentFields[field.path];
   } else {
     for (const item of Array.isArray(props.effectiveRecord.studio_editable_fields) ? props.effectiveRecord.studio_editable_fields : []) {
       const field = record(item);
@@ -222,18 +123,10 @@ export default function SkyV4StudioReviewPanel(props: Props) {
     }
   }
 
-  const currentDirty = isContinuousPlacement && allContinuousFields.some((field) => currentFields[field.path] !== baselineFields[field.path]);
+  const currentDirty = (isContinuousPlacement || isLunarContext)
+    && currentFieldDefinitions.some((field) => currentFields[field.path] !== baselineFields[field.path]);
   const continuousRows = useMemo(() => uniqueContinuousRows(batchRows), [batchRows]);
-  const visibleBatchRows = useMemo(() => continuousRows.filter((row) => {
-    const rowIdentity = continuousIdentity(row.content_key)!;
-    if (planetFilter !== "all" && rowIdentity.planet !== planetFilter) return false;
-    if (signFilter !== "all" && rowIdentity.sign !== signFilter) return false;
-    if (search.trim()) {
-      const haystack = `${rowIdentity.planet} ${rowIdentity.sign} ${Object.values(editableValues(rowEffectiveRecord(row))).join(" ")}`.toLowerCase();
-      if (!haystack.includes(search.trim().toLowerCase())) return false;
-    }
-    return true;
-  }), [continuousRows, planetFilter, signFilter, search]);
+  const selectedBatchRow = continuousRows.find((row) => row.content_key === selectedBatchKey) ?? continuousRows[0];
 
   async function generatedContentRows(url: string) {
     const response = await fetch(url, { headers: adminCredentialHeaders(props.secret) });
@@ -245,8 +138,12 @@ export default function SkyV4StudioReviewPanel(props: Props) {
 
   async function fetchCurrentStoredRow() {
     const rows = await generatedContentRows(`/api/admin/generated-content?status=all&visibility=all&contentKey=${encodeURIComponent(props.contentKey)}&limit=20`);
-    const continuous = uniqueContinuousRows(rows);
-    const exact = continuous.find((row) => row.content_key === props.contentKey);
+    const exact = isContinuousPlacement
+      ? uniqueContinuousRows(rows).find((row) => row.content_key === props.contentKey)
+      : rows.filter((row) => row.content_key === props.contentKey).reduce<AdminRow | undefined>(
+        (preferred, row) => preferred ? preferredRow(preferred, row) : row,
+        undefined
+      );
     if (!exact) throw new Error(`Could not load the stored Content Studio row for ${props.contentKey}.`);
     return exact;
   }
@@ -279,14 +176,16 @@ export default function SkyV4StudioReviewPanel(props: Props) {
   }
 
   async function saveCurrentGroupedDraft() {
-    if (!isContinuousPlacement || !currentDirty) return;
+    if ((!isContinuousPlacement && !isLunarContext) || !currentDirty) return;
     setSavingCurrent(true);
     setError(null);
     setCurrentSaveMessage(null);
     try {
       const row = await fetchCurrentStoredRow();
       await saveDraft(row, currentFields);
-      setCurrentSaveMessage("Draft saved. The approved serving baseline remains live until this version is separately reviewed and released.");
+      setCurrentSaveMessage(props.effectiveRecord.serving_enabled === true
+        ? "Draft saved. The approved serving baseline remains live until this version is separately reviewed and released."
+        : "Draft saved. This proposal remains non-serving until it receives explicit owner approval and a serving release.");
     } catch (reason) {
       setError(reason instanceof Error ? reason.message : "The grouped SKY V4 draft could not be saved.");
     } finally {
@@ -301,7 +200,9 @@ export default function SkyV4StudioReviewPanel(props: Props) {
       const rows = await generatedContentRows("/api/admin/generated-content?status=all&visibility=all&surface=sky&limit=1000");
       const continuous = uniqueContinuousRows(rows);
       setBatchRows(continuous);
-      if (planetFilter === "all" && identity?.planet) setPlanetFilter(identity.planet);
+      const initial = continuous.find((row) => row.content_key === props.contentKey) ?? continuous[0];
+      setSelectedBatchKey(initial?.content_key ?? "");
+      setBatchEdits(initial ? editableValues(rowEffectiveRecord(initial)) : {});
       if (continuous.length !== 120) {
         setBatchError(`Loaded ${continuous.length}/120 continuous placement records. Filters still work, but the batch review is incomplete.`);
       }
@@ -318,23 +219,15 @@ export default function SkyV4StudioReviewPanel(props: Props) {
     if (next && !batchRows.length && !batchLoading) await loadContinuousFallbacks();
   }
 
-  function batchValue(row: AdminRow, path: EditablePath) {
-    const edited = batchEdits[row.id]?.[path];
-    if (typeof edited === "string") return edited;
-    return String(valueAt(rowEffectiveRecord(row), path) ?? "");
-  }
-
-  function updateBatchValue(row: AdminRow, path: EditablePath, value: string) {
-    setBatchEdits((current) => ({
-      ...current,
-      [row.id]: { ...current[row.id], [path]: value }
-    }));
-    setBatchSaveMessage((current) => ({ ...current, [row.content_key]: "" }));
+  function selectBatchRow(contentKey: string) {
+    setSelectedBatchKey(contentKey);
+    const row = continuousRows.find((candidate) => candidate.content_key === contentKey);
+    setBatchEdits(row ? editableValues(rowEffectiveRecord(row)) : {});
   }
 
   async function saveBatchFallbackDraft(row: AdminRow) {
     const changes: Partial<Record<EditablePath, string>> = {};
-    for (const field of fallbackFields) changes[field.path] = batchValue(row, field.path);
+    for (const field of fallbackFields) changes[field.path] = batchEdits[field.path] ?? "";
     setSavingBatchKey(row.content_key);
     setBatchError(null);
     try {
@@ -343,11 +236,6 @@ export default function SkyV4StudioReviewPanel(props: Props) {
         ...current,
         [row.content_key]: "Draft saved · serving baseline unchanged"
       }));
-      setBatchEdits((current) => {
-        const next = { ...current };
-        delete next[row.id];
-        return next;
-      });
       await loadContinuousFallbacks();
     } catch (reason) {
       setBatchSaveMessage((current) => ({
@@ -367,12 +255,21 @@ export default function SkyV4StudioReviewPanel(props: Props) {
       subjectSign: String(props.effectiveRecord.SignA ?? ""),
       calculatedDate: String(props.effectiveRecord.calculatedDate ?? ""),
       calculatedOrb: String(props.effectiveRecord.calculatedOrb ?? "")
+    } : isLunarContext ? {
+      kind: "continuous",
+      subjectBody: String(props.effectiveRecord.Planet ?? ""),
+      subjectSign: "Aries"
     } : undefined;
     try {
       const response = await fetch("/api/admin/sky-v4-preview", {
         method: "POST",
         headers: { "content-type": "application/json", ...adminCredentialHeaders(props.secret) },
-        body: JSON.stringify({ contentKey: props.contentKey, draftFields, previewSurface })
+        body: JSON.stringify({
+          contentKey: props.contentKey,
+          draftFields,
+          previewSurface,
+          facts: isLunarContext ? { eventSign: "Aries", oppositeSign: "Libra" } : undefined
+        })
       });
       const payload = await response.json() as { ok?: boolean; rendered?: Preview; error?: string };
       if (!response.ok || !payload.rendered) throw new Error(payload.error || `Preview failed (${response.status}).`);
@@ -382,10 +279,6 @@ export default function SkyV4StudioReviewPanel(props: Props) {
       setError(reason instanceof Error ? reason.message : "The canonical preview could not be assembled.");
     }
   }
-
-  const fieldsForBatch = fieldFilter === "all"
-    ? fallbackFields
-    : fallbackFields.filter((field) => field.path === fallbackPath(fieldFilter));
 
   return <>
     {isContinuousPlacement && <section className="admin-hook-detail-section" aria-label="SKY V4 continuous placement grouped editor">
@@ -440,78 +333,54 @@ export default function SkyV4StudioReviewPanel(props: Props) {
         <div>
           <p className="admin-eyebrow">Continuous placement fallbacks</p>
           <h4>Review Hook · Lived · Turn across all 120 placements</h4>
-          <p>Filter by planet, sign, or fallback field. Saving here creates a non-serving Content Studio draft for that placement; it never overwrites the approved serving baseline.</p>
+          <p>Choose one placement. Saving creates a non-serving draft and never overwrites the approved serving baseline.</p>
         </div>
-
-        <div className="admin-review-filter-grid" aria-label="Continuous fallback filters">
-          <label>
-            <span>Planet</span>
-            <select value={planetFilter} onChange={(event) => setPlanetFilter(event.target.value)}>
-              <option value="all">All planets</option>
-              {planetOrder.map((planet) => <option key={planet} value={planet}>{titlePart(planet)}</option>)}
-            </select>
-          </label>
-          <label>
-            <span>Sign</span>
-            <select value={signFilter} onChange={(event) => setSignFilter(event.target.value)}>
-              <option value="all">All signs</option>
-              {signOrder.map((sign) => <option key={sign} value={sign}>{titlePart(sign)}</option>)}
-            </select>
-          </label>
-          <label>
-            <span>Field</span>
-            <select value={fieldFilter} onChange={(event) => setFieldFilter(event.target.value as BatchFieldFilter)}>
-              <option value="all">Hook + Lived + Turn</option>
-              <option value="hook">Hook only</option>
-              <option value="lived">Lived only</option>
-              <option value="turn">Turn only</option>
-            </select>
-          </label>
-          <label>
-            <span>Search copy</span>
-            <input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search fallback copy" />
-          </label>
-        </div>
-
         <div className="admin-fallback-row-actions">
-          <strong>{batchLoading ? "Loading…" : `${visibleBatchRows.length} shown · ${continuousRows.length}/120 loaded`}</strong>
+          <strong>{batchLoading ? "Loading…" : `${continuousRows.length}/120 loaded`}</strong>
           <button type="button" disabled={batchLoading || props.disabled} onClick={() => void loadContinuousFallbacks()}>Refresh</button>
         </div>
         {batchError && <p role="alert">{batchError}</p>}
-
-        <div className="admin-review-stack">
-          {visibleBatchRows.map((row) => {
-            const rowIdentity = continuousIdentity(row.content_key)!;
-            const hasUnsavedEdit = Boolean(batchEdits[row.id] && Object.keys(batchEdits[row.id]).length);
-            return <article className="admin-hook-detail-section" key={row.content_key}>
-              <div>
-                <p className="admin-eyebrow">{titlePart(rowIdentity.planet)} · {titlePart(rowIdentity.sign)}</p>
-                <h4>{titlePart(rowIdentity.planet)} in {titlePart(rowIdentity.sign)}</h4>
-                <p><code>{row.content_key}</code> · {rowHasDraft(row) ? "Existing draft" : "Serving baseline"}</p>
-              </div>
-              {fieldsForBatch.map((field) => <label key={`${row.id}-${field.path}`}>
-                <span><strong>{field.label}</strong> <code>{field.path}</code></span>
-                <textarea
-                  rows={4}
-                  value={batchValue(row, field.path)}
-                  disabled={props.disabled || savingBatchKey === row.content_key}
-                  onChange={(event) => updateBatchValue(row, field.path, event.target.value)}
-                />
-              </label>)}
-              <div className="admin-fallback-row-actions">
-                <button
-                  type="button"
-                  disabled={props.disabled || savingBatchKey === row.content_key || !hasUnsavedEdit}
-                  onClick={() => void saveBatchFallbackDraft(row)}
-                >
-                  {savingBatchKey === row.content_key ? "Saving draft…" : "Save fallback draft"}
-                </button>
-                {batchSaveMessage[row.content_key] && <small>{batchSaveMessage[row.content_key]}</small>}
-              </div>
-            </article>;
-          })}
-        </div>
+        {selectedBatchRow && <article className="admin-hook-detail-section">
+          <select value={selectedBatchRow.content_key} onChange={(event) => selectBatchRow(event.target.value)}>
+            {continuousRows.map((row) => {
+              const rowIdentity = continuousIdentity(row.content_key)!;
+              return <option key={row.content_key} value={row.content_key}>{titlePart(rowIdentity.planet)} in {titlePart(rowIdentity.sign)}</option>;
+            })}
+          </select>
+          {fallbackFields.map((field) => <label key={field.path}>
+            <span><strong>{field.label}</strong> <code>{field.path}</code></span>
+            <textarea rows={4} value={batchEdits[field.path] ?? ""} disabled={props.disabled || savingBatchKey === selectedBatchRow.content_key} onChange={(event) => setBatchEdits((current) => ({ ...current, [field.path]: event.target.value }))} />
+          </label>)}
+          <button type="button" disabled={props.disabled || savingBatchKey === selectedBatchRow.content_key} onClick={() => void saveBatchFallbackDraft(selectedBatchRow)}>
+            {savingBatchKey === selectedBatchRow.content_key ? "Saving draft…" : "Save fallback draft"}
+          </button>
+          {batchSaveMessage[selectedBatchRow.content_key] && <small>{batchSaveMessage[selectedBatchRow.content_key]}</small>}
+        </article>}
       </section>}
+    </section>}
+
+    {isLunarContext && <section className="admin-hook-detail-section" aria-label="SKY V4 placement lunar-context grouped editor">
+      <div>
+        <p className="admin-eyebrow">Sky Placement · Lunar context</p>
+        <h3>{lunarIdentity ? `${titlePart(lunarIdentity.planet)} · ${titlePart(lunarIdentity.eventType)}` : props.contentKey}</h3>
+        <p>These two fields are one event-day module. The full-page and fallback versions stay together so they cannot drift into separate records.</p>
+      </div>
+      {lunarContextFields.map((field) => <label key={field.path}>
+        <span><strong>{field.label}</strong> <code>{field.path}</code></span>
+        <small>{field.description}</small>
+        <textarea
+          rows={field.rows}
+          value={currentFields[field.path] ?? ""}
+          disabled={props.disabled || savingCurrent}
+          onChange={(event) => setCurrentFields((current) => ({ ...current, [field.path]: event.target.value }))}
+        />
+      </label>)}
+      <div className="admin-fallback-row-actions">
+        <button type="button" disabled={props.disabled || savingCurrent || !currentDirty} onClick={() => void saveCurrentGroupedDraft()}>
+          {savingCurrent ? "Saving draft…" : "Save lunar-context draft"}
+        </button>
+      </div>
+      {currentSaveMessage && <p className="admin-editor-guidance">{currentSaveMessage}</p>}
     </section>}
 
     <section className="admin-hook-detail-section" aria-label="Production-parity SKY V4 preview">
