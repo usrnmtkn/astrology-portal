@@ -53,6 +53,7 @@ import {
   SourceGapError as FallbackV3SourceGapError
 } from "./content/fallbackArchitectureV3Runtime";
 import {
+  installCompatibilityFallbackArchitectureV3Bundle,
   installFallbackArchitectureV3Bundle,
   installSkyPlacementFallbackArchitectureV3Bundle,
   loadDeferredFallbackArchitectureV3Bundle,
@@ -125,6 +126,7 @@ import {
 } from "./features/friends/friendCalculationReadiness";
 import { manualChartBigThree } from "./features/friends/friendChartModel";
 import {
+  shouldHydrateCompatibilityDashboardContent,
   shouldHydrateFallbackDashboardContent,
   shouldLoadDeferredFallbackContent,
   shouldLoadEmptyHouseFallbackContent,
@@ -193,6 +195,7 @@ import {
   generatedContentSections,
   generatedContentParagraphs,
   generatedContentPreviewModeChangeEvent,
+  loadFallbackArchitectureV3CompatibilityDashboardBundle,
   loadFallbackArchitectureV3DashboardBundle,
   loadFallbackArchitectureV3SkyPlacementDashboardBundle,
   loadLiveGeneratedContentForKeys,
@@ -10872,6 +10875,7 @@ export function App() {
   const selectedSkyDetailRefreshKeyRef = useRef("");
   const selectedSkyDetailRefreshContentRef = useRef<GeneratedContentMap | null>(null);
   const fallbackDashboardHydrationRequestedRef = useRef(false);
+  const compatibilityDashboardHydrationVersionRef = useRef<number | null>(null);
   const selectedCalendarTransitEventRef = useRef<{
     event: LunarCalendarEvent;
     description?: string;
@@ -11451,6 +11455,31 @@ export function App() {
 
   useEffect(() => {
     if (
+      !shouldHydrateCompatibilityDashboardContent({ mode, friendRelationshipContentRequests })
+      || compatibilityDashboardHydrationVersionRef.current === contentRefreshVersion
+    ) {
+      return;
+    }
+
+    compatibilityDashboardHydrationVersionRef.current = contentRefreshVersion;
+    void loadFallbackArchitectureV3CompatibilityDashboardBundle()
+      .then((bundle) => {
+        if (!bundle) {
+          compatibilityDashboardHydrationVersionRef.current = null;
+          return;
+        }
+
+        installCompatibilityFallbackArchitectureV3Bundle(bundle);
+        setFallbackArchitectureV3Version((version) => version + 1);
+      })
+      .catch((error) => {
+        compatibilityDashboardHydrationVersionRef.current = null;
+        console.warn("Compatibility dashboard content failed to install; bundled relationship copy remains active.", error);
+      });
+  }, [contentRefreshVersion, friendRelationshipContentRequests, mode]);
+
+  useEffect(() => {
+    if (
       !shouldHydrateFallbackDashboardContent(mode)
       || fallbackDashboardHydrationRequestedRef.current
     ) {
@@ -11710,6 +11739,7 @@ export function App() {
     clearSharedGeneratedContentCache();
     calendarContentCacheRef.current.clear();
     fallbackDashboardHydrationRequestedRef.current = false;
+    compatibilityDashboardHydrationVersionRef.current = null;
     setContentRefreshVersion((version) => version + 1);
   }), []);
 
