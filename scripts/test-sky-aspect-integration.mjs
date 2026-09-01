@@ -221,7 +221,7 @@ const retried = await generator.generateCard({
     if (calls === 2) {
       assert.match(prompt, /LINT RETRY - YOUR PREVIOUS DRAFT USED THE BANNED PHRASE\(S\)/);
       assert.match(prompt, /"degree\/orb mechanics"/);
-      assert.match(prompt, /"collective person"/);
+      assert.match(prompt, /"paragraph-count"/);
       assert.match(prompt, /Do not use "gift" or "shadow" as labels/);
     }
     return calls === 1 ? "You can read the 2° orb in the draft." : cleanExample;
@@ -236,8 +236,6 @@ assert.equal(retried.warmthHarvest.status, "ready");
 assert.equal(retried.harvest_mode, "matched");
 assert.deepEqual(retried.lintRetryAvoidTerms, [[
   "degree/orb mechanics",
-  "collective person",
-  "(?<!-)\\byou\\b|(?<!-)\\byour\\b",
   "paragraph-count"
 ]]);
 

@@ -84,3 +84,12 @@ export function calendarEventGeneratedContentKeys(event: LunarCalendarEvent) {
 export function calendarTransitDetailContentKeys(event: LunarCalendarEvent) {
   return Array.from(new Set(calendarEventGeneratedContentKeys(event)));
 }
+
+export function calendarSkyV4LunationContentKey(event: LunarCalendarEvent) {
+  if (event.type !== "lunation" || !event.sign) return null;
+  const sign = slugContentPart(event.sign);
+  if (event.eclipseType) {
+    return `sky-lunation/${event.eclipseType}-eclipse/${event.dateKey}-${sign}`;
+  }
+  return `sky-lunation/${/new moon/iu.test(event.title) ? "new-moon" : "full-moon"}/${sign}`;
+}

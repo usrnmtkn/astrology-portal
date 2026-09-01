@@ -97,7 +97,7 @@ export type SkyDetail = {
   sections?: SkyDetailSection[];
   relatedAspects?: {
     heading: string;
-    grouping?: "tone" | "counterpart";
+    grouping?: "tone" | "counterpart" | "event";
     rows: Array<ReactNode | SkyDetailRelatedAspectRow>;
   };
   personalizedPlacement?: SkyPersonalizedPlacement | null;
@@ -455,7 +455,9 @@ export function SkyDetailArticle({
   });
   const relatedAspectRows = (detail.relatedAspects?.rows ?? []).map(normalizeRelatedAspectRow);
   const relatedAspectGrouping = detail.relatedAspects?.grouping ?? "tone";
-  const aspectGroupDefinitions = relatedAspectGrouping === "counterpart"
+  const aspectGroupDefinitions = relatedAspectGrouping === "event"
+    ? ([{ id: "key-aspects" as const, label: "Key aspects" }])
+    : relatedAspectGrouping === "counterpart"
     ? ([
         { id: "planets" as const, label: "Planetary aspects" },
         { id: "points" as const, label: "Angles and points" }
@@ -466,10 +468,14 @@ export function SkyDetailArticle({
       ]);
   const aspectGroups = aspectGroupDefinitions.map((group) => ({
     ...group,
-    sections: relatedAspectGrouping === "tone"
-      ? aspectSections.filter((section) => section.group === group.id)
-      : [],
-    rows: relatedAspectRows.filter((row) => row.group === group.id)
+    sections: relatedAspectGrouping === "event"
+      ? aspectSections
+      : relatedAspectGrouping === "tone"
+        ? aspectSections.filter((section) => section.group === group.id)
+        : [],
+    rows: relatedAspectGrouping === "event"
+      ? []
+      : relatedAspectRows.filter((row) => row.group === group.id)
   })).filter((group) => group.sections.length > 0 || group.rows.length > 0);
   const hasAspectCard = aspectGroups.length > 0;
   const hasReadableBody = Boolean(
@@ -680,6 +686,11 @@ export function SkyDetailArticle({
         {hasAspectCard ? (
           <>
             <h2 className="sr-only">Aspect details</h2>
+            {relatedAspectGrouping !== "event" && detail.relatedAspects?.heading ? (
+              <p className="eyebrow section-label article-related-aspects__section-label">
+                {detail.relatedAspects.heading}
+              </p>
+            ) : null}
             {aspectGroups.map((group) => (
               <Fragment key={group.id}>
                 <h3
