@@ -11,6 +11,7 @@ import {
   natalAspectMatchesSelection,
   natalAspectSelectionOptions,
   natalAspectSourceDraft,
+  natalAspectTheyNameVariable,
   parseNatalAspectContentKey
 } from "../apps/admin/src/natalAspectSources.ts";
 
@@ -42,6 +43,7 @@ assert.equal(
   natalAspectContentKey({ first: "lilith", aspect: "square", second: "ascendant" }),
   "fallback-hook/natal-aspect-lived/lilith/square/ascendant"
 );
+assert.equal(natalAspectTheyNameVariable, "{{Name}}", "The admin hint must use the exact case-sensitive runtime name variable.");
 const missingAspectDraft = natalAspectSourceDraft({ first: "lilith", aspect: "square", second: "ascendant" });
 assert.equal(missingAspectDraft.contentKey, "fallback-hook/natal-aspect-lived/lilith/square/ascendant");
 assert.equal(missingAspectDraft.sections.packageRecord.body, "");
@@ -70,6 +72,9 @@ const skyWriteupsNavIndex = dashboardSource.indexOf('label: "Sky Write-ups"');
 assert.ok(natalChartNavIndex >= 0 && natalAspectNavIndex > natalChartNavIndex && skyWriteupsNavIndex > natalAspectNavIndex, "Natal Aspects must appear directly beneath Natal Chart in the primary navigation.");
 assert.match(dashboardSource, /<NatalAspectSourceFinder/u, "The dedicated workspace must lazy-load the exact natal aspect finder.");
 assert.match(dashboardSource, /category: "Natal Aspects"/u, "The Natal Aspects navigation must deep-link to its dedicated category route.");
+const theyNameHintIndex = dashboardSource.indexOf('id="natal-aspect-they-name-hint"');
+const theyCopyFieldIndex = dashboardSource.indexOf('aria-describedby={isExactNatalAspectDraft ? "natal-aspect-they-name-hint" : undefined}');
+assert.ok(theyNameHintIndex >= 0 && theyCopyFieldIndex > theyNameHintIndex, "The exact {{Name}} authoring hint must appear above the They copy field.");
 
 const finderSource = fs.readFileSync(path.join(repoRoot, "apps/admin/src/NatalAspectSourceFinder.tsx"), "utf8");
 const firstLabelIndex = finderSource.indexOf("1. Planet or point");

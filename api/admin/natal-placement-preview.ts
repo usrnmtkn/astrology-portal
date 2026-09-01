@@ -28,6 +28,7 @@ const fallbackTemplates = require("../../apps/web/src/content/fallbackArchitectu
 };
 
 const planets = new Set(["sun", "moon", "mercury", "venus", "mars", "jupiter", "saturn", "uranus", "neptune", "pluto", "chiron", "lilith", "north-node", "south-node"]);
+const retrogradePlanets = new Set(["mercury", "venus", "mars", "jupiter", "saturn", "uranus", "neptune", "pluto", "chiron", "lilith"]);
 const signs = new Set(["aries", "taurus", "gemini", "cancer", "leo", "virgo", "libra", "scorpio", "sagittarius", "capricorn", "aquarius", "pisces"]);
 
 function sendJson(res: ServerResponse, status: number, body: unknown) {
@@ -56,6 +57,7 @@ export function normalizeNatalPlacementPreviewInput(value: unknown) {
   const sign = typeof input.sign === "string" ? input.sign : "";
   const house = typeof input.house === "string" ? input.house : "";
   const audience = input.audience === "they" ? "they" : "you";
+  const isRetrograde = input.isRetrograde === true && retrogradePlanets.has(planet);
   if (!planets.has(planet) || !signs.has(sign) || (house && !/^(?:[1-9]|1[0-2])$/u.test(house))) {
     throw new Error("Choose a valid planet and sign. If provided, the house must be between 1 and 12.");
   }
@@ -68,7 +70,7 @@ export function normalizeNatalPlacementPreviewInput(value: unknown) {
       && typeof row.content_role === "string"
       && typeof row.review_status === "string";
   });
-  return { audience, house, overrides, planet, sign };
+  return { audience, house, isRetrograde, overrides, planet, sign };
 }
 
 export function renderNatalPlacementPreview(input: ReturnType<typeof normalizeNatalPlacementPreviewInput>) {
@@ -94,6 +96,7 @@ export function renderNatalPlacementPreview(input: ReturnType<typeof normalizeNa
   );
   return renderer.renderNatalPlacement({
     ...(input.house ? { house: Number(input.house) } : {}),
+    isRetrograde: input.isRetrograde,
     planet: input.planet,
     sign: input.sign,
     voice: input.audience === "you" ? "you" : "Maya"

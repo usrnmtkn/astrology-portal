@@ -31,6 +31,7 @@ type NatalRender = {
 type Props = {
   house: NatalPlacementHouse | "";
   initialAudience?: "you" | "they";
+  isRetrograde?: boolean;
   onCreateOverride: (contentKey: string, label: string, body: string) => void;
   onOpenSource: (contentKey: string, label: string, previewTemplate?: boolean) => void;
   planet: NatalPlacementPlanet;
@@ -68,6 +69,7 @@ function packageRowFromSavedRow(row: PreviewRow) {
 function sourceLabel(contentKey: string) {
   if (contentKey.includes("planet-in-sign")) return "Planet-in-sign section";
   if (contentKey.includes("house-context")) return "House section";
+  if (contentKey.includes("natal.modifier.retrograde")) return "Retrograde modifier";
   if (contentKey.includes("complete-final")) return "Exact full write-up";
   return "Reader section";
 }
@@ -110,10 +112,10 @@ export function natalPlacementOverrideDraft(contentKey: string, label: string, b
   };
 }
 
-export default function NatalPlacementReaderPreview({ house, initialAudience = "you", onCreateOverride, onOpenSource, planet, rows, secret, sign }: Props) {
+export default function NatalPlacementReaderPreview({ house, initialAudience = "you", isRetrograde = false, onCreateOverride, onOpenSource, planet, rows, secret, sign }: Props) {
   const [audience, setAudience] = useState<"you" | "they">(initialAudience);
   const [preview, setPreview] = useState<{ error: string | null; loading: boolean; rendered: NatalRender | null }>({ error: null, loading: true, rendered: null });
-  const sourceKeys = useMemo(() => new Set(natalPlacementSourceGroups(planet, sign, house).flatMap((group) => group.sources.map((source) => source.key))), [house, planet, sign]);
+  const sourceKeys = useMemo(() => new Set(natalPlacementSourceGroups(planet, sign, house, isRetrograde).flatMap((group) => group.sources.map((source) => source.key))), [house, isRetrograde, planet, sign]);
   const overrides = useMemo(() => rows
     .filter((row) => (row.status === "LIVE" || row.status === "REVIEWED") && sourceKeys.has(row.content_key))
     .map(packageRowFromSavedRow)
@@ -125,7 +127,7 @@ export default function NatalPlacementReaderPreview({ house, initialAudience = "
     void fetch("/api/admin/natal-placement-preview", {
       method: "POST",
       headers: { "content-type": "application/json", ...adminCredentialHeaders(secret) },
-      body: JSON.stringify({ audience, ...(house ? { house } : {}), overrides, planet, sign }),
+      body: JSON.stringify({ audience, ...(house ? { house } : {}), isRetrograde, overrides, planet, sign }),
       signal: controller.signal
     }).then(async (response) => {
       const payload = await response.json().catch(() => null) as { error?: string; rendered?: NatalRender } | null;
@@ -136,12 +138,12 @@ export default function NatalPlacementReaderPreview({ house, initialAudience = "
       setPreview({ error: error instanceof Error ? error.message : "The reader preview could not be assembled.", loading: false, rendered: null });
     });
     return () => controller.abort();
-  }, [audience, house, overrides, planet, secret, sign]);
+  }, [audience, house, isRetrograde, overrides, planet, secret, sign]);
 
   const exactKey = house ? `fallback-hook/natal-you-placement-complete-final/${planet}/${sign}/${house}` : "";
   const exactSaved = Boolean(exactKey && rows.some((row) => row.content_key === exactKey));
   const exactServing = Boolean(house && preview.rendered?.provenanceTier === "exact-owner-approved");
-  const label = house ? natalPlacementLabel(planet, sign, house) : natalPlacementSignLabel(planet, sign);
+  const label = house ? natalPlacementLabel(planet, sign, house, isRetrograde) : natalPlacementSignLabel(planet, sign, isRetrograde);
 
   return (
     <section className="admin-natal-reader-preview" aria-label={`Reader preview for ${label}`}>
@@ -164,7 +166,7 @@ export default function NatalPlacementReaderPreview({ house, initialAudience = "
       ) : preview.rendered ? (
         <div className="admin-natal-reader-preview-surface">
           <span className="admin-eyebrow">Headline</span>
-          <h3>{preview.rendered.headline}</h3>
+          <h3>{label}</h3>
           <span className="admin-eyebrow">Write-up</span>
           <div className="admin-natal-reader-preview-parts">
             {preview.rendered.parts.map((part, index) => {
@@ -192,7 +194,7 @@ export default function NatalPlacementReaderPreview({ house, initialAudience = "
                   ? "Exact authored override"
                   : "Composed from atomic sources"}
             </span>
-            {house && audience === "you" && !exactServing && (
+            {house && audience === "you" && !exactServing && !isRetrograde && (
               exactSaved
                 ? <button type="button" onClick={() => onOpenSource(exactKey, `Exact ${label} override`)}>Open draft override</button>
                 : <button type="button" onClick={() => onCreateOverride(exactKey, label, preview.rendered?.body ?? "")}>Create exact override</button>

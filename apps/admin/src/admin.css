@@ -5231,11 +5231,9 @@ body,
 .admin-template-drawer-body > .admin-template-actions:last-child {
   background: var(--admin-ui-sticky-footer);
   border-top: var(--border-width-thin) solid var(--admin-line);
-  bottom: 0;
   margin: 0 calc(var(--admin-space-4xl) * -1) calc(var(--admin-space-4xl) * -1);
   padding: var(--admin-space-xl) var(--admin-space-4xl);
-  position: sticky;
-  z-index: 4;
+  position: relative;
 }
 
 .admin-drawer-backdrop {
@@ -8930,7 +8928,7 @@ body,
   padding: 0;
   position: fixed;
   width: 100vw;
-  z-index: 78;
+  z-index: var(--admin-z-editor-backdrop);
 }
 
 .admin-dashboard .admin-editor-backdrop:hover,
@@ -8949,15 +8947,15 @@ body,
   display: grid;
   gap: var(--admin-space-4xl);
   height: 100vh;
-  max-width: min(660px, calc(100vw - 48px));
+  max-width: min(var(--admin-editor-width), calc(100vw - 48px));
   min-width: 0;
   overflow-y: auto;
   padding: var(--admin-space-5xl);
   position: fixed;
   right: 0;
   top: 0;
-  width: min(660px, calc(100vw - 48px));
-  z-index: 79;
+  width: min(var(--admin-editor-width), calc(100vw - 48px));
+  z-index: var(--admin-z-editor-panel);
 }
 
 .admin-dashboard .admin-editor-toolbar {
@@ -9284,15 +9282,13 @@ body,
   white-space: pre-wrap;
 }
 
-.admin-dashboard .admin-sky-article-sticky-actions {
+.admin-dashboard .admin-sky-article-actions {
   background: color-mix(in srgb, var(--admin-ui-surface-2) 94%, transparent);
   border: var(--border-width-thin) solid var(--admin-ui-border);
   border-radius: var(--admin-ui-radius-lg);
-  bottom: 12px;
   justify-content: space-between;
   padding: var(--admin-space-xl);
-  position: sticky;
-  z-index: 3;
+  position: relative;
 }
 
 .admin-dashboard .admin-sky-article-review {
@@ -10599,6 +10595,26 @@ body,
   box-shadow: var(--admin-ui-side-panel-shadow);
 }
 
+.admin-dashboard .admin-variable-reference-backdrop {
+  z-index: var(--admin-z-create-backdrop);
+}
+
+.admin-dashboard .admin-variable-reference-panel {
+  max-width: min(var(--admin-editor-reference-width), 100vw);
+  width: min(var(--admin-editor-reference-width), 100vw);
+  z-index: var(--admin-z-editor-reference);
+}
+
+.admin-dashboard .admin-variable-detail-backdrop {
+  z-index: var(--admin-z-editor-detail-backdrop);
+}
+
+.admin-dashboard .admin-variable-detail-panel {
+  max-width: min(var(--admin-editor-width), 100vw);
+  width: min(var(--admin-editor-width), 100vw);
+  z-index: var(--admin-z-editor-detail);
+}
+
 .admin-dashboard .admin-variable-detail-panel .admin-editor-toolbar h2 code {
   color: var(--admin-ui-text);
   font-size: inherit;
@@ -10776,7 +10792,7 @@ body,
 .admin-dashboard .admin-natal-placement-selectors {
   display: grid;
   gap: var(--admin-space-2xl);
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
 }
 
 .admin-dashboard .admin-natal-placement-selectors label {
@@ -10942,6 +10958,12 @@ body,
   cursor: pointer;
   font-size: 16px;
   font-weight: 700;
+}
+
+@media (max-width: 1180px) {
+  .admin-dashboard .admin-natal-placement-selectors {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 @media (max-width: 900px) {
@@ -11380,7 +11402,7 @@ body,
   justify-content: center;
   padding: var(--admin-space-8xl);
   position: fixed;
-  z-index: 90;
+  z-index: var(--admin-z-create-menu);
 }
 
 .admin-dashboard .admin-source-repair-dialog {
@@ -11392,8 +11414,23 @@ body,
   grid-template-rows: auto minmax(0, 1fr) auto;
   max-height: min(920px, calc(100dvh - 56px));
   max-width: 920px;
+  min-width: 0;
   overflow: hidden;
   width: 100%;
+}
+
+.admin-dashboard :where(
+  .admin-source-repair-header,
+  .admin-source-repair-body,
+  .admin-source-repair-footer,
+  .admin-source-repair-provenance,
+  .admin-source-repair-copy,
+  .admin-source-repair-copy > div,
+  .admin-source-repair-confirmation,
+  .admin-source-repair-confirmation > span
+) {
+  max-width: 100%;
+  min-width: 0;
 }
 
 .admin-dashboard .admin-source-repair-header {
@@ -11432,7 +11469,9 @@ body,
 .admin-dashboard .admin-source-repair-provenance code,
 .admin-dashboard .admin-source-repair-approved code {
   color: var(--admin-ui-muted);
+  max-width: 100%;
   overflow-wrap: anywhere;
+  white-space: normal;
 }
 
 .admin-dashboard .admin-source-repair-header > button {
@@ -11513,6 +11552,7 @@ body,
   gap: var(--admin-space-lg);
   grid-template-columns: auto minmax(0, 1fr);
   line-height: 1.5;
+  overflow-wrap: anywhere;
 }
 
 .admin-dashboard .admin-source-repair-confirmation input {
@@ -11695,12 +11735,18 @@ body,
   bottom: 0;
   box-shadow: var(--admin-ui-savebar-shadow);
   display: flex;
+  flex: 0 0 auto;
   flex-wrap: wrap;
   gap: var(--admin-space-lg);
-  margin: var(--admin-space-xs) calc(var(--admin-space-xs) * -1) calc(var(--admin-space-xs) * -1) !important;
-  padding: var(--admin-space-2xl) var(--admin-space-xs) var(--admin-space-xs) !important;
-  position: sticky !important;
+  margin: 0 calc(var(--admin-space-5xl) * -1) calc(var(--admin-space-5xl) * -1) !important;
+  padding: var(--admin-space-2xl) var(--admin-space-5xl) !important;
+  position: relative !important;
   z-index: 4;
+}
+
+.admin-dashboard .admin-editor-panel .admin-review-json pre {
+  max-height: 45dvh;
+  overscroll-behavior: contain;
 }
 
 .admin-dashboard .admin-editor-save-state {
@@ -11793,7 +11839,7 @@ body,
   }
 
   .admin-dashboard .admin-editor-savebar {
-    margin: calc(var(--admin-space-xs) / 2) calc(var(--admin-space-4xl) * -1) calc(var(--admin-space-4xl) * -1) !important;
+    margin: 0 calc(var(--admin-space-5xl) * -1) calc(var(--admin-space-5xl) * -1) !important;
     padding: var(--admin-space-xl) var(--admin-space-4xl) calc(var(--admin-space-xl) + env(safe-area-inset-bottom)) !important;
   }
 

@@ -26,6 +26,27 @@ const fullPlacement = renderNatalPlacementPreview(fullInput);
 assert.equal(fullPlacement.headline, "Sun in Aries in the 1st house");
 assert.equal(fullPlacement.parts.length, 2, "Selecting a house must add the house paragraph.");
 
+const retrogradeInput = normalizeNatalPlacementPreviewInput({
+  audience: "you",
+  house: "3",
+  isRetrograde: true,
+  overrides: [],
+  planet: "jupiter",
+  sign: "leo"
+});
+const retrogradePlacement = renderNatalPlacementPreview(retrogradeInput);
+assert.equal(retrogradeInput.isRetrograde, true);
+assert.match(retrogradePlacement.body, /Jupiter is retrograde in the birth chart/u, "Retrograde previews must include the canonical natal modifier.");
+
+const directOnlyInput = normalizeNatalPlacementPreviewInput({
+  audience: "you",
+  isRetrograde: true,
+  overrides: [],
+  planet: "sun",
+  sign: "aries"
+});
+assert.equal(directOnlyInput.isRetrograde, false, "Sun, Moon, and lunar nodes must remain direct-only in the Studio preview.");
+
 assert.throws(
   () => normalizeNatalPlacementPreviewInput({ audience: "you", house: "13", overrides: [], planet: "sun", sign: "aries" }),
   /house must be between 1 and 12/u

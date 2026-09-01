@@ -98,8 +98,8 @@ export function TemplateVariableReviewPanels({
 
   return (
     <>
-      <button type="button" className="admin-editor-backdrop" style={{ zIndex: 82 }} aria-label="Back" onClick={back} />
-      <aside className="admin-editor-panel admin-variable-detail-panel" style={{ maxWidth: "min(660px, 100vw)", width: "min(660px, 100vw)", zIndex: 83 }} role="dialog" aria-modal="true" aria-label={`${variable.label} variable details`}>
+      <button type="button" className="admin-editor-backdrop admin-variable-detail-backdrop" aria-label="Back" onClick={back} />
+      <aside className="admin-editor-panel admin-variable-detail-panel" role="dialog" aria-modal="true" aria-label={`${variable.label} variable details`}>
         <header className="admin-editor-toolbar">
           <div>
             <p className="admin-eyebrow">{source ? "Saved variable source" : "Template variable"}</p>
