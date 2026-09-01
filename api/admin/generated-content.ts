@@ -19,6 +19,33 @@ import skyV4ReaderCopyServingRelease from "../../apps/web/src/content/fallbackAr
 
 loadLocalWebEnv();
 
+const adminStorageTimeoutMs = 8_000;
+
+class AdminStorageTimeoutError extends Error {
+  constructor() {
+    super(`Content storage did not respond within ${adminStorageTimeoutMs / 1000} seconds.`);
+    this.name = "AdminStorageTimeoutError";
+  }
+}
+
+async function adminStorageFetch(input: string, init: RequestInit = {}) {
+  const controller = new AbortController();
+  let timedOut = false;
+  const timeout = setTimeout(() => {
+    timedOut = true;
+    controller.abort();
+  }, adminStorageTimeoutMs);
+
+  try {
+    return await fetch(input, { ...init, signal: controller.signal });
+  } catch (error) {
+    if (timedOut) throw new AdminStorageTimeoutError();
+    throw error;
+  } finally {
+    clearTimeout(timeout);
+  }
+}
+
 type ReviewStatus = "DRAFT" | "REVIEWED" | "LIVE" | "ARCHIVED" | "ERROR";
 type GeneratedContentSurface = "sky" | "you" | "natal" | "synastry" | "composite" | "relationship" | "modifier";
 
@@ -38,6 +65,7 @@ type GeneratedContentWriteBody = {
   knowledgeIds?: string[];
   sourceSnapshot?: unknown;
   reviewStatus?: string;
+  sourceLifecycleAction?: "archive" | "restore";
   editorialNotes?: string;
   revertToPackageOriginal?: boolean;
   lane?: "serving" | "reference" | string | null;
@@ -151,7 +179,7 @@ const allowedStatuses = new Set<ReviewStatus>(["DRAFT", "REVIEWED", "LIVE", "ARC
 const reviewStatuses: ReviewStatus[] = ["DRAFT", "REVIEWED", "LIVE", "ARCHIVED", "ERROR"];
 const fallbackArchitectureV3Provider = "tldrastro-fallback-architecture-v3";
 const fallbackArchitectureV3EligibleReviews = new Set(["approved", "approved_reuse"]);
-const fallbackArchitectureV3ReviewStatuses = new Set(["needs_review", "approved", "approved_reuse"]);
+const fallbackArchitectureV3ReviewStatuses = new Set(["needs_review", "approved", "approved_reuse", "deprecated"]);
 const skyV4CanonicalStagePackage = "SKY-V4-CANONICAL-CODEX-HANDOFF-CONTENT-STUDIO-EDITABLE-2026-08-30";
 const calendarAspectContentStudioStagePackage = "CALENDAR-ASPECT-CONSEQUENCE-FIRST-CONTENT-STUDIO-2026-09-01";
 const calendarAspectBatch2AId = "sky-calendar-batch-2a-venus-saturn-squares-2026-09-01";
@@ -478,9 +506,13 @@ function applyFallbackArchitectureV3ReviewPatch(row: ExistingGeneratedContentRow
     ? { ...storedSections.packageOriginalRecord }
     : { ...record };
   const hasPackageDraft = isRecord(sections.packageDraft);
-  const reviewStatus = hasPackageDraft
-    ? "needs_review"
-    : packageReviewStatus(row, body.reviewStatus || stringFrom(sourceSnapshot.review_status));
+  const reviewStatus = body.sourceLifecycleAction === "archive"
+    ? "deprecated"
+    : body.sourceLifecycleAction === "restore"
+      ? "needs_review"
+      : hasPackageDraft
+        ? "needs_review"
+        : packageReviewStatus(row, body.reviewStatus || stringFrom(sourceSnapshot.review_status));
   const stageKind = governedStageKind(record, sourceSnapshot, facts);
   const isSkyV4CanonicalStage = stageKind === "sky-v4";
   const isCalendarAspectStage = stageKind === "calendar-aspect";
@@ -488,7 +520,7 @@ function applyFallbackArchitectureV3ReviewPatch(row: ExistingGeneratedContentRow
     && skyV4OwnerApprovedReaderCopyKeys.has(row.content_key);
 
   if (!fallbackArchitectureV3ReviewStatuses.has(reviewStatus)) {
-    throw new Error("review_status must be needs_review, approved, or approved_reuse.");
+    throw new Error("review_status must be needs_review, approved, approved_reuse, or deprecated.");
   }
   if (
     isSkyV4CanonicalStage
@@ -600,11 +632,14 @@ function applyFallbackArchitectureV3ReviewPatch(row: ExistingGeneratedContentRow
   patch.body = hasPackageDraft ? row.body ?? readerBody : readerBody;
   sections.body_you = record.body_you ?? null;
   sections.body_they = record.body_they ?? null;
-  const skyV4Validation = validateSkyV4TransitPovCopy(record, hasPackageDraft ? sections.packageDraft : null);
+  const skyV4Validation = validateSkyV4TransitPovCopy(
+    record,
+    hasPackageDraft && isRecord(sections.packageDraft) ? sections.packageDraft : null
+  );
   if (isSkyV4CanonicalStage) sections.skyV4Validation = skyV4Validation;
 
   const editorialReview = sections.contentStudioReview;
-  if (editorialReview !== undefined && editorialReview !== null) {
+  if (editorialReview !== undefined && editorialReview !== null && body.sourceLifecycleAction !== "archive") {
     if (!isRecord(editorialReview)) throw new Error("Content Studio editorial review must be an object or null.");
     if (!skyV4Validation.passed) {
       throw new Error(`SKY V4 POV validation failed: ${skyV4Validation.hardFailures.join(", ")}.`);
@@ -639,7 +674,7 @@ function applyFallbackArchitectureV3ReviewPatch(row: ExistingGeneratedContentRow
   if (isSkyV4CanonicalStage) {
     record.owner_approved = isSkyV4OwnerApprovedReaderCopy && reviewStatus === "approved";
     record.serving_enabled = record.owner_approved
-      && skyV4ServingReleasedReaderCopyKeys.has(contentKey)
+      && skyV4ServingReleasedReaderCopyKeys.has(row.content_key)
       && !hasPackageDraft;
   }
   if (isCalendarAspectStage) {
@@ -1006,7 +1041,7 @@ async function listGeneratedContent(req: IncomingMessage) {
   }
 
   for (let attempt = 0; attempt < 8; attempt += 1) {
-    const response = await fetch(`${supabaseUrl()}/rest/v1/generated_interpretations?${params}`, {
+    const response = await adminStorageFetch(`${supabaseUrl()}/rest/v1/generated_interpretations?${params}`, {
       headers: adminHeaders()
     });
     const payload = await response.json().catch(() => null);
@@ -1047,7 +1082,7 @@ async function countGeneratedContent(status: ReviewStatus, surface: GeneratedCon
     params.set("surface", `eq.${surface}`);
   }
 
-  const response = await fetch(`${supabaseUrl()}/rest/v1/generated_interpretations?${params}`, {
+  const response = await adminStorageFetch(`${supabaseUrl()}/rest/v1/generated_interpretations?${params}`, {
     headers: {
       ...adminHeaders(),
       prefer: "count=exact",
@@ -1126,7 +1161,7 @@ async function createGeneratedContentFromBody(body: GeneratedContentWriteBody) {
     ...(packageState?.readerServing ? { reviewed_at: now, published_at: now } : {})
   };
 
-  const response = await fetch(`${supabaseUrl()}/rest/v1/generated_interpretations?on_conflict=content_key,target_date,mode`, {
+  const response = await adminStorageFetch(`${supabaseUrl()}/rest/v1/generated_interpretations?on_conflict=content_key,target_date,mode`, {
     method: "POST",
     headers: {
       ...adminHeaders(),
@@ -1222,7 +1257,7 @@ async function fetchExistingRowsByContentKey(contentKeys: string[]) {
     const params = new URLSearchParams();
     params.set("select", "id,content_key,target_date,mode,status,provider,prompt_version,source_snapshot,block_type,judge_score,judge_gate");
     params.set("content_key", `in.(${batch.map((key) => `"${key}"`).join(",")})`);
-    const response = await fetch(`${supabaseUrl()}/rest/v1/generated_interpretations?${params.toString()}`, {
+    const response = await adminStorageFetch(`${supabaseUrl()}/rest/v1/generated_interpretations?${params.toString()}`, {
       headers: adminHeaders()
     });
     const payload = await response.json().catch(() => null);
@@ -1242,7 +1277,7 @@ async function fetchExistingRowById(id: string) {
   params.set("select", "id,content_key,surface,target_date,mode,event_type,status,headline,summary,body,sections,facts,lane,review_state,block_type,provider,prompt_version,source_snapshot,judge_score,judge_verdict,judge_gate,judge_why");
   params.set("id", `eq.${id}`);
   params.set("limit", "1");
-  const response = await fetch(`${supabaseUrl()}/rest/v1/generated_interpretations?${params.toString()}`, {
+  const response = await adminStorageFetch(`${supabaseUrl()}/rest/v1/generated_interpretations?${params.toString()}`, {
     headers: adminHeaders()
   });
   const payload = await response.json().catch(() => null);
@@ -1255,7 +1290,7 @@ async function fetchExistingRowById(id: string) {
 }
 
 async function patchGeneratedContentRow(id: string, patch: Record<string, unknown>) {
-  const response = await fetch(`${supabaseUrl()}/rest/v1/generated_interpretations?id=eq.${encodeURIComponent(id)}`, {
+  const response = await adminStorageFetch(`${supabaseUrl()}/rest/v1/generated_interpretations?id=eq.${encodeURIComponent(id)}`, {
     method: "PATCH",
     headers: {
       ...adminHeaders(),
@@ -1271,7 +1306,7 @@ async function patchGeneratedContentRow(id: string, patch: Record<string, unknow
 }
 
 async function upsertGeneratedContentRow(row: Record<string, unknown>) {
-  const response = await fetch(`${supabaseUrl()}/rest/v1/generated_interpretations?on_conflict=content_key,target_date,mode`, {
+  const response = await adminStorageFetch(`${supabaseUrl()}/rest/v1/generated_interpretations?on_conflict=content_key,target_date,mode`, {
     method: "POST",
     headers: {
       ...adminHeaders(),
@@ -1399,7 +1434,7 @@ async function bulkUpsertGeneratedContent(body: GeneratedContentRequestBody) {
 
   for (let index = 0; index < upsertRows.length; index += 100) {
     const batch = upsertRows.slice(index, index + 100);
-    const response = await fetch(`${supabaseUrl()}/rest/v1/generated_interpretations?on_conflict=content_key,target_date,mode`, {
+    const response = await adminStorageFetch(`${supabaseUrl()}/rest/v1/generated_interpretations?on_conflict=content_key,target_date,mode`, {
       method: "POST",
       headers: {
         ...adminHeaders(),
@@ -1431,6 +1466,9 @@ async function updateGeneratedContent(req: IncomingMessage) {
 
   if (body.status && !allowedStatuses.has(body.status)) {
     throw new Error("status must be DRAFT, REVIEWED, LIVE, ARCHIVED, or ERROR.");
+  }
+  if (body.sourceLifecycleAction && !["archive", "restore"].includes(body.sourceLifecycleAction)) {
+    throw new Error("sourceLifecycleAction must be archive or restore.");
   }
 
   const existing = await fetchExistingRowById(body.id);
@@ -1928,7 +1966,7 @@ async function updateGeneratedContent(req: IncomingMessage) {
     });
   }
 
-  const response = await fetch(`${supabaseUrl()}/rest/v1/generated_interpretations?id=eq.${encodeURIComponent(body.id)}`, {
+  const response = await adminStorageFetch(`${supabaseUrl()}/rest/v1/generated_interpretations?id=eq.${encodeURIComponent(body.id)}`, {
     method: "PATCH",
     headers: {
       ...adminHeaders(),
@@ -1953,7 +1991,7 @@ async function deleteGeneratedContent(req: IncomingMessage) {
     throw new Error("id is required.");
   }
 
-  const response = await fetch(`${supabaseUrl()}/rest/v1/generated_interpretations?id=eq.${encodeURIComponent(id)}`, {
+  const response = await adminStorageFetch(`${supabaseUrl()}/rest/v1/generated_interpretations?id=eq.${encodeURIComponent(id)}`, {
     method: "DELETE",
     headers: {
       ...adminHeaders(),
@@ -2007,25 +2045,39 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
         return;
       }
 
-      sendJson(res, 200, { ok: true, rows: await createGeneratedContentFromBody(body) });
+      const rows = await createGeneratedContentFromBody(body);
+      if (!Array.isArray(rows) || rows.length === 0) throw new Error("Create completed without returning the saved row.");
+      sendJson(res, 200, { ok: true, rows });
       return;
     }
 
     if (req.method === "PATCH") {
-      sendJson(res, 200, { ok: true, rows: await updateGeneratedContent(req) });
+      const rows = await updateGeneratedContent(req);
+      if (!Array.isArray(rows) || rows.length === 0) throw new Error("Update completed without returning the saved row.");
+      sendJson(res, 200, { ok: true, rows });
       return;
     }
 
     if (req.method === "DELETE") {
-      sendJson(res, 200, { ok: true, rows: await deleteGeneratedContent(req) });
+      const rows = await deleteGeneratedContent(req);
+      if (!Array.isArray(rows) || rows.length === 0) throw new Error("Delete completed without returning the removed row.");
+      sendJson(res, 200, { ok: true, rows });
       return;
     }
 
     sendJson(res, 405, { error: "Use GET, POST, PATCH, or DELETE." });
   } catch (error) {
-    sendJson(res, error instanceof GeneratedContentRequestError ? error.statusCode : 500, {
-      ok: false,
-      error: error instanceof Error ? error.message : "Unknown generated content admin error."
-    });
+    sendJson(
+      res,
+      error instanceof GeneratedContentRequestError
+        ? error.statusCode
+        : error instanceof AdminStorageTimeoutError
+          ? 504
+          : 500,
+      {
+        ok: false,
+        error: error instanceof Error ? error.message : "Unknown generated content admin error."
+      }
+    );
   }
 }
