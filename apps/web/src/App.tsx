@@ -169,8 +169,7 @@ import {
 } from "./features/sky/skyPlacementContentState";
 import {
   composeSkyPlacementFallbackParagraphs,
-  readSkyPlacementPreviewMode,
-  shouldRenderCanonicalSkyV4Placement
+  isFallbackOnlySkyPlacementPreview
 } from "./features/sky/skyPlacementPreviewMode";
 import {
   skyV4Hemisphere,
@@ -4861,7 +4860,7 @@ function skyPlacementWritingSection(
     return null;
   }
   try {
-    if (!shouldRenderCanonicalSkyV4Placement()) {
+    if (isFallbackOnlySkyPlacementPreview()) {
       throw new Error("SKY_V4_NOT_SERVABLE: fallback-only preview requested.");
     }
     let seasonalContext = "";
@@ -5167,7 +5166,7 @@ function currentSkyPlacementDetailArticle({
       )
     : normalizedParagraphs;
   const isCanonicalSkyV4Article = placementSection?.sourceKeys.includes("sky-v4-canonical-reader-v1") ?? false;
-  const isFallbackOnlyPreview = readSkyPlacementPreviewMode() === "fallback-only";
+  const isFallbackOnlyPreview = isFallbackOnlySkyPlacementPreview();
   const fallbackDateLine = body.find((paragraph) => (
     typeof paragraph === "string"
     && /^[A-Z][a-z]+ \d{1,2}(?:, \d{4})? to [A-Z][a-z]+ \d{1,2}, \d{4}$/u.test(paragraph.trim())
