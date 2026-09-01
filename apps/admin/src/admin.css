@@ -7971,6 +7971,17 @@ body,
   gap: var(--admin-space-sm);
 }
 
+.admin-dashboard .admin-nav-workspace-group {
+  display: grid;
+  gap: var(--admin-space-5);
+  margin-left: var(--admin-space-xl);
+}
+
+.admin-dashboard .admin-nav-workspace-group button {
+  font-size: var(--admin-ui-type-label);
+  min-height: var(--admin-control-height-lg);
+}
+
 .admin-dashboard :where(.admin-breadcrumb, .admin-eyebrow, label span, .admin-metadata-field span, .admin-field-wide > span) {
   color: var(--admin-ui-subtle);
   font-family: var(--font-label);
