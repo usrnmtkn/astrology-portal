@@ -34,7 +34,7 @@ function record(value: unknown): Record<string, unknown> {
 
 function readableCopy(row: SourceRow) {
   const sections = record(row.sections);
-  const savedPackage = record(sections.packageRecord ?? sections);
+  const savedPackage = record(sections.packageDraft ?? sections.packageRecord ?? sections);
   const values = [
     ["Headline", row.headline ?? ""],
     ["Summary", row.summary ?? ""],

@@ -337,6 +337,109 @@ assert.equal(recoveredApprovedNatalAspect.status, 200);
 assert.equal(recoveredApprovedNatalAspect.payload.rows[0].status, "LIVE", "An approved package row stuck in Draft must recover on Save & publish.");
 assert.equal(recoveredApprovedNatalAspect.payload.rows[0].sections.packageRecord.body_they, "{{Name}} receives older saved friend-view copy.");
 
+const installedPackageRecord = {
+  ...row.sections.packageRecord,
+  studio_editable_fields: [
+    { path: "body_you" },
+    { path: "body_they" },
+    { path: "era_layer.frame" }
+  ],
+  era_layer: { frame: "Original nested package copy." }
+};
+const proposedPackageRecord = structuredClone(installedPackageRecord);
+proposedPackageRecord.body_you = "Revised exact reader copy saved from Content Studio.";
+proposedPackageRecord.body_they = "{{Name}} receives revised exact friend-view copy.";
+proposedPackageRecord.era_layer.frame = "Revised nested package copy.";
+row = {
+  ...row,
+  status: "LIVE",
+  lane: "serving",
+  review_state: null,
+  body: installedPackageRecord.body_you,
+  sections: {
+    ...row.sections,
+    body_you: installedPackageRecord.body_you,
+    body_they: installedPackageRecord.body_they,
+    packageRecord: installedPackageRecord,
+    packageOriginalRecord: structuredClone(installedPackageRecord),
+    packageDraft: proposedPackageRecord
+  },
+  facts: { ...row.facts, review_status: "approved" },
+  source_snapshot: { ...row.source_snapshot, review_status: "approved" }
+};
+
+const savedPackageRevision = await invokeApi("PATCH", "/api/admin/generated-content", {
+  id: row.id,
+  headline: row.headline,
+  summary: row.summary,
+  body: row.body,
+  sections: row.sections,
+  facts: row.facts,
+  sourceSnapshot: row.source_snapshot,
+  reviewStatus: "approved"
+});
+assert.equal(savedPackageRevision.status, 200);
+assert.equal(savedPackageRevision.payload.rows[0].status, "DRAFT", "Saving revised package copy must hold it for explicit approval.");
+assert.equal(savedPackageRevision.payload.rows[0].lane, "reference");
+assert.equal(savedPackageRevision.payload.rows[0].review_state, "needs-review");
+assert.equal(savedPackageRevision.payload.rows[0].facts.review_status, "needs_review");
+assert.equal(savedPackageRevision.payload.rows[0].sections.packageRecord.body_you, installedPackageRecord.body_you, "A normal Save must not silently replace the installed reader copy.");
+assert.equal(savedPackageRevision.payload.rows[0].sections.packageDraft.body_you, proposedPackageRecord.body_you);
+
+const publishedPackageRevision = await invokeApi("PATCH", "/api/admin/generated-content", {
+  id: row.id,
+  ownerAction: "approve-package-revision"
+});
+assert.equal(publishedPackageRevision.status, 200);
+assert.equal(publishedPackageRevision.payload.rows[0].status, "LIVE", "Approve & publish revision must make the saved package revision reader-eligible.");
+assert.equal(publishedPackageRevision.payload.rows[0].lane, "serving");
+assert.equal(publishedPackageRevision.payload.rows[0].review_state, null);
+assert.equal(publishedPackageRevision.payload.rows[0].facts.review_status, "approved");
+assert.equal(publishedPackageRevision.payload.rows[0].source_snapshot.review_status, "approved");
+assert.equal(publishedPackageRevision.payload.rows[0].sections.packageDraft, undefined);
+assert.equal(publishedPackageRevision.payload.rows[0].sections.packageRecord.body_you, proposedPackageRecord.body_you);
+assert.equal(publishedPackageRevision.payload.rows[0].sections.packageRecord.body_they, proposedPackageRecord.body_they);
+assert.equal(publishedPackageRevision.payload.rows[0].sections.packageRecord.era_layer.frame, proposedPackageRecord.era_layer.frame, "Nested studio-editable fields must publish with the rest of the revision.");
+assert.equal(publishedPackageRevision.payload.rows[0].body, proposedPackageRecord.body_you, "The reader-facing mirror must update with the approved package revision.");
+
+const sourceMaterialRecord = {
+  ...publishedPackageRevision.payload.rows[0].sections.packageRecord,
+  content_role: "source_material",
+  review_status: "approved"
+};
+row = {
+  ...publishedPackageRevision.payload.rows[0],
+  sections: {
+    ...publishedPackageRevision.payload.rows[0].sections,
+    packageRecord: sourceMaterialRecord,
+    packageDraft: {
+      ...sourceMaterialRecord,
+      body_you: "Revised source ingredient that must never become exact reader copy."
+    }
+  },
+  source_snapshot: {
+    ...publishedPackageRevision.payload.rows[0].source_snapshot,
+    content_role: "source_material",
+    review_status: "approved"
+  }
+};
+const savedSourceMaterial = await invokeApi("PATCH", "/api/admin/generated-content", {
+  id: row.id,
+  sections: row.sections,
+  facts: row.facts,
+  sourceSnapshot: row.source_snapshot,
+  reviewStatus: "approved"
+});
+assert.equal(savedSourceMaterial.status, 200);
+assert.equal(savedSourceMaterial.payload.rows[0].status, "DRAFT", "Approved source material must remain outside the reader-serving lane.");
+assert.equal(savedSourceMaterial.payload.rows[0].lane, "reference");
+assert.equal(savedSourceMaterial.payload.rows[0].review_state, "needs-review");
+const rejectedSourceMaterialPublish = await invokeApi("PATCH", "/api/admin/generated-content", {
+  id: row.id,
+  ownerAction: "approve-package-revision"
+});
+assert.equal(rejectedSourceMaterialPublish.status, 400, "Source ingredients must reject exact-copy publishing actions.");
+
 assert.ok(
   requests.some(({ method, url }) => method === "PATCH" && url.includes(`id=eq.${rowId}`)),
   "The Content Studio endpoint must persist edits through Supabase REST."

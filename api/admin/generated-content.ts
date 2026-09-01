@@ -52,6 +52,7 @@ type GeneratedContentWriteBody = {
   evergreenBy?: string | null;
   ownerAction?:
     | "approve-and-schedule"
+    | "approve-package-revision"
     | "approve-sky-article-edition"
     | "save-sky-article-edition-revision"
     | "publish-sky-article-edition-revision";
@@ -60,6 +61,16 @@ type GeneratedContentWriteBody = {
 type GeneratedContentRequestBody = GeneratedContentWriteBody & {
   rows?: GeneratedContentWriteBody[];
 };
+
+class GeneratedContentRequestError extends Error {
+  readonly statusCode: number;
+
+  constructor(message: string, statusCode = 400) {
+    super(message);
+    this.name = "GeneratedContentRequestError";
+    this.statusCode = statusCode;
+  }
+}
 
 type ExistingGeneratedContentRow = {
   id: string;
@@ -215,6 +226,10 @@ function readerServingForPackageReview(reviewStatus: string) {
   return fallbackArchitectureV3EligibleReviews.has(reviewStatus);
 }
 
+function packageRoleCanServeExactCopy(contentRole: string) {
+  return !["fallback_source", "source_material"].includes(contentRole);
+}
+
 function normalizeNatalAspectTheyNameVariable(contentKey: string | undefined, value: unknown) {
   if (!contentKey?.startsWith("fallback-hook/natal-aspect-lived/") || typeof value !== "string") return value;
   return value.replace(/\{\{Name\}\}|\{Name\}/gu, "{{Name}}");
@@ -257,7 +272,12 @@ function fallbackArchitectureV3CreateState(body: GeneratedContentWriteBody) {
   sections.packageRecord = record;
   facts.review_status = reviewStatus;
   sourceSnapshot.review_status = reviewStatus;
-  const readerServing = !isSkyV4CanonicalStage && readerServingForPackageReview(reviewStatus);
+  const contentRole = stringFrom(record.content_role)
+    || stringFrom(sourceSnapshot.content_role)
+    || stringFrom(facts.content_role);
+  const readerServing = !isSkyV4CanonicalStage
+    && packageRoleCanServeExactCopy(contentRole)
+    && readerServingForPackageReview(reviewStatus);
   facts.readerServing = readerServing;
 
   return {
@@ -290,6 +310,19 @@ function packageLeafFields(value: unknown, prefix = ""): Array<[string, unknown]
 
 function packageValueAt(value: unknown, path: string) {
   return path.split(".").reduce<unknown>((current, part) => isRecord(current) ? current[part] : undefined, value);
+}
+
+function setPackageValueAt(record: Record<string, unknown>, path: string, value: unknown) {
+  const parts = path.split(".").filter(Boolean);
+  if (parts.length === 0) return record;
+  let target = record;
+  for (const part of parts.slice(0, -1)) {
+    const child = isRecord(target[part]) ? { ...target[part] } : {};
+    target[part] = child;
+    target = child;
+  }
+  target[parts.at(-1) as string] = structuredClone(value);
+  return record;
 }
 
 function isEditablePackageCopyPath(path: string, packageRecord?: Record<string, unknown>) {
@@ -454,22 +487,13 @@ function applyFallbackArchitectureV3ReviewPatch(row: ExistingGeneratedContentRow
   }
 
   // Package records use several prose shapes. Only copy explicitly editable
-  // prose fields from the client; structural and provenance fields stay locked
-  // to the installed package record.
-  if (!body.revertToPackageOriginal) {
-    for (const field of [
-      "headline",
-      "summary",
-      "body",
-      "body_you",
-      "body_they",
-      "opening",
-      "tension",
-      "development",
-      "close"
-    ]) {
-      if (typeof incomingRecord[field] === "string") {
-        record[field] = incomingRecord[field];
+  // fields from the client; structural and provenance fields stay locked to
+  // the installed package record. This includes nested studio fields such as
+  // era_layer.* rather than only the older top-level prose fields.
+  if (!body.revertToPackageOriginal && !hasPackageDraft) {
+    for (const [field, value] of packageLeafFields(incomingRecord)) {
+      if (isEditablePackageCopyPath(field, record)) {
+        setPackageValueAt(record, field, value);
       }
     }
   }
@@ -477,14 +501,16 @@ function applyFallbackArchitectureV3ReviewPatch(row: ExistingGeneratedContentRow
   // Package rows are rendered from sections.packageRecord, not from the
   // dashboard's top-level mirrors. Keep every editable prose field in sync so
   // a successful admin save cannot silently leave the reader on stale copy.
-  if (typeof patch.headline === "string") {
+  if (!hasPackageDraft && typeof patch.headline === "string") {
     record.headline = patch.headline;
   }
-  if (typeof patch.summary === "string") {
+  if (!hasPackageDraft && typeof patch.summary === "string") {
     record.summary = patch.summary;
   }
-  const topLevelBodyChanged = typeof patch.body === "string" && patch.body !== (row.body ?? "");
-  const packageRole = stringFrom(record.content_role);
+  const topLevelBodyChanged = !hasPackageDraft && typeof patch.body === "string" && patch.body !== (row.body ?? "");
+  const packageRole = stringFrom(record.content_role)
+    || stringFrom(sourceSnapshot.content_role)
+    || stringFrom(facts.content_role);
   const incomingBodyYouChanged = typeof incomingRecord.body_you === "string"
     && incomingRecord.body_you !== v3PackageRecord(row).body_you;
   const sectionBodyYouChanged = typeof sections.body_you === "string"
@@ -502,11 +528,20 @@ function applyFallbackArchitectureV3ReviewPatch(row: ExistingGeneratedContentRow
       record.body = patch.body;
     }
   }
-  if (typeof sections.body_you === "string") {
+  if (!hasPackageDraft && typeof sections.body_you === "string") {
     record.body_you = sections.body_you;
   }
-  if (typeof sections.body_they === "string") {
+  if (!hasPackageDraft && typeof sections.body_they === "string") {
     record.body_they = sections.body_they;
+  }
+  if (hasPackageDraft && isRecord(sections.packageDraft)) {
+    const normalizedDraftBodyThey = normalizeNatalAspectTheyNameVariable(
+      row.content_key,
+      sections.packageDraft.body_they
+    );
+    sections.packageDraft = typeof normalizedDraftBodyThey === "string"
+      ? { ...sections.packageDraft, body_they: normalizedDraftBodyThey }
+      : sections.packageDraft;
   }
   record.body_they = normalizeNatalAspectTheyNameVariable(row.content_key, record.body_they);
   if (typeof record.body_they === "string") sections.body_they = record.body_they;
@@ -531,7 +566,9 @@ function applyFallbackArchitectureV3ReviewPatch(row: ExistingGeneratedContentRow
         record.close
       ].filter((part) => typeof part === "string" && part.trim()).join("\n\n")
     : stringFrom(record.body_you ?? record.body ?? record.text);
-  patch.body = readerBody;
+  patch.headline = hasPackageDraft ? row.headline ?? "" : patch.headline;
+  patch.summary = hasPackageDraft ? row.summary ?? "" : patch.summary;
+  patch.body = hasPackageDraft ? row.body ?? readerBody : readerBody;
   sections.body_you = record.body_you ?? null;
   sections.body_they = record.body_they ?? null;
   const skyV4Validation = validateSkyV4TransitPovCopy(record, hasPackageDraft ? sections.packageDraft : null);
@@ -605,13 +642,15 @@ function applyFallbackArchitectureV3ReviewPatch(row: ExistingGeneratedContentRow
   ].slice(-25);
 
   facts.review_status = reviewStatus;
-  facts.readerServing = isSkyV4CanonicalStage ? false : readerServingForPackageReview(reviewStatus);
+  const readerServing = !isSkyV4CanonicalStage
+    && packageRoleCanServeExactCopy(packageRole)
+    && readerServingForPackageReview(reviewStatus);
+  facts.readerServing = readerServing;
   sourceSnapshot.review_status = reviewStatus;
 
   patch.sections = sections;
   patch.facts = facts;
   patch.source_snapshot = sourceSnapshot;
-  const readerServing = !isSkyV4CanonicalStage && readerServingForPackageReview(reviewStatus);
   patch.status = readerServing ? "LIVE" : "DRAFT";
   patch.lane = readerServing ? "serving" : "reference";
   patch.review_state = readerServing
@@ -1364,6 +1403,102 @@ async function updateGeneratedContent(req: IncomingMessage) {
     updated_at: new Date().toISOString()
   };
 
+  if (body.ownerAction === "approve-package-revision") {
+    if (!existing || !isPackageRow) {
+      throw new Error("Approve & publish revision is available only for fallback package rows.");
+    }
+    const unexpectedFields = Object.entries(body)
+      .filter(([key, value]) => !["id", "ownerAction"].includes(key) && value !== undefined)
+      .map(([key]) => key);
+    if (unexpectedFields.length > 0) {
+      throw new Error(`Approve & publish revision cannot be combined with other changes: ${unexpectedFields.join(", ")}.`);
+    }
+
+    const isGovernedAspectDraft = existing.event_type === "sky-v4-governed-aspect-draft";
+    const targetRowId = isGovernedAspectDraft ? stringFrom(existing.source_snapshot?.targetRowId) : existing.id;
+    if (!targetRowId) throw new Error("This governed revision is missing its live target row.");
+    const target = targetRowId === existing.id ? existing : await fetchExistingRowById(targetRowId);
+    if (!target || !isFallbackArchitectureV3Row(target)) {
+      throw new Error("The fallback package row targeted by this revision no longer exists.");
+    }
+
+    const proposalSections = isRecord(existing.sections) ? existing.sections : {};
+    const packageDraft = isRecord(proposalSections.packageDraft) ? proposalSections.packageDraft : null;
+    if (!packageDraft) {
+      throw new Error("Save the copy revision before approving and publishing it.");
+    }
+    const targetSections = isRecord(target.sections) ? target.sections : {};
+    const targetRecord = v3PackageRecord(target);
+    const targetSnapshot = isRecord(target.source_snapshot) ? target.source_snapshot : {};
+    if (
+      stringFrom(targetRecord.source_package) === skyV4CanonicalStagePackage
+      || stringFrom(targetSnapshot.sourcePackage) === skyV4CanonicalStagePackage
+    ) {
+      throw new Error("SKY V4 reader copy must use its hash-bound owner approval workflow.");
+    }
+    const contentRole = stringFrom(targetRecord.content_role)
+      || stringFrom(targetSnapshot.content_role)
+      || stringFrom(target.facts?.content_role);
+    if (["fallback_source", "source_material"].includes(contentRole)) {
+      throw new GeneratedContentRequestError("Source-material package rows cannot be published as exact reader copy.");
+    }
+
+    validateFallbackArchitectureV3Copy(target, {
+      sections: { ...targetSections, packageDraft }
+    });
+    const promotedRecord = structuredClone(targetRecord);
+    for (const [field, value] of packageLeafFields(packageDraft)) {
+      if (isEditablePackageCopyPath(field, targetRecord)) {
+        setPackageValueAt(promotedRecord, field, value);
+      }
+    }
+    const now = new Date().toISOString();
+    const promotionPatch: Record<string, unknown> = { updated_at: now };
+    applyFallbackArchitectureV3ReviewPatch(target, {
+      id: target.id,
+      headline: stringFrom(promotedRecord.headline) || target.headline || "",
+      summary: stringFrom(promotedRecord.summary) || target.summary || "",
+      body: stringFrom(promotedRecord.body_you ?? promotedRecord.body ?? promotedRecord.text) || target.body || "",
+      sections: {
+        ...targetSections,
+        body_you: promotedRecord.body_you ?? targetSections.body_you ?? null,
+        body_they: promotedRecord.body_they ?? targetSections.body_they ?? null,
+        packageRecord: promotedRecord,
+        packageDraft: null
+      },
+      facts: { ...(target.facts ?? {}), review_status: "approved" },
+      sourceSnapshot: { ...targetSnapshot, review_status: "approved" },
+      reviewStatus: "approved"
+    }, promotionPatch);
+    const finalSections = isRecord(promotionPatch.sections) ? { ...promotionPatch.sections } : {};
+    delete finalSections.packageDraft;
+    const history = Array.isArray(finalSections.dashboardEditHistory)
+      ? finalSections.dashboardEditHistory.slice()
+      : [];
+    if (isRecord(history.at(-1))) {
+      history[history.length - 1] = {
+        ...history.at(-1),
+        versionStatus: "published",
+        approvedAt: now,
+        review_status: "approved"
+      };
+    }
+    finalSections.dashboardEditHistory = history;
+    promotionPatch.sections = finalSections;
+    promotionPatch.reviewed_at = now;
+    promotionPatch.published_at = now;
+    const published = await patchGeneratedContentRow(target.id, promotionPatch);
+    if (target.id !== existing.id) {
+      await patchGeneratedContentRow(existing.id, {
+        status: "ARCHIVED",
+        lane: "reference",
+        review_state: "published-revision",
+        updated_at: now
+      });
+    }
+    return published;
+  }
+
   if (body.ownerAction === "save-sky-article-edition-revision") {
     if (!existing || !["sky-article-edition", "sky-article-edition-revision"].includes(existing.event_type ?? "")) {
       throw new Error("Article autosave is available only for compiled Sky article editions.");
@@ -1744,6 +1879,11 @@ async function updateGeneratedContent(req: IncomingMessage) {
         : "Versioned reader-copy draft. The approved governed aspect baseline remains LIVE and unchanged.",
       knowledge_ids: [],
       ...patch,
+      source_snapshot: {
+        ...(isRecord(patch.source_snapshot) ? patch.source_snapshot : {}),
+        targetRowId: existing.id,
+        targetContentKey: existing.content_key
+      },
       status: "DRAFT",
       lane: "reference",
       review_state: "owner-review-required",
@@ -1846,7 +1986,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
 
     sendJson(res, 405, { error: "Use GET, POST, PATCH, or DELETE." });
   } catch (error) {
-    sendJson(res, 500, {
+    sendJson(res, error instanceof GeneratedContentRequestError ? error.statusCode : 500, {
       ok: false,
       error: error instanceof Error ? error.message : "Unknown generated content admin error."
     });
