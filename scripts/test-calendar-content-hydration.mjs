@@ -210,8 +210,9 @@ assert.equal(
 );
 
 const aspectKeys = calendarEventGeneratedContentKeys(aspectEvent);
-assert.equal(aspectKeys.length, 2, "Calendar aspects must request evergreen and dated approved-card keys.");
+assert.equal(aspectKeys.length, 3, "Calendar aspects must request sign-specific evergreen, dated, and exact published Studio keys.");
 assert.ok(aspectKeys.some((key) => key.includes("2026-07-31")), "Calendar aspects must include the exact event date.");
+assert.ok(aspectKeys.includes("sky.aspect.venus.square.mars"), "Calendar aspects must request the editable exact published baseline.");
 
 const ingressKeys = calendarEventGeneratedContentKeys(ingressEvent);
 assert.ok(ingressKeys.includes("sky.ingress.jupiter.leo"), "Ingress cards must request the canonical ingress row.");

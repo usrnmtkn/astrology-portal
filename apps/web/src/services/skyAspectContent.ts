@@ -1,6 +1,6 @@
 import { isReaderFacingCopy } from "../content/readerSafety";
 import type { LiveGeneratedContent } from "./generatedContent";
-import { skyAspectInstanceContentKey, slugContentPart } from "./generatedContentKeys";
+import { skyAspectContentKey, skyAspectInstanceContentKey, slugContentPart } from "./generatedContentKeys";
 
 const collectiveSkyAspectBodyOrder = [
   "sun",
@@ -150,7 +150,32 @@ function skyAspectContentKeysFromExpected(expected: ExpectedSkyAspectFacts, targ
       })
     : "";
 
-  return [evergreenKey, datedKey].filter(Boolean);
+  return [evergreenKey, datedKey, skyAspectContentKey(expected.a, expected.aspect, expected.b)].filter(Boolean);
+}
+
+export function resolveSkyAspectContentStudioExact(options: ResolveSkyAspectContentOptions) {
+  const expected = normalizedCollectiveSkyAspectFacts(options);
+  if (!expected) return null;
+
+  const contentKey = skyAspectContentKey(expected.a, expected.aspect, expected.b);
+  const content = options.generatedContent.get(contentKey);
+  const source = content?.sourceSnapshot ?? {};
+  const identity = recordField(source.exactSkyAspectIdentity);
+  const body = content ? skyAspectBody(content) : "";
+
+  if (
+    !content
+    || source.contentStudioExactAspect !== true
+    || identity?.a !== expected.a
+    || identity?.b !== expected.b
+    || identity?.aspect !== expected.aspect
+    || !body
+    || !isReaderFacingCopy(body)
+  ) {
+    return null;
+  }
+
+  return { body, content };
 }
 
 export function skyAspectGeneratedContentKeys(options: SkyAspectContentKeyOptions) {

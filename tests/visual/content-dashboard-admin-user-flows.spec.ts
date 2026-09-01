@@ -2801,7 +2801,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expectAdminHeader(page, "Content Library", "Admin / Write / Content library");
     await expect(page.getByLabel("Search content")).toHaveValue(editableUnresolvedItem?.contentKey ?? "");
     await expect(page.locator(".admin-content-row")).toContainText(editableUnresolvedItem?.contentKey ?? "");
-    await expect(page.getByRole("button", { name: "Show reference" })).toHaveAttribute("aria-pressed", "true");
+    await expect(page.getByRole("button", { name: "Hide reference" })).toHaveAttribute("aria-pressed", "true");
     await expect(page.getByRole("button", { name: "Show retired" })).toHaveAttribute("aria-pressed", "true");
     const guidedEditor = page.getByRole("dialog", { name: "Generated content editor" });
     await expect(guidedEditor).toBeVisible();
