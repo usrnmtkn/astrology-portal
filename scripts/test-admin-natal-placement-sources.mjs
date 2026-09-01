@@ -2,7 +2,8 @@ import assert from "node:assert/strict";
 import {
   natalPlacementLabel,
   natalPlacementSelectionFromText,
-  natalPlacementSourceGroups
+  natalPlacementSourceGroups,
+  natalPlacementSupportsRetrograde
 } from "../apps/admin/src/natalPlacementSources.ts";
 import { renderNatalPlacement } from "../apps/web/src/content/fallbackArchitectureV3/resolver/renderFallback.mjs";
 
@@ -17,9 +18,23 @@ assert.deepEqual(
   natalPlacementSelectionFromText("Chiron in Aries in the 12th house"),
   { planet: "chiron", sign: "aries", house: "12" }
 );
+assert.deepEqual(
+  natalPlacementSelectionFromText("Jupiter Rx in Leo in the 3rd house"),
+  { planet: "jupiter", sign: "leo", house: "3", motion: "retrograde" }
+);
+assert.equal(natalPlacementLabel("jupiter", "leo", "3", true), "Jupiter Rx in Leo in the 3rd house");
+assert.equal(natalPlacementSupportsRetrograde("jupiter"), true);
+assert.equal(natalPlacementSupportsRetrograde("sun"), false);
+assert.equal(natalPlacementSupportsRetrograde("moon"), false);
+assert.equal(natalPlacementSupportsRetrograde("north-node"), false);
 
 const groups = natalPlacementSourceGroups("chiron", "taurus", "12");
 assert.deepEqual(groups.map((group) => group.key), ["exact", "sign", "house", "structure"]);
+
+const retrogradeGroups = natalPlacementSourceGroups("jupiter", "leo", "3", true);
+assert.deepEqual(retrogradeGroups.map((group) => group.key), ["sign", "motion", "house", "structure"]);
+assert.ok(retrogradeGroups.flatMap((group) => group.sources).some((source) => source.key === "fallback-template/natal.modifier.retrograde"));
+assert.ok(retrogradeGroups.flatMap((group) => group.sources).every((source) => !source.key.includes("complete-final")));
 
 const signOnlyGroups = natalPlacementSourceGroups("sun", "aries");
 assert.deepEqual(signOnlyGroups.map((group) => group.key), ["sign", "structure"]);
