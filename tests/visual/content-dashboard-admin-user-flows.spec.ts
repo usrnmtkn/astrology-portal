@@ -1205,6 +1205,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(navigation.getByRole("button", { name: "Content Library" })).not.toHaveAttribute("aria-current", "page");
     await expect(page.getByRole("heading", { name: "Edit Calendar aspect cards" })).toBeVisible();
     await expect(page.getByText("These drafts remain hidden from readers until a separate approval and release.")).toBeVisible();
+    await expect(page.getByRole("button", { name: "Hide reference", exact: true })).toHaveAttribute("aria-pressed", "true");
 
     const contentRows = page.locator(".admin-content-row");
     await expect(contentRows).toHaveCount(2);
