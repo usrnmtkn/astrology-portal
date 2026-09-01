@@ -83,25 +83,42 @@ function fillFacts(value, facts) {
   ));
 }
 
-function releasedCorrectionPackage(source) {
+function releasedPackage(source, schema, recordCount, chunkCount, expectedKeys, complete) {
   if (
-    source?.schema !== "tldrastro-sky-v4-continuous-corpus-correction/v1"
+    source?.schema !== schema
     || source.review_status !== "approved"
     || source.owner_approved !== true
     || source.serving_enabled !== true
     || !text(source.approval_id).trim()
     || !text(source.release_id).trim()
-    || source.expected_records !== 120
-    || source.records?.length !== 120
-    || source.chunks?.length !== 4
+    || source.expected_records !== recordCount
+    || source.records?.length !== recordCount
+    || source.chunks?.length !== chunkCount
   ) return null;
-  const expected = new Set(CONTINUOUS_PLANETS.flatMap((planet) => SIGNS.map((sign) => `sky-placement/article/${planet}/${sign}`)));
   const actual = new Set(source.records.map((row) => row.ContentKey));
-  return actual.size === 120 && [...expected].every((key) => actual.has(key))
-    && source.records.every((row) => row.TLDRWhat?.trim() && row.TLDRTakeaway?.trim()
-      && row.Fallback?.hook?.trim() && row.Fallback?.lived?.trim() && row.Fallback?.turn?.trim())
+  return actual.size === recordCount && expectedKeys.every((key) => actual.has(key))
+    && source.records.every(complete)
     ? source
     : null;
+}
+
+const CONTINUOUS_CORRECTION_KEYS = CONTINUOUS_PLANETS.flatMap((planet) => (
+  SIGNS.map((sign) => `sky-placement/article/${planet}/${sign}`)
+));
+const PLACEMENT_LUNAR_CONTEXT_KEYS = CONTINUOUS_PLANETS.flatMap((planet) => (
+  PLACEMENT_LUNAR_EVENT_TYPES.map((event) => `sky-placement/lunar-context/${event}/${planet}`)
+));
+
+function releasedCorrectionPackage(source) {
+  return releasedPackage(
+    source,
+    "tldrastro-sky-v4-continuous-corpus-correction/v1",
+    120,
+    4,
+    CONTINUOUS_CORRECTION_KEYS,
+    (row) => row.TLDRWhat?.trim() && row.TLDRTakeaway?.trim()
+      && row.Fallback?.hook?.trim() && row.Fallback?.lived?.trim() && row.Fallback?.turn?.trim()
+  );
 }
 
 export function applySkyV4ContinuousCorpusCorrection(corpus, source) {
@@ -133,11 +150,9 @@ export function applySkyV4ContinuousCorpusCorrection(corpus, source) {
   return next;
 }
 
-export function skyV4ContinuousCorrectionReleaseState(source) {
+function releaseState(source) {
   return {
     schema: source.schema,
-    parentCanonicalPackageVersion: source.parent_canonical_package_version,
-    parentCanonicalJsonSha256: source.parent_canonical_json_sha256,
     expectedRecords: source.expected_records,
     recordCount: source.records.length,
     ownerApproved: source.owner_approved === true,
@@ -148,26 +163,23 @@ export function skyV4ContinuousCorrectionReleaseState(source) {
   };
 }
 
+export function skyV4ContinuousCorrectionReleaseState(source) {
+  return {
+    ...releaseState(source),
+    parentCanonicalPackageVersion: source.parent_canonical_package_version,
+    parentCanonicalJsonSha256: source.parent_canonical_json_sha256
+  };
+}
+
 function releasedLunarContextPackage(source) {
-  if (
-    source?.schema !== "tldrastro-sky-v4-placement-lunar-context/v1"
-    || source.review_status !== "approved"
-    || source.owner_approved !== true
-    || source.serving_enabled !== true
-    || !text(source.approval_id).trim()
-    || !text(source.release_id).trim()
-    || source.expected_records !== 40
-    || source.records?.length !== 40
-    || source.chunks?.length !== 2
-  ) return null;
-  const expected = new Set(CONTINUOUS_PLANETS.flatMap((planet) => (
-    PLACEMENT_LUNAR_EVENT_TYPES.map((event) => `sky-placement/lunar-context/${event}/${planet}`)
-  )));
-  const actual = new Set(source.records.map((row) => row.ContentKey));
-  return actual.size === 40 && [...expected].every((key) => actual.has(key))
-    && source.records.every((row) => row.FullPageBody?.trim() && row.FallbackBody?.trim())
-    ? source
-    : null;
+  return releasedPackage(
+    source,
+    "tldrastro-sky-v4-placement-lunar-context/v1",
+    40,
+    2,
+    PLACEMENT_LUNAR_CONTEXT_KEYS,
+    (row) => row.FullPageBody?.trim() && row.FallbackBody?.trim()
+  );
 }
 
 function placementLunarContext(source, input) {
@@ -190,16 +202,7 @@ function placementLunarContext(source, input) {
 }
 
 export function skyV4PlacementLunarContextReleaseState(source) {
-  return {
-    schema: source.schema,
-    expectedRecords: source.expected_records,
-    recordCount: source.records.length,
-    ownerApproved: source.owner_approved === true,
-    servingEnabled: source.serving_enabled === true,
-    reviewStatus: source.review_status,
-    approvalId: source.approval_id,
-    releaseId: source.release_id
-  };
+  return releaseState(source);
 }
 
 export function assertSkyV4CanonicalPackage(corpus) {
