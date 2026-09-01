@@ -6,6 +6,12 @@ import {
   dailyGlancePairSearchText,
   type DailyGlancePair
 } from "./dailyGlanceAdmin";
+import {
+  dailyGlanceFriendPreviewParts,
+  dailyGlanceFriendPreviewSlots,
+  type DailyGlanceFriendPreviewPart,
+  type DailyGlanceFriendPreviewPronouns
+} from "./dailyGlanceFriendPreview";
 
 export type DailyGlanceContext = {
   date: string;
@@ -165,7 +171,23 @@ type DailyGlancePairEditorProps = {
   pair: DailyGlancePair;
 };
 
+function renderFriendPreviewParts(parts: DailyGlanceFriendPreviewPart[]) {
+  return parts.map((part, index) => part.kind === "text"
+    ? <span key={`text-${index}`}>{part.text}</span>
+    : (
+      <mark
+        className={`admin-daily-glance-variable is-${part.category}`}
+        data-variable={part.variable}
+        key={`${part.variable}-${index}`}
+        title={`${part.source} · ${part.meaning}`}
+      >
+        {part.value}
+      </mark>
+    ));
+}
+
 export function DailyGlancePairEditor({ context, isSaving, onClose, onSave, pair }: DailyGlancePairEditorProps) {
+  const matchingContext = context?.selector === pair.selector ? context : null;
   const initial = useMemo<DailyGlancePairEdits>(() => ({
     headlineYou: dailyGlancePackageField(pair.headlineRow, "body_you"),
     headlineThey: dailyGlancePackageField(pair.headlineRow, "body_they"),
@@ -173,11 +195,32 @@ export function DailyGlancePairEditor({ context, isSaving, onClose, onSave, pair
     passageThey: dailyGlancePackageField(pair.passageRow, "body_they")
   }), [pair]);
   const [edits, setEdits] = useState(initial);
+  const [previewName, setPreviewName] = useState(() => matchingContext?.chart.name ?? "Alex");
+  const [previewPronouns, setPreviewPronouns] = useState<DailyGlanceFriendPreviewPronouns>("they");
 
   useEffect(() => setEdits(initial), [initial]);
+  useEffect(() => setPreviewName(matchingContext?.chart.name ?? "Alex"), [matchingContext?.chart.name, pair.selector]);
 
   const dirty = JSON.stringify(edits) !== JSON.stringify(initial);
-  const matchingContext = context?.selector === pair.selector ? context : null;
+  const friendPreviewSlots = useMemo(
+    () => dailyGlanceFriendPreviewSlots(previewName, previewPronouns),
+    [previewName, previewPronouns]
+  );
+  const friendHeadlineParts = useMemo(
+    () => dailyGlanceFriendPreviewParts(edits.headlineThey, friendPreviewSlots),
+    [edits.headlineThey, friendPreviewSlots]
+  );
+  const friendPassageParts = useMemo(
+    () => dailyGlanceFriendPreviewParts(edits.passageThey, friendPreviewSlots),
+    [edits.passageThey, friendPreviewSlots]
+  );
+  const friendVariableGuide = useMemo(() => {
+    const variables = new Map<string, Extract<DailyGlanceFriendPreviewPart, { kind: "variable" }>>();
+    [...friendHeadlineParts, ...friendPassageParts].forEach((part) => {
+      if (part.kind === "variable" && !variables.has(part.variable)) variables.set(part.variable, part);
+    });
+    return [...variables.values()];
+  }, [friendHeadlineParts, friendPassageParts]);
   const close = () => {
     if (dirty && !window.confirm("Discard the unsaved Daily At-a-Glance changes?")) return;
     onClose();
@@ -219,8 +262,51 @@ export function DailyGlancePairEditor({ context, isSaving, onClose, onSave, pair
 
           <section className="admin-daily-glance-audience" aria-label="Friend version">
             <div><p className="admin-eyebrow">Friend</p><h3>Selected person</h3></div>
+            <p className="admin-daily-glance-name-contract">
+              Daily uses <code>{"{{personPreferredName}}"}</code> for <strong>Name</strong> so the app can use the selected person's preferred name and fall back to their display name. <code>{"{{Name}}"}</code> is not part of this renderer's variable contract.
+            </p>
             <label className="admin-review-copy-editor"><span>Headline · Friend</span><textarea value={edits.headlineThey} onChange={(event) => setEdits((value) => ({ ...value, headlineThey: event.target.value }))} /></label>
             <label className="admin-review-copy-editor"><span>Passage · Friend</span><textarea value={edits.passageThey} onChange={(event) => setEdits((value) => ({ ...value, passageThey: event.target.value }))} /></label>
+            <div className="admin-daily-glance-preview-controls" aria-label="Friend preview values">
+              <label>
+                <span>Preview name</span>
+                <input aria-label="Friend preview name" value={previewName} onChange={(event) => setPreviewName(event.target.value)} placeholder="Alex" />
+              </label>
+              <label>
+                <span>Preview pronouns</span>
+                <select aria-label="Friend preview pronouns" value={previewPronouns} onChange={(event) => setPreviewPronouns(event.target.value as DailyGlanceFriendPreviewPronouns)}>
+                  <option value="they">They / them</option>
+                  <option value="she">She / her</option>
+                  <option value="he">He / him</option>
+                </select>
+              </label>
+              <p>Preview values only. They are not saved into the approved source.</p>
+            </div>
+            <div className="admin-daily-glance-reader-card admin-daily-glance-friend-preview" aria-label="Friend reader preview">
+              <p className="admin-eyebrow">Rendered Friend write-up</p>
+              <h4>{renderFriendPreviewParts(friendHeadlineParts)}</h4>
+              <p>{renderFriendPreviewParts(friendPassageParts)}</p>
+              {matchingContext && <><hr /><p>{matchingContext.detailLine}</p></>}
+            </div>
+            {friendVariableGuide.length > 0 && (
+              <div className="admin-daily-glance-variable-guide" aria-label="Friend variable guide">
+                <div>
+                  <p className="admin-eyebrow">Variable guide</p>
+                  <h4>What the Friend placeholders mean</h4>
+                </div>
+                <dl>
+                  {friendVariableGuide.map((variable) => (
+                    <div key={variable.variable}>
+                      <dt>
+                        <code>{variable.source}</code>
+                        <mark className={`admin-daily-glance-variable is-${variable.category}`}>{variable.value || "(no suffix)"}</mark>
+                      </dt>
+                      <dd><strong>{variable.label}.</strong> {variable.meaning}</dd>
+                    </div>
+                  ))}
+                </dl>
+              </div>
+            )}
           </section>
 
           <details className="admin-advanced admin-editor-key-details">

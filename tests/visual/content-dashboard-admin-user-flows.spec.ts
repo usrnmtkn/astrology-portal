@@ -3535,8 +3535,8 @@ test.describe("content dashboard admin user flow case studies", () => {
       created_at: now
     });
     const generatedRows = [
-      dailyRow("qa-daily-headline", "fallback-hook/daily-headline/soft/mars", "Take the useful opening.", "{{personPreferredName}} may take the useful opening."),
-      dailyRow("qa-daily-passage", "fallback-hook/daily-body/soft/mars", "Check the schedule before committing.", "{{personPreferredName}} may check the schedule before committing.")
+      dailyRow("qa-daily-headline", "fallback-hook/daily-headline/soft/mars", "Take the useful opening.", "{{personPreferredName}} may take the useful opening for {{personReflexive}}."),
+      dailyRow("qa-daily-passage", "fallback-hook/daily-body/soft/mars", "Check the schedule before committing.", "The calendar gives {{personObject}} time before {{personSubject}} commit{{personVerbSuffix}}.")
     ];
     const writes: Array<{ method: string; payload: Record<string, unknown> }> = [];
     await seedAdminApi(page, {
@@ -3589,6 +3589,20 @@ test.describe("content dashboard admin user flow case studies", () => {
     const editor = page.getByRole("dialog", { name: "Daily At-a-Glance paired editor" });
     await expect(editor.getByLabel("Headline · You")).toHaveValue("Take the useful opening.");
     await expect(editor.getByLabel("Passage · You")).toHaveValue("Check the schedule before committing.");
+    const friendPreview = editor.getByLabel("Friend reader preview");
+    await expect(editor.getByLabel("Friend preview name")).toHaveValue("Alisa P");
+    await expect(friendPreview).toContainText("Alisa P may take the useful opening for themselves.");
+    await expect(friendPreview).toContainText("The calendar gives them time before they commit.");
+    await expect(friendPreview).not.toContainText("{{");
+    await expect(friendPreview.locator('[data-variable="personPreferredName"]')).toHaveClass(/is-name/u);
+    await expect(friendPreview.locator('[data-variable="personObject"]')).toHaveClass(/is-object/u);
+    await expect(friendPreview.locator('[data-variable="personReflexive"]')).toHaveClass(/is-reflexive/u);
+    const variableGuide = editor.getByLabel("Friend variable guide");
+    await expect(variableGuide).toContainText("The pronoun that receives an action: them, her, or him.");
+    await expect(variableGuide).toContainText("The pronoun used when the person acts on themself: themselves, herself, or himself.");
+    await editor.getByLabel("Friend preview pronouns").selectOption("she");
+    await expect(friendPreview).toContainText("Alisa P may take the useful opening for herself.");
+    await expect(friendPreview).toContainText("The calendar gives her time before she commits.");
     await editor.getByLabel("Headline · You").fill("Take the useful opening now.");
     await editor.getByLabel("Passage · You").fill("Check the calendar before committing.");
     await editor.getByRole("button", { name: "Save headline and passage" }).click();
