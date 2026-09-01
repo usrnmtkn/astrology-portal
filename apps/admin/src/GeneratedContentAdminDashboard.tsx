@@ -3471,6 +3471,7 @@ export function GeneratedContentAdminDashboard() {
 
     setActivePage(page);
     setCategoryFilter(category && categoryFilters.some((filter) => filter.key === category) ? category : "all");
+    setShowReferenceRows(page === "content" && category === "Calendar Aspects");
     setContentLibraryView(page === "content" && view === "compatibility" ? "compatibility" : "all");
     setSkyVoiceQueueView(
       page === "reviewQueue" && ["composite", "upcoming", "needs-review", "audit", "live-omissions"].includes(view ?? "")
@@ -6621,7 +6622,7 @@ export function GeneratedContentAdminDashboard() {
             Refresh rows
           </button>
           <button type="button" aria-pressed={showReferenceRows} className={showReferenceRows ? "active" : ""} onClick={() => setShowReferenceRows((current) => !current)}>
-            Show reference
+            {showReferenceRows ? "Hide reference" : "Show reference"}
           </button>
           <button type="button" aria-pressed={showRetiredRows} className={showRetiredRows ? "active" : ""} onClick={() => setShowRetiredRows((current) => !current)}>
             Show retired
