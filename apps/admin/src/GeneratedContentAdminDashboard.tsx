@@ -94,7 +94,7 @@ import {
   type NatalPlacementPlanet,
   type NatalPlacementSign
 } from "./natalPlacementSources";
-import type { NatalAspectSelection } from "./natalAspectSources";
+import type { NatalAspectSelection, NatalAspectSourceDraft } from "./natalAspectSources";
 
 import type {
   WritingSurfaceAdminAccess,
@@ -3851,6 +3851,17 @@ export function GeneratedContentAdminDashboard() {
       const body = isPackageDraft
         ? {
             id: draftForSave.id ?? undefined,
+            ...(!draftForSave.id ? {
+              contentKey: draftForSave.contentKey,
+              surface: draftForSave.surface === "friends" ? "relationship" : draftForSave.surface,
+              mode: draftForSave.mode,
+              status,
+              lane: draftForSave.lane,
+              reviewState: draftForSave.reviewState || null,
+              blockType: draftForSave.blockType || null,
+              promptVersion: draftForSave.promptVersion || "manual-admin",
+              eventType: draftEventType(draftForSave)
+            } : {}),
             headline: draftForSave.headline,
             summary: draftForSave.summary,
             body: draftForSave.body,
@@ -4025,6 +4036,14 @@ export function GeneratedContentAdminDashboard() {
     setCompositionEditorContext(null);
     setDraft(natalPlacementOverrideDraft(contentKey, label, body));
     setMessage(`Created a draft exact override for ${label}. It will not replace the composed reader copy until it is reviewed and published.`);
+    scrollEditorToTop();
+  }
+
+  function createNatalAspectSource(nextDraft: NatalAspectSourceDraft) {
+    setSelectedRowId(null);
+    setCompositionEditorContext(null);
+    setDraft(nextDraft);
+    setMessage(`Created a draft exact passage for ${nextDraft.headline}. Write and review both You and Friend copy before publishing.`);
     scrollEditorToTop();
   }
 
@@ -5738,6 +5757,7 @@ export function GeneratedContentAdminDashboard() {
           aspect={natalAspectName}
           first={natalAspectFirst}
           isLoading={isLoading}
+          onCreateSource={createNatalAspectSource}
           onOpenSource={(contentKey, label) => void openContentKeyRow(contentKey, label)}
           onSelectionChange={updateNatalAspectSelection}
           rows={rows}

@@ -5,10 +5,12 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import {
+  natalAspectContentKey,
   natalAspectContentKeyPrefix,
   natalAspectDisplayTitle,
   natalAspectMatchesSelection,
   natalAspectSelectionOptions,
+  natalAspectSourceDraft,
   parseNatalAspectContentKey
 } from "../apps/admin/src/natalAspectSources.ts";
 
@@ -36,6 +38,17 @@ assert.equal(
   natalAspectDisplayTitle({ first: "lilith", aspect: "conjunction", second: "sun" }),
   "Lilith Conjunction Sun"
 );
+assert.equal(
+  natalAspectContentKey({ first: "lilith", aspect: "square", second: "ascendant" }),
+  "fallback-hook/natal-aspect-lived/lilith/square/ascendant"
+);
+const missingAspectDraft = natalAspectSourceDraft({ first: "lilith", aspect: "square", second: "ascendant" });
+assert.equal(missingAspectDraft.contentKey, "fallback-hook/natal-aspect-lived/lilith/square/ascendant");
+assert.equal(missingAspectDraft.sections.packageRecord.body, "");
+assert.equal(missingAspectDraft.sections.packageRecord.body_they, "");
+assert.equal(missingAspectDraft.sections.packageRecord.review_status, "needs_review");
+assert.equal(missingAspectDraft.sections.packageRecord.render_policy, "reader-only-exact-lived-v1");
+assert.equal(missingAspectDraft.sourceSnapshot.sourcePackage, "tldrastro-fallback-architecture-v3");
 assert.equal(parseNatalAspectContentKey("fallback-hook/aspect-lived/conjunction"), null, "Generic aspect prose must not appear in the exact Natal Aspects workspace.");
 assert.ok(natalAspectMatchesSelection(
   { content_key: "fallback-hook/natal-aspect-lived/lilith/conjunction/sun" },
@@ -64,5 +77,7 @@ const aspectLabelIndex = finderSource.indexOf("2. Aspect");
 const secondLabelIndex = finderSource.indexOf("3. Other planet or point");
 assert.ok(firstLabelIndex >= 0 && aspectLabelIndex > firstLabelIndex && secondLabelIndex > aspectLabelIndex, "Natal aspect selector labels must preserve the reader-friendly first body, aspect, second body order.");
 assert.match(finderSource, />Edit source</u, "Every matching exact natal aspect must open the standard editor.");
+assert.match(finderSource, /Write \{selectedTitle\}/u, "A missing exact aspect must offer a contextual writing action.");
+assert.match(finderSource, /onCreateSource\(natalAspectSourceDraft\(\{ first, aspect, second \}\)\)/u, "The contextual action must preserve the selected exact pair.");
 
 console.log(`Admin Natal Aspects workspace passed: ${catalogRows.length} exact pair-specific passages are discoverable and editable.`);
