@@ -97,6 +97,12 @@ import {
   type NatalPlacementSign
 } from "./natalPlacementSources";
 import {
+  natalAspectContentKeyPrefix,
+  natalAspectTheyNameVariable,
+  type NatalAspectSelection,
+  type NatalAspectSourceDraft
+} from "./natalAspectSources";
+import {
   contentDestinations,
   contentMotion,
   sortPlacementRows,
@@ -104,7 +110,6 @@ import {
   type ContentMotionFilter,
   type ContentPlacementSort
 } from "./contentMotion";
-import type { NatalAspectSelection, NatalAspectSourceDraft } from "./natalAspectSources";
 
 import type {
   WritingSurfaceAdminAccess,
@@ -576,6 +581,7 @@ const contentStatuses: GeneratedContentStatus[] = ["DRAFT", "REVIEWED", "LIVE", 
 const fallbackHookReviewStatuses = ["needs_review", "reviewed", "approved", "approved_reuse", "deprecated", "rejected"] as const;
 const fallbackArchitectureV3Provider = "tldrastro-fallback-architecture-v3";
 const fallbackArchitectureV3ReviewStatuses = ["needs_review", "approved", "approved_reuse"] as const;
+const fallbackArchitectureV3ReaderEligibleReviews = new Set<string>(["approved", "approved_reuse"]);
 const contentClassFilters: Array<{ key: AdminContentClassFilter; label: string }> = [
   { key: "all", label: "All classes" },
   { key: "phrasebank", label: "Authored app copy" },
@@ -804,6 +810,12 @@ function contentStatusLabel(status: GeneratedContentStatus) {
   if (status === "LIVE") return "Published";
   if (status === "ERROR") return "Needs Review";
   return status.charAt(0) + status.slice(1).toLowerCase();
+}
+
+function packageReviewStatusLabel(status: string) {
+  if (status === "approved") return "Approved";
+  if (status === "approved_reuse") return "Approved for reuse";
+  return "Needs review";
 }
 
 function normalizeText(value: string | null | undefined) {
@@ -6529,6 +6541,7 @@ export function GeneratedContentAdminDashboard() {
     const packageReviewStatus = packageReviewStatusForDraft(currentDraft);
     const packageRecord = draftPackageRecord(currentDraft);
     const isSkyPlacementFrameTemplate = currentDraft.contentKey === skyPlacementFrameTemplateKey;
+    const isExactNatalAspectDraft = currentDraft.contentKey.startsWith(natalAspectContentKeyPrefix);
     const skyPlacementTemplateOptions = skyPlacementCompositionOptions(effectivePackageRecord(currentDraft.sections));
     const skyFallbackEditor = skyFallbackWorkspace(currentDraft.contentKey, currentDraft.sections);
     const skyFallbackContentIdentity = skyFallbackIdentity(currentDraft.contentKey);
@@ -6540,6 +6553,17 @@ export function GeneratedContentAdminDashboard() {
     const skyV4OverlaysEnabled = effectiveSkyFallback.contextualTransitOverlaysEnabled !== false;
     const skyV4FallbackOverlayEnabled = effectiveSkyFallback.includeContextualOverlayInFallbackHook === true;
     const isSkyV4StudioRecord = Boolean(effectiveSkyFallback.source_baseline_sha256 && effectiveSkyFallback.studio_source_baseline);
+    const packageApprovalPublishes = isPackageDraft
+      && !skyFallbackEditor
+      && !isGuidedHeldReview
+      && fallbackArchitectureV3ReaderEligibleReviews.has(packageReviewStatus);
+    const packageStatusAfterSave: GeneratedContentStatus = packageApprovalPublishes ? "LIVE" : "DRAFT";
+    const packageWillPublishOnSave = packageApprovalPublishes && currentDraft.status !== "LIVE";
+    const packageReaderStatusLabel = packageWillPublishOnSave
+      ? "Will go live on Save"
+      : currentDraft.status === "LIVE"
+        ? "Live"
+        : "Not live";
     const variableReferences = templateVariableReferences({
       Headline: currentDraft.headline,
       Summary: currentDraft.summary,
@@ -7128,7 +7152,26 @@ export function GeneratedContentAdminDashboard() {
                 {aspectContext.label}
               </span>
             )}
-            <span className={`ui-pill admin-status status-${currentDraft.status.toLowerCase()}`}>{contentStatusLabel(currentDraft.status)}</span>
+            {isPackageDraft && (
+              <span
+                aria-label="Approval status"
+                className={`ui-pill admin-status ${fallbackArchitectureV3ReaderEligibleReviews.has(packageReviewStatus) ? "status-live" : "status-draft"}`}
+              >
+                {packageReviewStatusLabel(packageReviewStatus)}
+              </span>
+            )}
+            <span
+              aria-label={isPackageDraft ? "Reader status" : "Content status"}
+              className={`ui-pill admin-status ${isPackageDraft
+                ? currentDraft.status === "LIVE"
+                  ? "status-live"
+                  : packageWillPublishOnSave
+                    ? "status-reviewed"
+                    : "status-draft"
+                : `status-${currentDraft.status.toLowerCase()}`}`}
+            >
+              {isPackageDraft ? packageReaderStatusLabel : contentStatusLabel(currentDraft.status)}
+            </span>
             {variableReferences.length > 0 && (
               <button
                 type="button"
@@ -7826,7 +7869,7 @@ export function GeneratedContentAdminDashboard() {
                     <div className="admin-copy-preview">{skyArticleEditor.fields.body}</div>
                   </section>
 
-                  <div className="admin-toolbar-actions admin-sky-article-sticky-actions">
+                  <div className="admin-toolbar-actions admin-sky-article-actions">
                     <span>{skyArticleChanges.length} changed field{skyArticleChanges.length === 1 ? "" : "s"}</span>
                     {skyArticleChanges.length > 0 ? (
                       <button
@@ -7930,7 +7973,17 @@ export function GeneratedContentAdminDashboard() {
           {showPackageBodyThey && !skyFallbackEditor && (
             <label className="admin-review-copy-editor" data-reader-audience="they">
               <span>{fallbackEditorGuidance?.bodyTheyLabel ?? "Friend view copy"}</span>
-              <textarea aria-label={fallbackEditorGuidance?.bodyTheyLabel ?? "Friend view copy"} value={packageFieldString(currentDraft, "body_they")} onChange={(event) => setDraft(setPackageSectionField(currentDraft, "body_they", event.target.value))} />
+              {isExactNatalAspectDraft && (
+                <small className="admin-field-hint" id="natal-aspect-they-name-hint" role="note">
+                  Name variable: <code>{natalAspectTheyNameVariable}</code>. Enter it exactly where the person&apos;s name should appear; the app replaces it with their name.
+                </small>
+              )}
+              <textarea
+                aria-describedby={isExactNatalAspectDraft ? "natal-aspect-they-name-hint" : undefined}
+                aria-label={fallbackEditorGuidance?.bodyTheyLabel ?? "Friend view copy"}
+                value={packageFieldString(currentDraft, "body_they")}
+                onChange={(event) => setDraft(setPackageSectionField(currentDraft, "body_they", event.target.value))}
+              />
               {fallbackEditorGuidance && <small className="admin-field-hint">{fallbackEditorGuidance.bodyTheyHint}</small>}
               {!fallbackEditorGuidance && <small className="admin-field-hint">Used when the app describes this person to a friend or another chart viewer.</small>}
             </label>
@@ -8204,10 +8257,11 @@ export function GeneratedContentAdminDashboard() {
                 <strong>{packageRole || "package row"}</strong>
               </div>
               <label>
-                <span>review status</span>
-                <select aria-label="Package review status" value={packageReviewStatus} onChange={(event) => updatePackageReviewStatus(event.target.value)} disabled={Boolean(skyFallbackEditor) || isGuidedHeldReview}>
-                  {fallbackArchitectureV3ReviewStatuses.map((reviewStatus) => <option key={reviewStatus} value={reviewStatus}>{reviewStatus}</option>)}
+                <span>Approval</span>
+                <select aria-label="Approval" value={packageReviewStatus} onChange={(event) => updatePackageReviewStatus(event.target.value)} disabled={Boolean(skyFallbackEditor) || isGuidedHeldReview}>
+                  {fallbackArchitectureV3ReviewStatuses.map((reviewStatus) => <option key={reviewStatus} value={reviewStatus}>{packageReviewStatusLabel(reviewStatus)}</option>)}
                 </select>
+                {!skyFallbackEditor && !isGuidedHeldReview && <small className="admin-field-hint">Approved copy becomes live when Save &amp; publish completes.</small>}
                 {skyFallbackEditor && <small className="admin-field-hint">Copy proposals stay at needs_review until the source diff receives separate owner approval.</small>}
                 {isGuidedHeldReview && <small className="admin-field-hint">Locked at needs_review in this review flow. Use “Record owner copy review” above when the exact copy is correct; publication remains a separate governed step.</small>}
               </label>
@@ -8248,13 +8302,17 @@ export function GeneratedContentAdminDashboard() {
             <summary>Publishing and technical settings</summary>
             <fieldset className="admin-metadata-fields">
             <label className="admin-metadata-field">
-              <span>Status</span>
-              <select aria-label="Status" value={currentDraft.status} onChange={(event) => setDraft({ ...currentDraft, status: event.target.value as GeneratedContentStatus })} disabled={isPackageDraft || Boolean(compiledSkyArticleEdition)}>
+              <span>{isPackageDraft ? "Reader status after save" : "Status"}</span>
+              <select aria-label={isPackageDraft ? "Reader status after save" : "Status"} value={isPackageDraft ? packageStatusAfterSave : currentDraft.status} onChange={(event) => setDraft({ ...currentDraft, status: event.target.value as GeneratedContentStatus })} disabled={isPackageDraft || Boolean(compiledSkyArticleEdition)}>
                 {contentStatuses.map((status) => <option key={status} value={status}>{contentStatusLabel(status)}</option>)}
               </select>
               <small className="admin-field-hint">
                 {isPackageDraft
-                  ? "Derived from package review status when saved."
+                  ? packageWillPublishOnSave
+                    ? "This copy is approved. Save to publish it to readers."
+                    : currentDraft.status === "LIVE"
+                      ? "This approved copy is live for readers."
+                      : "Approval controls reader availability. Set review status to approved, then Save to publish."
                   : "Published maps to LIVE and means reader-eligible within this provenance system; it does not outrank a higher-priority system."}
               </small>
             </label>
@@ -8281,7 +8339,7 @@ export function GeneratedContentAdminDashboard() {
               <span>Review state</span>
               <input aria-label="Review state" value={currentDraft.reviewState} onChange={(event) => setDraft({ ...currentDraft, reviewState: event.target.value })} disabled={isPackageDraft} />
             </label>
-            {isFallbackHookDraft && (
+            {isFallbackHookDraft && !isPackageDraft && (
               <label className="admin-metadata-field">
                 <span>Fallback review status</span>
                 <select aria-label="Fallback review status" value={fallbackReviewStatus} onChange={(event) => updateFallbackReviewStatus(event.target.value)}>
@@ -8295,48 +8353,6 @@ export function GeneratedContentAdminDashboard() {
             </label>
             </fieldset>
           </details>}
-          {!compiledSkyArticleEdition && <div className="admin-toolbar-actions admin-editor-savebar">
-            <span className={`admin-editor-save-state ${draftHasUnsavedChanges || isNewDraft ? "is-unsaved" : "is-saved"}`} aria-live="polite">
-              {isLoading ? "Saving…" : isNewDraft ? "New draft" : draftHasUnsavedChanges ? "Unsaved changes" : "All changes saved"}
-            </span>
-            <button
-              className="admin-primary-button"
-              type="button"
-              onClick={() => void saveDraft(isCmsSurfaceDraft && currentDraft.status === "LIVE" ? "DRAFT" : undefined)}
-              disabled={isLoading || Boolean(compiledSkyArticleEdition) || !compatibilityNewDraftReady || (!isNewDraft && !draftHasUnsavedChanges)}
-              title={!compatibilityNewDraftReady ? "Complete the Compatibility identity and copy." : undefined}
-            >
-              <Save size={16} aria-hidden="true" />
-              {isGuidedHeldReview ? "Save held draft" : "Save"}
-            </button>
-            {isPackageDraft && !skyFallbackEditor && draftHasUnsavedChanges && (
-              <button type="button" onClick={revertPackageDraft} disabled={isLoading}>
-                Revert to package original
-              </button>
-            )}
-            {!isPackageDraft && isNewDraft && (
-              <span className="admin-savebar-next-step">Save this draft before review or publication.</span>
-            )}
-            {!isPackageDraft && !isNewDraft && (
-              <>
-                <button className="admin-review-button" type="button" onClick={() => void saveDraft("REVIEWED")} disabled={isLoading || !publishReady} title={!publishReady ? "Add the required main copy before review." : "Mark this saved copy as editorially reviewed."}>
-                  <Check size={16} aria-hidden="true" />
-                  Mark reviewed
-                </button>
-                {isGovernedSkyDraft && selectedRow ? (
-                  <button className="admin-publish-button" type="button" onClick={() => void approveAndScheduleSkyRow(selectedRow)} disabled={isLoading || skyDraftHasUnsavedCopy} title={skyDraftHasUnsavedCopy ? "Save and revalidate copy edits before approval." : currentDraft.blockType === "sky_placement" ? "Approve this copy for governed package import. This does not publish it." : "Approve this reusable card for calculated matching Sky configurations."}>
-                    <Check size={16} aria-hidden="true" />
-                    {currentDraft.blockType === "sky_placement" ? "Approve for package" : "Approve & schedule"}
-                  </button>
-                ) : (
-                  <button className="admin-publish-button" type="button" onClick={() => void saveDraft("LIVE")} disabled={isLoading || !cmsCanSignOff || !publishReady} title={!publishReady ? "Add the required main copy before publishing." : !cmsCanSignOff ? "Fix the CMS template errors before publishing." : "Make this reviewed source eligible for its app surface."}>
-                    <Check size={16} aria-hidden="true" />
-                    Publish to app
-                  </button>
-                )}
-              </>
-            )}
-          </div>}
           {selectedRow && (
             <details className="admin-advanced admin-review-json">
               <summary>Structured fields</summary>
@@ -8350,19 +8366,59 @@ export function GeneratedContentAdminDashboard() {
             </details>
           )}
         </section>
+        {!compiledSkyArticleEdition && <div className="admin-toolbar-actions admin-editor-savebar">
+          <span className={`admin-editor-save-state ${draftHasUnsavedChanges || isNewDraft || packageWillPublishOnSave ? "is-unsaved" : "is-saved"}`} aria-live="polite">
+            {isLoading ? "Saving…" : packageWillPublishOnSave ? "Ready to publish" : isNewDraft ? "New draft" : draftHasUnsavedChanges ? "Unsaved changes" : "All changes saved"}
+          </span>
+          <button
+            className="admin-primary-button"
+            type="button"
+            onClick={() => void saveDraft(isCmsSurfaceDraft && currentDraft.status === "LIVE" ? "DRAFT" : undefined)}
+            disabled={isLoading || Boolean(compiledSkyArticleEdition) || !compatibilityNewDraftReady || (!isNewDraft && !draftHasUnsavedChanges && !packageWillPublishOnSave)}
+            title={!compatibilityNewDraftReady ? "Complete the Compatibility identity and copy." : undefined}
+          >
+            <Save size={16} aria-hidden="true" />
+            {isGuidedHeldReview ? "Save held draft" : packageWillPublishOnSave ? "Save & publish" : "Save"}
+          </button>
+          {isPackageDraft && !skyFallbackEditor && draftHasUnsavedChanges && (
+            <button type="button" onClick={revertPackageDraft} disabled={isLoading}>
+              Revert to package original
+            </button>
+          )}
+          {!isPackageDraft && isNewDraft && (
+            <span className="admin-savebar-next-step">Save this draft before review or publication.</span>
+          )}
+          {!isPackageDraft && !isNewDraft && (
+            <>
+              <button className="admin-review-button" type="button" onClick={() => void saveDraft("REVIEWED")} disabled={isLoading || !publishReady} title={!publishReady ? "Add the required main copy before review." : "Mark this saved copy as editorially reviewed."}>
+                <Check size={16} aria-hidden="true" />
+                Mark reviewed
+              </button>
+              {isGovernedSkyDraft && selectedRow ? (
+                <button className="admin-publish-button" type="button" onClick={() => void approveAndScheduleSkyRow(selectedRow)} disabled={isLoading || skyDraftHasUnsavedCopy} title={skyDraftHasUnsavedCopy ? "Save and revalidate copy edits before approval." : currentDraft.blockType === "sky_placement" ? "Approve this copy for governed package import. This does not publish it." : "Approve this reusable card for calculated matching Sky configurations."}>
+                  <Check size={16} aria-hidden="true" />
+                  {currentDraft.blockType === "sky_placement" ? "Approve for package" : "Approve & schedule"}
+                </button>
+              ) : (
+                <button className="admin-publish-button" type="button" onClick={() => void saveDraft("LIVE")} disabled={isLoading || !cmsCanSignOff || !publishReady} title={!publishReady ? "Add the required main copy before publishing." : !cmsCanSignOff ? "Fix the CMS template errors before publishing." : "Make this reviewed source eligible for its app surface."}>
+                  <Check size={16} aria-hidden="true" />
+                  Publish to app
+                </button>
+              )}
+            </>
+          )}
+        </div>}
       </aside>
       {templateVariableReferenceOpen && (
         <>
           <button
             type="button"
-            className="admin-editor-backdrop"
-            style={{ zIndex: 80 }}
+            className="admin-editor-backdrop admin-variable-reference-backdrop"
             aria-label="Close template variable reference"
             onClick={() => setTemplateVariableReferenceOpen(false)}
           />
           <aside
             className="admin-editor-panel admin-variable-reference-panel"
-            style={{ maxWidth: "min(720px, 100vw)", width: "min(720px, 100vw)", zIndex: 81 }}
             role="dialog"
             aria-modal="true"
             aria-label="Template variable reference"
