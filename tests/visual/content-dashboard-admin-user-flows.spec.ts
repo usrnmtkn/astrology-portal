@@ -508,6 +508,7 @@ async function seedAdminApi(
     generatedContentFailuresBeforeSuccess?: number;
     generatedContentWriteReturnsEmpty?: boolean;
     onGeneratedContentRead?: (url: URL) => void;
+    reviewRows?: Record<string, unknown>[];
   } = {}
 ) {
   const apiGeneratedContentRows = structuredClone(options.generatedRows ?? generatedContentRows) as Record<string, unknown>[];
@@ -556,6 +557,7 @@ async function seedAdminApi(
     }
 
     if (pathname.endsWith("/review-records")) {
+      const servedReviewRows = options.reviewRows ?? reviewRecordRows;
       await route.fulfill({
         status: 200,
         contentType: "application/json",
@@ -565,8 +567,8 @@ async function seedAdminApi(
           startDate: url.searchParams.get("startDate") ?? "2026-07-16",
           endDate: url.searchParams.get("endDate") ?? "2026-08-15",
           prompt: null,
-          rows: reviewRecordRows,
-          counts: { total: reviewRecordRows.length, DRAFT: 0, REVIEWED: 1, LIVE: 1, ARCHIVED: 0, ERROR: 0 }
+          rows: servedReviewRows,
+          counts: { total: servedReviewRows.length, DRAFT: 0, REVIEWED: 1, LIVE: 1, ARCHIVED: 0, ERROR: 0 }
         })
       });
       return;
@@ -3492,6 +3494,106 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expectAdminHeader(page, "Surface Map", "Admin / Composition / Surface map");
     await expect(page.getByText(/reader surface directory|mapped surfaces/i).first()).toBeVisible();
 
+    await assertNoBrowserErrors();
+  });
+
+  test("Daily At-a-Glance pairs headline and passage with calculated Moon context", async ({ page }) => {
+    const assertNoBrowserErrors = await expectNoBrowserErrors(page);
+    const dailyRow = (id: string, contentKey: string, bodyYou: string, bodyThey: string) => ({
+      id,
+      content_key: contentKey,
+      surface: "you",
+      mode: "feed",
+      status: "LIVE",
+      event_type: "fallback-hook",
+      target_date: null,
+      headline: contentKey,
+      summary: "Owner-approved Daily At-a-Glance fixture.",
+      body: bodyYou,
+      sections: {
+        packageRecord: {
+          content_role: "fallback_hook",
+          contentKey,
+          review_status: "approved",
+          body_you: bodyYou,
+          body_they: bodyThey
+        }
+      },
+      block_type: "fallback_hook",
+      lane: "serving",
+      review_state: null,
+      facts: { fallbackArchitectureV3: true, review_status: "approved" },
+      knowledge_ids: [],
+      source_snapshot: { sourcePackage: "tldrastro-fallback-architecture-v3", review_status: "approved" },
+      reviewer_notes: null,
+      prompt_version: "qa-daily-glance",
+      provider: "fallback-architecture-v3",
+      model: null,
+      reviewed_at: now,
+      published_at: now,
+      updated_at: now,
+      created_at: now
+    });
+    const generatedRows = [
+      dailyRow("qa-daily-headline", "fallback-hook/daily-headline/soft/mars", "Take the useful opening.", "{{personPreferredName}} may take the useful opening."),
+      dailyRow("qa-daily-passage", "fallback-hook/daily-body/soft/mars", "Check the schedule before committing.", "{{personPreferredName}} may check the schedule before committing.")
+    ];
+    const writes: Array<{ method: string; payload: Record<string, unknown> }> = [];
+    await seedAdminApi(page, {
+      generatedRows,
+      onGeneratedContentWrite: (write) => writes.push(write),
+      reviewRows: [{
+        id: "calculated:daily-glance:alisa:2026-09-01",
+        source: "calculated",
+        surface: "you",
+        status: "DRAFT",
+        mode: "feed",
+        title: "Daily At-a-Glance · Alisa P",
+        subtitle: "Moon in Aries · Moon trine natal Mars",
+        targetDate: "2026-09-01",
+        contentKey: "fallback-hook/daily-body/soft/mars",
+        eventType: "daily-glance-source",
+        summary: "Calculated fixture.",
+        body: "",
+        sections: [],
+        facts: {
+          timeZone: "America/New_York",
+          chart: { id: "alisa", name: "Alisa P", birthTimeKnown: true },
+          moon: { sign: "Aries", degree: 9.2 },
+          driver: { kind: "aspect", label: "Moon trine natal Mars", orb: 1.2 },
+          selector: "soft/mars",
+          headlineKey: "fallback-hook/daily-headline/soft/mars",
+          passageKey: "fallback-hook/daily-body/soft/mars",
+          detailLine: "Moon in Aries is trine Alisa P's natal Mars at a 1.2° orb."
+        },
+        sourceSnapshot: null,
+        reviewerNotes: null,
+        updatedAt: now
+      }]
+    });
+
+    await expectAdminRouteLoads(page, "/admin/content#fallback-hooks?section=daily&q=daily");
+    const studio = page.getByRole("region", { name: "Daily At-a-Glance editor" });
+    await expect(studio.getByRole("heading", { name: "Edit the complete write-up" })).toBeVisible();
+    await expect(studio).toContainText("1 matched write-ups");
+    await page.getByLabel("Search fallback articles and passages").fill("schedule");
+    await expect(studio.getByText("Check the schedule before committing.")).toBeVisible();
+
+    await studio.getByLabel("Daily At-a-Glance person or chart").fill("Alisa P");
+    await studio.getByLabel("Daily At-a-Glance local date").fill("2026-09-01");
+    await studio.getByRole("button", { name: "Load current Moon write-up" }).click();
+    await expect(studio.getByText("Moon in Aries", { exact: true })).toBeVisible();
+    await expect(studio).toContainText("Moon in Aries is trine Alisa P's natal Mars at a 1.2° orb.");
+    await studio.getByRole("button", { name: "Edit this headline and passage" }).click();
+
+    const editor = page.getByRole("dialog", { name: "Daily At-a-Glance paired editor" });
+    await expect(editor.getByLabel("Headline · You")).toHaveValue("Take the useful opening.");
+    await expect(editor.getByLabel("Passage · You")).toHaveValue("Check the schedule before committing.");
+    await editor.getByLabel("Headline · You").fill("Take the useful opening now.");
+    await editor.getByLabel("Passage · You").fill("Check the calendar before committing.");
+    await editor.getByRole("button", { name: "Save headline and passage" }).click();
+    await expect.poll(() => writes.length).toBe(2);
+    await expect(editor).toContainText("All changes saved");
     await assertNoBrowserErrors();
   });
 

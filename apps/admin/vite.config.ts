@@ -105,7 +105,7 @@ export default defineConfig(({ command, mode }) => {
             if (/apps\/admin\/src\/(?:AspectPatternDiagnostics|AspectPatternWriteups|ReportFulfillmentAdminPanel|UnresolvedContentReview)\.tsx$/u.test(id)) {
               return "admin-deferred-review-tools";
             }
-            if (/apps\/admin\/src\/(?:DailyFallbackWorkspaceGuide|PackagedHookCatalogResults|SkyV4StudioReviewPanel)\.tsx$/u.test(id)) {
+            if (/apps\/admin\/src\/(?:DailyFallbackWorkspaceGuide|DailyGlanceStudio|PackagedHookCatalogResults|SkyV4StudioReviewPanel)\.tsx$/u.test(id)) {
               return "admin-deferred-fallback-tools";
             }
           }
