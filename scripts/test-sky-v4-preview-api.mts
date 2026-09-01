@@ -47,7 +47,7 @@ assert.match(reviewPanel, /status=all&visibility=all&surface=sky&limit=1000/u);
 assert.match(reviewPanel, /packageDraft: nextDraft/u);
 assert.match(reviewPanel, /reviewStatus: "needs_review"/u);
 assert.match(reviewPanel, /approved serving baseline remains live/u);
-assert.match(reviewPanel, /announceContentUpdate\(\)/u);
+assert.match(reviewPanel, /announceContentUpdate\(\{/u);
 assert.doesNotMatch(reviewPanel, /serving_enabled\s*=/u);
 
 const generatedContentApi = fs.readFileSync(new URL("../api/admin/generated-content.ts", import.meta.url), "utf8");
