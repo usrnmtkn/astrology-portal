@@ -1206,8 +1206,15 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(navigation.getByRole("button", { name: "Calendar Aspects", exact: true })).toHaveAttribute("aria-current", "page");
     await expect(navigation.getByRole("button", { name: "Content Library" })).not.toHaveAttribute("aria-current", "page");
     await expect(page.getByRole("heading", { name: "Edit Calendar aspect cards" })).toBeVisible();
-    await expect(page.getByText("These drafts remain hidden from readers until a separate approval and release.")).toBeVisible();
-    await expect(page.getByRole("button", { name: "Hide reference", exact: true })).toHaveAttribute("aria-pressed", "true");
+    await expect(page.getByText("Use Published to edit copy readers can see. Use Draft to continue proposed rewrites.", { exact: false })).toBeVisible();
+    const contentFilters = page.locator("section[aria-label='Content list filters']");
+    await expect(contentFilters.getByLabel("Content class")).toHaveCount(0);
+    await expect(contentFilters.getByLabel("Tier")).toHaveCount(0);
+    await expect(contentFilters.getByLabel("Category")).toHaveCount(0);
+    await expect(contentFilters.getByRole("tab", { name: "Editorial content" })).toHaveCount(0);
+    await expect(contentFilters.getByRole("button", { name: "Hide reference", exact: true })).toHaveCount(0);
+    await expect(contentFilters.getByLabel("Find an aspect")).toBeVisible();
+    await expect(contentFilters.getByRole("tab", { name: "All 2" })).toBeVisible();
 
     const contentRows = page.locator(".admin-content-row");
     await expect(contentRows).toHaveCount(2);
