@@ -1100,6 +1100,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(page.getByLabel("Natal placement planet or point")).toBeVisible();
     await expect(page.getByLabel("Natal placement zodiac sign")).toBeVisible();
     await expect(page.getByLabel("Natal placement house")).toBeVisible();
+    await expect(page.getByLabel("Natal placement motion")).toBeVisible();
     await expect(page.getByRole("region", { name: "Content list filters" })).toHaveCount(0);
     await expect(page.getByRole("region", { name: "App visibility status" })).toHaveCount(0);
     await expect(page.getByRole("region", { name: "Generated content records" })).toHaveCount(0);
@@ -1113,7 +1114,7 @@ test.describe("content dashboard admin user flow case studies", () => {
       return { left: box.left, right: box.right, top: box.top, bottom: box.bottom };
     }));
     expect(sourceFinderBox).not.toBeNull();
-    expect(selectorBoxes).toHaveLength(3);
+    expect(selectorBoxes).toHaveLength(4);
     selectorBoxes.forEach((box, index) => {
       expect(box.left).toBeGreaterThanOrEqual(sourceFinderBox!.x);
       expect(box.right).toBeLessThanOrEqual(sourceFinderBox!.x + sourceFinderBox!.width);
@@ -1121,8 +1122,17 @@ test.describe("content dashboard admin user flow case studies", () => {
     });
     await expectNoHorizontalOverflow(page, "Natal Chart workspace");
 
+    await page.getByLabel("Natal placement planet or point").selectOption("mercury");
+    await page.getByLabel("Natal placement zodiac sign").selectOption("virgo");
+    await page.getByLabel("Natal placement house").selectOption("6");
+    await page.getByLabel("Natal placement motion").selectOption("retrograde");
+    await expect(page).toHaveURL(/planet=mercury&sign=virgo&house=6&motion=retrograde/u);
+    await expect(sourceFinder.getByText("Retrograde chart context", { exact: true })).toBeVisible();
+
     await page.getByLabel("Natal placement planet or point").selectOption("sun");
     await page.getByLabel("Natal placement zodiac sign").selectOption("cancer");
+    await page.getByLabel("Natal placement house").selectOption("");
+    await expect(page.getByLabel("Natal placement motion")).toHaveValue("direct");
     await expect(sourceFinder.locator(".admin-natal-placement-finder-heading h3")).toHaveText("Sun in Cancer");
     await expect(sourceFinder.getByRole("heading", { name: "What you see" })).toBeVisible();
     await expect(sourceFinder.getByText("Your Sun is in Cancer, so the planet-in-sign write-up loads before a house is selected.")).toBeVisible();
@@ -1451,6 +1461,39 @@ test.describe("content dashboard admin user flow case studies", () => {
       }
     });
     await expect(page.getByRole("status")).toContainText("sky.placement.sun.cancer saved as Published");
+    await assertNoBrowserErrors();
+  });
+
+  test("Sky write-ups filter and sort retrograde Calendar placements", async ({ page }) => {
+    const assertNoBrowserErrors = await expectNoBrowserErrors(page);
+    const retrogradeRow = {
+      ...generatedContentRows[0],
+      id: "qa-retrograde-calendar-row",
+      content_key: "sky/station/mercury/retrograde/virgo",
+      event_type: "station",
+      headline: "Mercury stations retrograde in Virgo",
+      facts: { body: "Mercury", sign: "Virgo", motion: "retrograde", isRetrograde: true }
+    };
+    const directRow = {
+      ...generatedContentRows[0],
+      id: "qa-direct-sky-row",
+      content_key: "sky/placement/venus/libra/direct",
+      event_type: "sky-placement",
+      headline: "Venus direct in Libra",
+      facts: { body: "Venus", sign: "Libra", motion: "direct", isRetrograde: false }
+    };
+    await seedAdminApi(page, { generatedRows: [directRow, retrogradeRow, ...generatedContentRows] });
+    await expectAdminRouteLoads(page, "/admin/content#sky-writeups");
+
+    await expect(page.getByLabel("Sky write-up motion")).toBeVisible();
+    await expect(page.getByLabel("Sky write-up reader use")).toBeVisible();
+    await expect(page.getByLabel("Sort Sky write-ups")).toBeVisible();
+    await page.getByLabel("Sky write-up motion").selectOption("retrograde");
+    await page.getByLabel("Sky write-up reader use").selectOption("calendar");
+    await page.getByLabel("Sort Sky write-ups").selectOption("retrograde-first");
+
+    await expect(page.locator(".admin-content-row", { hasText: "Mercury stations retrograde in Virgo" })).toBeVisible();
+    await expect(page.locator(".admin-content-row", { hasText: "Venus direct in Libra" })).toHaveCount(0);
     await assertNoBrowserErrors();
   });
 
