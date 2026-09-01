@@ -98,6 +98,7 @@
     "test:admin-hook-catalog-packaging": "node scripts/build-admin-hook-catalog.mjs && node scripts/test-admin-hook-catalog-packaging.mjs",
     "test:admin-surface-map": "node scripts/build-admin-hook-catalog.mjs && node scripts/test-admin-hook-catalog-packaging.mjs && node --experimental-strip-types scripts/test-admin-writing-surface-map.mjs && node scripts/test-admin-report-copy-editor.mjs && node --import tsx scripts/test-cms-template-validation.mts && node --import tsx scripts/test-content-studio-api-roundtrip.mjs",
     "test:content-studio-api": "node --import tsx scripts/test-content-studio-api-roundtrip.mjs",
+    "test:admin-daily-glance": "node --import tsx scripts/test-admin-daily-glance-studio.mts",
     "qa:editorial-copy": "node scripts/run-editorial-writing-qa.mjs",
     "qa:article-voice": "npm run test:article-voice-routing -w @tldr/astro-knowledge",
     "test:aspect-warmth-harvest": "npm run test:aspect-warmth-harvest -w @tldr/astro-knowledge",
