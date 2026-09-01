@@ -9,7 +9,7 @@ The canonical voice system for ALL reader-facing copy: authored cards, fallback 
 - **First-glance comprehension.** The reader should understand what is happening without translating astrological shorthand or abstract language into ordinary life. Lead with an event, behavior, decision, consequence, or change the reader can recognize.
 - **Name the thing.** Prefer the specific ordinary noun over a vague stand-in. Say plan, deadline, payment, workload, message, decision, agreement, facts, promise, rule, job, or conversation when that is what you mean. Avoid writing around the subject with phrases such as "the version," "the arrangement," "the opening," "what has been promised," or "the situation" when a clearer noun is available.
 - **Behavioral realism.** Focus on human friction, agency, and choices ("what you were shamed out of," "what comes back stronger," "say no once and see what happens").
-- **One sentence, one job.** Do not make one sentence carry the situation, the astrology mechanism, the warning, and the advice at once. Let each sentence advance one clear idea.
+- **One sentence, one job.** Do not make one sentence carry the situation, the astrology mechanism, the warning, and the advice at once. Let each sentence advance one clear idea. This is not a one-sentence limit on the opening. The human consequence may take two or more sentences when that makes the situation easier to understand.
 - **Personality through precision, not decoration.** Do not add jokes, mystical language, quirky metaphors, cute phrasing, or novelty examples just to make simple astrology sound entertaining. A plain sentence is better when it says the consequence more clearly.
 - **Rhythmic and punchy.** Vary sentence lengths intentionally. Follow a long, descriptive observation with a short, definitive punchline.
 - **Zero fluff or hype.** Do not try to impress the reader. Do not use grandiose or mystical language to create artificial weight.
@@ -20,16 +20,16 @@ Reader-facing astrology should explain the lived result before asking the reader
 
 For transit and forecast copy, especially Calendar copy, use this order unless the surface has a stronger reason not to:
 
-1. **What may happen or become clearer.** Start with the recognizable result: a project moves, a decision has to be made, support arrives, the workload changes, a conversation clears something up, a deadline sets the limit.
+1. **What may happen or become clearer.** Start with the recognizable result: a project moves, a decision has to be made, support arrives, the workload changes, a conversation clears something up, a deadline sets the limit. Use one or more sentences when needed. Do not compress a clear two-sentence explanation into one overloaded sentence just to satisfy the structure.
 2. **Why this astrology matters.** Name the transit or aspect and explain its mechanism in normal language. The astrology supports the situation; it is not the situation.
 3. **What can go wrong.** Name the specific mistake the ease, pressure, conflict, or excitement can create.
 4. **What to do with it.** End with the decision, boundary, check, or practical response that changes the outcome.
 
-### The first-sentence test
+### The opening test
 
-Cover the astrology sentence and read only the first sentence. If a reader could reasonably ask "what does that mean?" or "what is actually happening?", rewrite it.
+Cover the astrology explanation and read only the consequence-first opening. The first sentence should make sense on its own, but the opening may continue for another sentence or two when the situation needs more room. If a reader could reasonably ask "what does that mean?" or "what is actually happening?" after reading the opening, rewrite it.
 
-A first sentence should usually contain a recognizable subject and consequence. Prefer statements such as "A deadline may force an answer" or "New information may change a plan you already committed to" over conceptual summaries such as "structure meets growth" or "an opening for change appears."
+An opening should contain a recognizable subject and consequence. Prefer statements such as "A deadline may force an answer" or "New information may change a plan you already committed to" over conceptual summaries such as "structure meets growth" or "an opening for change appears."
 
 Prefer observable results over conceptual shorthand. Phrases such as "growth meets structure," "support and limits agree," "ambition finds somewhere to go," "an opening appears," "the current setup shifts," or "the confident version gets repeated" are not enough on their own because the reader still has to translate them.
 
