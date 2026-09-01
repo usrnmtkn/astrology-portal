@@ -2276,7 +2276,8 @@ function tierForRow(row: AdminGeneratedContentRow | AdminReviewRecord): AdminPhr
 function isCalendarAspectContentRow(row: AdminGeneratedContentRow | AdminReviewRecord) {
   const contentKey = "content_key" in row ? row.content_key : row.contentKey;
   return contentKey.startsWith("sky-card/")
-    || contentKey.startsWith("fallback-hook/sky-aspect-sign/");
+    || contentKey.startsWith("fallback-hook/sky-aspect-sign/")
+    || contentKey.startsWith("sky.aspect.");
 }
 
 function contentCategoryForRow(row: AdminGeneratedContentRow | AdminReviewRecord): AdminContentCategoryFilter {
