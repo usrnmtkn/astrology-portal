@@ -6,6 +6,16 @@ Scope: the 24 currently serving sign-specific composed Calendar aspect forecasts
 
 This is a review-wall artifact. It does **not** change serving copy. The canonical cards remain untouched until the owner approves the rewritten forecasts. `details` are unchanged in this pass.
 
+## Content Studio staging
+
+The 24 composed-card proposals in `proposed-forecasts.json` are mapped into the Calendar-specific Content Studio draft package `CALENDAR-ASPECT-CONSEQUENCE-FIRST-CONTENT-STUDIO-2026-09-01`.
+
+Those Studio records are versioned, non-serving drafts. Astrology identity and source provenance are read-only; only `Body` is editable. The currently serving baseline remains available for comparison and remains unchanged. The stage is locked to `needs_review`, `owner_approved: false`, `serving_enabled: false`, and `readerServing: false` until a separate exact owner approval and deliberate serving release.
+
+No exact-wording approval is recorded for the 24 composed cards by this staging work.
+
+Batch 2A is governed separately. Its 24 Venus/Saturn square rewrites carry the exact owner ruling in `batch-2a-venus-saturn-squares-owner-approval.json` and are mapped into the non-serving Studio package `calendar-aspect-content-studio-batch-2a-v1.json`. The two packages intentionally have no overlapping content keys.
+
 The first draft in this review folder was rejected as too abstract. This replacement batch was rewritten from the astrology mechanisms rather than polished from those rejected sentences.
 
 The global standard is now stricter:
