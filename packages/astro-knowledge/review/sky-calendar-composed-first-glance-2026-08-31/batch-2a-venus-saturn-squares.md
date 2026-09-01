@@ -78,7 +78,7 @@ A hopeful plan may keep moving forward even though someone no longer has the ene
 
 ## 18. Venus in Sagittarius square Saturn in Virgo
 
-An opportunity may sound worth it until the appointments, workday, cleanup, or extra tasks are counted. Venus in Sagittarius square Saturn in Virgo can make a big possibility clash with the ordinary work required to support it. The risk is treating the practical person as negative when they are the one calculating the cost. Count the hours before you say yes.
+An opportunity may sound worth it until the appointments, workday, cleanup, or extra tasks are counted. Venus in Sagittarius square Saturn in Virgo can make a big possibility clash with the ordinary work required to support it. The risk here is treating the most practical person involved as a negative influence simply because they are calculating the true cost. Asking how a project will actually get done is not pessimism. Before you say yes to the vision, you have to count the actual hours it will take to maintain it.
 
 ## 19. Venus in Capricorn square Saturn in Aries
 
@@ -98,7 +98,7 @@ A relationship or group arrangement may feel flexible until money, shared risk, 
 
 ## 23. Venus in Pisces square Saturn in Gemini
 
-Two people may feel emotionally close and still have no clear agreement about what happens next. Venus in Pisces square Saturn in Gemini can make understanding feel complete before the plan or commitment is actually stated. The risk is assuming the feeling answers a practical question. Ask for the plan, date, or promise in plain language.
+Two people may feel emotionally close and still be talking past the practical question. Venus in Pisces square Saturn in Gemini can make a meaningful conversation feel like enough even when nobody has said what the relationship, plan, or commitment actually is. The risk is assuming emotional closeness means you have the same expectations. Ask what happens next and get the answer in plain language.
 
 ## 24. Venus in Pisces square Saturn in Sagittarius
 
