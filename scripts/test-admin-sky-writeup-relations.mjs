@@ -124,6 +124,42 @@ assert.deepEqual(
 const piscesFullMoonContext = skyLunationContextForRow(piscesFullMoonMacro);
 assert.deepEqual(piscesFullMoonContext, { kind: "full-moon", eclipse: "none", sign: "pisces" });
 assert.equal(skyWriteupSubjectTypeForRow(piscesFullMoonMacro), "planet", "Lunations belong in the planet filter.");
+const legacyLibraNewMoon = {
+  id: "legacy-libra-new-moon",
+  content_key: "authored/sky-newmoon/libra",
+  headline: "Libra",
+  mode: "article"
+};
+assert.deepEqual(
+  skyWriteupContextForRow(legacyLibraNewMoon),
+  { planet: "moon", sign: "libra" },
+  "Legacy authored New Moon rows must remain discoverable as Moon write-ups after the SKY V4 migration."
+);
+assert.deepEqual(
+  skyLunationContextForRow(legacyLibraNewMoon),
+  { kind: "new-moon", eclipse: "none", sign: "libra" }
+);
+assert.equal(skyWriteupSubjectTypeForRow(legacyLibraNewMoon), "planet");
+assert.deepEqual(
+  skyLunationContextForRow({
+    id: "legacy-capricorn-year-end",
+    content_key: "authored/sky-newmoon/capricorn-year-end",
+    headline: "Capricorn Year End",
+    mode: "article"
+  }),
+  { kind: "new-moon", eclipse: "none", sign: "capricorn" },
+  "The owner-authored year-end variant must retain its Capricorn Moon classification."
+);
+assert.deepEqual(
+  skyLunationContextForRow({
+    id: "legacy-solar-eclipse",
+    content_key: "authored/sky-eclipse/solar-virgo",
+    headline: "Virgo",
+    mode: "article"
+  }),
+  { kind: "new-moon", eclipse: "solar", sign: "virgo" },
+  "The legacy authored eclipse must remain discoverable with its event type and sign."
+);
 assert.deepEqual(
   skyLunationContextForRow({
     id: "solar-eclipse",
@@ -225,6 +261,8 @@ assert.match(readerApp, /body: packageSection\?\.body \?\? compiledAspect\?\.bod
 assert.match(dashboard, /Edit house-aware reader override/u, "Sky article aspect rows must expose the reader-facing CMS override directly.");
 assert.match(dashboard, /calculatedHouseContext: true/u, "Dynamic-house CMS drafts must record that houses are calculated, not fixed authored metadata.");
 assert.match(dashboard, /aria-label="Sky write-up type"/u, "Sky Write-ups must expose a planet, angle, or point filter.");
+assert.match(dashboard, /Moon and lunations/u, "Sky Write-ups must expose a discoverable Moon and lunations filter.");
+assert.match(dashboard, /skyWriteupContextForRow\(row\)\?\.planet === "moon"/u, "The Moon and lunations filter must use normalized Moon metadata rather than headline text.");
 assert.match(dashboard, /filteredSkyWriteupRows/u, "The Sky write-up list must render the selected subject type instead of the unfiltered inventory.");
 
 console.log("Admin Sky write-up relationship checks passed.");

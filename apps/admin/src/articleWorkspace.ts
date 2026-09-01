@@ -24,7 +24,9 @@ export function isSkyWriteupContentRow(row: ArticleWorkspaceRow) {
     || /^sky\.placement\./u.test(key)
     || /^sky[/-](?:placement|article)[/-]/u.test(key)
     || /^sky-article\//u.test(key)
-    || /^authored\/sky-lunation-macro\//u.test(key);
+    || /^authored\/sky-lunation-macro\//u.test(key)
+    || /^authored\/sky-(?:newmoon|fullmoon)\//u.test(key)
+    || /^authored\/sky-eclipse\//u.test(key);
 }
 
 export type ArticleAppDestination = {
