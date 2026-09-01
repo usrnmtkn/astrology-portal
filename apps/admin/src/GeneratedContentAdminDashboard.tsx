@@ -8482,6 +8482,9 @@ export function GeneratedContentAdminDashboard() {
                     contentKey={currentDraft.contentKey}
                     effectiveRecord={effectiveSkyFallback}
                     disabled={isLoading}
+                    hasChanges={skyFallbackChanges.length > 0}
+                    onFieldChange={updateSkyFallbackField}
+                    onSave={() => saveDraft()}
                   />
                 </Suspense>
               )}
