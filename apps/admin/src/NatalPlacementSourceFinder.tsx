@@ -2,11 +2,11 @@ import NatalPlacementReaderPreview, { natalPlacementOverrideDraft } from "./Nata
 import {
   natalPlacementHouses,
   natalPlacementLabel,
+  natalPlacementMotions,
   natalPlacementPlanets,
   natalPlacementSignLabel,
   natalPlacementSigns,
   natalPlacementSourceGroups,
-  natalPlacementSupportsRetrograde,
   type NatalPlacementHouse,
   type NatalPlacementMotion,
   type NatalPlacementPlanet,
@@ -27,8 +27,8 @@ type Props = {
   isLoading: boolean;
   onCreateOverride: (contentKey: string, label: string, body: string) => void;
   onOpenSource: (contentKey: string, label: string, previewTemplate?: boolean) => void;
-  onSelectionChange: (next: { house?: NatalPlacementHouse | ""; motion?: NatalPlacementMotion; planet?: NatalPlacementPlanet | ""; sign?: NatalPlacementSign | "" }) => void;
   motion: NatalPlacementMotion;
+  onSelectionChange: (next: { house?: NatalPlacementHouse | ""; motion?: NatalPlacementMotion; planet?: NatalPlacementPlanet | ""; sign?: NatalPlacementSign | "" }) => void;
   planet: NatalPlacementPlanet | "";
   rows: PreviewRow[];
   secret: string;
@@ -56,10 +56,8 @@ function statusLabel(status: string) {
 export default function NatalPlacementSourceFinder({ house, isLoading, motion, onCreateOverride, onOpenSource, onSelectionChange, planet, rows, secret, sign }: Props) {
   const signSelectionComplete = Boolean(planet && sign);
   const fullSelectionComplete = Boolean(signSelectionComplete && house);
-  const supportsRetrograde = natalPlacementSupportsRetrograde(planet);
-  const isRetrograde = supportsRetrograde && motion === "retrograde";
   const groups = signSelectionComplete
-    ? natalPlacementSourceGroups(planet as NatalPlacementPlanet, sign as NatalPlacementSign, house, isRetrograde)
+    ? natalPlacementSourceGroups(planet as NatalPlacementPlanet, sign as NatalPlacementSign, house, motion)
     : [];
 
   const renderSource = (source: ReturnType<typeof natalPlacementSourceGroups>[number]["sources"][number], previewTemplate = false) => {
@@ -93,9 +91,9 @@ export default function NatalPlacementSourceFinder({ house, isLoading, motion, o
         <div>
           <p className="admin-eyebrow">Natal placement source finder</p>
           <h3>{fullSelectionComplete
-            ? natalPlacementLabel(planet as NatalPlacementPlanet, sign as NatalPlacementSign, house as NatalPlacementHouse, isRetrograde)
+            ? natalPlacementLabel(planet as NatalPlacementPlanet, sign as NatalPlacementSign, house as NatalPlacementHouse)
             : signSelectionComplete
-              ? natalPlacementSignLabel(planet as NatalPlacementPlanet, sign as NatalPlacementSign, isRetrograde)
+              ? natalPlacementSignLabel(planet as NatalPlacementPlanet, sign as NatalPlacementSign)
               : "Choose a natal placement"}</h3>
           <p>Pick one value in each field. This workspace contains natal placements only; current transits and Sky placements are kept in Sky Write-ups.</p>
         </div>
@@ -104,7 +102,17 @@ export default function NatalPlacementSourceFinder({ house, isLoading, motion, o
       <div className="admin-natal-placement-selectors">
         <label>
           <span>1. Planet or point</span><small>What is placed</small>
-          <select aria-label="Natal placement planet or point" value={planet} onChange={(event) => onSelectionChange({ planet: event.target.value as NatalPlacementPlanet | "" })}>
+          <select
+            aria-label="Natal placement planet or point"
+            value={planet}
+            onChange={(event) => {
+              const nextPlanet = event.target.value as NatalPlacementPlanet | "";
+              onSelectionChange({
+                planet: nextPlanet,
+                ...((nextPlanet === "sun" || nextPlanet === "moon") ? { motion: "direct" as const } : {})
+              });
+            }}
+          >
             <option value="">Choose planet or point</option>
             {natalPlacementPlanets.map((item) => <option value={item} key={item}>{titleFromKey(item)}</option>)}
           </select>
@@ -124,25 +132,22 @@ export default function NatalPlacementSourceFinder({ house, isLoading, motion, o
           </select>
         </label>
         <label>
-          <span>4. Motion</span><small>{supportsRetrograde ? "How it moves in the birth chart" : planet ? "This point is shown direct" : "Choose a planet or point first"}</small>
-          <select
-            aria-label="Natal placement motion"
-            disabled={!supportsRetrograde}
-            value={isRetrograde ? "retrograde" : "direct"}
-            onChange={(event) => onSelectionChange({ motion: event.target.value as NatalPlacementMotion })}
-          >
-            <option value="direct">Direct</option>
-            <option value="retrograde">Retrograde (Rx)</option>
+          <span>4. Motion preview</span><small>Calculated from the birth chart</small>
+          <select aria-label="Natal placement motion" value={motion} onChange={(event) => onSelectionChange({ motion: event.target.value as NatalPlacementMotion })}>
+            {natalPlacementMotions.map((item) => (
+              <option value={item} key={item} disabled={item === "retrograde" && (planet === "sun" || planet === "moon")}>
+                {titleFromKey(item)}{item === "retrograde" && (planet === "sun" || planet === "moon") ? " (not possible)" : ""}
+              </option>
+            ))}
           </select>
         </label>
       </div>
       {!signSelectionComplete && <p className="admin-natal-placement-prompt">Choose a planet or point and zodiac sign to read the planet-in-sign write-up.</p>}
       {signSelectionComplete && !house && <p className="admin-natal-placement-prompt">The planet-in-sign write-up is shown below. Choose a house to add the house paragraph and exact full-placement override.</p>}
-      {signSelectionComplete && isRetrograde && <p className="admin-natal-placement-prompt">Retrograde is a calculated birth-chart condition. This preview composes the placement sources with the shared Rx modifier shown below; direct-only exact overrides are intentionally excluded.</p>}
       {signSelectionComplete && (
         <NatalPlacementReaderPreview
           house={house}
-          isRetrograde={isRetrograde}
+          motion={motion}
           onCreateOverride={onCreateOverride}
           onOpenSource={onOpenSource}
           planet={planet as NatalPlacementPlanet}
