@@ -10996,11 +10996,14 @@ body,
   gap: 0;
   overflow: hidden;
   overscroll-behavior: contain;
+  padding: 0;
 }
 
 .admin-dashboard .admin-editor-panel > .admin-editor-toolbar {
   flex: 0 0 auto;
+  margin: 0;
   margin-bottom: 0;
+  padding: var(--admin-space-4xl) var(--admin-space-5xl);
   position: relative;
   top: auto;
 }
@@ -11012,6 +11015,7 @@ body,
   overflow-x: hidden;
   overflow-y: auto;
   overscroll-behavior: contain;
+  padding: var(--admin-space-4xl) var(--admin-space-5xl);
 }
 
 .admin-dashboard .admin-editor-panel .admin-editor-toolbar > div:first-child {
@@ -11020,7 +11024,18 @@ body,
 
 .admin-dashboard .admin-editor-panel .admin-editor-toolbar-actions {
   flex-wrap: wrap;
-  justify-content: flex-end;
+  justify-content: flex-start;
+  max-width: 100%;
+}
+
+.admin-dashboard .admin-editor-panel .admin-editor-toolbar {
+  align-items: stretch;
+  flex-direction: column;
+}
+
+.admin-dashboard .admin-editor-panel .admin-editor-toolbar-actions > * {
+  max-width: 100%;
+  min-width: 0;
 }
 
 @media (max-width: 720px) {
@@ -11668,7 +11683,6 @@ body,
    giving every writing form a clearer field hierarchy and persistent actions. */
 .admin-dashboard .admin-post-editor {
   gap: var(--admin-space-6xl);
-  padding: var(--admin-space-5xl) var(--admin-space-xs) var(--admin-space-xs);
 }
 
 .admin-dashboard :where(.admin-title-field, .admin-review-copy-editor, .admin-metadata-field, .admin-field-wide):focus-within > span {
@@ -11720,7 +11734,7 @@ body,
   border: var(--border-width-thin) solid var(--admin-ui-border);
   border-radius: var(--admin-ui-radius-lg);
   gap: var(--admin-space-3xl);
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: minmax(0, 1fr);
   padding: var(--admin-space-3xl);
 }
 
@@ -11738,7 +11752,7 @@ body,
   flex: 0 0 auto;
   flex-wrap: wrap;
   gap: var(--admin-space-lg);
-  margin: 0 calc(var(--admin-space-5xl) * -1) calc(var(--admin-space-5xl) * -1) !important;
+  margin: 0 !important;
   padding: var(--admin-space-2xl) var(--admin-space-5xl) !important;
   position: relative !important;
   z-index: 4;
@@ -11808,17 +11822,14 @@ body,
   }
 
   .admin-dashboard .admin-editor-panel .admin-editor-toolbar-actions {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--admin-space-lg);
   }
 
   .admin-dashboard .admin-editor-panel .admin-editor-toolbar-actions > .admin-status {
-    justify-self: start;
-  }
-
-  .admin-dashboard .admin-editor-panel .admin-editor-toolbar-actions > button:last-child {
-    grid-column: 2;
-    grid-row: 1;
+    flex: 0 1 auto;
   }
 
   .admin-dashboard .admin-post-editor {
@@ -11839,7 +11850,7 @@ body,
   }
 
   .admin-dashboard .admin-editor-savebar {
-    margin: 0 calc(var(--admin-space-5xl) * -1) calc(var(--admin-space-5xl) * -1) !important;
+    margin: 0 !important;
     padding: var(--admin-space-xl) var(--admin-space-4xl) calc(var(--admin-space-xl) + env(safe-area-inset-bottom)) !important;
   }
 
@@ -12535,7 +12546,11 @@ body,
 .admin-dashboard .admin-composition-preview-context {
   display: grid;
   gap: var(--admin-space-xl);
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.admin-dashboard :where(.admin-composition-detail, .admin-composition-preview, .admin-composition-preview-context) {
+  overflow-wrap: anywhere;
 }
 
 .admin-dashboard .admin-composition-preview-context > section {
@@ -12879,7 +12894,7 @@ body,
   margin: 0;
 }
 
-@media (max-width: 980px) {
+@media (max-width: 1240px) {
   .admin-dashboard .admin-composition-map-layout,
   .admin-dashboard .admin-composition-preview-context {
     grid-template-columns: 1fr;
