@@ -105,7 +105,9 @@ assert.match(generatedContentApi, /CALENDAR-ASPECT-CONSEQUENCE-FIRST-CONTENT-STU
 assert.match(generatedContentApi, /sky-calendar-batch-2a-venus-saturn-squares-2026-09-01/u);
 assert.match(generatedContentApi, /Calendar aspect drafts require a separate exact owner approval and serving release before promotion/u);
 assert.match(generatedContentApi, /isCalendarAspectStage[\s\S]*?record\.owner_approved = false;[\s\S]*?record\.serving_enabled = false;/u);
-assert.match(generatedContentApi, /facts\.readerServing = stageKind \? false/u);
+assert.match(generatedContentApi, /const readerServing = !stageKind/u);
+assert.match(generatedContentApi, /packageRoleCanServeExactCopy\(packageRole\)/u);
+assert.match(generatedContentApi, /facts\.readerServing = readerServing/u);
 
 const styleGuide = readText("apps/web/src/content/fallbackArchitectureV3/admin/WRITING-STYLE-GUIDE.md");
 assert.match(styleGuide, /Human consequence first/u);
