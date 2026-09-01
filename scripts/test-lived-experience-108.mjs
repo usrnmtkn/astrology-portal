@@ -88,13 +88,23 @@ function mappedKey(workbookKey) {
 const llMatrixV13ByContentKey = new Map(source.hookRows
   .filter((row) => row.source_release === llMatrixV13Release)
   .map((row) => [row.contentKey, row]));
+const sourceByContentKey = new Map(source.hookRows.map((row) => [row.contentKey, row]));
+const laterV15Supersessions = new Set([
+  "fallback-hook/natal-aspect-lived/mercury/opposition/midheaven",
+  "fallback-hook/natal-aspect-lived/moon/opposition/ascendant",
+  "fallback-hook/natal-aspect-lived/moon/opposition/midheaven",
+]);
 const repairByContentKey = new Map(repair.entries.map((entry) => [entry.contentKey, entry]));
 const manifestByWorkbookKey = new Map(manifest.rows.map((row) => [row.workbookKey, row]));
 const natalMoonFinalSigns = new Map(natalMoonFinal.signRows.map((row) => [row.runtimeKey, row]));
 const natalMoonFinalHouses = new Map(natalMoonFinal.houseRows.map((row) => [row.runtimeKey, row]));
-const livedRows = manifest.rows.map((row) => llMatrixV13ByContentKey.get(row.contentKey)).filter(Boolean);
+const livedRows = manifest.rows.map((row) => sourceByContentKey.get(row.contentKey)).filter(Boolean);
 assert.equal(livedRows.length, 108);
-assert.ok(livedRows.every((row) => row.source_release === llMatrixV13Release));
+assert.equal(livedRows.filter((row) => row.source_release === llMatrixV13Release).length, 105);
+assert.deepEqual(
+  livedRows.filter((row) => row.source_release !== llMatrixV13Release).map((row) => row.contentKey).sort(),
+  [...laterV15Supersessions].sort(),
+);
 assert.equal(packet.approvedAt, "2026-08-10");
 assert.equal(packet.approvalRecord, workbookPath);
 assert.equal(manifest.rowCount, 108);
@@ -113,6 +123,7 @@ const existingApprovedRows = source.hookRows.filter((row) => (
   && row.source_release !== "natal-sun-square-ascendant-owner-approved-runtime"
   && !postBaselineOwnerReleases.has(row.source_release)
   && !postBaselineOwnerKeys.has(row.contentKey)
+  && !row.source_keys?.includes("packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md")
 )).map((row) => {
   // Preserve the frozen historical fingerprint while allowing the later,
   // separately hash-bound Friend house-bridge context release.
@@ -146,21 +157,26 @@ assert.match(
 for (const [workbookKey, entry] of Object.entries(packet.payloads)) {
   assert.equal(sha256(JSON.stringify(entry.payload)), entry.sha256, `${workbookKey}: payload hash mismatch`);
   const contentKey = mappedKey(workbookKey);
-  const row = llMatrixV13ByContentKey.get(contentKey);
+  const row = sourceByContentKey.get(contentKey);
   const disposition = repairByContentKey.get(contentKey);
   assert.ok(row, `${contentKey}: V13 canonical serving row missing`);
   assert.ok(disposition, `${contentKey}: V13 supersession disposition missing`);
-  assert.equal(
-    row.body,
-    disposition.copyChanged ? disposition.kept.copy.body : entry.payload.body,
-    `${contentKey}: canonical body differs from the governed V13 disposition`,
-  );
-  assert.equal(row.body_you, undefined, `${contentKey}: reader-only row must not synthesize body_you`);
-  assert.equal(row.body_they, undefined, `${contentKey}: reader-only row must not synthesize body_they`);
+  if (laterV15Supersessions.has(contentKey)) {
+    assert.match(row.approval?.recordPath ?? "", /angle-aspects-60-v15\/records\//u);
+    assert.equal(row.body_they_approval?.approvalLevel, "exact_owner_approved");
+  } else {
+    assert.equal(
+      row.body,
+      disposition.copyChanged ? disposition.kept.copy.body : entry.payload.body,
+      `${contentKey}: canonical body differs from the governed V13 disposition`,
+    );
+    assert.equal(row.body_you, undefined, `${contentKey}: reader-only row must not synthesize body_you`);
+    assert.equal(row.body_they, undefined, `${contentKey}: reader-only row must not synthesize body_they`);
+    assert.equal(row.approval?.approvedAt, "2026-08-10");
+  }
   assert.equal(row.reader_only, true);
   assert.equal(row.render_policy, "reader-only-exact-lived-v1");
   assert.equal(row.review_status, "approved");
-  assert.equal(row.approval?.approvedAt, "2026-08-10");
 
   const manifestRow = manifestByWorkbookKey.get(workbookKey);
   assert.equal(manifestRow?.contentKey, contentKey);
@@ -189,7 +205,7 @@ for (const [workbookKey, entry] of Object.entries(packet.payloads)) {
     const planetB = normalizeObject(rawB);
     const aspect = rawAspect === "inconjunct" ? "quincunx" : rawAspect;
     const expectedKey = mappedKey(workbookKey);
-    const expectedBody = llMatrixV13ByContentKey.get(expectedKey)?.body ?? entry.payload.body;
+    const expectedBody = sourceByContentKey.get(expectedKey)?.body ?? entry.payload.body;
     for (const [label, render] of [
       ["node", renderNodeNatalAspect],
       ["browser", browser.renderNatalAspect],

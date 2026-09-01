@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "release": "saturn-square-ascendant-owner-edit-v1",
+  "approvedAt": "2026-08-31",
+  "contentKey": "fallback-hook/natal-aspect-lived/saturn/square/ascendant",
+  "authorityArtifact": {
+    "path": "packages/astro-knowledge/review/saturn-square-ascendant-owner-edit-v1/content-studio-owner-edit-authority.json",
+    "sha256": "78869f35b923b845324c503b4b69b0b9da090f4f1c4be3479d3af3c07783b8f4",
+    "remoteUpdatedAt": "2026-08-31T16:29:17.528048+00:00",
+    "youBodySha256": "9ee6460ea6ccfa9fe1a9d74ba9d5f756b365b146c54db30f6118456a81091946",
+    "friendsBodySha256": "1a0d569bc79559a7fd3958402ec2689577011457d21bf7ee70b3512257bf65e7"
+  },
+  "approvalRecord": {
+    "path": "packages/astro-knowledge/review/saturn-square-ascendant-owner-edit-v1/saturn-square-ascendant-owner-edit-supersession.json",
+    "sha256": "b0780b85ab4e9b9ae039a49c767258ea46fcf58eb1c713fdf7741d38b0ff620d",
+    "payloadSha256": "17d8c7b38825b82d7921e8b1b56d0114ae6d2627ab3ebe9204e970df0dfa61bd"
+  },
+  "supersededRecordsPreserved": [
+    "packages/astro-knowledge/review/angle-aspects-60-v15/records/039-natal-aspect-lived-saturn-square-ascendant-exact-approval.json",
+    "packages/astro-knowledge/review/angle-aspects-60-friends-v1/records/039-natal-aspect-lived-saturn-square-ascendant-friends-exact-approval.json"
+  ],
+  "postwriteEvidence": {
+    "path": "packages/astro-knowledge/review/saturn-square-ascendant-owner-edit-v1/postwrite-materialization.json",
+    "sha256": "7cb8a661ce30207dc882f5c45eab5c2ea97483bd4f469ca4c0b1294c18054f1b"
+  },
+  "scope": {
+    "exactKeyCount": 1,
+    "keys": [
+      "fallback-hook/natal-aspect-lived/saturn/square/ascendant"
+    ],
+    "readerCopyOutsideKeyChanged": 0
+  }
+}

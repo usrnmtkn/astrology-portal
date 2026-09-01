@@ -66,8 +66,8 @@
   },
   "counts": {
     "byBucket": {
-      "AUTHORITY_RESOLVED": 417,
-      "AUTO_MERGE_EXACT": 0,
+      "AUTHORITY_RESOLVED": 357,
+      "AUTO_MERGE_EXACT": 60,
       "AUTO_MERGE_NORMALIZED": 0,
       "COMPOSED_ONLY": 2144,
       "OWNER_DECISION_REQUIRED": 0,
@@ -82,15 +82,15 @@
       "placement-sign": 180
     },
     "byMode": {
-      "authored": 0,
-      "composed": 2561,
+      "authored": 60,
+      "composed": 2501,
       "gap": 345
     },
     "byPerspectiveMode": {
       "they": {
-        "authored": 0,
+        "authored": 60,
         "composed": 2359,
-        "gap": 547
+        "gap": 487
       },
       "you": {
         "authored": 351,
@@ -156,9 +156,9 @@
   },
   "perspectiveResolution": {
     "they": {
-      "authored": 0,
+      "authored": 60,
       "composed": 2359,
-      "gap": 547
+      "gap": 487
     },
     "you": {
       "authored": 351,

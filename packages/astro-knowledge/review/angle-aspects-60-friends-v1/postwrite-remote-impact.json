@@ -1,0 +1,513 @@
+{
+  "schemaVersion": 1,
+  "operation": "angle-aspects-60-friends-v1-targeted-content-studio-materialization",
+  "beforeCapturedAt": "2026-08-31T16:10:55.091Z",
+  "afterCapturedAt": "2026-08-31T16:11:54.521Z",
+  "exactKeys": [
+    "fallback-hook/natal-aspect-lived/sun/conjunction/ascendant",
+    "fallback-hook/natal-aspect-lived/sun/conjunction/midheaven",
+    "fallback-hook/natal-aspect-lived/sun/square/ascendant",
+    "fallback-hook/natal-aspect-lived/sun/square/midheaven",
+    "fallback-hook/natal-aspect-lived/sun/opposition/ascendant",
+    "fallback-hook/natal-aspect-lived/sun/opposition/midheaven",
+    "fallback-hook/natal-aspect-lived/moon/conjunction/ascendant",
+    "fallback-hook/natal-aspect-lived/moon/conjunction/midheaven",
+    "fallback-hook/natal-aspect-lived/moon/square/ascendant",
+    "fallback-hook/natal-aspect-lived/moon/square/midheaven",
+    "fallback-hook/natal-aspect-lived/moon/opposition/ascendant",
+    "fallback-hook/natal-aspect-lived/moon/opposition/midheaven",
+    "fallback-hook/natal-aspect-lived/mercury/conjunction/ascendant",
+    "fallback-hook/natal-aspect-lived/mercury/conjunction/midheaven",
+    "fallback-hook/natal-aspect-lived/mercury/square/ascendant",
+    "fallback-hook/natal-aspect-lived/mercury/square/midheaven",
+    "fallback-hook/natal-aspect-lived/mercury/opposition/ascendant",
+    "fallback-hook/natal-aspect-lived/mercury/opposition/midheaven",
+    "fallback-hook/natal-aspect-lived/venus/conjunction/ascendant",
+    "fallback-hook/natal-aspect-lived/venus/conjunction/midheaven",
+    "fallback-hook/natal-aspect-lived/venus/square/ascendant",
+    "fallback-hook/natal-aspect-lived/venus/square/midheaven",
+    "fallback-hook/natal-aspect-lived/venus/opposition/ascendant",
+    "fallback-hook/natal-aspect-lived/venus/opposition/midheaven",
+    "fallback-hook/natal-aspect-lived/mars/conjunction/ascendant",
+    "fallback-hook/natal-aspect-lived/mars/conjunction/midheaven",
+    "fallback-hook/natal-aspect-lived/mars/square/ascendant",
+    "fallback-hook/natal-aspect-lived/mars/square/midheaven",
+    "fallback-hook/natal-aspect-lived/mars/opposition/ascendant",
+    "fallback-hook/natal-aspect-lived/mars/opposition/midheaven",
+    "fallback-hook/natal-aspect-lived/jupiter/conjunction/ascendant",
+    "fallback-hook/natal-aspect-lived/jupiter/conjunction/midheaven",
+    "fallback-hook/natal-aspect-lived/jupiter/square/ascendant",
+    "fallback-hook/natal-aspect-lived/jupiter/square/midheaven",
+    "fallback-hook/natal-aspect-lived/jupiter/opposition/ascendant",
+    "fallback-hook/natal-aspect-lived/jupiter/opposition/midheaven",
+    "fallback-hook/natal-aspect-lived/saturn/conjunction/ascendant",
+    "fallback-hook/natal-aspect-lived/saturn/conjunction/midheaven",
+    "fallback-hook/natal-aspect-lived/saturn/square/ascendant",
+    "fallback-hook/natal-aspect-lived/saturn/square/midheaven",
+    "fallback-hook/natal-aspect-lived/saturn/opposition/ascendant",
+    "fallback-hook/natal-aspect-lived/saturn/opposition/midheaven",
+    "fallback-hook/natal-aspect-lived/uranus/conjunction/ascendant",
+    "fallback-hook/natal-aspect-lived/uranus/conjunction/midheaven",
+    "fallback-hook/natal-aspect-lived/uranus/square/ascendant",
+    "fallback-hook/natal-aspect-lived/uranus/square/midheaven",
+    "fallback-hook/natal-aspect-lived/uranus/opposition/ascendant",
+    "fallback-hook/natal-aspect-lived/uranus/opposition/midheaven",
+    "fallback-hook/natal-aspect-lived/neptune/conjunction/ascendant",
+    "fallback-hook/natal-aspect-lived/neptune/conjunction/midheaven",
+    "fallback-hook/natal-aspect-lived/neptune/square/ascendant",
+    "fallback-hook/natal-aspect-lived/neptune/square/midheaven",
+    "fallback-hook/natal-aspect-lived/neptune/opposition/ascendant",
+    "fallback-hook/natal-aspect-lived/neptune/opposition/midheaven",
+    "fallback-hook/natal-aspect-lived/pluto/conjunction/ascendant",
+    "fallback-hook/natal-aspect-lived/pluto/conjunction/midheaven",
+    "fallback-hook/natal-aspect-lived/pluto/square/ascendant",
+    "fallback-hook/natal-aspect-lived/pluto/square/midheaven",
+    "fallback-hook/natal-aspect-lived/pluto/opposition/ascendant",
+    "fallback-hook/natal-aspect-lived/pluto/opposition/midheaven"
+  ],
+  "invocationCounts": {
+    "successful": 60,
+    "failed": 0
+  },
+  "remoteOutcome": {
+    "rowsUpdated": 60,
+    "rowsCreated": 0,
+    "rowsDeleted": 0,
+    "rowsArchivedOrDemoted": 0,
+    "unrelatedRowsMutated": 0,
+    "liveServing": 60,
+    "blockTypeParity": 60,
+    "friendsBodyParity": 60,
+    "youBodyParity": 60,
+    "youRevisionParity": 2,
+    "unchangedV15YouParity": 58,
+    "approvalAndProvenanceParity": 60
+  },
+  "package": {
+    "packageVersion": "v3-2026-08-31b",
+    "packageContentHash": "7bec3368b538cfb4aa81df9a2b172418",
+    "packageKeyManifestHash": "ad3b78b91851349d48f78053cada7089"
+  },
+  "invocations": [
+    {
+      "key": "fallback-hook/natal-aspect-lived/sun/conjunction/ascendant",
+      "status": "success",
+      "emittedRows": 1,
+      "upsertedRows": 1,
+      "verifiedRows": 1
+    },
+    {
+      "key": "fallback-hook/natal-aspect-lived/sun/conjunction/midheaven",
+      "status": "success",
+      "emittedRows": 1,
+      "upsertedRows": 1,
+      "verifiedRows": 1
+    },
+    {
+      "key": "fallback-hook/natal-aspect-lived/sun/square/ascendant",
+      "status": "success",
+      "emittedRows": 1,
+      "upsertedRows": 1,
+      "verifiedRows": 1
+    },
+    {
+      "key": "fallback-hook/natal-aspect-lived/sun/square/midheaven",
+      "status": "success",
+      "emittedRows": 1,
+      "upsertedRows": 1,
+      "verifiedRows": 1
+    },
+    {
+      "key": "fallback-hook/natal-aspect-lived/sun/opposition/ascendant",
+      "status": "success",
+      "emittedRows": 1,
+      "upsertedRows": 1,
+      "verifiedRows": 1
+    },
+    {
+      "key": "fallback-hook/natal-aspect-lived/sun/opposition/midheaven",
+      "status": "success",
+      "emittedRows": 1,
+      "upsertedRows": 1,
+      "verifiedRows": 1
+    },
+    {
+      "key": "fallback-hook/natal-aspect-lived/moon/conjunction/ascendant",
+      "status": "success",
+      "emittedRows": 1,
+      "upsertedRows": 1,
+      "verifiedRows": 1
+    },
+    {
+      "key": "fallback-hook/natal-aspect-lived/moon/conjunction/midheaven",
+      "status": "success",
+      "emittedRows": 1,
+      "upsertedRows": 1,
+      "verifiedRows": 1
+    },
+    {
+      "key": "fallback-hook/natal-aspect-lived/moon/square/ascendant",
+      "status": "success",
+      "emittedRows": 1,
+      "upsertedRows": 1,
+      "verifiedRows": 1
+    },
+    {
+      "key": "fallback-hook/natal-aspect-lived/moon/square/midheaven",
+      "status": "success",
+      "emittedRows": 1,
+      "upsertedRows": 1,
+      "verifiedRows": 1
+    },
+    {
+      "key": "fallback-hook/natal-aspect-lived/moon/opposition/ascendant",
+      "status": "success",
+      "emittedRows": 1,
+      "upsertedRows": 1,
+      "verifiedRows": 1
+    },
+    {
+      "key": "fallback-hook/natal-aspect-lived/moon/opposition/midheaven",
+      "status": "success",
+      "emittedRows": 1,
+      "upsertedRows": 1,
+      "verifiedRows": 1
+    },
+    {
+      "key": "fallback-hook/natal-aspect-lived/mercury/conjunction/ascendant",
+      "status": "success",
+      "emittedRows": 1,
+      "upsertedRows": 1,
+      "verifiedRows": 1
+    },
+    {
+      "key": "fallback-hook/natal-aspect-lived/mercury/conjunction/midheaven",
+      "status": "success",
+      "emittedRows": 1,
+      "upsertedRows": 1,
+      "verifiedRows": 1
+    },
+    {
+      "key": "fallback-hook/natal-aspect-lived/mercury/square/ascendant",
+      "status": "success",
+      "emittedRows": 1,
+      "upsertedRows": 1,
+      "verifiedRows": 1
+    },
+    {
+      "key": "fallback-hook/natal-aspect-lived/mercury/square/midheaven",
+      "status": "success",
+      "emittedRows": 1,
+      "upsertedRows": 1,
+      "verifiedRows": 1
+    },
+    {
+      "key": "fallback-hook/natal-aspect-lived/mercury/opposition/ascendant",
+      "status": "success",
+      "emittedRows": 1,
+      "upsertedRows": 1,
+      "verifiedRows": 1
+    },
+    {
+      "key": "fallback-hook/natal-aspect-lived/mercury/opposition/midheaven",
+      "status": "success",
+      "emittedRows": 1,
+      "upsertedRows": 1,
+      "verifiedRows": 1
+    },
+    {
+      "key": "fallback-hook/natal-aspect-lived/venus/conjunction/ascendant",
+      "status": "success",
+      "emittedRows": 1,
+      "upsertedRows": 1,
+      "verifiedRows": 1
+    },
+    {
+      "key": "fallback-hook/natal-aspect-lived/venus/conjunction/midheaven",
+      "status": "success",
+      "emittedRows": 1,
+      "upsertedRows": 1,
+      "verifiedRows": 1
+    },
+    {
+      "key": "fallback-hook/natal-aspect-lived/venus/square/ascendant",
+      "status": "success",
+      "emittedRows": 1,
+      "upsertedRows": 1,
+      "verifiedRows": 1
+    },
+    {
+      "key": "fallback-hook/natal-aspect-lived/venus/square/midheaven",
+      "status": "success",
+      "emittedRows": 1,
+      "upsertedRows": 1,
+      "verifiedRows": 1
+    },
+    {
+      "key": "fallback-hook/natal-aspect-lived/venus/opposition/ascendant",
+      "status": "success",
+      "emittedRows": 1,
+      "upsertedRows": 1,
+      "verifiedRows": 1
+    },
+    {
+      "key": "fallback-hook/natal-aspect-lived/venus/opposition/midheaven",
+      "status": "success",
+      "emittedRows": 1,
+      "upsertedRows": 1,
+      "verifiedRows": 1
+    },
+    {
+      "key": "fallback-hook/natal-aspect-lived/mars/conjunction/ascendant",
+      "status": "success",
+      "emittedRows": 1,
+      "upsertedRows": 1,
+      "verifiedRows": 1
+    },
+    {
+      "key": "fallback-hook/natal-aspect-lived/mars/conjunction/midheaven",
+      "status": "success",
+      "emittedRows": 1,
+      "upsertedRows": 1,
+      "verifiedRows": 1
+    },
+    {
+      "key": "fallback-hook/natal-aspect-lived/mars/square/ascendant",
+      "status": "success",
+      "emittedRows": 1,
+      "upsertedRows": 1,
+      "verifiedRows": 1
+    },
+    {
+      "key": "fallback-hook/natal-aspect-lived/mars/square/midheaven",
+      "status": "success",
+      "emittedRows": 1,
+      "upsertedRows": 1,
+      "verifiedRows": 1
+    },
+    {
+      "key": "fallback-hook/natal-aspect-lived/mars/opposition/ascendant",
+      "status": "success",
+      "emittedRows": 1,
+      "upsertedRows": 1,
+      "verifiedRows": 1
+    },
+    {
+      "key": "fallback-hook/natal-aspect-lived/mars/opposition/midheaven",
+      "status": "success",
+      "emittedRows": 1,
+      "upsertedRows": 1,
+      "verifiedRows": 1
+    },
+    {
+      "key": "fallback-hook/natal-aspect-lived/jupiter/conjunction/ascendant",
+      "status": "success",
+      "emittedRows": 1,
+      "upsertedRows": 1,
+      "verifiedRows": 1
+    },
+    {
+      "key": "fallback-hook/natal-aspect-lived/jupiter/conjunction/midheaven",
+      "status": "success",
+      "emittedRows": 1,
+      "upsertedRows": 1,
+      "verifiedRows": 1
+    },
+    {
+      "key": "fallback-hook/natal-aspect-lived/jupiter/square/ascendant",
+      "status": "success",
+      "emittedRows": 1,
+      "upsertedRows": 1,
+      "verifiedRows": 1
+    },
+    {
+      "key": "fallback-hook/natal-aspect-lived/jupiter/square/midheaven",
+      "status": "success",
+      "emittedRows": 1,
+      "upsertedRows": 1,
+      "verifiedRows": 1
+    },
+    {
+      "key": "fallback-hook/natal-aspect-lived/jupiter/opposition/ascendant",
+      "status": "success",
+      "emittedRows": 1,
+      "upsertedRows": 1,
+      "verifiedRows": 1
+    },
+    {
+      "key": "fallback-hook/natal-aspect-lived/jupiter/opposition/midheaven",
+      "status": "success",
+      "emittedRows": 1,
+      "upsertedRows": 1,
+      "verifiedRows": 1
+    },
+    {
+      "key": "fallback-hook/natal-aspect-lived/saturn/conjunction/ascendant",
+      "status": "success",
+      "emittedRows": 1,
+      "upsertedRows": 1,
+      "verifiedRows": 1
+    },
+    {
+      "key": "fallback-hook/natal-aspect-lived/saturn/conjunction/midheaven",
+      "status": "success",
+      "emittedRows": 1,
+      "upsertedRows": 1,
+      "verifiedRows": 1
+    },
+    {
+      "key": "fallback-hook/natal-aspect-lived/saturn/square/ascendant",
+      "status": "success",
+      "emittedRows": 1,
+      "upsertedRows": 1,
+      "verifiedRows": 1
+    },
+    {
+      "key": "fallback-hook/natal-aspect-lived/saturn/square/midheaven",
+      "status": "success",
+      "emittedRows": 1,
+      "upsertedRows": 1,
+      "verifiedRows": 1
+    },
+    {
+      "key": "fallback-hook/natal-aspect-lived/saturn/opposition/ascendant",
+      "status": "success",
+      "emittedRows": 1,
+      "upsertedRows": 1,
+      "verifiedRows": 1
+    },
+    {
+      "key": "fallback-hook/natal-aspect-lived/saturn/opposition/midheaven",
+      "status": "success",
+      "emittedRows": 1,
+      "upsertedRows": 1,
+      "verifiedRows": 1
+    },
+    {
+      "key": "fallback-hook/natal-aspect-lived/uranus/conjunction/ascendant",
+      "status": "success",
+      "emittedRows": 1,
+      "upsertedRows": 1,
+      "verifiedRows": 1
+    },
+    {
+      "key": "fallback-hook/natal-aspect-lived/uranus/conjunction/midheaven",
+      "status": "success",
+      "emittedRows": 1,
+      "upsertedRows": 1,
+      "verifiedRows": 1
+    },
+    {
+      "key": "fallback-hook/natal-aspect-lived/uranus/square/ascendant",
+      "status": "success",
+      "emittedRows": 1,
+      "upsertedRows": 1,
+      "verifiedRows": 1
+    },
+    {
+      "key": "fallback-hook/natal-aspect-lived/uranus/square/midheaven",
+      "status": "success",
+      "emittedRows": 1,
+      "upsertedRows": 1,
+      "verifiedRows": 1
+    },
+    {
+      "key": "fallback-hook/natal-aspect-lived/uranus/opposition/ascendant",
+      "status": "success",
+      "emittedRows": 1,
+      "upsertedRows": 1,
+      "verifiedRows": 1
+    },
+    {
+      "key": "fallback-hook/natal-aspect-lived/uranus/opposition/midheaven",
+      "status": "success",
+      "emittedRows": 1,
+      "upsertedRows": 1,
+      "verifiedRows": 1
+    },
+    {
+      "key": "fallback-hook/natal-aspect-lived/neptune/conjunction/ascendant",
+      "status": "success",
+      "emittedRows": 1,
+      "upsertedRows": 1,
+      "verifiedRows": 1
+    },
+    {
+      "key": "fallback-hook/natal-aspect-lived/neptune/conjunction/midheaven",
+      "status": "success",
+      "emittedRows": 1,
+      "upsertedRows": 1,
+      "verifiedRows": 1
+    },
+    {
+      "key": "fallback-hook/natal-aspect-lived/neptune/square/ascendant",
+      "status": "success",
+      "emittedRows": 1,
+      "upsertedRows": 1,
+      "verifiedRows": 1
+    },
+    {
+      "key": "fallback-hook/natal-aspect-lived/neptune/square/midheaven",
+      "status": "success",
+      "emittedRows": 1,
+      "upsertedRows": 1,
+      "verifiedRows": 1
+    },
+    {
+      "key": "fallback-hook/natal-aspect-lived/neptune/opposition/ascendant",
+      "status": "success",
+      "emittedRows": 1,
+      "upsertedRows": 1,
+      "verifiedRows": 1
+    },
+    {
+      "key": "fallback-hook/natal-aspect-lived/neptune/opposition/midheaven",
+      "status": "success",
+      "emittedRows": 1,
+      "upsertedRows": 1,
+      "verifiedRows": 1
+    },
+    {
+      "key": "fallback-hook/natal-aspect-lived/pluto/conjunction/ascendant",
+      "status": "success",
+      "emittedRows": 1,
+      "upsertedRows": 1,
+      "verifiedRows": 1
+    },
+    {
+      "key": "fallback-hook/natal-aspect-lived/pluto/conjunction/midheaven",
+      "status": "success",
+      "emittedRows": 1,
+      "upsertedRows": 1,
+      "verifiedRows": 1
+    },
+    {
+      "key": "fallback-hook/natal-aspect-lived/pluto/square/ascendant",
+      "status": "success",
+      "emittedRows": 1,
+      "upsertedRows": 1,
+      "verifiedRows": 1
+    },
+    {
+      "key": "fallback-hook/natal-aspect-lived/pluto/square/midheaven",
+      "status": "success",
+      "emittedRows": 1,
+      "upsertedRows": 1,
+      "verifiedRows": 1
+    },
+    {
+      "key": "fallback-hook/natal-aspect-lived/pluto/opposition/ascendant",
+      "status": "success",
+      "emittedRows": 1,
+      "upsertedRows": 1,
+      "verifiedRows": 1
+    },
+    {
+      "key": "fallback-hook/natal-aspect-lived/pluto/opposition/midheaven",
+      "status": "success",
+      "emittedRows": 1,
+      "upsertedRows": 1,
+      "verifiedRows": 1
+    }
+  ]
+}
