@@ -1,0 +1,76 @@
+name: Calendar aspect Content Studio
+
+on:
+  pull_request:
+    paths:
+      - "apps/web/src/content/fallbackArchitectureV3/admin/WRITING-STYLE-GUIDE.md"
+      - "apps/web/src/content/fallbackArchitectureV3/contracts/CONTENT-ROLE-CONTRACT.json"
+      - "apps/web/src/content/fallbackArchitectureV3/authored-inputs/calendar-aspect-consequence-first-drafts-v1.json"
+      - "apps/web/src/content/fallbackArchitectureV3/resolver/calendarAspectContentStudio.mjs"
+      - "api/admin/sky-v4-preview.ts"
+      - "scripts/stage-calendar-aspect-content-studio-drafts.mjs"
+      - "scripts/test-calendar-aspect-content-studio-drafts.mjs"
+      - "packages/astro-knowledge/data/sky-calendar/composed-cards-v1.json"
+      - "apps/web/src/content/fallbackArchitectureV3/source-rows/sky-aspect-phrasebook-v1.json"
+      - "packages/astro-knowledge/review/sky-calendar-composed-first-glance-2026-08-31/**"
+      - ".github/workflows/calendar-aspect-content-studio.yml"
+  push:
+    branches:
+      - main
+    paths:
+      - "apps/web/src/content/fallbackArchitectureV3/authored-inputs/calendar-aspect-consequence-first-drafts-v1.json"
+      - "apps/web/src/content/fallbackArchitectureV3/resolver/calendarAspectContentStudio.mjs"
+      - "api/admin/sky-v4-preview.ts"
+      - "scripts/stage-calendar-aspect-content-studio-drafts.mjs"
+      - "scripts/test-calendar-aspect-content-studio-drafts.mjs"
+      - ".github/workflows/calendar-aspect-content-studio.yml"
+  workflow_dispatch:
+    inputs:
+      seed_content_studio:
+        description: "Seed the 24 composed-card rewrites as non-serving Content Studio drafts"
+        required: true
+        default: false
+        type: boolean
+
+permissions:
+  contents: read
+
+jobs:
+  calendar-aspect-content-studio:
+    name: calendar-aspect-content-studio
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+      - name: Verify consequence-first draft package
+        run: node scripts/test-calendar-aspect-content-studio-drafts.mjs
+      - name: Materialize safe Content Studio rows
+        run: node scripts/stage-calendar-aspect-content-studio-drafts.mjs --out=/tmp/calendar-aspect-content-studio-drafts.json
+
+  seed-content-studio:
+    if: github.event_name == 'workflow_dispatch' && inputs.seed_content_studio
+    needs: calendar-aspect-content-studio
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+      - name: Seed composed-card drafts into Content Studio
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: |
+          if [ -z "$SUPABASE_SERVICE_ROLE_KEY" ]; then
+            echo "::error::SUPABASE_SERVICE_ROLE_KEY is not configured for this repository."
+            exit 1
+          fi
+          if [ -z "$SUPABASE_URL" ] && [ -z "$VITE_SUPABASE_URL" ]; then
+            echo "::error::Neither SUPABASE_URL nor VITE_SUPABASE_URL is configured for this repository."
+            exit 1
+          fi
+          node scripts/stage-calendar-aspect-content-studio-drafts.mjs --apply --verify-remote --out=/tmp/calendar-aspect-content-studio-drafts.json
