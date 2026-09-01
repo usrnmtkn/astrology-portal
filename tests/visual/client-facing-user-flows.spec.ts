@@ -3416,7 +3416,9 @@ test.describe("client-facing user flow case studies", () => {
     await expect(article).toBeVisible();
     await expect(article).toContainText("Welcome to Virgo season’s reality check.");
     await expect(article).toContainText("The best repair may be the one that removes work instead of teaching you to tolerate more of it.");
-    await expect(article).toContainText("Aspects shaping this transit");
+    await expect(article).not.toContainText("Aspects shaping this transit");
+    await expect(article.getByRole("heading", { name: "Gifts" })).toBeVisible();
+    await expect(article.getByRole("heading", { name: "Lessons" })).toBeVisible();
     await expect(article).toContainText("Sun Trine Chiron");
     await expect(article).toContainText("A closed-door talk exposes who has been pulling the strings.");
     await expect(article).not.toContainText("The Sun in Virgo ties confidence to usefulness, accuracy");
