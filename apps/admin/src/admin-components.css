@@ -192,3 +192,28 @@
     display: none;
   }
 }
+
+/* The content editor is a viewport-height shell: header and actions stay in
+   normal flex flow while only the form body scrolls. This prevents the action
+   row from covering the last fields or falling below the visible viewport. */
+.admin-dashboard .admin-editor-panel {
+  height: 100dvh;
+  max-height: 100dvh;
+  overflow: hidden;
+}
+
+.admin-dashboard .admin-editor-panel > .admin-post-editor {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  padding-bottom: var(--admin-space-8xl);
+  scroll-padding-bottom: var(--admin-space-8xl);
+}
+
+.admin-dashboard .admin-editor-panel > .admin-editor-savebar {
+  bottom: auto !important;
+  flex: 0 0 auto;
+  position: static !important;
+  width: 100%;
+  z-index: 1;
+}
