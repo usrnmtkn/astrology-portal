@@ -4,10 +4,14 @@ import { isContentAdminAuthorized } from "../_lib/admin-auth.js";
 import { loadLocalWebEnv } from "../_lib/local-env.js";
 import { transitToNatalOrbLimit } from "../_lib/astrology-config.js";
 import { canonicalSkyAspectProfile } from "../../apps/web/src/services/canonicalSkyAspectProfile.js";
+import {
+  selectDailyGlanceCivilDayDriver,
+  wholeSignHouseForSign
+} from "../../apps/web/src/services/chartMath.js";
 
 loadLocalWebEnv();
 
-type ReviewSurface = "upcomingAspects" | "transitNatal" | "natalChart" | "relationshipLayer";
+type ReviewSurface = "upcomingAspects" | "transitNatal" | "natalChart" | "relationshipLayer" | "dailyGlance";
 type ReviewStatus = "DRAFT" | "REVIEWED" | "LIVE" | "ARCHIVED" | "ERROR";
 type GeneratedContentSurface = "sky" | "you" | "natal" | "synastry" | "composite" | "relationship";
 
@@ -20,6 +24,8 @@ type PlanetPosition = {
   house: number;
   motion: "direct" | "retrograde";
   theme: string;
+  longitude?: number;
+  speed?: number | null;
 };
 
 type SkyAspect = {
@@ -38,6 +44,7 @@ type SkySnapshot = {
   generatedAt: string;
   positions: PlanetPosition[];
   aspects: SkyAspect[];
+  ascendant?: string;
 };
 
 type CloudRunPosition = {
@@ -45,6 +52,7 @@ type CloudRunPosition = {
   planet?: string;
   glyph?: string;
   longitude?: number;
+  speed?: number | null;
   sign?: string;
   signGlyph?: string;
   degree?: number;
@@ -59,6 +67,7 @@ type CloudRunSkyResponse = {
   generatedAt: string;
   positions?: CloudRunPosition[];
   aspects?: SkyAspect[];
+  ascendant?: string;
 };
 
 type SavedContentRow = {
@@ -378,7 +387,11 @@ function normalizeCloudRunPosition(position: CloudRunPosition): PlanetPosition {
     degree: Number(position.degreeDecimal ?? position.degree ?? 0),
     house: position.house ?? 0,
     motion: position.motion ?? "direct",
-    theme: position.theme ?? themeForPoint(planet)
+    theme: position.theme ?? themeForPoint(planet),
+    longitude: typeof position.longitude === "number"
+      ? position.longitude
+      : undefined,
+    speed: typeof position.speed === "number" ? position.speed : null
   };
 }
 
@@ -443,19 +456,19 @@ async function postTldrAstro<TResponse>(path: string, body: unknown): Promise<TR
   return payload as TResponse;
 }
 
-async function skyForDate(date: Date): Promise<SkySnapshot> {
+async function skyForDate(date: Date, timeZone = "America/New_York"): Promise<SkySnapshot> {
   const sky = await postTldrAstro<CloudRunSkyResponse>("/sky/current", {
     datetime: {
       date: dateOnly(date),
       time: "12:00",
       timeKnown: true,
-      timeZone: "America/New_York"
+      timeZone
     },
     location: {
       label: "New York, NY",
       latitude: 40.7128,
       longitude: -74.006,
-      timeZone: "America/New_York"
+      timeZone
     },
     settings: {
       houseSystem: "whole_sign",
@@ -468,8 +481,9 @@ async function skyForDate(date: Date): Promise<SkySnapshot> {
   return {
     generatedAt: sky.generatedAt,
     positions: (sky.positions ?? []).map(normalizeCloudRunPosition),
-    aspects: sky.aspects ?? []
-  }
+    aspects: sky.aspects ?? [],
+    ascendant: sky.ascendant
+  };
 }
 
 async function skySnapshotsForDates(dates: Date[]) {
@@ -492,6 +506,10 @@ async function skySnapshotsForDates(dates: Date[]) {
 }
 
 function savedRowMatchesReviewSurface(row: SavedContentRow, surface: ReviewSurface) {
+  if (surface === "dailyGlance") {
+    return row.content_key.startsWith("fallback-hook/daily-headline/")
+      || row.content_key.startsWith("fallback-hook/daily-body/");
+  }
   if (surface === "upcomingAspects") {
     return row.surface === "sky";
   }
@@ -869,6 +887,113 @@ function chartNeedsNatal(chart: ManualChartRow) {
   }
 
   return chart.natal_chart;
+}
+
+function validTimeZone(value: string) {
+  try {
+    new Intl.DateTimeFormat("en-US", { timeZone: value }).format(new Date());
+    return value;
+  } catch {
+    throw new Error(`Unknown IANA timezone: ${value}`);
+  }
+}
+
+function dailyGlanceAspectGroup(aspect: string) {
+  return aspect === "trine" || aspect === "sextile" ? "soft" : aspect;
+}
+
+function dailyGlanceRecord(date: Date, chart: ManualChartRow, timeZone: string): Promise<ReviewRecord> {
+  const natal = chartNeedsNatal(chart);
+
+  return skyForDate(date, timeZone).then((sky) => {
+    const moon = sky.positions.find((position) => position.planet === "Moon");
+    if (!moon) {
+      throw new Error(`The current-sky calculation did not return the Moon for ${dateOnly(date)}.`);
+    }
+
+    const birthTimeKnown = !chart.birth_time_unknown && Boolean(chart.birth_time);
+    const fallbackHouse = birthTimeKnown && natal.ascendant
+      ? wholeSignHouseForSign(moon.sign, natal.ascendant)
+      : null;
+    const driver = selectDailyGlanceCivilDayDriver(
+      typeof moon.longitude === "number" ? moon.longitude : longitude(moon),
+      moon.speed,
+      natal.positions.map((position) => ({
+        planet: position.planet,
+        longitude: typeof position.longitude === "number" ? position.longitude : longitude(position)
+      })),
+      fallbackHouse,
+      5
+    );
+    if (!driver) {
+      throw new Error(`No approved Daily At-a-Glance driver is available for ${chart.display_name} on ${dateOnly(date)}.`);
+    }
+
+    const selector = driver.kind === "aspect"
+      ? `${dailyGlanceAspectGroup(driver.aspect)}/${slug(driver.natal)}`
+      : `house/${driver.house}`;
+    const headlineKey = `fallback-hook/daily-headline/${selector}`;
+    const passageKey = `fallback-hook/daily-body/${selector}`;
+    const driverLabel = driver.kind === "aspect"
+      ? `Moon ${driver.aspect} natal ${driver.natal}`
+      : `Moon in the ${driver.house}${driver.house === 1 ? "st" : driver.house === 2 ? "nd" : driver.house === 3 ? "rd" : "th"} house`;
+    const detailLine = driver.kind === "aspect"
+      ? `Moon in ${moon.sign} is ${driver.aspect} ${chart.display_name}'s natal ${driver.natal} at a ${driver.orb.toFixed(1)}° orb.`
+      : `Moon in ${moon.sign} is moving through ${chart.display_name}'s ${driver.house}${driver.house === 1 ? "st" : driver.house === 2 ? "nd" : driver.house === 3 ? "rd" : "th"} house.`;
+    const targetDate = dateOnly(date);
+
+    return {
+      id: `calculated:daily-glance:${chart.id}:${targetDate}`,
+      source: "calculated",
+      surface: "you",
+      status: "DRAFT",
+      mode: "feed",
+      title: `Daily At-a-Glance · ${chart.display_name}`,
+      subtitle: `${targetDate} · Moon in ${moon.sign} · ${driverLabel}`,
+      targetDate,
+      contentKey: passageKey,
+      eventType: "daily-glance-source",
+      summary: "Calculated source identity for the Content Studio editor. This text is not reader copy.",
+      body: "",
+      sections: [],
+      blockType: "daily_glance_source",
+      facts: {
+        type: "daily_glance_source",
+        timeZone,
+        chart: {
+          id: chart.id,
+          name: chart.display_name,
+          birthTimeKnown
+        },
+        moon: {
+          sign: moon.sign,
+          degree: moon.degree,
+          longitude: typeof moon.longitude === "number" ? moon.longitude : longitude(moon),
+          speed: moon.speed ?? null
+        },
+        driver: {
+          ...driver,
+          label: driverLabel
+        },
+        selector,
+        headlineKey,
+        passageKey,
+        detailLine
+      },
+      sourceSnapshot: {
+        calculation: "selectDailyGlanceCivilDayDriver",
+        chartId: chart.id,
+        date: targetDate,
+        timeZone,
+        localCalculationTime: "12:00"
+      },
+      reviewerNotes: null,
+      subjectId: chart.id,
+      subjectType: "manual_chart",
+      userId: chart.owner_user_id,
+      updatedAt: new Date().toISOString()
+    };
+  });
 }
 
 async function transitNatalRecords(start: Date, end: Date, chart: ManualChartRow, savedRows: Map<string, SavedContentRow>): Promise<ReviewRecordsResult> {
@@ -1307,6 +1432,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     const surface = (requestUrl.searchParams.get("surface") ?? "upcomingAspects") as ReviewSurface;
     const status = requestUrl.searchParams.get("status");
     const person = requestUrl.searchParams.get("person") ?? "";
+    const timeZone = validTimeZone(requestUrl.searchParams.get("timeZone") || "America/New_York");
     const requestedStartDate = requestUrl.searchParams.get("startDate");
     const requestedEndDate = requestUrl.searchParams.get("endDate");
     const hasDateWindow = Boolean(requestedStartDate || requestedEndDate);
@@ -1320,7 +1446,15 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     let prompt: string | null = null;
     const warnings: string[] = [];
 
-    if (surface === "upcomingAspects") {
+    if (surface === "dailyGlance") {
+      const charts = await findManualCharts(person);
+
+      if (charts.length === 0) {
+        prompt = "Enter a person or chart name to calculate the Daily At-a-Glance source.";
+      } else {
+        records = [await dailyGlanceRecord(start, charts[0], timeZone)];
+      }
+    } else if (surface === "upcomingAspects") {
       const result = await upcomingAspectRecords(start, end, savedRows);
 
       records = result.records;
@@ -1356,7 +1490,9 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
       }
     }
 
-    records = mergeSavedOnlyRecords(surface, records, savedRowsList);
+    if (surface !== "dailyGlance") {
+      records = mergeSavedOnlyRecords(surface, records, savedRowsList);
+    }
 
     const filteredRecords = records.filter((record) => statusAllowed(status, record.status));
 
