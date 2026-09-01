@@ -167,6 +167,7 @@ import {
   skyPlacementDescriptionState,
   type SkyPlacementContentStatus
 } from "./features/sky/skyPlacementContentState";
+import { shouldRenderCanonicalSkyV4Placement } from "./features/sky/skyPlacementPreviewMode";
 import {
   skyV4Hemisphere,
   skyV4LunationContexts,
@@ -4856,6 +4857,9 @@ function skyPlacementWritingSection(
     return null;
   }
   try {
+    if (!shouldRenderCanonicalSkyV4Placement()) {
+      throw new Error("SKY_V4_NOT_SERVABLE: fallback-only preview requested.");
+    }
     let seasonalContext = "";
     if (planet === "sun") {
       try {
