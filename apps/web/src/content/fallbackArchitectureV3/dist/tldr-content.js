@@ -70,7 +70,6 @@ function createFallbackRenderer(templatesFile, rowsFile) {
     return (voice === "you" ? row.body_you : row.body_they) ?? null;
   };
   const getReaderLivedRow = (key, voice, opts2 = {}) => {
-    if (voice !== "you") return null;
     const row = hooks.get(key);
     if (!row) return null;
     if (!["fallback_hook", "full_copy"].includes(row.content_role)) {
@@ -80,7 +79,13 @@ function createFallbackRenderer(templatesFile, rowsFile) {
     if (row.reader_only !== true || row.render_policy !== "reader-only-exact-lived-v1") {
       throw new RoleViolationError(`Row ${key} is not a reader-only exact lived row.`);
     }
-    return typeof row.body === "string" && row.body.trim() ? row : null;
+    if (voice === "you") {
+      return typeof row.body === "string" && row.body.trim() ? row : null;
+    }
+    if (typeof row.body_they !== "string" || !row.body_they.trim() || !opts2.allowUnreviewed && !READER_ELIGIBLE.has(row.body_they_review_status ?? "") || row.body_they_approval?.approvalLevel !== "exact_owner_approved") {
+      return null;
+    }
+    return { ...row, body: row.body_they };
   };
   const findTemplate = (key, opts2 = {}) => {
     const t = templatesFile.templates.find((x) => x.contentKey === key);
@@ -247,10 +252,11 @@ function createFallbackRenderer(templatesFile, rowsFile) {
     const aspect = facts.aspect;
     const exactLived = getReaderLivedRow(`fallback-hook/natal-aspect-lived/${facts.planetA}/${aspect}/${facts.planetB}`, voice, opts2) ?? getReaderLivedRow(`fallback-hook/natal-aspect-lived/${facts.planetB}/${aspect}/${facts.planetA}`, voice, opts2);
     if (exactLived) {
+      const exactBody = mustache(exactLived.body ?? "", { Name: facts.voice });
       return {
         headline: `${title(facts.planetA)} ${aspect} ${title(facts.planetB)}`,
-        parts: [exactLived.body ?? ""],
-        body: exactLived.body ?? "",
+        parts: [exactBody],
+        body: exactBody,
         astroHint: exactLived.astroHint,
         templateKey: exactLived.contentKey,
         provenanceTier: "exact-owner-approved"
@@ -4883,7 +4889,7 @@ function skyV4FieldValue(source, path) {
 }
 
 // apps/web/src/content/fallbackArchitectureV3/resolver/index.browser.ts
-var PACKAGE_VERSION = "v3-2026-08-31a";
+var PACKAGE_VERSION = "v3-2026-08-31b";
 function stablePackageValue(value) {
   if (Array.isArray(value)) {
     return value.map(stablePackageValue);

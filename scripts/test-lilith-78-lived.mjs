@@ -83,6 +83,7 @@ const existingApprovedRows = source.hookRows.filter((row) => (
   && row.source_release !== "natal-sun-square-ascendant-owner-approved-runtime"
   && !postBaselineOwnerReleases.has(row.source_release)
   && !postBaselineOwnerKeys.has(row.contentKey)
+  && !row.source_keys?.includes("packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-OWNER-APPROVAL-CANDIDATE.md")
 )).map((row) => {
   // Preserve the frozen historical fingerprint while allowing the later,
   // separately hash-bound Friend house-bridge context release.
