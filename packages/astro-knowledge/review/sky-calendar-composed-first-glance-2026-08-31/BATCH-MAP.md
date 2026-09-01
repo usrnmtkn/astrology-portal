@@ -25,11 +25,11 @@ The goal of this project is first-glance comprehension at every static layer bef
 - 72 are Venus/Saturn sign-specific rows: square, trine, and sextile
 - 1 of those 72, `venus/virgo/trine/saturn/capricorn`, has exact owner-approved wording and is audit-only unless the owner explicitly replaces it
 - 6 additional sign-specific rows are owner-authored special cases and are audit-only unless the owner explicitly replaces them
-- Remaining rewrite scope: 71 reviewed, non-exact-owner-approved rows
+- Remaining rewrite scope after Batch 2A approval: 47 reviewed, non-exact-owner-approved rows
 
-Planned sub-batches:
+Sub-batches:
 
-- **2A:** 24 Venus/Saturn squares
+- **2A:** 24 Venus/Saturn squares — **exact wording owner-approved 2026-09-01**. Hash-bound approval record: `batch-2a-venus-saturn-squares-owner-approval.json`. Approved Content Studio payload: `apps/web/src/content/fallbackArchitectureV3/authored-inputs/calendar-aspect-content-studio-batch-2a-v1.json`. Staged only as non-serving `studio-draft` rows; current reader-serving source remains unchanged until a separate serving promotion.
 - **2B:** 23 Venus/Saturn trines requiring rewrite; keep the exact owner-approved Virgo/Capricorn trine untouched
 - **2C:** 24 Venus/Saturn sextiles
 - **2D:** audit the 6 owner-authored special rows for first-glance comprehension without rewriting protected wording by default
@@ -58,4 +58,4 @@ Generated sign-specific aspect copy can serve only after the four static layers 
 
 ## Review wall
 
-Every rewrite batch remains non-serving until exact wording is owner-approved. Protected owner-authored or exact-owner-approved rows are audit-only unless the owner explicitly authorizes replacement wording.
+Batch 2A is exact-wording owner-approved but remains non-serving until a separate serving promotion. Every other rewrite batch remains non-serving until exact wording is owner-approved. Protected owner-authored or exact-owner-approved rows are audit-only unless the owner explicitly authorizes replacement wording.
