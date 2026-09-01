@@ -1,0 +1,37 @@
+{
+  "schema": "tldrastro-sky-v4-placement-lunar-context/v1",
+  "package_version": "SKY-V4-PLACEMENT-LUNAR-CONTEXT-OWNER-APPROVED-2026-09-01",
+  "parent_canonical_package_version": "SKY-V4-CANONICAL-CODEX-HANDOFF-CONTENT-STUDIO-EDITABLE-2026-08-30",
+  "parent_canonical_json_sha256": "9b91e715bea63a2c835001783240122aad1e000b3982d68bfebbb3cef690a750",
+  "approval_id": "sky-v4-placement-lunar-context-owner-approval-2026-09-01",
+  "approved_on": "2026-09-01",
+  "approval_record": "packages/astro-knowledge/review/sky-v4-placement-lunar-context-2026-09-01/OWNER-APPROVAL.md",
+  "release_id": "sky-v4-placement-lunar-context-serving-release-2026-09-01",
+  "release_record": "packages/astro-knowledge/review/sky-v4-placement-lunar-context-2026-09-01/VERIFICATION.md",
+  "review_status": "approved",
+  "owner_approved": true,
+  "serving_enabled": true,
+  "expected_records": 40,
+  "runtime_policy": {
+    "selection": "exact-local-event-day",
+    "precedence": [
+      "solar-eclipse",
+      "lunar-eclipse",
+      "new-moon",
+      "full-moon"
+    ],
+    "full_page_order": "placementArticle -> current lunar context -> curated contextual overlays -> motion/conditions -> aspects",
+    "fallback_order": "hook -> current lunar context -> curated fallback overlay -> lived -> turn",
+    "runtime_synthesis": false,
+    "calculated_tokens": [
+      "eventSign",
+      "oppositeSign"
+    ]
+  },
+  "record_set_sha256": "f8ebbc78324e1225a8816b6256a1148dc7bef3b36960ccff5c15f193bc098057",
+  "copy_sha256": "cdffe65c9ab3a5aee91271bc0deedeecaff498939aa59b19a17bc35e1af70c7a",
+  "chunk_files": [
+    "sky-v4-placement-lunar-context-v1-chunk-1.json",
+    "sky-v4-placement-lunar-context-v1-chunk-2.json"
+  ]
+}
