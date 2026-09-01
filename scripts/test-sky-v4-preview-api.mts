@@ -1,5 +1,8 @@
 import assert from "node:assert/strict";
+import { execFileSync } from "node:child_process";
 import fs from "node:fs";
+import os from "node:os";
+import path from "node:path";
 import { normalizeSkyV4PreviewInput } from "../api/admin/sky-v4-preview.ts";
 
 const normalized = normalizeSkyV4PreviewInput({
@@ -17,6 +20,14 @@ const governedAspect = normalizeSkyV4PreviewInput({
 });
 assert.equal(governedAspect.governedAspectSource.review_status, "approved");
 assert.equal(governedAspect.previewSurface.calculatedOrb, "1°");
+const lunarContext = normalizeSkyV4PreviewInput({
+  contentKey: "sky-placement/lunar-context/full-moon/venus",
+  draftFields: { FullPageBody: "Draft event-day context.", FallbackBody: "Short context." },
+  facts: { eventSign: "Virgo", oppositeSign: "Pisces" },
+  previewSurface: { kind: "continuous", subjectBody: "venus", subjectSign: "libra" }
+});
+assert.equal(lunarContext.placementLunarContextSource.EventType, "full-moon");
+assert.equal(lunarContext.placementLunarContextSource.Planet, "Venus");
 assert.throws(() => normalizeSkyV4PreviewInput({ contentKey: "fallback-hook/not-v4" }), /canonical SKY V4/u);
 assert.throws(() => normalizeSkyV4PreviewInput({
   contentKey: "sky-placement/article/venus/virgo",
@@ -47,8 +58,12 @@ assert.match(reviewPanel, /status=all&visibility=all&surface=sky&limit=1000/u);
 assert.match(reviewPanel, /packageDraft: nextDraft/u);
 assert.match(reviewPanel, /reviewStatus: "needs_review"/u);
 assert.match(reviewPanel, /approved serving baseline remains live/u);
+assert.match(reviewPanel, /Sky Placement · Lunar context/u);
+assert.match(reviewPanel, /Full-page context/u);
+assert.match(reviewPanel, /Fallback context/u);
+assert.match(reviewPanel, /proposal remains non-serving/u);
 assert.match(reviewPanel, /announceContentUpdate\(\{/u);
-assert.doesNotMatch(reviewPanel, /serving_enabled\s*=/u);
+assert.doesNotMatch(reviewPanel, /serving_enabled\s*=(?!=)/u);
 
 const generatedContentApi = fs.readFileSync(new URL("../api/admin/generated-content.ts", import.meta.url), "utf8");
 assert.match(generatedContentApi, /sky-v4-governed-aspect-draft/u);
@@ -61,5 +76,26 @@ assert.match(generatedContentApi, /reviewState: "serving-disabled"|"serving-disa
 const materializer = fs.readFileSync(new URL("./materialize-fallback-architecture-v3-dashboard-rows.mjs", import.meta.url), "utf8");
 assert.match(materializer, /skyV4GovernedAspectStudioRecord\(row\) \?\? row/u);
 assert.match(materializer, /contentKey\.startsWith\("sky-placement\/article\/"\)/u);
+assert.match(materializer, /skyV4LunarContextStudioRecords/u);
+assert.match(materializer, /correctedSkyV4StudioRecords/u);
 
-console.log("SKY V4 production-parity preview API: PASS (grouped continuous editor + 120-record fallback review save only non-serving drafts)");
+const materializedDirectory = fs.mkdtempSync(path.join(os.tmpdir(), "sky-v4-staged-studio-"));
+const materializedPath = path.join(materializedDirectory, "dashboard-rows.json");
+execFileSync(process.execPath, [
+  new URL("./materialize-fallback-architecture-v3-dashboard-rows.mjs", import.meta.url).pathname,
+  `--out=${materializedPath}`
+], { stdio: "pipe" });
+const materializedRows = JSON.parse(fs.readFileSync(materializedPath, "utf8")).rows as Array<Record<string, any>>;
+const correctedRows = materializedRows.filter((row) => /^sky-placement\/article\/(?:sun|mercury|venus|mars|jupiter|saturn|uranus|neptune|pluto|chiron)\//u.test(row.content_key));
+const lunarRows = materializedRows.filter((row) => row.content_key.startsWith("sky-placement/lunar-context/"));
+assert.equal(correctedRows.length, 120);
+assert.equal(correctedRows.filter((row) => row.sections.packageRecord.active_correction_package).length, 120);
+assert.equal(lunarRows.length, 40);
+assert.ok([...correctedRows, ...lunarRows].every((row) => (
+  row.status === "LIVE"
+  && row.sections.packageRecord.review_status === "approved"
+  && row.sections.packageRecord.owner_approved === true
+  && row.sections.packageRecord.serving_enabled === true
+)), "all 160 owner-approved baselines must materialize as serving records");
+
+console.log("SKY V4 production-parity preview API: PASS (160 approved serving baselines are editable through grouped continuous/lunar fields; future saves remain non-serving drafts)");

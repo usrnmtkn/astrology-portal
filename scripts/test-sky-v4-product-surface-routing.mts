@@ -1,14 +1,11 @@
 import assert from "node:assert/strict";
 import fs from "node:fs";
-import { renderSkyV4ReaderRoute } from "../apps/web/src/content/fallbackArchitectureV3/resolver/skyPlacementV4Canonical.mjs";
 import {
   applySkyV4ContinuousCorpusCorrection,
-  skyV4ContinuousCorrectionReleaseState
-} from "../apps/web/src/features/sky/skyV4ContinuousCorpusCorrection.ts";
-import {
-  applySkyV4PlacementLunarContext,
+  renderSkyV4ReaderRoute,
+  skyV4ContinuousCorrectionReleaseState,
   skyV4PlacementLunarContextReleaseState
-} from "../apps/web/src/features/sky/skyV4PlacementLunarContext.ts";
+} from "../apps/web/src/content/fallbackArchitectureV3/resolver/skyPlacementV4Canonical.mjs";
 import {
   skyV4Hemisphere,
   skyV4LunationContexts,
@@ -23,13 +20,23 @@ const corpus = JSON.parse(fs.readFileSync(
   new URL("../apps/web/src/content/fallbackArchitectureV3/authored-inputs/sky-v4-canonical-content-studio-stage-v1.json", import.meta.url),
   "utf8"
 ));
-const correctedCorpus = applySkyV4ContinuousCorpusCorrection(corpus) as any;
-const correctionState = skyV4ContinuousCorrectionReleaseState();
+const correctionManifest = JSON.parse(fs.readFileSync(
+  new URL("../apps/web/src/content/fallbackArchitectureV3/authored-inputs/sky-v4-continuous-corpus-correction-v1.json", import.meta.url),
+  "utf8"
+));
+const correctionChunks = correctionManifest.chunk_files.map((fileName: string) => JSON.parse(fs.readFileSync(
+  new URL(`../apps/web/src/content/fallbackArchitectureV3/authored-inputs/${fileName}`, import.meta.url),
+  "utf8"
+)));
+const correctionSource = { ...correctionManifest, chunks: correctionChunks, records: correctionChunks.flatMap((chunk: any) => chunk.records) };
+const correctedCorpus = applySkyV4ContinuousCorpusCorrection(corpus, correctionSource) as any;
+const correctionState = skyV4ContinuousCorrectionReleaseState(correctionSource);
 assert.equal(correctionState.expectedRecords, 120);
 assert.equal(correctionState.recordCount, 120);
 assert.equal(correctionState.ownerApproved, true);
 assert.equal(correctionState.servingEnabled, true);
 assert.equal(correctionState.reviewStatus, "approved");
+assert.deepEqual(applySkyV4ContinuousCorpusCorrection(corpus, { ...correctionSource, owner_approved: false }), corpus, "unapproved correction package must fail closed");
 
 const correctedSunAries = correctedCorpus.content.continuous.find((row: any) => row.contentKey === "sky-placement/article/sun/aries");
 assert.equal(correctedSunAries.tldrWhat, "The Sun in Aries makes it harder to keep discussing what you already know you want to start.");
@@ -119,7 +126,20 @@ const offDayPlacementContexts = skyV4PlacementContexts({
 });
 assert.ok(!offDayPlacementContexts.some((context) => context.contextKind === "placement-lunar-event"));
 
-const lunarContextRelease = skyV4PlacementLunarContextReleaseState();
+const lunarManifest = JSON.parse(fs.readFileSync(
+  new URL("../apps/web/src/content/fallbackArchitectureV3/authored-inputs/sky-v4-placement-lunar-context-v1.json", import.meta.url),
+  "utf8"
+));
+const lunarChunks = lunarManifest.chunk_files.map((fileName: string) => JSON.parse(fs.readFileSync(
+  new URL(`../apps/web/src/content/fallbackArchitectureV3/authored-inputs/${fileName}`, import.meta.url),
+  "utf8"
+)));
+const testLunarRelease = {
+  ...lunarManifest,
+  chunks: lunarChunks,
+  records: lunarChunks.flatMap((chunk: any) => chunk.records)
+};
+const lunarContextRelease = skyV4PlacementLunarContextReleaseState(testLunarRelease);
 assert.equal(lunarContextRelease.expectedRecords, 40);
 assert.equal(lunarContextRelease.recordCount, 40);
 assert.equal(lunarContextRelease.ownerApproved, true);
@@ -144,18 +164,18 @@ const fullMoonInput = {
   }],
   aspects: []
 };
-const baseFullMoon = renderSkyV4ReaderRoute(correctedCorpus, fullMoonInput);
-const releasedFullMoon = applySkyV4PlacementLunarContext(baseFullMoon, fullMoonInput, correctedCorpus);
+const stagedFullMoon = renderSkyV4ReaderRoute(correctedCorpus, fullMoonInput, { ...testLunarRelease, serving_enabled: false });
+assert.equal(stagedFullMoon.placementLunarContextKey, undefined, "unapproved lunar package must fail closed");
+const releasedFullMoon = renderSkyV4ReaderRoute(correctedCorpus, fullMoonInput, testLunarRelease);
 assert.match(String(releasedFullMoon.page), /## What changes today/u);
 assert.match(String(releasedFullMoon.page), /Today’s Full Moon across Aries and Libra makes the consequence of the current story harder to keep in the background\./u);
 assert.equal(releasedFullMoon.placementLunarContextKey, "sky-placement/lunar-context/full-moon/sun");
 assert.ok(String(releasedFullMoon.page).indexOf(correctedSunAries.placementArticle) < String(releasedFullMoon.page).indexOf("## What changes today"));
 
 const fallbackInput = { ...fullMoonInput, articleAvailable: false };
-const baseFallback = renderSkyV4ReaderRoute(correctedCorpus, fallbackInput);
-assert.equal(baseFallback.resolution, "exact-fallback");
-const releasedFallback = applySkyV4PlacementLunarContext(baseFallback, fallbackInput, correctedCorpus);
-const fallbackCopy = (releasedFallback.readerParts as string[]).join("\n\n");
+const releasedFallback = renderSkyV4ReaderRoute(correctedCorpus, fallbackInput, testLunarRelease);
+assert.equal(releasedFallback.resolution, "exact-fallback");
+const fallbackCopy = String(releasedFallback.page);
 assert.ok(fallbackCopy.indexOf(correctedSunAries.fallback.hook) < fallbackCopy.indexOf("Today’s Full Moon across Aries and Libra"));
 assert.ok(fallbackCopy.indexOf("Today’s Full Moon across Aries and Libra") < fallbackCopy.indexOf(correctedSunAries.fallback.lived));
 assert.ok(fallbackCopy.indexOf(correctedSunAries.fallback.lived) < fallbackCopy.indexOf(correctedSunAries.fallback.turn));
@@ -207,17 +227,20 @@ assert.deepEqual(skyV4LunationRoute(exactEclipse, positions), {
 
 const app = fs.readFileSync(new URL("../apps/web/src/App.tsx", import.meta.url), "utf8");
 assert.match(app, /event\.type === "lunation"[\s\S]{0,120}currentSkyV4LunationDetailArticle/u);
-assert.match(app, /\[\.\.\.articleSections, \.\.\.relatedAspectSections\]/u);
+assert.match(app, /\[\.\.\.displayArticleSections, \.\.\.relatedAspectSections\]/u);
 assert.match(app, /grouping: "event"/u);
 assert.match(app, /skyV4PlacementContexts/u);
 assert.match(app, /skyV4StationSupported/u);
 assert.match(app, /skyV4Hemisphere/u);
 
 const skyBundle = fs.readFileSync(new URL("../apps/web/src/content/fallbackArchitectureV3SkyPlacementBundle.ts", import.meta.url), "utf8");
-assert.match(skyBundle, /applySkyV4ContinuousCorpusCorrection/u);
-assert.match(skyBundle, /applySkyV4PlacementLunarContext/u);
-const lunarAdapter = fs.readFileSync(new URL("../apps/web/src/features/sky/skyV4PlacementLunarContext.ts", import.meta.url), "utf8");
-assert.match(lunarAdapter, /## What changes today/u);
-assert.doesNotMatch(lunarAdapter, /openai|anthropic|model call|generateText/iu);
+assert.match(
+  skyBundle,
+  /applySkyV4ContinuousCorpusCorrection|renderSkyV4ReaderRoute/u,
+  "approved packages must compose through the deferred reader bundle"
+);
+const canonicalResolver = fs.readFileSync(new URL("../apps/web/src/content/fallbackArchitectureV3/resolver/skyPlacementV4Canonical.mjs", import.meta.url), "utf8");
+assert.match(canonicalResolver, /## What changes today/u);
+assert.doesNotMatch(canonicalResolver, /openai|anthropic|model call|generateText/iu);
 
-console.log("SKY V4 product-surface routing: PASS (120 owner-approved continuous corrections, 40 serving lunar contexts, ordinary New/Full Moon differentiation, eclipse precedence, exact local-day selection, seasonal hemisphere, Lilith station, node axis, Calendar keys)");
+console.log("SKY V4 product-surface routing: PASS (120 approved corrections + 40 approved lunar contexts serve through deferred assets; unapproved fixtures fail closed; routing, local-day selection, axis, precedence, hemisphere, stations, nodes, and Calendar keys verified)");

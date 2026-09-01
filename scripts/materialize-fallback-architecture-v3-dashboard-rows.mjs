@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 import fs from "node:fs";
+import { createHash } from "node:crypto";
 import path from "node:path";
 import process from "node:process";
 import {
@@ -73,6 +74,82 @@ function loadLocalWebEnv() {
 
 function readJson(fileName) {
   return JSON.parse(fs.readFileSync(path.join(packageDir, fileName), "utf8"));
+}
+
+function sha256(value) {
+  return createHash("sha256").update(JSON.stringify(value)).digest("hex");
+}
+
+function skyV4CorrectionRecords(source) {
+  return source.skyV4ContinuousCorrectionChunks.flatMap((chunk) => chunk.records ?? []);
+}
+
+function correctedSkyV4StudioRecords(source) {
+  const corrections = new Map(skyV4CorrectionRecords(source).map((row) => [row.ContentKey, row]));
+  return skyV4ContentStudioRecords(source.skyV4CanonicalStage).map((row) => {
+    const correction = corrections.get(row.contentKey);
+    if (!correction) return row;
+    const corrected = {
+      ...row,
+      tldrWhat: correction.TLDRWhat,
+      tldrTakeaway: correction.TLDRTakeaway,
+      placementArticle: correction.PlacementArticle?.trim() ? correction.PlacementArticle : row.placementArticle,
+      fallback: structuredClone(correction.Fallback),
+      body_you: correction.PlacementArticle?.trim() ? correction.PlacementArticle : row.body_you,
+      summary: correction.TLDRTakeaway,
+      active_correction_package: source.skyV4ContinuousCorrectionManifest.package_version,
+      active_correction_copy_sha256: source.skyV4ContinuousCorrectionManifest.copy_sha256,
+      studio_version_status: "approved-serving-baseline",
+      review_status: source.skyV4ContinuousCorrectionManifest.review_status,
+      owner_approved: source.skyV4ContinuousCorrectionManifest.owner_approved,
+      serving_enabled: source.skyV4ContinuousCorrectionManifest.serving_enabled,
+      approved_via: source.skyV4ContinuousCorrectionManifest.approval_id,
+      owner_approval_id: source.skyV4ContinuousCorrectionManifest.approval_id,
+      serving_release_id: source.skyV4ContinuousCorrectionManifest.release_id,
+      note: "Owner-approved 2026-09-01 correction baseline. Future Content Studio edits fork a non-serving draft."
+    };
+    corrected.studio_source_baseline = {
+      ...row.studio_source_baseline,
+      tldrWhat: corrected.tldrWhat,
+      tldrTakeaway: corrected.tldrTakeaway,
+      placementArticle: corrected.placementArticle,
+      fallback: corrected.fallback
+    };
+    corrected.source_baseline_sha256 = sha256(corrected.studio_source_baseline);
+    return corrected;
+  });
+}
+
+function skyV4LunarContextStudioRecords(source) {
+  return source.skyV4PlacementLunarContextChunks.flatMap((chunk) => chunk.records ?? []).map((row) => ({
+    ...row,
+    contentKey: row.ContentKey,
+    headline: `${row.Planet} · ${row.EventLabel}`,
+    body_you: row.FullPageBody,
+    summary: row.FallbackBody,
+    content_role: "full_copy",
+    review_status: source.skyV4PlacementLunarContextManifest.review_status,
+    surface: "sky",
+    render_policy: "sky-v4-placement-lunar-context-v1",
+    source_package: source.skyV4PlacementLunarContextManifest.package_version,
+    source_baseline_sha256: sha256(row),
+    studio_source_baseline: structuredClone(row),
+    studio_content_type: "placement-lunar-context",
+    studio_editable_fields: [
+      { path: "FullPageBody", label: "Full-page context" },
+      { path: "FallbackBody", label: "Fallback context" }
+    ],
+    studio_read_only_fields: ["ContentKey", "Planet", "EventType", "EventLabel", "Variables"],
+    studio_version_status: "approved-serving-baseline",
+    studio_review_category: "placement-lunar-context-approved",
+    owner_approved: source.skyV4PlacementLunarContextManifest.owner_approved,
+    serving_enabled: source.skyV4PlacementLunarContextManifest.serving_enabled,
+    approved_via: source.skyV4PlacementLunarContextManifest.approval_id,
+    owner_approval_id: source.skyV4PlacementLunarContextManifest.approval_id,
+    serving_release_id: source.skyV4PlacementLunarContextManifest.release_id,
+    owner_approved_fields: ["FullPageBody", "FallbackBody"],
+    note: "Owner-approved exact-event Sky Placement context baseline. Future edits remain non-serving drafts."
+  }));
 }
 
 function readSkySignCopySources() {
@@ -346,7 +423,8 @@ function mapPackageRecord(record, bucket) {
   }
 
   const contentRole = String(record.content_role ?? bucket).trim();
-  const isSkyV4Stage = bucket === "sky-v4-canonical-stage";
+  const isSkyV4Stage = bucket.startsWith("sky-v4-");
+  const skyV4SourcePackage = String(record.source_package ?? SKY_V4_CANONICAL_PACKAGE_VERSION);
   const sourceReviewStatus = String(record.review_status ?? "").trim();
   // Package templates without an explicit editorial status are already
   // reader-eligible in the bundled resolver. Normalize only the mirror
@@ -427,7 +505,7 @@ function mapPackageRecord(record, bucket) {
       positive_test: record.positive_test ?? null,
       readerServing: serving.status === "LIVE" && serving.lane === "serving" && !serving.reviewState,
       stageOnly: isSkyV4Stage,
-      sourceSchemaVersion: isSkyV4Stage ? SKY_V4_CANONICAL_PACKAGE_VERSION : null
+      sourceSchemaVersion: isSkyV4Stage ? skyV4SourcePackage : null
     },
     knowledge_ids: [],
     source_snapshot: {
@@ -438,7 +516,7 @@ function mapPackageRecord(record, bucket) {
       approved_via: record.approved_via ?? null,
       source_keys: record.source_keys ?? [],
       importBatchId,
-      sourcePackage: isSkyV4Stage ? SKY_V4_CANONICAL_PACKAGE_VERSION : "tldrastro-fallback-architecture-v3",
+      sourcePackage: isSkyV4Stage ? skyV4SourcePackage : "tldrastro-fallback-architecture-v3",
       sourceFile: bucket,
       packageVersion: packageManifest.packageVersion,
       packageContentHash: packageManifest.contentHash,
@@ -532,6 +610,12 @@ function readPackageSources() {
   const weeklyRows = readJson("source-rows/station-cards-week-openers-v1.json");
   const templateRows = readJson("templates/fallback-templates-v3.json");
   const skyV4CanonicalStage = readJson("authored-inputs/sky-v4-canonical-content-studio-stage-v1.json");
+  const skyV4ContinuousCorrectionManifest = readJson("authored-inputs/sky-v4-continuous-corpus-correction-v1.json");
+  const skyV4ContinuousCorrectionChunks = skyV4ContinuousCorrectionManifest.chunk_files
+    .map((fileName) => readJson(`authored-inputs/${fileName}`));
+  const skyV4PlacementLunarContextManifest = readJson("authored-inputs/sky-v4-placement-lunar-context-v1.json");
+  const skyV4PlacementLunarContextChunks = skyV4PlacementLunarContextManifest.chunk_files
+    .map((fileName) => readJson(`authored-inputs/${fileName}`));
   continuousFallbackImportManifest = readJson("authored-inputs/sky-placement-continuous-v2-pending.json");
   ({
     manifest: skyPlacementServingManifest,
@@ -563,7 +647,11 @@ function readPackageSources() {
     timingEventRows,
     weeklyRows,
     templateRows,
-    skyV4CanonicalStage
+    skyV4CanonicalStage,
+    skyV4ContinuousCorrectionManifest,
+    skyV4ContinuousCorrectionChunks,
+    skyV4PlacementLunarContextManifest,
+    skyV4PlacementLunarContextChunks
   };
 }
 
@@ -731,8 +819,10 @@ function materializeRows(sources) {
     ...sources.placementInterimRows.vocabularyRows.map((row) => mapPackageRecord(row, "fallback-system")),
     ...sources.skyArticleRows.vocabularyRows.map((row) => mapPackageRecord(row, "fallback-system")),
     ...sources.templateRows.templates.map((row) => mapPackageRecord(row, "fallback-system")),
-    ...skyV4ContentStudioRecords(sources.skyV4CanonicalStage)
+    ...correctedSkyV4StudioRecords(sources)
       .map((row) => mapPackageRecord(row, "sky-v4-canonical-stage")),
+    ...skyV4LunarContextStudioRecords(sources)
+      .map((row) => mapPackageRecord(row, "sky-v4-placement-lunar-context")),
     ...sources.placementInterimRows.templates.map((row) => mapPackageRecord(row, "fallback-system")),
     ...sources.sourceRows.fallbackSourceRows.map((row) => mapPackageRecord(row, "source-material")),
     ...editorialSourceBankRecords(sources.editorialSourceBank)

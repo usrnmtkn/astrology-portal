@@ -18,6 +18,7 @@ import {
 
 const corpus = JSON.parse(fs.readFileSync(new URL("../apps/web/src/content/fallbackArchitectureV3/authored-inputs/sky-v4-canonical-content-studio-stage-v1.json", import.meta.url), "utf8"));
 const governedAspectCorpus = JSON.parse(fs.readFileSync(new URL("../apps/web/src/content/fallbackArchitectureV3/source-rows/sky-aspect-phrasebook-v1.json", import.meta.url), "utf8"));
+const placementLunarChunk = JSON.parse(fs.readFileSync(new URL("../apps/web/src/content/fallbackArchitectureV3/authored-inputs/sky-v4-placement-lunar-context-v1-chunk-1.json", import.meta.url), "utf8"));
 const records = skyV4ContentStudioRecords(corpus);
 const executed = new Set<string>();
 
@@ -204,6 +205,28 @@ assert.match(continuousParity.page, /Mercury retrograde[\s\S]*What is shaping th
 const zeroOptional = renderSkyV4StudioPreview(corpus, { contentKey: "sky-lunation/new-moon/gemini" });
 assert.doesNotMatch(zeroOptional.page, /## (Other Conditions|Key aspects)/u);
 assert.equal(productionParity.servingEnabled, false);
+const lunarContextSource = placementLunarChunk.records.find((row: Record<string, unknown>) => row.ContentKey === "sky-placement/lunar-context/full-moon/venus");
+assert.ok(lunarContextSource);
+const lunarContextPreview = renderSkyV4StudioPreview(corpus, {
+  contentKey: lunarContextSource.ContentKey,
+  placementLunarContextSource: {
+    ...lunarContextSource,
+    contentKey: lunarContextSource.ContentKey,
+    studio_content_type: "placement-lunar-context",
+    studio_editable_fields: [
+      { path: "FullPageBody", label: "Full-page context" },
+      { path: "FallbackBody", label: "Fallback context" }
+    ],
+    source_baseline_sha256: "staged-lunar-context"
+  },
+  draftFields: { FullPageBody: "Draft Full Moon across {{eventSign}} and {{oppositeSign}}.", FallbackBody: "Short {{eventSign}} context." },
+  facts: { eventSign: "Virgo", oppositeSign: "Pisces" },
+  previewSurface: { kind: "continuous", subjectBody: "venus", subjectSign: "libra" }
+});
+assert.equal(lunarContextPreview.resolution, "placement-lunar-context-review");
+assert.match(lunarContextPreview.page, /Draft Full Moon across Virgo and Pisces\./u);
+assert.match(lunarContextPreview.page, /## Fallback version[\s\S]*Short Virgo context\./u);
+assert.equal(lunarContextPreview.servingEnabled, false);
 executed.add("CS-EDIT-014");
 
 assert.equal(executed.size, 14, "All 14 Content Studio editing scenarios must execute.");

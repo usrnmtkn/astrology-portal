@@ -3,15 +3,14 @@
   "package_version": "SKY-V4-CONTINUOUS-CORPUS-CORRECTION-OWNER-APPROVED-2026-09-01",
   "parent_canonical_package_version": "SKY-V4-CANONICAL-CODEX-HANDOFF-CONTENT-STUDIO-EDITABLE-2026-08-30",
   "parent_canonical_json_sha256": "9b91e715bea63a2c835001783240122aad1e000b3982d68bfebbb3cef690a750",
-  "approval_id": "sky-v4-continuous-corpus-correction-owner-approval-2026-09-01",
-  "approved_on": "2026-09-01",
-  "approval_record": "packages/astro-knowledge/review/sky-v4-continuous-corpus-correction-2026-09-01/OWNER-APPROVAL.md",
-  "release_id": "sky-v4-continuous-corpus-correction-serving-release-2026-09-01",
-  "release_record": "packages/astro-knowledge/review/sky-v4-continuous-corpus-correction-2026-09-01/VERIFICATION.md",
   "review_status": "approved",
   "owner_approved": true,
   "serving_enabled": true,
+  "approval_id": "sky-v4-continuous-correction-owner-approval-2026-09-01",
+  "release_id": "sky-v4-continuous-correction-serving-release-2026-09-01",
   "expected_records": 120,
+  "owner_review_source_json_sha256": "450eac515db908ea82a02869f308ac9ae5f97e272b2308c7c975e4c02245a08a",
+  "owner_review_workbook_sha256": "3551cb36c6f6181bf7f4f284999d40126f79b22661043ea2b7f585b9ee244418",
   "record_set_sha256": "7565cdd2f83cc45c7e62df73aa91856970d2807df11d1fec23969b5be9e4aa4f",
   "copy_sha256": "825f970dcae52bcb424b23e4f11d65103f24e37342e85691f6f4d1b078fd59c2",
   "chunk_files": [
@@ -19,5 +18,11 @@
     "sky-v4-continuous-corpus-correction-v1-chunk-2.json",
     "sky-v4-continuous-corpus-correction-v1-chunk-3.json",
     "sky-v4-continuous-corpus-correction-v1-chunk-4.json"
-  ]
+  ],
+  "chunk_sha256": {
+    "sky-v4-continuous-corpus-correction-v1-chunk-1.json": "f61aae29422d7499ec24a2c37424b8b2d87e1f9e2017be79beb33115fb704cb8",
+    "sky-v4-continuous-corpus-correction-v1-chunk-2.json": "9bd93e93e7e9fc91dd1f1a2494c623b883dbd4eb22d6bd293119b8b0d0b2f4e0",
+    "sky-v4-continuous-corpus-correction-v1-chunk-3.json": "9b1673cba0204b8239edd817e2cc9729aeac8eb6056b75dd6124bcf34a1533de",
+    "sky-v4-continuous-corpus-correction-v1-chunk-4.json": "acc6d0dacd0fe9fe2107c29b3884642d8d2c8e6eb126590bd0d67c983c53da02"
+  }
 }

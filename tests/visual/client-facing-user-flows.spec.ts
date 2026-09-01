@@ -3414,8 +3414,8 @@ test.describe("client-facing user flow case studies", () => {
 
     const article = page.locator(".sky-detail-article");
     await expect(article).toBeVisible();
-    await expect(article).toContainText("Welcome to Virgo season’s reality check.");
-    await expect(article).toContainText("The best repair may be the one that removes work instead of teaching you to tolerate more of it.");
+    await expect(article).toContainText("Virgo season makes the invisible work of keeping things running harder to overlook.");
+    await expect(article).toContainText("The system that works is the one that makes your life easier to live.");
     await expect(article).not.toContainText("Aspects shaping this transit");
     await expect(article.getByRole("heading", { name: "Gifts" })).toBeVisible();
     await expect(article.getByRole("heading", { name: "Lessons" })).toBeVisible();
