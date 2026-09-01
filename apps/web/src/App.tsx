@@ -212,7 +212,7 @@ import {
   cmsSurfaceKeys,
   resolveCmsSurfaceOverride
 } from "./content/cmsSurfaceOverrides";
-import { resolveSkyAspectGeneratedContent, skyAspectGeneratedContentKeys } from "./services/skyAspectContent";
+import { resolveSkyAspectContentStudioExact, resolveSkyAspectGeneratedContent, skyAspectGeneratedContentKeys } from "./services/skyAspectContent";
 import {
   resolveApprovedExactSkyAspectCopy,
   selectSkyAspectCopyByPrecedence
@@ -4328,8 +4328,34 @@ function generatedSkyAspectWritingSection(
 
 function approvedExactSkyAspectWritingSection(
   aspect: SkySnapshot["aspects"][number],
-  positions?: PlanetPosition[]
+  positions?: PlanetPosition[],
+  generatedContent?: GeneratedContentMap
 ): NormalizedSkyAspectSection | null {
+  const firstSign = skyAspectPosition(aspect.from, positions)?.sign;
+  const secondSign = skyAspectPosition(aspect.to, positions)?.sign;
+  const studio = generatedContent && firstSign && secondSign
+    ? resolveSkyAspectContentStudioExact({
+        generatedContent,
+        first: aspect.from,
+        second: aspect.to,
+        aspect: aspect.type,
+        firstSign,
+        secondSign
+      })
+    : null;
+
+  if (studio) {
+    return {
+      slot: "meaning",
+      required: true,
+      layer: "authored",
+      tier: "content-studio-exact-sky-aspect-v1",
+      sourceKeys: [studio.content.contentKey],
+      heading: studio.content.headline || skyAspectDisplayTitle(aspect),
+      body: studio.body
+    };
+  }
+
   const registry = contentRegistryFor("sky");
 
   if (!registry) {
@@ -4427,7 +4453,7 @@ function normalizeSkyAspectSurface(
   generatedAt?: string
 ): NormalizedSkyAspectArticle {
   const signAwareSection = reviewedSkyAspectWritingSection(aspect, positions, "sign-aware");
-  const authoredSection = approvedExactSkyAspectWritingSection(aspect, positions);
+  const authoredSection = approvedExactSkyAspectWritingSection(aspect, positions, generatedContent);
   const reviewedSection = reviewedSkyAspectWritingSection(aspect, positions, "generic");
   const generatedSection = generatedSkyAspectWritingSection(aspect, generatedContent, positions, generatedAt);
   const selectedSection = selectSkyAspectCopyByPrecedence({
