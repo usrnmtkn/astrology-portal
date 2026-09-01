@@ -167,6 +167,7 @@ function createFallbackRenderer(templatesFile, rowsFile) {
     const gapLabel = `${planet}/${sign}${house ? `/house-${house}` : ""}`;
     const parts = [];
     const partKeys = [];
+    const withModifiers = (body, include) => [body, ...include ? mods : []].filter(Boolean).join("\n\n");
     const isNode = planet === "north-node" || planet === "south-node";
     if (isNode) {
       const j = getHook(`fallback-hook/node-journey/${planet}`, voice, opts2);
@@ -176,7 +177,7 @@ function createFallbackRenderer(templatesFile, rowsFile) {
     }
     const signTemplate = findTemplate(`fallback-template/natal.planet-in-sign/${planet}`, opts2) ?? getTemplate(isNode ? "fallback-template/natal.node-in-sign" : "fallback-template/natal.planet-in-sign");
     if (exactSignLived) {
-      parts.push(exactSignLived.body ?? "");
+      parts.push(withModifiers(exactSignLived.body ?? "", !house));
       partKeys.push(exactSignLived.contentKey);
     } else {
       try {
@@ -184,7 +185,7 @@ function createFallbackRenderer(templatesFile, rowsFile) {
         partKeys.push(signTemplate.contentKey);
       } catch (err) {
         if (!(err instanceof SourceGapError) || !genericSignLived) throw err;
-        parts.push(genericSignLived.body ?? "");
+        parts.push(withModifiers(genericSignLived.body ?? "", !house));
         partKeys.push(genericSignLived.contentKey);
       }
     }
@@ -197,7 +198,7 @@ function createFallbackRenderer(templatesFile, rowsFile) {
       const renderedHouseMeaning = mustache(houseMeaning, ctx);
       if (exactHouseLived) {
         const exactBody = withoutLegacyHouseBridge(exactHouseLived.body ?? "", house, voice);
-        parts.push([renderedHouseMeaning, exactBody].filter(Boolean).join("\n\n"));
+        parts.push(withModifiers([renderedHouseMeaning, exactBody].filter(Boolean).join("\n\n"), true));
         partKeys.push(exactHouseLived.contentKey);
       } else {
         const houseTemplate = getTemplate("fallback-template/natal.house-context");
@@ -213,7 +214,7 @@ function createFallbackRenderer(templatesFile, rowsFile) {
           partKeys.push(houseTemplate.contentKey);
         } catch (err) {
           if (!(err instanceof SourceGapError) || !genericHouseLived) throw err;
-          parts.push(genericHouseLived.body ?? "");
+          parts.push(withModifiers(genericHouseLived.body ?? "", true));
           partKeys.push(genericHouseLived.contentKey);
         }
         headlineTemplate = houseTemplate;
@@ -4889,7 +4890,7 @@ function skyV4FieldValue(source, path) {
 }
 
 // apps/web/src/content/fallbackArchitectureV3/resolver/index.browser.ts
-var PACKAGE_VERSION = "v3-2026-08-31b";
+var PACKAGE_VERSION = "v3-2026-09-01a";
 function stablePackageValue(value) {
   if (Array.isArray(value)) {
     return value.map(stablePackageValue);
