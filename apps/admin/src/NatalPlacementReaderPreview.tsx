@@ -6,6 +6,7 @@ import {
   natalPlacementSignLabel,
   natalPlacementSourceGroups,
   type NatalPlacementHouse,
+  type NatalPlacementMotion,
   type NatalPlacementPlanet,
   type NatalPlacementSign
 } from "./natalPlacementSources";
@@ -31,6 +32,7 @@ type NatalRender = {
 type Props = {
   house: NatalPlacementHouse | "";
   initialAudience?: "you" | "they";
+  motion: NatalPlacementMotion;
   onCreateOverride: (contentKey: string, label: string, body: string) => void;
   onOpenSource: (contentKey: string, label: string, previewTemplate?: boolean) => void;
   planet: NatalPlacementPlanet;
@@ -110,10 +112,10 @@ export function natalPlacementOverrideDraft(contentKey: string, label: string, b
   };
 }
 
-export default function NatalPlacementReaderPreview({ house, initialAudience = "you", onCreateOverride, onOpenSource, planet, rows, secret, sign }: Props) {
+export default function NatalPlacementReaderPreview({ house, initialAudience = "you", motion, onCreateOverride, onOpenSource, planet, rows, secret, sign }: Props) {
   const [audience, setAudience] = useState<"you" | "they">(initialAudience);
   const [preview, setPreview] = useState<{ error: string | null; loading: boolean; rendered: NatalRender | null }>({ error: null, loading: true, rendered: null });
-  const sourceKeys = useMemo(() => new Set(natalPlacementSourceGroups(planet, sign, house).flatMap((group) => group.sources.map((source) => source.key))), [house, planet, sign]);
+  const sourceKeys = useMemo(() => new Set(natalPlacementSourceGroups(planet, sign, house, motion).flatMap((group) => group.sources.map((source) => source.key))), [house, motion, planet, sign]);
   const overrides = useMemo(() => rows
     .filter((row) => (row.status === "LIVE" || row.status === "REVIEWED") && sourceKeys.has(row.content_key))
     .map(packageRowFromSavedRow)
@@ -125,7 +127,7 @@ export default function NatalPlacementReaderPreview({ house, initialAudience = "
     void fetch("/api/admin/natal-placement-preview", {
       method: "POST",
       headers: { "content-type": "application/json", ...adminCredentialHeaders(secret) },
-      body: JSON.stringify({ audience, ...(house ? { house } : {}), overrides, planet, sign }),
+      body: JSON.stringify({ audience, ...(house ? { house } : {}), motion, overrides, planet, sign }),
       signal: controller.signal
     }).then(async (response) => {
       const payload = await response.json().catch(() => null) as { error?: string; rendered?: NatalRender } | null;
@@ -136,7 +138,7 @@ export default function NatalPlacementReaderPreview({ house, initialAudience = "
       setPreview({ error: error instanceof Error ? error.message : "The reader preview could not be assembled.", loading: false, rendered: null });
     });
     return () => controller.abort();
-  }, [audience, house, overrides, planet, secret, sign]);
+  }, [audience, house, motion, overrides, planet, secret, sign]);
 
   const exactKey = house ? `fallback-hook/natal-you-placement-complete-final/${planet}/${sign}/${house}` : "";
   const exactSaved = Boolean(exactKey && rows.some((row) => row.content_key === exactKey));
@@ -192,12 +194,18 @@ export default function NatalPlacementReaderPreview({ house, initialAudience = "
                   ? "Exact authored override"
                   : "Composed from atomic sources"}
             </span>
+            <span className={`ui-pill admin-status ${motion === "retrograde" ? "status-reviewed" : "status-live"}`}>
+              {motion === "retrograde" ? "Retrograde chart context" : "Direct chart context"}
+            </span>
             {house && audience === "you" && !exactServing && (
               exactSaved
                 ? <button type="button" onClick={() => onOpenSource(exactKey, `Exact ${label} override`)}>Open draft override</button>
                 : <button type="button" onClick={() => onCreateOverride(exactKey, label, preview.rendered?.body ?? "")}>Create exact override</button>
             )}
           </div>
+          {motion === "retrograde" && exactServing && audience === "you" && (
+            <p className="admin-field-hint">This exact authored override is served verbatim. It does not append the shared retrograde modifier; include any retrograde treatment in the exact write-up itself.</p>
+          )}
         </div>
       ) : (
         <div className="admin-empty-state" role="alert">
