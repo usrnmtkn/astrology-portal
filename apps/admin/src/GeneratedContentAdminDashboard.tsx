@@ -86,10 +86,10 @@ import {
 } from "./AdminStudioPrimitives";
 import {
   natalPlacementHouses,
+  natalPlacementMotions,
   natalPlacementPlanets,
   natalPlacementSelectionFromText,
   natalPlacementSigns,
-  natalPlacementSupportsRetrograde,
   ordinalHouse,
   type NatalPlacementHouse,
   type NatalPlacementMotion,
@@ -102,6 +102,14 @@ import {
   type NatalAspectSelection,
   type NatalAspectSourceDraft
 } from "./natalAspectSources";
+import {
+  contentDestinations,
+  contentMotion,
+  sortPlacementRows,
+  type ContentDestinationFilter,
+  type ContentMotionFilter,
+  type ContentPlacementSort
+} from "./contentMotion";
 
 import type {
   WritingSurfaceAdminAccess,
@@ -636,6 +644,24 @@ const skyWriteupSubjectFilters: Array<{ key: AdminSkyWriteupSubjectFilter; label
   { key: "planet", label: "Planets and lunations" },
   { key: "angle", label: "Angles" },
   { key: "point", label: "Points" }
+];
+const skyWriteupMotionFilters: Array<{ key: ContentMotionFilter; label: string }> = [
+  { key: "all", label: "All motion" },
+  { key: "retrograde", label: "Retrograde" },
+  { key: "direct", label: "Direct" },
+  { key: "unspecified", label: "No motion-specific copy" }
+];
+const skyWriteupDestinationFilters: Array<{ key: ContentDestinationFilter; label: string }> = [
+  { key: "all", label: "All reader uses" },
+  { key: "sky", label: "Sky" },
+  { key: "calendar", label: "Calendar" }
+];
+const skyWriteupSortOptions: Array<{ key: ContentPlacementSort; label: string }> = [
+  { key: "updated-desc", label: "Recently updated" },
+  { key: "title-asc", label: "Title A–Z" },
+  { key: "title-desc", label: "Title Z–A" },
+  { key: "retrograde-first", label: "Retrograde first" },
+  { key: "direct-first", label: "Direct first" }
 ];
 const contentSystemFilters: Array<{ key: AdminContentSystemFilter; label: string }> = [
   { key: "all", label: "All content systems" },
@@ -2555,6 +2581,9 @@ export function GeneratedContentAdminDashboard() {
   const [articleStatusFilter, setArticleStatusFilter] = useState<GeneratedContentStatus | "all">("LIVE");
   const [articlePointFilter, setArticlePointFilter] = useState<AdminArticlePointFilter>("all");
   const [skyWriteupSubjectFilter, setSkyWriteupSubjectFilter] = useState<AdminSkyWriteupSubjectFilter>("all");
+  const [skyWriteupMotionFilter, setSkyWriteupMotionFilter] = useState<ContentMotionFilter>("all");
+  const [skyWriteupDestinationFilter, setSkyWriteupDestinationFilter] = useState<ContentDestinationFilter>("all");
+  const [skyWriteupSort, setSkyWriteupSort] = useState<ContentPlacementSort>("updated-desc");
   const [articleContentSystemFilter, setArticleContentSystemFilter] = useState<AdminContentSystemFilter>("all");
   const [articleQuery, setArticleQuery] = useState("");
   const [compatibilitySectionFilter, setCompatibilitySectionFilter] = useState<AdminCompatibilitySectionFilter>("all");
@@ -2672,13 +2701,11 @@ export function GeneratedContentAdminDashboard() {
     }),
     [visibleRows]
   );
-  const filteredSkyWriteupRows = useMemo(
-    () => skyWriteupRows.filter((row) => (
-      skyWriteupSubjectFilter === "all"
-      || skyWriteupSubjectTypeForRow(row) === skyWriteupSubjectFilter
-    )),
-    [skyWriteupRows, skyWriteupSubjectFilter]
-  );
+  const filteredSkyWriteupRows = useMemo(() => sortPlacementRows(skyWriteupRows.filter((row) => (
+    (skyWriteupSubjectFilter === "all" || skyWriteupSubjectTypeForRow(row) === skyWriteupSubjectFilter)
+    && (skyWriteupMotionFilter === "all" || contentMotion(row) === skyWriteupMotionFilter)
+    && (skyWriteupDestinationFilter === "all" || contentDestinations(row).has(skyWriteupDestinationFilter))
+  )), skyWriteupSort), [skyWriteupDestinationFilter, skyWriteupMotionFilter, skyWriteupRows, skyWriteupSort, skyWriteupSubjectFilter]);
   const publishedButUnwiredSkyRows = useMemo(
     () => skyWriteupRows.filter(isPublishedButUnwired),
     [skyWriteupRows]
@@ -3294,13 +3321,7 @@ export function GeneratedContentAdminDashboard() {
     setNatalPlacementPlanet(page === "content" && natalPlanet && natalPlacementPlanets.includes(natalPlanet) ? natalPlanet : "");
     setNatalPlacementSign(page === "content" && natalSign && natalPlacementSigns.includes(natalSign) ? natalSign : "");
     setNatalPlacementHouse(page === "content" && natalHouse && natalPlacementHouses.includes(natalHouse) ? natalHouse : "");
-    setNatalPlacementMotion(
-      page === "content"
-      && natalMotion === "retrograde"
-      && Boolean(natalPlanet && natalPlacementPlanets.includes(natalPlanet) && natalPlacementSupportsRetrograde(natalPlanet))
-        ? "retrograde"
-        : "direct"
-    );
+    setNatalPlacementMotion(page === "content" && natalMotion && natalPlacementMotions.includes(natalMotion) ? natalMotion : "direct");
     setNatalAspectFirst(page === "content" && category === "Natal Aspects" ? natalAspectFirstParam : "");
     setNatalAspectName(page === "content" && category === "Natal Aspects" ? natalAspectNameParam : "");
     setNatalAspectSecond(page === "content" && category === "Natal Aspects" ? natalAspectSecondParam : "");
@@ -5109,6 +5130,24 @@ export function GeneratedContentAdminDashboard() {
                     ))}
                   </select>
                 </label>
+                <label>
+                  <span>Motion</span>
+                  <select aria-label="Sky write-up motion" value={skyWriteupMotionFilter} onChange={(event) => setSkyWriteupMotionFilter(event.target.value as ContentMotionFilter)}>
+                    {skyWriteupMotionFilters.map((filter) => <option key={filter.key} value={filter.key}>{filter.label}</option>)}
+                  </select>
+                </label>
+                <label>
+                  <span>Reader use</span>
+                  <select aria-label="Sky write-up reader use" value={skyWriteupDestinationFilter} onChange={(event) => setSkyWriteupDestinationFilter(event.target.value as ContentDestinationFilter)}>
+                    {skyWriteupDestinationFilters.map((filter) => <option key={filter.key} value={filter.key}>{filter.label}</option>)}
+                  </select>
+                </label>
+                <label>
+                  <span>Sort</span>
+                  <select aria-label="Sort Sky write-ups" value={skyWriteupSort} onChange={(event) => setSkyWriteupSort(event.target.value as ContentPlacementSort)}>
+                    {skyWriteupSortOptions.map((option) => <option key={option.key} value={option.key}>{option.label}</option>)}
+                  </select>
+                </label>
                 <p className="admin-filter-result-count" aria-live="polite">
                   <strong>{filteredSkyWriteupRows.length}</strong> of {skyWriteupRows.length} shown
                 </p>
@@ -5129,7 +5168,7 @@ export function GeneratedContentAdminDashboard() {
               <aside className="admin-list-panel" aria-label="Sky write-up rows">
                 {filteredSkyWriteupRows.length > 0
                   ? renderContentTable(filteredSkyWriteupRows, false, true)
-                  : <p className="admin-empty">No Sky write-ups match this type.</p>}
+                  : <p className="admin-empty">No Sky or Calendar write-ups match these filters.</p>}
               </aside>
             </section>
           </section>
@@ -5717,7 +5756,7 @@ export function GeneratedContentAdminDashboard() {
     const planet = next.planet ?? natalPlacementPlanet;
     const sign = next.sign ?? natalPlacementSign;
     const house = next.house ?? natalPlacementHouse;
-    const motion = natalPlacementSupportsRetrograde(planet) ? next.motion ?? natalPlacementMotion : "direct";
+    const motion = next.motion ?? natalPlacementMotion;
     setNatalPlacementPlanet(planet);
     setNatalPlacementSign(sign);
     setNatalPlacementHouse(house);
@@ -7978,9 +8017,9 @@ export function GeneratedContentAdminDashboard() {
               <Suspense fallback={<div className="admin-empty-state" role="status"><strong>Loading Friends copy…</strong></div>}>
                 <NatalPlacementReaderPreview
                   house={natalPlacementHouse}
-                  isRetrograde={natalPlacementMotion === "retrograde"}
                   initialAudience="they"
-                  key={`friend-editor-${natalPlacementPlanet}-${natalPlacementSign}-${natalPlacementHouse}`}
+                  key={`friend-editor-${natalPlacementPlanet}-${natalPlacementSign}-${natalPlacementHouse}-${natalPlacementMotion}`}
+                  motion={natalPlacementMotion}
                   onCreateOverride={createNatalPlacementOverride}
                   onOpenSource={(contentKey, label, previewTemplate) => void openContentKeyRow(contentKey, label, previewTemplate)}
                   planet={natalPlacementPlanet}

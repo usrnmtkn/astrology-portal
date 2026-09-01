@@ -10792,7 +10792,7 @@ body,
 .admin-dashboard .admin-natal-placement-selectors {
   display: grid;
   gap: var(--admin-space-2xl);
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
 }
 
 .admin-dashboard .admin-natal-placement-selectors label {
