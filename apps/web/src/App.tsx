@@ -167,7 +167,11 @@ import {
   skyPlacementDescriptionState,
   type SkyPlacementContentStatus
 } from "./features/sky/skyPlacementContentState";
-import { shouldRenderCanonicalSkyV4Placement } from "./features/sky/skyPlacementPreviewMode";
+import {
+  composeSkyPlacementFallbackParagraphs,
+  readSkyPlacementPreviewMode,
+  shouldRenderCanonicalSkyV4Placement
+} from "./features/sky/skyPlacementPreviewMode";
 import {
   skyV4Hemisphere,
   skyV4LunationContexts,
@@ -5162,6 +5166,21 @@ function currentSkyPlacementDetailArticle({
         normalizedParagraphs
       )
     : normalizedParagraphs;
+  const isCanonicalSkyV4Article = placementSection?.sourceKeys.includes("sky-v4-canonical-reader-v1") ?? false;
+  const isFallbackOnlyPreview = readSkyPlacementPreviewMode() === "fallback-only";
+  const fallbackDateLine = body.find((paragraph) => (
+    typeof paragraph === "string"
+    && /^[A-Z][a-z]+ \d{1,2}(?:, \d{4})? to [A-Z][a-z]+ \d{1,2}, \d{4}$/u.test(paragraph.trim())
+  ))?.trim();
+  const fallbackBody = body.filter((paragraph): paragraph is string => (
+    typeof paragraph === "string"
+    && paragraph.trim() !== fallbackDateLine
+    && comparableText(paragraph) !== comparableText(placementSection?.articleWindow ?? "")
+    && comparableText(paragraph) !== comparableText(transitRangeLabel ?? "")
+  ));
+  const displayBody = isCanonicalSkyV4Article && !isFallbackOnlyPreview
+    ? body
+    : composeSkyPlacementFallbackParagraphs(fallbackBody);
   const relatedAspectSections = isRegistryArticle
     ? []
     : relatedSkyAspectSectionsForPlacement({
@@ -5191,6 +5210,7 @@ function currentSkyPlacementDetailArticle({
     body: section.body,
     role: "main" as const
   }));
+  const displayArticleSections = isFallbackOnlyPreview ? [] : articleSections;
   const effectiveTransitRangeLabel = placementSection?.articleWindow ?? transitRangeLabel;
   const historicalLookback = null;
   return {
@@ -5204,7 +5224,11 @@ function currentSkyPlacementDetailArticle({
       articleMode === "archive" ? null : formatPlacementPosition(position).toUpperCase(),
       isRegistryArticle || isContinuousFallback ? null : effectiveTransitRangeLabel
     ].filter(Boolean).join(" · "),
-    duration: isRegistryArticle || isContinuousFallback ? undefined : effectiveTransitRangeLabel ?? undefined,
+    duration: isFallbackOnlyPreview
+      ? fallbackDateLine ?? effectiveTransitRangeLabel ?? undefined
+      : isRegistryArticle || isContinuousFallback
+        ? undefined
+        : effectiveTransitRangeLabel ?? undefined,
     tagline: placementSection?.tagline ?? undefined,
     keyDates: placementSection?.keyDates ?? [],
     keyDatesIntro: placementSection?.keyDatesIntro ?? null,
@@ -5213,12 +5237,12 @@ function currentSkyPlacementDetailArticle({
     risingHoroscopes: placementSection?.risingHoroscopes,
     articleAspectPassages: placementSection?.articleAspectPassages,
     retrograde: isRetrograde,
-    plainBody: articleSections.length === 0
+    plainBody: displayArticleSections.length === 0
       && normalized.sections.some((section) => section.layer === "authored"),
     suppressTldr: !placementSection?.tldr && authoredBody.length > 0 && !isRetrograde,
-    body: articleSections.length > 0 ? [] : body,
-    sections: articleSections.length > 0
-      ? [...articleSections, ...relatedAspectSections]
+    body: displayArticleSections.length > 0 ? [] : displayBody,
+    sections: displayArticleSections.length > 0
+      ? [...displayArticleSections, ...relatedAspectSections]
       : relatedAspectSections,
     relatedAspects: sourceGapAspectRows.length > 0
       ? {
