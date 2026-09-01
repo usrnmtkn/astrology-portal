@@ -35,6 +35,20 @@ assert.match(reviewPanel, /Render canonical preview/u);
 assert.match(reviewPanel, /\/api\/admin\/sky-v4-preview/u);
 assert.match(reviewPanel, /Stage preview · serving OFF/u);
 assert.match(reviewPanel, /Governed provenance/u);
+assert.match(reviewPanel, /Main reader copy/u);
+assert.match(reviewPanel, /Fallback copy/u);
+assert.match(reviewPanel, /Hook · Lived · Turn/u);
+assert.match(reviewPanel, /Review all 120 continuous fallbacks/u);
+assert.match(reviewPanel, /Continuous placement fallbacks/u);
+assert.match(reviewPanel, /fallback\.hook/u);
+assert.match(reviewPanel, /fallback\.lived/u);
+assert.match(reviewPanel, /fallback\.turn/u);
+assert.match(reviewPanel, /status=all&visibility=all&surface=sky&limit=1000/u);
+assert.match(reviewPanel, /packageDraft: nextDraft/u);
+assert.match(reviewPanel, /reviewStatus: "needs_review"/u);
+assert.match(reviewPanel, /approved serving baseline remains live/u);
+assert.match(reviewPanel, /announceContentUpdate\(\)/u);
+assert.doesNotMatch(reviewPanel, /serving_enabled\s*=/u);
 
 const generatedContentApi = fs.readFileSync(new URL("../api/admin/generated-content.ts", import.meta.url), "utf8");
 assert.match(generatedContentApi, /sky-v4-governed-aspect-draft/u);
@@ -48,4 +62,4 @@ const materializer = fs.readFileSync(new URL("./materialize-fallback-architectur
 assert.match(materializer, /skyV4GovernedAspectStudioRecord\(row\) \?\? row/u);
 assert.match(materializer, /contentKey\.startsWith\("sky-placement\/article\/"\)/u);
 
-console.log("SKY V4 production-parity preview API: PASS (auth required; canonical resolver shared; previews and edits remain non-serving drafts)");
+console.log("SKY V4 production-parity preview API: PASS (grouped continuous editor + 120-record fallback review save only non-serving drafts)");
