@@ -1895,7 +1895,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await assertNoBrowserErrors();
   });
 
-  test("transits to natal charts expose the assembled reading before its editable source rows", async ({ page }) => {
+  test("Personal Transits expose exact opened-card copy before advanced shared sources", async ({ page }) => {
     const assertNoBrowserErrors = await expectNoBrowserErrors(page);
     const writes: Array<{ method: string; payload: Record<string, unknown> }> = [];
     await page.setViewportSize({ width: 1308, height: 900 });
@@ -1912,11 +1912,25 @@ test.describe("content dashboard admin user flow case studies", () => {
 
     const finder = page.getByRole("region", { name: "Personal Transits source finder" });
     await expect(finder.getByRole("heading", { name: "Uranus square your Mercury", level: 3 })).toBeVisible();
-    const preview = finder.getByRole("region", { name: "Effective transit to natal reader preview" });
+    const exactReaderCopy = finder.getByRole("region", { name: "Exact Personal Transit reader copy" });
+    await expect(exactReaderCopy.getByRole("heading", { name: "Reader card copy" })).toBeVisible();
+    await expect(exactReaderCopy).toContainText("Exact Uranus square Mercury passage");
+    await expect(exactReaderCopy.getByRole("article", { name: "You Personal Transit preview" })).toContainText("Information arrives faster than decisions can keep up");
+    await exactReaderCopy.getByRole("tab", { name: "Friends" }).click();
+    await expect(exactReaderCopy.getByRole("article", { name: "Friends Personal Transit preview" })).toContainText("{{Name}}");
+    await exactReaderCopy.getByRole("button", { name: "Edit source row" }).click();
+    let editor = page.getByRole("dialog", { name: "Generated content editor" });
+    await expect(editor.getByLabel("Content key", { exact: true })).toHaveValue("authored/transit-aspect/uranus/mercury/hard");
+    await expect(editor.getByLabel("You view copy")).toHaveValue(/Information arrives faster than decisions can keep up/);
+    await expect(editor.getByLabel("Friend view copy")).toHaveValue(/\{\{Name\}\}/u);
+    await expect(editor.getByText(/Personal Transits require it in the first sentence/u)).toBeVisible();
+    await editor.getByRole("button", { name: "Close", exact: true }).click();
+
+    await finder.getByText("House-aware assembled version (advanced)", { exact: true }).click();
+    const preview = finder.getByRole("region", { name: "House-aware Personal Transit preview" });
     await expect(preview).toContainText("Complete composition");
     await expect(preview).toContainText("While Uranus is in your 1st house");
     await expect(preview).toContainText("Capture the lightning in notes and pick one idea to land.");
-    await expect(finder.getByRole("button", { name: "Edit source row" })).toHaveCount(4);
 
     const selectorLabels = await finder.locator(".admin-natal-placement-selectors label > span").allTextContents();
     expect(selectorLabels).toEqual([
@@ -1937,15 +1951,15 @@ test.describe("content dashboard admin user flow case studies", () => {
       { level: 3, text: "Uranus square your Mercury" }
     ]);
     const contentOrder = await finder.evaluate((region) => {
-      const readerPreview = region.querySelector('[aria-label="Effective transit to natal reader preview"]');
-      const sourceHeading = Array.from(region.querySelectorAll("h3")).find((heading) => heading.textContent?.trim() === "Editable passages in this Personal Transit");
-      return Boolean(readerPreview && sourceHeading && readerPreview.compareDocumentPosition(sourceHeading) & Node.DOCUMENT_POSITION_FOLLOWING);
+      const exactCopy = region.querySelector('[aria-label="Exact Personal Transit reader copy"]');
+      const advancedAssembly = Array.from(region.querySelectorAll("summary")).find((summary) => summary.textContent?.trim() === "House-aware assembled version (advanced)");
+      return Boolean(exactCopy && advancedAssembly && exactCopy.compareDocumentPosition(advancedAssembly) & Node.DOCUMENT_POSITION_FOLLOWING);
     });
-    expect(contentOrder, "reader preview precedes the editable source rows").toBe(true);
+    expect(contentOrder, "exact You and Friends copy precedes the advanced house-aware assembly").toBe(true);
 
     const livedEffect = finder.locator(".admin-natal-source-card", { hasText: "Uranus to Mercury hard-aspect effect" });
     await livedEffect.getByRole("button", { name: "Edit source row" }).click();
-    const editor = page.getByRole("dialog", { name: "Generated content editor" });
+    editor = page.getByRole("dialog", { name: "Generated content editor" });
     await expect(editor.getByRole("heading", { name: "Create fallback passage" })).toBeVisible();
     await expect(editor.getByLabel("Content key", { exact: true })).toHaveValue("fallback-hook/transit-effect-hard/uranus/mercury");
     await expect(editor.getByLabel("Reader copy")).toHaveValue(/Conversations jump lanes and ideas arrive mid-sentence/);
@@ -1977,7 +1991,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await editor.getByRole("button", { name: "Close", exact: true }).click();
 
     await page.setViewportSize({ width: 390, height: 844 });
-    await expect(finder.getByRole("heading", { name: "Uranus square your Mercury", level: 3 })).toBeVisible();
+    await expect(finder.getByRole("heading", { name: "Uranus square your Mercury", level: 3 }).first()).toBeVisible();
     await expectNoHorizontalOverflow(page, "Transit-to-natal Sky write-up workspace");
     await assertNoBrowserErrors();
   });
@@ -2091,25 +2105,91 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(editor.getByText("Unsaved changes", { exact: true })).toBeVisible();
   });
 
-  test("legacy transit searches and navigation lead directly to Transit to Natal Charts", async ({ page }) => {
+  test("legacy transit searches and navigation lead directly to Personal Transits", async ({ page }) => {
     await seedAdminApi(page);
     await expectAdminRouteLoads(page, "/admin/content#exact-content?category=Sky&q=cms%2Fpersonal-transit-aspect");
 
     const shortcut = page.getByRole("region", { name: "Transit writing workspace shortcut" });
-    await expect(shortcut.getByRole("heading", { name: "Transit to Natal Charts" })).toBeVisible();
+    await expect(shortcut.getByRole("heading", { name: "Personal Transits" })).toBeVisible();
     expect(await page.getByLabel("Category").locator("option").allTextContents()).toEqual(expect.arrayContaining([
       "Personal Transits (Transit to Natal)",
       "House Transits"
     ]));
-    await shortcut.getByRole("button", { name: "Open Transit to Natal Charts" }).click();
+    await shortcut.getByRole("button", { name: "Open Personal Transits" }).click();
     await expect(page.getByRole("tab", { name: "Personal Transits" })).toHaveAttribute("aria-selected", "true");
     await expect(page).toHaveURL(/#sky-writeups\?view=transits-to-natal$/u);
 
     const navigation = page.getByRole("navigation", { name: "Content operations" });
-    await expect(navigation.getByRole("button", { name: "Transit to Natal Charts" })).toHaveAttribute("aria-current", "page");
+    await expect(navigation.getByRole("button", { name: "Personal Transits" })).toHaveAttribute("aria-current", "page");
     await navigation.getByRole("button", { name: "House Transits" }).click();
     await expect(page.getByRole("tab", { name: "House Transits" })).toHaveAttribute("aria-selected", "true");
     await expect(page).toHaveURL(/#sky-writeups\?view=house-transits$/u);
+
+    await navigation.getByRole("button", { name: "Compatibility", exact: true }).click();
+    await expect(navigation.getByRole("button", { name: "Personal Transits" })).toHaveCount(0);
+    await expect(navigation.getByRole("button", { name: "House Transits" })).toHaveCount(0);
+  });
+
+  test("Between You Two exposes the reader card, directional sources, API CRUD, and hydration notice", async ({ page }) => {
+    const writes: Array<{ method: string; payload: Record<string, unknown> }> = [];
+    const assertNoBrowserErrors = await expectNoBrowserErrors(page);
+    await seedAdminApi(page, { onGeneratedContentWrite: (write) => writes.push(write) });
+    await expectAdminRouteLoads(page, "/admin/content#compatibility?view=between-you-two");
+
+    const navigation = page.getByRole("navigation", { name: "Content operations" });
+    await expect(navigation.getByRole("button", { name: "Between You Two" })).toHaveAttribute("aria-current", "page");
+    const finder = page.getByRole("region", { name: "Between You Two source finder" });
+    await finder.getByLabel("Between You Two transiting planet").selectOption("venus");
+    await finder.getByLabel("Between You Two transit aspect").selectOption("trine");
+    await finder.getByLabel("Between You Two endpoint owner").selectOption("friend");
+    await finder.getByLabel("Between You Two endpoint planet").selectOption("mars");
+    await finder.getByLabel("Between You Two activated planet").selectOption("sun");
+    await finder.getByLabel("Between You Two natal aspect").selectOption("conjunction");
+
+    const preview = finder.getByRole("region", { name: "Between You Two reader preview" });
+    await expect(preview.getByRole("heading", { name: "Venus trine Alisa's Mars" })).toBeVisible();
+    await expect(preview).toContainText("Calculated astrology fact, not editable");
+    await expect(preview).toContainText("What this activates");
+    await expect(preview).toContainText("Your Sun conjunct Alisa's Mars");
+
+    const effectSource = finder.locator(".admin-natal-source-card", { hasText: "Venus trine relationship effect" });
+    await expect(effectSource).toContainText("When their chart is contacted");
+    await expect(effectSource).toContainText("When your chart is contacted");
+    await effectSource.getByRole("button", { name: "Edit source row" }).click();
+    const editor = page.getByRole("dialog", { name: "Generated content editor" });
+    await expect(editor.getByLabel("Reader phrase · You")).toHaveValue(/remembers what you like/u);
+    await expect(editor.getByLabel("Reader phrase · They")).toHaveValue(/You remember the detail/u);
+    await editor.getByLabel("Reader phrase · You").fill("{{holder1}} remembers the exact detail that mattered.");
+    await editor.getByRole("button", { name: "Save revision" }).click();
+    await expect.poll(() => writes.length).toBe(1);
+    expect(writes[0]).toMatchObject({ method: "POST", payload: { contentKey: "fallback-hook/bond-effect-trine/venus" } });
+    await expect.poll(() => page.evaluate(() => window.localStorage.getItem("tldrastro:content-update"))).not.toBeNull();
+    const notice = JSON.parse((await page.evaluate(() => window.localStorage.getItem("tldrastro:content-update"))) ?? "{}");
+    expect(notice).toMatchObject({ contentKey: "fallback-hook/bond-effect-trine/venus", published: false });
+    await expect(editor.getByRole("button", { name: "Archive source" })).toBeVisible();
+    await editor.getByRole("button", { name: "Archive source" }).click();
+    await expect.poll(() => writes.length).toBe(2);
+    expect(writes[1]).toMatchObject({
+      method: "PATCH",
+      payload: {
+        sourceLifecycleAction: "archive",
+        sections: {
+          packageDraft: {
+            body_you: "{{holder1}} remembers the exact detail that mattered."
+          }
+        }
+      }
+    });
+    await expect(editor.getByRole("button", { name: "Restore as draft" })).toBeVisible();
+    await editor.getByRole("button", { name: "Restore as draft" }).click();
+    await expect.poll(() => writes.length).toBe(3);
+    expect(writes[2]).toMatchObject({ method: "PATCH", payload: { sourceLifecycleAction: "restore" } });
+    await editor.getByRole("button", { name: "Close", exact: true }).click();
+
+    await page.setViewportSize({ width: 390, height: 844 });
+    await expect(preview.getByRole("heading", { name: "Venus trine Alisa's Mars" })).toBeVisible();
+    await expectNoHorizontalOverflow(page, "Between You Two workspace and navigation");
+    await assertNoBrowserErrors();
   });
 
   test("article filters narrow by point, content system, and text search", async ({ page }) => {

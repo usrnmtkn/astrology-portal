@@ -486,53 +486,33 @@ const serialList = (items: string[]) => {
   return `${items.slice(0, -1).join(", ")}, and ${items.at(-1)}`;
 };
 
-const FRIEND_IMPERATIVE = /(^|[.!?]\s+|\n+)(Don't|Do not|Either|Stop|Keep|Let|Give|Take|Check|Say|Ask|Enjoy|Make|Go|Trust|Put|Use|Change|Tell|Be|Try|Add|Finish|Clear|Get|Notice|Remember|Decide|Test|Write|Walk|Sit|Come|Pick|Hit|Revisit|Eat|Start|See|Shake|Rest|Reschedule|Lead|Treat|Reduce|Stay|Run|Choose|Review|Pay|Complete|Separate|Begin|Send|Follow|Hold|Stick|Conserve|Reform|Enlist|Aim|Fight|Bring|Drain|Count|Read|Skip|Look|Call|Move|Leave|Postpone|Verify|Request|Delay|Spend|Accept|Speak|Expect|Renegotiate|Know|Direct)\b/g;
+const FRIEND_IMPERATIVE = /(^|[.!?]\s+|\n+)(Don't|Do not|Either|Stop|Keep|Let|Give|Take|Check|Say|Ask|Enjoy|Make|Go|Trust|Put|Use|Change|Tell|Be|Try|Add|Finish|Clear|Get|Notice|Remember|Decide|Test|Write|Walk|Sit|Come|Pick|Hit|Revisit|Eat|Start|See|Shake|Rest|Reschedule|Lead|Treat|Reduce|Stay|Run|Choose|Review|Pay|Complete|Separate|Begin|Send|Follow|Hold|Stick|Conserve|Reform|Enlist|Aim|Fight|Bring|Drain|Count|Read|Skip|Look|Call|Move|Leave|Postpone|Verify|Request|Delay|Spend|Accept|Speak|Expect|Renegotiate|Know|Direct|Help|Name|Resurface|Soak|Wear)\b/g;
 const FRIEND_REPORTED_SUBJECT_YOU = /\b(tell|tells|told|show|shows|showed|remind|reminds|reminded|teach|teaches|taught)\s+you\s+(are|were|have|had|can|could|will|would|should|may|might|must|do|did)\b/gi;
-const FRIEND_PREPOSITION_OBJECT_YOU = /\b(around|for|to|with|without|at|from|of|about|through|toward|towards|against|between|among|by|beside|behind|under|over|in|inside|outside|into|onto|off|near|within)\s+you\b/gi;
-const FRIEND_VERB_OBJECT_YOU = /\b(find|finds|found|finding|help|helps|helped|helping|give|gives|gave|giving|pull|pulls|pulled|pulling|support|supports|supported|supporting|affect|affects|affected|affecting|remind|reminds|reminded|reminding|satisfy|satisfies|satisfied|satisfying|cheer|cheers|cheered|cheering|ask|asks|asked|asking|tell|tells|told|telling|leave|leaves|left|leaving|show|shows|showed|showing|make|makes|made|making|let|lets|letting|keep|keeps|kept|keeping|cost|costs|costing|teach|teaches|taught|teaching|push|pushes|pushed|pushing|hold|holds|held|holding|stop|stops|stopped|stopping)\s+you\b/gi;
-
-function possessiveDisplayName(name: string) {
-  return `${name}'s`;
-}
+const FRIEND_OBJECT_BEFORE_MODAL_YOU = /\b(calm|calms|calmed|calming|satisfy|satisfies|satisfied|satisfying)\s+you\s+(are|were|have|had|can|could|will|would|should|may|might|must|do|did)\b/gi;
+const FRIEND_SUBJECT_YOU = /\byou\s+(are|were|have|had|can|could|will|would|should|may|might|must|do|did)\b/gi;
+const FRIEND_PREPOSITION_OBJECT_YOU = /\b(around|for|to|with|without|at|from|of|about|through|toward|towards|against|between|among|by|beside|behind|under|over|in|inside|outside|into|onto|on|off|near|within)\s+you\b/gi;
+const FRIEND_VERB_OBJECT_YOU = /\b(answer|answers|answered|answering|bother|bothers|bothered|bothering|bring|brings|brought|bringing|buy|buys|bought|buying|call|calls|called|calling|calm|calms|calmed|calming|cheer|cheers|cheered|cheering|connect|connects|connected|connecting|deaden|deadens|deadened|deadening|disappoint|disappoints|disappointed|disappointing|drain|drains|drained|draining|embarrass|embarrasses|embarrassed|embarrassing|expect|expects|expected|expecting|find|finds|found|finding|free|frees|freed|freeing|help|helps|helped|helping|hurt|hurts|hurting|idealize|idealizes|idealized|idealizing|give|gives|gave|giving|pull|pulls|pulled|pulling|support|supports|supported|supporting|affect|affects|affected|affecting|remind|reminds|reminded|reminding|satisfy|satisfies|satisfied|satisfying|ask|asks|asked|asking|tell|tells|told|telling|leave|leaves|left|leaving|show|shows|showed|showing|make|makes|made|making|let|lets|letting|keep|keeps|kept|keeping|cost|costs|costing|teach|teaches|taught|teaching|push|pushes|pushed|pushing|hold|holds|held|holding|offer|offers|offered|offering|persuade|persuades|persuaded|persuading|read|reads|reading|release|releases|released|releasing|require|requires|required|requiring|resist|resists|resisted|resisting|return|returns|returned|returning|run|runs|ran|running|saw|see|sees|seen|seeing|seek|seeks|sought|seeking|stop|stops|stopped|stopping|surprise|surprises|surprised|surprising|take|takes|took|taken|taking|tempt|tempts|tempted|tempting|trust|trusts|trusted|trusting|understand|understands|understood|understanding|wreck|wrecks|wrecked|wrecking)\s+you\b/gi;
 
 export function friendVoiceFromReaderCopy(body: string, name: string) {
-  let named = false;
-  const namePossessive = possessiveDisplayName(name);
-  const nameForPossessive = (source: string) => {
-    if (named) return /^[A-Z]/.test(source) ? "Their" : "their";
-    named = true;
-    return namePossessive;
-  };
-  const nameForContraction = (verb: string) => {
-    if (named) return `they${verb}`;
-    named = true;
-    return `${name} ${verb === "'re" ? "is" : verb === "'ve" ? "has" : verb === "'ll" ? "will" : "would"}`;
-  };
-  const nameForObject = () => {
-    const objectReference = named ? "them" : name;
-    named = true;
-    return objectReference;
-  };
-
+  void name;
   let rendered = body
     .replace(/\byourself\b/gi, "themselves")
     .replace(/\byourselves\b/gi, "themselves")
     .replace(/\byours\b/gi, "theirs")
-    .replace(/\byou('re|’re|'ve|’ve|'ll|’ll|'d|’d)\b/gi, (_, verb: string) => (
-      nameForContraction(verb.toLowerCase().replace("’", "'"))
-    ))
-    .replace(/\byour\b/gi, (source: string) => nameForPossessive(source))
+    .replace(/\byou('re|’re|'ve|’ve|'ll|’ll|'d|’d)\b/gi, (_, verb: string) => `they${verb.toLowerCase().replace("’", "'")}`)
+    .replace(/\byour\b/gi, (source: string) => (/^[A-Z]/u.test(source) ? "Their" : "their"))
     .replace(
       FRIEND_REPORTED_SUBJECT_YOU,
       (_, governor: string, auxiliary: string) => `${governor} they ${auxiliary}`
     )
-    .replace(FRIEND_PREPOSITION_OBJECT_YOU, (_, governor: string) => `${governor} ${nameForObject()}`)
-    .replace(FRIEND_VERB_OBJECT_YOU, (_, governor: string) => `${governor} ${nameForObject()}`)
+    .replace(FRIEND_PREPOSITION_OBJECT_YOU, (_, governor: string) => `${governor} them`)
+    .replace(FRIEND_OBJECT_BEFORE_MODAL_YOU, (_, governor: string, auxiliary: string) => `${governor} them ${auxiliary}`)
+    .replace(FRIEND_SUBJECT_YOU, (_, auxiliary: string) => `they ${auxiliary}`)
+    .replace(FRIEND_VERB_OBJECT_YOU, (_, governor: string) => `${governor} them`)
     .replace(/\byou\b/gi, (source: string) => (/^[A-Z]/.test(source) ? "They" : "they"));
 
   rendered = rendered.replace(FRIEND_IMPERATIVE, (_, prefix: string, verb: string) => {
-    const subject = named ? "They" : name;
-    named = true;
+    const subject = "They";
     const normalizedVerb = verb.toLowerCase();
 
     if (normalizedVerb === "don't" || normalizedVerb === "do not") {
@@ -1076,8 +1056,9 @@ export function createTransitSynastryRenderer(
   }
 
   function renderTransitAspect({ transiting, natal, aspect, variant, pass, sign, isRetrograde, window: win, voice = "you" }: TransitAspectFacts): TransitRenderResult {
-    // voice: "you" (reader) or a friend's display name. Friend views use the same approved
-    // authored unit, adapted deterministically to third person when no authored friend body exists.
+    // voice: "you" (reader) or a friend's display name. Friend views may use an exact
+    // authored unit only when it has an explicit body_they. Reader copy is never converted
+    // into friend copy; missing friend voice continues to the governed fallback composer.
     const v = voice === "you" ? "you" : "they";
     const otherPoss = v === "they" ? `${voice}'s` : null;
     const g = GROUP[aspect] ?? aspect; // accepts group names directly
@@ -1123,11 +1104,12 @@ export function createTransitSynastryRenderer(
       // {{aspectWord}} and {{untilDate}} slots so the closer names the exact aspect and window.
       const AW = { conjunction: "conjunct", square: "square", opposition: "opposite", trine: "trine", sextile: "sextile" };
       const untilDate = win ? String(win).replace(/^until\s+/i, "") : null;
-      const readerBody = c.body_you ?? c.body;
-      if (!readerBody) throw new SourceGapError(`SOURCE_GAP: transit aspect ${c.contentKey} has no body`);
-      let aBody = v === "you"
-        ? readerBody
-        : fillKeep(c.body_they ?? friendVoiceFromReaderCopy(readerBody, voice), { Name: voice });
+      const authoredBody = v === "you" ? (c.body_you ?? c.body) : c.body_they;
+      if (!authoredBody) {
+        if (v === "they") continue;
+        throw new SourceGapError(`SOURCE_GAP: transit aspect ${c.contentKey} has no body`);
+      }
+      let aBody = v === "you" ? authoredBody : fillKeep(authoredBody, { Name: voice });
       aBody = aBody.replace(/\{\{aspectWord\}\}/g, AW[aspect] ?? aspect);
       aBody = untilDate ? aBody.replace(/\{\{untilDate\}\}/g, untilDate) : aBody.replace(/ until \{\{untilDate\}\}/g, "");
       // Aspect-gated inserts (owner 2026-07-28): exact-aspect-only paragraphs appended to
@@ -1137,7 +1119,7 @@ export function createTransitSynastryRenderer(
         const readerInsert = gatedInsert.body_you ?? gatedInsert.body;
         const insBody = v === "you"
           ? readerInsert
-          : gatedInsert.body_they ?? (readerInsert ? friendVoiceFromReaderCopy(readerInsert, voice) : null);
+          : gatedInsert.body_they ? fillKeep(gatedInsert.body_they, { Name: voice }) : null;
         if (insBody) aBody = `${aBody}\n\n${insBody}`;
       }
       // Fog-decision note (owner 2026-07-28): rotates one of four variants under Neptune pressure cards.
@@ -1147,7 +1129,7 @@ export function createTransitSynastryRenderer(
         const fogRow = hooks.get(`fallback-hook/fog-note/variant-${fnIdx}`);
         const fogNote = v === "you"
           ? fogRow?.body_you
-          : fogRow?.body_they ?? (fogRow?.body_you ? friendVoiceFromReaderCopy(fogRow.body_you, voice) : null);
+          : fogRow?.body_they ? fillKeep(fogRow.body_they, { Name: voice }) : null;
         if (fogNote) aBody = `${aBody}\n\n${fogNote}`;
       }
       const authoredHeadline = v === "you"
@@ -1208,7 +1190,9 @@ export function createTransitSynastryRenderer(
       const target = v === "you" ? `your natal ${ctx.natalTitle}` : `${otherPoss} natal ${ctx.natalTitle}`;
       const timing = ctx.timeInline ? ` ${ctx.timeInline}` : "";
       const mechanics = `${String(ctx.transitRef).replace(/^./, (char) => char.toUpperCase())} is ${AVERB[aspect]} ${target}${timing}.`;
-      body = `${ctx.transitEffectLine} ${mechanics}`;
+      body = v === "you"
+        ? `${ctx.transitEffectLine} ${mechanics}`
+        : `${mechanics} ${ctx.transitEffectLine}`;
     } else {
       body = fill(v === "you" ? (T.body_you ?? T.body) : (T.body_they ?? T.body), ctx);
     }

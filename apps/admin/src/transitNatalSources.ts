@@ -132,8 +132,8 @@ export function transitNatalSourceGroups(selection: TransitNatalSelection): Tran
   return [
     {
       key: "composition",
-      label: "Editable passages in this Personal Transit",
-      description: "Readers see one paragraph. Content Studio combines these four saved passages after the chart engine supplies the two houses, aspect, and timing.",
+      label: "House-aware assembled version (advanced)",
+      description: "Some placement surfaces assemble these four shared blocks when a transit house is available. Editing one block changes every house-aware Personal Transit that reuses it.",
       sources: [
         {
           id: "frame",
@@ -169,13 +169,13 @@ export function transitNatalSourceGroups(selection: TransitNatalSelection): Tran
     },
     {
       key: "fallback",
-      label: "Alternate complete write-up (advanced)",
-      description: "This is used only when the four-part Personal Transit cannot be completed, or when the transit is opened without house information.",
+      label: "Exact You and Friends transit write-up",
+      description: "This exact aspect passage is the main interpretation when a reader opens the transit from You or Friends. The generic template is used only when the exact passage is unavailable.",
       sources: [
         {
           id: "standalone",
-          label: `Standalone ${planet} ${selection.aspect} ${natalPoint} passage`,
-          scope: "An authored complete passage can replace the generic standalone transit-aspect template.",
+          label: `Exact ${planet} ${selection.aspect} ${natalPoint} passage`,
+          scope: "Edit this passage to change the opened You or Friends transit interpretation for this exact planet, natal point, and aspect.",
           candidateKeys: [
             `authored/transit-aspect/${selection.planet}/${selection.natalPoint}/${selection.aspect}`,
             `authored/transit-aspect/${selection.planet}/${selection.natalPoint}/${family}`
@@ -183,8 +183,8 @@ export function transitNatalSourceGroups(selection: TransitNatalSelection): Tran
         },
         {
           id: "template",
-          label: "Standalone transit-aspect template",
-          scope: "Controls the fallback sentence order for transit-to-natal pages without a complete authored passage.",
+          label: "Generic transit-aspect fallback template",
+          scope: "Used only when the exact transit passage above is unavailable.",
           candidateKeys: ["fallback-template/transit.aspect"]
         }
       ]

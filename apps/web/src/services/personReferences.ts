@@ -230,7 +230,7 @@ export function findPronounGrammarIssues(text: string): PronounGrammarIssue[] {
     {
       label: "object pronoun used as subject",
       pattern: /\b(?:her|him|them)\s+(?:is|are|was|were|has|have|can|may|will|would|could|should|needs?|wants?|moves?|lives?|acts?|builds?|learns?|notices?)\b/gi,
-      ignorePrefix: /\b(?:around|for|to|with|without|at|from|of|about|through|toward|towards|against|between|among|by|beside|behind|under|over|into|onto|off|near|within|let|lets|letting|make|makes|made|making|help|helps|helped|helping|allow|allows|allowed|allowing|satisfy|satisfies|satisfied|satisfying)\s+$/i
+      ignorePrefix: /\b(?:around|for|to|with|without|at|from|of|about|through|toward|towards|against|between|among|by|beside|behind|under|over|into|onto|on|off|near|within|let|lets|letting|make|makes|made|making|help|helps|helped|helping|allow|allows|allowed|allowing|calm|calms|calmed|calming|find|finds|found|finding|give|gives|gave|giving|show|shows|showed|showing|tell|tells|told|telling|keep|keeps|kept|keeping|support|supports|supported|supporting|affect|affects|affected|affecting|remind|reminds|reminded|reminding|satisfy|satisfies|satisfied|satisfying)\s+$/i
     }
   ];
 

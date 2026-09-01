@@ -7982,6 +7982,26 @@ body,
   min-height: var(--admin-control-height-lg);
 }
 
+.admin-dashboard .admin-transit-workspace-steps {
+  color: var(--admin-ui-muted);
+  display: grid;
+  gap: var(--admin-space-sm);
+  margin: var(--admin-space-lg) 0;
+  padding-left: var(--admin-space-3xl);
+}
+
+.admin-dashboard .admin-transit-workspace-steps strong {
+  color: var(--admin-ui-text);
+}
+
+.admin-dashboard .admin-transit-shared-sources {
+  border-top-color: var(--admin-ui-border-strong);
+}
+
+.admin-dashboard .admin-transit-exact-source {
+  border-color: var(--admin-ui-info-border);
+}
+
 .admin-dashboard :where(.admin-breadcrumb, .admin-eyebrow, label span, .admin-metadata-field span, .admin-field-wide > span) {
   color: var(--admin-ui-subtle);
   font-family: var(--font-label);
@@ -10962,6 +10982,49 @@ body,
   border-color: var(--admin-ui-border-strong);
   color: var(--admin-ui-text);
   width: 100%;
+}
+
+.admin-dashboard .admin-between-you-two-preview {
+  background: var(--admin-ui-surface-2);
+  border: var(--border-width-thin) solid var(--admin-ui-border-strong);
+  border-radius: var(--admin-ui-radius-lg);
+  display: grid;
+  gap: var(--admin-space-xl);
+  padding: var(--admin-space-3xl);
+}
+
+.admin-dashboard .admin-between-you-two-preview > :is(h3, h4, p) {
+  margin: 0;
+}
+
+.admin-dashboard .admin-calculated-fact {
+  background: var(--admin-ui-surface);
+  border: var(--border-width-thin) dashed var(--admin-ui-border-strong);
+  border-radius: var(--admin-ui-radius-md);
+  display: grid;
+  gap: var(--admin-space-sm);
+  padding: var(--admin-space-xl);
+}
+
+.admin-dashboard .admin-calculated-fact strong {
+  color: var(--admin-ui-subtle);
+  font-size: var(--admin-ui-type-caption);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.admin-dashboard .admin-between-you-two-voices {
+  display: grid;
+  gap: var(--admin-space-lg);
+}
+
+.admin-dashboard .admin-between-you-two-voices > div {
+  min-width: 0;
+}
+
+.admin-dashboard .admin-between-you-two-voices strong {
+  color: var(--admin-ui-subtle);
+  font-size: var(--admin-ui-type-caption);
 }
 
 .admin-dashboard .admin-natal-source-advanced summary {

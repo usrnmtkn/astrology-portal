@@ -145,6 +145,20 @@ import {
   type HouseTransitMotion,
   type HouseTransitSelection
 } from "./houseTransitSources";
+import {
+  betweenYouTwoAspects,
+  betweenYouTwoPlanets,
+  betweenYouTwoSourceGroups,
+  betweenYouTwoTitle,
+  betweenYouTwoTransitingPlanets,
+  renderBetweenYouTwoPreview,
+  type BetweenYouTwoAspect,
+  type BetweenYouTwoEndpointOwner,
+  type BetweenYouTwoPlanet,
+  type BetweenYouTwoSelection,
+  type BetweenYouTwoSourceRecord,
+  type BetweenYouTwoTransitPlanet
+} from "./betweenYouTwoSources";
 
 import type {
   WritingSurfaceAdminAccess,
@@ -263,6 +277,7 @@ type SkyWriteupWorkspaceView = "catalog" | "transits-to-natal" | "house-transits
 type AdminCompatibilitySectionFilter = "all" | "content" | "fallback-hooks" | "vocabulary" | "slots";
 type AdminCompatibilitySort = "updated-desc" | "updated-asc" | "title-asc" | "status" | "source";
 type AdminCompatibilityCreateKind = "content" | "vocabulary" | "fallback-hook" | "template";
+type AdminCompatibilityWorkspaceView = "catalog" | "between-you-two";
 type SkyVoiceQueueView = "all" | "composite" | "upcoming" | "needs-review" | "audit" | "live-omissions";
 type ContentLibraryView = "all" | "compatibility";
 type SkyReviewHorizonOccurrence = {
@@ -743,7 +758,7 @@ function parseAdminHash() {
   const hashBody = rawHash.replace(/^#/, "");
   const [key = "review-queue", query = ""] = hashBody.split("?");
   const params = new URLSearchParams(query);
-  if (key === "compatibility") params.set("view", "compatibility");
+  if (key === "compatibility" && !params.has("view")) params.set("view", "compatibility");
   if (key === "composite-review") params.set("view", "composite");
   return {
     page: adminPageByHashKey[key] ?? "reviewQueue",
@@ -1105,9 +1120,14 @@ function draftIsFallbackArchitectureV3(draft: AdminDraft) {
 }
 
 function packageReviewStatusForDraft(draft: AdminDraft) {
+  const persistedReviewStatus = sourceSnapshotString(draft.sourceSnapshot, "review_status")
+    || (typeof draft.facts?.review_status === "string" ? draft.facts.review_status : "");
+  // Lifecycle state outranks a retained proposal. Archiving is reversible, so
+  // packageDraft remains available for restore, but it must not make an
+  // archived source look active or leave the editor stuck on "Archive source".
+  if (persistedReviewStatus === "deprecated") return "deprecated";
   if (objectRecord(objectRecord(draft.sections)?.packageDraft)) return "needs_review";
-  return sourceSnapshotString(draft.sourceSnapshot, "review_status")
-    || (typeof draft.facts?.review_status === "string" ? draft.facts.review_status : "")
+  return persistedReviewStatus
     || (typeof draftPackageRecord(draft).review_status === "string" ? draftPackageRecord(draft).review_status as string : "")
     || "needs_review";
 }
@@ -1544,6 +1564,7 @@ function isCompatibilityRow(row: AdminGeneratedContentRow) {
     || contentKey.startsWith("authored/compat-")
     || row.event_type === "friends.compatibility.planet-card"
     || row.block_type === "compatibility_planet_card"
+    || contentKey.startsWith("fallback-hook/bond-effect-")
     || /^fallback-hook\/(?:friends|relationship|synastry)[./-]/.test(contentKey)
     || contentKey.startsWith("fallback-hook/pair-daily/")
     || contentKey.startsWith("vocab/relationship/")
@@ -1885,6 +1906,16 @@ type AdminHookCatalogBodyPayload = {
   schemaVersion: 1;
   rows: Array<{ key: string; body: string }>;
 };
+type AdminTransitAspectCatalogRow = {
+  key: string;
+  body: string;
+  packageRecord: Record<string, unknown>;
+};
+type AdminTransitAspectCatalogPayload = {
+  schemaVersion: 1;
+  packageVersion: string;
+  rows: AdminTransitAspectCatalogRow[];
+};
 type AdminSourceDraft = {
   id: string;
   canonicalId: string;
@@ -1943,6 +1974,23 @@ async function loadAdminHookCatalogBodies(surface: AdminHookCatalogDomain): Prom
   }
 
   return new Map(payload.rows.map(({ key, body }) => [key, body]));
+}
+
+async function loadAdminTransitAspectCatalog(): Promise<Map<string, AdminTransitAspectCatalogRow>> {
+  const payload = await adminHookCatalogJson<AdminTransitAspectCatalogPayload>("admin-transit-aspect-catalog-v1.json");
+  if (payload.schemaVersion !== 1 || !Array.isArray(payload.rows)) {
+    throw new Error("Authored Personal Transit catalog failed validation.");
+  }
+
+  return new Map(payload.rows.map((row) => [row.key, row]));
+}
+
+async function loadAdminBetweenYouTwoCatalog(): Promise<Map<string, AdminTransitAspectCatalogRow>> {
+  const payload = await adminHookCatalogJson<AdminTransitAspectCatalogPayload>("admin-between-you-two-catalog-v1.json");
+  if (payload.schemaVersion !== 1 || !Array.isArray(payload.rows)) {
+    throw new Error("Between You Two source catalog failed validation.");
+  }
+  return new Map(payload.rows.map((row) => [row.key, row]));
 }
 
 async function loadAdminSourceDraftCatalog(secret: string): Promise<AdminSourceDraft[]> {
@@ -2634,6 +2682,79 @@ function emptyDraftForHook(item: HookCatalogItem): AdminDraft {
   };
 }
 
+function emptyDraftForAuthoredTransitAspect(source: AdminTransitAspectCatalogRow, label: string): AdminDraft {
+  const packageRecord = source.packageRecord;
+  const reviewStatus = typeof packageRecord.review_status === "string" ? packageRecord.review_status : "needs_review";
+  return {
+    id: null,
+    contentKey: source.key,
+    surface: "you",
+    mode: "feed",
+    status: "DRAFT",
+    headline: typeof packageRecord.headline === "string" && packageRecord.headline.trim() ? packageRecord.headline : label,
+    summary: typeof packageRecord.summary === "string" ? packageRecord.summary : "",
+    body: source.body,
+    lane: "reference",
+    reviewState: "needs-review",
+    blockType: "fallback_article",
+    promptVersion: "admin-transit-aspect-catalog-v1",
+    sections: { packageRecord },
+    facts: {
+      fallbackArchitectureV3: true,
+      packageBucket: "authored-content",
+      content_role: "full_copy",
+      review_status: reviewStatus
+    },
+    reviewerNotes: "",
+    sourceSnapshot: {
+      contentType: "authored-content",
+      content_role: "full_copy",
+      review_status: reviewStatus,
+      sourcePackage: "tldrastro-fallback-architecture-v3",
+      sourceFile: "bundled-transit-core-authored-cards-v3.json",
+      authoringSource: "admin-dashboard"
+    }
+  };
+}
+
+function emptyDraftForPackagedRelationshipHook(source: AdminTransitAspectCatalogRow, label: string): AdminDraft {
+  const packageRecord = source.packageRecord;
+  const reviewStatus = typeof packageRecord.review_status === "string" ? packageRecord.review_status : "needs_review";
+  const bodyYou = typeof packageRecord.body_you === "string" ? packageRecord.body_you : source.body;
+  const bodyThey = typeof packageRecord.body_they === "string" ? packageRecord.body_they : "";
+  return {
+    id: null,
+    contentKey: source.key,
+    surface: "relationship",
+    mode: "feed",
+    status: "DRAFT",
+    headline: label,
+    summary: "Between You Two relationship transit source.",
+    body: bodyYou,
+    lane: "reference",
+    reviewState: "needs-review",
+    blockType: "fallback_hook",
+    promptVersion: "admin-between-you-two-catalog-v1",
+    sections: { packageRecord, body_you: bodyYou, body_they: bodyThey },
+    facts: {
+      fallbackArchitectureV3: true,
+      packageBucket: "relationship-hooks",
+      content_role: "fallback_hook",
+      review_status: reviewStatus
+    },
+    reviewerNotes: "",
+    sourceSnapshot: {
+      contentType: "fallback-system",
+      content_role: "fallback_hook",
+      review_status: reviewStatus,
+      sourcePackage: "tldrastro-fallback-architecture-v3",
+      sourceFile: "bundled-relationship-hook-rows-v3.json",
+      authoringSource: "admin-dashboard",
+      route: "friends.transits.between-you-two"
+    }
+  };
+}
+
 function useSavedSecret() {
   const [secret, setSecret] = useState(() => {
     const localSecret = normalizeAdminSecret(getLocalContentGenerationSecret());
@@ -2726,11 +2847,13 @@ export function GeneratedContentAdminDashboard() {
   const [transitNatalAspect, setTransitNatalAspect] = useState<TransitNatalAspect | "">("");
   const [transitNatalPoint, setTransitNatalPoint] = useState<TransitNatalPoint | "">("");
   const [transitNatalNatalHouse, setTransitNatalNatalHouse] = useState<TransitNatalHouse | "">("");
+  const [transitNatalVoice, setTransitNatalVoice] = useState<"you" | "friends">("you");
   const [houseTransitPlanet, setHouseTransitPlanet] = useState<TransitNatalPlanet | "">("");
   const [houseTransitSign, setHouseTransitSign] = useState<TransitNatalSign | "">("");
   const [houseTransitHouse, setHouseTransitHouse] = useState<TransitNatalHouse | "">("");
   const [houseTransitMotion, setHouseTransitMotion] = useState<HouseTransitMotion>("direct");
   const [transitNatalSourceBodies, setTransitNatalSourceBodies] = useState<Map<string, string>>(() => new Map());
+  const [transitNatalAuthoredSources, setTransitNatalAuthoredSources] = useState<Map<string, AdminTransitAspectCatalogRow>>(() => new Map());
   const [articleContentSystemFilter, setArticleContentSystemFilter] = useState<AdminContentSystemFilter>("all");
   const [articleQuery, setArticleQuery] = useState("");
   const [compatibilitySectionFilter, setCompatibilitySectionFilter] = useState<AdminCompatibilitySectionFilter>("all");
@@ -2738,6 +2861,14 @@ export function GeneratedContentAdminDashboard() {
   const [compatibilityPlanetFilter, setCompatibilityPlanetFilter] = useState<AdminArticlePointFilter>("all");
   const [compatibilitySort, setCompatibilitySort] = useState<AdminCompatibilitySort>("updated-desc");
   const [compatibilityQuery, setCompatibilityQuery] = useState("");
+  const [compatibilityWorkspaceView, setCompatibilityWorkspaceView] = useState<AdminCompatibilityWorkspaceView>("catalog");
+  const [betweenYouTwoTransiting, setBetweenYouTwoTransiting] = useState<BetweenYouTwoTransitPlanet | "">("");
+  const [betweenYouTwoTransitAspect, setBetweenYouTwoTransitAspect] = useState<BetweenYouTwoAspect | "">("");
+  const [betweenYouTwoEndpointPlanet, setBetweenYouTwoEndpointPlanet] = useState<BetweenYouTwoPlanet | "">("");
+  const [betweenYouTwoEndpointOwner, setBetweenYouTwoEndpointOwner] = useState<BetweenYouTwoEndpointOwner>("friend");
+  const [betweenYouTwoActivatedPlanet, setBetweenYouTwoActivatedPlanet] = useState<BetweenYouTwoPlanet | "">("");
+  const [betweenYouTwoNatalAspect, setBetweenYouTwoNatalAspect] = useState<BetweenYouTwoAspect | "">("");
+  const [betweenYouTwoSources, setBetweenYouTwoSources] = useState<Map<string, AdminTransitAspectCatalogRow>>(() => new Map());
   const [selectedIds, setSelectedIds] = useState<Set<string>>(() => new Set());
   const [bulkStatus, setBulkStatus] = useState<GeneratedContentStatus>("REVIEWED");
   const [selectedRowId, setSelectedRowId] = useState<string | null>(null);
@@ -3281,17 +3412,37 @@ export function GeneratedContentAdminDashboard() {
   }, []);
 
   useEffect(() => {
-    if (activePage !== "skyWriteups" || skyWriteupWorkspaceView === "catalog" || transitNatalSourceBodies.size > 0) return;
+    if (
+      activePage !== "skyWriteups"
+      || skyWriteupWorkspaceView === "catalog"
+      || (transitNatalSourceBodies.size > 0 && transitNatalAuthoredSources.size > 0)
+    ) return;
     let cancelled = false;
-    void loadAdminHookCatalogBodies("sky")
-      .then((bodies) => {
-        if (!cancelled) setTransitNatalSourceBodies(bodies);
+    void Promise.all([loadAdminHookCatalogBodies("sky"), loadAdminTransitAspectCatalog()])
+      .then(([bodies, authoredSources]) => {
+        if (!cancelled) {
+          setTransitNatalSourceBodies(bodies);
+          setTransitNatalAuthoredSources(authoredSources);
+        }
       })
       .catch((error) => {
         if (!cancelled) setMessage(error instanceof Error ? error.message : "Could not load transit-to-natal source rows.");
       });
     return () => { cancelled = true; };
-  }, [activePage, skyWriteupWorkspaceView, transitNatalSourceBodies.size]);
+  }, [activePage, skyWriteupWorkspaceView, transitNatalAuthoredSources.size, transitNatalSourceBodies.size]);
+
+  useEffect(() => {
+    if (activePage !== "compatibility" || compatibilityWorkspaceView !== "between-you-two" || betweenYouTwoSources.size > 0) return;
+    let cancelled = false;
+    void loadAdminBetweenYouTwoCatalog()
+      .then((sources) => {
+        if (!cancelled) setBetweenYouTwoSources(sources);
+      })
+      .catch((error) => {
+        if (!cancelled) setMessage(error instanceof Error ? error.message : "Could not load Between You Two source rows.");
+      });
+    return () => { cancelled = true; };
+  }, [activePage, betweenYouTwoSources.size, compatibilityWorkspaceView]);
 
   useEffect(() => {
     const emergencySecret = secret;
@@ -3484,6 +3635,12 @@ export function GeneratedContentAdminDashboard() {
     const compatibilitySection = params.get("section") as AdminCompatibilitySectionFilter | null;
     const compatibilityPlanet = params.get("planet") as AdminArticlePointFilter | null;
     const compatibilitySortParam = params.get("sort") as AdminCompatibilitySort | null;
+    const betweenYouTwoTransitingParam = params.get("transit") as BetweenYouTwoTransitPlanet | null;
+    const betweenYouTwoTransitAspectParam = params.get("transitAspect") as BetweenYouTwoAspect | null;
+    const betweenYouTwoEndpointPlanetParam = params.get("endpoint") as BetweenYouTwoPlanet | null;
+    const betweenYouTwoEndpointOwnerParam = params.get("endpointOwner") as BetweenYouTwoEndpointOwner | null;
+    const betweenYouTwoActivatedPlanetParam = params.get("activated") as BetweenYouTwoPlanet | null;
+    const betweenYouTwoNatalAspectParam = params.get("natalAspect") as BetweenYouTwoAspect | null;
     const openedFromUnresolved = page === "content" && params.get("from") === "unresolved";
     const natalPlanet = params.get("planet") as NatalPlacementPlanet | null;
     const natalSign = params.get("sign") as NatalPlacementSign | null;
@@ -3498,6 +3655,7 @@ export function GeneratedContentAdminDashboard() {
     const transitAspect = params.get("aspect") as TransitNatalAspect | null;
     const natalPoint = params.get("natal") as TransitNatalPoint | null;
     const transitNatalHouse = params.get("natalHouse") as TransitNatalHouse | null;
+    const transitNatalVoiceParam = params.get("voice");
     const houseTransitMotionParam = params.get("motion") as HouseTransitMotion | null;
 
     setActivePage(page);
@@ -3534,6 +3692,7 @@ export function GeneratedContentAdminDashboard() {
     setTransitNatalAspect(page === "skyWriteups" && transitAspect && transitNatalAspects.includes(transitAspect) ? transitAspect : "");
     setTransitNatalPoint(page === "skyWriteups" && natalPoint && transitNatalPoints.includes(natalPoint) ? natalPoint : "");
     setTransitNatalNatalHouse(page === "skyWriteups" && transitNatalHouse && transitNatalHouses.includes(transitNatalHouse) ? transitNatalHouse : "");
+    setTransitNatalVoice(page === "skyWriteups" && transitNatalVoiceParam === "friends" ? "friends" : "you");
     setHouseTransitPlanet(page === "skyWriteups" && view === "house-transits" && transitPlanet && houseTransitPlanets.includes(transitPlanet) ? transitPlanet : "");
     setHouseTransitSign(page === "skyWriteups" && view === "house-transits" && transitSign && houseTransitSigns.includes(transitSign) ? transitSign : "");
     setHouseTransitHouse(page === "skyWriteups" && view === "house-transits" && transitHouse && houseTransitHouses.includes(transitHouse) ? transitHouse : "");
@@ -3543,12 +3702,20 @@ export function GeneratedContentAdminDashboard() {
     setSurfaceStatusFilter(status && ["all", "complete", "partial", "missing"].includes(status) ? status : "all");
     setVocabularyCategory(vocabularyCategoryFromParams(page, params));
     if (page === "compatibility") {
+      setCompatibilityWorkspaceView(view === "between-you-two" ? "between-you-two" : "catalog");
       setCompatibilitySectionFilter(compatibilitySection && compatibilitySections.some((filter) => filter.key === compatibilitySection) ? compatibilitySection : "all");
       setCompatibilityStatusFilter(status && (status === "all" || contentStatuses.includes(status as GeneratedContentStatus)) ? status as GeneratedContentStatus | "all" : "all");
       setCompatibilityPlanetFilter(compatibilityPlanet && articlePointFilters.some((filter) => filter.key === compatibilityPlanet) ? compatibilityPlanet : "all");
       setCompatibilitySort(compatibilitySortParam && compatibilitySortOptions.some((filter) => filter.key === compatibilitySortParam) ? compatibilitySortParam : "updated-desc");
       setCompatibilityQuery(search ?? "");
+      setBetweenYouTwoTransiting(betweenYouTwoTransitingParam && betweenYouTwoTransitingPlanets.includes(betweenYouTwoTransitingParam) ? betweenYouTwoTransitingParam : "");
+      setBetweenYouTwoTransitAspect(betweenYouTwoTransitAspectParam && betweenYouTwoAspects.includes(betweenYouTwoTransitAspectParam) ? betweenYouTwoTransitAspectParam : "");
+      setBetweenYouTwoEndpointPlanet(betweenYouTwoEndpointPlanetParam && betweenYouTwoPlanets.includes(betweenYouTwoEndpointPlanetParam) ? betweenYouTwoEndpointPlanetParam : "");
+      setBetweenYouTwoEndpointOwner(betweenYouTwoEndpointOwnerParam === "reader" ? "reader" : "friend");
+      setBetweenYouTwoActivatedPlanet(betweenYouTwoActivatedPlanetParam && betweenYouTwoPlanets.includes(betweenYouTwoActivatedPlanetParam) ? betweenYouTwoActivatedPlanetParam : "");
+      setBetweenYouTwoNatalAspect(betweenYouTwoNatalAspectParam && betweenYouTwoAspects.includes(betweenYouTwoNatalAspectParam) ? betweenYouTwoNatalAspectParam : "");
     } else {
+      setCompatibilityWorkspaceView("catalog");
       setCompatibilitySectionFilter("all");
       setCompatibilityStatusFilter("all");
       setCompatibilityPlanetFilter("all");
@@ -4105,6 +4272,15 @@ export function GeneratedContentAdminDashboard() {
   ) {
     const activeDraft = draftOverride ?? draft;
     if (!activeDraft) return null;
+    const friendCopy = packageFieldString(activeDraft, "body_they").trim();
+    if (
+      activeDraft.contentKey.startsWith("authored/transit-aspect/")
+      && friendCopy
+      && !/\{\{Name\}\}/u.test(friendCopy.match(/^[\s\S]*?[.!?](?:\s|$)/u)?.[0] ?? friendCopy)
+    ) {
+      setMessage("Friends copy must include {{Name}} in its first sentence. The app replaces it with the selected person's name.");
+      return null;
+    }
     const isNewCompatibilityCard = !activeDraft.id && activeDraft.blockType === "compatibility_planet_card";
     const compatibilityIdentity = compatibilityBrowseIdentity(activeDraft.contentKey, activeDraft.facts, activeDraft.sourceSnapshot);
     if (isNewCompatibilityCard && !compatibilityIdentity) {
@@ -5197,6 +5373,8 @@ export function GeneratedContentAdminDashboard() {
                   ? isCompositionPage(activePage)
                   : item.page === "skyWriteups"
                     ? activePage === item.page && skyWriteupWorkspaceView === "catalog"
+                  : item.page === "compatibility"
+                    ? activePage === item.page && compatibilityWorkspaceView === "catalog"
                   : activePage === item.page;
             return (
               <Fragment key={item.key ?? item.page}>
@@ -5213,14 +5391,14 @@ export function GeneratedContentAdminDashboard() {
                   <Icon size={16} aria-hidden="true" />
                   <span>{item.label}</span>
                 </button>
-                {item.page === "skyWriteups" && (
+                {item.page === "skyWriteups" && activePage === "skyWriteups" && (
                   <div className="admin-nav-workspace-group" aria-label="Sky Write-ups sections">
                     <button
                       type="button"
                       onClick={() => navigateAdminPage("skyWriteups", new URLSearchParams({ view: "transits-to-natal" }))}
                       aria-current={activePage === "skyWriteups" && skyWriteupWorkspaceView === "transits-to-natal" ? "page" : undefined}
                     >
-                      <span>Transit to Natal Charts</span>
+                      <span>Personal Transits</span>
                     </button>
                     <button
                       type="button"
@@ -5228,6 +5406,17 @@ export function GeneratedContentAdminDashboard() {
                       aria-current={activePage === "skyWriteups" && skyWriteupWorkspaceView === "house-transits" ? "page" : undefined}
                     >
                       <span>House Transits</span>
+                    </button>
+                  </div>
+                )}
+                {item.page === "compatibility" && activePage === "compatibility" && (
+                  <div className="admin-nav-workspace-group" aria-label="Compatibility sections">
+                    <button
+                      type="button"
+                      onClick={() => navigateAdminPage("compatibility", new URLSearchParams({ view: "between-you-two" }))}
+                      aria-current={compatibilityWorkspaceView === "between-you-two" ? "page" : undefined}
+                    >
+                      <span>Between You Two</span>
                     </button>
                   </div>
                 )}
@@ -5545,12 +5734,12 @@ export function GeneratedContentAdminDashboard() {
                     <section className="admin-reader-safety-panel" aria-label="Transit writing workspace shortcut">
                       <div>
                         <p className="admin-eyebrow">Assembled transit writing</p>
-                        <h3>{contentLibraryTransitShortcut === "transits-to-natal" ? "Transit to Natal Charts" : "House Transits"}</h3>
+                        <h3>{contentLibraryTransitShortcut === "transits-to-natal" ? "Personal Transits" : "House Transits"}</h3>
                         <p>These reader cards are assembled from several reusable rows. Open the dedicated workspace to preview the complete card and edit every passage inside it.</p>
                       </div>
                       <div className="admin-new-actions">
                         <button type="button" onClick={() => navigateAdminPage("skyWriteups", new URLSearchParams({ view: contentLibraryTransitShortcut }))}>
-                          Open {contentLibraryTransitShortcut === "transits-to-natal" ? "Transit to Natal Charts" : "House Transits"}
+                          Open {contentLibraryTransitShortcut === "transits-to-natal" ? "Personal Transits" : "House Transits"}
                         </button>
                       </div>
                     </section>
@@ -5731,10 +5920,12 @@ export function GeneratedContentAdminDashboard() {
             <section className="admin-content-toolbar">
               <div>
                 <p className="admin-eyebrow">Compatibility workspace</p>
-                <h2>Compatibility</h2>
-                <p>{filteredCompatibilityRows.length} of {compatibilityRows.length} compatibility rows shown across content, fallback hooks, vocabulary, slots, and templates.</p>
+                <h2>{compatibilityWorkspaceView === "between-you-two" ? "Between You Two" : "Compatibility"}</h2>
+                <p>{compatibilityWorkspaceView === "between-you-two"
+                  ? "Edit the relationship transit shown in Friends, including its directional passage, activated natal connection, and fallback hooks."
+                  : `${filteredCompatibilityRows.length} of ${compatibilityRows.length} compatibility rows shown across content, fallback hooks, vocabulary, slots, and templates.`}</p>
               </div>
-              <div className="admin-new-actions" aria-label="Compatibility shortcuts">
+              {compatibilityWorkspaceView === "catalog" && <div className="admin-new-actions" aria-label="Compatibility shortcuts">
                 <button type="button" onClick={() => navigateAdminPage("knowledge", new URLSearchParams({ section: "friends", q: "pair-daily" }))}>
                   <Users size={16} aria-hidden="true" />
                   Daily between you two
@@ -5755,37 +5946,33 @@ export function GeneratedContentAdminDashboard() {
                   <KeyRound size={16} aria-hidden="true" />
                   Template
                 </button>
-              </div>
+              </div>}
             </section>
-            {renderCompatibilityFilters()}
-            <section className="admin-workbench admin-review-workspace">
-              {renderEditor()}
-              <aside className="admin-list-panel" aria-label="Compatibility rows">
-                {filteredCompatibilityRows.length > 0
-                  ? renderContentTable(filteredCompatibilityRows, false, false, true)
-                  : (
-                    <section className="admin-empty-state admin-compatibility-empty" aria-live="polite">
-                      <strong>No Compatibility rows match this view</strong>
-                      <p>
-                        {compatibilityRows.length === 0
-                          ? "No Compatibility records loaded. Retry the inventory or check the connection."
-                          : `Current filters: ${compatibilitySections.find((section) => section.key === compatibilitySectionFilter)?.label ?? "All compatibility"}, ${compatibilityStatusFilter === "all" ? "all statuses" : contentStatusLabel(compatibilityStatusFilter)}, ${compatibilityPlanetFilter === "all" ? "all planets" : titleFromKey(compatibilityPlanetFilter)}${compatibilityQuery.trim() ? `, search “${compatibilityQuery.trim()}”` : ""}.`}
-                      </p>
-                      <div className="admin-toolbar-actions">
-                        <button type="button" onClick={clearCompatibilityFilters}>
-                          Clear Compatibility filters
-                        </button>
-                        {compatibilityRows.length === 0 && (
-                          <button type="button" onClick={() => void loadDashboardData()} disabled={isLoading}>
-                            <RefreshCw size={16} aria-hidden="true" />
-                            Retry inventory
-                          </button>
-                        )}
-                      </div>
-                    </section>
-                  )}
-              </aside>
-            </section>
+            <div className="admin-template-tabs" role="tablist" aria-label="Compatibility workspaces">
+              <button type="button" role="tab" aria-selected={compatibilityWorkspaceView === "catalog"} className={compatibilityWorkspaceView === "catalog" ? "active" : ""} onClick={() => navigateAdminPage("compatibility")}><span>Compatibility library</span></button>
+              <button type="button" role="tab" aria-selected={compatibilityWorkspaceView === "between-you-two"} className={compatibilityWorkspaceView === "between-you-two" ? "active" : ""} onClick={() => navigateAdminPage("compatibility", new URLSearchParams({ view: "between-you-two" }))}><span>Between You Two</span></button>
+            </div>
+            {compatibilityWorkspaceView === "between-you-two"
+              ? <section className="admin-workbench admin-review-workspace">{renderEditor()}<aside className="admin-list-panel" aria-label="Between You Two sources">{renderBetweenYouTwoWorkspace()}</aside></section>
+              : <>
+                {renderCompatibilityFilters()}
+                <section className="admin-workbench admin-review-workspace">
+                  {renderEditor()}
+                  <aside className="admin-list-panel" aria-label="Compatibility rows">
+                    {filteredCompatibilityRows.length > 0
+                      ? renderContentTable(filteredCompatibilityRows, false, false, true)
+                      : (
+                        <section className="admin-empty-state admin-compatibility-empty" aria-live="polite">
+                          <strong>No Compatibility rows match this view</strong>
+                          <p>{compatibilityRows.length === 0
+                            ? "No Compatibility records loaded. Retry the inventory or check the connection."
+                            : `Current filters: ${compatibilitySections.find((section) => section.key === compatibilitySectionFilter)?.label ?? "All compatibility"}, ${compatibilityStatusFilter === "all" ? "all statuses" : contentStatusLabel(compatibilityStatusFilter)}, ${compatibilityPlanetFilter === "all" ? "all planets" : titleFromKey(compatibilityPlanetFilter)}${compatibilityQuery.trim() ? `, search “${compatibilityQuery.trim()}”` : ""}.`}</p>
+                          <div className="admin-toolbar-actions"><button type="button" onClick={clearCompatibilityFilters}>Clear Compatibility filters</button>{compatibilityRows.length === 0 && <button type="button" onClick={() => void loadDashboardData()} disabled={isLoading}><RefreshCw size={16} aria-hidden="true" />Retry inventory</button>}</div>
+                        </section>
+                      )}
+                  </aside>
+                </section>
+              </>}
           </section>
         )}
 
@@ -6372,6 +6559,8 @@ export function GeneratedContentAdminDashboard() {
       if (savedRow?.body && savedRow.status !== "ARCHIVED" && savedReviewStatus !== "deprecated") {
         return { contentKey, text: savedRow.body, savedRow };
       }
+      const authoredSource = transitNatalAuthoredSources.get(contentKey);
+      if (authoredSource?.body) return { contentKey, text: authoredSource.body, savedRow: null };
       const body = transitNatalSourceBodies.get(contentKey);
       if (body) return { contentKey, text: body, savedRow: null };
     }
@@ -6386,6 +6575,9 @@ export function GeneratedContentAdminDashboard() {
     optional?: boolean;
   }) {
     const resolved = skySourceForCandidates(source.candidateKeys);
+    const sharedAspectFamily = source.id === "standalone"
+      ? resolved?.contentKey.match(/\/(hard|soft)$/u)?.[1] ?? null
+      : null;
     return (
       <article className="admin-natal-source-card" key={source.id}>
         <div className="admin-natal-source-card-copy">
@@ -6398,6 +6590,11 @@ export function GeneratedContentAdminDashboard() {
                 : source.optional && <span className="ui-pill admin-status status-draft">Optional</span>}
           </div>
           <p>{source.scope}</p>
+          {sharedAspectFamily && (
+            <p className="admin-field-hint">
+              This is the shared {sharedAspectFamily === "hard" ? "challenging" : "supportive"} aspect passage for this planet pair, so editing it can change more than one aspect type.
+            </p>
+          )}
           <code>{resolved?.contentKey ?? source.candidateKeys.join(" → ")}</code>
           <blockquote className={!resolved ? "missing" : ""}>{resolved?.text ?? (source.optional ? "No optional passage is saved for this selection." : "No saved passage is available for this source path.")}</blockquote>
         </div>
@@ -6434,13 +6631,25 @@ export function GeneratedContentAdminDashboard() {
     setTransitNatalPoint(natalPoint);
     setTransitNatalNatalHouse(natalHouse);
 
-    const params = new URLSearchParams({ view: "transits-to-natal" });
+    const params = new URLSearchParams({ view: "transits-to-natal", voice: transitNatalVoice });
     if (planet) params.set("transit", planet);
     if (sign) params.set("sign", sign);
     if (transitHouse) params.set("transitHouse", transitHouse);
     if (aspect) params.set("aspect", aspect);
     if (natalPoint) params.set("natal", natalPoint);
     if (natalHouse) params.set("natalHouse", natalHouse);
+    setAdminHash(adminHashForPage("skyWriteups", params), "replace");
+  }
+
+  function updateTransitNatalVoice(voice: "you" | "friends") {
+    setTransitNatalVoice(voice);
+    const params = new URLSearchParams({ view: "transits-to-natal", voice });
+    if (transitNatalPlanet) params.set("transit", transitNatalPlanet);
+    if (transitNatalSign) params.set("sign", transitNatalSign);
+    if (transitNatalTransitHouse) params.set("transitHouse", transitNatalTransitHouse);
+    if (transitNatalAspect) params.set("aspect", transitNatalAspect);
+    if (transitNatalPoint) params.set("natal", transitNatalPoint);
+    if (transitNatalNatalHouse) params.set("natalHouse", transitNatalNatalHouse);
     setAdminHash(adminHashForPage("skyWriteups", params), "replace");
   }
 
@@ -6453,14 +6662,23 @@ export function GeneratedContentAdminDashboard() {
     }
 
     const definition = fallbackHookDefinitions.find((candidate) => candidate.key === contentKey);
+    const authoredSource = transitNatalAuthoredSources.get(contentKey);
+    if (authoredSource) {
+      const nextDraft = emptyDraftForAuthoredTransitAspect(authoredSource, label);
+      setSelectedRowId(null);
+      setDraft(nextDraft);
+      editorBaselineRef.current = JSON.stringify(nextDraft);
+      editorSavedInputRef.current = JSON.stringify(nextDraft);
+      setMessage(`Opened ${label}. Saving creates an editable draft; it does not publish unreviewed wording.`);
+      return;
+    }
     const body = transitNatalSourceBodies.get(contentKey);
     if (!definition || !body) {
       setMessage(`${label} is not available as an editable Content Studio source (${contentKey}).`);
       return;
     }
 
-    setSelectedRowId(null);
-    setDraft(emptyDraftForHook({
+    const nextDraft = emptyDraftForHook({
       type: "fallback",
       key: contentKey,
       label,
@@ -6469,7 +6687,11 @@ export function GeneratedContentAdminDashboard() {
         ...definition,
         copy: { ...definition.copy, body }
       }
-    }));
+    });
+    setSelectedRowId(null);
+    setDraft(nextDraft);
+    editorBaselineRef.current = JSON.stringify(nextDraft);
+    editorSavedInputRef.current = JSON.stringify(nextDraft);
     setMessage(`Opened ${label}. Saving creates the editable Content Studio row; it does not publish unreviewed wording.`);
   }
 
@@ -6495,6 +6717,22 @@ export function GeneratedContentAdminDashboard() {
       const source = skySourceForCandidates(candidateKeys);
       return source ? { key: source.contentKey, text: source.text } : null;
     }) : null;
+    const exactGroup = groups.find((group) => group.key === "fallback") ?? null;
+    const exactPassage = exactGroup?.sources.find((source) => source.id === "standalone") ?? null;
+    const genericTemplate = exactGroup?.sources.find((source) => source.id === "template") ?? null;
+    const exactResolved = exactPassage ? skySourceForCandidates(exactPassage.candidateKeys) : null;
+    const exactPackagedRecord = exactResolved?.savedRow
+      ? effectivePackageRecord(exactResolved.savedRow.sections)
+      : exactResolved
+        ? transitNatalAuthoredSources.get(exactResolved.contentKey)?.packageRecord ?? {}
+        : {};
+    const exactYouCopy = typeof exactPackagedRecord.body_you === "string"
+      ? exactPackagedRecord.body_you
+      : typeof exactPackagedRecord.body === "string"
+        ? exactPackagedRecord.body
+        : exactResolved?.text ?? "";
+    const exactFriendsCopy = typeof exactPackagedRecord.body_they === "string" ? exactPackagedRecord.body_they : "";
+    const exactVoiceCopy = transitNatalVoice === "you" ? exactYouCopy : exactFriendsCopy;
 
     return (
       <section className="admin-natal-placement-finder" aria-label="Personal Transits source finder">
@@ -6502,7 +6740,13 @@ export function GeneratedContentAdminDashboard() {
           <div>
             <p className="admin-eyebrow">Personal Transits workspace</p>
             <h3>{selection ? transitNatalLabel(selection) : "Find a Personal Transit write-up"}</h3>
-            <p>Choose the current placement and the natal point it contacts. The reader sees one paragraph; Content Studio shows that paragraph first, followed by the four reusable passages inside it. You do not need to search Fallback Hooks.</p>
+            <p>Choose the transit shown on the reader card. Content Studio then puts the exact opened-card interpretation first.</p>
+            <ol className="admin-transit-workspace-steps">
+              <li><strong>Choose the chart facts</strong> you want to inspect.</li>
+              <li><strong>Edit the exact You or Friends passage</strong> to change the interpretation readers open from that card.</li>
+              <li><strong>Use the advanced house-aware section</strong> only when a shared building block should change everywhere it is reused.</li>
+            </ol>
+            <p><strong>What selects the prose:</strong> transiting planet, aspect, and natal planet or point. The sign and houses help you match the reader&apos;s chart and preview the optional house-aware assembly; the app calculates those facts rather than storing them in the prose.</p>
             <p><strong>Editable lifecycle:</strong> open a passage to read it, Save to create or update it, Archive to remove it from active use, and Restore to reopen it as a non-serving draft.</p>
           </div>
           {selection && <code>transit/{selection.planet}-{selection.sign}-{selection.transitHouse}h/{selection.aspect}/{selection.natalPoint}-{selection.natalHouse}h</code>}
@@ -6554,40 +6798,63 @@ export function GeneratedContentAdminDashboard() {
         </div>
 
         {!selection && <p className="admin-natal-placement-prompt">Choose all six values to preview the write-up and open its exact source rows.</p>}
-        {selection && preview && (
-          <section className="admin-natal-source-group" aria-label="Effective transit to natal reader preview">
+        {selection && exactPassage && (
+          <section className="admin-natal-source-group admin-transit-exact-source" aria-label="Exact Personal Transit reader copy">
             <header>
-              <p className="admin-eyebrow">Effective reader preview</p>
-              <h3>What you see</h3>
-              <p>The houses and end date are calculated facts. The highlighted language comes from the editable rows listed below.</p>
+              <p className="admin-eyebrow">You and Friends versions</p>
+              <h3>Reader card copy</h3>
+              <p>This is the interpretation readers open from the transit card. You and Friends are saved separately on the same source row. The app separately calculates and displays the natal sign, houses, dates, orb, and whether the aspect is applying or separating.</p>
             </header>
-            <article className="admin-natal-source-card">
+            <div className="admin-between-you-two-voices" role="tablist" aria-label="Personal Transit reader version">
+              <button type="button" role="tab" aria-selected={transitNatalVoice === "you"} className={transitNatalVoice === "you" ? "active" : ""} onClick={() => updateTransitNatalVoice("you")}>You</button>
+              <button type="button" role="tab" aria-selected={transitNatalVoice === "friends"} className={transitNatalVoice === "friends" ? "active" : ""} onClick={() => updateTransitNatalVoice("friends")}>Friends</button>
+            </div>
+            <article className="admin-natal-source-card admin-transit-voice-preview" aria-label={`${transitNatalVoice === "you" ? "You" : "Friends"} Personal Transit preview`}>
               <div className="admin-natal-source-card-copy">
                 <div className="admin-natal-source-card-heading">
-                  <h4>{preview.headline}</h4>
-                  <span className={`ui-pill admin-status ${preview.complete ? "status-live" : "status-draft"}`}>{preview.complete ? "Complete composition" : "Fallback required"}</span>
+                  <h4>{transitNatalVoice === "you" ? "You version" : "Friends version"}</h4>
+                  <span className={`ui-pill admin-status ${exactVoiceCopy ? "status-live" : "status-draft"}`}>{exactVoiceCopy ? "Saved" : "Missing"}</span>
                 </div>
-                <blockquote>{preview.body}</blockquote>
-                <code>{preview.sourceKeys.join(" · ")}</code>
-                {!preview.complete && <p>Missing: {preview.missing.join(", ")}</p>}
+                <blockquote className={!exactVoiceCopy ? "missing" : ""}>{exactVoiceCopy || "No Friends passage is saved. Add {{Name}} to the first sentence before publishing this version."}</blockquote>
+                {transitNatalVoice === "friends" && <p className="admin-field-hint">Use <code>{natalAspectTheyNameVariable}</code> in the first sentence. The app replaces it with the selected person&apos;s name.</p>}
               </div>
             </article>
+            {renderSkyAssemblySource(exactPassage)}
           </section>
         )}
 
-        {groups.filter((group) => group.key === "composition").map((group) => (
-          <section className="admin-natal-source-group" key={group.key}>
-            <header><h3>{group.label}</h3><p>{group.description}</p></header>
-            <div className="admin-natal-source-grid">{group.sources.map(renderSkyAssemblySource)}</div>
-          </section>
-        ))}
-        {groups.filter((group) => group.key === "fallback").map((group) => (
-          <details className="admin-natal-source-group admin-natal-source-advanced" key={group.key}>
+        {selection && preview && groups.filter((group) => group.key === "composition").map((group) => (
+          <details className="admin-natal-source-group admin-natal-source-advanced admin-transit-shared-sources" key={group.key}>
             <summary>{group.label}</summary>
             <p>{group.description}</p>
+            <section className="admin-natal-source-group" aria-label="House-aware Personal Transit preview">
+              <header>
+                <p className="admin-eyebrow">House-aware preview</p>
+                <h3>{preview.headline}</h3>
+                <p>This preview uses the sign and houses selected above. Exact dates are supplied at runtime.</p>
+              </header>
+              <article className="admin-natal-source-card">
+                <div className="admin-natal-source-card-copy">
+                  <div className="admin-natal-source-card-heading">
+                    <h4>Assembled version</h4>
+                    <span className={`ui-pill admin-status ${preview.complete ? "status-live" : "status-draft"}`}>{preview.complete ? "Complete composition" : "Fallback required"}</span>
+                  </div>
+                  <blockquote>{preview.body}</blockquote>
+                  <code>{preview.sourceKeys.join(" · ")}</code>
+                  {!preview.complete && <p>Missing: {preview.missing.join(", ")}</p>}
+                </div>
+              </article>
+            </section>
             <div className="admin-natal-source-grid">{group.sources.map(renderSkyAssemblySource)}</div>
           </details>
         ))}
+        {selection && genericTemplate && (
+          <details className="admin-natal-source-group admin-natal-source-advanced">
+            <summary>Generic fallback template (advanced)</summary>
+            <p>{genericTemplate.scope}</p>
+            <div className="admin-natal-source-grid">{renderSkyAssemblySource(genericTemplate)}</div>
+          </details>
+        )}
       </section>
     );
   }
@@ -6845,6 +7112,182 @@ export function GeneratedContentAdminDashboard() {
     setCompatibilityPlanetFilter("all");
     setCompatibilitySort("updated-desc");
     setCompatibilityQuery("");
+  }
+
+  function betweenYouTwoSourceForCandidates(candidateKeys: string[]): (BetweenYouTwoSourceRecord & { savedRow: AdminGeneratedContentRow | null }) | null {
+    for (const contentKey of candidateKeys) {
+      const savedRow = rows.find((row) => (
+        row.content_key === contentKey
+        && row.status !== "ARCHIVED"
+        && packageReviewStatusForDraft(draftFromRow(row)) !== "deprecated"
+      ));
+      if (savedRow) {
+        const sections = objectRecord(savedRow.sections) ?? {};
+        const packageRecord = rowPackageRecord(savedRow);
+        const bodyYou = typeof sections.body_you === "string"
+          ? sections.body_you
+          : typeof packageRecord.body_you === "string"
+            ? packageRecord.body_you
+            : savedRow.body ?? "";
+        const bodyThey = typeof sections.body_they === "string"
+          ? sections.body_they
+          : typeof packageRecord.body_they === "string"
+            ? packageRecord.body_they
+            : "";
+        if (bodyYou || bodyThey) return { key: contentKey, bodyYou, bodyThey, savedRow };
+      }
+      const packaged = betweenYouTwoSources.get(contentKey);
+      if (packaged) {
+        const bodyYou = typeof packaged.packageRecord.body_you === "string" ? packaged.packageRecord.body_you : packaged.body;
+        const bodyThey = typeof packaged.packageRecord.body_they === "string" ? packaged.packageRecord.body_they : "";
+        return { key: contentKey, bodyYou, bodyThey, savedRow: null };
+      }
+    }
+    return null;
+  }
+
+  async function openBetweenYouTwoSourceRow(contentKey: string, label: string) {
+    const savedRow = rows.find((row) => row.content_key === contentKey);
+    if (savedRow) {
+      openRow(savedRow);
+      setMessage(`Opened ${label}. Save updates this exact source; Archive removes it from active use and Restore reopens it as a draft.`);
+      return;
+    }
+    const packaged = betweenYouTwoSources.get(contentKey);
+    if (!packaged) {
+      setMessage(`${label} is not available in the packaged Between You Two catalog (${contentKey}).`);
+      return;
+    }
+    const nextDraft = emptyDraftForPackagedRelationshipHook(packaged, label);
+    setSelectedRowId(null);
+    setDraft(nextDraft);
+    editorBaselineRef.current = JSON.stringify(nextDraft);
+    editorSavedInputRef.current = JSON.stringify(nextDraft);
+    setMessage(`Opened ${label}. Saving creates an API-backed draft; it will not replace approved reader copy until published.`);
+    scrollEditorToTop();
+  }
+
+  function updateBetweenYouTwoSelection(next: Partial<{
+    transiting: BetweenYouTwoTransitPlanet | "";
+    transitAspect: BetweenYouTwoAspect | "";
+    endpointPlanet: BetweenYouTwoPlanet | "";
+    endpointOwner: BetweenYouTwoEndpointOwner;
+    activatedPlanet: BetweenYouTwoPlanet | "";
+    natalAspect: BetweenYouTwoAspect | "";
+  }>) {
+    const transiting = next.transiting ?? betweenYouTwoTransiting;
+    const transitAspect = next.transitAspect ?? betweenYouTwoTransitAspect;
+    const endpointPlanet = next.endpointPlanet ?? betweenYouTwoEndpointPlanet;
+    const endpointOwner = next.endpointOwner ?? betweenYouTwoEndpointOwner;
+    const activatedPlanet = next.activatedPlanet ?? betweenYouTwoActivatedPlanet;
+    const natalAspect = next.natalAspect ?? betweenYouTwoNatalAspect;
+    setBetweenYouTwoTransiting(transiting);
+    setBetweenYouTwoTransitAspect(transitAspect);
+    setBetweenYouTwoEndpointPlanet(endpointPlanet);
+    setBetweenYouTwoEndpointOwner(endpointOwner);
+    setBetweenYouTwoActivatedPlanet(activatedPlanet);
+    setBetweenYouTwoNatalAspect(natalAspect);
+    const params = new URLSearchParams({ view: "between-you-two", endpointOwner });
+    if (transiting) params.set("transit", transiting);
+    if (transitAspect) params.set("transitAspect", transitAspect);
+    if (endpointPlanet) params.set("endpoint", endpointPlanet);
+    if (activatedPlanet) params.set("activated", activatedPlanet);
+    if (natalAspect) params.set("natalAspect", natalAspect);
+    setAdminHash(adminHashForPage("compatibility", params), "replace");
+  }
+
+  function renderBetweenYouTwoSourceCard(source: ReturnType<typeof betweenYouTwoSourceGroups>[number]["sources"][number]) {
+    const resolved = betweenYouTwoSourceForCandidates(source.candidateKeys);
+    const isCalculatedOnly = source.candidateKeys.length === 0;
+    return (
+      <article className="admin-natal-source-card" key={source.id}>
+        <div className="admin-natal-source-card-copy">
+          <div className="admin-natal-source-card-heading">
+            <h4>{source.label}</h4>
+            {resolved?.savedRow
+              ? <span className={`ui-pill admin-status status-${resolved.savedRow.status.toLowerCase()}`}>{contentStatusLabel(resolved.savedRow.status)}</span>
+              : resolved
+                ? <span className="ui-pill admin-status status-live">Approved package source</span>
+                : <span className="ui-pill admin-status status-draft">Not available</span>}
+          </div>
+          <p>{source.scope}</p>
+          {!isCalculatedOnly && <code>{resolved?.key ?? source.candidateKeys.join(" → ")}</code>}
+          {resolved && (
+            <div className="admin-between-you-two-voices">
+              <div><strong>When your chart is contacted</strong><blockquote>{resolved.bodyYou || "No separate reader-contacted direction is authored on this row."}</blockquote></div>
+              <div><strong>When their chart is contacted</strong><blockquote>{resolved.bodyThey || "No separate friend-contacted direction is authored on this row."}</blockquote></div>
+            </div>
+          )}
+        </div>
+        <button type="button" disabled={!resolved || isLoading} onClick={() => resolved && void openBetweenYouTwoSourceRow(resolved.key, source.label)}>
+          {resolved ? "Edit source row" : "Source row unavailable"}
+        </button>
+      </article>
+    );
+  }
+
+  function renderBetweenYouTwoWorkspace() {
+    const selectionComplete = Boolean(
+      betweenYouTwoTransiting
+      && betweenYouTwoTransitAspect
+      && betweenYouTwoEndpointPlanet
+      && betweenYouTwoActivatedPlanet
+      && betweenYouTwoNatalAspect
+    );
+    const selection = selectionComplete ? {
+      transiting: betweenYouTwoTransiting,
+      transitAspect: betweenYouTwoTransitAspect,
+      endpointPlanet: betweenYouTwoEndpointPlanet,
+      endpointOwner: betweenYouTwoEndpointOwner,
+      activatedPlanet: betweenYouTwoActivatedPlanet,
+      natalAspect: betweenYouTwoNatalAspect
+    } as BetweenYouTwoSelection : null;
+    const groups = selection ? betweenYouTwoSourceGroups(selection) : [];
+    const preview = selection ? renderBetweenYouTwoPreview(selection, (candidateKeys) => betweenYouTwoSourceForCandidates(candidateKeys), "Alisa") : null;
+    const selectOptions = (values: readonly string[]) => values.map((value) => <option key={value} value={value}>{betweenYouTwoTitle(value)}</option>);
+
+    return (
+      <section className="admin-natal-placement-finder admin-between-you-two-workspace" aria-label="Between You Two source finder">
+        <div className="admin-natal-placement-finder-heading">
+          <div>
+            <p className="admin-eyebrow">Between You Two workspace</p>
+            <h3>Find the writing behind a relationship transit</h3>
+            <p>Choose the transit and the natal connection it activates. The reader preview appears first, followed by every editable source and fallback hook used to build it.</p>
+            <p><strong>CRUD lifecycle:</strong> Save creates or updates a source through the Content Studio API. Archive removes it from active use. Restore returns it as a non-serving draft. Published updates notify open reader tabs to refresh hydrated content.</p>
+          </div>
+          <code>friends/transits/between-you-two</code>
+        </div>
+        <div className="admin-natal-placement-selectors admin-between-you-two-controls">
+          <label><span>1. Transiting planet</span><select aria-label="Between You Two transiting planet" value={betweenYouTwoTransiting} onChange={(event) => updateBetweenYouTwoSelection({ transiting: event.target.value as BetweenYouTwoTransitPlanet | "" })}><option value="">Choose planet</option>{selectOptions(betweenYouTwoTransitingPlanets)}</select></label>
+          <label><span>2. Transit aspect</span><select aria-label="Between You Two transit aspect" value={betweenYouTwoTransitAspect} onChange={(event) => updateBetweenYouTwoSelection({ transitAspect: event.target.value as BetweenYouTwoAspect | "" })}><option value="">Choose aspect</option>{selectOptions(betweenYouTwoAspects)}</select></label>
+          <label><span>3. Chart being contacted</span><select aria-label="Between You Two endpoint owner" value={betweenYouTwoEndpointOwner} onChange={(event) => updateBetweenYouTwoSelection({ endpointOwner: event.target.value as BetweenYouTwoEndpointOwner })}><option value="friend">Friend's chart</option><option value="reader">Your chart</option></select></label>
+          <label><span>4. Contacted planet</span><select aria-label="Between You Two endpoint planet" value={betweenYouTwoEndpointPlanet} onChange={(event) => updateBetweenYouTwoSelection({ endpointPlanet: event.target.value as BetweenYouTwoPlanet | "" })}><option value="">Choose planet or point</option>{selectOptions(betweenYouTwoPlanets)}</select></label>
+          <label><span>5. Connected planet</span><select aria-label="Between You Two activated planet" value={betweenYouTwoActivatedPlanet} onChange={(event) => updateBetweenYouTwoSelection({ activatedPlanet: event.target.value as BetweenYouTwoPlanet | "" })}><option value="">Choose planet or point</option>{selectOptions(betweenYouTwoPlanets)}</select></label>
+          <label><span>6. Natal connection</span><select aria-label="Between You Two natal aspect" value={betweenYouTwoNatalAspect} onChange={(event) => updateBetweenYouTwoSelection({ natalAspect: event.target.value as BetweenYouTwoAspect | "" })}><option value="">Choose aspect</option>{selectOptions(betweenYouTwoAspects)}</select></label>
+        </div>
+        {!selection && <p className="admin-field-hint">Choose all six values to preview the card and open its exact source rows.</p>}
+        {preview && (
+          <section className="admin-natal-reader-preview admin-between-you-two-preview" aria-label="Between You Two reader preview">
+            <p className="admin-eyebrow">Effective reader preview</p>
+            <h3>{preview.headline}</h3>
+            <p>{preview.effectText}</p>
+            <div className="admin-calculated-fact"><strong>Calculated astrology fact, not editable</strong><p>{preview.calculatedFact}</p></div>
+            <h4>What this activates</h4>
+            <strong>{preview.connectionHeadline}</strong>
+            <p>{preview.connectionText}</p>
+            <small>{preview.complete ? "All required reader passages resolved." : "Missing sections fail closed; approved available content can still render."}</small>
+          </section>
+        )}
+        {groups.map((group) => (
+          <section className="admin-natal-source-group" key={group.key}>
+            <div><h3>{group.label}</h3><p>{group.description}</p></div>
+            {group.key === "fallbacks"
+              ? <details className="admin-advanced"><summary>Show fallback hooks</summary><div className="admin-natal-source-grid">{group.sources.map(renderBetweenYouTwoSourceCard)}</div></details>
+              : <div className="admin-natal-source-grid">{group.sources.map(renderBetweenYouTwoSourceCard)}</div>}
+          </section>
+        ))}
+      </section>
+    );
   }
 
   function renderCompatibilityFilters() {
@@ -7461,6 +7904,8 @@ export function GeneratedContentAdminDashboard() {
     const editablePackageRecord = draftEditablePackageRecord(currentDraft);
     const isSkyPlacementFrameTemplate = currentDraft.contentKey === skyPlacementFrameTemplateKey;
     const isExactNatalAspectDraft = currentDraft.contentKey.startsWith(natalAspectContentKeyPrefix);
+    const isExactPersonalTransitDraft = currentDraft.contentKey.startsWith("authored/transit-aspect/");
+    const friendCopyUsesNameVariable = isExactNatalAspectDraft || isExactPersonalTransitDraft;
     const skyPlacementTemplateOptions = skyPlacementCompositionOptions(effectivePackageRecord(currentDraft.sections));
     const skyFallbackEditor = skyFallbackWorkspace(currentDraft.contentKey, currentDraft.sections);
     const skyFallbackContentIdentity = skyFallbackIdentity(currentDraft.contentKey);
@@ -8934,13 +9379,14 @@ export function GeneratedContentAdminDashboard() {
           {showPackageBodyThey && !skyFallbackEditor && (
             <label className="admin-review-copy-editor" data-reader-audience="they">
               <span>{fallbackEditorGuidance?.bodyTheyLabel ?? "Friend view copy"}</span>
-              {isExactNatalAspectDraft && (
-                <small className="admin-field-hint" id="natal-aspect-they-name-hint" role="note">
+              {friendCopyUsesNameVariable && (
+                <small className="admin-field-hint" id="friend-copy-name-hint" role="note">
                   Name variable: <code>{natalAspectTheyNameVariable}</code>. Enter it exactly where the person&apos;s name should appear; the app replaces it with their name.
+                  {isExactPersonalTransitDraft && " Personal Transits require it in the first sentence so the affected person is always clear."}
                 </small>
               )}
               <textarea
-                aria-describedby={isExactNatalAspectDraft ? "natal-aspect-they-name-hint" : undefined}
+                aria-describedby={friendCopyUsesNameVariable ? "friend-copy-name-hint" : undefined}
                 aria-label={fallbackEditorGuidance?.bodyTheyLabel ?? "Friend view copy"}
                 value={packageFieldString(currentDraft, "body_they")}
                 onChange={(event) => setDraft(setPackageSectionField(currentDraft, "body_they", event.target.value))}
