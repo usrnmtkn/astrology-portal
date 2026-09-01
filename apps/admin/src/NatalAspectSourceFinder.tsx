@@ -2,8 +2,10 @@ import {
   natalAspectDisplayTitle,
   natalAspectMatchesSelection,
   natalAspectSelectionOptions,
+  natalAspectSourceDraft,
   parseNatalAspectContentKey,
-  type NatalAspectSelection
+  type NatalAspectSelection,
+  type NatalAspectSourceDraft
 } from "./natalAspectSources";
 
 type PreviewRow = {
@@ -18,6 +20,7 @@ type Props = {
   aspect: string;
   first: string;
   isLoading: boolean;
+  onCreateSource: (draft: NatalAspectSourceDraft) => void;
   onOpenSource: (contentKey: string, label: string) => void;
   onSelectionChange: (next: Partial<NatalAspectSelection>) => void;
   rows: PreviewRow[];
@@ -44,6 +47,7 @@ export default function NatalAspectSourceFinder({
   aspect,
   first,
   isLoading,
+  onCreateSource,
   onOpenSource,
   onSelectionChange,
   rows,
@@ -110,10 +114,24 @@ export default function NatalAspectSourceFinder({
         <p className="admin-natal-placement-prompt">Select any value to narrow the {exactRows.length} exact natal aspect passages. Select all three values to open one exact reader passage.</p>
       )}
 
-      {!isLoading && hasSelection && matches.length === 0 && (
+      {!isLoading && fullSelection && matches.length === 0 && (
+        <div className="admin-empty-state">
+          <strong>No exact passage exists for {selectedTitle}.</strong>
+          <p>The reader requires pair-specific writing. Create the exact You and Friend passages for this selection.</p>
+          <button
+            type="button"
+            className="primary"
+            onClick={() => onCreateSource(natalAspectSourceDraft({ first, aspect, second }))}
+          >
+            Write {selectedTitle}
+          </button>
+        </div>
+      )}
+
+      {!isLoading && hasSelection && !fullSelection && matches.length === 0 && (
         <div className="admin-empty-state" role="status">
-          <strong>No exact passage matches this selection.</strong>
-          <p>Try a different planet, point, or aspect. Generic aspect copy is intentionally excluded because the reader requires an exact pair.</p>
+          <strong>No passage matches the selected values yet.</strong>
+          <p>Choose all three values to create an exact pair-specific passage.</p>
         </div>
       )}
 

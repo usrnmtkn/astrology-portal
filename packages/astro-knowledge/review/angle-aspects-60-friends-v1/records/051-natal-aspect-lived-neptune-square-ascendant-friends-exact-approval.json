@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "id": "angle-aspects-60-friends-v1-051",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "collaborative_owner_approved",
+  "provenanceNote": "The Friends body is separately authored and exact owner approved. It is not derived from the You body.",
+  "contentKey": "fallback-hook/natal-aspect-lived/neptune/square/ascendant",
+  "packetKey": "neptune|square|ascendant",
+  "textField": "body_they",
+  "payloadSha256": "77456eeab72683883dd091c11f9875d000f18cef62e98269d0649f3755510628",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_they": "{{Name}} may know how to keep an interaction pleasant even when the answer they are giving is becoming less accurate. They soften the no, leave out the disappointing part, or match someone else's enthusiasm because changing the mood feels difficult. Then they can feel unseen by people who were simply responding to what {{Name}} appeared to agree to. The people who truly know them need access to an answer that actually sounds like theirs.",
+    "sourceMechanism": "Separately authored Friends copy transcribed byte-for-byte from the SHA-bound Friends V1 owner-approved artifact; no You-to-Friends transformation is permitted."
+  },
+  "approvedAt": "2026-08-31",
+  "approvalEffect": "exact_wording_approval",
+  "sourceArtifact": {
+    "id": "angle-aspects-60-friends-v1",
+    "path": "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.md",
+    "sha256": "186fc623066981bd66a1cb7f4f00e2062391572b5f94ab1ad68b7842c5c135f2",
+    "jsonPath": "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.json",
+    "jsonSha256": "acdd96d177b971d1a4cc9bb1c02130347a09fcd2036de499ea35c1a205cd5640",
+    "passageHeading": "Neptune square Ascendant",
+    "passageOrdinal": 51,
+    "bodySha256": "d9081e67c1dc0526ad9194894512f7337d50c218ddcedd3ffb31684a3e50dd2b"
+  },
+  "ownerConfirmationSource": {
+    "channel": "Codex task owner message and SHA-pinned handoff",
+    "taskId": "01a04fc0-899b-7cd2-bb2e-98ad182391bb",
+    "date": "2026-08-31"
+  },
+  "additionalBilledCalls": 0
+}

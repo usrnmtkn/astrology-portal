@@ -258,8 +258,15 @@
   --admin-access-actions-min-width: 280px;
   --admin-z-mobile-sidebar: 20;
   --admin-z-overlay-host: 30;
+  --admin-z-editor-backdrop: 78;
+  --admin-z-editor-panel: 79;
   --admin-z-create-backdrop: 80;
+  --admin-z-editor-reference: 81;
+  --admin-z-editor-detail-backdrop: 82;
+  --admin-z-editor-detail: 83;
   --admin-z-create-menu: 90;
+  --admin-editor-width: 660px;
+  --admin-editor-reference-width: 720px;
   --admin-shadow-menu: 0 18px 46px rgba(0, 0, 0, 0.4);
   --admin-shadow-toast: 0 18px 44px rgba(0, 0, 0, 0.34);
   --admin-shadow-side-rail: -24px 0 80px rgba(0, 0, 0, 0.42);

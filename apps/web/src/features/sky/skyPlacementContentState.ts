@@ -9,9 +9,9 @@ export function shouldLoadSkyPlacementContent({
   hasSky: boolean;
   detailRoutePath: string | null;
 }) {
-  const isSkyPlacementList = hasSky && (mode === "guest" || mode === "member");
+  const isSkyPlacementList = hasSky && (mode === "guest" || mode === "member" || mode === "calendar");
   const isSkyPlacementDetail = Boolean(
-    detailRoutePath && /^sky\/(?:placement|retrograde)\//u.test(detailRoutePath)
+    detailRoutePath && /^sky\/(?:placement|retrograde|lunation)\//u.test(detailRoutePath)
   );
 
   return isSkyPlacementList || isSkyPlacementDetail;

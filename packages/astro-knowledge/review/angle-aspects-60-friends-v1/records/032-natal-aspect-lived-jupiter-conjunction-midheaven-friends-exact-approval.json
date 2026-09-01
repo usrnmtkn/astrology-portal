@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "id": "angle-aspects-60-friends-v1-032",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "collaborative_owner_approved",
+  "provenanceNote": "The Friends body is separately authored and exact owner approved. It is not derived from the You body.",
+  "contentKey": "fallback-hook/natal-aspect-lived/jupiter/conjunction/midheaven",
+  "packetKey": "jupiter|conjunction|midheaven",
+  "textField": "body_they",
+  "payloadSha256": "1494e7a485c0a664b6957770b315c71f3c7e3459fb1c7313050af2c0b28d34f7",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_they": "{{Name}} wants what they are building publicly to keep giving them somewhere to grow. Recognition is more satisfying when it brings more knowledge, influence, access, reach, or authority rather than simply more attention for doing the same thing. Bigger is not automatically better. The next step matters when it gives them something useful to do with the larger role.",
+    "sourceMechanism": "Separately authored Friends copy transcribed byte-for-byte from the SHA-bound Friends V1 owner-approved artifact; no You-to-Friends transformation is permitted."
+  },
+  "approvedAt": "2026-08-31",
+  "approvalEffect": "exact_wording_approval",
+  "sourceArtifact": {
+    "id": "angle-aspects-60-friends-v1",
+    "path": "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.md",
+    "sha256": "186fc623066981bd66a1cb7f4f00e2062391572b5f94ab1ad68b7842c5c135f2",
+    "jsonPath": "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.json",
+    "jsonSha256": "acdd96d177b971d1a4cc9bb1c02130347a09fcd2036de499ea35c1a205cd5640",
+    "passageHeading": "Jupiter conjunction Midheaven",
+    "passageOrdinal": 32,
+    "bodySha256": "154e5242b1be26942d6b94244f59f8c760dea88979ded2ffc16c82a630f9dba4"
+  },
+  "ownerConfirmationSource": {
+    "channel": "Codex task owner message and SHA-pinned handoff",
+    "taskId": "01a04fc0-899b-7cd2-bb2e-98ad182391bb",
+    "date": "2026-08-31"
+  },
+  "additionalBilledCalls": 0
+}

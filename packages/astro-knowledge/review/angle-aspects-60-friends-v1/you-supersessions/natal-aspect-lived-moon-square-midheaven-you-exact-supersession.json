@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "id": "angle-aspects-60-friends-v1-you-supersession-natal-aspect-lived-moon-square-midheaven",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "owner_reviewed",
+  "provenanceNote": "Later exact owner-approved You wording supersedes the serving V15 body without mutating the historical V15 record.",
+  "contentKey": "fallback-hook/natal-aspect-lived/moon/square/midheaven",
+  "textField": "body",
+  "payloadSha256": "99d5a645be44626bf872e0db61ba41ef21089924c1e96577b3e6ef730757f508",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body": "It is normal to want to be taken seriously, but public achievement often comes at the expense of your private life. A demanding project takes your free time, a leadership role fills your evenings, and work follows you home. The Moon brings the focus back to your physical and emotional baseline. Sleep, meals, privacy, and the routines that anchor you do not lose their value just because people are proud of what you are doing. One extra meeting or one late night looks completely manageable on paper, but added together, they dictate what your everyday life actually feels like. Your basic needs have to factor into whatever you are building publicly. Recognition is great, but a path forward only makes sense if you can sustain living inside it.",
+    "sourceMechanism": "Later exact owner-approved You supersession transcribed byte-for-byte from the SHA-bound Friends V1 handoff revision artifact; historical V15 approval evidence is preserved."
+  },
+  "approvedAt": "2026-08-31",
+  "approvalEffect": "exact_wording_supersession",
+  "sourceArtifact": {
+    "id": "you-v15-two-owner-approved-supersessions",
+    "path": "packages/astro-knowledge/review/angle-aspects-60-friends-v1/YOU-V15-TWO-OWNER-APPROVED-SUPERSESSIONS.json",
+    "sha256": "bba7b003351a7b145c16c17ec6b85226d74aba37124c53aa08a2da54f7f1b853",
+    "bodySha256": "8e0ae20d731653e4ee6a4d1624fc7fc2d45fdf5ca895d92132b6a88058d03bc0"
+  },
+  "supersedes": {
+    "priorApproval": {
+      "approvalLevel": "exact_owner_approved",
+      "recordPath": "packages/astro-knowledge/review/angle-aspects-60-v15/records/010-natal-aspect-lived-moon-square-midheaven-exact-approval.json",
+      "payloadSha256": "34df0a9f9eb3a1bdb90b2a4eead8c551525aab0d32aba4e3ae63fae165a12e36",
+      "approvedAt": "2026-08-31"
+    },
+    "priorBodySha256": "81001492c15e6f0f87732d943560390fb0121922d0f51c830bf0a0e29bdea134",
+    "historicalRecordPreserved": true
+  },
+  "ownerConfirmationSource": {
+    "channel": "Codex task owner message and SHA-pinned handoff",
+    "taskId": "01a04fc0-899b-7cd2-bb2e-98ad182391bb",
+    "date": "2026-08-31"
+  },
+  "additionalBilledCalls": 0
+}

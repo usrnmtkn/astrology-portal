@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "id": "angle-aspects-60-friends-v1-037",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "collaborative_owner_approved",
+  "provenanceNote": "The Friends body is separately authored and exact owner approved. It is not derived from the You body.",
+  "contentKey": "fallback-hook/natal-aspect-lived/saturn/conjunction/ascendant",
+  "packetKey": "saturn|conjunction|ascendant",
+  "textField": "body_they",
+  "payloadSha256": "a134d0ed2a3f26926ea7cd96d300a0152f82dcd190d179ab42c0cb0a7596f38a",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_they": "{{Name}} may enter something new already thinking about what will be expected once the excitement wears off. They want to know how much time it will take, what they are responsible for, and what happens if the plan becomes more complicated. That judgment can protect them from commitments that never made sense. It can also make the first decision carry the weight of everything that could possibly follow. They need to know what they are agreeing to without deciding every future responsibility before they can begin.",
+    "sourceMechanism": "Separately authored Friends copy transcribed byte-for-byte from the SHA-bound Friends V1 owner-approved artifact; no You-to-Friends transformation is permitted."
+  },
+  "approvedAt": "2026-08-31",
+  "approvalEffect": "exact_wording_approval",
+  "sourceArtifact": {
+    "id": "angle-aspects-60-friends-v1",
+    "path": "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.md",
+    "sha256": "186fc623066981bd66a1cb7f4f00e2062391572b5f94ab1ad68b7842c5c135f2",
+    "jsonPath": "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.json",
+    "jsonSha256": "acdd96d177b971d1a4cc9bb1c02130347a09fcd2036de499ea35c1a205cd5640",
+    "passageHeading": "Saturn conjunction Ascendant",
+    "passageOrdinal": 37,
+    "bodySha256": "a2bb0f5018043f688d0741f938666c431d164866593b92e83b76694edca8b307"
+  },
+  "ownerConfirmationSource": {
+    "channel": "Codex task owner message and SHA-pinned handoff",
+    "taskId": "01a04fc0-899b-7cd2-bb2e-98ad182391bb",
+    "date": "2026-08-31"
+  },
+  "additionalBilledCalls": 0
+}

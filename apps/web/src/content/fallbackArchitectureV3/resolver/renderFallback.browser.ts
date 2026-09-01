@@ -42,6 +42,9 @@ export interface HookRow {
   body?: string;
   body_you?: string;
   body_they?: string;
+  body_they_review_status?: string;
+  body_they_approved_via?: string;
+  body_they_approval?: ApprovalReference;
   review_status: string;
   approved_via?: string;
   approval?: ApprovalReference;
@@ -242,7 +245,6 @@ export function createFallbackRenderer(templatesFile: TemplatesFile, rowsFile: R
     return (voice === "you" ? row.body_you : row.body_they) ?? null;
   };
   const getReaderLivedRow = (key: string, voice: "you" | "they", opts: RenderOpts = {}): HookRow | null => {
-    if (voice !== "you") return null;
     const row = hooks.get(key);
     if (!row) return null;
     if (!["fallback_hook", "full_copy"].includes(row.content_role)) {
@@ -252,7 +254,18 @@ export function createFallbackRenderer(templatesFile: TemplatesFile, rowsFile: R
     if (row.reader_only !== true || row.render_policy !== "reader-only-exact-lived-v1") {
       throw new RoleViolationError(`Row ${key} is not a reader-only exact lived row.`);
     }
-    return typeof row.body === "string" && row.body.trim() ? row : null;
+    if (voice === "you") {
+      return typeof row.body === "string" && row.body.trim() ? row : null;
+    }
+    if (
+      typeof row.body_they !== "string"
+      || !row.body_they.trim()
+      || (!opts.allowUnreviewed && !READER_ELIGIBLE.has(row.body_they_review_status ?? ""))
+      || row.body_they_approval?.approvalLevel !== "exact_owner_approved"
+    ) {
+      return null;
+    }
+    return { ...row, body: row.body_they };
   };
   const findTemplate = (key: string, opts: RenderOpts = {}): TemplateRow | null => {
     const t = templatesFile.templates.find((x) => x.contentKey === key);
@@ -348,6 +361,7 @@ export function createFallbackRenderer(templatesFile: TemplatesFile, rowsFile: R
     const gapLabel = `${planet}/${sign}${house ? `/house-${house}` : ""}`;
     const parts: string[] = [];
     const partKeys: string[] = [];
+    const withModifiers = (body: string, include: boolean) => [body, ...(include ? mods : [])].filter(Boolean).join("\n\n");
 
     const isNode = planet === "north-node" || planet === "south-node";
     if (isNode) {
@@ -359,7 +373,7 @@ export function createFallbackRenderer(templatesFile: TemplatesFile, rowsFile: R
     const signTemplate = findTemplate(`fallback-template/natal.planet-in-sign/${planet}`, opts)
       ?? getTemplate(isNode ? "fallback-template/natal.node-in-sign" : "fallback-template/natal.planet-in-sign");
     if (exactSignLived) {
-      parts.push(exactSignLived.body ?? "");
+      parts.push(withModifiers(exactSignLived.body ?? "", !house));
       partKeys.push(exactSignLived.contentKey);
     } else {
       try {
@@ -367,7 +381,7 @@ export function createFallbackRenderer(templatesFile: TemplatesFile, rowsFile: R
         partKeys.push(signTemplate.contentKey);
       } catch (err) {
         if (!(err instanceof SourceGapError) || !genericSignLived) throw err;
-        parts.push(genericSignLived.body ?? "");
+        parts.push(withModifiers(genericSignLived.body ?? "", !house));
         partKeys.push(genericSignLived.contentKey);
       }
     }
@@ -381,7 +395,7 @@ export function createFallbackRenderer(templatesFile: TemplatesFile, rowsFile: R
       const renderedHouseMeaning = mustache(houseMeaning, ctx);
       if (exactHouseLived) {
         const exactBody = withoutLegacyHouseBridge(exactHouseLived.body ?? "", house, voice);
-        parts.push([renderedHouseMeaning, exactBody].filter(Boolean).join("\n\n"));
+        parts.push(withModifiers([renderedHouseMeaning, exactBody].filter(Boolean).join("\n\n"), true));
         partKeys.push(exactHouseLived.contentKey);
       } else {
         const houseTemplate = getTemplate("fallback-template/natal.house-context");
@@ -397,7 +411,7 @@ export function createFallbackRenderer(templatesFile: TemplatesFile, rowsFile: R
           partKeys.push(houseTemplate.contentKey);
         } catch (err) {
           if (!(err instanceof SourceGapError) || !genericHouseLived) throw err;
-          parts.push(genericHouseLived.body ?? "");
+          parts.push(withModifiers(genericHouseLived.body ?? "", true));
           partKeys.push(genericHouseLived.contentKey);
         }
         headlineTemplate = houseTemplate;
@@ -443,10 +457,11 @@ export function createFallbackRenderer(templatesFile: TemplatesFile, rowsFile: R
       getReaderLivedRow(`fallback-hook/natal-aspect-lived/${facts.planetA}/${aspect}/${facts.planetB}`, voice, opts)
       ?? getReaderLivedRow(`fallback-hook/natal-aspect-lived/${facts.planetB}/${aspect}/${facts.planetA}`, voice, opts);
     if (exactLived) {
+      const exactBody = mustache(exactLived.body ?? "", { Name: facts.voice });
       return {
         headline: `${title(facts.planetA)} ${aspect} ${title(facts.planetB)}`,
-        parts: [exactLived.body ?? ""],
-        body: exactLived.body ?? "",
+        parts: [exactBody],
+        body: exactBody,
         astroHint: exactLived.astroHint,
         templateKey: exactLived.contentKey,
         provenanceTier: "exact-owner-approved",

@@ -195,7 +195,7 @@ assert.doesNotMatch(appSource, /if \(!aspect \|\| normalizeSkyAspectSurface\(/u)
 assert.doesNotMatch(appSource, /if \(mode === "sky" && !normalizedSkySurface\?\.sections\.length\)/u);
 assert.doesNotMatch(appSource, /\.filter\(\(\{ normalized \}\) => normalized\.sections\.length > 0\)/u);
 assert.match(appSource, /const sourceGapAspectRows = isRegistryArticle/u);
-assert.match(appSource, /heading: "Aspect details"/u);
+assert.match(appSource, /heading: "Aspects shaping this transit"/u);
 assert.doesNotMatch(appSource, /All calculated aspects/u);
 assert.doesNotMatch(appSource, /Facts only/u);
 assert.match(adminSource, /type AdminContentSystemFilter = "all" \| "authored" \| "generated" \| "fallback"/u);

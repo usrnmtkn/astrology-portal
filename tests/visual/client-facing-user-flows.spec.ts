@@ -2371,7 +2371,9 @@ test.describe("client-facing user flow case studies", () => {
     const monthTab = page.getByRole("tab", { name: "Month", exact: true });
     await monthTab.click();
     await expect(monthTab).toHaveAttribute("aria-selected", "true");
-    await expect(selectedDay.locator(".lunar-selected-card__aspect-writeup")).toHaveText(signSpecificBody ?? "");
+    await expect(selectedDay.locator(".lunar-selected-card__aspect-writeup")).toHaveText(signSpecificBody ?? "", {
+      timeout: 15_000
+    });
     await expect(selectedDay).not.toContainText("and for the collective");
     await assertNoClientErrors();
   });
@@ -2390,6 +2392,78 @@ test.describe("client-facing user flow case studies", () => {
     await page.getByLabel("Selected week").getByRole("button", { name: /Full Moon\. Moon in Aquarius/ }).click();
     await expect(selectedDay.getByRole("heading", { level: 2 })).toHaveText("Full Moon in Aquarius");
     await expect(selectedDay.getByText("Exact at 10:35 AM")).toBeVisible();
+    await assertNoClientErrors();
+  });
+
+  test("calendar Full Moon opens the canonical SKY V4 lunation article on the real detail surface", async ({ page }) => {
+    const assertNoClientErrors = await expectNoClientErrors(page);
+
+    await seedClientState(page, { now: "2026-07-29T16:00:00.000Z" });
+    await expectClientRouteLoads(page, "/#calendar?view=week&date=2026-07-29");
+    const selectedDay = page.getByLabel("Selected lunar day");
+    const eventButton = selectedDay.getByRole("button", { name: "Full Moon in Aquarius", exact: true });
+
+    await expect(eventButton).toBeVisible({ timeout: 15_000 });
+    await eventButton.click();
+    const article = page.locator(".app-shell.mode-detail .sky-detail-article");
+    await expect(article).toBeVisible();
+    await expect(article).toContainText("A Full Moon in Aquarius reveals what has grown around community, belonging, future vision");
+    await expect(article).toContainText("Aquarius reminds us that truth is not always comfortable, but it is necessary.");
+    await expect(article).not.toContainText("Aspects shaping this transit");
+    await expect(article).toContainText("Key aspects");
+    await assertNoClientErrors();
+  });
+
+  test("calendar New Moon opens the canonical SKY V4 lunation article on the real detail surface", async ({ page }) => {
+    const assertNoClientErrors = await expectNoClientErrors(page);
+
+    await seedClientState(page, { now: "2026-07-14T16:00:00.000Z" });
+    await expectClientRouteLoads(page, "/#calendar?view=week&date=2026-07-14");
+    const selectedDay = page.getByLabel("Selected lunar day");
+    const eventButton = selectedDay.getByRole("button", { name: /New Moon in Cancer/u });
+
+    await expect(eventButton).toBeVisible({ timeout: 15_000 });
+    await eventButton.click();
+    const article = page.locator(".app-shell.mode-detail .sky-detail-article");
+    await expect(article).toBeVisible();
+    await expect(article).toContainText("The New Moon in Cancer invites a new beginning rooted in care");
+    await expect(article).toContainText("Let this New Moon be an agreement between you and your nervous system.");
+    await expect(article).not.toContainText("Aspects shaping this transit");
+    await expect(article).toContainText("Key aspects");
+    await assertNoClientErrors();
+  });
+
+  test("calendar exact eclipse opens the exact canonical SKY V4 event article", async ({ page }) => {
+    const assertNoClientErrors = await expectNoClientErrors(page);
+
+    await seedClientState(page, { now: "2025-09-21T16:00:00.000Z" });
+    await expectClientRouteLoads(page, "/#calendar?view=week&date=2025-09-21");
+    const selectedDay = page.getByLabel("Selected lunar day");
+    const eventButton = selectedDay.getByRole("button", { name: /Eclipse in Virgo/u });
+
+    await expect(eventButton).toBeVisible({ timeout: 15_000 });
+    await eventButton.click();
+    const article = page.locator(".app-shell.mode-detail .sky-detail-article");
+    await expect(article).toBeVisible();
+    await expect(article).toContainText("The Partial Solar Eclipse in Virgo is a closing ceremony and a question of new foundations.");
+    await expect(article).toContainText("The magick is not in wishing. It is in the doing.");
+    await assertNoClientErrors();
+  });
+
+  test("calendar eclipse without an exact event record uses the governed sign-aware fallback", async ({ page }) => {
+    const assertNoClientErrors = await expectNoClientErrors(page);
+
+    await seedClientState(page, { now: "2026-08-12T16:00:00.000Z" });
+    await expectClientRouteLoads(page, "/#calendar?view=week&date=2026-08-12");
+    const selectedDay = page.getByLabel("Selected lunar day");
+    const eventButton = selectedDay.getByRole("button", { name: /Eclipse in Leo/u });
+
+    await expect(eventButton).toBeVisible({ timeout: 15_000 });
+    await eventButton.click();
+    const article = page.locator(".app-shell.mode-detail .sky-detail-article");
+    await expect(article).toBeVisible();
+    await expect(article).toContainText("The role that kept you visible may no longer feel like the person you want to keep performing.");
+    await expect(article).not.toContainText("The Partial Solar Eclipse in Virgo");
     await assertNoClientErrors();
   });
 
@@ -3332,7 +3406,7 @@ test.describe("client-facing user flow case studies", () => {
     await assertNoClientErrors();
   });
 
-  test("Sun in Virgo detail serves the exact owner-approved source repair", async ({ page }) => {
+  test("Sun in Virgo detail serves the exact canonical V4 owner-approved article", async ({ page }) => {
     const assertNoClientErrors = await expectNoClientErrors(page);
 
     await seedClientState(page, { now: "2026-08-27T16:00:00.000Z" });
@@ -3340,9 +3414,70 @@ test.describe("client-facing user flow case studies", () => {
 
     const article = page.locator(".sky-detail-article");
     await expect(article).toBeVisible();
-    await expect(article).toContainText("Virgo is not tidiness. Virgo is the standard");
-    await expect(article).toContainText("You may be the only person who can tell.");
+    await expect(article).toContainText("Welcome to Virgo season’s reality check.");
+    await expect(article).toContainText("The best repair may be the one that removes work instead of teaching you to tolerate more of it.");
+    await expect(article).toContainText("Aspects shaping this transit");
+    await expect(article).toContainText("Sun Trine Chiron");
+    await expect(article).toContainText("A closed-door talk exposes who has been pulling the strings.");
+    await expect(article).not.toContainText("The Sun in Virgo ties confidence to usefulness, accuracy");
     await expectNoDuplicateArticleHeadings(page, "Sun in Virgo placement detail");
+    await assertNoClientErrors();
+  });
+
+  test("SKY V4 placement detail composes canonical copy with governed conditions and aspects", async ({ page }) => {
+    const assertNoClientErrors = await expectNoClientErrors(page);
+
+    await seedClientState(page, { now: "2025-03-29T16:00:00.000Z" });
+    await expectClientRouteLoads(page, "/#sky/placement/venus/aries");
+
+    const article = page.locator(".sky-detail-article");
+    await expect(article).toBeVisible();
+    await expect(article).toContainText("Venus retrograde rewrites desire; Mercury retrograde scrambles the signal.");
+    await expect(article).toContainText("Venus retrograde is a course correction of the heart.");
+    await expect(article).not.toContainText(/generated unapproved|natal placement/iu);
+    await expectNoDuplicateArticleHeadings(page, "SKY V4 contextual placement detail");
+    await assertNoClientErrors();
+  });
+
+  test("SKY V4 node and Lilith routes compose their canonical product-surface records", async ({ page }) => {
+    const assertNoClientErrors = await expectNoClientErrors(page);
+
+    await seedClientState(page, { now: "2026-08-22T16:00:00.000Z" });
+    await expectClientRouteLoads(page, "/#sky/placement/north-node");
+    await expect(page.locator(".sky-detail-article")).toContainText("The North Node moves into Aquarius, making a less familiar response more important than the one that comes automatically.");
+    await expect(page.locator(".sky-detail-article")).toContainText("During this Aquarius–Leo node cycle, recognition and personal visibility stop being the only measure");
+    await expectNoDuplicateArticleHeadings(page, "SKY V4 North Node detail");
+
+    await expectClientRouteLoads(page, "/#sky/placement/south-node");
+    await expect(page.locator(".sky-detail-article")).toContainText("The South Node moves into Leo, making an old reflex easier to repeat and easier to see.");
+    await expectNoDuplicateArticleHeadings(page, "SKY V4 South Node detail");
+
+    await expectClientRouteLoads(page, "/#sky/placement/lilith/sagittarius");
+    await expect(page.locator(".sky-detail-article")).toContainText("While Black Moon Lilith moves through Sagittarius, certainty gets tested against evidence.");
+    await expectNoDuplicateArticleHeadings(page, "SKY V4 Lilith detail");
+    await assertNoClientErrors();
+  });
+
+  test("SKY V4 seasonal context uses the product location hemisphere", async ({ page }) => {
+    const assertNoClientErrors = await expectNoClientErrors(page);
+
+    await seedClientState(page, { now: "2026-06-25T16:00:00.000Z" });
+    await expectClientRouteLoads(page, "/#sky/placement/sun/cancer");
+    const article = page.locator(".sky-detail-article");
+
+    await expect(article).toContainText("The June solstice marks the longest day of the year in the Northern Hemisphere");
+    await expect(article).not.toContainText("longest night of the year in the Southern Hemisphere");
+    await assertNoClientErrors();
+  });
+
+  test("SKY V4 Lilith station copy appears only on its calculated station day", async ({ page }) => {
+    const assertNoClientErrors = await expectNoClientErrors(page);
+
+    await seedClientState(page, { now: "2026-08-27T16:00:00.000Z" });
+    await expectClientRouteLoads(page, "/#sky/placement/lilith/sagittarius");
+    const article = page.locator(".sky-detail-article");
+
+    await expect(article).toContainText("Black Moon Lilith stations, and a preference, refusal, or old point of anger becomes much harder to keep buried.");
     await assertNoClientErrors();
   });
 
@@ -3360,13 +3495,14 @@ test.describe("client-facing user flow case studies", () => {
     await expect(page.locator(".app-shell.mode-detail")).toBeVisible();
     await expectNoDuplicateArticleHeadings(page, "Sky placement detail");
     await expect(page.locator(".sky-detail-article")).toContainText(/The Sun in Leo/i);
+    await expect(page.locator(".sky-detail-article")).toContainText(/Leo brings a bold invitation to take center stage in your own life/u);
     await expect(page.locator(".sky-detail-article")).not.toContainText(/active here|current emphasis|timing, mood/i);
     await expectHydrationKeepsReaderCopyStable(
       page,
       page.locator(".sky-detail-article"),
       "Sky placement detail copy",
       {
-        excludedSelector: "#sky-rising-horoscopes, #sky-personalized-placement",
+        excludedSelector: "#sky-rising-horoscopes, #sky-personalized-placement, .article-related-aspects",
         minLength: 180
       }
     );
@@ -3497,16 +3633,16 @@ test.describe("client-facing user flow case studies", () => {
     await assertNoClientErrors();
   });
 
-  test("Pluto retrograde in Aquarius keeps approved placement copy when pre-1800 recurrence facts are unavailable", async ({ page }) => {
+  test("Pluto retrograde in Aquarius serves canonical V4 copy without invented recurrence facts", async ({ page }) => {
     const assertNoClientErrors = await expectNoClientErrors(page);
 
     await seedClientState(page, { now: "2026-08-22T16:00:00.000Z" });
     await expectClientRouteLoads(page, "/#sky/placement/pluto/aquarius");
 
     await expect(page.getByRole("heading", { name: /Pluto(?: Rx)? in Aquarius/u })).toBeVisible();
-    await expect(page.getByText(/Pluto governs power and transformation/u)).toBeVisible();
-    await expect(page.getByText(/These systems can connect a group quickly/u)).toBeVisible();
-    await expect(page.getByText(/By .*a network that treats agreement as proof of truth/u)).toBeVisible();
+    await expect(page.getByText(/Pluto moves into Aquarius, putting more pressure on power, control, and consequences/u)).toBeVisible();
+    await expect(page.getByText(/Pluto in Aquarius magnifies the shadows of group dynamics/u)).toBeVisible();
+    await expect(page.getByText(/who gains leverage after it changes/u)).toBeVisible();
     await expect(page.getByText(/Pluto previously moved through Aquarius/u)).toHaveCount(0);
     await assertNoClientErrors();
   });

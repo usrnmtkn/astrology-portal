@@ -7,6 +7,8 @@ import {
   SKY_V4_OVERLAY_DEFAULTS,
   assertSkyV4CanonicalPackage,
   assertSkyV4ContinuousOwnerApproval,
+  assertSkyV4ReaderCopyOwnerApproval,
+  assertSkyV4ReaderCopyServingRelease,
   continuousArticleFor,
   renderSkyV4ContinuousPreview,
   renderSkyV4StudioPreview,
@@ -27,12 +29,14 @@ const title = (value) => String(value ?? "").replace(/[-_]+/gu, " ").replace(/\b
 
 assert.equal(createHash("sha256").update(bytes).digest("hex"), SKY_V4_CANONICAL_JSON_SHA256);
 assert.equal(assertSkyV4CanonicalPackage(corpus), corpus);
-const ownerApproval = assertSkyV4ContinuousOwnerApproval(corpus);
-assert.equal(ownerApproval.approved_keys.length, 120);
+const continuousApproval = assertSkyV4ContinuousOwnerApproval(corpus);
+assert.equal(continuousApproval.approved_keys.length, 120);
 assert.equal(corpus.packageVersion, SKY_V4_CANONICAL_PACKAGE_VERSION);
 assert.equal(corpus.servingEnabled, false);
 
 const records = skyV4ContentStudioRecords(corpus);
+const ownerApproval = assertSkyV4ReaderCopyOwnerApproval(corpus, records);
+const servingRelease = assertSkyV4ReaderCopyServingRelease(corpus);
 const coverage = skyV4RuntimeCoverage(corpus);
 assert.equal(records.length, 305);
 assert.equal(coverage.continuousCount, 120);
@@ -40,18 +44,22 @@ assert.equal(coverage.fallbackCount, 120);
 assert.equal(coverage.compositionScenarioCount, 30);
 assert.equal(coverage.editingTestCount, 14);
 const continuousRecords = records.filter((row) => row.studio_content_type === "continuous-placement");
-const otherRecords = records.filter((row) => row.studio_content_type !== "continuous-placement");
+const additionalReaderRecords = records.filter((row) => row.studio_content_type !== "continuous-placement" && row.owner_approved === true);
+const configurationRecords = records.filter((row) => row.studio_review_category === "configuration");
 assert.equal(continuousRecords.length, 120);
 assert.ok(continuousRecords.every((row) => row.review_status === "approved"));
 assert.ok(continuousRecords.every((row) => row.owner_approved === true));
 assert.ok(continuousRecords.every((row) => row.approved_via === ownerApproval.approval_record));
-assert.ok(continuousRecords.every((row) => row.serving_enabled === false));
-assert.ok(continuousRecords.every((row) => row.owner_approved_fields.join("|") === "placementArticle|tldrWhat|tldrTakeaway"));
-assert.ok(continuousRecords.every((row) => row.owner_unapproved_fields.join("|") === "fallback.hook|fallback.lived|fallback.turn"));
-assert.equal(otherRecords.length, 185);
-assert.ok(otherRecords.every((row) => row.review_status === "needs_review"));
-assert.ok(otherRecords.every((row) => row.owner_approved === false));
-assert.ok(records.every((row) => row.serving_enabled === false));
+assert.ok(continuousRecords.every((row) => row.serving_enabled === true));
+assert.ok(continuousRecords.every((row) => row.owner_approved_fields.join("|") === "tldrWhat|tldrTakeaway|placementArticle|fallback.hook|fallback.lived|fallback.turn"));
+assert.equal(additionalReaderRecords.length, 160);
+assert.ok(additionalReaderRecords.every((row) => row.review_status === "approved"));
+assert.ok(additionalReaderRecords.every((row) => row.approved_via === ownerApproval.approval_record));
+assert.equal(configurationRecords.length, 25);
+assert.ok(configurationRecords.every((row) => row.review_status === "needs_review"));
+assert.ok(configurationRecords.every((row) => row.owner_approved === false));
+assert.equal(records.filter((row) => row.serving_enabled === true).length, 280);
+assert.equal(servingRelease.expected_serving_records, 280);
 assert.ok(records.every((row) => row.source_package === SKY_V4_CANONICAL_PACKAGE_VERSION));
 assert.equal(new Set(records.map((row) => row.contentKey)).size, records.length);
 
@@ -372,4 +380,4 @@ tokenOrder(continuousStacked.page, ["## TLDR", matchedOverlays[0].OverlayBody, "
 const zeroOptional = renderSkyV4StudioPreview(corpus, { contentKey: "sky-lunation/new-moon/gemini" });
 assert.doesNotMatch(zeroOptional.page, /## (Other Conditions|Key aspects)/u);
 
-console.log(`SKY V4 canonical stage: PASS (${records.length} records; ${coverage.continuousCount} continuous articles; serving OFF)`);
+console.log(`SKY V4 canonical package: PASS (${records.length} records; 280 explicitly released reader records; 25 configuration records remain dark)`);

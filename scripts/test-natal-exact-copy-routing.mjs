@@ -15,6 +15,8 @@ const templates = readJson("apps/web/src/content/fallbackArchitectureV3/template
 const rows = readJson("apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json");
 const sunSquareAscendantApproval = readJson("packages/astro-knowledge/review/natal-sun-square-ascendant-owner-approval-2026-08-22.json");
 const angleV15BatchManifest = readJson("packages/astro-knowledge/review/angle-aspects-60-v15/shipping-manifest.json");
+const friendsV1Manifest = readJson("packages/astro-knowledge/review/angle-aspects-60-friends-v1/shipping-manifest.json");
+const friendsV1Authority = readJson("packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.json");
 const browserRenderer = createFallbackRenderer(templates, rows);
 
 const natalAspectRows = rows.hookRows
@@ -74,9 +76,14 @@ assert.notEqual(sunSquareAscendant.body, sunSquareAscendantApproval.payload.body
 const v15SunSquare = angleV15BatchManifest.rows.find((row) => row.contentKey === sunSquareAscendantKey);
 assert.ok(v15SunSquare, "V15 Sun square Ascendant approval is missing.");
 const v15SunSquareApproval = readJson(v15SunSquare.recordPath);
-assert.equal(sunSquareAscendant.body, v15SunSquareApproval.payload.body);
-assert.equal(sunSquareAscendant.approval.recordPath, v15SunSquare.recordPath);
-assert.equal(sunSquareAscendant.approval.payloadSha256, v15SunSquare.payloadSha256);
+assert.notEqual(sunSquareAscendant.body, v15SunSquareApproval.payload.body, "The later You supersession must not rewrite historical V15 evidence.");
+const currentSunSquare = friendsV1Manifest.youRevisionRecords.find((row) => row.contentKey === sunSquareAscendantKey);
+assert.ok(currentSunSquare, "The later Sun square Ascendant You supersession is missing.");
+const currentSunSquareApproval = readJson(currentSunSquare.recordPath);
+assert.equal(sunSquareAscendant.body, currentSunSquareApproval.payload.body);
+assert.equal(sunSquareAscendant.approval.recordPath, currentSunSquare.recordPath);
+assert.equal(sunSquareAscendant.approval.payloadSha256, currentSunSquare.payloadSha256);
+assert.ok(sunSquareAscendant.historical_approvals.some((approval) => approval.recordPath === v15SunSquare.recordPath));
 
 for (const [name, renderAspect] of [
   ["Node", renderNodeAspect],
@@ -92,13 +99,13 @@ for (const [name, renderAspect] of [
   ["browser", browserRenderer.renderNatalAspect]
 ]) {
   const rendered = renderAspect({ planetA: "sun", aspect: "square", planetB: "ascendant", voice: "you" });
-  assert.equal(rendered.body, sunSquareAscendant.body, `${name} must serve the owner-authored Sun square Ascendant wording verbatim on You.`);
+  assert.equal(rendered.body, sunSquareAscendant.body, `${name} must serve the exact owner-approved Sun square Ascendant supersession verbatim on You.`);
   assert.equal(rendered.templateKey, sunSquareAscendant.contentKey);
-  assert.throws(
-    () => renderAspect({ planetA: "sun", aspect: "square", planetB: "ascendant", voice: "Alex" }),
-    /SOURCE_GAP: natal aspect pair/u,
-    `${name} must keep Friend fail-closed until separately authored observer-position wording exists.`
-  );
+  const friendAuthority = friendsV1Authority.rows.find((row) => row.base_content_key === sunSquareAscendantKey);
+  assert.ok(friendAuthority);
+  const friendRendered = renderAspect({ planetA: "sun", aspect: "square", planetB: "ascendant", voice: "Alex" });
+  assert.equal(friendRendered.body, friendAuthority.body.replaceAll("{{Name}}", "Alex"), `${name} must select separately authored Friends copy.`);
+  assert.notEqual(friendRendered.body, rendered.body, `${name} must not expose the You body on Friends.`);
 }
 
 for (const [name, renderPlacement] of [
@@ -135,4 +142,4 @@ assert.doesNotMatch(
   "Natal aspect subgroup labels must not fall back to non-semantic spans."
 );
 
-console.log("natal exact-copy routing: ok (231-row frozen non-V15 baseline plus 60-row V15 angle batch; dashboard hook lane; contextual house bridges; matching subgroup labels)");
+console.log("natal exact-copy routing: ok (231-row frozen non-V15 baseline plus 60-row V15 angle batch with governed Friends variants; dashboard hook lane; contextual house bridges; matching subgroup labels)");

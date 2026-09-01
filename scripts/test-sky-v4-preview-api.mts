@@ -39,11 +39,13 @@ assert.match(reviewPanel, /Governed provenance/u);
 const generatedContentApi = fs.readFileSync(new URL("../api/admin/generated-content.ts", import.meta.url), "utf8");
 assert.match(generatedContentApi, /sky-v4-governed-aspect-draft/u);
 assert.match(generatedContentApi, /approved governed aspect baseline remains LIVE and unchanged/u);
-assert.match(generatedContentApi, /skyV4OwnerApprovedContinuousKeys\.has\(row\.content_key\)/u);
-assert.match(generatedContentApi, /record\.serving_enabled = false/u);
+assert.match(generatedContentApi, /skyV4OwnerApprovedReaderCopyKeys\.has\(row\.content_key\)/u);
+assert.match(generatedContentApi, /skyV4ServingReleasedReaderCopyKeys/u);
+assert.match(generatedContentApi, /forksSkyV4ServingDraft/u);
+assert.match(generatedContentApi, /sky-v4-reader-copy-draft/u);
 assert.match(generatedContentApi, /reviewState: "serving-disabled"|"serving-disabled"/u);
 const materializer = fs.readFileSync(new URL("./materialize-fallback-architecture-v3-dashboard-rows.mjs", import.meta.url), "utf8");
 assert.match(materializer, /skyV4GovernedAspectStudioRecord\(row\) \?\? row/u);
 assert.match(materializer, /contentKey\.startsWith\("sky-placement\/article\/"\)/u);
 
-console.log("SKY V4 production-parity preview API: PASS (auth required; canonical resolver shared; serving OFF)");
+console.log("SKY V4 production-parity preview API: PASS (auth required; canonical resolver shared; previews and edits remain non-serving drafts)");

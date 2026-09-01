@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "id": "angle-aspects-60-friends-v1-013",
+  "approvalLevel": "exact_owner_approved",
+  "authorship": "collaborative_owner_approved",
+  "provenanceNote": "The Friends body is separately authored and exact owner approved. It is not derived from the You body.",
+  "contentKey": "fallback-hook/natal-aspect-lived/mercury/conjunction/ascendant",
+  "packetKey": "mercury|conjunction|ascendant",
+  "textField": "body_they",
+  "payloadSha256": "e8e5c73462b80b7af3a1584e3b12a1c24d8dbc7c04adcbac7ddbd31f088c8895",
+  "payloadHashAlgorithm": "sha256(JSON.stringify(payload))",
+  "payload": {
+    "body_they": "{{Name}} often discovers what they think by talking, writing, asking questions, or hearing themselves explain something out loud. Because their thinking is easy to see, something they say while figuring things out can quickly become part of how other people define them. They are allowed to know more now than they knew when they first described the plan. Their language should be able to change when their thinking does.",
+    "sourceMechanism": "Separately authored Friends copy transcribed byte-for-byte from the SHA-bound Friends V1 owner-approved artifact; no You-to-Friends transformation is permitted."
+  },
+  "approvedAt": "2026-08-31",
+  "approvalEffect": "exact_wording_approval",
+  "sourceArtifact": {
+    "id": "angle-aspects-60-friends-v1",
+    "path": "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.md",
+    "sha256": "186fc623066981bd66a1cb7f4f00e2062391572b5f94ab1ad68b7842c5c135f2",
+    "jsonPath": "packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.json",
+    "jsonSha256": "acdd96d177b971d1a4cc9bb1c02130347a09fcd2036de499ea35c1a205cd5640",
+    "passageHeading": "Mercury conjunction Ascendant",
+    "passageOrdinal": 13,
+    "bodySha256": "2d79ed78cb8bd0384af89ca96d7ae9cea13850b0fb4eb0b39c918324201af33b"
+  },
+  "ownerConfirmationSource": {
+    "channel": "Codex task owner message and SHA-pinned handoff",
+    "taskId": "01a04fc0-899b-7cd2-bb2e-98ad182391bb",
+    "date": "2026-08-31"
+  },
+  "additionalBilledCalls": 0
+}

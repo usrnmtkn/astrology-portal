@@ -625,19 +625,20 @@ async function seedAdminApi(
     }
 
     if (pathname.endsWith("/natal-placement-preview")) {
-      const payload = route.request().postDataJSON() as { house?: string; planet?: string; sign?: string };
+      const payload = route.request().postDataJSON() as { house?: string; isRetrograde?: boolean; planet?: string; sign?: string };
       const titleCase = (value: string) => value.split("-").map((part) => `${part.charAt(0).toUpperCase()}${part.slice(1)}`).join(" ");
       const planetLabel = titleCase(payload.planet ?? "sun");
       const signLabel = titleCase(payload.sign ?? "aries");
       const signPart = `Your ${planetLabel} is in ${signLabel}, so the planet-in-sign write-up loads before a house is selected.`;
-      const housePart = payload.house ? `The ${payload.house} house adds the second placement paragraph.` : null;
+      const retrogradePart = payload.isRetrograde ? `Because ${planetLabel} is retrograde in the birth chart, the pattern runs inward first.` : "";
+      const housePart = payload.house ? [`The ${payload.house} house adds the second placement paragraph.`, retrogradePart].filter(Boolean).join(" ") : null;
       await route.fulfill({
         status: 200,
         contentType: "application/json",
         body: JSON.stringify({
           ok: true,
           rendered: {
-            headline: payload.house ? `${planetLabel} in ${signLabel} in the ${payload.house === "1" ? "1st" : `${payload.house}th`} house` : `${planetLabel} in ${signLabel}`,
+            headline: payload.house ? `${planetLabel}${payload.isRetrograde ? " Rx" : ""} in ${signLabel} in the ${payload.house === "1" ? "1st" : `${payload.house}th`} house` : `${planetLabel}${payload.isRetrograde ? " Rx" : ""} in ${signLabel}`,
             parts: [signPart, ...(housePart ? [housePart] : [])],
             partKeys: ["fallback-template/natal.planet-in-sign", ...(housePart ? ["fallback-template/natal.house-context"] : [])],
             body: [signPart, housePart].filter(Boolean).join("\n\n"),
@@ -662,13 +663,15 @@ async function seedAdminApi(
         const payload = route.request().postDataJSON() as Record<string, unknown>;
         options.onGeneratedContentWrite?.({ method, payload });
         const existingRow = apiGeneratedContentRows.find((row) => row.id === payload.id) ?? generatedContentRows[0];
+        const packageReviewStatus = typeof payload.reviewStatus === "string" ? payload.reviewStatus : null;
+        const packageReaderServing = packageReviewStatus === "approved" || packageReviewStatus === "approved_reuse";
         const updatedRow = {
           ...existingRow,
           id: typeof payload.id === "string" ? payload.id : existingRow.id,
           content_key: typeof payload.contentKey === "string" ? payload.contentKey : existingRow.content_key,
           surface: typeof payload.surface === "string" ? payload.surface : existingRow.surface,
           mode: typeof payload.mode === "string" ? payload.mode : existingRow.mode,
-          status: typeof payload.status === "string" ? payload.status : existingRow.status,
+          status: packageReviewStatus ? packageReaderServing ? "LIVE" : "DRAFT" : typeof payload.status === "string" ? payload.status : existingRow.status,
           headline: typeof payload.headline === "string" ? payload.headline : existingRow.headline,
           summary: typeof payload.summary === "string" ? payload.summary : existingRow.summary,
           body: typeof payload.body === "string" ? payload.body : existingRow.body,
@@ -677,8 +680,8 @@ async function seedAdminApi(
           source_snapshot: payload.sourceSnapshot && typeof payload.sourceSnapshot === "object"
             ? payload.sourceSnapshot
             : existingRow.source_snapshot,
-          lane: typeof payload.lane === "string" ? payload.lane : existingRow.lane,
-          review_state: typeof payload.reviewState === "string" ? payload.reviewState : null,
+          lane: packageReviewStatus ? packageReaderServing ? "serving" : "reference" : typeof payload.lane === "string" ? payload.lane : existingRow.lane,
+          review_state: packageReviewStatus ? packageReaderServing ? null : "needs-review" : typeof payload.reviewState === "string" ? payload.reviewState : null,
           block_type: typeof payload.blockType === "string" ? payload.blockType : existingRow.block_type,
           prompt_version: typeof payload.promptVersion === "string" ? payload.promptVersion : existingRow.prompt_version
         };
@@ -829,6 +832,56 @@ async function expectNoHorizontalOverflow(page: Page, label: string) {
   const maxScrollWidth = Math.max(dimensions.bodyScrollWidth, dimensions.documentScrollWidth);
 
   expect(maxScrollWidth, `${label} does not create horizontal overflow`).toBeLessThanOrEqual(dimensions.viewportWidth + 4);
+}
+
+async function expectFormShellDoesNotOverlap(
+  shell: Locator,
+  label: string,
+  selectors = {
+    header: ":scope > .admin-editor-toolbar",
+    body: ":scope > .admin-post-editor",
+    footer: ":scope > .admin-editor-savebar"
+  }
+) {
+  await expect(shell, `${label} shell is visible`).toBeVisible();
+  const layout = await shell.evaluate((element, regionSelectors) => {
+    const rect = (selector: string) => {
+      const node = element.querySelector<HTMLElement>(selector);
+      if (!node) return null;
+      const bounds = node.getBoundingClientRect();
+      return {
+        top: bounds.top,
+        right: bounds.right,
+        bottom: bounds.bottom,
+        left: bounds.left,
+        position: getComputedStyle(node).position,
+        overflowY: getComputedStyle(node).overflowY,
+        scrollWidth: node.scrollWidth,
+        clientWidth: node.clientWidth
+      };
+    };
+    const bounds = element.getBoundingClientRect();
+    return {
+      shell: { top: bounds.top, right: bounds.right, bottom: bounds.bottom, left: bounds.left },
+      header: rect(regionSelectors.header),
+      body: rect(regionSelectors.body),
+      footer: rect(regionSelectors.footer),
+      horizontalOverflow: element.scrollWidth - element.clientWidth
+    };
+  }, selectors);
+
+  expect(layout.header, `${label} has a header`).not.toBeNull();
+  expect(layout.body, `${label} has a scrolling body`).not.toBeNull();
+  expect(layout.horizontalOverflow, `${label} shell has no horizontal overflow`).toBeLessThanOrEqual(1);
+  expect(layout.header!.bottom, `${label} header ends before the form body`).toBeLessThanOrEqual(layout.body!.top + 1);
+  expect(layout.body!.left, `${label} body stays inside the shell`).toBeGreaterThanOrEqual(layout.shell.left - 1);
+  expect(layout.body!.right, `${label} body stays inside the shell`).toBeLessThanOrEqual(layout.shell.right + 1);
+  expect(layout.body!.scrollWidth - layout.body!.clientWidth, `${label} body has no horizontal overflow`).toBeLessThanOrEqual(1);
+  if (layout.footer) {
+    expect(layout.body!.bottom, `${label} body ends before its actions`).toBeLessThanOrEqual(layout.footer.top + 1);
+    expect(layout.footer.position, `${label} actions remain in layout flow`).not.toBe("sticky");
+    expect(layout.footer.bottom, `${label} actions stay inside the shell`).toBeLessThanOrEqual(layout.shell.bottom + 1);
+  }
 }
 
 test.describe("content dashboard admin user flow case studies", () => {
@@ -1100,6 +1153,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(page.getByLabel("Natal placement planet or point")).toBeVisible();
     await expect(page.getByLabel("Natal placement zodiac sign")).toBeVisible();
     await expect(page.getByLabel("Natal placement house")).toBeVisible();
+    await expect(page.getByLabel("Natal placement motion")).toBeVisible();
     await expect(page.getByRole("region", { name: "Content list filters" })).toHaveCount(0);
     await expect(page.getByRole("region", { name: "App visibility status" })).toHaveCount(0);
     await expect(page.getByRole("region", { name: "Generated content records" })).toHaveCount(0);
@@ -1113,7 +1167,7 @@ test.describe("content dashboard admin user flow case studies", () => {
       return { left: box.left, right: box.right, top: box.top, bottom: box.bottom };
     }));
     expect(sourceFinderBox).not.toBeNull();
-    expect(selectorBoxes).toHaveLength(3);
+    expect(selectorBoxes).toHaveLength(4);
     selectorBoxes.forEach((box, index) => {
       expect(box.left).toBeGreaterThanOrEqual(sourceFinderBox!.x);
       expect(box.right).toBeLessThanOrEqual(sourceFinderBox!.x + sourceFinderBox!.width);
@@ -1121,8 +1175,17 @@ test.describe("content dashboard admin user flow case studies", () => {
     });
     await expectNoHorizontalOverflow(page, "Natal Chart workspace");
 
+    await page.getByLabel("Natal placement planet or point").selectOption("mercury");
+    await page.getByLabel("Natal placement zodiac sign").selectOption("virgo");
+    await page.getByLabel("Natal placement house").selectOption("6");
+    await page.getByLabel("Natal placement motion").selectOption("retrograde");
+    await expect(page).toHaveURL(/planet=mercury&sign=virgo&house=6&motion=retrograde/u);
+    await expect(sourceFinder.getByText("Retrograde chart context", { exact: true })).toBeVisible();
+
     await page.getByLabel("Natal placement planet or point").selectOption("sun");
     await page.getByLabel("Natal placement zodiac sign").selectOption("cancer");
+    await page.getByLabel("Natal placement house").selectOption("");
+    await expect(page.getByLabel("Natal placement motion")).toHaveValue("direct");
     await expect(sourceFinder.locator(".admin-natal-placement-finder-heading h3")).toHaveText("Sun in Cancer");
     await expect(sourceFinder.getByRole("heading", { name: "What you see" })).toBeVisible();
     await expect(sourceFinder.getByText("Your Sun is in Cancer, so the planet-in-sign write-up loads before a house is selected.")).toBeVisible();
@@ -1340,6 +1403,7 @@ test.describe("content dashboard admin user flow case studies", () => {
       await createAction.click({ force: true });
       const editor = page.locator(".admin-editor-panel");
       await expect(editor.getByRole("heading", { name: createCase.editorHeading })).toBeVisible();
+      await expectFormShellDoesNotOverlap(editor, `${createCase.action} desktop editor`);
       if (createCase.phraseEditor) {
         await fillAdminEditorField(editor, "Phrase title", `${createCase.action} QA row`);
         await fillAdminEditorField(editor, "Reusable phrase", `${createCase.action} body copy for the dashboard admin save contract.`);
@@ -1356,6 +1420,10 @@ test.describe("content dashboard admin user flow case studies", () => {
         await fillAdminEditorField(editor, createCase.headlineLabel, `${createCase.action} QA row`);
         await fillAdminEditorField(editor, createCase.bodyLabel, `${createCase.action} body copy for the dashboard admin save contract.`);
       }
+      await page.setViewportSize({ width: 390, height: 844 });
+      await expectFormShellDoesNotOverlap(editor, `${createCase.action} mobile editor`);
+      await expectNoHorizontalOverflow(page, `${createCase.action} mobile editor`);
+      await page.setViewportSize({ width: 1280, height: 900 });
       await editor.getByRole("button", { name: "Save" }).evaluate((element) => {
         (element as HTMLButtonElement).click();
       });
@@ -1399,7 +1467,8 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(editor.getByLabel("App display source")).toHaveCount(0);
     const savebar = editor.locator(".admin-editor-savebar");
     await expect(savebar).toContainText("All changes saved");
-    expect(await savebar.evaluate((element) => getComputedStyle(element).position)).toBe("sticky");
+    expect(await savebar.evaluate((element) => getComputedStyle(element).position)).toBe("relative");
+    await expectFormShellDoesNotOverlap(editor, "saved Content Library editor");
     const relatedPassages = editor.getByRole("region", { name: "Related reader horoscope passages" });
     await expect(relatedPassages).toBeVisible();
     await expect(relatedPassages).toContainText("House horoscopes");
@@ -1451,6 +1520,39 @@ test.describe("content dashboard admin user flow case studies", () => {
       }
     });
     await expect(page.getByRole("status")).toContainText("sky.placement.sun.cancer saved as Published");
+    await assertNoBrowserErrors();
+  });
+
+  test("Sky write-ups filter and sort retrograde Calendar placements", async ({ page }) => {
+    const assertNoBrowserErrors = await expectNoBrowserErrors(page);
+    const retrogradeRow = {
+      ...generatedContentRows[0],
+      id: "qa-retrograde-calendar-row",
+      content_key: "sky/station/mercury/retrograde/virgo",
+      event_type: "station",
+      headline: "Mercury stations retrograde in Virgo",
+      facts: { body: "Mercury", sign: "Virgo", motion: "retrograde", isRetrograde: true }
+    };
+    const directRow = {
+      ...generatedContentRows[0],
+      id: "qa-direct-sky-row",
+      content_key: "sky/placement/venus/libra/direct",
+      event_type: "sky-placement",
+      headline: "Venus direct in Libra",
+      facts: { body: "Venus", sign: "Libra", motion: "direct", isRetrograde: false }
+    };
+    await seedAdminApi(page, { generatedRows: [directRow, retrogradeRow, ...generatedContentRows] });
+    await expectAdminRouteLoads(page, "/admin/content#sky-writeups");
+
+    await expect(page.getByLabel("Sky write-up motion")).toBeVisible();
+    await expect(page.getByLabel("Sky write-up reader use")).toBeVisible();
+    await expect(page.getByLabel("Sort Sky write-ups")).toBeVisible();
+    await page.getByLabel("Sky write-up motion").selectOption("retrograde");
+    await page.getByLabel("Sky write-up reader use").selectOption("calendar");
+    await page.getByLabel("Sort Sky write-ups").selectOption("retrograde-first");
+
+    await expect(page.locator(".admin-content-row", { hasText: "Mercury stations retrograde in Virgo" })).toBeVisible();
+    await expect(page.locator(".admin-content-row", { hasText: "Venus direct in Libra" })).toHaveCount(0);
     await assertNoBrowserErrors();
   });
 
@@ -1973,7 +2075,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(editor.getByLabel("Lane")).toHaveValue("reference");
     await expect(editor.getByLabel("Review state")).toHaveValue("NEEDS_OWNER_DECISION");
 
-    await expect(editor.getByLabel("Status")).not.toBeVisible();
+    await expect(editor.getByLabel("Status", { exact: true })).not.toBeVisible();
     await expect(editor.getByRole("button", { name: "Publish to app" })).toHaveCount(0);
     await editor.getByRole("button", { name: "Save", exact: true }).click();
     await expect.poll(() => writes.length).toBe(1);
@@ -2087,7 +2189,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(editor.getByLabel("TL;DR / summary")).toHaveCount(0);
     await expect(editor.getByLabel("body_you")).toHaveCount(0);
     await expect(editor.getByLabel("body_they")).toHaveCount(0);
-    await expect(editor.getByLabel("Status")).toHaveCount(0);
+    await expect(editor.getByLabel("Status", { exact: true })).toHaveCount(0);
     await expect(editor.getByLabel("Surface")).toHaveCount(0);
     await expect(editor.getByText("Fallback ingredient check")).toHaveCount(0);
     await expect(editor.getByText("Internal source details")).toBeVisible();
@@ -2100,7 +2202,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     expect(mobileEditorBox!.width).toBeLessThanOrEqual(390);
 
     await editor.getByLabel("Variable value").fill("Agreeing before checking your capacity");
-    await editor.getByRole("button", { name: "Save", exact: true }).click();
+    await editor.getByRole("button", { name: "Save & publish", exact: true }).click();
     await expect.poll(() => writes.length).toBe(1);
     expect(writes[0].method).toBe("PATCH");
     expect(writes[0].payload.body).toBe("Agreeing before checking your capacity");
@@ -2162,7 +2264,7 @@ test.describe("content dashboard admin user flow case studies", () => {
 
     await editor.getByLabel("You version").fill("identity, purpose, and where you take up space");
     await editor.getByLabel("They version").fill("identity, purpose, and where they take up space");
-    await editor.getByRole("button", { name: "Save", exact: true }).click();
+    await editor.getByRole("button", { name: "Save & publish", exact: true }).click();
     await expect.poll(() => writes.length).toBe(1);
     expect(writes[0].payload.body).toBe("identity, purpose, and where you take up space");
     expect((writes[0].payload.sections as { packageRecord: { body: string; body_they: string } }).packageRecord)
@@ -2279,11 +2381,24 @@ test.describe("content dashboard admin user flow case studies", () => {
     await sourceRepairIssue.getByRole("button", { name: "Review replacement now" }).click();
     const repairDialog = page.getByRole("dialog", { name: "Review replacement for fallback-hook/sky-sign-copy/sun/virgo" });
     await expect(repairDialog).toBeVisible();
+    await expectFormShellDoesNotOverlap(repairDialog, "source repair desktop dialog", {
+      header: ":scope > .admin-source-repair-header",
+      body: ":scope > .admin-source-repair-body",
+      footer: ":scope > .admin-source-repair-footer"
+    });
     await expect(repairDialog).toContainText("Sun in Virgo replacement");
     await expect(repairDialog).toContainText("Virgo is not tidiness. Virgo is the standard");
     await expect(repairDialog).toContainText("packages/astro-knowledge/review/sun-virgo-spine-rewrite-v1/candidate.json");
     const approveReplacement = repairDialog.getByRole("button", { name: "Approve exact replacement" });
     await expect(approveReplacement).toBeDisabled();
+    await page.setViewportSize({ width: 390, height: 844 });
+    await expectFormShellDoesNotOverlap(repairDialog, "source repair mobile dialog", {
+      header: ":scope > .admin-source-repair-header",
+      body: ":scope > .admin-source-repair-body",
+      footer: ":scope > .admin-source-repair-footer"
+    });
+    await expectNoHorizontalOverflow(page, "source repair mobile dialog");
+    await page.setViewportSize({ width: 1280, height: 900 });
     await repairDialog.getByRole("checkbox").check();
     await expect(approveReplacement).toBeEnabled();
     await approveReplacement.click();
@@ -2330,7 +2445,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(guidedEditor.getByLabel("Full passage / body")).toHaveValue(String(guidedLunationRecord.body));
     await expect(guidedEditor.getByLabel("body_you")).toHaveCount(0);
     await expect(guidedEditor.getByLabel("body_they")).toHaveCount(0);
-    await expect(guidedEditor.getByLabel("Package review status")).toBeDisabled();
+    await expect(guidedEditor.getByLabel("Approval", { exact: true })).toBeDisabled();
     await expect(guidedEditor.getByRole("button", { name: "Save held draft" })).toBeDisabled();
     await guidedEditor.getByRole("button", { name: "Record owner copy review" }).click();
     await expect.poll(() => editorialReviewWrite).not.toBeNull();
@@ -2497,6 +2612,149 @@ test.describe("content dashboard admin user flow case studies", () => {
     const editor = page.getByRole("dialog", { name: "Generated content editor" });
     await expect(editor.locator(".admin-aspect-context-pill")).toHaveText("Transit aspect · current sky");
     await expectNoHorizontalOverflow(page, "aspect-context editor");
+    await assertNoBrowserErrors();
+  });
+
+  test("new natal aspect They copy shows the exact name variable above the field", async ({ page }) => {
+    const assertNoBrowserErrors = await expectNoBrowserErrors(page);
+    const exactAspectSeed = (contentKey: string, headline: string) => ({
+      ...generatedContentRows[0],
+      id: `qa-${contentKey.replaceAll("/", "-")}`,
+      content_key: contentKey,
+      surface: "you",
+      mode: "in_depth",
+      status: "DRAFT",
+      event_type: "fallback-hook",
+      headline,
+      summary: "Exact natal aspect writing for the reader's birth chart.",
+      body: "Exact You copy.",
+      block_type: "fallback_hook",
+      review_state: "needs-review",
+      sections: {
+        packageRecord: {
+          contentKey,
+          content_role: "full_copy",
+          grammar_frame: "complete_sentence",
+          body: "Exact You copy.",
+          body_they: "{{Name}} receives exact They copy.",
+          reader_only: true,
+          render_policy: "reader-only-exact-lived-v1",
+          review_status: "needs_review"
+        }
+      }
+    });
+
+    const writes: Array<{ method: string; payload: Record<string, unknown> }> = [];
+    await seedAdminApi(page, {
+      generatedRows: [
+        exactAspectSeed("fallback-hook/natal-aspect-lived/lilith/conjunction/sun", "Lilith Conjunction Sun"),
+        exactAspectSeed("fallback-hook/natal-aspect-lived/moon/square/ascendant", "Moon Square Ascendant")
+      ],
+      onGeneratedContentWrite: (write) => writes.push(write)
+    });
+    await expectAdminRouteLoads(
+      page,
+      "/admin/content#exact-content?category=Natal+Aspects&first=lilith&aspect=square&second=ascendant"
+    );
+
+    await page.getByRole("button", { name: "Write Lilith Square Ascendant" }).click();
+
+    const editor = page.getByRole("dialog", { name: "Generated content editor" });
+    const theyField = editor.locator('label[data-reader-audience="they"]');
+    const hint = theyField.getByRole("note");
+    const textarea = theyField.getByLabel("Reader phrase · They");
+
+    await expect(hint).toHaveText("Name variable: {{Name}}. Enter it exactly where the person's name should appear; the app replaces it with their name.");
+    await expect(textarea).toHaveAttribute("aria-describedby", "natal-aspect-they-name-hint");
+    expect(await theyField.locator(":scope > *").evaluateAll((children) => children.map((child) => child.tagName))).toEqual([
+      "SPAN",
+      "SMALL",
+      "TEXTAREA",
+      "SMALL"
+    ]);
+
+    await editor.getByText("Publishing and technical settings", { exact: true }).click();
+    await editor.getByLabel("Approval", { exact: true }).selectOption("approved");
+    await expect(editor.getByLabel("Fallback review status")).toHaveCount(0);
+    await expect(editor.getByLabel("Approval status")).toHaveText("Approved");
+    await expect(editor.getByLabel("Reader status", { exact: true })).toHaveText("Will go live on Save");
+    await expect(editor.getByLabel("Reader status after save")).toHaveValue("LIVE");
+    await expect(editor.getByText("This copy is approved. Save to publish it to readers.")).toBeVisible();
+
+    await editor.getByRole("button", { name: "Save & publish" }).click();
+    await expect.poll(() => writes.length).toBe(1);
+    expect(writes[0]?.payload).toMatchObject({ reviewStatus: "approved" });
+    await expect(editor.getByLabel("Approval status")).toHaveText("Approved");
+    await expect(editor.getByLabel("Reader status", { exact: true })).toHaveText("Live");
+    await expect(page.getByRole("status")).toContainText("fallback-hook/natal-aspect-lived/lilith/square/ascendant saved as Published");
+    await editor.getByText("Structured fields", { exact: true }).click();
+    const editorBodyBox = await editor.locator(":scope > .admin-post-editor").boundingBox();
+    const savebarBox = await editor.locator(":scope > .admin-editor-savebar").boundingBox();
+    expect(editorBodyBox).not.toBeNull();
+    expect(savebarBox).not.toBeNull();
+    expect((editorBodyBox?.y ?? 0) + (editorBodyBox?.height ?? 0)).toBeLessThanOrEqual((savebarBox?.y ?? 0) + 1);
+    expect(await editor.locator(".admin-review-json pre").evaluate((element) => element.clientHeight <= window.innerHeight * 0.46)).toBe(true);
+    await assertNoBrowserErrors();
+  });
+
+  test("an approved natal aspect stuck in Draft can be published without another copy edit", async ({ page }) => {
+    const assertNoBrowserErrors = await expectNoBrowserErrors(page);
+    const contentKey = "fallback-hook/natal-aspect-lived/lilith/square/ascendant";
+    const writes: Array<{ method: string; payload: Record<string, unknown> }> = [];
+    const stuckDraft = {
+      ...generatedContentRows[0],
+      id: "qa-approved-natal-aspect-stuck-draft",
+      content_key: contentKey,
+      surface: "you",
+      mode: "in_depth",
+      status: "DRAFT",
+      lane: "reference",
+      review_state: "needs-review",
+      event_type: "fallback-hook",
+      block_type: "fallback_hook",
+      provider: "tldrastro-fallback-architecture-v3",
+      headline: "Lilith Square Ascendant",
+      summary: "Exact natal aspect writing for the reader's birth chart.",
+      body: "Exact You copy.",
+      facts: { first: "lilith", aspect: "square", second: "ascendant", fallbackArchitectureV3: true, review_status: "approved" },
+      source_snapshot: { sourcePackage: "tldrastro-fallback-architecture-v3", review_status: "approved" },
+      sections: {
+        packageRecord: {
+          contentKey,
+          content_role: "full_copy",
+          grammar_frame: "complete_sentence",
+          body_you: "Exact You copy.",
+          body_they: "{{Name}} receives exact They copy.",
+          reader_only: true,
+          render_policy: "reader-only-exact-lived-v1",
+          review_status: "approved"
+        }
+      }
+    };
+
+    await seedAdminApi(page, {
+      generatedRows: [stuckDraft],
+      onGeneratedContentWrite: (write) => writes.push(write)
+    });
+    await expectAdminRouteLoads(
+      page,
+      "/admin/content#exact-content?category=Natal+Aspects&first=lilith&aspect=square&second=ascendant"
+    );
+    await page.getByRole("button", { name: "Edit source" }).click();
+
+    const editor = page.getByRole("dialog", { name: "Generated content editor" });
+    await expect(editor.getByLabel("Approval status")).toHaveText("Approved");
+    await expect(editor.getByLabel("Reader status", { exact: true })).toHaveText("Will go live on Save");
+    await expect(editor.getByText("Ready to publish", { exact: true })).toBeVisible();
+    const publishButton = editor.getByRole("button", { name: "Save & publish" });
+    await expect(publishButton).toBeEnabled();
+    await publishButton.click();
+
+    await expect.poll(() => writes.length).toBe(1);
+    expect(writes[0]?.method).toBe("PATCH");
+    expect(writes[0]?.payload).toMatchObject({ id: stuckDraft.id, reviewStatus: "approved" });
+    await expect(editor.getByLabel("Reader status", { exact: true })).toHaveText("Live");
+    await expect(page.getByRole("status")).toContainText(`${contentKey} saved as Published`);
     await assertNoBrowserErrors();
   });
 
@@ -3429,6 +3687,7 @@ test.describe("content dashboard admin user flow case studies", () => {
 
     const variableGuide = page.getByRole("dialog", { name: "Template variable reference" });
     await expect(variableGuide).toBeVisible();
+    await expectFormShellDoesNotOverlap(variableGuide, "template variable reference desktop dialog");
     await expect(variableGuide.getByRole("heading", { name: "Reader write-up & variables" })).toBeVisible();
     const readerWriteup = variableGuide.getByRole("region", { name: "Example reader write-up" });
     await expect(readerWriteup.getByRole("heading", { name: "Read the assembled write-up" })).toBeVisible();
@@ -3474,6 +3733,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(variableGuide).toContainText("Showing 1 of");
 
     await page.setViewportSize({ width: 390, height: 844 });
+    await expectFormShellDoesNotOverlap(variableGuide, "template variable reference mobile dialog");
     await expectNoHorizontalOverflow(page, "Template variable reference mobile slide-out");
     await page.screenshot({
       animations: "disabled",
@@ -3493,6 +3753,7 @@ test.describe("content dashboard admin user flow case studies", () => {
 
     variableDetails = page.getByRole("dialog", { name: "Planet intro variable details" });
     await expect(variableDetails).toContainText("fallback-hook/planet-intro/sun");
+    await expectFormShellDoesNotOverlap(variableDetails, "stacked variable detail mobile dialog");
     const detailToolbarBox = await variableDetails.locator(".admin-editor-toolbar").boundingBox();
     const detailBodyBox = await variableDetails.locator(".admin-post-editor").boundingBox();
     expect(detailToolbarBox).not.toBeNull();

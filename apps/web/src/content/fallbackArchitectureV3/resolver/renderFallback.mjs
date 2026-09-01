@@ -104,7 +104,6 @@ function getHook(key, voice, { allowUnreviewed = false } = {}) {
 }
 
 function getReaderLivedRow(key, voice, { allowUnreviewed = false } = {}) {
-  if (voice !== "you") return null;
   const row = hooks.get(key);
   if (!row) return null;
   if (!["fallback_hook", "full_copy"].includes(row.content_role)) {
@@ -114,7 +113,18 @@ function getReaderLivedRow(key, voice, { allowUnreviewed = false } = {}) {
   if (row.reader_only !== true || row.render_policy !== "reader-only-exact-lived-v1") {
     throw new RoleViolationError(`Row ${key} is not a reader-only exact lived row.`);
   }
-  return typeof row.body === "string" && row.body.trim() ? row : null;
+  if (voice === "you") {
+    return typeof row.body === "string" && row.body.trim() ? row : null;
+  }
+  if (
+    typeof row.body_they !== "string"
+    || !row.body_they.trim()
+    || (!allowUnreviewed && !READER_ELIGIBLE_STATUS.has(row.body_they_review_status))
+    || row.body_they_approval?.approvalLevel !== "exact_owner_approved"
+  ) {
+    return null;
+  }
+  return { ...row, body: row.body_they };
 }
 
 function getVocabList(prefix, voice = "you", opts = {}) {
@@ -246,6 +256,7 @@ export function renderNatalPlacement(facts, opts = {}) {
   const gapLabel = `${planet}/${sign}${house ? `/house-${house}` : ""}`;
   const parts = [];
   const partKeys = [];
+  const withModifiers = (body, include) => [body, ...(include ? mods : [])].filter(Boolean).join("\n\n");
 
   const isNode = planet === "north-node" || planet === "south-node";
   if (isNode) {
@@ -257,7 +268,7 @@ export function renderNatalPlacement(facts, opts = {}) {
   const signTemplate = findTemplate(`fallback-template/natal.planet-in-sign/${planet}`, { allowUnreviewed })
     ?? getTemplate(isNode ? "fallback-template/natal.node-in-sign" : "fallback-template/natal.planet-in-sign");
   if (exactSignLived) {
-    parts.push(exactSignLived.body);
+    parts.push(withModifiers(exactSignLived.body, !house));
     partKeys.push(exactSignLived.contentKey);
   } else {
     try {
@@ -265,7 +276,7 @@ export function renderNatalPlacement(facts, opts = {}) {
       partKeys.push(signTemplate.contentKey);
     } catch (err) {
       if (!(err instanceof SourceGapError) || !genericSignLived) throw err;
-      parts.push(genericSignLived.body);
+      parts.push(withModifiers(genericSignLived.body, !house));
       partKeys.push(genericSignLived.contentKey);
     }
   }
@@ -279,7 +290,7 @@ export function renderNatalPlacement(facts, opts = {}) {
     const renderedHouseMeaning = mustache(houseMeaning, ctx);
     if (exactHouseLived) {
       const exactBody = withoutLegacyHouseBridge(exactHouseLived.body, house, voice);
-      parts.push([renderedHouseMeaning, exactBody].filter(Boolean).join("\n\n"));
+      parts.push(withModifiers([renderedHouseMeaning, exactBody].filter(Boolean).join("\n\n"), true));
       partKeys.push(exactHouseLived.contentKey);
     } else {
       const houseTemplate = getTemplate("fallback-template/natal.house-context");
@@ -295,7 +306,7 @@ export function renderNatalPlacement(facts, opts = {}) {
         partKeys.push(houseTemplate.contentKey);
       } catch (err) {
         if (!(err instanceof SourceGapError) || !genericHouseLived) throw err;
-        parts.push(genericHouseLived.body);
+        parts.push(withModifiers(genericHouseLived.body, true));
         partKeys.push(genericHouseLived.contentKey);
       }
       headlineTemplate = houseTemplate;
@@ -350,10 +361,11 @@ export function renderNatalAspect(facts, opts = {}) {
     getReaderLivedRow(`fallback-hook/natal-aspect-lived/${planetA}/${aspect}/${planetB}`, voice, { allowUnreviewed })
     ?? getReaderLivedRow(`fallback-hook/natal-aspect-lived/${planetB}/${aspect}/${planetA}`, voice, { allowUnreviewed });
   if (exactLived) {
+    const exactBody = mustache(exactLived.body, { Name: facts.voice });
     return {
       headline: `${title(planetA)} ${aspect} ${title(planetB)}`,
-      parts: [exactLived.body],
-      body: exactLived.body,
+      parts: [exactBody],
+      body: exactBody,
       astroHint: exactLived.astroHint,
       templateKey: exactLived.contentKey,
       provenanceTier: "exact-owner-approved",

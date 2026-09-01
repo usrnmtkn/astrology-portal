@@ -3,7 +3,7 @@ import { expect, test } from "@playwright/test";
 const cacheKey = "tldrastro:fallbackArchitectureV3:dashboardBundle";
 const versionKey = "tldrastro:fallbackArchitectureV3:dashboardBundleVersion";
 const staleJupiterHook = "Someone just took the stage without asking if they were invited.";
-const currentJupiterArticle = "For about a year, Jupiter in Leo makes it harder to hide the parts of our lives that want more room";
+const currentJupiterArticle = "With Jupiter moving through Leo, confidence, visibility, recognition, and the desire to make something larger all increase";
 
 test("an old Jupiter/Lilith package cache self-heals to the bundled package", async ({ page }) => {
   await page.route("**/rest/v1/generated_interpretations*", async (route) => {
