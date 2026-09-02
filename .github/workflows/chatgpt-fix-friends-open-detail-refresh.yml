@@ -1,0 +1,238 @@
+name: Fix Friends open detail after live hydration
+
+on:
+  push:
+    branches:
+      - chatgpt/fix-content-studio-live-overlay-loader
+
+permissions:
+  contents: write
+
+jobs:
+  repair:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      VITE_SUPABASE_URL: https://visual-smoke.supabase.test
+      VITE_SUPABASE_ANON_KEY: visual-smoke-placeholder
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: chatgpt/fix-content-studio-live-overlay-loader
+          fetch-depth: 0
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+      - name: Apply Friends active-detail refresh repair
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          # ManualChartsPanel: restore a personal-transit detail from its canonical
+          # Friends route whenever the panel mounts, and make transit summaries react
+          # to runtime content-version changes.
+          path = Path('apps/web/src/features/friends/ManualChartsPanel.tsx')
+          text = path.read_text()
+          text = text.replace(
+              '  useMemo,\n  useState,',
+              '  useMemo,\n  useRef,\n  useState,',
+              1
+          )
+          text = text.replace(
+              '  const [socialFriends, setSocialFriends] = useState<ConnectedSocialFriend[]>([]);',
+              '  const friendRouteDetailRefreshKeyRef = useRef("");\n  const [socialFriends, setSocialFriends] = useState<ConnectedSocialFriend[]>([]);',
+              1
+          )
+          old_deps = '  }, [currentSky, relationshipGeneratedContent, selectedChart, selectedFriendTransits]);'
+          new_deps = '  }, [currentSky, fallbackArchitectureV3Version, relationshipGeneratedContent, selectedChart, selectedFriendTransits]);'
+          if old_deps not in text:
+              raise SystemExit('Personal transit group dependency anchor not found')
+          text = text.replace(old_deps, new_deps, 1)
+
+          anchor = '''  const openFriendTransitById = (transitId: string) => {
+            const transit = selectedFriendTransits.find((candidate) => candidate.id === transitId);
+
+            if (transit) {
+              openFriendTransitDetail(transit);
+            }
+          };
+'''.replace('          ', '')
+          if anchor not in text:
+              raise SystemExit('openFriendTransitById anchor not found')
+          addition = anchor + '''
+          useEffect(() => {
+            const routeState = friendsRouteStateFromUrl();
+            if (
+              !routeState?.detail
+              || routeState.view !== "transits"
+              || routeState.chartId !== selectedChart?.id
+              || !currentSky
+            ) {
+              return;
+            }
+
+            const prefix = "transit-";
+            if (!routeState.detail.startsWith(prefix)) {
+              return;
+            }
+
+            const routedTransitId = routeState.detail.slice(prefix.length);
+            const transit = selectedFriendTransits.find((candidate) => (
+              normalizeContentIdPart(candidate.id) === routedTransitId
+            ));
+            if (!transit) {
+              return;
+            }
+
+            const refreshKey = [
+              routeState.chartId,
+              routeState.detail,
+              fallbackArchitectureV3Version,
+              currentSky.generatedAt
+            ].join(":");
+            if (friendRouteDetailRefreshKeyRef.current === refreshKey) {
+              return;
+            }
+
+            friendRouteDetailRefreshKeyRef.current = refreshKey;
+            openFriendTransitDetail(transit);
+          }, [
+            currentSky,
+            fallbackArchitectureV3Version,
+            selectedChart?.id,
+            selectedFriendTransits
+          ]);
+'''.replace('          ', '')
+          text = text.replace(anchor, addition, 1)
+          path.write_text(text)
+
+          # App: distinguish dashboard-overlay installation from unrelated local bundle
+          # version bumps. When approved live content arrives while a Friends detail is
+          # already open, remount the Friends route once so it rebuilds the detail from
+          # the now-current runtime rather than keeping the pre-hydration snapshot.
+          path = Path('apps/web/src/App.tsx')
+          text = path.read_text()
+          state_anchor = '  const [fallbackArchitectureV3Version, setFallbackArchitectureV3Version] = useState(0);'
+          if state_anchor not in text:
+              raise SystemExit('fallback architecture state anchor not found')
+          text = text.replace(
+              state_anchor,
+              state_anchor + '\n  const [fallbackDashboardOverlayVersion, setFallbackDashboardOverlayVersion] = useState(0);',
+              1
+          )
+          ref_anchor = '  const fallbackDashboardHydrationRequestedRef = useRef(false);'
+          if ref_anchor not in text:
+              raise SystemExit('fallback dashboard ref anchor not found')
+          text = text.replace(
+              ref_anchor,
+              ref_anchor + '\n  const friendDetailOverlayRefreshKeyRef = useRef("");',
+              1
+          )
+          install_anchor = '''        installFallbackArchitectureV3Bundle(bundle);
+        setFallbackArchitectureV3Version((version) => version + 1);'''
+          if install_anchor not in text:
+              raise SystemExit('dashboard install anchor not found')
+          text = text.replace(
+              install_anchor,
+              install_anchor + '\n        setFallbackDashboardOverlayVersion((version) => version + 1);',
+              1
+          )
+
+          effect_anchor = '''  useEffect(() => {
+    if (!selectedSkyDetail) {
+      return;
+    }
+
+    setDatePickerOpen(false);'''
+          if effect_anchor not in text:
+              raise SystemExit('selected detail UI effect anchor not found')
+          refresh_effect = '''  useEffect(() => {
+    const routePath = selectedSkyDetail?.routePath;
+    if (!fallbackDashboardOverlayVersion || !routePath?.startsWith("friends?")) {
+      return;
+    }
+
+    const refreshKey = `${routePath}:${fallbackDashboardOverlayVersion}`;
+    if (friendDetailOverlayRefreshKeyRef.current === refreshKey) {
+      return;
+    }
+
+    friendDetailOverlayRefreshKeyRef.current = refreshKey;
+    setSelectedSkyDetail(null);
+  }, [fallbackDashboardOverlayVersion, selectedSkyDetail?.routePath]);
+
+'''
+          text = text.replace(effect_anchor, refresh_effect + effect_anchor, 1)
+          path.write_text(text)
+
+          # Add a source-level contract that catches the exact race: a Friends transit
+          # detail is a stored snapshot, so live dashboard installation must trigger a
+          # route rebuild, and the transit list memo must observe the runtime version.
+          path = Path('scripts/test-friends-live-detail-refresh.mjs')
+          path.write_text('''#!/usr/bin/env node
+import assert from "node:assert/strict";
+import fs from "node:fs";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+
+const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
+const app = fs.readFileSync(path.join(root, "apps/web/src/App.tsx"), "utf8");
+const panel = fs.readFileSync(path.join(root, "apps/web/src/features/friends/ManualChartsPanel.tsx"), "utf8");
+
+assert.match(
+  app,
+  /installFallbackArchitectureV3Bundle\(bundle\);[\s\S]{0,180}setFallbackArchitectureV3Version[\s\S]{0,180}setFallbackDashboardOverlayVersion/u,
+  "Installing a live Content Studio core overlay must publish a distinct overlay generation."
+);
+assert.match(
+  app,
+  /routePath = selectedSkyDetail\?\.routePath[\s\S]{0,500}routePath\?\.startsWith\("friends\?"\)[\s\S]{0,500}setSelectedSkyDetail\(null\)/u,
+  "An already-open Friends detail must be released after a newer live overlay installs so it cannot remain a frozen pre-hydration snapshot."
+);
+assert.match(
+  panel,
+  /friendsRouteStateFromUrl\(\)[\s\S]{0,900}routeState\.detail\.startsWith\(prefix\)[\s\S]{0,900}openFriendTransitDetail\(transit\)/u,
+  "Friends must rebuild a routed personal-transit detail when the panel remounts."
+);
+assert.match(
+  panel,
+  /\[currentSky, fallbackArchitectureV3Version, relationshipGeneratedContent, selectedChart, selectedFriendTransits\]/u,
+  "Friends personal-transit card summaries must recompute when the fallback runtime changes."
+);
+
+console.log("Friends live detail refresh contract passed.");
+''')
+
+          path = Path('package.json')
+          text = path.read_text()
+          old = 'node scripts/test-fallback-dashboard-live-overlay.mjs && node scripts/test-fallback-refresh-wiring.mjs'
+          new = 'node scripts/test-fallback-dashboard-live-overlay.mjs && node scripts/test-friends-live-detail-refresh.mjs && node scripts/test-fallback-refresh-wiring.mjs'
+          if old not in text:
+              raise SystemExit('content test insertion anchor not found')
+          path.write_text(text.replace(old, new, 1))
+          PY
+      - name: Install dependencies
+        run: npm ci
+      - name: Build astro knowledge prerequisite
+        run: npm run build -w @tldr/astro-knowledge
+      - name: Test live detail refresh contract
+        run: node scripts/test-friends-live-detail-refresh.mjs
+      - name: Test live overlay selection
+        run: node --experimental-strip-types scripts/test-fallback-dashboard-live-overlay.mjs
+      - name: Test Friends hydration policy
+        run: node --import tsx scripts/test-friends-content-loading-policy.mjs
+      - name: Test Friends Transit override
+        run: node scripts/test-friends-transit-dashboard-override.mjs
+      - name: Build Content Studio admin
+        run: npm run build:admin
+      - name: Build reader app
+        run: npm run build -w @tldr/web
+      - name: Commit verified repair
+        run: |
+          git config user.name "ChatGPT"
+          git config user.email "chatgpt@users.noreply.github.com"
+          git rm .github/workflows/chatgpt-fix-friends-open-detail-refresh.yml
+          git add apps/web/src/App.tsx apps/web/src/features/friends/ManualChartsPanel.tsx scripts/test-friends-live-detail-refresh.mjs package.json
+          git commit -m "fix: refresh open Friends details after live content hydration"
+          git push origin HEAD:chatgpt/fix-content-studio-live-overlay-loader
