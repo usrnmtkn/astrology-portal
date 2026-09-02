@@ -1,0 +1,498 @@
+name: Repair Content Studio live overlay loader
+
+on:
+  push:
+    branches:
+      - chatgpt/fix-content-studio-live-overlay-loader
+
+permissions:
+  contents: write
+
+jobs:
+  repair:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      VITE_SUPABASE_URL: https://visual-smoke.supabase.test
+      VITE_SUPABASE_ANON_KEY: visual-smoke-placeholder
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: chatgpt/fix-content-studio-live-overlay-loader
+          fetch-depth: 0
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+      - name: Apply live overlay loader repair
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+
+          path = Path('apps/web/src/services/generatedContent.ts')
+          text = path.read_text()
+
+          text = text.replace(
+              '  fallbackArchitectureV3ManifestForBundle,\n  fallbackArchitectureV3PackageVersion,\n  loadFallbackArchitectureV3BundledCoreManifest,',
+              '  fallbackArchitectureV3ManifestForBundle,\n  loadFallbackArchitectureV3BundledCoreManifest,'
+          )
+          text = text.replace(
+              'const fallbackArchitectureV3BundleCacheSchema = "fallback-architecture-v3-dashboard-cache-v5";',
+              'const fallbackArchitectureV3BundleCacheSchema = "fallback-architecture-v3-dashboard-overlay-cache-v6";'
+          )
+          text = re.sub(
+              r'\nconst fallbackArchitectureV3ImportBatchId = `fallback-architecture-\$\{fallbackArchitectureV3PackageVersion\}`;\n',
+              '\n',
+              text,
+              count=1
+          )
+
+          cached_type = '''type CachedFallbackArchitectureV3Bundle = {
+            version: number;
+            bundle: FallbackArchitectureV3Bundle;
+            mirror: FallbackArchitectureV3PackageManifest;
+          };'''.replace('          ', '')
+          if cached_type not in text:
+              raise SystemExit('Cached bundle type anchor not found')
+          text = text.replace(
+              cached_type,
+              cached_type + '''
+
+          type CachedFallbackArchitectureV3Overlay = {
+            version: number;
+            bundle: FallbackArchitectureV3Bundle;
+          };'''.replace('          ', ''),
+              1
+          )
+
+          helper_anchor = 'function fallbackArchitectureV3RowMirrorMetadata('
+          helper = '''export function selectFallbackArchitectureV3DashboardOverlayRows(
+            rows: GeneratedContentRow[],
+            currentCoreKeys: ReadonlySet<string>
+          ) {
+            const seen = new Set<string>();
+
+            return [...rows]
+              .sort((first, second) => {
+                const firstUpdatedAt = Date.parse(first.updated_at ?? "");
+                const secondUpdatedAt = Date.parse(second.updated_at ?? "");
+                const firstVersion = Number.isFinite(firstUpdatedAt) ? firstUpdatedAt : 0;
+                const secondVersion = Number.isFinite(secondUpdatedAt) ? secondUpdatedAt : 0;
+
+                if (firstVersion !== secondVersion) {
+                  return secondVersion - firstVersion;
+                }
+
+                return String(second.id ?? "").localeCompare(String(first.id ?? ""));
+              })
+              .filter((row) => row.status === "LIVE" && row.lane === "serving")
+              .filter((row) => isApprovedFallbackArchitectureV3Row(row))
+              .filter((row) => !isSkyPlacementFallbackPartitionKey(row.content_key))
+              .filter((row) => currentCoreKeys.has(row.content_key))
+              .filter((row) => {
+                if (seen.has(row.content_key)) {
+                  return false;
+                }
+
+                seen.add(row.content_key);
+                return true;
+              });
+          }
+
+          '''.replace('          ', '')
+          if helper_anchor not in text:
+              raise SystemExit('Overlay helper anchor not found')
+          text = text.replace(helper_anchor, helper + helper_anchor, 1)
+
+          read_cache_pattern = re.compile(
+              r'export function readCachedFallbackArchitectureV3Bundle\(\) \{.*?\n\}\n\nfunction readCachedFallbackArchitectureV3SkyPlacementBundle\(\)',
+              re.S
+          )
+          read_cache_replacement = '''export function readCachedFallbackArchitectureV3Bundle(): CachedFallbackArchitectureV3Overlay | null {
+            if (typeof window === "undefined") {
+              return null;
+            }
+
+            try {
+              const version = Number(window.localStorage.getItem(fallbackArchitectureV3BundleVersionKey) ?? "0");
+              const rawBundle = window.localStorage.getItem(fallbackArchitectureV3BundleCacheKey);
+
+              if (!version || !rawBundle) {
+                return null;
+              }
+
+              const envelope = JSON.parse(rawBundle) as {
+                schema?: unknown;
+                runtimeCapability?: unknown;
+                bundledPackageVersion?: unknown;
+                dashboardVersion?: unknown;
+                bundle?: unknown;
+              };
+              const bundle = envelope.bundle as FallbackArchitectureV3Bundle | undefined;
+
+              if (
+                envelope.schema !== fallbackArchitectureV3BundleCacheSchema
+                || envelope.runtimeCapability !== fallbackArchitectureV3BundledManifestSummary.runtimeCapability
+                || envelope.bundledPackageVersion !== fallbackArchitectureV3BundledManifestSummary.packageVersion
+                || Number(envelope.dashboardVersion) !== version
+                || !bundle?.transitLib
+                || !bundle?.rowsFile
+                || !bundle?.templatesFile
+              ) {
+                clearCachedFallbackArchitectureV3Bundle();
+                return null;
+              }
+
+              return { version, bundle };
+            } catch {
+              clearCachedFallbackArchitectureV3Bundle();
+              return null;
+            }
+          }
+
+          function readCachedFallbackArchitectureV3SkyPlacementBundle()'''.replace('          ', '')
+          text, count = read_cache_pattern.subn(read_cache_replacement, text, count=1)
+          if count != 1:
+              raise SystemExit(f'Expected one core cache reader, replaced {count}')
+
+          cache_pattern = re.compile(
+              r'function cacheFallbackArchitectureV3Bundle\(.*?\n\}\n\nfunction cacheFallbackArchitectureV3SkyPlacementBundle\(',
+              re.S
+          )
+          cache_replacement = '''function cacheFallbackArchitectureV3Bundle(
+            version: number,
+            bundle: FallbackArchitectureV3Bundle
+          ) {
+            if (typeof window === "undefined" || !version) {
+              return;
+            }
+
+            try {
+              window.localStorage.setItem(fallbackArchitectureV3BundleVersionKey, String(version));
+              window.localStorage.setItem(fallbackArchitectureV3BundleCacheKey, JSON.stringify({
+                schema: fallbackArchitectureV3BundleCacheSchema,
+                runtimeCapability: fallbackArchitectureV3BundledManifestSummary.runtimeCapability,
+                bundledPackageVersion: fallbackArchitectureV3BundledManifestSummary.packageVersion,
+                dashboardVersion: version,
+                bundle
+              }));
+            } catch {
+              // The checked-in package remains available when browser storage is full or blocked.
+            }
+          }
+
+          function cacheFallbackArchitectureV3SkyPlacementBundle('''.replace('          ', '')
+          text, count = cache_pattern.subn(cache_replacement, text, count=1)
+          if count != 1:
+              raise SystemExit(f'Expected one core cache writer, replaced {count}')
+
+          loader_pattern = re.compile(
+              r'export async function loadFallbackArchitectureV3DashboardBundle\(\): Promise<FallbackArchitectureV3Bundle \| null> \{.*?\n\}\n\nexport async function loadFallbackArchitectureV3CompatibilityDashboardBundle',
+              re.S
+          )
+          loader_replacement = '''export async function loadFallbackArchitectureV3DashboardBundle(): Promise<FallbackArchitectureV3Bundle | null> {
+            const supabase = await getSupabaseClient();
+            const cached = readCachedFallbackArchitectureV3Bundle();
+
+            if (!supabase) {
+              return cached?.bundle ?? null;
+            }
+
+            const { data: versionRows, error: versionError } = await supabase
+              .from("generated_interpretations")
+              .select("updated_at")
+              .eq("provider", fallbackArchitectureV3Provider)
+              .eq("status", "LIVE")
+              .eq("lane", "serving")
+              .order("updated_at", { ascending: false })
+              .limit(1)
+              .returns<Array<Pick<GeneratedContentRow, "updated_at">>>();
+
+            if (versionError) {
+              console.warn("Fallback architecture V3 live overlay version failed to load; cached/local copy remains active.", versionError);
+              return cached?.bundle ?? null;
+            }
+
+            const dashboardVersion = fallbackArchitectureV3DashboardVersionFromRows(versionRows ?? []);
+
+            if (cached && dashboardVersion && cached.version === dashboardVersion) {
+              return cached.bundle;
+            }
+
+            const rows: GeneratedContentRow[] = [];
+            const pageSize = 1000;
+
+            for (let page = 0; page < 10; page += 1) {
+              const from = page * pageSize;
+              const to = from + pageSize - 1;
+              const { data, error } = await supabase
+                .from("generated_interpretations")
+                .select("id, content_key, surface, mode, status, lane, review_state, event_type, target_date, facts, source_snapshot, headline, summary, body, sections, block_type, flags, provider, judge_score, judge_gate, model, updated_at")
+                .eq("provider", fallbackArchitectureV3Provider)
+                .eq("status", "LIVE")
+                .eq("lane", "serving")
+                .order("updated_at", { ascending: false })
+                .order("id", { ascending: false })
+                .range(from, to)
+                .returns<GeneratedContentRow[]>();
+
+              if (error) {
+                console.warn("Fallback architecture V3 live overlay failed to load; cached/local copy remains active.", error);
+                return cached?.bundle ?? null;
+              }
+
+              rows.push(...(data ?? []));
+
+              if (!data || data.length < pageSize) {
+                break;
+              }
+            }
+
+            let currentCoreManifest: FallbackArchitectureV3PackageManifest;
+            try {
+              currentCoreManifest = await loadFallbackArchitectureV3BundledCoreManifest();
+            } catch (error) {
+              console.warn("Fallback architecture V3 current key manifest failed to load; cached/local copy remains active.", error);
+              return cached?.bundle ?? null;
+            }
+
+            const currentCoreKeys = new Set(currentCoreManifest.keys);
+            const overlayRows = selectFallbackArchitectureV3DashboardOverlayRows(rows, currentCoreKeys);
+            const authoredCards: AuthoredCard[] = [];
+            const hookRows: HookRow[] = [];
+            const vocabularyRows: VocabRow[] = [];
+            const templates: TemplateRow[] = [];
+
+            for (const row of overlayRows) {
+              const { contentType, role } = fallbackSystemBucket(row);
+              const destination = fallbackArchitectureV3DashboardPackageDestination({
+                contentKey: row.content_key,
+                contentType,
+                role
+              });
+
+              if (destination === "authored") {
+                const card = packageAuthoredCardFromRow(row);
+                if (card) authoredCards.push(card);
+                continue;
+              }
+
+              if (destination === "hook") {
+                const hook = packageHookRowFromRow(row);
+                if (hook) hookRows.push(hook);
+                continue;
+              }
+
+              if (destination === "vocabulary") {
+                const vocab = packageVocabRowFromRow(row);
+                if (vocab) vocabularyRows.push(vocab);
+                continue;
+              }
+
+              if (destination === "template") {
+                const template = packageTemplateRowFromRow(row);
+                if (template) templates.push(template);
+              }
+            }
+
+            if (authoredCards.length + hookRows.length + vocabularyRows.length + templates.length === 0) {
+              clearCachedFallbackArchitectureV3Bundle();
+              return null;
+            }
+
+            // The checked-in package is the complete, hash-bound reader floor. Content Studio
+            // contributes only current LIVE + serving + approved overrides for stable keys that
+            // still exist in that package. Historical package metadata must not make one valid
+            // owner-published override invalidate every other Content Studio row.
+            const bundle: FallbackArchitectureV3Bundle = {
+              transitLib: { authoredCards },
+              rowsFile: { hookRows, vocabularyRows },
+              templatesFile: { templates }
+            };
+            cacheFallbackArchitectureV3Bundle(
+              dashboardVersion || fallbackArchitectureV3DashboardVersionFromRows(overlayRows),
+              bundle
+            );
+
+            return bundle;
+          }
+
+          export async function loadFallbackArchitectureV3CompatibilityDashboardBundle'''.replace('          ', '')
+          text, count = loader_pattern.subn(loader_replacement, text, count=1)
+          if count != 1:
+              raise SystemExit(f'Expected one core dashboard loader, replaced {count}')
+
+          path.write_text(text)
+
+          # Update the cache contract from full-mirror semantics to overlay semantics.
+          path = Path('scripts/test-fallback-package-cache-contract.mjs')
+          text = path.read_text()
+          text = text.replace(
+              '/fallbackArchitectureV3BundleCacheSchema = "fallback-architecture-v3-dashboard-cache-v5"/u,\n  "Browser cache envelopes must use the hash-aware schema."',
+              '/fallbackArchitectureV3BundleCacheSchema = "fallback-architecture-v3-dashboard-overlay-cache-v6"/u,\n  "Core browser cache envelopes must identify the live editorial-overlay schema."'
+          )
+          old_assert = '''assert.match(
+            generatedContentSource,
+            /envelope\\?\\.runtimeCapability !== fallbackArchitectureV3BundledManifestSummary\\.runtimeCapability[\\s\\S]*envelope\\?\\.bundledContentHash !== bundledPartition\\.contentHash/u,
+            "A runtime capability or partition-content hash change must invalidate browser cache."
+          );'''.replace('          ', '')
+          new_assert = '''assert.match(
+            generatedContentSource,
+            /readCachedFallbackArchitectureV3Bundle[\\s\\S]*envelope\\.runtimeCapability !== fallbackArchitectureV3BundledManifestSummary\\.runtimeCapability[\\s\\S]*envelope\\.bundledPackageVersion !== fallbackArchitectureV3BundledManifestSummary\\.packageVersion[\\s\\S]*dashboardVersion/u,
+            "Core overlay cache must invalidate across runtime/package releases and live dashboard versions."
+          );'''.replace('          ', '')
+          if old_assert not in text:
+              raise SystemExit('Old core cache assertion not found')
+          text = text.replace(old_assert, new_assert, 1)
+
+          old_assert = '''assert.match(
+            generatedContentSource,
+            /package metadata is missing or inconsistent[\\s\\S]*?clearCachedFallbackArchitectureV3Bundle\\(\\);[\\s\\S]*?return null;/u,
+            "Unversioned or inconsistent database packages must fail closed."
+          );'''.replace('          ', '')
+          new_assert = '''assert.match(
+            generatedContentSource,
+            /selectFallbackArchitectureV3DashboardOverlayRows[\\s\\S]*row\\.status === "LIVE" && row\\.lane === "serving"[\\s\\S]*isApprovedFallbackArchitectureV3Row\\(row\\)[\\s\\S]*currentCoreKeys\\.has\\(row\\.content_key\\)/u,
+            "Core hydration must select only LIVE, serving, approved rows whose stable keys still exist in the current package."
+          );
+          assert.match(
+            generatedContentSource,
+            /loadFallbackArchitectureV3BundledCoreManifest\\(\\)[\\s\\S]*selectFallbackArchitectureV3DashboardOverlayRows\\(rows, currentCoreKeys\\)/u,
+            "Core hydration must validate override keys against the current bundled key manifest instead of historical package hashes."
+          );'''.replace('          ', '')
+          if old_assert not in text:
+              raise SystemExit('Old core metadata assertion not found')
+          text = text.replace(old_assert, new_assert, 1)
+          path.write_text(text)
+
+          # Add the new regression to the standard content suite.
+          path = Path('package.json')
+          text = path.read_text()
+          old = 'node scripts/test-fallback-package-cache-contract.mjs && node scripts/test-fallback-refresh-wiring.mjs'
+          new = 'node scripts/test-fallback-package-cache-contract.mjs && node scripts/test-fallback-dashboard-live-overlay.mjs && node scripts/test-fallback-refresh-wiring.mjs'
+          if old not in text:
+              raise SystemExit('Package test anchor not found')
+          path.write_text(text.replace(old, new, 1))
+          PY
+
+          cat > scripts/test-fallback-dashboard-live-overlay.mjs <<'EOF'
+          #!/usr/bin/env node
+          import assert from "node:assert/strict";
+          import os from "node:os";
+          import path from "node:path";
+          import { pathToFileURL } from "node:url";
+          import { build } from "esbuild";
+
+          const repoRoot = path.resolve(import.meta.dirname, "..");
+          const outFile = path.join(os.tmpdir(), `tldr-fallback-live-overlay-${Date.now()}.mjs`);
+
+          await build({
+            absWorkingDir: repoRoot,
+            bundle: true,
+            format: "esm",
+            platform: "node",
+            outfile: outFile,
+            write: true,
+            logLevel: "silent",
+            stdin: {
+              resolveDir: repoRoot,
+              loader: "tsx",
+              contents: `
+                export { selectFallbackArchitectureV3DashboardOverlayRows }
+                from "./apps/web/src/services/generatedContent.ts";
+              `
+            }
+          });
+
+          const { selectFallbackArchitectureV3DashboardOverlayRows } = await import(pathToFileURL(outFile));
+          const venusKey = "authored/transit-aspect/venus/moon/hard";
+          const secondKey = "authored/transit-aspect/sun/mars/hard";
+          const currentKeys = new Set([venusKey, secondKey]);
+          const packageRecord = (reviewStatus, packageVersion) => ({
+            packageRecord: {
+              content_role: "full_copy",
+              review_status: reviewStatus,
+              packageVersion,
+              packagePartition: "core"
+            }
+          });
+          const row = ({
+            id,
+            contentKey,
+            updatedAt,
+            body,
+            status = "LIVE",
+            lane = "serving",
+            reviewStatus = "approved",
+            packageVersion = "v3-2026-08-27a"
+          }) => ({
+            id,
+            content_key: contentKey,
+            surface: "you",
+            mode: "feed",
+            status,
+            lane,
+            review_state: null,
+            event_type: "transit-to-natal",
+            target_date: null,
+            facts: {},
+            source_snapshot: {},
+            headline: null,
+            summary: null,
+            body,
+            sections: packageRecord(reviewStatus, packageVersion),
+            block_type: "transit_to_natal_aspect",
+            flags: [],
+            provider: "tldrastro-fallback-architecture-v3",
+            judge_score: null,
+            judge_gate: null,
+            model: null,
+            updated_at: updatedAt
+          });
+
+          const rows = [
+            row({ id: "venus-old", contentKey: venusKey, updatedAt: "2026-08-27T12:00:00Z", body: "OLD BUNDLED-ERA EDIT", packageVersion: "v3-2026-08-27a" }),
+            row({ id: "other-old-release", contentKey: secondKey, updatedAt: "2026-08-15T12:00:00Z", body: "SECOND CURRENT KEY", packageVersion: "v3-2026-08-15a" }),
+            row({ id: "venus-new", contentKey: venusKey, updatedAt: "2026-09-02T02:56:36Z", body: "A partner may feel smothered instead of loved.", packageVersion: "v3-2026-08-27a" }),
+            row({ id: "venus-newer-draft", contentKey: venusKey, updatedAt: "2026-09-02T03:00:00Z", body: "DRAFT MUST NOT SERVE", status: "DRAFT" }),
+            row({ id: "venus-newer-reference", contentKey: venusKey, updatedAt: "2026-09-02T03:01:00Z", body: "REFERENCE MUST NOT SERVE", lane: "reference" }),
+            row({ id: "venus-newer-review", contentKey: venusKey, updatedAt: "2026-09-02T03:02:00Z", body: "NEEDS REVIEW MUST NOT SERVE", reviewStatus: "needs_review" }),
+            row({ id: "unknown-current", contentKey: "authored/transit-aspect/not-in-current-package", updatedAt: "2026-09-02T03:03:00Z", body: "UNKNOWN KEY MUST NOT SERVE" })
+          ];
+
+          const selected = selectFallbackArchitectureV3DashboardOverlayRows(rows, currentKeys);
+          assert.deepEqual(selected.map((item) => item.content_key), [venusKey, secondKey]);
+          assert.equal(selected[0].body, "A partner may feel smothered instead of loved.");
+          assert.equal(selected[1].body, "SECOND CURRENT KEY");
+          assert.equal(selected.some((item) => item.body.includes("DRAFT")), false);
+          assert.equal(selected.some((item) => item.body.includes("REFERENCE")), false);
+          assert.equal(selected.some((item) => item.body.includes("NEEDS REVIEW")), false);
+          assert.equal(selected.some((item) => item.content_key.includes("not-in-current-package")), false);
+
+          console.log("Fallback dashboard live overlay selection passed (mixed historical package versions, current live overrides). ");
+          EOF
+      - name: Install dependencies
+        run: npm ci
+      - name: Build astro knowledge prerequisite
+        run: npm run build -w @tldr/astro-knowledge
+      - name: Test package/cache contract
+        run: node scripts/test-fallback-package-cache-contract.mjs
+      - name: Test live overlay selection
+        run: node scripts/test-fallback-dashboard-live-overlay.mjs
+      - name: Test Friends hydration policy
+        run: node --import tsx scripts/test-friends-content-loading-policy.mjs
+      - name: Test Friends Transit override
+        run: node scripts/test-friends-transit-dashboard-override.mjs
+      - name: Build Content Studio admin
+        run: npm run build:admin
+      - name: Build reader app
+        run: npm run build -w @tldr/web
+      - name: Commit verified repair
+        run: |
+          git config user.name "ChatGPT"
+          git config user.email "chatgpt@users.noreply.github.com"
+          git rm .github/workflows/chatgpt-fix-live-overlay-loader.yml
+          git add apps/web/src/services/generatedContent.ts scripts/test-fallback-package-cache-contract.mjs scripts/test-fallback-dashboard-live-overlay.mjs package.json
+          git commit -m "fix: hydrate published Content Studio overrides"
+          git push origin HEAD:chatgpt/fix-content-studio-live-overlay-loader
