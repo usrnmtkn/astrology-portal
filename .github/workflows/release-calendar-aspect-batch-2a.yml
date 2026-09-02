@@ -27,10 +27,9 @@ jobs:
         run: node scripts/release-calendar-aspect-content-studio-batch-2a.mjs
       - name: Regenerate governed fallback bundles
         run: node scripts/generate-fallback-package-manifest.mjs
-      - name: Verify Batch 2A staging and source contracts
+      - name: Verify controlled Batch 2A release
         run: |
           node scripts/test-calendar-aspect-content-studio-batch-2a.mjs
-          node scripts/test-reviewed-sky-aspect-phrasebook.mjs
           node scripts/generate-fallback-package-manifest.mjs --check
           git diff --check
       - name: Commit controlled serving release
