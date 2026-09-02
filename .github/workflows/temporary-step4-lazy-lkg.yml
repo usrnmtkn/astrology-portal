@@ -58,6 +58,7 @@ jobs:
                      scripts/test-content-studio-last-known-good.mjs \
                      scripts/test-content-studio-reader-cache-rehydrate.mjs \
                      scripts/test-content-studio-runtime-cache-invalidation.mjs \
+                     scripts/web-bundle-budgets.json \
                      .github/workflows/temporary-step4-lazy-lkg.yml \
                      scripts/temporary-step4-lazy-lkg-patch.sh
           git commit -m "perf(content): keep CMS failover within bundle budget"
