@@ -210,6 +210,12 @@ function withoutLegacyHouseBridge(body: string, house: number, voice: "you" | "t
   return paragraphBreak >= 0 ? body.slice(paragraphBreak + 2).trim() : "";
 }
 
+export function natalPlacementMotionExactKey(facts: PlacementFacts): string | null {
+  if (!facts.house) return null;
+  const directKey = `fallback-hook/natal-you-placement-complete-final/${facts.planet}/${facts.sign}/${facts.house}`;
+  return facts.isRetrograde ? `${directKey}/retrograde` : directKey;
+}
+
 export function createFallbackRenderer(templatesFile: TemplatesFile, rowsFile: RowsFile) {
   const vocab = new Map<string, VocabRow[]>();
   for (const row of rowsFile.vocabularyRows) {
@@ -292,9 +298,10 @@ export function createFallbackRenderer(templatesFile: TemplatesFile, rowsFile: R
   function renderNatalPlacement(facts: PlacementFacts, opts: RenderOpts = {}): RenderResult {
     const { planet, sign, house } = facts;
     const voice: "you" | "they" = facts.voice === "you" ? "you" : "they";
-    const exactCompleteLived = house
-      ? getReaderLivedRow(`fallback-hook/natal-you-placement-complete-final/${planet}/${sign}/${house}`, voice, opts)
-      : null;
+    const exactCompleteKey = natalPlacementMotionExactKey(facts);
+  const exactCompleteLived = exactCompleteKey
+    ? getReaderLivedRow(exactCompleteKey, voice, opts)
+    : null;
     if (exactCompleteLived) {
       const body = exactCompleteLived.body ?? "";
       return {
