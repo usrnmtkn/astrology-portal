@@ -118,7 +118,7 @@ jobs:
         run: |
           node --experimental-strip-types scripts/test-natal-placement-motion-exact-routing.mjs
           node --experimental-strip-types scripts/test-admin-natal-placement-sources.mjs
-          node --experimental-strip-types scripts/test-admin-natal-placement-preview-api.mjs
+          node --import tsx scripts/test-admin-natal-placement-preview-api.mjs
           node --experimental-strip-types scripts/test-natal-placement-sign-house-composition.mjs
           node --experimental-strip-types scripts/test-canonical-natal-adapter.mjs
           node --experimental-strip-types scripts/test-canonical-natal-retrograde-delegation.mjs
