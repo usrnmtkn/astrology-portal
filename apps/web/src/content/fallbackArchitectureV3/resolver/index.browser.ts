@@ -48,7 +48,9 @@ export function createFallbackRenderer(templatesFile: TemplatesFile, rowsFile: R
       const directKey = natalPlacementDirectExactKey(facts);
       if (!directKey) return baseRenderer.renderNatalPlacement(facts, opts);
       const retrogradeKey = `${directKey}/retrograde`;
-      const retrogradeRow = (rowsFile.hookRows ?? []).find((row) => row.contentKey === retrogradeKey);
+      const retrogradeRow = [...(rowsFile.hookRows ?? [])]
+        .reverse()
+        .find((row) => row.contentKey === retrogradeKey);
       const hookRows = (rowsFile.hookRows ?? [])
         .filter((row) => row.contentKey !== directKey && row.contentKey !== retrogradeKey);
 
