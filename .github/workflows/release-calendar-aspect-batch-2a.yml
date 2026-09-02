@@ -1,0 +1,48 @@
+name: Release Calendar aspect batch 2A
+
+on:
+  push:
+    branches:
+      - "owner/release-calendar-batch-2a-20260901"
+    paths:
+      - "scripts/release-calendar-aspect-content-studio-batch-2a.mjs"
+      - "packages/astro-knowledge/review/sky-calendar-composed-first-glance-2026-08-31/batch-2a-venus-saturn-squares-serving-release.json"
+      - ".github/workflows/release-calendar-aspect-batch-2a.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Apply exact owner-approved Batch 2A wording
+        run: node scripts/release-calendar-aspect-content-studio-batch-2a.mjs
+      - name: Regenerate governed fallback bundles
+        run: node scripts/generate-fallback-package-manifest.mjs
+      - name: Verify Batch 2A staging and source contracts
+        run: |
+          node scripts/test-calendar-aspect-content-studio-batch-2a.mjs
+          node scripts/test-reviewed-sky-aspect-phrasebook.mjs
+          node scripts/generate-fallback-package-manifest.mjs --check
+          git diff --check
+      - name: Commit controlled serving release
+        shell: bash
+        run: |
+          if git diff --quiet; then
+            echo "No release changes to commit."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add apps/web/src/content/fallbackArchitectureV3/source-rows/sky-aspect-phrasebook-v1.json \
+            apps/web/src/content/fallbackArchitectureV3/bundled-*.json \
+            apps/web/src/content/fallbackArchitectureV3/approved-serving-*.json
+          git commit -m "release(calendar): serve approved Venus Saturn squares"
+          git push origin HEAD
