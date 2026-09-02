@@ -4,8 +4,8 @@ import { effectivePackageRecord } from "./skyFallbackWorkspace";
 import {
   natalPlacementExactKey,
   natalPlacementLabel,
+  natalPlacementResolverDependencyKeys,
   natalPlacementSignLabel,
-  natalPlacementSourceGroups,
   type NatalPlacementHouse,
   type NatalPlacementMotion,
   type NatalPlacementPlanet,
@@ -16,9 +16,13 @@ type PreviewRow = {
   body: string | null;
   content_key: string;
   headline: string | null;
+  id?: string | null;
+  lane?: string | null;
+  provider?: string | null;
   sections: unknown;
   status: string;
   summary: string | null;
+  updated_at?: string | null;
 };
 
 type NatalRender = {
@@ -28,6 +32,19 @@ type NatalRender = {
   parts: string[];
   provenanceTier?: string;
   templateKey: string;
+};
+
+type IgnoredPreviewOverride = {
+  contentKey: string;
+  reason: "not-live" | "not-serving" | "wrong-provider" | "not-current-package-key" | "not-reader-approved";
+};
+
+type PreviewState = {
+  appliedOverrideKeys: string[];
+  error: string | null;
+  ignoredOverrides: IgnoredPreviewOverride[];
+  loading: boolean;
+  rendered: NatalRender | null;
 };
 
 type Props = {
@@ -51,11 +68,7 @@ function packageRowFromSavedRow(row: PreviewRow) {
   const sections = record(row.sections);
   const source = effectivePackageRecord(row.sections);
   if (typeof source.content_role !== "string") return null;
-  const reviewStatus = typeof source.review_status === "string"
-    ? source.review_status
-    : row.status === "LIVE"
-      ? "approved"
-      : "reviewed";
+  const reviewStatus = typeof source.review_status === "string" ? source.review_status : "";
   return {
     ...source,
     contentKey: row.content_key,
@@ -64,7 +77,20 @@ function packageRowFromSavedRow(row: PreviewRow) {
     body: typeof sections.body === "string" ? sections.body : typeof source.body === "string" ? source.body : row.body ?? undefined,
     body_you: typeof sections.body_you === "string" ? sections.body_you : source.body_you,
     body_they: typeof sections.body_they === "string" ? sections.body_they : source.body_they,
-    review_status: reviewStatus
+    ...(reviewStatus ? { review_status: reviewStatus } : {})
+  };
+}
+
+function previewOverrideCandidate(row: PreviewRow) {
+  const packageRow = packageRowFromSavedRow(row);
+  if (!packageRow) return null;
+  return {
+    id: row.id ?? "",
+    lane: row.lane ?? null,
+    packageRow,
+    provider: row.provider ?? null,
+    status: row.status,
+    updatedAt: row.updated_at ?? null
   };
 }
 
@@ -74,6 +100,14 @@ function sourceLabel(contentKey: string) {
   if (contentKey.includes("natal.modifier.retrograde")) return "Retrograde modifier";
   if (contentKey.includes("complete-final")) return "Exact full write-up";
   return "Reader section";
+}
+
+function ignoredReasonLabel(reason: IgnoredPreviewOverride["reason"]) {
+  if (reason === "not-live") return "not published";
+  if (reason === "not-serving") return "not on the serving lane";
+  if (reason === "wrong-provider") return "not part of the fallback package mirror";
+  if (reason === "not-current-package-key") return "not in the currently installed reader package";
+  return "not reader-approved";
 }
 
 export function natalPlacementOverrideDraft(contentKey: string, label: string, body: string) {
@@ -116,12 +150,21 @@ export function natalPlacementOverrideDraft(contentKey: string, label: string, b
 
 export default function NatalPlacementReaderPreview({ house, initialAudience = "you", motion, onCreateOverride, onOpenSource, planet, rows, secret, sign }: Props) {
   const [audience, setAudience] = useState<"you" | "they">(initialAudience);
-  const [preview, setPreview] = useState<{ error: string | null; loading: boolean; rendered: NatalRender | null }>({ error: null, loading: true, rendered: null });
-  const sourceKeys = useMemo(() => new Set(natalPlacementSourceGroups(planet, sign, house, motion).flatMap((group) => group.sources.map((source) => source.key))), [house, motion, planet, sign]);
+  const [preview, setPreview] = useState<PreviewState>({
+    appliedOverrideKeys: [],
+    error: null,
+    ignoredOverrides: [],
+    loading: true,
+    rendered: null
+  });
+  const dependencyKeys = useMemo(
+    () => new Set(natalPlacementResolverDependencyKeys(planet, sign, house, motion)),
+    [house, motion, planet, sign]
+  );
   const overrides = useMemo(() => rows
-    .filter((row) => (row.status === "LIVE" || row.status === "REVIEWED") && sourceKeys.has(row.content_key))
-    .map(packageRowFromSavedRow)
-    .filter((row): row is NonNullable<ReturnType<typeof packageRowFromSavedRow>> => Boolean(row)), [rows, sourceKeys]);
+    .filter((row) => dependencyKeys.has(row.content_key))
+    .map(previewOverrideCandidate)
+    .filter((row): row is NonNullable<ReturnType<typeof previewOverrideCandidate>> => Boolean(row)), [dependencyKeys, rows]);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -132,12 +175,29 @@ export default function NatalPlacementReaderPreview({ house, initialAudience = "
       body: JSON.stringify({ audience, ...(house ? { house } : {}), motion, overrides, planet, sign }),
       signal: controller.signal
     }).then(async (response) => {
-      const payload = await response.json().catch(() => null) as { error?: string; rendered?: NatalRender } | null;
+      const payload = await response.json().catch(() => null) as {
+        appliedOverrideKeys?: string[];
+        error?: string;
+        ignoredOverrides?: IgnoredPreviewOverride[];
+        rendered?: NatalRender;
+      } | null;
       if (!response.ok || !payload?.rendered) throw new Error(payload?.error ?? `Preview request failed with ${response.status}.`);
-      setPreview({ error: null, loading: false, rendered: payload.rendered });
+      setPreview({
+        appliedOverrideKeys: payload.appliedOverrideKeys ?? [],
+        error: null,
+        ignoredOverrides: payload.ignoredOverrides ?? [],
+        loading: false,
+        rendered: payload.rendered
+      });
     }).catch((error) => {
       if (controller.signal.aborted) return;
-      setPreview({ error: error instanceof Error ? error.message : "The reader preview could not be assembled.", loading: false, rendered: null });
+      setPreview({
+        appliedOverrideKeys: [],
+        error: error instanceof Error ? error.message : "The reader preview could not be assembled.",
+        ignoredOverrides: [],
+        loading: false,
+        rendered: null
+      });
     });
     return () => controller.abort();
   }, [audience, house, motion, overrides, planet, secret, sign]);
@@ -149,7 +209,25 @@ export default function NatalPlacementReaderPreview({ house, initialAudience = "
     && preview.rendered?.provenanceTier === "exact-owner-approved"
     && preview.rendered.templateKey === exactKey
   );
+  const exactServingFromStudio = Boolean(exactServing && preview.appliedOverrideKeys.includes(exactKey));
+  const usingLiveStudioSources = preview.appliedOverrideKeys.length > 0;
   const label = house ? natalPlacementLabel(planet, sign, house) : natalPlacementSignLabel(planet, sign);
+
+  const provenanceLabel = audience === "they"
+    ? exactServingFromStudio
+      ? "Live exact Friend Studio override"
+      : exactServing
+        ? "Exact packaged Friend write-up"
+        : usingLiveStudioSources
+          ? "Composed with live Friend Studio sources"
+          : "Composed from production package"
+    : exactServingFromStudio
+      ? "Live exact Studio override"
+      : exactServing
+        ? "Exact packaged write-up"
+        : usingLiveStudioSources
+          ? "Composed with live Studio sources"
+          : "Composed from production package";
 
   return (
     <section className="admin-natal-reader-preview" aria-label={`Reader preview for ${label}`}>
@@ -158,8 +236,8 @@ export default function NatalPlacementReaderPreview({ house, initialAudience = "
           <p className="admin-eyebrow">Effective reader preview</p>
           <h3>{audience === "they" ? "What a friend sees" : "What you see"}</h3>
           <p>{audience === "they"
-            ? "The Friends version is composed from separate third-person source writing and calculated person details. Each colored section opens the actual editable source used to build it."
-            : "This is assembled by the same fallback resolver as the app. Each colored section opens the source structure that places it in the write-up."}</p>
+            ? "This preview uses the same production eligibility rules as the Friends reader. Friend view is composed from separate third-person source writing, so it can be reviewed and edited independently from You copy. Draft, reviewed-only, reference-lane, stale-package, and otherwise non-hydratable Studio rows are excluded."
+            : "This preview uses the same production eligibility rules as the app. Draft, reviewed-only, reference-lane, stale-package, and otherwise non-hydratable Studio rows are excluded."}</p>
         </div>
         <div className="admin-composition-preview-audience" role="group" aria-label="Natal preview audience">
           <button type="button" aria-pressed={audience === "you"} className={audience === "you" ? "active" : ""} onClick={() => setAudience("you")}>You</button>
@@ -193,22 +271,26 @@ export default function NatalPlacementReaderPreview({ house, initialAudience = "
             })}
           </div>
           <div className="admin-natal-reader-preview-provenance">
-            <span className={`ui-pill admin-status ${exactServing ? "status-live" : "status-reviewed"}`}>
-              {audience === "they"
-                ? exactServing ? "Exact Friend override" : "Composed from Friend sources"
-                : exactServing
-                  ? "Exact authored override"
-                  : "Composed from atomic sources"}
+            <span className={`ui-pill admin-status ${exactServing || usingLiveStudioSources ? "status-live" : "status-reviewed"}`}>
+              {provenanceLabel}
             </span>
             <span className={`ui-pill admin-status ${motion === "retrograde" ? "status-reviewed" : "status-live"}`}>
               {motion === "retrograde" ? "Retrograde chart context" : "Direct chart context"}
             </span>
             {house && audience === "you" && !exactServing && (
               exactSaved
-                ? <button type="button" onClick={() => onOpenSource(exactKey, `Exact ${label} override`)}>Open draft override</button>
+                ? <button type="button" onClick={() => onOpenSource(exactKey, `Exact ${label} override`)}>Open saved override</button>
                 : <button type="button" onClick={() => onCreateOverride(exactKey, label, preview.rendered?.body ?? "")}>Create exact override</button>
             )}
           </div>
+          {preview.ignoredOverrides.length > 0 && (
+            <p
+              className="admin-field-hint"
+              title={preview.ignoredOverrides.map((item) => `${item.contentKey}: ${ignoredReasonLabel(item.reason)}`).join("\n")}
+            >
+              {preview.ignoredOverrides.length} saved Content Studio source{preview.ignoredOverrides.length === 1 ? " is" : "s are"} excluded from this production preview because {preview.ignoredOverrides.length === 1 ? ignoredReasonLabel(preview.ignoredOverrides[0].reason) : "they are not currently reader-effective"}.
+            </p>
+          )}
           {motion === "retrograde" && exactServing && audience === "you" && (
             <p className="admin-field-hint">This exact retrograde override is served verbatim. It does not append the shared retrograde fallback; include the retrograde treatment in the exact write-up itself.</p>
           )}

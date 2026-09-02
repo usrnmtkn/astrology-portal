@@ -1,5 +1,4 @@
-import { getSupabaseClient } from "./auth";
-import { isReaderServableGeneratedContentRow } from "./generatedContent";
+import { loadLiveGeneratedContentForKeys } from "./generatedContent";
 import { firstReaderFacingCopy } from "../content/readerSafety";
 
 export const natalCardTaglinePoints = [
@@ -36,16 +35,17 @@ export const fallbackNatalCardTaglines: Record<string, string> = {
 
 type NatalCardTaglineRow = {
   content_key: string;
-  status?: string | null;
-  lane?: string | null;
-  review_state?: string | null;
-  flags?: string[] | null;
   body: string | null;
   sections: unknown;
 };
 
 let cachedTaglines: Map<string, string> | null = null;
 let loadingTaglines: Promise<Map<string, string>> | null = null;
+
+export function clearNatalCardTaglineCache() {
+  cachedTaglines = null;
+  loadingTaglines = null;
+}
 
 export function normalizedNatalCardTaglinePoint(point: string) {
   return point
@@ -113,41 +113,17 @@ export function natalCardTagline(point: string) {
 }
 
 export async function loadNatalCardTaglines() {
-  if (cachedTaglines) {
-    return cachedTaglines;
-  }
-
-  if (loadingTaglines) {
-    return loadingTaglines;
-  }
-
+  if (loadingTaglines) return loadingTaglines;
   loadingTaglines = (async () => {
-    const supabase = await getSupabaseClient();
-
-    if (!supabase) {
-      cachedTaglines = new Map();
-      return cachedTaglines;
-    }
-
-    const { data, error } = await supabase
-      .from("generated_interpretations")
-      .select("content_key, status, lane, review_state, flags, body, sections")
-      .eq("status", "LIVE")
-      .eq("lane", "serving")
-      .is("review_state", null)
-      .eq("prompt_version", "tagline-v1")
-      .like("content_key", "vocab/natal-card-tagline/%")
-      .returns<NatalCardTaglineRow[]>();
-
-    if (error) {
-      console.warn("Natal card taglines failed to load; code fallbacks will be used.", error);
-      cachedTaglines = new Map();
-      return cachedTaglines;
-    }
-
-    cachedTaglines = natalCardTaglinesFromRows((data ?? []).filter(isReaderServableGeneratedContentRow));
+    const content = await loadLiveGeneratedContentForKeys(natalCardTaglinePoints.map(natalCardTaglineContentKey));
+    cachedTaglines = natalCardTaglinesFromRows([...content.values()].map((row) => ({
+      content_key: row.contentKey, body: row.body, sections: row.sections
+    })));
     return cachedTaglines;
   })();
-
-  return loadingTaglines;
+  try {
+    return await loadingTaglines;
+  } finally {
+    loadingTaglines = null;
+  }
 }

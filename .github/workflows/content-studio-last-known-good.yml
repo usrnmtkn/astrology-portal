@@ -1,0 +1,38 @@
+name: Refresh Content Studio last-known-good snapshot
+
+on:
+  schedule:
+    - cron: "17 7 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: content-studio-last-known-good
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Refresh reader-safe durable snapshot
+        run: node scripts/refresh-content-studio-last-known-good.mjs
+      - name: Verify snapshot contract
+        run: node scripts/test-content-studio-last-known-good.mjs
+      - name: Commit snapshot only when content changed
+        run: |
+          if git diff --quiet -- apps/web/public/content-studio-last-known-good.json; then
+            echo "Last-known-good snapshot is already current."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add apps/web/public/content-studio-last-known-good.json
+          git commit -m "chore(content): refresh CMS last-known-good snapshot"
+          git push

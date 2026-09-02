@@ -390,7 +390,7 @@ assert.equal(approvedEdition.patches[0].review_state, null);
 assert.equal(approvedEdition.patches[0].source_snapshot.ownerApproval.compiledHash, compiledEdition.compiledHash);
 
 const genericEditionSignoff = await invoke({ id: "sky-row", status: "LIVE" }, editionRow);
-assert.equal(genericEditionSignoff.status, 500);
+assert.equal(genericEditionSignoff.status, 409);
 assert.equal(genericEditionSignoff.patches.length, 0);
 assert.match(genericEditionSignoff.payload.error, /Use Approve & publish edition/u);
 

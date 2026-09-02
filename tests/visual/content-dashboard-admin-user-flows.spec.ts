@@ -788,9 +788,9 @@ async function seedAdminApi(
         body: JSON.stringify({
           ok: true,
           rows: pageRows,
-          ...(url.searchParams.get("scope") === "compatibility"
-            ? { nextCursor: pageRows.length === limit ? String(pageRows.at(-1)?.id ?? "") : null }
-            : {})
+          nextCursor: offset + pageRows.length < servedRows.length
+            ? String(pageRows.at(-1)?.id ?? "")
+            : null
         })
       });
       return;
@@ -1082,6 +1082,9 @@ test.describe("content dashboard admin user flow case studies", () => {
     await seedAdminApi(page, { generatedRows: scaleRows });
     await expectAdminRouteLoads(page, "/admin/content#exact-content");
 
+    await expect(page.getByRole("region", { name: "Admin status" })).toContainText("7200 saved rows loaded", {
+      timeout: routeReadyTimeoutMs
+    });
     await expect(page.locator(".admin-content-row")).toHaveCount(50);
     await expect(page.getByRole("navigation", { name: "Content rows pagination" })).toContainText("Showing 1–50 of 7200");
     expect(await page.locator("*").count(), "Content Library DOM remains bounded at production scale").toBeLessThan(10_000);
@@ -3189,7 +3192,11 @@ test.describe("content dashboard admin user flow case studies", () => {
 
     await expect.poll(() => writes.length).toBe(1);
     expect(writes[0]?.method).toBe("PATCH");
-    expect(writes[0]?.payload).toEqual({ id: pendingRevision.id, ownerAction: "approve-package-revision" });
+    expect(writes[0]?.payload).toEqual({
+      id: pendingRevision.id,
+      ownerAction: "approve-package-revision",
+      expectedUpdatedAt: pendingRevision.updated_at
+    });
     await expect(editor.getByLabel("Approval status")).toHaveText("Approved");
     await expect(editor.getByLabel("Reader status", { exact: true })).toHaveText("Live");
     await expect(editor.getByLabel("Reader phrase · You")).toHaveValue("Approved revised You copy.");

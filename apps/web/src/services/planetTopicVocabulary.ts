@@ -1,5 +1,4 @@
-import { getSupabaseClient } from "./auth";
-import { isReaderServableGeneratedContentRow } from "./generatedContent";
+import { loadLiveGeneratedContentForSurfaces } from "./generatedContent";
 import { fallbackV3PlanetTopic, fallbackV3SignStyle } from "../content/fallbackArchitectureV3Runtime";
 import { firstReaderFacingCopy } from "../content/readerSafety";
 
@@ -25,14 +24,6 @@ type SignNeedPhrases = {
 
 type PlanetTopicVocabularyRow = {
   content_key: string;
-  status?: string | null;
-  lane?: string | null;
-  review_state?: string | null;
-  facts?: Record<string, unknown> | null;
-  flags?: string[] | null;
-  provider?: string | null;
-  source_snapshot?: Record<string, unknown> | null;
-  headline: string | null;
   body: string | null;
   sections: unknown;
 };
@@ -49,6 +40,13 @@ let cachedSignStyles: SignStyleVocabulary | null = null;
 let cachedSignNeeds: SignNeedVocabulary | null = null;
 let loadingVocabulary: Promise<PlanetTopicVocabulary> | null = null;
 const warnedFallbacks = new Set<string>();
+
+export function clearPlanetTopicVocabularyCache() {
+  cachedVocabulary = null;
+  cachedSignStyles = null;
+  cachedSignNeeds = null;
+  loadingVocabulary = null;
+}
 
 function normalizedPlanetId(planet: string) {
   const normalized = planet
@@ -348,63 +346,26 @@ export function planetTopicPhrase(planet: string, variant: PlanetTopicVariant = 
   return planetTopicPhraseFromVocabulary(cachedVocabulary, planet, variant);
 }
 
+function hydratePlanetTopicVocabularyRows(rows: PlanetTopicVocabularyRow[]) {
+  cachedVocabulary = planetTopicVocabularyFromRows(rows);
+  cachedSignStyles = signStyleVocabularyFromRows(rows);
+  cachedSignNeeds = signNeedVocabularyFromRows(rows);
+  return cachedVocabulary;
+}
+
 export async function loadPlanetTopicVocabulary() {
-  if (cachedVocabulary) {
-    return cachedVocabulary;
-  }
-
-  if (loadingVocabulary) {
-    return loadingVocabulary;
-  }
-
+  if (loadingVocabulary) return loadingVocabulary;
   loadingVocabulary = (async () => {
-    const supabase = await getSupabaseClient();
-
-    if (!supabase) {
-      cachedVocabulary = new Map();
-      cachedSignStyles = new Map();
-      cachedSignNeeds = new Map();
-      return cachedVocabulary;
-    }
-
-    const rows: PlanetTopicVocabularyRow[] = [];
-    const pageSize = 1000;
-
-    for (let page = 0; page < 5; page += 1) {
-      const from = page * pageSize;
-      const to = from + pageSize - 1;
-      const { data, error } = await supabase
-        .from("generated_interpretations")
-        .select("content_key, status, lane, review_state, facts, flags, provider, source_snapshot, headline, body, sections")
-        .eq("surface", "modifier")
-        .eq("status", "LIVE")
-        .eq("lane", "serving")
-        .is("review_state", null)
-        .or("content_key.like.fallback-vocab/%,content_key.like.cc/planet/%,content_key.like.cc/sign/%")
-        .range(from, to)
-        .returns<PlanetTopicVocabularyRow[]>();
-
-      if (error) {
-        console.warn("Planet topic vocabulary failed to load; topic slots will be blank.", error);
-        cachedVocabulary = new Map();
-        cachedSignStyles = new Map();
-        cachedSignNeeds = new Map();
-        return cachedVocabulary;
-      }
-
-      rows.push(...(data ?? []));
-
-      if (!data || data.length < pageSize) {
-        break;
-      }
-    }
-
-    const servableRows = rows.filter(isReaderServableGeneratedContentRow);
-    cachedVocabulary = planetTopicVocabularyFromRows(servableRows);
-    cachedSignStyles = signStyleVocabularyFromRows(servableRows);
-    cachedSignNeeds = signNeedVocabularyFromRows(servableRows);
-    return cachedVocabulary;
+    const rows = [...(await loadLiveGeneratedContentForSurfaces(["modifier"])).values()]
+      .filter((row) => row.contentKey.startsWith("fallback-vocab/")
+        || row.contentKey.startsWith("cc/planet/")
+        || row.contentKey.startsWith("cc/sign/"))
+      .map((row) => ({ content_key: row.contentKey, body: row.body, sections: row.sections }));
+    return hydratePlanetTopicVocabularyRows(rows);
   })();
-
-  return loadingVocabulary;
+  try {
+    return await loadingVocabulary;
+  } finally {
+    loadingVocabulary = null;
+  }
 }
