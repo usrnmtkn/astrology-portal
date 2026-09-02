@@ -37,6 +37,7 @@ That is intentionally a second phase because several current list classifiers in
 
 - Focused CRUD/hydration/concurrency/performance tests pass.
 - `npm run typecheck`, `npm run build:web`, and `npm run build:admin` pass.
+- Web bundle budgets pass. This release adds only 15 kB of aggregate-build headroom for CMS reliability; App boot, reader boot, App chunk, startup CSS, and individual deferred-content limits remain unchanged.
 - Migration is reviewed before production application.
 - After migration: compare `EXPLAIN (ANALYZE, BUFFERS)` for Studio first page and reader cursor scans against this baseline.
 - Production smoke: create draft, read it back, edit, stale-edit conflict, publish, reader hydration, demote, cache refresh, archive, restore, and protected delete.
