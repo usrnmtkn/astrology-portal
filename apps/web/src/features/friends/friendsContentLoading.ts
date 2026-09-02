@@ -23,10 +23,17 @@ export function shouldLoadEmptyHouseFallbackContent({
   return mode === "profile" || (mode === "friends" && friendNatalContentRequested);
 }
 
-export function shouldHydrateFallbackDashboardContent(mode: FriendsContentLoadingMode) {
-  // The checked-in, review-gated package is the canonical Friends source. Avoid
-  // downloading the complete dashboard mirror while the user is opening charts.
-  return mode !== "friends";
+export function shouldHydrateFallbackDashboardContent({
+  mode,
+  friendNatalContentRequested,
+  friendRelationshipContentRequests
+}: Pick<FriendsContentLoadingState, "mode" | "friendNatalContentRequested" | "friendRelationshipContentRequests">) {
+  if (mode !== "friends") return true;
+
+  // Keep the bare Friends list fast, but once a reader opens any Friend detail
+  // surface, hydrate the approved Content Studio mirror so owner-published edits
+  // override the checked-in fallback package immediately.
+  return friendNatalContentRequested || friendRelationshipContentRequests.size > 0;
 }
 
 export function shouldHydrateCompatibilityDashboardContent({

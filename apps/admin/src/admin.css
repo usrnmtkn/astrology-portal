@@ -11811,15 +11811,18 @@ body,
 }
 
 .admin-dashboard .admin-editor-savebar .admin-publish-button {
-  background: var(--admin-ui-success-soft);
-  border-color: var(--admin-primary-border);
-  color: var(--admin-ui-success);
+  background: var(--admin-ui-primary);
+  border-color: var(--admin-ui-primary);
+  color: var(--admin-success-canvas);
+  font-weight: 700;
+  opacity: 1;
 }
 
 .admin-dashboard .admin-editor-savebar .admin-publish-button:hover:not(:disabled) {
-  background: var(--admin-ui-success-soft);
-  border-color: var(--admin-primary-border);
-  color: var(--admin-ui-success);
+  background: var(--admin-ui-primary-hover);
+  border-color: var(--admin-ui-primary-hover);
+  color: var(--admin-success-canvas);
+  opacity: 1;
 }
 
 @media (max-width: 720px) {
