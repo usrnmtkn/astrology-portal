@@ -1,3 +1,7 @@
+import { clearSharedGeneratedContentCache } from "./sharedGeneratedContentCache";
+import { clearPlanetTopicVocabularyCache } from "./planetTopicVocabulary";
+import { clearNatalCardTaglineCache } from "./natalPlacementTaglines";
+
 export const contentUpdateStorageKey = "tldrastro:content-update";
 export const contentUpdateEvent = "tldrastro:content-update";
 const contentUpdateChannelName = "tldrastro-content-updates";
@@ -41,20 +45,26 @@ export function announceContentUpdate(notice: ContentUpdateNotice) {
 
 export function subscribeToContentUpdates(listener: (notice: ContentUpdateNotice) => void) {
   if (typeof window === "undefined") return () => undefined;
+  const notify = (notice: ContentUpdateNotice) => {
+    clearSharedGeneratedContentCache();
+    clearPlanetTopicVocabularyCache();
+    clearNatalCardTaglineCache();
+    listener(notice);
+  };
   const handleCustom = (event: Event) => {
     const notice = (event as CustomEvent<ContentUpdateNotice>).detail;
-    if (notice) listener(notice);
+    if (notice) notify(notice);
   };
   const handleStorage = (event: StorageEvent) => {
     if (event.key !== contentUpdateStorageKey) return;
     const notice = readNotice(event.newValue);
-    if (notice) listener(notice);
+    if (notice) notify(notice);
   };
   const channel = typeof BroadcastChannel !== "undefined"
     ? new BroadcastChannel(contentUpdateChannelName)
     : null;
   const handleChannel = (event: MessageEvent<ContentUpdateNotice>) => {
-    if (event.data) listener(event.data);
+    if (event.data) notify(event.data);
   };
 
   window.addEventListener(contentUpdateEvent, handleCustom);
