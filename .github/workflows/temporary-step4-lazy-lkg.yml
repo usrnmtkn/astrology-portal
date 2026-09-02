@@ -32,8 +32,9 @@ jobs:
           node scripts/test-content-studio-runtime-cache-invalidation.mjs
           node --import tsx scripts/test-content-studio-crud-hydration-guards.mjs
           node --import tsx scripts/test-content-studio-atomic-concurrency.mjs
-          if git grep -n 'contentStudioLastKnownGood' -- apps/web/src ':!scripts/test-content-studio-last-known-good.mjs'; then
-            echo 'Standalone LKG helper reference remains.' >&2
+          test ! -e apps/web/src/services/contentStudioLastKnownGood.ts
+          if git grep -n '"./contentStudioLastKnownGood"' -- apps/web/src; then
+            echo 'Standalone LKG helper import remains.' >&2
             exit 1
           fi
       - name: Typecheck, build, and bundle budget
