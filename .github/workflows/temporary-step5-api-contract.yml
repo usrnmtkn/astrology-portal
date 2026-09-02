@@ -1,0 +1,62 @@
+name: Temporary Step 5 Content Studio API contract QA
+
+on:
+  push:
+    branches:
+      - chatgpt/content-studio-step5-api-contract
+
+permissions:
+  contents: write
+
+jobs:
+  qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build -w @tldr/astro-knowledge
+      - name: Apply remaining API contract patch
+        run: python scripts/temporary-step5-api-contract-patch.py
+      - name: Focused Content Studio API and reliability QA
+        run: |
+          git diff --check
+          node --import tsx scripts/test-content-studio-admin-api-contract.mjs
+          node --import tsx scripts/test-content-studio-crud-hydration-guards.mjs
+          node --import tsx scripts/test-content-studio-atomic-concurrency.mjs
+          node --import tsx scripts/test-content-studio-prepopulate-live-race.mjs
+          node scripts/test-content-studio-special-mutation-concurrency.mjs
+          node scripts/test-content-studio-hydration-reliability.mjs
+          node scripts/test-content-studio-cms-performance.mjs
+          node scripts/test-content-studio-last-known-good.mjs
+          node scripts/test-content-studio-reader-cache-rehydrate.mjs
+          node scripts/test-content-studio-runtime-cache-invalidation.mjs
+          node scripts/test-admin-natal-placement-preview-api.mjs
+          node scripts/test-admin-natal-placement-preview-dependencies.mjs
+          node --import tsx scripts/test-sky-owner-review-actions.mjs
+      - name: Typecheck and production builds
+        run: |
+          npm run typecheck
+          npm run build:web
+          npm run build:admin
+          npm run qa:bundle
+      - name: Commit tested Step 5 endpoint patch and remove QA scaffolding
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          rm .github/workflows/temporary-step5-api-contract.yml
+          rm scripts/temporary-step5-api-contract-patch.py
+          git add -A api/admin/prepopulate-content.ts \
+                     api/admin/natal-placement-preview.ts \
+                     api/admin/sky-v4-preview.ts \
+                     api/admin/review-records.ts \
+                     .github/workflows/temporary-step5-api-contract.yml \
+                     scripts/temporary-step5-api-contract-patch.py
+          git commit -m "fix(admin): complete Content Studio API contract hardening"
+          git push
