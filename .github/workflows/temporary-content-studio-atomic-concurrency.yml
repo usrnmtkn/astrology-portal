@@ -1,0 +1,71 @@
+name: Temporary Content Studio atomic concurrency QA
+
+on:
+  push:
+    branches:
+      - chatgpt/content-studio-hydration-crud-audit-finalqa
+
+permissions:
+  contents: write
+
+concurrency:
+  group: temporary-content-studio-atomic-concurrency
+  cancel-in-progress: false
+
+jobs:
+  repair:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: chatgpt/content-studio-hydration-crud-audit-finalqa
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build test dependencies
+        run: npm run build -w @tldr/astro-knowledge
+
+      - name: Apply atomic concurrency follow-up
+        run: python scripts/tmp_content_studio_atomic_concurrency_patch.py
+
+      - name: Focused CRUD and hydration QA
+        run: |
+          git diff --check
+          node --import tsx scripts/test-content-studio-crud-hydration-guards.mjs
+          node --import tsx scripts/test-content-studio-atomic-concurrency.mjs
+          node --import tsx scripts/test-content-studio-prepopulate-live-race.mjs
+          node scripts/test-content-studio-hydration-reliability.mjs
+          node scripts/test-content-studio-special-mutation-concurrency.mjs
+          node --import tsx scripts/test-content-studio-api-roundtrip.mjs
+          node scripts/test-admin-transit-source-crud.mjs
+          node --import tsx scripts/test-fallback-dashboard-live-overlay.mjs
+          node --import tsx scripts/test-fallback-dashboard-dynamic-natal-exact.mjs
+          node --import tsx scripts/test-admin-natal-placement-preview-api.mjs
+          node scripts/test-admin-natal-placement-preview-dependencies.mjs
+          node scripts/test-admin-writing-surface-map.mjs
+          node scripts/test-friends-chart-performance-contract.mjs
+          node --import tsx scripts/test-sky-owner-review-actions.mjs
+
+      - name: Typecheck and builds
+        run: |
+          npm run typecheck
+          npm run build:web
+          npm run build:admin
+
+      - name: Commit clean atomic repair
+        run: |
+          rm -f scripts/tmp_content_studio_atomic_concurrency_patch.py
+          rm -f .github/workflows/temporary-content-studio-atomic-concurrency.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "fix(content): make Content Studio concurrency guards atomic"
+          git push origin HEAD:chatgpt/content-studio-hydration-crud-audit-finalqa
