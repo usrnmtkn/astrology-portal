@@ -34,7 +34,9 @@ jobs:
         run: npm run build -w @tldr/astro-knowledge
 
       - name: Apply audited repair
-        run: python scripts/tmp_content_studio_hydration_crud_repair.py
+        run: |
+          python scripts/tmp_content_studio_hydration_crud_repair.py
+          python scripts/tmp_content_studio_hydration_crud_followup.py
 
       - name: Focused CRUD and hydration QA
         run: |
@@ -58,6 +60,7 @@ jobs:
       - name: Commit repair and remove temporary runner
         run: |
           rm -f scripts/tmp_content_studio_hydration_crud_repair.py
+          rm -f scripts/tmp_content_studio_hydration_crud_followup.py
           rm -f .github/workflows/temporary-content-studio-crud-repair.yml
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
