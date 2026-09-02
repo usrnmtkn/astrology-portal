@@ -11506,7 +11506,11 @@ export function App() {
 
   useEffect(() => {
     if (
-      !shouldHydrateFallbackDashboardContent(mode)
+      !shouldHydrateFallbackDashboardContent({
+  mode,
+  friendNatalContentRequested,
+  friendRelationshipContentRequests
+})
       || fallbackDashboardHydrationRequestedRef.current
     ) {
       return;
@@ -11525,7 +11529,7 @@ export function App() {
       .catch((error) => {
         console.warn("Fallback architecture V3 dashboard bundle failed to install; local JSON snapshot remains active.", error);
       });
-  }, [contentRefreshVersion, mode]);
+  }, [contentRefreshVersion, friendNatalContentRequested, friendRelationshipContentRequests, mode]);
 
   useEffect(() => {
     let cancelled = false;

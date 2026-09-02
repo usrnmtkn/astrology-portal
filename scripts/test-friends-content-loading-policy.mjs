@@ -119,13 +119,25 @@ assert.equal(
 );
 
 assert.equal(
-  shouldHydrateFallbackDashboardContent("friends"),
+  shouldHydrateFallbackDashboardContent(loadingState()),
   false,
-  "Friends must use the checked-in approved package without downloading the complete dashboard mirror."
+  "A bare Friends list must not download the complete dashboard mirror."
 );
+assert.equal(
+  shouldHydrateFallbackDashboardContent(loadingState([], { friendNatalContentRequested: true })),
+  true,
+  "Friends Natal must hydrate approved Content Studio overrides once the detail view is requested."
+);
+for (const tab of ["compatibility", "transits", "synastry", "composite"]) {
+  assert.equal(
+    shouldHydrateFallbackDashboardContent(loadingState([tab])),
+    true,
+    `Friends ${tab} must hydrate approved Content Studio overrides after the detail view opens.`
+  );
+}
 for (const mode of ["guest", "member", "profile", "calendar", "account", "settings"]) {
   assert.equal(
-    shouldHydrateFallbackDashboardContent(mode),
+    shouldHydrateFallbackDashboardContent(loadingState([], { mode })),
     true,
     `${mode} must retain dashboard hydration.`
   );
