@@ -16,9 +16,6 @@ jobs:
   qa:
     runs-on: ubuntu-latest
     timeout-minutes: 45
-    env:
-      VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
-      SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -32,8 +29,10 @@ jobs:
       - name: Build knowledge dependency
         run: npm run build -w @tldr/astro-knowledge
       - name: Apply Step 4 LKG patch
-        run: bash scripts/temporary-step4-lkg-patch.sh
-      - name: Refresh current production snapshot
+        run: |
+          bash scripts/temporary-step4-lkg-patch.sh
+          bash scripts/temporary-step4-lkg-public-reader.sh
+      - name: Refresh current production snapshot through reader RLS
         run: node scripts/refresh-content-studio-last-known-good.mjs
       - name: Last-known-good and Step 4 QA
         run: |
@@ -61,6 +60,7 @@ jobs:
         run: |
           rm .github/workflows/temporary-content-studio-step4-lkg.yml
           rm scripts/temporary-step4-lkg-patch.sh
+          rm scripts/temporary-step4-lkg-public-reader.sh
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add -A
