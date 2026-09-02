@@ -2521,20 +2521,18 @@ async function loadAllGeneratedContentRows(
   const allRows: AdminGeneratedContentRow[] = [];
   let cursor: string | null = null;
 
-  for (let offset = 0; offset < 50000; offset += pageSize) {
+  for (let page = 0; page < 125; page += 1) {
     const result = await loadGeneratedContentPage(
-      `/api/admin/generated-content?status=all&visibility=${visibility}&scope=${scope}&limit=${pageSize}${scope === "compatibility" ? cursor ? `&cursor=${encodeURIComponent(cursor)}` : "" : `&offset=${offset}`}`,
+      `/api/admin/generated-content?status=all&visibility=${visibility}&scope=${scope}&limit=${pageSize}${cursor ? `&cursor=${encodeURIComponent(cursor)}` : ""}`,
       secret
     );
     const pageRows = assertRowsPayload(result, "/api/admin/generated-content");
 
     allRows.push(...pageRows);
-    const complete = scope === "compatibility" ? !result.nextCursor : pageRows.length < pageSize;
+    const complete = !result.nextCursor;
     onPage?.(dedupeGeneratedContentRows(allRows), complete);
-    if (complete) {
-      break;
-    }
-    if (scope === "compatibility") cursor = result.nextCursor ?? null;
+    if (complete) break;
+    cursor = result.nextCursor ?? null;
   }
 
   return dedupeGeneratedContentRows(allRows);
@@ -4124,6 +4122,8 @@ export function GeneratedContentAdminDashboard() {
     const draftForSave = { ...activeDraft, status };
     const isPackageDraft = draftIsFallbackArchitectureV3(draftForSave);
     const isGuidedHeldReview = isPackageDraft && guidedReviewKey === draftForSave.contentKey;
+    const persistedRow = draftForSave.id ? rows.find((row) => row.id === draftForSave.id) : null;
+    const expectedUpdatedAt = persistedRow?.updated_at ?? undefined;
 
     try {
       const body = isPackageDraft
@@ -4171,9 +4171,10 @@ export function GeneratedContentAdminDashboard() {
             sourceSnapshot: draftSourceSnapshot(draftForSave)
           };
       const method = draftForSave.id ? "PATCH" : "POST";
+      const versionedBody = method === "PATCH" && expectedUpdatedAt ? { ...body, expectedUpdatedAt } : body;
       const payload = await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>("/api/admin/generated-content", secret, {
         method,
-        body: JSON.stringify(body)
+        body: JSON.stringify(versionedBody)
       });
       const saved = payload.ok && Array.isArray(payload.rows) ? payload.rows[0] : null;
       if (!saved || saved.content_key !== draftForSave.contentKey) {
@@ -4395,7 +4396,7 @@ export function GeneratedContentAdminDashboard() {
             };
         return adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>("/api/admin/generated-content", secret, {
           method: "PATCH",
-          body: JSON.stringify(requestBody)
+          body: JSON.stringify(row.updated_at ? { ...requestBody, expectedUpdatedAt: row.updated_at } : requestBody)
         });
       }));
       const updatedRows = updates.flatMap((payload) => payload.rows ?? []);
@@ -4422,7 +4423,7 @@ export function GeneratedContentAdminDashboard() {
     }
     setIsLoading(true);
     try {
-      await Promise.all(deletable.map((row) => adminJsonRequest<{ ok: boolean }>(`/api/admin/generated-content?id=${encodeURIComponent(row.id)}`, secret, {
+      await Promise.all(deletable.map((row) => adminJsonRequest<{ ok: boolean }>(`/api/admin/generated-content?id=${encodeURIComponent(row.id)}${row.updated_at ? `&expectedUpdatedAt=${encodeURIComponent(row.updated_at)}` : ""}`, secret, {
         method: "DELETE"
       })));
       setRows((current) => current.filter((row) => !deletable.some((deleted) => deleted.id === row.id)));

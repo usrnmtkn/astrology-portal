@@ -663,14 +663,39 @@ function buildSkyQueueRows(sky: SkySnapshot, targetDate: string) {
   return Array.from(new Map(rows.map((row) => [row.content_key, row])).values());
 }
 
+
+function queueTargetKey(row: Pick<QueueRow, "content_key" | "target_date" | "mode">) {
+  return [row.content_key, row.target_date ?? "", row.mode].join("\u0000");
+}
+
+async function liveQueueTargets(rows: QueueRow[]) {
+  const contentKeys = Array.from(new Set(rows.map((row) => row.content_key)));
+  if (contentKeys.length === 0) return new Set<string>();
+  const params = new URLSearchParams({ select: "content_key,target_date,mode", status: "eq.LIVE" });
+  params.set("content_key", `in.(${contentKeys.map((key) => `"${key}"`).join(",")})`);
+  const response = await fetch(`${supabaseUrl()}/rest/v1/generated_interpretations?${params.toString()}`, {
+    headers: adminHeaders()
+  });
+  const payload = await response.json().catch(() => null);
+  if (!response.ok) {
+    throw new Error(`Supabase live queue lookup failed with ${response.status}: ${JSON.stringify(payload)}`);
+  }
+  return new Set((Array.isArray(payload) ? payload : []).map((row) => queueTargetKey(row as QueueRow)));
+}
+
 async function saveRows(rows: QueueRow[]) {
+  const liveTargets = await liveQueueTargets(rows);
+  const pendingRows = rows.filter((row) => !liveTargets.has(queueTargetKey(row)));
+  const skippedLiveRows = rows.filter((row) => liveTargets.has(queueTargetKey(row))).map((row) => row.content_key);
+  if (pendingRows.length === 0) return { rows: [], skippedLiveRows };
+
   const response = await fetch(`${supabaseUrl()}/rest/v1/generated_interpretations?on_conflict=content_key,target_date,mode`, {
     method: "POST",
     headers: {
       ...adminHeaders(),
       prefer: "resolution=merge-duplicates,return=representation"
     },
-    body: JSON.stringify(rows)
+    body: JSON.stringify(pendingRows)
   });
   const payload = await response.json().catch(() => null);
 
@@ -678,7 +703,7 @@ async function saveRows(rows: QueueRow[]) {
     throw new Error(`Supabase queue save failed with ${response.status}: ${JSON.stringify(payload)}`);
   }
 
-  return payload;
+  return { rows: Array.isArray(payload) ? payload : [], skippedLiveRows };
 }
 
 export default async function handler(req: IncomingMessage, res: ServerResponse) {
@@ -726,8 +751,9 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
       ok: true,
       surface: requestedSurface,
       targetDate,
-      inserted: rows.length,
-      rows: saved
+      inserted: saved.rows.length,
+      skippedLiveRows: saved.skippedLiveRows,
+      rows: saved.rows
     });
   } catch (error) {
     sendJson(res, 500, {

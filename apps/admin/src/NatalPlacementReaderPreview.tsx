@@ -236,7 +236,7 @@ export default function NatalPlacementReaderPreview({ house, initialAudience = "
           <p className="admin-eyebrow">Effective reader preview</p>
           <h3>{audience === "they" ? "What a friend sees" : "What you see"}</h3>
           <p>{audience === "they"
-            ? "This preview uses the same production eligibility rules as the Friends reader. Draft, reviewed-only, reference-lane, stale-package, and otherwise non-hydratable Studio rows are excluded."
+            ? "This preview uses the same production eligibility rules as the Friends reader. Friend view is composed from separate third-person source writing, so it can be reviewed and edited independently from You copy. Draft, reviewed-only, reference-lane, stale-package, and otherwise non-hydratable Studio rows are excluded."
             : "This preview uses the same production eligibility rules as the app. Draft, reviewed-only, reference-lane, stale-package, and otherwise non-hydratable Studio rows are excluded."}</p>
         </div>
         <div className="admin-composition-preview-audience" role="group" aria-label="Natal preview audience">
