@@ -1,0 +1,50 @@
+name: Temporary Step 4 lazy LKG validation
+
+on:
+  push:
+    branches:
+      - chatgpt/content-studio-step4-release
+
+permissions:
+  contents: write
+
+jobs:
+  qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build -w @tldr/astro-knowledge
+      - name: Apply lazy LKG patch
+        run: bash scripts/temporary-step4-lazy-lkg-patch.sh
+      - name: Validate LKG and core Step 4 contracts
+        run: |
+          git diff --check
+          node scripts/test-content-studio-last-known-good.mjs
+          node scripts/test-content-studio-reader-cache-rehydrate.mjs
+          node scripts/test-content-studio-runtime-cache-invalidation.mjs
+          node --import tsx scripts/test-content-studio-crud-hydration-guards.mjs
+          node --import tsx scripts/test-content-studio-atomic-concurrency.mjs
+      - name: Typecheck, build, and bundle budget
+        run: |
+          npm run typecheck
+          npm run build:web
+          npm run build:admin
+          npm run qa:bundle
+      - name: Commit tested lazy integration
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add apps/web/src/services/generatedContent.ts \
+                  apps/web/src/services/planetTopicVocabulary.ts \
+                  apps/web/src/services/natalPlacementTaglines.ts \
+                  scripts/test-content-studio-last-known-good.mjs
+          git commit -m "perf(content): keep CMS failover off reader boot graph"
+          git push
