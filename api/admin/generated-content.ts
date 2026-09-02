@@ -410,10 +410,15 @@ function validateSkyV4TransitPovCopy(record: Record<string, unknown>, packageDra
 function validateFallbackArchitectureV3Copy(row: ExistingGeneratedContentRow, patch: Record<string, unknown>) {
   const record = v3PackageRecord(row);
   const bannedWords = contentRoleContract().styleRules?.bannedWords ?? [];
+  const canonicalPackageBody = typeof record.body === "string"
+    ? record.body
+    : typeof record.body_you === "string"
+      ? record.body_you
+      : undefined;
   const editableFields: Array<[string, unknown, unknown]> = [
     ["headline", patch.headline, record.headline],
     ["summary", patch.summary, record.summary],
-    ["body", patch.body, record.body]
+    ["body", patch.body, canonicalPackageBody]
   ];
   const sections = isRecord(patch.sections) ? patch.sections : {};
   editableFields.push(["body_you", sections.body_you, record.body_you]);
