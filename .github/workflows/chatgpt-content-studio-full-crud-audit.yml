@@ -11,7 +11,7 @@ permissions:
 jobs:
   audit:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 25
     env:
       VITE_SUPABASE_URL: https://visual-smoke.supabase.test
       VITE_SUPABASE_ANON_KEY: visual-smoke-placeholder
@@ -24,24 +24,42 @@ jobs:
         with:
           node-version: 22
           cache: npm
-      - name: Align admin CRUD tests with owner publish action
+      - name: Align Content Studio UX and CRUD regression coverage
         run: |
           python - <<'PY'
           from pathlib import Path
+
+          # Keep the owner-facing copy consistent with the one-step action.
+          admin = Path('apps/admin/src/GeneratedContentAdminDashboard.tsx')
+          admin_text = admin.read_text()
+          stale = 'Save the revision as a draft, then use “Approve &amp; publish revision” below to make the revised copy live.'
+          current = 'Use “Save &amp; publish revision” below to save this revision and make that exact saved copy live.'
+          if stale in admin_text:
+              admin_text = admin_text.replace(stale, current)
+          elif current not in admin_text:
+              raise SystemExit('Expected package revision helper text was not found.')
+          admin.write_text(admin_text)
+
+          # Align the full browser suite with the repaired package controls.
           path = Path('tests/visual/content-dashboard-admin-user-flows.spec.ts')
           text = path.read_text()
           old_label = 'Approve & publish revision'
-          if old_label not in text:
-              raise SystemExit('Expected old package publish label was not found in admin flow tests.')
-          text = text.replace(old_label, 'Save & publish revision')
+          if old_label in text:
+              text = text.replace(old_label, 'Save & publish revision')
+          elif 'Save & publish revision' not in text:
+              raise SystemExit('Expected package publish control was not found in admin flow tests.')
+
           old_status = 'await expect(editor.getByLabel("Reader status after save")).toHaveValue("LIVE");'
-          if old_status not in text:
+          if old_status in text:
+              text = text.replace(old_status, 'await expect(editor.getByLabel("Reader status after save")).toHaveText("Published");')
+          elif 'await expect(editor.getByLabel("Reader status after save")).toHaveText("Published");' not in text:
               raise SystemExit('Expected package reader-status assertion was not found.')
-          text = text.replace(old_status, 'await expect(editor.getByLabel("Reader status after save")).toHaveText("Published");')
           path.write_text(text)
           PY
       - name: Install dependencies
         run: npm ci
+      - name: Build astro knowledge prerequisite
+        run: npm run build -w @tldr/astro-knowledge
       - name: Install Playwright Chromium
         run: npx playwright install --with-deps chromium
       - name: Run Content Studio API CRUD roundtrip
@@ -50,11 +68,11 @@ jobs:
         run: npm run qa:admin-flows
       - name: Build Content Studio admin
         run: npm run build:admin
-      - name: Commit verified test alignment
+      - name: Commit verified CRUD repair and test alignment
         run: |
           git config user.name "ChatGPT"
           git config user.email "chatgpt@users.noreply.github.com"
           git rm .github/workflows/chatgpt-content-studio-full-crud-audit.yml
-          git add tests/visual/content-dashboard-admin-user-flows.spec.ts
-          git commit -m "test(admin): cover repaired package publish controls"
+          git add apps/admin/src/GeneratedContentAdminDashboard.tsx tests/visual/content-dashboard-admin-user-flows.spec.ts
+          git commit -m "test(admin): verify repaired Content Studio CRUD flows"
           git push origin HEAD:chatgpt/content-studio-crud-save-fix
