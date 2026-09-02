@@ -29,16 +29,22 @@ type IgnoredPreviewOverride = {
 };
 
 const require = createRequire(import.meta.url);
-const fallbackRows = require("../../apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json") as {
+const bundledInitialReaderRows = require("../../apps/web/src/content/fallbackArchitectureV3/bundled-initial-reader-rows-v3.json") as {
+  hookRows: PackageRow[];
+  vocabularyRows: PackageRow[];
+  templates: PackageRow[];
+};
+const bundledSkyCoreRows = require("../../apps/web/src/content/fallbackArchitectureV3/bundled-sky-core-rows-v3.json") as {
   hookRows: PackageRow[];
   vocabularyRows: PackageRow[];
 };
-const placementInterim = require("../../apps/web/src/content/fallbackArchitectureV3/source-rows/placement-interim-fixes-v1.json") as {
-  templates: PackageRow[];
+const bundledDeferredCoreRows = require("../../apps/web/src/content/fallbackArchitectureV3/bundled-deferred-core-rows-v3.json") as {
+  hookRows: PackageRow[];
   vocabularyRows: PackageRow[];
 };
-const fallbackTemplates = require("../../apps/web/src/content/fallbackArchitectureV3/templates/fallback-templates-v3.json") as {
-  templates: PackageRow[];
+const bundledSharedPlacementRows = require("../../apps/web/src/content/fallbackArchitectureV3/bundled-shared-placement-rows-v3.json") as {
+  hookRows: PackageRow[];
+  vocabularyRows: PackageRow[];
 };
 const bundledManifest = require("../../apps/web/src/content/fallbackArchitectureV3/bundled-manifest-v3.json") as {
   keys: string[];
@@ -158,16 +164,35 @@ export function productionNatalPlacementPreviewOverrides(candidates: PreviewOver
   };
 }
 
+function productionBaseReaderRows() {
+  return {
+    hookRows: [
+      ...bundledSkyCoreRows.hookRows,
+      ...bundledInitialReaderRows.hookRows,
+      ...bundledDeferredCoreRows.hookRows,
+      ...bundledSharedPlacementRows.hookRows
+    ],
+    vocabularyRows: [
+      ...bundledSkyCoreRows.vocabularyRows,
+      ...bundledInitialReaderRows.vocabularyRows,
+      ...bundledDeferredCoreRows.vocabularyRows,
+      ...bundledSharedPlacementRows.vocabularyRows
+    ],
+    templates: bundledInitialReaderRows.templates
+  };
+}
+
 export function renderNatalPlacementPreviewState(input: ReturnType<typeof normalizeNatalPlacementPreviewInput>) {
-  const hooks = new Map((fallbackRows.hookRows as unknown as PackageRow[]).map((row) => [row.contentKey, row]));
-  const vocabulary = new Map(([
-    ...(fallbackRows.vocabularyRows as unknown as PackageRow[]),
-    ...(placementInterim.vocabularyRows as unknown as PackageRow[])
-  ]).map((row) => [row.contentKey, row]));
-  const templates = new Map(([
-    ...(fallbackTemplates.templates as unknown as PackageRow[]),
-    ...(placementInterim.templates as unknown as PackageRow[])
-  ]).map((row) => [row.contentKey, row]));
+  // Build from the generated reader projection, not the authoring source files.
+  // The web app first installs this approved-only eager + deferred package and
+  // only then layers eligible LIVE dashboard rows over it. Reconstructing from
+  // raw authoring files let later needs_review duplicates shadow approved rows,
+  // which is why Content Studio could show the generic Leo floor while the app
+  // correctly rendered the Jupiter-specific paragraph.
+  const base = productionBaseReaderRows();
+  const hooks = new Map(base.hookRows.map((row) => [row.contentKey, row]));
+  const vocabulary = new Map(base.vocabularyRows.map((row) => [row.contentKey, row]));
+  const templates = new Map(base.templates.map((row) => [row.contentKey, row]));
   const productionOverrides = productionNatalPlacementPreviewOverrides(input.overrides);
 
   productionOverrides.appliedRows.forEach((row) => {
