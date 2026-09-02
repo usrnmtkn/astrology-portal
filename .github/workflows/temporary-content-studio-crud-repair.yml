@@ -30,6 +30,9 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Build test dependencies
+        run: npm run build -w @tldr/astro-knowledge
+
       - name: Apply audited repair
         run: python scripts/tmp_content_studio_hydration_crud_repair.py
 
