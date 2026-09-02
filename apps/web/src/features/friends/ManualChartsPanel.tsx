@@ -4,6 +4,7 @@ import {
   lazy,
   useEffect,
   useMemo,
+  useRef,
   useState,
   type FormEvent,
   type ReactNode
@@ -908,6 +909,7 @@ export function ManualChartsPanel({
     };
   }
 
+  const friendRouteDetailRefreshKeyRef = useRef("");
   const [socialFriends, setSocialFriends] = useState<ConnectedSocialFriend[]>([]);
   const socialFriendCharts = useMemo(
     () => socialFriends.map(socialFriendToChart),
@@ -1581,7 +1583,7 @@ export function ManualChartsPanel({
         })
       }];
     });
-  }, [currentSky, relationshipGeneratedContent, selectedChart, selectedFriendTransits]);
+  }, [currentSky, fallbackArchitectureV3Version, relationshipGeneratedContent, selectedChart, selectedFriendTransits]);
   const selectedFriendPlacementRows = useMemo(() => {
     if (!friendProfileWork.natal || !selectedChart || !selectedFriendReadyNatalChart) {
       return [];
@@ -2114,6 +2116,49 @@ export function ManualChartsPanel({
       openFriendTransitDetail(transit);
     }
   };
+
+  useEffect(() => {
+    const routeState = friendsRouteStateFromUrl();
+    if (
+      !routeState?.detail
+      || routeState.view !== "transits"
+      || routeState.chartId !== selectedChart?.id
+      || !currentSky
+    ) {
+      return;
+    }
+
+    const prefix = "transit-";
+    if (!routeState.detail.startsWith(prefix)) {
+      return;
+    }
+
+    const routedTransitId = routeState.detail.slice(prefix.length);
+    const transit = selectedFriendTransits.find((candidate) => (
+      normalizeContentIdPart(candidate.id) === routedTransitId
+    ));
+    if (!transit) {
+      return;
+    }
+
+    const refreshKey = [
+      routeState.chartId,
+      routeState.detail,
+      fallbackArchitectureV3Version,
+      currentSky.generatedAt
+    ].join(":");
+    if (friendRouteDetailRefreshKeyRef.current === refreshKey) {
+      return;
+    }
+
+    friendRouteDetailRefreshKeyRef.current = refreshKey;
+    openFriendTransitDetail(transit);
+  }, [
+    currentSky,
+    fallbackArchitectureV3Version,
+    selectedChart?.id,
+    selectedFriendTransits
+  ]);
   function selectFriendsTab(nextTab: FriendsTab, historyMode: "push" | "replace" = "push") {
     storeFriendsTab(nextTab);
     setFriendsMainView(nextTab);
