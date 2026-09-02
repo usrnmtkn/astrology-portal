@@ -3346,10 +3346,12 @@ export function GeneratedContentAdminDashboard() {
         try {
           setSkyArticleEditor((current) => current ? { ...current, saveState: "saving", error: null } : current);
           const revised = await reviseSkyArticleEdition(skyArticleEditor.baseEdition, skyArticleEditor.fields);
+          const persistedArticleRow = rows.find((row) => row.id === skyArticleEditor.rowId);
           const payload = await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>("/api/admin/generated-content", secret, {
             method: "PATCH",
             body: JSON.stringify({
               id: skyArticleEditor.rowId,
+              ...(persistedArticleRow?.updated_at ? { expectedUpdatedAt: persistedArticleRow.updated_at } : {}),
               ownerAction: "save-sky-article-edition-revision",
               sections: { skyArticleEdition: revised }
             })
@@ -3408,8 +3410,12 @@ export function GeneratedContentAdminDashboard() {
             tldr: form.tldr,
             slotValues: form.slotValues
           };
+          const persistedWorkspaceRow = form.workspaceId
+            ? rows.find((row) => row.id === form.workspaceId)
+            : null;
           const requestBody = form.workspaceId ? {
             id: form.workspaceId,
+            ...(persistedWorkspaceRow?.updated_at ? { expectedUpdatedAt: persistedWorkspaceRow.updated_at } : {}),
             headline: `${titleFromKey(facts.planet)} in ${titleFromKey(facts.sign)} article draft`,
             summary: form.tldr,
             sections: { skyArticleWorkspace: workspace },
@@ -3830,7 +3836,7 @@ export function GeneratedContentAdminDashboard() {
     try {
       const payload = await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>("/api/admin/generated-content", secret, {
         method: "PATCH",
-        body: JSON.stringify({ id: row.id, ownerAction: "approve-and-schedule" })
+        body: JSON.stringify({ id: row.id, ...(row.updated_at ? { expectedUpdatedAt: row.updated_at } : {}), ownerAction: "approve-and-schedule" })
       });
       const saved = payload.rows?.[0];
       if (saved) {
@@ -4044,7 +4050,7 @@ export function GeneratedContentAdminDashboard() {
     try {
       const payload = await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>("/api/admin/generated-content", secret, {
         method: "PATCH",
-        body: JSON.stringify({ id: row.id, ownerAction: "approve-sky-article-edition" })
+        body: JSON.stringify({ id: row.id, ...(row.updated_at ? { expectedUpdatedAt: row.updated_at } : {}), ownerAction: "approve-sky-article-edition" })
       });
       const saved = payload.rows?.[0];
       if (!saved) throw new Error("The approved edition was not returned by the content API.");
@@ -4081,7 +4087,7 @@ export function GeneratedContentAdminDashboard() {
         : "approve-sky-article-edition";
       const payload = await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>("/api/admin/generated-content", secret, {
         method: "PATCH",
-        body: JSON.stringify({ id: revisionRow.id, ownerAction })
+        body: JSON.stringify({ id: revisionRow.id, ...(revisionRow.updated_at ? { expectedUpdatedAt: revisionRow.updated_at } : {}), ownerAction })
       });
       const saved = payload.rows?.[0];
       if (!saved) throw new Error("The published article edition was not returned.");
@@ -4324,7 +4330,7 @@ export function GeneratedContentAdminDashboard() {
     try {
       const payload = await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>("/api/admin/generated-content", secret, {
         method: "PATCH",
-        body: JSON.stringify({ id: row.id, ownerAction: "approve-package-revision" })
+        body: JSON.stringify({ id: row.id, ...(row.updated_at ? { expectedUpdatedAt: row.updated_at } : {}), ownerAction: "approve-package-revision" })
       });
       const published = payload.rows?.[0];
       if (!published) throw new Error("The API did not return the published package row.");
