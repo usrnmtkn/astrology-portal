@@ -782,15 +782,16 @@ async function seedAdminApi(
       const cursorIndex = cursor ? servedRows.findIndex((row) => row.id === cursor) : -1;
       const offset = cursor ? Math.max(0, cursorIndex + 1) : Math.max(0, Number(url.searchParams.get("offset") ?? 0));
       const pageRows = servedRows.slice(offset, offset + limit);
+      const nextCursor = offset + pageRows.length < servedRows.length
+        ? String(pageRows.at(-1)?.id ?? "")
+        : null;
       await route.fulfill({
         status: 200,
         contentType: "application/json",
         body: JSON.stringify({
           ok: true,
           rows: pageRows,
-          ...(url.searchParams.get("scope") === "compatibility"
-            ? { nextCursor: pageRows.length === limit ? String(pageRows.at(-1)?.id ?? "") : null }
-            : {})
+          nextCursor
         })
       });
       return;
@@ -1081,6 +1082,9 @@ test.describe("content dashboard admin user flow case studies", () => {
 
     await seedAdminApi(page, { generatedRows: scaleRows });
     await expectAdminRouteLoads(page, "/admin/content#exact-content");
+    await expect(page.getByRole("region", { name: "Admin status" })).toContainText("7200 saved rows loaded", {
+      timeout: routeReadyTimeoutMs
+    });
 
     await expect(page.locator(".admin-content-row")).toHaveCount(50);
     await expect(page.getByRole("navigation", { name: "Content rows pagination" })).toContainText("Showing 1–50 of 7200");
@@ -3189,7 +3193,11 @@ test.describe("content dashboard admin user flow case studies", () => {
 
     await expect.poll(() => writes.length).toBe(1);
     expect(writes[0]?.method).toBe("PATCH");
-    expect(writes[0]?.payload).toEqual({ id: pendingRevision.id, ownerAction: "approve-package-revision" });
+    expect(writes[0]?.payload).toEqual({
+      id: pendingRevision.id,
+      ownerAction: "approve-package-revision",
+      expectedUpdatedAt: pendingRevision.updated_at
+    });
     await expect(editor.getByLabel("Approval status")).toHaveText("Approved");
     await expect(editor.getByLabel("Reader status", { exact: true })).toHaveText("Live");
     await expect(editor.getByLabel("Reader phrase · You")).toHaveValue("Approved revised You copy.");
