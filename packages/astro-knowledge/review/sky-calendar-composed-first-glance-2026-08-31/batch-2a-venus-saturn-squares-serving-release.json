@@ -11,5 +11,6 @@
   "source_file_blob_sha_before_release": "00f40c57e53003482a5fd7ecc2bc27997224fef2",
   "expected_row_count": 24,
   "scope": "Replace only the 24 owner-approved Venus/Saturn square sign-specific reader rows with their hash-bound approved wording; preserve all other source rows.",
-  "triggered_by_owner_release_commit": true
+  "triggered_by_owner_release_commit": true,
+  "generated_release_commit": "028472e6523358aa8fdbcb2d4c332b6f93a9fbc6"
 }
