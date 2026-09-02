@@ -1,0 +1,137 @@
+{
+  "schema": "tldr.sky-calendar.composed-card-serving-release.v1",
+  "batch_id": "sky-calendar-composed-cards-consequence-first-2026-09-01",
+  "released_at": "2026-09-01T22:09:00-04:00",
+  "owner_approved": true,
+  "owner_authorized": true,
+  "serving_enabled": true,
+  "expected_row_count": 24,
+  "payload_set_sha256": "78e8776e61dbc6885dd993e6f26a8827ffe50e7ad992aea243e4720cc2cc16d8",
+  "payload_set_hash_algorithm": "sha256(JSON.stringify(rows.map(({contentKey,bodySha256}) => ({contentKey,bodySha256}))))",
+  "source_file": "packages/astro-knowledge/data/sky-calendar/composed-cards-v1.json",
+  "source_file_blob_sha_before_release": "e04634cb551b711e96adcb5ed1fa4ff23be6beb7",
+  "approval_statement": "The 1-20 are approved to go live. The remaining four were then reviewed and approved. Proceed with making this wired up and live.",
+  "scope_note": "Release only these 24 composed sign-specific Calendar aspect forecasts. Preserve every Details field and all identities; no other Calendar aspect copy may change.",
+  "rows": [
+    {
+      "contentKey": "sky-card/mars/libra/trine/pluto/aquarius",
+      "body": "A disagreement can finally move once people say who the current arrangement is actually working for. Mars in Libra trine Pluto in Aquarius can make it easier to challenge a rule or set of terms without ending the negotiation. The risk is everyone agreeing on the wording while still having a different idea of what is actually going to change. Put the change in concrete terms before anyone calls the matter settled.",
+      "bodySha256": "40af974f813d5fe70606bff61f2bad2c389f3d4854606bc71d10a82b82774a50"
+    },
+    {
+      "contentKey": "sky-card/neptune/aries/sextile/pluto/aquarius",
+      "body": "A cause people care about may gain enough support to put pressure on a rule or system that is no longer working. Neptune in Aries sextile Pluto in Aquarius can turn shared conviction into enough momentum to move something that has been stuck. The risk is mistaking attention for progress. Name the change you want, then put your energy behind the step that could actually make it happen.",
+      "bodySha256": "96c3ed5be06a8046e28ade24eaeb21cbed4b08d3ed9ee75931f300f532dea842"
+    },
+    {
+      "contentKey": "sky-card/uranus/gemini/sextile/neptune/aries",
+      "body": "New information may make a plan that seemed out of reach feel suddenly possible. Uranus in Gemini sextile Neptune in Aries can open a route forward while the facts are still changing. Encouraging news is not the same as confirmation. Follow the opening, but check the details before you build the whole plan around it.",
+      "bodySha256": "6de60e509dabf6e9fb18d3549f60df1d088024c225cb1a62ca3861bbf21f8a45"
+    },
+    {
+      "contentKey": "sky-card/uranus/gemini/trine/pluto/aquarius",
+      "body": "A better way of doing things may be right in front of you, but you still need to know what problem you’re solving. Uranus in Gemini trine Pluto in Aquarius can bring the insight, information, or strategy that helps you change how the work gets done. Don’t overhaul the plan just because a new option looks more interesting. Get clear on what is actually holding things back, then make the change that solves that problem.",
+      "bodySha256": "d42472aa637e5bfb168c0bf5ff6b2f3cbd79ba2e1d8eb3e51ec0c9ed13abf5ba"
+    },
+    {
+      "contentKey": "sky-card/jupiter/leo/trine/saturn/aries",
+      "body": "Something you’ve been working toward may finally have enough support to become possible. Jupiter in Leo trine Saturn in Aries can bring growth and structure together: more backing, confidence, or opportunity, plus a limit that helps you decide what can actually be done. The temptation is to make the plan bigger just because things are going well. Take the opportunity, but keep the scope small enough to follow through.",
+      "bodySha256": "3a3efed7d14acd362b7212c6cdf0e34531ed1665853cb97eb9eb93cfa20aad8f"
+    },
+    {
+      "contentKey": "sky-card/saturn/aries/sextile/pluto/aquarius",
+      "body": "A deadline may create the opening to change something everyone already knows is not working. Saturn in Aries sextile Pluto in Aquarius can make it easier to deal with a rule, structure, or arrangement that has been hard to move. The opportunity can disappear if everyone waits for someone else to raise the problem. Put it on the table while there is still time to change it.",
+      "bodySha256": "74ae0d9eed81893d1c85efff1d5afbd130dcb01973f2f6597454d73330175ef2"
+    },
+    {
+      "contentKey": "sky-card/mars/leo/conjunction/jupiter/leo",
+      "body": "Doing something well can quickly lead to more visibility, responsibility, or influence. Mars conjunct Jupiter in Leo can make one strong effort turn into a much bigger opportunity. That may be worth saying yes to, but more recognition does not automatically mean you have room to take on everything that comes with it. Before you commit, get clear on what you are actually agreeing to.",
+      "bodySha256": "02638553b0b5333a706f96dab743aa51f0b369990d160785150df69906e12880"
+    },
+    {
+      "contentKey": "sky-card/saturn/aries/sextile/uranus/gemini",
+      "body": "You may have to commit before all the information is in. Saturn in Aries sextile Uranus in Gemini supports a plan that is firm enough to act on and flexible enough to change when the facts do. Waiting for certainty can become its own way of losing time. Make the best decision available now, and decide what new information would justify changing course.",
+      "bodySha256": "512056428ed1c9b15864fdd5266a3e4b36fe8cb994f47f2aa752f7e5840c7d97"
+    },
+    {
+      "contentKey": "sky-card/mars/leo/trine/saturn/aries",
+      "body": "A clear deadline can give you exactly the structure you need to get something finished. Mars in Leo trine Saturn in Aries can focus your effort once the responsibility is clear and the end point is defined. Progress may come quickly, which makes it tempting to add more while things are going well. Use the momentum to finish what you started, not make the plan bigger.",
+      "bodySha256": "94ebd5b0374ef36c9bf957f3062bd65b2cc4a3a9f02c853a707ccf1ac7a89fca"
+    },
+    {
+      "contentKey": "sky-card/venus/scorpio/square/pluto/aquarius",
+      "body": "A request for more openness can turn into a fight about privacy and control. Venus in Scorpio square Pluto in Aquarius can expose a deeper disagreement about what has to be shared, who gets access, and who gets to decide. More careful wording will not solve a conflict about where the boundary actually is. Be specific about what stays private, what needs to be shared, and who gets a say.",
+      "bodySha256": "6e83ce3a7d5731f92b9b89b6ab7c73f6572dbd7b5c90da446dd1dabd5841e91d"
+    },
+    {
+      "contentKey": "sky-card/venus/libra/sextile/jupiter/leo",
+      "body": "A boost for one person can change how a partnership works. Venus in Libra sextile Jupiter in Leo can bring more visibility, support, money, or opportunity to one person, which may shift what each side is contributing. If one role gets bigger, the split may need to change too. Talk about it while the news is still good, and make sure the setup still works for everyone involved.",
+      "bodySha256": "44ee36fea6430edebf06836602d5538986949d29a57ddbfc6904fa28b5aeef92"
+    },
+    {
+      "contentKey": "sky-card/mercury/gemini/sextile/saturn/aries",
+      "body": "A deadline can help you stop researching and start deciding. Mercury in Gemini sextile Saturn in Aries can help you choose a workable direction even while some of the details are still changing. More information may improve the decision, but it can also keep you circling the options past the point when a choice is useful. Pick the best path with what you know now, then set a review point for anything that genuinely changes the picture.",
+      "bodySha256": "d034f26aecec2c77ff430c3dd2b054a087b76019862961027a2fa28d36c0142d"
+    },
+    {
+      "contentKey": "sky-card/sun/leo/sextile/mars/libra",
+      "body": "Once you put your work where other people can respond to it, you also have to decide which criticism deserves to change it. The Sun in Leo sextile Mars in Libra can help you defend what matters about your contribution while still hearing an objection that improves the result. Diplomacy does not mean making every criticism equally important, and confidence does not mean refusing to adjust. Know what you are trying to protect before the conversation starts. Then you can change what strengthens the work without negotiating away the part that made it yours.",
+      "bodySha256": "1bc55838784ef0662b0a2b969add9aed2c251c3d1cfd043a56b9b8dea57b5621"
+    },
+    {
+      "contentKey": "sky-card/mercury/gemini/sextile/jupiter/leo",
+      "body": "An idea can start attracting support before you’ve had time to decide what you’re actually promising. Mercury in Gemini sextile Jupiter in Leo can make it easier to share possibilities, get people interested, and see how much further an idea could go. That enthusiasm can be useful because other people may see potential you had not considered yet, but attention can also make an unfinished idea feel more certain than it is. Let the response expand your thinking without letting it make the decision for you. Be clear about what you’re excited about, what you’ve committed to, and what is still allowed to change.",
+      "bodySha256": "e6319be85b25eb1bf895bb5d1a3516c89e1449a1f527c7bd073c6ca4cb1732ee"
+    },
+    {
+      "contentKey": "sky-card/sun/virgo/sextile/mars/cancer",
+      "body": "You can fix the problem without turning someone into the problem. The Sun in Virgo sextile Mars in Cancer can make it easier to notice what went wrong, take care of the immediate consequences, and protect the person involved from unnecessary blame. But protecting someone is different from protecting the pattern that caused the mistake. Handle what needs fixing first. Then have the conversation that makes it safer, clearer, or easier to do differently next time.",
+      "bodySha256": "5a1b6ff921169b310d2c58ae90eee8d1f475b3bda7f3edba248af80a4cd74c9a"
+    },
+    {
+      "contentKey": "sky-card/venus/libra/sextile/mars/leo",
+      "body": "Someone stepping up can change the balance of a connection faster than either person realizes. Venus in Libra sextile Mars in Leo can make one person’s effort, initiative, or visibility more obvious, which may also expose responsibilities that were never clearly divided in the first place. Appreciation matters, but praise does not redistribute the work. Talk about what each person is actually carrying while there is still goodwill to work with.",
+      "bodySha256": "ffc8e902209a43fed8462ddd62f9a2e5a8737d8246dfb81d2f623597d5fc3a9c"
+    },
+    {
+      "contentKey": "sky-card/mercury/aquarius/opposition/jupiter/leo",
+      "body": "A plan can sound convincing until it meets the promise people are already counting on. Mercury in Aquarius opposite Jupiter in Leo can expose the gap between what makes sense in theory and what has already been offered, announced, or expected. Neither side becomes irrelevant just because the other has a strong argument. Before defending the plan or the promise, compare both with the time, money, and capacity actually available.",
+      "bodySha256": "709b451ece9fa3bff8fda6d0e581d6cdc41d4f2348877c3f5a8c501830c32582"
+    },
+    {
+      "contentKey": "sky-card/sun/leo/conjunction/venus/leo",
+      "body": "Being praised for what you did is not always the same as feeling valued for who you are. The Sun conjunct Venus in Leo can bring recognition, affection, and visibility together, which can make it easy to assume one kind of appreciation should cover all three. If someone still feels overlooked after receiving credit, they may be asking for a different kind of acknowledgment. Name what they contributed, then make the appreciation personal.",
+      "bodySha256": "3764375fdf96a8ca93302178bff10684e848b9604971050a98ae342475a2cf77"
+    },
+    {
+      "contentKey": "sky-card/mercury/scorpio/square/pluto/aquarius",
+      "body": "When the stakes are high, rewriting the message can feel easier than naming the power struggle underneath it. Mercury in Scorpio square Pluto in Aquarius can make every word feel consequential when the larger question is who gets to decide what happens next. Better wording may make the conversation more careful, but it will not resolve a disagreement about control. Stop editing around the point. Say what needs to be decided, who has the authority to decide it, and what you need from them.",
+      "bodySha256": "514568c8a8134dc41c8f279cce36c61327a55c481ceecd8188d389bd59a60229"
+    },
+    {
+      "contentKey": "sky-card/mercury/scorpio/square/jupiter/leo",
+      "body": "People may start treating an unconfirmed possibility like a done deal. Mercury in Scorpio square Jupiter in Leo can create tension between what is known privately and what is being said publicly. Wanting something to happen can make people talk about it like it already will. Protect what needs to stay private, but be clear about what is confirmed and what is still uncertain.",
+      "bodySha256": "2c1a77a0a28fdbdd33f58eda193cb3326f9a6efee0fb1988851131344f2fcc64"
+    },
+    {
+      "contentKey": "sky-card/mercury/scorpio/square/mars/leo",
+      "body": "A difficult conversation can go off track when being respected starts to matter more than getting the issue resolved. Mercury in Scorpio square Mars in Leo can make one person push for an answer while the other becomes more careful about what they are willing to say. The harder the pressure gets, the easier it is to start defending yourself instead of dealing with the decision in front of you. Don’t let the fight about tone become the whole conversation. Say what you know, be clear about what still needs time, and come back to the problem you were trying to solve.",
+      "bodySha256": "21f72692aa922166099efeda5cee9d5d8a55156b5af3bc799969738d446c1aad"
+    },
+    {
+      "contentKey": "sky-card/mars/leo/sextile/uranus/gemini",
+      "body": "New information can show you a better way to get where you’re going. Mars in Leo sextile Uranus in Gemini can help you adjust quickly without losing sight of what you set out to accomplish. Commitment to the outcome does not require loyalty to an outdated method. If the plan stops making sense, change the plan. Keep the promise that matters and let the strategy evolve as you learn more.",
+      "bodySha256": "1b4cfe4e6a8a5a81e4c8a799f2254109e8cb3106a92d5afdfd670ba01cf83dee"
+    },
+    {
+      "contentKey": "sky-card/venus/scorpio/sextile/mars/virgo",
+      "body": "A hard conversation can actually move things forward when it gives you something concrete to fix. Venus in Scorpio sextile Mars in Virgo supports the kind of honesty that names what hurt and then does something about it. Reassurance helps, but follow-through is what rebuilds trust. Make the repair, keep the promise, and let your actions show that you were listening.",
+      "bodySha256": "956627be05c4a4a9d84ae5540679176c755aa810bbd7ee079e16a00a821b5107"
+    },
+    {
+      "contentKey": "sky-card/mercury/aquarius/sextile/venus/sagittarius",
+      "body": "You do not have to choose between giving people more freedom and keeping enough structure for things to work. Mercury in Aquarius sextile Venus in Sagittarius can help you find an approach that gives people more room without losing the standards, responsibilities, or expectations everyone still needs to share. Individual freedom and collective structure do not automatically have to compete. Build enough structure to keep things working, then give people room to make the rest their own.",
+      "bodySha256": "e4be68b890ed5e27d56dd3ff624e5bdaea91c17aadace5b532bce83976b9d07c"
+    }
+  ]
+}
