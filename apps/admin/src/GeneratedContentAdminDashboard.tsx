@@ -2499,11 +2499,13 @@ function isRetryableAdminReadError(error: unknown) {
   return error.status === 408 || error.status === 429 || error.status >= 500;
 }
 
-async function loadGeneratedContentPage(path: string, secret: string) {
+async function loadGeneratedContentPage(path: string, secret: string, signal?: AbortSignal) {
   for (let attempt = 0; ; attempt += 1) {
+    if (signal?.aborted) throw signal.reason ?? new Error("Content inventory load was cancelled.");
     try {
-      return await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[]; nextCursor?: string | null }>(path, secret);
+      return await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[]; nextCursor?: string | null }>(path, secret, { signal });
     } catch (error) {
+      if (signal?.aborted) throw signal.reason ?? error;
       const retryDelay = generatedContentPageRetryDelaysMs[attempt];
       if (retryDelay === undefined || !isRetryableAdminReadError(error)) throw error;
       await new Promise((resolve) => window.setTimeout(resolve, retryDelay));
@@ -2515,16 +2517,19 @@ async function loadAllGeneratedContentRows(
   secret: string,
   visibility: "editorial" | "all" = "editorial",
   scope: "all" | "compatibility" = "all",
-  onPage?: (rows: AdminGeneratedContentRow[], complete: boolean) => void
+  onPage?: (rows: AdminGeneratedContentRow[], complete: boolean) => void,
+  signal?: AbortSignal
 ) {
   const pageSize = scope === "compatibility" ? 500 : 400;
   const allRows: AdminGeneratedContentRow[] = [];
   let cursor: string | null = null;
 
   for (let page = 0; page < 125; page += 1) {
+    if (signal?.aborted) throw signal.reason ?? new Error("Content inventory load was cancelled.");
     const result = await loadGeneratedContentPage(
       `/api/admin/generated-content?status=all&visibility=${visibility}&scope=${scope}&limit=${pageSize}${cursor ? `&cursor=${encodeURIComponent(cursor)}` : ""}`,
-      secret
+      secret,
+      signal
     );
     const pageRows = assertRowsPayload(result, "/api/admin/generated-content");
 
@@ -2777,6 +2782,8 @@ export function GeneratedContentAdminDashboard() {
   const hookBodyRequestsRef = useRef(new Map<AdminHookCatalogDomain, Promise<Map<string, string>>>());
   const skyArticleAutosaveSequenceRef = useRef(0);
   const skyArticleWorkspaceAutosaveSequenceRef = useRef(0);
+  const dashboardLoadSequenceRef = useRef(0);
+  const dashboardLoadControllerRef = useRef<AbortController | null>(null);
 
   useEffect(() => {
     if (!draft || !draftIsFallbackHook(draft)) return;
@@ -3202,8 +3209,21 @@ export function GeneratedContentAdminDashboard() {
       || showRetiredRows;
     if (!needsExtendedInventory || allRowsLoaded || loadState !== "loaded" || !secret.trim()) return;
     let cancelled = false;
+    const controller = new AbortController();
     setIsLoading(true);
-    void loadAllGeneratedContentRows(secret, "all")
+    void loadAllGeneratedContentRows(
+      secret,
+      "all",
+      "all",
+      (loadedRows, complete) => {
+        if (cancelled) return;
+        setRows(loadedRows);
+        setMessage(complete
+          ? `Loaded the extended ${loadedRows.length}-row content inventory.`
+          : `Loaded ${loadedRows.length} extended content records…`);
+      },
+      controller.signal
+    )
       .then((allRows) => {
         if (cancelled) return;
         setRows(allRows);
@@ -3219,6 +3239,7 @@ export function GeneratedContentAdminDashboard() {
       });
     return () => {
       cancelled = true;
+      controller.abort();
       setIsLoading(false);
     };
   }, [activePage, categoryFilter, showReferenceRows, showRetiredRows, allRowsLoaded, loadState, secret]);
@@ -3326,6 +3347,7 @@ export function GeneratedContentAdminDashboard() {
 
     return () => {
       cancelled = true;
+      dashboardLoadControllerRef.current?.abort();
       unsubscribe();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -3678,6 +3700,10 @@ export function GeneratedContentAdminDashboard() {
   }
 
   async function loadDashboardData(secretOverride?: string, persistOnSuccess = false, credentialKind: "session" | "secret" = "secret") {
+    const loadSequence = ++dashboardLoadSequenceRef.current;
+    dashboardLoadControllerRef.current?.abort();
+    const loadController = new AbortController();
+    dashboardLoadControllerRef.current = loadController;
     const normalizedSecret = normalizeAdminSecret(secretOverride ?? secret);
     if (!normalizedSecret) {
       setLoadState("idle");
@@ -3707,21 +3733,23 @@ export function GeneratedContentAdminDashboard() {
           normalizedSecret,
           needsExtendedInventory || loadsCompatibilityFirst ? "all" : "editorial",
           loadsCompatibilityFirst ? "compatibility" : "all",
-          loadsCompatibilityFirst
-            ? (loadedRows, complete) => {
-                setRows(loadedRows);
-                setMessage(complete
-                  ? `Loaded ${loadedRows.length} compatibility records.`
-                  : `Loaded ${loadedRows.length} compatibility records…`);
-              }
-            : undefined
+          (loadedRows, complete) => {
+            if (loadSequence !== dashboardLoadSequenceRef.current || loadController.signal.aborted) return;
+            setRows(loadedRows);
+            const inventoryLabel = loadsCompatibilityFirst ? "compatibility records" : "content records";
+            setMessage(complete
+              ? `Loaded ${loadedRows.length} ${inventoryLabel}.`
+              : `Loaded ${loadedRows.length} ${inventoryLabel}…`);
+          },
+          loadController.signal
         ),
-        adminJsonRequest<{ ok: boolean; rows?: AdminReviewRecord[]; records?: AdminReviewRecord[]; counts?: unknown }>("/api/admin/review-records?surface=upcomingAspects&status=all", normalizedSecret),
-        adminJsonRequest<{ ok: boolean; rows: AdminUserGeneratedContentRow[] }>("/api/admin/user-generated-content?status=all&limit=100", normalizedSecret),
+        adminJsonRequest<{ ok: boolean; rows?: AdminReviewRecord[]; records?: AdminReviewRecord[]; counts?: unknown }>("/api/admin/review-records?surface=upcomingAspects&status=all", normalizedSecret, { signal: loadController.signal }),
+        adminJsonRequest<{ ok: boolean; rows: AdminUserGeneratedContentRow[] }>("/api/admin/user-generated-content?status=all&limit=100", normalizedSecret, { signal: loadController.signal }),
         loadAdminSourceDraftCatalog(normalizedSecret),
-        adminJsonRequest<{ ok: boolean; rows: AdminContentReviewEventRow[] }>("/api/admin/content-review-events?limit=250", normalizedSecret)
+        adminJsonRequest<{ ok: boolean; rows: AdminContentReviewEventRow[] }>("/api/admin/content-review-events?limit=250", normalizedSecret, { signal: loadController.signal })
       ]);
 
+      if (loadSequence !== dashboardLoadSequenceRef.current || loadController.signal.aborted) return false;
       if (generatedResult.status === "rejected") {
         throw generatedResult.reason;
       }
@@ -3778,6 +3806,7 @@ export function GeneratedContentAdminDashboard() {
       }
       return true;
     } catch (error) {
+      if (loadSequence !== dashboardLoadSequenceRef.current || loadController.signal.aborted) return false;
       const accessDenied = error instanceof AdminRequestError && error.status === 401;
       const nextMessage = accessDenied
         ? credentialKind === "session"
@@ -3791,7 +3820,7 @@ export function GeneratedContentAdminDashboard() {
       setMessage(nextMessage);
       return false;
     } finally {
-      setIsLoading(false);
+      if (loadSequence === dashboardLoadSequenceRef.current) setIsLoading(false);
     }
   }
 
