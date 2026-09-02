@@ -2,11 +2,79 @@
 // Codex: import ONLY from the prebuilt dist/tldr-content.js (or this file if bundling
 // yourself). Do not edit or fork the resolver sources; selection stays
 // authored-or-v3-or-SOURCE_GAP and grammar is correct by construction.
+import {
+  createFallbackRenderer as createBaseFallbackRenderer,
+  type PlacementFacts,
+  type RenderOpts,
+  type RowsFile,
+  type TemplatesFile
+} from "./renderFallback.browser";
+
 export * from "./renderFallback.browser";
 export * from "./renderTransitSynastry.browser";
 export * from "./knowledgeMatrixV9.browser";
 export * from "./knowledgeMatrixV13.browser";
 export * from "./skyPlacementV4Canonical.mjs";
+
+function natalPlacementDirectExactKey(facts: PlacementFacts) {
+  if (!facts.house) return null;
+  return `fallback-hook/natal-you-placement-complete-final/${facts.planet}/${facts.sign}/${facts.house}`;
+}
+
+export function natalPlacementMotionExactKey(facts: PlacementFacts) {
+  const directKey = natalPlacementDirectExactKey(facts);
+  if (!directKey) return null;
+  return facts.isRetrograde ? `${directKey}/retrograde` : directKey;
+}
+
+/**
+ * Motion-aware package boundary for exact natal placement copy.
+ *
+ * Legacy exact rows keep their existing key and remain Direct. Retrograde exact
+ * rows live at the same key plus `/retrograde`. When an Rx exact row is absent,
+ * the base resolver sees neither exact row and therefore composes the placement
+ * with the shared retrograde modifier. A Direct exact row can never mask Rx.
+ */
+export function createFallbackRenderer(templatesFile: TemplatesFile, rowsFile: RowsFile) {
+  const baseRenderer = createBaseFallbackRenderer(templatesFile, rowsFile);
+
+  return {
+    ...baseRenderer,
+    renderNatalPlacement(facts: PlacementFacts, opts: RenderOpts = {}) {
+      if (!facts.isRetrograde || !facts.house) {
+        return baseRenderer.renderNatalPlacement(facts, opts);
+      }
+
+      const directKey = natalPlacementDirectExactKey(facts);
+      if (!directKey) return baseRenderer.renderNatalPlacement(facts, opts);
+      const retrogradeKey = `${directKey}/retrograde`;
+      const retrogradeRow = (rowsFile.hookRows ?? []).find((row) => row.contentKey === retrogradeKey);
+      const hookRows = (rowsFile.hookRows ?? [])
+        .filter((row) => row.contentKey !== directKey && row.contentKey !== retrogradeKey);
+
+      if (retrogradeRow) {
+        hookRows.push({ ...retrogradeRow, contentKey: directKey });
+      }
+
+      const motionRenderer = createBaseFallbackRenderer(templatesFile, { ...rowsFile, hookRows });
+      const rendered = motionRenderer.renderNatalPlacement(facts, opts);
+
+      if (
+        retrogradeRow
+        && rendered.provenanceTier === "exact-owner-approved"
+        && rendered.templateKey === directKey
+      ) {
+        return {
+          ...rendered,
+          partKeys: rendered.partKeys?.map((key) => key === directKey ? retrogradeKey : key),
+          templateKey: retrogradeKey
+        };
+      }
+
+      return rendered;
+    }
+  };
+}
 
 // Version stamp: the app must surface this in its debug/about screen and the dashboard
 // admin must show it next to the import status, so the owner can verify at a glance
