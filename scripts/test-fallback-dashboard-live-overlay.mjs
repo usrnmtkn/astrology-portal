@@ -1,10 +1,24 @@
 #!/usr/bin/env node
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
 import { selectLatestLiveServingDashboardRows } from "../apps/web/src/services/fallbackArchitectureV3DashboardOverlay.ts";
 
+const manifest = JSON.parse(readFileSync(
+  new URL("../apps/web/src/content/fallbackArchitectureV3/bundled-core-manifest-v3.json", import.meta.url),
+  "utf8"
+));
+const manifestContentKeys = new Set(manifest.keys.map((manifestKey) => {
+  const separatorIndex = manifestKey.indexOf(":");
+  return separatorIndex >= 0 ? manifestKey.slice(separatorIndex + 1) : manifestKey;
+}));
 const venusKey = "authored/transit-aspect/venus/moon/hard";
 const sunMarsKey = "authored/transit-aspect/sun/mars/hard";
 const currentKeys = new Set([venusKey, sunMarsKey]);
+assert.equal(
+  manifestContentKeys.has(venusKey),
+  true,
+  "The current typed manifest must normalize to the raw Venus/Moon Content Studio key."
+);
 const row = ({
   id,
   contentKey,

@@ -76,6 +76,11 @@ assert.match(
   "Supabase pagination must use a stable unique-ID tiebreaker."
 );
 assert.match(
+  generatedContentSource,
+  /currentCoreManifest\.keys\.map\(\(manifestKey\)[\s\S]*manifestKey\.indexOf\(":"\)[\s\S]*manifestKey\.slice\(separatorIndex \+ 1\)/u,
+  "Typed package-manifest keys must normalize back to raw Content Studio content keys before overlay validation."
+);
+assert.match(
   materializerSource,
   /packageContentHash: packageManifest\.contentHash/u,
   "Every mirrored row must carry the package content hash."
