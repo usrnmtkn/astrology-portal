@@ -28,7 +28,11 @@ set search_path = public
 as $$
   select max(updated_at)
   from public.generated_interpretations
-  where provider = p_provider;
+  where provider = p_provider
+    and p_provider in (
+      'tldrastro-fallback-architecture-v3',
+      'tldrastro-fallback-architecture-v3-sky-placement'
+    );
 $$;
 
 revoke all on function public.content_runtime_revision(text) from public;
