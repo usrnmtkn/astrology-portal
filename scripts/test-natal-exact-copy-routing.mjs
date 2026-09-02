@@ -5,7 +5,14 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
-import { createFallbackRenderer } from "../apps/web/src/content/fallbackArchitectureV3/resolver/renderFallback.browser.ts";
+import {
+  createFallbackRenderer,
+  natalPlacementMotionExactKey
+} from "../apps/web/src/content/fallbackArchitectureV3/resolver/index.browser.ts";
+import {
+  createFallbackRenderer as createPackagedFallbackRenderer,
+  natalPlacementMotionExactKey as packagedNatalPlacementMotionExactKey
+} from "../apps/web/src/content/fallbackArchitectureV3/dist/tldr-content.js";
 import { renderNatalAspect as renderNodeAspect, renderNatalPlacement as renderNodePlacement } from "../apps/web/src/content/fallbackArchitectureV3/resolver/renderFallback.mjs";
 import { fallbackArchitectureV3DashboardPackageDestination } from "../apps/web/src/services/fallbackArchitectureV3DashboardPackaging.ts";
 
@@ -13,6 +20,7 @@ const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), ".."
 const readJson = (relativePath) => JSON.parse(fs.readFileSync(path.join(repoRoot, relativePath), "utf8"));
 const templates = readJson("apps/web/src/content/fallbackArchitectureV3/templates/fallback-templates-v3.json");
 const rows = readJson("apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json");
+const placementInterim = readJson("apps/web/src/content/fallbackArchitectureV3/source-rows/placement-interim-fixes-v1.json");
 const sunSquareAscendantApproval = readJson("packages/astro-knowledge/review/natal-sun-square-ascendant-owner-approval-2026-08-22.json");
 const angleV15BatchManifest = readJson("packages/astro-knowledge/review/angle-aspects-60-v15/shipping-manifest.json");
 const friendsV1Manifest = readJson("packages/astro-knowledge/review/angle-aspects-60-friends-v1/shipping-manifest.json");
@@ -127,6 +135,69 @@ for (const [name, renderPlacement] of [
   assert.doesNotMatch(friend.parts[1], /\bIt's in their 12th house\b/u);
 }
 
+const motionTemplates = { templates: [...templates.templates, ...placementInterim.templates] };
+const motionRows = {
+  hookRows: [...rows.hookRows],
+  vocabularyRows: [...rows.vocabularyRows, ...placementInterim.vocabularyRows]
+};
+const motionFacts = { planet: "mercury", sign: "virgo", house: 6 };
+const directPlacementKey = "fallback-hook/natal-you-placement-complete-final/mercury/virgo/6";
+const retrogradePlacementKey = `${directPlacementKey}/retrograde`;
+const exactPlacementRow = (contentKey, body, bodyThey) => ({
+  contentKey,
+  content_role: "full_copy",
+  grammar_frame: "complete_sentence",
+  body,
+  body_they: bodyThey,
+  body_they_review_status: "approved",
+  body_they_approval: { approvalLevel: "exact_owner_approved" },
+  reader_only: true,
+  render_policy: "reader-only-exact-lived-v1",
+  review_status: "approved"
+});
+const directSentinel = exactPlacementRow(directPlacementKey, "DIRECT EXACT SENTINEL.", "DIRECT FRIEND EXACT SENTINEL.");
+const retrogradeSentinel = exactPlacementRow(retrogradePlacementKey, "RETROGRADE EXACT SENTINEL.", "RETROGRADE FRIEND EXACT SENTINEL.");
+
+for (const [name, factory, motionKey] of [
+  ["browser package source", createFallbackRenderer, natalPlacementMotionExactKey],
+  ["checked-in package dist", createPackagedFallbackRenderer, packagedNatalPlacementMotionExactKey]
+]) {
+  assert.equal(motionKey({ ...motionFacts, voice: "you" }), directPlacementKey, `${name}: Direct must retain the legacy exact key.`);
+  assert.equal(motionKey({ ...motionFacts, voice: "you", isRetrograde: true }), retrogradePlacementKey, `${name}: Retrograde must have a distinct exact key.`);
+
+  const directOnly = factory(motionTemplates, {
+    ...motionRows,
+    hookRows: [...motionRows.hookRows, directSentinel]
+  });
+  const direct = directOnly.renderNatalPlacement({ ...motionFacts, voice: "you" });
+  assert.equal(direct.templateKey, directPlacementKey, `${name}: Direct must select Direct exact copy.`);
+  assert.equal(direct.body, "DIRECT EXACT SENTINEL.");
+
+  const retrogradeFallback = directOnly.renderNatalPlacement({ ...motionFacts, voice: "you", isRetrograde: true });
+  assert.notEqual(retrogradeFallback.templateKey, directPlacementKey, `${name}: Retrograde must never inherit Direct exact copy.`);
+  assert.notEqual(retrogradeFallback.body, "DIRECT EXACT SENTINEL.");
+  assert.match(retrogradeFallback.body, /retrograde in the birth chart/u, `${name}: missing Rx exact copy must compose with the shared retrograde modifier.`);
+
+  const bothMotions = factory(motionTemplates, {
+    ...motionRows,
+    hookRows: [...motionRows.hookRows, directSentinel, retrogradeSentinel]
+  });
+  const exactRetrograde = bothMotions.renderNatalPlacement({ ...motionFacts, voice: "you", isRetrograde: true });
+  assert.equal(exactRetrograde.templateKey, retrogradePlacementKey, `${name}: Rx exact provenance must expose the Rx key.`);
+  assert.deepEqual(exactRetrograde.partKeys, [retrogradePlacementKey]);
+  assert.equal(exactRetrograde.body, "RETROGRADE EXACT SENTINEL.");
+  assert.doesNotMatch(exactRetrograde.body, /retrograde in the birth chart/u, `${name}: exact Rx copy must be served verbatim.`);
+
+  const friendRetrograde = bothMotions.renderNatalPlacement({ ...motionFacts, voice: "Alex", isRetrograde: true });
+  assert.equal(friendRetrograde.templateKey, retrogradePlacementKey, `${name}: Friend Rx must use the same motion-specific exact key.`);
+  assert.equal(friendRetrograde.body, "RETROGRADE FRIEND EXACT SENTINEL.");
+  assert.notEqual(friendRetrograde.body, "DIRECT FRIEND EXACT SENTINEL.");
+
+  const directAfterRetrograde = bothMotions.renderNatalPlacement({ ...motionFacts, voice: "you" });
+  assert.equal(directAfterRetrograde.templateKey, directPlacementKey, `${name}: adding Rx copy must not alter Direct routing.`);
+  assert.equal(directAfterRetrograde.body, "DIRECT EXACT SENTINEL.");
+}
+
 const youPage = fs.readFileSync(path.join(repoRoot, "apps/web/src/features/you/YouPage.tsx"), "utf8");
 assert.match(youPage, /label: "Planetary aspects"/u);
 assert.match(youPage, /label: "Angles and points"/u);
@@ -142,4 +213,4 @@ assert.doesNotMatch(
   "Natal aspect subgroup labels must not fall back to non-semantic spans."
 );
 
-console.log("natal exact-copy routing: ok (231-row frozen non-V15 baseline plus 60-row V15 angle batch with governed Friends variants; dashboard hook lane; contextual house bridges; matching subgroup labels)");
+console.log("natal exact-copy routing: ok (protected aspect baselines plus motion-specific Direct/Rx exact isolation for You and Friend across package source and checked-in dist)");
