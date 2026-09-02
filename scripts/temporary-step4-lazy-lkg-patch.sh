@@ -33,9 +33,6 @@ assert compat_close > seen_start
 text = text[:seen_start] + '  return packageFallbackArchitectureV3CompatibilityRows(rows);\n' + text[compat_close:]
 generated.write_text(text)
 
-# Remove duplicate Supabase/LKG readers from vocabulary and taglines. Both
-# services already depend on generatedContent, whose shared loaders enforce the
-# same LIVE/serving/reader-safe boundary and fall back to the nightly snapshot.
 planet = Path('apps/web/src/services/planetTopicVocabulary.ts')
 source = planet.read_text()
 source = source.replace('import { getSupabaseClient } from "./auth";\n', '', 1)
@@ -84,4 +81,13 @@ needle = 'assert.match(generated, /loadContentStudioLastKnownGoodRows/u);\n'
 assert needle in source
 source = source.replace(needle, needle + 'assert.match(generated, /packageFallbackArchitectureV3CoreRows/u);\nassert.match(generated, /packageFallbackArchitectureV3CompatibilityRows/u);\n')
 test.write_text(source)
+
+cache_test = Path('scripts/test-content-studio-runtime-cache-invalidation.mjs')
+source = cache_test.read_text()
+source = source.replace('const signal = fs.readFileSync("apps/web/src/services/contentUpdateSignal.ts", "utf8");\n', 'const signal = fs.readFileSync("apps/web/src/services/contentUpdateSignal.ts", "utf8");\nconst generated = fs.readFileSync("apps/web/src/services/generatedContent.ts", "utf8");\n')
+start = source.index('assert.match(vocabulary, /export function clearPlanetTopicVocabularyCache/u);')
+end = source.index('\nassert.match(signal, /clearPlanetTopicVocabularyCache', start)
+new_contract = '''assert.match(vocabulary, /export function clearPlanetTopicVocabularyCache/u);\nassert.match(vocabulary, /loadLiveGeneratedContentForSurfaces/u, "Vocabulary hydration must delegate to the shared live/LKG loader.");\nassert.doesNotMatch(vocabulary, /\\.range\\(/u, "Vocabulary hydration must not own OFFSET pagination.");\nassert.match(vocabulary, /finally \\{\\s*loadingVocabulary = null/u);\n\nassert.match(taglines, /export function clearNatalCardTaglineCache/u);\nassert.match(taglines, /loadLiveGeneratedContentForKeys/u, "Tagline hydration must delegate to the shared live/LKG loader.");\nassert.match(taglines, /finally \\{\\s*loadingTaglines = null/u);\n\nassert.match(generated, /\\.gt\\("id", cursorId\\)/u, "Shared Content Studio hydration must use a stable cursor.");\nassert.doesNotMatch(generated, /\\.range\\(from, to\\)/u, "Shared Content Studio hydration must not use OFFSET pagination.");\nassert.match(generated, /loadLastKnownGoodGeneratedContentForSurfaces/u, "Shared surface hydration must retain LKG fallback.");\nassert.match(generated, /loadLastKnownGoodGeneratedContentForKeys/u, "Shared key hydration must retain LKG fallback.");\n'''
+source = source[:start] + new_contract + source[end:]
+cache_test.write_text(source)
 PY
