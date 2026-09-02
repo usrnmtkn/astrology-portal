@@ -175,7 +175,7 @@ export function transitNatalSourceGroups(selection: TransitNatalSelection): Tran
         {
           id: "standalone",
           label: `Standalone ${planet} ${selection.aspect} ${natalPoint} passage`,
-          scope: "An authored complete passage can replace the generic standalone transit-aspect template.",
+          scope: "An authored complete passage can replace the generic standalone transit-aspect template. The editor exposes separate You and Friends passages so each reader voice can be authored directly.",
           candidateKeys: [
             `authored/transit-aspect/${selection.planet}/${selection.natalPoint}/${selection.aspect}`,
             `authored/transit-aspect/${selection.planet}/${selection.natalPoint}/${family}`
