@@ -25,17 +25,19 @@ jobs:
           node-version: 22
       - name: Apply exact owner-approved Batch 2A wording
         run: node scripts/release-calendar-aspect-content-studio-batch-2a.mjs
-      - name: Regenerate governed fallback bundles and writing indexes
+      - name: Regenerate governed fallback bundles and writing evidence
         run: |
           node scripts/generate-fallback-package-manifest.mjs
           node scripts/build-knowledge-index.mjs --write
           node scripts/build-phrase-index.mjs --write
+          node scripts/build-production-sky-kernel-comparison.mjs --write
       - name: Verify controlled Batch 2A release
         run: |
           node scripts/test-calendar-aspect-content-studio-batch-2a.mjs
           node scripts/generate-fallback-package-manifest.mjs --check
           node scripts/build-knowledge-index.mjs --check
           node scripts/build-phrase-index.mjs --check
+          node scripts/build-production-sky-kernel-comparison.mjs
           git diff --check
       - name: Commit controlled serving release
         shell: bash
@@ -50,6 +52,7 @@ jobs:
             apps/web/src/content/fallbackArchitectureV3/bundled-*.json \
             apps/web/src/content/fallbackArchitectureV3/approved-serving-*.json \
             packages/astro-knowledge/generated/knowledge-index.json \
-            packages/astro-knowledge/generated/phrase-index.json
+            packages/astro-knowledge/generated/phrase-index.json \
+            packages/astro-knowledge/review/production-sky-kernel-comparison-v1/comparison.json
           git commit -m "release(calendar): serve approved Venus Saturn squares"
           git push origin HEAD
