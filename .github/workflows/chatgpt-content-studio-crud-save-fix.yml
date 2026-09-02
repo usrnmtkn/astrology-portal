@@ -1,0 +1,224 @@
+name: Apply Content Studio package save fix
+
+on:
+  push:
+    branches:
+      - chatgpt/content-studio-crud-save-fix
+
+permissions:
+  contents: write
+
+jobs:
+  apply-fix:
+    if: github.event.head_commit.message == 'chore: stage Content Studio package save fix'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: chatgpt/content-studio-crud-save-fix
+          fetch-depth: 0
+
+      - name: Fix package save, publish UX, and regression coverage
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          # 1. Server: validate the mirrored top-level body against the actual
+          # package reader body when a full_copy row stores only body_you.
+          api = Path('api/admin/generated-content.ts')
+          text = api.read_text()
+          old = '''function validateFallbackArchitectureV3Copy(row: ExistingGeneratedContentRow, patch: Record<string, unknown>) {
+  const record = v3PackageRecord(row);
+  const bannedWords = contentRoleContract().styleRules?.bannedWords ?? [];
+  const editableFields: Array<[string, unknown, unknown]> = [
+    ["headline", patch.headline, record.headline],
+    ["summary", patch.summary, record.summary],
+    ["body", patch.body, record.body]
+  ];'''
+          new = '''function validateFallbackArchitectureV3Copy(row: ExistingGeneratedContentRow, patch: Record<string, unknown>) {
+  const record = v3PackageRecord(row);
+  const bannedWords = contentRoleContract().styleRules?.bannedWords ?? [];
+  const canonicalPackageBody = typeof record.body === "string"
+    ? record.body
+    : typeof record.body_you === "string"
+      ? record.body_you
+      : undefined;
+  const editableFields: Array<[string, unknown, unknown]> = [
+    ["headline", patch.headline, record.headline],
+    ["summary", patch.summary, record.summary],
+    ["body", patch.body, canonicalPackageBody]
+  ];'''
+          if text.count(old) != 1:
+              raise SystemExit(f'API validator marker count was {text.count(old)}, expected 1')
+          text = text.replace(old, new, 1)
+          api.write_text(text)
+
+          # 2. Admin: do not claim a package revision is saved unless the returned
+          # row actually contains the proposal; compare saved-state refs to the
+          # state we render after save.
+          admin = Path('apps/admin/src/GeneratedContentAdminDashboard.tsx')
+          text = admin.read_text()
+          old = '''      const savedDraft = draftFromRow(saved);
+      setRows((current) => {
+        const without = current.filter((row) => row.id !== saved.id);
+        return [saved, ...without];
+      });'''
+          new = '''      const savedDraft = draftFromRow(saved);
+      if (isPackageDraft && draftHasPackageProposal(draftForSave) && !draftHasPackageProposal(savedDraft)) {
+        throw new Error(`${draftForSave.contentKey} did not persist the revision. The edit remains unsaved; reload before trying again.`);
+      }
+      setRows((current) => {
+        const without = current.filter((row) => row.id !== saved.id);
+        return [saved, ...without];
+      });'''
+          if text.count(old) != 1:
+              raise SystemExit(f'Save response marker count was {text.count(old)}, expected 1')
+          text = text.replace(old, new, 1)
+
+          old = '''      editorBaselineRef.current = JSON.stringify(savedDraft);
+      editorSavedInputRef.current = JSON.stringify(draftForSave);'''
+          new = '''      editorBaselineRef.current = JSON.stringify(savedDraft);
+      editorSavedInputRef.current = JSON.stringify(savedDraft);'''
+          if text.count(old) != 1:
+              raise SystemExit(f'Saved-input ref marker count was {text.count(old)}, expected 1')
+          text = text.replace(old, new, 1)
+
+          # Package rows do not have a directly editable database status. Replace
+          # the disabled fake select with a truthful read-only state; actual state
+          # transitions happen through Save revision / Save & publish revision.
+          old = '''              <select aria-label={isPackageDraft ? "Reader status after save" : "Status"} value={isPackageDraft ? packageStatusAfterSave : currentDraft.status} onChange={(event) => setDraft({ ...currentDraft, status: event.target.value as GeneratedContentStatus })} disabled={isPackageDraft || Boolean(compiledSkyArticleEdition)}>
+                {contentStatuses.map((status) => <option key={status} value={status}>{contentStatusLabel(status)}</option>)}
+              </select>'''
+          new = '''              {isPackageDraft ? (
+                <span
+                  aria-label="Reader status after save"
+                  className={`ui-pill admin-status ${packageStatusAfterSave === "LIVE" ? "status-live" : "status-draft"}`}
+                >
+                  {packageHasProposal ? "Draft revision" : packageStatusAfterSave === "LIVE" ? "Published" : "Draft"}
+                </span>
+              ) : (
+                <select aria-label="Status" value={currentDraft.status} onChange={(event) => setDraft({ ...currentDraft, status: event.target.value as GeneratedContentStatus })} disabled={Boolean(compiledSkyArticleEdition)}>
+                  {contentStatuses.map((status) => <option key={status} value={status}>{contentStatusLabel(status)}</option>)}
+                </select>
+              )}'''
+          if text.count(old) != 1:
+              raise SystemExit(f'Package status select marker count was {text.count(old)}, expected 1')
+          text = text.replace(old, new, 1)
+
+          # Make publication a real one-click owner action. If the revision is
+          # dirty, persist it first, then approve the exact returned saved row.
+          old = '''          {isPackageDraft && packageCanApproveRevision && selectedRow && (
+            <button
+              className="admin-publish-button"
+              type="button"
+              onClick={() => void approvePackageRevision(selectedRow)}
+              disabled={isLoading || draftHasUnsavedChanges}
+              title={draftHasUnsavedChanges ? "Save the revision before approving and publishing it." : "Approve this saved revision and make it available to readers."}
+            >
+              <Check size={16} aria-hidden="true" />
+              Approve &amp; publish revision
+            </button>
+          )}'''
+          new = '''          {isPackageDraft && packageCanApproveRevision && selectedRow && (
+            <button
+              className="admin-publish-button"
+              type="button"
+              onClick={() => void (async () => {
+                const rowToPublish = draftHasUnsavedChanges ? await saveDraft() : selectedRow;
+                if (rowToPublish) await approvePackageRevision(rowToPublish);
+              })()}
+              disabled={isLoading}
+              title={draftHasUnsavedChanges ? "Save this revision and publish the exact saved copy." : "Publish this saved revision to readers."}
+            >
+              <Check size={16} aria-hidden="true" />
+              Save &amp; publish revision
+            </button>
+          )}'''
+          if text.count(old) != 1:
+              raise SystemExit(f'Publish button marker count was {text.count(old)}, expected 1')
+          text = text.replace(old, new, 1)
+          admin.write_text(text)
+
+          # 3. API regression: body_you-only full_copy rows with existing CMS
+          # placeholders must be able to save a draft proposal. This reproduces
+          # Venus {{aspectWord}} / {{untilDate}} exactly at the API boundary.
+          test = Path('scripts/test-content-studio-api-roundtrip.mjs')
+          text = test.read_text()
+          marker = 'const installedPackageRecord = {'
+          if text.count(marker) != 1:
+              raise SystemExit(f'Roundtrip insertion marker count was {text.count(marker)}, expected 1')
+          insertion = r'''const packageRegressionBaseline = structuredClone(row);
+const placeholderTransitContentKey = "authored/transit-aspect/venus/moon/hard";
+const placeholderOriginalBody = "The affection comes out as management. Venus {{aspectWord}} your Moon until {{untilDate}} stays high on feeling.";
+const placeholderRevisedBody = "A partner may feel smothered instead of loved. Venus {{aspectWord}} your Moon until {{untilDate}} runs high on feeling and low on discussion.";
+row = {
+  ...row,
+  id: "qa-transit-aspect-placeholder-package-revision",
+  content_key: placeholderTransitContentKey,
+  surface: "you",
+  mode: "feed",
+  status: "LIVE",
+  lane: "serving",
+  review_state: null,
+  body: placeholderOriginalBody,
+  provider: "tldrastro-fallback-architecture-v3",
+  sections: {
+    body_you: placeholderOriginalBody,
+    packageRecord: {
+      contentKey: placeholderTransitContentKey,
+      content_role: "full_copy",
+      body_you: placeholderOriginalBody,
+      review_status: "approved"
+    },
+    packageDraft: {
+      contentKey: placeholderTransitContentKey,
+      content_role: "full_copy",
+      body_you: placeholderRevisedBody,
+      review_status: "approved"
+    }
+  },
+  facts: { fallbackArchitectureV3: true, content_role: "full_copy", review_status: "approved" },
+  source_snapshot: {
+    sourcePackage: "tldrastro-fallback-architecture-v3",
+    content_role: "full_copy",
+    review_status: "approved"
+  }
+};
+const savedPlaceholderTransitRevision = await invokeApi("PATCH", "/api/admin/generated-content", {
+  id: row.id,
+  headline: row.headline,
+  summary: row.summary,
+  body: placeholderRevisedBody,
+  sections: row.sections,
+  facts: row.facts,
+  sourceSnapshot: row.source_snapshot,
+  reviewStatus: "needs_review"
+});
+assert.equal(savedPlaceholderTransitRevision.status, 200, "A body_you-only transit row must accept its existing placeholders when saving a revision.");
+assert.equal(savedPlaceholderTransitRevision.payload.rows[0].status, "DRAFT");
+assert.equal(savedPlaceholderTransitRevision.payload.rows[0].lane, "reference");
+assert.equal(savedPlaceholderTransitRevision.payload.rows[0].sections.packageDraft.body_you, placeholderRevisedBody);
+row = packageRegressionBaseline;
+
+'''
+          text = text.replace(marker, insertion + marker, 1)
+          test.write_text(text)
+          PY
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run Content Studio API roundtrip regression
+        run: node scripts/test-content-studio-api-roundtrip.mjs
+
+      - name: Build admin
+        run: npm run build:admin
+
+      - name: Commit verified fix
+        run: |
+          git config user.name "ChatGPT"
+          git config user.email "chatgpt@users.noreply.github.com"
+          git rm .github/workflows/chatgpt-content-studio-crud-save-fix.yml
+          git add api/admin/generated-content.ts apps/admin/src/GeneratedContentAdminDashboard.tsx scripts/test-content-studio-api-roundtrip.mjs
+          git commit -m "fix(admin): repair package revision save and publish"
+          git push origin HEAD:chatgpt/content-studio-crud-save-fix
