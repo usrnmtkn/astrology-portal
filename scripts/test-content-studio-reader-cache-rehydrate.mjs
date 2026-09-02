@@ -5,7 +5,7 @@ import fs from "node:fs";
 const app = fs.readFileSync("apps/web/src/App.tsx", "utf8");
 const signal = fs.readFileSync("apps/web/src/services/contentUpdateSignal.ts", "utf8");
 
-assert.match(app, /subscribeToContentUpdates\(\(\) => \{[\s\S]{0,500}setContentRefreshVersion\(\(version\) => version \+ 1\)/u,
+assert.match(app, /subscribeToContentUpdates\(\(\) => \{[\s\S]{0,700}setContentRefreshVersion\(\(version\) => version \+ 1\)/u,
   "Open reader tabs must react to Content Studio update broadcasts.");
 
 for (const [label, loader] of [
@@ -16,6 +16,13 @@ for (const [label, loader] of [
   assert.match(app, pattern, `${label} must rehydrate after Content Studio content updates.`);
 }
 
-assert.match(signal, /clearPlanetTopicVocabularyCache\(\)/u);
-assert.match(signal, /clearNatalCardTaglineCache\(\)/u);
+assert.match(app, /clearSharedGeneratedContentCache\(\)/u,
+  "Reader update handling must invalidate shared generated-content cache.");
+assert.match(app, /clearPlanetTopicVocabularyCache\(\)/u,
+  "Reader update handling must invalidate planet/sign vocabulary cache.");
+assert.match(app, /clearNatalCardTaglineCache\(\)/u,
+  "Reader update handling must invalidate natal tagline cache.");
+assert.doesNotMatch(signal, /clearSharedGeneratedContentCache|clearPlanetTopicVocabularyCache|clearNatalCardTaglineCache/u,
+  "The content-update transport must remain cache-agnostic; App owns reader cache invalidation.");
+
 console.log("Content Studio reader cache rehydrate contract passed.");
