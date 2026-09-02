@@ -1,6 +1,7 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { URL } from "node:url";
 import { isContentAdminAuthorized } from "../_lib/admin-auth.js";
+import { AdminHttpError, adminErrorMessage, adminErrorStatus, adminFetch, sendAdminJson, sendAdminMethodNotAllowed } from "../_lib/admin-http.js";
 import skyReviewHorizon from "../../src/astro-writing/skyReviewHorizon.cjs";
 import { currentSkyFacts, type SkySnapshot } from "../_lib/current-sky.js";
 import { loadLocalWebEnv } from "../_lib/local-env.js";
@@ -26,12 +27,6 @@ type SkyReviewHorizon = {
 
 const calculatedHorizonCache = new Map<string, { expiresAt: number; horizon: SkyReviewHorizon }>();
 
-function sendJson(res: ServerResponse, status: number, body: unknown) {
-  res.statusCode = status;
-  res.setHeader("content-type", "application/json");
-  res.end(JSON.stringify(body));
-}
-
 function requireEnv(name: string) {
   const value = process.env[name];
   if (!value) throw new Error(`${name} is not configured.`);
@@ -48,10 +43,11 @@ function adminHeaders() {
 }
 
 function parseStartDate(value: string | null) {
-  const candidate = value && /^\d{4}-\d{2}-\d{2}$/u.test(value)
-    ? new Date(`${value}T12:00:00.000Z`)
-    : new Date();
-  if (Number.isNaN(candidate.getTime())) throw new Error("startDate must be YYYY-MM-DD.");
+  if (value && !/^\d{4}-\d{2}-\d{2}$/u.test(value)) throw new AdminHttpError(400, "startDate must be YYYY-MM-DD.");
+  const candidate = value ? new Date(`${value}T12:00:00.000Z`) : new Date();
+  if (Number.isNaN(candidate.getTime()) || (value && candidate.toISOString().slice(0, 10) !== value)) {
+    throw new AdminHttpError(400, "startDate must be a valid YYYY-MM-DD date.");
+  }
   candidate.setUTCHours(12, 0, 0, 0);
   return candidate;
 }
@@ -75,27 +71,39 @@ async function mapWithConcurrency<TInput, TOutput>(values: TInput[], concurrency
 }
 
 async function skyReviewRows() {
-  const params = new URLSearchParams({
-    select: "id,content_key,surface,mode,status,event_type,target_date,headline,summary,body,sections,facts,lane,review_state,block_type,provider,model,prompt_version,source_snapshot,judge_score,judge_verdict,judge_gate,judge_why,reviewed_at,published_at,updated_at,created_at",
-    surface: "eq.sky",
-    block_type: "in.(sky_aspect,sky_placement)",
-    limit: "5000"
-  });
-  const response = await fetch(`${supabaseUrl()}/rest/v1/generated_interpretations?${params}`, {
-    headers: adminHeaders()
-  });
-  const payload = await response.json().catch(() => null);
-  if (!response.ok) throw new Error(`Sky review horizon lookup failed with ${response.status}: ${JSON.stringify(payload)}`);
-  return Array.isArray(payload) ? payload : [];
+  const rows: unknown[] = [];
+  const pageSize = 500;
+  let cursorId = "";
+  for (let page = 0; page < 10; page += 1) {
+    const params = new URLSearchParams({
+      select: "id,content_key,surface,mode,status,event_type,target_date,headline,summary,body,sections,facts,lane,review_state,block_type,provider,model,prompt_version,source_snapshot,judge_score,judge_verdict,judge_gate,judge_why,reviewed_at,published_at,updated_at,created_at",
+      surface: "eq.sky",
+      block_type: "in.(sky_aspect,sky_placement)",
+      order: "id.asc",
+      limit: String(pageSize)
+    });
+    if (cursorId) params.set("id", `gt.${cursorId}`);
+    const response = await adminFetch(`${supabaseUrl()}/rest/v1/generated_interpretations?${params}`, {
+      headers: adminHeaders()
+    });
+    const payload = await response.json().catch(() => null);
+    if (!response.ok) throw new Error(`Sky review horizon lookup failed with ${response.status}: ${JSON.stringify(payload)}`);
+    const pageRows = Array.isArray(payload) ? payload as Array<{ id?: unknown }> : [];
+    rows.push(...pageRows);
+    const lastId = pageRows.at(-1)?.id;
+    if (pageRows.length < pageSize || typeof lastId !== "string" || !lastId) break;
+    cursorId = lastId;
+  }
+  return rows;
 }
 
 export default async function handler(req: IncomingMessage, res: ServerResponse) {
-  if (req.method !== "GET") {
-    sendJson(res, 405, { error: "Use GET." });
+  if (!await isContentAdminAuthorized(req)) {
+    sendAdminJson(res, 401, { ok: false, error: "Unauthorized." });
     return;
   }
-  if (!await isContentAdminAuthorized(req)) {
-    sendJson(res, 401, { error: "Unauthorized." });
+  if (req.method !== "GET") {
+    sendAdminMethodNotAllowed(res, ["GET"]);
     return;
   }
 
@@ -103,7 +111,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     const requestUrl = new URL(req.url ?? "/api/admin/sky-review-horizon", "http://localhost");
     const days = Number(requestUrl.searchParams.get("days") ?? 91);
     if (!Number.isInteger(days) || days < 1 || days > 92) {
-      throw new Error("days must be an integer from 1 through 92.");
+      throw new AdminHttpError(400, "days must be an integer from 1 through 92.");
     }
     const start = parseStartDate(requestUrl.searchParams.get("startDate"));
     const cacheKey = `${start.toISOString().slice(0, 10)}:${days}`;
@@ -120,7 +128,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     }
     const joined = joinSkyReviewRows(horizon, await skyReviewRows());
     const missingDrafts = joined.occurrences.filter((occurrence) => occurrence.reviewStatus === "missing_draft");
-    sendJson(res, 200, {
+    sendAdminJson(res, 200, {
       ok: true,
       horizon: {
         ...joined,
@@ -142,9 +150,9 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
       }
     });
   } catch (error) {
-    sendJson(res, 500, {
+    sendAdminJson(res, adminErrorStatus(error), {
       ok: false,
-      error: error instanceof Error ? error.message : "Unknown Sky review horizon error."
+      error: adminErrorMessage(error, "Unknown Sky review horizon error.")
     });
   }
 }
