@@ -90,7 +90,7 @@ for (const card of source.cards) {
   if (!approved) throw new Error(`Missing approved release row for ${card.id}.`);
 
   const parts = card.id.split("/");
-  if (parts.length !== 7 || parts[0] !== "sky-card") {
+  if (parts.length !== 6 || parts[0] !== "sky-card") {
     throw new Error(`Unexpected composed-card key shape: ${card.id}`);
   }
   const [, planetA, signA, aspect, planetB, signB] = parts;
