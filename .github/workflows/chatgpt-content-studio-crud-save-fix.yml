@@ -10,7 +10,6 @@ permissions:
 
 jobs:
   apply-fix:
-    if: github.event.head_commit.message == 'chore: stage Content Studio package save fix'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
@@ -23,8 +22,6 @@ jobs:
           python - <<'PY'
           from pathlib import Path
 
-          # 1. Server: validate the mirrored top-level body against the actual
-          # package reader body when a full_copy row stores only body_you.
           api = Path('api/admin/generated-content.ts')
           text = api.read_text()
           old = '''function validateFallbackArchitectureV3Copy(row: ExistingGeneratedContentRow, patch: Record<string, unknown>) {
@@ -53,9 +50,6 @@ jobs:
           text = text.replace(old, new, 1)
           api.write_text(text)
 
-          # 2. Admin: do not claim a package revision is saved unless the returned
-          # row actually contains the proposal; compare saved-state refs to the
-          # state we render after save.
           admin = Path('apps/admin/src/GeneratedContentAdminDashboard.tsx')
           text = admin.read_text()
           old = '''      const savedDraft = draftFromRow(saved);
@@ -83,9 +77,6 @@ jobs:
               raise SystemExit(f'Saved-input ref marker count was {text.count(old)}, expected 1')
           text = text.replace(old, new, 1)
 
-          # Package rows do not have a directly editable database status. Replace
-          # the disabled fake select with a truthful read-only state; actual state
-          # transitions happen through Save revision / Save & publish revision.
           old = '''              <select aria-label={isPackageDraft ? "Reader status after save" : "Status"} value={isPackageDraft ? packageStatusAfterSave : currentDraft.status} onChange={(event) => setDraft({ ...currentDraft, status: event.target.value as GeneratedContentStatus })} disabled={isPackageDraft || Boolean(compiledSkyArticleEdition)}>
                 {contentStatuses.map((status) => <option key={status} value={status}>{contentStatusLabel(status)}</option>)}
               </select>'''
@@ -105,8 +96,6 @@ jobs:
               raise SystemExit(f'Package status select marker count was {text.count(old)}, expected 1')
           text = text.replace(old, new, 1)
 
-          # Make publication a real one-click owner action. If the revision is
-          # dirty, persist it first, then approve the exact returned saved row.
           old = '''          {isPackageDraft && packageCanApproveRevision && selectedRow && (
             <button
               className="admin-publish-button"
@@ -139,9 +128,6 @@ jobs:
           text = text.replace(old, new, 1)
           admin.write_text(text)
 
-          # 3. API regression: body_you-only full_copy rows with existing CMS
-          # placeholders must be able to save a draft proposal. This reproduces
-          # Venus {{aspectWord}} / {{untilDate}} exactly at the API boundary.
           test = Path('scripts/test-content-studio-api-roundtrip.mjs')
           text = test.read_text()
           marker = 'const installedPackageRecord = {'
