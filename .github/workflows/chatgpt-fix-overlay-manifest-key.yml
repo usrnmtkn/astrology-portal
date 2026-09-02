@@ -1,0 +1,116 @@
+name: Fix live overlay manifest key matching
+
+on:
+  push:
+    branches:
+      - chatgpt/fix-content-studio-live-overlay-loader
+
+permissions:
+  contents: write
+
+jobs:
+  repair:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      VITE_SUPABASE_URL: https://visual-smoke.supabase.test
+      VITE_SUPABASE_ANON_KEY: visual-smoke-placeholder
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: chatgpt/fix-content-studio-live-overlay-loader
+          fetch-depth: 0
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+      - name: Normalize manifest keys for live overlays
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          path = Path('apps/web/src/services/generatedContent.ts')
+          text = path.read_text()
+          old = '  const currentCoreKeys = new Set(currentCoreManifest.keys);\n'
+          new = '''  const currentCoreKeys = new Set(currentCoreManifest.keys.map((manifestKey) => {
+            const separatorIndex = manifestKey.indexOf(":");
+            return separatorIndex >= 0 ? manifestKey.slice(separatorIndex + 1) : manifestKey;
+          }));
+          '''.replace('          ', '')
+          if old not in text:
+              raise SystemExit('Current core key-set anchor not found')
+          path.write_text(text.replace(old, new, 1))
+
+          path = Path('scripts/test-fallback-dashboard-live-overlay.mjs')
+          text = path.read_text()
+          text = text.replace(
+              'import { selectLatestLiveServingDashboardRows } from "../apps/web/src/services/fallbackArchitectureV3DashboardOverlay.ts";\n',
+              'import { readFileSync } from "node:fs";\nimport { selectLatestLiveServingDashboardRows } from "../apps/web/src/services/fallbackArchitectureV3DashboardOverlay.ts";\n'
+          )
+          anchor = 'const venusKey = "authored/transit-aspect/venus/moon/hard";\n'
+          addition = '''const manifest = JSON.parse(readFileSync(
+            new URL("../apps/web/src/content/fallbackArchitectureV3/bundled-core-manifest-v3.json", import.meta.url),
+            "utf8"
+          ));
+          const manifestContentKeys = new Set(manifest.keys.map((manifestKey) => {
+            const separatorIndex = manifestKey.indexOf(":");
+            return separatorIndex >= 0 ? manifestKey.slice(separatorIndex + 1) : manifestKey;
+          }));
+          '''.replace('          ', '')
+          if anchor not in text:
+              raise SystemExit('Overlay test anchor not found')
+          text = text.replace(anchor, addition + anchor, 1)
+          check_anchor = 'const currentKeys = new Set([venusKey, sunMarsKey]);\n'
+          check = '''assert.equal(
+            manifestContentKeys.has(venusKey),
+            true,
+            "The current typed manifest must normalize to the raw Venus/Moon Content Studio key."
+          );
+          '''.replace('          ', '')
+          if check_anchor not in text:
+              raise SystemExit('Overlay currentKeys anchor not found')
+          text = text.replace(check_anchor, check_anchor + check, 1)
+          path.write_text(text)
+
+          path = Path('scripts/test-fallback-package-cache-contract.mjs')
+          text = path.read_text()
+          old = '/loadFallbackArchitectureV3BundledCoreManifest\\(\\)[\\s\\S]*selectFallbackArchitectureV3DashboardOverlayRows\\(rows, currentCoreKeys\\)/u,'
+          if old in text:
+              pass
+          # The branch contract currently names the helper differently; append a precise normalization assertion.
+          insert = '''assert.match(
+            generatedContentSource,
+            /currentCoreManifest\\.keys\\.map\\(\\(manifestKey\\)[\\s\\S]*manifestKey\\.indexOf\\(":"\\)[\\s\\S]*manifestKey\\.slice\\(separatorIndex \\+ 1\\)/u,
+            "Typed package-manifest keys must normalize back to raw Content Studio content keys before overlay validation."
+          );
+          '''.replace('          ', '')
+          marker = 'assert.match(\n  materializerSource,'
+          if marker not in text:
+              raise SystemExit('Package cache test insertion marker not found')
+          text = text.replace(marker, insert + marker, 1)
+          path.write_text(text)
+          PY
+      - name: Install dependencies
+        run: npm ci
+      - name: Build astro knowledge prerequisite
+        run: npm run build -w @tldr/astro-knowledge
+      - name: Test package/cache contract
+        run: node scripts/test-fallback-package-cache-contract.mjs
+      - name: Test live overlay selection and manifest key normalization
+        run: node --import tsx scripts/test-fallback-dashboard-live-overlay.mjs
+      - name: Test Friends hydration policy
+        run: node --import tsx scripts/test-friends-content-loading-policy.mjs
+      - name: Test Friends Transit override
+        run: node scripts/test-friends-transit-dashboard-override.mjs
+      - name: Build Content Studio admin
+        run: npm run build:admin
+      - name: Build reader app
+        run: npm run build -w @tldr/web
+      - name: Commit verified key normalization
+        run: |
+          git config user.name "ChatGPT"
+          git config user.email "chatgpt@users.noreply.github.com"
+          git rm .github/workflows/chatgpt-fix-overlay-manifest-key.yml
+          git add apps/web/src/services/generatedContent.ts scripts/test-fallback-dashboard-live-overlay.mjs scripts/test-fallback-package-cache-contract.mjs
+          git commit -m "fix: normalize manifest keys for live overlays"
+          git push origin HEAD:chatgpt/fix-content-studio-live-overlay-loader
