@@ -4180,6 +4180,9 @@ export function GeneratedContentAdminDashboard() {
         throw new Error(`${method} ${draftForSave.contentKey} did not return the saved row. The edit remains unsaved; reload before trying again.`);
       }
       const savedDraft = draftFromRow(saved);
+      if (isPackageDraft && draftHasPackageProposal(draftForSave) && !draftHasPackageProposal(savedDraft)) {
+        throw new Error(`${draftForSave.contentKey} did not persist the revision. The edit remains unsaved; reload before trying again.`);
+      }
       setRows((current) => {
         const without = current.filter((row) => row.id !== saved.id);
         return [saved, ...without];
@@ -4187,7 +4190,7 @@ export function GeneratedContentAdminDashboard() {
       setSelectedRowId(saved.id);
       setDraft(savedDraft);
       editorBaselineRef.current = JSON.stringify(savedDraft);
-      editorSavedInputRef.current = JSON.stringify(draftForSave);
+      editorSavedInputRef.current = JSON.stringify(savedDraft);
       announceContentUpdate({ contentKey: saved.content_key, published: saved.status === "LIVE", updatedAt: saved.updated_at ?? new Date().toISOString() });
       setMessage(sourceLifecycleAction === "archive"
         ? `${draftForSave.contentKey} archived. It no longer serves and can be restored here.`
@@ -9240,9 +9243,18 @@ export function GeneratedContentAdminDashboard() {
             <fieldset className="admin-metadata-fields">
             <label className="admin-metadata-field">
               <span>{isPackageDraft ? "Reader status after save" : "Status"}</span>
-              <select aria-label={isPackageDraft ? "Reader status after save" : "Status"} value={isPackageDraft ? packageStatusAfterSave : currentDraft.status} onChange={(event) => setDraft({ ...currentDraft, status: event.target.value as GeneratedContentStatus })} disabled={isPackageDraft || Boolean(compiledSkyArticleEdition)}>
-                {contentStatuses.map((status) => <option key={status} value={status}>{contentStatusLabel(status)}</option>)}
-              </select>
+              {isPackageDraft ? (
+                <span
+                  aria-label="Reader status after save"
+                  className={`ui-pill admin-status ${packageStatusAfterSave === "LIVE" ? "status-live" : "status-draft"}`}
+                >
+                  {packageHasProposal ? "Draft revision" : packageStatusAfterSave === "LIVE" ? "Published" : "Draft"}
+                </span>
+              ) : (
+                <select aria-label="Status" value={currentDraft.status} onChange={(event) => setDraft({ ...currentDraft, status: event.target.value as GeneratedContentStatus })} disabled={Boolean(compiledSkyArticleEdition)}>
+                  {contentStatuses.map((status) => <option key={status} value={status}>{contentStatusLabel(status)}</option>)}
+                </select>
+              )}
               <small className="admin-field-hint">
                 {isPackageDraft
                   ? packageHasProposal
@@ -9371,12 +9383,15 @@ export function GeneratedContentAdminDashboard() {
             <button
               className="admin-publish-button"
               type="button"
-              onClick={() => void approvePackageRevision(selectedRow)}
-              disabled={isLoading || draftHasUnsavedChanges}
-              title={draftHasUnsavedChanges ? "Save the revision before approving and publishing it." : "Approve this saved revision and make it available to readers."}
+              onClick={() => void (async () => {
+                const rowToPublish = draftHasUnsavedChanges ? await saveDraft() : selectedRow;
+                if (rowToPublish) await approvePackageRevision(rowToPublish);
+              })()}
+              disabled={isLoading}
+              title={draftHasUnsavedChanges ? "Save this revision and publish the exact saved copy." : "Publish this saved revision to readers."}
             >
               <Check size={16} aria-hidden="true" />
-              Approve &amp; publish revision
+              Save &amp; publish revision
             </button>
           )}
           {isPackageDraft && packageHasProposal && !packageCanApproveRevision && !packageIsSkyV4Governed && (
