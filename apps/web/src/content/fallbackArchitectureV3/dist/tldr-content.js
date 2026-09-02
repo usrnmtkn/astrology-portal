@@ -38,6 +38,11 @@ function withoutLegacyHouseBridge(body, house, voice) {
   const paragraphBreak = body.indexOf("\n\n");
   return paragraphBreak >= 0 ? body.slice(paragraphBreak + 2).trim() : "";
 }
+function natalPlacementMotionExactKey(facts) {
+  if (!facts.house) return null;
+  const directKey = `fallback-hook/natal-you-placement-complete-final/${facts.planet}/${facts.sign}/${facts.house}`;
+  return facts.isRetrograde ? `${directKey}/retrograde` : directKey;
+}
 function createFallbackRenderer(templatesFile, rowsFile) {
   const vocab = /* @__PURE__ */ new Map();
   for (const row of rowsFile.vocabularyRows) {
@@ -111,7 +116,8 @@ function createFallbackRenderer(templatesFile, rowsFile) {
   function renderNatalPlacement(facts, opts2 = {}) {
     const { planet, sign, house } = facts;
     const voice = facts.voice === "you" ? "you" : "they";
-    const exactCompleteLived = house ? getReaderLivedRow(`fallback-hook/natal-you-placement-complete-final/${planet}/${sign}/${house}`, voice, opts2) : null;
+    const exactCompleteKey = natalPlacementMotionExactKey(facts);
+    const exactCompleteLived = exactCompleteKey ? getReaderLivedRow(exactCompleteKey, voice, opts2) : null;
     if (exactCompleteLived) {
       const body = exactCompleteLived.body ?? "";
       return {
@@ -4890,7 +4896,7 @@ function skyV4FieldValue(source, path) {
 }
 
 // apps/web/src/content/fallbackArchitectureV3/resolver/index.browser.ts
-var PACKAGE_VERSION = "v3-2026-09-01a";
+var PACKAGE_VERSION = "v3-2026-09-02a";
 function stablePackageValue(value) {
   if (Array.isArray(value)) {
     return value.map(stablePackageValue);
@@ -4971,6 +4977,7 @@ export {
   createPackageManifest,
   createTransitSynastryRenderer,
   friendVoiceFromReaderCopy,
+  natalPlacementMotionExactKey,
   normalizeAspect,
   renderSkyV4ContinuousPreview,
   renderSkyV4ReaderRoute,

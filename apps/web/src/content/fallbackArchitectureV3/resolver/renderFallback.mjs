@@ -170,6 +170,12 @@ const getTemplate = (key, opts = {}) => {
   return template;
 };
 
+export function natalPlacementMotionExactKey(facts) {
+  if (!facts?.house) return null;
+  const directKey = `fallback-hook/natal-you-placement-complete-final/${facts.planet}/${facts.sign}/${facts.house}`;
+  return facts.isRetrograde ? `${directKey}/retrograde` : directKey;
+}
+
 export function renderNatalPlacement(facts, opts = {}) {
   // facts: { planet, sign, house?, voice: "you" | name, dignity?, isRetrograde?, sect? }
   // Returns a TWO-PART result: parts[0] = planet-in-sign paragraph,
@@ -177,8 +183,9 @@ export function renderNatalPlacement(facts, opts = {}) {
   const { planet, sign, house } = facts;
   const allowUnreviewed = opts.allowUnreviewed ?? false;
   const voice = facts.voice === "you" ? "you" : "they";
-  const exactCompleteLived = house
-    ? getReaderLivedRow(`fallback-hook/natal-you-placement-complete-final/${planet}/${sign}/${house}`, voice, { allowUnreviewed })
+  const exactCompleteKey = natalPlacementMotionExactKey(facts);
+  const exactCompleteLived = exactCompleteKey
+    ? getReaderLivedRow(exactCompleteKey, voice, { allowUnreviewed })
     : null;
   if (exactCompleteLived) {
     const body = exactCompleteLived.body ?? "";
