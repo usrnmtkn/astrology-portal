@@ -1,0 +1,74 @@
+name: Temporary Step 4 standard gate repair
+
+on:
+  push:
+    branches:
+      - chatgpt/content-studio-step4-standard-gate-repair
+
+permissions:
+  contents: write
+
+jobs:
+  repair:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      VITE_SUPABASE_URL: https://visual-smoke.supabase.test
+      VITE_SUPABASE_ANON_KEY: visual-smoke-placeholder
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - name: Apply test-only standard-gate repair
+        run: python scripts/temporary-step4-standard-gate-repair.py
+      - name: Refresh governed writing artifacts
+        run: |
+          node scripts/build-knowledge-index.mjs --write
+          node scripts/build-phrase-index.mjs --check
+          node scripts/build-production-sky-kernel-comparison.mjs --write
+          node scripts/build-knowledge-index.mjs --check
+          node scripts/build-phrase-index.mjs --check
+          node scripts/build-production-sky-kernel-comparison.mjs
+      - name: Build exact Step 4 release tree
+        run: npm run build
+      - name: Verify focused admin flows
+        run: |
+          npx playwright test -c playwright.config.ts tests/visual/content-dashboard-admin-user-flows.spec.ts -g "production-scale Content Library keeps the DOM bounded and search responsive|a saved fallback revision can be explicitly approved and published"
+      - name: Verify full admin user-flow suite
+        run: npx playwright test -c playwright.config.ts tests/visual/content-dashboard-admin-user-flows.spec.ts
+      - name: Verify corpus grammar boundary
+        run: |
+          node scripts/lint-corpus-grammar.mjs
+          node scripts/build-knowledge-index.mjs --check
+          node scripts/build-phrase-index.mjs --check
+          node scripts/test-writing-kernel-drift.mjs
+          node scripts/test-packet-builder-migrations.mjs
+          node scripts/test-production-evidence-adapter.mjs
+          node scripts/test-production-sky-emission-coverage.mjs
+          node scripts/test-production-identifier-coverage.mjs
+          node scripts/test-production-precall-gate.mjs
+          node scripts/test-production-model-consolidation.mjs
+          node scripts/test-production-evidence-inspector.mjs
+          node scripts/test-production-surface-permissions.mjs
+          node scripts/build-production-sky-kernel-comparison.mjs
+          node scripts/test-sky-aspect-owner-gate-source.mjs
+      - name: Commit clean Step 4 standard-gate repair
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          rm .github/workflows/temporary-step4-standard-gate-repair.yml
+          rm scripts/temporary-step4-standard-gate-repair.py
+          git add -A tests/visual/content-dashboard-admin-user-flows.spec.ts \
+                     packages/astro-knowledge/generated/knowledge-index.json \
+                     packages/astro-knowledge/review/production-sky-kernel-comparison-v1/comparison.json \
+                     .github/workflows/temporary-step4-standard-gate-repair.yml \
+                     scripts/temporary-step4-standard-gate-repair.py
+          git diff --cached --check
+          git commit -m "test(content): align Step 4 standard release gates"
+          git push
