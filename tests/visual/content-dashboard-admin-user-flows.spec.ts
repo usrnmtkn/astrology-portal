@@ -3043,7 +3043,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(editor.getByLabel("Fallback review status")).toHaveCount(0);
     await expect(editor.getByLabel("Approval status")).toHaveText("Approved");
     await expect(editor.getByLabel("Reader status", { exact: true })).toHaveText("Will go live on Save");
-    await expect(editor.getByLabel("Reader status after save")).toHaveValue("LIVE");
+    await expect(editor.getByLabel("Reader status after save")).toHaveText("Published");
     await expect(editor.getByText("This copy is approved. Save to publish it to readers.")).toBeVisible();
 
     await editor.getByRole("button", { name: "Save & publish" }).click();
@@ -3183,7 +3183,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(editor.getByLabel("Reader status", { exact: true })).toHaveText("Revision not live");
     await expect(editor.getByText("Revision saved; awaiting approval", { exact: true })).toBeVisible();
     await expect(editor.getByLabel("Reader phrase · You")).toHaveValue("Approved revised You copy.");
-    const publishRevisionButton = editor.getByRole("button", { name: "Approve & publish revision" });
+    const publishRevisionButton = editor.getByRole("button", { name: "Save & publish revision" });
     await expect(publishRevisionButton).toBeEnabled();
     await publishRevisionButton.click();
 
@@ -3193,7 +3193,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(editor.getByLabel("Approval status")).toHaveText("Approved");
     await expect(editor.getByLabel("Reader status", { exact: true })).toHaveText("Live");
     await expect(editor.getByLabel("Reader phrase · You")).toHaveValue("Approved revised You copy.");
-    await expect(editor.getByRole("button", { name: "Approve & publish revision" })).toHaveCount(0);
+    await expect(editor.getByRole("button", { name: "Save & publish revision" })).toHaveCount(0);
     await expect(page.getByRole("status")).toContainText(`${contentKey} approved and published to the app`);
     await assertNoBrowserErrors();
   });
@@ -3807,7 +3807,7 @@ test.describe("content dashboard admin user flow case studies", () => {
     await detail.getByRole("button", { name: "Edit main template" }).click();
     editor = page.getByRole("dialog", { name: "Generated content editor" });
     await expect(editor.getByLabel("Template purpose (optional)")).toHaveValue("Updated template purpose");
-    await expect(editor.getByRole("button", { name: "Approve & publish revision" })).toBeVisible();
+    await expect(editor.getByRole("button", { name: "Save & publish revision" })).toBeVisible();
     await page.screenshot({
       animations: "disabled",
       path: path.join(adminScreenshotDir, "template-editor-saved-desktop.png")
