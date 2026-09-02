@@ -1,6 +1,7 @@
 import crypto from "node:crypto";
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { isContentAdminAuthorized } from "../_lib/admin-auth.js";
+import { AdminHttpError, adminErrorMessage, adminErrorStatus, adminFetch, readAdminJsonBody, sendAdminJson, sendAdminMethodNotAllowed } from "../_lib/admin-http.js";
 import { loadLocalWebEnv } from "../_lib/local-env.js";
 import { loadContentUnresolvedReport } from "./content-unresolved.js";
 import { contentSourceRepairPlan } from "./content-source-repair-plans.js";
@@ -31,44 +32,25 @@ function serviceRoleKey() {
   return requiredEnv("SUPABASE_SERVICE_ROLE_KEY");
 }
 
-function sendJson(res: ServerResponse, status: number, body: unknown) {
-  res.statusCode = status;
-  res.setHeader("content-type", "application/json");
-  res.setHeader("cache-control", "private, no-store");
-  res.end(JSON.stringify(body));
-}
-
-async function readJsonBody(req: IncomingMessage) {
-  const chunks: Buffer[] = [];
-  let size = 0;
-  for await (const chunk of req) {
-    const bytes = Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk);
-    size += bytes.length;
-    if (size > 32_000) throw new Error("Source decision is too large.");
-    chunks.push(bytes);
-  }
-  return JSON.parse(Buffer.concat(chunks).toString("utf8")) as unknown;
+function invalid(message: string): never {
+  throw new AdminHttpError(400, message);
 }
 
 function boundedString(value: unknown, field: string, limit: number) {
-  if (typeof value !== "string" || !value.trim() || value.length > limit) {
-    throw new Error(`${field} is invalid.`);
-  }
+  if (typeof value !== "string" || !value.trim() || value.length > limit) invalid(`${field} is invalid.`);
   return value.trim();
 }
 
 export function normalizeContentStudioSourceDecision(value: unknown): ContentStudioSourceDecisionInput {
-  if (!value || typeof value !== "object" || Array.isArray(value)) {
-    throw new Error("Source decision must be an object.");
-  }
+  if (!value || typeof value !== "object" || Array.isArray(value)) invalid("Source decision must be an object.");
   const input = value as Record<string, unknown>;
-  if (input.schema !== "content-studio-source-decision/v1") throw new Error("Unsupported source-decision schema.");
-  if (input.action !== "approve-replacement") throw new Error("Unsupported source-decision action.");
-  if (input.confirmExactText !== true) throw new Error("Exact-text confirmation is required.");
+  if (input.schema !== "content-studio-source-decision/v1") invalid("Unsupported source-decision schema.");
+  if (input.action !== "approve-replacement") invalid("Unsupported source-decision action.");
+  if (input.confirmExactText !== true) invalid("Exact-text confirmation is required.");
   const issueId = boundedString(input.issueId, "issueId", 64);
   const candidateSha256 = boundedString(input.candidateSha256, "candidateSha256", 64);
-  if (!/^[a-f0-9]{64}$/u.test(issueId)) throw new Error("issueId is invalid.");
-  if (!/^[a-f0-9]{64}$/u.test(candidateSha256)) throw new Error("candidateSha256 is invalid.");
+  if (!/^[a-f0-9]{64}$/u.test(issueId)) invalid("issueId is invalid.");
+  if (!/^[a-f0-9]{64}$/u.test(candidateSha256)) invalid("candidateSha256 is invalid.");
   return {
     schema: input.schema,
     issueId,
@@ -86,16 +68,14 @@ export function assertCurrentSourceDecision(input: ContentStudioSourceDecisionIn
   };
   const issue = report.issues.find((candidate) => candidate.issueId === input.issueId);
   if (!issue || issue.contentKey !== input.contentKey || issue.kind !== "source-repair") {
-    throw new Error("This decision does not match a current source-repair issue.");
+    invalid("This decision does not match a current source-repair issue.");
   }
   const plan = contentSourceRepairPlan(input.contentKey);
-  if (!plan) throw new Error("This source-repair issue has no governed replacement plan.");
+  if (!plan) invalid("This source-repair issue has no governed replacement plan.");
   if (input.candidateSha256 !== plan.candidateSha256) {
-    throw new Error("The replacement changed after it was opened. Refresh and review the current exact text.");
+    throw new AdminHttpError(409, "The replacement changed after it was opened. Refresh and review the current exact text.");
   }
-  if (input.approvalStatement !== plan.approvalStatement) {
-    throw new Error("The owner approval statement does not match the governed replacement plan.");
-  }
+  if (input.approvalStatement !== plan.approvalStatement) invalid("The owner approval statement does not match the governed replacement plan.");
   return plan;
 }
 
@@ -108,7 +88,7 @@ function decisionId(input: ContentStudioSourceDecisionInput) {
 async function existingDecision(id: string) {
   const key = serviceRoleKey();
   const params = new URLSearchParams({ select: "*", decision_id: `eq.${id}`, limit: "1" });
-  const response = await fetch(`${supabaseUrl()}/rest/v1/content_studio_source_decisions?${params}`, {
+  const response = await adminFetch(`${supabaseUrl()}/rest/v1/content_studio_source_decisions?${params}`, {
     headers: { apikey: key, authorization: `Bearer ${key}` }
   });
   const rows = await response.json().catch(() => null);
@@ -117,11 +97,11 @@ async function existingDecision(id: string) {
 }
 
 async function saveDecision(input: ContentStudioSourceDecisionInput, plan: ReturnType<typeof contentSourceRepairPlan>) {
-  if (!plan) throw new Error("Source-repair plan is unavailable.");
+  if (!plan) throw new AdminHttpError(400, "Source-repair plan is unavailable.");
   const id = decisionId(input);
   const key = serviceRoleKey();
   const approvedAt = new Date().toISOString();
-  const response = await fetch(`${supabaseUrl()}/rest/v1/content_studio_source_decisions`, {
+  const response = await adminFetch(`${supabaseUrl()}/rest/v1/content_studio_source_decisions`, {
     method: "POST",
     headers: {
       apikey: key,
@@ -150,18 +130,21 @@ async function saveDecision(input: ContentStudioSourceDecisionInput, plan: Retur
 
 export default async function handler(req: IncomingMessage, res: ServerResponse) {
   if (!await isContentAdminAuthorized(req)) {
-    sendJson(res, 401, { ok: false, error: "Unauthorized." });
+    sendAdminJson(res, 401, { ok: false, error: "Unauthorized." });
     return;
   }
   if (req.method !== "POST") {
-    sendJson(res, 405, { ok: false, error: "Use POST." });
+    sendAdminMethodNotAllowed(res, ["POST"]);
     return;
   }
   try {
-    const input = normalizeContentStudioSourceDecision(await readJsonBody(req));
+    const input = normalizeContentStudioSourceDecision(await readAdminJsonBody<unknown>(req, 32_000));
     const plan = assertCurrentSourceDecision(input);
-    sendJson(res, 200, { ok: true, decision: await saveDecision(input, plan) });
+    sendAdminJson(res, 200, { ok: true, decision: await saveDecision(input, plan) });
   } catch (error) {
-    sendJson(res, 400, { ok: false, error: error instanceof Error ? error.message : "Unable to record source decision." });
+    sendAdminJson(res, adminErrorStatus(error), {
+      ok: false,
+      error: adminErrorMessage(error, "Unable to record source decision.")
+    });
   }
 }

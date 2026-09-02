@@ -1,6 +1,7 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { readFile } from "node:fs/promises";
 import { isContentAdminAuthorized } from "../_lib/admin-auth.js";
+import { AdminHttpError, adminErrorMessage, adminErrorStatus, adminFetch, readAdminJsonBody, sendAdminJson, sendAdminMethodNotAllowed } from "../_lib/admin-http.js";
 import { loadLocalWebEnv } from "../_lib/local-env.js";
 import { currentSkyFacts, type SkySnapshot } from "../_lib/current-sky.js";
 import { loadSkySourceSnapshot } from "../_lib/content-generation.js";
@@ -35,6 +36,7 @@ type QueueRow = {
 };
 
 const sampleSurfaces = new Set<GeneratedContentSurface>(["you", "natal", "synastry", "composite", "relationship"]);
+const allowedQueueSurfaces = new Set<GeneratedContentSurface | "all">(["sky", "you", "natal", "synastry", "composite", "relationship", "modifier", "all"]);
 
 function requireEnv(name: string) {
   const value = process.env[name];
@@ -64,33 +66,13 @@ function adminHeaders() {
   };
 }
 
-function sendJson(res: ServerResponse, status: number, body: unknown) {
-  res.statusCode = status;
-  res.setHeader("content-type", "application/json");
-  res.end(JSON.stringify(body));
-}
-
-async function readJsonBody(req: IncomingMessage) {
-  const chunks: Buffer[] = [];
-
-  for await (const chunk of req) {
-    chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk));
-  }
-
-  return JSON.parse(Buffer.concat(chunks).toString("utf8") || "{}") as QueueInput;
-}
-
 function dateFromInput(value?: string) {
-  if (!value) {
-    return new Date();
-  }
-
+  if (!value) return new Date();
+  if (!/^\d{4}-\d{2}-\d{2}$/u.test(value)) throw new AdminHttpError(400, "targetDate must be YYYY-MM-DD.");
   const date = new Date(`${value}T12:00:00.000Z`);
-
-  if (Number.isNaN(date.getTime())) {
-    throw new Error("targetDate must be YYYY-MM-DD.");
+  if (Number.isNaN(date.getTime()) || date.toISOString().slice(0, 10) !== value) {
+    throw new AdminHttpError(400, "targetDate must be a valid YYYY-MM-DD date.");
   }
-
   return date;
 }
 
@@ -673,7 +655,7 @@ function queueTargetParams(row: QueueRow) {
 }
 
 async function saveQueueRow(row: QueueRow) {
-  const createResponse = await fetch(`${supabaseUrl()}/rest/v1/generated_interpretations`, {
+  const createResponse = await adminFetch(`${supabaseUrl()}/rest/v1/generated_interpretations`, {
     method: "POST",
     headers: {
       ...adminHeaders(),
@@ -694,7 +676,7 @@ async function saveQueueRow(row: QueueRow) {
   // cannot be overwritten by queue prepopulation.
   const params = queueTargetParams(row);
   params.set("status", "neq.LIVE");
-  const patchResponse = await fetch(`${supabaseUrl()}/rest/v1/generated_interpretations?${params.toString()}`, {
+  const patchResponse = await adminFetch(`${supabaseUrl()}/rest/v1/generated_interpretations?${params.toString()}`, {
     method: "PATCH",
     headers: {
       ...adminHeaders(),
@@ -722,22 +704,21 @@ async function saveRows(rows: QueueRow[]) {
 }
 
 export default async function handler(req: IncomingMessage, res: ServerResponse) {
-  if (req.method !== "POST") {
-    sendJson(res, 405, { error: "Use POST." });
+  if (!await isContentAdminAuthorized(req)) {
+    sendAdminJson(res, 401, { ok: false, error: "Unauthorized." });
     return;
   }
-
-  if (!await isContentAdminAuthorized(req)) {
-    sendJson(res, 401, { error: "Unauthorized." });
+  if (req.method !== "POST") {
+    sendAdminMethodNotAllowed(res, ["POST"]);
     return;
   }
 
   try {
-    const input = await readJsonBody(req);
-
+    const input = await readAdminJsonBody<QueueInput>(req);
     const date = dateFromInput(input.targetDate);
     const targetDate = dateOnly(date);
     const requestedSurface = input.surface ?? "sky";
+    if (!allowedQueueSurfaces.has(requestedSurface)) throw new AdminHttpError(400, "surface is not supported.");
     let rows: QueueRow[] = [];
 
     if (requestedSurface === "sky" || requestedSurface === "all") {
@@ -762,7 +743,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
 
     const saved = await saveRows(rows);
 
-    sendJson(res, 200, {
+    sendAdminJson(res, 200, {
       ok: true,
       surface: requestedSurface,
       targetDate,
@@ -771,9 +752,9 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
       rows: saved.rows
     });
   } catch (error) {
-    sendJson(res, 500, {
+    sendAdminJson(res, adminErrorStatus(error), {
       ok: false,
-      error: error instanceof Error ? error.message : "Unknown queue pre-population error."
+      error: adminErrorMessage(error, "Unknown queue pre-population error.")
     });
   }
 }

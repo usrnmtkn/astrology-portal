@@ -4,6 +4,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { isContentAdminAuthorized } from "../_lib/admin-auth.js";
+import { adminErrorMessage, adminErrorStatus, adminFetch, sendAdminJson, sendAdminMethodNotAllowed } from "../_lib/admin-http.js";
 import { loadLocalWebEnv } from "../_lib/local-env.js";
 import { contentSourceRepairPlan } from "./content-source-repair-plans.js";
 
@@ -22,10 +23,10 @@ async function recordedResolutions() {
   if (!url || !key) return { ready: false, rows: [] as Array<Record<string, unknown>> };
   const params = new URLSearchParams({
     select: "issue_id,result_status,diagnosis,proposed_action,files_involved,pr_url,owner_decision_required,updated_at",
-    order: "updated_at.desc",
+    order: "updated_at.desc,issue_id.asc",
     limit: "1000"
   });
-  const response = await fetch(`${url}/rest/v1/content_studio_issue_resolutions?${params}`, {
+  const response = await adminFetch(`${url}/rest/v1/content_studio_issue_resolutions?${params}`, {
     headers: { apikey: key, authorization: `Bearer ${key}` }
   });
   const rows = await response.json().catch(() => null);
@@ -39,10 +40,10 @@ async function recordedSourceDecisions() {
   if (!url || !key) return { ready: false, rows: [] as Array<Record<string, unknown>> };
   const params = new URLSearchParams({
     select: "decision_id,issue_id,content_key,decision_status,action,candidate_path,candidate_sha256,owner_statement,approved_at",
-    order: "approved_at.desc",
+    order: "approved_at.desc,decision_id.asc",
     limit: "1000"
   });
-  const response = await fetch(`${url}/rest/v1/content_studio_source_decisions?${params}`, {
+  const response = await adminFetch(`${url}/rest/v1/content_studio_source_decisions?${params}`, {
     headers: { apikey: key, authorization: `Bearer ${key}` }
   });
   const rows = await response.json().catch(() => null);
@@ -110,25 +111,18 @@ export function loadContentUnresolvedReport() {
   return cachedReport;
 }
 
-function sendJson(res: ServerResponse, status: number, body: unknown) {
-  res.statusCode = status;
-  res.setHeader("content-type", "application/json");
-  res.setHeader("cache-control", "private, no-store");
-  res.end(JSON.stringify(body));
-}
-
 export default async function handler(req: IncomingMessage, res: ServerResponse) {
-  if (req.method !== "GET") {
-    sendJson(res, 405, { error: "Use GET." });
+  if (!await isContentAdminAuthorized(req)) {
+    sendAdminJson(res, 401, { ok: false, error: "Unauthorized." });
     return;
   }
-  if (!await isContentAdminAuthorized(req)) {
-    sendJson(res, 401, { error: "Unauthorized." });
+  if (req.method !== "GET") {
+    sendAdminMethodNotAllowed(res, ["GET"]);
     return;
   }
 
   try {
-    const report = loadContentUnresolvedReport() as { issues: Array<{ issueId: string }> } & Record<string, unknown>;
+    const report = loadContentUnresolvedReport() as { issues: Array<{ issueId: string; contentKey: string }> } & Record<string, unknown>;
     const [resolutionStore, sourceDecisionStore] = await Promise.all([
       recordedResolutions(),
       recordedSourceDecisions()
@@ -137,11 +131,9 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     const sourceDecisionByContentKey = new Map<string, Record<string, unknown>>();
     for (const row of sourceDecisionStore.rows) {
       const contentKey = typeof row.content_key === "string" ? row.content_key : "";
-      if (contentKey && !sourceDecisionByContentKey.has(contentKey)) {
-        sourceDecisionByContentKey.set(contentKey, row);
-      }
+      if (contentKey && !sourceDecisionByContentKey.has(contentKey)) sourceDecisionByContentKey.set(contentKey, row);
     }
-    sendJson(res, 200, {
+    sendAdminJson(res, 200, {
       ok: true,
       report: {
         ...report,
@@ -155,9 +147,9 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
       }
     });
   } catch (error) {
-    sendJson(res, 500, {
+    sendAdminJson(res, adminErrorStatus(error), {
       ok: false,
-      error: error instanceof Error ? error.message : "Unable to load unresolved content."
+      error: adminErrorMessage(error, "Unable to load unresolved content.")
     });
   }
 }

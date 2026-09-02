@@ -1,6 +1,7 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { URL } from "node:url";
 import { isContentAdminAuthorized } from "../_lib/admin-auth.js";
+import { AdminHttpError, adminErrorMessage, adminErrorStatus, adminFetch, sendAdminJson, sendAdminMethodNotAllowed } from "../_lib/admin-http.js";
 import { loadLocalWebEnv } from "../_lib/local-env.js";
 import { transitToNatalOrbLimit } from "../_lib/astrology-config.js";
 import { canonicalSkyAspectProfile } from "../../apps/web/src/services/canonicalSkyAspectProfile.js";
@@ -234,7 +235,7 @@ function missingGeneratedInterpretationsColumn(payload: unknown) {
 
 async function fetchGeneratedInterpretationsRows(params: URLSearchParams, selectColumns: string[], errorLabel: string) {
   for (let attempt = 0; attempt < 8; attempt += 1) {
-    const response = await fetch(`${supabaseUrl()}/rest/v1/generated_interpretations?${params}`, {
+    const response = await adminFetch(`${supabaseUrl()}/rest/v1/generated_interpretations?${params}`, {
       headers: adminHeaders()
     });
     const payload = await response.json().catch(() => null);
@@ -255,12 +256,6 @@ async function fetchGeneratedInterpretationsRows(params: URLSearchParams, select
   }
 
   throw new Error(`${errorLabel} failed after retrying missing generated_interpretations columns.`);
-}
-
-function sendJson(res: ServerResponse, status: number, body: unknown) {
-  res.statusCode = status;
-  res.setHeader("content-type", "application/json");
-  res.end(JSON.stringify(body));
 }
 
 function slug(value: string) {
@@ -327,7 +322,7 @@ function parseDate(value: string | null, fallback: Date) {
   const date = new Date(`${value}T12:00:00.000Z`);
 
   if (Number.isNaN(date.getTime())) {
-    throw new Error("Dates must be YYYY-MM-DD.");
+    throw new AdminHttpError(400, "Dates must be YYYY-MM-DD.");
   }
 
   return date;
@@ -440,7 +435,7 @@ function calculatedAspectsForPositions(positions: PlanetPosition[]): CalculatedA
 }
 
 async function postTldrAstro<TResponse>(path: string, body: unknown): Promise<TResponse> {
-  const response = await fetch(`${tldrAstroApiUrl()}${path}`, {
+  const response = await adminFetch(`${tldrAstroApiUrl()}${path}`, {
     method: "POST",
     headers: {
       "content-type": "application/json"
@@ -840,7 +835,7 @@ function manualChartSearchParams(query: string, select: string) {
 
 async function fetchManualCharts(query: string, select: string) {
   const params = manualChartSearchParams(query, select);
-  const response = await fetch(`${supabaseUrl()}/rest/v1/manual_charts?${params}`, {
+  const response = await adminFetch(`${supabaseUrl()}/rest/v1/manual_charts?${params}`, {
     headers: adminHeaders()
   });
   const payload = await response.json().catch(() => null);
@@ -894,7 +889,7 @@ function validTimeZone(value: string) {
     new Intl.DateTimeFormat("en-US", { timeZone: value }).format(new Date());
     return value;
   } catch {
-    throw new Error(`Unknown IANA timezone: ${value}`);
+    throw new AdminHttpError(400, `Unknown IANA timezone: ${value}`);
   }
 }
 
@@ -1418,12 +1413,12 @@ function counts(records: ReviewRecord[]) {
 
 export default async function handler(req: IncomingMessage, res: ServerResponse) {
   if (!await isContentAdminAuthorized(req)) {
-    sendJson(res, 401, { error: "Unauthorized." });
+    sendAdminJson(res, 401, { ok: false, error: "Unauthorized." });
     return;
   }
 
   if (req.method !== "GET") {
-    sendJson(res, 405, { error: "Use GET." });
+    sendAdminMethodNotAllowed(res, ["GET"]);
     return;
   }
 
@@ -1431,6 +1426,12 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     const requestUrl = new URL(req.url ?? "/api/admin/review-records", "http://localhost");
     const surface = (requestUrl.searchParams.get("surface") ?? "upcomingAspects") as ReviewSurface;
     const status = requestUrl.searchParams.get("status");
+    if (!["upcomingAspects", "transitNatal", "natalChart", "relationshipLayer", "dailyGlance"].includes(surface)) {
+      throw new AdminHttpError(400, "surface is not supported.");
+    }
+    if (status && status !== "all" && !["DRAFT", "REVIEWED", "LIVE", "ARCHIVED", "ERROR"].includes(status)) {
+      throw new AdminHttpError(400, "status is not supported.");
+    }
     const person = requestUrl.searchParams.get("person") ?? "";
     const timeZone = validTimeZone(requestUrl.searchParams.get("timeZone") || "America/New_York");
     const requestedStartDate = requestUrl.searchParams.get("startDate");
@@ -1496,7 +1497,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
 
     const filteredRecords = records.filter((record) => statusAllowed(status, record.status));
 
-    sendJson(res, 200, {
+    sendAdminJson(res, 200, {
       ok: true,
       surface,
       startDate,
@@ -1507,9 +1508,9 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
       counts: counts(filteredRecords)
     });
   } catch (error) {
-    sendJson(res, 500, {
+    sendAdminJson(res, adminErrorStatus(error), {
       ok: false,
-      error: error instanceof Error ? error.message : "Unknown review records admin error."
+      error: adminErrorMessage(error, "Unknown review records admin error.")
     });
   }
 }
