@@ -1,0 +1,586 @@
+name: Temporary Content Studio Step 4 LKG
+
+on:
+  push:
+    branches:
+      - chatgpt/content-studio-step4-lkg
+
+permissions:
+  contents: write
+
+concurrency:
+  group: temporary-content-studio-step4-lkg
+  cancel-in-progress: false
+
+jobs:
+  qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+      SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Install dependencies
+        run: npm ci
+      - name: Build knowledge dependency
+        run: npm run build -w @tldr/astro-knowledge
+      - name: Add last-known-good snapshot system
+        run: |
+          cat > apps/web/src/services/contentStudioLastKnownGood.ts <<'EOF'
+          import { isFallbackDashboardRecordAllowed } from "../content/fallbackArchitectureV3/dashboardExtensions";
+          import {
+            loadFallbackArchitectureV3BundledCoreManifest,
+            type AuthoredCard,
+            type FallbackArchitectureV3Bundle,
+            type HookRow,
+            type TemplateRow,
+            type VocabRow
+          } from "../content/fallbackArchitectureV3Runtime";
+          import { fallbackArchitectureV3DashboardPackageDestination } from "./fallbackArchitectureV3DashboardPackaging";
+
+          export type ContentStudioLastKnownGoodRow = {
+            id: string;
+            content_key: string;
+            surface: string;
+            mode: "feed" | "in_depth" | "article" | "report";
+            status?: string | null;
+            lane?: string | null;
+            review_state?: string | null;
+            event_type: string | null;
+            target_date: string | null;
+            facts?: Record<string, unknown> | null;
+            source_snapshot?: Record<string, unknown> | null;
+            headline: string | null;
+            summary: string | null;
+            body: string;
+            sections: unknown;
+            block_type?: string | null;
+            flags?: string[] | null;
+            provider?: string | null;
+            judge_score?: number | null;
+            judge_gate?: string | null;
+            model: string | null;
+            updated_at: string;
+          };
+
+          type ContentStudioLastKnownGoodSnapshot = {
+            schema: "content-studio-last-known-good-v1";
+            sourceRevision: string;
+            rowCount: number;
+            rows: ContentStudioLastKnownGoodRow[];
+          };
+
+          const coreProvider = "tldrastro-fallback-architecture-v3";
+          const approvedReviews = new Set(["approved", "approved_reuse", "reviewed"]);
+          let snapshotPromise: Promise<ContentStudioLastKnownGoodSnapshot | null> | null = null;
+
+          function isRecord(value: unknown): value is Record<string, unknown> {
+            return Boolean(value && typeof value === "object" && !Array.isArray(value));
+          }
+
+          function stringFrom(...values: unknown[]) {
+            for (const value of values) {
+              if (typeof value === "string" && value.trim()) return value.trim();
+            }
+            return "";
+          }
+
+          function stringArrayFrom(value: unknown) {
+            return Array.isArray(value)
+              ? value.filter((item): item is string => typeof item === "string" && item.trim().length > 0)
+              : [];
+          }
+
+          function packageRecord(row: ContentStudioLastKnownGoodRow) {
+            const sections = isRecord(row.sections) ? row.sections : {};
+            return isRecord(sections.packageRecord) ? sections.packageRecord : {};
+          }
+
+          function packageRole(row: ContentStudioLastKnownGoodRow) {
+            const source = isRecord(row.source_snapshot) ? row.source_snapshot : {};
+            const facts = isRecord(row.facts) ? row.facts : {};
+            const record = packageRecord(row);
+            const role = source.content_role ?? source.contentRole ?? facts.content_role ?? facts.contentRole ?? record.content_role ?? record.contentRole;
+            const review = source.review_status ?? source.reviewStatus ?? facts.review_status ?? facts.reviewStatus ?? record.review_status ?? record.reviewStatus;
+            return {
+              role: typeof role === "string" ? role : "",
+              reviewStatus: typeof review === "string" ? review : ""
+            };
+          }
+
+          function contentType(row: ContentStudioLastKnownGoodRow) {
+            const source = isRecord(row.source_snapshot) ? row.source_snapshot : {};
+            const facts = isRecord(row.facts) ? row.facts : {};
+            return stringFrom(source.contentType, source.content_type, facts.contentType, facts.content_type);
+          }
+
+          function isSkyPlacementPartitionKey(contentKey: string) {
+            return contentKey.startsWith("fallback-hook/sky-sign-copy/")
+              || (contentKey.startsWith("fallback-hook/sky-placement-") && !contentKey.startsWith("fallback-hook/sky-placement-sign/"));
+          }
+
+          function isApprovedCoreRow(row: ContentStudioLastKnownGoodRow) {
+            const { role, reviewStatus } = packageRole(row);
+            return row.provider === coreProvider
+              && (approvedReviews.has(reviewStatus) || (role === "template" && !reviewStatus));
+          }
+
+          function authoredCard(row: ContentStudioLastKnownGoodRow): AuthoredCard | null {
+            const record = packageRecord(row);
+            const { role, reviewStatus } = packageRole(row);
+            const body = stringFrom(row.body, record.body);
+            const bodyYou = stringFrom(record.body_you);
+            const bodyThey = stringFrom(record.body_they);
+            if (!body && !bodyYou && !bodyThey) return null;
+            return {
+              ...record,
+              contentKey: row.content_key,
+              content_role: role || stringFrom(record.content_role) || "full_copy",
+              ...(body ? { body } : {}),
+              ...(bodyYou ? { body_you: bodyYou } : {}),
+              ...(bodyThey ? { body_they: bodyThey } : {}),
+              review_status: reviewStatus || stringFrom(record.review_status) || "approved"
+            };
+          }
+
+          function hookRow(row: ContentStudioLastKnownGoodRow): HookRow | null {
+            const record = packageRecord(row);
+            const { role, reviewStatus } = packageRole(row);
+            const body = stringFrom(record.body);
+            const bodyYou = stringFrom(record.body_you);
+            const bodyThey = stringFrom(record.body_they);
+            if (!body && !bodyYou && !bodyThey) return null;
+            return {
+              ...record,
+              contentKey: row.content_key,
+              content_role: role || stringFrom(record.content_role) || "fallback_hook",
+              ...(body ? { body } : {}),
+              ...(bodyYou ? { body_you: bodyYou } : {}),
+              ...(bodyThey ? { body_they: bodyThey } : {}),
+              review_status: reviewStatus || stringFrom(record.review_status) || "approved"
+            };
+          }
+
+          function vocabRow(row: ContentStudioLastKnownGoodRow): VocabRow | null {
+            const record = packageRecord(row);
+            const { role, reviewStatus } = packageRole(row);
+            const body = stringFrom(record.body);
+            if (!body) return null;
+            const grammarFrame = stringFrom(record.grammar_frame);
+            return {
+              ...record,
+              contentKey: row.content_key,
+              content_role: role || stringFrom(record.content_role) || "vocabulary",
+              ...(grammarFrame ? { grammar_frame: grammarFrame } : {}),
+              body,
+              review_status: reviewStatus || stringFrom(record.review_status) || "approved"
+            };
+          }
+
+          function templateRow(row: ContentStudioLastKnownGoodRow): TemplateRow | null {
+            const record = packageRecord(row);
+            const { role, reviewStatus } = packageRole(row);
+            const body = stringFrom(record.body);
+            if (!body) return null;
+            return {
+              ...record,
+              contentKey: row.content_key,
+              content_role: role || stringFrom(record.content_role) || "template",
+              body,
+              ...(stringFrom(record.body_you) ? { body_you: stringFrom(record.body_you) } : {}),
+              ...(stringFrom(record.body_they) ? { body_they: stringFrom(record.body_they) } : {}),
+              ...(stringArrayFrom(record.requiredSlots).length ? { requiredSlots: stringArrayFrom(record.requiredSlots) } : {}),
+              ...(stringArrayFrom(record.optionalSlots).length ? { optionalSlots: stringArrayFrom(record.optionalSlots) } : {}),
+              review_status: reviewStatus || stringFrom(record.review_status) || "approved_reuse"
+            };
+          }
+
+          async function loadSnapshot() {
+            if (snapshotPromise) return snapshotPromise;
+            snapshotPromise = (async () => {
+              try {
+                const module = await import("../content/content-studio-last-known-good.json");
+                const snapshot = (module.default ?? module) as ContentStudioLastKnownGoodSnapshot;
+                if (
+                  snapshot?.schema !== "content-studio-last-known-good-v1"
+                  || !Array.isArray(snapshot.rows)
+                  || snapshot.rowCount !== snapshot.rows.length
+                ) return null;
+                return snapshot;
+              } catch {
+                return null;
+              }
+            })();
+            return snapshotPromise;
+          }
+
+          export async function loadContentStudioLastKnownGoodRows() {
+            return (await loadSnapshot())?.rows ?? [];
+          }
+
+          export async function loadContentStudioLastKnownGoodCoreBundle(): Promise<FallbackArchitectureV3Bundle | null> {
+            const rows = (await loadContentStudioLastKnownGoodRows()).filter((row) => isApprovedCoreRow(row) && !isSkyPlacementPartitionKey(row.content_key));
+            if (!rows.length) return null;
+
+            const manifest = await loadFallbackArchitectureV3BundledCoreManifest();
+            const allowedKeys = new Set(manifest.keys.map((key) => {
+              const separatorIndex = key.indexOf(":");
+              return separatorIndex >= 0 ? key.slice(separatorIndex + 1) : key;
+            }));
+            const eligibleRows = rows.filter((row) => {
+              const extensionRecord = { ...packageRecord(row), contentKey: row.content_key };
+              if (allowedKeys.has(row.content_key)) return true;
+              if (!isFallbackDashboardRecordAllowed(extensionRecord, allowedKeys)) return false;
+              allowedKeys.add(row.content_key);
+              return true;
+            });
+
+            const authoredCards: AuthoredCard[] = [];
+            const hookRows: HookRow[] = [];
+            const vocabularyRows: VocabRow[] = [];
+            const templates: TemplateRow[] = [];
+            for (const row of eligibleRows) {
+              const { role } = packageRole(row);
+              const destination = fallbackArchitectureV3DashboardPackageDestination({
+                contentKey: row.content_key,
+                contentType: contentType(row),
+                role
+              });
+              if (destination === "authored") {
+                const value = authoredCard(row);
+                if (value) authoredCards.push(value);
+              } else if (destination === "hook") {
+                const value = hookRow(row);
+                if (value) hookRows.push(value);
+              } else if (destination === "vocabulary") {
+                const value = vocabRow(row);
+                if (value) vocabularyRows.push(value);
+              } else if (destination === "template") {
+                const value = templateRow(row);
+                if (value) templates.push(value);
+              }
+            }
+            if (!authoredCards.length && !hookRows.length && !vocabularyRows.length && !templates.length) return null;
+            return { transitLib: { authoredCards }, rowsFile: { hookRows, vocabularyRows }, templatesFile: { templates } };
+          }
+
+          export async function loadContentStudioLastKnownGoodCompatibilityBundle(): Promise<FallbackArchitectureV3Bundle | null> {
+            const authoredCards: AuthoredCard[] = [];
+            for (const row of await loadContentStudioLastKnownGoodRows()) {
+              if (!row.content_key.startsWith("authored/compat-pair/")) continue;
+              const { reviewStatus } = packageRole(row);
+              if (!approvedReviews.has(reviewStatus)) continue;
+              const value = authoredCard(row);
+              if (value) authoredCards.push(value);
+            }
+            if (!authoredCards.length) return null;
+            return { transitLib: { authoredCards }, rowsFile: { hookRows: [], vocabularyRows: [] }, templatesFile: { templates: [] } };
+          }
+          EOF
+
+          cat > scripts/refresh-content-studio-last-known-good.mjs <<'EOF'
+          #!/usr/bin/env node
+          import fs from "node:fs";
+          import path from "node:path";
+          import { fileURLToPath } from "node:url";
+
+          const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
+          const outPath = path.join(repoRoot, "apps/web/src/content/content-studio-last-known-good.json");
+          const supabaseUrl = (process.env.VITE_SUPABASE_URL ?? process.env.SUPABASE_URL ?? "").replace(/\/$/u, "");
+          const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY ?? "";
+          if (!supabaseUrl || !serviceRoleKey) throw new Error("VITE_SUPABASE_URL/SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY are required.");
+
+          const coreProvider = "tldrastro-fallback-architecture-v3";
+          const skyPlacementProvider = "tldrastro-fallback-architecture-v3-sky-placement";
+          const durablePrefixes = [
+            "cms/",
+            "fallback-hook/",
+            "fallback-vocab/",
+            "fallback-template/",
+            "slot-template/",
+            "vocab/",
+            "guide-phrase/",
+            "authored/compat-pair/",
+            "cc/planet/",
+            "cc/sign/"
+          ];
+          const approvedReviews = new Set(["approved", "approved_reuse", "reviewed"]);
+          const unsafeMarkers = ["unsafe", "editorial-only", "editorial_only", "superseded", "reference-only", "raw_quarantine", "revoice-pending", "revoice_pending"];
+
+          function isRecord(value) { return Boolean(value && typeof value === "object" && !Array.isArray(value)); }
+          function roleAndReview(row) {
+            const source = isRecord(row.source_snapshot) ? row.source_snapshot : {};
+            const facts = isRecord(row.facts) ? row.facts : {};
+            const sections = isRecord(row.sections) ? row.sections : {};
+            const record = isRecord(sections.packageRecord) ? sections.packageRecord : {};
+            return {
+              role: String(source.content_role ?? source.contentRole ?? facts.content_role ?? facts.contentRole ?? record.content_role ?? record.contentRole ?? ""),
+              review: String(source.review_status ?? source.reviewStatus ?? facts.review_status ?? facts.reviewStatus ?? record.review_status ?? record.reviewStatus ?? "")
+            };
+          }
+          function durableRow(row) {
+            if (row.status !== "LIVE" || row.lane !== "serving" || row.review_state != null || row.target_date != null) return false;
+            if (row.provider === skyPlacementProvider) return false;
+            const key = String(row.content_key ?? "");
+            if (!key || key.startsWith("sample-") || key.startsWith("sky/article-template/") || key.startsWith("sky-article-template/")) return false;
+            if (row.provider !== coreProvider && !durablePrefixes.some((prefix) => key.startsWith(prefix))) return false;
+            const source = isRecord(row.source_snapshot) ? row.source_snapshot : {};
+            const facts = isRecord(row.facts) ? row.facts : {};
+            if (source.sampleOnly === true || facts.sampleOnly === true) return false;
+            const { role, review } = roleAndReview(row);
+            if (["fallback_source", "source_material"].includes(role)) return false;
+            if (review && !approvedReviews.has(review)) return false;
+            const metadata = [key, row.provider ?? "", JSON.stringify(source), JSON.stringify(facts), ...(Array.isArray(row.flags) ? row.flags : [])].join(" ").toLowerCase();
+            if (unsafeMarkers.some((marker) => metadata.includes(marker))) return false;
+            const flags = new Set(Array.isArray(row.flags) ? row.flags : []);
+            if (flags.has("REFERENCE_ONLY_NEVER_SERVE_VERBATIM") || flags.has("PARAPHRASE_PENDING") || flags.has("BLOCKLIST_MATCH")) return false;
+            return true;
+          }
+
+          const select = "id,content_key,surface,mode,status,lane,review_state,event_type,target_date,facts,source_snapshot,headline,summary,body,sections,block_type,flags,provider,judge_score,judge_gate,model,updated_at";
+          const rows = [];
+          let cursor = null;
+          const pageSize = 1000;
+          for (let page = 0; page < 20; page += 1) {
+            const url = new URL(`${supabaseUrl}/rest/v1/generated_interpretations`);
+            url.searchParams.set("select", select);
+            url.searchParams.set("status", "eq.LIVE");
+            url.searchParams.set("lane", "eq.serving");
+            url.searchParams.set("review_state", "is.null");
+            url.searchParams.set("target_date", "is.null");
+            url.searchParams.set("order", "id.asc");
+            url.searchParams.set("limit", String(pageSize));
+            if (cursor) url.searchParams.set("id", `gt.${cursor}`);
+            const response = await fetch(url, { headers: { apikey: serviceRoleKey, authorization: `Bearer ${serviceRoleKey}` } });
+            if (!response.ok) throw new Error(`Snapshot query failed (${response.status}): ${await response.text()}`);
+            const pageRows = await response.json();
+            if (!Array.isArray(pageRows)) throw new Error("Snapshot query returned a non-array payload.");
+            rows.push(...pageRows);
+            const lastId = pageRows.at(-1)?.id ?? null;
+            if (pageRows.length < pageSize) { cursor = null; break; }
+            if (!lastId) throw new Error("Snapshot pagination did not return a stable id cursor.");
+            cursor = lastId;
+            if (page === 19) throw new Error("Snapshot pagination hit its safety page limit; refusing a partial snapshot.");
+          }
+
+          const candidates = rows.filter(durableRow).sort((a, b) => {
+            const time = Date.parse(b.updated_at) - Date.parse(a.updated_at);
+            return time || String(b.id).localeCompare(String(a.id));
+          });
+          const newest = new Map();
+          for (const row of candidates) if (!newest.has(row.content_key)) newest.set(row.content_key, row);
+          const snapshotRows = [...newest.values()].sort((a, b) => String(a.content_key).localeCompare(String(b.content_key)));
+          if (snapshotRows.length < 100) throw new Error(`Refusing implausibly small last-known-good snapshot (${snapshotRows.length} rows).`);
+
+          let previous = null;
+          try { previous = JSON.parse(fs.readFileSync(outPath, "utf8")); } catch {}
+          if (previous?.rowCount > 0 && snapshotRows.length < Math.floor(previous.rowCount * 0.5) && process.env.ALLOW_LKG_ROW_DROP !== "1") {
+            throw new Error(`Refusing >50% last-known-good row-count drop (${previous.rowCount} -> ${snapshotRows.length}). Set ALLOW_LKG_ROW_DROP=1 only after deliberate review.`);
+          }
+          const sourceRevision = snapshotRows.reduce((latest, row) => row.updated_at > latest ? row.updated_at : latest, "");
+          const snapshot = { schema: "content-studio-last-known-good-v1", sourceRevision, rowCount: snapshotRows.length, rows: snapshotRows };
+          const tmpPath = `${outPath}.tmp`;
+          fs.writeFileSync(tmpPath, `${JSON.stringify(snapshot, null, 2)}\n`);
+          fs.renameSync(tmpPath, outPath);
+          console.log(JSON.stringify({ rowCount: snapshot.rowCount, sourceRevision: snapshot.sourceRevision }));
+          EOF
+
+          cat > scripts/test-content-studio-last-known-good.mjs <<'EOF'
+          #!/usr/bin/env node
+          import assert from "node:assert/strict";
+          import fs from "node:fs";
+
+          const snapshot = JSON.parse(fs.readFileSync("apps/web/src/content/content-studio-last-known-good.json", "utf8"));
+          const workflow = fs.readFileSync(".github/workflows/content-studio-last-known-good.yml", "utf8");
+          const runtime = fs.readFileSync("apps/web/src/services/contentStudioLastKnownGood.ts", "utf8");
+          const generated = fs.readFileSync("apps/web/src/services/generatedContent.ts", "utf8");
+          const vocabulary = fs.readFileSync("apps/web/src/services/planetTopicVocabulary.ts", "utf8");
+          const taglines = fs.readFileSync("apps/web/src/services/natalPlacementTaglines.ts", "utf8");
+
+          assert.equal(snapshot.schema, "content-studio-last-known-good-v1");
+          assert.equal(snapshot.rowCount, snapshot.rows.length);
+          assert.ok(snapshot.rowCount >= 100, "snapshot should contain a meaningful durable reader baseline");
+          const keys = new Set();
+          let maxRevision = "";
+          for (const row of snapshot.rows) {
+            assert.equal(row.status, "LIVE");
+            assert.equal(row.lane, "serving");
+            assert.equal(row.review_state, null);
+            assert.equal(row.target_date, null);
+            assert.ok(!keys.has(row.content_key), `duplicate last-known-good key: ${row.content_key}`);
+            keys.add(row.content_key);
+            assert.notEqual(row.provider, "tldrastro-fallback-architecture-v3-sky-placement", "strict Sky Placement partition must stay on the governed local floor");
+            maxRevision = row.updated_at > maxRevision ? row.updated_at : maxRevision;
+          }
+          assert.equal(snapshot.sourceRevision, maxRevision);
+          assert.match(workflow, /schedule:[\s\S]*cron:/u, "nightly workflow must have a cron schedule");
+          assert.match(workflow, /refresh-content-studio-last-known-good\.mjs/u);
+          assert.match(workflow, /SUPABASE_SERVICE_ROLE_KEY/u);
+          assert.match(workflow, /content-studio-last-known-good\.json/u);
+          assert.match(runtime, /import\("\.\.\/content\/content-studio-last-known-good\.json"\)/u, "snapshot must be lazy-loaded");
+          assert.match(generated, /loadContentStudioLastKnownGoodCoreBundle/u);
+          assert.match(generated, /loadContentStudioLastKnownGoodRows/u);
+          assert.match(vocabulary, /loadContentStudioLastKnownGoodRows/u);
+          assert.match(taglines, /loadContentStudioLastKnownGoodRows/u);
+          console.log(`Content Studio last-known-good contract passed (${snapshot.rowCount} rows).`);
+          EOF
+
+          cat > .github/workflows/content-studio-last-known-good.yml <<'EOF'
+          name: Refresh Content Studio last-known-good snapshot
+
+          on:
+            schedule:
+              - cron: "17 7 * * *"
+            workflow_dispatch:
+
+          permissions:
+            contents: write
+
+          concurrency:
+            group: content-studio-last-known-good
+            cancel-in-progress: false
+
+          jobs:
+            refresh:
+              runs-on: ubuntu-latest
+              timeout-minutes: 15
+              env:
+                VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+                SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+              steps:
+                - uses: actions/checkout@v4
+                - uses: actions/setup-node@v4
+                  with:
+                    node-version: 22
+                - name: Refresh reader-safe durable snapshot
+                  run: node scripts/refresh-content-studio-last-known-good.mjs
+                - name: Verify snapshot contract
+                  run: node scripts/test-content-studio-last-known-good.mjs
+                - name: Commit snapshot only when content changed
+                  run: |
+                    if git diff --quiet -- apps/web/src/content/content-studio-last-known-good.json; then
+                      echo "Last-known-good snapshot is already current."
+                      exit 0
+                    fi
+                    git config user.name "github-actions[bot]"
+                    git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+                    git add apps/web/src/content/content-studio-last-known-good.json
+                    git commit -m "chore(content): refresh CMS last-known-good snapshot"
+                    git push
+          EOF
+
+          python - <<'PY'
+          from pathlib import Path
+
+          generated_path = Path("apps/web/src/services/generatedContent.ts")
+          text = generated_path.read_text()
+          import_marker = 'import { getSupabaseClient } from "./auth";\n'
+          lkg_import = '''import {\n  loadContentStudioLastKnownGoodCompatibilityBundle,\n  loadContentStudioLastKnownGoodCoreBundle,\n  loadContentStudioLastKnownGoodRows\n} from "./contentStudioLastKnownGood";\n'''
+          if 'from "./contentStudioLastKnownGood"' not in text:
+              text = text.replace(import_marker, import_marker + lkg_import, 1)
+
+          def function_slice(source, start, end):
+              a = source.index(start)
+              b = source.index(end, a)
+              return a, b, source[a:b]
+
+          # Core package overlay: browser cache is newest, then bundled nightly CMS snapshot, then local package.
+          a, b, block = function_slice(text, 'export async function loadFallbackArchitectureV3DashboardBundle()', 'export async function loadFallbackArchitectureV3CompatibilityDashboardBundle()')
+          block = block.replace('if (!supabase) return cached?.bundle ?? null;', 'if (!supabase) return cached?.bundle ?? await loadContentStudioLastKnownGoodCoreBundle();', 1)
+          block = block.replace('console.warn("Fallback architecture V3 live overlay version failed to load; cached/local copy remains active.", versionError);\n      return cached?.bundle ?? null;', 'console.warn("Fallback architecture V3 live overlay version failed to load; nightly/cached/local copy remains active.", versionError);\n      return cached?.bundle ?? await loadContentStudioLastKnownGoodCoreBundle();', 1)
+          block = block.replace('console.warn("Fallback architecture V3 live overlay failed to load; cached/local copy remains active.", error);\n      return cached?.bundle ?? null;', 'console.warn("Fallback architecture V3 live overlay failed to load; nightly/cached/local copy remains active.", error);\n      return cached?.bundle ?? await loadContentStudioLastKnownGoodCoreBundle();', 1)
+          text = text[:a] + block + text[b:]
+
+          # Compatibility overlay uses the global nightly snapshot when Supabase is unavailable.
+          a, b, block = function_slice(text, 'export async function loadFallbackArchitectureV3CompatibilityDashboardBundle()', 'export async function loadFallbackArchitectureV3SkyPlacementDashboardBundle()')
+          block = block.replace('if (!supabase) return null;', 'if (!supabase) return loadContentStudioLastKnownGoodCompatibilityBundle();', 1)
+          block = block.replace('console.warn("Compatibility dashboard content failed to load; bundled relationship copy remains active.", error);\n      return null;', 'console.warn("Compatibility dashboard content failed to load; nightly/bundled relationship copy remains active.", error);\n      return loadContentStudioLastKnownGoodCompatibilityBundle();', 1)
+          text = text[:a] + block + text[b:]
+
+          marker = 'export async function loadLiveGeneratedContentForSurfaces('
+          helper = '''async function loadLastKnownGoodGeneratedContentForSurfaces(\n  requestedSurfaces: string[],\n  targetDate?: string,\n  previewMode: GeneratedContentPreviewMode = readGeneratedContentPreviewMode()\n) {\n  const includeSharedTransitFloor = requestedSurfaces.includes("sky");\n  const surfaces = new Set([\n    ...requestedSurfaces,\n    "modifier",\n    ...(includeSharedTransitFloor ? ["you"] : [])\n  ]);\n  const rows = (await loadContentStudioLastKnownGoodRows()) as GeneratedContentRow[];\n  const filtered = rows.filter((row) => {\n    if (!surfaces.has(row.surface)) return false;\n    if (!targetDate || requestedSurfaces.includes("sky")) return true;\n    return row.target_date === null || row.target_date === targetDate;\n  });\n  return generatedContentMapFromRows(sortGeneratedRowsNewestFirst(filtered), previewMode);\n}\n\nasync function loadLastKnownGoodGeneratedContentForKeys(contentKeys: string[]) {\n  const keySet = new Set(contentKeys);\n  const rows = (await loadContentStudioLastKnownGoodRows()) as GeneratedContentRow[];\n  return generatedContentMapFromRows(sortGeneratedRowsNewestFirst(rows.filter((row) => keySet.has(row.content_key))));\n}\n\n'''
+          if 'loadLastKnownGoodGeneratedContentForSurfaces' not in text:
+              text = text.replace(marker, helper + marker, 1)
+
+          a, b, block = function_slice(text, 'export async function loadLiveGeneratedContentForSurfaces(', 'export async function loadLiveGeneratedContentForKeys(')
+          block = block.replace('if (!supabase) {\n    return new Map<string, LiveGeneratedContent>();\n  }', 'if (!supabase) {\n    return loadLastKnownGoodGeneratedContentForSurfaces(requestedSurfaces, targetDate, previewMode);\n  }', 1)
+          block = block.replace('console.warn("Live generated content failed to load; unpublished content will remain hidden.", error);\n      return new Map<string, LiveGeneratedContent>();', 'console.warn("Live generated content failed to load; using the nightly reader-safe snapshot.", error);\n      return loadLastKnownGoodGeneratedContentForSurfaces(requestedSurfaces, targetDate, previewMode);', 1)
+          text = text[:a] + block + text[b:]
+
+          a, b, block = function_slice(text, 'export async function loadLiveGeneratedContentForKeys(', 'function generatedContentMapFromRows(')
+          block = block.replace('if (!supabase) {\n    return new Map<string, LiveGeneratedContent>();\n  }', 'if (!supabase) {\n    return loadLastKnownGoodGeneratedContentForKeys(keys);\n  }', 1)
+          block = block.replace('console.warn("Targeted generated content failed to load; unpublished content will remain hidden.", error);\n      return new Map<string, LiveGeneratedContent>();', 'console.warn("Targeted generated content failed to load; using the nightly reader-safe snapshot.", error);\n      return loadLastKnownGoodGeneratedContentForKeys(keys);', 1)
+          text = text[:a] + block + text[b:]
+          generated_path.write_text(text)
+
+          vocab_path = Path("apps/web/src/services/planetTopicVocabulary.ts")
+          text = vocab_path.read_text()
+          if 'from "./contentStudioLastKnownGood"' not in text:
+              text = text.replace('import { getSupabaseClient } from "./auth";\n', 'import { getSupabaseClient } from "./auth";\nimport { loadContentStudioLastKnownGoodRows } from "./contentStudioLastKnownGood";\n', 1)
+          load_marker = 'export async function loadPlanetTopicVocabulary() {'
+          helper = '''function hydratePlanetTopicVocabularyRows(rows: PlanetTopicVocabularyRow[]) {\n  const servableRows = rows\n    .filter(isReaderServableGeneratedContentRow)\n    .sort((first, second) => {\n      const firstUpdated = Date.parse(first.updated_at);\n      const secondUpdated = Date.parse(second.updated_at);\n      if (firstUpdated !== secondUpdated) return firstUpdated - secondUpdated;\n      return first.id.localeCompare(second.id);\n    });\n  cachedVocabulary = planetTopicVocabularyFromRows(servableRows);\n  cachedSignStyles = signStyleVocabularyFromRows(servableRows);\n  cachedSignNeeds = signNeedVocabularyFromRows(servableRows);\n  return cachedVocabulary;\n}\n\nasync function hydratePlanetTopicVocabularyFromLastKnownGood() {\n  const rows = (await loadContentStudioLastKnownGoodRows())\n    .filter((row) => row.surface === "modifier" && (\n      row.content_key.startsWith("fallback-vocab/")\n      || row.content_key.startsWith("cc/planet/")\n      || row.content_key.startsWith("cc/sign/")\n    )) as PlanetTopicVocabularyRow[];\n  return hydratePlanetTopicVocabularyRows(rows);\n}\n\n'''
+          if 'hydratePlanetTopicVocabularyFromLastKnownGood' not in text:
+              text = text.replace(load_marker, helper + load_marker, 1)
+          text = text.replace('if (!supabase) {\n      cachedVocabulary = new Map();\n      cachedSignStyles = new Map();\n      cachedSignNeeds = new Map();\n      return cachedVocabulary;\n    }', 'if (!supabase) {\n      return hydratePlanetTopicVocabularyFromLastKnownGood();\n    }', 1)
+          text = text.replace('console.warn("Planet topic vocabulary failed to load; topic slots will be blank until the next retry.", error);\n        return new Map();', 'console.warn("Planet topic vocabulary failed to load; using the nightly reader-safe snapshot.", error);\n        return hydratePlanetTopicVocabularyFromLastKnownGood();', 1)
+          old_success = '''    const servableRows = rows\n      .filter(isReaderServableGeneratedContentRow)\n      .sort((first, second) => {\n        const firstUpdated = Date.parse(first.updated_at);\n        const secondUpdated = Date.parse(second.updated_at);\n        if (firstUpdated !== secondUpdated) return firstUpdated - secondUpdated;\n        return first.id.localeCompare(second.id);\n      });\n    cachedVocabulary = planetTopicVocabularyFromRows(servableRows);\n    cachedSignStyles = signStyleVocabularyFromRows(servableRows);\n    cachedSignNeeds = signNeedVocabularyFromRows(servableRows);\n    return cachedVocabulary;'''
+          text = text.replace(old_success, '    return hydratePlanetTopicVocabularyRows(rows);', 1)
+          vocab_path.write_text(text)
+
+          tagline_path = Path("apps/web/src/services/natalPlacementTaglines.ts")
+          text = tagline_path.read_text()
+          if 'from "./contentStudioLastKnownGood"' not in text:
+              text = text.replace('import { getSupabaseClient } from "./auth";\n', 'import { getSupabaseClient } from "./auth";\nimport { loadContentStudioLastKnownGoodRows } from "./contentStudioLastKnownGood";\n', 1)
+          marker = 'export async function loadNatalCardTaglines() {'
+          helper = '''async function hydrateNatalCardTaglinesFromLastKnownGood() {\n  const rows = (await loadContentStudioLastKnownGoodRows())\n    .filter((row) => row.content_key.startsWith("vocab/natal-card-tagline/")) as NatalCardTaglineRow[];\n  cachedTaglines = natalCardTaglinesFromRows(rows.filter(isReaderServableGeneratedContentRow));\n  return cachedTaglines;\n}\n\n'''
+          if 'hydrateNatalCardTaglinesFromLastKnownGood' not in text:
+              text = text.replace(marker, helper + marker, 1)
+          text = text.replace('if (!supabase) {\n      cachedTaglines = new Map();\n      return cachedTaglines;\n    }', 'if (!supabase) {\n      return hydrateNatalCardTaglinesFromLastKnownGood();\n    }', 1)
+          text = text.replace('console.warn("Natal card taglines failed to load; code fallbacks will be used until the next retry.", error);\n      return new Map();', 'console.warn("Natal card taglines failed to load; using the nightly reader-safe snapshot.", error);\n      return hydrateNatalCardTaglinesFromLastKnownGood();', 1)
+          tagline_path.write_text(text)
+
+          docs = Path("docs/content-studio-cms-reliability-plan.md")
+          text = docs.read_text()
+          if 'Nightly last-known-good' not in text:
+              text = text.replace('7. **Cancellable inventory loads**: a superseded CMS load is aborted and late responses cannot replace state from a newer navigation/auth load. Inventory progress is surfaced page by page.\n', '7. **Cancellable inventory loads**: a superseded CMS load is aborted and late responses cannot replace state from a newer navigation/auth load. Inventory progress is surfaced page by page.\n8. **Nightly last-known-good**: reader-safe durable LIVE/serving Content Studio rows are exported nightly into a lazy-loaded repository snapshot. Runtime precedence on CMS/network failure is browser cache → nightly snapshot → governed local package. Dated/transient rows and the strict Sky Placement partition are excluded.\n')
+          docs.write_text(text)
+          PY
+      - name: Refresh current production snapshot
+        run: node scripts/refresh-content-studio-last-known-good.mjs
+      - name: Last-known-good and Step 4 QA
+        run: |
+          git diff --check
+          node scripts/test-content-studio-last-known-good.mjs
+          node scripts/test-content-studio-reader-cache-rehydrate.mjs
+          node scripts/test-content-studio-runtime-cache-invalidation.mjs
+          node scripts/test-content-studio-cms-performance.mjs
+          node --import tsx scripts/test-content-studio-crud-hydration-guards.mjs
+          node --import tsx scripts/test-content-studio-atomic-concurrency.mjs
+          node --import tsx scripts/test-content-studio-prepopulate-live-race.mjs
+          node scripts/test-content-studio-hydration-reliability.mjs
+          node scripts/test-content-studio-special-mutation-concurrency.mjs
+          node --import tsx scripts/test-content-studio-api-roundtrip.mjs
+          node --import tsx scripts/test-fallback-dashboard-live-overlay.mjs
+          node --import tsx scripts/test-fallback-dashboard-dynamic-natal-exact.mjs
+          node --import tsx scripts/test-admin-natal-placement-preview-api.mjs
+          node scripts/test-admin-natal-placement-preview-dependencies.mjs
+      - name: Typecheck and builds
+        run: |
+          npm run typecheck
+          npm run build:web
+          npm run build:admin
+      - name: Commit clean Step 4 LKG checkpoint
+        run: |
+          rm .github/workflows/temporary-content-studio-step4-lkg.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "fix(content): add nightly CMS last-known-good fallback"
+          git push
