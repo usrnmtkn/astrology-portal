@@ -33,12 +33,12 @@ jobs:
           git show 9f0517f6a9081c7ef3f45004bf5a0df09bba1e5a -- \
             api/admin/generated-content.ts \
             api/admin/prepopulate-content.ts \
-            scripts/test-content-studio-hydration-reliability.mjs \
             scripts/test-content-studio-special-mutation-concurrency.mjs \
             | git apply --3way
           git checkout 9f0517f6a9081c7ef3f45004bf5a0df09bba1e5a -- \
             scripts/test-content-studio-atomic-concurrency.mjs \
-            scripts/test-content-studio-prepopulate-live-race.mjs
+            scripts/test-content-studio-prepopulate-live-race.mjs \
+            scripts/test-content-studio-hydration-reliability.mjs
       - name: Repair open-reader cache rehydration
         run: |
           python - <<'PY'
