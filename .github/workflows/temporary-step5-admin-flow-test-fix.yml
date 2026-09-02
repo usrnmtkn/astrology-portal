@@ -1,0 +1,69 @@
+name: Temporary Step 5 admin flow test repair
+
+on:
+  push:
+    branches:
+      - chatgpt/content-studio-step5-api-contract
+
+permissions:
+  contents: write
+
+jobs:
+  qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      VITE_SUPABASE_URL: https://visual-smoke.supabase.test
+      VITE_SUPABASE_ANON_KEY: visual-smoke-placeholder
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - name: Repair stale admin-flow fixtures
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          path = Path('tests/visual/content-dashboard-admin-user-flows.spec.ts')
+          text = path.read_text()
+          old_paging = '''      const pageRows = servedRows.slice(offset, offset + limit);\n      await route.fulfill({\n        status: 200,\n        contentType: "application/json",\n        body: JSON.stringify({\n          ok: true,\n          rows: pageRows,\n          ...(url.searchParams.get("scope") === "compatibility"\n            ? { nextCursor: pageRows.length === limit ? String(pageRows.at(-1)?.id ?? "") : null }\n            : {})\n        })\n      });'''
+          new_paging = '''      const pageRows = servedRows.slice(offset, offset + limit);\n      const nextCursor = offset + pageRows.length < servedRows.length\n        ? String(pageRows.at(-1)?.id ?? "")\n        : null;\n      await route.fulfill({\n        status: 200,\n        contentType: "application/json",\n        body: JSON.stringify({\n          ok: true,\n          rows: pageRows,\n          nextCursor\n        })\n      });'''
+          if old_paging not in text:
+              raise SystemExit('pagination fixture pattern not found')
+          text = text.replace(old_paging, new_paging, 1)
+
+          old_ready = '''    await expectAdminRouteLoads(page, "/admin/content#exact-content");\n\n    await expect(page.locator(".admin-content-row")).toHaveCount(50);'''
+          new_ready = '''    await expectAdminRouteLoads(page, "/admin/content#exact-content");\n    await expect(page.getByRole("region", { name: "Admin status" })).toContainText("7200 saved rows loaded", {\n      timeout: routeReadyTimeoutMs\n    });\n\n    await expect(page.locator(".admin-content-row")).toHaveCount(50);'''
+          if old_ready not in text:
+              raise SystemExit('production-scale readiness pattern not found')
+          text = text.replace(old_ready, new_ready, 1)
+
+          old_payload = '''    expect(writes[0]?.payload).toEqual({ id: pendingRevision.id, ownerAction: "approve-package-revision" });'''
+          new_payload = '''    expect(writes[0]?.payload).toEqual({\n      id: pendingRevision.id,\n      ownerAction: "approve-package-revision",\n      expectedUpdatedAt: pendingRevision.updated_at\n    });'''
+          if old_payload not in text:
+              raise SystemExit('package revision payload pattern not found')
+          text = text.replace(old_payload, new_payload, 1)
+          path.write_text(text)
+          PY
+          git diff --check
+      - name: Build app
+        run: npm run build
+      - name: Run the two repaired admin flows
+        run: >-
+          npx playwright test -c playwright.config.ts tests/visual/content-dashboard-admin-user-flows.spec.ts
+          --grep "production-scale Content Library keeps the DOM bounded and search responsive|a saved fallback revision can be explicitly approved and published"
+      - name: Run full admin user-flow suite
+        run: npx playwright test -c playwright.config.ts tests/visual/content-dashboard-admin-user-flows.spec.ts
+      - name: Commit tested admin-flow repair and remove temporary workflow
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          rm .github/workflows/temporary-step5-admin-flow-test-fix.yml
+          git add tests/visual/content-dashboard-admin-user-flows.spec.ts .github/workflows/temporary-step5-admin-flow-test-fix.yml
+          git commit -m "test(admin): follow cursor and concurrency contracts"
+          git push
