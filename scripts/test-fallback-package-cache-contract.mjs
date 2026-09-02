@@ -37,13 +37,13 @@ assert.match(
 );
 assert.match(
   generatedContentSource,
-  /fallbackArchitectureV3BundleCacheSchema = "fallback-architecture-v3-dashboard-cache-v5"/u,
-  "Browser cache envelopes must use the hash-aware schema."
+  /fallbackArchitectureV3BundleCacheSchema = "fallback-architecture-v3-dashboard-overlay-cache-v6"/u,
+  "Core browser cache envelopes must identify the live editorial-overlay schema."
 );
 assert.match(
   generatedContentSource,
-  /envelope\?\.runtimeCapability !== fallbackArchitectureV3BundledManifestSummary\.runtimeCapability[\s\S]*envelope\?\.bundledContentHash !== bundledPartition\.contentHash/u,
-  "A runtime capability or partition-content hash change must invalidate browser cache."
+  /readCachedFallbackArchitectureV3Bundle[\s\S]*envelope\.runtimeCapability !== fallbackArchitectureV3BundledManifestSummary\.runtimeCapability[\s\S]*envelope\.bundledPackageVersion !== fallbackArchitectureV3BundledManifestSummary\.packageVersion[\s\S]*dashboardVersion/u,
+  "Core overlay cache must invalidate across runtime/package releases and live dashboard versions."
 );
 assert.match(
   generatedContentSource,
@@ -62,13 +62,23 @@ assert.match(
 );
 assert.match(
   generatedContentSource,
-  /package metadata is missing or inconsistent[\s\S]*?clearCachedFallbackArchitectureV3Bundle\(\);[\s\S]*?return null;/u,
-  "Unversioned or inconsistent database packages must fail closed."
+  /selectLatestLiveServingDashboardRows\([\s\S]*currentCoreKeys[\s\S]*isApprovedFallbackArchitectureV3Row\(row\)[\s\S]*isSkyPlacementFallbackPartitionKey/u,
+  "Core hydration must select the latest approved live-serving override for current package keys."
+);
+assert.match(
+  generatedContentSource,
+  /\.eq\("status", "LIVE"\)[\s\S]*\.eq\("lane", "serving"\)[\s\S]*loadFallbackArchitectureV3BundledCoreManifest/u,
+  "Core hydration must query reader-live rows and validate their stable keys against the current package."
 );
 assert.match(
   generatedContentSource,
   /\.order\("updated_at", \{ ascending: false \}\)[\s\S]*?\.order\("id", \{ ascending: false \}\)/u,
   "Supabase pagination must use a stable unique-ID tiebreaker."
+);
+assert.match(
+  generatedContentSource,
+  /currentCoreManifest\.keys\.map\(\(manifestKey\)[\s\S]*manifestKey\.indexOf\(":"\)[\s\S]*manifestKey\.slice\(separatorIndex \+ 1\)/u,
+  "Typed package-manifest keys must normalize back to raw Content Studio content keys before overlay validation."
 );
 assert.match(
   materializerSource,
