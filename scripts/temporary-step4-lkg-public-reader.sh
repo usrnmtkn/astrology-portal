@@ -13,6 +13,9 @@ if (!supabaseUrl || !serviceRoleKey) throw new Error("VITE_SUPABASE_URL/SUPABASE
 const publishableKey = process.env.VITE_SUPABASE_PUBLISHABLE_KEY ?? process.env.SUPABASE_PUBLISHABLE_KEY ?? "sb_publishable_iX90KdzcQzw8a8OydBHHXA_COnEMcns";
 if (!supabaseUrl || !publishableKey) throw new Error("A Supabase project URL and publishable key are required.");''')
 text = text.replace('apikey: serviceRoleKey, authorization: `Bearer ${serviceRoleKey}`', 'apikey: publishableKey, authorization: `Bearer ${publishableKey}`')
+text = text.replace('const pageSize = 1000;', 'const pageSize = 200;')
+text = text.replace('for (let page = 0; page < 20; page += 1) {', 'for (let page = 0; page < 100; page += 1) {')
+text = text.replace('if (page === 19) throw new Error("Snapshot pagination hit its safety page limit; refusing a partial snapshot.");', 'if (page === 99) throw new Error("Snapshot pagination hit its safety page limit; refusing a partial snapshot.");')
 refresh.write_text(text)
 
 workflow = Path('.github/workflows/content-studio-last-known-good.yml')
