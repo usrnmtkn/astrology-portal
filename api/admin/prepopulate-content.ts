@@ -663,22 +663,62 @@ function buildSkyQueueRows(sky: SkySnapshot, targetDate: string) {
   return Array.from(new Map(rows.map((row) => [row.content_key, row])).values());
 }
 
-async function saveRows(rows: QueueRow[]) {
-  const response = await fetch(`${supabaseUrl()}/rest/v1/generated_interpretations?on_conflict=content_key,target_date,mode`, {
+
+function queueTargetParams(row: QueueRow) {
+  const params = new URLSearchParams();
+  params.set("content_key", `eq.${row.content_key}`);
+  params.set("target_date", row.target_date === null ? "is.null" : `eq.${row.target_date}`);
+  params.set("mode", `eq.${row.mode}`);
+  return params;
+}
+
+async function saveQueueRow(row: QueueRow) {
+  const createResponse = await fetch(`${supabaseUrl()}/rest/v1/generated_interpretations`, {
     method: "POST",
     headers: {
       ...adminHeaders(),
-      prefer: "resolution=merge-duplicates,return=representation"
+      prefer: "return=representation"
     },
-    body: JSON.stringify(rows)
+    body: JSON.stringify(row)
   });
-  const payload = await response.json().catch(() => null);
-
-  if (!response.ok) {
-    throw new Error(`Supabase queue save failed with ${response.status}: ${JSON.stringify(payload)}`);
+  const createPayload = await createResponse.json().catch(() => null);
+  if (createResponse.ok) {
+    return { row: Array.isArray(createPayload) ? createPayload[0] ?? null : null, skippedLive: false };
+  }
+  if (createResponse.status !== 409) {
+    throw new Error(`Supabase queue create failed with ${createResponse.status}: ${JSON.stringify(createPayload)}`);
   }
 
-  return payload;
+  // A duplicate may be a reusable draft or protected LIVE content. Patch only
+  // while the persisted row is still non-LIVE so a publish racing this request
+  // cannot be overwritten by queue prepopulation.
+  const params = queueTargetParams(row);
+  params.set("status", "neq.LIVE");
+  const patchResponse = await fetch(`${supabaseUrl()}/rest/v1/generated_interpretations?${params.toString()}`, {
+    method: "PATCH",
+    headers: {
+      ...adminHeaders(),
+      prefer: "return=representation"
+    },
+    body: JSON.stringify(row)
+  });
+  const patchPayload = await patchResponse.json().catch(() => null);
+  if (!patchResponse.ok) {
+    throw new Error(`Supabase queue refresh failed with ${patchResponse.status}: ${JSON.stringify(patchPayload)}`);
+  }
+  const updated = Array.isArray(patchPayload) ? patchPayload[0] ?? null : null;
+  return { row: updated, skippedLive: !updated };
+}
+
+async function saveRows(rows: QueueRow[]) {
+  const savedRows: unknown[] = [];
+  const skippedLiveRows: string[] = [];
+  for (const row of rows) {
+    const saved = await saveQueueRow(row);
+    if (saved.row) savedRows.push(saved.row);
+    if (saved.skippedLive) skippedLiveRows.push(row.content_key);
+  }
+  return { rows: savedRows, skippedLiveRows };
 }
 
 export default async function handler(req: IncomingMessage, res: ServerResponse) {
@@ -726,8 +766,9 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
       ok: true,
       surface: requestedSurface,
       targetDate,
-      inserted: rows.length,
-      rows: saved
+      inserted: saved.rows.length,
+      skippedLiveRows: saved.skippedLiveRows,
+      rows: saved.rows
     });
   } catch (error) {
     sendJson(res, 500, {

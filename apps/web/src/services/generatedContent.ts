@@ -1,5 +1,10 @@
 import { getSupabaseClient } from "./auth";
 import {
+  loadContentStudioLastKnownGoodCompatibilityBundle,
+  loadContentStudioLastKnownGoodCoreBundle,
+  loadContentStudioLastKnownGoodRows
+} from "./contentStudioLastKnownGood";
+import {
   hasMissingTemplateSlots,
   hasTemplateSlots,
   interpolateTemplateString,
@@ -8,6 +13,7 @@ import {
 import { generatedContentAliases } from "./generatedContentKeys";
 import { fallbackArchitectureV3DashboardPackageDestination } from "./fallbackArchitectureV3DashboardPackaging";
 import { selectLatestLiveServingDashboardRows } from "./fallbackArchitectureV3DashboardOverlay";
+import { isFallbackDashboardRecordAllowed } from "../content/fallbackArchitectureV3/dashboardExtensions";
 import { isReaderFacingCopy } from "../content/readerSafety";
 import {
   hasExactSkyArticleOwnerApproval,
@@ -1096,6 +1102,17 @@ function fallbackArchitectureV3DashboardVersionFromRows(rows: Pick<GeneratedCont
   }, 0);
 }
 
+function sortGeneratedRowsNewestFirst(rows: GeneratedContentRow[]) {
+  return [...rows].sort((first, second) => {
+    const firstUpdated = Date.parse(first.updated_at ?? "");
+    const secondUpdated = Date.parse(second.updated_at ?? "");
+    const firstVersion = Number.isFinite(firstUpdated) ? firstUpdated : 0;
+    const secondVersion = Number.isFinite(secondUpdated) ? secondUpdated : 0;
+    if (firstVersion !== secondVersion) return secondVersion - firstVersion;
+    return second.id.localeCompare(first.id);
+  });
+}
+
 export function clearCachedFallbackArchitectureV3Bundle() {
   if (typeof window === "undefined") {
     return;
@@ -1422,50 +1439,58 @@ export async function loadFallbackArchitectureV3DashboardBundle(): Promise<Fallb
   const supabase = await getSupabaseClient();
   const cached = readCachedFallbackArchitectureV3Bundle();
 
-  if (!supabase) return cached?.bundle ?? null;
+  if (!supabase) return cached?.bundle ?? await loadContentStudioLastKnownGoodCoreBundle();
 
-  const { data: versionRows, error: versionError } = await supabase
-    .from("generated_interpretations")
-    .select("updated_at")
-    .eq("provider", fallbackArchitectureV3Provider)
-    .eq("status", "LIVE")
-    .eq("lane", "serving")
-    .order("updated_at", { ascending: false })
-    .limit(1)
-    .returns<Array<Pick<GeneratedContentRow, "updated_at">>>();
+  const { data: runtimeRevision, error: runtimeRevisionError } = await supabase
+    .rpc("content_runtime_revision", { p_provider: fallbackArchitectureV3Provider });
+  let dashboardVersion = typeof runtimeRevision === "string" ? Date.parse(runtimeRevision) : 0;
 
-  if (versionError) {
-    console.warn("Fallback architecture V3 live overlay version failed to load; cached/local copy remains active.", versionError);
-    return cached?.bundle ?? null;
+  if (runtimeRevisionError || !Number.isFinite(dashboardVersion)) {
+    // Backward-compatible rollout path while the DB migration reaches an environment.
+    // This fallback cannot detect every demotion, so it is used only when the revision
+    // RPC is unavailable.
+    const { data: versionRows, error: versionError } = await supabase
+      .from("generated_interpretations")
+      .select("updated_at")
+      .eq("provider", fallbackArchitectureV3Provider)
+      .eq("status", "LIVE")
+      .eq("lane", "serving")
+      .order("updated_at", { ascending: false })
+      .limit(1)
+      .returns<Array<Pick<GeneratedContentRow, "updated_at">>>();
+    if (versionError) {
+      console.warn("Fallback architecture V3 live overlay version failed to load; nightly/cached/local copy remains active.", versionError);
+      return cached?.bundle ?? await loadContentStudioLastKnownGoodCoreBundle();
+    }
+    dashboardVersion = fallbackArchitectureV3DashboardVersionFromRows(versionRows ?? []);
   }
-
-  const dashboardVersion = fallbackArchitectureV3DashboardVersionFromRows(versionRows ?? []);
   if (cached && dashboardVersion && cached.version === dashboardVersion) return cached.bundle;
 
   const rows: GeneratedContentRow[] = [];
   const pageSize = 1000;
+  let cursorId: string | null = null;
 
   for (let page = 0; page < 10; page += 1) {
-    const from = page * pageSize;
-    const to = from + pageSize - 1;
-    const { data, error } = await supabase
+    let query = supabase
       .from("generated_interpretations")
       .select("id, content_key, surface, mode, status, lane, review_state, event_type, target_date, facts, source_snapshot, headline, summary, body, sections, block_type, flags, provider, judge_score, judge_gate, model, updated_at")
       .eq("provider", fallbackArchitectureV3Provider)
       .eq("status", "LIVE")
       .eq("lane", "serving")
-      .order("updated_at", { ascending: false })
-      .order("id", { ascending: false })
-      .range(from, to)
-      .returns<GeneratedContentRow[]>();
+      .order("id", { ascending: true })
+      .limit(pageSize);
+    if (cursorId) query = query.gt("id", cursorId);
+    const { data, error } = await query.returns<GeneratedContentRow[]>();
 
     if (error) {
-      console.warn("Fallback architecture V3 live overlay failed to load; cached/local copy remains active.", error);
-      return cached?.bundle ?? null;
+      console.warn("Fallback architecture V3 live overlay failed to load; nightly/cached/local copy remains active.", error);
+      return cached?.bundle ?? await loadContentStudioLastKnownGoodCoreBundle();
     }
 
     rows.push(...(data ?? []));
-    if (!data || data.length < pageSize) break;
+    const lastId = data?.at(-1)?.id ?? null;
+    if (!data || data.length < pageSize || !lastId) break;
+    cursorId = lastId;
   }
 
   let currentCoreManifest: FallbackArchitectureV3PackageManifest;
@@ -1477,9 +1502,15 @@ export async function loadFallbackArchitectureV3DashboardBundle(): Promise<Fallb
   }
 
   const currentCoreKeys = new Set(currentCoreManifest.keys.map((manifestKey) => {
-  const separatorIndex = manifestKey.indexOf(":");
-  return separatorIndex >= 0 ? manifestKey.slice(separatorIndex + 1) : manifestKey;
-}));
+    const separatorIndex = manifestKey.indexOf(":");
+    return separatorIndex >= 0 ? manifestKey.slice(separatorIndex + 1) : manifestKey;
+  }));
+  for (const row of rows) {
+    const extensionRecord = { ...packageRecord(row), contentKey: row.content_key };
+    if (isFallbackDashboardRecordAllowed(extensionRecord, currentCoreKeys)) {
+      currentCoreKeys.add(row.content_key);
+    }
+  }
   const overlayRows = selectLatestLiveServingDashboardRows(
     rows,
     currentCoreKeys,
@@ -1542,35 +1573,36 @@ export async function loadFallbackArchitectureV3DashboardBundle(): Promise<Fallb
 
 export async function loadFallbackArchitectureV3CompatibilityDashboardBundle(): Promise<FallbackArchitectureV3Bundle | null> {
   const supabase = await getSupabaseClient();
-  if (!supabase) return null;
+  if (!supabase) return loadContentStudioLastKnownGoodCompatibilityBundle();
 
   const rows: GeneratedContentRow[] = [];
   const pageSize = 1000;
+  let cursorId: string | null = null;
 
   for (let page = 0; page < 10; page += 1) {
-    const from = page * pageSize;
-    const to = from + pageSize - 1;
-    const { data, error } = await supabase
+    let query = supabase
       .from("generated_interpretations")
       .select("id, content_key, surface, mode, status, lane, review_state, event_type, target_date, facts, source_snapshot, headline, summary, body, sections, block_type, flags, provider, judge_score, judge_gate, model, updated_at")
       .like("content_key", "authored/compat-pair/%")
-      .order("updated_at", { ascending: false })
-      .order("id", { ascending: false })
-      .range(from, to)
-      .returns<GeneratedContentRow[]>();
+      .order("id", { ascending: true })
+      .limit(pageSize);
+    if (cursorId) query = query.gt("id", cursorId);
+    const { data, error } = await query.returns<GeneratedContentRow[]>();
 
     if (error) {
-      console.warn("Compatibility dashboard content failed to load; bundled relationship copy remains active.", error);
-      return null;
+      console.warn("Compatibility dashboard content failed to load; nightly/bundled relationship copy remains active.", error);
+      return loadContentStudioLastKnownGoodCompatibilityBundle();
     }
 
     rows.push(...(data ?? []));
-    if (!data || data.length < pageSize) break;
+    const lastId = data?.at(-1)?.id ?? null;
+    if (!data || data.length < pageSize || !lastId) break;
+    cursorId = lastId;
   }
 
   const seen = new Set<string>();
   const authoredCards: AuthoredCard[] = [];
-  for (const row of rows) {
+  for (const row of sortGeneratedRowsNewestFirst(rows)) {
     if (seen.has(row.content_key)) continue;
     seen.add(row.content_key);
     if (!row.provider || !isApprovedFallbackArchitectureV3Row(row, row.provider)) continue;
@@ -1613,17 +1645,17 @@ export async function loadFallbackArchitectureV3SkyPlacementDashboardBundle(): P
 
   const rows: GeneratedContentRow[] = [];
   const pageSize = 1000;
+  let cursorId: string | null = null;
 
   for (let page = 0; page < 10; page += 1) {
-    const from = page * pageSize;
-    const { data, error } = await supabase
+    let query = supabase
       .from("generated_interpretations")
       .select("id, content_key, surface, mode, status, lane, review_state, event_type, target_date, facts, source_snapshot, headline, summary, body, sections, block_type, flags, provider, judge_score, judge_gate, model, updated_at")
       .eq("provider", fallbackArchitectureV3SkyPlacementProvider)
-      .order("updated_at", { ascending: false })
-      .order("id", { ascending: false })
-      .range(from, from + pageSize - 1)
-      .returns<GeneratedContentRow[]>();
+      .order("id", { ascending: true })
+      .limit(pageSize);
+    if (cursorId) query = query.gt("id", cursorId);
+    const { data, error } = await query.returns<GeneratedContentRow[]>();
 
     if (error) {
       console.warn("Sky Placement dashboard partition failed to load; cached/local content remains active.", error);
@@ -1631,7 +1663,9 @@ export async function loadFallbackArchitectureV3SkyPlacementDashboardBundle(): P
     }
 
     rows.push(...(data ?? []));
-    if (!data || data.length < pageSize) break;
+    const lastId = data?.at(-1)?.id ?? null;
+    if (!data || data.length < pageSize || !lastId) break;
+    cursorId = lastId;
   }
 
   const approvedRows = rows.filter((row) => (
@@ -1777,6 +1811,32 @@ export function isGeneratedContentReaderBoundaryAllowed(row: GeneratedContentRea
   return false;
 }
 
+async function loadLastKnownGoodGeneratedContentForSurfaces(
+  requestedSurfaces: string[],
+  targetDate?: string,
+  previewMode: GeneratedContentPreviewMode = readGeneratedContentPreviewMode()
+) {
+  const includeSharedTransitFloor = requestedSurfaces.includes("sky");
+  const surfaces = new Set([
+    ...requestedSurfaces,
+    "modifier",
+    ...(includeSharedTransitFloor ? ["you"] : [])
+  ]);
+  const rows = (await loadContentStudioLastKnownGoodRows()) as GeneratedContentRow[];
+  const filtered = rows.filter((row) => {
+    if (!surfaces.has(row.surface)) return false;
+    if (!targetDate || requestedSurfaces.includes("sky")) return true;
+    return row.target_date === null || row.target_date === targetDate;
+  });
+  return generatedContentMapFromRows(sortGeneratedRowsNewestFirst(filtered), previewMode);
+}
+
+async function loadLastKnownGoodGeneratedContentForKeys(contentKeys: string[]) {
+  const keySet = new Set(contentKeys);
+  const rows = (await loadContentStudioLastKnownGoodRows()) as GeneratedContentRow[];
+  return generatedContentMapFromRows(sortGeneratedRowsNewestFirst(rows.filter((row) => keySet.has(row.content_key))));
+}
+
 export async function loadLiveGeneratedContentForSurfaces(
   requestedSurfaces: string[],
   targetDate?: string,
@@ -1785,7 +1845,7 @@ export async function loadLiveGeneratedContentForSurfaces(
   const supabase = await getSupabaseClient();
 
   if (!supabase) {
-    return new Map<string, LiveGeneratedContent>();
+    return loadLastKnownGoodGeneratedContentForSurfaces(requestedSurfaces, targetDate, previewMode);
   }
 
   const includeSharedTransitFloor = requestedSurfaces.includes("sky");
@@ -1796,10 +1856,9 @@ export async function loadLiveGeneratedContentForSurfaces(
   ]));
   const rows: GeneratedContentRow[] = [];
   const pageSize = 1000;
+  let cursorId: string | null = null;
 
   for (let page = 0; page < 10; page += 1) {
-    const from = page * pageSize;
-    const to = from + pageSize - 1;
     let query = supabase
       .from("generated_interpretations")
       .select(generatedContentSelect)
@@ -1807,9 +1866,10 @@ export async function loadLiveGeneratedContentForSurfaces(
       .eq("status", "LIVE")
       .eq("lane", "serving")
       .is("review_state", null)
-      .order("updated_at", { ascending: false })
-      .range(from, to);
+      .order("id", { ascending: true })
+      .limit(pageSize);
 
+    if (cursorId) query = query.gt("id", cursorId);
     if (targetDate && !requestedSurfaces.includes("sky")) {
       query = query.or(`target_date.is.null,target_date.eq.${targetDate}`);
     }
@@ -1817,18 +1877,17 @@ export async function loadLiveGeneratedContentForSurfaces(
     const { data, error } = await query.returns<GeneratedContentRow[]>();
 
     if (error) {
-      console.warn("Live generated content failed to load; unpublished content will remain hidden.", error);
-      return new Map<string, LiveGeneratedContent>();
+      console.warn("Live generated content failed to load; using the nightly reader-safe snapshot.", error);
+      return loadLastKnownGoodGeneratedContentForSurfaces(requestedSurfaces, targetDate, previewMode);
     }
 
     rows.push(...(data ?? []));
-
-    if (!data || data.length < pageSize) {
-      break;
-    }
+    const lastId = data?.at(-1)?.id ?? null;
+    if (!data || data.length < pageSize || !lastId) break;
+    cursorId = lastId;
   }
 
-  return generatedContentMapFromRows(rows, previewMode);
+  return generatedContentMapFromRows(sortGeneratedRowsNewestFirst(rows), previewMode);
 }
 
 export async function loadLiveGeneratedContentForKeys(contentKeys: string[]) {
@@ -1841,7 +1900,7 @@ export async function loadLiveGeneratedContentForKeys(contentKeys: string[]) {
   const supabase = await getSupabaseClient();
 
   if (!supabase) {
-    return new Map<string, LiveGeneratedContent>();
+    return loadLastKnownGoodGeneratedContentForKeys(keys);
   }
 
   const rows: GeneratedContentRow[] = [];
@@ -1860,8 +1919,8 @@ export async function loadLiveGeneratedContentForKeys(contentKeys: string[]) {
       .returns<GeneratedContentRow[]>();
 
     if (error) {
-      console.warn("Targeted generated content failed to load; unpublished content will remain hidden.", error);
-      return new Map<string, LiveGeneratedContent>();
+      console.warn("Targeted generated content failed to load; using the nightly reader-safe snapshot.", error);
+      return loadLastKnownGoodGeneratedContentForKeys(keys);
     }
 
     rows.push(...(data ?? []));
