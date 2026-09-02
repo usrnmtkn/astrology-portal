@@ -228,3 +228,36 @@
   width: 100%;
   z-index: 1;
 }
+
+/* Publishing/technical settings and Structured fields are sibling sections in
+   the editor markup. Keep each one in its own full-width grid row and undo the
+   legacy review-json styling that made Structured fields look nested inside the
+   publishing card. */
+.admin-dashboard .admin-editor-panel > .admin-post-editor > .admin-editor-settings,
+.admin-dashboard .admin-editor-panel > .admin-post-editor > .admin-review-json {
+  border: var(--border-width-thin) solid var(--admin-ui-border) !important;
+  border-radius: var(--admin-ui-radius-lg) !important;
+  grid-column: 1 / -1;
+  margin: 0 !important;
+  overflow: hidden;
+  padding: 0;
+  position: relative;
+  width: 100%;
+}
+
+.admin-dashboard .admin-editor-panel > .admin-post-editor > .admin-review-json > summary {
+  background: var(--admin-ui-surface-2);
+  cursor: pointer;
+  font-weight: 650;
+  margin: 0 !important;
+  padding: var(--admin-space-xl) var(--admin-space-2xl);
+}
+
+.admin-dashboard .admin-editor-panel > .admin-post-editor > .admin-review-json[open] > summary {
+  border-bottom: var(--border-width-thin) solid var(--admin-ui-border);
+}
+
+.admin-dashboard .admin-editor-panel > .admin-post-editor > .admin-review-json > pre {
+  margin: 0;
+  padding: var(--admin-space-2xl);
+}
