@@ -257,6 +257,7 @@
 }
 
 .admin-dashboard .admin-editor-panel > .admin-post-editor > .admin-editor-settings > summary,
+.admin-dashboard .admin-editor-panel > .admin-post-editor > .admin-editor-key-details > summary,
 .admin-dashboard .admin-editor-panel > .admin-post-editor > .admin-review-json > summary {
   background: var(--admin-ui-surface-2);
   cursor: pointer;
@@ -267,6 +268,7 @@
 }
 
 .admin-dashboard .admin-editor-panel > .admin-post-editor > .admin-editor-settings[open] > summary,
+.admin-dashboard .admin-editor-panel > .admin-post-editor > .admin-editor-key-details[open] > summary,
 .admin-dashboard .admin-editor-panel > .admin-post-editor > .admin-review-json[open] > summary {
   border-bottom: var(--border-width-thin) solid var(--admin-ui-border);
 }
@@ -274,6 +276,14 @@
 .admin-dashboard .admin-editor-panel > .admin-post-editor > .admin-editor-settings[open] > .admin-metadata-fields,
 .admin-dashboard .admin-editor-panel > .admin-post-editor > .admin-review-json[open] > pre {
   margin: 0 !important;
+  position: static !important;
+  width: 100%;
+}
+
+.admin-dashboard .admin-editor-panel > .admin-post-editor > .admin-editor-key-details[open] > .admin-title-field,
+.admin-dashboard .admin-editor-panel > .admin-post-editor > .admin-editor-key-details[open] > .admin-field-hint {
+  margin: 0 !important;
+  padding: var(--admin-space-2xl);
   position: static !important;
   width: 100%;
 }
