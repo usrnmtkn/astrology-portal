@@ -1,0 +1,47 @@
+name: Verify Transit to Natal Content Studio repair
+on:
+  push:
+    branches:
+      - chatgpt/fix-transit-natal-admin-friend-editor2
+permissions:
+  contents: write
+jobs:
+  repair:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      VITE_SUPABASE_URL: https://visual-smoke.supabase.test
+      VITE_SUPABASE_ANON_KEY: visual-smoke-placeholder
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: chatgpt/fix-transit-natal-admin-friend-editor2
+          fetch-depth: 0
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+      - name: Apply repair
+        run: python scripts/apply-transit-natal-admin-friend-editor-fix.py
+      - name: Install dependencies
+        run: npm ci
+      - name: Build astro knowledge prerequisite
+        run: npm run build -w @tldr/astro-knowledge
+      - name: Test Transit to Natal admin contract
+        run: node scripts/test-content-studio-transit-friend-editor.mjs
+      - name: Test Content Studio API roundtrip
+        run: node --import tsx scripts/test-content-studio-api-roundtrip.mjs
+      - name: Test transit Friend grammar
+        run: node --experimental-strip-types scripts/test-transit-friend-pronoun-grammar.mjs
+      - name: Build Content Studio admin
+        run: npm run build:admin
+      - name: Build reader app
+        run: npm run build -w @tldr/web
+      - name: Commit verified repair
+        run: |
+          git config user.name "ChatGPT"
+          git config user.email "chatgpt@users.noreply.github.com"
+          git rm .github/workflows/chatgpt-fix-transit-natal-admin-friend-editor-v2.yml scripts/apply-transit-natal-admin-friend-editor-fix.py
+          git add apps/admin/src/GeneratedContentAdminDashboard.tsx apps/admin/src/transitNatalSources.ts api/admin/generated-content.ts package.json scripts/test-content-studio-transit-friend-editor.mjs
+          git commit -m "fix: stabilize Transit to Natal Content Studio editing"
+          git push origin HEAD:chatgpt/fix-transit-natal-admin-friend-editor2
