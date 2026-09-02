@@ -1369,8 +1369,15 @@ async function fetchExistingRowById(id: string) {
   return Array.isArray(payload) ? payload[0] as ExistingGeneratedContentRow | undefined : undefined;
 }
 
-async function patchGeneratedContentRow(id: string, patch: Record<string, unknown>) {
-  const response = await adminStorageFetch(`${supabaseUrl()}/rest/v1/generated_interpretations?id=eq.${encodeURIComponent(id)}`, {
+async function patchGeneratedContentRow(
+  id: string,
+  patch: Record<string, unknown>,
+  expectedUpdatedAt?: string | null
+) {
+  const params = new URLSearchParams();
+  params.set("id", `eq.${id}`);
+  if (expectedUpdatedAt) params.set("updated_at", `eq.${expectedUpdatedAt}`);
+  const response = await adminStorageFetch(`${supabaseUrl()}/rest/v1/generated_interpretations?${params.toString()}`, {
     method: "PATCH",
     headers: {
       ...adminHeaders(),
@@ -1382,7 +1389,14 @@ async function patchGeneratedContentRow(id: string, patch: Record<string, unknow
   if (!response.ok) {
     throw new Error(`Supabase review update failed with ${response.status}: ${JSON.stringify(payload)}`);
   }
-  return payload as ExistingGeneratedContentRow[];
+  const rows = Array.isArray(payload) ? payload as ExistingGeneratedContentRow[] : [];
+  if (rows.length === 0) {
+    if (expectedUpdatedAt) {
+      throw new GeneratedContentRequestError("This content changed before the update completed. Reload the row before saving so a newer edit is not overwritten.", 409);
+    }
+    throw new GeneratedContentRequestError("Content row was not found.", 404);
+  }
+  return rows;
 }
 
 async function upsertGeneratedContentRow(row: Record<string, unknown>) {
@@ -1650,14 +1664,20 @@ async function updateGeneratedContent(req: IncomingMessage) {
     promotionPatch.sections = finalSections;
     promotionPatch.reviewed_at = now;
     promotionPatch.published_at = now;
-    const published = await patchGeneratedContentRow(target.id, promotionPatch);
+    let revisionExpectedUpdatedAt = body.expectedUpdatedAt ?? existing.updated_at ?? null;
+    if (target.id !== existing.id && body.expectedUpdatedAt) {
+      const claimedAt = new Date().toISOString();
+      await patchGeneratedContentRow(existing.id, { updated_at: claimedAt }, body.expectedUpdatedAt);
+      revisionExpectedUpdatedAt = claimedAt;
+    }
+    const published = await patchGeneratedContentRow(target.id, promotionPatch, target.updated_at);
     if (target.id !== existing.id) {
       await patchGeneratedContentRow(existing.id, {
         status: "ARCHIVED",
         lane: "reference",
         review_state: "published-revision",
         updated_at: now
-      });
+      }, revisionExpectedUpdatedAt);
     }
     return published;
   }
@@ -1705,7 +1725,7 @@ async function updateGeneratedContent(req: IncomingMessage) {
     };
 
     if (existing.status !== "LIVE") {
-      return patchGeneratedContentRow(existing.id, revisionPatch);
+      return patchGeneratedContentRow(existing.id, revisionPatch, body.expectedUpdatedAt);
     }
 
     return upsertGeneratedContentRow({
@@ -1736,6 +1756,12 @@ async function updateGeneratedContent(req: IncomingMessage) {
     );
     const targetRowId = stringFrom(existing.source_snapshot?.targetRowId);
     if (!targetRowId) throw new Error("Sky article revision is missing its live target row.");
+    let revisionExpectedUpdatedAt = body.expectedUpdatedAt ?? existing.updated_at ?? null;
+    if (body.expectedUpdatedAt) {
+      const claimedAt = new Date().toISOString();
+      await patchGeneratedContentRow(existing.id, { updated_at: claimedAt }, body.expectedUpdatedAt);
+      revisionExpectedUpdatedAt = claimedAt;
+    }
     const target = await fetchExistingRowById(targetRowId);
     if (!target || target.event_type !== "sky-article-edition") {
       throw new Error("The live Sky article targeted by this revision no longer exists.");
@@ -1773,13 +1799,13 @@ async function updateGeneratedContent(req: IncomingMessage) {
       reviewed_at: now,
       published_at: now,
       updated_at: now
-    });
+    }, target.updated_at);
     await patchGeneratedContentRow(existing.id, {
       status: "ARCHIVED",
       lane: "reference",
       review_state: "published-revision",
       updated_at: now
-    });
+    }, revisionExpectedUpdatedAt);
     return published;
   }
 
@@ -2062,7 +2088,10 @@ async function updateGeneratedContent(req: IncomingMessage) {
     });
   }
 
-  const response = await adminStorageFetch(`${supabaseUrl()}/rest/v1/generated_interpretations?id=eq.${encodeURIComponent(body.id)}`, {
+  const updateParams = new URLSearchParams();
+  updateParams.set("id", `eq.${body.id}`);
+  if (body.expectedUpdatedAt) updateParams.set("updated_at", `eq.${body.expectedUpdatedAt}`);
+  const response = await adminStorageFetch(`${supabaseUrl()}/rest/v1/generated_interpretations?${updateParams.toString()}`, {
     method: "PATCH",
     headers: {
       ...adminHeaders(),
@@ -2075,8 +2104,15 @@ async function updateGeneratedContent(req: IncomingMessage) {
   if (!response.ok) {
     throw new Error(`Supabase review update failed with ${response.status}: ${JSON.stringify(payload)}`);
   }
+  const updatedRows = Array.isArray(payload) ? payload : [];
+  if (updatedRows.length === 0) {
+    if (body.expectedUpdatedAt) {
+      throw new GeneratedContentRequestError("This content changed before the update completed. Reload the row before saving so a newer edit is not overwritten.", 409);
+    }
+    throw new GeneratedContentRequestError("Content row was not found.", 404);
+  }
 
-  return payload;
+  return updatedRows;
 }
 
 async function deleteGeneratedContent(req: IncomingMessage) {
@@ -2099,7 +2135,11 @@ async function deleteGeneratedContent(req: IncomingMessage) {
     throw new GeneratedContentRequestError("This content changed after it was selected for deletion. Reload before deleting it.", 409);
   }
 
-  const response = await adminStorageFetch(`${supabaseUrl()}/rest/v1/generated_interpretations?id=eq.${encodeURIComponent(id)}`, {
+  const deleteParams = new URLSearchParams();
+  deleteParams.set("id", `eq.${id}`);
+  deleteParams.set("status", "neq.LIVE");
+  if (expectedUpdatedAt) deleteParams.set("updated_at", `eq.${expectedUpdatedAt}`);
+  const response = await adminStorageFetch(`${supabaseUrl()}/rest/v1/generated_interpretations?${deleteParams.toString()}`, {
     method: "DELETE",
     headers: {
       ...adminHeaders(),
@@ -2111,8 +2151,12 @@ async function deleteGeneratedContent(req: IncomingMessage) {
   if (!response.ok) {
     throw new Error(`Supabase delete failed with ${response.status}: ${JSON.stringify(payload)}`);
   }
+  const deletedRows = Array.isArray(payload) ? payload : [];
+  if (deletedRows.length === 0) {
+    throw new GeneratedContentRequestError("This content changed, was already deleted, or became published before deletion completed. Reload before trying again.", 409);
+  }
 
-  return payload;
+  return deletedRows;
 }
 
 export default async function handler(req: IncomingMessage, res: ServerResponse) {
