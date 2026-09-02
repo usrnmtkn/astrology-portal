@@ -216,13 +216,14 @@
   min-height: 0;
   overflow-y: auto;
   overscroll-behavior: contain;
-  padding-bottom: var(--admin-space-8xl);
-  scroll-padding-bottom: var(--admin-space-8xl);
+  padding-bottom: calc(var(--admin-space-10xl) + var(--admin-space-4xl));
+  scroll-padding-bottom: calc(var(--admin-space-10xl) + var(--admin-space-4xl));
 }
 
 .admin-dashboard .admin-editor-panel > .admin-editor-savebar {
   bottom: auto !important;
   flex: 0 0 auto;
+  margin-top: var(--admin-space-xl);
   position: relative !important;
   width: 100%;
   z-index: 1;
