@@ -1,0 +1,163 @@
+name: Temporary natal motion finalize
+
+on:
+  push:
+    branches:
+      - chatgpt/natal-motion-repair-final
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  finalize:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Install dependencies
+        run: npm ci
+      - name: Apply clean repair on current main
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch origin chatgpt/natal-motion-aware-exact-copy:refs/remotes/origin/chatgpt/natal-motion-aware-exact-copy
+
+          for file in \
+            apps/admin/src/natalPlacementSources.ts \
+            apps/admin/src/NatalPlacementReaderPreview.tsx \
+            apps/web/src/content/canonicalContent/natalAdapter.ts \
+            scripts/test-admin-natal-placement-sources.mjs \
+            scripts/test-canonical-natal-retrograde-delegation.mjs \
+            scripts/test-natal-placement-motion-exact-routing.mjs
+          do
+            git show "origin/chatgpt/natal-motion-aware-exact-copy:${file}" > "${file}"
+          done
+
+          node <<'NODE'
+          const fs = require('node:fs');
+
+          function replaceOnce(file, before, after) {
+            const source = fs.readFileSync(file, 'utf8');
+            if (!source.includes(before)) throw new Error(`Expected block not found in ${file}`);
+            fs.writeFileSync(file, source.replace(before, after));
+          }
+
+          function replaceStatement(file, startText, after) {
+            const source = fs.readFileSync(file, 'utf8');
+            const start = source.indexOf(startText);
+            if (start < 0) throw new Error(`Expected statement start not found in ${file}`);
+            const semicolon = source.indexOf(';', start);
+            if (semicolon < 0) throw new Error(`Expected statement end not found in ${file}`);
+            fs.writeFileSync(file, source.slice(0, start) + after + source.slice(semicolon + 1));
+          }
+
+          const nodeFile = 'apps/web/src/content/fallbackArchitectureV3/resolver/renderFallback.mjs';
+          replaceOnce(
+            nodeFile,
+            'export function renderNatalPlacement(facts, opts = {}) {',
+            `export function natalPlacementMotionExactKey(facts) {
+            if (!facts?.house) return null;
+            const directKey = \`fallback-hook/natal-you-placement-complete-final/\${facts.planet}/\${facts.sign}/\${facts.house}\`;
+            return facts.isRetrograde ? \`\${directKey}/retrograde\` : directKey;
+          }
+
+          export function renderNatalPlacement(facts, opts = {}) {`
+          );
+          replaceStatement(
+            nodeFile,
+            '  const exactCompleteLived = house',
+            `  const exactCompleteKey = natalPlacementMotionExactKey(facts);
+            const exactCompleteLived = exactCompleteKey
+              ? getReaderLivedRow(exactCompleteKey, voice, { allowUnreviewed })
+              : null;`
+          );
+
+          const browserFile = 'apps/web/src/content/fallbackArchitectureV3/resolver/renderFallback.browser.ts';
+          replaceOnce(
+            browserFile,
+            'export function createFallbackRenderer(templatesFile: TemplatesFile, rowsFile: RowsFile) {',
+            `export function natalPlacementMotionExactKey(facts: PlacementFacts): string | null {
+            if (!facts.house) return null;
+            const directKey = \`fallback-hook/natal-you-placement-complete-final/\${facts.planet}/\${facts.sign}/\${facts.house}\`;
+            return facts.isRetrograde ? \`\${directKey}/retrograde\` : directKey;
+          }
+
+          export function createFallbackRenderer(templatesFile: TemplatesFile, rowsFile: RowsFile) {`
+          );
+          replaceStatement(
+            browserFile,
+            '    const exactCompleteLived = house',
+            `    const exactCompleteKey = natalPlacementMotionExactKey(facts);
+            const exactCompleteLived = exactCompleteKey
+              ? getReaderLivedRow(exactCompleteKey, voice, opts)
+              : null;`
+          );
+
+          const oldVersion = 'v3-2026-09-01a';
+          const newVersion = 'v3-2026-09-02a';
+          for (const file of [
+            'apps/web/src/content/fallbackArchitectureV3/resolver/index.browser.ts',
+            'scripts/test-empty-house-refinement.mjs',
+            'scripts/test-fallback-refresh-wiring.mjs',
+            'scripts/test-fallback-package-cache-contract.mjs'
+          ]) {
+            const source = fs.readFileSync(file, 'utf8');
+            if (!source.includes(oldVersion)) throw new Error(`Pinned package version not found in ${file}`);
+            fs.writeFileSync(file, source.replaceAll(oldVersion, newVersion));
+          }
+          NODE
+
+          rm -f .github/workflows/temporary-natal-motion-finalize.yml
+      - name: Build knowledge prerequisite
+        run: npm run build -w @tldr/astro-knowledge
+      - name: Rebuild shipped fallback package
+        run: |
+          ./node_modules/.bin/esbuild \
+            apps/web/src/content/fallbackArchitectureV3/resolver/index.browser.ts \
+            --bundle \
+            --format=esm \
+            --outfile=apps/web/src/content/fallbackArchitectureV3/dist/tldr-content.js
+          npm run build:fallback-manifest
+          (cd apps/web/src/content/fallbackArchitectureV3 && node admin/build-content-book.mjs)
+      - name: Run natal motion repair tests
+        run: |
+          node --experimental-strip-types scripts/test-natal-placement-motion-exact-routing.mjs
+          node --experimental-strip-types scripts/test-admin-natal-placement-sources.mjs
+          node --import tsx scripts/test-admin-natal-placement-preview-api.mjs
+          node --experimental-strip-types scripts/test-natal-placement-sign-house-composition.mjs
+          node --experimental-strip-types scripts/test-canonical-natal-adapter.mjs
+          node --experimental-strip-types scripts/test-canonical-natal-retrograde-delegation.mjs
+          node scripts/test-fallback-package-cache-contract.mjs
+          node scripts/test-fallback-refresh-wiring.mjs
+      - name: Run build gates
+        run: |
+          npm run typecheck
+          npm run build:web
+          npm run build:admin
+      - name: Verify branch diff is repair-only
+        shell: bash
+        run: |
+          set -euo pipefail
+          git diff --name-only origin/main...HEAD || true
+          test ! -e .github/workflows/temporary-natal-motion-finalize.yml
+          test ! -e apps/web/src/content/fallbackArchitectureV3/dist/tldr-content-base.js
+      - name: Commit finalized repair
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "No repair changes to commit."
+            exit 1
+          fi
+          git commit -m "fix(content): isolate natal direct and retrograde exact copy"
+          git push origin HEAD:chatgpt/natal-motion-repair-final
