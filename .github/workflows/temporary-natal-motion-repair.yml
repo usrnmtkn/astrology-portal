@@ -117,6 +117,7 @@ jobs:
 
           git show origin/main:apps/web/src/content/fallbackArchitectureV3/resolver/index.browser.ts > /tmp/index.browser.ts
           sed 's/v3-2026-09-01a/v3-2026-09-02a/g' /tmp/index.browser.ts > apps/web/src/content/fallbackArchitectureV3/resolver/index.browser.ts
+          sed -i 's#resolver/index.browser.ts#resolver/renderFallback.browser.ts#' scripts/test-natal-exact-copy-routing.mjs
           rm -f apps/web/src/content/fallbackArchitectureV3/dist/tldr-content-base.js
           rm -f .github/workflows/temporary-natal-motion-repair.yml
       - name: Rebuild shipped fallback package
@@ -135,9 +136,11 @@ jobs:
           node --experimental-strip-types scripts/test-canonical-natal-adapter.mjs
           node --experimental-strip-types scripts/test-canonical-natal-retrograde-delegation.mjs
           node scripts/test-natal-placement-motion-exact-routing.mjs
-      - name: Run build gates
+      - name: Run full gates
         run: |
+          npm run test:content
           npm run typecheck
+          npm run build:web
           npm run build:admin
       - name: Commit regenerated repair
         shell: bash
