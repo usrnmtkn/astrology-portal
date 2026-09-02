@@ -1,6 +1,7 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { createRequire } from "node:module";
 import { isContentAdminAuthorized } from "../_lib/admin-auth.js";
+import { AdminHttpError, readAdminJsonBody, sendAdminJson, sendAdminMethodNotAllowed } from "../_lib/admin-http.js";
 import { loadLocalWebEnv } from "../_lib/local-env.js";
 // The canonical stage resolver is shared by Content Studio and the future serving promotion.
 // @ts-ignore The governed JavaScript resolver intentionally has no declaration file.
@@ -17,25 +18,6 @@ const corpus = require("../../apps/web/src/content/fallbackArchitectureV3/author
 const governedAspectCorpus = require("../../apps/web/src/content/fallbackArchitectureV3/source-rows/sky-aspect-phrasebook-v1.json");
 const calendarAspectDrafts = require("../../apps/web/src/content/fallbackArchitectureV3/authored-inputs/calendar-aspect-consequence-first-drafts-v1.json");
 const composedCalendarCards = require("../../packages/astro-knowledge/data/sky-calendar/composed-cards-v1.json");
-
-function sendJson(res: ServerResponse, status: number, body: unknown) {
-  res.statusCode = status;
-  res.setHeader("content-type", "application/json");
-  res.setHeader("cache-control", "private, no-store");
-  res.end(JSON.stringify(body));
-}
-
-async function readJsonBody(req: IncomingMessage) {
-  const chunks: Buffer[] = [];
-  let size = 0;
-  for await (const chunk of req) {
-    const bytes = Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk);
-    size += bytes.length;
-    if (size > 1_000_000) throw new Error("Preview request is too large.");
-    chunks.push(bytes);
-  }
-  return JSON.parse(Buffer.concat(chunks).toString("utf8")) as unknown;
-}
 
 function calendarAspectDraftForKey(contentKey: string) {
   return Array.isArray(calendarAspectDrafts.drafts)
@@ -109,23 +91,24 @@ export function normalizeSkyV4PreviewInput(value: unknown) {
 
 export default async function handler(req: IncomingMessage, res: ServerResponse) {
   if (!await isContentAdminAuthorized(req)) {
-    sendJson(res, 401, { ok: false, error: "Unauthorized." });
+    sendAdminJson(res, 401, { ok: false, error: "Unauthorized." });
     return;
   }
   if (req.method !== "POST") {
-    sendJson(res, 405, { ok: false, error: "Use POST." });
+    sendAdminMethodNotAllowed(res, ["POST"]);
     return;
   }
   try {
-    const input = normalizeSkyV4PreviewInput(await readJsonBody(req));
+    const input = normalizeSkyV4PreviewInput(await readAdminJsonBody<unknown>(req, 1_000_000));
     const rendered = input.calendarAspectSource
       ? renderCalendarAspectStudioPreview(input.calendarAspectSource, {
           body: typeof input.draftFields.Body === "string" ? input.draftFields.Body : input.calendarAspectSource.Body,
           dateLine: input.dateLine
         })
       : renderSkyV4StudioPreview(corpus, input);
-    sendJson(res, 200, { ok: true, rendered });
+    sendAdminJson(res, 200, { ok: true, rendered });
   } catch (error) {
-    sendJson(res, 400, { ok: false, error: error instanceof Error ? error.message : "The SKY V4 preview could not be assembled." });
+    const status = error instanceof AdminHttpError ? error.statusCode : 400;
+    sendAdminJson(res, status, { ok: false, error: error instanceof Error ? error.message : "The SKY V4 preview could not be assembled." });
   }
 }

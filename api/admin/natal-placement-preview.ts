@@ -4,6 +4,7 @@ import { createRequire } from "node:module";
 // @ts-ignore The generated JavaScript bundle intentionally has no declaration file.
 import { createFallbackRenderer } from "../../apps/web/src/content/fallbackArchitectureV3/dist/tldr-content.js";
 import { isContentAdminAuthorized } from "../_lib/admin-auth.js";
+import { AdminHttpError, readAdminJsonBody, sendAdminJson, sendAdminMethodNotAllowed } from "../_lib/admin-http.js";
 import { loadLocalWebEnv } from "../_lib/local-env.js";
 import { isFallbackDashboardRecordAllowed } from "../../apps/web/src/content/fallbackArchitectureV3/dashboardExtensions.js";
 
@@ -59,25 +60,6 @@ const currentPackageKeys = new Set(bundledManifest.keys.map((key) => {
   const separator = key.indexOf(":");
   return separator >= 0 ? key.slice(separator + 1) : key;
 }));
-
-function sendJson(res: ServerResponse, status: number, body: unknown) {
-  res.statusCode = status;
-  res.setHeader("content-type", "application/json");
-  res.setHeader("cache-control", "private, no-store");
-  res.end(JSON.stringify(body));
-}
-
-async function readJsonBody(req: IncomingMessage) {
-  const chunks: Buffer[] = [];
-  let size = 0;
-  for await (const chunk of req) {
-    const bytes = Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk);
-    size += bytes.length;
-    if (size > 512_000) throw new Error("Preview request is too large.");
-    chunks.push(bytes);
-  }
-  return JSON.parse(Buffer.concat(chunks).toString("utf8")) as unknown;
-}
 
 function normalizeOverrideCandidate(value: unknown): PreviewOverrideCandidate | null {
   if (!value || typeof value !== "object" || Array.isArray(value)) return null;
@@ -227,17 +209,18 @@ export function renderNatalPlacementPreview(input: ReturnType<typeof normalizeNa
 
 export default async function handler(req: IncomingMessage, res: ServerResponse) {
   if (!await isContentAdminAuthorized(req)) {
-    sendJson(res, 401, { ok: false, error: "Unauthorized." });
+    sendAdminJson(res, 401, { ok: false, error: "Unauthorized." });
     return;
   }
   if (req.method !== "POST") {
-    sendJson(res, 405, { ok: false, error: "Use POST." });
+    sendAdminMethodNotAllowed(res, ["POST"]);
     return;
   }
   try {
-    const state = renderNatalPlacementPreviewState(normalizeNatalPlacementPreviewInput(await readJsonBody(req)));
-    sendJson(res, 200, { ok: true, ...state });
+    const state = renderNatalPlacementPreviewState(normalizeNatalPlacementPreviewInput(await readAdminJsonBody<unknown>(req, 512_000)));
+    sendAdminJson(res, 200, { ok: true, ...state });
   } catch (error) {
-    sendJson(res, 400, { ok: false, error: error instanceof Error ? error.message : "The reader preview could not be assembled." });
+    const status = error instanceof AdminHttpError ? error.statusCode : 400;
+    sendAdminJson(res, status, { ok: false, error: error instanceof Error ? error.message : "The reader preview could not be assembled." });
   }
 }
