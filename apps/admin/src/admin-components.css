@@ -232,7 +232,7 @@
   margin-top: var(--admin-space-xl);
   position: relative !important;
   width: 100%;
-  z-index: 1;
+  z-index: auto !important;
 }
 
 /* These are independent sibling cards. Keep the native details containers in
