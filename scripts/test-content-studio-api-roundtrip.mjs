@@ -337,6 +337,59 @@ assert.equal(recoveredApprovedNatalAspect.status, 200);
 assert.equal(recoveredApprovedNatalAspect.payload.rows[0].status, "LIVE", "An approved package row stuck in Draft must recover on Save & publish.");
 assert.equal(recoveredApprovedNatalAspect.payload.rows[0].sections.packageRecord.body_they, "{{Name}} receives older saved friend-view copy.");
 
+const packageRegressionBaseline = structuredClone(row);
+const placeholderTransitContentKey = "authored/transit-aspect/venus/moon/hard";
+const placeholderOriginalBody = "The affection comes out as management. Venus {{aspectWord}} your Moon until {{untilDate}} stays high on feeling.";
+const placeholderRevisedBody = "A partner may feel smothered instead of loved. Venus {{aspectWord}} your Moon until {{untilDate}} runs high on feeling and low on discussion.";
+row = {
+  ...row,
+  id: "qa-transit-aspect-placeholder-package-revision",
+  content_key: placeholderTransitContentKey,
+  surface: "you",
+  mode: "feed",
+  status: "LIVE",
+  lane: "serving",
+  review_state: null,
+  body: placeholderOriginalBody,
+  provider: "tldrastro-fallback-architecture-v3",
+  sections: {
+    body_you: placeholderOriginalBody,
+    packageRecord: {
+      contentKey: placeholderTransitContentKey,
+      content_role: "full_copy",
+      body_you: placeholderOriginalBody,
+      review_status: "approved"
+    },
+    packageDraft: {
+      contentKey: placeholderTransitContentKey,
+      content_role: "full_copy",
+      body_you: placeholderRevisedBody,
+      review_status: "approved"
+    }
+  },
+  facts: { fallbackArchitectureV3: true, content_role: "full_copy", review_status: "approved" },
+  source_snapshot: {
+    sourcePackage: "tldrastro-fallback-architecture-v3",
+    content_role: "full_copy",
+    review_status: "approved"
+  }
+};
+const savedPlaceholderTransitRevision = await invokeApi("PATCH", "/api/admin/generated-content", {
+  id: row.id,
+  headline: row.headline,
+  summary: row.summary,
+  body: placeholderRevisedBody,
+  sections: row.sections,
+  facts: row.facts,
+  sourceSnapshot: row.source_snapshot,
+  reviewStatus: "needs_review"
+});
+assert.equal(savedPlaceholderTransitRevision.status, 200, "A body_you-only transit row must accept its existing placeholders when saving a revision.");
+assert.equal(savedPlaceholderTransitRevision.payload.rows[0].status, "DRAFT");
+assert.equal(savedPlaceholderTransitRevision.payload.rows[0].lane, "reference");
+assert.equal(savedPlaceholderTransitRevision.payload.rows[0].sections.packageDraft.body_you, placeholderRevisedBody);
+row = packageRegressionBaseline;
+
 const installedPackageRecord = {
   ...row.sections.packageRecord,
   studio_editable_fields: [
