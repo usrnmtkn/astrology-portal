@@ -10,7 +10,6 @@ permissions:
 
 jobs:
   apply-fix:
-    if: github.event.head_commit.message == 'chore: stage Content Studio navigation fix'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -18,8 +17,8 @@ jobs:
           ref: chatgpt/fix-content-studio-nav-loading
           fetch-depth: 0
       - name: Patch navigation guard
-        shell: python
         run: |
+          python - <<'PY'
           from pathlib import Path
 
           path = Path('apps/admin/src/GeneratedContentAdminDashboard.tsx')
@@ -37,6 +36,7 @@ jobs:
           if old not in text:
               raise SystemExit('Expected closeEditor guard was not found; refusing to patch.')
           path.write_text(text.replace(old, new, 1))
+          PY
       - name: Remove temporary workflow and commit fix
         run: |
           git config user.name "ChatGPT"
