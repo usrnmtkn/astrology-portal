@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import {
+  natalPlacementExactKey,
   natalPlacementLabel,
   natalPlacementSelectionFromText,
   natalPlacementSourceGroups
@@ -22,6 +23,15 @@ assert.deepEqual(
   { planet: "mercury", sign: "virgo", house: "6", motion: "retrograde" }
 );
 
+assert.equal(
+  natalPlacementExactKey("jupiter", "leo", "3", "direct"),
+  "fallback-hook/natal-you-placement-complete-final/jupiter/leo/3"
+);
+assert.equal(
+  natalPlacementExactKey("jupiter", "leo", "3", "retrograde"),
+  "fallback-hook/natal-you-placement-complete-final/jupiter/leo/3/retrograde"
+);
+
 const groups = natalPlacementSourceGroups("chiron", "taurus", "12");
 assert.deepEqual(groups.map((group) => group.key), ["exact", "sign", "house", "structure"]);
 
@@ -32,9 +42,13 @@ assert.ok(signOnlyGroups.flatMap((group) => group.sources).some((source) => sour
 assert.ok(signOnlyGroups.flatMap((group) => group.sources).every((source) => !source.key.includes("house") && !source.key.includes("complete-final")));
 
 const retrogradeGroups = natalPlacementSourceGroups("mercury", "virgo", "6", "retrograde");
+const retrogradeSources = retrogradeGroups.flatMap((group) => group.sources);
 assert.deepEqual(retrogradeGroups.map((group) => group.key), ["exact", "sign", "motion", "house", "structure"]);
-assert.ok(retrogradeGroups.flatMap((group) => group.sources).some((source) => source.key === "fallback-template/natal.modifier.retrograde"));
+assert.ok(retrogradeSources.some((source) => source.key === "fallback-template/natal.modifier.retrograde"));
+assert.ok(retrogradeSources.some((source) => source.key === "fallback-hook/natal-you-placement-complete-final/mercury/virgo/6/retrograde"));
+assert.ok(!retrogradeSources.some((source) => source.key === "fallback-hook/natal-you-placement-complete-final/mercury/virgo/6"));
 assert.match(retrogradeGroups.find((group) => group.key === "motion")?.description ?? "", /calculated fact/u);
+assert.match(retrogradeGroups.find((group) => group.key === "exact")?.description ?? "", /stored separately/u);
 
 const sources = groups.flatMap((group) => group.sources);
 assert.equal(sources.length, 12);
@@ -116,7 +130,7 @@ const mercuryVirgoSixthRetrograde = renderNatalPlacement({
 assert.match(
   mercuryVirgoSixthRetrograde.body,
   /retrograde in the birth chart/u,
-  "Exact sign and house passages must retain the calculated retrograde modifier."
+  "Composed natal placements must retain the calculated retrograde modifier."
 );
 
-console.log("Natal placement source finder maps optional overrides and renders effective You/Friend reader copy with source provenance.");
+console.log("Natal placement source finder maps motion-specific optional overrides and renders effective You/Friend reader copy with source provenance.");
