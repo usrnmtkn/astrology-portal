@@ -1,0 +1,47 @@
+name: Apply Content Studio navigation fix
+
+on:
+  push:
+    branches:
+      - chatgpt/fix-content-studio-nav-loading
+
+permissions:
+  contents: write
+
+jobs:
+  apply-fix:
+    if: github.event.head_commit.message == 'chore: stage Content Studio navigation fix'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: chatgpt/fix-content-studio-nav-loading
+          fetch-depth: 0
+      - name: Patch navigation guard
+        shell: python
+        run: |
+          from pathlib import Path
+
+          path = Path('apps/admin/src/GeneratedContentAdminDashboard.tsx')
+          text = path.read_text()
+          old = '''  function closeEditor() {
+            if (isLoading) return false;
+            const persistedDraft = selectedRow ? draftFromRow(selectedRow) : null;
+          '''
+          new = '''  function closeEditor() {
+            const hasOpenEditor = Boolean(draft || selectedRowId || dailyGlancePairSelector);
+            if (!hasOpenEditor) return true;
+            if (isLoading) return false;
+            const persistedDraft = selectedRow ? draftFromRow(selectedRow) : null;
+          '''
+          if old not in text:
+              raise SystemExit('Expected closeEditor guard was not found; refusing to patch.')
+          path.write_text(text.replace(old, new, 1))
+      - name: Remove temporary workflow and commit fix
+        run: |
+          git config user.name "ChatGPT"
+          git config user.email "chatgpt@users.noreply.github.com"
+          git rm .github/workflows/chatgpt-apply-content-studio-nav-fix.yml
+          git add apps/admin/src/GeneratedContentAdminDashboard.tsx
+          git commit -m "fix(admin): allow navigation during background loading"
+          git push origin HEAD:chatgpt/fix-content-studio-nav-loading
