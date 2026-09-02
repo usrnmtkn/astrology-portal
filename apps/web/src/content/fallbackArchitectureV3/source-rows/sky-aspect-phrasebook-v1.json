@@ -844,289 +844,337 @@
       "contentKey": "fallback-hook/sky-aspect-sign/venus/aries/square/saturn/cancer",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "Venus in Aries square Saturn in Cancer brings open affection up against worries people may not be ready to discuss. Someone may say exactly how they feel and expect a clear answer, while the other person is thinking about family, privacy, or what the decision could disrupt at home. Someone may be honest about how they feel, then start to regret it when the answer takes longer than expected.",
-      "body_they": "Venus in Aries square Saturn in Cancer brings open affection up against worries people may not be ready to discuss. Someone may say exactly how they feel and expect a clear answer, while the other person is thinking about family, privacy, or what the decision could disrupt at home. Someone may be honest about how they feel, then start to regret it when the answer takes longer than expected.",
-      "review_status": "reviewed",
+      "body_you": "Someone may say what they want and then get a slower or more cautious response than they expected. Venus in Aries square Saturn in Cancer can make direct affection run into family needs, privacy, or worries about what a decision would change at home. The risk is treating the delay as rejection before the other person has had time to answer. Ask what is actually holding up the response.",
+      "body_they": "Someone may say what they want and then get a slower or more cautious response than they expected. Venus in Aries square Saturn in Cancer can make direct affection run into family needs, privacy, or worries about what a decision would change at home. The risk is treating the delay as rejection before the other person has had time to answer. Ask what is actually holding up the response.",
+      "review_status": "approved",
       "source_keys": [
-        "sky-aspect phrasebook (ChatGPT-drafted from house vocab + Jansky/Hand, owner-reviewed)"
+        "sky-aspect phrasebook (ChatGPT-drafted from house vocab + Jansky/Hand, owner-reviewed)",
+        "packages/astro-knowledge/review/sky-calendar-composed-first-glance-2026-08-31/batch-2a-venus-saturn-squares-owner-approval.json",
+        "packages/astro-knowledge/review/sky-calendar-composed-first-glance-2026-08-31/batch-2a-venus-saturn-squares-serving-release.json"
       ],
-      "note": "sky aspect sign-specific (planet-in-sign aspect planet-in-sign); reviewed"
+      "note": "sky aspect sign-specific; exact owner-approved 2026-09-01; serving release authorized 2026-09-01"
     },
     {
       "contentKey": "fallback-hook/sky-aspect-sign/venus/aries/square/saturn/capricorn",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "Venus in Aries square Saturn in Capricorn brings immediate desire up against a responsibility that was in place long before the moment arrived. Someone may want an answer now, while the other person is looking at a deadline, a work obligation, or a promise they cannot break. The feeling may be clear. The schedule may still have no room for it.",
-      "body_they": "Venus in Aries square Saturn in Capricorn brings immediate desire up against a responsibility that was in place long before the moment arrived. Someone may want an answer now, while the other person is looking at a deadline, a work obligation, or a promise they cannot break. The feeling may be clear. The schedule may still have no room for it.",
-      "review_status": "reviewed",
+      "body_you": "Someone may want an answer now, but work, a deadline, or an existing commitment may leave no room for it. Venus in Aries square Saturn in Capricorn puts immediate desire against responsibilities that were already in place. The risk is making the delay personal when the limit is practical. Get clear on what can happen now and what has to wait.",
+      "body_they": "Someone may want an answer now, but work, a deadline, or an existing commitment may leave no room for it. Venus in Aries square Saturn in Capricorn puts immediate desire against responsibilities that were already in place. The risk is making the delay personal when the limit is practical. Get clear on what can happen now and what has to wait.",
+      "review_status": "approved",
       "source_keys": [
-        "sky-aspect phrasebook (ChatGPT-drafted from house vocab + Jansky/Hand, owner-reviewed)"
+        "sky-aspect phrasebook (ChatGPT-drafted from house vocab + Jansky/Hand, owner-reviewed)",
+        "packages/astro-knowledge/review/sky-calendar-composed-first-glance-2026-08-31/batch-2a-venus-saturn-squares-owner-approval.json",
+        "packages/astro-knowledge/review/sky-calendar-composed-first-glance-2026-08-31/batch-2a-venus-saturn-squares-serving-release.json"
       ],
-      "note": "sky aspect sign-specific (planet-in-sign aspect planet-in-sign); reviewed"
+      "note": "sky aspect sign-specific; exact owner-approved 2026-09-01; serving release authorized 2026-09-01"
     },
     {
       "contentKey": "fallback-hook/sky-aspect-sign/venus/taurus/square/saturn/leo",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "Venus in Taurus square Saturn in Leo can fill the day with practical care while appreciation remains hard to hear. Someone may cook the meal, pay the bill, remember what is needed, and keep showing up without hearing that any of it mattered. The care is present in every practical detail. So is the hurt when no one says it mattered.",
-      "body_they": "Venus in Taurus square Saturn in Leo can fill the day with practical care while appreciation remains hard to hear. Someone may cook the meal, pay the bill, remember what is needed, and keep showing up without hearing that any of it mattered. The care is present in every practical detail. So is the hurt when no one says it mattered.",
-      "review_status": "reviewed",
+      "body_you": "Someone may be doing a lot to show they care and still feel unappreciated. Venus in Taurus square Saturn in Leo can make practical help easy to give while praise or recognition is harder to get. The risk is assuming the care should speak for itself or the appreciation should be obvious. Say what you noticed and what mattered.",
+      "body_they": "Someone may be doing a lot to show they care and still feel unappreciated. Venus in Taurus square Saturn in Leo can make practical help easy to give while praise or recognition is harder to get. The risk is assuming the care should speak for itself or the appreciation should be obvious. Say what you noticed and what mattered.",
+      "review_status": "approved",
       "source_keys": [
-        "sky-aspect phrasebook (ChatGPT-drafted from house vocab + Jansky/Hand, owner-reviewed)"
+        "sky-aspect phrasebook (ChatGPT-drafted from house vocab + Jansky/Hand, owner-reviewed)",
+        "packages/astro-knowledge/review/sky-calendar-composed-first-glance-2026-08-31/batch-2a-venus-saturn-squares-owner-approval.json",
+        "packages/astro-knowledge/review/sky-calendar-composed-first-glance-2026-08-31/batch-2a-venus-saturn-squares-serving-release.json"
       ],
-      "note": "sky aspect sign-specific (planet-in-sign aspect planet-in-sign); reviewed"
+      "note": "sky aspect sign-specific; exact owner-approved 2026-09-01; serving release authorized 2026-09-01"
     },
     {
       "contentKey": "fallback-hook/sky-aspect-sign/venus/taurus/square/saturn/aquarius",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "Venus in Taurus square Saturn in Aquarius brings the comfort of a familiar arrangement up against a rule or group decision meant to change how everyone lives. A shared budget, new policy, or future plan may make sense to the group while costing someone the routine they depend on. The change may be fair to more people and still leave one person without what made daily life manageable.",
-      "body_they": "Venus in Taurus square Saturn in Aquarius brings the comfort of a familiar arrangement up against a rule or group decision meant to change how everyone lives. A shared budget, new policy, or future plan may make sense to the group while costing someone the routine they depend on. The change may be fair to more people and still leave one person without what made daily life manageable.",
-      "review_status": "reviewed",
+      "body_you": "A new rule or group decision may be fair on paper and still make daily life harder for one person. Venus in Taurus square Saturn in Aquarius can put comfort, money, or routine against a change meant to work for everyone. The risk is treating the group benefit as proof that nobody loses anything. Check who is carrying the cost of the change.",
+      "body_they": "A new rule or group decision may be fair on paper and still make daily life harder for one person. Venus in Taurus square Saturn in Aquarius can put comfort, money, or routine against a change meant to work for everyone. The risk is treating the group benefit as proof that nobody loses anything. Check who is carrying the cost of the change.",
+      "review_status": "approved",
       "source_keys": [
-        "sky-aspect phrasebook (ChatGPT-drafted from house vocab + Jansky/Hand, owner-reviewed)"
+        "sky-aspect phrasebook (ChatGPT-drafted from house vocab + Jansky/Hand, owner-reviewed)",
+        "packages/astro-knowledge/review/sky-calendar-composed-first-glance-2026-08-31/batch-2a-venus-saturn-squares-owner-approval.json",
+        "packages/astro-knowledge/review/sky-calendar-composed-first-glance-2026-08-31/batch-2a-venus-saturn-squares-serving-release.json"
       ],
-      "note": "sky aspect sign-specific (planet-in-sign aspect planet-in-sign); reviewed"
+      "note": "sky aspect sign-specific; exact owner-approved 2026-09-01; serving release authorized 2026-09-01"
     },
     {
       "contentKey": "fallback-hook/sky-aspect-sign/venus/gemini/square/saturn/virgo",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "Venus in Gemini square Saturn in Virgo can turn a promising conversation into a list of everything that still needs work. A message meant to show interest may come back with corrections, questions, or a reminder of what has not been handled. The reply may be useful. It can also make someone wish they had kept the idea to themselves.",
-      "body_they": "Venus in Gemini square Saturn in Virgo can turn a promising conversation into a list of everything that still needs work. A message meant to show interest may come back with corrections, questions, or a reminder of what has not been handled. The reply may be useful. It can also make someone wish they had kept the idea to themselves.",
-      "review_status": "reviewed",
+      "body_you": "A conversation that started with interest may turn into corrections, questions, or a list of what still needs work. Venus in Gemini square Saturn in Virgo can make curiosity run into scrutiny. The risk is hearing useful feedback as rejection or using criticism to avoid saying what you actually want. Separate the correction from the answer.",
+      "body_they": "A conversation that started with interest may turn into corrections, questions, or a list of what still needs work. Venus in Gemini square Saturn in Virgo can make curiosity run into scrutiny. The risk is hearing useful feedback as rejection or using criticism to avoid saying what you actually want. Separate the correction from the answer.",
+      "review_status": "approved",
       "source_keys": [
-        "sky-aspect phrasebook (ChatGPT-drafted from house vocab + Jansky/Hand, owner-reviewed)"
+        "sky-aspect phrasebook (ChatGPT-drafted from house vocab + Jansky/Hand, owner-reviewed)",
+        "packages/astro-knowledge/review/sky-calendar-composed-first-glance-2026-08-31/batch-2a-venus-saturn-squares-owner-approval.json",
+        "packages/astro-knowledge/review/sky-calendar-composed-first-glance-2026-08-31/batch-2a-venus-saturn-squares-serving-release.json"
       ],
-      "note": "sky aspect sign-specific (planet-in-sign aspect planet-in-sign); reviewed"
+      "note": "sky aspect sign-specific; exact owner-approved 2026-09-01; serving release authorized 2026-09-01"
     },
     {
       "contentKey": "fallback-hook/sky-aspect-sign/venus/gemini/square/saturn/pisces",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "Venus in Gemini square Saturn in Pisces makes the missing answer harder to ignore. Messages may get shorter, plans may stay vague, or a needed conversation may be postponed because someone is exhausted, overwhelmed, or unsure what they can promise. No one has to say no. After enough silence, people begin to understand the answer anyway.",
-      "body_they": "Venus in Gemini square Saturn in Pisces makes the missing answer harder to ignore. Messages may get shorter, plans may stay vague, or a needed conversation may be postponed because someone is exhausted, overwhelmed, or unsure what they can promise. No one has to say no. After enough silence, people begin to understand the answer anyway.",
-      "review_status": "reviewed",
+      "body_you": "Messages may get shorter, plans may stay vague, or a conversation may keep getting postponed. Venus in Gemini square Saturn in Pisces can make it hard to get a clear answer when someone is tired, overwhelmed, or unsure what they can promise. The risk is filling in the silence yourself. Ask once, clearly, and judge the situation by the response you actually get.",
+      "body_they": "Messages may get shorter, plans may stay vague, or a conversation may keep getting postponed. Venus in Gemini square Saturn in Pisces can make it hard to get a clear answer when someone is tired, overwhelmed, or unsure what they can promise. The risk is filling in the silence yourself. Ask once, clearly, and judge the situation by the response you actually get.",
+      "review_status": "approved",
       "source_keys": [
-        "sky-aspect phrasebook (ChatGPT-drafted from house vocab + Jansky/Hand, owner-reviewed)"
+        "sky-aspect phrasebook (ChatGPT-drafted from house vocab + Jansky/Hand, owner-reviewed)",
+        "packages/astro-knowledge/review/sky-calendar-composed-first-glance-2026-08-31/batch-2a-venus-saturn-squares-owner-approval.json",
+        "packages/astro-knowledge/review/sky-calendar-composed-first-glance-2026-08-31/batch-2a-venus-saturn-squares-serving-release.json"
       ],
-      "note": "sky aspect sign-specific (planet-in-sign aspect planet-in-sign); reviewed"
+      "note": "sky aspect sign-specific; exact owner-approved 2026-09-01; serving release authorized 2026-09-01"
     },
     {
       "contentKey": "fallback-hook/sky-aspect-sign/venus/cancer/square/saturn/libra",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "Venus in Cancer square Saturn in Libra brings personal care up against an agreement meant to be fair to everyone. Someone may need an exception for family, home, or a private responsibility, while someone else is looking at the schedule, the cost, or who will take on the extra work. A compassionate choice can still leave another person carrying a responsibility they never agreed to.",
-      "body_they": "Venus in Cancer square Saturn in Libra brings personal care up against an agreement meant to be fair to everyone. Someone may need an exception for family, home, or a private responsibility, while someone else is looking at the schedule, the cost, or who will take on the extra work. A compassionate choice can still leave another person carrying a responsibility they never agreed to.",
-      "review_status": "reviewed",
+      "body_you": "Someone may need an exception for home or family, and that can leave someone else carrying extra time, cost, or work. Venus in Cancer square Saturn in Libra can put care for one person against an agreement meant to be fair to everyone. The risk is calling the choice fair because the reason is understandable. Name who is taking on the extra responsibility.",
+      "body_they": "Someone may need an exception for home or family, and that can leave someone else carrying extra time, cost, or work. Venus in Cancer square Saturn in Libra can put care for one person against an agreement meant to be fair to everyone. The risk is calling the choice fair because the reason is understandable. Name who is taking on the extra responsibility.",
+      "review_status": "approved",
       "source_keys": [
-        "sky-aspect phrasebook (ChatGPT-drafted from house vocab + Jansky/Hand, owner-reviewed)"
+        "sky-aspect phrasebook (ChatGPT-drafted from house vocab + Jansky/Hand, owner-reviewed)",
+        "packages/astro-knowledge/review/sky-calendar-composed-first-glance-2026-08-31/batch-2a-venus-saturn-squares-owner-approval.json",
+        "packages/astro-knowledge/review/sky-calendar-composed-first-glance-2026-08-31/batch-2a-venus-saturn-squares-serving-release.json"
       ],
-      "note": "sky aspect sign-specific (planet-in-sign aspect planet-in-sign); reviewed"
+      "note": "sky aspect sign-specific; exact owner-approved 2026-09-01; serving release authorized 2026-09-01"
     },
     {
       "contentKey": "fallback-hook/sky-aspect-sign/venus/cancer/square/saturn/aries",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "Venus in Cancer square Saturn in Aries can make the need for reassurance feel impossible to fit into the available time. Someone may need privacy, a calmer conversation, or another day to think, while a decision has to be made now. Moving quickly may protect the deadline. It may also leave someone feeling that their fear did not matter.",
-      "body_they": "Venus in Cancer square Saturn in Aries can make the need for reassurance feel impossible to fit into the available time. Someone may need privacy, a calmer conversation, or another day to think, while a decision has to be made now. Moving quickly may protect the deadline. It may also leave someone feeling that their fear did not matter.",
-      "review_status": "reviewed",
+      "body_you": "Someone may need more time or reassurance, but the decision may have to be made now. Venus in Cancer square Saturn in Aries can put emotional safety against a deadline or immediate action. The risk is rushing past the fear or using the fear to avoid a decision that cannot wait. Decide what must happen now and what can be talked through afterward.",
+      "body_they": "Someone may need more time or reassurance, but the decision may have to be made now. Venus in Cancer square Saturn in Aries can put emotional safety against a deadline or immediate action. The risk is rushing past the fear or using the fear to avoid a decision that cannot wait. Decide what must happen now and what can be talked through afterward.",
+      "review_status": "approved",
       "source_keys": [
-        "sky-aspect phrasebook (ChatGPT-drafted from house vocab + Jansky/Hand, owner-reviewed)"
+        "sky-aspect phrasebook (ChatGPT-drafted from house vocab + Jansky/Hand, owner-reviewed)",
+        "packages/astro-knowledge/review/sky-calendar-composed-first-glance-2026-08-31/batch-2a-venus-saturn-squares-owner-approval.json",
+        "packages/astro-knowledge/review/sky-calendar-composed-first-glance-2026-08-31/batch-2a-venus-saturn-squares-serving-release.json"
       ],
-      "note": "sky aspect sign-specific (planet-in-sign aspect planet-in-sign); reviewed"
+      "note": "sky aspect sign-specific; exact owner-approved 2026-09-01; serving release authorized 2026-09-01"
     },
     {
       "contentKey": "fallback-hook/sky-aspect-sign/venus/leo/square/saturn/scorpio",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "Venus in Leo square Saturn in Scorpio brings visible affection up against the fear of what becomes vulnerable once a feeling is made public. Someone may want the connection acknowledged or the event celebrated, while money, trust, jealousy, or private history makes another person hold back. The feeling may be strong enough to protect behind closed doors. That does not make the silence hurt less.",
-      "body_they": "Venus in Leo square Saturn in Scorpio brings visible affection up against the fear of what becomes vulnerable once a feeling is made public. Someone may want the connection acknowledged or the event celebrated, while money, trust, jealousy, or private history makes another person hold back. The feeling may be strong enough to protect behind closed doors. That does not make the silence hurt less.",
-      "review_status": "reviewed",
+      "body_you": "Someone may want a relationship, achievement, or feeling acknowledged publicly while the other person wants to keep it private. Venus in Leo square Saturn in Scorpio can make visibility collide with concerns about trust, money, jealousy, or private history. The risk is treating privacy as shame or publicity as proof of love. Say what recognition would mean and what privacy is protecting.",
+      "body_they": "Someone may want a relationship, achievement, or feeling acknowledged publicly while the other person wants to keep it private. Venus in Leo square Saturn in Scorpio can make visibility collide with concerns about trust, money, jealousy, or private history. The risk is treating privacy as shame or publicity as proof of love. Say what recognition would mean and what privacy is protecting.",
+      "review_status": "approved",
       "source_keys": [
-        "sky-aspect phrasebook (ChatGPT-drafted from house vocab + Jansky/Hand, owner-reviewed)"
+        "sky-aspect phrasebook (ChatGPT-drafted from house vocab + Jansky/Hand, owner-reviewed)",
+        "packages/astro-knowledge/review/sky-calendar-composed-first-glance-2026-08-31/batch-2a-venus-saturn-squares-owner-approval.json",
+        "packages/astro-knowledge/review/sky-calendar-composed-first-glance-2026-08-31/batch-2a-venus-saturn-squares-serving-release.json"
       ],
-      "note": "sky aspect sign-specific (planet-in-sign aspect planet-in-sign); reviewed"
+      "note": "sky aspect sign-specific; exact owner-approved 2026-09-01; serving release authorized 2026-09-01"
     },
     {
       "contentKey": "fallback-hook/sky-aspect-sign/venus/leo/square/saturn/taurus",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "Venus in Leo square Saturn in Taurus brings visible affection and celebration up against what money, energy, and existing responsibilities will allow. Someone may want to make the event feel special, but the money may already be spoken for. They may care deeply and still choose the modest plan, the practical gift, or the promise they know they can keep. The explanation can make sense, and someone may still wonder why the affection was so difficult to see.",
-      "body_they": "Venus in Leo square Saturn in Taurus brings visible affection and celebration up against what money, energy, and existing responsibilities will allow. Someone may want to make the event feel special, but the money may already be spoken for. They may care deeply and still choose the modest plan, the practical gift, or the promise they know they can keep. The explanation can make sense, and someone may still wonder why the affection was so difficult to see.",
-      "review_status": "reviewed",
+      "body_you": "Someone may want to celebrate in a bigger way than the money, energy, or schedule allows. Venus in Leo square Saturn in Taurus can make affection feel limited by practical resources. The risk is measuring care by how much gets spent or displayed. Choose the gesture you can actually afford and make the affection clear.",
+      "body_they": "Someone may want to celebrate in a bigger way than the money, energy, or schedule allows. Venus in Leo square Saturn in Taurus can make affection feel limited by practical resources. The risk is measuring care by how much gets spent or displayed. Choose the gesture you can actually afford and make the affection clear.",
+      "review_status": "approved",
       "source_keys": [
-        "sky-aspect phrasebook (ChatGPT-drafted from house vocab + Jansky/Hand, owner-reviewed)"
+        "sky-aspect phrasebook (ChatGPT-drafted from house vocab + Jansky/Hand, owner-reviewed)",
+        "packages/astro-knowledge/review/sky-calendar-composed-first-glance-2026-08-31/batch-2a-venus-saturn-squares-owner-approval.json",
+        "packages/astro-knowledge/review/sky-calendar-composed-first-glance-2026-08-31/batch-2a-venus-saturn-squares-serving-release.json"
       ],
-      "note": "sky aspect sign-specific (planet-in-sign aspect planet-in-sign); reviewed"
+      "note": "sky aspect sign-specific; exact owner-approved 2026-09-01; serving release authorized 2026-09-01"
     },
     {
       "contentKey": "fallback-hook/sky-aspect-sign/venus/virgo/square/saturn/sagittarius",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "Venus in Virgo square Saturn in Sagittarius brings the small responsibility everyone forgot into the same moment as the larger promise everyone wants to keep. Someone may be checking the cost, fixing the schedule, or handling the work at home while another person is focused on the trip, the deadline, or the bigger goal. The plan can be worthwhile. The overlooked work still belongs to someone.",
-      "body_they": "Venus in Virgo square Saturn in Sagittarius brings the small responsibility everyone forgot into the same moment as the larger promise everyone wants to keep. Someone may be checking the cost, fixing the schedule, or handling the work at home while another person is focused on the trip, the deadline, or the bigger goal. The plan can be worthwhile. The overlooked work still belongs to someone.",
-      "review_status": "reviewed",
+      "body_you": "A bigger plan may sound exciting until someone counts the hours, cost, or extra work it creates. Venus in Virgo square Saturn in Sagittarius can put daily responsibilities against a trip, opportunity, or promise that looks worthwhile from a distance. The risk is letting the least visible person absorb all the work needed to make it happen. Count the work before everyone agrees to the plan.",
+      "body_they": "A bigger plan may sound exciting until someone counts the hours, cost, or extra work it creates. Venus in Virgo square Saturn in Sagittarius can put daily responsibilities against a trip, opportunity, or promise that looks worthwhile from a distance. The risk is letting the least visible person absorb all the work needed to make it happen. Count the work before everyone agrees to the plan.",
+      "review_status": "approved",
       "source_keys": [
-        "sky-aspect phrasebook (ChatGPT-drafted from house vocab + Jansky/Hand, owner-reviewed)"
+        "sky-aspect phrasebook (ChatGPT-drafted from house vocab + Jansky/Hand, owner-reviewed)",
+        "packages/astro-knowledge/review/sky-calendar-composed-first-glance-2026-08-31/batch-2a-venus-saturn-squares-owner-approval.json",
+        "packages/astro-knowledge/review/sky-calendar-composed-first-glance-2026-08-31/batch-2a-venus-saturn-squares-serving-release.json"
       ],
-      "note": "sky aspect sign-specific (planet-in-sign aspect planet-in-sign); reviewed"
+      "note": "sky aspect sign-specific; exact owner-approved 2026-09-01; serving release authorized 2026-09-01"
     },
     {
       "contentKey": "fallback-hook/sky-aspect-sign/venus/virgo/square/saturn/gemini",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "Venus in Virgo square Saturn in Gemini can make care sound like criticism and caution sound like avoidance. Someone may point out a detail because they are trying to help, while the careful reply leaves the original question unanswered. Everyone may be choosing their words responsibly. The conversation can still leave no one feeling cared for.",
-      "body_they": "Venus in Virgo square Saturn in Gemini can make care sound like criticism and caution sound like avoidance. Someone may point out a detail because they are trying to help, while the careful reply leaves the original question unanswered. Everyone may be choosing their words responsibly. The conversation can still leave no one feeling cared for.",
-      "review_status": "reviewed",
+      "body_you": "Someone may be trying to help, but the conversation can start to feel like criticism followed by no clear answer. Venus in Virgo square Saturn in Gemini can make details multiply while the main question stays open. The risk is discussing every small issue except the decision that matters. Answer the question first, then fix the details.",
+      "body_they": "Someone may be trying to help, but the conversation can start to feel like criticism followed by no clear answer. Venus in Virgo square Saturn in Gemini can make details multiply while the main question stays open. The risk is discussing every small issue except the decision that matters. Answer the question first, then fix the details.",
+      "review_status": "approved",
       "source_keys": [
-        "sky-aspect phrasebook (ChatGPT-drafted from house vocab + Jansky/Hand, owner-reviewed)"
+        "sky-aspect phrasebook (ChatGPT-drafted from house vocab + Jansky/Hand, owner-reviewed)",
+        "packages/astro-knowledge/review/sky-calendar-composed-first-glance-2026-08-31/batch-2a-venus-saturn-squares-owner-approval.json",
+        "packages/astro-knowledge/review/sky-calendar-composed-first-glance-2026-08-31/batch-2a-venus-saturn-squares-serving-release.json"
       ],
-      "note": "sky aspect sign-specific (planet-in-sign aspect planet-in-sign); reviewed"
+      "note": "sky aspect sign-specific; exact owner-approved 2026-09-01; serving release authorized 2026-09-01"
     },
     {
       "contentKey": "fallback-hook/sky-aspect-sign/venus/libra/square/saturn/capricorn",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "Venus in Libra square Saturn in Capricorn shows what happens when a fair agreement meets an obligation with more authority behind it. The plan may work for everyone involved and still lose to policy, a deadline, or the person whose approval is required. Everyone may understand why the decision was made. Someone still leaves knowing the responsibility mattered more than the connection.",
-      "body_they": "Venus in Libra square Saturn in Capricorn shows what happens when a fair agreement meets an obligation with more authority behind it. The plan may work for everyone involved and still lose to policy, a deadline, or the person whose approval is required. Everyone may understand why the decision was made. Someone still leaves knowing the responsibility mattered more than the connection.",
-      "review_status": "reviewed",
+      "body_you": "A fair plan may still lose to policy, a deadline, or the person whose approval is required. Venus in Libra square Saturn in Capricorn can put a reasonable agreement against a responsibility with more authority behind it. The risk is acting as if understanding the reason makes the disappointment disappear. Be clear about which rule or obligation is deciding the outcome.",
+      "body_they": "A fair plan may still lose to policy, a deadline, or the person whose approval is required. Venus in Libra square Saturn in Capricorn can put a reasonable agreement against a responsibility with more authority behind it. The risk is acting as if understanding the reason makes the disappointment disappear. Be clear about which rule or obligation is deciding the outcome.",
+      "review_status": "approved",
       "source_keys": [
-        "sky-aspect phrasebook (ChatGPT-drafted from house vocab + Jansky/Hand, owner-reviewed)"
+        "sky-aspect phrasebook (ChatGPT-drafted from house vocab + Jansky/Hand, owner-reviewed)",
+        "packages/astro-knowledge/review/sky-calendar-composed-first-glance-2026-08-31/batch-2a-venus-saturn-squares-owner-approval.json",
+        "packages/astro-knowledge/review/sky-calendar-composed-first-glance-2026-08-31/batch-2a-venus-saturn-squares-serving-release.json"
       ],
-      "note": "sky aspect sign-specific (planet-in-sign aspect planet-in-sign); reviewed"
+      "note": "sky aspect sign-specific; exact owner-approved 2026-09-01; serving release authorized 2026-09-01"
     },
     {
       "contentKey": "fallback-hook/sky-aspect-sign/venus/libra/square/saturn/cancer",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "Venus in Libra square Saturn in Cancer can make an arrangement look fair until private responsibilities enter the room. The schedule may divide the hours evenly, but one person still has to care for a child, protect the home, remember what everyone needs, or handle the emotional aftermath. The agreement divides the hours. The private work keeps falling to the same person.",
-      "body_they": "Venus in Libra square Saturn in Cancer can make an arrangement look fair until private responsibilities enter the room. The schedule may divide the hours evenly, but one person still has to care for a child, protect the home, remember what everyone needs, or handle the emotional aftermath. The agreement divides the hours. The private work keeps falling to the same person.",
-      "review_status": "reviewed",
+      "body_you": "An agreement may divide time or work evenly and still leave one person handling more at home. Venus in Libra square Saturn in Cancer can expose the private responsibilities a fair-looking schedule does not count. The risk is judging fairness only by what is written down. Include the work that happens before and after the official task.",
+      "body_they": "An agreement may divide time or work evenly and still leave one person handling more at home. Venus in Libra square Saturn in Cancer can expose the private responsibilities a fair-looking schedule does not count. The risk is judging fairness only by what is written down. Include the work that happens before and after the official task.",
+      "review_status": "approved",
       "source_keys": [
-        "sky-aspect phrasebook (ChatGPT-drafted from house vocab + Jansky/Hand, owner-reviewed)"
+        "sky-aspect phrasebook (ChatGPT-drafted from house vocab + Jansky/Hand, owner-reviewed)",
+        "packages/astro-knowledge/review/sky-calendar-composed-first-glance-2026-08-31/batch-2a-venus-saturn-squares-owner-approval.json",
+        "packages/astro-knowledge/review/sky-calendar-composed-first-glance-2026-08-31/batch-2a-venus-saturn-squares-serving-release.json"
       ],
-      "note": "sky aspect sign-specific (planet-in-sign aspect planet-in-sign); reviewed"
+      "note": "sky aspect sign-specific; exact owner-approved 2026-09-01; serving release authorized 2026-09-01"
     },
     {
       "contentKey": "fallback-hook/sky-aspect-sign/venus/scorpio/square/saturn/aquarius",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "Venus in Scorpio square Saturn in Aquarius makes trust harder to protect when a connection also needs room, friends, or obligations outside it. Someone may ask for proof that the connection matters, while the other person refuses to give up their independence or apply one rule to one person and another rule to everyone else. Distance can feel like betrayal. Intensity can make closeness feel like another demand.",
-      "body_they": "Venus in Scorpio square Saturn in Aquarius makes trust harder to protect when a connection also needs room, friends, or obligations outside it. Someone may ask for proof that the connection matters, while the other person refuses to give up their independence or apply one rule to one person and another rule to everyone else. Distance can feel like betrayal. Intensity can make closeness feel like another demand.",
-      "review_status": "reviewed",
+      "body_you": "A relationship may hit a fight over closeness, privacy, or how much independence each person gets to keep. Venus in Scorpio square Saturn in Aquarius can put the need for deep trust against rules or obligations that apply beyond one relationship. The risk is treating space as betrayal or closeness as control. Say what you need without asking the other person to give up every outside obligation.",
+      "body_they": "A relationship may hit a fight over closeness, privacy, or how much independence each person gets to keep. Venus in Scorpio square Saturn in Aquarius can put the need for deep trust against rules or obligations that apply beyond one relationship. The risk is treating space as betrayal or closeness as control. Say what you need without asking the other person to give up every outside obligation.",
+      "review_status": "approved",
       "source_keys": [
-        "sky-aspect phrasebook (ChatGPT-drafted from house vocab + Jansky/Hand, owner-reviewed)"
+        "sky-aspect phrasebook (ChatGPT-drafted from house vocab + Jansky/Hand, owner-reviewed)",
+        "packages/astro-knowledge/review/sky-calendar-composed-first-glance-2026-08-31/batch-2a-venus-saturn-squares-owner-approval.json",
+        "packages/astro-knowledge/review/sky-calendar-composed-first-glance-2026-08-31/batch-2a-venus-saturn-squares-serving-release.json"
       ],
-      "note": "sky aspect sign-specific (planet-in-sign aspect planet-in-sign); reviewed"
+      "note": "sky aspect sign-specific; exact owner-approved 2026-09-01; serving release authorized 2026-09-01"
     },
     {
       "contentKey": "fallback-hook/sky-aspect-sign/venus/scorpio/square/saturn/leo",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "Venus in Scorpio square Saturn in Leo can keep a meaningful connection private longer than someone expected. An unspoken agreement may hold until one person wants the loyalty acknowledged and finds that the other is worried about visibility, pride, or what public recognition would require. What happens behind closed doors can carry real weight. The refusal to name it openly still changes what the closeness means.",
-      "body_they": "Venus in Scorpio square Saturn in Leo can keep a meaningful connection private longer than someone expected. An unspoken agreement may hold until one person wants the loyalty acknowledged and finds that the other is worried about visibility, pride, or what public recognition would require. What happens behind closed doors can carry real weight. The refusal to name it openly still changes what the closeness means.",
-      "review_status": "reviewed",
+      "body_you": "Something private may matter deeply, but one person may still want it named or acknowledged publicly. Venus in Scorpio square Saturn in Leo can make loyalty behind closed doors clash with the need for visible recognition. The risk is assuming private commitment automatically feels sufficient to both people. Talk about what needs to stay private and what still needs to be acknowledged.",
+      "body_they": "Something private may matter deeply, but one person may still want it named or acknowledged publicly. Venus in Scorpio square Saturn in Leo can make loyalty behind closed doors clash with the need for visible recognition. The risk is assuming private commitment automatically feels sufficient to both people. Talk about what needs to stay private and what still needs to be acknowledged.",
+      "review_status": "approved",
       "source_keys": [
-        "sky-aspect phrasebook (ChatGPT-drafted from house vocab + Jansky/Hand, owner-reviewed)"
+        "sky-aspect phrasebook (ChatGPT-drafted from house vocab + Jansky/Hand, owner-reviewed)",
+        "packages/astro-knowledge/review/sky-calendar-composed-first-glance-2026-08-31/batch-2a-venus-saturn-squares-owner-approval.json",
+        "packages/astro-knowledge/review/sky-calendar-composed-first-glance-2026-08-31/batch-2a-venus-saturn-squares-serving-release.json"
       ],
-      "note": "sky aspect sign-specific (planet-in-sign aspect planet-in-sign); reviewed"
+      "note": "sky aspect sign-specific; exact owner-approved 2026-09-01; serving release authorized 2026-09-01"
     },
     {
       "contentKey": "fallback-hook/sky-aspect-sign/venus/sagittarius/square/saturn/pisces",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "Venus in Sagittarius square Saturn in Pisces can keep a hopeful plan alive after the energy needed to carry it has run out. People may keep talking about the trip, the opportunity, or the future because the promise still feels good, while someone quietly handles exhaustion or a responsibility no one has clearly named. The hope remains generous. Someone is still too tired to keep up with it.",
-      "body_they": "Venus in Sagittarius square Saturn in Pisces can keep a hopeful plan alive after the energy needed to carry it has run out. People may keep talking about the trip, the opportunity, or the future because the promise still feels good, while someone quietly handles exhaustion or a responsibility no one has clearly named. The hope remains generous. Someone is still too tired to keep up with it.",
-      "review_status": "reviewed",
+      "body_you": "A hopeful plan may keep moving forward even though someone no longer has the energy to carry it. Venus in Sagittarius square Saturn in Pisces can make excitement about the future outrun exhaustion or an unspoken responsibility. The risk is protecting the dream by ignoring the person who is worn out. Check the energy and work required before making another promise.",
+      "body_they": "A hopeful plan may keep moving forward even though someone no longer has the energy to carry it. Venus in Sagittarius square Saturn in Pisces can make excitement about the future outrun exhaustion or an unspoken responsibility. The risk is protecting the dream by ignoring the person who is worn out. Check the energy and work required before making another promise.",
+      "review_status": "approved",
       "source_keys": [
-        "sky-aspect phrasebook (ChatGPT-drafted from house vocab + Jansky/Hand, owner-reviewed)"
+        "sky-aspect phrasebook (ChatGPT-drafted from house vocab + Jansky/Hand, owner-reviewed)",
+        "packages/astro-knowledge/review/sky-calendar-composed-first-glance-2026-08-31/batch-2a-venus-saturn-squares-owner-approval.json",
+        "packages/astro-knowledge/review/sky-calendar-composed-first-glance-2026-08-31/batch-2a-venus-saturn-squares-serving-release.json"
       ],
-      "note": "sky aspect sign-specific (planet-in-sign aspect planet-in-sign); reviewed"
+      "note": "sky aspect sign-specific; exact owner-approved 2026-09-01; serving release authorized 2026-09-01"
     },
     {
       "contentKey": "fallback-hook/sky-aspect-sign/venus/sagittarius/square/saturn/virgo",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "Venus in Sagittarius square Saturn in Virgo brings the excitement of a larger possibility down to the appointment, the workday, and the cleanup waiting at home. A plan may sound worth it until someone counts the hours and sees how much extra work it creates. The person protecting the excitement may never notice who had to make the good time possible.",
-      "body_they": "Venus in Sagittarius square Saturn in Virgo brings the excitement of a larger possibility down to the appointment, the workday, and the cleanup waiting at home. A plan may sound worth it until someone counts the hours and sees how much extra work it creates. The person protecting the excitement may never notice who had to make the good time possible.",
-      "review_status": "reviewed",
+      "body_you": "An opportunity may sound worth it until the appointments, workday, cleanup, or extra tasks are counted. Venus in Sagittarius square Saturn in Virgo can make a big possibility clash with the ordinary work required to support it. The risk here is treating the most practical person involved as a negative influence simply because they are calculating the true cost. Asking how a project will actually get done is not pessimism. Before you say yes to the vision, you have to count the actual hours it will take to maintain it.",
+      "body_they": "An opportunity may sound worth it until the appointments, workday, cleanup, or extra tasks are counted. Venus in Sagittarius square Saturn in Virgo can make a big possibility clash with the ordinary work required to support it. The risk here is treating the most practical person involved as a negative influence simply because they are calculating the true cost. Asking how a project will actually get done is not pessimism. Before you say yes to the vision, you have to count the actual hours it will take to maintain it.",
+      "review_status": "approved",
       "source_keys": [
-        "sky-aspect phrasebook (ChatGPT-drafted from house vocab + Jansky/Hand, owner-reviewed)"
+        "sky-aspect phrasebook (ChatGPT-drafted from house vocab + Jansky/Hand, owner-reviewed)",
+        "packages/astro-knowledge/review/sky-calendar-composed-first-glance-2026-08-31/batch-2a-venus-saturn-squares-owner-approval.json",
+        "packages/astro-knowledge/review/sky-calendar-composed-first-glance-2026-08-31/batch-2a-venus-saturn-squares-serving-release.json"
       ],
-      "note": "sky aspect sign-specific (planet-in-sign aspect planet-in-sign); reviewed"
+      "note": "sky aspect sign-specific; exact owner-approved 2026-09-01; serving release authorized 2026-09-01"
     },
     {
       "contentKey": "fallback-hook/sky-aspect-sign/venus/capricorn/square/saturn/aries",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "Venus in Capricorn square Saturn in Aries can bring a serious plan to the point where someone has to make the first move. One person may have accounted for the future, prepared for the responsibility, and waited long enough, while another resists making a choice under pressure. The commitment may be real. The answer is still no when the decision feels forced.",
-      "body_they": "Venus in Capricorn square Saturn in Aries can bring a serious plan to the point where someone has to make the first move. One person may have accounted for the future, prepared for the responsibility, and waited long enough, while another resists making a choice under pressure. The commitment may be real. The answer is still no when the decision feels forced.",
-      "review_status": "reviewed",
+      "body_you": "A serious plan may reach the point where someone has to decide, and pressure can make them pull back. Venus in Capricorn square Saturn in Aries can put long-term commitment against the demand for an immediate answer. The risk is assuming preparation means the other person is ready to choose on your timeline. Set the deadline clearly without turning it into a threat.",
+      "body_they": "A serious plan may reach the point where someone has to decide, and pressure can make them pull back. Venus in Capricorn square Saturn in Aries can put long-term commitment against the demand for an immediate answer. The risk is assuming preparation means the other person is ready to choose on your timeline. Set the deadline clearly without turning it into a threat.",
+      "review_status": "approved",
       "source_keys": [
-        "sky-aspect phrasebook (ChatGPT-drafted from house vocab + Jansky/Hand, owner-reviewed)"
+        "sky-aspect phrasebook (ChatGPT-drafted from house vocab + Jansky/Hand, owner-reviewed)",
+        "packages/astro-knowledge/review/sky-calendar-composed-first-glance-2026-08-31/batch-2a-venus-saturn-squares-owner-approval.json",
+        "packages/astro-knowledge/review/sky-calendar-composed-first-glance-2026-08-31/batch-2a-venus-saturn-squares-serving-release.json"
       ],
-      "note": "sky aspect sign-specific (planet-in-sign aspect planet-in-sign); reviewed"
+      "note": "sky aspect sign-specific; exact owner-approved 2026-09-01; serving release authorized 2026-09-01"
     },
     {
       "contentKey": "fallback-hook/sky-aspect-sign/venus/capricorn/square/saturn/libra",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "Venus in Capricorn square Saturn in Libra can expose the distance between years of dependable care and the agreement people actually made. Someone may assume that showing up should speak for itself, while another person needs the promise, the division of labor, or the money put in writing. The history may be solid. The connection can still stall over what each person is responsible for giving.",
-      "body_they": "Venus in Capricorn square Saturn in Libra can expose the distance between years of dependable care and the agreement people actually made. Someone may assume that showing up should speak for itself, while another person needs the promise, the division of labor, or the money put in writing. The history may be solid. The connection can still stall over what each person is responsible for giving.",
-      "review_status": "reviewed",
+      "body_you": "Years of showing up may not answer a disagreement about what each person is actually responsible for. Venus in Capricorn square Saturn in Libra can expose the difference between dependable care and a clear agreement about money, work, or commitment. The risk is assuming history should replace explicit terms. Put the responsibility into words.",
+      "body_they": "Years of showing up may not answer a disagreement about what each person is actually responsible for. Venus in Capricorn square Saturn in Libra can expose the difference between dependable care and a clear agreement about money, work, or commitment. The risk is assuming history should replace explicit terms. Put the responsibility into words.",
+      "review_status": "approved",
       "source_keys": [
-        "sky-aspect phrasebook (ChatGPT-drafted from house vocab + Jansky/Hand, owner-reviewed)"
+        "sky-aspect phrasebook (ChatGPT-drafted from house vocab + Jansky/Hand, owner-reviewed)",
+        "packages/astro-knowledge/review/sky-calendar-composed-first-glance-2026-08-31/batch-2a-venus-saturn-squares-owner-approval.json",
+        "packages/astro-knowledge/review/sky-calendar-composed-first-glance-2026-08-31/batch-2a-venus-saturn-squares-serving-release.json"
       ],
-      "note": "sky aspect sign-specific (planet-in-sign aspect planet-in-sign); reviewed"
+      "note": "sky aspect sign-specific; exact owner-approved 2026-09-01; serving release authorized 2026-09-01"
     },
     {
       "contentKey": "fallback-hook/sky-aspect-sign/venus/aquarius/square/saturn/taurus",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "Venus in Aquarius square Saturn in Taurus brings a new arrangement into direct contact with the money, home, or routine it would change. The idea may solve a larger problem and still ask someone to give up the comfort or income they worked hard to protect. A better future becomes harder to celebrate when the cost arrives in one person's ordinary life.",
-      "body_they": "Venus in Aquarius square Saturn in Taurus brings a new arrangement into direct contact with the money, home, or routine it would change. The idea may solve a larger problem and still ask someone to give up the comfort or income they worked hard to protect. A better future becomes harder to celebrate when the cost arrives in one person's ordinary life.",
-      "review_status": "reviewed",
+      "body_you": "A new group plan or arrangement may ask someone to give up more money, comfort, or routine than they expected. Venus in Aquarius square Saturn in Taurus can put a change meant to solve a larger problem against the material stability one person worked hard to protect. The risk is calling resistance stubborn when the person is asking what the change will cost them. Name the cost before asking for buy-in.",
+      "body_they": "A new group plan or arrangement may ask someone to give up more money, comfort, or routine than they expected. Venus in Aquarius square Saturn in Taurus can put a change meant to solve a larger problem against the material stability one person worked hard to protect. The risk is calling resistance stubborn when the person is asking what the change will cost them. Name the cost before asking for buy-in.",
+      "review_status": "approved",
       "source_keys": [
-        "sky-aspect phrasebook (ChatGPT-drafted from house vocab + Jansky/Hand, owner-reviewed)"
+        "sky-aspect phrasebook (ChatGPT-drafted from house vocab + Jansky/Hand, owner-reviewed)",
+        "packages/astro-knowledge/review/sky-calendar-composed-first-glance-2026-08-31/batch-2a-venus-saturn-squares-owner-approval.json",
+        "packages/astro-knowledge/review/sky-calendar-composed-first-glance-2026-08-31/batch-2a-venus-saturn-squares-serving-release.json"
       ],
-      "note": "sky aspect sign-specific (planet-in-sign aspect planet-in-sign); reviewed"
+      "note": "sky aspect sign-specific; exact owner-approved 2026-09-01; serving release authorized 2026-09-01"
     },
     {
       "contentKey": "fallback-hook/sky-aspect-sign/venus/aquarius/square/saturn/scorpio",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "Venus in Aquarius square Saturn in Scorpio can make a connection feel easy until people have to decide who has access, who carries the debt or shared risk, and what stays private. Space feels generous before the terms have consequences. Once trust and money enter the conversation, someone may realize that all that room also left them carrying the risk alone.",
-      "body_they": "Venus in Aquarius square Saturn in Scorpio can make a connection feel easy until people have to decide who has access, who carries the debt or shared risk, and what stays private. Space feels generous before the terms have consequences. Once trust and money enter the conversation, someone may realize that all that room also left them carrying the risk alone.",
-      "review_status": "reviewed",
+      "body_you": "A relationship or group arrangement may feel flexible until money, shared risk, or privacy has to be defined. Venus in Aquarius square Saturn in Scorpio can expose who carries the risk when everyone wants freedom. The risk is giving everyone space while leaving one person responsible for the consequences. Put the money, access, and privacy rules into the agreement.",
+      "body_they": "A relationship or group arrangement may feel flexible until money, shared risk, or privacy has to be defined. Venus in Aquarius square Saturn in Scorpio can expose who carries the risk when everyone wants freedom. The risk is giving everyone space while leaving one person responsible for the consequences. Put the money, access, and privacy rules into the agreement.",
+      "review_status": "approved",
       "source_keys": [
-        "sky-aspect phrasebook (ChatGPT-drafted from house vocab + Jansky/Hand, owner-reviewed)"
+        "sky-aspect phrasebook (ChatGPT-drafted from house vocab + Jansky/Hand, owner-reviewed)",
+        "packages/astro-knowledge/review/sky-calendar-composed-first-glance-2026-08-31/batch-2a-venus-saturn-squares-owner-approval.json",
+        "packages/astro-knowledge/review/sky-calendar-composed-first-glance-2026-08-31/batch-2a-venus-saturn-squares-serving-release.json"
       ],
-      "note": "sky aspect sign-specific (planet-in-sign aspect planet-in-sign); reviewed"
+      "note": "sky aspect sign-specific; exact owner-approved 2026-09-01; serving release authorized 2026-09-01"
     },
     {
       "contentKey": "fallback-hook/sky-aspect-sign/venus/pisces/square/saturn/gemini",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "Venus in Pisces square Saturn in Gemini can make emotional understanding feel complete before anyone has agreed on what happens next. Someone may feel deeply seen until they are asked to explain the plan, name the commitment, or put the terms in writing. The feeling can be sincere. The agreement may never become clear enough to depend on.",
-      "body_they": "Venus in Pisces square Saturn in Gemini can make emotional understanding feel complete before anyone has agreed on what happens next. Someone may feel deeply seen until they are asked to explain the plan, name the commitment, or put the terms in writing. The feeling can be sincere. The agreement may never become clear enough to depend on.",
-      "review_status": "reviewed",
+      "body_you": "Two people may feel emotionally close and still be talking past the practical question. Venus in Pisces square Saturn in Gemini can make a meaningful conversation feel like enough even when nobody has said what the relationship, plan, or commitment actually is. The risk is assuming emotional closeness means you have the same expectations. Ask what happens next and get the answer in plain language.",
+      "body_they": "Two people may feel emotionally close and still be talking past the practical question. Venus in Pisces square Saturn in Gemini can make a meaningful conversation feel like enough even when nobody has said what the relationship, plan, or commitment actually is. The risk is assuming emotional closeness means you have the same expectations. Ask what happens next and get the answer in plain language.",
+      "review_status": "approved",
       "source_keys": [
-        "sky-aspect phrasebook (ChatGPT-drafted from house vocab + Jansky/Hand, owner-reviewed)"
+        "sky-aspect phrasebook (ChatGPT-drafted from house vocab + Jansky/Hand, owner-reviewed)",
+        "packages/astro-knowledge/review/sky-calendar-composed-first-glance-2026-08-31/batch-2a-venus-saturn-squares-owner-approval.json",
+        "packages/astro-knowledge/review/sky-calendar-composed-first-glance-2026-08-31/batch-2a-venus-saturn-squares-serving-release.json"
       ],
-      "note": "sky aspect sign-specific (planet-in-sign aspect planet-in-sign); reviewed"
+      "note": "sky aspect sign-specific; exact owner-approved 2026-09-01; serving release authorized 2026-09-01"
     },
     {
       "contentKey": "fallback-hook/sky-aspect-sign/venus/pisces/square/saturn/sagittarius",
       "content_role": "fallback_hook",
       "grammar_frame": "complete_sentence",
-      "body_you": "Venus in Pisces square Saturn in Sagittarius can bring a generous vision to the point where belief, law, distance, or an existing promise requires a choice. People may agree on what they hope the future becomes and reach completely different conclusions about what they are willing to do for it. The vision can remain beautiful. The decision underneath it keeps getting harder to postpone.",
-      "body_they": "Venus in Pisces square Saturn in Sagittarius can bring a generous vision to the point where belief, law, distance, or an existing promise requires a choice. People may agree on what they hope the future becomes and reach completely different conclusions about what they are willing to do for it. The vision can remain beautiful. The decision underneath it keeps getting harder to postpone.",
-      "review_status": "reviewed",
+      "body_you": "People may agree on the future they want and still disagree about what they are willing to do to get there. Venus in Pisces square Saturn in Sagittarius can put compassion and hope against beliefs, distance, law, or an existing promise. The risk is keeping the vision beautiful by postponing the decision underneath it. Name the choice and what each option requires.",
+      "body_they": "People may agree on the future they want and still disagree about what they are willing to do to get there. Venus in Pisces square Saturn in Sagittarius can put compassion and hope against beliefs, distance, law, or an existing promise. The risk is keeping the vision beautiful by postponing the decision underneath it. Name the choice and what each option requires.",
+      "review_status": "approved",
       "source_keys": [
-        "sky-aspect phrasebook (ChatGPT-drafted from house vocab + Jansky/Hand, owner-reviewed)"
+        "sky-aspect phrasebook (ChatGPT-drafted from house vocab + Jansky/Hand, owner-reviewed)",
+        "packages/astro-knowledge/review/sky-calendar-composed-first-glance-2026-08-31/batch-2a-venus-saturn-squares-owner-approval.json",
+        "packages/astro-knowledge/review/sky-calendar-composed-first-glance-2026-08-31/batch-2a-venus-saturn-squares-serving-release.json"
       ],
-      "note": "sky aspect sign-specific (planet-in-sign aspect planet-in-sign); reviewed"
+      "note": "sky aspect sign-specific; exact owner-approved 2026-09-01; serving release authorized 2026-09-01"
     },
     {
       "contentKey": "fallback-hook/sky-aspect-sign/venus/aries/trine/saturn/leo",
