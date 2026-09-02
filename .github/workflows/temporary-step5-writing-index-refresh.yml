@@ -1,0 +1,45 @@
+name: Temporary Step 5 writing-index refresh
+
+on:
+  push:
+    branches:
+      - chatgpt/content-studio-step5-api-contract
+
+permissions:
+  contents: write
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+      - name: Regenerate governed writing-evidence indexes
+        run: |
+          node scripts/build-knowledge-index.mjs --write
+          node scripts/build-phrase-index.mjs --write
+      - name: Verify regenerated indexes are current
+        run: |
+          git diff --check
+          node scripts/build-knowledge-index.mjs --check
+          node scripts/build-phrase-index.mjs --check
+          node scripts/lint-corpus-grammar.mjs
+      - name: Commit refreshed indexes and remove temporary workflow
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          rm .github/workflows/temporary-step5-writing-index-refresh.yml
+          git add packages/astro-knowledge/generated/knowledge-index.json \
+                  packages/astro-knowledge/generated/phrase-index.json \
+                  .github/workflows/temporary-step5-writing-index-refresh.yml
+          if git diff --cached --quiet; then
+            echo "No index changes to commit."
+            exit 0
+          fi
+          git commit -m "chore(knowledge): refresh writing-evidence indexes"
+          git push
