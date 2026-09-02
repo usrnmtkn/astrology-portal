@@ -10889,6 +10889,7 @@ export function App() {
     initialFriendCalculationReadiness(initialFriendContentRequest)
   ));
   const [fallbackArchitectureV3Version, setFallbackArchitectureV3Version] = useState(0);
+  const [fallbackDashboardOverlayVersion, setFallbackDashboardOverlayVersion] = useState(0);
   const [skyPlacementFallbackStatus, setSkyPlacementFallbackStatus] = useState<SkyPlacementContentStatus>("idle");
   const [skyPlacementFallbackRetryKey, setSkyPlacementFallbackRetryKey] = useState(0);
   const [generatedContentPreviewMode, setGeneratedContentPreviewMode] = useState<GeneratedContentPreviewMode>(readGeneratedContentPreviewMode);
@@ -10901,6 +10902,7 @@ export function App() {
   const selectedSkyDetailRefreshKeyRef = useRef("");
   const selectedSkyDetailRefreshContentRef = useRef<GeneratedContentMap | null>(null);
   const fallbackDashboardHydrationRequestedRef = useRef(false);
+  const friendDetailOverlayRefreshKeyRef = useRef("");
   const compatibilityDashboardHydrationVersionRef = useRef<number | null>(null);
   const selectedCalendarTransitEventRef = useRef<{
     event: LunarCalendarEvent;
@@ -11525,6 +11527,7 @@ export function App() {
 
         installFallbackArchitectureV3Bundle(bundle);
         setFallbackArchitectureV3Version((version) => version + 1);
+        setFallbackDashboardOverlayVersion((version) => version + 1);
       })
       .catch((error) => {
         console.warn("Fallback architecture V3 dashboard bundle failed to install; local JSON snapshot remains active.", error);
@@ -11733,6 +11736,21 @@ export function App() {
       skyGeneratedContent
     ));
   }, [fallbackArchitectureV3Version, profileNatalSky?.ascendant, selectedSkyDetail?.routePath, sky, skyDetailRoutePath, skyGeneratedContent, skyPlacementPersonalizationTransits, userProfile?.rising]);
+
+  useEffect(() => {
+    const routePath = selectedSkyDetail?.routePath;
+    if (!fallbackDashboardOverlayVersion || !routePath?.startsWith("friends?")) {
+      return;
+    }
+
+    const refreshKey = `${routePath}:${fallbackDashboardOverlayVersion}`;
+    if (friendDetailOverlayRefreshKeyRef.current === refreshKey) {
+      return;
+    }
+
+    friendDetailOverlayRefreshKeyRef.current = refreshKey;
+    setSelectedSkyDetail(null);
+  }, [fallbackDashboardOverlayVersion, selectedSkyDetail?.routePath]);
 
   useEffect(() => {
     if (!selectedSkyDetail) {
