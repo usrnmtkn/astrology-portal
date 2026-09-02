@@ -1,9 +1,28 @@
 import { getSupabaseClient } from "./auth";
-import {
-  loadContentStudioLastKnownGoodCompatibilityBundle,
-  loadContentStudioLastKnownGoodCoreBundle,
-  loadContentStudioLastKnownGoodRows
-} from "./contentStudioLastKnownGood";
+
+let contentStudioLastKnownGoodRowsPromise: Promise<GeneratedContentRow[]> | null = null;
+
+export async function loadContentStudioLastKnownGoodRows(): Promise<GeneratedContentRow[]> {
+  if (!contentStudioLastKnownGoodRowsPromise) {
+    contentStudioLastKnownGoodRowsPromise = (async () => {
+      try {
+        const response = await fetch("/content-studio-last-known-good.json", { cache: "no-cache" });
+        if (!response.ok) return [];
+        const snapshot = await response.json() as { schema?: unknown; rowCount?: unknown; rows?: unknown };
+        return snapshot.schema === "content-studio-last-known-good-v1"
+          && Array.isArray(snapshot.rows)
+          && snapshot.rowCount === snapshot.rows.length
+          ? snapshot.rows as GeneratedContentRow[]
+          : [];
+      } catch {
+        return [];
+      }
+    })();
+  }
+  const rows = await contentStudioLastKnownGoodRowsPromise;
+  if (!rows.length) contentStudioLastKnownGoodRowsPromise = null;
+  return rows;
+}
 import {
   hasMissingTemplateSlots,
   hasTemplateSlots,
@@ -1435,6 +1454,78 @@ function packageTemplateRowFromRow(row: GeneratedContentRow): TemplateRow | null
   };
 }
 
+function packageFallbackArchitectureV3CoreRows(
+  rows: GeneratedContentRow[],
+  currentCoreManifest: FallbackArchitectureV3PackageManifest
+): FallbackArchitectureV3Bundle | null {
+  const currentCoreKeys = new Set(currentCoreManifest.keys.map((manifestKey) => {
+    const separatorIndex = manifestKey.indexOf(":");
+    return separatorIndex >= 0 ? manifestKey.slice(separatorIndex + 1) : manifestKey;
+  }));
+  for (const row of rows) {
+    const extensionRecord = { ...packageRecord(row), contentKey: row.content_key };
+    if (isFallbackDashboardRecordAllowed(extensionRecord, currentCoreKeys)) currentCoreKeys.add(row.content_key);
+  }
+  const overlayRows = selectLatestLiveServingDashboardRows(
+    rows,
+    currentCoreKeys,
+    (row) => isApprovedFallbackArchitectureV3Row(row),
+    (row) => isSkyPlacementFallbackPartitionKey(row.content_key)
+  );
+  const authoredCards: AuthoredCard[] = [];
+  const hookRows: HookRow[] = [];
+  const vocabularyRows: VocabRow[] = [];
+  const templates: TemplateRow[] = [];
+  for (const row of overlayRows) {
+    const { contentType, role } = fallbackSystemBucket(row);
+    const destination = fallbackArchitectureV3DashboardPackageDestination({ contentKey: row.content_key, contentType, role });
+    if (destination === "authored") {
+      const value = packageAuthoredCardFromRow(row);
+      if (value) authoredCards.push(value);
+    } else if (destination === "hook") {
+      const value = packageHookRowFromRow(row);
+      if (value) hookRows.push(value);
+    } else if (destination === "vocabulary") {
+      const value = packageVocabRowFromRow(row);
+      if (value) vocabularyRows.push(value);
+    } else if (destination === "template") {
+      const value = packageTemplateRowFromRow(row);
+      if (value) templates.push(value);
+    }
+  }
+  if (!authoredCards.length && !hookRows.length && !vocabularyRows.length && !templates.length) return null;
+  return { transitLib: { authoredCards }, rowsFile: { hookRows, vocabularyRows }, templatesFile: { templates } };
+}
+
+async function loadContentStudioLastKnownGoodCoreBundle() {
+  try {
+    const manifest = await loadFallbackArchitectureV3BundledCoreManifest();
+    return packageFallbackArchitectureV3CoreRows(await loadContentStudioLastKnownGoodRows(), manifest);
+  } catch {
+    return null;
+  }
+}
+
+function packageFallbackArchitectureV3CompatibilityRows(rows: GeneratedContentRow[]) {
+  const seen = new Set<string>();
+  const authoredCards: AuthoredCard[] = [];
+  for (const row of sortGeneratedRowsNewestFirst(rows)) {
+    if (seen.has(row.content_key)) continue;
+    seen.add(row.content_key);
+    if (!row.provider || !isApprovedFallbackArchitectureV3Row(row, row.provider)) continue;
+    if (!isReaderServableGeneratedContentRow(row)) continue;
+    const card = packageAuthoredCardFromRow(row);
+    if (card) authoredCards.push(card);
+  }
+  return authoredCards.length
+    ? { transitLib: { authoredCards }, templatesFile: { templates: [] }, rowsFile: { hookRows: [], vocabularyRows: [] } }
+    : null;
+}
+
+async function loadContentStudioLastKnownGoodCompatibilityBundle() {
+  return packageFallbackArchitectureV3CompatibilityRows(await loadContentStudioLastKnownGoodRows());
+}
+
 export async function loadFallbackArchitectureV3DashboardBundle(): Promise<FallbackArchitectureV3Bundle | null> {
   const supabase = await getSupabaseClient();
   const cached = readCachedFallbackArchitectureV3Bundle();
@@ -1500,75 +1591,14 @@ export async function loadFallbackArchitectureV3DashboardBundle(): Promise<Fallb
     console.warn("Fallback architecture V3 current key manifest failed to load; cached/local copy remains active.", error);
     return cached?.bundle ?? null;
   }
-
-  const currentCoreKeys = new Set(currentCoreManifest.keys.map((manifestKey) => {
-    const separatorIndex = manifestKey.indexOf(":");
-    return separatorIndex >= 0 ? manifestKey.slice(separatorIndex + 1) : manifestKey;
-  }));
-  for (const row of rows) {
-    const extensionRecord = { ...packageRecord(row), contentKey: row.content_key };
-    if (isFallbackDashboardRecordAllowed(extensionRecord, currentCoreKeys)) {
-      currentCoreKeys.add(row.content_key);
-    }
-  }
-  const overlayRows = selectLatestLiveServingDashboardRows(
-    rows,
-    currentCoreKeys,
-    (row) => isApprovedFallbackArchitectureV3Row(row),
-    (row) => isSkyPlacementFallbackPartitionKey(row.content_key)
-  );
-  const authoredCards: AuthoredCard[] = [];
-  const hookRows: HookRow[] = [];
-  const vocabularyRows: VocabRow[] = [];
-  const templates: TemplateRow[] = [];
-
-  for (const row of overlayRows) {
-    const { contentType, role } = fallbackSystemBucket(row);
-    const destination = fallbackArchitectureV3DashboardPackageDestination({
-      contentKey: row.content_key,
-      contentType,
-      role
-    });
-
-    if (destination === "authored") {
-      const card = packageAuthoredCardFromRow(row);
-      if (card) authoredCards.push(card);
-      continue;
-    }
-    if (destination === "hook") {
-      const hook = packageHookRowFromRow(row);
-      if (hook) hookRows.push(hook);
-      continue;
-    }
-    if (destination === "vocabulary") {
-      const vocab = packageVocabRowFromRow(row);
-      if (vocab) vocabularyRows.push(vocab);
-      continue;
-    }
-    if (destination === "template") {
-      const template = packageTemplateRowFromRow(row);
-      if (template) templates.push(template);
-    }
-  }
-
-  if (authoredCards.length + hookRows.length + vocabularyRows.length + templates.length === 0) {
+  const bundle = packageFallbackArchitectureV3CoreRows(rows, currentCoreManifest);
+  if (!bundle) {
     clearCachedFallbackArchitectureV3Bundle();
     return null;
   }
-
-  // The checked-in package remains the complete hash-bound floor. Content Studio is
-  // an editorial override layer: only current LIVE + serving + approved rows for keys
-  // still present in today's package are allowed to replace that floor.
-  const bundle: FallbackArchitectureV3Bundle = {
-    transitLib: { authoredCards },
-    rowsFile: { hookRows, vocabularyRows },
-    templatesFile: { templates }
-  };
-  cacheFallbackArchitectureV3Bundle(
-    dashboardVersion || fallbackArchitectureV3DashboardVersionFromRows(overlayRows),
-    bundle
-  );
+  cacheFallbackArchitectureV3Bundle(dashboardVersion || fallbackArchitectureV3DashboardVersionFromRows(rows), bundle);
   return bundle;
+
 }
 
 export async function loadFallbackArchitectureV3CompatibilityDashboardBundle(): Promise<FallbackArchitectureV3Bundle | null> {
@@ -1600,24 +1630,8 @@ export async function loadFallbackArchitectureV3CompatibilityDashboardBundle(): 
     cursorId = lastId;
   }
 
-  const seen = new Set<string>();
-  const authoredCards: AuthoredCard[] = [];
-  for (const row of sortGeneratedRowsNewestFirst(rows)) {
-    if (seen.has(row.content_key)) continue;
-    seen.add(row.content_key);
-    if (!row.provider || !isApprovedFallbackArchitectureV3Row(row, row.provider)) continue;
-    if (!isReaderServableGeneratedContentRow(row)) continue;
-    const card = packageAuthoredCardFromRow(row);
-    if (card) authoredCards.push(card);
-  }
+  return packageFallbackArchitectureV3CompatibilityRows(rows);
 
-  if (!authoredCards.length) return null;
-
-  return {
-    transitLib: { authoredCards },
-    templatesFile: { templates: [] },
-    rowsFile: { hookRows: [], vocabularyRows: [] },
-  };
 }
 
 export async function loadFallbackArchitectureV3SkyPlacementDashboardBundle(): Promise<FallbackArchitectureV3Bundle | null> {
