@@ -4,8 +4,8 @@ import { effectivePackageRecord } from "./skyFallbackWorkspace";
 import {
   natalPlacementExactKey,
   natalPlacementLabel,
+  natalPlacementResolverDependencyKeys,
   natalPlacementSignLabel,
-  natalPlacementSourceGroups,
   type NatalPlacementHouse,
   type NatalPlacementMotion,
   type NatalPlacementPlanet,
@@ -157,11 +157,14 @@ export default function NatalPlacementReaderPreview({ house, initialAudience = "
     loading: true,
     rendered: null
   });
-  const sourceKeys = useMemo(() => new Set(natalPlacementSourceGroups(planet, sign, house, motion).flatMap((group) => group.sources.map((source) => source.key))), [house, motion, planet, sign]);
+  const dependencyKeys = useMemo(
+    () => new Set(natalPlacementResolverDependencyKeys(planet, sign, house, motion)),
+    [house, motion, planet, sign]
+  );
   const overrides = useMemo(() => rows
-    .filter((row) => sourceKeys.has(row.content_key))
+    .filter((row) => dependencyKeys.has(row.content_key))
     .map(previewOverrideCandidate)
-    .filter((row): row is NonNullable<ReturnType<typeof previewOverrideCandidate>> => Boolean(row)), [rows, sourceKeys]);
+    .filter((row): row is NonNullable<ReturnType<typeof previewOverrideCandidate>> => Boolean(row)), [dependencyKeys, rows]);
 
   useEffect(() => {
     const controller = new AbortController();
