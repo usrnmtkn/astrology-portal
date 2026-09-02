@@ -37,7 +37,7 @@ jobs:
           node scripts/test-content-studio-last-known-good.mjs
           node scripts/test-content-studio-reader-cache-rehydrate.mjs
           node scripts/test-content-studio-runtime-cache-invalidation.mjs
-          node scripts/test-admin-natal-placement-preview-api.mjs
+          node --import tsx scripts/test-admin-natal-placement-preview-api.mjs
           node scripts/test-admin-natal-placement-preview-dependencies.mjs
           node --import tsx scripts/test-sky-owner-review-actions.mjs
       - name: Typecheck and production builds
