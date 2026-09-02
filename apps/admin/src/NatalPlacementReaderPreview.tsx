@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { adminCredentialHeaders } from "./adminSecret";
 import { effectivePackageRecord } from "./skyFallbackWorkspace";
 import {
+  natalPlacementExactKey,
   natalPlacementLabel,
   natalPlacementSignLabel,
   natalPlacementSourceGroups,
@@ -83,7 +84,7 @@ export function natalPlacementOverrideDraft(contentKey: string, label: string, b
     mode: "in_depth" as const,
     status: "DRAFT" as const,
     headline: label,
-    summary: "Optional exact write-up for this planet, sign, and house.",
+    summary: "Optional exact write-up for this planet, sign, house, and motion.",
     body,
     lane: "serving",
     reviewState: "EDITORIAL_REVIEW_REQUIRED",
@@ -141,9 +142,13 @@ export default function NatalPlacementReaderPreview({ house, initialAudience = "
     return () => controller.abort();
   }, [audience, house, motion, overrides, planet, secret, sign]);
 
-  const exactKey = house ? `fallback-hook/natal-you-placement-complete-final/${planet}/${sign}/${house}` : "";
+  const exactKey = house ? natalPlacementExactKey(planet, sign, house, motion) : "";
   const exactSaved = Boolean(exactKey && rows.some((row) => row.content_key === exactKey));
-  const exactServing = Boolean(house && preview.rendered?.provenanceTier === "exact-owner-approved");
+  const exactServing = Boolean(
+    house
+    && preview.rendered?.provenanceTier === "exact-owner-approved"
+    && preview.rendered.templateKey === exactKey
+  );
   const label = house ? natalPlacementLabel(planet, sign, house) : natalPlacementSignLabel(planet, sign);
 
   return (
@@ -190,7 +195,7 @@ export default function NatalPlacementReaderPreview({ house, initialAudience = "
           <div className="admin-natal-reader-preview-provenance">
             <span className={`ui-pill admin-status ${exactServing ? "status-live" : "status-reviewed"}`}>
               {audience === "they"
-                ? "Composed from Friend sources"
+                ? exactServing ? "Exact Friend override" : "Composed from Friend sources"
                 : exactServing
                   ? "Exact authored override"
                   : "Composed from atomic sources"}
@@ -205,7 +210,7 @@ export default function NatalPlacementReaderPreview({ house, initialAudience = "
             )}
           </div>
           {motion === "retrograde" && exactServing && audience === "you" && (
-            <p className="admin-field-hint">This exact authored override is served verbatim. It does not append the shared retrograde modifier; include any retrograde treatment in the exact write-up itself.</p>
+            <p className="admin-field-hint">This exact retrograde override is served verbatim. It does not append the shared retrograde fallback; include the retrograde treatment in the exact write-up itself.</p>
           )}
         </div>
       ) : (
