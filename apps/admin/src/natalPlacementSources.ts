@@ -51,6 +51,21 @@ export type NatalPlacementSourceGroup = {
   sources: NatalPlacementSource[];
 };
 
+const oppositeSign: Record<NatalPlacementSign, NatalPlacementSign> = {
+  aries: "libra",
+  taurus: "scorpio",
+  gemini: "sagittarius",
+  cancer: "capricorn",
+  leo: "aquarius",
+  virgo: "pisces",
+  libra: "aries",
+  scorpio: "taurus",
+  sagittarius: "gemini",
+  capricorn: "cancer",
+  aquarius: "leo",
+  pisces: "virgo"
+};
+
 function titleCase(value: string) {
   return value
     .split("-")
@@ -81,6 +96,69 @@ export function natalPlacementExactKey(
 ) {
   const directKey = `fallback-hook/natal-you-placement-complete-final/${planet}/${sign}/${house}`;
   return motion === "retrograde" ? `${directKey}/retrograde` : directKey;
+}
+
+/**
+ * Every Content Studio row the production natal resolver can consult for the
+ * selected placement. This is intentionally broader than the visible authoring
+ * cards: production can resolve through exact lived rows, composed templates,
+ * or generic floors, and any LIVE serving override for one of those keys must
+ * be present in the Studio preview too.
+ *
+ * Keep this list synchronized with renderNatalPlacement in renderFallback.*.
+ */
+export function natalPlacementResolverDependencyKeys(
+  planet: NatalPlacementPlanet,
+  sign: NatalPlacementSign,
+  house?: NatalPlacementHouse | "",
+  motion: NatalPlacementMotion = "direct"
+) {
+  const keys = new Set<string>([
+    `fallback-hook/natal-you-placement-sign-final/${planet}/${sign}`,
+    `fallback-hook/placement-sign-lived/${planet}/${sign}`,
+    `fallback-hook/sign-lived/${sign}`,
+    `fallback-hook/planet-lived/${planet}`,
+    `fallback-hook/planet-intro/${planet}`,
+    `fallback-hook/planet-best/${planet}`,
+    `fallback-hook/placement-sentence/${planet}/${sign}`,
+    `fallback-vocab/planet-topic/${planet}`,
+    `fallback-vocab/planet-excess/${planet}`,
+    `fallback-vocab/planet-productive/${planet}`,
+    `fallback-vocab/planet-core/${planet}`,
+    `fallback-vocab/sign-style/${sign}`,
+    `fallback-vocab/sign-need/${sign}`,
+    `fallback-vocab/planet-verb/${planet}`,
+    `fallback-vocab/sign-adverb/${sign}`,
+    `fallback-template/natal.planet-in-sign/${planet}`,
+    planet === "north-node" || planet === "south-node"
+      ? "fallback-template/natal.node-in-sign"
+      : "fallback-template/natal.planet-in-sign"
+  ]);
+
+  for (let index = 0; index < 8; index += 1) {
+    keys.add(`fallback-vocab/placement-gerund/${planet}/${sign}/${index}`);
+  }
+
+  if (planet === "north-node" || planet === "south-node") {
+    keys.add(`fallback-hook/node-journey/${planet}`);
+    keys.add(`fallback-vocab/node-direction/${oppositeSign[sign]}`);
+  }
+
+  if (motion === "retrograde") {
+    keys.add("fallback-template/natal.modifier.retrograde");
+  }
+
+  if (house) {
+    keys.add(natalPlacementExactKey(planet, sign, house, motion));
+    keys.add(`fallback-hook/natal-you-placement-house-final/${planet}/${house}`);
+    keys.add(`fallback-hook/placement-house-lived/${planet}/${house}`);
+    keys.add(`fallback-hook/house-lived/${house}`);
+    keys.add(`fallback-hook/house-meaning/${house}`);
+    keys.add(`fallback-hook/placement-house-sentence/${planet}/${house}`);
+    keys.add("fallback-template/natal.house-context");
+  }
+
+  return [...keys];
 }
 
 export function natalPlacementSourceGroups(

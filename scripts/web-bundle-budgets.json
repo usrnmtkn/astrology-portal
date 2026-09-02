@@ -13,11 +13,11 @@
   "relationshipFallbackChunkGzipBytes": 230000,
   "signupChunkGzipBytes": 4000,
   "totalCssGzipBytes": 111000,
-  "totalJavaScriptGzipBytes": 2720000,
+  "totalJavaScriptGzipBytes": 2735000,
   "_rationale": {
     "totalCssGzipBytes": "Raised by 5 kB for the deferred Content Studio form, Composition Map surface inventory, and contextual atomic-source editor; reader startup CSS remains separately capped at 47 kB.",
     "readerBootGzipBytes": "Raised by 2 kB for the fail-soft eclipse review reporting and protected-content integrity boundary; deferred content must still remain outside the static boot graph.",
     "lunationBookFallbackChunkGzipBytes": "Raised by 5 kB for the 22 recovered, owner-approved full lunation book passages; the complete protected writing remains lazy-loaded and byte-exact.",
-    "totalJavaScriptGzipBytes": "Raised by 18 kB for the 60 owner-approved Friends natal angle-aspect bodies and the composed natal retrograde modifier in the deferred core corpus, plus 15 kB of aggregate-only build-identity headroom after identical reader code crossed the prior limit across CI builds; app, reader boot, and individual chunk budgets remain unchanged."
+    "totalJavaScriptGzipBytes": "Raised by 15 kB of aggregate-only headroom for Content Studio hydration, cache invalidation, concurrency, and last-known-good failover reliability after the release remained within the unchanged App boot, reader boot, App chunk, startup CSS, and individual deferred-content budgets."
   }
 }

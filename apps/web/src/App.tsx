@@ -252,13 +252,13 @@ import {
   type AspectGiftLessonKey,
   type AspectGiftLessonGroup as GiftLessonGroup
 } from "./services/aspectGiftLesson";
-import { loadNatalCardTaglines, natalCardTagline } from "./services/natalPlacementTaglines";
+import { clearNatalCardTaglineCache, loadNatalCardTaglines, natalCardTagline } from "./services/natalPlacementTaglines";
 import {
   completeNatalAspectsForPlacement,
   natalAspectCounterpartGroup,
   uniqueDisplayableNatalAspects as uniqueNatalAspectRows
 } from "./services/natalAspectDisplay";
-import { loadPlanetTopicVocabulary, planetTopicPhrase, signNeedPhrase, signStylePhrase, signStyleShortPhrase, type PlanetTopicVariant } from "./services/planetTopicVocabulary";
+import { clearPlanetTopicVocabularyCache, loadPlanetTopicVocabulary, planetTopicPhrase, signNeedPhrase, signStylePhrase, signStyleShortPhrase, type PlanetTopicVariant } from "./services/planetTopicVocabulary";
 import { canonicalNatalAspectsForSnapshot } from "./services/natalAspectFacts";
 import { interpolateTemplateString, type TemplateSlotValues } from "./services/templateInterpolation";
 import {
@@ -11785,6 +11785,8 @@ export function App() {
 
   useEffect(() => subscribeToContentUpdates(() => {
     clearSharedGeneratedContentCache();
+    clearPlanetTopicVocabularyCache();
+    clearNatalCardTaglineCache();
     calendarContentCacheRef.current.clear();
     fallbackDashboardHydrationRequestedRef.current = false;
     compatibilityDashboardHydrationVersionRef.current = null;
@@ -11807,7 +11809,7 @@ export function App() {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [contentRefreshVersion]);
 
   useEffect(() => {
     let cancelled = false;
@@ -11825,7 +11827,7 @@ export function App() {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [contentRefreshVersion]);
 
   useEffect(() => {
     let cancelled = false;

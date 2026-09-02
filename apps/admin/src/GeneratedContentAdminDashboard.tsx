@@ -2499,11 +2499,13 @@ function isRetryableAdminReadError(error: unknown) {
   return error.status === 408 || error.status === 429 || error.status >= 500;
 }
 
-async function loadGeneratedContentPage(path: string, secret: string) {
+async function loadGeneratedContentPage(path: string, secret: string, signal?: AbortSignal) {
   for (let attempt = 0; ; attempt += 1) {
+    if (signal?.aborted) throw signal.reason ?? new Error("Content inventory load was cancelled.");
     try {
-      return await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[]; nextCursor?: string | null }>(path, secret);
+      return await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[]; nextCursor?: string | null }>(path, secret, { signal });
     } catch (error) {
+      if (signal?.aborted) throw signal.reason ?? error;
       const retryDelay = generatedContentPageRetryDelaysMs[attempt];
       if (retryDelay === undefined || !isRetryableAdminReadError(error)) throw error;
       await new Promise((resolve) => window.setTimeout(resolve, retryDelay));
@@ -2515,26 +2517,27 @@ async function loadAllGeneratedContentRows(
   secret: string,
   visibility: "editorial" | "all" = "editorial",
   scope: "all" | "compatibility" = "all",
-  onPage?: (rows: AdminGeneratedContentRow[], complete: boolean) => void
+  onPage?: (rows: AdminGeneratedContentRow[], complete: boolean) => void,
+  signal?: AbortSignal
 ) {
   const pageSize = scope === "compatibility" ? 500 : 400;
   const allRows: AdminGeneratedContentRow[] = [];
   let cursor: string | null = null;
 
-  for (let offset = 0; offset < 50000; offset += pageSize) {
+  for (let page = 0; page < 125; page += 1) {
+    if (signal?.aborted) throw signal.reason ?? new Error("Content inventory load was cancelled.");
     const result = await loadGeneratedContentPage(
-      `/api/admin/generated-content?status=all&visibility=${visibility}&scope=${scope}&limit=${pageSize}${scope === "compatibility" ? cursor ? `&cursor=${encodeURIComponent(cursor)}` : "" : `&offset=${offset}`}`,
-      secret
+      `/api/admin/generated-content?status=all&visibility=${visibility}&scope=${scope}&limit=${pageSize}${cursor ? `&cursor=${encodeURIComponent(cursor)}` : ""}`,
+      secret,
+      signal
     );
     const pageRows = assertRowsPayload(result, "/api/admin/generated-content");
 
     allRows.push(...pageRows);
-    const complete = scope === "compatibility" ? !result.nextCursor : pageRows.length < pageSize;
+    const complete = !result.nextCursor;
     onPage?.(dedupeGeneratedContentRows(allRows), complete);
-    if (complete) {
-      break;
-    }
-    if (scope === "compatibility") cursor = result.nextCursor ?? null;
+    if (complete) break;
+    cursor = result.nextCursor ?? null;
   }
 
   return dedupeGeneratedContentRows(allRows);
@@ -2779,6 +2782,8 @@ export function GeneratedContentAdminDashboard() {
   const hookBodyRequestsRef = useRef(new Map<AdminHookCatalogDomain, Promise<Map<string, string>>>());
   const skyArticleAutosaveSequenceRef = useRef(0);
   const skyArticleWorkspaceAutosaveSequenceRef = useRef(0);
+  const dashboardLoadSequenceRef = useRef(0);
+  const dashboardLoadControllerRef = useRef<AbortController | null>(null);
 
   useEffect(() => {
     if (!draft || !draftIsFallbackHook(draft)) return;
@@ -3204,8 +3209,21 @@ export function GeneratedContentAdminDashboard() {
       || showRetiredRows;
     if (!needsExtendedInventory || allRowsLoaded || loadState !== "loaded" || !secret.trim()) return;
     let cancelled = false;
+    const controller = new AbortController();
     setIsLoading(true);
-    void loadAllGeneratedContentRows(secret, "all")
+    void loadAllGeneratedContentRows(
+      secret,
+      "all",
+      "all",
+      (loadedRows, complete) => {
+        if (cancelled) return;
+        setRows(loadedRows);
+        setMessage(complete
+          ? `Loaded the extended ${loadedRows.length}-row content inventory.`
+          : `Loaded ${loadedRows.length} extended content records…`);
+      },
+      controller.signal
+    )
       .then((allRows) => {
         if (cancelled) return;
         setRows(allRows);
@@ -3221,6 +3239,7 @@ export function GeneratedContentAdminDashboard() {
       });
     return () => {
       cancelled = true;
+      controller.abort();
       setIsLoading(false);
     };
   }, [activePage, categoryFilter, showReferenceRows, showRetiredRows, allRowsLoaded, loadState, secret]);
@@ -3328,6 +3347,7 @@ export function GeneratedContentAdminDashboard() {
 
     return () => {
       cancelled = true;
+      dashboardLoadControllerRef.current?.abort();
       unsubscribe();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -3348,10 +3368,12 @@ export function GeneratedContentAdminDashboard() {
         try {
           setSkyArticleEditor((current) => current ? { ...current, saveState: "saving", error: null } : current);
           const revised = await reviseSkyArticleEdition(skyArticleEditor.baseEdition, skyArticleEditor.fields);
+          const persistedArticleRow = rows.find((row) => row.id === skyArticleEditor.rowId);
           const payload = await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>("/api/admin/generated-content", secret, {
             method: "PATCH",
             body: JSON.stringify({
               id: skyArticleEditor.rowId,
+              ...(persistedArticleRow?.updated_at ? { expectedUpdatedAt: persistedArticleRow.updated_at } : {}),
               ownerAction: "save-sky-article-edition-revision",
               sections: { skyArticleEdition: revised }
             })
@@ -3410,8 +3432,12 @@ export function GeneratedContentAdminDashboard() {
             tldr: form.tldr,
             slotValues: form.slotValues
           };
+          const persistedWorkspaceRow = form.workspaceId
+            ? rows.find((row) => row.id === form.workspaceId)
+            : null;
           const requestBody = form.workspaceId ? {
             id: form.workspaceId,
+            ...(persistedWorkspaceRow?.updated_at ? { expectedUpdatedAt: persistedWorkspaceRow.updated_at } : {}),
             headline: `${titleFromKey(facts.planet)} in ${titleFromKey(facts.sign)} article draft`,
             summary: form.tldr,
             sections: { skyArticleWorkspace: workspace },
@@ -3674,6 +3700,10 @@ export function GeneratedContentAdminDashboard() {
   }
 
   async function loadDashboardData(secretOverride?: string, persistOnSuccess = false, credentialKind: "session" | "secret" = "secret") {
+    const loadSequence = ++dashboardLoadSequenceRef.current;
+    dashboardLoadControllerRef.current?.abort();
+    const loadController = new AbortController();
+    dashboardLoadControllerRef.current = loadController;
     const normalizedSecret = normalizeAdminSecret(secretOverride ?? secret);
     if (!normalizedSecret) {
       setLoadState("idle");
@@ -3703,21 +3733,23 @@ export function GeneratedContentAdminDashboard() {
           normalizedSecret,
           needsExtendedInventory || loadsCompatibilityFirst ? "all" : "editorial",
           loadsCompatibilityFirst ? "compatibility" : "all",
-          loadsCompatibilityFirst
-            ? (loadedRows, complete) => {
-                setRows(loadedRows);
-                setMessage(complete
-                  ? `Loaded ${loadedRows.length} compatibility records.`
-                  : `Loaded ${loadedRows.length} compatibility records…`);
-              }
-            : undefined
+          (loadedRows, complete) => {
+            if (loadSequence !== dashboardLoadSequenceRef.current || loadController.signal.aborted) return;
+            setRows(loadedRows);
+            const inventoryLabel = loadsCompatibilityFirst ? "compatibility records" : "content records";
+            setMessage(complete
+              ? `Loaded ${loadedRows.length} ${inventoryLabel}.`
+              : `Loaded ${loadedRows.length} ${inventoryLabel}…`);
+          },
+          loadController.signal
         ),
-        adminJsonRequest<{ ok: boolean; rows?: AdminReviewRecord[]; records?: AdminReviewRecord[]; counts?: unknown }>("/api/admin/review-records?surface=upcomingAspects&status=all", normalizedSecret),
-        adminJsonRequest<{ ok: boolean; rows: AdminUserGeneratedContentRow[] }>("/api/admin/user-generated-content?status=all&limit=100", normalizedSecret),
+        adminJsonRequest<{ ok: boolean; rows?: AdminReviewRecord[]; records?: AdminReviewRecord[]; counts?: unknown }>("/api/admin/review-records?surface=upcomingAspects&status=all", normalizedSecret, { signal: loadController.signal }),
+        adminJsonRequest<{ ok: boolean; rows: AdminUserGeneratedContentRow[] }>("/api/admin/user-generated-content?status=all&limit=100", normalizedSecret, { signal: loadController.signal }),
         loadAdminSourceDraftCatalog(normalizedSecret),
-        adminJsonRequest<{ ok: boolean; rows: AdminContentReviewEventRow[] }>("/api/admin/content-review-events?limit=250", normalizedSecret)
+        adminJsonRequest<{ ok: boolean; rows: AdminContentReviewEventRow[] }>("/api/admin/content-review-events?limit=250", normalizedSecret, { signal: loadController.signal })
       ]);
 
+      if (loadSequence !== dashboardLoadSequenceRef.current || loadController.signal.aborted) return false;
       if (generatedResult.status === "rejected") {
         throw generatedResult.reason;
       }
@@ -3774,6 +3806,7 @@ export function GeneratedContentAdminDashboard() {
       }
       return true;
     } catch (error) {
+      if (loadSequence !== dashboardLoadSequenceRef.current || loadController.signal.aborted) return false;
       const accessDenied = error instanceof AdminRequestError && error.status === 401;
       const nextMessage = accessDenied
         ? credentialKind === "session"
@@ -3787,7 +3820,7 @@ export function GeneratedContentAdminDashboard() {
       setMessage(nextMessage);
       return false;
     } finally {
-      setIsLoading(false);
+      if (loadSequence === dashboardLoadSequenceRef.current) setIsLoading(false);
     }
   }
 
@@ -3832,7 +3865,7 @@ export function GeneratedContentAdminDashboard() {
     try {
       const payload = await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>("/api/admin/generated-content", secret, {
         method: "PATCH",
-        body: JSON.stringify({ id: row.id, ownerAction: "approve-and-schedule" })
+        body: JSON.stringify({ id: row.id, ...(row.updated_at ? { expectedUpdatedAt: row.updated_at } : {}), ownerAction: "approve-and-schedule" })
       });
       const saved = payload.rows?.[0];
       if (saved) {
@@ -4046,7 +4079,7 @@ export function GeneratedContentAdminDashboard() {
     try {
       const payload = await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>("/api/admin/generated-content", secret, {
         method: "PATCH",
-        body: JSON.stringify({ id: row.id, ownerAction: "approve-sky-article-edition" })
+        body: JSON.stringify({ id: row.id, ...(row.updated_at ? { expectedUpdatedAt: row.updated_at } : {}), ownerAction: "approve-sky-article-edition" })
       });
       const saved = payload.rows?.[0];
       if (!saved) throw new Error("The approved edition was not returned by the content API.");
@@ -4083,7 +4116,7 @@ export function GeneratedContentAdminDashboard() {
         : "approve-sky-article-edition";
       const payload = await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>("/api/admin/generated-content", secret, {
         method: "PATCH",
-        body: JSON.stringify({ id: revisionRow.id, ownerAction })
+        body: JSON.stringify({ id: revisionRow.id, ...(revisionRow.updated_at ? { expectedUpdatedAt: revisionRow.updated_at } : {}), ownerAction })
       });
       const saved = payload.rows?.[0];
       if (!saved) throw new Error("The published article edition was not returned.");
@@ -4124,6 +4157,8 @@ export function GeneratedContentAdminDashboard() {
     const draftForSave = { ...activeDraft, status };
     const isPackageDraft = draftIsFallbackArchitectureV3(draftForSave);
     const isGuidedHeldReview = isPackageDraft && guidedReviewKey === draftForSave.contentKey;
+    const persistedRow = draftForSave.id ? rows.find((row) => row.id === draftForSave.id) : null;
+    const expectedUpdatedAt = persistedRow?.updated_at ?? undefined;
 
     try {
       const body = isPackageDraft
@@ -4171,9 +4206,10 @@ export function GeneratedContentAdminDashboard() {
             sourceSnapshot: draftSourceSnapshot(draftForSave)
           };
       const method = draftForSave.id ? "PATCH" : "POST";
+      const versionedBody = method === "PATCH" && expectedUpdatedAt ? { ...body, expectedUpdatedAt } : body;
       const payload = await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>("/api/admin/generated-content", secret, {
         method,
-        body: JSON.stringify(body)
+        body: JSON.stringify(versionedBody)
       });
       const saved = payload.ok && Array.isArray(payload.rows) ? payload.rows[0] : null;
       if (!saved || saved.content_key !== draftForSave.contentKey) {
@@ -4323,7 +4359,7 @@ export function GeneratedContentAdminDashboard() {
     try {
       const payload = await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>("/api/admin/generated-content", secret, {
         method: "PATCH",
-        body: JSON.stringify({ id: row.id, ownerAction: "approve-package-revision" })
+        body: JSON.stringify({ id: row.id, ...(row.updated_at ? { expectedUpdatedAt: row.updated_at } : {}), ownerAction: "approve-package-revision" })
       });
       const published = payload.rows?.[0];
       if (!published) throw new Error("The API did not return the published package row.");
@@ -4395,7 +4431,7 @@ export function GeneratedContentAdminDashboard() {
             };
         return adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>("/api/admin/generated-content", secret, {
           method: "PATCH",
-          body: JSON.stringify(requestBody)
+          body: JSON.stringify(row.updated_at ? { ...requestBody, expectedUpdatedAt: row.updated_at } : requestBody)
         });
       }));
       const updatedRows = updates.flatMap((payload) => payload.rows ?? []);
@@ -4422,7 +4458,7 @@ export function GeneratedContentAdminDashboard() {
     }
     setIsLoading(true);
     try {
-      await Promise.all(deletable.map((row) => adminJsonRequest<{ ok: boolean }>(`/api/admin/generated-content?id=${encodeURIComponent(row.id)}`, secret, {
+      await Promise.all(deletable.map((row) => adminJsonRequest<{ ok: boolean }>(`/api/admin/generated-content?id=${encodeURIComponent(row.id)}${row.updated_at ? `&expectedUpdatedAt=${encodeURIComponent(row.updated_at)}` : ""}`, secret, {
         method: "DELETE"
       })));
       setRows((current) => current.filter((row) => !deletable.some((deleted) => deleted.id === row.id)));
