@@ -13,23 +13,18 @@ row_loader = '''\nlet contentStudioLastKnownGoodRowsPromise: Promise<GeneratedCo
 assert anchor in text
 text = text.replace(anchor, anchor + row_loader, 1)
 
-# Reuse the existing production row-to-bundle machinery for the static LKG
-# snapshot instead of shipping a second converter module.
 core_start = text.index('export async function loadFallbackArchitectureV3DashboardBundle()')
-core_helper = '''function packageFallbackArchitectureV3CoreRows(\n  rows: GeneratedContentRow[],\n  currentCoreManifest: FallbackArchitectureV3PackageManifest\n): FallbackArchitectureV3Bundle | null {\n  const currentCoreKeys = new Set(currentCoreManifest.keys.map((manifestKey) => {\n    const separatorIndex = manifestKey.indexOf(":");\n    return separatorIndex >= 0 ? manifestKey.slice(separatorIndex + 1) : manifestKey;\n  }));\n  for (const row of rows) {\n    const extensionRecord = { ...packageRecord(row), contentKey: row.content_key };\n    if (isFallbackDashboardRecordAllowed(extensionRecord, currentCoreKeys)) currentCoreKeys.add(row.content_key);\n  }\n  const overlayRows = selectLatestLiveServingDashboardRows(\n    rows,\n    currentCoreKeys,\n    (row) => isApprovedFallbackArchitectureV3Row(row),\n    (row) => isSkyPlacementFallbackPartitionKey(row.content_key)\n  );\n  const authoredCards: AuthoredCard[] = [];\n  const hookRows: HookRow[] = [];\n  const vocabularyRows: VocabRow[] = [];\n  const templates: TemplateRow[] = [];\n  for (const row of overlayRows) {\n    const { contentType, role } = fallbackSystemBucket(row);\n    const destination = fallbackArchitectureV3DashboardPackageDestination({\n      contentKey: row.content_key, contentType, role\n    });\n    if (destination === "authored") {\n      const value = packageAuthoredCardFromRow(row);\n      if (value) authoredCards.push(value);\n    } else if (destination === "hook") {\n      const value = packageHookRowFromRow(row);\n      if (value) hookRows.push(value);\n    } else if (destination === "vocabulary") {\n      const value = packageVocabRowFromRow(row);\n      if (value) vocabularyRows.push(value);\n    } else if (destination === "template") {\n      const value = packageTemplateRowFromRow(row);\n      if (value) templates.push(value);\n    }\n  }\n  if (!authoredCards.length && !hookRows.length && !vocabularyRows.length && !templates.length) return null;\n  return { transitLib: { authoredCards }, rowsFile: { hookRows, vocabularyRows }, templatesFile: { templates } };\n}\n\nasync function loadContentStudioLastKnownGoodCoreBundle() {\n  try {\n    const manifest = await loadFallbackArchitectureV3BundledCoreManifest();\n    return packageFallbackArchitectureV3CoreRows(await loadContentStudioLastKnownGoodRows(), manifest);\n  } catch {\n    return null;\n  }\n}\n\nfunction packageFallbackArchitectureV3CompatibilityRows(rows: GeneratedContentRow[]) {\n  const seen = new Set<string>();\n  const authoredCards: AuthoredCard[] = [];\n  for (const row of sortGeneratedRowsNewestFirst(rows)) {\n    if (seen.has(row.content_key)) continue;\n    seen.add(row.content_key);\n    if (!row.provider || !isApprovedFallbackArchitectureV3Row(row, row.provider)) continue;\n    if (!isReaderServableGeneratedContentRow(row)) continue;\n    const card = packageAuthoredCardFromRow(row);\n    if (card) authoredCards.push(card);\n  }\n  return authoredCards.length\n    ? { transitLib: { authoredCards }, templatesFile: { templates: [] }, rowsFile: { hookRows: [], vocabularyRows: [] } }\n    : null;\n}\n\nasync function loadContentStudioLastKnownGoodCompatibilityBundle() {\n  return packageFallbackArchitectureV3CompatibilityRows(await loadContentStudioLastKnownGoodRows());\n}\n\n'''
+core_helper = '''function packageFallbackArchitectureV3CoreRows(\n  rows: GeneratedContentRow[],\n  currentCoreManifest: FallbackArchitectureV3PackageManifest\n): FallbackArchitectureV3Bundle | null {\n  const currentCoreKeys = new Set(currentCoreManifest.keys.map((manifestKey) => {\n    const separatorIndex = manifestKey.indexOf(":");\n    return separatorIndex >= 0 ? manifestKey.slice(separatorIndex + 1) : manifestKey;\n  }));\n  for (const row of rows) {\n    const extensionRecord = { ...packageRecord(row), contentKey: row.content_key };\n    if (isFallbackDashboardRecordAllowed(extensionRecord, currentCoreKeys)) currentCoreKeys.add(row.content_key);\n  }\n  const overlayRows = selectLatestLiveServingDashboardRows(\n    rows,\n    currentCoreKeys,\n    (row) => isApprovedFallbackArchitectureV3Row(row),\n    (row) => isSkyPlacementFallbackPartitionKey(row.content_key)\n  );\n  const authoredCards: AuthoredCard[] = [];\n  const hookRows: HookRow[] = [];\n  const vocabularyRows: VocabRow[] = [];\n  const templates: TemplateRow[] = [];\n  for (const row of overlayRows) {\n    const { contentType, role } = fallbackSystemBucket(row);\n    const destination = fallbackArchitectureV3DashboardPackageDestination({ contentKey: row.content_key, contentType, role });\n    if (destination === "authored") {\n      const value = packageAuthoredCardFromRow(row);\n      if (value) authoredCards.push(value);\n    } else if (destination === "hook") {\n      const value = packageHookRowFromRow(row);\n      if (value) hookRows.push(value);\n    } else if (destination === "vocabulary") {\n      const value = packageVocabRowFromRow(row);\n      if (value) vocabularyRows.push(value);\n    } else if (destination === "template") {\n      const value = packageTemplateRowFromRow(row);\n      if (value) templates.push(value);\n    }\n  }\n  if (!authoredCards.length && !hookRows.length && !vocabularyRows.length && !templates.length) return null;\n  return { transitLib: { authoredCards }, rowsFile: { hookRows, vocabularyRows }, templatesFile: { templates } };\n}\n\nasync function loadContentStudioLastKnownGoodCoreBundle() {\n  try {\n    const manifest = await loadFallbackArchitectureV3BundledCoreManifest();\n    return packageFallbackArchitectureV3CoreRows(await loadContentStudioLastKnownGoodRows(), manifest);\n  } catch {\n    return null;\n  }\n}\n\nfunction packageFallbackArchitectureV3CompatibilityRows(rows: GeneratedContentRow[]) {\n  const seen = new Set<string>();\n  const authoredCards: AuthoredCard[] = [];\n  for (const row of sortGeneratedRowsNewestFirst(rows)) {\n    if (seen.has(row.content_key)) continue;\n    seen.add(row.content_key);\n    if (!row.provider || !isApprovedFallbackArchitectureV3Row(row, row.provider)) continue;\n    if (!isReaderServableGeneratedContentRow(row)) continue;\n    const card = packageAuthoredCardFromRow(row);\n    if (card) authoredCards.push(card);\n  }\n  return authoredCards.length\n    ? { transitLib: { authoredCards }, templatesFile: { templates: [] }, rowsFile: { hookRows: [], vocabularyRows: [] } }\n    : null;\n}\n\nasync function loadContentStudioLastKnownGoodCompatibilityBundle() {\n  return packageFallbackArchitectureV3CompatibilityRows(await loadContentStudioLastKnownGoodRows());\n}\n\n'''
 text = text[:core_start] + core_helper + text[core_start:]
 
-# Replace the duplicate live core assembly with the shared package helper while
-# preserving current live/cache/manifest semantics.
 core_start = text.index('export async function loadFallbackArchitectureV3DashboardBundle()')
 assembly_start = text.index('  let currentCoreManifest: FallbackArchitectureV3PackageManifest;', core_start)
 compat_start = text.index('\nexport async function loadFallbackArchitectureV3CompatibilityDashboardBundle()', assembly_start)
 core_close = text.rfind('\n}', assembly_start, compat_start)
 assert core_close > assembly_start
-replacement = '''  let currentCoreManifest: FallbackArchitectureV3PackageManifest;\n  try {\n    currentCoreManifest = await loadFallbackArchitectureV3BundledCoreManifest();\n  } catch (error) {\n    console.warn("Fallback architecture V3 current key manifest failed to load; cached/local copy remains active.", error);\n    return cached?.bundle ?? null;\n  }\n  const bundle = packageFallbackArchitectureV3CoreRows(rows, currentCoreManifest);\n  if (!bundle) {\n    clearCachedFallbackArchitectureV3Bundle();\n    return null;\n  }\n  cacheFallbackArchitectureV3Bundle(\n    dashboardVersion || fallbackArchitectureV3DashboardVersionFromRows(rows),\n    bundle\n  );\n  return bundle;\n'''
+replacement = '''  let currentCoreManifest: FallbackArchitectureV3PackageManifest;\n  try {\n    currentCoreManifest = await loadFallbackArchitectureV3BundledCoreManifest();\n  } catch (error) {\n    console.warn("Fallback architecture V3 current key manifest failed to load; cached/local copy remains active.", error);\n    return cached?.bundle ?? null;\n  }\n  const bundle = packageFallbackArchitectureV3CoreRows(rows, currentCoreManifest);\n  if (!bundle) {\n    clearCachedFallbackArchitectureV3Bundle();\n    return null;\n  }\n  cacheFallbackArchitectureV3Bundle(dashboardVersion || fallbackArchitectureV3DashboardVersionFromRows(rows), bundle);\n  return bundle;\n'''
 text = text[:assembly_start] + replacement + text[core_close:]
 
-# Replace duplicate compatibility packaging with the same shared helper.
 compat_start = text.index('export async function loadFallbackArchitectureV3CompatibilityDashboardBundle()')
 seen_start = text.index('  const seen = new Set<string>();', compat_start)
 sky_start = text.index('\nexport async function loadFallbackArchitectureV3SkyPlacementDashboardBundle()', seen_start)
@@ -38,31 +33,54 @@ assert compat_close > seen_start
 text = text[:seen_start] + '  return packageFallbackArchitectureV3CompatibilityRows(rows);\n' + text[compat_close:]
 generated.write_text(text)
 
-# These modules already depend on generatedContent, so share the row loader
-# through that existing dependency instead of creating a new deferred chunk.
-for path in [
-    Path('apps/web/src/services/planetTopicVocabulary.ts'),
-    Path('apps/web/src/services/natalPlacementTaglines.ts')
-]:
-    source = path.read_text()
-    source = source.replace('import { loadContentStudioLastKnownGoodRows } from "./contentStudioLastKnownGood";\n', '', 1)
-    old = 'import { isReaderServableGeneratedContentRow } from "./generatedContent";'
-    new = 'import { isReaderServableGeneratedContentRow, loadContentStudioLastKnownGoodRows } from "./generatedContent";'
-    assert old in source
-    source = source.replace(old, new, 1)
-    path.write_text(source)
+# Remove duplicate Supabase/LKG readers from vocabulary and taglines. Both
+# services already depend on generatedContent, whose shared loaders enforce the
+# same LIVE/serving/reader-safe boundary and fall back to the nightly snapshot.
+planet = Path('apps/web/src/services/planetTopicVocabulary.ts')
+source = planet.read_text()
+source = source.replace('import { getSupabaseClient } from "./auth";\n', '', 1)
+source = source.replace('import { loadContentStudioLastKnownGoodRows } from "./contentStudioLastKnownGood";\n', '', 1)
+source = source.replace('import { isReaderServableGeneratedContentRow } from "./generatedContent";\n', 'import { loadLiveGeneratedContentForSurfaces } from "./generatedContent";\n', 1)
+type_start = source.index('type PlanetTopicVocabularyRow = {')
+type_end = source.index('\n};', type_start) + 3
+source = source[:type_start] + '''type PlanetTopicVocabularyRow = {\n  content_key: string;\n  body: string | null;\n  sections: unknown;\n};''' + source[type_end:]
+source = source.replace('let cachedVocabularySource: "live" | "lkg" | null = null;\n', '')
+source = source.replace('  cachedVocabularySource = null;\n', '')
+hydrate_start = source.index('function hydratePlanetTopicVocabularyRows(')
+load_start = source.index('export async function loadPlanetTopicVocabulary()', hydrate_start)
+source = source[:hydrate_start] + '''function hydratePlanetTopicVocabularyRows(rows: PlanetTopicVocabularyRow[]) {\n  cachedVocabulary = planetTopicVocabularyFromRows(rows);\n  cachedSignStyles = signStyleVocabularyFromRows(rows);\n  cachedSignNeeds = signNeedVocabularyFromRows(rows);\n  return cachedVocabulary;\n}\n\n''' + source[load_start:]
+load_start = source.index('export async function loadPlanetTopicVocabulary()')
+source = source[:load_start] + '''export async function loadPlanetTopicVocabulary() {\n  if (loadingVocabulary) return loadingVocabulary;\n  loadingVocabulary = (async () => {\n    const rows = [...(await loadLiveGeneratedContentForSurfaces(["modifier"])).values()]\n      .filter((row) => row.contentKey.startsWith("fallback-vocab/")\n        || row.contentKey.startsWith("cc/planet/")\n        || row.contentKey.startsWith("cc/sign/"))\n      .map((row) => ({ content_key: row.contentKey, body: row.body, sections: row.sections }));\n    return hydratePlanetTopicVocabularyRows(rows);\n  })();\n  try {\n    return await loadingVocabulary;\n  } finally {\n    loadingVocabulary = null;\n  }\n}\n'''
+planet.write_text(source)
 
-# The former helper is now redundant; the JSON remains a static public asset.
+taglines = Path('apps/web/src/services/natalPlacementTaglines.ts')
+source = taglines.read_text()
+source = source.replace('import { getSupabaseClient } from "./auth";\n', '', 1)
+source = source.replace('import { loadContentStudioLastKnownGoodRows } from "./contentStudioLastKnownGood";\n', '', 1)
+source = source.replace('import { isReaderServableGeneratedContentRow } from "./generatedContent";\n', 'import { loadLiveGeneratedContentForKeys } from "./generatedContent";\n', 1)
+type_start = source.index('type NatalCardTaglineRow = {')
+type_end = source.index('\n};', type_start) + 3
+source = source[:type_start] + '''type NatalCardTaglineRow = {\n  content_key: string;\n  body: string | null;\n  sections: unknown;\n};''' + source[type_end:]
+source = source.replace('let cachedTaglineSource: "live" | "lkg" | null = null;\n', '')
+source = source.replace('  cachedTaglineSource = null;\n', '')
+hydrate_start = source.index('async function hydrateNatalCardTaglinesFromLastKnownGood()')
+load_start = source.index('export async function loadNatalCardTaglines()', hydrate_start)
+source = source[:hydrate_start] + source[load_start:]
+load_start = source.index('export async function loadNatalCardTaglines()')
+source = source[:load_start] + '''export async function loadNatalCardTaglines() {\n  if (loadingTaglines) return loadingTaglines;\n  loadingTaglines = (async () => {\n    const content = await loadLiveGeneratedContentForKeys(natalCardTaglinePoints.map(natalCardTaglineContentKey));\n    cachedTaglines = natalCardTaglinesFromRows([...content.values()].map((row) => ({\n      content_key: row.contentKey, body: row.body, sections: row.sections\n    })));\n    return cachedTaglines;\n  })();\n  try {\n    return await loadingTaglines;\n  } finally {\n    loadingTaglines = null;\n  }\n}\n'''
+taglines.write_text(source)
+
 runtime = Path('apps/web/src/services/contentStudioLastKnownGood.ts')
 assert runtime.exists()
 runtime.unlink()
 
-# Update the contract test to require the zero-helper-chunk architecture.
 test = Path('scripts/test-content-studio-last-known-good.mjs')
 source = test.read_text()
 source = source.replace('const runtime = fs.readFileSync("apps/web/src/services/contentStudioLastKnownGood.ts", "utf8");\n', '')
 source = source.replace('assert.match(runtime, /fetch\\("\\/content-studio-last-known-good\\.json"/u, "The LKG snapshot must be fetched as a static asset, not bundled into application JS.");\nassert.doesNotMatch(runtime, /import\\([^)]*content-studio-last-known-good\\.json/u);\n', 'assert.match(generated, /fetch\\("\\/content-studio-last-known-good\\.json"/u, "The LKG snapshot must be fetched as a static asset, not bundled into application JS.");\nassert.doesNotMatch(generated, /import\\([^)]*content-studio-last-known-good\\.json/u);\nassert.ok(!fs.existsSync("apps/web/src/services/contentStudioLastKnownGood.ts"), "LKG must not create a standalone JavaScript chunk.");\n')
-needle = 'assert.match(taglines, /loadContentStudioLastKnownGoodRows/u);\n'
+source = source.replace('assert.match(vocabulary, /loadContentStudioLastKnownGoodRows/u);\n', 'assert.match(vocabulary, /loadLiveGeneratedContentForSurfaces/u);\n')
+source = source.replace('assert.match(taglines, /loadContentStudioLastKnownGoodRows/u);\n', 'assert.match(taglines, /loadLiveGeneratedContentForKeys/u);\n')
+needle = 'assert.match(generated, /loadContentStudioLastKnownGoodRows/u);\n'
 assert needle in source
 source = source.replace(needle, needle + 'assert.match(generated, /packageFallbackArchitectureV3CoreRows/u);\nassert.match(generated, /packageFallbackArchitectureV3CompatibilityRows/u);\n')
 test.write_text(source)
