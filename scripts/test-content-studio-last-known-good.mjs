@@ -6,7 +6,6 @@ const snapshotPath = "apps/web/public/content-studio-last-known-good.json";
 assert.ok(fs.existsSync(snapshotPath), "The last-known-good snapshot must exist after refresh.");
 const snapshot = JSON.parse(fs.readFileSync(snapshotPath, "utf8"));
 const workflow = fs.readFileSync(".github/workflows/content-studio-last-known-good.yml", "utf8");
-const runtime = fs.readFileSync("apps/web/src/services/contentStudioLastKnownGood.ts", "utf8");
 const generated = fs.readFileSync("apps/web/src/services/generatedContent.ts", "utf8");
 const vocabulary = fs.readFileSync("apps/web/src/services/planetTopicVocabulary.ts", "utf8");
 const taglines = fs.readFileSync("apps/web/src/services/natalPlacementTaglines.ts", "utf8");
@@ -34,11 +33,14 @@ assert.doesNotMatch(workflow, /SUPABASE_SERVICE_ROLE_KEY/u, "Nightly fallback mu
 assert.match(workflow, /apps\/web\/public\/content-studio-last-known-good\.json/u);
 assert.match(exporter, /sb_publishable_/u, "Nightly fallback must use the public reader boundary.");
 assert.match(exporter, /const pageSize = 200/u, "Nightly export must use conservative cursor pages.");
-assert.match(runtime, /fetch\("\/content-studio-last-known-good\.json"/u, "The LKG snapshot must be fetched as a static asset, not bundled into application JS.");
-assert.doesNotMatch(runtime, /import\([^)]*content-studio-last-known-good\.json/u);
+assert.match(generated, /fetch\("\/content-studio-last-known-good\.json"/u, "The LKG snapshot must be fetched as a static asset, not bundled into application JS.");
+assert.doesNotMatch(generated, /import\([^)]*content-studio-last-known-good\.json/u);
+assert.ok(!fs.existsSync("apps/web/src/services/contentStudioLastKnownGood.ts"), "LKG must not create a standalone JavaScript chunk.");
 assert.match(generated, /loadContentStudioLastKnownGoodCoreBundle/u);
 assert.match(generated, /loadContentStudioLastKnownGoodRows/u);
-assert.match(vocabulary, /loadContentStudioLastKnownGoodRows/u);
-assert.match(taglines, /loadContentStudioLastKnownGoodRows/u);
+assert.match(generated, /packageFallbackArchitectureV3CoreRows/u);
+assert.match(generated, /packageFallbackArchitectureV3CompatibilityRows/u);
+assert.match(vocabulary, /loadLiveGeneratedContentForSurfaces/u);
+assert.match(taglines, /loadLiveGeneratedContentForKeys/u);
 
 console.log(`Content Studio last-known-good contract passed (${snapshot.rowCount} rows).`);

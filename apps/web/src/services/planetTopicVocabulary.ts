@@ -1,6 +1,4 @@
-import { getSupabaseClient } from "./auth";
-import { loadContentStudioLastKnownGoodRows } from "./contentStudioLastKnownGood";
-import { isReaderServableGeneratedContentRow } from "./generatedContent";
+import { loadLiveGeneratedContentForSurfaces } from "./generatedContent";
 import { fallbackV3PlanetTopic, fallbackV3SignStyle } from "../content/fallbackArchitectureV3Runtime";
 import { firstReaderFacingCopy } from "../content/readerSafety";
 
@@ -25,17 +23,7 @@ type SignNeedPhrases = {
 };
 
 type PlanetTopicVocabularyRow = {
-  id: string;
   content_key: string;
-  updated_at: string;
-  status?: string | null;
-  lane?: string | null;
-  review_state?: string | null;
-  facts?: Record<string, unknown> | null;
-  flags?: string[] | null;
-  provider?: string | null;
-  source_snapshot?: Record<string, unknown> | null;
-  headline: string | null;
   body: string | null;
   sections: unknown;
 };
@@ -50,7 +38,6 @@ const fallbackVocabPrefix = "fallback-vocab";
 let cachedVocabulary: PlanetTopicVocabulary | null = null;
 let cachedSignStyles: SignStyleVocabulary | null = null;
 let cachedSignNeeds: SignNeedVocabulary | null = null;
-let cachedVocabularySource: "live" | "lkg" | null = null;
 let loadingVocabulary: Promise<PlanetTopicVocabulary> | null = null;
 const warnedFallbacks = new Set<string>();
 
@@ -58,7 +45,6 @@ export function clearPlanetTopicVocabularyCache() {
   cachedVocabulary = null;
   cachedSignStyles = null;
   cachedSignNeeds = null;
-  cachedVocabularySource = null;
   loadingVocabulary = null;
 }
 
@@ -360,80 +346,23 @@ export function planetTopicPhrase(planet: string, variant: PlanetTopicVariant = 
   return planetTopicPhraseFromVocabulary(cachedVocabulary, planet, variant);
 }
 
-function hydratePlanetTopicVocabularyRows(rows: PlanetTopicVocabularyRow[], source: "live" | "lkg" = "live") {
-  const servableRows = rows
-    .filter(isReaderServableGeneratedContentRow)
-    .sort((first, second) => {
-      const firstUpdated = Date.parse(first.updated_at);
-      const secondUpdated = Date.parse(second.updated_at);
-      if (firstUpdated !== secondUpdated) return firstUpdated - secondUpdated;
-      return first.id.localeCompare(second.id);
-    });
-  cachedVocabulary = planetTopicVocabularyFromRows(servableRows);
-  cachedSignStyles = signStyleVocabularyFromRows(servableRows);
-  cachedSignNeeds = signNeedVocabularyFromRows(servableRows);
-  cachedVocabularySource = source;
+function hydratePlanetTopicVocabularyRows(rows: PlanetTopicVocabularyRow[]) {
+  cachedVocabulary = planetTopicVocabularyFromRows(rows);
+  cachedSignStyles = signStyleVocabularyFromRows(rows);
+  cachedSignNeeds = signNeedVocabularyFromRows(rows);
   return cachedVocabulary;
 }
 
-async function hydratePlanetTopicVocabularyFromLastKnownGood() {
-  const rows = (await loadContentStudioLastKnownGoodRows())
-    .filter((row) => row.surface === "modifier" && (
-      row.content_key.startsWith("fallback-vocab/")
-      || row.content_key.startsWith("cc/planet/")
-      || row.content_key.startsWith("cc/sign/")
-    )) as PlanetTopicVocabularyRow[];
-  return hydratePlanetTopicVocabularyRows(rows, "lkg");
-}
-
 export async function loadPlanetTopicVocabulary() {
-  if (cachedVocabulary && cachedVocabularySource === "live") {
-    return cachedVocabulary;
-  }
-
-  if (loadingVocabulary) {
-    return loadingVocabulary;
-  }
-
+  if (loadingVocabulary) return loadingVocabulary;
   loadingVocabulary = (async () => {
-    const supabase = await getSupabaseClient();
-
-    if (!supabase) {
-      return hydratePlanetTopicVocabularyFromLastKnownGood();
-    }
-
-    const rows: PlanetTopicVocabularyRow[] = [];
-    const pageSize = 1000;
-    let cursorId: string | null = null;
-
-    for (let page = 0; page < 5; page += 1) {
-      let query = supabase
-        .from("generated_interpretations")
-        .select("id, content_key, updated_at, status, lane, review_state, facts, flags, provider, source_snapshot, headline, body, sections")
-        .eq("surface", "modifier")
-        .eq("status", "LIVE")
-        .eq("lane", "serving")
-        .is("review_state", null)
-        .or("content_key.like.fallback-vocab/%,content_key.like.cc/planet/%,content_key.like.cc/sign/%")
-        .order("id", { ascending: true })
-        .limit(pageSize);
-      if (cursorId) query = query.gt("id", cursorId);
-      const { data, error } = await query.returns<PlanetTopicVocabularyRow[]>();
-
-      if (error) {
-        console.warn("Planet topic vocabulary failed to load; using the nightly reader-safe snapshot while live content remains retryable.", error);
-        return hydratePlanetTopicVocabularyFromLastKnownGood();
-      }
-
-      rows.push(...(data ?? []));
-      const lastId = data?.at(-1)?.id ?? null;
-      if (!data || data.length < pageSize || !lastId) break;
-      cursorId = lastId;
-    }
-
-    return hydratePlanetTopicVocabularyRows(rows, "live");
+    const rows = [...(await loadLiveGeneratedContentForSurfaces(["modifier"])).values()]
+      .filter((row) => row.contentKey.startsWith("fallback-vocab/")
+        || row.contentKey.startsWith("cc/planet/")
+        || row.contentKey.startsWith("cc/sign/"))
+      .map((row) => ({ content_key: row.contentKey, body: row.body, sections: row.sections }));
+    return hydratePlanetTopicVocabularyRows(rows);
   })();
-
   try {
     return await loadingVocabulary;
   } finally {

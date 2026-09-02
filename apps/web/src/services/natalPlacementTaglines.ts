@@ -1,6 +1,4 @@
-import { getSupabaseClient } from "./auth";
-import { loadContentStudioLastKnownGoodRows } from "./contentStudioLastKnownGood";
-import { isReaderServableGeneratedContentRow } from "./generatedContent";
+import { loadLiveGeneratedContentForKeys } from "./generatedContent";
 import { firstReaderFacingCopy } from "../content/readerSafety";
 
 export const natalCardTaglinePoints = [
@@ -36,24 +34,16 @@ export const fallbackNatalCardTaglines: Record<string, string> = {
 };
 
 type NatalCardTaglineRow = {
-  id: string;
   content_key: string;
-  updated_at: string;
-  status?: string | null;
-  lane?: string | null;
-  review_state?: string | null;
-  flags?: string[] | null;
   body: string | null;
   sections: unknown;
 };
 
 let cachedTaglines: Map<string, string> | null = null;
-let cachedTaglineSource: "live" | "lkg" | null = null;
 let loadingTaglines: Promise<Map<string, string>> | null = null;
 
 export function clearNatalCardTaglineCache() {
   cachedTaglines = null;
-  cachedTaglineSource = null;
   loadingTaglines = null;
 }
 
@@ -122,52 +112,15 @@ export function natalCardTagline(point: string) {
   return cachedTaglines?.get(pointId) || fallbackNatalCardTagline(point);
 }
 
-async function hydrateNatalCardTaglinesFromLastKnownGood() {
-  const rows = (await loadContentStudioLastKnownGoodRows())
-    .filter((row) => row.content_key.startsWith("vocab/natal-card-tagline/")) as NatalCardTaglineRow[];
-  cachedTaglines = natalCardTaglinesFromRows(rows.filter(isReaderServableGeneratedContentRow));
-  cachedTaglineSource = "lkg";
-  return cachedTaglines;
-}
-
 export async function loadNatalCardTaglines() {
-  if (cachedTaglines && cachedTaglineSource === "live") {
-    return cachedTaglines;
-  }
-
-  if (loadingTaglines) {
-    return loadingTaglines;
-  }
-
+  if (loadingTaglines) return loadingTaglines;
   loadingTaglines = (async () => {
-    const supabase = await getSupabaseClient();
-
-    if (!supabase) {
-      return hydrateNatalCardTaglinesFromLastKnownGood();
-    }
-
-    const { data, error } = await supabase
-      .from("generated_interpretations")
-      .select("id, content_key, updated_at, status, lane, review_state, flags, body, sections")
-      .eq("status", "LIVE")
-      .eq("lane", "serving")
-      .is("review_state", null)
-      .eq("prompt_version", "tagline-v1")
-      .like("content_key", "vocab/natal-card-tagline/%")
-      .order("updated_at", { ascending: true })
-      .order("id", { ascending: true })
-      .returns<NatalCardTaglineRow[]>();
-
-    if (error) {
-      console.warn("Natal card taglines failed to load; using the nightly reader-safe snapshot while live content remains retryable.", error);
-      return hydrateNatalCardTaglinesFromLastKnownGood();
-    }
-
-    cachedTaglines = natalCardTaglinesFromRows((data ?? []).filter(isReaderServableGeneratedContentRow));
-    cachedTaglineSource = "live";
+    const content = await loadLiveGeneratedContentForKeys(natalCardTaglinePoints.map(natalCardTaglineContentKey));
+    cachedTaglines = natalCardTaglinesFromRows([...content.values()].map((row) => ({
+      content_key: row.contentKey, body: row.body, sections: row.sections
+    })));
     return cachedTaglines;
   })();
-
   try {
     return await loadingTaglines;
   } finally {
