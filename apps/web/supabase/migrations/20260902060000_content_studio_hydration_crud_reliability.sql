@@ -13,6 +13,14 @@ create index if not exists generated_interpretations_active_serving_updated_idx
   on public.generated_interpretations (updated_at desc, id desc)
   where lane = 'serving' and status <> 'ARCHIVED';
 
+create index if not exists generated_interpretations_provider_id_idx
+  on public.generated_interpretations (provider, id)
+  where provider is not null;
+
+create index if not exists generated_interpretations_live_serving_surface_id_idx
+  on public.generated_interpretations (surface, id)
+  where status = 'LIVE' and lane = 'serving' and review_state is null;
+
 -- Archived prose is never reader-serving. Normalize the one-way lifecycle so
 -- old rows cannot look serving in Content Studio even though the reader hides them.
 update public.generated_interpretations
@@ -37,3 +45,6 @@ $$;
 
 revoke all on function public.content_runtime_revision(text) from public;
 grant execute on function public.content_runtime_revision(text) to anon, authenticated;
+
+-- Refresh planner statistics after the lifecycle normalization and new indexes.
+analyze public.generated_interpretations;
