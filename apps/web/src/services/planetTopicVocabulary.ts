@@ -24,7 +24,9 @@ type SignNeedPhrases = {
 };
 
 type PlanetTopicVocabularyRow = {
+  id: string;
   content_key: string;
+  updated_at: string;
   status?: string | null;
   lane?: string | null;
   review_state?: string | null;
@@ -49,6 +51,13 @@ let cachedSignStyles: SignStyleVocabulary | null = null;
 let cachedSignNeeds: SignNeedVocabulary | null = null;
 let loadingVocabulary: Promise<PlanetTopicVocabulary> | null = null;
 const warnedFallbacks = new Set<string>();
+
+export function clearPlanetTopicVocabularyCache() {
+  cachedVocabulary = null;
+  cachedSignStyles = null;
+  cachedSignNeeds = null;
+  loadingVocabulary = null;
+}
 
 function normalizedPlanetId(planet: string) {
   const normalized = planet
@@ -369,42 +378,50 @@ export async function loadPlanetTopicVocabulary() {
 
     const rows: PlanetTopicVocabularyRow[] = [];
     const pageSize = 1000;
+    let cursorId: string | null = null;
 
     for (let page = 0; page < 5; page += 1) {
-      const from = page * pageSize;
-      const to = from + pageSize - 1;
-      const { data, error } = await supabase
+      let query = supabase
         .from("generated_interpretations")
-        .select("content_key, status, lane, review_state, facts, flags, provider, source_snapshot, headline, body, sections")
+        .select("id, content_key, updated_at, status, lane, review_state, facts, flags, provider, source_snapshot, headline, body, sections")
         .eq("surface", "modifier")
         .eq("status", "LIVE")
         .eq("lane", "serving")
         .is("review_state", null)
         .or("content_key.like.fallback-vocab/%,content_key.like.cc/planet/%,content_key.like.cc/sign/%")
-        .range(from, to)
-        .returns<PlanetTopicVocabularyRow[]>();
+        .order("id", { ascending: true })
+        .limit(pageSize);
+      if (cursorId) query = query.gt("id", cursorId);
+      const { data, error } = await query.returns<PlanetTopicVocabularyRow[]>();
 
       if (error) {
-        console.warn("Planet topic vocabulary failed to load; topic slots will be blank.", error);
-        cachedVocabulary = new Map();
-        cachedSignStyles = new Map();
-        cachedSignNeeds = new Map();
-        return cachedVocabulary;
+        console.warn("Planet topic vocabulary failed to load; topic slots will be blank until the next retry.", error);
+        return new Map();
       }
 
       rows.push(...(data ?? []));
-
-      if (!data || data.length < pageSize) {
-        break;
-      }
+      const lastId = data?.at(-1)?.id ?? null;
+      if (!data || data.length < pageSize || !lastId) break;
+      cursorId = lastId;
     }
 
-    const servableRows = rows.filter(isReaderServableGeneratedContentRow);
+    const servableRows = rows
+      .filter(isReaderServableGeneratedContentRow)
+      .sort((first, second) => {
+        const firstUpdated = Date.parse(first.updated_at);
+        const secondUpdated = Date.parse(second.updated_at);
+        if (firstUpdated !== secondUpdated) return firstUpdated - secondUpdated;
+        return first.id.localeCompare(second.id);
+      });
     cachedVocabulary = planetTopicVocabularyFromRows(servableRows);
     cachedSignStyles = signStyleVocabularyFromRows(servableRows);
     cachedSignNeeds = signNeedVocabularyFromRows(servableRows);
     return cachedVocabulary;
   })();
 
-  return loadingVocabulary;
+  try {
+    return await loadingVocabulary;
+  } finally {
+    loadingVocabulary = null;
+  }
 }

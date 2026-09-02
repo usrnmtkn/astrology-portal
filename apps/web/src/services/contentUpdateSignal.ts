@@ -1,4 +1,6 @@
 import { clearSharedGeneratedContentCache } from "./sharedGeneratedContentCache";
+import { clearPlanetTopicVocabularyCache } from "./planetTopicVocabulary";
+import { clearNatalCardTaglineCache } from "./natalPlacementTaglines";
 
 export const contentUpdateStorageKey = "tldrastro:content-update";
 export const contentUpdateEvent = "tldrastro:content-update";
@@ -45,6 +47,8 @@ export function subscribeToContentUpdates(listener: (notice: ContentUpdateNotice
   if (typeof window === "undefined") return () => undefined;
   const notify = (notice: ContentUpdateNotice) => {
     clearSharedGeneratedContentCache();
+    clearPlanetTopicVocabularyCache();
+    clearNatalCardTaglineCache();
     listener(notice);
   };
   const handleCustom = (event: Event) => {

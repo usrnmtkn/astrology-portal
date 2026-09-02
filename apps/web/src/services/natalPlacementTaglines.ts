@@ -35,7 +35,9 @@ export const fallbackNatalCardTaglines: Record<string, string> = {
 };
 
 type NatalCardTaglineRow = {
+  id: string;
   content_key: string;
+  updated_at: string;
   status?: string | null;
   lane?: string | null;
   review_state?: string | null;
@@ -46,6 +48,11 @@ type NatalCardTaglineRow = {
 
 let cachedTaglines: Map<string, string> | null = null;
 let loadingTaglines: Promise<Map<string, string>> | null = null;
+
+export function clearNatalCardTaglineCache() {
+  cachedTaglines = null;
+  loadingTaglines = null;
+}
 
 export function normalizedNatalCardTaglinePoint(point: string) {
   return point
@@ -131,23 +138,28 @@ export async function loadNatalCardTaglines() {
 
     const { data, error } = await supabase
       .from("generated_interpretations")
-      .select("content_key, status, lane, review_state, flags, body, sections")
+      .select("id, content_key, updated_at, status, lane, review_state, flags, body, sections")
       .eq("status", "LIVE")
       .eq("lane", "serving")
       .is("review_state", null)
       .eq("prompt_version", "tagline-v1")
       .like("content_key", "vocab/natal-card-tagline/%")
+      .order("updated_at", { ascending: true })
+      .order("id", { ascending: true })
       .returns<NatalCardTaglineRow[]>();
 
     if (error) {
-      console.warn("Natal card taglines failed to load; code fallbacks will be used.", error);
-      cachedTaglines = new Map();
-      return cachedTaglines;
+      console.warn("Natal card taglines failed to load; code fallbacks will be used until the next retry.", error);
+      return new Map();
     }
 
     cachedTaglines = natalCardTaglinesFromRows((data ?? []).filter(isReaderServableGeneratedContentRow));
     return cachedTaglines;
   })();
 
-  return loadingTaglines;
+  try {
+    return await loadingTaglines;
+  } finally {
+    loadingTaglines = null;
+  }
 }
