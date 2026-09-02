@@ -137,7 +137,13 @@ export function createCanonicalNatalAdapter({
 
   return {
     renderNatalPlacement(facts, options) {
-      if (facts.dignity || facts.isRetrograde || facts.sect?.hasReliableSect) {
+      // Retrograde exact rows and their composed modifier fallback are motion-aware
+      // in the shipped resolver. Canonical Wave 1 has no motion variant identity yet,
+      // so keep retrograde placements on that governed path instead of failing early.
+      if (facts.isRetrograde) {
+        return legacyRenderer.renderNatalPlacement(facts, options);
+      }
+      if (facts.dignity || facts.sect?.hasReliableSect) {
         throw new Error("SOURCE_GAP: canonical natal modifier overlays are outside Wave 1");
       }
       let shippedPlacement: LegacyRender | null = null;
