@@ -1,0 +1,69 @@
+name: Temporary Content Studio CMS performance QA
+
+on:
+  push:
+    branches:
+      - chatgpt/content-studio-cms-performance-audit
+
+permissions:
+  contents: write
+
+concurrency:
+  group: temporary-content-studio-cms-performance
+  cancel-in-progress: false
+
+jobs:
+  qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: chatgpt/content-studio-cms-performance-audit
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build test dependencies
+        run: npm run build -w @tldr/astro-knowledge
+
+      - name: Apply CMS performance repair
+        run: python scripts/tmp_content_studio_cms_performance_patch.py
+
+      - name: CMS CRUD hydration performance QA
+        run: |
+          node --import tsx scripts/test-content-studio-crud-hydration-guards.mjs
+          node scripts/test-content-studio-hydration-reliability.mjs
+          node scripts/test-content-studio-special-mutation-concurrency.mjs
+          node scripts/test-content-studio-cms-performance.mjs
+          node --import tsx scripts/test-content-studio-api-roundtrip.mjs
+          node scripts/test-admin-transit-source-crud.mjs
+          node --import tsx scripts/test-fallback-dashboard-live-overlay.mjs
+          node --import tsx scripts/test-fallback-dashboard-dynamic-natal-exact.mjs
+          node --import tsx scripts/test-admin-natal-placement-preview-api.mjs
+          node scripts/test-admin-natal-placement-preview-dependencies.mjs
+          node scripts/test-admin-writing-surface-map.mjs
+          node scripts/test-friends-chart-performance-contract.mjs
+          node --import tsx scripts/test-sky-owner-review-actions.mjs
+
+      - name: Typecheck and production builds
+        run: |
+          npm run typecheck
+          npm run build:web
+          npm run build:admin
+
+      - name: Commit clean CMS performance repair
+        run: |
+          rm -f scripts/tmp_content_studio_cms_performance_patch.py
+          rm -f .github/workflows/temporary-content-studio-cms-performance.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "perf(content): harden Content Studio and reader pagination"
+          git push origin HEAD:chatgpt/content-studio-cms-performance-audit
