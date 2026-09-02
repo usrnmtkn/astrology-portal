@@ -147,7 +147,7 @@ const natalFinderSource = fs.readFileSync(path.join(repoRoot, "apps/admin/src/Na
 assert.match(natalFinderSource, /<NatalPlacementReaderPreview/u, "The natal source finder must display the effective reader rendering.");
 const generatedContentApiSource = fs.readFileSync(path.join(repoRoot, "api/admin/generated-content.ts"), "utf8");
 assert.match(generatedContentApiSource, /CMS template cannot be published/u, "The Admin API must reject incomplete CMS templates even when the UI is bypassed.");
-assert.match(generatedContentApiSource, /isCmsRow \? "manual-admin" : "claude"/u, "CMS rows must retain manual owner-authored provenance instead of being labeled as model output.");
+assert.match(generatedContentApiSource, /provider: packageState\?\.provider[\s\S]*?"manual-admin"/u, "Manual Content Studio creates must retain manual-admin provenance instead of being mislabeled as model output.");
 const cmsTemplateValidationSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/content/cmsTemplateValidation.ts"), "utf8");
 assert.match(cmsTemplateValidationSource, /from "\.\.\/services\/templateInterpolation\.js"/u, "Shared CMS validator imports must retain a server-runtime-resolvable .js extension.");
 const surfaceMapSource = fs.readFileSync(path.join(repoRoot, "apps/admin/src/writingSurfaceSourceMap.ts"), "utf8");

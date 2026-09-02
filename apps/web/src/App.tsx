@@ -11807,7 +11807,7 @@ export function App() {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [contentRefreshVersion]);
 
   useEffect(() => {
     let cancelled = false;
@@ -11825,7 +11825,7 @@ export function App() {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [contentRefreshVersion]);
 
   useEffect(() => {
     let cancelled = false;
