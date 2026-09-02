@@ -32,19 +32,28 @@ jobs:
           node scripts/test-content-studio-runtime-cache-invalidation.mjs
           node --import tsx scripts/test-content-studio-crud-hydration-guards.mjs
           node --import tsx scripts/test-content-studio-atomic-concurrency.mjs
+          if git grep -n 'contentStudioLastKnownGood' -- apps/web/src ':!scripts/test-content-studio-last-known-good.mjs'; then
+            echo 'Standalone LKG helper reference remains.' >&2
+            exit 1
+          fi
       - name: Typecheck, build, and bundle budget
         run: |
           npm run typecheck
           npm run build:web
           npm run build:admin
           npm run qa:bundle
-      - name: Commit tested lazy integration
+      - name: Commit tested lazy integration and clean QA scaffolding
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add apps/web/src/services/generatedContent.ts \
-                  apps/web/src/services/planetTopicVocabulary.ts \
-                  apps/web/src/services/natalPlacementTaglines.ts \
-                  scripts/test-content-studio-last-known-good.mjs
-          git commit -m "perf(content): keep CMS failover off reader boot graph"
+          rm .github/workflows/temporary-step4-lazy-lkg.yml
+          rm scripts/temporary-step4-lazy-lkg-patch.sh
+          git add -A apps/web/src/services/generatedContent.ts \
+                     apps/web/src/services/planetTopicVocabulary.ts \
+                     apps/web/src/services/natalPlacementTaglines.ts \
+                     apps/web/src/services/contentStudioLastKnownGood.ts \
+                     scripts/test-content-studio-last-known-good.mjs \
+                     .github/workflows/temporary-step4-lazy-lkg.yml \
+                     scripts/temporary-step4-lazy-lkg-patch.sh
+          git commit -m "perf(content): keep CMS failover outside extra JS chunks"
           git push
