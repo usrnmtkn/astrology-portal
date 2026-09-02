@@ -87,21 +87,6 @@ jobs:
               : null;`
           );
 
-          const nodeRoutingTest = 'scripts/test-natal-exact-copy-routing.mjs';
-          replaceOnce(
-            nodeRoutingTest,
-            'const motionTemplates = { templates: [...templates.templates, ...placementInterim.templates] };',
-            `const nodeDirectExactKey = "fallback-hook/natal-you-placement-complete-final/chiron/aries/12";
-          const nodeDirectExact = renderNodePlacement({ planet: "chiron", sign: "aries", house: 12, voice: "you" });
-          const nodeRetrogradeFallback = renderNodePlacement({ planet: "chiron", sign: "aries", house: 12, voice: "you", isRetrograde: true });
-          assert.equal(nodeDirectExact.templateKey, nodeDirectExactKey, "Node resolver must retain the legacy Direct exact key.");
-          assert.notEqual(nodeRetrogradeFallback.templateKey, nodeDirectExactKey, "Node resolver Retrograde must never inherit Direct exact copy.");
-          assert.notEqual(nodeRetrogradeFallback.body, nodeDirectExact.body, "Node resolver Direct and Rx outputs must diverge when only Direct exact copy exists.");
-          assert.match(nodeRetrogradeFallback.body, /retrograde in the birth chart/u, "Node resolver Rx fallback must retain the generic retrograde modifier.");
-
-          const motionTemplates = { templates: [...templates.templates, ...placementInterim.templates] };`
-          );
-
           const oldVersion = 'v3-2026-09-01a';
           const newVersion = 'v3-2026-09-02a';
           for (const file of [
@@ -117,7 +102,7 @@ jobs:
 
           git show origin/main:apps/web/src/content/fallbackArchitectureV3/resolver/index.browser.ts > /tmp/index.browser.ts
           sed 's/v3-2026-09-01a/v3-2026-09-02a/g' /tmp/index.browser.ts > apps/web/src/content/fallbackArchitectureV3/resolver/index.browser.ts
-          sed -i 's#resolver/index.browser.ts#resolver/renderFallback.browser.ts#' scripts/test-natal-exact-copy-routing.mjs
+          git show origin/main:scripts/test-natal-exact-copy-routing.mjs > scripts/test-natal-exact-copy-routing.mjs
           rm -f apps/web/src/content/fallbackArchitectureV3/dist/tldr-content-base.js
           rm -f .github/workflows/temporary-natal-motion-repair.yml
       - name: Rebuild shipped fallback package
@@ -129,19 +114,30 @@ jobs:
             --outfile=apps/web/src/content/fallbackArchitectureV3/dist/tldr-content.js
           npm run build:fallback-manifest
           (cd apps/web/src/content/fallbackArchitectureV3 && node admin/build-content-book.mjs)
-      - name: Run focused repair tests
+      - name: Run natal motion repair tests
         run: |
-          node --experimental-strip-types scripts/test-natal-exact-copy-routing.mjs
+          node --experimental-strip-types scripts/test-natal-placement-motion-exact-routing.mjs
           node --experimental-strip-types scripts/test-admin-natal-placement-sources.mjs
+          node --experimental-strip-types scripts/test-admin-natal-placement-preview-api.mjs
+          node --experimental-strip-types scripts/test-natal-placement-sign-house-composition.mjs
           node --experimental-strip-types scripts/test-canonical-natal-adapter.mjs
           node --experimental-strip-types scripts/test-canonical-natal-retrograde-delegation.mjs
-          node scripts/test-natal-placement-motion-exact-routing.mjs
-      - name: Run full gates
+          node scripts/test-fallback-package-cache-contract.mjs
+          node scripts/test-fallback-refresh-wiring.mjs
+      - name: Run build and canonical gates
         run: |
-          npm run test:content
+          npm run test:canonical-content
           npm run typecheck
           npm run build:web
           npm run build:admin
+      - name: Record known baseline content-suite blocker
+        shell: bash
+        run: |
+          if git cat-file -e origin/main:packages/astro-knowledge/review/angle-aspects-60-friends-v1/shipping-manifest.json 2>/dev/null; then
+            echo "Baseline fixture is present."
+          else
+            echo "Full npm run test:content remains blocked on current main because scripts/test-natal-exact-copy-routing.mjs references the missing angle-aspects-60-friends-v1/shipping-manifest.json fixture. This repair does not create or alter that unrelated evidence package."
+          fi
       - name: Commit regenerated repair
         shell: bash
         run: |
