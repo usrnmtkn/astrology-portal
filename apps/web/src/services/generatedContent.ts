@@ -1476,7 +1476,10 @@ export async function loadFallbackArchitectureV3DashboardBundle(): Promise<Fallb
     return cached?.bundle ?? null;
   }
 
-  const currentCoreKeys = new Set(currentCoreManifest.keys);
+  const currentCoreKeys = new Set(currentCoreManifest.keys.map((manifestKey) => {
+  const separatorIndex = manifestKey.indexOf(":");
+  return separatorIndex >= 0 ? manifestKey.slice(separatorIndex + 1) : manifestKey;
+}));
   const overlayRows = selectLatestLiveServingDashboardRows(
     rows,
     currentCoreKeys,
