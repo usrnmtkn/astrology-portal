@@ -9235,33 +9235,6 @@ export function GeneratedContentAdminDashboard() {
               </label>
             </section>
           ))}
-          <details className="admin-advanced admin-editor-key-details">
-            <summary>{isVocabularyDraft && isPackageDraft ? "Internal source details" : isVocabularyDraft ? "Internal generated key" : "Content key"}</summary>
-            <label className="admin-title-field">
-              <span>{isVocabularyDraft && isPackageDraft ? "Source key" : isVocabularyDraft ? "Generated key" : "Content key"}</span>
-              <input aria-label={isVocabularyDraft && isPackageDraft ? "Source key" : isVocabularyDraft ? "Generated key" : "Content key"} value={currentDraft.contentKey} onChange={(event) => setDraft({ ...currentDraft, contentKey: event.target.value })} disabled={Boolean(currentDraft.id) || isVocabularyDraft || isPackageDraft} />
-              {isVocabularyDraft && <small className="admin-field-hint">{isPackageDraft ? "The app uses this stable key to request the phrase. It cannot be renamed from Content Studio." : "Generated from section + title. Existing rows keep their original key so published content stays connected."}</small>}
-            </label>
-            {isVocabularyDraft && isPackageDraft && <p className="admin-field-hint">Package role: <code>{packageRole || "vocabulary"}</code></p>}
-          </details>
-          {isArticleDraft && (
-            <section className="admin-display-source-panel" aria-label="Article content system">
-              <div>
-                <p className="admin-eyebrow">Reader behavior</p>
-                <h3>Content System</h3>
-                <p>Reader pages distinguish authored, generated, and fallback copy. On Sky aspects, approved authored and reviewed package copy always outrank generated prose.</p>
-              </div>
-              <div className="admin-content-level-readout">
-                <span>System</span>
-                <strong className={`ui-pill admin-status ${contentSystem === "authored" ? "status-live" : contentSystem === "generated" ? "status-reviewed" : "status-draft"}`}>
-                  {contentSystemLabel(contentSystem)}
-                </strong>
-              </div>
-              <small className="admin-field-hint">
-                Published is a status. Authored, generated, and fallback are provenance systems; publication never changes one system into another.
-              </small>
-            </section>
-          )}
           {!(isVocabularyDraft && isPackageDraft) && <details className="admin-advanced admin-editor-settings">
             <summary>Publishing and technical settings</summary>
             <fieldset className="admin-metadata-fields">
@@ -9321,6 +9294,34 @@ export function GeneratedContentAdminDashboard() {
             </label>
             </fieldset>
           </details>}
+          <details className="admin-advanced admin-editor-key-details">
+            <summary>{isVocabularyDraft && isPackageDraft ? "Internal source details" : isVocabularyDraft ? "Internal generated key" : "Content key"}</summary>
+            <label className="admin-title-field">
+              <span>{isVocabularyDraft && isPackageDraft ? "Source key" : isVocabularyDraft ? "Generated key" : "Content key"}</span>
+              <input aria-label={isVocabularyDraft && isPackageDraft ? "Source key" : isVocabularyDraft ? "Generated key" : "Content key"} value={currentDraft.contentKey} onChange={(event) => setDraft({ ...currentDraft, contentKey: event.target.value })} disabled={Boolean(currentDraft.id) || isVocabularyDraft || isPackageDraft} />
+              {isVocabularyDraft && <small className="admin-field-hint">{isPackageDraft ? "The app uses this stable key to request the phrase. It cannot be renamed from Content Studio." : "Generated from section + title. Existing rows keep their original key so published content stays connected."}</small>}
+            </label>
+            {isVocabularyDraft && isPackageDraft && <p className="admin-field-hint">Package role: <code>{packageRole || "vocabulary"}</code></p>}
+          </details>
+          {isArticleDraft && (
+            <section className="admin-display-source-panel" aria-label="Article content system">
+              <div>
+                <p className="admin-eyebrow">Reader behavior</p>
+                <h3>Content System</h3>
+                <p>Reader pages distinguish authored, generated, and fallback copy. On Sky aspects, approved authored and reviewed package copy always outrank generated prose.</p>
+              </div>
+              <div className="admin-content-level-readout">
+                <span>System</span>
+                <strong className={`ui-pill admin-status ${contentSystem === "authored" ? "status-live" : contentSystem === "generated" ? "status-reviewed" : "status-draft"}`}>
+                  {contentSystemLabel(contentSystem)}
+                </strong>
+              </div>
+              <small className="admin-field-hint">
+                Published is a status. Authored, generated, and fallback are provenance systems; publication never changes one system into another.
+              </small>
+            </section>
+          )}
+
           {selectedRow && (
             <details className="admin-advanced admin-review-json">
               <summary>Structured fields</summary>
