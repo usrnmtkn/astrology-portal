@@ -280,7 +280,11 @@ function packageRoleCanServeExactCopy(contentRole: string) {
 }
 
 function normalizeNatalAspectTheyNameVariable(contentKey: string | undefined, value: unknown) {
-  if (!contentKey?.startsWith("fallback-hook/natal-aspect-lived/") || typeof value !== "string") return value;
+  const supportsNamedFriendCopy = Boolean(
+    contentKey?.startsWith("fallback-hook/natal-aspect-lived/")
+    || contentKey?.startsWith("authored/transit-aspect/")
+  );
+  if (!supportsNamedFriendCopy || typeof value !== "string") return value;
   return value.replace(/\{\{Name\}\}|\{Name\}/gu, "{{Name}}");
 }
 
@@ -459,10 +463,13 @@ function validateFallbackArchitectureV3Copy(row: ExistingGeneratedContentRow, pa
 
     const originalSlots = packagePlaceholders(original);
     for (const slot of packagePlaceholders(value)) {
-      const isRequiredNatalAspectName = row.content_key.startsWith("fallback-hook/natal-aspect-lived/")
+      const isAllowedFriendName = (
+        row.content_key.startsWith("fallback-hook/natal-aspect-lived/")
+        || row.content_key.startsWith("authored/transit-aspect/")
+      )
         && field.endsWith("body_they")
         && slot === "{{Name}}";
-      if (isRequiredNatalAspectName) continue;
+      if (isAllowedFriendName) continue;
       if (!originalSlots.has(slot)) {
         throw new Error(`${field} contains unresolved placeholder ${slot} that was not in the package original.`);
       }
