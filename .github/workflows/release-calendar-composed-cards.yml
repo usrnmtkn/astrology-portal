@@ -28,22 +28,38 @@ jobs:
       - run: npm ci
       - name: Apply exact owner-approved composed-card wording
         run: node scripts/release-calendar-composed-cards-owner-approved.mjs
+      - name: Refresh dependent writing evidence
+        run: |
+          node scripts/build-knowledge-index.mjs --write
+          node scripts/build-phrase-index.mjs --write
+          node scripts/build-production-sky-kernel-comparison.mjs --write
       - name: Verify controlled composed-card release
         run: |
           node scripts/test-calendar-composed-cards-owner-approved-release.mjs
           npm run validate -w @tldr/astro-knowledge
           npm run prepare:app-test-dependencies
           npm run test:sky-calendar-composed-routing
+          node scripts/build-knowledge-index.mjs --check
+          node scripts/build-phrase-index.mjs --check
+          node scripts/build-production-sky-kernel-comparison.mjs
           git diff --check
       - name: Commit controlled serving release
         shell: bash
         run: |
-          if git diff --quiet -- packages/astro-knowledge/data/sky-calendar/composed-cards-v1.json; then
+          if git diff --quiet -- \
+            packages/astro-knowledge/data/sky-calendar/composed-cards-v1.json \
+            packages/astro-knowledge/generated/knowledge-index.json \
+            packages/astro-knowledge/generated/phrase-index.json \
+            packages/astro-knowledge/review/production-sky-kernel-comparison-v1/comparison.json; then
             echo "No release changes to commit."
             exit 0
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add packages/astro-knowledge/data/sky-calendar/composed-cards-v1.json
-          git commit -m "release(calendar): serve approved composed aspect cards"
+          git add \
+            packages/astro-knowledge/data/sky-calendar/composed-cards-v1.json \
+            packages/astro-knowledge/generated/knowledge-index.json \
+            packages/astro-knowledge/generated/phrase-index.json \
+            packages/astro-knowledge/review/production-sky-kernel-comparison-v1/comparison.json
+          git commit -m "release(calendar): refresh composed-card evidence"
           git push origin HEAD
