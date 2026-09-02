@@ -31,8 +31,9 @@ jobs:
       - name: Verify controlled composed-card release
         run: |
           node scripts/test-calendar-composed-cards-owner-approved-release.mjs
-          npm run test:sky-calendar-composed-routing
           npm run validate -w @tldr/astro-knowledge
+          npm run prepare:app-test-dependencies
+          npm run test:sky-calendar-composed-routing
           git diff --check
       - name: Commit controlled serving release
         shell: bash
