@@ -1,0 +1,200 @@
+name: Repair Transit to Natal Content Studio editing
+
+on:
+  push:
+    branches:
+      - chatgpt/fix-transit-natal-admin-friend-editor2
+
+permissions:
+  contents: write
+
+jobs:
+  repair:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      VITE_SUPABASE_URL: https://visual-smoke.supabase.test
+      VITE_SUPABASE_ANON_KEY: visual-smoke-placeholder
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: chatgpt/fix-transit-natal-admin-friend-editor2
+          fetch-depth: 0
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+      - name: Apply Content Studio repair
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          dashboard_path = Path('apps/admin/src/GeneratedContentAdminDashboard.tsx')
+          dashboard = dashboard_path.read_text()
+
+          old = 'const generatedContentPageRetryDelaysMs = [350];'
+          new = 'const generatedContentPageRetryDelaysMs = [350, 1_000];'
+          if old not in dashboard:
+              raise SystemExit('retry delay anchor not found')
+          dashboard = dashboard.replace(old, new, 1)
+
+          old = '  const pageSize = scope === "compatibility" ? 500 : 1000;'
+          new = '  const pageSize = scope === "compatibility" ? 500 : 400;'
+          if old not in dashboard:
+              raise SystemExit('page size anchor not found')
+          dashboard = dashboard.replace(old, new, 1)
+
+          old = '''    const isContinuousSkyPackage = isPackageDraft && packageRecord.render_policy === "sky-placement-continuous-v2";
+    const showPackageBodyYou = isPackageDraft
+'''
+          new = '''    const isContinuousSkyPackage = isPackageDraft && packageRecord.render_policy === "sky-placement-continuous-v2";
+    const isAuthoredTransitAspectDraft = isPackageDraft
+      && currentDraft.contentKey.startsWith("authored/transit-aspect/");
+    const showPackageBodyYou = isPackageDraft
+'''
+          if old not in dashboard:
+              raise SystemExit('transit aspect draft anchor not found')
+          dashboard = dashboard.replace(old, new, 1)
+
+          old = '''    const showPackageBodyThey = isPackageDraft
+      && !isVocabularyDraft
+      && (typeof editablePackageRecord.body_they === "string" || typeof objectRecord(currentDraft.sections)?.body_they === "string");'''
+          new = '''    const showPackageBodyThey = isPackageDraft
+      && !isVocabularyDraft
+      && (isAuthoredTransitAspectDraft
+        || typeof editablePackageRecord.body_they === "string"
+        || typeof objectRecord(currentDraft.sections)?.body_they === "string");'''
+          if old not in dashboard:
+              raise SystemExit('showPackageBodyThey anchor not found')
+          dashboard = dashboard.replace(old, new, 1)
+
+          old = '''              {isExactNatalAspectDraft && (
+                <small className="admin-field-hint" id="natal-aspect-they-name-hint" role="note">
+                  Name variable: <code>{natalAspectTheyNameVariable}</code>. Enter it exactly where the person&apos;s name should appear; the app replaces it with their name.
+                </small>
+              )}
+              <textarea
+                aria-describedby={isExactNatalAspectDraft ? "natal-aspect-they-name-hint" : undefined}
+'''
+          new = '''              {isExactNatalAspectDraft && (
+                <small className="admin-field-hint" id="natal-aspect-they-name-hint" role="note">
+                  Name variable: <code>{natalAspectTheyNameVariable}</code>. Enter it exactly where the person&apos;s name should appear; the app replaces it with their name.
+                </small>
+              )}
+              {isAuthoredTransitAspectDraft && (
+                <small className="admin-field-hint" id="transit-aspect-they-name-hint" role="note">
+                  Friends uses this complete third-person passage. Use <code>{"{{Name}}"}</code> where the person&apos;s name belongs. If this field is blank, the reader falls back to the legacy automatic conversion of the You passage.
+                </small>
+              )}
+              <textarea
+                aria-describedby={isExactNatalAspectDraft
+                  ? "natal-aspect-they-name-hint"
+                  : isAuthoredTransitAspectDraft ? "transit-aspect-they-name-hint" : undefined}
+'''
+          if old not in dashboard:
+              raise SystemExit('Friend view hint anchor not found')
+          dashboard = dashboard.replace(old, new, 1)
+
+          old = '''              {!fallbackEditorGuidance && <small className="admin-field-hint">Used when the app describes this person to a friend or another chart viewer.</small>}'''
+          new = '''              {!fallbackEditorGuidance && !isAuthoredTransitAspectDraft && <small className="admin-field-hint">Used when the app describes this person to a friend or another chart viewer.</small>}
+              {!fallbackEditorGuidance && isAuthoredTransitAspectDraft && <small className="admin-field-hint">This is the editable Friends version of the standalone Transit to Natal write-up. Write it as its own complete passage rather than mechanically changing pronouns in the You copy.</small>}'''
+          if old not in dashboard:
+              raise SystemExit('Friend view generic hint anchor not found')
+          dashboard = dashboard.replace(old, new, 1)
+          dashboard_path.write_text(dashboard)
+
+          api_path = Path('api/admin/generated-content.ts')
+          api = api_path.read_text()
+          old = '''      const isRequiredNatalAspectName = row.content_key.startsWith("fallback-hook/natal-aspect-lived/")
+        && field.endsWith("body_they")
+        && slot === "{{Name}}";
+      if (isRequiredNatalAspectName) continue;'''
+          new = '''      const isAllowedFriendName = (
+        row.content_key.startsWith("fallback-hook/natal-aspect-lived/")
+        || row.content_key.startsWith("authored/transit-aspect/")
+      )
+        && field.endsWith("body_they")
+        && slot === "{{Name}}";
+      if (isAllowedFriendName) continue;'''
+          if old not in api:
+              raise SystemExit('friend Name placeholder validation anchor not found')
+          api = api.replace(old, new, 1)
+
+          old = '''function normalizeNatalAspectTheyNameVariable(contentKey: string | undefined, value: unknown) {
+  if (!contentKey?.startsWith("fallback-hook/natal-aspect-lived/") || typeof value !== "string") return value;
+  return value.replace(/\\{\\{Name\\}\\}|\\{Name\\}/gu, "{{Name}}");
+}'''
+          new = '''function normalizeNatalAspectTheyNameVariable(contentKey: string | undefined, value: unknown) {
+  const supportsNamedFriendCopy = Boolean(
+    contentKey?.startsWith("fallback-hook/natal-aspect-lived/")
+    || contentKey?.startsWith("authored/transit-aspect/")
+  );
+  if (!supportsNamedFriendCopy || typeof value !== "string") return value;
+  return value.replace(/\\{\\{Name\\}\\}|\\{Name\\}/gu, "{{Name}}");
+}'''
+          if old not in api:
+              raise SystemExit('friend Name normalization anchor not found')
+          api = api.replace(old, new, 1)
+          api_path.write_text(api)
+
+          source_path = Path('apps/admin/src/transitNatalSources.ts')
+          source = source_path.read_text()
+          old = '          scope: "An authored complete passage can replace the generic standalone transit-aspect template.",'
+          new = '          scope: "An authored complete passage can replace the generic standalone transit-aspect template. The editor exposes separate You and Friends passages so each reader voice can be authored directly.",'
+          if old not in source:
+              raise SystemExit('transit natal standalone scope anchor not found')
+          source_path.write_text(source.replace(old, new, 1))
+
+          test_path = Path('scripts/test-content-studio-transit-friend-editor.mjs')
+          test_path.write_text(r'''#!/usr/bin/env node
+import assert from "node:assert/strict";
+import fs from "node:fs";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+
+const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
+const dashboard = fs.readFileSync(path.join(root, "apps/admin/src/GeneratedContentAdminDashboard.tsx"), "utf8");
+const api = fs.readFileSync(path.join(root, "api/admin/generated-content.ts"), "utf8");
+const transitSources = fs.readFileSync(path.join(root, "apps/admin/src/transitNatalSources.ts"), "utf8");
+
+assert.match(dashboard, /const pageSize = scope === "compatibility" \? 500 : 400;/u, "Full Content Studio loads must use smaller pages than the prior 1000-row request that timed out in production.");
+assert.match(dashboard, /const generatedContentPageRetryDelaysMs = \[350, 1_000\];/u, "Transient Content Studio reads should get more than one retry opportunity.");
+assert.match(dashboard, /const isAuthoredTransitAspectDraft = isPackageDraft[\s\S]{0,160}startsWith\("authored\/transit-aspect\/"\)/u, "Transit aspect package rows must be recognized as dual-audience editor rows.");
+assert.match(dashboard, /const showPackageBodyThey = isPackageDraft[\s\S]{0,240}isAuthoredTransitAspectDraft/u, "Standalone Transit to Natal rows must expose a Friends copy editor even when the legacy package omitted body_they.");
+assert.match(dashboard, /Friends uses this complete third-person passage[\s\S]{0,220}\{\{"\{\{Name\}\}"\}\}/u, "Friends transit editor must explain the explicit named-friend authoring path.");
+assert.match(api, /row\.content_key\.startsWith\("authored\/transit-aspect\/"\)[\s\S]{0,180}slot === "\{\{Name\}\}"/u, "Transit Friends copy must be allowed to use the Name variable.");
+assert.match(transitSources, /separate You and Friends passages/u, "Transit to Natal source guidance must advertise both editable reader voices.");
+
+console.log("Content Studio Transit to Natal Friends editor contract passed.");
+''')
+
+          package_path = Path('package.json')
+          package_text = package_path.read_text()
+          old = 'node --import tsx scripts/test-fallback-dashboard-live-overlay.mjs && node scripts/test-fallback-refresh-wiring.mjs'
+          new = 'node --import tsx scripts/test-fallback-dashboard-live-overlay.mjs && node scripts/test-content-studio-transit-friend-editor.mjs && node scripts/test-fallback-refresh-wiring.mjs'
+          if old not in package_text:
+              raise SystemExit('test:content insertion anchor not found')
+          package_path.write_text(package_text.replace(old, new, 1))
+          PY
+      - name: Install dependencies
+        run: npm ci
+      - name: Build astro knowledge prerequisite
+        run: npm run build -w @tldr/astro-knowledge
+      - name: Test Transit to Natal admin contract
+        run: node scripts/test-content-studio-transit-friend-editor.mjs
+      - name: Test Content Studio API roundtrip
+        run: node --import tsx scripts/test-content-studio-api-roundtrip.mjs
+      - name: Test transit Friend grammar
+        run: node --experimental-strip-types scripts/test-transit-friend-pronoun-grammar.mjs
+      - name: Build Content Studio admin
+        run: npm run build:admin
+      - name: Build reader app
+        run: npm run build -w @tldr/web
+      - name: Commit verified repair
+        run: |
+          git config user.name "ChatGPT"
+          git config user.email "chatgpt@users.noreply.github.com"
+          git rm .github/workflows/chatgpt-fix-transit-natal-admin-friend-editor.yml
+          git add apps/admin/src/GeneratedContentAdminDashboard.tsx apps/admin/src/transitNatalSources.ts api/admin/generated-content.ts package.json scripts/test-content-studio-transit-friend-editor.mjs
+          git commit -m "fix: stabilize Transit to Natal Content Studio editing"
+          git push origin HEAD:chatgpt/fix-transit-natal-admin-friend-editor2
