@@ -2492,7 +2492,7 @@ async function adminJsonRequest<T>(path: string, secret: string, options: Reques
   return payload as T;
 }
 
-const generatedContentPageRetryDelaysMs = [350];
+const generatedContentPageRetryDelaysMs = [350, 1_000];
 
 function isRetryableAdminReadError(error: unknown) {
   if (!(error instanceof AdminRequestError)) return true;
@@ -2517,7 +2517,7 @@ async function loadAllGeneratedContentRows(
   scope: "all" | "compatibility" = "all",
   onPage?: (rows: AdminGeneratedContentRow[], complete: boolean) => void
 ) {
-  const pageSize = scope === "compatibility" ? 500 : 1000;
+  const pageSize = scope === "compatibility" ? 500 : 400;
   const allRows: AdminGeneratedContentRow[] = [];
   let cursor: string | null = null;
 
@@ -7592,13 +7592,17 @@ export function GeneratedContentAdminDashboard() {
     const vocabularyTheyValue = isVocabularyDraft ? packageFieldString(currentDraft, "body_they") : "";
     const vocabularyHasTheyVersion = vocabularyTheyValue.trim().length > 0;
     const isContinuousSkyPackage = isPackageDraft && packageRecord.render_policy === "sky-placement-continuous-v2";
+    const isAuthoredTransitAspectDraft = isPackageDraft
+      && currentDraft.contentKey.startsWith("authored/transit-aspect/");
     const showPackageBodyYou = isPackageDraft
       && !isVocabularyDraft
       && !isContinuousSkyPackage
       && (typeof editablePackageRecord.body_you === "string" || typeof objectRecord(currentDraft.sections)?.body_you === "string");
     const showPackageBodyThey = isPackageDraft
       && !isVocabularyDraft
-      && (typeof editablePackageRecord.body_they === "string" || typeof objectRecord(currentDraft.sections)?.body_they === "string");
+      && (isAuthoredTransitAspectDraft
+        || typeof editablePackageRecord.body_they === "string"
+        || typeof objectRecord(currentDraft.sections)?.body_they === "string");
     const isYouOnlyNatalExactDraft = categoryFilter === "Natal Chart"
       && packageRecord.reader_only === true
       && packageRecord.render_policy === "reader-only-exact-lived-v1";
@@ -8942,14 +8946,22 @@ export function GeneratedContentAdminDashboard() {
                   Name variable: <code>{natalAspectTheyNameVariable}</code>. Enter it exactly where the person&apos;s name should appear; the app replaces it with their name.
                 </small>
               )}
+              {isAuthoredTransitAspectDraft && (
+                <small className="admin-field-hint" id="transit-aspect-they-name-hint" role="note">
+                  Friends uses this complete third-person passage. Use <code>{"{{Name}}"}</code> where the person&apos;s name belongs. If this field is blank, the reader falls back to the legacy automatic conversion of the You passage.
+                </small>
+              )}
               <textarea
-                aria-describedby={isExactNatalAspectDraft ? "natal-aspect-they-name-hint" : undefined}
+                aria-describedby={isExactNatalAspectDraft
+                  ? "natal-aspect-they-name-hint"
+                  : isAuthoredTransitAspectDraft ? "transit-aspect-they-name-hint" : undefined}
                 aria-label={fallbackEditorGuidance?.bodyTheyLabel ?? "Friend view copy"}
                 value={packageFieldString(currentDraft, "body_they")}
                 onChange={(event) => setDraft(setPackageSectionField(currentDraft, "body_they", event.target.value))}
               />
               {fallbackEditorGuidance && <small className="admin-field-hint">{fallbackEditorGuidance.bodyTheyHint}</small>}
-              {!fallbackEditorGuidance && <small className="admin-field-hint">Used when the app describes this person to a friend or another chart viewer.</small>}
+              {!fallbackEditorGuidance && !isAuthoredTransitAspectDraft && <small className="admin-field-hint">Used when the app describes this person to a friend or another chart viewer.</small>}
+              {!fallbackEditorGuidance && isAuthoredTransitAspectDraft && <small className="admin-field-hint">This is the editable Friends version of the standalone Transit to Natal write-up. Write it as its own complete passage rather than mechanically changing pronouns in the You copy.</small>}
             </label>
           )}
           {!compiledSkyArticleEdition && showGenericBody && !skyFallbackEditor && (
