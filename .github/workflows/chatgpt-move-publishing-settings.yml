@@ -1,0 +1,68 @@
+name: Apply Content Studio publishing settings reorder
+
+on:
+  push:
+    branches:
+      - chatgpt/move-publishing-settings
+
+permissions:
+  contents: write
+
+jobs:
+  apply-reorder:
+    if: github.event.head_commit.message == 'chore: stage publishing settings reorder'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: chatgpt/move-publishing-settings
+          fetch-depth: 0
+      - name: Move publishing settings before content key
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          path = Path('apps/admin/src/GeneratedContentAdminDashboard.tsx')
+          text = path.read_text()
+
+          key_marker = '          <details className="admin-advanced admin-editor-key-details">'
+          publishing_marker = '          {!(isVocabularyDraft && isPackageDraft) && <details className="admin-advanced admin-editor-settings">'
+
+          if text.count(key_marker) != 1:
+              raise SystemExit(f'Expected one Content key block, found {text.count(key_marker)}')
+          if text.count(publishing_marker) != 1:
+              raise SystemExit(f'Expected one publishing settings block, found {text.count(publishing_marker)}')
+
+          key_start = text.index(key_marker)
+          publishing_start = text.index(publishing_marker)
+          if publishing_start < key_start:
+              raise SystemExit('Publishing settings already appears before Content key; refusing to rewrite.')
+
+          publishing_end_marker = '          </details>}'
+          publishing_end = text.index(publishing_end_marker, publishing_start) + len(publishing_end_marker)
+          publishing_block = text[publishing_start:publishing_end]
+
+          without_publishing = text[:publishing_start] + text[publishing_end:]
+          key_start_after_removal = without_publishing.index(key_marker)
+          updated = (
+              without_publishing[:key_start_after_removal]
+              + publishing_block
+              + '\n'
+              + without_publishing[key_start_after_removal:]
+          )
+
+          if updated.index(publishing_marker) > updated.index(key_marker):
+              raise SystemExit('Reorder verification failed.')
+          if updated.count(publishing_marker) != 1 or updated.count(key_marker) != 1:
+              raise SystemExit('Block count changed during reorder.')
+
+          path.write_text(updated)
+          PY
+      - name: Remove temporary workflow and commit
+        run: |
+          git config user.name "ChatGPT"
+          git config user.email "chatgpt@users.noreply.github.com"
+          git rm .github/workflows/chatgpt-move-publishing-settings.yml
+          git add apps/admin/src/GeneratedContentAdminDashboard.tsx
+          git commit -m "fix(admin): move publishing settings above content key"
+          git push origin HEAD:chatgpt/move-publishing-settings
