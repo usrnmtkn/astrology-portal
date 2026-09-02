@@ -193,8 +193,9 @@
   }
 }
 
-/* The content editor is a true viewport-height flex shell: header and actions
-   stay outside the scroll region while only the form body scrolls. */
+/* The content editor is a viewport-height flex shell. The form body is also a
+   flex column so every top-level editor section participates in normal document
+   flow; nested card grids remain local to their own section. */
 .admin-dashboard .admin-editor-panel {
   bottom: 0;
   box-sizing: border-box;
@@ -212,7 +213,12 @@
 }
 
 .admin-dashboard .admin-editor-panel > .admin-post-editor {
+  align-content: initial;
+  align-items: stretch;
+  display: flex;
   flex: 1 1 0;
+  flex-direction: column;
+  gap: var(--admin-space-6xl);
   min-height: 0;
   overflow-y: auto;
   overscroll-behavior: contain;
@@ -229,19 +235,19 @@
   z-index: 1;
 }
 
-/* Publishing/technical settings and Structured fields are sibling sections in
-   the editor markup. Keep each one in its own full-width grid row and undo the
-   legacy review-json styling that made Structured fields look nested inside the
-   publishing card. */
+/* These are independent sibling cards. Keep them full-width and in normal flow;
+   do not let legacy editor grid or review-json rules assign them to shared rows. */
 .admin-dashboard .admin-editor-panel > .admin-post-editor > .admin-editor-settings,
+.admin-dashboard .admin-editor-panel > .admin-post-editor > .admin-editor-key-details,
 .admin-dashboard .admin-editor-panel > .admin-post-editor > .admin-review-json {
-  align-self: start;
+  align-self: stretch;
   border: var(--border-width-thin) solid var(--admin-ui-border) !important;
   border-radius: var(--admin-ui-radius-lg) !important;
   display: grid !important;
+  flex: 0 0 auto;
   grid-auto-flow: row;
   grid-auto-rows: auto;
-  grid-column: 1 / -1;
+  grid-column: auto !important;
   grid-row: auto !important;
   grid-template-columns: minmax(0, 1fr);
   margin: 0 !important;
