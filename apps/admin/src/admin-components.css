@@ -195,7 +195,7 @@
 
 /* The content editor is a viewport-height flex shell. The form body is also a
    flex column so every top-level editor section participates in normal document
-   flow; nested card grids remain local to their own section. */
+   flow; nested layouts remain local to their own section. */
 .admin-dashboard .admin-editor-panel {
   bottom: 0;
   box-sizing: border-box;
@@ -235,21 +235,19 @@
   z-index: 1;
 }
 
-/* These are independent sibling cards. Keep them full-width and in normal flow;
-   do not let legacy editor grid or review-json rules assign them to shared rows. */
+/* These are independent sibling cards. Keep the native details containers in
+   normal block flow so an open section always contributes its full height before
+   the next card is laid out. */
 .admin-dashboard .admin-editor-panel > .admin-post-editor > .admin-editor-settings,
 .admin-dashboard .admin-editor-panel > .admin-post-editor > .admin-editor-key-details,
 .admin-dashboard .admin-editor-panel > .admin-post-editor > .admin-review-json {
   align-self: stretch;
   border: var(--border-width-thin) solid var(--admin-ui-border) !important;
   border-radius: var(--admin-ui-radius-lg) !important;
-  display: grid !important;
+  display: block !important;
   flex: 0 0 auto;
-  grid-auto-flow: row;
-  grid-auto-rows: auto;
   grid-column: auto !important;
   grid-row: auto !important;
-  grid-template-columns: minmax(0, 1fr);
   margin: 0 !important;
   overflow: hidden;
   padding: 0;
@@ -263,7 +261,6 @@
   background: var(--admin-ui-surface-2);
   cursor: pointer;
   font-weight: 650;
-  grid-column: 1;
   margin: 0 !important;
   padding: var(--admin-space-xl) var(--admin-space-2xl);
   position: static !important;
@@ -276,7 +273,6 @@
 
 .admin-dashboard .admin-editor-panel > .admin-post-editor > .admin-editor-settings[open] > .admin-metadata-fields,
 .admin-dashboard .admin-editor-panel > .admin-post-editor > .admin-review-json[open] > pre {
-  grid-column: 1;
   margin: 0 !important;
   position: static !important;
   width: 100%;
