@@ -4,6 +4,7 @@ import fs from "node:fs";
 
 const dashboard = fs.readFileSync("apps/admin/src/GeneratedContentAdminDashboard.tsx", "utf8");
 const migration = fs.readFileSync("apps/web/supabase/migrations/20260902060000_content_studio_hydration_crud_reliability.sql", "utf8");
+const api = fs.readFileSync("api/admin/generated-content.ts", "utf8");
 
 for (const [label, pattern] of [
   ["Sky article revision autosave", /persistedArticleRow\?\.updated_at[\s\S]{0,180}expectedUpdatedAt: persistedArticleRow\.updated_at[\s\S]{0,220}ownerAction: "save-sky-article-edition-revision"/u],
@@ -23,3 +24,8 @@ assert.match(
 );
 
 console.log("Content Studio special mutation concurrency contract passed.");
+
+
+assert.match(api, /updateParams\.set\("updated_at", `eq\.\$\{body\.expectedUpdatedAt\}`\)/u, "Ordinary saves must put the expected version in the database mutation filter.");
+assert.match(api, /deleteParams\.set\("status", "neq\.LIVE"\)/u, "Hard delete must atomically exclude rows that become LIVE.");
+assert.match(api, /deleteParams\.set\("updated_at", `eq\.\$\{expectedUpdatedAt\}`\)/u, "Hard delete must put the expected version in the database mutation filter.");
