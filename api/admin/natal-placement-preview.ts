@@ -5,6 +5,7 @@ import { createRequire } from "node:module";
 import { createFallbackRenderer } from "../../apps/web/src/content/fallbackArchitectureV3/dist/tldr-content.js";
 import { isContentAdminAuthorized } from "../_lib/admin-auth.js";
 import { loadLocalWebEnv } from "../_lib/local-env.js";
+import { isFallbackDashboardRecordAllowed } from "../../apps/web/src/content/fallbackArchitectureV3/dashboardExtensions.js";
 
 loadLocalWebEnv();
 
@@ -123,7 +124,7 @@ function ignoredReason(candidate: PreviewOverrideCandidate): IgnoredPreviewOverr
   if (candidate.status !== "LIVE") return "not-live";
   if (candidate.lane !== "serving") return "not-serving";
   if (candidate.provider !== fallbackProvider) return "wrong-provider";
-  if (!currentPackageKeys.has(candidate.packageRow.contentKey)) return "not-current-package-key";
+  if (!isFallbackDashboardRecordAllowed(candidate.packageRow, currentPackageKeys)) return "not-current-package-key";
   const reviewStatus = typeof candidate.packageRow.review_status === "string" ? candidate.packageRow.review_status : "";
   if (candidate.packageRow.content_role === "template" && !reviewStatus) return null;
   if (!approvedReviewStatuses.has(reviewStatus)) return "not-reader-approved";

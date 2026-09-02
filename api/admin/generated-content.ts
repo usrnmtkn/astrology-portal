@@ -78,6 +78,7 @@ type GeneratedContentWriteBody = {
   evergreen?: boolean;
   evergreenAt?: string | null;
   evergreenBy?: string | null;
+  expectedUpdatedAt?: string;
   ownerAction?:
     | "approve-and-schedule"
     | "approve-package-revision"
@@ -123,6 +124,7 @@ type ExistingGeneratedContentRow = {
   judge_verdict?: string | null;
   judge_gate?: string | null;
   judge_why?: string | null;
+  updated_at?: string | null;
 };
 
 type SkippedLiveGeneratedContentRow = {
@@ -949,6 +951,32 @@ function missingGeneratedInterpretationsColumn(payload: unknown) {
   return match?.[1] ?? null;
 }
 
+
+function boundedGeneratedContentLimit(value: string | null, fallback = 50, maximum = 1000) {
+  const parsed = Number(value ?? fallback);
+  if (!Number.isFinite(parsed)) return fallback;
+  return Math.min(Math.max(Math.trunc(parsed), 1), maximum);
+}
+
+type GeneratedContentCursor = { id: string; updatedAt: string };
+
+function encodeGeneratedContentCursor(row: { id?: unknown; updated_at?: unknown } | undefined) {
+  if (!row || typeof row.id !== "string" || typeof row.updated_at !== "string") return null;
+  return Buffer.from(JSON.stringify({ id: row.id, updatedAt: row.updated_at }), "utf8").toString("base64url");
+}
+
+function decodeGeneratedContentCursor(value: string): GeneratedContentCursor {
+  try {
+    const parsed = JSON.parse(Buffer.from(value, "base64url").toString("utf8")) as Partial<GeneratedContentCursor>;
+    if (typeof parsed.id !== "string" || !parsed.id || typeof parsed.updatedAt !== "string" || !Number.isFinite(Date.parse(parsed.updatedAt))) {
+      throw new Error("invalid cursor payload");
+    }
+    return { id: parsed.id, updatedAt: parsed.updatedAt };
+  } catch {
+    throw new GeneratedContentRequestError("cursor is invalid.");
+  }
+}
+
 async function listGeneratedContent(req: IncomingMessage) {
   const requestUrl = new URL(req.url ?? "/api/admin/generated-content", "http://localhost");
   const id = requestUrl.searchParams.get("id");
@@ -962,8 +990,9 @@ async function listGeneratedContent(req: IncomingMessage) {
   const visibility = requestUrl.searchParams.get("visibility") ?? "all";
   const scope = requestUrl.searchParams.get("scope") ?? "all";
   const cursor = requestUrl.searchParams.get("cursor");
-  const limit = Math.min(Number(requestUrl.searchParams.get("limit") ?? "50"), 1000);
-  const offset = Math.max(Number(requestUrl.searchParams.get("offset") ?? "0"), 0);
+  const limit = boundedGeneratedContentLimit(requestUrl.searchParams.get("limit"));
+  const supportsUpdatedCursor = !id && scope !== "compatibility" && !startDate && !endDate;
+  const offset = supportsUpdatedCursor ? 0 : Math.max(Number(requestUrl.searchParams.get("offset") ?? "0"), 0);
   const selectColumns = [
     "id",
     "content_key",
@@ -1028,6 +1057,11 @@ async function listGeneratedContent(req: IncomingMessage) {
     params.set("status", "neq.ARCHIVED");
   } else if (status !== "all") {
     params.set("status", `eq.${status}`);
+  }
+
+  if (!id && supportsUpdatedCursor && cursor) {
+    const decodedCursor = decodeGeneratedContentCursor(cursor);
+    params.set("or", `(updated_at.lt.${decodedCursor.updatedAt},and(updated_at.eq.${decodedCursor.updatedAt},id.lt.${decodedCursor.id}))`);
   }
 
   if (!id && surface) {
@@ -1142,15 +1176,39 @@ async function createGeneratedContentFromBody(body: GeneratedContentWriteBody) {
     throw new Error("eventType is required.");
   }
 
+  if (body.status && !allowedStatuses.has(body.status)) {
+    throw new GeneratedContentRequestError("status must be DRAFT, REVIEWED, LIVE, ARCHIVED, or ERROR.");
+  }
+
   const blockType = normalizedGeneratedContentBlockType(body.blockType, body.surface, body.mode);
   const isCmsRow = isCmsGeneratedContentWriteBody(body);
   const packageState = fallbackArchitectureV3CreateState(body);
+  if (!packageState && body.status === "LIVE") {
+    if (isSampleOnlyRow(body.surface, body.contentKey)) {
+      throw new GeneratedContentRequestError("Personalized content test rows cannot be published globally. Generate real user or bond scoped content instead.");
+    }
+    const requestedLane = typeof body.lane === "string" && body.lane.trim() ? body.lane.trim() : "serving";
+    if (requestedLane !== "serving") {
+      throw new GeneratedContentRequestError("Published content must use the serving lane.", 409);
+    }
+    if (body.reviewState) {
+      throw new GeneratedContentRequestError("Published content cannot retain a review hold.", 409);
+    }
+    assertValidCmsTemplate({
+      contentKey: body.contentKey,
+      headline: body.headline,
+      summary: body.summary,
+      body: body.body,
+      sourceSnapshot: body.sourceSnapshot
+    });
+    assertCanPublishGeneratedContent(body);
+  }
   const now = new Date().toISOString();
   const row = {
     content_key: body.contentKey.trim(),
     surface: body.surface,
     mode: body.mode,
-    status: packageState?.status ?? "DRAFT",
+    status: packageState?.status ?? body.status ?? "DRAFT",
     event_type: body.eventType.trim(),
     target_date: body.targetDate || null,
     facts: packageState?.facts ?? body.facts ?? {},
@@ -1163,8 +1221,8 @@ async function createGeneratedContentFromBody(body: GeneratedContentWriteBody) {
     evergreen_by: body.evergreen ? body.evergreenBy ?? "admin" : null,
     ...(blockType ? { block_type: blockType } : {}),
     prompt_version: typeof body.promptVersion === "string" && body.promptVersion.trim() ? body.promptVersion.trim() : "manual-admin",
-    provider: packageState?.provider ?? (isCmsRow ? "manual-admin" : "claude"),
-    model: "manual",
+    provider: packageState?.provider ?? (typeof body.provider === "string" && body.provider.trim() ? body.provider.trim() : "manual-admin"),
+    model: typeof body.model === "string" && body.model.trim() ? body.model.trim() : "manual",
     headline: body.headline ?? "",
     summary: body.summary ?? "",
     body: body.body ?? "",
@@ -1173,17 +1231,20 @@ async function createGeneratedContentFromBody(body: GeneratedContentWriteBody) {
     ...(packageState?.readerServing ? { reviewed_at: now, published_at: now } : {})
   };
 
-  const response = await adminStorageFetch(`${supabaseUrl()}/rest/v1/generated_interpretations?on_conflict=content_key,target_date,mode`, {
+  const response = await adminStorageFetch(`${supabaseUrl()}/rest/v1/generated_interpretations`, {
     method: "POST",
     headers: {
       ...adminHeaders(),
-      prefer: "resolution=merge-duplicates,return=representation"
+      prefer: "return=representation"
     },
     body: JSON.stringify(row)
   });
   const payload = await response.json().catch(() => null);
 
   if (!response.ok) {
+    if (response.status === 409) {
+      throw new GeneratedContentRequestError("A row already exists for this content key, target date, and mode. Open the saved row instead of creating over it.", 409);
+    }
     throw new Error(`Supabase create failed with ${response.status}: ${JSON.stringify(payload)}`);
   }
 
@@ -1212,10 +1273,17 @@ function generatedContentRowFromWriteBody(body: GeneratedContentWriteBody) {
   }
 
   if (body.status === "LIVE" && isSampleOnlyRow(body.surface, body.contentKey)) {
-    throw new Error("Personalized content test rows cannot be published globally. Generate real user or bond scoped content instead.");
+    throw new GeneratedContentRequestError("Personalized content test rows cannot be published globally. Generate real user or bond scoped content instead.");
   }
 
   if (body.status === "LIVE") {
+    const requestedLane = typeof body.lane === "string" && body.lane.trim() ? body.lane.trim() : "serving";
+    if (requestedLane !== "serving") {
+      throw new GeneratedContentRequestError("Published content must use the serving lane.", 409);
+    }
+    if (body.reviewState) {
+      throw new GeneratedContentRequestError("Published content cannot retain a review hold.", 409);
+    }
     const requestedEdition = isRecord(body.sections) ? skyArticleEditionRecord(body.sections.skyArticleEdition) : null;
     if (body.eventType === "sky-article-edition" || requestedEdition) {
       throw new Error("Create compiled Sky article editions as drafts, then use Approve & publish edition.");
@@ -1286,7 +1354,7 @@ async function fetchExistingRowsByContentKey(contentKeys: string[]) {
 
 async function fetchExistingRowById(id: string) {
   const params = new URLSearchParams();
-  params.set("select", "id,content_key,surface,target_date,mode,event_type,status,headline,summary,body,sections,facts,lane,review_state,block_type,provider,prompt_version,source_snapshot,judge_score,judge_verdict,judge_gate,judge_why");
+  params.set("select", "id,content_key,surface,target_date,mode,event_type,status,headline,summary,body,sections,facts,lane,review_state,block_type,provider,prompt_version,source_snapshot,judge_score,judge_verdict,judge_gate,judge_why,updated_at");
   params.set("id", `eq.${id}`);
   params.set("limit", "1");
   const response = await adminStorageFetch(`${supabaseUrl()}/rest/v1/generated_interpretations?${params.toString()}`, {
@@ -1484,7 +1552,15 @@ async function updateGeneratedContent(req: IncomingMessage) {
   }
 
   const existing = await fetchExistingRowById(body.id);
+  if (!existing) {
+    throw new GeneratedContentRequestError("Content row was not found.", 404);
+  }
+  if (body.expectedUpdatedAt && body.expectedUpdatedAt !== existing.updated_at) {
+    throw new GeneratedContentRequestError("This content changed after the editor was opened. Reload the row before saving so a newer edit is not overwritten.", 409);
+  }
   const isPackageRow = isFallbackArchitectureV3Row(existing);
+  const effectiveContentKey = body.contentKey ?? existing.content_key;
+  const effectiveSurface = (body.surface ?? existing.surface) as GeneratedContentSurface | undefined;
 
   const patch: Record<string, unknown> = {
     updated_at: new Date().toISOString()
@@ -1495,7 +1571,7 @@ async function updateGeneratedContent(req: IncomingMessage) {
       throw new Error("Approve & publish revision is available only for fallback package rows.");
     }
     const unexpectedFields = Object.entries(body)
-      .filter(([key, value]) => !["id", "ownerAction"].includes(key) && value !== undefined)
+      .filter(([key, value]) => !["id", "ownerAction", "expectedUpdatedAt"].includes(key) && value !== undefined)
       .map(([key]) => key);
     if (unexpectedFields.length > 0) {
       throw new Error(`Approve & publish revision cannot be combined with other changes: ${unexpectedFields.join(", ")}.`);
@@ -1717,7 +1793,7 @@ async function updateGeneratedContent(req: IncomingMessage) {
       throw new Error("Save and revalidate copy edits before approving and scheduling the row.");
     }
     const unexpectedFields = Object.entries(body)
-      .filter(([key, value]) => !["id", "ownerAction"].includes(key) && value !== undefined)
+      .filter(([key, value]) => !["id", "ownerAction", "expectedUpdatedAt"].includes(key) && value !== undefined)
       .map(([key]) => key);
     if (unexpectedFields.length > 0) {
       throw new Error(`Approve and schedule cannot be combined with other changes: ${unexpectedFields.join(", ")}.`);
@@ -1761,7 +1837,7 @@ async function updateGeneratedContent(req: IncomingMessage) {
       throw new Error("Approve & publish edition is available only for compiled Sky article editions.");
     }
     const unexpectedFields = Object.entries(body)
-      .filter(([key, value]) => !["id", "ownerAction"].includes(key) && value !== undefined)
+      .filter(([key, value]) => !["id", "ownerAction", "expectedUpdatedAt"].includes(key) && value !== undefined)
       .map(([key]) => key);
     if (unexpectedFields.length > 0) {
       throw new Error(`Approve & publish edition cannot be combined with other changes: ${unexpectedFields.join(", ")}.`);
@@ -1790,14 +1866,22 @@ async function updateGeneratedContent(req: IncomingMessage) {
   }
 
   if (body.status) {
-    if (body.status === "LIVE" && isSampleOnlyRow(body.surface, body.contentKey)) {
-      throw new Error("Personalized content test rows cannot be published globally. Generate real user or bond scoped content instead.");
+    if (body.status === "LIVE" && isSampleOnlyRow(effectiveSurface, effectiveContentKey)) {
+      throw new GeneratedContentRequestError("Personalized content test rows cannot be published globally. Generate real user or bond scoped content instead.");
     }
 
     if (body.status === "LIVE") {
       const requestedEdition = isRecord(body.sections) ? skyArticleEditionRecord(body.sections.skyArticleEdition) : null;
       if (existing?.event_type === "sky-article-edition" || body.eventType === "sky-article-edition" || requestedEdition) {
-        throw new Error("Use Approve & publish edition so the exact compiled Sky article receives an owner approval record.");
+        throw new GeneratedContentRequestError("Use Approve & publish edition so the exact compiled Sky article receives an owner approval record.", 409);
+      }
+      if (!isPackageRow) {
+        const effectiveLane = typeof body.lane === "string" && body.lane.trim()
+          ? body.lane.trim()
+          : existing.lane ?? "serving";
+        if (effectiveLane !== "serving") {
+          throw new GeneratedContentRequestError("Published content must use the serving lane.", 409);
+        }
       }
       assertValidCmsTemplate({
         contentKey: body.contentKey ?? existing?.content_key,
@@ -1998,9 +2082,21 @@ async function updateGeneratedContent(req: IncomingMessage) {
 async function deleteGeneratedContent(req: IncomingMessage) {
   const requestUrl = new URL(req.url ?? "/api/admin/generated-content", "http://localhost");
   const id = requestUrl.searchParams.get("id");
+  const expectedUpdatedAt = requestUrl.searchParams.get("expectedUpdatedAt");
 
   if (!id) {
-    throw new Error("id is required.");
+    throw new GeneratedContentRequestError("id is required.");
+  }
+
+  const existing = await fetchExistingRowById(id);
+  if (!existing) {
+    throw new GeneratedContentRequestError("Content row was not found.", 404);
+  }
+  if (existing.status === "LIVE") {
+    throw new GeneratedContentRequestError("Published rows cannot be hard-deleted. Demote or archive the row first.", 409);
+  }
+  if (expectedUpdatedAt && expectedUpdatedAt !== existing.updated_at) {
+    throw new GeneratedContentRequestError("This content changed after it was selected for deletion. Reload before deleting it.", 409);
   }
 
   const response = await adminStorageFetch(`${supabaseUrl()}/rest/v1/generated_interpretations?id=eq.${encodeURIComponent(id)}`, {
@@ -2038,14 +2134,17 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
       }
 
       const rows = await listGeneratedContent(req);
-      const requestLimit = Math.min(Number(requestUrl.searchParams.get("limit") ?? "50"), 1000);
-      sendJson(res, 200, {
-        ok: true,
-        rows,
-        ...(requestUrl.searchParams.get("scope") === "compatibility"
-          ? { nextCursor: rows.length === requestLimit ? rows.at(-1)?.id ?? null : null }
-          : {})
-      });
+      const requestLimit = boundedGeneratedContentLimit(requestUrl.searchParams.get("limit"));
+      const scope = requestUrl.searchParams.get("scope") ?? "all";
+      const hasDateRange = Boolean(requestUrl.searchParams.get("startDate") || requestUrl.searchParams.get("endDate"));
+      const nextCursor = rows.length === requestLimit
+        ? scope === "compatibility"
+          ? rows.at(-1)?.id ?? null
+          : hasDateRange
+            ? null
+            : encodeGeneratedContentCursor(rows.at(-1))
+        : null;
+      sendJson(res, 200, { ok: true, rows, nextCursor });
       return;
     }
 

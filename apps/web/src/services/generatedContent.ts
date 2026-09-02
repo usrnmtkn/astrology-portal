@@ -8,6 +8,7 @@ import {
 import { generatedContentAliases } from "./generatedContentKeys";
 import { fallbackArchitectureV3DashboardPackageDestination } from "./fallbackArchitectureV3DashboardPackaging";
 import { selectLatestLiveServingDashboardRows } from "./fallbackArchitectureV3DashboardOverlay";
+import { isFallbackDashboardRecordAllowed } from "../content/fallbackArchitectureV3/dashboardExtensions";
 import { isReaderFacingCopy } from "../content/readerSafety";
 import {
   hasExactSkyArticleOwnerApproval,
@@ -1424,22 +1425,29 @@ export async function loadFallbackArchitectureV3DashboardBundle(): Promise<Fallb
 
   if (!supabase) return cached?.bundle ?? null;
 
-  const { data: versionRows, error: versionError } = await supabase
-    .from("generated_interpretations")
-    .select("updated_at")
-    .eq("provider", fallbackArchitectureV3Provider)
-    .eq("status", "LIVE")
-    .eq("lane", "serving")
-    .order("updated_at", { ascending: false })
-    .limit(1)
-    .returns<Array<Pick<GeneratedContentRow, "updated_at">>>();
+  const { data: runtimeRevision, error: runtimeRevisionError } = await supabase
+    .rpc("content_runtime_revision", { p_provider: fallbackArchitectureV3Provider });
+  let dashboardVersion = typeof runtimeRevision === "string" ? Date.parse(runtimeRevision) : 0;
 
-  if (versionError) {
-    console.warn("Fallback architecture V3 live overlay version failed to load; cached/local copy remains active.", versionError);
-    return cached?.bundle ?? null;
+  if (runtimeRevisionError || !Number.isFinite(dashboardVersion)) {
+    // Backward-compatible rollout path while the DB migration reaches an environment.
+    // This fallback cannot detect every demotion, so it is used only when the revision
+    // RPC is unavailable.
+    const { data: versionRows, error: versionError } = await supabase
+      .from("generated_interpretations")
+      .select("updated_at")
+      .eq("provider", fallbackArchitectureV3Provider)
+      .eq("status", "LIVE")
+      .eq("lane", "serving")
+      .order("updated_at", { ascending: false })
+      .limit(1)
+      .returns<Array<Pick<GeneratedContentRow, "updated_at">>>();
+    if (versionError) {
+      console.warn("Fallback architecture V3 live overlay version failed to load; cached/local copy remains active.", versionError);
+      return cached?.bundle ?? null;
+    }
+    dashboardVersion = fallbackArchitectureV3DashboardVersionFromRows(versionRows ?? []);
   }
-
-  const dashboardVersion = fallbackArchitectureV3DashboardVersionFromRows(versionRows ?? []);
   if (cached && dashboardVersion && cached.version === dashboardVersion) return cached.bundle;
 
   const rows: GeneratedContentRow[] = [];
@@ -1477,9 +1485,15 @@ export async function loadFallbackArchitectureV3DashboardBundle(): Promise<Fallb
   }
 
   const currentCoreKeys = new Set(currentCoreManifest.keys.map((manifestKey) => {
-  const separatorIndex = manifestKey.indexOf(":");
-  return separatorIndex >= 0 ? manifestKey.slice(separatorIndex + 1) : manifestKey;
-}));
+    const separatorIndex = manifestKey.indexOf(":");
+    return separatorIndex >= 0 ? manifestKey.slice(separatorIndex + 1) : manifestKey;
+  }));
+  for (const row of rows) {
+    const extensionRecord = { ...packageRecord(row), contentKey: row.content_key };
+    if (isFallbackDashboardRecordAllowed(extensionRecord, currentCoreKeys)) {
+      currentCoreKeys.add(row.content_key);
+    }
+  }
   const overlayRows = selectLatestLiveServingDashboardRows(
     rows,
     currentCoreKeys,
