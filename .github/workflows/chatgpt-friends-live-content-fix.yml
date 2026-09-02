@@ -1,0 +1,220 @@
+name: Repair Friends live Content Studio hydration
+
+on:
+  push:
+    branches:
+      - chatgpt/content-studio-publish-button-emphasis
+
+permissions:
+  contents: write
+
+jobs:
+  repair:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      VITE_SUPABASE_URL: https://visual-smoke.supabase.test
+      VITE_SUPABASE_ANON_KEY: visual-smoke-placeholder
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: chatgpt/content-studio-publish-button-emphasis
+          fetch-depth: 0
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+      - name: Apply reader hydration and publish-button fixes
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+
+          # 1. Friends detail views must hydrate the live Content Studio mirror.
+          path = Path('apps/web/src/features/friends/friendsContentLoading.ts')
+          text = path.read_text()
+          old = '''export function shouldHydrateFallbackDashboardContent(mode: FriendsContentLoadingMode) {
+            // The checked-in, review-gated package is the canonical Friends source. Avoid
+            // downloading the complete dashboard mirror while the user is opening charts.
+            return mode !== "friends";
+          }'''.replace('          ', '')
+          new = '''export function shouldHydrateFallbackDashboardContent({
+            mode,
+            friendNatalContentRequested,
+            friendRelationshipContentRequests
+          }: Pick<FriendsContentLoadingState, "mode" | "friendNatalContentRequested" | "friendRelationshipContentRequests">) {
+            if (mode !== "friends") return true;
+
+            // Keep the bare Friends list fast, but once a reader opens any Friend detail
+            // surface, hydrate the approved Content Studio mirror so owner-published edits
+            // override the checked-in fallback package immediately.
+            return friendNatalContentRequested || friendRelationshipContentRequests.size > 0;
+          }'''.replace('          ', '')
+          if old not in text:
+              raise SystemExit('Expected Friends dashboard hydration policy was not found.')
+          path.write_text(text.replace(old, new))
+
+          # 2. Pass the Friend request state into the hydration gate and react to tab changes.
+          path = Path('apps/web/src/App.tsx')
+          text = path.read_text()
+          old_call = '!shouldHydrateFallbackDashboardContent(mode)'
+          new_call = '''!shouldHydrateFallbackDashboardContent({
+            mode,
+            friendNatalContentRequested,
+            friendRelationshipContentRequests
+          })'''
+          if old_call not in text:
+              raise SystemExit('Expected App Friends hydration call was not found.')
+          text = text.replace(old_call, new_call, 1)
+          anchor = 'Fallback architecture V3 dashboard bundle failed to install; local JSON snapshot remains active.'
+          start = text.index(anchor)
+          old_deps = '  }, [contentRefreshVersion, mode]);'
+          dep_pos = text.find(old_deps, start)
+          if dep_pos < 0:
+              raise SystemExit('Expected fallback hydration effect dependencies were not found.')
+          new_deps = '  }, [contentRefreshVersion, friendNatalContentRequested, friendRelationshipContentRequests, mode]);'
+          text = text[:dep_pos] + new_deps + text[dep_pos + len(old_deps):]
+          path.write_text(text)
+
+          # 3. Update policy regression coverage: bare list stays lean; every opened Friend
+          # detail surface receives live Content Studio overrides.
+          path = Path('scripts/test-friends-content-loading-policy.mjs')
+          text = path.read_text()
+          old_assert = '''assert.equal(
+            shouldHydrateFallbackDashboardContent("friends"),
+            false,
+            "Friends must use the checked-in approved package without downloading the complete dashboard mirror."
+          );
+          for (const mode of ["guest", "member", "profile", "calendar", "account", "settings"]) {
+            assert.equal(
+              shouldHydrateFallbackDashboardContent(mode),
+              true,
+              `${mode} must retain dashboard hydration.`
+            );
+          }'''.replace('          ', '')
+          new_assert = '''assert.equal(
+            shouldHydrateFallbackDashboardContent(loadingState()),
+            false,
+            "A bare Friends list must not download the complete dashboard mirror."
+          );
+          assert.equal(
+            shouldHydrateFallbackDashboardContent(loadingState([], { friendNatalContentRequested: true })),
+            true,
+            "Friends Natal must hydrate approved Content Studio overrides once the detail view is requested."
+          );
+          for (const tab of ["compatibility", "transits", "synastry", "composite"]) {
+            assert.equal(
+              shouldHydrateFallbackDashboardContent(loadingState([tab])),
+              true,
+              `Friends ${tab} must hydrate approved Content Studio overrides after the detail view opens.`
+            );
+          }
+          for (const mode of ["guest", "member", "profile", "calendar", "account", "settings"]) {
+            assert.equal(
+              shouldHydrateFallbackDashboardContent(loadingState([], { mode })),
+              true,
+              `${mode} must retain dashboard hydration.`
+            );
+          }'''.replace('          ', '')
+          if old_assert not in text:
+              raise SystemExit('Expected Friends hydration assertions were not found.')
+          path.write_text(text.replace(old_assert, new_assert))
+
+          # 4. Prove that a live dashboard authored-card override wins over the deferred
+          # bundled transit card for the exact Venus square Moon reader path.
+          path = Path('scripts/test-transit-aspect-v3-selection.mjs')
+          text = path.read_text()
+          old_export = '''        loadDeferredFallbackArchitectureV3Bundle,
+                transitSynastryFallbackRendererV3,'''
+          # indentation inside stdin is intentionally spaces; use a simpler one-shot replacement.
+          needle = '        loadDeferredFallbackArchitectureV3Bundle,\n        transitSynastryFallbackRendererV3,'
+          if needle not in text:
+              raise SystemExit('Expected transit runtime exports were not found.')
+          text = text.replace(
+              needle,
+              '        installFallbackArchitectureV3Bundle,\n        loadDeferredFallbackArchitectureV3Bundle,\n        transitSynastryFallbackRendererV3,',
+              1
+          )
+          marker = 'console.log("Transit aspect V3 selection contract passed.");'
+          regression = r'''
+          const bundledVenusMoon = render("venus", "square", "moon");
+          assert.equal(bundledVenusMoon.contentKey, "authored/transit-aspect/venus/moon/hard");
+
+          runtime.installFallbackArchitectureV3Bundle({
+            transitLib: {
+              authoredCards: [{
+                contentKey: "authored/transit-aspect/venus/moon/hard",
+                content_role: "full_copy",
+                review_status: "approved",
+                body: "CONTENT STUDIO VENUS MOON OVERRIDE MARKER."
+              }]
+            },
+            templatesFile: { templates: [] },
+            rowsFile: { hookRows: [], vocabularyRows: [] }
+          });
+          const dashboardVenusMoon = render("venus", "square", "moon");
+          assert.equal(dashboardVenusMoon.contentKey, "authored/transit-aspect/venus/moon/hard");
+          assert.match(
+            renderedParts(dashboardVenusMoon),
+            /CONTENT STUDIO VENUS MOON OVERRIDE MARKER/u,
+            "An approved Content Studio transit revision must override the bundled authored card in the reader runtime."
+          );
+          assert.notEqual(
+            renderedParts(dashboardVenusMoon),
+            renderedParts(bundledVenusMoon),
+            "Friends Transits must not keep the bundled copy after a live dashboard override is installed."
+          );
+
+          '''
+          if marker not in text:
+              raise SystemExit('Expected transit test completion marker was not found.')
+          text = text.replace(marker, regression + marker, 1)
+          path.write_text(text)
+
+          # 5. Make the owner publish CTA a solid, unmistakable green button.
+          path = Path('apps/admin/src/admin.css')
+          text = path.read_text()
+          pattern = re.compile(
+              r'\.admin-dashboard \.admin-editor-savebar \.admin-publish-button \{.*?\n\}\n\n'
+              r'\.admin-dashboard \.admin-editor-savebar \.admin-publish-button:hover:not\(:disabled\) \{.*?\n\}',
+              re.S
+          )
+          replacement = '''.admin-dashboard .admin-editor-savebar .admin-publish-button {
+            background: var(--admin-ui-primary);
+            border-color: var(--admin-ui-primary);
+            color: var(--admin-success-canvas);
+            font-weight: 700;
+            opacity: 1;
+          }
+
+          .admin-dashboard .admin-editor-savebar .admin-publish-button:hover:not(:disabled) {
+            background: var(--admin-ui-primary-hover);
+            border-color: var(--admin-ui-primary-hover);
+            color: var(--admin-success-canvas);
+            opacity: 1;
+          }'''.replace('          ', '')
+          text, count = pattern.subn(replacement, text, count=1)
+          if count != 1:
+              raise SystemExit(f'Expected one publish-button rule pair, replaced {count}.')
+          path.write_text(text)
+          PY
+      - name: Install dependencies
+        run: npm ci
+      - name: Build astro knowledge prerequisite
+        run: npm run build -w @tldr/astro-knowledge
+      - name: Test Friends content-loading policy
+        run: node --import tsx scripts/test-friends-content-loading-policy.mjs
+      - name: Test transit dashboard override precedence
+        run: node scripts/test-transit-aspect-v3-selection.mjs
+      - name: Build Content Studio admin
+        run: npm run build:admin
+      - name: Build reader app
+        run: npm run build -w @tldr/web
+      - name: Commit verified repair
+        run: |
+          git config user.name "ChatGPT"
+          git config user.email "chatgpt@users.noreply.github.com"
+          git rm .github/workflows/chatgpt-friends-live-content-fix.yml
+          git add apps/web/src/features/friends/friendsContentLoading.ts apps/web/src/App.tsx scripts/test-friends-content-loading-policy.mjs scripts/test-transit-aspect-v3-selection.mjs apps/admin/src/admin.css
+          git commit -m "fix: hydrate live Content Studio copy in Friends"
+          git push origin HEAD:chatgpt/content-studio-publish-button-emphasis
