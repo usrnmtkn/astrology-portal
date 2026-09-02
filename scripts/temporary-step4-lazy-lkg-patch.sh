@@ -71,6 +71,35 @@ runtime = Path('apps/web/src/services/contentStudioLastKnownGood.ts')
 assert runtime.exists()
 runtime.unlink()
 
+# Keep the update broadcaster transport-only. App already owns the caches and
+# can invalidate them without creating extra dependency edges here.
+signal = Path('apps/web/src/services/contentUpdateSignal.ts')
+source = signal.read_text()
+source = source.replace('import { clearSharedGeneratedContentCache } from "./sharedGeneratedContentCache";\n', '')
+source = source.replace('import { clearPlanetTopicVocabularyCache } from "./planetTopicVocabulary";\n', '')
+source = source.replace('import { clearNatalCardTaglineCache } from "./natalPlacementTaglines";\n\n', '')
+old_notify = '''  const notify = (notice: ContentUpdateNotice) => {\n    clearSharedGeneratedContentCache();\n    clearPlanetTopicVocabularyCache();\n    clearNatalCardTaglineCache();\n    listener(notice);\n  };\n'''
+assert old_notify in source
+source = source.replace(old_notify, '')
+source = source.replace('if (notice) notify(notice);', 'if (notice) listener(notice);')
+source = source.replace('if (event.data) notify(event.data);', 'if (event.data) listener(event.data);')
+signal.write_text(source)
+
+app = Path('apps/web/src/App.tsx')
+source = app.read_text()
+old = 'import { loadNatalCardTaglines, natalCardTagline } from "./services/natalPlacementTaglines";'
+new = 'import { clearNatalCardTaglineCache, loadNatalCardTaglines, natalCardTagline } from "./services/natalPlacementTaglines";'
+assert old in source
+source = source.replace(old, new, 1)
+old = 'import { loadPlanetTopicVocabulary, planetTopicPhrase, signNeedPhrase, signStylePhrase, signStyleShortPhrase, type PlanetTopicVariant } from "./services/planetTopicVocabulary";'
+new = 'import { clearPlanetTopicVocabularyCache, loadPlanetTopicVocabulary, planetTopicPhrase, signNeedPhrase, signStylePhrase, signStyleShortPhrase, type PlanetTopicVariant } from "./services/planetTopicVocabulary";'
+assert old in source
+source = source.replace(old, new, 1)
+needle = '  useEffect(() => subscribeToContentUpdates(() => {\n    clearSharedGeneratedContentCache();\n'
+assert needle in source
+source = source.replace(needle, '  useEffect(() => subscribeToContentUpdates(() => {\n    clearSharedGeneratedContentCache();\n    clearPlanetTopicVocabularyCache();\n    clearNatalCardTaglineCache();\n', 1)
+app.write_text(source)
+
 test = Path('scripts/test-content-studio-last-known-good.mjs')
 source = test.read_text()
 source = source.replace('const runtime = fs.readFileSync("apps/web/src/services/contentStudioLastKnownGood.ts", "utf8");\n', '')
@@ -84,10 +113,11 @@ test.write_text(source)
 
 cache_test = Path('scripts/test-content-studio-runtime-cache-invalidation.mjs')
 source = cache_test.read_text()
-source = source.replace('const signal = fs.readFileSync("apps/web/src/services/contentUpdateSignal.ts", "utf8");\n', 'const signal = fs.readFileSync("apps/web/src/services/contentUpdateSignal.ts", "utf8");\nconst generated = fs.readFileSync("apps/web/src/services/generatedContent.ts", "utf8");\n')
+source = source.replace('const signal = fs.readFileSync("apps/web/src/services/contentUpdateSignal.ts", "utf8");\n', 'const signal = fs.readFileSync("apps/web/src/services/contentUpdateSignal.ts", "utf8");\nconst app = fs.readFileSync("apps/web/src/App.tsx", "utf8");\nconst generated = fs.readFileSync("apps/web/src/services/generatedContent.ts", "utf8");\n')
 start = source.index('assert.match(vocabulary, /export function clearPlanetTopicVocabularyCache/u);')
 end = source.index('\nassert.match(signal, /clearPlanetTopicVocabularyCache', start)
 new_contract = '''assert.match(vocabulary, /export function clearPlanetTopicVocabularyCache/u);\nassert.match(vocabulary, /loadLiveGeneratedContentForSurfaces/u, "Vocabulary hydration must delegate to the shared live/LKG loader.");\nassert.doesNotMatch(vocabulary, /\\.range\\(/u, "Vocabulary hydration must not own OFFSET pagination.");\nassert.match(vocabulary, /finally \\{\\s*loadingVocabulary = null/u);\n\nassert.match(taglines, /export function clearNatalCardTaglineCache/u);\nassert.match(taglines, /loadLiveGeneratedContentForKeys/u, "Tagline hydration must delegate to the shared live/LKG loader.");\nassert.match(taglines, /finally \\{\\s*loadingTaglines = null/u);\n\nassert.match(generated, /\\.gt\\("id", cursorId\\)/u, "Shared Content Studio hydration must use a stable cursor.");\nassert.doesNotMatch(generated, /\\.range\\(from, to\\)/u, "Shared Content Studio hydration must not use OFFSET pagination.");\nassert.match(generated, /loadLastKnownGoodGeneratedContentForSurfaces/u, "Shared surface hydration must retain LKG fallback.");\nassert.match(generated, /loadLastKnownGoodGeneratedContentForKeys/u, "Shared key hydration must retain LKG fallback.");\n'''
 source = source[:start] + new_contract + source[end:]
+source = source.replace('assert.match(signal, /clearPlanetTopicVocabularyCache\\(\\)/u, "Publishing from Content Studio must invalidate planet/sign vocabulary cache.");\nassert.match(signal, /clearNatalCardTaglineCache\\(\\)/u, "Publishing from Content Studio must invalidate natal tagline cache.");\n', 'assert.doesNotMatch(signal, /clearPlanetTopicVocabularyCache|clearNatalCardTaglineCache/u, "The update transport must not own reader cache modules.");\nassert.match(app, /clearPlanetTopicVocabularyCache\\(\\)/u, "Publishing from Content Studio must invalidate planet/sign vocabulary cache.");\nassert.match(app, /clearNatalCardTaglineCache\\(\\)/u, "Publishing from Content Studio must invalidate natal tagline cache.");\n')
 cache_test.write_text(source)
 PY
