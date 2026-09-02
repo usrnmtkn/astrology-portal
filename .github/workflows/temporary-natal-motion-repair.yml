@@ -36,6 +36,15 @@ jobs:
             fs.writeFileSync(file, source.replace(before, after));
           }
 
+          function replaceStatement(file, startText, after) {
+            const source = fs.readFileSync(file, 'utf8');
+            const start = source.indexOf(startText);
+            if (start < 0) throw new Error(`Expected statement start not found in ${file}`);
+            const semicolon = source.indexOf(';', start);
+            if (semicolon < 0) throw new Error(`Expected statement end not found in ${file}`);
+            fs.writeFileSync(file, source.slice(0, start) + after + source.slice(semicolon + 1));
+          }
+
           const nodeFile = 'apps/web/src/content/fallbackArchitectureV3/resolver/renderFallback.mjs';
           replaceOnce(
             nodeFile,
@@ -48,11 +57,9 @@ jobs:
 
           export function renderNatalPlacement(facts, opts = {}) {`
           );
-          replaceOnce(
+          replaceStatement(
             nodeFile,
-            `  const exactCompleteLived = house
-            ? getReaderLivedRow(\`fallback-hook/natal-you-placement-complete-final/\${planet}/\${sign}/\${house}\`, voice, { allowUnreviewed })
-            : null;`,
+            '  const exactCompleteLived = house',
             `  const exactCompleteKey = natalPlacementMotionExactKey(facts);
             const exactCompleteLived = exactCompleteKey
               ? getReaderLivedRow(exactCompleteKey, voice, { allowUnreviewed })
@@ -71,11 +78,9 @@ jobs:
 
           export function createFallbackRenderer(templatesFile: TemplatesFile, rowsFile: RowsFile) {`
           );
-          replaceOnce(
+          replaceStatement(
             browserFile,
-            `    const exactCompleteLived = house
-              ? getReaderLivedRow(\`fallback-hook/natal-you-placement-complete-final/\${planet}/\${sign}/\${house}\`, voice, opts)
-              : null;`,
+            '    const exactCompleteLived = house',
             `    const exactCompleteKey = natalPlacementMotionExactKey(facts);
             const exactCompleteLived = exactCompleteKey
               ? getReaderLivedRow(exactCompleteKey, voice, opts)
