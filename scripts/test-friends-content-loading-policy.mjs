@@ -183,8 +183,25 @@ assert.doesNotMatch(
 );
 assert.match(
   compatibilityLoaderSource,
+  /return packageFallbackArchitectureV3CompatibilityRows\(rows\);/,
+  "Compatibility hydration must delegate row packaging to the governed compatibility helper."
+);
+const compatibilityPackagerStart = generatedContentSource.indexOf(
+  "function packageFallbackArchitectureV3CompatibilityRows"
+);
+const compatibilityPackagerEnd = generatedContentSource.indexOf(
+  "async function loadContentStudioLastKnownGoodCompatibilityBundle",
+  compatibilityPackagerStart
+);
+const compatibilityPackagerSource = generatedContentSource.slice(
+  compatibilityPackagerStart,
+  compatibilityPackagerEnd
+);
+assert.ok(compatibilityPackagerStart >= 0 && compatibilityPackagerEnd > compatibilityPackagerStart);
+assert.match(
+  compatibilityPackagerSource,
   /isApprovedFallbackArchitectureV3Row\(row, row\.provider\)/,
-  "Compatibility hydration must retain package approval checks for each row's actual provider."
+  "Compatibility packaging must retain package approval checks for each row's actual provider."
 );
 assert.match(
   generatedContentSource,
