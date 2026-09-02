@@ -41,7 +41,7 @@ vocab.write_text(text)
 
 taglines = Path('apps/web/src/services/natalPlacementTaglines.ts')
 text = taglines.read_text()
-text = text.replace('let cachedTaglines: NatalCardTaglineMap | null = null;\nlet loadingTaglines:', 'let cachedTaglines: NatalCardTaglineMap | null = null;\nlet cachedTaglineSource: "live" | "lkg" | null = null;\nlet loadingTaglines:', 1)
+text = text.replace('let cachedTaglines: Map<string, string> | null = null;\nlet loadingTaglines:', 'let cachedTaglines: Map<string, string> | null = null;\nlet cachedTaglineSource: "live" | "lkg" | null = null;\nlet loadingTaglines:', 1)
 text = text.replace('  cachedTaglines = null;\n  loadingTaglines = null;', '  cachedTaglines = null;\n  cachedTaglineSource = null;\n  loadingTaglines = null;', 1)
 text = text.replace('  cachedTaglines = natalCardTaglinesFromRows(rows.filter(isReaderServableGeneratedContentRow));\n  return cachedTaglines;\n}\n\nexport async function loadNatalCardTaglines()', '  cachedTaglines = natalCardTaglinesFromRows(rows.filter(isReaderServableGeneratedContentRow));\n  cachedTaglineSource = "lkg";\n  return cachedTaglines;\n}\n\nexport async function loadNatalCardTaglines()', 1)
 text = text.replace('if (cachedTaglines) {\n    return cachedTaglines;\n  }', 'if (cachedTaglines && cachedTaglineSource === "live") {\n    return cachedTaglines;\n  }', 1)
