@@ -1,4 +1,5 @@
 name: Release composed Calendar aspect cards
+# Human-authored final verification checkpoint after governed evidence refresh.
 
 on:
   push:
