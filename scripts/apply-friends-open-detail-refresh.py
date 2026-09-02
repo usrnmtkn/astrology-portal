@@ -173,11 +173,3 @@ assert.match(
 
 console.log("Friends live detail refresh contract passed.");
 ''')
-
-path = Path('package.json')
-text = path.read_text()
-old = 'node scripts/test-fallback-dashboard-live-overlay.mjs && node scripts/test-fallback-refresh-wiring.mjs'
-new = 'node scripts/test-fallback-dashboard-live-overlay.mjs && node scripts/test-friends-live-detail-refresh.mjs && node scripts/test-fallback-refresh-wiring.mjs'
-if old not in text:
-    raise SystemExit('content test insertion anchor not found')
-path.write_text(text.replace(old, new, 1))
