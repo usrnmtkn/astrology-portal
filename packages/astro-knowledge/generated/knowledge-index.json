@@ -95063,7 +95063,7 @@
             "document": true
           },
           "path": "packages/astro-knowledge/data/sky-calendar/composed-cards-v1.json",
-          "sourceSha256": "488bc06508a2cacc9ab0eda8dbd093ba3df21259adee7ed5459debe1e9e82df5"
+          "sourceSha256": "d326f16d1b18da9bdd8b2392ae9f3fcd0cf1b38f667615d986154a36210945e4"
         }
       ]
     },
@@ -519624,7 +519624,7 @@
     }
   ],
   "integrity": {
-    "contentSha256": "10e3a393318bafc1e5c4048cd4e10cffb2f663d0c4561e27fe8ed8d6fe7179f5",
+    "contentSha256": "ec13623ec4e7f1a72b70b8ac3e6189b3b979897f6f2ae9919bf4e2f103032a0a",
     "distinctSourceFiles": 3231
   }
 }
