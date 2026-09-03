@@ -1,0 +1,51 @@
+name: Repair Content Studio unresolved gate v1
+
+on:
+  push:
+    branches:
+      - chatgpt/friends-transits-complete-v1-gate-repair
+
+permissions:
+  contents: write
+
+jobs:
+  repair:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: chatgpt/friends-transits-complete-v1-gate-repair
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Install dependencies
+        run: npm ci
+      - name: Build astro knowledge prerequisite
+        run: npm run build -w @tldr/astro-knowledge
+      - name: Update stale unresolved-content source-shape assertion
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          path = Path('scripts/test-content-unresolved-studio.mts')
+          text = path.read_text()
+          old = 'assert.match(dashboardSource, /typeof packageRecord\\.body_you === "string"/u, "Null split-body placeholders must not hide a populated single Body field.");'
+          new = 'assert.match(dashboardSource, /function packageFieldString\\([\\s\\S]*?typeof sectionValue === "string"[\\s\\S]*?typeof packageValue === "string"/u, "Null split-body placeholders must fall through to populated installed package copy.");'
+          if old not in text:
+              raise SystemExit('stale assertion not found; refusing broad edit')
+          path.write_text(text.replace(old, new, 1))
+          PY
+      - name: Verify focused unresolved-content contract
+        run: |
+          node --import tsx scripts/test-content-unresolved-studio.mts
+          git diff --check
+      - name: Commit focused gate repair
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add scripts/test-content-unresolved-studio.mts
+          git commit -m "test(content): follow current package field fallback"
+          git push origin HEAD:chatgpt/friends-transits-complete-v1-gate-repair
