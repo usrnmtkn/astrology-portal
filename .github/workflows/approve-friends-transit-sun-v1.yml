@@ -1,0 +1,37 @@
+name: Lock Sun Friends owner approval
+
+on:
+  push:
+    branches:
+      - chatgpt/friends-transit-sun-proposed-v1
+
+permissions:
+  contents: write
+
+jobs:
+  approve:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: chatgpt/friends-transit-sun-proposed-v1
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install dependencies
+        run: npm ci
+      - name: Lock exact owner approval
+        run: node scripts/approve-friends-transit-sun-v1.mjs
+      - name: Validate approved packet
+        run: node scripts/test-transit-friends-sun-proposed-v1.mjs
+      - name: Verify diff
+        run: git diff --check
+      - name: Commit approved packet and remove temporary helpers
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git rm .github/workflows/approve-friends-transit-sun-v1.yml scripts/approve-friends-transit-sun-v1.mjs
+          git add packages/astro-knowledge/review/transit-aspect-friends-sun-proposed-v1.json scripts/test-transit-friends-sun-proposed-v1.mjs
+          git commit -m "content(friends): lock Sun transit owner approval"
+          git push origin HEAD:chatgpt/friends-transit-sun-proposed-v1
