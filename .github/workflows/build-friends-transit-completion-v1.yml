@@ -19,7 +19,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      - name: Apply pre-build style corrections
+      - name: Apply pre-build authoring corrections
         shell: python
         run: |
           from pathlib import Path
@@ -35,6 +35,55 @@ jobs:
             if old not in s:
               raise SystemExit(f'missing expected generator text: {old}')
             s = s.replace(old, new)
+
+          old = '''  const mechanism = sentence(pick(mechanismPool, seed, 3), { EFFECT: effect });
+          const action = pick(targetData.actions, seed, 4);
+          const bridge = sentence(pick(bridgeOpeners, seed, 5), {
+            PLANET: pLabel,
+            TARGET: label[canonicalTarget],
+            ACTION: action
+          });
+
+          return `${opener} ${scene} ${mechanism}\\n\\n${bridge}`;'''
+          new = '''  const mechanism = sentence(pick(mechanismPool, seed, 3), { EFFECT: effect });
+          const action = pick(targetData.actions, seed, 4);
+          const variantCode = parts[5] ?? null;
+          const variantTemplates = {
+            "variant-A": [
+              "Around their %TARGET%, the first response matters less than what they notice once the immediate reaction settles.",
+              "Their %TARGET% becomes easier to read after the first reaction drops enough for the practical issue to separate from it."
+            ],
+            "variant-B": [
+              "With their %TARGET%, the useful distinction is between what changed and the meaning the first reaction attached to it.",
+              "Their %TARGET% gives them a clearer clue once they compare the immediate reaction with what is still true an hour later."
+            ],
+            "variant-C": [
+              "For their %TARGET%, they do not need to settle the whole issue before the next concrete step becomes clear.",
+              "Their %TARGET% benefits from a second look because the first emotional meaning is not the only one available."
+            ],
+            "variant-D": [
+              "Around their %TARGET%, the better test is what still matters after the immediate charge has dropped.",
+              "Their %TARGET% becomes more useful as information once the first burst of urgency is no longer choosing the scale of the problem."
+            ],
+            "variant-E": [
+              "With their %TARGET%, the opening is worth using if it still improves the day after the first burst of enthusiasm passes.",
+              "Their %TARGET% gets the most from the option that still looks useful after the initial lift or relief settles."
+            ]
+          };
+          const variantPool = variantCode ? variantTemplates[variantCode] : null;
+          const variantNote = variantPool
+            ? sentence(pick(variantPool, seed, 6), { TARGET: label[canonicalTarget] })
+            : "";
+          const bridge = sentence(pick(bridgeOpeners, seed, 5), {
+            PLANET: pLabel,
+            TARGET: label[canonicalTarget],
+            ACTION: action
+          });
+
+          return `${opener} ${scene} ${mechanism}${variantNote ? ` ${variantNote}` : ""}\\n\\n${bridge}`;'''
+          if old not in s:
+            raise SystemExit('missing buildBody block for variant authoring patch')
+          s = s.replace(old, new)
           p.write_text(s)
       - name: Build 351-row Friends packet
         run: node scripts/build-friends-transit-completion-v1.mjs
