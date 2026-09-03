@@ -44,6 +44,10 @@ jobs:
           node scripts/build-phrase-index.mjs --write
           cd apps/web/src/content/fallbackArchitectureV3
           node admin/build-content-book.mjs
+      - name: Refresh canonical content inventory and export
+        run: |
+          node scripts/build-content-inventory.mjs --source-commit=${GITHUB_SHA}
+          node scripts/build-content-export.mjs
       - name: Run focused parity and preservation gates
         run: |
           node scripts/test-venus-moon-hard-owner-published-you-v1.mjs
@@ -51,6 +55,7 @@ jobs:
           node scripts/test-fallback-package-cache-contract.mjs
           node scripts/test-fallback-refresh-wiring.mjs
           node scripts/test-reader-facing-content-contract.mjs
+          node scripts/test-content-inventory-export.mjs
           node scripts/generate-fallback-package-manifest.mjs --check
           node scripts/build-knowledge-index.mjs --check
           node scripts/build-phrase-index.mjs --check
