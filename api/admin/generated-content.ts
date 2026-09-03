@@ -464,6 +464,13 @@ function validateFallbackArchitectureV3Copy(row: ExistingGeneratedContentRow, pa
     }
 
     const originalSlots = packagePlaceholders(original);
+    const inheritedFriendSlots = (
+      row.content_key.startsWith("authored/transit-aspect/")
+      && field.endsWith("body_they")
+      && originalSlots.size === 0
+    )
+      ? packagePlaceholders(record.body_you)
+      : new Set<string>();
     for (const slot of packagePlaceholders(value)) {
       const isAllowedFriendName = (
         row.content_key.startsWith("fallback-hook/natal-aspect-lived/")
@@ -472,7 +479,7 @@ function validateFallbackArchitectureV3Copy(row: ExistingGeneratedContentRow, pa
         && field.endsWith("body_they")
         && slot === "{{Name}}";
       if (isAllowedFriendName) continue;
-      if (!originalSlots.has(slot)) {
+      if (!originalSlots.has(slot) && !inheritedFriendSlots.has(slot)) {
         throw new Error(`${field} contains unresolved placeholder ${slot} that was not in the package original.`);
       }
     }
