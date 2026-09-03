@@ -1,0 +1,56 @@
+name: Sync 27 Sun Friends dashboard rows
+
+on:
+  push:
+    branches:
+      - chatgpt/sync-sun-friends-dashboard-v1
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    env:
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+      SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: chatgpt/sync-sun-friends-dashboard-v1
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Build exact Sun key list
+        shell: bash
+        run: |
+          node --input-type=module <<'NODE' > /tmp/sun-friends-keys.txt
+          import fs from "node:fs";
+          const packet = JSON.parse(fs.readFileSync("packages/astro-knowledge/review/transit-aspect-friends-sun-proposed-v1.json", "utf8"));
+          if (packet.records?.length !== 27) throw new Error(`Expected 27 Sun approval rows, found ${packet.records?.length ?? 0}.`);
+          for (const row of packet.records) console.log(row.contentKey);
+          NODE
+          test "$(wc -l < /tmp/sun-friends-keys.txt | tr -d ' ')" = "27"
+      - name: Apply and verify only the 27 Sun rows
+        shell: bash
+        run: |
+          while IFS= read -r key; do
+            safe="$(printf '%s' "$key" | tr '/:' '__')"
+            echo "Syncing $key"
+            node scripts/materialize-fallback-architecture-v3-dashboard-rows.mjs \
+              --content-key="$key" \
+              --apply \
+              --verify \
+              --out="/tmp/${safe}.json"
+          done < /tmp/sun-friends-keys.txt
+      - name: Remove temporary sync workflow
+        shell: bash
+        run: |
+          rm -f .github/workflows/sync-sun-friends-dashboard-v1.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "ops: complete Sun Friends dashboard sync"
+          git push origin HEAD:chatgpt/sync-sun-friends-dashboard-v1
