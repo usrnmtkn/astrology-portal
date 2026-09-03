@@ -33,13 +33,26 @@ jobs:
           replacements = {
             '"As this contact with their %TARGET% continues through {{untilDate}}, {{Name}} %ACTION%.",': '"As %PLANET% {{aspectWord}} their %TARGET% continues through {{untilDate}}, {{Name}} %ACTION%.",',
             '"%PLANET% stays in contact with their %TARGET% through {{untilDate}}. {{Name}} %ACTION%."': '"%PLANET% {{aspectWord}} their %TARGET% stays active through {{untilDate}}. {{Name}} %ACTION%."',
-            '"Until {{untilDate}}, the contact between %PLANET% and their %TARGET% is easiest to use when {{Name}} %ACTION%.",': '"Until {{untilDate}}, %PLANET% {{aspectWord}} their %TARGET% is easiest to use when {{Name}} %ACTION%.",'
+            '"Until {{untilDate}}, the contact between %PLANET% and their %TARGET% is easiest to use when {{Name}} %ACTION%.",': '"Until {{untilDate}}, %PLANET% {{aspectWord}} their %TARGET% stays active. {{Name}} %ACTION%.",'
           }
           for old, new in replacements.items():
             if old not in script:
               raise SystemExit(f'missing generic bridge variant: {old}')
             script = script.replace(old, new)
           exec(compile(script, '<friends-authoring-corrections>', 'exec'), {})
+
+          generator = Path('scripts/build-friends-transit-completion-v1.mjs')
+          generated = generator.read_text()
+          bridge_edits = {
+            '"%PLANET% {{aspectWord}} their %TARGET% until {{untilDate}} makes one response especially useful: {{Name}} %ACTION%.",': '"%PLANET% {{aspectWord}} their %TARGET% runs through {{untilDate}}. {{Name}} %ACTION%.",',
+            '"%PLANET% {{aspectWord}} their %TARGET% through {{untilDate}} keeps the useful response specific. {{Name}} %ACTION%.",': '"%PLANET% {{aspectWord}} their %TARGET% continues through {{untilDate}}. {{Name}} %ACTION%.",',
+            '"Until {{untilDate}}, %PLANET% {{aspectWord}} their %TARGET% puts the emphasis on a practical choice. {{Name}} %ACTION%.",': '"Until {{untilDate}}, %PLANET% {{aspectWord}} their %TARGET% remains active. {{Name}} %ACTION%.",'
+          }
+          for old, new in bridge_edits.items():
+            if old not in generated:
+              raise SystemExit(f'missing repeated bridge frame: {old}')
+            generated = generated.replace(old, new)
+          generator.write_text(generated)
       - name: Build 351-row Friends packet
         run: node scripts/build-friends-transit-completion-v1.mjs
       - name: Validate 378-row Friends corpus
