@@ -184,7 +184,7 @@ assert.match(appSource, /function reviewedSkyAspectWritingSection\(/u);
 assert.match(appSource, /sourceKeys: \[rendered\.contentKey\]/u);
 assert.doesNotMatch(appSource, /sourceKeys: \[rendered\.templateKey\]/u);
 assert.match(appSource, /const signAwareSection = reviewedSkyAspectWritingSection\(aspect, positions, "sign-aware"\)/u);
-assert.match(appSource, /const authoredSection = approvedExactSkyAspectWritingSection\(aspect, positions\)/u);
+assert.match(appSource, /const authoredSection = approvedExactSkyAspectWritingSection\(aspect, positions, generatedContent\)/u);
 assert.match(appSource, /reviewedSkyAspectWritingSection\(aspect, positions, "generic"\)/u);
 assert.match(appSource, /const selectedSection = selectSkyAspectCopyByPrecedence\(\{/u);
 assert.match(appSource, /signSpecific: signAwareSection,[\s\S]*exact: authoredSection,[\s\S]*phrasebook: reviewedSection,[\s\S]*generated: generatedSection/u);
