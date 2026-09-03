@@ -1,0 +1,17 @@
+{
+  "schema": "tldr.sky-calendar.aspect-serving-release.v1",
+  "batch_id": "sky-calendar-batch-2b-venus-saturn-trines-2026-09-03",
+  "owner_authorized": true,
+  "serving_enabled": true,
+  "released_at": "2026-09-03T00:39:21-04:00",
+  "release_source": "Owner instruction in ChatGPT project conversation",
+  "release_statement": "those can be approved as live",
+  "approval_record": "packages/astro-knowledge/review/sky-calendar-composed-first-glance-2026-08-31/batch-2b-venus-saturn-trines-owner-approval.json",
+  "approved_payload_sha256": "b00e9b273314c2400b22991c9cf1fba33d0c045e8be734a5ca8a28e1b9eaf4e8",
+  "source_file_blob_sha_before_release": "a69c14c9ca4747b9709d6d0e707e35084b980386",
+  "expected_row_count": 23,
+  "protected_key": "fallback-hook/sky-aspect-sign/venus/virgo/trine/saturn/capricorn",
+  "protected_body_sha256": "5abe4cb085f441e6d16d23aa2cead071d9c10b8ecd5c2b7468b72a98adcb7675",
+  "scope": "Replace only the 23 owner-approved Venus/Saturn trine sign-specific reader rows with their hash-bound approved wording; preserve the protected Venus in Virgo trine Saturn in Capricorn row and all other source rows.",
+  "triggered_by_owner_release_commit": true
+}
