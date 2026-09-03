@@ -58,6 +58,8 @@ jobs:
           node scripts/build-content-export.mjs
       - name: Refresh generated writing harness artifacts
         run: node scripts/build-writing-harness-data.mjs
+      - name: Refresh production Sky kernel comparison
+        run: node scripts/build-production-sky-kernel-comparison.mjs --write
       - name: Run focused parity and preservation gates
         run: |
           node scripts/test-venus-moon-hard-owner-published-you-v1.mjs
@@ -67,6 +69,7 @@ jobs:
           node scripts/test-reader-facing-content-contract.mjs
           node scripts/test-content-inventory-export.mjs
           node scripts/build-writing-harness-data.mjs --check
+          node scripts/build-production-sky-kernel-comparison.mjs
           node scripts/generate-fallback-package-manifest.mjs --check
           node scripts/build-knowledge-index.mjs --check
           node scripts/build-phrase-index.mjs --check
