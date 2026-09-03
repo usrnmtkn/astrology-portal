@@ -36,17 +36,8 @@ jobs:
               raise SystemExit(f'missing expected generator text: {old}')
             s = s.replace(old, new)
 
-          old = '''  const mechanism = sentence(pick(mechanismPool, seed, 3), { EFFECT: effect });
-          const action = pick(targetData.actions, seed, 4);
-          const bridge = sentence(pick(bridgeOpeners, seed, 5), {
-            PLANET: pLabel,
-            TARGET: label[canonicalTarget],
-            ACTION: action
-          });
-
-          return `${opener} ${scene} ${mechanism}\\n\\n${bridge}`;'''
-          new = '''  const mechanism = sentence(pick(mechanismPool, seed, 3), { EFFECT: effect });
-          const action = pick(targetData.actions, seed, 4);
+          anchor = '  const action = pick(targetData.actions, seed, 4);\n  const bridge = sentence(pick(bridgeOpeners, seed, 5), {'
+          insertion = '''  const action = pick(targetData.actions, seed, 4);
           const variantCode = parts[5] ?? null;
           const variantTemplates = {
             "variant-A": [
@@ -74,16 +65,16 @@ jobs:
           const variantNote = variantPool
             ? sentence(pick(variantPool, seed, 6), { TARGET: label[canonicalTarget] })
             : "";
-          const bridge = sentence(pick(bridgeOpeners, seed, 5), {
-            PLANET: pLabel,
-            TARGET: label[canonicalTarget],
-            ACTION: action
-          });
+          const bridge = sentence(pick(bridgeOpeners, seed, 5), {'''
+          if anchor not in s:
+            raise SystemExit('missing action/bridge anchor for variant authoring patch')
+          s = s.replace(anchor, insertion)
 
-          return `${opener} ${scene} ${mechanism}${variantNote ? ` ${variantNote}` : ""}\\n\\n${bridge}`;'''
-          if old not in s:
-            raise SystemExit('missing buildBody block for variant authoring patch')
-          s = s.replace(old, new)
+          old_return = '  return `${opener} ${scene} ${mechanism}\\n\\n${bridge}`;'
+          new_return = '  return `${opener} ${scene} ${mechanism}${variantNote ? ` ${variantNote}` : ""}\\n\\n${bridge}`;'
+          if old_return not in s:
+            raise SystemExit('missing return anchor for variant authoring patch')
+          s = s.replace(old_return, new_return)
           p.write_text(s)
       - name: Build 351-row Friends packet
         run: node scripts/build-friends-transit-completion-v1.mjs
