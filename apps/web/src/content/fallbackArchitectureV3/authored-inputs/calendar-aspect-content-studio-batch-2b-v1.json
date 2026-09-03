@@ -1,0 +1,129 @@
+{
+  "schema": "tldr.calendar-aspect-content-studio-batch.v1",
+  "batch_id": "sky-calendar-batch-2b-venus-saturn-trines-2026-09-03",
+  "review_status": "approved",
+  "owner_approved": true,
+  "serving_enabled": false,
+  "approved_at": "2026-09-03",
+  "approval_record": "packages/astro-knowledge/review/sky-calendar-composed-first-glance-2026-08-31/batch-2b-venus-saturn-trines-owner-approval.json",
+  "source_family": "apps/web/src/content/fallbackArchitectureV3/source-rows/sky-aspect-phrasebook-v1.json",
+  "studio_policy": "Create versioned non-serving Content Studio drafts. Preserve the current reader-serving baseline until a separate serving promotion is explicitly approved.",
+  "protected_key": "fallback-hook/sky-aspect-sign/venus/virgo/trine/saturn/capricorn",
+  "rows": [
+    {
+      "contentKey": "fallback-hook/sky-aspect-sign/venus/aries/trine/saturn/leo",
+      "body": "You don’t have to play it cool when you care, especially when someone is meeting your interest with the same level of intention. Venus in Aries trine Saturn in Leo can make direct affection easier to trust because confidence is backed by consistency. The first move matters, but what happens after the excitement fades tells you more. Say what you mean, then keep showing up in a way that matches it.",
+      "bodySha256": "74cd2b761b04541d6bd29f0c88a0a004f185e7447c1c2ef9871efe0816b61ead"
+    },
+    {
+      "contentKey": "fallback-hook/sky-aspect-sign/venus/aries/trine/saturn/sagittarius",
+      "body": "An exciting possibility has more potential when someone is willing to give it a direction instead of leaving it as a vague maybe. Venus in Aries trine Saturn in Sagittarius can turn enthusiasm into a plan without draining the excitement out of it. A new connection, invitation, or idea does not need every detail settled, but it does need a next step if anyone is going to invest in it. Follow what interests you, then decide where you want it to go.",
+      "bodySha256": "87e661a0081e4a74872a093ed1f9be6e6e7ffedde9a5f6aa7f303e8a45c3da19"
+    },
+    {
+      "contentKey": "fallback-hook/sky-aspect-sign/venus/taurus/trine/saturn/virgo",
+      "body": "Someone may show they care by noticing the thing that would make the day easier and handling it before it becomes another problem. Venus in Taurus trine Saturn in Virgo can make practical attention feel especially meaningful because comfort is supported by useful follow-through. A small fix, remembered detail, or thoughtful bit of preparation can say more than a bigger gesture that creates more work. Notice what would actually help, then do that.",
+      "bodySha256": "6b526da30b90352135f5a9d4401114152524752eb733cac8c2c57a6228161093"
+    },
+    {
+      "contentKey": "fallback-hook/sky-aspect-sign/venus/taurus/trine/saturn/capricorn",
+      "body": "Something enjoyable becomes easier to commit to when the cost, time, and responsibility behind it actually make sense. Venus in Taurus trine Saturn in Capricorn can help people build plans, purchases, or relationships that feel good now and remain workable later. A promise lands differently when no one has to quietly overextend themselves to keep it going. Make the commitment in a form people can actually sustain.",
+      "bodySha256": "b03bc10498fc88c95e4e25e3398952465011c71c528efab1aa4c41f69c02ee19"
+    },
+    {
+      "contentKey": "fallback-hook/sky-aspect-sign/venus/gemini/trine/saturn/libra",
+      "body": "A conversation may get easier once people stop trying to agree on everything and start getting specific about what each person actually needs. Venus in Gemini trine Saturn in Libra can help people compare preferences, clarify expectations, and adjust the terms without treating every difference like a threat to the connection. Fairness does not mean identical needs or identical contributions. Keep talking until everyone understands what they are agreeing to and what they can expect from each other.",
+      "bodySha256": "71544b3d612cd9f741bc4fa8f0f888f6dd6c579f2e6a438a607d12c12e0f58da"
+    },
+    {
+      "contentKey": "fallback-hook/sky-aspect-sign/venus/gemini/trine/saturn/aquarius",
+      "body": "A connection can work well even when the people involved need different amounts of freedom, contact, structure, or independence. Venus in Gemini trine Saturn in Aquarius can help people create arrangements that accommodate different schedules, priorities, interests, or ways of participating. Clear expectations make flexibility easier to trust. Agree on what people can rely on from each other, then let the rest stay flexible.",
+      "bodySha256": "405f951a1b3cdb3feac0e0b4bddf287b0e6d09d068525b74f2cd047223e35d61"
+    },
+    {
+      "contentKey": "fallback-hook/sky-aspect-sign/venus/cancer/trine/saturn/scorpio",
+      "body": "A difficult subject can bring people closer when it is handled with enough care that no one feels exposed for being honest. Venus in Cancer trine Saturn in Scorpio can make trust easier to build around private feelings, money, jealousy, grief, or anything else people usually protect carefully. What matters is not forcing more disclosure than the situation needs. Take what someone tells you seriously, protect what is private, and show them they were safe to tell you.",
+      "bodySha256": "b4e52cef8e3605e4e308064b78cb9d8d63bd53a91e90b8abdcbc843f01800af1"
+    },
+    {
+      "contentKey": "fallback-hook/sky-aspect-sign/venus/cancer/trine/saturn/pisces",
+      "body": "Sometimes caring about someone means changing what you expect from them when they have clearly reached their limit. Venus in Cancer trine Saturn in Pisces can make compassion more useful by turning concern into support that actually changes the situation. Sympathy is easier to trust when it comes with less pressure, more room, or practical help. Pay attention to what would make things gentler, then adjust what you can.",
+      "bodySha256": "855d56ba1deeac623b3e9d1a48ea09a3cf5d2e0ce8671a85898360e38b8ac7b6"
+    },
+    {
+      "contentKey": "fallback-hook/sky-aspect-sign/venus/leo/trine/saturn/aries",
+      "body": "Recognition can matter most when someone took a risk to put themselves forward in the first place. Venus in Leo trine Saturn in Aries can make it easier to respond to courage with clear appreciation instead of assuming the person already knows they did well. A sincere response can reinforce the confidence it took to act. If someone deserves the credit, give it while the effort is still fresh.",
+      "bodySha256": "c6650a5b84ac18ae22c166809e85cfbd836bf741e13e4a55cd38799f70737c3c"
+    },
+    {
+      "contentKey": "fallback-hook/sky-aspect-sign/venus/leo/trine/saturn/sagittarius",
+      "body": "A good response to your work can become the opening for something bigger, but attention is most useful when you know what you want to do with it. Venus in Leo trine Saturn in Sagittarius can connect recognition, creativity, or enthusiasm with a larger opportunity to learn, teach, travel, publish, or expand the idea. Enjoy the momentum, then decide where you want it to lead. Use the attention to move the work forward rather than simply collecting more of it.",
+      "bodySha256": "f58132b8bedce164425b0d7fa285ce6e6e6b04a77077b646697a9eac2ba99280"
+    },
+    {
+      "contentKey": "fallback-hook/sky-aspect-sign/venus/virgo/trine/saturn/taurus",
+      "body": "Something becomes easier to enjoy when the details are handled well enough that the pleasure does not create another problem later. Venus in Virgo trine Saturn in Taurus can favor thoughtful choices around money, comfort, quality, and the work required to maintain what people value. The nicest option is not always the most expensive or impressive one. Choose what works well, lasts, and does not leave someone cleaning up the consequences afterward.",
+      "bodySha256": "f770b38d17b2d2c7ed62f900c0f7cb7b02f8af005cbeb730b4ccdf891bd8e437"
+    },
+    {
+      "contentKey": "fallback-hook/sky-aspect-sign/venus/libra/trine/saturn/gemini",
+      "body": "A misunderstanding may be easier to resolve once people stop relying on assumptions and put the practical details into words. Venus in Libra trine Saturn in Gemini can help people clarify schedules, money, responsibilities, or expectations without making every question sound like mistrust. Clear language protects goodwill because people know what they are working with. Say the part most likely to be misunderstood before it turns into resentment.",
+      "bodySha256": "d3b3d9cfe11a6814ade409cb54136fb58edd9a55f5bf6bd027659398f0426208"
+    },
+    {
+      "contentKey": "fallback-hook/sky-aspect-sign/venus/libra/trine/saturn/aquarius",
+      "body": "Belonging does not require everyone to give up their autonomy or do things the same way. Venus in Libra trine Saturn in Aquarius helps friendships, groups, and collaborations find a structure that feels fair without demanding conformity. Clear standards can protect the collective without creating unnecessary rules. Agree on the few expectations that actually affect everyone, then leave room for the rest to look different.",
+      "bodySha256": "ae34327e3e5eb0db0550cca44d7cbc965e0a8380843db224e8a8144f5e4e8c35"
+    },
+    {
+      "contentKey": "fallback-hook/sky-aspect-sign/venus/scorpio/trine/saturn/cancer",
+      "body": "A private conversation can deepen trust when someone handles what you tell them with care instead of using it against you later. Venus in Scorpio trine Saturn in Cancer can make loyalty easier to recognize through discretion, protection, and the willingness to stay present when grief, family history, fear, or another sensitive subject comes up. Knowing where someone hurts does not give you permission to press there. Protect what was shared, take the vulnerability seriously, and let your consistency show that the trust was well placed.",
+      "bodySha256": "ce36348ddfdfdf1f54f238f306fd2868ea38a599033c7f405bb59d76048a7cd4"
+    },
+    {
+      "contentKey": "fallback-hook/sky-aspect-sign/venus/scorpio/trine/saturn/pisces",
+      "body": "A difficult feeling gets easier to face when no one is rushing to explain it away, force an ending, or move past what you are actually carrying. Venus in Scorpio trine Saturn in Pisces creates enough patience for grief, fear, desire, disappointment, or an old hurt to be acknowledged without demanding an immediate fix. Some truths become clear simply because they are finally allowed to be said plainly. Listen to what is actually there before deciding what needs to happen next.",
+      "bodySha256": "7aa45369fe1808b303eeee3f52afd926d8f8de90ec826157c2a955e9c23bb5c1"
+    },
+    {
+      "contentKey": "fallback-hook/sky-aspect-sign/venus/sagittarius/trine/saturn/aries",
+      "body": "An exciting possibility stops being theoretical once someone takes a step that requires an actual commitment. Venus in Sagittarius trine Saturn in Aries can turn enthusiasm into action before doubt or logistics drain the momentum. You do not need the entire plan before you begin, but you do need to do something that moves the idea out of your head and into your life. Make the call, submit the application, book the ticket, or take the first step that makes the possibility tangible.",
+      "bodySha256": "19bdf5dcc4244a6b1d61c15d12bc181fc7ad4140a5f98375eeb5816d903875db"
+    },
+    {
+      "contentKey": "fallback-hook/sky-aspect-sign/venus/sagittarius/trine/saturn/leo",
+      "body": "An ambitious vision attracts more support when the person presenting it is willing to claim it, step into the spotlight, and stand behind what they are offering. Venus in Sagittarius trine Saturn in Leo gives a creative project, teaching, or larger plan enough confidence and direction to draw other people in. Visibility works best when it gives an idea somewhere to go rather than becoming the whole point. Share what you believe in, then show people what you intend to do with the support.",
+      "bodySha256": "1518730e0a4bae7d1f42f12b9ab65cc0e74b9c46896fc7a611ebcf3063ef6587"
+    },
+    {
+      "contentKey": "fallback-hook/sky-aspect-sign/venus/capricorn/trine/saturn/taurus",
+      "body": "A commitment becomes easier to trust when you know what it will cost to maintain over time, not just what it takes to start. Venus in Capricorn trine Saturn in Taurus supports choices around money, time, work, or shared resources that favor durability over appearances. The less flashy option is often the one that leaves more resources intact and creates fewer problems later. Choose the version you can afford to maintain without turning the commitment into another source of pressure.",
+      "bodySha256": "1271ac01aaff5c9d8edb6f25795b1665821cac231b888a897d3c3816977f6854"
+    },
+    {
+      "contentKey": "fallback-hook/sky-aspect-sign/venus/capricorn/trine/saturn/virgo",
+      "body": "A long-term plan becomes more credible when the small, unglamorous responsibilities are actually being handled instead of left to chance. Venus in Capricorn trine Saturn in Virgo turns high-level ambition into schedules, paperwork, routines, and practical fixes that keep the larger goal moving. Progress can look ordinary because much of it happens through work no one applauds. Handle the detail that keeps slowing things down, then let the broader plan benefit from having one less problem to solve.",
+      "bodySha256": "c37b864c94476baa54832c6a67670ad9405dca315d6944540de3ac12e43293c3"
+    },
+    {
+      "contentKey": "fallback-hook/sky-aspect-sign/venus/aquarius/trine/saturn/gemini",
+      "body": "A new idea can become much more useful once it reaches the people who know how to question it, improve it, or help put it into practice. Venus in Aquarius trine Saturn in Gemini can connect unusual perspectives with the conversations and networks needed to make them workable. You do not need everyone to understand what you are trying, but the people involved do need enough clarity to participate well. Share the idea, test it with people you trust, and keep the parts that hold up once other minds get involved.",
+      "bodySha256": "e96681c84310b4aeda573c174675d84eae4be04bd8aac542863a478d5b94ea2b"
+    },
+    {
+      "contentKey": "fallback-hook/sky-aspect-sign/venus/aquarius/trine/saturn/libra",
+      "body": "People can need different amounts of freedom and still make clear commitments to each other. Venus in Aquarius trine Saturn in Libra can help friendships, partnerships, or groups create terms that respect individual needs without making the whole connection vague. Independence works better when people still know what they can expect from each other. Be clear about the commitment, respect the differences, and leave room for people to participate in ways that actually work for them.",
+      "bodySha256": "38074ee7bd5d30eb94e56f3df05b4457138cc48f99973bd888cd846acb165d21"
+    },
+    {
+      "contentKey": "fallback-hook/sky-aspect-sign/venus/pisces/trine/saturn/cancer",
+      "body": "Someone may need comfort without needing you to fix everything they are feeling. Venus in Pisces trine Saturn in Cancer can make compassion more dependable by giving difficult emotions enough support, privacy, and time to be felt without taking over the entire situation. Care does not require unlimited access to your time or energy. Offer what you can genuinely sustain, protect the limits that keep the support workable, and let kindness be something people can actually rely on.",
+      "bodySha256": "48b3078c79d83343c84c1b64bee23ddc61291bf8779fee3675b350e244f1a849"
+    },
+    {
+      "contentKey": "fallback-hook/sky-aspect-sign/venus/pisces/trine/saturn/scorpio",
+      "body": "A complicated feeling can become easier to understand once you stop avoiding the part of it that makes you uncomfortable. Venus in Pisces trine Saturn in Scorpio can help people stay with grief, desire, fear, betrayal, or another emotionally charged truth long enough to see what is underneath the first reaction. Sensitivity is useful when it helps you notice what needs attention, not when it keeps you circling the feeling forever. Name what is actually there, decide what it changes, and deal with the part that is yours.",
+      "bodySha256": "4645cb216b297294eb123a47858493e6ec2380051c23ed48509cf3edd1157946"
+    }
+  ]
+}
