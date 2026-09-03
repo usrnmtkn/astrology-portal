@@ -1,0 +1,51 @@
+name: Validate Friends transit editorial cleanup
+
+on:
+  push:
+    branches:
+      - chatgpt/friends-transits-complete-v1
+
+permissions:
+  contents: write
+
+jobs:
+  cleanup-and-validate:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: chatgpt/friends-transits-complete-v1
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Apply final editorial cleanup
+        run: python scripts/cleanup-friends-transit-generator-v1.py
+      - name: Rebuild corpus
+        run: node scripts/build-friends-transit-completion-v1.mjs
+      - name: Run complete 378-row contract
+        run: node scripts/test-friends-transit-completion-v1.mjs
+      - name: Reject known generator grammar seams
+        run: |
+          node --input-type=module <<'NODE'
+          import fs from 'node:fs';
+          const packet = JSON.parse(fs.readFileSync('packages/astro-knowledge/review/transit-aspect-friends-completion-v1.json','utf8'));
+          const bad = [];
+          for (const row of packet.records) {
+            const body = row.body_they;
+            if (/where [^.]{0,100}\bis concerned\b/iu.test(body)) bad.push([row.contentKey, 'is-concerned']);
+            if (/(?:^|[.!?]\s+)(?:a feeling changing|disruption exposing|a familiar sore point resurfacing|old history coloring|immediate pressure|a trigger that needs)/u.test(body)) bad.push([row.contentKey, 'lowercase-mechanism-start']);
+            if (/\bask more of\b/iu.test(body)) bad.push([row.contentKey, 'ask-more-of']);
+          }
+          if (bad.length) throw new Error(`Friends editorial cleanup regressions: ${JSON.stringify(bad.slice(0,50))}`);
+          console.log(`final editorial grammar seams: 0 across ${packet.records.length} completion rows`);
+          NODE
+      - name: Verify diff
+        run: git diff --check
+      - name: Commit cleaned generator and corpus
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add scripts/build-friends-transit-completion-v1.mjs packages/astro-knowledge/review/transit-aspect-friends-completion-v1.json
+          git commit -m "content(friends): polish complete independent transit corpus"
+          git push origin HEAD:chatgpt/friends-transits-complete-v1
