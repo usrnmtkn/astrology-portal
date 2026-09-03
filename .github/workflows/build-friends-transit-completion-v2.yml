@@ -30,14 +30,15 @@ jobs:
           block = workflow[start:end]
           lines = block.splitlines()
           script = '\n'.join(line[10:] if line.startswith('          ') else line for line in lines)
-          script = script.replace(
-            '"As this contact with their %TARGET% continues through {{untilDate}}, {{Name}} %ACTION%.",',
-            '"As %PLANET% {{aspectWord}} their %TARGET% continues through {{untilDate}}, {{Name}} %ACTION%.",'
-          )
-          script = script.replace(
-            '"%PLANET% stays in contact with their %TARGET% through {{untilDate}}. {{Name}} %ACTION%."',
-            '"%PLANET% {{aspectWord}} their %TARGET% stays active through {{untilDate}}. {{Name}} %ACTION%."'
-          )
+          replacements = {
+            '"As this contact with their %TARGET% continues through {{untilDate}}, {{Name}} %ACTION%.",': '"As %PLANET% {{aspectWord}} their %TARGET% continues through {{untilDate}}, {{Name}} %ACTION%.",',
+            '"%PLANET% stays in contact with their %TARGET% through {{untilDate}}. {{Name}} %ACTION%."': '"%PLANET% {{aspectWord}} their %TARGET% stays active through {{untilDate}}. {{Name}} %ACTION%."',
+            '"Until {{untilDate}}, the contact between %PLANET% and their %TARGET% is easiest to use when {{Name}} %ACTION%.",': '"Until {{untilDate}}, %PLANET% {{aspectWord}} their %TARGET% is easiest to use when {{Name}} %ACTION%.",'
+          }
+          for old, new in replacements.items():
+            if old not in script:
+              raise SystemExit(f'missing generic bridge variant: {old}')
+            script = script.replace(old, new)
           exec(compile(script, '<friends-authoring-corrections>', 'exec'), {})
       - name: Build 351-row Friends packet
         run: node scripts/build-friends-transit-completion-v1.mjs
