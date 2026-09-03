@@ -1,0 +1,25 @@
+name: Validate proposed Sun Friends transits
+
+on:
+  push:
+    branches:
+      - chatgpt/friends-transit-sun-proposed-v1
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install dependencies
+        run: npm ci
+      - name: Validate independent Sun Friends proposal
+        run: node scripts/test-transit-friends-sun-proposed-v1.mjs
+      - name: Verify repository diff
+        run: git diff --check
