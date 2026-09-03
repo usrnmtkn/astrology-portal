@@ -16,6 +16,12 @@ const mechanicalCorrection = readJson(
 const venusMoonRevision = readJson(
   "packages/astro-knowledge/review/transit-aspect-venus-moon-hard-owner-published-2026-09-02.json"
 );
+const sunFriendsApproval = readJson(
+  "packages/astro-knowledge/review/transit-aspect-friends-sun-proposed-v1.json"
+);
+const sunAscendantRevision = readJson(
+  "packages/astro-knowledge/review/transit-aspect-sun-ascendant-hard-owner-published-2026-09-03.json"
+);
 const wordingFields = ["headline", "body", "body_you", "body_they", "body_sky"];
 const sha256 = (value) => crypto.createHash("sha256").update(value).digest("hex");
 const targetFamilies = Object.keys(record.counts.byFamily);
@@ -38,12 +44,41 @@ assert.ok(
   "Venus square Moon You copy must match either the pre-revision package body or the exact September 2 CMS revision."
 );
 
+assert.equal(sunFriendsApproval.status, "owner_approved");
+assert.equal(sunFriendsApproval.createdAt, "2026-09-03");
+assert.equal(sunFriendsApproval.records.length, 27);
+assert.ok(
+  sunFriendsApproval.records.every((entry) => entry.approvedAt > record.recordedAt),
+  "Every Sun Friends field in this packet must postdate the August 13 historical snapshot."
+);
+const postSnapshotSunFriendKeys = new Set(sunFriendsApproval.records.map((entry) => entry.contentKey));
+assert.equal(postSnapshotSunFriendKeys.size, 27);
+assert.equal(sunAscendantRevision.contentKey, "authored/transit-aspect/sun/ascendant/hard");
+assert.equal(sunAscendantRevision.publishedAt.slice(0, 10), "2026-09-03");
+assert.equal(
+  sha256(sunAscendantRevision.supersedes.body_you),
+  sunAscendantRevision.supersedes.body_you_sha256,
+  "The Sun square Ascendant superseded You body must remain hash-bound."
+);
+const sunAscendantRow = familyRows.find((row) => row.contentKey === sunAscendantRevision.contentKey);
+assert.ok(sunAscendantRow, "Sun square Ascendant must remain in the governed Friends source family.");
+assert.ok(
+  [sunAscendantRevision.supersedes.body_you, sunAscendantRevision.body_you].includes(sunAscendantRow.body_you),
+  "Sun square Ascendant You copy must match either the pre-revision package body or the exact September 3 CMS revision."
+);
+
 function historicalWording(row, field) {
   if (row.contentKey === mechanicalCorrection.contentKey && field === mechanicalCorrection.field) {
     return mechanicalCorrection.before;
   }
   if (row.contentKey === venusMoonRevision.contentKey && field === "body_you") {
     return venusMoonRevision.supersedes.body_you;
+  }
+  if (row.contentKey === sunAscendantRevision.contentKey && field === "body_you") {
+    return sunAscendantRevision.supersedes.body_you;
+  }
+  if (field === "body_they" && postSnapshotSunFriendKeys.has(row.contentKey)) {
+    return undefined;
   }
   return row[field];
 }
@@ -107,4 +142,4 @@ assert.deepEqual(record.excluded, {
   note: "These rows feed compatibility, Sky, career, station, weekly, or other authored surfaces. They are not primary Friends transit-detail articles and are not disabled by this gate."
 });
 
-console.log("Friends owner-signoff ruling passed: 24 exact approvals preserved, 1,565 untraced approvals added, 1,175 unrelated authored rows left untouched; later CMS/mechanical revisions are excluded from the historical payload hash.");
+console.log("Friends owner-signoff ruling passed: 24 exact approvals preserved, 1,565 untraced approvals added, 1,175 unrelated authored rows left untouched; later CMS/mechanical/Sun Friends revisions are excluded from the historical payload hash.");
