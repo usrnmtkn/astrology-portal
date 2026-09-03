@@ -1,0 +1,77 @@
+name: Release Venus Moon You parity v1
+
+on:
+  push:
+    branches:
+      - chatgpt/friends-transits-complete-v1
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: chatgpt/friends-transits-complete-v1
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Install dependencies
+        run: npm ci
+      - name: Apply exact owner-published Venus Moon You revision
+        run: node scripts/import-venus-moon-hard-owner-published-you-v1.mjs --apply
+      - name: Rebuild shipped fallback resolver
+        run: |
+          ./node_modules/.bin/esbuild \
+            apps/web/src/content/fallbackArchitectureV3/resolver/index.browser.ts \
+            --bundle \
+            --format=esm \
+            --outfile=apps/web/src/content/fallbackArchitectureV3/dist/tldr-content.js
+      - name: Rebuild fallback manifests and content indexes
+        run: |
+          npm run build:fallback-manifest
+          node scripts/build-knowledge-index.mjs --write
+          node scripts/build-phrase-index.mjs --write
+          cd apps/web/src/content/fallbackArchitectureV3
+          node admin/build-content-book.mjs
+      - name: Run focused parity and preservation gates
+        run: |
+          node scripts/test-venus-moon-hard-owner-published-you-v1.mjs
+          node scripts/test-sun-friends-serving-v1.mjs
+          node scripts/test-fallback-package-cache-contract.mjs
+          node scripts/test-fallback-refresh-wiring.mjs
+          node scripts/test-reader-facing-content-contract.mjs
+          node scripts/generate-fallback-package-manifest.mjs --check
+          node scripts/build-knowledge-index.mjs --check
+          node scripts/build-phrase-index.mjs --check
+          git diff --check
+      - name: Run complete content gate
+        run: npm run test:content
+      - name: Run repository typecheck
+        run: npm run typecheck
+      - name: Build web application
+        run: npm run build:web
+      - name: Review generated diff
+        run: |
+          git status --short
+          git diff --stat
+          git diff --check
+      - name: Commit controlled parity release
+        shell: bash
+        run: |
+          if git diff --quiet; then
+            echo "No generated parity changes to commit."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git status --short
+          git commit -m "release(transits): preserve Venus Moon CMS You revision"
+          git push origin HEAD:chatgpt/friends-transits-complete-v1
