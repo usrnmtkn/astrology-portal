@@ -1,0 +1,59 @@
+name: Build Sun Friends serving release v2
+
+on:
+  push:
+    branches:
+      - chatgpt/release-sun-friends-transits-v1
+
+permissions:
+  contents: write
+
+jobs:
+  build-release:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: chatgpt/release-sun-friends-transits-v1
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install dependencies
+        run: npm ci
+      - name: Install exact Sun Friends serving copy on current main
+        run: node scripts/install-sun-friends-serving-v2.mjs
+      - name: Rebuild shipped resolver artifact
+        run: ./node_modules/.bin/esbuild apps/web/src/content/fallbackArchitectureV3/resolver/index.browser.ts --bundle --format=esm --outfile=apps/web/src/content/fallbackArchitectureV3/dist/tldr-content.js
+      - name: Rebuild fallback serving artifacts
+        run: npm run build:fallback-manifest
+      - name: Rebuild content book
+        run: |
+          cd apps/web/src/content/fallbackArchitectureV3
+          node admin/build-content-book.mjs
+      - name: Validate Sun approval packet
+        run: node scripts/test-transit-friends-sun-proposed-v1.mjs
+      - name: Validate current Sun Friends serving parity
+        run: node scripts/test-sun-friends-serving-v1.mjs
+      - name: Validate fallback refresh wiring
+        run: node scripts/test-fallback-refresh-wiring.mjs
+      - name: Validate fallback package cache contract
+        run: node scripts/test-fallback-package-cache-contract.mjs
+      - name: Validate Friends natal fallback runtime
+        run: node scripts/test-friends-natal-fallback-runtime.mjs
+      - name: Verify diff
+        run: git diff --check
+      - name: Commit serving release and remove temporary installer
+        shell: bash
+        run: |
+          rm -f .github/workflows/build-sun-friends-serving-v2.yml
+          rm -f scripts/install-sun-friends-serving-v2.mjs
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+            exit 0
+          fi
+          git commit -m "content(friends): release Sun transit corpus on current main"
+          git push origin HEAD:chatgpt/release-sun-friends-transits-v1
