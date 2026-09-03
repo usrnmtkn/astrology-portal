@@ -84,7 +84,7 @@ const planetOpeners = {
     "Something becomes difficult for {{Name}} to keep postponing, and it lands directly on %DOMAIN%.",
     "A situation that had stayed in the background moves close enough for {{Name}} to deal with, especially around %DOMAIN%.",
     "The issue becomes specific enough for {{Name}} to respond to now, with %DOMAIN% carrying most of the consequence.",
-    "What was easy to leave vague gets harder to ignore for {{Name}}, particularly where %DOMAIN% is concerned."
+    "What was easy to leave vague gets harder to ignore for {{Name}}, particularly around %DOMAIN%."
   ],
   chiron: [
     "A current moment may touch an older sensitivity for {{Name}}, especially around %DOMAIN%.",
@@ -95,7 +95,7 @@ const planetOpeners = {
   jupiter: [
     "The larger option is easier for {{Name}} to imagine right now, especially around %DOMAIN%.",
     "An opening can make the whole situation look more promising to {{Name}}, with %DOMAIN% becoming the place where expansion is most tempting.",
-    "{{Name}} may feel more willing to ask for more, spend more, or take a bigger chance where %DOMAIN% is concerned.",
+    "{{Name}} may feel more willing to ask for more, spend more, or take a bigger chance around %DOMAIN%.",
     "Good news or a new possibility can widen {{Name}}'s expectations quickly, particularly around %DOMAIN%."
   ],
   mars: [
@@ -114,17 +114,17 @@ const planetOpeners = {
     "A change in mood can make one part of the day feel much larger to {{Name}}, especially around %DOMAIN%.",
     "{{Name}} may react before they have explained the reaction to themselves, with %DOMAIN% carrying the emotional charge.",
     "Something small can reach {{Name}} quickly today because it touches an immediate need connected to %DOMAIN%.",
-    "The emotional meaning of an ordinary event can rise fast for {{Name}}, particularly where %DOMAIN% is concerned."
+    "The emotional meaning of an ordinary event can rise fast for {{Name}}, particularly around %DOMAIN%."
   ],
   neptune: [
     "{{Name}} may have less certainty and less energy at the same time, which makes %DOMAIN% harder to read cleanly.",
     "A vague plan, strong feeling, or missing detail can matter more than expected for {{Name}} around %DOMAIN%.",
     "Sensitivity is turned up for {{Name}}, and %DOMAIN% may feel less definite than it usually does.",
-    "The line between intuition, hope, and assumption gets thinner for {{Name}} where %DOMAIN% is concerned."
+    "The line between intuition, hope, and assumption gets thinner for {{Name}} around %DOMAIN%."
   ],
   "north-node": [
-    "An unfamiliar option may ask more of {{Name}} than the familiar one, especially around %DOMAIN%.",
-    "{{Name}} may be offered a next step that feels slightly ahead of their experience where %DOMAIN% is concerned.",
+    "An unfamiliar option may require more from {{Name}} than the familiar one, especially around %DOMAIN%.",
+    "{{Name}} may be offered a next step that feels slightly ahead of their experience around %DOMAIN%.",
     "The new direction becomes concrete enough for {{Name}} to try, with %DOMAIN% carrying the stretch.",
     "A choice can put {{Name}} closer to an unfamiliar role or habit, particularly around %DOMAIN%."
   ],
@@ -148,7 +148,7 @@ const planetOpeners = {
   ],
   venus: [
     "What feels good and what works in practice come closer together for {{Name}} around %DOMAIN%.",
-    "Money, affection, or social ease can change the tone of the situation for {{Name}}, especially where %DOMAIN% is concerned.",
+    "Money, affection, or social ease can change the tone of the situation for {{Name}}, especially around %DOMAIN%.",
     "{{Name}} may notice what they actually value through an ordinary choice involving %DOMAIN%.",
     "An invitation, purchase, apology, or offer can make %DOMAIN% easier for {{Name}} to evaluate in concrete terms."
   ]
@@ -559,6 +559,10 @@ function sentence(template, replacements) {
   return Object.entries(replacements).reduce((value, [key, replacement]) => value.replaceAll(`%${key}%`, replacement), template);
 }
 
+function capitalizeFirst(value) {
+  return value ? `${value[0].toUpperCase()}${value.slice(1)}` : value;
+}
+
 function modeFor(aspect) {
   if (["hard", "square", "opposition"].includes(aspect)) return "hard";
   if (["soft", "trine", "sextile"].includes(aspect)) return "soft";
@@ -590,7 +594,14 @@ function buildBody(contentKey) {
       : mode === "conjunction"
         ? conjunctionMechanism
         : anyMechanism;
-  const mechanism = sentence(pick(mechanismPool, seed, 3), { EFFECT: effect });
+  const mechanismTemplate = pick(mechanismPool, seed, 3);
+  const mechanismPrepared = mechanismTemplate
+    .replace(/^%EFFECT%/u, "%EFFECT_CAP%")
+    .replace(/([.!?]\s+)%EFFECT%/gu, "$1%EFFECT_CAP%");
+  const mechanism = sentence(mechanismPrepared, {
+    EFFECT: effect,
+    EFFECT_CAP: capitalizeFirst(effect)
+  });
   const action = pick(targetData.actions, seed, 4);
 const variantCode = parts[5] ?? null;
 const variantTemplates = {
