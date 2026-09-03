@@ -1,0 +1,42 @@
+name: Refresh Sun Friends production sky comparison
+
+on:
+  push:
+    branches:
+      - chatgpt/release-sun-friends-transits-v1
+
+permissions:
+  contents: write
+
+jobs:
+  refresh-comparison:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: chatgpt/release-sun-friends-transits-v1
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Rebuild production sky comparison
+        run: node scripts/build-production-sky-kernel-comparison.mjs --write
+      - name: Verify production sky comparison
+        run: node scripts/build-production-sky-kernel-comparison.mjs
+      - name: Verify Sun Friends parity
+        run: node scripts/test-sun-friends-serving-v1.mjs
+      - name: Verify diff
+        run: git diff --check
+      - name: Commit comparison and remove temporary workflow
+        shell: bash
+        run: |
+          rm -f .github/workflows/refresh-sun-friends-sky-comparison.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+            exit 0
+          fi
+          git commit -m "chore(content): refresh production sky comparison for Sun Friends"
+          git push origin HEAD:chatgpt/release-sun-friends-transits-v1
