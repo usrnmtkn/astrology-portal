@@ -23,9 +23,17 @@ jobs:
         with:
           node-version: 22
           cache: npm
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: services/tldrastro-api/pyproject.toml
       - name: Install dependencies
         timeout-minutes: 10
         run: npm ci --no-audit --no-fund
+      - name: Install pinned API dependencies
+        working-directory: services/tldrastro-api
+        run: python -m pip install -e ".[dev]"
       - name: Build astro knowledge prerequisite
         run: npm run build -w @tldr/astro-knowledge
       - name: Apply exact owner-published Venus Moon You revision
@@ -60,6 +68,8 @@ jobs:
           node scripts/build-knowledge-index.mjs --check
           node scripts/build-phrase-index.mjs --check
           git diff --check
+      - name: Run web/API house parity prerequisite
+        run: node scripts/test-web-api-house-parity.mjs
       - name: Run complete content gate
         run: npm run test:content
       - name: Run repository typecheck
