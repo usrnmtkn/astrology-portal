@@ -173,7 +173,7 @@ const counts = {
   sourceMaterial: sourceRows.fallbackSourceRows.length
 };
 
-assert.equal(PACKAGE_VERSION, "v3-2026-09-02a");
+assert.equal(PACKAGE_VERSION, "v3-2026-09-03a");
 assert.ok(counts.authoredCards > 0, "Package must include authored transit/synastry cards.");
 assert.ok(counts.fallbackHooks > 0, "Package must include fallback hooks.");
 assert.ok(counts.vocabulary > 0, "Package must include vocabulary rows.");
@@ -869,7 +869,7 @@ assert.match(
 );
 assert.match(
   generatedContentSource,
-  /fallbackArchitectureV3BundleCacheSchema = "fallback-architecture-v3-dashboard-cache-v5"/u,
+  /fallbackArchitectureV3BundleCacheSchema = "fallback-architecture-v3-dashboard-overlay-cache-v6"/u,
   "Dashboard cache payloads must carry an invalidatable schema."
 );
 assert.match(
@@ -884,13 +884,13 @@ assert.match(
 );
 assert.match(
   generatedContentSource,
-  /\.order\("updated_at", \{ ascending: false \}\)[\s\S]*?\.order\("id", \{ ascending: false \}\)/u,
-  "Dashboard hydration pagination must have a stable unique-ID tiebreaker."
+  /let cursorId: string \| null = null[\s\S]*?\.order\("id", \{ ascending: true \}\)[\s\S]*?if \(cursorId\) query = query\.gt\("id", cursorId\)/u,
+  "Dashboard hydration pagination must use a stable monotonic ID cursor."
 );
 assert.match(
   generatedContentSource,
-  /package metadata is missing or inconsistent[\s\S]*?clearCachedFallbackArchitectureV3Bundle\(\);[\s\S]*?return null;/u,
-  "An unversioned or inconsistent dashboard package must clear cache and fail closed to the bundled package."
+  /\.rpc\("content_runtime_revision", \{ p_provider: fallbackArchitectureV3Provider \}\)[\s\S]*?currentCoreManifest = await loadFallbackArchitectureV3BundledCoreManifest\(\)[\s\S]*?packageFallbackArchitectureV3CoreRows\(rows, currentCoreManifest\)[\s\S]*?if \(!bundle\) \{[\s\S]*?clearCachedFallbackArchitectureV3Bundle\(\);[\s\S]*?return null;/u,
+  "Core dashboard overlays must use runtime revision, bundled key topology, and fail closed when the overlay cannot be packaged."
 );
 
 assert.match(

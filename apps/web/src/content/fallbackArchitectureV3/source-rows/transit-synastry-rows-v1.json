@@ -40809,13 +40809,27 @@
    "review_status": "approved",
    "approved_via": "owner-approved final rev 4, chat 2026-07-27",
    "source_keys": [
-    "Walker, The Astrology of the Black Moon, ch.6"
+    "Walker, The Astrology of the Black Moon, ch.6",
+    "packages/astro-knowledge/review/transit-aspect-friends-sun-proposed-v1.json"
    ],
    "approval": {
     "approvalLevel": "owner_signoff_untraced",
     "evidence": "owner-approved final rev 4, chat 2026-07-27",
     "approvedAt": "2026-07-27",
     "migratedBy": "friends-owner-signoff-untraced-ruling-2026-08-13"
+   },
+   "body_they": "{{Name}} may have less patience for the version of themselves that keeps everyone else comfortable. A preference they stopped mentioning, an opinion that always became a problem, or a reaction they learned to hide can become much harder to dismiss while this transit is active. Irritation may be the first sign that an old compromise is costing more than it used to.\n\nThey do not need to turn every feeling into a confrontation. They do need to notice which situation keeps producing the same resentment. With the Sun {{aspectWord}} their Lilith until {{untilDate}}, one part of {{Name}} that was edited out for acceptance wants to be acknowledged again. Naming it privately is already different from pretending it is not there.",
+   "body_they_review_status": "approved",
+   "body_they_sha256": "0f6263f96753a25801d11ae35c7075301121644d1b1192bac3ce47059571e872",
+   "body_they_approved_via": "packages/astro-knowledge/review/transit-aspect-friends-sun-proposed-v1.json",
+   "body_they_authorship": "independent_friend_authoring",
+   "body_they_name_variable": "{{Name}}",
+   "body_they_sourceMechanism": "Explicit independently authored Friends passage. Runtime You-to-Friends conversion remains fallback-only for transit rows without explicit body_they.",
+   "body_they_approval": {
+    "approvalLevel": "exact_owner_approved",
+    "recordPath": "packages/astro-knowledge/review/transit-aspect-friends-sun-proposed-v1.json",
+    "payloadSha256": "0f6263f96753a25801d11ae35c7075301121644d1b1192bac3ce47059571e872",
+    "approvedAt": "2026-09-03"
    }
   },
   {
@@ -41009,13 +41023,27 @@
    "source_keys": [
     "Rudhyar, Lunar Nodes (transit principle)",
     "Spring, North Node Astrology",
-    "Jones, Healing the Soul"
+    "Jones, Healing the Soul",
+    "packages/astro-knowledge/review/transit-aspect-friends-sun-proposed-v1.json"
    ],
    "approval": {
     "approvalLevel": "owner_signoff_untraced",
     "evidence": "owner-authored final, chat 2026-07-28",
     "approvedAt": "2026-07-28",
     "migratedBy": "friends-owner-signoff-untraced-ruling-2026-08-13"
+   },
+   "body_they": "{{Name}} may be offered a role that feels slightly ahead of the version of themselves they already know how to be. Leading instead of assisting, accepting a title they have never held, or entering a group where everyone seems more experienced can make a genuine opportunity feel like evidence they are unprepared. The discomfort does not cancel the opportunity.\n\nWith the Sun {{aspectWord}} their North Node until {{untilDate}}, {{Name}} gets a concrete chance to begin becoming familiar with the unfamiliar role. They do not need proof that they can carry the entire future attached to it. They need enough willingness to accept the first assignment and learn from what happens next.",
+   "body_they_review_status": "approved",
+   "body_they_sha256": "22820abe0f731b170f3f9fba0f2c8d33d11f8d1f04bca431c3a4d39fd9230ed7",
+   "body_they_approved_via": "packages/astro-knowledge/review/transit-aspect-friends-sun-proposed-v1.json",
+   "body_they_authorship": "independent_friend_authoring",
+   "body_they_name_variable": "{{Name}}",
+   "body_they_sourceMechanism": "Explicit independently authored Friends passage. Runtime You-to-Friends conversion remains fallback-only for transit rows without explicit body_they.",
+   "body_they_approval": {
+    "approvalLevel": "exact_owner_approved",
+    "recordPath": "packages/astro-knowledge/review/transit-aspect-friends-sun-proposed-v1.json",
+    "payloadSha256": "22820abe0f731b170f3f9fba0f2c8d33d11f8d1f04bca431c3a4d39fd9230ed7",
+    "approvedAt": "2026-09-03"
    }
   },
   {
@@ -41229,13 +41257,27 @@
    "source_keys": [
     "Rudhyar, Lunar Nodes (release/confrontation)",
     "Spring, North Node Astrology",
-    "Schulman, Karmic Astrology (imagery)"
+    "Schulman, Karmic Astrology (imagery)",
+    "packages/astro-knowledge/review/transit-aspect-friends-sun-proposed-v1.json"
    ],
    "approval": {
     "approvalLevel": "owner_signoff_untraced",
     "evidence": "owner-authored final, chat 2026-07-28",
     "approvedAt": "2026-07-28",
     "migratedBy": "friends-owner-signoff-untraced-ruling-2026-08-13"
+   },
+   "body_they": "{{Name}} may slip back into a familiar role so easily that nobody has to explain what they expect. They already know how to help, what to say, and how to become useful there. Recognition can come quickly too, because other people already understand this version of them. The ease is genuine. It is also familiar for a reason.\n\nWith the Sun {{aspectWord}} their South Node until {{untilDate}}, {{Name}} gets to revisit something they have already mastered without assuming it still deserves the same place in their life. They can enjoy being competent there and still ask if the role supports the direction they are trying to move now.",
+   "body_they_review_status": "approved",
+   "body_they_sha256": "c2a9973d11d886dfc1b07bf68c3da3fbf741acc6f4b7549b7cbd83cd7800904a",
+   "body_they_approved_via": "packages/astro-knowledge/review/transit-aspect-friends-sun-proposed-v1.json",
+   "body_they_authorship": "independent_friend_authoring",
+   "body_they_name_variable": "{{Name}}",
+   "body_they_sourceMechanism": "Explicit independently authored Friends passage. Runtime You-to-Friends conversion remains fallback-only for transit rows without explicit body_they.",
+   "body_they_approval": {
+    "approvalLevel": "exact_owner_approved",
+    "recordPath": "packages/astro-knowledge/review/transit-aspect-friends-sun-proposed-v1.json",
+    "payloadSha256": "c2a9973d11d886dfc1b07bf68c3da3fbf741acc6f4b7549b7cbd83cd7800904a",
+    "approvedAt": "2026-09-03"
    }
   },
   {
@@ -41505,13 +41547,27 @@
    "approved_via": "owner-approved fast-planet refresh, chat 2026-07-28 (Sun/Mercury reviewed; Venus/Mars pre-approved 'fix later')",
    "source_keys": [
     "Hand, Planets in Transit",
-    "Rodden, Modern Transits"
+    "Rodden, Modern Transits",
+    "packages/astro-knowledge/review/transit-aspect-friends-sun-proposed-v1.json"
    ],
    "approval": {
     "approvalLevel": "owner_signoff_untraced",
     "evidence": "owner-approved fast-planet refresh, chat 2026-07-28 (Sun/Mercury reviewed; Venus/Mars pre-approved 'fix later')",
     "approvedAt": "2026-07-28",
     "migratedBy": "friends-owner-signoff-untraced-ruling-2026-08-13"
+   },
+   "body_they": "The day may give {{Name}} a little more cooperation than they expected. A reply arrives, a meeting takes less effort, or a plan advances without another round of pushing. That ease can be wasted if they only enjoy the relief and leave the same weak point waiting for a harder day.\n\nWith the Sun {{aspectWord}} their Sun until {{untilDate}}, {{Name}} has a useful window for checking what is working and strengthening the part that still depends on luck, another person's patience, or a temporary workaround. Easy progress is still progress. It is also a good time to make the next round easier.",
+   "body_they_review_status": "approved",
+   "body_they_sha256": "330d4b4839062b532c311f4b88494d7ab0b0f1d10919aad2591fd377a3d58608",
+   "body_they_approved_via": "packages/astro-knowledge/review/transit-aspect-friends-sun-proposed-v1.json",
+   "body_they_authorship": "independent_friend_authoring",
+   "body_they_name_variable": "{{Name}}",
+   "body_they_sourceMechanism": "Explicit independently authored Friends passage. Runtime You-to-Friends conversion remains fallback-only for transit rows without explicit body_they.",
+   "body_they_approval": {
+    "approvalLevel": "exact_owner_approved",
+    "recordPath": "packages/astro-knowledge/review/transit-aspect-friends-sun-proposed-v1.json",
+    "payloadSha256": "330d4b4839062b532c311f4b88494d7ab0b0f1d10919aad2591fd377a3d58608",
+    "approvedAt": "2026-09-03"
    }
   },
   {
@@ -41524,13 +41580,27 @@
    "approved_via": "owner-approved fast-planet refresh, chat 2026-07-28 (Sun/Mercury reviewed; Venus/Mars pre-approved 'fix later')",
    "source_keys": [
     "Hand, Planets in Transit",
-    "Rodden, Modern Transits"
+    "Rodden, Modern Transits",
+    "packages/astro-knowledge/review/transit-aspect-friends-sun-proposed-v1.json"
    ],
    "approval": {
     "approvalLevel": "owner_signoff_untraced",
     "evidence": "owner-approved fast-planet refresh, chat 2026-07-28 (Sun/Mercury reviewed; Venus/Mars pre-approved 'fix later')",
     "approvedAt": "2026-07-28",
     "migratedBy": "friends-owner-signoff-untraced-ruling-2026-08-13"
+   },
+   "body_they": "Something {{Name}} thought was settled may come back with questions today. A plan needs proof, a decision-maker wants to know how the ambitious version will be funded, or a choice from months ago finally produces a result that cannot be ignored. Pushback can feel personal when {{Name}} believed the difficult part was already over.\n\nThe questions are useful if they expose something that still needs work. With the Sun {{aspectWord}} their Sun until {{untilDate}}, {{Name}} is better served by showing the preparation, fixing the weak point, and letting the result speak than by treating scrutiny as disrespect. A plan that survives the questions becomes easier to trust afterward.",
+   "body_they_review_status": "approved",
+   "body_they_sha256": "d98284a73b6a1749819643aed92681cc14a59b87772728d3f89c3af6f790b8dc",
+   "body_they_approved_via": "packages/astro-knowledge/review/transit-aspect-friends-sun-proposed-v1.json",
+   "body_they_authorship": "independent_friend_authoring",
+   "body_they_name_variable": "{{Name}}",
+   "body_they_sourceMechanism": "Explicit independently authored Friends passage. Runtime You-to-Friends conversion remains fallback-only for transit rows without explicit body_they.",
+   "body_they_approval": {
+    "approvalLevel": "exact_owner_approved",
+    "recordPath": "packages/astro-knowledge/review/transit-aspect-friends-sun-proposed-v1.json",
+    "payloadSha256": "d98284a73b6a1749819643aed92681cc14a59b87772728d3f89c3af6f790b8dc",
+    "approvedAt": "2026-09-03"
    }
   },
   {
@@ -41543,13 +41613,27 @@
    "approved_via": "owner-approved fast-planet refresh, chat 2026-07-28 (Sun/Mercury reviewed; Venus/Mars pre-approved 'fix later')",
    "source_keys": [
     "Hand, Planets in Transit",
-    "Rodden, Modern Transits"
+    "Rodden, Modern Transits",
+    "packages/astro-knowledge/review/transit-aspect-friends-sun-proposed-v1.json"
    ],
    "approval": {
     "approvalLevel": "owner_signoff_untraced",
     "evidence": "owner-approved fast-planet refresh, chat 2026-07-28 (Sun/Mercury reviewed; Venus/Mars pre-approved 'fix later')",
     "approvedAt": "2026-07-28",
     "migratedBy": "friends-owner-signoff-untraced-ruling-2026-08-13"
+   },
+   "body_they": "{{Name}} may find it easier to get their feelings and plans moving in the same direction today. Home is less complicated, family is easier to reach, and a conversation that usually becomes defensive may stay calm long enough to get somewhere. The ease is useful because it gives them a chance to address something before it becomes urgent.\n\nWith the Sun {{aspectWord}} their Moon until {{untilDate}}, this is a good window for the personal conversation {{Name}} has been waiting to have. They do not need perfect language. A clear account of what changed, what they feel, and what they need next is enough.",
+   "body_they_review_status": "approved",
+   "body_they_sha256": "ee6560c80fe986b41863cf281d6a3eae2d4d9ff6912c34bdd8823da4f96647e4",
+   "body_they_approved_via": "packages/astro-knowledge/review/transit-aspect-friends-sun-proposed-v1.json",
+   "body_they_authorship": "independent_friend_authoring",
+   "body_they_name_variable": "{{Name}}",
+   "body_they_sourceMechanism": "Explicit independently authored Friends passage. Runtime You-to-Friends conversion remains fallback-only for transit rows without explicit body_they.",
+   "body_they_approval": {
+    "approvalLevel": "exact_owner_approved",
+    "recordPath": "packages/astro-knowledge/review/transit-aspect-friends-sun-proposed-v1.json",
+    "payloadSha256": "ee6560c80fe986b41863cf281d6a3eae2d4d9ff6912c34bdd8823da4f96647e4",
+    "approvedAt": "2026-09-03"
    }
   },
   {
@@ -41562,13 +41646,27 @@
    "approved_via": "owner-approved fast-planet refresh, chat 2026-07-28 (Sun/Mercury reviewed; Venus/Mars pre-approved 'fix later')",
    "source_keys": [
     "Hand, Planets in Transit",
-    "Rodden, Modern Transits"
+    "Rodden, Modern Transits",
+    "packages/astro-knowledge/review/transit-aspect-friends-sun-proposed-v1.json"
    ],
    "approval": {
     "approvalLevel": "owner_signoff_untraced",
     "evidence": "owner-approved fast-planet refresh, chat 2026-07-28 (Sun/Mercury reviewed; Venus/Mars pre-approved 'fix later')",
     "approvedAt": "2026-07-28",
     "migratedBy": "friends-owner-signoff-untraced-ruling-2026-08-13"
+   },
+   "body_they": "{{Name}} may carry one part of the day into another without realizing it. Frustration from work follows them home, a family need arrives when they have nothing left, or a boss gets a reaction that belongs partly to something much more personal. The feeling is still valid. The problem is assuming the nearest person caused all of it.\n\nA direct conversation can clear the friction before it spreads across the rest of the day. With the Sun {{aspectWord}} their Moon until {{untilDate}}, {{Name}} benefits from naming what they are actually upset about and noticing where public responsibilities and private needs have been competing for the same energy.",
+   "body_they_review_status": "approved",
+   "body_they_sha256": "df87a1520407f85372e0b8bf0d4438ec483c755397fa6c848de8746773d57e40",
+   "body_they_approved_via": "packages/astro-knowledge/review/transit-aspect-friends-sun-proposed-v1.json",
+   "body_they_authorship": "independent_friend_authoring",
+   "body_they_name_variable": "{{Name}}",
+   "body_they_sourceMechanism": "Explicit independently authored Friends passage. Runtime You-to-Friends conversion remains fallback-only for transit rows without explicit body_they.",
+   "body_they_approval": {
+    "approvalLevel": "exact_owner_approved",
+    "recordPath": "packages/astro-knowledge/review/transit-aspect-friends-sun-proposed-v1.json",
+    "payloadSha256": "df87a1520407f85372e0b8bf0d4438ec483c755397fa6c848de8746773d57e40",
+    "approvedAt": "2026-09-03"
    }
   },
   {
@@ -41581,13 +41679,27 @@
    "approved_via": "owner-approved fast-planet refresh, chat 2026-07-28 (Sun/Mercury reviewed; Venus/Mars pre-approved 'fix later')",
    "source_keys": [
     "Hand, Planets in Transit",
-    "Rodden, Modern Transits"
+    "Rodden, Modern Transits",
+    "packages/astro-knowledge/review/transit-aspect-friends-sun-proposed-v1.json"
    ],
    "approval": {
     "approvalLevel": "owner_signoff_untraced",
     "evidence": "owner-approved fast-planet refresh, chat 2026-07-28 (Sun/Mercury reviewed; Venus/Mars pre-approved 'fix later')",
     "approvedAt": "2026-07-28",
     "migratedBy": "friends-owner-signoff-untraced-ruling-2026-08-13"
+   },
+   "body_they": "The sentence {{Name}} has been trying to get right may finally come out cleanly today. A pitch, negotiation, class, contract discussion, or important call can move because they are able to explain the point without burying it under extra language. Other people are easier to understand too, especially when {{Name}} stays curious instead of rehearsing the next answer.\n\nWith the Sun {{aspectWord}} their Mercury until {{untilDate}}, this is a useful day for the message that needs a clear response. They should say the important part while the words are available and leave enough space for the other person to answer it.",
+   "body_they_review_status": "approved",
+   "body_they_sha256": "79433b0a788d59b52bb89060e5d281c37cfabe718deadd7908a71f651d656f47",
+   "body_they_approved_via": "packages/astro-knowledge/review/transit-aspect-friends-sun-proposed-v1.json",
+   "body_they_authorship": "independent_friend_authoring",
+   "body_they_name_variable": "{{Name}}",
+   "body_they_sourceMechanism": "Explicit independently authored Friends passage. Runtime You-to-Friends conversion remains fallback-only for transit rows without explicit body_they.",
+   "body_they_approval": {
+    "approvalLevel": "exact_owner_approved",
+    "recordPath": "packages/astro-knowledge/review/transit-aspect-friends-sun-proposed-v1.json",
+    "payloadSha256": "79433b0a788d59b52bb89060e5d281c37cfabe718deadd7908a71f651d656f47",
+    "approvedAt": "2026-09-03"
    }
   },
   {
@@ -41600,13 +41712,27 @@
    "approved_via": "owner-approved fast-planet refresh, chat 2026-07-28 (Sun/Mercury reviewed; Venus/Mars pre-approved 'fix later')",
    "source_keys": [
     "Hand, Planets in Transit",
-    "Rodden, Modern Transits"
+    "Rodden, Modern Transits",
+    "packages/astro-knowledge/review/transit-aspect-friends-sun-proposed-v1.json"
    ],
    "approval": {
     "approvalLevel": "owner_signoff_untraced",
     "evidence": "owner-approved fast-planet refresh, chat 2026-07-28 (Sun/Mercury reviewed; Venus/Mars pre-approved 'fix later')",
     "approvedAt": "2026-07-28",
     "migratedBy": "friends-owner-signoff-untraced-ruling-2026-08-13"
+   },
+   "body_they": "Conversations may accelerate around {{Name}} before anyone has decided what actually needs to be settled. Plans change, someone revises an agreement, and a simple exchange can become an argument because both people are responding faster than they are listening. The pressure is useful when it exposes a weak idea early. It becomes noise when every disagreement has to be won.\n\n{{Name}} may get further by defending the point that matters and letting the rest remain unresolved for a day. With the Sun {{aspectWord}} their Mercury until {{untilDate}}, clear facts hold up better than speed, and listening long enough to understand the objection can save them from arguing against something the other person never said.",
+   "body_they_review_status": "approved",
+   "body_they_sha256": "796c705246a3f52d86fdb3d8f6161dd122a75d4a05f05c6ca0a02e28cc818c5d",
+   "body_they_approved_via": "packages/astro-knowledge/review/transit-aspect-friends-sun-proposed-v1.json",
+   "body_they_authorship": "independent_friend_authoring",
+   "body_they_name_variable": "{{Name}}",
+   "body_they_sourceMechanism": "Explicit independently authored Friends passage. Runtime You-to-Friends conversion remains fallback-only for transit rows without explicit body_they.",
+   "body_they_approval": {
+    "approvalLevel": "exact_owner_approved",
+    "recordPath": "packages/astro-knowledge/review/transit-aspect-friends-sun-proposed-v1.json",
+    "payloadSha256": "796c705246a3f52d86fdb3d8f6161dd122a75d4a05f05c6ca0a02e28cc818c5d",
+    "approvedAt": "2026-09-03"
    }
   },
   {
@@ -41619,13 +41745,27 @@
    "approved_via": "owner-approved fast-planet refresh, chat 2026-07-28 (Sun/Mercury reviewed; Venus/Mars pre-approved 'fix later')",
    "source_keys": [
     "Hand, Planets in Transit",
-    "Rodden, Modern Transits"
+    "Rodden, Modern Transits",
+    "packages/astro-knowledge/review/transit-aspect-friends-sun-proposed-v1.json"
    ],
    "approval": {
     "approvalLevel": "owner_signoff_untraced",
     "evidence": "owner-approved fast-planet refresh, chat 2026-07-28 (Sun/Mercury reviewed; Venus/Mars pre-approved 'fix later')",
     "approvedAt": "2026-07-28",
     "migratedBy": "friends-owner-signoff-untraced-ruling-2026-08-13"
+   },
+   "body_they": "People may be a little easier for {{Name}} to reach today. The invitation is more likely to be welcomed, an apology can land without becoming another argument, and a proposal may get a warmer response when the practical terms are already clear. Easy rapport helps, but it cannot replace the part that still has to be said or offered.\n\nWith the Sun {{aspectWord}} their Venus until {{untilDate}}, {{Name}} gets more from making contact than from waiting to be noticed. The useful gesture is the one with something behind it: the invitation actually sent, the apology actually made, or the proposal that includes the number instead of only the charm.",
+   "body_they_review_status": "approved",
+   "body_they_sha256": "97fe2697b2490ea6f39429cc3618eff422b6984acd64193e09658385cbd1aef7",
+   "body_they_approved_via": "packages/astro-knowledge/review/transit-aspect-friends-sun-proposed-v1.json",
+   "body_they_authorship": "independent_friend_authoring",
+   "body_they_name_variable": "{{Name}}",
+   "body_they_sourceMechanism": "Explicit independently authored Friends passage. Runtime You-to-Friends conversion remains fallback-only for transit rows without explicit body_they.",
+   "body_they_approval": {
+    "approvalLevel": "exact_owner_approved",
+    "recordPath": "packages/astro-knowledge/review/transit-aspect-friends-sun-proposed-v1.json",
+    "payloadSha256": "97fe2697b2490ea6f39429cc3618eff422b6984acd64193e09658385cbd1aef7",
+    "approvedAt": "2026-09-03"
    }
   },
   {
@@ -41638,13 +41778,27 @@
    "approved_via": "owner-approved fast-planet refresh, chat 2026-07-28 (Sun/Mercury reviewed; Venus/Mars pre-approved 'fix later')",
    "source_keys": [
     "Hand, Planets in Transit",
-    "Rodden, Modern Transits"
+    "Rodden, Modern Transits",
+    "packages/astro-knowledge/review/transit-aspect-friends-sun-proposed-v1.json"
    ],
    "approval": {
     "approvalLevel": "owner_signoff_untraced",
     "evidence": "owner-approved fast-planet refresh, chat 2026-07-28 (Sun/Mercury reviewed; Venus/Mars pre-approved 'fix later')",
     "approvedAt": "2026-07-28",
     "migratedBy": "friends-owner-signoff-untraced-ruling-2026-08-13"
+   },
+   "body_they": "{{Name}} may want the pleasant answer before they have checked what it costs. The purchase is easy to justify, the night runs later than planned, or a relationship tension surfaces at exactly the moment everyone would rather keep things easy. Avoiding the discomfort may preserve the mood for an hour and leave the actual issue untouched.\n\nWith the Sun {{aspectWord}} their Venus until {{untilDate}}, {{Name}} benefits from slowing down the impulse purchase and taking the relationship tension seriously enough to look at it. They do not have to make the evening heavy. They do need to notice what keeps asking for attention underneath the attempt to keep everything pleasant.",
+   "body_they_review_status": "approved",
+   "body_they_sha256": "c7f69eeb4648963c400998723202b27a84df26c8c9967b31d9f351e84793e5b1",
+   "body_they_approved_via": "packages/astro-knowledge/review/transit-aspect-friends-sun-proposed-v1.json",
+   "body_they_authorship": "independent_friend_authoring",
+   "body_they_name_variable": "{{Name}}",
+   "body_they_sourceMechanism": "Explicit independently authored Friends passage. Runtime You-to-Friends conversion remains fallback-only for transit rows without explicit body_they.",
+   "body_they_approval": {
+    "approvalLevel": "exact_owner_approved",
+    "recordPath": "packages/astro-knowledge/review/transit-aspect-friends-sun-proposed-v1.json",
+    "payloadSha256": "c7f69eeb4648963c400998723202b27a84df26c8c9967b31d9f351e84793e5b1",
+    "approvedAt": "2026-09-03"
    }
   },
   {
@@ -41657,13 +41811,27 @@
    "approved_via": "owner-approved fast-planet refresh, chat 2026-07-28 (Sun/Mercury reviewed; Venus/Mars pre-approved 'fix later')",
    "source_keys": [
     "Hand, Planets in Transit",
-    "Rodden, Modern Transits"
+    "Rodden, Modern Transits",
+    "packages/astro-knowledge/review/transit-aspect-friends-sun-proposed-v1.json"
    ],
    "approval": {
     "approvalLevel": "owner_signoff_untraced",
     "evidence": "owner-approved fast-planet refresh, chat 2026-07-28 (Sun/Mercury reviewed; Venus/Mars pre-approved 'fix later')",
     "approvedAt": "2026-07-28",
     "migratedBy": "friends-owner-signoff-untraced-ruling-2026-08-13"
+   },
+   "body_they": "{{Name}} has more usable physical energy than usual today. The task that has been sitting because it felt too heavy, tedious, or physically demanding may finally look straightforward enough to begin. A workout, repair, move, cleanup, or project with a visible finish line can absorb this transit well.\n\nThe energy works better when it has a job. Left unused, it can turn into restlessness that makes everything else feel more irritating than it is. With the Sun {{aspectWord}} their Mars until {{untilDate}}, {{Name}} gets more from doing the difficult thing than from thinking about how much effort it will take.",
+   "body_they_review_status": "approved",
+   "body_they_sha256": "5730ae768148ddaee435c0749da2199e98d3c67ecf8b8200a456bd1ef9409c27",
+   "body_they_approved_via": "packages/astro-knowledge/review/transit-aspect-friends-sun-proposed-v1.json",
+   "body_they_authorship": "independent_friend_authoring",
+   "body_they_name_variable": "{{Name}}",
+   "body_they_sourceMechanism": "Explicit independently authored Friends passage. Runtime You-to-Friends conversion remains fallback-only for transit rows without explicit body_they.",
+   "body_they_approval": {
+    "approvalLevel": "exact_owner_approved",
+    "recordPath": "packages/astro-knowledge/review/transit-aspect-friends-sun-proposed-v1.json",
+    "payloadSha256": "5730ae768148ddaee435c0749da2199e98d3c67ecf8b8200a456bd1ef9409c27",
+    "approvedAt": "2026-09-03"
    }
   },
   {
@@ -41676,13 +41844,27 @@
    "approved_via": "owner-approved fast-planet refresh, chat 2026-07-28 (Sun/Mercury reviewed; Venus/Mars pre-approved 'fix later')",
    "source_keys": [
     "Hand, Planets in Transit",
-    "Rodden, Modern Transits"
+    "Rodden, Modern Transits",
+    "packages/astro-knowledge/review/transit-aspect-friends-sun-proposed-v1.json"
    ],
    "approval": {
     "approvalLevel": "owner_signoff_untraced",
     "evidence": "owner-approved fast-planet refresh, chat 2026-07-28 (Sun/Mercury reviewed; Venus/Mars pre-approved 'fix later')",
     "approvedAt": "2026-07-28",
     "migratedBy": "friends-owner-signoff-untraced-ruling-2026-08-13"
+   },
+   "body_they": "{{Name}} can run into friction even when they did not start the day looking for it. A boss pushes too hard, a disagreement at home escalates quickly, or a stranger's aggression lands on a shorter fuse than usual. The anger is not automatically wrong, but acting at the peak of it can turn a manageable problem into a larger one.\n\nPhysical effort gives some of the charge somewhere useful to go. So does saying the actual objection before it collects three unrelated grievances around it. With the Sun {{aspectWord}} their Mars until {{untilDate}}, {{Name}} is better off dealing with the real conflict directly and leaving the unnecessary fights alone.",
+   "body_they_review_status": "approved",
+   "body_they_sha256": "e62a380b29531d0f2cfef89111d02b88e3fdb15da72e15e2286b9012e75ea6bb",
+   "body_they_approved_via": "packages/astro-knowledge/review/transit-aspect-friends-sun-proposed-v1.json",
+   "body_they_authorship": "independent_friend_authoring",
+   "body_they_name_variable": "{{Name}}",
+   "body_they_sourceMechanism": "Explicit independently authored Friends passage. Runtime You-to-Friends conversion remains fallback-only for transit rows without explicit body_they.",
+   "body_they_approval": {
+    "approvalLevel": "exact_owner_approved",
+    "recordPath": "packages/astro-knowledge/review/transit-aspect-friends-sun-proposed-v1.json",
+    "payloadSha256": "e62a380b29531d0f2cfef89111d02b88e3fdb15da72e15e2286b9012e75ea6bb",
+    "approvedAt": "2026-09-03"
    }
   },
   {
@@ -41695,13 +41877,27 @@
    "approved_via": "owner-approved fast-planet refresh, chat 2026-07-28 (Sun/Mercury reviewed; Venus/Mars pre-approved 'fix later')",
    "source_keys": [
     "Hand, Planets in Transit",
-    "Rodden, Modern Transits"
+    "Rodden, Modern Transits",
+    "packages/astro-knowledge/review/transit-aspect-friends-sun-proposed-v1.json"
    ],
    "approval": {
     "approvalLevel": "owner_signoff_untraced",
     "evidence": "owner-approved fast-planet refresh, chat 2026-07-28 (Sun/Mercury reviewed; Venus/Mars pre-approved 'fix later')",
     "approvedAt": "2026-07-28",
     "migratedBy": "friends-owner-signoff-untraced-ruling-2026-08-13"
+   },
+   "body_they": "Something may go {{Name}}'s way with less resistance than expected today. A manager approves the request, a useful person answers, or a plan that had been waiting on someone else finally gets a yes. The opening matters most if they actually use it. Feeling optimistic without making the call, sending the proposal, or asking for what they want leaves the best part of the transit unused.\n\nWith the Sun {{aspectWord}} their Jupiter until {{untilDate}}, {{Name}} has a better window for the request they have been hesitating to make. They should be specific about what they want and give the other person something concrete to respond to.",
+   "body_they_review_status": "approved",
+   "body_they_sha256": "fc76db73ad376bd3d51f881d1408cd276b4054f39152a6de03f4424a3c20dad3",
+   "body_they_approved_via": "packages/astro-knowledge/review/transit-aspect-friends-sun-proposed-v1.json",
+   "body_they_authorship": "independent_friend_authoring",
+   "body_they_name_variable": "{{Name}}",
+   "body_they_sourceMechanism": "Explicit independently authored Friends passage. Runtime You-to-Friends conversion remains fallback-only for transit rows without explicit body_they.",
+   "body_they_approval": {
+    "approvalLevel": "exact_owner_approved",
+    "recordPath": "packages/astro-knowledge/review/transit-aspect-friends-sun-proposed-v1.json",
+    "payloadSha256": "fc76db73ad376bd3d51f881d1408cd276b4054f39152a6de03f4424a3c20dad3",
+    "approvedAt": "2026-09-03"
    }
   },
   {
@@ -41714,13 +41910,27 @@
    "approved_via": "owner-approved fast-planet refresh, chat 2026-07-28 (Sun/Mercury reviewed; Venus/Mars pre-approved 'fix later')",
    "source_keys": [
     "Hand, Planets in Transit",
-    "Rodden, Modern Transits"
+    "Rodden, Modern Transits",
+    "packages/astro-knowledge/review/transit-aspect-friends-sun-proposed-v1.json"
    ],
    "approval": {
     "approvalLevel": "owner_signoff_untraced",
     "evidence": "owner-approved fast-planet refresh, chat 2026-07-28 (Sun/Mercury reviewed; Venus/Mars pre-approved 'fix later')",
     "approvedAt": "2026-07-28",
     "migratedBy": "friends-owner-signoff-untraced-ruling-2026-08-13"
+   },
+   "body_they": "{{Name}} may feel unusually certain that the larger version is the better version today. The more expensive option looks justified, the promise sounds easy to keep, and one ambition can quickly turn into three. Confidence is useful here, but it can move faster than the calendar, budget, or actual amount of work involved.\n\nA decision that still looks good after the excitement settles is probably worth more than the one that needs to happen immediately. With the Sun {{aspectWord}} their Jupiter until {{untilDate}}, {{Name}} benefits from giving the largest promises and purchases a little time. The opportunity does not disappear just because they check what it will require first.",
+   "body_they_review_status": "approved",
+   "body_they_sha256": "fe90b187f0582d1297490c0aa32d57419c3415e88092a245fcb8527dade9026f",
+   "body_they_approved_via": "packages/astro-knowledge/review/transit-aspect-friends-sun-proposed-v1.json",
+   "body_they_authorship": "independent_friend_authoring",
+   "body_they_name_variable": "{{Name}}",
+   "body_they_sourceMechanism": "Explicit independently authored Friends passage. Runtime You-to-Friends conversion remains fallback-only for transit rows without explicit body_they.",
+   "body_they_approval": {
+    "approvalLevel": "exact_owner_approved",
+    "recordPath": "packages/astro-knowledge/review/transit-aspect-friends-sun-proposed-v1.json",
+    "payloadSha256": "fe90b187f0582d1297490c0aa32d57419c3415e88092a245fcb8527dade9026f",
+    "approvedAt": "2026-09-03"
    }
   },
   {
@@ -41733,13 +41943,27 @@
    "approved_via": "owner-approved fast-planet refresh, chat 2026-07-28 (Sun/Mercury reviewed; Venus/Mars pre-approved 'fix later')",
    "source_keys": [
     "Hand, Planets in Transit",
-    "Rodden, Modern Transits"
+    "Rodden, Modern Transits",
+    "packages/astro-knowledge/review/transit-aspect-friends-sun-proposed-v1.json"
    ],
    "approval": {
     "approvalLevel": "owner_signoff_untraced",
     "evidence": "owner-approved fast-planet refresh, chat 2026-07-28 (Sun/Mercury reviewed; Venus/Mars pre-approved 'fix later')",
     "approvedAt": "2026-07-28",
     "migratedBy": "friends-owner-signoff-untraced-ruling-2026-08-13"
+   },
+   "body_they": "The boring work may finally feel manageable to {{Name}} today. Forms, corrections, bookkeeping, follow-up, or a task that has been sitting because nobody will praise it can be finished without requiring a crisis first. Advice from someone with more experience may also be useful because {{Name}} is in a better position to hear the practical part of it.\n\nWith the Sun {{aspectWord}} their Saturn until {{untilDate}}, steady attention goes further than inspiration. {{Name}} does not need to make the task interesting. They need to finish it well enough that it stops taking up space on tomorrow's list.",
+   "body_they_review_status": "approved",
+   "body_they_sha256": "c55ff441a2c67c33f5a750594323a3aaf3ad74294801dc67926aab61dba3847c",
+   "body_they_approved_via": "packages/astro-knowledge/review/transit-aspect-friends-sun-proposed-v1.json",
+   "body_they_authorship": "independent_friend_authoring",
+   "body_they_name_variable": "{{Name}}",
+   "body_they_sourceMechanism": "Explicit independently authored Friends passage. Runtime You-to-Friends conversion remains fallback-only for transit rows without explicit body_they.",
+   "body_they_approval": {
+    "approvalLevel": "exact_owner_approved",
+    "recordPath": "packages/astro-knowledge/review/transit-aspect-friends-sun-proposed-v1.json",
+    "payloadSha256": "c55ff441a2c67c33f5a750594323a3aaf3ad74294801dc67926aab61dba3847c",
+    "approvedAt": "2026-09-03"
    }
   },
   {
@@ -41752,13 +41976,27 @@
    "approved_via": "owner-approved fast-planet refresh, chat 2026-07-28 (Sun/Mercury reviewed; Venus/Mars pre-approved 'fix later')",
    "source_keys": [
     "Hand, Planets in Transit",
-    "Rodden, Modern Transits"
+    "Rodden, Modern Transits",
+    "packages/astro-knowledge/review/transit-aspect-friends-sun-proposed-v1.json"
    ],
    "approval": {
     "approvalLevel": "owner_signoff_untraced",
     "evidence": "owner-approved fast-planet refresh, chat 2026-07-28 (Sun/Mercury reviewed; Venus/Mars pre-approved 'fix later')",
     "approvedAt": "2026-07-28",
     "migratedBy": "friends-owner-signoff-untraced-ruling-2026-08-13"
+   },
+   "body_they": "{{Name}} may feel the weight of every unfinished responsibility at once today. Someone cancels, authority is less flexible, or a task that should have been handled earlier becomes the thing blocking everything else. The mood can make the entire situation look more restricted than it is, especially when several small obligations have been left open.\n\nFinishing one tedious responsibility may give {{Name}} more relief than trying to rest while it remains in the background. With the Sun {{aspectWord}} their Saturn until {{untilDate}}, the day asks for less drama and more completion. The useful move is doing the necessary part, lowering the expectations for everything else, and getting enough sleep afterward.",
+   "body_they_review_status": "approved",
+   "body_they_sha256": "315774029c50bc6df926cb04130f1b27dfe7eedf15fc65a96a8ede91f35cde48",
+   "body_they_approved_via": "packages/astro-knowledge/review/transit-aspect-friends-sun-proposed-v1.json",
+   "body_they_authorship": "independent_friend_authoring",
+   "body_they_name_variable": "{{Name}}",
+   "body_they_sourceMechanism": "Explicit independently authored Friends passage. Runtime You-to-Friends conversion remains fallback-only for transit rows without explicit body_they.",
+   "body_they_approval": {
+    "approvalLevel": "exact_owner_approved",
+    "recordPath": "packages/astro-knowledge/review/transit-aspect-friends-sun-proposed-v1.json",
+    "payloadSha256": "315774029c50bc6df926cb04130f1b27dfe7eedf15fc65a96a8ede91f35cde48",
+    "approvedAt": "2026-09-03"
    }
   },
   {
@@ -41771,13 +42009,27 @@
    "approved_via": "owner-approved fast-planet refresh, chat 2026-07-28 (Sun/Mercury reviewed; Venus/Mars pre-approved 'fix later')",
    "source_keys": [
     "Hand, Planets in Transit",
-    "Rodden, Modern Transits"
+    "Rodden, Modern Transits",
+    "packages/astro-knowledge/review/transit-aspect-friends-sun-proposed-v1.json"
    ],
    "approval": {
     "approvalLevel": "owner_signoff_untraced",
     "evidence": "owner-approved fast-planet refresh, chat 2026-07-28 (Sun/Mercury reviewed; Venus/Mars pre-approved 'fix later')",
     "approvedAt": "2026-07-28",
     "migratedBy": "friends-owner-signoff-untraced-ruling-2026-08-13"
+   },
+   "body_they": "Something different may improve {{Name}}'s day more than something efficient. An old contact resurfaces, an ordinary interaction becomes unexpectedly interesting, or a small change to a stale routine gives them more energy than another attempt to be disciplined. The novelty is useful because it shows where the current pattern has become too narrow.\n\nWith the Sun {{aspectWord}} their Uranus until {{untilDate}}, {{Name}} can experiment without needing to reorganize everything. One deliberate change is enough to learn from. If it makes the day work better, they can decide later if it deserves to become part of the routine.",
+   "body_they_review_status": "approved",
+   "body_they_sha256": "b7196ffe13a4b4eed19de7b0c2d5475a21d9c24d171a16c814bee7c8b4e01f2d",
+   "body_they_approved_via": "packages/astro-knowledge/review/transit-aspect-friends-sun-proposed-v1.json",
+   "body_they_authorship": "independent_friend_authoring",
+   "body_they_name_variable": "{{Name}}",
+   "body_they_sourceMechanism": "Explicit independently authored Friends passage. Runtime You-to-Friends conversion remains fallback-only for transit rows without explicit body_they.",
+   "body_they_approval": {
+    "approvalLevel": "exact_owner_approved",
+    "recordPath": "packages/astro-knowledge/review/transit-aspect-friends-sun-proposed-v1.json",
+    "payloadSha256": "b7196ffe13a4b4eed19de7b0c2d5475a21d9c24d171a16c814bee7c8b4e01f2d",
+    "approvedAt": "2026-09-03"
    }
   },
   {
@@ -41790,13 +42042,27 @@
    "approved_via": "owner-approved fast-planet refresh, chat 2026-07-28 (Sun/Mercury reviewed; Venus/Mars pre-approved 'fix later')",
    "source_keys": [
     "Hand, Planets in Transit",
-    "Rodden, Modern Transits"
+    "Rodden, Modern Transits",
+    "packages/astro-knowledge/review/transit-aspect-friends-sun-proposed-v1.json"
    ],
    "approval": {
     "approvalLevel": "owner_signoff_untraced",
     "evidence": "owner-approved fast-planet refresh, chat 2026-07-28 (Sun/Mercury reviewed; Venus/Mars pre-approved 'fix later')",
     "approvedAt": "2026-07-28",
     "migratedBy": "friends-owner-signoff-untraced-ruling-2026-08-13"
+   },
+   "body_they": "{{Name}} may have to improvise around a day that refuses to follow the original plan. A schedule flips, a machine chooses the worst time to fail, someone acts abruptly, or a partner becomes the restless one. The disruption is irritating partly because it removes the illusion that the routine was fully under control.\n\nA small deliberate change can give the energy somewhere to go before frustration chooses the change instead. With the Sun {{aspectWord}} their Uranus until {{untilDate}}, {{Name}} benefits from staying flexible with plans and conservative with risky decisions made at the peak of irritation. Not every broken pattern needs to be rebuilt exactly as it was.",
+   "body_they_review_status": "approved",
+   "body_they_sha256": "d22069b5df654dad8a472434fb26fd164c467f493032ca5d8a549638bc5cda39",
+   "body_they_approved_via": "packages/astro-knowledge/review/transit-aspect-friends-sun-proposed-v1.json",
+   "body_they_authorship": "independent_friend_authoring",
+   "body_they_name_variable": "{{Name}}",
+   "body_they_sourceMechanism": "Explicit independently authored Friends passage. Runtime You-to-Friends conversion remains fallback-only for transit rows without explicit body_they.",
+   "body_they_approval": {
+    "approvalLevel": "exact_owner_approved",
+    "recordPath": "packages/astro-knowledge/review/transit-aspect-friends-sun-proposed-v1.json",
+    "payloadSha256": "d22069b5df654dad8a472434fb26fd164c467f493032ca5d8a549638bc5cda39",
+    "approvedAt": "2026-09-03"
    }
   },
   {
@@ -41809,13 +42075,27 @@
    "approved_via": "owner-approved fast-planet refresh, chat 2026-07-28 (Sun/Mercury reviewed; Venus/Mars pre-approved 'fix later')",
    "source_keys": [
     "Hand, Planets in Transit",
-    "Rodden, Modern Transits"
+    "Rodden, Modern Transits",
+    "packages/astro-knowledge/review/transit-aspect-friends-sun-proposed-v1.json"
    ],
    "approval": {
     "approvalLevel": "owner_signoff_untraced",
     "evidence": "owner-approved fast-planet refresh, chat 2026-07-28 (Sun/Mercury reviewed; Venus/Mars pre-approved 'fix later')",
     "approvedAt": "2026-07-28",
     "migratedBy": "friends-owner-signoff-untraced-ruling-2026-08-13"
+   },
+   "body_they": "{{Name}} may be less interested in competition, packed plans, or proving they can keep pace today. Quiet work, music, film, helping someone, or simply having fewer demands can feel more restorative than trying to squeeze productivity out of low energy. This is not necessarily a problem to solve.\n\nWith the Sun {{aspectWord}} their Neptune until {{untilDate}}, {{Name}} gets more from following the softer rhythm of the day than from treating sensitivity as inefficiency. They can still do something meaningful. It may just be the kind of thing that restores them instead of producing another measurable result.",
+   "body_they_review_status": "approved",
+   "body_they_sha256": "54248d905796e1320079ef3f11b78dcce1f08698c9859c17ec76336c26707c25",
+   "body_they_approved_via": "packages/astro-knowledge/review/transit-aspect-friends-sun-proposed-v1.json",
+   "body_they_authorship": "independent_friend_authoring",
+   "body_they_name_variable": "{{Name}}",
+   "body_they_sourceMechanism": "Explicit independently authored Friends passage. Runtime You-to-Friends conversion remains fallback-only for transit rows without explicit body_they.",
+   "body_they_approval": {
+    "approvalLevel": "exact_owner_approved",
+    "recordPath": "packages/astro-knowledge/review/transit-aspect-friends-sun-proposed-v1.json",
+    "payloadSha256": "54248d905796e1320079ef3f11b78dcce1f08698c9859c17ec76336c26707c25",
+    "approvedAt": "2026-09-03"
    }
   },
   {
@@ -41828,13 +42108,27 @@
    "approved_via": "owner-approved fast-planet refresh, chat 2026-07-28 (Sun/Mercury reviewed; Venus/Mars pre-approved 'fix later')",
    "source_keys": [
     "Hand, Planets in Transit",
-    "Rodden, Modern Transits"
+    "Rodden, Modern Transits",
+    "packages/astro-knowledge/review/transit-aspect-friends-sun-proposed-v1.json"
    ],
    "approval": {
     "approvalLevel": "owner_signoff_untraced",
     "evidence": "owner-approved fast-planet refresh, chat 2026-07-28 (Sun/Mercury reviewed; Venus/Mars pre-approved 'fix later')",
     "approvedAt": "2026-07-28",
     "migratedBy": "friends-owner-signoff-untraced-ruling-2026-08-13"
+   },
+   "body_they": "{{Name}} may have less clarity and less energy at the same time today, which makes vague plans sound more convincing than they should. A promise can be missing important details, a shortcut can look harmless, or exhaustion can make any decisive answer feel better than staying uncertain. The day is not ideal for forcing certainty that is not there yet.\n\nWith the Sun {{aspectWord}} their Neptune until {{untilDate}}, {{Name}} benefits from postponing what can wait and checking the facts on what cannot. A lighter schedule, less alcohol, and fewer high-stakes confrontations give the body and judgment more room to recover before they commit to something difficult to reverse.",
+   "body_they_review_status": "approved",
+   "body_they_sha256": "4f9d62acdf487f2a3efc020efe37a2e3b1d5955e607f58468a65d5785b4a2ec8",
+   "body_they_approved_via": "packages/astro-knowledge/review/transit-aspect-friends-sun-proposed-v1.json",
+   "body_they_authorship": "independent_friend_authoring",
+   "body_they_name_variable": "{{Name}}",
+   "body_they_sourceMechanism": "Explicit independently authored Friends passage. Runtime You-to-Friends conversion remains fallback-only for transit rows without explicit body_they.",
+   "body_they_approval": {
+    "approvalLevel": "exact_owner_approved",
+    "recordPath": "packages/astro-knowledge/review/transit-aspect-friends-sun-proposed-v1.json",
+    "payloadSha256": "4f9d62acdf487f2a3efc020efe37a2e3b1d5955e607f58468a65d5785b4a2ec8",
+    "approvedAt": "2026-09-03"
    }
   },
   {
@@ -41847,13 +42141,27 @@
    "approved_via": "owner-approved fast-planet refresh, chat 2026-07-28 (Sun/Mercury reviewed; Venus/Mars pre-approved 'fix later')",
    "source_keys": [
     "Hand, Planets in Transit",
-    "Rodden, Modern Transits"
+    "Rodden, Modern Transits",
+    "packages/astro-knowledge/review/transit-aspect-friends-sun-proposed-v1.json"
    ],
    "approval": {
     "approvalLevel": "owner_signoff_untraced",
     "evidence": "owner-approved fast-planet refresh, chat 2026-07-28 (Sun/Mercury reviewed; Venus/Mars pre-approved 'fix later')",
     "approvedAt": "2026-07-28",
     "migratedBy": "friends-owner-signoff-untraced-ruling-2026-08-13"
+   },
+   "body_they": "Something {{Name}} has been living around may become specific enough to address today. An old grievance finally gets named, a hidden expense becomes clear, or a difficult situation that kept producing consequences without an obvious cause reveals where the problem actually sits. Once it is concrete, {{Name}} can do something with it.\n\nOther people may be more willing to follow their lead when the solution helps more than one person. With the Sun {{aspectWord}} their Pluto until {{untilDate}}, influence works best when {{Name}} uses it to resolve the underlying problem rather than to prove they were the person who saw it first.",
+   "body_they_review_status": "approved",
+   "body_they_sha256": "a62090a0659633de2dd83a03b74439d9f58d26cd8bd0a880ac90605e10f5f2af",
+   "body_they_approved_via": "packages/astro-knowledge/review/transit-aspect-friends-sun-proposed-v1.json",
+   "body_they_authorship": "independent_friend_authoring",
+   "body_they_name_variable": "{{Name}}",
+   "body_they_sourceMechanism": "Explicit independently authored Friends passage. Runtime You-to-Friends conversion remains fallback-only for transit rows without explicit body_they.",
+   "body_they_approval": {
+    "approvalLevel": "exact_owner_approved",
+    "recordPath": "packages/astro-knowledge/review/transit-aspect-friends-sun-proposed-v1.json",
+    "payloadSha256": "a62090a0659633de2dd83a03b74439d9f58d26cd8bd0a880ac90605e10f5f2af",
+    "approvedAt": "2026-09-03"
    }
   },
   {
@@ -41866,13 +42174,27 @@
    "approved_via": "owner-approved fast-planet refresh, chat 2026-07-28 (Sun/Mercury reviewed; Venus/Mars pre-approved 'fix later')",
    "source_keys": [
     "Hand, Planets in Transit",
-    "Rodden, Modern Transits"
+    "Rodden, Modern Transits",
+    "packages/astro-knowledge/review/transit-aspect-friends-sun-proposed-v1.json"
    ],
    "approval": {
     "approvalLevel": "owner_signoff_untraced",
     "evidence": "owner-approved fast-planet refresh, chat 2026-07-28 (Sun/Mercury reviewed; Venus/Mars pre-approved 'fix later')",
     "approvedAt": "2026-07-28",
     "migratedBy": "friends-owner-signoff-untraced-ruling-2026-08-13"
+   },
+   "body_they": "A disagreement around {{Name}} may reveal that the argument is not only about the stated issue. An authority figure pushes for control, an arrangement that has been barely holding together reaches its limit, or someone introduces an ultimatum because the quieter ways of managing the problem stopped working. The pressure shows where the structure is weakest.\n\n{{Name}} does not have to accept someone else's terms just because they were delivered forcefully. They also do not gain much by answering pressure with a larger threat. With the Sun {{aspectWord}} their Pluto until {{untilDate}}, the useful confrontation is the one that names the actual grievance, the actual leverage, and what has to change for the problem to stop returning.",
+   "body_they_review_status": "approved",
+   "body_they_sha256": "e4ca80ae7ad1b9416475cbacceb6c410a5cab4c1c68c774bfe68147c20578ae9",
+   "body_they_approved_via": "packages/astro-knowledge/review/transit-aspect-friends-sun-proposed-v1.json",
+   "body_they_authorship": "independent_friend_authoring",
+   "body_they_name_variable": "{{Name}}",
+   "body_they_sourceMechanism": "Explicit independently authored Friends passage. Runtime You-to-Friends conversion remains fallback-only for transit rows without explicit body_they.",
+   "body_they_approval": {
+    "approvalLevel": "exact_owner_approved",
+    "recordPath": "packages/astro-knowledge/review/transit-aspect-friends-sun-proposed-v1.json",
+    "payloadSha256": "e4ca80ae7ad1b9416475cbacceb6c410a5cab4c1c68c774bfe68147c20578ae9",
+    "approvedAt": "2026-09-03"
    }
   },
   {
@@ -41885,13 +42207,27 @@
    "approved_via": "owner-approved fast-planet refresh, chat 2026-07-28 (Sun/Mercury reviewed; Venus/Mars pre-approved 'fix later')",
    "source_keys": [
     "Hand, Planets in Transit",
-    "Rodden, Modern Transits"
+    "Rodden, Modern Transits",
+    "packages/astro-knowledge/review/transit-aspect-friends-sun-proposed-v1.json"
    ],
    "approval": {
     "approvalLevel": "owner_signoff_untraced",
     "evidence": "owner-approved fast-planet refresh, chat 2026-07-28 (Sun/Mercury reviewed; Venus/Mars pre-approved 'fix later')",
     "approvedAt": "2026-07-28",
     "migratedBy": "friends-owner-signoff-untraced-ruling-2026-08-13"
+   },
+   "body_they": "Work {{Name}} has been doing quietly may become visible to someone who matters. A finished project, careful follow-through, or useful result can earn more attention than a polished announcement would. A manager, client, or decision-maker may be more willing to support the next step because there is already something concrete to point to.\n\nWith the Sun {{aspectWord}} their Midheaven until {{untilDate}}, recognition follows the work more easily than usual. {{Name}} does not need to chase the credit. They need to make sure the result is complete enough that the right person can see what they actually did.",
+   "body_they_review_status": "approved",
+   "body_they_sha256": "9d8189916bed63b3d24b75efff008f1d0746923fe3ead981ee5b9eb24e63c72b",
+   "body_they_approved_via": "packages/astro-knowledge/review/transit-aspect-friends-sun-proposed-v1.json",
+   "body_they_authorship": "independent_friend_authoring",
+   "body_they_name_variable": "{{Name}}",
+   "body_they_sourceMechanism": "Explicit independently authored Friends passage. Runtime You-to-Friends conversion remains fallback-only for transit rows without explicit body_they.",
+   "body_they_approval": {
+    "approvalLevel": "exact_owner_approved",
+    "recordPath": "packages/astro-knowledge/review/transit-aspect-friends-sun-proposed-v1.json",
+    "payloadSha256": "9d8189916bed63b3d24b75efff008f1d0746923fe3ead981ee5b9eb24e63c72b",
+    "approvedAt": "2026-09-03"
    }
   },
   {
@@ -41904,13 +42240,27 @@
    "approved_via": "owner-approved fast-planet refresh, chat 2026-07-28 (Sun/Mercury reviewed; Venus/Mars pre-approved 'fix later')",
    "source_keys": [
     "Hand, Planets in Transit",
-    "Rodden, Modern Transits"
+    "Rodden, Modern Transits",
+    "packages/astro-knowledge/review/transit-aspect-friends-sun-proposed-v1.json"
    ],
    "approval": {
     "approvalLevel": "owner_signoff_untraced",
     "evidence": "owner-approved fast-planet refresh, chat 2026-07-28 (Sun/Mercury reviewed; Venus/Mars pre-approved 'fix later')",
     "approvedAt": "2026-07-28",
     "migratedBy": "friends-owner-signoff-untraced-ruling-2026-08-13"
+   },
+   "body_they": "{{Name}}'s work may get more attention than usual, and attention is not automatically comfortable. A manager may question the approach, coworkers may resist being pushed, or a strong result may come with a disagreement about credit, authority, or how the next step should happen. The temptation is to press harder because the stakes feel personal.\n\nThe work itself is still the strongest argument. With the Sun {{aspectWord}} their Midheaven until {{untilDate}}, {{Name}} does better when they keep the team informed, let the result carry some of the weight, and avoid turning professional friction into a referendum on their worth.",
+   "body_they_review_status": "approved",
+   "body_they_sha256": "5106d60702c8c7b2829a6d44ddb2b7d39e033f90ceba5e2abb018fd81b07b7ae",
+   "body_they_approved_via": "packages/astro-knowledge/review/transit-aspect-friends-sun-proposed-v1.json",
+   "body_they_authorship": "independent_friend_authoring",
+   "body_they_name_variable": "{{Name}}",
+   "body_they_sourceMechanism": "Explicit independently authored Friends passage. Runtime You-to-Friends conversion remains fallback-only for transit rows without explicit body_they.",
+   "body_they_approval": {
+    "approvalLevel": "exact_owner_approved",
+    "recordPath": "packages/astro-knowledge/review/transit-aspect-friends-sun-proposed-v1.json",
+    "payloadSha256": "5106d60702c8c7b2829a6d44ddb2b7d39e033f90ceba5e2abb018fd81b07b7ae",
+    "approvedAt": "2026-09-03"
    }
   },
   {
@@ -41923,13 +42273,27 @@
    "approved_via": "owner-approved fast-planet refresh, chat 2026-07-28 (Sun/Mercury reviewed; Venus/Mars pre-approved 'fix later')",
    "source_keys": [
     "Hand, Planets in Transit",
-    "Rodden, Modern Transits"
+    "Rodden, Modern Transits",
+    "packages/astro-knowledge/review/transit-aspect-friends-sun-proposed-v1.json"
    ],
    "approval": {
     "approvalLevel": "owner_signoff_untraced",
     "evidence": "owner-approved fast-planet refresh, chat 2026-07-28 (Sun/Mercury reviewed; Venus/Mars pre-approved 'fix later')",
     "approvedAt": "2026-07-28",
     "migratedBy": "friends-owner-signoff-untraced-ruling-2026-08-13"
+   },
+   "body_they": "{{Name}} is easier to read in the best way today. Their confidence comes across without needing much explanation, and people are more likely to meet their openness with interest instead of resistance. A group plan, introduction, outing, or first meeting can go more easily because they are not spending the entire interaction wondering how they are being received.\n\nThey do not need to turn the day into a performance. The advantage is simpler than that: they can show up as themselves and let other people respond to what is actually there. With the Sun {{aspectWord}} their Ascendant until {{untilDate}}, being visible costs less effort than usual, and the right people are more likely to meet them halfway.",
+   "body_they_review_status": "approved",
+   "body_they_sha256": "f5b63a9c9ea13efb4423ddb1ead2a04f2dedc2d5fc33c157307a3dc305010481",
+   "body_they_approved_via": "packages/astro-knowledge/review/transit-aspect-friends-sun-proposed-v1.json",
+   "body_they_authorship": "independent_friend_authoring",
+   "body_they_name_variable": "{{Name}}",
+   "body_they_sourceMechanism": "Explicit independently authored Friends passage. Runtime You-to-Friends conversion remains fallback-only for transit rows without explicit body_they.",
+   "body_they_approval": {
+    "approvalLevel": "exact_owner_approved",
+    "recordPath": "packages/astro-knowledge/review/transit-aspect-friends-sun-proposed-v1.json",
+    "payloadSha256": "f5b63a9c9ea13efb4423ddb1ead2a04f2dedc2d5fc33c157307a3dc305010481",
+    "approvedAt": "2026-09-03"
    }
   },
   {
@@ -41937,18 +42301,39 @@
    "content_role": "full_copy",
    "surface": "transit-aspect",
    "headline": "",
-   "body_you": "Someone pushes today, or you do: a boss, a parent, the difficult coworker who cannot be dodged today. Fights fought for aims you privately doubt go worst; had openly, over something real, the clash mostly clears the air. Stepping away gives you a moment to breathe, but it doesn't resolve the conflict; the conversation will still be waiting when you walk back into the room, so decide whether delay actually buys you clarity or just prolongs the dread. The Sun {{aspectWord}} your Ascendant until {{untilDate}} puts the difficult conversation on today's calendar.",
+   "body_you": "External pressure lands squarely on your doorstep right now, whether sparked by a demanding manager, a rigid professor, an overbearing parent, or the sheer weight of parenting and daily responsibilities that leaves zero room for error. When your boundaries get tested across your work, studies, or home life, stop wasting energy fighting for outcomes or expectations you do not even believe in. Those battles are dead ends that drain the exact bandwidth you need for your family, your work, and your own well-being. A crisp, honest clash over something real, however, clears the air faster than weeks of quiet resentment.\n\nStepping back gives your nervous system a minute to cool down, but evasion is not a resolution. That conversation is parked right where you left it, waiting for your return. Decide if hitting pause is a strategic calculation that brings actual perspective or just a way to prolong the dread. With the Sun {{aspectWord}} your Ascendant until {{untilDate}}, put the hard talk on the calendar, state your terms, and protect your time.",
    "review_status": "approved",
    "approved_via": "owner-approved fast-planet refresh, chat 2026-07-28 (Sun/Mercury reviewed; Venus/Mars pre-approved 'fix later')",
    "source_keys": [
     "Hand, Planets in Transit",
-    "Rodden, Modern Transits"
+    "Rodden, Modern Transits",
+    "packages/astro-knowledge/review/transit-aspect-friends-sun-proposed-v1.json",
+    "packages/astro-knowledge/review/transit-aspect-sun-ascendant-hard-owner-published-2026-09-03.json"
    ],
    "approval": {
     "approvalLevel": "owner_signoff_untraced",
     "evidence": "owner-approved fast-planet refresh, chat 2026-07-28 (Sun/Mercury reviewed; Venus/Mars pre-approved 'fix later')",
     "approvedAt": "2026-07-28",
     "migratedBy": "friends-owner-signoff-untraced-ruling-2026-08-13"
+   },
+   "body_they": "External pressure is harder for {{Name}} to ignore right now, whether sparked by a demanding manager, a rigid professor, an overbearing parent, or the sheer weight of parenting and daily responsibilities that leaves zero room for error. When their boundaries get tested across work, studies, or home life, they can stop wasting energy fighting for outcomes or expectations they do not even believe in. Those battles are dead ends that drain the exact bandwidth they need for family, work, and personal well-being. A crisp, honest clash over something real, however, clears the air faster than weeks of quiet resentment.\n\n{{Name}} may need to step away long enough to cool down before they answer, but distance does not resolve the issue by itself. The conversation is still parked right where they left it, waiting for their return. What matters is whether the pause gives them enough perspective to say what they actually mean, or only postpones something they already know needs to be addressed. With the Sun {{aspectWord}} their Ascendant until {{untilDate}}, the difficult conversation belongs on their calendar. They are better off stating their terms clearly and dealing with the conflict than letting it keep building in the background.",
+   "body_they_review_status": "approved",
+   "body_they_sha256": "6e4c19d607b158e1b711d645ba7966df23cb1feb27d3c25518fcb748af56ae7f",
+   "body_they_approved_via": "packages/astro-knowledge/review/transit-aspect-sun-ascendant-hard-owner-published-2026-09-03.json",
+   "body_they_authorship": "independent_friend_authoring",
+   "body_they_name_variable": "{{Name}}",
+   "body_they_sourceMechanism": "Exact owner-published Content Studio Friend passage. Bundled first paint and live overlay must remain byte-identical.",
+   "body_they_approval": {
+    "approvalLevel": "exact_owner_published_cms_revision",
+    "recordPath": "packages/astro-knowledge/review/transit-aspect-sun-ascendant-hard-owner-published-2026-09-03.json",
+    "payloadSha256": "6e4c19d607b158e1b711d645ba7966df23cb1feb27d3c25518fcb748af56ae7f",
+    "approvedAt": "2026-09-03"
+   },
+   "body_you_revision": {
+    "approvalLevel": "exact_owner_published_cms_revision",
+    "recordPath": "packages/astro-knowledge/review/transit-aspect-sun-ascendant-hard-owner-published-2026-09-03.json",
+    "publishedAt": "2026-09-03T14:34:52.305Z",
+    "source": "Content Studio production publish"
    }
   },
   {
