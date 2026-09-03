@@ -24,7 +24,7 @@ jobs:
       - name: Install dependencies
         run: npm ci
       - name: Run Content Studio API roundtrip regression
-        run: node scripts/test-content-studio-api-roundtrip.mjs
+        run: node --import tsx scripts/test-content-studio-api-roundtrip.mjs
       - name: Verify diff
         run: git diff --check
       - name: Commit repair and remove temporary helpers
