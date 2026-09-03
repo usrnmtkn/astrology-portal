@@ -49,6 +49,12 @@ const prohibited = [
   /\breal\b/iu
 ];
 
+const editorialRegressions = [
+  [/where [^.]{0,100}\bis concerned\b/iu, "awkward 'where … is concerned' domain grammar"],
+  [/(?:^|[.!?]\s+)(?:a feeling changing|disruption exposing|a familiar sore point resurfacing|old history coloring|immediate pressure|a trigger that needs)/u, "lowercase mechanism phrase at sentence boundary"],
+  [/\bask more of\b/iu, "North Node 'ask more of' phrasing"]
+];
+
 let converterComparisons = 0;
 for (const record of completion.records) {
   assert.match(record.contentKey, /^authored\/transit-aspect\//u);
@@ -68,6 +74,9 @@ for (const record of completion.records) {
   assert.equal(body.includes("\n\n"), true, `${record.contentKey}: Friends passage must remain two paragraphs.`);
   for (const pattern of prohibited) {
     assert.doesNotMatch(body, pattern, `${record.contentKey}: prohibited style/language pattern ${pattern}.`);
+  }
+  for (const [pattern, label] of editorialRegressions) {
+    assert.doesNotMatch(body, pattern, `${record.contentKey}: ${label}.`);
   }
   assert.doesNotMatch(body, /\bthey\s+(?:is|has|was)\b/iu, `${record.contentKey}: likely they/them agreement error.`);
   assert.doesNotMatch(body, /\btheir\s+(?:is|are|was|were)\b/iu, `${record.contentKey}: likely possessive agreement error.`);
@@ -128,5 +137,6 @@ console.log(JSON.stringify({
   totalFriendsTransitRows: allByKey.size,
   converterComparisons,
   duplicateBodies: 0,
+  editorialGrammarRegressions: 0,
   repeatedNineWordPhrasesOver15: repeated.length
 }, null, 2));
