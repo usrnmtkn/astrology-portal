@@ -65,13 +65,37 @@ jobs:
           const variantNote = variantPool
             ? sentence(pick(variantPool, seed, 6), { TARGET: label[canonicalTarget] })
             : "";
+          const aliasTemplates = {
+            a: [
+              "A small shift in how they carry themselves can change the interaction more than another explanation.",
+              "The useful experiment is letting their first response be simpler instead of trying to pre-correct how it might be received."
+            ],
+            c: [
+              "The experience becomes useful when they recognize the old pattern without making the current person responsible for all of its history.",
+              "They may be able to offer perspective because they know this kind of sensitivity from the inside, not because they have a perfect answer."
+            ],
+            j: [
+              "A small pleasure or invitation can be worth taking without turning the whole day into a larger promise.",
+              "The useful extra is the one that adds something good without creating tomorrow's problem."
+            ],
+            m: [
+              "A quick message, piece of paperwork, or short conversation may be enough to move the practical part forward.",
+              "The words matter most when they stay close to the actual question instead of becoming another layer of explanation."
+            ],
+            s: [
+              "The useful momentum is personal: one choice that feels like theirs can matter more than broad approval.",
+              "They do not need to prove the whole direction today; one action that matches what they actually want is enough to learn from."
+            ]
+          };
+          const aliasPool = rawTarget !== canonicalTarget ? aliasTemplates[rawTarget] : null;
+          const aliasNote = aliasPool ? pick(aliasPool, seed, 7) : "";
           const bridge = sentence(pick(bridgeOpeners, seed, 5), {'''
           if anchor not in s:
             raise SystemExit('missing action/bridge anchor for variant authoring patch')
           s = s.replace(anchor, insertion)
 
           old_return = '  return `${opener} ${scene} ${mechanism}\\n\\n${bridge}`;'
-          new_return = '  return `${opener} ${scene} ${mechanism}${variantNote ? ` ${variantNote}` : ""}\\n\\n${bridge}`;'
+          new_return = '  return `${opener} ${scene} ${mechanism}${variantNote ? ` ${variantNote}` : ""}${aliasNote ? ` ${aliasNote}` : ""}\\n\\n${bridge}`;'
           if old_return not in s:
             raise SystemExit('missing return anchor for variant authoring patch')
           s = s.replace(old_return, new_return)
