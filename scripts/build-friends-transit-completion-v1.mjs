@@ -50,7 +50,7 @@ const label = {
 };
 
 const planetLabel = {
-  any: "This transit",
+  any: "this transit",
   chiron: "Chiron",
   jupiter: "Jupiter",
   mars: "Mars",
@@ -72,7 +72,7 @@ const planetEffect = {
   mercury: "messages, decisions, plans, and new information",
   moon: "mood, instinct, and immediate emotional needs",
   neptune: "sensitivity, uncertainty, imagination, and lower energy",
-  "north-node": "an unfamiliar direction asking for a first attempt",
+  "north-node": "an unfamiliar direction pulling them toward a first attempt",
   pluto: "pressure, leverage, and the need to get underneath the stated issue",
   saturn: "limits, deadlines, responsibility, and consequence",
   uranus: "disruption, independence, and the need to change a stale pattern",
@@ -321,7 +321,7 @@ const target = {
     ]
   },
   "north-node": {
-    domain: "an unfamiliar direction, role, or habit that asks them to develop something they cannot already do automatically",
+    domain: "an unfamiliar direction, role, or habit that requires them to develop something they cannot already do automatically",
     scenes: [
       "A new responsibility may feel like evidence that they are underqualified simply because they have not practiced this version of themselves yet.",
       "An introduction, assignment, class, or invitation can put them close to people who already seem comfortable doing what they are just beginning.",
@@ -444,7 +444,7 @@ const softMechanism = [
   "The advantage is practical: %EFFECT% is easier to direct toward something useful instead of spending the day managing friction around it.",
   "What usually takes more effort may move with less resistance while %EFFECT% is working with the situation instead of against it.",
   "The opening still needs action. %EFFECT% makes cooperation or timing easier, but it does not complete the task on {{Name}}'s behalf.",
-  "The day gives {{Name}} more room to use %EFFECT% well, especially if they attach the good feeling or useful timing to a specific next step.",
+  "The day makes %EFFECT% easier for {{Name}} to use well, especially if they attach the good feeling or useful timing to a specific next step.",
   "Support is available in a form {{Name}} can actually use, and %EFFECT% is less likely to become the part they have to manage around.",
   "This is easier energy, not automatic results. %EFFECT% helps most when {{Name}} gives it a concrete job."
 ];
@@ -465,13 +465,86 @@ const anyMechanism = [
   "The transit works through the situation directly, with %EFFECT% changing the next step rather than staying abstract."
 ];
 
+const planetEffectVariants = {
+  any: ["immediate pressure", "a trigger that needs a response", "the consequence becoming harder to ignore", "the issue moving from background to action"],
+  chiron: ["an older sensitivity becoming recognizable", "a familiar sore point resurfacing", "old history coloring a current event", "a vulnerability becoming easier to name"],
+  jupiter: ["confidence moving toward the larger option", "a bigger appetite for possibility", "optimism outrunning the practical details", "the impulse to expand before checking the cost", "generosity becoming easier to promise"],
+  mars: ["urgency and the need to act", "anger looking for a useful direction", "physical drive rising quickly", "impatience pushing for movement", "effort becoming harder to postpone"],
+  mercury: ["new information changing the plan", "messages and decisions moving quickly", "a conversation making the issue specific", "facts arriving close to the decision point", "wording and timing shaping the next step"],
+  moon: ["mood changing the scale of the moment", "an immediate emotional need becoming louder", "instinct reacting before explanation arrives", "the body registering the situation quickly", "a feeling changing what seems urgent"],
+  neptune: ["uncertainty mixing with sensitivity", "fatigue making assumptions more persuasive", "imagination filling in missing details", "a strong feeling blurring the practical facts", "lower energy making certainty harder to force"],
+  "north-node": ["an unfamiliar direction becoming concrete", "a new role requiring practice", "the next step arriving before full confidence", "development pulling them beyond the familiar response"],
+  pluto: ["hidden leverage becoming easier to see", "pressure exposing the underlying issue", "control becoming part of the argument", "the power arrangement becoming harder to ignore", "a buried grievance becoming specific"],
+  saturn: ["a limit becoming concrete", "responsibility turning into consequence", "unfinished work becoming visible", "a deadline exposing what lacks support", "authority making the requirement specific"],
+  uranus: ["disruption exposing a stale pattern", "the need for change arriving abruptly", "restlessness challenging the usual routine", "independence pushing against a rigid arrangement", "an unexpected change forcing improvisation"],
+  venus: ["money or affection changing the tone", "pleasure making one option easier to justify", "cooperation becoming easier to test", "values becoming visible through a practical choice", "social ease changing how the offer lands"]
+};
+
+const targetDomainVariants = {
+  ascendant: ["first impressions and immediate responses", "how they enter a new situation", "visibility and the way they respond first", "how other people meet their presence"],
+  chiron: ["an old sensitivity and its present trigger", "the history attached to a sore point", "how they protect a familiar vulnerability", "the difference between an old hurt and the current event"],
+  descendant: ["partnership and shared responsibility", "the terms of a close agreement", "cooperation with another person", "what they accept or require in partnership"],
+  jupiter: ["risk, opportunity, and the size of the promise", "how much they are willing to take on", "confidence and the cost of expanding", "the larger option and what it requires"],
+  lilith: ["the preference they usually make easy to ignore", "anger around an old compromise", "a non-negotiable they stopped naming", "the part of the arrangement that keeps producing resentment"],
+  mars: ["conflict and immediate action", "physical effort and impatience", "anger and what they do with it", "the task or confrontation that needs movement"],
+  mercury: ["messages and decisions", "the facts behind a conversation", "paperwork, timing, and what needs an answer", "how they think through the next choice"],
+  midheaven: ["career and visible responsibility", "recognition and professional authority", "the work other people can evaluate", "a public role and what comes with it"],
+  moon: ["home, family, and immediate emotional needs", "mood and body rhythms", "private needs competing with the rest of the day", "the feeling they carry into the next situation"],
+  neptune: ["uncertainty and the facts easiest to blur", "sensitivity and missing details", "hope, fatigue, and what still needs verification", "the story forming around incomplete information"],
+  "nodal-axis": ["a familiar pattern versus a developing direction", "the choice between competence and growth", "what is familiar and what still needs practice", "an old role competing with a newer direction"],
+  "north-node": ["a role they are still learning", "an unfamiliar next step", "the skill the new direction requires", "a choice that develops something new"],
+  pluto: ["power and the unstated terms", "control and the actual leverage involved", "the issue underneath the surface argument", "what keeps producing consequences behind the scenes"],
+  saturn: ["deadlines and unfinished responsibility", "limits and the work that can no longer be covered", "authority and the requirement that has become specific", "the practical consequence of an under-supported plan"],
+  "south-node": ["a familiar role and the competence attached to it", "an old habit that still works easily", "the job everyone already expects them to do", "a practiced response that may no longer deserve automatic priority"],
+  sun: ["identity and the work they want to stand behind", "visibility and personal direction", "pride and the choices that feel like theirs", "what they are trying to build under their own name"],
+  uranus: ["freedom and a routine that has become too narrow", "disruption and the part that needs updating", "restlessness around a stale pattern", "the change they need without destroying what still works"],
+  venus: ["relationships and practical terms", "money, pleasure, and what they value", "cooperation and the cost behind the pleasant option", "affection, preferences, and what makes the arrangement sustainable"]
+};
+
+hardMechanism.push(
+  "A useful response starts after {{Name}} separates the concrete problem from the extra force created by %EFFECT%.",
+  "%EFFECT% can sharpen the problem without making the biggest reaction the best response.",
+  "The pressure is informative if {{Name}} uses %EFFECT% to identify the exact weak point instead of enlarging the argument.",
+  "The first impulse may be understandable, but %EFFECT% still needs to be matched to the scale of the actual problem.",
+  "{{Name}} gets a clearer decision once %EFFECT% stops choosing the urgency for them.",
+  "The conflict is easier to use once %EFFECT% is separated from the part that genuinely needs action.",
+  "The difficult contact exposes something worth addressing, but %EFFECT% does not require an all-or-nothing answer.",
+  "What needs correction becomes clearer when {{Name}} treats %EFFECT% as a signal rather than a command."
+);
+
+softMechanism.push(
+  "%EFFECT% gives {{Name}} a workable opening, especially if they use it on one concrete task.",
+  "Less friction around %EFFECT% makes the practical next step easier to see and use.",
+  "The support is useful because %EFFECT% can move toward action without another problem having to force it.",
+  "{{Name}} can use %EFFECT% while the timing is cooperative instead of waiting for urgency to create momentum.",
+  "The easier contact helps most when %EFFECT% becomes part of something specific they can finish, send, decide, or change.",
+  "There is enough cooperation here for %EFFECT% to produce a result instead of only a better mood.",
+  "{{Name}} does not need to manufacture pressure; %EFFECT% is already easier to direct toward the useful next move.",
+  "The opening becomes valuable when {{Name}} turns %EFFECT% into a decision, conversation, task, or agreement that can hold up afterward."
+);
+
+planetOpeners.moon.push(
+  "A familiar situation can feel different to {{Name}} because %DOMAIN% carries more emotional weight today.",
+  "{{Name}} may notice %DOMAIN% through the body first: tension, relief, hunger, fatigue, or the need for privacy.",
+  "One ordinary event can change the emotional tone of %DOMAIN% quickly for {{Name}}.",
+  "The practical facts may be unchanged while {{Name}} feels %DOMAIN% much more strongly than they did a few hours ago.",
+  "A need that was easy to ignore earlier can become obvious to {{Name}} through %DOMAIN%.",
+  "{{Name}} may understand what happened only after noticing how strongly %DOMAIN% changed their mood."
+);
+
 const bridgeOpeners = [
   "With %PLANET% {{aspectWord}} their %TARGET% until {{untilDate}}, {{Name}} %ACTION%.",
   "While %PLANET% {{aspectWord}} their %TARGET% until {{untilDate}}, {{Name}} %ACTION%.",
-  "%PLANET% {{aspectWord}} their %TARGET% until {{untilDate}} makes one response especially useful: {{Name}} %ACTION%.",
-  "Until {{untilDate}}, %PLANET% {{aspectWord}} their %TARGET% puts the emphasis on a practical choice. {{Name}} %ACTION%.",
+  "%PLANET% {{aspectWord}} their %TARGET% runs through {{untilDate}}. {{Name}} %ACTION%.",
+  "Until {{untilDate}}, %PLANET% {{aspectWord}} their %TARGET% remains active. {{Name}} %ACTION%.",
   "The useful part of %PLANET% {{aspectWord}} their %TARGET% until {{untilDate}} is concrete. {{Name}} %ACTION%.",
-  "As %PLANET% {{aspectWord}} their %TARGET% through {{untilDate}}, {{Name}} %ACTION%."
+  "As %PLANET% {{aspectWord}} their %TARGET% through {{untilDate}}, {{Name}} %ACTION%.",
+  "Through {{untilDate}}, %PLANET% {{aspectWord}} their %TARGET% favors one practical response: {{Name}} %ACTION%.",
+  "%PLANET% {{aspectWord}} their %TARGET% continues through {{untilDate}}. {{Name}} %ACTION%.",
+  "Until {{untilDate}}, %PLANET% {{aspectWord}} their %TARGET% stays active. {{Name}} %ACTION%.",
+  "The decision point in %PLANET% {{aspectWord}} their %TARGET% through {{untilDate}} is simple: {{Name}} %ACTION%.",
+  "As %PLANET% {{aspectWord}} their %TARGET% continues through {{untilDate}}, {{Name}} %ACTION%.",
+  "%PLANET% {{aspectWord}} their %TARGET% stays active through {{untilDate}}. {{Name}} %ACTION%."
 ];
 
 function hashInt(value) {
@@ -503,11 +576,12 @@ function buildBody(contentKey) {
   if (!targetData) throw new Error(`${contentKey}: unsupported target ${canonicalTarget}.`);
   const seed = hashInt(contentKey);
   const mode = modeFor(aspect);
-  const effect = planetEffect[transiting];
+  const effect = pick(planetEffectVariants[transiting] ?? [planetEffect[transiting]], seed, 0);
   const pLabel = planetLabel[transiting];
   if (!effect || !pLabel) throw new Error(`${contentKey}: unsupported transiting body ${transiting}.`);
 
-  const opener = sentence(pick(planetOpeners[transiting], seed, 1), { DOMAIN: targetData.domain });
+  const domain = pick(targetDomainVariants[canonicalTarget] ?? [targetData.domain], seed, 8);
+  const opener = sentence(pick(planetOpeners[transiting], seed, 1), { DOMAIN: domain });
   const scene = pick(targetData.scenes, seed, 2);
   const mechanismPool = mode === "hard"
     ? hardMechanism
@@ -518,13 +592,71 @@ function buildBody(contentKey) {
         : anyMechanism;
   const mechanism = sentence(pick(mechanismPool, seed, 3), { EFFECT: effect });
   const action = pick(targetData.actions, seed, 4);
-  const bridge = sentence(pick(bridgeOpeners, seed, 5), {
+const variantCode = parts[5] ?? null;
+const variantTemplates = {
+  "variant-A": [
+    "Around their %TARGET%, the first response matters less than what they notice once the immediate reaction settles.",
+    "Their %TARGET% becomes easier to read after the first reaction drops enough for the practical issue to separate from it."
+  ],
+  "variant-B": [
+    "With their %TARGET%, the useful distinction is between what changed and the meaning the first reaction attached to it.",
+    "Their %TARGET% gives them a clearer clue once they compare the immediate reaction with what is still true an hour later."
+  ],
+  "variant-C": [
+    "For their %TARGET%, they do not need to settle the whole issue before the next concrete step becomes clear.",
+    "Their %TARGET% benefits from a second look because the first emotional meaning is not the only one available."
+  ],
+  "variant-D": [
+    "Around their %TARGET%, the better test is what still matters after the immediate charge has dropped.",
+    "Their %TARGET% becomes more useful as information once the first burst of urgency is no longer choosing the scale of the problem."
+  ],
+  "variant-E": [
+    "With their %TARGET%, the opening is worth using if it still improves the day after the first burst of enthusiasm passes.",
+    "Their %TARGET% gets the most from the option that still looks useful after the initial lift or relief settles."
+  ]
+};
+const variantPool = variantCode ? variantTemplates[variantCode] : null;
+const variantNote = variantPool
+  ? sentence(pick(variantPool, seed, 6), { TARGET: label[canonicalTarget] })
+  : "";
+const aliasTemplates = {
+  a: ["A simpler first response can change the interaction more than another explanation.", "Letting the first response stay simple can reveal more than pre-correcting it."],
+  c: ["Recognizing the old pattern is useful without making the current person carry its history.", "Their perspective matters because they know this sensitivity from the inside."],
+  j: ["A small pleasure can add something good without becoming tomorrow's problem.", "The useful extra is the one that does not create a larger promise."],
+  m: ["A short message or conversation may be enough to move the practical part.", "The words work best when they stay close to the actual question."],
+  s: ["One choice that feels like theirs can matter more than broad approval.", "One action that matches what they want is enough to learn from."]
+};
+const aliasPool = rawTarget !== canonicalTarget ? aliasTemplates[rawTarget] : null;
+const aliasNote = aliasPool ? pick(aliasPool, seed, 7) : "";
+const bridge = sentence(pick(bridgeOpeners, seed, 5), {
     PLANET: pLabel,
     TARGET: label[canonicalTarget],
     ACTION: action
   });
 
-  return `${opener} ${scene} ${mechanism}\n\n${bridge}`;
+  const firstParagraph = `${opener} ${scene} ${mechanism}${variantNote ? ` ${variantNote}` : ""}${aliasNote ? ` ${aliasNote}` : ""}`;
+const shortNotes = [
+  "The scale usually becomes clearer after the first reaction passes.",
+  "One concrete fact can keep the response proportional to the problem.",
+  "The next useful move is usually smaller than the first impulse suggests.",
+  "A second look can separate the important part from the immediate charge.",
+  "The practical choice gets clearer once the first burst settles.",
+  "What still matters afterward is the better guide for the response.",
+  "A little distance can show which part actually needs action.",
+  "The useful clue is the part that remains specific afterward.",
+  "One clear next step is enough to test the larger conclusion.",
+  "The decision improves when the scale matches the actual consequence.",
+  "The strongest feeling does not have to choose the largest response.",
+  "A specific response can do more than a broad reaction here.",
+  "The practical issue is easier to handle once it stays specific.",
+  "They can learn more from the next step than from another prediction.",
+  "The situation becomes easier to judge when they keep it concrete.",
+  "The useful response starts with the part they can verify."
+];
+const initialBody = `${firstParagraph}\n\n${bridge}`;
+const initialWords = initialBody.replace(/\{\{[^{}]+\}\}/gu, "variable").trim().split(/\s+/u).filter(Boolean).length;
+const lengthNote = initialWords < 80 ? pick(shortNotes, seed, 9) : "";
+return `${firstParagraph}${lengthNote ? ` ${lengthNote}` : ""}\n\n${bridge}`;
 }
 
 const records = keys.map((contentKey) => {
