@@ -1,6 +1,6 @@
 {
   "schema": "tldrastro-approved-lunation-book-cards/v1",
-  "packageVersion": "v3-2026-09-02a",
+  "packageVersion": "v3-2026-09-03a",
   "source": {
     "schema": "lunation-book-cards/v1",
     "count": 288
