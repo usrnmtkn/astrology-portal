@@ -24,6 +24,8 @@ jobs:
           cache: npm
       - name: Install dependencies
         run: npm ci
+      - name: Build astro knowledge prerequisite
+        run: npm run build -w @tldr/astro-knowledge
       - name: Apply exact owner-published Venus Moon You revision
         run: node scripts/import-venus-moon-hard-owner-published-you-v1.mjs --apply
       - name: Rebuild shipped fallback resolver
