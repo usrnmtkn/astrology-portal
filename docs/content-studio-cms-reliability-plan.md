@@ -41,3 +41,12 @@ That is intentionally a second phase because several current list classifiers in
 - Migration is reviewed before production application.
 - After migration: compare `EXPLAIN (ANALYZE, BUFFERS)` for Studio first page and reader cursor scans against this baseline.
 - Production smoke: create draft, read it back, edit, stale-edit conflict, publish, reader hydration, demote, cache refresh, archive, restore, and protected delete.
+
+## Step 6 activation (2026-09-02)
+
+The post-Step-5 production measurement crossed the split threshold: the active editorial inventory contains **9,141 serving rows**, and serializing the full rows is about **47 MB** before HTTP framing. The >8 MB trigger is therefore confirmed rather than hypothetical.
+
+Step 6 keeps the existing full-detail API contract as the default and adds an opt-in `view=inventory` projection for the normal editorial list. That projection retains identity, publishing state, title/summary, routing/classification metadata, and `updated_at` versioning while excluding full body copy and the large `sections`, `facts`, `source_snapshot`, provenance, and judge-detail documents. Exact row reads remain full detail.
+
+Content Studio uses the compact projection only for the ordinary active editorial inventory. Rich workspaces that already require cross-row structured documents continue to request the full extended inventory. When a compact row is opened, Studio re-fetches that exact row by `id` before constructing an editable draft, so a partial list record can never be submitted as a destructive replacement for the stored structured document.
+

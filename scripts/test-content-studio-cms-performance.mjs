@@ -10,6 +10,9 @@ assert.match(dashboard, /loadGeneratedContentPage\(path: string, secret: string,
 assert.match(dashboard, /dashboardLoadControllerRef\.current\?\.abort\(\)/u, "A newer CMS load must cancel the previous inventory request.");
 assert.match(dashboard, /loadSequence !== dashboardLoadSequenceRef\.current/u, "Late inventory responses must not overwrite a newer dashboard load.");
 assert.match(dashboard, /\(loadedRows, complete\) => \{[\s\S]{0,320}setRows\(loadedRows\)/u, "Content Studio should paint inventory progressively instead of waiting for the entire table.");
+assert.match(dashboard, /visibility === "editorial" && scope === "all" \? "&view=inventory"/u, "Default editorial inventory must use the compact projection.");
+assert.match(dashboard, /async function hydrateGeneratedContentRow\(row: AdminGeneratedContentRow\)/u, "Opening an inventory row must hydrate full document detail.");
+assert.match(dashboard, /generated-content\?id=\$\{encodeURIComponent\(row\.id\)\}/u, "Document detail hydration must use the exact row id.");
 
 for (const fn of [
   "loadFallbackArchitectureV3DashboardBundle",
