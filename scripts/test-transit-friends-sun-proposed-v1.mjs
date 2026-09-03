@@ -17,8 +17,10 @@ const sourcePath = new URL(
 const proposal = JSON.parse(await readFile(proposalPath, "utf8"));
 const source = JSON.parse(await readFile(sourcePath, "utf8"));
 
-assert.equal(proposal.schema, "tldrastro-transit-aspect-friends-independent-proposed-v1");
-assert.equal(proposal.status, "proposed_owner_review");
+assert.equal(proposal.schema, "tldrastro-transit-aspect-friends-independent-owner-approved-v1");
+assert.equal(proposal.status, "owner_approved");
+assert.equal(proposal.approvalLevel, "exact_owner_approved");
+assert.equal(proposal.approvedAt, "2026-09-03");
 assert.equal(proposal.servingEnabled, false);
 assert.equal(proposal.transitingBody, "sun");
 assert.equal(proposal.count, 27);
@@ -57,7 +59,9 @@ for (const record of proposal.records) {
   assert.equal(keys.has(record.contentKey), false, `${record.contentKey}: duplicate proposal key.`);
   keys.add(record.contentKey);
 
-  assert.equal(record.review_status, "proposed", `${record.contentKey}: must remain proposed.`);
+  assert.equal(record.review_status, "exact_owner_approved", `${record.contentKey}: must retain exact owner approval.`);
+  assert.equal(record.owner_approved, true, `${record.contentKey}: owner approval flag missing.`);
+  assert.equal(record.approvalLevel, "exact_owner_approved", `${record.contentKey}: approval level drifted.`);
   assert.equal(record.authorship, "independent_friend_authoring", `${record.contentKey}: authorship contract drifted.`);
   assert.equal(typeof record.body_they, "string");
   assert.ok(record.body_they.trim().length > 0);
