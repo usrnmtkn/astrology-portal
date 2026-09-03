@@ -45,7 +45,7 @@ function firstSentence(value) {
 }
 
 function legacyNameAnchor(value) {
-  if (/{{Name}}/u.test(firstSentence(value))) return value;
+  if (firstSentence(value).includes("{{Name}}")) return value;
   const properOpening = /^(?:Sun|Moon|Mercury|Venus|Mars|Jupiter|Saturn|Uranus|Neptune|Pluto|Chiron|Lilith|North Node|South Node)\b/u;
   return properOpening.test(value)
     ? `For {{Name}}, ${value}`
