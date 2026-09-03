@@ -71,7 +71,7 @@ const manifest = readJson(`${reviewRoot}/shipping-manifest.json`);
 const packet = readJson(`${reviewRoot}/angle-aspects-60-v15-payloads.json`);
 const importArtifact = readJson(`${reviewRoot}/ANGLE-ASPECTS-60-V15-CONTENT-STUDIO-IMPORT.json`);
 const replacements = readJson(`${reviewRoot}/replacement-before-after.json`);
-const friendsV1Manifest = readJson("packages/astro-knowledge/review/angle-aspects-60-friends-v1/shipping-manifest.json");
+const friendsV1Manifest = readJson("packages/astro-knowledge/review/angle-aspects-60-friends-v1/SHIPPING-MANIFEST.json");
 const youSupersessions = readJson("packages/astro-knowledge/review/angle-aspects-60-friends-v1/YOU-V15-TWO-OWNER-APPROVED-SUPERSESSIONS.json");
 const youSupersessionByKey = new Map(youSupersessions.revisions.map((row) => [row.content_key, row]));
 const ownerEditRoot = "packages/astro-knowledge/review/saturn-square-ascendant-owner-edit-v1";
