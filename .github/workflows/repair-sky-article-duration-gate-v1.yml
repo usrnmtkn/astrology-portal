@@ -1,0 +1,49 @@
+name: Repair Sky article duration gate v1
+
+on:
+  push:
+    branches:
+      - chatgpt/friends-transits-complete-v1-gate-repair
+
+permissions:
+  contents: write
+
+jobs:
+  repair:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: chatgpt/friends-transits-complete-v1
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Install dependencies
+        run: npm ci
+      - name: Update stale continuous-fallback duration assertion
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          path = Path('scripts/test-sky-article-v1.mjs')
+          text = path.read_text()
+          old = r'''  /const isContinuousFallback = placementSection\?\.sourceKeys\.includes\("sky-placement-continuous-v2"\)[\s\S]*isRegistryArticle \|\| isContinuousFallback \? null : effectiveTransitRangeLabel[\s\S]*isRegistryArticle \|\| isContinuousFallback \? undefined : effectiveTransitRangeLabel/u,'''
+          new = r'''  /const isContinuousFallback = placementSection\?\.sourceKeys\.includes\("sky-placement-continuous-v2"\)[\s\S]*isRegistryArticle \|\| isContinuousFallback \? null : effectiveTransitRangeLabel[\s\S]*duration: isFallbackOnlyPreview[\s\S]*fallbackDateLine \?\? effectiveTransitRangeLabel \?\? undefined[\s\S]*isRegistryArticle \|\| isContinuousFallback[\s\S]*\? undefined[\s\S]*: effectiveTransitRangeLabel \?\? undefined/u,'''
+          if old not in text:
+              raise SystemExit('stale Sky duration assertion not found; refusing broad edit')
+          path.write_text(text.replace(old, new, 1))
+          PY
+      - name: Verify focused Sky article contract
+        run: |
+          node scripts/test-sky-article-v1.mjs
+          git diff --check
+      - name: Commit focused gate repair
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add scripts/test-sky-article-v1.mjs
+          git commit -m "test(content): follow current Sky duration routing"
+          git push origin HEAD:chatgpt/friends-transits-complete-v1
