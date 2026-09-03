@@ -52,6 +52,34 @@ jobs:
             if old not in generated:
               raise SystemExit(f'missing repeated bridge frame: {old}')
             generated = generated.replace(old, new)
+
+          return_anchor = '  return `${opener} ${scene} ${mechanism}${variantNote ? ` ${variantNote}` : ""}${aliasNote ? ` ${aliasNote}` : ""}\\n\\n${bridge}`;'
+          return_replacement = '''  const firstParagraph = `${opener} ${scene} ${mechanism}${variantNote ? ` ${variantNote}` : ""}${aliasNote ? ` ${aliasNote}` : ""}`;
+          const shortNotes = [
+            "The scale usually becomes clearer after the first reaction passes.",
+            "One concrete fact can keep the response proportional to the problem.",
+            "The next useful move is usually smaller than the first impulse suggests.",
+            "A second look can separate the important part from the immediate charge.",
+            "The practical choice gets clearer once the first burst settles.",
+            "What still matters afterward is the better guide for the response.",
+            "A little distance can show which part actually needs action.",
+            "The useful clue is the part that remains specific afterward.",
+            "One clear next step is enough to test the larger conclusion.",
+            "The decision improves when the scale matches the actual consequence.",
+            "The strongest feeling does not have to choose the largest response.",
+            "A specific response can do more than a broad reaction here.",
+            "The practical issue is easier to handle once it stays specific.",
+            "They can learn more from the next step than from another prediction.",
+            "The situation becomes easier to judge when they keep it concrete.",
+            "The useful response starts with the part they can verify."
+          ];
+          const initialBody = `${firstParagraph}\\n\\n${bridge}`;
+          const initialWords = initialBody.replace(/\\{\\{[^{}]+\\}\\}/gu, "variable").trim().split(/\\s+/u).filter(Boolean).length;
+          const lengthNote = initialWords < 80 ? pick(shortNotes, seed, 9) : "";
+          return `${firstParagraph}${lengthNote ? ` ${lengthNote}` : ""}\\n\\n${bridge}`;'''
+          if return_anchor not in generated:
+            raise SystemExit('missing final return for conditional short-note patch')
+          generated = generated.replace(return_anchor, return_replacement)
           generator.write_text(generated)
       - name: Build 351-row Friends packet
         run: node scripts/build-friends-transit-completion-v1.mjs
