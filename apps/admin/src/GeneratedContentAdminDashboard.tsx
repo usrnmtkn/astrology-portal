@@ -338,6 +338,7 @@ type AdminGeneratedContentRow = {
   published_at?: string | null;
   updated_at?: string | null;
   created_at?: string | null;
+  inventory_only?: boolean;
 };
 
 type AdminReviewRecord = {
@@ -2322,6 +2323,12 @@ function readerSafetyForRow(row: AdminGeneratedContentRow | AdminReviewRecord | 
   const reviewState = "review_state" in row ? row.review_state : undefined;
 
   if (rowNeedsSourceMaterial(row)) return { key: "needs-source-material", label: "Needs more source copy", detail: "There is not enough reusable writing to build a complete passage." };
+  if ("inventory_only" in row && row.inventory_only === true) {
+    if (status !== "LIVE") return { key: "draft-held", label: "Not published", detail: "This row is saved as a draft and cannot appear in the app." };
+    if (lane && lane !== "serving") return { key: "reference-held", label: "Internal reference", detail: "This row is reference material and cannot appear in the app." };
+    if (reviewState) return { key: "review-held", label: "Awaiting review", detail: "This row still needs editorial review before it can appear in the app." };
+    return { key: "reader-ready", label: "Available in app", detail: "This row is published and available for the app to use." };
+  }
   if (!body && !headline) return { key: "fallback-needed", label: "Copy missing", detail: "This row has no reader-facing copy." };
   if (!isReaderFacingCopy(`${headline} ${body}`)) return { key: "reference-held", label: "Internal reference", detail: "This row contains internal notes or metadata, not reader copy." };
   if (status !== "LIVE") return { key: "draft-held", label: "Not published", detail: "This row is saved as a draft and cannot appear in the app." };
@@ -2527,7 +2534,7 @@ async function loadAllGeneratedContentRows(
   for (let page = 0; page < 125; page += 1) {
     if (signal?.aborted) throw signal.reason ?? new Error("Content inventory load was cancelled.");
     const result = await loadGeneratedContentPage(
-      `/api/admin/generated-content?status=all&visibility=${visibility}&scope=${scope}&limit=${pageSize}${cursor ? `&cursor=${encodeURIComponent(cursor)}` : ""}`,
+      `/api/admin/generated-content?status=all&visibility=${visibility}&scope=${scope}&limit=${pageSize}${visibility === "editorial" && scope === "all" ? "&view=inventory" : ""}${cursor ? `&cursor=${encodeURIComponent(cursor)}` : ""}`,
       secret,
       signal
     );
@@ -4301,11 +4308,27 @@ export function GeneratedContentAdminDashboard() {
     }
   }
 
-  function openDailyGlancePair(selector: string) {
+  async function openDailyGlancePair(selector: string) {
     editorReturnFocusRef.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    const pair = dailyGlanceWriteups.find((candidate) => candidate.selector === selector);
     setSelectedRowId(null);
     setDraft(null);
-    setDailyGlancePairSelector(selector);
+    if (!pair) {
+      setMessage(`Could not find the Daily At-a-Glance sources for ${selector}.`);
+      return;
+    }
+    setIsLoading(true);
+    try {
+      await Promise.all([
+        hydrateGeneratedContentRow(pair.headlineRow as AdminGeneratedContentRow),
+        hydrateGeneratedContentRow(pair.passageRow as AdminGeneratedContentRow)
+      ]);
+      setDailyGlancePairSelector(selector);
+    } catch (error) {
+      setMessage(dashboardErrorMessage(error));
+    } finally {
+      setIsLoading(false);
+    }
   }
 
   function closeDailyGlancePairEditor() {
@@ -4471,7 +4494,29 @@ export function GeneratedContentAdminDashboard() {
     }
   }
 
+  async function hydrateGeneratedContentRow(row: AdminGeneratedContentRow) {
+    if (!row.inventory_only) return row;
+    const payload = await adminJsonRequest<{ ok: boolean; rows: AdminGeneratedContentRow[] }>(
+      `/api/admin/generated-content?id=${encodeURIComponent(row.id)}&status=all&visibility=all&limit=1`,
+      secret
+    );
+    const hydrated = payload.rows?.find((candidate) => candidate.id === row.id);
+    if (!hydrated || hydrated.inventory_only) {
+      throw new Error(`Could not load the full content document for ${row.content_key}.`);
+    }
+    setRows((current) => current.map((candidate) => candidate.id === hydrated.id ? hydrated : candidate));
+    return hydrated;
+  }
+
   function openRow(row: AdminGeneratedContentRow, compositionContext: CompositionEditorContext | null = null) {
+    if (row.inventory_only) {
+      setIsLoading(true);
+      void hydrateGeneratedContentRow(row)
+        .then((hydrated) => openRow(hydrated, compositionContext))
+        .catch((error) => setMessage(dashboardErrorMessage(error)))
+        .finally(() => setIsLoading(false));
+      return;
+    }
     if (document.activeElement instanceof HTMLElement && !editorRef.current?.contains(document.activeElement)) {
       editorReturnFocusRef.current = document.activeElement;
     }
@@ -4688,6 +4733,14 @@ export function GeneratedContentAdminDashboard() {
   }
 
   function openRelatedSkyRow(parentId: string, row: AdminGeneratedContentRow) {
+    if (row.inventory_only) {
+      setIsLoading(true);
+      void hydrateGeneratedContentRow(row)
+        .then((hydrated) => openRelatedSkyRow(parentId, hydrated))
+        .catch((error) => setMessage(dashboardErrorMessage(error)))
+        .finally(() => setIsLoading(false));
+      return;
+    }
     const nextDraft = draftFromRow(row);
     setSkyWriteupParentId(parentId);
     setSelectedRowId(row.id);
