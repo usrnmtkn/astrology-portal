@@ -35,8 +35,13 @@ s = s.replace(helper_anchor, helper_replacement)
 
 mechanism_anchor = '''  const mechanism = sentence(pick(mechanismPool, seed, 3), { EFFECT: effect });'''
 mechanism_replacement = '''  const mechanismTemplate = pick(mechanismPool, seed, 3);
-  const mechanismEffect = mechanismTemplate.startsWith("%EFFECT%") ? capitalizeFirst(effect) : effect;
-  const mechanism = sentence(mechanismTemplate, { EFFECT: mechanismEffect });'''
+  const mechanismPrepared = mechanismTemplate
+    .replace(/^%EFFECT%/u, "%EFFECT_CAP%")
+    .replace(/([.!?]\\s+)%EFFECT%/gu, "$1%EFFECT_CAP%");
+  const mechanism = sentence(mechanismPrepared, {
+    EFFECT: effect,
+    EFFECT_CAP: capitalizeFirst(effect)
+  });'''
 if mechanism_anchor not in s:
     raise SystemExit('missing mechanism construction anchor')
 s = s.replace(mechanism_anchor, mechanism_replacement)
