@@ -13,7 +13,7 @@ const oldApi = `    const originalSlots = packagePlaceholders(original);
         && slot === "{{Name}}";
       if (isAllowedFriendName) continue;
       if (!originalSlots.has(slot)) {
-        throw new Error(\`${field} contains unresolved placeholder ${slot} that was not in the package original.\`);
+        throw new Error(\`\${field} contains unresolved placeholder \${slot} that was not in the package original.\`);
       }
     }
 `;
@@ -34,7 +34,7 @@ const newApi = `    const originalSlots = packagePlaceholders(original);
         && slot === "{{Name}}";
       if (isAllowedFriendName) continue;
       if (!originalSlots.has(slot) && !inheritedFriendSlots.has(slot)) {
-        throw new Error(\`${field} contains unresolved placeholder ${slot} that was not in the package original.\`);
+        throw new Error(\`\${field} contains unresolved placeholder \${slot} that was not in the package original.\`);
       }
     }
 `;
