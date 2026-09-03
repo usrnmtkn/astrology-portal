@@ -58,6 +58,15 @@ jobs:
           node scripts/build-content-export.mjs
       - name: Refresh generated writing harness artifacts
         run: node scripts/build-writing-harness-data.mjs
+      - name: Diagnose approved serving scene inventory
+        run: |
+          node --input-type=module <<'NODE'
+          import fs from 'node:fs';
+          import { approvedServingSceneCatalog } from './src/astro-writing/sceneEvidence.mjs';
+          const approved = fs.readFileSync('data/writing/OWNER_APPROVED_EXAMPLES.jsonl', 'utf8').trim().split('\n').filter(Boolean).map(JSON.parse);
+          const sceneRows = approvedServingSceneCatalog(approved).map(({ contentKey, sceneNouns }) => ({ contentKey, sceneNouns }));
+          console.log(JSON.stringify({ count: sceneRows.length, rows: sceneRows }, null, 2));
+          NODE
       - name: Refresh production Sky kernel comparison
         run: node scripts/build-production-sky-kernel-comparison.mjs --write
       - name: Run focused parity and preservation gates
