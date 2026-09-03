@@ -1,4 +1,5 @@
 name: Release Venus Moon You parity v1
+# Trigger marker: rerun from repaired technical checkpoint 1969d8fb.
 
 on:
   push:
