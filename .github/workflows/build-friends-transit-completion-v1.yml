@@ -67,24 +67,24 @@ jobs:
             : "";
           const aliasTemplates = {
             a: [
-              "A small shift in how they carry themselves can change the interaction more than another explanation.",
-              "The useful experiment is letting their first response be simpler instead of trying to pre-correct how it might be received."
+              "A simpler first response can change the interaction more than another explanation.",
+              "Letting the first response stay simple can reveal more than pre-correcting it."
             ],
             c: [
-              "The experience becomes useful when they recognize the old pattern without making the current person responsible for all of its history.",
-              "They may be able to offer perspective because they know this kind of sensitivity from the inside, not because they have a perfect answer."
+              "Recognizing the old pattern is useful without making the current person carry its history.",
+              "Their perspective matters because they know this sensitivity from the inside."
             ],
             j: [
-              "A small pleasure or invitation can be worth taking without turning the whole day into a larger promise.",
-              "The useful extra is the one that adds something good without creating tomorrow's problem."
+              "A small pleasure can add something good without becoming tomorrow's problem.",
+              "The useful extra is the one that does not create a larger promise."
             ],
             m: [
-              "A quick message, piece of paperwork, or short conversation may be enough to move the practical part forward.",
-              "The words matter most when they stay close to the actual question instead of becoming another layer of explanation."
+              "A short message or conversation may be enough to move the practical part.",
+              "The words work best when they stay close to the actual question."
             ],
             s: [
-              "The useful momentum is personal: one choice that feels like theirs can matter more than broad approval.",
-              "They do not need to prove the whole direction today; one action that matches what they actually want is enough to learn from."
+              "One choice that feels like theirs can matter more than broad approval.",
+              "One action that matches what they want is enough to learn from."
             ]
           };
           const aliasPool = rawTarget !== canonicalTarget ? aliasTemplates[rawTarget] : null;
