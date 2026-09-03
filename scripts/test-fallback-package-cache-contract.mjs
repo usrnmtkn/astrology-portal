@@ -19,7 +19,7 @@ const generatedContentSource = read("apps/web/src/services/generatedContent.ts")
 const materializerSource = read("scripts/materialize-fallback-architecture-v3-dashboard-rows.mjs");
 const appSource = read("apps/web/src/App.tsx");
 
-assert.equal(PACKAGE_VERSION, "v3-2026-09-02a");
+assert.equal(PACKAGE_VERSION, "v3-2026-09-03a");
 assert.match(
   runtimeSource,
   /export const fallbackArchitectureV3BundledManifestSummary = bundledManifestSummaryV3 as FallbackArchitectureV3PackageManifestSummary/u,
@@ -72,8 +72,8 @@ assert.match(
 );
 assert.match(
   generatedContentSource,
-  /\.order\("updated_at", \{ ascending: false \}\)[\s\S]*?\.order\("id", \{ ascending: false \}\)/u,
-  "Supabase pagination must use a stable unique-ID tiebreaker."
+  /let cursorId: string \| null = null[\s\S]*?\.order\("id", \{ ascending: true \}\)[\s\S]*?if \(cursorId\) query = query\.gt\("id", cursorId\)/u,
+  "Supabase pagination must use a stable monotonic ID cursor."
 );
 assert.match(
   generatedContentSource,
