@@ -5,6 +5,10 @@
   "approvalLevel": "exact_owner_published_cms_revision",
   "publishedAt": "2026-09-02T02:56:35.849Z",
   "source": "Content Studio production publish",
+  "supersedes": {
+    "body_you_sha256": "474bdf7a0bd7bde64a2bdb3a2c9f521b92e4790afb41518da31f469eded78324",
+    "body_you": "The affection comes out as management: hovering, feeding, fixing, checking. A partner may feel mothered instead of loved, and the calm relationship talk you planned dissolves into feeling. Sweets and drink both overshoot. Love without parenting is today's whole assignment. Venus {{aspectWord}} your Moon until {{untilDate}} runs high on feeling and low on discussion; save the big talk for a cooler day."
+  },
   "body_you_sha256": "254f56e3bb9ed7b1d29215b2aa3e92d22877c24925932e703a097ceb2416334a",
   "body_you": "The affection comes out as management: hovering, feeding, fixing, checking. A partner may feel smothered instead of loved. Instead of talking things through rationally, you or your partner get flooded by raw feelings, and the logical point of the discussion gets lost in the reaction. When the nervous system runs that hot, self-soothing habits easily turn into overindulgence. Connection without control is the goal. Venus {{aspectWord}} your Moon until {{untilDate}} runs high on feeling and low on discussion; save heavy relationship conversations for a different day."
 }
