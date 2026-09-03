@@ -977,23 +977,9 @@ function decodeGeneratedContentCursor(value: string): GeneratedContentCursor {
   }
 }
 
-async function listGeneratedContent(req: IncomingMessage) {
-  const requestUrl = new URL(req.url ?? "/api/admin/generated-content", "http://localhost");
-  const id = requestUrl.searchParams.get("id");
-  const status = requestUrl.searchParams.get("status") ?? "DRAFT";
-  const surface = requestUrl.searchParams.get("surface");
-  const promptVersion = requestUrl.searchParams.get("promptVersion");
-  const contentKey = requestUrl.searchParams.get("contentKey");
-  const contentKeyPrefix = requestUrl.searchParams.get("contentKeyPrefix");
-  const startDate = requestUrl.searchParams.get("startDate");
-  const endDate = requestUrl.searchParams.get("endDate");
-  const visibility = requestUrl.searchParams.get("visibility") ?? "all";
-  const scope = requestUrl.searchParams.get("scope") ?? "all";
-  const cursor = requestUrl.searchParams.get("cursor");
-  const limit = boundedGeneratedContentLimit(requestUrl.searchParams.get("limit"));
-  const supportsUpdatedCursor = !id && scope !== "compatibility" && !startDate && !endDate;
-  const offset = supportsUpdatedCursor ? 0 : Math.max(Number(requestUrl.searchParams.get("offset") ?? "0"), 0);
-  const selectColumns = [
+
+function generatedContentDetailSelectColumns() {
+  return [
     "id",
     "content_key",
     "surface",
@@ -1027,6 +1013,263 @@ async function listGeneratedContent(req: IncomingMessage) {
     "updated_at",
     "created_at"
   ];
+}
+
+function generatedContentInventorySelectColumns() {
+  return [
+    "id",
+    "content_key",
+    "surface",
+    "mode",
+    "status",
+    "event_type",
+    "target_date",
+    "headline",
+    "summary",
+    "block_type",
+    "lane",
+    "review_state",
+    "evergreen",
+    "judge_score",
+    "judge_gate",
+    "prompt_version",
+    "provider",
+    "updated_at",
+    "source_type:source_snapshot->>sourceType",
+    "source_review_status:source_snapshot->>review_status",
+    "source_lane:source_snapshot->>lane",
+    "source_content_role_camel:source_snapshot->>contentRole",
+    "source_content_role:source_snapshot->>content_role",
+    "source_source_role_camel:source_snapshot->>sourceRole",
+    "source_source_role:source_snapshot->>source_role",
+    "source_role:source_snapshot->>role",
+    "source_content_type_camel:source_snapshot->>contentType",
+    "source_content_type:source_snapshot->>content_type",
+    "source_type_alias:source_snapshot->>type",
+    "source_bucket:source_snapshot->>bucket",
+    "source_target_family:source_snapshot->>targetContentFamily",
+    "source_content_system:source_snapshot->>contentSystem",
+    "source_flags:source_snapshot->flags",
+    "source_package:source_snapshot->>sourcePackage",
+    "source_tier:source_snapshot->>tier",
+    "source_phrasebank_tier:source_snapshot->>phrasebankTier",
+    "source_provenance_tier:source_snapshot->>provenanceTier",
+    "source_source_tier:source_snapshot->>sourceTier",
+    "source_review_priority:source_snapshot->reviewPriority",
+    "source_review_sequence:source_snapshot->reviewSequence",
+    "source_planet:source_snapshot->>planet",
+    "source_body:source_snapshot->>body",
+    "source_point:source_snapshot->>point",
+    "source_angle:source_snapshot->>angle",
+    "source_object:source_snapshot->>object",
+    "source_sign:source_snapshot->>sign",
+    "source_reader_sign:source_snapshot->>readerSign",
+    "source_other_sign:source_snapshot->>otherSign",
+    "source_app_destination_camel:source_snapshot->>appDestination",
+    "source_app_destination:source_snapshot->>app_destination",
+    "source_render_policy:source_snapshot->>render_policy",
+    "source_surface:source_snapshot->>surface",
+    "source_destination:source_snapshot->>destination",
+    "source_motion:source_snapshot->>motion",
+    "source_is_retrograde_camel:source_snapshot->isRetrograde",
+    "source_is_retrograde:source_snapshot->is_retrograde",
+    "source_retrograde:source_snapshot->retrograde",
+    "source_direction:source_snapshot->>direction",
+    "source_phase:source_snapshot->>phase",
+    "source_lunation_kind:source_snapshot->>lunationKind",
+    "source_kind:source_snapshot->>kind",
+    "source_eclipse_type_camel:source_snapshot->>eclipseType",
+    "source_eclipse_type:source_snapshot->>eclipse_type",
+    "facts_fallback_v3:facts->fallbackArchitectureV3",
+    "facts_content_role:facts->>content_role",
+    "facts_review_status:facts->>review_status",
+    "facts_planet:facts->>planet",
+    "facts_body:facts->>body",
+    "facts_point:facts->>point",
+    "facts_angle:facts->>angle",
+    "facts_object:facts->>object",
+    "facts_sign:facts->>sign",
+    "facts_reader_sign:facts->>readerSign",
+    "facts_other_sign:facts->>otherSign",
+    "facts_app_destination_camel:facts->>appDestination",
+    "facts_app_destination:facts->>app_destination",
+    "facts_surface:facts->>surface",
+    "facts_destination:facts->>destination",
+    "facts_reader_surface:facts->>readerSurface",
+    "facts_render_policy:facts->>render_policy",
+    "facts_motion:facts->>motion",
+    "facts_is_retrograde_camel:facts->isRetrograde",
+    "facts_is_retrograde:facts->is_retrograde",
+    "facts_retrograde:facts->retrograde",
+    "facts_direction:facts->>direction",
+    "facts_phase:facts->>phase",
+    "facts_lunation_kind:facts->>lunationKind",
+    "facts_kind:facts->>kind",
+    "facts_eclipse_type_camel:facts->>eclipseType",
+    "facts_eclipse_type:facts->>eclipse_type",
+    "package_content_role:sections->packageRecord->>content_role",
+    "package_review_status:sections->packageRecord->>review_status",
+    "package_review_category:sections->packageRecord->>studio_review_category",
+    "package_owner_approved:sections->packageRecord->owner_approved",
+    "package_render_policy:sections->packageRecord->>render_policy",
+    "package_source_package:sections->packageRecord->>source_package"
+  ];
+}
+
+function compactInventoryRecord(entries: Record<string, unknown>) {
+  return Object.fromEntries(Object.entries(entries).filter(([, value]) => (
+    value !== undefined && value !== null && value !== ""
+  )));
+}
+
+function inventoryBoolean(value: unknown) {
+  if (typeof value === "boolean") return value;
+  if (value === "true") return true;
+  if (value === "false") return false;
+  return undefined;
+}
+
+function inventoryNumber(value: unknown) {
+  if (typeof value === "number" && Number.isFinite(value)) return value;
+  if (typeof value !== "string" || !value.trim()) return undefined;
+  const parsed = Number(value);
+  return Number.isFinite(parsed) ? parsed : undefined;
+}
+
+function generatedContentInventoryRow(value: unknown) {
+  const row = isRecord(value) ? value : {};
+  const sourceSnapshot = compactInventoryRecord({
+    sourceType: row.source_type,
+    review_status: row.source_review_status,
+    lane: row.source_lane,
+    contentRole: row.source_content_role_camel,
+    content_role: row.source_content_role,
+    sourceRole: row.source_source_role_camel,
+    source_role: row.source_source_role,
+    role: row.source_role,
+    contentType: row.source_content_type_camel,
+    content_type: row.source_content_type,
+    type: row.source_type_alias,
+    bucket: row.source_bucket,
+    targetContentFamily: row.source_target_family,
+    contentSystem: row.source_content_system,
+    flags: row.source_flags,
+    sourcePackage: row.source_package,
+    tier: row.source_tier,
+    phrasebankTier: row.source_phrasebank_tier,
+    provenanceTier: row.source_provenance_tier,
+    sourceTier: row.source_source_tier,
+    reviewPriority: inventoryNumber(row.source_review_priority),
+    reviewSequence: inventoryNumber(row.source_review_sequence),
+    planet: row.source_planet,
+    body: row.source_body,
+    point: row.source_point,
+    angle: row.source_angle,
+    object: row.source_object,
+    sign: row.source_sign,
+    readerSign: row.source_reader_sign,
+    otherSign: row.source_other_sign,
+    appDestination: row.source_app_destination_camel,
+    app_destination: row.source_app_destination,
+    render_policy: row.source_render_policy,
+    surface: row.source_surface,
+    destination: row.source_destination,
+    motion: row.source_motion,
+    isRetrograde: inventoryBoolean(row.source_is_retrograde_camel),
+    is_retrograde: inventoryBoolean(row.source_is_retrograde),
+    retrograde: inventoryBoolean(row.source_retrograde),
+    direction: row.source_direction,
+    phase: row.source_phase,
+    lunationKind: row.source_lunation_kind,
+    kind: row.source_kind,
+    eclipseType: row.source_eclipse_type_camel,
+    eclipse_type: row.source_eclipse_type
+  });
+  const facts = compactInventoryRecord({
+    fallbackArchitectureV3: inventoryBoolean(row.facts_fallback_v3),
+    content_role: row.facts_content_role,
+    review_status: row.facts_review_status,
+    planet: row.facts_planet,
+    body: row.facts_body,
+    point: row.facts_point,
+    angle: row.facts_angle,
+    object: row.facts_object,
+    sign: row.facts_sign,
+    readerSign: row.facts_reader_sign,
+    otherSign: row.facts_other_sign,
+    appDestination: row.facts_app_destination_camel,
+    app_destination: row.facts_app_destination,
+    surface: row.facts_surface,
+    destination: row.facts_destination,
+    readerSurface: row.facts_reader_surface,
+    render_policy: row.facts_render_policy,
+    motion: row.facts_motion,
+    isRetrograde: inventoryBoolean(row.facts_is_retrograde_camel),
+    is_retrograde: inventoryBoolean(row.facts_is_retrograde),
+    retrograde: inventoryBoolean(row.facts_retrograde),
+    direction: row.facts_direction,
+    phase: row.facts_phase,
+    lunationKind: row.facts_lunation_kind,
+    kind: row.facts_kind,
+    eclipseType: row.facts_eclipse_type_camel,
+    eclipse_type: row.facts_eclipse_type
+  });
+  const packageRecord = compactInventoryRecord({
+    content_role: row.package_content_role,
+    review_status: row.package_review_status,
+    studio_review_category: row.package_review_category,
+    owner_approved: inventoryBoolean(row.package_owner_approved),
+    render_policy: row.package_render_policy,
+    source_package: row.package_source_package
+  });
+
+  return {
+    id: row.id,
+    content_key: row.content_key,
+    surface: row.surface,
+    mode: row.mode,
+    status: row.status,
+    event_type: row.event_type ?? null,
+    target_date: row.target_date ?? null,
+    headline: row.headline ?? null,
+    summary: row.summary ?? null,
+    body: null,
+    sections: Object.keys(packageRecord).length > 0 ? { packageRecord } : null,
+    block_type: row.block_type ?? null,
+    lane: row.lane ?? null,
+    review_state: row.review_state ?? null,
+    evergreen: row.evergreen ?? null,
+    facts: Object.keys(facts).length > 0 ? facts : null,
+    source_snapshot: Object.keys(sourceSnapshot).length > 0 ? sourceSnapshot : null,
+    judge_score: row.judge_score ?? null,
+    judge_gate: row.judge_gate ?? null,
+    prompt_version: row.prompt_version ?? null,
+    provider: row.provider ?? null,
+    updated_at: row.updated_at ?? null,
+    inventory_only: true
+  };
+}
+
+async function listGeneratedContent(req: IncomingMessage) {
+  const requestUrl = new URL(req.url ?? "/api/admin/generated-content", "http://localhost");
+  const id = requestUrl.searchParams.get("id");
+  const status = requestUrl.searchParams.get("status") ?? "DRAFT";
+  const surface = requestUrl.searchParams.get("surface");
+  const promptVersion = requestUrl.searchParams.get("promptVersion");
+  const contentKey = requestUrl.searchParams.get("contentKey");
+  const contentKeyPrefix = requestUrl.searchParams.get("contentKeyPrefix");
+  const startDate = requestUrl.searchParams.get("startDate");
+  const endDate = requestUrl.searchParams.get("endDate");
+  const visibility = requestUrl.searchParams.get("visibility") ?? "all";
+  const scope = requestUrl.searchParams.get("scope") ?? "all";
+  const cursor = requestUrl.searchParams.get("cursor");
+  const limit = boundedGeneratedContentLimit(requestUrl.searchParams.get("limit"));
+  const view = requestUrl.searchParams.get("view") ?? "detail";
+  if (!["detail", "inventory"].includes(view)) throw new GeneratedContentRequestError("view must be detail or inventory.");
+  const inventoryView = view === "inventory" && !id && !contentKey && !contentKeyPrefix;
+  const supportsUpdatedCursor = !id && scope !== "compatibility" && !startDate && !endDate;
+  const offset = supportsUpdatedCursor ? 0 : Math.max(Number(requestUrl.searchParams.get("offset") ?? "0"), 0);
+  const selectColumns = inventoryView ? generatedContentInventorySelectColumns() : generatedContentDetailSelectColumns();
   const params = new URLSearchParams({
     select: selectColumns.join(","),
     order: scope === "compatibility" ? "id.asc" : startDate || endDate ? "target_date.asc.nullslast,id.desc" : "updated_at.desc,id.desc",
@@ -1093,7 +1336,7 @@ async function listGeneratedContent(req: IncomingMessage) {
     const payload = await response.json().catch(() => null);
 
     if (response.ok) {
-      return payload;
+      return inventoryView && Array.isArray(payload) ? payload.map(generatedContentInventoryRow) : payload;
     }
 
     const missingColumn = response.status === 400 ? missingGeneratedInterpretationsColumn(payload) : null;
