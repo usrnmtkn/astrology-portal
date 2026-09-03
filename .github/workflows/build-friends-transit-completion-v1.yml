@@ -1,0 +1,66 @@
+name: Build complete Friends transit corpus
+
+on:
+  push:
+    branches:
+      - chatgpt/friends-transits-complete-v1
+
+permissions:
+  contents: write
+
+jobs:
+  build-corpus:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: chatgpt/friends-transits-complete-v1
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Apply pre-build style corrections
+        shell: python
+        run: |
+          from pathlib import Path
+          p = Path('scripts/build-friends-transit-completion-v1.mjs')
+          s = p.read_text()
+          replacements = {
+            'any: "This transit",': 'any: "this transit",',
+            '"north-node": "an unfamiliar direction asking for a first attempt",': '"north-node": "an unfamiliar direction pulling them toward a first attempt",',
+            'domain: "an unfamiliar direction, role, or habit that asks them to develop something they cannot already do automatically",': 'domain: "an unfamiliar direction, role, or habit that requires them to develop something they cannot already do automatically",',
+            '"The day gives {{Name}} more room to use %EFFECT% well, especially if they attach the good feeling or useful timing to a specific next step.",': '"The day makes %EFFECT% easier for {{Name}} to use well, especially if they attach the good feeling or useful timing to a specific next step.",'
+          }
+          for old, new in replacements.items():
+            if old not in s:
+              raise SystemExit(f'missing expected generator text: {old}')
+            s = s.replace(old, new)
+          p.write_text(s)
+      - name: Build 351-row Friends packet
+        run: node scripts/build-friends-transit-completion-v1.mjs
+      - name: Validate 378-row Friends corpus
+        run: node scripts/test-friends-transit-completion-v1.mjs
+      - name: Print representative family samples
+        run: |
+          node --input-type=module <<'NODE'
+          import fs from 'node:fs';
+          const packet = JSON.parse(fs.readFileSync('packages/astro-knowledge/review/transit-aspect-friends-completion-v1.json', 'utf8'));
+          const seen = new Set();
+          for (const row of packet.records) {
+            const family = row.contentKey.split('/')[2];
+            if (seen.has(family)) continue;
+            seen.add(family);
+            console.log(`\n### ${family}: ${row.contentKey}\n${row.body_they}\n`);
+          }
+          NODE
+      - name: Verify diff
+        run: git diff --check
+      - name: Commit validated corpus and remove temporary workflow
+        shell: bash
+        run: |
+          rm -f .github/workflows/build-friends-transit-completion-v1.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "content(friends): stage complete independent transit corpus"
+          git push origin HEAD:chatgpt/friends-transits-complete-v1
