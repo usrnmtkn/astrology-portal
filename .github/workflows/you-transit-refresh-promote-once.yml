@@ -39,6 +39,8 @@ jobs:
         run: node scripts/test-content-studio-transit-friend-editor.mjs
       - name: Typecheck
         run: npm run typecheck
+      - name: Build knowledge prerequisite
+        run: npm run build -w @tldr/astro-knowledge
       - name: Build web
         run: npm run build:web
       - name: Commit promoted corpus and generated package
