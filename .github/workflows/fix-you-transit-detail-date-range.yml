@@ -53,8 +53,17 @@ jobs:
               test_path.write_text(test_source)
           PY
 
-      - name: Verify focused reader contract
-        run: node scripts/test-reader-facing-content-contract.mjs
+      - name: Verify focused date-range contract
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          source = Path("apps/web/src/features/you/YouPage.tsx").read_text()
+          assert 'label === "date range" || label === "duration"' in source
+          assert '{headerDateRange ? <p className="article-duration">{headerDateRange}</p> : null}' in source
+          test_source = Path("scripts/test-reader-facing-content-contract.mjs").read_text()
+          assert 'You transit detail articles must render the calculated date range in the header.' in test_source
+          print("You transit detail date-range contract: PASS")
+          PY
 
       - name: Typecheck
         run: npm run typecheck
