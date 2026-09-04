@@ -46,22 +46,36 @@ jobs:
             git add "${expected[@]}"
             git commit --no-edit
           fi
-      - name: Reconcile current Sky exact-approval fixture
+      - name: Reconcile current Sky exact-approval fixtures
         run: |
           node --input-type=module <<'NODE'
           import fs from 'node:fs';
           const path = 'scripts/test-reviewed-sky-aspect-phrasebook.mjs';
           let source = fs.readFileSync(path, 'utf8');
-          const oldImport = 'const approvedJupiterNeptune = readJson("../packages/astro-knowledge/data/transits/jupiter-trine-neptune.json");\n';
-          const newImport = `${oldImport}const approvedJupiterNeptuneExact = readJson("../packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-03/records/jupiter-trine-neptune-exact-approval.json");\n`;
-          if (!source.includes('approvedJupiterNeptuneExact')) {
-            if (!source.includes(oldImport)) throw new Error('Jupiter-Neptune data import not found.');
-            source = source.replace(oldImport, newImport);
+
+          if (!source.includes('import crypto from "node:crypto";')) {
+            source = source.replace('import assert from "node:assert/strict";\n', 'import assert from "node:assert/strict";\nimport crypto from "node:crypto";\n');
           }
-          const oldAssertion = `assert.equal(\n  approvedJupiterNeptune.readerCopy?.body,\n  ownerRewriteSource.payloads["sky.jupiter.trine.neptune"].payload.body,\n);`;
-          const newAssertion = `assert.equal(approvedJupiterNeptuneExact.authority, "owner");\nassert.equal(approvedJupiterNeptuneExact.decision, "approve");\nassert.equal(approvedJupiterNeptuneExact.approvalLevel, "exact_owner_approved");\nassert.ok(approvedJupiterNeptuneExact.capabilities.includes("serving"));\nassert.equal(\n  approvedJupiterNeptune.readerCopy?.body,\n  approvedJupiterNeptuneExact.body,\n);`;
-          if (source.includes(oldAssertion)) source = source.replace(oldAssertion, newAssertion);
-          else if (!source.includes('approvedJupiterNeptuneExact.body')) throw new Error('Stale Jupiter-Neptune assertion not found.');
+
+          const oldImport = 'const approvedJupiterNeptune = readJson("../packages/astro-knowledge/data/transits/jupiter-trine-neptune.json");\n';
+          const exactBlock = `${oldImport}const exactSkyApprovals = new Map([\n  ["jupiter-trine-neptune", readJson("../packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-03/records/jupiter-trine-neptune-exact-approval.json")],\n  ["neptune-sextile-pluto", readJson("../packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-03/records/neptune-sextile-pluto-exact-approval.json")],\n  ["uranus-sextile-neptune", readJson("../packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-03/records/uranus-sextile-neptune-exact-approval.json")],\n  ["uranus-trine-pluto", readJson("../packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-03/records/uranus-trine-pluto-exact-approval.json")]\n]);\nconst sha256 = (value) => crypto.createHash("sha256").update(value).digest("hex");\n`;
+          if (!source.includes('const exactSkyApprovals = new Map([')) {
+            if (!source.includes(oldImport)) throw new Error('Jupiter-Neptune data import not found.');
+            source = source.replace(oldImport, exactBlock);
+          }
+
+          const oldJupiterAssertion = `assert.equal(\n  approvedJupiterNeptune.readerCopy?.body,\n  ownerRewriteSource.payloads["sky.jupiter.trine.neptune"].payload.body,\n);`;
+          if (source.includes(oldJupiterAssertion)) source = source.replace(oldJupiterAssertion, '');
+
+          const priorPatchedJupiter = `assert.equal(approvedJupiterNeptuneExact.authority, "owner");\nassert.equal(approvedJupiterNeptuneExact.decision, "approve");\nassert.equal(approvedJupiterNeptuneExact.approvalLevel, "exact_owner_approved");\nassert.ok(approvedJupiterNeptuneExact.capabilities.includes("serving"));\nassert.equal(\n  approvedJupiterNeptune.readerCopy?.body,\n  approvedJupiterNeptuneExact.body,\n);`;
+          if (source.includes(priorPatchedJupiter)) source = source.replace(priorPatchedJupiter, '');
+          source = source.replace(/^const approvedJupiterNeptuneExact = .*\n/mu, '');
+
+          const oldLoop = `for (const id of ["neptune-sextile-pluto", "uranus-sextile-neptune", "uranus-trine-pluto"]) {\n  const [transiting, aspect, other] = id.split("-");\n  assert.equal(\n    exactTransitRecords.find((record) => record.id === id)?.readerCopy?.body,\n    ownerRewriteSource.payloads[\`sky.\${transiting}.\${aspect}.\${other}\`].payload.body,\n  );\n}`;
+          const newLoop = `for (const [id, approval] of exactSkyApprovals) {\n  assert.equal(approval.authority, "owner", \`\${id}: exact approval authority\`);\n  assert.equal(approval.decision, "approve", \`\${id}: exact approval decision\`);\n  assert.equal(approval.approvalLevel, "exact_owner_approved", \`\${id}: exact approval level\`);\n  assert.ok(approval.capabilities.includes("serving"), \`\${id}: serving capability\`);\n  assert.equal(sha256(approval.body), approval.bodySha256, \`\${id}: approval body hash\`);\n  assert.equal(\n    exactTransitRecords.find((record) => record.id === id)?.readerCopy?.body,\n    approval.body,\n    \`\${id}: live transit body must equal exact owner-approved body\`\n  );\n}`;
+          if (source.includes(oldLoop)) source = source.replace(oldLoop, newLoop);
+          else if (!source.includes('for (const [id, approval] of exactSkyApprovals)')) throw new Error('Stale Sky exact-aspect loop not found.');
+
           fs.writeFileSync(path, source);
           NODE
       - name: Install dependencies
