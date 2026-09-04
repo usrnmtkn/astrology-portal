@@ -1,0 +1,39 @@
+name: Stage held exact trines review rows
+
+on:
+  push:
+    branches:
+      - owner/calendar-aspect-sign-context-studio
+    paths:
+      - ".github/workflows/stage-held-exact-trines-review.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  stage-held-exact-trines:
+    if: github.repository == 'usrnmtkn/astrology-portal'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+      - name: Verify held exact trine boundary
+        run: node scripts/test-held-calendar-exact-aspect-staging.mjs
+      - name: Stage and verify 33 held exact trines
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: |
+          if [ -z "$SUPABASE_SERVICE_ROLE_KEY" ]; then
+            echo "::error::SUPABASE_SERVICE_ROLE_KEY is not configured for this repository."
+            exit 1
+          fi
+          if [ -z "$SUPABASE_URL" ] && [ -z "$VITE_SUPABASE_URL" ]; then
+            echo "::error::Neither SUPABASE_URL nor VITE_SUPABASE_URL is configured for this repository."
+            exit 1
+          fi
+          node scripts/stage-held-calendar-exact-aspects.mjs --aspect=trine --apply --verify-remote --out=/tmp/held-calendar-exact-trines.json
