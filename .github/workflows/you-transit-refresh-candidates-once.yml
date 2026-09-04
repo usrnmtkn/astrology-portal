@@ -23,6 +23,16 @@ jobs:
       - run: npm ci
       - name: Build You refresh candidates
         run: node scripts/build-you-transit-refresh-candidates.mjs --write
+      - name: Print ambiguity review
+        run: |
+          node --input-type=module <<'NODE'
+          import fs from 'node:fs';
+          const review = JSON.parse(fs.readFileSync('packages/astro-knowledge/review/transit-aspect-you-refresh-review-2026-09-04.json', 'utf8'));
+          console.log(`AMBIGUITY_FLAGS=${review.flaggedCount}`);
+          for (const flag of review.flags) {
+            console.log(`FLAG\t${flag.contentKey}\t${flag.sourceCoreferenceFlags.join(' || ')}`);
+          }
+          NODE
       - name: Commit generated review packet
         run: |
           git config user.name "github-actions[bot]"
