@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.jupiter.trine.uranus",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-03",
+  "ownerStatement": "can you approve the one's already done and make them live?",
+  "batchId": "sky-calendar-exact-approved-through-2026-09-03",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-03/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "25bb136c419d1d1c7205776c7051643f98c6c7d55ca60d8a4b1407178634b9e8",
+  "summary": "A better option can make you realize how much energy you were spending adapting yourself to a problem that never needed to stay that difficult.",
+  "body": "A better option can make you realize how much energy you were spending adapting yourself to a problem that never needed to stay that difficult. When Jupiter trines Uranus, opportunity and innovation reinforce each other, making an unconventional route, useful connection, or new way of working capable of opening much more room than the old method allowed. You do not owe the harder version loyalty simply because you learned how to survive it. Take the improvement seriously and let an easier route change your expectations about what is possible."
+}

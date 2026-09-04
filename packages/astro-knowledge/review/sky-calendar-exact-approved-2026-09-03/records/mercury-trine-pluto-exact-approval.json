@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.mercury.trine.pluto",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-03",
+  "ownerStatement": "can you approve the one's already done and make them live?",
+  "batchId": "sky-calendar-exact-approved-through-2026-09-03",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-03/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "382b45b0eaf56ad01308545fe768fce2cff60b004edd32a55df35d432168d937",
+  "summary": "If you need the truth, follow the evidence further than the version everyone has already agreed to repeat.",
+  "body": "If you need the truth, follow the evidence further than the version everyone has already agreed to repeat. When Mercury trines Pluto, concentration sharpens and hidden connections become easier to see, making it useful for research, financial review, investigation, or a conversation that requires more honesty than usual. Ask who knew, what changed, and where the decision actually came from. Dig deep, but stay loyal to what you can prove."
+}

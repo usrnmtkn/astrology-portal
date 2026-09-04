@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.mars.conjunction.jupiter",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-03",
+  "ownerStatement": "can you approve the one's already done and make them live?",
+  "batchId": "sky-calendar-exact-approved-through-2026-09-03",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-03/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "2eeffff5fbba5d16ac7b18279307ce2229c7c437adb4586dd0ce5040f101a8bb",
+  "summary": "Momentum makes everything look like a green light, especially when your first risk pays off and everyone tells you to double down.",
+  "body": "Momentum makes everything look like a green light, especially when your first risk pays off and everyone tells you to double down. When Mars conjuncts Jupiter, high confidence accelerates action, making it easy to outpace your actual bandwidth. Enthusiasm is not a replacement for logistics. Take the win, but audit your time, money, and capacity before you turn one smart move into five overlapping commitments."
+}

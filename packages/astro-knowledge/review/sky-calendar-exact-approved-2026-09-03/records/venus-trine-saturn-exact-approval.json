@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.venus.trine.saturn",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-03",
+  "ownerStatement": "can you approve the one's already done and make them live?",
+  "batchId": "sky-calendar-exact-approved-through-2026-09-03",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-03/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "cdc675d224c790d9ec202093b524f3427ff0e244032be926755eb9fff7d8ac49",
+  "summary": "Commitment becomes easier to trust when knowing what it will require does not make you want it less.",
+  "body": "Commitment becomes easier to trust when knowing what it will require does not make you want it less. When Venus trines Saturn, affection, value, and responsibility support each other, making it easier to look honestly at time, money, limits, and obligations without feeling that practicality is draining the meaning out of the choice. The details may actually make the decision feel stronger. Something worth keeping should still make sense once you understand what ordinary life will ask you to contribute to it."
+}

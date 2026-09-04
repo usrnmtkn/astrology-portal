@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.sun.square.uranus",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-03",
+  "ownerStatement": "can you approve the one's already done and make them live?",
+  "batchId": "sky-calendar-exact-approved-through-2026-09-03",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-03/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "1339c31d92d2ddb70a8eb3d9084284bb480218fcefe39ac57163d7379297d918",
+  "summary": "The urge to change everything usually gets louder when one part of your life has been making you feel trapped for too long.",
+  "body": "The urge to change everything usually gets louder when one part of your life has been making you feel trapped for too long. When the Sun squares Uranus, restlessness can make the familiar version of your routine, role, or identity suddenly feel impossible to tolerate, which is useful information even if blowing the whole thing up would create problems you do not actually want. Give yourself room to experiment before you make the break permanent. You are allowed to change direction as you learn more about who you are, but freedom works better when you know which part you are actually trying to escape."
+}

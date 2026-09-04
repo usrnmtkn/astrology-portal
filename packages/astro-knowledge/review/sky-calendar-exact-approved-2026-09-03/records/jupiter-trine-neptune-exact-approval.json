@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.jupiter.trine.neptune",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-03",
+  "ownerStatement": "can you approve the one's already done and make them live?",
+  "batchId": "sky-calendar-exact-approved-through-2026-09-03",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-03/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "df07376a6b0d90cc7518607cc89c209b6f788a61770f299661fad02bb31fed11",
+  "summary": "A dream can start feeling less like something you are escaping into and more like something you might genuinely be able to build your life around.",
+  "body": "A dream can start feeling less like something you are escaping into and more like something you might genuinely be able to build your life around. When Jupiter trines Neptune, imagination and confidence support each other, making a creative idea, compassionate goal, or long-held hope feel possible enough to receive more of your attention. You do not need to know every step before taking yourself seriously. Give the vision some of the time, money, or effort you normally reserve for things you already consider practical and see what becomes possible when the dream is allowed to compete for a place in your actual life."
+}

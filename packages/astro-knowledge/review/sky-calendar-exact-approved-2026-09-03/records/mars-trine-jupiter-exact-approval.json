@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.mars.trine.jupiter",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-03",
+  "ownerStatement": "can you approve the one's already done and make them live?",
+  "batchId": "sky-calendar-exact-approved-through-2026-09-03",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-03/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "dbf1fa7d4f4009f7a72284e08ec96d3bc3351e0fd8cfcab1e68b2aad240454b4",
+  "summary": "When something is already producing results, put more time, money, or attention behind it before you start something new.",
+  "body": "When something is already producing results, put more time, money, or attention behind it before you start something new. When Mars trines Jupiter, momentum can attract more opportunity, support, visibility, or resources, making it easier to grow what has already proven itself. This is expansion with evidence behind it. Back the thing that is working and resist scattering your energy across new ideas just because you suddenly have more confidence."
+}

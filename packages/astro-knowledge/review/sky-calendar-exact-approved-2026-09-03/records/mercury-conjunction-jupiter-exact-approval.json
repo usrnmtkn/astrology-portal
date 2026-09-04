@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.mercury.conjunction.jupiter",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-03",
+  "ownerStatement": "can you approve the one's already done and make them live?",
+  "batchId": "sky-calendar-exact-approved-through-2026-09-03",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-03/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "ba918ad1b0863614c5efaba46a9d7fc377c15801229a0c5a1e7c27c6ea4d937c",
+  "summary": "If other people start getting excited about an idea before you have finished working out the details, their enthusiasm can quietly pressure you into promising more than you originally intended.",
+  "body": "If other people start getting excited about an idea before you have finished working out the details, their enthusiasm can quietly pressure you into promising more than you originally intended. When Mercury conjuncts Jupiter, ideas expand quickly and sound especially convincing, which can help a pitch, application, announcement, or ambitious conversation gain momentum. The opportunity is useful, but you still get to distinguish the version you are exploring from the version you are prepared to deliver. Be clear about what is decided, what is still possible, and where you need more time before other people’s excitement turns your possibility into an overcommitment."
+}

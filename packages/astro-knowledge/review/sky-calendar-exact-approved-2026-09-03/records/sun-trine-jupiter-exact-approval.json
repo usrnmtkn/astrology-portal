@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.sun.trine.jupiter",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-03",
+  "ownerStatement": "can you approve the one's already done and make them live?",
+  "batchId": "sky-calendar-exact-approved-through-2026-09-03",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-03/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "2c22c8133c8d6e9fedcecc7f9c74cce636fbaa8cd84849ac06e884646ff4374f",
+  "summary": "When something you have been building starts receiving more support, let yourself believe the opportunity without immediately turning it into three more goals.",
+  "body": "When something you have been building starts receiving more support, let yourself believe the opportunity without immediately turning it into three more goals. When the Sun trines Jupiter, confidence and possibility reinforce each other, which can bring recognition, encouragement, money, access, or a larger audience to something that already has momentum. This is a good time to take up more space around the work that has earned it. Grow the part that is already giving you a reason to believe in yourself instead of scattering the momentum across every new possibility that appears."
+}

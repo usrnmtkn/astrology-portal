@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.jupiter.sextile.saturn",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-03",
+  "ownerStatement": "can you approve the one's already done and make them live?",
+  "batchId": "sky-calendar-exact-approved-through-2026-09-03",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-03/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "7fe45e2fb6979f00bff368db50a26b8d0198b6da66d53754b4e221ac81542492",
+  "summary": "A yes with conditions can still be a very good yes when the conditions are what make the larger opportunity possible to keep.",
+  "body": "A yes with conditions can still be a very good yes when the conditions are what make the larger opportunity possible to keep. When Jupiter sextiles Saturn, expansion gets help from structure, making a bigger commitment, role, purchase, or plan more workable because the limits are clear enough to plan around. You may not get every part of what you originally imagined, but what is available can become much more dependable once you know what it requires. Take the version you can actually build from instead of resenting it for not arriving without constraints."
+}

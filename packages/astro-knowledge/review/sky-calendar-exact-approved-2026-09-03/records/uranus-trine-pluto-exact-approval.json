@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.uranus.trine.pluto",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-03",
+  "ownerStatement": "can you approve the one's already done and make them live?",
+  "batchId": "sky-calendar-exact-approved-through-2026-09-03",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-03/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "7e57c9502b375b1bd7f28746e0a81aebcdb87fdfcd5696d4c648f243896ec3da",
+  "summary": "Some of the most important changes happen quietly when you stop organizing your life around a restriction you no longer need.",
+  "body": "Some of the most important changes happen quietly when you stop organizing your life around a restriction you no longer need. When Uranus trines Pluto, deeper change can settle into the systems, habits, and decisions that shape how much autonomy you actually have, often without requiring a dramatic confrontation first. Look for the arrangement that gives you more control over your time, access, money, or choices while still functioning well enough to rely on. A real shift in power may feel surprisingly ordinary once your daily life stops revolving around the old limitation."
+}

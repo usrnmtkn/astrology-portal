@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.jupiter.opposition.uranus",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-03",
+  "ownerStatement": "can you approve the one's already done and make them live?",
+  "batchId": "sky-calendar-exact-approved-through-2026-09-03",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-03/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "ce111a3006dfeb9b9d5768e0ce1ae6718644a83377e2f00e34c6cc1b5f07fdd1",
+  "summary": "A bigger opportunity can demand more change than you expected when you were imagining how good it would feel to have it.",
+  "body": "A bigger opportunity can demand more change than you expected when you were imagining how good it would feel to have it. When Jupiter opposes Uranus, expansion can disrupt routines, relationships, commitments, or assumptions that were built around a smaller version of your life. The chance may still be worth taking, but growth that creates more freedom in one area can create instability somewhere else. Decide what you are genuinely willing to rearrange instead of assuming everything important will somehow stay untouched while your life gets larger."
+}
