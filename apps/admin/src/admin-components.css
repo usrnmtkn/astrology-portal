@@ -291,3 +291,36 @@
 .admin-dashboard .admin-editor-panel > .admin-post-editor > .admin-review-json > pre {
   padding: var(--admin-space-2xl);
 }
+
+/* Content Studio sidebar rhythm: hierarchy comes from indentation, not type scale. */
+.admin-dashboard .admin-nav {
+  gap: var(--admin-space-lg);
+}
+
+.admin-dashboard .admin-nav-section {
+  gap: var(--admin-space-2xs);
+}
+
+.admin-dashboard .admin-nav button,
+.admin-dashboard .admin-public-link {
+  box-sizing: border-box;
+  font-size: var(--admin-ui-type-body);
+  height: 36px;
+  justify-content: flex-start;
+  min-height: 36px;
+  padding-block: 0;
+  text-align: left;
+  width: 100%;
+}
+
+.admin-dashboard .admin-nav-workspace-group {
+  gap: var(--admin-space-2xs);
+  margin-left: calc(16px + var(--admin-space-xl));
+}
+
+.admin-dashboard .admin-nav-workspace-group button {
+  font-size: var(--admin-ui-type-body);
+  height: 36px;
+  min-height: 36px;
+  padding-left: 0;
+}
