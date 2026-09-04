@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.mercury.square.pluto",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-04",
+  "ownerStatement": "please proceed with next steps",
+  "batchId": "sky-calendar-exact-approved-2026-09-04-batch-51",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-04-batch-51/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "b306bba772675297d5d7be22db69e0113d82d6c16c9bbfa504fd9502c5d05a40",
+  "summary": "A conversation can become obsessive when you are convinced there is one more piece of information that will finally give you control over the situation.",
+  "body": "A conversation can become obsessive when you are convinced there is one more piece of information that will finally give you control over the situation. When Mercury squares Pluto, thought and power grind against each other, making hidden motives, selective language, secrets, and unanswered questions unusually difficult to let go of. Digging deeper may uncover something important, but there is a point where investigation becomes another attempt to force certainty. Extract the specific data point that determines your next tactical move, and walk away. Refuse to waste another ounce of energy demanding total transparency from a person or system that thrives on withholding it."
+}

@@ -1,0 +1,223 @@
+{
+  "type": "bounded_contextual_owner_batch_authorization",
+  "authority": "owner",
+  "decision": "approve",
+  "batchId": "sky-calendar-exact-approved-2026-09-04-batch-51",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-04-batch-51/owner-batch-authorization.json",
+  "ownerStatement": "please proceed with next steps",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "approvedAt": "2026-09-04",
+  "memberCount": 51,
+  "memberSetSha256": "6a3b709d8f735da5ca44d8548cb343a8b7533d732d2445114f71c8cc7c26d54c",
+  "members": [
+    {
+      "contentKey": "sky.aspect.mercury.conjunction.mars",
+      "payloadSha256": "385ffbc59fd549a7bbff64eaa14ccfee98cdfee8c8848816d0f9da70fe7ec1e5"
+    },
+    {
+      "contentKey": "sky.aspect.mercury.conjunction.neptune",
+      "payloadSha256": "3cc110084d2ef644347cb3aea311d2f22fce947d8161ff3a432f6ef95ea05040"
+    },
+    {
+      "contentKey": "sky.aspect.mercury.conjunction.pluto",
+      "payloadSha256": "59dc0dce803633f08d376002080445891a1982834975896bc6ae4b756281caf6"
+    },
+    {
+      "contentKey": "sky.aspect.mercury.conjunction.saturn",
+      "payloadSha256": "72372bd1090c56314e75d8cc426d59552c556d585540c7c19f9382bc7f029cf6"
+    },
+    {
+      "contentKey": "sky.aspect.mercury.conjunction.uranus",
+      "payloadSha256": "dd4e5af68dfe11e3d292e64447e00eb7cada7d08e290146d8e5e03d8182b1808"
+    },
+    {
+      "contentKey": "sky.aspect.mercury.conjunction.venus",
+      "payloadSha256": "48af0b1fda218ff282d76a83c852f48686243339ff4bc1776865fcd951512725"
+    },
+    {
+      "contentKey": "sky.aspect.mercury.opposition.jupiter",
+      "payloadSha256": "6db3b5b9d535248be8445ea8b2371087725b369c1ffb478d9277055bf19c30b0"
+    },
+    {
+      "contentKey": "sky.aspect.mercury.opposition.mars",
+      "payloadSha256": "17f8d12a99dd41dd44465bc1656bf4c1bef1ab11df8621f2bab2e8e20578b221"
+    },
+    {
+      "contentKey": "sky.aspect.mercury.opposition.neptune",
+      "payloadSha256": "038c57e99c23df8acca9f630d5f42390bc34acda9b7ffb3a3efa26f292aeac00"
+    },
+    {
+      "contentKey": "sky.aspect.mercury.opposition.pluto",
+      "payloadSha256": "58796457ff784be6e1220325aedae9b6a8d0dc8094f5e86f87a520919400b4b0"
+    },
+    {
+      "contentKey": "sky.aspect.mercury.opposition.saturn",
+      "payloadSha256": "b4c77b7d27b38fc2ecfe6ef098af842c418170077011188a71077de469302215"
+    },
+    {
+      "contentKey": "sky.aspect.mercury.opposition.uranus",
+      "payloadSha256": "3cbbc709d910d8f343331726da6db7380699270137253f9caaa1f1290ae57368"
+    },
+    {
+      "contentKey": "sky.aspect.mercury.sextile.jupiter",
+      "payloadSha256": "be7065850142718b6970a1e7d30518787dea7a052d3ad5694361e6af200fa974"
+    },
+    {
+      "contentKey": "sky.aspect.mercury.sextile.mars",
+      "payloadSha256": "28be7e73cc0dc675fb9afaa35ad6634b3239cd090242c2bfde3c79c3968514b4"
+    },
+    {
+      "contentKey": "sky.aspect.mercury.sextile.neptune",
+      "payloadSha256": "56fff7179e2882368e77c84815864f7db18a4e8dcab5e644a05e009b1f3ec725"
+    },
+    {
+      "contentKey": "sky.aspect.mercury.sextile.pluto",
+      "payloadSha256": "81e9cfe7e2b51c8f5001c152744b4c0f95f78c26b1d898d27b43ed734ebef95c"
+    },
+    {
+      "contentKey": "sky.aspect.mercury.sextile.saturn",
+      "payloadSha256": "f88abc2634ae97273c35518f9ed43efe7414e652949ec65edecdb731500fb81a"
+    },
+    {
+      "contentKey": "sky.aspect.mercury.sextile.uranus",
+      "payloadSha256": "1f8fd7c19f46aa2e5201a1e6441f19c11215691d408dceab91aa1813aa9b715b"
+    },
+    {
+      "contentKey": "sky.aspect.mercury.sextile.venus",
+      "payloadSha256": "e99ef15257dce38d0f2af575452ce92814e201671ab0b9ced8a643a71967d837"
+    },
+    {
+      "contentKey": "sky.aspect.mercury.square.jupiter",
+      "payloadSha256": "0772f02276577a79c0c3ff990ca1f04a8fe49bc405f6582ecef2b6cd03aa2e3c"
+    },
+    {
+      "contentKey": "sky.aspect.mercury.square.mars",
+      "payloadSha256": "0913ca36d5d2abf127c8747f1d54e676310350865b4bcdc50a886f75b148b44c"
+    },
+    {
+      "contentKey": "sky.aspect.mercury.square.neptune",
+      "payloadSha256": "1b1b6b7a708ba35391ffd605451e87050083e4bc7e81c2892f5373a534f9dfd0"
+    },
+    {
+      "contentKey": "sky.aspect.mercury.square.pluto",
+      "payloadSha256": "b306bba772675297d5d7be22db69e0113d82d6c16c9bbfa504fd9502c5d05a40"
+    },
+    {
+      "contentKey": "sky.aspect.mercury.square.saturn",
+      "payloadSha256": "f006151ca17504e42b94cd80c9d6fd13121d358eea3e5a710f643a22f4f854a1"
+    },
+    {
+      "contentKey": "sky.aspect.mercury.square.uranus",
+      "payloadSha256": "e6dd9a4797409bb2f153cf867da18610e16968d3398df95cb152e9dfb0f41ba4"
+    },
+    {
+      "contentKey": "sky.aspect.saturn.conjunction.uranus",
+      "payloadSha256": "4918885f88cc78761d76dd0df4b2457ef9a972f60eefc99b41246e4198a17c39"
+    },
+    {
+      "contentKey": "sky.aspect.saturn.opposition.uranus",
+      "payloadSha256": "f12098b2eac9c8c4d5867ca0566a2e710f8941d91f044934b7cf414f5070dcca"
+    },
+    {
+      "contentKey": "sky.aspect.saturn.sextile.uranus",
+      "payloadSha256": "5336db63b5872e9c5d986d78db701bfe4b0122a221699da56e6914abc08790d0"
+    },
+    {
+      "contentKey": "sky.aspect.saturn.square.uranus",
+      "payloadSha256": "36090427b926dfbed7ded1870c14f3501535b7853ff02dfd4039359006c2c611"
+    },
+    {
+      "contentKey": "sky.aspect.sun.conjunction.jupiter",
+      "payloadSha256": "fb98a11fc5757774e52ce7a17af09e17bcb937f173fc8e74b9ba6d3d18096db5"
+    },
+    {
+      "contentKey": "sky.aspect.sun.conjunction.mars",
+      "payloadSha256": "45a291578d1e8cb27502772d3bad4dc74cdc11a3138235db770c542efbec50b1"
+    },
+    {
+      "contentKey": "sky.aspect.sun.conjunction.mercury",
+      "payloadSha256": "9089145e7c4fd7b62b3926bbdd1884f4f56355ad37093c96a2735f8bd233f5eb"
+    },
+    {
+      "contentKey": "sky.aspect.sun.conjunction.moon",
+      "payloadSha256": "1a15faf5de47051b5f040dae9c1ba334c92c9f575a618c3d8307d9e2a72149d7"
+    },
+    {
+      "contentKey": "sky.aspect.sun.conjunction.neptune",
+      "payloadSha256": "557c958cd7937cb2222dc5dcfc29e4bd78a34360515e0a07a9619230b83bb80a"
+    },
+    {
+      "contentKey": "sky.aspect.sun.conjunction.pluto",
+      "payloadSha256": "ba53f7e6d75f48b43b3919d731b703bf16ea4a4bd38bd0384b2f22d36f002840"
+    },
+    {
+      "contentKey": "sky.aspect.sun.conjunction.saturn",
+      "payloadSha256": "5a8cd0a5d41dd3d6731e0caf2c44d67a714228888197b4ff3199157af6973891"
+    },
+    {
+      "contentKey": "sky.aspect.sun.conjunction.uranus",
+      "payloadSha256": "3b1cde7397548cebc1c12d5f0edc912d690bc942a5a7e068635db46200e8d0ae"
+    },
+    {
+      "contentKey": "sky.aspect.sun.opposition.mars",
+      "payloadSha256": "d58120329f4de5343f007c4117fd4973377f113360c8f6633a52725f9324050f"
+    },
+    {
+      "contentKey": "sky.aspect.sun.opposition.neptune",
+      "payloadSha256": "997ecee3a20b1b33a9935f3e303fa152c8ac7ef2a4dfa111ccb030dd3451c417"
+    },
+    {
+      "contentKey": "sky.aspect.sun.opposition.saturn",
+      "payloadSha256": "7ebee47abce420cb0ae451489afc43fe6cea0a6ee494f83d88bd418a96f288c8"
+    },
+    {
+      "contentKey": "sky.aspect.sun.sextile.mars",
+      "payloadSha256": "39df07f9a40bc8fb9f90c534b57f3f298b8992e55039e262dea68870eaf1e3c1"
+    },
+    {
+      "contentKey": "sky.aspect.sun.sextile.moon",
+      "payloadSha256": "c4e8a7d80095ead1c7b1493e0a2685a8d2df0cb0bc73582f7066fdf4e1fd2996"
+    },
+    {
+      "contentKey": "sky.aspect.sun.sextile.neptune",
+      "payloadSha256": "f760de4fa000e693fba80d3f9d61a47947e9124ec5520877080ea67acef7a898"
+    },
+    {
+      "contentKey": "sky.aspect.sun.sextile.uranus",
+      "payloadSha256": "5a0f51e7838b5ea79d09ca8cc7692235c4a39a96a815e51e68f3f702259cf9ca"
+    },
+    {
+      "contentKey": "sky.aspect.sun.square.jupiter",
+      "payloadSha256": "896eeecc4d4535a074c30912130ab5aa30015a6cb4768be141e43784059c0424"
+    },
+    {
+      "contentKey": "sky.aspect.sun.square.mars",
+      "payloadSha256": "75251880abe53b0beae3ab00e1b79fc049419b7f4c08b70a8d8d48f671602395"
+    },
+    {
+      "contentKey": "sky.aspect.sun.square.moon",
+      "payloadSha256": "eed9d30db5df0fd3e5e1e41342521c979bf59b380a2a333d14c9ee87f4793f95"
+    },
+    {
+      "contentKey": "sky.aspect.sun.square.neptune",
+      "payloadSha256": "25506939462dd681d8d9433649e37f11ddbe7558635ea9b223a5455530e18237"
+    },
+    {
+      "contentKey": "sky.aspect.sun.square.pluto",
+      "payloadSha256": "ea44d3b3575fd464a5fd874dea79ae6d6b20595b79668f4bc6126c46c0b74e7c"
+    },
+    {
+      "contentKey": "sky.aspect.venus.opposition.uranus",
+      "payloadSha256": "e0595600d1c510684b93afe1466711e3b0e2e6c995326d6ec306b180bbc377bb"
+    },
+    {
+      "contentKey": "sky.aspect.venus.trine.uranus",
+      "payloadSha256": "22c1d565a52079ef71679f3cf549ddbc523fd205769de43b2e4fd559884eb0f7"
+    }
+  ]
+}

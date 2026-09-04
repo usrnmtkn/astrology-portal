@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.mercury.square.saturn",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-04",
+  "ownerStatement": "please proceed with next steps",
+  "batchId": "sky-calendar-exact-approved-2026-09-04-batch-51",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-04-batch-51/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "f006151ca17504e42b94cd80c9d6fd13121d358eea3e5a710f643a22f4f854a1",
+  "summary": "The answer you want may be delayed, denied, or returned with conditions you were hoping not to deal with.",
+  "body": "The answer you want may be delayed, denied, or returned with conditions you were hoping not to deal with. When Mercury squares Saturn, communication hits a wall, forcing you to slow down long enough to confront the detail, deadline, rule, or missing proof blocking the next step. This is frustrating astrology because the obstacle is often painfully specific. But specific is useful. Find the exact requirement, correct what can be corrected, and stop letting one difficult answer convince you that the entire plan is dead."
+}

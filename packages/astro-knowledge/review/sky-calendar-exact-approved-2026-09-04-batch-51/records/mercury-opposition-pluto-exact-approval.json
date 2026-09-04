@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.mercury.opposition.pluto",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-04",
+  "ownerStatement": "please proceed with next steps",
+  "batchId": "sky-calendar-exact-approved-2026-09-04-batch-51",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-04-batch-51/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "58796457ff784be6e1220325aedae9b6a8d0dc8094f5e86f87a520919400b4b0",
+  "summary": "A conversation can become a power struggle when one person keeps asking for answers and the other controls the information they need.",
+  "body": "A conversation can become a power struggle when one person keeps asking for answers and the other controls the information they need. When Mercury opposes Pluto, communication comes face-to-face with leverage, making withheld details, strategic silence, probing questions, and loaded language especially consequential. You may be tempted to push harder simply because somebody is making the truth difficult to access. Keep your questions surgically precise so that any attempt to evade them becomes glaringly obvious data in itself. You do not have to show your entire hand just to prove you know the deck is stacked."
+}

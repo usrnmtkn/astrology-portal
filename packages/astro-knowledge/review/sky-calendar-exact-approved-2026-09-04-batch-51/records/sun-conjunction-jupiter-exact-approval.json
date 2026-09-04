@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.sun.conjunction.jupiter",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-04",
+  "ownerStatement": "please proceed with next steps",
+  "batchId": "sky-calendar-exact-approved-2026-09-04-batch-51",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-04-batch-51/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "fb98a11fc5757774e52ce7a17af09e17bcb937f173fc8e74b9ba6d3d18096db5",
+  "summary": "A little success can make you feel ten feet tall, which is exactly when saying yes to everything starts looking reasonable.",
+  "body": "A little success can make you feel ten feet tall, which is exactly when saying yes to everything starts looking reasonable. When the Sun conjoins Jupiter, confidence and possibility expand together, making a bigger opportunity, audience, goal, or leap of faith feel unusually easy to believe in. This is generous astrology, and there may be very good reasons to take the bigger swing. Just remember that enthusiasm can make the cost of expansion look smaller than it is. Choose the opportunity that makes your life bigger without making your obligations bigger than the life carrying them."
+}

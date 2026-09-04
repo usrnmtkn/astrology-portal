@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.venus.trine.uranus",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-04",
+  "ownerStatement": "please proceed with next steps",
+  "batchId": "sky-calendar-exact-approved-2026-09-04-batch-51",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-04-batch-51/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "22c1d565a52079ef71679f3cf549ddbc523fd205769de43b2e4fd559884eb0f7",
+  "summary": "A spontaneous invitation, unexpected attraction, or change of plans could break a pattern that has been feeling stale without blowing up anything you still value.",
+  "body": "A spontaneous invitation, unexpected attraction, or change of plans could break a pattern that has been feeling stale without blowing up anything you still value. When Venus trines Uranus, connection and freedom support each other, making it easier to try something different without turning novelty into instability. You may be surprised by what feels good once you stop assuming it has to look like what you normally choose. Follow the change that adds energy without creating damage you will have to undo later. You do not need a crisis to justify wanting something different."
+}

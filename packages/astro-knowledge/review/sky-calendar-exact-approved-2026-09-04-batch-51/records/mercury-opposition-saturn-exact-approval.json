@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.mercury.opposition.saturn",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-04",
+  "ownerStatement": "please proceed with next steps",
+  "batchId": "sky-calendar-exact-approved-2026-09-04-batch-51",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-04-batch-51/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "b4c77b7d27b38fc2ecfe6ef098af842c418170077011188a71077de469302215",
+  "summary": "A request for an answer may run directly into a rule, deadline, missing document, or person unwilling to promise more than they can actually authorize.",
+  "body": "A request for an answer may run directly into a rule, deadline, missing document, or person unwilling to promise more than they can actually authorize. When Mercury opposes Saturn, communication and limitation face each other directly, making delays and refusals difficult to talk around. The answer may be disappointing, but disappointment becomes more useful once you know the exact condition behind it. Map the exact dimensions of the roadblock so you know precisely what you are dealing with. Stop wasting energy negotiating with a dead end, and pivot your resources toward the route that is actually open."
+}
