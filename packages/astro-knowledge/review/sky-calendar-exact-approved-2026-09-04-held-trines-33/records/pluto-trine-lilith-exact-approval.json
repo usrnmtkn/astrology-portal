@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.pluto.trine.lilith",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-04",
+  "ownerStatement": "perfect, approved; please proceed with making these live, and wiring them up to the calendar",
+  "batchId": "sky-calendar-exact-approved-2026-09-04-held-trines-33",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-04-held-trines-33/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "f7259e08e1e39db3cc57b5f9c8a11aba6e24754e8c45a9d847da1ccfb8248312",
+  "summary": "A situation changes when the person who was expected to stay quiet realizes they have leverage.",
+  "body": "A situation changes when the person who was expected to stay quiet realizes they have leverage. Pluto trine Lilith can make it easier to name a hidden rule, unequal arrangement, private consequence, or source of control that depended on nobody saying exactly what was happening. Once the information is explicit, the balance of power may shift quickly. Use that leverage to change the terms. You do not need to become as controlling as the arrangement you are trying to leave.",
+  "sourceHeldKey": "sky.aspect.pluto.trine.lilith",
+  "sourceHeldPath": "packages/astro-knowledge/data/points/aspects/sky/four-body-unverified/lilith-pluto-trine.json"
+}

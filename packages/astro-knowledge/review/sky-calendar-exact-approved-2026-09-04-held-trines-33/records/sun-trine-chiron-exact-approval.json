@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.sun.trine.chiron",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-04",
+  "ownerStatement": "perfect, approved; please proceed with making these live, and wiring them up to the calendar",
+  "batchId": "sky-calendar-exact-approved-2026-09-04-held-trines-33",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-04-held-trines-33/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "c229b6ac478b544a6c84a99814b6d5482cbcc82d762633121555b1aaa843802f",
+  "summary": "You may be more comfortable being seen in an area where you once expected embarrassment or judgment.",
+  "body": "You may be more comfortable being seen in an area where you once expected embarrassment or judgment. When the Sun trines Chiron, visibility does not have to require pretending the difficult part of your history never happened. You can speak about the job you lost, show the work you had to redo, wear the thing you used to avoid, or take credit for something you learned after getting it wrong the first time. The old story does not have to disappear before you let yourself be recognized for who you are now.",
+  "sourceHeldKey": "sky.aspect.sun.trine.chiron",
+  "sourceHeldPath": "packages/astro-knowledge/data/points/aspects/sky/four-body-unverified/chiron-sun-trine.json"
+}

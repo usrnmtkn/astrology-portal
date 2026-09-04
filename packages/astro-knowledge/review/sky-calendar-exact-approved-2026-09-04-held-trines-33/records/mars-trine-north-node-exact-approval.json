@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.mars.trine.north-node",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-04",
+  "ownerStatement": "perfect, approved; please proceed with making these live, and wiring them up to the calendar",
+  "batchId": "sky-calendar-exact-approved-2026-09-04-held-trines-33",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-04-held-trines-33/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "3d00e298b3cdb6f0b6c60bf6ecb9561879fae6fe269adf370572c5a91de5c399",
+  "summary": "The next move may become obvious once there is something concrete you can do today.",
+  "body": "The next move may become obvious once there is something concrete you can do today. Mars trine the North Node can give useful momentum to a decision that has spent too long as an idea. Send the email, make the call, submit the application, start the work, or say what you intend to do. Momentum helps you leave the starting point. It is not proof that every direction you can move in deserves to become the plan.",
+  "sourceHeldKey": "sky.aspect.mars.trine.nodes",
+  "sourceHeldPath": "packages/astro-knowledge/data/points/aspects/sky/four-body-unverified/mars-north_node-trine.json"
+}

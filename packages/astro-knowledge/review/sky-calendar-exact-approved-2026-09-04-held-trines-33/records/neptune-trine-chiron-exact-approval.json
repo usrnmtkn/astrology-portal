@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.neptune.trine.chiron",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-04",
+  "ownerStatement": "perfect, approved; please proceed with making these live, and wiring them up to the calendar",
+  "batchId": "sky-calendar-exact-approved-2026-09-04-held-trines-33",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-04-held-trines-33/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "9e19b81c38668a168396241e54800dd214685e3bd49282781bc948ff40778721",
+  "summary": "A difficult experience may become easier to understand once you stop forcing it into one clean explanation.",
+  "body": "A difficult experience may become easier to understand once you stop forcing it into one clean explanation. Neptune trine Chiron can soften the need to know exactly why something happened before you are allowed to move forward, especially around disappointment, grief, art, memory, or a situation that never gave you a satisfying ending. Music, writing, a conversation, or simply having enough distance from the event can help you see more than the version you kept repeating. Meaning can change without the facts changing.",
+  "sourceHeldKey": "sky.aspect.neptune.trine.chiron",
+  "sourceHeldPath": "packages/astro-knowledge/data/points/aspects/sky/four-body-unverified/chiron-neptune-trine.json"
+}

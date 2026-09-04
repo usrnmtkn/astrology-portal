@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.pluto.trine.north-node",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-04",
+  "ownerStatement": "perfect, approved; please proceed with making these live, and wiring them up to the calendar",
+  "batchId": "sky-calendar-exact-approved-2026-09-04-held-trines-33",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-04-held-trines-33/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "91475bba3051b16e1b53e6e0c3f7f4108279d8b6b51ba51aeea336d1789419ee",
+  "summary": "Something may become possible because you are finally willing to stop preserving a structure that has already run its course.",
+  "body": "Something may become possible because you are finally willing to stop preserving a structure that has already run its course. Pluto trine the North Node can support a major change in power, money, access, responsibility, or control when the old arrangement has become the thing preventing the next one. Close the account, renegotiate the terms, leave the role, transfer the authority, or make the decision that changes who controls what. The future does not need every part of the old structure to survive with you.",
+  "sourceHeldKey": "sky.aspect.pluto.trine.nodes",
+  "sourceHeldPath": "packages/astro-knowledge/data/points/aspects/sky/four-body-unverified/north_node-pluto-trine.json"
+}
