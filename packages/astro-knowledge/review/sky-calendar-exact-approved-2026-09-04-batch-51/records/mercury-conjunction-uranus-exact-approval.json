@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.mercury.conjunction.uranus",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-04",
+  "ownerStatement": "please proceed with next steps",
+  "batchId": "sky-calendar-exact-approved-2026-09-04-batch-51",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-04-batch-51/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "dd4e5af68dfe11e3d292e64447e00eb7cada7d08e290146d8e5e03d8182b1808",
+  "summary": "Unexpected news or one strange idea can change your entire understanding of a situation in minutes.",
+  "body": "Unexpected news or one strange idea can change your entire understanding of a situation in minutes. When Mercury conjoins Uranus, thought and disruption fuse, speeding up insight and making unusual connections, sudden discoveries, and abrupt changes of mind more likely. Capture the idea before it disappears, especially if it solves something the usual approach has not. Capture the insight immediately, but refuse to burn down your current structure just because the new idea feels electric. A genuine breakthrough will still be structurally sound once your nervous system returns to baseline."
+}

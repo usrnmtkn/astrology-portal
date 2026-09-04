@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.mercury.conjunction.saturn",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-04",
+  "ownerStatement": "please proceed with next steps",
+  "batchId": "sky-calendar-exact-approved-2026-09-04-batch-51",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-04-batch-51/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "72372bd1090c56314e75d8cc426d59552c556d585540c7c19f9382bc7f029cf6",
+  "summary": "A conversation may end with a firm answer, a deadline, or a commitment that leaves very little room for interpretation.",
+  "body": "A conversation may end with a firm answer, a deadline, or a commitment that leaves very little room for interpretation. When Mercury conjoins Saturn, thought and responsibility fuse, making details, consequences, and precise language much harder to brush aside. This is useful astrology for contracts, boundaries, serious conversations, and decisions that need to hold up after the moment has passed. Put the important part in writing. The answer may be slower or stricter than you hoped, but clarity gives you something you can actually plan around."
+}

@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.mercury.sextile.uranus",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-04",
+  "ownerStatement": "please proceed with next steps",
+  "batchId": "sky-calendar-exact-approved-2026-09-04-batch-51",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-04-batch-51/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "1f8fd7c19f46aa2e5201a1e6441f19c11215691d408dceab91aa1813aa9b715b",
+  "summary": "A clever shortcut or unexpected suggestion may solve a problem you have been approaching the same way for too long.",
+  "body": "A clever shortcut or unexpected suggestion may solve a problem you have been approaching the same way for too long. When Mercury sextiles Uranus, thought and experimentation cooperate, making unusual ideas easier to test without requiring you to throw out everything that already works. Try the different tool, ask the unconventional question, or rearrange the order of the task and watch what changes. Implement the unconventional workaround immediately and watch how quickly the pressure drops. If the new method successfully bypasses the bottleneck, stop defending the old system and adopt what actually works."
+}

@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.venus.opposition.uranus",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-04",
+  "ownerStatement": "please proceed with next steps",
+  "batchId": "sky-calendar-exact-approved-2026-09-04-batch-51",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-04-batch-51/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "e0595600d1c510684b93afe1466711e3b0e2e6c995326d6ec306b180bbc377bb",
+  "summary": "Someone may want to keep the connection, but not the version of it that has started to feel restrictive.",
+  "body": "Someone may want to keep the connection, but not the version of it that has started to feel restrictive. When Venus opposes Uranus, connection and freedom face each other directly, making sudden attractions, changed feelings, revised terms, or requests for more space difficult to ignore. A relationship, financial plan, or agreement can still matter even when the old rules no longer fit the people living inside them. Changing the terms is not the same as ending the connection. Sometimes the connection survives because the rules finally do."
+}
