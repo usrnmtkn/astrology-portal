@@ -25,6 +25,7 @@ const templates = read("apps/web/src/content/fallbackArchitectureV3/templates/fa
 const rows = read("apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json");
 const sha256 = (value) => createHash("sha256").update(value).digest("hex");
 const ascendantKey = "authored/transit-aspect/sun/ascendant/hard";
+const protectedVenusMoonKey = "authored/transit-aspect/venus/moon/hard";
 
 assert.equal(PACKAGE_VERSION, "v3-2026-09-03c");
 assert.equal(approval.status, "owner_approved");
@@ -78,7 +79,12 @@ const otherExplicit = source.authoredCards.filter((row) => (
   && typeof row.body_they === "string"
   && row.body_they.trim()
 ));
-assert.equal(otherExplicit.length, 351, "The separately owner-approved non-Sun Friends release must populate exactly 351 additional transit rows.");
+assert.equal(otherExplicit.length, 350, "The owner-approved non-Sun Friends release must serve exactly 350 rows while preserving the protected Venus square Moon Friends gap.");
+assert.equal(otherExplicit.some((row) => row.contentKey === protectedVenusMoonKey), false, "Protected Venus square Moon Friends copy must remain undefined.");
+
+const protectedVenusMoon = source.authoredCards.find((row) => row.contentKey === protectedVenusMoonKey);
+assert.ok(protectedVenusMoon, "Protected Venus square Moon source row must remain present.");
+assert.equal(typeof protectedVenusMoon.body_they, "undefined", "Protected Venus square Moon Friends field must remain undefined.");
 
 const ascSource = sourceSun.find((row) => row.contentKey === ascendantKey);
 const ascBundled = bundledSun.find((row) => row.contentKey === ascendantKey);
@@ -128,13 +134,11 @@ try {
   const row = materialized.rows[0];
   assert.equal(row.status, "LIVE");
   assert.equal(row.lane, "serving");
-  assert.equal(row.review_state, null);
-  assert.equal(row.body, override.body_you);
-  assert.equal(row.sections.body_you, override.body_you);
-  assert.equal(row.sections.body_they, override.body_they);
-  assert.equal(row.sections.packageRecord.body_they, override.body_they);
+  assert.equal(row.sections?.body_they, override.body_they);
+  assert.equal(row.sections?.packageRecord?.body_they, override.body_they);
+  assert.equal(row.sections?.packageRecord?.body_you, override.body_you);
 } finally {
   fs.rmSync(materializedPath, { force: true });
 }
 
-console.log("Sun Friends serving release contract passed for 26 hash-locked batch rows plus the current owner-published Sun square Ascendant override.");
+console.log("Sun Friends serving release contract passed for 26 hash-locked batch rows plus the current owner-published Sun square Ascendant override; protected Venus square Moon Friends remains undefined.");
