@@ -12,10 +12,12 @@ const transitDirectory = path.join(repoRoot, "packages/astro-knowledge/data/tran
 const bundleFile = path.join(os.tmpdir(), "tldrastro-calendar-exact-sky-aspect-routing.bundle.mjs");
 const registryBundleFile = path.join(os.tmpdir(), "tldrastro-approved-exact-sky-aspect-registry.bundle.mjs");
 const readJson = (filePath) => JSON.parse(fs.readFileSync(filePath, "utf8"));
-const canonicalPayloadPath = path.join(
-  repoRoot,
-  "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-03/current-owner-payloads.json"
-);
+const canonicalPayloadRelative = process.env.SKY_CALENDAR_OWNER_PAYLOADS_PATH
+  ?? "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-04-batch-30/current-owner-payloads.json";
+const canonicalPayloadPath = path.resolve(repoRoot, canonicalPayloadRelative);
+if (!canonicalPayloadPath.startsWith(`${repoRoot}${path.sep}`)) {
+  throw new Error("SKY_CALENDAR_OWNER_PAYLOADS_PATH must resolve inside the repository.");
+}
 const ownerRewrites = readJson(canonicalPayloadPath);
 const sha256 = (value) => crypto.createHash("sha256").update(value).digest("hex");
 

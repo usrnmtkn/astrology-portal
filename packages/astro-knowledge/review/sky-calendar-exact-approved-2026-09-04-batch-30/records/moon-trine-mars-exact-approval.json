@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.moon.trine.mars",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-04",
+  "ownerStatement": "please commit and make live the updated aspects",
+  "batchId": "sky-calendar-exact-approved-2026-09-04-batch-30",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-04-batch-30/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "5c10f951bf156f43f16f8d4e722f77504f52bcb8b49b5eb143f4e014f0578f07",
+  "summary": "It is much easier to act on what you need when your feelings and your instincts point in the same direction instead of fighting each other for control.",
+  "body": "It is much easier to act on what you need when your feelings and your instincts point in the same direction instead of fighting each other for control. When the Moon trines Mars, emotional clarity and initiative reinforce each other, making it smooth to speak up, make the call, set a limit, or deal with something you have been putting off before frustration has to become your primary engine. You are less likely to waste hours negotiating with yourself about a move you already know has to happen. Use the clean momentum while it is active."
+}
