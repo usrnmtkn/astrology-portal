@@ -106,18 +106,19 @@ assert.equal(bundledSun.every((row) => typeof row.body_they === "string" && row.
 const renderer = createTransitSynastryRenderer(bundled, templates, fallbackRows);
 const representative = completion.records.find((record) => record.contentKey === "authored/transit-aspect/chiron/ascendant/hard")
   ?? completion.records[0];
-const [, , , transiting, natal, aspect] = representative.contentKey.split("/");
+const [, , transiting, natal, aspect] = representative.contentKey.split("/");
+const aspectWord = aspect === "hard" ? "square" : aspect === "soft" ? "trine" : aspect;
 const rendered = renderer.renderTransitAspect({
   transiting,
   natal,
-  aspect: aspect === "hard" ? "square" : aspect === "soft" ? "trine" : aspect,
+  aspect: aspectWord,
   sign: "virgo",
   voice: "Alisa P",
   window: "until September 30"
 });
 const expectedRendered = representative.body_they
   .replaceAll("{{Name}}", "Alisa P")
-  .replaceAll("{{aspectWord}}", aspect === "hard" ? "square" : aspect === "soft" ? "trine" : aspect)
+  .replaceAll("{{aspectWord}}", aspectWord)
   .replaceAll("{{untilDate}}", "September 30");
 assert.equal(rendered.contentKey, representative.contentKey);
 assert.equal(rendered.body, expectedRendered, "Friends renderer must prefer the explicit owner-approved body_they over legacy conversion.");
