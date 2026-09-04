@@ -3783,43 +3783,64 @@ function compactTransitDurationLabel(position: PlanetPosition, generatedAt: stri
   return formatRemainingClockCompact(generatedAt, position.transitEnd);
 }
 
-function currentSkyAspectTransitWindow(aspect: SkySnapshot["aspects"][number], generatedAt: string) {
+function currentSkyAspectTransitWindow(
+  aspect: SkySnapshot["aspects"][number],
+  generatedAt: string,
+  positions?: PlanetPosition[]
+) {
+  const reference = new Date(generatedAt);
   const engagementStart = aspect.timing?.engagementStart
     ? new Date(aspect.timing.engagementStart)
     : null;
   const engagementEnd = aspect.timing?.engagementEnd
     ? new Date(aspect.timing.engagementEnd)
     : null;
-
-  if (
+  const timingContainsReference = Boolean(
     engagementStart
     && engagementEnd
+    && !Number.isNaN(reference.getTime())
     && !Number.isNaN(engagementStart.getTime())
     && !Number.isNaN(engagementEnd.getTime())
-  ) {
+    && engagementStart <= reference
+    && reference <= engagementEnd
+  );
+
+  if (timingContainsReference && engagementStart && engagementEnd) {
     return { start: engagementStart, end: engagementEnd };
   }
 
-  const fastestPlanet = fastestSkyAspectPlanet(aspect);
-  const speed = fastestPlanet ? averageDailyMotion[fastestPlanet] ?? 1 : 1;
-  const aspectWindowOrb = skyAspectWindowOrb(fastestPlanet);
-  const remainingOrb = Math.max(0.2, aspectWindowOrb - aspect.orb);
-  const currentOffsetDays = remainingOrb / speed;
+  const firstPosition = skyAspectPosition(aspect.from, positions);
+  const secondPosition = skyAspectPosition(aspect.to, positions);
+  const firstSpeed = typeof firstPosition?.speed === "number"
+    ? firstPosition.speed
+    : averageDailyMotion[aspect.from] ?? 0;
+  const secondSpeed = typeof secondPosition?.speed === "number"
+    ? secondPosition.speed
+    : averageDailyMotion[aspect.to] ?? 0;
+  const relativeSpeed = Math.max(0.002, Math.abs(firstSpeed - secondSpeed));
+  const displayOrb = aspect.type === "quincunx" ? 3 : 5;
+  const currentOrb = Math.max(0, Math.min(displayOrb, aspect.orb));
+  const applying = aspect.applying !== false;
+  const distanceFromEntry = applying
+    ? displayOrb - currentOrb
+    : displayOrb + currentOrb;
+  const distanceToExit = applying
+    ? displayOrb + currentOrb
+    : displayOrb - currentOrb;
 
   return {
-    start: dateFromOffsetDays(generatedAt, -currentOffsetDays),
-    end: dateFromOffsetDays(generatedAt, currentOffsetDays)
+    start: dateFromOffsetDays(generatedAt, -(distanceFromEntry / relativeSpeed)),
+    end: dateFromOffsetDays(generatedAt, distanceToExit / relativeSpeed)
   };
 }
 
-function currentSkyAspectTransitRange(aspect: SkySnapshot["aspects"][number], generatedAt: string) {
-  const window = currentSkyAspectTransitWindow(aspect, generatedAt);
-
-  if (aspect.timing) {
-    return skyAspectDateRange(aspect, window.start, window.end);
-  }
-
-  return formatSkyAspectDateRange(window.start, window.end, new Date(generatedAt));
+function currentSkyAspectTransitRange(
+  aspect: SkySnapshot["aspects"][number],
+  generatedAt: string,
+  positions?: PlanetPosition[]
+) {
+  const window = currentSkyAspectTransitWindow(aspect, generatedAt, positions);
+  return skyAspectDateRange(aspect, window.start, window.end);
 }
 
 function fastestSkyAspectPlanet(aspect: SkySnapshot["aspects"][number]) {
@@ -4508,7 +4529,7 @@ function currentSkyAspectDetailArticle(
   const title = skyAspectDisplayTitle(aspect);
   const normalized = normalizeSkyAspectSurface(aspect, generatedContent, positions, generatedAt);
   const body = normalized.sections.flatMap((section) => taggedSectionParagraphs(section));
-  const timing = currentSkyAspectTransitRange(aspect, generatedAt);
+  const timing = currentSkyAspectTransitRange(aspect, generatedAt, positions);
   const historicalLookback = null;
 
   return {
@@ -4757,7 +4778,7 @@ function skyPlacementWritingBeats({
     return {
       aspect: titleCase(aspect.type),
       applying: aspect.applying,
-      dateLine: currentSkyAspectTransitRange(aspect, generatedAt),
+      dateLine: currentSkyAspectTransitRange(aspect, generatedAt, positions),
       exactDate: skyPlacementAspectExactDate(aspect, generatedAt, positions),
       exactDateKey: skyPlacementAspectExactMoment(aspect, generatedAt, positions)
         .toISOString()
