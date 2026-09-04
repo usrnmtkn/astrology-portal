@@ -1,0 +1,103 @@
+{
+  "schemaVersion": 2,
+  "family": "chiron",
+  "rowCount": 12,
+  "rows": [
+    {
+      "contentKey": "sky.aspect.chiron.trine.lilith",
+      "summary": "You may be able to admit what hurt without immediately defending the choices you made afterward.",
+      "body": "You may be able to admit what hurt without immediately defending the choices you made afterward. Chiron trine Lilith can make it easier to separate an old sensitivity from the shame, judgment, or pressure to be more acceptable that became attached to it. A comment you still remember, a rejection that changed how you behaved, or a part of yourself you learned to hide may feel less powerful once you stop arguing with the fact that it mattered. You can keep the part of yourself that grew more independent without keeping the old fight alive.",
+      "bodySha256": "2d64e13a040f0b2243365eeefba0057b2e870b646b8fbbe325c03837a5cbba6f",
+      "sourceHeldKey": "sky.aspect.chiron.trine.lilith",
+      "sourceHeldPath": "packages/astro-knowledge/data/points/aspects/sky/four-body-unverified/chiron-lilith-trine.json"
+    },
+    {
+      "contentKey": "sky.aspect.chiron.trine.north-node",
+      "summary": "The next step may use an experience you once thought had only set you back.",
+      "body": "The next step may use an experience you once thought had only set you back. When the North Node trines Chiron, something you learned the hard way can become relevant to where you are going now. You may recognize the right opportunity because you know what the wrong one cost, give better advice because you made the mistake yourself, or make a different choice because the old pattern is finally obvious. Progress does not require erasing the history that got you here.",
+      "bodySha256": "9ca394995fb67328c01b827217a935ab498fb68c3b3345223f1316dde20ec137",
+      "sourceHeldKey": "sky.aspect.chiron.trine.nodes",
+      "sourceHeldPath": "packages/astro-knowledge/data/points/aspects/sky/four-body-unverified/chiron-north_node-trine.json"
+    },
+    {
+      "contentKey": "sky.aspect.jupiter.trine.chiron",
+      "summary": "Something that used to make you doubt yourself may become useful experience instead of the reason you hold back.",
+      "body": "Something that used to make you doubt yourself may become useful experience instead of the reason you hold back. When Jupiter trines Chiron, growth can come from knowing exactly what a difficult period taught you, especially when you are applying for something, teaching someone else, taking on a larger role, or trying again after a disappointment. You do not have to pretend the earlier setback was good for you to recognize that you know more because you lived through it. Take the opportunity that uses what you learned without requiring you to romanticize what it cost.",
+      "bodySha256": "b8b5c670a922658a607508cecb41c8ae7521156e2177f291886fd8961d0b2de1",
+      "sourceHeldKey": "sky.aspect.jupiter.trine.chiron",
+      "sourceHeldPath": "packages/astro-knowledge/data/points/aspects/sky/four-body-unverified/chiron-jupiter-trine.json"
+    },
+    {
+      "contentKey": "sky.aspect.mars.trine.chiron",
+      "summary": "The thing you have been hesitant to do may become easier once there is an actual action to take.",
+      "body": "The thing you have been hesitant to do may become easier once there is an actual action to take. When Mars trines Chiron, movement can interrupt an old pattern of avoiding the place where you once felt embarrassed, rejected, weak, or unprepared. Send the application, make the appointment, have the conversation, go back to the class, or do the part you know how to do now. You do not need to prove the old experience no longer affects you. Doing something differently is enough.",
+      "bodySha256": "dc8d6ac9fb500ae2be3199d168e09c559cf094fb87a87b724864e6e11c504ae9",
+      "sourceHeldKey": "sky.aspect.mars.trine.chiron",
+      "sourceHeldPath": "packages/astro-knowledge/data/points/aspects/sky/four-body-unverified/chiron-mars-trine.json"
+    },
+    {
+      "contentKey": "sky.aspect.mercury.trine.chiron",
+      "summary": "You may finally find the words for something that has been difficult to explain without making it larger than it is.",
+      "body": "You may finally find the words for something that has been difficult to explain without making it larger than it is. Mercury trine Chiron can make a sensitive conversation more precise, especially when the difference between what happened and what you assumed it meant has been hard to separate. A direct question, a carefully written message, or one useful detail can clear up more than another hour of replaying the entire history. Say what still matters now.",
+      "bodySha256": "81f1f7ae41b989c9117491a4be2f2e3e8aa140878ee4b857637a0266f1c18abd",
+      "sourceHeldKey": "sky.aspect.mercury.trine.chiron",
+      "sourceHeldPath": "packages/astro-knowledge/data/points/aspects/sky/four-body-unverified/chiron-mercury-trine.json"
+    },
+    {
+      "contentKey": "sky.aspect.moon.trine.chiron",
+      "summary": "Something can still touch a nerve without ruining the rest of your day.",
+      "body": "Something can still touch a nerve without ruining the rest of your day. When the Moon trines Chiron, an old emotional reaction may be easier to recognize before it decides what happens next. You might feel left out, criticized, overlooked, or reminded of an earlier disappointment and still be able to eat dinner, finish the work, answer the message, or ask for what you need. Take the feeling seriously without handing it the whole schedule.",
+      "bodySha256": "d4f47442b60d5a7fa43298c9e59dc1a2664afbd6ab7bad3b993f272769d8e6df",
+      "sourceHeldKey": "sky.aspect.moon.trine.chiron",
+      "sourceHeldPath": "packages/astro-knowledge/data/points/aspects/sky/four-body-unverified/chiron-moon-trine.json"
+    },
+    {
+      "contentKey": "sky.aspect.neptune.trine.chiron",
+      "summary": "A difficult experience may become easier to understand once you stop forcing it into one clean explanation.",
+      "body": "A difficult experience may become easier to understand once you stop forcing it into one clean explanation. Neptune trine Chiron can soften the need to know exactly why something happened before you are allowed to move forward, especially around disappointment, grief, art, memory, or a situation that never gave you a satisfying ending. Music, writing, a conversation, or simply having enough distance from the event can help you see more than the version you kept repeating. Meaning can change without the facts changing.",
+      "bodySha256": "9e19b81c38668a168396241e54800dd214685e3bd49282781bc948ff40778721",
+      "sourceHeldKey": "sky.aspect.neptune.trine.chiron",
+      "sourceHeldPath": "packages/astro-knowledge/data/points/aspects/sky/four-body-unverified/chiron-neptune-trine.json"
+    },
+    {
+      "contentKey": "sky.aspect.pluto.trine.chiron",
+      "summary": "You may finally be in a position to change the condition that kept reopening the same problem.",
+      "body": "You may finally be in a position to change the condition that kept reopening the same problem. Pluto trine Chiron can bring leverage to something that previously felt personal but was also connected to money, access, authority, secrecy, or who had the power to decide. A boundary can be enforced, a pattern can be named, or information that was missing can change what you are willing to accept. Use the leverage to change the arrangement, not to replay the original fight from the stronger position.",
+      "bodySha256": "1fe52cc7cd65217b545c0a87234802b127ef580da046d61f7ac102e1a0ff3a06",
+      "sourceHeldKey": "sky.aspect.pluto.trine.chiron",
+      "sourceHeldPath": "packages/astro-knowledge/data/points/aspects/sky/four-body-unverified/chiron-pluto-trine.json"
+    },
+    {
+      "contentKey": "sky.aspect.saturn.trine.chiron",
+      "summary": "A sensitive issue gets easier to live with when there is a plan for what happens next.",
+      "body": "A sensitive issue gets easier to live with when there is a plan for what happens next. Saturn trine Chiron can turn something vague and emotionally loaded into an appointment, boundary, deadline, payment plan, responsibility, or rule you can actually work with. You may still dislike the situation, but knowing who is doing what and when removes some of the uncertainty that kept aggravating it. Structure will help more than repeatedly checking how you feel about it.",
+      "bodySha256": "e40d88722a61704c74fa871616109dbee44b25f1ace85aa487275e1d5c2ba595",
+      "sourceHeldKey": "sky.aspect.saturn.trine.chiron",
+      "sourceHeldPath": "packages/astro-knowledge/data/points/aspects/sky/four-body-unverified/chiron-saturn-trine.json"
+    },
+    {
+      "contentKey": "sky.aspect.sun.trine.chiron",
+      "summary": "You may be more comfortable being seen in an area where you once expected embarrassment or judgment.",
+      "body": "You may be more comfortable being seen in an area where you once expected embarrassment or judgment. When the Sun trines Chiron, visibility does not have to require pretending the difficult part of your history never happened. You can speak about the job you lost, show the work you had to redo, wear the thing you used to avoid, or take credit for something you learned after getting it wrong the first time. The old story does not have to disappear before you let yourself be recognized for who you are now.",
+      "bodySha256": "c229b6ac478b544a6c84a99814b6d5482cbcc82d762633121555b1aaa843802f",
+      "sourceHeldKey": "sky.aspect.sun.trine.chiron",
+      "sourceHeldPath": "packages/astro-knowledge/data/points/aspects/sky/four-body-unverified/chiron-sun-trine.json"
+    },
+    {
+      "contentKey": "sky.aspect.uranus.trine.chiron",
+      "summary": "A small change may show you that an old reaction is not as permanent as it felt.",
+      "body": "A small change may show you that an old reaction is not as permanent as it felt. Uranus trine Chiron can make experimentation useful where habit has been organized around avoiding another bad experience. Try the different route, new format, changed schedule, unfamiliar tool, or response you would not normally give. You do not have to blow up the system that protects you. Change the part that no longer needs protecting.",
+      "bodySha256": "998689a8e02a95a4bbd01a360ddbb26e63b4979d33f0be2328157cea847be0bb",
+      "sourceHeldKey": "sky.aspect.uranus.trine.chiron",
+      "sourceHeldPath": "packages/astro-knowledge/data/points/aspects/sky/four-body-unverified/chiron-uranus-trine.json"
+    },
+    {
+      "contentKey": "sky.aspect.venus.trine.chiron",
+      "summary": "Someone does something kind and you may be able to receive it without immediately looking for the catch.",
+      "body": "Someone does something kind and you may be able to receive it without immediately looking for the catch. Venus trine Chiron can make affection, friendship, money, or appreciation feel less tangled up with an old disappointment about what you deserved or what another person would eventually take away. Let the compliment land. Let someone help. Let a good evening remain a good evening without testing it for signs that the old problem is coming back.",
+      "bodySha256": "3aa03496aa6017a111ce0a0160ee88c1fb56c7de3f2179e7f62b6839bf1165fb",
+      "sourceHeldKey": "sky.aspect.venus.trine.chiron",
+      "sourceHeldPath": "packages/astro-knowledge/data/points/aspects/sky/four-body-unverified/chiron-venus-trine.json"
+    }
+  ]
+}
