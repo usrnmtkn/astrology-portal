@@ -235,7 +235,7 @@ export function assertBatchGenerationAuthorized(state) {
   const boundedBatchPath = state?.boundedOwnerBatchAuthorized === true
     && state?.boundedOwnerBatchAuthorization?.capabilities?.includes("batch_generation");
   if (!state?.ownerApproved || (!renderedSamplePath && !boundedBatchPath) || !state?.batchGenerationAuthorized) {
-    throw new Error("OWNER_APPROVAL_REQUIRED_FOR_BATCH_GENERATION");
+    throw new Error("RENDERED_SAMPLE_OWNER_APPROVAL_REQUIRED_FOR_BATCH_GENERATION");
   }
   return true;
 }
@@ -245,7 +245,7 @@ export function assertServingAuthorized(state) {
   const boundedBatchPath = state?.boundedOwnerBatchAuthorized === true
     && state?.boundedOwnerBatchAuthorization?.capabilities?.includes("serving");
   if (!state?.ownerApproved || (!renderedSamplePath && !boundedBatchPath) || !state?.servingAuthorized) {
-    throw new Error("OWNER_APPROVAL_REQUIRED_FOR_SERVING");
+    throw new Error("RENDERED_SAMPLE_OWNER_APPROVAL_REQUIRED_FOR_SERVING");
   }
   return true;
 }
