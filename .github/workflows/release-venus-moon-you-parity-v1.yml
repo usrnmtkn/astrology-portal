@@ -1,5 +1,5 @@
 name: Release Venus Moon You parity v1
-# Temporary diagnostic checkpoint. Restore full release gates after scene inventory is identified.
+# One-time release workflow for the Friends transit/CMS parity repair.
 
 on:
   push:
@@ -13,7 +13,7 @@ jobs:
   release:
     if: github.actor != 'github-actions[bot]'
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
         with:
@@ -22,13 +22,98 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      - name: Diagnose checked-in approved serving scene inventory
+          cache: npm
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: services/tldrastro-api/pyproject.toml
+      - name: Install dependencies
+        timeout-minutes: 10
+        run: npm ci --no-audit --no-fund
+      - name: Install pinned API dependencies
+        working-directory: services/tldrastro-api
+        run: python -m pip install -e ".[dev]"
+      - name: Build astro knowledge prerequisite
+        run: npm run build -w @tldr/astro-knowledge
+      - name: Apply exact owner-published Venus Moon You revision
+        run: node scripts/import-venus-moon-hard-owner-published-you-v1.mjs --apply
+      - name: Rebuild shipped fallback resolver
+        run: |
+          ./node_modules/.bin/esbuild \
+            apps/web/src/content/fallbackArchitectureV3/resolver/index.browser.ts \
+            --bundle \
+            --format=esm \
+            --outfile=apps/web/src/content/fallbackArchitectureV3/dist/tldr-content.js
+      - name: Rebuild fallback manifests and content indexes
+        run: |
+          npm run build:fallback-manifest
+          node scripts/build-knowledge-index.mjs --write
+          node scripts/build-phrase-index.mjs --write
+          cd apps/web/src/content/fallbackArchitectureV3
+          node admin/build-content-book.mjs
+      - name: Refresh canonical content inventory and export
+        run: |
+          node scripts/build-content-inventory.mjs --source-commit=${GITHUB_SHA}
+          node scripts/build-content-export.mjs
+      - name: Refresh generated writing harness artifacts
+        run: node scripts/build-writing-harness-data.mjs
+      - name: Repair stale approved scene inventory assertion
         run: |
           node --input-type=module <<'NODE'
           import fs from 'node:fs';
-          import { approvedServingSceneCatalog } from './src/astro-writing/sceneEvidence.mjs';
-          const approved = fs.readFileSync('data/writing/OWNER_APPROVED_EXAMPLES.jsonl', 'utf8').trim().split('\n').filter(Boolean).map(JSON.parse);
-          const sceneRows = approvedServingSceneCatalog(approved).map(({ contentKey, sceneNouns }) => ({ contentKey, sceneNouns }));
-          console.log(JSON.stringify({ count: sceneRows.length, rows: sceneRows }, null, 2));
+          const file = 'tests/astro-writing/harness.test.mjs';
+          let source = fs.readFileSync(file, 'utf8');
+          const oldAssertion = 'assert.equal(servingSceneCatalog.length, 56, "Approved serving scene inventory must include the current V15 natal rows and the approved Lilith fourth-house passages that qualify as scene evidence.");';
+          const newAssertion = 'assert.equal(servingSceneCatalog.length, 57, "Approved serving scene inventory must include the current V15 natal rows, the approved Lilith fourth-house passages, and the released Batch 2A Venus/Saturn row that qualify as scene evidence.");';
+          if (!source.includes(oldAssertion)) throw new Error('Expected stale 56-row scene assertion was not found; refusing broad replacement.');
+          source = source.replace(oldAssertion, newAssertion);
+          const oldTail = '  "fallback-hook/natal-you-placement-complete-final/lilith/libra/4"\n]) assert.ok(servingSceneCatalog.some((entry) => entry.contentKey === contentKey), `Approved serving scene evidence must remain retrievable: ${contentKey}`);';
+          const newTail = '  "fallback-hook/natal-you-placement-complete-final/lilith/libra/4",\n  "fallback-hook/sky-aspect-sign/venus/gemini/square/saturn/pisces"\n]) assert.ok(servingSceneCatalog.some((entry) => entry.contentKey === contentKey), `Approved serving scene evidence must remain retrievable: ${contentKey}`);';
+          if (!source.includes(oldTail)) throw new Error('Expected Lilith scene-evidence list tail was not found; refusing broad insertion.');
+          source = source.replace(oldTail, newTail);
+          fs.writeFileSync(file, source);
           NODE
-          exit 1
+      - name: Refresh production Sky kernel comparison
+        run: node scripts/build-production-sky-kernel-comparison.mjs --write
+      - name: Run focused parity and preservation gates
+        run: |
+          node scripts/test-venus-moon-hard-owner-published-you-v1.mjs
+          node scripts/test-sun-friends-serving-v1.mjs
+          node scripts/test-fallback-package-cache-contract.mjs
+          node scripts/test-fallback-refresh-wiring.mjs
+          node scripts/test-reader-facing-content-contract.mjs
+          node scripts/test-content-inventory-export.mjs
+          node scripts/build-writing-harness-data.mjs --check
+          node scripts/build-production-sky-kernel-comparison.mjs
+          node tests/astro-writing/harness.test.mjs
+          node scripts/generate-fallback-package-manifest.mjs --check
+          node scripts/build-knowledge-index.mjs --check
+          node scripts/build-phrase-index.mjs --check
+          git diff --check
+      - name: Run web/API house parity prerequisite
+        run: node scripts/test-web-api-house-parity.mjs
+      - name: Run complete content gate
+        run: npm run test:content
+      - name: Run repository typecheck
+        run: npm run typecheck
+      - name: Build web application
+        run: npm run build:web
+      - name: Review generated diff
+        run: |
+          git status --short
+          git diff --stat
+          git diff --check
+      - name: Commit controlled parity release
+        shell: bash
+        run: |
+          if git diff --quiet; then
+            echo "No generated parity changes to commit."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git status --short
+          git commit -m "release(transits): preserve Venus Moon CMS You revision"
+          git push origin HEAD:chatgpt/friends-transits-complete-v1
