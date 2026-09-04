@@ -1,0 +1,8 @@
+/* Owner decision, 2026-09-04: remove row-selection affordances from Content Studio.
+   Selection state and bulk mutation logic remain internal for now, but the UI no longer exposes
+   checkboxes or the bulk-action bar. */
+.admin-dashboard .admin-col-select,
+.admin-dashboard .admin-content-row-check,
+.admin-dashboard .admin-content-bulk-bar {
+  display: none !important;
+}
