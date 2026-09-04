@@ -1,0 +1,69 @@
+name: Apply You transit date-range repair
+
+on:
+  push:
+    branches:
+      - fix/you-transit-detail-date-range
+
+permissions:
+  contents: write
+
+jobs:
+  repair:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: fix/you-transit-detail-date-range
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Restore transit date range in detail header
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          page_path = Path("apps/web/src/features/you/YouPage.tsx")
+          source = page_path.read_text()
+
+          state_needle = '  const eyebrowGlyphs = articleEyebrowGlyphs(displayArticle);\n'
+          state_replacement = '''  const eyebrowGlyphs = articleEyebrowGlyphs(displayArticle);\n  const headerDateRange = cleanArticleText(\n    displayArticle.meta.find((row) => {\n      const label = row.label.trim().toLowerCase();\n      return label === "date range" || label === "duration";\n    })?.value\n  );\n'''
+          if state_needle not in source:
+              raise SystemExit("You transit article timing-state insertion point not found")
+          source = source.replace(state_needle, state_replacement, 1)
+
+          header_needle = '            <h1 className="article-title" id="you-transit-article-title">{displayArticle.title}</h1>\n'
+          header_replacement = header_needle + '            {headerDateRange ? <p className="article-duration">{headerDateRange}</p> : null}\n'
+          if header_needle not in source:
+              raise SystemExit("You transit article header insertion point not found")
+          source = source.replace(header_needle, header_replacement, 1)
+          page_path.write_text(source)
+
+          test_path = Path("scripts/test-reader-facing-content-contract.mjs")
+          test_source = test_path.read_text()
+          marker = 'You transit detail articles must render the calculated date range in the header.'
+          if marker not in test_source:
+              test_source += '''\n\nassert.match(\n  youPage,\n  /const headerDateRange = cleanArticleText\\([\\s\\S]*?label === "date range" \\|\\| label === "duration"[\\s\\S]*?headerDateRange \\? <p className="article-duration">\\{headerDateRange\\}<\\/p> : null/u,\n  "You transit detail articles must render the calculated date range in the header."\n);\n'''
+              test_path.write_text(test_source)
+          PY
+
+      - name: Verify focused reader contract
+        run: node scripts/test-reader-facing-content-contract.mjs
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Commit repair
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add apps/web/src/features/you/YouPage.tsx scripts/test-reader-facing-content-contract.mjs
+          git diff --cached --check
+          git commit -m "fix(web): restore You transit detail date ranges"
+          git push origin HEAD:fix/you-transit-detail-date-range
