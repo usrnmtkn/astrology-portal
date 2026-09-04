@@ -15,7 +15,7 @@ const priorSourceBodySha256 = "474bdf7a0bd7bde64a2bdb3a2c9f521b92e4790afb41518da
 const apply = process.argv.includes("--apply");
 const sha256 = (value) => crypto.createHash("sha256").update(value).digest("hex");
 const readJson = (relative) => JSON.parse(fs.readFileSync(path.join(root, relative), "utf8"));
-const writeJson = (relative, value) => fs.writeFileSync(path.join(root, relative), `${JSON.stringify(value, null, 2)}\n`);
+const writeJson = (relative, value) => fs.writeFileSync(path.join(root, relative), `${JSON.stringify(value, null, 4)}\n`);
 
 const authority = readJson(authorityRelative);
 assert.equal(authority.schema, "tldrastro-transit-aspect-owner-published-you-override-v1");
@@ -57,8 +57,11 @@ if (apply) {
   for (const relative of pinnedVersionFiles) {
     const absolute = path.join(root, relative);
     const current = fs.readFileSync(absolute, "utf8");
-    assert.ok(current.includes(oldPackageVersion), `${relative}: expected ${oldPackageVersion} before package bump.`);
-    fs.writeFileSync(absolute, current.replaceAll(oldPackageVersion, nextPackageVersion));
+    if (current.includes(oldPackageVersion)) {
+      fs.writeFileSync(absolute, current.replaceAll(oldPackageVersion, nextPackageVersion));
+    } else {
+      assert.ok(current.includes(nextPackageVersion), `${relative}: expected ${oldPackageVersion} or ${nextPackageVersion}.`);
+    }
   }
 }
 
