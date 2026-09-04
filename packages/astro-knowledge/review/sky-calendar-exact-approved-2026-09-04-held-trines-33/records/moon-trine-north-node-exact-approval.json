@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.moon.trine.north-node",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-04",
+  "ownerStatement": "perfect, approved; please proceed with making these live, and wiring them up to the calendar",
+  "batchId": "sky-calendar-exact-approved-2026-09-04-held-trines-33",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-04-held-trines-33/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "82053b3981f8aa95fd52bc63703d256961c9780f2aa2b01a81b5a8ea4ca124a9",
+  "summary": "Moving forward may require less disruption to your actual life than you expected.",
+  "body": "Moving forward may require less disruption to your actual life than you expected. Moon trine the North Node can make home, family, emotional needs, food, sleep, or the routines that help you function support a new direction instead of competing with it. The plan may work because the childcare is available, the move feels manageable, the schedule leaves enough time to eat and sleep, or the people closest to you can adjust with you. A future worth choosing should have some relationship to the life you have to live every day.",
+  "sourceHeldKey": "sky.aspect.moon.trine.nodes",
+  "sourceHeldPath": "packages/astro-knowledge/data/points/aspects/sky/four-body-unverified/moon-north_node-trine.json"
+}

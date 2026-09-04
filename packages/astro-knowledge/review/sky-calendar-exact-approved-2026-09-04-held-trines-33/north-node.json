@@ -1,0 +1,87 @@
+{
+  "schemaVersion": 2,
+  "family": "north-node",
+  "rowCount": 10,
+  "rows": [
+    {
+      "contentKey": "sky.aspect.jupiter.trine.north-node",
+      "summary": "A larger opportunity may arrive at the same time you are ready to make a bigger decision.",
+      "body": "A larger opportunity may arrive at the same time you are ready to make a bigger decision. Jupiter trine the North Node can make education, travel, publishing, mentorship, a new role, or access to a wider audience feel unusually relevant to what comes next. The useful opportunity is the one that changes what becomes possible after you say yes, not simply the one that sounds impressive. Make sure the time, money, and responsibilities can support the larger plan.",
+      "bodySha256": "dafca8455f7dd073e3042822f59e2d5111e83c1bd74f06c015b1fffb0d2c29c5",
+      "sourceHeldKey": "sky.aspect.jupiter.trine.nodes",
+      "sourceHeldPath": "packages/astro-knowledge/data/points/aspects/sky/four-body-unverified/jupiter-north_node-trine.json"
+    },
+    {
+      "contentKey": "sky.aspect.mars.trine.north-node",
+      "summary": "The next move may become obvious once there is something concrete you can do today.",
+      "body": "The next move may become obvious once there is something concrete you can do today. Mars trine the North Node can give useful momentum to a decision that has spent too long as an idea. Send the email, make the call, submit the application, start the work, or say what you intend to do. Momentum helps you leave the starting point. It is not proof that every direction you can move in deserves to become the plan.",
+      "bodySha256": "3d00e298b3cdb6f0b6c60bf6ecb9561879fae6fe269adf370572c5a91de5c399",
+      "sourceHeldKey": "sky.aspect.mars.trine.nodes",
+      "sourceHeldPath": "packages/astro-knowledge/data/points/aspects/sky/four-body-unverified/mars-north_node-trine.json"
+    },
+    {
+      "contentKey": "sky.aspect.mercury.trine.north-node",
+      "summary": "One conversation, message, application, introduction, or piece of information could clarify the next step.",
+      "body": "One conversation, message, application, introduction, or piece of information could clarify the next step. Mercury trine the North Node can make the useful detail easier to notice because it connects directly to a decision you already need to make. Ask the follow-up question. Read the terms. Reply while the opportunity is still current. The right information can save you from spending another week trying to decide without it.",
+      "bodySha256": "f59cb5247fe5843b9565eb34086ca554060b8e6640123b42b64329047d9918a4",
+      "sourceHeldKey": "sky.aspect.mercury.trine.nodes",
+      "sourceHeldPath": "packages/astro-knowledge/data/points/aspects/sky/four-body-unverified/mercury-north_node-trine.json"
+    },
+    {
+      "contentKey": "sky.aspect.moon.trine.north-node",
+      "summary": "Moving forward may require less disruption to your actual life than you expected.",
+      "body": "Moving forward may require less disruption to your actual life than you expected. Moon trine the North Node can make home, family, emotional needs, food, sleep, or the routines that help you function support a new direction instead of competing with it. The plan may work because the childcare is available, the move feels manageable, the schedule leaves enough time to eat and sleep, or the people closest to you can adjust with you. A future worth choosing should have some relationship to the life you have to live every day.",
+      "bodySha256": "82053b3981f8aa95fd52bc63703d256961c9780f2aa2b01a81b5a8ea4ca124a9",
+      "sourceHeldKey": "sky.aspect.moon.trine.nodes",
+      "sourceHeldPath": "packages/astro-knowledge/data/points/aspects/sky/four-body-unverified/moon-north_node-trine.json"
+    },
+    {
+      "contentKey": "sky.aspect.neptune.trine.north-node",
+      "summary": "A future you have only been able to imagine may start becoming specific enough to work toward.",
+      "body": "A future you have only been able to imagine may start becoming specific enough to work toward. Neptune trine the North Node can support creative plans, compassionate work, art, film, music, photography, or any direction that began as an idea before it had a practical shape. Write down what the project actually requires, who needs to be involved, and what the next deliverable is. Inspiration is more useful once it has somewhere to go.",
+      "bodySha256": "7929e883a3a99bf87c134bfbcb3da3c8ac453f03d6e339c1b42f3297595c09b0",
+      "sourceHeldKey": "sky.aspect.neptune.trine.nodes",
+      "sourceHeldPath": "packages/astro-knowledge/data/points/aspects/sky/four-body-unverified/neptune-north_node-trine.json"
+    },
+    {
+      "contentKey": "sky.aspect.pluto.trine.north-node",
+      "summary": "Something may become possible because you are finally willing to stop preserving a structure that has already run its course.",
+      "body": "Something may become possible because you are finally willing to stop preserving a structure that has already run its course. Pluto trine the North Node can support a major change in power, money, access, responsibility, or control when the old arrangement has become the thing preventing the next one. Close the account, renegotiate the terms, leave the role, transfer the authority, or make the decision that changes who controls what. The future does not need every part of the old structure to survive with you.",
+      "bodySha256": "91475bba3051b16e1b53e6e0c3f7f4108279d8b6b51ba51aeea336d1789419ee",
+      "sourceHeldKey": "sky.aspect.pluto.trine.nodes",
+      "sourceHeldPath": "packages/astro-knowledge/data/points/aspects/sky/four-body-unverified/north_node-pluto-trine.json"
+    },
+    {
+      "contentKey": "sky.aspect.saturn.trine.north-node",
+      "summary": "The next chapter may begin with a responsibility rather than an exciting announcement.",
+      "body": "The next chapter may begin with a responsibility rather than an exciting announcement. Saturn trine the North Node can make a deadline, commitment, contract, title, boundary, or long-term obligation useful because it gives the future plan something solid to organize around. Decide what you are willing to be responsible for and build from there. A path becomes easier to follow once the terms stop changing.",
+      "bodySha256": "7b26352eaa76c9dcfba60767649dc56dce19f2e5c920b33a84bcf4c3bb8215f8",
+      "sourceHeldKey": "sky.aspect.saturn.trine.nodes",
+      "sourceHeldPath": "packages/astro-knowledge/data/points/aspects/sky/four-body-unverified/north_node-saturn-trine.json"
+    },
+    {
+      "contentKey": "sky.aspect.sun.trine.north-node",
+      "summary": "An opportunity to be more visible may also make the next direction clearer.",
+      "body": "An opportunity to be more visible may also make the next direction clearer. Sun trine the North Node can connect recognition, leadership, authorship, or simply being willing to put your name on something with a choice about where you want to go next. Accept the introduction, present the work, take the credit, or step into the role if it moves you toward something you actually want to build. Being noticed is useful when it opens the next door. It does not have to become the reason you keep doing the work.",
+      "bodySha256": "48e4a016b9317497ab1be4f32376285430bcab0e896dc47bbc736f71d6160666",
+      "sourceHeldKey": "sky.aspect.sun.trine.nodes",
+      "sourceHeldPath": "packages/astro-knowledge/data/points/aspects/sky/four-body-unverified/north_node-sun-trine.json"
+    },
+    {
+      "contentKey": "sky.aspect.uranus.trine.north-node",
+      "summary": "An unexpected change may solve a problem you had assumed you would have to keep working around.",
+      "body": "An unexpected change may solve a problem you had assumed you would have to keep working around. Uranus trine the North Node can make a new technology, unusual introduction, schedule change, sudden opening, or different way of organizing the plan unexpectedly useful to what comes next. Try the option that gives you more freedom without throwing away what still works. A course correction can be progress without becoming a complete reinvention.",
+      "bodySha256": "59ab37ef1362390dcbb4af844cbe5ec050fb0c272372b46c03bdc1f518af29a5",
+      "sourceHeldKey": "sky.aspect.uranus.trine.nodes",
+      "sourceHeldPath": "packages/astro-knowledge/data/points/aspects/sky/four-body-unverified/north_node-uranus-trine.json"
+    },
+    {
+      "contentKey": "sky.aspect.venus.trine.north-node",
+      "summary": "A relationship, collaboration, offer, or money decision may make the next step easier to take.",
+      "body": "A relationship, collaboration, offer, or money decision may make the next step easier to take. Venus trine the North Node can bring support through another person or through a clearer sense of what is worth your time and resources now. A useful introduction could lead somewhere, a partnership may make the project possible, or saying no to the cheaper but worse option may save you from rebuilding later. Choose what makes the future easier to live with, not simply what feels pleasant today.",
+      "bodySha256": "d0b77242692a340b1eea066df1dacd1228b63828ba94561e88b461df7d9116c4",
+      "sourceHeldKey": "sky.aspect.venus.trine.nodes",
+      "sourceHeldPath": "packages/astro-knowledge/data/points/aspects/sky/four-body-unverified/north_node-venus-trine.json"
+    }
+  ]
+}

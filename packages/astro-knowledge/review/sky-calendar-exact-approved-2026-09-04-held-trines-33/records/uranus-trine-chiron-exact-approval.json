@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.uranus.trine.chiron",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-04",
+  "ownerStatement": "perfect, approved; please proceed with making these live, and wiring them up to the calendar",
+  "batchId": "sky-calendar-exact-approved-2026-09-04-held-trines-33",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-04-held-trines-33/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "998689a8e02a95a4bbd01a360ddbb26e63b4979d33f0be2328157cea847be0bb",
+  "summary": "A small change may show you that an old reaction is not as permanent as it felt.",
+  "body": "A small change may show you that an old reaction is not as permanent as it felt. Uranus trine Chiron can make experimentation useful where habit has been organized around avoiding another bad experience. Try the different route, new format, changed schedule, unfamiliar tool, or response you would not normally give. You do not have to blow up the system that protects you. Change the part that no longer needs protecting.",
+  "sourceHeldKey": "sky.aspect.uranus.trine.chiron",
+  "sourceHeldPath": "packages/astro-knowledge/data/points/aspects/sky/four-body-unverified/chiron-uranus-trine.json"
+}

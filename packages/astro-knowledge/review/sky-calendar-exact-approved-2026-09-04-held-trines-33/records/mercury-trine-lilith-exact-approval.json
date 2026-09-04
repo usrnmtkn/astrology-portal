@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.mercury.trine.lilith",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-04",
+  "ownerStatement": "perfect, approved; please proceed with making these live, and wiring them up to the calendar",
+  "batchId": "sky-calendar-exact-approved-2026-09-04-held-trines-33",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-04-held-trines-33/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "380b0258559698b2b594ba62b82b6e2eedc50225c9d89750888bba54ff523246",
+  "summary": "The conversation gets easier once somebody says the part everyone has been circling.",
+  "body": "The conversation gets easier once somebody says the part everyone has been circling. Mercury trine Lilith can make it possible to discuss the embarrassing detail, unpopular opinion, family issue, money problem, sexual boundary, or criticism that people kept trying to phrase around. Plain language removes some of the power that secrecy gave the subject. Say it clearly enough that everyone can respond to the same information.",
+  "sourceHeldKey": "sky.aspect.mercury.trine.lilith",
+  "sourceHeldPath": "packages/astro-knowledge/data/points/aspects/sky/four-body-unverified/lilith-mercury-trine.json"
+}
