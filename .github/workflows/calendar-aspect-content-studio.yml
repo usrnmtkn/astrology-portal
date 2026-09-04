@@ -11,8 +11,6 @@ on:
       - "apps/admin/src/GeneratedContentAdminDashboard.tsx"
       - "scripts/stage-calendar-aspect-content-studio-drafts.mjs"
       - "scripts/test-calendar-aspect-content-studio-drafts.mjs"
-      - "scripts/stage-held-calendar-exact-aspects.mjs"
-      - "scripts/test-held-calendar-exact-aspect-staging.mjs"
       - "tests/visual/content-dashboard-admin-user-flows.spec.ts"
       - "packages/astro-knowledge/data/sky-calendar/composed-cards-v1.json"
       - "apps/web/src/content/fallbackArchitectureV3/source-rows/sky-aspect-phrasebook-v1.json"
@@ -28,19 +26,12 @@ on:
       - "apps/admin/src/GeneratedContentAdminDashboard.tsx"
       - "scripts/stage-calendar-aspect-content-studio-drafts.mjs"
       - "scripts/test-calendar-aspect-content-studio-drafts.mjs"
-      - "scripts/stage-held-calendar-exact-aspects.mjs"
-      - "scripts/test-held-calendar-exact-aspect-staging.mjs"
       - "tests/visual/content-dashboard-admin-user-flows.spec.ts"
       - ".github/workflows/calendar-aspect-content-studio.yml"
   workflow_dispatch:
     inputs:
       seed_content_studio:
         description: "Seed the 24 composed-card rewrites as non-serving Content Studio drafts"
-        required: true
-        default: false
-        type: boolean
-      seed_held_exact_trines:
-        description: "Surface held exact trines as non-serving owner-review rows"
         required: true
         default: false
         type: boolean
@@ -62,16 +53,6 @@ jobs:
         run: node scripts/test-calendar-aspect-content-studio-drafts.mjs
       - name: Materialize safe Content Studio rows
         run: node scripts/stage-calendar-aspect-content-studio-drafts.mjs --out=/tmp/calendar-aspect-content-studio-drafts.json
-      - name: Verify held exact trine review staging
-        run: node scripts/test-held-calendar-exact-aspect-staging.mjs
-      - name: Materialize held exact trines without serving them
-        run: node scripts/stage-held-calendar-exact-aspects.mjs --aspect=trine --out=/tmp/held-calendar-exact-trines.json
-      - name: Upload held exact trine review package
-        uses: actions/upload-artifact@v6
-        with:
-          name: held-calendar-exact-trines-review
-          path: /tmp/held-calendar-exact-trines.json
-          if-no-files-found: error
 
   seed-content-studio:
     if: github.event_name == 'workflow_dispatch' && inputs.seed_content_studio
@@ -97,28 +78,3 @@ jobs:
             exit 1
           fi
           node scripts/stage-calendar-aspect-content-studio-drafts.mjs --apply --verify-remote --out=/tmp/calendar-aspect-content-studio-drafts.json
-
-  seed-held-exact-trines:
-    if: github.event_name == 'workflow_dispatch' && inputs.seed_held_exact_trines
-    needs: calendar-aspect-content-studio
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v6
-      - uses: actions/setup-node@v6
-        with:
-          node-version: 22
-      - name: Seed held exact trines into Content Studio for owner review
-        env:
-          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
-          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
-        run: |
-          if [ -z "$SUPABASE_SERVICE_ROLE_KEY" ]; then
-            echo "::error::SUPABASE_SERVICE_ROLE_KEY is not configured for this repository."
-            exit 1
-          fi
-          if [ -z "$SUPABASE_URL" ] && [ -z "$VITE_SUPABASE_URL" ]; then
-            echo "::error::Neither SUPABASE_URL nor VITE_SUPABASE_URL is configured for this repository."
-            exit 1
-          fi
-          node scripts/stage-held-calendar-exact-aspects.mjs --aspect=trine --apply --verify-remote --out=/tmp/held-calendar-exact-trines.json
