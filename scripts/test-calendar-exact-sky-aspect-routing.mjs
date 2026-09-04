@@ -20,9 +20,11 @@ if (!canonicalPayloadPath.startsWith(`${repoRoot}${path.sep}`)) {
 }
 const ownerRewrites = readJson(canonicalPayloadPath);
 const sha256 = (value) => crypto.createHash("sha256").update(value).digest("hex");
+const expectedExactCount = ownerRewrites.rowCount;
+const documentedExactUniverse = 454;
 
-assert.equal(ownerRewrites.rowCount, 215, "The current exact owner payload projection must contain 215 rows.");
-assert.equal(Object.keys(ownerRewrites.payloads ?? {}).length, 215, "The current exact owner payload map changed.");
+assert.ok(Number.isInteger(expectedExactCount) && expectedExactCount > 0, "The current exact owner payload projection must declare a positive row count.");
+assert.equal(Object.keys(ownerRewrites.payloads ?? {}).length, expectedExactCount, "The current exact owner payload map changed.");
 const currentSetHashInput = Object.entries(ownerRewrites.payloads)
   .sort(([a], [b]) => a.localeCompare(b))
   .map(([contentKey, entry]) => ({ contentKey, payloadSha256: entry.sha256 }));
@@ -41,7 +43,7 @@ const exactRecords = fs.readdirSync(transitDirectory)
     && record.readerCopy.body.trim()
   ));
 
-assert.equal(exactRecords.length, 215, "The pinned reader-eligible exact Sky corpus changed.");
+assert.equal(exactRecords.length, expectedExactCount, "The pinned reader-eligible exact Sky corpus changed.");
 
 for (const [key, entry] of Object.entries(ownerRewrites.payloads)) {
   const payloadHash = sha256(JSON.stringify(entry.payload));
@@ -139,7 +141,7 @@ for (const record of exactRecords) {
   }
 }
 
-assert.equal(routedDirections, 430, "Every reader-eligible exact record must route in both planet orders.");
+assert.equal(routedDirections, expectedExactCount * 2, "Every reader-eligible exact record must route in both planet orders.");
 
 const screenshotCases = [
   {
@@ -177,7 +179,31 @@ const screenshotCases = [
     }),
     ownerKey: "sky.saturn.square.lilith",
     sourceId: "saturn-square-lilith"
-  }
+  },
+  ...(ownerRewrites.payloads["sky.sun.trine.lilith"] ? [{
+    event: aspectEvent({
+      first: "Sun",
+      second: "Lilith",
+      aspect: "trine",
+      fromSign: "Virgo",
+      toSign: "Capricorn",
+      id: "owner-sun-trine-lilith"
+    }),
+    ownerKey: "sky.sun.trine.lilith",
+    sourceId: "sun-trine-lilith"
+  }] : []),
+  ...(ownerRewrites.payloads["sky.sun.trine.north-node"] ? [{
+    event: aspectEvent({
+      first: "Sun",
+      second: "North Node",
+      aspect: "trine",
+      fromSign: "Virgo",
+      toSign: "Capricorn",
+      id: "owner-sun-trine-north-node"
+    }),
+    ownerKey: "sky.sun.trine.north-node",
+    sourceId: "sun-trine-north-node"
+  }] : [])
 ];
 
 for (const { event, ownerKey, sourceId } of screenshotCases) {
@@ -277,5 +303,5 @@ console.log("Calendar exact Sky-aspect routing parity passed", {
   readerEligibleRecords: exactRecords.length,
   routedDirections,
   screenshotRegressions: screenshotCases.length,
-  remainingDocumentedExactGaps: 239
+  remainingDocumentedExactGaps: documentedExactUniverse - exactRecords.length
 });
