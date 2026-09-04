@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.venus.square.jupiter",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-03",
+  "ownerStatement": "can you approve the one's already done and make them live?",
+  "batchId": "sky-calendar-exact-approved-through-2026-09-03",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-03/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "536dbcef910d200d5da93d1de291e184c20a3baaeb162a12ec06db79a16a4b16",
+  "summary": "It is possible to have too much of a good thing once every extra yes starts asking for money, time, or energy you did not originally agree to give.",
+  "body": "It is possible to have too much of a good thing once every extra yes starts asking for money, time, or energy you did not originally agree to give. When Venus squares Jupiter, generosity and appetite expand together, making another upgrade, invitation, purchase, promise, or person feel easy to add because each choice looks harmless on its own. Eventually the cost shows up in the part of your life expected to absorb all that abundance. Notice when more stops making the experience better and starts making you responsible for maintaining something you no longer have room to enjoy."
+}

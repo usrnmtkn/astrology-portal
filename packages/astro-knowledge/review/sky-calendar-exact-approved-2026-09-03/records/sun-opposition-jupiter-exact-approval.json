@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.sun.opposition.jupiter",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-03",
+  "ownerStatement": "can you approve the one's already done and make them live?",
+  "batchId": "sky-calendar-exact-approved-through-2026-09-03",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-03/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "0894c15393eb641126c8e1c4057c70f246af4c59c590db62e565d1a0fdeefff4",
+  "summary": "Sometimes the life you have been asking for arrives with a workload you never pictured when you were asking for it.",
+  "body": "Sometimes the life you have been asking for arrives with a workload you never pictured when you were asking for it. When the Sun opposes Jupiter, an opportunity can expand your confidence and your options at the same time, making it easy to focus on everything that could become possible while overlooking what the bigger version will require from your calendar, budget, energy, or existing commitments. More can absolutely be better, but it still needs somewhere to fit. Choose the expansion that gives your life more room rather than the one that forces everything you already care about to absorb the cost."
+}

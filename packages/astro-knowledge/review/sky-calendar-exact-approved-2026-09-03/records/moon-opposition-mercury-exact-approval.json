@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.moon.opposition.mercury",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-03",
+  "ownerStatement": "can you approve the one's already done and make them live?",
+  "batchId": "sky-calendar-exact-approved-through-2026-09-03",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-03/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "29ffa7597f8e45b3acdcdfa6e2c12675994101b844bc1cd4d4d5822f51e4d39f",
+  "summary": "You can understand the logic of a decision and still be the person whose life became harder because of it.",
+  "body": "You can understand the logic of a decision and still be the person whose life became harder because of it. When the Moon opposes Mercury, facts, schedules, policies, and explanations can sit directly across from the emotional or practical cost nobody captured on paper. Do not dismiss the feeling simply because the reasoning makes sense. Put the missing consequence into the conversation and see if the decision still looks as clean once the human cost is included."
+}

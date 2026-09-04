@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.venus.sextile.pluto",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-03",
+  "ownerStatement": "can you approve the one's already done and make them live?",
+  "batchId": "sky-calendar-exact-approved-through-2026-09-03",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-03/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "316eea0efa49008c5eac67a5bf369aec8d4d677ed4af63726d40d98d797abdf2",
+  "summary": "There is a difference between protecting a relationship and protecting the subject neither of you wants to touch.",
+  "body": "There is a difference between protecting a relationship and protecting the subject neither of you wants to touch. When Venus sextiles Pluto, conversations about money, jealousy, loyalty, intimacy, or control can go deeper without automatically threatening the connection, which makes it easier to finally name the thing that has been changing how you relate to each other from underneath. You do not have to reopen every old wound to be honest about what is happening now. Say the part that has been sitting between you and notice what becomes possible when the relationship no longer has to organize itself around avoiding it."
+}

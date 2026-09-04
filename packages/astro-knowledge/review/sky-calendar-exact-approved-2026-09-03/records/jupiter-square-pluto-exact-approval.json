@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.jupiter.square.pluto",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-03",
+  "ownerStatement": "can you approve the one's already done and make them live?",
+  "batchId": "sky-calendar-exact-approved-through-2026-09-03",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-03/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "82e58da96e45237926851c16539242ee64c6e7d31039307889b1cf6d875470df",
+  "summary": "A bigger win can become strangely difficult to enjoy once proving how much further you can go starts mattering more than what you originally wanted the success for.",
+  "body": "A bigger win can become strangely difficult to enjoy once proving how much further you can go starts mattering more than what you originally wanted the success for. When Jupiter squares Pluto, ambition can become tangled with control, making another victory, expansion, or advantage feel necessary because backing off now looks too much like losing. The problem is not wanting more; it is reaching the point where more is being used to settle something success was never going to settle for you. Notice when growth stops serving the goal and starts serving the need to prove that nobody can stop you."
+}

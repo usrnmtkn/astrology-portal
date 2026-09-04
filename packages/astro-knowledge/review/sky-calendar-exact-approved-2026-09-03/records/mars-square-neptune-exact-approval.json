@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.mars.square.neptune",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-03",
+  "ownerStatement": "can you approve the one's already done and make them live?",
+  "batchId": "sky-calendar-exact-approved-through-2026-09-03",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-03/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "9d6b2c3f857bf7cbc4056252aa3d4198dc6d992b5b4c16d1814aa0ba54afe68e",
+  "summary": "It is easy to turn uncertainty into a fight when being angry feels more manageable than admitting you do not actually know what is going on yet.",
+  "body": "It is easy to turn uncertainty into a fight when being angry feels more manageable than admitting you do not actually know what is going on yet. When Mars squares Neptune, urgency can attach itself to assumptions, mixed signals, or an incomplete version of the problem, making action feel justified before you know where the responsibility really belongs. Your instinct that something is wrong may be accurate without your first explanation for it being accurate too. Give the facts enough time to catch up with the feeling before you spend your energy confronting the wrong person or fixing the wrong problem."
+}

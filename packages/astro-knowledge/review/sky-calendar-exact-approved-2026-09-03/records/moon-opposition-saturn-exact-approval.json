@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.moon.opposition.saturn",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-03",
+  "ownerStatement": "can you approve the one's already done and make them live?",
+  "batchId": "sky-calendar-exact-approved-through-2026-09-03",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-03/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "1ad6b1ebb79a358d520fe73a206b5dbb32ff6d52d03866f1fe6b9983ac815eaf",
+  "summary": "Needing help does not make the deadline, bill, responsibility, or hard limit disappear, but the limit does not make your need less legitimate either.",
+  "body": "Needing help does not make the deadline, bill, responsibility, or hard limit disappear, but the limit does not make your need less legitimate either. When the Moon opposes Saturn, emotional reality collides with duty and restriction, often making one person feel like their circumstances are being treated as an inconvenience. Find out what can actually be adjusted, who has the authority to adjust it, and what cannot move. Work from the real limit instead of shaming yourself for having a need in the first place."
+}

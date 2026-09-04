@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.venus.opposition.jupiter",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-03",
+  "ownerStatement": "can you approve the one's already done and make them live?",
+  "batchId": "sky-calendar-exact-approved-through-2026-09-03",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-03/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "6199042a31c1e3eec85224c2681d619afc41ed4a900e9d31d985bc065c52eb4b",
+  "summary": "Generosity stops feeling generous when you keep saying yes in the moment and resenting everything the yes requires from you later.",
+  "body": "Generosity stops feeling generous when you keep saying yes in the moment and resenting everything the yes requires from you later. When Venus opposes Jupiter, the desire to give, include, spend, celebrate, or make somebody happy can grow larger than the amount of yourself you actually wanted to offer. Wanting other people to have more does not require you to become the person who absorbs every additional cost. Give from what you can genuinely afford to share, not from the version of yourself who wants nobody to be disappointed."
+}
