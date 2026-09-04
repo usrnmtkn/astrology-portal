@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.moon.opposition.pluto",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-03",
+  "ownerStatement": "can you approve the one's already done and make them live?",
+  "batchId": "sky-calendar-exact-approved-through-2026-09-03",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-03/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "ca5a45f4c4b38b36045af1577f93e41638abf047252a57fc6c97877289a78436",
+  "summary": "If someone controls the money, housing, access, or decision you depend on, your emotional vulnerability changes the balance of the conversation.",
+  "body": "If someone controls the money, housing, access, or decision you depend on, your emotional vulnerability changes the balance of the conversation. When the Moon opposes Pluto, private needs face material power directly, which can make asking for help feel much more loaded than the request itself. Do not pretend the leverage is equal if it is not. Be clear about what you need, what the other person controls, and what alternatives exist if they refuse."
+}

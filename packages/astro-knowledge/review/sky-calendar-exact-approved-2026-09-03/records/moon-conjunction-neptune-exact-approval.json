@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.moon.conjunction.neptune",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-03",
+  "ownerStatement": "can you approve the one's already done and make them live?",
+  "batchId": "sky-calendar-exact-approved-through-2026-09-03",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-03/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "a395c945a2e10a803934cd182f7dd9950aa27ff204dd526043d4c085855e1c85",
+  "summary": "When everyone is emotional, it gets very easy to mistake the mood in the room for a reliable version of what actually happened.",
+  "body": "When everyone is emotional, it gets very easy to mistake the mood in the room for a reliable version of what actually happened. When the Moon conjuncts Neptune, feelings spread quickly and boundaries between your reaction and everyone else’s become harder to track. Compassion may be genuine, but so can confusion. Give yourself enough time to separate what you know from what you absorbed before making a decision based on an atmosphere that may change by tomorrow."
+}

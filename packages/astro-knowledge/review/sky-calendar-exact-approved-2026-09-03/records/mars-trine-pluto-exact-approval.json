@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.mars.trine.pluto",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-03",
+  "ownerStatement": "can you approve the one's already done and make them live?",
+  "batchId": "sky-calendar-exact-approved-through-2026-09-03",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-03/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "a895bdb8487a728b7c633240c9b3b4ceed90543ef16848ea135a9e69cfe68a9a",
+  "summary": "If you already know who can make the decision, continuing to argue with people who cannot change the outcome only burns through time and energy you could be using more strategically.",
+  "body": "If you already know who can make the decision, continuing to argue with people who cannot change the outcome only burns through time and energy you could be using more strategically. When Mars trines Pluto, focused action has more leverage because you can see where the actual authority, resource, approval, or pressure point sits. This is less about pushing harder and more about putting your effort where it can produce a consequence. Take the strongest version of your case to the person who can act on it, and stop wasting your breath on conversations that cannot move the situation."
+}

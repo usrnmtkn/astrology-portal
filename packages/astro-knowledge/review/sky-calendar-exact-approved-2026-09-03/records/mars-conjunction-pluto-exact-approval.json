@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.mars.conjunction.pluto",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-03",
+  "ownerStatement": "can you approve the one's already done and make them live?",
+  "batchId": "sky-calendar-exact-approved-through-2026-09-03",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-03/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "742a248749b8a27222267fcb735dbc2954d871fcfc657bcaab324a6a38506b07",
+  "summary": "When a routine discussion turns into a high-stakes power struggle, brute force will only escalate a war you cannot afford to win.",
+  "body": "When a routine discussion turns into a high-stakes power struggle, brute force will only escalate a war you cannot afford to win. When Mars conjuncts Pluto, the urge to dominate the room overrides common sense, tying your ego directly to the outcome. Figure out what you actually need from this dynamic before you burn all your leverage on proving a point. Protect your real priorities, separate your pride from the strategy, and choose your battles based on what matters tomorrow, not who wins the argument today."
+}

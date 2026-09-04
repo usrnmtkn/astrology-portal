@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.saturn.trine.uranus",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-03",
+  "ownerStatement": "can you approve the one's already done and make them live?",
+  "batchId": "sky-calendar-exact-approved-through-2026-09-03",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-03/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "5e1187bf99c3c378222b08bb111e55d89dedd81187080967b53a7193968ed6d0",
+  "summary": "If a change is making your life easier, stop rushing back to the old way just because it is more familiar.",
+  "body": "If a change is making your life easier, stop rushing back to the old way just because it is more familiar. When Saturn trines Uranus, an unconventional fix can settle into a reliable, steady structure instead of fading away as a temporary experiment. Keep the habit or tool that saves time, cuts friction, or frees up your energy. You do not need to resurrect an old restriction just to prove you can live with it."
+}

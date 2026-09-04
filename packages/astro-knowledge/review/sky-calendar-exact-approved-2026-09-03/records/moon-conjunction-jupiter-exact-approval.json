@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.moon.conjunction.jupiter",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-03",
+  "ownerStatement": "can you approve the one's already done and make them live?",
+  "batchId": "sky-calendar-exact-approved-through-2026-09-03",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-03/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "464592361eed28d49db6f7b196f67b62bc8101a08e4702a54d38fa6b553d1872",
+  "summary": "When you are feeling a lot, more attention, advice, help, or generosity can become overwhelming surprisingly fast.",
+  "body": "When you are feeling a lot, more attention, advice, help, or generosity can become overwhelming surprisingly fast. When the Moon conjuncts Jupiter, emotions expand along with everyone’s desire to respond, which can turn one need into a flood of messages, visitors, opinions, spending, or promises. More support is not automatically better support. Decide what would actually make the situation easier before everyone else decides for you."
+}

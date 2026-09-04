@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.jupiter.conjunction.uranus",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-03",
+  "ownerStatement": "can you approve the one's already done and make them live?",
+  "batchId": "sky-calendar-exact-approved-through-2026-09-03",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-03/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "4a30ccf10e2bbade94bf2054ebd98717243628769e56adc4c804c72ab22102e2",
+  "summary": "A sudden opening can make your old life feel too small before you have had enough time to understand what the new one would actually require.",
+  "body": "A sudden opening can make your old life feel too small before you have had enough time to understand what the new one would actually require. When Jupiter conjuncts Uranus, possibility expands quickly, making an unexpected offer, breakthrough, idea, or change of direction feel capable of freeing you from limitations you had already started resenting. The opening may be exactly as valuable as it feels, but excitement can make the disruption around it look cheaper than it is. Give yourself permission to take the chance without pretending you know everything the chance will change."
+}

@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.mars.square.uranus",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-03",
+  "ownerStatement": "can you approve the one's already done and make them live?",
+  "batchId": "sky-calendar-exact-approved-through-2026-09-03",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-03/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "e64f04cb70fd1cb078de6cdf15bc9980a67e05e0de80fa6e86c5a27f993f2a83",
+  "summary": "Impatience will tempt you to blow up a working system just because progress feels too slow.",
+  "body": "Impatience will tempt you to blow up a working system just because progress feels too slow. When Mars squares Uranus, sudden, erratic restlessness can make every disruption look like a breakthrough. Sudden changes rarely fix structural flaws by themselves. Channel that adrenaline into a controlled experiment rather than setting fire to the routine that is keeping your life stable."
+}

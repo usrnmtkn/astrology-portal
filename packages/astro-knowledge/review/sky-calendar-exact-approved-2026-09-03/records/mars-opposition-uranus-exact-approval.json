@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.mars.opposition.uranus",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-03",
+  "ownerStatement": "can you approve the one's already done and make them live?",
+  "batchId": "sky-calendar-exact-approved-through-2026-09-03",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-03/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "9b9d3aa131b66433993c3e35b244eed51ea38baf0515b1573af6a52003b72caf",
+  "summary": "The deep desire to blow up a frustrating situation is rarely the same as having a viable plan for what happens on the other side.",
+  "body": "The deep desire to blow up a frustrating situation is rarely the same as having a viable plan for what happens on the other side. When Mars opposes Uranus, long-simmering burnout makes an abrupt exit look like freedom, risking a messy fallout that creates more problems than it solves. You may genuinely need to leave, but stage your exit with precision. Separate the immediate relief you crave from the infrastructure you still need to survive next week."
+}

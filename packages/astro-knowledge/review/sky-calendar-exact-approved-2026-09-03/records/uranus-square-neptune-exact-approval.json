@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.uranus.square.neptune",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-03",
+  "ownerStatement": "can you approve the one's already done and make them live?",
+  "batchId": "sky-calendar-exact-approved-through-2026-09-03",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-03/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "7bda6f8658e979b4f6b919345790bb729bfce79f68fc3835643519a199a6f6d8",
+  "summary": "A new solution can become especially seductive when you are tired enough of the old problem to want the first alternative to work.",
+  "body": "A new solution can become especially seductive when you are tired enough of the old problem to want the first alternative to work. When Uranus squares Neptune, excitement about change can combine with wishful thinking, making an untested tool, idea, relationship, or escape route feel more reliable than the evidence supports. You do not need to return to what was failing just because the new option has flaws. Give yourself enough time to find out what the alternative actually does before your relief at having another choice starts making the decision for you."
+}

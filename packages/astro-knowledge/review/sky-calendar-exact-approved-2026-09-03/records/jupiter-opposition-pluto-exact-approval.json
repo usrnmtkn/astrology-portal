@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.jupiter.opposition.pluto",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-03",
+  "ownerStatement": "can you approve the one's already done and make them live?",
+  "batchId": "sky-calendar-exact-approved-through-2026-09-03",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-03/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "ad28fbf209f5f95f96d47b14ca43e0eadbf7025c54786a0bc7c0ebba6ac0c442",
+  "summary": "An opportunity can stop feeling like an opportunity once accepting it means entering a power struggle over who gets to control what happens next.",
+  "body": "An opportunity can stop feeling like an opportunity once accepting it means entering a power struggle over who gets to control what happens next. When Jupiter opposes Pluto, growth and leverage pull against each other, making success, money, recognition, or increased access come with a sharper awareness of the person or institution capable of setting the terms. You may genuinely benefit from the arrangement and still dislike how dependent it makes you. Ask yourself how much growth is worth if keeping it requires surrendering more control than you intended to give away."
+}

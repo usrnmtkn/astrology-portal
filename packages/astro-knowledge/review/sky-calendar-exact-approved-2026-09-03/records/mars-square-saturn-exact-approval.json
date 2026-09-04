@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.mars.square.saturn",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-03",
+  "ownerStatement": "can you approve the one's already done and make them live?",
+  "batchId": "sky-calendar-exact-approved-through-2026-09-03",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-03/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "5ea5a2d11b87a32df376673cff67ca8b2f00489b622af47d42e1d850666a626d",
+  "summary": "Hitting a brick wall when you are ready to make a move feels like a personal punishment, but fighting the structure will only burn you out.",
+  "body": "Hitting a brick wall when you are ready to make a move feels like a personal punishment, but fighting the structure will only burn you out. When Mars squares Saturn, your immediate drive runs straight into hard limits, rules, and restrictions that will not budge. Forcing the issue will not make the wall disappear. Step back, respect the boundaries currently in place, and find the legal, sustainable way around the obstacle instead of breaking yourself against it."
+}

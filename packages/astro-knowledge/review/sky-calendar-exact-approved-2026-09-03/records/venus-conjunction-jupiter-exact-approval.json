@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.venus.conjunction.jupiter",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-03",
+  "ownerStatement": "can you approve the one's already done and make them live?",
+  "batchId": "sky-calendar-exact-approved-through-2026-09-03",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-03/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "e707227363157ff471969bc08235860dda72caa44572d98ef570a17fe6742eb5",
+  "summary": "It becomes very easy to say yes to more when everything already feels good and you want the good feeling to keep growing.",
+  "body": "It becomes very easy to say yes to more when everything already feels good and you want the good feeling to keep growing. When Venus conjuncts Jupiter, generosity, desire, spending, affection, and optimism can amplify each other until another promise or indulgence feels less consequential than it actually is. There is nothing wrong with wanting more from a moment that is going well, but abundance can become excess before it feels like a problem. Enjoy what is expanding without committing more time, money, or energy than you will be happy to give once the mood changes."
+}

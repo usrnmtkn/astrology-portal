@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.neptune.square.pluto",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-03",
+  "ownerStatement": "can you approve the one's already done and make them live?",
+  "batchId": "sky-calendar-exact-approved-through-2026-09-03",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-03/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "d892f4cc12863ad7719a0302bba7ebbaee39e3318bb11398c8cef394d162c635",
+  "summary": "If you keep defending something because accepting the harder truth would force you to rethink what you believed about it, that discomfort is worth paying attention to.",
+  "body": "If you keep defending something because accepting the harder truth would force you to rethink what you believed about it, that discomfort is worth paying attention to. When Neptune squares Pluto, hope, fear, loyalty, or idealism can make an unequal dynamic easier to justify because seeing the power clearly threatens the story you would rather keep. You do not have to distrust everything you care about. Notice which question you keep avoiding, who benefits from the current arrangement, and what becomes harder to excuse once you stop protecting the version you wanted to believe."
+}
