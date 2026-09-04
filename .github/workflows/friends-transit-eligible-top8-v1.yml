@@ -87,6 +87,25 @@ jobs:
           else if (!groupsBlock.includes(newDeps)) throw new Error('Friends personal-transit dependency tail was not found.');
           panel = `${panel.slice(0, groupsStart)}${groupsBlock}${panel.slice(groupsEnd)}`;
 
+          const directOpenOld = 'const transit = selectedFriendTransits.find((candidate) => candidate.id === transitId);';
+          const directOpenNew = 'const transit = selectedFriendEligibleTransits.find((candidate) => candidate.id === transitId);';
+          if (panel.includes(directOpenOld)) panel = panel.replace(directOpenOld, directOpenNew);
+          else if (!panel.includes(directOpenNew)) throw new Error('Friends personal-transit click lookup was not found.');
+
+          const routedOpenOld = 'const transit = selectedFriendTransits.find((candidate) => (\n      normalizeContentIdPart(candidate.id) === routedTransitId\n    ));';
+          const routedOpenNew = 'const transit = selectedFriendEligibleTransits.find((candidate) => (\n      normalizeContentIdPart(candidate.id) === routedTransitId\n    ));';
+          if (panel.includes(routedOpenOld)) panel = panel.replace(routedOpenOld, routedOpenNew);
+          else if (!panel.includes(routedOpenNew)) throw new Error('Friends routed personal-transit lookup was not found.');
+
+          const wheelOld = 'transitWheelAspectLines(currentSky, selectedFriendReadyNatalChart, selectedFriendTransits)';
+          const wheelNew = 'transitWheelAspectLines(currentSky, selectedFriendReadyNatalChart, selectedFriendEligibleTransits)';
+          if (panel.includes(wheelOld)) panel = panel.replace(wheelOld, wheelNew);
+          else if (!panel.includes(wheelNew)) throw new Error('Friends transit-wheel selection was not found.');
+          const wheelDepsOld = '[currentSky, friendProfileWork.transits, selectedChart, selectedChartIsEvent, selectedFriendReadyNatalChart, selectedFriendTransits]);';
+          const wheelDepsNew = '[currentSky, friendProfileWork.transits, selectedChart, selectedChartIsEvent, selectedFriendEligibleTransits, selectedFriendReadyNatalChart]);';
+          if (panel.includes(wheelDepsOld)) panel = panel.replace(wheelDepsOld, wheelDepsNew);
+          else if (!panel.includes(wheelDepsNew)) throw new Error('Friends transit-wheel dependency list was not found.');
+
           fs.writeFileSync(panelPath, panel);
 
           const packagePath = 'package.json';
@@ -103,6 +122,7 @@ jobs:
         run: |
           node --experimental-strip-types scripts/test-friends-transit-eligible-cap.mts
           node scripts/test-friends-live-detail-refresh.mjs
+          node --import tsx scripts/test-friends-transit-detail-provenance-gate.mjs
           git diff --check
       - name: Run full content gate
         run: npm run test:content
