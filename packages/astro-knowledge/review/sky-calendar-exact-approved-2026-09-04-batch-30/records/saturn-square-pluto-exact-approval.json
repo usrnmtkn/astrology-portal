@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.saturn.square.pluto",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-04",
+  "ownerStatement": "please commit and make live the updated aspects",
+  "batchId": "sky-calendar-exact-approved-2026-09-04-batch-30",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-04-batch-30/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "1457c4c8140ca4955791352506c456179b57934b9ed3f4b9083086f2bc627a6e",
+  "summary": "When every attempt to question a rule brings a harsher consequence, a disagreement about limits can quickly become a fight over who gets to decide without being challenged.",
+  "body": "When every attempt to question a rule brings a harsher consequence, a disagreement about limits can quickly become a fight over who gets to decide without being challenged. When Saturn squares Pluto, authority and concentrated power press against each other, making money, access, procedure, or punishment increasingly useful as leverage. Once escalation becomes the answer to every objection, the original problem can disappear underneath the struggle for control. A system that cannot tolerate an appeal is telling you something important about where the power actually sits."
+}

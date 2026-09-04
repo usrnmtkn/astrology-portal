@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.moon.trine.saturn",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-04",
+  "ownerStatement": "please commit and make live the updated aspects",
+  "batchId": "sky-calendar-exact-approved-2026-09-04-batch-30",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-04-batch-30/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "b66d1a02e559ab731f97c618f34aecfa6b26ec44e30b40da4b019c87587165c7",
+  "summary": "A little structural support can make an emotional weight feel infinitely more manageable when the sheer lack of certainty is the part wearing you down.",
+  "body": "A little structural support can make an emotional weight feel infinitely more manageable when the sheer lack of certainty is the part wearing you down. When the Moon trines Saturn, feelings and responsibility reinforce each other, making a clear plan, boundary, schedule, or commitment feel deeply reassuring rather than restrictive. You cannot change how you feel on command, but establishing what happens next can keep the exact same worry from cycling through your mind every few hours. Real stability begins with deciding what you can actually lean on."
+}

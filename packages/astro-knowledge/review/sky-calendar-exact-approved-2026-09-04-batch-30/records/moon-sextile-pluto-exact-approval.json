@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.moon.sextile.pluto",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-04",
+  "ownerStatement": "please commit and make live the updated aspects",
+  "batchId": "sky-calendar-exact-approved-2026-09-04-batch-30",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-04-batch-30/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "7d39bd0c6c2565aebe15e1c179c3f18c43cf7bc00488336e02d46f625a18311d",
+  "summary": "A reaction that looks wildly disproportionate to the moment usually snaps into focus the second you trace it back to its root.",
+  "body": "A reaction that looks wildly disproportionate to the moment usually snaps into focus the second you trace it back to its root. When the Moon sextiles Pluto, emotional honesty cuts through the fog, allowing you to see the older fear, resentment, or attachment giving a minor friction point so much weight. You don't need to turn every revelation into an excavation project. Spot the underlying pattern so you can stop treating the surface irritation like it's the entire crisis."
+}

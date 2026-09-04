@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.moon.sextile.saturn",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-04",
+  "ownerStatement": "please commit and make live the updated aspects",
+  "batchId": "sky-calendar-exact-approved-2026-09-04-batch-30",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-04-batch-30/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "86a6d7f8651489d92b26777d261fd2eaea758c8d7f4d28b79cb73b8c7ddab545",
+  "summary": "Support feels different when somebody takes responsibility for something that was weighing on you instead of leaving you with another promise to keep track of.",
+  "body": "Support feels different when somebody takes responsibility for something that was weighing on you instead of leaving you with another promise to keep track of. When the Moon sextiles Saturn, care and responsibility work together, making reliability, boundaries, and follow-through emotionally reassuring in their own right. This is the kind of support that gives you less to carry, not another person to manage."
+}
