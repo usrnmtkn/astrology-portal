@@ -58,6 +58,8 @@ function deinflectThirdPersonVerb(word) {
 function convertExplicitNameSubjects(value) {
   return value
     .replace(/\{\{Name\}\}[’']s/gu, "your")
+    // Only the explicit {{Name}} subject needs third-person verb agreement
+    // removed. Pronoun-based Friends sentences already use plural/base verbs.
     .replace(/\{\{Name\}\}\s+([A-Za-z]+)\b/gu, (_match, verb) => `you ${deinflectThirdPersonVerb(verb)}`)
     .replace(/\{\{Name\}\}/gu, "you");
 }
@@ -86,31 +88,17 @@ function convertFriendPronouns(value) {
     .replace(/\bthey\b/gu, "you");
 }
 
-function normalizeYouGrammar(value) {
-  let next = value
-    .replace(/\byou is\b/giu, (match) => /^[A-Z]/u.test(match) ? "You are" : "you are")
-    .replace(/\byou has\b/giu, (match) => /^[A-Z]/u.test(match) ? "You have" : "you have")
-    .replace(/\byou does\b/giu, (match) => /^[A-Z]/u.test(match) ? "You do" : "you do")
-    .replace(/\byou was\b/giu, (match) => /^[A-Z]/u.test(match) ? "You were" : "you were");
-
-  // The independent Friends corpus frequently uses {{Name}} as the grammatical
-  // subject. After the name becomes "you", remove third-person singular verb
-  // agreement only where "you" is immediately the subject.
-  next = next.replace(/\b([Yy]ou)\s+([A-Za-z]+s)\b/gu, (match, subject, verb) => {
-    const unchanged = new Set([
-      "across", "always", "as", "besides", "business", "class", "less", "news", "process", "progress", "series", "stress", "this"
-    ]);
-    if (unchanged.has(verb.toLowerCase())) return match;
-    return `${subject} ${deinflectThirdPersonVerb(verb)}`;
-  });
-
-  return next
+function normalizeSentenceStarts(value) {
+  return value
     .replace(/(^|[.!?]\s+|\n\n)you\b/gu, (_match, prefix) => `${prefix}You`)
     .replace(/(^|[.!?]\s+|\n\n)your\b/gu, (_match, prefix) => `${prefix}Your`);
 }
 
 function adaptFriendBodyToYou(bodyThey) {
-  return normalizeYouGrammar(convertFriendPronouns(convertExplicitNameSubjects(bodyThey)));
+  // Do not globally rewrite "you is/has/does/was" or "you <verb>s". In a
+  // phrase such as "the person in front of you is...", "you" is an object,
+  // not the subject. Explicit {{Name}} subjects are handled before pronouns.
+  return normalizeSentenceStarts(convertFriendPronouns(convertExplicitNameSubjects(bodyThey)));
 }
 
 function sentences(value) {
@@ -120,7 +108,7 @@ function sentences(value) {
     .filter(Boolean);
 }
 
-const thirdPartyAntecedent = /\b(?:everyone|someone|anyone|people|coworkers|colleagues|managers|clients|parents|friends|others|both people|either person|the other person|another person|a person|the person|the team|family members|decision-makers|decision makers|customers|audience members|neighbors|neighbours)\b/iu;
+const thirdPartyAntecedent = /\b(?:everyone|someone|anyone|nobody|people|coworkers|colleagues|managers|clients|parents|friends|others|both people|either person|the other person|another person|a person|the person|the team|family members|decision-makers|decision makers|customers|audience members|neighbors|neighbours)\b/iu;
 const friendPronoun = /\b(?:they|their|them|themselves|themself)\b/iu;
 
 function sourceCoreferenceFlags(bodyThey) {
@@ -160,7 +148,7 @@ for (const record of friendRecords) {
   const placeholdersThey = [...record.body_they.matchAll(/\{\{[^}]+\}\}/gu)].map((match) => match[0]).sort();
   const placeholdersYou = [...proposedBodyYou.matchAll(/\{\{[^}]+\}\}/gu)].map((match) => match[0]).sort();
   const residualFriendTokens = [...proposedBodyYou.matchAll(/\{\{Name\}\}|\b(?:they|their|them|themselves|themself)\b/giu)].map((match) => match[0]);
-  const badYouAgreement = [...proposedBodyYou.matchAll(/\byou\s+(?:is|has|does|was)\b/giu)].map((match) => match[0]);
+  const badYouAgreement = [...proposedBodyYou.matchAll(/(?:^|[.!?]\s+|\n\n)You\s+(?:is|has|does|was)\b/gu)].map((match) => match.trim());
   const coreference = sourceCoreferenceFlags(record.body_they);
 
   if (residualFriendTokens.length || badYouAgreement.length || coreference.length || JSON.stringify(placeholdersThey.filter((token) => token !== "{{Name}}")) !== JSON.stringify(placeholdersYou)) {
