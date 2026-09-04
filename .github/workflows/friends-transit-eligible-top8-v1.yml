@@ -1,0 +1,129 @@
+name: Friends transit eligible top8 v1
+
+on:
+  push:
+    branches:
+      - chatgpt/friends-transit-eligible-top8-v1
+
+permissions:
+  contents: write
+
+jobs:
+  repair:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: chatgpt/friends-transit-eligible-top8-v1
+          fetch-depth: 0
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+      - name: Install dependencies
+        run: npm ci --no-audit --no-fund
+      - name: Apply eligible-before-cap repair
+        run: |
+          node --input-type=module <<'NODE'
+          import fs from 'node:fs';
+
+          const panelPath = 'apps/web/src/features/friends/ManualChartsPanel.tsx';
+          let panel = fs.readFileSync(panelPath, 'utf8');
+
+          const importMarker = 'import { friendDetailHasReaderFacingContent } from "./friendDetailAvailability";';
+          const eligibilityImport = 'import { selectEligibleFriendTransits } from "./friendTransitEligibility";';
+          if (!panel.includes(eligibilityImport)) {
+            if (!panel.includes(importMarker)) throw new Error('Friends detail availability import marker not found.');
+            panel = panel.replace(importMarker, `${importMarker}\n${eligibilityImport}`);
+          }
+
+          const oldDeclaration = 'const selectedFriendTransits = useMemo(() => (';
+          const candidateDeclaration = 'const selectedFriendTransitCandidates = useMemo(() => (';
+          if (panel.includes(oldDeclaration)) {
+            panel = panel.replace(oldDeclaration, candidateDeclaration);
+          } else if (!panel.includes(candidateDeclaration)) {
+            throw new Error('Ranked Friends transit declaration not found.');
+          }
+
+          const candidateStart = panel.indexOf(candidateDeclaration);
+          const dailyMarker = '  const selectedFriendDailyForecast = useMemo(() => (';
+          const dailyIndex = panel.indexOf(dailyMarker, candidateStart);
+          if (candidateStart < 0 || dailyIndex < 0) throw new Error('Could not isolate ranked Friends transit block.');
+          let candidateBlock = panel.slice(candidateStart, dailyIndex);
+          const capToken = ').slice(0, 8)';
+          const capCount = candidateBlock.split(capToken).length - 1;
+          if (capCount === 1) {
+            candidateBlock = candidateBlock.replace(capToken, ')');
+          } else if (capCount !== 0) {
+            throw new Error(`Expected zero or one pre-eligibility cap, found ${capCount}.`);
+          }
+          const cappedSelection = '  const selectedFriendTransits = useMemo(\n    () => selectedFriendTransitCandidates.slice(0, 8),\n    [selectedFriendTransitCandidates]\n  );\n';
+          if (!candidateBlock.includes('const selectedFriendTransits = useMemo(')) {
+            candidateBlock = `${candidateBlock}${cappedSelection}`;
+          }
+          panel = `${panel.slice(0, candidateStart)}${candidateBlock}${panel.slice(dailyIndex)}`;
+
+          const groupsMarker = '  const selectedFriendPersonalTransitGroups = useMemo<FriendPersonalTransitGroup[]>(() => {';
+          const eligibleBlock = `  const selectedFriendEligibleTransits = useMemo(() => (\n    currentSky && selectedChart\n      ? selectEligibleFriendTransits(\n          selectedFriendTransitCandidates,\n          (transit) => {\n            const normalized = normalizePersonalTransitSurface(\n              transit,\n              currentSky.generatedAt,\n              selectedChart.displayName\n            );\n            return acceptedOwnerApprovedTransitSections(\n              normalized.sections,\n              fallbackV3ApprovalLevelForContentKey\n            ).length > 0;\n          },\n          8\n        )\n      : []\n  ), [\n    currentSky,\n    fallbackArchitectureV3Version,\n    selectedChart,\n    selectedFriendTransitCandidates\n  ]);\n`;
+          if (!panel.includes('const selectedFriendEligibleTransits = useMemo')) {
+            if (!panel.includes(groupsMarker)) throw new Error('Friends personal-transit groups marker not found.');
+            panel = panel.replace(groupsMarker, `${eligibleBlock}${groupsMarker}`);
+          }
+
+          const groupsStart = panel.indexOf(groupsMarker);
+          const groupsEndMarker = '  const selectedFriendPlacementRows = useMemo(() => {';
+          const groupsEnd = panel.indexOf(groupsEndMarker, groupsStart);
+          if (groupsStart < 0 || groupsEnd < 0) throw new Error('Could not isolate Friends personal-transit groups block.');
+          let groupsBlock = panel.slice(groupsStart, groupsEnd);
+          const oldFilter = 'const transits = selectedFriendTransits.filter((transit) => transit.term === durationClass);';
+          const newFilter = 'const transits = selectedFriendEligibleTransits.filter((transit) => transit.term === durationClass);';
+          if (groupsBlock.includes(oldFilter)) groupsBlock = groupsBlock.replace(oldFilter, newFilter);
+          else if (!groupsBlock.includes(newFilter)) throw new Error('Friends duration filter was not found.');
+          const oldDeps = 'relationshipGeneratedContent, selectedChart, selectedFriendTransits]);';
+          const newDeps = 'relationshipGeneratedContent, selectedChart, selectedFriendEligibleTransits]);';
+          if (groupsBlock.includes(oldDeps)) groupsBlock = groupsBlock.replace(oldDeps, newDeps);
+          else if (!groupsBlock.includes(newDeps)) throw new Error('Friends personal-transit dependency tail was not found.');
+          panel = `${panel.slice(0, groupsStart)}${groupsBlock}${panel.slice(groupsEnd)}`;
+
+          fs.writeFileSync(panelPath, panel);
+
+          const packagePath = 'package.json';
+          let pkg = fs.readFileSync(packagePath, 'utf8');
+          const existingTest = 'node --experimental-strip-types scripts/test-friends-transit-eligible-cap.mts && ';
+          if (!pkg.includes(existingTest)) {
+            const testMarker = 'node --import tsx scripts/test-friends-transit-detail-provenance-gate.mjs && ';
+            if (!pkg.includes(testMarker)) throw new Error('test:content Friends provenance marker not found.');
+            pkg = pkg.replace(testMarker, `${existingTest}${testMarker}`);
+            fs.writeFileSync(packagePath, pkg);
+          }
+          NODE
+      - name: Run focused Friends eligibility regression
+        run: |
+          node --experimental-strip-types scripts/test-friends-transit-eligible-cap.mts
+          node scripts/test-friends-live-detail-refresh.mjs
+          git diff --check
+      - name: Run full content gate
+        run: npm run test:content
+      - name: Run repository typecheck
+        run: npm run typecheck
+      - name: Build web application
+        run: npm run build:web
+      - name: Review repair diff
+        run: |
+          git status --short
+          git diff --stat
+          git diff --check
+      - name: Commit eligible-before-cap repair
+        shell: bash
+        run: |
+          if git diff --quiet; then
+            echo "No repair changes to commit."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "fix(friends): cap personal transits after eligibility"
+          git push origin HEAD:chatgpt/friends-transit-eligible-top8-v1
