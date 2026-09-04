@@ -1,0 +1,99 @@
+name: Release final 51 approved exact Calendar aspects
+
+on:
+  push:
+    branches:
+      - "owner/release-calendar-exact-approved-20260904-51"
+    paths:
+      - "scripts/release-calendar-exact-approved-20260904-51.mjs"
+      - "scripts/test-calendar-exact-approved-20260904-51.mjs"
+      - "scripts/test-calendar-exact-sky-aspect-routing.mjs"
+      - "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-04-batch-51/owner-ruling.json"
+      - "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-04-batch-51/mercury-a.json"
+      - "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-04-batch-51/mercury-b.json"
+      - "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-04-batch-51/saturn.json"
+      - "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-04-batch-51/sun-a.json"
+      - "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-04-batch-51/sun-b.json"
+      - "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-04-batch-51/venus.json"
+      - ".github/workflows/release-calendar-exact-approved-20260904-51.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Install dependencies
+        run: npm ci
+      - name: Apply hash-bound owner-approved exact Calendar copy
+        run: node scripts/release-calendar-exact-approved-20260904-51.mjs
+      - name: Update released Sun conjunct Mercury visual expectation
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          path = Path("tests/visual/client-facing-user-flows.spec.ts")
+          text = path.read_text()
+          old = 'await expect(article).toContainText("A closed-door talk exposes who has been pulling the strings.");'
+          new = 'await expect(article).toContainText("Your thoughts can feel unusually personal when saying what you mean also feels like saying who you are.");'
+          if old in text:
+              if text.count(old) != 1:
+                  raise SystemExit(f"Expected exactly one stale assertion, found {text.count(old)}")
+              path.write_text(text.replace(old, new))
+          elif text.count(new) != 1:
+              raise SystemExit("Released Sun conjunct Mercury assertion is missing or duplicated")
+          PY
+      - name: Build astro-knowledge workspace from released source
+        run: npm run build -w @tldr/astro-knowledge
+      - name: Regenerate governed bundles and writing evidence
+        run: |
+          node scripts/generate-fallback-package-manifest.mjs
+          node scripts/build-knowledge-index.mjs --write
+          node scripts/build-phrase-index.mjs --write
+          node scripts/build-production-sky-kernel-comparison.mjs --write
+      - name: Verify bounded owner authorization
+        run: node scripts/test-bounded-owner-batch-approval-governance.mjs
+      - name: Verify exact 51-row release boundary
+        run: node scripts/test-calendar-exact-approved-20260904-51.mjs
+      - name: Verify Calendar exact routing parity
+        env:
+          SKY_CALENDAR_OWNER_PAYLOADS_PATH: packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-04-batch-51/current-owner-payloads.json
+        run: node scripts/test-calendar-exact-sky-aspect-routing.mjs
+      - name: Verify generated fallback manifest
+        run: node scripts/generate-fallback-package-manifest.mjs --check
+      - name: Verify generated knowledge index
+        run: node scripts/build-knowledge-index.mjs --check
+      - name: Verify generated phrase index
+        run: node scripts/build-phrase-index.mjs --check
+      - name: Verify production Sky kernel comparison
+        run: node scripts/build-production-sky-kernel-comparison.mjs
+      - name: Verify whitespace integrity
+        run: git diff --check
+      - name: Commit controlled serving release
+        shell: bash
+        run: |
+          if git diff --quiet; then
+            echo "No release changes to commit."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add packages/astro-knowledge/data/transits \
+            packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-04-batch-51 \
+            apps/web/src/content/fallbackArchitectureV3/source-rows/sky-aspect-phrasebook-v1.json \
+            apps/web/src/content/fallbackArchitectureV3/bundled-*.json \
+            apps/web/src/content/fallbackArchitectureV3/approved-serving-*.json \
+            packages/astro-knowledge/generated/knowledge-index.json \
+            packages/astro-knowledge/generated/phrase-index.json \
+            packages/astro-knowledge/review/production-sky-kernel-comparison-v1/comparison.json \
+            tests/visual/client-facing-user-flows.spec.ts
+          git commit -m "release(calendar): serve final 51 approved exact aspects"
+          git push origin HEAD
