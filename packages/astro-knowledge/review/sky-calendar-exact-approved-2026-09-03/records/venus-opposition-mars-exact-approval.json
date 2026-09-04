@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.venus.opposition.mars",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-03",
+  "ownerStatement": "can you approve the one's already done and make them live?",
+  "batchId": "sky-calendar-exact-approved-through-2026-09-03",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-03/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "ec54be41495c67f01a95ab26370c5bac1d22b9fb86181aee2dbf413ee3084200",
+  "summary": "Wanting each other does not automatically mean you want the same thing from the connection.",
+  "body": "Wanting each other does not automatically mean you want the same thing from the connection. When Venus opposes Mars, attraction and friction can intensify each other, making differences around pace, commitment, boundaries, money, or expectations feel even more charged because the chemistry is still there. The attraction may be obvious while the agreement is not. Let both things be true, and stop treating desire as evidence that one person should eventually give in."
+}

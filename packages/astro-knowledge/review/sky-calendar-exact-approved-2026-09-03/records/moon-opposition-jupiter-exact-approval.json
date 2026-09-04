@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.moon.opposition.jupiter",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-03",
+  "ownerStatement": "can you approve the one's already done and make them live?",
+  "batchId": "sky-calendar-exact-approved-through-2026-09-03",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-03/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "8d6e1a742d5fa35e4c6fd24c8d4dada5a2455cbe86bf017b81c80286a04e78e0",
+  "summary": "Your feelings can make one good thing look enormous and one disappointment look like proof that everything is going wrong.",
+  "body": "Your feelings can make one good thing look enormous and one disappointment look like proof that everything is going wrong. When the Moon opposes Jupiter, emotional reactions get amplified, making it easy to overpromise, overspend, overhelp, or make a temporary mood carry far more meaning than it deserves. Give the feeling room without letting it make every decision. Check what has actually changed before you rewrite the whole story around today’s high or low."
+}

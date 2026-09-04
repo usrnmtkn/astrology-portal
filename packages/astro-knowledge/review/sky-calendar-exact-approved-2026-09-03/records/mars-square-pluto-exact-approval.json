@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.mars.square.pluto",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-03",
+  "ownerStatement": "can you approve the one's already done and make them live?",
+  "batchId": "sky-calendar-exact-approved-through-2026-09-03",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-03/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "a3a35de45ca3f37bda9205f1075ddda4a2893cb1a43ecee0644f68930f4b8858",
+  "summary": "A power struggle turns destructive the second your ego demands that you win the argument at all costs.",
+  "body": "A power struggle turns destructive the second your ego demands that you win the argument at all costs. When Mars squares Pluto, the desire to dominate the room or force an outcome triggers a relentless cycle of escalation. Pushing harder against a hostile environment will not yield results; it will only drain your leverage. Back away from the contest, assess what you actually control, and choose a smarter strategy that does not require a casualty."
+}

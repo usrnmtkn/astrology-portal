@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.neptune.trine.pluto",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-03",
+  "ownerStatement": "can you approve the one's already done and make them live?",
+  "batchId": "sky-calendar-exact-approved-through-2026-09-03",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-03/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "cef5ecc3a771d1dbbe8ccf8eea3b241785fce790d40a22101e5fbda78ec8a722",
+  "summary": "Sometimes understanding the deeper reason behind someone’s behavior makes you more compassionate without making the behavior any more acceptable.",
+  "body": "Sometimes understanding the deeper reason behind someone’s behavior makes you more compassionate without making the behavior any more acceptable. When Neptune trines Pluto, emotional insight can help you see the history, fear, grief, desire, or power underneath a situation without forcing you to choose between empathy and clear judgment. Let the fuller context change your understanding, but do not use understanding as a reason to abandon the boundary the situation still requires. You can see why something happened and still decide it cannot continue."
+}

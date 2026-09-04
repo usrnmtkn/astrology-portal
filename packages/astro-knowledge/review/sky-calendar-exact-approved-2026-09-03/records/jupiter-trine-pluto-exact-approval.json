@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.jupiter.trine.pluto",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-03",
+  "ownerStatement": "can you approve the one's already done and make them live?",
+  "batchId": "sky-calendar-exact-approved-through-2026-09-03",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-03/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "66565443dee54976bf2e257dda3cee77ec4c21128ced3041aeaa6827b6c7c718",
+  "summary": "There are moments when having more influence means you can finally change something you previously had to work around.",
+  "body": "There are moments when having more influence means you can finally change something you previously had to work around. When Jupiter trines Pluto, opportunity and leverage reinforce each other, giving your decisions more weight and making deeper change possible without requiring the same fight it might have taken before. Do not spend the opening making a weak arrangement slightly more comfortable if you now have enough power to change the arrangement itself. Use what has expanded to leave yourself with better terms after the moment of opportunity is over."
+}

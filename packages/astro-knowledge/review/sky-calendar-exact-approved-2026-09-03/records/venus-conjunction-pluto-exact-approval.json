@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.venus.conjunction.pluto",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-03",
+  "ownerStatement": "can you approve the one's already done and make them live?",
+  "batchId": "sky-calendar-exact-approved-through-2026-09-03",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-03/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "e0c842f2305452fdf1bd331362f8a94a346bb941e777ba30fd2342dae13f8651",
+  "summary": "Wanting something badly can make the price of having it strangely easy to ignore.",
+  "body": "Wanting something badly can make the price of having it strangely easy to ignore. When Venus conjuncts Pluto, attraction, money, loyalty, and attachment intensify, which can make a relationship, deal, purchase, or commitment feel too important to risk losing even when the terms give someone else more leverage than you are comfortable admitting. The depth of the feeling does not automatically make the arrangement fair. Notice what saying no would cost you and make sure desire has not quietly become the reason you no longer feel free to choose."
+}

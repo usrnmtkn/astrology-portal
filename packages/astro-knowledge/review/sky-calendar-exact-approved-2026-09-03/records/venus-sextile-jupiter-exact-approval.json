@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.venus.sextile.jupiter",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-03",
+  "ownerStatement": "can you approve the one's already done and make them live?",
+  "batchId": "sky-calendar-exact-approved-through-2026-09-03",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-03/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "c00f84979e52cbcaba362b6342c301d56deca2d126fc7e3b3b76926ac35ef161",
+  "summary": "Support can change what feels possible without changing what you actually wanted in the first place.",
+  "body": "Support can change what feels possible without changing what you actually wanted in the first place. When Venus sextiles Jupiter, generosity, encouragement, money, social connection, or opportunity can give something meaningful more room to grow without requiring you to force it. Let the extra support make the next step easier rather than turning one opening into pressure to make everything bigger. A good opportunity should give you more possibility, not immediately create another standard you have to live up to."
+}

@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.jupiter.square.uranus",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-03",
+  "ownerStatement": "can you approve the one's already done and make them live?",
+  "batchId": "sky-calendar-exact-approved-through-2026-09-03",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-03/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "9d42da461b6d480a35ca5674cadca324b9ae621bd6d47c7a8b5a00933cfd6040",
+  "summary": "The urge to make a dramatic change gets much more convincing when staying where you are has started feeling like proof that your life is not moving fast enough.",
+  "body": "The urge to make a dramatic change gets much more convincing when staying where you are has started feeling like proof that your life is not moving fast enough. When Jupiter squares Uranus, restlessness and optimism reinforce each other, making disruption look especially promising because almost anything different seems capable of creating more possibility. Change may be overdue, but freedom does not require you to gamble everything useful along with everything restrictive. Give the new direction enough room to prove itself before you make the old one impossible to return to."
+}

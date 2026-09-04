@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.mercury.trine.saturn",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-03",
+  "ownerStatement": "can you approve the one's already done and make them live?",
+  "batchId": "sky-calendar-exact-approved-through-2026-09-03",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-03/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "346f4c8866523b4454b97082e59aa0a3289c6bbcd473a75840727021d3867a6c",
+  "summary": "When the details matter, get them out of everyone’s memory and into something you can actually rely on.",
+  "body": "When the details matter, get them out of everyone’s memory and into something you can actually rely on. When Mercury trines Saturn, thinking becomes more disciplined and communication gets precise enough to support contracts, deadlines, boundaries, plans, and decisions with consequences. Write down the date, responsibility, requirement, or term that nobody can afford to misunderstand later. Clarity now prevents a much more annoying conversation later."
+}

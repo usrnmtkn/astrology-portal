@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.moon.conjunction.mars",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-03",
+  "ownerStatement": "can you approve the one's already done and make them live?",
+  "batchId": "sky-calendar-exact-approved-through-2026-09-03",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-03/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "68bdc9a2fad64ebe442720313104b5f554f5ede71c740136c4bb3f0441431218",
+  "summary": "A strong feeling can turn into an action before you have decided if you want to live with the consequences.",
+  "body": "A strong feeling can turn into an action before you have decided if you want to live with the consequences. When the Moon conjuncts Mars, anger, fear, protectiveness, frustration, or urgency moves straight into the body and demands a response. Use that speed on the immediate problem, not every grievance attached to it. Leave the conversation, make the call, protect the person, or handle what cannot wait, then decide the rest once the adrenaline comes down."
+}

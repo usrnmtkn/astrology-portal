@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.jupiter.opposition.neptune",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-03",
+  "ownerStatement": "can you approve the one's already done and make them live?",
+  "batchId": "sky-calendar-exact-approved-through-2026-09-03",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-03/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "955a67e4513133b4b34078b079c71542970c44b224e8af96d103e9675074e3e4",
+  "summary": "The more badly you want something to work, the easier it becomes to treat hope as evidence that it eventually will.",
+  "body": "The more badly you want something to work, the easier it becomes to treat hope as evidence that it eventually will. When Jupiter opposes Neptune, optimism can run directly into ambiguity, making a person, promise, cause, or possibility feel increasingly meaningful while the facts underneath it remain frustratingly difficult to pin down. Believing in something does not require you to keep financing the parts that nobody can explain. Let the vision inspire you, but notice when you are being asked to contribute more faith, money, or time simply because the missing answers have not arrived."
+}

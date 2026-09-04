@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.venus.sextile.saturn",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-03",
+  "ownerStatement": "can you approve the one's already done and make them live?",
+  "batchId": "sky-calendar-exact-approved-through-2026-09-03",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-03/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "919fd575fa72e61adf877c3520377f653ff333828652ac7c59eaf0f3c0a85205",
+  "summary": "Love becomes much easier to trust when neither person has to exhaust themselves proving they mean it.",
+  "body": "Love becomes much easier to trust when neither person has to exhaust themselves proving they mean it. When Venus sextiles Saturn, affection and responsibility can support each other, making it easier to talk honestly about the time, money, boundaries, and commitments required to keep something valuable in your life. A limit is not rejection when it protects the relationship from promises somebody will eventually resent having to keep. Choose the version of commitment that still leaves both people enough of themselves to remain present inside it."
+}

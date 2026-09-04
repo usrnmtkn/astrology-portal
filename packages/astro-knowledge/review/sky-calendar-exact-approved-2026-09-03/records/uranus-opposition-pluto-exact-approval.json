@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.uranus.opposition.pluto",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-03",
+  "ownerStatement": "can you approve the one's already done and make them live?",
+  "batchId": "sky-calendar-exact-approved-through-2026-09-03",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-03/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "0646822a2df8456b63277bad76702524780b16c61fa24f3bb689ba86492595d0",
+  "summary": "Wanting out is not the same as being free if the person or system you are leaving can still decide what options remain available to you.",
+  "body": "Wanting out is not the same as being free if the person or system you are leaving can still decide what options remain available to you. When Uranus opposes Pluto, the urge for independence can collide with entrenched power, exposing the places where your freedom still depends on money, access, approval, information, or somebody else’s willingness to let you go. Do not measure progress only by how forcefully you resist. Look for the choice that reduces your dependence on the source of control so the next step belongs more fully to you."
+}

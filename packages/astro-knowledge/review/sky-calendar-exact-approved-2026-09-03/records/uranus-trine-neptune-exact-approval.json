@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.uranus.trine.neptune",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-03",
+  "ownerStatement": "can you approve the one's already done and make them live?",
+  "batchId": "sky-calendar-exact-approved-through-2026-09-03",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-03/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "50ebee4d1095e6b274f5f1432632348a46bd0201f4e853a21e3d20a3aa667994",
+  "summary": "The right way of expressing something can make a feeling you have carried privately much easier for other people to understand.",
+  "body": "The right way of expressing something can make a feeling you have carried privately much easier for other people to understand. When Uranus trines Neptune, imagination and innovation move together, helping intuition, creativity, or emotional insight find a form that communicates more clearly than your usual approach. The new method does not need to be impressive for its own sake. Let it make the meaning easier to feel, understand, or share, and allow that increased connection to be enough."
+}
