@@ -47,6 +47,24 @@ jobs:
           else if (!sun.includes(newGuard)) throw new Error('Sun Friends non-Sun guard not found.');
           fs.writeFileSync(sunPath, sun);
 
+          const refreshPath = 'scripts/test-fallback-refresh-wiring.mjs';
+          let refresh = fs.readFileSync(refreshPath, 'utf8');
+          const oldRefresh = 'assert.match(friendTransit.body, /^They can say yes to plans and quietly hope they fall through\\./u);';
+          const newRefresh = `const approvedMoonVenusFriend = transitRows.authoredCards.find((row) => row.contentKey === "authored/transit-aspect/moon/venus/hard");
+          assert.equal(typeof approvedMoonVenusFriend?.body_they, "string", "Moon-Venus hard must carry explicit owner-approved Friends copy.");
+          const expectedMoonVenusFriend = approvedMoonVenusFriend.body_they
+            .replaceAll("{{Name}}", "Sofia")
+            .replaceAll("{{aspectWord}}", "square")
+            .replaceAll("{{untilDate}}", "November 13");
+          assert.ok(
+            friendTransit.body === expectedMoonVenusFriend
+              || friendTransit.body.startsWith(\`${'${expectedMoonVenusFriend}'}\\n\\n\`),
+            "Friends refresh must serve the exact explicit owner-approved Moon-Venus passage before any governed addendum."
+          );`;
+          if (refresh.includes(oldRefresh)) refresh = refresh.replace(oldRefresh, newRefresh);
+          else if (!refresh.includes('const approvedMoonVenusFriend = transitRows.authoredCards.find')) throw new Error('Moon-Venus Friends refresh fixture not found.');
+          fs.writeFileSync(refreshPath, refresh);
+
           const packagePath = 'package.json';
           let pkg = fs.readFileSync(packagePath, 'utf8');
           const existing = 'node --experimental-strip-types scripts/test-friends-transit-eligible-cap.mts && node --import tsx scripts/test-friends-transit-detail-provenance-gate.mjs && ';
