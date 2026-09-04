@@ -25,8 +25,8 @@ assert.match(
 );
 assert.match(
   panel,
-  /\[currentSky, fallbackArchitectureV3Version, relationshipGeneratedContent, selectedChart, selectedFriendTransits\]/u,
-  "Friends personal-transit summaries must recompute when the fallback runtime changes."
+  /\[currentSky, fallbackArchitectureV3Version, relationshipGeneratedContent, selectedChart, selectedFriendEligibleTransits\]/u,
+  "Friends personal-transit summaries must recompute when the fallback runtime changes after reader-eligible selection."
 );
 
 console.log("Friends live detail refresh contract passed.");

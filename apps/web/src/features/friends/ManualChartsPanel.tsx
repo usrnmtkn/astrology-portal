@@ -147,6 +147,7 @@ import { resolvedNatalAspectPatternSectionLabel } from "../you/natalAspectPatter
 import type { SkyDetail } from "../sky/SkyDetailArticle";
 import { wholeDegreeOrb } from "../sky/skyHelpers";
 import { friendDetailHasReaderFacingContent } from "./friendDetailAvailability";
+import { selectEligibleFriendTransits } from "./friendTransitEligibility";
 import { scheduleFriendChartRepair } from "./friendChartLoading";
 
 const FriendsWorkspaceShell = lazy(() =>
@@ -1278,12 +1279,12 @@ export function ManualChartsPanel({
   }, [friendChartRailRenderKey]);
 
   const renderFriendChartRail = renderedFriendChartRailKey === friendChartRailRenderKey;
-  const selectedFriendTransits = useMemo(() => (
+  const selectedFriendTransitCandidates = useMemo(() => (
     (friendProfileWork.transits || friendProfileWork.compatibility) && currentSky && selectedChart && selectedFriendReadyNatalChart && !selectedChartIsEvent
       ? dedupeSameBeatPersonalTransits(
           rankTransitsByLifeAreaFocus(rankedFriendTransits(currentSky, selectedChart, sunriseOrbDegrees), lifeAreaFocus),
           currentSky.generatedAt
-        ).slice(0, 8)
+        )
       : []
   ), [
     currentSky,
@@ -1294,6 +1295,34 @@ export function ManualChartsPanel({
     selectedChartIsEvent,
     selectedFriendReadyNatalChart,
     sunriseOrbDegrees
+  ]);
+  const selectedFriendTransits = useMemo(
+    () => selectedFriendTransitCandidates.slice(0, 8),
+    [selectedFriendTransitCandidates]
+  );
+  const selectedFriendEligibleTransits = useMemo(() => (
+    currentSky && selectedChart
+      ? selectEligibleFriendTransits(
+          selectedFriendTransitCandidates,
+          (transit) => {
+            const normalized = normalizePersonalTransitSurface(
+              transit,
+              currentSky.generatedAt,
+              selectedChart.displayName
+            );
+            return acceptedOwnerApprovedTransitSections(
+              normalized.sections,
+              fallbackV3ApprovalLevelForContentKey
+            ).length > 0;
+          },
+          8
+        )
+      : []
+  ), [
+    currentSky,
+    fallbackArchitectureV3Version,
+    selectedChart,
+    selectedFriendTransitCandidates
   ]);
   const selectedFriendDailyForecast = useMemo(() => (
     currentSky && selectedChart && selectedFriendReadyNatalChart && !selectedChartIsEvent
@@ -1509,9 +1538,9 @@ export function ManualChartsPanel({
   ]);
   const selectedFriendTransitAspectLines = useMemo(() => (
     friendProfileWork.transits && currentSky && selectedChart && selectedFriendReadyNatalChart && !selectedChartIsEvent
-      ? transitWheelAspectLines(currentSky, selectedFriendReadyNatalChart, selectedFriendTransits)
+      ? transitWheelAspectLines(currentSky, selectedFriendReadyNatalChart, selectedFriendEligibleTransits)
       : []
-  ), [currentSky, friendProfileWork.transits, selectedChart, selectedChartIsEvent, selectedFriendReadyNatalChart, selectedFriendTransits]);
+  ), [currentSky, friendProfileWork.transits, selectedChart, selectedChartIsEvent, selectedFriendEligibleTransits, selectedFriendReadyNatalChart]);
   const selectedBondTransitViewCards = useMemo<FriendBondTransitView[]>(() => (
     selectedBondTransitCards.map((card) => ({
       id: card.id,
@@ -1544,7 +1573,7 @@ export function ManualChartsPanel({
     }
 
     return (["short", "long"] as const).flatMap((durationClass) => {
-      const transits = selectedFriendTransits.filter((transit) => transit.term === durationClass);
+      const transits = selectedFriendEligibleTransits.filter((transit) => transit.term === durationClass);
 
       if (transits.length === 0 || !selectedChart) {
         return [];
@@ -1583,7 +1612,7 @@ export function ManualChartsPanel({
         })
       }];
     });
-  }, [currentSky, fallbackArchitectureV3Version, relationshipGeneratedContent, selectedChart, selectedFriendTransits]);
+  }, [currentSky, fallbackArchitectureV3Version, relationshipGeneratedContent, selectedChart, selectedFriendEligibleTransits]);
   const selectedFriendPlacementRows = useMemo(() => {
     if (!friendProfileWork.natal || !selectedChart || !selectedFriendReadyNatalChart) {
       return [];
@@ -2110,7 +2139,7 @@ export function ManualChartsPanel({
     });
   };
   const openFriendTransitById = (transitId: string) => {
-    const transit = selectedFriendTransits.find((candidate) => candidate.id === transitId);
+    const transit = selectedFriendEligibleTransits.find((candidate) => candidate.id === transitId);
 
     if (transit) {
       openFriendTransitDetail(transit);
@@ -2134,7 +2163,7 @@ export function ManualChartsPanel({
     }
 
     const routedTransitId = routeState.detail.slice(prefix.length);
-    const transit = selectedFriendTransits.find((candidate) => (
+    const transit = selectedFriendEligibleTransits.find((candidate) => (
       normalizeContentIdPart(candidate.id) === routedTransitId
     ));
     if (!transit) {

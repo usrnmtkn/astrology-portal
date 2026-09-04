@@ -175,8 +175,8 @@ assert.match(
 );
 assert.equal(
   (manualChartsPanelSource.match(/acceptedOwnerApprovedTransitSections\(/gu) ?? []).length,
-  4,
-  "both personal-transit and house-transit rows and detail sections must use the permanent gate"
+  5,
+  "personal-transit pre-cap eligibility plus personal-transit and house-transit rows and detail sections must use the permanent gate"
 );
 assert.deepEqual(
   nodeRenderedSaturn.partSourceKeys?.at(-1),
