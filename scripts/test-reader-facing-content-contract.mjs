@@ -532,3 +532,10 @@ assert.match(
 );
 
 console.log("Reader-facing content contract passed.");
+
+
+assert.match(
+  youPage,
+  /const headerDateRange = cleanArticleText\([\s\S]*?label === "date range" \|\| label === "duration"[\s\S]*?headerDateRange \? <p className="article-duration">\{headerDateRange\}<\/p> : null/u,
+  "You transit detail articles must render the calculated date range in the header."
+);

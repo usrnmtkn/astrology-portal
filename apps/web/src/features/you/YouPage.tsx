@@ -955,6 +955,12 @@ function YouTransitArticlePage({
   const passKeyDates = displayArticle.meta.filter((row) => /^Pass \d+$/u.test(row.label) && cleanArticleText(row.value));
   const eyebrowLabel = articleEyebrowLabel(displayArticle.title, displayArticle.meta);
   const eyebrowGlyphs = articleEyebrowGlyphs(displayArticle);
+  const headerDateRange = cleanArticleText(
+    displayArticle.meta.find((row) => {
+      const label = row.label.trim().toLowerCase();
+      return label === "date range" || label === "duration";
+    })?.value
+  );
 
   return (
     <section
@@ -983,6 +989,7 @@ function YouTransitArticlePage({
               ) : null}
             </div>
             <h1 className="article-title" id="you-transit-article-title">{displayArticle.title}</h1>
+            {headerDateRange ? <p className="article-duration">{headerDateRange}</p> : null}
             {articleTldr ? (
               <div className="article-tldr">
                 <span className="ui-pill ui-pill--neutral article-tldr__label">TLDR</span>
