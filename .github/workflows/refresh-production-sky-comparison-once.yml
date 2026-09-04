@@ -1,0 +1,36 @@
+name: Refresh production Sky kernel comparison
+
+on:
+  push:
+    branches:
+      - chatgpt/refresh-you-personal-transit-corpus
+
+permissions:
+  contents: write
+
+jobs:
+  refresh:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+      - name: Regenerate comparison
+        run: |
+          node scripts/build-production-sky-kernel-comparison.mjs --write
+          node scripts/build-production-sky-kernel-comparison.mjs
+      - name: Commit regenerated comparison
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "No comparison changes."
+            exit 0
+          fi
+          git commit -m "Refresh production Sky kernel comparison"
+          git push origin HEAD:chatgpt/refresh-you-personal-transit-corpus
