@@ -1,6 +1,6 @@
 {
   "schema": "tldrastro-approved-lunation-eclipse-sections/v1",
-  "packageVersion": "v3-2026-09-03b",
+  "packageVersion": "v3-2026-09-03c",
   "source": {
     "schema": "lunation-eclipse-sections/v1",
     "count": 30

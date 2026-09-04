@@ -22,6 +22,12 @@ const sunFriendsApproval = readJson(
 const sunAscendantRevision = readJson(
   "packages/astro-knowledge/review/transit-aspect-sun-ascendant-hard-owner-published-2026-09-03.json"
 );
+const nonSunFriendsAuthorizationPath = "packages/astro-knowledge/review/transit-aspect-friends-nonsun-350-owner-live-2026-09-03.json";
+const protectedVenusMoonKey = "authored/transit-aspect/venus/moon/hard";
+const nonSunFriendsAuthorizationAbsolute = path.join(repoRoot, nonSunFriendsAuthorizationPath);
+const nonSunFriendsAuthorization = fs.existsSync(nonSunFriendsAuthorizationAbsolute)
+  ? readJson(nonSunFriendsAuthorizationPath)
+  : null;
 const wordingFields = ["headline", "body", "body_you", "body_they", "body_sky"];
 const sha256 = (value) => crypto.createHash("sha256").update(value).digest("hex");
 const targetFamilies = Object.keys(record.counts.byFamily);
@@ -33,7 +39,7 @@ const targetRows = familyRows.filter((row) => (
 ));
 const postRulingRows = familyRows.filter((row) => row.approval?.approvedAt > record.recordedAt);
 
-assert.equal(venusMoonRevision.contentKey, "authored/transit-aspect/venus/moon/hard");
+assert.equal(venusMoonRevision.contentKey, protectedVenusMoonKey);
 assert.equal(venusMoonRevision.status, "owner_published");
 assert.equal(sha256(venusMoonRevision.supersedes.body_you), venusMoonRevision.supersedes.body_you_sha256);
 assert.equal(sha256(venusMoonRevision.body_you), venusMoonRevision.body_you_sha256);
@@ -43,6 +49,7 @@ assert.ok(
   [venusMoonRevision.supersedes.body_you, venusMoonRevision.body_you].includes(venusMoonRow.body_you),
   "Venus square Moon You copy must match either the pre-revision package body or the exact September 2 CMS revision."
 );
+assert.equal(typeof venusMoonRow.body_they, "undefined", "The protected Venus square Moon Friends field must remain undefined.");
 
 assert.equal(sunFriendsApproval.status, "owner_approved");
 assert.equal(sunFriendsApproval.createdAt, "2026-09-03");
@@ -53,6 +60,28 @@ assert.ok(
 );
 const postSnapshotSunFriendKeys = new Set(sunFriendsApproval.records.map((entry) => entry.contentKey));
 assert.equal(postSnapshotSunFriendKeys.size, 27);
+
+const postSnapshotNonSunFriendKeys = new Set(nonSunFriendsAuthorization?.members?.map((entry) => entry.contentKey) ?? []);
+if (nonSunFriendsAuthorization) {
+  assert.equal(nonSunFriendsAuthorization.authority, "owner");
+  assert.equal(nonSunFriendsAuthorization.decision, "approve");
+  assert.equal(nonSunFriendsAuthorization.ownerStatement, "all the friend's rewrite's your doing, you should approve as live.");
+  assert.equal(nonSunFriendsAuthorization.surface, "personal-transits-friends");
+  assert.equal(nonSunFriendsAuthorization.approvedField, "body_they");
+  assert.deepEqual(nonSunFriendsAuthorization.capabilities, ["batch_generation", "serving"]);
+  assert.equal(nonSunFriendsAuthorization.count, 350);
+  assert.equal(postSnapshotNonSunFriendKeys.size, 350);
+  assert.equal(postSnapshotNonSunFriendKeys.has(protectedVenusMoonKey), false);
+  assert.ok(
+    nonSunFriendsAuthorization.exclusions?.some((entry) => entry.contentKey === protectedVenusMoonKey),
+    "The later Friends authorization must record the protected Venus square Moon exclusion."
+  );
+  assert.ok(
+    nonSunFriendsAuthorization.members.every((entry) => /^[a-f0-9]{64}$/u.test(entry.payloadSha256 ?? "")),
+    "Every later non-Sun Friends approval member must remain hash-bound."
+  );
+}
+
 assert.equal(sunAscendantRevision.contentKey, "authored/transit-aspect/sun/ascendant/hard");
 assert.equal(sunAscendantRevision.publishedAt.slice(0, 10), "2026-09-03");
 assert.equal(
@@ -77,7 +106,13 @@ function historicalWording(row, field) {
   if (row.contentKey === sunAscendantRevision.contentKey && field === "body_you") {
     return sunAscendantRevision.supersedes.body_you;
   }
-  if (field === "body_they" && postSnapshotSunFriendKeys.has(row.contentKey)) {
+  if (
+    field === "body_they"
+    && (
+      postSnapshotSunFriendKeys.has(row.contentKey)
+      || postSnapshotNonSunFriendKeys.has(row.contentKey)
+    )
+  ) {
     return undefined;
   }
   return row[field];
@@ -142,4 +177,4 @@ assert.deepEqual(record.excluded, {
   note: "These rows feed compatibility, Sky, career, station, weekly, or other authored surfaces. They are not primary Friends transit-detail articles and are not disabled by this gate."
 });
 
-console.log("Friends owner-signoff ruling passed: 24 exact approvals preserved, 1,565 untraced approvals added, 1,175 unrelated authored rows left untouched; later CMS/mechanical/Sun Friends revisions are excluded from the historical payload hash.");
+console.log("Friends owner-signoff ruling passed: 24 exact approvals preserved, 1,565 untraced approvals added, 1,175 unrelated authored rows left untouched; later CMS/mechanical/Sun/protected-350 Friends revisions are excluded from the historical payload hash.");
