@@ -84,11 +84,11 @@ jobs:
           fs.writeFileSync(process.env.MIGRATION_PATH, sql);
           console.log(`wrote guarded transit mirror migration: ${process.env.MIGRATION_PATH}`);
           NODE
-      - name: Commit bounded migration
+      - name: Commit bounded migration to PR branch
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add "$MIGRATION_PATH"
           git diff --cached --check
           git commit -m "data(content-studio): sync approved Friends transit mirror"
-          git push origin HEAD:main
+          git push --force-with-lease origin HEAD:refs/heads/chatgpt/content-studio-transit-friends-mirror-sync
