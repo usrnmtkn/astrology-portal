@@ -37,6 +37,8 @@ jobs:
           cache: npm
       - name: Install dependencies
         run: npm ci
+      - name: Build astro-knowledge workspace
+        run: npm run build -w @tldr/astro-knowledge
       - name: Apply hash-bound owner-approved exact Calendar copy
         run: node scripts/release-calendar-exact-approved-20260903.mjs
       - name: Regenerate governed bundles and writing evidence
