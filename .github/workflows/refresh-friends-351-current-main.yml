@@ -46,34 +46,6 @@ jobs:
             git add "${expected[@]}"
             git commit --no-edit
           fi
-      - name: Reconcile current Sky exact-approval fixtures
-        run: |
-          node --input-type=module <<'NODE'
-          import fs from 'node:fs';
-          const path = 'scripts/test-reviewed-sky-aspect-phrasebook.mjs';
-          let source = fs.readFileSync(path, 'utf8');
-          const dataImport = 'const approvedJupiterNeptune = readJson("../packages/astro-knowledge/data/transits/jupiter-trine-neptune.json");\n';
-          const imports = [
-            ['approvedJupiterNeptuneExact', 'jupiter-trine-neptune-exact-approval.json'],
-            ['approvedNeptunePlutoExact', 'neptune-sextile-pluto-exact-approval.json'],
-            ['approvedUranusNeptuneExact', 'uranus-sextile-neptune-exact-approval.json'],
-            ['approvedUranusPlutoExact', 'uranus-trine-pluto-exact-approval.json']
-          ];
-          let insert = dataImport;
-          for (const [name, file] of imports) {
-            if (!source.includes(`const ${name} =`)) {
-              insert += `const ${name} = readJson("../packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-03/records/${file}");\n`;
-            }
-          }
-          if (insert !== dataImport) source = source.replace(dataImport, insert);
-          const oldJupiter = `assert.equal(\n  approvedJupiterNeptune.readerCopy?.body,\n  ownerRewriteSource.payloads["sky.jupiter.trine.neptune"].payload.body,\n);`;
-          const newJupiter = `assert.equal(approvedJupiterNeptuneExact.authority, "owner");\nassert.equal(approvedJupiterNeptuneExact.decision, "approve");\nassert.equal(approvedJupiterNeptuneExact.approvalLevel, "exact_owner_approved");\nassert.ok(approvedJupiterNeptuneExact.capabilities.includes("serving"));\nassert.equal(approvedJupiterNeptune.readerCopy?.body, approvedJupiterNeptuneExact.body);`;
-          if (source.includes(oldJupiter)) source = source.replace(oldJupiter, newJupiter);
-          const oldLoop = `for (const id of ["neptune-sextile-pluto", "uranus-sextile-neptune", "uranus-trine-pluto"]) {\n  const [transiting, aspect, other] = id.split("-");\n  assert.equal(\n    exactTransitRecords.find((record) => record.id === id)?.readerCopy?.body,\n    ownerRewriteSource.payloads[\`sky.${transiting}.${aspect}.${other}\`].payload.body,\n  );\n}`;
-          const newLoop = `for (const [id, approval] of [\n  ["neptune-sextile-pluto", approvedNeptunePlutoExact],\n  ["uranus-sextile-neptune", approvedUranusNeptuneExact],\n  ["uranus-trine-pluto", approvedUranusPlutoExact]\n]) {\n  assert.equal(approval.authority, "owner");\n  assert.equal(approval.decision, "approve");\n  assert.equal(approval.approvalLevel, "exact_owner_approved");\n  assert.ok(approval.capabilities.includes("serving"));\n  assert.equal(exactTransitRecords.find((record) => record.id === id)?.readerCopy?.body, approval.body);\n}`;
-          if (source.includes(oldLoop)) source = source.replace(oldLoop, newLoop);
-          fs.writeFileSync(path, source);
-          NODE
       - name: Install dependencies
         run: npm ci --no-audit --no-fund
       - name: Install pinned API dependencies
