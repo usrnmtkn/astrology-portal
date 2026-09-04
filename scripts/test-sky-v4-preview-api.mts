@@ -26,7 +26,10 @@ assert.throws(() => normalizeSkyV4PreviewInput({
 const endpoint = fs.readFileSync(new URL("../api/admin/sky-v4-preview.ts", import.meta.url), "utf8");
 assert.match(endpoint, /isContentAdminAuthorized/u);
 assert.match(endpoint, /renderSkyV4StudioPreview/u);
-assert.match(endpoint, /cache-control", "private, no-store/u);
+assert.match(endpoint, /sendAdminJson/u);
+assert.doesNotMatch(endpoint, /res\.end\(/u);
+const adminHttp = fs.readFileSync(new URL("../api/_lib/admin-http.ts", import.meta.url), "utf8");
+assert.match(adminHttp, /res\.setHeader\("cache-control", "no-store"\)/u);
 
 const dashboard = fs.readFileSync(new URL("../apps/admin/src/GeneratedContentAdminDashboard.tsx", import.meta.url), "utf8");
 assert.match(dashboard, /lazy\(\(\) => import\("\.\/SkyV4StudioReviewPanel"\)\)/u);
@@ -48,4 +51,4 @@ const materializer = fs.readFileSync(new URL("./materialize-fallback-architectur
 assert.match(materializer, /skyV4GovernedAspectStudioRecord\(row\) \?\? row/u);
 assert.match(materializer, /contentKey\.startsWith\("sky-placement\/article\/"\)/u);
 
-console.log("SKY V4 production-parity preview API: PASS (auth required; canonical resolver shared; previews and edits remain non-serving drafts)");
+console.log("SKY V4 production-parity preview API: PASS (auth required; canonical resolver shared; shared admin responses are no-store; previews and edits remain non-serving drafts)");
