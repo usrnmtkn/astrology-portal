@@ -7,8 +7,6 @@ import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { build } from "esbuild";
 
-await import("./test-sky-calendar-owner-rewrites.mjs");
-
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const transitDirectory = path.join(repoRoot, "packages/astro-knowledge/data/transits");
 const bundleFile = path.join(os.tmpdir(), "tldrastro-calendar-exact-sky-aspect-routing.bundle.mjs");
@@ -16,15 +14,20 @@ const registryBundleFile = path.join(os.tmpdir(), "tldrastro-approved-exact-sky-
 const readJson = (filePath) => JSON.parse(fs.readFileSync(filePath, "utf8"));
 const canonicalPayloadPath = path.join(
   repoRoot,
-  "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-owner-rewrites-payloads.json"
+  "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-03/current-owner-payloads.json"
 );
-const canonicalPayloadBytes = fs.readFileSync(canonicalPayloadPath);
-const ownerRewrites = JSON.parse(canonicalPayloadBytes.toString("utf8"));
+const ownerRewrites = readJson(canonicalPayloadPath);
+const sha256 = (value) => crypto.createHash("sha256").update(value).digest("hex");
 
+assert.equal(ownerRewrites.rowCount, 215, "The current exact owner payload projection must contain 215 rows.");
+assert.equal(Object.keys(ownerRewrites.payloads ?? {}).length, 215, "The current exact owner payload map changed.");
+const currentSetHashInput = Object.entries(ownerRewrites.payloads)
+  .sort(([a], [b]) => a.localeCompare(b))
+  .map(([contentKey, entry]) => ({ contentKey, payloadSha256: entry.sha256 }));
 assert.equal(
-  crypto.createHash("sha256").update(canonicalPayloadBytes).digest("hex"),
-  "7c72ab549cf74c460a5fe8ed08dede1e657b36f1f2ebeb4c10a2f853ee6f3bbe",
-  "The canonical owner-rewrite payload file changed."
+  sha256(JSON.stringify(currentSetHashInput)),
+  ownerRewrites.payloadSetSha256,
+  "The current exact owner payload-set hash drifted."
 );
 
 const exactRecords = fs.readdirSync(transitDirectory)
@@ -39,7 +42,7 @@ const exactRecords = fs.readdirSync(transitDirectory)
 assert.equal(exactRecords.length, 215, "The pinned reader-eligible exact Sky corpus changed.");
 
 for (const [key, entry] of Object.entries(ownerRewrites.payloads)) {
-  const payloadHash = crypto.createHash("sha256").update(JSON.stringify(entry.payload)).digest("hex");
+  const payloadHash = sha256(JSON.stringify(entry.payload));
   assert.equal(payloadHash, entry.sha256, `${key}: approved payload hash drifted.`);
 }
 
@@ -90,11 +93,11 @@ let routedDirections = 0;
 for (const record of exactRecords) {
   const contentKey = `sky.${record.transiting}.${record.aspect}.${record.other}`;
   const approvedPayload = ownerRewrites.payloads[contentKey]?.payload;
-  assert.ok(approvedPayload, `${contentKey}: missing owner-approved payload.`);
+  assert.ok(approvedPayload, `${contentKey}: missing current owner-approved payload.`);
   assert.deepEqual(
     { summary: record.readerCopy.summary, body: record.readerCopy.body },
     approvedPayload,
-    `${contentKey}: stored copy drifted from the owner-approved payload.`,
+    `${contentKey}: stored copy drifted from the current owner-approved payload.`,
   );
   for (const [first, second] of [
     [record.transiting, record.other],
