@@ -91,7 +91,7 @@ assert.match(
 );
 assert.match(
   appSource,
-  /const isContinuousFallback = placementSection\?\.sourceKeys\.includes\("sky-placement-continuous-v2"\)[\s\S]*isRegistryArticle \|\| isContinuousFallback \? null : effectiveTransitRangeLabel[\s\S]*isRegistryArticle \|\| isContinuousFallback \? undefined : effectiveTransitRangeLabel/u,
+  /const isContinuousFallback = placementSection\?\.sourceKeys\.includes\("sky-placement-continuous-v2"\)[\s\S]*isRegistryArticle \|\| isContinuousFallback \? null : effectiveTransitRangeLabel[\s\S]*duration: isFallbackOnlyPreview[\s\S]*fallbackDateLine \?\? effectiveTransitRangeLabel \?\? undefined[\s\S]*isRegistryArticle \|\| isContinuousFallback[\s\S]*\? undefined[\s\S]*: effectiveTransitRangeLabel \?\? undefined/u,
   "Continuous fallback pages must not repeat the transit range in detail metadata or duration."
 );
 assert.doesNotMatch(

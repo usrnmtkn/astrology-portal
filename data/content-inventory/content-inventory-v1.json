@@ -1,9 +1,9 @@
 {
   "schemaVersion": "content-inventory-v1",
   "generatedOn": "2026-08-10",
-  "sourceCommit": "b70537f24cb6661ed9bbb303f1c8e29535142cfd",
+  "sourceCommit": "5aa846a8822900b64ad063a1a5d8936f10882e39",
   "authorityRule": "Only owner-approved and owner-locked records may serve or export.",
-  "contentFingerprint": "b6fe2c15a9f04e7533fde67365452333db71c7af86ebd288eba310137a7274b1",
+  "contentFingerprint": "d5033ce33790688ecc1b03a44293b42b65527f0d0281db5e059294f151ede553",
   "recordCount": 10941,
   "statusCounts": {
     "owner-approved": 10941
@@ -49491,10 +49491,11 @@
       "sourceAuthor": "composed",
       "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
       "approvalVersionDate": "2026-07-28",
-      "contentHash": "77c276302ee7135a932a3ae0411b78cd8d710758ab55975e41a825b1db423864",
+      "contentHash": "e7ce5ae209a9f3a8d5a8b2eaa92b9dfe20c9494b048937755a79e95a0c3ef9d0",
       "wording": {
         "headline": "",
-        "body_you": "Someone pushes today, or you do: a boss, a parent, the difficult coworker who cannot be dodged today. Fights fought for aims you privately doubt go worst; had openly, over something real, the clash mostly clears the air. Stepping away gives you a moment to breathe, but it doesn't resolve the conflict; the conversation will still be waiting when you walk back into the room, so decide whether delay actually buys you clarity or just prolongs the dread. The Sun {{aspectWord}} your Ascendant until {{untilDate}} puts the difficult conversation on today's calendar."
+        "body_you": "External pressure lands squarely on your doorstep right now, whether sparked by a demanding manager, a rigid professor, an overbearing parent, or the sheer weight of parenting and daily responsibilities that leaves zero room for error. When your boundaries get tested across your work, studies, or home life, stop wasting energy fighting for outcomes or expectations you do not even believe in. Those battles are dead ends that drain the exact bandwidth you need for your family, your work, and your own well-being. A crisp, honest clash over something real, however, clears the air faster than weeks of quiet resentment.\n\nStepping back gives your nervous system a minute to cool down, but evasion is not a resolution. That conversation is parked right where you left it, waiting for your return. Decide if hitting pause is a strategic calculation that brings actual perspective or just a way to prolong the dread. With the Sun {{aspectWord}} your Ascendant until {{untilDate}}, put the hard talk on the calendar, state your terms, and protect your time.",
+        "body_they": "External pressure is harder for {{Name}} to ignore right now, whether sparked by a demanding manager, a rigid professor, an overbearing parent, or the sheer weight of parenting and daily responsibilities that leaves zero room for error. When their boundaries get tested across work, studies, or home life, they can stop wasting energy fighting for outcomes or expectations they do not even believe in. Those battles are dead ends that drain the exact bandwidth they need for family, work, and personal well-being. A crisp, honest clash over something real, however, clears the air faster than weeks of quiet resentment.\n\n{{Name}} may need to step away long enough to cool down before they answer, but distance does not resolve the issue by itself. The conversation is still parked right where they left it, waiting for their return. What matters is whether the pause gives them enough perspective to say what they actually mean, or only postpones something they already know needs to be addressed. With the Sun {{aspectWord}} their Ascendant until {{untilDate}}, the difficult conversation belongs on their calendar. They are better off stating their terms clearly and dealing with the conflict than letting it keep building in the background."
       },
       "astrology": {
         "objects": [
@@ -49518,10 +49519,11 @@
       "sourceAuthor": "composed",
       "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
       "approvalVersionDate": "2026-07-28",
-      "contentHash": "71db59af15ab356159fa2dc3d0167923a50a5c6fe7f23fa832bfe098d27c5b5d",
+      "contentHash": "71ac89ca4336c573d3fb14ee1e517d4a638e8061808ee5cd66307d1ee3f0e2d9",
       "wording": {
         "headline": "",
-        "body_you": "Confidence reads as charm today rather than ego, group settings go your way, and a little showing off actually lands. Good for starting the trip, the outing, the thing you enjoy doing in company. The Sun {{aspectWord}} your Ascendant until {{untilDate}} favors being openly yourself and letting that do the work."
+        "body_you": "Confidence reads as charm today rather than ego, group settings go your way, and a little showing off actually lands. Good for starting the trip, the outing, the thing you enjoy doing in company. The Sun {{aspectWord}} your Ascendant until {{untilDate}} favors being openly yourself and letting that do the work.",
+        "body_they": "{{Name}} is easier to read in the best way today. Their confidence comes across without needing much explanation, and people are more likely to meet their openness with interest instead of resistance. A group plan, introduction, outing, or first meeting can go more easily because they are not spending the entire interaction wondering how they are being received.\n\nThey do not need to turn the day into a performance. The advantage is simpler than that: they can show up as themselves and let other people respond to what is actually there. With the Sun {{aspectWord}} their Ascendant until {{untilDate}}, being visible costs less effort than usual, and the right people are more likely to meet them halfway."
       },
       "astrology": {
         "objects": [
@@ -49545,10 +49547,11 @@
       "sourceAuthor": "composed",
       "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
       "approvalVersionDate": "2026-07-28",
-      "contentHash": "b42e090d0cd1607221267532e0d10a53edb2773e644011a0d8af966ce4d29d8c",
+      "contentHash": "ed8d93b3170224f343879945bc31809daa3274d91b908e5eb7a1dd2c5cee7303",
       "wording": {
         "headline": "",
-        "body_you": "Everything wants to be bigger today: the order, the promise, the portion, the opinion. The purchase runs overpriced, the commitment runs past the calendar, and confidence can read as talking above your position, especially to superiors. Optimism gives you the momentum to start, but the calendar decides what survives; the gain comes from choosing one ambition you can actually finish this week. The Sun {{aspectWord}} your Jupiter until {{untilDate}} makes almost everything look affordable. Give the big decisions two days."
+        "body_you": "Everything wants to be bigger today: the order, the promise, the portion, the opinion. The purchase runs overpriced, the commitment runs past the calendar, and confidence can read as talking above your position, especially to superiors. Optimism gives you the momentum to start, but the calendar decides what survives; the gain comes from choosing one ambition you can actually finish this week. The Sun {{aspectWord}} your Jupiter until {{untilDate}} makes almost everything look affordable. Give the big decisions two days.",
+        "body_they": "{{Name}} may feel unusually certain that the larger version is the better version today. The more expensive option looks justified, the promise sounds easy to keep, and one ambition can quickly turn into three. Confidence is useful here, but it can move faster than the calendar, budget, or actual amount of work involved.\n\nA decision that still looks good after the excitement settles is probably worth more than the one that needs to happen immediately. With the Sun {{aspectWord}} their Jupiter until {{untilDate}}, {{Name}} benefits from giving the largest promises and purchases a little time. The opportunity does not disappear just because they check what it will require first."
       },
       "astrology": {
         "objects": [
@@ -49572,10 +49575,11 @@
       "sourceAuthor": "composed",
       "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
       "approvalVersionDate": "2026-07-28",
-      "contentHash": "cef410279e51873686e27033aafc6279895b097e20c72155211f17a26aeb9f44",
+      "contentHash": "cf09d257de030e03ca744b5a00be1c7186225dde3f279884a801105a3e0bb66d",
       "wording": {
         "headline": "",
-        "body_you": "One of the genuinely lucky days. Optimism does real work: the favor gets granted, the plan comes together, the boss says yes. The classic waste is enjoying the mood and asking for nothing. The ask may land, especially when it is concrete and aimed at someone with the power to grant it. The Sun {{aspectWord}} your Jupiter until {{untilDate}} is the day to make the request you have been sitting on."
+        "body_you": "One of the genuinely lucky days. Optimism does real work: the favor gets granted, the plan comes together, the boss says yes. The classic waste is enjoying the mood and asking for nothing. The ask may land, especially when it is concrete and aimed at someone with the power to grant it. The Sun {{aspectWord}} your Jupiter until {{untilDate}} is the day to make the request you have been sitting on.",
+        "body_they": "Something may go {{Name}}'s way with less resistance than expected today. A manager approves the request, a useful person answers, or a plan that had been waiting on someone else finally gets a yes. The opening matters most if they actually use it. Feeling optimistic without making the call, sending the proposal, or asking for what they want leaves the best part of the transit unused.\n\nWith the Sun {{aspectWord}} their Jupiter until {{untilDate}}, {{Name}} has a better window for the request they have been hesitating to make. They should be specific about what they want and give the other person something concrete to respond to."
       },
       "astrology": {
         "objects": [
@@ -49599,10 +49603,11 @@
       "sourceAuthor": "composed",
       "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
       "approvalVersionDate": "2026-07-27",
-      "contentHash": "67b67213eafee593b0032ecacb8acf7531de2492353a9f8d28d527ce0ef15011",
+      "contentHash": "1fe54388e171cc1bba86620d1d1fd8337028ad40fceeb69235fe898b7ab00c09",
       "wording": {
         "headline": "",
-        "body_you": "Your Lilith remembers what you learned to leave out so other people would find you easier to accept: the wants you stopped naming and the opinions that always became an argument. When the Sun crosses this point, those old compromises are harder to ignore. You may feel more tired, more irritable, or less willing to play along with people who express themselves freely while expecting you to stay agreeable. Keep the week lighter than usual and notice what keeps getting under your skin. The Sun {{aspectWord}} your Lilith until {{untilDate}} brings one old compromise into full view before moving on quickly."
+        "body_you": "Your Lilith remembers what you learned to leave out so other people would find you easier to accept: the wants you stopped naming and the opinions that always became an argument. When the Sun crosses this point, those old compromises are harder to ignore. You may feel more tired, more irritable, or less willing to play along with people who express themselves freely while expecting you to stay agreeable. Keep the week lighter than usual and notice what keeps getting under your skin. The Sun {{aspectWord}} your Lilith until {{untilDate}} brings one old compromise into full view before moving on quickly.",
+        "body_they": "{{Name}} may have less patience for the version of themselves that keeps everyone else comfortable. A preference they stopped mentioning, an opinion that always became a problem, or a reaction they learned to hide can become much harder to dismiss while this transit is active. Irritation may be the first sign that an old compromise is costing more than it used to.\n\nThey do not need to turn every feeling into a confrontation. They do need to notice which situation keeps producing the same resentment. With the Sun {{aspectWord}} their Lilith until {{untilDate}}, one part of {{Name}} that was edited out for acceptance wants to be acknowledged again. Naming it privately is already different from pretending it is not there."
       },
       "astrology": {
         "objects": [
@@ -49626,10 +49631,11 @@
       "sourceAuthor": "composed",
       "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
       "approvalVersionDate": "2026-07-28",
-      "contentHash": "6149e13ebd332eb5f99e887670d156c434b6e003dd029ad3ac0f749e75331e2d",
+      "contentHash": "0e793d2bdad8b29b0737ef26c5062a79d0ca45860754e301c79ac3b12d8a097a",
       "wording": {
         "headline": "",
-        "body_you": "The temper is close to the surface, and so is everyone else's. Ego friction with a boss, a quarrel at home, or a belligerent stranger can find you even when you feel calm. Anger said early and plainly stays small, and extra care with tools, traffic, and machinery is worth it today. The Sun {{aspectWord}} your Mars until {{untilDate}} burns cleanest through hard physical work."
+        "body_you": "The temper is close to the surface, and so is everyone else's. Ego friction with a boss, a quarrel at home, or a belligerent stranger can find you even when you feel calm. Anger said early and plainly stays small, and extra care with tools, traffic, and machinery is worth it today. The Sun {{aspectWord}} your Mars until {{untilDate}} burns cleanest through hard physical work.",
+        "body_they": "{{Name}} can run into friction even when they did not start the day looking for it. A boss pushes too hard, a disagreement at home escalates quickly, or a stranger's aggression lands on a shorter fuse than usual. The anger is not automatically wrong, but acting at the peak of it can turn a manageable problem into a larger one.\n\nPhysical effort gives some of the charge somewhere useful to go. So does saying the actual objection before it collects three unrelated grievances around it. With the Sun {{aspectWord}} their Mars until {{untilDate}}, {{Name}} is better off dealing with the real conflict directly and leaving the unnecessary fights alone."
       },
       "astrology": {
         "objects": [
@@ -49653,10 +49659,11 @@
       "sourceAuthor": "composed",
       "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
       "approvalVersionDate": "2026-07-28",
-      "contentHash": "31ec3fd367b0cb7cd3e7f1a2e6bdea5b73b9fdb20dc88cc025f73b1e2a159ef2",
+      "contentHash": "9d56f3aa0d27d6a0bc3d28303f33a6f5cd2edb4e0bdce6e9287ab460320fa067",
       "wording": {
         "headline": "",
-        "body_you": "Physical stamina feels more accessible today, making it a good window to tackle the heavy lift, the long workout, or the physical backlog you've been avoiding. Challenges met boldly tend to go your way, and the energy still wants a body to move through; deskbound, it turns into restlessness. The Sun {{aspectWord}} your Mars until {{untilDate}} goes furthest as effort actually spent."
+        "body_you": "Physical stamina feels more accessible today, making it a good window to tackle the heavy lift, the long workout, or the physical backlog you've been avoiding. Challenges met boldly tend to go your way, and the energy still wants a body to move through; deskbound, it turns into restlessness. The Sun {{aspectWord}} your Mars until {{untilDate}} goes furthest as effort actually spent.",
+        "body_they": "{{Name}} has more usable physical energy than usual today. The task that has been sitting because it felt too heavy, tedious, or physically demanding may finally look straightforward enough to begin. A workout, repair, move, cleanup, or project with a visible finish line can absorb this transit well.\n\nThe energy works better when it has a job. Left unused, it can turn into restlessness that makes everything else feel more irritating than it is. With the Sun {{aspectWord}} their Mars until {{untilDate}}, {{Name}} gets more from doing the difficult thing than from thinking about how much effort it will take."
       },
       "astrology": {
         "objects": [
@@ -49680,10 +49687,11 @@
       "sourceAuthor": "composed",
       "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
       "approvalVersionDate": "2026-07-28",
-      "contentHash": "7b26e4cd794fa07137364755b2d2e4a5594b921541271749f6ef276e29192518",
+      "contentHash": "df7edca211f829632b1706e6025caafd7f89dccd5c875bc1646241b2b6db3d19",
       "wording": {
         "headline": "",
-        "body_you": "The talking speeds up and so does the pushback. Ideas get tested, someone may change plans on you or walk back an agreement, and the paperwork multiplies. Arguments mostly start where broadcasting replaced listening. A position may survive the day intact when you defend it with facts and let the other person finish. The Sun {{aspectWord}} your Mercury until {{untilDate}} is for reading results, not launching directions."
+        "body_you": "The talking speeds up and so does the pushback. Ideas get tested, someone may change plans on you or walk back an agreement, and the paperwork multiplies. Arguments mostly start where broadcasting replaced listening. A position may survive the day intact when you defend it with facts and let the other person finish. The Sun {{aspectWord}} your Mercury until {{untilDate}} is for reading results, not launching directions.",
+        "body_they": "Conversations may accelerate around {{Name}} before anyone has decided what actually needs to be settled. Plans change, someone revises an agreement, and a simple exchange can become an argument because both people are responding faster than they are listening. The pressure is useful when it exposes a weak idea early. It becomes noise when every disagreement has to be won.\n\n{{Name}} may get further by defending the point that matters and letting the rest remain unresolved for a day. With the Sun {{aspectWord}} their Mercury until {{untilDate}}, clear facts hold up better than speed, and listening long enough to understand the objection can save them from arguing against something the other person never said."
       },
       "astrology": {
         "objects": [
@@ -49707,10 +49715,11 @@
       "sourceAuthor": "composed",
       "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
       "approvalVersionDate": "2026-07-28",
-      "contentHash": "4790e4ff7e2f6560b101ad4fd65482db6ff03f0f4fa1cc8fb8046b5cc73cce37",
+      "contentHash": "514d4e2e7d3d5fe0d170288612e734b4ff3309d9a0ac8bb575349b1959081159",
       "wording": {
         "headline": "",
-        "body_you": "The mind is clear and the words land. A pitch, a negotiation, a contract, a class, the important call: language does what you mean today. The exchange may go your way, especially when you state it precisely and take real interest in the other side's view. The Sun {{aspectWord}} your Mercury until {{untilDate}} favors saying the important thing today instead of Thursday."
+        "body_you": "The mind is clear and the words land. A pitch, a negotiation, a contract, a class, the important call: language does what you mean today. The exchange may go your way, especially when you state it precisely and take real interest in the other side's view. The Sun {{aspectWord}} your Mercury until {{untilDate}} favors saying the important thing today instead of Thursday.",
+        "body_they": "The sentence {{Name}} has been trying to get right may finally come out cleanly today. A pitch, negotiation, class, contract discussion, or important call can move because they are able to explain the point without burying it under extra language. Other people are easier to understand too, especially when {{Name}} stays curious instead of rehearsing the next answer.\n\nWith the Sun {{aspectWord}} their Mercury until {{untilDate}}, this is a useful day for the message that needs a clear response. They should say the important part while the words are available and leave enough space for the other person to answer it."
       },
       "astrology": {
         "objects": [
@@ -49734,10 +49743,11 @@
       "sourceAuthor": "composed",
       "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
       "approvalVersionDate": "2026-07-28",
-      "contentHash": "d5fe82130ca291eb4f505c9d6237fa170edf2d17f841a8271dd33fbd5f36e76b",
+      "contentHash": "2eaa7ed9f4d1253f23adbebd4cd09db3a610bb59467dfd09288967bd9541f7f2",
       "wording": {
         "headline": "",
-        "body_you": "Ambition peaks and tact lags. The work gets attention, which cuts both ways with superiors: support if the groundwork was laid, friction if the push reads as steamrolling. Keep the team on side while you drive. The Sun {{aspectWord}} your Midheaven until {{untilDate}} goes best into the work itself, not the credit."
+        "body_you": "Ambition peaks and tact lags. The work gets attention, which cuts both ways with superiors: support if the groundwork was laid, friction if the push reads as steamrolling. Keep the team on side while you drive. The Sun {{aspectWord}} your Midheaven until {{untilDate}} goes best into the work itself, not the credit.",
+        "body_they": "{{Name}}'s work may get more attention than usual, and attention is not automatically comfortable. A manager may question the approach, coworkers may resist being pushed, or a strong result may come with a disagreement about credit, authority, or how the next step should happen. The temptation is to press harder because the stakes feel personal.\n\nThe work itself is still the strongest argument. With the Sun {{aspectWord}} their Midheaven until {{untilDate}}, {{Name}} does better when they keep the team informed, let the result carry some of the weight, and avoid turning professional friction into a referendum on their worth."
       },
       "astrology": {
         "objects": [
@@ -49761,10 +49771,11 @@
       "sourceAuthor": "composed",
       "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
       "approvalVersionDate": "2026-07-28",
-      "contentHash": "30b6e36120badb9af29728a2ce20dc066b157ea9aecdf1981d114ea3a85dc55c",
+      "contentHash": "b38035c07799a50a2d340f576280f4ff77c3557f4bbece2b4ad631b7b2724a1d",
       "wording": {
         "headline": "",
-        "body_you": "Quiet competence gets noticed today. The work done thoroughly without an audience is exactly what earns the nod, and a superior may grant the favor that moves your project. Recognition follows real output here; showcase work earns nothing. The Sun {{aspectWord}} your Midheaven until {{untilDate}} notices the people who just do the job."
+        "body_you": "Quiet competence gets noticed today. The work done thoroughly without an audience is exactly what earns the nod, and a superior may grant the favor that moves your project. Recognition follows real output here; showcase work earns nothing. The Sun {{aspectWord}} your Midheaven until {{untilDate}} notices the people who just do the job.",
+        "body_they": "Work {{Name}} has been doing quietly may become visible to someone who matters. A finished project, careful follow-through, or useful result can earn more attention than a polished announcement would. A manager, client, or decision-maker may be more willing to support the next step because there is already something concrete to point to.\n\nWith the Sun {{aspectWord}} their Midheaven until {{untilDate}}, recognition follows the work more easily than usual. {{Name}} does not need to chase the credit. They need to make sure the result is complete enough that the right person can see what they actually did."
       },
       "astrology": {
         "objects": [
@@ -49788,10 +49799,11 @@
       "sourceAuthor": "composed",
       "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
       "approvalVersionDate": "2026-07-28",
-      "contentHash": "4be95918796cfabc1602479194f54cde7099627a4a6ea2d3a1395634d5571112",
+      "contentHash": "b1a0969e8777fc3e9fad57d175e90cd6fbe41c2560ca6a5b226e83591e975cff",
       "wording": {
         "headline": "",
-        "body_you": "Mood and duty collide. You may snap at home over nothing, react to a boss with feelings that belong somewhere else, or get pulled between the job and someone who needs you at home. The day runs rougher the longer the feelings have been swallowed; said early and plainly, the friction mostly clears. The Sun {{aspectWord}} your Moon until {{untilDate}} puts the personal life and the public one in the same small room."
+        "body_you": "Mood and duty collide. You may snap at home over nothing, react to a boss with feelings that belong somewhere else, or get pulled between the job and someone who needs you at home. The day runs rougher the longer the feelings have been swallowed; said early and plainly, the friction mostly clears. The Sun {{aspectWord}} your Moon until {{untilDate}} puts the personal life and the public one in the same small room.",
+        "body_they": "{{Name}} may carry one part of the day into another without realizing it. Frustration from work follows them home, a family need arrives when they have nothing left, or a boss gets a reaction that belongs partly to something much more personal. The feeling is still valid. The problem is assuming the nearest person caused all of it.\n\nA direct conversation can clear the friction before it spreads across the rest of the day. With the Sun {{aspectWord}} their Moon until {{untilDate}}, {{Name}} benefits from naming what they are actually upset about and noticing where public responsibilities and private needs have been competing for the same energy."
       },
       "astrology": {
         "objects": [
@@ -49815,10 +49827,11 @@
       "sourceAuthor": "composed",
       "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
       "approvalVersionDate": "2026-07-28",
-      "contentHash": "c1442bfb68870a0e7d6d3c3f95efc3dc05c4f5ac2d1c3305a503aaa7a2befd46",
+      "contentHash": "5e862415dea96ab5a922a01810209a4ade0f67f4a0120169dbc9d9ce70f07f6a",
       "wording": {
         "headline": "",
-        "body_you": "Feelings and plans point the same way for once. Home runs smoother, family is easier to reach, and the strain you have been avoiding can be talked out while everyone is calm. The conversation may actually resolve, especially when you raise it today instead of waiting for the version that starts itself later. The Sun {{aspectWord}} your Moon until {{untilDate}} is the easiest window of the month for the personal talk."
+        "body_you": "Feelings and plans point the same way for once. Home runs smoother, family is easier to reach, and the strain you have been avoiding can be talked out while everyone is calm. The conversation may actually resolve, especially when you raise it today instead of waiting for the version that starts itself later. The Sun {{aspectWord}} your Moon until {{untilDate}} is the easiest window of the month for the personal talk.",
+        "body_they": "{{Name}} may find it easier to get their feelings and plans moving in the same direction today. Home is less complicated, family is easier to reach, and a conversation that usually becomes defensive may stay calm long enough to get somewhere. The ease is useful because it gives them a chance to address something before it becomes urgent.\n\nWith the Sun {{aspectWord}} their Moon until {{untilDate}}, this is a good window for the personal conversation {{Name}} has been waiting to have. They do not need perfect language. A clear account of what changed, what they feel, and what they need next is enough."
       },
       "astrology": {
         "objects": [
@@ -49842,10 +49855,11 @@
       "sourceAuthor": "composed",
       "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
       "approvalVersionDate": "2026-07-28",
-      "contentHash": "ebe10cfd37e9feabba7752b2f50a9a46fe6bd63e4dff924b79c64645d4c8c7c0",
+      "contentHash": "fe0d07aa9a828f89ee640f1a3bf309fa9c9bb75e55ec1e802cde2a8a8b41d310",
       "wording": {
         "headline": "",
-        "body_you": "Clarity dips today and energy dips with it; and plans presented today may be vaguer than they sound; shortcuts are tempting and rarely land. The workload may simply need lightening. Postpone signatures and confrontations a few days, take claims with salt, and go easy on alcohol; the body runs oversensitive today. The Sun {{aspectWord}} your Neptune until {{untilDate}} is for coasting, not committing."
+        "body_you": "Clarity dips today and energy dips with it; and plans presented today may be vaguer than they sound; shortcuts are tempting and rarely land. The workload may simply need lightening. Postpone signatures and confrontations a few days, take claims with salt, and go easy on alcohol; the body runs oversensitive today. The Sun {{aspectWord}} your Neptune until {{untilDate}} is for coasting, not committing.",
+        "body_they": "{{Name}} may have less clarity and less energy at the same time today, which makes vague plans sound more convincing than they should. A promise can be missing important details, a shortcut can look harmless, or exhaustion can make any decisive answer feel better than staying uncertain. The day is not ideal for forcing certainty that is not there yet.\n\nWith the Sun {{aspectWord}} their Neptune until {{untilDate}}, {{Name}} benefits from postponing what can wait and checking the facts on what cannot. A lighter schedule, less alcohol, and fewer high-stakes confrontations give the body and judgment more room to recover before they commit to something difficult to reverse."
       },
       "astrology": {
         "objects": [
@@ -49869,10 +49883,11 @@
       "sourceAuthor": "composed",
       "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
       "approvalVersionDate": "2026-07-28",
-      "contentHash": "c1907621410541e50017b6a66056eb7b7bbe5360dc1512dde55f8582cb18ef63",
+      "contentHash": "f5a324b0f1aaaeac34a1c301a228d7aadc1e87b1ae3d3c2889b1fd8551f2ef99",
       "wording": {
         "headline": "",
-        "body_you": "Your tolerance for noise, competition, and packed schedules thins out. The day rewards dropping the effort to appear decisive when you're actually just tired. Helping someone, quiet hours, music, a film that lands: this is where the day goes right. Not the day to launch the colossal effort. The Sun {{aspectWord}} your Neptune until {{untilDate}} restores more than it produces, and that is its job."
+        "body_you": "Your tolerance for noise, competition, and packed schedules thins out. The day rewards dropping the effort to appear decisive when you're actually just tired. Helping someone, quiet hours, music, a film that lands: this is where the day goes right. Not the day to launch the colossal effort. The Sun {{aspectWord}} your Neptune until {{untilDate}} restores more than it produces, and that is its job.",
+        "body_they": "{{Name}} may be less interested in competition, packed plans, or proving they can keep pace today. Quiet work, music, film, helping someone, or simply having fewer demands can feel more restorative than trying to squeeze productivity out of low energy. This is not necessarily a problem to solve.\n\nWith the Sun {{aspectWord}} their Neptune until {{untilDate}}, {{Name}} gets more from following the softer rhythm of the day than from treating sensitivity as inefficiency. They can still do something meaningful. It may just be the kind of thing that restores them instead of producing another measurable result."
       },
       "astrology": {
         "objects": [
@@ -49896,10 +49911,11 @@
       "sourceAuthor": "composed",
       "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
       "approvalVersionDate": "2026-07-28",
-      "contentHash": "ba97ecf748e404905872f7262584ba0c4d3be08fe0679a25646b58cd947ad7a1",
+      "contentHash": "3ced240de94978462e80a1a70f87177475b1243cf0dc8483eca9a20298267cb1",
       "wording": {
         "headline": "",
-        "body_you": "You may be asked to lead the meeting instead of taking notes, accept a title you have never held, or enter a room where everyone appears more qualified. The opportunity may be exactly what you said you wanted. That will not stop you from immediately making a list of reasons someone else would be better for it.\n\nThe Sun {{aspectWord}} your North Node until {{untilDate}} gives the unfamiliar role somewhere real to begin. Accept the opportunity at the size it is now. You do not need to prove you can carry the next ten years before agreeing to the first assignment."
+        "body_you": "You may be asked to lead the meeting instead of taking notes, accept a title you have never held, or enter a room where everyone appears more qualified. The opportunity may be exactly what you said you wanted. That will not stop you from immediately making a list of reasons someone else would be better for it.\n\nThe Sun {{aspectWord}} your North Node until {{untilDate}} gives the unfamiliar role somewhere real to begin. Accept the opportunity at the size it is now. You do not need to prove you can carry the next ten years before agreeing to the first assignment.",
+        "body_they": "{{Name}} may be offered a role that feels slightly ahead of the version of themselves they already know how to be. Leading instead of assisting, accepting a title they have never held, or entering a group where everyone seems more experienced can make a genuine opportunity feel like evidence they are unprepared. The discomfort does not cancel the opportunity.\n\nWith the Sun {{aspectWord}} their North Node until {{untilDate}}, {{Name}} gets a concrete chance to begin becoming familiar with the unfamiliar role. They do not need proof that they can carry the entire future attached to it. They need enough willingness to accept the first assignment and learn from what happens next."
       },
       "astrology": {
         "objects": [
@@ -49927,10 +49943,11 @@
       "sourceAuthor": "composed",
       "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
       "approvalVersionDate": "2026-07-28",
-      "contentHash": "6161e47d1bd5d8292e878231d59935171b0339a5e62dacb62605230d241df3c3",
+      "contentHash": "ea5650e4b4ffe6eacdfce90b3a57a365579df1677bd9fe33d98688806f5d9820",
       "wording": {
         "headline": "",
-        "body_you": "An authority may demand you account for yourself today, an arrangement that was limping may break outright, and an ultimatum may appear from either side. Ultimatums issued today tend to backfire; the workable move is airing the grievance without forcing the ending, and not going it alone. A temporary fix reaches its limit today; the arrangement isn't doomed, but the quick patch won't hold the weight anymore. The Sun {{aspectWord}} your Pluto until {{untilDate}} points at the structural fault, and addressing it beats watching the same leak return."
+        "body_you": "An authority may demand you account for yourself today, an arrangement that was limping may break outright, and an ultimatum may appear from either side. Ultimatums issued today tend to backfire; the workable move is airing the grievance without forcing the ending, and not going it alone. A temporary fix reaches its limit today; the arrangement isn't doomed, but the quick patch won't hold the weight anymore. The Sun {{aspectWord}} your Pluto until {{untilDate}} points at the structural fault, and addressing it beats watching the same leak return.",
+        "body_they": "A disagreement around {{Name}} may reveal that the argument is not only about the stated issue. An authority figure pushes for control, an arrangement that has been barely holding together reaches its limit, or someone introduces an ultimatum because the quieter ways of managing the problem stopped working. The pressure shows where the structure is weakest.\n\n{{Name}} does not have to accept someone else's terms just because they were delivered forcefully. They also do not gain much by answering pressure with a larger threat. With the Sun {{aspectWord}} their Pluto until {{untilDate}}, the useful confrontation is the one that names the actual grievance, the actual leverage, and what has to change for the problem to stop returning."
       },
       "astrology": {
         "objects": [
@@ -49954,10 +49971,11 @@
       "sourceAuthor": "composed",
       "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
       "approvalVersionDate": "2026-07-28",
-      "contentHash": "46e4f6f9d437878490baefff18134078fe1f4cd327fe9b93d97ba49df368d58a",
+      "contentHash": "ac9d3d739a60937f714f12c46d81cc05bcd36681fd451bee092bece8697db20b",
       "wording": {
         "headline": "",
-        "body_you": "An old grievance, a hidden expense, or a quiet piece of resentment stops being vague today: it becomes specific enough to name, sit with, or finally deal with directly. People accept your lead, and the tangled situation - the closet, the account, the feud - can finally be cleaned up. The lead holds when it serves the group and not just you. The Sun {{aspectWord}} your Pluto until {{untilDate}} is the day to fix what has been broken for months."
+        "body_you": "An old grievance, a hidden expense, or a quiet piece of resentment stops being vague today: it becomes specific enough to name, sit with, or finally deal with directly. People accept your lead, and the tangled situation - the closet, the account, the feud - can finally be cleaned up. The lead holds when it serves the group and not just you. The Sun {{aspectWord}} your Pluto until {{untilDate}} is the day to fix what has been broken for months.",
+        "body_they": "Something {{Name}} has been living around may become specific enough to address today. An old grievance finally gets named, a hidden expense becomes clear, or a difficult situation that kept producing consequences without an obvious cause reveals where the problem actually sits. Once it is concrete, {{Name}} can do something with it.\n\nOther people may be more willing to follow their lead when the solution helps more than one person. With the Sun {{aspectWord}} their Pluto until {{untilDate}}, influence works best when {{Name}} uses it to resolve the underlying problem rather than to prove they were the person who saw it first."
       },
       "astrology": {
         "objects": [
@@ -49981,10 +49999,11 @@
       "sourceAuthor": "composed",
       "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
       "approvalVersionDate": "2026-07-28",
-      "contentHash": "390fe7998bd22d00a5eb8cf2a5b35d28ab867277cc341055a2e04e824e6f7c35",
+      "contentHash": "cac4433f3df69e48e768782fc66419c363f722a30365ae3be7ccbc6ec266cbb7",
       "wording": {
         "headline": "",
-        "body_you": "Energy runs low today and duties run large; someone may cancel or fall short of an agreement, and authority is not in the mood for you. Most of the restriction is closer than it looks: the tasks left undone are usually what is generating the gloom. Effort feels heavy today, but finishing the tedious thing clears a quiet kind of mental space that resting next to an unfinished task never gives you. The Sun {{aspectWord}} your Saturn until {{untilDate}} runs on duty, and early sleep helps."
+        "body_you": "Energy runs low today and duties run large; someone may cancel or fall short of an agreement, and authority is not in the mood for you. Most of the restriction is closer than it looks: the tasks left undone are usually what is generating the gloom. Effort feels heavy today, but finishing the tedious thing clears a quiet kind of mental space that resting next to an unfinished task never gives you. The Sun {{aspectWord}} your Saturn until {{untilDate}} runs on duty, and early sleep helps.",
+        "body_they": "{{Name}} may feel the weight of every unfinished responsibility at once today. Someone cancels, authority is less flexible, or a task that should have been handled earlier becomes the thing blocking everything else. The mood can make the entire situation look more restricted than it is, especially when several small obligations have been left open.\n\nFinishing one tedious responsibility may give {{Name}} more relief than trying to rest while it remains in the background. With the Sun {{aspectWord}} their Saturn until {{untilDate}}, the day asks for less drama and more completion. The useful move is doing the necessary part, lowering the expectations for everything else, and getting enough sleep afterward."
       },
       "astrology": {
         "objects": [
@@ -50008,10 +50027,11 @@
       "sourceAuthor": "composed",
       "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
       "approvalVersionDate": "2026-07-28",
-      "contentHash": "f65d75f3eef85d071662adadc5239c757b1a0964f6230b0598af01eb411ad6ae",
+      "contentHash": "3165870e5e6ec62efa8ef123a83702274c44e0ed7be55b71ef030b715c3fa510",
       "wording": {
         "headline": "",
-        "body_you": "The backlog stops looking like an insult and starts looking like a list. It's a good window for the task nobody applauds: the forms, the corrections, the spreadsheet, and the follow-up email you've been postponing. An older or more experienced person's advice is worth actively seeking, and what gets finished tends to stay finished. The Sun {{aspectWord}} your Saturn until {{untilDate}} clears backlogs."
+        "body_you": "The backlog stops looking like an insult and starts looking like a list. It's a good window for the task nobody applauds: the forms, the corrections, the spreadsheet, and the follow-up email you've been postponing. An older or more experienced person's advice is worth actively seeking, and what gets finished tends to stay finished. The Sun {{aspectWord}} your Saturn until {{untilDate}} clears backlogs.",
+        "body_they": "The boring work may finally feel manageable to {{Name}} today. Forms, corrections, bookkeeping, follow-up, or a task that has been sitting because nobody will praise it can be finished without requiring a crisis first. Advice from someone with more experience may also be useful because {{Name}} is in a better position to hear the practical part of it.\n\nWith the Sun {{aspectWord}} their Saturn until {{untilDate}}, steady attention goes further than inspiration. {{Name}} does not need to make the task interesting. They need to finish it well enough that it stops taking up space on tomorrow's list."
       },
       "astrology": {
         "objects": [
@@ -50035,10 +50055,11 @@
       "sourceAuthor": "composed",
       "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
       "approvalVersionDate": "2026-07-28",
-      "contentHash": "3c29359d2cb9215fe4c7281c9dd6a1d2dddd30e38e56e12395a46ee915047fdc",
+      "contentHash": "4bf17f10919ff8f34bdc49f7effbbaf38a87dbaaad78e561e697c423c34c5700",
       "wording": {
         "headline": "",
-        "body_you": "The familiar role fits immediately. You know what to say, how to help, and how to become useful before anyone asks. Recognition may also come easily because people already understand what you can do there.\n\nEnjoy the ease without treating it as a permanent address. The Sun {{aspectWord}} your South Node until {{untilDate}} brings you back to a version of yourself you have already mastered. It still works. That does not automatically make it the direction you need to keep following."
+        "body_you": "The familiar role fits immediately. You know what to say, how to help, and how to become useful before anyone asks. Recognition may also come easily because people already understand what you can do there.\n\nEnjoy the ease without treating it as a permanent address. The Sun {{aspectWord}} your South Node until {{untilDate}} brings you back to a version of yourself you have already mastered. It still works. That does not automatically make it the direction you need to keep following.",
+        "body_they": "{{Name}} may slip back into a familiar role so easily that nobody has to explain what they expect. They already know how to help, what to say, and how to become useful there. Recognition can come quickly too, because other people already understand this version of them. The ease is genuine. It is also familiar for a reason.\n\nWith the Sun {{aspectWord}} their South Node until {{untilDate}}, {{Name}} gets to revisit something they have already mastered without assuming it still deserves the same place in their life. They can enjoy being competent there and still ask if the role supports the direction they are trying to move now."
       },
       "astrology": {
         "objects": [
@@ -50066,10 +50087,11 @@
       "sourceAuthor": "composed",
       "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
       "approvalVersionDate": "2026-07-28",
-      "contentHash": "43a0f4761392f7c194616356594ff3e7fd079618ddfc0f0c78db01873b87c790",
+      "contentHash": "a0f460ba5861b047a257a555839c983cfc38988b2365ff08ea368ec6f936b68e",
       "wording": {
         "headline": "",
-        "body_you": "A plan you assumed was finished gets handed back with questions. Someone asks for proof, points directly at the line you hoped they'd skip, or asks how you intend to pay for the ambitious version. A decision from months ago may also show its results, ready or not. The pushback lands softer when the preparation was real, and a surfaced failure reads better as information than as a verdict. The Sun {{aspectWord}} your Sun until {{untilDate}} checks in on the year; smugness with a superior is the one expensive move."
+        "body_you": "A plan you assumed was finished gets handed back with questions. Someone asks for proof, points directly at the line you hoped they'd skip, or asks how you intend to pay for the ambitious version. A decision from months ago may also show its results, ready or not. The pushback lands softer when the preparation was real, and a surfaced failure reads better as information than as a verdict. The Sun {{aspectWord}} your Sun until {{untilDate}} checks in on the year; smugness with a superior is the one expensive move.",
+        "body_they": "Something {{Name}} thought was settled may come back with questions today. A plan needs proof, a decision-maker wants to know how the ambitious version will be funded, or a choice from months ago finally produces a result that cannot be ignored. Pushback can feel personal when {{Name}} believed the difficult part was already over.\n\nThe questions are useful if they expose something that still needs work. With the Sun {{aspectWord}} their Sun until {{untilDate}}, {{Name}} is better served by showing the preparation, fixing the weak point, and letting the result speak than by treating scrutiny as disrespect. A plan that survives the questions becomes easier to trust afterward."
       },
       "astrology": {
         "objects": [
@@ -50092,10 +50114,11 @@
       "sourceAuthor": "composed",
       "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
       "approvalVersionDate": "2026-07-28",
-      "contentHash": "f2c69384ad605a5e9b67a57a7614bc67a5c09b28e02e62607227b2fc861d13e2",
+      "contentHash": "cb68cc02abc805b487c4d3de9b76bd0cb0909d4297a7f016c5fdc7aafd73012f",
       "wording": {
         "headline": "",
-        "body_you": "Cooperation arrives without being asked for: the reply comes back, the meeting runs short, the plan advances a step on its own. A quick check on the year's goals is worth the ten minutes, especially when you use the calm to fix a weak spot rather than admire a strong one. The Sun {{aspectWord}} your Sun until {{untilDate}} is an easy day worth spending on purpose."
+        "body_you": "Cooperation arrives without being asked for: the reply comes back, the meeting runs short, the plan advances a step on its own. A quick check on the year's goals is worth the ten minutes, especially when you use the calm to fix a weak spot rather than admire a strong one. The Sun {{aspectWord}} your Sun until {{untilDate}} is an easy day worth spending on purpose.",
+        "body_they": "The day may give {{Name}} a little more cooperation than they expected. A reply arrives, a meeting takes less effort, or a plan advances without another round of pushing. That ease can be wasted if they only enjoy the relief and leave the same weak point waiting for a harder day.\n\nWith the Sun {{aspectWord}} their Sun until {{untilDate}}, {{Name}} has a useful window for checking what is working and strengthening the part that still depends on luck, another person's patience, or a temporary workaround. Easy progress is still progress. It is also a good time to make the next round easier."
       },
       "astrology": {
         "objects": [
@@ -50118,10 +50141,11 @@
       "sourceAuthor": "composed",
       "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
       "approvalVersionDate": "2026-07-28",
-      "contentHash": "539d224452ee95b57be5d4de609a05a7aa1d75761c43db2da05a8cbd695cd098",
+      "contentHash": "21a5494e5bb2e0fe88843b76a83f632d0572affb988911043890cff7b3434e82",
       "wording": {
         "headline": "",
-        "body_you": "Schedules flip today, the car or the printer picks its moment, someone does something abrupt, and a partner may be the restless one. The disruption eases when you plan something genuinely different yourself instead of defending the routine; jittery hours are the wrong ones for risky tasks, and a bridge burned in irritation is expensive to rebuild. The Sun {{aspectWord}} your Uranus until {{untilDate}} breaks the pattern one way or another; choosing which part breaks is the available control."
+        "body_you": "Schedules flip today, the car or the printer picks its moment, someone does something abrupt, and a partner may be the restless one. The disruption eases when you plan something genuinely different yourself instead of defending the routine; jittery hours are the wrong ones for risky tasks, and a bridge burned in irritation is expensive to rebuild. The Sun {{aspectWord}} your Uranus until {{untilDate}} breaks the pattern one way or another; choosing which part breaks is the available control.",
+        "body_they": "{{Name}} may have to improvise around a day that refuses to follow the original plan. A schedule flips, a machine chooses the worst time to fail, someone acts abruptly, or a partner becomes the restless one. The disruption is irritating partly because it removes the illusion that the routine was fully under control.\n\nA small deliberate change can give the energy somewhere to go before frustration chooses the change instead. With the Sun {{aspectWord}} their Uranus until {{untilDate}}, {{Name}} benefits from staying flexible with plans and conservative with risky decisions made at the peak of irritation. Not every broken pattern needs to be rebuilt exactly as it was."
       },
       "astrology": {
         "objects": [
@@ -50145,10 +50169,11 @@
       "sourceAuthor": "composed",
       "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
       "approvalVersionDate": "2026-07-28",
-      "contentHash": "0258d771337dcac1810192e75131c6d7089d8ef96b4da56e9edb52a586695760",
+      "contentHash": "d0fa469ba2a35b6a690615fd4461a425cf775bfa1ef98907848e7f79bc4e95dd",
       "wording": {
         "headline": "",
-        "body_you": "Ordinary encounters turn lively today, an old contact may resurface, and a deliberate change to a stale routine lands well. Discipline is low; novelty is high. A daring move may earn respect, especially when it is chosen rather than reactive. The Sun {{aspectWord}} your Uranus until {{untilDate}} favors shaking the routine on purpose."
+        "body_you": "Ordinary encounters turn lively today, an old contact may resurface, and a deliberate change to a stale routine lands well. Discipline is low; novelty is high. A daring move may earn respect, especially when it is chosen rather than reactive. The Sun {{aspectWord}} your Uranus until {{untilDate}} favors shaking the routine on purpose.",
+        "body_they": "Something different may improve {{Name}}'s day more than something efficient. An old contact resurfaces, an ordinary interaction becomes unexpectedly interesting, or a small change to a stale routine gives them more energy than another attempt to be disciplined. The novelty is useful because it shows where the current pattern has become too narrow.\n\nWith the Sun {{aspectWord}} their Uranus until {{untilDate}}, {{Name}} can experiment without needing to reorganize everything. One deliberate change is enough to learn from. If it makes the day work better, they can decide later if it deserves to become part of the routine."
       },
       "astrology": {
         "objects": [
@@ -50172,10 +50197,11 @@
       "sourceAuthor": "composed",
       "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
       "approvalVersionDate": "2026-07-28",
-      "contentHash": "d115dcaa498ae2a5d2e4551f702d3a5efe5921fc406eb4050f067c10f9a8803d",
+      "contentHash": "0d58bfae4c3a5a8b7c6c8e78dcb255f4b60521bf3d7e9f02709526dd802d75dd",
       "wording": {
         "headline": "",
-        "body_you": "Pleasure leads and drive follows at a distance. The purchase looks better than it is, the night out runs long, and in a couple, a hidden tension may pick today to surface. What drifts to you without effort is mostly not worth much; what surfaces in the relationship is worth looking at. The Sun {{aspectWord}} your Venus until {{untilDate}} favors gracious over touchy, and a one-day pause on the impulse buy."
+        "body_you": "Pleasure leads and drive follows at a distance. The purchase looks better than it is, the night out runs long, and in a couple, a hidden tension may pick today to surface. What drifts to you without effort is mostly not worth much; what surfaces in the relationship is worth looking at. The Sun {{aspectWord}} your Venus until {{untilDate}} favors gracious over touchy, and a one-day pause on the impulse buy.",
+        "body_they": "{{Name}} may want the pleasant answer before they have checked what it costs. The purchase is easy to justify, the night runs later than planned, or a relationship tension surfaces at exactly the moment everyone would rather keep things easy. Avoiding the discomfort may preserve the mood for an hour and leave the actual issue untouched.\n\nWith the Sun {{aspectWord}} their Venus until {{untilDate}}, {{Name}} benefits from slowing down the impulse purchase and taking the relationship tension seriously enough to look at it. They do not have to make the evening heavy. They do need to notice what keeps asking for attention underneath the attempt to keep everything pleasant."
       },
       "astrology": {
         "objects": [
@@ -50199,10 +50225,11 @@
       "sourceAuthor": "composed",
       "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
       "approvalVersionDate": "2026-07-28",
-      "contentHash": "5e0b3c337adf6809e33c0affe710a4850a0ae6b33759d91bd9d412e5a0a4dd43",
+      "contentHash": "5188b3cfd6d1bb80ebb512c72790fa82afff1c9830afac028b2a1101e97adf4c",
       "wording": {
         "headline": "",
-        "body_you": "The room is slightly warmer today, but the warmth doesn't do the work for you. The invitation still needs to be sent, the apology still needs to be spoken, and the proposal still needs an actual price attached to it. Easy rapport opens the door; the connection holds up when there's actual substance behind the friendly tone. The Sun {{aspectWord}} your Venus until {{untilDate}} is a social day; spending it alone tends to feel lonelier than usual."
+        "body_you": "The room is slightly warmer today, but the warmth doesn't do the work for you. The invitation still needs to be sent, the apology still needs to be spoken, and the proposal still needs an actual price attached to it. Easy rapport opens the door; the connection holds up when there's actual substance behind the friendly tone. The Sun {{aspectWord}} your Venus until {{untilDate}} is a social day; spending it alone tends to feel lonelier than usual.",
+        "body_they": "People may be a little easier for {{Name}} to reach today. The invitation is more likely to be welcomed, an apology can land without becoming another argument, and a proposal may get a warmer response when the practical terms are already clear. Easy rapport helps, but it cannot replace the part that still has to be said or offered.\n\nWith the Sun {{aspectWord}} their Venus until {{untilDate}}, {{Name}} gets more from making contact than from waiting to be noticed. The useful gesture is the one with something behind it: the invitation actually sent, the apology actually made, or the proposal that includes the number instead of only the charm."
       },
       "astrology": {
         "objects": [
@@ -51258,10 +51285,10 @@
       "sourceAuthor": "composed",
       "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
       "approvalVersionDate": "2026-07-28",
-      "contentHash": "b496284acc72111717932c5503f3c1c843959e2c5909cae54d4a13fb86af5500",
+      "contentHash": "15ffaa6f57209ff4cf63f6d0c77577bf8eec32182f737e2430391a04efb606e3",
       "wording": {
         "headline": "",
-        "body_you": "The affection comes out as management: hovering, feeding, fixing, checking. A partner may feel mothered instead of loved, and the calm relationship talk you planned dissolves into feeling. Sweets and drink both overshoot. Love without parenting is today's whole assignment. Venus {{aspectWord}} your Moon until {{untilDate}} runs high on feeling and low on discussion; save the big talk for a cooler day."
+        "body_you": "The affection comes out as management: hovering, feeding, fixing, checking. A partner may feel smothered instead of loved. Instead of talking things through rationally, you or your partner get flooded by raw feelings, and the logical point of the discussion gets lost in the reaction. When the nervous system runs that hot, self-soothing habits easily turn into overindulgence. Connection without control is the goal. Venus {{aspectWord}} your Moon until {{untilDate}} runs high on feeling and low on discussion; save heavy relationship conversations for a different day."
       },
       "astrology": {
         "objects": [
@@ -160036,15 +160063,15 @@
       "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/sky-aspect-phrasebook-v1.json",
       "runtimeBucket": "hook",
       "status": "owner-approved",
-      "sourceStatus": "reviewed",
+      "sourceStatus": "approved",
       "provenance": "source-archive",
       "sourceAuthor": "composed",
       "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
       "approvalVersionDate": "package-owner-approval",
-      "contentHash": "bb7cb3a394d2d592fa9b1b72361118db5ac2a719b5dd969e6f288e383aad5769",
+      "contentHash": "95362cc01c5eb9b4113f8be2e663db53899f15a7adf9411508af0a7e22920b0d",
       "wording": {
-        "body_you": "Venus in Aquarius square Saturn in Scorpio can make a connection feel easy until people have to decide who has access, who carries the debt or shared risk, and what stays private. Space feels generous before the terms have consequences. Once trust and money enter the conversation, someone may realize that all that room also left them carrying the risk alone.",
-        "body_they": "Venus in Aquarius square Saturn in Scorpio can make a connection feel easy until people have to decide who has access, who carries the debt or shared risk, and what stays private. Space feels generous before the terms have consequences. Once trust and money enter the conversation, someone may realize that all that room also left them carrying the risk alone."
+        "body_you": "A relationship or group arrangement may feel flexible until money, shared risk, or privacy has to be defined. Venus in Aquarius square Saturn in Scorpio can expose who carries the risk when everyone wants freedom. The risk is giving everyone space while leaving one person responsible for the consequences. Put the money, access, and privacy rules into the agreement.",
+        "body_they": "A relationship or group arrangement may feel flexible until money, shared risk, or privacy has to be defined. Venus in Aquarius square Saturn in Scorpio can expose who carries the risk when everyone wants freedom. The risk is giving everyone space while leaving one person responsible for the consequences. Put the money, access, and privacy rules into the agreement."
       },
       "astrology": {
         "objects": [
@@ -160070,15 +160097,15 @@
       "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/sky-aspect-phrasebook-v1.json",
       "runtimeBucket": "hook",
       "status": "owner-approved",
-      "sourceStatus": "reviewed",
+      "sourceStatus": "approved",
       "provenance": "source-archive",
       "sourceAuthor": "composed",
       "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
       "approvalVersionDate": "package-owner-approval",
-      "contentHash": "9929ce7769ccde7b4273027e1100417be3f5e52d2f4f60ae1d83f6a88d06a281",
+      "contentHash": "6e46f104bb1de378eadaae0991f7a5d0a915b14f522d2c664e05174aed78f097",
       "wording": {
-        "body_you": "Venus in Aquarius square Saturn in Taurus brings a new arrangement into direct contact with the money, home, or routine it would change. The idea may solve a larger problem and still ask someone to give up the comfort or income they worked hard to protect. A better future becomes harder to celebrate when the cost arrives in one person's ordinary life.",
-        "body_they": "Venus in Aquarius square Saturn in Taurus brings a new arrangement into direct contact with the money, home, or routine it would change. The idea may solve a larger problem and still ask someone to give up the comfort or income they worked hard to protect. A better future becomes harder to celebrate when the cost arrives in one person's ordinary life."
+        "body_you": "A new group plan or arrangement may ask someone to give up more money, comfort, or routine than they expected. Venus in Aquarius square Saturn in Taurus can put a change meant to solve a larger problem against the material stability one person worked hard to protect. The risk is calling resistance stubborn when the person is asking what the change will cost them. Name the cost before asking for buy-in.",
+        "body_they": "A new group plan or arrangement may ask someone to give up more money, comfort, or routine than they expected. Venus in Aquarius square Saturn in Taurus can put a change meant to solve a larger problem against the material stability one person worked hard to protect. The risk is calling resistance stubborn when the person is asking what the change will cost them. Name the cost before asking for buy-in."
       },
       "astrology": {
         "objects": [
@@ -160104,15 +160131,15 @@
       "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/sky-aspect-phrasebook-v1.json",
       "runtimeBucket": "hook",
       "status": "owner-approved",
-      "sourceStatus": "reviewed",
+      "sourceStatus": "approved",
       "provenance": "source-archive",
       "sourceAuthor": "composed",
       "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
       "approvalVersionDate": "package-owner-approval",
-      "contentHash": "b4e2857c43ffbe11a9a56e0d96753f87278e7e4b772f0ec04d43b52f81aaef7b",
+      "contentHash": "ad849b08c8d6c78f6de01d20b0fdd041731f8486fba7f5342af57b478b035dcd",
       "wording": {
-        "body_you": "Venus in Aquarius trine Saturn in Gemini gives an unusual connection or group idea language people can actually use. A conversation may define the terms, explain the difference, or turn scattered interest into a network that knows how to stay in contact. Belonging becomes easier when no one has to pretend the arrangement is more conventional than it is.",
-        "body_they": "Venus in Aquarius trine Saturn in Gemini gives an unusual connection or group idea language people can actually use. A conversation may define the terms, explain the difference, or turn scattered interest into a network that knows how to stay in contact. Belonging becomes easier when no one has to pretend the arrangement is more conventional than it is."
+        "body_you": "A new idea can become much more useful once it reaches the people who know how to question it, improve it, or help put it into practice. Venus in Aquarius trine Saturn in Gemini can connect unusual perspectives with the conversations and networks needed to make them workable. You do not need everyone to understand what you are trying, but the people involved do need enough clarity to participate well. Share the idea, test it with people you trust, and keep the parts that hold up once other minds get involved.",
+        "body_they": "A new idea can become much more useful once it reaches the people who know how to question it, improve it, or help put it into practice. Venus in Aquarius trine Saturn in Gemini can connect unusual perspectives with the conversations and networks needed to make them workable. You do not need everyone to understand what you are trying, but the people involved do need enough clarity to participate well. Share the idea, test it with people you trust, and keep the parts that hold up once other minds get involved."
       },
       "astrology": {
         "objects": [
@@ -160138,15 +160165,15 @@
       "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/sky-aspect-phrasebook-v1.json",
       "runtimeBucket": "hook",
       "status": "owner-approved",
-      "sourceStatus": "reviewed",
+      "sourceStatus": "approved",
       "provenance": "source-archive",
       "sourceAuthor": "composed",
       "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
       "approvalVersionDate": "package-owner-approval",
-      "contentHash": "3b1cfac843073d79273056ac045bfbd4e03516dded352327be83e60620201d98",
+      "contentHash": "0f3b36c33e555957f7569f5a8e71f7831a7956d2e56a3f502ca5a8970ef080dc",
       "wording": {
-        "body_you": "Venus in Aquarius trine Saturn in Libra helps a new social arrangement earn trust through fair rules. People may share access, divide responsibility, or protect individual freedom without leaving the most reliable person to carry every obligation. The agreement makes room for difference and tells everyone what they can count on.",
-        "body_they": "Venus in Aquarius trine Saturn in Libra helps a new social arrangement earn trust through fair rules. People may share access, divide responsibility, or protect individual freedom without leaving the most reliable person to carry every obligation. The agreement makes room for difference and tells everyone what they can count on."
+        "body_you": "People can need different amounts of freedom and still make clear commitments to each other. Venus in Aquarius trine Saturn in Libra can help friendships, partnerships, or groups create terms that respect individual needs without making the whole connection vague. Independence works better when people still know what they can expect from each other. Be clear about the commitment, respect the differences, and leave room for people to participate in ways that actually work for them.",
+        "body_they": "People can need different amounts of freedom and still make clear commitments to each other. Venus in Aquarius trine Saturn in Libra can help friendships, partnerships, or groups create terms that respect individual needs without making the whole connection vague. Independence works better when people still know what they can expect from each other. Be clear about the commitment, respect the differences, and leave room for people to participate in ways that actually work for them."
       },
       "astrology": {
         "objects": [
@@ -160240,15 +160267,15 @@
       "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/sky-aspect-phrasebook-v1.json",
       "runtimeBucket": "hook",
       "status": "owner-approved",
-      "sourceStatus": "reviewed",
+      "sourceStatus": "approved",
       "provenance": "source-archive",
       "sourceAuthor": "composed",
       "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
       "approvalVersionDate": "package-owner-approval",
-      "contentHash": "efc1e4330b6237e5353f5c1cb410ffb85fcf798983aac9dc5896c92638dd6ddd",
+      "contentHash": "4bcf2b28ff1aa950402f89620dc165e9f4ffd4c0e99930fb4fd812c5fc91d2af",
       "wording": {
-        "body_you": "Venus in Aries square Saturn in Cancer brings open affection up against worries people may not be ready to discuss. Someone may say exactly how they feel and expect a clear answer, while the other person is thinking about family, privacy, or what the decision could disrupt at home. Someone may be honest about how they feel, then start to regret it when the answer takes longer than expected.",
-        "body_they": "Venus in Aries square Saturn in Cancer brings open affection up against worries people may not be ready to discuss. Someone may say exactly how they feel and expect a clear answer, while the other person is thinking about family, privacy, or what the decision could disrupt at home. Someone may be honest about how they feel, then start to regret it when the answer takes longer than expected."
+        "body_you": "Someone may say what they want and then get a slower or more cautious response than they expected. Venus in Aries square Saturn in Cancer can make direct affection run into family needs, privacy, or worries about what a decision would change at home. The risk is treating the delay as rejection before the other person has had time to answer. Ask what is actually holding up the response.",
+        "body_they": "Someone may say what they want and then get a slower or more cautious response than they expected. Venus in Aries square Saturn in Cancer can make direct affection run into family needs, privacy, or worries about what a decision would change at home. The risk is treating the delay as rejection before the other person has had time to answer. Ask what is actually holding up the response."
       },
       "astrology": {
         "objects": [
@@ -160274,15 +160301,15 @@
       "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/sky-aspect-phrasebook-v1.json",
       "runtimeBucket": "hook",
       "status": "owner-approved",
-      "sourceStatus": "reviewed",
+      "sourceStatus": "approved",
       "provenance": "source-archive",
       "sourceAuthor": "composed",
       "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
       "approvalVersionDate": "package-owner-approval",
-      "contentHash": "7b8ad468fd45bd27a4c4138d5fe54b4af3378046fe9256e680cfe26fc8734f36",
+      "contentHash": "c55ff8c39f09f372e93bd67760bd755fe10557f12849b4c887109bd23848493d",
       "wording": {
-        "body_you": "Venus in Aries square Saturn in Capricorn brings immediate desire up against a responsibility that was in place long before the moment arrived. Someone may want an answer now, while the other person is looking at a deadline, a work obligation, or a promise they cannot break. The feeling may be clear. The schedule may still have no room for it.",
-        "body_they": "Venus in Aries square Saturn in Capricorn brings immediate desire up against a responsibility that was in place long before the moment arrived. Someone may want an answer now, while the other person is looking at a deadline, a work obligation, or a promise they cannot break. The feeling may be clear. The schedule may still have no room for it."
+        "body_you": "Someone may want an answer now, but work, a deadline, or an existing commitment may leave no room for it. Venus in Aries square Saturn in Capricorn puts immediate desire against responsibilities that were already in place. The risk is making the delay personal when the limit is practical. Get clear on what can happen now and what has to wait.",
+        "body_they": "Someone may want an answer now, but work, a deadline, or an existing commitment may leave no room for it. Venus in Aries square Saturn in Capricorn puts immediate desire against responsibilities that were already in place. The risk is making the delay personal when the limit is practical. Get clear on what can happen now and what has to wait."
       },
       "astrology": {
         "objects": [
@@ -160308,15 +160335,15 @@
       "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/sky-aspect-phrasebook-v1.json",
       "runtimeBucket": "hook",
       "status": "owner-approved",
-      "sourceStatus": "reviewed",
+      "sourceStatus": "approved",
       "provenance": "source-archive",
       "sourceAuthor": "composed",
       "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
       "approvalVersionDate": "package-owner-approval",
-      "contentHash": "cd83b0e5fca29a289a07e3ebe516a30ef27772929c30f35cb9053b13a6667b73",
+      "contentHash": "3c504a1b6f47a64966810664cd74006bb9c1b9d9a844c080e08b00fed563fba2",
       "wording": {
-        "body_you": "Venus in Aries trine Saturn in Leo makes it easier for open affection to be met with a confident response. Someone may make the first move, name what they want, or offer praise without turning the moment into a negotiation. The answer carries enough warmth to make the risk feel worthwhile. No one has to pretend they did not care.",
-        "body_they": "Venus in Aries trine Saturn in Leo makes it easier for open affection to be met with a confident response. Someone may make the first move, name what they want, or offer praise without turning the moment into a negotiation. The answer carries enough warmth to make the risk feel worthwhile. No one has to pretend they did not care."
+        "body_you": "You don’t have to play it cool when you care, especially when someone is meeting your interest with the same level of intention. Venus in Aries trine Saturn in Leo can make direct affection easier to trust because confidence is backed by consistency. The first move matters, but what happens after the excitement fades tells you more. Say what you mean, then keep showing up in a way that matches it.",
+        "body_they": "You don’t have to play it cool when you care, especially when someone is meeting your interest with the same level of intention. Venus in Aries trine Saturn in Leo can make direct affection easier to trust because confidence is backed by consistency. The first move matters, but what happens after the excitement fades tells you more. Say what you mean, then keep showing up in a way that matches it."
       },
       "astrology": {
         "objects": [
@@ -160342,15 +160369,15 @@
       "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/sky-aspect-phrasebook-v1.json",
       "runtimeBucket": "hook",
       "status": "owner-approved",
-      "sourceStatus": "reviewed",
+      "sourceStatus": "approved",
       "provenance": "source-archive",
       "sourceAuthor": "composed",
       "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
       "approvalVersionDate": "package-owner-approval",
-      "contentHash": "c90fc1c4fd556d956adcc8a369f2b732217f53cc2b2483ebaf3c0b20a84164ee",
+      "contentHash": "47dd0272a2df9f1b1718789090b044ad63562888072b133040a0050b1906bc76",
       "wording": {
-        "body_you": "Venus in Aries trine Saturn in Sagittarius gives immediate desire a clear direction. A spontaneous invitation may become an actual plan because someone checks the route, buys the ticket, or names the larger reason the experience matters. Excitement does not disappear when the details arrive. The promise becomes more believable once people know where it is leading.",
-        "body_they": "Venus in Aries trine Saturn in Sagittarius gives immediate desire a clear direction. A spontaneous invitation may become an actual plan because someone checks the route, buys the ticket, or names the larger reason the experience matters. Excitement does not disappear when the details arrive. The promise becomes more believable once people know where it is leading."
+        "body_you": "An exciting possibility has more potential when someone is willing to give it a direction instead of leaving it as a vague maybe. Venus in Aries trine Saturn in Sagittarius can turn enthusiasm into a plan without draining the excitement out of it. A new connection, invitation, or idea does not need every detail settled, but it does need a next step if anyone is going to invest in it. Follow what interests you, then decide where you want it to go.",
+        "body_they": "An exciting possibility has more potential when someone is willing to give it a direction instead of leaving it as a vague maybe. Venus in Aries trine Saturn in Sagittarius can turn enthusiasm into a plan without draining the excitement out of it. A new connection, invitation, or idea does not need every detail settled, but it does need a next step if anyone is going to invest in it. Follow what interests you, then decide where you want it to go."
       },
       "astrology": {
         "objects": [
@@ -160444,15 +160471,15 @@
       "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/sky-aspect-phrasebook-v1.json",
       "runtimeBucket": "hook",
       "status": "owner-approved",
-      "sourceStatus": "reviewed",
+      "sourceStatus": "approved",
       "provenance": "source-archive",
       "sourceAuthor": "composed",
       "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
       "approvalVersionDate": "package-owner-approval",
-      "contentHash": "2fc864457a8d08929c8b3ea740853a391eb8078ac88aadfa00a2f3a9f41a24c5",
+      "contentHash": "9a33825981744869c1628e1ba44b38fc65df0c727dc8124e0ccd413bca5dbdaa",
       "wording": {
-        "body_you": "Venus in Cancer square Saturn in Aries can make the need for reassurance feel impossible to fit into the available time. Someone may need privacy, a calmer conversation, or another day to think, while a decision has to be made now. Moving quickly may protect the deadline. It may also leave someone feeling that their fear did not matter.",
-        "body_they": "Venus in Cancer square Saturn in Aries can make the need for reassurance feel impossible to fit into the available time. Someone may need privacy, a calmer conversation, or another day to think, while a decision has to be made now. Moving quickly may protect the deadline. It may also leave someone feeling that their fear did not matter."
+        "body_you": "Someone may need more time or reassurance, but the decision may have to be made now. Venus in Cancer square Saturn in Aries can put emotional safety against a deadline or immediate action. The risk is rushing past the fear or using the fear to avoid a decision that cannot wait. Decide what must happen now and what can be talked through afterward.",
+        "body_they": "Someone may need more time or reassurance, but the decision may have to be made now. Venus in Cancer square Saturn in Aries can put emotional safety against a deadline or immediate action. The risk is rushing past the fear or using the fear to avoid a decision that cannot wait. Decide what must happen now and what can be talked through afterward."
       },
       "astrology": {
         "objects": [
@@ -160478,15 +160505,15 @@
       "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/sky-aspect-phrasebook-v1.json",
       "runtimeBucket": "hook",
       "status": "owner-approved",
-      "sourceStatus": "reviewed",
+      "sourceStatus": "approved",
       "provenance": "source-archive",
       "sourceAuthor": "composed",
       "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
       "approvalVersionDate": "package-owner-approval",
-      "contentHash": "74f3df9b116807ba20dde3525a485236434a249848342442b471276ea5f0aea7",
+      "contentHash": "898295fb2126cf57b71e930288fcbb78e59acd79a736eaa6d2b0d7ddf4c3fa79",
       "wording": {
-        "body_you": "Venus in Cancer square Saturn in Libra brings personal care up against an agreement meant to be fair to everyone. Someone may need an exception for family, home, or a private responsibility, while someone else is looking at the schedule, the cost, or who will take on the extra work. A compassionate choice can still leave another person carrying a responsibility they never agreed to.",
-        "body_they": "Venus in Cancer square Saturn in Libra brings personal care up against an agreement meant to be fair to everyone. Someone may need an exception for family, home, or a private responsibility, while someone else is looking at the schedule, the cost, or who will take on the extra work. A compassionate choice can still leave another person carrying a responsibility they never agreed to."
+        "body_you": "Someone may need an exception for home or family, and that can leave someone else carrying extra time, cost, or work. Venus in Cancer square Saturn in Libra can put care for one person against an agreement meant to be fair to everyone. The risk is calling the choice fair because the reason is understandable. Name who is taking on the extra responsibility.",
+        "body_they": "Someone may need an exception for home or family, and that can leave someone else carrying extra time, cost, or work. Venus in Cancer square Saturn in Libra can put care for one person against an agreement meant to be fair to everyone. The risk is calling the choice fair because the reason is understandable. Name who is taking on the extra responsibility."
       },
       "astrology": {
         "objects": [
@@ -160512,15 +160539,15 @@
       "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/sky-aspect-phrasebook-v1.json",
       "runtimeBucket": "hook",
       "status": "owner-approved",
-      "sourceStatus": "reviewed",
+      "sourceStatus": "approved",
       "provenance": "source-archive",
       "sourceAuthor": "composed",
       "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
       "approvalVersionDate": "package-owner-approval",
-      "contentHash": "21315a65fe980b01cb29e2de45c3aa7e4d4c1ad21c760880c7ca350615e06528",
+      "contentHash": "a0332c936f5f1bf1f9f169a753d7569bb10038aaced1b366265ca6f7a4dd9ba0",
       "wording": {
-        "body_you": "Venus in Cancer trine Saturn in Pisces gives compassion enough form to reach someone who needs it. Care may arrive as a meal, a quiet room, a canceled obligation, or the recognition that someone has reached their limit. The feeling does not remain a good intention. It changes what the day requires.",
-        "body_they": "Venus in Cancer trine Saturn in Pisces gives compassion enough form to reach someone who needs it. Care may arrive as a meal, a quiet room, a canceled obligation, or the recognition that someone has reached their limit. The feeling does not remain a good intention. It changes what the day requires."
+        "body_you": "Sometimes caring about someone means changing what you expect from them when they have clearly reached their limit. Venus in Cancer trine Saturn in Pisces can make compassion more useful by turning concern into support that actually changes the situation. Sympathy is easier to trust when it comes with less pressure, more room, or practical help. Pay attention to what would make things gentler, then adjust what you can.",
+        "body_they": "Sometimes caring about someone means changing what you expect from them when they have clearly reached their limit. Venus in Cancer trine Saturn in Pisces can make compassion more useful by turning concern into support that actually changes the situation. Sympathy is easier to trust when it comes with less pressure, more room, or practical help. Pay attention to what would make things gentler, then adjust what you can."
       },
       "astrology": {
         "objects": [
@@ -160546,15 +160573,15 @@
       "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/sky-aspect-phrasebook-v1.json",
       "runtimeBucket": "hook",
       "status": "owner-approved",
-      "sourceStatus": "reviewed",
+      "sourceStatus": "approved",
       "provenance": "source-archive",
       "sourceAuthor": "composed",
       "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
       "approvalVersionDate": "package-owner-approval",
-      "contentHash": "dfce080adc22744776923aec852874a18ca83d76416cc48af8f5b146734b33af",
+      "contentHash": "a00aa652dc7c49e4c6346e29fd8756f75ba833de9cc0bda6676fe6634db44850",
       "wording": {
-        "body_you": "Venus in Cancer trine Saturn in Scorpio makes private care easier to trust because people are willing to handle what is difficult. Someone may remember the old hurt, keep sensitive information out of public conversation, or stay present while money, grief, or jealousy is discussed honestly. The connection deepens through what people protect together.",
-        "body_they": "Venus in Cancer trine Saturn in Scorpio makes private care easier to trust because people are willing to handle what is difficult. Someone may remember the old hurt, keep sensitive information out of public conversation, or stay present while money, grief, or jealousy is discussed honestly. The connection deepens through what people protect together."
+        "body_you": "A difficult subject can bring people closer when it is handled with enough care that no one feels exposed for being honest. Venus in Cancer trine Saturn in Scorpio can make trust easier to build around private feelings, money, jealousy, grief, or anything else people usually protect carefully. What matters is not forcing more disclosure than the situation needs. Take what someone tells you seriously, protect what is private, and show them they were safe to tell you.",
+        "body_they": "A difficult subject can bring people closer when it is handled with enough care that no one feels exposed for being honest. Venus in Cancer trine Saturn in Scorpio can make trust easier to build around private feelings, money, jealousy, grief, or anything else people usually protect carefully. What matters is not forcing more disclosure than the situation needs. Take what someone tells you seriously, protect what is private, and show them they were safe to tell you."
       },
       "astrology": {
         "objects": [
@@ -160648,15 +160675,15 @@
       "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/sky-aspect-phrasebook-v1.json",
       "runtimeBucket": "hook",
       "status": "owner-approved",
-      "sourceStatus": "reviewed",
+      "sourceStatus": "approved",
       "provenance": "source-archive",
       "sourceAuthor": "composed",
       "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
       "approvalVersionDate": "package-owner-approval",
-      "contentHash": "78795a9cc416bbbfa9bda5cb7f33b8c6ec8257bc6a8eddc764c4e6b5189c93a1",
+      "contentHash": "6f228988aab30d801f220061992b3b532a67ed266b719408aa28ddcf4c7929a9",
       "wording": {
-        "body_you": "Venus in Capricorn square Saturn in Aries can bring a serious plan to the point where someone has to make the first move. One person may have accounted for the future, prepared for the responsibility, and waited long enough, while another resists making a choice under pressure. The commitment may be real. The answer is still no when the decision feels forced.",
-        "body_they": "Venus in Capricorn square Saturn in Aries can bring a serious plan to the point where someone has to make the first move. One person may have accounted for the future, prepared for the responsibility, and waited long enough, while another resists making a choice under pressure. The commitment may be real. The answer is still no when the decision feels forced."
+        "body_you": "A serious plan may reach the point where someone has to decide, and pressure can make them pull back. Venus in Capricorn square Saturn in Aries can put long-term commitment against the demand for an immediate answer. The risk is assuming preparation means the other person is ready to choose on your timeline. Set the deadline clearly without turning it into a threat.",
+        "body_they": "A serious plan may reach the point where someone has to decide, and pressure can make them pull back. Venus in Capricorn square Saturn in Aries can put long-term commitment against the demand for an immediate answer. The risk is assuming preparation means the other person is ready to choose on your timeline. Set the deadline clearly without turning it into a threat."
       },
       "astrology": {
         "objects": [
@@ -160682,15 +160709,15 @@
       "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/sky-aspect-phrasebook-v1.json",
       "runtimeBucket": "hook",
       "status": "owner-approved",
-      "sourceStatus": "reviewed",
+      "sourceStatus": "approved",
       "provenance": "source-archive",
       "sourceAuthor": "composed",
       "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
       "approvalVersionDate": "package-owner-approval",
-      "contentHash": "db730ff342f3fc9eb936a79e908989f7fa7f7ad020444900a2cdabe876c4c3d9",
+      "contentHash": "a57b5351d90f2ffee4d75c14d10bfca8985eea01b86c8945c7027d6ca487dce2",
       "wording": {
-        "body_you": "Venus in Capricorn square Saturn in Libra can expose the distance between years of dependable care and the agreement people actually made. Someone may assume that showing up should speak for itself, while another person needs the promise, the division of labor, or the money put in writing. The history may be solid. The connection can still stall over what each person is responsible for giving.",
-        "body_they": "Venus in Capricorn square Saturn in Libra can expose the distance between years of dependable care and the agreement people actually made. Someone may assume that showing up should speak for itself, while another person needs the promise, the division of labor, or the money put in writing. The history may be solid. The connection can still stall over what each person is responsible for giving."
+        "body_you": "Years of showing up may not answer a disagreement about what each person is actually responsible for. Venus in Capricorn square Saturn in Libra can expose the difference between dependable care and a clear agreement about money, work, or commitment. The risk is assuming history should replace explicit terms. Put the responsibility into words.",
+        "body_they": "Years of showing up may not answer a disagreement about what each person is actually responsible for. Venus in Capricorn square Saturn in Libra can expose the difference between dependable care and a clear agreement about money, work, or commitment. The risk is assuming history should replace explicit terms. Put the responsibility into words."
       },
       "astrology": {
         "objects": [
@@ -160716,15 +160743,15 @@
       "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/sky-aspect-phrasebook-v1.json",
       "runtimeBucket": "hook",
       "status": "owner-approved",
-      "sourceStatus": "reviewed",
+      "sourceStatus": "approved",
       "provenance": "source-archive",
       "sourceAuthor": "composed",
       "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
       "approvalVersionDate": "package-owner-approval",
-      "contentHash": "1dce3b62f7954b850e0ea68606c36601b763eb26c68840097d41ff91cacdfabe",
+      "contentHash": "41c39b55f5ff0ab7aa9b7320f7b70f442ac904e57a4a205fad8923dd87456de2",
       "wording": {
-        "body_you": "Venus in Capricorn trine Saturn in Taurus brings care down to money, time, and what can be maintained. People may commit to the option that costs less, lasts longer, or protects the resources everyone will need later. The choice may look modest from the outside. The people depending on it know why it matters.",
-        "body_they": "Venus in Capricorn trine Saturn in Taurus brings care down to money, time, and what can be maintained. People may commit to the option that costs less, lasts longer, or protects the resources everyone will need later. The choice may look modest from the outside. The people depending on it know why it matters."
+        "body_you": "A commitment becomes easier to trust when you know what it will cost to maintain over time, not just what it takes to start. Venus in Capricorn trine Saturn in Taurus supports choices around money, time, work, or shared resources that favor durability over appearances. The less flashy option is often the one that leaves more resources intact and creates fewer problems later. Choose the version you can afford to maintain without turning the commitment into another source of pressure.",
+        "body_they": "A commitment becomes easier to trust when you know what it will cost to maintain over time, not just what it takes to start. Venus in Capricorn trine Saturn in Taurus supports choices around money, time, work, or shared resources that favor durability over appearances. The less flashy option is often the one that leaves more resources intact and creates fewer problems later. Choose the version you can afford to maintain without turning the commitment into another source of pressure."
       },
       "astrology": {
         "objects": [
@@ -160750,15 +160777,15 @@
       "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/sky-aspect-phrasebook-v1.json",
       "runtimeBucket": "hook",
       "status": "owner-approved",
-      "sourceStatus": "reviewed",
+      "sourceStatus": "approved",
       "provenance": "source-archive",
       "sourceAuthor": "composed",
       "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
       "approvalVersionDate": "package-owner-approval",
-      "contentHash": "47431125c341bcae016ebbf7ae801aff42902b672fed2ec3710fadf08b3cb51f",
+      "contentHash": "44212a707951bdb1bc1451a1ef964735209f09216015ba9a2de15c86eab5e1c0",
       "wording": {
-        "body_you": "Venus in Capricorn trine Saturn in Virgo makes commitment visible through the work completed on time and without fanfare. Someone may build the schedule, handle the forms, or solve the small problem before it threatens the larger plan. Appreciation follows because the promise is easier to believe once the practical work is done.",
-        "body_they": "Venus in Capricorn trine Saturn in Virgo makes commitment visible through the work completed on time and without fanfare. Someone may build the schedule, handle the forms, or solve the small problem before it threatens the larger plan. Appreciation follows because the promise is easier to believe once the practical work is done."
+        "body_you": "A long-term plan becomes more credible when the small, unglamorous responsibilities are actually being handled instead of left to chance. Venus in Capricorn trine Saturn in Virgo turns high-level ambition into schedules, paperwork, routines, and practical fixes that keep the larger goal moving. Progress can look ordinary because much of it happens through work no one applauds. Handle the detail that keeps slowing things down, then let the broader plan benefit from having one less problem to solve.",
+        "body_they": "A long-term plan becomes more credible when the small, unglamorous responsibilities are actually being handled instead of left to chance. Venus in Capricorn trine Saturn in Virgo turns high-level ambition into schedules, paperwork, routines, and practical fixes that keep the larger goal moving. Progress can look ordinary because much of it happens through work no one applauds. Handle the detail that keeps slowing things down, then let the broader plan benefit from having one less problem to solve."
       },
       "astrology": {
         "objects": [
@@ -160852,15 +160879,15 @@
       "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/sky-aspect-phrasebook-v1.json",
       "runtimeBucket": "hook",
       "status": "owner-approved",
-      "sourceStatus": "reviewed",
+      "sourceStatus": "approved",
       "provenance": "source-archive",
       "sourceAuthor": "composed",
       "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
       "approvalVersionDate": "package-owner-approval",
-      "contentHash": "da0aac33a6c567936e6e2d555b7f1c57154495ea5f89b0b3d62214ca1542fd32",
+      "contentHash": "42b4292f09b829ea6ff624306c5fcd543bf241a22c8fdc15a51d9aaba7f3dd8d",
       "wording": {
-        "body_you": "Venus in Gemini square Saturn in Pisces makes the missing answer harder to ignore. Messages may get shorter, plans may stay vague, or a needed conversation may be postponed because someone is exhausted, overwhelmed, or unsure what they can promise. No one has to say no. After enough silence, people begin to understand the answer anyway.",
-        "body_they": "Venus in Gemini square Saturn in Pisces makes the missing answer harder to ignore. Messages may get shorter, plans may stay vague, or a needed conversation may be postponed because someone is exhausted, overwhelmed, or unsure what they can promise. No one has to say no. After enough silence, people begin to understand the answer anyway."
+        "body_you": "Messages may get shorter, plans may stay vague, or a conversation may keep getting postponed. Venus in Gemini square Saturn in Pisces can make it hard to get a clear answer when someone is tired, overwhelmed, or unsure what they can promise. The risk is filling in the silence yourself. Ask once, clearly, and judge the situation by the response you actually get.",
+        "body_they": "Messages may get shorter, plans may stay vague, or a conversation may keep getting postponed. Venus in Gemini square Saturn in Pisces can make it hard to get a clear answer when someone is tired, overwhelmed, or unsure what they can promise. The risk is filling in the silence yourself. Ask once, clearly, and judge the situation by the response you actually get."
       },
       "astrology": {
         "objects": [
@@ -160886,15 +160913,15 @@
       "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/sky-aspect-phrasebook-v1.json",
       "runtimeBucket": "hook",
       "status": "owner-approved",
-      "sourceStatus": "reviewed",
+      "sourceStatus": "approved",
       "provenance": "source-archive",
       "sourceAuthor": "composed",
       "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
       "approvalVersionDate": "package-owner-approval",
-      "contentHash": "ac0364e0065bbb4bce012feb5413cea2cf177df460f776466dc3d9467184c247",
+      "contentHash": "caaaaa3c02ead2e394eae07f07d6af53782a20e1f4436e6073d1f644a34bd19d",
       "wording": {
-        "body_you": "Venus in Gemini square Saturn in Virgo can turn a promising conversation into a list of everything that still needs work. A message meant to show interest may come back with corrections, questions, or a reminder of what has not been handled. The reply may be useful. It can also make someone wish they had kept the idea to themselves.",
-        "body_they": "Venus in Gemini square Saturn in Virgo can turn a promising conversation into a list of everything that still needs work. A message meant to show interest may come back with corrections, questions, or a reminder of what has not been handled. The reply may be useful. It can also make someone wish they had kept the idea to themselves."
+        "body_you": "A conversation that started with interest may turn into corrections, questions, or a list of what still needs work. Venus in Gemini square Saturn in Virgo can make curiosity run into scrutiny. The risk is hearing useful feedback as rejection or using criticism to avoid saying what you actually want. Separate the correction from the answer.",
+        "body_they": "A conversation that started with interest may turn into corrections, questions, or a list of what still needs work. Venus in Gemini square Saturn in Virgo can make curiosity run into scrutiny. The risk is hearing useful feedback as rejection or using criticism to avoid saying what you actually want. Separate the correction from the answer."
       },
       "astrology": {
         "objects": [
@@ -160920,15 +160947,15 @@
       "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/sky-aspect-phrasebook-v1.json",
       "runtimeBucket": "hook",
       "status": "owner-approved",
-      "sourceStatus": "reviewed",
+      "sourceStatus": "approved",
       "provenance": "source-archive",
       "sourceAuthor": "composed",
       "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
       "approvalVersionDate": "package-owner-approval",
-      "contentHash": "c2fe8bfa18276ca418628ffa3d99b9e1edde8ec21aa54d1fce584760ebfb0894",
+      "contentHash": "b3b5097d1638c6009a0b0bb86de6093be5db0cad412bdc85f82bb7e020f7f483",
       "wording": {
-        "body_you": "Venus in Gemini trine Saturn in Aquarius gives new ideas a social structure that can carry them. A conversation may connect the right people, turn a shared interest into a group plan, or make room for a connection that does not follow the usual rules. Difference becomes easier to live with when everyone understands the arrangement.",
-        "body_they": "Venus in Gemini trine Saturn in Aquarius gives new ideas a social structure that can carry them. A conversation may connect the right people, turn a shared interest into a group plan, or make room for a connection that does not follow the usual rules. Difference becomes easier to live with when everyone understands the arrangement."
+        "body_you": "A connection can work well even when the people involved need different amounts of freedom, contact, structure, or independence. Venus in Gemini trine Saturn in Aquarius can help people create arrangements that accommodate different schedules, priorities, interests, or ways of participating. Clear expectations make flexibility easier to trust. Agree on what people can rely on from each other, then let the rest stay flexible.",
+        "body_they": "A connection can work well even when the people involved need different amounts of freedom, contact, structure, or independence. Venus in Gemini trine Saturn in Aquarius can help people create arrangements that accommodate different schedules, priorities, interests, or ways of participating. Clear expectations make flexibility easier to trust. Agree on what people can rely on from each other, then let the rest stay flexible."
       },
       "astrology": {
         "objects": [
@@ -160954,15 +160981,15 @@
       "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/sky-aspect-phrasebook-v1.json",
       "runtimeBucket": "hook",
       "status": "owner-approved",
-      "sourceStatus": "reviewed",
+      "sourceStatus": "approved",
       "provenance": "source-archive",
       "sourceAuthor": "composed",
       "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
       "approvalVersionDate": "package-owner-approval",
-      "contentHash": "f2483c16346799dff3456ce2ad0b8ee941c9bb73cc4f8fbd48d9a4d8b87f6cd7",
+      "contentHash": "e9f8f7169af101722372df204c0c9c820da73a12d27694fe3d47e03d02043be5",
       "wording": {
-        "body_you": "Venus in Gemini trine Saturn in Libra makes agreement easier to reach without draining the life out of the conversation. People can ask another question, revise the plan, and name what feels fair while interest is still present. The exchange stays responsive because no one has to surrender their preference to keep it pleasant.",
-        "body_they": "Venus in Gemini trine Saturn in Libra makes agreement easier to reach without draining the life out of the conversation. People can ask another question, revise the plan, and name what feels fair while interest is still present. The exchange stays responsive because no one has to surrender their preference to keep it pleasant."
+        "body_you": "A conversation may get easier once people stop trying to agree on everything and start getting specific about what each person actually needs. Venus in Gemini trine Saturn in Libra can help people compare preferences, clarify expectations, and adjust the terms without treating every difference like a threat to the connection. Fairness does not mean identical needs or identical contributions. Keep talking until everyone understands what they are agreeing to and what they can expect from each other.",
+        "body_they": "A conversation may get easier once people stop trying to agree on everything and start getting specific about what each person actually needs. Venus in Gemini trine Saturn in Libra can help people compare preferences, clarify expectations, and adjust the terms without treating every difference like a threat to the connection. Fairness does not mean identical needs or identical contributions. Keep talking until everyone understands what they are agreeing to and what they can expect from each other."
       },
       "astrology": {
         "objects": [
@@ -161056,15 +161083,15 @@
       "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/sky-aspect-phrasebook-v1.json",
       "runtimeBucket": "hook",
       "status": "owner-approved",
-      "sourceStatus": "reviewed",
+      "sourceStatus": "approved",
       "provenance": "source-archive",
       "sourceAuthor": "composed",
       "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
       "approvalVersionDate": "package-owner-approval",
-      "contentHash": "7f291c66828789ea2141f4ba3388b659d1e31013cc08f7d99d70449e3ce3b900",
+      "contentHash": "4d24592ea40a6d0665e6b7581cddb50618a1f9864907b5a053211de9f5044f18",
       "wording": {
-        "body_you": "Venus in Leo square Saturn in Scorpio brings visible affection up against the fear of what becomes vulnerable once a feeling is made public. Someone may want the connection acknowledged or the event celebrated, while money, trust, jealousy, or private history makes another person hold back. The feeling may be strong enough to protect behind closed doors. That does not make the silence hurt less.",
-        "body_they": "Venus in Leo square Saturn in Scorpio brings visible affection up against the fear of what becomes vulnerable once a feeling is made public. Someone may want the connection acknowledged or the event celebrated, while money, trust, jealousy, or private history makes another person hold back. The feeling may be strong enough to protect behind closed doors. That does not make the silence hurt less."
+        "body_you": "Someone may want a relationship, achievement, or feeling acknowledged publicly while the other person wants to keep it private. Venus in Leo square Saturn in Scorpio can make visibility collide with concerns about trust, money, jealousy, or private history. The risk is treating privacy as shame or publicity as proof of love. Say what recognition would mean and what privacy is protecting.",
+        "body_they": "Someone may want a relationship, achievement, or feeling acknowledged publicly while the other person wants to keep it private. Venus in Leo square Saturn in Scorpio can make visibility collide with concerns about trust, money, jealousy, or private history. The risk is treating privacy as shame or publicity as proof of love. Say what recognition would mean and what privacy is protecting."
       },
       "astrology": {
         "objects": [
@@ -161090,15 +161117,15 @@
       "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/sky-aspect-phrasebook-v1.json",
       "runtimeBucket": "hook",
       "status": "owner-approved",
-      "sourceStatus": "reviewed",
+      "sourceStatus": "approved",
       "provenance": "source-archive",
       "sourceAuthor": "composed",
       "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
       "approvalVersionDate": "package-owner-approval",
-      "contentHash": "9fa771fdeb61a7fc2709dd8938e3389fab6d7aaafae1f6bca1328b2adf387d14",
+      "contentHash": "1f281836df8a95fc7f645e33ba96af79bb89ecc3b4c263c7eb98e3b31a4b11ac",
       "wording": {
-        "body_you": "Venus in Leo square Saturn in Taurus brings visible affection and celebration up against what money, energy, and existing responsibilities will allow. Someone may want to make the event feel special, but the money may already be spoken for. They may care deeply and still choose the modest plan, the practical gift, or the promise they know they can keep. The explanation can make sense, and someone may still wonder why the affection was so difficult to see.",
-        "body_they": "Venus in Leo square Saturn in Taurus brings visible affection and celebration up against what money, energy, and existing responsibilities will allow. Someone may want to make the event feel special, but the money may already be spoken for. They may care deeply and still choose the modest plan, the practical gift, or the promise they know they can keep. The explanation can make sense, and someone may still wonder why the affection was so difficult to see."
+        "body_you": "Someone may want to celebrate in a bigger way than the money, energy, or schedule allows. Venus in Leo square Saturn in Taurus can make affection feel limited by practical resources. The risk is measuring care by how much gets spent or displayed. Choose the gesture you can actually afford and make the affection clear.",
+        "body_they": "Someone may want to celebrate in a bigger way than the money, energy, or schedule allows. Venus in Leo square Saturn in Taurus can make affection feel limited by practical resources. The risk is measuring care by how much gets spent or displayed. Choose the gesture you can actually afford and make the affection clear."
       },
       "astrology": {
         "objects": [
@@ -161124,15 +161151,15 @@
       "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/sky-aspect-phrasebook-v1.json",
       "runtimeBucket": "hook",
       "status": "owner-approved",
-      "sourceStatus": "reviewed",
+      "sourceStatus": "approved",
       "provenance": "source-archive",
       "sourceAuthor": "composed",
       "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
       "approvalVersionDate": "package-owner-approval",
-      "contentHash": "e6faa785207ce8831a1b38db90e7f9ad22684b8735dd8fb54ed982253d5ad3e2",
+      "contentHash": "809daeb7cecbe19c358f5827fa0700880f1202197d6d11999dfc4b4f695f86a2",
       "wording": {
-        "body_you": "Venus in Leo trine Saturn in Aries makes appreciation easier to express without embarrassment. Someone may name what they admire, celebrate another person's effort, or make the first move while the feeling is still alive. Recognition gives courage back to the person who took the risk. The warmth is clear enough that no one has to guess.",
-        "body_they": "Venus in Leo trine Saturn in Aries makes appreciation easier to express without embarrassment. Someone may name what they admire, celebrate another person's effort, or make the first move while the feeling is still alive. Recognition gives courage back to the person who took the risk. The warmth is clear enough that no one has to guess."
+        "body_you": "Recognition can matter most when someone took a risk to put themselves forward in the first place. Venus in Leo trine Saturn in Aries can make it easier to respond to courage with clear appreciation instead of assuming the person already knows they did well. A sincere response can reinforce the confidence it took to act. If someone deserves the credit, give it while the effort is still fresh.",
+        "body_they": "Recognition can matter most when someone took a risk to put themselves forward in the first place. Venus in Leo trine Saturn in Aries can make it easier to respond to courage with clear appreciation instead of assuming the person already knows they did well. A sincere response can reinforce the confidence it took to act. If someone deserves the credit, give it while the effort is still fresh."
       },
       "astrology": {
         "objects": [
@@ -161158,15 +161185,15 @@
       "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/sky-aspect-phrasebook-v1.json",
       "runtimeBucket": "hook",
       "status": "owner-approved",
-      "sourceStatus": "reviewed",
+      "sourceStatus": "approved",
       "provenance": "source-archive",
       "sourceAuthor": "composed",
       "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
       "approvalVersionDate": "package-owner-approval",
-      "contentHash": "ab6316e81dfc334959243fec4539ffd236ea3ed0db868b4e26b668ca99fb3c75",
+      "contentHash": "e9d130b3cb39c75176161116310d56a1261de9008d4ff3eaa181b8ece1201c57",
       "wording": {
-        "body_you": "Venus in Leo trine Saturn in Sagittarius gives people a reason to celebrate a bold idea and take it further. A creative project, public success, or event may lead to a trip, a teaching opportunity, or a plan people are ready to support. The attention feels good because it is connected to somewhere the work can go next.",
-        "body_they": "Venus in Leo trine Saturn in Sagittarius gives people a reason to celebrate a bold idea and take it further. A creative project, public success, or event may lead to a trip, a teaching opportunity, or a plan people are ready to support. The attention feels good because it is connected to somewhere the work can go next."
+        "body_you": "A good response to your work can become the opening for something bigger, but attention is most useful when you know what you want to do with it. Venus in Leo trine Saturn in Sagittarius can connect recognition, creativity, or enthusiasm with a larger opportunity to learn, teach, travel, publish, or expand the idea. Enjoy the momentum, then decide where you want it to lead. Use the attention to move the work forward rather than simply collecting more of it.",
+        "body_they": "A good response to your work can become the opening for something bigger, but attention is most useful when you know what you want to do with it. Venus in Leo trine Saturn in Sagittarius can connect recognition, creativity, or enthusiasm with a larger opportunity to learn, teach, travel, publish, or expand the idea. Enjoy the momentum, then decide where you want it to lead. Use the attention to move the work forward rather than simply collecting more of it."
       },
       "astrology": {
         "objects": [
@@ -161260,15 +161287,15 @@
       "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/sky-aspect-phrasebook-v1.json",
       "runtimeBucket": "hook",
       "status": "owner-approved",
-      "sourceStatus": "reviewed",
+      "sourceStatus": "approved",
       "provenance": "source-archive",
       "sourceAuthor": "composed",
       "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
       "approvalVersionDate": "package-owner-approval",
-      "contentHash": "055095837a8bed0bc454e8082a6b80e8c5259cea367d8cb04e19f65d80f16019",
+      "contentHash": "f9c64520a247e41f65fa4dc4645acd6a771124d68b934930ad09dbf8063a2501",
       "wording": {
-        "body_you": "Venus in Libra square Saturn in Cancer can make an arrangement look fair until private responsibilities enter the room. The schedule may divide the hours evenly, but one person still has to care for a child, protect the home, remember what everyone needs, or handle the emotional aftermath. The agreement divides the hours. The private work keeps falling to the same person.",
-        "body_they": "Venus in Libra square Saturn in Cancer can make an arrangement look fair until private responsibilities enter the room. The schedule may divide the hours evenly, but one person still has to care for a child, protect the home, remember what everyone needs, or handle the emotional aftermath. The agreement divides the hours. The private work keeps falling to the same person."
+        "body_you": "An agreement may divide time or work evenly and still leave one person handling more at home. Venus in Libra square Saturn in Cancer can expose the private responsibilities a fair-looking schedule does not count. The risk is judging fairness only by what is written down. Include the work that happens before and after the official task.",
+        "body_they": "An agreement may divide time or work evenly and still leave one person handling more at home. Venus in Libra square Saturn in Cancer can expose the private responsibilities a fair-looking schedule does not count. The risk is judging fairness only by what is written down. Include the work that happens before and after the official task."
       },
       "astrology": {
         "objects": [
@@ -161294,15 +161321,15 @@
       "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/sky-aspect-phrasebook-v1.json",
       "runtimeBucket": "hook",
       "status": "owner-approved",
-      "sourceStatus": "reviewed",
+      "sourceStatus": "approved",
       "provenance": "source-archive",
       "sourceAuthor": "composed",
       "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
       "approvalVersionDate": "package-owner-approval",
-      "contentHash": "6d078b643a6747a8a629485d98ce540d8634e23da3e91e7a479a00b9f4de5b00",
+      "contentHash": "70375d92d271080ba9811534849260cba62e43a4814ffdc6d12f9ac740715d37",
       "wording": {
-        "body_you": "Venus in Libra square Saturn in Capricorn shows what happens when a fair agreement meets an obligation with more authority behind it. The plan may work for everyone involved and still lose to policy, a deadline, or the person whose approval is required. Everyone may understand why the decision was made. Someone still leaves knowing the responsibility mattered more than the connection.",
-        "body_they": "Venus in Libra square Saturn in Capricorn shows what happens when a fair agreement meets an obligation with more authority behind it. The plan may work for everyone involved and still lose to policy, a deadline, or the person whose approval is required. Everyone may understand why the decision was made. Someone still leaves knowing the responsibility mattered more than the connection."
+        "body_you": "A fair plan may still lose to policy, a deadline, or the person whose approval is required. Venus in Libra square Saturn in Capricorn can put a reasonable agreement against a responsibility with more authority behind it. The risk is acting as if understanding the reason makes the disappointment disappear. Be clear about which rule or obligation is deciding the outcome.",
+        "body_they": "A fair plan may still lose to policy, a deadline, or the person whose approval is required. Venus in Libra square Saturn in Capricorn can put a reasonable agreement against a responsibility with more authority behind it. The risk is acting as if understanding the reason makes the disappointment disappear. Be clear about which rule or obligation is deciding the outcome."
       },
       "astrology": {
         "objects": [
@@ -161328,15 +161355,15 @@
       "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/sky-aspect-phrasebook-v1.json",
       "runtimeBucket": "hook",
       "status": "owner-approved",
-      "sourceStatus": "reviewed",
+      "sourceStatus": "approved",
       "provenance": "source-archive",
       "sourceAuthor": "composed",
       "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
       "approvalVersionDate": "package-owner-approval",
-      "contentHash": "db3cfe1898987c3afb5a1032b76c169441db2a37c5641c65836944c80f5343c6",
+      "contentHash": "e5ff8ad872ee106ce874a756557da2459e56a935ef956108261a4a80277b21d5",
       "wording": {
-        "body_you": "Venus in Libra trine Saturn in Aquarius helps a group make room for difference without losing the agreement that holds everyone together. A friendship, collaboration, or unconventional connection may become easier to explain because the expectations are named and applied fairly. People know where they belong without having to become the same.",
-        "body_they": "Venus in Libra trine Saturn in Aquarius helps a group make room for difference without losing the agreement that holds everyone together. A friendship, collaboration, or unconventional connection may become easier to explain because the expectations are named and applied fairly. People know where they belong without having to become the same."
+        "body_you": "Belonging does not require everyone to give up their autonomy or do things the same way. Venus in Libra trine Saturn in Aquarius helps friendships, groups, and collaborations find a structure that feels fair without demanding conformity. Clear standards can protect the collective without creating unnecessary rules. Agree on the few expectations that actually affect everyone, then leave room for the rest to look different.",
+        "body_they": "Belonging does not require everyone to give up their autonomy or do things the same way. Venus in Libra trine Saturn in Aquarius helps friendships, groups, and collaborations find a structure that feels fair without demanding conformity. Clear standards can protect the collective without creating unnecessary rules. Agree on the few expectations that actually affect everyone, then leave room for the rest to look different."
       },
       "astrology": {
         "objects": [
@@ -161362,15 +161389,15 @@
       "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/sky-aspect-phrasebook-v1.json",
       "runtimeBucket": "hook",
       "status": "owner-approved",
-      "sourceStatus": "reviewed",
+      "sourceStatus": "approved",
       "provenance": "source-archive",
       "sourceAuthor": "composed",
       "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
       "approvalVersionDate": "package-owner-approval",
-      "contentHash": "9b1317727de4cd407da5b073659e111ca74bd539e77f9b5fa6c35f7f9cf4aa56",
+      "contentHash": "0ad66785cd6c17715e89d5192c7dc44bce5b1e795af0df4050ba384bb8cefdf1",
       "wording": {
-        "body_you": "Venus in Libra trine Saturn in Gemini makes it easier to put a fair agreement into clear language. People can discuss the schedule, the money, or what each person is responsible for without every question sounding like doubt. The conversation leaves fewer blanks for resentment to fill in later.",
-        "body_they": "Venus in Libra trine Saturn in Gemini makes it easier to put a fair agreement into clear language. People can discuss the schedule, the money, or what each person is responsible for without every question sounding like doubt. The conversation leaves fewer blanks for resentment to fill in later."
+        "body_you": "A misunderstanding may be easier to resolve once people stop relying on assumptions and put the practical details into words. Venus in Libra trine Saturn in Gemini can help people clarify schedules, money, responsibilities, or expectations without making every question sound like mistrust. Clear language protects goodwill because people know what they are working with. Say the part most likely to be misunderstood before it turns into resentment.",
+        "body_they": "A misunderstanding may be easier to resolve once people stop relying on assumptions and put the practical details into words. Venus in Libra trine Saturn in Gemini can help people clarify schedules, money, responsibilities, or expectations without making every question sound like mistrust. Clear language protects goodwill because people know what they are working with. Say the part most likely to be misunderstood before it turns into resentment."
       },
       "astrology": {
         "objects": [
@@ -161464,15 +161491,15 @@
       "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/sky-aspect-phrasebook-v1.json",
       "runtimeBucket": "hook",
       "status": "owner-approved",
-      "sourceStatus": "reviewed",
+      "sourceStatus": "approved",
       "provenance": "source-archive",
       "sourceAuthor": "composed",
       "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
       "approvalVersionDate": "package-owner-approval",
-      "contentHash": "d3d1ed680f1076bbd03b7e1e1a0affe9b87cd7b793c63c30033a56c69b868883",
+      "contentHash": "be331a3e33aa6fa64d0acd523f4beb0ae88521cab5a7f99cca9542904f8f0796",
       "wording": {
-        "body_you": "Venus in Pisces square Saturn in Gemini can make emotional understanding feel complete before anyone has agreed on what happens next. Someone may feel deeply seen until they are asked to explain the plan, name the commitment, or put the terms in writing. The feeling can be sincere. The agreement may never become clear enough to depend on.",
-        "body_they": "Venus in Pisces square Saturn in Gemini can make emotional understanding feel complete before anyone has agreed on what happens next. Someone may feel deeply seen until they are asked to explain the plan, name the commitment, or put the terms in writing. The feeling can be sincere. The agreement may never become clear enough to depend on."
+        "body_you": "Two people may feel emotionally close and still be talking past the practical question. Venus in Pisces square Saturn in Gemini can make a meaningful conversation feel like enough even when nobody has said what the relationship, plan, or commitment actually is. The risk is assuming emotional closeness means you have the same expectations. Ask what happens next and get the answer in plain language.",
+        "body_they": "Two people may feel emotionally close and still be talking past the practical question. Venus in Pisces square Saturn in Gemini can make a meaningful conversation feel like enough even when nobody has said what the relationship, plan, or commitment actually is. The risk is assuming emotional closeness means you have the same expectations. Ask what happens next and get the answer in plain language."
       },
       "astrology": {
         "objects": [
@@ -161498,15 +161525,15 @@
       "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/sky-aspect-phrasebook-v1.json",
       "runtimeBucket": "hook",
       "status": "owner-approved",
-      "sourceStatus": "reviewed",
+      "sourceStatus": "approved",
       "provenance": "source-archive",
       "sourceAuthor": "composed",
       "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
       "approvalVersionDate": "package-owner-approval",
-      "contentHash": "b9f86433c10f08233ca358a15e1b88ba0c714f9bde5668904c04e01c6a0e36f1",
+      "contentHash": "2419ab8eddcfabaa3f6ee04564dfbe54e44ec5c432da421f52689bd62be86588",
       "wording": {
-        "body_you": "Venus in Pisces square Saturn in Sagittarius can bring a generous vision to the point where belief, law, distance, or an existing promise requires a choice. People may agree on what they hope the future becomes and reach completely different conclusions about what they are willing to do for it. The vision can remain beautiful. The decision underneath it keeps getting harder to postpone.",
-        "body_they": "Venus in Pisces square Saturn in Sagittarius can bring a generous vision to the point where belief, law, distance, or an existing promise requires a choice. People may agree on what they hope the future becomes and reach completely different conclusions about what they are willing to do for it. The vision can remain beautiful. The decision underneath it keeps getting harder to postpone."
+        "body_you": "People may agree on the future they want and still disagree about what they are willing to do to get there. Venus in Pisces square Saturn in Sagittarius can put compassion and hope against beliefs, distance, law, or an existing promise. The risk is keeping the vision beautiful by postponing the decision underneath it. Name the choice and what each option requires.",
+        "body_they": "People may agree on the future they want and still disagree about what they are willing to do to get there. Venus in Pisces square Saturn in Sagittarius can put compassion and hope against beliefs, distance, law, or an existing promise. The risk is keeping the vision beautiful by postponing the decision underneath it. Name the choice and what each option requires."
       },
       "astrology": {
         "objects": [
@@ -161532,15 +161559,15 @@
       "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/sky-aspect-phrasebook-v1.json",
       "runtimeBucket": "hook",
       "status": "owner-approved",
-      "sourceStatus": "reviewed",
+      "sourceStatus": "approved",
       "provenance": "source-archive",
       "sourceAuthor": "composed",
       "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
       "approvalVersionDate": "package-owner-approval",
-      "contentHash": "e41161250b587d8af09ebea3f69b66eb4f032f74fa31c4a689aeccebdffecdd3",
+      "contentHash": "d9dbf8627b59ce839c0ed4a05f01c788193833caf9487da7d3887a244b0379c8",
       "wording": {
-        "body_you": "Venus in Pisces trine Saturn in Cancer makes compassion easier to feel in the care surrounding an ordinary day. Someone may notice exhaustion, protect a private need, or make home feel less demanding for a person who has very little left. The help reaches the place that words have not been able to reach.",
-        "body_they": "Venus in Pisces trine Saturn in Cancer makes compassion easier to feel in the care surrounding an ordinary day. Someone may notice exhaustion, protect a private need, or make home feel less demanding for a person who has very little left. The help reaches the place that words have not been able to reach."
+        "body_you": "Someone may need comfort without needing you to fix everything they are feeling. Venus in Pisces trine Saturn in Cancer can make compassion more dependable by giving difficult emotions enough support, privacy, and time to be felt without taking over the entire situation. Care does not require unlimited access to your time or energy. Offer what you can genuinely sustain, protect the limits that keep the support workable, and let kindness be something people can actually rely on.",
+        "body_they": "Someone may need comfort without needing you to fix everything they are feeling. Venus in Pisces trine Saturn in Cancer can make compassion more dependable by giving difficult emotions enough support, privacy, and time to be felt without taking over the entire situation. Care does not require unlimited access to your time or energy. Offer what you can genuinely sustain, protect the limits that keep the support workable, and let kindness be something people can actually rely on."
       },
       "astrology": {
         "objects": [
@@ -161566,15 +161593,15 @@
       "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/sky-aspect-phrasebook-v1.json",
       "runtimeBucket": "hook",
       "status": "owner-approved",
-      "sourceStatus": "reviewed",
+      "sourceStatus": "approved",
       "provenance": "source-archive",
       "sourceAuthor": "composed",
       "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
       "approvalVersionDate": "package-owner-approval",
-      "contentHash": "492c9c50baf124f9e01e009b3567446da8dca2a6cd2d37430c262f8fcc89eb43",
+      "contentHash": "ba55d4fa277027c50d1a6f320d908ff6f54030409466a1d260401cde39935c21",
       "wording": {
-        "body_you": "Venus in Pisces trine Saturn in Scorpio lets compassion stay present when the conversation reaches what people usually avoid. A secret may be shared, a loss may be named, or money and trust may be discussed without the story traveling any further. The response is quiet and serious. What was difficult to say remains protected.",
-        "body_they": "Venus in Pisces trine Saturn in Scorpio lets compassion stay present when the conversation reaches what people usually avoid. A secret may be shared, a loss may be named, or money and trust may be discussed without the story traveling any further. The response is quiet and serious. What was difficult to say remains protected."
+        "body_you": "A complicated feeling can become easier to understand once you stop avoiding the part of it that makes you uncomfortable. Venus in Pisces trine Saturn in Scorpio can help people stay with grief, desire, fear, betrayal, or another emotionally charged truth long enough to see what is underneath the first reaction. Sensitivity is useful when it helps you notice what needs attention, not when it keeps you circling the feeling forever. Name what is actually there, decide what it changes, and deal with the part that is yours.",
+        "body_they": "A complicated feeling can become easier to understand once you stop avoiding the part of it that makes you uncomfortable. Venus in Pisces trine Saturn in Scorpio can help people stay with grief, desire, fear, betrayal, or another emotionally charged truth long enough to see what is underneath the first reaction. Sensitivity is useful when it helps you notice what needs attention, not when it keeps you circling the feeling forever. Name what is actually there, decide what it changes, and deal with the part that is yours."
       },
       "astrology": {
         "objects": [
@@ -161668,15 +161695,15 @@
       "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/sky-aspect-phrasebook-v1.json",
       "runtimeBucket": "hook",
       "status": "owner-approved",
-      "sourceStatus": "reviewed",
+      "sourceStatus": "approved",
       "provenance": "source-archive",
       "sourceAuthor": "composed",
       "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
       "approvalVersionDate": "package-owner-approval",
-      "contentHash": "787532eeac01f2d938d2cec9b191a929e22c96f67cbb750d04377b08b105764a",
+      "contentHash": "54c1091b04b91211b6648f6e1c08ad5eac826ccac3007a6e125cb76e11ac17aa",
       "wording": {
-        "body_you": "Venus in Sagittarius square Saturn in Pisces can keep a hopeful plan alive after the energy needed to carry it has run out. People may keep talking about the trip, the opportunity, or the future because the promise still feels good, while someone quietly handles exhaustion or a responsibility no one has clearly named. The hope remains generous. Someone is still too tired to keep up with it.",
-        "body_they": "Venus in Sagittarius square Saturn in Pisces can keep a hopeful plan alive after the energy needed to carry it has run out. People may keep talking about the trip, the opportunity, or the future because the promise still feels good, while someone quietly handles exhaustion or a responsibility no one has clearly named. The hope remains generous. Someone is still too tired to keep up with it."
+        "body_you": "A hopeful plan may keep moving forward even though someone no longer has the energy to carry it. Venus in Sagittarius square Saturn in Pisces can make excitement about the future outrun exhaustion or an unspoken responsibility. The risk is protecting the dream by ignoring the person who is worn out. Check the energy and work required before making another promise.",
+        "body_they": "A hopeful plan may keep moving forward even though someone no longer has the energy to carry it. Venus in Sagittarius square Saturn in Pisces can make excitement about the future outrun exhaustion or an unspoken responsibility. The risk is protecting the dream by ignoring the person who is worn out. Check the energy and work required before making another promise."
       },
       "astrology": {
         "objects": [
@@ -161702,15 +161729,15 @@
       "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/sky-aspect-phrasebook-v1.json",
       "runtimeBucket": "hook",
       "status": "owner-approved",
-      "sourceStatus": "reviewed",
+      "sourceStatus": "approved",
       "provenance": "source-archive",
       "sourceAuthor": "composed",
       "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
       "approvalVersionDate": "package-owner-approval",
-      "contentHash": "f2de5345767d50efc61229a67c947b4694241dc83778b8900dd687267d29f18e",
+      "contentHash": "f3d00b9dcef46702d0f420fc55a1c579c4cde70bc203a9a37fefab607c3d5ef1",
       "wording": {
-        "body_you": "Venus in Sagittarius square Saturn in Virgo brings the excitement of a larger possibility down to the appointment, the workday, and the cleanup waiting at home. A plan may sound worth it until someone counts the hours and sees how much extra work it creates. The person protecting the excitement may never notice who had to make the good time possible.",
-        "body_they": "Venus in Sagittarius square Saturn in Virgo brings the excitement of a larger possibility down to the appointment, the workday, and the cleanup waiting at home. A plan may sound worth it until someone counts the hours and sees how much extra work it creates. The person protecting the excitement may never notice who had to make the good time possible."
+        "body_you": "An opportunity may sound worth it until the appointments, workday, cleanup, or extra tasks are counted. Venus in Sagittarius square Saturn in Virgo can make a big possibility clash with the ordinary work required to support it. The risk here is treating the most practical person involved as a negative influence simply because they are calculating the true cost. Asking how a project will actually get done is not pessimism. Before you say yes to the vision, you have to count the actual hours it will take to maintain it.",
+        "body_they": "An opportunity may sound worth it until the appointments, workday, cleanup, or extra tasks are counted. Venus in Sagittarius square Saturn in Virgo can make a big possibility clash with the ordinary work required to support it. The risk here is treating the most practical person involved as a negative influence simply because they are calculating the true cost. Asking how a project will actually get done is not pessimism. Before you say yes to the vision, you have to count the actual hours it will take to maintain it."
       },
       "astrology": {
         "objects": [
@@ -161736,15 +161763,15 @@
       "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/sky-aspect-phrasebook-v1.json",
       "runtimeBucket": "hook",
       "status": "owner-approved",
-      "sourceStatus": "reviewed",
+      "sourceStatus": "approved",
       "provenance": "source-archive",
       "sourceAuthor": "composed",
       "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
       "approvalVersionDate": "package-owner-approval",
-      "contentHash": "e235ba6ed03c4dcc10cc0121ae31bab2945bc43741b61c7a46a528e06457eb5c",
+      "contentHash": "5ce44bffe095cda42461df0aeb84ae90f4389626c8d36282d8408fab66a9dccc",
       "wording": {
-        "body_you": "Venus in Sagittarius trine Saturn in Aries turns enthusiasm into a first step people are willing to take. A trip may be booked, an application sent, or an honest invitation made before the opportunity loses its energy. The larger possibility feels more credible once someone acts on it.",
-        "body_they": "Venus in Sagittarius trine Saturn in Aries turns enthusiasm into a first step people are willing to take. A trip may be booked, an application sent, or an honest invitation made before the opportunity loses its energy. The larger possibility feels more credible once someone acts on it."
+        "body_you": "An exciting possibility stops being theoretical once someone takes a step that requires an actual commitment. Venus in Sagittarius trine Saturn in Aries can turn enthusiasm into action before doubt or logistics drain the momentum. You do not need the entire plan before you begin, but you do need to do something that moves the idea out of your head and into your life. Make the call, submit the application, book the ticket, or take the first step that makes the possibility tangible.",
+        "body_they": "An exciting possibility stops being theoretical once someone takes a step that requires an actual commitment. Venus in Sagittarius trine Saturn in Aries can turn enthusiasm into action before doubt or logistics drain the momentum. You do not need the entire plan before you begin, but you do need to do something that moves the idea out of your head and into your life. Make the call, submit the application, book the ticket, or take the first step that makes the possibility tangible."
       },
       "astrology": {
         "objects": [
@@ -161770,15 +161797,15 @@
       "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/sky-aspect-phrasebook-v1.json",
       "runtimeBucket": "hook",
       "status": "owner-approved",
-      "sourceStatus": "reviewed",
+      "sourceStatus": "approved",
       "provenance": "source-archive",
       "sourceAuthor": "composed",
       "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
       "approvalVersionDate": "package-owner-approval",
-      "contentHash": "df513519e5b5950919fea09b814212f928460135f4e539e8768c60135f5845fa",
+      "contentHash": "bdf621148b9adfe06ec94efa9b79fc0fb91f333aac8411d457d1b0c4f803927c",
       "wording": {
-        "body_you": "Venus in Sagittarius trine Saturn in Leo makes it easier to celebrate a bold idea and give it a public home. A creative project, teaching, or announcement may attract support because the person presenting it is willing to stand behind the promise. The confidence feels generous. Other people can see themselves inside the possibility too.",
-        "body_they": "Venus in Sagittarius trine Saturn in Leo makes it easier to celebrate a bold idea and give it a public home. A creative project, teaching, or announcement may attract support because the person presenting it is willing to stand behind the promise. The confidence feels generous. Other people can see themselves inside the possibility too."
+        "body_you": "An ambitious vision attracts more support when the person presenting it is willing to claim it, step into the spotlight, and stand behind what they are offering. Venus in Sagittarius trine Saturn in Leo gives a creative project, teaching, or larger plan enough confidence and direction to draw other people in. Visibility works best when it gives an idea somewhere to go rather than becoming the whole point. Share what you believe in, then show people what you intend to do with the support.",
+        "body_they": "An ambitious vision attracts more support when the person presenting it is willing to claim it, step into the spotlight, and stand behind what they are offering. Venus in Sagittarius trine Saturn in Leo gives a creative project, teaching, or larger plan enough confidence and direction to draw other people in. Visibility works best when it gives an idea somewhere to go rather than becoming the whole point. Share what you believe in, then show people what you intend to do with the support."
       },
       "astrology": {
         "objects": [
@@ -161872,15 +161899,15 @@
       "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/sky-aspect-phrasebook-v1.json",
       "runtimeBucket": "hook",
       "status": "owner-approved",
-      "sourceStatus": "reviewed",
+      "sourceStatus": "approved",
       "provenance": "source-archive",
       "sourceAuthor": "composed",
       "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
       "approvalVersionDate": "package-owner-approval",
-      "contentHash": "f73de345d59ee5e1b70b07b80db585dc71d945e5b2e0c96770b7d19235b2d482",
+      "contentHash": "088afe03d5941afa964d8499796d525cc3ee3a249df94563c73e6c356c1a085a",
       "wording": {
-        "body_you": "Venus in Scorpio square Saturn in Aquarius makes trust harder to protect when a connection also needs room, friends, or obligations outside it. Someone may ask for proof that the connection matters, while the other person refuses to give up their independence or apply one rule to one person and another rule to everyone else. Distance can feel like betrayal. Intensity can make closeness feel like another demand.",
-        "body_they": "Venus in Scorpio square Saturn in Aquarius makes trust harder to protect when a connection also needs room, friends, or obligations outside it. Someone may ask for proof that the connection matters, while the other person refuses to give up their independence or apply one rule to one person and another rule to everyone else. Distance can feel like betrayal. Intensity can make closeness feel like another demand."
+        "body_you": "A relationship may hit a fight over closeness, privacy, or how much independence each person gets to keep. Venus in Scorpio square Saturn in Aquarius can put the need for deep trust against rules or obligations that apply beyond one relationship. The risk is treating space as betrayal or closeness as control. Say what you need without asking the other person to give up every outside obligation.",
+        "body_they": "A relationship may hit a fight over closeness, privacy, or how much independence each person gets to keep. Venus in Scorpio square Saturn in Aquarius can put the need for deep trust against rules or obligations that apply beyond one relationship. The risk is treating space as betrayal or closeness as control. Say what you need without asking the other person to give up every outside obligation."
       },
       "astrology": {
         "objects": [
@@ -161906,15 +161933,15 @@
       "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/sky-aspect-phrasebook-v1.json",
       "runtimeBucket": "hook",
       "status": "owner-approved",
-      "sourceStatus": "reviewed",
+      "sourceStatus": "approved",
       "provenance": "source-archive",
       "sourceAuthor": "composed",
       "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
       "approvalVersionDate": "package-owner-approval",
-      "contentHash": "ada66b765b29b0727e0f93adc6b16cfc445b64c23691005dfaf223d50602c0fb",
+      "contentHash": "66297b7fbd2338defca9c37587a3457602a3b3051c569340b840a5d9ffa4ab0e",
       "wording": {
-        "body_you": "Venus in Scorpio square Saturn in Leo can keep a meaningful connection private longer than someone expected. An unspoken agreement may hold until one person wants the loyalty acknowledged and finds that the other is worried about visibility, pride, or what public recognition would require. What happens behind closed doors can carry real weight. The refusal to name it openly still changes what the closeness means.",
-        "body_they": "Venus in Scorpio square Saturn in Leo can keep a meaningful connection private longer than someone expected. An unspoken agreement may hold until one person wants the loyalty acknowledged and finds that the other is worried about visibility, pride, or what public recognition would require. What happens behind closed doors can carry real weight. The refusal to name it openly still changes what the closeness means."
+        "body_you": "Something private may matter deeply, but one person may still want it named or acknowledged publicly. Venus in Scorpio square Saturn in Leo can make loyalty behind closed doors clash with the need for visible recognition. The risk is assuming private commitment automatically feels sufficient to both people. Talk about what needs to stay private and what still needs to be acknowledged.",
+        "body_they": "Something private may matter deeply, but one person may still want it named or acknowledged publicly. Venus in Scorpio square Saturn in Leo can make loyalty behind closed doors clash with the need for visible recognition. The risk is assuming private commitment automatically feels sufficient to both people. Talk about what needs to stay private and what still needs to be acknowledged."
       },
       "astrology": {
         "objects": [
@@ -161940,15 +161967,15 @@
       "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/sky-aspect-phrasebook-v1.json",
       "runtimeBucket": "hook",
       "status": "owner-approved",
-      "sourceStatus": "reviewed",
+      "sourceStatus": "approved",
       "provenance": "source-archive",
       "sourceAuthor": "composed",
       "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
       "approvalVersionDate": "package-owner-approval",
-      "contentHash": "1379a9470747312baf478dc06bf9112fdc02512e031ca0dedf6e1cc123076b2a",
+      "contentHash": "650f04c8e3028181244d5eb8700d157986adf65bb30d6d4cee1b8edd871432c7",
       "wording": {
-        "body_you": "Venus in Scorpio trine Saturn in Cancer makes private loyalty visible through protection and follow-through. Someone may keep a confidence, help with a family problem, or stay close when the conversation reaches fear, grief, or money. Trust grows because the person who knows what hurts also knows how to handle it carefully.",
-        "body_they": "Venus in Scorpio trine Saturn in Cancer makes private loyalty visible through protection and follow-through. Someone may keep a confidence, help with a family problem, or stay close when the conversation reaches fear, grief, or money. Trust grows because the person who knows what hurts also knows how to handle it carefully."
+        "body_you": "A private conversation can deepen trust when someone handles what you tell them with care instead of using it against you later. Venus in Scorpio trine Saturn in Cancer can make loyalty easier to recognize through discretion, protection, and the willingness to stay present when grief, family history, fear, or another sensitive subject comes up. Knowing where someone hurts does not give you permission to press there. Protect what was shared, take the vulnerability seriously, and let your consistency show that the trust was well placed.",
+        "body_they": "A private conversation can deepen trust when someone handles what you tell them with care instead of using it against you later. Venus in Scorpio trine Saturn in Cancer can make loyalty easier to recognize through discretion, protection, and the willingness to stay present when grief, family history, fear, or another sensitive subject comes up. Knowing where someone hurts does not give you permission to press there. Protect what was shared, take the vulnerability seriously, and let your consistency show that the trust was well placed."
       },
       "astrology": {
         "objects": [
@@ -161974,15 +162001,15 @@
       "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/sky-aspect-phrasebook-v1.json",
       "runtimeBucket": "hook",
       "status": "owner-approved",
-      "sourceStatus": "reviewed",
+      "sourceStatus": "approved",
       "provenance": "source-archive",
       "sourceAuthor": "composed",
       "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
       "approvalVersionDate": "package-owner-approval",
-      "contentHash": "a25a4c3204ae612f88cf884c69a41083c264f24044bf2a6fb8355d393206001f",
+      "contentHash": "82c45513340ffe7865f00a314986c021937c0ad20145cc2f20b5eefbc8800f8c",
       "wording": {
-        "body_you": "Venus in Scorpio trine Saturn in Pisces can hold a difficult feeling without rushing people past it. Grief, fear, desire, or an old betrayal may be spoken about with enough privacy for the truth to come out. The connection does not need a quick resolution to remain present. People can stay in the room with what has been named.",
-        "body_they": "Venus in Scorpio trine Saturn in Pisces can hold a difficult feeling without rushing people past it. Grief, fear, desire, or an old betrayal may be spoken about with enough privacy for the truth to come out. The connection does not need a quick resolution to remain present. People can stay in the room with what has been named."
+        "body_you": "A difficult feeling gets easier to face when no one is rushing to explain it away, force an ending, or move past what you are actually carrying. Venus in Scorpio trine Saturn in Pisces creates enough patience for grief, fear, desire, disappointment, or an old hurt to be acknowledged without demanding an immediate fix. Some truths become clear simply because they are finally allowed to be said plainly. Listen to what is actually there before deciding what needs to happen next.",
+        "body_they": "A difficult feeling gets easier to face when no one is rushing to explain it away, force an ending, or move past what you are actually carrying. Venus in Scorpio trine Saturn in Pisces creates enough patience for grief, fear, desire, disappointment, or an old hurt to be acknowledged without demanding an immediate fix. Some truths become clear simply because they are finally allowed to be said plainly. Listen to what is actually there before deciding what needs to happen next."
       },
       "astrology": {
         "objects": [
@@ -162076,15 +162103,15 @@
       "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/sky-aspect-phrasebook-v1.json",
       "runtimeBucket": "hook",
       "status": "owner-approved",
-      "sourceStatus": "reviewed",
+      "sourceStatus": "approved",
       "provenance": "source-archive",
       "sourceAuthor": "composed",
       "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
       "approvalVersionDate": "package-owner-approval",
-      "contentHash": "1ca3ae1460bca9540c987ca3449e850ed8f7bde841a414702173dbce8306f456",
+      "contentHash": "b3b1a20ddc15f3efab924b51750a2679f8f80948506b6f376e9477958fc016d6",
       "wording": {
-        "body_you": "Venus in Taurus square Saturn in Aquarius brings the comfort of a familiar arrangement up against a rule or group decision meant to change how everyone lives. A shared budget, new policy, or future plan may make sense to the group while costing someone the routine they depend on. The change may be fair to more people and still leave one person without what made daily life manageable.",
-        "body_they": "Venus in Taurus square Saturn in Aquarius brings the comfort of a familiar arrangement up against a rule or group decision meant to change how everyone lives. A shared budget, new policy, or future plan may make sense to the group while costing someone the routine they depend on. The change may be fair to more people and still leave one person without what made daily life manageable."
+        "body_you": "A new rule or group decision may be fair on paper and still make daily life harder for one person. Venus in Taurus square Saturn in Aquarius can put comfort, money, or routine against a change meant to work for everyone. The risk is treating the group benefit as proof that nobody loses anything. Check who is carrying the cost of the change.",
+        "body_they": "A new rule or group decision may be fair on paper and still make daily life harder for one person. Venus in Taurus square Saturn in Aquarius can put comfort, money, or routine against a change meant to work for everyone. The risk is treating the group benefit as proof that nobody loses anything. Check who is carrying the cost of the change."
       },
       "astrology": {
         "objects": [
@@ -162110,15 +162137,15 @@
       "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/sky-aspect-phrasebook-v1.json",
       "runtimeBucket": "hook",
       "status": "owner-approved",
-      "sourceStatus": "reviewed",
+      "sourceStatus": "approved",
       "provenance": "source-archive",
       "sourceAuthor": "composed",
       "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
       "approvalVersionDate": "package-owner-approval",
-      "contentHash": "0ac0ae249c2ca544ccb19cfa279a3eb47e05300e35480c3dff6a122da9b21f36",
+      "contentHash": "cc30edb9bf5a467de5bb9245e1ae12979315026633392b879dc7559dba5bf6ed",
       "wording": {
-        "body_you": "Venus in Taurus square Saturn in Leo can fill the day with practical care while appreciation remains hard to hear. Someone may cook the meal, pay the bill, remember what is needed, and keep showing up without hearing that any of it mattered. The care is present in every practical detail. So is the hurt when no one says it mattered.",
-        "body_they": "Venus in Taurus square Saturn in Leo can fill the day with practical care while appreciation remains hard to hear. Someone may cook the meal, pay the bill, remember what is needed, and keep showing up without hearing that any of it mattered. The care is present in every practical detail. So is the hurt when no one says it mattered."
+        "body_you": "Someone may be doing a lot to show they care and still feel unappreciated. Venus in Taurus square Saturn in Leo can make practical help easy to give while praise or recognition is harder to get. The risk is assuming the care should speak for itself or the appreciation should be obvious. Say what you noticed and what mattered.",
+        "body_they": "Someone may be doing a lot to show they care and still feel unappreciated. Venus in Taurus square Saturn in Leo can make practical help easy to give while praise or recognition is harder to get. The risk is assuming the care should speak for itself or the appreciation should be obvious. Say what you noticed and what mattered."
       },
       "astrology": {
         "objects": [
@@ -162144,15 +162171,15 @@
       "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/sky-aspect-phrasebook-v1.json",
       "runtimeBucket": "hook",
       "status": "owner-approved",
-      "sourceStatus": "reviewed",
+      "sourceStatus": "approved",
       "provenance": "source-archive",
       "sourceAuthor": "composed",
       "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
       "approvalVersionDate": "package-owner-approval",
-      "contentHash": "fffc98ffc35c8b13ac0f27e0c76afe99debb1993124281c126da61113d969cd9",
+      "contentHash": "11a3c4487f06b79241b72c8d641222fb8c15ad305302e90e5f11c52ea477ac52",
       "wording": {
-        "body_you": "Venus in Taurus trine Saturn in Capricorn makes it easier to enjoy what people have planned and worked for. Someone may save for the dinner or trip, make the reservation, and know the rest of the bills are covered. They may make a promise because they know they can keep it, then follow through without needing to be reminded. Affection feels easier to trust when someone remembers what was important and continues to show up after the event is over.",
-        "body_they": "Venus in Taurus trine Saturn in Capricorn makes it easier to enjoy what people have planned and worked for. Someone may save for the dinner or trip, make the reservation, and know the rest of the bills are covered. They may make a promise because they know they can keep it, then follow through without needing to be reminded. Affection feels easier to trust when someone remembers what was important and continues to show up after the event is over."
+        "body_you": "Something enjoyable becomes easier to commit to when the cost, time, and responsibility behind it actually make sense. Venus in Taurus trine Saturn in Capricorn can help people build plans, purchases, or relationships that feel good now and remain workable later. A promise lands differently when no one has to quietly overextend themselves to keep it going. Make the commitment in a form people can actually sustain.",
+        "body_they": "Something enjoyable becomes easier to commit to when the cost, time, and responsibility behind it actually make sense. Venus in Taurus trine Saturn in Capricorn can help people build plans, purchases, or relationships that feel good now and remain workable later. A promise lands differently when no one has to quietly overextend themselves to keep it going. Make the commitment in a form people can actually sustain."
       },
       "astrology": {
         "objects": [
@@ -162178,15 +162205,15 @@
       "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/sky-aspect-phrasebook-v1.json",
       "runtimeBucket": "hook",
       "status": "owner-approved",
-      "sourceStatus": "reviewed",
+      "sourceStatus": "approved",
       "provenance": "source-archive",
       "sourceAuthor": "composed",
       "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
       "approvalVersionDate": "package-owner-approval",
-      "contentHash": "67c0a049e10f886d75b304fd32e64954016b369314cb838c87d1fc99d3425e71",
+      "contentHash": "5b7747ee6fc9b725632d1dc2c8d4e5bd4441123e901c5f68f7e23ba753c2f1ea",
       "wording": {
-        "body_you": "Venus in Taurus trine Saturn in Virgo makes practical care easy to recognize in the details. Someone may prepare the meal, fix what has been irritating everyone, or remember the small preference that makes the day more comfortable. Affection arrives through useful attention and has time to be enjoyed. Daily life feels more manageable because someone noticed what it needed.",
-        "body_they": "Venus in Taurus trine Saturn in Virgo makes practical care easy to recognize in the details. Someone may prepare the meal, fix what has been irritating everyone, or remember the small preference that makes the day more comfortable. Affection arrives through useful attention and has time to be enjoyed. Daily life feels more manageable because someone noticed what it needed."
+        "body_you": "Someone may show they care by noticing the thing that would make the day easier and handling it before it becomes another problem. Venus in Taurus trine Saturn in Virgo can make practical attention feel especially meaningful because comfort is supported by useful follow-through. A small fix, remembered detail, or thoughtful bit of preparation can say more than a bigger gesture that creates more work. Notice what would actually help, then do that.",
+        "body_they": "Someone may show they care by noticing the thing that would make the day easier and handling it before it becomes another problem. Venus in Taurus trine Saturn in Virgo can make practical attention feel especially meaningful because comfort is supported by useful follow-through. A small fix, remembered detail, or thoughtful bit of preparation can say more than a bigger gesture that creates more work. Notice what would actually help, then do that."
       },
       "astrology": {
         "objects": [
@@ -162348,15 +162375,15 @@
       "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/sky-aspect-phrasebook-v1.json",
       "runtimeBucket": "hook",
       "status": "owner-approved",
-      "sourceStatus": "reviewed",
+      "sourceStatus": "approved",
       "provenance": "source-archive",
       "sourceAuthor": "composed",
       "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
       "approvalVersionDate": "package-owner-approval",
-      "contentHash": "13eb7ce9096ee911dcce1d3da4b82100f4fbe224515c72aeb1703c54df45ff76",
+      "contentHash": "2126a9ae4c58338458968b974d8f6cde47f34e9df43fb98d1f609e1141d507b7",
       "wording": {
-        "body_you": "Venus in Virgo square Saturn in Gemini can make care sound like criticism and caution sound like avoidance. Someone may point out a detail because they are trying to help, while the careful reply leaves the original question unanswered. Everyone may be choosing their words responsibly. The conversation can still leave no one feeling cared for.",
-        "body_they": "Venus in Virgo square Saturn in Gemini can make care sound like criticism and caution sound like avoidance. Someone may point out a detail because they are trying to help, while the careful reply leaves the original question unanswered. Everyone may be choosing their words responsibly. The conversation can still leave no one feeling cared for."
+        "body_you": "Someone may be trying to help, but the conversation can start to feel like criticism followed by no clear answer. Venus in Virgo square Saturn in Gemini can make details multiply while the main question stays open. The risk is discussing every small issue except the decision that matters. Answer the question first, then fix the details.",
+        "body_they": "Someone may be trying to help, but the conversation can start to feel like criticism followed by no clear answer. Venus in Virgo square Saturn in Gemini can make details multiply while the main question stays open. The risk is discussing every small issue except the decision that matters. Answer the question first, then fix the details."
       },
       "astrology": {
         "objects": [
@@ -162382,15 +162409,15 @@
       "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/sky-aspect-phrasebook-v1.json",
       "runtimeBucket": "hook",
       "status": "owner-approved",
-      "sourceStatus": "reviewed",
+      "sourceStatus": "approved",
       "provenance": "source-archive",
       "sourceAuthor": "composed",
       "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
       "approvalVersionDate": "package-owner-approval",
-      "contentHash": "b8bfca5869563cabba9b05b3ea1997066b60079354072a671df4b6a769605f9b",
+      "contentHash": "f84913c4334b59dff94ffb404422587438e1e339ba0473eaab95098f063c34c1",
       "wording": {
-        "body_you": "Venus in Virgo square Saturn in Sagittarius brings the small responsibility everyone forgot into the same moment as the larger promise everyone wants to keep. Someone may be checking the cost, fixing the schedule, or handling the work at home while another person is focused on the trip, the deadline, or the bigger goal. The plan can be worthwhile. The overlooked work still belongs to someone.",
-        "body_they": "Venus in Virgo square Saturn in Sagittarius brings the small responsibility everyone forgot into the same moment as the larger promise everyone wants to keep. Someone may be checking the cost, fixing the schedule, or handling the work at home while another person is focused on the trip, the deadline, or the bigger goal. The plan can be worthwhile. The overlooked work still belongs to someone."
+        "body_you": "A bigger plan may sound exciting until someone counts the hours, cost, or extra work it creates. Venus in Virgo square Saturn in Sagittarius can put daily responsibilities against a trip, opportunity, or promise that looks worthwhile from a distance. The risk is letting the least visible person absorb all the work needed to make it happen. Count the work before everyone agrees to the plan.",
+        "body_they": "A bigger plan may sound exciting until someone counts the hours, cost, or extra work it creates. Venus in Virgo square Saturn in Sagittarius can put daily responsibilities against a trip, opportunity, or promise that looks worthwhile from a distance. The risk is letting the least visible person absorb all the work needed to make it happen. Count the work before everyone agrees to the plan."
       },
       "astrology": {
         "objects": [
@@ -162450,15 +162477,15 @@
       "runtimeSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/sky-aspect-phrasebook-v1.json",
       "runtimeBucket": "hook",
       "status": "owner-approved",
-      "sourceStatus": "reviewed",
+      "sourceStatus": "approved",
       "provenance": "source-archive",
       "sourceAuthor": "composed",
       "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
       "approvalVersionDate": "package-owner-approval",
-      "contentHash": "dba9558afeeaebc51b2648ade2d2965684b31656d3789b3edc38fa62909cbd2d",
+      "contentHash": "9e4b2e40d24fb82a96c0c68e71da7e5c9fab96fdd9baab90ea565726c024a631",
       "wording": {
-        "body_you": "Venus in Virgo trine Saturn in Taurus shows care through the work that keeps ordinary life from becoming harder than it needs to be. Someone may fix the broken drawer, prepare what everyone will need, or spend carefully so the pleasure does not create stress later. The gesture can be quiet. Its usefulness keeps reminding people that they were considered.",
-        "body_they": "Venus in Virgo trine Saturn in Taurus shows care through the work that keeps ordinary life from becoming harder than it needs to be. Someone may fix the broken drawer, prepare what everyone will need, or spend carefully so the pleasure does not create stress later. The gesture can be quiet. Its usefulness keeps reminding people that they were considered."
+        "body_you": "Something becomes easier to enjoy when the details are handled well enough that the pleasure does not create another problem later. Venus in Virgo trine Saturn in Taurus can favor thoughtful choices around money, comfort, quality, and the work required to maintain what people value. The nicest option is not always the most expensive or impressive one. Choose what works well, lasts, and does not leave someone cleaning up the consequences afterward.",
+        "body_they": "Something becomes easier to enjoy when the details are handled well enough that the pleasure does not create another problem later. Venus in Virgo trine Saturn in Taurus can favor thoughtful choices around money, comfort, quality, and the work required to maintain what people value. The nicest option is not always the most expensive or impressive one. Choose what works well, lasts, and does not leave someone cleaning up the consequences afterward."
       },
       "astrology": {
         "objects": [
