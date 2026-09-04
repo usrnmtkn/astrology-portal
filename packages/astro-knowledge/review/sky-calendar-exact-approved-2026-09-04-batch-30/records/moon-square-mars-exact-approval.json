@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.moon.square.mars",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-04",
+  "ownerStatement": "please commit and make live the updated aspects",
+  "batchId": "sky-calendar-exact-approved-2026-09-04-batch-30",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-04-batch-30/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "abedfe618d9c999ba76acce0d8def45d870c38c7e9828d44f0ad9d3610b4dd76",
+  "summary": "Your patience evaporates instantly the moment one more demand lands on top of boundaries you've already let slide.",
+  "body": "Your patience evaporates instantly the moment one more demand lands on top of boundaries you've already let slide. When the Moon squares Mars, emotional friction and physical urgency collide, making a routine interruption or tiny request carry the weight of everything you've been quietly swallowing. The anger is telling you the truth about your depletion, but it's a terrible guide for who to blame. Acknowledge where you're running on fumes before you make the nearest bystander pay for the whole backlog."
+}
