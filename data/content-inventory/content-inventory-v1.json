@@ -1,9 +1,9 @@
 {
   "schemaVersion": "content-inventory-v1",
   "generatedOn": "2026-08-10",
-  "sourceCommit": "a63e3472c4f258f2875ee9c5e8f974db289b5d2c",
+  "sourceCommit": "2e57c1a58e72857f3748b0d2e3d81b341417ef75",
   "authorityRule": "Only owner-approved and owner-locked records may serve or export.",
-  "contentFingerprint": "0a53714c45b02235db6d6a2213d7f7bfabd0fe1ba8e1f7b493223cc976916489",
+  "contentFingerprint": "bacba34f1ae1431f1637c2a049902791b36eb76dd4e8eb512b086c0525985bd6",
   "recordCount": 10941,
   "statusCounts": {
     "owner-approved": 10941
@@ -51620,11 +51620,10 @@
       "sourceAuthor": "composed",
       "approvalRecord": "apps/web/src/content/fallbackArchitectureV3/dist/README.md",
       "approvalVersionDate": "2026-07-28",
-      "contentHash": "2cac04ba31db552965bc0a50c62b3c4380d290c2ea2a3100ca26761cc5b2c9a5",
+      "contentHash": "15ffaa6f57209ff4cf63f6d0c77577bf8eec32182f737e2430391a04efb606e3",
       "wording": {
         "headline": "",
-        "body_you": "The affection comes out as management: hovering, feeding, fixing, checking. A partner may feel smothered instead of loved. Instead of talking things through rationally, you or your partner get flooded by raw feelings, and the logical point of the discussion gets lost in the reaction. When the nervous system runs that hot, self-soothing habits easily turn into overindulgence. Connection without control is the goal. Venus {{aspectWord}} your Moon until {{untilDate}} runs high on feeling and low on discussion; save heavy relationship conversations for a different day.",
-        "body_they": "{{Name}} may notice what they actually value through an ordinary choice involving the feeling they carry into the next situation. Sleep, food, privacy, noise, or another person's mood can matter more than expected because the body is already keeping score. The tension is useful when it reveals the weak point. It becomes expensive when money or affection changing the tone turns that weak point into a fight about everything else.\n\nAs Venus {{aspectWord}} their Moon continues through {{untilDate}}, {{Name}} can let the feeling change the plan that needs changing without letting it rewrite progress that was still there before the mood shifted."
+        "body_you": "The affection comes out as management: hovering, feeding, fixing, checking. A partner may feel smothered instead of loved. Instead of talking things through rationally, you or your partner get flooded by raw feelings, and the logical point of the discussion gets lost in the reaction. When the nervous system runs that hot, self-soothing habits easily turn into overindulgence. Connection without control is the goal. Venus {{aspectWord}} your Moon until {{untilDate}} runs high on feeling and low on discussion; save heavy relationship conversations for a different day."
       },
       "astrology": {
         "objects": [
