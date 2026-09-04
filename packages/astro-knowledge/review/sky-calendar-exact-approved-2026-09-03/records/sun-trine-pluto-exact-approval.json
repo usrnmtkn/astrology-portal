@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.sun.trine.pluto",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-03",
+  "ownerStatement": "can you approve the one's already done and make them live?",
+  "batchId": "sky-calendar-exact-approved-through-2026-09-03",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-03/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "a505218758390c0e3cfae709ddd7597e9e32824f71f6fe6ffe54d15c6a7a5d74",
+  "summary": "You may be ready to stop negotiating with a pattern you already understand well enough to know what it costs you.",
+  "body": "You may be ready to stop negotiating with a pattern you already understand well enough to know what it costs you. When the Sun trines Pluto, self-awareness and personal power can reinforce each other, making it easier to confront the habit, attachment, fear, or dynamic that has kept more control over you than you wanted to admit. This does not have to become a dramatic reinvention. Make the decision that removes one source of unnecessary power from your life and notice how different confidence feels when it comes from changing the pattern rather than surviving it again."
+}

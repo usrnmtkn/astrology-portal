@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.jupiter.sextile.neptune",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-03",
+  "ownerStatement": "can you approve the one's already done and make them live?",
+  "batchId": "sky-calendar-exact-approved-through-2026-09-03",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-03/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "75f497be3175fb541cf0672e874474de744351a996faea97ac9dac67a59b4b67",
+  "summary": "Something you care about can become easier to believe in when support arrives before you have had to harden the idea into something you no longer recognize.",
+  "body": "Something you care about can become easier to believe in when support arrives before you have had to harden the idea into something you no longer recognize. When Jupiter sextiles Neptune, hope and opportunity support each other, making it easier for a creative dream, compassionate goal, or personal vision to receive the encouragement, money, audience, or help it needs to become more possible. You do not need to prove the entire future before accepting the opening. Use the support on the part you already know matters and let the larger vision grow from there."
+}

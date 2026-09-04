@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.sun.trine.saturn",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-03",
+  "ownerStatement": "can you approve the one's already done and make them live?",
+  "batchId": "sky-calendar-exact-approved-through-2026-09-03",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-03/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "e93b7d15689a8e8d8ef4625ce4f765db26b7e0e559bda4211cd5c2637aa50a3e",
+  "summary": "There is a different kind of confidence that comes from knowing you can keep showing up after the excitement wears off.",
+  "body": "There is a different kind of confidence that comes from knowing you can keep showing up after the excitement wears off. When the Sun trines Saturn, discipline and identity support each other, which can make a commitment, responsibility, or long-term goal feel less like a burden and more like something you are genuinely prepared to carry. This is a good moment to formalize what you have already proven you can sustain. Let consistency become evidence that you are ready for more authority, responsibility, or trust rather than waiting for someone else to announce that you have earned it."
+}

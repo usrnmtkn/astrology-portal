@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.sun.trine.uranus",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-03",
+  "ownerStatement": "can you approve the one's already done and make them live?",
+  "batchId": "sky-calendar-exact-approved-through-2026-09-03",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-03/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "264c4077631696d20bf8554491bb814c3ea885bfca1a056cbad176be97bb5838",
+  "summary": "If a change makes you feel more like yourself rather than simply more excited, pay attention to that difference.",
+  "body": "If a change makes you feel more like yourself rather than simply more excited, pay attention to that difference. When the Sun trines Uranus, experimentation can reveal a version of your life, work, routine, or identity that gives you more freedom without requiring you to burn down everything that came before it. The unfamiliar option may fit better precisely because you have changed since the old one was chosen. Keep the adjustment that gives you more room to be who you are now instead of rebuilding an older version of yourself because it once made sense."
+}

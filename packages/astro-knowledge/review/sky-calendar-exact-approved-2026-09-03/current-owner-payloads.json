@@ -1,0 +1,1518 @@
+{
+  "schemaVersion": 2,
+  "name": "Current owner-approved Sky Calendar exact aspect payloads",
+  "rowCount": 215,
+  "approvedOverlayCount": 132,
+  "protectedBaselineCount": 2,
+  "historicalBaselinePath": "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-owner-rewrites-payloads.json",
+  "overlayBatchId": "sky-calendar-exact-approved-through-2026-09-03",
+  "overlayEvidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-03/owner-batch-authorization.json",
+  "payloadSetSha256": "9e95b0714a784b6c8698a0735aef606424a545c2cc733834b4879d4213c27c61",
+  "payloads": {
+    "sky.jupiter.conjunction.neptune": {
+      "sha256": "69d4e83f88f9ffd51a5def415469c5267c9e0889a8472d00e038ec24d9e803e6",
+      "payload": {
+        "summary": "It is easy to believe in something when it seems capable of solving several problems at once, especially when the possibility feels bigger and more hopeful than what you have been working with.",
+        "body": "It is easy to believe in something when it seems capable of solving several problems at once, especially when the possibility feels bigger and more hopeful than what you have been working with. When Jupiter conjuncts Neptune, optimism can stretch well past the facts, leaving people genuinely excited while imagining very different versions of what the opportunity will become. The problem is not believing in the idea; it is committing your time, money, or trust before anyone has clarified what is actually being promised. Let yourself be inspired, but make sure the numbers, expectations, and next step are concrete enough that your enthusiasm is attached to the same reality everyone else is agreeing to."
+      }
+    },
+    "sky.jupiter.conjunction.pluto": {
+      "sha256": "080089d4255fb575148284dff927a8bc8d265702d5b8f33cdc147807816d69f5",
+      "payload": {
+        "summary": "Getting more power can feel like proof that you were right all along, which is exactly when it becomes easiest to stop questioning how you are using it.",
+        "body": "Getting more power can feel like proof that you were right all along, which is exactly when it becomes easiest to stop questioning how you are using it. When Jupiter conjuncts Pluto, ambition and influence expand together, making a larger role, financial opportunity, audience, or position of authority feel capable of changing much more than the original situation. That power can be useful, but success does not automatically make every instinct behind it wise. Decide what you actually want the added leverage to change before having more influence becomes a reason to keep reaching for more."
+      }
+    },
+    "sky.jupiter.conjunction.saturn": {
+      "sha256": "e7f9397a89ba1fb1d4151fa35c0004e9ef299c71bcf68b2211eca3c60f8df9a6",
+      "payload": {
+        "summary": "Sometimes the opportunity you wanted becomes serious the moment you realize how much responsibility comes with getting to keep it.",
+        "body": "Sometimes the opportunity you wanted becomes serious the moment you realize how much responsibility comes with getting to keep it. When Jupiter conjuncts Saturn, expansion and obligation arrive together, making a larger role, commitment, or long-term plan possible precisely because there are now rules, deadlines, costs, and expectations around it. The structure is not necessarily what is standing between you and the opportunity; it may be what makes the opportunity sustainable. Make sure you want the responsibility as much as you wanted the possibility."
+      }
+    },
+    "sky.jupiter.conjunction.uranus": {
+      "sha256": "1b310a3ee49ac78821c86e5eaa97b9035b06aafc0b15147f76934a2f65378a41",
+      "payload": {
+        "summary": "A sudden opening can make your old life feel too small before you have had enough time to understand what the new one would actually require.",
+        "body": "A sudden opening can make your old life feel too small before you have had enough time to understand what the new one would actually require. When Jupiter conjuncts Uranus, possibility expands quickly, making an unexpected offer, breakthrough, idea, or change of direction feel capable of freeing you from limitations you had already started resenting. The opening may be exactly as valuable as it feels, but excitement can make the disruption around it look cheaper than it is. Give yourself permission to take the chance without pretending you know everything the chance will change."
+      }
+    },
+    "sky.jupiter.opposition.neptune": {
+      "sha256": "7bfedf0ebf40bf36f999c188c2576b07f1c13a8338c9fcd8baee7e61ef14ba1b",
+      "payload": {
+        "summary": "The more badly you want something to work, the easier it becomes to treat hope as evidence that it eventually will.",
+        "body": "The more badly you want something to work, the easier it becomes to treat hope as evidence that it eventually will. When Jupiter opposes Neptune, optimism can run directly into ambiguity, making a person, promise, cause, or possibility feel increasingly meaningful while the facts underneath it remain frustratingly difficult to pin down. Believing in something does not require you to keep financing the parts that nobody can explain. Let the vision inspire you, but notice when you are being asked to contribute more faith, money, or time simply because the missing answers have not arrived."
+      }
+    },
+    "sky.jupiter.opposition.pluto": {
+      "sha256": "032c284222fb56cd3b581d73be95de66a64906969ed6c2c96ca65c1d91aed1ef",
+      "payload": {
+        "summary": "An opportunity can stop feeling like an opportunity once accepting it means entering a power struggle over who gets to control what happens next.",
+        "body": "An opportunity can stop feeling like an opportunity once accepting it means entering a power struggle over who gets to control what happens next. When Jupiter opposes Pluto, growth and leverage pull against each other, making success, money, recognition, or increased access come with a sharper awareness of the person or institution capable of setting the terms. You may genuinely benefit from the arrangement and still dislike how dependent it makes you. Ask yourself how much growth is worth if keeping it requires surrendering more control than you intended to give away."
+      }
+    },
+    "sky.jupiter.opposition.saturn": {
+      "sha256": "7d0850b874ce1ce3b8dcd9ff67b4679925904a612e62b70c9b31a40f9b0174c4",
+      "payload": {
+        "summary": "It is frustrating to see exactly how much more could be possible while somebody else is holding up the rule, budget, deadline, or responsibility that says not yet.",
+        "body": "It is frustrating to see exactly how much more could be possible while somebody else is holding up the rule, budget, deadline, or responsibility that says not yet. When Jupiter opposes Saturn, optimism and expansion meet a limit that cannot simply be talked into disappearing, making the restriction feel especially small-minded when you can already see the larger outcome. The limit may be unnecessary, or it may be showing you the part of the plan that still cannot carry what you are asking of it. Figure out which before turning patience into proof that you are settling."
+      }
+    },
+    "sky.jupiter.opposition.uranus": {
+      "sha256": "6b4a0f86b14710a198a006762dda6c77c26e3515232977cbc9434c8050df64d3",
+      "payload": {
+        "summary": "A bigger opportunity can demand more change than you expected when you were imagining how good it would feel to have it.",
+        "body": "A bigger opportunity can demand more change than you expected when you were imagining how good it would feel to have it. When Jupiter opposes Uranus, expansion can disrupt routines, relationships, commitments, or assumptions that were built around a smaller version of your life. The chance may still be worth taking, but growth that creates more freedom in one area can create instability somewhere else. Decide what you are genuinely willing to rearrange instead of assuming everything important will somehow stay untouched while your life gets larger."
+      }
+    },
+    "sky.jupiter.sextile.neptune": {
+      "sha256": "5150f3f8d9877d8aada77744c9cb622686b0297a600d36d830769d704faa9de1",
+      "payload": {
+        "summary": "Something you care about can become easier to believe in when support arrives before you have had to harden the idea into something you no longer recognize.",
+        "body": "Something you care about can become easier to believe in when support arrives before you have had to harden the idea into something you no longer recognize. When Jupiter sextiles Neptune, hope and opportunity support each other, making it easier for a creative dream, compassionate goal, or personal vision to receive the encouragement, money, audience, or help it needs to become more possible. You do not need to prove the entire future before accepting the opening. Use the support on the part you already know matters and let the larger vision grow from there."
+      }
+    },
+    "sky.jupiter.sextile.pluto": {
+      "sha256": "148aee5671cde12ccf1342a8e455f38b7b7641090988184399d403d765e31512",
+      "payload": {
+        "summary": "Sometimes one meaningful opportunity gives you enough leverage to change the part of a situation you had almost accepted as permanent.",
+        "body": "Sometimes one meaningful opportunity gives you enough leverage to change the part of a situation you had almost accepted as permanent. When Jupiter sextiles Pluto, growth and influence work together, making access, money, authority, or the support of the right person more useful than it would normally be. The opening matters because you can do more with it than simply improve appearances. Use the additional power on the condition that has been limiting your choices, especially if changing that one thing would leave you with more control after the opportunity passes."
+      }
+    },
+    "sky.jupiter.sextile.saturn": {
+      "sha256": "660c3f9379c9c1e49e4ac42223d2688234bdbacfbb9d6b4f2b58a1c7fa0cead4",
+      "payload": {
+        "summary": "A yes with conditions can still be a very good yes when the conditions are what make the larger opportunity possible to keep.",
+        "body": "A yes with conditions can still be a very good yes when the conditions are what make the larger opportunity possible to keep. When Jupiter sextiles Saturn, expansion gets help from structure, making a bigger commitment, role, purchase, or plan more workable because the limits are clear enough to plan around. You may not get every part of what you originally imagined, but what is available can become much more dependable once you know what it requires. Take the version you can actually build from instead of resenting it for not arriving without constraints."
+      }
+    },
+    "sky.jupiter.sextile.uranus": {
+      "sha256": "963ed2ecc4b976c611bcda0a491cc975674c1d9cecd0014daf3aa32191ef97c7",
+      "payload": {
+        "summary": "One change in the way you have been doing things can create much more possibility than you expected it to.",
+        "body": "One change in the way you have been doing things can create much more possibility than you expected it to. When Jupiter sextiles Uranus, a new idea, connection, tool, or exception can remove a limitation that had quietly been determining how far you could go. The opening may look small compared with the larger goal, but that is part of what makes it useful. Follow the option that gives you more room and see how much of the old limit was actually necessary once another route exists."
+      }
+    },
+    "sky.jupiter.square.neptune": {
+      "sha256": "0dd1b912edf4083a35893e80641be2ed502011f8816c4461da015f67147f5eee",
+      "payload": {
+        "summary": "A compelling idea can keep pulling more time, money, or confidence out of you long after the practical evidence has stopped supporting it.",
+        "body": "A compelling idea can keep pulling more time, money, or confidence out of you long after the practical evidence has stopped supporting it. When Jupiter squares Neptune, enthusiasm can fill in the parts of a plan that have never been properly tested, making optimism feel like proof that the missing structure will somehow appear later. If the same questions about cost, delivery, responsibility, or results keep going unanswered, take that seriously. You do not have to abandon the vision, but you do need to stop asking belief to carry the part that only a workable plan can support."
+      }
+    },
+    "sky.jupiter.square.pluto": {
+      "sha256": "9134f119d243e52e5911b6150e95023097a7605dff3d8e10a63b7c26333c8d54",
+      "payload": {
+        "summary": "A bigger win can become strangely difficult to enjoy once proving how much further you can go starts mattering more than what you originally wanted the success for.",
+        "body": "A bigger win can become strangely difficult to enjoy once proving how much further you can go starts mattering more than what you originally wanted the success for. When Jupiter squares Pluto, ambition can become tangled with control, making another victory, expansion, or advantage feel necessary because backing off now looks too much like losing. The problem is not wanting more; it is reaching the point where more is being used to settle something success was never going to settle for you. Notice when growth stops serving the goal and starts serving the need to prove that nobody can stop you."
+      }
+    },
+    "sky.jupiter.square.saturn": {
+      "sha256": "b51a1114d59215a19df916ded7ef391e431ae7ff80a768d5ac273464d7686eaf",
+      "payload": {
+        "summary": "You can believe completely in where you are going and still be trying to get there with a life that does not currently have enough room to carry it.",
+        "body": "You can believe completely in where you are going and still be trying to get there with a life that does not currently have enough room to carry it. When Jupiter squares Saturn, ambition runs into the practical limits of time, money, responsibility, or energy, which can make every restriction feel like something standing between you and the life you should already have. The frustration is understandable, but the limit is also information. Build enough capacity for the larger version rather than repeatedly asking the current version of your life to absorb more than it can hold."
+      }
+    },
+    "sky.jupiter.square.uranus": {
+      "sha256": "fc545923eb88e60d1dd66c6ade2d17d65146272ef5809ac367207d8ab1ad9d14",
+      "payload": {
+        "summary": "The urge to make a dramatic change gets much more convincing when staying where you are has started feeling like proof that your life is not moving fast enough.",
+        "body": "The urge to make a dramatic change gets much more convincing when staying where you are has started feeling like proof that your life is not moving fast enough. When Jupiter squares Uranus, restlessness and optimism reinforce each other, making disruption look especially promising because almost anything different seems capable of creating more possibility. Change may be overdue, but freedom does not require you to gamble everything useful along with everything restrictive. Give the new direction enough room to prove itself before you make the old one impossible to return to."
+      }
+    },
+    "sky.jupiter.trine.neptune": {
+      "sha256": "5998460dfc0b0dee1db14c53a6a8239ccaee472bccede62c7d8a286dedd81335",
+      "payload": {
+        "summary": "A dream can start feeling less like something you are escaping into and more like something you might genuinely be able to build your life around.",
+        "body": "A dream can start feeling less like something you are escaping into and more like something you might genuinely be able to build your life around. When Jupiter trines Neptune, imagination and confidence support each other, making a creative idea, compassionate goal, or long-held hope feel possible enough to receive more of your attention. You do not need to know every step before taking yourself seriously. Give the vision some of the time, money, or effort you normally reserve for things you already consider practical and see what becomes possible when the dream is allowed to compete for a place in your actual life."
+      }
+    },
+    "sky.jupiter.trine.pluto": {
+      "sha256": "562751f6a61561732c48d860927946ca7a7367873b703aec2ff6ee7c01258390",
+      "payload": {
+        "summary": "There are moments when having more influence means you can finally change something you previously had to work around.",
+        "body": "There are moments when having more influence means you can finally change something you previously had to work around. When Jupiter trines Pluto, opportunity and leverage reinforce each other, giving your decisions more weight and making deeper change possible without requiring the same fight it might have taken before. Do not spend the opening making a weak arrangement slightly more comfortable if you now have enough power to change the arrangement itself. Use what has expanded to leave yourself with better terms after the moment of opportunity is over."
+      }
+    },
+    "sky.jupiter.trine.saturn": {
+      "sha256": "832cf10f112cb799ebe6eacf8fb3939a1ed65111da5b16f83ce3f1a438e1c343",
+      "payload": {
+        "summary": "Growth feels much less frightening when the life and foundation underneath it is strong enough that success does not immediately create another crisis to manage.",
+        "body": "Growth feels much less frightening when the life and foundation underneath it is strong enough that success does not immediately create another crisis to manage. When Jupiter trines Saturn, ambition and structure support each other, making it easier for a larger role, project, commitment, or opportunity to fit because the time, money, responsibilities, and expectations around it already make sense. You do not have to manufacture urgency around something that is working. Let what you have built carry more before assuming the next level requires you to reinvent everything."
+      }
+    },
+    "sky.jupiter.trine.uranus": {
+      "sha256": "20c67161252aac914575a92204b7216b7ff5ebcfaa7da55c04ee6f7589e3d374",
+      "payload": {
+        "summary": "A better option can make you realize how much energy you were spending adapting yourself to a problem that never needed to stay that difficult.",
+        "body": "A better option can make you realize how much energy you were spending adapting yourself to a problem that never needed to stay that difficult. When Jupiter trines Uranus, opportunity and innovation reinforce each other, making an unconventional route, useful connection, or new way of working capable of opening much more room than the old method allowed. You do not owe the harder version loyalty simply because you learned how to survive it. Take the improvement seriously and let an easier route change your expectations about what is possible."
+      }
+    },
+    "sky.mars.conjunction.jupiter": {
+      "sha256": "2c8e1f787ae78534ad799476c471e1dc94f3f396a0f971e0b7f21ced14d8426e",
+      "payload": {
+        "summary": "Momentum makes everything look like a green light, especially when your first risk pays off and everyone tells you to double down.",
+        "body": "Momentum makes everything look like a green light, especially when your first risk pays off and everyone tells you to double down. When Mars conjuncts Jupiter, high confidence accelerates action, making it easy to outpace your actual bandwidth. Enthusiasm is not a replacement for logistics. Take the win, but audit your time, money, and capacity before you turn one smart move into five overlapping commitments."
+      }
+    },
+    "sky.mars.conjunction.neptune": {
+      "sha256": "eb53df183d7be08c9957baacffcec4becb6b730a79e5b6d62d144c4e0e7b0646",
+      "payload": {
+        "summary": "You can feel entirely certain that a situation is wrong without having a single actionable clue about how to fix it.",
+        "body": "You can feel entirely certain that a situation is wrong without having a single actionable clue about how to fix it. When Mars conjuncts Neptune, high emotional conviction meets a total lack of a blueprint, leaving you ready to fight for an objective that keeps shifting shape. Pushing harder will not make a vague target clear. Define the actual problem, establish what is within your control, and pick one concrete step that actually moves the needle instead of just burning off nervous energy."
+      }
+    },
+    "sky.mars.conjunction.pluto": {
+      "sha256": "756cb8bf2d39e2aeb194d47d0bc862dd81236d032be2f61ad064a8527c5c9b2f",
+      "payload": {
+        "summary": "When a routine discussion turns into a high-stakes power struggle, brute force will only escalate a war you cannot afford to win.",
+        "body": "When a routine discussion turns into a high-stakes power struggle, brute force will only escalate a war you cannot afford to win. When Mars conjuncts Pluto, the urge to dominate the room overrides common sense, tying your ego directly to the outcome. Figure out what you actually need from this dynamic before you burn all your leverage on proving a point. Protect your real priorities, separate your pride from the strategy, and choose your battles based on what matters tomorrow, not who wins the argument today."
+      }
+    },
+    "sky.mars.conjunction.saturn": {
+      "sha256": "4f240368d7b17c973102f975575ee2f133e41f756ab1634f885423e26b53c063",
+      "payload": {
+        "summary": "Hitting a brick wall when you are ready to sprint is infuriating, but fighting the structure will only break your momentum.",
+        "body": "Hitting a brick wall when you are ready to sprint is infuriating, but fighting the structure will only break your momentum. When Mars conjuncts Saturn, active drive collides directly with hard rules, strict deadlines, and non-negotiable limits. Ignoring the restriction creates a bigger mess than accepting it. Respect the sequence, handle what is mandatory right now, and save your energy for changing the rules after the baseline is secured."
+      }
+    },
+    "sky.mars.conjunction.uranus": {
+      "sha256": "6969d038f18d1c9e211fbb9eb4421fad7941bba7b24f753b51e9d8e67aa34beb",
+      "payload": {
+        "summary": "When a sudden crisis hits, the sheer adrenaline spike can convince you that any chaotic reaction is better than standing still.",
+        "body": "When a sudden crisis hits, the sheer adrenaline spike can convince you that any chaotic reaction is better than standing still. When Mars conjuncts Uranus, disruption and panic arrive together, making rash decisions look like bold leadership. The first workaround that saves your day is rarely a solid foundation for your future. Handle the immediate emergency, keep yourself safe from self-sabotage, and refuse to make permanent choices while the dust is still settling."
+      }
+    },
+    "sky.mars.opposition.jupiter": {
+      "sha256": "873d89d6bbaf8a27326d1699b2f111c2c8e405fbefb155077901c2686b729997",
+      "payload": {
+        "summary": "You can be entirely right about a massive new opportunity while completely ignoring the fact that your current resources cannot support it.",
+        "body": "You can be entirely right about a massive new opportunity while completely ignoring the fact that your current resources cannot support it. When Mars opposes Jupiter, the desire for rapid expansion clashes directly with the gritty reality of your budget, staffing, or daily capacity. Optimism is a great catalyst, but it does not pay the bills or stretch the clock. Scale the vision down to what you can actually execute without collapsing your foundation."
+      }
+    },
+    "sky.mars.opposition.neptune": {
+      "sha256": "aef8c5f539429ab65eadcd11e666715879070b8a7fff6032fc79bf839a251816",
+      "payload": {
+        "summary": "Taking frantic action in a confusing situation feels much more productive than admitting you are flying blind, but motion is not the same as progress.",
+        "body": "Taking frantic action in a confusing situation feels much more productive than admitting you are flying blind, but motion is not the same as progress. When Mars opposes Neptune, urgency collides with mixed signals and shifting targets, turning guesswork into a strategy. Stop reacting to shadows. Slow down, separate hard data from your assumptions, and find out what is actually true before you commit your time and energy to a ghost."
+      }
+    },
+    "sky.mars.opposition.pluto": {
+      "sha256": "101813d901e8acf0f98190934a04e0f12e8f093a2ad03f5c83a8bd6c0188bbfc",
+      "payload": {
+        "summary": "Pretending a systemic power struggle is just a communication issue will keep you spinning your wheels against someone who holds all the leverage.",
+        "body": "Pretending a systemic power struggle is just a communication issue will keep you spinning your wheels against someone who holds all the leverage. When Mars opposes Pluto, visible hustle runs straight into structural gatekeeping, money, authority, or institutional rules you cannot charm your way around. Identify who holds the actual keys, assess what leverage you genuinely retain, and decide if the fight is worth the cost or if you need to completely change your approach."
+      }
+    },
+    "sky.mars.opposition.saturn": {
+      "sha256": "9af8e875670506d5a48a9eab47b073b82eacc15d2c0553cea01b2cff9b18f018",
+      "payload": {
+        "summary": "Every restriction feels like a personal attack when you are already burning with the desire to move forward.",
+        "body": "Every restriction feels like a personal attack when you are already burning with the desire to move forward. When Mars opposes Saturn, urgency crashes into boundaries, turning necessary guardrails into infuriating roadblocks. Some limits are protecting your long-term stability, while others are just bureaucratic noise. Figure out which one you are dealing with before you start tearing down walls you will need tomorrow."
+      }
+    },
+    "sky.mars.opposition.uranus": {
+      "sha256": "b74de18e65e62ead2c0ec75c49457f7ef90a5f6ba8b8ff3c97cb4571bc32e25d",
+      "payload": {
+        "summary": "The deep desire to blow up a frustrating situation is rarely the same as having a viable plan for what happens on the other side.",
+        "body": "The deep desire to blow up a frustrating situation is rarely the same as having a viable plan for what happens on the other side. When Mars opposes Uranus, long-simmering burnout makes an abrupt exit look like freedom, risking a messy fallout that creates more problems than it solves. You may genuinely need to leave, but stage your exit with precision. Separate the immediate relief you crave from the infrastructure you still need to survive next week."
+      }
+    },
+    "sky.mars.sextile.jupiter": {
+      "sha256": "b7c19cb2cc5dfa6bee8ba64cc2a6b1bf4a675dba4ab93115a96e258975eb7a2d",
+      "payload": {
+        "summary": "A single bold move can accidentally unlock a door much larger than you anticipated, turning a small test into a massive operational demand.",
+        "body": "A single bold move can accidentally unlock a door much larger than you anticipated, turning a small test into a massive operational demand. When Mars sextiles Jupiter, initiative triggers unexpected visibility, funding, or audience growth. Do not downplay the momentum, but do not ignore the fine print either. Say yes to the upgrade, and immediately put the systems in place to handle the extra weight your initiative just created."
+      }
+    },
+    "sky.mars.sextile.neptune": {
+      "sha256": "6d2ec8bf022a8a3ac05fa84d98487754c4ec11583e66ff2eaca90faf4891b667",
+      "payload": {
+        "summary": "Heavy feelings stop weighing you down the second you stop trying to process them in your head and give them a physical job to do.",
+        "body": "Heavy feelings stop weighing you down the second you stop trying to process them in your head and give them a physical job to do. When Mars sextiles Neptune, that heavy mix of compassion, grief, anger, or intuition can be channeled into direct, tangible work instead of spinning into mental static. Stop waiting for total emotional clarity to strike while you stare at the wall. Pick one specific, tedious operational task or physical cleanup item you have been actively avoiding, and give your energy a real vessel to move through."
+      }
+    },
+    "sky.mars.sextile.pluto": {
+      "sha256": "7843cb57f77f819042af8189af24699d0a9249d1ccbf0ce9c568c8880b8c4935",
+      "payload": {
+        "summary": "You can waste a lot of energy proving how serious you are to people who were never in a position to change the answer.",
+        "body": "You can waste a lot of energy proving how serious you are to people who were never in a position to change the answer. When Mars sextiles Pluto, determination becomes more effective because you are better able to see where the actual leverage sits and direct your effort there. This is less about pushing harder than understanding what could materially change the outcome. Put your energy behind the conversation, decision, boundary, or move that can actually shift something instead of exhausting yourself trying to win over everyone standing between you and it."
+      }
+    },
+    "sky.mars.sextile.saturn": {
+      "sha256": "19b19580437535c50c5ce58ca4a7417ec71e418f73ada88fce434d6f21ab046f",
+      "payload": {
+        "summary": "Once you know exactly what has to happen first, a blocked plan can stop feeling like a dead end and start feeling like a sequence.",
+        "body": "Once you know exactly what has to happen first, a blocked plan can stop feeling like a dead end and start feeling like a sequence. When Mars sextiles Saturn, action and structure support each other, making it easier to work with a deadline, responsibility, rule, or practical limit without treating the whole restriction as defeat. You may not be able to move everything at once, but you can usually move the part that is genuinely ready. Let one completed step restore your momentum instead of wasting energy fighting the pieces that still have to wait."
+      }
+    },
+    "sky.mars.sextile.uranus": {
+      "sha256": "c7820e9d00e90861a7a6774cd7d9bf767b98a98d3be4bdfcc0085a138e9f681a",
+      "payload": {
+        "summary": "A problem you have been handling the same way for months may suddenly have a much easier solution once you notice the part of the routine that never needed to be there.",
+        "body": "A problem you have been handling the same way for months may suddenly have a much easier solution once you notice the part of the routine that never needed to be there. When Mars sextiles Uranus, you are more willing to recognize and act on the workaround, tool, different route, or unconventional idea that gets you past a recurring source of friction. The new option does not have to replace everything you already know; it only needs to solve the part that keeps wasting your time. Do not retreat to the old method just because the new one feels unfamiliar. If it removes the bottleneck, let that be enough signal to change course."
+      }
+    },
+    "sky.mars.square.jupiter": {
+      "sha256": "bc15f6eeef16b729ba7ca8ca63dd36564c3a3769c4f1fe2212eec28d38f364e5",
+      "payload": {
+        "summary": "Your ambition will write checks your actual schedule cannot cash if you let enthusiasm outrun your operational capacity.",
+        "body": "Your ambition will write checks your actual schedule cannot cash if you let enthusiasm outrun your operational capacity. When Mars squares Jupiter, the drive to expand collides with the reality of how much time and energy you actually possess. More opportunities do not mean you have to take every single one of them. Protect your bandwidth, turn down the exciting distractions that pull you off course, and focus only on the projects you have the resources to finish."
+      }
+    },
+    "sky.mars.square.neptune": {
+      "sha256": "6f226555977110626f07478a02e576960aa5951c891bcd5ca68209e4e1edb471",
+      "payload": {
+        "summary": "It is easy to turn uncertainty into a fight when being angry feels more manageable than admitting you do not actually know what is going on yet.",
+        "body": "It is easy to turn uncertainty into a fight when being angry feels more manageable than admitting you do not actually know what is going on yet. When Mars squares Neptune, urgency can attach itself to assumptions, mixed signals, or an incomplete version of the problem, making action feel justified before you know where the responsibility really belongs. Your instinct that something is wrong may be accurate without your first explanation for it being accurate too. Give the facts enough time to catch up with the feeling before you spend your energy confronting the wrong person or fixing the wrong problem."
+      }
+    },
+    "sky.mars.square.pluto": {
+      "sha256": "8a20151f755d56c8eb6daca2659a459ffac0aec1276bee0ae516fb6e60e9ee0d",
+      "payload": {
+        "summary": "A power struggle turns destructive the second your ego demands that you win the argument at all costs.",
+        "body": "A power struggle turns destructive the second your ego demands that you win the argument at all costs. When Mars squares Pluto, the desire to dominate the room or force an outcome triggers a relentless cycle of escalation. Pushing harder against a hostile environment will not yield results; it will only drain your leverage. Back away from the contest, assess what you actually control, and choose a smarter strategy that does not require a casualty."
+      }
+    },
+    "sky.mars.square.saturn": {
+      "sha256": "3fb7a0f734cc15b62073eb5fd909544e80c88dcc617771812427a9554e1249ae",
+      "payload": {
+        "summary": "Hitting a brick wall when you are ready to make a move feels like a personal punishment, but fighting the structure will only burn you out.",
+        "body": "Hitting a brick wall when you are ready to make a move feels like a personal punishment, but fighting the structure will only burn you out. When Mars squares Saturn, your immediate drive runs straight into hard limits, rules, and restrictions that will not budge. Forcing the issue will not make the wall disappear. Step back, respect the boundaries currently in place, and find the legal, sustainable way around the obstacle instead of breaking yourself against it."
+      }
+    },
+    "sky.mars.square.uranus": {
+      "sha256": "f7e78bc64fc0d12670d0cfbaddb0ade00b6c2df09c476899d3e06ac7d7bc488e",
+      "payload": {
+        "summary": "Impatience will tempt you to blow up a working system just because progress feels too slow.",
+        "body": "Impatience will tempt you to blow up a working system just because progress feels too slow. When Mars squares Uranus, sudden, erratic restlessness can make every disruption look like a breakthrough. Sudden changes rarely fix structural flaws by themselves. Channel that adrenaline into a controlled experiment rather than setting fire to the routine that is keeping your life stable."
+      }
+    },
+    "sky.mars.trine.jupiter": {
+      "sha256": "997c7afe7388a57012a1731c04c0105a3ce8d3ddebb33376bc1e6025f583db1c",
+      "payload": {
+        "summary": "When something is already producing results, put more time, money, or attention behind it before you start something new.",
+        "body": "When something is already producing results, put more time, money, or attention behind it before you start something new. When Mars trines Jupiter, momentum can attract more opportunity, support, visibility, or resources, making it easier to grow what has already proven itself. This is expansion with evidence behind it. Back the thing that is working and resist scattering your energy across new ideas just because you suddenly have more confidence."
+      }
+    },
+    "sky.mars.trine.neptune": {
+      "sha256": "468b4432a5d7be0249e54c779ff6d08e19117f6db8cea85160c7d5702162369c",
+      "payload": {
+        "summary": "You do not have to explain exactly why something matters to you before you are allowed to act like it matters.",
+        "body": "You do not have to explain exactly why something matters to you before you are allowed to act like it matters. When Mars trines Neptune, action can follow compassion, intuition, creativity, or conviction without requiring you to turn every feeling into an argument first. Sometimes the quickest way through a feeling is to give it something to do. Make the thing, help the person, follow the instinct, and let the action show you what all that thinking could not. You do not need to know where the feeling is leading before you let it move you."
+      }
+    },
+    "sky.mars.trine.pluto": {
+      "sha256": "56a2c8e97bae05ee3eb46bee69b78c3a0a8ddbe997c7e36118aec35c7825b550",
+      "payload": {
+        "summary": "If you already know who can make the decision, continuing to argue with people who cannot change the outcome only burns through time and energy you could be using more strategically.",
+        "body": "If you already know who can make the decision, continuing to argue with people who cannot change the outcome only burns through time and energy you could be using more strategically. When Mars trines Pluto, focused action has more leverage because you can see where the actual authority, resource, approval, or pressure point sits. This is less about pushing harder and more about putting your effort where it can produce a consequence. Take the strongest version of your case to the person who can act on it, and stop wasting your breath on conversations that cannot move the situation."
+      }
+    },
+    "sky.mars.trine.saturn": {
+      "sha256": "79285f7805f28a0039f9ed8ff88366f5e15f0533c457d03f4f704d13d7f35c97",
+      "payload": {
+        "summary": "There is a difference between discipline that builds your life and discipline that only proves how much you can endure.",
+        "body": "There is a difference between discipline that builds your life and discipline that only proves how much you can endure. When Mars trines Saturn, effort and restraint work together, making it easier to give something consistent attention without turning exhaustion into evidence that you are committed. You do not need to use all of your energy simply because you have it today. The work should ask something of you without requiring everything you have to give."
+      }
+    },
+    "sky.mars.trine.uranus": {
+      "sha256": "b8f20b17a02607ff3dcdc5de39bd584999f1f38fcc7ee2f660d7b0f6a63577b4",
+      "payload": {
+        "summary": "You do not have to keep doing something the hard way simply because the old method still technically works.",
+        "body": "You do not have to keep doing something the hard way simply because the old method still technically works. When Mars trines Uranus, a better tool, process, or approach can remove work you have been treating as unavoidable, often without compromising the result you actually care about. The useful insight may be embarrassingly simple: automate the repetitive part, change the route, use the better tool, or stop doing the step that no longer serves a purpose. If the new method gives you back time or energy without creating another problem, let your life get easier."
+      }
+    },
+    "sky.mercury.conjunction.jupiter": {
+      "sha256": "71eedb5b49339d2cf026df37252b45fb4d5cb34546f65fdd786d2cadf5aceee7",
+      "payload": {
+        "summary": "If other people start getting excited about an idea before you have finished working out the details, their enthusiasm can quietly pressure you into promising more than you originally intended.",
+        "body": "If other people start getting excited about an idea before you have finished working out the details, their enthusiasm can quietly pressure you into promising more than you originally intended. When Mercury conjuncts Jupiter, ideas expand quickly and sound especially convincing, which can help a pitch, application, announcement, or ambitious conversation gain momentum. The opportunity is useful, but you still get to distinguish the version you are exploring from the version you are prepared to deliver. Be clear about what is decided, what is still possible, and where you need more time before other people’s excitement turns your possibility into an overcommitment."
+      }
+    },
+    "sky.mercury.conjunction.mars": {
+      "payload": {
+        "summary": "One sentence sets the entire response in motion.",
+        "body": "One sentence sets the entire response in motion. Mercury conjunct Mars can make the message and the action arrive together, so a warning, accusation, instruction, or post triggers a filing, walkout, purchase, confrontation, or emergency call before anyone has time to soften the language. That speed can cut through delay, but careless wording now travels with consequences that are harder to reverse. Say exactly what needs to happen and why. If the sentence is going to start the action, make sure it names the right target."
+      },
+      "sha256": "7352cfbee3a631161f04521135aa893826d5b5ae8ad1f9a3a9868c7bff934bad"
+    },
+    "sky.mercury.conjunction.neptune": {
+      "payload": {
+        "summary": "A message becomes more powerful because nobody can agree on exactly what it promises.",
+        "body": "A message becomes more powerful because nobody can agree on exactly what it promises. Mercury conjunct Neptune can make a speech, post, artistic statement, or private assurance feel meaningful while leaving enough room for each listener to hear the future they want. That ambiguity can build a large audience and a larger disappointment. The problem is not imagination; it is letting imagination stand in for terms. Put the promise into plain language and name what is not guaranteed before people begin planning around different versions of the same message."
+      },
+      "sha256": "84cbdf214fbaf939d6982d35c46fdff23430b34151141b3bf6e3109d221fe030"
+    },
+    "sky.mercury.conjunction.pluto": {
+      "payload": {
+        "summary": "One private conversation changes who is trusted with the plan.",
+        "body": "One private conversation changes who is trusted with the plan. Mercury conjunct Pluto can bring missing money, withheld information, or an undisclosed agreement into the same moment as the decision about what happens next. Once the hidden arrangement is named, access and loyalty are no longer abstract questions. Preserve the record before the conversation gets rewritten afterward. Ask who knew, who approved, and who had something to gain from keeping the information private."
+      },
+      "sha256": "f97fad9e85eba00de9ac0fadf88dc3072dcb06a68db301f5527f6b925010d205"
+    },
+    "sky.mercury.conjunction.saturn": {
+      "payload": {
+        "summary": "The meeting ends with a sentence no one can later pretend they misunderstood.",
+        "body": "The meeting ends with a sentence no one can later pretend they misunderstood. Mercury conjunct Saturn can make the wording and the consequence part of the same official fact, especially in a signed statement, formal warning, binding promise, or documented refusal. The clarity may feel strict, but it protects everyone from a later version of what was supposedly meant. Put the condition, date, responsibility, and consequence in writing. If the answer matters, it should survive being read again next month."
+      },
+      "sha256": "deb4c59d0e9b773ce7b284979bd5350be37c400f66b43d97d6e8cc043a173dfa"
+    },
+    "sky.mercury.conjunction.uranus": {
+      "payload": {
+        "summary": "One message changes the direction of the entire conversation before anyone can prepare a response.",
+        "body": "One message changes the direction of the entire conversation before anyone can prepare a response. Mercury conjunct Uranus can make a leak, alert, resignation note, discovery, or technical breakthrough invalidate the older explanation almost instantly. The information and the break from the old plan arrive together. Speed matters, but everyone still needs to know which facts are confirmed. Share the update, mark what is still changing, and stop pretending the previous plan can remain intact if the new information has already made it obsolete."
+      },
+      "sha256": "624d139a67081b61ad1bd17889d521770e9caa49dcae4c124fe122715622e5c6"
+    },
+    "sky.mercury.conjunction.venus": {
+      "payload": {
+        "summary": "A public announcement turns a private agreement into a social fact.",
+        "body": "A public announcement turns a private agreement into a social fact. Mercury conjunct Venus can make the wording part of the agreement itself, especially when a partnership, payment, invitation, creative deal, or change in status is being named for other people. The language now shapes how the relationship will be understood. Be precise about the terms before the announcement travels farther than the conversation that created them. If the public version and the private agreement do not match, fix that before asking everyone else to celebrate."
+      },
+      "sha256": "3bf9a96d5707244befc64ebdb23aa05471ba1e803c3703f3b8e2ea00e882a15a"
+    },
+    "sky.mercury.opposition.jupiter": {
+      "payload": {
+        "summary": "The simple success story meets the report full of limits, exceptions, and mixed results.",
+        "body": "The simple success story meets the report full of limits, exceptions, and mixed results. Mercury opposite Jupiter can put the headline directly across from the fuller explanation, especially when one side wants the message to inspire and the other needs the numbers to remain accurate. The disagreement is not about being positive or negative. It is about how much the claim can carry. Publish the context that materially changes the conclusion, even if it makes the story less impressive."
+      },
+      "sha256": "f133516432a837dc58c12fadbac7cfb219dc1165372d6d48905b14a16dd46ffa"
+    },
+    "sky.mercury.opposition.mars": {
+      "payload": {
+        "summary": "One side keeps asking questions while the other treats every question as a delay.",
+        "body": "One side keeps asking questions while the other treats every question as a delay. Mercury opposite Mars can turn missing information into a fight about timing, especially when the planner sees changing terms and the operator sees a clock that is already running out. Explanation and execution both matter here. The team needs enough information to know what it is doing and a point where discussion ends. Decide which unanswered question could materially change the move, answer that one, and stop using the rest to postpone a decision."
+      },
+      "sha256": "2c17d42c4f1fda9e4d63016b0e4f2cdf96b9cddb6c51df4fde7407c8fe09f895"
+    },
+    "sky.mercury.opposition.neptune": {
+      "payload": {
+        "summary": "The verified account faces a story people prefer because it explains the fear, hope, or outrage more cleanly.",
+        "body": "The verified account faces a story people prefer because it explains the fear, hope, or outrage more cleanly. Mercury opposite Neptune can put checkable facts directly against a narrative that already feels emotionally true to the people repeating it. Evidence may be stronger and still lose attention to the better story. Do not answer belief with contempt. Show the source, the date, and the detail that materially changes the claim, then be clear about what the record does not prove."
+      },
+      "sha256": "5d2f8a3917a66dcf11abe62faf7dd717e836ebd8a7a7f76ee5896fe205b1d60a"
+    },
+    "sky.mercury.opposition.pluto": {
+      "payload": {
+        "summary": "The person asking for the full record faces the institution determined to limit what can be seen.",
+        "body": "The person asking for the full record faces the institution determined to limit what can be seen. Mercury opposite Pluto makes the power behind information impossible to ignore: one side keeps the questions specific while the other controls the files, access, and consequences attached to releasing them. The argument is not only about truth. It is about who gets to decide which truth becomes available. Narrow the request to the document, date, or decision that matters most, and put every refusal in writing."
+      },
+      "sha256": "e8fd493c22366cd5363cde5bb10b50bb79cf8349f55493f0782278e8c594e611"
+    },
+    "sky.mercury.opposition.saturn": {
+      "payload": {
+        "summary": "The person requesting an answer faces the official responsible for making every word survive review.",
+        "body": "The person requesting an answer faces the official responsible for making every word survive review. Mercury opposite Saturn can put urgency and prior conversations directly against missing proof, limited authority, and the exact language on file. A technically correct answer may still expose how little the earlier reassurance was worth. Ask for the rule behind the refusal and the evidence required to change it. Do not keep negotiating with a promise that never made it into the record."
+      },
+      "sha256": "bb790488085ec4b19c3c5a3e52512e218ac20ea99c760967b46282f85ca8b608"
+    },
+    "sky.mercury.opposition.uranus": {
+      "payload": {
+        "summary": "The official update says the system is under control while users, staff, or residents document a completely different failure.",
+        "body": "The official update says the system is under control while users, staff, or residents document a completely different failure. Mercury opposite Uranus puts the approved explanation directly against the live record of outages, errors, and workarounds happening now. Credibility depends on acknowledging the mismatch before somebody outside the institution does. Compare the official timeline with the reports coming from the people using the system. Update the statement when the public has better information than the people writing it."
+      },
+      "sha256": "a102d5388f32a04e699979a4585a7601025d849b9e64093f5f9d726a220160ae"
+    },
+    "sky.mercury.sextile.jupiter": {
+      "payload": {
+        "summary": "A strong idea finds the person who can help it travel farther.",
+        "body": "A strong idea finds the person who can help it travel farther. Mercury sextile Jupiter can connect a clear explanation with funding, publication, enrollment, an introduction, or a larger audience. The opportunity grows because the proposal is attached to a specific ask people can answer. Do not bury the request inside a long explanation. Name what is needed, why it matters, and the next step the other person can actually take."
+      },
+      "sha256": "fd46b1509cd57bf03d15e050226345d7a1c64e080b48dfa249089e939a23bb19"
+    },
+    "sky.mercury.sextile.mars": {
+      "payload": {
+        "summary": "A direct conversation clears a logistical bottleneck that has held up the work.",
+        "body": "A direct conversation clears a logistical bottleneck that has held up the work. Mercury sextile Mars can turn one practical question about money, scheduling, supplies, or responsibility into the answer needed to begin. The relief comes from specificity, not from having a longer discussion. Make the call. Ask the question that decides the next move, confirm the answer, and act on it before the conversation expands into every other frustration around the project."
+      },
+      "sha256": "ad77a2592ecfb7789e5c70e45166ba60130c9e28e544745dbd3988aa57cab43c"
+    },
+    "sky.mercury.sextile.neptune": {
+      "payload": {
+        "summary": "A confusing concern becomes understandable after someone finds the image, example, or gentler language that fits it.",
+        "body": "A confusing concern becomes understandable after someone finds the image, example, or gentler language that fits it. Mercury sextile Neptune can help a vague fear become a specific request another person can actually answer. The goal is not to flatten the feeling into bullet points; it is to give the feeling enough language to move. Try the example that makes the problem concrete. If the other person understands what happened and what needs to happen next, the translation has done its job."
+      },
+      "sha256": "54f9b963eaa239dad2ab817af015943337cfef1d20b7815f0281e6c9e6ca3844"
+    },
+    "sky.mercury.sextile.pluto": {
+      "payload": {
+        "summary": "One precise question reaches the record everyone else was willing to leave closed.",
+        "body": "One precise question reaches the record everyone else was willing to leave closed. Mercury sextile Pluto can turn a discrepancy in a budget, contract, timeline, or access log into enough leverage to request the missing document. This is where specificity matters. Do not argue with the official summary if one detail can test it. Ask for the source behind the claim, follow the first refusal, and keep the request narrow enough that an evasive answer becomes obvious."
+      },
+      "sha256": "cd610b8cffceecf0549888aab2b1cc770298802d694b4c75d049fb6fd17017fd"
+    },
+    "sky.mercury.sextile.saturn": {
+      "payload": {
+        "summary": "A delayed answer moves after someone supplies the missing proof in exactly the required form.",
+        "body": "A delayed answer moves after someone supplies the missing proof in exactly the required form. Mercury sextile Saturn can turn one corrected line, signature, document, or responsible contact into the condition that releases part of the request. The result may be smaller than originally hoped for, but the portion that clears is solid enough to rely on. Give the reviewer the exact evidence being requested. Once that piece is accepted, build from the answer already on the page instead of reopening the entire case."
+      },
+      "sha256": "e5925c97621801d3572fe41f8930ecae44556ade9953f624e4c5e78a23098ec8"
+    },
+    "sky.mercury.sextile.uranus": {
+      "payload": {
+        "summary": "One unusual suggestion gives a stalled process a faster way forward.",
+        "body": "One unusual suggestion gives a stalled process a faster way forward. Mercury sextile Uranus can help a staff member test a shortcut, alternate platform, or revised form after noticing that the official route keeps creating the same error. The idea earns support because it fixes the delay without throwing out the information the system still needs. Try it on one task first. If the result holds, show the time saved and the problem removed before asking everyone else to change their workflow."
+      },
+      "sha256": "446a70ab21a91d063d60d4e164c1a6d84e6e0c2effa5037f6f8d3758ff3d97b4"
+    },
+    "sky.mercury.sextile.venus": {
+      "payload": {
+        "summary": "One carefully worded message gives an agreement a chance to survive a difficult correction.",
+        "body": "One carefully worded message gives an agreement a chance to survive a difficult correction. Mercury sextile Venus can help someone clarify the price, change the date, or name missing credit without turning the whole exchange into a public complaint. The relationship matters, but politeness cannot carry a correction nobody is willing to make. Send the honest version. State what changed, what needs to be fixed, and what would make the agreement workable again."
+      },
+      "sha256": "a740f5e0658b2f67eeb1cd8d0c73e12673fcf0653b04b690b9c8b6bbc8328986"
+    },
+    "sky.mercury.square.jupiter": {
+      "payload": {
+        "summary": "A confident statement outruns the evidence needed to defend it.",
+        "body": "A confident statement outruns the evidence needed to defend it. Mercury square Jupiter can turn a useful idea into an overpromise once the wording gets broader than the facts underneath it. One estimate becomes a guarantee, one promising result becomes a trend, or one enthusiastic reply becomes proof that everyone agrees. The sentence may travel farther than the correction. Tighten the claim before someone else has to. State exactly what the evidence shows and stop there."
+      },
+      "sha256": "b8db171c9ef3e08632e58cb111e5804093439de476e74a1176ba108d607f2e82"
+    },
+    "sky.mercury.square.mars": {
+      "payload": {
+        "summary": "A blunt message turns a solvable problem into a personal confrontation.",
+        "body": "A blunt message turns a solvable problem into a personal confrontation. Mercury square Mars can make every sentence sound like a challenge that requires an immediate reply, so the original question gets buried under arguments about tone, respect, and who started it. The deadline may still be there after the fight, along with damage the task never required. Slow the exchange before sending the next response. State the problem, the answer required, and the deadline, then leave the insult out of the logistics."
+      },
+      "sha256": "4e0f8a23a67af7f48984d40676148255b06ac5586894775aafe6d9bd2a81a4b0"
+    },
+    "sky.mercury.square.neptune": {
+      "payload": {
+        "summary": "A rumor travels faster than anyone can check the facts.",
+        "body": "A rumor travels faster than anyone can check the facts. Mercury square Neptune can make a convincing screenshot, repost, or partial quote feel complete long before anyone verifies the source, time, or missing context. The correction usually arrives with less drama than the wrong version, which means accuracy has to be deliberate. Read twice. Check the original source and the date before forwarding anything that could change what people do next."
+      },
+      "sha256": "d2bdb2a12b9c7b1c0b13d9dd0181d453f006874d8efd78cc21d77546d2dbc02c"
+    },
+    "sky.mercury.square.pluto": {
+      "payload": {
+        "summary": "Two sides use selective leaks and edited messages to control what the public believes happened.",
+        "body": "Two sides use selective leaks and edited messages to control what the public believes happened. Mercury square Pluto can turn communication into a fight over the official history, especially when each release contains enough truth to wound the other side and enough omission to protect its own position. The loudest version is not necessarily the complete one. Save the original records and compare timelines before choosing a side. The missing context is often where the leverage is."
+      },
+      "sha256": "2d7ef3a3ddebf603dacad05469f2c259f03e51af990a9c049ffd4ffacb680ad1"
+    },
+    "sky.mercury.square.saturn": {
+      "payload": {
+        "summary": "A promised answer arrives late and covers far less than what was originally discussed.",
+        "body": "A promised answer arrives late and covers far less than what was originally discussed. Mercury square Saturn can turn one request into a chain of revisions, signatures, and formal sign-offs until the response is reduced to the minimum someone is willing to put in writing. The email may satisfy policy while leaving the people who planned around the earlier conversation absorbing the fallout. Read the answer twice. Separate what was approved, denied, and sent back, then ask one direct question about the part that still changes the next move."
+      },
+      "sha256": "e9ce49d1646b1dd51b904ea798779cdc7e1ec381fb3038773a8627360234ad43"
+    },
+    "sky.mercury.square.uranus": {
+      "payload": {
+        "summary": "Unexpected news reaches the public before the people responsible for explaining it have the same information.",
+        "body": "Unexpected news reaches the public before the people responsible for explaining it have the same information. Mercury square Uranus can make every correction compete with a newer screenshot, alert, or conflicting instruction, teaching people to trust speed over the source meant to verify it. The answer may change in real time. That is not a reason to guess. State what is confirmed, timestamp the update, and tell people when the next verified answer is coming."
+      },
+      "sha256": "44ee8f5c73e1b84c3b096f8b224a5d942473829bf4fcec2236fe4bb1a7bb2402"
+    },
+    "sky.mercury.trine.jupiter": {
+      "sha256": "ebfe5aceb55e7eccdf0db8a33d2e691a95ced42e05ce481a3eaab014de786bc7",
+      "payload": {
+        "summary": "If you have a big idea, this is the moment to explain it well enough that other people can actually see how it works.",
+        "body": "If you have a big idea, this is the moment to explain it well enough that other people can actually see how it works. When Mercury trines Jupiter, your thinking expands without losing the details, making it easier to pitch, teach, publish, negotiate, or make the case for something larger. Do not bury the vision under logistics, but do not expect enthusiasm to fill in the missing plan either. Lead with why it matters, then give people the numbers, timeline, or next step they need to take you seriously."
+      }
+    },
+    "sky.mercury.trine.mars": {
+      "sha256": "6b7fec4fd3b5e99280f6551264d05db034e2eeae62c4ea0a1db7a9d9a2a6f7af",
+      "payload": {
+        "summary": "When you know what needs to happen, say it clearly enough that nobody has to waste time interpreting the assignment.",
+        "body": "When you know what needs to happen, say it clearly enough that nobody has to waste time interpreting the assignment. When Mercury trines Mars, your mind and your actions move in the same direction, making decisions, instructions, and difficult conversations easier to execute quickly. Name who is responsible, what needs to get done, and what happens next. Clear direction saves more time than another round of discussion."
+      }
+    },
+    "sky.mercury.trine.neptune": {
+      "sha256": "3ead4b0bfe0005adba19c11485896244588b80aa1382fcd3e2df3d935fa55e72",
+      "payload": {
+        "summary": "You can tell the emotional truth without exaggerating the facts to make people care.",
+        "body": "You can tell the emotional truth without exaggerating the facts to make people care. When Mercury trines Neptune, language can carry nuance, grief, imagination, or compassion without losing the details that make the story credible. This is strong energy for writing, art, difficult conversations, or putting words around something complicated. Trust the story you actually have. If the truth is moving, you do not need to make it more dramatic."
+      }
+    },
+    "sky.mercury.trine.pluto": {
+      "sha256": "9ad41588a72bf9de3b0b391745d5f703903d16e7d746ea18176e46769c272b4b",
+      "payload": {
+        "summary": "If you need the truth, follow the evidence further than the version everyone has already agreed to repeat.",
+        "body": "If you need the truth, follow the evidence further than the version everyone has already agreed to repeat. When Mercury trines Pluto, concentration sharpens and hidden connections become easier to see, making it useful for research, financial review, investigation, or a conversation that requires more honesty than usual. Ask who knew, what changed, and where the decision actually came from. Dig deep, but stay loyal to what you can prove."
+      }
+    },
+    "sky.mercury.trine.saturn": {
+      "sha256": "e9e2e5a3c5f423f9cdd9b23cd27f9d63b27d04a363675576430ffbe1353638e3",
+      "payload": {
+        "summary": "When the details matter, get them out of everyone’s memory and into something you can actually rely on.",
+        "body": "When the details matter, get them out of everyone’s memory and into something you can actually rely on. When Mercury trines Saturn, thinking becomes more disciplined and communication gets precise enough to support contracts, deadlines, boundaries, plans, and decisions with consequences. Write down the date, responsibility, requirement, or term that nobody can afford to misunderstand later. Clarity now prevents a much more annoying conversation later."
+      }
+    },
+    "sky.mercury.trine.uranus": {
+      "sha256": "1a6a62d30ffb9caf593d1182e4afad493cc32b6d11c07e13b632fcc1d56d8542",
+      "payload": {
+        "summary": "The answer may be hiding in the one detail everyone keeps treating like it does not matter.",
+        "body": "The answer may be hiding in the one detail everyone keeps treating like it does not matter. When Mercury trines Uranus, your mind spots patterns, errors, shortcuts, and alternatives faster than usual, making it easier to see a solution that was invisible under the old assumptions. Follow the odd detail. Test the unconventional fix. If one small insight removes the larger bottleneck, do not dismiss it because the solution looks too simple."
+      }
+    },
+    "sky.moon.conjunction.jupiter": {
+      "sha256": "926fd3ff8cc564bf89c3aae66332e8732213c49de74f5414b7abe1183bc9689e",
+      "payload": {
+        "summary": "When you are feeling a lot, more attention, advice, help, or generosity can become overwhelming surprisingly fast.",
+        "body": "When you are feeling a lot, more attention, advice, help, or generosity can become overwhelming surprisingly fast. When the Moon conjuncts Jupiter, emotions expand along with everyone’s desire to respond, which can turn one need into a flood of messages, visitors, opinions, spending, or promises. More support is not automatically better support. Decide what would actually make the situation easier before everyone else decides for you."
+      }
+    },
+    "sky.moon.conjunction.mars": {
+      "sha256": "a26dca06d1a84171c8697022d519f536367c78009874370a4da3f82b2c11650e",
+      "payload": {
+        "summary": "A strong feeling can turn into an action before you have decided if you want to live with the consequences.",
+        "body": "A strong feeling can turn into an action before you have decided if you want to live with the consequences. When the Moon conjuncts Mars, anger, fear, protectiveness, frustration, or urgency moves straight into the body and demands a response. Use that speed on the immediate problem, not every grievance attached to it. Leave the conversation, make the call, protect the person, or handle what cannot wait, then decide the rest once the adrenaline comes down."
+      }
+    },
+    "sky.moon.conjunction.mercury": {
+      "sha256": "bde5d576fe07515306a797beea8b53fc1cf6f0fd6055d7f5be4cec91a34b1c57",
+      "payload": {
+        "summary": "If you have been carrying something privately, saying it out loud may change the entire conversation.",
+        "body": "If you have been carrying something privately, saying it out loud may change the entire conversation. When the Moon conjuncts Mercury, feelings become easier to name, and an admission about family, home, health, hurt, or what you actually need can make the old version of the discussion impossible to continue. Do not apologize for changing the context by telling the truth. Once the information is on the table, make the decision from what everyone knows now."
+      }
+    },
+    "sky.moon.conjunction.neptune": {
+      "sha256": "690e58f968644b9e41398cdd0bf7293cd1c5b12e82d998926754b2be032c16a8",
+      "payload": {
+        "summary": "When everyone is emotional, it gets very easy to mistake the mood in the room for a reliable version of what actually happened.",
+        "body": "When everyone is emotional, it gets very easy to mistake the mood in the room for a reliable version of what actually happened. When the Moon conjuncts Neptune, feelings spread quickly and boundaries between your reaction and everyone else’s become harder to track. Compassion may be genuine, but so can confusion. Give yourself enough time to separate what you know from what you absorbed before making a decision based on an atmosphere that may change by tomorrow."
+      }
+    },
+    "sky.moon.conjunction.pluto": {
+      "sha256": "08e2152dcf141b916618fcd645fa18707c3b3eefe3ed6e30e81e1bef2e95aa9d",
+      "payload": {
+        "summary": "If a feeling has been buried for years, it may not come out politely once something finally forces it to the surface.",
+        "body": "If a feeling has been buried for years, it may not come out politely once something finally forces it to the surface. When the Moon conjuncts Pluto, resentment, grief, fear, jealousy, or a private truth can change the emotional balance of a relationship in one conversation. Do not rush to make things comfortable again just because the honesty was intense. Figure out what the disclosure actually changes and what can no longer continue the way it did before."
+      }
+    },
+    "sky.moon.conjunction.saturn": {
+      "sha256": "20b9f20b2d74458701c66b74a68b0f1ca8ecc82026f0ed7df36857d70c00ce05",
+      "payload": {
+        "summary": "When one responsibility keeps deciding the shape of your entire week, stop treating it like a small task you should somehow be able to squeeze in.",
+        "body": "When one responsibility keeps deciding the shape of your entire week, stop treating it like a small task you should somehow be able to squeeze in. When the Moon conjuncts Saturn, emotional needs and practical obligations become heavier and harder to separate, especially around family, caregiving, home, or commitments nobody else is volunteering to carry. Put the actual time and work on paper. If the arrangement only functions because you are never allowed to be unavailable, it needs more support."
+      }
+    },
+    "sky.moon.conjunction.uranus": {
+      "sha256": "fd1fdf6d3f803b79610f5bbe75dd49439d81dfbb4bcb8cfe138e678bfec6f53f",
+      "payload": {
+        "summary": "A sudden change to home, money, family, or your daily routine can leave you solving the practical problem before your emotions have caught up.",
+        "body": "A sudden change to home, money, family, or your daily routine can leave you solving the practical problem before your emotions have caught up. When the Moon conjuncts Uranus, disruption arrives quickly and familiar sources of comfort may stop feeling reliable overnight. Handle what needs replacing first. Once you know where you are sleeping, paying, working, logging in, or getting help tomorrow, you will have more room to process how you feel about the change itself."
+      }
+    },
+    "sky.moon.conjunction.venus": {
+      "sha256": "0e364cfe020181bdef6762e4c6dfaaea4275427ff8b817983b4619d85f139975",
+      "payload": {
+        "summary": "Care feels most convincing when it shows up in a form the other person can actually receive.",
+        "body": "Care feels most convincing when it shows up in a form the other person can actually receive. When the Moon conjuncts Venus, affection, generosity, comfort, food, money, gifts, and social connection become more emotionally meaningful. This can be lovely, but it can also expose who is always giving and who is always being taken care of. Enjoy the warmth, and notice if appreciation needs to move in both directions."
+      }
+    },
+    "sky.moon.opposition.jupiter": {
+      "sha256": "4e456e73d8869d01954f4a86202fe0d9162ca55bfe0138d36fda2d14d0e2b417",
+      "payload": {
+        "summary": "Your feelings can make one good thing look enormous and one disappointment look like proof that everything is going wrong.",
+        "body": "Your feelings can make one good thing look enormous and one disappointment look like proof that everything is going wrong. When the Moon opposes Jupiter, emotional reactions get amplified, making it easy to overpromise, overspend, overhelp, or make a temporary mood carry far more meaning than it deserves. Give the feeling room without letting it make every decision. Check what has actually changed before you rewrite the whole story around today’s high or low."
+      }
+    },
+    "sky.moon.opposition.mars": {
+      "sha256": "7db93b60ccf003f1203884b5e1babde63b135dc3186ec2c63aa67a9ac38a24a3",
+      "payload": {
+        "summary": "When you are already upset, someone else’s urgency can feel like a demand that your needs should wait.",
+        "body": "When you are already upset, someone else’s urgency can feel like a demand that your needs should wait. When the Moon opposes Mars, emotional needs collide with pressure to act, decide, confront, or move before everyone feels ready. Something may genuinely need to happen now, but that does not mean the person most affected should absorb all of the disruption. Handle what is urgent and build protection for the people who still have to live with the consequences afterward."
+      }
+    },
+    "sky.moon.opposition.mercury": {
+      "sha256": "0eea4a61fc1b5e4a2ae8c563292a15cd024783e90c73d1780e274b7c5bc31130",
+      "payload": {
+        "summary": "You can understand the logic of a decision and still be the person whose life became harder because of it.",
+        "body": "You can understand the logic of a decision and still be the person whose life became harder because of it. When the Moon opposes Mercury, facts, schedules, policies, and explanations can sit directly across from the emotional or practical cost nobody captured on paper. Do not dismiss the feeling simply because the reasoning makes sense. Put the missing consequence into the conversation and see if the decision still looks as clean once the human cost is included."
+      }
+    },
+    "sky.moon.opposition.neptune": {
+      "sha256": "36a39aa493b1655100879773e811d9e4acfaf5163f7a025060f60cd31afee6a6",
+      "payload": {
+        "summary": "Feeling deeply for someone can make you believe you understand what they need before you have actually asked them.",
+        "body": "Feeling deeply for someone can make you believe you understand what they need before you have actually asked them. When the Moon opposes Neptune, empathy and projection blur easily, which can turn care into assumptions, rescue attempts, or disappointment when reality does not match the story in your head. Stay compassionate, but check the fantasy. Ask what is actually needed and let the answer replace the version you imagined."
+      }
+    },
+    "sky.moon.opposition.pluto": {
+      "sha256": "3a848ed90a63cf228faa2f13b4b5b28182e68efa66a797e3191b64dd509b1975",
+      "payload": {
+        "summary": "If someone controls the money, housing, access, or decision you depend on, your emotional vulnerability changes the balance of the conversation.",
+        "body": "If someone controls the money, housing, access, or decision you depend on, your emotional vulnerability changes the balance of the conversation. When the Moon opposes Pluto, private needs face material power directly, which can make asking for help feel much more loaded than the request itself. Do not pretend the leverage is equal if it is not. Be clear about what you need, what the other person controls, and what alternatives exist if they refuse."
+      }
+    },
+    "sky.moon.opposition.saturn": {
+      "sha256": "e8906d1fb587edb5b232a22689397b1124c1d3440db9dcd96e4ca4f3a8d033e5",
+      "payload": {
+        "summary": "Needing help does not make the deadline, bill, responsibility, or hard limit disappear, but the limit does not make your need less legitimate either.",
+        "body": "Needing help does not make the deadline, bill, responsibility, or hard limit disappear, but the limit does not make your need less legitimate either. When the Moon opposes Saturn, emotional reality collides with duty and restriction, often making one person feel like their circumstances are being treated as an inconvenience. Find out what can actually be adjusted, who has the authority to adjust it, and what cannot move. Work from the real limit instead of shaming yourself for having a need in the first place."
+      }
+    },
+    "sky.moon.opposition.uranus": {
+      "sha256": "6f5c7823daf01692cc40d26eb31147a825e01bb83923010e79c33c6c8104704e",
+      "payload": {
+        "summary": "You can know something needs to change and still hate what the transition is doing to your sense of stability.",
+        "body": "You can know something needs to change and still hate what the transition is doing to your sense of stability. When the Moon opposes Uranus, the need for freedom, reform, or a break from the old pattern clashes with the part of you that still wants something familiar to rely on. Do not force yourself to pretend disruption feels exciting just because the change is necessary. Protect the routines and supports you still need while the new arrangement takes shape."
+      }
+    },
+    "sky.moon.opposition.venus": {
+      "sha256": "a60c260dd95b8a1993ebb661591e9cc618fad69e02fedcb2247f015dc2d0f0fe",
+      "payload": {
+        "summary": "Keeping everyone happy stops being generous when you are the one quietly paying for it with your time, money, comfort, or energy.",
+        "body": "Keeping everyone happy stops being generous when you are the one quietly paying for it with your time, money, comfort, or energy. When the Moon opposes Venus, harmony and affection can come into conflict with needs that have been ignored to preserve the pleasant plan. Put the private cost into the conversation. A compromise is not balanced if one person keeps absorbing the inconvenience so nobody else has to feel disappointed."
+      }
+    },
+    "sky.moon.sextile.jupiter": {
+      "sha256": "2ddb60c570c8a03b95399f19eec9afe3d238f1a809c4a0d799f76f82f710877a",
+      "payload": {
+        "summary": "If you have been carrying something mostly on your own, this is a good time to let the circle of support get bigger.",
+        "body": "If you have been carrying something mostly on your own, this is a good time to let the circle of support get bigger. When the Moon sextiles Jupiter, a personal need can connect with more generosity, resources, people, or practical help than you could provide by yourself. Be specific about what would make a difference. Ask for the ride, meal, introduction, money, childcare, extra set of hands, or whatever would actually reduce the burden instead of making people guess how to help."
+      }
+    },
+    "sky.moon.sextile.mars": {
+      "sha256": "44dd86aa318d29205833378214855b90cd434bcf2ae3e5eef59eac5ef9bfb4d2",
+      "payload": {
+        "summary": "If you can see exactly what would make the situation easier right now, do that before the problem grows into something harder to manage.",
+        "body": "If you can see exactly what would make the situation easier right now, do that before the problem grows into something harder to manage. When the Moon sextiles Mars, concern moves naturally into action, making small practical responses especially effective. Make the call, cover the shift, fix the thing, bring the food, or handle the immediate piece that buys everyone more breathing room. You do not need to solve the whole situation for one useful action to matter."
+      }
+    },
+    "sky.moon.sextile.mercury": {
+      "payload": {
+        "summary": "A private concern reaches the right person before it becomes a public problem.",
+        "body": "A private concern reaches the right person before it becomes a public problem. Moon sextile Mercury can turn a message about childcare, medication, housing, or a schedule change into enough information for a coordinator to intervene before the day falls apart. Send the message while the problem is still small. Include the time, the practical need, and the answer required. One clear note can save someone from explaining the same problem after the damage is already done."
+      },
+      "sha256": "dfffae478bf92c42129b9eae841aa3dc73b1b97c4cb3a218bb1dbe016906ebbd"
+    },
+    "sky.moon.sextile.neptune": {
+      "payload": {
+        "summary": "Someone notices the need behind a vague request and finds one concrete way to help.",
+        "body": "Someone notices the need behind a vague request and finds one concrete way to help. Moon sextile Neptune can turn a quiet check-in into a meal, ride, room, referral, or payment before the person struggling has to make a private crisis public. Sensitivity matters most when it becomes useful. Offer the specific thing that is actually available and leave room for the answer to be no. Help should reduce the person's work, not create another conversation they have to manage."
+      },
+      "sha256": "0cdc06fa1be6ddfeb447ab94e37511ce1c64e743a117f38475af330bc73cb65e"
+    },
+    "sky.moon.sextile.pluto": {
+      "payload": {
+        "summary": "A difficult family or care conversation reaches the person with enough authority to change the arrangement.",
+        "body": "A difficult family or care conversation reaches the person with enough authority to change the arrangement. Moon sextile Pluto can turn one disclosure about money, safety, resentment, or an old loyalty into a chance to correct the problem before silence hardens around it again. The useful part is that the actual source of fear is finally being named. Ask for the change that would reduce the pressure now. Do not waste the opening on hints everyone has already learned to ignore."
+      },
+      "sha256": "176351812b2086ff37578e980ddabda83e0cb78dfe34d270bd66b417790235bd"
+    },
+    "sky.moon.sextile.saturn": {
+      "payload": {
+        "summary": "A care plan becomes workable after one person names the limit everyone else was avoiding.",
+        "body": "A care plan becomes workable after one person names the limit everyone else was avoiding. Moon sextile Saturn can make a smaller schedule, arranged payment, or moved deadline enough to keep the responsibility from falling apart. The help becomes more reliable because time and energy are finally being treated as finite. Make the adjustment official. Name who owns the next step, when the arrangement ends, and what happens if the need lasts longer than expected."
+      },
+      "sha256": "18faa664aa10fe20228edcc103c600fed16eb7788c8a473ed01994a92ff17c17"
+    },
+    "sky.moon.sextile.uranus": {
+      "payload": {
+        "summary": "A small change in routine gives a household or team breathing room it did not know it had.",
+        "body": "A small change in routine gives a household or team breathing room it did not know it had. Moon sextile Uranus can make a different schedule, tool, transport option, or care arrangement useful before the existing system fails completely. The adjustment works because it removes one actual source of strain without demanding that everything else change too. Try it long enough to see the effect. If the day gets easier, keep the part that helped and stop defending the rule that caused the problem."
+      },
+      "sha256": "7d5d7483ac5fa2c5eed917394cdf0ed7cfeaf6aed3109ed0819af590f9d9cc50"
+    },
+    "sky.moon.sextile.venus": {
+      "payload": {
+        "summary": "A small budget adjustment makes a difficult week easier to carry.",
+        "body": "A small budget adjustment makes a difficult week easier to carry. Moon sextile Venus can turn a flexible fund, extra meal, open room, or changed reservation into enough support to keep a need from falling through. The help matters because it arrives before embarrassment or exhaustion forces someone to ask twice. Offer what is actually available. A modest adjustment can be more useful than a bigger gesture that creates another promise nobody can maintain."
+      },
+      "sha256": "a1aa1e8a2120de4d05c35f893341925f7a0e0b2247c36d633687b5aa05c3ad6c"
+    },
+    "sky.moon.square.jupiter": {
+      "payload": {
+        "summary": "A generous promise creates more emotional and practical responsibility than anyone planned to carry.",
+        "body": "A generous promise creates more emotional and practical responsibility than anyone planned to carry. Moon square Jupiter can make the guest list, family commitment, or relief effort keep expanding while the same people continue providing meals, rides, beds, and reassurance. Goodwill can become an invisible staffing plan. Count the hours and work required before saying yes to the next person. Support is more generous when the caregivers are not treated as the part of the budget that never runs out."
+      },
+      "sha256": "d74251144705e4e1a78a05da472d679a4bb02fc4d382d689e35bfcd46f0c4ba2"
+    },
+    "sky.moon.square.mars": {
+      "payload": {
+        "summary": "A last-minute demand turns an already strained household or team into a fight.",
+        "body": "A last-minute demand turns an already strained household or team into a fight. Moon square Mars can make an urgent request collide with exhaustion, care responsibilities, or private stress that was already close to the limit. Someone may still get the task done and carry the anger home afterward. Treat that anger as information about the workload, not just the tone of the response. Give the job a realistic timeline and stop treating one person's availability as proof that their plans can wait."
+      },
+      "sha256": "175cc924139a324a18188818b97feec66745922352b817940ba91f583fe56442"
+    },
+    "sky.moon.square.mercury": {
+      "payload": {
+        "summary": "A technically correct message lands as dismissive because its tone ignores what the room is already carrying.",
+        "body": "A technically correct message lands as dismissive because its tone ignores what the room is already carrying. Moon square Mercury can make an automated reply, short email, or carefully worded statement answer the question and still lose the trust required for the answer to be heard. Accuracy is not the whole job when grief, fear, anger, or exhaustion is obvious. Keep the facts, change the delivery. Acknowledge the impact before repeating the policy."
+      },
+      "sha256": "55c86c1ab12e37a7d6959b055ba9b7bf25a11507ce71547dd614d9272d05b63d"
+    },
+    "sky.moon.square.neptune": {
+      "payload": {
+        "summary": "A family or community rallies around a crisis before anyone confirms what kind of help is actually needed.",
+        "body": "A family or community rallies around a crisis before anyone confirms what kind of help is actually needed. Moon square Neptune can flood the situation with money, advice, visitors, and promises while the same exhausted person is still making every hard decision. Sympathy is not automatically useful support. Ask what would make the next twelve hours easier. Bring the meal, cover the shift, pay the bill, or give the person space instead of making them manage everyone else's concern."
+      },
+      "sha256": "82973a65f37b509b07848d0c6a4dbcdd7f16019ea30bb6e16d2eeef2164dc4f1"
+    },
+    "sky.moon.square.pluto": {
+      "payload": {
+        "summary": "A last-minute schedule change triggers a sharp conflict over who actually gets to make the call.",
+        "body": "A last-minute schedule change triggers a sharp conflict over who actually gets to make the call. Moon square Pluto can turn an immediate emotional reaction into a direct challenge to the person using rank, contract, policy, or money to shut the discussion down. The original decision may still stand, but the conflict exposes where authority becomes control. Before escalating, identify the rule being enforced and who can actually change it. Do not spend the whole argument on the person enforcing a rule they have no authority to revise."
+      },
+      "sha256": "74d740c5d8cd0125b6315603b1d2721dc0135c72d41739946d880974e022c9fb"
+    },
+    "sky.moon.square.saturn": {
+      "payload": {
+        "summary": "A family, housing, or care need runs into a deadline that will not move.",
+        "body": "A family, housing, or care need runs into a deadline that will not move. Moon square Saturn can make an employer, landlord, lender, or agency keep returning to policy while the person living through the crisis keeps absorbing the cost. The rule may be technically correct and still create a preventable hardship. Get the deadline, policy, and escalation path in writing. Then focus on the part that can still be negotiated instead of spending the day arguing with a limit the person enforcing it has no authority to change."
+      },
+      "sha256": "53f8a3f810d8d4fd33297ab86de75ff353e4727a4568659fa5e7bb8047fa27a6"
+    },
+    "sky.moon.square.uranus": {
+      "payload": {
+        "summary": "A sudden closure, outage, or schedule reversal knocks out the routine people were relying on.",
+        "body": "A sudden closure, outage, or schedule reversal knocks out the routine people were relying on. Moon square Uranus can turn an unavoidable change into a much larger crisis when families, staff, or residents are left scrambling for care, transportation, supplies, and information at the same time. The people with the least flexibility absorb the chaos first. Give them the replacement plan before the explanation. Then explain what changed, how long it may last, and who is responsible for the next update."
+      },
+      "sha256": "18a1fabad5df3426c7e284a1ed30acc39b5836c03193b13a8c2cf7d8fee463cd"
+    },
+    "sky.moon.square.venus": {
+      "payload": {
+        "summary": "A celebration built to look generous leaves the people doing the care work overwhelmed and unpaid.",
+        "body": "A celebration built to look generous leaves the people doing the care work overwhelmed and unpaid. Moon square Venus can make childcare, cleanup, accessibility, food restrictions, and other practical needs impossible to hide once the event starts failing the people expected to make it look effortless. The room can be beautiful and the workload still be unfair. Count the work and money before adding another detail for appearances. If the event depends on invisible work, make that work visible in the plan and the budget."
+      },
+      "sha256": "825def8910c34a8e602a5f22c802c0fc37ee3f59ead9bd08688c4c91c7e2d8dd"
+    },
+    "sky.moon.trine.jupiter": {
+      "payload": {
+        "summary": "A private need receives a much larger response than expected.",
+        "body": "A private need receives a much larger response than expected. Moon trine Jupiter can bring meals, money, childcare, space, or forgiveness without making the person receiving help explain every detail first. The relief can feel almost immediate because people are willing to give more than the minimum. Let the help be easy to receive. Then make sure somebody is still showing up after the first wave of urgency passes, because the need may last longer than the attention around it."
+      },
+      "sha256": "2d283c708cfb7b8ac38470066e2c5b182f4b9be6d510c30ea8922361fc05f5d7"
+    },
+    "sky.moon.trine.mars": {
+      "payload": {
+        "summary": "The response team reaches the problem with the right supplies and enough authority to use them.",
+        "body": "The response team reaches the problem with the right supplies and enough authority to use them. Moon trine Mars can help caregivers, neighbors, staff, or family members act on what people actually need instead of following a plan that no longer fits the situation. Instinct and action support each other here. Keep the team close to the people affected. The fastest response is useful when it can adjust without losing the purpose of the work."
+      },
+      "sha256": "6904ed5ca48ff3c829f6c24490e91fb5fa8cfdc00e463a294340452e589fcac1"
+    },
+    "sky.moon.trine.mercury": {
+      "payload": {
+        "summary": "The conversation finally reaches the reason someone was upset in the first place.",
+        "body": "The conversation finally reaches the reason someone was upset in the first place. Moon trine Mercury can make a voice note, private meeting, or direct reply clear enough to name what hurt, what changed, and what answer is needed next without starting another argument. Say the part that matters. The goal is not to explain every feeling perfectly; it is to give the other person enough information to respond to the actual problem instead of guessing at the reaction."
+      },
+      "sha256": "b2afe99d17aae450d8e4f54af9299a7aa74102dfc23eb95442398b3d4f4d1a00"
+    },
+    "sky.moon.trine.neptune": {
+      "payload": {
+        "summary": "A collective loss is met with care that feels personal rather than procedural.",
+        "body": "A collective loss is met with care that feels personal rather than procedural. Moon trine Neptune can bring meals, vigils, art, childcare, or quiet places to gather without forcing mourners to organize the support themselves. The response does not need to erase the loss to be meaningful. Keep showing up in ways that reduce the practical burden. Grief is easier to carry when care is visible in the food, rides, hours, and space people actually receive."
+      },
+      "sha256": "7de04bc916f87ed5a7a822166c869c13cb97fc9603be160279e0a615d4532bda"
+    },
+    "sky.moon.trine.pluto": {
+      "payload": {
+        "summary": "Long-standing emotional baggage comes into the open without the conversation becoming a fight.",
+        "body": "Long-standing emotional baggage comes into the open without the conversation becoming a fight. Moon trine Pluto can make grief, anxiety, or an old family loyalty easier to name without forcing anyone to reveal more than they are ready to share. Honesty has enough room to move here without turning vulnerability into a weapon. Let the conversation change the understanding of the past. The truth can matter even when one conversation does not resolve every old hurt."
+      },
+      "sha256": "97a30c8d0abd713032c1394913998026561e42298a4dfbef7409a0e061e9c91f"
+    },
+    "sky.moon.trine.saturn": {
+      "payload": {
+        "summary": "The caregiver schedule, budget, and backup plan are confirmed before the need becomes urgent.",
+        "body": "The caregiver schedule, budget, and backup plan are confirmed before the need becomes urgent. Moon trine Saturn can make compassion more reliable because everybody knows who is covering each shift, what the money pays for, and when the arrangement will be reviewed. Care feels less cold when the structure protects both the person receiving it and the people providing it. Keep the backup current. A good plan should survive one person getting sick, needing a day off, or simply reaching their limit."
+      },
+      "sha256": "3bec36104c16ba989f5f4f900dc558714b5a27937342fe6a1e70a61b24340da5"
+    },
+    "sky.moon.trine.uranus": {
+      "payload": {
+        "summary": "A new arrangement makes daily life easier almost immediately.",
+        "body": "A new arrangement makes daily life easier almost immediately. Moon trine Uranus can make flexible hours, shared transport, accessible technology, or a changed household role solve a problem people had started treating as permanent. The relief is the evidence. Keep what makes the day easier and do not rebuild the old restriction just because it is familiar. A good change should reduce strain without asking everyone to live in constant instability."
+      },
+      "sha256": "86a9a73c9631a8b6e0d4371f0c728b3b960525ef21d54ca109f931c586b4462b"
+    },
+    "sky.moon.trine.venus": {
+      "payload": {
+        "summary": "Care arrives in a form that feels thoughtful because someone remembered the details.",
+        "body": "Care arrives in a form that feels thoughtful because someone remembered the details. Moon trine Venus can make affection show up as the right food, a prepared room, a quietly handled payment, or an accommodation that does not turn someone's need into a spectacle. The gesture feels good because it reduces work instead of creating another obligation. Keep doing the practical thing that made the person more comfortable. Thoughtfulness is usually easier to recognize in what somebody remembered than in what they said."
+      },
+      "sha256": "aaad7a653622de14bf1614734bd77e984a36f05b2987e7c205d1f10a5a9b4403"
+    },
+    "sky.neptune.conjunction.pluto": {
+      "payload": {
+        "summary": "A collective fear or hope becomes inseparable from the hidden power shaping the response.",
+        "body": "A collective fear or hope becomes inseparable from the hidden power shaping the response. Neptune conjunct Pluto can make a crisis, spiritual movement, media campaign, or public grief feel deeply meaningful while money, secrecy, and institutional interests decide which version reaches the audience. That combination deserves scrutiny precisely because the feeling is sincere. Follow the resources and the decision-making. Ask who benefits from the story, who controls what remains hidden, and what the public is being encouraged not to question."
+      },
+      "sha256": "1e35508d9fc5804f97727aaf8d8ed0e501e149956d9782afc5cf12bd3f68b5e8"
+    },
+    "sky.neptune.opposition.pluto": {
+      "payload": {
+        "summary": "The humanitarian narrative faces the workers and communities documenting what the campaign left out.",
+        "body": "The humanitarian narrative faces the workers and communities documenting what the campaign left out. Neptune opposite Pluto can put genuine compassion directly across from private contracts, controlled access, or cleanup assigned to people with no authority. The cause may still be worthy while the institution speaking for it loses credibility. Separate the need from the organization claiming to represent it. Support the people doing the work, and inspect who is controlling the money and the story around them."
+      },
+      "sha256": "5a655169d7793a5b89e1a7a07916037580e0b634124dd23e9019c8428481555f"
+    },
+    "sky.neptune.sextile.pluto": {
+      "sha256": "1bc7e3fd3b16e847a903192239e37a98e3fd1e40bdde3c8c3fc143087ddc7d8b",
+      "payload": {
+        "summary": "If something moves you deeply, give yourself enough curiosity to understand why before you hand it your loyalty, money, or trust.",
+        "body": "If something moves you deeply, give yourself enough curiosity to understand why before you hand it your loyalty, money, or trust. When Neptune sextiles Pluto, empathy and intuition can draw your attention toward the motive, history, hidden incentive, or power dynamic underneath the version of the story that first caught your heart. Learning more does not require you to become cynical about what matters to you. It gives you a chance to make sure your support is going toward the thing you actually believe in rather than the version that was easiest to sell."
+      }
+    },
+    "sky.neptune.square.pluto": {
+      "sha256": "fc1854923302ae4d750806c0996af97df2d0ea5450aa24cdc69507f82007aaeb",
+      "payload": {
+        "summary": "If you keep defending something because accepting the harder truth would force you to rethink what you believed about it, that discomfort is worth paying attention to.",
+        "body": "If you keep defending something because accepting the harder truth would force you to rethink what you believed about it, that discomfort is worth paying attention to. When Neptune squares Pluto, hope, fear, loyalty, or idealism can make an unequal dynamic easier to justify because seeing the power clearly threatens the story you would rather keep. You do not have to distrust everything you care about. Notice which question you keep avoiding, who benefits from the current arrangement, and what becomes harder to excuse once you stop protecting the version you wanted to believe."
+      }
+    },
+    "sky.neptune.trine.pluto": {
+      "sha256": "4d25cf716fe911894eed454765b4c294798e41589eaaed0da81e208a5885c93b",
+      "payload": {
+        "summary": "Sometimes understanding the deeper reason behind someone’s behavior makes you more compassionate without making the behavior any more acceptable.",
+        "body": "Sometimes understanding the deeper reason behind someone’s behavior makes you more compassionate without making the behavior any more acceptable. When Neptune trines Pluto, emotional insight can help you see the history, fear, grief, desire, or power underneath a situation without forcing you to choose between empathy and clear judgment. Let the fuller context change your understanding, but do not use understanding as a reason to abandon the boundary the situation still requires. You can see why something happened and still decide it cannot continue."
+      }
+    },
+    "sky.saturn.conjunction.neptune": {
+      "payload": {
+        "summary": "A dream is placed inside a structure that will determine if it can survive ordinary life.",
+        "body": "A dream is placed inside a structure that will determine if it can survive ordinary life. Saturn conjunct Neptune can make a care program, creative institution, spiritual community, or recovery plan receive rules, funding limits, leadership, and formal responsibility all at once. Structure can protect the purpose and distort it when one office starts deciding who deserves access to the care. Keep the mission close to the paperwork. Review the eligibility, budget, and decision-making before administration quietly becomes the thing the project serves."
+      },
+      "sha256": "1460817c639bac3515d5e3187d2791c519a57c4a1a626d371ff6cee8d68bbee6"
+    },
+    "sky.saturn.conjunction.pluto": {
+      "payload": {
+        "summary": "A hard restructuring concentrates authority around survival, control, and consequences.",
+        "body": "A hard restructuring concentrates authority around survival, control, and consequences. Saturn conjunct Pluto can make budget cuts, department closures, tighter contracts, or emergency powers feel unavoidable while the same response also reduces freedom and review. Necessity is powerful language because it can end an argument before the terms are examined. Ask what control is being made permanent in the name of the crisis. If an emergency measure changes who can decide, put a date and review process on that power before it becomes ordinary."
+      },
+      "sha256": "4f9a3f5889675cf3ca95b853f06ea517a2ed09740663a164f5b9037dbdc01031"
+    },
+    "sky.saturn.conjunction.uranus": {
+      "payload": {
+        "summary": "A new system becomes mandatory at the same moment the old one is shut down.",
+        "body": "A new system becomes mandatory at the same moment the old one is shut down. Saturn conjunct Uranus can make reform and enforcement arrive together, leaving staff, residents, or users to learn new rules and tools while still meeting every obligation the former process handled. The upgrade may solve a specific problem and still be badly timed. Keep a working bridge between the two systems long enough for records, payments, and people to move. A transition is not complete because leadership declared the old version over."
+      },
+      "sha256": "9bca8b56b46d851ab08fa6bcbb55ca5f9d5d2b3054db01224aa808b23c4749d9"
+    },
+    "sky.saturn.opposition.neptune": {
+      "payload": {
+        "summary": "The institution responsible for enforcing the limit faces the people who believed its promise of care.",
+        "body": "The institution responsible for enforcing the limit faces the people who believed its promise of care. Saturn opposite Neptune can put law, budget, eligibility, and documentation directly across from prior assurances and the human cost of withdrawing support. A program can survive the review and still lose credibility if compassion only existed while nobody was asking what it cost. Compare the promise with the actual terms people are being held to now. If they changed, say so plainly instead of hiding the reversal inside policy language."
+      },
+      "sha256": "f38f780b67c01e48a97d8f6e407821e2295cb02c8b4a4c599ef6af7cbfcfa6a5"
+    },
+    "sky.saturn.opposition.pluto": {
+      "payload": {
+        "summary": "The official responsible for enforcing the rules faces the person or institution powerful enough to operate around them.",
+        "body": "The official responsible for enforcing the rules faces the person or institution powerful enough to operate around them. Saturn opposite Pluto can expose the difference between formal authority and actual leverage, especially when money, access, or private consequences make enforcement risky. A rule that only applies to people without power is not much of a rule. Put the exemption on the record. The confrontation matters if it produces a limit that applies to the office or institution, not only to the person easiest to punish."
+      },
+      "sha256": "4ee45ebdf2d91ad5db5d24b010a2de523d47e807c2e50dbbcc78c30938c393fa"
+    },
+    "sky.saturn.opposition.uranus": {
+      "payload": {
+        "summary": "The officials responsible for continuity face the people demanding a complete break from the existing system.",
+        "body": "The officials responsible for continuity face the people demanding a complete break from the existing system. Saturn opposite Uranus can put safety, law, records, and services directly across from exclusion, failure, and a structure that has used stability to protect itself. Both sides are naming a risk. The replacement plan should show whose stability matters and who was previously expected to absorb the disruption. Reform is stronger when it protects essential continuity without using continuity as an excuse to preserve the failure."
+      },
+      "sha256": "4bc2f01637f4f101b2cb5b6d7e7da09d74df2db8976839dd21234f22416423e2"
+    },
+    "sky.saturn.sextile.neptune": {
+      "sha256": "df00da1b62059a90755df6035c49a5df67fa17e24ecdad9d2d32279c0ac427e0",
+      "payload": {
+        "summary": "If something matters enough that you want to keep giving your time or energy to it, the next question is what would make that commitment possible on an ordinary week rather than only when you feel inspired.",
+        "body": "If something matters enough that you want to keep giving your time or energy to it, the next question is what would make that commitment possible on an ordinary week rather than only when you feel inspired. When Saturn sextiles Neptune, a hope or compassionate impulse can become more sustainable because you are willing to give it limits, time, money, or a routine that protects it from depending on your best mood. You do not need to build the whole vision at once. Choose the part you can genuinely support now and let consistency give the larger idea something solid to grow from."
+      }
+    },
+    "sky.saturn.sextile.pluto": {
+      "sha256": "82cfc34faabbfa83dc45b0de1d8ad29ff149301c47e2b3de4b55dc3483467dea",
+      "payload": {
+        "summary": "If the same conflict keeps returning with different people, the pattern is probably being protected by something larger than the latest person causing the problem.",
+        "body": "If the same conflict keeps returning with different people, the pattern is probably being protected by something larger than the latest person causing the problem. When Saturn sextiles Pluto, you have an opportunity to change the boundary, responsibility, access, or decision-making process that keeps allowing the same dynamic to recreate itself. Replacing one person may bring temporary relief, but it will not protect you from the next version of the problem if the setup stays the same. Use the opening to change what people are allowed to do, who gets the final say, or what happens when the boundary is crossed."
+      }
+    },
+    "sky.saturn.sextile.uranus": {
+      "payload": {
+        "summary": "An overdue system upgrade fixes a pipeline that was quietly failing the people who needed it most.",
+        "body": "An overdue system upgrade fixes a pipeline that was quietly failing the people who needed it most. Saturn sextile Uranus can turn one approved change in booking, inventory, payouts, or processing into a much faster route through a stubborn bottleneck. The improvement may be technical, but the result is human: fewer missed appointments, delayed payments, or people turned away. Finish the unglamorous implementation. A good reform is the one that reaches the front door with less delay."
+      },
+      "sha256": "b48a47e5db048d4d33d4a37670d14fe546bc2453230af117e67c8faafc7024aa"
+    },
+    "sky.saturn.square.lilith": {
+      "payload": {
+        "summary": "Patience runs thin for rules, expectations, or responsibilities that have demanded too much for too long.",
+        "body": "Patience runs thin for rules, expectations, or responsibilities that have demanded too much for too long. Saturn square Lilith can make the weak point in an agreement or system impossible to keep covering with endurance. Shortcuts stop working, and the person who has been absorbing the extra burden may finally refuse to do it again. Do not confuse that refusal with irresponsibility. Name the demand that has become unsustainable and renegotiate who carries it before the whole arrangement breaks under the same pressure."
+      },
+      "sha256": "b1f9303ba04aecb374e5f2e4682d404d38a491cfaef488b046bbe0763b5285ac"
+    },
+    "sky.saturn.square.neptune": {
+      "payload": {
+        "summary": "A sweeping promise hits a hard wall of practical limits.",
+        "body": "A sweeping promise hits a hard wall of practical limits. Saturn square Neptune can make a community project, care plan, or creative institution keep running on belief until the budget, legal backing, or staffing finally refuses to cooperate. Inspiration cannot cover a missing structure forever. The shutdown may be quick, but the cleanup is not. Name what failed before replacing the dream with another promise. Fix the funding, authority, or staffing gap that made delivery impossible in the first place."
+      },
+      "sha256": "9fffffae75b972c8c11dd123b76642b46831634eaf5746cf19150610cca6059e"
+    },
+    "sky.saturn.square.pluto": {
+      "payload": {
+        "summary": "Two centers of authority refuse to give up the rule, money, or access that makes them powerful.",
+        "body": "Two centers of authority refuse to give up the rule, money, or access that makes them powerful. Saturn square Pluto can turn deadlines, records, and ordinary work into leverage while each side tries to force the other into accepting its terms. The people underneath the conflict pay for every withheld decision. Stop treating delay as neutral. Identify which decision is being held hostage, who has the authority to release it, and what consequence exists if neither side moves."
+      },
+      "sha256": "fe2ee7569d860d98a4252df34cf0e8fca11b789e3a2dc18aad5ae8f2c6d7ff79"
+    },
+    "sky.saturn.square.uranus": {
+      "payload": {
+        "summary": "A rigid institution keeps enforcing a process that technology, staff, or public need has already made obsolete.",
+        "body": "A rigid institution keeps enforcing a process that technology, staff, or public need has already made obsolete. Saturn square Uranus can make workers build unofficial workarounds while leadership tightens the same rules causing the delay. Every workaround becomes another argument about who is authorized to change the system. Stop treating the workaround as misconduct if it is the only thing keeping the work moving. Document where the official process fails and escalate the specific rule blocking a replacement."
+      },
+      "sha256": "b706d690fcc37db9956ae5a97b7fe9c2cab977951117b93433e1713bc31f49f9"
+    },
+    "sky.saturn.trine.neptune": {
+      "sha256": "354c5db19df11e65ea958743a98effe06363a1073c3cf03dad279458a14b245d",
+      "payload": {
+        "summary": "Caring about something becomes much easier to sustain once your support no longer depends on you having extra time, money, or emotional capacity every time the need appears.",
+        "body": "Caring about something becomes much easier to sustain once your support no longer depends on you having extra time, money, or emotional capacity every time the need appears. When Saturn trines Neptune, compassion can settle into a structure you can actually rely on, which may mean clearer boundaries, a realistic schedule, shared responsibility, or knowing in advance what you can and cannot give. This does not make the care less generous. It keeps generosity from turning into exhaustion and makes it more likely that what you value will still have your support after the immediate emotion has passed."
+      }
+    },
+    "sky.saturn.trine.pluto": {
+      "sha256": "fe3ad66256e3601fb70efca2ba73852838cfc647f7dec5950524c40e86c4806c",
+      "payload": {
+        "summary": "If the same misuse of power would still be possible with someone else in charge, replacing the person has not solved the part of the problem most likely to repeat.",
+        "body": "If the same misuse of power would still be possible with someone else in charge, replacing the person has not solved the part of the problem most likely to repeat. When Saturn trines Pluto, deeper change becomes possible because you can address the agreement, rule, access, responsibility, or check on authority that made the old pattern easy to maintain. The goal is not simply to feel better about who holds the position now. Change the conditions that allowed the problem to happen so the next person has less room to recreate it."
+      }
+    },
+    "sky.saturn.trine.uranus": {
+      "sha256": "a74c0e28640759f2ccf8b14a4f139e30be545845b6d9d6654ef0d31dafd835f5",
+      "payload": {
+        "summary": "If a change is making your life easier, stop rushing back to the old way just because it is more familiar.",
+        "body": "If a change is making your life easier, stop rushing back to the old way just because it is more familiar. When Saturn trines Uranus, an unconventional fix can settle into a reliable, steady structure instead of fading away as a temporary experiment. Keep the habit or tool that saves time, cuts friction, or frees up your energy. You do not need to resurrect an old restriction just to prove you can live with it."
+      }
+    },
+    "sky.sun.conjunction.jupiter": {
+      "payload": {
+        "summary": "A wave of attention puts a leader or passion project center stage.",
+        "body": "A wave of attention puts a leader or passion project center stage. Sun conjunct Jupiter can make visibility and expansion feed each other so quickly that public backing becomes a new level of responsibility before the person at the center has had time to adjust. More attention creates more expectation. Decide what the larger audience can actually receive now. A bigger platform is useful when the promise grows with the work, not faster than it."
+      },
+      "sha256": "170e08462fadd6a859b00c1c495d65e23e288096bdc8613e70037516a3fc5f88"
+    },
+    "sky.sun.conjunction.mars": {
+      "payload": {
+        "summary": "The plan and the first move happen in the same meeting.",
+        "body": "The plan and the first move happen in the same meeting. Sun conjunct Mars can remove nearly all distance between deciding and doing, so a vote is followed by a filing, launch, dismissal, or transfer before anyone outside the meeting can prepare. That speed gives leadership power and responsibility at the same time. The person setting the direction also owns the consequences of the first move. Fast execution is not an excuse to pretend the overlooked fallout belongs to somebody else."
+      },
+      "sha256": "38aae1ab134bac25e0c3ff5e1adbf90f92eb10788cff36afb83b6daa0cbc7fa0"
+    },
+    "sky.sun.conjunction.mercury": {
+      "payload": {
+        "summary": "A closed-door talk exposes who has been pulling the strings.",
+        "body": "A closed-door talk exposes who has been pulling the strings. Sun conjunct Mercury can bring a hidden conflict of interest, secret clause, or unaccounted-for resource into the same conversation as the decision about who is trusted next. The record matters because authority is already involved. Ask for the straight answer and the document behind it. Once the hidden arrangement is named, do not let the room solve the embarrassment faster than it solves the access or accountability problem."
+      },
+      "sha256": "56b7bc6125e5e7db6e158db773f4963b9e4f9c77dc028e61225e31e8f43ff05f"
+    },
+    "sky.sun.conjunction.moon": {
+      "payload": {
+        "summary": "A single deadline puts equal heat on the boss who set it and the team doing the work.",
+        "body": "A single deadline puts equal heat on the boss who set it and the team doing the work. Sun conjunct Moon can make the official direction and the human reaction to it part of the same story, especially when late nights, missed care, or unfinished tasks are the cost of keeping the date. The work may still get done. That does not mean the deadline was well planned. Count the hours and tradeoffs before repeating the same timeline next time."
+      },
+      "sha256": "8d6f9251e7177f5e6f01f09c6c7bd2c9cb92bb4c5c219deef5497445f2dbdeeb"
+    },
+    "sky.sun.conjunction.neptune": {
+      "payload": {
+        "summary": "A founder, candidate, or public figure can become the answer to needs no one person could realistically satisfy.",
+        "body": "A founder, candidate, or public figure can become the answer to needs no one person could realistically satisfy. Sun conjunct Neptune can blur the line between who someone is and what supporters hope they represent, especially when rescue, healing, creativity, or moral certainty has been projected onto the role. The devotion may be sincere, but it becomes fragile when ordinary mistakes are treated like betrayal. Keep the person separate from the promise. Judge the work by what is actually delivered, not by how much hope the public figure has come to carry for everyone else."
+      },
+      "sha256": "9f01b9492e2a09683162c6f182ae46ed2a30436653256a48dce50ea902790a3c"
+    },
+    "sky.sun.conjunction.pluto": {
+      "payload": {
+        "summary": "One signature can move the budget, the public story, and the decision-making power at the same time.",
+        "body": "One signature can move the budget, the public story, and the decision-making power at the same time. Sun conjunct Pluto can concentrate visible authority and the leverage behind it in the same hands, which makes a merger, succession, election, or takeover feel decisive very quickly. The question is what becomes harder to challenge once the change is complete. Follow the title to the money, records, and access that come with it. If one person can make the decision and control the information used to review it, the new structure needs more oversight, not less."
+      },
+      "sha256": "b8dd70377d7a4a41f667812b4f0071d18809e5c04b16d8b9921a1c0e5096d8d8"
+    },
+    "sky.sun.conjunction.saturn": {
+      "payload": {
+        "summary": "A promotion may arrive with the title, scrutiny, and a longer list of problems that now belong to the person being congratulated.",
+        "body": "A promotion may arrive with the title, scrutiny, and a longer list of problems that now belong to the person being congratulated. Sun conjunct Saturn can make recognition and responsibility part of the same offer, so the status looks better from the outside than the workload feels from inside the role. Read the duties as closely as the title. Ask what authority, pay, staff, and time come with the added responsibility. More responsibility should come with something that makes carrying it possible."
+      },
+      "sha256": "05f9e3d451b0aa22e22392118be24a1d9fc0ab7b830a4160a1ee8cca257e9899"
+    },
+    "sky.sun.conjunction.uranus": {
+      "payload": {
+        "summary": "One unexpected resignation, disclosure, or break from the plan can change the public story before leadership has time to prepare the response.",
+        "body": "One unexpected resignation, disclosure, or break from the plan can change the public story before leadership has time to prepare the response. Sun conjunct Uranus can make the disruption itself become the new direction, especially when the person at the center decides the old arrangement is no longer worth protecting. The shock may be useful if it exposes a problem everyone was already avoiding. Do not spend the whole response trying to restore the old script. Name what actually changed and what now has to be rebuilt because the break made the previous plan impossible."
+      },
+      "sha256": "a6273acd442580db2b362f649c581d93b5292c0dbe5cf8de8291bf13721d769b"
+    },
+    "sky.sun.conjunction.venus": {
+      "sha256": "d66e51e1fe2d4ce38020f192714a1271b599bbb554649a333a4bd4cc2bf54b9c",
+      "payload": {
+        "summary": "Being chosen can make you want something more than you did before it chose you.",
+        "body": "Being chosen can make you want something more than you did before it chose you. When the Sun conjuncts Venus, attention, attraction, praise, and pleasure can reinforce your confidence so strongly that another person’s enthusiasm starts influencing your own desire. There is nothing wrong with enjoying the compliment, the invitation, or the feeling of being wanted, but being valued does not automatically make the offer valuable to you. Let the attention land, then notice if you still want what is being offered once you are no longer making the decision from the high of being picked."
+      }
+    },
+    "sky.sun.opposition.jupiter": {
+      "sha256": "64cfcc574bbc297a55aed2e19b83e9110e0bf5ab11f5785e61505aa483ffff58",
+      "payload": {
+        "summary": "Sometimes the life you have been asking for arrives with a workload you never pictured when you were asking for it.",
+        "body": "Sometimes the life you have been asking for arrives with a workload you never pictured when you were asking for it. When the Sun opposes Jupiter, an opportunity can expand your confidence and your options at the same time, making it easy to focus on everything that could become possible while overlooking what the bigger version will require from your calendar, budget, energy, or existing commitments. More can absolutely be better, but it still needs somewhere to fit. Choose the expansion that gives your life more room rather than the one that forces everything you already care about to absorb the cost."
+      }
+    },
+    "sky.sun.opposition.mars": {
+      "payload": {
+        "summary": "The person announcing the plan stands across from the people expected to execute it.",
+        "body": "The person announcing the plan stands across from the people expected to execute it. Sun opposite Mars can put strategy and urgency directly against safety, hours, and the work that cannot be completed on command. Issuing the order is not the same as having the people to fulfill it. Bring the operators into the decision before the deadline becomes a test of obedience. A plan is stronger when the people doing the work can say what it will actually take."
+      },
+      "sha256": "d82586c4bccef4691c55622f209c688bb4313da1e00aa7cbcc211d2616cbf4ce"
+    },
+    "sky.sun.opposition.moon": {
+      "payload": {
+        "summary": "Leadership may call a change necessary while the people living with it are losing pay, childcare, transportation, or the routine that made the old plan workable.",
+        "body": "Leadership may call a change necessary while the people living with it are losing pay, childcare, transportation, or the routine that made the old plan workable. The opposition between the Sun and Moon can put the official decision directly across from its human cost, making it difficult to keep one version of the story in charge. A budget can explain why the policy changed without answering who is expected to absorb the disruption. Put that cost into the decision before calling the plan complete. If the same people are always asked to adjust, the compromise is not evenly shared."
+      },
+      "sha256": "39d9028365b9060e60256e663265e943db9756f016c3e5717126f442c6c48c27"
+    },
+    "sky.sun.opposition.neptune": {
+      "payload": {
+        "summary": "The leader onstage describes a rescue while the staff doing the work are still asking where the money, people, and measurable end point are.",
+        "body": "The leader onstage describes a rescue while the staff doing the work are still asking where the money, people, and measurable end point are. Sun opposite Neptune can put an inspiring public story directly against the practical confusion underneath it. Both sides may believe in the cause. The problem is that belief does not tell anyone what was promised or who is responsible for delivering it. Compare the speech with the budget, staffing, and timeline. If those documents describe a smaller plan, the public promise needs to get smaller too."
+      },
+      "sha256": "7f4f14ec88775d0cbb3c2ba25f8bd8d384fb07443aed24d9c0e7f86ceb82b89a"
+    },
+    "sky.sun.opposition.pluto": {
+      "sha256": "0f265ea4b6e1d4e43b37482f3f7947b9e3b08c060d893dad97558ead39b878a6",
+      "payload": {
+        "summary": "If someone else can freeze the deal, withhold access, or make one decision that changes your options, arguing harder does not make the power equal.",
+        "body": "If someone else can freeze the deal, withhold access, or make one decision that changes your options, arguing harder does not make the power equal. When the Sun opposes Pluto, dependence on another person’s cooperation can hit your pride hard enough that forcing the outcome starts to feel more important than getting what you actually need. The useful question is not who deserves to win the standoff, but what leverage you still have outside it. Look for the alternative route, the boundary, the information, the person above them, or the option that gives you more control over your own next move instead of making your future depend on their willingness to give in."
+      }
+    },
+    "sky.sun.opposition.saturn": {
+      "payload": {
+        "summary": "Leadership may promise a result that the person responsible for law, budget, staffing, or compliance already knows cannot be delivered as announced.",
+        "body": "Leadership may promise a result that the person responsible for law, budget, staffing, or compliance already knows cannot be delivered as announced. Sun opposite Saturn can force public ambition to face the limit it was trying to talk around. A smaller plan is not automatically a failure if it is the one the structure can actually support. Put the restriction into the public decision instead of leaving operations to explain it later. The promise should match what the people enforcing the limits are authorized and funded to deliver."
+      },
+      "sha256": "ce34f842546b0ea1e67e55688d86a9996ce31cd8d5fb5b68807e6afd86fda181"
+    },
+    "sky.sun.opposition.uranus": {
+      "sha256": "91be78f5cbd3b5f01a7a2c4b1e6cf78f7a6f6236e0d0e3a57c15a4805fc7eb7c",
+      "payload": {
+        "summary": "Someone else changing the terms can expose how much of your plan depended on them staying exactly the same.",
+        "body": "Someone else changing the terms can expose how much of your plan depended on them staying exactly the same. When the Sun opposes Uranus, another person’s decision to leave, change direction, ask for more freedom, or stop participating in the old arrangement can force you to adjust before you wanted to. Your first instinct may be to restore what was familiar because it worked for you, but the break is also information about what is no longer available. Build from what is true now, and let the next version of the plan depend less on somebody returning to a role they have already outgrown."
+      }
+    },
+    "sky.sun.sextile.jupiter": {
+      "sha256": "514a343e289e6bc4e3abb46c63d274ef50a43a559e9688fb91f465d464c502ad",
+      "payload": {
+        "summary": "A little more support can change what feels possible without requiring you to turn one good opening into a complete reinvention of your life.",
+        "body": "A little more support can change what feels possible without requiring you to turn one good opening into a complete reinvention of your life. When the Sun sextiles Jupiter, confidence, encouragement, money, visibility, or access can arrive behind something that already has momentum, giving you enough room to take the next step with more backing than you had before. The opportunity does not need to become enormous to matter. Use the extra room on the move you were already ready to make, and let growth come from what proves it can hold more."
+      }
+    },
+    "sky.sun.sextile.mars": {
+      "payload": {
+        "summary": "One person takes the first task and another claims the next, dividing the work without an argument.",
+        "body": "One person takes the first task and another claims the next, dividing the work without an argument. Sun sextile Mars can make a partial plan useful once somebody has enough authority to start the first concrete piece. The early result gives the rest of the project something to build around. Name the first two owners and let them move. Clear handoffs and decision rights matter more than having every detail final before the work begins."
+      },
+      "sha256": "aed7eff0b2653492d2b20e5f4c631a51b55cb7924e02a8f5d27a330f44a24a58"
+    },
+    "sky.sun.sextile.moon": {
+      "payload": {
+        "summary": "A policy change is announced early enough for someone to catch the detail that would have created a much bigger problem later.",
+        "body": "A policy change is announced early enough for someone to catch the detail that would have created a much bigger problem later. The sextile between the Sun and Moon can create room for an official decision to adjust to the people who actually have to live with it. A grace period, transit option, childcare plan, or revised start date may be enough to keep one rule from derailing an entire week. Use the lead time. Ask who will have to rearrange the most before the policy is locked, then fix the preventable problem while the plan can still move."
+      },
+      "sha256": "7cc5ed56df2c231e373c5886b9cda227a7c5c58b4f7aee961f07f44d0823c3ba"
+    },
+    "sky.sun.sextile.neptune": {
+      "payload": {
+        "summary": "A vague hope becomes a campaign people can actually support once it has a name, a budget, and somewhere for the money to go.",
+        "body": "A vague hope becomes a campaign people can actually support once it has a name, a budget, and somewhere for the money to go. Sun sextile Neptune can help a compassionate or creative idea find a public form without requiring the whole vision to be finished first. A donation link, first event, named organizer, or clear beneficiary may be enough to turn concern into useful participation. Make the first promise specific. People should know what they are contributing to, who is responsible for it, and what the first round of support is meant to accomplish."
+      },
+      "sha256": "e4220771051d0cfc1f0717421ac39368b0f0ebed26ff8b94c1b89e0e30fb450b"
+    },
+    "sky.sun.sextile.pluto": {
+      "sha256": "764924e584cbf7b02ad7502a0775475c9aee75d49ec0ff4f2138f08837d0511f",
+      "payload": {
+        "summary": "You may finally get the conversation you have been rehearsing in your head for months, so do not waste it proving how angry you had every right to be.",
+        "body": "You may finally get the conversation you have been rehearsing in your head for months, so do not waste it proving how angry you had every right to be. When the Sun sextiles Pluto, confidence and leverage can come together in a way that gives you access to the person, decision, boundary, or resource capable of changing something that has felt stuck. That opening is more valuable than the satisfaction of unloading every grievance that led you there. Say enough to establish the problem, then ask for the change that would actually alter what happens next."
+      }
+    },
+    "sky.sun.sextile.saturn": {
+      "sha256": "cd2bb9ccf92a16b114262120ca9a2bd9e7d6342613feab6be4cc4e3c28d1b271",
+      "payload": {
+        "summary": "Sometimes the difference between almost having the opportunity and actually having it is one unglamorous requirement you have been putting off because the exciting part already feels done.",
+        "body": "Sometimes the difference between almost having the opportunity and actually having it is one unglamorous requirement you have been putting off because the exciting part already feels done. When the Sun sextiles Saturn, recognition can become more concrete through a signature, documented result, completed condition, formal commitment, or responsibility you are finally ready to accept. The last administrative step may seem small compared with everything it took to reach this point, but it is often the piece that turns encouragement into something you can rely on. Finish what makes the opportunity official so the work you already did comes with the status, authority, or commitment it was supposed to earn."
+      }
+    },
+    "sky.sun.sextile.uranus": {
+      "payload": {
+        "summary": "New software or one procedural change may clear a bottleneck the old workflow kept reproducing.",
+        "body": "New software or one procedural change may clear a bottleneck the old workflow kept reproducing. Sun sextile Uranus can give an experiment enough authority to be tested inside the live system without requiring everyone to abandon the current process first. Start with the failure everyone can already see. Give one team the tool, track the result, and keep the old route available until the replacement has handled ordinary use. The change earns support when people can point to the delay it removed."
+      },
+      "sha256": "7bebe0ce30003d114d9d3e803187b94dd4ab2df0873eaaf63890c0572342a068"
+    },
+    "sky.sun.square.jupiter": {
+      "payload": {
+        "summary": "The launch keeps adding features while the budget and sign-off stay put.",
+        "body": "The launch keeps adding features while the budget and sign-off stay put. Sun square Jupiter can make every new promise sound exciting in public while the staff, time, and legal authority needed to deliver it remain exactly the same. Scope grows because optimism keeps winning the meeting. The team inherits every expectation anyway. Freeze the additions long enough to compare the public promise with the resources underneath it. If the numbers did not grow, the scope cannot keep growing for free."
+      },
+      "sha256": "759271fc426c082e018fe3530f5a28d5ff72f79760d516f4b71e5df3cef56581"
+    },
+    "sky.sun.square.mars": {
+      "payload": {
+        "summary": "A director moves the date up and the team pushes back in the same email thread.",
+        "body": "A director moves the date up and the team pushes back in the same email thread. Sun square Mars can turn the schedule into a direct fight over authority when management treats the order as final and the people responsible for delivery are still naming missing staff, unfinished work, and prior commitments. The date may hold and the mistakes will still count. Recalculate the workload before demanding faster execution. Pressure does not create extra hours just because leadership needs them."
+      },
+      "sha256": "586dd7a96eb7d65980d7a4baf37befe4de0da01f938d4a5a78add5dc94819797"
+    },
+    "sky.sun.square.moon": {
+      "payload": {
+        "summary": "The email goes out before the meeting, and everyone starts rearranging care, transportation, and work before leadership has explained what changed.",
+        "body": "The email goes out before the meeting, and everyone starts rearranging care, transportation, and work before leadership has explained what changed. Sun square Moon can turn a decision made at the top into immediate disruption for the people expected to live with it. The policy may survive the pushback, but trust will not recover just because the calendar does. Explain the change before asking people to reorganize their day around it. If there is no way to avoid the disruption, give people enough time and information to plan for the part that lands on them."
+      },
+      "sha256": "a647a26c1e5651a40317f61c151676c87fa0d445614114873866f72ed4de70fc"
+    },
+    "sky.sun.square.neptune": {
+      "payload": {
+        "summary": "A polished pitch can win the room before anyone reads the numbers closely.",
+        "body": "A polished pitch can win the room before anyone reads the numbers closely. Sun square Neptune can make the image of a person or project more convincing at the exact moment the missing details matter most, especially when a good story makes basic questions feel cynical. The weakness is usually ordinary: money that is not accounted for, results nobody has defined, or a promise that cannot be checked. Read the budget and the terms before voting on the vision. A compelling presentation should survive the same questions as an unglamorous one."
+      },
+      "sha256": "c07f7f1a91f24a6517dabc4719270a451fc28a37f9edc61842dce6734a508ef6"
+    },
+    "sky.sun.square.pluto": {
+      "payload": {
+        "summary": "Two versions of the same decision circulate, each edited to protect its author and make the other side look responsible.",
+        "body": "Two versions of the same decision circulate, each edited to protect its author and make the other side look responsible. Sun square Pluto can turn a dispute over credit or leadership into a fight over the record itself, especially when private access lets someone remove context, withhold documents, or decide which account looks official. A public argument cannot repair a missing paper trail. Preserve the emails, approvals, dates, and original files. When control of the story has become part of the conflict, the record needs to exist somewhere neither side can quietly rewrite it."
+      },
+      "sha256": "b370c1db2cf126d6699f46b006877088a04f0dea68ae7e0daed0f2e0d60411e0"
+    },
+    "sky.sun.square.saturn": {
+      "sha256": "21b55c886e4a5c3eb0c76efb7a3f65e865e4b069806e71c72421529972db70a6",
+      "payload": {
+        "summary": "A setback can start sounding like a verdict on your ability when you have already tied too much of your confidence to getting this one thing right.",
+        "body": "A setback can start sounding like a verdict on your ability when you have already tied too much of your confidence to getting this one thing right. When the Sun squares Saturn, delays, criticism, responsibility, or a hard practical limit can make you question yourself more harshly than the situation actually requires. Something may need more time, a smaller scope, or a different approach, but that is not the same as being incapable. Work with the limit in front of you without turning it into evidence that you should expect less from yourself."
+      }
+    },
+    "sky.sun.square.uranus": {
+      "sha256": "130d79eb63a113b0d71b0fe038127cccb2805326222f9fe6792af5e4471be21a",
+      "payload": {
+        "summary": "The urge to change everything usually gets louder when one part of your life has been making you feel trapped for too long.",
+        "body": "The urge to change everything usually gets louder when one part of your life has been making you feel trapped for too long. When the Sun squares Uranus, restlessness can make the familiar version of your routine, role, or identity suddenly feel impossible to tolerate, which is useful information even if blowing the whole thing up would create problems you do not actually want. Give yourself room to experiment before you make the break permanent. You are allowed to change direction as you learn more about who you are, but freedom works better when you know which part you are actually trying to escape."
+      }
+    },
+    "sky.sun.trine.jupiter": {
+      "sha256": "c8ecb599af763eb428232d9f086fd382a8c5be24fee80506778b6b03c2ec551b",
+      "payload": {
+        "summary": "When something you have been building starts receiving more support, let yourself believe the opportunity without immediately turning it into three more goals.",
+        "body": "When something you have been building starts receiving more support, let yourself believe the opportunity without immediately turning it into three more goals. When the Sun trines Jupiter, confidence and possibility reinforce each other, which can bring recognition, encouragement, money, access, or a larger audience to something that already has momentum. This is a good time to take up more space around the work that has earned it. Grow the part that is already giving you a reason to believe in yourself instead of scattering the momentum across every new possibility that appears."
+      }
+    },
+    "sky.sun.trine.mars": {
+      "sha256": "a13aea0949f804fd4836289ff06f66568dcdb4e454f77f9d6f7319eaed29f101",
+      "payload": {
+        "summary": "You may know exactly what you want to do before you have finished talking yourself out of it, and for once that first instinct may deserve more credit.",
+        "body": "You may know exactly what you want to do before you have finished talking yourself out of it, and for once that first instinct may deserve more credit. When the Sun trines Mars, confidence and action cooperate, making it easier to move on a decision without the usual drag between knowing what you want and actually doing something about it. Use the energy on the move you have been postponing because it requires nerve, not on creating urgency where none exists. Acting decisively feels different when the action is aligned with something you already know matters."
+      }
+    },
+    "sky.sun.trine.moon": {
+      "sha256": "cb5e2500fc725907b96f9b961642571ca78e1bd611c536cfb10a9cb7eb958be0",
+      "payload": {
+        "summary": "A decision becomes much easier when the version that makes sense on paper also feels livable once you imagine yourself inside it.",
+        "body": "A decision becomes much easier when the version that makes sense on paper also feels livable once you imagine yourself inside it. When the Sun trines the Moon, what you want and what you need can support each other instead of pulling in opposite directions, giving you a clearer read on what belongs in your life now. Pay attention to the choice that gives you forward movement without requiring you to keep overriding your own emotional or practical needs. Sometimes clarity feels less like excitement and more like finally not having to argue with yourself."
+      }
+    },
+    "sky.sun.trine.neptune": {
+      "sha256": "302ade1efe0e248ff3b804e4de529f2915ab9c02b4375a39c999be55b63f4683",
+      "payload": {
+        "summary": "The idea you keep returning to may deserve a place in your actual life instead of remaining the thing you think about when everything else is finished.",
+        "body": "The idea you keep returning to may deserve a place in your actual life instead of remaining the thing you think about when everything else is finished. When the Sun trines Neptune, imagination, compassion, creativity, or intuition can feel more connected to your sense of purpose, making it easier to recognize what genuinely inspires you rather than what merely looks impressive. Give the feeling enough form to become tangible, even if the first version is small. The point is not to make the dream grander; it is to stop treating something meaningful like it only belongs in your imagination."
+      }
+    },
+    "sky.sun.trine.pluto": {
+      "sha256": "7e5a208d66a634ff5fcdb0c1c9f12bda70d18bb0e975954a1eac7f3f6e9b7bd6",
+      "payload": {
+        "summary": "You may be ready to stop negotiating with a pattern you already understand well enough to know what it costs you.",
+        "body": "You may be ready to stop negotiating with a pattern you already understand well enough to know what it costs you. When the Sun trines Pluto, self-awareness and personal power can reinforce each other, making it easier to confront the habit, attachment, fear, or dynamic that has kept more control over you than you wanted to admit. This does not have to become a dramatic reinvention. Make the decision that removes one source of unnecessary power from your life and notice how different confidence feels when it comes from changing the pattern rather than surviving it again."
+      }
+    },
+    "sky.sun.trine.saturn": {
+      "sha256": "12d2177cd83503d2368ef9852366c9b1d9f002d2f3ed9ad1b484859502ce1a34",
+      "payload": {
+        "summary": "There is a different kind of confidence that comes from knowing you can keep showing up after the excitement wears off.",
+        "body": "There is a different kind of confidence that comes from knowing you can keep showing up after the excitement wears off. When the Sun trines Saturn, discipline and identity support each other, which can make a commitment, responsibility, or long-term goal feel less like a burden and more like something you are genuinely prepared to carry. This is a good moment to formalize what you have already proven you can sustain. Let consistency become evidence that you are ready for more authority, responsibility, or trust rather than waiting for someone else to announce that you have earned it."
+      }
+    },
+    "sky.sun.trine.uranus": {
+      "sha256": "66e398c39f7e770cc15ead8810315edc482bf6d6f91e1b173f3d4f45d459e015",
+      "payload": {
+        "summary": "If a change makes you feel more like yourself rather than simply more excited, pay attention to that difference.",
+        "body": "If a change makes you feel more like yourself rather than simply more excited, pay attention to that difference. When the Sun trines Uranus, experimentation can reveal a version of your life, work, routine, or identity that gives you more freedom without requiring you to burn down everything that came before it. The unfamiliar option may fit better precisely because you have changed since the old one was chosen. Keep the adjustment that gives you more room to be who you are now instead of rebuilding an older version of yourself because it once made sense."
+      }
+    },
+    "sky.uranus.conjunction.neptune": {
+      "sha256": "7a87a4b06d498a19e64d6998000c243546f3ae676f4046ecb70e72ed614c91b1",
+      "payload": {
+        "summary": "A new possibility can feel like the future simply because it gives shape to something you had almost stopped believing could change.",
+        "body": "A new possibility can feel like the future simply because it gives shape to something you had almost stopped believing could change. When Uranus conjuncts Neptune, innovation and imagination rise together, making a new idea, tool, community, or way of living carry enormous hope before you know exactly what it can sustain. Let the possibility wake something up in you without asking it to solve everything immediately. Hope becomes more useful when you give the new thing enough time to show you what it actually changes."
+      }
+    },
+    "sky.uranus.conjunction.pluto": {
+      "sha256": "7cb7c5891b15ad6023de61706fda77fcdfbd624083b6e743331aa09efba8e6fe",
+      "payload": {
+        "summary": "Breaking free from one source of control does not help much if you discover afterward that the replacement now controls the things you still depend on.",
+        "body": "Breaking free from one source of control does not help much if you discover afterward that the replacement now controls the things you still depend on. When Uranus conjuncts Pluto, disruption can change the balance of power quickly, especially when an old arrangement fails and a new system, person, or option rushes in to take its place. The break itself may be necessary, but freedom is not measured only by what you escaped. Look at what now controls your access, choices, money, or information and make sure the new arrangement actually gives you more room to move."
+      }
+    },
+    "sky.uranus.opposition.neptune": {
+      "sha256": "6c5ff87abc096f4f32dded4ae1f6cf351b75faeb3a7a126e3d137700566f3504",
+      "payload": {
+        "summary": "You do not have to abandon the vision just because the first method you believed in stops working.",
+        "body": "You do not have to abandon the vision just because the first method you believed in stops working. When Uranus opposes Neptune, the ideal and the experiment can pull apart, forcing you to distinguish what still matters from the tool, person, or strategy you hoped would deliver it. Disappointment can make cynicism tempting, while loyalty to the dream can make obvious failures easier to excuse. Keep the value that still feels true and be willing to change the method once reality shows you it cannot carry the promise."
+      }
+    },
+    "sky.uranus.opposition.pluto": {
+      "sha256": "4b0eeb702725f7e627c7d29e181994492e97ebf3223467bc353f5991eb25c94d",
+      "payload": {
+        "summary": "Wanting out is not the same as being free if the person or system you are leaving can still decide what options remain available to you.",
+        "body": "Wanting out is not the same as being free if the person or system you are leaving can still decide what options remain available to you. When Uranus opposes Pluto, the urge for independence can collide with entrenched power, exposing the places where your freedom still depends on money, access, approval, information, or somebody else’s willingness to let you go. Do not measure progress only by how forcefully you resist. Look for the choice that reduces your dependence on the source of control so the next step belongs more fully to you."
+      }
+    },
+    "sky.uranus.sextile.neptune": {
+      "sha256": "41b6baa049b583529c11264a151a4c0789537ff9c54918d79aa3adf6f9f6b26c",
+      "payload": {
+        "summary": "Something you had written off as unrealistic may become more workable once you realize the obstacle was the method, not the idea itself.",
+        "body": "Something you had written off as unrealistic may become more workable once you realize the obstacle was the method, not the idea itself. When Uranus sextiles Neptune, imagination gets help from a new approach, making it easier to see how a creative idea, personal hope, or change you care about could work differently than you originally pictured. You do not have to give up on something meaningful just because the first version was impractical. Be willing to change how you get there without assuming that means you wanted the wrong thing."
+      }
+    },
+    "sky.uranus.sextile.pluto": {
+      "sha256": "5b51e1aff134cb8b5204fffe84c8d85008e74d9f12efdb2e791b4f94163d32c9",
+      "payload": {
+        "summary": "A small opening can matter more than it looks if it gives you more control over something you previously had to ask permission to access.",
+        "body": "A small opening can matter more than it looks if it gives you more control over something you previously had to ask permission to access. When Uranus sextiles Pluto, a new option, rule change, tool, or shift in circumstances can alter the balance of power enough for you to renegotiate how much control another person or system has over the outcome. Use the opening while it exists. The useful change is the one that leaves you with more choice after the excitement of getting access wears off."
+      }
+    },
+    "sky.uranus.square.neptune": {
+      "sha256": "ed14fc29a7e013030be0ae0ff1a145f9a01ad784484a6ac92f556d2456110380",
+      "payload": {
+        "summary": "A new solution can become especially seductive when you are tired enough of the old problem to want the first alternative to work.",
+        "body": "A new solution can become especially seductive when you are tired enough of the old problem to want the first alternative to work. When Uranus squares Neptune, excitement about change can combine with wishful thinking, making an untested tool, idea, relationship, or escape route feel more reliable than the evidence supports. You do not need to return to what was failing just because the new option has flaws. Give yourself enough time to find out what the alternative actually does before your relief at having another choice starts making the decision for you."
+      }
+    },
+    "sky.uranus.square.pluto": {
+      "sha256": "148649d488dddfc957d9d8907ce20a51939ceca5c7b6c7cf9a70905cc71c4be9",
+      "payload": {
+        "summary": "Breaking one restriction can feel like freedom right up until you realize the new arrangement gives somebody else the power to change the terms.",
+        "body": "Breaking one restriction can feel like freedom right up until you realize the new arrangement gives somebody else the power to change the terms. When Uranus squares Pluto, disruption can open access while simultaneously creating a new struggle over who owns, controls, or benefits from what replaces the old system. Do not confuse novelty with independence. Before you hand the new option your money, information, loyalty, or trust, make sure you understand who can still close the door once you are inside."
+      }
+    },
+    "sky.uranus.trine.neptune": {
+      "sha256": "b473e72427394e49e687df9366a8ed32a24a5f575fcc661977f7f912aa8adb40",
+      "payload": {
+        "summary": "The right way of expressing something can make a feeling you have carried privately much easier for other people to understand.",
+        "body": "The right way of expressing something can make a feeling you have carried privately much easier for other people to understand. When Uranus trines Neptune, imagination and innovation move together, helping intuition, creativity, or emotional insight find a form that communicates more clearly than your usual approach. The new method does not need to be impressive for its own sake. Let it make the meaning easier to feel, understand, or share, and allow that increased connection to be enough."
+      }
+    },
+    "sky.uranus.trine.pluto": {
+      "sha256": "4692aebb7a3528c32574707c726156e02c940f0d698381798b9f807e5f7ccfca",
+      "payload": {
+        "summary": "Some of the most important changes happen quietly when you stop organizing your life around a restriction you no longer need.",
+        "body": "Some of the most important changes happen quietly when you stop organizing your life around a restriction you no longer need. When Uranus trines Pluto, deeper change can settle into the systems, habits, and decisions that shape how much autonomy you actually have, often without requiring a dramatic confrontation first. Look for the arrangement that gives you more control over your time, access, money, or choices while still functioning well enough to rely on. A real shift in power may feel surprisingly ordinary once your daily life stops revolving around the old limitation."
+      }
+    },
+    "sky.venus.conjunction.jupiter": {
+      "sha256": "db8681a661c25c6e2f464aafdbe6cf89cbaaa5720c73b6e4f5a07572b48bab24",
+      "payload": {
+        "summary": "It becomes very easy to say yes to more when everything already feels good and you want the good feeling to keep growing.",
+        "body": "It becomes very easy to say yes to more when everything already feels good and you want the good feeling to keep growing. When Venus conjuncts Jupiter, generosity, desire, spending, affection, and optimism can amplify each other until another promise or indulgence feels less consequential than it actually is. There is nothing wrong with wanting more from a moment that is going well, but abundance can become excess before it feels like a problem. Enjoy what is expanding without committing more time, money, or energy than you will be happy to give once the mood changes."
+      }
+    },
+    "sky.venus.conjunction.mars": {
+      "sha256": "201c39f7a57ba319bcad48564735bca5fdb0a3ab7fcf4e703a0085fccd5aaca0",
+      "payload": {
+        "summary": "Chemistry can move faster than the conversation about what each person actually wants from it.",
+        "body": "Chemistry can move faster than the conversation about what each person actually wants from it. When Venus conjuncts Mars, attraction and action reinforce each other, making it easier to make the move, accept the invitation, spend the money, or turn interest into something tangible before either side has had much reason to hesitate. Let the spark be a spark without forcing it to answer every question about the future. Once the first move is made, make sure the pace, expectations, and terms still belong to both people rather than to the momentum itself."
+      }
+    },
+    "sky.venus.conjunction.neptune": {
+      "sha256": "ef122571a7d28b3ba1c81f18aa183c7089e0af45f61019f50eb26be098efbbad",
+      "payload": {
+        "summary": "Something can feel beautiful, meaningful, and completely right while you are still filling in half the story yourself.",
+        "body": "Something can feel beautiful, meaningful, and completely right while you are still filling in half the story yourself. When Venus conjuncts Neptune, attraction, hope, creativity, and idealization can blur together, making a person, offer, purchase, or relationship feel more complete than the facts currently make it. You do not need to ruin the feeling by interrogating it, but you do need to notice what you actually know and what you have lovingly supplied on its behalf. Let the beauty be real without requiring the fantasy to become a contract."
+      }
+    },
+    "sky.venus.conjunction.pluto": {
+      "sha256": "1ef4ee1aad800f1d6303710c834128a844b9e5b780dd6a0f44c1ad2b83b26bdf",
+      "payload": {
+        "summary": "Wanting something badly can make the price of having it strangely easy to ignore.",
+        "body": "Wanting something badly can make the price of having it strangely easy to ignore. When Venus conjuncts Pluto, attraction, money, loyalty, and attachment intensify, which can make a relationship, deal, purchase, or commitment feel too important to risk losing even when the terms give someone else more leverage than you are comfortable admitting. The depth of the feeling does not automatically make the arrangement fair. Notice what saying no would cost you and make sure desire has not quietly become the reason you no longer feel free to choose."
+      }
+    },
+    "sky.venus.conjunction.saturn": {
+      "sha256": "ffdc51732fec70435e907b7126719048806c0d3b220be400b8880a4a00a113c5",
+      "payload": {
+        "summary": "A commitment becomes more meaningful when you understand what it will ask of you after the romantic, exciting, or hopeful part becomes ordinary.",
+        "body": "A commitment becomes more meaningful when you understand what it will ask of you after the romantic, exciting, or hopeful part becomes ordinary. When Venus conjuncts Saturn, affection and value meet responsibility, making relationships, financial agreements, creative commitments, or promises feel more serious because time and consequence are now part of the decision. This does not have to make commitment feel heavy. It gives you a chance to choose the obligation knowingly and make sure the time, money, loyalty, or work it requires is something you can keep giving without resenting what you chose."
+      }
+    },
+    "sky.venus.conjunction.uranus": {
+      "sha256": "4089b52196c7c0a3a11b6520b54999eb676b03b8b6fa04161bd50c30479e6311",
+      "payload": {
+        "summary": "Something unexpected can become attractive precisely because it gives you permission to want differently.",
+        "body": "Something unexpected can become attractive precisely because it gives you permission to want differently. When Venus conjuncts Uranus, attraction, values, money, and relationships can shift quickly enough that a choice you would normally dismiss suddenly feels more honest than the one you thought you were supposed to make. You do not need to turn a surprise into a permanent decision, but you also do not need to talk yourself out of what it reveals. Pay attention to what feels newly possible and what that tells you about the version of yourself you may have outgrown."
+      }
+    },
+    "sky.venus.opposition.jupiter": {
+      "sha256": "4e2b2fa44c3a589df37af5c0d139f9fe37b48fb3b74dc311c230a06fdb01ed7d",
+      "payload": {
+        "summary": "Generosity stops feeling generous when you keep saying yes in the moment and resenting everything the yes requires from you later.",
+        "body": "Generosity stops feeling generous when you keep saying yes in the moment and resenting everything the yes requires from you later. When Venus opposes Jupiter, the desire to give, include, spend, celebrate, or make somebody happy can grow larger than the amount of yourself you actually wanted to offer. Wanting other people to have more does not require you to become the person who absorbs every additional cost. Give from what you can genuinely afford to share, not from the version of yourself who wants nobody to be disappointed."
+      }
+    },
+    "sky.venus.opposition.mars": {
+      "sha256": "ff571fbdc04abd594700549269a7037df08f4cb9261389a787b1457a9906a8df",
+      "payload": {
+        "summary": "Wanting each other does not automatically mean you want the same thing from the connection.",
+        "body": "Wanting each other does not automatically mean you want the same thing from the connection. When Venus opposes Mars, attraction and friction can intensify each other, making differences around pace, commitment, boundaries, money, or expectations feel even more charged because the chemistry is still there. The attraction may be obvious while the agreement is not. Let both things be true, and stop treating desire as evidence that one person should eventually give in."
+      }
+    },
+    "sky.venus.opposition.neptune": {
+      "sha256": "54d8bd70247f56011200cf84e25b372de5137bb5bd751368619953d4caf0b668",
+      "payload": {
+        "summary": "It can be difficult to separate what someone has actually offered from everything you have started hoping their attention might eventually become.",
+        "body": "It can be difficult to separate what someone has actually offered from everything you have started hoping their attention might eventually become. When Venus opposes Neptune, attraction and idealization can make possibility feel emotionally convincing long before the relationship, offer, or commitment has become equally clear. Hope is not the problem; building decisions around what has never been promised is. Let what someone consistently does carry more weight than the future you can imagine with them."
+      }
+    },
+    "sky.venus.opposition.pluto": {
+      "sha256": "65430038477ecb949a458b4eaea28eadcd4022c391855b272a3c3b16663a9cb1",
+      "payload": {
+        "summary": "A relationship can feel mutual while one person still has much more power over what happens if either of you says no.",
+        "body": "A relationship can feel mutual while one person still has much more power over what happens if either of you says no. When Venus opposes Pluto, love, loyalty, money, attraction, or access can become tangled with leverage, making it harder to see how differently each person experiences the cost of refusing the terms. Nobody has to issue an obvious threat for the imbalance to matter. Pay attention to what each person can safely refuse, because closeness means less when one person has to protect the relationship by giving up their ability to choose freely."
+      }
+    },
+    "sky.venus.opposition.saturn": {
+      "sha256": "0be0cf40d1e184c421dc69598378ac4d88b90583519daf62e3ba3dc8e3eeab19",
+      "payload": {
+        "summary": "Rejection can make you want someone’s approval more than you wanted what you originally asked them for.",
+        "body": "Rejection can make you want someone’s approval more than you wanted what you originally asked them for. When Venus opposes Saturn, affection, money, recognition, or commitment can meet a limit that feels personal enough to make you start offering more, asking for less, or trying harder to become the person who gets a yes. The boundary may still disappoint you, but disappointment is different from inadequacy. Find out what is actually unavailable before you negotiate away something important just to change somebody else’s answer."
+      }
+    },
+    "sky.venus.opposition.uranus": {
+      "payload": {
+        "summary": "One side may want to preserve the agreement while the other believes staying requires different terms.",
+        "body": "One side may want to preserve the agreement while the other believes staying requires different terms. Venus opposite Uranus can make belonging and independence impossible to separate, especially when a familiar price, role, schedule, or relationship rule now feels restrictive to the person living under it. The old agreement does not become fair because it used to work. Put both versions on the table and decide what each side needs in order to stay by choice. If the relationship only survives when one person stays quiet, continuity is not the same thing as consent."
+      },
+      "sha256": "0a4a14333422871ca0ea6e9e339feffc03b711069245bd8386892b698af18bc8"
+    },
+    "sky.venus.sextile.jupiter": {
+      "sha256": "0def2e99c7d61713536487d40c371769e1ea35af7bb3d4c282c199341ec42ae7",
+      "payload": {
+        "summary": "Support can change what feels possible without changing what you actually wanted in the first place.",
+        "body": "Support can change what feels possible without changing what you actually wanted in the first place. When Venus sextiles Jupiter, generosity, encouragement, money, social connection, or opportunity can give something meaningful more room to grow without requiring you to force it. Let the extra support make the next step easier rather than turning one opening into pressure to make everything bigger. A good opportunity should give you more possibility, not immediately create another standard you have to live up to."
+      }
+    },
+    "sky.venus.sextile.mars": {
+      "sha256": "7b64ffd99e85ee5f0d36f1fe1f4ee9a34749f6da441a949f14b76ee055134dd7",
+      "payload": {
+        "summary": "You can spend a long time wondering what might happen when one small move would tell you much more.",
+        "body": "You can spend a long time wondering what might happen when one small move would tell you much more. When Venus sextiles Mars, attraction and initiative work well together, making it easier to act on what you want without turning the first step into a demand for certainty. There is enough momentum here to flirt, ask, offer, negotiate, create, or simply make your interest known and see what meets you there. You do not have to chase the outcome. Give the possibility a chance to become something, and let the response tell you what is worth doing next."
+      }
+    },
+    "sky.venus.sextile.neptune": {
+      "sha256": "ea0b0aae57d1a34e69af04541043e1e20fe47595bebee47a2fd81d9bbbf8906c",
+      "payload": {
+        "summary": "You may find it easier to let yourself care about something without immediately needing to know what it means, where it is going, or what you are going to get back from it.",
+        "body": "You may find it easier to let yourself care about something without immediately needing to know what it means, where it is going, or what you are going to get back from it. When Venus sextiles Neptune, affection, creativity, and compassion can feel less guarded, making it easier to enjoy a connection, make something beautiful, or show someone you care without turning the moment into a test of the future. Not every feeling needs to be converted into a promise before you are allowed to trust that it mattered. Let yourself receive what is good about the experience without asking it to answer questions it has not reached yet."
+      }
+    },
+    "sky.venus.sextile.pluto": {
+      "sha256": "90e5c141b6896d733d2c3e4251ce1f333f03b72b861716a5f7bb879804a1e6bb",
+      "payload": {
+        "summary": "There is a difference between protecting a relationship and protecting the subject neither of you wants to touch.",
+        "body": "There is a difference between protecting a relationship and protecting the subject neither of you wants to touch. When Venus sextiles Pluto, conversations about money, jealousy, loyalty, intimacy, or control can go deeper without automatically threatening the connection, which makes it easier to finally name the thing that has been changing how you relate to each other from underneath. You do not have to reopen every old wound to be honest about what is happening now. Say the part that has been sitting between you and notice what becomes possible when the relationship no longer has to organize itself around avoiding it."
+      }
+    },
+    "sky.venus.sextile.saturn": {
+      "sha256": "41c4a0234780dcf4e1cef9ee3a3b00eb84603ddb817d324ce7fee56705fbcb9c",
+      "payload": {
+        "summary": "Love becomes much easier to trust when neither person has to exhaust themselves proving they mean it.",
+        "body": "Love becomes much easier to trust when neither person has to exhaust themselves proving they mean it. When Venus sextiles Saturn, affection and responsibility can support each other, making it easier to talk honestly about the time, money, boundaries, and commitments required to keep something valuable in your life. A limit is not rejection when it protects the relationship from promises somebody will eventually resent having to keep. Choose the version of commitment that still leaves both people enough of themselves to remain present inside it."
+      }
+    },
+    "sky.venus.sextile.uranus": {
+      "sha256": "9b9fa0b7a9d69097e2d0ce68cd4b3d8d304df3722de1d8899dc71510e2968d35",
+      "payload": {
+        "summary": "Sometimes the relationship is not the problem; the version of it you have been trying to preserve is.",
+        "body": "Sometimes the relationship is not the problem; the version of it you have been trying to preserve is. When Venus sextiles Uranus, a change in expectations, schedule, money, space, or the way two people participate can create enough freedom for a connection to feel alive again. You do not need to destroy something meaningful because one old rule stopped fitting. Let the relationship change shape where it needs to, especially if the alternative is asking one of you to keep becoming smaller just so everything can look the same."
+      }
+    },
+    "sky.venus.square.jupiter": {
+      "sha256": "f1a7390f2b8d3ee3d58e4902b81aaa20a7d1e101917885aba4fd89e8a8b5e90d",
+      "payload": {
+        "summary": "It is possible to have too much of a good thing once every extra yes starts asking for money, time, or energy you did not originally agree to give.",
+        "body": "It is possible to have too much of a good thing once every extra yes starts asking for money, time, or energy you did not originally agree to give. When Venus squares Jupiter, generosity and appetite expand together, making another upgrade, invitation, purchase, promise, or person feel easy to add because each choice looks harmless on its own. Eventually the cost shows up in the part of your life expected to absorb all that abundance. Notice when more stops making the experience better and starts making you responsible for maintaining something you no longer have room to enjoy."
+      }
+    },
+    "sky.venus.square.mars": {
+      "sha256": "15acd9dfdcca6e9b7bc7ffd6a4b426e876302be9d61c272d4a6f9b236b2128be",
+      "payload": {
+        "summary": "Chemistry gets confusing when one person experiences urgency as passion and the other experiences it as pressure.",
+        "body": "Chemistry gets confusing when one person experiences urgency as passion and the other experiences it as pressure. When Venus squares Mars, attraction and frustration rise together, which can make the tension itself feel like evidence that the connection matters while both people are actually struggling over pace, boundaries, money, commitment, or who gets to decide what happens next. Wanting each other does not erase the need for separate choices. Give the situation enough room for a yes to mean yes rather than simply meaning somebody got tired of resisting."
+      }
+    },
+    "sky.venus.square.neptune": {
+      "sha256": "ef395c752228254c5c09f54366174221eab8fda4984654e42e24366fa4fa1169",
+      "payload": {
+        "summary": "You can spend a long time staying loyal to what something could become while quietly getting less and less from what it is now.",
+        "body": "You can spend a long time staying loyal to what something could become while quietly getting less and less from what it is now. When Venus squares Neptune, hope and attraction can make the potential of a relationship, opportunity, or creative dream feel more convincing than its present reality. The possibility may still be meaningful, but eventually the future cannot keep doing all the work for the present. Notice what is actually being offered now and decide how long you are willing to keep investing in what has not happened yet."
+      }
+    },
+    "sky.venus.square.pluto": {
+      "sha256": "2e603df4c28056ca668ba9677ebaf09aab698ee6d14edc258aa1b945c4085ba0",
+      "payload": {
+        "summary": "When keeping the relationship starts requiring you to give up your ability to say no, the issue is no longer how much you love each other.",
+        "body": "When keeping the relationship starts requiring you to give up your ability to say no, the issue is no longer how much you love each other. When Venus squares Pluto, attachment can become tangled with money, guilt, jealousy, privacy, access, or the fear of what you will lose if you stop cooperating, making control easier to disguise as proof that the bond is important. Deep feelings do not make coercion more romantic. Notice which compromises come from genuine desire and which ones you are making because protecting your autonomy suddenly feels more expensive than protecting the connection."
+      }
+    },
+    "sky.venus.square.saturn": {
+      "sha256": "96f17082d8acf6787fe747415dbf1c401fa04a80601d9fd869218418cb9ee81b",
+      "payload": {
+        "summary": "Appreciation starts feeling very different when the praise keeps coming but the conditions you actually asked to change remain exactly the same.",
+        "body": "Appreciation starts feeling very different when the praise keeps coming but the conditions you actually asked to change remain exactly the same. When Venus squares Saturn, affection, recognition, or value can run into a hard practical limit around money, time, availability, or commitment, forcing you to confront the difference between being valued emotionally and being supported in the way you actually need. The other person may genuinely care and still be unable or unwilling to offer more. At some point the question stops being how to convince them and becomes whether what is currently available is enough for you to keep choosing the arrangement."
+      }
+    },
+    "sky.venus.square.uranus": {
+      "sha256": "fe601213658a41785785b122dba332117b6b0dedb2a5e7feb6f4bc9c9724a386",
+      "payload": {
+        "summary": "A sudden change hurts differently when it exposes how much of your stability depended on somebody else remaining predictable.",
+        "body": "A sudden change hurts differently when it exposes how much of your stability depended on somebody else remaining predictable. When Venus squares Uranus, a shift in another person’s feelings, availability, money, plans, or commitment can disrupt the arrangement you had quietly built your own sense of stability around. You may want the old terms back simply because you knew how to live inside them, even if they were already becoming restrictive. Let the disruption show you what you need to build for yourself so your ability to feel grounded is not entirely dependent on someone else staying the same."
+      }
+    },
+    "sky.venus.trine.jupiter": {
+      "sha256": "3e861ac52484f7d9cfd72d80d4b81eca978d3515a43ea69f80b9df1c0bed144a",
+      "payload": {
+        "summary": "Receiving something good can be uncomfortable when you are used to believing you have to earn every inch of support before you are allowed to enjoy it.",
+        "body": "Receiving something good can be uncomfortable when you are used to believing you have to earn every inch of support before you are allowed to enjoy it. When Venus trines Jupiter, affection, generosity, money, encouragement, or opportunity can come more easily, giving you a chance to experience what it feels like when life is not making you fight for the entire outcome. Let the support register before you turn it into another obligation to achieve more. Sometimes growth is learning that being given something does not immediately put you in debt to the future."
+      }
+    },
+    "sky.venus.trine.mars": {
+      "sha256": "ef4fd1d911138d08de5cd0ca72c4d6b650ffa288b5d9f26548e4a735c959125a",
+      "payload": {
+        "summary": "Magnetism feels entirely different when you no longer have to guess if the other person will step up to meet you halfway.",
+        "body": "Magnetism feels entirely different when you no longer have to guess if the other person will step up to meet you halfway. When Venus trines Mars, attraction and initiative move in the same direction, making affection, creative collaboration, and negotiation flow because interest is expressed through direct action rather than left for one person to decode. Let reciprocity do the heavy lifting. You do not need to manufacture friction or test how much someone cares when their actual effort is already answering the question."
+      }
+    },
+    "sky.venus.trine.neptune": {
+      "sha256": "0d2cb257e80885de16cd672249a75fd2636c2a37e3e8389171f5701c036f8a1c",
+      "payload": {
+        "summary": "Not everything meaningful needs to become permanent before you are allowed to let it matter.",
+        "body": "Not everything meaningful needs to become permanent before you are allowed to let it matter. When Venus trines Neptune, affection, creativity, beauty, and compassion can feel restorative precisely because you are able to receive an experience without immediately asking what it produces, where it is going, or how long it will last. Let yourself be moved by the art, romance, tenderness, generosity, or quiet connection without forcing it to become a contract with the future. Some things change you because you were fully present for them, not because you managed to keep them forever."
+      }
+    },
+    "sky.venus.trine.pluto": {
+      "sha256": "25b56916dc76bcc226596978f6bc2ae166eedca77fb0385694ab8f0fab517e09",
+      "payload": {
+        "summary": "Real intimacy gets easier when you stop treating the subjects that matter most like the subjects most likely to ruin everything.",
+        "body": "Real intimacy gets easier when you stop treating the subjects that matter most like the subjects most likely to ruin everything. When Venus trines Pluto, closeness can hold more honesty around money, loyalty, fear, intimacy, ownership, and power without every difficult conversation becoming evidence that the bond is in danger. You do not have to manufacture intensity or force somebody to reveal more than they are ready to share. Let the important truth exist in the relationship openly and notice how much energy returns once neither person has to keep working around it."
+      }
+    },
+    "sky.venus.trine.saturn": {
+      "sha256": "e19a2ba31fe4256227aaf6cc9f76c53fd04146011b188709f70de65104086c00",
+      "payload": {
+        "summary": "Commitment becomes easier to trust when knowing what it will require does not make you want it less.",
+        "body": "Commitment becomes easier to trust when knowing what it will require does not make you want it less. When Venus trines Saturn, affection, value, and responsibility support each other, making it easier to look honestly at time, money, limits, and obligations without feeling that practicality is draining the meaning out of the choice. The details may actually make the decision feel stronger. Something worth keeping should still make sense once you understand what ordinary life will ask you to contribute to it."
+      }
+    },
+    "sky.venus.trine.uranus": {
+      "payload": {
+        "summary": "An agreement that has become too rigid may be easier to revise before the people living with it decide to leave.",
+        "body": "An agreement that has become too rigid may be easier to revise before the people living with it decide to leave. Venus trine Uranus can help a payment plan stretch, a deadline move, or a relationship rule change without turning the adjustment into proof that the whole agreement failed. The goal is not change for its own sake. It is making enough room for the arrangement to keep working. Name the term causing the problem and rewrite that term. A flexible agreement is stronger when people can adapt it before surprise becomes the only route to relief."
+      },
+      "sha256": "f41fb6fb275e7501bc4446404478a37df0f3c18bfb8264e696252d572504e6db"
+    }
+  }
+}

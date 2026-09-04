@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.mars.sextile.uranus",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-03",
+  "ownerStatement": "can you approve the one's already done and make them live?",
+  "batchId": "sky-calendar-exact-approved-through-2026-09-03",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-03/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "d50a11f95134c1b050c0c15c42241beb93c7ea6ccfa92a7e4f445ad282cc358f",
+  "summary": "A problem you have been handling the same way for months may suddenly have a much easier solution once you notice the part of the routine that never needed to be there.",
+  "body": "A problem you have been handling the same way for months may suddenly have a much easier solution once you notice the part of the routine that never needed to be there. When Mars sextiles Uranus, you are more willing to recognize and act on the workaround, tool, different route, or unconventional idea that gets you past a recurring source of friction. The new option does not have to replace everything you already know; it only needs to solve the part that keeps wasting your time. Do not retreat to the old method just because the new one feels unfamiliar. If it removes the bottleneck, let that be enough signal to change course."
+}

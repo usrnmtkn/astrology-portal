@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.mars.square.jupiter",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-03",
+  "ownerStatement": "can you approve the one's already done and make them live?",
+  "batchId": "sky-calendar-exact-approved-through-2026-09-03",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-03/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "87351859def6b692e88630921156dd3cab1943a20d1db63bb0fd7f4cbb6102a8",
+  "summary": "Your ambition will write checks your actual schedule cannot cash if you let enthusiasm outrun your operational capacity.",
+  "body": "Your ambition will write checks your actual schedule cannot cash if you let enthusiasm outrun your operational capacity. When Mars squares Jupiter, the drive to expand collides with the reality of how much time and energy you actually possess. More opportunities do not mean you have to take every single one of them. Protect your bandwidth, turn down the exciting distractions that pull you off course, and focus only on the projects you have the resources to finish."
+}

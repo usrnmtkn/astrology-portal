@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.venus.square.uranus",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-03",
+  "ownerStatement": "can you approve the one's already done and make them live?",
+  "batchId": "sky-calendar-exact-approved-through-2026-09-03",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-03/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "96f7dada5edb4698e59b982c512b23f840e80c5d0da06b1b0abaca0a849d0203",
+  "summary": "A sudden change hurts differently when it exposes how much of your stability depended on somebody else remaining predictable.",
+  "body": "A sudden change hurts differently when it exposes how much of your stability depended on somebody else remaining predictable. When Venus squares Uranus, a shift in another person’s feelings, availability, money, plans, or commitment can disrupt the arrangement you had quietly built your own sense of stability around. You may want the old terms back simply because you knew how to live inside them, even if they were already becoming restrictive. Let the disruption show you what you need to build for yourself so your ability to feel grounded is not entirely dependent on someone else staying the same."
+}

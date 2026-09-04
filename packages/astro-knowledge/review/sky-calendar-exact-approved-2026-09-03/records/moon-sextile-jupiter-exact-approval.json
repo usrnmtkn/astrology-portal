@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.moon.sextile.jupiter",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-03",
+  "ownerStatement": "can you approve the one's already done and make them live?",
+  "batchId": "sky-calendar-exact-approved-through-2026-09-03",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-03/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "e00f6f83c22b4accf27e8be9842d2bad067d2008051f959fdc402ac7c76b7a76",
+  "summary": "If you have been carrying something mostly on your own, this is a good time to let the circle of support get bigger.",
+  "body": "If you have been carrying something mostly on your own, this is a good time to let the circle of support get bigger. When the Moon sextiles Jupiter, a personal need can connect with more generosity, resources, people, or practical help than you could provide by yourself. Be specific about what would make a difference. Ask for the ride, meal, introduction, money, childcare, extra set of hands, or whatever would actually reduce the burden instead of making people guess how to help."
+}

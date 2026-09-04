@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.mars.conjunction.uranus",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-03",
+  "ownerStatement": "can you approve the one's already done and make them live?",
+  "batchId": "sky-calendar-exact-approved-through-2026-09-03",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-03/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "2ad222721040c5710ca981454e44f3b0fad35120240a7d523a6e628d20c35b4c",
+  "summary": "When a sudden crisis hits, the sheer adrenaline spike can convince you that any chaotic reaction is better than standing still.",
+  "body": "When a sudden crisis hits, the sheer adrenaline spike can convince you that any chaotic reaction is better than standing still. When Mars conjuncts Uranus, disruption and panic arrive together, making rash decisions look like bold leadership. The first workaround that saves your day is rarely a solid foundation for your future. Handle the immediate emergency, keep yourself safe from self-sabotage, and refuse to make permanent choices while the dust is still settling."
+}
