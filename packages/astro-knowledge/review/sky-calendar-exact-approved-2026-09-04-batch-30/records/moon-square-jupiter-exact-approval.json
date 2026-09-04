@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.moon.square.jupiter",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-04",
+  "ownerStatement": "please commit and make live the updated aspects",
+  "batchId": "sky-calendar-exact-approved-2026-09-04-batch-30",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-04-batch-30/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "ef12de63f8f9b5ced2d97bd9b7dfedeac820ce08c04b8859024520024d080238",
+  "summary": "Good news can make the whole situation look more promising than it actually is, while one frustrating development can make progress you felt good about yesterday suddenly seem like it is not enough.",
+  "body": "Good news can make the whole situation look more promising than it actually is, while one frustrating development can make progress you felt good about yesterday suddenly seem like it is not enough. When the Moon squares Jupiter, emotions magnify the meaning of whatever just happened, making optimism and disappointment both harder to keep in proportion. You do not need to distrust the good feeling or talk yourself out of being upset; just remember that neither mood has the full picture yet."
+}

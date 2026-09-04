@@ -1,0 +1,24 @@
+{
+  "schema": "tldr.calendar-exact-owner-ruling.v1",
+  "type": "bounded_contextual_owner_batch_authorization",
+  "authority": "owner",
+  "decision": "approve",
+  "batchId": "sky-calendar-exact-approved-2026-09-04-batch-30",
+  "ownerStatement": "please commit and make live the updated aspects",
+  "approvedAt": "2026-09-04",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "memberCount": 30,
+  "memberSetSha256": "9b526416f5cabf2beb5886e73e5e57b6ff05206cc5735b413cd97ae94c91fa8f",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-04-batch-30/owner-batch-authorization.json",
+  "payloadFiles": [
+    "moon.json",
+    "neptune.json",
+    "saturn.json"
+  ],
+  "note": "Owner approved these exact Calendar aspect rewrites in conversation and then explicitly instructed that the updated aspects be committed and made live. Rows outside this fixed hash-bound batch remain untouched."
+}
