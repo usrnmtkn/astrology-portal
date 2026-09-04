@@ -1,0 +1,18 @@
+{
+  "family": "venus",
+  "rowCount": 2,
+  "rows": [
+    {
+      "contentKey": "sky.aspect.venus.opposition.uranus",
+      "summary": "Someone may want to keep the connection, but not the version of it that has started to feel restrictive.",
+      "body": "Someone may want to keep the connection, but not the version of it that has started to feel restrictive. When Venus opposes Uranus, connection and freedom face each other directly, making sudden attractions, changed feelings, revised terms, or requests for more space difficult to ignore. A relationship, financial plan, or agreement can still matter even when the old rules no longer fit the people living inside them. Changing the terms is not the same as ending the connection. Sometimes the connection survives because the rules finally do.",
+      "bodySha256": "e0595600d1c510684b93afe1466711e3b0e2e6c995326d6ec306b180bbc377bb"
+    },
+    {
+      "contentKey": "sky.aspect.venus.trine.uranus",
+      "summary": "A spontaneous invitation, unexpected attraction, or change of plans could break a pattern that has been feeling stale without blowing up anything you still value.",
+      "body": "A spontaneous invitation, unexpected attraction, or change of plans could break a pattern that has been feeling stale without blowing up anything you still value. When Venus trines Uranus, connection and freedom support each other, making it easier to try something different without turning novelty into instability. You may be surprised by what feels good once you stop assuming it has to look like what you normally choose. Follow the change that adds energy without creating damage you will have to undo later. You do not need a crisis to justify wanting something different.",
+      "bodySha256": "22c1d565a52079ef71679f3cf549ddbc523fd205769de43b2e4fd559884eb0f7"
+    }
+  ]
+}
