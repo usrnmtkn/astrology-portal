@@ -1,0 +1,92 @@
+name: Owner batch approval governance v1
+
+on:
+  push:
+    branches:
+      - chatgpt/owner-batch-approval-governance-v1
+
+permissions:
+  contents: write
+
+jobs:
+  governance:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: chatgpt/owner-batch-approval-governance-v1
+          fetch-depth: 0
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: services/tldrastro-api/pyproject.toml
+      - name: Install dependencies
+        run: npm ci --no-audit --no-fund
+      - name: Install pinned API dependencies
+        working-directory: services/tldrastro-api
+        run: python -m pip install -e ".[dev]"
+      - name: Wire bounded owner batch governance
+        run: |
+          node --input-type=module <<'NODE'
+          import fs from 'node:fs';
+
+          const governancePath = 'src/astro-writing/approvalGovernance.mjs';
+          let governance = fs.readFileSync(governancePath, 'utf8');
+          governance = governance
+            .replace('throw new Error("OWNER_APPROVAL_REQUIRED_FOR_BATCH_GENERATION");', 'throw new Error("RENDERED_SAMPLE_OWNER_APPROVAL_REQUIRED_FOR_BATCH_GENERATION");')
+            .replace('throw new Error("OWNER_APPROVAL_REQUIRED_FOR_SERVING");', 'throw new Error("RENDERED_SAMPLE_OWNER_APPROVAL_REQUIRED_FOR_SERVING");');
+          fs.writeFileSync(governancePath, governance);
+
+          const focusedPath = 'scripts/test-bounded-owner-batch-approval-governance.mjs';
+          let focused = fs.readFileSync(focusedPath, 'utf8');
+          focused = focused.replace(
+            '/OWNER_APPROVAL_REQUIRED_FOR_SERVING/u,',
+            '/RENDERED_SAMPLE_OWNER_APPROVAL_REQUIRED_FOR_SERVING/u,'
+          );
+          fs.writeFileSync(focusedPath, focused);
+
+          const packagePath = 'package.json';
+          let pkg = fs.readFileSync(packagePath, 'utf8');
+          const oldPretest = '"pretest:astro-writing": "node scripts/test-legacy-package-governed-evidence-boundary.mjs"';
+          const newPretest = '"pretest:astro-writing": "node scripts/test-legacy-package-governed-evidence-boundary.mjs && node scripts/test-bounded-owner-batch-approval-governance.mjs"';
+          if (pkg.includes(oldPretest)) {
+            pkg = pkg.replace(oldPretest, newPretest);
+          } else if (!pkg.includes(newPretest)) {
+            throw new Error('Could not locate pretest:astro-writing wiring point.');
+          }
+          fs.writeFileSync(packagePath, pkg);
+          NODE
+      - name: Run focused governance regression
+        run: |
+          node scripts/test-bounded-owner-batch-approval-governance.mjs
+          git diff --check
+      - name: Run repository typecheck
+        run: npm run typecheck
+      - name: Run full content gate
+        run: npm run test:content
+      - name: Build web application
+        run: npm run build:web
+      - name: Review governance diff
+        run: |
+          git status --short
+          git diff --stat
+          git diff --check
+      - name: Commit governance wiring
+        shell: bash
+        run: |
+          if git diff --quiet; then
+            echo "No governance wiring changes to commit."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "test: enforce bounded owner batch governance"
+          git push origin HEAD:chatgpt/owner-batch-approval-governance-v1
