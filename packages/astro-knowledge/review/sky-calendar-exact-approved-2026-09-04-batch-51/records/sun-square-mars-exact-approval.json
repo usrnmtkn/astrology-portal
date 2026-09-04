@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.sun.square.mars",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-04",
+  "ownerStatement": "please proceed with next steps",
+  "batchId": "sky-calendar-exact-approved-2026-09-04-batch-51",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-04-batch-51/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "75251880abe53b0beae3ab00e1b79fc049419b7f4c08b70a8d8d48f671602395",
+  "summary": "Your temper may arrive before the part of you that remembers this problem is probably not worth a war.",
+  "body": "Your temper may arrive before the part of you that remembers this problem is probably not worth a war. When the Sun squares Mars, pride and frustration feed each other, making delays, criticism, competition, or somebody else’s attitude much harder to ignore. Anger can show you exactly where you are tired of being pushed, dismissed, or blocked, but it can also make every irritation look like a challenge to your authority. Use the heat to deal with what is actually wrong. Do not give a small conflict the power to decide the rest of your day."
+}

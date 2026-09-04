@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.sun.sextile.moon",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-04",
+  "ownerStatement": "please proceed with next steps",
+  "batchId": "sky-calendar-exact-approved-2026-09-04-batch-51",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-04-batch-51/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "c4e8a7d80095ead1c7b1493e0a2685a8d2df0cb0bc73582f7066fdf4e1fd2996",
+  "summary": "One small adjustment to a demanding plan can suddenly make the entire commitment much easier to say yes to.",
+  "body": "One small adjustment to a demanding plan can suddenly make the entire commitment much easier to say yes to. When the Sun sextiles the Moon, what you want to achieve and what you need to feel comfortable doing it work together seamlessly. Shifting the timeline, asking for backup, or making room for one practical need can resolve a conflict that looked insurmountable in the first draft. You do not have to scrap a winning agenda simply because the original pacing is burning you out. Isolate the specific friction point and renegotiate that single boundary to make the rest of the work sustainable."
+}

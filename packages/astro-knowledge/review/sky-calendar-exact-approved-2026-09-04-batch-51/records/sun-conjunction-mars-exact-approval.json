@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.sun.conjunction.mars",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-04",
+  "ownerStatement": "please proceed with next steps",
+  "batchId": "sky-calendar-exact-approved-2026-09-04-batch-51",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-04-batch-51/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "45a291578d1e8cb27502772d3bad4dc74cdc11a3138235db770c542efbec50b1",
+  "summary": "Once you know what you want, the distance between deciding and acting can become almost nonexistent.",
+  "body": "Once you know what you want, the distance between deciding and acting can become almost nonexistent. When the Sun conjoins Mars, identity and drive fuse, concentrating confidence, anger, courage, and initiative into a powerful need to do something rather than keep waiting. That force can help you make a move you have been avoiding, but it can also make resistance feel like a personal challenge that has to be defeated. Use the heat on the decision that actually requires courage, not on proving that nobody gets to slow you down."
+}

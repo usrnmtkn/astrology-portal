@@ -3420,7 +3420,7 @@ test.describe("client-facing user flow case studies", () => {
     await expect(article.getByRole("heading", { name: "Gifts" })).toBeVisible();
     await expect(article.getByRole("heading", { name: "Lessons" })).toBeVisible();
     await expect(article).toContainText("Sun Trine Chiron");
-    await expect(article).toContainText("A closed-door talk exposes who has been pulling the strings.");
+    await expect(article).toContainText("Your thoughts can feel unusually personal when saying what you mean also feels like saying who you are.");
     await expect(article).not.toContainText("The Sun in Virgo ties confidence to usefulness, accuracy");
     await expectNoDuplicateArticleHeadings(page, "Sun in Virgo placement detail");
     await assertNoClientErrors();

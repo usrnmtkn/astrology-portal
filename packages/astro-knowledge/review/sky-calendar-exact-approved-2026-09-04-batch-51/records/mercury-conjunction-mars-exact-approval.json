@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.mercury.conjunction.mars",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-04",
+  "ownerStatement": "please proceed with next steps",
+  "batchId": "sky-calendar-exact-approved-2026-09-04-batch-51",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-04-batch-51/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "385ffbc59fd549a7bbff64eaa14ccfee98cdfee8c8848816d0f9da70fe7ec1e5",
+  "summary": "A conversation can go from casual to confrontational before you have decided how much the issue actually matters.",
+  "body": "A conversation can go from casual to confrontational before you have decided how much the issue actually matters. When Mercury conjoins Mars, thought and action fuse, making your mind faster, your opinions sharper, and your response much harder to hold back once something irritates you. This is excellent astrology for making the call, asking the difficult question, or saying what everyone else has been avoiding. Deploy that sharpness to slice through logistical confusion, not the person sitting across from you. Win the actual objective instead of just winning the argument."
+}

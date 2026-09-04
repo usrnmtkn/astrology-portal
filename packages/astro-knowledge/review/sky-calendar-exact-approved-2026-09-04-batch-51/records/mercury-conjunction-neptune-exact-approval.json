@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.mercury.conjunction.neptune",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-04",
+  "ownerStatement": "please proceed with next steps",
+  "batchId": "sky-calendar-exact-approved-2026-09-04-batch-51",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-04-batch-51/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "3cc110084d2ef644347cb3aea311d2f22fce947d8161ff3a432f6ef95ea05040",
+  "summary": "An idea, dream, or intuitive hit can feel so convincing that you start planning around it before you have checked the details.",
+  "body": "An idea, dream, or intuitive hit can feel so convincing that you start planning around it before you have checked the details. When Mercury conjoins Neptune, thought and imagination fuse, making creativity, symbolism, intuition, and associative thinking unusually strong while facts can become easier to blur. Write down the strange idea, follow the creative thread, and pay attention to what your instincts are noticing. Give the inspiration enough space to breathe, but refuse to make a permanent decision until the actual logistics are on paper. Build the vision, but verify the floorboards before you step on them."
+}

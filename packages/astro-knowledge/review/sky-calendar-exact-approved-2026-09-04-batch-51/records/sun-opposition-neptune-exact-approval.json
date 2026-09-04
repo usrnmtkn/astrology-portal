@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.sun.opposition.neptune",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-04",
+  "ownerStatement": "please proceed with next steps",
+  "batchId": "sky-calendar-exact-approved-2026-09-04-batch-51",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-04-batch-51/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "997ecee3a20b1b33a9935f3e303fa152c8ac7ef2a4dfa111ccb030dd3451c417",
+  "summary": "Mixed signals can make it hard to tell if something is genuinely promising or if you are filling in the blanks with what you hope is true.",
+  "body": "Mixed signals can make it hard to tell if something is genuinely promising or if you are filling in the blanks with what you hope is true. When the Sun opposes Neptune, confidence and clarity come up against uncertainty and projection, so a person, plan, or opportunity can look more convincing from a distance than it does once you ask for specifics. If the story keeps changing, the answer stays vague, or you are doing most of the explaining for why it could work, slow down before committing more time, money, or trust. You do not have to abandon the possibility. Wait until you have enough information to know what you are actually saying yes to."
+}

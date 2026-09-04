@@ -1,0 +1,66 @@
+{
+  "family": "sun",
+  "rowCount": 10,
+  "rows": [
+    {
+      "contentKey": "sky.aspect.sun.opposition.saturn",
+      "summary": "A delay, rejection, or hard limit will quickly force you to confront exactly what your current plan can actually support.",
+      "body": "A delay, rejection, or hard limit will quickly force you to confront exactly what your current plan can actually support. When the Sun opposes Saturn, your confidence meets external resistance, usually arriving through a deadline, a new rule, or a gatekeeper with enough authority to tell you no. A setback might demand a smaller scope or a longer timeline, but it does not automatically mean the larger goal is flawed. Treat a \"no\" as a structural data point rather than a final verdict on your potential. Identify the exact terms of the roadblock and pivot your strategy to operate within the space that is actually open.",
+      "bodySha256": "7ebee47abce420cb0ae451489afc43fe6cea0a6ee494f83d88bd418a96f288c8"
+    },
+    {
+      "contentKey": "sky.aspect.sun.sextile.mars",
+      "summary": "It is unusually easy to make the call, send the message, or act on a decision you have been sitting on once you stop demanding a perfect plan.",
+      "body": "It is unusually easy to make the call, send the message, or act on a decision you have been sitting on once you stop demanding a perfect plan. When the Sun sextiles Mars, core vitality and initiative cooperate, giving you a clean opening to move before overthinking turns a simple task back into a massive project. Stop endlessly revising the strategy and spend this momentum on immediate execution. If you already know the correct move, stop waiting for consensus and simply clear the bottleneck yourself.",
+      "bodySha256": "39df07f9a40bc8fb9f90c534b57f3f298b8992e55039e262dea68870eaf1e3c1"
+    },
+    {
+      "contentKey": "sky.aspect.sun.sextile.moon",
+      "summary": "One small adjustment to a demanding plan can suddenly make the entire commitment much easier to say yes to.",
+      "body": "One small adjustment to a demanding plan can suddenly make the entire commitment much easier to say yes to. When the Sun sextiles the Moon, what you want to achieve and what you need to feel comfortable doing it work together seamlessly. Shifting the timeline, asking for backup, or making room for one practical need can resolve a conflict that looked insurmountable in the first draft. You do not have to scrap a winning agenda simply because the original pacing is burning you out. Isolate the specific friction point and renegotiate that single boundary to make the rest of the work sustainable.",
+      "bodySha256": "c4e8a7d80095ead1c7b1493e0a2685a8d2df0cb0bc73582f7066fdf4e1fd2996"
+    },
+    {
+      "contentKey": "sky.aspect.sun.sextile.neptune",
+      "summary": "An intuitive hunch or creative idea becomes much easier to trust the second you find one practical way to act on it.",
+      "body": "An intuitive hunch or creative idea becomes much easier to trust the second you find one practical way to act on it. When the Sun sextiles Neptune, conscious purpose and imagination cooperate, turning floating inspiration into something immediately useful. Write the first page, make the sketch, or give a daydream an hour of actual focus to see what happens when it survives outside your head. You do not need a flawless business plan to test whether an idea has merit. Build a low-stakes prototype, put it into the real world, and let the results dictate your next investment of time.",
+      "bodySha256": "f760de4fa000e693fba80d3f9d61a47947e9124ec5520877080ea67acef7a898"
+    },
+    {
+      "contentKey": "sky.aspect.sun.sextile.uranus",
+      "summary": "A better option may appear the moment you stop trying to make the old one work.",
+      "body": "A better option may appear the moment you stop trying to make the old one work. When the Sun sextiles Uranus, confidence and experimentation support each other, making it easier to change the method without losing the larger goal. A new tool, unexpected invitation, different schedule, or sudden idea could solve something you have been forcing for too long. Follow the opening that gives you more freedom without creating another problem you will have to clean up later.",
+      "bodySha256": "5a0f51e7838b5ea79d09ca8cc7692235c4a39a96a815e51e68f3f702259cf9ca"
+    },
+    {
+      "contentKey": "sky.aspect.sun.square.jupiter",
+      "summary": "One exciting yes can become three more commitments before you have counted what the first one is going to cost you.",
+      "body": "One exciting yes can become three more commitments before you have counted what the first one is going to cost you. When the Sun squares Jupiter, confidence expands faster than restraint, making bigger goals, purchases, promises, and opportunities unusually difficult to resist. More may genuinely be available, but that does not mean all of it belongs in your life at once. Look at the money, time, and energy already spoken for before enthusiasm volunteers resources you do not actually have.",
+      "bodySha256": "896eeecc4d4535a074c30912130ab5aa30015a6cb4768be141e43784059c0424"
+    },
+    {
+      "contentKey": "sky.aspect.sun.square.mars",
+      "summary": "Your temper may arrive before the part of you that remembers this problem is probably not worth a war.",
+      "body": "Your temper may arrive before the part of you that remembers this problem is probably not worth a war. When the Sun squares Mars, pride and frustration feed each other, making delays, criticism, competition, or somebody else’s attitude much harder to ignore. Anger can show you exactly where you are tired of being pushed, dismissed, or blocked, but it can also make every irritation look like a challenge to your authority. Use the heat to deal with what is actually wrong. Do not give a small conflict the power to decide the rest of your day.",
+      "bodySha256": "75251880abe53b0beae3ab00e1b79fc049419b7f4c08b70a8d8d48f671602395"
+    },
+    {
+      "contentKey": "sky.aspect.sun.square.moon",
+      "summary": "The plan may still look good on paper while your actual life is starting to reject it.",
+      "body": "The plan may still look good on paper while your actual life is starting to reject it. When the Sun squares the Moon, what you are trying to accomplish rubs against what your body, home, emotions, or existing responsibilities need from you. Exhaustion, irritability, or the sudden urge to cancel everything may be less about the goal itself and more about what the current version is demanding. Change the schedule, expectation, or responsibility that is making the rest of the plan unnecessarily hard to carry.",
+      "bodySha256": "eed9d30db5df0fd3e5e1e41342521c979bf59b380a2a333d14c9ee87f4793f95"
+    },
+    {
+      "contentKey": "sky.aspect.sun.square.neptune",
+      "summary": "Something may look convincing right up until you ask the question nobody has given you a straight answer to yet.",
+      "body": "Something may look convincing right up until you ask the question nobody has given you a straight answer to yet. When the Sun squares Neptune, confidence and projection blur together, making a person, promise, or plan easier to believe before the missing details become obvious. If the numbers keep moving, the explanation changes, or you are being asked to trust what nobody will put in writing, pay attention. Inspiration is not the problem. Building your next move on information that keeps dissolving is.",
+      "bodySha256": "25506939462dd681d8d9433649e37f11ddbe7558635ea9b223a5455530e18237"
+    },
+    {
+      "contentKey": "sky.aspect.sun.square.pluto",
+      "summary": "A disagreement can become much harder to solve once somebody decides that giving an inch means losing control.",
+      "body": "A disagreement can become much harder to solve once somebody decides that giving an inch means losing control. When the Sun squares Pluto, pride and power collide, making leverage, secrecy, money, access, or authority part of a conflict that may have started over something much smaller. The harder one side pushes, the more the other may tighten its grip. Do not let the fight over control swallow the original issue. Find the thing that actually needs to change and keep your attention there.",
+      "bodySha256": "ea44d3b3575fd464a5fd874dea79ae6d6b20595b79668f4bc6126c46c0b74e7c"
+    }
+  ]
+}

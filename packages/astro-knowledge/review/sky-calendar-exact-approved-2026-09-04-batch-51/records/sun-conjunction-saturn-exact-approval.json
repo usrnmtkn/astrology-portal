@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.sun.conjunction.saturn",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-04",
+  "ownerStatement": "please proceed with next steps",
+  "batchId": "sky-calendar-exact-approved-2026-09-04-batch-51",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-04-batch-51/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "5a8cd0a5d41dd3d6731e0caf2c44d67a714228888197b4ff3199157af6973891",
+  "summary": "Responsibility can feel especially personal when the thing you have to carry starts looking like evidence of what you are capable of.",
+  "body": "Responsibility can feel especially personal when the thing you have to carry starts looking like evidence of what you are capable of. When the Sun conjoins Saturn, identity and duty fuse, making deadlines, commitments, criticism, or added authority feel heavier because your confidence is wrapped up in meeting the standard. This is strong astrology for taking yourself seriously and doing work that requires discipline. It is not a reason to treat exhaustion like proof of character. Carry what genuinely belongs to you without turning every limit into a test you have to pass."
+}

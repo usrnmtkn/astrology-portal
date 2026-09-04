@@ -1,0 +1,27 @@
+{
+  "schema": "tldr.calendar-exact-owner-ruling.v1",
+  "type": "bounded_contextual_owner_batch_authorization",
+  "authority": "owner",
+  "decision": "approve",
+  "batchId": "sky-calendar-exact-approved-2026-09-04-batch-51",
+  "ownerStatement": "please proceed with next steps",
+  "approvedAt": "2026-09-04",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "memberCount": 51,
+  "memberSetSha256": "6a3b709d8f735da5ca44d8548cb343a8b7533d732d2445114f71c8cc7c26d54c",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-04-batch-51/owner-batch-authorization.json",
+  "payloadFiles": [
+    "mercury-a.json",
+    "mercury-b.json",
+    "saturn.json",
+    "sun-a.json",
+    "sun-b.json",
+    "venus.json"
+  ],
+  "note": "Owner approved the remaining exact Calendar aspect rewrites in conversation and then explicitly instructed the controlled release to proceed. This fixed hash-bound batch contains the final 51 editorial updates; protected benchmark passages remain untouched."
+}

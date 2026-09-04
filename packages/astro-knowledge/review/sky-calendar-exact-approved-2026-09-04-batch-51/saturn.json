@@ -1,0 +1,30 @@
+{
+  "family": "saturn",
+  "rowCount": 4,
+  "rows": [
+    {
+      "contentKey": "sky.aspect.saturn.conjunction.uranus",
+      "summary": "The new way stops being an experiment the moment other people have to build their lives around it.",
+      "body": "The new way stops being an experiment the moment other people have to build their lives around it. When Saturn conjoins Uranus, disruption and structure fuse, giving a new system, rule, habit, or boundary enough authority to replace what came before it. The change may solve a problem that genuinely needed solving, but that does not mean everyone can absorb the transition at the same speed or cost. Reinvention becomes sustainable when the replacement can carry what people still need, not simply prove that the old way is over.",
+      "bodySha256": "4918885f88cc78761d76dd0df4b2457ef9a972f60eefc99b41246e4198a17c39"
+    },
+    {
+      "contentKey": "sky.aspect.saturn.opposition.uranus",
+      "summary": "You can know something has to change and still be terrified of what breaks when it does.",
+      "body": "You can know something has to change and still be terrified of what breaks when it does. When Saturn opposes Uranus, the need for stability comes face-to-face with the need for freedom, making every option look like it sacrifices something important. Keeping the old structure may protect what people rely on, but it can also preserve the exact restriction that created the problem. Do not confuse stability with keeping everything the same. Protect what still matters and change what has become impossible to justify.",
+      "bodySha256": "f12098b2eac9c8c4d5867ca0566a2e710f8941d91f044934b7cf414f5070dcca"
+    },
+    {
+      "contentKey": "sky.aspect.saturn.sextile.uranus",
+      "summary": "A better way of doing something can make you realize how much unnecessary difficulty you had started treating as normal.",
+      "body": "A better way of doing something can make you realize how much unnecessary difficulty you had started treating as normal. When Saturn sextiles Uranus, structure and experimentation support each other, making it easier to introduce a new tool, boundary, routine, or method without destabilizing everything around it. The improvement does not have to be dramatic to change what you can rely on. If the new way saves time, removes friction, or gives you more room to move, stop assuming difficulty was part of the deal.",
+      "bodySha256": "5336db63b5872e9c5d986d78db701bfe4b0122a221699da56e6914abc08790d0"
+    },
+    {
+      "contentKey": "sky.aspect.saturn.square.uranus",
+      "summary": "The urge to break free gets much louder when the structure around you keeps demanding that you work around a problem nobody is willing to fix.",
+      "body": "The urge to break free gets much louder when the structure around you keeps demanding that you work around a problem nobody is willing to fix. When Saturn squares Uranus, restriction and disruption grind against each other until the old way becomes increasingly difficult to maintain and the new way still carries consequences nobody wants to absorb. Frustration can make blowing everything up look cleaner than it actually is, especially when you are exhausted from adapting to something that should have changed already. Something needs to move. Make sure you are dismantling the restriction that caused the problem, not everything you built around it to survive.",
+      "bodySha256": "36090427b926dfbed7ded1870c14f3501535b7853ff02dfd4039359006c2c611"
+    }
+  ]
+}

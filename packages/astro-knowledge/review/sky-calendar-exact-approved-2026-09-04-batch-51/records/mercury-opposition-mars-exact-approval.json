@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.mercury.opposition.mars",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-04",
+  "ownerStatement": "please proceed with next steps",
+  "batchId": "sky-calendar-exact-approved-2026-09-04-batch-51",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-04-batch-51/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "17f8d12a99dd41dd44465bc1656bf4c1bef1ab11df8621f2bab2e8e20578b221",
+  "summary": "Someone may want an answer immediately while you are still trying to understand what you are actually being asked to agree to.",
+  "body": "Someone may want an answer immediately while you are still trying to understand what you are actually being asked to agree to. When Mercury opposes Mars, thought and action face each other directly, turning questions, timing, and tone into potential points of conflict. One person may see discussion as delay while the other sees acting without enough information as reckless. Refuse to let someone else's manufactured emergency dictate your timeline. Extract the exact data point you need to make an informed choice, and exit the debate the second you have it."
+}
