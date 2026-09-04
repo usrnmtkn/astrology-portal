@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.moon.trine.venus",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-04",
+  "ownerStatement": "please commit and make live the updated aspects",
+  "batchId": "sky-calendar-exact-approved-2026-09-04-batch-30",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-04-batch-30/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "b02e19981c1fdd3e2fab9ce56d95db015a60b82726bb50bf37773141610f1993",
+  "summary": "Affection is easier to give and receive when you stop inventing a catch just because something feels uncomplicated.",
+  "body": "Affection is easier to give and receive when you stop inventing a catch just because something feels uncomplicated. When the Moon trines Venus, emotional needs and pleasure cooperate, making warmth, connection, beauty, and generosity easier to enjoy without immediately worrying about what comes next. Let the good feeling be useful. This is lovely astrology for enjoying the people, places, and small comforts that remind you life is allowed to feel good too."
+}
