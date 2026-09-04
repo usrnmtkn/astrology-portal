@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.sun.square.moon",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-04",
+  "ownerStatement": "please proceed with next steps",
+  "batchId": "sky-calendar-exact-approved-2026-09-04-batch-51",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-04-batch-51/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "eed9d30db5df0fd3e5e1e41342521c979bf59b380a2a333d14c9ee87f4793f95",
+  "summary": "The plan may still look good on paper while your actual life is starting to reject it.",
+  "body": "The plan may still look good on paper while your actual life is starting to reject it. When the Sun squares the Moon, what you are trying to accomplish rubs against what your body, home, emotions, or existing responsibilities need from you. Exhaustion, irritability, or the sudden urge to cancel everything may be less about the goal itself and more about what the current version is demanding. Change the schedule, expectation, or responsibility that is making the rest of the plan unnecessarily hard to carry."
+}

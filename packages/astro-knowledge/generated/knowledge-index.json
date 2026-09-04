@@ -96875,7 +96875,7 @@
             "document": true
           },
           "path": "packages/astro-knowledge/data/transits/mercury-conjunction-mars.json",
-          "sourceSha256": "59049f0c7978b7f87032442846660b016a93912aa55796117ffd8fdb245410cb"
+          "sourceSha256": "0323ebe30af78391aa2d6779125c199a3fc2c54d02c6befcee734bed92cf00df"
         }
       ]
     },
@@ -96896,7 +96896,7 @@
             "document": true
           },
           "path": "packages/astro-knowledge/data/transits/mercury-conjunction-neptune.json",
-          "sourceSha256": "c073b6154981b753f3f48f66de90a2c61abad7a1421bf32e167f96e6ed391763"
+          "sourceSha256": "9816433b99ed794c5acfa6fc3ad4a3c2416b1110a0f939bb3d070998e18f11bc"
         }
       ]
     },
@@ -96917,7 +96917,7 @@
             "document": true
           },
           "path": "packages/astro-knowledge/data/transits/mercury-conjunction-pluto.json",
-          "sourceSha256": "09a16c471608a2e5b688b3d2ebbeb1b4db79d19298565f3e79c4e7552dd83a31"
+          "sourceSha256": "e3815aa3bb9c43408704d269b69a636dca08000564cde0b443f9dddc7600f3da"
         }
       ]
     },
@@ -96938,7 +96938,7 @@
             "document": true
           },
           "path": "packages/astro-knowledge/data/transits/mercury-conjunction-saturn.json",
-          "sourceSha256": "79c1c358974f4835cc4e1d3c986e10e9fd0bf37fa23bcfa853213d089dbf656d"
+          "sourceSha256": "405396dad4d9a3a66f5a3ca943c70b918e971b98d01d26554452a5d6e57c4607"
         }
       ]
     },
@@ -96959,7 +96959,7 @@
             "document": true
           },
           "path": "packages/astro-knowledge/data/transits/mercury-conjunction-uranus.json",
-          "sourceSha256": "4fa7798b1a67eacf2c19f0b13bb7de189159d741bac2a718eb0a14e421eb9489"
+          "sourceSha256": "d1968df505ee77decc38eb5fa50b035de04f92956cafae55f45b5e00bf0b3f4a"
         }
       ]
     },
@@ -96980,7 +96980,7 @@
             "document": true
           },
           "path": "packages/astro-knowledge/data/transits/mercury-conjunction-venus.json",
-          "sourceSha256": "7f0e0e6131f1354c30e1efcff3ca008f73ab7a2ec5d3a827353f25e25c03b3d5"
+          "sourceSha256": "aed022278ed2f7e7b6d54405203c4333ff60873358bcfa1be4ba087689f4d318"
         }
       ]
     },
@@ -97106,7 +97106,7 @@
             "document": true
           },
           "path": "packages/astro-knowledge/data/transits/mercury-opposition-jupiter.json",
-          "sourceSha256": "53d4c8f951fea6732c2965ab05117c029fd98e378fb1f0f186bf2ff4c4187ff5"
+          "sourceSha256": "266af1f276fc9ceb7a5c2a65e363028cbdb7df743a387f7bc81133cce48b7ee0"
         }
       ]
     },
@@ -97127,7 +97127,7 @@
             "document": true
           },
           "path": "packages/astro-knowledge/data/transits/mercury-opposition-mars.json",
-          "sourceSha256": "2019ec9e930a13229b3b18d0a3dd482488a159fd84bf15d68f74324650a6c01c"
+          "sourceSha256": "c2ceeaa7f6f7571b70e3058a1e2235ec67eaea9bf0cab18fdfa6a7f653753cfb"
         }
       ]
     },
@@ -97148,7 +97148,7 @@
             "document": true
           },
           "path": "packages/astro-knowledge/data/transits/mercury-opposition-neptune.json",
-          "sourceSha256": "4d9defb5a67c90dd6583431c08a6161d596a4fcee67e95cd073660cb1297bf40"
+          "sourceSha256": "272f902376cb17270b39945011065099a4e21db9b0186a16814e90589c9134f6"
         }
       ]
     },
@@ -97169,7 +97169,7 @@
             "document": true
           },
           "path": "packages/astro-knowledge/data/transits/mercury-opposition-pluto.json",
-          "sourceSha256": "ea81b4d38fa7a8af48d647bb0388ef3f08356e1083ce8c0fe00ecd256becb0d0"
+          "sourceSha256": "97b343c42b46c202c9c7ff9b7234bb133873033610a194860e979b0c12130838"
         }
       ]
     },
@@ -97190,7 +97190,7 @@
             "document": true
           },
           "path": "packages/astro-knowledge/data/transits/mercury-opposition-saturn.json",
-          "sourceSha256": "57293d80f1270ddeec5ce2c78d4c9cbdaf9ff3f26652e2b991c9c8b1202d8785"
+          "sourceSha256": "c699566d1fce113bde44411a9bf2bb16ac46f3bc6a6d08b5eec95a59401f7dde"
         }
       ]
     },
@@ -97211,7 +97211,7 @@
             "document": true
           },
           "path": "packages/astro-knowledge/data/transits/mercury-opposition-uranus.json",
-          "sourceSha256": "4d96d24530e70810600dbde659d589db5c46018e367b91c634c1714500eb5d46"
+          "sourceSha256": "ad86ba213de01aa262c1ca98dd7749ebcb441dc0dee0e6b4922904bb0d2851c6"
         }
       ]
     },
@@ -97274,7 +97274,7 @@
             "document": true
           },
           "path": "packages/astro-knowledge/data/transits/mercury-sextile-jupiter.json",
-          "sourceSha256": "a69bd44d1a30c12b10afcd43951ad5410d944f6181ef99c139ce99c21875975d"
+          "sourceSha256": "59d0d053a8d85f3e8594a1046106f7cbfc4a5e2fc007e7c55a2d63cdbf75d8bc"
         }
       ]
     },
@@ -97295,7 +97295,7 @@
             "document": true
           },
           "path": "packages/astro-knowledge/data/transits/mercury-sextile-mars.json",
-          "sourceSha256": "73ea48f38ed6839d87f44b4c4601dd73aa49774e7c7b5d411e3c07e929172d76"
+          "sourceSha256": "fff07856a20540835614dcc21cda976db69e196945cf45d553c5a89853232d33"
         }
       ]
     },
@@ -97316,7 +97316,7 @@
             "document": true
           },
           "path": "packages/astro-knowledge/data/transits/mercury-sextile-neptune.json",
-          "sourceSha256": "593d51b12404b39d3571b15d690938de032b64ffd3e74a1d8a4123e720572e2f"
+          "sourceSha256": "56cad89154f80ee7ee289e75bc072e0c84e597767e4defd442596877025da2f9"
         }
       ]
     },
@@ -97337,7 +97337,7 @@
             "document": true
           },
           "path": "packages/astro-knowledge/data/transits/mercury-sextile-pluto.json",
-          "sourceSha256": "737252d2ebc1fc70260de190ee1457f177ca3923ae12b763a685504663aa7e66"
+          "sourceSha256": "85dee1ee98dbf6e253dbabec303a1bdd6940c7cf281def4e54a6bb0121cc6b6b"
         }
       ]
     },
@@ -97358,7 +97358,7 @@
             "document": true
           },
           "path": "packages/astro-knowledge/data/transits/mercury-sextile-saturn.json",
-          "sourceSha256": "820b4371068ab03db37031d2afcf3a50aa0fbc2bf8289da6ec4d7e66071cee19"
+          "sourceSha256": "08cac15b19348c0d670efa827b6e90cfbbb0c80df1e40eafd1512d1ae082bcc7"
         }
       ]
     },
@@ -97379,7 +97379,7 @@
             "document": true
           },
           "path": "packages/astro-knowledge/data/transits/mercury-sextile-uranus.json",
-          "sourceSha256": "ff4a526525c6f36b8ab1532d4dbbec558d0e0091d1f0b56e2544317bcf453061"
+          "sourceSha256": "584f65dcaac069190b2ca9d891ed9d35f40bc374017dff7ab46153cad0f95a83"
         }
       ]
     },
@@ -97400,7 +97400,7 @@
             "document": true
           },
           "path": "packages/astro-knowledge/data/transits/mercury-sextile-venus.json",
-          "sourceSha256": "0f73afd4935a00c9d23bb3b9a56d570f61609f04c5a32bd2357be20d91c84759"
+          "sourceSha256": "370ef4e3f008319c5959da26d488166f38252d19710b4d49b4c5654278f01434"
         }
       ]
     },
@@ -97421,7 +97421,7 @@
             "document": true
           },
           "path": "packages/astro-knowledge/data/transits/mercury-square-jupiter.json",
-          "sourceSha256": "a968b89127efd0d67aeee941cfd347c62b5bc109ee6ca2b32aa8383c716072c5"
+          "sourceSha256": "9f251258bc037bd31ac630d5daf197df6e65c85d327c3362b8dbf4ba94bd695d"
         }
       ]
     },
@@ -97442,7 +97442,7 @@
             "document": true
           },
           "path": "packages/astro-knowledge/data/transits/mercury-square-mars.json",
-          "sourceSha256": "5ca970b6362a4f5ce9fe39e72654f54aec079a2a02c81b3100fd569972c871e6"
+          "sourceSha256": "2d2a3d2c8d81b7501dc1e0f2b5f3dc7b2063a1b48efff47fe012d70b3c292626"
         }
       ]
     },
@@ -97463,7 +97463,7 @@
             "document": true
           },
           "path": "packages/astro-knowledge/data/transits/mercury-square-neptune.json",
-          "sourceSha256": "a0d12e6b344f183e8cee6d62b58502bd4d58f3bb7888e13c035ddab5e8afdce6"
+          "sourceSha256": "5840b3a4259d1974249c929bb3429d09cc469cdcfebdebd1a3b9e5cefdfeca05"
         }
       ]
     },
@@ -97484,7 +97484,7 @@
             "document": true
           },
           "path": "packages/astro-knowledge/data/transits/mercury-square-pluto.json",
-          "sourceSha256": "8b301212be03c6ed85dccceeeef8eb8cc3cb71b2bb925c5a4b6e0d8c992795f2"
+          "sourceSha256": "bd7e63909a69b3eb9f67e31055e317f9472bd081534dd386d205399396cfb1a4"
         }
       ]
     },
@@ -97505,7 +97505,7 @@
             "document": true
           },
           "path": "packages/astro-knowledge/data/transits/mercury-square-saturn.json",
-          "sourceSha256": "073b11b5b123f6682dfd8114155e60c40df99e5730e991b4b8324e4cd1bc0ee3"
+          "sourceSha256": "028093a3335021b2c3dc212e8d8e95326a04a33713bbc34879d806621b0585cc"
         }
       ]
     },
@@ -97526,7 +97526,7 @@
             "document": true
           },
           "path": "packages/astro-knowledge/data/transits/mercury-square-uranus.json",
-          "sourceSha256": "fdf924f6af952a77c03593dcd7c70dffd9e48eb76083c38d31d0812896ea3c9f"
+          "sourceSha256": "a60c810bfb4016464014700d664beb86c8760dd07f3b2bb3f9b43c72bbf8ada3"
         }
       ]
     },
@@ -99670,7 +99670,7 @@
             "document": true
           },
           "path": "packages/astro-knowledge/data/transits/saturn-conjunction-uranus.json",
-          "sourceSha256": "b360cb8709d4863052f9a992acc627721cb235dd7f021c7d5581c0c7794d56cc"
+          "sourceSha256": "1bdd9e89ca7fa60d1bf832bbf9a26eb084c6300024ea0785ec1f0fa04fa5022a"
         }
       ]
     },
@@ -99796,7 +99796,7 @@
             "document": true
           },
           "path": "packages/astro-knowledge/data/transits/saturn-opposition-uranus.json",
-          "sourceSha256": "1a9e4432b2282fe5cc9ae7dc5f77f6de69dd23f96ff6e27833002ea86fb4db7d"
+          "sourceSha256": "ccc78838d2715033c9c873748b73639eda33a40a84e34242452ff5b3c8195776"
         }
       ]
     },
@@ -99901,7 +99901,7 @@
             "document": true
           },
           "path": "packages/astro-knowledge/data/transits/saturn-sextile-uranus.json",
-          "sourceSha256": "4b8b9d965a3b9d69af03e21fe9ac47dbac22217dd37e1ddd875bacca9b7b6359"
+          "sourceSha256": "5721fa16a9fa9dad1fa24f8bb9d83c8dc063f8585240e703eb2e83027816bd0c"
         }
       ]
     },
@@ -99985,7 +99985,7 @@
             "document": true
           },
           "path": "packages/astro-knowledge/data/transits/saturn-square-uranus.json",
-          "sourceSha256": "1208771ea48ba6fd30315b5113b6181abd9e1fbc0debd4daf092ff174d98b5fd"
+          "sourceSha256": "4e2b85b794e725b8c9d9b024ea385710c1cd662cd55df7ac49de77e2de15ba16"
         }
       ]
     },
@@ -101249,7 +101249,7 @@
             "document": true
           },
           "path": "packages/astro-knowledge/data/transits/sun-conjunction-jupiter.json",
-          "sourceSha256": "5c93f3e6d39a58a8d53c49bba8ba68ddff2da85f38c51266a822399df1ae3fdd"
+          "sourceSha256": "5236213e1a3c3228017ab11567223701506b96bb5bb3aedf409c69568bceff66"
         }
       ]
     },
@@ -101270,7 +101270,7 @@
             "document": true
           },
           "path": "packages/astro-knowledge/data/transits/sun-conjunction-mars.json",
-          "sourceSha256": "1d2676dc1525ff614a4eef65caa1cb2fe44578d75a107b069cf17b74f5d95139"
+          "sourceSha256": "7be18bc235bb09b9df30880d79b091619c76d8050529a387a2b89baea16f6ee6"
         }
       ]
     },
@@ -101291,7 +101291,7 @@
             "document": true
           },
           "path": "packages/astro-knowledge/data/transits/sun-conjunction-mercury.json",
-          "sourceSha256": "660ebe6b108bb8f439a203d09c69f258da4c1b99797e85f12717810666f5ccd1"
+          "sourceSha256": "7bbdea9282df823d6dc0945364e027c1924ba9a4e6ba3b0266b7d0ee558803b8"
         }
       ]
     },
@@ -101312,7 +101312,7 @@
             "document": true
           },
           "path": "packages/astro-knowledge/data/transits/sun-conjunction-moon.json",
-          "sourceSha256": "b79f389e300ea5c5f490627e251f2b58c543b056424f593e9e974a27996ae275"
+          "sourceSha256": "45d74aa711a879f0416417909f35d2ead6cdc235c6ca6c7555ed521a06987732"
         }
       ]
     },
@@ -101333,7 +101333,7 @@
             "document": true
           },
           "path": "packages/astro-knowledge/data/transits/sun-conjunction-neptune.json",
-          "sourceSha256": "43982fa19ce4bbf7600a1fc776f7d53fef07619c4f45957976c8a1afc80d8286"
+          "sourceSha256": "5cf1146f8d576ebb8326379c9b86a43ec0f61d442a0ac6e059ec979fbb37a739"
         }
       ]
     },
@@ -101354,7 +101354,7 @@
             "document": true
           },
           "path": "packages/astro-knowledge/data/transits/sun-conjunction-pluto.json",
-          "sourceSha256": "af1b7f35585028742727926b02f36891baaa3b6c4ff22e4a50d76310a74dc5a0"
+          "sourceSha256": "95732c14705bc83836fea938c648ec542641f18d1d2d45112c4c62d6d831869b"
         }
       ]
     },
@@ -101375,7 +101375,7 @@
             "document": true
           },
           "path": "packages/astro-knowledge/data/transits/sun-conjunction-saturn.json",
-          "sourceSha256": "afa7bc982a1f1a914a3f11407795038916bd588e077fc79b2db158c5dfbc3c47"
+          "sourceSha256": "6da7b0d603ed7c0467b78a7ab3d782f2ff187f813f7f875936f313ba2fdcd50a"
         }
       ]
     },
@@ -101396,7 +101396,7 @@
             "document": true
           },
           "path": "packages/astro-knowledge/data/transits/sun-conjunction-uranus.json",
-          "sourceSha256": "22751f52669b6d5a21fe670943561ccc0cc84e0986472c447daba661a86da9a5"
+          "sourceSha256": "d4de4ed8304ae2b60ac3acee6f7f6318d3e07b53213df51004e3b30ca085d977"
         }
       ]
     },
@@ -101606,7 +101606,7 @@
             "document": true
           },
           "path": "packages/astro-knowledge/data/transits/sun-opposition-mars.json",
-          "sourceSha256": "83ed43c79537370c1b8ba5e06b5842cf19f80434b12b934307f114e1131c4a10"
+          "sourceSha256": "a7eb74aa457ead53b82a41212aad8ba5c57d61c225cc02afd5220c186fe9aeb0"
         }
       ]
     },
@@ -101648,7 +101648,7 @@
             "document": true
           },
           "path": "packages/astro-knowledge/data/transits/sun-opposition-neptune.json",
-          "sourceSha256": "b90a40ea3b9a94ac0fa6dcdcf72c44ecfde61ed399dde8720b06024c5cba617c"
+          "sourceSha256": "3955cf5fdb1f9c0ae3316fe17054aa2c6435b625016d85145e172e95a441a232"
         }
       ]
     },
@@ -101690,7 +101690,7 @@
             "document": true
           },
           "path": "packages/astro-knowledge/data/transits/sun-opposition-saturn.json",
-          "sourceSha256": "39cd302a3c9ea52af07cb9e0857a624691b20527f806ec011eed13c28dff7aa4"
+          "sourceSha256": "007da01fb7ff5b9a5522eb158175c6927423dd45b1467decc2b341c01e58dd5a"
         }
       ]
     },
@@ -101795,7 +101795,7 @@
             "document": true
           },
           "path": "packages/astro-knowledge/data/transits/sun-sextile-mars.json",
-          "sourceSha256": "4c15279baab77b8aedbfa79ec8f2ca9e8e36fd192ff4955fad0aeda797a35397"
+          "sourceSha256": "15397eb20be4f7929365f8f902d80d78a78df1905764e0d1d8fe7cddf6220732"
         }
       ]
     },
@@ -101816,7 +101816,7 @@
             "document": true
           },
           "path": "packages/astro-knowledge/data/transits/sun-sextile-moon.json",
-          "sourceSha256": "c59c512eb0df103529aa527ec4c0b9f412cd64fc2ff1942a932f01573b11339a"
+          "sourceSha256": "4df0eab6db579db8e79312e0d8866ed3ecf2c73c14316c8b9a98c6e861dfa784"
         }
       ]
     },
@@ -101837,7 +101837,7 @@
             "document": true
           },
           "path": "packages/astro-knowledge/data/transits/sun-sextile-neptune.json",
-          "sourceSha256": "d505cb6ebb49b16b2eaf62b4cc02f694bf729bb5c8c9a2f2c69090c8c656d041"
+          "sourceSha256": "30eb00d9c80f1df78eb6ed0aa6868f41f67d503278b27c87dc744c71b771bd8a"
         }
       ]
     },
@@ -101900,7 +101900,7 @@
             "document": true
           },
           "path": "packages/astro-knowledge/data/transits/sun-sextile-uranus.json",
-          "sourceSha256": "9bdafa61afc7382da87f19e71fd15fc25f76238fc43b7dd8f46b5b0315eafaac"
+          "sourceSha256": "d2e00cb8a483aad5beb0f9114057f9d924718418c57858b1ca6c07a88c0680dd"
         }
       ]
     },
@@ -101921,7 +101921,7 @@
             "document": true
           },
           "path": "packages/astro-knowledge/data/transits/sun-square-jupiter.json",
-          "sourceSha256": "767197537dde3b706a48663476689295a61c4febe2a44059c46afed8720437b3"
+          "sourceSha256": "2115a15a70e0b46dec0e971d5d648dc7649c05f3e17b43f4d352cc8f55dc4fed"
         }
       ]
     },
@@ -101942,7 +101942,7 @@
             "document": true
           },
           "path": "packages/astro-knowledge/data/transits/sun-square-mars.json",
-          "sourceSha256": "4860243e42dedcee0b7f3d5f65f222971d62fb2536beeb7b17816df24f634a92"
+          "sourceSha256": "aa662e275410ee7623619b80000d5235929a4e7b2d6bef8d370a43cf2c6a5249"
         }
       ]
     },
@@ -101963,7 +101963,7 @@
             "document": true
           },
           "path": "packages/astro-knowledge/data/transits/sun-square-moon.json",
-          "sourceSha256": "57b9cd19ab1cf4fa2808269536d904a826d67a0e36fe5a9fbc53cb615627bf62"
+          "sourceSha256": "bca04b71f81760835feffca8b154c9f62578039180fb771d8f7bf961415b0f59"
         }
       ]
     },
@@ -101984,7 +101984,7 @@
             "document": true
           },
           "path": "packages/astro-knowledge/data/transits/sun-square-neptune.json",
-          "sourceSha256": "1c412fd18db450bebd53e8fee9481133009dba26d98f83510992fd05a788472c"
+          "sourceSha256": "89470e0462dfdbeafc17eb86079f210bb1f90b368c8426da7aa3361ab516cbcb"
         }
       ]
     },
@@ -102005,7 +102005,7 @@
             "document": true
           },
           "path": "packages/astro-knowledge/data/transits/sun-square-pluto.json",
-          "sourceSha256": "26af40a76329f768e3e1e3e040c03e156502ed2ba279dfd530debcfdd3e88807"
+          "sourceSha256": "7dc0f3c5700c0bfc54c599cd39f6011d531295600410981433a201828c819a4a"
         }
       ]
     },
@@ -103353,7 +103353,7 @@
             "document": true
           },
           "path": "packages/astro-knowledge/data/transits/venus-opposition-uranus.json",
-          "sourceSha256": "2fe12b24fa50af6e5941002a3cb8e732bee342fd8660d2337f1c1bb4ac0e2cda"
+          "sourceSha256": "01c4619d6e0e902c0122d527b243bc27321f3053584142e2fb964e5f10d3766a"
         }
       ]
     },
@@ -103773,7 +103773,7 @@
             "document": true
           },
           "path": "packages/astro-knowledge/data/transits/venus-trine-uranus.json",
-          "sourceSha256": "a2a6381cd8f90b897df3ebeea4faea5c167dd34c9649785331ab2fb5261b3460"
+          "sourceSha256": "9d0440351b0b535f8c589eedcebbe699e5db0e63250c322d19221aae7bb10b07"
         }
       ]
     },
@@ -519624,7 +519624,7 @@
     }
   ],
   "integrity": {
-    "contentSha256": "f474a8b2cec3956d07ea9d2f5bff9bd6f1e5e0169c6e9fc8114514e24da010b6",
+    "contentSha256": "c559b3e921c52fda69ec1c67dc6ea1e7d6c9e0ed45029c7d0dda03f209aa8340",
     "distinctSourceFiles": 3231
   }
 }

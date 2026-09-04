@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.sun.opposition.saturn",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-04",
+  "ownerStatement": "please proceed with next steps",
+  "batchId": "sky-calendar-exact-approved-2026-09-04-batch-51",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-04-batch-51/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "7ebee47abce420cb0ae451489afc43fe6cea0a6ee494f83d88bd418a96f288c8",
+  "summary": "A delay, rejection, or hard limit will quickly force you to confront exactly what your current plan can actually support.",
+  "body": "A delay, rejection, or hard limit will quickly force you to confront exactly what your current plan can actually support. When the Sun opposes Saturn, your confidence meets external resistance, usually arriving through a deadline, a new rule, or a gatekeeper with enough authority to tell you no. A setback might demand a smaller scope or a longer timeline, but it does not automatically mean the larger goal is flawed. Treat a \"no\" as a structural data point rather than a final verdict on your potential. Identify the exact terms of the roadblock and pivot your strategy to operate within the space that is actually open."
+}

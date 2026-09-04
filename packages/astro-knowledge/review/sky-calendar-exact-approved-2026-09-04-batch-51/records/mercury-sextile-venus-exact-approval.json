@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.mercury.sextile.venus",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-04",
+  "ownerStatement": "please proceed with next steps",
+  "batchId": "sky-calendar-exact-approved-2026-09-04-batch-51",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-04-batch-51/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "e99ef15257dce38d0f2af575452ce92814e201671ab0b9ced8a643a71967d837",
+  "summary": "A difficult subject can become much easier to discuss once you find a way to be honest without making the other person brace for impact.",
+  "body": "A difficult subject can become much easier to discuss once you find a way to be honest without making the other person brace for impact. When Mercury sextiles Venus, communication and connection cooperate, helping negotiations, apologies, invitations, compliments, and money conversations move with less unnecessary friction. This is a good opening for saying something that matters while preserving the relationship around it. Wrap the boundary in diplomacy, but refuse to soften the language so much that the actual requirement gets lost. True relational grace means maintaining absolute clarity while still keeping the bridge intact."
+}

@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.sun.square.jupiter",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-04",
+  "ownerStatement": "please proceed with next steps",
+  "batchId": "sky-calendar-exact-approved-2026-09-04-batch-51",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-04-batch-51/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "896eeecc4d4535a074c30912130ab5aa30015a6cb4768be141e43784059c0424",
+  "summary": "One exciting yes can become three more commitments before you have counted what the first one is going to cost you.",
+  "body": "One exciting yes can become three more commitments before you have counted what the first one is going to cost you. When the Sun squares Jupiter, confidence expands faster than restraint, making bigger goals, purchases, promises, and opportunities unusually difficult to resist. More may genuinely be available, but that does not mean all of it belongs in your life at once. Look at the money, time, and energy already spoken for before enthusiasm volunteers resources you do not actually have."
+}
