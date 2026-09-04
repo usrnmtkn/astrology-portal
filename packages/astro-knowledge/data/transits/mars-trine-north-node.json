@@ -1,0 +1,18 @@
+{
+  "id": "mars-trine-north-node",
+  "transiting": "mars",
+  "aspect": "trine",
+  "other": "north-node",
+  "base": "The next move may become obvious once there is something concrete you can do today.",
+  "business": "A supportive opening is available here; use what becomes easier without assuming ease will do the work for you.",
+  "shadow": "The ease of a trine can make the opening easy to miss, leave unused, or go unexamined.",
+  "arcApplying": "Support and coordination build toward exactness.",
+  "arcSeparating": "The opening begins to recede after exactness.",
+  "voiceNeutral": true,
+  "status": "LIVE",
+  "readerCopy": {
+    "summary": "The next move may become obvious once there is something concrete you can do today.",
+    "body": "The next move may become obvious once there is something concrete you can do today. Mars trine the North Node can give useful momentum to a decision that has spent too long as an idea. Send the email, make the call, submit the application, start the work, or say what you intend to do. Momentum helps you leave the starting point. It is not proof that every direction you can move in deserves to become the plan.",
+    "approvedVia": "bounded owner-approved exact Calendar batch sky-calendar-exact-approved-2026-09-04-held-trines-33; packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-04-held-trines-33/owner-batch-authorization.json"
+  }
+}

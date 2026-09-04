@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.jupiter.trine.north-node",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-04",
+  "ownerStatement": "perfect, approved; please proceed with making these live, and wiring them up to the calendar",
+  "batchId": "sky-calendar-exact-approved-2026-09-04-held-trines-33",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-04-held-trines-33/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "dafca8455f7dd073e3042822f59e2d5111e83c1bd74f06c015b1fffb0d2c29c5",
+  "summary": "A larger opportunity may arrive at the same time you are ready to make a bigger decision.",
+  "body": "A larger opportunity may arrive at the same time you are ready to make a bigger decision. Jupiter trine the North Node can make education, travel, publishing, mentorship, a new role, or access to a wider audience feel unusually relevant to what comes next. The useful opportunity is the one that changes what becomes possible after you say yes, not simply the one that sounds impressive. Make sure the time, money, and responsibilities can support the larger plan.",
+  "sourceHeldKey": "sky.aspect.jupiter.trine.nodes",
+  "sourceHeldPath": "packages/astro-knowledge/data/points/aspects/sky/four-body-unverified/jupiter-north_node-trine.json"
+}

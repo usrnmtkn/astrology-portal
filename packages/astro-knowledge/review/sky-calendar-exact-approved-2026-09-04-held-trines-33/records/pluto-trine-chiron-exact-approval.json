@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.pluto.trine.chiron",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-04",
+  "ownerStatement": "perfect, approved; please proceed with making these live, and wiring them up to the calendar",
+  "batchId": "sky-calendar-exact-approved-2026-09-04-held-trines-33",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-04-held-trines-33/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "1fe52cc7cd65217b545c0a87234802b127ef580da046d61f7ac102e1a0ff3a06",
+  "summary": "You may finally be in a position to change the condition that kept reopening the same problem.",
+  "body": "You may finally be in a position to change the condition that kept reopening the same problem. Pluto trine Chiron can bring leverage to something that previously felt personal but was also connected to money, access, authority, secrecy, or who had the power to decide. A boundary can be enforced, a pattern can be named, or information that was missing can change what you are willing to accept. Use the leverage to change the arrangement, not to replay the original fight from the stronger position.",
+  "sourceHeldKey": "sky.aspect.pluto.trine.chiron",
+  "sourceHeldPath": "packages/astro-knowledge/data/points/aspects/sky/four-body-unverified/chiron-pluto-trine.json"
+}

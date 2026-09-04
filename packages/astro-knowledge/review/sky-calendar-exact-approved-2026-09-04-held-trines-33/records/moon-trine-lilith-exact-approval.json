@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.moon.trine.lilith",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-04",
+  "ownerStatement": "perfect, approved; please proceed with making these live, and wiring them up to the calendar",
+  "batchId": "sky-calendar-exact-approved-2026-09-04-held-trines-33",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-04-held-trines-33/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "0a782a398c8af9a342d2c509b052910c65d518c893ec2eac670373547abb3ad9",
+  "summary": "You may stop arguing with yourself about a need simply because it is inconvenient for someone else.",
+  "body": "You may stop arguing with yourself about a need simply because it is inconvenient for someone else. Moon trine Lilith can make it easier to notice when you are tired, angry, hungry, overstimulated, jealous, lonely, or simply done without immediately turning the feeling into a character flaw. Change the plan, go home, eat something, ask for privacy, or admit that the arrangement is not working for you. A feeling does not have to be noble to contain useful information.",
+  "sourceHeldKey": "sky.aspect.moon.trine.lilith",
+  "sourceHeldPath": "packages/astro-knowledge/data/points/aspects/sky/four-body-unverified/lilith-moon-trine.json"
+}

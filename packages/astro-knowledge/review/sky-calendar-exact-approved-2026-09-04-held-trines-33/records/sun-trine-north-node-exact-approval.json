@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.sun.trine.north-node",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-04",
+  "ownerStatement": "perfect, approved; please proceed with making these live, and wiring them up to the calendar",
+  "batchId": "sky-calendar-exact-approved-2026-09-04-held-trines-33",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-04-held-trines-33/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "48e4a016b9317497ab1be4f32376285430bcab0e896dc47bbc736f71d6160666",
+  "summary": "An opportunity to be more visible may also make the next direction clearer.",
+  "body": "An opportunity to be more visible may also make the next direction clearer. Sun trine the North Node can connect recognition, leadership, authorship, or simply being willing to put your name on something with a choice about where you want to go next. Accept the introduction, present the work, take the credit, or step into the role if it moves you toward something you actually want to build. Being noticed is useful when it opens the next door. It does not have to become the reason you keep doing the work.",
+  "sourceHeldKey": "sky.aspect.sun.trine.nodes",
+  "sourceHeldPath": "packages/astro-knowledge/data/points/aspects/sky/four-body-unverified/north_node-sun-trine.json"
+}
