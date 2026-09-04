@@ -15,7 +15,7 @@ const priorSourceBodySha256 = "474bdf7a0bd7bde64a2bdb3a2c9f521b92e4790afb41518da
 const apply = process.argv.includes("--apply");
 const sha256 = (value) => crypto.createHash("sha256").update(value).digest("hex");
 const readJson = (relative) => JSON.parse(fs.readFileSync(path.join(root, relative), "utf8"));
-const writeJson = (relative, value) => fs.writeFileSync(path.join(root, relative), `${JSON.stringify(value, null, 4)}\n`);
+const writeJson = (relative, value) => fs.writeFileSync(path.join(root, relative), `${JSON.stringify(value, null, 1)}\n`);
 
 const authority = readJson(authorityRelative);
 assert.equal(authority.schema, "tldrastro-transit-aspect-owner-published-you-override-v1");
