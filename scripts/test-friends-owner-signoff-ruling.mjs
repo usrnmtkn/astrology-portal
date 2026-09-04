@@ -22,6 +22,11 @@ const sunFriendsApproval = readJson(
 const sunAscendantRevision = readJson(
   "packages/astro-knowledge/review/transit-aspect-sun-ascendant-hard-owner-published-2026-09-03.json"
 );
+const nonSunFriendsAuthorizationPath = "packages/astro-knowledge/review/transit-aspect-friends-nonsun-351-owner-live-2026-09-03.json";
+const nonSunFriendsAuthorizationAbsolute = path.join(repoRoot, nonSunFriendsAuthorizationPath);
+const nonSunFriendsAuthorization = fs.existsSync(nonSunFriendsAuthorizationAbsolute)
+  ? readJson(nonSunFriendsAuthorizationPath)
+  : null;
 const wordingFields = ["headline", "body", "body_you", "body_they", "body_sky"];
 const sha256 = (value) => crypto.createHash("sha256").update(value).digest("hex");
 const targetFamilies = Object.keys(record.counts.byFamily);
@@ -53,6 +58,23 @@ assert.ok(
 );
 const postSnapshotSunFriendKeys = new Set(sunFriendsApproval.records.map((entry) => entry.contentKey));
 assert.equal(postSnapshotSunFriendKeys.size, 27);
+
+const postSnapshotNonSunFriendKeys = new Set(nonSunFriendsAuthorization?.members?.map((entry) => entry.contentKey) ?? []);
+if (nonSunFriendsAuthorization) {
+  assert.equal(nonSunFriendsAuthorization.authority, "owner");
+  assert.equal(nonSunFriendsAuthorization.decision, "approve");
+  assert.equal(nonSunFriendsAuthorization.ownerStatement, "all the friend's rewrite's your doing, you should approve as live.");
+  assert.equal(nonSunFriendsAuthorization.surface, "personal-transits-friends");
+  assert.equal(nonSunFriendsAuthorization.approvedField, "body_they");
+  assert.deepEqual(nonSunFriendsAuthorization.capabilities, ["batch_generation", "serving"]);
+  assert.equal(nonSunFriendsAuthorization.count, 351);
+  assert.equal(postSnapshotNonSunFriendKeys.size, 351);
+  assert.ok(
+    nonSunFriendsAuthorization.members.every((entry) => /^[a-f0-9]{64}$/u.test(entry.payloadSha256 ?? "")),
+    "Every later non-Sun Friends approval member must remain hash-bound."
+  );
+}
+
 assert.equal(sunAscendantRevision.contentKey, "authored/transit-aspect/sun/ascendant/hard");
 assert.equal(sunAscendantRevision.publishedAt.slice(0, 10), "2026-09-03");
 assert.equal(
@@ -77,7 +99,13 @@ function historicalWording(row, field) {
   if (row.contentKey === sunAscendantRevision.contentKey && field === "body_you") {
     return sunAscendantRevision.supersedes.body_you;
   }
-  if (field === "body_they" && postSnapshotSunFriendKeys.has(row.contentKey)) {
+  if (
+    field === "body_they"
+    && (
+      postSnapshotSunFriendKeys.has(row.contentKey)
+      || postSnapshotNonSunFriendKeys.has(row.contentKey)
+    )
+  ) {
     return undefined;
   }
   return row[field];
@@ -142,4 +170,4 @@ assert.deepEqual(record.excluded, {
   note: "These rows feed compatibility, Sky, career, station, weekly, or other authored surfaces. They are not primary Friends transit-detail articles and are not disabled by this gate."
 });
 
-console.log("Friends owner-signoff ruling passed: 24 exact approvals preserved, 1,565 untraced approvals added, 1,175 unrelated authored rows left untouched; later CMS/mechanical/Sun Friends revisions are excluded from the historical payload hash.");
+console.log("Friends owner-signoff ruling passed: 24 exact approvals preserved, 1,565 untraced approvals added, 1,175 unrelated authored rows left untouched; later CMS/mechanical/Sun/non-Sun Friends revisions are excluded from the historical payload hash.");
