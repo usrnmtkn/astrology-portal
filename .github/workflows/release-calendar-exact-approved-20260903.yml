@@ -42,16 +42,22 @@ jobs:
           node scripts/build-knowledge-index.mjs --write
           node scripts/build-phrase-index.mjs --write
           node scripts/build-production-sky-kernel-comparison.mjs --write
-      - name: Verify bounded exact Calendar release
-        run: |
-          node scripts/test-bounded-owner-batch-approval-governance.mjs
-          node scripts/test-calendar-exact-approved-20260903.mjs
-          node scripts/test-calendar-exact-sky-aspect-routing.mjs
-          node scripts/generate-fallback-package-manifest.mjs --check
-          node scripts/build-knowledge-index.mjs --check
-          node scripts/build-phrase-index.mjs --check
-          node scripts/build-production-sky-kernel-comparison.mjs
-          git diff --check
+      - name: Verify bounded owner authorization
+        run: node scripts/test-bounded-owner-batch-approval-governance.mjs
+      - name: Verify exact 132-row release boundary
+        run: node scripts/test-calendar-exact-approved-20260903.mjs
+      - name: Verify Calendar exact routing parity
+        run: node scripts/test-calendar-exact-sky-aspect-routing.mjs
+      - name: Verify generated fallback manifest
+        run: node scripts/generate-fallback-package-manifest.mjs --check
+      - name: Verify generated knowledge index
+        run: node scripts/build-knowledge-index.mjs --check
+      - name: Verify generated phrase index
+        run: node scripts/build-phrase-index.mjs --check
+      - name: Verify production Sky kernel comparison
+        run: node scripts/build-production-sky-kernel-comparison.mjs
+      - name: Verify whitespace integrity
+        run: git diff --check
       - name: Commit controlled serving release
         shell: bash
         run: |
