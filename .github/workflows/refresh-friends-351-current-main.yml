@@ -32,7 +32,20 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git fetch origin main
-          git merge --no-edit origin/main
+          if ! git merge --no-edit origin/main; then
+            mapfile -t conflicts < <(git diff --name-only --diff-filter=U | sort)
+            expected=(
+              "packages/astro-knowledge/generated/knowledge-index.json"
+              "packages/astro-knowledge/review/production-sky-kernel-comparison-v1/comparison.json"
+            )
+            if [ "${conflicts[*]}" != "${expected[*]}" ]; then
+              printf 'Unexpected merge conflicts:\n%s\n' "${conflicts[@]}"
+              exit 1
+            fi
+            git checkout --theirs -- "${expected[@]}"
+            git add "${expected[@]}"
+            git commit --no-edit
+          fi
       - name: Install dependencies
         run: npm ci --no-audit --no-fund
       - name: Install pinned API dependencies
