@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.sun.conjunction.neptune",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-04",
+  "ownerStatement": "please proceed with next steps",
+  "batchId": "sky-calendar-exact-approved-2026-09-04-batch-51",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-04-batch-51/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "557c958cd7937cb2222dc5dcfc29e4bd78a34360515e0a07a9619230b83bb80a",
+  "summary": "A beautiful possibility can feel more like destiny when it reflects the person you desperately want to become.",
+  "body": "A beautiful possibility can feel more like destiny when it reflects the person you desperately want to become. When the Sun conjoins Neptune, identity and imagination fuse, making inspiration, intuition, creativity, and idealism unusually powerful while the line between vision and projection gets thinner. The dream may be worth following, but wanting something to mean everything can make ordinary warning signs surprisingly easy to excuse. Let yourself be inspired without requiring the fantasy to prove anything about who you are. What matters will survive a closer look."
+}

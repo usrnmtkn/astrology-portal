@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.sun.conjunction.uranus",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-04",
+  "ownerStatement": "please proceed with next steps",
+  "batchId": "sky-calendar-exact-approved-2026-09-04-batch-51",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-04-batch-51/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "3b1cde7397548cebc1c12d5f0edc912d690bc942a5a7e068635db46200e8d0ae",
+  "summary": "The urge to do something completely differently gets harder to ignore when the old version of your life no longer feels like you.",
+  "body": "The urge to do something completely differently gets harder to ignore when the old version of your life no longer feels like you. When the Sun conjoins Uranus, identity and disruption fuse, making experimentation, independence, and sudden changes of direction feel unusually personal and urgent. A break from routine may reveal something you have outgrown, but shock value is not the same thing as freedom. Change the part that gives you more room to be yourself. You do not have to destroy everything familiar just to prove the change is yours."
+}
