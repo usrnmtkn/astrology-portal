@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.venus.opposition.neptune",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-03",
+  "ownerStatement": "can you approve the one's already done and make them live?",
+  "batchId": "sky-calendar-exact-approved-through-2026-09-03",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-03/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "ab9166ffd011d30a045b2bc07b549b79d74eca9f79e5cd670f0946fe199a07f3",
+  "summary": "It can be difficult to separate what someone has actually offered from everything you have started hoping their attention might eventually become.",
+  "body": "It can be difficult to separate what someone has actually offered from everything you have started hoping their attention might eventually become. When Venus opposes Neptune, attraction and idealization can make possibility feel emotionally convincing long before the relationship, offer, or commitment has become equally clear. Hope is not the problem; building decisions around what has never been promised is. Let what someone consistently does carry more weight than the future you can imagine with them."
+}

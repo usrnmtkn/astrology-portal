@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.moon.opposition.neptune",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-03",
+  "ownerStatement": "can you approve the one's already done and make them live?",
+  "batchId": "sky-calendar-exact-approved-through-2026-09-03",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-03/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "ef526c8e71a8f5dd17368d2210ae89c355563e773887b0975a578bb27570ae67",
+  "summary": "Feeling deeply for someone can make you believe you understand what they need before you have actually asked them.",
+  "body": "Feeling deeply for someone can make you believe you understand what they need before you have actually asked them. When the Moon opposes Neptune, empathy and projection blur easily, which can turn care into assumptions, rescue attempts, or disappointment when reality does not match the story in your head. Stay compassionate, but check the fantasy. Ask what is actually needed and let the answer replace the version you imagined."
+}

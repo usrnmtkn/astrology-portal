@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.sun.sextile.jupiter",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-03",
+  "ownerStatement": "can you approve the one's already done and make them live?",
+  "batchId": "sky-calendar-exact-approved-through-2026-09-03",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-03/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "f45cefec366f88111fcda85376753db36696d38afef7f1fe00c219a9394613e8",
+  "summary": "A little more support can change what feels possible without requiring you to turn one good opening into a complete reinvention of your life.",
+  "body": "A little more support can change what feels possible without requiring you to turn one good opening into a complete reinvention of your life. When the Sun sextiles Jupiter, confidence, encouragement, money, visibility, or access can arrive behind something that already has momentum, giving you enough room to take the next step with more backing than you had before. The opportunity does not need to become enormous to matter. Use the extra room on the move you were already ready to make, and let growth come from what proves it can hold more."
+}

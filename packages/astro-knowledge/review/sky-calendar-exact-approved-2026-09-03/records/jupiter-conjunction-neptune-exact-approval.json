@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.jupiter.conjunction.neptune",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-03",
+  "ownerStatement": "can you approve the one's already done and make them live?",
+  "batchId": "sky-calendar-exact-approved-through-2026-09-03",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-03/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "287eff6dd907f4bc739b3de13ca7c927e04c30e7182c06f84758b3258f2c1420",
+  "summary": "It is easy to believe in something when it seems capable of solving several problems at once, especially when the possibility feels bigger and more hopeful than what you have been working with.",
+  "body": "It is easy to believe in something when it seems capable of solving several problems at once, especially when the possibility feels bigger and more hopeful than what you have been working with. When Jupiter conjuncts Neptune, optimism can stretch well past the facts, leaving people genuinely excited while imagining very different versions of what the opportunity will become. The problem is not believing in the idea; it is committing your time, money, or trust before anyone has clarified what is actually being promised. Let yourself be inspired, but make sure the numbers, expectations, and next step are concrete enough that your enthusiasm is attached to the same reality everyone else is agreeing to."
+}

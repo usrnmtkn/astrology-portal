@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.jupiter.conjunction.pluto",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-03",
+  "ownerStatement": "can you approve the one's already done and make them live?",
+  "batchId": "sky-calendar-exact-approved-through-2026-09-03",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-03/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "853b77a1b687b3d4b309e937ede15d4a364e3105212fb9a8b0628dedb9cee556",
+  "summary": "Getting more power can feel like proof that you were right all along, which is exactly when it becomes easiest to stop questioning how you are using it.",
+  "body": "Getting more power can feel like proof that you were right all along, which is exactly when it becomes easiest to stop questioning how you are using it. When Jupiter conjuncts Pluto, ambition and influence expand together, making a larger role, financial opportunity, audience, or position of authority feel capable of changing much more than the original situation. That power can be useful, but success does not automatically make every instinct behind it wise. Decide what you actually want the added leverage to change before having more influence becomes a reason to keep reaching for more."
+}

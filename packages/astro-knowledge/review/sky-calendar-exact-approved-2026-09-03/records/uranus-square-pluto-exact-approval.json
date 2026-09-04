@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.uranus.square.pluto",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-03",
+  "ownerStatement": "can you approve the one's already done and make them live?",
+  "batchId": "sky-calendar-exact-approved-through-2026-09-03",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-03/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "6733f39691a99c3cd2aa5310d89927926944be74d9347ea771b4399140766b96",
+  "summary": "Breaking one restriction can feel like freedom right up until you realize the new arrangement gives somebody else the power to change the terms.",
+  "body": "Breaking one restriction can feel like freedom right up until you realize the new arrangement gives somebody else the power to change the terms. When Uranus squares Pluto, disruption can open access while simultaneously creating a new struggle over who owns, controls, or benefits from what replaces the old system. Do not confuse novelty with independence. Before you hand the new option your money, information, loyalty, or trust, make sure you understand who can still close the door once you are inside."
+}

@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.sun.trine.mars",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-03",
+  "ownerStatement": "can you approve the one's already done and make them live?",
+  "batchId": "sky-calendar-exact-approved-through-2026-09-03",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-03/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "130119410b99a606536073db840611826c1f61bc673615b2bd57952036cf0f4e",
+  "summary": "You may know exactly what you want to do before you have finished talking yourself out of it, and for once that first instinct may deserve more credit.",
+  "body": "You may know exactly what you want to do before you have finished talking yourself out of it, and for once that first instinct may deserve more credit. When the Sun trines Mars, confidence and action cooperate, making it easier to move on a decision without the usual drag between knowing what you want and actually doing something about it. Use the energy on the move you have been postponing because it requires nerve, not on creating urgency where none exists. Acting decisively feels different when the action is aligned with something you already know matters."
+}

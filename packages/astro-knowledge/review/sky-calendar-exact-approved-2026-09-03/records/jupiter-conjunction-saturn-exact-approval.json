@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.jupiter.conjunction.saturn",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-03",
+  "ownerStatement": "can you approve the one's already done and make them live?",
+  "batchId": "sky-calendar-exact-approved-through-2026-09-03",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-03/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "4938c722a477bcbd6ef1b7e56804f3f11c730133804b65385bf6fb3c9a27c8ad",
+  "summary": "Sometimes the opportunity you wanted becomes serious the moment you realize how much responsibility comes with getting to keep it.",
+  "body": "Sometimes the opportunity you wanted becomes serious the moment you realize how much responsibility comes with getting to keep it. When Jupiter conjuncts Saturn, expansion and obligation arrive together, making a larger role, commitment, or long-term plan possible precisely because there are now rules, deadlines, costs, and expectations around it. The structure is not necessarily what is standing between you and the opportunity; it may be what makes the opportunity sustainable. Make sure you want the responsibility as much as you wanted the possibility."
+}

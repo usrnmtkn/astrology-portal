@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.mars.opposition.neptune",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-03",
+  "ownerStatement": "can you approve the one's already done and make them live?",
+  "batchId": "sky-calendar-exact-approved-through-2026-09-03",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-03/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "da7c68c8062380a62e0bf390a1ffd2486e769316cda3ec722dc7ae408a54927f",
+  "summary": "Taking frantic action in a confusing situation feels much more productive than admitting you are flying blind, but motion is not the same as progress.",
+  "body": "Taking frantic action in a confusing situation feels much more productive than admitting you are flying blind, but motion is not the same as progress. When Mars opposes Neptune, urgency collides with mixed signals and shifting targets, turning guesswork into a strategy. Stop reacting to shadows. Slow down, separate hard data from your assumptions, and find out what is actually true before you commit your time and energy to a ghost."
+}

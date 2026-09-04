@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.sun.sextile.pluto",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-03",
+  "ownerStatement": "can you approve the one's already done and make them live?",
+  "batchId": "sky-calendar-exact-approved-through-2026-09-03",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-03/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "7500f1eb13ae2a7a8fe8b8b13286eb2acf964b24465e595965fc1fbccc9b003c",
+  "summary": "You may finally get the conversation you have been rehearsing in your head for months, so do not waste it proving how angry you had every right to be.",
+  "body": "You may finally get the conversation you have been rehearsing in your head for months, so do not waste it proving how angry you had every right to be. When the Sun sextiles Pluto, confidence and leverage can come together in a way that gives you access to the person, decision, boundary, or resource capable of changing something that has felt stuck. That opening is more valuable than the satisfaction of unloading every grievance that led you there. Say enough to establish the problem, then ask for the change that would actually alter what happens next."
+}

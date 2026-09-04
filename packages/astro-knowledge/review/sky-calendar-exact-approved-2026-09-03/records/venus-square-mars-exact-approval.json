@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.venus.square.mars",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-03",
+  "ownerStatement": "can you approve the one's already done and make them live?",
+  "batchId": "sky-calendar-exact-approved-through-2026-09-03",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-03/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "68b13228896905054253525989f6d9df856f1944377238a9ca59fa81917bb54c",
+  "summary": "Chemistry gets confusing when one person experiences urgency as passion and the other experiences it as pressure.",
+  "body": "Chemistry gets confusing when one person experiences urgency as passion and the other experiences it as pressure. When Venus squares Mars, attraction and frustration rise together, which can make the tension itself feel like evidence that the connection matters while both people are actually struggling over pace, boundaries, money, commitment, or who gets to decide what happens next. Wanting each other does not erase the need for separate choices. Give the situation enough room for a yes to mean yes rather than simply meaning somebody got tired of resisting."
+}

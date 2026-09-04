@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.jupiter.square.neptune",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-03",
+  "ownerStatement": "can you approve the one's already done and make them live?",
+  "batchId": "sky-calendar-exact-approved-through-2026-09-03",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-03/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "eb2947b519fd15916b9bedc6ffa6d7cabde2b9766b340aa97c99a00778af2f00",
+  "summary": "A compelling idea can keep pulling more time, money, or confidence out of you long after the practical evidence has stopped supporting it.",
+  "body": "A compelling idea can keep pulling more time, money, or confidence out of you long after the practical evidence has stopped supporting it. When Jupiter squares Neptune, enthusiasm can fill in the parts of a plan that have never been properly tested, making optimism feel like proof that the missing structure will somehow appear later. If the same questions about cost, delivery, responsibility, or results keep going unanswered, take that seriously. You do not have to abandon the vision, but you do need to stop asking belief to carry the part that only a workable plan can support."
+}

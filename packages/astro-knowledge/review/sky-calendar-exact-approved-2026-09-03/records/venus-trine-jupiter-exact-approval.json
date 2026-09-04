@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.venus.trine.jupiter",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-03",
+  "ownerStatement": "can you approve the one's already done and make them live?",
+  "batchId": "sky-calendar-exact-approved-through-2026-09-03",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-03/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "6fafed028cc164505e8023546a38c87dc5757b23c2a7b2548394a3549979b9ed",
+  "summary": "Receiving something good can be uncomfortable when you are used to believing you have to earn every inch of support before you are allowed to enjoy it.",
+  "body": "Receiving something good can be uncomfortable when you are used to believing you have to earn every inch of support before you are allowed to enjoy it. When Venus trines Jupiter, affection, generosity, money, encouragement, or opportunity can come more easily, giving you a chance to experience what it feels like when life is not making you fight for the entire outcome. Let the support register before you turn it into another obligation to achieve more. Sometimes growth is learning that being given something does not immediately put you in debt to the future."
+}

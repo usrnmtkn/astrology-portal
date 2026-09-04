@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.venus.opposition.pluto",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-03",
+  "ownerStatement": "can you approve the one's already done and make them live?",
+  "batchId": "sky-calendar-exact-approved-through-2026-09-03",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-03/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "d4151660f31ea07c65e2ccb28f044f6b960ef3d0d25a8336e1133592471da06e",
+  "summary": "A relationship can feel mutual while one person still has much more power over what happens if either of you says no.",
+  "body": "A relationship can feel mutual while one person still has much more power over what happens if either of you says no. When Venus opposes Pluto, love, loyalty, money, attraction, or access can become tangled with leverage, making it harder to see how differently each person experiences the cost of refusing the terms. Nobody has to issue an obvious threat for the imbalance to matter. Pay attention to what each person can safely refuse, because closeness means less when one person has to protect the relationship by giving up their ability to choose freely."
+}

@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.uranus.opposition.neptune",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-03",
+  "ownerStatement": "can you approve the one's already done and make them live?",
+  "batchId": "sky-calendar-exact-approved-through-2026-09-03",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-03/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "eb7238329c65f62a605e9db1764bd6861afdfd85d8e8e675436c62d3a1ac888c",
+  "summary": "You do not have to abandon the vision just because the first method you believed in stops working.",
+  "body": "You do not have to abandon the vision just because the first method you believed in stops working. When Uranus opposes Neptune, the ideal and the experiment can pull apart, forcing you to distinguish what still matters from the tool, person, or strategy you hoped would deliver it. Disappointment can make cynicism tempting, while loyalty to the dream can make obvious failures easier to excuse. Keep the value that still feels true and be willing to change the method once reality shows you it cannot carry the promise."
+}

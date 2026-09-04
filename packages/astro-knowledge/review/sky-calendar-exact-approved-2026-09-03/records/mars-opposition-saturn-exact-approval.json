@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.mars.opposition.saturn",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-03",
+  "ownerStatement": "can you approve the one's already done and make them live?",
+  "batchId": "sky-calendar-exact-approved-through-2026-09-03",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-03/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "5c35cb4c150913ce7cc8a3af6fa3ac016f2ba95601ad60ca5fbb7e235b693d26",
+  "summary": "Every restriction feels like a personal attack when you are already burning with the desire to move forward.",
+  "body": "Every restriction feels like a personal attack when you are already burning with the desire to move forward. When Mars opposes Saturn, urgency crashes into boundaries, turning necessary guardrails into infuriating roadblocks. Some limits are protecting your long-term stability, while others are just bureaucratic noise. Figure out which one you are dealing with before you start tearing down walls you will need tomorrow."
+}

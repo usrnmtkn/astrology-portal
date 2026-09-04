@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.mercury.trine.mars",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-03",
+  "ownerStatement": "can you approve the one's already done and make them live?",
+  "batchId": "sky-calendar-exact-approved-through-2026-09-03",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-03/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "4c81bb8a0d967723989bf2705cece03408043c815a12a348094872344e0343c6",
+  "summary": "When you know what needs to happen, say it clearly enough that nobody has to waste time interpreting the assignment.",
+  "body": "When you know what needs to happen, say it clearly enough that nobody has to waste time interpreting the assignment. When Mercury trines Mars, your mind and your actions move in the same direction, making decisions, instructions, and difficult conversations easier to execute quickly. Name who is responsible, what needs to get done, and what happens next. Clear direction saves more time than another round of discussion."
+}

@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.mars.sextile.saturn",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-03",
+  "ownerStatement": "can you approve the one's already done and make them live?",
+  "batchId": "sky-calendar-exact-approved-through-2026-09-03",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-03/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "5a23f06032c6fa56fd0045795dc144826d7ecf80287fd6b362ce04a77261282d",
+  "summary": "Once you know exactly what has to happen first, a blocked plan can stop feeling like a dead end and start feeling like a sequence.",
+  "body": "Once you know exactly what has to happen first, a blocked plan can stop feeling like a dead end and start feeling like a sequence. When Mars sextiles Saturn, action and structure support each other, making it easier to work with a deadline, responsibility, rule, or practical limit without treating the whole restriction as defeat. You may not be able to move everything at once, but you can usually move the part that is genuinely ready. Let one completed step restore your momentum instead of wasting energy fighting the pieces that still have to wait."
+}

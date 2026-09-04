@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.mars.trine.uranus",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-03",
+  "ownerStatement": "can you approve the one's already done and make them live?",
+  "batchId": "sky-calendar-exact-approved-through-2026-09-03",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-03/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "55c3064a6a52e3086bae50d0ecd3469007336cb624cade676c02b0da1da0ac82",
+  "summary": "You do not have to keep doing something the hard way simply because the old method still technically works.",
+  "body": "You do not have to keep doing something the hard way simply because the old method still technically works. When Mars trines Uranus, a better tool, process, or approach can remove work you have been treating as unavoidable, often without compromising the result you actually care about. The useful insight may be embarrassingly simple: automate the repetitive part, change the route, use the better tool, or stop doing the step that no longer serves a purpose. If the new method gives you back time or energy without creating another problem, let your life get easier."
+}

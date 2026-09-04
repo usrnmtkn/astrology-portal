@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.sun.trine.moon",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-03",
+  "ownerStatement": "can you approve the one's already done and make them live?",
+  "batchId": "sky-calendar-exact-approved-through-2026-09-03",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-03/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "64c4cb0429dfac780ab04ed623fe418d45e282f05179369d850618f45703cd45",
+  "summary": "A decision becomes much easier when the version that makes sense on paper also feels livable once you imagine yourself inside it.",
+  "body": "A decision becomes much easier when the version that makes sense on paper also feels livable once you imagine yourself inside it. When the Sun trines the Moon, what you want and what you need can support each other instead of pulling in opposite directions, giving you a clearer read on what belongs in your life now. Pay attention to the choice that gives you forward movement without requiring you to keep overriding your own emotional or practical needs. Sometimes clarity feels less like excitement and more like finally not having to argue with yourself."
+}

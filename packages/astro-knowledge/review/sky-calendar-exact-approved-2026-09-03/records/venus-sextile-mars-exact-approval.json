@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.venus.sextile.mars",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-03",
+  "ownerStatement": "can you approve the one's already done and make them live?",
+  "batchId": "sky-calendar-exact-approved-through-2026-09-03",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-03/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "27a2fe7dea4a404b22fd96dadbc31d660cd5896ece28ec9d376b2b88e9758a9b",
+  "summary": "You can spend a long time wondering what might happen when one small move would tell you much more.",
+  "body": "You can spend a long time wondering what might happen when one small move would tell you much more. When Venus sextiles Mars, attraction and initiative work well together, making it easier to act on what you want without turning the first step into a demand for certainty. There is enough momentum here to flirt, ask, offer, negotiate, create, or simply make your interest known and see what meets you there. You do not have to chase the outcome. Give the possibility a chance to become something, and let the response tell you what is worth doing next."
+}

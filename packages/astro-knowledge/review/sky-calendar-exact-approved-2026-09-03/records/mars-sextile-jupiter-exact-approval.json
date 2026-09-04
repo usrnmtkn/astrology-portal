@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.mars.sextile.jupiter",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-03",
+  "ownerStatement": "can you approve the one's already done and make them live?",
+  "batchId": "sky-calendar-exact-approved-through-2026-09-03",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-03/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "c711bdfc172d0943a545ed54b9afa526420c21f7cec519a4e17b58a9b6176a5a",
+  "summary": "A single bold move can accidentally unlock a door much larger than you anticipated, turning a small test into a massive operational demand.",
+  "body": "A single bold move can accidentally unlock a door much larger than you anticipated, turning a small test into a massive operational demand. When Mars sextiles Jupiter, initiative triggers unexpected visibility, funding, or audience growth. Do not downplay the momentum, but do not ignore the fine print either. Say yes to the upgrade, and immediately put the systems in place to handle the extra weight your initiative just created."
+}

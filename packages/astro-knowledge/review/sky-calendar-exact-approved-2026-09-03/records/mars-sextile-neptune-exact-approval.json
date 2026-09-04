@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.mars.sextile.neptune",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-03",
+  "ownerStatement": "can you approve the one's already done and make them live?",
+  "batchId": "sky-calendar-exact-approved-through-2026-09-03",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-03/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "1332d4715f239326f59dc780f7540c8c0a4d6accf1a2e6b427c32e06f72ce129",
+  "summary": "Heavy feelings stop weighing you down the second you stop trying to process them in your head and give them a physical job to do.",
+  "body": "Heavy feelings stop weighing you down the second you stop trying to process them in your head and give them a physical job to do. When Mars sextiles Neptune, that heavy mix of compassion, grief, anger, or intuition can be channeled into direct, tangible work instead of spinning into mental static. Stop waiting for total emotional clarity to strike while you stare at the wall. Pick one specific, tedious operational task or physical cleanup item you have been actively avoiding, and give your energy a real vessel to move through."
+}

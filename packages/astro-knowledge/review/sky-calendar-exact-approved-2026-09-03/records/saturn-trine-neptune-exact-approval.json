@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.saturn.trine.neptune",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-03",
+  "ownerStatement": "can you approve the one's already done and make them live?",
+  "batchId": "sky-calendar-exact-approved-through-2026-09-03",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-03/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "981882b3af5b9a17eff04d5dbdfa8fde1d921da8cbf9e5db66e8bf8447f16c77",
+  "summary": "Caring about something becomes much easier to sustain once your support no longer depends on you having extra time, money, or emotional capacity every time the need appears.",
+  "body": "Caring about something becomes much easier to sustain once your support no longer depends on you having extra time, money, or emotional capacity every time the need appears. When Saturn trines Neptune, compassion can settle into a structure you can actually rely on, which may mean clearer boundaries, a realistic schedule, shared responsibility, or knowing in advance what you can and cannot give. This does not make the care less generous. It keeps generosity from turning into exhaustion and makes it more likely that what you value will still have your support after the immediate emotion has passed."
+}
