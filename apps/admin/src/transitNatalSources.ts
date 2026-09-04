@@ -170,12 +170,12 @@ export function transitNatalSourceGroups(selection: TransitNatalSelection): Tran
     {
       key: "fallback",
       label: "Alternate complete write-up (advanced, shared across signs & houses)",
-      description: "Shared across all current signs, transit houses, and natal houses for this planet-to-point contact. Changing Current sign, Transit house, or Natal house will not change this standalone source. To open a different standalone row, change the Transiting planet, Natal planet or point, or move to a different hard/soft aspect family. It is used only when the four-part Personal Transit cannot be completed, or when the transit is opened without house information.",
+      description: "Shared across all signs and houses. Current sign, Transit house, and Natal house update the reader preview above, but they do not change this standalone source. To open a different standalone row, change the Transiting planet, Natal planet or point, or move to a different hard/soft aspect family. Two exact aspects can still share the same row when they belong to the same family. This write-up is used only when the four-part Personal Transit cannot be completed, or when the transit is opened without house information.",
       sources: [
         {
           id: "standalone",
           label: `Standalone ${planet} ${selection.aspect} ${natalPoint} passage`,
-          scope: "Shared across all signs and houses for this transiting planet, natal point, and hard/soft aspect family. Changing the sign or either house does not change this row; changing the exact aspect may also keep the same row when it stays in the same family. The editor exposes separate You and Friends passages so each reader voice can be authored directly.",
+          scope: "Shared across all signs and houses. Current sign, Transit house, and Natal house affect the preview above, not this row. The row is keyed by transiting planet, natal point, and hard/soft aspect family, so changing the exact aspect can also keep the same source when it stays in the same family. The editor exposes separate You and Friends passages so each reader voice can be authored directly.",
           candidateKeys: [
             `authored/transit-aspect/${selection.planet}/${selection.natalPoint}/${selection.aspect}`,
             `authored/transit-aspect/${selection.planet}/${selection.natalPoint}/${family}`
