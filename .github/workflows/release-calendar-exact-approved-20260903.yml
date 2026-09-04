@@ -1,0 +1,72 @@
+name: Release approved exact Calendar aspects
+
+on:
+  push:
+    branches:
+      - "owner/release-calendar-exact-approved-20260903"
+    paths:
+      - "scripts/release-calendar-exact-approved-20260903.mjs"
+      - "scripts/test-calendar-exact-approved-20260903.mjs"
+      - "scripts/test-calendar-exact-sky-aspect-routing.mjs"
+      - "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-03/owner-ruling.json"
+      - "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-03/jupiter.json"
+      - "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-03/mars.json"
+      - "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-03/mercury.json"
+      - "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-03/moon.json"
+      - "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-03/neptune.json"
+      - "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-03/saturn.json"
+      - "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-03/sun.json"
+      - "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-03/uranus.json"
+      - "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-03/venus.json"
+      - ".github/workflows/release-calendar-exact-approved-20260903.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Apply hash-bound owner-approved exact Calendar copy
+        run: node scripts/release-calendar-exact-approved-20260903.mjs
+      - name: Regenerate governed bundles and writing evidence
+        run: |
+          node scripts/generate-fallback-package-manifest.mjs
+          node scripts/build-knowledge-index.mjs --write
+          node scripts/build-phrase-index.mjs --write
+          node scripts/build-production-sky-kernel-comparison.mjs --write
+      - name: Verify bounded exact Calendar release
+        run: |
+          node scripts/test-bounded-owner-batch-approval-governance.mjs
+          node scripts/test-calendar-exact-approved-20260903.mjs
+          node scripts/test-calendar-exact-sky-aspect-routing.mjs
+          node scripts/generate-fallback-package-manifest.mjs --check
+          node scripts/build-knowledge-index.mjs --check
+          node scripts/build-phrase-index.mjs --check
+          node scripts/build-production-sky-kernel-comparison.mjs
+          git diff --check
+      - name: Commit controlled serving release
+        shell: bash
+        run: |
+          if git diff --quiet; then
+            echo "No release changes to commit."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add packages/astro-knowledge/data/transits \
+            packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-03 \
+            apps/web/src/content/fallbackArchitectureV3/source-rows/sky-aspect-phrasebook-v1.json \
+            apps/web/src/content/fallbackArchitectureV3/bundled-*.json \
+            apps/web/src/content/fallbackArchitectureV3/approved-serving-*.json \
+            packages/astro-knowledge/generated/knowledge-index.json \
+            packages/astro-knowledge/generated/phrase-index.json \
+            packages/astro-knowledge/review/production-sky-kernel-comparison-v1/comparison.json
+          git commit -m "release(calendar): serve 132 approved exact aspects"
+          git push origin HEAD
