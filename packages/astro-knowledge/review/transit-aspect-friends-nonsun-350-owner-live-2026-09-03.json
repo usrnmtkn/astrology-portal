@@ -3,8 +3,8 @@
   "type": "bounded_contextual_owner_batch_authorization",
   "authority": "owner",
   "decision": "approve",
-  "batchId": "transit-aspect-friends-nonsun-351-v1",
-  "evidenceRecordPath": "packages/astro-knowledge/review/transit-aspect-friends-nonsun-351-owner-live-2026-09-03.json",
+  "batchId": "transit-aspect-friends-nonsun-350-v1",
+  "evidenceRecordPath": "packages/astro-knowledge/review/transit-aspect-friends-nonsun-350-owner-live-2026-09-03.json",
   "ownerStatement": "all the friend's rewrite's your doing, you should approve as live.",
   "approvedAt": "2026-09-03",
   "surface": "personal-transits-friends",
@@ -15,7 +15,13 @@
   ],
   "sourceRecordPath": "packages/astro-knowledge/review/transit-aspect-friends-completion-v1.json",
   "sourceRecordSha256": "058a3b030202991084741e06f66c4aa4001eaba616fe26a0321152141c698bc0",
-  "count": 351,
+  "count": 350,
+  "exclusions": [
+    {
+      "contentKey": "authored/transit-aspect/venus/moon/hard",
+      "reason": "Preserve the exact September 2 owner-published Content Studio You revision without populating Friends copy."
+    }
+  ],
   "members": [
     {
       "contentKey": "authored/transit-aspect/any/chiron/conjunction",
@@ -1356,10 +1362,6 @@
     {
       "contentKey": "authored/transit-aspect/venus/midheaven/soft",
       "payloadSha256": "bdba3965c0de0d81b206fc2f121f5488a202ad5a67acd5882a2eaa1c92e41ee0"
-    },
-    {
-      "contentKey": "authored/transit-aspect/venus/moon/hard",
-      "payloadSha256": "c4adf312e0be3c6871a7333cb10875a439b04133a67dd150f1bdc15440bc6d6c"
     },
     {
       "contentKey": "authored/transit-aspect/venus/moon/soft",
