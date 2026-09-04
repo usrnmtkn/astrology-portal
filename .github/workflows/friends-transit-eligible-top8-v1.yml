@@ -22,8 +22,16 @@ jobs:
         with:
           node-version: 22
           cache: npm
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: services/tldrastro-api/pyproject.toml
       - name: Install dependencies
         run: npm ci --no-audit --no-fund
+      - name: Install pinned API dependencies
+        working-directory: services/tldrastro-api
+        run: python -m pip install -e ".[dev]"
       - name: Apply eligible-before-cap repair
         run: |
           node --input-type=module <<'NODE'
