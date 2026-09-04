@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.moon.trine.pluto",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-04",
+  "ownerStatement": "please commit and make live the updated aspects",
+  "batchId": "sky-calendar-exact-approved-2026-09-04-batch-30",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-04-batch-30/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "572069686f4f4b1f9b9aa0d5518a829097bcc52156802c7eb4792375d327be3e",
+  "summary": "You can look something emotionally complex square in the face without letting it hijack your entire afternoon, which makes radical honesty a lot easier than avoidance.",
+  "body": "You can look something emotionally complex square in the face without letting it hijack your entire afternoon, which makes radical honesty a lot easier than avoidance. When the Moon trines Pluto, deep psychological currents become easier to tolerate, helping you acknowledge the resentment, fear, attachment, or desire underneath a dynamic without needing to suppress it or blow it up into a crisis. Once you admit what is actually there, the next move stops being a mystery. You do not need to dramatize the truth for it to change how you operate."
+}

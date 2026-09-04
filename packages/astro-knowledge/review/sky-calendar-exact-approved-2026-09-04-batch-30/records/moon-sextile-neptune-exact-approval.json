@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.moon.sextile.neptune",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-04",
+  "ownerStatement": "please commit and make live the updated aspects",
+  "batchId": "sky-calendar-exact-approved-2026-09-04-batch-30",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-04-batch-30/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "15a0143103b7c8bd8c367af3272b34ce68f56a253ca74bfe3ef953407859732a",
+  "summary": "You often know what you need long before your rational mind can manufacture a neat explanation for it, and that instinct is entirely safe to trust.",
+  "body": "You often know what you need long before your rational mind can manufacture a neat explanation for it, and that instinct is entirely safe to trust. When the Moon sextiles Neptune, feeling and intuition synchronize, helping you recognize what will actually restore, soothe, or ground you before you've built a whole defense around it. A quiet inner pull doesn't have to be audited into oblivion before it gets to be useful. Let the raw instinct tell you what you're missing."
+}
