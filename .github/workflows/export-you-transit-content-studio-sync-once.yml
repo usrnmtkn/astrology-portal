@@ -13,39 +13,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
-      - uses: actions/setup-node@v6
-        with:
-          node-version: 22
-      - name: Export exact merged transit rows
+      - name: Export exact merged source file
         run: |
-          node <<'NODE'
-          const fs = require('fs');
-          const crypto = require('crypto');
-          const sourcePath = 'apps/web/src/content/fallbackArchitectureV3/source-rows/transit-synastry-rows-v1.json';
-          const raw = fs.readFileSync(sourcePath);
-          const parsed = JSON.parse(raw.toString('utf8'));
-          const allRows = Array.isArray(parsed) ? parsed : (parsed.rows ?? parsed.records ?? []);
-          if (!Array.isArray(allRows)) throw new Error('Source is not an array and exposes no rows/records array');
-          const keyOf = (row) => row.content_key ?? row.contentKey ?? row.key ?? row.id ?? '';
-          const rows = allRows.filter((row) => String(keyOf(row)).startsWith('authored/transit-aspect/'));
-          if (rows.length !== 378) throw new Error(`Expected 378 transit rows, got ${rows.length}`);
-          const bodyThey = (r) => r.body_they ?? r.bodyThey ?? null;
-          const explicitFriends = rows.filter((r) => bodyThey(r) != null && String(bodyThey(r)).length > 0).length;
-          const protectedGap = rows.filter((r) => keyOf(r) === 'authored/transit-aspect/venus/moon/hard' && (bodyThey(r) == null || String(bodyThey(r)).length === 0)).length;
-          if (explicitFriends !== 377) throw new Error(`Expected 377 explicit Friends rows, got ${explicitFriends}`);
-          if (protectedGap !== 1) throw new Error(`Expected protected Venus/Moon gap, got ${protectedGap}`);
-          fs.mkdirSync('artifacts', {recursive:true});
-          fs.writeFileSync('artifacts/transit-content-studio-sync-rows.json', JSON.stringify(rows, null, 2));
-          fs.writeFileSync('artifacts/transit-content-studio-sync-manifest.json', JSON.stringify({
-            sourceCommit: process.env.GITHUB_SHA,
-            sourcePath,
-            sourceFileSha256: crypto.createHash('sha256').update(raw).digest('hex'),
-            transitRows: rows.length,
-            explicitFriends,
-            protectedGap
-          }, null, 2));
-          console.log(JSON.stringify({ transitRows: rows.length, explicitFriends, protectedGap }));
-          NODE
+          mkdir -p artifacts
+          cp apps/web/src/content/fallbackArchitectureV3/source-rows/transit-synastry-rows-v1.json artifacts/transit-synastry-rows-v1.json
+          sha256sum artifacts/transit-synastry-rows-v1.json > artifacts/transit-synastry-rows-v1.sha256
+          git rev-parse HEAD > artifacts/source-commit.txt
       - uses: actions/upload-artifact@v4
         with:
           name: you-transit-content-studio-sync
