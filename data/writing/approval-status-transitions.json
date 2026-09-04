@@ -1,6 +1,7 @@
 {
-  "schemaVersion": "rendered-sample-approval-gate-v1",
+  "schemaVersion": "rendered-sample-or-bounded-owner-batch-approval-gate-v2",
   "ownerRulingDate": "2026-08-11",
+  "amendedAt": "2026-09-03",
   "approvalStatuses": [
     "generated",
     "pipeline-review-passed",
@@ -29,6 +30,19 @@
       "requires": [
         "exact_rendered_sample_owner_ruling"
       ]
+    },
+    {
+      "from": "owner-review-pending",
+      "to": "owner-approved",
+      "requires": [
+        "bounded_contextual_owner_batch_authorization",
+        "explicit_batch_id",
+        "governed_owner_evidence_record",
+        "exact_surface",
+        "exact_field",
+        "explicit_member_content_key",
+        "exact_member_payload_sha256"
+      ]
     }
   ],
   "capabilityRequirements": {
@@ -42,6 +56,42 @@
     "serving": [
       "rendered_sample_owner_approved"
     ]
+  },
+  "capabilityRequirementAlternatives": {
+    "batch_generation": [
+      [
+        "rendered_sample_owner_approved"
+      ],
+      [
+        "bounded_contextual_owner_batch_authorization"
+      ]
+    ],
+    "serving": [
+      [
+        "rendered_sample_owner_approved"
+      ],
+      [
+        "bounded_contextual_owner_batch_authorization"
+      ]
+    ]
+  },
+  "boundedOwnerBatchAuthorization": {
+    "authority": "owner_only",
+    "wildcardsAllowed": false,
+    "scopeExpansionAllowed": false,
+    "requiredEvidence": [
+      "owner_approve_decision",
+      "owner_exact_statement",
+      "stable_batch_id",
+      "governed_evidence_record_path",
+      "exact_surface",
+      "exact_field",
+      "explicit_member_content_key",
+      "exact_member_payload_sha256",
+      "explicit_capabilities"
+    ],
+    "modelOrJudgeMayCreateAuthority": false,
+    "servingRequiresBatchGenerationCapability": true
   },
   "proseJudgment": {
     "authority": "owner",
