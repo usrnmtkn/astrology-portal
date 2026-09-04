@@ -15,7 +15,7 @@ const templates = readJson("apps/web/src/content/fallbackArchitectureV3/template
 const rows = readJson("apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json");
 const sunSquareAscendantApproval = readJson("packages/astro-knowledge/review/natal-sun-square-ascendant-owner-approval-2026-08-22.json");
 const angleV15BatchManifest = readJson("packages/astro-knowledge/review/angle-aspects-60-v15/shipping-manifest.json");
-const friendsV1Manifest = readJson("packages/astro-knowledge/review/angle-aspects-60-friends-v1/shipping-manifest.json");
+const friendsV1Manifest = readJson("packages/astro-knowledge/review/angle-aspects-60-friends-v1/SHIPPING-MANIFEST.json");
 const friendsV1Authority = readJson("packages/astro-knowledge/review/angle-aspects-60-friends-v1/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.json");
 const browserRenderer = createFallbackRenderer(templates, rows);
 

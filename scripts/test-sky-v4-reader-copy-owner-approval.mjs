@@ -116,7 +116,7 @@ const adminDashboard = fs.readFileSync(path.join(repoRoot, "apps/admin/src/Gener
 assert.match(adminDashboard, /skyV4ReviewCategory === "configuration"/u);
 assert.match(adminDashboard, /skyV4ReviewCategory === "owner-approved-reader-copy"/u);
 const generatedContentApi = fs.readFileSync(path.join(repoRoot, "api/admin/generated-content.ts"), "utf8");
-assert.match(generatedContentApi, /const reviewStatus = hasPackageDraft\s*\? "needs_review"/u);
+assert.match(generatedContentApi, /const reviewStatus = \(?\s*hasPackageDraft\s*\?\s*"needs_review"/u);
 assert.match(generatedContentApi, /record\.owner_approved = isSkyV4OwnerApprovedReaderCopy && reviewStatus === "approved"/u);
 
 console.log("SKY V4 reader-copy owner approval: PASS (280 approved and released; 120 continuous with six fields; 160 additional; 25 configuration dark; copy drift 0)");

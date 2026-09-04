@@ -85,7 +85,7 @@ assert.deepEqual(skyV4LunationRoute(exactEclipse, positions), {
 
 const app = fs.readFileSync(new URL("../apps/web/src/App.tsx", import.meta.url), "utf8");
 assert.match(app, /event\.type === "lunation"[\s\S]{0,120}currentSkyV4LunationDetailArticle/u);
-assert.match(app, /\[\.\.\.articleSections, \.\.\.relatedAspectSections\]/u);
+assert.match(app, /sections:\s*displayArticleSections\.length > 0[\s\S]{0,120}\?\s*\[\.\.\.displayArticleSections,\s*\.\.\.relatedAspectSections\][\s\S]{0,80}:\s*relatedAspectSections/u);
 assert.match(app, /grouping: "event"/u);
 assert.match(app, /skyV4PlacementContexts/u);
 assert.match(app, /skyV4StationSupported/u);
