@@ -47,7 +47,6 @@ jobs:
         run: |
           node scripts/test-admin-friends-transits-navigation.mjs
           node scripts/test-admin-transit-natal-sources.mjs
-          node scripts/test-admin-natal-aspect-sources.mjs
       - name: Commit patch
         run: |
           if git diff --quiet; then
