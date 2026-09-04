@@ -16,7 +16,9 @@
   "memberSetSha256": "494e5a39360234defd629e86a040a5aa404d1f2be7108eabccfb004cfca8a509",
   "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-04-held-trines-33/owner-batch-authorization.json",
   "payloadFiles": [
-    "trines.json"
+    "chiron.json",
+    "lilith.json",
+    "north-node.json"
   ],
   "sourceReviewBoundary": "33 held exact trines rewritten fresh from mechanism and approved in chat",
   "runtimeNodeCanonicalization": "North Node runtime key is north-node; held source key nodes remains provenance-only"
