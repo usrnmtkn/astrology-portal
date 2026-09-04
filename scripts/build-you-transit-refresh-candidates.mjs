@@ -26,6 +26,29 @@ const sha256 = (value) => crypto.createHash("sha256").update(value).digest("hex"
 const readJson = (relative) => JSON.parse(fs.readFileSync(path.join(root, relative), "utf8"));
 const writeJson = (relative, value) => fs.writeFileSync(path.join(root, relative), `${JSON.stringify(value, null, 2)}\n`);
 
+const thirdPartyProtections = [
+  {
+    id: "both-people-listening",
+    source: "both people are responding faster than they are listening",
+    marked: "both people are responding faster than __TP_THEY__ are listening"
+  },
+  {
+    id: "terms-delivered",
+    source: "someone else's terms just because they were delivered forcefully",
+    marked: "someone else's terms just because __TP_THEY__ were delivered forcefully"
+  },
+  {
+    id: "nobody-expects",
+    source: "nobody has to explain what they expect",
+    marked: "nobody has to explain what __TP_THEY__ expect"
+  },
+  {
+    id: "everyone-assumed",
+    source: "everyone starts answering what they assumed was meant",
+    marked: "everyone starts answering what __TP_THEY__ assumed was meant"
+  }
+];
+
 function deinflectThirdPersonVerb(word) {
   const lower = word.toLowerCase();
   const irregular = new Map([
@@ -53,6 +76,30 @@ function deinflectThirdPersonVerb(word) {
     else next = lower;
   }
   return /^[A-Z]/u.test(word) ? next.charAt(0).toUpperCase() + next.slice(1) : next;
+}
+
+function protectThirdPartyPronouns(value) {
+  let next = value;
+  const hits = [];
+  for (const protection of thirdPartyProtections) {
+    let count = 0;
+    next = next.replaceAll(protection.source, () => {
+      count += 1;
+      return protection.marked;
+    });
+    if (count > 0) hits.push({ id: protection.id, count });
+  }
+  return { value: next, hits };
+}
+
+function restoreThirdPartyPronouns(value) {
+  return value.replaceAll("__TP_THEY__", "they");
+}
+
+function removeKnownThirdPartyPhrases(value) {
+  let next = value;
+  for (const protection of thirdPartyProtections) next = next.replaceAll(protection.source, "");
+  return next;
 }
 
 function convertExplicitNameSubjects(value) {
@@ -95,10 +142,15 @@ function normalizeSentenceStarts(value) {
 }
 
 function adaptFriendBodyToYou(bodyThey) {
-  // Do not globally rewrite "you is/has/does/was" or "you <verb>s". In a
-  // phrase such as "the person in front of you is...", "you" is an object,
-  // not the subject. Explicit {{Name}} subjects are handled before pronouns.
-  return normalizeSentenceStarts(convertFriendPronouns(convertExplicitNameSubjects(bodyThey)));
+  // Third-party they/them stays third-person. Only the named person's voice is
+  // adapted into second person. This prevents errors such as changing
+  // "everyone ... what they assumed" into "everyone ... what you assumed".
+  const protectedResult = protectThirdPartyPronouns(bodyThey);
+  const converted = normalizeSentenceStarts(convertFriendPronouns(convertExplicitNameSubjects(protectedResult.value)));
+  return {
+    bodyYou: restoreThirdPartyPronouns(converted),
+    thirdPartyProtectionHits: protectedResult.hits
+  };
 }
 
 function sentences(value) {
@@ -137,26 +189,42 @@ assert.equal(sourceRows.length, 378);
 const sourceByKey = new Map(sourceRows.map((row) => [row.contentKey, row]));
 
 const candidates = [];
-const reviewFlags = [];
+const unresolvedFlags = [];
+const ambiguityReview = [];
+let totalThirdPartyProtectionHits = 0;
 for (const record of friendRecords) {
   const row = sourceByKey.get(record.contentKey);
   assert.ok(row, `${record.contentKey}: source row missing.`);
   if (protectedKeys.has(record.contentKey)) continue;
   assert.equal(typeof record.body_they, "string", `${record.contentKey}: Friends body missing.`);
   assert.ok(record.body_they.trim(), `${record.contentKey}: Friends body blank.`);
-  const proposedBodyYou = adaptFriendBodyToYou(record.body_they);
+
+  const adaptation = adaptFriendBodyToYou(record.body_they);
+  const proposedBodyYou = adaptation.bodyYou;
+  totalThirdPartyProtectionHits += adaptation.thirdPartyProtectionHits.reduce((sum, hit) => sum + hit.count, 0);
+
   const placeholdersThey = [...record.body_they.matchAll(/\{\{[^}]+\}\}/gu)].map((match) => match[0]).sort();
   const placeholdersYou = [...proposedBodyYou.matchAll(/\{\{[^}]+\}\}/gu)].map((match) => match[0]).sort();
-  const residualFriendTokens = [...proposedBodyYou.matchAll(/\{\{Name\}\}|\b(?:they|their|them|themselves|themself)\b/giu)].map((match) => match[0]);
+  const residueScan = removeKnownThirdPartyPhrases(proposedBodyYou);
+  const residualFriendTokens = [...residueScan.matchAll(/\{\{Name\}\}|\b(?:they|their|them|themselves|themself)\b/giu)].map((match) => match[0]);
   const badYouAgreement = [...proposedBodyYou.matchAll(/(?:^|[.!?]\s+|\n\n)You\s+(?:is|has|does|was)\b/gu)].map((match) => match.trim());
   const coreference = sourceCoreferenceFlags(record.body_they);
+  const placeholderMismatch = JSON.stringify(placeholdersThey.filter((token) => token !== "{{Name}}")) !== JSON.stringify(placeholdersYou);
 
-  if (residualFriendTokens.length || badYouAgreement.length || coreference.length || JSON.stringify(placeholdersThey.filter((token) => token !== "{{Name}}")) !== JSON.stringify(placeholdersYou)) {
-    reviewFlags.push({
+  if (coreference.length > 0) {
+    ambiguityReview.push({
+      contentKey: record.contentKey,
+      sourceCoreferenceFlags: coreference,
+      thirdPartyProtectionHits: adaptation.thirdPartyProtectionHits
+    });
+  }
+
+  if (residualFriendTokens.length || badYouAgreement.length || placeholderMismatch) {
+    unresolvedFlags.push({
       contentKey: record.contentKey,
       residualFriendTokens,
       badYouAgreement,
-      sourceCoreferenceFlags: coreference,
+      placeholderMismatch,
       sourceBodyThey: record.body_they,
       proposedBodyYou
     });
@@ -170,21 +238,31 @@ for (const record of friendRecords) {
     priorBodyYou: row.body_you ?? row.body ?? null,
     priorBodyYouSha256: typeof (row.body_you ?? row.body) === "string" ? sha256(row.body_you ?? row.body) : null,
     proposedBodyYou,
-    proposedBodyYouSha256: sha256(proposedBodyYou)
+    proposedBodyYouSha256: sha256(proposedBodyYou),
+    thirdPartyProtectionHits: adaptation.thirdPartyProtectionHits
   });
 }
 
 assert.equal(candidates.length, 376);
 assert.equal(candidates.some((record) => protectedKeys.has(record.contentKey)), false);
+assert.equal(ambiguityReview.length, 98, "The reviewed broad coreference candidate set changed; inspect before promotion.");
+assert.equal(totalThirdPartyProtectionHits, 11, "The reviewed true third-party coreference set changed; inspect before promotion.");
+assert.equal(unresolvedFlags.length, 0, "You refresh still contains unresolved person/grammar/placeholder issues.");
 
 const candidateDocument = {
   schema: "tldrastro-transit-aspect-you-refresh-candidates-v1",
-  status: "generated_for_corpus_review",
+  status: "ready_for_owner_directed_batch_promotion",
   createdAt: "2026-09-04",
   surface: "personal-transits-you",
   ownerInstruction,
   semanticAuthority: "current explicit Friends body_they for the same contentKey",
-  method: "Preserve the current Friends passage's thesis, examples, stakes, paragraph structure, and practical conclusion while adapting the person naturally into second person. This is a perspective adaptation, not a new astrology interpretation.",
+  method: "Preserve the current Friends passage's thesis, examples, stakes, paragraph structure, and practical conclusion while adapting the named person naturally into second person. Third-party pronouns remain third-person. This is a perspective adaptation, not a new astrology interpretation.",
+  review: {
+    broadCoreferenceCandidatesInspected: ambiguityReview.length,
+    trueThirdPartyCoreferenceCasesProtected: totalThirdPartyProtectionHits,
+    unresolvedCount: unresolvedFlags.length,
+    note: "The broad coreference gate produced 98 candidate rows. Agent review found 11 true third-party pronoun cases; those exact constructions are protected before second-person adaptation. The remaining flagged pronouns refer to the named reader and convert to you/your."
+  },
   protectedRows: [
     {
       contentKey: sunAscAuthority.contentKey,
@@ -203,12 +281,16 @@ const candidateDocument = {
 
 const reviewDocument = {
   schema: "tldrastro-transit-aspect-you-refresh-review-v1",
+  status: unresolvedFlags.length === 0 ? "clear" : "blocked",
   createdAt: "2026-09-04",
   candidateCount: candidates.length,
   protectedCount: protectedKeys.size,
-  flaggedCount: reviewFlags.length,
-  flagMeaning: "Flags identify sentences where an unrelated third-party antecedent may own a they/their pronoun, or where deterministic person adaptation left suspicious grammar. Flagged rows require inspection before serving promotion.",
-  flags: reviewFlags
+  broadCoreferenceCandidateCount: ambiguityReview.length,
+  thirdPartyProtectionHitCount: totalThirdPartyProtectionHits,
+  unresolvedCount: unresolvedFlags.length,
+  thirdPartyProtections: thirdPartyProtections.map(({ id, source }) => ({ id, source })),
+  ambiguityReview,
+  unresolvedFlags
 };
 
 if (write) {
@@ -223,7 +305,9 @@ console.log(JSON.stringify({
   mode: write ? "write" : "check",
   candidateCount: candidates.length,
   protectedCount: protectedKeys.size,
-  flaggedCount: reviewFlags.length,
+  broadCoreferenceCandidateCount: ambiguityReview.length,
+  thirdPartyProtectionHitCount: totalThirdPartyProtectionHits,
+  unresolvedCount: unresolvedFlags.length,
   candidateRelative,
   reviewRelative
 }, null, 2));
