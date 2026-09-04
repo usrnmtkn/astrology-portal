@@ -2345,7 +2345,7 @@ function fallbackSectionForKey(key: string, surface?: string): Exclude<AdminFall
   if (key.startsWith("fallback-hook/daily-headline/") || key.startsWith("fallback-hook/daily-body/") || key.startsWith("fallback-hook/pair-daily/")) return "daily";
   if (key.includes("lunar") || key.startsWith("lunation/") || key.startsWith("season/") || key.startsWith("season-arc/") || key.startsWith("transit-fallback/")) return "lunar-calendar";
   if (key.includes("settings") || surface === "settings") return "settings";
-  if (key.includes("friends") || key.includes("synastry") || key.includes("relationship") || surface === "friends" || surface === "relationship" || surface === "synastry" || surface === "composite") return "friends";
+  if (key.includes("friends") || key.includes("synastry") || key.includes("relationship") || key.includes("bond-effect") || surface === "friends" || surface === "relationship" || surface === "synastry" || surface === "composite") return "friends";
   if (key.includes("natal") || key.includes("you") || surface === "you" || surface === "natal") return "you";
   return "sky";
 }
@@ -5322,6 +5322,45 @@ export function GeneratedContentAdminDashboard() {
                       <span>House Transits</span>
                     </button>
                   </div>
+                )}
+                {item.page === "skyWriteups" && (
+                  <>
+                    <button
+                      type="button"
+                      title="Friends > Transits reader-facing copy"
+                      onClick={() => navigateAdminPage("skyWriteups", new URLSearchParams({ view: "transits-to-natal", audience: "friends" }))}
+                      aria-current={window.location.hash.includes("audience=friends") && activePage === "skyWriteups" ? "page" : undefined}
+                    >
+                      <Users size={16} aria-hidden="true" />
+                      <span>Friends Transits</span>
+                    </button>
+                    <div className="admin-nav-workspace-group" aria-label="Friends Transits sections">
+                      <button
+                        type="button"
+                        title="Edit the bond-effect passages shown under Friends > Transits > Between you two"
+                        onClick={() => navigateAdminPage("knowledge", new URLSearchParams({ section: "friends", q: "bond-effect", audience: "friends" }))}
+                        aria-current={window.location.hash.includes("audience=friends") && activePage === "knowledge" && window.location.hash.includes("bond-effect") ? "page" : undefined}
+                      >
+                        <span>Between you two</span>
+                      </button>
+                      <button
+                        type="button"
+                        title="Edit Friend View Copy for the personal transits shown as Active for the selected friend"
+                        onClick={() => navigateAdminPage("skyWriteups", new URLSearchParams({ view: "transits-to-natal", audience: "friends" }))}
+                        aria-current={window.location.hash.includes("audience=friends") && activePage === "skyWriteups" && skyWriteupWorkspaceView === "transits-to-natal" ? "page" : undefined}
+                      >
+                        <span>Active for {"{{Name}}"}</span>
+                      </button>
+                      <button
+                        type="button"
+                        title="Edit the house-transit passages shown under Friends > Transits > Where it lands"
+                        onClick={() => navigateAdminPage("skyWriteups", new URLSearchParams({ view: "house-transits", audience: "friends" }))}
+                        aria-current={window.location.hash.includes("audience=friends") && activePage === "skyWriteups" && skyWriteupWorkspaceView === "house-transits" ? "page" : undefined}
+                      >
+                        <span>Where it lands (house transit)</span>
+                      </button>
+                    </div>
+                  </>
                 )}
               </Fragment>
             );
