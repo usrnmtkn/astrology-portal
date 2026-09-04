@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.mercury.square.mars",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-04",
+  "ownerStatement": "please proceed with next steps",
+  "batchId": "sky-calendar-exact-approved-2026-09-04-batch-51",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-04-batch-51/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "0913ca36d5d2abf127c8747f1d54e676310350865b4bcdc50a886f75b148b44c",
+  "summary": "One sharp reply can turn a practical disagreement into the argument you spend the rest of the day regretting.",
+  "body": "One sharp reply can turn a practical disagreement into the argument you spend the rest of the day regretting. When Mercury squares Mars, thought and anger grind against each other, making impatience easier to hear in your words and disagreement easier to interpret as disrespect. The issue may genuinely need confronting, but irritation is likely to make the sentence harsher than the solution requires. Draft the scorched-earth response in a private document to clear your nervous system. Then, edit it down to the cold, professional facts and send the version that actually secures your objective."
+}

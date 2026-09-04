@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.saturn.opposition.uranus",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-04",
+  "ownerStatement": "please proceed with next steps",
+  "batchId": "sky-calendar-exact-approved-2026-09-04-batch-51",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-04-batch-51/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "f12098b2eac9c8c4d5867ca0566a2e710f8941d91f044934b7cf414f5070dcca",
+  "summary": "You can know something has to change and still be terrified of what breaks when it does.",
+  "body": "You can know something has to change and still be terrified of what breaks when it does. When Saturn opposes Uranus, the need for stability comes face-to-face with the need for freedom, making every option look like it sacrifices something important. Keeping the old structure may protect what people rely on, but it can also preserve the exact restriction that created the problem. Do not confuse stability with keeping everything the same. Protect what still matters and change what has become impossible to justify."
+}

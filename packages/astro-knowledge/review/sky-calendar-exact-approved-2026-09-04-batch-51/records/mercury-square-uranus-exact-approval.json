@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.mercury.square.uranus",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-04",
+  "ownerStatement": "please proceed with next steps",
+  "batchId": "sky-calendar-exact-approved-2026-09-04-batch-51",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-04-batch-51/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "e6dd9a4797409bb2f153cf867da18610e16968d3398df95cb152e9dfb0f41ba4",
+  "summary": "A message, cancellation, technical problem, or piece of unexpected news can throw the entire plan off course before you have had time to process it.",
+  "body": "A message, cancellation, technical problem, or piece of unexpected news can throw the entire plan off course before you have had time to process it. When Mercury squares Uranus, information arrives with disruption attached, making schedules shift, instructions change, and your mind race toward the next solution before the facts have fully landed. Do not confuse speed with clarity. Confirm what actually changed, then rebuild from that. One surprise does not deserve permission to turn the rest of the day into chaos."
+}

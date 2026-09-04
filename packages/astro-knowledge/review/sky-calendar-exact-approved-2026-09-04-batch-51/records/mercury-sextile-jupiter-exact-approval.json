@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.mercury.sextile.jupiter",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-04",
+  "ownerStatement": "please proceed with next steps",
+  "batchId": "sky-calendar-exact-approved-2026-09-04-batch-51",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-04-batch-51/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "be7065850142718b6970a1e7d30518787dea7a052d3ad5694361e6af200fa974",
+  "summary": "A conversation, application, introduction, or piece of good news can open a larger opportunity than you expected.",
+  "body": "A conversation, application, introduction, or piece of good news can open a larger opportunity than you expected. When Mercury sextiles Jupiter, communication and expansion cooperate, helping ideas travel farther and making it easier to connect your message with the person, audience, or resource that can help it grow. Say what you are trying to do instead of assuming somebody will infer the opportunity from a long explanation. Stop making people guess how they can help you and explicitly state the outcome you are looking for. Hand the momentum a concrete next step so the opportunity actually has a place to land."
+}

@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.sun.conjunction.mercury",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-04",
+  "ownerStatement": "please proceed with next steps",
+  "batchId": "sky-calendar-exact-approved-2026-09-04-batch-51",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-04-batch-51/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "9089145e7c4fd7b62b3926bbdd1884f4f56355ad37093c96a2735f8bd233f5eb",
+  "summary": "Your thoughts can feel unusually personal when saying what you mean also feels like saying who you are.",
+  "body": "Your thoughts can feel unusually personal when saying what you mean also feels like saying who you are. When the Sun conjoins Mercury, identity and communication fuse, making it easier to put your ideas forward with confidence and much harder to separate disagreement from criticism of you personally. This can be excellent astrology for writing, pitching, deciding, or having the conversation you have been rehearsing. Just remember that changing your mind does not weaken your position. A better idea is allowed to replace the one you were certain about five minutes ago."
+}
