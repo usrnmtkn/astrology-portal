@@ -1,4 +1,4 @@
-name: One-time fallback V3 dashboard sync
+name: One-time fallback V3 dashboard export
 
 on:
   push:
@@ -11,7 +11,7 @@ permissions:
   contents: read
 
 jobs:
-  sync:
+  export:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
@@ -22,8 +22,11 @@ jobs:
           cache: npm
       - name: Install dependencies
         run: npm ci --no-audit --no-fund
-      - name: Apply and verify canonical Content Studio mirror
-        env:
-          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
-          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
-        run: node scripts/materialize-fallback-architecture-v3-dashboard-rows.mjs --apply --verify
+      - name: Materialize canonical Content Studio mirror
+        run: node scripts/materialize-fallback-architecture-v3-dashboard-rows.mjs --out=/tmp/fallback-v3-dashboard-rows.json
+      - name: Upload canonical mirror
+        uses: actions/upload-artifact@v4
+        with:
+          name: fallback-v3-dashboard-rows
+          path: /tmp/fallback-v3-dashboard-rows.json
+          if-no-files-found: error
