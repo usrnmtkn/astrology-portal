@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.moon.square.mercury",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-04",
+  "ownerStatement": "please commit and make live the updated aspects",
+  "batchId": "sky-calendar-exact-approved-2026-09-04-batch-30",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-04-batch-30/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "1c1b2252de6ae0353c35fd9c337b01548cf4dae171afd1056c403f115c1885c0",
+  "summary": "A message can sound much harsher when you are already hurt, irritated, or worried, and your reaction can start filling in meaning the other person may never have intended.",
+  "body": "A message can sound much harsher when you are already hurt, irritated, or worried, and your reaction can start filling in meaning the other person may never have intended. When the Moon squares Mercury, feelings and interpretation compete for the same information, making tone, timing, and small wording choices feel unusually loaded. The emotion is worth listening to because it tells you where something landed, but it cannot tell you exactly what another person meant. Before you answer the version of the conversation happening in your head, come back to what was actually said and decide which part truly needs a response."
+}

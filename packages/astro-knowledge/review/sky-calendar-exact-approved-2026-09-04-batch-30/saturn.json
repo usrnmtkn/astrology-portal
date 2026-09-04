@@ -1,0 +1,43 @@
+{
+  "schemaVersion": 1,
+  "family": "saturn",
+  "rowCount": 6,
+  "rows": [
+    {
+      "contentKey": "sky.aspect.saturn.conjunction.neptune",
+      "summary": "A vision becomes a commitment the moment it needs money, time, and someone willing to be responsible for what happens next.",
+      "body": "A vision becomes a commitment the moment it needs money, time, and someone willing to be responsible for what happens next. When Saturn conjoins Neptune, imagination and structure fuse, giving something intangible enough form to become possible while exposing every place hope had been filling in for missing support. The dream is not less meaningful because it needs a budget, a deadline, or a workable plan. If it matters enough to build, it matters enough to support properly.",
+      "bodySha256": "5887cd9374f987845dfc64d8d7db299ec7843c88cf526e823c0159449e2d76de"
+    },
+    {
+      "contentKey": "sky.aspect.saturn.conjunction.pluto",
+      "summary": "When the stakes are high, control can start looking like responsibility, and fear can make almost any restriction seem reasonable.",
+      "body": "When the stakes are high, control can start looking like responsibility, and fear can make almost any restriction seem reasonable. When Saturn conjoins Pluto, structure and power fuse, giving rules, consequences, and hard decisions unusual force while making them much harder to question once they are in place. Some limits may be necessary, but emergency measures have a habit of surviving the emergency that justified them. Notice what is becoming permanent simply because nobody wants to be the first person to challenge it.",
+      "bodySha256": "d965b7a8f49711d95600c03b921a1dc5fb148e496c9238b32ebc881209725922"
+    },
+    {
+      "contentKey": "sky.aspect.saturn.opposition.neptune",
+      "summary": "A promise can sound generous until the budget, policy, or deadline reveals who will actually be left without what was promised.",
+      "body": "A promise can sound generous until the budget, policy, or deadline reveals who will actually be left without what was promised. When Saturn opposes Neptune, ideals and practical limits face each other directly, exposing the distance between what people want to provide and what the structure is actually prepared to support. Good intentions matter, but they do not pay the bill, extend the deadline, or make an inaccessible system suddenly usable. Judge the promise by what reaches the people it was supposed to help.",
+      "bodySha256": "5fa946e783f7b940bd64561543cbbd9d0855524d5a31f2291af74e4619585012"
+    },
+    {
+      "contentKey": "sky.aspect.saturn.square.lilith",
+      "summary": "When a rule keeps asking you to violate a boundary you already know is non-negotiable, compliance starts costing more than refusal.",
+      "body": "When a rule keeps asking you to violate a boundary you already know is non-negotiable, compliance starts costing more than refusal. When Saturn squares Lilith, duty and authority collide with the part of you that is no longer willing to cooperate at your own expense. What looks like defiance from the outside may simply be the point where keeping the peace has become more damaging than dealing with the fallout of saying no. At some point, the consequence of refusing becomes easier to live with than the consequence of abandoning yourself again.",
+      "bodySha256": "46ad50a2fd02f8bba21f2062f508fce1e56b86b28a245f2a9970a94a5ba3e09a"
+    },
+    {
+      "contentKey": "sky.aspect.saturn.square.neptune",
+      "summary": "If you are quietly supplying the missing time, money, or clarity that keeps a plan alive, the plan is not functioning as well as everyone says it is.",
+      "body": "If you are quietly supplying the missing time, money, or clarity that keeps a plan alive, the plan is not functioning as well as everyone says it is. When Saturn squares Neptune, responsibility and idealism grind against each other until the gap between the vision and the support underneath it becomes impossible to keep covering. You can believe deeply in the purpose without volunteering to disguise every weakness in the structure. Your ability to compensate is not proof that the arrangement works.",
+      "bodySha256": "9b680c8c44783a0c8c19a2317f2d9f9e3e44fd81377ead9d1f81452b64a4de5c"
+    },
+    {
+      "contentKey": "sky.aspect.saturn.square.pluto",
+      "summary": "When every attempt to question a rule brings a harsher consequence, a disagreement about limits can quickly become a fight over who gets to decide without being challenged.",
+      "body": "When every attempt to question a rule brings a harsher consequence, a disagreement about limits can quickly become a fight over who gets to decide without being challenged. When Saturn squares Pluto, authority and concentrated power press against each other, making money, access, procedure, or punishment increasingly useful as leverage. Once escalation becomes the answer to every objection, the original problem can disappear underneath the struggle for control. A system that cannot tolerate an appeal is telling you something important about where the power actually sits.",
+      "bodySha256": "1457c4c8140ca4955791352506c456179b57934b9ed3f4b9083086f2bc627a6e"
+    }
+  ]
+}

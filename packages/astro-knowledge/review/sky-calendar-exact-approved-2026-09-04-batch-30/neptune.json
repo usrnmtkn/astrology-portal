@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "family": "neptune",
+  "rowCount": 2,
+  "rows": [
+    {
+      "contentKey": "sky.aspect.neptune.conjunction.pluto",
+      "summary": "A story becomes much harder to question when belief and power start reinforcing each other.",
+      "body": "A story becomes much harder to question when belief and power start reinforcing each other. When Neptune conjoins Pluto, ideals, fears, imagination, and collective longing fuse with control, secrecy, and influence, giving certain movements, institutions, or narratives an almost irresistible emotional charge. Something can feel sacred, inevitable, or deeply meaningful and still deserve scrutiny. Pay attention to what becomes easier to justify once everyone is emotionally invested in believing the same version of events.",
+      "bodySha256": "4b53092ef7d7b2a4f77ce4d6fe8016ffda7de465ccd3d956f087769f02fa36f1"
+    },
+    {
+      "contentKey": "sky.aspect.neptune.opposition.pluto",
+      "summary": "The inspiring story gets much harder to swallow when the power structure underneath it becomes impossible to ignore.",
+      "body": "The inspiring story gets much harder to swallow when the power structure underneath it becomes impossible to ignore. When Neptune opposes Pluto, ideals, compassion, and belief come into direct tension with control, secrecy, money, and whoever actually holds the leverage. The contradiction can expose a widening gap between what people say they are protecting and what their choices allow. You do not have to abandon the value just because the person or institution claiming to represent it has given you a reason to question their motives.",
+      "bodySha256": "d0a2f78869937b57f3cb007ed22298801a683d288bdeb382070a669879b0b166"
+    }
+  ]
+}

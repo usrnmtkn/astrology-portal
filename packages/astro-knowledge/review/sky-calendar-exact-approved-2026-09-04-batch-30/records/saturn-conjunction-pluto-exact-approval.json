@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.saturn.conjunction.pluto",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-04",
+  "ownerStatement": "please commit and make live the updated aspects",
+  "batchId": "sky-calendar-exact-approved-2026-09-04-batch-30",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-04-batch-30/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "d965b7a8f49711d95600c03b921a1dc5fb148e496c9238b32ebc881209725922",
+  "summary": "When the stakes are high, control can start looking like responsibility, and fear can make almost any restriction seem reasonable.",
+  "body": "When the stakes are high, control can start looking like responsibility, and fear can make almost any restriction seem reasonable. When Saturn conjoins Pluto, structure and power fuse, giving rules, consequences, and hard decisions unusual force while making them much harder to question once they are in place. Some limits may be necessary, but emergency measures have a habit of surviving the emergency that justified them. Notice what is becoming permanent simply because nobody wants to be the first person to challenge it."
+}
