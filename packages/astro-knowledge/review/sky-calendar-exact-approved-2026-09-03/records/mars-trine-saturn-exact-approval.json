@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.mars.trine.saturn",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-03",
+  "ownerStatement": "can you approve the one's already done and make them live?",
+  "batchId": "sky-calendar-exact-approved-through-2026-09-03",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-03/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "4cca701832ba6f400d7402e430cb067fe3a7a99738aa94d3d46f3f41adac1b47",
+  "summary": "There is a difference between discipline that builds your life and discipline that only proves how much you can endure.",
+  "body": "There is a difference between discipline that builds your life and discipline that only proves how much you can endure. When Mars trines Saturn, effort and restraint work together, making it easier to give something consistent attention without turning exhaustion into evidence that you are committed. You do not need to use all of your energy simply because you have it today. The work should ask something of you without requiring everything you have to give."
+}

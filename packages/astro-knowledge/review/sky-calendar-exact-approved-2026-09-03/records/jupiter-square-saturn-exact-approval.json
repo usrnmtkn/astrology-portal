@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.jupiter.square.saturn",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-03",
+  "ownerStatement": "can you approve the one's already done and make them live?",
+  "batchId": "sky-calendar-exact-approved-through-2026-09-03",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-03/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "370764f660b58f4c661e0abda6efd113765d4202673ff2c7928f0ec8817ffaa7",
+  "summary": "You can believe completely in where you are going and still be trying to get there with a life that does not currently have enough room to carry it.",
+  "body": "You can believe completely in where you are going and still be trying to get there with a life that does not currently have enough room to carry it. When Jupiter squares Saturn, ambition runs into the practical limits of time, money, responsibility, or energy, which can make every restriction feel like something standing between you and the life you should already have. The frustration is understandable, but the limit is also information. Build enough capacity for the larger version rather than repeatedly asking the current version of your life to absorb more than it can hold."
+}

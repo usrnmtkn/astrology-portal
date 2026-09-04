@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.mars.conjunction.saturn",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-03",
+  "ownerStatement": "can you approve the one's already done and make them live?",
+  "batchId": "sky-calendar-exact-approved-through-2026-09-03",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-03/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "ee62936ed2858e9be7f1107fe2b42b7b257e0d5df73ae540fe5db6c5f2d7b7c7",
+  "summary": "Hitting a brick wall when you are ready to sprint is infuriating, but fighting the structure will only break your momentum.",
+  "body": "Hitting a brick wall when you are ready to sprint is infuriating, but fighting the structure will only break your momentum. When Mars conjuncts Saturn, active drive collides directly with hard rules, strict deadlines, and non-negotiable limits. Ignoring the restriction creates a bigger mess than accepting it. Respect the sequence, handle what is mandatory right now, and save your energy for changing the rules after the baseline is secured."
+}

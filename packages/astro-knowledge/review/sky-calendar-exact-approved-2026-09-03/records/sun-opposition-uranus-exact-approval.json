@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.sun.opposition.uranus",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-03",
+  "ownerStatement": "can you approve the one's already done and make them live?",
+  "batchId": "sky-calendar-exact-approved-through-2026-09-03",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-03/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "8788152952a6d8655c5c3057427df15c9f53daa5a31a9446ee942062754d74db",
+  "summary": "Someone else changing the terms can expose how much of your plan depended on them staying exactly the same.",
+  "body": "Someone else changing the terms can expose how much of your plan depended on them staying exactly the same. When the Sun opposes Uranus, another person’s decision to leave, change direction, ask for more freedom, or stop participating in the old arrangement can force you to adjust before you wanted to. Your first instinct may be to restore what was familiar because it worked for you, but the break is also information about what is no longer available. Build from what is true now, and let the next version of the plan depend less on somebody returning to a role they have already outgrown."
+}

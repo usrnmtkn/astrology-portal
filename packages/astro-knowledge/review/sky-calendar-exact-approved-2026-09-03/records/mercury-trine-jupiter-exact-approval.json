@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.mercury.trine.jupiter",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-03",
+  "ownerStatement": "can you approve the one's already done and make them live?",
+  "batchId": "sky-calendar-exact-approved-through-2026-09-03",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-03/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "a3fb6042a0eac6ee8654360546d15018db13aac49db811b642ff64185e9017f2",
+  "summary": "If you have a big idea, this is the moment to explain it well enough that other people can actually see how it works.",
+  "body": "If you have a big idea, this is the moment to explain it well enough that other people can actually see how it works. When Mercury trines Jupiter, your thinking expands without losing the details, making it easier to pitch, teach, publish, negotiate, or make the case for something larger. Do not bury the vision under logistics, but do not expect enthusiasm to fill in the missing plan either. Lead with why it matters, then give people the numbers, timeline, or next step they need to take you seriously."
+}

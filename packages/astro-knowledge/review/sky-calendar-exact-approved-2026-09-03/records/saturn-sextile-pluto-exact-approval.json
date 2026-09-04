@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.saturn.sextile.pluto",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-03",
+  "ownerStatement": "can you approve the one's already done and make them live?",
+  "batchId": "sky-calendar-exact-approved-through-2026-09-03",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-03/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "70958b85d021a589d203c603de4235a667dfc83a091bc1ddfbec005c969876f8",
+  "summary": "If the same conflict keeps returning with different people, the pattern is probably being protected by something larger than the latest person causing the problem.",
+  "body": "If the same conflict keeps returning with different people, the pattern is probably being protected by something larger than the latest person causing the problem. When Saturn sextiles Pluto, you have an opportunity to change the boundary, responsibility, access, or decision-making process that keeps allowing the same dynamic to recreate itself. Replacing one person may bring temporary relief, but it will not protect you from the next version of the problem if the setup stays the same. Use the opening to change what people are allowed to do, who gets the final say, or what happens when the boundary is crossed."
+}

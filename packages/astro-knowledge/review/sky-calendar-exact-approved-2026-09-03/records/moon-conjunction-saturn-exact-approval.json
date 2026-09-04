@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.moon.conjunction.saturn",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-03",
+  "ownerStatement": "can you approve the one's already done and make them live?",
+  "batchId": "sky-calendar-exact-approved-through-2026-09-03",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-03/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "112a6a380f4b11e603a61f1814c1663d5f198808c70dc9debf951351aaf6760c",
+  "summary": "When one responsibility keeps deciding the shape of your entire week, stop treating it like a small task you should somehow be able to squeeze in.",
+  "body": "When one responsibility keeps deciding the shape of your entire week, stop treating it like a small task you should somehow be able to squeeze in. When the Moon conjuncts Saturn, emotional needs and practical obligations become heavier and harder to separate, especially around family, caregiving, home, or commitments nobody else is volunteering to carry. Put the actual time and work on paper. If the arrangement only functions because you are never allowed to be unavailable, it needs more support."
+}

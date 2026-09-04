@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.uranus.sextile.neptune",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-03",
+  "ownerStatement": "can you approve the one's already done and make them live?",
+  "batchId": "sky-calendar-exact-approved-through-2026-09-03",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-03/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "efe8788b158f066eeb3a553951aa3383fe2313207a90421a631c8dabe11194ce",
+  "summary": "Something you had written off as unrealistic may become more workable once you realize the obstacle was the method, not the idea itself.",
+  "body": "Something you had written off as unrealistic may become more workable once you realize the obstacle was the method, not the idea itself. When Uranus sextiles Neptune, imagination gets help from a new approach, making it easier to see how a creative idea, personal hope, or change you care about could work differently than you originally pictured. You do not have to give up on something meaningful just because the first version was impractical. Be willing to change how you get there without assuming that means you wanted the wrong thing."
+}

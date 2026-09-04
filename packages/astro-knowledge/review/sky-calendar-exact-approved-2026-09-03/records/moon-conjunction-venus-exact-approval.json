@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.moon.conjunction.venus",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-03",
+  "ownerStatement": "can you approve the one's already done and make them live?",
+  "batchId": "sky-calendar-exact-approved-through-2026-09-03",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-03/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "68b154455809344b9bf1c9346fec54c8a60937a3c5512d3b89427f8a6dd6bd1d",
+  "summary": "Care feels most convincing when it shows up in a form the other person can actually receive.",
+  "body": "Care feels most convincing when it shows up in a form the other person can actually receive. When the Moon conjuncts Venus, affection, generosity, comfort, food, money, gifts, and social connection become more emotionally meaningful. This can be lovely, but it can also expose who is always giving and who is always being taken care of. Enjoy the warmth, and notice if appreciation needs to move in both directions."
+}

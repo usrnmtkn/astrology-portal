@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.venus.sextile.neptune",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-03",
+  "ownerStatement": "can you approve the one's already done and make them live?",
+  "batchId": "sky-calendar-exact-approved-through-2026-09-03",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-03/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "9765b74238b1b21e0533a95d159e5c42733c37c3cf7f9639129df1e3a89fc365",
+  "summary": "You may find it easier to let yourself care about something without immediately needing to know what it means, where it is going, or what you are going to get back from it.",
+  "body": "You may find it easier to let yourself care about something without immediately needing to know what it means, where it is going, or what you are going to get back from it. When Venus sextiles Neptune, affection, creativity, and compassion can feel less guarded, making it easier to enjoy a connection, make something beautiful, or show someone you care without turning the moment into a test of the future. Not every feeling needs to be converted into a promise before you are allowed to trust that it mattered. Let yourself receive what is good about the experience without asking it to answer questions it has not reached yet."
+}

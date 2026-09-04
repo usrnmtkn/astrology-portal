@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.venus.opposition.saturn",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-03",
+  "ownerStatement": "can you approve the one's already done and make them live?",
+  "batchId": "sky-calendar-exact-approved-through-2026-09-03",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-03/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "6b23fcd587db024fd0a71d87dd2ced2626ef15559e7a5e5a35f0716027764fe6",
+  "summary": "Rejection can make you want someone’s approval more than you wanted what you originally asked them for.",
+  "body": "Rejection can make you want someone’s approval more than you wanted what you originally asked them for. When Venus opposes Saturn, affection, money, recognition, or commitment can meet a limit that feels personal enough to make you start offering more, asking for less, or trying harder to become the person who gets a yes. The boundary may still disappoint you, but disappointment is different from inadequacy. Find out what is actually unavailable before you negotiate away something important just to change somebody else’s answer."
+}

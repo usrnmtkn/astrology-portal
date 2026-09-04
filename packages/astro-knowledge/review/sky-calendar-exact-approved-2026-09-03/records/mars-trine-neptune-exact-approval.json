@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.mars.trine.neptune",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-03",
+  "ownerStatement": "can you approve the one's already done and make them live?",
+  "batchId": "sky-calendar-exact-approved-through-2026-09-03",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-03/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "ebeda0cc2110aed906540e191546f253334c45fb8df7f3c4643f6cddce9cd5c1",
+  "summary": "You do not have to explain exactly why something matters to you before you are allowed to act like it matters.",
+  "body": "You do not have to explain exactly why something matters to you before you are allowed to act like it matters. When Mars trines Neptune, action can follow compassion, intuition, creativity, or conviction without requiring you to turn every feeling into an argument first. Sometimes the quickest way through a feeling is to give it something to do. Make the thing, help the person, follow the instinct, and let the action show you what all that thinking could not. You do not need to know where the feeling is leading before you let it move you."
+}
