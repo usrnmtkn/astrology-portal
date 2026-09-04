@@ -1,5 +1,8 @@
 #!/usr/bin/env node
 import assert from "node:assert/strict";
+import fs from "node:fs";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 import { selectEligibleFriendTransits } from "../apps/web/src/features/friends/friendTransitEligibility.ts";
 
 const rankedCandidates = Array.from({ length: 10 }, (_, index) => ({
@@ -30,4 +33,36 @@ assert.deepEqual(
   "A non-positive cap must return no cards."
 );
 
-console.log("Friends personal-transit eligible-card cap: PASS (eligibility precedes the eight-card cap and preserves rank order)");
+const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
+const panel = fs.readFileSync(
+  path.join(root, "apps/web/src/features/friends/ManualChartsPanel.tsx"),
+  "utf8"
+);
+
+assert.match(
+  panel,
+  /const selectedFriendEligibleTransits = useMemo\([\s\S]{0,900}selectEligibleFriendTransits\([\s\S]{0,900}acceptedOwnerApprovedTransitSections\(/u,
+  "Friends must evaluate owner-approved reader-detail eligibility before applying the visible-card cap."
+);
+assert.match(
+  panel,
+  /const transits = selectedFriendEligibleTransits\.filter\(\(transit\) => transit\.term === durationClass\);/u,
+  "Friends personal-transit groups must render from the eligible capped set."
+);
+assert.match(
+  panel,
+  /const transit = selectedFriendEligibleTransits\.find\(\(candidate\) => candidate\.id === transitId\);/u,
+  "A backfilled visible Friends transit must open from the same eligible set that rendered it."
+);
+assert.match(
+  panel,
+  /const transit = selectedFriendEligibleTransits\.find\(\(candidate\) => \(\s*normalizeContentIdPart\(candidate\.id\) === routedTransitId\s*\)\);/u,
+  "A backfilled Friends transit deep link must restore from the same eligible set that rendered it."
+);
+assert.match(
+  panel,
+  /transitWheelAspectLines\(currentSky, selectedFriendReadyNatalChart, selectedFriendEligibleTransits\)/u,
+  "The Friends transit wheel must reflect the same eligible visible personal-transit set."
+);
+
+console.log("Friends personal-transit eligible-card cap: PASS (eligibility precedes the eight-card cap; backfilled cards remain visible, openable, routable, and wheel-consistent)");
