@@ -36,6 +36,34 @@ assert.deepEqual(groups[0].sources[3].candidateKeys, [
   "fallback-hook/transit-house-event-scenes/uranus/mercury/hard",
   "fallback-hook/transit-effect-hard/uranus/mercury"
 ]);
+assert.match(groups[1].label, /shared across signs & houses/u);
+assert.match(groups[1].description, /Current sign, Transit house, and Natal house update the reader preview above, but they do not change this standalone source/u);
+assert.match(groups[1].description, /change the Transiting planet, Natal planet or point, or move to a different hard\/soft aspect family/u);
+assert.match(groups[1].sources[0].scope, /Shared across all signs and houses/u);
+assert.match(groups[1].sources[0].scope, /Current sign, Transit house, and Natal house affect the preview above, not this row/u);
+assert.match(groups[1].sources[0].scope, /changing the exact aspect can also keep the same source when it stays in the same family/u);
+
+const sameStandaloneDifferentLocation = transitNatalSourceGroups({
+  ...selection,
+  sign: "libra",
+  transitHouse: "2",
+  natalHouse: "2"
+})[1].sources[0];
+assert.deepEqual(
+  sameStandaloneDifferentLocation.candidateKeys,
+  groups[1].sources[0].candidateKeys,
+  "Changing sign or houses must keep the same standalone source row."
+);
+
+const differentStandalonePlanet = transitNatalSourceGroups({
+  ...selection,
+  planet: "saturn"
+})[1].sources[0];
+assert.notDeepEqual(
+  differentStandalonePlanet.candidateKeys,
+  groups[1].sources[0].candidateKeys,
+  "Changing the transiting planet must resolve a different standalone source row."
+);
 
 const copy = new Map([
   [
