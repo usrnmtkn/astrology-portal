@@ -19,6 +19,7 @@
     "readerBootGzipBytes": "Raised by 2 kB for the fail-soft eclipse review reporting and protected-content integrity boundary; deferred content must still remain outside the static boot graph.",
     "lunationBookFallbackChunkGzipBytes": "Raised by 5 kB for the 22 recovered, owner-approved full lunation book passages; the complete protected writing remains lazy-loaded and byte-exact.",
     "transitFallbackChunkGzipBytes": "Owner-authorized increase from 330 kB to 390 kB for the 351 exact, hash-bound Friends transit body_they passages. The transit corpus remains on-demand and outside the static App boot graph; all startup and route-local budgets remain unchanged.",
-    "totalJavaScriptGzipBytes": "Owner-authorized aggregate increase to 2.85 MB for the 351 exact Friends transit passages. App boot, reader boot, App chunk, startup CSS, Friends workspace, and all unrelated deferred-content budgets remain unchanged."
+    "totalJavaScriptGzipBytes": "Owner-authorized aggregate increase to 2.85 MB for the 351 exact Friends transit passages. App boot, reader boot, App chunk, startup CSS, Friends workspace, and all unrelated deferred-content budgets remain unchanged.",
+    "authorization": "Owner explicitly authorized increasing the bundle budget during PR #509 release review on 2026-09-04."
   }
 }
