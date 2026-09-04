@@ -1,0 +1,27 @@
+{
+  "schema": "tldr.calendar-exact-owner-ruling.v1",
+  "type": "bounded_contextual_owner_batch_authorization",
+  "authority": "owner",
+  "decision": "approve",
+  "batchId": "sky-calendar-exact-approved-through-2026-09-03",
+  "ownerStatement": "can you approve the one's already done and make them live?",
+  "approvedAt": "2026-09-03",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "capabilities": ["batch_generation", "serving"],
+  "memberCount": 132,
+  "memberSetSha256": "c64283b8eddb0ada6bdde92cee27984a2604bb9a0031cc2e2025a710fbf609ac",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-03/owner-batch-authorization.json",
+  "payloadFiles": [
+    "jupiter.json",
+    "mars.json",
+    "mercury.json",
+    "moon.json",
+    "neptune.json",
+    "saturn.json",
+    "sun.json",
+    "uranus.json",
+    "venus.json"
+  ],
+  "note": "Owner instruction authorizes the already-completed exact Calendar aspect copy in this fixed, hash-bound batch for generation and serving. Rows outside this batch remain untouched."
+}
