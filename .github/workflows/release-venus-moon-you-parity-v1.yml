@@ -66,12 +66,12 @@ jobs:
           let source = fs.readFileSync(file, 'utf8');
           const oldAssertion = 'assert.equal(servingSceneCatalog.length, 56, "Approved serving scene inventory must include the current V15 natal rows and the approved Lilith fourth-house passages that qualify as scene evidence.");';
           const newAssertion = 'assert.equal(servingSceneCatalog.length, 57, "Approved serving scene inventory must include the current V15 natal rows, the approved Lilith fourth-house passages, and the released Batch 2A Venus/Saturn row that qualify as scene evidence.");';
-          if (!source.includes(oldAssertion)) throw new Error('Expected stale 56-row scene assertion was not found; refusing broad replacement.');
-          source = source.replace(oldAssertion, newAssertion);
+          if (source.includes(oldAssertion)) source = source.replace(oldAssertion, newAssertion);
+          else if (!source.includes(newAssertion)) throw new Error('Neither the stale nor repaired scene-count assertion was found; refusing broad replacement.');
           const oldTail = '  "fallback-hook/natal-you-placement-complete-final/lilith/libra/4"\n]) assert.ok(servingSceneCatalog.some((entry) => entry.contentKey === contentKey), `Approved serving scene evidence must remain retrievable: ${contentKey}`);';
           const newTail = '  "fallback-hook/natal-you-placement-complete-final/lilith/libra/4",\n  "fallback-hook/sky-aspect-sign/venus/gemini/square/saturn/pisces"\n]) assert.ok(servingSceneCatalog.some((entry) => entry.contentKey === contentKey), `Approved serving scene evidence must remain retrievable: ${contentKey}`);';
-          if (!source.includes(oldTail)) throw new Error('Expected Lilith scene-evidence list tail was not found; refusing broad insertion.');
-          source = source.replace(oldTail, newTail);
+          if (source.includes(oldTail)) source = source.replace(oldTail, newTail);
+          else if (!source.includes(newTail)) throw new Error('Neither the stale nor repaired scene-evidence list tail was found; refusing broad insertion.');
           fs.writeFileSync(file, source);
           NODE
       - name: Refresh production Sky kernel comparison
