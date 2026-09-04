@@ -87,6 +87,11 @@ jobs:
           node scripts/build-writing-harness-data.mjs --check
           node scripts/build-production-sky-kernel-comparison.mjs
           node tests/astro-writing/harness.test.mjs
+          node scripts/test-sky-v4-reader-copy-owner-approval.mjs
+          node scripts/test-sky-v4-reader-serving-release.mjs
+          node --import tsx scripts/test-sky-v4-product-surface-routing.mts
+          node --import tsx scripts/test-sky-v4-content-studio.mts
+          node --import tsx scripts/test-sky-v4-preview-api.mts
           node scripts/generate-fallback-package-manifest.mjs --check
           node scripts/build-knowledge-index.mjs --check
           node scripts/build-phrase-index.mjs --check
