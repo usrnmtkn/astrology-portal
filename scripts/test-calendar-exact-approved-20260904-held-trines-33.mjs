@@ -57,7 +57,7 @@ for (const row of rows) {
   batchLegacyKeys.add(legacyKey);
   assert.equal(current.payloads[legacyKey]?.payload?.body, row.body, `${row.contentKey}: current projection drift`);
 }
-assert.equal(northNodeRows, 11, "Expected 11 North Node trines in this release.");
+assert.equal(northNodeRows, 12, "Expected 12 North Node trines in this release.");
 
 assert.equal(current.rowCount, 248);
 assert.equal(Object.keys(current.payloads).length, 248);
