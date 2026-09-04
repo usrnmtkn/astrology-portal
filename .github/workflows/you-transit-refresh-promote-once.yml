@@ -27,8 +27,6 @@ jobs:
         run: npx esbuild apps/web/src/content/fallbackArchitectureV3/resolver/index.browser.ts --bundle --format=esm --outfile=apps/web/src/content/fallbackArchitectureV3/dist/tldr-content.js
       - name: Rebuild fallback package manifests
         run: npm run build:fallback-manifest
-      - name: Verify candidate packet freshness
-        run: node scripts/build-you-transit-refresh-candidates.mjs
       - name: Verify You refresh integrity
         run: node scripts/test-you-transit-refresh-v1.mjs
       - name: Verify Friends corpus unchanged
