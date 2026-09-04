@@ -1,0 +1,29 @@
+name: One-time fallback V3 dashboard sync
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - .github/workflows/fallback-v3-dashboard-sync-once.yml
+
+permissions:
+  contents: read
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+      - name: Install dependencies
+        run: npm ci --no-audit --no-fund
+      - name: Apply and verify canonical Content Studio mirror
+        env:
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: node scripts/materialize-fallback-architecture-v3-dashboard-rows.mjs --apply --verify
