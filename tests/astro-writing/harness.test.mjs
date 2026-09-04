@@ -527,11 +527,12 @@ const venusLibraSceneEvidence = sceneEvidenceForTarget({
   }
 });
 assert.equal(matrixSceneCatalog.primary.length, 41, "Higher-governance matrix scene inventory must remain 41 unique rows.");
-assert.equal(servingSceneCatalog.length, 56, "Approved serving scene inventory must include the current V15 natal rows and the approved Lilith fourth-house passages that qualify as scene evidence.");
+assert.equal(servingSceneCatalog.length, 57, "Approved serving scene inventory must include the current V15 natal rows, the approved Lilith fourth-house passages, and the released Batch 2A Venus/Saturn row that qualify as scene evidence.");
 for (const contentKey of [
   "fallback-hook/natal-you-placement-complete-final/lilith/aries/4",
   "fallback-hook/natal-you-placement-complete-final/lilith/gemini/4",
-  "fallback-hook/natal-you-placement-complete-final/lilith/libra/4"
+  "fallback-hook/natal-you-placement-complete-final/lilith/libra/4",
+  "fallback-hook/sky-aspect-sign/venus/gemini/square/saturn/pisces"
 ]) assert.ok(servingSceneCatalog.some((entry) => entry.contentKey === contentKey), `Approved serving scene evidence must remain retrievable: ${contentKey}`);
 assert.equal(venusLibraHouseCoreScenes.length, 11);
 assert.equal(venusLibraSceneEvidence.counts.samePlanetSignHouseCoreSelected, 11);

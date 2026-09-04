@@ -1,6 +1,6 @@
 {
   "schema": "tldrastro-approved-serving-projection/v1",
-  "packageVersion": "v3-2026-09-03a",
+  "packageVersion": "v3-2026-09-03b",
   "policy": {
     "eligibleReviewStatuses": [
       "approved",
@@ -18,13 +18,13 @@
     "runtimeFilter": "defense-in-depth"
   },
   "manifest": {
-    "contentHash": "a075eedc30939ab8c78103aed732520c",
+    "contentHash": "2d0681de4c67f3a22b785c3c3f21e10e",
     "keyManifestHash": "ad3b78b91851349d48f78053cada7089",
     "keyCount": 9271
   },
   "lineage": {
     "file": "approved-serving-lineage-v1.json",
-    "sha256": "e5ee9e4c6396085c0e365db2ccf6ec8e32dc0b7882cc0d71150462dd17d05c38",
+    "sha256": "239ca287d3de2e929433ad12d3ff565bc12e37c7a30bc1a29a1844fbd96986c9",
     "count": 9812,
     "emissionCount": 9888,
     "exactSourceMatchCount": 8770

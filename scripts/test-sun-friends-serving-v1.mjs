@@ -26,7 +26,7 @@ const rows = read("apps/web/src/content/fallbackArchitectureV3/source-rows/fallb
 const sha256 = (value) => createHash("sha256").update(value).digest("hex");
 const ascendantKey = "authored/transit-aspect/sun/ascendant/hard";
 
-assert.equal(PACKAGE_VERSION, "v3-2026-09-03a");
+assert.equal(PACKAGE_VERSION, "v3-2026-09-03b");
 assert.equal(approval.status, "owner_approved");
 assert.equal(approval.approvalLevel, "exact_owner_approved");
 assert.equal(approval.records.length, 27);
