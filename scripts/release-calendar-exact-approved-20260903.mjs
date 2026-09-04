@@ -19,6 +19,9 @@ const evidenceRelative = `${reviewRelative}/owner-batch-authorization.json`;
 const evidencePath = path.join(repoRoot, evidenceRelative);
 const recordsRoot = path.join(reviewRoot, "records");
 const manifestPath = path.join(reviewRoot, "shipping-manifest.json");
+const currentPayloadPath = path.join(reviewRoot, "current-owner-payloads.json");
+const historicalPayloadRelative = "packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-owner-rewrites-payloads.json";
+const historicalPayloadPath = path.join(repoRoot, historicalPayloadRelative);
 const transitRoot = path.join(repoRoot, "packages/astro-knowledge/data/transits");
 const sha256 = (value) => crypto.createHash("sha256").update(value).digest("hex");
 const protectedKeys = new Set([
@@ -178,4 +181,32 @@ fs.writeFileSync(manifestPath, `${JSON.stringify({
   rows: manifestRows,
 }, null, 2)}\n`);
 
-console.log(`Released ${manifestRows.length}/132 hash-bound owner-approved exact Calendar aspect rows.`);
+const historical = readJson(historicalPayloadPath);
+if (historical.rowCount !== 215 || Object.keys(historical.payloads ?? {}).length !== 215) {
+  throw new Error("Historical exact owner baseline no longer contains 215 rows.");
+}
+const currentPayloads = JSON.parse(JSON.stringify(historical.payloads));
+for (const row of rows) {
+  const legacyKey = row.contentKey.replace(/^sky\.aspect\./u, "sky.");
+  const payload = { summary: row.summary, body: row.body };
+  currentPayloads[legacyKey] = { sha256: sha256(JSON.stringify(payload)), payload };
+}
+if (Object.keys(currentPayloads).length !== 215) throw new Error("Current exact owner payload projection must contain 215 rows.");
+const currentSetHashInput = Object.entries(currentPayloads)
+  .sort(([a], [b]) => a.localeCompare(b))
+  .map(([contentKey, entry]) => ({ contentKey, payloadSha256: entry.sha256 }));
+const currentPayloadSetSha256 = sha256(JSON.stringify(currentSetHashInput));
+fs.writeFileSync(currentPayloadPath, `${JSON.stringify({
+  schemaVersion: 2,
+  name: "Current owner-approved Sky Calendar exact aspect payloads",
+  rowCount: 215,
+  approvedOverlayCount: rows.length,
+  protectedBaselineCount: protectedKeys.size,
+  historicalBaselinePath: historicalPayloadRelative,
+  overlayBatchId: ruling.batchId,
+  overlayEvidenceRecordPath: evidenceRelative,
+  payloadSetSha256: currentPayloadSetSha256,
+  payloads: currentPayloads,
+}, null, 2)}\n`);
+
+console.log(`Released ${manifestRows.length}/132 hash-bound owner-approved exact Calendar aspect rows; projected 215 current exact owner payloads.`);
