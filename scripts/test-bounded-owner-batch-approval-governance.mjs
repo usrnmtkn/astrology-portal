@@ -122,7 +122,7 @@ const generationOnly = applyBoundedOwnerBatchAuthorization(pending, {
 assert.equal(assertBatchGenerationAuthorized(generationOnly), true);
 assert.throws(
   () => assertServingAuthorized(generationOnly),
-  /OWNER_APPROVAL_REQUIRED_FOR_SERVING/u,
+  /RENDERED_SAMPLE_OWNER_APPROVAL_REQUIRED_FOR_SERVING/u,
   "Generation authorization must not silently become serving authorization."
 );
 assert.throws(
