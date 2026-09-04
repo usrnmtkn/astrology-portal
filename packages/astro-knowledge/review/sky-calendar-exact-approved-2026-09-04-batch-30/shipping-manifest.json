@@ -1,0 +1,232 @@
+{
+  "schemaVersion": 2,
+  "name": "Sky Calendar exact owner-approved release, 2026-09-04 batch 30",
+  "batchId": "sky-calendar-exact-approved-2026-09-04-batch-30",
+  "approvedAt": "2026-09-04",
+  "ownerStatement": "please commit and make live the updated aspects",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "memberSetSha256": "9b526416f5cabf2beb5886e73e5e57b6ff05206cc5735b413cd97ae94c91fa8f",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-04-batch-30/owner-batch-authorization.json",
+  "rowCount": 30,
+  "protectedUntouched": [
+    "sky.aspect.saturn.opposition.pluto",
+    "sky.aspect.sun.opposition.moon"
+  ],
+  "rows": [
+    {
+      "contentKey": "sky.aspect.moon.sextile.mercury",
+      "sourceFile": "packages/astro-knowledge/data/transits/moon-sextile-mercury.json",
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-04-batch-30/records/moon-sextile-mercury-exact-approval.json",
+      "bodySha256": "f09838d7f2cd63dd19f6cbafcaff6a6d5859cf0c9574ef06759df140763b679e",
+      "previousReaderCopySha256": "8996b39a2a28c7b783d44f836fdbaaaf380db25037c6502e8052b0a05f9f5369"
+    },
+    {
+      "contentKey": "sky.aspect.moon.sextile.neptune",
+      "sourceFile": "packages/astro-knowledge/data/transits/moon-sextile-neptune.json",
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-04-batch-30/records/moon-sextile-neptune-exact-approval.json",
+      "bodySha256": "15a0143103b7c8bd8c367af3272b34ce68f56a253ca74bfe3ef953407859732a",
+      "previousReaderCopySha256": "e07065b9f6510c6c8e04c2226361a69107642f7884e95543a414a4fd1b4d6103"
+    },
+    {
+      "contentKey": "sky.aspect.moon.sextile.pluto",
+      "sourceFile": "packages/astro-knowledge/data/transits/moon-sextile-pluto.json",
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-04-batch-30/records/moon-sextile-pluto-exact-approval.json",
+      "bodySha256": "7d39bd0c6c2565aebe15e1c179c3f18c43cf7bc00488336e02d46f625a18311d",
+      "previousReaderCopySha256": "b8b90b13eb879ad38ae0e2ebcaeed69a1310eba48655a6685285042c8a968e20"
+    },
+    {
+      "contentKey": "sky.aspect.moon.sextile.saturn",
+      "sourceFile": "packages/astro-knowledge/data/transits/moon-sextile-saturn.json",
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-04-batch-30/records/moon-sextile-saturn-exact-approval.json",
+      "bodySha256": "86a6d7f8651489d92b26777d261fd2eaea758c8d7f4d28b79cb73b8c7ddab545",
+      "previousReaderCopySha256": "b6178549a105c83da0affebb3031a40b3482a255679f3fce83f42fc635a74e26"
+    },
+    {
+      "contentKey": "sky.aspect.moon.sextile.uranus",
+      "sourceFile": "packages/astro-knowledge/data/transits/moon-sextile-uranus.json",
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-04-batch-30/records/moon-sextile-uranus-exact-approval.json",
+      "bodySha256": "c16b97358aa7f94eacb46c9a28f22a854aec00fae66e434abd11ff2d6175a998",
+      "previousReaderCopySha256": "91d04e1df3966a34c697e679d6b3d9fd5829d16b69bfc9ed5369472744962c9b"
+    },
+    {
+      "contentKey": "sky.aspect.moon.sextile.venus",
+      "sourceFile": "packages/astro-knowledge/data/transits/moon-sextile-venus.json",
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-04-batch-30/records/moon-sextile-venus-exact-approval.json",
+      "bodySha256": "433ed93502eea885407877d4b1a9a9ab4656f09c5cc38725e208cc144d407ab7",
+      "previousReaderCopySha256": "ad804a36e0e7178574737099c66ac5d92da4108c8df5b8ddd7acebb7b383b306"
+    },
+    {
+      "contentKey": "sky.aspect.moon.square.jupiter",
+      "sourceFile": "packages/astro-knowledge/data/transits/moon-square-jupiter.json",
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-04-batch-30/records/moon-square-jupiter-exact-approval.json",
+      "bodySha256": "ef12de63f8f9b5ced2d97bd9b7dfedeac820ce08c04b8859024520024d080238",
+      "previousReaderCopySha256": "928af683f9fc43f8302328a3a071ecda3f9c8fd5c1ed88517bfdd4f343059c14"
+    },
+    {
+      "contentKey": "sky.aspect.moon.square.mars",
+      "sourceFile": "packages/astro-knowledge/data/transits/moon-square-mars.json",
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-04-batch-30/records/moon-square-mars-exact-approval.json",
+      "bodySha256": "abedfe618d9c999ba76acce0d8def45d870c38c7e9828d44f0ad9d3610b4dd76",
+      "previousReaderCopySha256": "2be990f6d1091c58b0b6a8cf649bd5bbb0e3613d0a88d5261aba55a022c6ab19"
+    },
+    {
+      "contentKey": "sky.aspect.moon.square.mercury",
+      "sourceFile": "packages/astro-knowledge/data/transits/moon-square-mercury.json",
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-04-batch-30/records/moon-square-mercury-exact-approval.json",
+      "bodySha256": "1c1b2252de6ae0353c35fd9c337b01548cf4dae171afd1056c403f115c1885c0",
+      "previousReaderCopySha256": "c9060080243d57b53dbb390185b5323ed171f21f47347ae202d37b43d69591ff"
+    },
+    {
+      "contentKey": "sky.aspect.moon.square.neptune",
+      "sourceFile": "packages/astro-knowledge/data/transits/moon-square-neptune.json",
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-04-batch-30/records/moon-square-neptune-exact-approval.json",
+      "bodySha256": "c586af5884dcd6f71356ba866d247e7ecce95512cb08aec547ecab316fcbaa76",
+      "previousReaderCopySha256": "5b56d7ce5afc3f3843e31b71da07836a3128bea31841f97cc0dfa3aeb7f43b3b"
+    },
+    {
+      "contentKey": "sky.aspect.moon.square.pluto",
+      "sourceFile": "packages/astro-knowledge/data/transits/moon-square-pluto.json",
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-04-batch-30/records/moon-square-pluto-exact-approval.json",
+      "bodySha256": "1923bb512cc2683f1dc7ac5b142865ab5f919ab14f3a5cc76c066f0f07ce0089",
+      "previousReaderCopySha256": "05f11bff3303c42074b47376833ef5e52da183490674448f9c1b93c3e07ba7f2"
+    },
+    {
+      "contentKey": "sky.aspect.moon.square.saturn",
+      "sourceFile": "packages/astro-knowledge/data/transits/moon-square-saturn.json",
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-04-batch-30/records/moon-square-saturn-exact-approval.json",
+      "bodySha256": "039a91f1f4482a0606a03e24b87a1c9c9b5bffcc47bae55711477c3cee420167",
+      "previousReaderCopySha256": "53eb162bb84db54946cbed3cb22ab27907297cdaec971e8c50681fdc55744875"
+    },
+    {
+      "contentKey": "sky.aspect.moon.square.uranus",
+      "sourceFile": "packages/astro-knowledge/data/transits/moon-square-uranus.json",
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-04-batch-30/records/moon-square-uranus-exact-approval.json",
+      "bodySha256": "f672829fe32be51fa93dfc7b986e236edfb28dadf0750514d2580be22970eb29",
+      "previousReaderCopySha256": "5128b73911b05daa9e5028f708c9eeac38befc79cbacd65607ded1d269b61896"
+    },
+    {
+      "contentKey": "sky.aspect.moon.square.venus",
+      "sourceFile": "packages/astro-knowledge/data/transits/moon-square-venus.json",
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-04-batch-30/records/moon-square-venus-exact-approval.json",
+      "bodySha256": "391f4d832fdec0873fa364825905869dd0ba260b13e61f2db2c4a0394bacd03e",
+      "previousReaderCopySha256": "52075b232fa9dd958d04f8d3a0beabd242cb73a445b7ab378b3690cef669e0cf"
+    },
+    {
+      "contentKey": "sky.aspect.moon.trine.jupiter",
+      "sourceFile": "packages/astro-knowledge/data/transits/moon-trine-jupiter.json",
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-04-batch-30/records/moon-trine-jupiter-exact-approval.json",
+      "bodySha256": "1ef95214f703454411d95b7b568ff867a012ba846dd2759348b35a752592da8c",
+      "previousReaderCopySha256": "59d4fd66ec7de855c5f6c86b3084ae18976e3f9bab556a6c21e8f2e522388b77"
+    },
+    {
+      "contentKey": "sky.aspect.moon.trine.mars",
+      "sourceFile": "packages/astro-knowledge/data/transits/moon-trine-mars.json",
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-04-batch-30/records/moon-trine-mars-exact-approval.json",
+      "bodySha256": "5c10f951bf156f43f16f8d4e722f77504f52bcb8b49b5eb143f4e014f0578f07",
+      "previousReaderCopySha256": "b37f98df6326efbcdabd12d4abbc7517041276eeb1053cbc0db596bcc88018aa"
+    },
+    {
+      "contentKey": "sky.aspect.moon.trine.mercury",
+      "sourceFile": "packages/astro-knowledge/data/transits/moon-trine-mercury.json",
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-04-batch-30/records/moon-trine-mercury-exact-approval.json",
+      "bodySha256": "70d74b43f05c25328ec05e03a510ce68baee1b2e93d2cec530c6c1028739f03d",
+      "previousReaderCopySha256": "1f1288923bebba4d92222ae61c8e84ca455f60d739e2d2a6d9792fa6fbedbd0e"
+    },
+    {
+      "contentKey": "sky.aspect.moon.trine.neptune",
+      "sourceFile": "packages/astro-knowledge/data/transits/moon-trine-neptune.json",
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-04-batch-30/records/moon-trine-neptune-exact-approval.json",
+      "bodySha256": "b4ac29b28c8c36c6cb1f25875e982f13a20272f6505f2f003eedb1e3c0556bbd",
+      "previousReaderCopySha256": "68793214f2431b262a5541f87b055c3cdac4720a5af393b3552100a192534915"
+    },
+    {
+      "contentKey": "sky.aspect.moon.trine.pluto",
+      "sourceFile": "packages/astro-knowledge/data/transits/moon-trine-pluto.json",
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-04-batch-30/records/moon-trine-pluto-exact-approval.json",
+      "bodySha256": "572069686f4f4b1f9b9aa0d5518a829097bcc52156802c7eb4792375d327be3e",
+      "previousReaderCopySha256": "857b943932e1f170a6ef910572ee698a3e97fe1f91b924a6f3e5bfeac50f6df3"
+    },
+    {
+      "contentKey": "sky.aspect.moon.trine.saturn",
+      "sourceFile": "packages/astro-knowledge/data/transits/moon-trine-saturn.json",
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-04-batch-30/records/moon-trine-saturn-exact-approval.json",
+      "bodySha256": "b66d1a02e559ab731f97c618f34aecfa6b26ec44e30b40da4b019c87587165c7",
+      "previousReaderCopySha256": "f627bee86781bc1b08a356fe039079defd44ad1a03beab332c1309b5aac934d3"
+    },
+    {
+      "contentKey": "sky.aspect.moon.trine.uranus",
+      "sourceFile": "packages/astro-knowledge/data/transits/moon-trine-uranus.json",
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-04-batch-30/records/moon-trine-uranus-exact-approval.json",
+      "bodySha256": "3b8ab58d92c1d229ce8d9d49064157866fb7876c80b5e09cd22e88c88e29b5e7",
+      "previousReaderCopySha256": "6a23a6105771f325eff614f84ed173f3068ae55c9273a3029467403efd0a64b4"
+    },
+    {
+      "contentKey": "sky.aspect.moon.trine.venus",
+      "sourceFile": "packages/astro-knowledge/data/transits/moon-trine-venus.json",
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-04-batch-30/records/moon-trine-venus-exact-approval.json",
+      "bodySha256": "b02e19981c1fdd3e2fab9ce56d95db015a60b82726bb50bf37773141610f1993",
+      "previousReaderCopySha256": "29d2c136f3872920a4f75d3ccf4aa59d68fc16ee47601213812e2b6e2ffcffa9"
+    },
+    {
+      "contentKey": "sky.aspect.neptune.conjunction.pluto",
+      "sourceFile": "packages/astro-knowledge/data/transits/neptune-conjunction-pluto.json",
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-04-batch-30/records/neptune-conjunction-pluto-exact-approval.json",
+      "bodySha256": "4b53092ef7d7b2a4f77ce4d6fe8016ffda7de465ccd3d956f087769f02fa36f1",
+      "previousReaderCopySha256": "018b8f03ad2b26dec5b11730d35441fb3a505be34923bf9e8783caf8b7a0fd8c"
+    },
+    {
+      "contentKey": "sky.aspect.neptune.opposition.pluto",
+      "sourceFile": "packages/astro-knowledge/data/transits/neptune-opposition-pluto.json",
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-04-batch-30/records/neptune-opposition-pluto-exact-approval.json",
+      "bodySha256": "d0a2f78869937b57f3cb007ed22298801a683d288bdeb382070a669879b0b166",
+      "previousReaderCopySha256": "2f122b09862a93b4a829710672758c398dc28452b544e1fe780224e7b19359b8"
+    },
+    {
+      "contentKey": "sky.aspect.saturn.conjunction.neptune",
+      "sourceFile": "packages/astro-knowledge/data/transits/saturn-conjunction-neptune.json",
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-04-batch-30/records/saturn-conjunction-neptune-exact-approval.json",
+      "bodySha256": "5887cd9374f987845dfc64d8d7db299ec7843c88cf526e823c0159449e2d76de",
+      "previousReaderCopySha256": "24982b7e926d13abff1de638971e372299e9ad546188da5bb3a410165ae79597"
+    },
+    {
+      "contentKey": "sky.aspect.saturn.conjunction.pluto",
+      "sourceFile": "packages/astro-knowledge/data/transits/saturn-conjunction-pluto.json",
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-04-batch-30/records/saturn-conjunction-pluto-exact-approval.json",
+      "bodySha256": "d965b7a8f49711d95600c03b921a1dc5fb148e496c9238b32ebc881209725922",
+      "previousReaderCopySha256": "8be223b3746414c1fdf97cf3f72617e8cb641483d8e24d613542b3ba52cf1c55"
+    },
+    {
+      "contentKey": "sky.aspect.saturn.opposition.neptune",
+      "sourceFile": "packages/astro-knowledge/data/transits/saturn-opposition-neptune.json",
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-04-batch-30/records/saturn-opposition-neptune-exact-approval.json",
+      "bodySha256": "5fa946e783f7b940bd64561543cbbd9d0855524d5a31f2291af74e4619585012",
+      "previousReaderCopySha256": "23590e3030f8dc438f635968589166ff8d095eba2a640561a2a0331e54bfdb69"
+    },
+    {
+      "contentKey": "sky.aspect.saturn.square.lilith",
+      "sourceFile": "packages/astro-knowledge/data/transits/saturn-square-lilith.json",
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-04-batch-30/records/saturn-square-lilith-exact-approval.json",
+      "bodySha256": "46ad50a2fd02f8bba21f2062f508fce1e56b86b28a245f2a9970a94a5ba3e09a",
+      "previousReaderCopySha256": "d10e61c9930950a6685bd13aab8dea4ce4fefaec04c0014bda5cd762287bbab2"
+    },
+    {
+      "contentKey": "sky.aspect.saturn.square.neptune",
+      "sourceFile": "packages/astro-knowledge/data/transits/saturn-square-neptune.json",
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-04-batch-30/records/saturn-square-neptune-exact-approval.json",
+      "bodySha256": "9b680c8c44783a0c8c19a2317f2d9f9e3e44fd81377ead9d1f81452b64a4de5c",
+      "previousReaderCopySha256": "26be3ea44f9c361262a50ca308e7e45b3d6e3bdb53385488a2183d8ac29cd887"
+    },
+    {
+      "contentKey": "sky.aspect.saturn.square.pluto",
+      "sourceFile": "packages/astro-knowledge/data/transits/saturn-square-pluto.json",
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-04-batch-30/records/saturn-square-pluto-exact-approval.json",
+      "bodySha256": "1457c4c8140ca4955791352506c456179b57934b9ed3f4b9083086f2bc627a6e",
+      "previousReaderCopySha256": "7a2af83ebc8f887a8d1a39bc1745de4117da42bcb412d4b1f62441a7dbb6e32c"
+    }
+  ]
+}

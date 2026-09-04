@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.moon.trine.uranus",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-04",
+  "ownerStatement": "please commit and make live the updated aspects",
+  "batchId": "sky-calendar-exact-approved-2026-09-04-batch-30",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-04-batch-30/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "3b8ab58d92c1d229ce8d9d49064157866fb7876c80b5e09cd22e88c88e29b5e7",
+  "summary": "Doing something completely differently can feel surprisingly natural, especially when your default response has been manufacturing the exact same frustration on a loop.",
+  "body": "Doing something completely differently can feel surprisingly natural, especially when your default response has been manufacturing the exact same frustration on a loop. When the Moon trines Uranus, emotion and sudden shifts cooperate, making it frictionless to break a habit, alter a routine, or answer someone in a way that preserves your freedom without turning the experiment into a dramatic life declaration. You may discover you never needed as much permission as you thought to rewrite your own script. Keep the change that actually makes the room breathe."
+}

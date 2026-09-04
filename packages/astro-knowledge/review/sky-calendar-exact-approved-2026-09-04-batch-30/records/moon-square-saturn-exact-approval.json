@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.moon.square.saturn",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-04",
+  "ownerStatement": "please commit and make live the updated aspects",
+  "batchId": "sky-calendar-exact-approved-2026-09-04-batch-30",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-04-batch-30/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "039a91f1f4482a0606a03e24b87a1c9c9b5bffcc47bae55711477c3cee420167",
+  "summary": "When a single delay or piece of criticism lands on an already exhausted day, it can make you question your entire capacity to hold your life together.",
+  "body": "When a single delay or piece of criticism lands on an already exhausted day, it can make you question your entire capacity to hold your life together. When the Moon squares Saturn, emotional strain and structural responsibility collide, making a minor mistake or an unfinished obligation feel like absolute proof that you should have been faster, stronger, or more resilient. Something may genuinely need your attention, but self-punishment is not accountability. Handle the operational problem without turning the friction of the moment into a referendum on your worth."
+}

@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.moon.square.pluto",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-04",
+  "ownerStatement": "please commit and make live the updated aspects",
+  "batchId": "sky-calendar-exact-approved-2026-09-04-batch-30",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-04-batch-30/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "1923bb512cc2683f1dc7ac5b142865ab5f919ab14f3a5cc76c066f0f07ce0089",
+  "summary": "When uncertainty rubs up against an older, deeper fear, the simple desire to feel emotionally safe can quickly curdle into an attempt to force certainty out of someone who cannot give it.",
+  "body": "When uncertainty rubs up against an older, deeper fear, the simple desire to feel emotionally safe can quickly curdle into an attempt to force certainty out of someone who cannot give it. When the Moon squares Pluto, feelings around trust, rejection, and power intensify until no amount of reassurance ever quite settles your nervous system. If asking for proof again and again only leaves you hungrier, the problem is no longer a lack of information. Notice when you are trying to make another person soothe an internal panic that keeps rebuilding itself from the inside."
+}

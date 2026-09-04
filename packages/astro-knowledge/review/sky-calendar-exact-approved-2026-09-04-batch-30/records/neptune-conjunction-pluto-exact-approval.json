@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.neptune.conjunction.pluto",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-04",
+  "ownerStatement": "please commit and make live the updated aspects",
+  "batchId": "sky-calendar-exact-approved-2026-09-04-batch-30",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-04-batch-30/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "4b53092ef7d7b2a4f77ce4d6fe8016ffda7de465ccd3d956f087769f02fa36f1",
+  "summary": "A story becomes much harder to question when belief and power start reinforcing each other.",
+  "body": "A story becomes much harder to question when belief and power start reinforcing each other. When Neptune conjoins Pluto, ideals, fears, imagination, and collective longing fuse with control, secrecy, and influence, giving certain movements, institutions, or narratives an almost irresistible emotional charge. Something can feel sacred, inevitable, or deeply meaningful and still deserve scrutiny. Pay attention to what becomes easier to justify once everyone is emotionally invested in believing the same version of events."
+}
