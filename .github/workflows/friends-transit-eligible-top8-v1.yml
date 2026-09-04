@@ -67,19 +67,20 @@ jobs:
           } else if (capCount !== 0) {
             throw new Error(`Expected zero or one pre-eligibility cap, found ${capCount}.`);
           }
+
           const cappedSelection = '  const selectedFriendTransits = useMemo(\n    () => selectedFriendTransitCandidates.slice(0, 8),\n    [selectedFriendTransitCandidates]\n  );\n';
           if (!candidateBlock.includes('const selectedFriendTransits = useMemo(')) {
             candidateBlock = `${candidateBlock}${cappedSelection}`;
           }
+
+          const eligibleBlock = `  const selectedFriendEligibleTransits = useMemo(() => (\n    currentSky && selectedChart\n      ? selectEligibleFriendTransits(\n          selectedFriendTransitCandidates,\n          (transit) => {\n            const normalized = normalizePersonalTransitSurface(\n              transit,\n              currentSky.generatedAt,\n              selectedChart.displayName\n            );\n            return acceptedOwnerApprovedTransitSections(\n              normalized.sections,\n              fallbackV3ApprovalLevelForContentKey\n            ).length > 0;\n          },\n          8\n        )\n      : []\n  ), [\n    currentSky,\n    fallbackArchitectureV3Version,\n    selectedChart,\n    selectedFriendTransitCandidates\n  ]);\n`;
+          if (!candidateBlock.includes('const selectedFriendEligibleTransits = useMemo')) {
+            candidateBlock = `${candidateBlock}${eligibleBlock}`;
+          }
           panel = `${panel.slice(0, candidateStart)}${candidateBlock}${panel.slice(dailyIndex)}`;
 
           const groupsMarker = '  const selectedFriendPersonalTransitGroups = useMemo<FriendPersonalTransitGroup[]>(() => {';
-          const eligibleBlock = `  const selectedFriendEligibleTransits = useMemo(() => (\n    currentSky && selectedChart\n      ? selectEligibleFriendTransits(\n          selectedFriendTransitCandidates,\n          (transit) => {\n            const normalized = normalizePersonalTransitSurface(\n              transit,\n              currentSky.generatedAt,\n              selectedChart.displayName\n            );\n            return acceptedOwnerApprovedTransitSections(\n              normalized.sections,\n              fallbackV3ApprovalLevelForContentKey\n            ).length > 0;\n          },\n          8\n        )\n      : []\n  ), [\n    currentSky,\n    fallbackArchitectureV3Version,\n    selectedChart,\n    selectedFriendTransitCandidates\n  ]);\n`;
-          if (!panel.includes('const selectedFriendEligibleTransits = useMemo')) {
-            if (!panel.includes(groupsMarker)) throw new Error('Friends personal-transit groups marker not found.');
-            panel = panel.replace(groupsMarker, `${eligibleBlock}${groupsMarker}`);
-          }
-
+          if (!panel.includes(groupsMarker)) throw new Error('Friends personal-transit groups marker not found.');
           const groupsStart = panel.indexOf(groupsMarker);
           const groupsEndMarker = '  const selectedFriendPlacementRows = useMemo(() => {';
           const groupsEnd = panel.indexOf(groupsEndMarker, groupsStart);
@@ -132,10 +133,10 @@ jobs:
           node scripts/test-friends-live-detail-refresh.mjs
           node --import tsx scripts/test-friends-transit-detail-provenance-gate.mjs
           git diff --check
-      - name: Run full content gate
-        run: npm run test:content
       - name: Run repository typecheck
         run: npm run typecheck
+      - name: Run full content gate
+        run: npm run test:content
       - name: Build web application
         run: npm run build:web
       - name: Review repair diff
