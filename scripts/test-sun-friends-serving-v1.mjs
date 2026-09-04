@@ -27,7 +27,7 @@ const sha256 = (value) => createHash("sha256").update(value).digest("hex");
 const ascendantKey = "authored/transit-aspect/sun/ascendant/hard";
 const protectedVenusMoonKey = "authored/transit-aspect/venus/moon/hard";
 
-assert.equal(PACKAGE_VERSION, "v3-2026-09-03c");
+assert.equal(PACKAGE_VERSION, "v3-2026-09-04a");
 assert.equal(approval.status, "owner_approved");
 assert.equal(approval.approvalLevel, "exact_owner_approved");
 assert.equal(approval.records.length, 27);
