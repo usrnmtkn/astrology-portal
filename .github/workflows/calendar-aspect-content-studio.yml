@@ -66,6 +66,12 @@ jobs:
         run: node scripts/test-held-calendar-exact-aspect-staging.mjs
       - name: Materialize held exact trines without serving them
         run: node scripts/stage-held-calendar-exact-aspects.mjs --aspect=trine --out=/tmp/held-calendar-exact-trines.json
+      - name: Upload held exact trine review package
+        uses: actions/upload-artifact@v6
+        with:
+          name: held-calendar-exact-trines-review
+          path: /tmp/held-calendar-exact-trines.json
+          if-no-files-found: error
 
   seed-content-studio:
     if: github.event_name == 'workflow_dispatch' && inputs.seed_content_studio
