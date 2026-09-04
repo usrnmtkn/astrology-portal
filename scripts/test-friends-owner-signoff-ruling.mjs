@@ -13,6 +13,15 @@ const record = readJson("packages/astro-knowledge/review/friends-owner-signoff-u
 const mechanicalCorrection = readJson(
   "packages/astro-knowledge/review/lilith-house-1-headline-mechanical-correction-2026-08-27.json"
 );
+const venusMoonRevision = readJson(
+  "packages/astro-knowledge/review/transit-aspect-venus-moon-hard-owner-published-2026-09-02.json"
+);
+const sunFriendsApproval = readJson(
+  "packages/astro-knowledge/review/transit-aspect-friends-sun-proposed-v1.json"
+);
+const sunAscendantRevision = readJson(
+  "packages/astro-knowledge/review/transit-aspect-sun-ascendant-hard-owner-published-2026-09-03.json"
+);
 const wordingFields = ["headline", "body", "body_you", "body_they", "body_sky"];
 const sha256 = (value) => crypto.createHash("sha256").update(value).digest("hex");
 const targetFamilies = Object.keys(record.counts.byFamily);
@@ -23,13 +32,62 @@ const targetRows = familyRows.filter((row) => (
   row.approval?.approvedAt === undefined || row.approval.approvedAt <= record.recordedAt
 ));
 const postRulingRows = familyRows.filter((row) => row.approval?.approvedAt > record.recordedAt);
+
+assert.equal(venusMoonRevision.contentKey, "authored/transit-aspect/venus/moon/hard");
+assert.equal(venusMoonRevision.status, "owner_published");
+assert.equal(sha256(venusMoonRevision.supersedes.body_you), venusMoonRevision.supersedes.body_you_sha256);
+assert.equal(sha256(venusMoonRevision.body_you), venusMoonRevision.body_you_sha256);
+const venusMoonRow = familyRows.find((row) => row.contentKey === venusMoonRevision.contentKey);
+assert.ok(venusMoonRow, "Venus square Moon row must remain in the governed Friends source family.");
+assert.ok(
+  [venusMoonRevision.supersedes.body_you, venusMoonRevision.body_you].includes(venusMoonRow.body_you),
+  "Venus square Moon You copy must match either the pre-revision package body or the exact September 2 CMS revision."
+);
+
+assert.equal(sunFriendsApproval.status, "owner_approved");
+assert.equal(sunFriendsApproval.createdAt, "2026-09-03");
+assert.equal(sunFriendsApproval.records.length, 27);
+assert.ok(
+  sunFriendsApproval.records.every((entry) => entry.approvedAt > record.recordedAt),
+  "Every Sun Friends field in this packet must postdate the August 13 historical snapshot."
+);
+const postSnapshotSunFriendKeys = new Set(sunFriendsApproval.records.map((entry) => entry.contentKey));
+assert.equal(postSnapshotSunFriendKeys.size, 27);
+assert.equal(sunAscendantRevision.contentKey, "authored/transit-aspect/sun/ascendant/hard");
+assert.equal(sunAscendantRevision.publishedAt.slice(0, 10), "2026-09-03");
+assert.equal(
+  sha256(sunAscendantRevision.supersedes.body_you),
+  sunAscendantRevision.supersedes.body_you_sha256,
+  "The Sun square Ascendant superseded You body must remain hash-bound."
+);
+const sunAscendantRow = familyRows.find((row) => row.contentKey === sunAscendantRevision.contentKey);
+assert.ok(sunAscendantRow, "Sun square Ascendant must remain in the governed Friends source family.");
+assert.ok(
+  [sunAscendantRevision.supersedes.body_you, sunAscendantRevision.body_you].includes(sunAscendantRow.body_you),
+  "Sun square Ascendant You copy must match either the pre-revision package body or the exact September 3 CMS revision."
+);
+
+function historicalWording(row, field) {
+  if (row.contentKey === mechanicalCorrection.contentKey && field === mechanicalCorrection.field) {
+    return mechanicalCorrection.before;
+  }
+  if (row.contentKey === venusMoonRevision.contentKey && field === "body_you") {
+    return venusMoonRevision.supersedes.body_you;
+  }
+  if (row.contentKey === sunAscendantRevision.contentKey && field === "body_you") {
+    return sunAscendantRevision.supersedes.body_you;
+  }
+  if (field === "body_they" && postSnapshotSunFriendKeys.has(row.contentKey)) {
+    return undefined;
+  }
+  return row[field];
+}
+
 const readerPayload = targetRows.map((row) => [
   row.contentKey,
   Object.fromEntries(wordingFields.filter((field) => row[field] !== undefined).map((field) => [
     field,
-    row.contentKey === mechanicalCorrection.contentKey && field === mechanicalCorrection.field
-      ? mechanicalCorrection.before
-      : row[field]
+    historicalWording(row, field)
   ]))
 ]);
 
@@ -84,4 +142,4 @@ assert.deepEqual(record.excluded, {
   note: "These rows feed compatibility, Sky, career, station, weekly, or other authored surfaces. They are not primary Friends transit-detail articles and are not disabled by this gate."
 });
 
-console.log("Friends owner-signoff ruling passed: 24 exact approvals preserved, 1,565 untraced approvals added, 1,175 unrelated authored rows left untouched.");
+console.log("Friends owner-signoff ruling passed: 24 exact approvals preserved, 1,565 untraced approvals added, 1,175 unrelated authored rows left untouched; later CMS/mechanical/Sun Friends revisions are excluded from the historical payload hash.");

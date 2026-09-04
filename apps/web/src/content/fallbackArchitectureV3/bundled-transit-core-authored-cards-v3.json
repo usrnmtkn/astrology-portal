@@ -30428,7 +30428,7 @@
       "content_role": "full_copy",
       "surface": "transit-aspect",
       "headline": "",
-      "body_you": "The affection comes out as management: hovering, feeding, fixing, checking. A partner may feel mothered instead of loved, and the calm relationship talk you planned dissolves into feeling. Sweets and drink both overshoot. Love without parenting is today's whole assignment. Venus {{aspectWord}} your Moon until {{untilDate}} runs high on feeling and low on discussion; save the big talk for a cooler day.",
+      "body_you": "The affection comes out as management: hovering, feeding, fixing, checking. A partner may feel smothered instead of loved. Instead of talking things through rationally, you or your partner get flooded by raw feelings, and the logical point of the discussion gets lost in the reaction. When the nervous system runs that hot, self-soothing habits easily turn into overindulgence. Connection without control is the goal. Venus {{aspectWord}} your Moon until {{untilDate}} runs high on feeling and low on discussion; save heavy relationship conversations for a different day.",
       "review_status": "approved",
       "approved_via": "owner-approved fast-planet refresh, chat 2026-07-28 (Sun/Mercury reviewed; Venus/Mars pre-approved 'fix later')",
       "source_keys": [
@@ -30440,6 +30440,13 @@
         "evidence": "owner-approved fast-planet refresh, chat 2026-07-28 (Sun/Mercury reviewed; Venus/Mars pre-approved 'fix later')",
         "approvedAt": "2026-07-28",
         "migratedBy": "friends-owner-signoff-untraced-ruling-2026-08-13"
+      },
+      "body_you_revision": {
+        "approvalLevel": "exact_owner_published_cms_revision",
+        "recordPath": "packages/astro-knowledge/review/transit-aspect-venus-moon-hard-owner-published-2026-09-02.json",
+        "publishedAt": "2026-09-02T02:56:35.849Z",
+        "source": "Content Studio production publish",
+        "payloadSha256": "254f56e3bb9ed7b1d29215b2aa3e92d22877c24925932e703a097ceb2416334a"
       }
     },
     {

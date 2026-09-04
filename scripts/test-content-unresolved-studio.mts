@@ -208,7 +208,7 @@ assert.match(dashboardSource, /new URLSearchParams\(\{ q: contentKey, from: "unr
 assert.match(dashboardSource, /openRow\(guidedRow\)/u, "The unresolved-content handoff must open the exact editor automatically.");
 assert.match(dashboardSource, /Opened from Unresolved Content/u, "The exact editor must explain why it opened.");
 assert.match(dashboardSource, /The populated <strong>Headline<\/strong> and <strong>Body<\/strong> fields below are the copy under review/u, "The guided review must identify the copy the owner should read.");
-assert.match(dashboardSource, /typeof packageRecord\.body_you === "string"/u, "Null split-body placeholders must not hide a populated single Body field.");
+assert.match(dashboardSource, /function packageFieldString\([\s\S]*?typeof sectionValue === "string"[\s\S]*?typeof packageValue === "string"/u, "Null split-body placeholders must fall through to populated installed package copy.");
 assert.match(dashboardSource, /Record owner copy review/u, "The guided review must have an explicit non-serving completion action.");
 assert.match(dashboardSource, /isGuidedHeldReview \? "needs_review"/u, "The guided review save path must remain held regardless of package approval controls.");
 assert.match(generatedContentEndpointSource, /Content Studio editorial review hash does not match the exact saved Headline, Summary, and Body/u, "The API must bind owner review to the exact saved copy.");

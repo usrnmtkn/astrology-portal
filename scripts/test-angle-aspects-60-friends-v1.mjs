@@ -36,7 +36,7 @@ const browserRenderer = browserFallback.createFallbackRenderer(templatesFile, ro
 const shippedRenderer = shipped.createFallbackRenderer(templatesFile, rowsFile);
 const authority = readJson(`${reviewRoot}/ANGLE-ASPECTS-60-FRIENDS-V1-OWNER-APPROVED.json`);
 const revisions = readJson(`${reviewRoot}/YOU-V15-TWO-OWNER-APPROVED-SUPERSESSIONS.json`);
-const manifest = readJson(`${reviewRoot}/shipping-manifest.json`);
+const manifest = readJson(`${reviewRoot}/SHIPPING-MANIFEST.json`);
 const v15Import = readJson("packages/astro-knowledge/review/angle-aspects-60-v15/ANGLE-ASPECTS-60-V15-CONTENT-STUDIO-IMPORT.json");
 const ownerEditAuthority = readJson(`${ownerEditRoot}/content-studio-owner-edit-authority.json`);
 const ownerEditManifest = readJson(`${ownerEditRoot}/shipping-manifest.json`);
@@ -174,4 +174,4 @@ for (const [implementation, render, GapError] of [
   );
 }
 
-console.log("Friends natal angle aspects V1: ok (60/60 effective source parity; 360/360 Friends resolver checks; 2/2 earlier You supersessions; 1/1 Saturn owner-edit supersession; 57/57 other V15 You bodies unchanged; Pluto trine Midheaven remains SOURCE_GAP).");
+console.log("Friends natal angle aspects V1: ok (60/60 effective source parity; 360/360 Friends resolver checks; 2/2 earlier You supersessions; 1/1 Saturn owner-edit supersession; 57/57 other V15 You bodies unchanged; Pluto trine Midheaven remains SOURCE_GAP).\n");
