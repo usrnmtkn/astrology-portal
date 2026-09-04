@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.uranus.conjunction.neptune",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-03",
+  "ownerStatement": "can you approve the one's already done and make them live?",
+  "batchId": "sky-calendar-exact-approved-through-2026-09-03",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-03/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "c856b00ef8b0484aeebe3c55ba9b144e086bb776c25a21fc84acb3e3868d24d7",
+  "summary": "A new possibility can feel like the future simply because it gives shape to something you had almost stopped believing could change.",
+  "body": "A new possibility can feel like the future simply because it gives shape to something you had almost stopped believing could change. When Uranus conjuncts Neptune, innovation and imagination rise together, making a new idea, tool, community, or way of living carry enormous hope before you know exactly what it can sustain. Let the possibility wake something up in you without asking it to solve everything immediately. Hope becomes more useful when you give the new thing enough time to show you what it actually changes."
+}

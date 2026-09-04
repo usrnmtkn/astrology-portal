@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.venus.conjunction.uranus",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-03",
+  "ownerStatement": "can you approve the one's already done and make them live?",
+  "batchId": "sky-calendar-exact-approved-through-2026-09-03",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-03/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "cd70c706ed0ac3479ed7af0d837565f6c6c70c2cd6875d97485e2d1fa2645e33",
+  "summary": "Something unexpected can become attractive precisely because it gives you permission to want differently.",
+  "body": "Something unexpected can become attractive precisely because it gives you permission to want differently. When Venus conjuncts Uranus, attraction, values, money, and relationships can shift quickly enough that a choice you would normally dismiss suddenly feels more honest than the one you thought you were supposed to make. You do not need to turn a surprise into a permanent decision, but you also do not need to talk yourself out of what it reveals. Pay attention to what feels newly possible and what that tells you about the version of yourself you may have outgrown."
+}

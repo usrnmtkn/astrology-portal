@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.mars.opposition.jupiter",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-03",
+  "ownerStatement": "can you approve the one's already done and make them live?",
+  "batchId": "sky-calendar-exact-approved-through-2026-09-03",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-03/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "b3da86b20bce39f8f58e6db297194e5d3ff9207dce9372c7dd42349010b776fa",
+  "summary": "You can be entirely right about a massive new opportunity while completely ignoring the fact that your current resources cannot support it.",
+  "body": "You can be entirely right about a massive new opportunity while completely ignoring the fact that your current resources cannot support it. When Mars opposes Jupiter, the desire for rapid expansion clashes directly with the gritty reality of your budget, staffing, or daily capacity. Optimism is a great catalyst, but it does not pay the bills or stretch the clock. Scale the vision down to what you can actually execute without collapsing your foundation."
+}

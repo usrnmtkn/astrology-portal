@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.venus.sextile.uranus",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-03",
+  "ownerStatement": "can you approve the one's already done and make them live?",
+  "batchId": "sky-calendar-exact-approved-through-2026-09-03",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-03/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "d56b73ee7ab261a0546ac2f14c0c4da0d1b60547de96af77ba30c6e47e9dba93",
+  "summary": "Sometimes the relationship is not the problem; the version of it you have been trying to preserve is.",
+  "body": "Sometimes the relationship is not the problem; the version of it you have been trying to preserve is. When Venus sextiles Uranus, a change in expectations, schedule, money, space, or the way two people participate can create enough freedom for a connection to feel alive again. You do not need to destroy something meaningful because one old rule stopped fitting. Let the relationship change shape where it needs to, especially if the alternative is asking one of you to keep becoming smaller just so everything can look the same."
+}

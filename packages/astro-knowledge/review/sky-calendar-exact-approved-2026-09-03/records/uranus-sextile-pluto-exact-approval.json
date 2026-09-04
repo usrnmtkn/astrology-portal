@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.uranus.sextile.pluto",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-03",
+  "ownerStatement": "can you approve the one's already done and make them live?",
+  "batchId": "sky-calendar-exact-approved-through-2026-09-03",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-03/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "66ac83156f4380431df7f2bd2c4e324fcf6ce563eca4b211ff0c3559a515e18f",
+  "summary": "A small opening can matter more than it looks if it gives you more control over something you previously had to ask permission to access.",
+  "body": "A small opening can matter more than it looks if it gives you more control over something you previously had to ask permission to access. When Uranus sextiles Pluto, a new option, rule change, tool, or shift in circumstances can alter the balance of power enough for you to renegotiate how much control another person or system has over the outcome. Use the opening while it exists. The useful change is the one that leaves you with more choice after the excitement of getting access wears off."
+}

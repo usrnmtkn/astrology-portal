@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.moon.opposition.uranus",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-03",
+  "ownerStatement": "can you approve the one's already done and make them live?",
+  "batchId": "sky-calendar-exact-approved-through-2026-09-03",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-03/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "4f67f07299856866b7b7dd375e1ba6c2465b1c630f91da61b4d60c663ad07b42",
+  "summary": "You can know something needs to change and still hate what the transition is doing to your sense of stability.",
+  "body": "You can know something needs to change and still hate what the transition is doing to your sense of stability. When the Moon opposes Uranus, the need for freedom, reform, or a break from the old pattern clashes with the part of you that still wants something familiar to rely on. Do not force yourself to pretend disruption feels exciting just because the change is necessary. Protect the routines and supports you still need while the new arrangement takes shape."
+}

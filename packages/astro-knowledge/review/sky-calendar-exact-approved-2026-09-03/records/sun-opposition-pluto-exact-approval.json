@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.sun.opposition.pluto",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-03",
+  "ownerStatement": "can you approve the one's already done and make them live?",
+  "batchId": "sky-calendar-exact-approved-through-2026-09-03",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-03/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "c62ee8f8a7e4875a6eec880d2e36a192dedcc092c5cae1cc4c432f4f142e3a5b",
+  "summary": "If someone else can freeze the deal, withhold access, or make one decision that changes your options, arguing harder does not make the power equal.",
+  "body": "If someone else can freeze the deal, withhold access, or make one decision that changes your options, arguing harder does not make the power equal. When the Sun opposes Pluto, dependence on another person’s cooperation can hit your pride hard enough that forcing the outcome starts to feel more important than getting what you actually need. The useful question is not who deserves to win the standoff, but what leverage you still have outside it. Look for the alternative route, the boundary, the information, the person above them, or the option that gives you more control over your own next move instead of making your future depend on their willingness to give in."
+}

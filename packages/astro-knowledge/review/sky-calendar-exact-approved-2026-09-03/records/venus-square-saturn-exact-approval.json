@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.venus.square.saturn",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-03",
+  "ownerStatement": "can you approve the one's already done and make them live?",
+  "batchId": "sky-calendar-exact-approved-through-2026-09-03",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-03/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "95becbf1e6f08a63e794e190af4287f0bebbb2c2e3a191de2ec028707da26299",
+  "summary": "Appreciation starts feeling very different when the praise keeps coming but the conditions you actually asked to change remain exactly the same.",
+  "body": "Appreciation starts feeling very different when the praise keeps coming but the conditions you actually asked to change remain exactly the same. When Venus squares Saturn, affection, recognition, or value can run into a hard practical limit around money, time, availability, or commitment, forcing you to confront the difference between being valued emotionally and being supported in the way you actually need. The other person may genuinely care and still be unable or unwilling to offer more. At some point the question stops being how to convince them and becomes whether what is currently available is enough for you to keep choosing the arrangement."
+}

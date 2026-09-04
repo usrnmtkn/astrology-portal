@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.saturn.sextile.neptune",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-03",
+  "ownerStatement": "can you approve the one's already done and make them live?",
+  "batchId": "sky-calendar-exact-approved-through-2026-09-03",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-03/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "435dd55fa4b554b7c5f3aeee29a6706a0b1a6b34bef7fd83ac8ad663f0a0a8d9",
+  "summary": "If something matters enough that you want to keep giving your time or energy to it, the next question is what would make that commitment possible on an ordinary week rather than only when you feel inspired.",
+  "body": "If something matters enough that you want to keep giving your time or energy to it, the next question is what would make that commitment possible on an ordinary week rather than only when you feel inspired. When Saturn sextiles Neptune, a hope or compassionate impulse can become more sustainable because you are willing to give it limits, time, money, or a routine that protects it from depending on your best mood. You do not need to build the whole vision at once. Choose the part you can genuinely support now and let consistency give the larger idea something solid to grow from."
+}

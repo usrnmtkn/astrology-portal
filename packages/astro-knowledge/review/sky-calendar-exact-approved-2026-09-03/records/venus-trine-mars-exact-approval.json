@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.venus.trine.mars",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-03",
+  "ownerStatement": "can you approve the one's already done and make them live?",
+  "batchId": "sky-calendar-exact-approved-through-2026-09-03",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-03/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "d9798a220010979cb81d81ded2ce79d1f2e37a63ec37041f0a287c65d62fe77b",
+  "summary": "Magnetism feels entirely different when you no longer have to guess if the other person will step up to meet you halfway.",
+  "body": "Magnetism feels entirely different when you no longer have to guess if the other person will step up to meet you halfway. When Venus trines Mars, attraction and initiative move in the same direction, making affection, creative collaboration, and negotiation flow because interest is expressed through direct action rather than left for one person to decode. Let reciprocity do the heavy lifting. You do not need to manufacture friction or test how much someone cares when their actual effort is already answering the question."
+}

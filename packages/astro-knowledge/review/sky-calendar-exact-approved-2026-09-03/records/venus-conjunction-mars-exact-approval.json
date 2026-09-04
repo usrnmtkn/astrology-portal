@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.venus.conjunction.mars",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-03",
+  "ownerStatement": "can you approve the one's already done and make them live?",
+  "batchId": "sky-calendar-exact-approved-through-2026-09-03",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-03/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "d033278da82a89763d4a4c36b68017ff79a36dd83ee10f306a725c3a93619fd2",
+  "summary": "Chemistry can move faster than the conversation about what each person actually wants from it.",
+  "body": "Chemistry can move faster than the conversation about what each person actually wants from it. When Venus conjuncts Mars, attraction and action reinforce each other, making it easier to make the move, accept the invitation, spend the money, or turn interest into something tangible before either side has had much reason to hesitate. Let the spark be a spark without forcing it to answer every question about the future. Once the first move is made, make sure the pace, expectations, and terms still belong to both people rather than to the momentum itself."
+}

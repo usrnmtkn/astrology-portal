@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.moon.conjunction.mercury",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-03",
+  "ownerStatement": "can you approve the one's already done and make them live?",
+  "batchId": "sky-calendar-exact-approved-through-2026-09-03",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-03/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "2d7146822fde9f97ec9cc0e6f600fd5ef9ac6dddb7cf153cf553f39bd2dd42cb",
+  "summary": "If you have been carrying something privately, saying it out loud may change the entire conversation.",
+  "body": "If you have been carrying something privately, saying it out loud may change the entire conversation. When the Moon conjuncts Mercury, feelings become easier to name, and an admission about family, home, health, hurt, or what you actually need can make the old version of the discussion impossible to continue. Do not apologize for changing the context by telling the truth. Once the information is on the table, make the decision from what everyone knows now."
+}

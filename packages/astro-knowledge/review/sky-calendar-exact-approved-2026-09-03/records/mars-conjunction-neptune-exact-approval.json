@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.mars.conjunction.neptune",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-03",
+  "ownerStatement": "can you approve the one's already done and make them live?",
+  "batchId": "sky-calendar-exact-approved-through-2026-09-03",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-03/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "9e8214d6a853f2ad921fe52c23e368e37780da95bf66b5e17a646b03fc38169c",
+  "summary": "You can feel entirely certain that a situation is wrong without having a single actionable clue about how to fix it.",
+  "body": "You can feel entirely certain that a situation is wrong without having a single actionable clue about how to fix it. When Mars conjuncts Neptune, high emotional conviction meets a total lack of a blueprint, leaving you ready to fight for an objective that keeps shifting shape. Pushing harder will not make a vague target clear. Define the actual problem, establish what is within your control, and pick one concrete step that actually moves the needle instead of just burning off nervous energy."
+}

@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.jupiter.trine.saturn",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-03",
+  "ownerStatement": "can you approve the one's already done and make them live?",
+  "batchId": "sky-calendar-exact-approved-through-2026-09-03",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-03/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "c03a415345dd9a9b173b28e31f5740a0a154c5b132d93e74c4a2127e7b72d763",
+  "summary": "Growth feels much less frightening when the life and foundation underneath it is strong enough that success does not immediately create another crisis to manage.",
+  "body": "Growth feels much less frightening when the life and foundation underneath it is strong enough that success does not immediately create another crisis to manage. When Jupiter trines Saturn, ambition and structure support each other, making it easier for a larger role, project, commitment, or opportunity to fit because the time, money, responsibilities, and expectations around it already make sense. You do not have to manufacture urgency around something that is working. Let what you have built carry more before assuming the next level requires you to reinvent everything."
+}

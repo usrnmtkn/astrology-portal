@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.moon.opposition.venus",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-03",
+  "ownerStatement": "can you approve the one's already done and make them live?",
+  "batchId": "sky-calendar-exact-approved-through-2026-09-03",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-03/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "ae38636d48e0d9213e716398c589ee07cac3d6313c98e55d762a52316a75a9e4",
+  "summary": "Keeping everyone happy stops being generous when you are the one quietly paying for it with your time, money, comfort, or energy.",
+  "body": "Keeping everyone happy stops being generous when you are the one quietly paying for it with your time, money, comfort, or energy. When the Moon opposes Venus, harmony and affection can come into conflict with needs that have been ignored to preserve the pleasant plan. Put the private cost into the conversation. A compromise is not balanced if one person keeps absorbing the inconvenience so nobody else has to feel disappointed."
+}

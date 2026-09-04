@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.moon.conjunction.uranus",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-03",
+  "ownerStatement": "can you approve the one's already done and make them live?",
+  "batchId": "sky-calendar-exact-approved-through-2026-09-03",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-03/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "b5dcd855b63dd1e886ac2f69756682615db07d8c31a00d8b6ff8fd43ad53144a",
+  "summary": "A sudden change to home, money, family, or your daily routine can leave you solving the practical problem before your emotions have caught up.",
+  "body": "A sudden change to home, money, family, or your daily routine can leave you solving the practical problem before your emotions have caught up. When the Moon conjuncts Uranus, disruption arrives quickly and familiar sources of comfort may stop feeling reliable overnight. Handle what needs replacing first. Once you know where you are sleeping, paying, working, logging in, or getting help tomorrow, you will have more room to process how you feel about the change itself."
+}

@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.mars.sextile.pluto",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-03",
+  "ownerStatement": "can you approve the one's already done and make them live?",
+  "batchId": "sky-calendar-exact-approved-through-2026-09-03",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-03/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "07b6357b016bc3c34d7c1018f815227fe41372b1a81339d07f9604e8ab1872e5",
+  "summary": "You can waste a lot of energy proving how serious you are to people who were never in a position to change the answer.",
+  "body": "You can waste a lot of energy proving how serious you are to people who were never in a position to change the answer. When Mars sextiles Pluto, determination becomes more effective because you are better able to see where the actual leverage sits and direct your effort there. This is less about pushing harder than understanding what could materially change the outcome. Put your energy behind the conversation, decision, boundary, or move that can actually shift something instead of exhausting yourself trying to win over everyone standing between you and it."
+}

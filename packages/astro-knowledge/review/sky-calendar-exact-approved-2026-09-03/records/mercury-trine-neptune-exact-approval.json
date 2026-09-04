@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.mercury.trine.neptune",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-03",
+  "ownerStatement": "can you approve the one's already done and make them live?",
+  "batchId": "sky-calendar-exact-approved-through-2026-09-03",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-03/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "9f14574679573899345e652804e66a1efa680ed053d9d700e520324e5de2ec39",
+  "summary": "You can tell the emotional truth without exaggerating the facts to make people care.",
+  "body": "You can tell the emotional truth without exaggerating the facts to make people care. When Mercury trines Neptune, language can carry nuance, grief, imagination, or compassion without losing the details that make the story credible. This is strong energy for writing, art, difficult conversations, or putting words around something complicated. Trust the story you actually have. If the truth is moving, you do not need to make it more dramatic."
+}

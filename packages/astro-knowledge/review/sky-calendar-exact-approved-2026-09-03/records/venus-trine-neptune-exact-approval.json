@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.venus.trine.neptune",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-03",
+  "ownerStatement": "can you approve the one's already done and make them live?",
+  "batchId": "sky-calendar-exact-approved-through-2026-09-03",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-03/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "63c3fb6164e177c2ba3d7011d0ed0d22983969f2568cf269305088c053198b58",
+  "summary": "Not everything meaningful needs to become permanent before you are allowed to let it matter.",
+  "body": "Not everything meaningful needs to become permanent before you are allowed to let it matter. When Venus trines Neptune, affection, creativity, beauty, and compassion can feel restorative precisely because you are able to receive an experience without immediately asking what it produces, where it is going, or how long it will last. Let yourself be moved by the art, romance, tenderness, generosity, or quiet connection without forcing it to become a contract with the future. Some things change you because you were fully present for them, not because you managed to keep them forever."
+}
