@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.neptune.trine.north-node",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-04",
+  "ownerStatement": "perfect, approved; please proceed with making these live, and wiring them up to the calendar",
+  "batchId": "sky-calendar-exact-approved-2026-09-04-held-trines-33",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-04-held-trines-33/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "7929e883a3a99bf87c134bfbcb3da3c8ac453f03d6e339c1b42f3297595c09b0",
+  "summary": "A future you have only been able to imagine may start becoming specific enough to work toward.",
+  "body": "A future you have only been able to imagine may start becoming specific enough to work toward. Neptune trine the North Node can support creative plans, compassionate work, art, film, music, photography, or any direction that began as an idea before it had a practical shape. Write down what the project actually requires, who needs to be involved, and what the next deliverable is. Inspiration is more useful once it has somewhere to go.",
+  "sourceHeldKey": "sky.aspect.neptune.trine.nodes",
+  "sourceHeldPath": "packages/astro-knowledge/data/points/aspects/sky/four-body-unverified/neptune-north_node-trine.json"
+}

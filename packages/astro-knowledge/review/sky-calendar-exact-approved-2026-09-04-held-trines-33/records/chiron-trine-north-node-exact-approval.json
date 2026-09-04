@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.chiron.trine.north-node",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-04",
+  "ownerStatement": "perfect, approved; please proceed with making these live, and wiring them up to the calendar",
+  "batchId": "sky-calendar-exact-approved-2026-09-04-held-trines-33",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-04-held-trines-33/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "9ca394995fb67328c01b827217a935ab498fb68c3b3345223f1316dde20ec137",
+  "summary": "The next step may use an experience you once thought had only set you back.",
+  "body": "The next step may use an experience you once thought had only set you back. When the North Node trines Chiron, something you learned the hard way can become relevant to where you are going now. You may recognize the right opportunity because you know what the wrong one cost, give better advice because you made the mistake yourself, or make a different choice because the old pattern is finally obvious. Progress does not require erasing the history that got you here.",
+  "sourceHeldKey": "sky.aspect.chiron.trine.nodes",
+  "sourceHeldPath": "packages/astro-knowledge/data/points/aspects/sky/four-body-unverified/chiron-north_node-trine.json"
+}

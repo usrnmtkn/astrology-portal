@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.saturn.trine.lilith",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-04",
+  "ownerStatement": "perfect, approved; please proceed with making these live, and wiring them up to the calendar",
+  "batchId": "sky-calendar-exact-approved-2026-09-04-held-trines-33",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-04-held-trines-33/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "ece0fc88331497fb45ae96d1c4b6a0614f36c56903bac9bebc6f43595544e197",
+  "summary": "A refusal becomes much harder to dismiss once it has a clear boundary around it.",
+  "body": "A refusal becomes much harder to dismiss once it has a clear boundary around it. Saturn trine Lilith can help turn something you have repeatedly objected to into a rule, condition, deadline, contract term, or responsibility that other people have to account for. Instead of explaining again why the situation bothers you, specify what you will and will not do. The boundary works because it is enforceable, not because everyone agrees with it.",
+  "sourceHeldKey": "sky.aspect.saturn.trine.lilith",
+  "sourceHeldPath": "packages/astro-knowledge/data/points/aspects/sky/four-body-unverified/lilith-saturn-trine.json"
+}

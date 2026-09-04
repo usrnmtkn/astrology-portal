@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.venus.trine.north-node",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-04",
+  "ownerStatement": "perfect, approved; please proceed with making these live, and wiring them up to the calendar",
+  "batchId": "sky-calendar-exact-approved-2026-09-04-held-trines-33",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-04-held-trines-33/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "d0b77242692a340b1eea066df1dacd1228b63828ba94561e88b461df7d9116c4",
+  "summary": "A relationship, collaboration, offer, or money decision may make the next step easier to take.",
+  "body": "A relationship, collaboration, offer, or money decision may make the next step easier to take. Venus trine the North Node can bring support through another person or through a clearer sense of what is worth your time and resources now. A useful introduction could lead somewhere, a partnership may make the project possible, or saying no to the cheaper but worse option may save you from rebuilding later. Choose what makes the future easier to live with, not simply what feels pleasant today.",
+  "sourceHeldKey": "sky.aspect.venus.trine.nodes",
+  "sourceHeldPath": "packages/astro-knowledge/data/points/aspects/sky/four-body-unverified/north_node-venus-trine.json"
+}

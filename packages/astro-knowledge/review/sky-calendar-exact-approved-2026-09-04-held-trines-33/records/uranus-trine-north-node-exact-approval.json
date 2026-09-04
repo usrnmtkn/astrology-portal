@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.uranus.trine.north-node",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-04",
+  "ownerStatement": "perfect, approved; please proceed with making these live, and wiring them up to the calendar",
+  "batchId": "sky-calendar-exact-approved-2026-09-04-held-trines-33",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-04-held-trines-33/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "59ab37ef1362390dcbb4af844cbe5ec050fb0c272372b46c03bdc1f518af29a5",
+  "summary": "An unexpected change may solve a problem you had assumed you would have to keep working around.",
+  "body": "An unexpected change may solve a problem you had assumed you would have to keep working around. Uranus trine the North Node can make a new technology, unusual introduction, schedule change, sudden opening, or different way of organizing the plan unexpectedly useful to what comes next. Try the option that gives you more freedom without throwing away what still works. A course correction can be progress without becoming a complete reinvention.",
+  "sourceHeldKey": "sky.aspect.uranus.trine.nodes",
+  "sourceHeldPath": "packages/astro-knowledge/data/points/aspects/sky/four-body-unverified/north_node-uranus-trine.json"
+}

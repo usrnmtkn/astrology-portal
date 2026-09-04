@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.jupiter.trine.lilith",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-04",
+  "ownerStatement": "perfect, approved; please proceed with making these live, and wiring them up to the calendar",
+  "batchId": "sky-calendar-exact-approved-2026-09-04-held-trines-33",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-04-held-trines-33/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "346356e729ab8e88a2e0a9e0ec157a8e6e16d0d8008addda51f5b000a8ddf553",
+  "summary": "An opportunity may get bigger once you stop trying to make the choice sound conventional.",
+  "body": "An opportunity may get bigger once you stop trying to make the choice sound conventional. Jupiter trine Lilith can support something you genuinely want even when it does not make immediate sense to the people who expected a different plan. A niche project finds an audience, an unusual career move gets support, or a decision you were prepared to defend turns out to need much less explanation than expected. Use the opening. You do not need to exaggerate the rebellion just because the permission arrived easily.",
+  "sourceHeldKey": "sky.aspect.jupiter.trine.lilith",
+  "sourceHeldPath": "packages/astro-knowledge/data/points/aspects/sky/four-body-unverified/jupiter-lilith-trine.json"
+}
