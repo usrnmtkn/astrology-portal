@@ -1,0 +1,803 @@
+{
+  "schema": "tldrastro-transit-aspect-you-refresh-review-v1",
+  "status": "clear",
+  "createdAt": "2026-09-04",
+  "candidateCount": 376,
+  "protectedCount": 2,
+  "broadCoreferenceCandidateCount": 98,
+  "thirdPartyProtectionHitCount": 11,
+  "unresolvedCount": 0,
+  "thirdPartyProtections": [
+    {
+      "id": "both-people-listening",
+      "source": "both people are responding faster than they are listening"
+    },
+    {
+      "id": "terms-delivered",
+      "source": "someone else's terms just because they were delivered forcefully"
+    },
+    {
+      "id": "nobody-expects",
+      "source": "nobody has to explain what they expect"
+    },
+    {
+      "id": "everyone-assumed",
+      "source": "everyone starts answering what they assumed was meant"
+    }
+  ],
+  "ambiguityReview": [
+    {
+      "contentKey": "authored/transit-aspect/sun/ascendant/soft",
+      "sourceCoreferenceFlags": [
+        "Their confidence comes across without needing much explanation, and people are more likely to meet their openness with interest instead of resistance.",
+        "The advantage is simpler than that: they can show up as themselves and let other people respond to what is actually there.",
+        "With the Sun {{aspectWord}} their Ascendant until {{untilDate}}, being visible costs less effort than usual, and the right people are more likely to meet them halfway."
+      ],
+      "thirdPartyProtectionHits": []
+    },
+    {
+      "contentKey": "authored/transit-aspect/sun/jupiter/soft",
+      "sourceCoreferenceFlags": [
+        "They should be specific about what they want and give the other person something concrete to respond to."
+      ],
+      "thirdPartyProtectionHits": []
+    },
+    {
+      "contentKey": "authored/transit-aspect/sun/lilith/hard",
+      "sourceCoreferenceFlags": [
+        "{{Name}} may have less patience for the version of themselves that keeps everyone else comfortable."
+      ],
+      "thirdPartyProtectionHits": []
+    },
+    {
+      "contentKey": "authored/transit-aspect/sun/mercury/hard",
+      "sourceCoreferenceFlags": [
+        "Plans change, someone revises an agreement, and a simple exchange can become an argument because both people are responding faster than they are listening.",
+        "With the Sun {{aspectWord}} their Mercury until {{untilDate}}, clear facts hold up better than speed, and listening long enough to understand the objection can save them from arguing against something the other person never said."
+      ],
+      "thirdPartyProtectionHits": [
+        {
+          "id": "both-people-listening",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "contentKey": "authored/transit-aspect/sun/mercury/soft",
+      "sourceCoreferenceFlags": [
+        "They should say the important part while the words are available and leave enough space for the other person to answer it."
+      ],
+      "thirdPartyProtectionHits": []
+    },
+    {
+      "contentKey": "authored/transit-aspect/sun/midheaven/hard",
+      "sourceCoreferenceFlags": [
+        "With the Sun {{aspectWord}} their Midheaven until {{untilDate}}, {{Name}} does better when they keep the team informed, let the result carry some of the weight, and avoid turning professional friction into a referendum on their worth."
+      ],
+      "thirdPartyProtectionHits": []
+    },
+    {
+      "contentKey": "authored/transit-aspect/sun/north-node/conjunction",
+      "sourceCoreferenceFlags": [
+        "Leading instead of assisting, accepting a title they have never held, or entering a group where everyone seems more experienced can make a genuine opportunity feel like evidence they are unprepared."
+      ],
+      "thirdPartyProtectionHits": []
+    },
+    {
+      "contentKey": "authored/transit-aspect/sun/pluto/hard",
+      "sourceCoreferenceFlags": [
+        "{{Name}} does not have to accept someone else's terms just because they were delivered forcefully."
+      ],
+      "thirdPartyProtectionHits": [
+        {
+          "id": "terms-delivered",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "contentKey": "authored/transit-aspect/sun/pluto/soft",
+      "sourceCoreferenceFlags": [
+        "Other people may be more willing to follow their lead when the solution helps more than one person.",
+        "With the Sun {{aspectWord}} their Pluto until {{untilDate}}, influence works best when {{Name}} uses it to resolve the underlying problem rather than to prove they were the person who saw it first."
+      ],
+      "thirdPartyProtectionHits": []
+    },
+    {
+      "contentKey": "authored/transit-aspect/sun/south-node/conjunction",
+      "sourceCoreferenceFlags": [
+        "{{Name}} may slip back into a familiar role so easily that nobody has to explain what they expect.",
+        "Recognition can come quickly too, because other people already understand this version of them."
+      ],
+      "thirdPartyProtectionHits": [
+        {
+          "id": "nobody-expects",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "contentKey": "authored/transit-aspect/sun/sun/soft",
+      "sourceCoreferenceFlags": [
+        "With the Sun {{aspectWord}} their Sun until {{untilDate}}, {{Name}} has a useful window for checking what is working and strengthening the part that still depends on luck, another person's patience, or a temporary workaround."
+      ],
+      "thirdPartyProtectionHits": []
+    },
+    {
+      "contentKey": "authored/transit-aspect/any/chiron/conjunction",
+      "sourceCoreferenceFlags": [
+        "They may notice the urge to protect the sore spot before deciding if the person in front of them is actually repeating the old pattern."
+      ],
+      "thirdPartyProtectionHits": []
+    },
+    {
+      "contentKey": "authored/transit-aspect/chiron/ascendant/hard",
+      "sourceCoreferenceFlags": [
+        "{{Name}} may recognize an old sore point inside a present-day situation involving how other people meet their presence.",
+        "Someone may react to their tone, pace, appearance, or confidence before there is time for a fuller explanation."
+      ],
+      "thirdPartyProtectionHits": []
+    },
+    {
+      "contentKey": "authored/transit-aspect/chiron/ascendant/soft",
+      "sourceCoreferenceFlags": [
+        "{{Name}} does better when they let the first reaction settle before changing how they present themselves to everyone else."
+      ],
+      "thirdPartyProtectionHits": []
+    },
+    {
+      "contentKey": "authored/transit-aspect/chiron/mars/soft",
+      "sourceCoreferenceFlags": [
+        "With Chiron {{aspectWord}} their Mars until {{untilDate}}, {{Name}} benefits from acting on the part that is theirs without turning every delay into proof that someone is blocking them."
+      ],
+      "thirdPartyProtectionHits": []
+    },
+    {
+      "contentKey": "authored/transit-aspect/chiron/mercury/hard",
+      "sourceCoreferenceFlags": [
+        "They may know what they mean and still need to slow down enough to notice that the other person heard something different."
+      ],
+      "thirdPartyProtectionHits": []
+    },
+    {
+      "contentKey": "authored/transit-aspect/chiron/mercury/soft",
+      "sourceCoreferenceFlags": [
+        "A small wording problem can create more work than the actual disagreement if everyone starts answering what they assumed was meant.",
+        "As Chiron {{aspectWord}} their Mercury continues through {{untilDate}}, {{Name}} can save time by correcting the misunderstanding early instead of winning an argument about a version nobody intended."
+      ],
+      "thirdPartyProtectionHits": [
+        {
+          "id": "everyone-assumed",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "contentKey": "authored/transit-aspect/chiron/midheaven/soft",
+      "sourceCoreferenceFlags": [
+        "While Chiron {{aspectWord}} their Midheaven until {{untilDate}}, {{Name}} gets more from a concrete result than from spending the same energy trying to manage everyone's opinion of the result."
+      ],
+      "thirdPartyProtectionHits": []
+    },
+    {
+      "contentKey": "authored/transit-aspect/chiron/neptune/hard",
+      "sourceCoreferenceFlags": [
+        "They may be more affected by music, sleep loss, alcohol, atmosphere, or another person's emotion than they realize in the moment."
+      ],
+      "thirdPartyProtectionHits": []
+    },
+    {
+      "contentKey": "authored/transit-aspect/chiron/south-node/conjunction",
+      "sourceCoreferenceFlags": [
+        "Something ordinary can carry more history than expected for {{Name}} when it reaches the job everyone already expects them to do.",
+        "Other people may quickly hand them the job they always know how to do, especially if that competence has made them the default helper before.",
+        "As Chiron {{aspectWord}} their South Node through {{untilDate}}, {{Name}} gets more from deciding consciously where the old habit still serves them and where it simply saves other people from adjusting."
+      ],
+      "thirdPartyProtectionHits": []
+    },
+    {
+      "contentKey": "authored/transit-aspect/jupiter/ascendant/hard",
+      "sourceCoreferenceFlags": [
+        "{{Name}} does better when they let the first reaction settle before changing how they present themselves to everyone else."
+      ],
+      "thirdPartyProtectionHits": []
+    },
+    {
+      "contentKey": "authored/transit-aspect/jupiter/chiron/sextile",
+      "sourceCoreferenceFlags": [
+        "They may notice the urge to protect the sore spot before deciding if the person in front of them is actually repeating the old pattern."
+      ],
+      "thirdPartyProtectionHits": []
+    },
+    {
+      "contentKey": "authored/transit-aspect/jupiter/chiron/square",
+      "sourceCoreferenceFlags": [
+        "They may notice the urge to protect the sore spot before deciding if the person in front of them is actually repeating the old pattern."
+      ],
+      "thirdPartyProtectionHits": []
+    },
+    {
+      "contentKey": "authored/transit-aspect/jupiter/lilith/hard",
+      "sourceCoreferenceFlags": [
+        "{{Name}} does better when they distinguish a boundary from the urge to punish someone for crossing an old one."
+      ],
+      "thirdPartyProtectionHits": []
+    },
+    {
+      "contentKey": "authored/transit-aspect/jupiter/mars/hard",
+      "sourceCoreferenceFlags": [
+        "{{Name}} benefits from acting on the part that is theirs without turning every delay into proof that someone is blocking them."
+      ],
+      "thirdPartyProtectionHits": []
+    },
+    {
+      "contentKey": "authored/transit-aspect/jupiter/mercury/soft",
+      "sourceCoreferenceFlags": [
+        "A small wording problem can create more work than the actual disagreement if everyone starts answering what they assumed was meant.",
+        "As Jupiter {{aspectWord}} their Mercury continues through {{untilDate}}, {{Name}} can save time by correcting the misunderstanding early instead of winning an argument about a version nobody intended."
+      ],
+      "thirdPartyProtectionHits": [
+        {
+          "id": "everyone-assumed",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "contentKey": "authored/transit-aspect/jupiter/midheaven/soft",
+      "sourceCoreferenceFlags": [
+        "As Jupiter {{aspectWord}} their Midheaven through {{untilDate}}, {{Name}} gets more from a concrete result than from spending the same energy trying to manage everyone's opinion of the result."
+      ],
+      "thirdPartyProtectionHits": []
+    },
+    {
+      "contentKey": "authored/transit-aspect/jupiter/sun/soft",
+      "sourceCoreferenceFlags": [
+        "{{Name}} does better when they let the work and choice become more specific instead of demanding that other people validate the entire identity attached to it."
+      ],
+      "thirdPartyProtectionHits": []
+    },
+    {
+      "contentKey": "authored/transit-aspect/mars/ascendant/hard",
+      "sourceCoreferenceFlags": [
+        "Urgency rises around {{Name}} when how other people meet their presence stops being theoretical and starts requiring a response.",
+        "Someone may react to their tone, pace, appearance, or confidence before there is time for a fuller explanation."
+      ],
+      "thirdPartyProtectionHits": []
+    },
+    {
+      "contentKey": "authored/transit-aspect/mars/ascendant/soft",
+      "sourceCoreferenceFlags": [
+        "Urgency rises around {{Name}} when how other people meet their presence stops being theoretical and starts requiring a response.",
+        "Someone may react to their tone, pace, appearance, or confidence before there is time for a fuller explanation."
+      ],
+      "thirdPartyProtectionHits": []
+    },
+    {
+      "contentKey": "authored/transit-aspect/mars/lilith/hard",
+      "sourceCoreferenceFlags": [
+        "They may hear themselves say yes and immediately realize the yes was meant to prevent someone else's reaction rather than reflect what they want."
+      ],
+      "thirdPartyProtectionHits": []
+    },
+    {
+      "contentKey": "authored/transit-aspect/mars/mars/soft",
+      "sourceCoreferenceFlags": [
+        "{{Name}} benefits from acting on the part that is theirs without turning every delay into proof that someone is blocking them."
+      ],
+      "thirdPartyProtectionHits": []
+    },
+    {
+      "contentKey": "authored/transit-aspect/mars/mercury/hard",
+      "sourceCoreferenceFlags": [
+        "A small wording problem can create more work than the actual disagreement if everyone starts answering what they assumed was meant.",
+        "Through {{untilDate}}, Mars {{aspectWord}} their Mercury favors one practical response: {{Name}} can save time by correcting the misunderstanding early instead of winning an argument about a version nobody intended."
+      ],
+      "thirdPartyProtectionHits": [
+        {
+          "id": "everyone-assumed",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "contentKey": "authored/transit-aspect/mars/midheaven/soft",
+      "sourceCoreferenceFlags": [
+        "While Mars {{aspectWord}} their Midheaven until {{untilDate}}, {{Name}} gets more from a concrete result than from spending the same energy trying to manage everyone's opinion of the result."
+      ],
+      "thirdPartyProtectionHits": []
+    },
+    {
+      "contentKey": "authored/transit-aspect/mars/neptune/hard",
+      "sourceCoreferenceFlags": [
+        "They may be more affected by music, sleep loss, alcohol, atmosphere, or another person's emotion than they realize in the moment."
+      ],
+      "thirdPartyProtectionHits": []
+    },
+    {
+      "contentKey": "authored/transit-aspect/mars/south-node/conjunction",
+      "sourceCoreferenceFlags": [
+        "{{Name}} may have less patience for delay once the job everyone already expects them to do becomes the place where something has to move.",
+        "Other people may quickly hand them the job they always know how to do, especially if that competence has made them the default helper before.",
+        "While Mars {{aspectWord}} their South Node until {{untilDate}}, {{Name}} gets more from deciding consciously where the old habit still serves them and where it simply saves other people from adjusting."
+      ],
+      "thirdPartyProtectionHits": []
+    },
+    {
+      "contentKey": "authored/transit-aspect/mercury/ascendant/soft",
+      "sourceCoreferenceFlags": [
+        "{{Name}} does better when they let the first reaction settle before changing how they present themselves to everyone else."
+      ],
+      "thirdPartyProtectionHits": []
+    },
+    {
+      "contentKey": "authored/transit-aspect/mercury/jupiter/hard",
+      "sourceCoreferenceFlags": [
+        "They may want to say yes before checking the budget, schedule, evidence, or number of people who will depend on that yes."
+      ],
+      "thirdPartyProtectionHits": []
+    },
+    {
+      "contentKey": "authored/transit-aspect/mercury/jupiter/soft",
+      "sourceCoreferenceFlags": [
+        "They may want to say yes before checking the budget, schedule, evidence, or number of people who will depend on that yes."
+      ],
+      "thirdPartyProtectionHits": []
+    },
+    {
+      "contentKey": "authored/transit-aspect/mercury/lilith/hard",
+      "sourceCoreferenceFlags": [
+        "{{Name}} does better when they distinguish a boundary from the urge to punish someone for crossing an old one."
+      ],
+      "thirdPartyProtectionHits": []
+    },
+    {
+      "contentKey": "authored/transit-aspect/mercury/midheaven/hard",
+      "sourceCoreferenceFlags": [
+        "While Mercury {{aspectWord}} their Midheaven until {{untilDate}}, {{Name}} gets more from a concrete result than from spending the same energy trying to manage everyone's opinion of the result."
+      ],
+      "thirdPartyProtectionHits": []
+    },
+    {
+      "contentKey": "authored/transit-aspect/mercury/neptune/soft",
+      "sourceCoreferenceFlags": [
+        "They may be more affected by music, sleep loss, alcohol, atmosphere, or another person's emotion than they realize in the moment."
+      ],
+      "thirdPartyProtectionHits": []
+    },
+    {
+      "contentKey": "authored/transit-aspect/moon/a/soft/variant-D",
+      "sourceCoreferenceFlags": [
+        "A change in mood can make one part of the day feel much larger to {{Name}}, especially around how other people meet their presence.",
+        "Someone may react to their tone, pace, appearance, or confidence before there is time for a fuller explanation."
+      ],
+      "thirdPartyProtectionHits": []
+    },
+    {
+      "contentKey": "authored/transit-aspect/moon/a/soft/variant-E",
+      "sourceCoreferenceFlags": [
+        "{{Name}} does better when they let the first reaction settle before changing how they present themselves to everyone else."
+      ],
+      "thirdPartyProtectionHits": []
+    },
+    {
+      "contentKey": "authored/transit-aspect/moon/ascendant/any",
+      "sourceCoreferenceFlags": [
+        "Something small can reach {{Name}} quickly today because it touches an immediate need connected to how other people meet their presence.",
+        "Someone may react to their tone, pace, appearance, or confidence before there is time for a fuller explanation."
+      ],
+      "thirdPartyProtectionHits": []
+    },
+    {
+      "contentKey": "authored/transit-aspect/moon/ascendant/any/variant-C",
+      "sourceCoreferenceFlags": [
+        "{{Name}} does better when they let the first reaction settle before changing how they present themselves to everyone else."
+      ],
+      "thirdPartyProtectionHits": []
+    },
+    {
+      "contentKey": "authored/transit-aspect/moon/ascendant/soft/variant-E",
+      "sourceCoreferenceFlags": [
+        "A change in mood can make one part of the day feel much larger to {{Name}}, especially around how other people meet their presence.",
+        "Someone may react to their tone, pace, appearance, or confidence before there is time for a fuller explanation."
+      ],
+      "thirdPartyProtectionHits": []
+    },
+    {
+      "contentKey": "authored/transit-aspect/moon/c/any/variant-C",
+      "sourceCoreferenceFlags": [
+        "They may notice the urge to protect the sore spot before deciding if the person in front of them is actually repeating the old pattern."
+      ],
+      "thirdPartyProtectionHits": []
+    },
+    {
+      "contentKey": "authored/transit-aspect/moon/c/soft/variant-B",
+      "sourceCoreferenceFlags": [
+        "They may notice the urge to protect the sore spot before deciding if the person in front of them is actually repeating the old pattern."
+      ],
+      "thirdPartyProtectionHits": []
+    },
+    {
+      "contentKey": "authored/transit-aspect/moon/j/soft/variant-D",
+      "sourceCoreferenceFlags": [
+        "They may want to say yes before checking the budget, schedule, evidence, or number of people who will depend on that yes."
+      ],
+      "thirdPartyProtectionHits": []
+    },
+    {
+      "contentKey": "authored/transit-aspect/moon/jupiter/soft/variant-E",
+      "sourceCoreferenceFlags": [
+        "They may want to say yes before checking the budget, schedule, evidence, or number of people who will depend on that yes."
+      ],
+      "thirdPartyProtectionHits": []
+    },
+    {
+      "contentKey": "authored/transit-aspect/moon/lilith/hard",
+      "sourceCoreferenceFlags": [
+        "{{Name}} does better when they distinguish a boundary from the urge to punish someone for crossing an old one."
+      ],
+      "thirdPartyProtectionHits": []
+    },
+    {
+      "contentKey": "authored/transit-aspect/moon/m/soft/variant-A",
+      "sourceCoreferenceFlags": [
+        "A small wording problem can create more work than the actual disagreement if everyone starts answering what they assumed was meant."
+      ],
+      "thirdPartyProtectionHits": [
+        {
+          "id": "everyone-assumed",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "contentKey": "authored/transit-aspect/moon/m/soft/variant-C",
+      "sourceCoreferenceFlags": [
+        "They may know what they mean and still need to slow down enough to notice that the other person heard something different."
+      ],
+      "thirdPartyProtectionHits": []
+    },
+    {
+      "contentKey": "authored/transit-aspect/moon/m/soft/variant-D",
+      "sourceCoreferenceFlags": [
+        "A small wording problem can create more work than the actual disagreement if everyone starts answering what they assumed was meant.",
+        "Through {{untilDate}}, Moon {{aspectWord}} their Mercury favors one practical response: {{Name}} can save time by correcting the misunderstanding early instead of winning an argument about a version nobody intended."
+      ],
+      "thirdPartyProtectionHits": [
+        {
+          "id": "everyone-assumed",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "contentKey": "authored/transit-aspect/moon/mars/hard",
+      "sourceCoreferenceFlags": [
+        "With Moon {{aspectWord}} their Mars until {{untilDate}}, {{Name}} benefits from acting on the part that is theirs without turning every delay into proof that someone is blocking them."
+      ],
+      "thirdPartyProtectionHits": []
+    },
+    {
+      "contentKey": "authored/transit-aspect/moon/mars/hard/variant-D",
+      "sourceCoreferenceFlags": [
+        "{{Name}} benefits from acting on the part that is theirs without turning every delay into proof that someone is blocking them."
+      ],
+      "thirdPartyProtectionHits": []
+    },
+    {
+      "contentKey": "authored/transit-aspect/moon/mars/soft",
+      "sourceCoreferenceFlags": [
+        "{{Name}} benefits from acting on the part that is theirs without turning every delay into proof that someone is blocking them."
+      ],
+      "thirdPartyProtectionHits": []
+    },
+    {
+      "contentKey": "authored/transit-aspect/moon/mars/soft/variant-B",
+      "sourceCoreferenceFlags": [
+        "{{Name}} benefits from acting on the part that is theirs without turning every delay into proof that someone is blocking them."
+      ],
+      "thirdPartyProtectionHits": []
+    },
+    {
+      "contentKey": "authored/transit-aspect/moon/mercury/conjunction",
+      "sourceCoreferenceFlags": [
+        "They may know what they mean and still need to slow down enough to notice that the other person heard something different."
+      ],
+      "thirdPartyProtectionHits": []
+    },
+    {
+      "contentKey": "authored/transit-aspect/moon/mercury/hard",
+      "sourceCoreferenceFlags": [
+        "A small wording problem can create more work than the actual disagreement if everyone starts answering what they assumed was meant.",
+        "As Moon {{aspectWord}} their Mercury continues through {{untilDate}}, {{Name}} can save time by correcting the misunderstanding early instead of winning an argument about a version nobody intended."
+      ],
+      "thirdPartyProtectionHits": [
+        {
+          "id": "everyone-assumed",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "contentKey": "authored/transit-aspect/moon/mercury/hard/variant-D",
+      "sourceCoreferenceFlags": [
+        "A small wording problem can create more work than the actual disagreement if everyone starts answering what they assumed was meant."
+      ],
+      "thirdPartyProtectionHits": [
+        {
+          "id": "everyone-assumed",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "contentKey": "authored/transit-aspect/moon/mercury/soft/variant-C",
+      "sourceCoreferenceFlags": [
+        "They may know what they mean and still need to slow down enough to notice that the other person heard something different."
+      ],
+      "thirdPartyProtectionHits": []
+    },
+    {
+      "contentKey": "authored/transit-aspect/moon/neptune/any",
+      "sourceCoreferenceFlags": [
+        "They may be more affected by music, sleep loss, alcohol, atmosphere, or another person's emotion than they realize in the moment."
+      ],
+      "thirdPartyProtectionHits": []
+    },
+    {
+      "contentKey": "authored/transit-aspect/moon/neptune/any/variant-C",
+      "sourceCoreferenceFlags": [
+        "They may be more affected by music, sleep loss, alcohol, atmosphere, or another person's emotion than they realize in the moment."
+      ],
+      "thirdPartyProtectionHits": []
+    },
+    {
+      "contentKey": "authored/transit-aspect/moon/s/soft/variant-B",
+      "sourceCoreferenceFlags": [
+        "With Moon {{aspectWord}} their Sun until {{untilDate}}, {{Name}} does better when they let the work and choice become more specific instead of demanding that other people validate the entire identity attached to it."
+      ],
+      "thirdPartyProtectionHits": []
+    },
+    {
+      "contentKey": "authored/transit-aspect/moon/s/soft/variant-C",
+      "sourceCoreferenceFlags": [
+        "{{Name}} does better when they let the work and choice become more specific instead of demanding that other people validate the entire identity attached to it."
+      ],
+      "thirdPartyProtectionHits": []
+    },
+    {
+      "contentKey": "authored/transit-aspect/moon/south-node/conjunction",
+      "sourceCoreferenceFlags": [
+        "{{Name}} may understand what happened only after noticing how strongly the job everyone already expects them to do changed their mood.",
+        "Other people may quickly hand them the job they always know how to do, especially if that competence has made them the default helper before.",
+        "While Moon {{aspectWord}} their South Node until {{untilDate}}, {{Name}} gets more from deciding consciously where the old habit still serves them and where it simply saves other people from adjusting."
+      ],
+      "thirdPartyProtectionHits": []
+    },
+    {
+      "contentKey": "authored/transit-aspect/moon/sun/soft/variant-B",
+      "sourceCoreferenceFlags": [
+        "{{Name}} does better when they let the work and choice become more specific instead of demanding that other people validate the entire identity attached to it."
+      ],
+      "thirdPartyProtectionHits": []
+    },
+    {
+      "contentKey": "authored/transit-aspect/neptune/ascendant/hard",
+      "sourceCoreferenceFlags": [
+        "{{Name}} does better when they let the first reaction settle before changing how they present themselves to everyone else."
+      ],
+      "thirdPartyProtectionHits": []
+    },
+    {
+      "contentKey": "authored/transit-aspect/neptune/ascendant/soft",
+      "sourceCoreferenceFlags": [
+        "{{Name}} does better when they let the first reaction settle before changing how they present themselves to everyone else."
+      ],
+      "thirdPartyProtectionHits": []
+    },
+    {
+      "contentKey": "authored/transit-aspect/neptune/chiron/square",
+      "sourceCoreferenceFlags": [
+        "They may notice the urge to protect the sore spot before deciding if the person in front of them is actually repeating the old pattern."
+      ],
+      "thirdPartyProtectionHits": []
+    },
+    {
+      "contentKey": "authored/transit-aspect/neptune/jupiter/soft",
+      "sourceCoreferenceFlags": [
+        "They may want to say yes before checking the budget, schedule, evidence, or number of people who will depend on that yes."
+      ],
+      "thirdPartyProtectionHits": []
+    },
+    {
+      "contentKey": "authored/transit-aspect/neptune/lilith/hard",
+      "sourceCoreferenceFlags": [
+        "They may hear themselves say yes and immediately realize the yes was meant to prevent someone else's reaction rather than reflect what they want."
+      ],
+      "thirdPartyProtectionHits": []
+    },
+    {
+      "contentKey": "authored/transit-aspect/neptune/south-node/conjunction",
+      "sourceCoreferenceFlags": [
+        "A vague plan, strong feeling, or missing detail can matter more than expected for {{Name}} around the job everyone already expects them to do.",
+        "Other people may quickly hand them the job they always know how to do, especially if that competence has made them the default helper before.",
+        "While Neptune {{aspectWord}} their South Node until {{untilDate}}, {{Name}} gets more from deciding consciously where the old habit still serves them and where it simply saves other people from adjusting."
+      ],
+      "thirdPartyProtectionHits": []
+    },
+    {
+      "contentKey": "authored/transit-aspect/pluto/ascendant/hard",
+      "sourceCoreferenceFlags": [
+        "Something that had been managed indirectly becomes harder for {{Name}} to keep managing that way, with how other people meet their presence showing where the power sits.",
+        "Someone may react to their tone, pace, appearance, or confidence before there is time for a fuller explanation."
+      ],
+      "thirdPartyProtectionHits": []
+    },
+    {
+      "contentKey": "authored/transit-aspect/pluto/ascendant/soft",
+      "sourceCoreferenceFlags": [
+        "A situation around {{Name}} may reveal more leverage than anyone has been naming, especially around how they enter a new situation."
+      ],
+      "thirdPartyProtectionHits": []
+    },
+    {
+      "contentKey": "authored/transit-aspect/pluto/jupiter/soft",
+      "sourceCoreferenceFlags": [
+        "A situation around {{Name}} may reveal more leverage than anyone has been naming, especially around how much they are willing to take on."
+      ],
+      "thirdPartyProtectionHits": []
+    },
+    {
+      "contentKey": "authored/transit-aspect/pluto/lilith/hard",
+      "sourceCoreferenceFlags": [
+        "{{Name}} does better when they distinguish a boundary from the urge to punish someone for crossing an old one."
+      ],
+      "thirdPartyProtectionHits": []
+    },
+    {
+      "contentKey": "authored/transit-aspect/pluto/mars/hard",
+      "sourceCoreferenceFlags": [
+        "{{Name}} benefits from acting on the part that is theirs without turning every delay into proof that someone is blocking them."
+      ],
+      "thirdPartyProtectionHits": []
+    },
+    {
+      "contentKey": "authored/transit-aspect/pluto/mercury/hard",
+      "sourceCoreferenceFlags": [
+        "They may know what they mean and still need to slow down enough to notice that the other person heard something different.",
+        "With Pluto {{aspectWord}} their Mercury until {{untilDate}}, {{Name}} benefits from saying the important part clearly and leaving enough space for the other person to respond to that exact point."
+      ],
+      "thirdPartyProtectionHits": []
+    },
+    {
+      "contentKey": "authored/transit-aspect/pluto/mercury/soft",
+      "sourceCoreferenceFlags": [
+        "They may know what they mean and still need to slow down enough to notice that the other person heard something different.",
+        "With Pluto {{aspectWord}} their Mercury until {{untilDate}}, {{Name}} benefits from saying the important part clearly and leaving enough space for the other person to respond to that exact point."
+      ],
+      "thirdPartyProtectionHits": []
+    },
+    {
+      "contentKey": "authored/transit-aspect/pluto/north-node/conjunction",
+      "sourceCoreferenceFlags": [
+        "An introduction, assignment, class, or invitation can put them close to people who already seem comfortable doing what they are just beginning."
+      ],
+      "thirdPartyProtectionHits": []
+    },
+    {
+      "contentKey": "authored/transit-aspect/saturn/ascendant/soft",
+      "sourceCoreferenceFlags": [
+        "{{Name}} does better when they let the first reaction settle before changing how they present themselves to everyone else."
+      ],
+      "thirdPartyProtectionHits": []
+    },
+    {
+      "contentKey": "authored/transit-aspect/saturn/mercury/soft",
+      "sourceCoreferenceFlags": [
+        "A small wording problem can create more work than the actual disagreement if everyone starts answering what they assumed was meant.",
+        "Through {{untilDate}}, Saturn {{aspectWord}} their Mercury favors one practical response: {{Name}} can save time by correcting the misunderstanding early instead of winning an argument about a version nobody intended."
+      ],
+      "thirdPartyProtectionHits": [
+        {
+          "id": "everyone-assumed",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "contentKey": "authored/transit-aspect/saturn/neptune/soft",
+      "sourceCoreferenceFlags": [
+        "They may be more affected by music, sleep loss, alcohol, atmosphere, or another person's emotion than they realize in the moment."
+      ],
+      "thirdPartyProtectionHits": []
+    },
+    {
+      "contentKey": "authored/transit-aspect/saturn/south-node/conjunction",
+      "sourceCoreferenceFlags": [
+        "The unfinished or under-supported part of the situation becomes visible to {{Name}} through the job everyone already expects them to do.",
+        "Other people may quickly hand them the job they always know how to do, especially if that competence has made them the default helper before.",
+        "While Saturn {{aspectWord}} their South Node until {{untilDate}}, {{Name}} gets more from deciding consciously where the old habit still serves them and where it simply saves other people from adjusting."
+      ],
+      "thirdPartyProtectionHits": []
+    },
+    {
+      "contentKey": "authored/transit-aspect/saturn/sun/soft",
+      "sourceCoreferenceFlags": [
+        "{{Name}} does better when they let the work and choice become more specific instead of demanding that other people validate the entire identity attached to it."
+      ],
+      "thirdPartyProtectionHits": []
+    },
+    {
+      "contentKey": "authored/transit-aspect/uranus/ascendant/hard",
+      "sourceCoreferenceFlags": [
+        "{{Name}} does better when they let the first reaction settle before changing how they present themselves to everyone else."
+      ],
+      "thirdPartyProtectionHits": []
+    },
+    {
+      "contentKey": "authored/transit-aspect/uranus/jupiter/hard",
+      "sourceCoreferenceFlags": [
+        "They may want to say yes before checking the budget, schedule, evidence, or number of people who will depend on that yes."
+      ],
+      "thirdPartyProtectionHits": []
+    },
+    {
+      "contentKey": "authored/transit-aspect/uranus/mercury/soft",
+      "sourceCoreferenceFlags": [
+        "They may know what they mean and still need to slow down enough to notice that the other person heard something different.",
+        "With Uranus {{aspectWord}} their Mercury until {{untilDate}}, {{Name}} benefits from saying the important part clearly and leaving enough space for the other person to respond to that exact point."
+      ],
+      "thirdPartyProtectionHits": []
+    },
+    {
+      "contentKey": "authored/transit-aspect/uranus/north-node/conjunction",
+      "sourceCoreferenceFlags": [
+        "An introduction, assignment, class, or invitation can put them close to people who already seem comfortable doing what they are just beginning."
+      ],
+      "thirdPartyProtectionHits": []
+    },
+    {
+      "contentKey": "authored/transit-aspect/venus/jupiter/hard",
+      "sourceCoreferenceFlags": [
+        "They may want to say yes before checking the budget, schedule, evidence, or number of people who will depend on that yes."
+      ],
+      "thirdPartyProtectionHits": []
+    },
+    {
+      "contentKey": "authored/transit-aspect/venus/jupiter/soft",
+      "sourceCoreferenceFlags": [
+        "They may want to say yes before checking the budget, schedule, evidence, or number of people who will depend on that yes."
+      ],
+      "thirdPartyProtectionHits": []
+    },
+    {
+      "contentKey": "authored/transit-aspect/venus/mercury/hard",
+      "sourceCoreferenceFlags": [
+        "They may know what they mean and still need to slow down enough to notice that the other person heard something different."
+      ],
+      "thirdPartyProtectionHits": []
+    },
+    {
+      "contentKey": "authored/transit-aspect/venus/mercury/soft",
+      "sourceCoreferenceFlags": [
+        "They may know what they mean and still need to slow down enough to notice that the other person heard something different."
+      ],
+      "thirdPartyProtectionHits": []
+    },
+    {
+      "contentKey": "authored/transit-aspect/venus/north-node/conjunction",
+      "sourceCoreferenceFlags": [
+        "An introduction, assignment, class, or invitation can put them close to people who already seem comfortable doing what they are just beginning."
+      ],
+      "thirdPartyProtectionHits": []
+    },
+    {
+      "contentKey": "authored/transit-aspect/venus/sun/hard",
+      "sourceCoreferenceFlags": [
+        "With Venus {{aspectWord}} their Sun until {{untilDate}}, {{Name}} does better when they let the work and choice become more specific instead of demanding that other people validate the entire identity attached to it."
+      ],
+      "thirdPartyProtectionHits": []
+    }
+  ],
+  "unresolvedFlags": []
+}
