@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.mercury.trine.north-node",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-04",
+  "ownerStatement": "perfect, approved; please proceed with making these live, and wiring them up to the calendar",
+  "batchId": "sky-calendar-exact-approved-2026-09-04-held-trines-33",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-04-held-trines-33/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "f59cb5247fe5843b9565eb34086ca554060b8e6640123b42b64329047d9918a4",
+  "summary": "One conversation, message, application, introduction, or piece of information could clarify the next step.",
+  "body": "One conversation, message, application, introduction, or piece of information could clarify the next step. Mercury trine the North Node can make the useful detail easier to notice because it connects directly to a decision you already need to make. Ask the follow-up question. Read the terms. Reply while the opportunity is still current. The right information can save you from spending another week trying to decide without it.",
+  "sourceHeldKey": "sky.aspect.mercury.trine.nodes",
+  "sourceHeldPath": "packages/astro-knowledge/data/points/aspects/sky/four-body-unverified/mercury-north_node-trine.json"
+}

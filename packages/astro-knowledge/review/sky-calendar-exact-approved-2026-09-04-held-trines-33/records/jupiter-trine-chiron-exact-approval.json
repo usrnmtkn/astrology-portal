@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.jupiter.trine.chiron",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-04",
+  "ownerStatement": "perfect, approved; please proceed with making these live, and wiring them up to the calendar",
+  "batchId": "sky-calendar-exact-approved-2026-09-04-held-trines-33",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-04-held-trines-33/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "b8b5c670a922658a607508cecb41c8ae7521156e2177f291886fd8961d0b2de1",
+  "summary": "Something that used to make you doubt yourself may become useful experience instead of the reason you hold back.",
+  "body": "Something that used to make you doubt yourself may become useful experience instead of the reason you hold back. When Jupiter trines Chiron, growth can come from knowing exactly what a difficult period taught you, especially when you are applying for something, teaching someone else, taking on a larger role, or trying again after a disappointment. You do not have to pretend the earlier setback was good for you to recognize that you know more because you lived through it. Take the opportunity that uses what you learned without requiring you to romanticize what it cost.",
+  "sourceHeldKey": "sky.aspect.jupiter.trine.chiron",
+  "sourceHeldPath": "packages/astro-knowledge/data/points/aspects/sky/four-body-unverified/chiron-jupiter-trine.json"
+}

@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.mars.trine.chiron",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-04",
+  "ownerStatement": "perfect, approved; please proceed with making these live, and wiring them up to the calendar",
+  "batchId": "sky-calendar-exact-approved-2026-09-04-held-trines-33",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-04-held-trines-33/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "dc8d6ac9fb500ae2be3199d168e09c559cf094fb87a87b724864e6e11c504ae9",
+  "summary": "The thing you have been hesitant to do may become easier once there is an actual action to take.",
+  "body": "The thing you have been hesitant to do may become easier once there is an actual action to take. When Mars trines Chiron, movement can interrupt an old pattern of avoiding the place where you once felt embarrassed, rejected, weak, or unprepared. Send the application, make the appointment, have the conversation, go back to the class, or do the part you know how to do now. You do not need to prove the old experience no longer affects you. Doing something differently is enough.",
+  "sourceHeldKey": "sky.aspect.mars.trine.chiron",
+  "sourceHeldPath": "packages/astro-knowledge/data/points/aspects/sky/four-body-unverified/chiron-mars-trine.json"
+}

@@ -3,8 +3,8 @@
   "status": "index-only. No content moved, rewritten, or approved.",
   "deterministic": "This payload contains no timestamps. Identical inputs produce a byte-identical file.",
   "totals": {
-    "canonicalObjects": 14632,
-    "sourceRecordsIndexed": 25547,
+    "canonicalObjects": 14665,
+    "sourceRecordsIndexed": 25580,
     "objectsFoundInMoreThanOneStore": 2048,
     "unresolved": 0,
     "skipped": 55,
@@ -14,7 +14,7 @@
     "ll-matrix-v13": 1014,
     "v13-locked": 301,
     "phrasebank": 7064,
-    "astro-knowledge/data": 3191,
+    "astro-knowledge/data": 3224,
     "authored-placements": 314,
     "daily-glance-config": 31,
     "matrix-v9": 3430,
@@ -29,7 +29,7 @@
     "machine-proposal": 725,
     "owner-approved-prose": 9513,
     "unverified": 7748,
-    "factual-evidence": 7561
+    "factual-evidence": 7594
   },
   "byKind": {
     "aspect-generic": {
@@ -108,10 +108,10 @@
       }
     },
     "document": {
-      "objects": 376,
-      "records": 376,
+      "objects": 409,
+      "records": 409,
       "stores": {
-        "astro-knowledge/data": 376
+        "astro-knowledge/data": 409
       }
     },
     "phrasebank-entry": {
@@ -95026,6 +95026,48 @@
       ]
     },
     {
+      "id": "doc/chiron_trine_lilith",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "chiron-trine-lilith",
+          "rowKey": "chiron-trine-lilith",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/chiron-trine-lilith.json",
+          "sourceSha256": "16efa46ce79e1d2c997e54be1a5cb45aeb0ead08196491c2314e80fe0273571c"
+        }
+      ]
+    },
+    {
+      "id": "doc/chiron_trine_north_node",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "chiron-trine-north-node",
+          "rowKey": "chiron-trine-north-node",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/chiron-trine-north-node.json",
+          "sourceSha256": "c704f83644fd201b6da41f3ee46a14cd04e5a8acf4dae7ba2e91b35f2d969289"
+        }
+      ]
+    },
+    {
       "id": "doc/circle_feed_logic_framework",
       "kind": "document",
       "sources": [
@@ -95893,6 +95935,48 @@
       ]
     },
     {
+      "id": "doc/jupiter_trine_chiron",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "jupiter-trine-chiron",
+          "rowKey": "jupiter-trine-chiron",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/jupiter-trine-chiron.json",
+          "sourceSha256": "62245decf6a143f384a933894f24332097f2d97597125d1f3a949aba99bbc3d5"
+        }
+      ]
+    },
+    {
+      "id": "doc/jupiter_trine_lilith",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "jupiter-trine-lilith",
+          "rowKey": "jupiter-trine-lilith",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/jupiter-trine-lilith.json",
+          "sourceSha256": "6fd38f351d518a87d1f949fa8537fe72c491f7284419b50bc47a13cdddd6c259"
+        }
+      ]
+    },
+    {
       "id": "doc/jupiter_trine_neptune",
       "kind": "document",
       "sources": [
@@ -95910,6 +95994,27 @@
           },
           "path": "packages/astro-knowledge/data/transits/jupiter-trine-neptune.json",
           "sourceSha256": "59d7ece2fbe7e6f28bfd7284311b4fd750904f9472befc399313f79dc25bdf5e"
+        }
+      ]
+    },
+    {
+      "id": "doc/jupiter_trine_north_node",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "jupiter-trine-north-node",
+          "rowKey": "jupiter-trine-north-node",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/jupiter-trine-north-node.json",
+          "sourceSha256": "328c9664bf2d0661c9612092eb70d00ad4b26dcad2992504d9d38fb10c504a9b"
         }
       ]
     },
@@ -96036,6 +96141,27 @@
           },
           "path": "packages/astro-knowledge/data/pairs/lilith-nodes.json",
           "sourceSha256": "224cdfb7a81a04dee9338e0a566ccf62acc77ee2349ff69f2251131920a96d00"
+        }
+      ]
+    },
+    {
+      "id": "doc/lilith_trine_north_node",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "lilith-trine-north-node",
+          "rowKey": "lilith-trine-north-node",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/lilith-trine-north-node.json",
+          "sourceSha256": "3abd87542ece18b84302375e93bcfc85a8ec24378b977fd0403bbddc477a8abb"
         }
       ]
     },
@@ -96691,6 +96817,27 @@
       ]
     },
     {
+      "id": "doc/mars_trine_chiron",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "mars-trine-chiron",
+          "rowKey": "mars-trine-chiron",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/mars-trine-chiron.json",
+          "sourceSha256": "719771bef98e8d040a0f7e092e9847df40597236d179e741f09acda6873bf516"
+        }
+      ]
+    },
+    {
       "id": "doc/mars_trine_jupiter",
       "kind": "document",
       "sources": [
@@ -96712,6 +96859,27 @@
       ]
     },
     {
+      "id": "doc/mars_trine_lilith",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "mars-trine-lilith",
+          "rowKey": "mars-trine-lilith",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/mars-trine-lilith.json",
+          "sourceSha256": "a0d36b36fd79d4bf7cdfe0ae93ee67dc331db563b8aeee0451a324caac9280f0"
+        }
+      ]
+    },
+    {
       "id": "doc/mars_trine_neptune",
       "kind": "document",
       "sources": [
@@ -96729,6 +96897,27 @@
           },
           "path": "packages/astro-knowledge/data/transits/mars-trine-neptune.json",
           "sourceSha256": "5ec2ad7ebe857708938bae45aea4acfc4a00416fa990228a3f9fb6b1e8feafff"
+        }
+      ]
+    },
+    {
+      "id": "doc/mars_trine_north_node",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "mars-trine-north-node",
+          "rowKey": "mars-trine-north-node",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/mars-trine-north-node.json",
+          "sourceSha256": "03b9a739a64a11f3f61633b32d2d4a02777c4e20e708a8dd8b6523b9dd40650b"
         }
       ]
     },
@@ -97531,6 +97720,27 @@
       ]
     },
     {
+      "id": "doc/mercury_trine_chiron",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "mercury-trine-chiron",
+          "rowKey": "mercury-trine-chiron",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/mercury-trine-chiron.json",
+          "sourceSha256": "9ad84ffe00d15b38b8d0cfb23c93b399a3cd16f5974b2b27b40033d4425abd59"
+        }
+      ]
+    },
+    {
       "id": "doc/mercury_trine_jupiter",
       "kind": "document",
       "sources": [
@@ -97548,6 +97758,27 @@
           },
           "path": "packages/astro-knowledge/data/transits/mercury-trine-jupiter.json",
           "sourceSha256": "99716666ff5c3b178abd53317065ca1d6e6082c1152683bbe8665ebf1ffa14fa"
+        }
+      ]
+    },
+    {
+      "id": "doc/mercury_trine_lilith",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "mercury-trine-lilith",
+          "rowKey": "mercury-trine-lilith",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/mercury-trine-lilith.json",
+          "sourceSha256": "96ffd982343c9fcf79ac1d36e3ec4452fb7cd185101fc35ba08f7fe18a914a5f"
         }
       ]
     },
@@ -97590,6 +97821,27 @@
           },
           "path": "packages/astro-knowledge/data/transits/mercury-trine-neptune.json",
           "sourceSha256": "4aedca1f462ded2d604587b2a0ec0e4e60dd0a89427dfddabb20e54dd34c76d5"
+        }
+      ]
+    },
+    {
+      "id": "doc/mercury_trine_north_node",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "mercury-trine-north-node",
+          "rowKey": "mercury-trine-north-node",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/mercury-trine-north-node.json",
+          "sourceSha256": "3ee30952593ec96d4df95a87e1cc89f3be8b286fc15e9ac89f7186dd1ada0f23"
         }
       ]
     },
@@ -98644,6 +98896,27 @@
       ]
     },
     {
+      "id": "doc/moon_trine_chiron",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "moon-trine-chiron",
+          "rowKey": "moon-trine-chiron",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/moon-trine-chiron.json",
+          "sourceSha256": "67c58a06917af705208fcbee096a78c8521f6c4d0f0f2e552aa586b0cb4b5bc4"
+        }
+      ]
+    },
+    {
       "id": "doc/moon_trine_jupiter",
       "kind": "document",
       "sources": [
@@ -98661,6 +98934,27 @@
           },
           "path": "packages/astro-knowledge/data/transits/moon-trine-jupiter.json",
           "sourceSha256": "f5f2177dbc9ed21efe9d731b25fd1d4c17e491a25d52876895b8e5b377f0eb7c"
+        }
+      ]
+    },
+    {
+      "id": "doc/moon_trine_lilith",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "moon-trine-lilith",
+          "rowKey": "moon-trine-lilith",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/moon-trine-lilith.json",
+          "sourceSha256": "45ac082f61b7306b1281d47756f05c8b5103fb1c1cc03e44ee44f0019cb04cc9"
         }
       ]
     },
@@ -98724,6 +99018,27 @@
           },
           "path": "packages/astro-knowledge/data/transits/moon-trine-neptune.json",
           "sourceSha256": "21ddb2f37262e2d3f45237cbf9b8e2b3693fe434041d27db4d146045b591af17"
+        }
+      ]
+    },
+    {
+      "id": "doc/moon_trine_north_node",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "moon-trine-north-node",
+          "rowKey": "moon-trine-north-node",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/moon-trine-north-node.json",
+          "sourceSha256": "5dd958c6fa6a2531841361b7e6ee3881564055d9ee548962429fa52216e39485"
         }
       ]
     },
@@ -99087,6 +99402,69 @@
       ]
     },
     {
+      "id": "doc/neptune_trine_chiron",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "neptune-trine-chiron",
+          "rowKey": "neptune-trine-chiron",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/neptune-trine-chiron.json",
+          "sourceSha256": "69efc335f015437ad4dd12e102ba6256f1d00fac2be4b23971c8d4d741266ec8"
+        }
+      ]
+    },
+    {
+      "id": "doc/neptune_trine_lilith",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "neptune-trine-lilith",
+          "rowKey": "neptune-trine-lilith",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/neptune-trine-lilith.json",
+          "sourceSha256": "6bff5f3b52c68e3b426f75d029d6e2a2a48cd9d96c714033a448fc3f049aee95"
+        }
+      ]
+    },
+    {
+      "id": "doc/neptune_trine_north_node",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "neptune-trine-north-node",
+          "rowKey": "neptune-trine-north-node",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/neptune-trine-north-node.json",
+          "sourceSha256": "9173ed1be33a6cc16d09786fa2e288b60936edb09a4025514596809abff61997"
+        }
+      ]
+    },
+    {
       "id": "doc/neptune_trine_pluto",
       "kind": "document",
       "sources": [
@@ -99356,6 +99734,69 @@
           },
           "path": "packages/astro-knowledge/data/pairs/pluto-nodes.json",
           "sourceSha256": "3f742a27b4a97d63f4e7514f63aeea5ced7c074cf192145844a7b90e7771cf30"
+        }
+      ]
+    },
+    {
+      "id": "doc/pluto_trine_chiron",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "pluto-trine-chiron",
+          "rowKey": "pluto-trine-chiron",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/pluto-trine-chiron.json",
+          "sourceSha256": "164fe7246f789899a1e6bf0877c39a8e83e82900aaf164406e1d38e12f356254"
+        }
+      ]
+    },
+    {
+      "id": "doc/pluto_trine_lilith",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "pluto-trine-lilith",
+          "rowKey": "pluto-trine-lilith",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/pluto-trine-lilith.json",
+          "sourceSha256": "484d4f15a704ca05586437b4cc57489a922dfe11a9e4d724314ba75915458580"
+        }
+      ]
+    },
+    {
+      "id": "doc/pluto_trine_north_node",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "pluto-trine-north-node",
+          "rowKey": "pluto-trine-north-node",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/pluto-trine-north-node.json",
+          "sourceSha256": "058f4ba4098980fcc89c9efd9c24fd000d6eb7371e54e20be7953786299e4b38"
         }
       ]
     },
@@ -99990,6 +100431,48 @@
       ]
     },
     {
+      "id": "doc/saturn_trine_chiron",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "saturn-trine-chiron",
+          "rowKey": "saturn-trine-chiron",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/saturn-trine-chiron.json",
+          "sourceSha256": "e5458e26f7195caef2945fe8e7f45792ea776ad9db65e0ac805b71703cc811fe"
+        }
+      ]
+    },
+    {
+      "id": "doc/saturn_trine_lilith",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "saturn-trine-lilith",
+          "rowKey": "saturn-trine-lilith",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/saturn-trine-lilith.json",
+          "sourceSha256": "b5f5c4800150e38bb6d4ccc18a856141e10fbf466982d018030af57ecbea416f"
+        }
+      ]
+    },
+    {
       "id": "doc/saturn_trine_neptune",
       "kind": "document",
       "sources": [
@@ -100007,6 +100490,27 @@
           },
           "path": "packages/astro-knowledge/data/transits/saturn-trine-neptune.json",
           "sourceSha256": "e494e92d6f5ecce5d3af0be496f1b473a47b277d73130cfe98833f8738623e72"
+        }
+      ]
+    },
+    {
+      "id": "doc/saturn_trine_north_node",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "saturn-trine-north-node",
+          "rowKey": "saturn-trine-north-node",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/saturn-trine-north-node.json",
+          "sourceSha256": "e26f5b60dc47ee92c3ed4a90985ba9575697f4e266aad46516696e6e25e0fcbf"
         }
       ]
     },
@@ -102052,6 +102556,27 @@
       ]
     },
     {
+      "id": "doc/sun_trine_chiron",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "sun-trine-chiron",
+          "rowKey": "sun-trine-chiron",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/sun-trine-chiron.json",
+          "sourceSha256": "2cea04126422999cfc69c39b6e2335af57827d863af437728386f55f26c6d748"
+        }
+      ]
+    },
+    {
       "id": "doc/sun_trine_jupiter",
       "kind": "document",
       "sources": [
@@ -102069,6 +102594,27 @@
           },
           "path": "packages/astro-knowledge/data/transits/sun-trine-jupiter.json",
           "sourceSha256": "0fdd0189058962c4abf5015304e6c1042f8bd127737f529bb8b836220d6c409e"
+        }
+      ]
+    },
+    {
+      "id": "doc/sun_trine_lilith",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "sun-trine-lilith",
+          "rowKey": "sun-trine-lilith",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/sun-trine-lilith.json",
+          "sourceSha256": "f197b65659054dfd691e3492e9270c32e787149da6049d2c8971df9dd61bdad1"
         }
       ]
     },
@@ -102132,6 +102678,27 @@
           },
           "path": "packages/astro-knowledge/data/transits/sun-trine-neptune.json",
           "sourceSha256": "0a3e59be90a48562c90a4679d17c200a3bcf9b68ade9e6e5be0fea0447f5f690"
+        }
+      ]
+    },
+    {
+      "id": "doc/sun_trine_north_node",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "sun-trine-north-node",
+          "rowKey": "sun-trine-north-node",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/sun-trine-north-node.json",
+          "sourceSha256": "d9c1e533e7c8908fe1a048fcabb95a858d21a46c6efac836e3d71bb715e97729"
         }
       ]
     },
@@ -102938,6 +103505,48 @@
       ]
     },
     {
+      "id": "doc/uranus_trine_chiron",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "uranus-trine-chiron",
+          "rowKey": "uranus-trine-chiron",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/uranus-trine-chiron.json",
+          "sourceSha256": "b8e4b6a4035d271fc1a13c2d2dac6b238d39fe14941844c72d26cc2ea0ba34e1"
+        }
+      ]
+    },
+    {
+      "id": "doc/uranus_trine_lilith",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "uranus-trine-lilith",
+          "rowKey": "uranus-trine-lilith",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/uranus-trine-lilith.json",
+          "sourceSha256": "b8ce776e5819355b20d8c6859e27d2f352585b7b2fedf79b2192c2b74e0c3cb8"
+        }
+      ]
+    },
+    {
       "id": "doc/uranus_trine_neptune",
       "kind": "document",
       "sources": [
@@ -102955,6 +103564,27 @@
           },
           "path": "packages/astro-knowledge/data/transits/uranus-trine-neptune.json",
           "sourceSha256": "0e75d80ac142c9d3d9326a6430feebfd821b4b62bf986975f170d74c88735ac4"
+        }
+      ]
+    },
+    {
+      "id": "doc/uranus_trine_north_node",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "uranus-trine-north-node",
+          "rowKey": "uranus-trine-north-node",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/uranus-trine-north-node.json",
+          "sourceSha256": "5754324eb148f67afee2f4c63ab12075885651b336702a58fc81cf64528bc207"
         }
       ]
     },
@@ -103652,6 +104282,27 @@
       ]
     },
     {
+      "id": "doc/venus_trine_chiron",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "venus-trine-chiron",
+          "rowKey": "venus-trine-chiron",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/venus-trine-chiron.json",
+          "sourceSha256": "6b19bc9b0e5a9ce755bbe11a4c482b2a4a651f8f4bb132fad2563b38c820839c"
+        }
+      ]
+    },
+    {
       "id": "doc/venus_trine_jupiter",
       "kind": "document",
       "sources": [
@@ -103669,6 +104320,27 @@
           },
           "path": "packages/astro-knowledge/data/transits/venus-trine-jupiter.json",
           "sourceSha256": "91c2b25d30d1f2608d68974a757901ee0df0291b0928388a4c53ade9b2f5ced9"
+        }
+      ]
+    },
+    {
+      "id": "doc/venus_trine_lilith",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "venus-trine-lilith",
+          "rowKey": "venus-trine-lilith",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/venus-trine-lilith.json",
+          "sourceSha256": "acbea56f6efb9afade5e9e38712b81e0f0b48ee9eefa2aac69eb6194831495ba"
         }
       ]
     },
@@ -103711,6 +104383,27 @@
           },
           "path": "packages/astro-knowledge/data/transits/venus-trine-neptune.json",
           "sourceSha256": "ad7967dfa6fb796ac9635e00fbc18a724f544c35a2f25730492e0b77291c5fb9"
+        }
+      ]
+    },
+    {
+      "id": "doc/venus_trine_north_node",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "venus-trine-north-node",
+          "rowKey": "venus-trine-north-node",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/venus-trine-north-node.json",
+          "sourceSha256": "4774ae1850d4ed2cb3522ed446041c64ea5894d6d8da13673a2d118373c70005"
         }
       ]
     },
@@ -519624,7 +520317,7 @@
     }
   ],
   "integrity": {
-    "contentSha256": "c559b3e921c52fda69ec1c67dc6ea1e7d6c9e0ed45029c7d0dda03f209aa8340",
-    "distinctSourceFiles": 3231
+    "contentSha256": "c06b17827b7fa25ae1292945babd026467db2c3c6a4df5d380518f73abed4ecb",
+    "distinctSourceFiles": 3264
   }
 }
