@@ -1,0 +1,95 @@
+{
+  "schemaVersion": 2,
+  "family": "lilith",
+  "rowCount": 11,
+  "rows": [
+    {
+      "contentKey": "sky.aspect.jupiter.trine.lilith",
+      "summary": "An opportunity may get bigger once you stop trying to make the choice sound conventional.",
+      "body": "An opportunity may get bigger once you stop trying to make the choice sound conventional. Jupiter trine Lilith can support something you genuinely want even when it does not make immediate sense to the people who expected a different plan. A niche project finds an audience, an unusual career move gets support, or a decision you were prepared to defend turns out to need much less explanation than expected. Use the opening. You do not need to exaggerate the rebellion just because the permission arrived easily.",
+      "bodySha256": "346356e729ab8e88a2e0a9e0ec157a8e6e16d0d8008addda51f5b000a8ddf553",
+      "sourceHeldKey": "sky.aspect.jupiter.trine.lilith",
+      "sourceHeldPath": "packages/astro-knowledge/data/points/aspects/sky/four-body-unverified/jupiter-lilith-trine.json"
+    },
+    {
+      "contentKey": "sky.aspect.lilith.trine.north-node",
+      "summary": "The path forward may require a choice that makes less sense to other people than it does to you.",
+      "body": "The path forward may require a choice that makes less sense to other people than it does to you. When the North Node trines Lilith, refusing an expected role can create space for an option you would not have reached by continuing to cooperate with the old plan. You may say no to the obvious job, relationship arrangement, family expectation, or version of success and discover that another route was already available. Being misunderstood is not proof that a choice is right, but it does not make the choice wrong either.",
+      "bodySha256": "bfa191214e358b083856343a3d05a68702627362d1e6e300d56c920568378c2d",
+      "sourceHeldKey": "sky.aspect.lilith.trine.nodes",
+      "sourceHeldPath": "packages/astro-knowledge/data/points/aspects/sky/four-body-unverified/lilith-north_node-trine.json"
+    },
+    {
+      "contentKey": "sky.aspect.mars.trine.lilith",
+      "summary": "You may know exactly where your no is before you have finished explaining it.",
+      "body": "You may know exactly where your no is before you have finished explaining it. Mars trine Lilith can make it easier to act on a boundary, preference, or decision you have been softening because you expected resistance. Decline the request, correct the assumption, leave the plan you never agreed to, or pursue the option you actually want. Defiance is useful when it protects a decision that matters. It becomes less useful when opposing someone is the only reason to keep going.",
+      "bodySha256": "793125c4ca928f551fac25b13d56bb6a780123653a38526ebb86263d56fd783e",
+      "sourceHeldKey": "sky.aspect.mars.trine.lilith",
+      "sourceHeldPath": "packages/astro-knowledge/data/points/aspects/sky/four-body-unverified/lilith-mars-trine.json"
+    },
+    {
+      "contentKey": "sky.aspect.mercury.trine.lilith",
+      "summary": "The conversation gets easier once somebody says the part everyone has been circling.",
+      "body": "The conversation gets easier once somebody says the part everyone has been circling. Mercury trine Lilith can make it possible to discuss the embarrassing detail, unpopular opinion, family issue, money problem, sexual boundary, or criticism that people kept trying to phrase around. Plain language removes some of the power that secrecy gave the subject. Say it clearly enough that everyone can respond to the same information.",
+      "bodySha256": "380b0258559698b2b594ba62b82b6e2eedc50225c9d89750888bba54ff523246",
+      "sourceHeldKey": "sky.aspect.mercury.trine.lilith",
+      "sourceHeldPath": "packages/astro-knowledge/data/points/aspects/sky/four-body-unverified/lilith-mercury-trine.json"
+    },
+    {
+      "contentKey": "sky.aspect.moon.trine.lilith",
+      "summary": "You may stop arguing with yourself about a need simply because it is inconvenient for someone else.",
+      "body": "You may stop arguing with yourself about a need simply because it is inconvenient for someone else. Moon trine Lilith can make it easier to notice when you are tired, angry, hungry, overstimulated, jealous, lonely, or simply done without immediately turning the feeling into a character flaw. Change the plan, go home, eat something, ask for privacy, or admit that the arrangement is not working for you. A feeling does not have to be noble to contain useful information.",
+      "bodySha256": "0a782a398c8af9a342d2c509b052910c65d518c893ec2eac670373547abb3ad9",
+      "sourceHeldKey": "sky.aspect.moon.trine.lilith",
+      "sourceHeldPath": "packages/astro-knowledge/data/points/aspects/sky/four-body-unverified/lilith-moon-trine.json"
+    },
+    {
+      "contentKey": "sky.aspect.neptune.trine.lilith",
+      "summary": "Something you normally censor may come out more easily in art, writing, fantasy, humor, or a conversation that feels unusually unguarded.",
+      "body": "Something you normally censor may come out more easily in art, writing, fantasy, humor, or a conversation that feels unusually unguarded. Neptune trine Lilith can loosen the rules around what is acceptable to imagine or admit without requiring you to turn every private thought into a public declaration. Pay attention to what keeps returning when you stop correcting it. Inspiration can reveal a desire before you have decided what to do about it.",
+      "bodySha256": "74c3fc48362b48aabb78cb89ec8f91592ebc56d20c29e92c142d52033ec4124c",
+      "sourceHeldKey": "sky.aspect.neptune.trine.lilith",
+      "sourceHeldPath": "packages/astro-knowledge/data/points/aspects/sky/four-body-unverified/lilith-neptune-trine.json"
+    },
+    {
+      "contentKey": "sky.aspect.pluto.trine.lilith",
+      "summary": "A situation changes when the person who was expected to stay quiet realizes they have leverage.",
+      "body": "A situation changes when the person who was expected to stay quiet realizes they have leverage. Pluto trine Lilith can make it easier to name a hidden rule, unequal arrangement, private consequence, or source of control that depended on nobody saying exactly what was happening. Once the information is explicit, the balance of power may shift quickly. Use that leverage to change the terms. You do not need to become as controlling as the arrangement you are trying to leave.",
+      "bodySha256": "f7259e08e1e39db3cc57b5f9c8a11aba6e24754e8c45a9d847da1ccfb8248312",
+      "sourceHeldKey": "sky.aspect.pluto.trine.lilith",
+      "sourceHeldPath": "packages/astro-knowledge/data/points/aspects/sky/four-body-unverified/lilith-pluto-trine.json"
+    },
+    {
+      "contentKey": "sky.aspect.saturn.trine.lilith",
+      "summary": "A refusal becomes much harder to dismiss once it has a clear boundary around it.",
+      "body": "A refusal becomes much harder to dismiss once it has a clear boundary around it. Saturn trine Lilith can help turn something you have repeatedly objected to into a rule, condition, deadline, contract term, or responsibility that other people have to account for. Instead of explaining again why the situation bothers you, specify what you will and will not do. The boundary works because it is enforceable, not because everyone agrees with it.",
+      "bodySha256": "ece0fc88331497fb45ae96d1c4b6a0614f36c56903bac9bebc6f43595544e197",
+      "sourceHeldKey": "sky.aspect.saturn.trine.lilith",
+      "sourceHeldPath": "packages/astro-knowledge/data/points/aspects/sky/four-body-unverified/lilith-saturn-trine.json"
+    },
+    {
+      "contentKey": "sky.aspect.sun.trine.lilith",
+      "summary": "You may be able to show more of who you are without preparing a defense first.",
+      "body": "You may be able to show more of who you are without preparing a defense first. When the Sun trines Lilith, visibility is less likely to depend on making the inconvenient, unconventional, or less polished part of yourself easier for other people to approve. Wear it, say it, publish it, choose it, or let the preference stand without adding a long explanation. The useful part of this transit is not becoming shocking. It is discovering how little energy you need to spend apologizing for something that was never actually a problem.",
+      "bodySha256": "432227841a30238bfcf8ebd7e009321ab56e5bd8cf2fe0b3c18dfd1ba5c4486c",
+      "sourceHeldKey": "sky.aspect.sun.trine.lilith",
+      "sourceHeldPath": "packages/astro-knowledge/data/points/aspects/sky/four-body-unverified/lilith-sun-trine.json"
+    },
+    {
+      "contentKey": "sky.aspect.uranus.trine.lilith",
+      "summary": "A change you expected to be disruptive may feel more like relief.",
+      "body": "A change you expected to be disruptive may feel more like relief. Uranus trine Lilith can make it easier to break a rule, routine, social expectation, or arrangement that had become restrictive long before you admitted you wanted out. Change the schedule, try the unconventional option, stop participating in the tradition, or let the plan look different from everyone else's. Keep the freedom. Skip the unnecessary wreckage.",
+      "bodySha256": "de116a43d3bf37edf4aa4447d566c2b6b7baa58508341713bf08cd72751edd15",
+      "sourceHeldKey": "sky.aspect.uranus.trine.lilith",
+      "sourceHeldPath": "packages/astro-knowledge/data/points/aspects/sky/four-body-unverified/lilith-uranus-trine.json"
+    },
+    {
+      "contentKey": "sky.aspect.venus.trine.lilith",
+      "summary": "You may feel more attracted to what actually suits you than to what you are supposed to want.",
+      "body": "You may feel more attracted to what actually suits you than to what you are supposed to want. Venus trine Lilith can make relationships, style, pleasure, money, and personal taste less dependent on outside approval for a moment. Choose the person you enjoy being around, the clothes you will actually wear, the price you are willing to pay, or the arrangement that feels fair to you. Being accepted for a preference is useful information. It is not the same thing as being compatible everywhere else.",
+      "bodySha256": "217f4e398c2b9dae08afe581d1cdaae1142286e6178f618995d00d7dd7c65e9d",
+      "sourceHeldKey": "sky.aspect.venus.trine.lilith",
+      "sourceHeldPath": "packages/astro-knowledge/data/points/aspects/sky/four-body-unverified/lilith-venus-trine.json"
+    }
+  ]
+}
