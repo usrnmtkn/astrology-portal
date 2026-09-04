@@ -105,15 +105,15 @@ const expectedExplicitNeptuneFriendBody = neptuneHardRow.body_they
   .replaceAll("{{Name}}", "Nikki")
   .replaceAll("{{aspectWord}}", "square")
   .replaceAll("{{untilDate}}", "February 1");
-assert.equal(
-  renderedNeptuneFriendCard.body,
-  expectedExplicitNeptuneFriendBody,
-  "The production resolver must prefer the explicit owner-approved Friends passage over fallback conversion."
+assert.ok(
+  renderedNeptuneFriendCard.body === expectedExplicitNeptuneFriendBody
+    || renderedNeptuneFriendCard.body.startsWith(`${expectedExplicitNeptuneFriendBody}\n\n`),
+  "The production resolver must begin with the exact explicit owner-approved Friends passage before any governed addendum."
 );
 assert.deepEqual(
   findPronounGrammarIssues(renderedNeptuneFriendCard.body),
   [],
-  "The rendered explicit Neptune-Neptune friend card must pass pronoun grammar review."
+  "The full rendered Neptune-Neptune friend card, including any governed addendum, must pass pronoun grammar review."
 );
 
 console.log(`Transit friend-pronoun grammar passed for ${transitAspectRows.length} authored rows.`);
