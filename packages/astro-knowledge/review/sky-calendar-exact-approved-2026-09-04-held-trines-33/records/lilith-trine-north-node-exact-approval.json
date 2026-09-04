@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.lilith.trine.north-node",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-04",
+  "ownerStatement": "perfect, approved; please proceed with making these live, and wiring them up to the calendar",
+  "batchId": "sky-calendar-exact-approved-2026-09-04-held-trines-33",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-04-held-trines-33/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "bfa191214e358b083856343a3d05a68702627362d1e6e300d56c920568378c2d",
+  "summary": "The path forward may require a choice that makes less sense to other people than it does to you.",
+  "body": "The path forward may require a choice that makes less sense to other people than it does to you. When the North Node trines Lilith, refusing an expected role can create space for an option you would not have reached by continuing to cooperate with the old plan. You may say no to the obvious job, relationship arrangement, family expectation, or version of success and discover that another route was already available. Being misunderstood is not proof that a choice is right, but it does not make the choice wrong either.",
+  "sourceHeldKey": "sky.aspect.lilith.trine.nodes",
+  "sourceHeldPath": "packages/astro-knowledge/data/points/aspects/sky/four-body-unverified/lilith-north_node-trine.json"
+}

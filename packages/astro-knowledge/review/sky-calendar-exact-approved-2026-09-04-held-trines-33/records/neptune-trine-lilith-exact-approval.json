@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.neptune.trine.lilith",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-04",
+  "ownerStatement": "perfect, approved; please proceed with making these live, and wiring them up to the calendar",
+  "batchId": "sky-calendar-exact-approved-2026-09-04-held-trines-33",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-04-held-trines-33/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "74c3fc48362b48aabb78cb89ec8f91592ebc56d20c29e92c142d52033ec4124c",
+  "summary": "Something you normally censor may come out more easily in art, writing, fantasy, humor, or a conversation that feels unusually unguarded.",
+  "body": "Something you normally censor may come out more easily in art, writing, fantasy, humor, or a conversation that feels unusually unguarded. Neptune trine Lilith can loosen the rules around what is acceptable to imagine or admit without requiring you to turn every private thought into a public declaration. Pay attention to what keeps returning when you stop correcting it. Inspiration can reveal a desire before you have decided what to do about it.",
+  "sourceHeldKey": "sky.aspect.neptune.trine.lilith",
+  "sourceHeldPath": "packages/astro-knowledge/data/points/aspects/sky/four-body-unverified/lilith-neptune-trine.json"
+}

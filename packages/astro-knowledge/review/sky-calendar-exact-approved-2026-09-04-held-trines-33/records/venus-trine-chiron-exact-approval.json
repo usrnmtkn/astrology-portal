@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.venus.trine.chiron",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-04",
+  "ownerStatement": "perfect, approved; please proceed with making these live, and wiring them up to the calendar",
+  "batchId": "sky-calendar-exact-approved-2026-09-04-held-trines-33",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-04-held-trines-33/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "3aa03496aa6017a111ce0a0160ee88c1fb56c7de3f2179e7f62b6839bf1165fb",
+  "summary": "Someone does something kind and you may be able to receive it without immediately looking for the catch.",
+  "body": "Someone does something kind and you may be able to receive it without immediately looking for the catch. Venus trine Chiron can make affection, friendship, money, or appreciation feel less tangled up with an old disappointment about what you deserved or what another person would eventually take away. Let the compliment land. Let someone help. Let a good evening remain a good evening without testing it for signs that the old problem is coming back.",
+  "sourceHeldKey": "sky.aspect.venus.trine.chiron",
+  "sourceHeldPath": "packages/astro-knowledge/data/points/aspects/sky/four-body-unverified/chiron-venus-trine.json"
+}

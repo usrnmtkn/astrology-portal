@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.uranus.trine.lilith",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-04",
+  "ownerStatement": "perfect, approved; please proceed with making these live, and wiring them up to the calendar",
+  "batchId": "sky-calendar-exact-approved-2026-09-04-held-trines-33",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-04-held-trines-33/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "de116a43d3bf37edf4aa4447d566c2b6b7baa58508341713bf08cd72751edd15",
+  "summary": "A change you expected to be disruptive may feel more like relief.",
+  "body": "A change you expected to be disruptive may feel more like relief. Uranus trine Lilith can make it easier to break a rule, routine, social expectation, or arrangement that had become restrictive long before you admitted you wanted out. Change the schedule, try the unconventional option, stop participating in the tradition, or let the plan look different from everyone else's. Keep the freedom. Skip the unnecessary wreckage.",
+  "sourceHeldKey": "sky.aspect.uranus.trine.lilith",
+  "sourceHeldPath": "packages/astro-knowledge/data/points/aspects/sky/four-body-unverified/lilith-uranus-trine.json"
+}
