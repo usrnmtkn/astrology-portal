@@ -1,1021 +1,803 @@
 {
   "schema": "tldrastro-transit-aspect-you-refresh-review-v1",
+  "status": "clear",
   "createdAt": "2026-09-04",
   "candidateCount": 376,
   "protectedCount": 2,
-  "flaggedCount": 98,
-  "flagMeaning": "Flags identify sentences where an unrelated third-party antecedent may own a they/their pronoun, or where deterministic person adaptation left suspicious grammar. Flagged rows require inspection before serving promotion.",
-  "flags": [
+  "broadCoreferenceCandidateCount": 98,
+  "thirdPartyProtectionHitCount": 11,
+  "unresolvedCount": 0,
+  "thirdPartyProtections": [
+    {
+      "id": "both-people-listening",
+      "source": "both people are responding faster than they are listening"
+    },
+    {
+      "id": "terms-delivered",
+      "source": "someone else's terms just because they were delivered forcefully"
+    },
+    {
+      "id": "nobody-expects",
+      "source": "nobody has to explain what they expect"
+    },
+    {
+      "id": "everyone-assumed",
+      "source": "everyone starts answering what they assumed was meant"
+    }
+  ],
+  "ambiguityReview": [
     {
       "contentKey": "authored/transit-aspect/sun/ascendant/soft",
-      "residualFriendTokens": [],
-      "badYouAgreement": [],
       "sourceCoreferenceFlags": [
         "Their confidence comes across without needing much explanation, and people are more likely to meet their openness with interest instead of resistance.",
         "The advantage is simpler than that: they can show up as themselves and let other people respond to what is actually there.",
         "With the Sun {{aspectWord}} their Ascendant until {{untilDate}}, being visible costs less effort than usual, and the right people are more likely to meet them halfway."
       ],
-      "sourceBodyThey": "{{Name}} is easier to read in the best way today. Their confidence comes across without needing much explanation, and people are more likely to meet their openness with interest instead of resistance. A group plan, introduction, outing, or first meeting can go more easily because they are not spending the entire interaction wondering how they are being received.\n\nThey do not need to turn the day into a performance. The advantage is simpler than that: they can show up as themselves and let other people respond to what is actually there. With the Sun {{aspectWord}} their Ascendant until {{untilDate}}, being visible costs less effort than usual, and the right people are more likely to meet them halfway.",
-      "proposedBodyYou": "You are easier to read in the best way today. Your confidence comes across without needing much explanation, and people are more likely to meet your openness with interest instead of resistance. A group plan, introduction, outing, or first meeting can go more easily because you are not spending the entire interaction wondering how you are being received.\n\nYou do not need to turn the day into a performance. The advantage is simpler than that: you can show up as yourself and let other people respond to what is actually there. With the Sun {{aspectWord}} your Ascendant until {{untilDate}}, being visible costs less effort than usual, and the right people are more likely to meet you halfway."
+      "thirdPartyProtectionHits": []
     },
     {
       "contentKey": "authored/transit-aspect/sun/jupiter/soft",
-      "residualFriendTokens": [],
-      "badYouAgreement": [],
       "sourceCoreferenceFlags": [
         "They should be specific about what they want and give the other person something concrete to respond to."
       ],
-      "sourceBodyThey": "Something may go {{Name}}'s way with less resistance than expected today. A manager approves the request, a useful person answers, or a plan that had been waiting on someone else finally gets a yes. The opening matters most if they actually use it. Feeling optimistic without making the call, sending the proposal, or asking for what they want leaves the best part of the transit unused.\n\nWith the Sun {{aspectWord}} their Jupiter until {{untilDate}}, {{Name}} has a better window for the request they have been hesitating to make. They should be specific about what they want and give the other person something concrete to respond to.",
-      "proposedBodyYou": "Something may go your way with less resistance than expected today. A manager approves the request, a useful person answers, or a plan that had been waiting on someone else finally gets a yes. The opening matters most if you actually use it. Feeling optimistic without making the call, sending the proposal, or asking for what you want leaves the best part of the transit unused.\n\nWith the Sun {{aspectWord}} your Jupiter until {{untilDate}}, you have a better window for the request you have been hesitating to make. You should be specific about what you want and give the other person something concrete to respond to."
+      "thirdPartyProtectionHits": []
     },
     {
       "contentKey": "authored/transit-aspect/sun/lilith/hard",
-      "residualFriendTokens": [],
-      "badYouAgreement": [],
       "sourceCoreferenceFlags": [
         "{{Name}} may have less patience for the version of themselves that keeps everyone else comfortable."
       ],
-      "sourceBodyThey": "{{Name}} may have less patience for the version of themselves that keeps everyone else comfortable. A preference they stopped mentioning, an opinion that always became a problem, or a reaction they learned to hide can become much harder to dismiss while this transit is active. Irritation may be the first sign that an old compromise is costing more than it used to.\n\nThey do not need to turn every feeling into a confrontation. They do need to notice which situation keeps producing the same resentment. With the Sun {{aspectWord}} their Lilith until {{untilDate}}, one part of {{Name}} that was edited out for acceptance wants to be acknowledged again. Naming it privately is already different from pretending it is not there.",
-      "proposedBodyYou": "You may have less patience for the version of yourself that keeps everyone else comfortable. A preference you stopped mentioning, an opinion that always became a problem, or a reaction you learned to hide can become much harder to dismiss while this transit is active. Irritation may be the first sign that an old compromise is costing more than it used to.\n\nYou do not need to turn every feeling into a confrontation. You do need to notice which situation keeps producing the same resentment. With the Sun {{aspectWord}} your Lilith until {{untilDate}}, one part of you that was edited out for acceptance wants to be acknowledged again. Naming it privately is already different from pretending it is not there."
+      "thirdPartyProtectionHits": []
     },
     {
       "contentKey": "authored/transit-aspect/sun/mercury/hard",
-      "residualFriendTokens": [],
-      "badYouAgreement": [],
       "sourceCoreferenceFlags": [
         "Plans change, someone revises an agreement, and a simple exchange can become an argument because both people are responding faster than they are listening.",
         "With the Sun {{aspectWord}} their Mercury until {{untilDate}}, clear facts hold up better than speed, and listening long enough to understand the objection can save them from arguing against something the other person never said."
       ],
-      "sourceBodyThey": "Conversations may accelerate around {{Name}} before anyone has decided what actually needs to be settled. Plans change, someone revises an agreement, and a simple exchange can become an argument because both people are responding faster than they are listening. The pressure is useful when it exposes a weak idea early. It becomes noise when every disagreement has to be won.\n\n{{Name}} may get further by defending the point that matters and letting the rest remain unresolved for a day. With the Sun {{aspectWord}} their Mercury until {{untilDate}}, clear facts hold up better than speed, and listening long enough to understand the objection can save them from arguing against something the other person never said.",
-      "proposedBodyYou": "Conversations may accelerate around you before anyone has decided what actually needs to be settled. Plans change, someone revises an agreement, and a simple exchange can become an argument because both people are responding faster than you are listening. The pressure is useful when it exposes a weak idea early. It becomes noise when every disagreement has to be won.\n\nYou may get further by defending the point that matters and letting the rest remain unresolved for a day. With the Sun {{aspectWord}} your Mercury until {{untilDate}}, clear facts hold up better than speed, and listening long enough to understand the objection can save you from arguing against something the other person never said."
+      "thirdPartyProtectionHits": [
+        {
+          "id": "both-people-listening",
+          "count": 1
+        }
+      ]
     },
     {
       "contentKey": "authored/transit-aspect/sun/mercury/soft",
-      "residualFriendTokens": [],
-      "badYouAgreement": [],
       "sourceCoreferenceFlags": [
         "They should say the important part while the words are available and leave enough space for the other person to answer it."
       ],
-      "sourceBodyThey": "The sentence {{Name}} has been trying to get right may finally come out cleanly today. A pitch, negotiation, class, contract discussion, or important call can move because they are able to explain the point without burying it under extra language. Other people are easier to understand too, especially when {{Name}} stays curious instead of rehearsing the next answer.\n\nWith the Sun {{aspectWord}} their Mercury until {{untilDate}}, this is a useful day for the message that needs a clear response. They should say the important part while the words are available and leave enough space for the other person to answer it.",
-      "proposedBodyYou": "The sentence you have been trying to get right may finally come out cleanly today. A pitch, negotiation, class, contract discussion, or important call can move because you are able to explain the point without burying it under extra language. Other people are easier to understand too, especially when you stay curious instead of rehearsing the next answer.\n\nWith the Sun {{aspectWord}} your Mercury until {{untilDate}}, this is a useful day for the message that needs a clear response. You should say the important part while the words are available and leave enough space for the other person to answer it."
+      "thirdPartyProtectionHits": []
     },
     {
       "contentKey": "authored/transit-aspect/sun/midheaven/hard",
-      "residualFriendTokens": [],
-      "badYouAgreement": [],
       "sourceCoreferenceFlags": [
         "With the Sun {{aspectWord}} their Midheaven until {{untilDate}}, {{Name}} does better when they keep the team informed, let the result carry some of the weight, and avoid turning professional friction into a referendum on their worth."
       ],
-      "sourceBodyThey": "{{Name}}'s work may get more attention than usual, and attention is not automatically comfortable. A manager may question the approach, coworkers may resist being pushed, or a strong result may come with a disagreement about credit, authority, or how the next step should happen. The temptation is to press harder because the stakes feel personal.\n\nThe work itself is still the strongest argument. With the Sun {{aspectWord}} their Midheaven until {{untilDate}}, {{Name}} does better when they keep the team informed, let the result carry some of the weight, and avoid turning professional friction into a referendum on their worth.",
-      "proposedBodyYou": "Your work may get more attention than usual, and attention is not automatically comfortable. A manager may question the approach, coworkers may resist being pushed, or a strong result may come with a disagreement about credit, authority, or how the next step should happen. The temptation is to press harder because the stakes feel personal.\n\nThe work itself is still the strongest argument. With the Sun {{aspectWord}} your Midheaven until {{untilDate}}, you do better when you keep the team informed, let the result carry some of the weight, and avoid turning professional friction into a referendum on your worth."
+      "thirdPartyProtectionHits": []
     },
     {
       "contentKey": "authored/transit-aspect/sun/north-node/conjunction",
-      "residualFriendTokens": [],
-      "badYouAgreement": [],
       "sourceCoreferenceFlags": [
         "Leading instead of assisting, accepting a title they have never held, or entering a group where everyone seems more experienced can make a genuine opportunity feel like evidence they are unprepared."
       ],
-      "sourceBodyThey": "{{Name}} may be offered a role that feels slightly ahead of the version of themselves they already know how to be. Leading instead of assisting, accepting a title they have never held, or entering a group where everyone seems more experienced can make a genuine opportunity feel like evidence they are unprepared. The discomfort does not cancel the opportunity.\n\nWith the Sun {{aspectWord}} their North Node until {{untilDate}}, {{Name}} gets a concrete chance to begin becoming familiar with the unfamiliar role. They do not need proof that they can carry the entire future attached to it. They need enough willingness to accept the first assignment and learn from what happens next.",
-      "proposedBodyYou": "You may be offered a role that feels slightly ahead of the version of yourself you already know how to be. Leading instead of assisting, accepting a title you have never held, or entering a group where everyone seems more experienced can make a genuine opportunity feel like evidence you are unprepared. The discomfort does not cancel the opportunity.\n\nWith the Sun {{aspectWord}} your North Node until {{untilDate}}, you get a concrete chance to begin becoming familiar with the unfamiliar role. You do not need proof that you can carry the entire future attached to it. You need enough willingness to accept the first assignment and learn from what happens next."
+      "thirdPartyProtectionHits": []
     },
     {
       "contentKey": "authored/transit-aspect/sun/pluto/hard",
-      "residualFriendTokens": [],
-      "badYouAgreement": [],
       "sourceCoreferenceFlags": [
         "{{Name}} does not have to accept someone else's terms just because they were delivered forcefully."
       ],
-      "sourceBodyThey": "A disagreement around {{Name}} may reveal that the argument is not only about the stated issue. An authority figure pushes for control, an arrangement that has been barely holding together reaches its limit, or someone introduces an ultimatum because the quieter ways of managing the problem stopped working. The pressure shows where the structure is weakest.\n\n{{Name}} does not have to accept someone else's terms just because they were delivered forcefully. They also do not gain much by answering pressure with a larger threat. With the Sun {{aspectWord}} their Pluto until {{untilDate}}, the useful confrontation is the one that names the actual grievance, the actual leverage, and what has to change for the problem to stop returning.",
-      "proposedBodyYou": "A disagreement around you may reveal that the argument is not only about the stated issue. An authority figure pushes for control, an arrangement that has been barely holding together reaches its limit, or someone introduces an ultimatum because the quieter ways of managing the problem stopped working. The pressure shows where the structure is weakest.\n\nYou do not have to accept someone else's terms just because you were delivered forcefully. You also do not gain much by answering pressure with a larger threat. With the Sun {{aspectWord}} your Pluto until {{untilDate}}, the useful confrontation is the one that names the actual grievance, the actual leverage, and what has to change for the problem to stop returning."
+      "thirdPartyProtectionHits": [
+        {
+          "id": "terms-delivered",
+          "count": 1
+        }
+      ]
     },
     {
       "contentKey": "authored/transit-aspect/sun/pluto/soft",
-      "residualFriendTokens": [],
-      "badYouAgreement": [],
       "sourceCoreferenceFlags": [
         "Other people may be more willing to follow their lead when the solution helps more than one person.",
         "With the Sun {{aspectWord}} their Pluto until {{untilDate}}, influence works best when {{Name}} uses it to resolve the underlying problem rather than to prove they were the person who saw it first."
       ],
-      "sourceBodyThey": "Something {{Name}} has been living around may become specific enough to address today. An old grievance finally gets named, a hidden expense becomes clear, or a difficult situation that kept producing consequences without an obvious cause reveals where the problem actually sits. Once it is concrete, {{Name}} can do something with it.\n\nOther people may be more willing to follow their lead when the solution helps more than one person. With the Sun {{aspectWord}} their Pluto until {{untilDate}}, influence works best when {{Name}} uses it to resolve the underlying problem rather than to prove they were the person who saw it first.",
-      "proposedBodyYou": "Something you have been living around may become specific enough to address today. An old grievance finally gets named, a hidden expense becomes clear, or a difficult situation that kept producing consequences without an obvious cause reveals where the problem actually sits. Once it is concrete, you can do something with it.\n\nOther people may be more willing to follow your lead when the solution helps more than one person. With the Sun {{aspectWord}} your Pluto until {{untilDate}}, influence works best when you use it to resolve the underlying problem rather than to prove you were the person who saw it first."
+      "thirdPartyProtectionHits": []
     },
     {
       "contentKey": "authored/transit-aspect/sun/south-node/conjunction",
-      "residualFriendTokens": [],
-      "badYouAgreement": [],
       "sourceCoreferenceFlags": [
         "{{Name}} may slip back into a familiar role so easily that nobody has to explain what they expect.",
         "Recognition can come quickly too, because other people already understand this version of them."
       ],
-      "sourceBodyThey": "{{Name}} may slip back into a familiar role so easily that nobody has to explain what they expect. They already know how to help, what to say, and how to become useful there. Recognition can come quickly too, because other people already understand this version of them. The ease is genuine. It is also familiar for a reason.\n\nWith the Sun {{aspectWord}} their South Node until {{untilDate}}, {{Name}} gets to revisit something they have already mastered without assuming it still deserves the same place in their life. They can enjoy being competent there and still ask if the role supports the direction they are trying to move now.",
-      "proposedBodyYou": "You may slip back into a familiar role so easily that nobody has to explain what you expect. You already know how to help, what to say, and how to become useful there. Recognition can come quickly too, because other people already understand this version of you. The ease is genuine. It is also familiar for a reason.\n\nWith the Sun {{aspectWord}} your South Node until {{untilDate}}, you get to revisit something you have already mastered without assuming it still deserves the same place in your life. You can enjoy being competent there and still ask if the role supports the direction you are trying to move now."
+      "thirdPartyProtectionHits": [
+        {
+          "id": "nobody-expects",
+          "count": 1
+        }
+      ]
     },
     {
       "contentKey": "authored/transit-aspect/sun/sun/soft",
-      "residualFriendTokens": [],
-      "badYouAgreement": [],
       "sourceCoreferenceFlags": [
         "With the Sun {{aspectWord}} their Sun until {{untilDate}}, {{Name}} has a useful window for checking what is working and strengthening the part that still depends on luck, another person's patience, or a temporary workaround."
       ],
-      "sourceBodyThey": "The day may give {{Name}} a little more cooperation than they expected. A reply arrives, a meeting takes less effort, or a plan advances without another round of pushing. That ease can be wasted if they only enjoy the relief and leave the same weak point waiting for a harder day.\n\nWith the Sun {{aspectWord}} their Sun until {{untilDate}}, {{Name}} has a useful window for checking what is working and strengthening the part that still depends on luck, another person's patience, or a temporary workaround. Easy progress is still progress. It is also a good time to make the next round easier.",
-      "proposedBodyYou": "The day may give you a little more cooperation than you expected. A reply arrives, a meeting takes less effort, or a plan advances without another round of pushing. That ease can be wasted if you only enjoy the relief and leave the same weak point waiting for a harder day.\n\nWith the Sun {{aspectWord}} your Sun until {{untilDate}}, you have a useful window for checking what is working and strengthening the part that still depends on luck, another person's patience, or a temporary workaround. Easy progress is still progress. It is also a good time to make the next round easier."
+      "thirdPartyProtectionHits": []
     },
     {
       "contentKey": "authored/transit-aspect/any/chiron/conjunction",
-      "residualFriendTokens": [],
-      "badYouAgreement": [],
       "sourceCoreferenceFlags": [
         "They may notice the urge to protect the sore spot before deciding if the person in front of them is actually repeating the old pattern."
       ],
-      "sourceBodyThey": "The issue becomes specific enough for {{Name}} to respond to now, with the difference between an old hurt and the current event carrying most of the consequence. They may notice the urge to protect the sore spot before deciding if the person in front of them is actually repeating the old pattern. The two concerns sit close together now, so the issue moving from background to action immediately changes how {{Name}} experiences the situation instead of arriving as a separate issue.\n\nAs this transit {{aspectWord}} their Chiron continues through {{untilDate}}, {{Name}} does better when they protect the sore spot without assuming that protection has to become withdrawal or retaliation.",
-      "proposedBodyYou": "The issue becomes specific enough for you to respond to now, with the difference between an old hurt and the current event carrying most of the consequence. You may notice the urge to protect the sore spot before deciding if the person in front of you is actually repeating the old pattern. The two concerns sit close together now, so the issue moving from background to action immediately changes how you experience the situation instead of arriving as a separate issue.\n\nAs this transit {{aspectWord}} your Chiron continues through {{untilDate}}, you do better when you protect the sore spot without assuming that protection has to become withdrawal or retaliation."
+      "thirdPartyProtectionHits": []
     },
     {
       "contentKey": "authored/transit-aspect/chiron/ascendant/hard",
-      "residualFriendTokens": [],
-      "badYouAgreement": [],
       "sourceCoreferenceFlags": [
         "{{Name}} may recognize an old sore point inside a present-day situation involving how other people meet their presence.",
         "Someone may react to their tone, pace, appearance, or confidence before there is time for a fuller explanation."
       ],
-      "sourceBodyThey": "{{Name}} may recognize an old sore point inside a present-day situation involving how other people meet their presence. Someone may react to their tone, pace, appearance, or confidence before there is time for a fuller explanation. {{Name}} gets a clearer decision once a vulnerability becoming easier to name stops choosing the urgency for them.\n\nThrough {{untilDate}}, Chiron {{aspectWord}} their Ascendant favors one practical response: {{Name}} benefits from answering the situation in front of them instead of rehearsing how they might be judged later.",
-      "proposedBodyYou": "You may recognize an old sore point inside a present-day situation involving how other people meet your presence. Someone may react to your tone, pace, appearance, or confidence before there is time for a fuller explanation. You get a clearer decision once a vulnerability becoming easier to name stops choosing the urgency for you.\n\nThrough {{untilDate}}, Chiron {{aspectWord}} your Ascendant favors one practical response: you benefit from answering the situation in front of you instead of rehearsing how you might be judged later."
+      "thirdPartyProtectionHits": []
     },
     {
       "contentKey": "authored/transit-aspect/chiron/ascendant/soft",
-      "residualFriendTokens": [],
-      "badYouAgreement": [],
       "sourceCoreferenceFlags": [
         "{{Name}} does better when they let the first reaction settle before changing how they present themselves to everyone else."
       ],
-      "sourceBodyThey": "A comment, delay, or small change can make {{Name}} more aware of an older sensitivity tied to first impressions and immediate responses. A new setting can make the difference between their first instinct and their preferred response easier to notice. There is less resistance between an older sensitivity becoming recognizable and what the situation needs, which gives {{Name}} a better chance to use the opening deliberately.\n\nUntil {{untilDate}}, Chiron {{aspectWord}} their Ascendant remains active. {{Name}} does better when they let the first reaction settle before changing how they present themselves to everyone else.",
-      "proposedBodyYou": "A comment, delay, or small change can make you more aware of an older sensitivity tied to first impressions and immediate responses. A new setting can make the difference between your first instinct and your preferred response easier to notice. There is less resistance between an older sensitivity becoming recognizable and what the situation needs, which gives you a better chance to use the opening deliberately.\n\nUntil {{untilDate}}, Chiron {{aspectWord}} your Ascendant remains active. You do better when you let the first reaction settle before changing how you present yourself to everyone else."
+      "thirdPartyProtectionHits": []
     },
     {
       "contentKey": "authored/transit-aspect/chiron/mars/soft",
-      "residualFriendTokens": [],
-      "badYouAgreement": [],
       "sourceCoreferenceFlags": [
         "With Chiron {{aspectWord}} their Mars until {{untilDate}}, {{Name}} benefits from acting on the part that is theirs without turning every delay into proof that someone is blocking them."
       ],
-      "sourceBodyThey": "A current moment may touch an older sensitivity for {{Name}}, especially around physical effort and impatience. They may have enough energy to push through a difficult job and not enough patience to tolerate an unnecessary obstacle at the same time. Support is available in a form {{Name}} can actually use, and a familiar sore point resurfacing is less likely to become the part they have to manage around.\n\nWith Chiron {{aspectWord}} their Mars until {{untilDate}}, {{Name}} benefits from acting on the part that is theirs without turning every delay into proof that someone is blocking them.",
-      "proposedBodyYou": "A current moment may touch an older sensitivity for you, especially around physical effort and impatience. You may have enough energy to push through a difficult job and not enough patience to tolerate an unnecessary obstacle at the same time. Support is available in a form you can actually use, and a familiar sore point resurfacing is less likely to become the part you have to manage around.\n\nWith Chiron {{aspectWord}} your Mars until {{untilDate}}, you benefit from acting on the part that is yours without turning every delay into proof that someone is blocking you."
+      "thirdPartyProtectionHits": []
     },
     {
       "contentKey": "authored/transit-aspect/chiron/mercury/hard",
-      "residualFriendTokens": [],
-      "badYouAgreement": [],
       "sourceCoreferenceFlags": [
         "They may know what they mean and still need to slow down enough to notice that the other person heard something different."
       ],
-      "sourceBodyThey": "A current moment may touch an older sensitivity for {{Name}}, especially around the facts behind a conversation. They may know what they mean and still need to slow down enough to notice that the other person heard something different. Pressure rises when a familiar sore point resurfacing pushes against a need that cannot simply be rushed, enlarged, softened, or controlled into compliance.\n\nThe useful part of Chiron {{aspectWord}} their Mercury until {{untilDate}} is concrete. {{Name}} benefits from saying the important part clearly and leaving enough space for the other person to respond to that exact point.",
-      "proposedBodyYou": "A current moment may touch an older sensitivity for you, especially around the facts behind a conversation. You may know what you mean and still need to slow down enough to notice that the other person heard something different. Pressure rises when a familiar sore point resurfacing pushes against a need that cannot simply be rushed, enlarged, softened, or controlled into compliance.\n\nThe useful part of Chiron {{aspectWord}} your Mercury until {{untilDate}} is concrete. You benefit from saying the important part clearly and leaving enough space for the other person to respond to that exact point."
+      "thirdPartyProtectionHits": []
     },
     {
       "contentKey": "authored/transit-aspect/chiron/mercury/soft",
-      "residualFriendTokens": [],
-      "badYouAgreement": [],
       "sourceCoreferenceFlags": [
         "A small wording problem can create more work than the actual disagreement if everyone starts answering what they assumed was meant.",
         "As Chiron {{aspectWord}} their Mercury continues through {{untilDate}}, {{Name}} can save time by correcting the misunderstanding early instead of winning an argument about a version nobody intended."
       ],
-      "sourceBodyThey": "{{Name}} may recognize an old sore point inside a present-day situation involving how they think through the next choice. A small wording problem can create more work than the actual disagreement if everyone starts answering what they assumed was meant. The easier contact helps most when a vulnerability becoming easier to name becomes part of something specific they can finish, send, decide, or change.\n\nAs Chiron {{aspectWord}} their Mercury continues through {{untilDate}}, {{Name}} can save time by correcting the misunderstanding early instead of winning an argument about a version nobody intended.",
-      "proposedBodyYou": "You may recognize an old sore point inside a present-day situation involving how you think through the next choice. A small wording problem can create more work than the actual disagreement if everyone starts answering what you assumed was meant. The easier contact helps most when a vulnerability becoming easier to name becomes part of something specific you can finish, send, decide, or change.\n\nAs Chiron {{aspectWord}} your Mercury continues through {{untilDate}}, you can save time by correcting the misunderstanding early instead of winning an argument about a version nobody intended."
+      "thirdPartyProtectionHits": [
+        {
+          "id": "everyone-assumed",
+          "count": 1
+        }
+      ]
     },
     {
       "contentKey": "authored/transit-aspect/chiron/midheaven/soft",
-      "residualFriendTokens": [],
-      "badYouAgreement": [],
       "sourceCoreferenceFlags": [
         "While Chiron {{aspectWord}} their Midheaven until {{untilDate}}, {{Name}} gets more from a concrete result than from spending the same energy trying to manage everyone's opinion of the result."
       ],
-      "sourceBodyThey": "Something ordinary can carry more history than expected for {{Name}} when it reaches the work other people can evaluate. A manager, client, audience, or decision-maker may respond to the result before they know how much work happened behind it. {{Name}} can use old history coloring a current event while the timing is cooperative instead of waiting for urgency to create momentum.\n\nWhile Chiron {{aspectWord}} their Midheaven until {{untilDate}}, {{Name}} gets more from a concrete result than from spending the same energy trying to manage everyone's opinion of the result.",
-      "proposedBodyYou": "Something ordinary can carry more history than expected for you when it reaches the work other people can evaluate. A manager, client, audience, or decision-maker may respond to the result before you know how much work happened behind it. You can use old history coloring a current event while the timing is cooperative instead of waiting for urgency to create momentum.\n\nWhile Chiron {{aspectWord}} your Midheaven until {{untilDate}}, you get more from a concrete result than from spending the same energy trying to manage everyone's opinion of the result."
+      "thirdPartyProtectionHits": []
     },
     {
       "contentKey": "authored/transit-aspect/chiron/neptune/hard",
-      "residualFriendTokens": [],
-      "badYouAgreement": [],
       "sourceCoreferenceFlags": [
         "They may be more affected by music, sleep loss, alcohol, atmosphere, or another person's emotion than they realize in the moment."
       ],
-      "sourceBodyThey": "A current moment may touch an older sensitivity for {{Name}}, especially around sensitivity and missing details. They may be more affected by music, sleep loss, alcohol, atmosphere, or another person's emotion than they realize in the moment. Pressure rises when a familiar sore point resurfacing pushes against a need that cannot simply be rushed, enlarged, softened, or controlled into compliance.\n\nThe useful part of Chiron {{aspectWord}} their Neptune until {{untilDate}} is concrete. {{Name}} does better when they reduce noise, substances, and unnecessary pressure before making the decision that will be hard to reverse.",
-      "proposedBodyYou": "A current moment may touch an older sensitivity for you, especially around sensitivity and missing details. You may be more affected by music, sleep loss, alcohol, atmosphere, or another person's emotion than you realize in the moment. Pressure rises when a familiar sore point resurfacing pushes against a need that cannot simply be rushed, enlarged, softened, or controlled into compliance.\n\nThe useful part of Chiron {{aspectWord}} your Neptune until {{untilDate}} is concrete. You do better when you reduce noise, substances, and unnecessary pressure before making the decision that will be hard to reverse."
+      "thirdPartyProtectionHits": []
     },
     {
       "contentKey": "authored/transit-aspect/chiron/south-node/conjunction",
-      "residualFriendTokens": [],
-      "badYouAgreement": [],
       "sourceCoreferenceFlags": [
         "Something ordinary can carry more history than expected for {{Name}} when it reaches the job everyone already expects them to do.",
         "Other people may quickly hand them the job they always know how to do, especially if that competence has made them the default helper before.",
         "As Chiron {{aspectWord}} their South Node through {{untilDate}}, {{Name}} gets more from deciding consciously where the old habit still serves them and where it simply saves other people from adjusting."
       ],
-      "sourceBodyThey": "Something ordinary can carry more history than expected for {{Name}} when it reaches the job everyone already expects them to do. Other people may quickly hand them the job they always know how to do, especially if that competence has made them the default helper before. The transit is close enough to the natal point that old history coloring a current event becomes difficult to separate from the choice in front of {{Name}}.\n\nAs Chiron {{aspectWord}} their South Node through {{untilDate}}, {{Name}} gets more from deciding consciously where the old habit still serves them and where it simply saves other people from adjusting.",
-      "proposedBodyYou": "Something ordinary can carry more history than expected for you when it reaches the job everyone already expects you to do. Other people may quickly hand you the job you always know how to do, especially if that competence has made you the default helper before. The transit is close enough to the natal point that old history coloring a current event becomes difficult to separate from the choice in front of you.\n\nAs Chiron {{aspectWord}} your South Node through {{untilDate}}, you get more from deciding consciously where the old habit still serves you and where it simply saves other people from adjusting."
+      "thirdPartyProtectionHits": []
     },
     {
       "contentKey": "authored/transit-aspect/jupiter/ascendant/hard",
-      "residualFriendTokens": [],
-      "badYouAgreement": [],
       "sourceCoreferenceFlags": [
         "{{Name}} does better when they let the first reaction settle before changing how they present themselves to everyone else."
       ],
-      "sourceBodyThey": "Good news or a new possibility can widen {{Name}}'s expectations quickly, particularly around first impressions and immediate responses. A new setting can make the difference between their first instinct and their preferred response easier to notice. A sharp reaction can contain useful information and still be badly timed if optimism outrunning the practical details is making the situation feel more absolute than it is.\n\nJupiter {{aspectWord}} their Ascendant continues through {{untilDate}}. {{Name}} does better when they let the first reaction settle before changing how they present themselves to everyone else.",
-      "proposedBodyYou": "Good news or a new possibility can widen your expectations quickly, particularly around first impressions and immediate responses. A new setting can make the difference between your first instinct and your preferred response easier to notice. A sharp reaction can contain useful information and still be badly timed if optimism outrunning the practical details is making the situation feel more absolute than it is.\n\nJupiter {{aspectWord}} your Ascendant continues through {{untilDate}}. You do better when you let the first reaction settle before changing how you present yourself to everyone else."
+      "thirdPartyProtectionHits": []
     },
     {
       "contentKey": "authored/transit-aspect/jupiter/chiron/sextile",
-      "residualFriendTokens": [],
-      "badYouAgreement": [],
       "sourceCoreferenceFlags": [
         "They may notice the urge to protect the sore spot before deciding if the person in front of them is actually repeating the old pattern."
       ],
-      "sourceBodyThey": "{{Name}} may feel more willing to ask for more, spend more, or take a bigger chance around the difference between an old hurt and the current event. They may notice the urge to protect the sore spot before deciding if the person in front of them is actually repeating the old pattern. A bigger appetite for possibility gives {{Name}} a workable opening, especially if they use it on one concrete task.\n\nAs Jupiter {{aspectWord}} their Chiron continues through {{untilDate}}, {{Name}} does better when they protect the sore spot without assuming that protection has to become withdrawal or retaliation.",
-      "proposedBodyYou": "You may feel more willing to ask for more, spend more, or take a bigger chance around the difference between an old hurt and the current event. You may notice the urge to protect the sore spot before deciding if the person in front of you is actually repeating the old pattern. A bigger appetite for possibility gives you a workable opening, especially if you use it on one concrete task.\n\nAs Jupiter {{aspectWord}} your Chiron continues through {{untilDate}}, you do better when you protect the sore spot without assuming that protection has to become withdrawal or retaliation."
+      "thirdPartyProtectionHits": []
     },
     {
       "contentKey": "authored/transit-aspect/jupiter/chiron/square",
-      "residualFriendTokens": [],
-      "badYouAgreement": [],
       "sourceCoreferenceFlags": [
         "They may notice the urge to protect the sore spot before deciding if the person in front of them is actually repeating the old pattern."
       ],
-      "sourceBodyThey": "{{Name}} may feel more willing to ask for more, spend more, or take a bigger chance around the difference between an old hurt and the current event. They may notice the urge to protect the sore spot before deciding if the person in front of them is actually repeating the old pattern. The friction matters because the impulse to expand before checking the cost can move faster than the part of the situation that needs judgment, so the first reaction may create more work than the original problem.\n\nAs Jupiter {{aspectWord}} their Chiron continues through {{untilDate}}, {{Name}} does better when they protect the sore spot without assuming that protection has to become withdrawal or retaliation.",
-      "proposedBodyYou": "You may feel more willing to ask for more, spend more, or take a bigger chance around the difference between an old hurt and the current event. You may notice the urge to protect the sore spot before deciding if the person in front of you is actually repeating the old pattern. The friction matters because the impulse to expand before checking the cost can move faster than the part of the situation that needs judgment, so the first reaction may create more work than the original problem.\n\nAs Jupiter {{aspectWord}} your Chiron continues through {{untilDate}}, you do better when you protect the sore spot without assuming that protection has to become withdrawal or retaliation."
+      "thirdPartyProtectionHits": []
     },
     {
       "contentKey": "authored/transit-aspect/jupiter/lilith/hard",
-      "residualFriendTokens": [],
-      "badYouAgreement": [],
       "sourceCoreferenceFlags": [
         "{{Name}} does better when they distinguish a boundary from the urge to punish someone for crossing an old one."
       ],
-      "sourceBodyThey": "The larger option is easier for {{Name}} to imagine right now, especially around anger around an old compromise. The strongest reaction may point to the place where they have been making themselves easier to accommodate instead of making the terms more honest. The conflict gets clearer once {{Name}} separates what actually changed from the extra pressure created by the impulse to expand before checking the cost.\n\nUntil {{untilDate}}, Jupiter {{aspectWord}} their Lilith stays active. {{Name}} does better when they distinguish a boundary from the urge to punish someone for crossing an old one.",
-      "proposedBodyYou": "The larger option is easier for you to imagine right now, especially around anger around an old compromise. The strongest reaction may point to the place where you have been making yourself easier to accommodate instead of making the terms more honest. The conflict gets clearer once you separate what actually changed from the extra pressure created by the impulse to expand before checking the cost.\n\nUntil {{untilDate}}, Jupiter {{aspectWord}} your Lilith stays active. You do better when you distinguish a boundary from the urge to punish someone for crossing an old one."
+      "thirdPartyProtectionHits": []
     },
     {
       "contentKey": "authored/transit-aspect/jupiter/mars/hard",
-      "residualFriendTokens": [],
-      "badYouAgreement": [],
       "sourceCoreferenceFlags": [
         "{{Name}} benefits from acting on the part that is theirs without turning every delay into proof that someone is blocking them."
       ],
-      "sourceBodyThey": "The larger option is easier for {{Name}} to imagine right now, especially around physical effort and impatience. They may have enough energy to push through a difficult job and not enough patience to tolerate an unnecessary obstacle at the same time. The difficult contact exposes something worth addressing, but generosity becoming easier to promise does not require an all-or-nothing answer.\n\nUntil {{untilDate}}, Jupiter {{aspectWord}} their Mars stays active. {{Name}} benefits from acting on the part that is theirs without turning every delay into proof that someone is blocking them.",
-      "proposedBodyYou": "The larger option is easier for you to imagine right now, especially around physical effort and impatience. You may have enough energy to push through a difficult job and not enough patience to tolerate an unnecessary obstacle at the same time. The difficult contact exposes something worth addressing, but generosity becoming easier to promise does not require an all-or-nothing answer.\n\nUntil {{untilDate}}, Jupiter {{aspectWord}} your Mars stays active. You benefit from acting on the part that is yours without turning every delay into proof that someone is blocking you."
+      "thirdPartyProtectionHits": []
     },
     {
       "contentKey": "authored/transit-aspect/jupiter/mercury/soft",
-      "residualFriendTokens": [],
-      "badYouAgreement": [],
       "sourceCoreferenceFlags": [
         "A small wording problem can create more work than the actual disagreement if everyone starts answering what they assumed was meant.",
         "As Jupiter {{aspectWord}} their Mercury continues through {{untilDate}}, {{Name}} can save time by correcting the misunderstanding early instead of winning an argument about a version nobody intended."
       ],
-      "sourceBodyThey": "{{Name}} may feel more willing to ask for more, spend more, or take a bigger chance around how they think through the next choice. A small wording problem can create more work than the actual disagreement if everyone starts answering what they assumed was meant. The easier contact helps most when confidence moving toward the larger option becomes part of something specific they can finish, send, decide, or change.\n\nAs Jupiter {{aspectWord}} their Mercury continues through {{untilDate}}, {{Name}} can save time by correcting the misunderstanding early instead of winning an argument about a version nobody intended.",
-      "proposedBodyYou": "You may feel more willing to ask for more, spend more, or take a bigger chance around how you think through the next choice. A small wording problem can create more work than the actual disagreement if everyone starts answering what you assumed was meant. The easier contact helps most when confidence moving toward the larger option becomes part of something specific you can finish, send, decide, or change.\n\nAs Jupiter {{aspectWord}} your Mercury continues through {{untilDate}}, you can save time by correcting the misunderstanding early instead of winning an argument about a version nobody intended."
+      "thirdPartyProtectionHits": [
+        {
+          "id": "everyone-assumed",
+          "count": 1
+        }
+      ]
     },
     {
       "contentKey": "authored/transit-aspect/jupiter/midheaven/soft",
-      "residualFriendTokens": [],
-      "badYouAgreement": [],
       "sourceCoreferenceFlags": [
         "As Jupiter {{aspectWord}} their Midheaven through {{untilDate}}, {{Name}} gets more from a concrete result than from spending the same energy trying to manage everyone's opinion of the result."
       ],
-      "sourceBodyThey": "An opening can make the whole situation look more promising to {{Name}}, with the work other people can evaluate becoming the place where expansion is most tempting. A manager, client, audience, or decision-maker may respond to the result before they know how much work happened behind it. The opening becomes valuable when {{Name}} turns a bigger appetite for possibility into a decision, conversation, task, or agreement that can hold up afterward.\n\nAs Jupiter {{aspectWord}} their Midheaven through {{untilDate}}, {{Name}} gets more from a concrete result than from spending the same energy trying to manage everyone's opinion of the result.",
-      "proposedBodyYou": "An opening can make the whole situation look more promising to you, with the work other people can evaluate becoming the place where expansion is most tempting. A manager, client, audience, or decision-maker may respond to the result before you know how much work happened behind it. The opening becomes valuable when you turn a bigger appetite for possibility into a decision, conversation, task, or agreement that can hold up afterward.\n\nAs Jupiter {{aspectWord}} your Midheaven through {{untilDate}}, you get more from a concrete result than from spending the same energy trying to manage everyone's opinion of the result."
+      "thirdPartyProtectionHits": []
     },
     {
       "contentKey": "authored/transit-aspect/jupiter/sun/soft",
-      "residualFriendTokens": [],
-      "badYouAgreement": [],
       "sourceCoreferenceFlags": [
         "{{Name}} does better when they let the work and choice become more specific instead of demanding that other people validate the entire identity attached to it."
       ],
-      "sourceBodyThey": "The larger option is easier for {{Name}} to imagine right now, especially around visibility and personal direction. They may need to defend a decision without turning every question about the decision into a question about who they are. The support is useful because optimism outrunning the practical details can move toward action without another problem having to force it.\n\nUntil {{untilDate}}, Jupiter {{aspectWord}} their Sun stays active. {{Name}} does better when they let the work and choice become more specific instead of demanding that other people validate the entire identity attached to it.",
-      "proposedBodyYou": "The larger option is easier for you to imagine right now, especially around visibility and personal direction. You may need to defend a decision without turning every question about the decision into a question about who you are. The support is useful because optimism outrunning the practical details can move toward action without another problem having to force it.\n\nUntil {{untilDate}}, Jupiter {{aspectWord}} your Sun stays active. You do better when you let the work and choice become more specific instead of demanding that other people validate the entire identity attached to it."
+      "thirdPartyProtectionHits": []
     },
     {
       "contentKey": "authored/transit-aspect/mars/ascendant/hard",
-      "residualFriendTokens": [],
-      "badYouAgreement": [],
       "sourceCoreferenceFlags": [
         "Urgency rises around {{Name}} when how other people meet their presence stops being theoretical and starts requiring a response.",
         "Someone may react to their tone, pace, appearance, or confidence before there is time for a fuller explanation."
       ],
-      "sourceBodyThey": "Urgency rises around {{Name}} when how other people meet their presence stops being theoretical and starts requiring a response. Someone may react to their tone, pace, appearance, or confidence before there is time for a fuller explanation. The tension is useful when it reveals the weak point. It becomes expensive when effort becoming harder to postpone turns that weak point into a fight about everything else.\n\nThrough {{untilDate}}, Mars {{aspectWord}} their Ascendant favors one practical response: {{Name}} benefits from answering the situation in front of them instead of rehearsing how they might be judged later.",
-      "proposedBodyYou": "Urgency rises around you when how other people meet your presence stops being theoretical and starts requiring a response. Someone may react to your tone, pace, appearance, or confidence before there is time for a fuller explanation. The tension is useful when it reveals the weak point. It becomes expensive when effort becoming harder to postpone turns that weak point into a fight about everything else.\n\nThrough {{untilDate}}, Mars {{aspectWord}} your Ascendant favors one practical response: you benefit from answering the situation in front of you instead of rehearsing how you might be judged later."
+      "thirdPartyProtectionHits": []
     },
     {
       "contentKey": "authored/transit-aspect/mars/ascendant/soft",
-      "residualFriendTokens": [],
-      "badYouAgreement": [],
       "sourceCoreferenceFlags": [
         "Urgency rises around {{Name}} when how other people meet their presence stops being theoretical and starts requiring a response.",
         "Someone may react to their tone, pace, appearance, or confidence before there is time for a fuller explanation."
       ],
-      "sourceBodyThey": "Urgency rises around {{Name}} when how other people meet their presence stops being theoretical and starts requiring a response. Someone may react to their tone, pace, appearance, or confidence before there is time for a fuller explanation. The opening still needs action. Physical drive rising quickly makes cooperation or timing easier, but it does not complete the task on {{Name}}'s behalf.\n\nMars {{aspectWord}} their Ascendant runs through {{untilDate}}. {{Name}} benefits from answering the situation in front of them instead of rehearsing how they might be judged later.",
-      "proposedBodyYou": "Urgency rises around you when how other people meet your presence stops being theoretical and starts requiring a response. Someone may react to your tone, pace, appearance, or confidence before there is time for a fuller explanation. The opening still needs action. Physical drive rising quickly makes cooperation or timing easier, but it does not complete the task on your behalf.\n\nMars {{aspectWord}} your Ascendant runs through {{untilDate}}. You benefit from answering the situation in front of you instead of rehearsing how you might be judged later."
+      "thirdPartyProtectionHits": []
     },
     {
       "contentKey": "authored/transit-aspect/mars/lilith/hard",
-      "residualFriendTokens": [],
-      "badYouAgreement": [],
       "sourceCoreferenceFlags": [
         "They may hear themselves say yes and immediately realize the yes was meant to prevent someone else's reaction rather than reflect what they want."
       ],
-      "sourceBodyThey": "Urgency rises around {{Name}} when the part of the arrangement that keeps producing resentment stops being theoretical and starts requiring a response. They may hear themselves say yes and immediately realize the yes was meant to prevent someone else's reaction rather than reflect what they want. The tension is useful when it reveals the weak point. It becomes expensive when physical drive rising quickly turns that weak point into a fight about everything else.\n\nThrough {{untilDate}}, Mars {{aspectWord}} their Lilith favors one practical response: {{Name}} gets more from a clear refusal or preference than from another round of being agreeable and privately furious.",
-      "proposedBodyYou": "Urgency rises around you when the part of the arrangement that keeps producing resentment stops being theoretical and starts requiring a response. You may hear yourself say yes and immediately realize the yes was meant to prevent someone else's reaction rather than reflect what you want. The tension is useful when it reveals the weak point. It becomes expensive when physical drive rising quickly turns that weak point into a fight about everything else.\n\nThrough {{untilDate}}, Mars {{aspectWord}} your Lilith favors one practical response: you get more from a clear refusal or preference than from another round of being agreeable and privately furious."
+      "thirdPartyProtectionHits": []
     },
     {
       "contentKey": "authored/transit-aspect/mars/mars/soft",
-      "residualFriendTokens": [],
-      "badYouAgreement": [],
       "sourceCoreferenceFlags": [
         "{{Name}} benefits from acting on the part that is theirs without turning every delay into proof that someone is blocking them."
       ],
-      "sourceBodyThey": "The part of the situation that requires action becomes harder for {{Name}} to ignore, especially around physical effort and impatience. They may have enough energy to push through a difficult job and not enough patience to tolerate an unnecessary obstacle at the same time. The support is useful because urgency and the need to act can move toward action without another problem having to force it.\n\nUntil {{untilDate}}, Mars {{aspectWord}} their Mars stays active. {{Name}} benefits from acting on the part that is theirs without turning every delay into proof that someone is blocking them.",
-      "proposedBodyYou": "The part of the situation that requires action becomes harder for you to ignore, especially around physical effort and impatience. You may have enough energy to push through a difficult job and not enough patience to tolerate an unnecessary obstacle at the same time. The support is useful because urgency and the need to act can move toward action without another problem having to force it.\n\nUntil {{untilDate}}, Mars {{aspectWord}} your Mars stays active. You benefit from acting on the part that is yours without turning every delay into proof that someone is blocking you."
+      "thirdPartyProtectionHits": []
     },
     {
       "contentKey": "authored/transit-aspect/mars/mercury/hard",
-      "residualFriendTokens": [],
-      "badYouAgreement": [],
       "sourceCoreferenceFlags": [
         "A small wording problem can create more work than the actual disagreement if everyone starts answering what they assumed was meant.",
         "Through {{untilDate}}, Mars {{aspectWord}} their Mercury favors one practical response: {{Name}} can save time by correcting the misunderstanding early instead of winning an argument about a version nobody intended."
       ],
-      "sourceBodyThey": "Urgency rises around {{Name}} when how they think through the next choice stops being theoretical and starts requiring a response. A small wording problem can create more work than the actual disagreement if everyone starts answering what they assumed was meant. {{Name}} gets a clearer decision once anger looking for a useful direction stops choosing the urgency for them.\n\nThrough {{untilDate}}, Mars {{aspectWord}} their Mercury favors one practical response: {{Name}} can save time by correcting the misunderstanding early instead of winning an argument about a version nobody intended.",
-      "proposedBodyYou": "Urgency rises around you when how you think through the next choice stops being theoretical and starts requiring a response. A small wording problem can create more work than the actual disagreement if everyone starts answering what you assumed was meant. You get a clearer decision once anger looking for a useful direction stops choosing the urgency for you.\n\nThrough {{untilDate}}, Mars {{aspectWord}} your Mercury favors one practical response: you can save time by correcting the misunderstanding early instead of winning an argument about a version nobody intended."
+      "thirdPartyProtectionHits": [
+        {
+          "id": "everyone-assumed",
+          "count": 1
+        }
+      ]
     },
     {
       "contentKey": "authored/transit-aspect/mars/midheaven/soft",
-      "residualFriendTokens": [],
-      "badYouAgreement": [],
       "sourceCoreferenceFlags": [
         "While Mars {{aspectWord}} their Midheaven until {{untilDate}}, {{Name}} gets more from a concrete result than from spending the same energy trying to manage everyone's opinion of the result."
       ],
-      "sourceBodyThey": "{{Name}} may have less patience for delay once the work other people can evaluate becomes the place where something has to move. A manager, client, audience, or decision-maker may respond to the result before they know how much work happened behind it. The opening becomes valuable when {{Name}} turns urgency and the need to act into a decision, conversation, task, or agreement that can hold up afterward.\n\nWhile Mars {{aspectWord}} their Midheaven until {{untilDate}}, {{Name}} gets more from a concrete result than from spending the same energy trying to manage everyone's opinion of the result.",
-      "proposedBodyYou": "You may have less patience for delay once the work other people can evaluate becomes the place where something has to move. A manager, client, audience, or decision-maker may respond to the result before you know how much work happened behind it. The opening becomes valuable when you turn urgency and the need to act into a decision, conversation, task, or agreement that can hold up afterward.\n\nWhile Mars {{aspectWord}} your Midheaven until {{untilDate}}, you get more from a concrete result than from spending the same energy trying to manage everyone's opinion of the result."
+      "thirdPartyProtectionHits": []
     },
     {
       "contentKey": "authored/transit-aspect/mars/neptune/hard",
-      "residualFriendTokens": [],
-      "badYouAgreement": [],
       "sourceCoreferenceFlags": [
         "They may be more affected by music, sleep loss, alcohol, atmosphere, or another person's emotion than they realize in the moment."
       ],
-      "sourceBodyThey": "The part of the situation that requires action becomes harder for {{Name}} to ignore, especially around sensitivity and missing details. They may be more affected by music, sleep loss, alcohol, atmosphere, or another person's emotion than they realize in the moment. The pressure is informative if {{Name}} uses effort becoming harder to postpone to identify the exact weak point instead of enlarging the argument.\n\nUntil {{untilDate}}, Mars {{aspectWord}} their Neptune stays active. {{Name}} does better when they reduce noise, substances, and unnecessary pressure before making the decision that will be hard to reverse.",
-      "proposedBodyYou": "The part of the situation that requires action becomes harder for you to ignore, especially around sensitivity and missing details. You may be more affected by music, sleep loss, alcohol, atmosphere, or another person's emotion than you realize in the moment. The pressure is informative if you use effort becoming harder to postpone to identify the exact weak point instead of enlarging the argument.\n\nUntil {{untilDate}}, Mars {{aspectWord}} your Neptune stays active. You do better when you reduce noise, substances, and unnecessary pressure before making the decision that will be hard to reverse."
+      "thirdPartyProtectionHits": []
     },
     {
       "contentKey": "authored/transit-aspect/mars/south-node/conjunction",
-      "residualFriendTokens": [],
-      "badYouAgreement": [],
       "sourceCoreferenceFlags": [
         "{{Name}} may have less patience for delay once the job everyone already expects them to do becomes the place where something has to move.",
         "Other people may quickly hand them the job they always know how to do, especially if that competence has made them the default helper before.",
         "While Mars {{aspectWord}} their South Node until {{untilDate}}, {{Name}} gets more from deciding consciously where the old habit still serves them and where it simply saves other people from adjusting."
       ],
-      "sourceBodyThey": "{{Name}} may have less patience for delay once the job everyone already expects them to do becomes the place where something has to move. Other people may quickly hand them the job they always know how to do, especially if that competence has made them the default helper before. The contact concentrates anger looking for a useful direction around one part of life, which can make a familiar pattern easier to recognize because it is harder to avoid.\n\nWhile Mars {{aspectWord}} their South Node until {{untilDate}}, {{Name}} gets more from deciding consciously where the old habit still serves them and where it simply saves other people from adjusting.",
-      "proposedBodyYou": "You may have less patience for delay once the job everyone already expects you to do becomes the place where something has to move. Other people may quickly hand you the job you always know how to do, especially if that competence has made you the default helper before. The contact concentrates anger looking for a useful direction around one part of life, which can make a familiar pattern easier to recognize because it is harder to avoid.\n\nWhile Mars {{aspectWord}} your South Node until {{untilDate}}, you get more from deciding consciously where the old habit still serves you and where it simply saves other people from adjusting."
+      "thirdPartyProtectionHits": []
     },
     {
       "contentKey": "authored/transit-aspect/mercury/ascendant/soft",
-      "residualFriendTokens": [],
-      "badYouAgreement": [],
       "sourceCoreferenceFlags": [
         "{{Name}} does better when they let the first reaction settle before changing how they present themselves to everyone else."
       ],
-      "sourceBodyThey": "A call, email, correction, or blunt comment can change what {{Name}} needs to do next around first impressions and immediate responses. A new setting can make the difference between their first instinct and their preferred response easier to notice. There is enough cooperation here for new information changing the plan to produce a result instead of only a better mood.\n\nMercury {{aspectWord}} their Ascendant continues through {{untilDate}}. {{Name}} does better when they let the first reaction settle before changing how they present themselves to everyone else.",
-      "proposedBodyYou": "A call, email, correction, or blunt comment can change what you need to do next around first impressions and immediate responses. A new setting can make the difference between your first instinct and your preferred response easier to notice. There is enough cooperation here for new information changing the plan to produce a result instead of only a better mood.\n\nMercury {{aspectWord}} your Ascendant continues through {{untilDate}}. You do better when you let the first reaction settle before changing how you present yourself to everyone else."
+      "thirdPartyProtectionHits": []
     },
     {
       "contentKey": "authored/transit-aspect/mercury/jupiter/hard",
-      "residualFriendTokens": [],
-      "badYouAgreement": [],
       "sourceCoreferenceFlags": [
         "They may want to say yes before checking the budget, schedule, evidence, or number of people who will depend on that yes."
       ],
-      "sourceBodyThey": "A call, email, correction, or blunt comment can change what {{Name}} needs to do next around risk, opportunity, and the size of the promise. They may want to say yes before checking the budget, schedule, evidence, or number of people who will depend on that yes. A sharp reaction can contain useful information and still be badly timed if a conversation making the issue specific is making the situation feel more absolute than it is.\n\nMercury {{aspectWord}} their Jupiter continues through {{untilDate}}. {{Name}} benefits from checking the number, time, and obligation attached to the larger option before committing to it.",
-      "proposedBodyYou": "A call, email, correction, or blunt comment can change what you need to do next around risk, opportunity, and the size of the promise. You may want to say yes before checking the budget, schedule, evidence, or number of people who will depend on that yes. A sharp reaction can contain useful information and still be badly timed if a conversation making the issue specific is making the situation feel more absolute than it is.\n\nMercury {{aspectWord}} your Jupiter continues through {{untilDate}}. You benefit from checking the number, time, and obligation attached to the larger option before committing to it."
+      "thirdPartyProtectionHits": []
     },
     {
       "contentKey": "authored/transit-aspect/mercury/jupiter/soft",
-      "residualFriendTokens": [],
-      "badYouAgreement": [],
       "sourceCoreferenceFlags": [
         "They may want to say yes before checking the budget, schedule, evidence, or number of people who will depend on that yes."
       ],
-      "sourceBodyThey": "A call, email, correction, or blunt comment can change what {{Name}} needs to do next around risk, opportunity, and the size of the promise. They may want to say yes before checking the budget, schedule, evidence, or number of people who will depend on that yes. The day makes new information changing the plan easier for {{Name}} to use well, especially if they attach the good feeling or useful timing to a specific next step.\n\nMercury {{aspectWord}} their Jupiter stays active through {{untilDate}}. {{Name}} benefits from checking the number, time, and obligation attached to the larger option before committing to it.",
-      "proposedBodyYou": "A call, email, correction, or blunt comment can change what you need to do next around risk, opportunity, and the size of the promise. You may want to say yes before checking the budget, schedule, evidence, or number of people who will depend on that yes. The day makes new information changing the plan easier for you to use well, especially if you attach the good feeling or useful timing to a specific next step.\n\nMercury {{aspectWord}} your Jupiter stays active through {{untilDate}}. You benefit from checking the number, time, and obligation attached to the larger option before committing to it."
+      "thirdPartyProtectionHits": []
     },
     {
       "contentKey": "authored/transit-aspect/mercury/lilith/hard",
-      "residualFriendTokens": [],
-      "badYouAgreement": [],
       "sourceCoreferenceFlags": [
         "{{Name}} does better when they distinguish a boundary from the urge to punish someone for crossing an old one."
       ],
-      "sourceBodyThey": "Messages and decisions move faster around {{Name}} under this transit, with anger around an old compromise becoming the part that needs an answer. The strongest reaction may point to the place where they have been making themselves easier to accommodate instead of making the terms more honest. The conflict gets clearer once {{Name}} separates what actually changed from the extra pressure created by facts arriving close to the decision point.\n\nUntil {{untilDate}}, Mercury {{aspectWord}} their Lilith stays active. {{Name}} does better when they distinguish a boundary from the urge to punish someone for crossing an old one.",
-      "proposedBodyYou": "Messages and decisions move faster around you under this transit, with anger around an old compromise becoming the part that needs an answer. The strongest reaction may point to the place where you have been making yourself easier to accommodate instead of making the terms more honest. The conflict gets clearer once you separate what actually changed from the extra pressure created by facts arriving close to the decision point.\n\nUntil {{untilDate}}, Mercury {{aspectWord}} your Lilith stays active. You do better when you distinguish a boundary from the urge to punish someone for crossing an old one."
+      "thirdPartyProtectionHits": []
     },
     {
       "contentKey": "authored/transit-aspect/mercury/midheaven/hard",
-      "residualFriendTokens": [],
-      "badYouAgreement": [],
       "sourceCoreferenceFlags": [
         "While Mercury {{aspectWord}} their Midheaven until {{untilDate}}, {{Name}} gets more from a concrete result than from spending the same energy trying to manage everyone's opinion of the result."
       ],
-      "sourceBodyThey": "Information arrives close to the decision point for {{Name}}, especially where the work other people can evaluate is involved. A manager, client, audience, or decision-maker may respond to the result before they know how much work happened behind it. What feels urgent is not always the same thing as what deserves the strongest response, especially while messages and decisions moving quickly is already amplifying the stakes.\n\nWhile Mercury {{aspectWord}} their Midheaven until {{untilDate}}, {{Name}} gets more from a concrete result than from spending the same energy trying to manage everyone's opinion of the result.",
-      "proposedBodyYou": "Information arrives close to the decision point for you, especially where the work other people can evaluate is involved. A manager, client, audience, or decision-maker may respond to the result before you know how much work happened behind it. What feels urgent is not always the same thing as what deserves the strongest response, especially while messages and decisions moving quickly is already amplifying the stakes.\n\nWhile Mercury {{aspectWord}} your Midheaven until {{untilDate}}, you get more from a concrete result than from spending the same energy trying to manage everyone's opinion of the result."
+      "thirdPartyProtectionHits": []
     },
     {
       "contentKey": "authored/transit-aspect/mercury/neptune/soft",
-      "residualFriendTokens": [],
-      "badYouAgreement": [],
       "sourceCoreferenceFlags": [
         "They may be more affected by music, sleep loss, alcohol, atmosphere, or another person's emotion than they realize in the moment."
       ],
-      "sourceBodyThey": "Messages and decisions move faster around {{Name}} under this transit, with sensitivity and missing details becoming the part that needs an answer. They may be more affected by music, sleep loss, alcohol, atmosphere, or another person's emotion than they realize in the moment. The support is useful because facts arriving close to the decision point can move toward action without another problem having to force it.\n\nWith Mercury {{aspectWord}} their Neptune until {{untilDate}}, {{Name}} does better when they reduce noise, substances, and unnecessary pressure before making the decision that will be hard to reverse.",
-      "proposedBodyYou": "Messages and decisions move faster around you under this transit, with sensitivity and missing details becoming the part that needs an answer. You may be more affected by music, sleep loss, alcohol, atmosphere, or another person's emotion than you realize in the moment. The support is useful because facts arriving close to the decision point can move toward action without another problem having to force it.\n\nWith Mercury {{aspectWord}} your Neptune until {{untilDate}}, you do better when you reduce noise, substances, and unnecessary pressure before making the decision that will be hard to reverse."
+      "thirdPartyProtectionHits": []
     },
     {
       "contentKey": "authored/transit-aspect/moon/a/soft/variant-D",
-      "residualFriendTokens": [],
-      "badYouAgreement": [],
       "sourceCoreferenceFlags": [
         "A change in mood can make one part of the day feel much larger to {{Name}}, especially around how other people meet their presence.",
         "Someone may react to their tone, pace, appearance, or confidence before there is time for a fuller explanation."
       ],
-      "sourceBodyThey": "A change in mood can make one part of the day feel much larger to {{Name}}, especially around how other people meet their presence. Someone may react to their tone, pace, appearance, or confidence before there is time for a fuller explanation. A feeling changing what seems urgent gives {{Name}} a workable opening, especially if they use it on one concrete task. Their Ascendant becomes more useful as information once the first burst of urgency is no longer choosing the scale of the problem. A simpler first response can change the interaction more than another explanation.\n\nThrough {{untilDate}}, Moon {{aspectWord}} their Ascendant favors one practical response: {{Name}} benefits from answering the situation in front of them instead of rehearsing how they might be judged later.",
-      "proposedBodyYou": "A change in mood can make one part of the day feel much larger to you, especially around how other people meet your presence. Someone may react to your tone, pace, appearance, or confidence before there is time for a fuller explanation. A feeling changing what seems urgent gives you a workable opening, especially if you use it on one concrete task. Your Ascendant becomes more useful as information once the first burst of urgency is no longer choosing the scale of the problem. A simpler first response can change the interaction more than another explanation.\n\nThrough {{untilDate}}, Moon {{aspectWord}} your Ascendant favors one practical response: you benefit from answering the situation in front of you instead of rehearsing how you might be judged later."
+      "thirdPartyProtectionHits": []
     },
     {
       "contentKey": "authored/transit-aspect/moon/a/soft/variant-E",
-      "residualFriendTokens": [],
-      "badYouAgreement": [],
       "sourceCoreferenceFlags": [
         "{{Name}} does better when they let the first reaction settle before changing how they present themselves to everyone else."
       ],
-      "sourceBodyThey": "The practical facts may be unchanged while {{Name}} feels first impressions and immediate responses much more strongly than they did a few hours ago. A new setting can make the difference between their first instinct and their preferred response easier to notice. There is enough cooperation here for an immediate emotional need becoming louder to produce a result instead of only a better mood. With their Ascendant, the opening is worth using if it still improves the day after the first burst of enthusiasm passes. Letting the first response stay simple can reveal more than pre-correcting it.\n\nUntil {{untilDate}}, Moon {{aspectWord}} their Ascendant remains active. {{Name}} does better when they let the first reaction settle before changing how they present themselves to everyone else.",
-      "proposedBodyYou": "The practical facts may be unchanged while you feel first impressions and immediate responses much more strongly than you did a few hours ago. A new setting can make the difference between your first instinct and your preferred response easier to notice. There is enough cooperation here for an immediate emotional need becoming louder to produce a result instead of only a better mood. With your Ascendant, the opening is worth using if it still improves the day after the first burst of enthusiasm passes. Letting the first response stay simple can reveal more than pre-correcting it.\n\nUntil {{untilDate}}, Moon {{aspectWord}} your Ascendant remains active. You do better when you let the first reaction settle before changing how you present yourself to everyone else."
+      "thirdPartyProtectionHits": []
     },
     {
       "contentKey": "authored/transit-aspect/moon/ascendant/any",
-      "residualFriendTokens": [],
-      "badYouAgreement": [],
       "sourceCoreferenceFlags": [
         "Something small can reach {{Name}} quickly today because it touches an immediate need connected to how other people meet their presence.",
         "Someone may react to their tone, pace, appearance, or confidence before there is time for a fuller explanation."
       ],
-      "sourceBodyThey": "Something small can reach {{Name}} quickly today because it touches an immediate need connected to how other people meet their presence. Someone may react to their tone, pace, appearance, or confidence before there is time for a fuller explanation. The effect is immediate enough that an immediate emotional need becoming louder quickly changes the practical meaning of the situation for {{Name}}.\n\nMoon {{aspectWord}} their Ascendant runs through {{untilDate}}. {{Name}} benefits from answering the situation in front of them instead of rehearsing how they might be judged later.",
-      "proposedBodyYou": "Something small can reach you quickly today because it touches an immediate need connected to how other people meet your presence. Someone may react to your tone, pace, appearance, or confidence before there is time for a fuller explanation. The effect is immediate enough that an immediate emotional need becoming louder quickly changes the practical meaning of the situation for you.\n\nMoon {{aspectWord}} your Ascendant runs through {{untilDate}}. You benefit from answering the situation in front of you instead of rehearsing how you might be judged later."
+      "thirdPartyProtectionHits": []
     },
     {
       "contentKey": "authored/transit-aspect/moon/ascendant/any/variant-C",
-      "residualFriendTokens": [],
-      "badYouAgreement": [],
       "sourceCoreferenceFlags": [
         "{{Name}} does better when they let the first reaction settle before changing how they present themselves to everyone else."
       ],
-      "sourceBodyThey": "The practical facts may be unchanged while {{Name}} feels first impressions and immediate responses much more strongly than they did a few hours ago. A new setting can make the difference between their first instinct and their preferred response easier to notice. There is not much distance between the trigger and the response, so an immediate emotional need becoming louder becomes part of the decision before {{Name}} has fully named it. For their Ascendant, they do not need to settle the whole issue before the next concrete step becomes clear.\n\nUntil {{untilDate}}, Moon {{aspectWord}} their Ascendant remains active. {{Name}} does better when they let the first reaction settle before changing how they present themselves to everyone else.",
-      "proposedBodyYou": "The practical facts may be unchanged while you feel first impressions and immediate responses much more strongly than you did a few hours ago. A new setting can make the difference between your first instinct and your preferred response easier to notice. There is not much distance between the trigger and the response, so an immediate emotional need becoming louder becomes part of the decision before you have fully named it. For your Ascendant, you do not need to settle the whole issue before the next concrete step becomes clear.\n\nUntil {{untilDate}}, Moon {{aspectWord}} your Ascendant remains active. You do better when you let the first reaction settle before changing how you present yourself to everyone else."
+      "thirdPartyProtectionHits": []
     },
     {
       "contentKey": "authored/transit-aspect/moon/ascendant/soft/variant-E",
-      "residualFriendTokens": [],
-      "badYouAgreement": [],
       "sourceCoreferenceFlags": [
         "A change in mood can make one part of the day feel much larger to {{Name}}, especially around how other people meet their presence.",
         "Someone may react to their tone, pace, appearance, or confidence before there is time for a fuller explanation."
       ],
-      "sourceBodyThey": "A change in mood can make one part of the day feel much larger to {{Name}}, especially around how other people meet their presence. Someone may react to their tone, pace, appearance, or confidence before there is time for a fuller explanation. The easier contact helps most when a feeling changing what seems urgent becomes part of something specific they can finish, send, decide, or change. Their Ascendant gets the most from the option that still looks useful after the initial lift or relief settles.\n\nThrough {{untilDate}}, Moon {{aspectWord}} their Ascendant favors one practical response: {{Name}} benefits from answering the situation in front of them instead of rehearsing how they might be judged later.",
-      "proposedBodyYou": "A change in mood can make one part of the day feel much larger to you, especially around how other people meet your presence. Someone may react to your tone, pace, appearance, or confidence before there is time for a fuller explanation. The easier contact helps most when a feeling changing what seems urgent becomes part of something specific you can finish, send, decide, or change. Your Ascendant gets the most from the option that still looks useful after the initial lift or relief settles.\n\nThrough {{untilDate}}, Moon {{aspectWord}} your Ascendant favors one practical response: you benefit from answering the situation in front of you instead of rehearsing how you might be judged later."
+      "thirdPartyProtectionHits": []
     },
     {
       "contentKey": "authored/transit-aspect/moon/c/any/variant-C",
-      "residualFriendTokens": [],
-      "badYouAgreement": [],
       "sourceCoreferenceFlags": [
         "They may notice the urge to protect the sore spot before deciding if the person in front of them is actually repeating the old pattern."
       ],
-      "sourceBodyThey": "A need that was easy to ignore earlier can become obvious to {{Name}} through the difference between an old hurt and the current event. They may notice the urge to protect the sore spot before deciding if the person in front of them is actually repeating the old pattern. The effect is immediate enough that instinct reacting before explanation arrives quickly changes the practical meaning of the situation for {{Name}}. Their Chiron benefits from a second look because the first emotional meaning is not the only one available. Recognizing the old pattern is useful without making the current person carry its history.\n\nAs Moon {{aspectWord}} their Chiron continues through {{untilDate}}, {{Name}} does better when they protect the sore spot without assuming that protection has to become withdrawal or retaliation.",
-      "proposedBodyYou": "A need that was easy to ignore earlier can become obvious to you through the difference between an old hurt and the current event. You may notice the urge to protect the sore spot before deciding if the person in front of you is actually repeating the old pattern. The effect is immediate enough that instinct reacting before explanation arrives quickly changes the practical meaning of the situation for you. Your Chiron benefits from a second look because the first emotional meaning is not the only one available. Recognizing the old pattern is useful without making the current person carry its history.\n\nAs Moon {{aspectWord}} your Chiron continues through {{untilDate}}, you do better when you protect the sore spot without assuming that protection has to become withdrawal or retaliation."
+      "thirdPartyProtectionHits": []
     },
     {
       "contentKey": "authored/transit-aspect/moon/c/soft/variant-B",
-      "residualFriendTokens": [],
-      "badYouAgreement": [],
       "sourceCoreferenceFlags": [
         "They may notice the urge to protect the sore spot before deciding if the person in front of them is actually repeating the old pattern."
       ],
-      "sourceBodyThey": "A change in mood can make one part of the day feel much larger to {{Name}}, especially around the difference between an old hurt and the current event. They may notice the urge to protect the sore spot before deciding if the person in front of them is actually repeating the old pattern. The opening still needs action. A feeling changing what seems urgent makes cooperation or timing easier, but it does not complete the task on {{Name}}'s behalf. Their Chiron gives them a clearer clue once they compare the immediate reaction with what is still true an hour later. Recognizing the old pattern is useful without making the current person carry its history.\n\nThrough {{untilDate}}, Moon {{aspectWord}} their Chiron favors one practical response: {{Name}} does better when they protect the sore spot without assuming that protection has to become withdrawal or retaliation.",
-      "proposedBodyYou": "A change in mood can make one part of the day feel much larger to you, especially around the difference between an old hurt and the current event. You may notice the urge to protect the sore spot before deciding if the person in front of you is actually repeating the old pattern. The opening still needs action. A feeling changing what seems urgent makes cooperation or timing easier, but it does not complete the task on your behalf. Your Chiron gives you a clearer clue once you compare the immediate reaction with what is still true an hour later. Recognizing the old pattern is useful without making the current person carry its history.\n\nThrough {{untilDate}}, Moon {{aspectWord}} your Chiron favors one practical response: you do better when you protect the sore spot without assuming that protection has to become withdrawal or retaliation."
+      "thirdPartyProtectionHits": []
     },
     {
       "contentKey": "authored/transit-aspect/moon/j/soft/variant-D",
-      "residualFriendTokens": [],
-      "badYouAgreement": [],
       "sourceCoreferenceFlags": [
         "They may want to say yes before checking the budget, schedule, evidence, or number of people who will depend on that yes."
       ],
-      "sourceBodyThey": "{{Name}} may react before they have explained the reaction to themselves, with risk, opportunity, and the size of the promise carrying the emotional charge. They may want to say yes before checking the budget, schedule, evidence, or number of people who will depend on that yes. Less friction around mood changing the scale of the moment makes the practical next step easier to see and use. Around their Jupiter, the better test is what still matters after the immediate charge has dropped. The useful extra is the one that does not create a larger promise.\n\nMoon {{aspectWord}} their Jupiter stays active through {{untilDate}}. {{Name}} benefits from checking the number, time, and obligation attached to the larger option before committing to it.",
-      "proposedBodyYou": "You may react before you have explained the reaction to yourself, with risk, opportunity, and the size of the promise carrying the emotional charge. You may want to say yes before checking the budget, schedule, evidence, or number of people who will depend on that yes. Less friction around mood changing the scale of the moment makes the practical next step easier to see and use. Around your Jupiter, the better test is what still matters after the immediate charge has dropped. The useful extra is the one that does not create a larger promise.\n\nMoon {{aspectWord}} your Jupiter stays active through {{untilDate}}. You benefit from checking the number, time, and obligation attached to the larger option before committing to it."
+      "thirdPartyProtectionHits": []
     },
     {
       "contentKey": "authored/transit-aspect/moon/jupiter/soft/variant-E",
-      "residualFriendTokens": [],
-      "badYouAgreement": [],
       "sourceCoreferenceFlags": [
         "They may want to say yes before checking the budget, schedule, evidence, or number of people who will depend on that yes."
       ],
-      "sourceBodyThey": "The practical facts may be unchanged while {{Name}} feels risk, opportunity, and the size of the promise much more strongly than they did a few hours ago. They may want to say yes before checking the budget, schedule, evidence, or number of people who will depend on that yes. There is less resistance between an immediate emotional need becoming louder and what the situation needs, which gives {{Name}} a better chance to use the opening deliberately. With their Jupiter, the opening is worth using if it still improves the day after the first burst of enthusiasm passes.\n\nMoon {{aspectWord}} their Jupiter continues through {{untilDate}}. {{Name}} benefits from checking the number, time, and obligation attached to the larger option before committing to it.",
-      "proposedBodyYou": "The practical facts may be unchanged while you feel risk, opportunity, and the size of the promise much more strongly than you did a few hours ago. You may want to say yes before checking the budget, schedule, evidence, or number of people who will depend on that yes. There is less resistance between an immediate emotional need becoming louder and what the situation needs, which gives you a better chance to use the opening deliberately. With your Jupiter, the opening is worth using if it still improves the day after the first burst of enthusiasm passes.\n\nMoon {{aspectWord}} your Jupiter continues through {{untilDate}}. You benefit from checking the number, time, and obligation attached to the larger option before committing to it."
+      "thirdPartyProtectionHits": []
     },
     {
       "contentKey": "authored/transit-aspect/moon/lilith/hard",
-      "residualFriendTokens": [],
-      "badYouAgreement": [],
       "sourceCoreferenceFlags": [
         "{{Name}} does better when they distinguish a boundary from the urge to punish someone for crossing an old one."
       ],
-      "sourceBodyThey": "A familiar situation can feel different to {{Name}} because anger around an old compromise carries more emotional weight today. The strongest reaction may point to the place where they have been making themselves easier to accommodate instead of making the terms more honest. The difficult contact exposes something worth addressing, but the body registering the situation quickly does not require an all-or-nothing answer.\n\nThe useful part of Moon {{aspectWord}} their Lilith until {{untilDate}} is concrete. {{Name}} does better when they distinguish a boundary from the urge to punish someone for crossing an old one.",
-      "proposedBodyYou": "A familiar situation can feel different to you because anger around an old compromise carries more emotional weight today. The strongest reaction may point to the place where you have been making yourself easier to accommodate instead of making the terms more honest. The difficult contact exposes something worth addressing, but the body registering the situation quickly does not require an all-or-nothing answer.\n\nThe useful part of Moon {{aspectWord}} your Lilith until {{untilDate}} is concrete. You do better when you distinguish a boundary from the urge to punish someone for crossing an old one."
+      "thirdPartyProtectionHits": []
     },
     {
       "contentKey": "authored/transit-aspect/moon/m/soft/variant-A",
-      "residualFriendTokens": [],
-      "badYouAgreement": [],
       "sourceCoreferenceFlags": [
         "A small wording problem can create more work than the actual disagreement if everyone starts answering what they assumed was meant."
       ],
-      "sourceBodyThey": "Something small can reach {{Name}} quickly today because it touches an immediate need connected to how they think through the next choice. A small wording problem can create more work than the actual disagreement if everyone starts answering what they assumed was meant. The opening still needs action. An immediate emotional need becoming louder makes cooperation or timing easier, but it does not complete the task on {{Name}}'s behalf. Their Mercury becomes easier to read after the first reaction drops enough for the practical issue to separate from it. A short message or conversation may be enough to move the practical part.\n\nMoon {{aspectWord}} their Mercury runs through {{untilDate}}. {{Name}} can save time by correcting the misunderstanding early instead of winning an argument about a version nobody intended.",
-      "proposedBodyYou": "Something small can reach you quickly today because it touches an immediate need connected to how you think through the next choice. A small wording problem can create more work than the actual disagreement if everyone starts answering what you assumed was meant. The opening still needs action. An immediate emotional need becoming louder makes cooperation or timing easier, but it does not complete the task on your behalf. Your Mercury becomes easier to read after the first reaction drops enough for the practical issue to separate from it. A short message or conversation may be enough to move the practical part.\n\nMoon {{aspectWord}} your Mercury runs through {{untilDate}}. You can save time by correcting the misunderstanding early instead of winning an argument about a version nobody intended."
+      "thirdPartyProtectionHits": [
+        {
+          "id": "everyone-assumed",
+          "count": 1
+        }
+      ]
     },
     {
       "contentKey": "authored/transit-aspect/moon/m/soft/variant-C",
-      "residualFriendTokens": [],
-      "badYouAgreement": [],
       "sourceCoreferenceFlags": [
         "They may know what they mean and still need to slow down enough to notice that the other person heard something different."
       ],
-      "sourceBodyThey": "Something small can reach {{Name}} quickly today because it touches an immediate need connected to the facts behind a conversation. They may know what they mean and still need to slow down enough to notice that the other person heard something different. {{Name}} does not need to manufacture pressure; an immediate emotional need becoming louder is already easier to direct toward the useful next move. Their Mercury benefits from a second look because the first emotional meaning is not the only one available. A short message or conversation may be enough to move the practical part.\n\nUntil {{untilDate}}, Moon {{aspectWord}} their Mercury stays active. {{Name}} benefits from saying the important part clearly and leaving enough space for the other person to respond to that exact point.",
-      "proposedBodyYou": "Something small can reach you quickly today because it touches an immediate need connected to the facts behind a conversation. You may know what you mean and still need to slow down enough to notice that the other person heard something different. You do not need to manufacture pressure; an immediate emotional need becoming louder is already easier to direct toward the useful next move. Your Mercury benefits from a second look because the first emotional meaning is not the only one available. A short message or conversation may be enough to move the practical part.\n\nUntil {{untilDate}}, Moon {{aspectWord}} your Mercury stays active. You benefit from saying the important part clearly and leaving enough space for the other person to respond to that exact point."
+      "thirdPartyProtectionHits": []
     },
     {
       "contentKey": "authored/transit-aspect/moon/m/soft/variant-D",
-      "residualFriendTokens": [],
-      "badYouAgreement": [],
       "sourceCoreferenceFlags": [
         "A small wording problem can create more work than the actual disagreement if everyone starts answering what they assumed was meant.",
         "Through {{untilDate}}, Moon {{aspectWord}} their Mercury favors one practical response: {{Name}} can save time by correcting the misunderstanding early instead of winning an argument about a version nobody intended."
       ],
-      "sourceBodyThey": "One ordinary event can change the emotional tone of how they think through the next choice quickly for {{Name}}. A small wording problem can create more work than the actual disagreement if everyone starts answering what they assumed was meant. The opening still needs action. Mood changing the scale of the moment makes cooperation or timing easier, but it does not complete the task on {{Name}}'s behalf. Their Mercury becomes more useful as information once the first burst of urgency is no longer choosing the scale of the problem. A short message or conversation may be enough to move the practical part.\n\nThrough {{untilDate}}, Moon {{aspectWord}} their Mercury favors one practical response: {{Name}} can save time by correcting the misunderstanding early instead of winning an argument about a version nobody intended.",
-      "proposedBodyYou": "One ordinary event can change the emotional tone of how you think through the next choice quickly for you. A small wording problem can create more work than the actual disagreement if everyone starts answering what you assumed was meant. The opening still needs action. Mood changing the scale of the moment makes cooperation or timing easier, but it does not complete the task on your behalf. Your Mercury becomes more useful as information once the first burst of urgency is no longer choosing the scale of the problem. A short message or conversation may be enough to move the practical part.\n\nThrough {{untilDate}}, Moon {{aspectWord}} your Mercury favors one practical response: you can save time by correcting the misunderstanding early instead of winning an argument about a version nobody intended."
+      "thirdPartyProtectionHits": [
+        {
+          "id": "everyone-assumed",
+          "count": 1
+        }
+      ]
     },
     {
       "contentKey": "authored/transit-aspect/moon/mars/hard",
-      "residualFriendTokens": [],
-      "badYouAgreement": [],
       "sourceCoreferenceFlags": [
         "With Moon {{aspectWord}} their Mars until {{untilDate}}, {{Name}} benefits from acting on the part that is theirs without turning every delay into proof that someone is blocking them."
       ],
-      "sourceBodyThey": "A change in mood can make one part of the day feel much larger to {{Name}}, especially around physical effort and impatience. They may have enough energy to push through a difficult job and not enough patience to tolerate an unnecessary obstacle at the same time. The conflict gets clearer once {{Name}} separates what actually changed from the extra pressure created by a feeling changing what seems urgent.\n\nWith Moon {{aspectWord}} their Mars until {{untilDate}}, {{Name}} benefits from acting on the part that is theirs without turning every delay into proof that someone is blocking them.",
-      "proposedBodyYou": "A change in mood can make one part of the day feel much larger to you, especially around physical effort and impatience. You may have enough energy to push through a difficult job and not enough patience to tolerate an unnecessary obstacle at the same time. The conflict gets clearer once you separate what actually changed from the extra pressure created by a feeling changing what seems urgent.\n\nWith Moon {{aspectWord}} your Mars until {{untilDate}}, you benefit from acting on the part that is yours without turning every delay into proof that someone is blocking you."
+      "thirdPartyProtectionHits": []
     },
     {
       "contentKey": "authored/transit-aspect/moon/mars/hard/variant-D",
-      "residualFriendTokens": [],
-      "badYouAgreement": [],
       "sourceCoreferenceFlags": [
         "{{Name}} benefits from acting on the part that is theirs without turning every delay into proof that someone is blocking them."
       ],
-      "sourceBodyThey": "A familiar situation can feel different to {{Name}} because physical effort and impatience carries more emotional weight today. They may have enough energy to push through a difficult job and not enough patience to tolerate an unnecessary obstacle at the same time. Pressure rises when the body registering the situation quickly pushes against a need that cannot simply be rushed, enlarged, softened, or controlled into compliance. Their Mars becomes more useful as information once the first burst of urgency is no longer choosing the scale of the problem.\n\nThe useful part of Moon {{aspectWord}} their Mars until {{untilDate}} is concrete. {{Name}} benefits from acting on the part that is theirs without turning every delay into proof that someone is blocking them.",
-      "proposedBodyYou": "A familiar situation can feel different to you because physical effort and impatience carries more emotional weight today. You may have enough energy to push through a difficult job and not enough patience to tolerate an unnecessary obstacle at the same time. Pressure rises when the body registering the situation quickly pushes against a need that cannot simply be rushed, enlarged, softened, or controlled into compliance. Your Mars becomes more useful as information once the first burst of urgency is no longer choosing the scale of the problem.\n\nThe useful part of Moon {{aspectWord}} your Mars until {{untilDate}} is concrete. You benefit from acting on the part that is yours without turning every delay into proof that someone is blocking you."
+      "thirdPartyProtectionHits": []
     },
     {
       "contentKey": "authored/transit-aspect/moon/mars/soft",
-      "residualFriendTokens": [],
-      "badYouAgreement": [],
       "sourceCoreferenceFlags": [
         "{{Name}} benefits from acting on the part that is theirs without turning every delay into proof that someone is blocking them."
       ],
-      "sourceBodyThey": "A change in mood can make one part of the day feel much larger to {{Name}}, especially around physical effort and impatience. They may have enough energy to push through a difficult job and not enough patience to tolerate an unnecessary obstacle at the same time. {{Name}} does not need to manufacture pressure; a feeling changing what seems urgent is already easier to direct toward the useful next move.\n\nUntil {{untilDate}}, Moon {{aspectWord}} their Mars stays active. {{Name}} benefits from acting on the part that is theirs without turning every delay into proof that someone is blocking them.",
-      "proposedBodyYou": "A change in mood can make one part of the day feel much larger to you, especially around physical effort and impatience. You may have enough energy to push through a difficult job and not enough patience to tolerate an unnecessary obstacle at the same time. You do not need to manufacture pressure; a feeling changing what seems urgent is already easier to direct toward the useful next move.\n\nUntil {{untilDate}}, Moon {{aspectWord}} your Mars stays active. You benefit from acting on the part that is yours without turning every delay into proof that someone is blocking you."
+      "thirdPartyProtectionHits": []
     },
     {
       "contentKey": "authored/transit-aspect/moon/mars/soft/variant-B",
-      "residualFriendTokens": [],
-      "badYouAgreement": [],
       "sourceCoreferenceFlags": [
         "{{Name}} benefits from acting on the part that is theirs without turning every delay into proof that someone is blocking them."
       ],
-      "sourceBodyThey": "Something small can reach {{Name}} quickly today because it touches an immediate need connected to physical effort and impatience. They may have enough energy to push through a difficult job and not enough patience to tolerate an unnecessary obstacle at the same time. {{Name}} does not need to manufacture pressure; an immediate emotional need becoming louder is already easier to direct toward the useful next move. Their Mars gives them a clearer clue once they compare the immediate reaction with what is still true an hour later.\n\nUntil {{untilDate}}, Moon {{aspectWord}} their Mars stays active. {{Name}} benefits from acting on the part that is theirs without turning every delay into proof that someone is blocking them.",
-      "proposedBodyYou": "Something small can reach you quickly today because it touches an immediate need connected to physical effort and impatience. You may have enough energy to push through a difficult job and not enough patience to tolerate an unnecessary obstacle at the same time. You do not need to manufacture pressure; an immediate emotional need becoming louder is already easier to direct toward the useful next move. Your Mars gives you a clearer clue once you compare the immediate reaction with what is still true an hour later.\n\nUntil {{untilDate}}, Moon {{aspectWord}} your Mars stays active. You benefit from acting on the part that is yours without turning every delay into proof that someone is blocking you."
+      "thirdPartyProtectionHits": []
     },
     {
       "contentKey": "authored/transit-aspect/moon/mercury/conjunction",
-      "residualFriendTokens": [],
-      "badYouAgreement": [],
       "sourceCoreferenceFlags": [
         "They may know what they mean and still need to slow down enough to notice that the other person heard something different."
       ],
-      "sourceBodyThey": "A familiar situation can feel different to {{Name}} because the facts behind a conversation carries more emotional weight today. They may know what they mean and still need to slow down enough to notice that the other person heard something different. The immediate quality of the transit makes the body registering the situation quickly feel personal even when the useful response is still practical and specific.\n\nUntil {{untilDate}}, Moon {{aspectWord}} their Mercury stays active. {{Name}} benefits from saying the important part clearly and leaving enough space for the other person to respond to that exact point.",
-      "proposedBodyYou": "A familiar situation can feel different to you because the facts behind a conversation carries more emotional weight today. You may know what you mean and still need to slow down enough to notice that the other person heard something different. The immediate quality of the transit makes the body registering the situation quickly feel personal even when the useful response is still practical and specific.\n\nUntil {{untilDate}}, Moon {{aspectWord}} your Mercury stays active. You benefit from saying the important part clearly and leaving enough space for the other person to respond to that exact point."
+      "thirdPartyProtectionHits": []
     },
     {
       "contentKey": "authored/transit-aspect/moon/mercury/hard",
-      "residualFriendTokens": [],
-      "badYouAgreement": [],
       "sourceCoreferenceFlags": [
         "A small wording problem can create more work than the actual disagreement if everyone starts answering what they assumed was meant.",
         "As Moon {{aspectWord}} their Mercury continues through {{untilDate}}, {{Name}} can save time by correcting the misunderstanding early instead of winning an argument about a version nobody intended."
       ],
-      "sourceBodyThey": "Something small can reach {{Name}} quickly today because it touches an immediate need connected to how they think through the next choice. A small wording problem can create more work than the actual disagreement if everyone starts answering what they assumed was meant. The tension is useful when it reveals the weak point. It becomes expensive when an immediate emotional need becoming louder turns that weak point into a fight about everything else.\n\nAs Moon {{aspectWord}} their Mercury continues through {{untilDate}}, {{Name}} can save time by correcting the misunderstanding early instead of winning an argument about a version nobody intended.",
-      "proposedBodyYou": "Something small can reach you quickly today because it touches an immediate need connected to how you think through the next choice. A small wording problem can create more work than the actual disagreement if everyone starts answering what you assumed was meant. The tension is useful when it reveals the weak point. It becomes expensive when an immediate emotional need becoming louder turns that weak point into a fight about everything else.\n\nAs Moon {{aspectWord}} your Mercury continues through {{untilDate}}, you can save time by correcting the misunderstanding early instead of winning an argument about a version nobody intended."
+      "thirdPartyProtectionHits": [
+        {
+          "id": "everyone-assumed",
+          "count": 1
+        }
+      ]
     },
     {
       "contentKey": "authored/transit-aspect/moon/mercury/hard/variant-D",
-      "residualFriendTokens": [],
-      "badYouAgreement": [],
       "sourceCoreferenceFlags": [
         "A small wording problem can create more work than the actual disagreement if everyone starts answering what they assumed was meant."
       ],
-      "sourceBodyThey": "A familiar situation can feel different to {{Name}} because how they think through the next choice carries more emotional weight today. A small wording problem can create more work than the actual disagreement if everyone starts answering what they assumed was meant. The tension is useful when it reveals the weak point. It becomes expensive when the body registering the situation quickly turns that weak point into a fight about everything else. Their Mercury becomes more useful as information once the first burst of urgency is no longer choosing the scale of the problem.\n\nMoon {{aspectWord}} their Mercury runs through {{untilDate}}. {{Name}} can save time by correcting the misunderstanding early instead of winning an argument about a version nobody intended.",
-      "proposedBodyYou": "A familiar situation can feel different to you because how you think through the next choice carries more emotional weight today. A small wording problem can create more work than the actual disagreement if everyone starts answering what you assumed was meant. The tension is useful when it reveals the weak point. It becomes expensive when the body registering the situation quickly turns that weak point into a fight about everything else. Your Mercury becomes more useful as information once the first burst of urgency is no longer choosing the scale of the problem.\n\nMoon {{aspectWord}} your Mercury runs through {{untilDate}}. You can save time by correcting the misunderstanding early instead of winning an argument about a version nobody intended."
+      "thirdPartyProtectionHits": [
+        {
+          "id": "everyone-assumed",
+          "count": 1
+        }
+      ]
     },
     {
       "contentKey": "authored/transit-aspect/moon/mercury/soft/variant-C",
-      "residualFriendTokens": [],
-      "badYouAgreement": [],
       "sourceCoreferenceFlags": [
         "They may know what they mean and still need to slow down enough to notice that the other person heard something different."
       ],
-      "sourceBodyThey": "A change in mood can make one part of the day feel much larger to {{Name}}, especially around the facts behind a conversation. They may know what they mean and still need to slow down enough to notice that the other person heard something different. Support is available in a form {{Name}} can actually use, and a feeling changing what seems urgent is less likely to become the part they have to manage around. Their Mercury benefits from a second look because the first emotional meaning is not the only one available.\n\nUntil {{untilDate}}, Moon {{aspectWord}} their Mercury stays active. {{Name}} benefits from saying the important part clearly and leaving enough space for the other person to respond to that exact point.",
-      "proposedBodyYou": "A change in mood can make one part of the day feel much larger to you, especially around the facts behind a conversation. You may know what you mean and still need to slow down enough to notice that the other person heard something different. Support is available in a form you can actually use, and a feeling changing what seems urgent is less likely to become the part you have to manage around. Your Mercury benefits from a second look because the first emotional meaning is not the only one available.\n\nUntil {{untilDate}}, Moon {{aspectWord}} your Mercury stays active. You benefit from saying the important part clearly and leaving enough space for the other person to respond to that exact point."
+      "thirdPartyProtectionHits": []
     },
     {
       "contentKey": "authored/transit-aspect/moon/neptune/any",
-      "residualFriendTokens": [],
-      "badYouAgreement": [],
       "sourceCoreferenceFlags": [
         "They may be more affected by music, sleep loss, alcohol, atmosphere, or another person's emotion than they realize in the moment."
       ],
-      "sourceBodyThey": "A change in mood can make one part of the day feel much larger to {{Name}}, especially around sensitivity and missing details. They may be more affected by music, sleep loss, alcohol, atmosphere, or another person's emotion than they realize in the moment. What matters is the live consequence: a feeling changing what seems urgent changes what {{Name}} notices, needs, or chooses in the moment.\n\nThe useful part of Moon {{aspectWord}} their Neptune until {{untilDate}} is concrete. {{Name}} does better when they reduce noise, substances, and unnecessary pressure before making the decision that will be hard to reverse.",
-      "proposedBodyYou": "A change in mood can make one part of the day feel much larger to you, especially around sensitivity and missing details. You may be more affected by music, sleep loss, alcohol, atmosphere, or another person's emotion than you realize in the moment. What matters is the live consequence: a feeling changing what seems urgent changes what you notice, needs, or chooses in the moment.\n\nThe useful part of Moon {{aspectWord}} your Neptune until {{untilDate}} is concrete. You do better when you reduce noise, substances, and unnecessary pressure before making the decision that will be hard to reverse."
+      "thirdPartyProtectionHits": []
     },
     {
       "contentKey": "authored/transit-aspect/moon/neptune/any/variant-C",
-      "residualFriendTokens": [],
-      "badYouAgreement": [],
       "sourceCoreferenceFlags": [
         "They may be more affected by music, sleep loss, alcohol, atmosphere, or another person's emotion than they realize in the moment."
       ],
-      "sourceBodyThey": "A familiar situation can feel different to {{Name}} because sensitivity and missing details carries more emotional weight today. They may be more affected by music, sleep loss, alcohol, atmosphere, or another person's emotion than they realize in the moment. What matters is the live consequence: the body registering the situation quickly changes what {{Name}} notices, needs, or chooses in the moment. Their Neptune benefits from a second look because the first emotional meaning is not the only one available.\n\nWith Moon {{aspectWord}} their Neptune until {{untilDate}}, {{Name}} does better when they reduce noise, substances, and unnecessary pressure before making the decision that will be hard to reverse.",
-      "proposedBodyYou": "A familiar situation can feel different to you because sensitivity and missing details carries more emotional weight today. You may be more affected by music, sleep loss, alcohol, atmosphere, or another person's emotion than you realize in the moment. What matters is the live consequence: the body registering the situation quickly changes what you notice, needs, or chooses in the moment. Your Neptune benefits from a second look because the first emotional meaning is not the only one available.\n\nWith Moon {{aspectWord}} your Neptune until {{untilDate}}, you do better when you reduce noise, substances, and unnecessary pressure before making the decision that will be hard to reverse."
+      "thirdPartyProtectionHits": []
     },
     {
       "contentKey": "authored/transit-aspect/moon/s/soft/variant-B",
-      "residualFriendTokens": [],
-      "badYouAgreement": [],
       "sourceCoreferenceFlags": [
         "With Moon {{aspectWord}} their Sun until {{untilDate}}, {{Name}} does better when they let the work and choice become more specific instead of demanding that other people validate the entire identity attached to it."
       ],
-      "sourceBodyThey": "One ordinary event can change the emotional tone of visibility and personal direction quickly for {{Name}}. They may need to defend a decision without turning every question about the decision into a question about who they are. Support is available in a form {{Name}} can actually use, and mood changing the scale of the moment is less likely to become the part they have to manage around. Their Sun gives them a clearer clue once they compare the immediate reaction with what is still true an hour later. One choice that feels like theirs can matter more than broad approval.\n\nWith Moon {{aspectWord}} their Sun until {{untilDate}}, {{Name}} does better when they let the work and choice become more specific instead of demanding that other people validate the entire identity attached to it.",
-      "proposedBodyYou": "One ordinary event can change the emotional tone of visibility and personal direction quickly for you. You may need to defend a decision without turning every question about the decision into a question about who you are. Support is available in a form you can actually use, and mood changing the scale of the moment is less likely to become the part you have to manage around. Your Sun gives you a clearer clue once you compare the immediate reaction with what is still true an hour later. One choice that feels like yours can matter more than broad approval.\n\nWith Moon {{aspectWord}} your Sun until {{untilDate}}, you do better when you let the work and choice become more specific instead of demanding that other people validate the entire identity attached to it."
+      "thirdPartyProtectionHits": []
     },
     {
       "contentKey": "authored/transit-aspect/moon/s/soft/variant-C",
-      "residualFriendTokens": [],
-      "badYouAgreement": [],
       "sourceCoreferenceFlags": [
         "{{Name}} does better when they let the work and choice become more specific instead of demanding that other people validate the entire identity attached to it."
       ],
-      "sourceBodyThey": "A change in mood can make one part of the day feel much larger to {{Name}}, especially around visibility and personal direction. They may need to defend a decision without turning every question about the decision into a question about who they are. The support is useful because a feeling changing what seems urgent can move toward action without another problem having to force it. Their Sun benefits from a second look because the first emotional meaning is not the only one available. One choice that feels like theirs can matter more than broad approval.\n\nThe useful part of Moon {{aspectWord}} their Sun until {{untilDate}} is concrete. {{Name}} does better when they let the work and choice become more specific instead of demanding that other people validate the entire identity attached to it.",
-      "proposedBodyYou": "A change in mood can make one part of the day feel much larger to you, especially around visibility and personal direction. You may need to defend a decision without turning every question about the decision into a question about who you are. The support is useful because a feeling changing what seems urgent can move toward action without another problem having to force it. Your Sun benefits from a second look because the first emotional meaning is not the only one available. One choice that feels like yours can matter more than broad approval.\n\nThe useful part of Moon {{aspectWord}} your Sun until {{untilDate}} is concrete. You do better when you let the work and choice become more specific instead of demanding that other people validate the entire identity attached to it."
+      "thirdPartyProtectionHits": []
     },
     {
       "contentKey": "authored/transit-aspect/moon/south-node/conjunction",
-      "residualFriendTokens": [],
-      "badYouAgreement": [],
       "sourceCoreferenceFlags": [
         "{{Name}} may understand what happened only after noticing how strongly the job everyone already expects them to do changed their mood.",
         "Other people may quickly hand them the job they always know how to do, especially if that competence has made them the default helper before.",
         "While Moon {{aspectWord}} their South Node until {{untilDate}}, {{Name}} gets more from deciding consciously where the old habit still serves them and where it simply saves other people from adjusting."
       ],
-      "sourceBodyThey": "{{Name}} may understand what happened only after noticing how strongly the job everyone already expects them to do changed their mood. Other people may quickly hand them the job they always know how to do, especially if that competence has made them the default helper before. The contact concentrates the body registering the situation quickly around one part of life, which can make a familiar pattern easier to recognize because it is harder to avoid.\n\nWhile Moon {{aspectWord}} their South Node until {{untilDate}}, {{Name}} gets more from deciding consciously where the old habit still serves them and where it simply saves other people from adjusting.",
-      "proposedBodyYou": "You may understand what happened only after noticing how strongly the job everyone already expects you to do changed your mood. Other people may quickly hand you the job you always know how to do, especially if that competence has made you the default helper before. The contact concentrates the body registering the situation quickly around one part of life, which can make a familiar pattern easier to recognize because it is harder to avoid.\n\nWhile Moon {{aspectWord}} your South Node until {{untilDate}}, you get more from deciding consciously where the old habit still serves you and where it simply saves other people from adjusting."
+      "thirdPartyProtectionHits": []
     },
     {
       "contentKey": "authored/transit-aspect/moon/sun/soft/variant-B",
-      "residualFriendTokens": [],
-      "badYouAgreement": [],
       "sourceCoreferenceFlags": [
         "{{Name}} does better when they let the work and choice become more specific instead of demanding that other people validate the entire identity attached to it."
       ],
-      "sourceBodyThey": "A change in mood can make one part of the day feel much larger to {{Name}}, especially around visibility and personal direction. They may need to defend a decision without turning every question about the decision into a question about who they are. {{Name}} does not need to manufacture pressure; a feeling changing what seems urgent is already easier to direct toward the useful next move. Their Sun gives them a clearer clue once they compare the immediate reaction with what is still true an hour later.\n\nUntil {{untilDate}}, Moon {{aspectWord}} their Sun stays active. {{Name}} does better when they let the work and choice become more specific instead of demanding that other people validate the entire identity attached to it.",
-      "proposedBodyYou": "A change in mood can make one part of the day feel much larger to you, especially around visibility and personal direction. You may need to defend a decision without turning every question about the decision into a question about who you are. You do not need to manufacture pressure; a feeling changing what seems urgent is already easier to direct toward the useful next move. Your Sun gives you a clearer clue once you compare the immediate reaction with what is still true an hour later.\n\nUntil {{untilDate}}, Moon {{aspectWord}} your Sun stays active. You do better when you let the work and choice become more specific instead of demanding that other people validate the entire identity attached to it."
+      "thirdPartyProtectionHits": []
     },
     {
       "contentKey": "authored/transit-aspect/neptune/ascendant/hard",
-      "residualFriendTokens": [],
-      "badYouAgreement": [],
       "sourceCoreferenceFlags": [
         "{{Name}} does better when they let the first reaction settle before changing how they present themselves to everyone else."
       ],
-      "sourceBodyThey": "The line between intuition, hope, and assumption gets thinner for {{Name}} around first impressions and immediate responses. A new setting can make the difference between their first instinct and their preferred response easier to notice. The conflict is easier to use once a strong feeling blurring the practical facts is separated from the part that genuinely needs action.\n\nNeptune {{aspectWord}} their Ascendant stays active through {{untilDate}}. {{Name}} does better when they let the first reaction settle before changing how they present themselves to everyone else.",
-      "proposedBodyYou": "The line between intuition, hope, and assumption gets thinner for you around first impressions and immediate responses. A new setting can make the difference between your first instinct and your preferred response easier to notice. The conflict is easier to use once a strong feeling blurring the practical facts is separated from the part that genuinely needs action.\n\nNeptune {{aspectWord}} your Ascendant stays active through {{untilDate}}. You do better when you let the first reaction settle before changing how you present yourself to everyone else."
+      "thirdPartyProtectionHits": []
     },
     {
       "contentKey": "authored/transit-aspect/neptune/ascendant/soft",
-      "residualFriendTokens": [],
-      "badYouAgreement": [],
       "sourceCoreferenceFlags": [
         "{{Name}} does better when they let the first reaction settle before changing how they present themselves to everyone else."
       ],
-      "sourceBodyThey": "The line between intuition, hope, and assumption gets thinner for {{Name}} around first impressions and immediate responses. A new setting can make the difference between their first instinct and their preferred response easier to notice. There is less resistance between a strong feeling blurring the practical facts and what the situation needs, which gives {{Name}} a better chance to use the opening deliberately.\n\nUntil {{untilDate}}, Neptune {{aspectWord}} their Ascendant remains active. {{Name}} does better when they let the first reaction settle before changing how they present themselves to everyone else.",
-      "proposedBodyYou": "The line between intuition, hope, and assumption gets thinner for you around first impressions and immediate responses. A new setting can make the difference between your first instinct and your preferred response easier to notice. There is less resistance between a strong feeling blurring the practical facts and what the situation needs, which gives you a better chance to use the opening deliberately.\n\nUntil {{untilDate}}, Neptune {{aspectWord}} your Ascendant remains active. You do better when you let the first reaction settle before changing how you present yourself to everyone else."
+      "thirdPartyProtectionHits": []
     },
     {
       "contentKey": "authored/transit-aspect/neptune/chiron/square",
-      "residualFriendTokens": [],
-      "badYouAgreement": [],
       "sourceCoreferenceFlags": [
         "They may notice the urge to protect the sore spot before deciding if the person in front of them is actually repeating the old pattern."
       ],
-      "sourceBodyThey": "Sensitivity is turned up for {{Name}}, and the difference between an old hurt and the current event may feel less definite than it usually does. They may notice the urge to protect the sore spot before deciding if the person in front of them is actually repeating the old pattern. A useful response starts after {{Name}} separates the concrete problem from the extra force created by a strong feeling blurring the practical facts.\n\nNeptune {{aspectWord}} their Chiron runs through {{untilDate}}. {{Name}} does better when they protect the sore spot without assuming that protection has to become withdrawal or retaliation.",
-      "proposedBodyYou": "Sensitivity is turned up for you, and the difference between an old hurt and the current event may feel less definite than it usually does. You may notice the urge to protect the sore spot before deciding if the person in front of you is actually repeating the old pattern. A useful response starts after you separate the concrete problem from the extra force created by a strong feeling blurring the practical facts.\n\nNeptune {{aspectWord}} your Chiron runs through {{untilDate}}. You do better when you protect the sore spot without assuming that protection has to become withdrawal or retaliation."
+      "thirdPartyProtectionHits": []
     },
     {
       "contentKey": "authored/transit-aspect/neptune/jupiter/soft",
-      "residualFriendTokens": [],
-      "badYouAgreement": [],
       "sourceCoreferenceFlags": [
         "They may want to say yes before checking the budget, schedule, evidence, or number of people who will depend on that yes."
       ],
-      "sourceBodyThey": "The line between intuition, hope, and assumption gets thinner for {{Name}} around risk, opportunity, and the size of the promise. They may want to say yes before checking the budget, schedule, evidence, or number of people who will depend on that yes. Less friction around uncertainty mixing with sensitivity makes the practical next step easier to see and use.\n\nNeptune {{aspectWord}} their Jupiter continues through {{untilDate}}. {{Name}} benefits from checking the number, time, and obligation attached to the larger option before committing to it.",
-      "proposedBodyYou": "The line between intuition, hope, and assumption gets thinner for you around risk, opportunity, and the size of the promise. You may want to say yes before checking the budget, schedule, evidence, or number of people who will depend on that yes. Less friction around uncertainty mixing with sensitivity makes the practical next step easier to see and use.\n\nNeptune {{aspectWord}} your Jupiter continues through {{untilDate}}. You benefit from checking the number, time, and obligation attached to the larger option before committing to it."
+      "thirdPartyProtectionHits": []
     },
     {
       "contentKey": "authored/transit-aspect/neptune/lilith/hard",
-      "residualFriendTokens": [],
-      "badYouAgreement": [],
       "sourceCoreferenceFlags": [
         "They may hear themselves say yes and immediately realize the yes was meant to prevent someone else's reaction rather than reflect what they want."
       ],
-      "sourceBodyThey": "Sensitivity is turned up for {{Name}}, and the part of the arrangement that keeps producing resentment may feel less definite than it usually does. They may hear themselves say yes and immediately realize the yes was meant to prevent someone else's reaction rather than reflect what they want. The friction matters because lower energy making certainty harder to force can move faster than the part of the situation that needs judgment, so the first reaction may create more work than the original problem.\n\nAs Neptune {{aspectWord}} their Lilith continues through {{untilDate}}, {{Name}} gets more from a clear refusal or preference than from another round of being agreeable and privately furious.",
-      "proposedBodyYou": "Sensitivity is turned up for you, and the part of the arrangement that keeps producing resentment may feel less definite than it usually does. You may hear yourself say yes and immediately realize the yes was meant to prevent someone else's reaction rather than reflect what you want. The friction matters because lower energy making certainty harder to force can move faster than the part of the situation that needs judgment, so the first reaction may create more work than the original problem.\n\nAs Neptune {{aspectWord}} your Lilith continues through {{untilDate}}, you get more from a clear refusal or preference than from another round of being agreeable and privately furious."
+      "thirdPartyProtectionHits": []
     },
     {
       "contentKey": "authored/transit-aspect/neptune/south-node/conjunction",
-      "residualFriendTokens": [],
-      "badYouAgreement": [],
       "sourceCoreferenceFlags": [
         "A vague plan, strong feeling, or missing detail can matter more than expected for {{Name}} around the job everyone already expects them to do.",
         "Other people may quickly hand them the job they always know how to do, especially if that competence has made them the default helper before.",
         "While Neptune {{aspectWord}} their South Node until {{untilDate}}, {{Name}} gets more from deciding consciously where the old habit still serves them and where it simply saves other people from adjusting."
       ],
-      "sourceBodyThey": "A vague plan, strong feeling, or missing detail can matter more than expected for {{Name}} around the job everyone already expects them to do. Other people may quickly hand them the job they always know how to do, especially if that competence has made them the default helper before. The contact concentrates lower energy making certainty harder to force around one part of life, which can make a familiar pattern easier to recognize because it is harder to avoid.\n\nWhile Neptune {{aspectWord}} their South Node until {{untilDate}}, {{Name}} gets more from deciding consciously where the old habit still serves them and where it simply saves other people from adjusting.",
-      "proposedBodyYou": "A vague plan, strong feeling, or missing detail can matter more than expected for you around the job everyone already expects you to do. Other people may quickly hand you the job you always know how to do, especially if that competence has made you the default helper before. The contact concentrates lower energy making certainty harder to force around one part of life, which can make a familiar pattern easier to recognize because it is harder to avoid.\n\nWhile Neptune {{aspectWord}} your South Node until {{untilDate}}, you get more from deciding consciously where the old habit still serves you and where it simply saves other people from adjusting."
+      "thirdPartyProtectionHits": []
     },
     {
       "contentKey": "authored/transit-aspect/pluto/ascendant/hard",
-      "residualFriendTokens": [],
-      "badYouAgreement": [],
       "sourceCoreferenceFlags": [
         "Something that had been managed indirectly becomes harder for {{Name}} to keep managing that way, with how other people meet their presence showing where the power sits.",
         "Someone may react to their tone, pace, appearance, or confidence before there is time for a fuller explanation."
       ],
-      "sourceBodyThey": "Something that had been managed indirectly becomes harder for {{Name}} to keep managing that way, with how other people meet their presence showing where the power sits. Someone may react to their tone, pace, appearance, or confidence before there is time for a fuller explanation. {{Name}} gets a clearer decision once a buried grievance becoming specific stops choosing the urgency for them.\n\nPluto {{aspectWord}} their Ascendant runs through {{untilDate}}. {{Name}} benefits from answering the situation in front of them instead of rehearsing how they might be judged later.",
-      "proposedBodyYou": "Something that had been managed indirectly becomes harder for you to keep managing that way, with how other people meet your presence showing where the power sits. Someone may react to your tone, pace, appearance, or confidence before there is time for a fuller explanation. You get a clearer decision once a buried grievance becoming specific stops choosing the urgency for you.\n\nPluto {{aspectWord}} your Ascendant runs through {{untilDate}}. You benefit from answering the situation in front of you instead of rehearsing how you might be judged later."
+      "thirdPartyProtectionHits": []
     },
     {
       "contentKey": "authored/transit-aspect/pluto/ascendant/soft",
-      "residualFriendTokens": [],
-      "badYouAgreement": [],
       "sourceCoreferenceFlags": [
         "A situation around {{Name}} may reveal more leverage than anyone has been naming, especially around how they enter a new situation."
       ],
-      "sourceBodyThey": "A situation around {{Name}} may reveal more leverage than anyone has been naming, especially around how they enter a new situation. They may catch themselves changing how they speak or carry themselves because one person's reaction suddenly feels important. {{Name}} does not need to manufacture pressure; a buried grievance becoming specific is already easier to direct toward the useful next move.\n\nThe useful part of Pluto {{aspectWord}} their Ascendant until {{untilDate}} is concrete. {{Name}} gets more from showing up clearly than from trying to manage every impression in advance.",
-      "proposedBodyYou": "A situation around you may reveal more leverage than anyone has been naming, especially around how you enter a new situation. You may catch yourself changing how you speak or carry yourself because one person's reaction suddenly feels important. You do not need to manufacture pressure; a buried grievance becoming specific is already easier to direct toward the useful next move.\n\nThe useful part of Pluto {{aspectWord}} your Ascendant until {{untilDate}} is concrete. You get more from showing up clearly than from trying to manage every impression in advance."
+      "thirdPartyProtectionHits": []
     },
     {
       "contentKey": "authored/transit-aspect/pluto/jupiter/soft",
-      "residualFriendTokens": [],
-      "badYouAgreement": [],
       "sourceCoreferenceFlags": [
         "A situation around {{Name}} may reveal more leverage than anyone has been naming, especially around how much they are willing to take on."
       ],
-      "sourceBodyThey": "A situation around {{Name}} may reveal more leverage than anyone has been naming, especially around how much they are willing to take on. An opportunity can be genuine and still come with more work, money, travel, or responsibility than the first conversation mentions. The support is useful because hidden leverage becoming easier to see can move toward action without another problem having to force it.\n\nUntil {{untilDate}}, Pluto {{aspectWord}} their Jupiter stays active. {{Name}} does better when they separate genuine opportunity from the part that only feels persuasive because it is bigger.",
-      "proposedBodyYou": "A situation around you may reveal more leverage than anyone has been naming, especially around how much you are willing to take on. An opportunity can be genuine and still come with more work, money, travel, or responsibility than the first conversation mentions. The support is useful because hidden leverage becoming easier to see can move toward action without another problem having to force it.\n\nUntil {{untilDate}}, Pluto {{aspectWord}} your Jupiter stays active. You do better when you separate genuine opportunity from the part that only feels persuasive because it is bigger."
+      "thirdPartyProtectionHits": []
     },
     {
       "contentKey": "authored/transit-aspect/pluto/lilith/hard",
-      "residualFriendTokens": [],
-      "badYouAgreement": [],
       "sourceCoreferenceFlags": [
         "{{Name}} does better when they distinguish a boundary from the urge to punish someone for crossing an old one."
       ],
-      "sourceBodyThey": "A situation around {{Name}} may reveal more leverage than anyone has been naming, especially around anger around an old compromise. The strongest reaction may point to the place where they have been making themselves easier to accommodate instead of making the terms more honest. Pressure rises when the power arrangement becoming harder to ignore pushes against a need that cannot simply be rushed, enlarged, softened, or controlled into compliance.\n\nUntil {{untilDate}}, Pluto {{aspectWord}} their Lilith stays active. {{Name}} does better when they distinguish a boundary from the urge to punish someone for crossing an old one.",
-      "proposedBodyYou": "A situation around you may reveal more leverage than anyone has been naming, especially around anger around an old compromise. The strongest reaction may point to the place where you have been making yourself easier to accommodate instead of making the terms more honest. Pressure rises when the power arrangement becoming harder to ignore pushes against a need that cannot simply be rushed, enlarged, softened, or controlled into compliance.\n\nUntil {{untilDate}}, Pluto {{aspectWord}} your Lilith stays active. You do better when you distinguish a boundary from the urge to punish someone for crossing an old one."
+      "thirdPartyProtectionHits": []
     },
     {
       "contentKey": "authored/transit-aspect/pluto/mars/hard",
-      "residualFriendTokens": [],
-      "badYouAgreement": [],
       "sourceCoreferenceFlags": [
         "{{Name}} benefits from acting on the part that is theirs without turning every delay into proof that someone is blocking them."
       ],
-      "sourceBodyThey": "A situation around {{Name}} may reveal more leverage than anyone has been naming, especially around physical effort and impatience. They may have enough energy to push through a difficult job and not enough patience to tolerate an unnecessary obstacle at the same time. Pressure rises when a buried grievance becoming specific pushes against a need that cannot simply be rushed, enlarged, softened, or controlled into compliance.\n\nThe useful part of Pluto {{aspectWord}} their Mars until {{untilDate}} is concrete. {{Name}} benefits from acting on the part that is theirs without turning every delay into proof that someone is blocking them.",
-      "proposedBodyYou": "A situation around you may reveal more leverage than anyone has been naming, especially around physical effort and impatience. You may have enough energy to push through a difficult job and not enough patience to tolerate an unnecessary obstacle at the same time. Pressure rises when a buried grievance becoming specific pushes against a need that cannot simply be rushed, enlarged, softened, or controlled into compliance.\n\nThe useful part of Pluto {{aspectWord}} your Mars until {{untilDate}} is concrete. You benefit from acting on the part that is yours without turning every delay into proof that someone is blocking you."
+      "thirdPartyProtectionHits": []
     },
     {
       "contentKey": "authored/transit-aspect/pluto/mercury/hard",
-      "residualFriendTokens": [],
-      "badYouAgreement": [],
       "sourceCoreferenceFlags": [
         "They may know what they mean and still need to slow down enough to notice that the other person heard something different.",
         "With Pluto {{aspectWord}} their Mercury until {{untilDate}}, {{Name}} benefits from saying the important part clearly and leaving enough space for the other person to respond to that exact point."
       ],
-      "sourceBodyThey": "A situation around {{Name}} may reveal more leverage than anyone has been naming, especially around the facts behind a conversation. They may know what they mean and still need to slow down enough to notice that the other person heard something different. The difficult contact exposes something worth addressing, but pressure exposing the underlying issue does not require an all-or-nothing answer.\n\nWith Pluto {{aspectWord}} their Mercury until {{untilDate}}, {{Name}} benefits from saying the important part clearly and leaving enough space for the other person to respond to that exact point.",
-      "proposedBodyYou": "A situation around you may reveal more leverage than anyone has been naming, especially around the facts behind a conversation. You may know what you mean and still need to slow down enough to notice that the other person heard something different. The difficult contact exposes something worth addressing, but pressure exposing the underlying issue does not require an all-or-nothing answer.\n\nWith Pluto {{aspectWord}} your Mercury until {{untilDate}}, you benefit from saying the important part clearly and leaving enough space for the other person to respond to that exact point."
+      "thirdPartyProtectionHits": []
     },
     {
       "contentKey": "authored/transit-aspect/pluto/mercury/soft",
-      "residualFriendTokens": [],
-      "badYouAgreement": [],
       "sourceCoreferenceFlags": [
         "They may know what they mean and still need to slow down enough to notice that the other person heard something different.",
         "With Pluto {{aspectWord}} their Mercury until {{untilDate}}, {{Name}} benefits from saying the important part clearly and leaving enough space for the other person to respond to that exact point."
       ],
-      "sourceBodyThey": "A situation around {{Name}} may reveal more leverage than anyone has been naming, especially around the facts behind a conversation. They may know what they mean and still need to slow down enough to notice that the other person heard something different. Support is available in a form {{Name}} can actually use, and the power arrangement becoming harder to ignore is less likely to become the part they have to manage around.\n\nWith Pluto {{aspectWord}} their Mercury until {{untilDate}}, {{Name}} benefits from saying the important part clearly and leaving enough space for the other person to respond to that exact point.",
-      "proposedBodyYou": "A situation around you may reveal more leverage than anyone has been naming, especially around the facts behind a conversation. You may know what you mean and still need to slow down enough to notice that the other person heard something different. Support is available in a form you can actually use, and the power arrangement becoming harder to ignore is less likely to become the part you have to manage around.\n\nWith Pluto {{aspectWord}} your Mercury until {{untilDate}}, you benefit from saying the important part clearly and leaving enough space for the other person to respond to that exact point."
+      "thirdPartyProtectionHits": []
     },
     {
       "contentKey": "authored/transit-aspect/pluto/north-node/conjunction",
-      "residualFriendTokens": [],
-      "badYouAgreement": [],
       "sourceCoreferenceFlags": [
         "An introduction, assignment, class, or invitation can put them close to people who already seem comfortable doing what they are just beginning."
       ],
-      "sourceBodyThey": "Something that had been managed indirectly becomes harder for {{Name}} to keep managing that way, with a choice that develops something new showing where the power sits. An introduction, assignment, class, or invitation can put them close to people who already seem comfortable doing what they are just beginning. This is a direct contact, so pressure exposing the underlying issue is not happening in the background. It becomes part of the way {{Name}} handles the situation itself.\n\nThrough {{untilDate}}, Pluto {{aspectWord}} their North Node favors one practical response: {{Name}} can let experience build the confidence instead of making confidence a prerequisite for beginning.",
-      "proposedBodyYou": "Something that had been managed indirectly becomes harder for you to keep managing that way, with a choice that develops something new showing where the power sits. An introduction, assignment, class, or invitation can put you close to people who already seem comfortable doing what you are just beginning. This is a direct contact, so pressure exposing the underlying issue is not happening in the background. It becomes part of the way you handle the situation itself.\n\nThrough {{untilDate}}, Pluto {{aspectWord}} your North Node favors one practical response: you can let experience build the confidence instead of making confidence a prerequisite for beginning."
+      "thirdPartyProtectionHits": []
     },
     {
       "contentKey": "authored/transit-aspect/saturn/ascendant/soft",
-      "residualFriendTokens": [],
-      "badYouAgreement": [],
       "sourceCoreferenceFlags": [
         "{{Name}} does better when they let the first reaction settle before changing how they present themselves to everyone else."
       ],
-      "sourceBodyThey": "A deadline, refusal, or practical constraint can make {{Name}} deal with first impressions and immediate responses more directly than they planned. A new setting can make the difference between their first instinct and their preferred response easier to notice. There is enough cooperation here for responsibility turning into consequence to produce a result instead of only a better mood.\n\nSaturn {{aspectWord}} their Ascendant continues through {{untilDate}}. {{Name}} does better when they let the first reaction settle before changing how they present themselves to everyone else.",
-      "proposedBodyYou": "A deadline, refusal, or practical constraint can make you deal with first impressions and immediate responses more directly than you planned. A new setting can make the difference between your first instinct and your preferred response easier to notice. There is enough cooperation here for responsibility turning into consequence to produce a result instead of only a better mood.\n\nSaturn {{aspectWord}} your Ascendant continues through {{untilDate}}. You do better when you let the first reaction settle before changing how you present yourself to everyone else."
+      "thirdPartyProtectionHits": []
     },
     {
       "contentKey": "authored/transit-aspect/saturn/mercury/soft",
-      "residualFriendTokens": [],
-      "badYouAgreement": [],
       "sourceCoreferenceFlags": [
         "A small wording problem can create more work than the actual disagreement if everyone starts answering what they assumed was meant.",
         "Through {{untilDate}}, Saturn {{aspectWord}} their Mercury favors one practical response: {{Name}} can save time by correcting the misunderstanding early instead of winning an argument about a version nobody intended."
       ],
-      "sourceBodyThey": "Responsibility gets specific for {{Name}} now, especially where how they think through the next choice has depended on extra time, patience, or work. A small wording problem can create more work than the actual disagreement if everyone starts answering what they assumed was meant. The opening still needs action. A deadline exposing what lacks support makes cooperation or timing easier, but it does not complete the task on {{Name}}'s behalf.\n\nThrough {{untilDate}}, Saturn {{aspectWord}} their Mercury favors one practical response: {{Name}} can save time by correcting the misunderstanding early instead of winning an argument about a version nobody intended.",
-      "proposedBodyYou": "Responsibility gets specific for you now, especially where how you think through the next choice has depended on extra time, patience, or work. A small wording problem can create more work than the actual disagreement if everyone starts answering what you assumed was meant. The opening still needs action. A deadline exposing what lacks support makes cooperation or timing easier, but it does not complete the task on your behalf.\n\nThrough {{untilDate}}, Saturn {{aspectWord}} your Mercury favors one practical response: you can save time by correcting the misunderstanding early instead of winning an argument about a version nobody intended."
+      "thirdPartyProtectionHits": [
+        {
+          "id": "everyone-assumed",
+          "count": 1
+        }
+      ]
     },
     {
       "contentKey": "authored/transit-aspect/saturn/neptune/soft",
-      "residualFriendTokens": [],
-      "badYouAgreement": [],
       "sourceCoreferenceFlags": [
         "They may be more affected by music, sleep loss, alcohol, atmosphere, or another person's emotion than they realize in the moment."
       ],
-      "sourceBodyThey": "A limit becomes concrete for {{Name}}, and sensitivity and missing details is where the consequence is hardest to avoid. They may be more affected by music, sleep loss, alcohol, atmosphere, or another person's emotion than they realize in the moment. The support is useful because a deadline exposing what lacks support can move toward action without another problem having to force it.\n\nWith Saturn {{aspectWord}} their Neptune until {{untilDate}}, {{Name}} does better when they reduce noise, substances, and unnecessary pressure before making the decision that will be hard to reverse.",
-      "proposedBodyYou": "A limit becomes concrete for you, and sensitivity and missing details is where the consequence is hardest to avoid. You may be more affected by music, sleep loss, alcohol, atmosphere, or another person's emotion than you realize in the moment. The support is useful because a deadline exposing what lacks support can move toward action without another problem having to force it.\n\nWith Saturn {{aspectWord}} your Neptune until {{untilDate}}, you do better when you reduce noise, substances, and unnecessary pressure before making the decision that will be hard to reverse."
+      "thirdPartyProtectionHits": []
     },
     {
       "contentKey": "authored/transit-aspect/saturn/south-node/conjunction",
-      "residualFriendTokens": [],
-      "badYouAgreement": [],
       "sourceCoreferenceFlags": [
         "The unfinished or under-supported part of the situation becomes visible to {{Name}} through the job everyone already expects them to do.",
         "Other people may quickly hand them the job they always know how to do, especially if that competence has made them the default helper before.",
         "While Saturn {{aspectWord}} their South Node until {{untilDate}}, {{Name}} gets more from deciding consciously where the old habit still serves them and where it simply saves other people from adjusting."
       ],
-      "sourceBodyThey": "The unfinished or under-supported part of the situation becomes visible to {{Name}} through the job everyone already expects them to do. Other people may quickly hand them the job they always know how to do, especially if that competence has made them the default helper before. The contact concentrates unfinished work becoming visible around one part of life, which can make a familiar pattern easier to recognize because it is harder to avoid.\n\nWhile Saturn {{aspectWord}} their South Node until {{untilDate}}, {{Name}} gets more from deciding consciously where the old habit still serves them and where it simply saves other people from adjusting.",
-      "proposedBodyYou": "The unfinished or under-supported part of the situation becomes visible to you through the job everyone already expects you to do. Other people may quickly hand you the job you always know how to do, especially if that competence has made you the default helper before. The contact concentrates unfinished work becoming visible around one part of life, which can make a familiar pattern easier to recognize because it is harder to avoid.\n\nWhile Saturn {{aspectWord}} your South Node until {{untilDate}}, you get more from deciding consciously where the old habit still serves you and where it simply saves other people from adjusting."
+      "thirdPartyProtectionHits": []
     },
     {
       "contentKey": "authored/transit-aspect/saturn/sun/soft",
-      "residualFriendTokens": [],
-      "badYouAgreement": [],
       "sourceCoreferenceFlags": [
         "{{Name}} does better when they let the work and choice become more specific instead of demanding that other people validate the entire identity attached to it."
       ],
-      "sourceBodyThey": "A limit becomes concrete for {{Name}}, and visibility and personal direction is where the consequence is hardest to avoid. They may need to defend a decision without turning every question about the decision into a question about who they are. The advantage is practical: a deadline exposing what lacks support is easier to direct toward something useful instead of spending the day managing friction around it.\n\nUntil {{untilDate}}, Saturn {{aspectWord}} their Sun stays active. {{Name}} does better when they let the work and choice become more specific instead of demanding that other people validate the entire identity attached to it.",
-      "proposedBodyYou": "A limit becomes concrete for you, and visibility and personal direction is where the consequence is hardest to avoid. You may need to defend a decision without turning every question about the decision into a question about who you are. The advantage is practical: a deadline exposing what lacks support is easier to direct toward something useful instead of spending the day managing friction around it.\n\nUntil {{untilDate}}, Saturn {{aspectWord}} your Sun stays active. You do better when you let the work and choice become more specific instead of demanding that other people validate the entire identity attached to it."
+      "thirdPartyProtectionHits": []
     },
     {
       "contentKey": "authored/transit-aspect/uranus/ascendant/hard",
-      "residualFriendTokens": [],
-      "badYouAgreement": [],
       "sourceCoreferenceFlags": [
         "{{Name}} does better when they let the first reaction settle before changing how they present themselves to everyone else."
       ],
-      "sourceBodyThey": "Something unexpected can force {{Name}} to improvise around first impressions and immediate responses instead of repeating the usual solution. A new setting can make the difference between their first instinct and their preferred response easier to notice. Disruption exposing a stale pattern can sharpen the problem without making the biggest reaction the best response.\n\nUranus {{aspectWord}} their Ascendant stays active through {{untilDate}}. {{Name}} does better when they let the first reaction settle before changing how they present themselves to everyone else.",
-      "proposedBodyYou": "Something unexpected can force you to improvise around first impressions and immediate responses instead of repeating the usual solution. A new setting can make the difference between your first instinct and your preferred response easier to notice. Disruption exposing a stale pattern can sharpen the problem without making the biggest reaction the best response.\n\nUranus {{aspectWord}} your Ascendant stays active through {{untilDate}}. You do better when you let the first reaction settle before changing how you present yourself to everyone else."
+      "thirdPartyProtectionHits": []
     },
     {
       "contentKey": "authored/transit-aspect/uranus/jupiter/hard",
-      "residualFriendTokens": [],
-      "badYouAgreement": [],
       "sourceCoreferenceFlags": [
         "They may want to say yes before checking the budget, schedule, evidence, or number of people who will depend on that yes."
       ],
-      "sourceBodyThey": "Something unexpected can force {{Name}} to improvise around risk, opportunity, and the size of the promise instead of repeating the usual solution. They may want to say yes before checking the budget, schedule, evidence, or number of people who will depend on that yes. The conflict is easier to use once disruption exposing a stale pattern is separated from the part that genuinely needs action.\n\nUntil {{untilDate}}, Uranus {{aspectWord}} their Jupiter remains active. {{Name}} benefits from checking the number, time, and obligation attached to the larger option before committing to it.",
-      "proposedBodyYou": "Something unexpected can force you to improvise around risk, opportunity, and the size of the promise instead of repeating the usual solution. You may want to say yes before checking the budget, schedule, evidence, or number of people who will depend on that yes. The conflict is easier to use once disruption exposing a stale pattern is separated from the part that genuinely needs action.\n\nUntil {{untilDate}}, Uranus {{aspectWord}} your Jupiter remains active. You benefit from checking the number, time, and obligation attached to the larger option before committing to it."
+      "thirdPartyProtectionHits": []
     },
     {
       "contentKey": "authored/transit-aspect/uranus/mercury/soft",
-      "residualFriendTokens": [],
-      "badYouAgreement": [],
       "sourceCoreferenceFlags": [
         "They may know what they mean and still need to slow down enough to notice that the other person heard something different.",
         "With Uranus {{aspectWord}} their Mercury until {{untilDate}}, {{Name}} benefits from saying the important part clearly and leaving enough space for the other person to respond to that exact point."
       ],
-      "sourceBodyThey": "The original plan may stop fitting {{Name}} as neatly as it did, especially around the facts behind a conversation. They may know what they mean and still need to slow down enough to notice that the other person heard something different. Support is available in a form {{Name}} can actually use, and independence pushing against a rigid arrangement is less likely to become the part they have to manage around.\n\nWith Uranus {{aspectWord}} their Mercury until {{untilDate}}, {{Name}} benefits from saying the important part clearly and leaving enough space for the other person to respond to that exact point.",
-      "proposedBodyYou": "The original plan may stop fitting you a neatly as it did, especially around the facts behind a conversation. You may know what you mean and still need to slow down enough to notice that the other person heard something different. Support is available in a form you can actually use, and independence pushing against a rigid arrangement is less likely to become the part you have to manage around.\n\nWith Uranus {{aspectWord}} your Mercury until {{untilDate}}, you benefit from saying the important part clearly and leaving enough space for the other person to respond to that exact point."
+      "thirdPartyProtectionHits": []
     },
     {
       "contentKey": "authored/transit-aspect/uranus/north-node/conjunction",
-      "residualFriendTokens": [],
-      "badYouAgreement": [],
       "sourceCoreferenceFlags": [
         "An introduction, assignment, class, or invitation can put them close to people who already seem comfortable doing what they are just beginning."
       ],
-      "sourceBodyThey": "{{Name}} may want more freedom from a pattern that has become stale, with a choice that develops something new making the need for change obvious. An introduction, assignment, class, or invitation can put them close to people who already seem comfortable doing what they are just beginning. The two concerns sit close together now, so the need for change arriving abruptly immediately changes how {{Name}} experiences the situation instead of arriving as a separate issue.\n\nAs Uranus {{aspectWord}} their North Node continues through {{untilDate}}, {{Name}} can let experience build the confidence instead of making confidence a prerequisite for beginning.",
-      "proposedBodyYou": "You may want more freedom from a pattern that has become stale, with a choice that develops something new making the need for change obvious. An introduction, assignment, class, or invitation can put you close to people who already seem comfortable doing what you are just beginning. The two concerns sit close together now, so the need for change arriving abruptly immediately changes how you experience the situation instead of arriving as a separate issue.\n\nAs Uranus {{aspectWord}} your North Node continues through {{untilDate}}, you can let experience build the confidence instead of making confidence a prerequisite for beginning."
+      "thirdPartyProtectionHits": []
     },
     {
       "contentKey": "authored/transit-aspect/venus/jupiter/hard",
-      "residualFriendTokens": [],
-      "badYouAgreement": [],
       "sourceCoreferenceFlags": [
         "They may want to say yes before checking the budget, schedule, evidence, or number of people who will depend on that yes."
       ],
-      "sourceBodyThey": "An invitation, purchase, apology, or offer can make risk, opportunity, and the size of the promise easier for {{Name}} to evaluate in concrete terms. They may want to say yes before checking the budget, schedule, evidence, or number of people who will depend on that yes. A sharp reaction can contain useful information and still be badly timed if money or affection changing the tone is making the situation feel more absolute than it is.\n\nUntil {{untilDate}}, Venus {{aspectWord}} their Jupiter remains active. {{Name}} benefits from checking the number, time, and obligation attached to the larger option before committing to it.",
-      "proposedBodyYou": "An invitation, purchase, apology, or offer can make risk, opportunity, and the size of the promise easier for you to evaluate in concrete terms. You may want to say yes before checking the budget, schedule, evidence, or number of people who will depend on that yes. A sharp reaction can contain useful information and still be badly timed if money or affection changing the tone is making the situation feel more absolute than it is.\n\nUntil {{untilDate}}, Venus {{aspectWord}} your Jupiter remains active. You benefit from checking the number, time, and obligation attached to the larger option before committing to it."
+      "thirdPartyProtectionHits": []
     },
     {
       "contentKey": "authored/transit-aspect/venus/jupiter/soft",
-      "residualFriendTokens": [],
-      "badYouAgreement": [],
       "sourceCoreferenceFlags": [
         "They may want to say yes before checking the budget, schedule, evidence, or number of people who will depend on that yes."
       ],
-      "sourceBodyThey": "An invitation, purchase, apology, or offer can make risk, opportunity, and the size of the promise easier for {{Name}} to evaluate in concrete terms. They may want to say yes before checking the budget, schedule, evidence, or number of people who will depend on that yes. There is enough cooperation here for values becoming visible through a practical choice to produce a result instead of only a better mood.\n\nUntil {{untilDate}}, Venus {{aspectWord}} their Jupiter remains active. {{Name}} benefits from checking the number, time, and obligation attached to the larger option before committing to it.",
-      "proposedBodyYou": "An invitation, purchase, apology, or offer can make risk, opportunity, and the size of the promise easier for you to evaluate in concrete terms. You may want to say yes before checking the budget, schedule, evidence, or number of people who will depend on that yes. There is enough cooperation here for values becoming visible through a practical choice to produce a result instead of only a better mood.\n\nUntil {{untilDate}}, Venus {{aspectWord}} your Jupiter remains active. You benefit from checking the number, time, and obligation attached to the larger option before committing to it."
+      "thirdPartyProtectionHits": []
     },
     {
       "contentKey": "authored/transit-aspect/venus/mercury/hard",
-      "residualFriendTokens": [],
-      "badYouAgreement": [],
       "sourceCoreferenceFlags": [
         "They may know what they mean and still need to slow down enough to notice that the other person heard something different."
       ],
-      "sourceBodyThey": "What feels good and what works in practice come closer together for {{Name}} around the facts behind a conversation. They may know what they mean and still need to slow down enough to notice that the other person heard something different. The difficult contact exposes something worth addressing, but pleasure making one option easier to justify does not require an all-or-nothing answer.\n\nUntil {{untilDate}}, Venus {{aspectWord}} their Mercury stays active. {{Name}} benefits from saying the important part clearly and leaving enough space for the other person to respond to that exact point.",
-      "proposedBodyYou": "What feels good and what works in practice come closer together for you around the facts behind a conversation. You may know what you mean and still need to slow down enough to notice that the other person heard something different. The difficult contact exposes something worth addressing, but pleasure making one option easier to justify does not require an all-or-nothing answer.\n\nUntil {{untilDate}}, Venus {{aspectWord}} your Mercury stays active. You benefit from saying the important part clearly and leaving enough space for the other person to respond to that exact point."
+      "thirdPartyProtectionHits": []
     },
     {
       "contentKey": "authored/transit-aspect/venus/mercury/soft",
-      "residualFriendTokens": [],
-      "badYouAgreement": [],
       "sourceCoreferenceFlags": [
         "They may know what they mean and still need to slow down enough to notice that the other person heard something different."
       ],
-      "sourceBodyThey": "What feels good and what works in practice come closer together for {{Name}} around the facts behind a conversation. They may know what they mean and still need to slow down enough to notice that the other person heard something different. The advantage is practical: pleasure making one option easier to justify is easier to direct toward something useful instead of spending the day managing friction around it.\n\nUntil {{untilDate}}, Venus {{aspectWord}} their Mercury stays active. {{Name}} benefits from saying the important part clearly and leaving enough space for the other person to respond to that exact point.",
-      "proposedBodyYou": "What feels good and what works in practice come closer together for you around the facts behind a conversation. You may know what you mean and still need to slow down enough to notice that the other person heard something different. The advantage is practical: pleasure making one option easier to justify is easier to direct toward something useful instead of spending the day managing friction around it.\n\nUntil {{untilDate}}, Venus {{aspectWord}} your Mercury stays active. You benefit from saying the important part clearly and leaving enough space for the other person to respond to that exact point."
+      "thirdPartyProtectionHits": []
     },
     {
       "contentKey": "authored/transit-aspect/venus/north-node/conjunction",
-      "residualFriendTokens": [],
-      "badYouAgreement": [],
       "sourceCoreferenceFlags": [
         "An introduction, assignment, class, or invitation can put them close to people who already seem comfortable doing what they are just beginning."
       ],
-      "sourceBodyThey": "{{Name}} may notice what they actually value through an ordinary choice involving a choice that develops something new. An introduction, assignment, class, or invitation can put them close to people who already seem comfortable doing what they are just beginning. The two concerns sit close together now, so social ease changing how the offer lands immediately changes how {{Name}} experiences the situation instead of arriving as a separate issue.\n\nAs Venus {{aspectWord}} their North Node continues through {{untilDate}}, {{Name}} can let experience build the confidence instead of making confidence a prerequisite for beginning.",
-      "proposedBodyYou": "You may notice what you actually value through an ordinary choice involving a choice that develops something new. An introduction, assignment, class, or invitation can put you close to people who already seem comfortable doing what you are just beginning. The two concerns sit close together now, so social ease changing how the offer lands immediately changes how you experience the situation instead of arriving as a separate issue.\n\nAs Venus {{aspectWord}} your North Node continues through {{untilDate}}, you can let experience build the confidence instead of making confidence a prerequisite for beginning."
+      "thirdPartyProtectionHits": []
     },
     {
       "contentKey": "authored/transit-aspect/venus/sun/hard",
-      "residualFriendTokens": [],
-      "badYouAgreement": [],
       "sourceCoreferenceFlags": [
         "With Venus {{aspectWord}} their Sun until {{untilDate}}, {{Name}} does better when they let the work and choice become more specific instead of demanding that other people validate the entire identity attached to it."
       ],
-      "sourceBodyThey": "What feels good and what works in practice come closer together for {{Name}} around visibility and personal direction. They may need to defend a decision without turning every question about the decision into a question about who they are. The difficult contact exposes something worth addressing, but pleasure making one option easier to justify does not require an all-or-nothing answer.\n\nWith Venus {{aspectWord}} their Sun until {{untilDate}}, {{Name}} does better when they let the work and choice become more specific instead of demanding that other people validate the entire identity attached to it.",
-      "proposedBodyYou": "What feels good and what works in practice come closer together for you around visibility and personal direction. You may need to defend a decision without turning every question about the decision into a question about who you are. The difficult contact exposes something worth addressing, but pleasure making one option easier to justify does not require an all-or-nothing answer.\n\nWith Venus {{aspectWord}} your Sun until {{untilDate}}, you do better when you let the work and choice become more specific instead of demanding that other people validate the entire identity attached to it."
+      "thirdPartyProtectionHits": []
     }
-  ]
+  ],
+  "unresolvedFlags": []
 }
