@@ -56,8 +56,7 @@ jobs:
           fs.writeFileSync(packagePath, pkg);
           NODE
       - name: Rebuild fallback browser resolver
-        working-directory: apps/web/src/content/fallbackArchitectureV3
-        run: npx esbuild resolver/index.browser.ts --bundle --format=esm --outfile=dist/tldr-content.js
+        run: npx esbuild apps/web/src/content/fallbackArchitectureV3/resolver/index.browser.ts --bundle --format=esm --outfile=apps/web/src/content/fallbackArchitectureV3/dist/tldr-content.js
       - name: Regenerate governed fallback artifacts
         run: |
           node scripts/generate-fallback-package-manifest.mjs
