@@ -34,7 +34,7 @@ const bundled = read(bundledPath);
 const templates = read("apps/web/src/content/fallbackArchitectureV3/templates/fallback-templates-v3.json");
 const fallbackRows = read("apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json");
 
-assert.equal(PACKAGE_VERSION, "v3-2026-09-03c");
+assert.equal(PACKAGE_VERSION, "v3-2026-09-04a");
 assert.equal(authorization.schema, "tldrastro-bounded-owner-batch-authorization-v1");
 assert.equal(authorization.type, BOUNDED_OWNER_BATCH_AUTHORIZATION_TYPE);
 assert.equal(authorization.authority, "owner");
