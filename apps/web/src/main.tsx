@@ -61,7 +61,9 @@ async function startApp() {
     });
   }
 
-  if (!isAdminContentPath()) {
+  if (isAdminContentPath()) {
+    await import("../../admin/src/admin-row-selection.css");
+  } else {
     await import("./styles.css");
   }
 
