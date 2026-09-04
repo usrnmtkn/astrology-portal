@@ -2,7 +2,6 @@
 
 import assert from "node:assert/strict";
 import crypto from "node:crypto";
-import { execFileSync } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
 import {
@@ -26,8 +25,6 @@ const protectedSunAsc = "authored/transit-aspect/sun/ascendant/hard";
 const protectedVenusMoon = "authored/transit-aspect/venus/moon/hard";
 const read = (relative) => JSON.parse(fs.readFileSync(path.join(root, relative), "utf8"));
 const sha256 = (value) => crypto.createHash("sha256").update(value).digest("hex");
-
-execFileSync(process.execPath, ["scripts/build-you-transit-refresh-candidates.mjs"], { cwd: root, stdio: "inherit" });
 
 const candidates = read(candidatePath);
 const review = read(reviewPath);
@@ -55,6 +52,9 @@ assert.equal(authorization.approvalLevel, "owner_directed_perspective_adaptation
 assert.deepEqual(authorization.capabilities, ["batch_generation", "serving"]);
 assert.equal(authorization.count, 376);
 assert.equal(authorization.members.length, 376);
+// The candidate/review packets are immutable PRE-promotion evidence. Their hashes,
+// recorded in the authorization, prove exactly which old You bodies were replaced
+// and which proposed bodies the owner-directed batch authorized.
 assert.equal(sha256(fs.readFileSync(path.join(root, candidatePath), "utf8")), authorization.sourceRecordSha256);
 assert.equal(sha256(fs.readFileSync(path.join(root, reviewPath), "utf8")), authorization.reviewRecordSha256);
 
