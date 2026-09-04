@@ -9,15 +9,17 @@
   "reportRouteChunkGzipBytes": 4500,
   "skyPlacementFallbackChunkGzipBytes": 150000,
   "lunationBookFallbackChunkGzipBytes": 215000,
-  "transitFallbackChunkGzipBytes": 330000,
+  "transitFallbackChunkGzipBytes": 390000,
   "relationshipFallbackChunkGzipBytes": 230000,
   "signupChunkGzipBytes": 4000,
   "totalCssGzipBytes": 111000,
-  "totalJavaScriptGzipBytes": 2735000,
+  "totalJavaScriptGzipBytes": 2850000,
   "_rationale": {
     "totalCssGzipBytes": "Raised by 5 kB for the deferred Content Studio form, Composition Map surface inventory, and contextual atomic-source editor; reader startup CSS remains separately capped at 47 kB.",
     "readerBootGzipBytes": "Raised by 2 kB for the fail-soft eclipse review reporting and protected-content integrity boundary; deferred content must still remain outside the static boot graph.",
     "lunationBookFallbackChunkGzipBytes": "Raised by 5 kB for the 22 recovered, owner-approved full lunation book passages; the complete protected writing remains lazy-loaded and byte-exact.",
-    "totalJavaScriptGzipBytes": "Raised by 15 kB of aggregate-only headroom for Content Studio hydration, cache invalidation, concurrency, and last-known-good failover reliability after the release remained within the unchanged App boot, reader boot, App chunk, startup CSS, and individual deferred-content budgets."
+    "transitFallbackChunkGzipBytes": "Owner-authorized increase from 330 kB to 390 kB for the 351 exact, hash-bound Friends transit body_they passages. The transit corpus remains on-demand and outside the static App boot graph; all startup and route-local budgets remain unchanged.",
+    "totalJavaScriptGzipBytes": "Owner-authorized aggregate increase to 2.85 MB for the 351 exact Friends transit passages. App boot, reader boot, App chunk, startup CSS, Friends workspace, and all unrelated deferred-content budgets remain unchanged.",
+    "authorization": "Owner explicitly authorized increasing the bundle budget during PR #509 release review on 2026-09-04."
   }
 }

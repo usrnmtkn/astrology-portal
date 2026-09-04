@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import crypto from "node:crypto";
 import fs from "node:fs";
 import {
   createTransitSynastryRenderer
@@ -14,6 +15,13 @@ const transitRows = readJson("../apps/web/src/content/fallbackArchitectureV3/sou
 const templates = readJson("../apps/web/src/content/fallbackArchitectureV3/templates/fallback-templates-v3.json");
 const canonicalMatrix = readJson("../docs/content-review/sky-aspects/2026-07-31/canonical-noon-matrix.json");
 const approvedJupiterNeptune = readJson("../packages/astro-knowledge/data/transits/jupiter-trine-neptune.json");
+const exactSkyApprovals = new Map([
+  ["jupiter-trine-neptune", readJson("../packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-03/records/jupiter-trine-neptune-exact-approval.json")],
+  ["neptune-sextile-pluto", readJson("../packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-03/records/neptune-sextile-pluto-exact-approval.json")],
+  ["uranus-sextile-neptune", readJson("../packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-03/records/uranus-sextile-neptune-exact-approval.json")],
+  ["uranus-trine-pluto", readJson("../packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-03/records/uranus-trine-pluto-exact-approval.json")]
+]);
+const sha256 = (value) => crypto.createHash("sha256").update(value).digest("hex");
 const ownerRewriteSource = readJson("../packages/astro-knowledge/review/sky-calendar-owner-rewrites-2026-08-20/sky-calendar-owner-rewrites-payloads.json");
 const ownerAspectSource = readJson("../packages/astro-knowledge/sources/authored/sky-aspect-owner-refined-v101.json");
 const skyAspectVoice = readJson("../packages/astro-knowledge/voice/tldr-astro/sky-aspect.json");
@@ -37,10 +45,7 @@ assert.equal(phrasebook.hookRows.filter((row) => row.contentKey.startsWith("fall
 assert.equal(phrasebook.hookRows.filter((row) => row.contentKey.startsWith("fallback-hook/sky-aspect-sign/")).length, 78);
 
 assert.equal(approvedJupiterNeptune.status, "LIVE");
-assert.equal(
-  approvedJupiterNeptune.readerCopy?.body,
-  ownerRewriteSource.payloads["sky.jupiter.trine.neptune"].payload.body,
-);
+
 assert.equal(Object.keys(ownerAspectSource).length, 225);
 assert.equal(exactTransitRecords.length, 215);
 assert.ok(exactTransitRecords.every((record) => record.status === "LIVE"));
@@ -49,11 +54,16 @@ assert.equal(
   skyAspectVoice.lockedPrinciple,
   "The astrology should explain why the event unfolds the way it does, while the prose shows what that looks like in ordinary life. The best version does both."
 );
-for (const id of ["neptune-sextile-pluto", "uranus-sextile-neptune", "uranus-trine-pluto"]) {
-  const [transiting, aspect, other] = id.split("-");
+for (const [id, approval] of exactSkyApprovals) {
+  assert.equal(approval.authority, "owner", `${id}: exact approval authority`);
+  assert.equal(approval.decision, "approve", `${id}: exact approval decision`);
+  assert.equal(approval.approvalLevel, "exact_owner_approved", `${id}: exact approval level`);
+  assert.ok(approval.capabilities.includes("serving"), `${id}: serving capability`);
+  assert.equal(sha256(approval.body), approval.bodySha256, `${id}: approval body hash`);
   assert.equal(
     exactTransitRecords.find((record) => record.id === id)?.readerCopy?.body,
-    ownerRewriteSource.payloads[`sky.${transiting}.${aspect}.${other}`].payload.body,
+    approval.body,
+    `${id}: live transit body must equal exact owner-approved body`
   );
 }
 

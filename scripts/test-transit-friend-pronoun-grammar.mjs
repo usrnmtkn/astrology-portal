@@ -49,13 +49,31 @@ for (const row of transitAspectRows) {
   assert.doesNotMatch(
     friendBody,
     /\b(?:you|your|yours|yourself|yourselves)\b/iu,
-    `${row.contentKey}: second-person language leaked into friend voice.`
+    `${row.contentKey}: second-person language leaked into fallback friend voice.`
   );
   assert.deepEqual(
     issues,
     [],
-    `${row.contentKey}: ${issues.map((issue) => `${issue.pattern}: ${issue.sentence}`).join(" | ")}`
+    `${row.contentKey}: fallback conversion: ${issues.map((issue) => `${issue.pattern}: ${issue.sentence}`).join(" | ")}`
   );
+
+  if (typeof row.body_they === "string" && row.body_they.trim()) {
+    const explicitFriendBody = row.body_they
+      .replaceAll("{{Name}}", "Sofia")
+      .replaceAll("{{aspectWord}}", "square")
+      .replaceAll("{{untilDate}}", "February 1");
+    const explicitIssues = findPronounGrammarIssues(explicitFriendBody);
+    assert.doesNotMatch(
+      explicitFriendBody,
+      /\b(?:you|your|yours|yourself|yourselves)\b/iu,
+      `${row.contentKey}: second-person language leaked into explicit Friends copy.`
+    );
+    assert.deepEqual(
+      explicitIssues,
+      [],
+      `${row.contentKey}: explicit Friends copy: ${explicitIssues.map((issue) => `${issue.pattern}: ${issue.sentence}`).join(" | ")}`
+    );
+  }
 }
 
 const neptuneHardRow = transitAspectRows.find(
@@ -67,14 +85,15 @@ const neptuneFriendBody = friendVoiceFromReaderCopy(neptuneHardRow.body_you, "Ni
 assert.match(
   neptuneFriendBody,
   /^The achievements that used to satisfy them may stop satisfying them\./u,
-  "Object-position reader references should render with the correct friend pronoun."
+  "Fallback object-position reader references should render with the correct friend pronoun."
 );
 assert.doesNotMatch(
   neptuneFriendBody,
   /\bsatisf(?:y|ies|ied|ying)\s+they\b/iu,
-  "The Neptune-Neptune regression must never render object-position `they`."
+  "The Neptune-Neptune fallback regression must never render object-position `they`."
 );
 
+assert.equal(typeof neptuneHardRow.body_they, "string", "The owner-approved Neptune-Neptune Friends release must carry explicit body_they.");
 const renderedNeptuneFriendCard = renderTransitAspect({
   transiting: "neptune",
   natal: "neptune",
@@ -82,15 +101,19 @@ const renderedNeptuneFriendCard = renderTransitAspect({
   voice: "Nikki",
   window: "Until February 1"
 });
-assert.match(
-  renderedNeptuneFriendCard.body,
-  /^The achievements that used to satisfy them may stop satisfying them\./u,
-  "The production resolver must use the grammar-safe friend rendering."
+const expectedExplicitNeptuneFriendBody = neptuneHardRow.body_they
+  .replaceAll("{{Name}}", "Nikki")
+  .replaceAll("{{aspectWord}}", "square")
+  .replaceAll("{{untilDate}}", "February 1");
+assert.ok(
+  renderedNeptuneFriendCard.body === expectedExplicitNeptuneFriendBody
+    || renderedNeptuneFriendCard.body.startsWith(`${expectedExplicitNeptuneFriendBody}\n\n`),
+  "The production resolver must begin with the exact explicit owner-approved Friends passage before any governed addendum."
 );
 assert.deepEqual(
   findPronounGrammarIssues(renderedNeptuneFriendCard.body),
   [],
-  "The rendered Neptune-Neptune friend card must pass pronoun grammar review."
+  "The full rendered Neptune-Neptune friend card, including any governed addendum, must pass pronoun grammar review."
 );
 
 console.log(`Transit friend-pronoun grammar passed for ${transitAspectRows.length} authored rows.`);

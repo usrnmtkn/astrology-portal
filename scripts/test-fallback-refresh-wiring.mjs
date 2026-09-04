@@ -173,7 +173,7 @@ const counts = {
   sourceMaterial: sourceRows.fallbackSourceRows.length
 };
 
-assert.equal(PACKAGE_VERSION, "v3-2026-09-03b");
+assert.equal(PACKAGE_VERSION, "v3-2026-09-03c");
 assert.ok(counts.authoredCards > 0, "Package must include authored transit/synastry cards.");
 assert.ok(counts.fallbackHooks > 0, "Package must include fallback hooks.");
 assert.ok(counts.vocabulary > 0, "Package must include vocabulary rows.");
@@ -292,7 +292,17 @@ const friendTransit = transitRenderer.renderTransitAspect({
 });
 assert.equal(friendTransit.headline, "Moon square Sofia's Venus");
 assert.equal(friendTransit.contentKey, "authored/transit-aspect/moon/venus/hard");
-assert.match(friendTransit.body, /^They can say yes to plans and quietly hope they fall through\./u);
+const approvedMoonVenusFriend = transitRows.authoredCards.find((row) => row.contentKey === "authored/transit-aspect/moon/venus/hard");
+assert.equal(typeof approvedMoonVenusFriend?.body_they, "string", "Moon-Venus hard must carry explicit owner-approved Friends copy.");
+const expectedMoonVenusFriend = approvedMoonVenusFriend.body_they
+  .replaceAll("{{Name}}", "Sofia")
+  .replaceAll("{{aspectWord}}", "square")
+  .replaceAll("{{untilDate}}", "November 13");
+assert.ok(
+  friendTransit.body === expectedMoonVenusFriend
+    || friendTransit.body.startsWith(`${expectedMoonVenusFriend}\n\n`),
+  "Friends refresh must serve the exact explicit owner-approved Moon-Venus passage before any governed addendum."
+);
 assert.doesNotMatch(friendTransit.body, /The Moon in Taurus wants comfort of the touchable kind;/u);
 assert.doesNotMatch(friendTransit.body, /\byou(?:r|rs|self)?\b/iu);
 

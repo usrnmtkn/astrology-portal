@@ -10,7 +10,7 @@ const contentKey = "authored/transit-aspect/venus/moon/hard";
 const authorityRelative = "packages/astro-knowledge/review/transit-aspect-venus-moon-hard-owner-published-2026-09-02.json";
 const sourceRelative = "apps/web/src/content/fallbackArchitectureV3/source-rows/transit-synastry-rows-v1.json";
 const oldPackageVersion = "v3-2026-09-03a";
-const nextPackageVersion = "v3-2026-09-03b";
+const nextPackageVersion = "v3-2026-09-03c";
 const priorSourceBodySha256 = "474bdf7a0bd7bde64a2bdb3a2c9f521b92e4790afb41518da31f469eded78324";
 const apply = process.argv.includes("--apply");
 const sha256 = (value) => crypto.createHash("sha256").update(value).digest("hex");
