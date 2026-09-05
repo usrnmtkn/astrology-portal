@@ -28,16 +28,18 @@ jobs:
         run: npm ci
       - name: Apply focused Sky aspect fix
         run: node scripts/hotfix-sky-v4-related-aspect-hydration.mjs
-      - name: Verify focused contracts
-        run: |
-          node scripts/test-sky-v4-related-aspect-hydration.mjs
-          node scripts/test-calendar-exact-sky-aspect-routing.mjs
+      - name: Verify focused source contract
+        run: node scripts/test-sky-v4-related-aspect-hydration.mjs
+      - name: Build astro knowledge
+        run: npm run build -w @tldr/astro-knowledge
+      - name: Verify all 248 exact routes
+        run: node scripts/test-calendar-exact-sky-aspect-routing.mjs
       - name: Verify existing Sky article contracts
         run: |
           node scripts/test-sky-article-v1.mjs
           node scripts/test-reviewed-sky-aspect-phrasebook.mjs
-      - name: Build app
-        run: npm run build
+      - name: Build web app
+        run: npm run build -w @tldr/web
       - name: Install Playwright Chromium
         run: npx playwright install chromium
       - name: Reproduce and verify Sun in Virgo article
