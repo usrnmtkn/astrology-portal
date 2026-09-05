@@ -4,8 +4,9 @@ import fs from "node:fs";
 
 const reviewDir = "packages/astro-knowledge/review/between-you-two-v2-2026-09-05";
 const full = JSON.parse(fs.readFileSync(`${reviewDir}/full-authoring-review.json`, "utf8"));
-const pilot = JSON.parse(fs.readFileSync(`${reviewDir}/pilot-review.json`, "utf8"));
 const evidence = JSON.parse(fs.readFileSync(`${reviewDir}/bond-evidence-28.json`, "utf8"));
+const batch1 = JSON.parse(fs.readFileSync(`${reviewDir}/owner-approval-batch-1.json`, "utf8"));
+const batch2 = JSON.parse(fs.readFileSync(`${reviewDir}/owner-approval-batch-2.json`, "utf8"));
 
 assert.equal(full.servingAuthority, false);
 assert.equal(full.records.length, 32);
@@ -25,7 +26,9 @@ for (const record of bond) {
   assert.ok(record.headline.body_they.trim());
   assert.ok(record.move.body_you.trim());
   assert.ok(record.move.body_they.trim());
-  assert.ok(["owner_approved", "proposed"].includes(record.reviewStatus));
+  assert.ok(["owner_approved", "proposed"].includes(record.reviewStatusYou));
+  assert.ok(["owner_approved", "proposed"].includes(record.reviewStatusThey));
+  assert.ok(["partially_owner_approved", "proposed"].includes(record.reviewStatus));
 }
 for (const record of moon) {
   assert.ok(record.headline.trim());
@@ -33,27 +36,39 @@ for (const record of moon) {
   assert.ok(["owner_approved", "proposed"].includes(record.reviewStatus));
 }
 
-const approved = full.records.filter((record) => record.reviewStatus === "owner_approved");
-const proposed = full.records.filter((record) => record.reviewStatus === "proposed");
-assert.equal(approved.length, 6);
-assert.equal(proposed.length, 26);
-assert.deepEqual(
-  new Set(approved.map((record) => record.id)),
-  new Set(["hard-saturn", "hard-mercury", "hard-jupiter", "soft-venus", "soft-jupiter", "shared-moon-fire"])
-);
+const approvedYou = bond.filter((record) => record.reviewStatusYou === "owner_approved");
+const approvedThey = bond.filter((record) => record.reviewStatusThey === "owner_approved");
+const approvedMoon = moon.filter((record) => record.reviewStatus === "owner_approved");
+assert.equal(approvedYou.length, 11);
+assert.equal(approvedThey.length, 0);
+assert.equal(approvedMoon.length, 1);
+assert.equal(approvedMoon[0].id, "shared-moon-fire");
+assert.equal(full.approvalBoundary.bondReaderDirectionApproved, 11);
+assert.equal(full.approvalBoundary.bondReverseDirectionApproved, 0);
+assert.equal(full.approvalBoundary.sharedMoonApproved, 1);
 
-const pilotById = new Map(pilot.records.map((record) => [record.id, record]));
-for (const record of approved) {
-  const calibration = pilotById.get(record.id);
-  assert.ok(calibration, `Approved full-review record ${record.id} must originate in owner-approved pilot`);
-  if (record.evidenceTier === "shared-moon") {
-    assert.equal(record.headline, calibration.candidateHeadline);
-    assert.equal(record.body, calibration.candidateBody);
-    continue;
+const approvedIds = new Set([...batch1.records, ...batch2.records]
+  .filter((record) => record.family && record.transiting)
+  .map((record) => record.id));
+assert.equal(approvedIds.size, 11);
+assert.deepEqual(new Set(approvedYou.map((record) => record.id)), approvedIds);
+
+for (const batch of [batch1, batch2]) {
+  assert.equal(batch.servingAuthority, false);
+  for (const approval of batch.records) {
+    const record = full.records.find((candidate) => candidate.id === approval.id);
+    assert.ok(record, `Missing approved V2 record ${approval.id}`);
+    if (record.evidenceTier === "shared-moon") {
+      assert.equal(record.headline, approval.headline);
+      assert.equal(record.body, approval.body);
+      assert.equal(record.reviewStatus, "owner_approved");
+      continue;
+    }
+    assert.equal(record.headline.body_you, approval.headline_body_you, `${record.id} approved headline drifted`);
+    assert.equal(record.move.body_you, approval.move_body_you, `${record.id} approved move drifted`);
+    assert.equal(record.reviewStatusYou, "owner_approved");
+    assert.equal(record.reviewStatusThey, "proposed");
   }
-  assert.deepEqual(record.headline, calibration.candidateHeadline, `${record.id} headline drifted from owner-approved pilot`);
-  assert.deepEqual(record.move, calibration.candidateMove, `${record.id} move drifted from owner-approved pilot`);
-  assert.equal(record.bodyContentKey, calibration.bodyAuthority.contentKey);
 }
 
-console.log("Between You Two V2 full review contract passed: 28 bond families + 4 Moon elements; 6 owner-approved calibration rows; 26 proposed rows; 0 serving authority.");
+console.log("Between You Two V2 full review contract passed: 28 bond families + 4 Moon elements; 11 reader-direction bond mechanisms + Moon Fire owner-approved; 0 reverse-direction approval; 0 serving authority.");
