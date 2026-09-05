@@ -3,6 +3,7 @@ import { resolveAstrology } from "./resolveAstrology.mjs";
 import { retrieveOwnerContext } from "./retrieveOwnerContext.mjs";
 import { ARTICLE_LIVED_SECTION_DRAFT_SCHEMA, generateDraft } from "./generateDraft.mjs";
 import { validateCopy } from "./validateCopy.mjs";
+import { governValidationResult } from "./effectiveRuleGovernance.mjs";
 import { buildArgumentOutline, assertArgumentOutlineApproved } from "./argumentGate.mjs";
 import { getContentSpine, assertContentSpine } from "./spineRegistry.mjs";
 import { assertPositiveOwnerEvidenceContext, OwnerEvidencePreconditionError } from "./ownerEvidencePolicy.mjs";
@@ -173,7 +174,7 @@ export async function runWritingPipeline({
   const effectiveProtectedOwnerLines = partialRewrite?.mode === "lived-section-only"
     ? [...new Set([...protectedOwnerLines, ...Object.values(partialRewrite.protectedFields)])]
     : protectedOwnerLines;
-  const lint = validateCopy(draft, {
+  const rawLint = validateCopy(draft, {
     family, register, surface, plan, expectedPlaceholders, requiredFields: resolvedRequiredFields, protectedOwnerLines: effectiveProtectedOwnerLines,
     ownerCorrections: context.corrections, ownerCorpusVocabulary, literalEvidenceRequirements,
     reservedNegationPivots,
@@ -191,8 +192,10 @@ export async function runWritingPipeline({
       ? ["planet", "condition", "handoff", "thesis", "failure_mechanism", "close"]
       : []
   });
+  const lint = governValidationResult(rawLint, { surface, family });
   const billedCalls = writerClient?.billed === true ? 1 : writerClient?.billed === false ? 0 : null;
   const failureCategories = [...new Set(lint.violations.map((item) => item.category))];
+  const advisoryCategories = [...new Set(lint.advisories.map((item) => item.category).filter(Boolean))];
   if (lint.completionStatus === "spine-quality-incomplete") {
     return {
       draft: {
@@ -216,6 +219,7 @@ export async function runWritingPipeline({
         proseModelGateCalls: 0,
         automaticallyRevised: 0,
         failureCategories,
+        advisoryCategories,
         spineQualityFailedElements: lint.spineQuality.failedElements,
         finalLintStatus: lint.passed ? "PASS_WITH_SPINE_QUALITY_INCOMPLETE" : "REVISE",
         finalEvalStatus: "SPINE_QUALITY_INCOMPLETE"
@@ -238,7 +242,8 @@ export async function runWritingPipeline({
         proseModelGateCalls: 0,
         automaticallyRevised: 0,
         failureCategories,
-        finalLintStatus: lint.passed ? "PASS" : "REVISE",
+        advisoryCategories,
+        finalLintStatus: "REVISE",
         finalEvalStatus: "OWNER_GATE_REQUIRED"
       }
     };
@@ -266,6 +271,7 @@ export async function runWritingPipeline({
       proseModelGateCalls: 0,
       automaticallyRevised: 0,
       failureCategories,
+      advisoryCategories,
       finalLintStatus: "PASS",
       finalEvalStatus: "OWNER_GATE_REQUIRED"
     }
