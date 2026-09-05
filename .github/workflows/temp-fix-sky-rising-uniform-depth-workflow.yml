@@ -1,0 +1,38 @@
+name: Update sky rising guard verification
+
+on:
+  push:
+    branches:
+      - chatgpt/sky-rising-uniform-depth-current-main
+
+permissions:
+  contents: write
+
+jobs:
+  fix:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Update verification to current approved 12-house state
+        shell: bash
+        run: |
+          python3 <<'PY'
+          from pathlib import Path
+          path = Path('.github/workflows/temp-apply-sky-rising-uniform-depth.yml')
+          text = path.read_text()
+          text = text.replace("    if: github.actor != 'github-actions[bot]'\n", "", 1)
+          old = '''assert.deepEqual(jupiterLeo.filter((row) => row.contentTier === "full-owner-authored-horoscope").map((row) => row.house), [5, 7, 8, 9, 10, 11, 12]);\\nassert.deepEqual(jupiterLeo.filter((row) => row.contentTier === "compact-house-core").map((row) => row.house), [1, 2, 3, 4, 6]);\\nassert.throws(() => requireUniformSkyPlacementHoroscopeSet(jupiterLeo, { planet: "jupiter", sign: "leo" }), /mixed or unknown house horoscope tiers/u);'''
+          new = '''assert.deepEqual(jupiterLeo.filter((row) => row.contentTier === "full-owner-authored-horoscope").map((row) => row.house), [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]);\\nassert.deepEqual(jupiterLeo.filter((row) => row.contentTier === "compact-house-core").map((row) => row.house), []);\\nassert.equal(requireUniformSkyPlacementHoroscopeSet(jupiterLeo, { planet: "jupiter", sign: "leo" }).length, 12);\\nconst syntheticMixed = jupiterLeo.map((row, index) => index === 0 ? { ...row, contentTier: "compact-house-core" } : row);\\nassert.throws(() => requireUniformSkyPlacementHoroscopeSet(syntheticMixed, { planet: "jupiter", sign: "leo" }), /mixed or unknown house horoscope tiers/u);'''
+          if old not in text:
+              raise SystemExit('expected old Jupiter/Leo verification block not found')
+          path.write_text(text.replace(old, new, 1))
+          PY
+      - name: Commit workflow correction
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git rm .github/workflows/temp-fix-sky-rising-uniform-depth-workflow.yml
+          git add .github/workflows/temp-apply-sky-rising-uniform-depth.yml
+          git commit -m "chore: rerun sky rising guard against approved 12-house corpus"
+          git push origin HEAD:chatgpt/sky-rising-uniform-depth-current-main
