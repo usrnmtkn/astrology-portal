@@ -1,6 +1,7 @@
 import type { KeyboardEvent } from "react";
 
 import { zodiacAssetHref, zodiacSignIconFiles } from "../../components/charts/chartAssets";
+import type { BetweenYouTwoV2Daily } from "../../services/betweenYouTwoV2";
 
 export type CompatibilityPlanetCard = {
   id: string;
@@ -48,7 +49,7 @@ export type CompatibilityDynamic = {
 
 export type CompatibilityTabProps = {
   cards: CompatibilityPlanetCard[];
-  daily?: { body: string; dateLabel: string } | null;
+  daily?: BetweenYouTwoV2Daily | null;
   dynamics: CompatibilityDynamic[];
   friendName: string;
   onOpenCard?: (card: CompatibilityPlanetCard, paragraphs: string[]) => void;
@@ -180,9 +181,23 @@ export function CompatibilityTab({
     <div className="friend-tab-pane friend-compat-stage friend-compatibility-stage" aria-label={`${friendName} compatibility`}>
       <div className="friend-profile-copy-column compatibility-column">
         {daily ? (
-          <section className="daily-horoscope-summary friend-daily-forecast" aria-label={`Today - ${daily.dateLabel}`}>
-            <span className="eyebrow section-label friend-section-label">Today - {daily.dateLabel}</span>
+          <section className="daily-horoscope-summary friend-daily-forecast" aria-label={`Between you two - ${daily.dateLabel}`}>
+            <span className="eyebrow section-label friend-section-label">Between you two · Today - {daily.dateLabel}</span>
+            <h3 className="friend-daily-forecast__headline">{daily.headline}</h3>
             <p>{daily.body}</p>
+            {daily.readerContext || daily.friendContext ? (
+              <div className="friend-daily-forecast__context">
+                <span className="eyebrow section-label friend-section-label">What each of you is carrying today</span>
+                {daily.readerContext ? <p><strong>You:</strong> {daily.readerContext}</p> : null}
+                {daily.friendContext ? <p><strong>{friendName}:</strong> {daily.friendContext}</p> : null}
+              </div>
+            ) : null}
+            {daily.move ? (
+              <div className="friend-daily-forecast__move">
+                <span className="eyebrow section-label friend-section-label">One useful move</span>
+                <p>{daily.move}</p>
+              </div>
+            ) : null}
           </section>
         ) : null}
         <section className="compatibility-card-list" aria-label="Planet comparisons">
