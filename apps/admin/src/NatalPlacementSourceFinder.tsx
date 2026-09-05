@@ -56,6 +56,7 @@ function statusLabel(status: string) {
 export default function NatalPlacementSourceFinder({ house, isLoading, motion, onCreateOverride, onOpenSource, onSelectionChange, planet, rows, secret, sign }: Props) {
   const signSelectionComplete = Boolean(planet && sign);
   const fullSelectionComplete = Boolean(signSelectionComplete && house);
+  const readerRoute = fullSelectionComplete ? `#/you/placement/${planet}-${sign}-${house}h` : "";
   const groups = signSelectionComplete
     ? natalPlacementSourceGroups(planet as NatalPlacementPlanet, sign as NatalPlacementSign, house, motion)
     : [];
@@ -97,7 +98,19 @@ export default function NatalPlacementSourceFinder({ house, isLoading, motion, o
               : "Choose a natal placement"}</h3>
           <p>Pick one value in each field. This workspace contains natal placements only; current transits and Sky placements are kept in Sky Write-ups.</p>
         </div>
-        {fullSelectionComplete && <p className="admin-natal-placement-key"><span>Reader path</span><code>you/placement/{planet}-{sign}-{house}h</code></p>}
+        {fullSelectionComplete && (
+          <div className="admin-natal-placement-key">
+            <span>Reader path</span>
+            <code>you/placement/{planet}-{sign}-{house}h</code>
+            <button
+              type="button"
+              onClick={() => window.open(`/${readerRoute}`, "_blank", "noopener,noreferrer")}
+              aria-label={`View ${natalPlacementLabel(planet as NatalPlacementPlanet, sign as NatalPlacementSign, house as NatalPlacementHouse)} in app`}
+            >
+              View in app
+            </button>
+          </div>
+        )}
       </div>
       <div className="admin-natal-placement-selectors">
         <label>
