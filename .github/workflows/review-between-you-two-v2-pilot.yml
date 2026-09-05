@@ -1,4 +1,4 @@
-name: Review Between You Two V2 pilot
+name: Review Between You Two V2 authoring
 
 on:
   push:
@@ -7,6 +7,7 @@ on:
     paths:
       - "packages/astro-knowledge/review/between-you-two-v2-2026-09-05/**"
       - "scripts/test-between-you-two-v2-pilot.mjs"
+      - "scripts/test-between-you-two-v2-full-review.mjs"
       - ".github/workflows/review-between-you-two-v2-pilot.yml"
 
 permissions:
@@ -21,5 +22,7 @@ jobs:
       - uses: actions/setup-node@v6
         with:
           node-version: 22
-      - name: Verify dark review boundary and exact-body provenance
+      - name: Verify approved pilot boundary and exact-body provenance
         run: node scripts/test-between-you-two-v2-pilot.mjs
+      - name: Verify full authoring review coverage
+        run: node scripts/test-between-you-two-v2-full-review.mjs
