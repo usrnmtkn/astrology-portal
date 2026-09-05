@@ -9,6 +9,16 @@ loadLocalWebEnv();
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 
+type CoverageAuthority = {
+  id: string;
+  ownerAuthority: string;
+  studioOverlay: string;
+  servingSource: string;
+  resolver: string;
+  readerDestinations: string[];
+  failurePolicy: string;
+};
+
 function readJson(relativePath: string) {
   return JSON.parse(fs.readFileSync(path.join(repoRoot, relativePath), "utf8")) as Record<string, any>;
 }
@@ -24,7 +34,15 @@ function sendJson(res: ServerResponse, status: number, body: unknown) {
   res.end(JSON.stringify(body));
 }
 
-function coverageRow(id: string, label: string, ready: number, total: number, detail: string, source: string) {
+function coverageRow(
+  id: string,
+  label: string,
+  ready: number,
+  total: number,
+  detail: string,
+  source: string,
+  authority: CoverageAuthority
+) {
   return {
     id,
     label,
@@ -34,11 +52,33 @@ function coverageRow(id: string, label: string, ready: number, total: number, de
     percent: total > 0 ? Math.round((ready / total) * 1000) / 10 : 0,
     state: ready >= total ? "complete" : "incomplete",
     detail,
-    source
+    source,
+    authority
   };
 }
 
 function buildCoverage() {
+  const authorityRegistry = readJson("config/content-authority-map-v1.json");
+  const authorityFamilies = Array.isArray(authorityRegistry.families) ? authorityRegistry.families : [];
+  const authorityById = new Map<string, Record<string, any>>(
+    authorityFamilies.map((family: Record<string, any>) => [String(family.id ?? ""), family])
+  );
+  const authorityFor = (id: string): CoverageAuthority => {
+    const family = authorityById.get(id);
+    if (!family) throw new Error(`Content authority family is missing: ${id}`);
+    return {
+      id,
+      ownerAuthority: String(family.ownerAuthority ?? ""),
+      studioOverlay: String(family.studioOverlay ?? ""),
+      servingSource: String(family.servingSource ?? ""),
+      resolver: String(family.resolver ?? ""),
+      readerDestinations: Array.isArray(family.readerDestinations)
+        ? family.readerDestinations.map((value: unknown) => String(value))
+        : [],
+      failurePolicy: String(family.failurePolicy ?? "")
+    };
+  };
+
   const transitSource = readJson("apps/web/src/content/fallbackArchitectureV3/source-rows/transit-synastry-rows-v1.json");
   const transitRows = (Array.isArray(transitSource.authoredCards) ? transitSource.authoredCards : [])
     .filter((row: Record<string, unknown>) => String(row.contentKey ?? "").startsWith("authored/transit-aspect/"));
@@ -69,7 +109,8 @@ function buildCoverage() {
       personalReady,
       transitRows.length,
       `${personalReady}/${transitRows.length} canonical transit rows contain You copy.`,
-      "transit-synastry-rows-v1.json"
+      "transit-synastry-rows-v1.json",
+      authorityFor("personal-transit-you")
     ),
     coverageRow(
       "friends-transits",
@@ -77,7 +118,8 @@ function buildCoverage() {
       friendsReady,
       transitRows.length,
       `${friendsOwnerLive.count ?? 0} non-Sun Friends rows are covered by the Sep 3 owner-live batch; ${sunFriendsReady} Sun rows currently contain Friends copy.`,
-      "transit-synastry-rows-v1.json + transit-aspect-friends-nonsun-350-owner-live-2026-09-03.json"
+      "transit-synastry-rows-v1.json + transit-aspect-friends-nonsun-350-owner-live-2026-09-03.json",
+      authorityFor("personal-transit-friends")
     ),
     coverageRow(
       "sky-exact-aspects",
@@ -85,7 +127,8 @@ function buildCoverage() {
       Number(exactSky.rowCount ?? 0),
       248,
       `${exactSky.rowCount ?? 0} current owner-approved exact aspect payloads.`,
-      "sky-calendar-exact-approved-2026-09-04-held-trines-33/current-owner-payloads.json"
+      "sky-calendar-exact-approved-2026-09-04-held-trines-33/current-owner-payloads.json",
+      authorityFor("sky-exact-aspects")
     ),
     coverageRow(
       "sky-continuous-placements",
@@ -93,7 +136,8 @@ function buildCoverage() {
       continuous.owner_approved === true ? Number(continuous.expected_records ?? 0) : 0,
       120,
       `Owner approved: ${continuous.owner_approved === true ? "yes" : "no"}; serving release declared: ${continuous.serving_enabled === true ? "yes" : "no"}.`,
-      "sky-v4-continuous-corpus-correction-v1.json"
+      "sky-v4-continuous-corpus-correction-v1.json",
+      authorityFor("sky-placement-continuous")
     ),
     coverageRow(
       "sky-lunar-context",
@@ -101,7 +145,8 @@ function buildCoverage() {
       lunar.owner_approved === true ? Number(lunar.expected_records ?? 0) : 0,
       40,
       `Exact-day lunar modules across 10 planets × 4 event types. Serving release declared: ${lunar.serving_enabled === true ? "yes" : "no"}.`,
-      "sky-v4-placement-lunar-context-v1.json"
+      "sky-v4-placement-lunar-context-v1.json",
+      authorityFor("sky-placement-lunar-context")
     ),
     coverageRow(
       "jupiter-leo-house-horoscopes",
@@ -109,7 +154,8 @@ function buildCoverage() {
       approvedJupiterLeo.size,
       12,
       missingJupiterLeo.length ? `Missing full owner-authored houses: ${missingJupiterLeo.join(", ")}.` : "All 12 full house passages are present.",
-      "owner-authored-sky-placement-house-passages-v1.json"
+      "owner-authored-sky-placement-house-passages-v1.json",
+      authorityFor("sky-placement-house-horoscopes")
     )
   ];
 
@@ -117,6 +163,7 @@ function buildCoverage() {
     ok: true,
     generatedAt: new Date().toISOString(),
     authority: "governed repository sources on the deployed commit",
+    readerEligibility: authorityRegistry.readerEligibility?.databaseOverlay?.required ?? null,
     summary: {
       complete: coverage.filter((row) => row.state === "complete").length,
       incomplete: coverage.filter((row) => row.state === "incomplete").length,
