@@ -10,7 +10,7 @@ client = TestClient(app)
 FIXTURE = json.loads((Path(__file__).parent / "fixtures" / "marie_report_2026.json").read_text())
 
 
-def test_report_window_reproduces_owner_transit_and_eclipse_contract():
+def test_report_window_reproduces_production_transit_and_eclipse_contract():
     response = client.post(
         "/timing/report-window",
         json={
@@ -33,9 +33,9 @@ def test_report_window_reproduces_owner_transit_and_eclipse_contract():
         ("Jupiter", "Pluto", "square"): ["2026-05-01"],
         ("Jupiter", "Uranus", "trine"): ["2026-05-14"],
         ("Saturn", "Ascendant", "sextile"): [
-            "2026-05-19",
-            "2026-10-06",
-            "2027-02-10",
+            "2026-05-18",
+            "2026-10-07",
+            "2027-02-09",
         ],
         ("Jupiter", "Jupiter", "conjunction"): ["2026-07-04"],
         ("Jupiter", "Moon", "square"): ["2026-08-27"],

@@ -8,9 +8,9 @@
       "timeZone": "America/New_York"
     },
     "location": {
-      "label": "Manhattan, New York, NY, USA",
-      "latitude": 40.7128,
-      "longitude": -74.006,
+      "label": "New York, New York",
+      "latitude": 40.712749,
+      "longitude": -74.005994,
       "timeZone": "America/New_York"
     },
     "settings": {
@@ -20,18 +20,18 @@
     }
   },
   "returnLocation": {
-    "label": "Manhattan, New York, NY, USA",
-    "latitude": 40.7128,
-    "longitude": -74.006,
+    "label": "New York, New York",
+    "latitude": 40.712749,
+    "longitude": -74.005994,
     "timeZone": "America/New_York"
   },
   "window": {
-    "start": "2026-02-18T01:59:11Z",
-    "end": "2027-02-18T07:40:22Z",
+    "start": "2026-02-18",
+    "end": "2027-02-17",
     "reportHorizon": "12_months",
     "natalPointLongitudes": {
-      "Ascendant": 71.15,
-      "Midheaven": 316.6
+      "Ascendant": 71.04691436300243,
+      "Midheaven": 316.5730514590148
     }
   }
 }

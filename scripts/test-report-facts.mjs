@@ -5,6 +5,7 @@ import {
   createTldrAstroReportFactsClient,
   normalizeReportFactDates
 } from "../api/_lib/report-facts.ts";
+import { reportKeyDateEventManifest } from "../api/_lib/report-key-dates.ts";
 
 class MemoryStore {
   reports = [];
@@ -184,6 +185,39 @@ assert.deepEqual(sent.natalPointLongitudes, { Ascendant: 71.15, Midheaven: 316.6
 assert.equal(normalizedWindow.slowTransitArcs[0].passes[0].exactAtDate, "2026-05-18",
   "All report prose dates must be normalized once through the report-location timezone.");
 assert.equal(normalizeReportFactDates({ occursAt: "2026-10-07T02:10:26Z" }, "America/New_York").occursAtDate, "2026-10-06");
+
+const localizedKeyDateManifest = reportKeyDateEventManifest({
+  slowTransitArcs: [{
+    id: "saturn-sextile-ascendant",
+    transitPlanet: "Saturn",
+    natalPoint: "Ascendant",
+    aspect: "sextile",
+    isReturn: false,
+    passes: [{
+      motion: "direct",
+      exactAt: "2026-05-19T03:30:00Z",
+      exactAtDate: "2026-05-18"
+    }]
+  }],
+  lunarEvents: [{
+    id: "solar_eclipse-local-date-fixture",
+    kind: "solar_eclipse",
+    occursAt: "2026-10-07T02:10:26Z",
+    occursAtDate: "2026-10-06",
+    natalHouse: 1,
+    natalContacts: []
+  }]
+}, "12_months");
+assert.equal(
+  localizedKeyDateManifest.find((entry) => entry.eventId === "saturn-sextile-ascendant:0")?.dateLabel,
+  "MAY 18",
+  "Deterministic Key Dates must display the normalized report-local transit date, not the raw UTC day."
+);
+assert.equal(
+  localizedKeyDateManifest.find((entry) => entry.eventId === "solar_eclipse-local-date-fixture")?.dateLabel,
+  "OCT 6",
+  "Deterministic Key Dates must display the normalized report-local eclipse date, not the raw UTC day."
+);
 
 const missingEndpointClient = createTldrAstroReportFactsClient({
   baseUrl: "https://missing-fixture.invalid",
