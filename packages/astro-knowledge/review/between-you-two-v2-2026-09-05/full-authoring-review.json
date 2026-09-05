@@ -1,0 +1,460 @@
+{
+  "schemaVersion": 1,
+  "id": "between-you-two-v2-full-authoring-review-2026-09-05",
+  "servingAuthority": false,
+  "bodyAuthority": "Existing exact-owner-approved bond-effect body remains authoritative for all bond records.",
+  "records": [
+    {
+      "id": "hard-chiron",
+      "family": "hard",
+      "transiting": "chiron",
+      "bodyContentKey": "fallback-hook/bond-effect-hard/chiron",
+      "headline": {
+        "body_you": "The silence may be hitting an old insecurity before you have new information.",
+        "body_they": "{{holder1}} may be reading the delay through an old insecurity."
+      },
+      "move": {
+        "body_you": "Wait for the new information before you decide what the delay means.",
+        "body_they": "If the delay is ordinary, say that clearly before {{holder1}} has to guess."
+      },
+      "reviewStatus": "proposed"
+    },
+    {
+      "id": "hard-jupiter",
+      "family": "hard",
+      "transiting": "jupiter",
+      "bodyContentKey": "fallback-hook/bond-effect-hard/jupiter",
+      "headline": {
+        "body_you": "You may be agreeing before you check the cost.",
+        "body_they": "{{holder1}} may be agreeing before they check the cost."
+      },
+      "move": {
+        "body_you": "Check the money, time, and logistics before you agree to one more thing.",
+        "body_they": "Check the money, time, and logistics before you ask {{holder1}} to add one more thing."
+      },
+      "reviewStatus": "owner_approved"
+    },
+    {
+      "id": "hard-lilith",
+      "family": "hard",
+      "transiting": "lilith",
+      "bodyContentKey": "fallback-hook/bond-effect-hard/lilith",
+      "headline": {
+        "body_you": "You have been agreeing longer than you actually wanted to.",
+        "body_they": "{{holder1}} may have been agreeing longer than they actually wanted to."
+      },
+      "move": {
+        "body_you": "Say no to the plan before irritation has to say it for you.",
+        "body_they": "Take the first no seriously instead of waiting for {{holder1}} to get sharper."
+      },
+      "reviewStatus": "proposed"
+    },
+    {
+      "id": "hard-mars",
+      "family": "hard",
+      "transiting": "mars",
+      "bodyContentKey": "fallback-hook/bond-effect-hard/mars",
+      "headline": {
+        "body_you": "Being kept waiting is starting to feel like disrespect.",
+        "body_they": "{{holder1}} may be reading the delay as disrespect."
+      },
+      "move": {
+        "body_you": "Name the delay first before you turn it into an argument about everything else.",
+        "body_they": "Acknowledge the delay before you defend why it happened."
+      },
+      "reviewStatus": "proposed"
+    },
+    {
+      "id": "hard-mercury",
+      "family": "hard",
+      "transiting": "mercury",
+      "bodyContentKey": "fallback-hook/bond-effect-hard/mercury",
+      "headline": {
+        "body_you": "You may be reacting to the tone more than the message.",
+        "body_they": "{{holder1}} may be reacting to the tone more than the message."
+      },
+      "move": {
+        "body_you": "Answer what was actually said before you start arguing with the tone.",
+        "body_they": "If your reply was brief, make the meaning clear before {{holder1}} has to guess."
+      },
+      "reviewStatus": "owner_approved"
+    },
+    {
+      "id": "hard-moon",
+      "family": "hard",
+      "transiting": "moon",
+      "bodyContentKey": "fallback-hook/bond-effect-hard/moon",
+      "headline": {
+        "body_you": "A bad day is making a small disappointment land harder.",
+        "body_they": "{{holder1}} may be reacting from a harder day than you can see."
+      },
+      "move": {
+        "body_you": "Handle the immediate disappointment before you argue about the size of the reaction.",
+        "body_they": "Handle the immediate disappointment before you argue about the size of the reaction."
+      },
+      "reviewStatus": "proposed"
+    },
+    {
+      "id": "hard-neptune",
+      "family": "hard",
+      "transiting": "neptune",
+      "bodyContentKey": "fallback-hook/bond-effect-hard/neptune",
+      "headline": {
+        "body_you": "You may be filling the silence with a problem that has not happened.",
+        "body_they": "{{holder1}} may be filling the silence with a problem that has not happened."
+      },
+      "move": {
+        "body_you": "Ask the question before you start answering your own explanation.",
+        "body_they": "If you are simply busy or delayed, say that before {{holder1}} has to invent the reason."
+      },
+      "reviewStatus": "proposed"
+    },
+    {
+      "id": "hard-north-node",
+      "family": "hard",
+      "transiting": "north-node",
+      "bodyContentKey": "fallback-hook/bond-effect-hard/north-node",
+      "headline": {
+        "body_you": "They may put an unfamiliar option in front of you before you feel ready.",
+        "body_they": "You may put an unfamiliar option in front of {{holder1}} before they feel ready."
+      },
+      "move": {
+        "body_you": "Find out what the option actually requires before nervousness decides for you.",
+        "body_they": "Give {{holder1}} enough information to consider the option without pushing for an immediate answer."
+      },
+      "reviewStatus": "proposed"
+    },
+    {
+      "id": "hard-pluto",
+      "family": "hard",
+      "transiting": "pluto",
+      "bodyContentKey": "fallback-hook/bond-effect-hard/pluto",
+      "headline": {
+        "body_you": "The part that hurts is how little say you had.",
+        "body_they": "{{holder1}} may be reacting to how little say they had."
+      },
+      "move": {
+        "body_you": "Ask for the information or decision point you were left out of.",
+        "body_they": "Put the information and decision on the table before asking {{holder1}} to accept the outcome."
+      },
+      "reviewStatus": "proposed"
+    },
+    {
+      "id": "hard-saturn",
+      "family": "hard",
+      "transiting": "saturn",
+      "bodyContentKey": "fallback-hook/bond-effect-hard/saturn",
+      "headline": {
+        "body_you": "The plan is becoming your job.",
+        "body_they": "{{holder1}} may be carrying more of the follow-through."
+      },
+      "move": {
+        "body_you": "Decide who is actually handling the next step before you make another plan.",
+        "body_they": "Decide who is actually handling the next step before you make another plan."
+      },
+      "reviewStatus": "owner_approved"
+    },
+    {
+      "id": "hard-south-node",
+      "family": "hard",
+      "transiting": "south-node",
+      "bodyContentKey": "fallback-hook/bond-effect-hard/south-node",
+      "headline": {
+        "body_you": "You are slipping back into the old job you used to do in this relationship.",
+        "body_they": "{{holder1}} may be slipping back into the old role they used to take with you."
+      },
+      "move": {
+        "body_you": "Notice which job you picked up automatically before you keep doing it.",
+        "body_they": "Ask instead of letting the old division of work restart by default."
+      },
+      "reviewStatus": "proposed"
+    },
+    {
+      "id": "hard-sun",
+      "family": "hard",
+      "transiting": "sun",
+      "bodyContentKey": "fallback-hook/bond-effect-hard/sun",
+      "headline": {
+        "body_you": "Their recognition may be making your contribution disappear.",
+        "body_they": "Your recognition may be making {{holder1}}'s contribution disappear."
+      },
+      "move": {
+        "body_you": "Name what you contributed instead of pretending the missing credit does not matter.",
+        "body_they": "Give {{holder1}} specific credit for the part they actually did."
+      },
+      "reviewStatus": "proposed"
+    },
+    {
+      "id": "hard-uranus",
+      "family": "hard",
+      "transiting": "uranus",
+      "bodyContentKey": "fallback-hook/bond-effect-hard/uranus",
+      "headline": {
+        "body_you": "Their last-minute changes are costing you time.",
+        "body_they": "Your last-minute changes may be costing {{holder1}} time."
+      },
+      "move": {
+        "body_you": "Before you adjust again, count the time you have already lost to the changes.",
+        "body_they": "Before you change the plan again, check what {{holder1}} already rearranged around it."
+      },
+      "reviewStatus": "proposed"
+    },
+    {
+      "id": "hard-venus",
+      "family": "hard",
+      "transiting": "venus",
+      "bodyContentKey": "fallback-hook/bond-effect-hard/venus",
+      "headline": {
+        "body_you": "You can understand why they are unavailable and still feel disappointed.",
+        "body_they": "{{holder1}} may understand why you are unavailable and still feel disappointed."
+      },
+      "move": {
+        "body_you": "Say you wanted more time without turning their schedule into a rejection.",
+        "body_they": "Say what you can actually give instead of leaving {{holder1}} to guess."
+      },
+      "reviewStatus": "proposed"
+    },
+    {
+      "id": "soft-chiron",
+      "family": "soft",
+      "transiting": "chiron",
+      "bodyContentKey": "fallback-hook/bond-effect-soft/chiron",
+      "headline": {
+        "body_you": "You may be able to finish the vulnerable part without defending it.",
+        "body_they": "{{holder1}} may be able to say more because they do not have to defend the reaction."
+      },
+      "move": {
+        "body_you": "Let the explanation finish before you start solving or correcting it.",
+        "body_they": "Let {{holder1}} finish before you explain why they should see it differently."
+      },
+      "reviewStatus": "proposed"
+    },
+    {
+      "id": "soft-jupiter",
+      "family": "soft",
+      "transiting": "jupiter",
+      "bodyContentKey": "fallback-hook/bond-effect-soft/jupiter",
+      "headline": {
+        "body_you": "They may bring you an opportunity that actually fits your life.",
+        "body_they": "You may bring them an opportunity that actually fits their life."
+      },
+      "move": {
+        "body_you": "Follow the lead if it connects to something you already wanted.",
+        "body_they": "Pass it along if it connects to something {{holder1}} already wanted."
+      },
+      "reviewStatus": "owner_approved"
+    },
+    {
+      "id": "soft-lilith",
+      "family": "soft",
+      "transiting": "lilith",
+      "bodyContentKey": "fallback-hook/bond-effect-soft/lilith",
+      "headline": {
+        "body_you": "You can say what you actually want before resentment does it for you.",
+        "body_they": "{{holder1}} may tell you what they actually want before resentment builds."
+      },
+      "move": {
+        "body_you": "Give the clear answer first instead of choosing the easiest plan to agree to.",
+        "body_they": "Take the clear answer seriously, even if it is less convenient."
+      },
+      "reviewStatus": "proposed"
+    },
+    {
+      "id": "soft-mars",
+      "family": "soft",
+      "transiting": "mars",
+      "bodyContentKey": "fallback-hook/bond-effect-soft/mars",
+      "headline": {
+        "body_you": "You can get more done together than either of you wants to do alone.",
+        "body_they": "You can get more done together than either of you wants to do alone."
+      },
+      "move": {
+        "body_you": "Pick the task you have both been postponing and finish it together.",
+        "body_they": "Pick the task you have both been postponing and finish it together."
+      },
+      "reviewStatus": "proposed"
+    },
+    {
+      "id": "soft-mercury",
+      "family": "soft",
+      "transiting": "mercury",
+      "bodyContentKey": "fallback-hook/bond-effect-soft/mercury",
+      "headline": {
+        "body_you": "The conversation may finally come out cleanly.",
+        "body_they": "{{holder1}} may be easier to understand without a second round of explanation."
+      },
+      "move": {
+        "body_you": "Say the part you mean and stop before you turn it into five more paragraphs.",
+        "body_they": "Take the clear answer at face value instead of pulling for a hidden meaning."
+      },
+      "reviewStatus": "proposed"
+    },
+    {
+      "id": "soft-moon",
+      "family": "soft",
+      "transiting": "moon",
+      "bodyContentKey": "fallback-hook/bond-effect-soft/moon",
+      "headline": {
+        "body_you": "They may notice what you need before you have to spell it out.",
+        "body_they": "You may notice what {{holder1}} needs before they have to ask."
+      },
+      "move": {
+        "body_you": "Let them help in the specific way they already noticed.",
+        "body_they": "Offer the specific thing you can see {{holder1}} needs."
+      },
+      "reviewStatus": "proposed"
+    },
+    {
+      "id": "soft-neptune",
+      "family": "soft",
+      "transiting": "neptune",
+      "bodyContentKey": "fallback-hook/bond-effect-soft/neptune",
+      "headline": {
+        "body_you": "One off day can stay one off day.",
+        "body_they": "A clumsy moment does not have to become a larger problem between you."
+      },
+      "move": {
+        "body_you": "Leave the imperfect sentence where it is unless there is actually something to clarify.",
+        "body_they": "Do not over-explain a clumsy sentence that {{holder1}} already understood."
+      },
+      "reviewStatus": "proposed"
+    },
+    {
+      "id": "soft-north-node",
+      "family": "soft",
+      "transiting": "north-node",
+      "bodyContentKey": "fallback-hook/bond-effect-soft/north-node",
+      "headline": {
+        "body_you": "They may introduce you to something new without forcing a big decision.",
+        "body_they": "You may introduce {{holder1}} to something new without asking them to decide the whole future."
+      },
+      "move": {
+        "body_you": "Try the first step if it interests you. You can decide the rest later.",
+        "body_they": "Offer the first step without turning it into a commitment {{holder1}} has not made."
+      },
+      "reviewStatus": "proposed"
+    },
+    {
+      "id": "soft-pluto",
+      "family": "soft",
+      "transiting": "pluto",
+      "bodyContentKey": "fallback-hook/bond-effect-soft/pluto",
+      "headline": {
+        "body_you": "You may finally be able to name the part that has been uneven.",
+        "body_they": "{{holder1}} may finally tell you where the arrangement has felt uneven."
+      },
+      "move": {
+        "body_you": "Name the money, decision, or responsibility that is actually uneven.",
+        "body_they": "Listen for the specific imbalance {{holder1}} is naming before you defend the whole arrangement."
+      },
+      "reviewStatus": "proposed"
+    },
+    {
+      "id": "soft-saturn",
+      "family": "soft",
+      "transiting": "saturn",
+      "bodyContentKey": "fallback-hook/bond-effect-soft/saturn",
+      "headline": {
+        "body_you": "You have evidence that they will follow through.",
+        "body_they": "{{holder1}} has evidence that you will follow through."
+      },
+      "move": {
+        "body_you": "Let the follow-through count instead of checking one more time.",
+        "body_they": "Do what you said you would do without making {{holder1}} chase the answer."
+      },
+      "reviewStatus": "proposed"
+    },
+    {
+      "id": "soft-south-node",
+      "family": "soft",
+      "transiting": "south-node",
+      "bodyContentKey": "fallback-hook/bond-effect-soft/south-node",
+      "headline": {
+        "body_you": "The old rhythm may feel good even if one part no longer fits.",
+        "body_they": "{{holder1}} may fall into an old role because it still feels easy."
+      },
+      "move": {
+        "body_you": "Keep the part of the routine you still like and change the part that no longer fits.",
+        "body_they": "Do not assume the familiar role still works for {{holder1}} just because it comes easily."
+      },
+      "reviewStatus": "proposed"
+    },
+    {
+      "id": "soft-sun",
+      "family": "soft",
+      "transiting": "sun",
+      "bodyContentKey": "fallback-hook/bond-effect-soft/sun",
+      "headline": {
+        "body_you": "They may give you the credit without making you ask for it.",
+        "body_they": "You may be able to give {{holder1}} the credit without making them ask for it."
+      },
+      "move": {
+        "body_you": "Let the specific recognition land instead of brushing past it.",
+        "body_they": "Name the part {{holder1}} did well instead of giving a vague compliment."
+      },
+      "reviewStatus": "proposed"
+    },
+    {
+      "id": "soft-uranus",
+      "family": "soft",
+      "transiting": "uranus",
+      "bodyContentKey": "fallback-hook/bond-effect-soft/uranus",
+      "headline": {
+        "body_you": "A different plan may suit you better than the usual one.",
+        "body_they": "A different plan may give {{holder1}} the break they were already ready for."
+      },
+      "move": {
+        "body_you": "Say yes to the change if the usual plan was already feeling repetitive.",
+        "body_they": "Offer the different option without making it a test of how spontaneous {{holder1}} can be."
+      },
+      "reviewStatus": "proposed"
+    },
+    {
+      "id": "soft-venus",
+      "family": "soft",
+      "transiting": "venus",
+      "bodyContentKey": "fallback-hook/bond-effect-soft/venus",
+      "headline": {
+        "body_you": "The small effort matters because it was specific to you.",
+        "body_they": "The small effort matters because it was specific to {{holder1}}."
+      },
+      "move": {
+        "body_you": "Notice the specific effort instead of measuring it by how big it was.",
+        "body_they": "Do the small thing you already know would make {{holder1}}'s day easier."
+      },
+      "reviewStatus": "owner_approved"
+    },
+    {
+      "id": "shared-moon-fire",
+      "evidenceTier": "shared-moon",
+      "element": "fire",
+      "headline": "You may both have less patience for delays today.",
+      "body": "The Moon is in a fire sign and aspecting both charts today, so both of you may be quicker to act and less patient with delays. A changed plan or blunt reply can become more irritating than it usually would. Say what changed before either of you decides why the other person did it.",
+      "reviewStatus": "owner_approved"
+    },
+    {
+      "id": "shared-moon-earth",
+      "evidenceTier": "shared-moon",
+      "element": "earth",
+      "headline": "You may both care more about getting it handled than talking it through today.",
+      "body": "The Moon is in an earth sign and aspecting both charts today, so practical concerns can take over quickly. A task, plan, or unfinished responsibility may feel more urgent than the conversation around it. Decide what actually needs to get done, then make room for the part that still needs to be said.",
+      "reviewStatus": "proposed"
+    },
+    {
+      "id": "shared-moon-air",
+      "evidenceTier": "shared-moon",
+      "element": "air",
+      "headline": "You may both have more to say than either of you has patience to finish.",
+      "body": "The Moon is in an air sign and aspecting both charts today, so the conversation can move faster than either of you is listening. One idea turns into another, a joke becomes a side argument, or the point keeps changing. Finish the thought you are actually discussing before adding the next one.",
+      "reviewStatus": "proposed"
+    },
+    {
+      "id": "shared-moon-water",
+      "evidenceTier": "shared-moon",
+      "element": "water",
+      "headline": "You may both be reading more into the mood today.",
+      "body": "The Moon is in a water sign and aspecting both charts today, so tone, timing, and small changes in mood can carry more weight. One person going quiet can become a story about the relationship before anyone has said what is wrong. Name the feeling or need you actually know about before either of you fills in the rest.",
+      "reviewStatus": "proposed"
+    }
+  ]
+}
