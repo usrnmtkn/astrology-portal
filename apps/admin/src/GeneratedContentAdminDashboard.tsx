@@ -6547,6 +6547,9 @@ export function GeneratedContentAdminDashboard() {
     optional?: boolean;
   }) {
     const resolved = skySourceForCandidates(source.candidateKeys);
+    const sourceReaderDestination = skyWriteupWorkspaceView === "transits-to-natal"
+      ? friendsTransitAudience ? "Friends → Transits → Active for {{Name}}" : "You → Personal Transits"
+      : friendsTransitAudience ? "Friends → Transits → Where it lands" : "You → House Transits";
     return (
       <article className="admin-natal-source-card" key={source.id}>
         <div className="admin-natal-source-card-copy">
@@ -6559,6 +6562,7 @@ export function GeneratedContentAdminDashboard() {
                 : source.optional && <span className="ui-pill admin-status status-draft">Optional</span>}
           </div>
           <p>{source.scope}</p>
+          <p className="admin-reader-destination-line"><strong>Where readers see this:</strong> {sourceReaderDestination}</p>
           <code>{resolved?.contentKey ?? source.candidateKeys.join(" → ")}</code>
           <blockquote className={!resolved ? "missing" : ""}>{resolved?.text ?? (source.optional ? "No optional passage is saved for this selection." : "No saved passage is available for this source path.")}</blockquote>
         </div>
@@ -8246,6 +8250,14 @@ export function GeneratedContentAdminDashboard() {
             : isTemplateDraft
               ? "Templates & assembly"
               : "Content Studio");
+    const editorReaderDestination =
+      activePage === "skyWriteups" && skyWriteupWorkspaceView === "transits-to-natal"
+        ? friendsTransitAudience ? "Friends → Transits → Active for {{Name}}" : "You → Personal Transits"
+        : activePage === "skyWriteups" && skyWriteupWorkspaceView === "house-transits"
+          ? friendsTransitAudience ? "Friends → Transits → Where it lands" : "You → House Transits"
+          : activePage === "knowledge" && friendsTransitAudience && fallbackSectionFilter === "friends" && query.includes("bond-effect")
+            ? "Friends → Transits → Between you two"
+            : null;
     const handleEditorKeyDown = (event: ReactKeyboardEvent<HTMLElement>) => {
       if (event.key === "Escape") {
         event.preventDefault();
@@ -8287,6 +8299,9 @@ export function GeneratedContentAdminDashboard() {
             <h2>{editorHeading}</h2>
             <p className="admin-editor-context-line">
               <span><strong>Use:</strong> {editorUseLabel}</span>
+              {editorReaderDestination && (
+                <span className="admin-editor-reader-destination"><strong>Where readers see this:</strong> {editorReaderDestination}</span>
+              )}
               <code title={currentDraft.contentKey}>{currentDraft.contentKey}</code>
             </p>
           </div>
