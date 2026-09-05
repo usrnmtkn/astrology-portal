@@ -1,0 +1,71 @@
+name: Fix Sky exact Content Studio authority
+
+on:
+  push:
+    branches:
+      - "fix/sky-exact-content-studio-authority-20260904"
+    paths:
+      - "scripts/apply-sky-exact-content-studio-authority-fix.mjs"
+      - ".github/workflows/fix-sky-exact-content-studio-authority.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  repair:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+      - name: Install dependencies
+        run: npm ci
+      - name: Apply focused repair
+        run: node scripts/apply-sky-exact-content-studio-authority-fix.mjs
+      - name: Verify exact authority source contracts
+        run: |
+          node scripts/test-sky-placement-exact-aspect-authority.mjs
+          node scripts/test-published-calendar-aspect-content-studio.mjs
+      - name: Build astro knowledge
+        run: npm run build -w @tldr/astro-knowledge
+      - name: Verify all 248 canonical exact routes
+        env:
+          SKY_CALENDAR_OWNER_PAYLOADS_PATH: packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-04-held-trines-33/current-owner-payloads.json
+        run: node scripts/test-calendar-exact-sky-aspect-routing.mjs
+      - name: Verify exact release and existing Sky contracts
+        run: |
+          node scripts/test-calendar-exact-approved-20260904-held-trines-33.mjs
+          node scripts/test-reviewed-sky-aspect-phrasebook.mjs
+          node scripts/test-sky-article-v1.mjs
+      - name: Build web app
+        run: npm run build -w @tldr/web
+      - name: Install Playwright Chromium
+        run: npx playwright install chromium
+      - name: Verify Sun in Virgo exact aspect detail
+        run: npx playwright test -c playwright.config.ts tests/visual/client-facing-user-flows.spec.ts --grep "Sun in Virgo detail serves the exact canonical V4 owner-approved article"
+      - name: Verify whitespace integrity
+        run: git diff --check
+      - name: Commit permanent repair
+        shell: bash
+        run: |
+          if git diff --quiet; then
+            echo "No repair changes to commit."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add \
+            apps/web/src/App.tsx \
+            apps/web/src/services/skyAspectRouting.ts \
+            apps/web/src/features/calendar/LunarCalendar.tsx \
+            scripts/test-calendar-exact-sky-aspect-routing.mjs \
+            scripts/test-reviewed-sky-aspect-phrasebook.mjs \
+            scripts/test-published-calendar-aspect-content-studio.mjs \
+            scripts/test-sky-placement-exact-aspect-authority.mjs
+          git commit -m "fix(sky): keep canonical exact aspects authoritative"
+          git push origin HEAD
