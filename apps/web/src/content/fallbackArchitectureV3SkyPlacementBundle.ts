@@ -1,6 +1,7 @@
 import bundledSkyPlacementRowsV3 from "./fallbackArchitectureV3/bundled-sky-placement-rows-v3.json";
 import bundledSkyPlacementHouseRowsV3 from "./fallbackArchitectureV3/bundled-sky-placement-house-rows-v3.json";
 import bundledSkyPlacementManifestV3 from "./fallbackArchitectureV3/bundled-sky-placement-manifest-v3.json";
+import ownerAuthoredSkyPlacementHousePassages from "./fallbackArchitectureV3/authored-inputs/owner-authored-sky-placement-house-passages-v1.json";
 import skyV4CanonicalCorpusUrl from "./fallbackArchitectureV3/authored-inputs/sky-v4-canonical-content-studio-stage-v1.json?url";
 import correctionManifestUrl from "./fallbackArchitectureV3/authored-inputs/sky-v4-continuous-corpus-correction-v1.json?url";
 import correctionChunk1Url from "./fallbackArchitectureV3/authored-inputs/sky-v4-continuous-corpus-correction-v1-chunk-1.json?url";
@@ -10,6 +11,8 @@ import correctionChunk4Url from "./fallbackArchitectureV3/authored-inputs/sky-v4
 import lunarManifestUrl from "./fallbackArchitectureV3/authored-inputs/sky-v4-placement-lunar-context-v1.json?url";
 import lunarChunk1Url from "./fallbackArchitectureV3/authored-inputs/sky-v4-placement-lunar-context-v1-chunk-1.json?url";
 import lunarChunk2Url from "./fallbackArchitectureV3/authored-inputs/sky-v4-placement-lunar-context-v1-chunk-2.json?url";
+// @ts-ignore Shared ESM helper enforces all-or-nothing owner-authored 12-house sets at the deferred bundle boundary.
+import { filterMixedDepthSkyPlacementHouseRows } from "./fallbackArchitectureV3/skyPlacementHouseSetGuard.mjs";
 // @ts-ignore The governed resolver is shared ESM; its reader input is narrowed at this bundle boundary.
 import { applySkyV4ContinuousCorpusCorrection, renderSkyV4ReaderRoute } from "./fallbackArchitectureV3/resolver/skyPlacementV4Canonical.mjs";
 import type {
@@ -18,13 +21,18 @@ import type {
   HookRow
 } from "./fallbackArchitectureV3Runtime";
 
+const guardedSkyPlacementHouseRows = filterMixedDepthSkyPlacementHouseRows(
+  bundledSkyPlacementHouseRowsV3.hookRows,
+  ownerAuthoredSkyPlacementHousePassages.rows
+) as HookRow[];
+
 export const skyPlacementFallbackArchitectureV3Bundle: FallbackArchitectureV3Bundle = {
   transitLib: { authoredCards: [] },
   templatesFile: { templates: [] },
   rowsFile: {
     hookRows: [
       ...bundledSkyPlacementRowsV3.hookRows,
-      ...bundledSkyPlacementHouseRowsV3.hookRows
+      ...guardedSkyPlacementHouseRows
     ] as HookRow[],
     vocabularyRows: []
   },
