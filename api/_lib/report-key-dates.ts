@@ -1,4 +1,4 @@
-import type { ReportDraft, ReportHorizon } from "./report-generation.ts";
+import type { ReportDomain, ReportDraft, ReportHorizon } from "./report-generation.ts";
 
 export type ReportKeyDateSourceUnit = {
   unitId: string;
@@ -63,11 +63,10 @@ const SOURCE_UNIT_IDS: Record<ReportHorizon, readonly string[]> = {
   "12_months": ["winter-current", "spring", "summer", "autumn", "winter-next"]
 };
 
-// The owner-authored 12-month benchmark keeps Key Dates selective by season.
-// Supporting contacts may stay in the seasonal prose without automatically
-// becoming another headline date. Summer earns one additional slot because it
-// can carry a return plus the two eclipse anchors inside the same season.
-const TWELVE_MONTH_KEY_DATE_UNIT_CAPS: Record<string, number> = {
+// Calibrated only to the owner-authored General Year Ahead benchmark. Focused
+// deep-dive products retain their own Key Date behavior until separately
+// calibrated against their owner references.
+const TWELVE_MONTH_GENERAL_KEY_DATE_UNIT_CAPS: Record<string, number> = {
   "winter-current": 3,
   spring: 4,
   summer: 5,
@@ -308,13 +307,14 @@ export function reportKeyDateEventManifest(
 
 function selectExpectedKeyDateEvents(input: {
   horizon: ReportHorizon;
+  reportDomain: ReportDomain;
   events: ReportKeyDateEventManifestEntry[];
   priorityByEventId: Map<string, number>;
 }) {
-  if (input.horizon !== "12_months") return input.events;
+  if (input.horizon !== "12_months" || input.reportDomain !== "general") return input.events;
   const retained = new Set<string>();
   for (const unitId of SOURCE_UNIT_IDS["12_months"]) {
-    const cap = TWELVE_MONTH_KEY_DATE_UNIT_CAPS[unitId] ?? Number.MAX_SAFE_INTEGER;
+    const cap = TWELVE_MONTH_GENERAL_KEY_DATE_UNIT_CAPS[unitId] ?? Number.MAX_SAFE_INTEGER;
     input.events
       .filter((event) => event.sourceUnitId === unitId)
       .sort((left, right) => {
@@ -331,6 +331,7 @@ function selectExpectedKeyDateEvents(input: {
 
 export function assembleDeterministicReportKeyDates(input: {
   reportHorizon: ReportHorizon;
+  reportDomain?: ReportDomain;
   frozenFacts: Record<string, unknown>;
   sourceUnits: ReportKeyDateSourceUnit[];
   eligibleEventIds: Iterable<string>;
@@ -353,6 +354,7 @@ export function assembleDeterministicReportKeyDates(input: {
   const interpretedEvents = allEvents.filter((event) => interpretedEventIds.has(event.eventId));
   const events = selectExpectedKeyDateEvents({
     horizon: input.reportHorizon,
+    reportDomain: input.reportDomain ?? "general",
     events: interpretedEvents,
     priorityByEventId
   });
