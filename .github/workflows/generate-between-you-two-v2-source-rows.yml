@@ -1,0 +1,28 @@
+name: Generate Between You Two V2 source rows
+on:
+  push:
+    branches:
+      - owner/between-you-two-v2-20260905
+    paths:
+      - packages/astro-knowledge/review/between-you-two-v2-2026-09-05/full-authoring-review.json
+      - scripts/generate-between-you-two-v2-source-rows.mjs
+      - .github/workflows/generate-between-you-two-v2-source-rows.yml
+permissions:
+  contents: write
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+      - run: node scripts/generate-between-you-two-v2-source-rows.mjs
+      - name: Commit generated source rows
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add apps/web/src/content/fallbackArchitectureV3/source-rows/pair-daily-v2-rows.json
+          git diff --cached --check
+          git commit -m "content(friends): stage Between You Two V2 source rows"
+          git push origin HEAD
