@@ -402,3 +402,26 @@
   white-space: normal;
 }
 
+
+
+/* Reader destination labels: explain the app destination before the technical key. */
+.admin-dashboard .admin-reader-destination-line {
+  align-items: baseline;
+  color: var(--admin-muted);
+  display: flex;
+  flex-wrap: wrap;
+  font-size: var(--admin-ui-type-caption);
+  gap: var(--admin-space-sm);
+  line-height: var(--leading-meta);
+  margin: 0;
+}
+
+.admin-dashboard .admin-reader-destination-line strong,
+.admin-dashboard .admin-editor-reader-destination strong {
+  color: var(--admin-text-secondary);
+  font-weight: var(--weight-semibold);
+}
+
+.admin-dashboard .admin-editor-reader-destination {
+  color: var(--admin-muted);
+}
