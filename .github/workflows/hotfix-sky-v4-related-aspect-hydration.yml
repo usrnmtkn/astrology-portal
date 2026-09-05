@@ -1,0 +1,56 @@
+name: Hotfix Sky V4 related aspect hydration
+
+on:
+  push:
+    branches:
+      - "hotfix/sky-v4-related-aspect-hydration"
+    paths:
+      - "scripts/hotfix-sky-v4-related-aspect-hydration.mjs"
+      - "scripts/test-sky-v4-related-aspect-hydration.mjs"
+      - ".github/workflows/hotfix-sky-v4-related-aspect-hydration.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  hotfix:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+      - name: Install dependencies
+        run: npm ci
+      - name: Apply focused hydration fix
+        run: node scripts/hotfix-sky-v4-related-aspect-hydration.mjs
+      - name: Verify hydration boundary
+        run: node scripts/test-sky-v4-related-aspect-hydration.mjs
+      - name: Verify existing Sky article contracts
+        run: |
+          node scripts/test-sky-article-v1.mjs
+          node scripts/test-reviewed-sky-aspect-phrasebook.mjs
+      - name: Build app
+        run: npm run build
+      - name: Install Playwright Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Reproduce and verify Sun in Virgo article
+        run: npx playwright test -c playwright.config.ts tests/visual/client-facing-user-flows.spec.ts --grep "Sun in Virgo detail serves the exact canonical V4 owner-approved article"
+      - name: Verify whitespace integrity
+        run: git diff --check
+      - name: Commit hotfix
+        shell: bash
+        run: |
+          if git diff --quiet; then
+            echo "No hotfix changes to commit."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add apps/web/src/App.tsx
+          git commit -m "fix(sky): preserve related aspects after V4 hydration"
+          git push origin HEAD
