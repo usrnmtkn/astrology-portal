@@ -12,10 +12,24 @@ function replaceOnce(source, search, replacement, label) {
   return source.slice(0, first) + replacement + source.slice(first + search.length);
 }
 
-function replaceRegexOnce(source, pattern, replacement, label) {
-  const matches = [...source.matchAll(new RegExp(pattern.source, pattern.flags.includes("g") ? pattern.flags : `${pattern.flags}g`))];
-  if (matches.length !== 1) throw new Error(`Expected one ${label}, found ${matches.length}`);
-  return source.replace(pattern, replacement);
+function removeTopLevelStatement(source, startMarker, nextStatementPattern, label) {
+  const start = source.indexOf(startMarker);
+  if (start < 0) throw new Error(`Missing ${label}`);
+  const remainder = source.slice(start + startMarker.length);
+  const match = remainder.match(nextStatementPattern);
+  if (!match || typeof match.index !== "number") throw new Error(`Missing end of ${label}`);
+  const end = start + startMarker.length + match.index + 1;
+  return source.slice(0, start) + source.slice(end);
+}
+
+function removeReturnedProperty(source, startMarker, label) {
+  const start = source.indexOf(startMarker);
+  if (start < 0) throw new Error(`Missing ${label}`);
+  const remainder = source.slice(start + startMarker.length);
+  const match = remainder.match(/\n    [A-Za-z_$][A-Za-z0-9_$]*:/u);
+  if (!match || typeof match.index !== "number") throw new Error(`Missing next property after ${label}`);
+  const end = start + startMarker.length + match.index + 1;
+  return source.slice(0, start) + source.slice(end);
 }
 
 let app = fs.readFileSync(appPath, "utf8");
@@ -45,17 +59,16 @@ builder = replaceOnce(
 );
 app = app.slice(0, builderStart) + builder + app.slice(builderEnd);
 
-app = replaceRegexOnce(
+app = removeReturnedProperty(
   app,
-  /  const sourceGapAspectRows = isRegistryArticle[\s\S]*?\n      \}\);\n/u,
-  "",
-  "Sky placement source-gap rows"
-);
-app = replaceRegexOnce(
-  app,
-  /    relatedAspects: sourceGapAspectRows\.length > 0[\s\S]*?\n      : undefined,\n/u,
-  "",
+  "    relatedAspects: sourceGapAspectRows.length > 0",
   "Sky placement source-gap rendering"
+);
+app = removeTopLevelStatement(
+  app,
+  "  const sourceGapAspectRows = isRegistryArticle",
+  /\n  (?:const|return) /u,
+  "Sky placement source-gap rows"
 );
 
 if (app.includes("setContentRegistryVersion")) throw new Error("Ad-hoc content registry setter remains");
