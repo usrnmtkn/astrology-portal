@@ -104,10 +104,10 @@ export function AdminPageHeader({
           className="admin-create-button"
           href="/admin/content/coverage"
           style={coverageActionStyle}
-          title="See complete and missing content corpora"
+          title="See content coverage: complete and missing content corpora"
         >
           <BarChart3 size={16} aria-hidden="true" />
-          Coverage
+          Content coverage
         </a>
         <div className="admin-create-menu">
           <button
