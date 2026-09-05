@@ -22,8 +22,8 @@ export function PackagedHookCatalogResults({ items, savedKeys, resetKey, onOpen 
       <header className="admin-section-heading-row">
         <div>
           <p className="admin-eyebrow">Packaged source phrases</p>
-          <h3>View and edit the writing used by the app</h3>
-          <p>Open a source to load its exact wording. Saving creates an editable Content Studio row.</p>
+          <h3>Source material used by the app</h3>
+          <p>These are authoring sources, not final reader cards. Saving creates an editable Content Studio source row.</p>
         </div>
         <span className="ui-pill admin-status">{items.length} sources</span>
       </header>
@@ -34,15 +34,15 @@ export function PackagedHookCatalogResults({ items, savedKeys, resetKey, onOpen 
               const contentKey = canonicalKey(item.key);
               const saved = savedKeys.has(item.key) || savedKeys.has(contentKey);
               return (
-                <article key={item.key} className="admin-fallback-row">
+                <article key={item.key} className="admin-fallback-row admin-source-only-row">
                   <div className="admin-fallback-row-main">
                     <p className="admin-eyebrow">{item.section} / packaged source</p>
-                    <h3 style={{ fontSize: "var(--admin-type-14)", lineHeight: "var(--leading-title)" }}>{item.label}</h3>
+                    <h3>{item.label}</h3>
                     <code>{contentKey}</code>
                   </div>
                   <div className="admin-fallback-row-actions">
-                    <span className={`ui-pill admin-status ${saved ? "status-live" : "status-draft"}`}>{saved ? "Saved row" : "Package source"}</span>
-                    <button type="button" onClick={() => onOpen(item)}>{saved ? "Edit" : "View and edit"}</button>
+                    <span className={`ui-pill admin-status ${saved ? "status-live" : "status-draft"}`}>{saved ? "Saved source" : "Source only"}</span>
+                    <button type="button" onClick={() => onOpen(item)}>{saved ? "Edit source" : "View source"}</button>
                   </div>
                 </article>
               );
