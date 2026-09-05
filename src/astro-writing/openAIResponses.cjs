@@ -30,6 +30,19 @@ function instructionsForRole(role, taskInstructions = "") {
   return taskInstructions.trim() ? `${canonical}\n\n${taskInstructions.trim()}` : canonical;
 }
 
+function inferredPromptContext(request, { surface = "", family = "" } = {}) {
+  const input = typeof request?.input === "string" ? request.input : JSON.stringify(request?.input ?? "");
+  const inferredSurface = surface
+    || input.match(/(?:^|\n\n)SURFACE\n([^\n]+)/u)?.[1]?.trim()
+    || input.match(/"surface"\s*:\s*"([^"]+)"/u)?.[1]
+    || "";
+  const inferredFamily = family
+    || input.match(/(?:^|\n\n)CONTENT FAMILY\n([^\n]+)/u)?.[1]?.trim()
+    || input.match(/"family"\s*:\s*"([^"]+)"/u)?.[1]
+    || "";
+  return { surface: inferredSurface, family: inferredFamily };
+}
+
 function governedInstructionsForRole(role, {
   taskInstructions = "",
   governedInstructions = "",
@@ -47,7 +60,10 @@ function governedInstructionsForRole(role, {
   if (!EFFECTIVE_RULE_ROLES.has(role)) return instructionsForRole(role, taskInstructions);
   const resolvedSurface = surface || (role.startsWith("CARD_") ? "card" : "generic");
   const effectiveRules = renderEffectiveRulesForPrompt({ surface: resolvedSurface, family }).trim();
-  const base = effectiveRules ? `${canonical}\n\n${effectiveRules}` : canonical;
+  const reviewerGovernance = role === "REVIEWER"
+    ? "MODEL REVIEW GOVERNANCE: Every model-authored editorial finding is advisory evidence for the owner. Do not claim approval authority, and do not use severity to authorize an automatic rewrite."
+    : "";
+  const base = [canonical, effectiveRules, reviewerGovernance].filter(Boolean).join("\n\n");
   return taskInstructions.trim() ? `${base}\n\n${taskInstructions.trim()}` : base;
 }
 
@@ -70,13 +86,14 @@ async function callOpenAIResponses({
   if (Object.hasOwn(request, "previous_response_id")) {
     throw new Error("Astrology prose calls may not rely on previous-response instruction persistence.");
   }
+  const context = inferredPromptContext(request, { surface, family });
   const body = {
     ...request,
     instructions: governedInstructionsForRole(role, {
       taskInstructions,
       governedInstructions,
-      surface,
-      family
+      surface: context.surface,
+      family: context.family
     })
   };
   const response = await fetchImpl("https://api.openai.com/v1/responses", {
@@ -109,5 +126,6 @@ module.exports = {
   callGovernedOpenAIResponses,
   callOpenAIResponses,
   governedInstructionsForRole,
+  inferredPromptContext,
   instructionsForRole
 };
