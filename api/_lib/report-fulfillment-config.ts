@@ -97,7 +97,7 @@ export function resolvedStripePriceId(sku: ReportSku) {
 }
 
 export function reportCallEstimate(horizon: ReportHorizon) {
-  const unitCount = horizon === "1_month" ? 4 : horizon === "4_months" || horizon === "6_months" ? 6 : 11;
+  const unitCount = horizon === "1_month" ? 4 : horizon === "4_months" || horizon === "6_months" ? 6 : 10;
   const writerUnitCount = unitCount - 1; // key-dates is deterministic formatted assembly
   const redundancyPassCalls = 0; // warning-only assembly proceeds directly to owner review
   const coldReadCalls = writerUnitCount;
