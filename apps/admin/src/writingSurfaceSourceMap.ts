@@ -179,17 +179,19 @@ export const writingSurfaceSourceMap: WritingSurfaceMapItem[] = [
   },
   {
     id: "friends-pair-daily",
-    surface: "Friends: Today Between You Two",
+    surface: "Friends: Between You Two V2",
     area: "Friends",
     status: "normalized",
-    requiredSlots: ["daily opener", "your daily clause", "friend daily clause", "shared bridge", "optional closing advice"],
+    requiredSlots: ["shared relationship evidence", "headline", "canonical bond body or shared-Moon body", "optional individual context", "optional useful move"],
     visibleLayerOrder: ["source-grounded"],
-    currentRenderPath: "ManualChartsPanel calculates each person's daily driver and the shared Moon or bond context, then renderPairDaily fills reviewed pair-daily hooks. Every displayed prose span retains its fallback-hook source key.",
-    risk: "Planet, aspect, house, Moon element, and date remain calculated facts. Editors must change the reviewed hook wording without hard-coding those facts into reusable rows.",
-    nextAction: "Use the Friends pair-daily source browser, edit an atomic hook, and verify both direct-reader and friend voice in the reader preview.",
+    currentRenderPath: "ManualChartsPanel selects the top-ranked active bond transit first. BetweenYouTwoV2 resolves only an approved direction-specific headline + canonical owner-approved family body + approved move. If no bond transit exists, an approved shared-Moon note may render. With no shared condition, the daily synthesis is omitted.",
+    risk: "V2 approval is directional. Reader-facing headline/move approval must never be copied to an unseen reverse-direction row. Held rows remain visible in Content Studio but excluded from the reader bundle.",
+    nextAction: "Review held V2 reader-direction and reverse-direction rows separately in Content Studio. Promote only exact wording the owner has reviewed.",
     sources: [
       { label: "ManualChartsPanel.tsx", path: "apps/web/src/features/friends/ManualChartsPanel.tsx", role: "renderer" },
-      { label: "pairDaily.ts", path: "apps/web/src/services/pairDaily.ts", role: "renderer" },
+      { label: "betweenYouTwoV2.ts", path: "apps/web/src/services/betweenYouTwoV2.ts", role: "renderer" },
+      { label: "pair-daily-v2-rows.json", path: "apps/web/src/content/fallbackArchitectureV3/source-rows/pair-daily-v2-rows.json", role: "source-grounded" },
+      { label: "bond-effect directional corpus", path: "packages/astro-knowledge/review/bond-effect-directional-copy-v1", role: "source-grounded" },
       { label: "pair-daily-frames-v1.json", path: "apps/web/src/content/fallbackArchitectureV3/source-rows/pair-daily-frames-v1.json", role: "source-grounded" },
       { label: "pair-daily-clauses-v1.json", path: "apps/web/src/content/fallbackArchitectureV3/source-rows/pair-daily-clauses-v1.json", role: "source-grounded" }
     ]

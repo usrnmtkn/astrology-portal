@@ -35,6 +35,7 @@ import { aspectGlyph, pointGlyph } from "../../components/charts/chartAssets";
 import type { InterChartAspectLine } from "../../components/charts/Wheels";
 import {
   fallbackV3ApprovalLevelForContentKey,
+  fallbackV3HookBody,
   normalizeAspect as normalizeFallbackV3Aspect,
   SourceGapError as FallbackV3SourceGapError,
   transitSynastryFallbackRendererV3
@@ -45,6 +46,10 @@ import {
 } from "../../content/readerSafety";
 import { isDisplayRetrograde } from "../../services/astrologyDisplay";
 import { natalChartHasCompletePlacements } from "../../services/natalChartCompleteness";
+import {
+  betweenYouTwoV2BondReading,
+  betweenYouTwoV2SharedMoonReading
+} from "../../services/betweenYouTwoV2";
 import {
   selectPairDailyDriver,
   stablePairDailyVariant
@@ -648,6 +653,7 @@ export function ManualChartsPanel({
         return [{
           activatedContacts: contactsForBondTransitGroup(group, contacts),
           id: `${group.key}-${group.activationId}`,
+          endpointOwner: group.endpointOwner,
           effectFamily: bondEffectFamily(group.transiting, group.aspect) as "soft" | "hard",
           effectContentKey: rendered.contentKey,
           headline: rendered.headline,
@@ -1415,7 +1421,7 @@ export function ManualChartsPanel({
     selectedFriendTransits,
     selectedSynastryContacts
   ]);
-  const selectedPairDailySelection = useMemo(() => {
+  const selectedPairDaily = useMemo(() => {
     if (
       !friendProfileWork.compatibility
       || !relationshipComparisonIsSelf
@@ -1429,12 +1435,9 @@ export function ManualChartsPanel({
     }
 
     const isoDate = currentSky.generatedAt.slice(0, 10);
+    const dateLabel = formatPairDailyDate(isoDate);
     const readerChartId = profile.charts[0]?.id ?? profile.id;
     const pairVariant = stablePairDailyVariant(readerChartId, selectedChart.id, isoDate);
-
-    // Pair Daily reuses the Daily At-a-Glance applying-contact selector, then
-    // rotates only within its tightest three qualifying contacts. The canonical
-    // selector returns the unchanged single house fallback when no contact applies.
     const readerDriver = pairDailyDriver(
       currentSky,
       profileNatalSky,
@@ -1447,35 +1450,42 @@ export function ManualChartsPanel({
       pairVariant,
       selectedChart.birthTimeUnknown
     );
-    if (!readerDriver || !friendDriver) return null;
-
-    const driverSelection = { readerDriver, friendDriver, pairVariant };
-    const moon = currentSky.positions.find((position) => position.planet === "Moon") ?? null;
-    const element = moon ? pairDailyMoonElement(moon.sign) : null;
-    const fallbackShared = readerDriver.kind === "aspect" && friendDriver.kind === "aspect" && element
-      ? { kind: "moon" as const, element }
-      : { kind: null };
-
+    const readerContext = readerDriver
+      ? fallbackV3HookBody(pairDailyClauseKey(readerDriver), "you").trim() || null
+      : null;
+    const friendContext = friendDriver
+      ? fallbackV3HookBody(pairDailyClauseKey(friendDriver), "they").trim() || null
+      : null;
     const selectedBondTransit = selectedBondTransitCards[0];
+
     if (selectedBondTransit) {
-      return {
-        ...driverSelection,
-        shared: {
-          kind: "bond" as const,
-          family: selectedBondTransit.effectFamily,
-          transiting: selectedBondTransit.transitPlanet
-        },
-        fallbackShared
-      };
+      return betweenYouTwoV2BondReading({
+        dateLabel,
+        family: selectedBondTransit.effectFamily,
+        transiting: selectedBondTransit.transitPlanet,
+        direction: selectedBondTransit.endpointOwner === "reader" ? "you" : "they",
+        friendName: selectedChart.displayName,
+        primaryBondTransitId: selectedBondTransit.id,
+        readerContext,
+        friendContext
+      });
     }
 
-    return {
-      ...driverSelection,
-      shared: fallbackShared,
-      fallbackShared: { kind: null }
-    };
+    const moon = currentSky.positions.find((position) => position.planet === "Moon") ?? null;
+    const element = moon ? pairDailyMoonElement(moon.sign) : null;
+    if (!element || readerDriver?.kind !== "aspect" || friendDriver?.kind !== "aspect") {
+      return null;
+    }
+
+    return betweenYouTwoV2SharedMoonReading({
+      dateLabel,
+      element,
+      readerContext,
+      friendContext
+    });
   }, [
     currentSky,
+    fallbackArchitectureV3Version,
     friendProfileWork.compatibility,
     profile.charts,
     profile.id,
@@ -1485,56 +1495,6 @@ export function ManualChartsPanel({
     selectedChart,
     selectedChartIsEvent,
     selectedFriendReadyNatalChart
-  ]);
-  const selectedPairDaily = useMemo(() => {
-    if (!selectedPairDailySelection || !currentSky || !selectedChart) return null;
-
-    const isoDate = currentSky.generatedAt.slice(0, 10);
-
-    const renderShared = (shared: typeof selectedPairDailySelection.shared) => (
-      transitSynastryFallbackRendererV3.renderPairDaily({
-        reader: {
-          handle: profileHandle,
-          clauseKey: pairDailyClauseKey(selectedPairDailySelection.readerDriver)
-        },
-        friend: {
-          handle: selectedSocialFriend?.handle ?? null,
-          displayName: selectedChart.displayName,
-          clauseKey: pairDailyClauseKey(selectedPairDailySelection.friendDriver)
-        },
-        shared,
-        variant: selectedPairDailySelection.pairVariant
-      })
-    );
-
-    try {
-      let rendered;
-      try {
-        rendered = renderShared(selectedPairDailySelection.shared);
-      } catch (error) {
-        if (
-          !(error instanceof FallbackV3SourceGapError)
-          || selectedPairDailySelection.shared.kind !== "bond"
-        ) {
-          throw error;
-        }
-        rendered = renderShared(selectedPairDailySelection.fallbackShared);
-      }
-
-      return rendered.body
-        ? { body: rendered.body, dateLabel: formatPairDailyDate(isoDate) }
-        : null;
-    } catch (error) {
-      if (error instanceof FallbackV3SourceGapError) return null;
-      throw error;
-    }
-  }, [
-    currentSky,
-    fallbackArchitectureV3Version,
-    profileHandle,
-    selectedChart,
-    selectedPairDailySelection,
-    selectedSocialFriend?.handle
   ]);
   const selectedFriendTransitAspectLines = useMemo(() => (
     friendProfileWork.transits && currentSky && selectedChart && selectedFriendReadyNatalChart && !selectedChartIsEvent
