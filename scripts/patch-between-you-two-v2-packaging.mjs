@@ -17,8 +17,8 @@ manifest = replaceExact(
 );
 manifest = replaceExact(
   manifest,
-  'const pairDailyClauses = readJson("source-rows/pair-daily-clauses-v1.json");',
-  'const pairDailyClauses = readJson("source-rows/pair-daily-clauses-v1.json");\nconst pairDailyV2Rows = readJson("source-rows/pair-daily-v2-rows.json");',
+  '\nconst pairDailyClauses = readJson("source-rows/pair-daily-clauses-v1.json");\nconst skyAspectPhrasebookRows',
+  '\nconst pairDailyClauses = readJson("source-rows/pair-daily-clauses-v1.json");\nconst pairDailyV2Rows = readJson("source-rows/pair-daily-v2-rows.json");\nconst skyAspectPhrasebookRows',
   "top-level pair-daily V2 declaration"
 );
 manifest = replaceExact(
