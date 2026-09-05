@@ -9,8 +9,13 @@ const app = fs.readFileSync(path.join(repoRoot, "apps/web/src/App.tsx"), "utf8")
 
 assert.match(
   app,
-  /const \[contentRegistryVersion, setContentRegistryVersion\] = useState\(0\);/u,
-  "The open-detail lifecycle must retain the lazy content-registry revision."
+  /const contentRegistryVersion = useContentRegistryRevision\(\);/u,
+  "The open-detail lifecycle must synchronize the current lazy content-registry revision on mount."
+);
+assert.doesNotMatch(
+  app,
+  /setContentRegistryVersion/u,
+  "The open-detail lifecycle must not keep a second ad-hoc registry listener that can miss an already-completed load."
 );
 assert.match(
   app,
@@ -28,7 +33,7 @@ const dependencyBlock = app.slice(dependencyStart, dependencyEnd + 3);
 assert.match(
   dependencyBlock,
   /\bcontentRegistryVersion\b/u,
-  "The open Sky detail refresh effect must rerun when the registry revision changes."
+  "The open Sky detail refresh effect must rerun when the synchronized registry revision changes."
 );
 assert.match(
   app,
@@ -36,4 +41,4 @@ assert.match(
   "Canonical registry articles must continue suppressing unreviewed source-gap aspect rows."
 );
 
-console.log("Sky V4 registry-driven related-aspect refresh contract passed.");
+console.log("Sky V4 synchronized registry related-aspect refresh contract passed.");
