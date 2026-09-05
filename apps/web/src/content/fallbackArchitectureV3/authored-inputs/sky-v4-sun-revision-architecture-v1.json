@@ -1,0 +1,59 @@
+{
+  "schema": "tldrastro-sky-v4-sun-revision-architecture/v1",
+  "status": "architecture_only_needs_editorial_revision",
+  "serving_enabled": false,
+  "current_serving_copy_unchanged": true,
+  "base_main_sha": "6368877d5b9f7d425d495911c19614cec6dafde8",
+  "supersedes_pr": 450,
+  "canonical_package_version": "SKY-V4-CANONICAL-CODEX-HANDOFF-CONTENT-STUDIO-EDITABLE-2026-08-30",
+  "authoring_guide": "apps/web/src/content/fallbackArchitectureV3/admin/OWNER-LUNATION-TEMPLATE-LIBRARY.md",
+  "madlib_reference": "tldr-astro-phrasebank/sources/TLDR-ASTRO-MUSTACHE-MADLIBS-v2.2.md",
+  "continuous_fallback_contract": {
+    "resolution_order": [
+      "exact-authored-article",
+      "eligible-sky-placement-continuous-v2",
+      "eligible-standalone-fallback-hook/sky-placement-sign/{planet}/{sign}",
+      "SOURCE_GAP"
+    ],
+    "retired": [
+      "placement-hook-lived-turn-stack",
+      "placement-hook-lived-turn-moves-stack"
+    ],
+    "new_fallback_copy_in_this_proposal": false
+  },
+  "date_fact_contract": {
+    "custom_entryDate_allowed": false,
+    "canonical_slots": [
+      "ingress_date_display",
+      "ingress_time_display",
+      "start_date_display",
+      "end_date_display",
+      "exit_date_display",
+      "timezone_display"
+    ]
+  },
+  "scope": {
+    "planet": "sun",
+    "expected_records": 12,
+    "excluded_families": [
+      "seasonal-context",
+      "templates",
+      "retrograde-modifiers",
+      "serving-release"
+    ]
+  },
+  "records": [
+    {"content_key":"sky-placement/article/sun/aries","sign":"aries","revision_status":"needs_editorial_refinement","serving_action":"none","fallback_action":"reuse-canonical-resolution-only"},
+    {"content_key":"sky-placement/article/sun/taurus","sign":"taurus","revision_status":"needs_editorial_refinement","serving_action":"none","fallback_action":"reuse-canonical-resolution-only"},
+    {"content_key":"sky-placement/article/sun/gemini","sign":"gemini","revision_status":"needs_editorial_refinement","serving_action":"none","fallback_action":"reuse-canonical-resolution-only"},
+    {"content_key":"sky-placement/article/sun/cancer","sign":"cancer","revision_status":"needs_editorial_refinement","serving_action":"none","fallback_action":"reuse-canonical-resolution-only"},
+    {"content_key":"sky-placement/article/sun/leo","sign":"leo","revision_status":"needs_editorial_refinement","serving_action":"none","fallback_action":"reuse-canonical-resolution-only"},
+    {"content_key":"sky-placement/article/sun/virgo","sign":"virgo","revision_status":"needs_editorial_refinement","serving_action":"none","fallback_action":"reuse-canonical-resolution-only"},
+    {"content_key":"sky-placement/article/sun/libra","sign":"libra","revision_status":"needs_editorial_refinement","serving_action":"none","fallback_action":"reuse-canonical-resolution-only"},
+    {"content_key":"sky-placement/article/sun/scorpio","sign":"scorpio","revision_status":"needs_editorial_refinement","serving_action":"none","fallback_action":"reuse-canonical-resolution-only"},
+    {"content_key":"sky-placement/article/sun/sagittarius","sign":"sagittarius","revision_status":"needs_editorial_refinement","serving_action":"none","fallback_action":"reuse-canonical-resolution-only"},
+    {"content_key":"sky-placement/article/sun/capricorn","sign":"capricorn","revision_status":"needs_editorial_refinement","serving_action":"none","fallback_action":"reuse-canonical-resolution-only"},
+    {"content_key":"sky-placement/article/sun/aquarius","sign":"aquarius","revision_status":"needs_editorial_refinement","serving_action":"none","fallback_action":"reuse-canonical-resolution-only"},
+    {"content_key":"sky-placement/article/sun/pisces","sign":"pisces","revision_status":"needs_editorial_refinement","serving_action":"none","fallback_action":"reuse-canonical-resolution-only"}
+  ]
+}
