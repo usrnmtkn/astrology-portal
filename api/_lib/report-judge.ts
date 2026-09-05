@@ -23,6 +23,10 @@ export const REPORT_JUDGE_HARD_GATE_CATEGORIES = [
   "interpretive_movement",
   "owner_voice"
 ] as const satisfies readonly ReportJudgeCategory[];
+export const REPORT_JUDGE_RELEASE_QUALITY_FLOORS = {
+  owner_voice: 4,
+  natural_language: 4
+} as const satisfies Partial<Record<ReportJudgeCategory, number>>;
 export type ReportJudgeCategory = typeof REPORT_JUDGE_CATEGORIES[number];
 export type ReportJudgeScores = Record<ReportJudgeCategory, number | null>;
 export type ReportJudgeResult = {
@@ -157,7 +161,10 @@ export function reportJudgeVerdict(scores: ReportJudgeScores, threshold: number,
   const hardGatePassed = REPORT_JUDGE_HARD_GATE_CATEGORIES
     .filter((category) => category !== "interpretive_movement" || movementApplicable)
     .every((category) => typeof scores[category] === "number" && (scores[category] as number) >= 3);
-  return overall >= threshold && hardGatePassed ? "pass" as const : "below_threshold" as const;
+  const releaseQualityPassed = Object.entries(REPORT_JUDGE_RELEASE_QUALITY_FLOORS)
+    .every(([category, floor]) => typeof scores[category as ReportJudgeCategory] === "number"
+      && (scores[category as ReportJudgeCategory] as number) >= floor);
+  return overall >= threshold && hardGatePassed && releaseQualityPassed ? "pass" as const : "below_threshold" as const;
 }
 
 export function deterministicCalibrationScore(text: string) {
