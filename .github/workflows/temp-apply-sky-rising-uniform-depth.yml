@@ -1,0 +1,110 @@
+name: Apply current-main rising horoscope depth guard
+
+on:
+  push:
+    branches:
+      - chatgpt/sky-rising-uniform-depth-current-main
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Apply minimal source patch
+        shell: bash
+        run: |
+          python3 <<'PY'
+          from pathlib import Path
+          import re
+
+          root = Path('.')
+          policy_path = root / 'apps/web/src/content/fallbackArchitectureV3/resolver/skyPlacementHoroscopeSetPolicy.mjs'
+          policy_path.write_text('''export const SKY_PLACEMENT_HOROSCOPE_TIERS = Object.freeze([\n  "full-owner-authored-horoscope",\n  "compact-house-core"\n]);\n\nconst OWNER_AUTHORED_SELECTIONS = new Set([\n  "protected-owner-authored-passage",\n  "owner-authored-content-studio-inventory"\n]);\n\nexport function skyPlacementHouseContentTier(row) {\n  const selectedFrom = row?.template_selection?.selected_from;\n  return row?.source_release === "owner-authored-sky-placement-house-passages-v1"\n    || OWNER_AUTHORED_SELECTIONS.has(selectedFrom)\n    ? "full-owner-authored-horoscope"\n    : "compact-house-core";\n}\n\nexport function requireUniformSkyPlacementHoroscopeSet(entries, { planet, sign }) {\n  if (!Array.isArray(entries) || entries.length !== 12) {\n    throw new Error(`SOURCE_GAP: rising horoscope set ${planet}/${sign} requires 12 entries`);\n  }\n  const tiers = new Set(entries.map((entry) => entry.contentTier));\n  if (tiers.size !== 1 || !SKY_PLACEMENT_HOROSCOPE_TIERS.includes([...tiers][0])) {\n    throw new Error(\n      `SOURCE_GAP: mixed or unknown house horoscope tiers ${planet}/${sign} (${[...tiers].join(", ")})`\n    );\n  }\n  return entries;\n}\n''')
+
+          def replace_once(text, old, new, label):
+              count = text.count(old)
+              if count != 1:
+                  raise SystemExit(f'{label}: expected exactly one match, found {count}')
+              return text.replace(old, new, 1)
+
+          node_path = root / 'apps/web/src/content/fallbackArchitectureV3/resolver/renderTransitSynastry.mjs'
+          node = node_path.read_text()
+          node = replace_once(
+              node,
+              'import { sha256Text } from "./contentIntegrity.mjs";\n',
+              'import { sha256Text } from "./contentIntegrity.mjs";\nimport { requireUniformSkyPlacementHoroscopeSet, skyPlacementHouseContentTier } from "./skyPlacementHoroscopeSetPolicy.mjs";\n',
+              'node policy import'
+          )
+          node = replace_once(
+              node,
+              '    contentKey: row.contentKey,\n    house: normalizedHouse,\n    templateKey: `house-horoscope-core/${normalizedPlanet}-${normalizedSign}-v1`\n  };\n}\n',
+              '    contentKey: row.contentKey,\n    contentTier: skyPlacementHouseContentTier(row),\n    house: normalizedHouse,\n    templateKey: `house-horoscope-core/${normalizedPlanet}-${normalizedSign}-v1`\n  };\n}\n\nexport function renderSkyPlacementRisingHoroscopeSet({ planet, sign, entries }) {\n  const rendered = entries.map((entry) => ({\n    risingSign: entry.risingSign,\n    ...renderSkyPlacementHouseCore({ planet, sign, house: entry.house })\n  }));\n  try {\n    return requireUniformSkyPlacementHoroscopeSet(rendered, { planet, sign });\n  } catch (error) {\n    throw new SourceGapError(error instanceof Error ? error.message : String(error));\n  }\n}\n',
+              'node house core'
+          )
+          node_path.write_text(node)
+
+          browser_path = root / 'apps/web/src/content/fallbackArchitectureV3/resolver/renderTransitSynastry.browser.ts'
+          browser = browser_path.read_text()
+          browser = replace_once(
+              browser,
+              '} from "./renderFallback.browser";\n',
+              '} from "./renderFallback.browser";\nimport { requireUniformSkyPlacementHoroscopeSet, skyPlacementHouseContentTier } from "./skyPlacementHoroscopeSetPolicy.mjs";\n',
+              'browser policy import'
+          )
+          browser = replace_once(
+              browser,
+              '      contentKey: row.contentKey,\n      house: normalizedHouse,\n      templateKey: `house-horoscope-core/${normalizedPlanet}-${normalizedSign}-v1`\n    };\n  }\n',
+              '      contentKey: row.contentKey,\n      contentTier: skyPlacementHouseContentTier(row),\n      house: normalizedHouse,\n      templateKey: `house-horoscope-core/${normalizedPlanet}-${normalizedSign}-v1`\n    };\n  }\n\n  function renderSkyPlacementRisingHoroscopeSet({\n    planet,\n    sign,\n    entries\n  }: { planet: string; sign: string; entries: Array<{ risingSign: string; house: number }> }) {\n    const rendered = entries.map((entry) => ({\n      risingSign: entry.risingSign,\n      ...renderSkyPlacementHouseCore({ planet, sign, house: entry.house })\n    }));\n    try {\n      return requireUniformSkyPlacementHoroscopeSet(rendered, { planet, sign });\n    } catch (error) {\n      throw new SourceGapError(error instanceof Error ? error.message : String(error));\n    }\n  }\n',
+              'browser house core'
+          )
+          old_return = 'renderSkyPlacement, renderSkyPlacementHouseCore, renderSkyAspectCard'
+          browser = replace_once(
+              browser,
+              old_return,
+              'renderSkyPlacement, renderSkyPlacementHouseCore, renderSkyPlacementRisingHoroscopeSet, renderSkyAspectCard',
+              'browser renderer export'
+          )
+          browser_path.write_text(browser)
+
+          app_path = root / 'apps/web/src/App.tsx'
+          app = app_path.read_text()
+          old = '''    return zodiacSigns.map((risingSign) => {\n      const house = risingHouseMap[normalizeContentIdPart(risingSign)];\n      if (!house) {\n        throw new FallbackV3SourceGapError(\n          `SOURCE_GAP: house horoscope core ${planet}/${sign}/house-pending`\n        );\n      }\n      const rendered = transitSynastryFallbackRendererV3.renderSkyPlacementHouseCore({\n        planet,\n        sign,\n        house\n      });\n      return {\n        risingSign,\n        house,\n        body: rendered.body,\n        contentKey: rendered.contentKey\n      };\n    });'''
+          new = '''    const entries = zodiacSigns.map((risingSign) => {\n      const house = risingHouseMap[normalizeContentIdPart(risingSign)];\n      if (!house) {\n        throw new FallbackV3SourceGapError(\n          `SOURCE_GAP: house horoscope core ${planet}/${sign}/house-pending`\n        );\n      }\n      return { risingSign, house };\n    });\n    return transitSynastryFallbackRendererV3.renderSkyPlacementRisingHoroscopeSet({\n      planet,\n      sign,\n      entries\n    });'''
+          app = replace_once(app, old, new, 'current App rising helper')
+          app_path.write_text(app)
+
+          test_path = root / 'scripts/test-sky-placement-rising-horoscope-uniform-depth.mjs'
+          test_path.write_text('''import assert from "node:assert/strict";\nimport fs from "node:fs";\nimport {\n  requireUniformSkyPlacementHoroscopeSet,\n  skyPlacementHouseContentTier\n} from "../apps/web/src/content/fallbackArchitectureV3/resolver/skyPlacementHoroscopeSetPolicy.mjs";\n\nconst source = JSON.parse(fs.readFileSync(new URL("../apps/web/src/content/fallbackArchitectureV3/source-rows/sky-placement-house-templates-v1.json", import.meta.url), "utf8"));\nconst entriesFor = (planet, sign) => source.rows\n  .filter((row) => row.contentKey.startsWith(`house-horoscope-core/${planet}/${sign}/house-`))\n  .map((row) => ({\n    contentKey: row.contentKey,\n    house: Number(row.contentKey.match(/house-(\\d+)$/u)?.[1]),\n    contentTier: skyPlacementHouseContentTier(row)\n  }))\n  .sort((a, b) => a.house - b.house);\n\nconst jupiterLeo = entriesFor("jupiter", "leo");\nassert.equal(jupiterLeo.length, 12);\nassert.deepEqual(jupiterLeo.filter((row) => row.contentTier === "full-owner-authored-horoscope").map((row) => row.house), [5, 7, 8, 9, 10, 11, 12]);\nassert.deepEqual(jupiterLeo.filter((row) => row.contentTier === "compact-house-core").map((row) => row.house), [1, 2, 3, 4, 6]);\nassert.throws(() => requireUniformSkyPlacementHoroscopeSet(jupiterLeo, { planet: "jupiter", sign: "leo" }), /mixed or unknown house horoscope tiers/u);\n\nconst uranusGemini = entriesFor("uranus", "gemini");\nassert.equal(uranusGemini.length, 12);\nassert.equal(new Set(uranusGemini.map((row) => row.contentTier)).size, 1);\nassert.equal(requireUniformSkyPlacementHoroscopeSet(uranusGemini, { planet: "uranus", sign: "gemini" }).length, 12);\n\nconst app = fs.readFileSync(new URL("../apps/web/src/App.tsx", import.meta.url), "utf8");\nconst nodeResolver = fs.readFileSync(new URL("../apps/web/src/content/fallbackArchitectureV3/resolver/renderTransitSynastry.mjs", import.meta.url), "utf8");\nconst browserResolver = fs.readFileSync(new URL("../apps/web/src/content/fallbackArchitectureV3/resolver/renderTransitSynastry.browser.ts", import.meta.url), "utf8");\nconst dist = fs.readFileSync(new URL("../apps/web/src/content/fallbackArchitectureV3/dist/tldr-content.js", import.meta.url), "utf8");\nassert.match(app, /renderSkyPlacementRisingHoroscopeSet/u);\nassert.match(nodeResolver, /export function renderSkyPlacementRisingHoroscopeSet/u);\nassert.match(browserResolver, /function renderSkyPlacementRisingHoroscopeSet/u);\nassert.match(dist, /renderSkyPlacementRisingHoroscopeSet/u);\nconsole.log("Sky placement rising-horoscope uniform-depth guard passed.");\n''')
+          PY
+      - name: Install build dependencies
+        run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: Rebuild browser resolver bundle
+        run: ./node_modules/.bin/esbuild apps/web/src/content/fallbackArchitectureV3/resolver/index.browser.ts --bundle --format=esm --outfile=apps/web/src/content/fallbackArchitectureV3/dist/tldr-content.js
+      - name: Verify guard
+        run: |
+          node scripts/test-sky-placement-rising-horoscope-uniform-depth.mjs
+          node scripts/test-sky-placement-house-templates.mjs
+      - name: Commit patched files and remove temporary workflow
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git rm .github/workflows/temp-apply-sky-rising-uniform-depth.yml
+          git add apps/web/src/App.tsx \
+            apps/web/src/content/fallbackArchitectureV3/resolver/skyPlacementHoroscopeSetPolicy.mjs \
+            apps/web/src/content/fallbackArchitectureV3/resolver/renderTransitSynastry.mjs \
+            apps/web/src/content/fallbackArchitectureV3/resolver/renderTransitSynastry.browser.ts \
+            apps/web/src/content/fallbackArchitectureV3/dist/tldr-content.js \
+            scripts/test-sky-placement-rising-horoscope-uniform-depth.mjs
+          git commit -m "fix(sky): fail closed on mixed-depth rising horoscopes"
+          git push origin HEAD:chatgpt/sky-rising-uniform-depth-current-main
