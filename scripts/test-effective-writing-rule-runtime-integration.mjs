@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import fs from "node:fs";
 import path from "node:path";
+import { createRequire } from "node:module";
 import { fileURLToPath } from "node:url";
 import {
   effectiveRulePrompt,
@@ -9,6 +10,8 @@ import {
   governValidationResult
 } from "../src/astro-writing/effectiveRuleGovernance.mjs";
 
+const require = createRequire(import.meta.url);
+const openAIResponses = require("../src/astro-writing/openAIResponses.cjs");
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const read = (relative) => fs.readFileSync(path.join(root, relative), "utf8");
 const generate = read("src/astro-writing/generateDraft.mjs");
@@ -51,6 +54,20 @@ assert.match(prompt, /^BASE OWNER STANDARD/u);
 assert.match(prompt, /Effective TLDR Astro writing rules/u);
 assert.match(prompt, /Generated wording remains needs_review\. Only the owner can approve exact prose\./u);
 
+const inferredCard = openAIResponses.inferredPromptContext({
+  input: "TASK\nWrite.\n\nSURFACE\nfriends-transit\n\nCONTENT FAMILY\nfriends-transit\n\nREGISTER\nfriend"
+});
+assert.deepEqual(inferredCard, { surface: "friends-transit", family: "friends-transit" });
+const governedOpenAI = openAIResponses.governedInstructionsForRole("REVIEWER", inferredCard);
+assert.match(governedOpenAI, /Effective TLDR Astro writing rules/u);
+assert.match(governedOpenAI, /Surface: friends-transit/u);
+assert.match(governedOpenAI, /MODEL REVIEW GOVERNANCE/u);
+assert.equal(
+  openAIResponses.instructionsForRole("COLD_REVIEWER"),
+  openAIResponses.governedInstructionsForRole("COLD_REVIEWER"),
+  "Cold rendered prose must remain context-isolated and must not receive the broader effective-rule packet."
+);
+
 assert.match(generate, /effectiveRulePrompt\(baseInstructions, \{ surface, family \}\)/u);
 assert.match(revise, /filter\(\(entry\) => entry\.severity === "blocking"\)/u);
 assert.match(revise, /effectiveRulePrompt\(baseInstructions, \{ surface, family \}\)/u);
@@ -61,4 +78,4 @@ assert.match(review, /filter\(\(item\) => item\.severity === "blocking"\)/u);
 assert.match(pipeline, /const lint = governValidationResult\(rawLint, \{ surface, family \}\);/u);
 assert.match(pipeline, /advisoryCategories/u);
 
-console.log("Effective writing-rule runtime integration passed: deterministic blocking tiers govern revision; model and voice findings remain owner-review advisories.");
+console.log("Effective writing-rule runtime integration passed: deterministic blocking tiers govern revision; model and voice findings remain owner-review advisories across provider boundaries.");
