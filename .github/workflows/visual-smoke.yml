@@ -30,6 +30,12 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Verify Content Studio readability contract
+        run: node scripts/test-admin-content-readability-contract.mjs
+
+      - name: Audit CSS and form typography
+        run: npm run qa:css-audit && npm run qa:form-typography
+
       - name: Install Playwright Chromium
         run: npx playwright install --with-deps chromium
 
