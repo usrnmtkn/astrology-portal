@@ -92,6 +92,10 @@
   padding: var(--admin-space-lg) var(--admin-space-xl);
 }
 
+.admin-dashboard .admin-review-copy-editor textarea.admin-copy-field-body {
+  min-height: 180px;
+}
+
 /* A header's actions/status can never sit on top of its title or description. */
 .admin-dashboard :where(
   .admin-section-heading-row,
@@ -128,6 +132,30 @@
   max-width: 100%;
   overflow-wrap: anywhere;
   text-align: center;
+  white-space: normal;
+}
+
+/* Notifications belong in document flow so they never cover status cards, fields,
+   or table text while an editor is trying to read the page. */
+.admin-dashboard .admin-save-toast {
+  bottom: auto;
+  justify-self: end;
+  max-width: 100%;
+  position: static;
+  right: auto;
+  width: fit-content;
+  z-index: auto;
+}
+
+/* Keep save state separate from actions so buttons have room for useful labels. */
+.admin-dashboard .admin-editor-save-state {
+  flex: 1 1 100%;
+  min-width: 0;
+}
+
+.admin-dashboard .admin-editor-savebar button {
+  max-width: 100%;
+  min-width: 0;
   white-space: normal;
 }
 
@@ -181,6 +209,26 @@
   padding-block: var(--admin-space-xl);
 }
 
+/* Source-key rows in Sky/lunation editors should read role → key → action, not a
+   single inline sentence that can collide with the edit button. */
+.admin-dashboard .admin-sky-related-row {
+  align-items: start;
+  display: grid;
+  gap: var(--admin-space-xl);
+  grid-template-columns: minmax(0, 1fr) auto;
+}
+
+.admin-dashboard .admin-sky-related-row > div {
+  display: grid;
+  gap: var(--admin-space-xs);
+  min-width: 0;
+}
+
+.admin-dashboard .admin-sky-related-row > button {
+  align-self: start;
+  max-width: 100%;
+}
+
 /* Long keys, names, and helper copy should wrap instead of widening cards. */
 .admin-dashboard :where(
   .admin-content-row,
@@ -196,7 +244,8 @@
 
 /* Medium layouts prioritize readable copy over a squeezed two-column form. */
 @media (max-width: 1180px) {
-  .admin-dashboard .admin-hook-catalog-results .admin-fallback-row {
+  .admin-dashboard .admin-hook-catalog-results .admin-fallback-row,
+  .admin-dashboard .admin-sky-related-row {
     grid-template-columns: minmax(0, 1fr);
   }
 
@@ -213,6 +262,10 @@
 @media (max-width: 860px) {
   .admin-dashboard .admin-content-filters {
     padding: var(--admin-space-xl);
+  }
+
+  .admin-dashboard .admin-review-copy-editor textarea.admin-copy-field-body {
+    min-height: 160px;
   }
 
   .admin-dashboard :where(
@@ -239,5 +292,9 @@
   ) > :where(.admin-new-actions, .admin-fallback-row-actions, .admin-toolbar-actions) {
     justify-content: flex-start;
     width: 100%;
+  }
+
+  .admin-dashboard .admin-editor-savebar button {
+    flex: 1 1 calc(50% - var(--admin-space-md));
   }
 }
