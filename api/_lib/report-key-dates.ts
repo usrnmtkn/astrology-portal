@@ -48,6 +48,7 @@ type KeyDateEvent = {
   id: string;
   factorId: string;
   occursAt: string;
+  normalizedDate: string;
   sortAt: number;
   attribution: string;
   priority: number;
@@ -181,6 +182,7 @@ function slowTransitEvents(root: FactRecord): KeyDateEvent[] {
     const priority = slowTransitPriority({ aspect, isReturn, natalPoint, passCount: passes.length });
     return passes.flatMap((pass, passIndex) => {
       const exactAt = words(pass.exactAt);
+      const exactAtDate = words(pass.exactAtDate);
       if (!planet || !natalPoint || !exactAt) return [];
       const motion = words(pass.motion).toLowerCase();
       const passClause = passes.length > 1 ? `, the ${passOrdinal(passIndex, passes.length)} of ${passes.length} passes` : "";
@@ -191,6 +193,7 @@ function slowTransitEvents(root: FactRecord): KeyDateEvent[] {
         id: `${words(arc.id) || `${planet}-${aspect}-${natalPoint}`}:${passIndex}`,
         factorId: words(arc.id) || `${planet}-${aspect}-${natalPoint}`,
         occursAt: exactAt,
+        normalizedDate: exactAtDate || exactAt,
         sortAt: Date.parse(exactAt),
         attribution,
         priority,
@@ -210,6 +213,7 @@ function eclipseEvents(root: FactRecord): KeyDateEvent[] {
   return lunarEvents.flatMap((event) => {
     const kind = words(event.kind);
     const occursAt = words(event.occursAt);
+    const occursAtDate = words(event.occursAtDate);
     if (!/_eclipse$/u.test(kind) || !occursAt) return [];
     const eclipseKind = kind.replace("_eclipse", "");
     const contacts = Array.isArray(event.natalContacts) ? event.natalContacts.map(record).filter(Boolean) as FactRecord[] : [];
@@ -223,6 +227,7 @@ function eclipseEvents(root: FactRecord): KeyDateEvent[] {
       id: words(event.id) || `${kind}:${occursAt}`,
       factorId: words(event.id) || `${kind}:${occursAt}`,
       occursAt,
+      normalizedDate: occursAtDate || occursAt,
       sortAt: Date.parse(occursAt),
       attribution,
       priority: 100,
@@ -299,7 +304,7 @@ export function reportKeyDateEventManifest(
       eventId: event.id,
       factorId: event.factorId,
       occursAt: event.occursAt,
-      dateLabel: dateLabel(event.occursAt),
+      dateLabel: dateLabel(event.normalizedDate),
       attribution: event.attribution,
       sourceUnitId: eventSourceUnitId(root, reportHorizon, event.sortAt)
     }));
