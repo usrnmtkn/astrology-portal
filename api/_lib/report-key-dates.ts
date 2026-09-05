@@ -50,6 +50,7 @@ type KeyDateEvent = {
   occursAt: string;
   sortAt: number;
   attribution: string;
+  priority: number;
   matches: (sentence: string) => boolean;
 };
 
@@ -60,6 +61,18 @@ const SOURCE_UNIT_IDS: Record<ReportHorizon, readonly string[]> = {
   "4_months": ["development:1", "development:2", "closing-synthesis"],
   "6_months": ["phase-1", "phase-2", "review"],
   "12_months": ["winter-current", "spring", "summer", "autumn", "winter-next"]
+};
+
+// The owner-authored 12-month benchmark keeps Key Dates selective by season.
+// Supporting contacts may stay in the seasonal prose without automatically
+// becoming another headline date. Summer earns one additional slot because it
+// can carry a return plus the two eclipse anchors inside the same season.
+const TWELVE_MONTH_KEY_DATE_UNIT_CAPS: Record<string, number> = {
+  "winter-current": 3,
+  spring: 4,
+  summer: 5,
+  autumn: 4,
+  "winter-next": 3
 };
 
 function record(value: unknown): FactRecord | null {
@@ -145,6 +158,19 @@ function aspectVerb(aspect: string) {
   return values[aspect.toLowerCase()] ?? aspect;
 }
 
+function slowTransitPriority(input: {
+  aspect: string;
+  isReturn: boolean;
+  natalPoint: string;
+  passCount: number;
+}) {
+  if (input.isReturn) return 100;
+  if (input.passCount > 1) return 95;
+  if (["conjunction", "opposition", "square"].includes(input.aspect.toLowerCase())) return 90;
+  if (["ascendant", "midheaven", "descendant", "ic"].includes(input.natalPoint.toLowerCase())) return 75;
+  return 80;
+}
+
 function slowTransitEvents(root: FactRecord): KeyDateEvent[] {
   const arcs = Array.isArray(root.slowTransitArcs) ? root.slowTransitArcs.map(record).filter(Boolean) as FactRecord[] : [];
   return arcs.flatMap((arc) => {
@@ -153,6 +179,7 @@ function slowTransitEvents(root: FactRecord): KeyDateEvent[] {
     const aspect = words(arc.aspect);
     const isReturn = arc.isReturn === true;
     const passes = Array.isArray(arc.passes) ? arc.passes.map(record).filter(Boolean) as FactRecord[] : [];
+    const priority = slowTransitPriority({ aspect, isReturn, natalPoint, passCount: passes.length });
     return passes.flatMap((pass, passIndex) => {
       const exactAt = words(pass.exactAt);
       if (!planet || !natalPoint || !exactAt) return [];
@@ -167,6 +194,7 @@ function slowTransitEvents(root: FactRecord): KeyDateEvent[] {
         occursAt: exactAt,
         sortAt: Date.parse(exactAt),
         attribution,
+        priority,
         matches: (sentence: string) => {
           if (!hasTerm(sentence, planet)) return false;
           if (isReturn) return /\breturn(?:s|ed|ing)?\b/iu.test(sentence)
@@ -198,6 +226,7 @@ function eclipseEvents(root: FactRecord): KeyDateEvent[] {
       occursAt,
       sortAt: Date.parse(occursAt),
       attribution,
+      priority: 100,
       matches: (sentence: string) => {
         if (!hasTerm(sentence, "eclipse") || !hasTerm(sentence, eclipseKind)) return false;
         if (natalPoint && hasTerm(sentence, natalPoint)) return true;
@@ -205,6 +234,10 @@ function eclipseEvents(root: FactRecord): KeyDateEvent[] {
       }
     } satisfies KeyDateEvent];
   });
+}
+
+function allKeyDateEvents(root: FactRecord) {
+  return [...slowTransitEvents(root), ...eclipseEvents(root)];
 }
 
 function readerSentence(located: LocatedSentence) {
@@ -258,7 +291,7 @@ export function reportKeyDateEventManifest(
 ): ReportKeyDateEventManifestEntry[] {
   const root = record(frozenFacts.reportWindow) ?? frozenFacts;
   const eligible = eligibleFactorIds ? new Set(eligibleFactorIds) : null;
-  return [...slowTransitEvents(root), ...eclipseEvents(root)]
+  return allKeyDateEvents(root)
     .filter((event) => Number.isFinite(event.sortAt))
     .filter((event) => !eligible || eligible.has(event.factorId)
       || [...eligible].some((factorId) => factorId.startsWith(`${event.factorId}-`)))
@@ -273,6 +306,29 @@ export function reportKeyDateEventManifest(
     }));
 }
 
+function selectExpectedKeyDateEvents(input: {
+  horizon: ReportHorizon;
+  events: ReportKeyDateEventManifestEntry[];
+  priorityByEventId: Map<string, number>;
+}) {
+  if (input.horizon !== "12_months") return input.events;
+  const retained = new Set<string>();
+  for (const unitId of SOURCE_UNIT_IDS["12_months"]) {
+    const cap = TWELVE_MONTH_KEY_DATE_UNIT_CAPS[unitId] ?? Number.MAX_SAFE_INTEGER;
+    input.events
+      .filter((event) => event.sourceUnitId === unitId)
+      .sort((left, right) => {
+        const priority = (input.priorityByEventId.get(right.eventId) ?? 0) - (input.priorityByEventId.get(left.eventId) ?? 0);
+        if (priority) return priority;
+        const recency = Date.parse(right.occursAt) - Date.parse(left.occursAt);
+        return recency || left.eventId.localeCompare(right.eventId);
+      })
+      .slice(0, cap)
+      .forEach((event) => retained.add(event.eventId));
+  }
+  return input.events.filter((event) => !event.sourceUnitId || retained.has(event.eventId));
+}
+
 export function assembleDeterministicReportKeyDates(input: {
   reportHorizon: ReportHorizon;
   frozenFacts: Record<string, unknown>;
@@ -281,6 +337,9 @@ export function assembleDeterministicReportKeyDates(input: {
   interpretedEventIds: Iterable<string>;
 }): ReportDraft {
   const allowedSourceIds = new Set(reportKeyDateSourceUnitIds(input.reportHorizon));
+  const root = record(input.frozenFacts.reportWindow) ?? input.frozenFacts;
+  const rawEvents = allKeyDateEvents(root);
+  const priorityByEventId = new Map(rawEvents.map((event) => [event.id, event.priority]));
   const allEvents = reportKeyDateEventManifest(input.frozenFacts, input.reportHorizon);
   const allEventById = new Map(allEvents.map((event) => [event.eventId, event]));
   const eligibleEventIds = new Set(input.eligibleEventIds);
@@ -291,11 +350,20 @@ export function assembleDeterministicReportKeyDates(input: {
   for (const eventId of interpretedEventIds) {
     if (!eligibleEventIds.has(eventId)) throw new Error(`REPORT_KEY_DATES_INELIGIBLE_INTERPRETATION: '${eventId}'.`);
   }
-  const events = allEvents.filter((event) => interpretedEventIds.has(event.eventId));
+  const interpretedEvents = allEvents.filter((event) => interpretedEventIds.has(event.eventId));
+  const events = selectExpectedKeyDateEvents({
+    horizon: input.reportHorizon,
+    events: interpretedEvents,
+    priorityByEventId
+  });
   const eventById = new Map(events.map((event) => [event.eventId, event]));
-  const selected = input.sourceUnits
+  const selectedRaw = input.sourceUnits
     .filter((unit) => allowedSourceIds.has(unit.unitId))
     .flatMap((unit) => (unit.draft.keyDates ?? []).map((entry) => ({ ...entry, unitId: unit.unitId })));
+  for (const entry of selectedRaw) {
+    if (!allEventById.has(entry.eventId)) throw new Error(`REPORT_KEY_DATES_UNINTERPRETED_EVENT: '${entry.eventId}' is not an eligible interpreted factor.`);
+  }
+  const selected = selectedRaw.filter((entry) => eventById.has(entry.eventId));
   if (!selected.length) {
     throw new Error("REPORT_KEY_DATES_SOURCE_GAP: source units emitted no structured key-date entries.");
   }
