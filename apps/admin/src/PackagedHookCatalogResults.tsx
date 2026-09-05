@@ -37,7 +37,7 @@ export function PackagedHookCatalogResults({ items, savedKeys, resetKey, onOpen 
                 <article key={item.key} className="admin-fallback-row">
                   <div className="admin-fallback-row-main">
                     <p className="admin-eyebrow">{item.section} / packaged source</p>
-                    <h3>{item.label}</h3>
+                    <h3 style={{ fontSize: "var(--admin-type-14)", lineHeight: "var(--leading-title)" }}>{item.label}</h3>
                     <code>{contentKey}</code>
                   </div>
                   <div className="admin-fallback-row-actions">
