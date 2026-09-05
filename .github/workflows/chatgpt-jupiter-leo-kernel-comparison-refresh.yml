@@ -1,0 +1,48 @@
+name: Refresh Jupiter Leo production sky comparison
+
+on:
+  push:
+    branches:
+      - chatgpt/jupiter-leo-12-owner-approved-current-main
+
+permissions:
+  contents: write
+
+jobs:
+  refresh:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out branch
+        uses: actions/checkout@v4
+        with:
+          ref: chatgpt/jupiter-leo-12-owner-approved-current-main
+          fetch-depth: 0
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Install dependencies
+        run: npm ci
+      - name: Refresh production Sky kernel comparison
+        run: node scripts/build-production-sky-kernel-comparison.mjs --write
+      - name: Verify production Sky kernel comparison
+        run: node scripts/build-production-sky-kernel-comparison.mjs
+      - name: Verify writing evidence remains current
+        run: |
+          node scripts/build-knowledge-index.mjs --check
+          node scripts/build-phrase-index.mjs --check
+      - name: Commit comparison and remove temporary workflow
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git rm .github/workflows/chatgpt-jupiter-leo-kernel-comparison-refresh.yml
+          git add packages/astro-knowledge/review/production-sky-kernel-comparison-v1/comparison.json
+          if git diff --cached --quiet; then
+            echo "No comparison change to commit."
+            exit 1
+          fi
+          git commit -m "Refresh production Sky comparison after Jupiter in Leo approval"
+          git push origin HEAD:chatgpt/jupiter-leo-12-owner-approved-current-main
