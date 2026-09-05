@@ -75,8 +75,8 @@ assert.match(resolverSpec, /must not be combined with the[\s\S]*retired placemen
 for (const templateId of ["6A", "6B", "6C", "6D", "6M"]) {
   assert.match(madlibs, new RegExp(`^## ${templateId}\\.`, "mu"), `missing Mad-Lib ${templateId}`);
 }
-assert.match(madlibs, /Fact slots come only from calculated astrology/u);
-assert.match(madlibs, /Interpretive slots come from the narrowest eligible reviewed combination source/u);
+assert.match(madlibs, /\*\*Fact slots\*\* come only from calculated astrology/u);
+assert.match(madlibs, /\*\*Interpretive slots\*\* come from the narrowest eligible reviewed combination source/u);
 assert.match(ownerGuide, /Transit \/ Retrograde \/ Ingress article structure/u);
 assert.match(ownerGuide, /These are AUTHORING GUIDES for future article writing, not machine templates/u);
 
