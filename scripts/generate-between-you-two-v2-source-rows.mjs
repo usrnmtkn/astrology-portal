@@ -78,6 +78,7 @@ for (const record of review.records) {
       const suffix = direction;
       const headlineBody = direction === "you" ? record.headline.body_you : record.headline.body_they;
       const moveBody = direction === "you" ? record.move.body_you : record.move.body_they;
+      const v2Body = direction === "you" ? record.v2Body?.body_you : record.v2Body?.body_they;
       rows.push(makeDirectionalRow({
         contentKey: `fallback-hook/pair-daily/v2/headline/${record.family}/${record.transiting}/${suffix}`,
         body: headlineBody,
@@ -86,6 +87,16 @@ for (const record of review.records) {
         direction,
         sourceKey: record.bodyContentKey
       }));
+      if (typeof v2Body === "string" && v2Body.trim()) {
+        rows.push(makeDirectionalRow({
+          contentKey: `fallback-hook/pair-daily/v2/body/${record.family}/${record.transiting}/${suffix}`,
+          body: v2Body,
+          record,
+          piece: "body",
+          direction,
+          sourceKey: record.bodyContentKey
+        }));
+      }
       rows.push(makeDirectionalRow({
         contentKey: `fallback-hook/pair-daily/v2/move/${record.family}/${record.transiting}/${suffix}`,
         body: moveBody,
@@ -119,16 +130,16 @@ for (const record of review.records) {
 
 const approved = rows.filter((row) => row.review_status === "approved");
 const held = rows.filter((row) => row.review_status === "needs_review");
-if (rows.length !== 120) throw new Error(`Expected 120 direction-safe V2 rows, got ${rows.length}`);
-if (approved.length !== 24) throw new Error(`Expected 24 owner-approved V2 rows, got ${approved.length}`);
-if (held.length !== 96) throw new Error(`Expected 96 held V2 rows, got ${held.length}`);
+if (rows.length !== 127) throw new Error(`Expected 127 direction-safe V2 rows, got ${rows.length}`);
+if (approved.length !== 45) throw new Error(`Expected 45 owner-approved V2 rows, got ${approved.length}`);
+if (held.length !== 82) throw new Error(`Expected 82 held V2 rows, got ${held.length}`);
 if (new Set(rows.map((row) => row.contentKey)).size !== rows.length) throw new Error("Duplicate V2 source key");
 if (approved.some((row) => row.v2_direction === "they")) throw new Error("Reverse-direction V2 copy must remain held until explicitly reviewed.");
 
 fs.mkdirSync(path.dirname(outputPath), { recursive: true });
 fs.writeFileSync(outputPath, JSON.stringify({
-  schema: "tldrastro-between-you-two-v2-source-rows/v2",
-  description: "Between You Two V2 relationship-first headline/move and shared-Moon rows. Bond headline/move approvals are direction-specific so unseen reverse-direction wording cannot inherit owner approval.",
+  schema: "tldrastro-between-you-two-v2-source-rows/v3",
+  description: "Between You Two V2 relationship-first headline/body/move and shared-Moon rows. Bond approvals are direction-specific so unseen reverse-direction wording cannot inherit owner approval. An approved V2 lead body is additive and does not replace the canonical bond-effect body used by other relationship surfaces.",
   rowCount: rows.length,
   approvedCount: approved.length,
   needsReviewCount: held.length,
