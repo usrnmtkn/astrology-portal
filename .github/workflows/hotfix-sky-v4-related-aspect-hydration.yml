@@ -26,6 +26,9 @@ jobs:
           cache: npm
       - name: Install dependencies
         run: npm ci
+      - name: Inspect Sun aspect ordering
+        run: |
+          npx tsx -e 'import { getAstrodienstSky } from "./apps/web/src/services/ephemeris.ts"; const location={label:"Portsmouth, NH",latitude:43.0718,longitude:-70.7626,timeZone:"America/New_York"}; const sky=await getAstrodienstSky(location,new Date("2026-08-27T16:00:00.000Z")); console.log(JSON.stringify(sky.aspects.filter((aspect)=>aspect.from==="Sun"||aspect.to==="Sun").sort((a,b)=>a.orb-b.orb),null,2));'
       - name: Apply focused hydration fix
         run: node scripts/hotfix-sky-v4-related-aspect-hydration.mjs
       - name: Verify hydration boundary
@@ -50,7 +53,7 @@ jobs:
             exit 0
           fi
           git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config user.email "4189823+github-actions[bot]@users.noreply.github.com"
           git add apps/web/src/App.tsx scripts/test-reviewed-sky-aspect-phrasebook.mjs
           git commit -m "fix(sky): refresh open detail when exact registry loads"
           git push origin HEAD
