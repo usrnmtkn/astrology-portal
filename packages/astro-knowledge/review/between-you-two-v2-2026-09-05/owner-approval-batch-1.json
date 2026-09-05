@@ -1,0 +1,54 @@
+{
+  "schemaVersion": 1,
+  "id": "between-you-two-v2-owner-approval-batch-1-2026-09-05",
+  "approvedAt": "2026-09-05",
+  "ownerStatements": [
+    "these are good, but can you check against my website MarieSatori.com",
+    "i agree with your edits"
+  ],
+  "servingAuthority": false,
+  "scopeNote": "Exact-wording approval applies to the reader-facing V2 headline/move text and shared-Moon Fire copy shown to the owner, including the two MarieSatori.com-calibrated edits. Existing bond-effect bodies were already exact-owner-approved and are not changed. Reverse-direction V2 headline/move wording was not shown in that review and is not approved by this record.",
+  "records": [
+    {
+      "id": "hard-saturn",
+      "family": "hard",
+      "transiting": "saturn",
+      "headline_body_you": "The plan is becoming your job.",
+      "move_body_you": "Decide who is actually handling the next step before you make another plan."
+    },
+    {
+      "id": "hard-mercury",
+      "family": "hard",
+      "transiting": "mercury",
+      "headline_body_you": "You may be reacting to the tone more than the message.",
+      "move_body_you": "Answer what was actually said before you start arguing with the tone."
+    },
+    {
+      "id": "hard-jupiter",
+      "family": "hard",
+      "transiting": "jupiter",
+      "headline_body_you": "You may be agreeing before you check the cost.",
+      "move_body_you": "Check the money, time, and logistics before you agree to one more thing."
+    },
+    {
+      "id": "soft-venus",
+      "family": "soft",
+      "transiting": "venus",
+      "headline_body_you": "The small effort matters because it was specific to you.",
+      "move_body_you": "Notice the specific effort instead of measuring it by how big it was."
+    },
+    {
+      "id": "soft-jupiter",
+      "family": "soft",
+      "transiting": "jupiter",
+      "headline_body_you": "They may bring you an opportunity that actually fits your life.",
+      "move_body_you": "Follow the lead if it connects to something you already wanted."
+    },
+    {
+      "id": "shared-moon-fire",
+      "element": "fire",
+      "headline": "You may both have less patience for delays today.",
+      "body": "The Moon is in a fire sign and aspecting both charts today, so both of you may be quicker to act and less patient with delays. A changed plan or blunt reply can become more irritating than it usually would. Say what changed before either of you decides why the other person did it."
+    }
+  ]
+}
