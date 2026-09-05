@@ -6,13 +6,25 @@ TEST_FILE = Path("scripts/test-admin-reader-destination-labels.mjs")
 
 text = DASHBOARD.read_text()
 
+resolved_anchor = '''  }) {
+    const resolved = skySourceForCandidates(source.candidateKeys);
+    return ('''
+if text.count(resolved_anchor) != 1:
+    raise SystemExit(f"shared source renderer anchor mismatch: {text.count(resolved_anchor)}")
+resolved_new = '''  }) {
+    const resolved = skySourceForCandidates(source.candidateKeys);
+    const sourceReaderDestination = skyWriteupWorkspaceView === "transits-to-natal"
+      ? friendsTransitAudience ? "Friends → Transits → Active for {{Name}}" : "You → Personal Transits"
+      : friendsTransitAudience ? "Friends → Transits → Where it lands" : "You → House Transits";
+    return ('''
+text = text.replace(resolved_anchor, resolved_new, 1)
+
 scope_line = '          <p>{source.scope}</p>'
-parts = text.split(scope_line)
-if len(parts) != 3:
-    raise SystemExit(f"expected 2 transit source scope lines, found {len(parts) - 1}")
-personal_destination = '\n          <p className="admin-reader-destination-line"><strong>Where readers see this:</strong> {friendsTransitAudience ? "Friends → Transits → Active for {{Name}}" : "You → Personal Transits"}</p>'
-house_destination = '\n          <p className="admin-reader-destination-line"><strong>Where readers see this:</strong> {friendsTransitAudience ? "Friends → Transits → Where it lands" : "You → House Transits"}</p>'
-text = parts[0] + scope_line + personal_destination + parts[1] + scope_line + house_destination + parts[2]
+if text.count(scope_line) != 1:
+    raise SystemExit(f"shared transit source scope line mismatch: {text.count(scope_line)}")
+scope_new = '''          <p>{source.scope}</p>
+          <p className="admin-reader-destination-line"><strong>Where readers see this:</strong> {sourceReaderDestination}</p>'''
+text = text.replace(scope_line, scope_new, 1)
 
 handle = '    const handleEditorKeyDown = (event: ReactKeyboardEvent<HTMLElement>) => {'
 if text.count(handle) != 1:
@@ -77,7 +89,8 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const dashboard = fs.readFileSync(path.join(root, "apps/admin/src/GeneratedContentAdminDashboard.tsx"), "utf8");
 const css = fs.readFileSync(path.join(root, "apps/admin/src/admin-components.css"), "utf8");
 
-assert.equal((dashboard.match(/className="admin-reader-destination-line"/gu) ?? []).length, 2, "Personal and House Transit source cards must both show reader destinations.");
+assert.equal((dashboard.match(/className="admin-reader-destination-line"/gu) ?? []).length, 1, "Personal and House Transit cards should share one destination renderer.");
+assert.match(dashboard, /const sourceReaderDestination = skyWriteupWorkspaceView === "transits-to-natal"/u);
 assert.match(dashboard, /Friends → Transits → Active for \{\{Name\}\}/u);
 assert.match(dashboard, /Friends → Transits → Where it lands/u);
 assert.match(dashboard, /Friends → Transits → Between you two/u);
