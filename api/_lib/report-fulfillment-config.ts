@@ -97,6 +97,9 @@ export function resolvedStripePriceId(sku: ReportSku) {
 }
 
 export function reportCallEstimate(horizon: ReportHorizon) {
+  // Keep the 12-month estimate conservative across domain-specific outlines.
+  // Personal & Health still has an extra annual unit, so horizon-only planning
+  // should not under-authorize a valid 12-month report.
   const unitCount = horizon === "1_month" ? 4 : horizon === "4_months" || horizon === "6_months" ? 6 : 11;
   const writerUnitCount = unitCount - 1; // key-dates is deterministic formatted assembly
   const redundancyPassCalls = 0; // warning-only assembly proceeds directly to owner review
