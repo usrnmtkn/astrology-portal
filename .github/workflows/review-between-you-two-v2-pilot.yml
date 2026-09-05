@@ -1,0 +1,25 @@
+name: Review Between You Two V2 pilot
+
+on:
+  push:
+    branches:
+      - "owner/between-you-two-v2-20260905"
+    paths:
+      - "packages/astro-knowledge/review/between-you-two-v2-2026-09-05/**"
+      - "scripts/test-between-you-two-v2-pilot.mjs"
+      - ".github/workflows/review-between-you-two-v2-pilot.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  review-contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+      - name: Verify dark review boundary and exact-body provenance
+        run: node scripts/test-between-you-two-v2-pilot.mjs
