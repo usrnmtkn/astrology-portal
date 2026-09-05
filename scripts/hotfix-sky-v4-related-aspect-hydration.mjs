@@ -111,9 +111,17 @@ if (phrasebookTestSource.includes(staleCount)) {
 console.log("Reviewed Sky aspect corpus contract expects 248 exact records.");
 
 // 4. Pin the new exact-over-sign-specific precedence in the Calendar routing
-// contract. Sign-specific copy remains available only when no exact row exists.
+// contract and point the contract at the latest 248-row owner payload projection.
 const exactRoutingTestPath = path.join(repoRoot, "scripts/test-calendar-exact-sky-aspect-routing.mjs");
 let exactRoutingTest = fs.readFileSync(exactRoutingTestPath, "utf8");
+const stalePayloadPath = "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-04-batch-30/current-owner-payloads.json";
+const currentPayloadPath = "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-04-held-trines-33/current-owner-payloads.json";
+if (exactRoutingTest.includes(stalePayloadPath)) {
+  exactRoutingTest = exactRoutingTest.replace(stalePayloadPath, currentPayloadPath);
+} else if (!exactRoutingTest.includes(currentPayloadPath)) {
+  throw new Error("Expected Calendar exact owner-payload projection path was not found.");
+}
+
 const oldBlockStart = exactRoutingTest.indexOf("const signSpecificOverride = normalizeCalendarEventSurface(");
 const oldBlockEnd = exactRoutingTest.indexOf("\nconst phrasebookBeforeGenerated =", oldBlockStart);
 if (oldBlockStart >= 0 && oldBlockEnd > oldBlockStart) {
@@ -144,8 +152,8 @@ assert.equal(
 );
 `;
   exactRoutingTest = `${exactRoutingTest.slice(0, oldBlockStart)}${newBlock}${exactRoutingTest.slice(oldBlockEnd)}`;
-  fs.writeFileSync(exactRoutingTestPath, exactRoutingTest);
-  console.log("Calendar routing contract now pins exact copy ahead of legacy sign-specific copy.");
 } else if (!exactRoutingTest.includes("const exactBeforeSignSpecific = normalizeCalendarEventSurface(")) {
   throw new Error("Expected Calendar sign-specific precedence test block was not found.");
 }
+fs.writeFileSync(exactRoutingTestPath, exactRoutingTest);
+console.log("Calendar routing contract now uses the 248-row owner projection and pins exact copy ahead of legacy sign-specific copy.");
