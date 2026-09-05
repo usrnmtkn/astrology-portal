@@ -4,7 +4,7 @@
   "status": "proposed",
   "servingAuthority": false,
   "ownerApprovalRequired": true,
-  "note": "The bond bodies are existing exact-owner-approved copy and are not being rewritten. Only candidateHeadline, candidateMove, and the Moon-only candidateBody are new review material.",
+  "note": "The bond bodies are existing exact-owner-approved copy and are not being rewritten. Their canonical placeholder tokens are preserved exactly here. Only candidateHeadline, candidateMove, and the Moon-only candidateBody are new review material.",
   "records": [
     {
       "id": "hard-saturn",
@@ -15,7 +15,7 @@
         "contentKey": "fallback-hook/bond-effect-hard/saturn",
         "approvalLevel": "exact_owner_approved",
         "reuseVerbatim": true,
-        "body_you": "You and {{Name}} make plans, but you are the one checking the time, making the reservation, and remembering what needs to happen next. The relationship starts taking more work from you than you expected."
+        "body_you": "You and {{holder1}} make plans, but you are the one checking the time, making the reservation, and remembering what needs to happen next. The relationship starts taking more work from you than you expected."
       },
       "supportingContextExample": {
         "you": "deciding what deserves your energy before you react",
@@ -34,7 +34,7 @@
         "contentKey": "fallback-hook/bond-effect-hard/mercury",
         "approvalLevel": "exact_owner_approved",
         "reuseVerbatim": true,
-        "body_you": "{{Name}} sends a short reply and you spend twenty minutes deciding what the tone means. By the time you answer, you may already be annoyed about a meaning {{Name}} never intended."
+        "body_you": "{{holder1}} sends a short reply and you spend twenty minutes deciding what the tone means. By the time you answer, you may already be annoyed about a meaning {{holder1}} never intended."
       },
       "supportingContextExample": {
         "you": "saying what you want before you start shaping it into something everyone else will approve of",
@@ -53,7 +53,7 @@
         "contentKey": "fallback-hook/bond-effect-hard/jupiter",
         "approvalLevel": "exact_owner_approved",
         "reuseVerbatim": true,
-        "body_you": "{{Name}} suggests adding another night, another stop, or another expense, and you agree because the plan sounds good. Later you are the one staring at the total and wondering how the weekend became this expensive."
+        "body_you": "{{holder1}} suggests adding another night, another stop, or another expense, and you agree because the plan sounds good. Later you are the one staring at the total and wondering how the weekend became this expensive."
       },
       "supportingContextExample": {
         "you": "noticing when trying harder is no longer fixing the problem",
@@ -72,7 +72,7 @@
         "contentKey": "fallback-hook/bond-effect-soft/venus",
         "approvalLevel": "exact_owner_approved",
         "reuseVerbatim": true,
-        "body_you": "{{Name}} remembers what you like, checks in, makes room for you in the plan, or handles one small task before it becomes another errand on your list. What matters is that {{Name}} was paying attention."
+        "body_you": "{{holder1}} remembers what you like, checks in, makes room for you in the plan, or handles one small task before it becomes another errand on your list. What matters is that {{holder1}} was paying attention."
       },
       "supportingContextExample": {
         "you": "putting the credit card away before disappointment starts shopping for you",
@@ -91,7 +91,7 @@
         "contentKey": "fallback-hook/bond-effect-soft/jupiter",
         "approvalLevel": "exact_owner_approved",
         "reuseVerbatim": true,
-        "body_you": "{{Name}} sends you something and you realize the opportunity actually fits. The job, trip, class, or project connects to something you already wanted instead of becoming another random possibility."
+        "body_you": "{{holder1}} sends you something and you realize the opportunity actually fits. The job, trip, class, or project connects to something you already wanted instead of becoming another random possibility."
       },
       "supportingContextExample": {
         "you": "letting the calendar answer before your enthusiasm promises too much",
