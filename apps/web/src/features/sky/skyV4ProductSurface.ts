@@ -19,6 +19,15 @@ function calendarDayAtZone(value: string, timeZone: string) {
   }).format(new Date(value));
 }
 
+function sameCalendarDayAtZone(
+  first: string | null | undefined,
+  second: string | null | undefined,
+  timeZone: string
+) {
+  if (!first || !second) return false;
+  return calendarDayAtZone(first, timeZone) === calendarDayAtZone(second, timeZone);
+}
+
 export function skyV4Hemisphere(latitude: number | null | undefined) {
   if (typeof latitude !== "number" || !Number.isFinite(latitude) || latitude === 0) return "neutral";
   return latitude > 0 ? "northern" : "southern";
@@ -39,26 +48,52 @@ export function skyV4NodeAxis(positions: PlanetPosition[]) {
   };
 }
 
-function eclipseContext(moonEvent: SkySnapshot["moonEvent"] | null | undefined, generatedAt: string) {
-  if (!moonEvent?.eclipseType || !sameUtcDay(moonEvent.occursAt, generatedAt)) return [];
-  return [{
+function placementLunarContexts(
+  moonEvent: SkySnapshot["moonEvent"] | null | undefined,
+  generatedAt: string,
+  timeZone: string
+) {
+  if (!moonEvent?.occursAt || !sameCalendarDayAtZone(moonEvent.occursAt, generatedAt, timeZone)) return [];
+
+  const eventType = moonEvent.eclipseType === "solar"
+    ? "solar-eclipse"
+    : moonEvent.eclipseType === "lunar"
+      ? "lunar-eclipse"
+      : /new moon/iu.test(String(moonEvent.name ?? ""))
+        ? "new-moon"
+        : /full moon/iu.test(String(moonEvent.name ?? ""))
+          ? "full-moon"
+          : "";
+
+  if (!eventType) return [];
+
+  const contexts = [{
+    contextKind: "placement-lunar-event",
+    contextBodyOrEvent: eventType,
+    contextSign: moonEvent.sign,
+    contextCondition: moonEvent.eclipseType ? "eclipse" : "lunation"
+  }];
+  if (moonEvent.eclipseType) contexts.push({
     contextKind: "eclipse",
     contextBodyOrEvent: moonEvent.eclipseType === "solar" ? "Solar Eclipse" : "Lunar Eclipse",
     contextSign: moonEvent.sign,
     contextCondition: "eclipse"
-  }];
+  });
+  return contexts;
 }
 
 export function skyV4PlacementContexts({
   position,
   positions,
   moonEvent,
-  generatedAt
+  generatedAt,
+  timeZone
 }: {
   position: PlanetPosition;
   positions: PlanetPosition[];
   moonEvent?: SkySnapshot["moonEvent"] | null;
   generatedAt: string;
+  timeZone?: string;
 }) {
   const subjectCondition = normalized(position.motion) === "retrograde" ? "retrograde" : "direct";
   const base = {
@@ -67,6 +102,7 @@ export function skyV4PlacementContexts({
     subjectSign: position.sign,
     subjectCondition
   };
+  const eventTimeZone = timeZone ?? position.transitTimeZone ?? "UTC";
   const motion = positions
     .filter((candidate) => candidate.planet !== position.planet)
     .map((candidate) => ({
@@ -87,7 +123,7 @@ export function skyV4PlacementContexts({
     }));
   return [
     ...motion,
-    ...eclipseContext(moonEvent, generatedAt).map((context) => ({ ...base, ...context })),
+    ...placementLunarContexts(moonEvent, generatedAt, eventTimeZone).map((context) => ({ ...base, ...context })),
     ...ingresses
   ];
 }
