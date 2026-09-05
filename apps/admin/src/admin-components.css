@@ -315,7 +315,7 @@
 
 .admin-dashboard .admin-nav-workspace-group {
   gap: var(--admin-space-2xs);
-  margin-left: calc(16px + var(--admin-space-xl));
+  margin-left: var(--admin-space-8xl);
 }
 
 .admin-dashboard .admin-nav-workspace-group button {
