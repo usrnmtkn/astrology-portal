@@ -26,45 +26,12 @@ jobs:
           cache: npm
       - name: Install dependencies
         run: npm ci
-      - name: Inspect Sun aspect ordering
-        shell: bash
-        run: |
-          node --input-type=module <<'NODE'
-          import path from "node:path";
-          import { createLogger, createServer } from "vite";
-          const root = process.cwd();
-          const logger = createLogger("error");
-          const vite = await createServer({
-            root: path.join(root, "apps/web"),
-            customLogger: logger,
-            server: { middlewareMode: true, hmr: false },
-            optimizeDeps: { entries: [], noDiscovery: true },
-            appType: "custom",
-            logLevel: "error"
-          });
-          try {
-            const ephemeris = await vite.ssrLoadModule("/src/services/ephemeris.ts");
-            const location = {
-              label: "Portsmouth, NH",
-              latitude: 43.0718,
-              longitude: -70.7626,
-              timeZone: "America/New_York"
-            };
-            const sky = await ephemeris.getAstrodienstSky(location, new Date("2026-08-27T16:00:00.000Z"), { includeTransitWindows: false });
-            console.log("SUN_ASPECTS=" + JSON.stringify(
-              sky.aspects
-                .filter((aspect) => aspect.from === "Sun" || aspect.to === "Sun")
-                .sort((a, b) => a.orb - b.orb)
-                .map(({ from, type, to, orb, applying }) => ({ from, type, to, orb, applying }))
-            ));
-          } finally {
-            await vite.close();
-          }
-          NODE
-      - name: Apply focused hydration fix
+      - name: Apply focused Sky aspect fix
         run: node scripts/hotfix-sky-v4-related-aspect-hydration.mjs
-      - name: Verify hydration boundary
-        run: node scripts/test-sky-v4-related-aspect-hydration.mjs
+      - name: Verify focused contracts
+        run: |
+          node scripts/test-sky-v4-related-aspect-hydration.mjs
+          node scripts/test-calendar-exact-sky-aspect-routing.mjs
       - name: Verify existing Sky article contracts
         run: |
           node scripts/test-sky-article-v1.mjs
@@ -86,6 +53,10 @@ jobs:
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add apps/web/src/App.tsx scripts/test-reviewed-sky-aspect-phrasebook.mjs
-          git commit -m "fix(sky): preserve gift and lesson aspect sections"
+          git add \
+            apps/web/src/App.tsx \
+            apps/web/src/services/skyAspectRouting.ts \
+            scripts/test-calendar-exact-sky-aspect-routing.mjs \
+            scripts/test-reviewed-sky-aspect-phrasebook.mjs
+          git commit -m "fix(sky): preserve exact aspects in placement details"
           git push origin HEAD
