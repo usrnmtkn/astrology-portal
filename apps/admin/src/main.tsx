@@ -4,7 +4,6 @@ import "../../web/src/styles/theme.css";
 import "../../web/src/styles/pill.css";
 import { GeneratedContentAdminDashboard } from "./GeneratedContentAdminDashboard";
 import "./admin-row-selection.css";
-import "./admin-content-readability.css";
 
 const ContentCoverageDashboard = lazy(() => import("./ContentCoverageDashboard"));
 
