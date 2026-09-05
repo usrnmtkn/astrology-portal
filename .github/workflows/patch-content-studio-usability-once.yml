@@ -1,0 +1,37 @@
+name: Patch Content Studio usability once
+
+on:
+  push:
+    branches:
+      - chatgpt/content-studio-usability-cleanup
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+      - name: Apply usability patch
+        run: python scripts/patch-content-studio-usability.py
+      - name: Install dependencies
+        run: npm ci
+      - name: Verify Content Studio usability
+        run: |
+          node scripts/test-admin-content-studio-usability.mjs
+          node scripts/test-admin-friends-transits-navigation.mjs
+          npm run build:admin
+      - name: Commit usability cleanup
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add apps/admin/src/GeneratedContentAdminDashboard.tsx apps/admin/src/admin-components.css scripts/test-admin-content-studio-usability.mjs
+          git commit -m "Clarify Content Studio review and editor hierarchy"
+          git push origin HEAD:chatgpt/content-studio-usability-cleanup
