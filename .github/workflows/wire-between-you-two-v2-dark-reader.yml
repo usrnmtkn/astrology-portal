@@ -1,0 +1,57 @@
+name: Wire Between You Two V2 dark reader
+
+on:
+  push:
+    branches:
+      - "owner/between-you-two-v2-20260905"
+    paths:
+      - "scripts/patch-between-you-two-v2-reader.mjs"
+      - "scripts/test-between-you-two-v2-runtime.mts"
+      - "apps/web/src/services/betweenYouTwoV2.ts"
+      - ".github/workflows/wire-between-you-two-v2-dark-reader.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  wire-and-test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Apply dark V2 reader wiring
+        run: node scripts/patch-between-you-two-v2-reader.mjs
+      - name: Verify owner-approval boundary
+        run: node scripts/test-between-you-two-v2-full-review.mjs
+      - name: Verify V2 runtime fail-closed behavior
+        run: node --import tsx scripts/test-between-you-two-v2-runtime.mts
+      - name: Preserve V1 rollback renderer contract
+        run: node --experimental-strip-types scripts/test-pair-daily.mjs
+      - name: Check fallback refresh/source wiring
+        run: node scripts/test-fallback-refresh-wiring.mjs
+      - name: Build astro knowledge
+        run: npm run build -w @tldr/astro-knowledge
+      - name: Build web
+        run: npm run build -w @tldr/web
+      - name: Build admin
+        run: npm run build -w @tldr/admin
+      - name: Check whitespace
+        run: git diff --check
+      - name: Commit dark V2 reader wiring
+        run: |
+          if git diff --quiet -- apps/web/src/features/friends/ManualChartsPanel.tsx apps/web/src/features/friends/CompatibilityTab.tsx apps/admin/src/writingSurfaceSourceMap.ts; then
+            echo "No reader wiring changes to commit."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add apps/web/src/features/friends/ManualChartsPanel.tsx apps/web/src/features/friends/CompatibilityTab.tsx apps/admin/src/writingSurfaceSourceMap.ts
+          git commit -m "feat(friends): wire dark Between You Two V2 reader"
+          git push origin HEAD:owner/between-you-two-v2-20260905
