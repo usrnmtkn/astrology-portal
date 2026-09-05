@@ -3437,6 +3437,21 @@ test.describe("client-facing user flow case studies", () => {
     await assertNoClientErrors();
   });
 
+  test("Sky placement renders approved related aspects as full write-ups without source-gap rows", async ({ page }) => {
+    const assertNoClientErrors = await expectNoClientErrors(page);
+
+    await seedClientState(page, { now: "2026-09-02T16:00:00.000Z" });
+    await expectClientRouteLoads(page, "/#sky/placement/sun/virgo");
+
+    const article = page.locator(".sky-detail-article");
+    await expect(article).toBeVisible();
+    const sunLilith = article.locator(".article-related-aspects__copy").filter({ hasText: "Sun Trine Lilith" });
+    await expect(sunLilith).toBeVisible();
+    await expect(sunLilith).toContainText("You may be able to show more of who you are without preparing a defense first.");
+    await expect(article.locator(".aspect-row-list")).toHaveCount(0);
+    await assertNoClientErrors();
+  });
+
   test("SKY V4 placement detail composes canonical copy with governed conditions and aspects", async ({ page }) => {
     const assertNoClientErrors = await expectNoClientErrors(page);
 
