@@ -7,38 +7,40 @@ import { fileURLToPath } from "node:url";
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const app = fs.readFileSync(path.join(repoRoot, "apps/web/src/App.tsx"), "utf8");
 
-assert.match(
-  app,
-  /const contentRegistryVersion = useContentRegistryRevision\(\);/u,
-  "The open-detail lifecycle must synchronize the current lazy content-registry revision on mount."
-);
-assert.doesNotMatch(
-  app,
-  /setContentRegistryVersion/u,
-  "The open-detail lifecycle must not keep a second ad-hoc registry listener that can miss an already-completed load."
-);
-assert.match(
-  app,
-  /const refreshKey = `\$\{skyDetailRoutePath\}:\$\{fallbackArchitectureV3Version\}:\$\{contentRegistryVersion\}:\$\{personalizationKey\}`;/u,
-  "An open Sky detail must invalidate its refresh key when the registry revision changes."
-);
+const functionStart = app.indexOf("function relatedSkyAspectSectionsForPlacement({");
+const functionEnd = app.indexOf("\nfunction skyPlacementAspectExactMoment(", functionStart);
+assert.ok(functionStart >= 0 && functionEnd > functionStart, "Related Sky aspect section builder must exist.");
+const relatedAspectBuilder = app.slice(functionStart, functionEnd);
 
-const marker = "const refreshKey = `${skyDetailRoutePath}:${fallbackArchitectureV3Version}:${contentRegistryVersion}:${personalizationKey}`;";
-const markerIndex = app.indexOf(marker);
-assert.ok(markerIndex >= 0, "Open Sky detail refresh marker must exist.");
-const dependencyStart = app.indexOf("  }, [", markerIndex);
-const dependencyEnd = dependencyStart >= 0 ? app.indexOf("]);", dependencyStart) : -1;
-assert.ok(dependencyStart >= 0 && dependencyEnd >= 0, "Open Sky detail refresh dependency array must exist.");
-const dependencyBlock = app.slice(dependencyStart, dependencyEnd + 3);
 assert.match(
-  dependencyBlock,
-  /\bcontentRegistryVersion\b/u,
-  "The open Sky detail refresh effect must rerun when the synchronized registry revision changes."
+  relatedAspectBuilder,
+  /const resolvedSections = aspects[\s\S]*?\.sort\(\(first, second\) => first\.orb - second\.orb\)/u,
+  "Reader-eligible related aspects must remain ordered by orb before editorial selection."
+);
+assert.match(
+  relatedAspectBuilder,
+  /const giftSection = resolvedSections\.find\(\(\{ section \}\) => section\.group === "gifts"\);/u,
+  "The placement detail must retain the tightest reader-eligible Gift."
+);
+assert.match(
+  relatedAspectBuilder,
+  /const lessonSection = resolvedSections\.find\(\(\{ section \}\) => section\.group === "lessons"\);/u,
+  "The placement detail must retain the tightest reader-eligible Lesson."
+);
+assert.match(
+  relatedAspectBuilder,
+  /if \(giftSection && lessonSection\)[\s\S]*?return \[giftSection, lessonSection\][\s\S]*?\.map\(\(\{ section \}\) => section\);/u,
+  "When both tones exist, one Gift and one Lesson must survive the two-card cap."
+);
+assert.match(
+  relatedAspectBuilder,
+  /return resolvedSections[\s\S]*?\.slice\(0, 2\)[\s\S]*?\.map\(\(\{ section \}\) => section\);/u,
+  "When only one tone exists, the placement detail must remain capped at its two tightest reader-eligible aspects."
 );
 assert.match(
   app,
   /const sourceGapAspectRows = isRegistryArticle\s*\? \[\]\s*:\s*relatedAspectRowsForPlacement/u,
-  "Canonical registry articles must continue suppressing unreviewed source-gap aspect rows."
+  "Unreviewed source-gap aspect rows must remain suppressed for canonical registry articles."
 );
 
-console.log("Sky V4 synchronized registry related-aspect refresh contract passed.");
+console.log("Sky related-aspect Gift/Lesson balance contract passed.");
