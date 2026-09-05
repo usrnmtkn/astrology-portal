@@ -333,6 +333,7 @@ function fullReaderBundle() {
   const placementRows = readJson("source-rows/placement-interim-fixes-v1.json");
   const pairDailyFrames = readJson("source-rows/pair-daily-frames-v1.json");
   const pairDailyClauses = readJson("source-rows/pair-daily-clauses-v1.json");
+  const pairDailyV2Rows = readJson("source-rows/pair-daily-v2-rows.json");
   const skyArticleRows = readJson("source-rows/sky-article-v1.json");
   const skyAspectRows = readJson("source-rows/sky-aspect-phrasebook-v1.json");
   const skyPlanetRows = readJson("source-rows/sky-planet-frames-v1.json");
@@ -365,6 +366,7 @@ function fullReaderBundle() {
         ...lunationRows.hookRows,
         ...pairDailyFrames.rows,
         ...pairDailyClauses.rows,
+        ...pairDailyV2Rows.rows,
         ...skyArticleRows.hookRows,
         ...skyAspectRows.hookRows,
         ...skyPlanetRows.rows,
@@ -399,6 +401,7 @@ const dailyGlanceVariants = approvedDailyGlanceVariants(
 const transitRows = readJson("source-rows/transit-synastry-rows-v1.json");
 const pairDailyFrames = readJson("source-rows/pair-daily-frames-v1.json");
 const pairDailyClauses = readJson("source-rows/pair-daily-clauses-v1.json");
+const pairDailyV2Rows = readJson("source-rows/pair-daily-v2-rows.json");
 const skyAspectPhrasebookRows = readJson("source-rows/sky-aspect-phrasebook-v1.json");
 const skyPlacementVoicePassRows = readJson("source-rows/sky-placement-inventories-voice-pass-v1.json");
 const skyPlanetFrameRows = readJson("source-rows/sky-planet-frames-v1.json");
@@ -523,7 +526,8 @@ const relationshipHookRows = {
   hookRows: latestReaderEligible([
     ...sourceRows.hookRows.filter(isRelationshipHook),
     ...pairDailyFrames.rows,
-    ...pairDailyClauses.rows
+    ...pairDailyClauses.rows,
+    ...pairDailyV2Rows.rows
   ]),
   vocabularyRows: []
 };

@@ -18,16 +18,16 @@
     "runtimeFilter": "defense-in-depth"
   },
   "manifest": {
-    "contentHash": "b22396fc9202d3505d5062d2e25d808c",
-    "keyManifestHash": "ad3b78b91851349d48f78053cada7089",
-    "keyCount": 9271
+    "contentHash": "83b391b567969a41543b3daf096fb025",
+    "keyManifestHash": "4ffd54005a976384eafd49dacc33e690",
+    "keyCount": 9295
   },
   "lineage": {
     "file": "approved-serving-lineage-v1.json",
-    "sha256": "165b4346299016a0d8b13e62254744c3ffa78baeee95025a6094605e9b87b411",
-    "count": 9812,
-    "emissionCount": 9888,
-    "exactSourceMatchCount": 8770
+    "sha256": "21c43b38e0496b608d32b707a75fff76ab2ae96ba159a258c57c32dc4e140cbf",
+    "count": 9836,
+    "emissionCount": 9912,
+    "exactSourceMatchCount": 8794
   },
   "partitions": {
     "skyCore": {
@@ -45,7 +45,7 @@
     },
     "relationshipHooks": {
       "file": "bundled-relationship-hook-rows-v3.json",
-      "hookRows": 826
+      "hookRows": 850
     },
     "emptyHouses": {
       "file": "bundled-empty-house-rows-v3.json",
