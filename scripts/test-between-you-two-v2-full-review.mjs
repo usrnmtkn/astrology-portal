@@ -7,6 +7,7 @@ const full = JSON.parse(fs.readFileSync(`${reviewDir}/full-authoring-review.json
 const evidence = JSON.parse(fs.readFileSync(`${reviewDir}/bond-evidence-28.json`, "utf8"));
 const batch1 = JSON.parse(fs.readFileSync(`${reviewDir}/owner-approval-batch-1.json`, "utf8"));
 const batch2 = JSON.parse(fs.readFileSync(`${reviewDir}/owner-approval-batch-2.json`, "utf8"));
+const batch3 = JSON.parse(fs.readFileSync(`${reviewDir}/owner-approval-batch-3.json`, "utf8"));
 
 assert.equal(full.servingAuthority, false);
 assert.equal(full.records.length, 32);
@@ -38,22 +39,25 @@ for (const record of moon) {
 
 const approvedYou = bond.filter((record) => record.reviewStatusYou === "owner_approved");
 const approvedThey = bond.filter((record) => record.reviewStatusThey === "owner_approved");
+const approvedYouBodyOverrides = approvedYou.filter((record) => typeof record.v2Body?.body_you === "string" && record.v2Body.body_you.trim());
 const approvedMoon = moon.filter((record) => record.reviewStatus === "owner_approved");
-assert.equal(approvedYou.length, 11);
+assert.equal(approvedYou.length, 18);
 assert.equal(approvedThey.length, 0);
+assert.equal(approvedYouBodyOverrides.length, 7);
 assert.equal(approvedMoon.length, 1);
 assert.equal(approvedMoon[0].id, "shared-moon-fire");
-assert.equal(full.approvalBoundary.bondReaderDirectionApproved, 11);
+assert.equal(full.approvalBoundary.bondReaderDirectionApproved, 18);
+assert.equal(full.approvalBoundary.bondReaderDirectionBodyOverridesApproved, 7);
 assert.equal(full.approvalBoundary.bondReverseDirectionApproved, 0);
 assert.equal(full.approvalBoundary.sharedMoonApproved, 1);
 
-const approvedIds = new Set([...batch1.records, ...batch2.records]
+const approvedIds = new Set([...batch1.records, ...batch2.records, ...batch3.records]
   .filter((record) => record.family && record.transiting)
   .map((record) => record.id));
-assert.equal(approvedIds.size, 11);
+assert.equal(approvedIds.size, 18);
 assert.deepEqual(new Set(approvedYou.map((record) => record.id)), approvedIds);
 
-for (const batch of [batch1, batch2]) {
+for (const batch of [batch1, batch2, batch3]) {
   assert.equal(batch.servingAuthority, false);
   for (const approval of batch.records) {
     const record = full.records.find((candidate) => candidate.id === approval.id);
@@ -66,9 +70,17 @@ for (const batch of [batch1, batch2]) {
     }
     assert.equal(record.headline.body_you, approval.headline_body_you, `${record.id} approved headline drifted`);
     assert.equal(record.move.body_you, approval.move_body_you, `${record.id} approved move drifted`);
+    if (approval.body_body_you) {
+      assert.equal(record.v2Body?.body_you, approval.body_body_you, `${record.id} approved V2 lead body drifted`);
+    }
     assert.equal(record.reviewStatusYou, "owner_approved");
     assert.equal(record.reviewStatusThey, "proposed");
   }
 }
 
-console.log("Between You Two V2 full review contract passed: 28 bond families + 4 Moon elements; 11 reader-direction bond mechanisms + Moon Fire owner-approved; 0 reverse-direction approval; 0 serving authority.");
+const southNode = full.records.find((record) => record.id === "hard-south-node");
+assert.equal(southNode.headline.body_you, "You know this old role too well.");
+assert.match(southNode.v2Body.body_you, /old role/u);
+assert.doesNotMatch(`${southNode.headline.body_you} ${southNode.v2Body.body_you} ${southNode.move.body_you}`, /old job/iu);
+
+console.log("Between You Two V2 full review contract passed: 28 bond families + 4 Moon elements; 18 reader-direction bond mechanisms, 7 V2 lead bodies, and Moon Fire owner-approved; 0 reverse-direction approval; 0 production serving authority.");
