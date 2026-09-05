@@ -1,7 +1,10 @@
 import React from "react";
 import { createRoot } from "react-dom/client";
 import { shouldPreloadInitialFriendCalculationRuntime } from "./features/friends/friendCalculationReadiness";
-import { initialFriendProfileContentRequest } from "./features/friends/friendsRouting";
+import {
+  initialFriendProfileContentRequest,
+  prepareFriendProfileRoute
+} from "./features/friends/friendsRouting";
 
 const localAdminOrigin = "http://127.0.0.1:5174";
 const blankRestoreReloadKey = "tldrastro:blankRestoreReloadAt";
@@ -50,6 +53,7 @@ async function startApp() {
     return;
   }
 
+  await prepareFriendProfileRoute(window.location.href);
   const appModulePromise = import("./App");
   const initialFriendProfileTab = initialFriendProfileContentRequest(window.location.href);
 
