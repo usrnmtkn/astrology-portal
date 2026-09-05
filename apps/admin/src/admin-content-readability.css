@@ -1,0 +1,266 @@
+/* Content Studio readability and density pass.
+   Keep this file late in the cascade: it resolves layout collisions and form density without
+   changing content, publishing state, or reader-facing behavior. */
+
+/* Every form-like workspace must allow its children to shrink instead of painting over neighbors. */
+.admin-dashboard :where(
+  form,
+  fieldset,
+  .admin-content-toolbar,
+  .admin-content-filters,
+  .admin-generation-inputs,
+  .admin-post-editor,
+  .admin-metadata-fields,
+  .admin-review-copy-editor,
+  .admin-natal-placement-finder,
+  .admin-natal-placement-selectors,
+  .admin-natal-source-card,
+  .admin-daily-glance-context-form,
+  .admin-review-queue-commandbar,
+  .admin-composition-template-tools,
+  .admin-composition-detail,
+  .admin-source-repair-dialog
+) {
+  min-width: 0;
+}
+
+.admin-dashboard form :where(label, fieldset, section, article, div),
+.admin-dashboard :where(
+  .admin-content-toolbar,
+  .admin-content-filters,
+  .admin-generation-inputs,
+  .admin-metadata-fields,
+  .admin-natal-placement-selectors,
+  .admin-daily-glance-context-form,
+  .admin-review-queue-commandbar,
+  .admin-composition-detail
+) > * {
+  min-width: 0;
+}
+
+.admin-dashboard :where(input, select, textarea) {
+  max-width: 100%;
+  min-width: 0;
+}
+
+/* Bring labels, helper text, and controls closer together so forms scan as field groups. */
+.admin-dashboard :where(
+  .admin-title-field,
+  .admin-field-wide,
+  .admin-metadata-field,
+  .admin-review-copy-editor,
+  .admin-natal-placement-selectors label,
+  .admin-daily-glance-context-form label
+) {
+  gap: var(--admin-space-sm);
+}
+
+.admin-dashboard :where(
+  .admin-title-field,
+  .admin-field-wide,
+  .admin-metadata-field,
+  .admin-review-copy-editor,
+  .admin-natal-placement-selectors label,
+  .admin-daily-glance-context-form label
+) > :where(span, small) {
+  line-height: var(--leading-meta);
+  margin: var(--admin-space-0);
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
+.admin-dashboard :where(
+  .admin-title-field,
+  .admin-field-wide,
+  .admin-metadata-field,
+  .admin-review-copy-editor,
+  .admin-natal-placement-selectors label,
+  .admin-daily-glance-context-form label
+) > span {
+  color: var(--admin-text-high);
+}
+
+.admin-dashboard :where(.admin-field-hint, .admin-access-note) {
+  line-height: var(--leading-meta);
+  margin-block: var(--admin-space-0);
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
+/* Reduce empty vertical space while keeping writing fields comfortably distinct. */
+.admin-dashboard .admin-post-editor {
+  gap: var(--admin-space-4xl);
+}
+
+.admin-dashboard .admin-metadata-fields {
+  gap: var(--admin-space-xl);
+  padding: var(--admin-space-2xl);
+}
+
+.admin-dashboard :where(.admin-content-toolbar, .admin-content-filters, .admin-review-queue-commandbar) {
+  gap: var(--admin-space-2xl);
+}
+
+.admin-dashboard :where(.admin-toolbar-actions, .admin-header-actions, .admin-new-actions) {
+  min-width: 0;
+}
+
+.admin-dashboard :where(.admin-toolbar-actions, .admin-header-actions, .admin-new-actions) > button {
+  max-width: 100%;
+}
+
+/* Content rows: fixed column layouts must clip inside their own cell, never over the next cell. */
+.admin-dashboard .admin-content-table--browse {
+  table-layout: fixed;
+}
+
+.admin-dashboard .admin-content-table--browse :where(th, td) {
+  min-width: 0;
+  vertical-align: top;
+}
+
+.admin-dashboard .admin-content-table--browse :where(
+  td.admin-col-content,
+  td.admin-col-visibility,
+  td.admin-col-editorial,
+  td.admin-col-destination,
+  td.admin-col-wiring,
+  td.admin-col-source,
+  td.admin-col-edit
+) {
+  overflow: hidden;
+}
+
+.admin-dashboard .admin-content-table--browse :where(
+  td.admin-col-visibility,
+  td.admin-col-editorial,
+  td.admin-col-destination,
+  td.admin-col-wiring,
+  td.admin-col-source,
+  td.admin-col-edit
+) > * {
+  max-width: 100%;
+  min-width: 0;
+}
+
+.admin-dashboard .admin-content-table--browse .admin-content-row-title {
+  display: block;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  white-space: normal;
+}
+
+.admin-dashboard .admin-content-table--browse td.admin-col-content code,
+.admin-dashboard .admin-content-table--browse td.admin-col-source small,
+.admin-dashboard .admin-content-table--browse td.admin-col-destination small,
+.admin-dashboard .admin-content-table--browse td.admin-col-wiring small {
+  display: block;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.admin-dashboard .admin-content-table--browse :where(.ui-pill, .admin-status, .admin-wiring-state) {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.admin-dashboard .admin-content-table--browse td.admin-col-edit {
+  text-align: right;
+  white-space: nowrap;
+}
+
+.admin-dashboard .admin-content-table--browse td.admin-col-edit button {
+  max-width: 100%;
+  width: 100%;
+}
+
+/* Source cards and route/action rows should reserve space for controls instead of covering copy. */
+.admin-dashboard :where(
+  .admin-natal-source-card,
+  .admin-composition-cms-starters article,
+  .admin-composition-surface-route-list > a,
+  .admin-composition-surface-provenance article
+) > * {
+  min-width: 0;
+}
+
+.admin-dashboard :where(
+  .admin-natal-source-card-copy,
+  .admin-composition-cms-starters article > div,
+  .admin-composition-surface-route-list > a > span:first-child
+) {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.admin-dashboard .admin-natal-source-card > button,
+.admin-dashboard .admin-composition-cms-starters article > button {
+  align-self: start;
+  flex: 0 0 auto;
+  max-width: 100%;
+}
+
+/* Dense selector workspaces: helper copy belongs to the field, not to the next field. */
+.admin-dashboard .admin-natal-placement-selectors {
+  gap: var(--admin-space-2xl);
+}
+
+.admin-dashboard .admin-natal-placement-selectors label {
+  align-content: start;
+}
+
+.admin-dashboard .admin-natal-placement-selectors label > small {
+  color: var(--admin-ui-muted);
+}
+
+/* Technical keys can be long; keep them readable without forcing the page wider. */
+.admin-dashboard :where(
+  .admin-natal-placement-key,
+  .admin-natal-source-key,
+  .admin-editor-context-line,
+  .admin-reader-destination-line
+) {
+  min-width: 0;
+}
+
+.admin-dashboard :where(
+  .admin-natal-placement-key,
+  .admin-natal-source-key,
+  .admin-editor-context-line,
+  .admin-reader-destination-line
+) code {
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  white-space: normal;
+}
+
+/* On narrow editors, give the publish action its own row and keep secondary actions readable. */
+@media (max-width: 720px) {
+  .admin-dashboard .admin-editor-savebar:has(.admin-publish-button) {
+    align-items: stretch;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .admin-dashboard .admin-editor-savebar:has(.admin-publish-button) .admin-editor-save-state {
+    grid-column: 1 / -1;
+    grid-row: 1;
+  }
+
+  .admin-dashboard .admin-editor-savebar:has(.admin-publish-button) .admin-publish-button {
+    grid-column: 1 / -1;
+    grid-row: 2;
+  }
+
+  .admin-dashboard .admin-editor-savebar:has(.admin-publish-button) > button {
+    max-width: 100%;
+    min-height: var(--admin-control-height-3xl);
+    min-width: 0;
+    white-space: normal;
+    width: 100%;
+  }
+}
