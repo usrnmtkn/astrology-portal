@@ -77,13 +77,53 @@ if (!existingBuilder.includes("const giftSection = resolvedSections.find")) {
     throw new Error("Expected orb-first two-aspect selection boundary was not found.");
   }
   appSource = `${appSource.slice(0, functionStart)}${replacement}${appSource.slice(functionEnd)}`;
-  fs.writeFileSync(appPath, appSource);
   console.log("Sky placement details now preserve the tightest Gift and tightest Lesson when both have reader-facing copy.");
 } else {
   console.log("Gift/Lesson-balanced Sky placement aspect selection is already applied.");
 }
 
-// 2. Exact owner-approved copy is authoritative. A legacy sign-specific
+// 2. The exact-content registry is lazy. An already-open Sky detail must rebuild
+// when that registry finishes loading or it can remain stuck on pre-registry
+// phrasebook copy even after exact owner-approved copy becomes available.
+const discardedRegistryState = "  const [, setContentRegistryVersion] = useState(0);";
+const synchronizedRegistryState = "  const contentRegistryVersion = useContentRegistryRevision();";
+if (appSource.includes(discardedRegistryState)) {
+  appSource = appSource.replace(discardedRegistryState, synchronizedRegistryState);
+} else if (!appSource.includes(synchronizedRegistryState)) {
+  throw new Error("Expected Content Registry state boundary was not found.");
+}
+
+const staleRefreshKey = '    const refreshKey = `${skyDetailRoutePath}:${fallbackArchitectureV3Version}:${personalizationKey}`;';
+const currentRefreshKey = '    const refreshKey = `${skyDetailRoutePath}:${fallbackArchitectureV3Version}:${contentRegistryVersion}:${personalizationKey}`;';
+if (appSource.includes(staleRefreshKey)) {
+  appSource = appSource.replace(staleRefreshKey, currentRefreshKey);
+} else if (!appSource.includes(currentRefreshKey)) {
+  throw new Error("Expected open Sky detail refresh key was not found.");
+}
+
+const staleDependencies = "  }, [fallbackArchitectureV3Version, profileNatalSky?.ascendant, selectedSkyDetail?.routePath, sky, skyDetailRoutePath, skyGeneratedContent, skyPlacementPersonalizationTransits, userProfile?.rising]);";
+const currentDependencies = "  }, [contentRegistryVersion, fallbackArchitectureV3Version, profileNatalSky?.ascendant, selectedSkyDetail?.routePath, sky, skyDetailRoutePath, skyGeneratedContent, skyPlacementPersonalizationTransits, userProfile?.rising]);";
+if (appSource.includes(staleDependencies)) {
+  appSource = appSource.replace(staleDependencies, currentDependencies);
+} else if (!appSource.includes(currentDependencies)) {
+  throw new Error("Expected open Sky detail dependency list was not found.");
+}
+
+const duplicateRegistryEffect = `  useEffect(() => subscribeContentRegistry(() => {
+    setContentRegistryVersion((version) => version + 1);
+  }), []);
+
+`;
+if (appSource.includes(duplicateRegistryEffect)) {
+  appSource = appSource.replace(duplicateRegistryEffect, "");
+}
+if (/setContentRegistryVersion/u.test(appSource)) {
+  throw new Error("Race-prone duplicate Content Registry state remains after patch.");
+}
+fs.writeFileSync(appPath, appSource);
+console.log("Open Sky detail now rebuilds when the synchronized exact-content registry revision changes.");
+
+// 3. Exact owner-approved copy is authoritative. A legacy sign-specific
 // phrasebook row may fill an exact gap, but it must not replace an exact body.
 const routingPath = path.join(repoRoot, "apps/web/src/services/skyAspectRouting.ts");
 let routingSource = fs.readFileSync(routingPath, "utf8");
@@ -97,7 +137,7 @@ if (routingSource.includes(oldPrecedence)) {
   throw new Error("Expected Sky aspect precedence boundary was not found.");
 }
 
-// 3. Refresh the exact-corpus count contract after the 33-trine release.
+// 4. Refresh the exact-corpus count contract after the 33-trine release.
 const phrasebookTestPath = path.join(repoRoot, "scripts/test-reviewed-sky-aspect-phrasebook.mjs");
 let phrasebookTestSource = fs.readFileSync(phrasebookTestPath, "utf8");
 const staleCount = "assert.equal(exactTransitRecords.length, 215);";
@@ -110,8 +150,8 @@ if (phrasebookTestSource.includes(staleCount)) {
 }
 console.log("Reviewed Sky aspect corpus contract expects 248 exact records.");
 
-// 4. Pin the new exact-over-sign-specific precedence in the Calendar routing
-// contract and point the contract at the latest 248-row owner payload projection.
+// 5. Pin exact-over-sign-specific precedence in Calendar routing and point the
+// contract at the latest 248-row owner payload projection.
 const exactRoutingTestPath = path.join(repoRoot, "scripts/test-calendar-exact-sky-aspect-routing.mjs");
 let exactRoutingTest = fs.readFileSync(exactRoutingTestPath, "utf8");
 const stalePayloadPath = "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-04-batch-30/current-owner-payloads.json";
