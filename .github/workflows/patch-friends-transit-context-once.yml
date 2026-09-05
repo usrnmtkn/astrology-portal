@@ -1,0 +1,192 @@
+name: Patch Friends Transit Studio context once
+
+on:
+  push:
+    branches:
+      - chatgpt/friends-transit-editor-parity
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+      - name: Patch Friends Transit editor parity
+        run: |
+          python <<'PY'
+          from pathlib import Path
+
+          path = Path('apps/admin/src/GeneratedContentAdminDashboard.tsx')
+          text = path.read_text()
+
+          def once(old, new, label):
+              global text
+              count = text.count(old)
+              if count != 1:
+                  raise SystemExit(f'{label}: expected 1 match, found {count}')
+              text = text.replace(old, new, 1)
+
+          once(
+              '  const [activePage, setActivePage] = useState<AdminDashboardPage>(() => parseAdminHash().page);',
+              '  const [activePage, setActivePage] = useState<AdminDashboardPage>(() => parseAdminHash().page);\n  const friendsTransitAudience = parseAdminHash().params.get("audience") === "friends";',
+              'friends audience state'
+          )
+
+          old_source = '''  function skySourceForCandidates(candidateKeys: string[]) {
+    for (const contentKey of candidateKeys) {
+      const savedRow = rows.find((row) => row.content_key === contentKey);
+      const savedReviewStatus = savedRow ? sourceSnapshotString(savedRow.source_snapshot, "review_status") : "";
+      if (savedRow?.body && savedRow.status !== "ARCHIVED" && savedReviewStatus !== "deprecated") {
+        return { contentKey, text: savedRow.body, savedRow };
+      }
+      const body = transitNatalSourceBodies.get(contentKey);
+      if (body) return { contentKey, text: body, savedRow: null };
+    }
+    return null;
+  }'''
+          new_source = '''  function skySourceForCandidates(candidateKeys: string[], audience: "you" | "friends" = friendsTransitAudience ? "friends" : "you") {
+    for (const contentKey of candidateKeys) {
+      const savedRow = rows.find((row) => row.content_key === contentKey);
+      const savedReviewStatus = savedRow ? sourceSnapshotString(savedRow.source_snapshot, "review_status") : "";
+      if (savedRow?.body && savedRow.status !== "ARCHIVED" && savedReviewStatus !== "deprecated") {
+        const sections = objectRecord(savedRow.sections);
+        const packageRecord = objectRecord(sections?.packageRecord);
+        const audienceKey = audience === "friends" ? "body_they" : "body_you";
+        const hasAudienceField = Boolean(
+          (packageRecord && Object.prototype.hasOwnProperty.call(packageRecord, audienceKey))
+          || (sections && Object.prototype.hasOwnProperty.call(sections, audienceKey))
+        );
+        const packageAudienceBody = packageRecord?.[audienceKey];
+        const sectionAudienceBody = sections?.[audienceKey];
+        const audienceBody = typeof packageAudienceBody === "string"
+          ? packageAudienceBody.trim()
+          : typeof sectionAudienceBody === "string"
+            ? sectionAudienceBody.trim()
+            : "";
+        if (audienceBody && isReaderFacingCopy(audienceBody)) {
+          return { contentKey, text: audienceBody, savedRow };
+        }
+        if (audience === "friends" && hasAudienceField) continue;
+        return { contentKey, text: savedRow.body, savedRow };
+      }
+      const body = transitNatalSourceBodies.get(contentKey);
+      if (body) return { contentKey, text: body, savedRow: null };
+    }
+    return null;
+  }'''
+          once(old_source, new_source, 'audience-aware source resolver')
+
+          once(
+              '<p className="admin-eyebrow">Personal Transits workspace</p>\n            <h3>{selection ? transitNatalLabel(selection) : "Find a Personal Transit write-up"}</h3>\n            <p>Choose the current placement and the natal point it contacts. The reader sees one paragraph; Content Studio shows that paragraph first, followed by the four reusable passages inside it. You do not need to search Fallback Hooks.</p>',
+              '<p className="admin-eyebrow">{friendsTransitAudience ? "Friends Transits · Active for {{Name}}" : "Personal Transits workspace"}</p>\n            <h3>{selection ? transitNatalLabel(selection) : "Find a Personal Transit write-up"}</h3>\n            <p>{friendsTransitAudience\n              ? "This is the editor for Friends > Transits > Active for {{Name}}. The assembled preview prefers Friend View Copy wherever the saved source has a separate Friends passage. Open the standalone passage below when you want to edit its Friend View Copy directly."\n              : "Choose the current placement and the natal point it contacts. The reader sees one paragraph; Content Studio shows that paragraph first, followed by the four reusable passages inside it. You do not need to search Fallback Hooks."}</p>',
+              'personal transit Friends context'
+          )
+
+          once(
+              '<p className="admin-eyebrow">House Transits workspace</p>\n            <h3>{selection ? houseTransitLabel(selection) : "Find a House Transit write-up"}</h3>\n            <p>Choose the transiting planet, its current sign, and the reader\'s house. The complete card appears first, followed by the evergreen house passage, sign-specific passage, and any retrograde passage inside it.</p>',
+              '<p className="admin-eyebrow">{friendsTransitAudience ? "Friends Transits · Where it lands" : "House Transits workspace"}</p>\n            <h3>{selection ? houseTransitLabel(selection) : "Find a House Transit write-up"}</h3>\n            <p>{friendsTransitAudience\n              ? "This is the editor for Friends > Transits > Where it lands. The preview prefers Friends copy for the evergreen house passage, current-sign passage, and retrograde overlay when those sources have separate audience versions."\n              : "Choose the transiting planet, its current sign, and the reader\'s house. The complete card appears first, followed by the evergreen house passage, sign-specific passage, and any retrograde passage inside it."}</p>',
+              'house transit Friends context'
+          )
+
+          target = '    setAdminHash(adminHashForPage("skyWriteups", params), "replace");'
+          count = text.count(target)
+          if count != 2:
+              raise SystemExit(f'Friends audience selector preservation: expected 2 Sky selector hash writes, found {count}')
+          text = text.replace(
+              target,
+              '    if (friendsTransitAudience) params.set("audience", "friends");\n' + target
+          )
+
+          personal_tab = '''                onClick={() => {
+                  setSkyWriteupWorkspaceView("transits-to-natal");
+                  setAdminHash(adminHashForPage("skyWriteups", new URLSearchParams({ view: "transits-to-natal" })));
+                }}'''
+          personal_tab_new = '''                onClick={() => {
+                  setSkyWriteupWorkspaceView("transits-to-natal");
+                  const params = new URLSearchParams({ view: "transits-to-natal" });
+                  if (friendsTransitAudience) params.set("audience", "friends");
+                  setAdminHash(adminHashForPage("skyWriteups", params));
+                }}'''
+          once(personal_tab, personal_tab_new, 'Personal Transit tab audience preservation')
+
+          house_tab = '''                onClick={() => {
+                  setSkyWriteupWorkspaceView("house-transits");
+                  setAdminHash(adminHashForPage("skyWriteups", new URLSearchParams({ view: "house-transits" })));
+                }}'''
+          house_tab_new = '''                onClick={() => {
+                  setSkyWriteupWorkspaceView("house-transits");
+                  const params = new URLSearchParams({ view: "house-transits" });
+                  if (friendsTransitAudience) params.set("audience", "friends");
+                  setAdminHash(adminHashForPage("skyWriteups", params));
+                }}'''
+          once(house_tab, house_tab_new, 'House Transit tab audience preservation')
+
+          hook_anchor = '''            {renderFallbackTabs()}
+            {fallbackSectionFilter === "daily" && ('''
+          hook_insert = '''            {friendsTransitAudience && fallbackSectionFilter === "friends" && query.includes("bond-effect") && (
+              <section className="admin-editor-guidance admin-contextual-editor-guidance" aria-label="Friends Transits Between you two context">
+                <p className="admin-eyebrow">Friends Transits · Between you two</p>
+                <strong>These passages feed the live “Between you two” transit cards.</strong>
+                <p>Exact aspect rows are preferred for the first matching card. Family and variant rows are shared fallback/rotation sources, so editing one of those can affect more than one friend pair.</p>
+              </section>
+            )}
+            {renderFallbackTabs()}
+            {fallbackSectionFilter === "daily" && ('''
+          once(hook_anchor, hook_insert, 'Between you two context note')
+
+          path.write_text(text)
+
+          test_path = Path('scripts/test-admin-friends-transits-navigation.mjs')
+          test = test_path.read_text()
+          test = test.replace(
+              'const transitRenderer = fs.readFileSync(path.join(root, "apps/web/src/content/fallbackArchitectureV3/resolver/renderTransitSynastry.mjs"), "utf8");',
+              'const transitRenderer = fs.readFileSync(path.join(root, "apps/web/src/content/fallbackArchitectureV3/resolver/renderTransitSynastry.mjs"), "utf8");\nconst app = fs.readFileSync(path.join(root, "apps/web/src/App.tsx"), "utf8");\nconst transitSources = fs.readFileSync(path.join(root, "apps/admin/src/transitNatalSources.ts"), "utf8");\nconst houseSources = fs.readFileSync(path.join(root, "apps/admin/src/houseTransitSources.ts"), "utf8");'
+          )
+          extra = '''
+
+assert.match(dashboard, /const friendsTransitAudience = parseAdminHash\(\)\.params\.get\("audience"\) === "friends"/u);
+assert.match(dashboard, /Friends Transits · Active for \{\{Name\}\}/u);
+assert.match(dashboard, /Friends Transits · Where it lands/u);
+assert.match(dashboard, /Friends Transits · Between you two/u);
+assert.match(dashboard, /audienceKey = audience === "friends" \? "body_they" : "body_you"/u, "Friends previews must resolve body_they instead of silently showing You copy.");
+assert.match(dashboard, /if \(audience === "friends" && hasAudienceField\) continue;/u, "An explicitly blank Friends field must not fall back to the You body in the Studio preview.");
+assert.ok((dashboard.match(/if \(friendsTransitAudience\) params\.set\("audience", "friends"\);/gu) ?? []).length >= 4, "Friends context must survive selector and transit-tab changes.");
+
+assert.match(app, /renderTransitHouseEvent\(\{/u, "Personal Transit reader must still prefer the house-resolved event composition when available.");
+assert.match(app, /renderTransitHouse\(\{/u, "Friends Where it lands reader must still resolve through the House Transit renderer.");
+assert.match(transitSources, /fallback-hook\/transit-house-event-frame/u);
+assert.match(transitSources, /fallback-hook\/transit-house-event-wants/u);
+assert.match(transitSources, /fallback-hook\/transit-house-event-natal/u);
+assert.match(transitSources, /authored\/transit-aspect/u);
+assert.match(houseSources, /authored\/transit-house-intro/u);
+assert.match(houseSources, /authored\/transit-house-sign/u);
+'''
+          marker = '\nconsole.log("Admin Friends Transits navigation passed: all three reader sections deep-link to their existing source editors.");'
+          if marker not in test:
+              raise SystemExit('test marker missing')
+          test = test.replace(marker, extra + marker)
+          test_path.write_text(test)
+          PY
+      - name: Install dependencies
+        run: npm ci
+      - name: Verify Friends Transit Studio parity
+        run: |
+          node scripts/test-admin-friends-transits-navigation.mjs
+          node --experimental-strip-types scripts/test-admin-transit-natal-sources.mjs
+          node --import tsx scripts/test-admin-house-transit-sources.mjs
+          npm run build:admin
+      - name: Commit parity fix
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add apps/admin/src/GeneratedContentAdminDashboard.tsx scripts/test-admin-friends-transits-navigation.mjs
+          git commit -m "Keep Friends Transit editor context and preview voice"
+          git push origin HEAD:chatgpt/friends-transit-editor-parity
