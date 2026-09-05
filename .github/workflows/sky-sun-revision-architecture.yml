@@ -1,0 +1,36 @@
+name: Sky Sun revision architecture
+
+on:
+  pull_request:
+    paths:
+      - "apps/web/src/content/fallbackArchitectureV3/authored-inputs/sky-v4-sun-revision-architecture-v1.json"
+      - "apps/web/src/content/fallbackArchitectureV3/FALLBACK-ARCHITECTURE.md"
+      - "apps/web/src/content/fallbackArchitectureV3/resolver/RESOLVER-SPEC.md"
+      - "apps/web/src/content/fallbackArchitectureV3/admin/OWNER-LUNATION-TEMPLATE-LIBRARY.md"
+      - "tldr-astro-phrasebank/sources/TLDR-ASTRO-MUSTACHE-MADLIBS-v2.2.md"
+      - "packages/astro-knowledge/review/sky-sun-revision-architecture-2026-09-05/AUDIT.md"
+      - "scripts/test-sky-v4-sun-revision-architecture.mjs"
+      - ".github/workflows/sky-sun-revision-architecture.yml"
+  push:
+    branches:
+      - main
+    paths:
+      - "apps/web/src/content/fallbackArchitectureV3/authored-inputs/sky-v4-sun-revision-architecture-v1.json"
+      - "apps/web/src/content/fallbackArchitectureV3/FALLBACK-ARCHITECTURE.md"
+      - "apps/web/src/content/fallbackArchitectureV3/resolver/RESOLVER-SPEC.md"
+      - "apps/web/src/content/fallbackArchitectureV3/admin/OWNER-LUNATION-TEMPLATE-LIBRARY.md"
+      - "tldr-astro-phrasebank/sources/TLDR-ASTRO-MUSTACHE-MADLIBS-v2.2.md"
+      - "packages/astro-knowledge/review/sky-sun-revision-architecture-2026-09-05/AUDIT.md"
+      - "scripts/test-sky-v4-sun-revision-architecture.mjs"
+      - ".github/workflows/sky-sun-revision-architecture.yml"
+
+jobs:
+  architecture-contract:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Verify Sun revision architecture contract
+        run: node scripts/test-sky-v4-sun-revision-architecture.mjs
