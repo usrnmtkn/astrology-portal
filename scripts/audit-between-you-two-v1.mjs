@@ -75,31 +75,31 @@ const scenarios = [
   },
   {
     id: "soft-venus-bond",
-    purpose: "Two supportive personal drivers joined to a Venus relationship-support bridge.",
+    purpose: "Two distinct personal pressures joined to a Venus relationship-support bridge.",
     variant: 10,
     reader: {
       handle: "reader",
-      clauseKey: "fallback-hook/pair-daily/clause/trine/venus"
+      clauseKey: "fallback-hook/pair-daily/clause/square/venus"
     },
     friend: {
       handle: "friend",
       displayName: "Friend",
-      clauseKey: "fallback-hook/pair-daily/clause/sextile/moon"
+      clauseKey: "fallback-hook/pair-daily/clause/opposition/moon"
     },
     shared: { kind: "bond", family: "soft", transiting: "venus" }
   },
   {
     id: "soft-jupiter-bond",
-    purpose: "Supportive but different personal drivers joined to a Jupiter bond bridge.",
+    purpose: "Different personal pressures joined to a Jupiter relationship-support bridge.",
     variant: 3,
     reader: {
       handle: "reader",
-      clauseKey: "fallback-hook/pair-daily/clause/trine/jupiter"
+      clauseKey: "fallback-hook/pair-daily/clause/square/jupiter"
     },
     friend: {
       handle: "friend",
       displayName: "Friend",
-      clauseKey: "fallback-hook/pair-daily/clause/sextile/mercury"
+      clauseKey: "fallback-hook/pair-daily/clause/square/mercury"
     },
     shared: { kind: "bond", family: "soft", transiting: "jupiter" }
   },
@@ -109,7 +109,7 @@ const scenarios = [
     variant: 2,
     reader: {
       handle: "reader",
-      clauseKey: "fallback-hook/pair-daily/clause/conjunction/mars"
+      clauseKey: "fallback-hook/pair-daily/clause/square/mars"
     },
     friend: {
       handle: "friend",
@@ -124,7 +124,7 @@ const scenarios = [
     variant: 3,
     reader: {
       handle: "reader",
-      clauseKey: "fallback-hook/pair-daily/clause/sextile/venus"
+      clauseKey: "fallback-hook/pair-daily/clause/square/venus"
     },
     friend: {
       handle: "friend",
