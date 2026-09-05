@@ -43,8 +43,9 @@ When `selectedBondTransitCards[0]` exists:
 2. Its exact owner-approved directional `effectBody` is the core body and must remain verbatim.
 3. A short V2 headline may be authored for the transiting-planet + effect-family mechanism.
 4. One optional practical move may be authored from that same relationship mechanism.
-5. Reader and friend daily drivers may appear only as clearly labeled supporting context. They may not be spliced into the lead paragraph.
-6. Remaining bond transits stay available as the deeper `What's driving this` / active relationship-transits list.
+5. Because the canonical bond effects are directional, V2 headline and move rows may carry separate `body_you` and `body_they` wording. The renderer must select the same perspective used by the canonical bond effect. A neutral sentence may be identical in both fields.
+6. Reader and friend daily drivers may appear only as clearly labeled supporting context. They may not be spliced into the lead paragraph.
+7. Remaining bond transits stay available as the deeper `What's driving this` / active relationship-transits list.
 
 ### Tier 2: shared Moon condition, no bond transit
 
@@ -70,7 +71,7 @@ The reader's and friend's separate daily forecasts can continue to exist on thei
 `Between you two · Today`
 
 **Headline**  
-Plain relationship thesis keyed to the shared mechanism.
+Plain relationship thesis keyed to the shared mechanism and, when needed, the same directional perspective as the bond effect.
 
 **Body**  
 Tier 1: exact owner-approved bond effect body.  
@@ -107,6 +108,8 @@ type BetweenYouTwoDailyV2 = {
 };
 ```
 
+The resolved object contains strings. The source row may contain separate `body_you` / `body_they` values and resolves them before this object is passed to the reader component.
+
 ### Provenance requirements
 
 For Tier 1, `sourceKeys` must include:
@@ -125,6 +128,8 @@ New V2 copy is small and mechanism-specific:
 - `fallback-hook/between-you-two-v2/move/{hard|soft}/{transiting}`
 - `fallback-hook/between-you-two-v2/shared-moon/{fire|earth|air|water}`
 
+Headline and move rows use the established `body_you` / `body_they` model when direction changes the meaning. Shared-Moon rows are symmetrical.
+
 Do **not** create new body rows for Tier 1. The existing exact owner-approved bond-effect body is the body authority.
 
 ## Editorial contract
@@ -134,6 +139,7 @@ A V2 headline or move must:
 - state the relationship problem/support plainly;
 - be understandable without astrology jargon;
 - remain true for the complete directional bond-effect family it represents;
+- preserve who is doing what when the bond effect is directional;
 - avoid predicting an outcome;
 - avoid generic therapy language;
 - prefer concrete stakes: time, plans, money, messages, affection, effort, responsibility, access, recognition;
