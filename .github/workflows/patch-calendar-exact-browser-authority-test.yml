@@ -1,0 +1,42 @@
+name: Patch Calendar exact browser authority test
+
+on:
+  push:
+    branches:
+      - "fix/sky-exact-content-studio-authority-20260904"
+    paths:
+      - "scripts/patch-calendar-exact-browser-authority-test.mjs"
+      - ".github/workflows/patch-calendar-exact-browser-authority-test.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Apply browser regression refresh
+        run: node scripts/patch-calendar-exact-browser-authority-test.mjs
+      - name: Verify focused Calendar authority case
+        run: |
+          npm run build -w @tldr/astro-knowledge
+          npm run build -w @tldr/web
+          npx playwright install chromium
+          npx playwright test -c playwright.config.ts tests/visual/client-facing-user-flows.spec.ts --grep "Calendar Day and Month keep canonical exact Sky aspect copy authoritative"
+      - name: Commit browser regression refresh
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add tests/visual/client-facing-user-flows.spec.ts
+          git diff --cached --check
+          git commit -m "test(calendar): keep exact copy authoritative in Day and Month"
+          git push origin HEAD
