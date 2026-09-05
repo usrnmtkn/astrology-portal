@@ -44,6 +44,15 @@
   opacity: 0.72;
 }
 
+.admin-dashboard .admin-fallback-row.admin-source-only-row {
+  box-shadow: inset var(--border-width-medium) 0 0 var(--admin-ui-border);
+}
+
+.admin-dashboard .admin-hook-catalog-results .admin-fallback-row h3 {
+  font-size: var(--admin-type-14);
+  line-height: var(--leading-title);
+}
+
 /* Keep the connection column scannable. The full explanation remains available in the native
    title tooltip on the existing detail text. */
 .admin-dashboard .admin-wiring-cell small {
