@@ -1,0 +1,66 @@
+{
+  "schemaVersion": 1,
+  "id": "between-you-two-v2-owner-approval-batch-3-2026-09-05",
+  "approvedAt": "2026-09-05",
+  "ownerStatement": "yes, these are approved",
+  "servingAuthority": false,
+  "scopeNote": "Exact-wording approval applies only to the reader-facing V2 headline, V2 lead body, and useful move shown to the owner in the immediately preceding review. These V2 lead bodies are additive Between You Two copy and do not replace the existing canonical bond-effect bodies used by other relationship surfaces. Reverse-direction V2 wording was not shown and is not approved by this record.",
+  "records": [
+    {
+      "id": "hard-chiron",
+      "family": "hard",
+      "transiting": "chiron",
+      "headline_body_you": "A late reply can hit an old fear before anything has actually happened.",
+      "body_body_you": "You send {{Name}} something honest and they take longer than usual to answer. Now you are rereading the message, looking for the sentence that made you too much, too needy, or harder to love. Nothing new has actually happened, but the silence is giving an old insecurity plenty of room to tell the story for you.",
+      "move_body_you": "Wait for the actual reply before you start repairing a conversation that may not be broken."
+    },
+    {
+      "id": "hard-lilith",
+      "family": "hard",
+      "transiting": "lilith",
+      "headline_body_you": "You keep saying yes, and now you are angry they believed you.",
+      "body_body_you": "The problem may not even be the plan anymore. It is that you have agreed to it three times when you did not want to, and now {{Name}} thinks your answer means exactly what you said. By the time the resentment comes out, it can sound like they should have known you meant no.",
+      "move_body_you": "Say no while it can still be a clean answer."
+    },
+    {
+      "id": "hard-moon",
+      "family": "hard",
+      "transiting": "moon",
+      "headline_body_you": "You are already worn down, and {{Name}} happens to say the one thing you have no patience left for.",
+      "body_body_you": "A small disappointment can land much harder at the end of a bad day. Maybe they cancel, forget something, or answer more casually than you wanted. The reaction is about what happened between you, but it may also be carrying everything that happened before they got there.",
+      "move_body_you": "Tell them what hurt without making them responsible for the whole day."
+    },
+    {
+      "id": "hard-north-node",
+      "family": "hard",
+      "transiting": "north-node",
+      "headline_body_you": "They may put something unfamiliar in front of you that you actually want.",
+      "body_body_you": "{{Name}} introduces you to a person, place, job, trip, or possibility you would not have found on your own. Part of you is interested. Another part immediately starts listing everything that could go wrong. The fact that it is unfamiliar does not automatically mean it is wrong for you.",
+      "move_body_you": "Find out what the option actually requires before nervousness decides for you."
+    },
+    {
+      "id": "hard-south-node",
+      "family": "hard",
+      "transiting": "south-node",
+      "headline_body_you": "You know this old role too well.",
+      "body_body_you": "Around {{Name}}, you can slip back into being the planner, the peacemaker, the one who apologizes first, the one who waits, or the one who quietly handles what nobody else picked up. Neither of you has to discuss it because the relationship already knows the pattern. That is exactly why it can restart so quickly.",
+      "move_body_you": "Notice which old role you stepped into before you keep playing it."
+    },
+    {
+      "id": "hard-sun",
+      "family": "hard",
+      "transiting": "sun",
+      "headline_body_you": "You are happy for them, but you are disappearing from the story.",
+      "body_body_you": "{{Name}} gets the recognition, the thank-you, or the public credit for something you helped make happen. You may genuinely want to celebrate them and still register that your contribution has somehow vanished from the version everyone else is hearing. Pretending that does not bother you usually just postpones the argument.",
+      "move_body_you": "Name your contribution before missing credit turns into a bigger fight about respect."
+    },
+    {
+      "id": "hard-venus",
+      "family": "hard",
+      "transiting": "venus",
+      "headline_body_you": "You can miss them without making their schedule mean something about you.",
+      "body_body_you": "You wanted more time with {{Name}} and they do not have it. Maybe they are tired, working, distracted, or already committed somewhere else. You can understand every reasonable explanation and still feel disappointed. The trouble starts when disappointment quietly becomes proof that you matter less to them than you thought.",
+      "move_body_you": "Ask for the time you want instead of making their availability answer a bigger question."
+    }
+  ]
+}
