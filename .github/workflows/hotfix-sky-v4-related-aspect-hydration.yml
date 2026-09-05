@@ -51,6 +51,6 @@ jobs:
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add apps/web/src/App.tsx
+          git add apps/web/src/App.tsx scripts/test-reviewed-sky-aspect-phrasebook.mjs
           git commit -m "fix(sky): preserve related aspects after V4 hydration"
           git push origin HEAD
