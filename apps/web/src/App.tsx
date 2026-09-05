@@ -4604,18 +4604,7 @@ function relatedSkyAspectSectionsForPlacement({
         } satisfies SkyDetailSection
       }];
     });
-  const giftSection = resolvedSections.find(({ section }) => section.group === "gifts");
-  const lessonSection = resolvedSections.find(({ section }) => section.group === "lessons");
-
-  if (giftSection && lessonSection) {
-    return [giftSection, lessonSection]
-      .sort((first, second) => first.orb - second.orb)
-      .map(({ section }) => section);
-  }
-
-  return resolvedSections
-    .slice(0, 2)
-    .map(({ section }) => section);
+  return resolvedSections.map(({ section }) => section);
 }
 
 function skyPlacementAspectExactMoment(
@@ -5258,21 +5247,6 @@ function currentSkyPlacementDetailArticle({
         pointName: position.planet,
         positions
       });
-  const sourceGapAspectRows = isRegistryArticle
-    ? []
-    : relatedAspectRowsForPlacement({
-        aspects: aspects.filter((aspect) => (
-          normalizeSkyAspectSurface(aspect, generatedContent, positions, generatedAt).sections.length === 0
-        )),
-        generatedAt,
-        generatedContent,
-        mode: "sky",
-        onOpenSkyAspect: onOpenDetail
-          ? (aspect) => onOpenDetail(currentSkyAspectDetailArticle(aspect, generatedAt, generatedContent, positions))
-          : undefined,
-        pointName: position.planet,
-        positions
-      }).filter((row): row is SkyDetailRelatedAspectRow => Boolean(row));
   const articleSections = (placementSection?.articleSections ?? []).map((section) => ({
     heading: section.heading,
     body: section.body,
@@ -5312,13 +5286,6 @@ function currentSkyPlacementDetailArticle({
     sections: displayArticleSections.length > 0
       ? [...displayArticleSections, ...relatedAspectSections]
       : relatedAspectSections,
-    relatedAspects: sourceGapAspectRows.length > 0
-      ? {
-          heading: "Aspects shaping this transit",
-          rows: sourceGapAspectRows
-        }
-      : undefined,
-    historicalLookback,
     astrologyDrilldown: null
   };
 }
@@ -10938,7 +10905,7 @@ export function App() {
   const [, setNatalCardTaglineVersion] = useState(0);
   const [selectedSkyDetail, setSelectedSkyDetail] = useState<SkyDetail | null>(null);
   const [skyDetailRoutePath, setSkyDetailRoutePath] = useState<string | null>(skyDetailRoutePathFromUrl);
-  const [contentRegistryVersion, setContentRegistryVersion] = useState(0);
+  const contentRegistryVersion = useContentRegistryRevision();
   const selectedSkyDetailRefreshKeyRef = useRef("");
   const selectedSkyDetailRefreshContentRef = useRef<GeneratedContentMap | null>(null);
   const fallbackDashboardHydrationRequestedRef = useRef(false);
@@ -11804,10 +11771,6 @@ export function App() {
     window.scrollTo({ top: 0, left: 0, behavior: "auto" });
     document.scrollingElement?.scrollTo({ top: 0, left: 0, behavior: "auto" });
   }, [selectedSkyDetail]);
-
-  useEffect(() => subscribeContentRegistry(() => {
-    setContentRegistryVersion((version) => version + 1);
-  }), []);
 
   useEffect(() => {
     const syncPreviewMode = () => {
