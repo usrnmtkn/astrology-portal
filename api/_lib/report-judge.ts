@@ -37,6 +37,42 @@ export type ReportJudgeResult = {
   findings: Array<{ category: ReportJudgeCategory; location: string; finding: string; evidence_ids: string[] }>;
 };
 
+export type ReportOverviewSentenceContract = {
+  applicable: boolean;
+  passed: boolean;
+  sentenceCount: number | null;
+  minimum: 5;
+  maximum: 7;
+};
+
+function proseSentenceCount(draft: ReportDraft) {
+  const prose = [
+    draft.body ?? "",
+    ...(draft.sections ?? []).map((section) => section.body ?? "")
+  ].filter(Boolean).join(" ");
+  return prose.match(/[^.!?]+[.!?]+|[^.!?]+$/gu)?.map((sentence) => sentence.trim()).filter(Boolean).length ?? 0;
+}
+
+export function reportOverviewSentenceContract(
+  payload: Pick<ReportGenerationPayload, "reportDomain" | "reportHorizon" | "unit">,
+  draft: ReportDraft
+): ReportOverviewSentenceContract {
+  const applicable = payload.reportDomain === "general"
+    && payload.reportHorizon === "12_months"
+    && payload.unit.unitId === "overview";
+  if (!applicable) {
+    return { applicable: false, passed: true, sentenceCount: null, minimum: 5, maximum: 7 };
+  }
+  const sentenceCount = proseSentenceCount(draft);
+  return {
+    applicable: true,
+    passed: sentenceCount >= 5 && sentenceCount <= 7,
+    sentenceCount,
+    minimum: 5,
+    maximum: 7
+  };
+}
+
 export const REPORT_JUDGE_SCHEMA = {
   type: "object", additionalProperties: false, required: ["scores", "applicability", "overall", "verdict", "findings"],
   properties: {
@@ -133,10 +169,20 @@ export async function judgeReportUnit(input: {
       throw new Error("V3 owner_voice finding lacks eligible comparison evidence.");
     }
   }
+  const overviewSentenceContract = reportOverviewSentenceContract(input.payload, input.draft);
+  const deterministicFindings: ReportJudgeResult["findings"] = overviewSentenceContract.applicable && !overviewSentenceContract.passed
+    ? [{
+        category: "density",
+        location: "body",
+        finding: `General 12-month overview must contain five to seven prose sentences; found ${overviewSentenceContract.sentenceCount}. Revise the overview without dropping a major annual turning point or inventing a new event.`,
+        evidence_ids: []
+      }]
+    : [];
   const overall = reportJudgeOverall(scores, movementApplicable);
   const result = {
     ...response.value,
     scores,
+    findings: [...response.value.findings, ...deterministicFindings],
     applicability: {
       interpretive_movement: movementApplicable ? "applicable" as const : "not_applicable" as const,
       reason: movementApplicable
@@ -144,7 +190,9 @@ export async function judgeReportUnit(input: {
         : "The complete unit contains fewer than two substantive prose paragraphs."
     },
     overall,
-    verdict: reportJudgeReleaseVerdict(scores, input.threshold, movementApplicable)
+    verdict: overviewSentenceContract.passed
+      ? reportJudgeReleaseVerdict(scores, input.threshold, movementApplicable)
+      : "below_threshold" as const
   };
   return { result, usage: response.usage, model: response.model, promptVersion: prompt.version };
 }
