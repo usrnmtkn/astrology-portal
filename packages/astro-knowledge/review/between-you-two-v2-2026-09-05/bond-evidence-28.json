@@ -1,0 +1,287 @@
+{
+  "schemaVersion": 1,
+  "servingAuthority": false,
+  "rowCount": 28,
+  "rows": [
+    {
+      "family": "hard",
+      "transiting": "chiron",
+      "contentKey": "fallback-hook/bond-effect-hard/chiron",
+      "payloadSha256": "4008a06dd6f34590f106f4cc22987d36b667dae040804f55803b8fca410fb236",
+      "approvalLevel": "exact_owner_approved",
+      "authorship": "owner_authored",
+      "body_you": "A late reply from {{holder1}} leaves you wondering if you said too much. By the time {{holder1}} answers, you have already replayed the last conversation several times. The insecurity arrives before you have any new information.",
+      "body_they": "{{holder1}} waits longer than expected for an answer from you and starts wondering if something changed. What looks like impatience may be an insecurity {{holder1}} already knows well."
+    },
+    {
+      "family": "hard",
+      "transiting": "jupiter",
+      "contentKey": "fallback-hook/bond-effect-hard/jupiter",
+      "payloadSha256": "e1835f1233ddc6be2e42949c6f215002a8f686ca776f20ae8deec947c8706161",
+      "approvalLevel": "exact_owner_approved",
+      "authorship": "owner_authored",
+      "body_you": "{{holder1}} suggests adding another night, another stop, or another expense, and you agree because the plan sounds good. Later you are the one staring at the total and wondering how the weekend became this expensive.",
+      "body_they": "You make the plan bigger and {{holder1}} goes along with it. Later, {{holder1}} may realize they agreed to spend more money or time than they wanted."
+    },
+    {
+      "family": "hard",
+      "transiting": "lilith",
+      "contentKey": "fallback-hook/bond-effect-hard/lilith",
+      "payloadSha256": "09842006ac64d6d60fccab2c983189b13255e48c5f2fedc63b73f87b14a798d4",
+      "approvalLevel": "exact_owner_approved",
+      "authorship": "owner_authored",
+      "body_you": "You have been saying you are fine with a plan you actually dislike. By the third or fourth time {{holder1}} suggests it, your answer comes out much sharper. The irritation has had time to build.",
+      "body_they": "{{holder1}} has been agreeing to something they do not really want. Eventually the answer comes out bluntly, and you may wonder why this suddenly became such a problem."
+    },
+    {
+      "family": "hard",
+      "transiting": "mars",
+      "contentKey": "fallback-hook/bond-effect-hard/mars",
+      "payloadSha256": "742b448a4076848db33086eda0e3d7f95319bd6bbea3ae68a5df6c14dc46d262",
+      "approvalLevel": "exact_owner_approved",
+      "authorship": "owner_authored",
+      "body_you": "{{holder1}} is ten minutes late and you are already annoyed before they arrive. The rest of the evening can become a fight about respect when the first problem was simply that you were left waiting.",
+      "body_they": "You are late, change the time, or keep {{holder1}} waiting. {{holder1}} is irritated before the two of you even start whatever you planned to do."
+    },
+    {
+      "family": "hard",
+      "transiting": "mercury",
+      "contentKey": "fallback-hook/bond-effect-hard/mercury",
+      "payloadSha256": "1335ffd0ef31cbdd53b582a3db474fced0045c7c7093041986cdbead6dc78eab",
+      "approvalLevel": "exact_owner_approved",
+      "authorship": "owner_authored",
+      "body_you": "{{holder1}} sends a short reply and you spend twenty minutes deciding what the tone means. By the time you answer, you may already be annoyed about a meaning {{holder1}} never intended.",
+      "body_they": "You send a quick reply and {{holder1}} reads distance into it. What took you ten seconds to type can occupy much more of {{holder1}}'s afternoon."
+    },
+    {
+      "family": "hard",
+      "transiting": "moon",
+      "contentKey": "fallback-hook/bond-effect-hard/moon",
+      "payloadSha256": "f61067987048e5623a24069d3f8d5d669bd190e86f2ffab7444fac2850fe9a20",
+      "approvalLevel": "exact_owner_approved",
+      "authorship": "owner_authored",
+      "body_you": "{{holder1}} catches you at the end of a bad day and a small comment bothers you more than it normally would. You know you are tired. You are still upset.",
+      "body_they": "{{holder1}} is having a harder day than you realize. A small disappointment from you can get a reaction that seems much bigger than the moment."
+    },
+    {
+      "family": "hard",
+      "transiting": "neptune",
+      "contentKey": "fallback-hook/bond-effect-hard/neptune",
+      "payloadSha256": "9cd3ba7b12e4532e32d7130bc2edb61a68437a7a13787291269442865a110b55",
+      "approvalLevel": "exact_owner_approved",
+      "authorship": "owner_authored",
+      "body_you": "{{holder1}} has not answered yet, and your mind has already decided why. You imagine rejection, disappointment, or a problem before you have one fact.",
+      "body_they": "You take longer to answer and {{holder1}} fills the silence with an explanation of their own. By the time you reply, {{holder1}} may already be responding to a problem that never happened."
+    },
+    {
+      "family": "hard",
+      "transiting": "north-node",
+      "contentKey": "fallback-hook/bond-effect-hard/north-node",
+      "payloadSha256": "a9e81c3ff75ed6d1f0ff437e21cc83ad4dc8454db4586ef87d69e87ebbfb6eec",
+      "approvalLevel": "exact_owner_approved",
+      "authorship": "owner_authored",
+      "body_you": "{{holder1}} introduces you to a person, place, job, or option you would not have found on your own. The opportunity is unfamiliar enough to make you nervous, but interesting enough that you keep thinking about it.",
+      "body_they": "You introduce {{holder1}} to an option they had not considered. {{holder1}} may be interested and uncomfortable at the same time because the choice requires them to do something differently."
+    },
+    {
+      "family": "hard",
+      "transiting": "pluto",
+      "contentKey": "fallback-hook/bond-effect-hard/pluto",
+      "payloadSha256": "c49d0cdf17f4aba58c01db8329264892ba54d2c0ab448e8ea76d31e8180e0471",
+      "approvalLevel": "exact_owner_approved",
+      "authorship": "owner_authored",
+      "body_you": "{{holder1}} has the information and you are expected to wait. Or {{holder1}} makes the decision and tells you afterward. The part that bothers you most is how little say you had before the answer became final.",
+      "body_they": "You have more information or more control over the outcome, and {{holder1}} notices. {{holder1}} may push hard for details because waiting means accepting a decision they had very little part in making."
+    },
+    {
+      "family": "hard",
+      "transiting": "saturn",
+      "contentKey": "fallback-hook/bond-effect-hard/saturn",
+      "payloadSha256": "7f50de0fae52050d23d7531ef044697a20b3780833bc0ca4c10bdb0c531ec285",
+      "approvalLevel": "exact_owner_approved",
+      "authorship": "owner_authored",
+      "body_you": "You and {{holder1}} make plans, but you are the one checking the time, making the reservation, and remembering what needs to happen next. The relationship starts taking more work from you than you expected.",
+      "body_they": "{{holder1}} may be the person handling the practical details more often. A pattern of missed calls, changed plans, or unfinished responsibilities can leave {{holder1}} doing more than their share."
+    },
+    {
+      "family": "hard",
+      "transiting": "south-node",
+      "contentKey": "fallback-hook/bond-effect-hard/south-node",
+      "payloadSha256": "b710e39f5e9a1e71d2c41e8e0aedc19b871be652da716e128fb90da6e15cc266",
+      "approvalLevel": "exact_owner_approved",
+      "authorship": "owner_authored",
+      "body_you": "Around {{holder1}}, you start doing the job you always used to do. You make the plan, smooth over the disagreement, apologize first, or wait for {{holder1}} to decide. It happens quickly because both of you already know this version of the relationship.",
+      "body_they": "{{holder1}} falls back into a role they know well around you. They chase, withdraw, apologize first, or take responsibility before anyone asks. The pattern can return before either of you realizes it."
+    },
+    {
+      "family": "hard",
+      "transiting": "sun",
+      "contentKey": "fallback-hook/bond-effect-hard/sun",
+      "payloadSha256": "27ca7d04a01c2135e15107f6832f1e8c1f6fac269541a5debbdd6fd50374c810",
+      "approvalLevel": "exact_owner_approved",
+      "authorship": "owner_authored",
+      "body_you": "{{holder1}} gets the credit and your work disappears from the story. You want to celebrate the result, but it is difficult when no one seems to remember what you contributed.",
+      "body_they": "Your work gets noticed while {{holder1}} is barely mentioned. {{holder1}} may be less upset by your recognition than by the fact that their work is being treated as invisible."
+    },
+    {
+      "family": "hard",
+      "transiting": "uranus",
+      "contentKey": "fallback-hook/bond-effect-hard/uranus",
+      "payloadSha256": "9a96f15f35814828c63ffd1be679ef89e116226c16a5dd0191314fa4ac508464",
+      "approvalLevel": "exact_owner_approved",
+      "authorship": "owner_authored",
+      "body_you": "{{holder1}} changes the time after you already arranged your day around it. Then another plan changes. You can handle surprise, but repeated changes start costing you hours.",
+      "body_they": "You change plans quickly and {{holder1}} keeps adjusting. The individual changes may make sense, but {{holder1}} is still the person losing time."
+    },
+    {
+      "family": "hard",
+      "transiting": "venus",
+      "contentKey": "fallback-hook/bond-effect-hard/venus",
+      "payloadSha256": "86f79d61344cd16a693340929597c469b44d14616a6e7bafd6e96aedb7ac1c59",
+      "approvalLevel": "exact_owner_approved",
+      "authorship": "owner_authored",
+      "body_you": "You reach for {{holder1}} and they have less time or energy than you expected. You may know {{holder1}} is busy and still feel disappointed that the evening did not become what you wanted.",
+      "body_they": "{{holder1}} reaches for you when you have less time or energy to give. They may understand the reason and still wish you had more available."
+    },
+    {
+      "family": "soft",
+      "transiting": "chiron",
+      "contentKey": "fallback-hook/bond-effect-soft/chiron",
+      "payloadSha256": "20a30b269e126645d3f8452b1e5faf60fbb69eee416d77490a2bf4b0296c6d5e",
+      "approvalLevel": "exact_owner_approved",
+      "authorship": "owner_authored",
+      "body_you": "You tell {{holder1}} about something that normally makes you defensive, and the conversation does not turn into an argument about why you feel that way. You get to finish.",
+      "body_they": "{{holder1}} tells you about something they normally keep to themselves. They may say more because they do not have to defend the reaction while explaining it."
+    },
+    {
+      "family": "soft",
+      "transiting": "jupiter",
+      "contentKey": "fallback-hook/bond-effect-soft/jupiter",
+      "payloadSha256": "f5d265d9bc7c9d4a648b559bcd19d2fa01fad381730cf34be8a9e7c4be188050",
+      "approvalLevel": "exact_owner_approved",
+      "authorship": "owner_authored",
+      "body_you": "{{holder1}} sends you something and you realize the opportunity actually fits. The job, trip, class, or project connects to something you already wanted instead of becoming another random possibility.",
+      "body_they": "You send {{holder1}} an opportunity that fits something they have already been talking about. {{holder1}} may be more willing to try because the timing finally makes sense."
+    },
+    {
+      "family": "soft",
+      "transiting": "lilith",
+      "contentKey": "fallback-hook/bond-effect-soft/lilith",
+      "payloadSha256": "84d950da76e3b13543f42c76196ec540e75aa5cb5cffded02f15f539303cb976",
+      "approvalLevel": "exact_owner_approved",
+      "authorship": "owner_authored",
+      "body_you": "You tell {{holder1}} what you actually prefer instead of automatically choosing the plan that creates the least friction. The answer is clearer because you are not already resentful when you give it.",
+      "body_they": "{{holder1}} tells you what they actually want instead of agreeing first and becoming irritated later. You may get a more direct answer than usual."
+    },
+    {
+      "family": "soft",
+      "transiting": "mars",
+      "contentKey": "fallback-hook/bond-effect-soft/mars",
+      "payloadSha256": "667a2f6a07fb77dbea53ff6f3595b68037ff50ed8b64f5cc5d4143cb1cbac8b5",
+      "approvalLevel": "exact_owner_approved",
+      "authorship": "owner_authored",
+      "body_you": "You and {{holder1}} get through the errands, repair, project, or workout faster together. There is enough energy to finish instead of postponing it again.",
+      "body_they": "You and {{holder1}} get through the errands, repair, project, or workout faster together. There is enough energy to finish instead of postponing it again."
+    },
+    {
+      "family": "soft",
+      "transiting": "mercury",
+      "contentKey": "fallback-hook/bond-effect-soft/mercury",
+      "payloadSha256": "6b672c04ac8ee09141effda523cfe425b233b8164b6a2f671bdbfca72a39a3a2",
+      "approvalLevel": "exact_owner_approved",
+      "authorship": "owner_authored",
+      "body_you": "You tell {{holder1}} what you mean and the sentence comes out the way you intended. No five-paragraph text. No second explanation ten minutes later.",
+      "body_they": "{{holder1}} tells you exactly what they mean. You do not have to pull the answer out of them or guess what was left unsaid."
+    },
+    {
+      "family": "soft",
+      "transiting": "moon",
+      "contentKey": "fallback-hook/bond-effect-soft/moon",
+      "payloadSha256": "81af0c42f9f454821d1067c6a90ea7d4f9787c9fb01ce76f40211a409e2759ef",
+      "approvalLevel": "exact_owner_approved",
+      "authorship": "owner_authored",
+      "body_you": "{{holder1}} remembers the food you like, checks in after the long day, or knows you need quiet before conversation. You feel understood without having to explain every detail.",
+      "body_they": "{{holder1}} is easier to read. You notice they need food, quiet, or company before {{holder1}} has to ask directly."
+    },
+    {
+      "family": "soft",
+      "transiting": "neptune",
+      "contentKey": "fallback-hook/bond-effect-soft/neptune",
+      "payloadSha256": "08968af0ce3955965cc916e2a0f79ba3d62df931d8e069588ed6b1fcb165ef6c",
+      "approvalLevel": "exact_owner_approved",
+      "authorship": "owner_authored",
+      "body_you": "{{holder1}} is tired, distracted, or not explaining themselves perfectly, and you do not immediately turn it into a larger story. One off day stays one off day.",
+      "body_they": "{{holder1}} may be less worried about saying exactly the right thing around you. A clumsy sentence does not have to become a relationship problem."
+    },
+    {
+      "family": "soft",
+      "transiting": "north-node",
+      "contentKey": "fallback-hook/bond-effect-soft/north-node",
+      "payloadSha256": "17ee1dbb787156b3f368ad6e9836847862679382a635e47fcdb439edc2a2ff7d",
+      "approvalLevel": "exact_owner_approved",
+      "authorship": "owner_authored",
+      "body_you": "{{holder1}} introduces you to an option you would not have considered on your own. You are interested enough to try it even though you do not know yet how far you want to take it.",
+      "body_they": "You introduce {{holder1}} to something new and {{holder1}} is willing to try. The first step can be useful without requiring a decision about the whole future."
+    },
+    {
+      "family": "soft",
+      "transiting": "pluto",
+      "contentKey": "fallback-hook/bond-effect-soft/pluto",
+      "payloadSha256": "0f7d12ea2950ac05f3f70322d010d4ec571e6972bf70f760d1377c73814a4726",
+      "approvalLevel": "exact_owner_approved",
+      "authorship": "owner_authored",
+      "body_you": "You tell {{holder1}} the money arrangement is uneven, you felt left out of the decision, or you are still angry about something the two of you stopped discussing. The relief comes from not pretending anymore.",
+      "body_they": "{{holder1}} tells you where they feel excluded, resentful, jealous, or overburdened. The problem becomes clearer once {{holder1}} stops trying to make it sound smaller."
+    },
+    {
+      "family": "soft",
+      "transiting": "saturn",
+      "contentKey": "fallback-hook/bond-effect-soft/saturn",
+      "payloadSha256": "d2287e5642c20c13c7f88fd9e4db6db596ea9190f343de95834b7579d26f1d28",
+      "approvalLevel": "exact_owner_approved",
+      "authorship": "owner_authored",
+      "body_you": "{{holder1}} follows through. The plan happens, the call comes when promised, or the responsibility gets handled without you checking twice. You know what you can rely on because you have evidence.",
+      "body_they": "You do what you said you would do and {{holder1}} notices. They do not have to remind you, chase the answer, or prepare a backup plan."
+    },
+    {
+      "family": "soft",
+      "transiting": "south-node",
+      "contentKey": "fallback-hook/bond-effect-soft/south-node",
+      "payloadSha256": "1d64f8a706e46788f604ff70ef6ec5c0bda420df4b34632b8e0f3c193705773e",
+      "approvalLevel": "exact_owner_approved",
+      "authorship": "owner_authored",
+      "body_you": "Being with {{holder1}} drops you into an old rhythm quickly. You know what they will order, which joke is coming, and who will make the plan. The familiarity can feel good even if part of the routine no longer fits.",
+      "body_they": "{{holder1}} falls into an old rhythm around you without thinking about it. The role is easy because {{holder1}} has played it before."
+    },
+    {
+      "family": "soft",
+      "transiting": "sun",
+      "contentKey": "fallback-hook/bond-effect-soft/sun",
+      "payloadSha256": "3971a1846df20609da70ba0570b880cc3bb9e9390cf3b687792edcd836bd3b2e",
+      "approvalLevel": "exact_owner_approved",
+      "authorship": "owner_authored",
+      "body_you": "{{holder1}} notices what you did and says it out loud. They give you credit, celebrate the result, or remind you that the work mattered. You feel appreciated instead of having to ask for recognition.",
+      "body_they": "You notice {{holder1}}'s contribution and say so. {{holder1}} knows exactly what you valued because you were specific."
+    },
+    {
+      "family": "soft",
+      "transiting": "uranus",
+      "contentKey": "fallback-hook/bond-effect-soft/uranus",
+      "payloadSha256": "7303e59bfcc7f40dce3d6dfa274d3f174f62f4fa78e5a4b096d1aad4870a4950",
+      "approvalLevel": "exact_owner_approved",
+      "authorship": "owner_authored",
+      "body_you": "{{holder1}} suggests something you would not normally choose, and you say yes. The new place, crowd, or plan suits you better than expected.",
+      "body_they": "You suggest something different and {{holder1}} is more willing to try it. The change gives {{holder1}} a break from a routine they were already tired of."
+    },
+    {
+      "family": "soft",
+      "transiting": "venus",
+      "contentKey": "fallback-hook/bond-effect-soft/venus",
+      "payloadSha256": "6652eeb40faec64083c58e2ca27c0e64c6a9843a6a50c16f25d8d6e42d46b1f8",
+      "approvalLevel": "exact_owner_approved",
+      "authorship": "owner_authored",
+      "body_you": "{{holder1}} remembers what you like, checks in, makes room for you in the plan, or handles one small task before it becomes another errand on your list. What matters is that {{holder1}} was paying attention.",
+      "body_they": "You remember what {{holder1}} likes, choose the place they prefer, or take care of one small detail before they have to ask. {{holder1}} feels appreciated because the effort was specific to them."
+    }
+  ]
+}
