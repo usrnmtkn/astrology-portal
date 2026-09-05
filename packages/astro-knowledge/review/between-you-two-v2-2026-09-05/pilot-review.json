@@ -1,0 +1,119 @@
+{
+  "schemaVersion": 1,
+  "id": "between-you-two-v2-pilot-2026-09-05",
+  "status": "proposed",
+  "servingAuthority": false,
+  "ownerApprovalRequired": true,
+  "note": "The bond bodies are existing exact-owner-approved copy and are not being rewritten. Only candidateHeadline, candidateMove, and the Moon-only candidateBody are new review material.",
+  "records": [
+    {
+      "id": "hard-saturn",
+      "evidenceTier": "bond",
+      "mechanism": { "family": "hard", "transiting": "saturn" },
+      "candidateHeadline": "One person is doing more of the follow-through.",
+      "bodyAuthority": {
+        "contentKey": "fallback-hook/bond-effect-hard/saturn",
+        "approvalLevel": "exact_owner_approved",
+        "reuseVerbatim": true,
+        "body_you": "You and {{Name}} make plans, but you are the one checking the time, making the reservation, and remembering what needs to happen next. The relationship starts taking more work from you than you expected."
+      },
+      "supportingContextExample": {
+        "you": "deciding what deserves your energy before you react",
+        "friend": "leaving the reply in drafts until the missing context shows up",
+        "note": "Display as subordinate context only. Do not splice into the relationship paragraph."
+      },
+      "candidateMove": "Before you make another plan, decide who is actually responsible for the next step.",
+      "reviewStatus": "proposed"
+    },
+    {
+      "id": "hard-mercury",
+      "evidenceTier": "bond",
+      "mechanism": { "family": "hard", "transiting": "mercury" },
+      "candidateHeadline": "The tone is becoming a bigger problem than the message.",
+      "bodyAuthority": {
+        "contentKey": "fallback-hook/bond-effect-hard/mercury",
+        "approvalLevel": "exact_owner_approved",
+        "reuseVerbatim": true,
+        "body_you": "{{Name}} sends a short reply and you spend twenty minutes deciding what the tone means. By the time you answer, you may already be annoyed about a meaning {{Name}} never intended."
+      },
+      "supportingContextExample": {
+        "you": "saying what you want before you start shaping it into something everyone else will approve of",
+        "friend": "letting the first message stand instead of sending another one to manage how it was received",
+        "note": "Display as subordinate context only. Do not splice into the relationship paragraph."
+      },
+      "candidateMove": "Answer the message that was sent before you answer the tone you think was underneath it.",
+      "reviewStatus": "proposed"
+    },
+    {
+      "id": "hard-jupiter",
+      "evidenceTier": "bond",
+      "mechanism": { "family": "hard", "transiting": "jupiter" },
+      "candidateHeadline": "The plan gets bigger before either of you checks what it costs.",
+      "bodyAuthority": {
+        "contentKey": "fallback-hook/bond-effect-hard/jupiter",
+        "approvalLevel": "exact_owner_approved",
+        "reuseVerbatim": true,
+        "body_you": "{{Name}} suggests adding another night, another stop, or another expense, and you agree because the plan sounds good. Later you are the one staring at the total and wondering how the weekend became this expensive."
+      },
+      "supportingContextExample": {
+        "you": "noticing when trying harder is no longer fixing the problem",
+        "friend": "noticing when trying harder is no longer fixing the problem",
+        "note": "When the exact contexts match, the UI may say both people are carrying the same daily pressure, but it remains subordinate to the bond body."
+      },
+      "candidateMove": "Check the money, time, and logistics before adding one more thing to the plan.",
+      "reviewStatus": "proposed"
+    },
+    {
+      "id": "soft-venus",
+      "evidenceTier": "bond",
+      "mechanism": { "family": "soft", "transiting": "venus" },
+      "candidateHeadline": "Small, specific effort means more than a big gesture today.",
+      "bodyAuthority": {
+        "contentKey": "fallback-hook/bond-effect-soft/venus",
+        "approvalLevel": "exact_owner_approved",
+        "reuseVerbatim": true,
+        "body_you": "{{Name}} remembers what you like, checks in, makes room for you in the plan, or handles one small task before it becomes another errand on your list. What matters is that {{Name}} was paying attention."
+      },
+      "supportingContextExample": {
+        "you": "putting the credit card away before disappointment starts shopping for you",
+        "friend": "helping without rearranging their day around someone else",
+        "note": "This audit pair shows why the individual clauses should not lead: they are both valid, but their juxtaposition is not the relationship thesis."
+      },
+      "candidateMove": "Do the small thing you already know would make their day easier.",
+      "reviewStatus": "proposed"
+    },
+    {
+      "id": "soft-jupiter",
+      "evidenceTier": "bond",
+      "mechanism": { "family": "soft", "transiting": "jupiter" },
+      "candidateHeadline": "A useful opportunity can come through each other.",
+      "bodyAuthority": {
+        "contentKey": "fallback-hook/bond-effect-soft/jupiter",
+        "approvalLevel": "exact_owner_approved",
+        "reuseVerbatim": true,
+        "body_you": "{{Name}} sends you something and you realize the opportunity actually fits. The job, trip, class, or project connects to something you already wanted instead of becoming another random possibility."
+      },
+      "supportingContextExample": {
+        "you": "letting the calendar answer before your enthusiasm promises too much",
+        "friend": "leaving the reply in drafts until the missing context shows up",
+        "note": "Display as subordinate context only. Do not splice into the relationship paragraph."
+      },
+      "candidateMove": "Pass along the opportunity if it connects to something they already wanted.",
+      "reviewStatus": "proposed"
+    },
+    {
+      "id": "shared-moon-fire",
+      "evidenceTier": "shared-moon",
+      "mechanism": { "element": "fire" },
+      "candidateHeadline": "You may both have less patience for delays today.",
+      "candidateBody": "The Moon is activating both charts from a fire sign today, so you may both move faster than your patience can keep up with. A delay, changed plan, or blunt reply can feel more irritating than it normally would. Say what changed before either of you decides what the other person meant.",
+      "supportingContextExample": {
+        "you": "telling them when you can do it instead of letting their urgency set your schedule",
+        "friend": "helping without rearranging their day around someone else",
+        "note": "These can be shown separately if useful, but are not evidence for the shared Moon claim."
+      },
+      "candidateMove": null,
+      "reviewStatus": "proposed"
+    }
+  ]
+}
