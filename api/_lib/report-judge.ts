@@ -23,6 +23,10 @@ export const REPORT_JUDGE_HARD_GATE_CATEGORIES = [
   "interpretive_movement",
   "owner_voice"
 ] as const satisfies readonly ReportJudgeCategory[];
+export const REPORT_JUDGE_RELEASE_QUALITY_FLOORS = {
+  owner_voice: 4,
+  natural_language: 4
+} as const satisfies Partial<Record<ReportJudgeCategory, number>>;
 export type ReportJudgeCategory = typeof REPORT_JUDGE_CATEGORIES[number];
 export type ReportJudgeScores = Record<ReportJudgeCategory, number | null>;
 export type ReportJudgeResult = {
@@ -140,7 +144,7 @@ export async function judgeReportUnit(input: {
         : "The complete unit contains fewer than two substantive prose paragraphs."
     },
     overall,
-    verdict: reportJudgeVerdict(scores, input.threshold, movementApplicable)
+    verdict: reportJudgeReleaseVerdict(scores, input.threshold, movementApplicable)
   };
   return { result, usage: response.usage, model: response.model, promptVersion: prompt.version };
 }
@@ -152,12 +156,23 @@ export function reportJudgeOverall(scores: ReportJudgeScores, movementApplicable
   return (values as number[]).reduce((sum, score) => sum + score, 0) / (4 * applicable.length);
 }
 
+// Historical calibration semantics remain stable here. Production report
+// fulfillment uses reportJudgeReleaseVerdict so archived judge artifacts do
+// not change meaning when the owner raises the release-quality floor.
 export function reportJudgeVerdict(scores: ReportJudgeScores, threshold: number, movementApplicable = scores.interpretive_movement !== null) {
   const overall = reportJudgeOverall(scores, movementApplicable);
   const hardGatePassed = REPORT_JUDGE_HARD_GATE_CATEGORIES
     .filter((category) => category !== "interpretive_movement" || movementApplicable)
     .every((category) => typeof scores[category] === "number" && (scores[category] as number) >= 3);
   return overall >= threshold && hardGatePassed ? "pass" as const : "below_threshold" as const;
+}
+
+export function reportJudgeReleaseVerdict(scores: ReportJudgeScores, threshold: number, movementApplicable = scores.interpretive_movement !== null) {
+  if (reportJudgeVerdict(scores, threshold, movementApplicable) !== "pass") return "below_threshold" as const;
+  const releaseQualityPassed = Object.entries(REPORT_JUDGE_RELEASE_QUALITY_FLOORS)
+    .every(([category, floor]) => typeof scores[category as ReportJudgeCategory] === "number"
+      && (scores[category as ReportJudgeCategory] as number) >= floor);
+  return releaseQualityPassed ? "pass" as const : "below_threshold" as const;
 }
 
 export function deterministicCalibrationScore(text: string) {
