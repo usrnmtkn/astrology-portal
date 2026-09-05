@@ -1,0 +1,56 @@
+name: Apply Between You Two V2 owner approvals
+
+on:
+  push:
+    branches:
+      - "owner/between-you-two-v2-20260905"
+    paths:
+      - "packages/astro-knowledge/review/between-you-two-v2-2026-09-05/owner-approval-batch-*.json"
+      - "scripts/apply-between-you-two-v2-owner-approvals.mjs"
+      - "scripts/generate-between-you-two-v2-source-rows.mjs"
+      - "scripts/test-between-you-two-v2-full-review.mjs"
+      - ".github/workflows/apply-between-you-two-v2-owner-approvals.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+      - name: Apply exact owner approval scope
+        run: node scripts/apply-between-you-two-v2-owner-approvals.mjs
+      - name: Verify full review approval boundary
+        run: node scripts/test-between-you-two-v2-full-review.mjs
+      - name: Regenerate direction-safe V2 source rows
+        run: node scripts/generate-between-you-two-v2-source-rows.mjs
+      - name: Verify source-row counts and held reverse direction
+        run: |
+          node - <<'NODE'
+          const fs = require('fs');
+          const p = 'apps/web/src/content/fallbackArchitectureV3/source-rows/pair-daily-v2-rows.json';
+          const data = JSON.parse(fs.readFileSync(p, 'utf8'));
+          if (data.schema !== 'tldrastro-between-you-two-v2-source-rows/v2') throw new Error('wrong V2 source schema');
+          if (data.rowCount !== 120 || data.approvedCount !== 24 || data.needsReviewCount !== 96) throw new Error(JSON.stringify({rowCount:data.rowCount,approved:data.approvedCount,held:data.needsReviewCount}));
+          const approvedThey = data.rows.filter(row => row.review_status === 'approved' && row.v2_direction === 'they');
+          if (approvedThey.length) throw new Error(`reverse-direction rows approved unexpectedly: ${approvedThey.map(row => row.contentKey).join(', ')}`);
+          console.log('Direction-safe V2 source rows verified: 24 approved, 96 held, 0 approved reverse-direction rows.');
+          NODE
+      - name: Commit governed review and source projection
+        run: |
+          if git diff --quiet -- packages/astro-knowledge/review/between-you-two-v2-2026-09-05/full-authoring-review.json apps/web/src/content/fallbackArchitectureV3/source-rows/pair-daily-v2-rows.json; then
+            echo "No governed projection changes to commit."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add packages/astro-knowledge/review/between-you-two-v2-2026-09-05/full-authoring-review.json apps/web/src/content/fallbackArchitectureV3/source-rows/pair-daily-v2-rows.json
+          git commit -m "content(friends): apply Between You Two V2 owner approvals"
+          git push origin HEAD:owner/between-you-two-v2-20260905
