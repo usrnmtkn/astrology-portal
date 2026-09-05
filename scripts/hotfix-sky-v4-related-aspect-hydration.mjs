@@ -9,10 +9,21 @@ let appSource = fs.readFileSync(appPath, "utf8");
 
 const discardedRegistryVersion = "  const [, setContentRegistryVersion] = useState(0);";
 const retainedRegistryVersion = "  const [contentRegistryVersion, setContentRegistryVersion] = useState(0);";
+const synchronizedRegistryVersion = "  const contentRegistryVersion = useContentRegistryRevision();";
 if (appSource.includes(discardedRegistryVersion)) {
-  appSource = appSource.replace(discardedRegistryVersion, retainedRegistryVersion);
-} else if (!appSource.includes(retainedRegistryVersion)) {
+  appSource = appSource.replace(discardedRegistryVersion, synchronizedRegistryVersion);
+} else if (appSource.includes(retainedRegistryVersion)) {
+  appSource = appSource.replace(retainedRegistryVersion, synchronizedRegistryVersion);
+} else if (!appSource.includes(synchronizedRegistryVersion)) {
   throw new Error("Expected Content Registry version state was not found.");
+}
+
+const adHocSubscription = `  useEffect(() => subscribeContentRegistry(() => {\n    setContentRegistryVersion((version) => version + 1);\n  }), []);\n\n`;
+if (appSource.includes(adHocSubscription)) {
+  appSource = appSource.replace(adHocSubscription, "");
+}
+if (/setContentRegistryVersion/u.test(appSource)) {
+  throw new Error("Ad-hoc Content Registry version setter remains after synchronization patch.");
 }
 
 const staleRefreshKey = '    const refreshKey = `${skyDetailRoutePath}:${fallbackArchitectureV3Version}:${personalizationKey}`;';
@@ -23,8 +34,7 @@ if (appSource.includes(staleRefreshKey)) {
   throw new Error("Expected open Sky detail refresh key was not found.");
 }
 
-const marker = currentRefreshKey;
-const markerIndex = appSource.indexOf(marker);
+const markerIndex = appSource.indexOf(currentRefreshKey);
 if (markerIndex < 0) throw new Error("Open Sky detail refresh marker is missing after patch.");
 const effectStart = appSource.lastIndexOf("  useEffect(() => {", markerIndex);
 const dependencyStart = appSource.indexOf("  }, [", markerIndex);
@@ -39,7 +49,7 @@ if (!dependencyBlock.includes("contentRegistryVersion")) {
 }
 
 fs.writeFileSync(appPath, appSource);
-console.log("Open Sky detail now refreshes when the lazy content registry revision changes.");
+console.log("Open Sky detail synchronizes the current registry revision and refreshes on later registry changes.");
 
 const phrasebookTestPath = path.join(repoRoot, "scripts/test-reviewed-sky-aspect-phrasebook.mjs");
 let phrasebookTestSource = fs.readFileSync(phrasebookTestPath, "utf8");
