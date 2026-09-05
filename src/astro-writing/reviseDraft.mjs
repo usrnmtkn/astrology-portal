@@ -4,10 +4,14 @@ import {
   cardCritiqueChecklist,
   isCardWritingSurface
 } from "./cardWritingStandard.mjs";
+import { effectiveRulePrompt } from "./effectiveRuleGovernance.mjs";
 import { unapprovedDraft } from "./generateDraft.mjs";
 
 function permittedFields(review) {
-  return new Set((review.violations ?? []).map((entry) => entry.location).filter(Boolean));
+  return new Set((review.violations ?? [])
+    .filter((entry) => entry.severity === "blocking")
+    .map((entry) => entry.location)
+    .filter(Boolean));
 }
 
 function failedLines(draft, fields) {
@@ -27,16 +31,17 @@ export async function reviseDraft({
   if (review.decision === "PASS") return draft;
   if (typeof modelClient !== "function") throw new Error("reviseDraft requires an injected reviserClient; no implicit billed call is allowed.");
   const allowed = permittedFields(review);
-  if (!allowed.size) throw new Error("REVISE decision must identify failed fields for surgical revision.");
-  const relevantViolations = (review.violations ?? []).filter((entry) => allowed.has(entry.location));
+  if (!allowed.size) throw new Error("REVISE decision must identify blocking failed fields for surgical revision.");
+  const relevantViolations = (review.violations ?? []).filter((entry) => entry.severity === "blocking" && allowed.has(entry.location));
+  const baseInstructions = isCardWritingSurface({ surface, family })
+    ? candidateCardAstrologyWritingInstructions
+    : canonicalAstrologyWritingInstructions;
   const patch = await modelClient({
     stage: "revision",
     role: isCardWritingSurface({ surface, family }) ? "CARD_REVISER_V3" : "REVISER",
-    instructions: isCardWritingSurface({ surface, family })
-      ? candidateCardAstrologyWritingInstructions
-      : canonicalAstrologyWritingInstructions,
+    instructions: effectiveRulePrompt(baseInstructions, { surface, family }),
     input: JSON.stringify({
-      instruction: "Revise only the supplied failed lines. Return a JSON patch containing only those fields. Do not rewrite successful material.",
+      instruction: "Revise only the supplied blocking failed lines. Return a JSON patch containing only those fields. Do not rewrite successful or advisory-only material.",
       surface,
       family,
       plan,
