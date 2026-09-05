@@ -8,6 +8,7 @@ import { generatedApprovalState } from "./approvalGovernance.mjs";
 import { attachGenerationMetadata, writeGenerationMetadata } from "./generationMetadata.mjs";
 import { assertArgumentOutlineApproved } from "./argumentGate.mjs";
 import { assertSurfaceRegisterContract } from "./surfaceRegisterContract.mjs";
+import { effectiveRulePrompt } from "./effectiveRuleGovernance.mjs";
 
 export const PLACEMENT_DRAFT_SCHEMA = Object.freeze({
   type: "object",
@@ -206,12 +207,13 @@ export async function generateDraft({
     : family === "slow-mover-article"
       ? SLOW_MOVER_ARTICLE_DRAFT_SCHEMA
       : PLACEMENT_DRAFT_SCHEMA);
+  const baseInstructions = isCardWritingSurface({ surface, family })
+    ? candidateCardAstrologyWritingInstructions
+    : canonicalAstrologyWritingInstructions;
   const value = await modelClient({
     stage: "draft",
     role,
-    instructions: isCardWritingSurface({ surface, family })
-      ? candidateCardAstrologyWritingInstructions
-      : canonicalAstrologyWritingInstructions,
+    instructions: effectiveRulePrompt(baseInstructions, { surface, family }),
     input: buildDraftInput({ plan, context, task, target: resolvedTarget, family, register, surface, familyContext, engineFacts, argumentSource, argumentOutline, spine }),
     schema: resolvedSchema
   });
