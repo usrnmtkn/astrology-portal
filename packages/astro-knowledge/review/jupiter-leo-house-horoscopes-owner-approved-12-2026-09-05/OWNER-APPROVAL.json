@@ -20,6 +20,17 @@
     {"house":4,"contentKey":"house-horoscope-core/jupiter/leo/house-4","bodySha256":"6c89712fa543e2ddcd1d35d0b7d03c9598af20fc97b1c537bd171a647c98bede"},
     {"house":6,"contentKey":"house-horoscope-core/jupiter/leo/house-6","bodySha256":"acbb44312829816b6a8ef0de2366374788d2469f988025aee332a27bd453f43a"}
   ],
+  "materialization": {
+    "generatedReaderPackageCommit": "8359be2d378bd954432d8278353a723ca5b454a7",
+    "writingEvidenceRefreshCommit": "d34c4eaa17d7b2717e80c321e57e520cfe935b47",
+    "commandsVerified": [
+      "npm run content:materialize-sky-placement-houses",
+      "npm run build:fallback-manifest",
+      "node scripts/test-sky-placement-house-templates.mjs",
+      "node scripts/generate-fallback-package-manifest.mjs --check",
+      "npm run refresh:writing-evidence"
+    ]
+  },
   "governance": {
     "review_status": "approved",
     "owner_approved": true,
