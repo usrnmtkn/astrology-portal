@@ -6,6 +6,16 @@ import { loadOwnerSessionAccessToken, watchOwnerSessionAccessToken } from "./own
 import "./admin.css";
 import "./admin-components.css";
 
+type CoverageAuthority = {
+  id: string;
+  ownerAuthority: string;
+  studioOverlay: string;
+  servingSource: string;
+  resolver: string;
+  readerDestinations: string[];
+  failurePolicy: string;
+};
+
 type CoverageRow = {
   id: string;
   label: string;
@@ -16,12 +26,18 @@ type CoverageRow = {
   state: "complete" | "incomplete";
   detail: string;
   source: string;
+  authority: CoverageAuthority;
 };
 
 type CoveragePayload = {
   ok: true;
   generatedAt: string;
   authority: string;
+  readerEligibility: {
+    status: string;
+    lane: string;
+    review_state: null;
+  } | null;
   summary: {
     complete: number;
     incomplete: number;
@@ -39,6 +55,11 @@ const cardStyle = {
   borderRadius: 14,
   padding: 18,
   background: "var(--admin-surface, #fff)"
+} as const;
+
+const authorityLineStyle = {
+  margin: "7px 0 0",
+  overflowWrap: "anywhere"
 } as const;
 
 export default function ContentCoverageDashboard() {
@@ -107,7 +128,7 @@ export default function ContentCoverageDashboard() {
             <p className="admin-eyebrow">Content operations</p>
             <h1 style={{ marginBottom: 8 }}>Content coverage</h1>
             <p style={{ maxWidth: 760, margin: 0 }}>
-              One view of what is complete, what is missing, and which governed source proves the count.
+              One view of what is complete, what is missing, and the authority chain from owner source to reader destination.
             </p>
           </div>
           <button
@@ -150,6 +171,19 @@ export default function ContentCoverageDashboard() {
               </div>
             </section>
 
+            {payload.readerEligibility && (
+              <section style={{ ...cardStyle, marginBottom: 20 }} aria-label="Reader database eligibility">
+                <p className="admin-eyebrow">Database overlay rule</p>
+                <strong>Actually serving requires all three conditions</strong>
+                <p style={{ margin: "6px 0 0" }}>
+                  status = {payload.readerEligibility.status} · lane = {payload.readerEligibility.lane} · review_state = null
+                </p>
+                <p style={{ margin: "6px 0 0", opacity: 0.76 }}>
+                  A draft can sit in the serving lane without becoming reader copy. Lane alone is not publication authority.
+                </p>
+              </section>
+            )}
+
             {payload.notes.friendsIntentionalGap && (
               <section style={{ ...cardStyle, marginBottom: 20, display: "flex", gap: 10, alignItems: "flex-start" }}>
                 <AlertTriangle size={18} aria-hidden="true" />
@@ -178,7 +212,18 @@ export default function ContentCoverageDashboard() {
                     <span style={{ marginLeft: "auto" }}>{row.percent}%</span>
                   </div>
                   <p style={{ margin: "0 0 12px" }}>{row.detail}</p>
-                  <small style={{ overflowWrap: "anywhere" }}>Source: {row.source}</small>
+                  <small style={{ overflowWrap: "anywhere" }}>Count source: {row.source}</small>
+                  <details style={{ marginTop: 14 }}>
+                    <summary style={{ cursor: "pointer", fontWeight: 700 }}>Authority chain</summary>
+                    <div style={{ marginTop: 10, fontSize: 13, lineHeight: 1.45 }}>
+                      <p style={authorityLineStyle}><strong>Owner authority:</strong> {row.authority.ownerAuthority}</p>
+                      <p style={authorityLineStyle}><strong>Studio overlay:</strong> {row.authority.studioOverlay}</p>
+                      <p style={authorityLineStyle}><strong>Serving source:</strong> {row.authority.servingSource}</p>
+                      <p style={authorityLineStyle}><strong>Resolver:</strong> {row.authority.resolver}</p>
+                      <p style={authorityLineStyle}><strong>Reader:</strong> {row.authority.readerDestinations.join(" · ")}</p>
+                      <p style={authorityLineStyle}><strong>Fail closed:</strong> {row.authority.failurePolicy}</p>
+                    </div>
+                  </details>
                 </article>
               ))}
             </section>
