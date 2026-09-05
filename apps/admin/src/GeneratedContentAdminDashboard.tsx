@@ -7337,8 +7337,8 @@ export function GeneratedContentAdminDashboard() {
           {visibleTableRows.map((row) => {
             const safety = readerSafetyForRow(row);
             const saved = row.rawGlobalRow;
-            const rowRole = contentRoleDetails(contentRoleForRecord(row));
             const aspectContext = aspectContextForRow(row);
+            const readerUse = aspectContext?.label ?? contentCategoryForRow(row);
             return (
               <article key={row.id} className="admin-review-queue-row" onClick={() => saved && openRow(saved)}>
                 <div className="admin-review-queue-row-head">
@@ -7346,18 +7346,12 @@ export function GeneratedContentAdminDashboard() {
                     <input type="checkbox" checked={selectedIds.has(saved?.id ?? row.id)} disabled={!saved} onChange={() => saved && toggleRowSelection(saved.id)} />
                   </label>
                   <div className="admin-review-queue-copy">
-                    <h3>{rowTitle(row)}</h3>
-                    <code>{row.contentKey}</code>
+                    <h3 title={rowTitle(row)}>{rowTitle(row)}</h3>
+                    <span className="admin-review-queue-use">{readerUse}</span>
+                    <code title={row.contentKey}>{row.contentKey}</code>
                   </div>
                   <div className="admin-review-queue-meta-strip">
-                    {aspectContext && (
-                      <span className="ui-pill admin-status admin-aspect-context-pill" title={aspectContext.detail}>
-                        {aspectContext.label}
-                      </span>
-                    )}
                     <span className={`ui-pill admin-status status-${row.status.toLowerCase()}`}>{contentStatusLabel(row.status)}</span>
-                    <span className="ui-pill admin-status">{contentClassLabel(contentClassForRow(row))}</span>
-                    <span className="ui-pill admin-status" title={rowRole.detail}>{rowRole.label}</span>
                     <span className={`admin-reader-state-pill ${safety.key}`}>{safety.label}</span>
                   </div>
                 </div>
@@ -8226,7 +8220,11 @@ export function GeneratedContentAdminDashboard() {
           ? `Edit ${currentDraft.headline || "article"}`
           : fallbackHookEditorTitle
             ? `Edit ${fallbackHookEditorTitle}`
-            : "Edit saved row"
+            : selectedRow
+              ? `Edit ${rowTitle(selectedRow)}`
+              : currentDraft.headline.trim()
+                ? `Edit ${currentDraft.headline.trim()}`
+                : `Edit ${titleFromKey(currentDraft.contentKey)}`
       : isVocabularyDraft
         ? "Create reusable phrase"
         : isArticleDraft
@@ -8238,6 +8236,16 @@ export function GeneratedContentAdminDashboard() {
               : isTemplateDraft
                 ? isCompatibilityWorkspaceDraft ? "Create compatibility template" : "Create reader-copy template"
                 : "Create saved row";
+    const editorUseLabel = aspectContext?.label
+      ?? (selectedRow
+        ? contentCategoryForRow(selectedRow)
+        : isArticleDraft
+          ? "Articles"
+          : isVocabularyDraft
+            ? "Vocabulary & phrases"
+            : isTemplateDraft
+              ? "Templates & assembly"
+              : "Content Studio");
     const handleEditorKeyDown = (event: ReactKeyboardEvent<HTMLElement>) => {
       if (event.key === "Escape") {
         event.preventDefault();
@@ -8277,6 +8285,10 @@ export function GeneratedContentAdminDashboard() {
           <div>
             <p className="admin-eyebrow">{isVocabularyDraft ? "Phrase editor" : isArticleDraft ? "Article editor" : "Content editor"}</p>
             <h2>{editorHeading}</h2>
+            <p className="admin-editor-context-line">
+              <span><strong>Use:</strong> {editorUseLabel}</span>
+              <code title={currentDraft.contentKey}>{currentDraft.contentKey}</code>
+            </p>
           </div>
           <div className="admin-editor-toolbar-actions">
             {aspectContext && (
