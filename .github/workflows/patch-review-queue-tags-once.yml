@@ -16,54 +16,11 @@ jobs:
         with:
           fetch-depth: 0
       - name: Move review queue tags below title
-        run: |
-          python <<'PY'
-          from pathlib import Path
-
-          path = Path('apps/admin/src/admin-components.css')
-          text = path.read_text()
-          marker = '/* Review queue cards: keep tags below the title instead of squeezing the heading. */'
-          block = '''
-
-/* Review queue cards: keep tags below the title instead of squeezing the heading. */
-.admin-dashboard .admin-review-queue-row-head {
-  grid-template-columns: 24px minmax(0, 1fr);
-}
-
-.admin-dashboard .admin-review-queue-row-head > .admin-content-row-check {
-  grid-column: 1;
-  grid-row: 1;
-}
-
-.admin-dashboard .admin-review-queue-row-head > .admin-review-queue-copy {
-  grid-column: 2;
-  grid-row: 1;
-  min-width: 0;
-}
-
-.admin-dashboard .admin-review-queue-row-head > .admin-review-queue-meta-strip {
-  grid-column: 2;
-  grid-row: 2;
-  justify-content: flex-start;
-  min-width: 0;
-}
-'''
-          if marker not in text:
-              text = text.rstrip() + block + '\n'
-              path.write_text(text)
-          PY
+        run: >-
+          python -c "from pathlib import Path; p=Path('apps/admin/src/admin-components.css'); t=p.read_text(); m='/* Review queue cards: keep tags below the title instead of squeezing the heading. */'; b='\\n\\n'+m+'\\n.admin-dashboard .admin-review-queue-row-head {\\n  grid-template-columns: 24px minmax(0, 1fr);\\n}\\n\\n.admin-dashboard .admin-review-queue-row-head > .admin-content-row-check {\\n  grid-column: 1;\\n  grid-row: 1;\\n}\\n\\n.admin-dashboard .admin-review-queue-row-head > .admin-review-queue-copy {\\n  grid-column: 2;\\n  grid-row: 1;\\n  min-width: 0;\\n}\\n\\n.admin-dashboard .admin-review-queue-row-head > .admin-review-queue-meta-strip {\\n  grid-column: 2;\\n  grid-row: 2;\\n  justify-content: flex-start;\\n  min-width: 0;\\n}\\n'; p.write_text(t.rstrip()+b+'\\n') if m not in t else None"
       - name: Verify focused layout contract
-        run: |
-          node - <<'NODE'
-          const fs = require('fs');
-          const css = fs.readFileSync('apps/admin/src/admin-components.css', 'utf8');
-          const marker = '/* Review queue cards: keep tags below the title instead of squeezing the heading. */';
-          const rules = css.slice(css.lastIndexOf(marker));
-          if (!rules.includes('grid-template-columns: 24px minmax(0, 1fr);')) throw new Error('review queue header must use two columns');
-          if (!rules.includes('grid-row: 2;')) throw new Error('tag strip must be on second row');
-          if (!rules.includes('justify-content: flex-start;')) throw new Error('tag strip must be left aligned');
-          console.log('Review queue tag layout contract passed.');
-          NODE
+        run: >-
+          node -e "const fs=require('fs'); const css=fs.readFileSync('apps/admin/src/admin-components.css','utf8'); const m='/* Review queue cards: keep tags below the title instead of squeezing the heading. */'; const r=css.slice(css.lastIndexOf(m)); if(!r.includes('grid-template-columns: 24px minmax(0, 1fr);')) throw new Error('review queue header must use two columns'); if(!r.includes('grid-row: 2;')) throw new Error('tag strip must be on second row'); if(!r.includes('justify-content: flex-start;')) throw new Error('tag strip must be left aligned'); console.log('Review queue tag layout contract passed.');"
       - name: Commit layout fix
         run: |
           if git diff --quiet; then
