@@ -1,4 +1,4 @@
-import { Plus, RefreshCw, type LucideIcon } from "lucide-react";
+import { BarChart3, Plus, RefreshCw, type LucideIcon } from "lucide-react";
 import { useEffect, useRef, type KeyboardEvent } from "react";
 
 export type AdminBreadcrumb = {
@@ -82,47 +82,58 @@ export function AdminPageHeader({
         <h1>{title}</h1>
         <p>{description}</p>
       </div>
-      <div className="admin-create-menu">
-        <button
-          ref={createButtonRef}
+      <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap", justifyContent: "flex-end" }}>
+        <a
           className="admin-create-button"
-          type="button"
-          onClick={onToggleCreateMenu}
-          aria-haspopup="menu"
-          aria-expanded={createMenuOpen}
-          disabled={createDisabled}
-          title={createDisabled ? "Verify admin access before creating content." : undefined}
+          href="/admin/content/coverage"
+          style={{ textDecoration: "none" }}
+          title="See complete and missing content corpora"
         >
-          <Plus size={16} aria-hidden="true" />
-          Create
-        </button>
-        {createMenuOpen && (
-          <>
-            <button
-              className="admin-create-menu-backdrop"
-              type="button"
-              aria-label="Close create menu"
-              onClick={onCloseCreateMenu}
-            />
-            <div
-              ref={createMenuRef}
-              className="admin-create-menu-panel"
-              role="menu"
-              onKeyDown={handleCreateMenuKeyDown}
-            >
-              {createActions.map((item) => {
-                const Icon = item.icon;
-                return (
-                  <button key={item.key} type="button" role="menuitem" onClick={item.onSelect}>
-                    <Icon size={16} aria-hidden="true" />
-                    <span>{item.label}</span>
-                    <small>{item.description}</small>
-                  </button>
-                );
-              })}
-            </div>
-          </>
-        )}
+          <BarChart3 size={16} aria-hidden="true" />
+          Coverage
+        </a>
+        <div className="admin-create-menu">
+          <button
+            ref={createButtonRef}
+            className="admin-create-button"
+            type="button"
+            onClick={onToggleCreateMenu}
+            aria-haspopup="menu"
+            aria-expanded={createMenuOpen}
+            disabled={createDisabled}
+            title={createDisabled ? "Verify admin access before creating content." : undefined}
+          >
+            <Plus size={16} aria-hidden="true" />
+            Create
+          </button>
+          {createMenuOpen && (
+            <>
+              <button
+                className="admin-create-menu-backdrop"
+                type="button"
+                aria-label="Close create menu"
+                onClick={onCloseCreateMenu}
+              />
+              <div
+                ref={createMenuRef}
+                className="admin-create-menu-panel"
+                role="menu"
+                onKeyDown={handleCreateMenuKeyDown}
+              >
+                {createActions.map((item) => {
+                  const Icon = item.icon;
+                  return (
+                    <button key={item.key} type="button" role="menuitem" onClick={item.onSelect}>
+                      <Icon size={16} aria-hidden="true" />
+                      <span>{item.label}</span>
+                      <small>{item.description}</small>
+                    </button>
+                  );
+                })}
+              </div>
+            </>
+          )}
+        </div>
       </div>
     </header>
   );
