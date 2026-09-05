@@ -141,6 +141,7 @@ import {
   calendarEventGeneratedContentKeys,
   calendarTransitDetailContentKeys
 } from "./features/calendar/calendarContentKeys";
+import { weeklyHoroscopeTagItems } from "./services/weeklyHoroscope";
 import type { WeeklyHoroscopeAssembly, WeeklyHoroscopeReading } from "./services/weeklyHoroscope";
 import { assertLunationBodyMatchesEventSky, lunationBlendFacts } from "./services/lunationEphemerisFacts";
 import { reportLiveOmittedSections } from "./services/conditionalSectionReviewReporter";
@@ -17430,8 +17431,12 @@ function ProfileView({
                   ))}
                 </span>
               ) : reading.tag ? (
-                <span className="updates-aspect-row__life-areas">
-                  <span className="ui-pill house-transit-term-tag">{reading.tag}</span>
+                <span className="updates-aspect-row__life-areas" aria-label="Life area tags">
+                  {weeklyHoroscopeTagItems(reading.tag).map((tag) => (
+                    <span className="ui-pill house-transit-term-tag" key={`${articleId}-${tag}`}>
+                      {tag}
+                    </span>
+                  ))}
                 </span>
               ) : null}
             </span>

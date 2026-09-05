@@ -62,6 +62,13 @@ export type WeeklyHoroscopeReading = {
   reviewFlags?: WeeklyHoroscopeSection["reviewFlags"];
 };
 
+export function weeklyHoroscopeTagItems(tag?: string | null) {
+  return (tag ?? "")
+    .split(/\s*,\s*/u)
+    .map((item) => item.trim())
+    .filter(Boolean);
+}
+
 export type CalendarWeeklyOverview = {
   headline: string;
   overview: string;
