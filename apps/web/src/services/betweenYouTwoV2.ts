@@ -20,6 +20,8 @@ function fillFriend(value: string, friendName: string) {
   return value
     .replaceAll("{{holder1}}'s", `${friendName}'s`)
     .replaceAll("{{holder1}}", friendName)
+    .replaceAll("{{Name}}'s", `${friendName}'s`)
+    .replaceAll("{{Name}}", friendName)
     .trim();
 }
 
@@ -43,17 +45,23 @@ export function betweenYouTwoV2BondReading({
   friendContext?: string | null;
 }): BetweenYouTwoV2Daily | null {
   const normalizedPlanet = transiting.trim().toLowerCase();
-  const bodyKey = `fallback-hook/bond-effect-${family}/${normalizedPlanet}`;
+  const canonicalBodyKey = `fallback-hook/bond-effect-${family}/${normalizedPlanet}`;
+  const v2BodyKey = `fallback-hook/pair-daily/v2/body/${family}/${normalizedPlanet}/${direction}`;
   const headlineKey = `fallback-hook/pair-daily/v2/headline/${family}/${normalizedPlanet}/${direction}`;
   const moveKey = `fallback-hook/pair-daily/v2/move/${family}/${normalizedPlanet}/${direction}`;
   const voice = direction === "you" ? "you" : "they";
   const headline = fallbackV3HookBody(headlineKey, "you").trim();
-  const body = fallbackV3HookBody(bodyKey, voice).trim();
+  const approvedV2Body = fallbackV3HookBody(v2BodyKey, "you").trim();
+  const canonicalBody = fallbackV3HookBody(canonicalBodyKey, voice).trim();
+  const body = approvedV2Body || canonicalBody;
+  const bodyKey = approvedV2Body ? v2BodyKey : canonicalBodyKey;
   const move = fallbackV3HookBody(moveKey, "you").trim();
 
   // V2 fails closed as one governed unit. A canonical bond body alone is not
   // enough to opt a relationship into the new reader hierarchy until its
   // direction-specific headline and move have both been explicitly approved.
+  // A V2-specific lead body may replace the lead paragraph only inside this
+  // surface; it never mutates the canonical bond-effect body used elsewhere.
   if (!headline || !body || !move) return null;
 
   return {
