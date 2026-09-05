@@ -2680,6 +2680,7 @@ export function GeneratedContentAdminDashboard() {
   const [secret, setSecret, setTransientCredential] = useSavedSecret();
   const [secretInput, setSecretInput] = useState(secret);
   const [activePage, setActivePage] = useState<AdminDashboardPage>(() => parseAdminHash().page);
+  const friendsTransitAudience = parseAdminHash().params.get("audience") === "friends";
   const [rows, setRows] = useState<AdminGeneratedContentRow[]>([]);
   const [allRowsLoaded, setAllRowsLoaded] = useState(false);
   const [reviewRows, setReviewRows] = useState<AdminReviewRecord[]>([]);
@@ -5744,7 +5745,9 @@ export function GeneratedContentAdminDashboard() {
                 className={skyWriteupWorkspaceView === "transits-to-natal" ? "active" : ""}
                 onClick={() => {
                   setSkyWriteupWorkspaceView("transits-to-natal");
-                  setAdminHash(adminHashForPage("skyWriteups", new URLSearchParams({ view: "transits-to-natal" })));
+                  const params = new URLSearchParams({ view: "transits-to-natal" });
+                  if (friendsTransitAudience) params.set("audience", "friends");
+                  setAdminHash(adminHashForPage("skyWriteups", params));
                 }}
               >
                 Personal Transits
@@ -5756,7 +5759,9 @@ export function GeneratedContentAdminDashboard() {
                 className={skyWriteupWorkspaceView === "house-transits" ? "active" : ""}
                 onClick={() => {
                   setSkyWriteupWorkspaceView("house-transits");
-                  setAdminHash(adminHashForPage("skyWriteups", new URLSearchParams({ view: "house-transits" })));
+                  const params = new URLSearchParams({ view: "house-transits" });
+                  if (friendsTransitAudience) params.set("audience", "friends");
+                  setAdminHash(adminHashForPage("skyWriteups", params));
                 }}
               >
                 House Transits
@@ -5933,6 +5938,13 @@ export function GeneratedContentAdminDashboard() {
                 Open Surface Map
               </button>
             </section>
+            {friendsTransitAudience && fallbackSectionFilter === "friends" && query.includes("bond-effect") && (
+              <section className="admin-editor-guidance admin-contextual-editor-guidance" aria-label="Friends Transits Between you two context">
+                <p className="admin-eyebrow">Friends Transits · Between you two</p>
+                <strong>These passages feed the live “Between you two” transit cards.</strong>
+                <p>Exact aspect rows are preferred for the first matching card. Family and variant rows are shared fallback/rotation sources, so editing one of those can affect more than one friend pair.</p>
+              </section>
+            )}
             {renderFallbackTabs()}
             {fallbackSectionFilter === "daily" && (
               <Suspense fallback={null}>
@@ -6496,11 +6508,29 @@ export function GeneratedContentAdminDashboard() {
     );
   }
 
-  function skySourceForCandidates(candidateKeys: string[]) {
+  function skySourceForCandidates(candidateKeys: string[], audience: "you" | "friends" = friendsTransitAudience ? "friends" : "you") {
     for (const contentKey of candidateKeys) {
       const savedRow = rows.find((row) => row.content_key === contentKey);
       const savedReviewStatus = savedRow ? sourceSnapshotString(savedRow.source_snapshot, "review_status") : "";
       if (savedRow?.body && savedRow.status !== "ARCHIVED" && savedReviewStatus !== "deprecated") {
+        const sections = objectRecord(savedRow.sections);
+        const packageRecord = objectRecord(sections?.packageRecord);
+        const audienceKey = audience === "friends" ? "body_they" : "body_you";
+        const hasAudienceField = Boolean(
+          (packageRecord && Object.prototype.hasOwnProperty.call(packageRecord, audienceKey))
+          || (sections && Object.prototype.hasOwnProperty.call(sections, audienceKey))
+        );
+        const packageAudienceBody = packageRecord?.[audienceKey];
+        const sectionAudienceBody = sections?.[audienceKey];
+        const audienceBody = typeof packageAudienceBody === "string"
+          ? packageAudienceBody.trim()
+          : typeof sectionAudienceBody === "string"
+            ? sectionAudienceBody.trim()
+            : "";
+        if (audienceBody && isReaderFacingCopy(audienceBody)) {
+          return { contentKey, text: audienceBody, savedRow };
+        }
+        if (audience === "friends" && hasAudienceField) continue;
         return { contentKey, text: savedRow.body, savedRow };
       }
       const body = transitNatalSourceBodies.get(contentKey);
@@ -6572,6 +6602,7 @@ export function GeneratedContentAdminDashboard() {
     if (aspect) params.set("aspect", aspect);
     if (natalPoint) params.set("natal", natalPoint);
     if (natalHouse) params.set("natalHouse", natalHouse);
+    if (friendsTransitAudience) params.set("audience", "friends");
     setAdminHash(adminHashForPage("skyWriteups", params), "replace");
   }
 
@@ -6631,9 +6662,11 @@ export function GeneratedContentAdminDashboard() {
       <section className="admin-natal-placement-finder" aria-label="Personal Transits source finder">
         <div className="admin-natal-placement-finder-heading">
           <div>
-            <p className="admin-eyebrow">Personal Transits workspace</p>
+            <p className="admin-eyebrow">{friendsTransitAudience ? "Friends Transits · Active for {{Name}}" : "Personal Transits workspace"}</p>
             <h3>{selection ? transitNatalLabel(selection) : "Find a Personal Transit write-up"}</h3>
-            <p>Choose the current placement and the natal point it contacts. The reader sees one paragraph; Content Studio shows that paragraph first, followed by the four reusable passages inside it. You do not need to search Fallback Hooks.</p>
+            <p>{friendsTransitAudience
+              ? "This is the editor for Friends > Transits > Active for {{Name}}. The assembled preview prefers Friend View Copy wherever the saved source has a separate Friends passage. Open the standalone passage below when you want to edit its Friend View Copy directly."
+              : "Choose the current placement and the natal point it contacts. The reader sees one paragraph; Content Studio shows that paragraph first, followed by the four reusable passages inside it. You do not need to search Fallback Hooks."}</p>
             <p><strong>Editable lifecycle:</strong> open a passage to read it, Save to create or update it, Archive to remove it from active use, and Restore to reopen it as a non-serving draft.</p>
           </div>
           {selection && <code>transit/{selection.planet}-{selection.sign}-{selection.transitHouse}h/{selection.aspect}/{selection.natalPoint}-{selection.natalHouse}h</code>}
@@ -6743,6 +6776,7 @@ export function GeneratedContentAdminDashboard() {
     if (planet) params.set("transit", planet);
     if (sign) params.set("sign", sign);
     if (house) params.set("transitHouse", house);
+    if (friendsTransitAudience) params.set("audience", "friends");
     setAdminHash(adminHashForPage("skyWriteups", params), "replace");
   }
 
@@ -6770,9 +6804,11 @@ export function GeneratedContentAdminDashboard() {
       <section className="admin-natal-placement-finder" aria-label="House Transits source finder">
         <div className="admin-natal-placement-finder-heading">
           <div>
-            <p className="admin-eyebrow">House Transits workspace</p>
+            <p className="admin-eyebrow">{friendsTransitAudience ? "Friends Transits · Where it lands" : "House Transits workspace"}</p>
             <h3>{selection ? houseTransitLabel(selection) : "Find a House Transit write-up"}</h3>
-            <p>Choose the transiting planet, its current sign, and the reader's house. The complete card appears first, followed by the evergreen house passage, sign-specific passage, and any retrograde passage inside it.</p>
+            <p>{friendsTransitAudience
+              ? "This is the editor for Friends > Transits > Where it lands. The preview prefers Friends copy for the evergreen house passage, current-sign passage, and retrograde overlay when those sources have separate audience versions."
+              : "Choose the transiting planet, its current sign, and the reader's house. The complete card appears first, followed by the evergreen house passage, sign-specific passage, and any retrograde passage inside it."}</p>
             <p><strong>Editable lifecycle:</strong> open a passage to read it, Save to create or update it, Archive to remove it from active use, and Restore to reopen it as a non-serving draft.</p>
           </div>
           {selection && <code>transit/{selection.planet}-{selection.sign}/{selection.house}h/{selection.motion}</code>}
