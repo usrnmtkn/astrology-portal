@@ -1,0 +1,47 @@
+name: Rebuild weekly focus tags
+
+on:
+  push:
+    branches:
+      - chatgpt/weekly-focus-tags-current-main
+    paths:
+      - .github/workflows/chatgpt-rebuild-weekly-focus-tags.yml
+
+permissions:
+  contents: write
+
+jobs:
+  rebuild:
+    runs-on: ubuntu-24.04
+    env:
+      VITE_SUPABASE_URL: https://visual-smoke.supabase.test
+      VITE_SUPABASE_ANON_KEY: visual-smoke-placeholder
+    steps:
+      - name: Check out current-main branch
+        uses: actions/checkout@v6
+        with:
+          ref: chatgpt/weekly-focus-tags-current-main
+          fetch-depth: 0
+      - name: Configure git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+      - name: Transplant reviewed weekly tag fix
+        run: git cherry-pick 974f007e0713706ead2fa95914ac3f49d2b8f523
+      - name: Install dependencies
+        run: npm ci
+      - name: Build astrology knowledge
+        run: npm run build -w @tldr/astro-knowledge
+      - name: Verify weekly tag behavior
+        run: |
+          node scripts/test-weekly-horoscope-assembly.mjs
+          npm run typecheck
+          npm run build:web
+          npx playwright install --with-deps chromium
+          npx playwright test -c playwright.config.ts tests/visual/client-facing-user-flows.spec.ts --project=chromium-desktop --grep "signed-in user can review their chart on You"
+      - name: Remove temporary workflow and push
+        run: |
+          rm .github/workflows/chatgpt-rebuild-weekly-focus-tags.yml
+          git add -A
+          git commit -m "Remove temporary weekly focus tag rebuild workflow"
+          git push origin HEAD:chatgpt/weekly-focus-tags-current-main
