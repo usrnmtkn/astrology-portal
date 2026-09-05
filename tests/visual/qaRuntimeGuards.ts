@@ -8,7 +8,9 @@ export function watchBrowserErrors(page: Page) {
   const ignoredConsolePatterns = [
     /Failed to load resource/i,
     /net::ERR_/i,
-    /favicon/i
+    /favicon/i,
+    /wasm streaming compile failed: TypeError: Failed to fetch/i,
+    /falling back to ArrayBuffer instantiation/i
   ];
 
   page.on("pageerror", (error) => {

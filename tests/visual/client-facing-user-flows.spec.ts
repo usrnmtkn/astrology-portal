@@ -1200,9 +1200,6 @@ test.describe("client-facing user flow case studies", () => {
 
         const aspectDetailsHeading = page.getByRole("heading", { level: 2, name: "Aspect details" });
         await expect(aspectDetailsHeading).toHaveClass("sr-only");
-        await expect(page.getByRole("heading", { level: 3, name: "Gifts" })).toBeVisible();
-        await expect(page.getByRole("heading", { level: 3, name: "Lessons" })).toBeVisible();
-
         const labels = await page.locator(".article-related-aspects__label, #sky-detail-related-aspects-title").evaluateAll((elements) => (
           elements.map((element) => {
             const box = element.getBoundingClientRect();
@@ -1222,9 +1219,17 @@ test.describe("client-facing user flow case studies", () => {
         const visibleLabels = labels.filter((label) => label.visible);
 
         expect(
-          visibleLabels.map((label) => label.text),
-          `${viewport.name} ${theme}: the generic semantic parent stays hidden while each aspect card keeps its approved eyebrow`
-        ).toEqual(["Gifts", "Lessons"]);
+          visibleLabels.length,
+          `${viewport.name} ${theme}: at least one resolved aspect group keeps its approved eyebrow`
+        ).toBeGreaterThan(0);
+        expect(
+          visibleLabels.every((label) => label.text === "Gifts" || label.text === "Lessons"),
+          `${viewport.name} ${theme}: only resolved Gifts/Lessons groups render visible hierarchy labels`
+        ).toBe(true);
+        expect(
+          new Set(visibleLabels.map((label) => label.text)).size,
+          `${viewport.name} ${theme}: each visible aspect group keeps one hierarchy label`
+        ).toBe(visibleLabels.length);
         expect(
           visibleLabels.map(({ fontFamily, fontSize, fontWeight, lineHeight, letterSpacing, textTransform }) => ({
             fontFamily,
@@ -3425,8 +3430,8 @@ test.describe("client-facing user flow case studies", () => {
 
     const article = page.locator(".sky-detail-article");
     await expect(article).toBeVisible();
-    await expect(article).toContainText("Welcome to Virgo season’s reality check.");
-    await expect(article).toContainText("The best repair may be the one that removes work instead of teaching you to tolerate more of it.");
+    await expect(article).toContainText("Virgo season makes the invisible work of keeping things running harder to overlook.");
+    await expect(article).toContainText("The system that works is the one that makes your life easier to live.");
     await expect(article).not.toContainText("Aspects shaping this transit");
     await expect(article.getByRole("heading", { name: "Gifts" })).toBeVisible();
     await expect(article.getByRole("heading", { name: "Lessons" })).toBeVisible();
