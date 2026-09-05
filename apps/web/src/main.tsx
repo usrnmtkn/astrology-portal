@@ -22,12 +22,22 @@ const localUiStateKeys = [
   "tldrastro:fallbackArchitectureV3:dashboardBundleVersion"
 ];
 
+function isContentCoveragePath() {
+  return window.location.pathname.replace(/\/$/u, "") === "/admin/content/coverage";
+}
+
 function isAdminContentPath() {
   return (
     window.location.pathname === "/admin/content" ||
     window.location.pathname === "/admin/generated-content" ||
-    window.location.pathname === "/content/admin"
+    window.location.pathname === "/content/admin" ||
+    isContentCoveragePath()
   );
+}
+
+async function setupAdminReaderLinks() {
+  const { setupAdminReaderLinkTargets } = await import("../../admin/src/adminReaderLinks");
+  setupAdminReaderLinkTargets();
 }
 
 function redirectLocalAdminPath() {
@@ -43,13 +53,33 @@ function redirectLocalAdminPath() {
     return false;
   }
 
-  const adminPath = window.location.pathname === "/admin/generated-content" ? "/admin/generated-content" : "/admin/content";
+  const adminPath = isContentCoveragePath()
+    ? "/admin/content/coverage"
+    : window.location.pathname === "/admin/generated-content"
+      ? "/admin/generated-content"
+      : "/admin/content";
   window.location.replace(`${localAdminOrigin}${adminPath}${window.location.search}${window.location.hash}`);
   return true;
 }
 
+async function loadAdminPresentationStyles() {
+  await import("../../admin/src/admin-row-selection.css");
+}
+
 async function startApp() {
   if (redirectLocalAdminPath()) {
+    return;
+  }
+
+  if (isContentCoveragePath()) {
+    await loadAdminPresentationStyles();
+    const { default: ContentCoverageDashboard } = await import("../../admin/src/ContentCoverageDashboard");
+    createRoot(document.getElementById("root")!).render(
+      <React.StrictMode>
+        <ContentCoverageDashboard />
+      </React.StrictMode>
+    );
+    await setupAdminReaderLinks();
     return;
   }
 
@@ -66,7 +96,7 @@ async function startApp() {
   }
 
   if (isAdminContentPath()) {
-    await import("../../admin/src/admin-row-selection.css");
+    await loadAdminPresentationStyles();
   } else {
     await import("./styles.css");
   }
@@ -79,7 +109,11 @@ async function startApp() {
     </React.StrictMode>
   );
 
-  setupBlankRestoreRecovery();
+  if (isAdminContentPath()) {
+    await setupAdminReaderLinks();
+  } else {
+    setupBlankRestoreRecovery();
+  }
 }
 
 function setupBlankRestoreRecovery() {
