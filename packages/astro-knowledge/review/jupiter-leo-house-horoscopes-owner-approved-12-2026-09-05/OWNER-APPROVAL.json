@@ -23,12 +23,15 @@
   "materialization": {
     "generatedReaderPackageCommit": "8359be2d378bd954432d8278353a723ca5b454a7",
     "writingEvidenceRefreshCommit": "d34c4eaa17d7b2717e80c321e57e520cfe935b47",
+    "productionSkyComparisonRefreshCommit": "2a16adf80c017f6bbf71b1f125569023cf43bc88",
     "commandsVerified": [
       "npm run content:materialize-sky-placement-houses",
       "npm run build:fallback-manifest",
       "node scripts/test-sky-placement-house-templates.mjs",
       "node scripts/generate-fallback-package-manifest.mjs --check",
-      "npm run refresh:writing-evidence"
+      "npm run refresh:writing-evidence",
+      "node scripts/build-production-sky-kernel-comparison.mjs --write",
+      "node scripts/build-production-sky-kernel-comparison.mjs"
     ]
   },
   "governance": {
