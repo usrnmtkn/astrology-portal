@@ -1210,8 +1210,15 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(navigation.getByRole("button", { name: "Calendar Aspects", exact: true })).toHaveAttribute("aria-current", "page");
     await expect(navigation.getByRole("button", { name: "Content Library" })).not.toHaveAttribute("aria-current", "page");
     await expect(page.getByRole("heading", { name: "Edit Calendar aspect cards" })).toBeVisible();
-    await expect(page.getByText("These drafts remain hidden from readers until a separate approval and release.")).toBeVisible();
-    await expect(page.getByRole("button", { name: "Hide reference", exact: true })).toHaveAttribute("aria-pressed", "true");
+    await expect(page.getByText("Use Published to edit copy readers can see. Use Draft to continue proposed rewrites.", { exact: false })).toBeVisible();
+    const contentFilters = page.locator("section[aria-label='Content list filters']");
+    await expect(contentFilters.getByLabel("Content class")).toHaveCount(0);
+    await expect(contentFilters.getByLabel("Tier")).toHaveCount(0);
+    await expect(contentFilters.getByLabel("Category")).toHaveCount(0);
+    await expect(contentFilters.getByRole("tab", { name: "Editorial content" })).toHaveCount(0);
+    await expect(contentFilters.getByRole("button", { name: "Hide reference", exact: true })).toHaveCount(0);
+    await expect(contentFilters.getByLabel("Find an aspect")).toHaveAttribute("placeholder", "Mercury sextile Mars");
+    await expect(contentFilters.getByRole("tab", { name: "All 2" })).toBeVisible();
 
     const contentRows = page.locator(".admin-content-row");
     await expect(contentRows).toHaveCount(2);
@@ -1364,6 +1371,39 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(page.getByLabel("Category")).toHaveValue("all");
     await expect(navigation.getByRole("button", { name: "Content Library" })).toHaveAttribute("aria-current", "page");
 
+    await assertNoBrowserErrors();
+  });
+
+  test("Sky write-ups search and filter by editorial keywords", async ({ page }) => {
+    const assertNoBrowserErrors = await expectNoBrowserErrors(page);
+    await seedAdminApi(page);
+    await expectAdminRouteLoads(page, "/admin/content#sky-writeups");
+
+    const filters = page.getByRole("region", { name: "Sky write-up filters" });
+    const search = filters.getByLabel("Search Sky write-ups");
+    const type = filters.getByLabel("Sky write-up type");
+    await expect(search).toHaveAttribute("placeholder", "Title, sign, aspect, body text, or content key");
+    await expect(filters.getByLabel("Sky write-up motion")).toBeVisible();
+    await expect(filters.getByLabel("Sky write-up reader use")).toBeVisible();
+
+    await search.fill("care belonging");
+    await expect(page.locator(".admin-content-row", { hasText: "sky.placement.sun.cancer" })).toHaveCount(1);
+    await expect(page.locator(".admin-content-row", { hasText: "sky.placement.moon.virgo" })).toHaveCount(0);
+
+    await search.fill("qa-moon-source");
+    await expect(page.locator(".admin-content-row", { hasText: "sky.placement.moon.virgo" })).toHaveCount(1);
+    await type.selectOption("point");
+    await expect(page.getByText("No Sky write-ups match “qa-moon-source”. Try another keyword or clear the filters.")).toBeVisible();
+
+    await filters.getByRole("button", { name: "Clear filters" }).click();
+    await expect(search).toHaveValue("");
+    await expect(type).toHaveValue("all");
+    await expect(filters.getByLabel("Sky write-up motion")).toHaveValue("all");
+    await expect(filters.getByLabel("Sky write-up reader use")).toHaveValue("all");
+    await page.setViewportSize({ width: 390, height: 844 });
+    await expect(search).toBeVisible();
+    await expect(filters.getByRole("button", { name: "Clear filters" })).toBeVisible();
+    await expectNoHorizontalOverflow(page, "Sky write-up keyword filters");
     await assertNoBrowserErrors();
   });
 
