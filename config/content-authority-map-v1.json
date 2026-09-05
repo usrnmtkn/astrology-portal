@@ -1,0 +1,112 @@
+{
+  "schema": "tldrastro-content-authority-map/v1",
+  "version": "2026-09-05",
+  "scope": "Reader-facing content families with governed Content Studio or repository promotion paths. Surface discovery remains in apps/admin/src/writingSurfaceSourceMap.ts; this file owns promotion authority only.",
+  "readerEligibility": {
+    "databaseOverlay": {
+      "required": {
+        "status": "LIVE",
+        "lane": "serving",
+        "review_state": null
+      },
+      "note": "lane=serving by itself is never reader authority. DRAFT/serving rows remain non-serving because the reader loader requires LIVE + serving + null review_state."
+    },
+    "ownerApproval": "Exact prose promotion requires explicit owner authority for families whose approvalMode is owner-exact. Repository presence, generated output, review status, or a Content Studio save does not create owner approval."
+  },
+  "families": [
+    {
+      "id": "personal-transit-you",
+      "contentKeyPattern": "authored/transit-aspect/*",
+      "ownerAuthority": "apps/web/src/content/fallbackArchitectureV3/source-rows/transit-synastry-rows-v1.json#body_you",
+      "approvalMode": "owner-exact",
+      "studioOverlay": "public.generated_interpretations authored/transit-aspect/*",
+      "servingSource": "apps/web/src/content/fallbackArchitectureV3/bundled-transit-core-authored-cards-v3.json",
+      "resolver": "apps/web/src/content/fallbackArchitectureV3Runtime.ts",
+      "readerDestinations": ["You · Personal Transit detail/card"],
+      "expected": { "rows": 378, "nonblank": 378 },
+      "failurePolicy": "Keep canonical source/bundle byte-aligned; a database override may win only when reader-eligible."
+    },
+    {
+      "id": "personal-transit-friends",
+      "contentKeyPattern": "authored/transit-aspect/*",
+      "ownerAuthority": "apps/web/src/content/fallbackArchitectureV3/source-rows/transit-synastry-rows-v1.json#body_they",
+      "approvalMode": "owner-exact",
+      "studioOverlay": "public.generated_interpretations authored/transit-aspect/*",
+      "servingSource": "apps/web/src/content/fallbackArchitectureV3/bundled-transit-core-authored-cards-v3.json",
+      "resolver": "apps/web/src/content/fallbackArchitectureV3Runtime.ts",
+      "readerDestinations": ["Friends · Transits"],
+      "expected": { "rows": 378, "nonblank": 377, "intentionalBlank": "authored/transit-aspect/venus/moon/hard" },
+      "failurePolicy": "Do not synthesize Friends prose for the intentional blank. Database overrides require the same LIVE/serving/null-review-state gate."
+    },
+    {
+      "id": "sky-exact-aspects",
+      "contentKeyPattern": "sky.*aspect* / sky.aspect.* exact payload projection",
+      "ownerAuthority": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-04-held-trines-33/current-owner-payloads.json",
+      "approvalMode": "owner-exact",
+      "studioOverlay": "public.generated_interpretations rows with facts.exactSkyAspect=true",
+      "servingSource": "Content Studio exact payload projection bound to payloadSetSha256",
+      "resolver": "apps/web/src/services/skyAspectRouting.ts",
+      "readerDestinations": ["Sky · exact/current aspect detail", "Calendar · exact aspect context"],
+      "expected": { "rows": 248, "payloadSetSha256": "b3b2a90a00241dff84b271bb8d7d9ac5ed539ff8b7a1c1505ce34c7283233d60" },
+      "failurePolicy": "A Studio replacement is serving only after exact owner approval, release authorization, and controlled promotion against the canonical payload-set hash."
+    },
+    {
+      "id": "sky-placement-continuous",
+      "contentKeyPattern": "Sky V4 continuous placement correction layer",
+      "ownerAuthority": "apps/web/src/content/fallbackArchitectureV3/authored-inputs/sky-v4-continuous-corpus-correction-v1.json",
+      "approvalMode": "owner-exact",
+      "studioOverlay": "Content Studio grouped SKY V4 fallback editor is draft/review only",
+      "servingSource": "released owner-approved 120-record correction package",
+      "resolver": "apps/web/src/content/fallbackArchitectureV3/resolver/skyPlacementV4Canonical.mjs",
+      "readerDestinations": ["Sky · Placement detail"],
+      "expected": { "rows": 120 },
+      "failurePolicy": "Draft editor state may not mutate serving state; released package must declare owner_approved=true and serving_enabled=true."
+    },
+    {
+      "id": "sky-placement-lunar-context",
+      "contentKeyPattern": "Sky V4 exact-day lunar context layer",
+      "ownerAuthority": "apps/web/src/content/fallbackArchitectureV3/authored-inputs/sky-v4-placement-lunar-context-v1.json",
+      "approvalMode": "owner-exact",
+      "studioOverlay": "No independent reader authority; Studio may review source-backed records only",
+      "servingSource": "released owner-approved 40-record lunar-context package",
+      "resolver": "apps/web/src/features/sky/skyV4ProductSurface.ts",
+      "readerDestinations": ["Sky · Placement detail on matching local lunar event day"],
+      "expected": { "rows": 40 },
+      "failurePolicy": "Only exact local event-day matches may render; eclipse precedence remains deterministic."
+    },
+    {
+      "id": "sky-placement-house-horoscopes",
+      "contentKeyPattern": "house-horoscope-core/*/*/house-*",
+      "ownerAuthority": "apps/web/src/content/fallbackArchitectureV3/authored-inputs/owner-authored-sky-placement-house-passages-v1.json",
+      "approvalMode": "owner-exact",
+      "studioOverlay": "House-horoscope Content Studio rows are mirrors/edit surfaces, not a second semantic authority",
+      "servingSource": "apps/web/src/content/fallbackArchitectureV3/source-rows/sky-placement-house-templates-v1.json",
+      "resolver": "apps/web/src/content/fallbackArchitectureV3SkyPlacementBundle.ts",
+      "readerDestinations": ["Sky · Rising-sign house horoscope set"],
+      "expected": { "jupiterLeoOwnerApprovedRows": 12 },
+      "failurePolicy": "apps/web/src/content/fallbackArchitectureV3/skyPlacementHouseSetGuard.mjs withholds an owner-authored set if it is partial, unapproved, or byte-drifted; compact-only sets may serve uniformly."
+    },
+    {
+      "id": "natal-aspect-patterns",
+      "contentKeyPattern": "Natal aspect-pattern authored records",
+      "ownerAuthority": "api/admin/aspect-pattern-writeups.ts governed authored record store",
+      "approvalMode": "owner-exact",
+      "studioOverlay": "Aspect Patterns workspace",
+      "servingSource": "server-resolved approved aspect-pattern records",
+      "resolver": "apps/web/src/services/natalAspectPatterns.ts",
+      "readerDestinations": ["You · Natal Aspect Patterns", "Friends · Natal Aspect Patterns / Active Now"],
+      "failurePolicy": "Missing authored copy remains unavailable; pattern geometry and activation timing are calculated facts and are never replaced with local prose."
+    },
+    {
+      "id": "friends-pair-daily",
+      "contentKeyPattern": "pair-daily-* governed hook families",
+      "ownerAuthority": "apps/web/src/content/fallbackArchitectureV3/source-rows/pair-daily-frames-v1.json + pair-daily-clauses-v1.json",
+      "approvalMode": "owner-exact",
+      "studioOverlay": "Friends pair-daily source editor",
+      "servingSource": "fallback V3 reviewed pair-daily hook rows",
+      "resolver": "apps/web/src/services/pairDaily.ts",
+      "readerDestinations": ["Friends · Today Between You Two"],
+      "failurePolicy": "Calculated planet/aspect/house/Moon/date facts stay outside editable prose; reader text must retain governed source keys."
+    }
+  ]
+}
