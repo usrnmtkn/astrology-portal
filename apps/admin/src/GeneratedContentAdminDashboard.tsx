@@ -1509,6 +1509,15 @@ function visibleRowSearchText(row: AdminGeneratedContentRow) {
   ].join(" ").toLowerCase();
 }
 
+function skyWriteupSearchText(row: AdminGeneratedContentRow) {
+  return [
+    rowSearchText(row),
+    rowTitle(row),
+    ...(row.knowledge_ids ?? []),
+    row.reviewer_notes
+  ].join(" ").toLowerCase();
+}
+
 function fallbackHookVisibleSearchText(row: AdminGeneratedContentRow) {
   return [
     row.content_key,
@@ -2727,6 +2736,7 @@ export function GeneratedContentAdminDashboard() {
   const [articleStatusFilter, setArticleStatusFilter] = useState<GeneratedContentStatus | "all">("LIVE");
   const [articlePointFilter, setArticlePointFilter] = useState<AdminArticlePointFilter>("all");
   const [skyWriteupSubjectFilter, setSkyWriteupSubjectFilter] = useState<AdminSkyWriteupSubjectFilter>("all");
+  const [skyWriteupQuery, setSkyWriteupQuery] = useState("");
   const [skyWriteupMotionFilter, setSkyWriteupMotionFilter] = useState<ContentMotionFilter>("all");
   const [skyWriteupDestinationFilter, setSkyWriteupDestinationFilter] = useState<ContentDestinationFilter>("all");
   const [skyWriteupSort, setSkyWriteupSort] = useState<ContentPlacementSort>("updated-desc");
@@ -2878,7 +2888,8 @@ export function GeneratedContentAdminDashboard() {
     (skyWriteupSubjectFilter === "all" || skyWriteupSubjectTypeForRow(row) === skyWriteupSubjectFilter)
     && (skyWriteupMotionFilter === "all" || contentMotion(row) === skyWriteupMotionFilter)
     && (skyWriteupDestinationFilter === "all" || contentDestinations(row).has(skyWriteupDestinationFilter))
-  )), skyWriteupSort), [skyWriteupDestinationFilter, skyWriteupMotionFilter, skyWriteupRows, skyWriteupSort, skyWriteupSubjectFilter]);
+    && matchesAdminSearch(skyWriteupSearchText(row), skyWriteupQuery)
+  )), skyWriteupSort), [skyWriteupDestinationFilter, skyWriteupMotionFilter, skyWriteupQuery, skyWriteupRows, skyWriteupSort, skyWriteupSubjectFilter]);
   const publishedButUnwiredSkyRows = useMemo(
     () => skyWriteupRows.filter(isPublishedButUnwired),
     [skyWriteupRows]
@@ -2948,6 +2959,7 @@ export function GeneratedContentAdminDashboard() {
   // visible filters. Otherwise a successful save can make `selectedRow`
   // disappear, leaving the editor permanently marked as unsaved.
   const selectedRow = rows.find((row) => row.id === selectedRowId) ?? null;
+  const calendarAspectFilterScopeActive = activePage === "content" && categoryFilter === "Calendar Aspects";
   const reviewQueueRows = useMemo(() => {
     const rowsByKey = new Map<string, AdminReviewRecord>();
 
@@ -2958,11 +2970,17 @@ export function GeneratedContentAdminDashboard() {
 
     return [...rowsByKey.values()];
   }, [reviewRows, visibleRows]);
+  const statusCountRows = useMemo(
+    () => calendarAspectFilterScopeActive
+      ? visibleRows.filter((row) => contentCategoryForRow(row) === "Calendar Aspects")
+      : visibleRows,
+    [calendarAspectFilterScopeActive, visibleRows]
+  );
   const statusCounts = useMemo(() => {
-    const counts: Record<GeneratedContentStatus | "all", number> = { all: visibleRows.length, DRAFT: 0, REVIEWED: 0, LIVE: 0, ARCHIVED: 0, ERROR: 0 };
-    visibleRows.forEach((row) => counts[row.status] += 1);
+    const counts: Record<GeneratedContentStatus | "all", number> = { all: statusCountRows.length, DRAFT: 0, REVIEWED: 0, LIVE: 0, ARCHIVED: 0, ERROR: 0 };
+    statusCountRows.forEach((row) => counts[row.status] += 1);
     return counts;
-  }, [visibleRows]);
+  }, [statusCountRows]);
   const readerCounts = useMemo(() => {
     const counts: Record<AdminReaderReadinessKey, number> = {
       "reader-ready": 0,
@@ -2972,12 +2990,12 @@ export function GeneratedContentAdminDashboard() {
       "fallback-needed": 0,
       "needs-source-material": 0
     };
-    visibleRows.forEach((row) => {
+    statusCountRows.forEach((row) => {
       const key = readerSafetyForRow(row).key as AdminReaderReadinessKey;
       counts[key] += 1;
     });
     return counts;
-  }, [visibleRows]);
+  }, [statusCountRows]);
   const filteredRows = useMemo(() => visibleRows.filter((row) => {
     const rowClass = contentClassForRow(row);
     const rowTier = tierForRow(row);
@@ -2987,11 +3005,11 @@ export function GeneratedContentAdminDashboard() {
 
     return (contentLibraryView === "all" || isCompatibilityRow(row))
       && (contentStatusFilter === "all" || row.status === contentStatusFilter)
-      && (contentClassFilter === "all" || rowClass === contentClassFilter)
-      && (tierFilter === "all" || rowTier === tierFilter)
+      && (calendarAspectFilterScopeActive || contentClassFilter === "all" || rowClass === contentClassFilter)
+      && (calendarAspectFilterScopeActive || tierFilter === "all" || rowTier === tierFilter)
       && (categoryFilter === "all" || rowCategory === categoryFilter)
       && matchesAdminSearch(visibleRowSearchText(row), search);
-  }), [visibleRows, contentLibraryView, contentStatusFilter, contentClassFilter, tierFilter, categoryFilter, query]);
+  }), [visibleRows, contentLibraryView, contentStatusFilter, contentClassFilter, tierFilter, categoryFilter, query, calendarAspectFilterScopeActive]);
   const normalizedContentLibraryQuery = query.trim().toLowerCase();
   const contentLibraryTransitShortcut: "transits-to-natal" | "house-transits" | null = categoryFilter === "Personal Transits"
     || /(?:personal[- /]transit|transit[- /]to[- /]natal)/u.test(normalizedContentLibraryQuery)
@@ -5636,7 +5654,7 @@ export function GeneratedContentAdminDashboard() {
                   : natalAspectWorkspaceActive
                     ? "Choose the first planet or point, the aspect, and the second planet or point. Open any matching passage in the standard editor."
                     : calendarAspectWorkspaceActive
-                      ? "Open a composed Calendar card or reusable sign-specific passage below. Astrology identity fields stay read-only; prose is editable. These drafts remain hidden from readers until a separate approval and release."
+                      ? "Use Published to edit copy readers can see. Use Draft to continue proposed rewrites. Astrology details stay read-only; prose is editable."
                     : `${filteredRows.length} rows shown across articles, phrasebank copy, vocabulary, templates, fallback hooks, and source rows. Runtime serves only Published rows in the serving lane with no review hold.`}</p>
               </div>
               {!natalChartWorkspaceActive && !natalAspectWorkspaceActive && !calendarAspectWorkspaceActive && <div className="admin-new-actions" aria-label="Content admin shortcuts">
@@ -5794,6 +5812,16 @@ export function GeneratedContentAdminDashboard() {
                       </select>
                     </label>
                     <label>
+                      <span>Search by keyword</span>
+                      <input
+                        aria-label="Search Sky write-ups"
+                        type="search"
+                        value={skyWriteupQuery}
+                        onChange={(event) => setSkyWriteupQuery(event.target.value)}
+                        placeholder="Title, sign, aspect, body text, or content key"
+                      />
+                    </label>
+                    <label>
                       <span>Motion</span>
                       <select aria-label="Sky write-up motion" value={skyWriteupMotionFilter} onChange={(event) => setSkyWriteupMotionFilter(event.target.value as ContentMotionFilter)}>
                         {skyWriteupMotionFilters.map((filter) => <option key={filter.key} value={filter.key}>{filter.label}</option>)}
@@ -5811,6 +5839,25 @@ export function GeneratedContentAdminDashboard() {
                         {skyWriteupSortOptions.map((option) => <option key={option.key} value={option.key}>{option.label}</option>)}
                       </select>
                     </label>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setSkyWriteupSubjectFilter("all");
+                        setSkyWriteupMotionFilter("all");
+                        setSkyWriteupDestinationFilter("all");
+                        setSkyWriteupSort("updated-desc");
+                        setSkyWriteupQuery("");
+                      }}
+                      disabled={
+                        skyWriteupSubjectFilter === "all"
+                        && skyWriteupMotionFilter === "all"
+                        && skyWriteupDestinationFilter === "all"
+                        && skyWriteupSort === "updated-desc"
+                        && !skyWriteupQuery.trim()
+                      }
+                    >
+                      Clear filters
+                    </button>
                     <p className="admin-filter-result-count" aria-live="polite">
                       <strong>{filteredSkyWriteupRows.length}</strong> of {skyWriteupRows.length} shown
                     </p>
@@ -5831,7 +5878,13 @@ export function GeneratedContentAdminDashboard() {
                   <aside className="admin-list-panel" aria-label="Sky write-up rows">
                     {filteredSkyWriteupRows.length > 0
                       ? renderContentTable(filteredSkyWriteupRows, false, true)
-                      : <p className="admin-empty">No Sky write-ups match this type.</p>}
+                      : (
+                        <p className="admin-empty">
+                          {skyWriteupQuery.trim()
+                            ? `No Sky write-ups match “${skyWriteupQuery.trim()}”. Try another keyword or clear the filters.`
+                            : "No Sky write-ups match these filters. Try another filter or clear the filters."}
+                        </p>
+                      )}
                   </aside>
                 </section>
               </>
@@ -6895,6 +6948,7 @@ export function GeneratedContentAdminDashboard() {
   function renderContentFilters() {
     return (
       <section className="admin-content-filters" aria-label="Content list filters">
+        {!calendarAspectWorkspaceActive && (
         <div className="admin-template-tabs" role="tablist" aria-label="Content Library saved views">
           <button type="button" role="tab" aria-selected={contentLibraryView === "all"} className={contentLibraryView === "all" ? "active" : ""} onClick={() => setContentLibraryView("all")}>
             Editorial content
@@ -6903,6 +6957,7 @@ export function GeneratedContentAdminDashboard() {
             Compatibility
           </button>
         </div>
+        )}
         <div className="admin-status-pills" role="tablist" aria-label="Status">
           {(["all", ...contentStatuses] as Array<GeneratedContentStatus | "all">).map((status) => (
             <button key={status} type="button" role="tab" aria-selected={contentStatusFilter === status} className={contentStatusFilter === status ? "active" : ""} onClick={() => setContentStatusFilter(status)}>
@@ -6912,35 +6967,48 @@ export function GeneratedContentAdminDashboard() {
           ))}
         </div>
         <div className="admin-review-filter-grid">
+          {!calendarAspectWorkspaceActive && (
           <label>
             <span>Category</span>
             <select aria-label="Category" value={categoryFilter} onChange={(event) => setCategoryFilter(event.target.value as AdminContentCategoryFilter)}>
               {categoryFilters.map((filter) => <option key={filter.key} value={filter.key}>{filter.label}</option>)}
             </select>
           </label>
+          )}
+          {!calendarAspectWorkspaceActive && (
           <label>
             <span>Content class</span>
             <select aria-label="Content class" value={contentClassFilter} onChange={(event) => setContentClassFilter(event.target.value as AdminContentClassFilter)}>
               {contentClassFilters.map((filter) => <option key={filter.key} value={filter.key}>{filter.label}</option>)}
             </select>
           </label>
+          )}
+          {!calendarAspectWorkspaceActive && (
           <label>
             <span>Tier</span>
             <select aria-label="Tier" value={tierFilter} onChange={(event) => setTierFilter(event.target.value as AdminPhrasebankTierFilter)}>
               {tierFilters.map((filter) => <option key={filter.key} value={filter.key}>{filter.label}</option>)}
             </select>
           </label>
+          )}
           <label>
-            <span>Search content</span>
-            <input aria-label="Search content" value={query} onChange={(event) => handleContentSearchChange(event.target.value)} placeholder="Title, surface, kind, content key" />
+            <span>{calendarAspectWorkspaceActive ? "Find an aspect" : "Search content"}</span>
+            <input
+              aria-label={calendarAspectWorkspaceActive ? "Find an aspect" : "Search content"}
+              value={query}
+              onChange={(event) => handleContentSearchChange(event.target.value)}
+              placeholder={calendarAspectWorkspaceActive ? "Mercury sextile Mars" : "Title, surface, kind, content key"}
+            />
           </label>
           <button type="button" onClick={() => void loadDashboardData()} disabled={isLoading}>
             <RefreshCw size={16} aria-hidden="true" />
             Refresh rows
           </button>
+          {!calendarAspectWorkspaceActive && (
           <button type="button" aria-pressed={showReferenceRows} className={showReferenceRows ? "active" : ""} onClick={() => setShowReferenceRows((current) => !current)}>
             {showReferenceRows ? "Hide reference" : "Show reference"}
           </button>
+          )}
           <button type="button" aria-pressed={showRetiredRows} className={showRetiredRows ? "active" : ""} onClick={() => setShowRetiredRows((current) => !current)}>
             Show retired
           </button>
@@ -6949,10 +7017,10 @@ export function GeneratedContentAdminDashboard() {
             onClick={() => {
               setContentStatusFilter("all");
               setContentLibraryView("all");
-              setCategoryFilter("all");
+              setCategoryFilter(calendarAspectWorkspaceActive ? "Calendar Aspects" : "all");
               setContentClassFilter("all");
               setTierFilter("all");
-              setShowReferenceRows(false);
+              setShowReferenceRows(calendarAspectWorkspaceActive);
               setShowRetiredRows(false);
               setQuery("");
               setNatalPlacementPlanet("");
