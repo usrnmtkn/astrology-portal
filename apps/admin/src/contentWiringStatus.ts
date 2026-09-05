@@ -115,7 +115,7 @@ export function contentWiringStatus(row: ContentWiringRow): ContentWiringStatus 
   if (retired) {
     return {
       detail: retired,
-      label: "Retired—not reader-serving",
+      label: "Not serving",
       reason: "retired",
       state: "not-serving"
     };
@@ -124,7 +124,7 @@ export function contentWiringStatus(row: ContentWiringRow): ContentWiringStatus 
   if (isSourceMaterial(row)) {
     return {
       detail: "This is an editing ingredient or authoring reference. It is intentionally not requested as final reader copy.",
-      label: "Source material only",
+      label: "Source only",
       reason: "source-material",
       state: "not-serving"
     };
@@ -135,7 +135,7 @@ export function contentWiringStatus(row: ContentWiringRow): ContentWiringStatus 
       detail: row.status === "LIVE"
         ? "This row is published, but no live reader call site requests this key family. Runtime integration was never completed."
         : "This key family was imported for future app use, but no live reader call site requests it yet.",
-      label: row.status === "LIVE" ? "Published—not connected" : "Not connected—unfinished",
+      label: row.status === "LIVE" ? "Needs connection" : "Not connected",
       reason: "unfinished",
       state: "not-connected"
     };
@@ -153,7 +153,7 @@ export function contentWiringStatus(row: ContentWiringRow): ContentWiringStatus 
   if (isKnownRenderedKey(contentKey)) {
     return {
       detail: "A live resolver requests this content-key family and renders it on a reader surface when its publishing gates pass.",
-      label: "Connected to app",
+      label: "Used by app",
       reason: "connected",
       state: "connected"
     };
@@ -162,7 +162,7 @@ export function contentWiringStatus(row: ContentWiringRow): ContentWiringStatus 
   if (contentKey.startsWith("article/") && row.mode === "article") {
     return {
       detail: "Publishing an article does not create a reader destination. Connect this key to an article page before expecting it in the app.",
-      label: "Not connected—needs destination",
+      label: "Needs destination",
       reason: "unfinished",
       state: "not-connected"
     };
@@ -170,7 +170,7 @@ export function contentWiringStatus(row: ContentWiringRow): ContentWiringStatus 
 
   return {
     detail: "No verified reader call-site result is recorded for this key. This is not a deletion recommendation.",
-    label: "Connection not verified",
+    label: "Connection unknown",
     reason: "unknown",
     state: "unknown"
   };
