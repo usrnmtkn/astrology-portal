@@ -26,8 +26,56 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-      - name: Transplant reviewed weekly tag fix
-        run: git cherry-pick 974f007e0713706ead2fa95914ac3f49d2b8f523
+      - name: Apply current-main weekly tag patch
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          app_path = Path('apps/web/src/App.tsx')
+          weekly_path = Path('apps/web/src/services/weeklyHoroscope.ts')
+          test_path = Path('scripts/test-weekly-horoscope-assembly.mjs')
+
+          app = app_path.read_text()
+          weekly = weekly_path.read_text()
+          tests = test_path.read_text()
+
+          def replace_once(text, old, new, label):
+              count = text.count(old)
+              if count != 1:
+                  raise SystemExit(f'{label}: expected 1 match, found {count}')
+              return text.replace(old, new, 1)
+
+          import_line = 'import type { WeeklyHoroscopeAssembly, WeeklyHoroscopeReading } from "./services/weeklyHoroscope";'
+          if 'weeklyHoroscopeTagItems' not in app:
+              app = replace_once(
+                  app,
+                  import_line,
+                  'import { weeklyHoroscopeTagItems } from "./services/weeklyHoroscope";\n' + import_line,
+                  'weekly helper import'
+              )
+
+          old_render = '''              ) : reading.tag ? (\n                <span className="updates-aspect-row__life-areas">\n                  <span className="ui-pill house-transit-term-tag">{reading.tag}</span>\n                </span>\n              ) : null}'''
+          new_render = '''              ) : reading.tag ? (\n                <span className="updates-aspect-row__life-areas" aria-label="Life area tags">\n                  {weeklyHoroscopeTagItems(reading.tag).map((tag) => (\n                    <span className="ui-pill house-transit-term-tag" key={`${articleId}-${tag}`}>\n                      {tag}\n                    </span>\n                  ))}\n                </span>\n              ) : null}'''
+          if old_render in app:
+              app = replace_once(app, old_render, new_render, 'weekly tag render')
+          elif new_render not in app:
+              raise SystemExit('weekly tag render: current-main shape not recognized')
+
+          if 'export function weeklyHoroscopeTagItems' not in weekly:
+              marker = 'export type CalendarWeeklyOverview = {'
+              idx = weekly.index(marker)
+              helper = '''export function weeklyHoroscopeTagItems(tag?: string | null) {\n  return (tag ?? "")\n    .split(/\\s*,\\s*/u)\n    .map((item) => item.trim())\n    .filter(Boolean);\n}\n\n'''
+              weekly = weekly[:idx] + helper + weekly[idx:]
+
+          assertion_anchor = '  const weekly = await vite.ssrLoadModule("/src/services/weeklyHoroscope.ts");\n'
+          if 'Weekly focus phrases must render as separate tags' not in tests:
+              assertions = '''\n  assert.deepEqual(\n    weekly.weeklyHoroscopeTagItems("True balance, honest beauty, reciprocal relationship"),\n    ["True balance", "honest beauty", "reciprocal relationship"],\n    "Weekly focus phrases must render as separate tags without splitting multi-word phrases."\n  );\n  assert.deepEqual(\n    weekly.weeklyHoroscopeTagItems("  clear signal, , steady follow-through  "),\n    ["clear signal", "steady follow-through"],\n    "Weekly focus tag normalization must trim labels and discard empty tags."\n  );\n'''
+              tests = replace_once(tests, assertion_anchor, assertion_anchor + assertions, 'weekly tag assertions')
+
+          app_path.write_text(app)
+          weekly_path.write_text(weekly)
+          test_path.write_text(tests)
+          PY
       - name: Install dependencies
         run: npm ci
       - name: Build astrology knowledge
@@ -39,9 +87,9 @@ jobs:
           npm run build:web
           npx playwright install --with-deps chromium
           npx playwright test -c playwright.config.ts tests/visual/client-facing-user-flows.spec.ts --project=chromium-desktop --grep "signed-in user can review their chart on You"
-      - name: Remove temporary workflow and push
+      - name: Commit validated rebuild
         run: |
           rm .github/workflows/chatgpt-rebuild-weekly-focus-tags.yml
           git add -A
-          git commit -m "Remove temporary weekly focus tag rebuild workflow"
+          git commit -m "Split weekly focus phrases into separate tags"
           git push origin HEAD:chatgpt/weekly-focus-tags-current-main
