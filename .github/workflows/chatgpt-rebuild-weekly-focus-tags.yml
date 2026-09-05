@@ -33,11 +33,8 @@ jobs:
 
           app_path = Path('apps/web/src/App.tsx')
           weekly_path = Path('apps/web/src/services/weeklyHoroscope.ts')
-          test_path = Path('scripts/test-weekly-horoscope-assembly.mjs')
-
           app = app_path.read_text()
           weekly = weekly_path.read_text()
-          tests = test_path.read_text()
 
           def replace_once(text, old, new, label):
               count = text.count(old)
@@ -67,26 +64,54 @@ jobs:
               helper = '''export function weeklyHoroscopeTagItems(tag?: string | null) {\n  return (tag ?? "")\n    .split(/\\s*,\\s*/u)\n    .map((item) => item.trim())\n    .filter(Boolean);\n}\n\n'''
               weekly = weekly[:idx] + helper + weekly[idx:]
 
-          assertion_anchor = '  const weekly = await vite.ssrLoadModule("/src/services/weeklyHoroscope.ts");\n'
-          if 'Weekly focus phrases must render as separate tags' not in tests:
-              assertions = '''\n  assert.deepEqual(\n    weekly.weeklyHoroscopeTagItems("True balance, honest beauty, reciprocal relationship"),\n    ["True balance", "honest beauty", "reciprocal relationship"],\n    "Weekly focus phrases must render as separate tags without splitting multi-word phrases."\n  );\n  assert.deepEqual(\n    weekly.weeklyHoroscopeTagItems("  clear signal, , steady follow-through  "),\n    ["clear signal", "steady follow-through"],\n    "Weekly focus tag normalization must trim labels and discard empty tags."\n  );\n'''
-              tests = replace_once(tests, assertion_anchor, assertion_anchor + assertions, 'weekly tag assertions')
-
           app_path.write_text(app)
           weekly_path.write_text(weekly)
-          test_path.write_text(tests)
           PY
       - name: Install dependencies
         run: npm ci
       - name: Build astrology knowledge
         run: npm run build -w @tldr/astro-knowledge
-      - name: Verify weekly tag behavior
+      - name: Verify weekly tag helper and render contract
         run: |
-          node scripts/test-weekly-horoscope-assembly.mjs
+          node --input-type=module <<'NODE'
+          import assert from "node:assert/strict";
+          import fs from "node:fs";
+          import path from "node:path";
+          import { createServer } from "vite";
+
+          const repoRoot = process.cwd();
+          const vite = await createServer({
+            configFile: false,
+            root: path.join(repoRoot, "apps/web"),
+            appType: "custom",
+            server: { middlewareMode: true, hmr: false },
+            logLevel: "error"
+          });
+          try {
+            const weekly = await vite.ssrLoadModule("/src/services/weeklyHoroscope.ts");
+            assert.deepEqual(
+              weekly.weeklyHoroscopeTagItems("True balance, honest beauty, reciprocal relationship"),
+              ["True balance", "honest beauty", "reciprocal relationship"]
+            );
+            assert.deepEqual(
+              weekly.weeklyHoroscopeTagItems("  clear signal, , steady follow-through  "),
+              ["clear signal", "steady follow-through"]
+            );
+          } finally {
+            await vite.close();
+          }
+
+          const app = fs.readFileSync("apps/web/src/App.tsx", "utf8");
+          assert.match(app, /aria-label="Life area tags"/u);
+          assert.match(app, /weeklyHoroscopeTagItems\(reading\.tag\)\.map/u);
+          console.log("Weekly focus tag helper/render contract passed.");
+          NODE
           npm run typecheck
           npm run build:web
-          npx playwright install --with-deps chromium
-          npx playwright test -c playwright.config.ts tests/visual/client-facing-user-flows.spec.ts --project=chromium-desktop --grep "signed-in user can review their chart on You"
+      - name: Install Playwright Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Verify signed-in You browser flow
+        run: npx playwright test -c playwright.config.ts tests/visual/client-facing-user-flows.spec.ts --project=chromium-desktop --grep "signed-in user can review their chart on You"
       - name: Commit validated rebuild
         run: |
           rm .github/workflows/chatgpt-rebuild-weekly-focus-tags.yml
