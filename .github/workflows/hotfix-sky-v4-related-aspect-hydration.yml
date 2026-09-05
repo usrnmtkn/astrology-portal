@@ -26,9 +26,6 @@ jobs:
           cache: npm
       - name: Install dependencies
         run: npm ci
-      - name: Inspect open-detail refresh effect
-        shell: bash
-        run: grep -n -B25 -A90 'selectedSkyDetailRefreshKeyRef.current === refreshKey' apps/web/src/App.tsx
       - name: Apply focused hydration fix
         run: node scripts/hotfix-sky-v4-related-aspect-hydration.mjs
       - name: Verify hydration boundary
@@ -40,7 +37,7 @@ jobs:
       - name: Build app
         run: npm run build
       - name: Install Playwright Chromium
-        run: npx playwright install --with-deps chromium
+        run: npx playwright install chromium
       - name: Reproduce and verify Sun in Virgo article
         run: npx playwright test -c playwright.config.ts tests/visual/client-facing-user-flows.spec.ts --grep "Sun in Virgo detail serves the exact canonical V4 owner-approved article"
       - name: Verify whitespace integrity
@@ -55,5 +52,5 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add apps/web/src/App.tsx scripts/test-reviewed-sky-aspect-phrasebook.mjs
-          git commit -m "fix(sky): preserve related aspects after V4 hydration"
+          git commit -m "fix(sky): refresh open detail when exact registry loads"
           git push origin HEAD
