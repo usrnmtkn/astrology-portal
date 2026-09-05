@@ -1,0 +1,52 @@
+{
+  "schemaVersion": 1,
+  "id": "between-you-two-v2-owner-approval-batch-2-2026-09-05",
+  "approvedAt": "2026-09-05",
+  "ownerStatement": "these are good, i approve",
+  "servingAuthority": false,
+  "scopeNote": "Exact-wording approval applies only to the reader-facing V2 headline and move text shown to the owner in the preceding review. Existing bond-effect bodies were already exact-owner-approved and are not changed. Reverse-direction V2 headline/move wording was not shown in that review and is not approved by this record.",
+  "records": [
+    {
+      "id": "hard-mars",
+      "family": "hard",
+      "transiting": "mars",
+      "headline_body_you": "Being kept waiting is starting to feel like disrespect.",
+      "move_body_you": "Acknowledge that you were left waiting before the argument becomes about everything the delay supposedly means."
+    },
+    {
+      "id": "hard-neptune",
+      "family": "hard",
+      "transiting": "neptune",
+      "headline_body_you": "You may be filling the silence with a problem that has not happened.",
+      "move_body_you": "Ask the question before you start responding to the explanation you made up."
+    },
+    {
+      "id": "hard-pluto",
+      "family": "hard",
+      "transiting": "pluto",
+      "headline_body_you": "The part that hurts is how little say you had.",
+      "move_body_you": "Ask for the information or decision you were left out of instead of fighting about the answer after it is already final."
+    },
+    {
+      "id": "hard-uranus",
+      "family": "hard",
+      "transiting": "uranus",
+      "headline_body_you": "Their last-minute changes are costing you time.",
+      "move_body_you": "Before you adjust again, count how much of your day has already been rearranged around their changes."
+    },
+    {
+      "id": "soft-saturn",
+      "family": "soft",
+      "transiting": "saturn",
+      "headline_body_you": "You have evidence that they will follow through.",
+      "move_body_you": "Let the follow-through count instead of checking one more time."
+    },
+    {
+      "id": "soft-pluto",
+      "family": "soft",
+      "transiting": "pluto",
+      "headline_body_you": "You may finally be able to name what has been uneven.",
+      "move_body_you": "Name the money, decision, or responsibility that is actually uneven instead of arguing about the relationship in general."
+    }
+  ]
+}
