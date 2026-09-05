@@ -17,7 +17,9 @@
         "body_you": "Wait for the new information before you decide what the delay means.",
         "body_they": "If the delay is ordinary, say that clearly before {{holder1}} has to guess."
       },
-      "reviewStatus": "proposed"
+      "reviewStatus": "proposed",
+      "reviewStatusYou": "proposed",
+      "reviewStatusThey": "proposed"
     },
     {
       "id": "hard-jupiter",
@@ -32,7 +34,12 @@
         "body_you": "Check the money, time, and logistics before you agree to one more thing.",
         "body_they": "Check the money, time, and logistics before you ask {{holder1}} to add one more thing."
       },
-      "reviewStatus": "owner_approved"
+      "reviewStatus": "partially_owner_approved",
+      "reviewStatusYou": "owner_approved",
+      "reviewStatusThey": "proposed",
+      "ownerApprovalSources": [
+        "packages/astro-knowledge/review/between-you-two-v2-2026-09-05/owner-approval-batch-1.json"
+      ]
     },
     {
       "id": "hard-lilith",
@@ -47,7 +54,9 @@
         "body_you": "Say no to the plan before irritation has to say it for you.",
         "body_they": "Take the first no seriously instead of waiting for {{holder1}} to get sharper."
       },
-      "reviewStatus": "proposed"
+      "reviewStatus": "proposed",
+      "reviewStatusYou": "proposed",
+      "reviewStatusThey": "proposed"
     },
     {
       "id": "hard-mars",
@@ -59,10 +68,15 @@
         "body_they": "{{holder1}} may be reading the delay as disrespect."
       },
       "move": {
-        "body_you": "Name the delay first before you turn it into an argument about everything else.",
+        "body_you": "Acknowledge that you were left waiting before the argument becomes about everything the delay supposedly means.",
         "body_they": "Acknowledge the delay before you defend why it happened."
       },
-      "reviewStatus": "proposed"
+      "reviewStatus": "partially_owner_approved",
+      "reviewStatusYou": "owner_approved",
+      "reviewStatusThey": "proposed",
+      "ownerApprovalSources": [
+        "packages/astro-knowledge/review/between-you-two-v2-2026-09-05/owner-approval-batch-2.json"
+      ]
     },
     {
       "id": "hard-mercury",
@@ -77,7 +91,12 @@
         "body_you": "Answer what was actually said before you start arguing with the tone.",
         "body_they": "If your reply was brief, make the meaning clear before {{holder1}} has to guess."
       },
-      "reviewStatus": "owner_approved"
+      "reviewStatus": "partially_owner_approved",
+      "reviewStatusYou": "owner_approved",
+      "reviewStatusThey": "proposed",
+      "ownerApprovalSources": [
+        "packages/astro-knowledge/review/between-you-two-v2-2026-09-05/owner-approval-batch-1.json"
+      ]
     },
     {
       "id": "hard-moon",
@@ -92,7 +111,9 @@
         "body_you": "Handle the immediate disappointment before you argue about the size of the reaction.",
         "body_they": "Handle the immediate disappointment before you argue about the size of the reaction."
       },
-      "reviewStatus": "proposed"
+      "reviewStatus": "proposed",
+      "reviewStatusYou": "proposed",
+      "reviewStatusThey": "proposed"
     },
     {
       "id": "hard-neptune",
@@ -104,10 +125,15 @@
         "body_they": "{{holder1}} may be filling the silence with a problem that has not happened."
       },
       "move": {
-        "body_you": "Ask the question before you start answering your own explanation.",
+        "body_you": "Ask the question before you start responding to the explanation you made up.",
         "body_they": "If you are simply busy or delayed, say that before {{holder1}} has to invent the reason."
       },
-      "reviewStatus": "proposed"
+      "reviewStatus": "partially_owner_approved",
+      "reviewStatusYou": "owner_approved",
+      "reviewStatusThey": "proposed",
+      "ownerApprovalSources": [
+        "packages/astro-knowledge/review/between-you-two-v2-2026-09-05/owner-approval-batch-2.json"
+      ]
     },
     {
       "id": "hard-north-node",
@@ -122,7 +148,9 @@
         "body_you": "Find out what the option actually requires before nervousness decides for you.",
         "body_they": "Give {{holder1}} enough information to consider the option without pushing for an immediate answer."
       },
-      "reviewStatus": "proposed"
+      "reviewStatus": "proposed",
+      "reviewStatusYou": "proposed",
+      "reviewStatusThey": "proposed"
     },
     {
       "id": "hard-pluto",
@@ -134,10 +162,15 @@
         "body_they": "{{holder1}} may be reacting to how little say they had."
       },
       "move": {
-        "body_you": "Ask for the information or decision point you were left out of.",
+        "body_you": "Ask for the information or decision you were left out of instead of fighting about the answer after it is already final.",
         "body_they": "Put the information and decision on the table before asking {{holder1}} to accept the outcome."
       },
-      "reviewStatus": "proposed"
+      "reviewStatus": "partially_owner_approved",
+      "reviewStatusYou": "owner_approved",
+      "reviewStatusThey": "proposed",
+      "ownerApprovalSources": [
+        "packages/astro-knowledge/review/between-you-two-v2-2026-09-05/owner-approval-batch-2.json"
+      ]
     },
     {
       "id": "hard-saturn",
@@ -152,7 +185,12 @@
         "body_you": "Decide who is actually handling the next step before you make another plan.",
         "body_they": "Decide who is actually handling the next step before you make another plan."
       },
-      "reviewStatus": "owner_approved"
+      "reviewStatus": "partially_owner_approved",
+      "reviewStatusYou": "owner_approved",
+      "reviewStatusThey": "proposed",
+      "ownerApprovalSources": [
+        "packages/astro-knowledge/review/between-you-two-v2-2026-09-05/owner-approval-batch-1.json"
+      ]
     },
     {
       "id": "hard-south-node",
@@ -167,7 +205,9 @@
         "body_you": "Notice which job you picked up automatically before you keep doing it.",
         "body_they": "Ask instead of letting the old division of work restart by default."
       },
-      "reviewStatus": "proposed"
+      "reviewStatus": "proposed",
+      "reviewStatusYou": "proposed",
+      "reviewStatusThey": "proposed"
     },
     {
       "id": "hard-sun",
@@ -182,7 +222,9 @@
         "body_you": "Name what you contributed instead of pretending the missing credit does not matter.",
         "body_they": "Give {{holder1}} specific credit for the part they actually did."
       },
-      "reviewStatus": "proposed"
+      "reviewStatus": "proposed",
+      "reviewStatusYou": "proposed",
+      "reviewStatusThey": "proposed"
     },
     {
       "id": "hard-uranus",
@@ -194,10 +236,15 @@
         "body_they": "Your last-minute changes may be costing {{holder1}} time."
       },
       "move": {
-        "body_you": "Before you adjust again, count the time you have already lost to the changes.",
+        "body_you": "Before you adjust again, count how much of your day has already been rearranged around their changes.",
         "body_they": "Before you change the plan again, check what {{holder1}} already rearranged around it."
       },
-      "reviewStatus": "proposed"
+      "reviewStatus": "partially_owner_approved",
+      "reviewStatusYou": "owner_approved",
+      "reviewStatusThey": "proposed",
+      "ownerApprovalSources": [
+        "packages/astro-knowledge/review/between-you-two-v2-2026-09-05/owner-approval-batch-2.json"
+      ]
     },
     {
       "id": "hard-venus",
@@ -212,7 +259,9 @@
         "body_you": "Say you wanted more time without turning their schedule into a rejection.",
         "body_they": "Say what you can actually give instead of leaving {{holder1}} to guess."
       },
-      "reviewStatus": "proposed"
+      "reviewStatus": "proposed",
+      "reviewStatusYou": "proposed",
+      "reviewStatusThey": "proposed"
     },
     {
       "id": "soft-chiron",
@@ -227,7 +276,9 @@
         "body_you": "Let the explanation finish before you start solving or correcting it.",
         "body_they": "Let {{holder1}} finish before you explain why they should see it differently."
       },
-      "reviewStatus": "proposed"
+      "reviewStatus": "proposed",
+      "reviewStatusYou": "proposed",
+      "reviewStatusThey": "proposed"
     },
     {
       "id": "soft-jupiter",
@@ -242,7 +293,12 @@
         "body_you": "Follow the lead if it connects to something you already wanted.",
         "body_they": "Pass it along if it connects to something {{holder1}} already wanted."
       },
-      "reviewStatus": "owner_approved"
+      "reviewStatus": "partially_owner_approved",
+      "reviewStatusYou": "owner_approved",
+      "reviewStatusThey": "proposed",
+      "ownerApprovalSources": [
+        "packages/astro-knowledge/review/between-you-two-v2-2026-09-05/owner-approval-batch-1.json"
+      ]
     },
     {
       "id": "soft-lilith",
@@ -257,7 +313,9 @@
         "body_you": "Give the clear answer first instead of choosing the easiest plan to agree to.",
         "body_they": "Take the clear answer seriously, even if it is less convenient."
       },
-      "reviewStatus": "proposed"
+      "reviewStatus": "proposed",
+      "reviewStatusYou": "proposed",
+      "reviewStatusThey": "proposed"
     },
     {
       "id": "soft-mars",
@@ -272,7 +330,9 @@
         "body_you": "Pick the task you have both been postponing and finish it together.",
         "body_they": "Pick the task you have both been postponing and finish it together."
       },
-      "reviewStatus": "proposed"
+      "reviewStatus": "proposed",
+      "reviewStatusYou": "proposed",
+      "reviewStatusThey": "proposed"
     },
     {
       "id": "soft-mercury",
@@ -287,7 +347,9 @@
         "body_you": "Say the part you mean and stop before you turn it into five more paragraphs.",
         "body_they": "Take the clear answer at face value instead of pulling for a hidden meaning."
       },
-      "reviewStatus": "proposed"
+      "reviewStatus": "proposed",
+      "reviewStatusYou": "proposed",
+      "reviewStatusThey": "proposed"
     },
     {
       "id": "soft-moon",
@@ -302,7 +364,9 @@
         "body_you": "Let them help in the specific way they already noticed.",
         "body_they": "Offer the specific thing you can see {{holder1}} needs."
       },
-      "reviewStatus": "proposed"
+      "reviewStatus": "proposed",
+      "reviewStatusYou": "proposed",
+      "reviewStatusThey": "proposed"
     },
     {
       "id": "soft-neptune",
@@ -317,7 +381,9 @@
         "body_you": "Leave the imperfect sentence where it is unless there is actually something to clarify.",
         "body_they": "Do not over-explain a clumsy sentence that {{holder1}} already understood."
       },
-      "reviewStatus": "proposed"
+      "reviewStatus": "proposed",
+      "reviewStatusYou": "proposed",
+      "reviewStatusThey": "proposed"
     },
     {
       "id": "soft-north-node",
@@ -332,7 +398,9 @@
         "body_you": "Try the first step if it interests you. You can decide the rest later.",
         "body_they": "Offer the first step without turning it into a commitment {{holder1}} has not made."
       },
-      "reviewStatus": "proposed"
+      "reviewStatus": "proposed",
+      "reviewStatusYou": "proposed",
+      "reviewStatusThey": "proposed"
     },
     {
       "id": "soft-pluto",
@@ -340,14 +408,19 @@
       "transiting": "pluto",
       "bodyContentKey": "fallback-hook/bond-effect-soft/pluto",
       "headline": {
-        "body_you": "You may finally be able to name the part that has been uneven.",
+        "body_you": "You may finally be able to name what has been uneven.",
         "body_they": "{{holder1}} may finally tell you where the arrangement has felt uneven."
       },
       "move": {
-        "body_you": "Name the money, decision, or responsibility that is actually uneven.",
+        "body_you": "Name the money, decision, or responsibility that is actually uneven instead of arguing about the relationship in general.",
         "body_they": "Listen for the specific imbalance {{holder1}} is naming before you defend the whole arrangement."
       },
-      "reviewStatus": "proposed"
+      "reviewStatus": "partially_owner_approved",
+      "reviewStatusYou": "owner_approved",
+      "reviewStatusThey": "proposed",
+      "ownerApprovalSources": [
+        "packages/astro-knowledge/review/between-you-two-v2-2026-09-05/owner-approval-batch-2.json"
+      ]
     },
     {
       "id": "soft-saturn",
@@ -362,7 +435,12 @@
         "body_you": "Let the follow-through count instead of checking one more time.",
         "body_they": "Do what you said you would do without making {{holder1}} chase the answer."
       },
-      "reviewStatus": "proposed"
+      "reviewStatus": "partially_owner_approved",
+      "reviewStatusYou": "owner_approved",
+      "reviewStatusThey": "proposed",
+      "ownerApprovalSources": [
+        "packages/astro-knowledge/review/between-you-two-v2-2026-09-05/owner-approval-batch-2.json"
+      ]
     },
     {
       "id": "soft-south-node",
@@ -377,7 +455,9 @@
         "body_you": "Keep the part of the routine you still like and change the part that no longer fits.",
         "body_they": "Do not assume the familiar role still works for {{holder1}} just because it comes easily."
       },
-      "reviewStatus": "proposed"
+      "reviewStatus": "proposed",
+      "reviewStatusYou": "proposed",
+      "reviewStatusThey": "proposed"
     },
     {
       "id": "soft-sun",
@@ -392,7 +472,9 @@
         "body_you": "Let the specific recognition land instead of brushing past it.",
         "body_they": "Name the part {{holder1}} did well instead of giving a vague compliment."
       },
-      "reviewStatus": "proposed"
+      "reviewStatus": "proposed",
+      "reviewStatusYou": "proposed",
+      "reviewStatusThey": "proposed"
     },
     {
       "id": "soft-uranus",
@@ -407,7 +489,9 @@
         "body_you": "Say yes to the change if the usual plan was already feeling repetitive.",
         "body_they": "Offer the different option without making it a test of how spontaneous {{holder1}} can be."
       },
-      "reviewStatus": "proposed"
+      "reviewStatus": "proposed",
+      "reviewStatusYou": "proposed",
+      "reviewStatusThey": "proposed"
     },
     {
       "id": "soft-venus",
@@ -422,7 +506,12 @@
         "body_you": "Notice the specific effort instead of measuring it by how big it was.",
         "body_they": "Do the small thing you already know would make {{holder1}}'s day easier."
       },
-      "reviewStatus": "owner_approved"
+      "reviewStatus": "partially_owner_approved",
+      "reviewStatusYou": "owner_approved",
+      "reviewStatusThey": "proposed",
+      "ownerApprovalSources": [
+        "packages/astro-knowledge/review/between-you-two-v2-2026-09-05/owner-approval-batch-1.json"
+      ]
     },
     {
       "id": "shared-moon-fire",
@@ -430,7 +519,10 @@
       "element": "fire",
       "headline": "You may both have less patience for delays today.",
       "body": "The Moon is in a fire sign and aspecting both charts today, so both of you may be quicker to act and less patient with delays. A changed plan or blunt reply can become more irritating than it usually would. Say what changed before either of you decides why the other person did it.",
-      "reviewStatus": "owner_approved"
+      "reviewStatus": "owner_approved",
+      "ownerApprovalSources": [
+        "packages/astro-knowledge/review/between-you-two-v2-2026-09-05/owner-approval-batch-1.json"
+      ]
     },
     {
       "id": "shared-moon-earth",
@@ -456,5 +548,11 @@
       "body": "The Moon is in a water sign and aspecting both charts today, so tone, timing, and small changes in mood can carry more weight. One person going quiet can become a story about the relationship before anyone has said what is wrong. Name the feeling or need you actually know about before either of you fills in the rest.",
       "reviewStatus": "proposed"
     }
-  ]
+  ],
+  "approvalBoundary": {
+    "bondReaderDirectionApproved": 11,
+    "bondReverseDirectionApproved": 0,
+    "sharedMoonApproved": 1,
+    "note": "Owner approval is direction-specific. Do not infer exact-wording approval for body_they headline/move text from reader-facing review examples."
+  }
 }
