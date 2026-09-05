@@ -55,6 +55,8 @@ jobs:
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add scripts/generate-fallback-package-manifest.mjs scripts/build-admin-hook-catalog.mjs apps/web/src/content/fallbackArchitectureV3/bundled-*.json apps/web/src/content/fallbackArchitectureV3/approved-serving-*.json apps/admin/public/generated apps/web/public/generated
+          # The public/generated catalogs are build artifacts and intentionally ignored.
+          # Commit only the tracked package generator and governed bundle projections.
+          git add scripts/generate-fallback-package-manifest.mjs scripts/build-admin-hook-catalog.mjs apps/web/src/content/fallbackArchitectureV3/bundled-*.json apps/web/src/content/fallbackArchitectureV3/approved-serving-*.json
           git commit -m "build(friends): stage Between You Two V2 package projection"
           git push origin HEAD:owner/between-you-two-v2-20260905
