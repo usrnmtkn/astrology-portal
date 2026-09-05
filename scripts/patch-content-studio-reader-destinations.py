@@ -6,19 +6,13 @@ TEST_FILE = Path("scripts/test-admin-reader-destination-labels.mjs")
 
 text = DASHBOARD.read_text()
 
-source_pair = '''          <p>{source.scope}</p>
-          <code>{resolved?.contentKey ?? source.candidateKeys.join(" → ")}</code>'''
-if text.count(source_pair) != 2:
-    raise SystemExit(f"expected 2 shared transit source-card bodies, found {text.count(source_pair)}")
-
-personal = '''          <p>{source.scope}</p>
-          <p className="admin-reader-destination-line"><strong>Where readers see this:</strong> {friendsTransitAudience ? "Friends → Transits → Active for {{Name}}" : "You → Personal Transits"}</p>
-          <code>{resolved?.contentKey ?? source.candidateKeys.join(" → ")}</code>'''
-house = '''          <p>{source.scope}</p>
-          <p className="admin-reader-destination-line"><strong>Where readers see this:</strong> {friendsTransitAudience ? "Friends → Transits → Where it lands" : "You → House Transits"}</p>
-          <code>{resolved?.contentKey ?? source.candidateKeys.join(" → ")}</code>'''
-text = text.replace(source_pair, personal, 1)
-text = text.replace(source_pair, house, 1)
+scope_line = '          <p>{source.scope}</p>'
+parts = text.split(scope_line)
+if len(parts) != 3:
+    raise SystemExit(f"expected 2 transit source scope lines, found {len(parts) - 1}")
+personal_destination = '\n          <p className="admin-reader-destination-line"><strong>Where readers see this:</strong> {friendsTransitAudience ? "Friends → Transits → Active for {{Name}}" : "You → Personal Transits"}</p>'
+house_destination = '\n          <p className="admin-reader-destination-line"><strong>Where readers see this:</strong> {friendsTransitAudience ? "Friends → Transits → Where it lands" : "You → House Transits"}</p>'
+text = parts[0] + scope_line + personal_destination + parts[1] + scope_line + house_destination + parts[2]
 
 handle = '    const handleEditorKeyDown = (event: ReactKeyboardEvent<HTMLElement>) => {'
 if text.count(handle) != 1:
