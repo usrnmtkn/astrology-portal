@@ -1,0 +1,378 @@
+/* Content Studio form-density pass, owner requested 2026-09-05.
+   Keep form controls readable, prevent pills/actions from covering copy, and reduce
+   unnecessary vertical space without changing content or workflow behavior. */
+
+/* Every editable control must stay inside its grid/flex cell. */
+.admin-dashboard :where(
+  input:not([type="checkbox"]):not([type="radio"]),
+  select,
+  textarea
+) {
+  max-width: 100%;
+  min-width: 0;
+  width: 100%;
+}
+
+.admin-dashboard textarea {
+  line-height: var(--leading-body);
+  resize: vertical;
+}
+
+/* Labels read as one compact unit: label, control, then help text. */
+.admin-dashboard :where(
+  .admin-title-field,
+  .admin-metadata-field,
+  .admin-review-copy-editor,
+  .admin-review-tldr-editor,
+  .admin-access-inline-field,
+  .admin-editor-guidance > label,
+  .admin-review-filter-grid > label,
+  .admin-review-stack .admin-hook-detail-section > label,
+  .admin-content-toolbar .admin-toolbar-actions > label,
+  .admin-field-wide > label,
+  .admin-template-two-column > label,
+  .admin-daily-glance-context-form > label,
+  .admin-daily-glance-preview-controls > label,
+  .aspect-writeups-filters > label,
+  .aspect-writeups-status,
+  .aspect-writeups-fields > label
+) {
+  display: grid;
+  gap: var(--admin-space-sm);
+  min-width: 0;
+}
+
+.admin-dashboard :where(
+  .admin-title-field,
+  .admin-metadata-field,
+  .admin-review-copy-editor,
+  .admin-review-tldr-editor,
+  .admin-access-inline-field,
+  .admin-editor-guidance > label,
+  .admin-review-filter-grid > label,
+  .admin-review-stack .admin-hook-detail-section > label,
+  .admin-daily-glance-context-form > label,
+  .admin-daily-glance-preview-controls > label,
+  .aspect-writeups-filters > label,
+  .aspect-writeups-status,
+  .aspect-writeups-fields > label
+) > span:first-child {
+  color: var(--admin-text-secondary);
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-meta);
+}
+
+/* Some operational forms use plain text nodes as their labels. Give those labels
+   the same hierarchy, then return the actual control to normal body weight. */
+.admin-dashboard :where(
+  .admin-content-toolbar .admin-toolbar-actions > label,
+  .admin-field-wide > label,
+  .admin-template-two-column > label
+) {
+  color: var(--admin-text-secondary);
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-meta);
+}
+
+.admin-dashboard :where(
+  .admin-content-toolbar .admin-toolbar-actions > label,
+  .admin-field-wide > label,
+  .admin-template-two-column > label
+) > :where(input, select, textarea, .admin-search-input-shell) {
+  color: var(--admin-ink);
+  font-weight: var(--weight-regular);
+}
+
+.admin-dashboard .admin-content-toolbar .admin-toolbar-actions:has(> label) {
+  align-items: end;
+  justify-content: flex-start;
+  min-width: 0;
+}
+
+.admin-dashboard .admin-content-toolbar .admin-toolbar-actions > label {
+  flex: 1 1 auto;
+}
+
+.admin-dashboard .admin-field-hint {
+  color: var(--admin-muted);
+  line-height: var(--leading-description);
+  margin-top: 0;
+}
+
+/* Dense forms should still preserve clear section boundaries. */
+.admin-dashboard .admin-editor-panel > .admin-post-editor {
+  gap: var(--admin-space-4xl);
+}
+
+.admin-dashboard :where(
+  .admin-content-filters,
+  .admin-review-filters,
+  .admin-controls,
+  .admin-generation-inputs,
+  .admin-form-grid,
+  .admin-metadata-fields,
+  .admin-sky-edition-fields,
+  .admin-natal-placement-selectors,
+  .admin-review-filter-grid,
+  .admin-daily-glance-context-form,
+  .admin-daily-glance-preview-controls,
+  .aspect-writeups-filters,
+  .aspect-writeups-fields,
+  .admin-template-two-column
+) {
+  gap: var(--admin-space-xl);
+}
+
+.admin-dashboard :where(
+  .admin-content-filters,
+  .admin-review-filters,
+  .admin-controls,
+  .admin-generation-inputs,
+  .admin-form-grid,
+  .admin-metadata-fields,
+  .admin-sky-edition-fields,
+  .admin-natal-placement-selectors,
+  .admin-review-filter-grid,
+  .admin-daily-glance-context-form,
+  .admin-daily-glance-preview-controls,
+  .aspect-writeups-filters,
+  .aspect-writeups-fields,
+  .admin-template-two-column
+) > * {
+  min-width: 0;
+}
+
+.admin-dashboard .admin-content-filters {
+  padding: var(--admin-space-xl) var(--admin-space-2xl);
+}
+
+.admin-dashboard .admin-metadata-field {
+  padding-top: var(--admin-space-xl);
+}
+
+.admin-dashboard .admin-sky-edition-fields .admin-review-copy-editor,
+.admin-dashboard .admin-sky-article-editor .admin-review-copy-editor {
+  padding: var(--admin-space-lg) var(--admin-space-xl);
+}
+
+/* A header's actions/status can never sit on top of its title or description. */
+.admin-dashboard :where(
+  .admin-section-heading-row,
+  .admin-fallback-diagnostic-heading,
+  .admin-sky-related-heading,
+  .admin-review-copy-heading,
+  .admin-natal-placement-finder-heading,
+  .admin-natal-source-card-heading,
+  .admin-editor-toolbar,
+  .admin-content-toolbar,
+  .aspect-writeups-header,
+  .aspect-writeups-editor > header
+) {
+  min-width: 0;
+}
+
+.admin-dashboard :where(
+  .admin-section-heading-row,
+  .admin-fallback-diagnostic-heading,
+  .admin-sky-related-heading,
+  .admin-review-copy-heading,
+  .admin-natal-placement-finder-heading,
+  .admin-natal-source-card-heading,
+  .admin-editor-toolbar,
+  .admin-content-toolbar,
+  .aspect-writeups-header,
+  .aspect-writeups-editor > header
+) > * {
+  min-width: 0;
+}
+
+.admin-dashboard .admin-section-heading-row {
+  align-items: flex-start;
+}
+
+/* Keep ordinary status tags compact. Layout changes below guarantee they get their
+   own space instead of sitting on top of headings or keys. */
+.admin-dashboard :where(.ui-pill, .admin-status, .admin-restriction-pill) {
+  line-height: var(--leading-meta);
+  max-width: 100%;
+  text-align: center;
+  white-space: nowrap;
+}
+
+/* Notifications belong in document flow so they never cover status cards, fields,
+   or table text while an editor is trying to read the page. */
+.admin-dashboard .admin-save-toast {
+  bottom: auto;
+  justify-self: end;
+  max-width: 100%;
+  position: static;
+  right: auto;
+  width: fit-content;
+  z-index: auto;
+}
+
+/* Keep save state separate from actions so buttons have room for useful labels. */
+.admin-dashboard .admin-editor-save-state {
+  flex: 1 1 100%;
+  min-width: 0;
+}
+
+.admin-dashboard .admin-editor-savebar button {
+  max-width: 100%;
+  min-width: 0;
+  white-space: normal;
+}
+
+/* Packaged sources were inheriting a horizontal fallback-row-main layout, which
+   put the eyebrow, title, and content key on one line and let status/actions cover
+   the title. Source cards are a vertical text stack with a separate action column. */
+.admin-dashboard .admin-hook-catalog-results .admin-fallback-row {
+  align-items: start;
+  gap: var(--admin-space-xl) var(--admin-space-2xl);
+  grid-template-columns: minmax(0, 1fr) auto;
+  padding: var(--admin-space-xl) var(--admin-space-2xl);
+}
+
+.admin-dashboard .admin-hook-catalog-results .admin-fallback-row-main {
+  align-items: start;
+  display: grid;
+  gap: var(--admin-space-xs);
+  justify-content: stretch;
+  min-width: 0;
+}
+
+.admin-dashboard .admin-hook-catalog-results .admin-fallback-row-main > :where(p, h3, code) {
+  margin: 0;
+  max-width: 100%;
+  min-width: 0;
+}
+
+.admin-dashboard .admin-hook-catalog-results .admin-fallback-row-main h3 {
+  overflow-wrap: anywhere;
+}
+
+.admin-dashboard .admin-hook-catalog-results .admin-fallback-row-main code {
+  overflow-wrap: anywhere;
+  white-space: normal;
+}
+
+.admin-dashboard .admin-hook-catalog-results .admin-fallback-row-actions {
+  align-self: start;
+  justify-content: flex-end;
+  max-width: 100%;
+  min-width: 0;
+}
+
+.admin-dashboard .admin-hook-catalog-results .admin-fallback-row-actions button {
+  max-width: 100%;
+  white-space: normal;
+}
+
+.admin-dashboard .admin-hook-catalog-results > .admin-section-heading-row {
+  gap: var(--admin-space-xl);
+  padding-block: var(--admin-space-xl);
+}
+
+/* Source-key rows in Sky/lunation editors should read role → key → action, not a
+   single inline sentence that can collide with the edit button. */
+.admin-dashboard .admin-sky-related-row {
+  align-items: start;
+  display: grid;
+  gap: var(--admin-space-xl);
+  grid-template-columns: minmax(0, 1fr) auto;
+}
+
+.admin-dashboard .admin-sky-related-row > div {
+  display: grid;
+  gap: var(--admin-space-xs);
+  min-width: 0;
+}
+
+.admin-dashboard .admin-sky-related-row > button {
+  align-self: start;
+  max-width: 100%;
+}
+
+/* Long keys, names, helper copy, and operational JSON should wrap instead of
+   widening a card until another component sits on top of it. */
+.admin-dashboard :where(
+  .admin-content-row,
+  .admin-hook-detail-section,
+  .admin-fallback-row,
+  .admin-natal-source-card,
+  .admin-variable-reference-card,
+  .admin-status-card,
+  .admin-editor-key-details,
+  .admin-unresolved-content-table,
+  .aspect-diagnostics-controls
+) code {
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  white-space: normal;
+}
+
+/* Medium layouts prioritize readable copy over squeezed multi-column forms. */
+@media (max-width: 1180px) {
+  .admin-dashboard .admin-hook-catalog-results .admin-fallback-row,
+  .admin-dashboard .admin-sky-related-row,
+  .admin-dashboard .admin-template-two-column {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .admin-dashboard .admin-hook-catalog-results .admin-fallback-row-actions {
+    justify-content: flex-start;
+    width: 100%;
+  }
+
+  .admin-dashboard .admin-sky-article-editor {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .admin-dashboard :where(.aspect-writeups-header, .aspect-writeups-editor > header) {
+    align-items: stretch;
+    display: grid;
+  }
+
+  .admin-dashboard :where(.aspect-writeups-header, .aspect-writeups-editor > header) > .admin-new-actions {
+    justify-content: flex-start;
+    width: 100%;
+  }
+}
+
+@media (max-width: 860px) {
+  .admin-dashboard .admin-content-filters {
+    padding: var(--admin-space-xl);
+  }
+
+  .admin-dashboard :where(
+    .admin-section-heading-row,
+    .admin-fallback-diagnostic-heading,
+    .admin-sky-related-heading,
+    .admin-review-copy-heading,
+    .admin-natal-placement-finder-heading,
+    .admin-natal-source-card-heading,
+    .admin-editor-toolbar
+  ) {
+    align-items: stretch;
+    display: grid;
+  }
+
+  .admin-dashboard :where(
+    .admin-section-heading-row,
+    .admin-fallback-diagnostic-heading,
+    .admin-sky-related-heading,
+    .admin-review-copy-heading,
+    .admin-natal-placement-finder-heading,
+    .admin-natal-source-card-heading,
+    .admin-editor-toolbar
+  ) > :where(.admin-new-actions, .admin-fallback-row-actions, .admin-toolbar-actions) {
+    justify-content: flex-start;
+    width: 100%;
+  }
+
+  .admin-dashboard .admin-content-toolbar .admin-toolbar-actions:has(> label) {
+    align-items: stretch;
+    display: grid;
+    width: 100%;
+  }
+}
