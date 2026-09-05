@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import {
   friendDetailRoutePath,
+  friendHandleProfileHref,
   friendProfileHref,
   friendsHashParts,
   friendsRouteStateFromHref,
@@ -8,7 +9,8 @@ import {
   friendsTabHref,
   isFriendsHref,
   parseFriendProfileTab,
-  parseFriendsTab
+  parseFriendsTab,
+  registerFriendHandleRoute
 } from "../apps/web/src/features/friends/friendsRouting.ts";
 import { friendProfileWorkForTab } from "../apps/web/src/features/friends/friendProfileWork.ts";
 
@@ -87,6 +89,48 @@ assert.equal(standaloneProfileUrl.searchParams.get("detail"), "pattern / 1");
 
 const hashProfileUrl = new URL(friendProfileHref("https://example.com/#sky", "chart-2", "natal"));
 assert.equal(hashProfileUrl.hash, "#friends?tab=charts&chart=chart-2&view=natal");
+
+assert.equal(registerFriendHandleRoute("project-author", "social:user-1"), true);
+assert.equal(registerFriendHandleRoute("settings", "social:user-2"), false);
+assert.deepEqual(
+  friendsRouteStateFromHref("https://example.com/project-author"),
+  {
+    tab: "charts",
+    chartId: "social:user-1",
+    view: "compatibility",
+    detail: null
+  }
+);
+assert.deepEqual(
+  friendsRouteStateFromHref("https://example.com/project-author/transits?detail=moon-square-mars"),
+  {
+    tab: "charts",
+    chartId: "social:user-1",
+    view: "transits",
+    detail: "moon-square-mars"
+  }
+);
+assert.equal(friendsRouteStateFromHref("https://example.com/project-author/not-a-tab"), null);
+assert.equal(friendsRouteStateFromHref("https://example.com/settings"), null);
+assert.equal(friendsTabFromHref("https://example.com/project-author/natal"), "charts");
+assert.equal(isFriendsHref("https://example.com/project-author"), true);
+
+const readableCompatibilityUrl = new URL(
+  friendHandleProfileHref("https://example.com/friends?tab=charts", "@project-author", "compatibility")
+);
+assert.equal(readableCompatibilityUrl.pathname, "/project-author");
+assert.equal(readableCompatibilityUrl.search, "");
+assert.equal(readableCompatibilityUrl.hash, "");
+
+const readableTransitUrl = new URL(
+  friendProfileHref("https://example.com/friends", "social:user-1", "transits")
+);
+assert.equal(readableTransitUrl.pathname, "/project-author/transits");
+assert.equal(readableTransitUrl.search, "");
+
+const readableFriendsHubUrl = new URL(friendsTabHref("https://example.com/project-author/natal", "requests"));
+assert.equal(readableFriendsHubUrl.pathname, "/friends");
+assert.equal(readableFriendsHubUrl.search, "?tab=requests");
 
 assert.equal(
   friendDetailRoutePath("chart / 1", "synastry", "contact / 1"),
