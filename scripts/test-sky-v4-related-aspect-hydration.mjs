@@ -6,6 +6,7 @@ import { fileURLToPath } from "node:url";
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const app = fs.readFileSync(path.join(repoRoot, "apps/web/src/App.tsx"), "utf8");
+const routing = fs.readFileSync(path.join(repoRoot, "apps/web/src/services/skyAspectRouting.ts"), "utf8");
 
 const functionStart = app.indexOf("function relatedSkyAspectSectionsForPlacement({");
 const functionEnd = app.indexOf("\nfunction skyPlacementAspectExactMoment(", functionStart);
@@ -38,9 +39,19 @@ assert.match(
   "When only one tone exists, the placement detail must remain capped at its two tightest reader-eligible aspects."
 );
 assert.match(
+  routing,
+  /return composed \?\? exact \?\? signSpecific \?\? phrasebook \?\? generated \?\? fallback \?\? null;/u,
+  "Owner-approved exact aspect copy must outrank legacy sign-specific phrasebook copy."
+);
+assert.doesNotMatch(
+  routing,
+  /return composed \?\? signSpecific \?\? exact/u,
+  "Legacy sign-specific copy must not replace an available exact aspect body."
+);
+assert.match(
   app,
   /const sourceGapAspectRows = isRegistryArticle\s*\? \[\]\s*:\s*relatedAspectRowsForPlacement/u,
   "Unreviewed source-gap aspect rows must remain suppressed for canonical registry articles."
 );
 
-console.log("Sky related-aspect Gift/Lesson balance contract passed.");
+console.log("Sky related-aspect balance and exact-copy authority contract passed.");
