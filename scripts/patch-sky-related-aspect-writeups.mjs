@@ -51,8 +51,12 @@ app = replaceRegexOnce(
   "",
   "Sky placement source-gap rows"
 );
-const sourceGapProperty = `    relatedAspects: sourceGapAspectRows.length > 0\n      ? {\n          heading: "Aspects shaping this transit",\n          rows: sourceGapAspectRows\n        }\n      : undefined,\n`;
-app = replaceOnce(app, sourceGapProperty, "", "Sky placement source-gap rendering");
+app = replaceRegexOnce(
+  app,
+  /    relatedAspects: sourceGapAspectRows\.length > 0[\s\S]*?\n      : undefined,\n/u,
+  "",
+  "Sky placement source-gap rendering"
+);
 
 if (app.includes("setContentRegistryVersion")) throw new Error("Ad-hoc content registry setter remains");
 if (builder.includes(".slice(0, 2)") || builder.includes("giftSection") || builder.includes("lessonSection")) {
