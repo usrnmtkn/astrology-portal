@@ -12,11 +12,12 @@ const reviewDir = path.join(
 const pilot = JSON.parse(fs.readFileSync(path.join(reviewDir, "pilot-review.json"), "utf8"));
 const spec = fs.readFileSync(path.join(reviewDir, "BETWEEN-YOU-TWO-V2-SPEC.md"), "utf8");
 
-assert.equal(pilot.status, "proposed");
+assert.equal(pilot.status, "owner_approved");
 assert.equal(pilot.servingAuthority, false);
-assert.equal(pilot.ownerApprovalRequired, true);
+assert.equal(pilot.ownerApprovalRequired, false);
+assert.equal(pilot.approvedAt, "2026-09-05");
 assert.equal(pilot.records.length, 6);
-assert.ok(pilot.records.every((record) => record.reviewStatus === "proposed"));
+assert.ok(pilot.records.every((record) => record.reviewStatus === "owner_approved"));
 assert.match(spec, /Serving effect: \*\*none\*\*/u);
 assert.match(spec, /Do not render a Between You Two daily synthesis/u);
 assert.match(spec, /separate `body_you` and `body_they` wording/u);
@@ -56,11 +57,22 @@ for (const record of bondRecords) {
     approval.payload.body_they,
     `${contentKey} pilot body_they must be byte-identical to canonical approval payload`
   );
-  assert.ok(record.candidateHeadline?.body_you?.trim(), `${contentKey} needs candidate headline body_you`);
-  assert.ok(record.candidateHeadline?.body_they?.trim(), `${contentKey} needs candidate headline body_they`);
-  assert.ok(record.candidateMove?.body_you?.trim(), `${contentKey} needs candidate move body_you`);
-  assert.ok(record.candidateMove?.body_they?.trim(), `${contentKey} needs candidate move body_they`);
+  assert.ok(record.candidateHeadline?.body_you?.trim(), `${contentKey} needs approved headline body_you`);
+  assert.ok(record.candidateHeadline?.body_they?.trim(), `${contentKey} needs approved headline body_they`);
+  assert.ok(record.candidateMove?.body_you?.trim(), `${contentKey} needs approved move body_you`);
+  assert.ok(record.candidateMove?.body_they?.trim(), `${contentKey} needs approved move body_they`);
 }
+
+const saturn = pilot.records.find((record) => record.id === "hard-saturn");
+assert.equal(
+  saturn.candidateMove.body_you,
+  "Decide who is actually handling the next step before you make another plan."
+);
+const softJupiter = pilot.records.find((record) => record.id === "soft-jupiter");
+assert.equal(
+  softJupiter.candidateHeadline.body_you,
+  "They may bring you an opportunity that actually fits your life."
+);
 
 const moonRecord = pilot.records.find((record) => record.evidenceTier === "shared-moon");
 assert.ok(moonRecord);
@@ -70,4 +82,4 @@ assert.ok(moonRecord.candidateBody?.trim());
 assert.equal(moonRecord.candidateMove, null);
 assert.equal(moonRecord.bodyAuthority, undefined);
 
-console.log("Between You Two V2 pilot provenance contract passed: 5 canonical directional bond bodies + 1 dark Moon candidate; 0 serving authority.");
+console.log("Between You Two V2 owner-approved pilot contract passed: 5 canonical directional bond bodies + 1 approved Moon calibration; 0 serving authority.");
