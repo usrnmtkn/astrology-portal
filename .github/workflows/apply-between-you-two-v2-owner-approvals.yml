@@ -37,11 +37,13 @@ jobs:
           const fs = require('fs');
           const p = 'apps/web/src/content/fallbackArchitectureV3/source-rows/pair-daily-v2-rows.json';
           const data = JSON.parse(fs.readFileSync(p, 'utf8'));
-          if (data.schema !== 'tldrastro-between-you-two-v2-source-rows/v2') throw new Error('wrong V2 source schema');
-          if (data.rowCount !== 120 || data.approvedCount !== 24 || data.needsReviewCount !== 96) throw new Error(JSON.stringify({rowCount:data.rowCount,approved:data.approvedCount,held:data.needsReviewCount}));
+          if (data.schema !== 'tldrastro-between-you-two-v2-source-rows/v3') throw new Error('wrong V2 source schema');
+          if (data.rowCount !== 127 || data.approvedCount !== 45 || data.needsReviewCount !== 82) throw new Error(JSON.stringify({rowCount:data.rowCount,approved:data.approvedCount,held:data.needsReviewCount}));
           const approvedThey = data.rows.filter(row => row.review_status === 'approved' && row.v2_direction === 'they');
           if (approvedThey.length) throw new Error(`reverse-direction rows approved unexpectedly: ${approvedThey.map(row => row.contentKey).join(', ')}`);
-          console.log('Direction-safe V2 source rows verified: 24 approved, 96 held, 0 approved reverse-direction rows.');
+          const approvedBodies = data.rows.filter(row => row.review_status === 'approved' && row.v2_piece === 'body' && row.v2_direction === 'you');
+          if (approvedBodies.length !== 7) throw new Error(`expected 7 approved V2 lead bodies, got ${approvedBodies.length}`);
+          console.log('Direction-safe V2 source rows verified: 45 approved, 82 held, 7 approved reader lead bodies, 0 approved reverse-direction rows.');
           NODE
       - name: Commit governed review and source projection
         run: |
