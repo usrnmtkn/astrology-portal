@@ -1,0 +1,233 @@
+{
+  "generatedAt": "2026-09-05T05:36:42.836Z",
+  "note": "Diagnostic only. No V2 copy in this artifact is serving or approved.",
+  "scenarioCount": 8,
+  "outputs": [
+    {
+      "id": "different-days-moon-earth",
+      "purpose": "Two unrelated personal daily clauses followed by a generic shared Moon condition.",
+      "variant": 1,
+      "reader": {
+        "handle": "reader",
+        "clauseKey": "fallback-hook/pair-daily/clause/square/venus"
+      },
+      "friend": {
+        "handle": "friend",
+        "displayName": "Friend",
+        "clauseKey": "fallback-hook/pair-daily/clause/house/4"
+      },
+      "shared": {
+        "kind": "moon",
+        "element": "earth"
+      },
+      "status": "rendered",
+      "body": "@reader, you are letting a slow reply be a slow reply instead of assuming something is wrong, while @friend is fixing the thing at home that makes the day harder every single time. You are both focused on what needs to get done, with less patience for talking through every step.",
+      "wordCount": 51,
+      "sourceKeys": [
+        "fallback-hook/pair-daily/opener",
+        "fallback-hook/pair-daily/clause/square/venus",
+        "fallback-hook/pair-daily/clause/house/4",
+        "fallback-hook/pair-daily/shared-moon/earth"
+      ]
+    },
+    {
+      "id": "same-driver-hard-bond",
+      "purpose": "Exact same-clause collapse followed by a hard shared bond condition.",
+      "variant": 1,
+      "reader": {
+        "handle": "reader",
+        "clauseKey": "fallback-hook/pair-daily/clause/opposition/saturn"
+      },
+      "friend": {
+        "handle": "friend",
+        "displayName": "Friend",
+        "clauseKey": "fallback-hook/pair-daily/clause/opposition/saturn"
+      },
+      "shared": {
+        "kind": "bond",
+        "family": "hard",
+        "transiting": "jupiter"
+      },
+      "status": "rendered",
+      "body": "@reader, both you and @friend are noticing when trying harder is no longer fixing the problem. You are both stretched a little thin, so even something minor can start to feel personal. You are making plans for time, money, or energy neither of you actually has, so cut it back before the excitement becomes another obligation.",
+      "wordCount": 56,
+      "sourceKeys": [
+        "fallback-hook/pair-daily/opener/shared-clause",
+        "fallback-hook/pair-daily/clause/opposition/saturn",
+        "fallback-hook/pair-daily/clause/opposition/saturn",
+        "fallback-hook/pair-daily/shared-bond/hard",
+        "fallback-hook/pair-daily/bond-clause/hard/jupiter"
+      ]
+    },
+    {
+      "id": "reactivity-vs-information-hard-saturn",
+      "purpose": "Different personal pressures plus a Saturn relationship-friction bridge and closing advice.",
+      "variant": 1,
+      "reader": {
+        "handle": "reader",
+        "clauseKey": "fallback-hook/pair-daily/clause/square/mars"
+      },
+      "friend": {
+        "handle": "friend",
+        "displayName": "Friend",
+        "clauseKey": "fallback-hook/pair-daily/clause/square/mercury"
+      },
+      "shared": {
+        "kind": "bond",
+        "family": "hard",
+        "transiting": "saturn"
+      },
+      "status": "rendered",
+      "body": "@reader, you are deciding what deserves your energy before you react, while @friend is leaving the reply in drafts until the missing context shows up. You are both stretched a little thin, so even something minor can start to feel personal. The chores, deadlines, or obligations are eating the warmth out of the room, and doing what you promised matters more than saying everything is fine. Keep the plan you already made. Don't reschedule twice and pretend it's flexibility.",
+      "wordCount": 79,
+      "sourceKeys": [
+        "fallback-hook/pair-daily/opener",
+        "fallback-hook/pair-daily/clause/square/mars",
+        "fallback-hook/pair-daily/clause/square/mercury",
+        "fallback-hook/pair-daily/shared-bond/hard",
+        "fallback-hook/pair-daily/bond-clause/hard/saturn",
+        "fallback-hook/pair-daily/close/hard"
+      ]
+    },
+    {
+      "id": "approval-vs-uncertainty-hard-mercury",
+      "purpose": "Identity/approval pressure and uncertainty joined to a Mercury relationship-friction bridge.",
+      "variant": 2,
+      "reader": {
+        "handle": "reader",
+        "clauseKey": "fallback-hook/pair-daily/clause/square/sun"
+      },
+      "friend": {
+        "handle": "friend",
+        "displayName": "Friend",
+        "clauseKey": "fallback-hook/pair-daily/clause/square/neptune"
+      },
+      "shared": {
+        "kind": "bond",
+        "family": "hard",
+        "transiting": "mercury"
+      },
+      "status": "rendered",
+      "body": "@reader, your attention is on saying what you want before you start shaping it into something everyone else will approve of; @friend's is on letting the first message stand instead of sending another one to manage how it was received. One strange text or offhand comment follows you both longer than either of you meant it to. A short text sounds sharper than it was meant to, and now you are answering the tone instead of the actual plan. Keep the plan you already made. Don't reschedule twice and pretend it's flexibility.",
+      "wordCount": 92,
+      "sourceKeys": [
+        "fallback-hook/pair-daily/opener/variant-2",
+        "fallback-hook/pair-daily/clause/square/sun/variant-2",
+        "fallback-hook/pair-daily/clause/square/neptune/variant-2",
+        "fallback-hook/pair-daily/shared-bond/hard/variant-2",
+        "fallback-hook/pair-daily/bond-clause/hard/mercury",
+        "fallback-hook/pair-daily/close/hard"
+      ]
+    },
+    {
+      "id": "soft-venus-bond",
+      "purpose": "Two distinct personal pressures joined to a Venus relationship-support bridge.",
+      "variant": 10,
+      "reader": {
+        "handle": "reader",
+        "clauseKey": "fallback-hook/pair-daily/clause/square/venus"
+      },
+      "friend": {
+        "handle": "friend",
+        "displayName": "Friend",
+        "clauseKey": "fallback-hook/pair-daily/clause/opposition/moon"
+      },
+      "shared": {
+        "kind": "bond",
+        "family": "soft",
+        "transiting": "venus"
+      },
+      "status": "rendered",
+      "body": "@reader, you are putting the credit card away before disappointment starts shopping for you, while @friend is helping without rearranging their day around someone else. The plan that kept slipping gets a date, and suddenly it feels real. A small gesture of affection reaches the place the long conversation kept circling.",
+      "wordCount": 51,
+      "sourceKeys": [
+        "fallback-hook/pair-daily/opener",
+        "fallback-hook/pair-daily/clause/square/venus/variant-2",
+        "fallback-hook/pair-daily/clause/opposition/moon",
+        "fallback-hook/pair-daily/shared-bond/soft/variant-10",
+        "fallback-hook/pair-daily/bond-clause/soft/venus"
+      ]
+    },
+    {
+      "id": "soft-jupiter-bond",
+      "purpose": "Different personal pressures joined to a Jupiter relationship-support bridge.",
+      "variant": 3,
+      "reader": {
+        "handle": "reader",
+        "clauseKey": "fallback-hook/pair-daily/clause/square/jupiter"
+      },
+      "friend": {
+        "handle": "friend",
+        "displayName": "Friend",
+        "clauseKey": "fallback-hook/pair-daily/clause/square/mercury"
+      },
+      "shared": {
+        "kind": "bond",
+        "family": "soft",
+        "transiting": "jupiter"
+      },
+      "status": "rendered",
+      "body": "You are letting the calendar answer before your enthusiasm promises too much, while @friend is leaving the reply in drafts until the missing context shows up. You are giving each other more benefit of the doubt. One idea turns into three plans fast, so check the calendar before you promise all of them.",
+      "wordCount": 53,
+      "sourceKeys": [
+        "fallback-hook/pair-daily/opener/variant-3",
+        "fallback-hook/pair-daily/clause/square/jupiter",
+        "fallback-hook/pair-daily/clause/square/mercury",
+        "fallback-hook/pair-daily/shared-bond/soft/variant-3",
+        "fallback-hook/pair-daily/bond-clause/soft/jupiter"
+      ]
+    },
+    {
+      "id": "moon-fire-fallback",
+      "purpose": "No bond transit; shared sentence comes only from today's Moon element.",
+      "variant": 2,
+      "reader": {
+        "handle": "reader",
+        "clauseKey": "fallback-hook/pair-daily/clause/square/mars"
+      },
+      "friend": {
+        "handle": "friend",
+        "displayName": "Friend",
+        "clauseKey": "fallback-hook/pair-daily/clause/opposition/moon"
+      },
+      "shared": {
+        "kind": "moon",
+        "element": "fire"
+      },
+      "status": "rendered",
+      "body": "@reader, your attention is on telling them when you can do it instead of letting their urgency set your schedule; @friend's is on helping without rearranging their day around someone else. You are both moving on impulse. Actions happen fast, but patience for minor delays is basically zero.",
+      "wordCount": 48,
+      "sourceKeys": [
+        "fallback-hook/pair-daily/opener/variant-2",
+        "fallback-hook/pair-daily/clause/square/mars/variant-2",
+        "fallback-hook/pair-daily/clause/opposition/moon",
+        "fallback-hook/pair-daily/shared-moon/fire/variant-2"
+      ]
+    },
+    {
+      "id": "no-shared-condition",
+      "purpose": "Both daily clauses exist but there is no defensible shared condition.",
+      "variant": 3,
+      "reader": {
+        "handle": "reader",
+        "clauseKey": "fallback-hook/pair-daily/clause/square/venus"
+      },
+      "friend": {
+        "handle": "friend",
+        "displayName": "Friend",
+        "clauseKey": "fallback-hook/pair-daily/clause/square/saturn"
+      },
+      "shared": {
+        "kind": null
+      },
+      "status": "rendered",
+      "body": "You are letting a slow reply be a slow reply instead of assuming something is wrong, while @friend is refusing to turn a slower pace into proof that they are behind.",
+      "wordCount": 31,
+      "sourceKeys": [
+        "fallback-hook/pair-daily/opener/variant-3",
+        "fallback-hook/pair-daily/clause/square/venus",
+        "fallback-hook/pair-daily/clause/square/saturn"
+      ]
+    }
+  ]
+}
