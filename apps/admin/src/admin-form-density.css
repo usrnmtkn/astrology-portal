@@ -55,6 +55,8 @@
 
 .admin-dashboard :where(
   .admin-content-filters,
+  .admin-review-filters,
+  .admin-controls,
   .admin-generation-inputs,
   .admin-form-grid,
   .admin-metadata-fields,
@@ -66,6 +68,8 @@
 
 .admin-dashboard :where(
   .admin-content-filters,
+  .admin-review-filters,
+  .admin-controls,
   .admin-generation-inputs,
   .admin-form-grid,
   .admin-metadata-fields,
@@ -92,6 +96,10 @@
 .admin-dashboard :where(
   .admin-section-heading-row,
   .admin-fallback-diagnostic-heading,
+  .admin-sky-related-heading,
+  .admin-review-copy-heading,
+  .admin-natal-placement-finder-heading,
+  .admin-natal-source-card-heading,
   .admin-editor-toolbar,
   .admin-content-toolbar
 ) {
@@ -101,6 +109,10 @@
 .admin-dashboard :where(
   .admin-section-heading-row,
   .admin-fallback-diagnostic-heading,
+  .admin-sky-related-heading,
+  .admin-review-copy-heading,
+  .admin-natal-placement-finder-heading,
+  .admin-natal-source-card-heading,
   .admin-editor-toolbar,
   .admin-content-toolbar
 ) > * {
@@ -206,6 +218,10 @@
   .admin-dashboard :where(
     .admin-section-heading-row,
     .admin-fallback-diagnostic-heading,
+    .admin-sky-related-heading,
+    .admin-review-copy-heading,
+    .admin-natal-placement-finder-heading,
+    .admin-natal-source-card-heading,
     .admin-editor-toolbar
   ) {
     align-items: stretch;
@@ -215,6 +231,10 @@
   .admin-dashboard :where(
     .admin-section-heading-row,
     .admin-fallback-diagnostic-heading,
+    .admin-sky-related-heading,
+    .admin-review-copy-heading,
+    .admin-natal-placement-finder-heading,
+    .admin-natal-source-card-heading,
     .admin-editor-toolbar
   ) > :where(.admin-new-actions, .admin-fallback-row-actions, .admin-toolbar-actions) {
     justify-content: flex-start;
