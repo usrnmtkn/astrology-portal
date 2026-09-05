@@ -38,6 +38,28 @@ assert.match(
   /return resolvedSections[\s\S]*?\.slice\(0, 2\)[\s\S]*?\.map\(\(\{ section \}\) => section\);/u,
   "When only one tone exists, the placement detail must remain capped at its two tightest reader-eligible aspects."
 );
+
+assert.match(
+  app,
+  /const contentRegistryVersion = useContentRegistryRevision\(\);/u,
+  "Open Sky details must synchronize the current lazy content-registry revision on mount."
+);
+assert.match(
+  app,
+  /const refreshKey = `\$\{skyDetailRoutePath\}:\$\{fallbackArchitectureV3Version\}:\$\{contentRegistryVersion\}:\$\{personalizationKey\}`;/u,
+  "The open-detail refresh key must change when exact registry content arrives."
+);
+assert.match(
+  app,
+  /\}, \[contentRegistryVersion, fallbackArchitectureV3Version, profileNatalSky\?\.ascendant, selectedSkyDetail\?\.routePath, sky, skyDetailRoutePath, skyGeneratedContent, skyPlacementPersonalizationTransits, userProfile\?\.rising\]\);/u,
+  "The open-detail refresh effect must depend on the content-registry revision."
+);
+assert.doesNotMatch(
+  app,
+  /setContentRegistryVersion/u,
+  "Open Sky details must not use the race-prone duplicate registry listener."
+);
+
 assert.match(
   routing,
   /return composed \?\? exact \?\? signSpecific \?\? phrasebook \?\? generated \?\? fallback \?\? null;/u,
@@ -54,4 +76,4 @@ assert.match(
   "Unreviewed source-gap aspect rows must remain suppressed for canonical registry articles."
 );
 
-console.log("Sky related-aspect balance and exact-copy authority contract passed.");
+console.log("Sky related-aspect balance, registry refresh, and exact-copy authority contract passed.");
