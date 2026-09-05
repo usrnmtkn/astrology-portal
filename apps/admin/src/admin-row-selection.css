@@ -1,3 +1,5 @@
+@import "./admin-content-readability.css";
+
 /* Owner decision, 2026-09-05: Content Studio row selection stays hidden.
    Selection state and bulk mutation logic may remain internal, but editor rows should not expose
    selection checkboxes, Select columns, or the bulk-action bar. */
