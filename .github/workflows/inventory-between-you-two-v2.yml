@@ -1,0 +1,19 @@
+name: Inventory Between You Two V2
+on:
+  push:
+    branches:
+      - owner/between-you-two-v2-20260905
+    paths:
+      - scripts/inventory-between-you-two-v2.mjs
+      - .github/workflows/inventory-between-you-two-v2.yml
+permissions:
+  contents: read
+jobs:
+  inventory:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+      - run: node scripts/inventory-between-you-two-v2.mjs
