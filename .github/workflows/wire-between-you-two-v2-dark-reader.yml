@@ -7,6 +7,7 @@ on:
     paths:
       - "scripts/patch-between-you-two-v2-reader.mjs"
       - "scripts/test-between-you-two-v2-runtime.mts"
+      - "scripts/test-between-you-two-v2-wiring.mjs"
       - "apps/web/src/services/betweenYouTwoV2.ts"
       - ".github/workflows/wire-between-you-two-v2-dark-reader.yml"
 
@@ -34,8 +35,8 @@ jobs:
         run: node --import tsx scripts/test-between-you-two-v2-runtime.mts
       - name: Preserve V1 rollback renderer contract
         run: node --experimental-strip-types scripts/test-pair-daily.mjs
-      - name: Check fallback refresh/source wiring
-        run: node scripts/test-fallback-refresh-wiring.mjs
+      - name: Verify V2 reader and UI wiring
+        run: node scripts/test-between-you-two-v2-wiring.mjs
       - name: Build astro knowledge
         run: npm run build -w @tldr/astro-knowledge
       - name: Build web
