@@ -1,0 +1,223 @@
+/* Content Studio form-density pass, owner requested 2026-09-05.
+   Keep form controls readable, prevent pills/actions from covering copy, and reduce
+   unnecessary vertical space without changing content or workflow behavior. */
+
+/* Every editable control must stay inside its grid/flex cell. */
+.admin-dashboard :where(
+  input:not([type="checkbox"]):not([type="radio"]),
+  select,
+  textarea
+) {
+  max-width: 100%;
+  min-width: 0;
+  width: 100%;
+}
+
+.admin-dashboard textarea {
+  line-height: var(--leading-body);
+  resize: vertical;
+}
+
+/* Labels read as one compact unit: label, control, then help text. */
+.admin-dashboard :where(
+  .admin-title-field,
+  .admin-metadata-field,
+  .admin-review-copy-editor,
+  .admin-review-tldr-editor,
+  .admin-access-inline-field
+) {
+  gap: var(--admin-space-sm);
+  min-width: 0;
+}
+
+.admin-dashboard :where(
+  .admin-title-field,
+  .admin-metadata-field,
+  .admin-review-copy-editor,
+  .admin-review-tldr-editor,
+  .admin-access-inline-field
+) > span:first-child {
+  color: var(--admin-text-secondary);
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-meta);
+}
+
+.admin-dashboard .admin-field-hint {
+  color: var(--admin-muted);
+  line-height: var(--leading-description);
+  margin-top: 0;
+}
+
+/* Dense forms should still preserve clear section boundaries. */
+.admin-dashboard .admin-editor-panel > .admin-post-editor {
+  gap: var(--admin-space-4xl);
+}
+
+.admin-dashboard :where(
+  .admin-content-filters,
+  .admin-generation-inputs,
+  .admin-form-grid,
+  .admin-metadata-fields,
+  .admin-sky-edition-fields,
+  .admin-natal-placement-selectors
+) {
+  gap: var(--admin-space-xl);
+}
+
+.admin-dashboard :where(
+  .admin-content-filters,
+  .admin-generation-inputs,
+  .admin-form-grid,
+  .admin-metadata-fields,
+  .admin-sky-edition-fields,
+  .admin-natal-placement-selectors
+) > * {
+  min-width: 0;
+}
+
+.admin-dashboard .admin-content-filters {
+  padding: var(--admin-space-xl) var(--admin-space-2xl);
+}
+
+.admin-dashboard .admin-metadata-field {
+  padding-top: var(--admin-space-xl);
+}
+
+.admin-dashboard .admin-sky-edition-fields .admin-review-copy-editor,
+.admin-dashboard .admin-sky-article-editor .admin-review-copy-editor {
+  padding: var(--admin-space-lg) var(--admin-space-xl);
+}
+
+/* A header's actions/status can never sit on top of its title or description. */
+.admin-dashboard :where(
+  .admin-section-heading-row,
+  .admin-fallback-diagnostic-heading,
+  .admin-editor-toolbar,
+  .admin-content-toolbar
+) {
+  min-width: 0;
+}
+
+.admin-dashboard :where(
+  .admin-section-heading-row,
+  .admin-fallback-diagnostic-heading,
+  .admin-editor-toolbar,
+  .admin-content-toolbar
+) > * {
+  min-width: 0;
+}
+
+.admin-dashboard .admin-section-heading-row {
+  align-items: flex-start;
+}
+
+.admin-dashboard :where(.ui-pill, .admin-status, .admin-restriction-pill) {
+  line-height: var(--leading-meta);
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  text-align: center;
+  white-space: normal;
+}
+
+/* Packaged sources were inheriting a horizontal fallback-row-main layout, which
+   put the eyebrow, title, and content key on one line and let status/actions cover
+   the title. Source cards are a vertical text stack with a separate action column. */
+.admin-dashboard .admin-hook-catalog-results .admin-fallback-row {
+  align-items: start;
+  gap: var(--admin-space-xl) var(--admin-space-2xl);
+  grid-template-columns: minmax(0, 1fr) auto;
+  padding: var(--admin-space-xl) var(--admin-space-2xl);
+}
+
+.admin-dashboard .admin-hook-catalog-results .admin-fallback-row-main {
+  align-items: start;
+  display: grid;
+  gap: var(--admin-space-xs);
+  justify-content: stretch;
+  min-width: 0;
+}
+
+.admin-dashboard .admin-hook-catalog-results .admin-fallback-row-main > :where(p, h3, code) {
+  margin: 0;
+  max-width: 100%;
+  min-width: 0;
+}
+
+.admin-dashboard .admin-hook-catalog-results .admin-fallback-row-main h3 {
+  overflow-wrap: anywhere;
+}
+
+.admin-dashboard .admin-hook-catalog-results .admin-fallback-row-main code {
+  overflow-wrap: anywhere;
+  white-space: normal;
+}
+
+.admin-dashboard .admin-hook-catalog-results .admin-fallback-row-actions {
+  align-self: start;
+  justify-content: flex-end;
+  max-width: 100%;
+  min-width: 0;
+}
+
+.admin-dashboard .admin-hook-catalog-results .admin-fallback-row-actions button {
+  max-width: 100%;
+  white-space: normal;
+}
+
+.admin-dashboard .admin-hook-catalog-results > .admin-section-heading-row {
+  gap: var(--admin-space-xl);
+  padding-block: var(--admin-space-xl);
+}
+
+/* Long keys, names, and helper copy should wrap instead of widening cards. */
+.admin-dashboard :where(
+  .admin-content-row,
+  .admin-hook-detail-section,
+  .admin-fallback-row,
+  .admin-natal-source-card,
+  .admin-variable-reference-card
+) code {
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  white-space: normal;
+}
+
+/* Medium layouts prioritize readable copy over a squeezed two-column form. */
+@media (max-width: 1180px) {
+  .admin-dashboard .admin-hook-catalog-results .admin-fallback-row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .admin-dashboard .admin-hook-catalog-results .admin-fallback-row-actions {
+    justify-content: flex-start;
+    width: 100%;
+  }
+
+  .admin-dashboard .admin-sky-article-editor {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 860px) {
+  .admin-dashboard .admin-content-filters {
+    padding: var(--admin-space-xl);
+  }
+
+  .admin-dashboard :where(
+    .admin-section-heading-row,
+    .admin-fallback-diagnostic-heading,
+    .admin-editor-toolbar
+  ) {
+    align-items: stretch;
+    display: grid;
+  }
+
+  .admin-dashboard :where(
+    .admin-section-heading-row,
+    .admin-fallback-diagnostic-heading,
+    .admin-editor-toolbar
+  ) > :where(.admin-new-actions, .admin-fallback-row-actions, .admin-toolbar-actions) {
+    justify-content: flex-start;
+    width: 100%;
+  }
+}
