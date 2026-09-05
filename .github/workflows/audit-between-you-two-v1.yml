@@ -1,0 +1,47 @@
+name: Audit Between You Two V1
+
+on:
+  push:
+    branches:
+      - "owner/between-you-two-v2-20260905"
+    paths:
+      - "scripts/audit-between-you-two-v1.mjs"
+      - ".github/workflows/audit-between-you-two-v1.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Generate V1 render audit
+        run: node scripts/audit-between-you-two-v1.mjs
+      - name: Validate audit matrix
+        run: |
+          node - <<'NODE'
+          const fs = require('fs');
+          const p = 'packages/astro-knowledge/review/between-you-two-v2-2026-09-05/v1-render-audit.json';
+          const audit = JSON.parse(fs.readFileSync(p, 'utf8'));
+          if (audit.scenarioCount !== 8) throw new Error(`expected 8 scenarios, got ${audit.scenarioCount}`);
+          const gaps = audit.outputs.filter((row) => row.status !== 'rendered');
+          if (gaps.length) throw new Error(`unexpected source gaps: ${JSON.stringify(gaps, null, 2)}`);
+          console.log('Between You Two V1 audit matrix rendered all 8 scenarios.');
+          NODE
+      - name: Commit diagnostic artifact
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add packages/astro-knowledge/review/between-you-two-v2-2026-09-05/v1-render-audit.json
+          git diff --cached --check
+          git commit -m "review(friends): capture Between You Two V1 render audit"
+          git push origin HEAD
