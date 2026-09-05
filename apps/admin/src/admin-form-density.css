@@ -24,8 +24,18 @@
   .admin-metadata-field,
   .admin-review-copy-editor,
   .admin-review-tldr-editor,
-  .admin-access-inline-field
+  .admin-access-inline-field,
+  .admin-editor-guidance > label,
+  .admin-review-filter-grid > label,
+  .admin-review-stack .admin-hook-detail-section > label,
+  .admin-content-toolbar .admin-toolbar-actions > label,
+  .admin-field-wide > label,
+  .admin-template-two-column > label,
+  .aspect-writeups-filters > label,
+  .aspect-writeups-status,
+  .aspect-writeups-fields > label
 ) {
+  display: grid;
   gap: var(--admin-space-sm);
   min-width: 0;
 }
@@ -35,11 +45,48 @@
   .admin-metadata-field,
   .admin-review-copy-editor,
   .admin-review-tldr-editor,
-  .admin-access-inline-field
+  .admin-access-inline-field,
+  .admin-editor-guidance > label,
+  .admin-review-filter-grid > label,
+  .admin-review-stack .admin-hook-detail-section > label,
+  .aspect-writeups-filters > label,
+  .aspect-writeups-status,
+  .aspect-writeups-fields > label
 ) > span:first-child {
   color: var(--admin-text-secondary);
   font-weight: var(--weight-semibold);
   line-height: var(--leading-meta);
+}
+
+/* Some operational forms use plain text nodes as their labels. Give those labels
+   the same hierarchy, then return the actual control to normal body weight. */
+.admin-dashboard :where(
+  .admin-content-toolbar .admin-toolbar-actions > label,
+  .admin-field-wide > label,
+  .admin-template-two-column > label
+) {
+  color: var(--admin-text-secondary);
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-meta);
+}
+
+.admin-dashboard :where(
+  .admin-content-toolbar .admin-toolbar-actions > label,
+  .admin-field-wide > label,
+  .admin-template-two-column > label
+) > :where(input, select, textarea, .admin-search-input-shell) {
+  color: var(--admin-ink);
+  font-weight: var(--weight-regular);
+}
+
+.admin-dashboard .admin-content-toolbar .admin-toolbar-actions:has(> label) {
+  align-items: end;
+  justify-content: flex-start;
+  min-width: 0;
+}
+
+.admin-dashboard .admin-content-toolbar .admin-toolbar-actions > label {
+  flex: 1 1 auto;
 }
 
 .admin-dashboard .admin-field-hint {
@@ -61,7 +108,11 @@
   .admin-form-grid,
   .admin-metadata-fields,
   .admin-sky-edition-fields,
-  .admin-natal-placement-selectors
+  .admin-natal-placement-selectors,
+  .admin-review-filter-grid,
+  .aspect-writeups-filters,
+  .aspect-writeups-fields,
+  .admin-template-two-column
 ) {
   gap: var(--admin-space-xl);
 }
@@ -74,7 +125,11 @@
   .admin-form-grid,
   .admin-metadata-fields,
   .admin-sky-edition-fields,
-  .admin-natal-placement-selectors
+  .admin-natal-placement-selectors,
+  .admin-review-filter-grid,
+  .aspect-writeups-filters,
+  .aspect-writeups-fields,
+  .admin-template-two-column
 ) > * {
   min-width: 0;
 }
@@ -92,10 +147,6 @@
   padding: var(--admin-space-lg) var(--admin-space-xl);
 }
 
-.admin-dashboard .admin-review-copy-editor textarea.admin-copy-field-body {
-  min-height: 180px;
-}
-
 /* A header's actions/status can never sit on top of its title or description. */
 .admin-dashboard :where(
   .admin-section-heading-row,
@@ -105,7 +156,9 @@
   .admin-natal-placement-finder-heading,
   .admin-natal-source-card-heading,
   .admin-editor-toolbar,
-  .admin-content-toolbar
+  .admin-content-toolbar,
+  .aspect-writeups-header,
+  .aspect-writeups-editor > header
 ) {
   min-width: 0;
 }
@@ -118,7 +171,9 @@
   .admin-natal-placement-finder-heading,
   .admin-natal-source-card-heading,
   .admin-editor-toolbar,
-  .admin-content-toolbar
+  .admin-content-toolbar,
+  .aspect-writeups-header,
+  .aspect-writeups-editor > header
 ) > * {
   min-width: 0;
 }
@@ -229,23 +284,26 @@
   max-width: 100%;
 }
 
-/* Long keys, names, and helper copy should wrap instead of widening cards. */
+/* Long keys, names, helper copy, and operational JSON should wrap instead of
+   widening a card until another component sits on top of it. */
 .admin-dashboard :where(
   .admin-content-row,
   .admin-hook-detail-section,
   .admin-fallback-row,
   .admin-natal-source-card,
-  .admin-variable-reference-card
+  .admin-variable-reference-card,
+  .admin-status-card
 ) code {
   max-width: 100%;
   overflow-wrap: anywhere;
   white-space: normal;
 }
 
-/* Medium layouts prioritize readable copy over a squeezed two-column form. */
+/* Medium layouts prioritize readable copy over squeezed multi-column forms. */
 @media (max-width: 1180px) {
   .admin-dashboard .admin-hook-catalog-results .admin-fallback-row,
-  .admin-dashboard .admin-sky-related-row {
+  .admin-dashboard .admin-sky-related-row,
+  .admin-dashboard .admin-template-two-column {
     grid-template-columns: minmax(0, 1fr);
   }
 
@@ -257,15 +315,21 @@
   .admin-dashboard .admin-sky-article-editor {
     grid-template-columns: minmax(0, 1fr);
   }
+
+  .admin-dashboard :where(.aspect-writeups-header, .aspect-writeups-editor > header) {
+    align-items: stretch;
+    display: grid;
+  }
+
+  .admin-dashboard :where(.aspect-writeups-header, .aspect-writeups-editor > header) > .admin-new-actions {
+    justify-content: flex-start;
+    width: 100%;
+  }
 }
 
 @media (max-width: 860px) {
   .admin-dashboard .admin-content-filters {
     padding: var(--admin-space-xl);
-  }
-
-  .admin-dashboard .admin-review-copy-editor textarea.admin-copy-field-body {
-    min-height: 160px;
   }
 
   .admin-dashboard :where(
@@ -294,7 +358,9 @@
     width: 100%;
   }
 
-  .admin-dashboard .admin-editor-savebar button {
-    flex: 1 1 calc(50% - var(--admin-space-md));
+  .admin-dashboard .admin-content-toolbar .admin-toolbar-actions:has(> label) {
+    align-items: stretch;
+    display: grid;
+    width: 100%;
   }
 }
