@@ -348,3 +348,57 @@
   min-width: 0;
 }
 
+/* Content Studio usability hierarchy: title first, context second, implementation details last. */
+.admin-dashboard .admin-review-queue-copy h3 {
+  display: block;
+  overflow: visible;
+  overflow-wrap: anywhere;
+  text-overflow: clip;
+  white-space: normal;
+  -webkit-box-orient: initial;
+  -webkit-line-clamp: unset;
+}
+
+.admin-dashboard .admin-review-queue-use {
+  color: var(--admin-muted);
+  font-size: var(--admin-ui-type-caption);
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-meta);
+}
+
+.admin-dashboard .admin-review-queue-copy code {
+  color: var(--admin-text-disabled);
+  font-size: var(--admin-ui-type-caption);
+  font-weight: var(--weight-regular);
+  max-width: 100%;
+}
+
+.admin-dashboard .admin-review-queue-meta-strip {
+  justify-content: flex-start;
+}
+
+.admin-dashboard .admin-editor-context-line {
+  align-items: baseline;
+  color: var(--admin-muted);
+  display: flex;
+  flex-wrap: wrap;
+  font-size: var(--admin-ui-type-caption);
+  gap: var(--admin-space-sm) var(--admin-space-lg);
+  line-height: var(--leading-meta);
+  margin: var(--admin-space-sm) 0 0;
+  min-width: 0;
+}
+
+.admin-dashboard .admin-editor-context-line span {
+  flex: 0 0 auto;
+}
+
+.admin-dashboard .admin-editor-context-line code {
+  color: var(--admin-text-disabled);
+  font-size: inherit;
+  font-weight: var(--weight-regular);
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  white-space: normal;
+}
+
