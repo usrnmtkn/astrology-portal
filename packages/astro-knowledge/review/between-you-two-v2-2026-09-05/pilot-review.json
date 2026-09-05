@@ -1,10 +1,12 @@
 {
   "schemaVersion": 1,
   "id": "between-you-two-v2-pilot-2026-09-05",
-  "status": "proposed",
+  "status": "owner_approved",
   "servingAuthority": false,
-  "ownerApprovalRequired": true,
-  "note": "The five bond bodies are existing exact-owner-approved copy and are not being rewritten. Both canonical directional bodies are preserved exactly. Only candidateHeadline, candidateMove, and the Moon-only candidateBody are new review material.",
+  "ownerApprovalRequired": false,
+  "approvedAt": "2026-09-05",
+  "approvalSource": "Owner said the pilot examples were good and then explicitly agreed with the MarieSatori.com-calibrated edits.",
+  "note": "The five bond bodies are existing exact-owner-approved copy and are not being rewritten. Both canonical directional bodies are preserved exactly. The V2 pilot headlines, moves, and Moon-only wording are owner-approved calibration copy, but this review artifact alone grants no serving authority.",
   "records": [
     {
       "id": "hard-saturn",
@@ -27,10 +29,10 @@
         "note": "Display as subordinate context only. Do not splice into the relationship paragraph."
       },
       "candidateMove": {
-        "body_you": "Before either of you makes another plan, decide who is actually responsible for the next step.",
-        "body_they": "Before either of you makes another plan, decide who is actually responsible for the next step."
+        "body_you": "Decide who is actually handling the next step before you make another plan.",
+        "body_they": "Decide who is actually handling the next step before you make another plan."
       },
-      "reviewStatus": "proposed"
+      "reviewStatus": "owner_approved"
     },
     {
       "id": "hard-mercury",
@@ -56,7 +58,7 @@
         "body_you": "Answer what was actually said before you start arguing with the tone.",
         "body_they": "If your reply was brief, make the meaning clear before {{holder1}} has to guess."
       },
-      "reviewStatus": "proposed"
+      "reviewStatus": "owner_approved"
     },
     {
       "id": "hard-jupiter",
@@ -82,7 +84,7 @@
         "body_you": "Check the money, time, and logistics before you agree to one more thing.",
         "body_they": "Check the money, time, and logistics before you ask {{holder1}} to add one more thing."
       },
-      "reviewStatus": "proposed"
+      "reviewStatus": "owner_approved"
     },
     {
       "id": "soft-venus",
@@ -108,15 +110,15 @@
         "body_you": "Notice the specific effort instead of measuring it by how big it was.",
         "body_they": "Do the small thing you already know would make {{holder1}}'s day easier."
       },
-      "reviewStatus": "proposed"
+      "reviewStatus": "owner_approved"
     },
     {
       "id": "soft-jupiter",
       "evidenceTier": "bond",
       "mechanism": { "family": "soft", "transiting": "jupiter" },
       "candidateHeadline": {
-        "body_you": "Something they send you could actually fit.",
-        "body_they": "Something you send {{holder1}} could actually fit."
+        "body_you": "They may bring you an opportunity that actually fits your life.",
+        "body_they": "You may bring them an opportunity that actually fits their life."
       },
       "bodyAuthority": {
         "contentKey": "fallback-hook/bond-effect-soft/jupiter",
@@ -134,7 +136,7 @@
         "body_you": "Follow the lead if it connects to something you already wanted.",
         "body_they": "Pass it along if it connects to something {{holder1}} already wanted."
       },
-      "reviewStatus": "proposed"
+      "reviewStatus": "owner_approved"
     },
     {
       "id": "shared-moon-fire",
@@ -148,7 +150,7 @@
         "note": "These can be shown separately if useful, but are not evidence for the shared Moon claim."
       },
       "candidateMove": null,
-      "reviewStatus": "proposed"
+      "reviewStatus": "owner_approved"
     }
   ]
 }
