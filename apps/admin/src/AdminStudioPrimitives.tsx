@@ -28,6 +28,23 @@ type AdminPageHeaderProps = {
   title: string;
 };
 
+const coverageActionStyle = {
+  alignItems: "center",
+  borderRadius: "var(--admin-radius-md)",
+  borderStyle: "solid",
+  borderWidth: "var(--border-width-thin)",
+  cursor: "pointer",
+  display: "inline-flex",
+  fontWeight: "var(--weight-semibold)",
+  gap: "var(--admin-space-sm)",
+  justifyContent: "center",
+  maxWidth: "100%",
+  minHeight: "var(--admin-control-height-md)",
+  padding: "var(--admin-space-sm) var(--admin-space-lg)",
+  textDecoration: "none",
+  whiteSpace: "nowrap"
+} as const;
+
 export function AdminPageHeader({
   breadcrumbs,
   createActions,
@@ -86,7 +103,7 @@ export function AdminPageHeader({
         <a
           className="admin-create-button"
           href="/admin/content/coverage"
-          style={{ textDecoration: "none" }}
+          style={coverageActionStyle}
           title="See complete and missing content corpora"
         >
           <BarChart3 size={16} aria-hidden="true" />
