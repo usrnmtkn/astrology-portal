@@ -26,6 +26,9 @@ jobs:
           cache: npm
       - name: Install dependencies
         run: npm ci
+      - name: Inspect open-detail refresh effect
+        shell: bash
+        run: grep -n -B25 -A90 'selectedSkyDetailRefreshKeyRef.current === refreshKey' apps/web/src/App.tsx
       - name: Apply focused hydration fix
         run: node scripts/hotfix-sky-v4-related-aspect-hydration.mjs
       - name: Verify hydration boundary
