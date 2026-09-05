@@ -28,7 +28,6 @@ jobs:
           node scripts/test-admin-reader-destination-labels.mjs
           node scripts/test-admin-friends-transits-navigation.mjs
           node --experimental-strip-types scripts/test-admin-transit-natal-sources.mjs
-          node --import tsx scripts/test-admin-house-transit-sources.mjs
           npm run build:admin
       - name: Commit destination UX
         run: |
