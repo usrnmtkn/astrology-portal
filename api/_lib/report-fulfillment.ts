@@ -54,8 +54,13 @@ const unitsByHorizon = {
   "1_month": ["overview", "what-matters-most", "domain:main", "key-dates"],
   "4_months": ["overview", "period-theme", "development:1", "development:2", "key-dates", "closing-synthesis"],
   "6_months": ["overview", "period-theme", "phase-1", "phase-2", "key-dates", "review"],
-  "12_months": ["overview", "year-theme", "domain:main", "winter-current", "spring", "summer", "autumn", "key-dates", "review-current-year", "winter-next"]
+  "12_months": ["overview", "year-theme", "domain:main", "winter-current", "spring", "summer", "autumn", "money", "key-dates", "review-current-year", "winter-next"]
 } as const;
+
+const generalYearUnits = [
+  "overview", "year-theme", "domain:main", "winter-current", "spring", "summer", "autumn",
+  "key-dates", "review-current-year", "winter-next"
+] as const;
 
 const personalHealthYearUnits = [
   "overview", "year-theme", "domain:main", "winter-current", "spring", "summer", "autumn",
@@ -63,9 +68,9 @@ const personalHealthYearUnits = [
 ] as const;
 
 function fulfillmentUnitIds(reportDomain: ReportDomain, reportHorizon: ReportHorizon) {
-  return reportDomain === "personal_health" && reportHorizon === "12_months"
-    ? personalHealthYearUnits
-    : unitsByHorizon[reportHorizon];
+  if (reportDomain === "personal_health" && reportHorizon === "12_months") return personalHealthYearUnits;
+  if (reportDomain === "general" && reportHorizon === "12_months") return generalYearUnits;
+  return unitsByHorizon[reportHorizon];
 }
 
 export type ReportFactsCalculator = ((report: FulfillmentReportRow) => Promise<{ facts: Record<string, unknown>; facts_engine: string }>) & {
@@ -812,8 +817,9 @@ export async function processReportFulfillmentJob(input: {
 
   if (orderedUnitIds.includes("key-dates")) {
     const existingKeyDates = await input.store.unit(report.id, "key-dates");
+    const existingKeyDateSchema = (existingKeyDates?.source_snapshot?.deterministicAssembly as { schema?: unknown } | undefined)?.schema;
     if (existingKeyDates?.source_snapshot?.fulfillmentPassed === true
-      && (existingKeyDates.source_snapshot.deterministicAssembly as { schema?: unknown } | undefined)?.schema === "report-key-dates-assembly.v5") {
+      && (existingKeyDateSchema === "report-key-dates-assembly.v5" || existingKeyDateSchema === "report-key-dates-assembly.v4")) {
       const snapshot = existingKeyDates.source_snapshot;
       validatorSummary.push({
         unitId: "key-dates",
@@ -862,6 +868,7 @@ export async function processReportFulfillmentJob(input: {
       });
       const keyDatesDraft = assembleDeterministicReportKeyDates({
         reportHorizon: report.report_horizon,
+        reportDomain: report.report_domain,
         frozenFacts: report.facts,
         sourceUnits,
         eligibleEventIds,
