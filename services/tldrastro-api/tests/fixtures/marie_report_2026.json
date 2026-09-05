@@ -9,9 +9,14 @@
     },
     "location": {
       "label": "Manhattan, New York, NY, USA",
-      "latitude": 40.7128,
-      "longitude": -74.006,
-      "timeZone": "America/New_York"
+      "latitude": 40.7831,
+      "longitude": -73.9712,
+      "timeZone": "America/New_York",
+      "coordinateSource": {
+        "provider": "owner_ruling_2026-08-14",
+        "sourceId": "manhattan-borough-centroid",
+        "resolution": "borough_centroid"
+      }
     },
     "settings": {
       "houseSystem": "whole_sign",
@@ -21,17 +26,18 @@
   },
   "returnLocation": {
     "label": "Manhattan, New York, NY, USA",
-    "latitude": 40.7128,
-    "longitude": -74.006,
-    "timeZone": "America/New_York"
+    "latitude": 40.7831,
+    "longitude": -73.9712,
+    "timeZone": "America/New_York",
+    "coordinateSource": {
+      "provider": "owner_ruling_2026-08-14",
+      "sourceId": "manhattan-borough-centroid",
+      "resolution": "borough_centroid"
+    }
   },
   "window": {
     "start": "2026-02-18T01:59:11Z",
     "end": "2027-02-18T07:40:22Z",
-    "reportHorizon": "12_months",
-    "natalPointLongitudes": {
-      "Ascendant": 71.15,
-      "Midheaven": 316.6
-    }
+    "reportHorizon": "12_months"
   }
 }

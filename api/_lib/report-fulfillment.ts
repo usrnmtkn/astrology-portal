@@ -1,5 +1,5 @@
 import crypto from "node:crypto";
-import { createTldrAstroReportFactsClient, ReportCalculationApiClientError, type ReportChartSubject } from "./report-facts.js";
+import { assertCanonicalReportFacts, createTldrAstroReportFactsClient, ReportCalculationApiClientError, type ReportChartSubject } from "./report-facts.js";
 import { reportFulfillmentConfig } from "./report-fulfillment-config.js";
 import type { ReportFulfillmentStore, FulfillmentJobRow, FulfillmentReportRow, ReportModelCallTimingRow } from "./report-fulfillment-store.ts";
 import { verifyReportFactLock } from "./report-fact-lock.js";
@@ -41,7 +41,7 @@ import {
   type ReportWriterChainCheckpoint
 } from "./report-writer-chain.js";
 import { createSupabaseReportAdmin, type SupabaseReportAdmin } from "./supabase-report-admin.js";
-import { natalPointLongitudesFromChart, ReportBirthDataError, requireReportBirthProfile, type BirthProfile } from "./report-billing-window.js";
+import { ReportBirthDataError, requireReportBirthProfile, type BirthProfile } from "./report-billing-window.js";
 import { reportUrl } from "./report-http.js";
 import {
   assembleDeterministicReportKeyDates,
@@ -49,23 +49,11 @@ import {
   reportKeyDateEventManifest,
   reportKeyDateSourceUnitIds
 } from "./report-key-dates.js";
-
-const unitsByHorizon = {
-  "1_month": ["overview", "what-matters-most", "domain:main", "key-dates"],
-  "4_months": ["overview", "period-theme", "development:1", "development:2", "key-dates", "closing-synthesis"],
-  "6_months": ["overview", "period-theme", "phase-1", "phase-2", "key-dates", "review"],
-  "12_months": ["overview", "year-theme", "domain:main", "winter-current", "spring", "summer", "autumn", "money", "key-dates", "review-current-year", "winter-next"]
-} as const;
-
-const personalHealthYearUnits = [
-  "overview", "year-theme", "domain:main", "winter-current", "spring", "summer", "autumn",
-  "health-capacity", "key-dates", "review-current-year", "winter-next"
-] as const;
+import { reportUnitIds } from "./report-unit-order.ts";
+import { buildReviewedReportDocument, reviewedReportDocumentBytes, reviewedReportDocumentHash } from "./report-review-document.ts";
 
 function fulfillmentUnitIds(reportDomain: ReportDomain, reportHorizon: ReportHorizon) {
-  return reportDomain === "personal_health" && reportHorizon === "12_months"
-    ? personalHealthYearUnits
-    : unitsByHorizon[reportHorizon];
+  return reportUnitIds(reportDomain, reportHorizon);
 }
 
 export type ReportFactsCalculator = ((report: FulfillmentReportRow) => Promise<{ facts: Record<string, unknown>; facts_engine: string }>) & {
@@ -293,14 +281,8 @@ export function createReportFactsCalculator(admin: SupabaseReportAdmin = createS
   const prepareBirthProfile = async (report: FulfillmentReportRow, requiresBirthTime: boolean) => {
     const profileRow = await admin.selectOne<{ data: unknown }>("user_profiles", new URLSearchParams({ user_id: `eq.${report.user_id}`, select: "data" }));
     const birth = requireReportBirthProfile(profileRow?.data, requiresBirthTime);
-    const socialProfile = await admin.selectOne<{ natal_chart?: unknown }>("social_profiles", new URLSearchParams({ user_id: `eq.${report.user_id}`, select: "natal_chart" }));
-    const socialAngles = natalPointLongitudesFromChart(socialProfile?.natal_chart);
-    const prepared = {
-      ...birth,
-      natalPointLongitudes: Object.keys(socialAngles).length ? socialAngles : birth.natalPointLongitudes
-    };
-    preparedBirthProfiles.set(report.id, prepared);
-    return prepared;
+    preparedBirthProfiles.set(report.id, birth);
+    return birth;
   };
   const calculate: ReportFactsCalculator = async (report) => {
     const birth = preparedBirthProfiles.get(report.id) ?? await prepareBirthProfile(report, true);
@@ -313,7 +295,7 @@ export function createReportFactsCalculator(admin: SupabaseReportAdmin = createS
     };
     const [version, facts] = await Promise.all([
       client.serviceVersion(),
-      client.reportWindow({ natalSubject, location: birth.birthLocation, reportDomain: report.report_domain, reportHorizon: report.report_horizon, start: report.period_start, end: report.period_end, natalPointLongitudes: birth.natalPointLongitudes })
+      client.reportWindow({ natalSubject, location: birth.birthLocation, reportDomain: report.report_domain, reportHorizon: report.report_horizon, start: report.period_start, end: report.period_end })
     ]);
     return { facts, facts_engine: `tldrastro-api@${version}` };
   };
@@ -467,6 +449,14 @@ export async function processReportFulfillmentJob(input: {
   });
   assertReportDomainFulfillmentReady(report.report_domain);
   let factsBundle = await input.store.reusableFacts(report);
+  if (factsBundle) {
+    try {
+      assertCanonicalReportFacts(factsBundle.facts);
+      if (reportFactsHash(factsBundle.facts) !== factsBundle.facts_hash) factsBundle = null;
+    } catch {
+      factsBundle = null;
+    }
+  }
   if (!factsBundle) {
     await input.calculateFacts.preflight?.(report, Boolean(entitlement.requires_birth_time));
     const claimed = await input.store.claimFacts(report, input.job.id);
@@ -474,6 +464,7 @@ export async function processReportFulfillmentJob(input: {
     await input.store.updateReport(report.id, nowPatch("calculating"));
     try {
       const calculated = await input.calculateFacts(report);
+      assertCanonicalReportFacts(calculated.facts);
       factsBundle = { ...calculated, facts_hash: reportFactsHash(calculated.facts) };
       await input.store.saveFacts(report, factsBundle);
     } catch (error) {
@@ -1064,11 +1055,25 @@ export async function processReportFulfillmentJob(input: {
     mechanicalCoherenceRepairs: mechanicalCoherence.repairs
   });
 
+  const reviewDocument = buildReviewedReportDocument({
+    id: report.id,
+    reportDomain: report.report_domain,
+    reportHorizon: report.report_horizon,
+    periodStart: report.period_start,
+    periodEnd: report.period_end,
+    factsEngine: report.facts_engine,
+    factsHash: report.facts_hash ?? "",
+    units: assembledUnits
+  });
+
   const publicationStatus = config.autoPublishEnabled ? "live" : "needs_review";
   await input.store.updateReport(report.id, {
     ...nowPatch(publicationStatus), status: publicationStatus, prompt_versions: promptVersions,
     judge_scores: judgeScores, token_count: tokenCount,
     validator_results: validatorSummary,
+    review_document: reviewDocument,
+    review_document_bytes: reviewedReportDocumentBytes(reviewDocument),
+    review_document_hash: reviewedReportDocumentHash(reviewDocument),
     attempt_counts: { validator: validatorAttempts, judge: judgeAttempts, redundancy: redundancyAttempts },
     ...(config.autoPublishEnabled ? { delivered_at: new Date().toISOString() } : {})
   });
