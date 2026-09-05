@@ -5,8 +5,9 @@ on:
     branches:
       - "owner/between-you-two-v2-20260905"
     paths:
-      - "scripts/patch-between-you-two-v2-packaging.mjs"
       - "apps/web/src/content/fallbackArchitectureV3/source-rows/pair-daily-v2-rows.json"
+      - "scripts/generate-fallback-package-manifest.mjs"
+      - "scripts/build-admin-hook-catalog.mjs"
       - ".github/workflows/stage-between-you-two-v2-packaging.yml"
 
 permissions:
@@ -25,8 +26,6 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
-      - name: Patch package and Content Studio discovery
-        run: node scripts/patch-between-you-two-v2-packaging.mjs
       - name: Rebuild governed fallback package
         run: npm run build:fallback-manifest
       - name: Rebuild Content Studio hook catalog
@@ -39,13 +38,15 @@ jobs:
           const source = JSON.parse(fs.readFileSync('apps/web/src/content/fallbackArchitectureV3/source-rows/pair-daily-v2-rows.json', 'utf8'));
           const servingV2 = relationship.hookRows.filter(row => row.contentKey.includes('/pair-daily/v2/'));
           const held = source.rows.filter(row => row.review_status === 'needs_review');
-          if (servingV2.length !== 24) throw new Error(`expected 24 reader-eligible V2 rows, got ${servingV2.length}`);
-          if (held.length !== 96) throw new Error(`expected 96 held V2 authoring rows, got ${held.length}`);
+          if (servingV2.length !== 45) throw new Error(`expected 45 reader-eligible V2 rows, got ${servingV2.length}`);
+          if (held.length !== 82) throw new Error(`expected 82 held V2 authoring rows, got ${held.length}`);
           if (servingV2.some(row => row.v2_direction === 'they')) throw new Error('reverse-direction row leaked into serving bundle');
+          const approvedBodies = servingV2.filter(row => row.v2_piece === 'body');
+          if (approvedBodies.length !== 7) throw new Error(`expected 7 reader-eligible V2 lead bodies, got ${approvedBodies.length}`);
           const admin = JSON.parse(fs.readFileSync('apps/admin/public/generated/admin-hook-catalog-index-v1.json', 'utf8'));
           const adminV2 = admin.rows.filter(row => row.key.includes('/pair-daily/v2/'));
-          if (adminV2.length !== 120) throw new Error(`expected all 120 V2 rows in Content Studio catalog, got ${adminV2.length}`);
-          console.log('V2 packaging boundary verified: 24 reader-eligible, 96 held, 120 Content Studio-visible.');
+          if (adminV2.length !== 127) throw new Error(`expected all 127 V2 rows in Content Studio catalog, got ${adminV2.length}`);
+          console.log('V2 packaging boundary verified: 45 reader-eligible, 82 held, 7 lead-body overrides, 127 Content Studio-visible.');
           NODE
       - name: Commit staged package projection
         run: |
