@@ -5,33 +5,50 @@ import { fileURLToPath } from "node:url";
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const appPath = path.join(repoRoot, "apps/web/src/App.tsx");
-const appSource = fs.readFileSync(appPath, "utf8");
+let appSource = fs.readFileSync(appPath, "utf8");
 
-const before = `  const relatedAspectSections = isRegistryArticle\n    ? []\n    : relatedSkyAspectSectionsForPlacement({`;
-const after = `  const relatedAspectSections = relatedSkyAspectSectionsForPlacement({`;
-
-if (appSource.includes(before)) {
-  if (appSource.split(before).length !== 2) {
-    throw new Error("Expected exactly one Sky V4 registry-article aspect suppression boundary.");
-  }
-  fs.writeFileSync(appPath, appSource.replace(before, after));
-  console.log("Preserved approved exact aspect sections across canonical V4 article hydration.");
-} else if (appSource.includes(after)) {
-  console.log("Sky V4 related-aspect hydration hotfix is already applied.");
-} else {
-  throw new Error("Expected Sky V4 registry-article aspect suppression boundary was not found.");
+const discardedRegistryVersion = "  const [, setContentRegistryVersion] = useState(0);";
+const retainedRegistryVersion = "  const [contentRegistryVersion, setContentRegistryVersion] = useState(0);";
+if (appSource.includes(discardedRegistryVersion)) {
+  appSource = appSource.replace(discardedRegistryVersion, retainedRegistryVersion);
+} else if (!appSource.includes(retainedRegistryVersion)) {
+  throw new Error("Expected Content Registry version state was not found.");
 }
+
+const staleRefreshKey = '    const refreshKey = `${skyDetailRoutePath}:${fallbackArchitectureV3Version}:${personalizationKey}`;';
+const currentRefreshKey = '    const refreshKey = `${skyDetailRoutePath}:${fallbackArchitectureV3Version}:${contentRegistryVersion}:${personalizationKey}`;';
+if (appSource.includes(staleRefreshKey)) {
+  appSource = appSource.replace(staleRefreshKey, currentRefreshKey);
+} else if (!appSource.includes(currentRefreshKey)) {
+  throw new Error("Expected open Sky detail refresh key was not found.");
+}
+
+const marker = currentRefreshKey;
+const markerIndex = appSource.indexOf(marker);
+if (markerIndex < 0) throw new Error("Open Sky detail refresh marker is missing after patch.");
+const effectStart = appSource.lastIndexOf("  useEffect(() => {", markerIndex);
+const dependencyStart = appSource.indexOf("  }, [", markerIndex);
+const dependencyEnd = dependencyStart >= 0 ? appSource.indexOf("]);", dependencyStart) : -1;
+if (effectStart < 0 || dependencyStart < 0 || dependencyEnd < 0) {
+  throw new Error("Could not locate the open Sky detail refresh effect dependency array.");
+}
+const dependencyBlock = appSource.slice(dependencyStart, dependencyEnd + 3);
+if (!dependencyBlock.includes("contentRegistryVersion")) {
+  const insertionPoint = dependencyStart + "  }, [".length;
+  appSource = `${appSource.slice(0, insertionPoint)}\n    contentRegistryVersion,${appSource.slice(insertionPoint)}`;
+}
+
+fs.writeFileSync(appPath, appSource);
+console.log("Open Sky detail now refreshes when the lazy content registry revision changes.");
 
 const phrasebookTestPath = path.join(repoRoot, "scripts/test-reviewed-sky-aspect-phrasebook.mjs");
-const phrasebookTestSource = fs.readFileSync(phrasebookTestPath, "utf8");
+let phrasebookTestSource = fs.readFileSync(phrasebookTestPath, "utf8");
 const staleCount = "assert.equal(exactTransitRecords.length, 215);";
 const currentCount = "assert.equal(exactTransitRecords.length, 248);";
-
 if (phrasebookTestSource.includes(staleCount)) {
-  fs.writeFileSync(phrasebookTestPath, phrasebookTestSource.replace(staleCount, currentCount));
-  console.log("Updated the reviewed Sky aspect corpus contract from 215 to 248 exact records.");
-} else if (phrasebookTestSource.includes(currentCount)) {
-  console.log("Reviewed Sky aspect corpus contract already expects 248 exact records.");
-} else {
+  phrasebookTestSource = phrasebookTestSource.replace(staleCount, currentCount);
+} else if (!phrasebookTestSource.includes(currentCount)) {
   throw new Error("Expected exact-transit corpus count assertion was not found.");
 }
+fs.writeFileSync(phrasebookTestPath, phrasebookTestSource);
+console.log("Reviewed Sky aspect corpus contract expects 248 exact records.");
