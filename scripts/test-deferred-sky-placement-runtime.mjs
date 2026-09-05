@@ -151,13 +151,14 @@ assert.doesNotMatch(moonTaurusAfter.body, /\{\{/u);
 const jupiterLeoAfter = runtime.transitSynastryFallbackRendererV3.renderSkyPlacement(jupiterLeoFacts);
 assert.match(jupiterLeoAfter.body, /For about a year, Jupiter in Leo makes it harder to hide/u);
 assert.match(jupiterLeoAfter.body, /somebody nearby to provide it\.$/u);
-assert.match(
-  runtime.transitSynastryFallbackRendererV3.renderSkyPlacementHouseCore({
+assert.throws(
+  () => runtime.transitSynastryFallbackRendererV3.renderSkyPlacementHouseCore({
     planet: "jupiter",
     sign: "leo",
     house: 7
-  }).body,
-  /Let people love you loudly this year/u
+  }),
+  /SOURCE_GAP/u,
+  "Jupiter/Leo house horoscopes must fail closed while its owner-authored set is only 7/12."
 );
 const sunVirgoAfter = runtime.transitSynastryFallbackRendererV3.renderSkyPlacement(sunVirgoFacts);
 assert.equal(sunVirgoAfter.templateKey, "sky-placement-continuous-v2");
@@ -170,4 +171,4 @@ assert.match(sunVirgoAfter.body, /You may be the only person who can tell\.$/u);
 assert.doesNotMatch(sunVirgoAfter.body, /\{\{/u);
 assert.equal(await runtime.loadSkyPlacementFallbackArchitectureV3Bundle(), false);
 
-console.log("Deferred Sky Placement runtime parity passed.");
+console.log("Deferred Sky Placement runtime parity passed, including the mixed-depth Jupiter/Leo fail-closed guard.");
