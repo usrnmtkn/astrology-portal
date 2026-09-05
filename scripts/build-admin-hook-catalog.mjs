@@ -13,7 +13,10 @@ const sourceFiles = [
   path.join(repoRoot, "apps/web/src/content/fallbackArchitectureV3/bundled-sky-core-rows-v3.json"),
   path.join(repoRoot, "apps/web/src/content/fallbackArchitectureV3/bundled-deferred-core-rows-v3.json"),
   path.join(repoRoot, "apps/web/src/content/fallbackArchitectureV3/bundled-shared-placement-rows-v3.json"),
-  path.join(repoRoot, "apps/web/src/content/fallbackArchitectureV3/bundled-relationship-hook-rows-v3.json")
+  path.join(repoRoot, "apps/web/src/content/fallbackArchitectureV3/bundled-relationship-hook-rows-v3.json"),
+  // Include the authoring source directly so held V2 rows remain visible in Content Studio
+  // without becoming reader-eligible in the relationship runtime bundle.
+  path.join(repoRoot, "apps/web/src/content/fallbackArchitectureV3/source-rows/pair-daily-v2-rows.json")
 ];
 const editorGuidanceSource = path.join(repoRoot, "apps/admin/content/fallback-hook-editor-guidance-v1.json");
 const resolverEntry = fs.readFileSync(
@@ -49,6 +52,16 @@ function pairDailyLabel(key) {
   const [kind, detail, subject, variant] = key.split("/").slice(2);
   const suffix = (variant ?? subject)?.match(/^variant-(\d+)$/u)?.[1];
   const variantLabel = suffix ? ` · Variant ${suffix}` : "";
+  if (kind === "v2") {
+    if (detail === "headline" || detail === "move") {
+      const direction = key.split("/")[6];
+      return `Between You Two V2 · ${words(subject)} · ${words(variant)} · ${detail === "headline" ? "Headline" : "Useful move"} · ${direction === "you" ? "Reader direction" : "Reverse direction"}`;
+    }
+    if (detail === "shared-moon") {
+      const piece = key.split("/")[5];
+      return `Between You Two V2 · ${words(subject)} Moon · ${words(piece)}`;
+    }
+  }
   if (kind === "opener") return `Today between you two · ${detail === "shared-clause" ? "Shared-day opening" : "Opening"}${detail === "no-reader-handle" || subject === "no-reader-handle" ? " · Without reader handle" : detail?.startsWith("variant-") ? ` · Variant ${detail.slice(8)}` : ""}`;
   if (kind === "clause") return `Today between you two · ${detail === "house" ? `${subject}${subject === "1" ? "st" : subject === "2" ? "nd" : subject === "3" ? "rd" : "th"} House` : `${words(subject)} ${words(detail).toLowerCase()}`} · Personal daily clause${variantLabel}`;
   if (kind === "bond-clause") return `Today between you two · ${words(subject)} · ${detail === "soft" ? "Supportive" : "Challenging"} bond clause`;
@@ -61,11 +74,16 @@ function pairDailyLabel(key) {
 const rowsByKey = new Map();
 for (const sourceFile of sourceFiles) {
   const payload = JSON.parse(fs.readFileSync(sourceFile, "utf8"));
-  if (!Array.isArray(payload.hookRows)) {
-    throw new Error(`${path.relative(repoRoot, sourceFile)} does not contain hookRows.`);
+  const hookRows = Array.isArray(payload.hookRows)
+    ? payload.hookRows
+    : Array.isArray(payload.rows)
+      ? payload.rows
+      : null;
+  if (!hookRows) {
+    throw new Error(`${path.relative(repoRoot, sourceFile)} does not contain hookRows or rows.`);
   }
 
-  for (const row of payload.hookRows) {
+  for (const row of hookRows) {
     const key = typeof row.contentKey === "string" ? row.contentKey : "";
     if (!key || rowsByKey.has(key)) continue;
     rowsByKey.set(key, {
