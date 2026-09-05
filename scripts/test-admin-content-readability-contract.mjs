@@ -30,8 +30,11 @@ const requiredReadabilitySnippets = [
   "padding: var(--admin-space-2xl);",
   ".admin-dashboard .admin-natal-placement-selectors {",
   "min-width: 0;",
-  ".admin-dashboard .admin-editor-savebar:has(.admin-publish-button) {",
+  ".admin-dashboard .admin-fallback-diagnostic-heading > div > p:not(.admin-eyebrow) > strong {",
+  "background: transparent;",
+  ".admin-dashboard .admin-fallback-diagnostic-heading .admin-hook-pattern-list {",
   "grid-template-columns: repeat(2, minmax(0, 1fr));",
+  ".admin-dashboard .admin-editor-savebar:has(.admin-publish-button) {",
   ".admin-dashboard .admin-editor-savebar:has(.admin-publish-button) .admin-publish-button {",
   "grid-column: 1 / -1;"
 ];
