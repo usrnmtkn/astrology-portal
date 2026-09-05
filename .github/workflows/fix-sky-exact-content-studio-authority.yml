@@ -6,6 +6,7 @@ on:
       - "fix/sky-exact-content-studio-authority-20260904"
     paths:
       - "scripts/apply-sky-exact-content-studio-authority-fix-v2.mjs"
+      - "scripts/apply-sky-exact-content-studio-authority-type-guard.mjs"
       - "scripts/test-sky-placement-exact-aspect-authority.mjs"
       - "scripts/test-published-calendar-aspect-content-studio.mjs"
       - ".github/workflows/fix-sky-exact-content-studio-authority.yml"
@@ -28,7 +29,9 @@ jobs:
       - name: Install dependencies
         run: npm ci
       - name: Apply focused repair
-        run: node scripts/apply-sky-exact-content-studio-authority-fix-v2.mjs
+        run: |
+          node scripts/apply-sky-exact-content-studio-authority-fix-v2.mjs
+          node scripts/apply-sky-exact-content-studio-authority-type-guard.mjs
       - name: Verify exact authority source contracts
         run: |
           node scripts/test-sky-placement-exact-aspect-authority.mjs
