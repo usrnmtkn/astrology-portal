@@ -9,7 +9,7 @@ const dashboard = fs.readFileSync(path.join(root, "apps/admin/src/GeneratedConte
 const css = fs.readFileSync(path.join(root, "apps/admin/src/admin-components.css"), "utf8");
 
 assert.match(dashboard, /const readerUse = aspectContext\?\.label \?\? contentCategoryForRow\(row\)/u);
-assert.match(dashboard, /className="admin-review-queue-use">\{readerUse\}<\/span>/u);
+assert.match(dashboard, /className="admin-review-queue-use admin-aspect-context-pill">\{readerUse\}<\/span>/u);
 assert.doesNotMatch(dashboard, /<span className="ui-pill admin-status">\{contentClassLabel\(contentClassForRow\(row\)\)\}<\/span>/u);
 assert.doesNotMatch(dashboard, /<span className="ui-pill admin-status" title=\{rowRole\.detail\}>\{rowRole\.label\}<\/span>/u);
 assert.match(dashboard, /selectedRow\s*\? `Edit \$\{rowTitle\(selectedRow\)\}`/u);

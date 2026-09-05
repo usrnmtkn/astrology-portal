@@ -7347,7 +7347,7 @@ export function GeneratedContentAdminDashboard() {
                   </label>
                   <div className="admin-review-queue-copy">
                     <h3 title={rowTitle(row)}>{rowTitle(row)}</h3>
-                    <span className="admin-review-queue-use">{readerUse}</span>
+                    <span className="admin-review-queue-use admin-aspect-context-pill">{readerUse}</span>
                     <code title={row.contentKey}>{row.contentKey}</code>
                   </div>
                   <div className="admin-review-queue-meta-strip">
