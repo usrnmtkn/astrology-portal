@@ -3,11 +3,10 @@ import fs from "node:fs";
 import path from "node:path";
 
 const manifestPath = "packages/astro-knowledge/review/bond-effect-directional-copy-v1/shipping-manifest.json";
-const approvalDir = "packages/astro-knowledge/review/bond-effect-directional-copy-v1";
 const outDir = "packages/astro-knowledge/review/between-you-two-v2-2026-09-05";
 const outPath = path.join(outDir, "bond-evidence-28.json");
 const manifest = JSON.parse(fs.readFileSync(manifestPath, "utf8"));
-const members = manifest.members ?? manifest.records ?? manifest.entries ?? [];
+const members = manifest.rows ?? manifest.members ?? manifest.records ?? manifest.entries ?? [];
 const base = members.filter((item) => /^fallback-hook\/bond-effect-(?:soft|hard)\/[^/]+$/u.test(item.contentKey));
 const rows = base.map((item) => {
   const record = JSON.parse(fs.readFileSync(item.recordPath, "utf8"));
