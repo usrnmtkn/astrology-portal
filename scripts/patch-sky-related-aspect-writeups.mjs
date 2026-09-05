@@ -12,6 +12,12 @@ function replaceOnce(source, search, replacement, label) {
   return source.slice(0, first) + replacement + source.slice(first + search.length);
 }
 
+function replaceRegexOnce(source, pattern, replacement, label) {
+  const matches = [...source.matchAll(new RegExp(pattern.source, pattern.flags.includes("g") ? pattern.flags : `${pattern.flags}g`))];
+  if (matches.length !== 1) throw new Error(`Expected one ${label}, found ${matches.length}`);
+  return source.replace(pattern, replacement);
+}
+
 let app = fs.readFileSync(appPath, "utf8");
 app = replaceOnce(
   app,
@@ -39,8 +45,12 @@ builder = replaceOnce(
 );
 app = app.slice(0, builderStart) + builder + app.slice(builderEnd);
 
-const sourceGapBlock = `  const sourceGapAspectRows = isRegistryArticle\n    ? []\n    : relatedAspectRowsForPlacement({\n        aspects: aspects.filter((aspect) => (\n          normalizeSkyAspectSurface(aspect, generatedContent, positions, generatedAt).sections.length === 0\n        )),\n        generatedAt,\n        generatedContent,\n        mode: "sky",\n        pointName: position.planet,\n        positions\n      });\n`;
-app = replaceOnce(app, sourceGapBlock, "", "Sky placement source-gap rows");
+app = replaceRegexOnce(
+  app,
+  /  const sourceGapAspectRows = isRegistryArticle[\s\S]*?\n      \}\);\n/u,
+  "",
+  "Sky placement source-gap rows"
+);
 const sourceGapProperty = `    relatedAspects: sourceGapAspectRows.length > 0\n      ? {\n          heading: "Aspects shaping this transit",\n          rows: sourceGapAspectRows\n        }\n      : undefined,\n`;
 app = replaceOnce(app, sourceGapProperty, "", "Sky placement source-gap rendering");
 
@@ -48,7 +58,7 @@ if (app.includes("setContentRegistryVersion")) throw new Error("Ad-hoc content r
 if (builder.includes(".slice(0, 2)") || builder.includes("giftSection") || builder.includes("lessonSection")) {
   throw new Error("Two-aspect cap remains in related Sky aspect builder");
 }
-if (app.includes("relatedAspects: sourceGapAspectRows")) throw new Error("Source-gap rows still render in Sky placement detail");
+if (app.includes("sourceGapAspectRows")) throw new Error("Source-gap rows remain in Sky placement detail");
 fs.writeFileSync(appPath, app);
 
 let contract = fs.readFileSync(contractPath, "utf8");
@@ -62,7 +72,7 @@ contract = contract.replace(
 );
 contract = contract.replace(
   `assert.match(app, /const loadedExactRegistry = contentRegistryFor\\("sky"\\);[\\s\\S]*studio[\\s\\S]*loadedExactRegistry[\\s\\S]*!loadedExactRegistry\\.approvedExactSkyAspectCopy/u);\n`,
-  `assert.match(app, /const loadedExactRegistry = contentRegistryFor\\("sky"\\);[\\s\\S]*studio[\\s\\S]*loadedExactRegistry[\\s\\S]*!loadedExactRegistry\\.approvedExactSkyAspectCopy/u);\nassert.doesNotMatch(app, /relatedAspects: sourceGapAspectRows/u);\n`
+  `assert.match(app, /const loadedExactRegistry = contentRegistryFor\\("sky"\\);[\\s\\S]*studio[\\s\\S]*loadedExactRegistry[\\s\\S]*!loadedExactRegistry\\.approvedExactSkyAspectCopy/u);\nassert.doesNotMatch(app, /sourceGapAspectRows/u);\n`
 );
 fs.writeFileSync(contractPath, contract);
 
