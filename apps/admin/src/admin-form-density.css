@@ -31,6 +31,8 @@
   .admin-content-toolbar .admin-toolbar-actions > label,
   .admin-field-wide > label,
   .admin-template-two-column > label,
+  .admin-daily-glance-context-form > label,
+  .admin-daily-glance-preview-controls > label,
   .aspect-writeups-filters > label,
   .aspect-writeups-status,
   .aspect-writeups-fields > label
@@ -49,6 +51,8 @@
   .admin-editor-guidance > label,
   .admin-review-filter-grid > label,
   .admin-review-stack .admin-hook-detail-section > label,
+  .admin-daily-glance-context-form > label,
+  .admin-daily-glance-preview-controls > label,
   .aspect-writeups-filters > label,
   .aspect-writeups-status,
   .aspect-writeups-fields > label
@@ -110,6 +114,8 @@
   .admin-sky-edition-fields,
   .admin-natal-placement-selectors,
   .admin-review-filter-grid,
+  .admin-daily-glance-context-form,
+  .admin-daily-glance-preview-controls,
   .aspect-writeups-filters,
   .aspect-writeups-fields,
   .admin-template-two-column
@@ -127,6 +133,8 @@
   .admin-sky-edition-fields,
   .admin-natal-placement-selectors,
   .admin-review-filter-grid,
+  .admin-daily-glance-context-form,
+  .admin-daily-glance-preview-controls,
   .aspect-writeups-filters,
   .aspect-writeups-fields,
   .admin-template-two-column
@@ -182,12 +190,13 @@
   align-items: flex-start;
 }
 
+/* Keep ordinary status tags compact. Layout changes below guarantee they get their
+   own space instead of sitting on top of headings or keys. */
 .admin-dashboard :where(.ui-pill, .admin-status, .admin-restriction-pill) {
   line-height: var(--leading-meta);
   max-width: 100%;
-  overflow-wrap: anywhere;
   text-align: center;
-  white-space: normal;
+  white-space: nowrap;
 }
 
 /* Notifications belong in document flow so they never cover status cards, fields,
@@ -292,7 +301,10 @@
   .admin-fallback-row,
   .admin-natal-source-card,
   .admin-variable-reference-card,
-  .admin-status-card
+  .admin-status-card,
+  .admin-editor-key-details,
+  .admin-unresolved-content-table,
+  .aspect-diagnostics-controls
 ) code {
   max-width: 100%;
   overflow-wrap: anywhere;
