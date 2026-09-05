@@ -1,31 +1,12 @@
-/* Owner decision, 2026-09-05: row selection is useful when its result is visible.
-   Keep the existing bulk actions, expose selection consistently, and make the selected state
-   obvious without changing the underlying content or publishing model. */
+@import "./admin-content-readability.css";
 
+/* Owner decision, 2026-09-05: Content Studio row selection stays hidden.
+   Selection state and bulk mutation logic may remain internal, but editor rows should not expose
+   selection checkboxes, Select columns, or the bulk-action bar. */
 .admin-dashboard .admin-col-select,
-.admin-dashboard .admin-content-row-check {
-  visibility: visible;
-}
-
-.admin-dashboard .admin-content-row-check {
-  display: inline-flex;
-}
-
+.admin-dashboard .admin-content-row-check,
 .admin-dashboard .admin-content-bulk-bar {
-  display: flex;
-  position: sticky;
-  bottom: var(--admin-space-3xl);
-  z-index: 30;
-  box-shadow: var(--admin-shadow-toast);
-}
-
-.admin-dashboard .admin-content-row:has(.admin-content-row-check input:checked) {
-  background: var(--admin-info-soft);
-  box-shadow: inset var(--border-width-medium) 0 0 var(--admin-info-border-strong);
-}
-
-.admin-dashboard .admin-content-row:has(.admin-content-row-check input:checked) .admin-content-row-title {
-  color: var(--admin-text-high);
+  display: none !important;
 }
 
 /* Source/reference rows should never look interchangeable with reader-serving copy. */
@@ -80,10 +61,4 @@
   position: sticky;
   top: var(--admin-space-0);
   z-index: 4;
-}
-
-@media (max-width: 760px) {
-  .admin-dashboard .admin-content-bulk-bar {
-    bottom: var(--admin-space-md);
-  }
 }
