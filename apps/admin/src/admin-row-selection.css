@@ -1,8 +1,80 @@
-/* Owner decision, 2026-09-04: remove row-selection affordances from Content Studio.
-   Selection state and bulk mutation logic remain internal for now, but the UI no longer exposes
-   checkboxes or the bulk-action bar. */
+/* Owner decision, 2026-09-05: row selection is useful when its result is visible.
+   Keep the existing bulk actions, expose selection consistently, and make the selected state
+   obvious without changing the underlying content or publishing model. */
+
 .admin-dashboard .admin-col-select,
-.admin-dashboard .admin-content-row-check,
+.admin-dashboard .admin-content-row-check {
+  visibility: visible;
+}
+
+.admin-dashboard .admin-content-row-check {
+  display: inline-flex;
+}
+
 .admin-dashboard .admin-content-bulk-bar {
-  display: none !important;
+  display: flex;
+  position: sticky;
+  bottom: var(--admin-space-3xl);
+  z-index: 30;
+  box-shadow: var(--admin-shadow-toast);
+}
+
+.admin-dashboard .admin-content-row:has(.admin-content-row-check input:checked) {
+  background: var(--admin-info-soft);
+  box-shadow: inset var(--border-width-medium) 0 0 var(--admin-info-border-strong);
+}
+
+.admin-dashboard .admin-content-row:has(.admin-content-row-check input:checked) .admin-content-row-title {
+  color: var(--admin-text-high);
+}
+
+/* Source/reference rows should never look interchangeable with reader-serving copy. */
+.admin-dashboard .admin-content-row:has(.admin-wiring-state.not-serving),
+.admin-dashboard .admin-fallback-row.admin-source-only-row {
+  background: var(--admin-surface-subtle);
+}
+
+.admin-dashboard .admin-content-row:has(.admin-wiring-state.not-serving) .admin-content-row-title,
+.admin-dashboard .admin-fallback-row.admin-source-only-row h3 {
+  color: var(--admin-text-secondary);
+}
+
+.admin-dashboard .admin-content-row:has(.admin-wiring-state.not-serving) code,
+.admin-dashboard .admin-fallback-row.admin-source-only-row code {
+  opacity: 0.72;
+}
+
+/* Keep the connection column scannable. The full explanation remains available in the native
+   title tooltip on the existing detail text. */
+.admin-dashboard .admin-wiring-cell small {
+  display: block;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.admin-dashboard .admin-wiring-cell .admin-wiring-state {
+  display: block;
+  margin-bottom: var(--admin-space-xs);
+}
+
+/* The content-health summary and current fallback group should stay easy to orient around. */
+.admin-dashboard .admin-reader-safety-grid article.reader-ready,
+.admin-dashboard .admin-reader-safety-grid article.needs-fallback {
+  border-width: var(--border-width-medium);
+}
+
+.admin-dashboard .admin-hook-detail-section > .admin-section-heading-row {
+  background: var(--admin-ui-surface);
+  border-bottom: var(--border-width-thin) solid var(--admin-ui-border);
+  position: sticky;
+  top: var(--admin-space-0);
+  z-index: 4;
+}
+
+@media (max-width: 760px) {
+  .admin-dashboard .admin-content-bulk-bar {
+    bottom: var(--admin-space-md);
+  }
 }
