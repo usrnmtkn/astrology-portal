@@ -19,6 +19,7 @@ assert.equal(pilot.records.length, 6);
 assert.ok(pilot.records.every((record) => record.reviewStatus === "proposed"));
 assert.match(spec, /Serving effect: \*\*none\*\*/u);
 assert.match(spec, /Do not render a Between You Two daily synthesis/u);
+assert.match(spec, /separate `body_you` and `body_they` wording/u);
 
 const approvalPaths = new Map([
   ["fallback-hook/bond-effect-hard/saturn", "bond-effect-hard-saturn-exact-approval.json"],
@@ -48,10 +49,17 @@ for (const record of bondRecords) {
   assert.equal(
     record.bodyAuthority.body_you,
     approval.payload.body_you,
-    `${contentKey} pilot body must be byte-identical to canonical approval payload`
+    `${contentKey} pilot body_you must be byte-identical to canonical approval payload`
   );
-  assert.ok(record.candidateHeadline?.trim(), `${contentKey} needs a candidate headline for owner review`);
-  assert.ok(record.candidateMove?.trim(), `${contentKey} needs one candidate move for owner review`);
+  assert.equal(
+    record.bodyAuthority.body_they,
+    approval.payload.body_they,
+    `${contentKey} pilot body_they must be byte-identical to canonical approval payload`
+  );
+  assert.ok(record.candidateHeadline?.body_you?.trim(), `${contentKey} needs candidate headline body_you`);
+  assert.ok(record.candidateHeadline?.body_they?.trim(), `${contentKey} needs candidate headline body_they`);
+  assert.ok(record.candidateMove?.body_you?.trim(), `${contentKey} needs candidate move body_you`);
+  assert.ok(record.candidateMove?.body_they?.trim(), `${contentKey} needs candidate move body_they`);
 }
 
 const moonRecord = pilot.records.find((record) => record.evidenceTier === "shared-moon");
@@ -62,4 +70,4 @@ assert.ok(moonRecord.candidateBody?.trim());
 assert.equal(moonRecord.candidateMove, null);
 assert.equal(moonRecord.bodyAuthority, undefined);
 
-console.log("Between You Two V2 pilot provenance contract passed: 5 canonical bond bodies + 1 dark Moon candidate; 0 serving authority.");
+console.log("Between You Two V2 pilot provenance contract passed: 5 canonical directional bond bodies + 1 dark Moon candidate; 0 serving authority.");
