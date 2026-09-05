@@ -28,7 +28,7 @@ jobs:
         run: npm ci
       - name: Inspect Sun aspect ordering
         run: |
-          npx tsx -e 'import { getAstrodienstSky } from "./apps/web/src/services/ephemeris.ts"; const location={label:"Portsmouth, NH",latitude:43.0718,longitude:-70.7626,timeZone:"America/New_York"}; const sky=await getAstrodienstSky(location,new Date("2026-08-27T16:00:00.000Z")); console.log(JSON.stringify(sky.aspects.filter((aspect)=>aspect.from==="Sun"||aspect.to==="Sun").sort((a,b)=>a.orb-b.orb),null,2));'
+          npx tsx -e 'import { getAstrodienstSky } from "./apps/web/src/services/ephemeris.ts"; (async()=>{ const location={label:"Portsmouth, NH",latitude:43.0718,longitude:-70.7626,timeZone:"America/New_York"}; const sky=await getAstrodienstSky(location,new Date("2026-08-27T16:00:00.000Z")); console.log(JSON.stringify(sky.aspects.filter((aspect)=>aspect.from==="Sun"||aspect.to==="Sun").sort((a,b)=>a.orb-b.orb),null,2)); })().catch((error)=>{ console.error(error); process.exit(1); });'
       - name: Apply focused hydration fix
         run: node scripts/hotfix-sky-v4-related-aspect-hydration.mjs
       - name: Verify hydration boundary
