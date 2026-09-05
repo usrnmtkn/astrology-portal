@@ -13,7 +13,7 @@ const bundleFile = path.join(os.tmpdir(), "tldrastro-calendar-exact-sky-aspect-r
 const registryBundleFile = path.join(os.tmpdir(), "tldrastro-approved-exact-sky-aspect-registry.bundle.mjs");
 const readJson = (filePath) => JSON.parse(fs.readFileSync(filePath, "utf8"));
 const canonicalPayloadRelative = process.env.SKY_CALENDAR_OWNER_PAYLOADS_PATH
-  ?? "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-04-batch-30/current-owner-payloads.json";
+  ?? "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-04-held-trines-33/current-owner-payloads.json";
 const canonicalPayloadPath = path.resolve(repoRoot, canonicalPayloadRelative);
 if (!canonicalPayloadPath.startsWith(`${repoRoot}${path.sep}`)) {
   throw new Error("SKY_CALENDAR_OWNER_PAYLOADS_PATH must resolve inside the repository.");
@@ -226,17 +226,17 @@ for (const { event, ownerKey, sourceId } of screenshotCases) {
   assert.equal(Object.hasOwn(record.readerCopy, "calendarLeadIn"), false, `${ownerKey}: obsolete lead-in metadata remains.`);
 }
 
-const signSpecificOverride = normalizeCalendarEventSurface(
+const exactBeforeSignSpecific = normalizeCalendarEventSurface(
   aspectEvent({
     first: "Venus",
     second: "Saturn",
     aspect: "square",
     fromSign: "Aries",
     toSign: "Cancer",
-    id: "precedence-sign-specific-over-exact"
+    id: "precedence-exact-over-sign-specific"
   }),
   {
-    body: "Generated copy must not outrank reviewed specific copy.",
+    body: "Generated copy must not outrank exact owner-approved copy.",
     contentKey: "generated/precedence-test",
     headline: "Generated precedence test"
   },
@@ -245,10 +245,11 @@ const signSpecificOverride = normalizeCalendarEventSurface(
   exactLookup
 );
 
-assert.equal(signSpecificOverride.sections[0]?.tier, "reviewed-sky-aspect-phrasebook-v1");
+assert.equal(exactBeforeSignSpecific.sections[0]?.tier, "approved-exact-sky-aspect-v1");
 assert.equal(
-  signSpecificOverride.sections[0]?.sourceKeys[0],
-  "fallback-hook/sky-aspect-sign/venus/aries/square/saturn/cancer"
+  exactBeforeSignSpecific.sections[0]?.body,
+  exactLookup("Venus", "square", "Saturn")?.body,
+  "Legacy sign-specific copy must not replace an available owner-approved exact aspect body."
 );
 
 const phrasebookBeforeGenerated = normalizeCalendarEventSurface(

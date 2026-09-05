@@ -4368,7 +4368,14 @@ function approvedExactSkyAspectWritingSection(
       })
     : null;
 
-  if (studio) {
+  const loadedExactRegistry = contentRegistryFor("sky");
+
+  if (
+    studio
+    && loadedExactRegistry
+    && loadedExactRegistry.approvedExactSkyAspectCopy
+    && !loadedExactRegistry.approvedExactSkyAspectCopy(aspect.from, aspect.type, aspect.to)
+  ) {
     return {
       slot: "meaning",
       required: true,
@@ -4571,7 +4578,7 @@ function relatedSkyAspectSectionsForPlacement({
   pointName: string;
   positions: PlanetPosition[];
 }): SkyDetailSection[] {
-  return aspects
+  const resolvedSections = aspects
     .filter((aspect) => aspect.from === pointName || aspect.to === pointName)
     .filter((aspect, index, matchingAspects) => uniqueNatalAspectRows(matchingAspects).includes(aspect))
     .slice()
@@ -4584,19 +4591,31 @@ function relatedSkyAspectSectionsForPlacement({
         .filter((paragraph) => paragraph && isReaderFacingCopy(paragraph))
         .join("\n\n");
 
-      if (!body) {
-        return [];
-      }
+      if (!body) return [];
 
       return [{
-        heading: aspectDetail.title,
-        body,
-        role: "aspect" as const,
-        aspectType: aspect.type,
-        group: normalizedAspectToneBucket(aspect.type)
+        orb: aspect.orb,
+        section: {
+          heading: aspectDetail.title,
+          body,
+          role: "aspect" as const,
+          aspectType: aspect.type,
+          group: normalizedAspectToneBucket(aspect.type)
+        } satisfies SkyDetailSection
       }];
-    })
-    .slice(0, 2);
+    });
+  const giftSection = resolvedSections.find(({ section }) => section.group === "gifts");
+  const lessonSection = resolvedSections.find(({ section }) => section.group === "lessons");
+
+  if (giftSection && lessonSection) {
+    return [giftSection, lessonSection]
+      .sort((first, second) => first.orb - second.orb)
+      .map(({ section }) => section);
+  }
+
+  return resolvedSections
+    .slice(0, 2)
+    .map(({ section }) => section);
 }
 
 function skyPlacementAspectExactMoment(
@@ -10919,7 +10938,7 @@ export function App() {
   const [, setNatalCardTaglineVersion] = useState(0);
   const [selectedSkyDetail, setSelectedSkyDetail] = useState<SkyDetail | null>(null);
   const [skyDetailRoutePath, setSkyDetailRoutePath] = useState<string | null>(skyDetailRoutePathFromUrl);
-  const [, setContentRegistryVersion] = useState(0);
+  const [contentRegistryVersion, setContentRegistryVersion] = useState(0);
   const selectedSkyDetailRefreshKeyRef = useRef("");
   const selectedSkyDetailRefreshContentRef = useRef<GeneratedContentMap | null>(null);
   const fallbackDashboardHydrationRequestedRef = useRef(false);
@@ -11728,7 +11747,7 @@ export function App() {
       profileNatalSky?.ascendant ?? userProfile?.rising ?? "",
       skyPlacementPersonalizationTransits.map((transit) => transit.id).join(",")
     ].join(":");
-    const refreshKey = `${skyDetailRoutePath}:${fallbackArchitectureV3Version}:${personalizationKey}`;
+    const refreshKey = `${skyDetailRoutePath}:${fallbackArchitectureV3Version}:${contentRegistryVersion}:${personalizationKey}`;
 
     if (
       selectedSkyDetail?.routePath === skyDetailRoutePath
@@ -11756,7 +11775,7 @@ export function App() {
       sky.generatedAt,
       skyGeneratedContent
     ));
-  }, [fallbackArchitectureV3Version, profileNatalSky?.ascendant, selectedSkyDetail?.routePath, sky, skyDetailRoutePath, skyGeneratedContent, skyPlacementPersonalizationTransits, userProfile?.rising]);
+  }, [contentRegistryVersion, fallbackArchitectureV3Version, profileNatalSky?.ascendant, selectedSkyDetail?.routePath, sky, skyDetailRoutePath, skyGeneratedContent, skyPlacementPersonalizationTransits, userProfile?.rising]);
 
   useEffect(() => {
     const routePath = selectedSkyDetail?.routePath;

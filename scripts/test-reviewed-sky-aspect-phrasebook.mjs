@@ -47,7 +47,7 @@ assert.equal(phrasebook.hookRows.filter((row) => row.contentKey.startsWith("fall
 assert.equal(approvedJupiterNeptune.status, "LIVE");
 
 assert.equal(Object.keys(ownerAspectSource).length, 225);
-assert.equal(exactTransitRecords.length, 215);
+assert.equal(exactTransitRecords.length, 248);
 assert.ok(exactTransitRecords.every((record) => record.status === "LIVE"));
 assert.ok(exactTransitRecords.every((record) => record.readerCopy?.summary && record.readerCopy?.body));
 assert.equal(

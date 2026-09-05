@@ -144,7 +144,7 @@ export function selectSkyAspectCopyByPrecedence<T>({
   generated,
   fallback
 }: SkyAspectPrecedenceCandidates<T>): T | null {
-  return composed ?? signSpecific ?? exact ?? phrasebook ?? generated ?? fallback ?? null;
+  return composed ?? exact ?? signSpecific ?? phrasebook ?? generated ?? fallback ?? null;
 }
 
 export function resolveApprovedExactSkyAspectCopy({
