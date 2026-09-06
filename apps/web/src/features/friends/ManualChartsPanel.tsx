@@ -109,12 +109,13 @@ import type {
 import type { FriendCompositeAspectGroup } from "./FriendCompositeTab";
 import type { FriendSynastryAspectGroup } from "./FriendSynastryTab";
 import type { FriendNatalEmptyHouseRow } from "./FriendNatalTab";
-import type {
-  FriendBondTransitView,
-  FriendDailyForecastView,
-  FriendHouseTransitView,
-  FriendPersonalTransitGroup
-} from "./FriendTransitsTab";
+import {
+  buildFriendTransitsBrief,
+  type FriendBondTransitView,
+  type FriendDailyForecastView,
+  type FriendHouseTransitView,
+  type FriendPersonalTransitGroup
+} from "./friendTransitsBrief";
 import {
   friendDetailRoutePath,
   friendsRouteStateFromUrl,
@@ -1546,12 +1547,14 @@ export function ManualChartsPanel({
       id: card.id,
       headline: card.headline,
       effectBody: card.effectBody,
-      activationBody: card.activationBody
+      activationBody: card.activationBody,
+      transitPlanet: card.transitPlanet
     }))
   ), [selectedBondTransitCards]);
   const selectedFriendHouseTransitViewCards = useMemo<FriendHouseTransitView[]>(() => (
     selectedFriendHouseTransitCards.map((card) => ({
       id: card.contentKey,
+      contentKey: card.contentKey,
       transitPlanet: card.transit.transitPlanet,
       title: card.title,
       durationLabel: card.durationLabel,
@@ -1607,7 +1610,20 @@ export function ManualChartsPanel({
             detailAvailable: acceptedOwnerApprovedTransitSections(
               normalized.sections,
               fallbackV3ApprovalLevelForContentKey
-            ).length > 0
+            ).length > 0,
+            evidence: {
+              transitPlanet: transit.transitPlanet,
+              transitSign: transit.transitSign,
+              aspect: transit.aspect,
+              natalPoint: transit.natalPoint,
+              natalSign: transit.natalSign,
+              natalHouse: transit.natalHouse,
+              direction: transit.direction,
+              score: transit.score,
+              significance: transit.significance,
+              timingBonuses: transit.timingBonuses ?? [],
+              contentKeys: normalized.sections.flatMap((section) => section.sourceKeys)
+            }
           };
         })
       }];
@@ -1734,6 +1750,27 @@ export function ManualChartsPanel({
     friendProfileWork.transits,
     selectedFriendNatalAspectPatternItems,
     selectedFriendTransits
+  ]);
+  const selectedFriendTransitsBrief = useMemo(() => buildFriendTransitsBrief({
+    friendName: selectedChart?.displayName ?? "Friend",
+    dateLabel: transitDateLabel,
+    personalTransitGroups: selectedFriendPersonalTransitGroups,
+    bondTransits: selectedBondTransitViewCards,
+    houseTransits: selectedFriendHouseTransitViewCards,
+    dailyForecast: selectedFriendDailyForecast,
+    dailyDoItems: selectedFriendDailyDoDont?.do ?? [],
+    dailyDontItems: selectedFriendDailyDoDont?.dont ?? [],
+    patternItems: currentSkyLoading ? [] : selectedFriendNatalAspectPatternItems
+  }), [
+    currentSkyLoading,
+    selectedBondTransitViewCards,
+    selectedChart?.displayName,
+    selectedFriendDailyDoDont,
+    selectedFriendDailyForecast,
+    selectedFriendHouseTransitViewCards,
+    selectedFriendNatalAspectPatternItems,
+    selectedFriendPersonalTransitGroups,
+    transitDateLabel
   ]);
   const selectedFriendNatalAspectPatternStatus = friendProfileWork.natal && showFriendNatalAspectPatterns && selectedFriendReadyNatalChart
     ? natalAspectPatternReaderStatus(
@@ -2710,20 +2747,12 @@ export function ManualChartsPanel({
 
           {friendProfileTab === "transits" && (
             <FriendTransitsTab
-              bondTransits={selectedBondTransitViewCards}
+              brief={selectedFriendTransitsBrief}
               isLoading={currentSkyLoading}
-              dailyForecast={selectedFriendDailyForecast}
-              dailyDoItems={selectedFriendDailyDoDont?.do ?? []}
-              dailyDontItems={selectedFriendDailyDoDont?.dont ?? []}
-              dateLabel={transitDateLabel}
-              friendName={selectedChart.displayName}
-              houseTransits={selectedFriendHouseTransitViewCards}
               onOpenBondTransit={openBondTransitById}
               onOpenHouseTransit={openFriendHouseTransitById}
               onOpenPersonalTransit={openFriendTransitById}
-              patternItems={currentSkyLoading ? [] : selectedFriendNatalAspectPatternItems}
               patternTimingOverrides={currentSkyLoading ? {} : selectedFriendNatalAspectPatternTimingOverrides}
-              personalTransitGroups={selectedFriendPersonalTransitGroups}
             />
           )}
 
