@@ -1,0 +1,41 @@
+{
+  "schemaVersion": 2,
+  "type": "bounded_contextual_owner_batch_authorization",
+  "authority": "owner",
+  "decision": "approve",
+  "batchId": "sky-calendar-exact-approved-2026-09-05-north-node-48",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "approvedAt": "2026-09-05",
+  "ownerStatement": "yes please continue",
+  "decisionContext": "The owner had just been told the next step was to ship the 48 newly approved North Node passages into the governed Calendar exact-aspect corpus, then replied \"yes please continue\".",
+  "payloadFiles": [
+    "north-node-48.json"
+  ],
+  "memberCount": 48,
+  "memberSetSha256": "1989521150fe77a251d4f0d98a5d769e1d6093bd42533b6878f14769b1147682",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-05-north-node-48/owner-batch-authorization.json",
+  "previousProjectionPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-04-held-trines-33/current-owner-payloads.json",
+  "scopeGuards": {
+    "target": "north-node",
+    "aspects": [
+      "conjunction",
+      "sextile",
+      "square",
+      "opposition"
+    ],
+    "excluded": [
+      "south-node",
+      "trine",
+      "quincunx"
+    ],
+    "protectedUntouched": [
+      "sky.aspect.sun.opposition.moon",
+      "sky.aspect.saturn.opposition.pluto"
+    ]
+  }
+}
