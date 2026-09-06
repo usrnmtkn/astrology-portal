@@ -1,0 +1,35 @@
+{
+  "schema": "lunation-astrology-boundary-overrides/v1",
+  "count": 1,
+  "authoredCards": [
+    {
+      "contentKey": "authored/book-ritual-and-the-moon/lunation-horoscope/new-moon/virgo/rising-gemini/house-4",
+      "content_role": "full_copy",
+      "headline": "Virgo New Moon for Gemini Rising",
+      "body": "The Virgo new moon activates your 4th House of Home and Family. Home is where the heart is, and your heart is speaking loudly to you now. Who, where, and what are you giving your heart to in the present and the past. You may be feeling more reclusive during this New Moon, but it’s helping you get clear on your own internal emotional process. Unlike your usual social nature, you may feel like being alone now, tending to the illusions or misinformation that has been revealed at work or at home. You may also be seeing some changes surrounding home/family right now, or be thinking about moving and exploring the various contradictions and conflicts within yourself around what you need to feel happy and stable. What does home mean to you? To some, it is the foundation that grounds and sustains their families. To others, it is a place of refuge, security, and comfort. To many, it’s their sanctuary away from the toils of the world. This could be a great time to take stock of your home and make certain changes to suit your preferences and goals. Ask yourself if the location still aligns with what you want for yourself and your family. If a change is in order, then start planning carefully and strategically as there may be positive material rewards in it for you. This may also be a time when your emotional needs are being renegotiated. All relationships require give and take, and this New Moon can make it easier to see where the balance at home has become uneven. You may realize that you need more privacy, more help, a different division of responsibility, or simply a home that works better for the life you are living now. If something about your living situation or family dynamic has been bothering you for a while, this is a good time to stop treating it as background noise and decide what actually needs to change. Your intention for this New Moon is, “Find home and comfort inside yourself despite the chaos that surrounds you. Healthy boundaries and self-love will carry you through.”",
+      "review_status": "approved",
+      "owner_authored": true,
+      "reader_content_type": "astrology",
+      "lunation_kind": "new-moon",
+      "lunation_sign": "virgo",
+      "rising_sign": "gemini",
+      "house": 4,
+      "source_keys": [
+        "owner/ritual-and-the-moon/authored/book-ritual-and-the-moon/lunation-horoscope/new-moon/virgo/rising-gemini/house-4",
+        "tldr-astro-phrasebank/TLDR-ASTROLOGY-TAROT-SEPARATION-OWNER.md"
+      ],
+      "approval": {
+        "approvalLevel": "exact_owner_approved",
+        "recordPath": "tldr-astro-phrasebank/TLDR-ASTROLOGY-TAROT-SEPARATION-OWNER.md",
+        "payloadSha256": "4880d5376938394d71ecdb51b518a8cfcc8c694b4e57538561fb1a0371fdc0ef",
+        "approvedAt": "2026-09-06"
+      },
+      "protected_content": {
+        "policy": "owner-approved-astrology-boundary-correction",
+        "body_sha256": "4880d5376938394d71ecdb51b518a8cfcc8c694b4e57538561fb1a0371fdc0ef",
+        "word_count": 356,
+        "char_count": 2009
+      }
+    }
+  ]
+}
