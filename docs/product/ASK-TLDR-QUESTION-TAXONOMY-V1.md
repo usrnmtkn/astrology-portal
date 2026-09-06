@@ -108,11 +108,23 @@ may route to:
 
 The nearest evergreen record supplies retrieval hints only. The system must answer the user's actual question.
 
+## Money boundary
+
+`Money` can surface financial pressure, priorities, tradeoffs, and timing context.
+
+The question system must not use astrology to recommend or guarantee an investment, trade, loan, debt action, purchase, sale, or other financial transaction. Decision questions are reflective and contextual, not financial advice.
+
 ## Health boundary
 
 `Daily Life & Health` is about workload, routines, appointments, sleep, meals, recovery, physical limits, and what the week can realistically support.
 
 The question system must not use astrology to diagnose illness, infer symptoms, predict a medical crisis, or replace medical care.
+
+## Spirituality boundary
+
+`Spirituality` can discuss belief, meaning, solitude, private practice, and discernment.
+
+It must not assert psychic certainty, supernatural ability, spiritual awakening, or hidden facts about another person.
 
 ## Answer contract
 
