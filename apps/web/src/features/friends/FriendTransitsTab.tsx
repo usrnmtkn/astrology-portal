@@ -1,4 +1,6 @@
+import { useEffect, useState } from "react";
 import type { NatalAspectPatternActivationTimingWindow } from "../../services/natalAspectPatterns";
+import { loadUserGeneratedInterpretation } from "../../services/userGeneratedContent";
 import { DailyMoonContextTags } from "../../components/DailyMoonContextTags";
 import { DurationLabelText } from "../../components/charts/PlacementRows";
 import { pointGlyph } from "../../components/charts/chartAssets";
@@ -46,6 +48,30 @@ export type FriendTransitReadingView = {
   body: string;
 };
 
+type PersistedFriendTransitReadingIdentity = {
+  subjectId: string;
+  targetDate: string;
+  contentKey: string;
+};
+
+function persistedFriendTransitReadingIdentity(): PersistedFriendTransitReadingIdentity | null {
+  if (typeof window === "undefined") return null;
+
+  const targetDate = new URLSearchParams(window.location.search).get("date")?.trim() ?? "";
+  const hashQuery = window.location.hash.split("?", 2)[1] ?? "";
+  const subjectId = new URLSearchParams(hashQuery).get("chart")?.trim() ?? "";
+
+  if (!subjectId || !/^\d{4}-\d{2}-\d{2}$/u.test(targetDate)) {
+    return null;
+  }
+
+  return {
+    subjectId,
+    targetDate,
+    contentKey: `friend-transit-reading/${subjectId}/${targetDate}`
+  };
+}
+
 export function FriendTransitsTab({
   brief,
   isLoading = false,
@@ -79,6 +105,54 @@ export function FriendTransitsTab({
     activePatterns,
     hasAnyTransit
   } = brief;
+  const persistedIdentity = persistedFriendTransitReadingIdentity();
+  const persistedIdentityKey = persistedIdentity
+    ? `${persistedIdentity.subjectId}|${persistedIdentity.targetDate}`
+    : "";
+  const [persistedReading, setPersistedReading] = useState<FriendTransitReadingView | null>(null);
+  const [persistedReadingStatus, setPersistedReadingStatus] = useState<"idle" | "loading" | "ready">("idle");
+
+  useEffect(() => {
+    if (!readingAvailable || readingStatus !== "idle" || !persistedIdentity) {
+      setPersistedReading(null);
+      setPersistedReadingStatus("idle");
+      return undefined;
+    }
+
+    let cancelled = false;
+    setPersistedReading(null);
+    setPersistedReadingStatus("loading");
+
+    void loadUserGeneratedInterpretation({
+      subjectType: "friend_transit_reading",
+      subjectId: persistedIdentity.subjectId,
+      contentKey: persistedIdentity.contentKey,
+      targetDate: persistedIdentity.targetDate
+    }).then((savedReading) => {
+      if (cancelled) return;
+
+      if (savedReading) {
+        setPersistedReading(savedReading);
+        setPersistedReadingStatus("ready");
+        return;
+      }
+
+      setPersistedReadingStatus("idle");
+    }).catch(() => {
+      if (!cancelled) {
+        setPersistedReadingStatus("idle");
+      }
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [persistedIdentityKey, readingAvailable, readingStatus]);
+
+  const effectiveReading = reading ?? (readingStatus === "idle" ? persistedReading : null);
+  const effectiveReadingStatus = readingStatus === "idle" && persistedReadingStatus !== "idle"
+    ? persistedReadingStatus
+    : readingStatus;
 
   return (
     <div className="friend-tab-pane friend-compat-stage friend-transits-stage friend-transits-stage--full" aria-label={`${friendName} transits`}>
@@ -95,14 +169,14 @@ export function FriendTransitsTab({
               <span className="friend-transit-reading__premium">Paid reading</span>
             </div>
             <h3>{`What's going on with ${friendName} right now?`}</h3>
-            {readingStatus === "ready" && reading ? (
+            {effectiveReadingStatus === "ready" && effectiveReading ? (
               <>
-                {reading.summary ? <p>{reading.summary}</p> : null}
-                {reading.body.split(/\n{2,}/u).filter(Boolean).map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
+                {effectiveReading.summary ? <p>{effectiveReading.summary}</p> : null}
+                {effectiveReading.body.split(/\n{2,}/u).filter(Boolean).map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
               </>
-            ) : readingStatus === "loading" ? (
+            ) : effectiveReadingStatus === "loading" ? (
               <p role="status">Preparing {friendName}&apos;s reading…</p>
-            ) : readingStatus === "locked" ? (
+            ) : effectiveReadingStatus === "locked" ? (
               <>
                 <p>This reading is unavailable right now. You can try generating it again.</p>
                 <button className="friend-transit-reading__cta" onClick={onGenerateReading} type="button">Try again</button>
