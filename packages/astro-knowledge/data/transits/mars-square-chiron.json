@@ -1,0 +1,18 @@
+{
+  "id": "mars-square-chiron",
+  "transiting": "mars",
+  "aspect": "square",
+  "other": "chiron",
+  "base": "A boundary can come out twice: first as a clear no, then as an apology that quietly takes the no back.",
+  "business": "A practical mismatch needs adjustment; change the arrangement instead of repeating the same workaround.",
+  "shadow": "Pressure escalates when each side keeps demanding terms the other cannot sustain.",
+  "arcApplying": "The mismatch becomes harder to work around as exactness approaches.",
+  "arcSeparating": "The pressure eases after exactness, leaving the changed arrangement to prove itself.",
+  "voiceNeutral": true,
+  "status": "LIVE",
+  "readerCopy": {
+    "summary": "A boundary can come out twice: first as a clear no, then as an apology that quietly takes the no back.",
+    "body": "A boundary can come out twice: first as a clear no, then as an apology that quietly takes the no back. When Mars squares Chiron, assertion can clash with the learned fear that anger, refusal, or taking up space will cost you approval, which makes every direct response vulnerable to immediate revision. The result is frustration on both sides because nobody knows which answer is the answer. Keep the boundary intact long enough to see what actually happens before discomfort talks you into negotiating against yourself.",
+    "approvedVia": "bounded owner-approved exact Calendar batch sky-calendar-exact-approved-2026-09-06-final-83; packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/owner-batch-authorization.json"
+  }
+}

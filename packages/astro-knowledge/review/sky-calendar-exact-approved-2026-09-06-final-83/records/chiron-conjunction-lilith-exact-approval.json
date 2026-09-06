@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.chiron.conjunction.lilith",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-06",
+  "ownerStatement": "please mark all of this writing as approved for live",
+  "decisionContext": "Owner explicitly authorized all remaining Chiron + Lilith major Sky Calendar exact-aspect writing for live serving after reviewing and approving Batches 3 through 6.",
+  "batchId": "sky-calendar-exact-approved-2026-09-06-final-83",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "974d0c974551ee38c51dff7d7fccad690bd5a1b104b46c8f75c7166a036e987b",
+  "summary": "The thing you learned to be ashamed of wanting may be the same thing you are still hurting over not having.",
+  "body": "The thing you learned to be ashamed of wanting may be the same thing you are still hurting over not having. When Chiron conjuncts Lilith, an old rejection, criticism, or humiliation can meet the exact desire, anger, preference, or boundary you pushed out of sight afterward. It is hard to understand what hurt when you are still required to call the want itself unacceptable. Start there. Name what you wanted before you explain why you should have known better. Once the desire is allowed back into the story, the meaning of the old injury may change with it.",
+  "sourceApprovalBatch": "sky-chiron-launch-batch-4-v4-exact-owner-approved-2026-09-06",
+  "sourceApprovedAt": "2026-09-06"
+}

@@ -1,0 +1,18 @@
+{
+  "id": "saturn-conjunction-chiron",
+  "transiting": "saturn",
+  "aspect": "conjunction",
+  "other": "chiron",
+  "base": "Responsibility gets much heavier when you think one mistake will change how people see you.",
+  "business": "The two concerns arrive in the same decision; work with the point they now share.",
+  "shadow": "Because both concerns are active at once, acting on one can obscure what the other still needs.",
+  "arcApplying": "The two concerns become harder to separate as exactness approaches.",
+  "arcSeparating": "The fused emphasis begins to loosen after exactness.",
+  "voiceNeutral": true,
+  "status": "LIVE",
+  "readerCopy": {
+    "summary": "Responsibility gets much heavier when you think one mistake will change how people see you.",
+    "body": "Responsibility gets much heavier when you think one mistake will change how people see you. When Saturn conjuncts Chiron, a deadline, review, new title, or person with authority can turn an ordinary requirement into the old fear that competence is the price of being respected. That is how doing the job becomes watching yourself do the job, looking for the error that will expose you. The standard may be legitimate. The surveillance is not part of the assignment. Meet the requirement in front of you without turning every imperfection into evidence against yourself.",
+    "approvedVia": "bounded owner-approved exact Calendar batch sky-calendar-exact-approved-2026-09-06-final-83; packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/owner-batch-authorization.json"
+  }
+}

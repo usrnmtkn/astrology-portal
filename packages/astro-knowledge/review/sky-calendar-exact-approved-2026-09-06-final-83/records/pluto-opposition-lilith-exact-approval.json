@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.pluto.opposition.lilith",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-06",
+  "ownerStatement": "please mark all of this writing as approved for live",
+  "decisionContext": "Owner explicitly authorized all remaining Chiron + Lilith major Sky Calendar exact-aspect writing for live serving after reviewing and approving Batches 3 through 6.",
+  "batchId": "sky-calendar-exact-approved-2026-09-06-final-83",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "60bafee75f7aa073f6174edee29b844881dc8891aadac23e2d23d96af040ef3b",
+  "summary": "A person who used to have enough leverage to make you comply may discover that the consequence they threaten no longer works.",
+  "body": "A person who used to have enough leverage to make you comply may discover that the consequence they threaten no longer works. When Pluto opposes Lilith, power can sit directly across from refusal: money, access, secrets, status, approval, or fear on one side, and the decision to stop paying that price on the other. The balance can shift quickly once the threat loses its force. Do not waste the shift proving that you can dominate the situation now. Protect what matters, set the condition that needs to change, and leave the old power struggle with less control over your next decision.",
+  "sourceApprovalBatch": "sky-lilith-batch-6-v2-exact-owner-approved-2026-09-06",
+  "sourceApprovedAt": "2026-09-06"
+}

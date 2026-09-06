@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.moon.sextile.chiron",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-06",
+  "ownerStatement": "please mark all of this writing as approved for live",
+  "decisionContext": "Owner explicitly authorized all remaining Chiron + Lilith major Sky Calendar exact-aspect writing for live serving after reviewing and approving Batches 3 through 6.",
+  "batchId": "sky-calendar-exact-approved-2026-09-06-final-83",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "0e26d3f701328bd2f9e7928ea4a6c300773123ee052cdceb72f6938f62036f0c",
+  "summary": "Asking clearly for one small thing may be easier than waiting to see if someone notices.",
+  "body": "Asking clearly for one small thing may be easier than waiting to see if someone notices. When the Moon sextiles Chiron, care can become more available once you give another person a concrete way to provide it. Ask for the ride, the meal, the hour to talk, the quieter plan, or the practical favor that would actually help. The useful change is not becoming perfectly comfortable with needing people. It is discovering that one direct request can cost less than another evening spent hoping somebody guesses correctly.",
+  "sourceApprovalBatch": "sky-chiron-launch-batch-3-owner-review-2026-09-06",
+  "sourceApprovedAt": "2026-09-06"
+}

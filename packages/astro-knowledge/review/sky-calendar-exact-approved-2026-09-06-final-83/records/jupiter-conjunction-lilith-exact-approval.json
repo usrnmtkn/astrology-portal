@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.jupiter.conjunction.lilith",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-06",
+  "ownerStatement": "please mark all of this writing as approved for live",
+  "decisionContext": "Owner explicitly authorized all remaining Chiron + Lilith major Sky Calendar exact-aspect writing for live serving after reviewing and approving Batches 3 through 6.",
+  "batchId": "sky-calendar-exact-approved-2026-09-06-final-83",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "70d4a804bf5c2fec46b089c821e54bfbd4c01413003263d8d19e18cdba36b450",
+  "summary": "Wanting more can feel like liberation until more becomes its own excuse.",
+  "body": "Wanting more can feel like liberation until more becomes its own excuse. When Jupiter conjuncts Lilith, a desire you kept small can suddenly get louder, more ambitious, and much easier to justify, especially around money, sex, freedom, travel, attention, opportunity, or the right to live differently. The expansion may be overdue. It can also make every limit look like repression simply because you are tired of being limited. Give the want a place in the plan without turning permission into proof that every impulse deserves to become a commitment.",
+  "sourceApprovalBatch": "sky-lilith-batch-5-v4-exact-owner-approved-2026-09-06",
+  "sourceApprovedAt": "2026-09-06"
+}

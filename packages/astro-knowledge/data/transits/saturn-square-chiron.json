@@ -1,0 +1,18 @@
+{
+  "id": "saturn-square-chiron",
+  "transiting": "saturn",
+  "aspect": "square",
+  "other": "chiron",
+  "base": "If every small correction makes you work twice as hard, the standard is no longer the only thing you are responding to.",
+  "business": "A practical mismatch needs adjustment; change the arrangement instead of repeating the same workaround.",
+  "shadow": "Pressure escalates when each side keeps demanding terms the other cannot sustain.",
+  "arcApplying": "The mismatch becomes harder to work around as exactness approaches.",
+  "arcSeparating": "The pressure eases after exactness, leaving the changed arrangement to prove itself.",
+  "voiceNeutral": true,
+  "status": "LIVE",
+  "readerCopy": {
+    "summary": "If every small correction makes you work twice as hard, the standard is no longer the only thing you are responding to.",
+    "body": "If every small correction makes you work twice as hard, the standard is no longer the only thing you are responding to. When Saturn squares Chiron, criticism, delay, or a difficult requirement can wake up the old belief that one mistake exposes something fundamentally lacking in you. That is how improvement turns into penance: one revision becomes an all-nighter, one missed detail becomes proof you should have known better, one no becomes a reason to lower your expectations of yourself. Fix what needs fixing. You do not have to pay for a mistake with your entire sense of competence.",
+    "approvedVia": "bounded owner-approved exact Calendar batch sky-calendar-exact-approved-2026-09-06-final-83; packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/owner-batch-authorization.json"
+  }
+}

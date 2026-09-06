@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.mars.square.chiron",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-06",
+  "ownerStatement": "please mark all of this writing as approved for live",
+  "decisionContext": "Owner explicitly authorized all remaining Chiron + Lilith major Sky Calendar exact-aspect writing for live serving after reviewing and approving Batches 3 through 6.",
+  "batchId": "sky-calendar-exact-approved-2026-09-06-final-83",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "51be83230a18b6f566256316d7ec31090277bb8bf7b84ab8ee175d180c0c80a6",
+  "summary": "A boundary can come out twice: first as a clear no, then as an apology that quietly takes the no back.",
+  "body": "A boundary can come out twice: first as a clear no, then as an apology that quietly takes the no back. When Mars squares Chiron, assertion can clash with the learned fear that anger, refusal, or taking up space will cost you approval, which makes every direct response vulnerable to immediate revision. The result is frustration on both sides because nobody knows which answer is the answer. Keep the boundary intact long enough to see what actually happens before discomfort talks you into negotiating against yourself.",
+  "sourceApprovalBatch": "sky-chiron-launch-batch-3-owner-review-2026-09-06",
+  "sourceApprovedAt": "2026-09-06"
+}

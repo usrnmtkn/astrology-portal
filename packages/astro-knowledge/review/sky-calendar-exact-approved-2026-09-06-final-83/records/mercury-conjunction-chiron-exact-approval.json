@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.mercury.conjunction.chiron",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-06",
+  "ownerStatement": "please mark all of this writing as approved for live",
+  "decisionContext": "Owner explicitly authorized all remaining Chiron + Lilith major Sky Calendar exact-aspect writing for live serving after reviewing and approving Batches 3 through 6.",
+  "batchId": "sky-calendar-exact-approved-2026-09-06-final-83",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "b44701d98bb70efed1996b70689154532f7905bd36878186cb60951abefca8c4",
+  "summary": "The sentence you need to say may feel much more exposing than its actual content.",
+  "body": "The sentence you need to say may feel much more exposing than its actual content. When Mercury conjuncts Chiron, speaking and an older doubt about being heard can arrive together, making a reasonable question, correction, admission, or explanation feel unusually difficult to get out cleanly. You may rehearse it, qualify it, or hear your own voice shake and assume that means you are not ready. Say the accurate version, even if it is not the polished one. The conversation needs the information more than it needs flawless delivery.",
+  "sourceApprovalBatch": "sky-chiron-launch-batch-3-owner-review-2026-09-06",
+  "sourceApprovedAt": "2026-09-06"
+}
