@@ -1,5 +1,6 @@
 import { expect, test } from "@playwright/test";
 
+// Keep this flow in the standard admin smoke run so the actionable queue and its internal navigation cannot drift.
 test.describe("Content Studio Needs attention", () => {
   test("shows only actionable required work and keeps actions inside Studio", async ({ page }) => {
     await page.addInitScript(() => {
