@@ -383,7 +383,7 @@ try {
       }]
     }]
   }));
-  assert.match(populatedTransitsHtml, /friend-profile-copy-column"><section class="friend-transit-group" aria-label="Short-term themes"/);
+  assert.match(populatedTransitsHtml, /friend-profile-copy-column"><section class="daily-horoscope-summary friend-daily-forecast"/);
   assert.match(populatedTransitsHtml, /Daily forecast for Alex/);
   assert.match(populatedTransitsHtml, /An opening just appeared/);
   assert.match(populatedTransitsHtml, /Alex gets an answer sooner than expected/);
@@ -433,8 +433,8 @@ try {
   assert.doesNotMatch(unknownBirthTimeTransitsHtml, /7th house|Partnership|One-to-one relationships/);
 
   assert.ok(
-    populatedTransitsHtml.indexOf("Mars trine Moon") < populatedTransitsHtml.indexOf("Between you two"),
-    "The friend's ranked short-term transit list should lead relationship context."
+    populatedTransitsHtml.indexOf("Between you two") < populatedTransitsHtml.indexOf("Mars trine Moon"),
+    "Relationship context should lead the ranked short-term transit list."
   );
   assert.ok(
     populatedTransitsHtml.indexOf("Between you two") < populatedTransitsHtml.indexOf("Where it lands"),
