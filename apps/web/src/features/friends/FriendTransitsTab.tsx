@@ -54,7 +54,6 @@ export function FriendTransitsTab({
   onOpenHouseTransit,
   onOpenPersonalTransit,
   reading,
-  readingError,
   readingStatus = "idle",
   readingAvailable = false,
   patternTimingOverrides
@@ -66,8 +65,7 @@ export function FriendTransitsTab({
   onOpenHouseTransit: (id: string) => void;
   onOpenPersonalTransit: (id: string) => void;
   reading?: FriendTransitReadingView | null;
-  readingError?: string | null;
-  readingStatus?: "idle" | "loading" | "ready" | "error";
+  readingStatus?: "idle" | "loading" | "ready" | "locked";
   readingAvailable?: boolean;
   patternTimingOverrides: Record<string, NatalAspectPatternActivationTimingWindow>;
 }) {
@@ -92,7 +90,10 @@ export function FriendTransitsTab({
         ) : null}
         {!isLoading && readingAvailable ? (
           <article className="friends-logic-card friend-transit-reading" aria-label={`What's going on with ${friendName} right now?`}>
-            <span>Right now</span>
+            <div className="friend-transit-reading__topline">
+              <span>Right now</span>
+              <span className="friend-transit-reading__premium">Paid reading</span>
+            </div>
             <h3>{`What's going on with ${friendName} right now?`}</h3>
             {readingStatus === "ready" && reading ? (
               <>
@@ -100,16 +101,16 @@ export function FriendTransitsTab({
                 {reading.body.split(/\n{2,}/u).filter(Boolean).map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
               </>
             ) : readingStatus === "loading" ? (
-              <p role="status">Putting {friendName}&apos;s current transits together…</p>
-            ) : readingStatus === "error" ? (
+              <p role="status">Preparing {friendName}&apos;s reading…</p>
+            ) : readingStatus === "locked" ? (
               <>
-                <p>{readingError || "The short reading could not be generated. The transit details below are still available."}</p>
-                <button className="button secondary" onClick={onGenerateReading} type="button">Try again</button>
+                <p>This is a paid reading. Purchase access to unlock a personalized summary of {friendName}&apos;s current transits.</p>
+                <button className="friend-transit-reading__cta" onClick={onGenerateReading} type="button">Unlock this reading</button>
               </>
             ) : (
               <>
-                <p>Pull the current transit picture into one short reading without changing the astrology underneath it.</p>
-                <button className="button secondary" onClick={onGenerateReading} type="button">Give me the short version</button>
+                <p>A concise, personalized synthesis of the strongest themes active for {friendName} right now.</p>
+                <button className="friend-transit-reading__cta" onClick={onGenerateReading} type="button">Unlock this reading</button>
               </>
             )}
           </article>
