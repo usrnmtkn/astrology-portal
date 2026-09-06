@@ -63,6 +63,8 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
+      - name: Build knowledge dependency
+        run: npm run build:knowledge
       - run: npx playwright install --with-deps chromium
       - name: Verify standalone Reports UI
         run: npx playwright test -c playwright.config.ts tests/visual/report-library-ui.spec.ts
