@@ -69,7 +69,7 @@ const seedRun = spawnSync(process.execPath, [path.join(repoRoot, "scripts/seed-p
 });
 assert.equal(seedRun.status, 0, seedRun.stderr || "Content Studio seed contract failed.");
 const seedResult = JSON.parse(seedRun.stdout);
-assert.equal(seedResult.rows, 439, "Published exact Content Studio catalog must expand from 379 to 439 rows.");
+assert.equal(seedResult.rows, 439, "Published exact Content Studio catalog must remain 439 rows.");
 assert.equal(seedResult.northNodeRows, 60, "Content Studio must retain 60 editable North Node exact rows.");
 assert.equal(seedResult.southNodeRows, 60, "Content Studio must expose 60 editable South Node exact rows.");
 
@@ -138,13 +138,13 @@ const marsNorth = exactLookup("Mars", "square", "North Node");
 const marsSouth = exactLookup("Mars", "square", "South Node");
 assert.ok(marsNorth && marsSouth);
 const studioContent = new Map([
-  ["sky.aspect.north-node.square.mars", {
+  ["sky.aspect.mars.square.north-node", {
     body: marsNorth.body,
-    contentKey: "sky.aspect.north-node.square.mars",
-    headline: "North Node Square Mars",
+    contentKey: "sky.aspect.mars.square.north-node",
+    headline: "Mars Square North Node",
     sourceSnapshot: {
       contentStudioExactAspect: true,
-      exactSkyAspectIdentity: { a: "north-node", b: "mars", aspect: "square" },
+      exactSkyAspectIdentity: { a: "mars", b: "north-node", aspect: "square" },
       nodeAxisPole: "north-node"
     }
   }],
@@ -167,6 +167,14 @@ const studioNorth = resolveSkyAspectContentStudioExact({
   firstSign: "Aries",
   secondSign: "Libra"
 });
+const studioNorthReversed = resolveSkyAspectContentStudioExact({
+  generatedContent: studioContent,
+  first: "North Node",
+  second: "Mars",
+  aspect: "square",
+  firstSign: "Libra",
+  secondSign: "Aries"
+});
 const studioSouth = resolveSkyAspectContentStudioExact({
   generatedContent: studioContent,
   first: "Mars",
@@ -175,8 +183,18 @@ const studioSouth = resolveSkyAspectContentStudioExact({
   firstSign: "Aries",
   secondSign: "Libra"
 });
-assert.equal(studioNorth?.content.contentKey, "sky.aspect.north-node.square.mars");
+const studioSouthReversed = resolveSkyAspectContentStudioExact({
+  generatedContent: studioContent,
+  first: "South Node",
+  second: "Mars",
+  aspect: "square",
+  firstSign: "Libra",
+  secondSign: "Aries"
+});
+assert.equal(studioNorth?.content.contentKey, "sky.aspect.mars.square.north-node");
+assert.equal(studioNorthReversed?.content.contentKey, "sky.aspect.mars.square.north-node");
 assert.equal(studioSouth?.content.contentKey, "sky.aspect.south-node.square.mars");
+assert.equal(studioSouthReversed?.content.contentKey, "sky.aspect.south-node.square.mars");
 assert.notEqual(studioNorth?.content.contentKey, studioSouth?.content.contentKey, "Content Studio exact resolver collapsed the two node poles.");
 assert.equal(studioNorth?.body, marsNorth.body);
 assert.equal(studioSouth?.body, marsSouth.body);
@@ -185,6 +203,9 @@ console.log("South Node Calendar serving + Content Studio contract passed", {
   geometryEventsAdded: 0,
   southNodeRuntimeRecords: runtimeCount,
   contentStudioRows: seedResult.rows,
+  northNodeContentStudioRows: seedResult.northNodeRows,
   southNodeContentStudioRows: seedResult.southNodeRows,
-  dualPoleRoutingSamples: 3
+  dualPoleRoutingSamples: 3,
+  stableNorthNodeStudioKey: "sky.aspect.mars.square.north-node",
+  stableSouthNodeStudioKey: "sky.aspect.south-node.square.mars"
 });
