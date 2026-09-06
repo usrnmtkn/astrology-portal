@@ -4,6 +4,7 @@ import { defaultPronounChoice, normalizePronounChoice, type PronounChoice } from
 import { normalizeRelationshipContextKey, relationshipContextStorageKey } from "./relationshipContext";
 import { isTldrAstroApiConfigured, resolveTimezone } from "./tldrastroApi";
 import { natalChartHasCompletePlacements } from "./natalChartCompleteness";
+import { natalSnapshotWithBirthTimeReliability } from "./birthTimeReliability";
 import { listLocalManualChartUserIds } from "./manualChartLocalOwners";
 import type { LocationInput, SkySnapshot } from "../types";
 
@@ -90,8 +91,16 @@ export function manualChartNeedsNatalRepair(chart: ManualChart) {
     || !natalChartHasCompletePlacements(chart.natalChart, chart.birthTimeUnknown);
 }
 
+export function manualChartHasReliableBirthTime(chart: ManualChart) {
+  if (typeof chart.natalChart?.birthTimeKnown === "boolean") {
+    return chart.natalChart.birthTimeKnown;
+  }
+
+  return !chart.birthTimeUnknown && Boolean(chart.birthTime);
+}
+
 export function manualChartNeedsBirthTime(chart: ManualChart) {
-  return chart.chartType !== "event" && (chart.birthTimeUnknown || !chart.birthTime);
+  return chart.chartType !== "event" && !manualChartHasReliableBirthTime(chart);
 }
 
 type ManualChartRow = {
@@ -172,6 +181,7 @@ function isMissingManualChartPronounsColumn(error: unknown) {
 function rowToManualChart(row: ManualChartRow): ManualChart {
   const chartType = row.relationship_type === "event" ? "event" : "person";
   const lastSyncedAt = row.last_synced_at ?? row.updated_at ?? row.created_at;
+  const birthTimeKnown = !row.birth_time_unknown && Boolean(row.birth_time);
 
   return {
     id: row.id,
@@ -193,7 +203,7 @@ function rowToManualChart(row: ManualChartRow): ManualChart {
       longitude: row.birth_longitude,
       timeZone: row.birth_timezone ?? undefined
     },
-    natalChart: row.natal_chart,
+    natalChart: natalSnapshotWithBirthTimeReliability(row.natal_chart, birthTimeKnown),
     notes: row.notes,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
@@ -205,12 +215,16 @@ function rowToManualChart(row: ManualChartRow): ManualChart {
 
 function normalizeLocalManualChart(chart: LocalManualChartRecord): ManualChart {
   const chartType = chart.chartType ?? (chart.relationshipType === "event" ? "event" : "person");
+  const birthTimeKnown = typeof chart.natalChart?.birthTimeKnown === "boolean"
+    ? chart.natalChart.birthTimeKnown
+    : !chart.birthTimeUnknown && Boolean(chart.birthTime);
 
   return {
     ...chart,
     chartType,
     pronouns: normalizePronounChoice(chart.pronouns),
     relationshipType: chartType === "event" ? null : normalizeRelationshipContextKey(chart.relationshipType),
+    natalChart: natalSnapshotWithBirthTimeReliability(chart.natalChart, birthTimeKnown),
     syncStatus: chart.syncStatus ?? "pending",
     syncError: chart.syncError ?? null,
     lastSyncedAt: chart.lastSyncedAt ?? null
@@ -220,6 +234,7 @@ function normalizeLocalManualChart(chart: LocalManualChartRecord): ManualChart {
 function inputToRow(userId: string, input: ManualChartInput, options: { omitPronounsColumn?: boolean; storageRelationship?: boolean } = {}) {
   const pronouns = normalizePronounChoice(input.pronouns);
   const birthTime = input.birthTimeUnknown ? null : normalizeBirthTime(input.birthTime);
+  const birthTimeKnown = !input.birthTimeUnknown && Boolean(birthTime);
   const row = {
     owner_user_id: userId,
     display_name: input.displayName,
@@ -237,7 +252,10 @@ function inputToRow(userId: string, input: ManualChartInput, options: { omitPron
     birth_latitude: input.birthLocation.latitude,
     birth_longitude: input.birthLocation.longitude,
     birth_timezone: input.birthLocation.timeZone ?? null,
-    natal_chart: natalChartWithPronouns(input.natalChart, pronouns),
+    natal_chart: natalChartWithPronouns(
+      natalSnapshotWithBirthTimeReliability(input.natalChart, birthTimeKnown),
+      pronouns
+    ),
     notes: input.notes ?? null
   };
 
