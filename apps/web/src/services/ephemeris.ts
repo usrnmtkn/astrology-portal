@@ -3120,6 +3120,65 @@ function findNextPlacementSample(
   throw new Error(`Could not locate the next ${planet} in ${sign} transit from ${referenceDate.toISOString()}.`);
 }
 
+function findSkyPlacementResidencyAspects(
+  swe: SwissEphInstance,
+  start: Date,
+  end: Date,
+  timeZone: string,
+  planet: string
+): LunarCalendarEvent[] {
+  const planetId = skyPointPlanetId(swe, planet);
+  if (planetId === null || planet === "South Node") return [];
+
+  const otherPlanets = [
+    "Sun", "Mercury", "Venus", "Mars", "Jupiter", "Saturn",
+    "Uranus", "Neptune", "Pluto", "Lilith"
+  ].filter((candidate) => candidate !== planet);
+  const glyphByPlanet = new Map(planets.map(([name, glyph]) => [name, glyph]));
+  const events: LunarCalendarEvent[] = [];
+
+  for (const otherPlanet of otherPlanets) {
+    const otherPlanetId = skyPointPlanetId(swe, otherPlanet);
+    if (otherPlanetId === null) continue;
+
+    for (const [aspect, degrees] of calendarAspectDefinitions) {
+      const passes = scanExactAspectPasses(
+        swe,
+        planetId,
+        otherPlanetId,
+        degrees,
+        start,
+        end,
+        0.25
+      );
+
+      for (const occursAt of passes) {
+        if (occursAt < start || occursAt > end) continue;
+        const id = `aspect-${planet}-${aspect}-${otherPlanet}-${occursAt.toISOString()}`
+          .toLowerCase()
+          .replace(/\s+/g, "-");
+        if (events.some((event) => event.id === id)) continue;
+
+        events.push({
+          id,
+          type: "aspect",
+          title: `${planet} ${aspect} ${otherPlanet}`,
+          startsAt: occursAt.toISOString(),
+          dateKey: localDateKey(occursAt, timeZone),
+          glyph: `${glyphByPlanet.get(planet) ?? ""}${glyphByPlanet.get(otherPlanet) ?? ""}`,
+          primary: true,
+          planets: [planet, otherPlanet],
+          aspect,
+          fromSign: exactPlanetSign(swe, planetId, occursAt),
+          toSign: exactPlanetSign(swe, otherPlanetId, occursAt)
+        });
+      }
+    }
+  }
+
+  return events.sort((first, second) => first.startsAt.localeCompare(second.startsAt));
+}
+
 function rankPlacementEvents(events: LunarCalendarEvent[], planet: string) {
   const bodyPriority = ["Pluto", "Neptune", "Uranus", "Saturn", "Jupiter", "Mars", "Venus", "Mercury", "Sun"];
   const aspectPriority = ["conjunction", "opposition", "square", "trine", "sextile"];
@@ -3191,12 +3250,20 @@ export async function getSkyPlacementTransitFacts({
   const rankedEventsDuringTransit = ["Chiron", "North Node", "South Node"].includes(planet)
     ? []
     : rankPlacementEvents(
-      eventPasses.flatMap((pass) => findSkyAspects(
-        swe,
-        new Date(pass.entryDate),
-        new Date(pass.exitDate),
-        timeZone
-      )),
+      eventPasses.flatMap((pass) => (planet === "Sun"
+        ? findSkyPlacementResidencyAspects(
+            swe,
+            new Date(pass.entryDate),
+            new Date(pass.exitDate),
+            timeZone,
+            planet
+          )
+        : findSkyAspects(
+            swe,
+            new Date(pass.entryDate),
+            new Date(pass.exitDate),
+            timeZone
+          ))),
       planet
     );
 
