@@ -1,0 +1,46 @@
+name: Role-aware person model
+
+on:
+  pull_request:
+    paths:
+      - "apps/web/src/services/personReferences.ts"
+      - "apps/web/src/services/roleAwarePerson.ts"
+      - "scripts/test-role-aware-person-model.mjs"
+      - "scripts/audit-role-aware-person-migration.mjs"
+      - "scripts/test-friend-vocabulary-inflection-candidates.mjs"
+      - "packages/astro-knowledge/review/role-aware-person-migration-*"
+      - "tldr-astro-phrasebank/TLDR-ROLE-AWARE-PERSON-MODEL-SPEC-V1.md"
+      - "tldr-astro-phrasebank/TLDR-VOICE-ENTRY-POINT-RULING-OWNER.md"
+      - ".github/workflows/role-aware-person-model.yml"
+  push:
+    branches:
+      - main
+    paths:
+      - "apps/web/src/services/personReferences.ts"
+      - "apps/web/src/services/roleAwarePerson.ts"
+      - "scripts/test-role-aware-person-model.mjs"
+      - "scripts/audit-role-aware-person-migration.mjs"
+      - "scripts/test-friend-vocabulary-inflection-candidates.mjs"
+      - "packages/astro-knowledge/review/role-aware-person-migration-*"
+      - "tldr-astro-phrasebank/TLDR-ROLE-AWARE-PERSON-MODEL-SPEC-V1.md"
+      - "tldr-astro-phrasebank/TLDR-VOICE-ENTRY-POINT-RULING-OWNER.md"
+      - ".github/workflows/role-aware-person-model.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  role-aware-person:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Verify role-aware person foundation and frozen migration audit
+        run: node scripts/test-friend-vocabulary-inflection-candidates.mjs
+      - name: Typecheck web app
+        run: npm run typecheck
