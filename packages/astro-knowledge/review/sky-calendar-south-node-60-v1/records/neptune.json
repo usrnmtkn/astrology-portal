@@ -1,0 +1,51 @@
+{
+  "counterpartBody": "neptune",
+  "status": "needs_review",
+  "records": [
+    {
+      "contentKey": "sky.aspect.neptune.conjunction.south-node",
+      "aspect": "conjunction",
+      "mirroredNorthNodeAspect": "opposition",
+      "summary": "Nostalgia can make an old pattern feel more beautiful than it was to live through.",
+      "body": "Nostalgia can make an old pattern feel more beautiful than it was to live through. Neptune conjunct the South Node can blur the line between meaningful memory and selective memory, especially around a person, dream, role, or chapter you once wanted badly. You may remember the promise and forget the daily cost. The feeling can still tell you something important about what mattered. Just do not use longing as evidence that the old arrangement should be restored exactly as it was.",
+      "reviewStatus": "needs_review",
+      "runtimeEligible": false
+    },
+    {
+      "contentKey": "sky.aspect.neptune.sextile.south-node",
+      "aspect": "sextile",
+      "mirroredNorthNodeAspect": "trine",
+      "summary": "Something from the past can inspire you again without asking you to return to it.",
+      "body": "Something from the past can inspire you again without asking you to return to it. Neptune sextile the South Node can bring an old song, image, dream, spiritual practice, creative idea, or memory back in a way that softens the present and opens imagination. Let the association give you material. You can keep what moved you without rebuilding the circumstances around it. Inspiration travels better than nostalgia.",
+      "reviewStatus": "needs_review",
+      "runtimeEligible": false
+    },
+    {
+      "contentKey": "sky.aspect.neptune.square.south-node",
+      "aspect": "square",
+      "mirroredNorthNodeAspect": "square",
+      "summary": "The old story may be easiest to believe exactly where the facts are hardest to face.",
+      "body": "The old story may be easiest to believe exactly where the facts are hardest to face. Neptune square the South Node can make a familiar fantasy, excuse, longing, or escape route especially tempting when reality is disappointing. You may tell yourself the person has changed, the plan will somehow work this time, or the old dream only failed because the timing was wrong. Hope is not the problem. Reusing a comforting explanation instead of checking what is true now is.",
+      "reviewStatus": "needs_review",
+      "runtimeEligible": false
+    },
+    {
+      "contentKey": "sky.aspect.neptune.trine.south-node",
+      "aspect": "trine",
+      "mirroredNorthNodeAspect": "sextile",
+      "summary": "The past can feel soft enough around the edges that you forget why you left it.",
+      "body": "The past can feel soft enough around the edges that you forget why you left it. Neptune trine the South Node can make old dreams, memories, relationships, and creative identities feel unusually tender and easy to revisit. There may be something worth reclaiming in the feeling or imagination. Keep the part that still feeds you. Do not let a beautiful memory erase the practical reasons the chapter ended.",
+      "reviewStatus": "needs_review",
+      "runtimeEligible": false
+    },
+    {
+      "contentKey": "sky.aspect.neptune.opposition.south-node",
+      "aspect": "opposition",
+      "mirroredNorthNodeAspect": "conjunction",
+      "summary": "A current dream may expose how much an older fantasy still shapes what you expect.",
+      "body": "A current dream may expose how much an older fantasy still shapes what you expect. When Neptune opposes the South Node, the future you are imagining can come up against a story, longing, or ideal you have carried for a long time. The old picture may still be emotionally powerful even if it no longer fits the life in front of you. Name what you actually want now. You can honor the dream that got you here without making it the only acceptable ending.",
+      "reviewStatus": "needs_review",
+      "runtimeEligible": false
+    }
+  ]
+}
