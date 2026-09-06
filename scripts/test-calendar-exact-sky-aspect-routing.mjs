@@ -34,7 +34,7 @@ assert.equal(
   "The current exact owner payload-set hash drifted."
 );
 
-const exactRecords = fs.readdirSync(transitDirectory)
+const allExactRecords = fs.readdirSync(transitDirectory)
   .filter((name) => name.endsWith(".json"))
   .map((name) => readJson(path.join(transitDirectory, name)))
   .filter((record) => (
@@ -42,8 +42,17 @@ const exactRecords = fs.readdirSync(transitDirectory)
     && typeof record.readerCopy?.body === "string"
     && record.readerCopy.body.trim()
   ));
+const southNodePoleRecords = allExactRecords.filter((record) => record.other === "south-node");
+const exactRecords = allExactRecords.filter((record) => record.other !== "south-node");
 
-assert.equal(exactRecords.length, expectedExactCount, "The pinned reader-eligible exact Sky corpus changed.");
+assert.equal(exactRecords.length, expectedExactCount, "The pinned canonical-event exact Sky corpus changed.");
+if (southNodePoleRecords.length > 0) {
+  assert.equal(
+    southNodePoleRecords.length,
+    60,
+    "South Node pole-specific content must add exactly 60 interpretations without changing the canonical event denominator."
+  );
+}
 
 for (const [key, entry] of Object.entries(ownerRewrites.payloads)) {
   const payloadHash = sha256(JSON.stringify(entry.payload));
@@ -137,11 +146,19 @@ for (const record of exactRecords) {
       selected.sourceKeys.includes(`packages/astro-knowledge/data/transits/${record.id}.json`),
       `${record.id} (${first} first) lost exact-source provenance.`
     );
+    if (record.other === "north-node" && southNodePoleRecords.length === 60) {
+      assert.match(selected.body, /North Node \([a-z]+\):/u, `${record.id}: North Node label missing from dual-pole Calendar copy.`);
+      assert.match(selected.body, /South Node \([a-z]+\):/u, `${record.id}: South Node counterpoint missing from dual-pole Calendar copy.`);
+      assert.ok(
+        selected.sourceKeys.some((key) => key.endsWith("-south-node.json")),
+        `${record.id}: South Node exact-source provenance missing from dual-pole Calendar copy.`
+      );
+    }
     routedDirections += 1;
   }
 }
 
-assert.equal(routedDirections, expectedExactCount * 2, "Every reader-eligible exact record must route in both planet orders.");
+assert.equal(routedDirections, expectedExactCount * 2, "Every canonical reader-eligible exact record must route in both planet orders.");
 
 const screenshotCases = [
   {
@@ -219,7 +236,12 @@ for (const { event, ownerKey, sourceId } of screenshotCases) {
   const selected = normalized.sections[0];
 
   assert.equal(selected?.tier, "approved-exact-sky-aspect-v1");
-  assert.equal(selected?.body, ownerText, `${ownerKey}: Calendar Exact today output drifted from owner text.`);
+  if (sourceId.endsWith("-north-node") && southNodePoleRecords.length === 60) {
+    assert.ok(selected?.body.includes(ownerText), `${ownerKey}: North Node owner text disappeared from dual-pole Calendar output.`);
+    assert.match(selected?.body ?? "", /South Node \([a-z]+\):/u, `${ownerKey}: South Node interpretation is missing.`);
+  } else {
+    assert.equal(selected?.body, ownerText, `${ownerKey}: Calendar Exact today output drifted from owner text.`);
+  }
   assert.doesNotMatch(selected?.body ?? "", /untamed side|soften at the edges/iu);
 
   assert.equal(record.readerCopy.body, ownerText, `${ownerKey}: stored body must be byte-identical to owner text.`);
@@ -301,7 +323,8 @@ assert.equal(sourceGapWithoutGenericProse.status, "not-servable");
 assert.deepEqual(sourceGapWithoutGenericProse.sections, []);
 
 console.log("Calendar exact Sky-aspect routing parity passed", {
-  readerEligibleRecords: exactRecords.length,
+  canonicalReaderEligibleRecords: exactRecords.length,
+  poleSpecificSouthNodeContentRecords: southNodePoleRecords.length,
   routedDirections,
   screenshotRegressions: screenshotCases.length,
   remainingDocumentedExactGaps: documentedExactUniverse - exactRecords.length
