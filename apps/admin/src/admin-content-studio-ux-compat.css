@@ -1,0 +1,5 @@
+/* Preserve the established editor title rhythm while the wider Content Studio
+   workspace changes the surrounding hierarchy. */
+.admin-dashboard .admin-editor-toolbar h2 {
+  margin-top: var(--admin-space-sm);
+}
