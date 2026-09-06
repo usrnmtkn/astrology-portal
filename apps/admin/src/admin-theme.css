@@ -213,6 +213,10 @@
   --admin-main-padding-legacy: 46px clamp(var(--admin-space-34), 4vw, 68px);
   --admin-main-padding-compact: var(--admin-space-34) clamp(var(--admin-space-8xl), 3vw, 48px);
   --admin-main-padding: clamp(var(--admin-space-34), 4.4vw, 66px) clamp(var(--admin-space-8xl), 3.4vw, 52px);
+  --admin-space-36: 36px;
+  /* Content Studio layout rhythm: page padding and the gap between page-level blocks. */
+  --admin-studio-page-padding: var(--admin-space-8xl) clamp(var(--admin-space-7xl), 3vw, var(--admin-space-36));
+  --admin-studio-gap: var(--admin-space-6xl);
   --admin-composition-detail-padding: clamp(var(--admin-space-3xl), 2vw, var(--admin-space-7xl));
   --admin-composition-preview-padding: clamp(var(--admin-space-4xl), 3vw, var(--admin-space-9xl));
   --admin-radius-hairline: 2px;

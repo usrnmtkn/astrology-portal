@@ -160,6 +160,7 @@ import "./admin-components.css";
 import "./admin-row-selection.css";
 import "./admin-form-density.css";
 import "./admin-content-studio-ux-compat.css";
+import "./admin-content-studio-layout.css";
 
 const CompositionMapWorkspace = lazy(() => import("./CompositionMapWorkspace"));
 const AspectPatternDiagnostics = lazy(async () => {
@@ -5492,7 +5493,10 @@ export function GeneratedContentAdminDashboard() {
         />
 
         {message && (
-          <div className={`admin-save-toast ${loadState === "error" || loadState === "accessDenied" ? "is-error" : ""}`} role={loadState === "error" || loadState === "accessDenied" ? "alert" : "status"}>
+          <div
+            className={`admin-save-toast ${loadState === "error" || loadState === "accessDenied" ? "is-error" : message.includes("Partial load:") ? "is-warning" : ""}`}
+            role={loadState === "error" || loadState === "accessDenied" ? "alert" : "status"}
+          >
             <span>{message}</span>
             <button type="button" onClick={() => setMessage("")} aria-label="Dismiss notification">
               <X size={16} aria-hidden="true" />
