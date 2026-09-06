@@ -63,7 +63,11 @@ function redirectLocalAdminPath() {
 }
 
 async function loadAdminPresentationStyles() {
-  await import("../../admin/src/admin-row-selection.css");
+  await Promise.all([
+    import("../../admin/src/admin-row-selection.css"),
+    import("../../admin/src/admin-form-density.css"),
+    import("../../admin/src/admin-content-studio-ux-compat.css")
+  ]);
 }
 
 async function startApp() {
