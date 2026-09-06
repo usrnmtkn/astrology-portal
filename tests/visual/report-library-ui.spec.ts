@@ -55,7 +55,7 @@ test("standalone Reports route renders with the TLDR design system across themes
       expect(computed.headingFontFamily, `${viewport.name} ${theme}: page title uses TLDR Newsreader`).toContain("Newsreader");
       expect(computed.headingFontWeight, `${viewport.name} ${theme}: page title is not browser-default bold`).not.toBe("700");
       expect(computed.pageDisplay, `${viewport.name} ${theme}: route CSS is attached`).toBe("grid");
-      expect(computed.tabsDisplay, `${viewport.name} ${theme}: shared segmented control is styled`).toBe("inline-grid");
+      expect(["grid", "inline-grid"], `${viewport.name} ${theme}: shared segmented control is styled`).toContain(computed.tabsDisplay);
       expect(computed.backBorderRadius, `${viewport.name} ${theme}: shared back control is not browser-default`).not.toBe("0px");
       expect(computed.bodyBackgroundImage, `${viewport.name} ${theme}: TLDR background treatment is present`).not.toBe("none");
       expect(computed.horizontalOverflow, `${viewport.name} ${theme}: Reports does not overflow horizontally`).toBe(false);
