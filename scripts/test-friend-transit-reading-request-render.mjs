@@ -22,6 +22,7 @@ assert.match(
 assert.match(apiSource, /const locked = friendTransitReadingRequestLock\(\{/u);
 assert.match(apiSource, /input\.status = "DRAFT"/u);
 assert.match(apiSource, /input\.allowQualityFallback = false/u);
+assert.match(apiSource, /requestSubjectType === "friend_transit_reading"[\s\S]{0,220}This paid reading is currently unavailable/u);
 
 const server = await createServer({
   root: "./apps/web",
@@ -90,13 +91,14 @@ try {
 
   const idle = renderToStaticMarkup(React.createElement(FriendTransitsTab, baseProps));
   assert.match(idle, /What&#x27;s going on with Alex right now\?/u);
-  assert.match(idle, /Give me the short version/u);
+  assert.match(idle, /Paid reading/u);
+  assert.match(idle, /Unlock this reading/u);
 
   const loading = renderToStaticMarkup(React.createElement(FriendTransitsTab, {
     ...baseProps,
     readingStatus: "loading"
   }));
-  assert.match(loading, /Putting Alex&#x27;s current transits together/u);
+  assert.match(loading, /Preparing Alex&#x27;s reading/u);
 
   const ready = renderToStaticMarkup(React.createElement(FriendTransitsTab, {
     ...baseProps,
@@ -111,19 +113,19 @@ try {
   assert.match(ready, /The transit cards below remain the source of truth/u);
   assert.doesNotMatch(ready, /Give me the short version/u);
 
-  const error = renderToStaticMarkup(React.createElement(FriendTransitsTab, {
+  const locked = renderToStaticMarkup(React.createElement(FriendTransitsTab, {
     ...baseProps,
-    readingStatus: "error",
-    readingError: "Generation failed safely."
+    readingStatus: "locked"
   }));
-  assert.match(error, /Generation failed safely/u);
-  assert.match(error, /Try again/u);
+  assert.match(locked, /This is a paid reading/u);
+  assert.match(locked, /Unlock this reading/u);
+  assert.doesNotMatch(locked, /Anthropic|Claude|API|credit balance|Generation failed|Try again/iu);
 
   const unavailable = renderToStaticMarkup(React.createElement(FriendTransitsTab, {
     ...baseProps,
     readingAvailable: false
   }));
-  assert.doesNotMatch(unavailable, /Give me the short version/u);
+  assert.doesNotMatch(unavailable, /Unlock this reading/u);
 } finally {
   await server.close();
 }
