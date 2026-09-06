@@ -22,7 +22,7 @@ const careerIntents = askTldrPillarIntentVocabulary(career);
 assert.ok(careerIntents.includes("recognition"));
 assert.ok(careerIntents.includes("credit"));
 assert.ok(careerIntents.includes("authority"));
-assert.ok(careerIntents.includes("professional_direction"));
+assert.ok(careerIntents.includes("career_direction"));
 assert.equal(new Set(careerIntents).size, careerIntents.length);
 
 const schema = askTldrClassifierSchema(career);
@@ -110,7 +110,7 @@ const offPillar = validateAskTldrClassifierResult({
   pillar: career,
   value: {
     route: "needs_rephrase",
-    primaryIntent: "professional_direction",
+    primaryIntent: "career_direction",
     secondaryIntents: [],
     questionTypes: ["guidance"],
     timeWindow: "4_months",
