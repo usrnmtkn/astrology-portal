@@ -27,6 +27,7 @@ assert.equal(new Set(rows.map((row) => row.contentKey)).size, 48);
 assert.equal(evidence.memberCount, 48);
 assert.equal(manifest.rowCount, 48);
 assert.equal(ruling.decision, "approve");
+assert.equal(ruling.memberSetSha256, "100a291cb2b470d3598786fd5c954d16ef5c2b1ae8e79c59cd86e10be6ca157b", "release must remain byte-bound to the exact owner-approved 48-row source set");
 assert.equal(evidence.ownerStatement, "yes please continue");
 assert.deepEqual(evidence.capabilities, ["batch_generation", "serving"]);
 assert.equal(sha256(rows.map((row) => `${row.contentKey}:${row.bodySha256}`).join("\n")), ruling.memberSetSha256);
