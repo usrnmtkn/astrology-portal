@@ -147,13 +147,12 @@ export function useManualChartsController({
     }
 
     if (!chartsReady) {
-      const cachedCharts = manualChartsWithReliableAngleLongitudes(
-        listCachedManualCharts([chartOwnerUserId, profileId])
-      );
+      const cachedCharts = listCachedManualCharts([chartOwnerUserId, profileId]);
+      const reliableCachedCharts = manualChartsWithReliableAngleLongitudes(cachedCharts);
 
-      if (allowCachedChartsWhileLoading && cachedCharts.length > 0) {
+      if (allowCachedChartsWhileLoading && reliableCachedCharts.length > 0) {
         chartsLoadedRef.current = true;
-        setCharts(cachedCharts);
+        setCharts(reliableCachedCharts);
         setStatus("idle");
       } else {
         setCharts([]);
@@ -166,13 +165,12 @@ export function useManualChartsController({
     }
 
     if (allowCachedChartsWhileLoading && !chartsLoadedRef.current) {
-      const cachedCharts = manualChartsWithReliableAngleLongitudes(
-        listCachedManualCharts([chartOwnerUserId, profileId])
-      );
+      const cachedCharts = listCachedManualCharts([chartOwnerUserId, profileId]);
+      const reliableCachedCharts = manualChartsWithReliableAngleLongitudes(cachedCharts);
 
-      if (cachedCharts.length > 0) {
+      if (reliableCachedCharts.length > 0) {
         chartsLoadedRef.current = true;
-        setCharts(cachedCharts);
+        setCharts(reliableCachedCharts);
         setStatus("idle");
       }
     }
