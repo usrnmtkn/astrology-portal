@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.pluto.sextile.chiron",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-06",
+  "ownerStatement": "please mark all of this writing as approved for live",
+  "decisionContext": "Owner explicitly authorized all remaining Chiron + Lilith major Sky Calendar exact-aspect writing for live serving after reviewing and approving Batches 3 through 6.",
+  "batchId": "sky-calendar-exact-approved-2026-09-06-final-83",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "4038d52fe3b25532b89defff3aa887ce43abbb5711991ae29866894be5518da8",
+  "summary": "The most satisfying revenge is not winning the old argument. It is making the old problem harder to repeat.",
+  "body": "The most satisfying revenge is not winning the old argument. It is making the old problem harder to repeat. When Pluto sextiles Chiron, new information, money, authority, access, or support from the right person can finally give you enough leverage to change a condition you previously had to endure. Use it on the terms, not the history. Change who decides, what gets documented, where the boundary sits, or what happens when somebody crosses it. If the arrangement can no longer recreate the same problem, you do not need the other side to finally agree with your version of the past.",
+  "sourceApprovalBatch": "sky-chiron-launch-batch-4-v4-exact-owner-approved-2026-09-06",
+  "sourceApprovedAt": "2026-09-06"
+}

@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.mars.square.lilith",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-06",
+  "ownerStatement": "please mark all of this writing as approved for live",
+  "decisionContext": "Owner explicitly authorized all remaining Chiron + Lilith major Sky Calendar exact-aspect writing for live serving after reviewing and approving Batches 3 through 6.",
+  "batchId": "sky-calendar-exact-approved-2026-09-06-final-83",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "8a0cd138cf42433403225107af4cc07cd11af4b49d3822e0344a6a7827ff54d4",
+  "summary": "When anger has been unacceptable for too long, the first boundary can come out carrying every boundary you never set.",
+  "body": "When anger has been unacceptable for too long, the first boundary can come out carrying every boundary you never set. When Mars squares Lilith, a current frustration can collide with years of swallowing the no, softening the objection, or proving you could handle more than you wanted to handle. That is how a small offense gets a decade of heat behind it. The anger may be telling the truth about the pattern while exaggerating what this single moment can repair. Set the boundary for today. The person in front of you cannot return every earlier time you made yourself easier to overrule.",
+  "sourceApprovalBatch": "sky-lilith-batch-5-v4-exact-owner-approved-2026-09-06",
+  "sourceApprovedAt": "2026-09-06"
+}

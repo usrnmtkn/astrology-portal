@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.mars.opposition.lilith",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-06",
+  "ownerStatement": "please mark all of this writing as approved for live",
+  "decisionContext": "Owner explicitly authorized all remaining Chiron + Lilith major Sky Calendar exact-aspect writing for live serving after reviewing and approving Batches 3 through 6.",
+  "batchId": "sky-calendar-exact-approved-2026-09-06-final-83",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "0348512394601fd04d52d86736b4027c1c871abeeffa0317b6d369d68fe7dd8b",
+  "summary": "You are arguing about the decision, but the fight is really about who gets to make it.",
+  "body": "You are arguing about the decision, but the fight is really about who gets to make it. When Mars opposes Lilith, pressure to act, agree, comply, or settle something can run straight into another person's refusal to be managed. You can keep debating the details for hours and get nowhere if the deeper disagreement is about authority. Before another round of arguing, establish who actually has the right to decide what. A compromise only counts if both people have a say. One person finally giving in because they are exhausted is not the same thing as agreement.",
+  "sourceApprovalBatch": "sky-lilith-batch-5-v4-exact-owner-approved-2026-09-06",
+  "sourceApprovedAt": "2026-09-06"
+}

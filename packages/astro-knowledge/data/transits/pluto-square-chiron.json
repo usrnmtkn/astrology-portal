@@ -1,0 +1,18 @@
+{
+  "id": "pluto-square-chiron",
+  "transiting": "pluto",
+  "aspect": "square",
+  "other": "chiron",
+  "base": "The problem with control is that it keeps promising the next piece of information will finally let you relax.",
+  "business": "A practical mismatch needs adjustment; change the arrangement instead of repeating the same workaround.",
+  "shadow": "Pressure escalates when each side keeps demanding terms the other cannot sustain.",
+  "arcApplying": "The mismatch becomes harder to work around as exactness approaches.",
+  "arcSeparating": "The pressure eases after exactness, leaving the changed arrangement to prove itself.",
+  "voiceNeutral": true,
+  "status": "LIVE",
+  "readerCopy": {
+    "summary": "The problem with control is that it keeps promising the next piece of information will finally let you relax.",
+    "body": "The problem with control is that it keeps promising the next piece of information will finally let you relax. When Pluto squares Chiron, an old fear around rejection, dependence, trust, or being overruled can turn one unknown into a hunt for certainty: another check, another question, another way to make sure nobody can surprise you. Each answer helps for a minute and then creates another thing to verify. At that point you are no longer gathering information; you are trying to buy emotional certainty with facts, and facts cannot sell it. Make the decision the evidence supports, then stop asking the situation to guarantee you will never regret it.",
+    "approvedVia": "bounded owner-approved exact Calendar batch sky-calendar-exact-approved-2026-09-06-final-83; packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/owner-batch-authorization.json"
+  }
+}

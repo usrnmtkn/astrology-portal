@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.uranus.sextile.lilith",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-06",
+  "ownerStatement": "please mark all of this writing as approved for live",
+  "decisionContext": "Owner explicitly authorized all remaining Chiron + Lilith major Sky Calendar exact-aspect writing for live serving after reviewing and approving Batches 3 through 6.",
+  "batchId": "sky-calendar-exact-approved-2026-09-06-final-83",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "06fd8c5610af471e81c126dd42cd636282e582869c85d721d1e8c451d6f1bec9",
+  "summary": "An unexpected alternative can show you that the rule you were rebelling against was never the only way to do this.",
+  "body": "An unexpected alternative can show you that the rule you were rebelling against was never the only way to do this. When Uranus sextiles Lilith, a new tool, different schedule, unconventional collaborator, alternate route, or last-minute opening can make a private refusal practical instead of merely defiant. You may not have to fight the old arrangement head-on if another option lets you stop depending on it. Try the workaround before you turn the conflict into a referendum on your freedom. The useful change is the one that gives you a workable choice you did not have before, not simply a louder way to reject the old one.",
+  "sourceApprovalBatch": "sky-lilith-batch-6-v2-exact-owner-approved-2026-09-06",
+  "sourceApprovedAt": "2026-09-06"
+}

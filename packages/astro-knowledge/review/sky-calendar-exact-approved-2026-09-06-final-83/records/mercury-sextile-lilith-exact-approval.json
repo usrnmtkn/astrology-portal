@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.mercury.sextile.lilith",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-06",
+  "ownerStatement": "please mark all of this writing as approved for live",
+  "decisionContext": "Owner explicitly authorized all remaining Chiron + Lilith major Sky Calendar exact-aspect writing for live serving after reviewing and approving Batches 3 through 6.",
+  "batchId": "sky-calendar-exact-approved-2026-09-06-final-83",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "92fa2b597ecda45f9211ac4e0838cf59af5fa5dba1e4de91db158c136ece398e",
+  "summary": "Everyone knows what the problem is, but the conversation keeps going around it.",
+  "body": "Everyone knows what the problem is, but the conversation keeps going around it. When Mercury sextiles Lilith, one clear sentence can bring the money issue, resentment, sexual boundary, family problem, or criticism into the part of the conversation where people can finally respond to it. You do not need the perfect wording, and you do not need to make the truth harsher than it is. But politeness stops being useful when everyone has to keep pretending not to know the same thing. Say the fact that changes what everyone is actually deciding.",
+  "sourceApprovalBatch": "sky-lilith-batch-5-v4-exact-owner-approved-2026-09-06",
+  "sourceApprovedAt": "2026-09-06"
+}

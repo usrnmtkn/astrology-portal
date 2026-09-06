@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.jupiter.opposition.lilith",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-06",
+  "ownerStatement": "please mark all of this writing as approved for live",
+  "decisionContext": "Owner explicitly authorized all remaining Chiron + Lilith major Sky Calendar exact-aspect writing for live serving after reviewing and approving Batches 3 through 6.",
+  "batchId": "sky-calendar-exact-approved-2026-09-06-final-83",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "9ebb22d5dcfa45b71c52d52e3e4fa8ef1d8c75b46e9909d198a5131361f15493",
+  "summary": "A bigger opportunity can come with an unspoken request to become easier to approve of in exchange for receiving it.",
+  "body": "A bigger opportunity can come with an unspoken request to become easier to approve of in exchange for receiving it. When Jupiter opposes Lilith, money, access, travel, education, visibility, or influence may sit across from a desire, boundary, or identity the larger system would prefer you keep quiet. The benefits can be substantial, which is why the compromise deserves precision. Do not reject support simply because it comes from conventional sources, and do not call the deal generous if the price is pretending an important part of your life does not exist. Know exactly what the yes is buying and what it expects you to leave outside.",
+  "sourceApprovalBatch": "sky-lilith-batch-5-v4-exact-owner-approved-2026-09-06",
+  "sourceApprovedAt": "2026-09-06"
+}

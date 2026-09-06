@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.uranus.conjunction.lilith",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-06",
+  "ownerStatement": "please mark all of this writing as approved for live",
+  "decisionContext": "Owner explicitly authorized all remaining Chiron + Lilith major Sky Calendar exact-aspect writing for live serving after reviewing and approving Batches 3 through 6.",
+  "batchId": "sky-calendar-exact-approved-2026-09-06-final-83",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "d737d0fb9f32f8bf043dd249f8c6c2bc97ff6701362131b8e9518cce7ed4b034",
+  "summary": "You can know the old arrangement is finished before you know what replaces it.",
+  "body": "You can know the old arrangement is finished before you know what replaces it. When Uranus conjuncts Lilith, a refusal that has been building quietly can turn into a sudden quit, cancellation, announcement, move, breakup, or change of plan. The break may be overdue, but urgency can make the most dramatic exit look like the most honest one. It is not. Give yourself enough time to separate the change you need from the damage you only want because you are angry. Choose the version of freedom that leaves you with more options after the adrenaline wears off.",
+  "sourceApprovalBatch": "sky-lilith-batch-6-v2-exact-owner-approved-2026-09-06",
+  "sourceApprovedAt": "2026-09-06"
+}
