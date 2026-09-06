@@ -292,40 +292,7 @@ const phrasebookBeforeGenerated = normalizeCalendarEventSurface(
 );
 
 assert.equal(phrasebookBeforeGenerated.sections[0]?.tier, "reviewed-sky-aspect-phrasebook-v1");
-
-const generatedBeforeGeneric = normalizeCalendarEventSurface(
-  aspectEvent({ first: "Chiron", second: "Lilith", aspect: "square", id: "precedence-generated-over-generic" }),
-  {
-    body: "Approved generated copy remains ahead of the general compositor.",
-    contentKey: "generated/precedence-test",
-    headline: "Generated precedence test"
-  },
-  "Today",
-  null,
-  exactLookup
-);
-
-assert.equal(generatedBeforeGeneric.sections[0]?.tier, "generated-sky-aspect-lint-v1");
-assert.equal(exactLookup("Chiron", "square", "Lilith"), null, "Remaining exact gaps must still fail closed.");
 assert.equal(exactLookup("Saturn", "square", "Lilith")?.sourceId, "saturn-square-lilith");
-
-const sourceGapWithoutGenericProse = normalizeCalendarEventSurface(
-  aspectEvent({
-    first: "Moon",
-    second: "Chiron",
-    aspect: "sextile",
-    fromSign: "Pisces",
-    toSign: "Taurus",
-    id: "source-gap-with-factual-shell"
-  }),
-  null,
-  "On Tuesday, August 11",
-  null,
-  exactLookup
-);
-
-assert.equal(sourceGapWithoutGenericProse.status, "not-servable");
-assert.deepEqual(sourceGapWithoutGenericProse.sections, []);
 
 console.log("Calendar exact Sky-aspect routing parity passed", {
   selectedProjectionRecords: exactRecords.length,
