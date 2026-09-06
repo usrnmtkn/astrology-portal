@@ -1,0 +1,18 @@
+{
+  "id": "chiron-opposition-south-node",
+  "transiting": "chiron",
+  "aspect": "opposition",
+  "other": "south-node",
+  "base": "What is happening now may show you the difference between an old wound and a current need.",
+  "business": "Both positions are visible; deal with the tradeoff directly instead of pretending one side can disappear.",
+  "shadow": "The conflict hardens when each side treats the other as the obstacle instead of part of the decision.",
+  "arcApplying": "The two positions become more explicit as exactness approaches.",
+  "arcSeparating": "The standoff begins to loosen after exactness.",
+  "voiceNeutral": true,
+  "status": "LIVE",
+  "readerCopy": {
+    "summary": "What is happening now may show you the difference between an old wound and a current need.",
+    "body": "What is happening now may show you the difference between an old wound and a current need. When Chiron opposes the South Node, a present vulnerability can stand directly across from the strategy you developed to protect yourself before. You may want to disappear, prove yourself, help everyone else, or avoid asking because that response once made sense. The old protection does not have to be mocked or discarded. It just needs to stop answering questions the present has not asked.",
+    "approvedVia": "exact owner-approved South Node Calendar batch sky-calendar-south-node-60-v1; packages/astro-knowledge/review/sky-calendar-south-node-60-v1/owner-batch-authorization.json; serving authorized by packages/astro-knowledge/review/sky-calendar-south-node-60-v1/owner-serving-authorization.json"
+  }
+}

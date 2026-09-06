@@ -1,0 +1,18 @@
+{
+  "id": "moon-opposition-south-node",
+  "transiting": "moon",
+  "aspect": "opposition",
+  "other": "south-node",
+  "base": "What you need now may be different from what has always made you feel safe.",
+  "business": "Both positions are visible; deal with the tradeoff directly instead of pretending one side can disappear.",
+  "shadow": "The conflict hardens when each side treats the other as the obstacle instead of part of the decision.",
+  "arcApplying": "The two positions become more explicit as exactness approaches.",
+  "arcSeparating": "The standoff begins to loosen after exactness.",
+  "voiceNeutral": true,
+  "status": "LIVE",
+  "readerCopy": {
+    "summary": "What you need now may be different from what has always made you feel safe.",
+    "body": "What you need now may be different from what has always made you feel safe. When the Moon opposes the South Node, a current emotional need can expose the limits of an old family pattern, coping strategy, or source of reassurance. You may realize that keeping everyone calm, going home, staying quiet, or reaching for the usual person no longer gives you what it used to. The old comfort may still be real. It just does not get to define the only way you can care for yourself.",
+    "approvedVia": "exact owner-approved South Node Calendar batch sky-calendar-south-node-60-v1; packages/astro-knowledge/review/sky-calendar-south-node-60-v1/owner-batch-authorization.json; serving authorized by packages/astro-knowledge/review/sky-calendar-south-node-60-v1/owner-serving-authorization.json"
+  }
+}

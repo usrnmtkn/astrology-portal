@@ -1,0 +1,18 @@
+{
+  "id": "moon-trine-south-node",
+  "transiting": "moon",
+  "aspect": "trine",
+  "other": "south-node",
+  "base": "The comfort zone can feel especially convincing when nothing is forcing you out of it.",
+  "business": "A supportive opening is available here; use what becomes easier without assuming ease will do the work for you.",
+  "shadow": "The ease of a trine can make the opening easy to miss, leave unused, or go unexamined.",
+  "arcApplying": "Support and coordination build toward exactness.",
+  "arcSeparating": "The opening begins to recede after exactness.",
+  "voiceNeutral": true,
+  "status": "LIVE",
+  "readerCopy": {
+    "summary": "The comfort zone can feel especially convincing when nothing is forcing you out of it.",
+    "body": "The comfort zone can feel especially convincing when nothing is forcing you out of it. The Moon trine the South Node can make old routines, emotional roles, and familiar people feel easy to return to. There may be genuine nourishment in the meal you know, the place you trust, or the person who understands the backstory without an explanation. Enjoy what still restores you. The catch is noticing when comfort quietly becomes a reason to keep living inside a pattern you have already outgrown.",
+    "approvedVia": "exact owner-approved South Node Calendar batch sky-calendar-south-node-60-v1; packages/astro-knowledge/review/sky-calendar-south-node-60-v1/owner-batch-authorization.json; serving authorized by packages/astro-knowledge/review/sky-calendar-south-node-60-v1/owner-serving-authorization.json"
+  }
+}
