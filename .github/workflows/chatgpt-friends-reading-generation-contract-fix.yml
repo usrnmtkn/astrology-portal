@@ -1,0 +1,180 @@
+name: ChatGPT Friends Reading Generation Contract Fix
+
+on:
+  push:
+    branches:
+      - chatgpt/friends-reading-generation-contract-fix-20260906
+
+permissions:
+  contents: write
+
+jobs:
+  patch-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+      - name: Patch Friends generation contract
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          path = Path('api/_lib/content-generation.ts')
+          source = path.read_text()
+
+          schema_marker = 'const bannedUserFacingPhrases = ['
+          assert schema_marker in source
+          if 'const friendTransitReadingGeneratedContentSchema = {' not in source:
+              friend_schema = '''const friendTransitReadingGeneratedContentSchema = {
+            type: "object",
+            additionalProperties: false,
+            required: ["headline", "tldr", "summary", "body", "action", "timing", "sections", "sceneLock", "astrologyDrilldown"],
+            properties: {
+              headline: { type: "string" },
+              tldr: { type: "string" },
+              summary: { type: "string" },
+              body: { type: "string" },
+              action: { type: "string" },
+              timing: { type: "string" },
+              sections: {
+                type: "array",
+                maxItems: 0,
+                items: {
+                  type: "object",
+                  additionalProperties: false,
+                  required: ["heading", "body"],
+                  properties: {
+                    heading: { type: "string" },
+                    body: { type: "string" }
+                  }
+                }
+              },
+              sceneLock: { type: "null" },
+              astrologyDrilldown: { type: "null" }
+            }
+          } as const;
+
+          function generatedContentSchemaForInput(input: GenerateContentInput) {
+            return isFriendTransitReadingInput(input)
+              ? friendTransitReadingGeneratedContentSchema
+              : generatedContentSchema;
+          }
+
+          '''
+              source = source.replace(schema_marker, friend_schema + schema_marker, 1)
+
+          old_openai = '          schema: generatedContentSchema\n'
+          assert old_openai in source
+          source = source.replace(old_openai, '          schema: generatedContentSchemaForInput(input)\n', 1)
+
+          old_claude = '            input_schema: generatedContentSchema\n'
+          assert old_claude in source
+          source = source.replace(old_claude, '            input_schema: generatedContentSchemaForInput(input)\n', 1)
+
+          body_gate = '''  if (content.body.trim().length < 180) {
+            throw new Error("Generated body is too thin for editorial review.");
+          }
+
+          if (isPrimaryNatalPlacementGeneration(input)) {'''
+          assert body_gate in source
+          source = source.replace(body_gate, '''  if (content.body.trim().length < 180) {
+            throw new Error("Generated body is too thin for editorial review.");
+          }
+
+          if (isFriendTransitReadingInput(input)) {
+            return;
+          }
+
+          if (isPrimaryNatalPlacementGeneration(input)) {''', 1)
+
+          old_validation = '''function validateGeneratedContentForInput(content: GeneratedContent, input: GenerateContentInput) {
+            validateGeneratedContentQuality(content, input);
+            validateAstrologyDrilldownQuality(content);
+
+            if (isFriendTransitReadingInput(input)) {
+              const brief = friendTransitReadingBriefFromFacts(input.facts);
+              const expectedHeadline = stringValue(input.headline) || `What's going on with ${brief.friendName} right now?`;
+              const result = validateFriendTransitReadingDraft({ draft: content, brief, expectedHeadline });
+              if (!result.passed) {
+                hardEditorialViolation(
+                  result.issues.map((issue) => issue.code),
+                  `Generated Friends transit reading failed fact lock: ${result.issues.map((issue) => issue.message).join(" ")}`
+                );
+              }
+              return;
+            }
+
+            if (isNatalAspectGenerationContext(input)) {'''
+          assert old_validation in source
+          new_validation = '''function validateGeneratedContentForInput(content: GeneratedContent, input: GenerateContentInput) {
+            validateGeneratedContentQuality(content, input);
+
+            if (isFriendTransitReadingInput(input)) {
+              const brief = friendTransitReadingBriefFromFacts(input.facts);
+              const expectedHeadline = stringValue(input.headline) || `What's going on with ${brief.friendName} right now?`;
+              const result = validateFriendTransitReadingDraft({ draft: content, brief, expectedHeadline });
+              if (!result.passed) {
+                hardEditorialViolation(
+                  result.issues.map((issue) => issue.code),
+                  `Generated Friends transit reading failed fact lock: ${result.issues.map((issue) => issue.message).join(" ")}`
+                );
+              }
+              return;
+            }
+
+            validateAstrologyDrilldownQuality(content);
+
+            if (isNatalAspectGenerationContext(input)) {'''
+          source = source.replace(old_validation, new_validation, 1)
+          path.write_text(source)
+
+          test_path = Path('scripts/test-friend-transit-reading-request-render.mjs')
+          test_source = test_path.read_text()
+          if 'const generationSource = fs.readFileSync("api/_lib/content-generation.ts"' not in test_source:
+              test_source = test_source.replace(
+                  'const apiSource = fs.readFileSync("api/generate-user-content.ts", "utf8");\n',
+                  'const apiSource = fs.readFileSync("api/generate-user-content.ts", "utf8");\nconst generationSource = fs.readFileSync("api/_lib/content-generation.ts", "utf8");\n',
+                  1
+              )
+          marker = 'assert.match(apiSource, /requestSubjectType === "friend_transit_reading"[\\s\\S]{0,220}This paid reading is currently unavailable/u);\n'
+          assert marker in test_source
+          additions = r'''
+          assert.match(generationSource, /const friendTransitReadingGeneratedContentSchema = \{[\s\S]*sceneLock: \{ type: "null" \}[\s\S]*astrologyDrilldown: \{ type: "null" \}/u);
+          assert.match(generationSource, /schema: generatedContentSchemaForInput\(input\)/u);
+          assert.match(generationSource, /input_schema: generatedContentSchemaForInput\(input\)/u);
+          assert.match(
+            generationSource,
+            /content\.body\.trim\(\)\.length < 180[\s\S]{0,260}isFriendTransitReadingInput\(input\)[\s\S]{0,80}return;[\s\S]{0,120}isPrimaryNatalPlacementGeneration/u,
+            "Friends readings must keep baseline prose checks but skip article-only section requirements."
+          );
+          const friendValidationStart = generationSource.indexOf("function validateGeneratedContentForInput");
+          const friendValidationEnd = generationSource.indexOf("function parseResponseJson", friendValidationStart);
+          const friendValidationSource = generationSource.slice(friendValidationStart, friendValidationEnd);
+          assert.ok(friendValidationSource.indexOf("validateGeneratedContentQuality(content, input)") >= 0);
+          assert.ok(friendValidationSource.indexOf("if (isFriendTransitReadingInput(input))") > friendValidationSource.indexOf("validateGeneratedContentQuality(content, input)"));
+          assert.ok(friendValidationSource.indexOf("validateAstrologyDrilldownQuality(content)") > friendValidationSource.indexOf("if (isFriendTransitReadingInput(input))"));
+          '''
+          if 'friendTransitReadingGeneratedContentSchema' not in test_source:
+              test_source = test_source.replace(marker, marker + additions, 1)
+          test_path.write_text(test_source)
+          PY
+      - run: npm ci
+      - run: node scripts/test-friend-transit-reading-request-render.mjs
+      - run: node --experimental-strip-types scripts/test-friend-transit-reading-contract.mts
+      - run: node --import tsx scripts/test-birth-time-angle-reliability.mts
+      - run: npm run typecheck
+      - run: npm run build:knowledge
+      - run: npm run build:web
+      - run: git diff --check
+      - name: Commit validated fix
+        run: |
+          git config user.name usrnmtkn
+          git config user.email usrnmtkn@proton.me
+          git add api/_lib/content-generation.ts scripts/test-friend-transit-reading-request-render.mjs
+          git commit -m "Fix Friends reading generation validation contract"
+          git push origin HEAD:chatgpt/friends-reading-generation-contract-fix-20260906
