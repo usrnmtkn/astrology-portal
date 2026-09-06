@@ -108,6 +108,6 @@ test.describe("Content Studio Needs attention", () => {
     await expect(openContentRow).toHaveAttribute("href", /\/admin\/content#exact-content/);
     await expect(openContentRow).not.toHaveAttribute("target", "_blank");
 
-    await expect(page.getByRole("link", { name: "Content coverage" })).toHaveAttribute("href", "/admin/content/coverage");
+    await expect(page.getByRole("link", { name: "Content coverage", exact: true })).toHaveAttribute("href", "/admin/content/coverage");
   });
 });
