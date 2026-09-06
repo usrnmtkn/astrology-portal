@@ -1,5 +1,5 @@
 import { createRequire } from "node:module";
-import type { AskTldrRankedEvidence, AskTldrRetrievalPlan } from "./ask-tldr-model.js";
+import type { AskTldrRankedEvidence } from "./ask-tldr-model.js";
 
 const require = createRequire(import.meta.url);
 const knowledgeResolver = require("../../packages/astro-knowledge/scripts/knowledge-resolver.js") as {
@@ -14,6 +14,8 @@ const knowledgeResolver = require("../../packages/astro-knowledge/scripts/knowle
   multiTargetPacketToPrompt: (packet: Record<string, unknown>) => string;
   loadIndex: () => { byId: Map<string, unknown> };
 };
+
+export type AskTldrQuestionFocus = { houses: number[]; angles: string[]; points: string[] };
 
 const APPROVED_AUTHORITIES = new Set(["owner-approved-prose", "factual-evidence"]);
 const FILTER_ID = "ask-tldr-question-relevance-v1";
@@ -34,17 +36,17 @@ function approvedRecord(record: Record<string, unknown>) {
   return APPROVED_AUTHORITIES.has(words(record.authorityClass));
 }
 
-function matchedSelectors(factor: AskTldrRankedEvidence, plan: AskTldrRetrievalPlan) {
-  const houses = unique((factor.houses ?? []).filter((house) => plan.focus.houses.includes(house)));
-  const angleWanted = new Set(plan.focus.angles.map((value) => value.toLowerCase()));
+function matchedSelectors(factor: AskTldrRankedEvidence, focus: AskTldrQuestionFocus) {
+  const houses = unique((factor.houses ?? []).filter((house) => focus.houses.includes(house)));
+  const angleWanted = new Set(focus.angles.map((value) => value.toLowerCase()));
   const angles = unique((factor.angles ?? []).filter((angle) => angleWanted.has(angle.toLowerCase())));
-  const pointWanted = new Set(plan.focus.points.map((value) => value.toLowerCase()));
+  const pointWanted = new Set(focus.points.map((value) => value.toLowerCase()));
   const points = unique((factor.points ?? []).filter((point) => pointWanted.has(point.toLowerCase())));
   return { houses, angles, points };
 }
 
-function targetIds(factor: AskTldrRankedEvidence, plan: AskTldrRetrievalPlan) {
-  const matched = matchedSelectors(factor, plan);
+function targetIds(factor: AskTldrRankedEvidence, focus: AskTldrQuestionFocus) {
+  const matched = matchedSelectors(factor, focus);
   const ids = [
     ...matched.houses.map((house) => `house/${house}`),
     ...matched.angles.map((angle) => `body/${token(angle)}`),
@@ -64,14 +66,16 @@ export type AskTldrQuestionRelevanceEvidence = {
 
 export function resolveAskTldrQuestionRelevanceEvidence(input: {
   factor: AskTldrRankedEvidence;
-  plan: AskTldrRetrievalPlan;
+  focus: AskTldrQuestionFocus;
 }): AskTldrQuestionRelevanceEvidence {
-  const { matched, ids } = targetIds(input.factor, input.plan);
-  const hasRequiredMatch = input.plan.focus.houses.length > 0 || input.plan.focus.angles.length > 0
+  const { matched, ids } = targetIds(input.factor, input.focus);
+  const hasLocationFocus = input.focus.houses.length > 0 || input.focus.angles.length > 0;
+  const hasPointFocus = input.focus.points.length > 0;
+  const hasRequiredMatch = hasLocationFocus
     ? matched.houses.length > 0 || matched.angles.length > 0
-    : input.plan.focus.points.length > 0
+    : hasPointFocus
       ? matched.points.length > 0
-      : true;
+      : false;
   if (!hasRequiredMatch || ids.length === 0) {
     return { status: "missing", matched, canonicalIds: ids, packet: null, promptEvidence: null, packetSha256: null };
   }
