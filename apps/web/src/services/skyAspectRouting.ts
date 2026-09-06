@@ -31,8 +31,20 @@ const calendarAspectLeadVerb: Record<string, string> = {
   trine: "trines"
 };
 
+const southNodeAspectForNorthNodeAspect: Record<string, string> = {
+  conjunction: "opposition",
+  sextile: "trine",
+  square: "square",
+  trine: "sextile",
+  opposition: "conjunction"
+};
+
 function lowerSentenceStart(value: string) {
   return value ? `${value.charAt(0).toLowerCase()}${value.slice(1)}` : value;
+}
+
+function pointSlug(value: string) {
+  return value.trim().toLowerCase().replace(/[^a-z0-9]+/gu, "-").replace(/^-+|-+$/gu, "");
 }
 
 function calendarExactLeadIn(
@@ -52,6 +64,20 @@ function calendarExactLeadIn(
   }
 
   return `${dateLine}, ${planetA} in ${signA} ${aspectVerb} ${planetB} in ${signB}, and on a collective level, ${lowerSentenceStart(body)}`;
+}
+
+function exactStoredBody(
+  copy: ApprovedExactSkyAspectCopy,
+  slots: TemplateSlotValues
+) {
+  return interpolateTemplateString(copy.body, slots, {
+    contentKey: copy.contentId,
+    field: "body"
+  })
+    .split(/\n{2,}/)
+    .map((paragraph) => paragraph.trim())
+    .filter(Boolean)
+    .join("\n\n");
 }
 
 export type SkyCalendarComposedCardLookup = (
@@ -168,28 +194,67 @@ export function resolveApprovedExactSkyAspectCopy({
     return null;
   }
 
-  const storedBody = interpolateTemplateString(copy.body, slots, {
-    contentKey: copy.contentId,
-    field: "body"
-  })
-    .split(/\n{2,}/)
-    .map((paragraph) => paragraph.trim())
-    .filter(Boolean)
-    .join("\n\n");
-  const body = copy.calendarLeadIn === "date-placements-collective-level"
+  const storedBody = exactStoredBody(copy, slots);
+  const primaryBody = copy.calendarLeadIn === "date-placements-collective-level"
     && slots.dateLine
     ? calendarExactLeadIn(storedBody, aspect, slots)
     : storedBody;
 
-  if (!body || !isReaderFacingCopy(body)) {
+  if (!primaryBody || !isReaderFacingCopy(primaryBody)) {
     return null;
   }
 
+  const sourceKeys = [copy.contentId, `packages/astro-knowledge/data/transits/${copy.sourceId}.json`];
+  const firstSlug = pointSlug(first);
+  const secondSlug = pointSlug(second);
+  const northNodeIsFirst = firstSlug === "north-node" || firstSlug === "true-node";
+  const northNodeIsSecond = secondSlug === "north-node" || secondSlug === "true-node";
+  const southAspect = southNodeAspectForNorthNodeAspect[aspect.trim().toLowerCase()];
+
+  if ((northNodeIsFirst || northNodeIsSecond) && southAspect) {
+    const counterpart = northNodeIsFirst ? second : first;
+    const southCopy = lookup?.(counterpart, southAspect, "South Node");
+
+    if (southCopy) {
+      const southSlots: TemplateSlotValues = {
+        ...slots,
+        aspect: southAspect,
+        planetA: northNodeIsFirst ? "South Node" : slots.planetA,
+        planetB: northNodeIsSecond ? "South Node" : slots.planetB
+      };
+      // South Node and North Node are opposite points, so the canonical event's
+      // node sign cannot be reused as a South Node sign. The approved South Node
+      // Calendar bodies are sign-independent; keep their stored wording intact.
+      const southBody = exactStoredBody(southCopy, southSlots);
+
+      if (southBody && isReaderFacingCopy(southBody)) {
+        const combinedBody = [
+          `North Node (${aspect.trim().toLowerCase()}): ${primaryBody}`,
+          `South Node (${southAspect}): ${southBody}`
+        ].join("\n\n");
+
+        if (isReaderFacingCopy(combinedBody)) {
+          return {
+            body: combinedBody,
+            heading,
+            layer: "authored",
+            sourceKeys: [
+              ...sourceKeys,
+              southCopy.contentId,
+              `packages/astro-knowledge/data/transits/${southCopy.sourceId}.json`
+            ],
+            tier: "approved-exact-sky-aspect-v1"
+          };
+        }
+      }
+    }
+  }
+
   return {
-    body,
+    body: primaryBody,
     heading,
     layer: "authored",
-    sourceKeys: [copy.contentId, `packages/astro-knowledge/data/transits/${copy.sourceId}.json`],
+    sourceKeys,
     tier: "approved-exact-sky-aspect-v1"
   };
 }
