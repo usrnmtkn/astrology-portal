@@ -1,0 +1,67 @@
+name: ChatGPT PR 586 Current Main Sync
+
+on:
+  push:
+    branches:
+      - chatgpt/friend-transit-reading-v1-safe-main-20260906
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: chatgpt/friend-transit-reading-v1-safe-main-20260906
+          fetch-depth: 0
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+      - name: Remove duplicate server subject type
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          path = Path('api/generate-user-content.ts')
+          source = path.read_text()
+          duplicate = '  | "friend_transit_reading"\n  | "friend_transit_reading"\n'
+          if duplicate in source:
+              source = source.replace(duplicate, '  | "friend_transit_reading"\n', 1)
+              path.write_text(source)
+          if source.count('  | "friend_transit_reading"\n') != 1:
+              raise SystemExit('Expected exactly one server friend_transit_reading subject type')
+          PY
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if ! git diff --quiet -- api/generate-user-content.ts; then
+            git add api/generate-user-content.ts
+            git commit -m "Remove duplicate Friends reading server subject type"
+          fi
+      - name: Merge current main
+        run: |
+          git fetch origin main
+          git merge --no-edit origin/main
+      - name: Verify feature scope
+        run: |
+          changed="$(git diff --name-only origin/main...HEAD)"
+          printf '%s\n' "$changed"
+          allowed='^(api/_lib/content-generation\.ts|api/_lib/friend-transit-reading\.ts|api/_lib/provider-config\.ts|api/generate-user-content\.ts|apps/web/src/features/friends/FriendTransitsTab\.tsx|apps/web/src/features/friends/ManualChartsPanel\.tsx|apps/web/src/services/userGeneratedContent\.ts|scripts/test-friend-transit-reading-contract\.mts|scripts/test-friend-transit-reading-request-render\.mjs|src/astro-writing/productionEvidenceAdapter\.cjs|src/astro-writing/productionPreCallGate\.cjs|src/astro-writing/validateCopy\.mjs|\.github/workflows/chatgpt-pr586-sync\.yml)$'
+          bad="$(printf '%s\n' "$changed" | grep -Ev "$allowed" || true)"
+          if [ -n "$bad" ]; then
+            echo "Unexpected PR scope:" >&2
+            echo "$bad" >&2
+            exit 1
+          fi
+          grep -c '^  | "friend_transit_reading"$' api/generate-user-content.ts | grep -qx '1'
+          grep -c '^  | "friend_transit_reading"$' apps/web/src/services/userGeneratedContent.ts | grep -qx '1'
+      - run: npm ci
+      - run: node --experimental-strip-types scripts/test-friend-transit-reading-contract.mts
+      - run: node scripts/test-friend-transit-reading-request-render.mjs
+      - run: node --import tsx scripts/test-friend-natal-chart-completeness.mjs
+      - run: npm run typecheck
+      - run: npm run build:knowledge
+      - run: npm run build:web
+      - name: Push refreshed branch
+        run: git push origin HEAD:chatgpt/friend-transit-reading-v1-safe-main-20260906
