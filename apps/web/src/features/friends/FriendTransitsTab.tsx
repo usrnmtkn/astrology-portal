@@ -6,7 +6,6 @@ import { DailyMoonContextTags, type DailyMoonContext } from "../../components/Da
 import { DurationLabelText } from "../../components/charts/PlacementRows";
 import { pointGlyph } from "../../components/charts/chartAssets";
 import { NatalAspectPatternActivationsSection } from "../you/NatalAspectPatternsSection";
-import { buildFriendTransitsBriefState } from "./friendTransitsBrief";
 
 export type FriendBondTransitView = {
   id: string;
@@ -114,21 +113,19 @@ export function FriendTransitsTab({
   patternTimingOverrides: Record<string, NatalAspectPatternActivationTimingWindow>;
   personalTransitGroups: FriendPersonalTransitGroup[];
 }) {
-  const {
-    visibleHouseTransits,
-    shortTermTransits,
-    longTermTransits,
-    hasAnyTransit,
-    hasDailyGuidance
-  } = buildFriendTransitsBriefState({
-    personalTransitGroups,
-    houseTransits,
-    bondTransitCount: bondTransits.length,
-    hasDailyForecast: Boolean(dailyForecast),
-    dailyDoCount: dailyDoItems.length,
-    dailyDontCount: dailyDontItems.length,
-    hasActivePattern: patternItems.some((item) => Boolean(item.activationCopy))
-  });
+  const visiblePersonalTransitGroups = personalTransitGroups.map((group) => ({
+    ...group,
+    transits: group.transits.filter((transit) => transit.detailAvailable)
+  }));
+  const visibleHouseTransits = houseTransits.filter((transit) => transit.detailAvailable);
+  const personalTransitCount = visiblePersonalTransitGroups.reduce((count, group) => count + group.transits.length, 0);
+  const shortTermGroup = visiblePersonalTransitGroups.find((group) => group.key === "short");
+  const longTermGroup = visiblePersonalTransitGroups.find((group) => group.key === "long");
+  const shortTermTransits = shortTermGroup?.transits ?? [];
+  const longTermTransits = longTermGroup?.transits ?? [];
+  const hasActivePattern = patternItems.some((item) => Boolean(item.activationCopy));
+  const hasAnyTransit = Boolean(dailyForecast) || personalTransitCount > 0 || visibleHouseTransits.length > 0 || bondTransits.length > 0 || hasActivePattern;
+  const hasDailyGuidance = dailyDoItems.length === 3 && dailyDontItems.length === 3;
 
   return (
     <div className="friend-tab-pane friend-compat-stage friend-transits-stage friend-transits-stage--full" aria-label={`${friendName} transits`}>
@@ -138,17 +135,24 @@ export function FriendTransitsTab({
             Calculating transits for the selected date…
           </div>
         ) : null}
-        {shortTermTransits.length > 0 ? (
-          <section className="friend-transit-group" aria-label="Short-term themes">
-            <span className="eyebrow section-label friend-section-label">Active for {friendName}</span>
-            <div className="updates-aspect-list friend-transit-list">
-              {shortTermTransits.map((transit) => (
-                <FriendPersonalTransitCard
-                  key={transit.id}
-                  onOpen={onOpenPersonalTransit}
-                  transit={transit}
-                />
-              ))}
+        {dailyForecast ? (
+          <section className="daily-horoscope-summary friend-daily-forecast" aria-label={`Daily forecast for ${friendName}`}>
+            <h3>{dailyForecast.headline}</h3>
+            <p>{dailyForecast.body}</p>
+            <DailyMoonContextTags context={dailyForecast.moonContext} />
+          </section>
+        ) : null}
+        {hasDailyGuidance ? (
+          <section className="friend-transit-guidance" aria-label={`${friendName}'s do and don't`}>
+            <div className="daily-dodont friend-transit-dodont">
+              <div>
+                <span className="eyebrow section-label">Do</span>
+                <ul>{dailyDoItems.map((item) => <li key={item}>{item}</li>)}</ul>
+              </div>
+              <div>
+                <span className="eyebrow section-label">Don&apos;t</span>
+                <ul>{dailyDontItems.map((item) => <li key={item}>{item}</li>)}</ul>
+              </div>
             </div>
           </section>
         ) : null}
@@ -178,6 +182,20 @@ export function FriendTransitsTab({
             </div>
           </section>
         )}
+        {shortTermTransits.length > 0 ? (
+          <section className="friend-transit-group" aria-label="Short-term themes">
+            <span className="eyebrow section-label friend-section-label">Active for {friendName}</span>
+            <div className="updates-aspect-list friend-transit-list">
+              {shortTermTransits.map((transit) => (
+                <FriendPersonalTransitCard
+                  key={transit.id}
+                  onOpen={onOpenPersonalTransit}
+                  transit={transit}
+                />
+              ))}
+            </div>
+          </section>
+        ) : null}
         {visibleHouseTransits.length > 0 && (
           <section className="friend-transit-group" aria-label="House transits">
             <span className="eyebrow section-label friend-section-label">Where it lands</span>
@@ -224,27 +242,6 @@ export function FriendTransitsTab({
             </div>
           </section>
         )}
-        {dailyForecast ? (
-          <section className="daily-horoscope-summary friend-daily-forecast" aria-label={`Daily forecast for ${friendName}`}>
-            <h3>{dailyForecast.headline}</h3>
-            <p>{dailyForecast.body}</p>
-            <DailyMoonContextTags context={dailyForecast.moonContext} />
-          </section>
-        ) : null}
-        {hasDailyGuidance ? (
-          <section className="friend-transit-guidance" aria-label={`${friendName}'s do and don't`}>
-            <div className="daily-dodont friend-transit-dodont">
-              <div>
-                <span className="eyebrow section-label">Do</span>
-                <ul>{dailyDoItems.map((item) => <li key={item}>{item}</li>)}</ul>
-              </div>
-              <div>
-                <span className="eyebrow section-label">Don&apos;t</span>
-                <ul>{dailyDontItems.map((item) => <li key={item}>{item}</li>)}</ul>
-              </div>
-            </div>
-          </section>
-        ) : null}
         {longTermTransits.length > 0 ? (
           <section className="friend-transit-group" aria-label="Long-term themes">
             <span className="eyebrow section-label friend-section-label">Longer cycles</span>

@@ -7186,10 +7186,6 @@ function timingTargetName(point: string) {
     return "mc";
   }
 
-  if (point === "Imum Coeli" || point === "IC") {
-    return "ic";
-  }
-
   if (point === "North Node" || point === "True Node") {
     return "north_node";
   }
@@ -7252,39 +7248,23 @@ function rankedTransitItems(transits: TransitItem[], timing: FriendTimingContext
 }
 
 function natalTransitTargets(natalSky: SkySnapshot) {
-  const targets = [...natalSky.positions];
-
-  if (typeof natalSky.ascendantLongitude === "number") {
-    targets.push(
-      positionFromLongitude({
-        planet: "Ascendant",
-        glyph: pointGlyph("Ascendant"),
-        longitude: natalSky.ascendantLongitude
-      }),
-      positionFromLongitude({
-        planet: "Descendant",
-        glyph: pointGlyph("Descendant"),
-        longitude: natalSky.ascendantLongitude + 180
-      })
-    );
+  if (typeof natalSky.ascendantLongitude !== "number") {
+    return natalSky.positions;
   }
 
-  if (typeof natalSky.midheavenLongitude === "number") {
-    targets.push(
-      positionFromLongitude({
-        planet: "Midheaven",
-        glyph: "MC",
-        longitude: natalSky.midheavenLongitude
-      }),
-      positionFromLongitude({
-        planet: "Imum Coeli",
-        glyph: "IC",
-        longitude: natalSky.midheavenLongitude + 180
-      })
-    );
-  }
-
-  return targets;
+  return [
+    ...natalSky.positions,
+    positionFromLongitude({
+      planet: "Ascendant",
+      glyph: pointGlyph("Ascendant"),
+      longitude: natalSky.ascendantLongitude
+    }),
+    positionFromLongitude({
+      planet: "Descendant",
+      glyph: pointGlyph("Descendant"),
+      longitude: natalSky.ascendantLongitude + 180
+    })
+  ];
 }
 
 function rankedProfileTransits(currentSky: SkySnapshot, natalSky: SkySnapshot, birthDate: string, sunriseOrb = DEFAULT_SUNRISE_ORB_DEGREES) {
