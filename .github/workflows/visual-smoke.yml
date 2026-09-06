@@ -51,6 +51,9 @@ jobs:
       - name: Enforce browser knowledge boundary
         run: npm run test:browser-knowledge-boundary
 
+      - name: Verify reader copy eligibility and content boundary
+        run: npm run test:reader-copy-repair
+
       - name: Enforce web bundle budgets
         run: npm run qa:bundle
 
