@@ -5,6 +5,8 @@ export type UserGeneratedSubjectType =
   // Keep identical to UserContentSubjectType in api/generate-user-content.ts.
   | "you_update"
   | "you_transit"
+  | "friend_transit_reading"
+  | "friend_transit_reading"
   | "natal_summary"
   | "natal_placement"
   | "natal_aspect"
@@ -50,7 +52,7 @@ export type GenerateUserContentRequest = {
   subjectType: UserGeneratedSubjectType;
   subjectId: string;
   contentKey: string;
-  surface: "sky" | "you" | "natal" | "synastry" | "composite" | "relationship" | "year_ahead";
+  surface: "sky" | "you" | "natal" | "synastry" | "composite" | "relationship" | "friends" | "year_ahead";
   mode: GeneratedContentMode;
   eventType: string;
   status?: "DRAFT" | "LIVE";
@@ -193,6 +195,9 @@ export async function generateUserContent(request: GenerateUserContentRequest) {
   const saved = payload?.saved?.[0];
 
   if (saved) {
+    if (request.subjectType === "friend_transit_reading" && saved.status === "DRAFT") {
+      return fromRow(saved);
+    }
     return saved.status === "LIVE" ? fromRow(saved) : null;
   }
 

@@ -14,11 +14,17 @@ import {
   type ReportGenerationPayload
 } from "./_lib/report-generation.js";
 import type { ReportDomain, ReportHorizon } from "./_lib/report-types.js";
+import {
+  FRIEND_TRANSIT_READING_PROMPT_VERSION,
+  friendTransitReadingRequestLock
+} from "./_lib/friend-transit-reading.js";
 
 type UserContentSubjectType =
   // Keep identical to UserGeneratedSubjectType in apps/web/src/services/userGeneratedContent.ts.
   | "you_update"
   | "you_transit"
+  | "friend_transit_reading"
+  | "friend_transit_reading"
   | "natal_summary"
   | "natal_placement"
   | "natal_aspect"
@@ -225,7 +231,9 @@ async function saveUserGeneratedInterpretation(
       source_snapshot: input.sourceSnapshot ?? {},
       prompt_version: input.subjectType === "report_unit"
         ? "report-generation-owner-2026-08-09"
-        : "tldr-astro-v4",
+        : input.subjectType === "friend_transit_reading"
+          ? FRIEND_TRANSIT_READING_PROMPT_VERSION
+          : "tldr-astro-v4",
       provider: contentProvider(input.subjectType),
       model: generated.model,
       headline: generated.headline,
@@ -317,6 +325,24 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
   try {
     const userId = await requireAuthenticatedUser(req);
     const input = await readJsonBody(req);
+    if (input.subjectType === "friend_transit_reading") {
+      const locked = friendTransitReadingRequestLock({
+        brief: input.facts?.friendTransitsBrief,
+        subjectId: input.subjectId,
+        targetDate: typeof input.targetDate === "string" ? input.targetDate : ""
+      });
+      input.contentKey = locked.contentKey;
+      input.surface = locked.surface;
+      input.mode = locked.mode;
+      input.eventType = locked.eventType;
+      input.headline = locked.headline;
+      input.knowledgeIds = locked.knowledgeIds;
+      input.facts = locked.facts;
+      input.sourceSnapshot = locked.sourceSnapshot;
+      input.voiceNotes = undefined;
+      input.allowQualityFallback = false;
+      input.status = "DRAFT";
+    }
     const reportPayload = input.subjectType === "report_unit"
       ? await reportPayloadForRequest(userId, input)
       : undefined;
