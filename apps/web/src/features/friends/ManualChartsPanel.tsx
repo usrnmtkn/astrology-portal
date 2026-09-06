@@ -148,6 +148,7 @@ import type { SkyDetail } from "../sky/SkyDetailArticle";
 import { wholeDegreeOrb } from "../sky/skyHelpers";
 import { friendDetailHasReaderFacingContent } from "./friendDetailAvailability";
 import { selectEligibleFriendTransits } from "./friendTransitEligibility";
+import { rankFriendHouseTransitActivations } from "./friendHouseTransitPriority";
 import { scheduleFriendChartRepair } from "./friendChartLoading";
 
 const FriendsWorkspaceShell = lazy(() =>
@@ -1347,7 +1348,9 @@ export function ManualChartsPanel({
       return [];
     }
 
-    return currentSkyHouseActivations(currentSky, selectedFriendReadyNatalChart)
+    return rankFriendHouseTransitActivations(
+      currentSkyHouseActivations(currentSky, selectedFriendReadyNatalChart)
+    )
       .slice(0, 4)
       .map((activation) => {
         const transit = {
