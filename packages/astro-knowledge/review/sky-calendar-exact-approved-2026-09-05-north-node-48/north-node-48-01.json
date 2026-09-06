@@ -1,0 +1,71 @@
+{
+  "schemaVersion": 2,
+  "family": "north-node-48-01",
+  "rowCount": 8,
+  "rows": [
+    {
+      "contentKey": "sky.aspect.chiron.conjunction.north-node",
+      "summary": "A new opportunity can touch the exact place where you still doubt yourself and still be worth taking.",
+      "body": "A new opportunity can touch the exact place where you still doubt yourself and still be worth taking. When Chiron conjuncts the North Node, a chance to move forward may resemble an earlier experience that left you embarrassed, rejected, or convinced you were not ready. You do not need to feel completely healed before you use what you learned. Let the old experience inform your preparation and sharpen your boundaries, but do not let what happened before make the final decision for you.",
+      "bodySha256": "8708aa19bdc287efd478c424f62bc5fe7102425117f912abde012372706af04f",
+      "sourceApprovalBatch": "sky-north-node-launch-batch-2-exact-owner-approved-refined-2026-09-05",
+      "sourceApprovalLevel": "exact_owner_approved"
+    },
+    {
+      "contentKey": "sky.aspect.chiron.opposition.north-node",
+      "summary": "Being very good at avoiding an old wound can quietly become a reason to keep choosing a life built around safety.",
+      "body": "Being very good at avoiding an old wound can quietly become a reason to keep choosing a life built around safety. When Chiron opposes the North Node, the safer, familiar choice may be the routine or strategy originally designed to keep you from being embarrassed, rejected, or overwhelmed again. That protection may have been necessary in the past. Check if it is still protecting you from a genuine danger, or if it is now simply keeping you away from opportunities that would require a different response.",
+      "bodySha256": "df52e1a8311a608b6355ef000c904e6eec36a85015c43040078919136eeaecac",
+      "sourceApprovalBatch": "sky-north-node-launch-batch-2-exact-owner-approved-refined-2026-09-05",
+      "sourceApprovalLevel": "exact_owner_approved"
+    },
+    {
+      "contentKey": "sky.aspect.chiron.sextile.north-node",
+      "summary": "Something you learned the hard way may give you a useful advantage in a situation you are only beginning to enter.",
+      "body": "Something you learned the hard way may give you a useful advantage in a situation you are only beginning to enter. When Chiron sextiles the North Node, an old mistake, rejection, or difficult conversation can help you notice the part of a new situation that deserves attention much sooner this time. Use the knowledge where it changes the outcome. Ask the better question, set the boundary earlier, or prepare differently so you can bypass the friction you had to learn alone.",
+      "bodySha256": "40e9e4ecc6a7143b906a67c87954209b5b49223c84da305bc8145f00a003d440",
+      "sourceApprovalBatch": "sky-north-node-launch-batch-2-exact-owner-approved-refined-2026-09-05",
+      "sourceApprovalLevel": "exact_owner_approved"
+    },
+    {
+      "contentKey": "sky.aspect.chiron.square.north-node",
+      "summary": "An old hurt can make the next opportunity look dangerous for reasons that belong partly to what happened before.",
+      "body": "An old hurt can make the next opportunity look dangerous for reasons that belong partly to what happened before. When Chiron squares the North Node, criticism, visibility, or entering a similar situation can bring an earlier experience back into the decision with far more authority than it deserves. The fear may still contain useful information about what needs protection now. Update the boundary or secure better support, but do not assume the only safe choice is avoiding anything that resembles the old problem.",
+      "bodySha256": "5eea24d594a7bcb0edfb94e34af7c746da3ce8ed8aed53aefde886d2796acf23",
+      "sourceApprovalBatch": "sky-north-node-launch-batch-2-exact-owner-approved-refined-2026-09-05",
+      "sourceApprovalLevel": "exact_owner_approved"
+    },
+    {
+      "contentKey": "sky.aspect.jupiter.conjunction.north-node",
+      "summary": "A bigger opportunity can make the next direction feel obvious before you have checked what the bigger version will require.",
+      "body": "A bigger opportunity can make the next direction feel obvious before you have checked what the bigger version will require. When Jupiter conjuncts the North Node, growth and forward movement arrive in the same opening, which can bring education, travel, publishing, a larger audience, a new role, or access that materially expands your options. The opportunity may be excellent, but scale can hide the cost until the calendar, budget, or responsibilities have already changed around it. Say yes to the expansion you can still support after the excitement becomes ordinary.",
+      "bodySha256": "b7a690e5aac958eeac101a9de4acfb82482bd3961497407bb1d9e9be167b9a80",
+      "sourceApprovalBatch": "sky-north-node-launch-batch-1-owner-review-v2-2026-09-05",
+      "sourceApprovalLevel": "exact_owner_approved"
+    },
+    {
+      "contentKey": "sky.aspect.jupiter.opposition.north-node",
+      "summary": "The option with the biggest audience, easiest credibility, or most familiar version of success may not be the one that moves you forward.",
+      "body": "The option with the biggest audience, easiest credibility, or most familiar version of success may not be the one that moves you forward. When Jupiter opposes the North Node, old expertise, a proven market, a known belief system, or an opportunity you already understand can look especially rewarding because you know how to make it grow. There is nothing wrong with using what already works, especially if it brings money, reach, or access. Make sure the success gives you more choice afterward instead of becoming another reason to keep building around what you have already mastered.",
+      "bodySha256": "5c69b81aa5035b105d38ba8381682b61853b5c5dd565ab65102d255e331beb21",
+      "sourceApprovalBatch": "sky-north-node-launch-batch-1-owner-review-v2-2026-09-05",
+      "sourceApprovalLevel": "exact_owner_approved"
+    },
+    {
+      "contentKey": "sky.aspect.jupiter.sextile.north-node",
+      "summary": "A little more access, support, or confidence may turn a possibility into something you can actually test.",
+      "body": "A little more access, support, or confidence may turn a possibility into something you can actually test. When Jupiter sextiles the North Node, a mentor, course, introduction, grant, trip, audience, or piece of good news can give an idea enough backing to move beyond speculation. The support is useful because it lowers the cost of finding out, not because it guarantees the outcome. Use the extra reach on the possibility you were already prepared to explore and let the results decide how much larger it deserves to become.",
+      "bodySha256": "a47b3507d94413f11e8a9b4ea2407c6f3f06b9721d99522635032ccb04569eab",
+      "sourceApprovalBatch": "sky-north-node-launch-batch-1-owner-review-v2-2026-09-05",
+      "sourceApprovalLevel": "exact_owner_approved"
+    },
+    {
+      "contentKey": "sky.aspect.jupiter.square.north-node",
+      "summary": "A larger opportunity can become a distraction if it lets you avoid the smaller decision that would actually change your direction.",
+      "body": "A larger opportunity can become a distraction if it lets you avoid the smaller decision that would actually change your direction. When Jupiter squares the North Node, another project, promise, credential, trip, or ambitious plan can feel like progress while the unresolved choice underneath it keeps returning. More options do not help much when every option preserves the same indecision. Cut the plan back to the decision that changes what you actually do next, then let expansion follow the choice instead of replacing it.",
+      "bodySha256": "c83a8a23562578a8d9b976bd187825d17aa6d3449ad250318e1f7ef1ebc6d4d0",
+      "sourceApprovalBatch": "sky-north-node-launch-batch-1-owner-review-v2-2026-09-05",
+      "sourceApprovalLevel": "exact_owner_approved"
+    }
+  ]
+}
