@@ -11,6 +11,7 @@ function read(relativePath) {
 
 const app = read("apps/web/src/App.tsx");
 const manualChartsPanel = read("apps/web/src/features/friends/ManualChartsPanel.tsx");
+const manualChartsController = read("apps/web/src/features/friends/useManualChartsController.ts");
 const readerSurfaces = `${app}\n${manualChartsPanel}`;
 const page = read("apps/web/src/features/you/YouPage.tsx");
 const component = read("apps/web/src/features/you/NatalAspectPatternsSection.tsx");
@@ -40,7 +41,7 @@ assert.match(
   /setProfileNatalAspectPatternStatus\(\s*showNatalAspectPatterns\s*\?\s*natalSky\.aspectPatterns\?\.interpretationContexts\s*\?\s*"ready"\s*:\s*"loading"\s*:\s*"idle"\s*\)/s,
   "Cached pattern copy may resolve immediately; otherwise pattern loading must not block the natal chart."
 );
-assert.match(app, /skyWithNatalAspectPatternCopy\(natalSky, aspectPatterns\)/, "Aspect patterns must be attached by copying the sky snapshot.");
+assert.match(manualChartsController, /skyWithNatalAspectPatternCopy\(natalSky, aspectPatterns\)/, "Aspect patterns must be attached by copying the sky snapshot in the extracted manual-chart controller.");
 assert.match(app, /showNatalAspectPatterns\s*\?\s*natalAspectPatternReaderItems\(natalSky\)/, "Reader items must be derived only when enabled.");
 assert.match(app, /natalAspectPatternStatus={natalAspectPatternStatus}/, "YouPage must receive an explicit reader status.");
 assert.match(readerSurfaces, /showFriendNatalAspectPatterns\s*=\s*natalAspectPatternReaderEnabled\(\)/, "Friends natal charts must use the same guarded reader flag.");
