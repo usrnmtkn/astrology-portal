@@ -82,7 +82,7 @@ const lovePattern = validateAskTldrClassifierResult({
   pillar: love,
   value: {
     route: "in_pillar",
-    primaryIntent: "patterns",
+    primaryIntent: "relationship_pattern",
     secondaryIntents: ["reciprocity"],
     questionTypes: ["pattern", "guidance"],
     timeWindow: "4_months",
@@ -97,7 +97,7 @@ const moneyDecision = validateAskTldrClassifierResult({
   value: {
     route: "in_pillar",
     primaryIntent: "financial_decision",
-    secondaryIntents: ["priorities"],
+    secondaryIntents: ["priority"],
     questionTypes: ["decision", "guidance"],
     timeWindow: "4_months",
     confidence: "high",
