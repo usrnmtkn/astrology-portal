@@ -29,6 +29,13 @@ assert.equal(evergreen.preparationAllowed, true, evergreen.preparationBlockReaso
 assert.ok(evergreen.writerRequest);
 assert.ok(evergreen.candidateCount > 0);
 assert.equal(evergreen.governedPacket.evidence[0].factorKey, "transit:jupiter:opposition:midheaven");
+assert.equal(evergreen.questionBoundPacket.evidence[0].factorKey, "transit:jupiter:opposition:midheaven");
+assert.equal(evergreen.questionBoundPacket.evidence[0].questionRelevance.status, "full");
+assert.ok(evergreen.questionBoundPacket.evidence[0].questionRelevance.canonicalIds.some((id) => id === "body/midheaven" || id === "house/10"));
+assert.equal(evergreen.relevanceReceipt.generationAllowed, true);
+assert.equal(evergreen.relevanceReceipt.primaryEvidenceId, evergreen.writerRequest.primaryEvidenceId);
+assert.ok(evergreen.writerRequest.input.includes("GOVERNED QUESTION RELEVANCE EVIDENCE"));
+assert.ok(evergreen.writerRequest.input.includes(evergreen.relevanceReceipt.receiptSha256));
 
 const freeText = prepareFreeTextAskTldrCalibration({
   model,
@@ -51,6 +58,7 @@ assert.deepEqual(freeText.plan.focus, {
 }, "Free-text recognition/credit/workload must inherit the matching evergreen retrieval focus instead of using only the broad Career profile.");
 assert.equal(freeText.preparationAllowed, true, freeText.preparationBlockReason);
 assert.equal(freeText.governedPacket.evidence[0].factorKey, evergreen.governedPacket.evidence[0].factorKey, "Equivalent evergreen and free-text questions should reach the same primary astrology when the facts support it.");
+assert.equal(freeText.questionBoundPacket.evidence[0].questionRelevance.status, "full");
 
 const renegotiationFreeText = prepareFreeTextAskTldrCalibration({
   model,
@@ -94,9 +102,13 @@ assert.equal(finalized.runtimeEnabled, false);
 assert.equal(finalized.finalized, true);
 assert.equal(finalized.factLock.passed, true);
 assert.equal(finalized.judge.verdict, "pass");
+assert.equal(finalized.releasePacket.schema, "ask-tldr-question-bound-calibration-release-packet.v1");
 assert.equal(finalized.releasePacket.releaseStatus, "calibration_candidate");
 assert.equal(finalized.releasePacket.readerServingEnabled, false);
 assert.equal(finalized.releasePacket.ownerApproved, false);
+assert.equal(finalized.releasePacket.sourceBindings.relevanceReceiptSha256, evergreen.relevanceReceipt.receiptSha256);
+assert.ok(finalized.releasePacket.sourceBindings.questionRelevancePacketSha256ByEvidenceId[primaryId]);
+assert.ok(finalized.judgeRequest.input.includes("GOVERNED QUESTION RELEVANCE EVIDENCE"));
 
 const badFacts = finalizeAskTldrCalibration({
   prepared: evergreen,
@@ -112,4 +124,4 @@ assert.equal(badFacts.blockReason, "deterministic_fact_lock_failed");
 assert.equal(badFacts.judgeRequest, null, "A factually invalid writer answer must not spend a judge call.");
 assert.equal(badFacts.releasePacket, null);
 
-console.log("Ask TLDR end-to-end calibration pipeline passed: evergreen and free-text share one astrology engine with intent-specific retrieval focus, invalid facts stop before judging, and a fully passing answer remains a non-serving calibration candidate.");
+console.log("Ask TLDR end-to-end calibration pipeline passed: evergreen and free-text share one question-focused astrology engine, every writer factor carries governed question relevance, invalid facts stop before judging, and passing generated copy remains non-serving calibration only.");
