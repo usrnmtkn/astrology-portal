@@ -1,62 +1,19 @@
-import type {
-  NatalAspectPatternActivationTimingWindow,
-  NatalAspectPatternReaderItem
-} from "../../services/natalAspectPatterns";
-import { DailyMoonContextTags, type DailyMoonContext } from "../../components/DailyMoonContextTags";
+import type { NatalAspectPatternActivationTimingWindow } from "../../services/natalAspectPatterns";
+import { DailyMoonContextTags } from "../../components/DailyMoonContextTags";
 import { DurationLabelText } from "../../components/charts/PlacementRows";
 import { pointGlyph } from "../../components/charts/chartAssets";
 import { NatalAspectPatternActivationsSection } from "../you/NatalAspectPatternsSection";
-
-export type FriendBondTransitView = {
-  id: string;
-  headline: string;
-  effectBody: string;
-  activationBody: string;
-};
-
-export type FriendHouseTransitView = {
-  id: string;
-  transitPlanet: string;
-  title: string;
-  durationLabel: string | null;
-  timingRange: string;
-  rowSummary: string;
-  termLabel: string;
-  keywords: string[];
-  house: number;
-  houseLabel: string;
-  detailAvailable: boolean;
-};
-
-export type FriendPersonalTransitGroup = {
-  key: "short" | "long";
-  label: string;
-  transits: Array<{
-    id: string;
-    title: string;
-    durationLabel: string;
-    rangeLabel: string;
-    timingLabel: string;
-    summary: string;
-    orb: string;
-    detailAvailable: boolean;
-  }>;
-};
-
-export type FriendDailyForecastView = {
-  headline: string;
-  body: string;
-  moonContext: DailyMoonContext;
-};
-
-type FriendPersonalTransit = FriendPersonalTransitGroup["transits"][number];
+import type {
+  FriendPersonalTransitView,
+  FriendTransitsBrief
+} from "./friendTransitsBrief";
 
 function FriendPersonalTransitCard({
   onOpen,
   transit
 }: {
   onOpen: (id: string) => void;
-  transit: FriendPersonalTransit;
+  transit: FriendPersonalTransitView;
 }) {
   return (
     <button
@@ -84,48 +41,30 @@ function FriendPersonalTransitCard({
 }
 
 export function FriendTransitsTab({
-  bondTransits,
-  dailyForecast,
-  dailyDoItems = [],
-  dailyDontItems = [],
-  friendName,
-  houseTransits,
+  brief,
   isLoading = false,
   onOpenBondTransit,
   onOpenHouseTransit,
   onOpenPersonalTransit,
-  patternItems,
-  patternTimingOverrides,
-  personalTransitGroups
+  patternTimingOverrides
 }: {
-  bondTransits: FriendBondTransitView[];
-  dailyForecast?: FriendDailyForecastView | null;
-  dailyDoItems?: string[];
-  dailyDontItems?: string[];
-  dateLabel: string;
-  friendName: string;
-  houseTransits: FriendHouseTransitView[];
+  brief: FriendTransitsBrief;
   isLoading?: boolean;
   onOpenBondTransit: (id: string) => void;
   onOpenHouseTransit: (id: string) => void;
   onOpenPersonalTransit: (id: string) => void;
-  patternItems: NatalAspectPatternReaderItem[];
   patternTimingOverrides: Record<string, NatalAspectPatternActivationTimingWindow>;
-  personalTransitGroups: FriendPersonalTransitGroup[];
 }) {
-  const visiblePersonalTransitGroups = personalTransitGroups.map((group) => ({
-    ...group,
-    transits: group.transits.filter((transit) => transit.detailAvailable)
-  }));
-  const visibleHouseTransits = houseTransits.filter((transit) => transit.detailAvailable);
-  const personalTransitCount = visiblePersonalTransitGroups.reduce((count, group) => count + group.transits.length, 0);
-  const shortTermGroup = visiblePersonalTransitGroups.find((group) => group.key === "short");
-  const longTermGroup = visiblePersonalTransitGroups.find((group) => group.key === "long");
-  const shortTermTransits = shortTermGroup?.transits ?? [];
-  const longTermTransits = longTermGroup?.transits ?? [];
-  const hasActivePattern = patternItems.some((item) => Boolean(item.activationCopy));
-  const hasAnyTransit = Boolean(dailyForecast) || personalTransitCount > 0 || visibleHouseTransits.length > 0 || bondTransits.length > 0 || hasActivePattern;
-  const hasDailyGuidance = dailyDoItems.length === 3 && dailyDontItems.length === 3;
+  const {
+    friendName,
+    primaryThemes,
+    relationshipActivations,
+    houseContext,
+    daily,
+    longerCycles,
+    activePatterns,
+    hasAnyTransit
+  } = brief;
 
   return (
     <div className="friend-tab-pane friend-compat-stage friend-transits-stage friend-transits-stage--full" aria-label={`${friendName} transits`}>
@@ -135,32 +74,32 @@ export function FriendTransitsTab({
             Calculating transits for the selected date…
           </div>
         ) : null}
-        {dailyForecast ? (
+        {daily?.forecast ? (
           <section className="daily-horoscope-summary friend-daily-forecast" aria-label={`Daily forecast for ${friendName}`}>
-            <h3>{dailyForecast.headline}</h3>
-            <p>{dailyForecast.body}</p>
-            <DailyMoonContextTags context={dailyForecast.moonContext} />
+            <h3>{daily.forecast.headline}</h3>
+            <p>{daily.forecast.body}</p>
+            <DailyMoonContextTags context={daily.forecast.moonContext} />
           </section>
         ) : null}
-        {hasDailyGuidance ? (
+        {daily && daily.doItems.length === 3 && daily.dontItems.length === 3 ? (
           <section className="friend-transit-guidance" aria-label={`${friendName}'s do and don't`}>
             <div className="daily-dodont friend-transit-dodont">
               <div>
                 <span className="eyebrow section-label">Do</span>
-                <ul>{dailyDoItems.map((item) => <li key={item}>{item}</li>)}</ul>
+                <ul>{daily.doItems.map((item) => <li key={item}>{item}</li>)}</ul>
               </div>
               <div>
                 <span className="eyebrow section-label">Don&apos;t</span>
-                <ul>{dailyDontItems.map((item) => <li key={item}>{item}</li>)}</ul>
+                <ul>{daily.dontItems.map((item) => <li key={item}>{item}</li>)}</ul>
               </div>
             </div>
           </section>
         ) : null}
-        {bondTransits.length > 0 && (
+        {relationshipActivations.length > 0 && (
           <section className="friend-transit-group" aria-label="Between you two">
             <span className="eyebrow section-label friend-section-label">Between you two</span>
             <div className="updates-aspect-list friend-transit-list">
-              {bondTransits.map((card) => (
+              {relationshipActivations.map((card) => (
                 <button
                   aria-label={`Open full entry for ${card.headline}`}
                   className="updates-aspect-row friend-transit-row"
@@ -182,11 +121,11 @@ export function FriendTransitsTab({
             </div>
           </section>
         )}
-        {shortTermTransits.length > 0 ? (
+        {primaryThemes.length > 0 ? (
           <section className="friend-transit-group" aria-label="Short-term themes">
             <span className="eyebrow section-label friend-section-label">Active for {friendName}</span>
             <div className="updates-aspect-list friend-transit-list">
-              {shortTermTransits.map((transit) => (
+              {primaryThemes.map((transit) => (
                 <FriendPersonalTransitCard
                   key={transit.id}
                   onOpen={onOpenPersonalTransit}
@@ -196,11 +135,11 @@ export function FriendTransitsTab({
             </div>
           </section>
         ) : null}
-        {visibleHouseTransits.length > 0 && (
+        {houseContext.length > 0 && (
           <section className="friend-transit-group" aria-label="House transits">
             <span className="eyebrow section-label friend-section-label">Where it lands</span>
             <div className="updates-aspect-list friend-transit-list">
-              {visibleHouseTransits.map((card) => (
+              {houseContext.map((card) => (
                 <button
                   aria-label={`Open full entry for ${card.title}`}
                   className="updates-aspect-row updates-aspect-row--house"
@@ -242,11 +181,11 @@ export function FriendTransitsTab({
             </div>
           </section>
         )}
-        {longTermTransits.length > 0 ? (
+        {longerCycles.length > 0 ? (
           <section className="friend-transit-group" aria-label="Long-term themes">
             <span className="eyebrow section-label friend-section-label">Longer cycles</span>
             <div className="updates-aspect-list friend-transit-list">
-              {longTermTransits.map((transit) => (
+              {longerCycles.map((transit) => (
                 <FriendPersonalTransitCard
                   key={transit.id}
                   onOpen={onOpenPersonalTransit}
@@ -257,7 +196,7 @@ export function FriendTransitsTab({
           </section>
         ) : null}
         <NatalAspectPatternActivationsSection
-          items={patternItems}
+          items={activePatterns}
           timingOverrides={patternTimingOverrides}
         />
         {!isLoading && !hasAnyTransit && (
