@@ -16,20 +16,29 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      - name: Summarize unresolved queue and shadowed rows
+      - name: Build actionable queue in temp path
+        run: node scripts/build-content-unresolved-queue.mjs --out=/tmp/unresolved.json
+      - name: Classify actionable decisions
         run: |
           node --input-type=module <<'NODE'
           import fs from 'node:fs';
-          import path from 'node:path';
-          import { isGovernedReaderEligible } from './apps/web/src/content/fallbackArchitectureV3/resolver/readerEligibility.mjs';
-          const root='apps/web/src/content/fallbackArchitectureV3/source-rows';
-          const queue=JSON.parse(fs.readFileSync('packages/astro-knowledge/generated/content-unresolved-queue-v1.json','utf8'));
-          const byKey=new Map();
-          const visit=(v,file,p='')=>{ if(Array.isArray(v)){v.forEach((x,i)=>visit(x,file,`${p}/${i}`));return;} if(!v||typeof v!=='object')return; if(typeof v.contentKey==='string'){const a=byKey.get(v.contentKey)||[];a.push({file,path:p,row:v,eligible:isGovernedReaderEligible(v)});byKey.set(v.contentKey,a);} for(const [k,x] of Object.entries(v)) visit(x,file,`${p}/${k}`); };
-          for(const name of fs.readdirSync(root).filter(x=>x.endsWith('.json'))){const file=path.join(root,name);visit(JSON.parse(fs.readFileSync(file,'utf8')),file);}
-          const analyzed=queue.items.map(item=>{const peers=(byKey.get(item.contentKey)||[]);const eligiblePeers=peers.filter(p=>p.eligible);return {...item,peerCount:peers.length,eligiblePeerCount:eligiblePeers.length,eligiblePeerSources:eligiblePeers.map(p=>p.file)};});
-          const countBy=(arr,fn)=>Object.entries(arr.reduce((a,x)=>{const k=fn(x);a[k]=(a[k]||0)+1;return a;},{})).sort((a,b)=>b[1]-a[1]);
-          const shadowed=analyzed.filter(x=>x.eligiblePeerCount>0);
-          const uniquePending=analyzed.filter(x=>x.eligiblePeerCount===0);
-          console.log(JSON.stringify({total:analyzed.length,shadowedByEligiblePeer:shadowed.length,uniquePending:uniquePending.length,shadowedBySource:countBy(shadowed,x=>x.sourcePath),uniquePendingBySource:countBy(uniquePending,x=>x.sourcePath),shadowedSamples:shadowed.slice(0,30),uniquePendingSamples:uniquePending.slice(0,80)},null,2));
+          const report=JSON.parse(fs.readFileSync('/tmp/unresolved.json','utf8'));
+          const family=(k)=>{
+            k=String(k);
+            if(k.startsWith('daily-glance-variant/')) return 'daily-glance-variants';
+            if(k.startsWith('authored/book-ritual-and-the-moon/lunation-horoscope/eclipse-')) return 'eclipse-house-horoscopes';
+            if(k.startsWith('authored/sky-lunation-macro/')) return 'sky-lunation-macro';
+            if(k.startsWith('fallback-hook/empty-house-ruler-v3/')) return 'legacy-empty-house-ruler-v3';
+            if(k.startsWith('fallback-hook/lunation-opening-situation/')) return 'lunation-opening-situations';
+            if(k.startsWith('fallback-hook/lunation-ruler-house/')) return 'lunation-ruler-house';
+            if(k.startsWith('fallback-template/natal.planet-in-sign/')) return 'natal-planet-in-sign-template';
+            if(k.startsWith('fallback-vocab/sign-')) return 'placement-sign-vocabulary';
+            if(k.startsWith('fallback-hook/sky-sign-copy/')) return 'sky-sign-copy';
+            if(k.startsWith('fallback-hook/sky-placement/')) return 'sky-placement-hook';
+            return k.split('/').slice(0,3).join('/');
+          };
+          const grouped={};
+          for(const item of report.items){const f=family(item.contentKey);(grouped[f]??=[]).push(item);}
+          const summary=Object.entries(grouped).map(([f,items])=>({family:f,records:items.length,uniqueKeys:new Set(items.map(x=>x.contentKey)).size,sources:[...new Set(items.map(x=>x.sourcePath))],keys:[...new Set(items.map(x=>x.contentKey))].sort()})).sort((a,b)=>b.records-a.records);
+          console.log(JSON.stringify({actionableRecords:report.count,shadowedRecords:report.shadowedCount,actionableUniqueContentKeys:new Set(report.items.map(x=>x.contentKey)).size,groups:summary},null,2));
           NODE
