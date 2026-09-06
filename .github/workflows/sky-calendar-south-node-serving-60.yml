@@ -9,6 +9,7 @@ on:
       - "scripts/test-calendar-south-node-serving.mjs"
       - "scripts/test-calendar-south-node-axis-mirror.mjs"
       - "scripts/test-calendar-exact-sky-aspect-routing.mjs"
+      - "scripts/test-calendar-major-exact-routing-complete.mjs"
       - "scripts/seed-published-calendar-aspect-content-studio.mjs"
       - "apps/web/src/services/skyAspectRouting.ts"
       - "apps/web/src/services/skyAspectContent.ts"
@@ -50,7 +51,9 @@ jobs:
       - name: Verify canonical exact Sky aspect routing remains 379 events
         env:
           SKY_CALENDAR_OWNER_PAYLOADS_PATH: packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/current-owner-payloads.json
-        run: node scripts/test-calendar-exact-sky-aspect-routing.mjs
+        run: |
+          node scripts/test-calendar-exact-sky-aspect-routing.mjs
+          node scripts/test-calendar-major-exact-routing-complete.mjs
       - name: Verify published exact-aspect Content Studio contract
         run: node scripts/test-published-calendar-aspect-content-studio.mjs
       - name: Verify generated fallback manifest
@@ -70,7 +73,7 @@ jobs:
       - name: Commit controlled South Node serving outputs
         shell: bash
         run: |
-          if git diff --quiet; then
+          if [ -z "$(git status --porcelain)" ]; then
             echo "No release changes to commit."
             exit 0
           fi
