@@ -1,0 +1,18 @@
+{
+  "id": "moon-conjunction-chiron",
+  "transiting": "moon",
+  "aspect": "conjunction",
+  "other": "chiron",
+  "base": "A small act of care can hit much harder than the favor itself should.",
+  "business": "The two concerns arrive in the same decision; work with the point they now share.",
+  "shadow": "Because both concerns are active at once, acting on one can obscure what the other still needs.",
+  "arcApplying": "The two concerns become harder to separate as exactness approaches.",
+  "arcSeparating": "The fused emphasis begins to loosen after exactness.",
+  "voiceNeutral": true,
+  "status": "LIVE",
+  "readerCopy": {
+    "summary": "A small act of care can hit much harder than the favor itself should.",
+    "body": "A small act of care can hit much harder than the favor itself should. When the Moon conjuncts Chiron, being looked after in the present can touch the history of having to manage the same need alone, so a meal, a ride, a check-in, or somebody quietly taking something off your plate may bring up more emotion than expected. The reaction does not mean the kindness is a problem. Let the help be useful before you rush to explain why you should not need it.",
+    "approvedVia": "bounded owner-approved exact Calendar batch sky-calendar-exact-approved-2026-09-06-final-83; packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/owner-batch-authorization.json"
+  }
+}

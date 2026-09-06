@@ -1,0 +1,593 @@
+{
+  "schemaVersion": 2,
+  "name": "Final 83 exact-owner-approved Chiron + Lilith overlay",
+  "batchId": "sky-calendar-exact-approved-2026-09-06-final-83",
+  "previousProjectionPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-05-north-node-48/current-owner-payloads.json",
+  "previousRowCount": 296,
+  "overlayRowCount": 83,
+  "combinedRowCount": 379,
+  "memberSetSha256": "f8a5b4234e5e2be760fcb4b5e54103e9ab36727aea1f0e90fbe2874cbe607208",
+  "payloads": {
+    "sky.chiron.conjunction.lilith": {
+      "sha256": "245d4cd6a2a9db844a4f18bbb664baa043fbf11b6479da3179b21089b2e569cf",
+      "payload": {
+        "summary": "The thing you learned to be ashamed of wanting may be the same thing you are still hurting over not having.",
+        "body": "The thing you learned to be ashamed of wanting may be the same thing you are still hurting over not having. When Chiron conjuncts Lilith, an old rejection, criticism, or humiliation can meet the exact desire, anger, preference, or boundary you pushed out of sight afterward. It is hard to understand what hurt when you are still required to call the want itself unacceptable. Start there. Name what you wanted before you explain why you should have known better. Once the desire is allowed back into the story, the meaning of the old injury may change with it."
+      }
+    },
+    "sky.chiron.opposition.lilith": {
+      "sha256": "bc99e1da46246379895232f1e15846907fda240624943f70e970d8446356967d",
+      "payload": {
+        "summary": "You can get so good at being acceptable that you stop noticing how much of your life is organized around avoiding one old reaction.",
+        "body": "You can get so good at being acceptable that you stop noticing how much of your life is organized around avoiding one old reaction. When Chiron opposes Lilith, the strategy that kept you from being criticized, rejected, or exposed can sit directly across from a desire or boundary that no longer fits inside it. The protection may have worked. That does not mean it has to become your personality. Ask what you would choose now if the person, group, or old rule that taught you to fear the consequence no longer got the first vote."
+      }
+    },
+    "sky.chiron.sextile.lilith": {
+      "sha256": "08e59cc35cfa50add402074caa620a3933a5c2f22ec1d74191313fe80c70be76",
+      "payload": {
+        "summary": "One honest preference can undo more shame than another year of trying not to want it.",
+        "body": "One honest preference can undo more shame than another year of trying not to want it. When Chiron sextiles Lilith, a small act of refusal or self-definition can give you a different ending to something you once learned was embarrassing, selfish, excessive, or unacceptable. Ask for the different term. Decline what does not fit. Admit the preference without adding a defense brief. The consequence may be much smaller than the one you have been avoiding for years. You are not proving the old judgment wrong in theory; you are finding out how much authority it still has in practice."
+      }
+    },
+    "sky.chiron.square.lilith": {
+      "sha256": "77a3b28ba4809caabc32eb2282f24d112da0b618d361a1d6fe92436125d2eef4",
+      "payload": {
+        "summary": "Wanting something different should not require a rebellion, but old shame can make every preference feel like one.",
+        "body": "Wanting something different should not require a rebellion, but old shame can make every preference feel like one. When Chiron squares Lilith, the thing you were mocked, punished, or rejected for wanting can come back with enough force that a simple no carries years of anger behind it. The anger is not random. It remembers what it cost to make yourself easier to approve of. But the person in front of you cannot return the years you spent making yourself acceptable. Say what you want now. If it still creates a rupture, at least you are dealing with the truth of this relationship instead of fighting the past through it."
+      }
+    },
+    "sky.jupiter.conjunction.chiron": {
+      "sha256": "61c437576e2206938836c2834f9c5df24230b03249cae6c1d8e90257b18dd373",
+      "payload": {
+        "summary": "A bigger opportunity can make an old insecurity much louder because there is suddenly more to lose.",
+        "body": "A bigger opportunity can make an old insecurity much louder because there is suddenly more to lose. When Jupiter conjuncts Chiron, growth can enlarge both the possibility and the sensitivity attached to it, so a promotion, course, audience, trip, teaching role, or generous offer may bring up doubt you thought you had already outgrown. The return of the doubt does not mean you have gone backward or that the opportunity is wrong. Check the terms, support, and practical demands, then judge the opportunity by what it requires now rather than by what a smaller version once made you believe about yourself."
+      }
+    },
+    "sky.jupiter.conjunction.lilith": {
+      "sha256": "6ffea96245a72dccbb43e8f60254c23831f31a60482cf0e4a68ac96b36ffa8b4",
+      "payload": {
+        "summary": "Wanting more can feel like liberation until more becomes its own excuse.",
+        "body": "Wanting more can feel like liberation until more becomes its own excuse. When Jupiter conjuncts Lilith, a desire you kept small can suddenly get louder, more ambitious, and much easier to justify, especially around money, sex, freedom, travel, attention, opportunity, or the right to live differently. The expansion may be overdue. It can also make every limit look like repression simply because you are tired of being limited. Give the want a place in the plan without turning permission into proof that every impulse deserves to become a commitment."
+      }
+    },
+    "sky.jupiter.opposition.chiron": {
+      "sha256": "d61049eb63c87481e757db45706106394e4a3cfed8ba296686e6abb1dc7c2444",
+      "payload": {
+        "summary": "The person with the biggest answer may be least equipped to understand the part of the problem that hurt.",
+        "body": "The person with the biggest answer may be least equipped to understand the part of the problem that hurt. When Jupiter opposes Chiron, confidence, expertise, or an expansive solution can sit across from lived experience that does not fit the optimistic version cleanly. Advice may be broadly useful and still miss the cost, history, or vulnerability that changes what is practical for you. Do not reject a helpful opportunity just because it came with an oversimplified explanation. Keep the part that works and insist that the plan account for what you already know from experience."
+      }
+    },
+    "sky.jupiter.opposition.lilith": {
+      "sha256": "5611d1f537914a9921e22e658a83cdb1254aa7671e1cb6eeffbda7d0e89cef92",
+      "payload": {
+        "summary": "A bigger opportunity can come with an unspoken request to become easier to approve of in exchange for receiving it.",
+        "body": "A bigger opportunity can come with an unspoken request to become easier to approve of in exchange for receiving it. When Jupiter opposes Lilith, money, access, travel, education, visibility, or influence may sit across from a desire, boundary, or identity the larger system would prefer you keep quiet. The benefits can be substantial, which is why the compromise deserves precision. Do not reject support simply because it comes from conventional sources, and do not call the deal generous if the price is pretending an important part of your life does not exist. Know exactly what the yes is buying and what it expects you to leave outside."
+      }
+    },
+    "sky.jupiter.sextile.chiron": {
+      "sha256": "25eb54b0cd4c48795578d98d4a467c6e0f3dba658a4086635c5260b2f9f60157",
+      "payload": {
+        "summary": "Someone may offer you a larger possibility because of experience you usually think of as the reason you are behind.",
+        "body": "Someone may offer you a larger possibility because of experience you usually think of as the reason you are behind. When Jupiter sextiles Chiron, a mentor, class, introduction, publication, teaching opportunity, or new role can give difficult experience somewhere useful to go. The opportunity still needs a response from you. Apply, ask the question, tell the relevant part of the story, or let the lesson you earned qualify you for something instead of automatically disqualifying you from it."
+      }
+    },
+    "sky.jupiter.sextile.lilith": {
+      "sha256": "2ede04d8bc71232a65af2d0534764da0761f4b4b9b4b7c14a7933e06b56e40db",
+      "payload": {
+        "summary": "An option you expected people to dismiss may get more support than you thought.",
+        "body": "An option you expected people to dismiss may get more support than you thought. When Jupiter sextiles Lilith, money, education, travel, publicity, an introduction, or help from the right person can make an unconventional choice much more practical. The surprise may be realizing that the people who taught you to expect rejection were never the only people whose opinion mattered. You do not have to keep making the idea smaller just because someone else would not choose it. Let it grow as far as the support and evidence justify, then see what becomes possible."
+      }
+    },
+    "sky.jupiter.square.chiron": {
+      "sha256": "0a0ddf1e4305db8689536fff3949cdf8065ab3f77a1b859ed0d13d6474ebc584",
+      "payload": {
+        "summary": "Trying to prove you are no longer limited by an old doubt can become its own form of overcommitment.",
+        "body": "Trying to prove you are no longer limited by an old doubt can become its own form of overcommitment. When Jupiter squares Chiron, growth can turn into compensation, making another credential, bigger promise, extra project, or ambitious leap feel necessary because stopping at enough would leave the insecurity unanswered. The opportunity may be good, but expansion cannot settle every question you have about your worth. Choose the version that improves your life instead of the one designed to demonstrate that the earlier limitation has no power over you."
+      }
+    },
+    "sky.jupiter.square.lilith": {
+      "sha256": "64ef666a95a5270c7fe112eded73ba84a43cd83ec282ce03b6766390482c214a",
+      "payload": {
+        "summary": "Just because you finally gave yourself permission does not mean every impulse deserves a yes.",
+        "body": "Just because you finally gave yourself permission does not mean every impulse deserves a yes. When Jupiter squares Lilith, the relief of no longer suppressing a desire can make excess feel like honesty: more spending, more risk, more attention, more freedom, more promises, or one exception after another because restraint starts to resemble the rules you are tired of obeying. That is the trap. Refusing shame does not require abandoning judgment. Give yourself enough freedom to learn what you actually want, then keep the limits that protect the life you want to have after the excitement passes."
+      }
+    },
+    "sky.mars.conjunction.chiron": {
+      "sha256": "3a7579d87548f185c0490a7471031fbec6506369dd7b25a877ab0260e03ba73b",
+      "payload": {
+        "summary": "Anger may arrive at the exact place where you were taught not to take up space.",
+        "body": "Anger may arrive at the exact place where you were taught not to take up space. When Mars conjuncts Chiron, the need to act, object, compete, or defend yourself can collide with an older reflex to apologize for having force at all. A clear no may come out and then get softened immediately, or frustration may build until the response is much bigger than the request required. Use the anger to identify the boundary. You do not need to erase the boundary just because stating it made you uncomfortable."
+      }
+    },
+    "sky.mars.conjunction.lilith": {
+      "sha256": "b27261e024fc00b6eb81351a61c0f382a264d5b863969631e3d202e525cbc40d",
+      "payload": {
+        "summary": "Anger gets useful when it stops being proof that something is wrong with you and starts showing you what you will no longer do.",
+        "body": "Anger gets useful when it stops being proof that something is wrong with you and starts showing you what you will no longer do. When Mars conjuncts Lilith, action and a long-suppressed refusal can arrive together, making it much harder to keep smiling through the request, rule, relationship pattern, or expectation that has been wearing your patience down. The anger may be bigger than today's offense because today's offense is not the whole history. Use the anger on the boundary that matters. You do not have to destroy the entire arrangement to stop participating in the part that keeps making you furious."
+      }
+    },
+    "sky.mars.opposition.chiron": {
+      "sha256": "b538d7a159ed0174873d2f10cbcc6f83aad12dd9d19d7ff6ae1af9b2240f5f82",
+      "payload": {
+        "summary": "It can be easier to fight fiercely for someone else than to ask for the same protection for yourself.",
+        "body": "It can be easier to fight fiercely for someone else than to ask for the same protection for yourself. When Mars opposes Chiron, courage and vulnerability can split across a situation, making you decisive when another person is mistreated and strangely hesitant when the same issue affects you directly. That difference is useful information about where assertion still feels expensive. Take one action on your own behalf before all of your anger gets spent proving you know how to defend everyone except yourself."
+      }
+    },
+    "sky.mars.opposition.lilith": {
+      "sha256": "3c03e95123c9cc09166750d9dfb2ab33c44ddf11c1e2cdc101cd383a93f0ecf4",
+      "payload": {
+        "summary": "You are arguing about the decision, but the fight is really about who gets to make it.",
+        "body": "You are arguing about the decision, but the fight is really about who gets to make it. When Mars opposes Lilith, pressure to act, agree, comply, or settle something can run straight into another person's refusal to be managed. You can keep debating the details for hours and get nowhere if the deeper disagreement is about authority. Before another round of arguing, establish who actually has the right to decide what. A compromise only counts if both people have a say. One person finally giving in because they are exhausted is not the same thing as agreement."
+      }
+    },
+    "sky.mars.sextile.chiron": {
+      "sha256": "3462e917b6e3a468392ffb4c49783192ebe6a5d4309b70016d0505add7e51067",
+      "payload": {
+        "summary": "A direct ask may cost less than another week spent resenting that nobody volunteered.",
+        "body": "A direct ask may cost less than another week spent resenting that nobody volunteered. When Mars sextiles Chiron, action gives you a manageable way to interrupt a pattern of waiting, overaccommodating, or defending everyone except yourself. Ask for the change, decline the extra work, make the appointment, or take the step you keep wishing somebody else would make easier for you. The move does not need to be dramatic. It only needs to give your own need the same practical response you would give someone else's."
+      }
+    },
+    "sky.mars.sextile.lilith": {
+      "sha256": "e724482a90f7079ce5ca03d603658cf481118f5985ad5780998b4e3af028f206",
+      "payload": {
+        "summary": "A clean no can save you from the resentment you create by saying yes and punishing everyone for it later.",
+        "body": "A clean no can save you from the resentment you create by saying yes and punishing everyone for it later. When Mars sextiles Lilith, you may have a direct chance to act on something you already know you do not want: decline the extra work, correct the assumption, change the plan, leave the obligation you never agreed to, or pursue the option you kept postponing because somebody might disapprove. The action does not have to be dramatic. The point is to stop making other people pay for a boundary you refused to state when you still had the chance."
+      }
+    },
+    "sky.mars.square.chiron": {
+      "sha256": "446de343160dbc6008a017551ea739300e07bb64b2c40d4380e684f4578e9a17",
+      "payload": {
+        "summary": "A boundary can come out twice: first as a clear no, then as an apology that quietly takes the no back.",
+        "body": "A boundary can come out twice: first as a clear no, then as an apology that quietly takes the no back. When Mars squares Chiron, assertion can clash with the learned fear that anger, refusal, or taking up space will cost you approval, which makes every direct response vulnerable to immediate revision. The result is frustration on both sides because nobody knows which answer is the answer. Keep the boundary intact long enough to see what actually happens before discomfort talks you into negotiating against yourself."
+      }
+    },
+    "sky.mars.square.lilith": {
+      "sha256": "c6a5c4b7cb3ced3def9f7d597cdc7735cea81c558eeb58fccf28ddb2738d3041",
+      "payload": {
+        "summary": "When anger has been unacceptable for too long, the first boundary can come out carrying every boundary you never set.",
+        "body": "When anger has been unacceptable for too long, the first boundary can come out carrying every boundary you never set. When Mars squares Lilith, a current frustration can collide with years of swallowing the no, softening the objection, or proving you could handle more than you wanted to handle. That is how a small offense gets a decade of heat behind it. The anger may be telling the truth about the pattern while exaggerating what this single moment can repair. Set the boundary for today. The person in front of you cannot return every earlier time you made yourself easier to overrule."
+      }
+    },
+    "sky.mercury.conjunction.chiron": {
+      "sha256": "6b95a2e71fa63a3f23f7e841d34f112d069970fa9491f3dcc4aff953b6d33cd3",
+      "payload": {
+        "summary": "The sentence you need to say may feel much more exposing than its actual content.",
+        "body": "The sentence you need to say may feel much more exposing than its actual content. When Mercury conjuncts Chiron, speaking and an older doubt about being heard can arrive together, making a reasonable question, correction, admission, or explanation feel unusually difficult to get out cleanly. You may rehearse it, qualify it, or hear your own voice shake and assume that means you are not ready. Say the accurate version, even if it is not the polished one. The conversation needs the information more than it needs flawless delivery."
+      }
+    },
+    "sky.mercury.conjunction.lilith": {
+      "sha256": "c5f73e2543226f2ba408dc85aca4fb9523f8cca8319512d7334d4fd54c564872",
+      "payload": {
+        "summary": "The sentence you keep deleting is usually the one the conversation is already organized around.",
+        "body": "The sentence you keep deleting is usually the one the conversation is already organized around. When Mercury conjuncts Lilith, the embarrassing detail, unpopular opinion, difficult question, or blunt truth you have been trying to phrase around can become impossible to separate from the discussion itself. Silence does not remove the subject; it makes everybody manage it indirectly. Say the part that changes the meaning of the conversation. You do not need to make it harsher to prove you are being honest, but you do need to stop expecting politeness to carry information it was designed to hide."
+      }
+    },
+    "sky.mercury.opposition.chiron": {
+      "sha256": "e4f5d278067dbaf17fd16ea7046ac7c6a8c37d437fb24e94309bb4441ac4685e",
+      "payload": {
+        "summary": "The fastest speaker in the conversation may not be the person who understands the problem best.",
+        "body": "The fastest speaker in the conversation may not be the person who understands the problem best. When Mercury opposes Chiron, fluency and sensitivity can separate across an exchange, so one person fills the silence while another needs more time because the subject touches experience the quicker explanation does not account for. Speed can start looking like authority and hesitation like uncertainty. Slow the conversation down enough for the person carrying the missing context to finish the thought before everyone decides what the silence meant."
+      }
+    },
+    "sky.mercury.opposition.lilith": {
+      "sha256": "668db51b06d31bcd49750303726f46f4dc544506255ff3e90e33a4406866b8c4",
+      "payload": {
+        "summary": "Someone says the thing everyone else was thinking, and now the argument is about how they said it.",
+        "body": "Someone says the thing everyone else was thinking, and now the argument is about how they said it. When Mercury opposes Lilith, tone can become easier to fight about than the uncomfortable fact underneath it. The person may have been rude. They may have chosen terrible timing. They may still be right about the part nobody wanted to discuss. Deal with those as separate questions. If the information matters, making the speaker more pleasant will not make it disappear. Answer what they said before the argument about delivery becomes a way to avoid the subject completely."
+      }
+    },
+    "sky.mercury.sextile.chiron": {
+      "sha256": "8892f4bb294891fe4664ecff7bea65a499d3550f7c36d63197faeafed0f8b48a",
+      "payload": {
+        "summary": "One precise question can take a sensitive subject out of your head and put it into a conversation you can actually respond to.",
+        "body": "One precise question can take a sensitive subject out of your head and put it into a conversation you can actually respond to. When Mercury sextiles Chiron, language can give a difficult issue enough shape to become discussable without requiring you to retell the entire history. Ask what they meant, name the part that bothered you, or put the missing detail in writing. The conversation only changes once somebody says the first clear sentence. Ten direct words may change more than another week of rehearsing every possible version."
+      }
+    },
+    "sky.mercury.sextile.lilith": {
+      "sha256": "10d481f2904674c2504b7659ea535b25d80939913ea109ec6f5dea5e79d9d344",
+      "payload": {
+        "summary": "Everyone knows what the problem is, but the conversation keeps going around it.",
+        "body": "Everyone knows what the problem is, but the conversation keeps going around it. When Mercury sextiles Lilith, one clear sentence can bring the money issue, resentment, sexual boundary, family problem, or criticism into the part of the conversation where people can finally respond to it. You do not need the perfect wording, and you do not need to make the truth harsher than it is. But politeness stops being useful when everyone has to keep pretending not to know the same thing. Say the fact that changes what everyone is actually deciding."
+      }
+    },
+    "sky.mercury.square.chiron": {
+      "sha256": "a3370b0e4839376b89e4eeb0a9c6e41ac3f037651d301ee6cbb9cfdecf8c5166",
+      "payload": {
+        "summary": "A neutral question can sound condescending when it lands on an old place where you learned not to trust your own voice.",
+        "body": "A neutral question can sound condescending when it lands on an old place where you learned not to trust your own voice. When Mercury squares Chiron, a correction, interruption, delayed reply, or badly chosen phrase can carry more insult than the current exchange may actually contain. The sharp response that follows can protect you from feeling dismissed while also making it harder to find out what the other person meant. Answer the sentence they said before you answer the history it reminded you of."
+      }
+    },
+    "sky.mercury.square.lilith": {
+      "sha256": "80072c70aa5f1096e430774828435edd3bb4cd0c2c10148a9876fdc489bc03b4",
+      "payload": {
+        "summary": "Trying to sound reasonable can become a way of hiding the point you are most afraid will make you unacceptable.",
+        "body": "Trying to sound reasonable can become a way of hiding the point you are most afraid will make you unacceptable. When Mercury squares Lilith, the need to keep a conversation smooth can collide with a sentence that refuses to become harmless just because you softened the wording. That is how resentment leaks out sideways: the careful message gets sarcastic, the polite answer carries a sting, or you keep explaining everything except the actual objection. The problem may not be your tone. It may be that you are trying to make a genuine no sound enough like yes that nobody has to respond to it."
+      }
+    },
+    "sky.moon.conjunction.chiron": {
+      "sha256": "76e4637ec44d80b07d69d05a0e64b02d5bfcba65b3ce8632f40db4dbf09b33b0",
+      "payload": {
+        "summary": "A small act of care can hit much harder than the favor itself should.",
+        "body": "A small act of care can hit much harder than the favor itself should. When the Moon conjuncts Chiron, being looked after in the present can touch the history of having to manage the same need alone, so a meal, a ride, a check-in, or somebody quietly taking something off your plate may bring up more emotion than expected. The reaction does not mean the kindness is a problem. Let the help be useful before you rush to explain why you should not need it."
+      }
+    },
+    "sky.moon.conjunction.lilith": {
+      "sha256": "eab72e06f437b4cef2d2a1eaf88d3949e5fb0803632902239078ad03ba0d442c",
+      "payload": {
+        "summary": "You keep telling yourself you are just in a bad mood, but the irritation is pointing to something you actually need.",
+        "body": "You keep telling yourself you are just in a bad mood, but the irritation is pointing to something you actually need. When the Moon conjuncts Lilith, restlessness, jealousy, exhaustion, anger, or the urge to be left alone can make a buried need harder to dismiss. Maybe you need more privacy, more help, more rest, or simply less responsibility for keeping everyone else comfortable. The feeling is not automatically an instruction, but it is information. Before you criticize yourself for being difficult, look at what has been missing from the arrangement. A need does not become unreasonable just because acknowledging it would inconvenience somebody else."
+      }
+    },
+    "sky.moon.opposition.chiron": {
+      "sha256": "91239e0b6f647e14d5cb7ae3a1c5a2c6f108b42b2111b09daf8d78753f29a78c",
+      "payload": {
+        "summary": "One person can keep offering help while the other keeps proving they do not need it.",
+        "body": "One person can keep offering help while the other keeps proving they do not need it. When the Moon opposes Chiron, care and discomfort with receiving it can split across a relationship, leaving one person pushing harder and the other refusing more firmly until both feel misunderstood. The giver may need to stop making care compulsory, and the receiver may need to stop treating acceptance like surrender. A useful exchange begins when the help has terms both people can actually agree to."
+      }
+    },
+    "sky.moon.opposition.lilith": {
+      "sha256": "143a83e0cf3a4e5561cdd69fb53308e14f3b657c2ab87ad0bdf8b42ae5b8ce60",
+      "payload": {
+        "summary": "You can love the routine you have and still be tired of what it requires you to keep giving up.",
+        "body": "You can love the routine you have and still be tired of what it requires you to keep giving up. When the Moon opposes Lilith, the comfort of a familiar relationship, home, family arrangement, or daily rhythm can come directly up against a need you have been treating as disruptive. Maybe keeping the peace means you get less privacy, less rest, less help, or less say. The familiar arrangement may still give you something valuable. That does not make its cost imaginary. Name what you keep sacrificing before you decide that familiarity alone is enough reason to keep things the same."
+      }
+    },
+    "sky.moon.sextile.chiron": {
+      "sha256": "20a1496f912e8851a7e3c36e33fe80ee607fcd4acb2f0a628c09179191822fbd",
+      "payload": {
+        "summary": "Asking clearly for one small thing may be easier than waiting to see if someone notices.",
+        "body": "Asking clearly for one small thing may be easier than waiting to see if someone notices. When the Moon sextiles Chiron, care can become more available once you give another person a concrete way to provide it. Ask for the ride, the meal, the hour to talk, the quieter plan, or the practical favor that would actually help. The useful change is not becoming perfectly comfortable with needing people. It is discovering that one direct request can cost less than another evening spent hoping somebody guesses correctly."
+      }
+    },
+    "sky.moon.sextile.lilith": {
+      "sha256": "135ffcfb61a164914a646daeeb0d9a02fbe9d77d92df8f159954b6a483b1d6cc",
+      "payload": {
+        "summary": "You agree because explaining what you need feels harder, then spend the rest of the day irritated that you said yes.",
+        "body": "You agree because explaining what you need feels harder, then spend the rest of the day irritated that you said yes. When the Moon sextiles Lilith, it may be easier to catch that pattern before resentment takes over. Tell them you need to leave earlier. Ask for privacy. Say you cannot take on the extra task. Change the part of the plan that does not work for you. If keeping everyone else comfortable requires you to keep overruling yourself, the arrangement is already creating a problem. Say what you need while it is still a small adjustment instead of waiting until anger has to say it for you."
+      }
+    },
+    "sky.moon.square.chiron": {
+      "sha256": "1cb4d4324426f1192e4cc0f627e6152819c1bac5c9047f373ec090557a570cbc",
+      "payload": {
+        "summary": "Waiting for someone to guess what you need can turn disappointment into evidence that they do not care.",
+        "body": "Waiting for someone to guess what you need can turn disappointment into evidence that they do not care. When the Moon squares Chiron, a genuine need can collide with the old belief that asking for it is embarrassing, excessive, or unsafe, so silence becomes a test the other person does not know they are taking. Their failure to notice may hurt, but it does not answer the question you never asked. Say what would help before you use their guess as the measure of the relationship."
+      }
+    },
+    "sky.moon.square.lilith": {
+      "sha256": "ed531f21fabb00991ac83c7ae16809954299e2f86fead5ab1945f3a15a5fcca3",
+      "payload": {
+        "summary": "Keeping everyone comfortable can get expensive when your body is the one paying for it.",
+        "body": "Keeping everyone comfortable can get expensive when your body is the one paying for it. When the Moon squares Lilith, the routine that keeps home, family, or a relationship running can collide with a need you have been swallowing because it would disrupt somebody else's sense of normal. That is how care turns into resentment: you keep saying it is fine while your sleep, meals, patience, privacy, or time starts absorbing the difference. The need does not become selfish because somebody else dislikes it. Change the arrangement before your body has to keep making the argument for you."
+      }
+    },
+    "sky.neptune.conjunction.chiron": {
+      "sha256": "a755ee54925632531a8428d0a348a18ebb34822637dc10ac998492cdcff7a234",
+      "payload": {
+        "summary": "Sometimes rescuing someone else is an attempt to go back and rescue yourself.",
+        "body": "Sometimes rescuing someone else is an attempt to go back and rescue yourself. When Neptune conjuncts Chiron, another person's grief, confusion, illness, disappointment, or vulnerability can feel so familiar that helping them starts to answer an old question in your own history. You give the ride, cover the bill, stay on the phone, take over the problem, and tell yourself you are simply being compassionate. Maybe you are. But if their outcome starts deciding your peace, you are no longer only helping them. Give what you can give without making their ending responsible for repairing yours."
+      }
+    },
+    "sky.neptune.conjunction.lilith": {
+      "sha256": "3ef4679da7fd50af8523cbece7f52a30eb96f3577a90b191fe85edc96440f45c",
+      "payload": {
+        "summary": "A fantasy that keeps returning may be trying to tell you something much simpler than the fantasy itself.",
+        "body": "A fantasy that keeps returning may be trying to tell you something much simpler than the fantasy itself. When Neptune conjuncts Lilith, a desire you have been reluctant to name can show up as daydreaming, fixation, art, longing, attraction, or the wish to disappear into a completely different life. Do not assume the whole fantasy needs to become literal. Ask what repeats inside it. More privacy, more freedom, more affection, more creative time, less scrutiny, or a different kind of work may be the ordinary need underneath the dramatic version. Start with the need you can actually name."
+      }
+    },
+    "sky.neptune.opposition.chiron": {
+      "sha256": "459a7b0a176e382ab96ffd0bf2af12e5b322ec456c59f4c29b240bef6feab2a2",
+      "payload": {
+        "summary": "Recognizing yourself in someone's pain can make stepping back feel like betrayal.",
+        "body": "Recognizing yourself in someone's pain can make stepping back feel like betrayal. When Neptune opposes Chiron, another person's grief, confusion, illness, disappointment, or vulnerability can look so familiar that saying no to one more request feels like abandoning the person you once were. You may understand exactly why they are hurting and still be unable to fix what happens next. Offer the care they are actually asking for, not the rescue your own history wishes somebody had provided. Understanding their pain does not make you responsible for becoming the ending you wanted for yourself."
+      }
+    },
+    "sky.neptune.opposition.lilith": {
+      "sha256": "e0492e450ca72936335f2e75ef0006fabbe7029863ceca571fa2c1410916d4c1",
+      "payload": {
+        "summary": "Someone else's life can become unusually magnetic when it seems to contain the permission you have not given yourself.",
+        "body": "Someone else's life can become unusually magnetic when it seems to contain the permission you have not given yourself. When Neptune opposes Lilith, a crush, friend, public figure, relationship, or imagined future can start carrying a desire that is difficult to admit directly. You may envy their freedom, idealize their choices, or resent how easily they appear to claim something you keep denying yourself. The feeling is information, not proof that their life is the answer. Name the exact thing you want more of, less of, or permission to change. It becomes easier to act on once it stops belonging to somebody else."
+      }
+    },
+    "sky.neptune.sextile.chiron": {
+      "sha256": "04aa7897d9c4ae6789fbcefff35908af91093fb832131ccf28540a4d805e6533",
+      "payload": {
+        "summary": "You may be waiting for the past to make perfect sense before you allow yourself to be finished with it.",
+        "body": "You may be waiting for the past to make perfect sense before you allow yourself to be finished with it. When Neptune sextiles Chiron, distance, art, rest, or one compassionate conversation can loosen the need to decide that an experience was either entirely harmful or secretly good for you. That demand for a clean verdict can keep you arguing with the same history long after the event is over. You can miss someone and still know leaving was right. You can be grateful for what you learned and still wish you never had to learn it that way. Moving on does not require a simpler story."
+      }
+    },
+    "sky.neptune.sextile.lilith": {
+      "sha256": "91409c1168fa319c1b1b1b5c1c36d9ea7913c997e6aa41a5038b61530a6daf53",
+      "payload": {
+        "summary": "A vague longing can become useful once you give it a form you can actually examine.",
+        "body": "A vague longing can become useful once you give it a form you can actually examine. When Neptune sextiles Lilith, a difficult want may become easier to understand through writing, art, music, fantasy, or one private conversation where you do not have to defend it yet. The first version does not need to be practical. It needs to be specific enough to show you what keeps repeating. Once you can name the theme, translate it into ordinary terms: more privacy, different work, more intimacy, more time alone, more freedom to create. Imagination helps most when it brings you back to a request you can make in your actual life."
+      }
+    },
+    "sky.neptune.square.chiron": {
+      "sha256": "eec5f7190dfe7597a9ee3542a6b46f3adbaa948099b6aa4819aac39e3ee61421",
+      "payload": {
+        "summary": "A blank space is dangerous when your history already knows how to fill it.",
+        "body": "A blank space is dangerous when your history already knows how to fill it. When Neptune squares Chiron, a delayed reply, vague promise, mixed signal, or unclear ending can give an older rejection enough empty space to write the rest of the story for you. Suddenly silence means dismissal, uncertainty means betrayal, and a question mark starts behaving like an answer. The feeling matters; the conclusion is still a guess. Leave the missing information missing until something factual arrives. Do not let an old rejection write the missing paragraph simply because the present has not finished speaking yet."
+      }
+    },
+    "sky.neptune.square.lilith": {
+      "sha256": "53e856c77a5033409deca4b80481903b3f45f79e9f26ab12e0e43f06fb9145fd",
+      "payload": {
+        "summary": "An escape can start looking irresistible when the need underneath it has gone unnamed for too long.",
+        "body": "An escape can start looking irresistible when the need underneath it has gone unnamed for too long. When Neptune squares Lilith, a crush, fantasy, online fixation, secret plan, or wish to disappear may carry more emotional weight than the situation itself can support. The desire is not automatically false just because the story around it has become inflated. Strip away the person, image, or imagined future and ask what you are actually missing now. If the answer is attention, freedom, sex, rest, creativity, privacy, or change, deal with that need before giving the fantasy control of the decision."
+      }
+    },
+    "sky.pluto.conjunction.chiron": {
+      "sha256": "b3002e80b56c6560fec983e1471db1f1bbd2a651bd59dbeac08e548758e087b5",
+      "payload": {
+        "summary": "Having power after a period of powerlessness can make losing any control feel intolerable.",
+        "body": "Having power after a period of powerlessness can make losing any control feel intolerable. When Pluto conjuncts Chiron, money, access, authority, information, or another person's ability to change your options can turn one negotiation into a test of your ability to make sure nobody can trap you again. That is how leverage becomes something you hoard instead of something you use: one more safeguard, one more contingency, one more way to make sure nobody can corner you. Use your power on the condition that actually matters. You do not have to control every possible outcome to prove you are no longer powerless."
+      }
+    },
+    "sky.pluto.conjunction.lilith": {
+      "sha256": "5c0a038a0960a3f1690c6d707fc045267baedc70d9dc9215f950b7a0c190a687",
+      "payload": {
+        "summary": "The moment you understand what has been used to keep you compliant, it may stop working.",
+        "body": "The moment you understand what has been used to keep you compliant, it may stop working. When Pluto conjuncts Lilith, buried anger can surface alongside the secret, threat, shame, money, access, or private rule that gave someone else leverage. The discovery can permanently change what you are willing to tolerate because the power depended partly on staying unnamed. Use the information to remove the leverage, rewrite the agreement, or leave the situation. Do not turn the reversal into a reason to humiliate or control someone else just because you finally can. Getting your say back matters more than recreating the same power struggle from the other side."
+      }
+    },
+    "sky.pluto.opposition.chiron": {
+      "sha256": "e9c9ff76242274fc14c6bb0d33fec073286d887c6b770a93fc1ae537494f1183",
+      "payload": {
+        "summary": "Needing something from someone changes what you are willing to tolerate.",
+        "body": "Needing something from someone changes what you are willing to tolerate. When Pluto opposes Chiron, the person holding the money, approval, access, or answer can press directly on an old fear that speaking up will cost you the thing you need. That is how unequal arrangements survive. Not because the terms are fair, but because one person has more to lose by objecting. Pay attention to what you are already giving up just to keep the door open. The real question is what would have to change for their no to stop controlling your options."
+      }
+    },
+    "sky.pluto.opposition.lilith": {
+      "sha256": "60d160e815c90f15dbdcbc2075efb47ab06f209a739199f5dbab2a17ec5d6502",
+      "payload": {
+        "summary": "A person who used to have enough leverage to make you comply may discover that the consequence they threaten no longer works.",
+        "body": "A person who used to have enough leverage to make you comply may discover that the consequence they threaten no longer works. When Pluto opposes Lilith, power can sit directly across from refusal: money, access, secrets, status, approval, or fear on one side, and the decision to stop paying that price on the other. The balance can shift quickly once the threat loses its force. Do not waste the shift proving that you can dominate the situation now. Protect what matters, set the condition that needs to change, and leave the old power struggle with less control over your next decision."
+      }
+    },
+    "sky.pluto.sextile.chiron": {
+      "sha256": "31141ea9a5f2b6bb8f2cab3ae779ef6764c591c44cc786d2e5c9c90419cf68e1",
+      "payload": {
+        "summary": "The most satisfying revenge is not winning the old argument. It is making the old problem harder to repeat.",
+        "body": "The most satisfying revenge is not winning the old argument. It is making the old problem harder to repeat. When Pluto sextiles Chiron, new information, money, authority, access, or support from the right person can finally give you enough leverage to change a condition you previously had to endure. Use it on the terms, not the history. Change who decides, what gets documented, where the boundary sits, or what happens when somebody crosses it. If the arrangement can no longer recreate the same problem, you do not need the other side to finally agree with your version of the past."
+      }
+    },
+    "sky.pluto.sextile.lilith": {
+      "sha256": "7a019234b67d4972afe80a721c34ed3a386ffc899a11baa3a2aed9605ef54dac",
+      "payload": {
+        "summary": "You may be able to name an old source of control without letting it run the current decision.",
+        "body": "You may be able to name an old source of control without letting it run the current decision. When Pluto sextiles Lilith, a buried resentment, private rule, family pattern, unequal agreement, or fear of being punished can become easier to see without taking over the entire situation. That gives you a chance to respond without turning the correction into revenge. Say what happened, name what you will not repeat, and use any leverage you have to make the arrangement different now. The point is not to win the old fight. It is to stop organizing your choices around it."
+      }
+    },
+    "sky.pluto.square.chiron": {
+      "sha256": "d45394a16c713ae317acc69420264fa70159646a7844acdbecdaf2269b8b3399",
+      "payload": {
+        "summary": "The problem with control is that it keeps promising the next piece of information will finally let you relax.",
+        "body": "The problem with control is that it keeps promising the next piece of information will finally let you relax. When Pluto squares Chiron, an old fear around rejection, dependence, trust, or being overruled can turn one unknown into a hunt for certainty: another check, another question, another way to make sure nobody can surprise you. Each answer helps for a minute and then creates another thing to verify. At that point you are no longer gathering information; you are trying to buy emotional certainty with facts, and facts cannot sell it. Make the decision the evidence supports, then stop asking the situation to guarantee you will never regret it."
+      }
+    },
+    "sky.pluto.square.lilith": {
+      "sha256": "d0d19d799fbd577ae689df846ab97fbf0cc5238786479660751c2336e86ae007",
+      "payload": {
+        "summary": "A current power struggle can become much bigger when it touches the same place where you once learned that wanting something came with punishment.",
+        "body": "A current power struggle can become much bigger when it touches the same place where you once learned that wanting something came with punishment. When Pluto squares Lilith, control and refusal can feed each other until the argument stops being only about the present decision. You may become determined to win, expose, withhold, or force an admission because losing now feels too much like being silenced again. The history matters, but it cannot make the current choice for you. Identify the actual leverage on both sides, decide what term has to change, and stop before protecting yourself turns into another attempt to control the outcome."
+      }
+    },
+    "sky.saturn.conjunction.chiron": {
+      "sha256": "627594116411c335c1b58cf9fa46343960ee7511313a078953ead26953523418",
+      "payload": {
+        "summary": "Responsibility gets much heavier when you think one mistake will change how people see you.",
+        "body": "Responsibility gets much heavier when you think one mistake will change how people see you. When Saturn conjuncts Chiron, a deadline, review, new title, or person with authority can turn an ordinary requirement into the old fear that competence is the price of being respected. That is how doing the job becomes watching yourself do the job, looking for the error that will expose you. The standard may be legitimate. The surveillance is not part of the assignment. Meet the requirement in front of you without turning every imperfection into evidence against yourself."
+      }
+    },
+    "sky.saturn.conjunction.lilith": {
+      "sha256": "c1b26998a084e955d5c8ef4bd5f2f53f6daab4656be666f3b364e7fd5151569c",
+      "payload": {
+        "summary": "An obligation can look completely different once you admit that the arrangement only works because you keep absorbing the part nobody else wants.",
+        "body": "An obligation can look completely different once you admit that the arrangement only works because you keep absorbing the part nobody else wants. When Saturn conjuncts Lilith, duty meets the part of you that has stopped accepting the old terms, so a role, promise, contract, or responsibility may need to be renegotiated rather than silently carried. You may still care about the commitment. That does not mean every condition attached to it deserves to survive. Decide what you are still willing to do, what now belongs to someone else, and what happens if the arrangement cannot make that change workable."
+      }
+    },
+    "sky.saturn.opposition.chiron": {
+      "sha256": "7fe215ed4c16e84da9d404e56a331f0d383a3829c6149b07e3b4090d81391e86",
+      "payload": {
+        "summary": "When authority used to humiliate you, even a reasonable limit can feel like a judgment of your worth.",
+        "body": "When authority used to humiliate you, even a reasonable limit can feel like a judgment of your worth. When Saturn opposes Chiron, a boss, institution, deadline, policy, or firm no can trigger the old instinct to overexplain, comply too quickly, or assume you are already in trouble. That is how a boundary becomes bigger than the boundary itself. Find out what is actually required and what consequence actually exists. You do not have to earn respect by accepting more shame than the situation contains."
+      }
+    },
+    "sky.saturn.opposition.lilith": {
+      "sha256": "0c15f3aadb29e2177c5868d8152b12ae74108a6f75331fa885367da825cb770b",
+      "payload": {
+        "summary": "Authority can call something non-negotiable at exactly the moment you realize you are no longer willing to pay the price of obeying it.",
+        "body": "Authority can call something non-negotiable at exactly the moment you realize you are no longer willing to pay the price of obeying it. When Saturn opposes Lilith, a boss, institution, family role, contract, or long-standing obligation can force the conflict between what is required and what you refuse to keep sacrificing. Some rules protect something worth protecting. Others survive because the cost of challenging them has always been pushed onto the person with less power. Find out which kind you are dealing with. Then decide what can be renegotiated, what cannot, and what consequence you are willing to accept for saying no."
+      }
+    },
+    "sky.saturn.sextile.chiron": {
+      "sha256": "a7ab0c7436cfae303478100b14a3b2f099c98411b9d0b5161964360fc5cab16a",
+      "payload": {
+        "summary": "Having to explain the same need over and over can make you feel like the need itself is the problem.",
+        "body": "Having to explain the same need over and over can make you feel like the need itself is the problem. When Saturn sextiles Chiron, a clear boundary, schedule, payment plan, division of responsibility, or written agreement can stop a sensitive issue from being reopened every time someone forgets, pushes, or asks again. The point of the structure is not to prove that your need is serious enough to deserve accommodation. It is to remove the need for repeated negotiation. A good boundary should save you from having to make the same case every week."
+      }
+    },
+    "sky.saturn.sextile.lilith": {
+      "sha256": "4a99ef1262dfe70466f99c11581744801109d805e6a6770d2d3d77972dea2cc4",
+      "payload": {
+        "summary": "A rule that used to force a bad choice may have an exception, workaround, or renegotiation path you can actually use.",
+        "body": "A rule that used to force a bad choice may have an exception, workaround, or renegotiation path you can actually use. When Saturn sextiles Lilith, the person enforcing the structure may be willing to change a deadline, divide responsibility differently, put an exception in writing, or define what is no longer yours to carry. The opening matters because refusal stops being only a protest and becomes a workable arrangement. Bring a concrete alternative instead of another explanation of why the old setup is unfair. If the structure can change, make the change official so you are not having the same argument again next week."
+      }
+    },
+    "sky.saturn.square.chiron": {
+      "sha256": "c447a08c06580ddf134ee6011d21bad166336bdc860f5066865cfebb65944d48",
+      "payload": {
+        "summary": "If every small correction makes you work twice as hard, the standard is no longer the only thing you are responding to.",
+        "body": "If every small correction makes you work twice as hard, the standard is no longer the only thing you are responding to. When Saturn squares Chiron, criticism, delay, or a difficult requirement can wake up the old belief that one mistake exposes something fundamentally lacking in you. That is how improvement turns into penance: one revision becomes an all-nighter, one missed detail becomes proof you should have known better, one no becomes a reason to lower your expectations of yourself. Fix what needs fixing. You do not have to pay for a mistake with your entire sense of competence."
+      }
+    },
+    "sky.sun.conjunction.chiron": {
+      "sha256": "5edb65b961c032854dedf1c428f1a932dcf59528b425377c7c588cc43e17b533",
+      "payload": {
+        "summary": "Being seen for something can bring back the exact memory that taught you to hide it.",
+        "body": "Being seen for something can bring back the exact memory that taught you to hide it. When the Sun conjuncts Chiron, recognition and an older sensitivity can arrive in the same moment, so praise for your work, attention on your appearance, or being asked to take the lead may feel more exposing than the situation itself explains. The attention may be welcome and uncomfortable at once. Notice what is happening now before you make the people in front of you answer for the people who taught you that visibility came with a price."
+      }
+    },
+    "sky.sun.conjunction.lilith": {
+      "sha256": "80177273f1d9709fe5cb650be931dfae30304a654a08c28487b74cf7e4e8efcb",
+      "payload": {
+        "summary": "You get praised for being easy to work with, dependable, polished, or agreeable, and realize those are also the traits you have been using to hide what you actually want.",
+        "body": "You get praised for being easy to work with, dependable, polished, or agreeable, and realize those are also the traits you have been using to hide what you actually want. When the Sun conjuncts Lilith, recognition can make the gap between being liked and being fully known much harder to ignore. The praise may be deserved. The problem is what you have had to leave out to keep receiving it. Notice where success depends on never being difficult, unconventional, angry, or honest about what does not work for you. Being appreciated should not require becoming easier to approve of than you actually are."
+      }
+    },
+    "sky.sun.opposition.chiron": {
+      "sha256": "0e4623f6b911d09de66e35a3a43ff0ce75ef4bbf1a0c83526837f8bb5034a916",
+      "payload": {
+        "summary": "Someone else's confidence can irritate you most when they are doing openly what you taught yourself to hide.",
+        "body": "Someone else's confidence can irritate you most when they are doing openly what you taught yourself to hide. When the Sun opposes Chiron, another person's visibility can bring your own history with recognition, embarrassment, or comparison into sharp relief. Their ease may look like arrogance simply because you had to work so hard to earn permission for the same thing. You do not have to admire them. Just notice if the quality bothering you is one you would like more freedom to claim for yourself."
+      }
+    },
+    "sky.sun.opposition.lilith": {
+      "sha256": "dfce8af6fc34a1d5475d993e31be553954fb57857f75d92cc76e50b63cba103a",
+      "payload": {
+        "summary": "Someone refuses to go along with the plan, and part of what bothers you is that you would never let yourself do the same.",
+        "body": "Someone refuses to go along with the plan, and part of what bothers you is that you would never let yourself do the same. When the Sun opposes Lilith, another person's blunt no, unconventional choice, or refusal to stay agreeable can expose how often you cooperate simply because being difficult feels worse than being unhappy. Their choice may be selfish or badly handled. That does not make your reaction meaningless. Notice if some of the anger comes from watching someone claim a freedom you keep denying yourself. You do not have to copy their behavior to admit that always being the reasonable one has been costing you something."
+      }
+    },
+    "sky.sun.sextile.chiron": {
+      "sha256": "bed9d5586f086f2f2620dae73d15bb727df5caf9733425704e51607693475995",
+      "payload": {
+        "summary": "A small moment of visibility can do more than another month spent preparing to feel ready.",
+        "body": "A small moment of visibility can do more than another month spent preparing to feel ready. When the Sun sextiles Chiron, you may get a manageable chance to be seen in an area where you usually expect embarrassment, criticism, or too much attention. Give the presentation, show the work, accept the introduction, or let the photo exist without treating the moment as proof of how confident you are. The opportunity matters because you can test the present instead of letting an earlier experience keep predicting it for you."
+      }
+    },
+    "sky.sun.sextile.lilith": {
+      "sha256": "3c6ddd6806b961de1c45290519c68397b7e192aa5bc009dbd947c99c6d44258e",
+      "payload": {
+        "summary": "You say what you actually think, make the choice you expected people to question, and nobody reacts as badly as you imagined.",
+        "body": "You say what you actually think, make the choice you expected people to question, and nobody reacts as badly as you imagined. When the Sun sextiles Lilith, it can be easier to show a part of yourself you normally soften before anyone else sees it. Correct the assumption. Claim the work. Wear what you like. Let the decision look different from the one people expected. The important part is not being provocative. It is finding out that you may have been doing far more work to prevent disapproval than the situation required. Give people a chance to respond to the version of you that is actually there."
+      }
+    },
+    "sky.sun.square.chiron": {
+      "sha256": "be9c5d55f3fce31560136e28b39904685efa1a9b70e1e5dd0c9b24ec0fe433d0",
+      "payload": {
+        "summary": "Compliments can feel suspicious when being noticed used to come with criticism attached.",
+        "body": "Compliments can feel suspicious when being noticed used to come with criticism attached. When the Sun squares Chiron, praise, recognition, or a chance to stand out can trigger the reflex to minimize what you did, work twice as hard, or wait for the correction that usually followed attention in the past. The discomfort may be sincere without being current evidence. Before you turn appreciation into another assignment, check if anyone actually asked you to prove the compliment was deserved."
+      }
+    },
+    "sky.sun.square.lilith": {
+      "sha256": "60852369593bc0caae81742fc5f67dd789bf5d2e330dd9e3333ec51b2f7784fa",
+      "payload": {
+        "summary": "You are getting rewarded for a role that no longer feels like you.",
+        "body": "You are getting rewarded for a role that no longer feels like you. When the Sun squares Lilith, praise, recognition, or responsibility can make it harder to ignore how much of yourself has been left out of the version other people value. The better you become at being dependable, agreeable, impressive, or easy to understand, the more expensive it can feel to change the terms. That is how success becomes a trap. Do not assume that because the role is working, it still fits. You are allowed to change something even when other people liked you better before the change."
+      }
+    },
+    "sky.uranus.conjunction.chiron": {
+      "sha256": "01f351934d0e6f0083d7c5fea098410ee8188ea86e2ea1dd480f8519ad96dde5",
+      "payload": {
+        "summary": "The routine you cannot imagine losing may be the same routine that kept you from finding out how much has changed.",
+        "body": "The routine you cannot imagine losing may be the same routine that kept you from finding out how much has changed. When Uranus conjuncts Chiron, a cancellation, move, technical failure, sudden opening, or abrupt change can knock out the workaround that made an old fear easier to manage. That is the bargain hidden inside predictability: it protected you from being hurt again, but it also gave you very little reason to test what you can handle now. Replace the support you still need. Do not automatically rebuild every rule that grew around the version of you who needed more protection."
+      }
+    },
+    "sky.uranus.conjunction.lilith": {
+      "sha256": "ac70daf8e4245ec5e8bf41f8b331fbc1b275969ca1355b889b4c4471db6f65df",
+      "payload": {
+        "summary": "You can know the old arrangement is finished before you know what replaces it.",
+        "body": "You can know the old arrangement is finished before you know what replaces it. When Uranus conjuncts Lilith, a refusal that has been building quietly can turn into a sudden quit, cancellation, announcement, move, breakup, or change of plan. The break may be overdue, but urgency can make the most dramatic exit look like the most honest one. It is not. Give yourself enough time to separate the change you need from the damage you only want because you are angry. Choose the version of freedom that leaves you with more options after the adrenaline wears off."
+      }
+    },
+    "sky.uranus.opposition.chiron": {
+      "sha256": "01a86a49ea18f78e7e4ff0207dedd98760d95330fc61ec631e79be8affe57cff",
+      "payload": {
+        "summary": "The hardest part of someone changing the plan may be how quickly it turns you back into the person who had to adjust after everyone else decided.",
+        "body": "The hardest part of someone changing the plan may be how quickly it turns you back into the person who had to adjust after everyone else decided. When Uranus opposes Chiron, another person's departure, changed availability, new boundary, or sudden decision can land on a history of being the one expected to absorb disruption without much say. That history can make the current change feel like abandonment before you know what is still available. Get specific about what changed, what did not, and what you need now. Another person's change does not automatically require you to carry the entire transition again."
+      }
+    },
+    "sky.uranus.opposition.lilith": {
+      "sha256": "552f8b5328788787cee490cc9f7f6f661f6201dce759d5056ffd30c37c1fba59",
+      "payload": {
+        "summary": "Someone else's sudden refusal can expose how much of the old arrangement you were only keeping because nobody had challenged it yet.",
+        "body": "Someone else's sudden refusal can expose how much of the old arrangement you were only keeping because nobody had challenged it yet. When Uranus opposes Lilith, another person's exit, boundary, unconventional choice, or abrupt change can force a decision about a rule you had learned to live around. Their move may be inconvenient and still reveal something useful. Their rebellion is not a template, and their bad timing does not automatically make the old setup worth defending. Look at what becomes possible now that the agreement is no longer automatic, then choose the change you actually want to keep."
+      }
+    },
+    "sky.uranus.sextile.chiron": {
+      "sha256": "113cdca0e74354b8e3377fcb6463d89cad7964e324c058df9bf5cad4ed3e5285",
+      "payload": {
+        "summary": "You may still be organizing your life around preventing something that is no longer happening.",
+        "body": "You may still be organizing your life around preventing something that is no longer happening. When Uranus sextiles Chiron, a changed schedule, different route, new tool, or one small exception can expose how much effort goes into avoiding an old problem. You skip the event, double-check the plan, keep the backup, or say no before anyone has the chance to disappoint you. Then you try it differently and nothing happens. Keep that information. A rule that once protected you does not deserve lifetime authority just because it was useful once."
+      }
+    },
+    "sky.uranus.sextile.lilith": {
+      "sha256": "905d97005e19824db17e6b805dd2427b13bc74a34b579dc8ca0f4b9c8b849869",
+      "payload": {
+        "summary": "An unexpected alternative can show you that the rule you were rebelling against was never the only way to do this.",
+        "body": "An unexpected alternative can show you that the rule you were rebelling against was never the only way to do this. When Uranus sextiles Lilith, a new tool, different schedule, unconventional collaborator, alternate route, or last-minute opening can make a private refusal practical instead of merely defiant. You may not have to fight the old arrangement head-on if another option lets you stop depending on it. Try the workaround before you turn the conflict into a referendum on your freedom. The useful change is the one that gives you a workable choice you did not have before, not simply a louder way to reject the old one."
+      }
+    },
+    "sky.uranus.square.chiron": {
+      "sha256": "124a099b9e612e2bcf09126e027aa1757a9c1053b5613658ef2816fbf2dfd6b9",
+      "payload": {
+        "summary": "You can want change and still panic when it finally stops asking permission.",
+        "body": "You can want change and still panic when it finally stops asking permission. When Uranus squares Chiron, an overdue disruption can remove a familiar source of control before you have replaced what it was doing for you, making the old arrangement look safer the moment it is no longer available. That reaction does not automatically mean you made the wrong turn. It may mean the protection disappeared before the support was rebuilt. Figure out what the old setup gave you besides restriction, then build that into what comes next instead of restoring the exact problem just to make the fear quieter."
+      }
+    },
+    "sky.uranus.square.lilith": {
+      "sha256": "176be2570eac54d69be8540cd0a6e7290fcc24f337cda6ca3558c8f9e1fe1248",
+      "payload": {
+        "summary": "The urge to blow up the arrangement may be strongest right before you have figured out what you want instead.",
+        "body": "The urge to blow up the arrangement may be strongest right before you have figured out what you want instead. When Uranus squares Lilith, a restriction you have tolerated for too long can suddenly become unbearable, and the first available exit may look better simply because it is an exit. The anger may be pointing to a necessary change. It does not have to choose the timing, wording, or method for you. Before you quit, expose, cancel, or cut someone off, decide which part of the situation actually needs to end and what you still want intact afterward."
+      }
+    },
+    "sky.venus.conjunction.chiron": {
+      "sha256": "89717c86f1474099b4eae0527cc43fdd38f795c6954584f24fff58bb9cf2b20e",
+      "payload": {
+        "summary": "Kindness can feel suspicious when affection used to come with terms attached.",
+        "body": "Kindness can feel suspicious when affection used to come with terms attached. When Venus conjuncts Chiron, a compliment, invitation, gift, romantic gesture, or offer of support can arrive alongside the reflex to look for the catch. You may want the connection and still find yourself inspecting it for evidence that the warmth will eventually be withdrawn or used against you. Do not force yourself to trust more than the situation has earned. Let what is consistently offered count before an earlier disappointment decides what this person must mean."
+      }
+    },
+    "sky.venus.conjunction.lilith": {
+      "sha256": "bb1d230fbbfe4101fedc78009dfbb593cff4afe6d28585fa1f5486cb08a99916",
+      "payload": {
+        "summary": "Being wanted is not the same as being wanted on terms you can live with.",
+        "body": "Being wanted is not the same as being wanted on terms you can live with. When Venus conjuncts Lilith, attraction, affection, money, pleasure, or approval can meet the exact desire or boundary you usually make easier for other people to accept. That can expose a bargain you were willing to call love because being chosen felt more important than naming the terms. Chemistry does not settle the question of fit. Appreciation does not require you to accept the arrangement offered with it. Let what you want become part of the relationship before being wanted becomes another reason to abandon it."
+      }
+    },
+    "sky.venus.opposition.chiron": {
+      "sha256": "91ba20c327d4f4b7a22fbe8e2465e4c439343b9576536013559fa19974cf97fd",
+      "payload": {
+        "summary": "A relationship can get organized around one person proving they care and the other person waiting for the proof to disappear.",
+        "body": "A relationship can get organized around one person proving they care and the other person waiting for the proof to disappear. When Venus opposes Chiron, affection and an old expectation of rejection can split across two people, creating a cycle of reassurance, doubt, extra effort, and another test. The giving may be sincere and the fear may be sincere, but neither one can settle a question that keeps changing its standard. Talk about the actual commitment, boundary, or need instead of making affection pass the same exam again."
+      }
+    },
+    "sky.venus.opposition.lilith": {
+      "sha256": "f0778a5baf2aa716ce3121c2da08dd2ae867ff113298142fc16013bee271c02b",
+      "payload": {
+        "summary": "A relationship or offer can look good from the outside and still ask you to keep part of yourself out of it.",
+        "body": "A relationship or offer can look good from the outside and still ask you to keep part of yourself out of it. When Venus opposes Lilith, affection, money, chemistry, approval, or practical support can come with terms that make one important desire or boundary easier to hide than to negotiate. You can appreciate what the arrangement gives you and still admit what you have to give up to keep it. If staying loved, chosen, or supported repeatedly requires you to make the same part of yourself smaller, that cost belongs in the decision too. A good-looking arrangement is not automatically a good fit."
+      }
+    },
+    "sky.venus.sextile.chiron": {
+      "sha256": "239ad91f0e58662d9f2c52a3429a7b784e174f5ada46b81c8bd9c457847fab51",
+      "payload": {
+        "summary": "Letting one compliment land without arguing with it can change the tone of an entire exchange.",
+        "body": "Letting one compliment land without arguing with it can change the tone of an entire exchange. When Venus sextiles Chiron, affection and appreciation may reach you with less friction than usual, but you still have to resist immediately deflecting them. Say thank you. Accept the invitation. Let someone pay, help, or be kind without converting the gesture into a debt you need to settle before the day is over. Receiving one good thing plainly can teach you more than another attempt to prove you never needed it."
+      }
+    },
+    "sky.venus.sextile.lilith": {
+      "sha256": "a3dce98d3287b89d5d73539c39cd76e9f6e466d46a2c48c14132af477739b321",
+      "payload": {
+        "summary": "You may find out that honesty costs far less affection than pretending not to want what you want.",
+        "body": "You may find out that honesty costs far less affection than pretending not to want what you want. When Venus sextiles Lilith, a relationship, money conversation, style choice, or agreement may have enough flexibility for you to name a desire or limit without blowing up the connection. Use that flexibility. Ask for the different term, choose what actually suits you, or stop apologizing for the part that does not match somebody else's taste. Being loved after you tell the truth gives you information pretending can never provide."
+      }
+    },
+    "sky.venus.square.chiron": {
+      "sha256": "398cc24df6703dd2f8f7c1d1aa8d9b2356c52432437fd28af50105339a5ce423",
+      "payload": {
+        "summary": "Pulling away just as a connection starts to feel good can recreate the distance you were afraid was coming.",
+        "body": "Pulling away just as a connection starts to feel good can recreate the distance you were afraid was coming. When Venus squares Chiron, affection can bring an older expectation of rejection close enough that unanswered messages, vague plans, small tests, or sudden coolness start doing the rejecting first. The instinct may protect you from being surprised, but it also changes the relationship you are trying to evaluate. Give the current connection enough time to show you what it is before you make it pay for the ending you remember."
+      }
+    },
+    "sky.venus.square.lilith": {
+      "sha256": "a4e4c32acbb434482e0f323e8907507abbdcaa4aa6f29881917f88ee6f4ccd88",
+      "payload": {
+        "summary": "A relationship can be loving and still depend on you wanting less than you do.",
+        "body": "A relationship can be loving and still depend on you wanting less than you do. When Venus squares Lilith, affection and approval can collide with a desire, boundary, attraction, financial choice, or version of pleasure that does not fit the existing agreement as neatly as everyone would prefer. That does not automatically make the want wise or the relationship wrong. It does mean love cannot solve a conflict nobody is allowed to name. If keeping the relationship requires one person to keep making their desire smaller, the problem is no longer the desire. The terms need to become honest enough for both people to exist inside them."
+      }
+    }
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.moon.conjunction.chiron",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-06",
+  "ownerStatement": "please mark all of this writing as approved for live",
+  "decisionContext": "Owner explicitly authorized all remaining Chiron + Lilith major Sky Calendar exact-aspect writing for live serving after reviewing and approving Batches 3 through 6.",
+  "batchId": "sky-calendar-exact-approved-2026-09-06-final-83",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "1e8c4e60b8beef20edfca0ae9137b326533cb84a6de5c3d031613b24efda941b",
+  "summary": "A small act of care can hit much harder than the favor itself should.",
+  "body": "A small act of care can hit much harder than the favor itself should. When the Moon conjuncts Chiron, being looked after in the present can touch the history of having to manage the same need alone, so a meal, a ride, a check-in, or somebody quietly taking something off your plate may bring up more emotion than expected. The reaction does not mean the kindness is a problem. Let the help be useful before you rush to explain why you should not need it.",
+  "sourceApprovalBatch": "sky-chiron-launch-batch-3-owner-review-2026-09-06",
+  "sourceApprovedAt": "2026-09-06"
+}

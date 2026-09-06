@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.pluto.square.lilith",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-06",
+  "ownerStatement": "please mark all of this writing as approved for live",
+  "decisionContext": "Owner explicitly authorized all remaining Chiron + Lilith major Sky Calendar exact-aspect writing for live serving after reviewing and approving Batches 3 through 6.",
+  "batchId": "sky-calendar-exact-approved-2026-09-06-final-83",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "ff2063c1b8fc5dccd8581b82d02dd2a305adf64af090adcdc6304ffc20daa784",
+  "summary": "A current power struggle can become much bigger when it touches the same place where you once learned that wanting something came with punishment.",
+  "body": "A current power struggle can become much bigger when it touches the same place where you once learned that wanting something came with punishment. When Pluto squares Lilith, control and refusal can feed each other until the argument stops being only about the present decision. You may become determined to win, expose, withhold, or force an admission because losing now feels too much like being silenced again. The history matters, but it cannot make the current choice for you. Identify the actual leverage on both sides, decide what term has to change, and stop before protecting yourself turns into another attempt to control the outcome.",
+  "sourceApprovalBatch": "sky-lilith-batch-6-v2-exact-owner-approved-2026-09-06",
+  "sourceApprovedAt": "2026-09-06"
+}

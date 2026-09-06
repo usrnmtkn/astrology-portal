@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.mercury.sextile.chiron",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-06",
+  "ownerStatement": "please mark all of this writing as approved for live",
+  "decisionContext": "Owner explicitly authorized all remaining Chiron + Lilith major Sky Calendar exact-aspect writing for live serving after reviewing and approving Batches 3 through 6.",
+  "batchId": "sky-calendar-exact-approved-2026-09-06-final-83",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "479681a628786d86f26882041c6f2179c0b2747aa5f571622bda42542d8d1d54",
+  "summary": "One precise question can take a sensitive subject out of your head and put it into a conversation you can actually respond to.",
+  "body": "One precise question can take a sensitive subject out of your head and put it into a conversation you can actually respond to. When Mercury sextiles Chiron, language can give a difficult issue enough shape to become discussable without requiring you to retell the entire history. Ask what they meant, name the part that bothered you, or put the missing detail in writing. The conversation only changes once somebody says the first clear sentence. Ten direct words may change more than another week of rehearsing every possible version.",
+  "sourceApprovalBatch": "sky-chiron-launch-batch-3-owner-review-2026-09-06",
+  "sourceApprovedAt": "2026-09-06"
+}

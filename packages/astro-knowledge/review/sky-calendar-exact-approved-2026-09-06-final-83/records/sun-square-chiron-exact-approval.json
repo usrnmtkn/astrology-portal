@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.sun.square.chiron",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-06",
+  "ownerStatement": "please mark all of this writing as approved for live",
+  "decisionContext": "Owner explicitly authorized all remaining Chiron + Lilith major Sky Calendar exact-aspect writing for live serving after reviewing and approving Batches 3 through 6.",
+  "batchId": "sky-calendar-exact-approved-2026-09-06-final-83",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "b6b87854a734fabb67c083e958910a725e6694c68e36bd6bc66f6a8d2f8670bf",
+  "summary": "Compliments can feel suspicious when being noticed used to come with criticism attached.",
+  "body": "Compliments can feel suspicious when being noticed used to come with criticism attached. When the Sun squares Chiron, praise, recognition, or a chance to stand out can trigger the reflex to minimize what you did, work twice as hard, or wait for the correction that usually followed attention in the past. The discomfort may be sincere without being current evidence. Before you turn appreciation into another assignment, check if anyone actually asked you to prove the compliment was deserved.",
+  "sourceApprovalBatch": "sky-chiron-launch-batch-3-owner-review-2026-09-06",
+  "sourceApprovedAt": "2026-09-06"
+}

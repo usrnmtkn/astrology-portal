@@ -1,0 +1,18 @@
+{
+  "id": "mars-opposition-chiron",
+  "transiting": "mars",
+  "aspect": "opposition",
+  "other": "chiron",
+  "base": "It can be easier to fight fiercely for someone else than to ask for the same protection for yourself.",
+  "business": "Both positions are visible; deal with the tradeoff directly instead of pretending one side can disappear.",
+  "shadow": "The conflict hardens when each side treats the other as the obstacle instead of part of the decision.",
+  "arcApplying": "The two positions become more explicit as exactness approaches.",
+  "arcSeparating": "The standoff begins to loosen after exactness.",
+  "voiceNeutral": true,
+  "status": "LIVE",
+  "readerCopy": {
+    "summary": "It can be easier to fight fiercely for someone else than to ask for the same protection for yourself.",
+    "body": "It can be easier to fight fiercely for someone else than to ask for the same protection for yourself. When Mars opposes Chiron, courage and vulnerability can split across a situation, making you decisive when another person is mistreated and strangely hesitant when the same issue affects you directly. That difference is useful information about where assertion still feels expensive. Take one action on your own behalf before all of your anger gets spent proving you know how to defend everyone except yourself.",
+    "approvedVia": "bounded owner-approved exact Calendar batch sky-calendar-exact-approved-2026-09-06-final-83; packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/owner-batch-authorization.json"
+  }
+}

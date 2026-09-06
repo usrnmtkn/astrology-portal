@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.saturn.opposition.lilith",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-06",
+  "ownerStatement": "please mark all of this writing as approved for live",
+  "decisionContext": "Owner explicitly authorized all remaining Chiron + Lilith major Sky Calendar exact-aspect writing for live serving after reviewing and approving Batches 3 through 6.",
+  "batchId": "sky-calendar-exact-approved-2026-09-06-final-83",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "64c3e94756cee92bbad8b0e21437f918579204821d9fae27da50a64f67feb31e",
+  "summary": "Authority can call something non-negotiable at exactly the moment you realize you are no longer willing to pay the price of obeying it.",
+  "body": "Authority can call something non-negotiable at exactly the moment you realize you are no longer willing to pay the price of obeying it. When Saturn opposes Lilith, a boss, institution, family role, contract, or long-standing obligation can force the conflict between what is required and what you refuse to keep sacrificing. Some rules protect something worth protecting. Others survive because the cost of challenging them has always been pushed onto the person with less power. Find out which kind you are dealing with. Then decide what can be renegotiated, what cannot, and what consequence you are willing to accept for saying no.",
+  "sourceApprovalBatch": "sky-lilith-batch-6-v2-exact-owner-approved-2026-09-06",
+  "sourceApprovedAt": "2026-09-06"
+}

@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.saturn.opposition.chiron",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-06",
+  "ownerStatement": "please mark all of this writing as approved for live",
+  "decisionContext": "Owner explicitly authorized all remaining Chiron + Lilith major Sky Calendar exact-aspect writing for live serving after reviewing and approving Batches 3 through 6.",
+  "batchId": "sky-calendar-exact-approved-2026-09-06-final-83",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "f32abcd2e1cd80cb95f24e91cb30fed3abfd215db7dc6afd3a091d50bcf00eb6",
+  "summary": "When authority used to humiliate you, even a reasonable limit can feel like a judgment of your worth.",
+  "body": "When authority used to humiliate you, even a reasonable limit can feel like a judgment of your worth. When Saturn opposes Chiron, a boss, institution, deadline, policy, or firm no can trigger the old instinct to overexplain, comply too quickly, or assume you are already in trouble. That is how a boundary becomes bigger than the boundary itself. Find out what is actually required and what consequence actually exists. You do not have to earn respect by accepting more shame than the situation contains.",
+  "sourceApprovalBatch": "sky-chiron-launch-batch-4-v4-exact-owner-approved-2026-09-06",
+  "sourceApprovedAt": "2026-09-06"
+}
