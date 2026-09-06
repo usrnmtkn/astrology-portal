@@ -4,9 +4,6 @@ import "../../web/src/styles/theme.css";
 import "../../web/src/styles/pill.css";
 import { GeneratedContentAdminDashboard } from "./GeneratedContentAdminDashboard";
 import { setupAdminReaderLinkTargets } from "./adminReaderLinks";
-import "./admin-row-selection.css";
-import "./admin-form-density.css";
-import "./admin-content-studio-ux-compat.css";
 
 const ContentCoverageDashboard = lazy(() => import("./ContentCoverageDashboard"));
 
