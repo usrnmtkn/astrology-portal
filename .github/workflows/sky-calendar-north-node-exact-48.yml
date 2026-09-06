@@ -34,6 +34,8 @@ jobs:
       - run: npm ci
       - name: Materialize bounded North Node release in CI workspace
         run: node scripts/release-calendar-exact-approved-20260905-north-node-48.mjs
+      - name: Build astro-knowledge workspace from released source
+        run: npm run build -w @tldr/astro-knowledge
       - name: Verify exact-owner-approved North Node release
         run: node scripts/test-calendar-exact-approved-20260905-north-node-48.mjs
       - name: Verify exact Sky aspect routing
