@@ -7,6 +7,7 @@ on:
       - "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-05-north-node-48/**"
       - "scripts/release-calendar-exact-approved-20260905-north-node-48.mjs"
       - "scripts/test-calendar-exact-approved-20260905-north-node-48.mjs"
+      - "scripts/test-calendar-exact-sky-aspect-routing.mjs"
   push:
     branches:
       - main
@@ -15,6 +16,7 @@ on:
       - "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-05-north-node-48/**"
       - "scripts/release-calendar-exact-approved-20260905-north-node-48.mjs"
       - "scripts/test-calendar-exact-approved-20260905-north-node-48.mjs"
+      - "scripts/test-calendar-exact-sky-aspect-routing.mjs"
 
 permissions:
   contents: read
@@ -35,4 +37,6 @@ jobs:
       - name: Verify exact-owner-approved North Node release
         run: node scripts/test-calendar-exact-approved-20260905-north-node-48.mjs
       - name: Verify exact Sky aspect routing
+        env:
+          SKY_CALENDAR_OWNER_PAYLOADS_PATH: packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-05-north-node-48/current-owner-payloads.json
         run: node scripts/test-calendar-exact-sky-aspect-routing.mjs
