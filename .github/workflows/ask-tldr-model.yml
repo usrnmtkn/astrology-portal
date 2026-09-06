@@ -43,6 +43,9 @@ jobs:
       - name: Validate Ask TLDR governed evidence
         run: npx tsx scripts/test-ask-tldr-governed-evidence.mjs
 
+      - name: Validate Ask TLDR question relevance
+        run: npx tsx scripts/test-ask-tldr-question-relevance.mjs
+
       - name: Validate Ask TLDR owner voice receipt
         run: npx tsx scripts/test-ask-tldr-voice-receipt.mjs
 
