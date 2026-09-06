@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.moon.sextile.north-node",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-05",
+  "ownerStatement": "yes please continue",
+  "decisionContext": "The owner explicitly approved both 24-row North Node source batches on 2026-09-05 and then authorized shipping the 48 approved North Node passages into the governed Calendar exact-aspect corpus by replying \"yes please continue\".",
+  "batchId": "sky-calendar-exact-approved-2026-09-05-north-node-48",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-05-north-node-48/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "2b717b54c6bd23a37c5e17d2219e3fd946a6988ea2fc1a9bacdc835a7c2f3dc0",
+  "summary": "Something familiar may give you exactly the support you need to try something unfamiliar.",
+  "body": "Something familiar may give you exactly the support you need to try something unfamiliar. When the Moon sextiles the North Node, care from the life you already have can reduce the cost of change: someone covers a practical responsibility, a familiar routine keeps the day manageable, or home gives you a stable base while something else shifts. The support is not there to recreate the old life. Use it to reduce the cost of trying the new arrangement and free up the time, sleep, money, or emotional energy the change actually requires.",
+  "sourceApprovalBatch": "sky-north-node-launch-batch-1-owner-review-v2-2026-09-05"
+}

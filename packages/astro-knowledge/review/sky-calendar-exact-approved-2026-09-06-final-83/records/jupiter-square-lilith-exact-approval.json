@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.jupiter.square.lilith",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-06",
+  "ownerStatement": "please mark all of this writing as approved for live",
+  "decisionContext": "Owner explicitly authorized all remaining Chiron + Lilith major Sky Calendar exact-aspect writing for live serving after reviewing and approving Batches 3 through 6.",
+  "batchId": "sky-calendar-exact-approved-2026-09-06-final-83",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "7f64821e87caf48eee8727f7022ecc0a6ede0d79e83f036cd1bd90f6e3d6939f",
+  "summary": "Just because you finally gave yourself permission does not mean every impulse deserves a yes.",
+  "body": "Just because you finally gave yourself permission does not mean every impulse deserves a yes. When Jupiter squares Lilith, the relief of no longer suppressing a desire can make excess feel like honesty: more spending, more risk, more attention, more freedom, more promises, or one exception after another because restraint starts to resemble the rules you are tired of obeying. That is the trap. Refusing shame does not require abandoning judgment. Give yourself enough freedom to learn what you actually want, then keep the limits that protect the life you want to have after the excitement passes.",
+  "sourceApprovalBatch": "sky-lilith-batch-5-v4-exact-owner-approved-2026-09-06",
+  "sourceApprovedAt": "2026-09-06"
+}

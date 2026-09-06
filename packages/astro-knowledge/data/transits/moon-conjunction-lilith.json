@@ -1,0 +1,18 @@
+{
+  "id": "moon-conjunction-lilith",
+  "transiting": "moon",
+  "aspect": "conjunction",
+  "other": "lilith",
+  "base": "You keep telling yourself you are just in a bad mood, but the irritation is pointing to something you actually need.",
+  "business": "The two concerns arrive in the same decision; work with the point they now share.",
+  "shadow": "Because both concerns are active at once, acting on one can obscure what the other still needs.",
+  "arcApplying": "The two concerns become harder to separate as exactness approaches.",
+  "arcSeparating": "The fused emphasis begins to loosen after exactness.",
+  "voiceNeutral": true,
+  "status": "LIVE",
+  "readerCopy": {
+    "summary": "You keep telling yourself you are just in a bad mood, but the irritation is pointing to something you actually need.",
+    "body": "You keep telling yourself you are just in a bad mood, but the irritation is pointing to something you actually need. When the Moon conjuncts Lilith, restlessness, jealousy, exhaustion, anger, or the urge to be left alone can make a buried need harder to dismiss. Maybe you need more privacy, more help, more rest, or simply less responsibility for keeping everyone else comfortable. The feeling is not automatically an instruction, but it is information. Before you criticize yourself for being difficult, look at what has been missing from the arrangement. A need does not become unreasonable just because acknowledging it would inconvenience somebody else.",
+    "approvedVia": "bounded owner-approved exact Calendar batch sky-calendar-exact-approved-2026-09-06-final-83; packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/owner-batch-authorization.json"
+  }
+}

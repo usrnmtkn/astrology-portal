@@ -1,0 +1,18 @@
+{
+  "id": "moon-square-chiron",
+  "transiting": "moon",
+  "aspect": "square",
+  "other": "chiron",
+  "base": "Waiting for someone to guess what you need can turn disappointment into evidence that they do not care.",
+  "business": "A practical mismatch needs adjustment; change the arrangement instead of repeating the same workaround.",
+  "shadow": "Pressure escalates when each side keeps demanding terms the other cannot sustain.",
+  "arcApplying": "The mismatch becomes harder to work around as exactness approaches.",
+  "arcSeparating": "The pressure eases after exactness, leaving the changed arrangement to prove itself.",
+  "voiceNeutral": true,
+  "status": "LIVE",
+  "readerCopy": {
+    "summary": "Waiting for someone to guess what you need can turn disappointment into evidence that they do not care.",
+    "body": "Waiting for someone to guess what you need can turn disappointment into evidence that they do not care. When the Moon squares Chiron, a genuine need can collide with the old belief that asking for it is embarrassing, excessive, or unsafe, so silence becomes a test the other person does not know they are taking. Their failure to notice may hurt, but it does not answer the question you never asked. Say what would help before you use their guess as the measure of the relationship.",
+    "approvedVia": "bounded owner-approved exact Calendar batch sky-calendar-exact-approved-2026-09-06-final-83; packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/owner-batch-authorization.json"
+  }
+}

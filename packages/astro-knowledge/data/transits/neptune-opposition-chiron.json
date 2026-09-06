@@ -1,0 +1,18 @@
+{
+  "id": "neptune-opposition-chiron",
+  "transiting": "neptune",
+  "aspect": "opposition",
+  "other": "chiron",
+  "base": "Recognizing yourself in someone's pain can make stepping back feel like betrayal.",
+  "business": "Both positions are visible; deal with the tradeoff directly instead of pretending one side can disappear.",
+  "shadow": "The conflict hardens when each side treats the other as the obstacle instead of part of the decision.",
+  "arcApplying": "The two positions become more explicit as exactness approaches.",
+  "arcSeparating": "The standoff begins to loosen after exactness.",
+  "voiceNeutral": true,
+  "status": "LIVE",
+  "readerCopy": {
+    "summary": "Recognizing yourself in someone's pain can make stepping back feel like betrayal.",
+    "body": "Recognizing yourself in someone's pain can make stepping back feel like betrayal. When Neptune opposes Chiron, another person's grief, confusion, illness, disappointment, or vulnerability can look so familiar that saying no to one more request feels like abandoning the person you once were. You may understand exactly why they are hurting and still be unable to fix what happens next. Offer the care they are actually asking for, not the rescue your own history wishes somebody had provided. Understanding their pain does not make you responsible for becoming the ending you wanted for yourself.",
+    "approvedVia": "bounded owner-approved exact Calendar batch sky-calendar-exact-approved-2026-09-06-final-83; packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/owner-batch-authorization.json"
+  }
+}

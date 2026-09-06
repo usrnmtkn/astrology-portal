@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.mercury.conjunction.lilith",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-06",
+  "ownerStatement": "please mark all of this writing as approved for live",
+  "decisionContext": "Owner explicitly authorized all remaining Chiron + Lilith major Sky Calendar exact-aspect writing for live serving after reviewing and approving Batches 3 through 6.",
+  "batchId": "sky-calendar-exact-approved-2026-09-06-final-83",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "817cf3d83f546e6a08d69819b9553c4012e3bf51e31dfe170f8bc585a2de2bfa",
+  "summary": "The sentence you keep deleting is usually the one the conversation is already organized around.",
+  "body": "The sentence you keep deleting is usually the one the conversation is already organized around. When Mercury conjuncts Lilith, the embarrassing detail, unpopular opinion, difficult question, or blunt truth you have been trying to phrase around can become impossible to separate from the discussion itself. Silence does not remove the subject; it makes everybody manage it indirectly. Say the part that changes the meaning of the conversation. You do not need to make it harsher to prove you are being honest, but you do need to stop expecting politeness to carry information it was designed to hide.",
+  "sourceApprovalBatch": "sky-lilith-batch-5-v4-exact-owner-approved-2026-09-06",
+  "sourceApprovedAt": "2026-09-06"
+}

@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.uranus.opposition.lilith",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-06",
+  "ownerStatement": "please mark all of this writing as approved for live",
+  "decisionContext": "Owner explicitly authorized all remaining Chiron + Lilith major Sky Calendar exact-aspect writing for live serving after reviewing and approving Batches 3 through 6.",
+  "batchId": "sky-calendar-exact-approved-2026-09-06-final-83",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "93158680fcd024e872d06fbdb550e356ec2af02f671a5ff1ef833e4e2706981f",
+  "summary": "Someone else's sudden refusal can expose how much of the old arrangement you were only keeping because nobody had challenged it yet.",
+  "body": "Someone else's sudden refusal can expose how much of the old arrangement you were only keeping because nobody had challenged it yet. When Uranus opposes Lilith, another person's exit, boundary, unconventional choice, or abrupt change can force a decision about a rule you had learned to live around. Their move may be inconvenient and still reveal something useful. Their rebellion is not a template, and their bad timing does not automatically make the old setup worth defending. Look at what becomes possible now that the agreement is no longer automatic, then choose the change you actually want to keep.",
+  "sourceApprovalBatch": "sky-lilith-batch-6-v2-exact-owner-approved-2026-09-06",
+  "sourceApprovedAt": "2026-09-06"
+}

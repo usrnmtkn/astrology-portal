@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.venus.sextile.chiron",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-06",
+  "ownerStatement": "please mark all of this writing as approved for live",
+  "decisionContext": "Owner explicitly authorized all remaining Chiron + Lilith major Sky Calendar exact-aspect writing for live serving after reviewing and approving Batches 3 through 6.",
+  "batchId": "sky-calendar-exact-approved-2026-09-06-final-83",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "c4cb951a2c5fa12807fb8dd2a584ea1495463481efd019bfae824d626b896781",
+  "summary": "Letting one compliment land without arguing with it can change the tone of an entire exchange.",
+  "body": "Letting one compliment land without arguing with it can change the tone of an entire exchange. When Venus sextiles Chiron, affection and appreciation may reach you with less friction than usual, but you still have to resist immediately deflecting them. Say thank you. Accept the invitation. Let someone pay, help, or be kind without converting the gesture into a debt you need to settle before the day is over. Receiving one good thing plainly can teach you more than another attempt to prove you never needed it.",
+  "sourceApprovalBatch": "sky-chiron-launch-batch-3-owner-review-2026-09-06",
+  "sourceApprovedAt": "2026-09-06"
+}

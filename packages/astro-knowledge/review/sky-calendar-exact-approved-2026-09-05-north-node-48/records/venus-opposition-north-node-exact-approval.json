@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.venus.opposition.north-node",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-05",
+  "ownerStatement": "yes please continue",
+  "decisionContext": "The owner explicitly approved both 24-row North Node source batches on 2026-09-05 and then authorized shipping the 48 approved North Node passages into the governed Calendar exact-aspect corpus by replying \"yes please continue\".",
+  "batchId": "sky-calendar-exact-approved-2026-09-05-north-node-48",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-05-north-node-48/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "f1a4fec3934cadf08740c20df1cc31bad65dd5e4c939df0c8fa554c914005b01",
+  "summary": "Chemistry can come back before compatibility with the life you want does.",
+  "body": "Chemistry can come back before compatibility with the life you want does. When Venus opposes the North Node, an ex, old friendship, former collaborator, familiar financial arrangement, or type of pleasure you already know can feel especially easy to return to. The connection may still be meaningful, and the old terms may even feel better than they used to. Before you rebuild around it, look at the schedule, money, boundaries, and priorities you have now. Familiar desire is useful information, but it is not proof that the old arrangement fits the life you are trying to make.",
+  "sourceApprovalBatch": "sky-north-node-launch-batch-1-owner-review-v2-2026-09-05"
+}

@@ -1,0 +1,153 @@
+/* Content Studio workflow hierarchy.
+   This layer loads after the legacy density rules so the editor can improve its
+   information order without changing content, serving, or approval behavior. */
+
+/* Preserve the established editor title rhythm required by the visual contract. */
+.admin-dashboard .admin-editor-toolbar h2 {
+  margin-top: var(--admin-space-sm);
+}
+
+/* "Use" already explains the content context beside the title. Do not repeat the
+   same context as a competing pill in the action cluster. */
+.admin-dashboard .admin-editor-toolbar-actions > .admin-aspect-context-pill {
+  display: none;
+}
+
+/* A fallback/source workspace used to lead with resolver and provenance detail,
+   forcing editors to scroll past implementation information before reaching the
+   copy. Keep every governed section available, but put the editorial task first. */
+.admin-dashboard .admin-editor-panel .admin-fallback-diagnostic-panel:has(> .admin-sky-edition-fields) {
+  display: flex;
+  flex-direction: column;
+}
+
+.admin-dashboard .admin-editor-panel .admin-fallback-diagnostic-panel:has(> .admin-sky-edition-fields)
+  > .admin-fallback-diagnostic-heading {
+  order: 0;
+}
+
+.admin-dashboard .admin-editor-panel .admin-fallback-diagnostic-panel:has(> .admin-sky-edition-fields)
+  > .admin-editor-guidance[role="note"] {
+  order: 1;
+}
+
+.admin-dashboard .admin-editor-panel .admin-fallback-diagnostic-panel:has(> .admin-sky-edition-fields)
+  > .admin-sky-edition-fields {
+  order: 2;
+}
+
+.admin-dashboard .admin-editor-panel .admin-fallback-diagnostic-panel:has(> .admin-sky-edition-fields)
+  > [aria-label="Rendered fallback preview"] {
+  order: 3;
+}
+
+.admin-dashboard .admin-editor-panel .admin-fallback-diagnostic-panel:has(> .admin-sky-edition-fields)
+  > [aria-label="Review fallback changes"] {
+  order: 4;
+}
+
+.admin-dashboard .admin-editor-panel .admin-fallback-diagnostic-panel:has(> .admin-sky-edition-fields)
+  > [aria-label="Calculated facts"] {
+  order: 5;
+}
+
+.admin-dashboard .admin-editor-panel .admin-fallback-diagnostic-panel:has(> .admin-sky-edition-fields)
+  > [aria-label="Production-parity SKY V4 preview"] {
+  order: 6;
+}
+
+.admin-dashboard .admin-editor-panel .admin-fallback-diagnostic-panel:has(> .admin-sky-edition-fields)
+  > [aria-label="SKY V4 source provenance"] {
+  order: 7;
+}
+
+/* The safe-editing rule matters, but it should read as a compact guardrail rather
+   than another full content card competing with the editable prose. */
+.admin-dashboard .admin-editor-panel .admin-fallback-diagnostic-panel:has(> .admin-sky-edition-fields)
+  > .admin-editor-guidance[role="note"] {
+  align-items: start;
+  background: var(--admin-ui-success-surface-muted);
+  border-color: var(--admin-success-border);
+  display: grid;
+  gap: var(--admin-space-sm) var(--admin-space-2xl);
+  grid-template-columns: max-content minmax(0, 1fr);
+  padding: var(--admin-space-xl) var(--admin-space-2xl);
+}
+
+.admin-dashboard .admin-editor-panel .admin-fallback-diagnostic-panel:has(> .admin-sky-edition-fields)
+  > .admin-editor-guidance[role="note"] > :where(strong, p) {
+  margin: 0;
+}
+
+/* Make the source-workspace summary scannable: human context on the left,
+   operational facts on the right. */
+@media (min-width: 1100px) {
+  .admin-dashboard .admin-editor-panel .admin-fallback-diagnostic-panel:has(> .admin-sky-edition-fields)
+    > .admin-fallback-diagnostic-heading {
+    align-items: start;
+    display: grid;
+    gap: var(--admin-space-3xl);
+    grid-template-columns: minmax(0, 1.15fr) minmax(360px, 0.85fr);
+  }
+
+  .admin-dashboard .admin-editor-panel .admin-fallback-diagnostic-panel:has(> .admin-sky-edition-fields)
+    > .admin-fallback-diagnostic-heading > .admin-hook-pattern-list {
+    display: grid;
+    gap: var(--admin-space-lg);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* Editable copy is the primary work surface. Give it the strongest local
+   hierarchy and let implementation-only panels recede after preview/review. */
+.admin-dashboard .admin-editor-panel .admin-fallback-diagnostic-panel:has(> .admin-sky-edition-fields)
+  > .admin-sky-edition-fields {
+  background: var(--admin-ui-surface-1);
+  border: var(--border-width-thin) solid var(--admin-ui-border-strong);
+  border-radius: var(--admin-ui-radius-lg);
+  display: grid;
+  gap: var(--admin-space-2xl);
+  padding: var(--admin-space-3xl);
+}
+
+.admin-dashboard .admin-editor-panel .admin-fallback-diagnostic-panel:has(> .admin-sky-edition-fields)
+  > .admin-sky-edition-fields > header {
+  border-bottom: var(--border-width-thin) solid var(--admin-ui-border);
+  padding-bottom: var(--admin-space-xl);
+}
+
+.admin-dashboard .admin-editor-panel .admin-fallback-diagnostic-panel:has(> .admin-sky-edition-fields)
+  > .admin-sky-edition-fields > header > :where(p, h3) {
+  margin-bottom: var(--admin-space-sm);
+  margin-top: 0;
+}
+
+/* Preview and diff are part of the editorial loop. Resolver/provenance remain
+   available afterwards, but visually read as advanced verification rather than
+   prerequisites for writing. */
+.admin-dashboard .admin-editor-panel .admin-fallback-diagnostic-panel:has(> .admin-sky-edition-fields)
+  > :where(
+    [aria-label="Production-parity SKY V4 preview"],
+    [aria-label="SKY V4 source provenance"],
+    [aria-label="Calculated facts"]
+  ) {
+  background: transparent;
+  border-color: var(--admin-ui-border);
+}
+
+.admin-dashboard .admin-editor-panel .admin-fallback-diagnostic-panel:has(> .admin-sky-edition-fields)
+  > [aria-label="SKY V4 source provenance"] {
+  color: var(--admin-ui-muted);
+}
+
+@media (max-width: 860px) {
+  .admin-dashboard .admin-editor-panel .admin-fallback-diagnostic-panel:has(> .admin-sky-edition-fields)
+    > .admin-editor-guidance[role="note"] {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .admin-dashboard .admin-editor-panel .admin-fallback-diagnostic-panel:has(> .admin-sky-edition-fields)
+    > .admin-sky-edition-fields {
+    padding: var(--admin-space-2xl);
+  }
+}

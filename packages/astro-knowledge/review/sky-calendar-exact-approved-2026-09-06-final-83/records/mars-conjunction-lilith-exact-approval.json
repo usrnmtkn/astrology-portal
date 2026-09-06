@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.mars.conjunction.lilith",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-06",
+  "ownerStatement": "please mark all of this writing as approved for live",
+  "decisionContext": "Owner explicitly authorized all remaining Chiron + Lilith major Sky Calendar exact-aspect writing for live serving after reviewing and approving Batches 3 through 6.",
+  "batchId": "sky-calendar-exact-approved-2026-09-06-final-83",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "7023682c4a490986b693dee2eb973001a7ca34f9ced72dcff8c85deb28981396",
+  "summary": "Anger gets useful when it stops being proof that something is wrong with you and starts showing you what you will no longer do.",
+  "body": "Anger gets useful when it stops being proof that something is wrong with you and starts showing you what you will no longer do. When Mars conjuncts Lilith, action and a long-suppressed refusal can arrive together, making it much harder to keep smiling through the request, rule, relationship pattern, or expectation that has been wearing your patience down. The anger may be bigger than today's offense because today's offense is not the whole history. Use the anger on the boundary that matters. You do not have to destroy the entire arrangement to stop participating in the part that keeps making you furious.",
+  "sourceApprovalBatch": "sky-lilith-batch-5-v4-exact-owner-approved-2026-09-06",
+  "sourceApprovedAt": "2026-09-06"
+}

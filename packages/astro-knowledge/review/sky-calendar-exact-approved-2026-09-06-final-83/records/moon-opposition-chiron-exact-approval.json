@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.moon.opposition.chiron",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-06",
+  "ownerStatement": "please mark all of this writing as approved for live",
+  "decisionContext": "Owner explicitly authorized all remaining Chiron + Lilith major Sky Calendar exact-aspect writing for live serving after reviewing and approving Batches 3 through 6.",
+  "batchId": "sky-calendar-exact-approved-2026-09-06-final-83",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "a813553f7437fb475b2f08cb61c7e638e240b6f772a670c2cb4b6f3d7aac26ba",
+  "summary": "One person can keep offering help while the other keeps proving they do not need it.",
+  "body": "One person can keep offering help while the other keeps proving they do not need it. When the Moon opposes Chiron, care and discomfort with receiving it can split across a relationship, leaving one person pushing harder and the other refusing more firmly until both feel misunderstood. The giver may need to stop making care compulsory, and the receiver may need to stop treating acceptance like surrender. A useful exchange begins when the help has terms both people can actually agree to.",
+  "sourceApprovalBatch": "sky-chiron-launch-batch-3-owner-review-2026-09-06",
+  "sourceApprovedAt": "2026-09-06"
+}

@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.pluto.square.north-node",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-05",
+  "ownerStatement": "yes please continue",
+  "decisionContext": "The owner explicitly approved both 24-row North Node source batches on 2026-09-05 and then authorized shipping the 48 approved North Node passages into the governed Calendar exact-aspect corpus by replying \"yes please continue\".",
+  "batchId": "sky-calendar-exact-approved-2026-09-05-north-node-48",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-05-north-node-48/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "369c5f5dfc3a395961da1b8981ab8153b14677c3480755be8d025de3d2403320",
+  "summary": "You can know exactly what needs to change and still be trapped by the person or system that controls the terms.",
+  "body": "You can know exactly what needs to change and still be trapped by the person or system that controls the terms. When Pluto squares the North Node, the change you want can run directly into money, access, secrecy, authority, or dependence that gives someone else the power to delay it, narrow it, or make it expensive. Pushing harder is not always leverage. Identify what the other side can withhold, what alternatives exist, and what would reduce your dependence before turning the struggle itself into proof that you have to keep fighting on their terms.",
+  "sourceApprovalBatch": "sky-north-node-launch-batch-2-owner-review-2026-09-05"
+}

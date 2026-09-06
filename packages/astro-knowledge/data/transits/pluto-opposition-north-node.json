@@ -1,0 +1,18 @@
+{
+  "id": "pluto-opposition-north-node",
+  "transiting": "pluto",
+  "aspect": "opposition",
+  "other": "north-node",
+  "base": "An old source of power can be difficult to leave because it still gives you access, influence, money, or protection you know how to use.",
+  "business": "Both positions are visible; deal with the tradeoff directly instead of pretending one side can disappear.",
+  "shadow": "The conflict hardens when each side treats the other as the obstacle instead of part of the decision.",
+  "arcApplying": "The two positions become more explicit as exactness approaches.",
+  "arcSeparating": "The standoff begins to loosen after exactness.",
+  "voiceNeutral": true,
+  "status": "LIVE",
+  "readerCopy": {
+    "summary": "An old source of power can be difficult to leave because it still gives you access, influence, money, or protection you know how to use.",
+    "body": "An old source of power can be difficult to leave because it still gives you access, influence, money, or protection you know how to use. When Pluto opposes the North Node, an established role, alliance, institution, or arrangement can offer enough leverage that giving it up feels like surrendering options you may not be able to replace immediately. The benefits may be substantial, which is exactly why the decision deserves precision. Build enough leverage outside the arrangement that staying becomes a choice rather than the price of keeping your options.",
+    "approvedVia": "bounded owner-approved exact Calendar batch sky-calendar-exact-approved-2026-09-05-north-node-48; packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-05-north-node-48/owner-batch-authorization.json"
+  }
+}

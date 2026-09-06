@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.venus.square.chiron",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-06",
+  "ownerStatement": "please mark all of this writing as approved for live",
+  "decisionContext": "Owner explicitly authorized all remaining Chiron + Lilith major Sky Calendar exact-aspect writing for live serving after reviewing and approving Batches 3 through 6.",
+  "batchId": "sky-calendar-exact-approved-2026-09-06-final-83",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "5eda4e7f100589c1d9714223e50f2b1116d9bf941648e347a3de80fd522c814e",
+  "summary": "Pulling away just as a connection starts to feel good can recreate the distance you were afraid was coming.",
+  "body": "Pulling away just as a connection starts to feel good can recreate the distance you were afraid was coming. When Venus squares Chiron, affection can bring an older expectation of rejection close enough that unanswered messages, vague plans, small tests, or sudden coolness start doing the rejecting first. The instinct may protect you from being surprised, but it also changes the relationship you are trying to evaluate. Give the current connection enough time to show you what it is before you make it pay for the ending you remember.",
+  "sourceApprovalBatch": "sky-chiron-launch-batch-3-owner-review-2026-09-06",
+  "sourceApprovedAt": "2026-09-06"
+}

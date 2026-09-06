@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.pluto.sextile.north-node",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-05",
+  "ownerStatement": "yes please continue",
+  "decisionContext": "The owner explicitly approved both 24-row North Node source batches on 2026-09-05 and then authorized shipping the 48 approved North Node passages into the governed Calendar exact-aspect corpus by replying \"yes please continue\".",
+  "batchId": "sky-calendar-exact-approved-2026-09-05-north-node-48",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-05-north-node-48/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "e0a9144d4f00e24a2c56a44732bd216a954476ddac3a41482e52ade1bc24df29",
+  "summary": "A small shift in leverage may give you enough room to change a situation you previously had to work around.",
+  "body": "A small shift in leverage may give you enough room to change a situation you previously had to work around. When Pluto sextiles the North Node, new information, more money, formal authority, a changed rule, or support from someone who can influence the outcome can improve your position enough to alter the terms instead of merely coping with them. Use that advantage on the setup itself. A stronger position matters most when it leaves you with more control after the immediate problem is solved, not simply when it helps you win one difficult conversation.",
+  "sourceApprovalBatch": "sky-north-node-launch-batch-2-owner-review-2026-09-05"
+}

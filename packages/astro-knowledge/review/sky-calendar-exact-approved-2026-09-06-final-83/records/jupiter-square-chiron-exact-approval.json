@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.jupiter.square.chiron",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-06",
+  "ownerStatement": "please mark all of this writing as approved for live",
+  "decisionContext": "Owner explicitly authorized all remaining Chiron + Lilith major Sky Calendar exact-aspect writing for live serving after reviewing and approving Batches 3 through 6.",
+  "batchId": "sky-calendar-exact-approved-2026-09-06-final-83",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "07352180b33bd29a9529864010e3a8c07a513d811d108de627c114444573cbd6",
+  "summary": "Trying to prove you are no longer limited by an old doubt can become its own form of overcommitment.",
+  "body": "Trying to prove you are no longer limited by an old doubt can become its own form of overcommitment. When Jupiter squares Chiron, growth can turn into compensation, making another credential, bigger promise, extra project, or ambitious leap feel necessary because stopping at enough would leave the insecurity unanswered. The opportunity may be good, but expansion cannot settle every question you have about your worth. Choose the version that improves your life instead of the one designed to demonstrate that the earlier limitation has no power over you.",
+  "sourceApprovalBatch": "sky-chiron-launch-batch-3-owner-review-2026-09-06",
+  "sourceApprovedAt": "2026-09-06"
+}

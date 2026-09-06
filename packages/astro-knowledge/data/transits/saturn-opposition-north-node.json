@@ -1,0 +1,18 @@
+{
+  "id": "saturn-opposition-north-node",
+  "transiting": "saturn",
+  "aspect": "opposition",
+  "other": "north-node",
+  "base": "Being responsible for something can make leaving it feel wrong long after the arrangement has stopped being useful.",
+  "business": "Both positions are visible; deal with the tradeoff directly instead of pretending one side can disappear.",
+  "shadow": "The conflict hardens when each side treats the other as the obstacle instead of part of the decision.",
+  "arcApplying": "The two positions become more explicit as exactness approaches.",
+  "arcSeparating": "The standoff begins to loosen after exactness.",
+  "voiceNeutral": true,
+  "status": "LIVE",
+  "readerCopy": {
+    "summary": "Being responsible for something can make leaving it feel wrong long after the arrangement has stopped being useful.",
+    "body": "Being responsible for something can make leaving it feel wrong long after the arrangement has stopped being useful. When Saturn opposes the North Node, the strongest argument for staying may be duty: the role you know how to perform, the promise you made, the institution that relies on you, or the commitment that has already taken years of work. You may still need to finish what you promised or protect people who depend on you. Separate that responsibility from the assumption that keeping your word requires preserving the entire setup exactly as it is.",
+    "approvedVia": "bounded owner-approved exact Calendar batch sky-calendar-exact-approved-2026-09-05-north-node-48; packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-05-north-node-48/owner-batch-authorization.json"
+  }
+}
