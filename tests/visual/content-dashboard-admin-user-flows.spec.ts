@@ -1111,23 +1111,23 @@ test.describe("content dashboard admin user flow case studies", () => {
     await expect(page.getByRole("heading", { name: "Review Queue" })).toBeVisible({
       timeout: routeReadyTimeoutMs
     });
-    await expect(page.getByRole("status")).toContainText("Admin access was denied");
+    await expect(page.getByRole("alert")).toContainText("Admin access was denied");
     await expect(page.getByRole("region", { name: "Admin status" })).toContainText("Access denied");
     await expect(page.getByRole("region", { name: "Admin access required" })).toBeVisible();
     await expect(page.getByRole("heading", { name: "Review, sign off, publish" })).toHaveCount(0);
     await expect(page.getByRole("button", { name: "Create" })).toBeDisabled();
-    const secretInput = page.getByLabel("Secret");
+    const secretInput = page.getByLabel("Emergency admin secret");
     await expect(secretInput).toHaveValue("stale-secret");
-    await expect(page.getByRole("button", { name: "Load content" })).toBeVisible();
+    await expect(page.getByRole("button", { name: "Verify emergency access" })).toBeVisible();
 
     await secretInput.fill("CONTENT_GENERATION_SECRET");
     await secretInput.press("Enter");
-    await expect(page.getByRole("status")).toContainText("Paste the secret value, not the words CONTENT_GENERATION_SECRET");
+    await expect(page.getByRole("alert")).toContainText("Paste the secret value, not the words CONTENT_GENERATION_SECRET");
 
     await secretInput.fill("CONTENT_GENERATION_SECRET='qa-secret'");
     await expect(secretInput).toHaveValue("CONTENT_GENERATION_SECRET='qa-secret'");
-    await expect(page.getByRole("button", { name: "Load content" })).toBeEnabled();
-    await page.getByRole("button", { name: "Load content" }).click();
+    await expect(page.getByRole("button", { name: "Verify emergency access" })).toBeEnabled();
+    await page.getByRole("button", { name: "Verify emergency access" }).click();
 
     await expect(page.getByRole("region", { name: "Admin status" })).toContainText(`${generatedContentRows.length} saved rows loaded`, {
       timeout: routeReadyTimeoutMs
