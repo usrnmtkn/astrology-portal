@@ -14,7 +14,12 @@
   "ownerStatement": "yes please continue",
   "decisionContext": "The owner had just been told the next step was to ship the 48 newly approved North Node passages into the governed Calendar exact-aspect corpus, then replied \"yes please continue\".",
   "payloadFiles": [
-    "north-node-48.json"
+    "north-node-48-01.json",
+    "north-node-48-02.json",
+    "north-node-48-03.json",
+    "north-node-48-04.json",
+    "north-node-48-05.json",
+    "north-node-48-06.json"
   ],
   "memberCount": 48,
   "memberSetSha256": "1989521150fe77a251d4f0d98a5d769e1d6093bd42533b6878f14769b1147682",
