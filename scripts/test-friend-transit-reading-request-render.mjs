@@ -7,6 +7,10 @@ import { createServer } from "vite";
 const panelSource = fs.readFileSync("apps/web/src/features/friends/ManualChartsPanel.tsx", "utf8");
 const serviceSource = fs.readFileSync("apps/web/src/services/userGeneratedContent.ts", "utf8");
 const apiSource = fs.readFileSync("api/generate-user-content.ts", "utf8");
+const surfaceMigrationSource = fs.readFileSync(
+  "apps/web/supabase/migrations/20260906190000_add_friends_user_generated_surface.sql",
+  "utf8"
+);
 
 assert.match(panelSource, /friendTransitReadingSelectionKeyRef\.current = friendTransitReadingSelectionKey/u);
 assert.equal(
@@ -23,6 +27,11 @@ assert.match(apiSource, /const locked = friendTransitReadingRequestLock\(\{/u);
 assert.match(apiSource, /input\.status = "DRAFT"/u);
 assert.match(apiSource, /input\.allowQualityFallback = false/u);
 assert.match(apiSource, /requestSubjectType === "friend_transit_reading"[\s\S]{0,220}This paid reading is currently unavailable/u);
+assert.match(
+  surfaceMigrationSource,
+  /user_generated_interpretations_surface_check[\s\S]{0,260}'friends'/u,
+  "The user-generated content surface constraint must allow Friends readings to persist."
+);
 
 const server = await createServer({
   root: "./apps/web",
@@ -92,7 +101,8 @@ try {
   const idle = renderToStaticMarkup(React.createElement(FriendTransitsTab, baseProps));
   assert.match(idle, /What&#x27;s going on with Alex right now\?/u);
   assert.match(idle, /Paid reading/u);
-  assert.match(idle, /Unlock this reading/u);
+  assert.match(idle, /Generate reading/u);
+  assert.doesNotMatch(idle, /Purchase access|Unlock this reading/u);
 
   const loading = renderToStaticMarkup(React.createElement(FriendTransitsTab, {
     ...baseProps,
@@ -111,21 +121,21 @@ try {
   }));
   assert.match(ready, /Alex has more room to move/u);
   assert.match(ready, /The transit cards below remain the source of truth/u);
-  assert.doesNotMatch(ready, /Give me the short version/u);
+  assert.doesNotMatch(ready, /Generate reading/u);
 
   const locked = renderToStaticMarkup(React.createElement(FriendTransitsTab, {
     ...baseProps,
     readingStatus: "locked"
   }));
-  assert.match(locked, /This is a paid reading/u);
-  assert.match(locked, /Unlock this reading/u);
-  assert.doesNotMatch(locked, /Anthropic|Claude|API|credit balance|Generation failed|Try again/iu);
+  assert.match(locked, /This reading is unavailable right now/u);
+  assert.match(locked, /Try again/u);
+  assert.doesNotMatch(locked, /Anthropic|Claude|API|credit balance|Generation failed|Purchase access|Unlock this reading/iu);
 
   const unavailable = renderToStaticMarkup(React.createElement(FriendTransitsTab, {
     ...baseProps,
     readingAvailable: false
   }));
-  assert.doesNotMatch(unavailable, /Unlock this reading/u);
+  assert.doesNotMatch(unavailable, /Generate reading/u);
 } finally {
   await server.close();
 }

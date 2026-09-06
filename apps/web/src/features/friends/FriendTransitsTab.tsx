@@ -104,13 +104,13 @@ export function FriendTransitsTab({
               <p role="status">Preparing {friendName}&apos;s reading…</p>
             ) : readingStatus === "locked" ? (
               <>
-                <p>This is a paid reading. Purchase access to unlock a personalized summary of {friendName}&apos;s current transits.</p>
-                <button className="friend-transit-reading__cta" onClick={onGenerateReading} type="button">Unlock this reading</button>
+                <p>This reading is unavailable right now. You can try generating it again.</p>
+                <button className="friend-transit-reading__cta" onClick={onGenerateReading} type="button">Try again</button>
               </>
             ) : (
               <>
                 <p>A concise, personalized synthesis of the strongest themes active for {friendName} right now.</p>
-                <button className="friend-transit-reading__cta" onClick={onGenerateReading} type="button">Unlock this reading</button>
+                <button className="friend-transit-reading__cta" onClick={onGenerateReading} type="button">Generate reading</button>
               </>
             )}
           </article>
