@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.venus.square.north-node",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-05",
+  "ownerStatement": "yes please continue",
+  "decisionContext": "The owner had just been told the next step was to ship the 48 newly approved North Node passages into the governed Calendar exact-aspect corpus, then replied \"yes please continue\".",
+  "batchId": "sky-calendar-exact-approved-2026-09-05-north-node-48",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-05-north-node-48/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "c235e2953ea269ca543b575a03554cc4d7c39be75cc436af6cdd2e6d862ad8de",
+  "summary": "A relationship can be good and still be organized around a version of your life you are trying to leave.",
+  "body": "A relationship can be good and still be organized around a version of your life you are trying to leave. When Venus squares the North Node, affection, money, pleasure, or agreement can clash with a change in work, location, schedule, spending, or priorities that no longer fits the old terms. If preserving the bond keeps requiring you to decline the choices you actually want, the problem is no longer just timing. Change the arrangement before assuming you have to choose between the relationship and the life that is taking shape around it.",
+  "sourceApprovalBatch": "sky-north-node-launch-batch-1-owner-review-v2-2026-09-05"
+}

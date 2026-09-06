@@ -1,0 +1,18 @@
+{
+  "id": "moon-opposition-north-node",
+  "transiting": "moon",
+  "aspect": "opposition",
+  "other": "north-node",
+  "base": "Missing what was familiar can make returning look more right than it actually is.",
+  "business": "Both positions are visible; deal with the tradeoff directly instead of pretending one side can disappear.",
+  "shadow": "The conflict hardens when each side treats the other as the obstacle instead of part of the decision.",
+  "arcApplying": "The two positions become more explicit as exactness approaches.",
+  "arcSeparating": "The standoff begins to loosen after exactness.",
+  "voiceNeutral": true,
+  "status": "LIVE",
+  "readerCopy": {
+    "summary": "Missing what was familiar can make returning look more right than it actually is.",
+    "body": "Missing what was familiar can make returning look more right than it actually is. When the Moon opposes the North Node, an old home, family routine, relationship pattern, or former schedule can feel emotionally convincing because your body already knows how to function inside it. That pull may contain useful information, especially if the newer plan has left out rest, belonging, predictability, or care that you still need. Bring the need forward before you bring the whole old arrangement back.",
+    "approvedVia": "bounded owner-approved exact Calendar batch sky-calendar-exact-approved-2026-09-05-north-node-48; packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-05-north-node-48/owner-batch-authorization.json"
+  }
+}

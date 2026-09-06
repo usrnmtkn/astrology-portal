@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.lilith.conjunction.north-node",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-05",
+  "ownerStatement": "yes please continue",
+  "decisionContext": "The owner had just been told the next step was to ship the 48 newly approved North Node passages into the governed Calendar exact-aspect corpus, then replied \"yes please continue\".",
+  "batchId": "sky-calendar-exact-approved-2026-09-05-north-node-48",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-05-north-node-48/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "da8b6a2e38f373bf540b55d31b198528aa4801e5ab2b5a147158bed99ef881c7",
+  "summary": "A want you have been treating like a problem may become impossible to separate from the decision about what you actually want next.",
+  "body": "A want you have been treating like a problem may become impossible to separate from the decision about what you actually want next. When Lilith conjuncts the North Node, an unconventional relationship, career move, boundary, or refusal you kept private can start changing the plan itself. Wanting something does not automatically make it wise, but hiding the want makes honest planning impossible. Put your actual preference into the equation and see what has to change once you stop editing it out.",
+  "sourceApprovalBatch": "sky-north-node-launch-batch-2-exact-owner-approved-refined-2026-09-05"
+}

@@ -1,0 +1,18 @@
+{
+  "id": "mars-opposition-north-node",
+  "transiting": "mars",
+  "aspect": "opposition",
+  "other": "north-node",
+  "base": "Winning the old fight can keep you too busy to make the new move.",
+  "business": "Both positions are visible; deal with the tradeoff directly instead of pretending one side can disappear.",
+  "shadow": "The conflict hardens when each side treats the other as the obstacle instead of part of the decision.",
+  "arcApplying": "The two positions become more explicit as exactness approaches.",
+  "arcSeparating": "The standoff begins to loosen after exactness.",
+  "voiceNeutral": true,
+  "status": "LIVE",
+  "readerCopy": {
+    "summary": "Winning the old fight can keep you too busy to make the new move.",
+    "body": "Winning the old fight can keep you too busy to make the new move. When Mars opposes the North Node, a battle you already know how to fight can feel more urgent than the less practiced action that would change the situation, especially when you are good at defending the boundary, fixing the crisis, or pushing through the problem. You may still need to finish what is in front of you. Just notice when competence at surviving the old setup has become the reason all of your energy keeps going back into it.",
+    "approvedVia": "bounded owner-approved exact Calendar batch sky-calendar-exact-approved-2026-09-05-north-node-48; packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-05-north-node-48/owner-batch-authorization.json"
+  }
+}

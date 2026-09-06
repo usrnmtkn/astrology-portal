@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.chiron.sextile.north-node",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-05",
+  "ownerStatement": "yes please continue",
+  "decisionContext": "The owner had just been told the next step was to ship the 48 newly approved North Node passages into the governed Calendar exact-aspect corpus, then replied \"yes please continue\".",
+  "batchId": "sky-calendar-exact-approved-2026-09-05-north-node-48",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-05-north-node-48/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "40e9e4ecc6a7143b906a67c87954209b5b49223c84da305bc8145f00a003d440",
+  "summary": "Something you learned the hard way may give you a useful advantage in a situation you are only beginning to enter.",
+  "body": "Something you learned the hard way may give you a useful advantage in a situation you are only beginning to enter. When Chiron sextiles the North Node, an old mistake, rejection, or difficult conversation can help you notice the part of a new situation that deserves attention much sooner this time. Use the knowledge where it changes the outcome. Ask the better question, set the boundary earlier, or prepare differently so you can bypass the friction you had to learn alone.",
+  "sourceApprovalBatch": "sky-north-node-launch-batch-2-exact-owner-approved-refined-2026-09-05"
+}

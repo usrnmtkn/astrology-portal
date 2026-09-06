@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.saturn.opposition.north-node",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-05",
+  "ownerStatement": "yes please continue",
+  "decisionContext": "The owner had just been told the next step was to ship the 48 newly approved North Node passages into the governed Calendar exact-aspect corpus, then replied \"yes please continue\".",
+  "batchId": "sky-calendar-exact-approved-2026-09-05-north-node-48",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-05-north-node-48/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "95c0e2c749ac13f2c9b33a4b872b99f060ce92b333e30d6dc15ddf9aa5cbc1e1",
+  "summary": "A deep sense of responsibility can make leaving an arrangement feel wrong long after it has stopped being useful.",
+  "body": "A deep sense of responsibility can make leaving an arrangement feel wrong long after it has stopped being useful. When Saturn opposes the North Node, institutional loyalty and past promises can make it difficult to walk away from a role you know how to perform perfectly, even when another direction needs more of your time. You may still need to finish what you started or protect the people relying on you. Separate that obligation from the assumption that keeping your word requires staying exactly where you are.",
+  "sourceApprovalBatch": "sky-north-node-launch-batch-2-exact-owner-approved-refined-2026-09-05"
+}

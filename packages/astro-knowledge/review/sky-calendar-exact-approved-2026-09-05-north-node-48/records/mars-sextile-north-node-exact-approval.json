@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.mars.sextile.north-node",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-05",
+  "ownerStatement": "yes please continue",
+  "decisionContext": "The owner had just been told the next step was to ship the 48 newly approved North Node passages into the governed Calendar exact-aspect corpus, then replied \"yes please continue\".",
+  "batchId": "sky-calendar-exact-approved-2026-09-05-north-node-48",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-05-north-node-48/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "ebebdd9f4fbc1e587cb0ccdd043c8de3349cd5fca873910dfe8e1a4d308ac72f",
+  "summary": "One small action can tell you more about a possible future than another week of planning.",
+  "body": "One small action can tell you more about a possible future than another week of planning. When Mars sextiles the North Node, initiative gives you a low-risk way to test something before you reorganize your whole life around it. Make the call, submit the application, try the new process, have the conversation, or take the first step that produces a response you could not get from thinking alone. Use the momentum to collect evidence. A possible direction becomes easier to judge once it has had a chance to meet reality.",
+  "sourceApprovalBatch": "sky-north-node-launch-batch-1-owner-review-v2-2026-09-05"
+}

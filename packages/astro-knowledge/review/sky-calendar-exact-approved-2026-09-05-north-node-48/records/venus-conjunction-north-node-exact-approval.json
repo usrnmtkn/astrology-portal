@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.venus.conjunction.north-node",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-05",
+  "ownerStatement": "yes please continue",
+  "decisionContext": "The owner had just been told the next step was to ship the 48 newly approved North Node passages into the governed Calendar exact-aspect corpus, then replied \"yes please continue\".",
+  "batchId": "sky-calendar-exact-approved-2026-09-05-north-node-48",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-05-north-node-48/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "2ff3464961c3aafed608d0371274e6117b7894cb8384f57eac7439df866dae0d",
+  "summary": "A relationship, offer, or money decision may matter because it changes what you can build around it.",
+  "body": "A relationship, offer, or money decision may matter because it changes what you can build around it. When Venus conjuncts the North Node, connection and value meet forward movement in the same choice, so a new collaborator, changing relationship, financial commitment, or clearer sense of what you want can alter the practical shape of what becomes possible. Chemistry and pleasure are not proof that every term works, but support that fits the life you are building is worth noticing. Choose the agreement that makes the work, move, schedule, or financial decision you want more possible instead of the one that only makes the old arrangement easier to preserve.",
+  "sourceApprovalBatch": "sky-north-node-launch-batch-1-owner-review-v2-2026-09-05"
+}

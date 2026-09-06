@@ -1,0 +1,18 @@
+{
+  "id": "moon-conjunction-north-node",
+  "transiting": "moon",
+  "aspect": "conjunction",
+  "other": "north-node",
+  "base": "A new plan starts feeling more believable when your daily life stops treating it like an emergency.",
+  "business": "The two concerns arrive in the same decision; work with the point they now share.",
+  "shadow": "Because both concerns are active at once, acting on one can obscure what the other still needs.",
+  "arcApplying": "The two concerns become harder to separate as exactness approaches.",
+  "arcSeparating": "The fused emphasis begins to loosen after exactness.",
+  "voiceNeutral": true,
+  "status": "LIVE",
+  "readerCopy": {
+    "summary": "A new plan starts feeling more believable when your daily life stops treating it like an emergency.",
+    "body": "A new plan starts feeling more believable when your daily life stops treating it like an emergency. When the Moon conjuncts the North Node, emotional needs and forward movement have to fit inside the same arrangement, so sleep, food, childcare, home, family, and the routines that help you function become part of how well the plan works. If every step forward requires you to be exhausted, displaced, or unavailable to the people who depend on you, the plan is underbuilt. Make the change livable enough that your body does not have to keep pulling you back.",
+    "approvedVia": "bounded owner-approved exact Calendar batch sky-calendar-exact-approved-2026-09-05-north-node-48; packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-05-north-node-48/owner-batch-authorization.json"
+  }
+}

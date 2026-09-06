@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.mars.square.north-node",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-05",
+  "ownerStatement": "yes please continue",
+  "decisionContext": "The owner had just been told the next step was to ship the 48 newly approved North Node passages into the governed Calendar exact-aspect corpus, then replied \"yes please continue\".",
+  "batchId": "sky-calendar-exact-approved-2026-09-05-north-node-48",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-05-north-node-48/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "b35113312c3fe0bb161b3e5fcfb07b3552495fceb081888b5f3908563bd48a00",
+  "summary": "You can keep fighting the obstacle in front of you and still avoid the move that would change the larger pattern.",
+  "body": "You can keep fighting the obstacle in front of you and still avoid the move that would change the larger pattern. When Mars squares the North Node, the same argument, emergency, deadline, or source of frustration can consume your energy while the more consequential decision keeps getting postponed. The anger may be justified, but winning another round of the old fight will not automatically create a different result. Handle what genuinely needs action, then put some of that force behind the decision that changes the arrangement instead of only resisting it.",
+  "sourceApprovalBatch": "sky-north-node-launch-batch-1-owner-review-v2-2026-09-05"
+}

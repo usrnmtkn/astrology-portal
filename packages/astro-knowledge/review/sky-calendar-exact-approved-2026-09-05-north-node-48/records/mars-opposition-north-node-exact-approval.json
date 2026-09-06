@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.mars.opposition.north-node",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-05",
+  "ownerStatement": "yes please continue",
+  "decisionContext": "The owner had just been told the next step was to ship the 48 newly approved North Node passages into the governed Calendar exact-aspect corpus, then replied \"yes please continue\".",
+  "batchId": "sky-calendar-exact-approved-2026-09-05-north-node-48",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-05-north-node-48/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "5b78282baf2cd92bc6f426f017a517210756b19b75dd8c16a9b771861077d288",
+  "summary": "Winning the old fight can keep you too busy to make the new move.",
+  "body": "Winning the old fight can keep you too busy to make the new move. When Mars opposes the North Node, a battle you already know how to fight can feel more urgent than the less practiced action that would change the situation, especially when you are good at defending the boundary, fixing the crisis, or pushing through the problem. You may still need to finish what is in front of you. Just notice when competence at surviving the old setup has become the reason all of your energy keeps going back into it.",
+  "sourceApprovalBatch": "sky-north-node-launch-batch-1-owner-review-v2-2026-09-05"
+}

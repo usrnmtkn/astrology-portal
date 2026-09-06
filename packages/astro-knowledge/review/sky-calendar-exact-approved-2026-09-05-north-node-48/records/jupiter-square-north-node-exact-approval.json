@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.jupiter.square.north-node",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-05",
+  "ownerStatement": "yes please continue",
+  "decisionContext": "The owner had just been told the next step was to ship the 48 newly approved North Node passages into the governed Calendar exact-aspect corpus, then replied \"yes please continue\".",
+  "batchId": "sky-calendar-exact-approved-2026-09-05-north-node-48",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-05-north-node-48/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "c83a8a23562578a8d9b976bd187825d17aa6d3449ad250318e1f7ef1ebc6d4d0",
+  "summary": "A larger opportunity can become a distraction if it lets you avoid the smaller decision that would actually change your direction.",
+  "body": "A larger opportunity can become a distraction if it lets you avoid the smaller decision that would actually change your direction. When Jupiter squares the North Node, another project, promise, credential, trip, or ambitious plan can feel like progress while the unresolved choice underneath it keeps returning. More options do not help much when every option preserves the same indecision. Cut the plan back to the decision that changes what you actually do next, then let expansion follow the choice instead of replacing it.",
+  "sourceApprovalBatch": "sky-north-node-launch-batch-1-owner-review-v2-2026-09-05"
+}

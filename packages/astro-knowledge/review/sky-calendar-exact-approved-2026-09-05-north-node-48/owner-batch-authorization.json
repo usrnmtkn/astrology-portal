@@ -1,0 +1,212 @@
+{
+  "type": "bounded_contextual_owner_batch_authorization",
+  "authority": "owner",
+  "decision": "approve",
+  "batchId": "sky-calendar-exact-approved-2026-09-05-north-node-48",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-05-north-node-48/owner-batch-authorization.json",
+  "ownerStatement": "yes please continue",
+  "decisionContext": "The owner had just been told the next step was to ship the 48 newly approved North Node passages into the governed Calendar exact-aspect corpus, then replied \"yes please continue\".",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "approvedAt": "2026-09-05",
+  "memberCount": 48,
+  "memberSetSha256": "1989521150fe77a251d4f0d98a5d769e1d6093bd42533b6878f14769b1147682",
+  "members": [
+    {
+      "contentKey": "sky.aspect.chiron.conjunction.north-node",
+      "payloadSha256": "8708aa19bdc287efd478c424f62bc5fe7102425117f912abde012372706af04f"
+    },
+    {
+      "contentKey": "sky.aspect.chiron.opposition.north-node",
+      "payloadSha256": "df52e1a8311a608b6355ef000c904e6eec36a85015c43040078919136eeaecac"
+    },
+    {
+      "contentKey": "sky.aspect.chiron.sextile.north-node",
+      "payloadSha256": "40e9e4ecc6a7143b906a67c87954209b5b49223c84da305bc8145f00a003d440"
+    },
+    {
+      "contentKey": "sky.aspect.chiron.square.north-node",
+      "payloadSha256": "5eea24d594a7bcb0edfb94e34af7c746da3ce8ed8aed53aefde886d2796acf23"
+    },
+    {
+      "contentKey": "sky.aspect.jupiter.conjunction.north-node",
+      "payloadSha256": "b7a690e5aac958eeac101a9de4acfb82482bd3961497407bb1d9e9be167b9a80"
+    },
+    {
+      "contentKey": "sky.aspect.jupiter.opposition.north-node",
+      "payloadSha256": "5c69b81aa5035b105d38ba8381682b61853b5c5dd565ab65102d255e331beb21"
+    },
+    {
+      "contentKey": "sky.aspect.jupiter.sextile.north-node",
+      "payloadSha256": "a47b3507d94413f11e8a9b4ea2407c6f3f06b9721d99522635032ccb04569eab"
+    },
+    {
+      "contentKey": "sky.aspect.jupiter.square.north-node",
+      "payloadSha256": "c83a8a23562578a8d9b976bd187825d17aa6d3449ad250318e1f7ef1ebc6d4d0"
+    },
+    {
+      "contentKey": "sky.aspect.lilith.conjunction.north-node",
+      "payloadSha256": "da8b6a2e38f373bf540b55d31b198528aa4801e5ab2b5a147158bed99ef881c7"
+    },
+    {
+      "contentKey": "sky.aspect.lilith.opposition.north-node",
+      "payloadSha256": "edbf33d95c50c53a268d5eb6ba1255d78eab5a4e1488eb07f6cf0728ea314066"
+    },
+    {
+      "contentKey": "sky.aspect.lilith.sextile.north-node",
+      "payloadSha256": "6c81e8b20d3b0dfd421a98a8ff927d5578388b581054cf81414f684c2adaad0b"
+    },
+    {
+      "contentKey": "sky.aspect.lilith.square.north-node",
+      "payloadSha256": "b6ed747188139800950b82cc49ab106061f582b0816a183a8e2e30de88b0347c"
+    },
+    {
+      "contentKey": "sky.aspect.mars.conjunction.north-node",
+      "payloadSha256": "a57939e6a182551734b25251d4d1bce4e5ed0ddc97181448c84a2ebb69065209"
+    },
+    {
+      "contentKey": "sky.aspect.mars.opposition.north-node",
+      "payloadSha256": "5b78282baf2cd92bc6f426f017a517210756b19b75dd8c16a9b771861077d288"
+    },
+    {
+      "contentKey": "sky.aspect.mars.sextile.north-node",
+      "payloadSha256": "ebebdd9f4fbc1e587cb0ccdd043c8de3349cd5fca873910dfe8e1a4d308ac72f"
+    },
+    {
+      "contentKey": "sky.aspect.mars.square.north-node",
+      "payloadSha256": "b35113312c3fe0bb161b3e5fcfb07b3552495fceb081888b5f3908563bd48a00"
+    },
+    {
+      "contentKey": "sky.aspect.mercury.conjunction.north-node",
+      "payloadSha256": "9aca7ae522a1a899962a59b611dc60a70184357cec60f5dd4bba38d3745e4e34"
+    },
+    {
+      "contentKey": "sky.aspect.mercury.opposition.north-node",
+      "payloadSha256": "c67934aab7a08ae04e5c7d3f22b621beb6a5ef57a36ead122d71a325d96ad6c8"
+    },
+    {
+      "contentKey": "sky.aspect.mercury.sextile.north-node",
+      "payloadSha256": "a252b8d15597224b09d92acbe03454d9dfc779aa37c7c1b6bd7d2684d6c5dcc7"
+    },
+    {
+      "contentKey": "sky.aspect.mercury.square.north-node",
+      "payloadSha256": "e57ea6451c117ecec5c313c2889e41a4145d0f2c0e187550211eac4c97b59610"
+    },
+    {
+      "contentKey": "sky.aspect.moon.conjunction.north-node",
+      "payloadSha256": "cbe3fdb27f9a1292548c6f8cd8a6f2708e7f9916457c2ea8b02d45a5322e6f91"
+    },
+    {
+      "contentKey": "sky.aspect.moon.opposition.north-node",
+      "payloadSha256": "931d035a32e2b5e69f61fe2e92bf082f7248f8e32a1fe0e7315540f3c1736213"
+    },
+    {
+      "contentKey": "sky.aspect.moon.sextile.north-node",
+      "payloadSha256": "2b717b54c6bd23a37c5e17d2219e3fd946a6988ea2fc1a9bacdc835a7c2f3dc0"
+    },
+    {
+      "contentKey": "sky.aspect.moon.square.north-node",
+      "payloadSha256": "6692337f2c46179a641e73252b6336fb00e3a2d353c58a1e82f7a297f30fa4b9"
+    },
+    {
+      "contentKey": "sky.aspect.neptune.conjunction.north-node",
+      "payloadSha256": "1810f0e7bf81071bd4c7a23583322dfb03c399e60b3aeac3dab131126daae6b2"
+    },
+    {
+      "contentKey": "sky.aspect.neptune.opposition.north-node",
+      "payloadSha256": "77da3bf03e197f16c1fdffff68bd0b79a496aff77a4f54ea5bce068ec7029e21"
+    },
+    {
+      "contentKey": "sky.aspect.neptune.sextile.north-node",
+      "payloadSha256": "c0b0d7c8b027dd15f85617f9ab58711c892fd355a731949a7130abab7fe1efc0"
+    },
+    {
+      "contentKey": "sky.aspect.neptune.square.north-node",
+      "payloadSha256": "87a2750b5d6d7b4dfc1bd09650469e5bcc50d2be341f4155d1391f97c52b72c2"
+    },
+    {
+      "contentKey": "sky.aspect.pluto.conjunction.north-node",
+      "payloadSha256": "85a972b6f6b6f2d292cd257d2c4d625f557aabf1ea66845f9b2186b00f93cb14"
+    },
+    {
+      "contentKey": "sky.aspect.pluto.opposition.north-node",
+      "payloadSha256": "4e0e7e19aa49bddc4aeceb35ec2e994014e76822eae2cd9c0ca1d04b66c4a5fd"
+    },
+    {
+      "contentKey": "sky.aspect.pluto.sextile.north-node",
+      "payloadSha256": "6cd3532c02e79ba776a3fde4c8ad734d86c306a87dd814b4030bbc8bec1a1d6e"
+    },
+    {
+      "contentKey": "sky.aspect.pluto.square.north-node",
+      "payloadSha256": "43ed64c0e7af08f725804289db89d2ee884d5da8daa3183392e8ea938a60709a"
+    },
+    {
+      "contentKey": "sky.aspect.saturn.conjunction.north-node",
+      "payloadSha256": "f4275d2760128aed7158260d3df823adcd39933252e96e9238ed6620639379cf"
+    },
+    {
+      "contentKey": "sky.aspect.saturn.opposition.north-node",
+      "payloadSha256": "95c0e2c749ac13f2c9b33a4b872b99f060ce92b333e30d6dc15ddf9aa5cbc1e1"
+    },
+    {
+      "contentKey": "sky.aspect.saturn.sextile.north-node",
+      "payloadSha256": "c2bf831cfcfef559954992438dde4bc7e1e37c107b29cb28f30962ef973fc311"
+    },
+    {
+      "contentKey": "sky.aspect.saturn.square.north-node",
+      "payloadSha256": "632840cc3a0866200dc7ffc6ed516f8b36f5df0d34c411f9adbd6003c7dba492"
+    },
+    {
+      "contentKey": "sky.aspect.sun.conjunction.north-node",
+      "payloadSha256": "5a977317e8c16626fdeab716ed453688cb7357b083f531dc731ad94db07bd957"
+    },
+    {
+      "contentKey": "sky.aspect.sun.opposition.north-node",
+      "payloadSha256": "d1205710af88844b1d81175d1d7ed4f8f6bb9092b2291b20743ab3e69048f50b"
+    },
+    {
+      "contentKey": "sky.aspect.sun.sextile.north-node",
+      "payloadSha256": "0f1369d286faea6ced0e5e145ff27b41ac2d2f848e91ca5be5143fc34504731b"
+    },
+    {
+      "contentKey": "sky.aspect.sun.square.north-node",
+      "payloadSha256": "4329915f227323a652db73f46d9865b3eb61ce78f190b5f805a7d7e5fa90385f"
+    },
+    {
+      "contentKey": "sky.aspect.uranus.conjunction.north-node",
+      "payloadSha256": "8104483b15cbd99a71bd8237b9c2a9b60af019b0c09668b1e2f646b065af6069"
+    },
+    {
+      "contentKey": "sky.aspect.uranus.opposition.north-node",
+      "payloadSha256": "83bb2805fa55cae17630ff60c995b1b246a4eda097a26ed8ac2c9fc95aca81ad"
+    },
+    {
+      "contentKey": "sky.aspect.uranus.sextile.north-node",
+      "payloadSha256": "a9a994722fc56c4ded75401d9b7ded4d5b4d0b1b5d18d037857d02ceddd4955c"
+    },
+    {
+      "contentKey": "sky.aspect.uranus.square.north-node",
+      "payloadSha256": "38a5bf98f7d46f511ad4af5274957bf32975bab3a2e6a6cbca0818ba928e8c62"
+    },
+    {
+      "contentKey": "sky.aspect.venus.conjunction.north-node",
+      "payloadSha256": "2ff3464961c3aafed608d0371274e6117b7894cb8384f57eac7439df866dae0d"
+    },
+    {
+      "contentKey": "sky.aspect.venus.opposition.north-node",
+      "payloadSha256": "f1a4fec3934cadf08740c20df1cc31bad65dd5e4c939df0c8fa554c914005b01"
+    },
+    {
+      "contentKey": "sky.aspect.venus.sextile.north-node",
+      "payloadSha256": "4a6751217384ab03a8992eddb3bba100b86b8e753d81497a1dd903e9965038c7"
+    },
+    {
+      "contentKey": "sky.aspect.venus.square.north-node",
+      "payloadSha256": "c235e2953ea269ca543b575a03554cc4d7c39be75cc436af6cdd2e6d862ad8de"
+    }
+  ]
+}

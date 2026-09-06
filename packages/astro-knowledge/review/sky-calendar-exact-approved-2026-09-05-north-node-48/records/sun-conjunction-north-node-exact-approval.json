@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.sun.conjunction.north-node",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-05",
+  "ownerStatement": "yes please continue",
+  "decisionContext": "The owner had just been told the next step was to ship the 48 newly approved North Node passages into the governed Calendar exact-aspect corpus, then replied \"yes please continue\".",
+  "batchId": "sky-calendar-exact-approved-2026-09-05-north-node-48",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-05-north-node-48/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "5a977317e8c16626fdeab716ed453688cb7357b083f531dc731ad94db07bd957",
+  "summary": "You may find yourself being taken seriously for something you have only just started claiming.",
+  "body": "You may find yourself being taken seriously for something you have only just started claiming. When the Sun conjuncts the North Node, visibility lands on the newer role, project, or identity you are trying to grow into, so putting your name on the work, accepting the title, publishing the idea, or introducing yourself differently can carry more weight than the size of the move suggests. The older version of you may still be easier for other people to recognize, but that does not make it more relevant. Use the attention to reinforce what you want to be known for now.",
+  "sourceApprovalBatch": "sky-north-node-launch-batch-1-owner-review-v2-2026-09-05"
+}

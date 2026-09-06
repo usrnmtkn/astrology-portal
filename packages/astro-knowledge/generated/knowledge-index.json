@@ -3,8 +3,8 @@
   "status": "index-only. No content moved, rewritten, or approved.",
   "deterministic": "This payload contains no timestamps. Identical inputs produce a byte-identical file.",
   "totals": {
-    "canonicalObjects": 14665,
-    "sourceRecordsIndexed": 25580,
+    "canonicalObjects": 14713,
+    "sourceRecordsIndexed": 25628,
     "objectsFoundInMoreThanOneStore": 2048,
     "unresolved": 0,
     "skipped": 55,
@@ -14,7 +14,7 @@
     "ll-matrix-v13": 1014,
     "v13-locked": 301,
     "phrasebank": 7064,
-    "astro-knowledge/data": 3224,
+    "astro-knowledge/data": 3272,
     "authored-placements": 314,
     "daily-glance-config": 31,
     "matrix-v9": 3430,
@@ -29,7 +29,7 @@
     "machine-proposal": 725,
     "owner-approved-prose": 9513,
     "unverified": 7748,
-    "factual-evidence": 7594
+    "factual-evidence": 7642
   },
   "byKind": {
     "aspect-generic": {
@@ -108,10 +108,10 @@
       }
     },
     "document": {
-      "objects": 409,
-      "records": 409,
+      "objects": 457,
+      "records": 457,
       "stores": {
-        "astro-knowledge/data": 409
+        "astro-knowledge/data": 457
       }
     },
     "phrasebank-entry": {
@@ -94942,6 +94942,27 @@
       ]
     },
     {
+      "id": "doc/chiron_conjunction_north_node",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "chiron-conjunction-north-node",
+          "rowKey": "chiron-conjunction-north-node",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/chiron-conjunction-north-node.json",
+          "sourceSha256": "c7c1b54acc8dde2c8e9ae8480a34a0c74cd8aeb9fbe56bd4310ef861887c4faf"
+        }
+      ]
+    },
+    {
       "id": "doc/chiron_life_cycle",
       "kind": "document",
       "sources": [
@@ -95022,6 +95043,69 @@
           },
           "path": "packages/astro-knowledge/data/pairs/chiron-nodes.json",
           "sourceSha256": "8926ba842892993188c614c198a169014d7c3c517ca290620de2c4540e89461e"
+        }
+      ]
+    },
+    {
+      "id": "doc/chiron_opposition_north_node",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "chiron-opposition-north-node",
+          "rowKey": "chiron-opposition-north-node",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/chiron-opposition-north-node.json",
+          "sourceSha256": "c7762b635756e9751cfe08f5fe09013c5fb3938a94e26d594d351b88f4ad6fa1"
+        }
+      ]
+    },
+    {
+      "id": "doc/chiron_sextile_north_node",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "chiron-sextile-north-node",
+          "rowKey": "chiron-sextile-north-node",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/chiron-sextile-north-node.json",
+          "sourceSha256": "a6a7aa19382926d3204e7ff6b5391776793ccceafdff5014d45aba91fca8c093"
+        }
+      ]
+    },
+    {
+      "id": "doc/chiron_square_north_node",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "chiron-square-north-node",
+          "rowKey": "chiron-square-north-node",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/chiron-square-north-node.json",
+          "sourceSha256": "1e074c857341cdfc981f63918b92db5a0e040358d63a5f9b3eecfef812b61237"
         }
       ]
     },
@@ -95494,6 +95578,27 @@
       ]
     },
     {
+      "id": "doc/jupiter_conjunction_north_node",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "jupiter-conjunction-north-node",
+          "rowKey": "jupiter-conjunction-north-node",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/jupiter-conjunction-north-node.json",
+          "sourceSha256": "a8697be115056827ddf233918b2bad43f15af0f5e9b43affa365299cacf9acc1"
+        }
+      ]
+    },
+    {
       "id": "doc/jupiter_conjunction_pluto",
       "kind": "document",
       "sources": [
@@ -95637,6 +95742,27 @@
           },
           "path": "packages/astro-knowledge/data/transits/jupiter-opposition-neptune.json",
           "sourceSha256": "5dfe08feaffc4552e40012959553222c7f09b74a6ab8d920de76f137e9016d6b"
+        }
+      ]
+    },
+    {
+      "id": "doc/jupiter_opposition_north_node",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "jupiter-opposition-north-node",
+          "rowKey": "jupiter-opposition-north-node",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/jupiter-opposition-north-node.json",
+          "sourceSha256": "d106c02b5d6e7cc6de2354cfa3da53b2a868263c12d81ca319efc812b4b566e6"
         }
       ]
     },
@@ -95788,6 +95914,27 @@
       ]
     },
     {
+      "id": "doc/jupiter_sextile_north_node",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "jupiter-sextile-north-node",
+          "rowKey": "jupiter-sextile-north-node",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/jupiter-sextile-north-node.json",
+          "sourceSha256": "5388ba836d8992cb27d380e98e3a0352b0785198473a36eff0c60ab1f8aecb3e"
+        }
+      ]
+    },
+    {
       "id": "doc/jupiter_sextile_pluto",
       "kind": "document",
       "sources": [
@@ -95868,6 +96015,27 @@
           },
           "path": "packages/astro-knowledge/data/transits/jupiter-square-neptune.json",
           "sourceSha256": "728e1bfbb9994f6756bb0f85b64bea338f8901e5e175d523346771efeb5448cf"
+        }
+      ]
+    },
+    {
+      "id": "doc/jupiter_square_north_node",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "jupiter-square-north-node",
+          "rowKey": "jupiter-square-north-node",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/jupiter-square-north-node.json",
+          "sourceSha256": "f20abda7ac22e3010315a6b96ca67adac3f5ff7068d26ced6be446dbaf119cee"
         }
       ]
     },
@@ -96124,6 +96292,27 @@
       ]
     },
     {
+      "id": "doc/lilith_conjunction_north_node",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "lilith-conjunction-north-node",
+          "rowKey": "lilith-conjunction-north-node",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/lilith-conjunction-north-node.json",
+          "sourceSha256": "43e0ebf7548258d3d7faeb8b6673e98cd54f7af23877fe879cbe00e74a4b27c3"
+        }
+      ]
+    },
+    {
       "id": "doc/lilith_nodes",
       "kind": "document",
       "sources": [
@@ -96141,6 +96330,69 @@
           },
           "path": "packages/astro-knowledge/data/pairs/lilith-nodes.json",
           "sourceSha256": "224cdfb7a81a04dee9338e0a566ccf62acc77ee2349ff69f2251131920a96d00"
+        }
+      ]
+    },
+    {
+      "id": "doc/lilith_opposition_north_node",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "lilith-opposition-north-node",
+          "rowKey": "lilith-opposition-north-node",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/lilith-opposition-north-node.json",
+          "sourceSha256": "231524bb0615b21b5df9f13dff2463c48596068ef67ddf27b06c815f0f6032f6"
+        }
+      ]
+    },
+    {
+      "id": "doc/lilith_sextile_north_node",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "lilith-sextile-north-node",
+          "rowKey": "lilith-sextile-north-node",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/lilith-sextile-north-node.json",
+          "sourceSha256": "86cb4647e3f532f6628877d545d2d9a44dea99c184281e2eeaee8b23a1d60a5c"
+        }
+      ]
+    },
+    {
+      "id": "doc/lilith_square_north_node",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "lilith-square-north-node",
+          "rowKey": "lilith-square-north-node",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/lilith-square-north-node.json",
+          "sourceSha256": "509ce32d4abb9272017ff4d3704f453a732800324fdf3dd375282ec1376d5f95"
         }
       ]
     },
@@ -96309,6 +96561,27 @@
           },
           "path": "packages/astro-knowledge/data/transits/mars-conjunction-neptune.json",
           "sourceSha256": "ede4eefcacb0101f4405d2cf2acf70172236a3344d09dc092d05af32069efc59"
+        }
+      ]
+    },
+    {
+      "id": "doc/mars_conjunction_north_node",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "mars-conjunction-north-node",
+          "rowKey": "mars-conjunction-north-node",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/mars-conjunction-north-node.json",
+          "sourceSha256": "68ef8ac64906c7434bbf622fa84c28938a987c89d27ec6aad82267e95d5e87e4"
         }
       ]
     },
@@ -96502,6 +96775,27 @@
       ]
     },
     {
+      "id": "doc/mars_opposition_north_node",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "mars-opposition-north-node",
+          "rowKey": "mars-opposition-north-node",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/mars-opposition-north-node.json",
+          "sourceSha256": "0dea3e0d671ab682c72e1f99c6abd1076060dd3bf1e3fc50f9bb9bc3b65b2f88"
+        }
+      ]
+    },
+    {
       "id": "doc/mars_opposition_pluto",
       "kind": "document",
       "sources": [
@@ -96649,6 +96943,27 @@
       ]
     },
     {
+      "id": "doc/mars_sextile_north_node",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "mars-sextile-north-node",
+          "rowKey": "mars-sextile-north-node",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/mars-sextile-north-node.json",
+          "sourceSha256": "9b86139394d073683933e14904b445425df2543101c44f98eced6d1a5ed2e692"
+        }
+      ]
+    },
+    {
       "id": "doc/mars_sextile_pluto",
       "kind": "document",
       "sources": [
@@ -96750,6 +97065,27 @@
           },
           "path": "packages/astro-knowledge/data/transits/mars-square-neptune.json",
           "sourceSha256": "90042c9d96637af1afc9f2c7e31d3b41cc286a42b6a05401dc26cd0dc9603529"
+        }
+      ]
+    },
+    {
+      "id": "doc/mars_square_north_node",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "mars-square-north-node",
+          "rowKey": "mars-square-north-node",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/mars-square-north-node.json",
+          "sourceSha256": "4e92d663287fb94b46288168581db43769df3ed054e92bdd8de1a884788de2b8"
         }
       ]
     },
@@ -97090,6 +97426,27 @@
       ]
     },
     {
+      "id": "doc/mercury_conjunction_north_node",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "mercury-conjunction-north-node",
+          "rowKey": "mercury-conjunction-north-node",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/mercury-conjunction-north-node.json",
+          "sourceSha256": "2f571946bf0b07cf265270079a9d76d6c54b1762d2cfa2f0e8e3bff51ec5a7e7"
+        }
+      ]
+    },
+    {
       "id": "doc/mercury_conjunction_pluto",
       "kind": "document",
       "sources": [
@@ -97342,6 +97699,27 @@
       ]
     },
     {
+      "id": "doc/mercury_opposition_north_node",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "mercury-opposition-north-node",
+          "rowKey": "mercury-opposition-north-node",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/mercury-opposition-north-node.json",
+          "sourceSha256": "c4e7d941fb341c75aafd24fbca09696793992b201b104dd27b6bc9afce50e2a0"
+        }
+      ]
+    },
+    {
       "id": "doc/mercury_opposition_pluto",
       "kind": "document",
       "sources": [
@@ -97510,6 +97888,27 @@
       ]
     },
     {
+      "id": "doc/mercury_sextile_north_node",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "mercury-sextile-north-node",
+          "rowKey": "mercury-sextile-north-node",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/mercury-sextile-north-node.json",
+          "sourceSha256": "119d4af6c7c7a4a8fe73f364075e7b39468f9c81f9898fe781c057a1b9dc4aa5"
+        }
+      ]
+    },
+    {
       "id": "doc/mercury_sextile_pluto",
       "kind": "document",
       "sources": [
@@ -97653,6 +98052,27 @@
           },
           "path": "packages/astro-knowledge/data/transits/mercury-square-neptune.json",
           "sourceSha256": "5840b3a4259d1974249c929bb3429d09cc469cdcfebdebd1a3b9e5cefdfeca05"
+        }
+      ]
+    },
+    {
+      "id": "doc/mercury_square_north_node",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "mercury-square-north-node",
+          "rowKey": "mercury-square-north-node",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/mercury-square-north-node.json",
+          "sourceSha256": "e932c230baf4f024fcced5015b71af0fb749c14842f5751885f0d1c8cc9bbf8e"
         }
       ]
     },
@@ -98098,6 +98518,27 @@
       ]
     },
     {
+      "id": "doc/moon_conjunction_north_node",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "moon-conjunction-north-node",
+          "rowKey": "moon-conjunction-north-node",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/moon-conjunction-north-node.json",
+          "sourceSha256": "6059d5553997932c1ffa56ad6de8d88be54b8feaddf1a590cfb3b79ad7d61b19"
+        }
+      ]
+    },
+    {
       "id": "doc/moon_conjunction_pluto",
       "kind": "document",
       "sources": [
@@ -98413,6 +98854,27 @@
       ]
     },
     {
+      "id": "doc/moon_opposition_north_node",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "moon-opposition-north-node",
+          "rowKey": "moon-opposition-north-node",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/moon-opposition-north-node.json",
+          "sourceSha256": "0c718afacdc2bcebdcd5e060c73153197df8254e6a7e3b813f8c51f35f23285b"
+        }
+      ]
+    },
+    {
       "id": "doc/moon_opposition_pluto",
       "kind": "document",
       "sources": [
@@ -98644,6 +99106,27 @@
       ]
     },
     {
+      "id": "doc/moon_sextile_north_node",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "moon-sextile-north-node",
+          "rowKey": "moon-sextile-north-node",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/moon-sextile-north-node.json",
+          "sourceSha256": "9da82058083ea6f45bd65b9d11425c63d54cab722f376b36b93d7f1612e1be78"
+        }
+      ]
+    },
+    {
       "id": "doc/moon_sextile_pluto",
       "kind": "document",
       "sources": [
@@ -98808,6 +99291,27 @@
           },
           "path": "packages/astro-knowledge/data/transits/moon-square-neptune.json",
           "sourceSha256": "23834ac855a3393f5e2005118ce32fe4fabdc15015f6d55144a9bdf6cae073c1"
+        }
+      ]
+    },
+    {
+      "id": "doc/moon_square_north_node",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "moon-square-north-node",
+          "rowKey": "moon-square-north-node",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/moon-square-north-node.json",
+          "sourceSha256": "e67b1f0d2954d8be8082d3aa00143d8451f624cb9dafd96d4cad4a139b72e0fb"
         }
       ]
     },
@@ -99255,6 +99759,27 @@
       ]
     },
     {
+      "id": "doc/neptune_conjunction_north_node",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "neptune-conjunction-north-node",
+          "rowKey": "neptune-conjunction-north-node",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/neptune-conjunction-north-node.json",
+          "sourceSha256": "fef7ad87afa9b6b99a2bf14c3d4359a57c57149090d5788d32bd9f1b37c99187"
+        }
+      ]
+    },
+    {
       "id": "doc/neptune_conjunction_pluto",
       "kind": "document",
       "sources": [
@@ -99318,6 +99843,27 @@
       ]
     },
     {
+      "id": "doc/neptune_opposition_north_node",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "neptune-opposition-north-node",
+          "rowKey": "neptune-opposition-north-node",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/neptune-opposition-north-node.json",
+          "sourceSha256": "8da937293d5ae500ee4edbe8c8a82fbe7282c810a1f2854156616afbc8a8f9af"
+        }
+      ]
+    },
+    {
       "id": "doc/neptune_opposition_pluto",
       "kind": "document",
       "sources": [
@@ -99360,6 +99906,27 @@
       ]
     },
     {
+      "id": "doc/neptune_sextile_north_node",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "neptune-sextile-north-node",
+          "rowKey": "neptune-sextile-north-node",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/neptune-sextile-north-node.json",
+          "sourceSha256": "ddef3bf5e2fae11dc49c307685796373e9f45e9179372db77396def788190f53"
+        }
+      ]
+    },
+    {
       "id": "doc/neptune_sextile_pluto",
       "kind": "document",
       "sources": [
@@ -99377,6 +99944,27 @@
           },
           "path": "packages/astro-knowledge/data/transits/neptune-sextile-pluto.json",
           "sourceSha256": "a87e5a1cfcd61e55b68465e80e7e094a75b329ec7f92462ada3474a5ac05f458"
+        }
+      ]
+    },
+    {
+      "id": "doc/neptune_square_north_node",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "neptune-square-north-node",
+          "rowKey": "neptune-square-north-node",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/neptune-square-north-node.json",
+          "sourceSha256": "63f51f21b4abd03a3941ec74a28594f9f4b99c9f746764c014fa0547d2f1703f"
         }
       ]
     },
@@ -99696,6 +100284,27 @@
       ]
     },
     {
+      "id": "doc/pluto_conjunction_north_node",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "pluto-conjunction-north-node",
+          "rowKey": "pluto-conjunction-north-node",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/pluto-conjunction-north-node.json",
+          "sourceSha256": "6e30a97c10525922e277933e7ac21f1b4cf7649460882dc37e90809ed3948ab3"
+        }
+      ]
+    },
+    {
       "id": "doc/pluto_lilith",
       "kind": "document",
       "sources": [
@@ -99734,6 +100343,69 @@
           },
           "path": "packages/astro-knowledge/data/pairs/pluto-nodes.json",
           "sourceSha256": "3f742a27b4a97d63f4e7514f63aeea5ced7c074cf192145844a7b90e7771cf30"
+        }
+      ]
+    },
+    {
+      "id": "doc/pluto_opposition_north_node",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "pluto-opposition-north-node",
+          "rowKey": "pluto-opposition-north-node",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/pluto-opposition-north-node.json",
+          "sourceSha256": "0b8c194c24f3683f013e67f6e0ca5f9315dc11aae9b1df04e0f90aa260a6756f"
+        }
+      ]
+    },
+    {
+      "id": "doc/pluto_sextile_north_node",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "pluto-sextile-north-node",
+          "rowKey": "pluto-sextile-north-node",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/pluto-sextile-north-node.json",
+          "sourceSha256": "f909951a2d9d177231bc8a0ee40dc5ca70659ae5cdd6977653b03fcc5dfd81ea"
+        }
+      ]
+    },
+    {
+      "id": "doc/pluto_square_north_node",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "pluto-square-north-node",
+          "rowKey": "pluto-square-north-node",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/pluto-square-north-node.json",
+          "sourceSha256": "1c968b11612eabef2ce6aa45bcb4f65b67ebbba0c0ca13f1c20bafd88e8ca9f2"
         }
       ]
     },
@@ -100074,6 +100746,27 @@
       ]
     },
     {
+      "id": "doc/saturn_conjunction_north_node",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "saturn-conjunction-north-node",
+          "rowKey": "saturn-conjunction-north-node",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/saturn-conjunction-north-node.json",
+          "sourceSha256": "4f7ccdd07fcdd8977527f5f9f853af38d260c8aa9de12598ee761c77eae94a8b"
+        }
+      ]
+    },
+    {
       "id": "doc/saturn_conjunction_pluto",
       "kind": "document",
       "sources": [
@@ -100200,6 +100893,27 @@
       ]
     },
     {
+      "id": "doc/saturn_opposition_north_node",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "saturn-opposition-north-node",
+          "rowKey": "saturn-opposition-north-node",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/saturn-opposition-north-node.json",
+          "sourceSha256": "e82201555a6c9ab50a87c130b7d4bd9b45104bed28c4613ffd3453745b0387e7"
+        }
+      ]
+    },
+    {
       "id": "doc/saturn_opposition_pluto",
       "kind": "document",
       "sources": [
@@ -100305,6 +101019,27 @@
       ]
     },
     {
+      "id": "doc/saturn_sextile_north_node",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "saturn-sextile-north-node",
+          "rowKey": "saturn-sextile-north-node",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/saturn-sextile-north-node.json",
+          "sourceSha256": "121f6380bab76b094c47dca0345537a31eac1c166df3c6e04eb4f3f910e1e976"
+        }
+      ]
+    },
+    {
       "id": "doc/saturn_sextile_pluto",
       "kind": "document",
       "sources": [
@@ -100385,6 +101120,27 @@
           },
           "path": "packages/astro-knowledge/data/transits/saturn-square-neptune.json",
           "sourceSha256": "4d7845a235bed815744ce225758bb0905b3ac47e962a6f7cf44e9a65bb776f02"
+        }
+      ]
+    },
+    {
+      "id": "doc/saturn_square_north_node",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "saturn-square-north-node",
+          "rowKey": "saturn-square-north-node",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/saturn-square-north-node.json",
+          "sourceSha256": "fe829b80fc8759e6653b1c363c02b6c7085eacb00ae76d52540f28d9155123c4"
         }
       ]
     },
@@ -101842,6 +102598,27 @@
       ]
     },
     {
+      "id": "doc/sun_conjunction_north_node",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "sun-conjunction-north-node",
+          "rowKey": "sun-conjunction-north-node",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/sun-conjunction-north-node.json",
+          "sourceSha256": "8b0084be4ff3d1e863760e92c3bab3c495ae2eb536537c1c9f802c992ec7c844"
+        }
+      ]
+    },
+    {
       "id": "doc/sun_conjunction_pluto",
       "kind": "document",
       "sources": [
@@ -102157,6 +102934,27 @@
       ]
     },
     {
+      "id": "doc/sun_opposition_north_node",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "sun-opposition-north-node",
+          "rowKey": "sun-opposition-north-node",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/sun-opposition-north-node.json",
+          "sourceSha256": "62096e1aed8bf4e40135f3b0f2ef6034363d3300cab05a1338d6a3891c7700f4"
+        }
+      ]
+    },
+    {
       "id": "doc/sun_opposition_pluto",
       "kind": "document",
       "sources": [
@@ -102346,6 +103144,27 @@
       ]
     },
     {
+      "id": "doc/sun_sextile_north_node",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "sun-sextile-north-node",
+          "rowKey": "sun-sextile-north-node",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/sun-sextile-north-node.json",
+          "sourceSha256": "4a01963d45bf623249d19b804f24d318c2b8a019b9cfa5c8663a3884578a8a66"
+        }
+      ]
+    },
+    {
       "id": "doc/sun_sextile_pluto",
       "kind": "document",
       "sources": [
@@ -102489,6 +103308,27 @@
           },
           "path": "packages/astro-knowledge/data/transits/sun-square-neptune.json",
           "sourceSha256": "89470e0462dfdbeafc17eb86079f210bb1f90b368c8426da7aa3361ab516cbcb"
+        }
+      ]
+    },
+    {
+      "id": "doc/sun_square_north_node",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "sun-square-north-node",
+          "rowKey": "sun-square-north-node",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/sun-square-north-node.json",
+          "sourceSha256": "7c4ecbffe2b7abbf6434e6e51fe12b53f622bf3e09741a7b76f8fcb5dec6e8ad"
         }
       ]
     },
@@ -103253,6 +104093,27 @@
       ]
     },
     {
+      "id": "doc/uranus_conjunction_north_node",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "uranus-conjunction-north-node",
+          "rowKey": "uranus-conjunction-north-node",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/uranus-conjunction-north-node.json",
+          "sourceSha256": "a948ee88469e70f362fc005442a372c334148caf1796e99fc400445d8f73e6a9"
+        }
+      ]
+    },
+    {
       "id": "doc/uranus_conjunction_pluto",
       "kind": "document",
       "sources": [
@@ -103379,6 +104240,27 @@
       ]
     },
     {
+      "id": "doc/uranus_opposition_north_node",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "uranus-opposition-north-node",
+          "rowKey": "uranus-opposition-north-node",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/uranus-opposition-north-node.json",
+          "sourceSha256": "21042195064d4186da0b2aef1f9493f798dbdcdde49f71ef0d24316b9afc7000"
+        }
+      ]
+    },
+    {
       "id": "doc/uranus_opposition_pluto",
       "kind": "document",
       "sources": [
@@ -103442,6 +104324,27 @@
       ]
     },
     {
+      "id": "doc/uranus_sextile_north_node",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "uranus-sextile-north-node",
+          "rowKey": "uranus-sextile-north-node",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/uranus-sextile-north-node.json",
+          "sourceSha256": "58f454f45e1483be40a6af34273d38bc7c2616c441de6489e2d8c0a390d4d651"
+        }
+      ]
+    },
+    {
       "id": "doc/uranus_sextile_pluto",
       "kind": "document",
       "sources": [
@@ -103480,6 +104383,27 @@
           },
           "path": "packages/astro-knowledge/data/transits/uranus-square-neptune.json",
           "sourceSha256": "e3f640798455808c1884ee4c5735b97598643f2fa67bd53a06e3887f7718b6c3"
+        }
+      ]
+    },
+    {
+      "id": "doc/uranus_square_north_node",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "uranus-square-north-node",
+          "rowKey": "uranus-square-north-node",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/uranus-square-north-node.json",
+          "sourceSha256": "ad314754a9003ec8c6963531df05ac70cfd9d504e24584962b320b911dc6808a"
         }
       ]
     },
@@ -103690,6 +104614,27 @@
           },
           "path": "packages/astro-knowledge/data/transits/venus-conjunction-neptune.json",
           "sourceSha256": "55ece1be0b89b9b54febef3920bba1ed9b5f0ba8edcfd39eba9f4bbc643459ad"
+        }
+      ]
+    },
+    {
+      "id": "doc/venus_conjunction_north_node",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "venus-conjunction-north-node",
+          "rowKey": "venus-conjunction-north-node",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/venus-conjunction-north-node.json",
+          "sourceSha256": "fae91889813473b7821eb7bd93ed7103652ce6a00ec900bf75d5f75cc47f8d6f"
         }
       ]
     },
@@ -103925,6 +104870,27 @@
       ]
     },
     {
+      "id": "doc/venus_opposition_north_node",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "venus-opposition-north-node",
+          "rowKey": "venus-opposition-north-node",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/venus-opposition-north-node.json",
+          "sourceSha256": "0e74d6c5b8b4b304ebc7376a4991db5236cad30299db8acc7e46a706e19c54df"
+        }
+      ]
+    },
+    {
       "id": "doc/venus_opposition_pluto",
       "kind": "document",
       "sources": [
@@ -104093,6 +105059,27 @@
       ]
     },
     {
+      "id": "doc/venus_sextile_north_node",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "venus-sextile-north-node",
+          "rowKey": "venus-sextile-north-node",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/venus-sextile-north-node.json",
+          "sourceSha256": "c46f6cd789eec3e4e3815377fdab48a3d9ede6f499ed74849676397ae52676f8"
+        }
+      ]
+    },
+    {
       "id": "doc/venus_sextile_pluto",
       "kind": "document",
       "sources": [
@@ -104215,6 +105202,27 @@
           },
           "path": "packages/astro-knowledge/data/transits/venus-square-neptune.json",
           "sourceSha256": "c95351cc2f04a0dc6d12dd8cc14c74763251623bddc53c48a6e0d6158d43a493"
+        }
+      ]
+    },
+    {
+      "id": "doc/venus_square_north_node",
+      "kind": "document",
+      "sources": [
+        {
+          "store": "astro-knowledge/data",
+          "nativeKey": "venus-square-north-node",
+          "rowKey": "venus-square-north-node",
+          "status": "LIVE",
+          "authorityClass": "factual-evidence",
+          "surfacePermission": [
+            "doctrine-only"
+          ],
+          "locator": {
+            "document": true
+          },
+          "path": "packages/astro-knowledge/data/transits/venus-square-north-node.json",
+          "sourceSha256": "c8cec8e36dd6c283508ac231a35f98da4f82a18c560fddefd99e1a36756e4edf"
         }
       ]
     },
@@ -520317,7 +521325,7 @@
     }
   ],
   "integrity": {
-    "contentSha256": "661a6c438e5ee5e406a724cc6aed4d09476b176933e7cda322018b29d9b22a5a",
-    "distinctSourceFiles": 3264
+    "contentSha256": "bcd97f18afa6d3381b7e65c418bb896c7c1b9416085fdd53beec30fb0bd11644",
+    "distinctSourceFiles": 3312
   }
 }

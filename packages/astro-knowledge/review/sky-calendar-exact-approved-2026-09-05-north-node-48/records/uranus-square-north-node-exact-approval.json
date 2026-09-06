@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.uranus.square.north-node",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-05",
+  "ownerStatement": "yes please continue",
+  "decisionContext": "The owner had just been told the next step was to ship the 48 newly approved North Node passages into the governed Calendar exact-aspect corpus, then replied \"yes please continue\".",
+  "batchId": "sky-calendar-exact-approved-2026-09-05-north-node-48",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-05-north-node-48/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "38a5bf98f7d46f511ad4af5274957bf32975bab3a2e6a6cbca0818ba928e8c62",
+  "summary": "The urge to break free is usually accurate about the problem, but it can be reckless about the solution.",
+  "body": "The urge to break free is usually accurate about the problem, but it can be reckless about the solution. When Uranus squares the North Node, the old setup may become impossible to tolerate before the replacement is actually stable, affordable, or complete. A sudden exit can remove the restriction, but it may also remove support you still rely on. Identify the specific rule, schedule, or expectation that has become intolerable, and change that part deliberately instead of asking one burst of frustration to design your entire future.",
+  "sourceApprovalBatch": "sky-north-node-launch-batch-2-exact-owner-approved-refined-2026-09-05"
+}
