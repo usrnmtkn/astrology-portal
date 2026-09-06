@@ -8,15 +8,15 @@
   "decision": "approve",
   "approvedAt": "2026-09-05",
   "ownerStatement": "yes please continue",
-  "decisionContext": "The owner had just been told the next step was to ship the 48 newly approved North Node passages into the governed Calendar exact-aspect corpus, then replied \"yes please continue\".",
+  "decisionContext": "The owner explicitly approved both 24-row North Node batches, later directly instructed an updated Sun sextile North Node passage, and then authorized shipping the 48 approved North Node passages into the governed Calendar exact-aspect corpus by replying \"yes please continue\".",
   "batchId": "sky-calendar-exact-approved-2026-09-05-north-node-48",
   "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-05-north-node-48/owner-batch-authorization.json",
   "capabilities": [
     "batch_generation",
     "serving"
   ],
-  "bodySha256": "0f1369d286faea6ced0e5e145ff27b41ac2d2f848e91ca5be5143fc34504731b",
-  "summary": "Past work may open a door you could not have opened from scratch.",
-  "body": "Past work may open a door you could not have opened from scratch. When the Sun sextiles the North Node, recognition you already earned can support something newer through a recommendation, introduction, invitation, or first chance to lead in unfamiliar territory. The useful part is not being rewarded for staying the same; it is that old credibility can give you a chance to try something different. Accept the opportunity if it gives you experience, access, or proof you can carry into the role you want to grow into.",
-  "sourceApprovalBatch": "sky-north-node-launch-batch-1-owner-review-v2-2026-09-05"
+  "bodySha256": "2ba724fa2684d0bb6d6b4e9c9f394481eb2a9feca4f05e337c863b59d19b10a2",
+  "summary": "Your established track record can open a door that raw potential simply cannot.",
+  "body": "Your established track record can open a door that raw potential simply cannot. When the Sun sextiles the North Node, recognition you already earned can support something newer through a recommendation, introduction, invitation, or first chance to lead in unfamiliar territory. Do not mistake a reward for past behavior as an obligation to keep repeating it. Leverage your established credibility to secure the access and capital you need to fund your next evolution.",
+  "sourceApprovalBatch": "owner-direct-replacement-2026-09-06"
 }

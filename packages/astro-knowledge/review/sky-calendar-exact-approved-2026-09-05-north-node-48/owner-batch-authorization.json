@@ -5,7 +5,7 @@
   "batchId": "sky-calendar-exact-approved-2026-09-05-north-node-48",
   "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-05-north-node-48/owner-batch-authorization.json",
   "ownerStatement": "yes please continue",
-  "decisionContext": "The owner had just been told the next step was to ship the 48 newly approved North Node passages into the governed Calendar exact-aspect corpus, then replied \"yes please continue\".",
+  "decisionContext": "The owner explicitly approved both 24-row North Node batches, later directly instructed an updated Sun sextile North Node passage, and then authorized shipping the 48 approved North Node passages into the governed Calendar exact-aspect corpus by replying \"yes please continue\".",
   "surface": "sky-calendar-exact-aspect",
   "approvedField": "readerCopy.body",
   "capabilities": [
@@ -14,7 +14,7 @@
   ],
   "approvedAt": "2026-09-05",
   "memberCount": 48,
-  "memberSetSha256": "1989521150fe77a251d4f0d98a5d769e1d6093bd42533b6878f14769b1147682",
+  "memberSetSha256": "1cccabec93374839c7c2abd4367078928be0262913eef596afb6c009505b87f9",
   "members": [
     {
       "contentKey": "sky.aspect.chiron.conjunction.north-node",
@@ -170,7 +170,7 @@
     },
     {
       "contentKey": "sky.aspect.sun.sextile.north-node",
-      "payloadSha256": "0f1369d286faea6ced0e5e145ff27b41ac2d2f848e91ca5be5143fc34504731b"
+      "payloadSha256": "2ba724fa2684d0bb6d6b4e9c9f394481eb2a9feca4f05e337c863b59d19b10a2"
     },
     {
       "contentKey": "sky.aspect.sun.square.north-node",

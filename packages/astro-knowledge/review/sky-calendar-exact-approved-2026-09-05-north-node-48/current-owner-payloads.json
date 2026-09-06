@@ -7,7 +7,7 @@
   "previousProjectionPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-04-held-trines-33/current-owner-payloads.json",
   "overlayBatchId": "sky-calendar-exact-approved-2026-09-05-north-node-48",
   "overlayEvidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-05-north-node-48/owner-batch-authorization.json",
-  "payloadSetSha256": "d113390096a5e7f766fb8947713fa24459634155084a574c3157f017346ca5e0",
+  "payloadSetSha256": "3462c7c5cd3f839b1d6bbe3155617d8a990e55cedc0ab030c467cf7bb09e03d4",
   "payloads": {
     "sky.jupiter.conjunction.neptune": {
       "sha256": "69d4e83f88f9ffd51a5def415469c5267c9e0889a8472d00e038ec24d9e803e6",
@@ -2012,10 +2012,10 @@
       }
     },
     "sky.sun.sextile.north-node": {
-      "sha256": "e3cbb8d81335aac310bf8a9c9f24a7ce15d269d60d01ccc55a504462204a5b9d",
+      "sha256": "5eed33b13d71d646175dfc58e55dac1ef884f94d30d0b77281a79e679b10fd77",
       "payload": {
-        "summary": "Past work may open a door you could not have opened from scratch.",
-        "body": "Past work may open a door you could not have opened from scratch. When the Sun sextiles the North Node, recognition you already earned can support something newer through a recommendation, introduction, invitation, or first chance to lead in unfamiliar territory. The useful part is not being rewarded for staying the same; it is that old credibility can give you a chance to try something different. Accept the opportunity if it gives you experience, access, or proof you can carry into the role you want to grow into."
+        "summary": "Your established track record can open a door that raw potential simply cannot.",
+        "body": "Your established track record can open a door that raw potential simply cannot. When the Sun sextiles the North Node, recognition you already earned can support something newer through a recommendation, introduction, invitation, or first chance to lead in unfamiliar territory. Do not mistake a reward for past behavior as an obligation to keep repeating it. Leverage your established credibility to secure the access and capital you need to fund your next evolution."
       }
     },
     "sky.sun.square.north-node": {
