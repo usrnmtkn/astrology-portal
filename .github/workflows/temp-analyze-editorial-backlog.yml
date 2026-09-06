@@ -1,4 +1,4 @@
-name: Analyze editorial backlog
+name: Finalize editorial backlog model
 
 on:
   push:
@@ -6,39 +6,223 @@ on:
       - chatgpt/editorial-backlog-resolution
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
-  analyze:
+  finalize:
+    if: github.actor != 'github-actions[bot]'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      - name: Build actionable queue in temp path
-        run: node scripts/build-content-unresolved-queue.mjs --out=/tmp/unresolved.json
-      - name: Classify actionable decisions
+          cache: npm
+      - name: Apply backlog classification and owner-facing labels
+        shell: bash
         run: |
-          node --input-type=module <<'NODE'
-          import fs from 'node:fs';
-          const report=JSON.parse(fs.readFileSync('/tmp/unresolved.json','utf8'));
-          const family=(k)=>{
-            k=String(k);
-            if(k.startsWith('daily-glance-variant/')) return 'daily-glance-variants';
-            if(k.startsWith('authored/book-ritual-and-the-moon/lunation-horoscope/eclipse-')) return 'eclipse-house-horoscopes';
-            if(k.startsWith('authored/sky-lunation-macro/')) return 'sky-lunation-macro';
-            if(k.startsWith('fallback-hook/empty-house-ruler-v3/')) return 'legacy-empty-house-ruler-v3';
-            if(k.startsWith('fallback-hook/lunation-opening-situation/')) return 'lunation-opening-situations';
-            if(k.startsWith('fallback-hook/lunation-ruler-house/')) return 'lunation-ruler-house';
-            if(k.startsWith('fallback-template/natal.planet-in-sign/')) return 'natal-planet-in-sign-template';
-            if(k.startsWith('fallback-vocab/sign-')) return 'placement-sign-vocabulary';
-            if(k.startsWith('fallback-hook/sky-sign-copy/')) return 'sky-sign-copy';
-            if(k.startsWith('fallback-hook/sky-placement/')) return 'sky-placement-hook';
-            return k.split('/').slice(0,3).join('/');
-          };
-          const grouped={};
-          for(const item of report.items){const f=family(item.contentKey);(grouped[f]??=[]).push(item);}
-          const summary=Object.entries(grouped).map(([f,items])=>({family:f,records:items.length,uniqueKeys:new Set(items.map(x=>x.contentKey)).size,sources:[...new Set(items.map(x=>x.sourcePath))],keys:[...new Set(items.map(x=>x.contentKey))].sort()})).sort((a,b)=>b.records-a.records);
-          console.log(JSON.stringify({actionableRecords:report.count,shadowedRecords:report.shadowedCount,actionableUniqueContentKeys:new Set(report.items.map(x=>x.contentKey)).size,groups:summary},null,2));
-          NODE
+          python3 <<'PY'
+          from pathlib import Path
+
+          def replace_once(path, old, new, label):
+              text = path.read_text()
+              count = text.count(old)
+              if count != 1:
+                  raise SystemExit(f"{label}: expected one match, found {count}")
+              path.write_text(text.replace(old, new, 1))
+
+          builder = Path('scripts/build-content-unresolved-queue.mjs')
+          replace_once(builder,
+          '''function retirementFor(contentKey) {
+            return retirementFamilies.find((family) => (
+              typeof family.contentKeyPrefix === "string" && contentKey.startsWith(family.contentKeyPrefix)
+            )) ?? null;
+          }
+          ''',
+          '''function retirementFor(contentKey) {
+            return retirementFamilies.find((family) => (
+              typeof family.contentKeyPrefix === "string" && contentKey.startsWith(family.contentKeyPrefix)
+            )) ?? null;
+          }
+
+          function workClassFor(contentKey) {
+            if (contentKey.startsWith("daily-glance-variant/")) return "optional-rotation";
+            if (contentKey.startsWith("authored/book-ritual-and-the-moon/lunation-horoscope/eclipse-")
+              || contentKey.startsWith("authored/sky-lunation-macro/")) return "full-copy-review";
+            if (contentKey.startsWith("fallback-hook/lunation-")) return "shared-fallback-authoring";
+            if (contentKey.startsWith("fallback-template/natal.planet-in-sign/")) return "template-review";
+            return "editorial-review";
+          }
+          ''', 'builder work class')
+          replace_once(builder, '    actionableItems.push(item);\n', '    actionableItems.push({ ...item, workClass: workClassFor(item.contentKey) });\n', 'builder actionable classification')
+          replace_once(builder,
+          '''const actionableContentKeys = [...new Set(actionableItems.map((item) => item.contentKey))].sort();
+          const report = {
+          ''',
+          '''const actionableContentKeys = [...new Set(actionableItems.map((item) => item.contentKey))].sort();
+          function workloadSummary(items) {
+            const order = ["full-copy-review", "shared-fallback-authoring", "template-review", "optional-rotation", "editorial-review"];
+            return Object.fromEntries(order
+              .filter((workClass) => items.some((item) => item.workClass === workClass))
+              .map((workClass) => {
+                const records = items.filter((item) => item.workClass === workClass);
+                return [workClass, {
+                  records: records.length,
+                  decisions: new Set(records.map((item) => item.contentKey)).size
+                }];
+              }));
+          }
+          const report = {
+          ''', 'builder workload summary')
+          replace_once(builder, '  actionableContentKeys,\n  reasonCounts:', '  actionableContentKeys,\n  workload: workloadSummary(actionableItems),\n  reasonCounts:', 'builder workload output')
+
+          test = Path('scripts/test-content-unresolved-actionable-queue.mjs')
+          replace_once(test,
+          '''  assert.equal(report.count + report.shadowedCount + report.retiredCount, 212, "Queue classification must preserve all 212 pre-classification records.");
+          ''',
+          '''  assert.equal(report.count + report.shadowedCount + report.retiredCount, 212, "Queue classification must preserve all 212 pre-classification records.");
+          assert.deepEqual(report.workload, {
+            "full-copy-review": { records: 13, decisions: 13 },
+            "shared-fallback-authoring": { records: 44, decisions: 33 },
+            "template-review": { records: 14, decisions: 14 },
+            "optional-rotation": { records: 32, decisions: 32 }
+          });
+          ''', 'test workload assertions')
+
+          api = Path('api/admin/content-coverage.ts')
+          replace_once(api,
+          '''      unresolvedQueue: Number(unresolved.count ?? 0)
+          ''',
+          '''      unresolvedQueue: Number(unresolved.count ?? 0),
+            unresolvedIssues: Number(unresolved.issueCount ?? unresolved.count ?? 0),
+            unresolvedShadowed: Number(unresolved.shadowedCount ?? 0),
+            unresolvedRetired: Number(unresolved.retiredCount ?? 0)
+          ''', 'coverage summary')
+          replace_once(api,
+          '''      unresolvedReasonCounts: unresolved.reasonCounts ?? {}
+          ''',
+          '''      unresolvedReasonCounts: unresolved.reasonCounts ?? {},
+            unresolvedWorkload: unresolved.workload ?? {},
+            unresolvedShadowedReasonCounts: unresolved.shadowedReasonCounts ?? {},
+            unresolvedRetiredReasonCounts: unresolved.retiredReasonCounts ?? {}
+          ''', 'coverage notes')
+
+          ui = Path('apps/admin/src/ContentCoverageDashboard.tsx')
+          replace_once(ui,
+          '''    unresolvedQueue: number;
+          ''',
+          '''    unresolvedQueue: number;
+            unresolvedIssues: number;
+            unresolvedShadowed: number;
+            unresolvedRetired: number;
+          ''', 'coverage ui summary type')
+          replace_once(ui,
+          '''    unresolvedReasonCounts: Record<string, number>;
+          ''',
+          '''    unresolvedReasonCounts: Record<string, number>;
+            unresolvedWorkload: Record<string, { records: number; decisions: number }>;
+            unresolvedShadowedReasonCounts: Record<string, number>;
+            unresolvedRetiredReasonCounts: Record<string, number>;
+          ''', 'coverage ui notes type')
+          replace_once(ui,
+          '''              <div style={cardStyle}>
+                <p className="admin-eyebrow">Unresolved queue</p>
+                <strong style={{ fontSize: 28 }}>{payload.summary.unresolvedQueue}</strong>
+              </div>
+          ''',
+          '''              <div style={cardStyle}>
+                <p className="admin-eyebrow">Actionable decisions</p>
+                <strong style={{ fontSize: 28 }}>{payload.summary.unresolvedIssues}</strong>
+              </div>
+              <div style={cardStyle}>
+                <p className="admin-eyebrow">Actionable source records</p>
+                <strong style={{ fontSize: 28 }}>{payload.summary.unresolvedQueue}</strong>
+              </div>
+              <div style={cardStyle}>
+                <p className="admin-eyebrow">Resolved source history</p>
+                <strong style={{ fontSize: 28 }}>{payload.summary.unresolvedShadowed + payload.summary.unresolvedRetired}</strong>
+              </div>
+          ''', 'coverage ui cards')
+          replace_once(ui,
+          '''            {payload.readerEligibility && (
+          ''',
+          '''            {Object.keys(payload.notes.unresolvedWorkload).length > 0 && (
+              <section style={{ ...cardStyle, marginBottom: 20 }} aria-label="Editorial backlog classes">
+                <p className="admin-eyebrow">Editorial work remaining</p>
+                {Object.entries(payload.notes.unresolvedWorkload).map(([workClass, counts]) => (
+                  <p key={workClass} style={{ margin: "6px 0 0" }}>
+                    <strong>{workClass.replaceAll("-", " ")}:</strong> {counts.decisions} decisions · {counts.records} source records
+                  </p>
+                ))}
+                <p style={{ margin: "8px 0 0", opacity: 0.72 }}>
+                  Shadowed and governed retired source rows remain preserved as audit history and are not counted as owner work.
+                </p>
+              </section>
+            )}
+
+            {payload.readerEligibility && (
+          ''', 'coverage workload panel')
+
+          governed = Path('docs/content-management/GOVERNED-APPROVALS.md')
+          replace_once(governed,
+          '''`npm run build:content-unresolved-queue` scans the current V3 authoring sources and
+          writes `packages/astro-knowledge/generated/content-unresolved-queue-v1.json`.
+          This report is an inventory, not an approval grant. It records source paths, object
+          paths, statuses, reasons, and source hashes for rows excluded by reader governance.
+          ''',
+          '''`npm run build:content-unresolved-queue` scans the current V3 authoring sources and
+          writes `packages/astro-knowledge/generated/content-unresolved-queue-v1.json`.
+          This report is an inventory, not an approval grant. Its `items` array is the actionable
+          editorial backlog: pending records that have neither an exact-key reader-eligible peer
+          nor a governed retirement/supersession decision. `issueCount` counts unique actionable
+          content keys, so it is the closer measure of owner/editorial decisions remaining.
+          `shadowedItems` and `retiredItems` preserve non-actionable source history with the
+          eligible-peer or retirement evidence that removed those records from the active queue.
+          No row is approved, deleted, or made reader-eligible by this classification.
+          ''', 'governed approvals unresolved semantics')
+
+          readme = Path('docs/content-management/README.md')
+          replace_once(readme,
+          '''To review the complete governed package backlog, open Content Studio >
+          Unresolved Content (`/admin/content#unresolved-content`). Its inventory is
+          generated from `content-unresolved-queue-v1.json` and includes file-backed
+          records that are not materialized as editable CMS rows. Editorial issues open
+          ''',
+          '''To review the actionable governed package backlog, open Content Studio >
+          Unresolved Content (`/admin/content#unresolved-content`). Its active inventory is
+          generated from `content-unresolved-queue-v1.json` and contains only pending records
+          that still require a decision. Exact-key rows already superseded by reader-eligible
+          peers and source families with governed retirements remain in the report as audit
+          history but are not presented as owner work. Editorial issues open
+          ''', 'readme actionable backlog semantics')
+          PY
+      - name: Rebuild unresolved artifacts
+        run: |
+          node scripts/build-content-unresolved-queue.mjs
+          node scripts/build-content-unresolved-dashboard.mjs
+      - name: Verify backlog contracts
+        run: |
+          node scripts/test-content-unresolved-actionable-queue.mjs
+          node scripts/build-content-unresolved-queue.mjs --check
+          node scripts/build-content-unresolved-dashboard.mjs --check
+      - name: Install dependencies
+        run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: Verify TypeScript and Content Studio build
+        run: |
+          npm run typecheck
+          npm run build:admin
+      - name: Commit finalized backlog model
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add \
+            scripts/build-content-unresolved-queue.mjs \
+            scripts/test-content-unresolved-actionable-queue.mjs \
+            api/admin/content-coverage.ts \
+            apps/admin/src/ContentCoverageDashboard.tsx \
+            docs/content-management/GOVERNED-APPROVALS.md \
+            docs/content-management/README.md \
+            packages/astro-knowledge/generated/content-unresolved-queue-v1.json \
+            packages/astro-knowledge/generated/content-unresolved-dashboard-v1.html
+          git commit -m "fix(content): surface only actionable editorial backlog"
+          git push origin HEAD:chatgpt/editorial-backlog-resolution
