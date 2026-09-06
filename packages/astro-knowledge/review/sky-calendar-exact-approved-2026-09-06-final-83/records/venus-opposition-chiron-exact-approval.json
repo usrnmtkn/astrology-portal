@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.venus.opposition.chiron",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-06",
+  "ownerStatement": "please mark all of this writing as approved for live",
+  "decisionContext": "Owner explicitly authorized all remaining Chiron + Lilith major Sky Calendar exact-aspect writing for live serving after reviewing and approving Batches 3 through 6.",
+  "batchId": "sky-calendar-exact-approved-2026-09-06-final-83",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "01c8ff6300f3649420ac9417f18dc16b8bff2c21fcb8b9e54e11ffad45b71790",
+  "summary": "A relationship can get organized around one person proving they care and the other person waiting for the proof to disappear.",
+  "body": "A relationship can get organized around one person proving they care and the other person waiting for the proof to disappear. When Venus opposes Chiron, affection and an old expectation of rejection can split across two people, creating a cycle of reassurance, doubt, extra effort, and another test. The giving may be sincere and the fear may be sincere, but neither one can settle a question that keeps changing its standard. Talk about the actual commitment, boundary, or need instead of making affection pass the same exam again.",
+  "sourceApprovalBatch": "sky-chiron-launch-batch-3-owner-review-2026-09-06",
+  "sourceApprovedAt": "2026-09-06"
+}

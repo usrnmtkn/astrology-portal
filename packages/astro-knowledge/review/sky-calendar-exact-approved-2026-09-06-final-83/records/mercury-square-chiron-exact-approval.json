@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.mercury.square.chiron",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-06",
+  "ownerStatement": "please mark all of this writing as approved for live",
+  "decisionContext": "Owner explicitly authorized all remaining Chiron + Lilith major Sky Calendar exact-aspect writing for live serving after reviewing and approving Batches 3 through 6.",
+  "batchId": "sky-calendar-exact-approved-2026-09-06-final-83",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "43d8517c93aeab3201a9c6e03f6a2fe38d63e5e7548708c9354bd7c62589d168",
+  "summary": "A neutral question can sound condescending when it lands on an old place where you learned not to trust your own voice.",
+  "body": "A neutral question can sound condescending when it lands on an old place where you learned not to trust your own voice. When Mercury squares Chiron, a correction, interruption, delayed reply, or badly chosen phrase can carry more insult than the current exchange may actually contain. The sharp response that follows can protect you from feeling dismissed while also making it harder to find out what the other person meant. Answer the sentence they said before you answer the history it reminded you of.",
+  "sourceApprovalBatch": "sky-chiron-launch-batch-3-owner-review-2026-09-06",
+  "sourceApprovedAt": "2026-09-06"
+}

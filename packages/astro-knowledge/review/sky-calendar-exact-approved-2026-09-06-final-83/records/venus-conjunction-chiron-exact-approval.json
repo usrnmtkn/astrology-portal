@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.venus.conjunction.chiron",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-06",
+  "ownerStatement": "please mark all of this writing as approved for live",
+  "decisionContext": "Owner explicitly authorized all remaining Chiron + Lilith major Sky Calendar exact-aspect writing for live serving after reviewing and approving Batches 3 through 6.",
+  "batchId": "sky-calendar-exact-approved-2026-09-06-final-83",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "4c4057a5110347adffd270db1610824f2832af140b07660dcbf850ebef45ec50",
+  "summary": "Kindness can feel suspicious when affection used to come with terms attached.",
+  "body": "Kindness can feel suspicious when affection used to come with terms attached. When Venus conjuncts Chiron, a compliment, invitation, gift, romantic gesture, or offer of support can arrive alongside the reflex to look for the catch. You may want the connection and still find yourself inspecting it for evidence that the warmth will eventually be withdrawn or used against you. Do not force yourself to trust more than the situation has earned. Let what is consistently offered count before an earlier disappointment decides what this person must mean.",
+  "sourceApprovalBatch": "sky-chiron-launch-batch-3-owner-review-2026-09-06",
+  "sourceApprovedAt": "2026-09-06"
+}

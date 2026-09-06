@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.neptune.conjunction.lilith",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-06",
+  "ownerStatement": "please mark all of this writing as approved for live",
+  "decisionContext": "Owner explicitly authorized all remaining Chiron + Lilith major Sky Calendar exact-aspect writing for live serving after reviewing and approving Batches 3 through 6.",
+  "batchId": "sky-calendar-exact-approved-2026-09-06-final-83",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "f946b0659b1ac150faaf7ecf175f5a5a4955885409d999f2f91f4d3d175c2b06",
+  "summary": "A fantasy that keeps returning may be trying to tell you something much simpler than the fantasy itself.",
+  "body": "A fantasy that keeps returning may be trying to tell you something much simpler than the fantasy itself. When Neptune conjuncts Lilith, a desire you have been reluctant to name can show up as daydreaming, fixation, art, longing, attraction, or the wish to disappear into a completely different life. Do not assume the whole fantasy needs to become literal. Ask what repeats inside it. More privacy, more freedom, more affection, more creative time, less scrutiny, or a different kind of work may be the ordinary need underneath the dramatic version. Start with the need you can actually name.",
+  "sourceApprovalBatch": "sky-lilith-batch-6-v2-exact-owner-approved-2026-09-06",
+  "sourceApprovedAt": "2026-09-06"
+}

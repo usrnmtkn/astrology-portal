@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.moon.sextile.lilith",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-06",
+  "ownerStatement": "please mark all of this writing as approved for live",
+  "decisionContext": "Owner explicitly authorized all remaining Chiron + Lilith major Sky Calendar exact-aspect writing for live serving after reviewing and approving Batches 3 through 6.",
+  "batchId": "sky-calendar-exact-approved-2026-09-06-final-83",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "b7ff7efd10b0f99dfeba5cf3ae9064fa8cdbf0fa1121e041b368b8a28886e85d",
+  "summary": "You agree because explaining what you need feels harder, then spend the rest of the day irritated that you said yes.",
+  "body": "You agree because explaining what you need feels harder, then spend the rest of the day irritated that you said yes. When the Moon sextiles Lilith, it may be easier to catch that pattern before resentment takes over. Tell them you need to leave earlier. Ask for privacy. Say you cannot take on the extra task. Change the part of the plan that does not work for you. If keeping everyone else comfortable requires you to keep overruling yourself, the arrangement is already creating a problem. Say what you need while it is still a small adjustment instead of waiting until anger has to say it for you.",
+  "sourceApprovalBatch": "sky-lilith-batch-5-v4-exact-owner-approved-2026-09-06",
+  "sourceApprovedAt": "2026-09-06"
+}

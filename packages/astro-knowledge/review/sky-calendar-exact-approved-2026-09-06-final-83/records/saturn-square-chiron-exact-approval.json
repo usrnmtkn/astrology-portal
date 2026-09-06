@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.saturn.square.chiron",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-06",
+  "ownerStatement": "please mark all of this writing as approved for live",
+  "decisionContext": "Owner explicitly authorized all remaining Chiron + Lilith major Sky Calendar exact-aspect writing for live serving after reviewing and approving Batches 3 through 6.",
+  "batchId": "sky-calendar-exact-approved-2026-09-06-final-83",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "ac981963238455622aa5c3906e1f8474eef33739c63b5e1fba6e3b60123933ff",
+  "summary": "If every small correction makes you work twice as hard, the standard is no longer the only thing you are responding to.",
+  "body": "If every small correction makes you work twice as hard, the standard is no longer the only thing you are responding to. When Saturn squares Chiron, criticism, delay, or a difficult requirement can wake up the old belief that one mistake exposes something fundamentally lacking in you. That is how improvement turns into penance: one revision becomes an all-nighter, one missed detail becomes proof you should have known better, one no becomes a reason to lower your expectations of yourself. Fix what needs fixing. You do not have to pay for a mistake with your entire sense of competence.",
+  "sourceApprovalBatch": "sky-chiron-launch-batch-4-v4-exact-owner-approved-2026-09-06",
+  "sourceApprovedAt": "2026-09-06"
+}

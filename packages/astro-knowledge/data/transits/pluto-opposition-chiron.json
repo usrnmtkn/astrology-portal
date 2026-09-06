@@ -1,0 +1,18 @@
+{
+  "id": "pluto-opposition-chiron",
+  "transiting": "pluto",
+  "aspect": "opposition",
+  "other": "chiron",
+  "base": "Needing something from someone changes what you are willing to tolerate.",
+  "business": "Both positions are visible; deal with the tradeoff directly instead of pretending one side can disappear.",
+  "shadow": "The conflict hardens when each side treats the other as the obstacle instead of part of the decision.",
+  "arcApplying": "The two positions become more explicit as exactness approaches.",
+  "arcSeparating": "The standoff begins to loosen after exactness.",
+  "voiceNeutral": true,
+  "status": "LIVE",
+  "readerCopy": {
+    "summary": "Needing something from someone changes what you are willing to tolerate.",
+    "body": "Needing something from someone changes what you are willing to tolerate. When Pluto opposes Chiron, the person holding the money, approval, access, or answer can press directly on an old fear that speaking up will cost you the thing you need. That is how unequal arrangements survive. Not because the terms are fair, but because one person has more to lose by objecting. Pay attention to what you are already giving up just to keep the door open. The real question is what would have to change for their no to stop controlling your options.",
+    "approvedVia": "bounded owner-approved exact Calendar batch sky-calendar-exact-approved-2026-09-06-final-83; packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/owner-batch-authorization.json"
+  }
+}
