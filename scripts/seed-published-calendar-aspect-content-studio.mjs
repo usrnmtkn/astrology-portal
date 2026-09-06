@@ -61,6 +61,26 @@ function adminHeaders(extra = {}) {
   return { apikey: key, authorization: `Bearer ${key}`, "content-type": "application/json", ...extra };
 }
 
+function verificationHeaders(extra = {}) {
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY
+    ?? process.env.SUPABASE_PUBLISHABLE_KEY
+    ?? process.env.VITE_SUPABASE_ANON_KEY
+    ?? "";
+  if (!key) {
+    throw new Error("Remote verification requires SUPABASE_SERVICE_ROLE_KEY, SUPABASE_PUBLISHABLE_KEY, or VITE_SUPABASE_ANON_KEY.");
+  }
+  const headers = { apikey: key, "content-type": "application/json", ...extra };
+  if (!key.startsWith("sb_publishable_")) headers.authorization = `Bearer ${key}`;
+  return headers;
+}
+
+function verificationAuthMode() {
+  if (process.env.SUPABASE_SERVICE_ROLE_KEY) return "service-role";
+  if (process.env.SUPABASE_PUBLISHABLE_KEY) return "publishable";
+  if (process.env.VITE_SUPABASE_ANON_KEY) return "anon";
+  return "none";
+}
+
 function canonicalBodies(first, second) {
   const order = ["sun", "moon", "mercury", "venus", "mars", "jupiter", "saturn", "uranus", "neptune", "pluto", "chiron", "lilith", "nodes"];
   return order.indexOf(first) <= order.indexOf(second) ? [first, second] : [second, first];
@@ -188,7 +208,7 @@ async function upsertRows(rows) {
 
 async function verifyRows(rows) {
   loadLocalWebEnv();
-  const response = await fetch(`${supabaseUrl()}/rest/v1/generated_interpretations?select=content_key,status,lane,review_state,body,source_snapshot&prompt_version=eq.exact-sky-aspect-content-studio-v1&limit=500`, { headers: adminHeaders() });
+  const response = await fetch(`${supabaseUrl()}/rest/v1/generated_interpretations?select=content_key,status,lane,review_state,body,source_snapshot&prompt_version=eq.exact-sky-aspect-content-studio-v1&limit=500`, { headers: verificationHeaders() });
   const payload = await response.json().catch(() => null);
   if (!response.ok) throw new Error(`Published Calendar aspect verification failed with ${response.status}: ${JSON.stringify(payload)}`);
   if (!Array.isArray(payload) || payload.length !== rows.length) throw new Error(`Expected ${rows.length} published exact aspects; found ${Array.isArray(payload) ? payload.length : 0}.`);
@@ -207,4 +227,13 @@ if (apply) applied = await upsertRows(rows);
 let verified = [];
 if (verifyRemote) verified = await verifyRows(rows);
 
-console.log(JSON.stringify({ ok: true, rows: rows.length, apply, appliedRows: applied.length, verifyRemote, verifiedRows: verified.length, servingCopyChanged: false }, null, 2));
+console.log(JSON.stringify({
+  ok: true,
+  rows: rows.length,
+  apply,
+  appliedRows: applied.length,
+  verifyRemote,
+  verifiedRows: verified.length,
+  verificationAuth: verifyRemote ? verificationAuthMode() : "none",
+  servingCopyChanged: false
+}, null, 2));
