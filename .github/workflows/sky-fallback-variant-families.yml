@@ -1,0 +1,39 @@
+name: Sky fallback variant families
+
+on:
+  pull_request:
+    paths:
+      - "apps/web/src/content/fallbackArchitectureV3/resolver/skyContinuousFallbackVariants.mjs"
+      - "apps/admin/src/SkyFallbackVariantFamilyEditor.tsx"
+      - "apps/admin/src/SkyV4StudioReviewPanel.tsx"
+      - "api/admin/sky-fallback-variant-preview.ts"
+      - "scripts/test-sky-v4-preview-api.mts"
+      - "scripts/test-sky-v4-content-studio-fallback-review-current.mjs"
+      - ".github/workflows/sky-fallback-variant-families.yml"
+  push:
+    branches: [main]
+    paths:
+      - "apps/web/src/content/fallbackArchitectureV3/resolver/skyContinuousFallbackVariants.mjs"
+      - "apps/admin/src/SkyFallbackVariantFamilyEditor.tsx"
+      - "apps/admin/src/SkyV4StudioReviewPanel.tsx"
+      - "api/admin/sky-fallback-variant-preview.ts"
+      - "scripts/test-sky-v4-preview-api.mts"
+      - "scripts/test-sky-v4-content-studio-fallback-review-current.mjs"
+      - ".github/workflows/sky-fallback-variant-families.yml"
+
+jobs:
+  architecture-contract:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Verify deterministic selector and preview contract
+        run: node --import tsx scripts/test-sky-v4-preview-api.mts
+      - name: Verify Content Studio fallback management boundary
+        run: node scripts/test-sky-v4-content-studio-fallback-review-current.mjs
+      - name: Build admin
+        run: npm run build:admin
