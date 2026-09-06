@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.jupiter.sextile.north-node",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-05",
+  "ownerStatement": "yes please continue",
+  "decisionContext": "The owner explicitly approved both 24-row North Node source batches on 2026-09-05 and then authorized shipping the 48 approved North Node passages into the governed Calendar exact-aspect corpus by replying \"yes please continue\".",
+  "batchId": "sky-calendar-exact-approved-2026-09-05-north-node-48",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-05-north-node-48/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "a47b3507d94413f11e8a9b4ea2407c6f3f06b9721d99522635032ccb04569eab",
+  "summary": "A little more access, support, or confidence may turn a possibility into something you can actually test.",
+  "body": "A little more access, support, or confidence may turn a possibility into something you can actually test. When Jupiter sextiles the North Node, a mentor, course, introduction, grant, trip, audience, or piece of good news can give an idea enough backing to move beyond speculation. The support is useful because it lowers the cost of finding out, not because it guarantees the outcome. Use the extra reach on the possibility you were already prepared to explore and let the results decide how much larger it deserves to become.",
+  "sourceApprovalBatch": "sky-north-node-launch-batch-1-owner-review-v2-2026-09-05"
+}

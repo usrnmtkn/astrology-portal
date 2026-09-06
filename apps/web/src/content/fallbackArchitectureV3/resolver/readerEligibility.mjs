@@ -1,3 +1,8 @@
+import {
+  passesReaderContentBoundary,
+  readerContentBoundaryReason
+} from "./readerContentBoundary.mjs";
+
 export const READER_ELIGIBLE_REVIEW_STATUSES = new Set([
   "approved",
   "approved_reuse",
@@ -32,6 +37,7 @@ export function transitReaderTier(row) {
   if (!READER_ELIGIBLE_REVIEW_STATUSES.has(String(row?.review_status ?? "").trim().toLowerCase())) {
     return null;
   }
+  if (!passesReaderContentBoundary(row)) return null;
   return hasExactOwnerApproval(row) ? "exact-owner-approved" : "legacy-reviewed";
 }
 
@@ -40,6 +46,7 @@ export function synastryReaderTier(row) {
   if (!READER_ELIGIBLE_REVIEW_STATUSES.has(String(row?.review_status ?? "").trim().toLowerCase())) {
     return null;
   }
+  if (!passesReaderContentBoundary(row)) return null;
 
   const aspect = String(row.contentKey).split("/").at(-1) ?? "";
   if (EXACT_SYNASTRY_ASPECTS.has(aspect) && hasExactOwnerApproval(row)) {
@@ -73,6 +80,7 @@ export function isGovernedReaderEligible(row, { allowUnreviewed = false } = {}) 
   if (allowUnreviewed) return true;
   if (QUARANTINED_CONTENT_KEYS.has(row.contentKey)) return false;
   if (!READER_ELIGIBLE_REVIEW_STATUSES.has(String(row.review_status ?? "").trim().toLowerCase())) return false;
+  if (!passesReaderContentBoundary(row)) return false;
   if (String(row.contentKey).startsWith("fallback-hook/synastry-pair/")) {
     return synastryReaderTier(row) !== null;
   }
@@ -88,6 +96,8 @@ export function isGovernedReaderEligible(row, { allowUnreviewed = false } = {}) 
 export function readerEligibilityReason(row) {
   if (QUARANTINED_CONTENT_KEYS.has(row.contentKey)) return "known-current-contract-failure";
   if (!READER_ELIGIBLE_REVIEW_STATUSES.has(String(row.review_status ?? "").trim().toLowerCase())) return "review-status";
+  const boundaryReason = readerContentBoundaryReason(row);
+  if (boundaryReason) return boundaryReason;
   if (String(row.contentKey).startsWith("fallback-hook/synastry-pair/")) {
     return synastryReaderTier(row) === null ? "unsupported-synastry-family" : null;
   }

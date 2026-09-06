@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.sun.sextile.lilith",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-06",
+  "ownerStatement": "please mark all of this writing as approved for live",
+  "decisionContext": "Owner explicitly authorized all remaining Chiron + Lilith major Sky Calendar exact-aspect writing for live serving after reviewing and approving Batches 3 through 6.",
+  "batchId": "sky-calendar-exact-approved-2026-09-06-final-83",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "1265c041474281dc8bac12ae1a3039d831012c69337bd7e160bb6defd1d17c5d",
+  "summary": "You say what you actually think, make the choice you expected people to question, and nobody reacts as badly as you imagined.",
+  "body": "You say what you actually think, make the choice you expected people to question, and nobody reacts as badly as you imagined. When the Sun sextiles Lilith, it can be easier to show a part of yourself you normally soften before anyone else sees it. Correct the assumption. Claim the work. Wear what you like. Let the decision look different from the one people expected. The important part is not being provocative. It is finding out that you may have been doing far more work to prevent disapproval than the situation required. Give people a chance to respond to the version of you that is actually there.",
+  "sourceApprovalBatch": "sky-lilith-batch-5-v4-exact-owner-approved-2026-09-06",
+  "sourceApprovedAt": "2026-09-06"
+}

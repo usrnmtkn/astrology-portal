@@ -1,0 +1,76 @@
+name: Sky Calendar North Node exact 48
+
+on:
+  pull_request:
+    paths:
+      - "packages/astro-knowledge/data/transits/*-north-node.json"
+      - "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-05-north-node-48/**"
+      - "scripts/release-calendar-exact-approved-20260905-north-node-48.mjs"
+      - "scripts/test-calendar-exact-approved-20260905-north-node-48.mjs"
+      - "scripts/test-calendar-exact-sky-aspect-routing.mjs"
+      - ".github/workflows/sky-calendar-north-node-exact-48.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.ref }}
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Materialize bounded North Node release in CI workspace
+        run: node scripts/release-calendar-exact-approved-20260905-north-node-48.mjs
+      - name: Build astro-knowledge workspace from released source
+        run: npm run build -w @tldr/astro-knowledge
+      - name: Regenerate governed bundles and writing evidence
+        run: |
+          node scripts/generate-fallback-package-manifest.mjs
+          node scripts/build-knowledge-index.mjs --write
+          node scripts/build-phrase-index.mjs --write
+          node scripts/build-production-sky-kernel-comparison.mjs --write
+      - name: Verify bounded owner authorization
+        run: node scripts/test-bounded-owner-batch-approval-governance.mjs
+      - name: Verify exact-owner-approved North Node release
+        run: node scripts/test-calendar-exact-approved-20260905-north-node-48.mjs
+      - name: Verify exact Sky aspect routing
+        env:
+          SKY_CALENDAR_OWNER_PAYLOADS_PATH: packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-05-north-node-48/current-owner-payloads.json
+        run: node scripts/test-calendar-exact-sky-aspect-routing.mjs
+      - name: Verify generated fallback manifest
+        run: node scripts/generate-fallback-package-manifest.mjs --check
+      - name: Verify generated knowledge index
+        run: node scripts/build-knowledge-index.mjs --check
+      - name: Verify generated phrase index
+        run: node scripts/build-phrase-index.mjs --check
+      - name: Verify production Sky kernel comparison
+        run: node scripts/build-production-sky-kernel-comparison.mjs
+      - name: Verify whitespace integrity
+        run: git diff --check
+      - name: Commit controlled serving release
+        shell: bash
+        run: |
+          if git diff --quiet; then
+            echo "No release changes to commit."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add packages/astro-knowledge/data/transits \
+            packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-05-north-node-48 \
+            apps/web/src/content/fallbackArchitectureV3/source-rows/sky-aspect-phrasebook-v1.json \
+            apps/web/src/content/fallbackArchitectureV3/bundled-*.json \
+            apps/web/src/content/fallbackArchitectureV3/approved-serving-*.json \
+            packages/astro-knowledge/generated/knowledge-index.json \
+            packages/astro-knowledge/generated/phrase-index.json \
+            packages/astro-knowledge/review/production-sky-kernel-comparison-v1/comparison.json
+          git commit -m "release(calendar): serve 48 approved North Node aspects"
+          git push origin HEAD:${{ github.event.pull_request.head.ref }}

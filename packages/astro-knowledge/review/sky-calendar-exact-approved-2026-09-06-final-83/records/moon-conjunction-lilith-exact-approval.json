@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.moon.conjunction.lilith",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-06",
+  "ownerStatement": "please mark all of this writing as approved for live",
+  "decisionContext": "Owner explicitly authorized all remaining Chiron + Lilith major Sky Calendar exact-aspect writing for live serving after reviewing and approving Batches 3 through 6.",
+  "batchId": "sky-calendar-exact-approved-2026-09-06-final-83",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "451eedef20973f4a942114c905ba027ed0519f4435c79e400e3842ac4db7ddd4",
+  "summary": "You keep telling yourself you are just in a bad mood, but the irritation is pointing to something you actually need.",
+  "body": "You keep telling yourself you are just in a bad mood, but the irritation is pointing to something you actually need. When the Moon conjuncts Lilith, restlessness, jealousy, exhaustion, anger, or the urge to be left alone can make a buried need harder to dismiss. Maybe you need more privacy, more help, more rest, or simply less responsibility for keeping everyone else comfortable. The feeling is not automatically an instruction, but it is information. Before you criticize yourself for being difficult, look at what has been missing from the arrangement. A need does not become unreasonable just because acknowledging it would inconvenience somebody else.",
+  "sourceApprovalBatch": "sky-lilith-batch-5-v4-exact-owner-approved-2026-09-06",
+  "sourceApprovedAt": "2026-09-06"
+}

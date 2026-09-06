@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.mercury.opposition.chiron",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-06",
+  "ownerStatement": "please mark all of this writing as approved for live",
+  "decisionContext": "Owner explicitly authorized all remaining Chiron + Lilith major Sky Calendar exact-aspect writing for live serving after reviewing and approving Batches 3 through 6.",
+  "batchId": "sky-calendar-exact-approved-2026-09-06-final-83",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "5c1e6527a5e8f4678758ab8f75bfe33ab198dc42c2d010b2e25a756832eaeec8",
+  "summary": "The fastest speaker in the conversation may not be the person who understands the problem best.",
+  "body": "The fastest speaker in the conversation may not be the person who understands the problem best. When Mercury opposes Chiron, fluency and sensitivity can separate across an exchange, so one person fills the silence while another needs more time because the subject touches experience the quicker explanation does not account for. Speed can start looking like authority and hesitation like uncertainty. Slow the conversation down enough for the person carrying the missing context to finish the thought before everyone decides what the silence meant.",
+  "sourceApprovalBatch": "sky-chiron-launch-batch-3-owner-review-2026-09-06",
+  "sourceApprovedAt": "2026-09-06"
+}

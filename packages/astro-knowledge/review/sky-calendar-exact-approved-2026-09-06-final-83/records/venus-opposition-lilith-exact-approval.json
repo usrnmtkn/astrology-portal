@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.venus.opposition.lilith",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-06",
+  "ownerStatement": "please mark all of this writing as approved for live",
+  "decisionContext": "Owner explicitly authorized all remaining Chiron + Lilith major Sky Calendar exact-aspect writing for live serving after reviewing and approving Batches 3 through 6.",
+  "batchId": "sky-calendar-exact-approved-2026-09-06-final-83",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "a302d8e078e89011e7141a76d35f0cd2c43bf53e2f803a4d7cd40b23a48eec16",
+  "summary": "A relationship or offer can look good from the outside and still ask you to keep part of yourself out of it.",
+  "body": "A relationship or offer can look good from the outside and still ask you to keep part of yourself out of it. When Venus opposes Lilith, affection, money, chemistry, approval, or practical support can come with terms that make one important desire or boundary easier to hide than to negotiate. You can appreciate what the arrangement gives you and still admit what you have to give up to keep it. If staying loved, chosen, or supported repeatedly requires you to make the same part of yourself smaller, that cost belongs in the decision too. A good-looking arrangement is not automatically a good fit.",
+  "sourceApprovalBatch": "sky-lilith-batch-5-v4-exact-owner-approved-2026-09-06",
+  "sourceApprovedAt": "2026-09-06"
+}

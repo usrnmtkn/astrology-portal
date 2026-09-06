@@ -1,0 +1,18 @@
+{
+  "id": "moon-opposition-chiron",
+  "transiting": "moon",
+  "aspect": "opposition",
+  "other": "chiron",
+  "base": "One person can keep offering help while the other keeps proving they do not need it.",
+  "business": "Both positions are visible; deal with the tradeoff directly instead of pretending one side can disappear.",
+  "shadow": "The conflict hardens when each side treats the other as the obstacle instead of part of the decision.",
+  "arcApplying": "The two positions become more explicit as exactness approaches.",
+  "arcSeparating": "The standoff begins to loosen after exactness.",
+  "voiceNeutral": true,
+  "status": "LIVE",
+  "readerCopy": {
+    "summary": "One person can keep offering help while the other keeps proving they do not need it.",
+    "body": "One person can keep offering help while the other keeps proving they do not need it. When the Moon opposes Chiron, care and discomfort with receiving it can split across a relationship, leaving one person pushing harder and the other refusing more firmly until both feel misunderstood. The giver may need to stop making care compulsory, and the receiver may need to stop treating acceptance like surrender. A useful exchange begins when the help has terms both people can actually agree to.",
+    "approvedVia": "bounded owner-approved exact Calendar batch sky-calendar-exact-approved-2026-09-06-final-83; packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/owner-batch-authorization.json"
+  }
+}

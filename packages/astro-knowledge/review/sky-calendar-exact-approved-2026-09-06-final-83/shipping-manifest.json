@@ -1,0 +1,606 @@
+{
+  "schemaVersion": 2,
+  "name": "Sky Calendar final 83 exact owner-approved Chiron + Lilith release",
+  "batchId": "sky-calendar-exact-approved-2026-09-06-final-83",
+  "approvedAt": "2026-09-06",
+  "ownerStatement": "please mark all of this writing as approved for live",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "memberSetSha256": "f8a5b4234e5e2be760fcb4b5e54103e9ab36727aea1f0e90fbe2874cbe607208",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/owner-batch-authorization.json",
+  "rowCount": 83,
+  "previousProjectionPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-05-north-node-48/current-owner-payloads.json",
+  "previousRowCount": 296,
+  "combinedRowCount": 379,
+  "protectedUntouched": [
+    "sky.aspect.saturn.opposition.pluto",
+    "sky.aspect.sun.opposition.moon"
+  ],
+  "rows": [
+    {
+      "contentKey": "sky.aspect.chiron.conjunction.lilith",
+      "sourceFile": "packages/astro-knowledge/data/transits/chiron-conjunction-lilith.json",
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/records/chiron-conjunction-lilith-exact-approval.json",
+      "bodySha256": "974d0c974551ee38c51dff7d7fccad690bd5a1b104b46c8f75c7166a036e987b",
+      "previousReaderCopySha256": "560ea6ab6bd08251fa0ce42d73a0730cfbcedd5adee277a14bc4b1744b739e7b"
+    },
+    {
+      "contentKey": "sky.aspect.chiron.opposition.lilith",
+      "sourceFile": "packages/astro-knowledge/data/transits/chiron-opposition-lilith.json",
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/records/chiron-opposition-lilith-exact-approval.json",
+      "bodySha256": "7f1101dab73980eb1172912b1df808757022ec93654ace971ae334970a840bab",
+      "previousReaderCopySha256": "954219ab2dfbaea4688e7b15c46a3eadc274e9d7525a821d89724bbb0f13ca6c"
+    },
+    {
+      "contentKey": "sky.aspect.chiron.sextile.lilith",
+      "sourceFile": "packages/astro-knowledge/data/transits/chiron-sextile-lilith.json",
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/records/chiron-sextile-lilith-exact-approval.json",
+      "bodySha256": "80493e609d0b40d50c7499c1d464ae3ce8a7a4cc5e7e9944b4812d466bf1430a",
+      "previousReaderCopySha256": "69705b7ddb2ade7a39f29a9dfa9698fd637d63f2b49203a2d6bd83ee4999a3b2"
+    },
+    {
+      "contentKey": "sky.aspect.chiron.square.lilith",
+      "sourceFile": "packages/astro-knowledge/data/transits/chiron-square-lilith.json",
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/records/chiron-square-lilith-exact-approval.json",
+      "bodySha256": "8bb7cdfa04fb781d9d9f2ce7db9415f2d688dc28ab1f0dbf753edc6bf73bd7d2",
+      "previousReaderCopySha256": "b512562f69cd345009edcbb8f9fcdb395537ef129fc55116df20a5a2d0205b9f"
+    },
+    {
+      "contentKey": "sky.aspect.jupiter.conjunction.chiron",
+      "sourceFile": "packages/astro-knowledge/data/transits/jupiter-conjunction-chiron.json",
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/records/jupiter-conjunction-chiron-exact-approval.json",
+      "bodySha256": "e797652b085f34c78384007a85f7b3a7b421ff131276a5bc0bce75f1c76613ef",
+      "previousReaderCopySha256": "a8afa400e04e85ff0e9f5699c49a0a453f7adc4b1ce2cdabc8e54e984a313012"
+    },
+    {
+      "contentKey": "sky.aspect.jupiter.conjunction.lilith",
+      "sourceFile": "packages/astro-knowledge/data/transits/jupiter-conjunction-lilith.json",
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/records/jupiter-conjunction-lilith-exact-approval.json",
+      "bodySha256": "70d4a804bf5c2fec46b089c821e54bfbd4c01413003263d8d19e18cdba36b450",
+      "previousReaderCopySha256": "969a67eaa3f307f0f871291e61c7a91d69c0ed4c6aafa0c059fb0d869d2290d7"
+    },
+    {
+      "contentKey": "sky.aspect.jupiter.opposition.chiron",
+      "sourceFile": "packages/astro-knowledge/data/transits/jupiter-opposition-chiron.json",
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/records/jupiter-opposition-chiron-exact-approval.json",
+      "bodySha256": "1153b72bb0b8b5b537e10e785a513489def3e938893bcc49652d48444a16c214",
+      "previousReaderCopySha256": "36953992db875993c78a5536df8b40a11491f79353f80e29921db407a483c416"
+    },
+    {
+      "contentKey": "sky.aspect.jupiter.opposition.lilith",
+      "sourceFile": "packages/astro-knowledge/data/transits/jupiter-opposition-lilith.json",
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/records/jupiter-opposition-lilith-exact-approval.json",
+      "bodySha256": "9ebb22d5dcfa45b71c52d52e3e4fa8ef1d8c75b46e9909d198a5131361f15493",
+      "previousReaderCopySha256": "705bdf2be6f3e3de871a8116cfe48b8399fb5748a7af4c0ee4742007556597b4"
+    },
+    {
+      "contentKey": "sky.aspect.jupiter.sextile.chiron",
+      "sourceFile": "packages/astro-knowledge/data/transits/jupiter-sextile-chiron.json",
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/records/jupiter-sextile-chiron-exact-approval.json",
+      "bodySha256": "9d28152cb752603bc3d77f36fa9cc3747c21afc6a53a6a94e41b2baa6196afd0",
+      "previousReaderCopySha256": "822fbfecd2c9ad38eeaf9090fd46d440c3939ca844929e9f438205e6dec843ab"
+    },
+    {
+      "contentKey": "sky.aspect.jupiter.sextile.lilith",
+      "sourceFile": "packages/astro-knowledge/data/transits/jupiter-sextile-lilith.json",
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/records/jupiter-sextile-lilith-exact-approval.json",
+      "bodySha256": "19d21983dece2088f0f896436b2aced39704969e9c9c0c4f4df8ce7b1dcdc6c2",
+      "previousReaderCopySha256": "92a617bfe7d7fc1b1ce4069ea79ce9aec94c24fb0375c0ace4c8fead87cc5c75"
+    },
+    {
+      "contentKey": "sky.aspect.jupiter.square.chiron",
+      "sourceFile": "packages/astro-knowledge/data/transits/jupiter-square-chiron.json",
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/records/jupiter-square-chiron-exact-approval.json",
+      "bodySha256": "07352180b33bd29a9529864010e3a8c07a513d811d108de627c114444573cbd6",
+      "previousReaderCopySha256": "ce0a89d6dd6bd3d949aff36023e12590ef6440ccc6650b3b842328c252b97dda"
+    },
+    {
+      "contentKey": "sky.aspect.jupiter.square.lilith",
+      "sourceFile": "packages/astro-knowledge/data/transits/jupiter-square-lilith.json",
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/records/jupiter-square-lilith-exact-approval.json",
+      "bodySha256": "7f64821e87caf48eee8727f7022ecc0a6ede0d79e83f036cd1bd90f6e3d6939f",
+      "previousReaderCopySha256": "36204caa01c641169a5bd3e60a35f88f147e396ac181a70dd0f2ccd62e40e415"
+    },
+    {
+      "contentKey": "sky.aspect.mars.conjunction.chiron",
+      "sourceFile": "packages/astro-knowledge/data/transits/mars-conjunction-chiron.json",
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/records/mars-conjunction-chiron-exact-approval.json",
+      "bodySha256": "dd3e220990ec38490914fbae863be238e467ad6d43693235e09efb944a7a0d56",
+      "previousReaderCopySha256": "5ece4ab85aee18f241a72c997bacb28db9a8f9e00f69ce5db4f82c5f8db80f88"
+    },
+    {
+      "contentKey": "sky.aspect.mars.conjunction.lilith",
+      "sourceFile": "packages/astro-knowledge/data/transits/mars-conjunction-lilith.json",
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/records/mars-conjunction-lilith-exact-approval.json",
+      "bodySha256": "7023682c4a490986b693dee2eb973001a7ca34f9ced72dcff8c85deb28981396",
+      "previousReaderCopySha256": "18d259253d4c31b8e0f9c9abcaed38d3938bda12040328f928762bf731c623b1"
+    },
+    {
+      "contentKey": "sky.aspect.mars.opposition.chiron",
+      "sourceFile": "packages/astro-knowledge/data/transits/mars-opposition-chiron.json",
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/records/mars-opposition-chiron-exact-approval.json",
+      "bodySha256": "005f861ab05db1150ca26f3c9bf1f899193a8b625883037e9bf8b1c3225dc0a7",
+      "previousReaderCopySha256": "9d8068aab26daa9ca87a065f73c3430055d9555ba090477cede2f72010075eff"
+    },
+    {
+      "contentKey": "sky.aspect.mars.opposition.lilith",
+      "sourceFile": "packages/astro-knowledge/data/transits/mars-opposition-lilith.json",
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/records/mars-opposition-lilith-exact-approval.json",
+      "bodySha256": "0348512394601fd04d52d86736b4027c1c871abeeffa0317b6d369d68fe7dd8b",
+      "previousReaderCopySha256": "0448994a8248a4796e4e14d0f022e4525643a5d53f23d1167574325a295797e9"
+    },
+    {
+      "contentKey": "sky.aspect.mars.sextile.chiron",
+      "sourceFile": "packages/astro-knowledge/data/transits/mars-sextile-chiron.json",
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/records/mars-sextile-chiron-exact-approval.json",
+      "bodySha256": "0d7cea38ebdbed66be4ca729e3ffbe0450f01f0dd150644b8c963917c18877ef",
+      "previousReaderCopySha256": "5303d410223c61275697b7a4515f76f4e5f71b63ab66cce1011a2036a9d38f4a"
+    },
+    {
+      "contentKey": "sky.aspect.mars.sextile.lilith",
+      "sourceFile": "packages/astro-knowledge/data/transits/mars-sextile-lilith.json",
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/records/mars-sextile-lilith-exact-approval.json",
+      "bodySha256": "9058c7c8728384f23e67855031524111d8068f57f56cda7a15b2d41fdd5849a6",
+      "previousReaderCopySha256": "4ad45ae0a0f2dfb533af2143f6bd8f4c159219a098ee6296cf6b155fff0485bf"
+    },
+    {
+      "contentKey": "sky.aspect.mars.square.chiron",
+      "sourceFile": "packages/astro-knowledge/data/transits/mars-square-chiron.json",
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/records/mars-square-chiron-exact-approval.json",
+      "bodySha256": "51be83230a18b6f566256316d7ec31090277bb8bf7b84ab8ee175d180c0c80a6",
+      "previousReaderCopySha256": "bf379d24b7b524bd47a095369dbe5badf90222d8986c19aca9d31b22c6a43f1d"
+    },
+    {
+      "contentKey": "sky.aspect.mars.square.lilith",
+      "sourceFile": "packages/astro-knowledge/data/transits/mars-square-lilith.json",
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/records/mars-square-lilith-exact-approval.json",
+      "bodySha256": "8a0cd138cf42433403225107af4cc07cd11af4b49d3822e0344a6a7827ff54d4",
+      "previousReaderCopySha256": "eb8097f2e0c45fb8b6c586108fa39bd6667de5e329950d02dc99cba137c498e7"
+    },
+    {
+      "contentKey": "sky.aspect.mercury.conjunction.chiron",
+      "sourceFile": "packages/astro-knowledge/data/transits/mercury-conjunction-chiron.json",
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/records/mercury-conjunction-chiron-exact-approval.json",
+      "bodySha256": "b44701d98bb70efed1996b70689154532f7905bd36878186cb60951abefca8c4",
+      "previousReaderCopySha256": "c2e4fc7d31f66748af5693e9084f831f700ed14c6decacf8375a6877d7a6b9b5"
+    },
+    {
+      "contentKey": "sky.aspect.mercury.conjunction.lilith",
+      "sourceFile": "packages/astro-knowledge/data/transits/mercury-conjunction-lilith.json",
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/records/mercury-conjunction-lilith-exact-approval.json",
+      "bodySha256": "817cf3d83f546e6a08d69819b9553c4012e3bf51e31dfe170f8bc585a2de2bfa",
+      "previousReaderCopySha256": "9a87b22e7301f73a9a69f24aad066c12d4ac4fda4f3c5610c64ce989146a1c94"
+    },
+    {
+      "contentKey": "sky.aspect.mercury.opposition.chiron",
+      "sourceFile": "packages/astro-knowledge/data/transits/mercury-opposition-chiron.json",
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/records/mercury-opposition-chiron-exact-approval.json",
+      "bodySha256": "5c1e6527a5e8f4678758ab8f75bfe33ab198dc42c2d010b2e25a756832eaeec8",
+      "previousReaderCopySha256": "0c0b174f311b303b2b87cba3f1e5f870b665b74a7cc1211cf370857b52cb86b0"
+    },
+    {
+      "contentKey": "sky.aspect.mercury.opposition.lilith",
+      "sourceFile": "packages/astro-knowledge/data/transits/mercury-opposition-lilith.json",
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/records/mercury-opposition-lilith-exact-approval.json",
+      "bodySha256": "56c3d34fda743f258bd1a9626faabce1d93f5a68bb9b97571220a324c7f47900",
+      "previousReaderCopySha256": "81cdf752b0eb332500cb9f8ff9b097423fbeefe6ab51d697f88598672a3f8655"
+    },
+    {
+      "contentKey": "sky.aspect.mercury.sextile.chiron",
+      "sourceFile": "packages/astro-knowledge/data/transits/mercury-sextile-chiron.json",
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/records/mercury-sextile-chiron-exact-approval.json",
+      "bodySha256": "479681a628786d86f26882041c6f2179c0b2747aa5f571622bda42542d8d1d54",
+      "previousReaderCopySha256": "f4212c961741f0519c2c5cf2a30ee566628bcaef97c4cb95f35b12fad877eaf1"
+    },
+    {
+      "contentKey": "sky.aspect.mercury.sextile.lilith",
+      "sourceFile": "packages/astro-knowledge/data/transits/mercury-sextile-lilith.json",
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/records/mercury-sextile-lilith-exact-approval.json",
+      "bodySha256": "92fa2b597ecda45f9211ac4e0838cf59af5fa5dba1e4de91db158c136ece398e",
+      "previousReaderCopySha256": "16dfdbde781f9b113f6c777d28e083d33cfca7b69db6ba08206d97a1e9350053"
+    },
+    {
+      "contentKey": "sky.aspect.mercury.square.chiron",
+      "sourceFile": "packages/astro-knowledge/data/transits/mercury-square-chiron.json",
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/records/mercury-square-chiron-exact-approval.json",
+      "bodySha256": "43d8517c93aeab3201a9c6e03f6a2fe38d63e5e7548708c9354bd7c62589d168",
+      "previousReaderCopySha256": "811ea846775d2fb582bfd8b7a6d92150b196571685319fe003422a5941879e1f"
+    },
+    {
+      "contentKey": "sky.aspect.mercury.square.lilith",
+      "sourceFile": "packages/astro-knowledge/data/transits/mercury-square-lilith.json",
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/records/mercury-square-lilith-exact-approval.json",
+      "bodySha256": "b006e54a74fc5498878201e0420017ce6c236b7cb2d91da228f625bd255ecaa8",
+      "previousReaderCopySha256": "0018f9e913730cf8f656ae90c8126f4e7b2d622ef0fe11a50d08f89936553c0d"
+    },
+    {
+      "contentKey": "sky.aspect.moon.conjunction.chiron",
+      "sourceFile": "packages/astro-knowledge/data/transits/moon-conjunction-chiron.json",
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/records/moon-conjunction-chiron-exact-approval.json",
+      "bodySha256": "1e8c4e60b8beef20edfca0ae9137b326533cb84a6de5c3d031613b24efda941b",
+      "previousReaderCopySha256": "1b9d3468d0b0140fb32d80fdecf309baa3ebf3c61e9a2f6a5a3dee4b9030b4b2"
+    },
+    {
+      "contentKey": "sky.aspect.moon.conjunction.lilith",
+      "sourceFile": "packages/astro-knowledge/data/transits/moon-conjunction-lilith.json",
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/records/moon-conjunction-lilith-exact-approval.json",
+      "bodySha256": "451eedef20973f4a942114c905ba027ed0519f4435c79e400e3842ac4db7ddd4",
+      "previousReaderCopySha256": "b1adff14afedc82e84d799e3d45ce489f5768e187a8e42eeaa2ba013942b1b43"
+    },
+    {
+      "contentKey": "sky.aspect.moon.opposition.chiron",
+      "sourceFile": "packages/astro-knowledge/data/transits/moon-opposition-chiron.json",
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/records/moon-opposition-chiron-exact-approval.json",
+      "bodySha256": "a813553f7437fb475b2f08cb61c7e638e240b6f772a670c2cb4b6f3d7aac26ba",
+      "previousReaderCopySha256": "ed435e08232fff0eca6a212b4f3e6df11f5fcae61ed05573ce70a32144ced5f7"
+    },
+    {
+      "contentKey": "sky.aspect.moon.opposition.lilith",
+      "sourceFile": "packages/astro-knowledge/data/transits/moon-opposition-lilith.json",
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/records/moon-opposition-lilith-exact-approval.json",
+      "bodySha256": "bdd854389e81e0f8a7d942b3f0e060a3617128e9d753cf69cf6fd35880d88bb8",
+      "previousReaderCopySha256": "1b6687e83153ab4665ee64294f1c05915bd1493f1ff270e5ae36e72468d2444c"
+    },
+    {
+      "contentKey": "sky.aspect.moon.sextile.chiron",
+      "sourceFile": "packages/astro-knowledge/data/transits/moon-sextile-chiron.json",
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/records/moon-sextile-chiron-exact-approval.json",
+      "bodySha256": "0e26d3f701328bd2f9e7928ea4a6c300773123ee052cdceb72f6938f62036f0c",
+      "previousReaderCopySha256": "baa63f8be91825c07285536cc45656f5d9ec71c84e1b2dfe52cd4127aaea4b8c"
+    },
+    {
+      "contentKey": "sky.aspect.moon.sextile.lilith",
+      "sourceFile": "packages/astro-knowledge/data/transits/moon-sextile-lilith.json",
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/records/moon-sextile-lilith-exact-approval.json",
+      "bodySha256": "b7ff7efd10b0f99dfeba5cf3ae9064fa8cdbf0fa1121e041b368b8a28886e85d",
+      "previousReaderCopySha256": "01ec8733efaae53ef02ef3de9440514dfed9ce0c20d322bf7630bd6a1bbee18f"
+    },
+    {
+      "contentKey": "sky.aspect.moon.square.chiron",
+      "sourceFile": "packages/astro-knowledge/data/transits/moon-square-chiron.json",
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/records/moon-square-chiron-exact-approval.json",
+      "bodySha256": "807157876d5592b66b69b8cf41d9609c7fe17e92fe29235e1bcbf376cecf6ee1",
+      "previousReaderCopySha256": "0ada648c74c08b0b208707682887e6f28ef02357f09bb1c7cc1d750536f6242a"
+    },
+    {
+      "contentKey": "sky.aspect.moon.square.lilith",
+      "sourceFile": "packages/astro-knowledge/data/transits/moon-square-lilith.json",
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/records/moon-square-lilith-exact-approval.json",
+      "bodySha256": "a7946be3d9a6cf7fac8a0f521fa787063645ca152d03a67c3e980c75a8f22c34",
+      "previousReaderCopySha256": "3281be12b6de10dbe0b18bf75701b65517bd26fa615c8db9ce00cf4571b51ebd"
+    },
+    {
+      "contentKey": "sky.aspect.neptune.conjunction.chiron",
+      "sourceFile": "packages/astro-knowledge/data/transits/neptune-conjunction-chiron.json",
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/records/neptune-conjunction-chiron-exact-approval.json",
+      "bodySha256": "e7f92cde8e9273e089d1fc5d40d8673874dbb9f8493ef93e3f882989fe3413a9",
+      "previousReaderCopySha256": "3988e21d4e396dbacc0ac589879b0d4a3e52dcd12fcaf29d0ba25ceb47c42b9c"
+    },
+    {
+      "contentKey": "sky.aspect.neptune.conjunction.lilith",
+      "sourceFile": "packages/astro-knowledge/data/transits/neptune-conjunction-lilith.json",
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/records/neptune-conjunction-lilith-exact-approval.json",
+      "bodySha256": "f946b0659b1ac150faaf7ecf175f5a5a4955885409d999f2f91f4d3d175c2b06",
+      "previousReaderCopySha256": "9e3327a05c2ae945ab07ddf0ee547806b0fed0cfffa69452b56537caa3d2142c"
+    },
+    {
+      "contentKey": "sky.aspect.neptune.opposition.chiron",
+      "sourceFile": "packages/astro-knowledge/data/transits/neptune-opposition-chiron.json",
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/records/neptune-opposition-chiron-exact-approval.json",
+      "bodySha256": "a4c4c055cc109782440888391b66d630bb98a5002fe17628381f36e17e2233c6",
+      "previousReaderCopySha256": "0ef091a03fd2f2b7edf32de62ea065f53bcefb47ec8c6bd85d04deca244d0d12"
+    },
+    {
+      "contentKey": "sky.aspect.neptune.opposition.lilith",
+      "sourceFile": "packages/astro-knowledge/data/transits/neptune-opposition-lilith.json",
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/records/neptune-opposition-lilith-exact-approval.json",
+      "bodySha256": "9693fc08bbe0cb3b84ecec9bbf50fc131e39b55bda0d75121f1b88f2c6b5a4c7",
+      "previousReaderCopySha256": "9ed52260409fed50313aaea0c41b4508c2873ed2041409d2337b59bb208641de"
+    },
+    {
+      "contentKey": "sky.aspect.neptune.sextile.chiron",
+      "sourceFile": "packages/astro-knowledge/data/transits/neptune-sextile-chiron.json",
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/records/neptune-sextile-chiron-exact-approval.json",
+      "bodySha256": "4d0c5d88bb5327c37423676fb8c2239adb5e51f2ef27cf2cbdd947ce1f38b96e",
+      "previousReaderCopySha256": "e4fd3944814cdeff8a4fd2c060b18efe28d55047c4b16fd3339fb44bd117c6fd"
+    },
+    {
+      "contentKey": "sky.aspect.neptune.sextile.lilith",
+      "sourceFile": "packages/astro-knowledge/data/transits/neptune-sextile-lilith.json",
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/records/neptune-sextile-lilith-exact-approval.json",
+      "bodySha256": "51282e6c6bfa70f352055016cf335978308d9228686cc1ea0ed09539e0a70c1b",
+      "previousReaderCopySha256": "9c6e8629a412edc492c2cb1fbf8b678b1f9139a4c0ce269be8d209fb0b0cdf1d"
+    },
+    {
+      "contentKey": "sky.aspect.neptune.square.chiron",
+      "sourceFile": "packages/astro-knowledge/data/transits/neptune-square-chiron.json",
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/records/neptune-square-chiron-exact-approval.json",
+      "bodySha256": "5a4a9348669d9200c74ad33b472715c19e4ff2943ffa4886f1e21f1803a0f3c1",
+      "previousReaderCopySha256": "63377338e1eb3513ba7ee8f3cb26624afb74a68282e2d0d0a4aa0b99ac46403e"
+    },
+    {
+      "contentKey": "sky.aspect.neptune.square.lilith",
+      "sourceFile": "packages/astro-knowledge/data/transits/neptune-square-lilith.json",
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/records/neptune-square-lilith-exact-approval.json",
+      "bodySha256": "60b56654a19fc875a7fe8c9cd1bd4b949411a59088490876fe73c98cdf67afa4",
+      "previousReaderCopySha256": "847192a00447a3ecd95eb4ece879f735e133a1dcf12841e81440bda354befab4"
+    },
+    {
+      "contentKey": "sky.aspect.pluto.conjunction.chiron",
+      "sourceFile": "packages/astro-knowledge/data/transits/pluto-conjunction-chiron.json",
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/records/pluto-conjunction-chiron-exact-approval.json",
+      "bodySha256": "921551e109a907cd91c1c0627d7ae1ed94d4c924936b9a366938ce856447d835",
+      "previousReaderCopySha256": "4f31277d1a45da885ef676bc539a223d1c16a8c57bfd04e7d169fb7930027d47"
+    },
+    {
+      "contentKey": "sky.aspect.pluto.conjunction.lilith",
+      "sourceFile": "packages/astro-knowledge/data/transits/pluto-conjunction-lilith.json",
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/records/pluto-conjunction-lilith-exact-approval.json",
+      "bodySha256": "c1062170078e5fc6fdcafba5d1c4a698dd69b379a0fa9ff21d48210294943f0d",
+      "previousReaderCopySha256": "0251db9b326177eea4d242a30670b6621c0a25695dd1479d2b0bbc0cf92a87c2"
+    },
+    {
+      "contentKey": "sky.aspect.pluto.opposition.chiron",
+      "sourceFile": "packages/astro-knowledge/data/transits/pluto-opposition-chiron.json",
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/records/pluto-opposition-chiron-exact-approval.json",
+      "bodySha256": "7ba77b4f60f33868d504553dca23c16a7899518ab28e546b0e6c74532e27fbe9",
+      "previousReaderCopySha256": "a424c8b1805f546f9a619d4fbfeb0b5219bde9c225d3e139b1bdfd1e99addf0a"
+    },
+    {
+      "contentKey": "sky.aspect.pluto.opposition.lilith",
+      "sourceFile": "packages/astro-knowledge/data/transits/pluto-opposition-lilith.json",
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/records/pluto-opposition-lilith-exact-approval.json",
+      "bodySha256": "60bafee75f7aa073f6174edee29b844881dc8891aadac23e2d23d96af040ef3b",
+      "previousReaderCopySha256": "ee2d1fb7eed8da1e99b461bd524d18d0a0a3088cbc1cf32c1b9f599b9a3509ab"
+    },
+    {
+      "contentKey": "sky.aspect.pluto.sextile.chiron",
+      "sourceFile": "packages/astro-knowledge/data/transits/pluto-sextile-chiron.json",
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/records/pluto-sextile-chiron-exact-approval.json",
+      "bodySha256": "4038d52fe3b25532b89defff3aa887ce43abbb5711991ae29866894be5518da8",
+      "previousReaderCopySha256": "1005d56bf26ab04213bdb264cf728d6d27a96e372d2cbe9fda095ed38c0665da"
+    },
+    {
+      "contentKey": "sky.aspect.pluto.sextile.lilith",
+      "sourceFile": "packages/astro-knowledge/data/transits/pluto-sextile-lilith.json",
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/records/pluto-sextile-lilith-exact-approval.json",
+      "bodySha256": "e00ecc4a52a7e1297ac19936f3147e587ace7f94b901f2df68227c561670db11",
+      "previousReaderCopySha256": "7b9256ad32816710a1124954c9545c0a986c8bc9ae58e3cef80a5bd576712397"
+    },
+    {
+      "contentKey": "sky.aspect.pluto.square.chiron",
+      "sourceFile": "packages/astro-knowledge/data/transits/pluto-square-chiron.json",
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/records/pluto-square-chiron-exact-approval.json",
+      "bodySha256": "80f5a100aa913dbe7629c80d9ca6ec07bca1b38c48adbd9579488975438844de",
+      "previousReaderCopySha256": "60a70a12fff7152092105fb263663e63b47a171369361f9a01a395ca9988277f"
+    },
+    {
+      "contentKey": "sky.aspect.pluto.square.lilith",
+      "sourceFile": "packages/astro-knowledge/data/transits/pluto-square-lilith.json",
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/records/pluto-square-lilith-exact-approval.json",
+      "bodySha256": "ff2063c1b8fc5dccd8581b82d02dd2a305adf64af090adcdc6304ffc20daa784",
+      "previousReaderCopySha256": "2bdb06dc515541b7c1c49871b43374e40d66a1bf8ff495c4a722edf289c52d3c"
+    },
+    {
+      "contentKey": "sky.aspect.saturn.conjunction.chiron",
+      "sourceFile": "packages/astro-knowledge/data/transits/saturn-conjunction-chiron.json",
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/records/saturn-conjunction-chiron-exact-approval.json",
+      "bodySha256": "a7e43cf06d7d928a4f1256c6b2f99e6fb4c100339c4cb9f1bfd9ab6cd75ca2d0",
+      "previousReaderCopySha256": "6d7c3167ad689f199532de17920ca149737d042c69320d677aa8c86e415f0e0d"
+    },
+    {
+      "contentKey": "sky.aspect.saturn.conjunction.lilith",
+      "sourceFile": "packages/astro-knowledge/data/transits/saturn-conjunction-lilith.json",
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/records/saturn-conjunction-lilith-exact-approval.json",
+      "bodySha256": "508c3ad02d48608bae2c2716216b23b60526de41646aee911c767f7c9a74aa0d",
+      "previousReaderCopySha256": "3bda4409bcad4d4c0a0d07597b12841360f25e315d13415af8a547f5116a70e0"
+    },
+    {
+      "contentKey": "sky.aspect.saturn.opposition.chiron",
+      "sourceFile": "packages/astro-knowledge/data/transits/saturn-opposition-chiron.json",
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/records/saturn-opposition-chiron-exact-approval.json",
+      "bodySha256": "f32abcd2e1cd80cb95f24e91cb30fed3abfd215db7dc6afd3a091d50bcf00eb6",
+      "previousReaderCopySha256": "477d55c09eb27b3a56ea1c2e2d94794147acb74578a158519a715a6a3d6b5823"
+    },
+    {
+      "contentKey": "sky.aspect.saturn.opposition.lilith",
+      "sourceFile": "packages/astro-knowledge/data/transits/saturn-opposition-lilith.json",
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/records/saturn-opposition-lilith-exact-approval.json",
+      "bodySha256": "64c3e94756cee92bbad8b0e21437f918579204821d9fae27da50a64f67feb31e",
+      "previousReaderCopySha256": "2be56934582a841d52d0ab611a1954007174601d68bc23f0718ade664ad3e0b2"
+    },
+    {
+      "contentKey": "sky.aspect.saturn.sextile.chiron",
+      "sourceFile": "packages/astro-knowledge/data/transits/saturn-sextile-chiron.json",
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/records/saturn-sextile-chiron-exact-approval.json",
+      "bodySha256": "321925fe22532e5ee3f0e4c24c48541df231c2676d6a343c9e94d8151b292b3c",
+      "previousReaderCopySha256": "e23a803a5eab50799322180b886ef960a1798b103dd3dd0def4930a9b6fd789f"
+    },
+    {
+      "contentKey": "sky.aspect.saturn.sextile.lilith",
+      "sourceFile": "packages/astro-knowledge/data/transits/saturn-sextile-lilith.json",
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/records/saturn-sextile-lilith-exact-approval.json",
+      "bodySha256": "564795f39213a207b62bbf8375fc4dae5e665afe75d96a6e78a4b197e288eef8",
+      "previousReaderCopySha256": "4aa956cd99161dc6ae57a96ba213b4e745786673745ef129226968e3e6dd3da5"
+    },
+    {
+      "contentKey": "sky.aspect.saturn.square.chiron",
+      "sourceFile": "packages/astro-knowledge/data/transits/saturn-square-chiron.json",
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/records/saturn-square-chiron-exact-approval.json",
+      "bodySha256": "ac981963238455622aa5c3906e1f8474eef33739c63b5e1fba6e3b60123933ff",
+      "previousReaderCopySha256": "72b9f36d53ec3672d013a696bf86b6df1adf18d722819c497149b661cabd32b5"
+    },
+    {
+      "contentKey": "sky.aspect.sun.conjunction.chiron",
+      "sourceFile": "packages/astro-knowledge/data/transits/sun-conjunction-chiron.json",
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/records/sun-conjunction-chiron-exact-approval.json",
+      "bodySha256": "c2826f1d3eb159a5a4455eaf7ad3b50494b70798d0e97526f1527564f2b5e1c5",
+      "previousReaderCopySha256": "d201f5830fe38c4a47968dfb48581a0bda067240d3843875a658c1bf1537dc50"
+    },
+    {
+      "contentKey": "sky.aspect.sun.conjunction.lilith",
+      "sourceFile": "packages/astro-knowledge/data/transits/sun-conjunction-lilith.json",
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/records/sun-conjunction-lilith-exact-approval.json",
+      "bodySha256": "56fedba4e1c5d0fd278a304b2985c1b8139f12b922dc35b1bd5d47b0be51f357",
+      "previousReaderCopySha256": "5a165d93cb212d29a336de2fa232b2c355771bbe43fd9e58147c83fe90366842"
+    },
+    {
+      "contentKey": "sky.aspect.sun.opposition.chiron",
+      "sourceFile": "packages/astro-knowledge/data/transits/sun-opposition-chiron.json",
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/records/sun-opposition-chiron-exact-approval.json",
+      "bodySha256": "ea5e120b9309341bd74dc34e0165ce38944ade87a70baf049f5cf8bad21a77d9",
+      "previousReaderCopySha256": "c12985f57211511baa3682ad546b1de36a0d45ff8ff8d257270ac6a7bc1634f1"
+    },
+    {
+      "contentKey": "sky.aspect.sun.opposition.lilith",
+      "sourceFile": "packages/astro-knowledge/data/transits/sun-opposition-lilith.json",
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/records/sun-opposition-lilith-exact-approval.json",
+      "bodySha256": "a15794df0f32da1cca313fb957d25f124a475b385e2965002589fdd23e26c96d",
+      "previousReaderCopySha256": "fa3c3c93b67be14459fa3f4a1665676df56d47946972767b0f99213c2f1bc65c"
+    },
+    {
+      "contentKey": "sky.aspect.sun.sextile.chiron",
+      "sourceFile": "packages/astro-knowledge/data/transits/sun-sextile-chiron.json",
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/records/sun-sextile-chiron-exact-approval.json",
+      "bodySha256": "fec7c881bc1af2eef7e4cc92b9ae01ab49ee086a257f7cb1d6bb2e944fa3c375",
+      "previousReaderCopySha256": "e6e20a0ad68699beeeb01294a048d7e9315f287f9db3fd8e1a24ed7766df1b97"
+    },
+    {
+      "contentKey": "sky.aspect.sun.sextile.lilith",
+      "sourceFile": "packages/astro-knowledge/data/transits/sun-sextile-lilith.json",
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/records/sun-sextile-lilith-exact-approval.json",
+      "bodySha256": "1265c041474281dc8bac12ae1a3039d831012c69337bd7e160bb6defd1d17c5d",
+      "previousReaderCopySha256": "215ac0bd82f9d9bdbd377e90603b31f993520a068ab442b4a0889ecccce705c5"
+    },
+    {
+      "contentKey": "sky.aspect.sun.square.chiron",
+      "sourceFile": "packages/astro-knowledge/data/transits/sun-square-chiron.json",
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/records/sun-square-chiron-exact-approval.json",
+      "bodySha256": "b6b87854a734fabb67c083e958910a725e6694c68e36bd6bc66f6a8d2f8670bf",
+      "previousReaderCopySha256": "4f247146ddc899ef6c3ca15050272d3eff874b22c5686d064431a21fd757287c"
+    },
+    {
+      "contentKey": "sky.aspect.sun.square.lilith",
+      "sourceFile": "packages/astro-knowledge/data/transits/sun-square-lilith.json",
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/records/sun-square-lilith-exact-approval.json",
+      "bodySha256": "14ed918ce743493d93c42c86f0c2bb64b9ec95fcdf5279f90f5d166cd15ae2f2",
+      "previousReaderCopySha256": "a6bfff21a629b8a1af0cd7c08bcaee6e13581c936289d1bac926c5b20ddca123"
+    },
+    {
+      "contentKey": "sky.aspect.uranus.conjunction.chiron",
+      "sourceFile": "packages/astro-knowledge/data/transits/uranus-conjunction-chiron.json",
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/records/uranus-conjunction-chiron-exact-approval.json",
+      "bodySha256": "532ff1ea4bcd86eb86715365d30cb566f2fbc798c8e5e487ceb104414d0a9b3a",
+      "previousReaderCopySha256": "41403018ad17f82357e6c64ede57c9223a36288854467d8a3ea7ccc1d0cd6429"
+    },
+    {
+      "contentKey": "sky.aspect.uranus.conjunction.lilith",
+      "sourceFile": "packages/astro-knowledge/data/transits/uranus-conjunction-lilith.json",
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/records/uranus-conjunction-lilith-exact-approval.json",
+      "bodySha256": "d737d0fb9f32f8bf043dd249f8c6c2bc97ff6701362131b8e9518cce7ed4b034",
+      "previousReaderCopySha256": "7fbbddc86b72bcbdd24fd12027125f80e2e1a99c8707b552cc6bb31207782f75"
+    },
+    {
+      "contentKey": "sky.aspect.uranus.opposition.chiron",
+      "sourceFile": "packages/astro-knowledge/data/transits/uranus-opposition-chiron.json",
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/records/uranus-opposition-chiron-exact-approval.json",
+      "bodySha256": "edf5ce640758632bd1643083a408f631a356a89287301cc560ff6a410b9f03b0",
+      "previousReaderCopySha256": "f6fd8f235d1c9704a906a331f2ea5d2d293bb9520dad0f1361a3fcc9adfe3946"
+    },
+    {
+      "contentKey": "sky.aspect.uranus.opposition.lilith",
+      "sourceFile": "packages/astro-knowledge/data/transits/uranus-opposition-lilith.json",
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/records/uranus-opposition-lilith-exact-approval.json",
+      "bodySha256": "93158680fcd024e872d06fbdb550e356ec2af02f671a5ff1ef833e4e2706981f",
+      "previousReaderCopySha256": "4ae129ec7e6a0c93a569c3c025191f262e721586b3f6f029cea036d97cda07d9"
+    },
+    {
+      "contentKey": "sky.aspect.uranus.sextile.chiron",
+      "sourceFile": "packages/astro-knowledge/data/transits/uranus-sextile-chiron.json",
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/records/uranus-sextile-chiron-exact-approval.json",
+      "bodySha256": "eeebfad741b87722affe72ab13cfb2de4b7eb8ab271e39d1e535ba4e5770a524",
+      "previousReaderCopySha256": "d7d24f567b04cd6506aa12d2dd8cf3e0c6564ff3bc9ff4364614ce92328dcd4c"
+    },
+    {
+      "contentKey": "sky.aspect.uranus.sextile.lilith",
+      "sourceFile": "packages/astro-knowledge/data/transits/uranus-sextile-lilith.json",
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/records/uranus-sextile-lilith-exact-approval.json",
+      "bodySha256": "06fd8c5610af471e81c126dd42cd636282e582869c85d721d1e8c451d6f1bec9",
+      "previousReaderCopySha256": "c349cf0d350b075903a98c3dc533eed09c7e52b64e7bc3437cea3e3065fe6d39"
+    },
+    {
+      "contentKey": "sky.aspect.uranus.square.chiron",
+      "sourceFile": "packages/astro-knowledge/data/transits/uranus-square-chiron.json",
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/records/uranus-square-chiron-exact-approval.json",
+      "bodySha256": "7df54949e0bc9df20f11b3031ac4dbfe32a64f916e617fede3127d4c4e93f296",
+      "previousReaderCopySha256": "3f5d50ac38fd5c3bb8abf07ccced3b304e1fefb43b09689d7a0d8502dea455d1"
+    },
+    {
+      "contentKey": "sky.aspect.uranus.square.lilith",
+      "sourceFile": "packages/astro-knowledge/data/transits/uranus-square-lilith.json",
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/records/uranus-square-lilith-exact-approval.json",
+      "bodySha256": "cfd8b0b13d94efe293dcb18bed97bb7f6d3c68fb490d80ae7e4a2b96071c285b",
+      "previousReaderCopySha256": "6535fe0db9ac9b466db89cdc7a3c14b45057eccfebd37dcda0366786429be2a4"
+    },
+    {
+      "contentKey": "sky.aspect.venus.conjunction.chiron",
+      "sourceFile": "packages/astro-knowledge/data/transits/venus-conjunction-chiron.json",
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/records/venus-conjunction-chiron-exact-approval.json",
+      "bodySha256": "4c4057a5110347adffd270db1610824f2832af140b07660dcbf850ebef45ec50",
+      "previousReaderCopySha256": "e2318800e06ac5ce20ab9a6e9669703c4b2f294bd2368ce0c058ba924e36cb04"
+    },
+    {
+      "contentKey": "sky.aspect.venus.conjunction.lilith",
+      "sourceFile": "packages/astro-knowledge/data/transits/venus-conjunction-lilith.json",
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/records/venus-conjunction-lilith-exact-approval.json",
+      "bodySha256": "e21f5cac1d61fb4743ef60a7092deded762552c3bb42c1f950da8fafc91ccf55",
+      "previousReaderCopySha256": "8e59ac5164768a33f003b5d6b0bc07e85f9b978c473f38a3a4ed266eefe707fd"
+    },
+    {
+      "contentKey": "sky.aspect.venus.opposition.chiron",
+      "sourceFile": "packages/astro-knowledge/data/transits/venus-opposition-chiron.json",
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/records/venus-opposition-chiron-exact-approval.json",
+      "bodySha256": "01c8ff6300f3649420ac9417f18dc16b8bff2c21fcb8b9e54e11ffad45b71790",
+      "previousReaderCopySha256": "7e65d4c37c8948d178455b7e5a4f7d47f688e5316cd72084b35e69046e56655b"
+    },
+    {
+      "contentKey": "sky.aspect.venus.opposition.lilith",
+      "sourceFile": "packages/astro-knowledge/data/transits/venus-opposition-lilith.json",
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/records/venus-opposition-lilith-exact-approval.json",
+      "bodySha256": "a302d8e078e89011e7141a76d35f0cd2c43bf53e2f803a4d7cd40b23a48eec16",
+      "previousReaderCopySha256": "96ab4e12d49875629f0ccd7e4e9ac78eb76028e818eec20c3b47621b9a1212f7"
+    },
+    {
+      "contentKey": "sky.aspect.venus.sextile.chiron",
+      "sourceFile": "packages/astro-knowledge/data/transits/venus-sextile-chiron.json",
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/records/venus-sextile-chiron-exact-approval.json",
+      "bodySha256": "c4cb951a2c5fa12807fb8dd2a584ea1495463481efd019bfae824d626b896781",
+      "previousReaderCopySha256": "34f07366541bd25b496e18f4dbc0d035f37906d5e222b41e441d94022ad3d7f2"
+    },
+    {
+      "contentKey": "sky.aspect.venus.sextile.lilith",
+      "sourceFile": "packages/astro-knowledge/data/transits/venus-sextile-lilith.json",
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/records/venus-sextile-lilith-exact-approval.json",
+      "bodySha256": "f08969a741bb271deffe842cc056bccfb361187b456070f8b4f0d043df212865",
+      "previousReaderCopySha256": "db6c7a7c9eb3e48776517e3051739dca43a82f2c22cb9b99902f9ed65666393f"
+    },
+    {
+      "contentKey": "sky.aspect.venus.square.chiron",
+      "sourceFile": "packages/astro-knowledge/data/transits/venus-square-chiron.json",
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/records/venus-square-chiron-exact-approval.json",
+      "bodySha256": "5eda4e7f100589c1d9714223e50f2b1116d9bf941648e347a3de80fd522c814e",
+      "previousReaderCopySha256": "1c7b59a4ad09dcb57ef9f43292739cf2243f847f08b1f60ddd12637d74fe8705"
+    },
+    {
+      "contentKey": "sky.aspect.venus.square.lilith",
+      "sourceFile": "packages/astro-knowledge/data/transits/venus-square-lilith.json",
+      "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/records/venus-square-lilith-exact-approval.json",
+      "bodySha256": "8c4416950a97194832e8f7e858b65fe228e722e9b081c7ed3f5e286c1e22cab2",
+      "previousReaderCopySha256": "07aede4198cf0faf6ba7b46cf1499b1a0635aa4f1b0632ae716d31945d207ca1"
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.mercury.opposition.lilith",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-06",
+  "ownerStatement": "please mark all of this writing as approved for live",
+  "decisionContext": "Owner explicitly authorized all remaining Chiron + Lilith major Sky Calendar exact-aspect writing for live serving after reviewing and approving Batches 3 through 6.",
+  "batchId": "sky-calendar-exact-approved-2026-09-06-final-83",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "56c3d34fda743f258bd1a9626faabce1d93f5a68bb9b97571220a324c7f47900",
+  "summary": "Someone says the thing everyone else was thinking, and now the argument is about how they said it.",
+  "body": "Someone says the thing everyone else was thinking, and now the argument is about how they said it. When Mercury opposes Lilith, tone can become easier to fight about than the uncomfortable fact underneath it. The person may have been rude. They may have chosen terrible timing. They may still be right about the part nobody wanted to discuss. Deal with those as separate questions. If the information matters, making the speaker more pleasant will not make it disappear. Answer what they said before the argument about delivery becomes a way to avoid the subject completely.",
+  "sourceApprovalBatch": "sky-lilith-batch-5-v4-exact-owner-approved-2026-09-06",
+  "sourceApprovedAt": "2026-09-06"
+}

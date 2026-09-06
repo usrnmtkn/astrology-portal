@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.mars.conjunction.north-node",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-05",
+  "ownerStatement": "yes please continue",
+  "decisionContext": "The owner explicitly approved both 24-row North Node source batches on 2026-09-05 and then authorized shipping the 48 approved North Node passages into the governed Calendar exact-aspect corpus by replying \"yes please continue\".",
+  "batchId": "sky-calendar-exact-approved-2026-09-05-north-node-48",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-05-north-node-48/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "a57939e6a182551734b25251d4d1bce4e5ed0ddc97181448c84a2ebb69065209",
+  "summary": "A decision becomes much harder to keep theoretical once you act on it.",
+  "body": "A decision becomes much harder to keep theoretical once you act on it. When Mars conjuncts the North Node, action and forward movement meet at the same point, so sending the application, setting the boundary, starting the work, making the call, or leaving an arrangement can change your options immediately. That is the useful part of the pressure: action produces consequences that thinking cannot. Put the energy behind the move that creates new information, access, or freedom, not the reaction that only proves how frustrated you already were.",
+  "sourceApprovalBatch": "sky-north-node-launch-batch-1-owner-review-v2-2026-09-05"
+}

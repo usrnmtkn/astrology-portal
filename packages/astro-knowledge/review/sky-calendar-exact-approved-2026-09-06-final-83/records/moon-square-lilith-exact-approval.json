@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.moon.square.lilith",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-06",
+  "ownerStatement": "please mark all of this writing as approved for live",
+  "decisionContext": "Owner explicitly authorized all remaining Chiron + Lilith major Sky Calendar exact-aspect writing for live serving after reviewing and approving Batches 3 through 6.",
+  "batchId": "sky-calendar-exact-approved-2026-09-06-final-83",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "a7946be3d9a6cf7fac8a0f521fa787063645ca152d03a67c3e980c75a8f22c34",
+  "summary": "Keeping everyone comfortable can get expensive when your body is the one paying for it.",
+  "body": "Keeping everyone comfortable can get expensive when your body is the one paying for it. When the Moon squares Lilith, the routine that keeps home, family, or a relationship running can collide with a need you have been swallowing because it would disrupt somebody else's sense of normal. That is how care turns into resentment: you keep saying it is fine while your sleep, meals, patience, privacy, or time starts absorbing the difference. The need does not become selfish because somebody else dislikes it. Change the arrangement before your body has to keep making the argument for you.",
+  "sourceApprovalBatch": "sky-lilith-batch-5-v4-exact-owner-approved-2026-09-06",
+  "sourceApprovedAt": "2026-09-06"
+}
