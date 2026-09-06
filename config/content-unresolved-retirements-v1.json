@@ -1,0 +1,28 @@
+{
+  "schema": "tldrastro-content-unresolved-retirements/v1",
+  "version": "2026-09-05",
+  "purpose": "Exclude source records from the actionable editorial queue only when current architecture has a governed retirement/supersession decision. This does not delete source evidence or grant approval.",
+  "families": [
+    {
+      "id": "retired-sky-placement-you",
+      "contentKeyPrefix": "fallback-hook/sky-placement-you/",
+      "reason": "owner-retired-family",
+      "evidence": "packages/astro-knowledge/review/sky-placement-emergency-row-retirement-2026-08-08.md",
+      "replacement": "complete per-sign Sky Placement copy; renderer fails closed instead of substituting this family"
+    },
+    {
+      "id": "retired-sky-placement-practice",
+      "contentKeyPrefix": "fallback-hook/sky-placement-practice/",
+      "reason": "owner-retired-family",
+      "evidence": "packages/astro-knowledge/review/sky-placement-emergency-row-retirement-2026-08-08.md",
+      "replacement": "complete per-sign Sky Placement copy; renderer fails closed instead of substituting this family"
+    },
+    {
+      "id": "superseded-empty-house-ruler-v3",
+      "contentKeyPrefix": "fallback-hook/empty-house-ruler-v3/",
+      "reason": "superseded-by-owner-approved-v14",
+      "evidence": "packages/astro-knowledge/review/empty-house-v14/import-manifest.json",
+      "replacement": "fallback-template/natal.empty-house-v14 and its owner-approved V14 source keys"
+    }
+  ]
+}
