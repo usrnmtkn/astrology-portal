@@ -79,6 +79,41 @@
   margin: 0;
 }
 
+/* The reader-source content-role lead-in is explanatory text, not a diagnostic pill.
+   Keep the label inline so it cannot overlap the sentence that follows it. */
+.admin-dashboard .admin-editor-panel .admin-fallback-diagnostic-panel:has(> .admin-sky-edition-fields)
+  > .admin-fallback-diagnostic-heading > div > p:not(.admin-eyebrow) {
+  margin: var(--admin-space-sm) 0 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
+.admin-dashboard .admin-editor-panel .admin-fallback-diagnostic-panel:has(> .admin-sky-edition-fields)
+  > .admin-fallback-diagnostic-heading > div > p:not(.admin-eyebrow) > strong {
+  background: transparent;
+  border: 0;
+  border-radius: var(--admin-space-0);
+  color: var(--admin-text-high);
+  display: inline;
+  flex: initial;
+  line-height: inherit;
+  padding: var(--admin-space-0);
+}
+
+/* Source keys are allowed to wrap inside their own fact cell instead of widening
+   the editor or colliding with neighboring metadata. */
+.admin-dashboard .admin-editor-panel .admin-fallback-diagnostic-panel:has(> .admin-sky-edition-fields)
+  > .admin-fallback-diagnostic-heading .admin-hook-pattern-list > div {
+  min-width: 0;
+}
+
+.admin-dashboard .admin-editor-panel .admin-fallback-diagnostic-panel:has(> .admin-sky-edition-fields)
+  > .admin-fallback-diagnostic-heading .admin-hook-pattern-list code {
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  white-space: normal;
+}
+
 /* Make the source-workspace summary scannable: human context on the left,
    operational facts on the right. */
 @media (min-width: 1100px) {
@@ -149,5 +184,29 @@
   .admin-dashboard .admin-editor-panel .admin-fallback-diagnostic-panel:has(> .admin-sky-edition-fields)
     > .admin-sky-edition-fields {
     padding: var(--admin-space-2xl);
+  }
+
+  /* Give Publish a dedicated primary row on narrow editors. Secondary actions can
+     share the row below without squeezing their labels into each other. */
+  .admin-dashboard .admin-editor-savebar:has(.admin-publish-button) {
+    align-items: stretch;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .admin-dashboard .admin-editor-savebar:has(.admin-publish-button) .admin-editor-save-state {
+    grid-column: 1 / -1;
+    grid-row: 1;
+  }
+
+  .admin-dashboard .admin-editor-savebar:has(.admin-publish-button) .admin-publish-button {
+    grid-column: 1 / -1;
+    grid-row: 2;
+  }
+
+  .admin-dashboard .admin-editor-savebar:has(.admin-publish-button) > button {
+    max-width: 100%;
+    min-width: 0;
+    width: 100%;
   }
 }
