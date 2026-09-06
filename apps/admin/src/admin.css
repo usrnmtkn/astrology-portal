@@ -2454,31 +2454,6 @@ body,
   flex: 0 0 auto;
 }
 
-.admin-status.status-live {
-  background: var(--admin-ui-success-soft);
-  border-color: var(--admin-primary-border);
-  color: var(--admin-ui-success);
-}
-
-.admin-status.status-draft {
-  background: var(--admin-accent-soft);
-  border-color: var(--admin-warning-ui-border);
-  color: var(--admin-ui-warning);
-}
-
-.admin-status.status-reviewed {
-  background: var(--admin-ui-info-soft);
-  border-color: var(--admin-ui-info-border);
-  color: var(--admin-ui-info);
-}
-
-.admin-status.status-archived,
-.admin-status.status-error {
-  background: var(--admin-ui-danger-soft);
-  border-color: var(--admin-danger-border);
-  color: var(--admin-ui-danger);
-}
-
 .admin-restriction-pill {
   border: var(--border-width-thin) solid var(--admin-line-warm);
   color: var(--admin-ui-muted);
@@ -2509,12 +2484,6 @@ body,
 
 .admin-empty-error {
   color: var(--admin-accent-copy-strong);
-}
-
-.admin-editor-panel {
-  display: grid;
-  gap: var(--admin-space-0);
-  overflow: hidden;
 }
 
 .admin-drawer-backdrop {
@@ -4628,35 +4597,6 @@ body,
   font-size: var(--admin-type-12);
 }
 
-.admin-status,
-.admin-restriction-pill {
-  border-radius: var(--admin-radius-pill);
-  font-family: var(--font-mono);
-  font-size: var(--admin-type-11);
-  font-weight: var(--weight-semibold);
-  letter-spacing: var(--tracking-label);
-  min-height: 24px;
-  padding: 0 var(--admin-space-lg);
-}
-
-.admin-status.status-draft {
-  background: var(--admin-ui-warning-soft);
-  border-color: var(--admin-warning-ui-border);
-  color: var(--admin-ui-warning);
-}
-
-.admin-status.status-live {
-  background: var(--admin-ui-success-soft);
-  border-color: var(--admin-primary-border);
-  color: var(--admin-ui-success);
-}
-
-.admin-status.status-reviewed {
-  background: var(--admin-ui-info-soft);
-  border-color: var(--admin-ui-info-border);
-  color: var(--admin-ui-info);
-}
-
 .admin-drawer-backdrop {
   background: var(--admin-ui-backdrop);
   padding-left: var(--admin-drawer-inset-wider);
@@ -6425,21 +6365,6 @@ body,
   padding: var(--admin-space-sm) var(--admin-space-xl);
 }
 
-.admin-status.status-live {
-  background: var(--admin-ui-success-soft);
-  color: var(--admin-ui-success);
-}
-
-.admin-status.status-draft {
-  background: var(--admin-ui-warning-soft);
-  color: var(--admin-ui-warning);
-}
-
-.admin-status.status-reviewed {
-  background: var(--admin-ui-info-soft);
-  color: var(--admin-ui-info);
-}
-
 .admin-fallback-usage {
   gap: var(--admin-space-4xl);
 }
@@ -7385,25 +7310,6 @@ body,
   font-size: var(--admin-type-11);
   font-weight: var(--weight-medium);
   line-height: var(--leading-title);
-}
-
-.admin-reader-state-pill.reader-ready {
-  border-color: var(--admin-primary-border);
-  background: var(--admin-ui-success-soft);
-  color: var(--admin-success-text);
-}
-
-.admin-reader-state-pill.fallback-needed {
-  border-color: var(--admin-warning-ui-border);
-  background: var(--admin-ui-warning-soft);
-  color: var(--admin-warning-text);
-}
-
-.admin-reader-state-pill.reference-held,
-.admin-reader-state-pill.review-held {
-  border-color: var(--admin-ui-fallback-border);
-  background: var(--admin-violet-bg);
-  color: var(--admin-ui-fallback);
 }
 
 .admin-content-title-cell {
@@ -8576,32 +8482,43 @@ body,
   letter-spacing: 0;
 }
 
-.admin-dashboard :where(.status-live, .admin-status.status-live, .admin-status-select.status-live, .reader-ready, .admin-reader-state-pill.reader-ready) {
+/* Status colour: the single source for editorial pills (.admin-status.status-*) and
+   reader-visibility pills (.admin-reader-state-pill.*). Published/reader-ready = green,
+   Reviewed = blue, Draft and Needs review = amber, Copy missing = red, Archived = muted. */
+.admin-dashboard .admin-status.status-live,
+.admin-dashboard .admin-reader-state-pill.reader-ready {
   background: var(--admin-ui-success-soft);
   border-color: var(--admin-ui-live-border);
   color: var(--admin-ui-live-copy);
 }
 
-.admin-dashboard :where(.status-reviewed, .admin-status.status-reviewed, .admin-status-select.status-reviewed) {
+.admin-dashboard .admin-status.status-reviewed {
   background: var(--admin-ui-reviewed-surface);
   border-color: var(--admin-ui-reviewed-border);
   color: var(--admin-ui-reviewed-copy);
 }
 
-.admin-dashboard :where(.status-draft, .status-needs-review, .status-needs_review, .admin-status.status-draft, .admin-status-select.status-draft) {
+.admin-dashboard .admin-status.status-draft,
+.admin-dashboard .admin-status.status-error,
+.admin-dashboard .admin-reader-state-pill.draft-held,
+.admin-dashboard .admin-reader-state-pill.review-held {
   background: var(--admin-ui-warning-soft);
   border-color: var(--admin-ui-draft-border);
   color: var(--admin-ui-draft-copy);
 }
 
-.admin-dashboard :where(.status-error, .fallback-needed, .admin-reader-state-pill.fallback-needed, .admin-danger-button) {
+.admin-dashboard .admin-reader-state-pill.fallback-needed,
+.admin-dashboard .admin-reader-state-pill.needs-source-material,
+.admin-dashboard :where(.admin-danger-button) {
   background: var(--admin-ui-danger-soft);
   border-color: var(--admin-ui-error-border);
   color: var(--admin-ui-error-copy);
 }
 
-.admin-dashboard :where(.status-archived, .admin-status.status-archived, .admin-status-select.status-archived) {
+.admin-dashboard .admin-status.status-archived,
+.admin-dashboard .admin-reader-state-pill.reference-held {
   background: var(--admin-ui-archived-surface);
+  border-color: var(--admin-ui-border);
   color: var(--admin-ui-subtle);
 }
 
@@ -8950,18 +8867,23 @@ body,
   outline: 0;
 }
 
+/* Slide-out editor shell: one definition. The toolbar stays fixed at the top and
+   .admin-post-editor scrolls on its own (see the child rules further down). */
 .admin-dashboard .admin-editor-panel {
+  align-content: stretch;
   background: var(--admin-ui-bg);
   border: var(--border-width-thin) solid var(--admin-ui-border-strong);
   border-radius: 0;
   box-shadow: var(--admin-shadow-editor-left);
-  display: grid;
-  gap: var(--admin-space-4xl);
+  display: flex;
+  flex-direction: column;
+  gap: 0;
   height: 100vh;
   max-width: min(var(--admin-editor-width), calc(100vw - 48px));
   min-width: 0;
-  overflow-y: auto;
-  padding: var(--admin-space-5xl);
+  overflow: hidden;
+  overscroll-behavior: contain;
+  padding: 0;
   position: fixed;
   right: 0;
   top: 0;
@@ -10310,18 +10232,6 @@ body,
   word-break: normal;
 }
 
-.admin-dashboard .admin-reader-state-pill,
-.admin-dashboard .admin-status,
-.admin-dashboard .ui-pill {
-  align-items: center;
-  border-radius: var(--admin-radius-pill);
-  box-sizing: border-box;
-  line-height: 1.2;
-  min-height: 28px;
-  padding: var(--admin-space-5) var(--admin-space-lg);
-  white-space: normal;
-}
-
 .admin-dashboard .admin-reader-safety-grid article span {
   line-height: 1.18;
   max-width: 100%;
@@ -10346,7 +10256,7 @@ body,
 .admin-dashboard .admin-content-table th.admin-col-content,
 .admin-dashboard .admin-content-table td.admin-col-content { width: 340px; }
 .admin-dashboard .admin-content-table th.admin-col-visibility,
-.admin-dashboard .admin-content-table td.admin-col-visibility,
+.admin-dashboard .admin-content-table td.admin-col-visibility { width: 176px; }
 .admin-dashboard .admin-content-table th.admin-col-editorial,
 .admin-dashboard .admin-content-table td.admin-col-editorial { width: 132px; }
 .admin-dashboard .admin-content-table th.admin-col-destination,
@@ -11000,16 +10910,6 @@ body,
 
 /* Shared slide-out shell. Keep every editor, guide, and nested source panel
    compact at the top while its content scrolls independently below. */
-.admin-dashboard .admin-editor-panel {
-  align-content: stretch;
-  display: flex;
-  flex-direction: column;
-  gap: 0;
-  overflow: hidden;
-  overscroll-behavior: contain;
-  padding: 0;
-}
-
 .admin-dashboard .admin-editor-panel > .admin-editor-toolbar {
   flex: 0 0 auto;
   margin: 0;
@@ -11753,20 +11653,25 @@ body,
   grid-column: 1 / -1;
 }
 
-.admin-dashboard .admin-editor-savebar {
+/* Save bar: one definition, no !important. It sits in normal flow at the bottom
+   of the slide-out shell; the panel itself is the fixed element. */
+.admin-dashboard .admin-editor-panel > .admin-editor-savebar {
   align-items: center;
-  background: var(--admin-panel-overlay) !important;
-  border-top: var(--border-width-thin) solid var(--admin-ui-border-strong) !important;
-  bottom: 0;
+  background: var(--admin-panel-overlay-strong);
+  border: 0;
+  border-top: var(--border-width-thin) solid var(--admin-ui-border-strong);
+  bottom: auto;
   box-shadow: var(--admin-ui-savebar-shadow);
   display: flex;
   flex: 0 0 auto;
   flex-wrap: wrap;
   gap: var(--admin-space-lg);
-  margin: 0 !important;
-  padding: var(--admin-space-2xl) var(--admin-space-5xl) !important;
-  position: relative !important;
-  z-index: 4;
+  justify-content: flex-end;
+  margin: 0;
+  padding: var(--admin-space-xl) var(--admin-space-5xl);
+  position: relative;
+  width: 100%;
+  z-index: auto;
 }
 
 .admin-dashboard .admin-editor-panel .admin-review-json pre {
@@ -11863,9 +11768,9 @@ body,
     min-height: 210px;
   }
 
-  .admin-dashboard .admin-editor-savebar {
-    margin: 0 !important;
-    padding: var(--admin-space-xl) var(--admin-space-4xl) calc(var(--admin-space-xl) + env(safe-area-inset-bottom)) !important;
+  .admin-dashboard .admin-editor-panel > .admin-editor-savebar {
+    margin: 0;
+    padding: var(--admin-space-xl) var(--admin-space-4xl) calc(var(--admin-space-xl) + env(safe-area-inset-bottom));
   }
 
   .admin-dashboard .admin-editor-save-state {
@@ -13197,10 +13102,14 @@ body,
   padding-inline: var(--admin-space-0);
 }
 
+/* Status pills: one geometry rule. Colour comes from the :where() state rules above. */
 .admin-dashboard .admin-reader-state-pill,
 .admin-dashboard .admin-status,
 .admin-dashboard .ui-pill {
+  align-items: center;
   border-radius: var(--admin-ui-radius-sm);
+  box-sizing: border-box;
+  display: inline-flex;
   line-height: 1.15;
   min-height: 26px;
   padding: var(--admin-space-2xs) var(--admin-space-lg);
@@ -13218,10 +13127,13 @@ body,
 }
 
 .admin-dashboard .admin-content-table--browse th.admin-col-visibility,
-.admin-dashboard .admin-content-table--browse td.admin-col-visibility,
+.admin-dashboard .admin-content-table--browse td.admin-col-visibility {
+  width: 176px;
+}
+
 .admin-dashboard .admin-content-table--browse th.admin-col-editorial,
 .admin-dashboard .admin-content-table--browse td.admin-col-editorial {
-  width: 118px;
+  width: 132px;
 }
 
 .admin-dashboard .admin-content-table--browse th.admin-col-source,

@@ -4,6 +4,7 @@
 }
 
 .admin-dashboard {
+  /* Single resolved token block. Earlier palette generations (warm brown, blue, navy) were stacked here as separate .admin-dashboard blocks; the last declaration always won, so this is the same resolved set with the legacy accent names aliased onto the green --admin-ui-* system. */
   /* Compact shared foundations keep lazy Admin routes self-contained. */
   --font-display: "Newsreader", Georgia, "Times New Roman", serif;
   --font-body: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
@@ -56,20 +57,20 @@
   --label-eyebrow-font-family: var(--font-label);
   --label-eyebrow-font-size: var(--type-label-size);
   --label-eyebrow-font-weight: var(--weight-semibold);
-  --admin-bg: var(--admin-document-bg);
-  --admin-sidebar: rgba(13, 12, 19, 0.9);
-  --admin-panel: rgba(20, 19, 28, 0.82);
-  --admin-panel-2: rgba(29, 26, 38, 0.86);
+  --admin-bg: var(--admin-ui-bg);
+  --admin-sidebar: var(--admin-ui-sidebar);
+  --admin-panel: var(--admin-ui-surface);
+  --admin-panel-2: var(--admin-ui-surface-2);
   --admin-panel-3: #f7f7f4;
-  --admin-ink: #e8e0d0;
+  --admin-ink: var(--admin-ui-text);
   --admin-ink-dark: #171918;
-  --admin-muted: #c8c0b0;
+  --admin-muted: var(--admin-ui-muted);
   --admin-muted-dark: #6f7278;
-  --admin-line: rgba(232, 224, 208, 0.12);
+  --admin-line: var(--admin-ui-border);
   --admin-line-dark: rgba(23, 25, 24, 0.13);
-  --admin-accent: #c17f5a;
-  --admin-accent-2: #8a7a44;
-  --admin-danger: #c26f68;
+  --admin-accent: var(--admin-ui-primary);
+  --admin-accent-2: var(--admin-ui-primary-hover);
+  --admin-danger: var(--admin-ui-danger);
   --admin-surface-faint: rgba(255, 255, 255, 0.035);
   --admin-surface-subtle: rgba(255, 255, 255, 0.025);
   --admin-surface-soft: rgba(255, 255, 255, 0.04);
@@ -81,7 +82,7 @@
   --admin-text-strong: rgba(245, 243, 238, 0.88);
   --admin-muted-copy: rgba(200, 192, 176, 0.76);
   --admin-line-faint: rgba(232, 224, 208, 0.08);
-  --admin-accent-soft: rgba(193, 127, 90, 0.16);
+  --admin-accent-soft: var(--admin-ui-primary-soft);
   --admin-control-surface: rgba(244, 241, 234, 0.08);
   --admin-control-border: rgba(244, 241, 234, 0.12);
   --admin-dark-text: #111;
@@ -169,7 +170,7 @@
   --admin-text: var(--admin-ink);
   --admin-ui-accent-soft: color-mix(in srgb, var(--admin-accent) 18%, transparent);
   --admin-ui-border-soft: var(--admin-line);
-  --admin-ui-danger: var(--admin-danger);
+  --admin-ui-danger: var(--admin-danger-copy);
   --admin-ui-radius-sm: var(--admin-radius-sm);
   --admin-ui-radius-md: var(--admin-radius-md);
   --admin-ui-radius-xl: var(--admin-radius-xl);
@@ -182,7 +183,7 @@
   --admin-space-micro: 2px;
   --admin-space-2xs: 3px;
   --admin-space-xs: 4px;
-  --admin-space-5: 5px;
+  --admin-space-5: 24px;
   --admin-space-sm: 6px;
   --admin-space-7: 7px;
   --admin-space-md: 8px;
@@ -221,7 +222,7 @@
   --admin-radius-sm: 6px;
   --admin-radius-7: 7px;
   --admin-radius-md: 8px;
-  --admin-radius-lg: 10px;
+  --admin-radius-lg: 12px;
   --admin-radius-xl: 12px;
   --admin-radius-2xl: 14px;
   --admin-radius-3xl: 16px;
@@ -286,69 +287,20 @@
   --admin-shadow-active-rail: inset var(--border-width-thick) 0 0 var(--admin-ui-primary);
   --admin-shadow-connector-ring: 0 0 0 var(--admin-space-xs) var(--admin-ui-primary-soft);
   --duration-badge-bg: rgba(232, 224, 208, 0.055);
-  --duration-badge-fg: var(--admin-muted)
-}
-.admin-dashboard {
-  --admin-bg: #141414;
-  --admin-sidebar: #101010;
-  --admin-panel: #1b1b1a;
-  --admin-panel-2: #20201f;
-  --admin-ink: #f4f1ea;
-  --admin-muted: #aaa69d;
-  --admin-line: rgba(244, 241, 234, 0.11);
-  --admin-accent: #d28b63;
-  --admin-accent-2: #f2a66f;
-  --admin-danger: #ef7d73
-}
-.admin-dashboard {
-  --admin-bg: #111315;
-  --admin-sidebar: #242932;
-  --admin-panel: #151719;
-  --admin-panel-2: #1d2024;
-  --admin-ink: #e7eaee;
-  --admin-muted: #a9b0ba;
-  --admin-line: rgba(231, 234, 238, 0.14);
-  --admin-accent: #7da7ff;
-  --admin-accent-2: #9bbcff
-}
-.admin-dashboard {
+  --duration-badge-fg: var(--admin-muted);
   --admin-radius: 8px;
-  --admin-radius-sm: 6px;
   --admin-space-1: 6px;
   --admin-space-2: 10px;
   --admin-space-3: 14px;
   --admin-space-4: 18px;
-  --admin-space-5: 24px;
-  --admin-field-height: 40px;
+  --admin-field-height: 38px;
   --admin-panel-bg: #151719;
-  --admin-panel-raised: #1b1e22;
-  --admin-panel-soft: rgba(255, 255, 255, 0.026)
-}
-.admin-dashboard {
-  --admin-bg: #090c12;
-  --admin-sidebar: #0b1018;
-  --admin-panel: #121923;
-  --admin-panel-dark: #090d13;
   --admin-panel-raised: #172131;
   --admin-panel-soft: #101720;
-  --admin-ink: #f4f7fb;
-  --admin-muted: #93a0b3;
+  --admin-panel-dark: #090d13;
   --admin-border: rgba(130, 145, 170, 0.24);
-  --admin-line: rgba(130, 145, 170, 0.22);
-  --admin-accent: #6697ff;
-  --admin-good: #5bd89f;
-  --admin-warn: #e4a453;
-  --admin-danger: #e07668;
-  --admin-radius-lg: 16px;
-  --admin-radius: 10px;
-  --admin-field-height: 48px
-}
-.admin-dashboard {
-  --admin-radius-lg: 12px;
-  --admin-radius: 8px;
-  --admin-field-height: 38px
-}
-.admin-dashboard {
+  --admin-good: var(--admin-ui-success);
+  --admin-warn: var(--admin-ui-warning);
   --admin-ui-bg: #111312;
   --admin-ui-sidebar: #101211;
   --admin-ui-surface: #151817;
@@ -367,7 +319,6 @@
   --admin-ui-success: var(--admin-success-ui-copy);
   --admin-ui-warning: var(--admin-warning-ui-copy);
   --admin-ui-info: var(--admin-blue-accent);
-  --admin-ui-danger: var(--admin-danger-copy);
   --admin-ui-info-soft: var(--admin-blue-bg);
   --admin-ui-info-border: var(--admin-blue-border-soft);
   --admin-ui-on-primary: var(--admin-ui-bg);
@@ -464,12 +415,6 @@
   --admin-ui-type-brand: var(--admin-type-18);
   --admin-ui-type-panel-title: var(--admin-type-22);
   --admin-ui-type-stat: calc(var(--admin-type-24) + var(--space-1) / 2);
-  --admin-sidebar: var(--admin-ui-sidebar);
-  --admin-panel: var(--admin-ui-surface);
-  --admin-panel-2: var(--admin-ui-surface-2);
-  --admin-ink: var(--admin-ui-text);
-  --admin-muted: var(--admin-ui-muted);
-  --admin-line: var(--admin-ui-border)
 }
 .admin-dashboard .variable-fact {
   --composition-variable-bg: rgba(56, 189, 248, 0.12);
