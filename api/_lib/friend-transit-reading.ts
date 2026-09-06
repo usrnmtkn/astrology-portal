@@ -176,7 +176,16 @@ export function assertFriendTransitReadingBrief(value: unknown): FriendTransitRe
   if (!friendName) throw new Error("FRIEND_TRANSIT_READING_FRIEND_NAME_REQUIRED");
   const primaryThemes = array(brief.primaryThemes).map(assertPersonalTransit);
   const longerCycles = array(brief.longerCycles).map(assertPersonalTransit);
-  if ([...primaryThemes, ...longerCycles].some((item) => !item.detailAvailable || !item.evidence.transitPlanet || !item.evidence.aspect || !item.evidence.natalPoint)) {
+  if ([...primaryThemes, ...longerCycles].some((item) => (
+    !item.detailAvailable
+    || !item.id
+    || !item.title
+    || !item.summary
+    || !item.evidence.transitPlanet
+    || !item.evidence.aspect
+    || !item.evidence.natalPoint
+    || item.evidence.contentKeys.length === 0
+  ))) {
     throw new Error("FRIEND_TRANSIT_READING_PERSONAL_EVIDENCE_INVALID");
   }
   const relationshipActivations = array(brief.relationshipActivations).flatMap((value) => {
@@ -249,6 +258,47 @@ export function friendTransitReadingKnowledgeIds(brief: FriendTransitReadingBrie
 
 export function friendTransitReadingCanGenerate(brief: FriendTransitReadingBrief) {
   return [...brief.primaryThemes, ...brief.longerCycles].length > 0;
+}
+
+export function friendTransitReadingRequestLock(input: {
+  brief: unknown;
+  subjectId: string;
+  targetDate: string;
+}) {
+  const brief = assertFriendTransitReadingBrief(input.brief);
+  const subjectId = stringValue(input.subjectId);
+  const targetDate = stringValue(input.targetDate);
+
+  if (!subjectId) throw new Error("FRIEND_TRANSIT_READING_SUBJECT_REQUIRED");
+  if (!/^\d{4}-\d{2}-\d{2}$/u.test(targetDate)) {
+    throw new Error("FRIEND_TRANSIT_READING_TARGET_DATE_REQUIRED");
+  }
+  if (!friendTransitReadingCanGenerate(brief)) {
+    throw new Error("FRIEND_TRANSIT_READING_NO_PERSONAL_TRANSIT_EVIDENCE");
+  }
+
+  return {
+    brief,
+    contentKey: `friend-transit-reading/${subjectId}/${targetDate}`,
+    surface: "friends" as const,
+    mode: "in_depth" as const,
+    eventType: FRIEND_TRANSIT_READING_EVENT_TYPE,
+    headline: `What's going on with ${brief.friendName} right now?`,
+    knowledgeIds: friendTransitReadingKnowledgeIds(brief),
+    facts: {
+      contentType: FRIEND_TRANSIT_READING_CONTENT_TYPE,
+      blockType: FRIEND_TRANSIT_READING_CONTENT_TYPE,
+      friendTransitsBrief: brief
+    },
+    sourceSnapshot: {
+      schema: "friend-transit-reading-source.v1",
+      briefSchema: brief.schema,
+      friendName: brief.friendName,
+      dateLabel: brief.dateLabel,
+      counts: brief.counts,
+      targetDate
+    }
+  };
 }
 
 function approvedReaderText(brief: FriendTransitReadingBrief) {
