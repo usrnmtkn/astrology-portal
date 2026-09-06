@@ -1,7 +1,7 @@
 # Sky Calendar South Node pole-specific authoring — V1
 
 Date: 2026-09-06
-Status: **exact owner approved / no serving changes yet**
+Status: **exact owner approved / serving outputs materialized / production merge pending**
 
 ## Owner product decision
 
@@ -11,7 +11,7 @@ Geometry deduplication is correct: one exact node-axis contact should not become
 
 The product contract is therefore:
 
-**one astronomical event → two possible pole-specific interpretations**
+**one astronomical event → two pole-specific interpretations**
 
 This supersedes the editorial conclusion in `sky-calendar-south-node-axis-audit-2026-09-06` that no separate South Node writing queue was needed. The prior audit remains correct about geometry and event identity only.
 
@@ -66,33 +66,40 @@ On 2026-09-06 the owner reviewed representative passages from the complete 60-re
 
 That statement grants **exact wording approval** to all 60 `summary` and `body` fields in the candidate set bound to commit `2005e620da8a98f8cbc2e1aa711f4cc127f5ddac` and the twelve record-file blob SHAs recorded in `owner-batch-authorization.json`.
 
-The original record packets retain their `needs_review` fields as the immutable pre-approval snapshot. The separate authorization record is the approval evidence and binds the approved wording without rewriting the source packets after the decision.
+The original record packets retain their `needs_review` and `runtimeEligible:false` fields as the immutable pre-approval snapshot. The separate authorization record is the approval evidence and binds the approved wording without rewriting the source packets after the decision.
 
-Approval does **not** by itself make these records runtime eligible. Serving remains a separate implementation change.
+The owner later authorized the serving implementation and Content Studio editing with:
 
-## Current boundary
+> please proceed, and also make sure the south node content can be edited in the Content Studio
 
-This approval branch still does **not**:
+That implementation authorization is recorded separately in `owner-serving-authorization.json` so the original editorial approval remains immutable.
 
-- change the approved North Node corpus;
-- create live `*-south-node.json` runtime transit records;
-- change Calendar event calculation or timestamps;
-- change reader routing;
-- publish any South Node copy.
+## Serving model
 
-The next serving implementation must keep a single astronomical node-axis event while making both pole-specific interpretations addressable by the content/UI layer.
+The serving release preserves the existing node-axis calculation and timestamp deduplication. The engine continues to emit one North-Node-keyed astronomical event. The content layer resolves the already-approved North Node interpretation and its mathematically mirrored South Node interpretation for that same event.
 
-## What the eventual serving model should preserve
+For a square, both interpretations carry `square`. For conjunction/opposition and sextile/trine, the South Node interpretation carries the mirrored aspect name.
 
-For a square, both pole interpretations share the same aspect name and exact time, but may carry different copy. For conjunction/opposition and sextile/trine, the same event carries mirrored aspect names across the two poles.
+The release materializes 60 exact South Node runtime content sources under `packages/astro-knowledge/data/transits/*-south-node.json`. Those files are **content records, not additional astronomical events**.
 
-Example data shape, not yet a runtime schema:
+## Content Studio
 
-```text
-nodeAxisEvent
-  northNode: { aspect, contentKey }
-  southNode: { mirroredAspect, contentKey }
-  exactAt: one timestamp
-```
+Every LIVE exact South Node runtime source is mirrored into the existing Calendar Aspects Content Studio catalog as its own editable row. North Node and South Node retain separate content keys and explicit `nodeAxisPole` metadata, so editing one pole cannot overwrite or collapse the other.
 
-The event is deduplicated. The meaning is not.
+Editable fields remain:
+
+- Summary
+- Body
+
+As with the existing exact-aspect catalog, editing a published baseline forks a non-serving draft. An edit does not silently overwrite owner-approved serving copy; the normal explicit Sign Off and governed serving-release boundary remains in place.
+
+## Invariants
+
+The serving implementation must keep all of these true:
+
+- one astronomical node-axis event and one exact timestamp;
+- 60 canonical North Node event interpretations remain unchanged;
+- 60 distinct South Node pole-specific interpretations remain byte-identical to the owner-approved candidate snapshot at release;
+- no North Node prose is relabeled or mechanically reversed into South Node prose;
+- North Node and South Node remain independently addressable in Content Studio;
+- South Node content provenance points back to both the exact editorial approval and the separate serving authorization.

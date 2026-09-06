@@ -1,0 +1,29 @@
+{
+  "type": "bounded_contextual_owner_batch_authorization",
+  "authority": "owner",
+  "decision": "approve",
+  "batchId": "sky-calendar-south-node-60-v1-serving",
+  "sourceEditorialBatchId": "sky-calendar-south-node-60-v1",
+  "sourceEditorialAuthorizationPath": "packages/astro-knowledge/review/sky-calendar-south-node-60-v1/owner-batch-authorization.json",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-south-node-60-v1/owner-serving-authorization.json",
+  "ownerStatement": "please proceed, and also make sure the south node content can be edited in the Content Studio",
+  "decisionContext": "After establishing that one astronomical lunar-node-axis event can carry distinct North Node and South Node interpretations, the owner authorized the already exact-wording-approved 60 South Node Calendar passages to proceed to reader serving and required the South Node content to be editable in Content Studio.",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedFields": [
+    "summary",
+    "body"
+  ],
+  "approvalEffect": "serving_and_content_studio_authorization",
+  "capabilities": [
+    "batch_generation",
+    "serving",
+    "content_studio_sync"
+  ],
+  "authorizedAt": "2026-09-06",
+  "memberCount": 60,
+  "approvedCandidateHeadSha": "2005e620da8a98f8cbc2e1aa711f4cc127f5ddac",
+  "runtimeEligible": true,
+  "contentStudioEditable": true,
+  "geometryPolicy": "single-node-axis-event",
+  "editorialPolicy": "distinct-north-and-south-pole-copy"
+}

@@ -1,0 +1,18 @@
+{
+  "id": "mars-trine-south-node",
+  "transiting": "mars",
+  "aspect": "trine",
+  "other": "south-node",
+  "base": "Old muscle memory can make the familiar move feel obviously right.",
+  "business": "A supportive opening is available here; use what becomes easier without assuming ease will do the work for you.",
+  "shadow": "The ease of a trine can make the opening easy to miss, leave unused, or go unexamined.",
+  "arcApplying": "Support and coordination build toward exactness.",
+  "arcSeparating": "The opening begins to recede after exactness.",
+  "voiceNeutral": true,
+  "status": "LIVE",
+  "readerCopy": {
+    "summary": "Old muscle memory can make the familiar move feel obviously right.",
+    "body": "Old muscle memory can make the familiar move feel obviously right. Mars trine the South Node can give you easy access to a practiced way of acting, competing, defending yourself, or getting something done. The response may be efficient because you have used it many times. That is a strength when the situation actually calls for it. It is a problem when speed keeps you from noticing that a different kind of action would cost less and solve more.",
+    "approvedVia": "exact owner-approved South Node Calendar batch sky-calendar-south-node-60-v1; packages/astro-knowledge/review/sky-calendar-south-node-60-v1/owner-batch-authorization.json; serving authorized by packages/astro-knowledge/review/sky-calendar-south-node-60-v1/owner-serving-authorization.json"
+  }
+}
