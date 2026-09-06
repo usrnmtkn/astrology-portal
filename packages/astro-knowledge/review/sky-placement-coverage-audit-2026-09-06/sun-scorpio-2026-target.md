@@ -27,28 +27,30 @@ The existing authoring facts file contains only two `eventsDuringTransit` record
 
 The companion audit script must be the implementation authority for this list. An independent Swiss Ephemeris cross-check against the engine's ingress boundaries identifies the following five major exact Sun aspects inside the residency:
 
-| Order | Approx. exact event | Geometry | Signs | Repo status before pilot |
+| Order | Approx. exact event | Geometry | Signs | Existing exact aspect-copy authority |
 | ---: | --- | --- | --- | --- |
-| 1 | Oct. 24, 2026 | Sun conjunct Venus | Scorpio / Scorpio | engine confirmation required; governed aspect-copy resolution required |
-| 2 | Oct. 26, 2026 | Sun square Pluto | Scorpio / Aquarius | already present in the existing engine-facts artifact; governed aspect-copy resolution required |
-| 3 | Nov. 4, 2026 | Sun conjunct Mercury | Scorpio / Scorpio | engine confirmation required; governed aspect-copy resolution required |
-| 4 | Nov. 18, 2026 | Sun square Jupiter | Scorpio / Leo | already present in the existing engine-facts artifact; governed aspect-copy resolution required |
-| 5 | Nov. 19, 2026 | Sun square Mars | Scorpio / Leo | engine confirmation required; governed aspect-copy resolution required |
+| 1 | Oct. 24, 2026 | Sun conjunct Venus | Scorpio / Scorpio | `packages/astro-knowledge/data/transits/sun-conjunction-venus.json` is `LIVE` and contains owner-approved `readerCopy` |
+| 2 | Oct. 26, 2026 | Sun square Pluto | Scorpio / Aquarius | engine event already retained in the existing facts artifact; `sun-square-pluto.json` is `LIVE` with owner-approved `readerCopy` |
+| 3 | Nov. 4, 2026 | Sun conjunct Mercury | Scorpio / Scorpio | `sun-conjunction-mercury.json` is `LIVE` with owner-approved `readerCopy` |
+| 4 | Nov. 18, 2026 | Sun square Jupiter | Scorpio / Leo | engine event already retained in the existing facts artifact; `sun-square-jupiter.json` is `LIVE` with owner-approved `readerCopy` |
+| 5 | Nov. 19, 2026 | Sun square Mars | Scorpio / Leo | `sun-square-mars.json` is `LIVE` with owner-approved `readerCopy` |
 
-The independent cross-check is evidence, not serving authority. Do not hard-code these dates from this review document. Before implementation, run `getSkyPlacementTransitFacts(...)` through the audit script and use its full `rankedEventsDuringTransit` output.
+All five candidate aspect families therefore already have exact owner-approved reader copy at the planet-pair/aspect authority layer. The remaining verification is that the engine's full `rankedEventsDuringTransit` returns the complete five-event sequence for this residency and that the placement composition consumes those events without reintroducing a one-event cap.
+
+The independent date cross-check is evidence, not serving authority. Do not hard-code these dates from this review document. Before implementation, run `getSkyPlacementTransitFacts(...)` through the audit script and use its full `rankedEventsDuringTransit` output.
 
 ## Aspect-copy gate
 
-For each engine-confirmed event, resolve copy using the existing governed Sky aspect precedence/registry. The current content system exposes exact/sign/pair/placement-aspect families, but the presence of a generic or reviewed pair row is not equivalent to exact owner-approved wording for this placement event.
+For each engine-confirmed event, resolve copy using the existing governed exact Sky aspect registry. The registry only exposes `approvedExactSkyAspectCopy` when the transit record is `LIVE` and carries reader copy, so the pilot should consume that authority rather than synthesize a placement-specific gloss.
 
 Required disposition for each event:
 
-- `RESOLVED_APPROVED`: render the full governed aspect write-up;
+- `RESOLVED_APPROVED`: render the full governed exact aspect write-up;
 - `UNRESOLVED`: omit the write-up from the reader page and report the coverage gap;
 - never synthesize a replacement gloss merely to make the section look complete;
 - never render an empty heading/card for an unresolved event.
 
-The existing reviewed group-level `fallback-hook/sky-aspect-pair/sun/venus/conjunction` is useful fallback evidence, but its `reviewed` state alone must not be described as exact owner wording approval.
+A reviewed group-level phrasebook row may remain useful elsewhere in the fallback system, but `reviewed` alone must not be substituted for the exact owner-approved registry path in this pilot.
 
 ## Target reader composition
 
@@ -73,7 +75,7 @@ The pilot should use the existing placement label **`Aspects shaping this transi
 - no arbitrary one-aspect cap;
 - chronological stable ordering;
 - no duplicate event IDs or duplicate aspect passages;
-- only governed approved aspect prose renders;
+- only governed approved exact aspect prose renders;
 - unresolved aspect copy fails closed without an empty reader card;
 - archive/event-instance rendering is deterministic for the same calculated residency;
 - current placement behavior outside the new aspect sequence does not drift.
