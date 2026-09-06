@@ -27,12 +27,14 @@ assert.equal(answerPacket.evidence[0].facts.natalHouse, 9, "The ranked factor mu
 
 const governed = buildAskTldrGovernedAnswerPacket(answerPacket);
 assert.equal(governed.schema, "ask-tldr-governed-answer-packet.v1");
-assert.equal(governed.generationAllowed, true, "A resolved primary transit mechanism should permit the future writer stage.");
+assert.equal(governed.generationAllowed, true, "A hash-verified owner-approved current Personal Transit meaning should permit the future writer stage.");
 assert.equal(governed.generationBlockReason, null);
 assert.equal(governed.evidence[0].governedMeaning.status, "full");
-assert.ok(governed.evidence[0].governedMeaning.canonicalIds.length > 0);
+assert.equal(governed.evidence[0].governedMeaning.sourceKind, "owner_approved_cms_snapshot");
+assert.deepEqual(governed.evidence[0].governedMeaning.canonicalIds, ["cms:authored/transit-aspect/jupiter/midheaven/hard"]);
 assert.ok(governed.evidence[0].governedMeaning.packetSha256);
-assert.ok(governed.evidence[0].governedMeaning.indexSha256);
+assert.ok(governed.evidence[0].governedMeaning.governanceSourceSha256, "CMS-backed governed meaning must carry the exact owner-authorization file hash.");
+assert.equal(governed.evidence[0].governedMeaning.indexSha256, null, "CMS snapshot evidence must not pretend it came from the canonical knowledge index.");
 assert.match(governed.evidence[0].governedMeaning.promptEvidence, /ASTROLOGICAL TRUTH/u);
 assert.equal(governed.evidence[0].facts.natalPoint, "Midheaven");
 assert.equal(governed.evidence[0].provenance.calculator, "tldrastro-api:/timing/report-window");
@@ -65,6 +67,7 @@ const governedProfection = resolveAskTldrGovernedFactor({
 });
 assert.equal(governedProfection.governedMeaning.status, "partial", "Generic house/ruler doctrine is not enough to pretend we have governed profection technique semantics.");
 assert.ok(governedProfection.governedMeaning.canonicalIds.some((id) => id === "house/12"));
+assert.equal(governedProfection.governedMeaning.sourceKind, "knowledge_index");
 
 const profectionPacket = buildAskTldrGovernedAnswerPacket({
   ...answerPacket,
@@ -88,4 +91,4 @@ assert.throws(() => resolveAskTldrGovernedFactor({
   knowledgeIds: []
 }), /ASK_TLDR_CALCULATED_FACTS_REQUIRED/u);
 
-console.log("Ask TLDR governed evidence passed: ranked calculated factors resolve only through approved/factual TLDR knowledge, preserve provenance, and incomplete technique coverage fails closed.");
+console.log("Ask TLDR governed evidence passed: ranked calculated factors resolve only through approved/factual TLDR knowledge or hash-verified owner-approved CMS snapshots, preserve provenance, and incomplete technique coverage fails closed.");
