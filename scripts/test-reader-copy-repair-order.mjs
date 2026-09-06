@@ -67,6 +67,73 @@ const astrologyTarotProbe = {
 assert.equal(isGovernedReaderEligible(astrologyTarotProbe), false);
 assert.equal(readerEligibilityReason(astrologyTarotProbe), "tarot-reference-in-astrology-copy");
 
+const majorArcanaCardNames = [
+  "The Fool",
+  "The Magician",
+  "The High Priestess",
+  "The Empress",
+  "The Emperor",
+  "The Hierophant",
+  "The Lovers",
+  "The Chariot",
+  "Strength",
+  "The Hermit",
+  "Wheel of Fortune",
+  "Justice",
+  "The Hanged Man",
+  "Death",
+  "Temperance",
+  "The Devil",
+  "The Tower",
+  "The Star",
+  "The Moon",
+  "The Sun",
+  "Judgement",
+  "The World"
+];
+for (const cardName of majorArcanaCardNames) {
+  const probe = {
+    contentKey: `probe/astrology/major-arcana/${cardName.toLowerCase().replace(/\s+/gu, "-")}`,
+    review_status: "approved",
+    reader_content_type: "astrology",
+    body: `${cardName} card is being used to explain this placement.`
+  };
+  assert.equal(isGovernedReaderEligible(probe), false, `${cardName} card reference must fail astrology eligibility.`);
+  assert.equal(readerEligibilityReason(probe), "tarot-reference-in-astrology-copy");
+}
+
+const minorArcanaProbe = {
+  contentKey: "probe/astrology/minor-arcana/three-of-cups",
+  review_status: "approved",
+  reader_content_type: "astrology",
+  body: "The Three of Cups card is being used to explain this transit."
+};
+assert.equal(isGovernedReaderEligible(minorArcanaProbe), false, "A named Minor Arcana card must fail astrology eligibility.");
+
+const titledDeathCorrespondenceProbe = {
+  contentKey: "probe/astrology/titled-death-correspondence",
+  review_status: "approved",
+  reader_content_type: "astrology",
+  body: "The eighth house corresponds to Death."
+};
+assert.equal(isGovernedReaderEligible(titledDeathCorrespondenceProbe), false, "A titled ambiguous Major Arcana correspondence must fail closed.");
+
+const ordinaryDeathAstrologyProbe = {
+  contentKey: "probe/astrology/ordinary-death",
+  review_status: "approved",
+  reader_content_type: "astrology",
+  body: "The eighth house is associated with death, inheritance, and shared resources."
+};
+assert.equal(isGovernedReaderEligible(ordinaryDeathAstrologyProbe), true, "Ordinary astrology use of death must not false-positive as Tarot.");
+
+const ordinarySunMoonAstrologyProbe = {
+  contentKey: "probe/astrology/ordinary-sun-moon",
+  review_status: "approved",
+  reader_content_type: "astrology",
+  body: "The Sun rules Leo while the Moon rules Cancer."
+};
+assert.equal(isGovernedReaderEligible(ordinarySunMoonAstrologyProbe), true, "Ordinary astrology use of Sun and Moon must remain eligible.");
+
 const tarotSurfaceProbe = {
   ...astrologyTarotProbe,
   contentKey: "probe/tarot/chariot",
