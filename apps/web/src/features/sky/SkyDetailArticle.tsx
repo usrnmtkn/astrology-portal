@@ -1,5 +1,5 @@
 import { ChevronLeft } from "lucide-react";
-import { Fragment, isValidElement, useLayoutEffect, type ReactNode } from "react";
+import { Fragment, isValidElement, useEffect, useLayoutEffect, useState, type ReactNode } from "react";
 import type { ContentBundle } from "../../content/types";
 import { AspectGlyphs } from "../../components/charts/PlacementRows";
 import {
@@ -43,6 +43,7 @@ export type SkyDetailRelatedAspectRow = {
 export type SkyDetailSection = {
   heading: string;
   body: ReactNode;
+  dateLine?: string;
   sourceTag?: string;
   sourceKeys?: string[];
   role?: "main" | "aspect";
@@ -85,6 +86,12 @@ export type SkyDetail = {
   closingCharge?: string | null;
   risingHoroscopes?: { risingSign?: string | null; house?: number; body: string; contentKey?: string }[];
   articleAspectPassages?: { natalPoint: string; aspect: string; body: string; contentKey: string }[];
+  placementResidencyContext?: {
+    planet: string;
+    sign: string;
+    referenceDate: string;
+    timeZone: string;
+  };
   subtitle?: string;
   tldr?: string;
   suppressTldr?: boolean;
@@ -375,12 +382,60 @@ export function SkyDetailArticle({
     window.scrollTo({ top: 0, left: 0, behavior: "auto" });
   }, [detail.title, detail.meta]);
 
+  const residencyContext = detail.placementResidencyContext;
+  const residencyContextKey = residencyContext
+    ? [residencyContext.planet, residencyContext.sign, residencyContext.referenceDate, residencyContext.timeZone].join("|")
+    : "";
+  const [residencyAspectState, setResidencyAspectState] = useState<{
+    key: string;
+    sections: SkyDetailSection[];
+  } | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    if (!residencyContext || !residencyContextKey) {
+      setResidencyAspectState(null);
+      return () => {
+        cancelled = true;
+      };
+    }
+
+    setResidencyAspectState(null);
+    void import("../../services/skyPlacementResidencyAspects")
+      .then(({ skyPlacementResidencyAspectSections }) => skyPlacementResidencyAspectSections(residencyContext))
+      .then((result) => {
+        if (!cancelled) {
+          setResidencyAspectState({ key: residencyContextKey, sections: result.sections });
+        }
+      })
+      .catch((error) => {
+        if (!cancelled) {
+          console.warn("Sky Placement residency aspect enrichment failed closed.", error);
+          setResidencyAspectState({ key: residencyContextKey, sections: [] });
+        }
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [residencyContextKey]);
+
+  const residencyAspectSections = residencyAspectState?.key === residencyContextKey
+    ? residencyAspectState.sections
+    : null;
+  const detailSections = residencyContext
+    ? [
+        ...(detail.sections ?? []).filter((section) => section.role !== "aspect"),
+        ...(residencyAspectSections ?? [])
+      ]
+    : (detail.sections ?? []);
   const metaRows = detailMetaRows(detail.meta);
   const articleBody = detail.body.filter((node) => (
     !isRetrogradeTimelineNode(node) && (typeof node !== "string" || isReaderFacingCopy(node))
   ));
   const paragraphs = articleBody;
-  const rawGeneratedSections = (detail.sections ?? []).filter(
+  const rawGeneratedSections = detailSections.filter(
     (section) => !isTimingOnlyArticleSection(section) && !isSuppressedSkyDetailSectionHeading(section.heading)
   ).map((section) => ({
     ...section,
@@ -456,7 +511,7 @@ export function SkyDetailArticle({
   const relatedAspectRows = (detail.relatedAspects?.rows ?? []).map(normalizeRelatedAspectRow);
   const relatedAspectGrouping = detail.relatedAspects?.grouping ?? "tone";
   const aspectGroupDefinitions = relatedAspectGrouping === "event"
-    ? ([{ id: "key-aspects" as const, label: "Key aspects" }])
+    ? ([{ id: "key-aspects" as const, label: detail.relatedAspects?.heading?.trim() || "Key aspects" }])
     : relatedAspectGrouping === "counterpart"
     ? ([
         { id: "planets" as const, label: "Planetary aspects" },
@@ -718,6 +773,7 @@ export function SkyDetailArticle({
                               <h4>{sectionHeading}</h4>
                             </div>
                           ) : null}
+                          {section.dateLine ? <p>{section.dateLine}</p> : null}
                           {sourceTag && !bodyAlreadyStartsWithTag ? <p>{sourceTag}</p> : null}
                           {bodyParagraphs.length > 0
                             ? bodyParagraphs.map((paragraph, paragraphIndex) => (
