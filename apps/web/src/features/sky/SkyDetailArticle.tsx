@@ -509,14 +509,9 @@ export function SkyDetailArticle({
     title: detail.title
   });
   const relatedAspectRows = (detail.relatedAspects?.rows ?? []).map(normalizeRelatedAspectRow);
-  const relatedAspectGrouping = residencyContext
-    ? "event"
-    : detail.relatedAspects?.grouping ?? "tone";
-  const eventAspectLabel = residencyContext
-    ? "Aspects shaping this transit"
-    : detail.relatedAspects?.heading?.trim() || "Key aspects";
+  const relatedAspectGrouping = detail.relatedAspects?.grouping ?? "tone";
   const aspectGroupDefinitions = relatedAspectGrouping === "event"
-    ? ([{ id: "key-aspects" as const, label: eventAspectLabel }])
+    ? ([{ id: "key-aspects" as const, label: detail.relatedAspects?.heading?.trim() || "Key aspects" }])
     : relatedAspectGrouping === "counterpart"
     ? ([
         { id: "planets" as const, label: "Planetary aspects" },
