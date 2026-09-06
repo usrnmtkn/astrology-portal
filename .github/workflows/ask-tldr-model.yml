@@ -56,3 +56,6 @@ jobs:
 
       - name: Validate Ask TLDR calibration release packet
         run: npx tsx scripts/test-ask-tldr-release.mjs
+
+      - name: Validate Ask TLDR end-to-end calibration pipeline
+        run: npx tsx scripts/test-ask-tldr-pipeline.mjs
