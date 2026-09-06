@@ -25,6 +25,7 @@ jobs:
         run: |
           node scripts/apply-sky-placement-residency-aspect-pilot-patch.mjs
           node scripts/patch-sky-placement-residency-aspect-tone-ui.mjs
+          node scripts/patch-sun-residency-conjunction-scan.mjs
       - name: Commit patch
         shell: bash
         run: |
@@ -34,6 +35,6 @@ jobs:
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add apps/web/src/App.tsx apps/web/src/features/sky/SkyDetailArticle.tsx package.json
-          git commit -m "Keep residency aspects in Gifts and Lessons UI"
+          git add apps/web/src/App.tsx apps/web/src/features/sky/SkyDetailArticle.tsx apps/web/src/services/ephemeris.ts package.json
+          git commit -m "Complete Sun residency aspect scan"
           git push origin HEAD:chatgpt/sky-placement-residency-aspects-20260906
