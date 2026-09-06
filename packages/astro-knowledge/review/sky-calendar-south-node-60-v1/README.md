@@ -1,7 +1,7 @@
 # Sky Calendar South Node pole-specific authoring — V1
 
 Date: 2026-09-06
-Status: **exact owner approved / serving implementation authorized**
+Status: **exact owner approved / serving outputs materialized / production merge pending**
 
 ## Owner product decision
 
