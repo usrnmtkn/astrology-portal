@@ -60,13 +60,7 @@
   height: var(--border-width-thin);
 }
 
-.admin-dashboard .admin-save-toast.is-error {
-  background: var(--admin-danger-bg);
-  border-color: var(--admin-danger-border);
-  color: var(--admin-danger-copy);
-}
-
-.admin-dashboard .admin-save-toast.is-error .admin-save-toast-text,
+/* Error toast colour lives in admin.css (.admin-save-toast.is-error); do not redefine it here. */
 .admin-dashboard .admin-save-toast.is-error button {
-  color: var(--admin-danger-copy);
+  color: var(--admin-ui-error-copy);
 }
