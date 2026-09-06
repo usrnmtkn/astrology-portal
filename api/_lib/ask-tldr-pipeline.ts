@@ -1,8 +1,13 @@
 import {
   buildAskTldrAnswerPacket,
   compileEvergreenAskPlan,
-  compileFreeTextAskPlan
+  compileFreeTextAskPlan,
+  type AskTldrAnswerModelConfig,
+  type AskTldrIntentClassification,
+  type AskTldrPillarDefinition,
+  type AskTldrQuestionDefinition
 } from "./ask-tldr-model.js";
+import { applyAskTldrFreeTextFocus } from "./ask-tldr-free-text-focus.js";
 import {
   askTldrEvidenceFromPersonalTiming,
   askTldrEvidenceFromReportWindow,
@@ -15,7 +20,6 @@ import { verifyAskTldrFactLock } from "./ask-tldr-fact-lock.js";
 import { buildAskTldrJudgeRequest, validateAskTldrJudgeOutput } from "./ask-tldr-judge.js";
 import { buildAskTldrCalibrationReleasePacket } from "./ask-tldr-release.js";
 
-type FactRecord = Record<string, unknown>;
 type AskPlan = ReturnType<typeof compileEvergreenAskPlan> | ReturnType<typeof compileFreeTextAskPlan>;
 
 export type AskTldrPreparedCalibration = {
@@ -34,7 +38,7 @@ export type AskTldrPreparedCalibration = {
 
 function prepareFromPlan(input: {
   source: "evergreen" | "free_text";
-  model: FactRecord;
+  model: AskTldrAnswerModelConfig;
   plan: AskPlan;
   personalTiming?: unknown;
   reportWindow?: unknown;
@@ -77,9 +81,9 @@ function prepareFromPlan(input: {
 }
 
 export function prepareEvergreenAskTldrCalibration(input: {
-  model: FactRecord;
-  pillar: FactRecord;
-  question: FactRecord;
+  model: AskTldrAnswerModelConfig;
+  pillar: AskTldrPillarDefinition;
+  question: AskTldrQuestionDefinition;
   personalTiming?: unknown;
   reportWindow?: unknown;
   now?: Date;
@@ -96,18 +100,23 @@ export function prepareEvergreenAskTldrCalibration(input: {
 }
 
 export function prepareFreeTextAskTldrCalibration(input: {
-  model: FactRecord;
-  pillarId: string;
+  model: AskTldrAnswerModelConfig;
+  pillar: AskTldrPillarDefinition;
   questionText: string;
-  classification: FactRecord;
+  classification: AskTldrIntentClassification;
   personalTiming?: unknown;
   reportWindow?: unknown;
   now?: Date;
 }) {
-  const plan = compileFreeTextAskPlan({
+  const basePlan = compileFreeTextAskPlan({
     model: input.model,
-    pillarId: input.pillarId,
+    pillarId: input.pillar.id,
     questionText: input.questionText,
+    classification: input.classification
+  });
+  const plan = applyAskTldrFreeTextFocus({
+    plan: basePlan,
+    pillar: input.pillar,
     classification: input.classification
   });
   return prepareFromPlan({
