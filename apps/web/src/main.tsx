@@ -39,6 +39,10 @@ function isAdminContentPath() {
   );
 }
 
+function isReportPath() {
+  return /^\/reports(?:\/|$)/u.test(window.location.pathname);
+}
+
 async function setupAdminReaderLinks() {
   const { setupAdminReaderLinkTargets } = await import("../../admin/src/adminReaderLinks");
   setupAdminReaderLinkTargets();
@@ -110,11 +114,12 @@ async function startApp() {
   }
 
   const { App } = await appModulePromise;
+  const reportPath = isReportPath();
 
   createRoot(document.getElementById("root")!).render(
     <React.StrictMode>
       <App />
-      {!isAdminContentPath() ? (
+      {!isAdminContentPath() && !reportPath ? (
         <React.Suspense fallback={null}>
           <ReportsGlobalLayer />
         </React.Suspense>
@@ -124,13 +129,13 @@ async function startApp() {
 
   if (isAdminContentPath()) {
     await setupAdminReaderLinks();
-  } else {
+  } else if (!reportPath) {
     setupBlankRestoreRecovery();
   }
 }
 
 function setupBlankRestoreRecovery() {
-  if (isAdminContentPath()) {
+  if (isAdminContentPath() || isReportPath()) {
     return;
   }
 
