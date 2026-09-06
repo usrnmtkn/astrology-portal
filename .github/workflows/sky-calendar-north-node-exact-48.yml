@@ -1,0 +1,38 @@
+name: Sky Calendar North Node exact 48
+
+on:
+  pull_request:
+    paths:
+      - "packages/astro-knowledge/data/transits/*-north-node.json"
+      - "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-05-north-node-48/**"
+      - "scripts/release-calendar-exact-approved-20260905-north-node-48.mjs"
+      - "scripts/test-calendar-exact-approved-20260905-north-node-48.mjs"
+  push:
+    branches:
+      - main
+    paths:
+      - "packages/astro-knowledge/data/transits/*-north-node.json"
+      - "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-05-north-node-48/**"
+      - "scripts/release-calendar-exact-approved-20260905-north-node-48.mjs"
+      - "scripts/test-calendar-exact-approved-20260905-north-node-48.mjs"
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Materialize bounded North Node release in CI workspace
+        run: node scripts/release-calendar-exact-approved-20260905-north-node-48.mjs
+      - name: Verify exact-owner-approved North Node release
+        run: node scripts/test-calendar-exact-approved-20260905-north-node-48.mjs
+      - name: Verify exact Sky aspect routing
+        run: node scripts/test-calendar-exact-sky-aspect-routing.mjs
