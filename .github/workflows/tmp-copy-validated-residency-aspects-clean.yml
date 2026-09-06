@@ -1,0 +1,38 @@
+name: Temporary copy validated residency aspect implementation
+
+on:
+  push:
+    branches:
+      - chatgpt/sky-placement-residency-aspects-clean-20260906
+
+permissions:
+  contents: write
+
+jobs:
+  copy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: chatgpt/sky-placement-residency-aspects-clean-20260906
+          fetch-depth: 0
+      - name: Copy validated implementation from pilot
+        shell: bash
+        run: |
+          git fetch origin chatgpt/sky-placement-residency-aspects-20260906
+          git checkout origin/chatgpt/sky-placement-residency-aspects-20260906 -- \
+            apps/web/src/App.tsx \
+            apps/web/src/features/sky/SkyDetailArticle.tsx \
+            apps/web/src/services/skyPlacementResidencyAspects.ts \
+            apps/web/src/services/ephemeris.ts \
+            scripts/test-sky-placement-residency-aspects.mts \
+            package.json
+          git rm .github/workflows/tmp-copy-validated-residency-aspects-clean.yml
+      - name: Commit clean implementation
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add apps/web/src/App.tsx apps/web/src/features/sky/SkyDetailArticle.tsx apps/web/src/services/skyPlacementResidencyAspects.ts apps/web/src/services/ephemeris.ts scripts/test-sky-placement-residency-aspects.mts package.json
+          git commit -m "Add complete Sun residency aspects to Sky Placement detail"
+          git push origin HEAD:chatgpt/sky-placement-residency-aspects-clean-20260906
