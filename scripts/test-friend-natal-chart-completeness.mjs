@@ -147,8 +147,8 @@ assert.doesNotMatch(
 );
 assert.match(
   appSource,
-  /if \(typeof natalSky\.ascendantLongitude !== "number"\) \{\s*return natalSky\.positions;/,
-  "Friends transit targeting must fall back to planetary positions when no reliable Ascendant longitude is present."
+  /function natalTransitTargets\(natalSky: SkySnapshot, birthTimeKnown = false\) \{\s*if \(!birthTimeKnown \|\| typeof natalSky\.ascendantLongitude !== "number"\) \{\s*return natalSky\.positions\.filter\(\(position\) => !\["Ascendant", "Descendant", "Midheaven", "Imum Coeli"\]\.includes\(position\.planet\)\);\s*\}/,
+  "Friends transit targeting must fail closed to planetary positions when birth time is unknown or the Ascendant is unreliable."
 );
 assert.match(
   panelSource,
