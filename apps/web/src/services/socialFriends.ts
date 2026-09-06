@@ -1,6 +1,7 @@
 import type { SkySnapshot } from "../types";
 import type { ManualChart } from "./manualCharts";
 import { getSupabaseClient, getVerifiedAuthUser } from "./auth";
+import { natalSnapshotBirthTimeIsKnown, natalSnapshotWithBirthTimeReliability } from "./birthTimeReliability";
 
 export type SocialProfile = {
   userId: string;
@@ -300,13 +301,18 @@ function rowToProfile(row: SocialProfileRow): SocialProfile {
   };
 }
 
-export function friendSafeNatalChart(chart: SkySnapshot | null | undefined): SkySnapshot | null {
-  if (!chart) {
+export function friendSafeNatalChart(
+  chart: SkySnapshot | null | undefined,
+  birthTimeKnown = false
+): SkySnapshot | null {
+  const reliableChart = natalSnapshotWithBirthTimeReliability(chart, birthTimeKnown);
+
+  if (!reliableChart) {
     return null;
   }
 
   return {
-    ...chart,
+    ...reliableChart,
     location: {
       label: "Private birth location",
       latitude: 0,
@@ -322,18 +328,20 @@ export function friendSafeNatalChart(chart: SkySnapshot | null | undefined): Sky
 export async function syncOwnSocialProfile({
   displayName,
   avatarUrl,
-  natalChart
+  natalChart,
+  birthTimeKnown
 }: {
   displayName: string;
   avatarUrl?: string;
   natalChart: SkySnapshot | null;
+  birthTimeKnown: boolean;
 }): Promise<SocialProfile> {
   const { client, user } = await authenticatedClient();
   const { data, error } = await client
     .rpc("ensure_own_social_profile", {
       display_name_input: displayName.trim() || "New stargazer",
       avatar_url_input: avatarUrl ?? null,
-      natal_chart_input: friendSafeNatalChart(natalChart)
+      natal_chart_input: friendSafeNatalChart(natalChart, birthTimeKnown)
     })
     .single();
 
@@ -933,6 +941,8 @@ export function socialFriendChartId(userId: string) {
 
 export function socialFriendToChart(friend: ConnectedSocialFriend): ManualChart {
   const now = friend.acceptedAt || new Date().toISOString();
+  const birthTimeKnown = natalSnapshotBirthTimeIsKnown(friend.natalChart);
+  const natalChart = natalSnapshotWithBirthTimeReliability(friend.natalChart, birthTimeKnown);
 
   return {
     id: socialFriendChartId(friend.userId),
@@ -945,15 +955,15 @@ export function socialFriendToChart(friend: ConnectedSocialFriend): ManualChart 
     pronouns: "name_only",
     relationshipType: "friend",
     birthDate: "",
-    birthTime: "12:00",
-    birthTimeUnknown: false,
+    birthTime: null,
+    birthTimeUnknown: !birthTimeKnown,
     birthPlace: "Private birth details",
     birthLocation: {
       label: "Private birth location",
       latitude: 0,
       longitude: 0
     },
-    natalChart: friend.natalChart,
+    natalChart,
     notes: `@${friend.handle}`,
     createdAt: now,
     updatedAt: now,

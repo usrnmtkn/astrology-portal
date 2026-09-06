@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { Dispatch, FormEvent, SetStateAction } from "react";
 import { twentyFourHourTimeToDisplay } from "../../services/chartTime";
+import { natalSnapshotWithBirthTimeReliability } from "../../services/birthTimeReliability";
 import {
   createManualChart,
   deleteManualChart,
@@ -79,16 +80,18 @@ async function natalSkyWithAspectPatternsForStorage(
   timeKnown: boolean,
   enabled: boolean
 ) {
+  const reliableNatalSky = natalSnapshotWithBirthTimeReliability(natalSky, timeKnown) ?? natalSky;
+
   if (!enabled) {
-    return natalSky;
+    return reliableNatalSky;
   }
 
   try {
     const aspectPatterns = await fetchNatalAspectPatternsWithCopy(location, date, { timeKnown });
-    return skyWithNatalAspectPatternCopy(natalSky, aspectPatterns);
+    return skyWithNatalAspectPatternCopy(reliableNatalSky, aspectPatterns);
   } catch (error) {
     console.warn("Natal aspect-pattern summary could not be stored with this chart.", error);
-    return natalSky;
+    return reliableNatalSky;
   }
 }
 
