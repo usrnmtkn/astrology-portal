@@ -1,0 +1,71 @@
+{
+  "schemaVersion": 2,
+  "family": "north-node-48-03",
+  "rowCount": 8,
+  "rows": [
+    {
+      "contentKey": "sky.aspect.mercury.conjunction.north-node",
+      "summary": "One conversation can make the next decision impossible to keep vague.",
+      "body": "One conversation can make the next decision impossible to keep vague. When Mercury conjuncts the North Node, a message, application, introduction, contract term, or answer to one important question can put a concrete choice where speculation had been. You may still need time to decide, but now you know what you are deciding about. Get the date, amount, requirement, name, or answer that changes your options, then stop planning around information you no longer need to guess at.",
+      "bodySha256": "9aca7ae522a1a899962a59b611dc60a70184357cec60f5dd4bba38d3745e4e34",
+      "sourceApprovalBatch": "sky-north-node-launch-batch-1-owner-review-v2-2026-09-05",
+      "sourceApprovalLevel": "exact_owner_approved"
+    },
+    {
+      "contentKey": "sky.aspect.mercury.opposition.north-node",
+      "summary": "You can make an excellent case for staying with what you already know, especially when the unfamiliar option still has more questions than answers.",
+      "body": "You can make an excellent case for staying with what you already know, especially when the unfamiliar option still has more questions than answers. When Mercury opposes the North Node, old expertise, settled opinions, familiar contacts, or an explanation you have used for years can sound especially convincing because you already know how to defend it. That knowledge still matters, but expertise can turn into a closed argument when no new information is allowed to change the conclusion. Use what you know as evidence, not as a reason to stop asking what the unfamiliar option actually requires.",
+      "bodySha256": "c67934aab7a08ae04e5c7d3f22b621beb6a5ef57a36ead122d71a325d96ad6c8",
+      "sourceApprovalBatch": "sky-north-node-launch-batch-1-owner-review-v2-2026-09-05",
+      "sourceApprovalLevel": "exact_owner_approved"
+    },
+    {
+      "contentKey": "sky.aspect.mercury.sextile.north-node",
+      "summary": "A useful message can remove one small obstacle that has been keeping a larger move hypothetical.",
+      "body": "A useful message can remove one small obstacle that has been keeping a larger move hypothetical. When Mercury sextiles the North Node, a reply, introduction, document, or well-timed conversation can give you enough information to act without pretending you know the whole outcome. Follow up while the information is current. Ask the next question, read the terms, schedule the call, or answer the person who offered to connect you. One concrete exchange can teach you more about the possibility than another week spent planning around assumptions.",
+      "bodySha256": "a252b8d15597224b09d92acbe03454d9dfc779aa37c7c1b6bd7d2684d6c5dcc7",
+      "sourceApprovalBatch": "sky-north-node-launch-batch-1-owner-review-v2-2026-09-05",
+      "sourceApprovalLevel": "exact_owner_approved"
+    },
+    {
+      "contentKey": "sky.aspect.mercury.square.north-node",
+      "summary": "New information can make it obvious that the decision you thought you were making is no longer the one in front of you.",
+      "body": "New information can make it obvious that the decision you thought you were making is no longer the one in front of you. When Mercury squares the North Node, a changed deadline, conflicting answer, missing requirement, or conversation you kept postponing can expose the assumption that no longer holds. Repeating the old explanation will not solve a problem created by new facts. Update the terms, ask the question you have been avoiding, and let the plan change if the information changed first.",
+      "bodySha256": "e57ea6451c117ecec5c313c2889e41a4145d0f2c0e187550211eac4c97b59610",
+      "sourceApprovalBatch": "sky-north-node-launch-batch-1-owner-review-v2-2026-09-05",
+      "sourceApprovalLevel": "exact_owner_approved"
+    },
+    {
+      "contentKey": "sky.aspect.moon.conjunction.north-node",
+      "summary": "A new plan starts feeling more believable when your daily life stops treating it like an emergency.",
+      "body": "A new plan starts feeling more believable when your daily life stops treating it like an emergency. When the Moon conjuncts the North Node, emotional needs and forward movement have to fit inside the same arrangement, so sleep, food, childcare, home, family, and the routines that help you function become part of how well the plan works. If every step forward requires you to be exhausted, displaced, or unavailable to the people who depend on you, the plan is underbuilt. Make the change livable enough that your body does not have to keep pulling you back.",
+      "bodySha256": "cbe3fdb27f9a1292548c6f8cd8a6f2708e7f9916457c2ea8b02d45a5322e6f91",
+      "sourceApprovalBatch": "sky-north-node-launch-batch-1-owner-review-v2-2026-09-05",
+      "sourceApprovalLevel": "exact_owner_approved"
+    },
+    {
+      "contentKey": "sky.aspect.moon.opposition.north-node",
+      "summary": "Missing what was familiar can make returning look more right than it actually is.",
+      "body": "Missing what was familiar can make returning look more right than it actually is. When the Moon opposes the North Node, an old home, family routine, relationship pattern, or former schedule can feel emotionally convincing because your body already knows how to function inside it. That pull may contain useful information, especially if the newer plan has left out rest, belonging, predictability, or care that you still need. Bring the need forward before you bring the whole old arrangement back.",
+      "bodySha256": "931d035a32e2b5e69f61fe2e92bf082f7248f8e32a1fe0e7315540f3c1736213",
+      "sourceApprovalBatch": "sky-north-node-launch-batch-1-owner-review-v2-2026-09-05",
+      "sourceApprovalLevel": "exact_owner_approved"
+    },
+    {
+      "contentKey": "sky.aspect.moon.sextile.north-node",
+      "summary": "Something familiar may give you exactly the support you need to try something unfamiliar.",
+      "body": "Something familiar may give you exactly the support you need to try something unfamiliar. When the Moon sextiles the North Node, care from the life you already have can reduce the cost of change: someone covers a practical responsibility, a familiar routine keeps the day manageable, or home gives you a stable base while something else shifts. The support is not there to recreate the old life. Use it to reduce the cost of trying the new arrangement and free up the time, sleep, money, or emotional energy the change actually requires.",
+      "bodySha256": "2b717b54c6bd23a37c5e17d2219e3fd946a6988ea2fc1a9bacdc835a7c2f3dc0",
+      "sourceApprovalBatch": "sky-north-node-launch-batch-1-owner-review-v2-2026-09-05",
+      "sourceApprovalLevel": "exact_owner_approved"
+    },
+    {
+      "contentKey": "sky.aspect.moon.square.north-node",
+      "summary": "Stress can send you back to the habit that calms you fastest even when that habit keeps rebuilding the same problem.",
+      "body": "Stress can send you back to the habit that calms you fastest even when that habit keeps rebuilding the same problem. When the Moon squares the North Node, comfort and forward movement create friction, making an old routine, relationship pattern, or emotional response especially tempting at the exact moment a different response is needed. Returning to what is familiar may help for one night without being a plan for the next six months. Notice what the old habit gives you, such as company, relief, predictability, or escape, then find a way to meet that need without rebuilding the situation you were trying to leave.",
+      "bodySha256": "6692337f2c46179a641e73252b6336fb00e3a2d353c58a1e82f7a297f30fa4b9",
+      "sourceApprovalBatch": "sky-north-node-launch-batch-1-owner-review-v2-2026-09-05",
+      "sourceApprovalLevel": "exact_owner_approved"
+    }
+  ]
+}

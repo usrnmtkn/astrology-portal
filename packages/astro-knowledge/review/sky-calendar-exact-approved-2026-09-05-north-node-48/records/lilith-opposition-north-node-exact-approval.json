@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.lilith.opposition.north-node",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-05",
+  "ownerStatement": "yes please continue",
+  "decisionContext": "The owner explicitly approved both 24-row North Node source batches on 2026-09-05 and then authorized shipping the 48 approved North Node passages into the governed Calendar exact-aspect corpus by replying \"yes please continue\".",
+  "batchId": "sky-calendar-exact-approved-2026-09-05-north-node-48",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-05-north-node-48/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "03dbf33b362663cf46a1887f68ff8f79e65c1fc54fd59d374983731452d1c08c",
+  "summary": "The respectable option can be genuinely easier and still require you to keep pretending you want it.",
+  "body": "The respectable option can be genuinely easier and still require you to keep pretending you want it. When Lilith opposes the North Node, the conventional role, relationship, career choice, family expectation, or socially acceptable answer may come with more approval, money, cooperation, or practical support than the option you prefer. There is nothing noble about making life unnecessarily difficult. Use the support that is useful, but do not confuse being rewarded for compliance with evidence that the approved choice fits you better.",
+  "sourceApprovalBatch": "sky-north-node-launch-batch-2-owner-review-2026-09-05"
+}

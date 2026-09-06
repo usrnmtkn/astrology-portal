@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.mercury.square.north-node",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-05",
+  "ownerStatement": "yes please continue",
+  "decisionContext": "The owner explicitly approved both 24-row North Node source batches on 2026-09-05 and then authorized shipping the 48 approved North Node passages into the governed Calendar exact-aspect corpus by replying \"yes please continue\".",
+  "batchId": "sky-calendar-exact-approved-2026-09-05-north-node-48",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-05-north-node-48/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "e57ea6451c117ecec5c313c2889e41a4145d0f2c0e187550211eac4c97b59610",
+  "summary": "New information can make it obvious that the decision you thought you were making is no longer the one in front of you.",
+  "body": "New information can make it obvious that the decision you thought you were making is no longer the one in front of you. When Mercury squares the North Node, a changed deadline, conflicting answer, missing requirement, or conversation you kept postponing can expose the assumption that no longer holds. Repeating the old explanation will not solve a problem created by new facts. Update the terms, ask the question you have been avoiding, and let the plan change if the information changed first.",
+  "sourceApprovalBatch": "sky-north-node-launch-batch-1-owner-review-v2-2026-09-05"
+}

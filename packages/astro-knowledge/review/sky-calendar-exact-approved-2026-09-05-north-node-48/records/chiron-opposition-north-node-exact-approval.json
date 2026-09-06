@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.chiron.opposition.north-node",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-05",
+  "ownerStatement": "yes please continue",
+  "decisionContext": "The owner explicitly approved both 24-row North Node source batches on 2026-09-05 and then authorized shipping the 48 approved North Node passages into the governed Calendar exact-aspect corpus by replying \"yes please continue\".",
+  "batchId": "sky-calendar-exact-approved-2026-09-05-north-node-48",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-05-north-node-48/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "a303bdd35d62baa486d13e23348ef05d7b0bd214037b569f0f0dc8bdfb91cd1d",
+  "summary": "Being very good at avoiding an old wound can quietly become a reason to keep choosing the life built around avoiding it.",
+  "body": "Being very good at avoiding an old wound can quietly become a reason to keep choosing the life built around avoiding it. When Chiron opposes the North Node, the safer familiar choice may be the role, routine, or strategy designed to keep you from being embarrassed, rejected, overwhelmed, or hurt again. That protection may have been necessary. Check if it is still protecting you from the same danger or if it is now keeping you away from opportunities that would require a different response.",
+  "sourceApprovalBatch": "sky-north-node-launch-batch-2-owner-review-2026-09-05"
+}
