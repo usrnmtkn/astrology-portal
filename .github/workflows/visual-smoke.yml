@@ -1,20 +1,24 @@
 name: Visual smoke
 
 on:
-  pull_request:
   push:
     branches:
       - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
 
 jobs:
   visual-smoke:
-    runs-on: ubuntu-latest
-    timeout-minutes: 20
+    runs-on: ubuntu-24.04
     env:
       VITE_SUPABASE_URL: https://visual-smoke.supabase.test
       VITE_SUPABASE_ANON_KEY: visual-smoke-placeholder
-
     steps:
+      - name: Set up job
+        run: echo "Starting visual smoke"
+
       - name: Check out repository
         uses: actions/checkout@v6
 
@@ -57,7 +61,7 @@ jobs:
       - name: Verify startup performance contracts
         run: npm run test:performance-contracts
 
-      - name: Run admin user flows including Needs attention
+      - name: Run Content Studio admin user flows
         run: npx playwright test -c playwright.config.ts tests/visual/content-dashboard-admin-user-flows.spec.ts tests/visual/content-studio-reader-destinations.spec.ts tests/visual/content-studio-needs-attention.spec.ts
 
       - name: Run client-facing user flows
