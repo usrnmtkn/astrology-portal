@@ -7,6 +7,10 @@ import { createServer } from "vite";
 const panelSource = fs.readFileSync("apps/web/src/features/friends/ManualChartsPanel.tsx", "utf8");
 const serviceSource = fs.readFileSync("apps/web/src/services/userGeneratedContent.ts", "utf8");
 const apiSource = fs.readFileSync("api/generate-user-content.ts", "utf8");
+const surfaceMigrationSource = fs.readFileSync(
+  "apps/web/supabase/migrations/20260906190000_add_friends_user_generated_surface.sql",
+  "utf8"
+);
 
 assert.match(panelSource, /friendTransitReadingSelectionKeyRef\.current = friendTransitReadingSelectionKey/u);
 assert.equal(
@@ -23,6 +27,11 @@ assert.match(apiSource, /const locked = friendTransitReadingRequestLock\(\{/u);
 assert.match(apiSource, /input\.status = "DRAFT"/u);
 assert.match(apiSource, /input\.allowQualityFallback = false/u);
 assert.match(apiSource, /requestSubjectType === "friend_transit_reading"[\s\S]{0,220}This paid reading is currently unavailable/u);
+assert.match(
+  surfaceMigrationSource,
+  /user_generated_interpretations_surface_check[\s\S]{0,260}'friends'/u,
+  "The user-generated content surface constraint must allow Friends readings to persist."
+);
 
 const server = await createServer({
   root: "./apps/web",
