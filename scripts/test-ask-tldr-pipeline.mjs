@@ -32,7 +32,7 @@ assert.equal(evergreen.governedPacket.evidence[0].factorKey, "transit:jupiter:op
 
 const freeText = prepareFreeTextAskTldrCalibration({
   model,
-  pillarId: "career",
+  pillar: career,
   questionText: "Why am I doing all the work and nobody notices?",
   classification: {
     primaryIntent: "recognition",
@@ -44,8 +44,32 @@ const freeText = prepareFreeTextAskTldrCalibration({
   now
 });
 assert.equal(freeText.source, "free_text");
+assert.deepEqual(freeText.plan.focus, {
+  houses: [10, 6],
+  points: ["Sun", "Saturn"],
+  angles: ["Midheaven"]
+}, "Free-text recognition/credit/workload must inherit the matching evergreen retrieval focus instead of using only the broad Career profile.");
 assert.equal(freeText.preparationAllowed, true, freeText.preparationBlockReason);
 assert.equal(freeText.governedPacket.evidence[0].factorKey, evergreen.governedPacket.evidence[0].factorKey, "Equivalent evergreen and free-text questions should reach the same primary astrology when the facts support it.");
+
+const renegotiationFreeText = prepareFreeTextAskTldrCalibration({
+  model,
+  pillar: career,
+  questionText: "Should I leave this job or ask for different terms?",
+  classification: {
+    primaryIntent: "renegotiation",
+    secondaryIntents: ["role_change", "terms"],
+    questionTypes: ["decision", "timing"],
+    timeWindow: "4_months"
+  },
+  reportWindow,
+  now
+});
+assert.deepEqual(renegotiationFreeText.plan.focus, {
+  houses: [6, 10],
+  points: ["Saturn", "Uranus", "Pluto"],
+  angles: []
+}, "A role-change free-text question must inherit its own evergreen Saturn/Uranus/Pluto and 6th/10th focus instead of the recognition focus.");
 
 const primaryId = evergreen.writerRequest.primaryEvidenceId;
 const writerValue = {
@@ -88,4 +112,4 @@ assert.equal(badFacts.blockReason, "deterministic_fact_lock_failed");
 assert.equal(badFacts.judgeRequest, null, "A factually invalid writer answer must not spend a judge call.");
 assert.equal(badFacts.releasePacket, null);
 
-console.log("Ask TLDR end-to-end calibration pipeline passed: evergreen and free-text share one astrology engine, invalid facts stop before judging, and a fully passing answer remains a non-serving calibration candidate.");
+console.log("Ask TLDR end-to-end calibration pipeline passed: evergreen and free-text share one astrology engine with intent-specific retrieval focus, invalid facts stop before judging, and a fully passing answer remains a non-serving calibration candidate.");
