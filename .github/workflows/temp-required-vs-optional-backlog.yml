@@ -1,0 +1,386 @@
+name: Finalize required vs optional editorial backlog
+
+on:
+  push:
+    branches:
+      - chatgpt/required-vs-optional-editorial-backlog
+
+permissions:
+  contents: write
+
+jobs:
+  finalize:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Classify required, optional, and retired work
+        shell: bash
+        run: |
+          python3 <<'PY'
+          from pathlib import Path
+          import json
+
+          def replace_once(path, old, new, label):
+              text = path.read_text()
+              count = text.count(old)
+              if count != 1:
+                  raise SystemExit(f"{label}: expected one match, found {count}")
+              path.write_text(text.replace(old, new, 1))
+
+          builder = Path('scripts/build-content-unresolved-queue.mjs')
+          replace_once(builder,
+          '''function workClassFor(contentKey) {
+            if (contentKey.startsWith("daily-glance-variant/")) return "optional-rotation";
+            if (contentKey.startsWith("authored/book-ritual-and-the-moon/lunation-horoscope/eclipse-")
+              || contentKey.startsWith("authored/sky-lunation-macro/")) return "full-copy-review";
+            if (contentKey.startsWith("fallback-hook/lunation-")) return "shared-fallback-authoring";
+            if (contentKey.startsWith("fallback-template/natal.planet-in-sign/")) return "template-review";
+            return "editorial-review";
+          }
+          ''',
+          '''function workClassFor(contentKey) {
+            if (contentKey.startsWith("daily-glance-variant/")) return "optional-rotation";
+            if (contentKey.startsWith("authored/book-ritual-and-the-moon/lunation-horoscope/eclipse-")
+              || contentKey.startsWith("authored/sky-lunation-macro/")) return "full-copy-review";
+            if (contentKey.startsWith("fallback-hook/lunation-opening-situation/")) return "optional-lunation-opening";
+            if (contentKey.startsWith("fallback-hook/lunation-ruler-house/")) return "optional-lunation-ruler";
+            if (contentKey.startsWith("fallback-hook/lunation-")) return "shared-fallback-authoring";
+            if (contentKey.startsWith("fallback-template/natal.planet-in-sign/")) return "optional-template";
+            return "editorial-review";
+          }
+
+          function isOptionalWorkClass(workClass) {
+            return workClass.startsWith("optional-");
+          }
+          ''', 'builder work classes')
+          replace_once(builder,
+          '''const retiredItems = [];
+          const shadowedItems = [];
+          const actionableItems = [];
+          ''',
+          '''const retiredItems = [];
+          const shadowedItems = [];
+          const optionalItems = [];
+          const actionableItems = [];
+          ''', 'builder optional collection')
+          replace_once(builder,
+          '''  const eligiblePeers = eligiblePeersFor(item);
+            if (!eligiblePeers.length) {
+              actionableItems.push({ ...item, workClass: workClassFor(item.contentKey) });
+              continue;
+            }
+          ''',
+          '''  const eligiblePeers = eligiblePeersFor(item);
+            if (!eligiblePeers.length) {
+              const classified = { ...item, workClass: workClassFor(item.contentKey) };
+              if (isOptionalWorkClass(classified.workClass)) optionalItems.push(classified);
+              else actionableItems.push(classified);
+              continue;
+            }
+          ''', 'builder route optional')
+          replace_once(builder,
+          '''const actionableContentKeys = [...new Set(actionableItems.map((item) => item.contentKey))].sort();
+          function workloadSummary(items) {
+            const order = ["full-copy-review", "shared-fallback-authoring", "template-review", "optional-rotation", "editorial-review"];
+          ''',
+          '''const actionableContentKeys = [...new Set(actionableItems.map((item) => item.contentKey))].sort();
+          const optionalContentKeys = [...new Set(optionalItems.map((item) => item.contentKey))].sort();
+          function workloadSummary(items) {
+            const order = ["full-copy-review", "shared-fallback-authoring", "editorial-review", "optional-lunation-opening", "optional-lunation-ruler", "optional-template", "optional-rotation"];
+          ''', 'builder optional keys')
+          replace_once(builder,
+          '''  actionableContentKeys,
+            workload: workloadSummary(actionableItems),
+            reasonCounts: reasonCounts(actionableItems),
+            items: actionableItems,
+            shadowedCount: shadowedItems.length,
+          ''',
+          '''  actionableContentKeys,
+            workload: workloadSummary(actionableItems),
+            reasonCounts: reasonCounts(actionableItems),
+            items: actionableItems,
+            optionalCount: optionalItems.length,
+            optionalIssueCount: optionalContentKeys.length,
+            optionalContentKeys,
+            optionalWorkload: workloadSummary(optionalItems),
+            optionalReasonCounts: reasonCounts(optionalItems),
+            optionalItems,
+            shadowedCount: shadowedItems.length,
+          ''', 'builder optional report')
+          replace_once(builder,
+          '''    count: "Actionable unresolved source records.",
+              issueCount: "Unique actionable content keys, which is the closer measure of owner/editorial decisions remaining.",
+              items: "Actionable unresolved records with no governed retirement and no reader-eligible peer using the same contentKey.",
+              shadowedItems: "Pending source records retained as audit evidence but excluded from owner/editorial backlog because an exact-key reader-eligible peer already exists.",
+          ''',
+          '''    count: "Required unresolved source records.",
+              issueCount: "Unique required content keys that still need an editorial decision before required coverage can be complete.",
+              items: "Required unresolved records with no governed retirement, no reader-eligible peer using the same contentKey, and no resolver-supported optional classification.",
+              optionalItems: "Non-serving enrichment candidates retained for future editorial work but excluded from the required backlog because current reader coverage resolves without them.",
+              shadowedItems: "Pending source records retained as audit evidence but excluded from owner/editorial backlog because an exact-key reader-eligible peer already exists.",
+          ''', 'builder semantics')
+          replace_once(builder,
+          '''  console.log(`Content unresolved queue is current (${actionableItems.length} actionable records / ${actionableContentKeys.length} decisions, ${shadowedItems.length} shadowed, ${retiredItems.length} retired).`);
+          ''',
+          '''  console.log(`Content unresolved queue is current (${actionableItems.length} required records / ${actionableContentKeys.length} decisions, ${optionalItems.length} optional records / ${optionalContentKeys.length} optional decisions, ${shadowedItems.length} shadowed, ${retiredItems.length} retired).`);
+          ''', 'builder check log')
+          replace_once(builder,
+          '''  console.log(`Wrote ${path.relative(repoRoot, outputPath)} (${actionableItems.length} actionable records / ${actionableContentKeys.length} decisions, ${shadowedItems.length} shadowed, ${retiredItems.length} retired).`);
+          ''',
+          '''  console.log(`Wrote ${path.relative(repoRoot, outputPath)} (${actionableItems.length} required records / ${actionableContentKeys.length} decisions, ${optionalItems.length} optional records / ${optionalContentKeys.length} optional decisions, ${shadowedItems.length} shadowed, ${retiredItems.length} retired).`);
+          ''', 'builder write log')
+
+          retirements = Path('config/content-unresolved-retirements-v1.json')
+          data = json.loads(retirements.read_text())
+          if not any(x.get('id') == 'retired-lunation-uranus-reader-layer' for x in data['families']):
+              data['families'].append({
+                  'id': 'retired-lunation-uranus-reader-layer',
+                  'contentKeyPrefix': 'fallback-hook/lunation-uranus-layer/',
+                  'reason': 'governed-reader-layer-retirement',
+                  'evidence': 'docs/decisions/2026-08-23-remove-uranus-lunation-reader-layer.md',
+                  'replacement': 'No Uranus-only secondary lunation paragraph; current lunation assembly uses the common governed composition path.'
+              })
+          retirements.write_text(json.dumps(data, indent=2) + '\n')
+
+          test = Path('scripts/test-content-unresolved-actionable-queue.mjs')
+          replace_once(test,
+          '''  assert.equal(report.shadowedCount, report.shadowedItems.length);
+            assert.equal(report.retiredCount, report.retiredItems.length);
+            assert.equal(report.count, 103, "Current actionable editorial backlog must exclude shadowed and governed retired records.");
+            assert.equal(report.issueCount, 92, "Current owner/editorial workload must contain 92 unique actionable content keys.");
+            assert.equal(report.shadowedCount, 47, "Shadowed/reference backlog must preserve 47 rows as audit evidence.");
+            assert.equal(report.retiredCount, 62, "Governed retired/superseded backlog must preserve 62 rows as audit evidence.");
+            assert.equal(report.count + report.shadowedCount + report.retiredCount, 212, "Queue classification must preserve all 212 pre-classification records.");
+          assert.deepEqual(report.workload, {
+            "full-copy-review": { records: 13, decisions: 13 },
+            "shared-fallback-authoring": { records: 44, decisions: 33 },
+            "template-review": { records: 14, decisions: 14 },
+            "optional-rotation": { records: 32, decisions: 32 }
+          });
+          ''',
+          '''  assert.equal(report.optionalCount, report.optionalItems.length);
+            assert.equal(report.optionalIssueCount, new Set(report.optionalItems.map((item) => item.contentKey)).size);
+            assert.equal(report.shadowedCount, report.shadowedItems.length);
+            assert.equal(report.retiredCount, report.retiredItems.length);
+            assert.equal(report.count, 13, "Required editorial backlog must contain only the 13 full-copy gaps.");
+            assert.equal(report.issueCount, 13, "Required owner/editorial workload must contain 13 unique content keys.");
+            assert.equal(report.optionalCount, 79, "Optional enrichment inventory must preserve 79 source records.");
+            assert.equal(report.optionalIssueCount, 68, "Optional enrichment inventory must contain 68 unique decisions.");
+            assert.equal(report.shadowedCount, 47, "Shadowed/reference backlog must preserve 47 rows as audit evidence.");
+            assert.equal(report.retiredCount, 73, "Governed retired/superseded backlog must preserve 73 rows as audit evidence.");
+            assert.equal(report.count + report.optionalCount + report.shadowedCount + report.retiredCount, 212, "Queue classification must preserve all 212 pre-classification records.");
+          assert.deepEqual(report.workload, {
+            "full-copy-review": { records: 13, decisions: 13 }
+          });
+          assert.deepEqual(report.optionalWorkload, {
+            "optional-lunation-opening": { records: 11, decisions: 11 },
+            "optional-lunation-ruler": { records: 22, decisions: 11 },
+            "optional-template": { records: 14, decisions: 14 },
+            "optional-rotation": { records: 32, decisions: 32 }
+          });
+          ''', 'test counts')
+          replace_once(test,
+          '''  assert.ok([...actionableKeys].some((key) => key.startsWith("daily-glance-variant/")));
+          ''',
+          '''  assert.ok(![...actionableKeys].some((key) => key.startsWith("daily-glance-variant/")));
+            assert.ok(![...actionableKeys].some((key) => key.startsWith("fallback-template/natal.planet-in-sign/")));
+            assert.ok(![...actionableKeys].some((key) => key.startsWith("fallback-hook/lunation-opening-situation/")));
+            assert.ok(![...actionableKeys].some((key) => key.startsWith("fallback-hook/lunation-ruler-house/")));
+
+            const optionalKeys = new Set(report.optionalItems.map((item) => item.contentKey));
+            assert.ok([...optionalKeys].some((key) => key.startsWith("daily-glance-variant/")));
+            assert.ok([...optionalKeys].some((key) => key.startsWith("fallback-template/natal.planet-in-sign/")));
+            assert.ok([...optionalKeys].some((key) => key.startsWith("fallback-hook/lunation-opening-situation/")));
+            assert.ok([...optionalKeys].some((key) => key.startsWith("fallback-hook/lunation-ruler-house/")));
+          ''', 'test optional keys')
+          replace_once(test,
+          '''  assert.ok(retiredKeys.has("fallback-hook/empty-house-ruler-v3/a"));
+          ''',
+          '''  assert.ok(retiredKeys.has("fallback-hook/empty-house-ruler-v3/a"));
+            assert.ok([...retiredKeys].some((key) => key.startsWith("fallback-hook/lunation-uranus-layer/")));
+          ''', 'test uranus retirement')
+          replace_once(test,
+          '''  assert.match(report.semantics.items, /Actionable unresolved/u);
+          ''',
+          '''  assert.match(report.semantics.items, /Required unresolved/u);
+            assert.match(report.semantics.optionalItems, /enrichment candidates/u);
+          ''', 'test semantics')
+          replace_once(test,
+          '''  console.log(`Actionable unresolved queue passed (${report.count} records / ${report.issueCount} decisions, ${report.shadowedCount} shadowed, ${report.retiredCount} retired).`);
+          ''',
+          '''  console.log(`Required unresolved queue passed (${report.count} required records / ${report.issueCount} decisions, ${report.optionalCount} optional records / ${report.optionalIssueCount} optional decisions, ${report.shadowedCount} shadowed, ${report.retiredCount} retired).`);
+          ''', 'test log')
+
+          api = Path('api/admin/content-coverage.ts')
+          replace_once(api,
+          '''      unresolvedQueue: Number(unresolved.count ?? 0),
+            unresolvedIssues: Number(unresolved.issueCount ?? unresolved.count ?? 0),
+            unresolvedShadowed: Number(unresolved.shadowedCount ?? 0),
+          ''',
+          '''      unresolvedQueue: Number(unresolved.count ?? 0),
+            unresolvedIssues: Number(unresolved.issueCount ?? unresolved.count ?? 0),
+            unresolvedOptionalQueue: Number(unresolved.optionalCount ?? 0),
+            unresolvedOptionalIssues: Number(unresolved.optionalIssueCount ?? 0),
+            unresolvedShadowed: Number(unresolved.shadowedCount ?? 0),
+          ''', 'api optional summary')
+          replace_once(api,
+          '''      unresolvedWorkload: unresolved.workload ?? {},
+            unresolvedShadowedReasonCounts: unresolved.shadowedReasonCounts ?? {},
+          ''',
+          '''      unresolvedWorkload: unresolved.workload ?? {},
+            unresolvedOptionalWorkload: unresolved.optionalWorkload ?? {},
+            unresolvedShadowedReasonCounts: unresolved.shadowedReasonCounts ?? {},
+          ''', 'api optional workload')
+
+          ui = Path('apps/admin/src/ContentCoverageDashboard.tsx')
+          replace_once(ui,
+          '''    unresolvedIssues: number;
+            unresolvedShadowed: number;
+          ''',
+          '''    unresolvedIssues: number;
+            unresolvedOptionalQueue: number;
+            unresolvedOptionalIssues: number;
+            unresolvedShadowed: number;
+          ''', 'ui optional summary type')
+          replace_once(ui,
+          '''    unresolvedWorkload: Record<string, { records: number; decisions: number }>;
+            unresolvedShadowedReasonCounts: Record<string, number>;
+          ''',
+          '''    unresolvedWorkload: Record<string, { records: number; decisions: number }>;
+            unresolvedOptionalWorkload: Record<string, { records: number; decisions: number }>;
+            unresolvedShadowedReasonCounts: Record<string, number>;
+          ''', 'ui optional notes type')
+          replace_once(ui,
+          '''                <p className="admin-eyebrow">Actionable decisions</p>
+                <strong style={{ fontSize: 28 }}>{payload.summary.unresolvedIssues}</strong>
+              </div>
+              <div style={cardStyle}>
+                <p className="admin-eyebrow">Actionable source records</p>
+                <strong style={{ fontSize: 28 }}>{payload.summary.unresolvedQueue}</strong>
+              </div>
+              <div style={cardStyle}>
+                <p className="admin-eyebrow">Resolved source history</p>
+          ''',
+          '''                <p className="admin-eyebrow">Required decisions</p>
+                <strong style={{ fontSize: 28 }}>{payload.summary.unresolvedIssues}</strong>
+              </div>
+              <div style={cardStyle}>
+                <p className="admin-eyebrow">Optional enrichment</p>
+                <strong style={{ fontSize: 28 }}>{payload.summary.unresolvedOptionalIssues}</strong>
+              </div>
+              <div style={cardStyle}>
+                <p className="admin-eyebrow">Required source records</p>
+                <strong style={{ fontSize: 28 }}>{payload.summary.unresolvedQueue}</strong>
+              </div>
+              <div style={cardStyle}>
+                <p className="admin-eyebrow">Resolved source history</p>
+          ''', 'ui summary cards')
+          replace_once(ui,
+          '''      <p className="admin-eyebrow">Editorial work remaining</p>
+          ''',
+          '''      <p className="admin-eyebrow">Required editorial work</p>
+          ''', 'ui required heading')
+          replace_once(ui,
+          '''        Shadowed and governed retired source rows remain preserved as audit history and are not counted as owner work.
+              </p>
+            </section>
+          )}
+
+          {payload.readerEligibility && (
+          ''',
+          '''        Shadowed and governed retired source rows remain preserved as audit history and are not counted as required owner work.
+              </p>
+            </section>
+          )}
+
+          {Object.keys(payload.notes.unresolvedOptionalWorkload).length > 0 && (
+            <section style={{ ...cardStyle, marginBottom: 20 }} aria-label="Optional editorial enrichment">
+              <p className="admin-eyebrow">Optional enrichment</p>
+              {Object.entries(payload.notes.unresolvedOptionalWorkload).map(([workClass, counts]) => (
+                <p key={workClass} style={{ margin: "6px 0 0" }}>
+                  <strong>{workClass.replaceAll("-", " ")}:</strong> {counts.decisions} decisions · {counts.records} source records
+                </p>
+              ))}
+              <p style={{ margin: "8px 0 0", opacity: 0.72 }}>
+                These candidates can improve rotation or depth later, but current reader coverage resolves without them.
+              </p>
+            </section>
+          )}
+
+          {payload.readerEligibility && (
+          ''', 'ui optional panel')
+
+          governed = Path('docs/content-management/GOVERNED-APPROVALS.md')
+          replace_once(governed,
+          '''This report is an inventory, not an approval grant. Its `items` array is the actionable
+          editorial backlog: pending records that have neither an exact-key reader-eligible peer
+          nor a governed retirement/supersession decision. `issueCount` counts unique actionable
+          content keys, so it is the closer measure of owner/editorial decisions remaining.
+          `shadowedItems` and `retiredItems` preserve non-actionable source history with the
+          eligible-peer or retirement evidence that removed those records from the active queue.
+          No row is approved, deleted, or made reader-eligible by this classification.
+          ''',
+          '''This report is an inventory, not an approval grant. Its `items` array is the required
+          editorial backlog: pending records that still represent a required coverage decision after
+          exact-key reader eligibility, governed retirement, and resolver-supported optionality are
+          accounted for. `issueCount` counts unique required content keys. `optionalItems` preserves
+          non-serving enrichment candidates that current reader resolution does not require.
+          `shadowedItems` and `retiredItems` preserve source history with the eligible-peer or
+          retirement evidence that removed those records from required owner work. No row is
+          approved, deleted, or made reader-eligible by this classification.
+          ''', 'docs governed semantics')
+
+          readme = Path('docs/content-management/README.md')
+          replace_once(readme,
+          '''To review the actionable governed package backlog, open Content Studio >
+          Unresolved Content (`/admin/content#unresolved-content`). Its active inventory is
+          generated from `content-unresolved-queue-v1.json` and contains only pending records
+          that still require a decision. Exact-key rows already superseded by reader-eligible
+          peers and source families with governed retirements remain in the report as audit
+          history but are not presented as owner work. Editorial issues open
+          ''',
+          '''To review the required governed package backlog, open Content Studio >
+          Unresolved Content (`/admin/content#unresolved-content`). Its active inventory is
+          generated from `content-unresolved-queue-v1.json` and contains only pending records
+          required to close reader coverage. Resolver-supported optional enrichments, exact-key
+          rows already superseded by reader-eligible peers, and governed retirements remain in
+          the report for audit and future enrichment planning but are not presented as required
+          owner work. Editorial issues open
+          ''', 'docs readme semantics')
+          PY
+      - name: Rebuild generated unresolved artifacts
+        run: |
+          node scripts/build-content-unresolved-queue.mjs
+          node scripts/build-content-unresolved-dashboard.mjs
+      - name: Verify backlog invariants
+        run: |
+          node scripts/test-content-unresolved-actionable-queue.mjs
+          node scripts/build-content-unresolved-queue.mjs --check
+          node scripts/build-content-unresolved-dashboard.mjs --check
+      - name: Install dependencies
+        run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: Verify TypeScript and Content Studio build
+        run: |
+          npm run typecheck
+          npm run build:admin
+      - name: Commit required-vs-optional model
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add \
+            scripts/build-content-unresolved-queue.mjs \
+            scripts/test-content-unresolved-actionable-queue.mjs \
+            config/content-unresolved-retirements-v1.json \
+            api/admin/content-coverage.ts \
+            apps/admin/src/ContentCoverageDashboard.tsx \
+            docs/content-management/GOVERNED-APPROVALS.md \
+            docs/content-management/README.md \
+            packages/astro-knowledge/generated/content-unresolved-queue-v1.json \
+            packages/astro-knowledge/generated/content-unresolved-dashboard-v1.html
+          git commit -m "fix(content): distinguish required backlog from optional enrichment"
+          git push origin HEAD:chatgpt/required-vs-optional-editorial-backlog
