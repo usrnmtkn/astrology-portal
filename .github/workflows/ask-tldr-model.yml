@@ -59,3 +59,6 @@ jobs:
 
       - name: Validate Ask TLDR end-to-end calibration pipeline
         run: npx tsx scripts/test-ask-tldr-pipeline.mjs
+
+      - name: Validate Ask TLDR bounded provider harness
+        run: npx tsx scripts/test-ask-tldr-provider.mjs
