@@ -316,6 +316,7 @@ async function reportPayloadForRequest(userId: string, input: UserContentRequest
 }
 
 export default async function handler(req: IncomingMessage, res: ServerResponse) {
+  let requestSubjectType: UserContentSubjectType | null = null;
   if (req.method !== "POST") {
     sendJson(res, 405, { error: "Use POST." });
     return;
@@ -324,6 +325,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
   try {
     const userId = await requireAuthenticatedUser(req);
     const input = await readJsonBody(req);
+    requestSubjectType = input.subjectType;
     if (input.subjectType === "friend_transit_reading") {
       const locked = friendTransitReadingRequestLock({
         brief: input.facts?.friendTransitsBrief,
@@ -402,7 +404,10 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     console.error("generate-user-content failed", error);
     sendJson(res, 500, {
       ok: false,
-      error: error instanceof Error ? error.message : "Unknown personalized generation error."
+      errorType: requestSubjectType === "friend_transit_reading" ? "paid_reading_unavailable" : "generation_error",
+      error: requestSubjectType === "friend_transit_reading"
+        ? "This paid reading is currently unavailable."
+        : error instanceof Error ? error.message : "Unknown personalized generation error."
     });
   }
 }

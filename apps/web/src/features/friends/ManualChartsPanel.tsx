@@ -953,8 +953,7 @@ export function ManualChartsPanel({
   const [relationshipComparisonPickerOpen, setRelationshipComparisonPickerOpen] = useState(false);
   const [friendChartModalOpen, setFriendChartModalOpen] = useState(false);
   const [friendTransitReading, setFriendTransitReading] = useState<import("../../services/generatedContent").LiveGeneratedContent | null>(null);
-  const [friendTransitReadingStatus, setFriendTransitReadingStatus] = useState<"idle" | "loading" | "ready" | "error">("idle");
-  const [friendTransitReadingError, setFriendTransitReadingError] = useState<string | null>(null);
+  const [friendTransitReadingStatus, setFriendTransitReadingStatus] = useState<"idle" | "loading" | "ready" | "locked">("idle");
   const [openChartMenuId, setOpenChartMenuId] = useState<string | null>(null);
   const [deleteCandidateChart, setDeleteCandidateChart] = useState<ManualChart | null>(null);
   const allFriendCharts = useMemo(
@@ -1789,14 +1788,12 @@ export function ManualChartsPanel({
   useEffect(() => {
     setFriendTransitReading(null);
     setFriendTransitReadingStatus("idle");
-    setFriendTransitReadingError(null);
   }, [friendTransitReadingSelectionKey]);
 
   async function generateSelectedFriendTransitReading() {
     if (!selectedChart || !selectedFriendTransitReadingDate || !selectedFriendTransitReadingAvailable) return;
     const requestSelectionKey = friendTransitReadingSelectionKey;
     setFriendTransitReadingStatus("loading");
-    setFriendTransitReadingError(null);
     try {
       const generated = await generateUserContent({
         subjectType: "friend_transit_reading",
@@ -1815,11 +1812,10 @@ export function ManualChartsPanel({
       if (!generated) throw new Error("The short reading was not returned.");
       setFriendTransitReading(generated);
       setFriendTransitReadingStatus("ready");
-    } catch (error) {
+    } catch {
       if (friendTransitReadingSelectionKeyRef.current !== requestSelectionKey) return;
       setFriendTransitReading(null);
-      setFriendTransitReadingStatus("error");
-      setFriendTransitReadingError(error instanceof Error ? error.message : "The short reading could not be generated.");
+      setFriendTransitReadingStatus("locked");
     }
   }
 
@@ -2807,7 +2803,6 @@ export function ManualChartsPanel({
               patternTimingOverrides={currentSkyLoading ? {} : selectedFriendNatalAspectPatternTimingOverrides}
               reading={friendTransitReading}
               readingAvailable={selectedFriendTransitReadingAvailable}
-              readingError={friendTransitReadingError}
               readingStatus={friendTransitReadingStatus}
             />
           )}
