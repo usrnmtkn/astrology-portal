@@ -4,10 +4,18 @@ on:
   pull_request:
     paths:
       - "api/account.ts"
+      - "apps/web/src/App.tsx"
       - "apps/web/src/features/friends/**"
       - "apps/web/src/services/auth.ts"
+      - "apps/web/src/services/birthTimeReliability.ts"
+      - "apps/web/src/services/chartProfile.ts"
+      - "apps/web/src/services/manualCharts.ts"
       - "apps/web/src/services/socialFriends.ts"
+      - "apps/web/src/types.ts"
       - "apps/web/supabase/**"
+      - "scripts/test-birth-time-angle-reliability.mts"
+      - "scripts/test-friend-transit-reading-contract.mts"
+      - "scripts/test-friend-transit-reading-request-render.mjs"
       - "scripts/test-social-friends-contract.mjs"
       - ".github/workflows/social-friends-security.yml"
   push:
@@ -15,11 +23,20 @@ on:
       - main
     paths:
       - "api/account.ts"
+      - "apps/web/src/App.tsx"
       - "apps/web/src/features/friends/**"
       - "apps/web/src/services/auth.ts"
+      - "apps/web/src/services/birthTimeReliability.ts"
+      - "apps/web/src/services/chartProfile.ts"
+      - "apps/web/src/services/manualCharts.ts"
       - "apps/web/src/services/socialFriends.ts"
+      - "apps/web/src/types.ts"
       - "apps/web/supabase/**"
+      - "scripts/test-birth-time-angle-reliability.mts"
+      - "scripts/test-friend-transit-reading-contract.mts"
+      - "scripts/test-friend-transit-reading-request-render.mjs"
       - "scripts/test-social-friends-contract.mjs"
+      - ".github/workflows/social-friends-security.yml"
 
 jobs:
   social-contract:
@@ -33,6 +50,9 @@ jobs:
           cache: npm
       - run: npm ci
       - run: node scripts/test-social-friends-contract.mjs
+      - run: node --import tsx scripts/test-birth-time-angle-reliability.mts
+      - run: node --experimental-strip-types scripts/test-friend-transit-reading-contract.mts
+      - run: node scripts/test-friend-transit-reading-request-render.mjs
       - run: npm run typecheck
       - run: npm run build:knowledge
       - run: npm run build:web

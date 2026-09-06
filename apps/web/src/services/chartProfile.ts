@@ -9,6 +9,7 @@ type ChartProfileInput = {
 type ChartBirthInput = {
   birthDate?: string | null;
   birthTime?: string | null;
+  birthTimeUnknown?: boolean | null;
   birthLocation?: LocationInput | null;
 };
 
@@ -88,6 +89,15 @@ export function validChartBirthTime(chart?: ChartBirthInput) {
   }
 }
 
+export function chartBirthTimeIsKnown(chart?: ChartBirthInput | null) {
+  if (!chart || chart.birthTimeUnknown === true) {
+    return false;
+  }
+
+  const birthTime = validChartBirthTime(chart);
+  return Boolean(birthTime && birthTime !== "Time unknown");
+}
+
 export function apiSettingsFromChartSettings(
   settings?: ChartSettingsInput | null
 ): TldrAstroChartSettings {
@@ -113,7 +123,7 @@ export function apiSubjectFromUserChart(
     return null;
   }
 
-  const timeKnown = birthTime !== "Time unknown";
+  const timeKnown = chartBirthTimeIsKnown(chart);
 
   return {
     name: profile.name,

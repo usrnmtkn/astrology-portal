@@ -51,6 +51,14 @@ export function FriendNatalTab({
   placementRows: SocialPlacementRow[];
 }) {
   const placementTitle = isEventChart ? "Event placements" : `${friendName}'s natal placements`;
+  const unreliableAngleLabels = new Set(["Ascendant", "Descendant", "Midheaven", "MC", "Imum Coeli", "IC"]);
+  const visibleBigThreeRows = birthTimeUnknown
+    ? bigThreeRows.filter((row) => !unreliableAngleLabels.has(row.label))
+    : bigThreeRows;
+  const visiblePlacementRows = birthTimeUnknown
+    ? placementRows.filter((row) => !unreliableAngleLabels.has(row.label))
+    : placementRows;
+  const visibleEmptyHouseRows = birthTimeUnknown ? [] : emptyHouseRows;
 
   if (isNatalChartRepairing) {
     return (
@@ -88,7 +96,7 @@ export function FriendNatalTab({
         )}
         <span className="eyebrow section-label friend-section-label">Big three</span>
         <div className="list you-aspects-list aspect-row-list friend-aspect-list friend-big-three-list" aria-label={`${friendName} big three`}>
-          {bigThreeRows.map((row) => {
+          {visibleBigThreeRows.map((row) => {
             const title = row.label === "Ascendant"
               ? `Ascendant in ${row.sign}`
               : placementTitleFromParts(row.label, row.sign, row.retrograde);
@@ -121,18 +129,18 @@ export function FriendNatalTab({
             <span className="eyebrow section-label friend-section-label">{placementTitle}</span>
             <FriendPlacementTable
               title={placementTitle}
-              rows={placementRows}
+              rows={visiblePlacementRows}
               descriptionContext={isEventChart ? "chart" : "person"}
               generatedContext="natal"
               onPlacementClick={onOpenPlacement}
               ownerName={friendName}
               showTitle={false}
             />
-            {emptyHouseRows.length > 0 && (
+            {visibleEmptyHouseRows.length > 0 && (
               <>
                 <span className="eyebrow section-label friend-section-label">Empty houses</span>
                 <div className="list you-list-card planet-placement-list" aria-label={`${friendName} empty houses`}>
-                  {emptyHouseRows.map((row) => (
+                  {visibleEmptyHouseRows.map((row) => (
                     <PlacementTableRow
                       ariaLabel={row.detailAvailable !== false ? row.ariaLabel : `${row.title} interpretation unavailable`}
                       asButton={row.detailAvailable !== false}
