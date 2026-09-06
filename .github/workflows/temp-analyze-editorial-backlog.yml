@@ -125,13 +125,9 @@ jobs:
             unresolvedRetiredReasonCounts: Record<string, number>;
           ''', 'coverage ui notes type')
           replace_once(ui,
-          '''              <div style={cardStyle}>
-                <p className="admin-eyebrow">Unresolved queue</p>
-                <strong style={{ fontSize: 28 }}>{payload.summary.unresolvedQueue}</strong>
-              </div>
-          ''',
-          '''              <div style={cardStyle}>
-                <p className="admin-eyebrow">Actionable decisions</p>
+          '''<p className="admin-eyebrow">Unresolved queue</p>
+                <strong style={{ fontSize: 28 }}>{payload.summary.unresolvedQueue}</strong>''',
+          '''<p className="admin-eyebrow">Actionable decisions</p>
                 <strong style={{ fontSize: 28 }}>{payload.summary.unresolvedIssues}</strong>
               </div>
               <div style={cardStyle}>
@@ -140,9 +136,7 @@ jobs:
               </div>
               <div style={cardStyle}>
                 <p className="admin-eyebrow">Resolved source history</p>
-                <strong style={{ fontSize: 28 }}>{payload.summary.unresolvedShadowed + payload.summary.unresolvedRetired}</strong>
-              </div>
-          ''', 'coverage ui cards')
+                <strong style={{ fontSize: 28 }}>{payload.summary.unresolvedShadowed + payload.summary.unresolvedRetired}</strong>''', 'coverage ui cards')
           replace_once(ui,
           '''            {payload.readerEligibility && (
           ''',
