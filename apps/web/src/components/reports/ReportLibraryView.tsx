@@ -1,5 +1,6 @@
 import { Archive, ChevronLeft, FileText, RotateCcw } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
+import { SegmentedControl } from "../SegmentedControl";
 import {
   listReportLibrary,
   loadGeneratedReportById,
@@ -48,11 +49,11 @@ function ReportLibraryRow({
         <span className="report-library-row__icon" aria-hidden="true"><FileText size={20} /></span>
         <span className="report-library-row__copy">
           <span className="report-library-row__title-line">
-            <strong>{item.title}</strong>
-            <span className={`report-library-status report-library-status--${item.status}`}>{statusLabel(item)}</span>
+            <strong className="type-card-title">{item.title}</strong>
+            <span className={`report-library-status ui-pill ui-pill--neutral report-library-status--${item.status}`}>{statusLabel(item)}</span>
           </span>
-          <span className="report-library-row__subtitle">{item.subtitle}</span>
-          <span className="report-library-row__date">
+          <span className="report-library-row__subtitle type-meta">{item.subtitle}</span>
+          <span className="report-library-row__date type-meta">
             {item.status === "ready" ? `Saved ${formatTimestamp(item.readyAt ?? item.updatedAt)}` : `Updated ${formatTimestamp(item.updatedAt)}`}
           </span>
         </span>
@@ -101,34 +102,61 @@ export function ReportLibraryView() {
   }
 
   return (
-    <main className="report-library-shell">
-      <header className="report-library-header">
-        <a className="report-library-back" href="/">
-          <ChevronLeft size={18} aria-hidden="true" />
-          <span>TLDR Astro</span>
-        </a>
-        <div>
-          <span className="report-library-eyebrow">Your library</span>
-          <h1>Reports</h1>
-          <p>Every saved reading stays here so you can come back to it without generating or paying for it again.</p>
-        </div>
-      </header>
+    <main className="report-library-page">
+      <button className="report-library-back floating-back-button" type="button" onClick={() => window.location.assign("/")}>
+        <ChevronLeft size={18} aria-hidden="true" />
+        <span>TLDR Astro</span>
+      </button>
 
-      <div className="report-library-tabs" role="tablist" aria-label="Report library">
-        <button type="button" role="tab" aria-selected={view === "active"} className={view === "active" ? "active" : ""} onClick={() => setView("active")}>Reports</button>
-        <button type="button" role="tab" aria-selected={view === "archived"} className={view === "archived" ? "active" : ""} onClick={() => setView("archived")}>Archived{archivedCount ? ` ${archivedCount}` : ""}</button>
-      </div>
+      <section className="report-library-shell" aria-labelledby="report-library-title">
+        <header className="report-library-header">
+          <p className="type-section-label">Your library</p>
+          <h1 className="type-page-title" id="report-library-title">Reports</h1>
+          <p className="type-body">Every saved reading stays here so you can come back to it without generating or paying for it again.</p>
+        </header>
 
-      <section className="report-library-list" aria-live="polite">
-        {status === "loading" ? <p className="report-library-empty">Loading your reports…</p> : null}
-        {status === "error" ? <p className="report-library-empty">Your reports could not be loaded right now.</p> : null}
-        {status === "ready" && visible.length === 0 ? (
-          <p className="report-library-empty">{view === "archived" ? "No archived reports." : "Your saved reports will appear here."}</p>
-        ) : null}
-        {status === "ready" ? visible.map((item) => (
-          <ReportLibraryRow key={item.id} item={item} onArchiveChange={changeArchive} />
-        )) : null}
+        <SegmentedControl
+          id="report-library-tabs"
+          panelId="report-library-panel"
+          className="report-library-tabs"
+          value={view}
+          ariaLabel="Report library"
+          onChange={setView}
+          options={[
+            { value: "active", label: "Reports" },
+            { value: "archived", label: archivedCount ? `Archived ${archivedCount}` : "Archived" }
+          ]}
+        />
+
+        <section
+          className="report-library-list"
+          id="report-library-panel"
+          role="tabpanel"
+          aria-labelledby={`report-library-tabs-${view}-tab`}
+          aria-live="polite"
+        >
+          {status === "loading" ? <p className="report-library-empty type-body-muted">Loading your reports…</p> : null}
+          {status === "error" ? <p className="report-library-empty type-body-muted">Your reports could not be loaded right now.</p> : null}
+          {status === "ready" && visible.length === 0 ? (
+            <p className="report-library-empty type-body-muted">{view === "archived" ? "No archived reports." : "Your saved reports will appear here."}</p>
+          ) : null}
+          {status === "ready" ? visible.map((item) => (
+            <ReportLibraryRow key={item.id} item={item} onArchiveChange={changeArchive} />
+          )) : null}
+        </section>
       </section>
+    </main>
+  );
+}
+
+function GeneratedReportState({ message }: { message: string }) {
+  return (
+    <main className="saved-generated-report saved-generated-report--state">
+      <button className="report-library-back floating-back-button" type="button" onClick={() => window.location.assign("/reports/")}>
+        <ChevronLeft size={18} aria-hidden="true" />
+        <span>Reports</span>
+      </button>
+      <p className="report-library-empty type-body-muted">{message}</p>
     </main>
   );
 }
@@ -159,26 +187,28 @@ export function GeneratedReportDeliveryView() {
     return () => { cancelled = true; };
   }, [reportId]);
 
-  if (status === "loading") return <main className="report-library-shell"><p className="report-library-empty">Loading report…</p></main>;
-  if (status === "error" || !report) return <main className="report-library-shell"><p className="report-library-empty">This report is unavailable.</p></main>;
+  if (status === "loading") return <GeneratedReportState message="Loading report…" />;
+  if (status === "error" || !report) return <GeneratedReportState message="This report is unavailable." />;
 
   return (
     <main className="saved-generated-report">
-      <a className="report-library-back" href="/reports/">
+      <button className="report-library-back floating-back-button" type="button" onClick={() => window.location.assign("/reports/")}>
         <ChevronLeft size={18} aria-hidden="true" />
         <span>Reports</span>
-      </a>
+      </button>
       <article className="saved-generated-report__article">
-        <div className="saved-generated-report__topline">
-          <span>Friends</span>
-          <span>Paid reading</span>
-        </div>
-        <h1>{report.headline ?? "Saved reading"}</h1>
-        {report.summary ? <p className="saved-generated-report__summary">{report.summary}</p> : null}
+        <header className="saved-generated-report__header">
+          <div className="saved-generated-report__topline">
+            <span className="type-section-label">Friends</span>
+            <span className="ui-pill ui-pill--neutral">Paid reading</span>
+          </div>
+          <h1 className="type-page-title">{report.headline ?? "Saved reading"}</h1>
+          {report.summary ? <p className="saved-generated-report__summary type-body">{report.summary}</p> : null}
+        </header>
         <div className="saved-generated-report__body">
-          {report.body.split(/\n{2,}/u).filter(Boolean).map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
+          {report.body.split(/\n{2,}/u).filter(Boolean).map((paragraph) => <p className="type-body" key={paragraph}>{paragraph}</p>)}
         </div>
-        <footer>Saved {formatTimestamp(report.updatedAt)}</footer>
+        <footer className="type-meta">Saved {formatTimestamp(report.updatedAt)}</footer>
       </article>
     </main>
   );
