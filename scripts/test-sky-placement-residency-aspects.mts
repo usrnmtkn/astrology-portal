@@ -48,8 +48,8 @@ try {
   );
   assert.deepEqual(
     chronologicalEngineEvents.map((event) => event.dateKey),
-    ["2026-10-24", "2026-10-26", "2026-11-04", "2026-11-18", "2026-11-19"],
-    "Engine-owned Sun in Scorpio exact-aspect dates drifted."
+    ["2026-10-23", "2026-10-26", "2026-11-04", "2026-11-18", "2026-11-19"],
+    "Engine-owned Sun in Scorpio reader-local exact-aspect dates drifted."
   );
 
   const residency = await vite.ssrLoadModule("/src/services/skyPlacementResidencyAspects.ts");
@@ -75,7 +75,7 @@ try {
   assert.deepEqual(
     result.events.map((event: { dateLine: string }) => event.dateLine),
     [
-      "October 24, 2026",
+      "October 23, 2026",
       "October 26, 2026",
       "November 4, 2026",
       "November 18, 2026",
