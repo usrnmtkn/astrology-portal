@@ -1,4 +1,5 @@
 import NatalPlacementReaderPreview, { natalPlacementOverrideDraft } from "./NatalPlacementReaderPreview";
+import { natalPlacementReaderHref, openContextualReaderHref } from "./adminReaderDestinations";
 import {
   natalPlacementHouses,
   natalPlacementLabel,
@@ -56,7 +57,9 @@ function statusLabel(status: string) {
 export default function NatalPlacementSourceFinder({ house, isLoading, motion, onCreateOverride, onOpenSource, onSelectionChange, planet, rows, secret, sign }: Props) {
   const signSelectionComplete = Boolean(planet && sign);
   const fullSelectionComplete = Boolean(signSelectionComplete && house);
-  const readerRoute = fullSelectionComplete ? `#/you/placement/${planet}-${sign}-${house}h` : "";
+  const readerHref = fullSelectionComplete
+    ? natalPlacementReaderHref(planet, sign, house)
+    : "";
   const groups = signSelectionComplete
     ? natalPlacementSourceGroups(planet as NatalPlacementPlanet, sign as NatalPlacementSign, house, motion)
     : [];
@@ -101,10 +104,10 @@ export default function NatalPlacementSourceFinder({ house, isLoading, motion, o
         {fullSelectionComplete && (
           <div className="admin-natal-placement-key">
             <span>Reader path</span>
-            <code>you/placement/{planet}-{sign}-{house}h</code>
+            <code>{readerHref}</code>
             <button
               type="button"
-              onClick={() => window.open(`/${readerRoute}`, "_blank", "noopener,noreferrer")}
+              onClick={() => openContextualReaderHref(readerHref)}
               aria-label={`View ${natalPlacementLabel(planet as NatalPlacementPlanet, sign as NatalPlacementSign, house as NatalPlacementHouse)} in app`}
             >
               View in app
