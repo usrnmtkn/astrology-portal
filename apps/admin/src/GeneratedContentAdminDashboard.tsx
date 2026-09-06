@@ -154,6 +154,12 @@ import type {
 import type { CompositionEditorContext } from "./CompositionMapWorkspace";
 import "./admin.css";
 import "./admin-components.css";
+// Presentation layers that must ship with the dashboard itself. The production
+// route is served by @tldr/web, which lazy-loads this component and never ran
+// apps/admin/src/main.tsx, so anything imported only there was missing in prod.
+import "./admin-row-selection.css";
+import "./admin-form-density.css";
+import "./admin-content-studio-ux-compat.css";
 
 const CompositionMapWorkspace = lazy(() => import("./CompositionMapWorkspace"));
 const AspectPatternDiagnostics = lazy(async () => {
@@ -858,7 +864,7 @@ function adminPageDescription(activePage: AdminDashboardPage) {
 
 function contentStatusLabel(status: GeneratedContentStatus) {
   if (status === "LIVE") return "Published";
-  if (status === "ERROR") return "Needs Review";
+  if (status === "ERROR") return "Needs review";
   return status.charAt(0) + status.slice(1).toLowerCase();
 }
 
@@ -9480,7 +9486,7 @@ export function GeneratedContentAdminDashboard() {
                 <select aria-label="Variable approval" value={packageReviewStatus} onChange={(event) => updatePackageReviewStatus(event.target.value)}>
                   {fallbackArchitectureV3ReviewStatuses.map((reviewStatus) => (
                     <option key={reviewStatus} value={reviewStatus}>
-                      {reviewStatus === "needs_review" ? "Needs review" : reviewStatus === "approved_reuse" ? "Approved for reuse" : reviewStatus === "deprecated" ? "Archived" : "Approved for use"}
+                      {reviewStatus === "needs_review" ? "Needs review" : reviewStatus === "approved_reuse" ? "Approved for reuse" : reviewStatus === "deprecated" ? "Retired (not for reuse)" : "Approved for use"}
                     </option>
                   ))}
                 </select>
