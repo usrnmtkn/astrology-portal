@@ -7,7 +7,7 @@ import { createServer } from "vite";
 const panelSource = fs.readFileSync("apps/web/src/features/friends/ManualChartsPanel.tsx", "utf8");
 const serviceSource = fs.readFileSync("apps/web/src/services/userGeneratedContent.ts", "utf8");
 const apiSource = fs.readFileSync("api/generate-user-content.ts", "utf8");
-const generationSource = fs.readFileSync("api/_lib/content-generation.ts", "utf8");
+const friendApiSource = fs.readFileSync("api/generate-friend-transit-reading.ts", "utf8");
 const surfaceMigrationSource = fs.readFileSync(
   "apps/web/supabase/migrations/20260906190000_add_friends_user_generated_surface.sql",
   "utf8"
@@ -24,26 +24,32 @@ assert.match(
   /request\.subjectType === "friend_transit_reading"[\s\S]{0,120}saved\.status === "DRAFT"[\s\S]{0,120}return fromRow\(saved\)/u,
   "The on-demand DRAFT must remain visible in the current session without being promoted LIVE."
 );
+assert.match(
+  serviceSource,
+  /subjectType === "friend_transit_reading"[\s\S]{0,120}query\.in\("status", \["DRAFT", "REVIEWED", "LIVE"\]\)/u,
+  "A successfully generated Friends DRAFT must survive a refresh without another provider call."
+);
+assert.match(
+  serviceSource,
+  /request\.subjectType === "friend_transit_reading"[\s\S]{0,140}"\/api\/generate-friend-transit-reading"/u,
+  "Friends paid readings must use the dedicated short-reading endpoint instead of the generic article generator."
+);
+
 assert.match(apiSource, /const locked = friendTransitReadingRequestLock\(\{/u);
 assert.match(apiSource, /input\.status = "DRAFT"/u);
 assert.match(apiSource, /input\.allowQualityFallback = false/u);
 assert.match(apiSource, /requestSubjectType === "friend_transit_reading"[\s\S]{0,220}This paid reading is currently unavailable/u);
 
-assert.match(generationSource, /const friendTransitReadingGeneratedContentSchema = \{[\s\S]*sceneLock: \{ type: "null" \}[\s\S]*astrologyDrilldown: \{ type: "null" \}/u);
-assert.match(generationSource, /schema: generatedContentSchemaForInput\(input\)/u);
-assert.match(generationSource, /input_schema: generatedContentSchemaForInput\(input\)/u);
-const qualityStart = generationSource.indexOf("function validateGeneratedContentQuality");
-const qualityEnd = generationSource.indexOf("function validateAstrologyDrilldownQuality", qualityStart);
-const qualitySource = generationSource.slice(qualityStart, qualityEnd);
-assert.ok(qualitySource.indexOf("content.body.trim().length < 180") >= 0);
-assert.ok(qualitySource.indexOf("if (isFriendTransitReadingInput(input))") > qualitySource.indexOf("content.body.trim().length < 180"));
-assert.ok(qualitySource.indexOf("if (isPrimaryNatalPlacementGeneration(input))") > qualitySource.indexOf("if (isFriendTransitReadingInput(input))"));
-const validationStart = generationSource.indexOf("function validateGeneratedContentForInput");
-const validationEnd = generationSource.indexOf("function parseResponseJson", validationStart);
-const validationSource = generationSource.slice(validationStart, validationEnd);
-assert.ok(validationSource.indexOf("validateGeneratedContentQuality(content, input)") >= 0);
-assert.ok(validationSource.indexOf("if (isFriendTransitReadingInput(input))") > validationSource.indexOf("validateGeneratedContentQuality(content, input)"));
-assert.ok(validationSource.indexOf("validateAstrologyDrilldownQuality(content)") > validationSource.indexOf("if (isFriendTransitReadingInput(input))"));
+assert.match(friendApiSource, /const FRIEND_TRANSIT_READING_PROVIDER_SCHEMA|export const FRIEND_TRANSIT_READING_PROVIDER_SCHEMA/u);
+assert.match(friendApiSource, /required: \["headline", "tldr", "summary", "body"\]/u);
+assert.doesNotMatch(friendApiSource, /maxItems\s*:/u, "The live Friends provider schema must not use unsupported array-size constraints.");
+assert.doesNotMatch(friendApiSource, /type:\s*"null"/u, "The live Friends provider schema must not require null-only article fields.");
+assert.match(friendApiSource, /validateFriendTransitReadingDraft\(\{ draft, brief, expectedHeadline \}\)/u);
+assert.match(friendApiSource, /validationProfile:\s*"friends-transit"[\s\S]{0,120}family:\s*"friend-transit-reading"[\s\S]{0,120}register:\s*"third_person"/u);
+assert.match(friendApiSource, /\["DRAFT", "REVIEWED", "LIVE"\]\.includes\(existing\.status\)/u, "A saved paid reading must be reused instead of regenerated.");
+assert.match(friendApiSource, /console\.error\("generate-friend-transit-reading failed", error\)/u);
+assert.match(friendApiSource, /errorType:\s*"paid_reading_unavailable"[\s\S]{0,120}This paid reading is currently unavailable/u);
+assert.doesNotMatch(friendApiSource, /error:\s*error instanceof Error \? error\.message/u, "Provider details must not be returned to the customer.");
 assert.match(
   surfaceMigrationSource,
   /user_generated_interpretations_surface_check[\s\S]{0,260}'friends'/u,
