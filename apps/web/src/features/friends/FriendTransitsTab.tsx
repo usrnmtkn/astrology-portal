@@ -40,19 +40,35 @@ function FriendPersonalTransitCard({
   );
 }
 
+export type FriendTransitReadingView = {
+  headline: string | null;
+  summary: string | null;
+  body: string;
+};
+
 export function FriendTransitsTab({
   brief,
   isLoading = false,
+  onGenerateReading,
   onOpenBondTransit,
   onOpenHouseTransit,
   onOpenPersonalTransit,
+  reading,
+  readingError,
+  readingStatus = "idle",
+  readingAvailable = false,
   patternTimingOverrides
 }: {
   brief: FriendTransitsBrief;
   isLoading?: boolean;
+  onGenerateReading?: () => void;
   onOpenBondTransit: (id: string) => void;
   onOpenHouseTransit: (id: string) => void;
   onOpenPersonalTransit: (id: string) => void;
+  reading?: FriendTransitReadingView | null;
+  readingError?: string | null;
+  readingStatus?: "idle" | "loading" | "ready" | "error";
+  readingAvailable?: boolean;
   patternTimingOverrides: Record<string, NatalAspectPatternActivationTimingWindow>;
 }) {
   const {
@@ -73,6 +89,30 @@ export function FriendTransitsTab({
           <div className="feature-loading-fallback" role="status">
             Calculating transits for the selected date…
           </div>
+        ) : null}
+        {!isLoading && readingAvailable ? (
+          <article className="friends-logic-card friend-transit-reading" aria-label={`What's going on with ${friendName} right now?`}>
+            <span>Right now</span>
+            <h3>{`What's going on with ${friendName} right now?`}</h3>
+            {readingStatus === "ready" && reading ? (
+              <>
+                {reading.summary ? <p>{reading.summary}</p> : null}
+                {reading.body.split(/\n{2,}/u).filter(Boolean).map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
+              </>
+            ) : readingStatus === "loading" ? (
+              <p role="status">Putting {friendName}&apos;s current transits together…</p>
+            ) : readingStatus === "error" ? (
+              <>
+                <p>{readingError || "The short reading could not be generated. The transit details below are still available."}</p>
+                <button className="button secondary" onClick={onGenerateReading} type="button">Try again</button>
+              </>
+            ) : (
+              <>
+                <p>Pull the current transit picture into one short reading without changing the astrology underneath it.</p>
+                <button className="button secondary" onClick={onGenerateReading} type="button">Give me the short version</button>
+              </>
+            )}
+          </article>
         ) : null}
         {daily?.forecast ? (
           <section className="daily-horoscope-summary friend-daily-forecast" aria-label={`Daily forecast for ${friendName}`}>
