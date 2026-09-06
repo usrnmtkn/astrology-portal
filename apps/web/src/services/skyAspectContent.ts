@@ -18,6 +18,21 @@ const collectiveSkyAspectBodyOrder = [
   "nodes"
 ];
 
+const contentStudioExactBodyOrder = [
+  "sun",
+  "moon",
+  "mercury",
+  "venus",
+  "mars",
+  "jupiter",
+  "saturn",
+  "uranus",
+  "neptune",
+  "pluto",
+  "chiron",
+  "lilith"
+];
+
 function canonicalCollectiveSkyPoint(value: string) {
   const point = slugContentPart(value);
   return ["north-node", "south-node", "true-node", "node", "nodes", "lunar-nodes"].includes(point)
@@ -25,6 +40,13 @@ function canonicalCollectiveSkyPoint(value: string) {
     : point === "black-moon-lilith"
       ? "lilith"
       : point;
+}
+
+function canonicalContentStudioExactSkyPoint(value: string) {
+  const point = slugContentPart(value);
+  if (point === "north-node" || point === "true-node") return "north-node";
+  if (point === "south-node") return "south-node";
+  return point === "black-moon-lilith" ? "lilith" : point;
 }
 
 type ResolveSkyAspectContentOptions = {
@@ -104,6 +126,58 @@ function normalizedCollectiveSkyAspectFacts({
   };
 }
 
+function normalizedContentStudioExactSkyAspectFacts({
+  first,
+  second,
+  aspect,
+  firstSign,
+  secondSign
+}: Omit<ResolveSkyAspectContentOptions, "generatedContent" | "targetDate">): ExpectedSkyAspectFacts | null {
+  const normalizedFirst = canonicalContentStudioExactSkyPoint(first);
+  const normalizedSecond = canonicalContentStudioExactSkyPoint(second);
+  const normalizedAspect = slugContentPart(aspect);
+  const normalizedFirstSign = slugContentPart(firstSign);
+  const normalizedSecondSign = slugContentPart(secondSign);
+  const nodePoles = new Set(["north-node", "south-node"]);
+  const firstIsNode = nodePoles.has(normalizedFirst);
+  const secondIsNode = nodePoles.has(normalizedSecond);
+  const firstIndex = contentStudioExactBodyOrder.indexOf(normalizedFirst);
+  const secondIndex = contentStudioExactBodyOrder.indexOf(normalizedSecond);
+
+  if (
+    (firstIsNode && secondIsNode)
+    || (!firstIsNode && firstIndex < 0)
+    || (!secondIsNode && secondIndex < 0)
+    || !["conjunction", "sextile", "square", "trine", "quincunx", "opposition"].includes(normalizedAspect)
+    || !normalizedFirstSign
+    || !normalizedSecondSign
+  ) {
+    return null;
+  }
+
+  let a = normalizedFirst;
+  let b = normalizedSecond;
+  let signA = normalizedFirstSign;
+  let signB = normalizedSecondSign;
+
+  // Published exact-aspect Content Studio rows have always put the node first.
+  // Preserve that key shape so North Node rows do not migrate, while keeping
+  // North and South Node as distinct editable identities.
+  if (secondIsNode || (!firstIsNode && !secondIsNode && firstIndex > secondIndex)) {
+    [a, b, signA, signB] = [normalizedSecond, normalizedFirst, normalizedSecondSign, normalizedFirstSign];
+  }
+
+  return {
+    a,
+    b,
+    aspect: normalizedAspect,
+    signA,
+    signB,
+    pairKey: `${a}-${b}`,
+    pairSource: `data/pairs/${a}-${b}.json`
+  };
+}
+
 function generatedSkyAspectCardPassesBoundary(
   content: LiveGeneratedContent,
   expected: ExpectedSkyAspectFacts
@@ -154,10 +228,10 @@ function skyAspectContentKeysFromExpected(expected: ExpectedSkyAspectFacts, targ
 }
 
 export function resolveSkyAspectContentStudioExact(options: ResolveSkyAspectContentOptions) {
-  const expected = normalizedCollectiveSkyAspectFacts(options);
+  const expected = normalizedContentStudioExactSkyAspectFacts(options);
   if (!expected) return null;
 
-  const contentKey = skyAspectContentKey(expected.a, expected.aspect, expected.b);
+  const contentKey = `sky.aspect.${expected.a}.${expected.aspect}.${expected.b}`;
   const content = options.generatedContent.get(contentKey);
   const source = content?.sourceSnapshot ?? {};
   const identity = recordField(source.exactSkyAspectIdentity);

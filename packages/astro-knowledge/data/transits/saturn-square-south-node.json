@@ -1,0 +1,18 @@
+{
+  "id": "saturn-square-south-node",
+  "transiting": "saturn",
+  "aspect": "square",
+  "other": "south-node",
+  "base": "The old obligation may have become a rule nobody has reconsidered.",
+  "business": "A practical mismatch needs adjustment; change the arrangement instead of repeating the same workaround.",
+  "shadow": "Pressure escalates when each side keeps demanding terms the other cannot sustain.",
+  "arcApplying": "The mismatch becomes harder to work around as exactness approaches.",
+  "arcSeparating": "The pressure eases after exactness, leaving the changed arrangement to prove itself.",
+  "voiceNeutral": true,
+  "status": "LIVE",
+  "readerCopy": {
+    "summary": "The old obligation may have become a rule nobody has reconsidered.",
+    "body": "The old obligation may have become a rule nobody has reconsidered. Saturn square the South Node can expose a responsibility, hierarchy, deadline, or standard that keeps repeating because everyone assumes you will continue to carry it. You may feel guilty changing the arrangement because you have been reliable for so long. The pressure is information. A commitment can have history and still need new terms. Do not confuse endurance with consent.",
+    "approvedVia": "exact owner-approved South Node Calendar batch sky-calendar-south-node-60-v1; packages/astro-knowledge/review/sky-calendar-south-node-60-v1/owner-batch-authorization.json; serving authorized by packages/astro-knowledge/review/sky-calendar-south-node-60-v1/owner-serving-authorization.json"
+  }
+}

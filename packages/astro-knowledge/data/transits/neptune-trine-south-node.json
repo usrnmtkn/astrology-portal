@@ -1,0 +1,18 @@
+{
+  "id": "neptune-trine-south-node",
+  "transiting": "neptune",
+  "aspect": "trine",
+  "other": "south-node",
+  "base": "The past can feel soft enough around the edges that you forget why you left it.",
+  "business": "A supportive opening is available here; use what becomes easier without assuming ease will do the work for you.",
+  "shadow": "The ease of a trine can make the opening easy to miss, leave unused, or go unexamined.",
+  "arcApplying": "Support and coordination build toward exactness.",
+  "arcSeparating": "The opening begins to recede after exactness.",
+  "voiceNeutral": true,
+  "status": "LIVE",
+  "readerCopy": {
+    "summary": "The past can feel soft enough around the edges that you forget why you left it.",
+    "body": "The past can feel soft enough around the edges that you forget why you left it. Neptune trine the South Node can make old dreams, memories, relationships, and creative identities feel unusually tender and easy to revisit. There may be something worth reclaiming in the feeling or imagination. Keep the part that still feeds you. Do not let a beautiful memory erase the practical reasons the chapter ended.",
+    "approvedVia": "exact owner-approved South Node Calendar batch sky-calendar-south-node-60-v1; packages/astro-knowledge/review/sky-calendar-south-node-60-v1/owner-batch-authorization.json; serving authorized by packages/astro-knowledge/review/sky-calendar-south-node-60-v1/owner-serving-authorization.json"
+  }
+}
