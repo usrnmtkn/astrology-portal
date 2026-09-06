@@ -6,7 +6,6 @@ export type UserGeneratedSubjectType =
   | "you_update"
   | "you_transit"
   | "friend_transit_reading"
-  | "friend_transit_reading"
   | "natal_summary"
   | "natal_placement"
   | "natal_aspect"
