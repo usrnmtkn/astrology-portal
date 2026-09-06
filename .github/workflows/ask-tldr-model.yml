@@ -44,3 +44,6 @@ jobs:
 
       - name: Validate Ask TLDR owner voice receipt
         run: npx tsx scripts/test-ask-tldr-voice-receipt.mjs
+
+      - name: Validate Ask TLDR writer contract
+        run: npx tsx scripts/test-ask-tldr-writer.mjs
