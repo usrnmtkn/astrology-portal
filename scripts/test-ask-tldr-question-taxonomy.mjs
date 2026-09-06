@@ -1,8 +1,12 @@
 import assert from "node:assert/strict";
 import fs from "node:fs";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 
-const path = new URL("../packages/astro-knowledge/data/questions/ask-tldr-evergreen-question-taxonomy-v1.json", import.meta.url);
-const taxonomy = JSON.parse(fs.readFileSync(path, "utf8"));
+const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
+const taxonomyDir = path.join(repoRoot, "packages/astro-knowledge/data/questions/ask-tldr-question-taxonomy-v1");
+const taxonomy = JSON.parse(fs.readFileSync(path.join(taxonomyDir, "manifest.json"), "utf8"));
+const pillars = taxonomy.pillarFiles.map((file) => JSON.parse(fs.readFileSync(path.join(taxonomyDir, file), "utf8")));
 
 assert.equal(taxonomy.schemaVersion, 1);
 assert.equal(taxonomy.recordType, "ask_tldr_evergreen_question_taxonomy");
@@ -14,7 +18,7 @@ assert.equal(taxonomy.runtimeEnabled, false);
 
 assert.equal(taxonomy.pillarCount, 9);
 assert.equal(taxonomy.questionCount, 54);
-assert.equal(taxonomy.pillars.length, 9);
+assert.equal(pillars.length, 9);
 
 const expectedPillars = [
   ["self", "Self"],
@@ -27,14 +31,15 @@ const expectedPillars = [
   ["social", "Social"],
   ["spirituality", "Spirituality"]
 ];
-assert.deepEqual(taxonomy.pillars.map(({ id, label }) => [id, label]), expectedPillars);
+assert.deepEqual(pillars.map(({ id, label }) => [id, label]), expectedPillars);
+assert.deepEqual(taxonomy.pillarFiles, expectedPillars.map(([id]) => `${id}.json`));
 
 const allowedTypes = new Set(taxonomy.allowedQuestionTypes);
 const allowedWindows = new Set(taxonomy.allowedTimeWindows);
 assert.deepEqual([...allowedTypes], ["current_state", "pattern", "guidance", "direction", "decision", "timing"]);
 assert.deepEqual([...allowedWindows], ["1_month", "4_months", "12_months"]);
 
-const questions = taxonomy.pillars.flatMap((pillar) => {
+const questions = pillars.flatMap((pillar) => {
   assert.equal(pillar.questions.length, 6, `${pillar.id} must contain exactly six evergreen questions.`);
   assert.ok(pillar.description.trim(), `${pillar.id} needs a description.`);
   assert.ok(pillar.defaultEvidencePriority.length >= 2, `${pillar.id} needs default evidence priorities.`);
@@ -61,10 +66,19 @@ assert.equal(taxonomy.routingPolicy.pillarIsUserFacingAndDoesNotEqualHouse, true
 assert.equal(taxonomy.routingPolicy.astrologyRetrievedAfterIntentClassification, true);
 assert.equal(taxonomy.routingPolicy.llmMustNotCalculateAstrology, true);
 
-const health = taxonomy.pillars.find((pillar) => pillar.id === "daily_life_health");
-assert.ok(health?.description.includes("Never medical diagnosis."), "Daily Life & Health must retain the medical-diagnosis boundary.");
+const money = pillars.find((pillar) => pillar.id === "money");
+assert.ok(money?.answerBoundary?.includes("Do not recommend or guarantee"), "Money must retain the financial-decision boundary.");
+
+const health = pillars.find((pillar) => pillar.id === "daily_life_health");
+assert.ok(health?.answerBoundary?.includes("Do not diagnose illness"), "Daily Life & Health must retain the medical-diagnosis boundary.");
+
+const spirituality = pillars.find((pillar) => pillar.id === "spirituality");
+assert.ok(spirituality?.answerBoundary?.includes("without asserting psychic certainty"), "Spirituality must retain the discernment boundary.");
 
 const readerQuestionText = questions.map(({ question }) => question.displayQuestion).join("\n");
 assert.doesNotMatch(readerQuestionText, /\balign(?:ed|ment)?\b/iu, "Evergreen questions should not use generic alignment language.");
+assert.doesNotMatch(readerQuestionText, /Is this a good time to take a financial risk\?/u, "Evergreen questions must not ask astrology to green-light financial risk.");
+assert.doesNotMatch(readerQuestionText, /\bthis person\b/iu, "Evergreen questions cannot depend on an undefined person.");
+assert.doesNotMatch(readerQuestionText, /\bresponsible for here\b/iu, "Evergreen questions cannot depend on an undefined 'here'.");
 
 console.log(`Ask TLDR taxonomy contract passed: ${taxonomy.pillarCount} pillars, ${questions.length} unique evergreen questions.`);
