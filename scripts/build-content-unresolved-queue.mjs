@@ -41,11 +41,15 @@ function retirementFor(contentKey) {
 
 function workClassFor(contentKey) {
   if (contentKey.startsWith("daily-glance-variant/")) return "optional-rotation";
-  if (contentKey.startsWith("authored/book-ritual-and-the-moon/lunation-horoscope/eclipse-")
-    || contentKey.startsWith("authored/sky-lunation-macro/")) return "full-copy-review";
-  if (contentKey.startsWith("fallback-hook/lunation-")) return "shared-fallback-authoring";
-  if (contentKey.startsWith("fallback-template/natal.planet-in-sign/")) return "template-review";
+  if (contentKey.startsWith("authored/sky-lunation-macro/")) return "optional-lunation-macro";
+  if (contentKey.startsWith("fallback-hook/lunation-opening-situation/")) return "optional-lunation-opening";
+  if (contentKey.startsWith("fallback-hook/lunation-ruler-house/")) return "optional-lunation-ruler";
+  if (contentKey.startsWith("fallback-template/natal.planet-in-sign/")) return "optional-template";
   return "editorial-review";
+}
+
+function isOptionalWorkClass(workClass) {
+  return workClass.startsWith("optional-");
 }
 
 const candidates = [];
@@ -131,6 +135,7 @@ function eligiblePeersFor(item) {
 
 const retiredItems = [];
 const shadowedItems = [];
+const optionalItems = [];
 const actionableItems = [];
 for (const item of uniqueCandidates) {
   const retirement = retirementFor(item.contentKey);
@@ -149,7 +154,9 @@ for (const item of uniqueCandidates) {
 
   const eligiblePeers = eligiblePeersFor(item);
   if (!eligiblePeers.length) {
-    actionableItems.push({ ...item, workClass: workClassFor(item.contentKey) });
+    const classified = { ...item, workClass: workClassFor(item.contentKey) };
+    if (isOptionalWorkClass(classified.workClass)) optionalItems.push(classified);
+    else actionableItems.push(classified);
     continue;
   }
   shadowedItems.push({
@@ -170,8 +177,9 @@ function retirementReasonCounts(items) {
 }
 
 const actionableContentKeys = [...new Set(actionableItems.map((item) => item.contentKey))].sort();
+const optionalContentKeys = [...new Set(optionalItems.map((item) => item.contentKey))].sort();
 function workloadSummary(items) {
-  const order = ["full-copy-review", "shared-fallback-authoring", "template-review", "optional-rotation", "editorial-review"];
+  const order = ["editorial-review", "optional-lunation-macro", "optional-lunation-opening", "optional-lunation-ruler", "optional-template", "optional-rotation"];
   return Object.fromEntries(order
     .filter((workClass) => items.some((item) => item.workClass === workClass))
     .map((workClass) => {
@@ -191,6 +199,12 @@ const report = {
   workload: workloadSummary(actionableItems),
   reasonCounts: reasonCounts(actionableItems),
   items: actionableItems,
+  optionalCount: optionalItems.length,
+  optionalIssueCount: optionalContentKeys.length,
+  optionalContentKeys,
+  optionalWorkload: workloadSummary(optionalItems),
+  optionalReasonCounts: reasonCounts(optionalItems),
+  optionalItems,
   shadowedCount: shadowedItems.length,
   shadowedReasonCounts: reasonCounts(shadowedItems),
   shadowedItems,
@@ -198,10 +212,11 @@ const report = {
   retiredReasonCounts: retirementReasonCounts(retiredItems),
   retiredItems,
   semantics: {
-    count: "Actionable unresolved source records.",
-    issueCount: "Unique actionable content keys, which is the closer measure of owner/editorial decisions remaining.",
-    items: "Actionable unresolved records with no governed retirement and no reader-eligible peer using the same contentKey.",
-    shadowedItems: "Pending source records retained as audit evidence but excluded from owner/editorial backlog because an exact-key reader-eligible peer already exists.",
+    count: "Required unresolved source records.",
+    issueCount: "Unique required content keys that still need an editorial decision before required reader coverage can be complete.",
+    items: "Required unresolved records with no governed retirement, no reader-eligible peer using the same contentKey, and no resolver-supported optional classification.",
+    optionalItems: "Non-serving enrichment candidates retained for future editorial work but excluded from the required backlog because current reader coverage resolves without them.",
+    shadowedItems: "Pending source records retained as audit evidence but excluded from required owner/editorial work because an exact-key reader-eligible peer already exists.",
     retiredItems: "Pending source records retained as audit evidence but excluded from owner/editorial backlog because a governed retirement or supersession decision already exists."
   }
 };
@@ -213,9 +228,9 @@ if (checkOnly) {
     console.error("Content unresolved queue is stale. Run npm run build:content-unresolved-queue.");
     process.exit(1);
   }
-  console.log(`Content unresolved queue is current (${actionableItems.length} actionable records / ${actionableContentKeys.length} decisions, ${shadowedItems.length} shadowed, ${retiredItems.length} retired).`);
+  console.log(`Content unresolved queue is current (${actionableItems.length} required records / ${actionableContentKeys.length} decisions, ${optionalItems.length} optional records / ${optionalContentKeys.length} optional decisions, ${shadowedItems.length} shadowed, ${retiredItems.length} retired).`);
 } else {
   fs.mkdirSync(path.dirname(outputPath), { recursive: true });
   fs.writeFileSync(outputPath, serialized);
-  console.log(`Wrote ${path.relative(repoRoot, outputPath)} (${actionableItems.length} actionable records / ${actionableContentKeys.length} decisions, ${shadowedItems.length} shadowed, ${retiredItems.length} retired).`);
+  console.log(`Wrote ${path.relative(repoRoot, outputPath)} (${actionableItems.length} required records / ${actionableContentKeys.length} decisions, ${optionalItems.length} optional records / ${optionalContentKeys.length} optional decisions, ${shadowedItems.length} shadowed, ${retiredItems.length} retired).`);
 }
