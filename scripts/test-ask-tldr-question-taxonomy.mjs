@@ -4,9 +4,10 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-const taxonomyDir = path.join(repoRoot, "packages/astro-knowledge/data/questions/ask-tldr-question-taxonomy-v1");
+const taxonomyDir = path.join(repoRoot, "config/ask-tldr");
+const pillarDir = path.join(taxonomyDir, "pillars");
 const taxonomy = JSON.parse(fs.readFileSync(path.join(taxonomyDir, "manifest.json"), "utf8"));
-const pillars = taxonomy.pillarFiles.map((file) => JSON.parse(fs.readFileSync(path.join(taxonomyDir, file), "utf8")));
+const pillars = taxonomy.pillarFiles.map((file) => JSON.parse(fs.readFileSync(path.join(pillarDir, file), "utf8")));
 
 assert.equal(taxonomy.schemaVersion, 1);
 assert.equal(taxonomy.recordType, "ask_tldr_evergreen_question_taxonomy");
