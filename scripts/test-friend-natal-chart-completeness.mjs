@@ -3,6 +3,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { SKY_BODY_ORDER } from "../apps/web/src/astrologyConfig.ts";
+import { natalChartWithReliableAngleLongitudes } from "../apps/web/src/services/natalAngleReliability.ts";
 import {
   natalChartHasCompletePlacements,
   natalChartPlacementCompleteness
@@ -23,6 +24,10 @@ const panelSource = fs.readFileSync(
 );
 const natalTabSource = fs.readFileSync(
   path.join(repoRoot, "apps/web/src/features/friends/FriendNatalTab.tsx"),
+  "utf8"
+);
+const appSource = fs.readFileSync(
+  path.join(repoRoot, "apps/web/src/App.tsx"),
   "utf8"
 );
 
@@ -79,15 +84,71 @@ assert.equal(
   "An unknown-time chart requires every body but must not invent timed angles."
 );
 
+const noonUnknownTimeSnapshot = snapshot(SKY_BODY_ORDER, true);
+const sanitizedUnknownTimeSnapshot = natalChartWithReliableAngleLongitudes(
+  noonUnknownTimeSnapshot,
+  true
+);
+assert.notEqual(
+  sanitizedUnknownTimeSnapshot,
+  noonUnknownTimeSnapshot,
+  "Unknown-time snapshots with calculated noon angles must be copied before sanitation."
+);
+assert.equal(sanitizedUnknownTimeSnapshot.ascendantLongitude, undefined);
+assert.equal(sanitizedUnknownTimeSnapshot.midheavenLongitude, undefined);
+assert.equal(
+  sanitizedUnknownTimeSnapshot.positions,
+  noonUnknownTimeSnapshot.positions,
+  "Angle sanitation must preserve the calculated planetary positions used by unknown-time charts."
+);
+assert.equal(
+  noonUnknownTimeSnapshot.ascendantLongitude,
+  0,
+  "Angle sanitation must not mutate the calculation snapshot in place."
+);
+assert.equal(noonUnknownTimeSnapshot.midheavenLongitude, 270);
+assert.equal(
+  natalChartWithReliableAngleLongitudes(noonUnknownTimeSnapshot, false),
+  noonUnknownTimeSnapshot,
+  "Known-time charts must retain their calculated natal angles byte-for-byte."
+);
+assert.equal(natalChartWithReliableAngleLongitudes(null, true), null);
+assert.equal(natalChartWithReliableAngleLongitudes(undefined, true), undefined);
+
 assert.match(
   manualChartsSource,
   /!natalChartHasCompletePlacements\(chart\.natalChart, chart\.birthTimeUnknown\)/,
   "The saved-chart repair rule must validate canonical placement completeness."
 );
+assert.match(
+  controllerSource,
+  /const cachedCharts = listCachedManualCharts\(\[chartOwnerUserId, profileId\]\);\s*const reliableCachedCharts = manualChartsWithReliableAngleLongitudes\(cachedCharts\);/,
+  "Cached manual Friend charts must be read synchronously, then sanitized before entering controller state."
+);
+assert.match(
+  controllerSource,
+  /const reliableNextCharts = manualChartsWithReliableAngleLongitudes\(nextCharts\)/,
+  "Remote manual Friend charts must be sanitized before entering controller state."
+);
+assert.match(
+  controllerSource,
+  /natalChartWithReliableAngleLongitudes\(\s*storedNatalChart,\s*chart\.birthTimeUnknown\s*\)/,
+  "Repaired unknown-time charts must strip placeholder noon angle longitudes before persistence."
+);
+assert.match(
+  controllerSource,
+  /natalChartWithReliableAngleLongitudes\(\s*storedNatalChart,\s*form\.birthTimeUnknown\s*\)/,
+  "Newly saved unknown-time charts must strip placeholder noon angle longitudes before persistence."
+);
 assert.doesNotMatch(
   controllerSource,
   /if \(chart\.natalChart && chart\.birthLocation\.timeZone === birthLocation\.timeZone\) \{\s*return null;/,
   "The repair worker must not skip an incomplete snapshot merely because its timezone is unchanged."
+);
+assert.match(
+  appSource,
+  /if \(typeof natalSky\.ascendantLongitude !== "number"\) \{\s*return natalSky\.positions;/,
+  "Friends transit targeting must fall back to planetary positions when no reliable Ascendant longitude is present."
 );
 assert.match(
   panelSource,
@@ -116,7 +177,11 @@ assert.ok(
 
 console.log(JSON.stringify({
   status: "PASS",
-  surface: "Friend natal chart completeness",
+  surface: "Friend natal chart completeness and unknown-time angle reliability",
   expectedKnownTimePlacements: 16,
-  guardedLegacyMissingPlacements: legacyResult.missingPlacements
+  guardedLegacyMissingPlacements: legacyResult.missingPlacements,
+  unknownTimeAngleLongitudes: {
+    ascendant: sanitizedUnknownTimeSnapshot.ascendantLongitude ?? null,
+    midheaven: sanitizedUnknownTimeSnapshot.midheavenLongitude ?? null
+  }
 }, null, 2));
