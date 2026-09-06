@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.moon.square.north-node",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-05",
+  "ownerStatement": "yes please continue",
+  "decisionContext": "The owner explicitly approved both 24-row North Node source batches on 2026-09-05 and then authorized shipping the 48 approved North Node passages into the governed Calendar exact-aspect corpus by replying \"yes please continue\".",
+  "batchId": "sky-calendar-exact-approved-2026-09-05-north-node-48",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-05-north-node-48/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "6692337f2c46179a641e73252b6336fb00e3a2d353c58a1e82f7a297f30fa4b9",
+  "summary": "Stress can send you back to the habit that calms you fastest even when that habit keeps rebuilding the same problem.",
+  "body": "Stress can send you back to the habit that calms you fastest even when that habit keeps rebuilding the same problem. When the Moon squares the North Node, comfort and forward movement create friction, making an old routine, relationship pattern, or emotional response especially tempting at the exact moment a different response is needed. Returning to what is familiar may help for one night without being a plan for the next six months. Notice what the old habit gives you, such as company, relief, predictability, or escape, then find a way to meet that need without rebuilding the situation you were trying to leave.",
+  "sourceApprovalBatch": "sky-north-node-launch-batch-1-owner-review-v2-2026-09-05"
+}

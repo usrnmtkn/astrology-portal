@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.jupiter.opposition.north-node",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-05",
+  "ownerStatement": "yes please continue",
+  "decisionContext": "The owner explicitly approved both 24-row North Node source batches on 2026-09-05 and then authorized shipping the 48 approved North Node passages into the governed Calendar exact-aspect corpus by replying \"yes please continue\".",
+  "batchId": "sky-calendar-exact-approved-2026-09-05-north-node-48",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-05-north-node-48/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "5c69b81aa5035b105d38ba8381682b61853b5c5dd565ab65102d255e331beb21",
+  "summary": "The option with the biggest audience, easiest credibility, or most familiar version of success may not be the one that moves you forward.",
+  "body": "The option with the biggest audience, easiest credibility, or most familiar version of success may not be the one that moves you forward. When Jupiter opposes the North Node, old expertise, a proven market, a known belief system, or an opportunity you already understand can look especially rewarding because you know how to make it grow. There is nothing wrong with using what already works, especially if it brings money, reach, or access. Make sure the success gives you more choice afterward instead of becoming another reason to keep building around what you have already mastered.",
+  "sourceApprovalBatch": "sky-north-node-launch-batch-1-owner-review-v2-2026-09-05"
+}

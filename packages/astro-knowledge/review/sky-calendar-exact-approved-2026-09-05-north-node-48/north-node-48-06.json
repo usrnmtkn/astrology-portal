@@ -1,0 +1,71 @@
+{
+  "schemaVersion": 2,
+  "family": "north-node-48-06",
+  "rowCount": 8,
+  "rows": [
+    {
+      "contentKey": "sky.aspect.uranus.conjunction.north-node",
+      "summary": "An unexpected change may force a decision you were still hoping to make on your own timeline.",
+      "body": "An unexpected change may force a decision you were still hoping to make on your own timeline. When Uranus conjuncts the North Node, a cancellation, sudden offer, technical change, departure, move, or break in the old setup can alter what is available before you have had time to get comfortable with the new facts. The surprise may expose an overdue change without making every impulsive response wise. Handle what changed first, then choose the option that gives you more freedom after the adrenaline wears off.",
+      "bodySha256": "5e9153161fbae703f0bd5d8a6b594a10f876d48ceb6d51f26037af6a5cf0a3ea",
+      "sourceApprovalBatch": "sky-north-node-launch-batch-2-owner-review-2026-09-05",
+      "sourceApprovalLevel": "exact_owner_approved"
+    },
+    {
+      "contentKey": "sky.aspect.uranus.opposition.north-node",
+      "summary": "An old pattern can become especially attractive when the alternative requires more change than you expected to make at once.",
+      "body": "An old pattern can become especially attractive when the alternative requires more change than you expected to make at once. When Uranus opposes the North Node, the known schedule, old system, former group, or previous way of doing things can look safer after a sudden change leaves you disoriented. Familiarity may buy useful time, especially while you replace what disappeared. Just make sure the temporary retreat helps you rebuild your options instead of restoring the exact restriction that made change necessary.",
+      "bodySha256": "a45f2ba0e66a3d5e055bd9b6b495325733dcb04d12ac42ad6e89a3f678bf384b",
+      "sourceApprovalBatch": "sky-north-node-launch-batch-2-owner-review-2026-09-05",
+      "sourceApprovalLevel": "exact_owner_approved"
+    },
+    {
+      "contentKey": "sky.aspect.uranus.sextile.north-node",
+      "summary": "A workaround you did not plan may give you access to an option the old system kept making unnecessarily difficult.",
+      "body": "A workaround you did not plan may give you access to an option the old system kept making unnecessarily difficult. When Uranus sextiles the North Node, a new tool, unusual introduction, revised schedule, different route, or exception can remove one stubborn source of friction and make another approach practical enough to try. You do not need to reinvent everything because one better method appeared. Test it where the old process was blocking you and keep it if it gives you more choice without creating another problem you now have to work around.",
+      "bodySha256": "c9397c99df1bfcb45f8401aae6f2c8ae45c4ad3e703c6fd271567d100a8f99f4",
+      "sourceApprovalBatch": "sky-north-node-launch-batch-2-owner-review-2026-09-05",
+      "sourceApprovalLevel": "exact_owner_approved"
+    },
+    {
+      "contentKey": "sky.aspect.uranus.square.north-node",
+      "summary": "The urge to break free can be accurate about the problem and reckless about what should replace it.",
+      "body": "The urge to break free can be accurate about the problem and reckless about what should replace it. When Uranus squares the North Node, the old setup may become impossible to tolerate before the replacement is stable, affordable, or complete. A sudden exit can remove the restriction and also remove support you still need. Identify the specific rule, schedule, system, or dependence that has become intolerable, then change that part deliberately instead of asking one burst of frustration to design everything that comes after it.",
+      "bodySha256": "08509e707c05c3efad6d68f4896da69f873543014865b1bb9f9461369d7dd9f4",
+      "sourceApprovalBatch": "sky-north-node-launch-batch-2-owner-review-2026-09-05",
+      "sourceApprovalLevel": "exact_owner_approved"
+    },
+    {
+      "contentKey": "sky.aspect.venus.conjunction.north-node",
+      "summary": "A relationship, offer, or money decision may matter because it changes what you can build around it.",
+      "body": "A relationship, offer, or money decision may matter because it changes what you can build around it. When Venus conjuncts the North Node, connection and value meet forward movement in the same choice, so a new collaborator, changing relationship, financial commitment, or clearer sense of what you want can alter the practical shape of what becomes possible. Chemistry and pleasure are not proof that every term works, but support that fits the life you are building is worth noticing. Choose the agreement that makes the work, move, schedule, or financial decision you want more possible instead of the one that only makes the old arrangement easier to preserve.",
+      "bodySha256": "2ff3464961c3aafed608d0371274e6117b7894cb8384f57eac7439df866dae0d",
+      "sourceApprovalBatch": "sky-north-node-launch-batch-1-owner-review-v2-2026-09-05",
+      "sourceApprovalLevel": "exact_owner_approved"
+    },
+    {
+      "contentKey": "sky.aspect.venus.opposition.north-node",
+      "summary": "Chemistry can come back before compatibility with the life you want does.",
+      "body": "Chemistry can come back before compatibility with the life you want does. When Venus opposes the North Node, an ex, old friendship, former collaborator, familiar financial arrangement, or type of pleasure you already know can feel especially easy to return to. The connection may still be meaningful, and the old terms may even feel better than they used to. Before you rebuild around it, look at the schedule, money, boundaries, and priorities you have now. Familiar desire is useful information, but it is not proof that the old arrangement fits the life you are trying to make.",
+      "bodySha256": "f1a4fec3934cadf08740c20df1cc31bad65dd5e4c939df0c8fa554c914005b01",
+      "sourceApprovalBatch": "sky-north-node-launch-batch-1-owner-review-v2-2026-09-05",
+      "sourceApprovalLevel": "exact_owner_approved"
+    },
+    {
+      "contentKey": "sky.aspect.venus.sextile.north-node",
+      "summary": "Someone who already cares about you may be able to make the next step easier, but they need a concrete way to help.",
+      "body": "Someone who already cares about you may be able to make the next step easier, but they need a concrete way to help. When Venus sextiles the North Node, relationships, money, goodwill, and shared resources can make a change more workable through an introduction, place to stay, recommendation, shared expense, flexible schedule, or another form of practical support. Do not make care guess what care is supposed to do. Ask for the specific thing that would change what is possible and let the people who want to be part of your life show up in a form you can actually use.",
+      "bodySha256": "4a6751217384ab03a8992eddb3bba100b86b8e753d81497a1dd903e9965038c7",
+      "sourceApprovalBatch": "sky-north-node-launch-batch-1-owner-review-v2-2026-09-05",
+      "sourceApprovalLevel": "exact_owner_approved"
+    },
+    {
+      "contentKey": "sky.aspect.venus.square.north-node",
+      "summary": "A relationship can be good and still be organized around a version of your life you are trying to leave.",
+      "body": "A relationship can be good and still be organized around a version of your life you are trying to leave. When Venus squares the North Node, affection, money, pleasure, or agreement can clash with a change in work, location, schedule, spending, or priorities that no longer fits the old terms. If preserving the bond keeps requiring you to decline the choices you actually want, the problem is no longer just timing. Change the arrangement before assuming you have to choose between the relationship and the life that is taking shape around it.",
+      "bodySha256": "c235e2953ea269ca543b575a03554cc4d7c39be75cc436af6cdd2e6d862ad8de",
+      "sourceApprovalBatch": "sky-north-node-launch-batch-1-owner-review-v2-2026-09-05",
+      "sourceApprovalLevel": "exact_owner_approved"
+    }
+  ]
+}

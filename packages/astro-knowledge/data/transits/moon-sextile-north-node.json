@@ -1,0 +1,18 @@
+{
+  "id": "moon-sextile-north-node",
+  "transiting": "moon",
+  "aspect": "sextile",
+  "other": "north-node",
+  "base": "Something familiar may give you exactly the support you need to try something unfamiliar.",
+  "business": "A workable option is available; use the move that connects the two concerns.",
+  "shadow": "The opportunity can remain unused if nobody makes the concrete move it requires.",
+  "arcApplying": "The workable option becomes easier to recognize as exactness approaches.",
+  "arcSeparating": "The opening becomes less immediate after exactness.",
+  "voiceNeutral": true,
+  "status": "LIVE",
+  "readerCopy": {
+    "summary": "Something familiar may give you exactly the support you need to try something unfamiliar.",
+    "body": "Something familiar may give you exactly the support you need to try something unfamiliar. When the Moon sextiles the North Node, care from the life you already have can reduce the cost of change: someone covers a practical responsibility, a familiar routine keeps the day manageable, or home gives you a stable base while something else shifts. The support is not there to recreate the old life. Use it to reduce the cost of trying the new arrangement and free up the time, sleep, money, or emotional energy the change actually requires.",
+    "approvedVia": "bounded owner-approved exact Calendar batch sky-calendar-exact-approved-2026-09-05-north-node-48; packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-05-north-node-48/owner-batch-authorization.json"
+  }
+}

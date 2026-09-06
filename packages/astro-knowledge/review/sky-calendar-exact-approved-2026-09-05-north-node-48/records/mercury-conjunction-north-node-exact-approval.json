@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.mercury.conjunction.north-node",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-05",
+  "ownerStatement": "yes please continue",
+  "decisionContext": "The owner explicitly approved both 24-row North Node source batches on 2026-09-05 and then authorized shipping the 48 approved North Node passages into the governed Calendar exact-aspect corpus by replying \"yes please continue\".",
+  "batchId": "sky-calendar-exact-approved-2026-09-05-north-node-48",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-05-north-node-48/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "9aca7ae522a1a899962a59b611dc60a70184357cec60f5dd4bba38d3745e4e34",
+  "summary": "One conversation can make the next decision impossible to keep vague.",
+  "body": "One conversation can make the next decision impossible to keep vague. When Mercury conjuncts the North Node, a message, application, introduction, contract term, or answer to one important question can put a concrete choice where speculation had been. You may still need time to decide, but now you know what you are deciding about. Get the date, amount, requirement, name, or answer that changes your options, then stop planning around information you no longer need to guess at.",
+  "sourceApprovalBatch": "sky-north-node-launch-batch-1-owner-review-v2-2026-09-05"
+}
