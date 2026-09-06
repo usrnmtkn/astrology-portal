@@ -52,10 +52,7 @@ jobs:
         run: npm run test:browser-knowledge-boundary
 
       - name: Verify reader copy eligibility and content boundary
-        run: |
-          set -o pipefail
-          mkdir -p test-results
-          npm run test:reader-copy-repair 2>&1 | tee test-results/reader-copy-repair.log
+        run: npm run test:reader-copy-repair
 
       - name: Enforce web bundle budgets
         run: npm run qa:bundle
