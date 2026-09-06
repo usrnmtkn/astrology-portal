@@ -81,5 +81,6 @@ assert.doesNotMatch(readerQuestionText, /Is this a good time to take a financial
 assert.doesNotMatch(readerQuestionText, /\bthis person\b/iu, "Evergreen questions cannot depend on an undefined person.");
 assert.doesNotMatch(readerQuestionText, /\bthis (?:relationship|friendship|course|degree|certification|program|position)\b/iu, "Evergreen questions cannot depend on an undefined object or relationship.");
 assert.doesNotMatch(readerQuestionText, /^(?:Should I|Is this a good time to)/gimu, "Evergreen prompts should ask for context, tradeoffs, or timing evidence instead of asking astrology for a yes/no decision.");
+assert.doesNotMatch(readerQuestionText, /\bWhat should I (?:look at|consider) before\b/giu, "Evergreen decision prompts should not collapse into a repeated safety-template stem.");
 
 console.log(`Ask TLDR taxonomy contract passed: ${taxonomy.pillarCount} pillars, ${questions.length} unique evergreen questions; review wall remains closed.`);
