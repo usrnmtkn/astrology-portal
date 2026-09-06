@@ -138,9 +138,12 @@ function normalizedContentStudioExactSkyAspectFacts({
   const normalizedAspect = slugContentPart(aspect);
   const normalizedFirstSign = slugContentPart(firstSign);
   const normalizedSecondSign = slugContentPart(secondSign);
-  const nodePoles = new Set(["north-node", "south-node"]);
-  const firstIsNode = nodePoles.has(normalizedFirst);
-  const secondIsNode = nodePoles.has(normalizedSecond);
+  const firstIsNorthNode = normalizedFirst === "north-node";
+  const secondIsNorthNode = normalizedSecond === "north-node";
+  const firstIsSouthNode = normalizedFirst === "south-node";
+  const secondIsSouthNode = normalizedSecond === "south-node";
+  const firstIsNode = firstIsNorthNode || firstIsSouthNode;
+  const secondIsNode = secondIsNorthNode || secondIsSouthNode;
   const firstIndex = contentStudioExactBodyOrder.indexOf(normalizedFirst);
   const secondIndex = contentStudioExactBodyOrder.indexOf(normalizedSecond);
 
@@ -160,10 +163,15 @@ function normalizedContentStudioExactSkyAspectFacts({
   let signA = normalizedFirstSign;
   let signB = normalizedSecondSign;
 
-  // Published exact-aspect Content Studio rows have always put the node first.
-  // Preserve that key shape so North Node rows do not migrate, while keeping
-  // North and South Node as distinct editable identities.
-  if (secondIsNode || (!firstIsNode && !secondIsNode && firstIndex > secondIndex)) {
+  // Content Studio has two stable, intentionally distinct node-pole key shapes:
+  // legacy North Node rows are body-first, while the new South Node rows are
+  // node-first. Preserve both production identities instead of migrating either
+  // family and creating duplicate editable rows.
+  if (
+    firstIsNorthNode
+    || secondIsSouthNode
+    || (!firstIsNode && !secondIsNode && firstIndex > secondIndex)
+  ) {
     [a, b, signA, signB] = [normalizedSecond, normalizedFirst, normalizedSecondSign, normalizedFirstSign];
   }
 
