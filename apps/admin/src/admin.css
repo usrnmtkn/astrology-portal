@@ -10278,13 +10278,13 @@ body,
 .admin-dashboard .admin-content-table th.admin-col-content,
 .admin-dashboard .admin-content-table td.admin-col-content { width: 340px; }
 .admin-dashboard .admin-content-table th.admin-col-visibility,
-.admin-dashboard .admin-content-table td.admin-col-visibility { width: 176px; }
+.admin-dashboard .admin-content-table td.admin-col-visibility { width: 150px; }
 .admin-dashboard .admin-content-table th.admin-col-editorial,
-.admin-dashboard .admin-content-table td.admin-col-editorial { width: 132px; }
+.admin-dashboard .admin-content-table td.admin-col-editorial { width: 118px; }
 .admin-dashboard .admin-content-table th.admin-col-destination,
 .admin-dashboard .admin-content-table td.admin-col-destination,
 .admin-dashboard .admin-content-table th.admin-col-wiring,
-.admin-dashboard .admin-content-table td.admin-col-wiring { width: 178px; }
+.admin-dashboard .admin-content-table td.admin-col-wiring { width: 160px; }
 .admin-dashboard .admin-content-table th.admin-col-surface,
 .admin-dashboard .admin-content-table td.admin-col-surface,
 .admin-dashboard .admin-content-table th.admin-col-kind,
@@ -13150,12 +13150,20 @@ body,
 
 .admin-dashboard .admin-content-table--browse th.admin-col-visibility,
 .admin-dashboard .admin-content-table--browse td.admin-col-visibility {
-  width: 176px;
+  width: 150px;
 }
 
 .admin-dashboard .admin-content-table--browse th.admin-col-editorial,
 .admin-dashboard .admin-content-table--browse td.admin-col-editorial {
-  width: 132px;
+  width: 118px;
+}
+
+/* The two long visibility labels ("Needs more source copy", "Internal reference")
+   may take a second line rather than clip or steal width from the title column. */
+.admin-dashboard .admin-content-table--browse td.admin-col-visibility .admin-reader-state-pill {
+  line-height: 1.2;
+  text-align: center;
+  white-space: normal;
 }
 
 .admin-dashboard .admin-content-table--browse th.admin-col-source,
