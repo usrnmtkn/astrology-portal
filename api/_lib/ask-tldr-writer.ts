@@ -1,9 +1,9 @@
 import { createHash } from "node:crypto";
-import type { AskTldrGovernedFactor } from "./ask-tldr-governed-evidence.ts";
+import type { AskTldrGovernedFactor } from "./ask-tldr-governed-evidence.js";
 import {
   assertAskTldrVoiceEvidenceReceipt,
   type AskTldrVoiceEvidenceReceipt
-} from "./ask-tldr-voice-receipt.ts";
+} from "./ask-tldr-voice-receipt.js";
 
 type FactRecord = Record<string, unknown>;
 
@@ -76,12 +76,9 @@ function primaryEvidence(packet: GovernedAnswerPacket) {
 }
 
 function writerEligibleEvidence(packet: GovernedAnswerPacket) {
-  const eligible = packet.evidence.filter((factor) => factor.governedMeaning.status === "full");
   const primary = primaryEvidence(packet);
-  if (primary.governedMeaning.status !== "full" || !eligible.some((factor) => factor.id === primary.id)) {
-    throw new Error("ASK_TLDR_PRIMARY_MEANING_NOT_FULL");
-  }
-  return eligible;
+  if (primary.governedMeaning.status !== "full") throw new Error("ASK_TLDR_PRIMARY_MEANING_NOT_FULL");
+  return packet.evidence.filter((factor) => factor.governedMeaning.status === "full");
 }
 
 function validateReceiptMatchesPacket(packet: GovernedAnswerPacket, receipt: AskTldrVoiceEvidenceReceipt) {
@@ -102,7 +99,6 @@ function validateReceiptMatchesPacket(packet: GovernedAnswerPacket, receipt: Ask
       throw new Error(`ASK_TLDR_WRITER_SEMANTIC_RECEIPT_MISMATCH: ${factor.id}`);
     }
   }
-  return true;
 }
 
 function writerInstructions(packet: GovernedAnswerPacket) {
@@ -156,7 +152,6 @@ function writerInput(
     "",
     "CALCULATED EVIDENCE (facts only; never change these facts)"
   ];
-
   for (const factor of eligibleEvidence) {
     lines.push(
       `--- ${factor.role.toUpperCase()} EVIDENCE ${factor.id}`,
@@ -178,15 +173,11 @@ function writerInput(
       factor.governedMeaning.promptEvidence ?? "NONE"
     );
   }
-
   lines.push("", "OWNER REGISTER EVIDENCE (style/register only; these passages are not facts about the reader)");
-  for (const [index, passage] of receipt.ownerPassages.entries()) {
-    lines.push(
-      `--- OWNER PASSAGE ${index + 1}; source=${passage.sourcePath}; sha256=${passage.passageSha256}`,
-      passage.text
-    );
-  }
-
+  receipt.ownerPassages.forEach((passage, index) => lines.push(
+    `--- OWNER PASSAGE ${index + 1}; source=${passage.sourcePath}; sha256=${passage.passageSha256}`,
+    passage.text
+  ));
   lines.push("", "OWNER CORRECTIONS (apply the correction, not the rejected wording)");
   for (const correction of receipt.ownerCorrections) {
     lines.push(
@@ -196,7 +187,6 @@ function writerInput(
       correction.ownerReason ? `WHY: ${correction.ownerReason}` : ""
     );
   }
-
   lines.push(
     "",
     `ACTIVE DO-NOT-USE RULES; source=${receipt.doNotUse.sourcePath}; sha256=${receipt.doNotUse.sectionSha256}`,
@@ -258,24 +248,12 @@ function validateReaderProse(answer: string, pillarId: string, decisionMode: str
     if (pattern.test(answer)) issues.push(`banned_pattern:${pattern.source}`);
   }
   const paragraphs = answer.trim().split(/\n\s*\n/gu).map((paragraph) => paragraph.trim()).filter(Boolean);
-  if (paragraphs.length > 1 && paragraphs.some((paragraph) => sentenceCount(paragraph) < 2)) {
-    issues.push("one_sentence_paragraph");
-  }
-  if (/\b(?:evidence|factor)[-_ ]?id\b/iu.test(answer) || /\btldrastro-api\b/iu.test(answer) || /sha256/iu.test(answer)) {
-    issues.push("internal_metadata_leak");
-  }
-  if (decisionMode === "decision_support_not_outcome" && /\b(?:astrology|chart|transit) (?:says|shows|proves) (?:you should|that you should)\b/iu.test(answer)) {
-    issues.push("decision_outcome_claim");
-  }
-  if (pillarId === "money" && /\b(?:you should|i recommend|astrology says to)\s+(?:buy|sell|invest|borrow|take out (?:a )?loan|refinance)\b/iu.test(answer)) {
-    issues.push("financial_transaction_directive");
-  }
-  if (pillarId === "daily_life_health" && /\b(?:diagnos(?:e|is)|you have|you will develop)\s+(?:a |an )?(?:disease|disorder|condition|illness)\b/iu.test(answer)) {
-    issues.push("medical_diagnosis_or_prediction");
-  }
-  if (pillarId === "spirituality" && /\b(?:you are psychic|psychic ability is|you will awaken|spiritual awakening is guaranteed|intuition proves)\b/iu.test(answer)) {
-    issues.push("spiritual_certainty_claim");
-  }
+  if (paragraphs.length > 1 && paragraphs.some((paragraph) => sentenceCount(paragraph) < 2)) issues.push("one_sentence_paragraph");
+  if (/\b(?:evidence|factor)[-_ ]?id\b/iu.test(answer) || /\btldrastro-api\b/iu.test(answer) || /sha256/iu.test(answer)) issues.push("internal_metadata_leak");
+  if (decisionMode === "decision_support_not_outcome" && /\b(?:astrology|chart|transit) (?:says|shows|proves) (?:you should|that you should)\b/iu.test(answer)) issues.push("decision_outcome_claim");
+  if (pillarId === "money" && /\b(?:you should|i recommend|astrology says to)\s+(?:buy|sell|invest|borrow|take out (?:a )?loan|refinance)\b/iu.test(answer)) issues.push("financial_transaction_directive");
+  if (pillarId === "daily_life_health" && /\b(?:diagnos(?:e|is)|you have|you will develop)\s+(?:a |an )?(?:disease|disorder|condition|illness)\b/iu.test(answer)) issues.push("medical_diagnosis_or_prediction");
+  if (pillarId === "spirituality" && /\b(?:you are psychic|psychic ability is|you will awaken|spiritual awakening is guaranteed|intuition proves)\b/iu.test(answer)) issues.push("spiritual_certainty_claim");
   return unique(issues);
 }
 
@@ -285,47 +263,22 @@ export function validateAskTldrWriterOutput(input: {
   evidence: AskTldrGovernedFactor[];
   value: unknown;
 }): AskTldrWriterOutput {
-  if (!input.value || typeof input.value !== "object" || Array.isArray(input.value)) {
-    throw new Error("ASK_TLDR_WRITER_OUTPUT_OBJECT_REQUIRED");
-  }
+  if (!input.value || typeof input.value !== "object" || Array.isArray(input.value)) throw new Error("ASK_TLDR_WRITER_OUTPUT_OBJECT_REQUIRED");
   const value = input.value as FactRecord;
   const expectedKeys = ["answer", "evidenceIdsUsed", "primaryEvidenceId", "whyNowEvidenceId", "decisionOutcomeClaimed"].sort();
-  if (JSON.stringify(Object.keys(value).sort()) !== JSON.stringify(expectedKeys)) {
-    throw new Error("ASK_TLDR_WRITER_OUTPUT_KEYS_INVALID");
-  }
+  if (JSON.stringify(Object.keys(value).sort()) !== JSON.stringify(expectedKeys)) throw new Error("ASK_TLDR_WRITER_OUTPUT_KEYS_INVALID");
   const answer = words(value.answer);
   const evidenceIdsUsed = Array.isArray(value.evidenceIdsUsed) ? value.evidenceIdsUsed.map(words) : [];
-  if (!answer || !evidenceIdsUsed.length || evidenceIdsUsed.some((id) => !input.request.evidenceIds.includes(id))) {
-    throw new Error("ASK_TLDR_WRITER_EVIDENCE_IDS_INVALID");
-  }
-  if (new Set(evidenceIdsUsed).size !== evidenceIdsUsed.length) {
-    throw new Error("ASK_TLDR_WRITER_EVIDENCE_IDS_DUPLICATE");
-  }
-  if (!evidenceIdsUsed.includes(input.request.primaryEvidenceId)
-    || words(value.primaryEvidenceId) !== input.request.primaryEvidenceId) {
-    throw new Error("ASK_TLDR_WRITER_PRIMARY_EVIDENCE_NOT_USED");
-  }
-  if (value.whyNowEvidenceId !== null && typeof value.whyNowEvidenceId !== "string") {
-    throw new Error("ASK_TLDR_WRITER_WHY_NOW_EVIDENCE_INVALID");
-  }
+  if (!answer || !evidenceIdsUsed.length || evidenceIdsUsed.some((id) => !input.request.evidenceIds.includes(id))) throw new Error("ASK_TLDR_WRITER_EVIDENCE_IDS_INVALID");
+  if (new Set(evidenceIdsUsed).size !== evidenceIdsUsed.length) throw new Error("ASK_TLDR_WRITER_EVIDENCE_IDS_DUPLICATE");
+  if (!evidenceIdsUsed.includes(input.request.primaryEvidenceId) || words(value.primaryEvidenceId) !== input.request.primaryEvidenceId) throw new Error("ASK_TLDR_WRITER_PRIMARY_EVIDENCE_NOT_USED");
+  if (value.whyNowEvidenceId !== null && typeof value.whyNowEvidenceId !== "string") throw new Error("ASK_TLDR_WRITER_WHY_NOW_EVIDENCE_INVALID");
   const whyNowEvidenceId = value.whyNowEvidenceId === null ? null : words(value.whyNowEvidenceId);
-  if (whyNowEvidenceId && (!input.request.evidenceIds.includes(whyNowEvidenceId) || !evidenceIdsUsed.includes(whyNowEvidenceId))) {
-    throw new Error("ASK_TLDR_WRITER_WHY_NOW_EVIDENCE_INVALID");
-  }
+  if (whyNowEvidenceId && (!input.request.evidenceIds.includes(whyNowEvidenceId) || !evidenceIdsUsed.includes(whyNowEvidenceId))) throw new Error("ASK_TLDR_WRITER_WHY_NOW_EVIDENCE_INVALID");
   const usedTemporal = input.evidence.some((factor) => evidenceIdsUsed.includes(factor.id) && factor.temporalState !== "natal");
-  if (usedTemporal && !whyNowEvidenceId) {
-    throw new Error("ASK_TLDR_WRITER_WHY_NOW_REQUIRED");
-  }
-  if (value.decisionOutcomeClaimed !== false) {
-    throw new Error("ASK_TLDR_WRITER_DECISION_OUTCOME_FLAG_INVALID");
-  }
+  if (usedTemporal && !whyNowEvidenceId) throw new Error("ASK_TLDR_WRITER_WHY_NOW_REQUIRED");
+  if (value.decisionOutcomeClaimed !== false) throw new Error("ASK_TLDR_WRITER_DECISION_OUTCOME_FLAG_INVALID");
   const proseIssues = validateReaderProse(answer, words(input.question.pillarId), input.request.decisionMode);
   if (proseIssues.length) throw new Error(`ASK_TLDR_WRITER_PROSE_INVALID: ${proseIssues.join(",")}`);
-  return {
-    answer,
-    evidenceIdsUsed,
-    primaryEvidenceId: input.request.primaryEvidenceId,
-    whyNowEvidenceId,
-    decisionOutcomeClaimed: false
-  };
+  return { answer, evidenceIdsUsed, primaryEvidenceId: input.request.primaryEvidenceId, whyNowEvidenceId, decisionOutcomeClaimed: false };
 }
