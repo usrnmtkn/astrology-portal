@@ -9,7 +9,7 @@ import {
   type ReportLibraryItem,
   type ReportReadyEventDetail
 } from "../../services/reportLibrary";
-import "../../styles/report-library.css";
+import "../../styles/report-notifications.css";
 
 const pollIntervalMs = 30_000;
 
@@ -131,7 +131,7 @@ export function ReportsGlobalLayer() {
         >
           <FileText size={20} aria-hidden="true" />
           <span>Reports</span>
-          {unreadCount > 0 ? <span className="reports-nav-badge" aria-hidden="true">{unreadCount}</span> : null}
+          {unreadCount > 0 ? <span className="friends-nav-badge friends-nav-badge-menu reports-nav-badge" aria-hidden="true">{unreadCount}</span> : null}
         </button>,
         menuSlot
       ) : null}
