@@ -9328,6 +9328,28 @@ body,
   right: 24px;
 }
 
+/* Semantic toast colour. The default toast is a success confirmation; an error
+   or access-denied message must not read as success. */
+.admin-dashboard .admin-save-toast.is-error {
+  background: var(--admin-ui-danger-surface);
+  border-color: var(--admin-ui-error-border);
+  color: var(--admin-ui-error-copy);
+}
+
+/* "Needs attention" is a warning affordance, not a primary action. */
+.admin-dashboard .admin-create-button.admin-attention-button {
+  background: var(--admin-ui-warning-soft);
+  border-color: var(--admin-ui-draft-border);
+  color: var(--admin-ui-draft-copy);
+}
+
+.admin-dashboard .admin-create-button.admin-attention-button:hover,
+.admin-dashboard .admin-create-button.admin-attention-button:focus-visible {
+  background: var(--admin-ui-warning-surface);
+  border-color: var(--admin-warning-ui-copy);
+  color: var(--admin-ui-draft-copy);
+}
+
 .admin-dashboard .admin-review-queue-layout {
   align-items: stretch;
   display: grid;

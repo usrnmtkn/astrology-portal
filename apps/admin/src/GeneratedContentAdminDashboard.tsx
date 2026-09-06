@@ -5492,7 +5492,7 @@ export function GeneratedContentAdminDashboard() {
         />
 
         {message && (
-          <div className={`admin-save-toast ${loadState === "error" || loadState === "accessDenied" ? "is-error" : ""}`} role="status">
+          <div className={`admin-save-toast ${loadState === "error" || loadState === "accessDenied" ? "is-error" : ""}`} role={loadState === "error" || loadState === "accessDenied" ? "alert" : "status"}>
             <span>{message}</span>
             <button type="button" onClick={() => setMessage("")} aria-label="Dismiss notification">
               <X size={16} aria-hidden="true" />
