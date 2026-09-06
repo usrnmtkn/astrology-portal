@@ -86,6 +86,12 @@ function canonicalBodies(first, second) {
   return order.indexOf(first) <= order.indexOf(second) ? [first, second] : [second, first];
 }
 
+function nodeAxisPoleFor(a, b) {
+  if (a === "south-node" || b === "south-node") return "south-node";
+  if (a === "north-node" || b === "north-node") return "north-node";
+  return null;
+}
+
 function buildRows() {
   const files = fs.readdirSync(transitRoot).filter((file) => file.endsWith(".json")).sort();
   const rows = [];
@@ -98,6 +104,7 @@ function buildRows() {
     const aspect = text(transit.aspect).toLowerCase();
     if (!first || !second || !aspect) throw new Error(`${file} is missing exact-aspect identity.`);
     const [a, b] = canonicalBodies(first, second);
+    const nodeAxisPole = nodeAxisPoleFor(a, b);
     const contentKey = `sky.aspect.${a}.${aspect}.${b}`;
     const headline = `${title(a)} ${title(aspect)} ${title(b)}`;
     const summary = text(transit.readerCopy?.summary);
@@ -111,6 +118,7 @@ function buildRows() {
       BodyA: a,
       AspectType: aspect,
       BodyB: b,
+      nodeAxisPole,
       content_role: "full_copy",
       review_status: "approved",
       surface: "sky",
@@ -124,7 +132,7 @@ function buildRows() {
         { path: "Body", label: "Body" }
       ],
       studio_read_only_fields: [
-        "contentKey", "Headline", "BodyA", "AspectType", "BodyB", "review_status",
+        "contentKey", "Headline", "BodyA", "AspectType", "BodyB", "nodeAxisPole", "review_status",
         "source_package", "source_baseline_sha256"
       ],
       studio_source_baseline: { Summary: summary, Body: body },
@@ -132,7 +140,8 @@ function buildRows() {
         reviewStatus: "approved",
         sourcePath,
         approvedVia: text(transit.readerCopy?.approvedVia) || null,
-        transitId: transit.id
+        transitId: transit.id,
+        nodeAxisPole
       },
       studio_version_status: "approved-serving-baseline",
       owner_approved: true,
@@ -165,7 +174,8 @@ function buildRows() {
         fallbackArchitectureV3: true,
         review_status: "approved",
         readerServing: true,
-        exactSkyAspect: true
+        exactSkyAspect: true,
+        nodeAxisPole
       },
       knowledge_ids: [],
       source_snapshot: {
@@ -176,6 +186,7 @@ function buildRows() {
         content_role: "full_copy",
         contentStudioExactAspect: true,
         exactSkyAspectIdentity: { a, b, aspect },
+        nodeAxisPole,
         sourceBaselineSha256: baselineHash
       },
       reviewer_notes: "Canonical owner-approved exact aspect copy imported for governed Content Studio editing.",
@@ -187,6 +198,17 @@ function buildRows() {
   }
   const keys = new Set(rows.map((row) => row.content_key));
   if (keys.size !== rows.length) throw new Error("Published exact aspect catalog contains duplicate canonical keys.");
+
+  const northNodeRows = rows.filter((row) => row.source_snapshot.nodeAxisPole === "north-node");
+  const southNodeRows = rows.filter((row) => row.source_snapshot.nodeAxisPole === "south-node");
+  if (southNodeRows.length > 0) {
+    if (southNodeRows.length !== 60) throw new Error(`Expected 60 South Node Content Studio rows; found ${southNodeRows.length}.`);
+    if (northNodeRows.length !== 60) throw new Error(`Expected 60 North Node Content Studio rows beside South Node; found ${northNodeRows.length}.`);
+    const southKeys = new Set(southNodeRows.map((row) => row.content_key));
+    if (northNodeRows.some((row) => southKeys.has(row.content_key))) {
+      throw new Error("North Node and South Node Content Studio rows must remain independently editable identities.");
+    }
+  }
   return rows;
 }
 
@@ -217,6 +239,7 @@ async function verifyRows(rows) {
     const actual = remote.get(expected.content_key);
     if (!actual || actual.status !== "LIVE" || actual.lane !== "serving" || actual.review_state !== null) throw new Error(`${expected.content_key} is not published safely.`);
     if (actual.body !== expected.body || actual.source_snapshot?.contentStudioExactAspect !== true) throw new Error(`${expected.content_key} drifted after seed.`);
+    if (actual.source_snapshot?.nodeAxisPole !== expected.source_snapshot.nodeAxisPole) throw new Error(`${expected.content_key} node-axis pole metadata drifted after seed.`);
   }
   return payload;
 }
@@ -230,6 +253,8 @@ if (verifyRemote) verified = await verifyRows(rows);
 console.log(JSON.stringify({
   ok: true,
   rows: rows.length,
+  northNodeRows: rows.filter((row) => row.source_snapshot.nodeAxisPole === "north-node").length,
+  southNodeRows: rows.filter((row) => row.source_snapshot.nodeAxisPole === "south-node").length,
   apply,
   appliedRows: applied.length,
   verifyRemote,

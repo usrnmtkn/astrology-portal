@@ -1,0 +1,18 @@
+{
+  "id": "mercury-trine-south-node",
+  "transiting": "mercury",
+  "aspect": "trine",
+  "other": "south-node",
+  "base": "The old way of thinking may work so smoothly that you never test the assumption underneath it.",
+  "business": "A supportive opening is available here; use what becomes easier without assuming ease will do the work for you.",
+  "shadow": "The ease of a trine can make the opening easy to miss, leave unused, or go unexamined.",
+  "arcApplying": "Support and coordination build toward exactness.",
+  "arcSeparating": "The opening begins to recede after exactness.",
+  "voiceNeutral": true,
+  "status": "LIVE",
+  "readerCopy": {
+    "summary": "The old way of thinking may work so smoothly that you never test the assumption underneath it.",
+    "body": "The old way of thinking may work so smoothly that you never test the assumption underneath it. Mercury trine the South Node can make familiar language, expertise, contacts, and mental shortcuts especially easy to use. You may know the answer before the meeting starts or finish the task from memory. That fluency is valuable. It is also a good moment to notice which conclusion keeps surviving because it is correct and which one survives because you stopped questioning it years ago.",
+    "approvedVia": "exact owner-approved South Node Calendar batch sky-calendar-south-node-60-v1; packages/astro-knowledge/review/sky-calendar-south-node-60-v1/owner-batch-authorization.json; serving authorized by packages/astro-knowledge/review/sky-calendar-south-node-60-v1/owner-serving-authorization.json"
+  }
+}

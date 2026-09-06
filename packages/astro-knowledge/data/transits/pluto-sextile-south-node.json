@@ -1,0 +1,18 @@
+{
+  "id": "pluto-sextile-south-node",
+  "transiting": "pluto",
+  "aspect": "sextile",
+  "other": "south-node",
+  "base": "Something you survived before can give you useful leverage now.",
+  "business": "A workable option is available; use the move that connects the two concerns.",
+  "shadow": "The opportunity can remain unused if nobody makes the concrete move it requires.",
+  "arcApplying": "The workable option becomes easier to recognize as exactness approaches.",
+  "arcSeparating": "The opening becomes less immediate after exactness.",
+  "voiceNeutral": true,
+  "status": "LIVE",
+  "readerCopy": {
+    "summary": "Something you survived before can give you useful leverage now.",
+    "body": "Something you survived before can give you useful leverage now. Pluto sextile the South Node can make an old lesson about power, boundaries, money, secrecy, or consequence available at the right moment. You may see the pressure point sooner because you have already learned what happens when nobody names it. Use the knowledge without recreating the crisis. Experience is most useful when it lets you make a cleaner decision this time.",
+    "approvedVia": "exact owner-approved South Node Calendar batch sky-calendar-south-node-60-v1; packages/astro-knowledge/review/sky-calendar-south-node-60-v1/owner-batch-authorization.json; serving authorized by packages/astro-knowledge/review/sky-calendar-south-node-60-v1/owner-serving-authorization.json"
+  }
+}

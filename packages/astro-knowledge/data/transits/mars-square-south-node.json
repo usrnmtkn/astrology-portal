@@ -1,0 +1,18 @@
+{
+  "id": "mars-square-south-node",
+  "transiting": "mars",
+  "aspect": "square",
+  "other": "south-node",
+  "base": "You may be spending all your force on a fight you already know how to have.",
+  "business": "A practical mismatch needs adjustment; change the arrangement instead of repeating the same workaround.",
+  "shadow": "Pressure escalates when each side keeps demanding terms the other cannot sustain.",
+  "arcApplying": "The mismatch becomes harder to work around as exactness approaches.",
+  "arcSeparating": "The pressure eases after exactness, leaving the changed arrangement to prove itself.",
+  "voiceNeutral": true,
+  "status": "LIVE",
+  "readerCopy": {
+    "summary": "You may be spending all your force on a fight you already know how to have.",
+    "body": "You may be spending all your force on a fight you already know how to have. Mars square the South Node can make the old reaction immediate: push harder, take over, cut someone off, prove the point, or turn frustration into a contest. The conflict may be real, but the response can still be automatic. Notice what keeps getting your energy because it is familiar territory. Winning another round is not useful if it leaves the larger pattern exactly where it was.",
+    "approvedVia": "exact owner-approved South Node Calendar batch sky-calendar-south-node-60-v1; packages/astro-knowledge/review/sky-calendar-south-node-60-v1/owner-batch-authorization.json; serving authorized by packages/astro-knowledge/review/sky-calendar-south-node-60-v1/owner-serving-authorization.json"
+  }
+}
