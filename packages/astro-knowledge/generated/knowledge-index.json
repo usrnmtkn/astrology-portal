@@ -103160,7 +103160,7 @@
             "document": true
           },
           "path": "packages/astro-knowledge/data/transits/sun-sextile-north-node.json",
-          "sourceSha256": "4a01963d45bf623249d19b804f24d318c2b8a019b9cfa5c8663a3884578a8a66"
+          "sourceSha256": "281ae734f16db211d49f575d81f3551feba62bc2458101b7ba8b67c27256825b"
         }
       ]
     },
@@ -521325,7 +521325,7 @@
     }
   ],
   "integrity": {
-    "contentSha256": "bcd97f18afa6d3381b7e65c418bb896c7c1b9416085fdd53beec30fb0bd11644",
+    "contentSha256": "e1d19534db4d8799c013c1231322ba0fa97e086dbe61c296462182df01bedfd8",
     "distinctSourceFiles": 3312
   }
 }

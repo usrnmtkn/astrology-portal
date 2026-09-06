@@ -10,7 +10,7 @@
     "batch_generation",
     "serving"
   ],
-  "memberSetSha256": "1989521150fe77a251d4f0d98a5d769e1d6093bd42533b6878f14769b1147682",
+  "memberSetSha256": "1cccabec93374839c7c2abd4367078928be0262913eef596afb6c009505b87f9",
   "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-05-north-node-48/owner-batch-authorization.json",
   "rowCount": 48,
   "protectedUntouched": [
@@ -330,7 +330,7 @@
       "sourceFile": "packages/astro-knowledge/data/transits/sun-sextile-north-node.json",
       "sourceCreatedByRelease": true,
       "recordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-05-north-node-48/records/sun-sextile-north-node-exact-approval.json",
-      "bodySha256": "0f1369d286faea6ced0e5e145ff27b41ac2d2f848e91ca5be5143fc34504731b",
+      "bodySha256": "2ba724fa2684d0bb6d6b4e9c9f394481eb2a9feca4f05e337c863b59d19b10a2",
       "previousReaderCopySha256": "5e7f1979e484d3484412204f901ef0eb02914b1dc1cc3f7ff14e760acabdf388"
     },
     {
