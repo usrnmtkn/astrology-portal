@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.uranus.sextile.chiron",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-06",
+  "ownerStatement": "please mark all of this writing as approved for live",
+  "decisionContext": "Owner explicitly authorized all remaining Chiron + Lilith major Sky Calendar exact-aspect writing for live serving after reviewing and approving Batches 3 through 6.",
+  "batchId": "sky-calendar-exact-approved-2026-09-06-final-83",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "eeebfad741b87722affe72ab13cfb2de4b7eb8ab271e39d1e535ba4e5770a524",
+  "summary": "You may still be organizing your life around preventing something that is no longer happening.",
+  "body": "You may still be organizing your life around preventing something that is no longer happening. When Uranus sextiles Chiron, a changed schedule, different route, new tool, or one small exception can expose how much effort goes into avoiding an old problem. You skip the event, double-check the plan, keep the backup, or say no before anyone has the chance to disappoint you. Then you try it differently and nothing happens. Keep that information. A rule that once protected you does not deserve lifetime authority just because it was useful once.",
+  "sourceApprovalBatch": "sky-chiron-launch-batch-4-v4-exact-owner-approved-2026-09-06",
+  "sourceApprovedAt": "2026-09-06"
+}

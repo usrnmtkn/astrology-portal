@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.chiron.opposition.lilith",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-06",
+  "ownerStatement": "please mark all of this writing as approved for live",
+  "decisionContext": "Owner explicitly authorized all remaining Chiron + Lilith major Sky Calendar exact-aspect writing for live serving after reviewing and approving Batches 3 through 6.",
+  "batchId": "sky-calendar-exact-approved-2026-09-06-final-83",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "7f1101dab73980eb1172912b1df808757022ec93654ace971ae334970a840bab",
+  "summary": "You can get so good at being acceptable that you stop noticing how much of your life is organized around avoiding one old reaction.",
+  "body": "You can get so good at being acceptable that you stop noticing how much of your life is organized around avoiding one old reaction. When Chiron opposes Lilith, the strategy that kept you from being criticized, rejected, or exposed can sit directly across from a desire or boundary that no longer fits inside it. The protection may have worked. That does not mean it has to become your personality. Ask what you would choose now if the person, group, or old rule that taught you to fear the consequence no longer got the first vote.",
+  "sourceApprovalBatch": "sky-chiron-launch-batch-4-v4-exact-owner-approved-2026-09-06",
+  "sourceApprovedAt": "2026-09-06"
+}

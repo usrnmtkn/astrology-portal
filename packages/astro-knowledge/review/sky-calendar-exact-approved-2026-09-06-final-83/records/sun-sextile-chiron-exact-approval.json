@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.sun.sextile.chiron",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-06",
+  "ownerStatement": "please mark all of this writing as approved for live",
+  "decisionContext": "Owner explicitly authorized all remaining Chiron + Lilith major Sky Calendar exact-aspect writing for live serving after reviewing and approving Batches 3 through 6.",
+  "batchId": "sky-calendar-exact-approved-2026-09-06-final-83",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "fec7c881bc1af2eef7e4cc92b9ae01ab49ee086a257f7cb1d6bb2e944fa3c375",
+  "summary": "A small moment of visibility can do more than another month spent preparing to feel ready.",
+  "body": "A small moment of visibility can do more than another month spent preparing to feel ready. When the Sun sextiles Chiron, you may get a manageable chance to be seen in an area where you usually expect embarrassment, criticism, or too much attention. Give the presentation, show the work, accept the introduction, or let the photo exist without treating the moment as proof of how confident you are. The opportunity matters because you can test the present instead of letting an earlier experience keep predicting it for you.",
+  "sourceApprovalBatch": "sky-chiron-launch-batch-3-owner-review-2026-09-06",
+  "sourceApprovedAt": "2026-09-06"
+}

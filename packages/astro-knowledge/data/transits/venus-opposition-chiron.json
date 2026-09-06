@@ -1,0 +1,18 @@
+{
+  "id": "venus-opposition-chiron",
+  "transiting": "venus",
+  "aspect": "opposition",
+  "other": "chiron",
+  "base": "A relationship can get organized around one person proving they care and the other person waiting for the proof to disappear.",
+  "business": "Both positions are visible; deal with the tradeoff directly instead of pretending one side can disappear.",
+  "shadow": "The conflict hardens when each side treats the other as the obstacle instead of part of the decision.",
+  "arcApplying": "The two positions become more explicit as exactness approaches.",
+  "arcSeparating": "The standoff begins to loosen after exactness.",
+  "voiceNeutral": true,
+  "status": "LIVE",
+  "readerCopy": {
+    "summary": "A relationship can get organized around one person proving they care and the other person waiting for the proof to disappear.",
+    "body": "A relationship can get organized around one person proving they care and the other person waiting for the proof to disappear. When Venus opposes Chiron, affection and an old expectation of rejection can split across two people, creating a cycle of reassurance, doubt, extra effort, and another test. The giving may be sincere and the fear may be sincere, but neither one can settle a question that keeps changing its standard. Talk about the actual commitment, boundary, or need instead of making affection pass the same exam again.",
+    "approvedVia": "bounded owner-approved exact Calendar batch sky-calendar-exact-approved-2026-09-06-final-83; packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/owner-batch-authorization.json"
+  }
+}
