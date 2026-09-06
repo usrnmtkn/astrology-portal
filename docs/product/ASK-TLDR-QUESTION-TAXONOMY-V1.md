@@ -58,6 +58,8 @@ Decision and timing prompts should ask astrology for **context, tradeoffs, press
 
 Questions may be emotionally direct, but they should not presuppose an unverified fact about another person or the reader's situation. For example, prefer a pattern question about reciprocity over asserting that the reader is definitely giving more than they receive.
 
+Selecting an evergreen question is a signal of what the reader wants to explore. The wording of the question is **intent, not evidence**. A future answer must not turn the question's premise into a proven fact about the reader, another person, or an external situation. It may discuss a pattern as a possibility when governed astrology supports it; external facts require user-supplied information or deterministic app data.
+
 ## Evidence inheritance
 
 Each pillar defines `defaultEvidencePriority`.
