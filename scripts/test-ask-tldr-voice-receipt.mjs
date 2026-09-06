@@ -3,7 +3,10 @@ import fs from "node:fs";
 import { createHash } from "node:crypto";
 import { buildAskTldrAnswerPacket, compileEvergreenAskPlan } from "../api/_lib/ask-tldr-model.ts";
 import { askTldrEvidenceFromReportWindow } from "../api/_lib/ask-tldr-evidence-adapter.ts";
-import { buildAskTldrGovernedAnswerPacket } from "../api/_lib/ask-tldr-governed-evidence.ts";
+import {
+  buildAskTldrGovernedAnswerPacket,
+  resolveAskTldrGovernedFactor
+} from "../api/_lib/ask-tldr-governed-evidence.ts";
 import {
   ASK_TLDR_OWNER_PASSAGE_MINIMUM,
   assertAskTldrVoiceEvidenceReceipt,
@@ -59,11 +62,18 @@ const tampered = structuredClone(receipt);
 tampered.ownerPassages[0].text += " changed";
 assert.throws(() => assertAskTldrVoiceEvidenceReceipt(tampered), /ASK_TLDR_OWNER_PASSAGE_EVIDENCE_INVALID/u);
 
-const profection = governed.evidence.find((factor) => factor.kind === "profection");
-assert.ok(profection);
+const profectionCandidate = calculated.find((factor) => factor.kind === "profection");
+assert.ok(profectionCandidate);
+const profection = resolveAskTldrGovernedFactor({
+  ...profectionCandidate,
+  score: 100,
+  role: "primary",
+  reasons: ["fixture"]
+});
+assert.equal(profection.governedMeaning.status, "partial");
 const blocked = buildAskTldrVoiceEvidenceReceipt({
   question: governed.question,
-  evidence: [{ ...profection, role: "primary" }],
+  evidence: [profection],
   governedGenerationAllowed: false,
   governedGenerationBlockReason: "PRIMARY_GOVERNED_INTERPRETATION_INCOMPLETE"
 });
