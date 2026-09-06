@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { announceContentUpdate } from "../../web/src/services/contentUpdateSignal";
 import { adminCredentialHeaders } from "./adminSecret";
+import SkyFallbackVariantFamilyEditor from "./SkyFallbackVariantFamilyEditor";
 
 type Preview = { contentKey: string; page: string; servingEnabled: boolean };
 
@@ -62,19 +63,19 @@ const fallbackFields: FieldDefinition[] = [
   {
     path: "fallback.hook",
     label: "Hook",
-    description: "Independent fallback opening. It should not be an excerpt from the placement article.",
+    description: "Legacy serving fallback opening. Keep this stable while the evergreen variant family is authored and reviewed.",
     rows: 4
   },
   {
     path: "fallback.lived",
     label: "Lived",
-    description: "Independent human consequence or recognizable situation.",
+    description: "Legacy serving fallback consequence or recognizable situation.",
     rows: 4
   },
   {
     path: "fallback.turn",
     label: "Turn",
-    description: "Independent turn or choice. Do not recycle the article close or TLDR takeaway.",
+    description: "Legacy serving fallback turn. It remains unchanged until a separate replacement release is approved.",
     rows: 4
   }
 ];
@@ -134,6 +135,11 @@ function rowEffectiveRecord(row: AdminRow) {
 
 function rowHasDraft(row: AdminRow) {
   return Object.keys(record(rowSections(row).packageDraft)).length > 0;
+}
+
+function rowHasVariantFamilyDraft(row: AdminRow) {
+  const family = record(rowSections(row).skyFallbackVariantFamilyDraft);
+  return Array.isArray(family.lanes) && family.lanes.length > 0;
 }
 
 function continuousIdentity(contentKey: string) {
@@ -392,7 +398,7 @@ export default function SkyV4StudioReviewPanel(props: Props) {
       <div>
         <p className="admin-eyebrow">Continuous placement editor</p>
         <h3>{identity ? `${titlePart(identity.planet)} in ${titlePart(identity.sign)}` : props.contentKey}</h3>
-        <p>All six reader fields belong to this one placement record. The main article and fallback copy are separated here so you can edit them without hunting through different Content Studio areas.</p>
+        <p>The main article, current serving fallback, and new evergreen fallback family are managed together here. New variant-family work stays non-serving until exact copy and a separate release are approved.</p>
       </div>
 
       <div className="admin-editor-guidance" aria-label="Main reader copy">
@@ -410,10 +416,10 @@ export default function SkyV4StudioReviewPanel(props: Props) {
         </label>)}
       </div>
 
-      <div className="admin-editor-guidance" aria-label="Fallback copy">
-        <p className="admin-eyebrow">Fallback copy</p>
+      <div className="admin-editor-guidance" aria-label="Legacy fallback copy">
+        <p className="admin-eyebrow">Legacy serving fallback</p>
         <h4>Hook · Lived · Turn</h4>
-        <p>These three fields are independent fallback writing. They should not be excerpts from the placement article or repeats of the TLDR.</p>
+        <p>This is the currently governed fallback baseline. Keep it stable while the longer evergreen variant family is authored, reviewed, and separately released.</p>
         {fallbackFields.map((field) => <label key={field.path}>
           <span><strong>{field.label}</strong> <code>{field.path}</code></span>
           <small>{field.description}</small>
@@ -426,21 +432,28 @@ export default function SkyV4StudioReviewPanel(props: Props) {
         </label>)}
       </div>
 
+      <SkyFallbackVariantFamilyEditor
+        secret={props.secret}
+        contentKey={props.contentKey}
+        headline={identity ? `${titlePart(identity.planet)} in ${titlePart(identity.sign)}` : props.contentKey}
+        disabled={props.disabled}
+      />
+
       <div className="admin-fallback-row-actions">
         <button type="button" disabled={props.disabled || savingCurrent || !currentDirty} onClick={() => void saveCurrentGroupedDraft()}>
           {savingCurrent ? "Saving draft…" : "Save grouped draft"}
         </button>
         <button type="button" disabled={props.disabled || batchLoading} onClick={() => void toggleBatchReview()}>
-          {batchOpen ? "Hide continuous fallback review" : "Review all 120 continuous fallbacks"}
+          {batchOpen ? "Hide legacy fallback review" : "Review all 120 legacy continuous fallbacks"}
         </button>
       </div>
       {currentSaveMessage && <p className="admin-editor-guidance">{currentSaveMessage}</p>}
 
-      {batchOpen && <section className="admin-hook-detail-section" aria-label="Continuous placement fallback batch review">
+      {batchOpen && <section className="admin-hook-detail-section" aria-label="Continuous placement legacy fallback batch review">
         <div>
-          <p className="admin-eyebrow">Continuous placement fallbacks</p>
-          <h4>Review Hook · Lived · Turn across all 120 placements</h4>
-          <p>Filter by planet, sign, or fallback field. Saving here creates a non-serving Content Studio draft for that placement; it never overwrites the approved serving baseline.</p>
+          <p className="admin-eyebrow">Legacy continuous placement fallbacks</p>
+          <h4>Review current Hook · Lived · Turn across all 120 placements</h4>
+          <p>These are the existing fallback fields, not the new evergreen variant families. Saving here creates a non-serving Content Studio draft and never overwrites the approved serving baseline.</p>
         </div>
 
         <div className="admin-review-filter-grid" aria-label="Continuous fallback filters">
@@ -469,7 +482,7 @@ export default function SkyV4StudioReviewPanel(props: Props) {
           </label>
           <label>
             <span>Search copy</span>
-            <input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search fallback copy" />
+            <input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search legacy fallback copy" />
           </label>
         </div>
 
@@ -487,7 +500,7 @@ export default function SkyV4StudioReviewPanel(props: Props) {
               <div>
                 <p className="admin-eyebrow">{titlePart(rowIdentity.planet)} · {titlePart(rowIdentity.sign)}</p>
                 <h4>{titlePart(rowIdentity.planet)} in {titlePart(rowIdentity.sign)}</h4>
-                <p><code>{row.content_key}</code> · {rowHasDraft(row) ? "Existing draft" : "Serving baseline"}</p>
+                <p><code>{row.content_key}</code> · {rowHasDraft(row) ? "Existing draft" : "Serving baseline"}{rowHasVariantFamilyDraft(row) ? " · Evergreen family draft" : ""}</p>
               </div>
               {fieldsForBatch.map((field) => <label key={`${row.id}-${field.path}`}>
                 <span><strong>{field.label}</strong> <code>{field.path}</code></span>
