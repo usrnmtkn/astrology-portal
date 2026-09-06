@@ -3610,7 +3610,17 @@ export function GeneratedContentAdminDashboard() {
   }
 
   function closeEditor() {
-    if (isLoading) return false;
+    const hasOpenEditor = Boolean(
+      selectedRow
+      || draft
+      || compositionEditorContext
+      || skyArticleEditor
+      || skyArticleEditionForm
+    );
+    if (isLoading && hasOpenEditor) {
+      setMessage("Finish the current editor operation before leaving this section.");
+      return false;
+    }
     const persistedDraft = selectedRow ? draftFromRow(selectedRow) : null;
     const serializedDraft = draft ? JSON.stringify(draft) : "";
     const matchesSavedDraft = Boolean(draft && (
