@@ -22,13 +22,15 @@ function formatTimestamp(value: string | null) {
 
 function statusLabel(item: ReportLibraryItem) {
   if (item.status === "ready") return item.seenAt ? "Ready" : "New";
-  if (item.status === "generating") return "Preparing";
   if (item.status === "needs_attention") return "Needs information";
-  if (item.status === "failed") return "Unavailable";
-  return "Unavailable";
+  return "Preparing";
 }
 
 function openItem(item: ReportLibraryItem) {
+  if (item.status !== "ready") {
+    window.location.assign(item.route);
+    return;
+  }
   void markReportSeen(item).finally(() => window.location.assign(item.route));
 }
 
@@ -90,8 +92,12 @@ export function ReportLibraryView() {
   const archivedCount = useMemo(() => items.filter((item) => item.archivedAt).length, [items]);
 
   async function changeArchive(item: ReportLibraryItem, archived: boolean) {
-    await markReportArchived(item, archived);
-    await refresh();
+    try {
+      await markReportArchived(item, archived);
+      await refresh();
+    } catch {
+      setStatus("error");
+    }
   }
 
   return (
