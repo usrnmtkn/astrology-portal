@@ -1,0 +1,71 @@
+{
+  "schemaVersion": 2,
+  "family": "north-node-48-02",
+  "rowCount": 8,
+  "rows": [
+    {
+      "contentKey": "sky.aspect.lilith.conjunction.north-node",
+      "summary": "A want you have been treating like a problem may become impossible to separate from the decision about what you actually want next.",
+      "body": "A want you have been treating like a problem may become impossible to separate from the decision about what you actually want next. When Lilith conjuncts the North Node, an unconventional relationship, career move, boundary, or refusal you kept private can start changing the plan itself. Wanting something does not automatically make it wise, but hiding the want makes honest planning impossible. Put your actual preference into the equation and see what has to change once you stop editing it out.",
+      "bodySha256": "da8b6a2e38f373bf540b55d31b198528aa4801e5ab2b5a147158bed99ef881c7",
+      "sourceApprovalBatch": "sky-north-node-launch-batch-2-exact-owner-approved-refined-2026-09-05",
+      "sourceApprovalLevel": "exact_owner_approved"
+    },
+    {
+      "contentKey": "sky.aspect.lilith.opposition.north-node",
+      "summary": "The respectable option can be genuinely easier and still require you to keep pretending you want it.",
+      "body": "The respectable option can be genuinely easier and still require you to keep pretending you want it. When Lilith opposes the North Node, the conventional role, relationship, or socially acceptable answer may come with more approval, money, or practical support than the option you actually prefer. There is nothing noble about making life unnecessarily difficult, so use the support if it is useful. Just do not confuse being rewarded for compliance with evidence that the approved choice actually fits you better.",
+      "bodySha256": "edbf33d95c50c53a268d5eb6ba1255d78eab5a4e1488eb07f6cf0728ea314066",
+      "sourceApprovalBatch": "sky-north-node-launch-batch-2-exact-owner-approved-refined-2026-09-05",
+      "sourceApprovalLevel": "exact_owner_approved"
+    },
+    {
+      "contentKey": "sky.aspect.lilith.sextile.north-node",
+      "summary": "A little more freedom may be enough to make an option you dismissed suddenly workable.",
+      "body": "A little more freedom may be enough to make an option you dismissed suddenly workable. When Lilith sextiles the North Node, changing one rule, declining an expectation, or admitting that you want something other people would not choose for you can make a previously awkward option fit much better. You do not need to turn the difference into a dramatic rebellion. Change the specific condition that matters, and see what becomes possible once approval is no longer doing all the deciding.",
+      "bodySha256": "6c81e8b20d3b0dfd421a98a8ff927d5578388b581054cf81414f684c2adaad0b",
+      "sourceApprovalBatch": "sky-north-node-launch-batch-2-exact-owner-approved-refined-2026-09-05",
+      "sourceApprovalLevel": "exact_owner_approved"
+    },
+    {
+      "contentKey": "sky.aspect.lilith.square.north-node",
+      "summary": "The choice that keeps everyone comfortable may be the exact choice that keeps your own preference out of the plan.",
+      "body": "The choice that keeps everyone comfortable may be the exact choice that keeps your own preference out of the plan. When Lilith squares the North Node, a family expectation, workplace norm, or version of respectability can keep demanding that you soften the decision until it no longer reflects what you wanted. Defiance alone will not build a better setup. Name the specific term you can no longer accept, and decide what you are prepared to walk away from if the other side will not move with you.",
+      "bodySha256": "b6ed747188139800950b82cc49ab106061f582b0816a183a8e2e30de88b0347c",
+      "sourceApprovalBatch": "sky-north-node-launch-batch-2-exact-owner-approved-refined-2026-09-05",
+      "sourceApprovalLevel": "exact_owner_approved"
+    },
+    {
+      "contentKey": "sky.aspect.mars.conjunction.north-node",
+      "summary": "A decision becomes much harder to keep theoretical once you act on it.",
+      "body": "A decision becomes much harder to keep theoretical once you act on it. When Mars conjuncts the North Node, action and forward movement meet at the same point, so sending the application, setting the boundary, starting the work, making the call, or leaving an arrangement can change your options immediately. That is the useful part of the pressure: action produces consequences that thinking cannot. Put the energy behind the move that creates new information, access, or freedom, not the reaction that only proves how frustrated you already were.",
+      "bodySha256": "a57939e6a182551734b25251d4d1bce4e5ed0ddc97181448c84a2ebb69065209",
+      "sourceApprovalBatch": "sky-north-node-launch-batch-1-owner-review-v2-2026-09-05",
+      "sourceApprovalLevel": "exact_owner_approved"
+    },
+    {
+      "contentKey": "sky.aspect.mars.opposition.north-node",
+      "summary": "Winning the old fight can keep you too busy to make the new move.",
+      "body": "Winning the old fight can keep you too busy to make the new move. When Mars opposes the North Node, a battle you already know how to fight can feel more urgent than the less practiced action that would change the situation, especially when you are good at defending the boundary, fixing the crisis, or pushing through the problem. You may still need to finish what is in front of you. Just notice when competence at surviving the old setup has become the reason all of your energy keeps going back into it.",
+      "bodySha256": "5b78282baf2cd92bc6f426f017a517210756b19b75dd8c16a9b771861077d288",
+      "sourceApprovalBatch": "sky-north-node-launch-batch-1-owner-review-v2-2026-09-05",
+      "sourceApprovalLevel": "exact_owner_approved"
+    },
+    {
+      "contentKey": "sky.aspect.mars.sextile.north-node",
+      "summary": "One small action can tell you more about a possible future than another week of planning.",
+      "body": "One small action can tell you more about a possible future than another week of planning. When Mars sextiles the North Node, initiative gives you a low-risk way to test something before you reorganize your whole life around it. Make the call, submit the application, try the new process, have the conversation, or take the first step that produces a response you could not get from thinking alone. Use the momentum to collect evidence. A possible direction becomes easier to judge once it has had a chance to meet reality.",
+      "bodySha256": "ebebdd9f4fbc1e587cb0ccdd043c8de3349cd5fca873910dfe8e1a4d308ac72f",
+      "sourceApprovalBatch": "sky-north-node-launch-batch-1-owner-review-v2-2026-09-05",
+      "sourceApprovalLevel": "exact_owner_approved"
+    },
+    {
+      "contentKey": "sky.aspect.mars.square.north-node",
+      "summary": "You can keep fighting the obstacle in front of you and still avoid the move that would change the larger pattern.",
+      "body": "You can keep fighting the obstacle in front of you and still avoid the move that would change the larger pattern. When Mars squares the North Node, the same argument, emergency, deadline, or source of frustration can consume your energy while the more consequential decision keeps getting postponed. The anger may be justified, but winning another round of the old fight will not automatically create a different result. Handle what genuinely needs action, then put some of that force behind the decision that changes the arrangement instead of only resisting it.",
+      "bodySha256": "b35113312c3fe0bb161b3e5fcfb07b3552495fceb081888b5f3908563bd48a00",
+      "sourceApprovalBatch": "sky-north-node-launch-batch-1-owner-review-v2-2026-09-05",
+      "sourceApprovalLevel": "exact_owner_approved"
+    }
+  ]
+}
