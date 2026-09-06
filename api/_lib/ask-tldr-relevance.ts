@@ -47,6 +47,14 @@ export function buildQuestionFocusedAskTldrAnswerPacket(input: {
   const packet = buildAskTldrAnswerPacket({ ...input, candidates });
   return {
     ...packet,
+    question: {
+      ...packet.question,
+      focus: {
+        houses: [...input.plan.focus.houses],
+        angles: [...input.plan.focus.angles],
+        points: [...input.plan.focus.points]
+      }
+    },
     relevanceContract: {
       mode: input.plan.focus.houses.length || input.plan.focus.angles.length
         ? "question_location_required" as const
