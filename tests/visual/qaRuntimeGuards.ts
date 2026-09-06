@@ -1,4 +1,5 @@
 import { expect, type Page } from "@playwright/test";
+import "./qaUnresolvedContentFixtures";
 
 export const routeReadyTimeoutMs = 15_000;
 export const routeLoadBudgetMs = 15_000;
