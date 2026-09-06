@@ -92,7 +92,8 @@ try {
   const idle = renderToStaticMarkup(React.createElement(FriendTransitsTab, baseProps));
   assert.match(idle, /What&#x27;s going on with Alex right now\?/u);
   assert.match(idle, /Paid reading/u);
-  assert.match(idle, /Unlock this reading/u);
+  assert.match(idle, /Generate reading/u);
+  assert.doesNotMatch(idle, /Purchase access|Unlock this reading/u);
 
   const loading = renderToStaticMarkup(React.createElement(FriendTransitsTab, {
     ...baseProps,
@@ -111,21 +112,21 @@ try {
   }));
   assert.match(ready, /Alex has more room to move/u);
   assert.match(ready, /The transit cards below remain the source of truth/u);
-  assert.doesNotMatch(ready, /Give me the short version/u);
+  assert.doesNotMatch(ready, /Generate reading/u);
 
   const locked = renderToStaticMarkup(React.createElement(FriendTransitsTab, {
     ...baseProps,
     readingStatus: "locked"
   }));
-  assert.match(locked, /This is a paid reading/u);
-  assert.match(locked, /Unlock this reading/u);
-  assert.doesNotMatch(locked, /Anthropic|Claude|API|credit balance|Generation failed|Try again/iu);
+  assert.match(locked, /This reading is unavailable right now/u);
+  assert.match(locked, /Try again/u);
+  assert.doesNotMatch(locked, /Anthropic|Claude|API|credit balance|Generation failed|Purchase access|Unlock this reading/iu);
 
   const unavailable = renderToStaticMarkup(React.createElement(FriendTransitsTab, {
     ...baseProps,
     readingAvailable: false
   }));
-  assert.doesNotMatch(unavailable, /Unlock this reading/u);
+  assert.doesNotMatch(unavailable, /Generate reading/u);
 } finally {
   await server.close();
 }
