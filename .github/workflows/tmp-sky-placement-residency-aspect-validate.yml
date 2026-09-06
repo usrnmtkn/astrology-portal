@@ -27,3 +27,5 @@ jobs:
         run: npm run typecheck
       - name: Diff check
         run: git diff --check
+
+# Exact-head validation refresh after the typed glyph-map fix.
