@@ -1,7 +1,7 @@
 import bundledLunationBookV3 from "./fallbackArchitectureV3/bundled-lunation-book-cards-v3.json";
 import bundledLunationEclipseSectionsV3 from "./fallbackArchitectureV3/bundled-lunation-eclipse-sections-v3.json";
 import bundledLunationEclipseHouseLayersV3 from "./fallbackArchitectureV3/bundled-lunation-eclipse-house-layers-v3.json";
-import lunationAstrologyBoundaryOverridesV1 from "./fallbackArchitectureV3/source-rows/lunation-astrology-boundary-overrides-v1.json";
+import lunationAstrologyBoundaryOverridesV1 from "./fallbackArchitectureV3/owner-overrides/lunation-astrology-boundary-overrides-v1.json";
 import type {
   AuthoredCard,
   FallbackArchitectureV3Bundle
