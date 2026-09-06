@@ -81,6 +81,8 @@ export type SkySnapshot = {
     actualEphemeris?: "swiss";
     returnedEphemerisFlags?: number[];
   };
+  /** True only when this natal snapshot was calculated from an actual known birth time. */
+  birthTimeKnown?: boolean;
   ascendant: string;
   ascendantLongitude?: number;
   midheaven: string;
