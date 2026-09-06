@@ -3,7 +3,7 @@ import { getSupabaseClient } from "./auth";
 export const reportReadyEvent = "tldrastro:report-ready";
 
 export type ReportLibrarySourceKind = "generated_interpretation" | "premium_report";
-export type ReportLibraryStatus = "generating" | "ready" | "needs_attention" | "failed" | "revoked";
+export type ReportLibraryStatus = "generating" | "ready" | "needs_attention";
 
 export type ReportLibraryItem = {
   id: string;
@@ -82,6 +82,16 @@ export type ReportReadyEventDetail = {
   route: string;
 };
 
+const customerPremiumFulfillmentStates = new Set([
+  "awaiting_birth_data",
+  "queued",
+  "calculating",
+  "writing",
+  "validating",
+  "judging",
+  "live"
+]);
+
 function compactDate(value: string | null) {
   if (!value) return "";
   const parsed = new Date(`${value.slice(0, 10)}T12:00:00`);
@@ -99,8 +109,6 @@ function premiumReportTitle(row: PremiumReportRow) {
 }
 
 function premiumReportStatus(row: PremiumReportRow): ReportLibraryStatus {
-  if (row.revoked_at || row.fulfillment_status === "revoked") return "revoked";
-  if (row.fulfillment_status === "exception") return "failed";
   if (row.fulfillment_status === "awaiting_birth_data") return "needs_attention";
   if (row.fulfillment_status === "live" || row.delivered_at || row.status === "live") return "ready";
   return "generating";
@@ -179,15 +187,16 @@ export async function listReportLibrary(): Promise<ReportLibraryItem[]> {
     }];
   });
 
-  const premium = (premiumResult.data ?? []).map<ReportLibraryItem>((row) => {
+  const premium = (premiumResult.data ?? []).flatMap<ReportLibraryItem>((row) => {
+    if (!customerPremiumFulfillmentStates.has(row.fulfillment_status) || row.revoked_at) return [];
     const state = states.get(stateKey("premium_report", row.id));
-    return {
+    return [{
       id: `premium_report:${row.id}`,
       sourceKind: "premium_report",
       sourceId: row.id,
       reportKind: "premium_report",
       title: premiumReportTitle(row),
-      subtitle: [compactDate(row.period_start), compactDate(row.period_end)].filter(Boolean).join(" – "),
+      subtitle: [compactDate(row.period_start), compactDate(row.period_end)].filter(Boolean).join(" - "),
       status: premiumReportStatus(row),
       targetDate: row.period_start,
       createdAt: row.created_at,
@@ -196,7 +205,7 @@ export async function listReportLibrary(): Promise<ReportLibraryItem[]> {
       seenAt: state?.seen_at ?? null,
       archivedAt: state?.archived_at ?? null,
       route: `/reports/${row.id}`
-    };
+    }];
   });
 
   return [...generated, ...premium].sort((left, right) => (
