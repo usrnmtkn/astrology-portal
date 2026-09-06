@@ -1,6 +1,7 @@
 import bundledLunationBookV3 from "./fallbackArchitectureV3/bundled-lunation-book-cards-v3.json";
 import bundledLunationEclipseSectionsV3 from "./fallbackArchitectureV3/bundled-lunation-eclipse-sections-v3.json";
 import bundledLunationEclipseHouseLayersV3 from "./fallbackArchitectureV3/bundled-lunation-eclipse-house-layers-v3.json";
+import lunationAstrologyBoundaryOverridesV1 from "./fallbackArchitectureV3/source-rows/lunation-astrology-boundary-overrides-v1.json";
 import type {
   AuthoredCard,
   FallbackArchitectureV3Bundle
@@ -10,6 +11,7 @@ import { fallbackArchitectureV3PackageVersion } from "./fallbackArchitectureV3Ru
 const cards = bundledLunationBookV3.authoredCards;
 const eclipseSections = bundledLunationEclipseSectionsV3.authoredCards;
 const eclipseHouseLayers = bundledLunationEclipseHouseLayersV3.authoredCards;
+const astrologyBoundaryOverrides = lunationAstrologyBoundaryOverridesV1.authoredCards;
 const keys = new Set(cards.map((card) => card.contentKey));
 const eclipseSectionKeys = new Set(eclipseSections.map((card) => card.contentKey));
 const eclipseHouseLayerKeys = new Set(eclipseHouseLayers.map((card) => card.contentKey));
@@ -95,9 +97,30 @@ if (
   throw new Error("Lunation eclipse house-layer bundle must contain 12 protected owner-approved solar sections.");
 }
 
+if (
+  lunationAstrologyBoundaryOverridesV1.schema !== "lunation-astrology-boundary-overrides/v1"
+  || lunationAstrologyBoundaryOverridesV1.count !== 1
+  || astrologyBoundaryOverrides.length !== 1
+  || astrologyBoundaryOverrides.some((card) => (
+    card.contentKey !== "authored/book-ritual-and-the-moon/lunation-horoscope/new-moon/virgo/rising-gemini/house-4"
+    || card.reader_content_type !== "astrology"
+    || card.review_status !== "approved"
+    || card.owner_authored !== true
+    || card.approval.approvalLevel !== "exact_owner_approved"
+    || card.approval.payloadSha256 !== card.protected_content.body_sha256
+    || card.protected_content.char_count !== card.body.length
+    || !isSha256(card.protected_content.body_sha256)
+  ))
+) {
+  throw new Error("Lunation astrology-boundary override must contain the exact owner-approved Virgo/Gemini correction.");
+}
+
 export const lunationBookFallbackArchitectureV3Bundle: FallbackArchitectureV3Bundle = {
   transitLib: {
-    authoredCards: [...cards, ...eclipseSections, ...eclipseHouseLayers] as AuthoredCard[]
+    // Overrides are intentionally last. Production reader projection selects the
+    // latest eligible row for a duplicate contentKey, preserving the historical
+    // source cell while serving the corrected astrology-only copy.
+    authoredCards: [...cards, ...eclipseSections, ...eclipseHouseLayers, ...astrologyBoundaryOverrides] as AuthoredCard[]
   },
   templatesFile: { templates: [] },
   rowsFile: { hookRows: [], vocabularyRows: [] }
