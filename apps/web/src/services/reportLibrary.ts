@@ -182,7 +182,7 @@ export async function listReportLibrary(): Promise<ReportLibraryItem[]> {
       updatedAt: row.updated_at,
       readyAt: row.updated_at,
       seenAt: state?.seen_at ?? null,
-      archivedAt: state?.archived_at ?? (row.status === "ARCHIVED" ? row.updated_at : null),
+      archivedAt: state ? state.archived_at : (row.status === "ARCHIVED" ? row.updated_at : null),
       route: `/reports/generated/${row.id}`
     }];
   });
