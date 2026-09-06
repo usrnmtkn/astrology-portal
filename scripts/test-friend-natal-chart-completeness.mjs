@@ -122,8 +122,8 @@ assert.match(
 );
 assert.match(
   controllerSource,
-  /manualChartsWithReliableAngleLongitudes\(\s*listCachedManualCharts\(\[chartOwnerUserId, profileId\]\)\s*\)/,
-  "Cached manual Friend charts must be sanitized before entering controller state."
+  /const cachedCharts = listCachedManualCharts\(\[chartOwnerUserId, profileId\]\);\s*const reliableCachedCharts = manualChartsWithReliableAngleLongitudes\(cachedCharts\);/,
+  "Cached manual Friend charts must be read synchronously, then sanitized before entering controller state."
 );
 assert.match(
   controllerSource,
