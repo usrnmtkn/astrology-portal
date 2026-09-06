@@ -13,13 +13,13 @@
   "relationshipFallbackChunkGzipBytes": 230000,
   "signupChunkGzipBytes": 4000,
   "totalCssGzipBytes": 111000,
-  "totalJavaScriptGzipBytes": 2850000,
+  "totalJavaScriptGzipBytes": 2870000,
   "_rationale": {
     "totalCssGzipBytes": "Raised by 5 kB for the deferred Content Studio form, Composition Map surface inventory, and contextual atomic-source editor; reader startup CSS remains separately capped at 47 kB.",
     "readerBootGzipBytes": "Raised by 2 kB for the fail-soft eclipse review reporting and protected-content integrity boundary; deferred content must still remain outside the static boot graph.",
     "lunationBookFallbackChunkGzipBytes": "Raised by 5 kB for the 22 recovered, owner-approved full lunation book passages; the complete protected writing remains lazy-loaded and byte-exact.",
     "transitFallbackChunkGzipBytes": "Owner-authorized increase from 330 kB to 390 kB for the 351 exact, hash-bound Friends transit body_they passages. The transit corpus remains on-demand and outside the static App boot graph; all startup and route-local budgets remain unchanged.",
-    "totalJavaScriptGzipBytes": "Owner-authorized aggregate increase to 2.85 MB for the 351 exact Friends transit passages. App boot, reader boot, App chunk, startup CSS, Friends workspace, and all unrelated deferred-content budgets remain unchanged.",
-    "authorization": "Owner explicitly authorized increasing the bundle budget during PR #509 release review on 2026-09-04."
+    "totalJavaScriptGzipBytes": "Rebaselined from 2.85 MB to 2.87 MB after the owner-authorized final 83 exact Sky Calendar aspect release in PR #582. The release increased the deferred astro-knowledge Sky chunk from 91.24 kB to 109.26 kB gzip and moved aggregate JavaScript from 2.84 MB to 2.86 MB, while App boot remained 392.7 kB, the App chunk remained 166.7 kB, and every startup and deferred per-surface budget stayed below its existing cap.",
+    "authorization": "The prior Friends-transit aggregate increase was explicitly owner-authorized during PR #509 release review on 2026-09-04. The additional 20 kB rebaseline reflects the 83 exact Sky Calendar passages the owner explicitly authorized for live serving on 2026-09-06 in PR #582; no reader-startup or per-surface cap is raised."
   }
 }
