@@ -3,7 +3,7 @@ type RecordLike = Record<string, unknown>;
 export const FRIEND_TRANSIT_READING_CONTENT_TYPE = "friend_transit_reading";
 export const FRIEND_TRANSIT_READING_EVENT_TYPE = "friend-transit-reading";
 export const FRIEND_TRANSITS_BRIEF_SCHEMA = "tldr.friend-transits-brief.v1";
-export const FRIEND_TRANSIT_READING_PROMPT_VERSION = "friend-transit-reading-v1";
+export const FRIEND_TRANSIT_READING_PROMPT_VERSION = "friend-transit-reading-v1.1";
 
 export type FriendTransitReadingBrief = {
   schema: typeof FRIEND_TRANSITS_BRIEF_SCHEMA;
@@ -365,7 +365,8 @@ export function friendTransitReadingPrompt(input: { brief: FriendTransitReadingB
     "",
     "TASK",
     `Write one short answer to: ${input.headline}`,
-    `Write about ${brief.friendName} in third person using their name and they/them/their. Never address the reader as you/your.`,
+    `Write ${brief.friendName}\'s personal astrology in third person using their name and they/them/their.`,
+    `When using Between You Two relationship context, address the reader directly and prefer the bridge: "Things between you and ${brief.friendName}..." Do not use you/your outside relationship context.`,
     "This is synthesis only. TLDR Astro has already calculated, selected, ordered, and content-gated the astrology.",
     "Do not calculate astrology. Do not add a transit, placement, aspect, sign, house, date, degree, orb, interpretation, example, or life event that is not present below.",
     "Do not re-rank the evidence. Preserve the supplied order inside each lane.",
@@ -378,6 +379,7 @@ export function friendTransitReadingPrompt(input: { brief: FriendTransitReadingB
     "CONTENT PRIORITY",
     "Daily is immediate context, not the master ranking.",
     "Between You Two is relationship context and must remain distinct.",
+    `If relationship context is used, speak to the reader naturally as "Things between you and ${brief.friendName}..." rather than referring to both people as "the two of them."`,
     "Primary themes are the friend's own short-term transits in final upstream order.",
     "House context says where an already-selected transit lands. It is not a new ranked theme.",
     "Longer cycles are background pressure or support, not a replacement for what is immediate.",
@@ -437,6 +439,28 @@ function allowedTechnicalFacts(brief: FriendTransitReadingBrief) {
   };
 }
 
+function relationshipSecondPersonAllowed(text: string, matchIndex: number, brief: FriendTransitReadingBrief) {
+  if (brief.relationshipActivations.length === 0 || matchIndex < 0) return false;
+  const starts = [
+    text.lastIndexOf(".", matchIndex),
+    text.lastIndexOf("!", matchIndex),
+    text.lastIndexOf("?", matchIndex),
+    text.lastIndexOf("\n", matchIndex)
+  ];
+  const start = Math.max(...starts) + 1;
+  const endings = [
+    text.indexOf(".", matchIndex),
+    text.indexOf("!", matchIndex),
+    text.indexOf("?", matchIndex),
+    text.indexOf("\n", matchIndex)
+  ].filter((value) => value >= 0);
+  const end = endings.length > 0 ? Math.min(...endings) : text.length;
+  const sentence = text.slice(start, end);
+  const friendNamePattern = new RegExp(`\\b${escapeRegex(brief.friendName)}\\b`, "iu");
+  return friendNamePattern.test(sentence)
+    && /\b(?:between|connection|relationship)\b/iu.test(sentence);
+}
+
 export function validateFriendTransitReadingDraft(input: { draft: FriendTransitReadingDraft; brief: FriendTransitReadingBrief; expectedHeadline: string }) {
   const issues: FriendTransitReadingValidationIssue[] = [];
   const text = renderedText(input.draft);
@@ -447,7 +471,9 @@ export function validateFriendTransitReadingDraft(input: { draft: FriendTransitR
     issues.push({ code: "invalid_brief", value: input.draft.headline, message: "Friend transit reading headline changed from the locked question." });
   }
   for (const match of text.matchAll(/\b(?:you|your|yours|yourself|yourselves)\b/giu)) {
-    issues.push({ code: "second_person", value: match[0], message: "Friend transit reading addressed the reader instead of describing the friend." });
+    if (!relationshipSecondPersonAllowed(text, match.index ?? -1, input.brief)) {
+      issues.push({ code: "second_person", value: match[0], message: "Friend transit reading used second person outside explicit relationship context." });
+    }
   }
   for (const match of text.matchAll(/\b(?:score|significance|timing bonuses?|content keys?|source rows?|approval state|schema|backend)\b/giu)) {
     issues.push({ code: "internal_field_leak", value: match[0], message: "Friend transit reading exposed an internal brief field." });
