@@ -13,13 +13,13 @@
   "relationshipFallbackChunkGzipBytes": 230000,
   "signupChunkGzipBytes": 4000,
   "totalCssGzipBytes": 111000,
-  "totalJavaScriptGzipBytes": 2850000,
+  "totalJavaScriptGzipBytes": 2880000,
   "_rationale": {
     "totalCssGzipBytes": "Raised by 5 kB for the deferred Content Studio form, Composition Map surface inventory, and contextual atomic-source editor; reader startup CSS remains separately capped at 47 kB.",
     "readerBootGzipBytes": "Raised by 2 kB for the fail-soft eclipse review reporting and protected-content integrity boundary; deferred content must still remain outside the static boot graph.",
     "lunationBookFallbackChunkGzipBytes": "Raised by 5 kB for the 22 recovered, owner-approved full lunation book passages; the complete protected writing remains lazy-loaded and byte-exact.",
     "transitFallbackChunkGzipBytes": "Owner-authorized increase from 330 kB to 390 kB for the 351 exact, hash-bound Friends transit body_they passages. The transit corpus remains on-demand and outside the static App boot graph; all startup and route-local budgets remain unchanged.",
-    "totalJavaScriptGzipBytes": "Owner-authorized aggregate increase to 2.85 MB for the 351 exact Friends transit passages. App boot, reader boot, App chunk, startup CSS, Friends workspace, and all unrelated deferred-content budgets remain unchanged.",
-    "authorization": "Owner explicitly authorized increasing the bundle budget during PR #509 release review on 2026-09-04."
+    "totalJavaScriptGzipBytes": "Raised narrowly from 2.85 MB to 2.88 MB after completing the 131 exact owner-approved Sky Calendar major aspects, bringing the governed exact-aspect corpus to 379. The added prose remains in deferred/on-demand content; App boot, reader boot, App chunk, startup CSS, Friends workspace, transit chunk, and other route-local budgets remain unchanged.",
+    "authorization": "Owner authorized the 131 Calendar aspect serving release and instructed proceeding with the bundle-budget fix on 2026-09-06."
   }
 }
