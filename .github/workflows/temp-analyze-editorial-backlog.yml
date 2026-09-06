@@ -1,0 +1,44 @@
+name: Analyze editorial backlog
+
+on:
+  push:
+    branches:
+      - chatgpt/editorial-backlog-resolution
+
+permissions:
+  contents: read
+
+jobs:
+  analyze:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Summarize unresolved queue
+        run: |
+          node --input-type=module <<'NODE'
+          import fs from 'node:fs';
+          const queue = JSON.parse(fs.readFileSync('packages/astro-knowledge/generated/content-unresolved-queue-v1.json','utf8'));
+          const countBy = (fn) => Object.entries(queue.items.reduce((acc,item)=>{ const key=fn(item); acc[key]=(acc[key]||0)+1; return acc; },{})).sort((a,b)=>b[1]-a[1]);
+          const family = (item) => {
+            const k=String(item.contentKey||'');
+            if (k.startsWith('daily-glance-variant/')) return 'daily-glance-variants';
+            if (k.includes('/lunation-horoscope/eclipse-')) return 'lunation-eclipse-horoscopes';
+            if (k.startsWith('authored/sky-lunation-macro/')) return 'sky-lunation-macro';
+            if (k.startsWith('sky-placement/article/')) return 'sky-placement-article';
+            if (k.startsWith('fallback-hook/')) return 'fallback-hook';
+            if (k.startsWith('authored/transit-aspect/')) return 'personal-transit';
+            return k.split('/').slice(0,2).join('/') || 'other';
+          };
+          console.log(JSON.stringify({
+            total: queue.count,
+            reasonCounts: queue.reasonCounts,
+            byFamily: countBy(family),
+            bySourcePath: countBy(i=>i.sourcePath),
+            byRole: countBy(i=>i.contentRole),
+            byReviewStatus: countBy(i=>i.reviewStatus),
+            samplesByFamily: Object.fromEntries([...new Set(queue.items.map(family))].map(f=>[f,queue.items.filter(i=>family(i)===f).slice(0,5).map(i=>({contentKey:i.contentKey,role:i.contentRole,status:i.reviewStatus,source:i.sourcePath}))]))
+          }, null, 2));
+          NODE
