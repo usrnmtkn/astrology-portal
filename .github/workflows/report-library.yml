@@ -50,6 +50,23 @@ jobs:
       - run: npm run build:knowledge
       - run: npm run build:web
 
+  report-library-browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      VITE_SUPABASE_URL: https://report-library.supabase.test
+      VITE_SUPABASE_ANON_KEY: report-library-placeholder
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - name: Verify standalone Reports UI
+        run: npx playwright test -c playwright.config.ts tests/visual/report-library-ui.spec.ts
+
   report-library-database:
     runs-on: ubuntu-latest
     timeout-minutes: 15
