@@ -1,0 +1,108 @@
+#!/usr/bin/env node
+
+import assert from "node:assert/strict";
+import fs from "node:fs";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+import { createServer } from "vite";
+
+const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
+const canonicalPath = path.join(
+  repoRoot,
+  "apps/web/src/content/fallbackArchitectureV3/authored-inputs/sky-v4-canonical-content-studio-stage-v1.json"
+);
+const canonical = JSON.parse(fs.readFileSync(canonicalPath, "utf8"));
+const sunScorpio = canonical.content.continuous.find(
+  (row: { contentKey?: string }) => row.contentKey === "sky-placement/article/sun/scorpio"
+);
+assert.ok(sunScorpio, "Sun in Scorpio canonical placement article must remain present.");
+const canonicalSunScorpioBytes = JSON.stringify(sunScorpio);
+
+const vite = await createServer({
+  root: path.join(repoRoot, "apps", "web"),
+  appType: "custom",
+  logLevel: "silent",
+  server: { middlewareMode: true }
+});
+
+try {
+  const residency = await vite.ssrLoadModule("/src/services/skyPlacementResidencyAspects.ts");
+  const result = await residency.skyPlacementResidencyAspectSections({
+    planet: "sun",
+    sign: "scorpio",
+    referenceDate: "2026-11-01T12:00:00.000Z",
+    timeZone: "America/New_York"
+  });
+
+  assert.equal(result.status, "resolved");
+  assert.deepEqual(
+    result.events.map((event: { heading: string }) => event.heading),
+    [
+      "Sun Conjunction Venus",
+      "Sun Square Pluto",
+      "Sun Conjunction Mercury",
+      "Sun Square Jupiter",
+      "Sun Square Mars"
+    ],
+    "Sun in Scorpio 2026 must expose the complete chronological major-aspect sequence."
+  );
+  assert.deepEqual(
+    result.events.map((event: { dateLine: string }) => event.dateLine),
+    [
+      "October 24, 2026",
+      "October 26, 2026",
+      "November 4, 2026",
+      "November 18, 2026",
+      "November 19, 2026"
+    ],
+    "Residency aspect dates must come from the engine and remain chronological in the reader timezone."
+  );
+  assert.equal(result.events.length, 5);
+  assert.equal(result.sections.length, 5);
+  assert.deepEqual(result.unresolvedEventIds, []);
+  assert.ok(result.events.every((event: { resolution: string }) => event.resolution === "resolved-approved-exact"));
+  assert.ok(result.sections.every((section: { role?: string }) => section.role === "aspect"));
+  assert.ok(result.sections.every((section: { dateLine?: string }) => Boolean(section.dateLine)));
+  assert.ok(result.sections.every((section: { body: unknown }) => typeof section.body === "string" && section.body.length > 0));
+  assert.ok(result.sections.every((section: { body: string }) => !/\{\{/u.test(section.body)));
+  assert.equal(new Set(result.events.map((event: { id: string }) => event.id)).size, 5, "Residency events must not duplicate.");
+
+  const unsupported = await residency.skyPlacementResidencyAspectSections({
+    planet: "mars",
+    sign: "scorpio",
+    referenceDate: "2026-11-01T12:00:00.000Z",
+    timeZone: "America/New_York"
+  });
+  assert.deepEqual(unsupported, {
+    status: "unsupported-pilot",
+    sections: [],
+    events: [],
+    unresolvedEventIds: []
+  }, "The first implementation must remain Sun-only rather than silently expanding expensive residency scans.");
+
+  const canonicalAfter = JSON.parse(fs.readFileSync(canonicalPath, "utf8"));
+  const sunScorpioAfter = canonicalAfter.content.continuous.find(
+    (row: { contentKey?: string }) => row.contentKey === "sky-placement/article/sun/scorpio"
+  );
+  assert.equal(JSON.stringify(sunScorpioAfter), canonicalSunScorpioBytes, "Sun in Scorpio canonical base copy drifted.");
+
+  const appSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/App.tsx"), "utf8");
+  assert.match(
+    appSource,
+    /function skyPlacementArticleAspects\([\s\S]*?applyingPriority[\s\S]*?conjunctionPriority[\s\S]*?\.slice\(0, 1\)/u,
+    "Compact/current-state placement aspect selection must retain the one-aspect cap."
+  );
+  assert.match(
+    appSource,
+    /placementResidencyContext:[\s\S]*?normalizeContentIdPart\(position\.planet\) === "sun"/u,
+    "Long-form residency aspect enrichment must remain explicitly Sun-only in the pilot."
+  );
+
+  const detailSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/features/sky/SkyDetailArticle.tsx"), "utf8");
+  assert.match(detailSource, /skyPlacementResidencyAspectSections/u);
+  assert.match(detailSource, /Aspects shaping this transit/u);
+
+  console.log("Sky Placement residency aspects pilot: PASS (Sun in Scorpio 5/5 exact approved aspects; compact selector preserved; base copy drift 0). ");
+} finally {
+  await vite.close();
+}
