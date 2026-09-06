@@ -10,8 +10,9 @@ import type { AskTldrPillarDefinition } from "./ask-tldr-model.js";
 import type { AskTldrPreparedCalibration } from "./ask-tldr-pipeline.js";
 import { validateAskTldrWriterOutput } from "./ask-tldr-writer.js";
 import { verifyAskTldrFactLock } from "./ask-tldr-fact-lock.js";
-import { buildAskTldrJudgeRequest, validateAskTldrJudgeOutput } from "./ask-tldr-judge.js";
-import { buildAskTldrCalibrationReleasePacket } from "./ask-tldr-release.js";
+import { validateAskTldrJudgeOutput } from "./ask-tldr-judge.js";
+import { buildQuestionBoundAskTldrJudgeRequest } from "./ask-tldr-question-bound-judge.js";
+import { buildQuestionBoundAskTldrCalibrationReleasePacket } from "./ask-tldr-question-bound-release.js";
 
 export type AskTldrProviderRole = "classifier" | "writer" | "judge";
 export type AskTldrProviderUsage = {
@@ -124,13 +125,13 @@ export async function runPreparedAskTldrAnswerCalibration(input: {
   });
   const writerOutput = validateAskTldrWriterOutput({
     request: input.prepared.writerRequest,
-    question: input.prepared.governedPacket.question,
-    evidence: input.prepared.governedPacket.evidence,
+    question: input.prepared.questionBoundPacket.question,
+    evidence: input.prepared.questionBoundPacket.evidence,
     value: writerResponse.value
   });
   const factLock = verifyAskTldrFactLock({
     output: writerOutput,
-    evidence: input.prepared.governedPacket.evidence
+    evidence: input.prepared.questionBoundPacket.evidence
   });
   if (!factLock.passed) {
     return {
@@ -148,11 +149,12 @@ export async function runPreparedAskTldrAnswerCalibration(input: {
       blockReason: "deterministic_fact_lock_failed"
     };
   }
-  const judgeRequest = buildAskTldrJudgeRequest({
+  const judgeRequest = buildQuestionBoundAskTldrJudgeRequest({
     writerRequest: input.prepared.writerRequest,
     writerOutput,
-    evidence: input.prepared.governedPacket.evidence,
+    evidence: input.prepared.questionBoundPacket.evidence,
     receipt: input.prepared.voiceReceipt,
+    relevanceReceipt: input.prepared.relevanceReceipt,
     factLock
   });
   const judgeResponse = await input.callModel({
@@ -169,12 +171,13 @@ export async function runPreparedAskTldrAnswerCalibration(input: {
     usage: judgeResponse.usage ?? null
   });
   const judge = validateAskTldrJudgeOutput(judgeRequest, judgeResponse.value);
-  const releasePacket = buildAskTldrCalibrationReleasePacket({
-    question: input.prepared.governedPacket.question,
+  const releasePacket = buildQuestionBoundAskTldrCalibrationReleasePacket({
+    question: input.prepared.questionBoundPacket.question,
     writerRequest: input.prepared.writerRequest,
     writerOutput,
-    evidence: input.prepared.governedPacket.evidence,
+    evidence: input.prepared.questionBoundPacket.evidence,
     receipt: input.prepared.voiceReceipt,
+    relevanceReceipt: input.prepared.relevanceReceipt,
     factLock,
     judgeRequest,
     judge
