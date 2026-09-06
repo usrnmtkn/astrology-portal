@@ -14,11 +14,15 @@ import {
   combineAskTldrCalculatedEvidence
 } from "./ask-tldr-evidence-adapter.js";
 import { buildAskTldrGovernedAnswerPacket } from "./ask-tldr-governed-evidence.js";
+import { bindAskTldrQuestionRelevance } from "./ask-tldr-relevance-bound.js";
+import { buildAskTldrQuestionRelevanceReceipt } from "./ask-tldr-relevance-receipt.js";
 import { buildAskTldrVoiceEvidenceReceipt } from "./ask-tldr-voice-receipt.js";
-import { buildAskTldrWriterRequest, validateAskTldrWriterOutput } from "./ask-tldr-writer.js";
+import { validateAskTldrWriterOutput } from "./ask-tldr-writer.js";
+import { buildQuestionBoundAskTldrWriterRequest } from "./ask-tldr-question-bound-writer.js";
 import { verifyAskTldrFactLock } from "./ask-tldr-fact-lock.js";
-import { buildAskTldrJudgeRequest, validateAskTldrJudgeOutput } from "./ask-tldr-judge.js";
-import { buildAskTldrCalibrationReleasePacket } from "./ask-tldr-release.js";
+import { validateAskTldrJudgeOutput } from "./ask-tldr-judge.js";
+import { buildQuestionBoundAskTldrJudgeRequest } from "./ask-tldr-question-bound-judge.js";
+import { buildQuestionBoundAskTldrCalibrationReleasePacket } from "./ask-tldr-question-bound-release.js";
 
 type AskPlan = ReturnType<typeof compileEvergreenAskPlan> | ReturnType<typeof compileFreeTextAskPlan>;
 
@@ -30,8 +34,10 @@ export type AskTldrPreparedCalibration = {
   candidateCount: number;
   rankedPacket: ReturnType<typeof buildQuestionFocusedAskTldrAnswerPacket>;
   governedPacket: ReturnType<typeof buildAskTldrGovernedAnswerPacket>;
+  questionBoundPacket: ReturnType<typeof bindAskTldrQuestionRelevance>;
+  relevanceReceipt: ReturnType<typeof buildAskTldrQuestionRelevanceReceipt>;
   voiceReceipt: ReturnType<typeof buildAskTldrVoiceEvidenceReceipt>;
-  writerRequest: ReturnType<typeof buildAskTldrWriterRequest> | null;
+  writerRequest: ReturnType<typeof buildQuestionBoundAskTldrWriterRequest> | null;
   preparationAllowed: boolean;
   preparationBlockReason: string | null;
 };
@@ -50,18 +56,25 @@ function prepareFromPlan(input: {
   const candidates = combineAskTldrCalculatedEvidence(personal, future);
   const rankedPacket = buildQuestionFocusedAskTldrAnswerPacket({ model: input.model, plan: input.plan, candidates, now });
   const governedPacket = buildAskTldrGovernedAnswerPacket(rankedPacket);
+  const questionBoundPacket = bindAskTldrQuestionRelevance(governedPacket);
+  const relevanceReceipt = buildAskTldrQuestionRelevanceReceipt(questionBoundPacket);
   const voiceReceipt = buildAskTldrVoiceEvidenceReceipt({
-    question: governedPacket.question,
-    evidence: governedPacket.evidence,
-    governedGenerationAllowed: governedPacket.generationAllowed,
-    governedGenerationBlockReason: governedPacket.generationBlockReason
+    question: questionBoundPacket.question,
+    evidence: questionBoundPacket.evidence,
+    governedGenerationAllowed: questionBoundPacket.generationAllowed,
+    governedGenerationBlockReason: questionBoundPacket.generationBlockReason
   });
-  let writerRequest: ReturnType<typeof buildAskTldrWriterRequest> | null = null;
+  let writerRequest: ReturnType<typeof buildQuestionBoundAskTldrWriterRequest> | null = null;
   let preparationBlockReason: string | null = null;
-  if (governedPacket.generationAllowed && voiceReceipt.generationAllowed) {
-    writerRequest = buildAskTldrWriterRequest({ packet: governedPacket, receipt: voiceReceipt });
+  if (questionBoundPacket.generationAllowed && relevanceReceipt.generationAllowed && voiceReceipt.generationAllowed) {
+    writerRequest = buildQuestionBoundAskTldrWriterRequest({
+      packet: questionBoundPacket,
+      voiceReceipt,
+      relevanceReceipt
+    });
   } else {
-    preparationBlockReason = governedPacket.generationBlockReason
+    preparationBlockReason = questionBoundPacket.generationBlockReason
+      ?? relevanceReceipt.generationBlockReason
       ?? voiceReceipt.generationBlockReason
       ?? "ASK_TLDR_PREPARATION_BLOCKED";
   }
@@ -73,6 +86,8 @@ function prepareFromPlan(input: {
     candidateCount: candidates.length,
     rankedPacket,
     governedPacket,
+    questionBoundPacket,
+    relevanceReceipt,
     voiceReceipt,
     writerRequest,
     preparationAllowed: writerRequest !== null,
@@ -139,13 +154,13 @@ export function finalizeAskTldrCalibration(input: {
   }
   const writerOutput = validateAskTldrWriterOutput({
     request: input.prepared.writerRequest,
-    question: input.prepared.governedPacket.question,
-    evidence: input.prepared.governedPacket.evidence,
+    question: input.prepared.questionBoundPacket.question,
+    evidence: input.prepared.questionBoundPacket.evidence,
     value: input.writerValue
   });
   const factLock = verifyAskTldrFactLock({
     output: writerOutput,
-    evidence: input.prepared.governedPacket.evidence
+    evidence: input.prepared.questionBoundPacket.evidence
   });
   if (!factLock.passed) {
     return {
@@ -160,20 +175,22 @@ export function finalizeAskTldrCalibration(input: {
       blockReason: "deterministic_fact_lock_failed"
     };
   }
-  const judgeRequest = buildAskTldrJudgeRequest({
+  const judgeRequest = buildQuestionBoundAskTldrJudgeRequest({
     writerRequest: input.prepared.writerRequest,
     writerOutput,
-    evidence: input.prepared.governedPacket.evidence,
+    evidence: input.prepared.questionBoundPacket.evidence,
     receipt: input.prepared.voiceReceipt,
+    relevanceReceipt: input.prepared.relevanceReceipt,
     factLock
   });
   const judge = validateAskTldrJudgeOutput(judgeRequest, input.judgeValue);
-  const releasePacket = buildAskTldrCalibrationReleasePacket({
-    question: input.prepared.governedPacket.question,
+  const releasePacket = buildQuestionBoundAskTldrCalibrationReleasePacket({
+    question: input.prepared.questionBoundPacket.question,
     writerRequest: input.prepared.writerRequest,
     writerOutput,
-    evidence: input.prepared.governedPacket.evidence,
+    evidence: input.prepared.questionBoundPacket.evidence,
     receipt: input.prepared.voiceReceipt,
+    relevanceReceipt: input.prepared.relevanceReceipt,
     factLock,
     judgeRequest,
     judge
