@@ -61,7 +61,7 @@ jobs:
       - run: npm ci
       - run: node --experimental-strip-types scripts/test-friend-transit-reading-contract.mts
       - run: node scripts/test-friend-transit-reading-request-render.mjs
-      - run: node scripts/test-friend-natal-chart-completeness.mjs
+      - run: node --import tsx scripts/test-friend-natal-chart-completeness.mjs
       - run: npm run typecheck
       - run: npm run build:knowledge
       - run: npm run build:web
