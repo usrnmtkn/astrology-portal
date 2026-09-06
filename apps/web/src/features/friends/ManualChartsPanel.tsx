@@ -150,6 +150,7 @@ import { wholeDegreeOrb } from "../sky/skyHelpers";
 import { friendDetailHasReaderFacingContent } from "./friendDetailAvailability";
 import { selectEligibleFriendTransits } from "./friendTransitEligibility";
 import { scheduleFriendChartRepair } from "./friendChartLoading";
+import { generateUserContent } from "../../services/userGeneratedContent";
 
 const FriendsWorkspaceShell = lazy(() =>
   import("./FriendsWorkspaceShell").then((module) => ({
@@ -951,6 +952,9 @@ export function ManualChartsPanel({
   const [relationshipComparisonChartId, setRelationshipComparisonChartId] = useState("self");
   const [relationshipComparisonPickerOpen, setRelationshipComparisonPickerOpen] = useState(false);
   const [friendChartModalOpen, setFriendChartModalOpen] = useState(false);
+  const [friendTransitReading, setFriendTransitReading] = useState<import("../../services/generatedContent").LiveGeneratedContent | null>(null);
+  const [friendTransitReadingStatus, setFriendTransitReadingStatus] = useState<"idle" | "loading" | "ready" | "error">("idle");
+  const [friendTransitReadingError, setFriendTransitReadingError] = useState<string | null>(null);
   const [openChartMenuId, setOpenChartMenuId] = useState<string | null>(null);
   const [deleteCandidateChart, setDeleteCandidateChart] = useState<ManualChart | null>(null);
   const allFriendCharts = useMemo(
@@ -959,6 +963,9 @@ export function ManualChartsPanel({
   );
   const editingChart = charts.find((chart) => chart.id === editingChartId) ?? null;
   const selectedChart = allFriendCharts.find((chart) => chart.id === selectedChartId) ?? null;
+  const friendTransitReadingSelectionKey = `${selectedChart?.id ?? ""}|${currentSky?.generatedAt.slice(0, 10) ?? ""}`;
+  const friendTransitReadingSelectionKeyRef = useRef(friendTransitReadingSelectionKey);
+  friendTransitReadingSelectionKeyRef.current = friendTransitReadingSelectionKey;
   const selectedFriendNatalChartComplete = selectedChart
     ? natalChartHasCompletePlacements(selectedChart.natalChart, selectedChart.birthTimeUnknown)
     : false;
@@ -1772,6 +1779,50 @@ export function ManualChartsPanel({
     selectedFriendPersonalTransitGroups,
     transitDateLabel
   ]);
+  const selectedFriendTransitReadingDate = currentSky?.generatedAt.slice(0, 10) ?? "";
+  const selectedFriendTransitReadingAvailable = Boolean(
+    selectedFriendTransitReadingDate
+    && selectedChart
+    && [...selectedFriendTransitsBrief.primaryThemes, ...selectedFriendTransitsBrief.longerCycles].length > 0
+  );
+
+  useEffect(() => {
+    setFriendTransitReading(null);
+    setFriendTransitReadingStatus("idle");
+    setFriendTransitReadingError(null);
+  }, [friendTransitReadingSelectionKey]);
+
+  async function generateSelectedFriendTransitReading() {
+    if (!selectedChart || !selectedFriendTransitReadingDate || !selectedFriendTransitReadingAvailable) return;
+    const requestSelectionKey = friendTransitReadingSelectionKey;
+    setFriendTransitReadingStatus("loading");
+    setFriendTransitReadingError(null);
+    try {
+      const generated = await generateUserContent({
+        subjectType: "friend_transit_reading",
+        subjectId: selectedChart.id,
+        contentKey: `friend-transit-reading/${selectedChart.id}/${selectedFriendTransitReadingDate}`,
+        surface: "friends",
+        mode: "in_depth",
+        eventType: "friend-transit-reading",
+        targetDate: selectedFriendTransitReadingDate,
+        facts: {
+          contentType: "friend_transit_reading",
+          friendTransitsBrief: selectedFriendTransitsBrief
+        }
+      });
+      if (friendTransitReadingSelectionKeyRef.current !== requestSelectionKey) return;
+      if (!generated) throw new Error("The short reading was not returned.");
+      setFriendTransitReading(generated);
+      setFriendTransitReadingStatus("ready");
+    } catch (error) {
+      if (friendTransitReadingSelectionKeyRef.current !== requestSelectionKey) return;
+      setFriendTransitReading(null);
+      setFriendTransitReadingStatus("error");
+      setFriendTransitReadingError(error instanceof Error ? error.message : "The short reading could not be generated.");
+    }
+  }
+
   const selectedFriendNatalAspectPatternStatus = friendProfileWork.natal && showFriendNatalAspectPatterns && selectedFriendReadyNatalChart
     ? natalAspectPatternReaderStatus(
         showFriendNatalAspectPatterns,
@@ -2749,10 +2800,15 @@ export function ManualChartsPanel({
             <FriendTransitsTab
               brief={selectedFriendTransitsBrief}
               isLoading={currentSkyLoading}
+              onGenerateReading={generateSelectedFriendTransitReading}
               onOpenBondTransit={openBondTransitById}
               onOpenHouseTransit={openFriendHouseTransitById}
               onOpenPersonalTransit={openFriendTransitById}
               patternTimingOverrides={currentSkyLoading ? {} : selectedFriendNatalAspectPatternTimingOverrides}
+              reading={friendTransitReading}
+              readingAvailable={selectedFriendTransitReadingAvailable}
+              readingError={friendTransitReadingError}
+              readingStatus={friendTransitReadingStatus}
             />
           )}
 
