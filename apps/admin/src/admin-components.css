@@ -1,5 +1,12 @@
 /* Reusable Content Studio shell and workflow primitives. */
 
+/* Standalone Content Studio routes reuse the dashboard grid without rendering
+   a sidebar. Let the lone main panel span both grid tracks instead of collapsing
+   into the 286px sidebar column. */
+.admin-dashboard > .admin-main:only-child {
+  grid-column: 1 / -1;
+}
+
 .admin-dashboard .admin-access-gate {
   align-items: center;
   grid-template-columns: minmax(0, 1fr) minmax(var(--admin-access-actions-min-width), auto);
