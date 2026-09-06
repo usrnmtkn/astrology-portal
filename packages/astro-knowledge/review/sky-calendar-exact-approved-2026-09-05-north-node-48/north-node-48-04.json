@@ -1,0 +1,71 @@
+{
+  "schemaVersion": 2,
+  "family": "north-node-48-04",
+  "rowCount": 8,
+  "rows": [
+    {
+      "contentKey": "sky.aspect.neptune.conjunction.north-node",
+      "summary": "A possibility can feel deeply important before you can explain exactly how it will work in reality.",
+      "body": "A possibility can feel deeply important before you can explain exactly how it will work in reality. When Neptune conjuncts the North Node, inspiration can begin influencing your choices before you know the cost, timeline, or result. Inspiration is useful, but it is not evidence. Give the idea one concrete test: a draft, an application, a meeting, or a budget. What happens when the idea meets ordinary constraints will tell you more than another round of imagining.",
+      "bodySha256": "1810f0e7bf81071bd4c7a23583322dfb03c399e60b3aeac3dab131126daae6b2",
+      "sourceApprovalBatch": "sky-north-node-launch-batch-2-exact-owner-approved-refined-2026-09-05",
+      "sourceApprovalLevel": "exact_owner_approved"
+    },
+    {
+      "contentKey": "sky.aspect.neptune.opposition.north-node",
+      "summary": "Nostalgia can edit an old situation until returning looks much easier than remembering why you left.",
+      "body": "Nostalgia can edit an old situation until returning looks much easier than remembering why you left. When Neptune opposes the North Node, an old relationship, dream, or identity can become easier to idealize precisely because the unfinished alternative has not had time to collect the same memories. There may be something worth recovering from your history, but make sure you recover the actual value, not the missing context. Compare the memory with what actually happened before you rebuild a new decision around a sanitized version of the past.",
+      "bodySha256": "77da3bf03e197f16c1fdffff68bd0b79a496aff77a4f54ea5bce068ec7029e21",
+      "sourceApprovalBatch": "sky-north-node-launch-batch-2-exact-owner-approved-refined-2026-09-05",
+      "sourceApprovalLevel": "exact_owner_approved"
+    },
+    {
+      "contentKey": "sky.aspect.neptune.sextile.north-node",
+      "summary": "One practical experiment may give shape to a hunch you have only been able to imagine.",
+      "body": "One practical experiment may give shape to a hunch you have only been able to imagine. When Neptune sextiles the North Node, a creative idea, compassionate goal, or intuitive pull can become specific enough to evaluate once you give it something concrete to work through. Make the prototype, schedule the meeting, or price the project. You do not need absolute certainty before beginning. You just need one action that shows you what the idea can support and what deserves more of your time.",
+      "bodySha256": "c0b0d7c8b027dd15f85617f9ab58711c892fd355a731949a7130abab7fe1efc0",
+      "sourceApprovalBatch": "sky-north-node-launch-batch-2-exact-owner-approved-refined-2026-09-05",
+      "sourceApprovalLevel": "exact_owner_approved"
+    },
+    {
+      "contentKey": "sky.aspect.neptune.square.north-node",
+      "summary": "Not knowing exactly what you want next can make a familiar option look more meaningful than it actually is.",
+      "body": "Not knowing exactly what you want next can make a familiar option look more meaningful than it actually is. When Neptune squares the North Node, nostalgia, mixed signals, or a beautiful but vague possibility can make it difficult to tell which uncertainty deserves patience and which one is simply keeping you stuck. You cannot force clarity out of a situation that does not have it yet. Pick the smallest decision that can produce evidence, and let the facts narrow the story instead of waiting for the story to become clear first.",
+      "bodySha256": "87a2750b5d6d7b4dfc1bd09650469e5bcc50d2be341f4155d1391f97c52b72c2",
+      "sourceApprovalBatch": "sky-north-node-launch-batch-2-exact-owner-approved-refined-2026-09-05",
+      "sourceApprovalLevel": "exact_owner_approved"
+    },
+    {
+      "contentKey": "sky.aspect.pluto.conjunction.north-node",
+      "summary": "A decision about your next direction may force you to confront whoever actually controls the access, funding, or authority.",
+      "body": "A decision about your next direction may force you to confront whoever actually controls the access, funding, or authority. When Pluto conjuncts the North Node, your plan can become inseparable from the power required to carry it out. A negotiation, difficult boundary, or exit from an unequal setup may matter far more right now than another round of deciding what you want. Wanting change and having leverage are two different problems. Find the leverage, then use it on the specific condition that is limiting your choices.",
+      "bodySha256": "85a972b6f6b6f2d292cd257d2c4d625f557aabf1ea66845f9b2186b00f93cb14",
+      "sourceApprovalBatch": "sky-north-node-launch-batch-2-exact-owner-approved-refined-2026-09-05",
+      "sourceApprovalLevel": "exact_owner_approved"
+    },
+    {
+      "contentKey": "sky.aspect.pluto.opposition.north-node",
+      "summary": "An old source of power can be difficult to leave because it still gives you access, money, or protection you know how to use.",
+      "body": "An old source of power can be difficult to leave because it still gives you access, money, or protection you know how to use. When Pluto opposes the North Node, an established role, alliance, or arrangement can offer enough leverage that giving it up feels like surrendering options you may not be able to replace immediately. The benefits may be substantial, which is exactly why the decision deserves precision. Build enough leverage outside the arrangement so that staying becomes a choice rather than the price of keeping your options open.",
+      "bodySha256": "4e0e7e19aa49bddc4aeceb35ec2e994014e76822eae2cd9c0ca1d04b66c4a5fd",
+      "sourceApprovalBatch": "sky-north-node-launch-batch-2-exact-owner-approved-refined-2026-09-05",
+      "sourceApprovalLevel": "exact_owner_approved"
+    },
+    {
+      "contentKey": "sky.aspect.pluto.sextile.north-node",
+      "summary": "A small shift in leverage may give you enough room to change a situation you previously had to work around.",
+      "body": "A small shift in leverage may give you enough room to change a situation you previously had to work around. When Pluto sextiles the North Node, new information, formal authority, or support from someone who can influence the outcome can improve your position enough to alter the terms instead of merely coping with them. Use that advantage on the setup itself. A stronger position matters most when it leaves you with more control after the immediate problem is solved, not simply when it helps you win one difficult conversation.",
+      "bodySha256": "6cd3532c02e79ba776a3fde4c8ad734d86c306a87dd814b4030bbc8bec1a1d6e",
+      "sourceApprovalBatch": "sky-north-node-launch-batch-2-exact-owner-approved-refined-2026-09-05",
+      "sourceApprovalLevel": "exact_owner_approved"
+    },
+    {
+      "contentKey": "sky.aspect.pluto.square.north-node",
+      "summary": "You can know exactly what needs to change and still be trapped by the person or system that controls the terms.",
+      "body": "You can know exactly what needs to change and still be trapped by the person or system that controls the terms. When Pluto squares the North Node, the change you want can run directly into money, access, secrecy, or dependence that gives someone else the power to delay it or make it expensive. Pushing harder is not always leverage; sometimes it is just exhausting. Identify what the other side can withhold, map your alternatives, and systematically reduce your dependence before turning the struggle into proof that you have to keep fighting on their terms.",
+      "bodySha256": "43ed64c0e7af08f725804289db89d2ee884d5da8daa3183392e8ea938a60709a",
+      "sourceApprovalBatch": "sky-north-node-launch-batch-2-exact-owner-approved-refined-2026-09-05",
+      "sourceApprovalLevel": "exact_owner_approved"
+    }
+  ]
+}
