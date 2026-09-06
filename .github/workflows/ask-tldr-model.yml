@@ -47,3 +47,6 @@ jobs:
 
       - name: Validate Ask TLDR writer contract
         run: npx tsx scripts/test-ask-tldr-writer.mjs
+
+      - name: Validate Ask TLDR post-write fact lock
+        run: npx tsx scripts/test-ask-tldr-fact-lock.mjs
