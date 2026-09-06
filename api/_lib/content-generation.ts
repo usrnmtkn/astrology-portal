@@ -23,9 +23,16 @@ import {
   type ReportGenerationPayload
 } from "./report-generation.js";
 import { validateSkyArticleTemplateSlotValues } from "./sky-article-template-slots.js";
+import {
+  friendTransitReadingBriefFromFacts,
+  friendTransitReadingMeaningPlan,
+  friendTransitReadingPrompt,
+  isFriendTransitReadingInput,
+  validateFriendTransitReadingDraft
+} from "./friend-transit-reading.js";
 
 type ContentMode = "feed" | "in_depth" | "article" | "report";
-type Surface = "sky" | "you" | "natal" | "synastry" | "composite" | "relationship" | "year_ahead";
+type Surface = "sky" | "you" | "natal" | "synastry" | "composite" | "relationship" | "friends" | "year_ahead";
 type Planet = "Sun" | "Moon" | "Mercury" | "Venus" | "Mars" | "Jupiter" | "Saturn";
 
 export type GenerateContentInput = {
@@ -4473,6 +4480,15 @@ function v4ExamplesPrompt(input: GenerateContentInput) {
 }
 
 function buildPrompt(input: GenerateContentInput, approvedExamples: ApprovedExample[] = [], qualityFeedback = "") {
+  if (isFriendTransitReadingInput(input)) {
+    const brief = friendTransitReadingBriefFromFacts(input.facts);
+    const headline = stringValue(input.headline) || `What's going on with ${brief.friendName} right now?`;
+    return [
+      friendTransitReadingPrompt({ brief, headline }),
+      qualityFeedback ? `QUALITY_FEEDBACK_FROM_PRIOR_DRAFT\n${qualityFeedback}` : ""
+    ].filter(Boolean).join("\n\n");
+  }
+
   if (input.reportPayload) {
     return [
       reportPromptFromPayload(input.reportPayload),
@@ -5134,6 +5150,19 @@ function validateGeneratedContentForInput(content: GeneratedContent, input: Gene
   validateGeneratedContentQuality(content, input);
   validateAstrologyDrilldownQuality(content);
 
+  if (isFriendTransitReadingInput(input)) {
+    const brief = friendTransitReadingBriefFromFacts(input.facts);
+    const expectedHeadline = stringValue(input.headline) || `What's going on with ${brief.friendName} right now?`;
+    const result = validateFriendTransitReadingDraft({ draft: content, brief, expectedHeadline });
+    if (!result.passed) {
+      hardEditorialViolation(
+        result.issues.map((issue) => issue.code),
+        `Generated Friends transit reading failed fact lock: ${result.issues.map((issue) => issue.message).join(" ")}`
+      );
+    }
+    return;
+  }
+
   if (isNatalAspectGenerationContext(input)) {
     return;
   }
@@ -5512,8 +5541,10 @@ export async function generateWithOpenAI(input: GenerateContentInput): Promise<S
   const model = process.env.OPENAI_GENERATION_MODEL ?? process.env.OPENAI_MODEL ?? defaultOpenAiModel;
   const reasoningEffort = configuredOpenAiReasoningEffort(model);
   const lockedHeadline = factualHeadlineFor(input);
-  const approvedExamples = await loadApprovedExamples(input);
-  const meaningPlan = await planGeneratedContentWithOpenAI({ apiKey, input, productionGate });
+  const approvedExamples = isFriendTransitReadingInput(input) ? [] : await loadApprovedExamples(input);
+  const meaningPlan = isFriendTransitReadingInput(input)
+    ? friendTransitReadingMeaningPlan(friendTransitReadingBriefFromFacts(input.facts))
+    : await planGeneratedContentWithOpenAI({ apiKey, input, productionGate });
   const legacyPrompt = `${buildPrompt(input, approvedExamples, "")}\n\nGOVERNED MEANING PLAN\n${JSON.stringify(meaningPlan, null, 2)}`;
   const writerPrompt = productionGate.governedPromptEnabled
     ? `${legacyPrompt}\n\nGOVERNED KNOWLEDGE EVIDENCE\n${productionGate.governedPrompt}`
@@ -5610,7 +5641,7 @@ export async function generateWithClaude(input: GenerateContentInput): Promise<S
   const apiKey = requireEnv("ANTHROPIC_API_KEY");
   const model = process.env.ANTHROPIC_MODEL ?? defaultClaudeModel;
   const lockedHeadline = factualHeadlineFor(input);
-  const approvedExamples = await loadApprovedExamples(input);
+  const approvedExamples = isFriendTransitReadingInput(input) ? [] : await loadApprovedExamples(input);
   let qualityFeedback = "";
   let lastError: Error | null = null;
   let lastDraft: StoredGeneratedContent | null = null;

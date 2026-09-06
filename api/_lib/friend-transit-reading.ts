@@ -102,7 +102,7 @@ const ASPECT_ALIASES = new Map([
   ["conjunct", "conjunction"], ["conjunction", "conjunction"], ["opposes", "opposition"], ["opposite", "opposition"], ["opposition", "opposition"],
   ["square", "square"], ["squares", "square"], ["trine", "trine"], ["trines", "trine"], ["sextile", "sextile"], ["sextiles", "sextile"]
 ] as const);
-const BODY_PATTERN = [...BODY_ALIASES.keys()].sort((a, b) => b.length - a.length).map(escapeRegex).join("|");
+const BODY_PATTERN = [...BODY_ALIASES.keys()].filter((value) => value !== "rising").sort((a, b) => b.length - a.length).map(escapeRegex).join("|");
 const ASPECT_PATTERN = [...ASPECT_ALIASES.keys()].sort((a, b) => b.length - a.length).map(escapeRegex).join("|");
 const SIGN_PATTERN = SIGNS.map((sign) => sign.toLowerCase()).join("|");
 
@@ -266,10 +266,23 @@ function approvedReaderText(brief: FriendTransitReadingBrief) {
   };
 }
 
+function compactTechnicalTransit(item: FriendTransitReadingPersonalTransit) {
+  return {
+    id: item.id,
+    transitPlanet: item.evidence.transitPlanet,
+    transitSign: item.evidence.transitSign ?? null,
+    aspect: item.evidence.aspect,
+    natalPoint: item.evidence.natalPoint,
+    natalSign: item.evidence.natalSign,
+    natalHouse: item.evidence.natalHouse ?? null,
+    direction: item.evidence.direction ?? null
+  };
+}
+
 function technicalEvidence(brief: FriendTransitReadingBrief) {
   return {
-    primaryThemes: brief.primaryThemes.map((item) => ({ id: item.id, evidence: item.evidence })),
-    longerCycles: brief.longerCycles.map((item) => ({ id: item.id, evidence: item.evidence })),
+    primaryThemes: brief.primaryThemes.map(compactTechnicalTransit),
+    longerCycles: brief.longerCycles.map(compactTechnicalTransit),
     houseContext: brief.houseContext.map((item) => ({ id: item.id, transitPlanet: item.transitPlanet, house: item.house })),
     dailyMoonContext: brief.daily?.forecast?.moonContext ?? null,
     relationshipTransitPlanets: brief.relationshipActivations.map((item) => item.transitPlanet).filter(Boolean)
@@ -346,7 +359,7 @@ function renderedText(draft: FriendTransitReadingDraft) {
 }
 
 function sourceText(brief: FriendTransitReadingBrief) {
-  return JSON.stringify(brief).toLowerCase();
+  return JSON.stringify({ approvedReaderText: approvedReaderText(brief), technicalEvidence: technicalEvidence(brief) }).toLowerCase();
 }
 
 function allowedTechnicalFacts(brief: FriendTransitReadingBrief) {
