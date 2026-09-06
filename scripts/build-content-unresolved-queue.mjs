@@ -15,6 +15,8 @@ const sourceRoot = path.join(repoRoot, "apps/web/src/content/fallbackArchitectur
 const defaultOutput = path.join(repoRoot, "packages/astro-knowledge/generated/content-unresolved-queue-v1.json");
 const outputPath = path.resolve(process.argv.find((value) => value.startsWith("--out="))?.slice(6) ?? defaultOutput);
 const checkOnly = process.argv.includes("--check");
+const retirementRegistry = JSON.parse(fs.readFileSync(path.join(repoRoot, "config/content-unresolved-retirements-v1.json"), "utf8"));
+const retirementFamilies = Array.isArray(retirementRegistry.families) ? retirementRegistry.families : [];
 
 function sha256(value) {
   return crypto.createHash("sha256").update(value).digest("hex");
@@ -29,6 +31,12 @@ function belongsInUnresolvedQueue(value, reason) {
   if (!reason) return false;
   if (reason !== "review-status") return true;
   return pendingReviewStatuses.has(String(value.review_status ?? "").trim().toLowerCase());
+}
+
+function retirementFor(contentKey) {
+  return retirementFamilies.find((family) => (
+    typeof family.contentKeyPrefix === "string" && contentKey.startsWith(family.contentKeyPrefix)
+  )) ?? null;
 }
 
 const candidates = [];
@@ -112,9 +120,24 @@ function eligiblePeersFor(item) {
   ));
 }
 
+const retiredItems = [];
 const shadowedItems = [];
 const actionableItems = [];
 for (const item of uniqueCandidates) {
+  const retirement = retirementFor(item.contentKey);
+  if (retirement) {
+    retiredItems.push({
+      ...item,
+      retirement: {
+        id: retirement.id,
+        reason: retirement.reason,
+        evidence: retirement.evidence,
+        replacement: retirement.replacement
+      }
+    });
+    continue;
+  }
+
   const eligiblePeers = eligiblePeersFor(item);
   if (!eligiblePeers.length) {
     actionableItems.push(item);
@@ -132,18 +155,32 @@ function reasonCounts(items) {
     .map((reason) => [reason, items.filter((item) => item.reason === reason).length]));
 }
 
+function retirementReasonCounts(items) {
+  return Object.fromEntries([...new Set(items.map((item) => item.retirement.reason))].sort()
+    .map((reason) => [reason, items.filter((item) => item.retirement.reason === reason).length]));
+}
+
+const actionableContentKeys = [...new Set(actionableItems.map((item) => item.contentKey))].sort();
 const report = {
   schema: "tldrastro-content-unresolved-queue/v1",
   generatedFrom: path.relative(repoRoot, sourceRoot),
   count: actionableItems.length,
+  issueCount: actionableContentKeys.length,
+  actionableContentKeys,
   reasonCounts: reasonCounts(actionableItems),
   items: actionableItems,
   shadowedCount: shadowedItems.length,
   shadowedReasonCounts: reasonCounts(shadowedItems),
   shadowedItems,
+  retiredCount: retiredItems.length,
+  retiredReasonCounts: retirementReasonCounts(retiredItems),
+  retiredItems,
   semantics: {
-    items: "Actionable unresolved records with no reader-eligible peer using the same contentKey.",
-    shadowedItems: "Pending source records retained as audit evidence but excluded from owner/editorial backlog because an exact-key reader-eligible peer already exists."
+    count: "Actionable unresolved source records.",
+    issueCount: "Unique actionable content keys, which is the closer measure of owner/editorial decisions remaining.",
+    items: "Actionable unresolved records with no governed retirement and no reader-eligible peer using the same contentKey.",
+    shadowedItems: "Pending source records retained as audit evidence but excluded from owner/editorial backlog because an exact-key reader-eligible peer already exists.",
+    retiredItems: "Pending source records retained as audit evidence but excluded from owner/editorial backlog because a governed retirement or supersession decision already exists."
   }
 };
 const serialized = `${JSON.stringify(report, null, 2)}\n`;
@@ -154,9 +191,9 @@ if (checkOnly) {
     console.error("Content unresolved queue is stale. Run npm run build:content-unresolved-queue.");
     process.exit(1);
   }
-  console.log(`Content unresolved queue is current (${actionableItems.length} actionable, ${shadowedItems.length} shadowed).`);
+  console.log(`Content unresolved queue is current (${actionableItems.length} actionable records / ${actionableContentKeys.length} decisions, ${shadowedItems.length} shadowed, ${retiredItems.length} retired).`);
 } else {
   fs.mkdirSync(path.dirname(outputPath), { recursive: true });
   fs.writeFileSync(outputPath, serialized);
-  console.log(`Wrote ${path.relative(repoRoot, outputPath)} (${actionableItems.length} actionable, ${shadowedItems.length} shadowed).`);
+  console.log(`Wrote ${path.relative(repoRoot, outputPath)} (${actionableItems.length} actionable records / ${actionableContentKeys.length} decisions, ${shadowedItems.length} shadowed, ${retiredItems.length} retired).`);
 }
