@@ -8,15 +8,15 @@
   "decision": "approve",
   "approvedAt": "2026-09-05",
   "ownerStatement": "yes please continue",
-  "decisionContext": "The owner explicitly approved both 24-row North Node batches, later directly instructed an updated Sun sextile North Node passage, and then authorized shipping the 48 approved North Node passages into the governed Calendar exact-aspect corpus by replying \"yes please continue\".",
+  "decisionContext": "The owner explicitly approved both 24-row North Node source batches on 2026-09-05 and then authorized shipping the 48 approved North Node passages into the governed Calendar exact-aspect corpus by replying \"yes please continue\".",
   "batchId": "sky-calendar-exact-approved-2026-09-05-north-node-48",
   "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-05-north-node-48/owner-batch-authorization.json",
   "capabilities": [
     "batch_generation",
     "serving"
   ],
-  "bodySha256": "f4275d2760128aed7158260d3df823adcd39933252e96e9238ed6620639379cf",
-  "summary": "A decision you have been postponing becomes much harder to avoid once it arrives with a formal deadline or a new responsibility.",
-  "body": "A decision you have been postponing becomes much harder to avoid once it arrives with a formal deadline or a new responsibility. When Saturn conjuncts the North Node, future direction and practical limitation meet in the same decision, turning a theoretical plan into a concrete requirement for paperwork, commitment, or structure. The pressure to sign the contract or accept the role is not proof that you have to say yes. It simply gives you measurable terms. Read them carefully, and only accept the arrangement if you are prepared to carry the actual weight of the work.",
-  "sourceApprovalBatch": "sky-north-node-launch-batch-2-exact-owner-approved-refined-2026-09-05"
+  "bodySha256": "394d3f6a7206cd4dab2037ac22b8be721dd6517b8fc883369a6116a989a17efd",
+  "summary": "A decision you have been postponing may become much more concrete once it comes with a deadline, responsibility, or consequence.",
+  "body": "A decision you have been postponing may become much more concrete once it comes with a deadline, responsibility, or consequence. When Saturn conjuncts the North Node, the part of the plan that was easy to postpone may suddenly come with paperwork, a date, a title, or people depending on your answer. Signing the contract, accepting the role, committing to the schedule, or closing something that has become too expensive to maintain makes the choice harder to keep theoretical. Pressure is not proof that the answer is yes. It gives you terms you can measure. Read them carefully, then decide what you are willing to carry.",
+  "sourceApprovalBatch": "sky-north-node-launch-batch-2-owner-review-2026-09-05"
 }

@@ -8,15 +8,15 @@
   "decision": "approve",
   "approvedAt": "2026-09-05",
   "ownerStatement": "yes please continue",
-  "decisionContext": "The owner explicitly approved both 24-row North Node batches, later directly instructed an updated Sun sextile North Node passage, and then authorized shipping the 48 approved North Node passages into the governed Calendar exact-aspect corpus by replying \"yes please continue\".",
+  "decisionContext": "The owner explicitly approved both 24-row North Node source batches on 2026-09-05 and then authorized shipping the 48 approved North Node passages into the governed Calendar exact-aspect corpus by replying \"yes please continue\".",
   "batchId": "sky-calendar-exact-approved-2026-09-05-north-node-48",
   "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-05-north-node-48/owner-batch-authorization.json",
   "capabilities": [
     "batch_generation",
     "serving"
   ],
-  "bodySha256": "85a972b6f6b6f2d292cd257d2c4d625f557aabf1ea66845f9b2186b00f93cb14",
-  "summary": "A decision about your next direction may force you to confront whoever actually controls the access, funding, or authority.",
-  "body": "A decision about your next direction may force you to confront whoever actually controls the access, funding, or authority. When Pluto conjuncts the North Node, your plan can become inseparable from the power required to carry it out. A negotiation, difficult boundary, or exit from an unequal setup may matter far more right now than another round of deciding what you want. Wanting change and having leverage are two different problems. Find the leverage, then use it on the specific condition that is limiting your choices.",
-  "sourceApprovalBatch": "sky-north-node-launch-batch-2-exact-owner-approved-refined-2026-09-05"
+  "bodySha256": "ac4bbf7690364e995bdbc756ab06639c3323153a3c968808dc97061ac4a0fa46",
+  "summary": "A decision about what comes next may force you to confront who actually controls the money, access, information, or authority needed to make it happen.",
+  "body": "A decision about what comes next may force you to confront who actually controls the money, access, information, or authority needed to make it happen. When Pluto conjuncts the North Node, the plan can become inseparable from the power required to carry it out. A negotiation, transfer of authority, difficult boundary, new source of funding, or exit from an unequal setup may matter more than another round of deciding what you want. Wanting change and having leverage are different problems. Find the leverage, then use it on the condition that is limiting your choices.",
+  "sourceApprovalBatch": "sky-north-node-launch-batch-2-owner-review-2026-09-05"
 }

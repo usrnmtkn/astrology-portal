@@ -8,15 +8,15 @@
   "decision": "approve",
   "approvedAt": "2026-09-05",
   "ownerStatement": "yes please continue",
-  "decisionContext": "The owner explicitly approved both 24-row North Node batches, later directly instructed an updated Sun sextile North Node passage, and then authorized shipping the 48 approved North Node passages into the governed Calendar exact-aspect corpus by replying \"yes please continue\".",
+  "decisionContext": "The owner explicitly approved both 24-row North Node source batches on 2026-09-05 and then authorized shipping the 48 approved North Node passages into the governed Calendar exact-aspect corpus by replying \"yes please continue\".",
   "batchId": "sky-calendar-exact-approved-2026-09-05-north-node-48",
   "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-05-north-node-48/owner-batch-authorization.json",
   "capabilities": [
     "batch_generation",
     "serving"
   ],
-  "bodySha256": "5eea24d594a7bcb0edfb94e34af7c746da3ce8ed8aed53aefde886d2796acf23",
+  "bodySha256": "ee8bfca515d1ec2f16288a931f521df1de9dae4e59554d2624e96db6a690a6f8",
   "summary": "An old hurt can make the next opportunity look dangerous for reasons that belong partly to what happened before.",
-  "body": "An old hurt can make the next opportunity look dangerous for reasons that belong partly to what happened before. When Chiron squares the North Node, criticism, visibility, or entering a similar situation can bring an earlier experience back into the decision with far more authority than it deserves. The fear may still contain useful information about what needs protection now. Update the boundary or secure better support, but do not assume the only safe choice is avoiding anything that resembles the old problem.",
-  "sourceApprovalBatch": "sky-north-node-launch-batch-2-exact-owner-approved-refined-2026-09-05"
+  "body": "An old hurt can make the next opportunity look dangerous for reasons that belong partly to what happened before. When Chiron squares the North Node, criticism, visibility, asking for help, trying again, or entering a similar situation can bring the earlier experience back into the decision with more authority than it deserves. The fear may still contain useful information about what needs protection now. Update the boundary, preparation, or support without assuming the only safe choice is never returning to anything that resembles the old problem.",
+  "sourceApprovalBatch": "sky-north-node-launch-batch-2-owner-review-2026-09-05"
 }

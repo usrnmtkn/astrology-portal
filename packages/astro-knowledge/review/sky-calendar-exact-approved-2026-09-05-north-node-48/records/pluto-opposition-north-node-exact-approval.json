@@ -8,15 +8,15 @@
   "decision": "approve",
   "approvedAt": "2026-09-05",
   "ownerStatement": "yes please continue",
-  "decisionContext": "The owner explicitly approved both 24-row North Node batches, later directly instructed an updated Sun sextile North Node passage, and then authorized shipping the 48 approved North Node passages into the governed Calendar exact-aspect corpus by replying \"yes please continue\".",
+  "decisionContext": "The owner explicitly approved both 24-row North Node source batches on 2026-09-05 and then authorized shipping the 48 approved North Node passages into the governed Calendar exact-aspect corpus by replying \"yes please continue\".",
   "batchId": "sky-calendar-exact-approved-2026-09-05-north-node-48",
   "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-05-north-node-48/owner-batch-authorization.json",
   "capabilities": [
     "batch_generation",
     "serving"
   ],
-  "bodySha256": "4e0e7e19aa49bddc4aeceb35ec2e994014e76822eae2cd9c0ca1d04b66c4a5fd",
-  "summary": "An old source of power can be difficult to leave because it still gives you access, money, or protection you know how to use.",
-  "body": "An old source of power can be difficult to leave because it still gives you access, money, or protection you know how to use. When Pluto opposes the North Node, an established role, alliance, or arrangement can offer enough leverage that giving it up feels like surrendering options you may not be able to replace immediately. The benefits may be substantial, which is exactly why the decision deserves precision. Build enough leverage outside the arrangement so that staying becomes a choice rather than the price of keeping your options open.",
-  "sourceApprovalBatch": "sky-north-node-launch-batch-2-exact-owner-approved-refined-2026-09-05"
+  "bodySha256": "6db5186470b185e0b1f63f6443f464a71d5ae6bc3254578cc0d3ac9315648f68",
+  "summary": "An old source of power can be difficult to leave because it still gives you access, influence, money, or protection you know how to use.",
+  "body": "An old source of power can be difficult to leave because it still gives you access, influence, money, or protection you know how to use. When Pluto opposes the North Node, an established role, alliance, institution, or arrangement can offer enough leverage that giving it up feels like surrendering options you may not be able to replace immediately. The benefits may be substantial, which is exactly why the decision deserves precision. Build enough leverage outside the arrangement that staying becomes a choice rather than the price of keeping your options.",
+  "sourceApprovalBatch": "sky-north-node-launch-batch-2-owner-review-2026-09-05"
 }
