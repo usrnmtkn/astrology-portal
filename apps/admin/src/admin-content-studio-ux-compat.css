@@ -2,8 +2,10 @@
    This layer loads after the legacy density rules so the editor can improve its
    information order without changing content, serving, or approval behavior. */
 
-/* Preserve the established editor title rhythm required by the visual contract. */
-.admin-dashboard .admin-editor-toolbar h2 {
+/* Preserve the established editor title rhythm required by the visual contract.
+   Include the editor panel in the selector so this rule wins even when Vite
+   concatenates the base component stylesheet after this compatibility layer. */
+.admin-dashboard .admin-editor-panel > .admin-editor-toolbar h2 {
   margin-top: var(--admin-space-sm);
 }
 
