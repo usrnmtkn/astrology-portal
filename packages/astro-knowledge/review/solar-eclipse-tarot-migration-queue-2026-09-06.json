@@ -1,0 +1,101 @@
+{
+  "schema": "astrology-tarot-legacy-migration-queue/v1",
+  "createdAt": "2026-09-06",
+  "surface": "lunation-eclipse-house-layer",
+  "contentType": "astrology",
+  "sourceBundle": "apps/web/src/content/fallbackArchitectureV3/bundled-lunation-eclipse-house-layers-v3.json",
+  "ownerBoundary": "tldr-astro-phrasebank/TLDR-ASTROLOGY-TAROT-SEPARATION-OWNER.md",
+  "count": 12,
+  "governance": {
+    "reviewOnly": true,
+    "replacementCopyApproved": false,
+    "servingChangeAuthorized": false,
+    "historicalSourceMustBePreserved": true
+  },
+  "items": [
+    {
+      "contentKey": "authored/lunation-eclipse-house-layer/solar/house-1",
+      "house": 1,
+      "protectedBodySha256": "1ac32858ec98568558cad620af4dbb691e26585efe77fcce3f91badba26e26b7",
+      "finding": "tarot-reference-in-astrology-copy",
+      "replacementStatus": "needs-owner-review"
+    },
+    {
+      "contentKey": "authored/lunation-eclipse-house-layer/solar/house-2",
+      "house": 2,
+      "protectedBodySha256": "1e01ea5cf6f77508da5d3b33409f196fdea981359a7605e211cdc0e0e1334135",
+      "finding": "tarot-reference-in-astrology-copy",
+      "replacementStatus": "needs-owner-review"
+    },
+    {
+      "contentKey": "authored/lunation-eclipse-house-layer/solar/house-3",
+      "house": 3,
+      "protectedBodySha256": "58248134424ec7e9571c50c86b5fd0393b12ad0e646044d46087737f0a37d05d",
+      "finding": "tarot-reference-in-astrology-copy",
+      "replacementStatus": "needs-owner-review"
+    },
+    {
+      "contentKey": "authored/lunation-eclipse-house-layer/solar/house-4",
+      "house": 4,
+      "protectedBodySha256": "936c14472eff02594c69b4509df3db6a2e26842aad6317fc853e71e77b8939cd",
+      "finding": "tarot-reference-in-astrology-copy",
+      "replacementStatus": "needs-owner-review"
+    },
+    {
+      "contentKey": "authored/lunation-eclipse-house-layer/solar/house-5",
+      "house": 5,
+      "protectedBodySha256": "5ff0e5cebfc56978f243e73a5c72f3e92107b2b3f44437a8587ca6c4aebdb61c",
+      "finding": "tarot-reference-in-astrology-copy",
+      "replacementStatus": "needs-owner-review"
+    },
+    {
+      "contentKey": "authored/lunation-eclipse-house-layer/solar/house-6",
+      "house": 6,
+      "protectedBodySha256": "1e2ee21a0379db6dd1fa3b5b9971e5aece392082f55b76fb2c211878f6a0f865",
+      "finding": "tarot-reference-in-astrology-copy",
+      "replacementStatus": "needs-owner-review"
+    },
+    {
+      "contentKey": "authored/lunation-eclipse-house-layer/solar/house-7",
+      "house": 7,
+      "protectedBodySha256": "770783c53478e078c849e712e0ed4588598a930594b59861fdef34b3bd7545c1",
+      "finding": "tarot-reference-in-astrology-copy",
+      "replacementStatus": "needs-owner-review"
+    },
+    {
+      "contentKey": "authored/lunation-eclipse-house-layer/solar/house-8",
+      "house": 8,
+      "protectedBodySha256": "45dfd50d6cf8998900baf64592488561bea9cd75b86bfa0b1e8638bb93c690cf",
+      "finding": "tarot-reference-in-astrology-copy",
+      "replacementStatus": "needs-owner-review"
+    },
+    {
+      "contentKey": "authored/lunation-eclipse-house-layer/solar/house-9",
+      "house": 9,
+      "protectedBodySha256": "036eeedba1db1b0ee1927b0e4f3c329ecc58d9197c37d0d007dda20400bf2f21",
+      "finding": "tarot-reference-in-astrology-copy",
+      "replacementStatus": "needs-owner-review"
+    },
+    {
+      "contentKey": "authored/lunation-eclipse-house-layer/solar/house-10",
+      "house": 10,
+      "protectedBodySha256": "f8813c9e73048fd009e6e5c926a609d0ee35f233fa11edd37c67a04fcf7dff58",
+      "finding": "tarot-reference-in-astrology-copy",
+      "replacementStatus": "needs-owner-review"
+    },
+    {
+      "contentKey": "authored/lunation-eclipse-house-layer/solar/house-11",
+      "house": 11,
+      "protectedBodySha256": "69c7f502ca3c8b2ef2e081b2be45c4424521c18ed492e995f0896144ce0f1761",
+      "finding": "tarot-reference-in-astrology-copy",
+      "replacementStatus": "needs-owner-review"
+    },
+    {
+      "contentKey": "authored/lunation-eclipse-house-layer/solar/house-12",
+      "house": 12,
+      "protectedBodySha256": "304e5cdf922c02732b9420b5e1b592ed1a0375556115d9ca37fcd8621ea59ccf",
+      "finding": "tarot-reference-in-astrology-copy",
+      "replacementStatus": "needs-owner-review"
+    }
+  ]
+}

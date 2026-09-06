@@ -57,6 +57,9 @@ jobs:
       - name: Verify reader copy eligibility and content boundary
         run: npm run test:reader-copy-repair
 
+      - name: Verify solar eclipse Tarot migration queue
+        run: node scripts/test-solar-eclipse-tarot-migration-queue.mjs
+
       - name: Enforce web bundle budgets
         run: npm run qa:bundle
 
