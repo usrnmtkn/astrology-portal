@@ -14,6 +14,7 @@ import {
 import {
   renderCalendarPhase,
   renderDailyGlance,
+  renderSkyPlacement,
   renderSynastryAspect,
   renderWeeklyMoon
 } from "../apps/web/src/content/fallbackArchitectureV3/resolver/renderTransitSynastry.mjs";
@@ -288,13 +289,35 @@ const legacyCalendar = renderWeeklyMoon({ sign: "aquarius", variant: 2 });
 assert.match(legacyCalendar.contentKey, /^authored\/calendar-weekly-moon\//u);
 assert.ok(legacyCalendar.body.length > 0);
 
+const currentSkyPlacement = renderSkyPlacement({
+  planet: "sun",
+  sign: "leo",
+  entryDate: "July 22, 2026",
+  exitDate: "August 22, 2026",
+  priorSign: "cancer",
+  priorSignEntryDate: "June 21, 2026",
+  priorSignExitDate: "July 22, 2026",
+  previousResidencyEntryDate: "July 22, 2025",
+  previousResidencyExitDate: "August 22, 2025",
+  events: []
+});
+assert.ok(currentSkyPlacement.body?.trim(), "Current Sky placement reader path must render non-empty governed copy.");
+assert.ok(
+  new Set([
+    "sky-placement-continuous-v2",
+    "sky-placement-moon-entry-v1",
+    "sky-placement-frame-v3",
+    "sky-article-final-v1",
+    "sky-article-v1"
+  ]).has(currentSkyPlacement.templateKey),
+  `Current Sky placement reader path selected unauthorized policy ${currentSkyPlacement.templateKey}.`
+);
+assertRenderedOutputBoundary(currentSkyPlacement.body, "current Sky placement reader path");
+
 assert.equal(queue.ownerApproved, false);
 assert.equal(queue.promotionAuthorized, false);
 assert.equal(queue.skyAspectGaps.length, 4);
-assert.match(app, /layer: "generated",\s+tier: "generated-sky-placement-lint-v1"/u);
-assert.match(app, /exact-owner-approved-natal-aspect-v1/u);
-assert.match(app, /legacy-reviewed-transit-continuity-v1/u);
 assert.doesNotMatch(app, /void friendPronouns/u);
 assert.doesNotMatch(app, /void romanticAllowed/u);
 
-console.log("reader copy repair order: ok (provenance, registers, source gaps, tarot boundary, and page-layer labels)");
+console.log("reader copy repair order: ok (provenance, registers, source gaps, tarot boundary, and current reader-path guards)");
