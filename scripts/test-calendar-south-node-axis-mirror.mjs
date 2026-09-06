@@ -38,15 +38,8 @@ function slug(value) {
   return value.toLowerCase().replaceAll(" ", "-");
 }
 
-const southNodeRuntimeFiles = fs.readdirSync(transitDirectory)
-  .filter((name) => name.endsWith(".json") && name.includes("south-node"));
-assert.deepEqual(
-  southNodeRuntimeFiles,
-  [],
-  "South Node must not have duplicate exact Calendar runtime records while the node axis is canonicalized to North Node.",
-);
-
 const expectedNorthNodeFiles = new Set();
+const expectedSouthNodeFiles = new Set();
 let verifiedSouthNodeGeometries = 0;
 
 for (const body of counterpartBodies) {
@@ -89,7 +82,7 @@ for (const body of counterpartBodies) {
     assert.equal(
       canonicalNodeContacts.length,
       1,
-      `${body} ${southAspect} South Node must collapse to one canonical node-axis editorial event.`,
+      `${body} ${southAspect} South Node must collapse to one canonical node-axis astronomical event.`,
     );
 
     const [kept] = canonicalNodeContacts;
@@ -99,7 +92,7 @@ for (const body of counterpartBodies) {
     );
     assert.ok(
       ![kept.from, kept.to].includes("South Node"),
-      `${body} ${southAspect} South Node leaked through node-axis deduplication.`,
+      `${body} ${southAspect} South Node leaked through node-axis event deduplication.`,
     );
     assert.equal(
       kept.type,
@@ -107,37 +100,61 @@ for (const body of counterpartBodies) {
       `${body} ${southAspect} South Node must canonicalize to ${body} ${northAspect} North Node.`,
     );
 
-    const runtimeFile = `${slug(body)}-${northAspect}-north-node.json`;
-    const runtimePath = path.join(transitDirectory, runtimeFile);
+    const northRuntimeFile = `${slug(body)}-${northAspect}-north-node.json`;
+    const northRuntimePath = path.join(transitDirectory, northRuntimeFile);
     assert.ok(
-      fs.existsSync(runtimePath),
-      `${body} ${southAspect} South Node is missing canonical runtime coverage at ${runtimeFile}.`,
+      fs.existsSync(northRuntimePath),
+      `${body} ${southAspect} South Node is missing canonical North Node runtime coverage at ${northRuntimeFile}.`,
+    );
+    const northRecord = JSON.parse(fs.readFileSync(northRuntimePath, "utf8"));
+    assert.equal(northRecord.other, "north-node");
+    assert.equal(northRecord.aspect, northAspect);
+    assert.equal(northRecord.status, "LIVE");
+    assert.ok(typeof northRecord.readerCopy?.body === "string" && northRecord.readerCopy.body.trim());
+
+    const southRuntimeFile = `${slug(body)}-${southAspect}-south-node.json`;
+    const southRuntimePath = path.join(transitDirectory, southRuntimeFile);
+    assert.ok(
+      fs.existsSync(southRuntimePath),
+      `${body} ${southAspect} South Node is missing its pole-specific editorial source at ${southRuntimeFile}.`,
+    );
+    const southRecord = JSON.parse(fs.readFileSync(southRuntimePath, "utf8"));
+    assert.equal(southRecord.id, southRuntimeFile.replace(/\.json$/u, ""));
+    assert.equal(southRecord.transiting, slug(body));
+    assert.equal(southRecord.aspect, southAspect);
+    assert.equal(southRecord.other, "south-node");
+    assert.equal(southRecord.status, "LIVE");
+    assert.ok(typeof southRecord.readerCopy?.body === "string" && southRecord.readerCopy.body.trim());
+    assert.match(southRecord.readerCopy.body, /\bSouth Node\b/u);
+    assert.doesNotMatch(southRecord.readerCopy.body, /\bNorth Node\b/u);
+    assert.notEqual(
+      southRecord.readerCopy.body,
+      northRecord.readerCopy.body,
+      `${body} ${southAspect}: South Node copy must remain pole-specific rather than reuse North Node prose.`,
     );
 
-    const record = JSON.parse(fs.readFileSync(runtimePath, "utf8"));
-    assert.equal(record.id, runtimeFile.replace(/\.json$/u, ""));
-    assert.equal(record.transiting, slug(body));
-    assert.equal(record.aspect, northAspect);
-    assert.equal(record.other, "north-node");
-    assert.ok(
-      ["APPROVED", "LIVE"].includes(record.status),
-      `${runtimeFile} is not reader-eligible.`,
-    );
-    assert.ok(
-      typeof record.readerCopy?.body === "string" && record.readerCopy.body.trim(),
-      `${runtimeFile} has no exact reader body.`,
-    );
-
-    expectedNorthNodeFiles.add(runtimeFile);
+    expectedNorthNodeFiles.add(northRuntimeFile);
+    expectedSouthNodeFiles.add(southRuntimeFile);
     verifiedSouthNodeGeometries += 1;
   }
 }
 
+const actualSouthNodeFiles = fs.readdirSync(transitDirectory)
+  .filter((name) => name.endsWith("-south-node.json"))
+  .sort();
+
 assert.equal(verifiedSouthNodeGeometries, 60, "Expected exactly 60 major South Node geometries.");
 assert.equal(expectedNorthNodeFiles.size, 60, "Expected 60 unique canonical North Node runtime records.");
+assert.equal(expectedSouthNodeFiles.size, 60, "Expected 60 unique pole-specific South Node runtime content records.");
+assert.deepEqual(
+  actualSouthNodeFiles,
+  [...expectedSouthNodeFiles].sort(),
+  "South Node runtime content must contain exactly the 60 owner-approved pole-specific major-aspect records.",
+);
 
-console.log("South Node Calendar axis mirror contract passed", {
+console.log("South Node Calendar axis contract passed", {
   southNodeGeometries: verifiedSouthNodeGeometries,
+  canonicalAstronomicalEventsPerGeometry: 1,
   canonicalNorthNodeRecords: expectedNorthNodeFiles.size,
-  duplicateSouthNodeRuntimeRecords: southNodeRuntimeFiles.length,
+  poleSpecificSouthNodeContentRecords: expectedSouthNodeFiles.size,
 });
