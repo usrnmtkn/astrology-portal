@@ -462,6 +462,7 @@ function mapLegacyIdentifier(legacyIdentifier, context = {}) {
 function evidenceSurfaceForInput(input) {
   const event = slug(input?.eventType || input?.facts?.type);
   if (input?.surface === "sky") return "sky";
+  if (input?.surface === "friends" && event.includes("transit")) return "you-transit";
   if (input?.surface === "you" && event.includes("transit")) return "you-transit";
   if (["you", "natal"].includes(input?.surface) && event.includes("natal")) return "you-natal";
   if (["synastry", "composite", "relationship"].includes(input?.surface)) return "friends-synastry";
@@ -551,7 +552,7 @@ function mapProductionContentKey(input, canonicalIds) {
 function shadowSurfaces(env = process.env) {
   const value = String(env[SHADOW_FLAG] ?? "").trim().toLowerCase();
   if (!value) return new Set();
-  if (["1", "true", "all"].includes(value)) return new Set(["sky", "you", "natal", "synastry", "composite", "relationship", "year_ahead"]);
+  if (["1", "true", "all"].includes(value)) return new Set(["sky", "you", "natal", "synastry", "composite", "relationship", "friends", "year_ahead"]);
   return new Set(value.split(",").map((entry) => entry.trim()).filter(Boolean));
 }
 
