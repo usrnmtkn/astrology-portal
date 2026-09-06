@@ -66,7 +66,19 @@ This definition separates **base content coverage** from **event-instance comple
 
 The engine is the authority for the residency window and exact aspect events. `getSkyPlacementTransitFacts(...)` already returns `rankedEventsDuringTransit` for non-structural placement bodies using the major aspect set. The existing authoring helper `scripts/build-sky-placement-engine-facts.mjs` currently trims that ranked list to the top two events after knowledge joining; that two-event authoring cap must not be mistaken for the complete residency event set.
 
-A companion read-only script in this audit, `scripts/audit-sky-placement-residency-aspects.mjs`, prints the full engine-ranked residency aspect list without changing content or serving state.
+A companion read-only script, `scripts/audit-sky-placement-residency-aspects.mjs`, prints the full engine-ranked residency aspect list, checks each event against `approvedExactSkyAspectCopy`, and can optionally assemble a non-serving canonical placement preview with every resolved aspect.
+
+Sun-in-Scorpio audit:
+
+```sh
+node --import tsx scripts/audit-sky-placement-residency-aspects.mjs \
+  --planet sun \
+  --sign scorpio \
+  --date 2026-11-01T12:00:00Z \
+  --time-zone America/New_York
+```
+
+Add `--preview` to include the canonical placement page assembled with the full resolved aspect array. Add `--out <path>` only when a review artifact is intentionally wanted. Neither mode changes content or serving state.
 
 ## Pilot
 
