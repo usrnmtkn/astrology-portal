@@ -75,6 +75,15 @@ function primaryEvidence(packet: GovernedAnswerPacket) {
   return primary;
 }
 
+function writerEligibleEvidence(packet: GovernedAnswerPacket) {
+  const eligible = packet.evidence.filter((factor) => factor.governedMeaning.status === "full");
+  const primary = primaryEvidence(packet);
+  if (primary.governedMeaning.status !== "full" || !eligible.some((factor) => factor.id === primary.id)) {
+    throw new Error("ASK_TLDR_PRIMARY_MEANING_NOT_FULL");
+  }
+  return eligible;
+}
+
 function validateReceiptMatchesPacket(packet: GovernedAnswerPacket, receipt: AskTldrVoiceEvidenceReceipt) {
   assertAskTldrVoiceEvidenceReceipt(receipt);
   if (!packet.generationAllowed) {
@@ -101,6 +110,7 @@ function writerInstructions(packet: GovernedAnswerPacket) {
   return [
     "You write one TLDR Astro answer to the user's question.",
     "Do not calculate astrology. Do not infer a placement, aspect, house, transit, date, return, profection, eclipse contact, or timing window that is not explicitly supplied in CALCULATED EVIDENCE.",
+    "Every astrology factor supplied to you has passed the governed-meaning gate. Do not introduce or rely on any factor that is not supplied in this request.",
     "Use the ranked astrology in the order supplied. The primary factor must carry the answer; supporting factors may clarify it but may not replace it.",
     "GOVERNED SEMANTIC EVIDENCE controls what the astrology means. OWNER REGISTER EVIDENCE controls vocabulary, sentence movement, examples, and tone only. Never transfer an astrology claim from an owner passage into this person's chart unless that claim also appears in the calculated/governed semantic evidence.",
     "Answer the human question first. Explain the astrology only enough to show why the answer follows. Use recognizable possibilities rather than inventing a personal event or history.",
@@ -124,7 +134,11 @@ function writerInstructions(packet: GovernedAnswerPacket) {
   ].filter(Boolean).join("\n");
 }
 
-function writerInput(packet: GovernedAnswerPacket, receipt: AskTldrVoiceEvidenceReceipt) {
+function writerInput(
+  packet: GovernedAnswerPacket,
+  receipt: AskTldrVoiceEvidenceReceipt,
+  eligibleEvidence: AskTldrGovernedFactor[]
+) {
   const lines = [
     "USER QUESTION",
     words(packet.question.text),
@@ -143,7 +157,7 @@ function writerInput(packet: GovernedAnswerPacket, receipt: AskTldrVoiceEvidence
     "CALCULATED EVIDENCE (facts only; never change these facts)"
   ];
 
-  for (const factor of packet.evidence) {
+  for (const factor of eligibleEvidence) {
     lines.push(
       `--- ${factor.role.toUpperCase()} EVIDENCE ${factor.id}`,
       JSON.stringify({
@@ -217,13 +231,13 @@ export function buildAskTldrWriterRequest(input: {
 }): AskTldrWriterRequest {
   validateReceiptMatchesPacket(input.packet, input.receipt);
   const primary = primaryEvidence(input.packet);
-  if (primary.governedMeaning.status !== "full") throw new Error("ASK_TLDR_PRIMARY_MEANING_NOT_FULL");
-  const evidenceIds = input.packet.evidence.map((factor) => factor.id);
+  const eligibleEvidence = writerEligibleEvidence(input.packet);
+  const evidenceIds = eligibleEvidence.map((factor) => factor.id);
   const requestWithoutHash = {
     schema: "ask-tldr-writer-request.v1" as const,
     runtimeEnabled: false as const,
     instructions: writerInstructions(input.packet),
-    input: writerInput(input.packet, input.receipt),
+    input: writerInput(input.packet, input.receipt, eligibleEvidence),
     outputSchema: outputSchema(evidenceIds, primary.id),
     evidenceIds,
     primaryEvidenceId: primary.id,
@@ -233,7 +247,7 @@ export function buildAskTldrWriterRequest(input: {
 }
 
 function sentenceCount(paragraph: string) {
-  return (paragraph.match(/[.!?](?:[\"')\]]?)(?=\s|$)/gu) ?? []).length;
+  return (paragraph.match(/[.!?]+(?=\s|$)/gu) ?? []).length;
 }
 
 function validateReaderProse(answer: string, pillarId: string, decisionMode: string) {
