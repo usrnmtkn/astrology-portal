@@ -19,6 +19,8 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
+      - name: Build app test dependencies
+        run: npm run prepare:app-test-dependencies
       - name: Residency aspect regression
         run: node --import tsx scripts/test-sky-placement-residency-aspects.mts
       - name: TypeScript
