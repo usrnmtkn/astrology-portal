@@ -5,6 +5,7 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { createServer } from "vite";
 
 const panelSource = fs.readFileSync("apps/web/src/features/friends/ManualChartsPanel.tsx", "utf8");
+const transitsSource = fs.readFileSync("apps/web/src/features/friends/FriendTransitsTab.tsx", "utf8");
 const serviceSource = fs.readFileSync("apps/web/src/services/userGeneratedContent.ts", "utf8");
 const apiSource = fs.readFileSync("api/generate-user-content.ts", "utf8");
 const friendApiSource = fs.readFileSync("api/generate-friend-transit-reading.ts", "utf8");
@@ -33,6 +34,21 @@ assert.match(
   serviceSource,
   /request\.subjectType === "friend_transit_reading"[\s\S]{0,140}"\/api\/generate-friend-transit-reading"/u,
   "Friends paid readings must use the dedicated short-reading endpoint instead of the generic article generator."
+);
+assert.match(
+  transitsSource,
+  /loadUserGeneratedInterpretation\(\{[\s\S]{0,260}subjectType:\s*"friend_transit_reading"[\s\S]{0,260}targetDate:\s*persistedIdentity\.targetDate/u,
+  "The Friends card must hydrate an existing saved reading when the page is refreshed."
+);
+assert.match(
+  transitsSource,
+  /contentKey:\s*`friend-transit-reading\/\$\{subjectId\}\/\$\{targetDate\}`/u,
+  "Refresh hydration must use the same friend/date content key as generation."
+);
+assert.match(
+  transitsSource,
+  /const effectiveReading = reading \?\? \(readingStatus === "idle" \? persistedReading : null\)/u,
+  "A restored saved reading must become the displayed paid reading while parent generation state is idle."
 );
 
 assert.match(apiSource, /const locked = friendTransitReadingRequestLock\(\{/u);
