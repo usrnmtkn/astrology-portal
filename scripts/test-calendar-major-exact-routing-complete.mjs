@@ -15,8 +15,8 @@ const projectionPath = path.resolve(repoRoot, projectionRelative);
 const ownerProjection = JSON.parse(fs.readFileSync(projectionPath, "utf8"));
 const sha256 = (value) => crypto.createHash("sha256").update(value).digest("hex");
 
-assert.equal(ownerProjection.rowCount, 379, "Major exact-aspect launch projection must contain 379 rows.");
-assert.equal(Object.keys(ownerProjection.payloads ?? {}).length, 379, "Major exact-aspect launch payload map must contain 379 rows.");
+assert.equal(ownerProjection.rowCount, 379, "Major exact-aspect launch projection must contain 379 canonical event rows.");
+assert.equal(Object.keys(ownerProjection.payloads ?? {}).length, 379, "Major exact-aspect launch payload map must contain 379 canonical event rows.");
 const setHashInput = Object.entries(ownerProjection.payloads)
   .sort(([a], [b]) => a.localeCompare(b))
   .map(([contentKey, entry]) => ({ contentKey, payloadSha256: entry.sha256 }));
@@ -26,7 +26,7 @@ assert.equal(
   "Major exact-aspect launch projection hash drifted.",
 );
 
-const exactRecords = fs.readdirSync(transitDirectory)
+const allExactRecords = fs.readdirSync(transitDirectory)
   .filter((name) => name.endsWith(".json"))
   .map((name) => JSON.parse(fs.readFileSync(path.join(transitDirectory, name), "utf8")))
   .filter((record) => (
@@ -34,7 +34,12 @@ const exactRecords = fs.readdirSync(transitDirectory)
     && typeof record.readerCopy?.body === "string"
     && record.readerCopy.body.trim()
   ));
-assert.equal(exactRecords.length, 379, "Reader-eligible major exact Sky corpus must contain 379 rows.");
+const southNodePoleRecords = allExactRecords.filter((record) => record.other === "south-node");
+const exactRecords = allExactRecords.filter((record) => record.other !== "south-node");
+assert.equal(exactRecords.length, 379, "Reader-eligible canonical major exact Sky event corpus must contain 379 rows.");
+if (southNodePoleRecords.length > 0) {
+  assert.equal(southNodePoleRecords.length, 60, "Pole-specific South Node content must contain 60 rows.");
+}
 
 for (const [key, entry] of Object.entries(ownerProjection.payloads)) {
   assert.equal(
@@ -112,7 +117,13 @@ for (const record of exactRecords) {
     const selected = normalized.sections[0];
     assert.ok(selected, `${record.id} (${first} first) returned no Calendar copy.`);
     assert.equal(selected.tier, "approved-exact-sky-aspect-v1", `${record.id} (${first} first) bypassed exact owner copy.`);
-    assert.equal(selected.body, record.readerCopy.body, `${record.id} (${first} first) Calendar body drifted.`);
+    if (record.other === "north-node" && southNodePoleRecords.length === 60) {
+      assert.ok(selected.body.includes(record.readerCopy.body), `${record.id}: North Node exact owner body disappeared.`);
+      assert.match(selected.body, /South Node \([a-z]+\):/u, `${record.id}: South Node interpretation is missing from the canonical event.`);
+      assert.ok(selected.sourceKeys.some((key) => key.endsWith("-south-node.json")), `${record.id}: South Node provenance missing.`);
+    } else {
+      assert.equal(selected.body, record.readerCopy.body, `${record.id} (${first} first) Calendar body drifted.`);
+    }
     assert.ok(
       selected.sourceKeys.includes(`packages/astro-knowledge/data/transits/${record.id}.json`),
       `${record.id} (${first} first) lost exact-source provenance.`,
@@ -121,11 +132,12 @@ for (const record of exactRecords) {
   }
 }
 
-assert.equal(routedDirections, 758, "All 379 major exact-aspect rows must route in both body orders.");
+assert.equal(routedDirections, 758, "All 379 canonical major exact-aspect event rows must route in both body orders.");
 assert.equal(exactLookup("Chiron", "quincunx", "Lilith"), null, "Excluded quincunx must remain outside the major-aspect launch corpus.");
 
 console.log("Complete major exact Sky-aspect routing passed.", {
-  readerEligibleRecords: exactRecords.length,
+  canonicalReaderEligibleRecords: exactRecords.length,
+  poleSpecificSouthNodeContentRecords: southNodePoleRecords.length,
   routedDirections,
   launchMajorExactRows: 379,
 });
