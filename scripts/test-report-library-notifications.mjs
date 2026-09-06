@@ -7,6 +7,8 @@ const service = read("apps/web/src/services/reportLibrary.ts");
 const generatedService = read("apps/web/src/services/userGeneratedContent.ts");
 const globalLayer = read("apps/web/src/features/reports/ReportsGlobalLayer.tsx");
 const libraryView = read("apps/web/src/components/reports/ReportLibraryView.tsx");
+const libraryStyles = read("apps/web/src/styles/report-library.css");
+const notificationStyles = read("apps/web/src/styles/report-notifications.css");
 const reportRoute = read("apps/web/src/routes/ReportRoute.tsx");
 const main = read("apps/web/src/main.tsx");
 const migration = read("apps/web/supabase/migrations/20260906214000_report_library_state.sql");
@@ -34,8 +36,14 @@ assert.match(globalLayer, /pollIntervalMs = 30_000/u);
 assert.match(globalLayer, /window\.addEventListener\(reportReadyEvent/u);
 assert.match(globalLayer, /Report ready/u);
 assert.match(globalLayer, /reports-nav-badge/u);
+assert.match(globalLayer, /styles\/report-notifications\.css/u, "The global layer must own only notification/menu CSS.");
+assert.doesNotMatch(globalLayer, /styles\/report-library\.css/u, "The global layer must not own standalone Reports route CSS.");
 
-assert.match(libraryView, /<h1>Reports<\/h1>/u);
+assert.match(libraryView, /id="report-library-title">Reports<\/h1>/u);
+assert.match(libraryView, /SegmentedControl/u);
+assert.match(libraryView, /type-page-title/u);
+assert.match(libraryView, /ui-pill ui-pill--neutral/u);
+assert.match(libraryView, /floating-back-button/u);
 assert.match(libraryView, /Archived/u);
 assert.match(libraryView, /Archive/u);
 assert.match(libraryView, /Restore/u);
@@ -44,10 +52,30 @@ assert.match(libraryView, /loadGeneratedReportById/u);
 assert.match(libraryView, /Paid reading/u);
 assert.match(libraryView, /if \(item\.status !== "ready"\)[\s\S]*window\.location\.assign\(item\.route\)/u, "Opening an in-progress report must not mark it seen before it finishes.");
 
+assert.match(reportRoute, /styles\/report-library\.css/u, "Standalone Reports routes must import their own visual stylesheet.");
 assert.match(reportRoute, /path === "\/reports"[\s\S]*<ReportLibraryView/u);
 assert.match(reportRoute, /\/reports\\\/generated/u);
 assert.match(reportRoute, /<GeneratedReportDeliveryView/u);
 assert.match(reportRoute, /<ReportDeliveryView/u, "Existing premium report delivery must remain intact.");
+assert.match(reportRoute, /localStorage\.getItem\("tldrastro:theme"\)/u);
+assert.match(reportRoute, /document\.documentElement\.dataset\.theme = theme/u, "Standalone report pages must inherit the saved app theme.");
+assert.match(reportRoute, /theme-\$\{theme\}/u);
+
+assert.match(libraryStyles, /\.report-library-page/u);
+assert.match(libraryStyles, /\.saved-generated-report__article/u);
+assert.match(libraryStyles, /var\(--report-page-padding\)/u);
+assert.match(libraryStyles, /var\(--card-bg\)/u);
+assert.match(libraryStyles, /var\(--card-shadow\)/u);
+assert.match(libraryStyles, /var\(--container-reading\)/u);
+assert.doesNotMatch(libraryStyles, /\.report-ready-toast|\.reports-menu-slot/u, "Report-route CSS must stay independent from the global notification layer.");
+assert.doesNotMatch(libraryStyles, /--font-serif|--font-sans|--text-small/u, "Reports must use current semantic TLDR typography tokens, not legacy aliases.");
+
+assert.match(notificationStyles, /\.report-ready-toast/u);
+assert.match(notificationStyles, /\.reports-menu-slot/u);
+assert.match(notificationStyles, /var\(--card-bg\)/u);
+assert.match(notificationStyles, /var\(--font-display\)/u);
+assert.doesNotMatch(notificationStyles, /\.report-library-page|\.saved-generated-report/u, "Notification CSS must not carry standalone route styles.");
+assert.doesNotMatch(notificationStyles, /--font-serif|--font-sans|--text-small/u, "Report notifications must use current semantic TLDR typography tokens.");
 
 assert.match(main, /function isReportPath\(\)[\s\S]*\^\\\/reports/u);
 assert.match(main, /!isAdminContentPath\(\) && !reportPath/u);
@@ -64,4 +92,4 @@ assert.match(migration, /for insert/u);
 assert.match(migration, /for update/u);
 assert.match(migration, /for delete/u);
 
-console.log("Report library and notification contract passed.");
+console.log("Report library, notification, and standalone styling contract passed.");
