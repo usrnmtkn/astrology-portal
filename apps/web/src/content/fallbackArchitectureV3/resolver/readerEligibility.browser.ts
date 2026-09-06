@@ -1,12 +1,12 @@
-export type GovernedReaderRow = {
+import {
+  passesReaderContentBoundary,
+  readerContentBoundaryReason,
+  type ReaderContentBoundaryRow
+} from "./readerContentBoundary.browser.ts";
+
+export type GovernedReaderRow = ReaderContentBoundaryRow & {
   contentKey: string;
   review_status?: string | null;
-  approval?: {
-    approvalLevel?: string | null;
-    recordPath?: string | null;
-    payloadSha256?: string | null;
-    approvedAt?: string | null;
-  } | null;
 };
 
 export const READER_ELIGIBLE_REVIEW_STATUSES = new Set([
@@ -52,6 +52,7 @@ export function transitReaderTier(row: GovernedReaderRow): TransitReaderTier | n
   if (!READER_ELIGIBLE_REVIEW_STATUSES.has(String(row.review_status ?? "").trim().toLowerCase())) {
     return null;
   }
+  if (!passesReaderContentBoundary(row)) return null;
   return hasExactOwnerApproval(row) ? "exact-owner-approved" : "legacy-reviewed";
 }
 
@@ -60,6 +61,7 @@ export function synastryReaderTier(row: GovernedReaderRow): SynastryReaderTier |
   if (!READER_ELIGIBLE_REVIEW_STATUSES.has(String(row.review_status ?? "").trim().toLowerCase())) {
     return null;
   }
+  if (!passesReaderContentBoundary(row)) return null;
 
   const aspect = row.contentKey.split("/").at(-1) ?? "";
   if (EXACT_SYNASTRY_ASPECTS.has(aspect) && hasExactOwnerApproval(row)) {
@@ -99,6 +101,7 @@ export function isGovernedReaderEligible(
   if (!READER_ELIGIBLE_REVIEW_STATUSES.has(String(row.review_status ?? "").trim().toLowerCase())) {
     return false;
   }
+  if (!passesReaderContentBoundary(row)) return false;
   if (row.contentKey.startsWith("fallback-hook/synastry-pair/")) {
     return synastryReaderTier(row) !== null;
   }
@@ -116,6 +119,8 @@ export function readerEligibilityReason(row: GovernedReaderRow): string | null {
   if (!READER_ELIGIBLE_REVIEW_STATUSES.has(String(row.review_status ?? "").trim().toLowerCase())) {
     return "review-status";
   }
+  const boundaryReason = readerContentBoundaryReason(row);
+  if (boundaryReason) return boundaryReason;
   if (row.contentKey.startsWith("fallback-hook/synastry-pair/")) {
     return synastryReaderTier(row) === null ? "unsupported-synastry-family" : null;
   }
