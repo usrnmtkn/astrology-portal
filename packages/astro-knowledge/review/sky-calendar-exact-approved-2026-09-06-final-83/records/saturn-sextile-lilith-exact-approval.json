@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.saturn.sextile.lilith",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-06",
+  "ownerStatement": "please mark all of this writing as approved for live",
+  "decisionContext": "Owner explicitly authorized all remaining Chiron + Lilith major Sky Calendar exact-aspect writing for live serving after reviewing and approving Batches 3 through 6.",
+  "batchId": "sky-calendar-exact-approved-2026-09-06-final-83",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "564795f39213a207b62bbf8375fc4dae5e665afe75d96a6e78a4b197e288eef8",
+  "summary": "A rule that used to force a bad choice may have an exception, workaround, or renegotiation path you can actually use.",
+  "body": "A rule that used to force a bad choice may have an exception, workaround, or renegotiation path you can actually use. When Saturn sextiles Lilith, the person enforcing the structure may be willing to change a deadline, divide responsibility differently, put an exception in writing, or define what is no longer yours to carry. The opening matters because refusal stops being only a protest and becomes a workable arrangement. Bring a concrete alternative instead of another explanation of why the old setup is unfair. If the structure can change, make the change official so you are not having the same argument again next week.",
+  "sourceApprovalBatch": "sky-lilith-batch-6-v2-exact-owner-approved-2026-09-06",
+  "sourceApprovedAt": "2026-09-06"
+}

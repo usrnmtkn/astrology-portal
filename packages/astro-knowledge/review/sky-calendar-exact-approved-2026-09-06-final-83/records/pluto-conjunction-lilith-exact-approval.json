@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.pluto.conjunction.lilith",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-06",
+  "ownerStatement": "please mark all of this writing as approved for live",
+  "decisionContext": "Owner explicitly authorized all remaining Chiron + Lilith major Sky Calendar exact-aspect writing for live serving after reviewing and approving Batches 3 through 6.",
+  "batchId": "sky-calendar-exact-approved-2026-09-06-final-83",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "c1062170078e5fc6fdcafba5d1c4a698dd69b379a0fa9ff21d48210294943f0d",
+  "summary": "The moment you understand what has been used to keep you compliant, it may stop working.",
+  "body": "The moment you understand what has been used to keep you compliant, it may stop working. When Pluto conjuncts Lilith, buried anger can surface alongside the secret, threat, shame, money, access, or private rule that gave someone else leverage. The discovery can permanently change what you are willing to tolerate because the power depended partly on staying unnamed. Use the information to remove the leverage, rewrite the agreement, or leave the situation. Do not turn the reversal into a reason to humiliate or control someone else just because you finally can. Getting your say back matters more than recreating the same power struggle from the other side.",
+  "sourceApprovalBatch": "sky-lilith-batch-6-v2-exact-owner-approved-2026-09-06",
+  "sourceApprovedAt": "2026-09-06"
+}

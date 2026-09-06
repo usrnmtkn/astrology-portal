@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.neptune.conjunction.chiron",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-06",
+  "ownerStatement": "please mark all of this writing as approved for live",
+  "decisionContext": "Owner explicitly authorized all remaining Chiron + Lilith major Sky Calendar exact-aspect writing for live serving after reviewing and approving Batches 3 through 6.",
+  "batchId": "sky-calendar-exact-approved-2026-09-06-final-83",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "e7f92cde8e9273e089d1fc5d40d8673874dbb9f8493ef93e3f882989fe3413a9",
+  "summary": "Sometimes rescuing someone else is an attempt to go back and rescue yourself.",
+  "body": "Sometimes rescuing someone else is an attempt to go back and rescue yourself. When Neptune conjuncts Chiron, another person's grief, confusion, illness, disappointment, or vulnerability can feel so familiar that helping them starts to answer an old question in your own history. You give the ride, cover the bill, stay on the phone, take over the problem, and tell yourself you are simply being compassionate. Maybe you are. But if their outcome starts deciding your peace, you are no longer only helping them. Give what you can give without making their ending responsible for repairing yours.",
+  "sourceApprovalBatch": "sky-chiron-launch-batch-4-v4-exact-owner-approved-2026-09-06",
+  "sourceApprovedAt": "2026-09-06"
+}

@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.neptune.sextile.chiron",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-06",
+  "ownerStatement": "please mark all of this writing as approved for live",
+  "decisionContext": "Owner explicitly authorized all remaining Chiron + Lilith major Sky Calendar exact-aspect writing for live serving after reviewing and approving Batches 3 through 6.",
+  "batchId": "sky-calendar-exact-approved-2026-09-06-final-83",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "4d0c5d88bb5327c37423676fb8c2239adb5e51f2ef27cf2cbdd947ce1f38b96e",
+  "summary": "You may be waiting for the past to make perfect sense before you allow yourself to be finished with it.",
+  "body": "You may be waiting for the past to make perfect sense before you allow yourself to be finished with it. When Neptune sextiles Chiron, distance, art, rest, or one compassionate conversation can loosen the need to decide that an experience was either entirely harmful or secretly good for you. That demand for a clean verdict can keep you arguing with the same history long after the event is over. You can miss someone and still know leaving was right. You can be grateful for what you learned and still wish you never had to learn it that way. Moving on does not require a simpler story.",
+  "sourceApprovalBatch": "sky-chiron-launch-batch-4-v4-exact-owner-approved-2026-09-06",
+  "sourceApprovedAt": "2026-09-06"
+}

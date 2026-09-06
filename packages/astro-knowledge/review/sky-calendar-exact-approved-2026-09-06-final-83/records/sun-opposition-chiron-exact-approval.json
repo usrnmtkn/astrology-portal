@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.sun.opposition.chiron",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-06",
+  "ownerStatement": "please mark all of this writing as approved for live",
+  "decisionContext": "Owner explicitly authorized all remaining Chiron + Lilith major Sky Calendar exact-aspect writing for live serving after reviewing and approving Batches 3 through 6.",
+  "batchId": "sky-calendar-exact-approved-2026-09-06-final-83",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "ea5e120b9309341bd74dc34e0165ce38944ade87a70baf049f5cf8bad21a77d9",
+  "summary": "Someone else's confidence can irritate you most when they are doing openly what you taught yourself to hide.",
+  "body": "Someone else's confidence can irritate you most when they are doing openly what you taught yourself to hide. When the Sun opposes Chiron, another person's visibility can bring your own history with recognition, embarrassment, or comparison into sharp relief. Their ease may look like arrogance simply because you had to work so hard to earn permission for the same thing. You do not have to admire them. Just notice if the quality bothering you is one you would like more freedom to claim for yourself.",
+  "sourceApprovalBatch": "sky-chiron-launch-batch-3-owner-review-2026-09-06",
+  "sourceApprovedAt": "2026-09-06"
+}
