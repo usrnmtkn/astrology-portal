@@ -3,7 +3,7 @@ name: Ask TLDR model
 on:
   pull_request:
     paths:
-      - "api/_lib/ask-tldr-model.ts"
+      - "api/_lib/ask-tldr-*.ts"
       - "config/ask-tldr/**"
       - "scripts/test-ask-tldr-*.mjs"
       - ".github/workflows/ask-tldr-model.yml"
@@ -32,3 +32,6 @@ jobs:
 
       - name: Validate Ask TLDR answer model
         run: npx tsx scripts/test-ask-tldr-answer-model.mjs
+
+      - name: Validate Ask TLDR calculated evidence adapter
+        run: npx tsx scripts/test-ask-tldr-evidence-adapter.mjs
