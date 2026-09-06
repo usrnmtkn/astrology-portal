@@ -1,0 +1,51 @@
+{
+  "counterpartBody": "lilith",
+  "status": "needs_review",
+  "records": [
+    {
+      "contentKey": "sky.aspect.lilith.conjunction.south-node",
+      "aspect": "conjunction",
+      "mirroredNorthNodeAspect": "opposition",
+      "summary": "An old refusal can feel so automatic that instinct and history are hard to separate.",
+      "body": "An old refusal can feel so automatic that instinct and history are hard to separate. Lilith conjunct the South Node can bring back the same desire, boundary, anger, or rejection of a role that once felt necessary for self-protection. You may want to leave, expose the problem, reject the expectation, or refuse the compromise before the current situation has fully shown itself. The refusal may still be right. Make sure it belongs to this moment, not only to the person or rule you are still answering from the past.",
+      "reviewStatus": "needs_review",
+      "runtimeEligible": false
+    },
+    {
+      "contentKey": "sky.aspect.lilith.sextile.south-node",
+      "aspect": "sextile",
+      "mirroredNorthNodeAspect": "trine",
+      "summary": "An old act of self-protection can become a useful tool instead of an automatic reaction.",
+      "body": "An old act of self-protection can become a useful tool instead of an automatic reaction. Lilith sextile the South Node can make a familiar boundary, refusal, or hard-earned sense of what you will not accept easier to use cleanly. You may know exactly where the line is because you learned it through experience. State it without rebuilding the entire old conflict around it. The past can teach you how to protect your autonomy without deciding who the present person is.",
+      "reviewStatus": "needs_review",
+      "runtimeEligible": false
+    },
+    {
+      "contentKey": "sky.aspect.lilith.square.south-node",
+      "aspect": "square",
+      "mirroredNorthNodeAspect": "square",
+      "summary": "A present act of freedom can still be organized around an old person, rule, or humiliation.",
+      "body": "A present act of freedom can still be organized around an old person, rule, or humiliation. Lilith square the South Node can turn a justified refusal into another round of the same conflict if proving you cannot be controlled becomes more important than the result you actually want. You may speak up, quit, expose the problem, or reject the role partly to reverse an earlier outcome. Reclamation matters. It becomes freer when the past stops choosing the target.",
+      "reviewStatus": "needs_review",
+      "runtimeEligible": false
+    },
+    {
+      "contentKey": "sky.aspect.lilith.trine.south-node",
+      "aspect": "trine",
+      "mirroredNorthNodeAspect": "sextile",
+      "summary": "An old survival instinct may become useful once it no longer has to run the whole situation.",
+      "body": "An old survival instinct may become useful once it no longer has to run the whole situation. Lilith trine the South Node can give easy access to a familiar refusal, boundary, or instinct for noticing where something is trying to make you smaller or more compliant. You may trust the signal quickly because you have seen the pattern before. Keep the discernment. You do not have to repeat the old exit, fight, or secrecy just because the warning system still works.",
+      "reviewStatus": "needs_review",
+      "runtimeEligible": false
+    },
+    {
+      "contentKey": "sky.aspect.lilith.opposition.south-node",
+      "aspect": "opposition",
+      "mirroredNorthNodeAspect": "conjunction",
+      "summary": "The current situation can put an old compliance pattern directly across from the part of you that refuses it.",
+      "body": "The current situation can put an old compliance pattern directly across from the part of you that refuses it. When Lilith opposes the South Node, you may feel pulled between playing the familiar role and rejecting it so completely that none of your existing skill can come with you. The past stays influential when every choice is either obedience or revolt. Keep what you learned. You do not have to keep the old terms in order to prove you are free of them.",
+      "reviewStatus": "needs_review",
+      "runtimeEligible": false
+    }
+  ]
+}

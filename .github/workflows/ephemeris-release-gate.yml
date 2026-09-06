@@ -22,6 +22,8 @@ jobs:
           node-version: 22
       - name: Verify South Node Calendar axis mirror contract
         run: node scripts/test-calendar-south-node-axis-mirror.mjs
+      - name: Verify South Node Calendar editorial queue
+        run: node scripts/test-calendar-south-node-editorial-queue.mjs
       - name: Verify ephemeris monitoring contract
         run: node scripts/test-ephemeris-monitoring-contract.mjs
       - name: Require a fresh passing NASA/JPL comparison

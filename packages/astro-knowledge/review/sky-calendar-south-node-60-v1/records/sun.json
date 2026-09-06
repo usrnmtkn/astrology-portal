@@ -1,0 +1,51 @@
+{
+  "counterpartBody": "sun",
+  "status": "needs_review",
+  "records": [
+    {
+      "contentKey": "sky.aspect.sun.conjunction.south-node",
+      "aspect": "conjunction",
+      "mirroredNorthNodeAspect": "opposition",
+      "summary": "An old version of you may be getting more attention than the one you are trying to become.",
+      "body": "An old version of you may be getting more attention than the one you are trying to become. When the Sun conjuncts the South Node, recognition can gather around a role, title, talent, or identity you already know how to carry. The praise may be deserved, and the opportunity may still be useful, but familiarity can make yesterday’s version of success feel more important than it is. Take what still belongs to you. You do not have to keep organizing your life around the part everyone already knows.",
+      "reviewStatus": "needs_review",
+      "runtimeEligible": false
+    },
+    {
+      "contentKey": "sky.aspect.sun.sextile.south-node",
+      "aspect": "sextile",
+      "mirroredNorthNodeAspect": "trine",
+      "summary": "Something you already know how to do can make today easier without deciding what comes next.",
+      "body": "Something you already know how to do can make today easier without deciding what comes next. The Sun sextile the South Node can bring an old skill, contact, audience, or role back into useful reach. You may know exactly how to handle the meeting, make the introduction, or step into a responsibility because you have done it before. Use that competence where it helps. The opening becomes less useful if being good at the old role is the reason you keep choosing it.",
+      "reviewStatus": "needs_review",
+      "runtimeEligible": false
+    },
+    {
+      "contentKey": "sky.aspect.sun.square.south-node",
+      "aspect": "square",
+      "mirroredNorthNodeAspect": "square",
+      "summary": "Being good at the old role can make it harder to admit that you are finished with it.",
+      "body": "Being good at the old role can make it harder to admit that you are finished with it. The Sun square the South Node can put your identity up against a habit of proving yourself in the same familiar way. A title, audience, responsibility, or kind of recognition may keep asking for the version of you that knows exactly how to deliver. The friction matters because competence can hide exhaustion. Notice what you keep doing because it confirms who you used to be, not because it still deserves your time.",
+      "reviewStatus": "needs_review",
+      "runtimeEligible": false
+    },
+    {
+      "contentKey": "sky.aspect.sun.trine.south-node",
+      "aspect": "trine",
+      "mirroredNorthNodeAspect": "sextile",
+      "summary": "The old version of you may fit so easily that nobody notices you have outgrown it.",
+      "body": "The old version of you may fit so easily that nobody notices you have outgrown it. The Sun trine the South Node can make an established role, talent, or public identity feel effortless and reassuring. Other people may gladly hand you the work you are known for, and you may be able to do it without much strain. Ease is useful information, but it is not the same as relevance. Keep the strength. Let the identity built around it become optional.",
+      "reviewStatus": "needs_review",
+      "runtimeEligible": false
+    },
+    {
+      "contentKey": "sky.aspect.sun.opposition.south-node",
+      "aspect": "opposition",
+      "mirroredNorthNodeAspect": "conjunction",
+      "summary": "A current decision may show you exactly how much an old identity still has a vote.",
+      "body": "A current decision may show you exactly how much an old identity still has a vote. When the Sun opposes the South Node, the person you are trying to be can come face to face with a role, expectation, or source of recognition that has shaped you for a long time. You may feel pulled between keeping a familiar place and making room for something less established. The past does not have to be rejected to stop running the decision. Carry forward the part that still works and leave the rest where it belongs.",
+      "reviewStatus": "needs_review",
+      "runtimeEligible": false
+    }
+  ]
+}

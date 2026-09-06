@@ -1,0 +1,51 @@
+{
+  "counterpartBody": "chiron",
+  "status": "needs_review",
+  "records": [
+    {
+      "contentKey": "sky.aspect.chiron.conjunction.south-node",
+      "aspect": "conjunction",
+      "mirroredNorthNodeAspect": "opposition",
+      "summary": "An old hurt can feel immediate again because the response built around it is still familiar.",
+      "body": "An old hurt can feel immediate again because the response built around it is still familiar. Chiron conjunct the South Node can bring a wound, insecurity, or protective habit back into focus at the exact place where you have learned how to function around it. You may minimize the need, over-prepare, become useful, or avoid the same exposure because those strategies once kept the tender spot manageable. The skill you developed is real. You do not have to keep reopening the injury to justify having it.",
+      "reviewStatus": "needs_review",
+      "runtimeEligible": false
+    },
+    {
+      "contentKey": "sky.aspect.chiron.sextile.south-node",
+      "aspect": "sextile",
+      "mirroredNorthNodeAspect": "trine",
+      "summary": "Something you learned while healing can be useful without making the old wound the center of the day.",
+      "body": "Something you learned while healing can be useful without making the old wound the center of the day. Chiron sextile the South Node can bring an old coping skill, hard-earned perspective, former helper, or practical lesson back into reach. You may know how to handle the conversation because you once had to learn it the difficult way. Use the medicine. You are allowed to benefit from what the experience taught you without organizing the present around the pain that taught it.",
+      "reviewStatus": "needs_review",
+      "runtimeEligible": false
+    },
+    {
+      "contentKey": "sky.aspect.chiron.square.south-node",
+      "aspect": "square",
+      "mirroredNorthNodeAspect": "square",
+      "summary": "A familiar wound can make the present situation feel like proof that the old story is happening again.",
+      "body": "A familiar wound can make the present situation feel like proof that the old story is happening again. Chiron square the South Node can put pressure on the coping strategy you built after an earlier hurt. You may brace for rejection, hide the need, overwork, or interpret a small mistake through the memory of a much larger one. The feeling deserves respect, but it may be carrying old evidence into a new case. Respond to what happened today before giving the past the final word.",
+      "reviewStatus": "needs_review",
+      "runtimeEligible": false
+    },
+    {
+      "contentKey": "sky.aspect.chiron.trine.south-node",
+      "aspect": "trine",
+      "mirroredNorthNodeAspect": "sextile",
+      "summary": "The workaround you built around an old hurt may still function beautifully.",
+      "body": "The workaround you built around an old hurt may still function beautifully. Chiron trine the South Node can make a familiar coping skill, helping role, or hard-earned sensitivity feel natural and useful. You may know how to notice what other people miss because you learned from experience. Keep the wisdom. Check that you are not staying in the wounded role simply because you became exceptionally good at surviving from there.",
+      "reviewStatus": "needs_review",
+      "runtimeEligible": false
+    },
+    {
+      "contentKey": "sky.aspect.chiron.opposition.south-node",
+      "aspect": "opposition",
+      "mirroredNorthNodeAspect": "conjunction",
+      "summary": "What is happening now may show you the difference between an old wound and a current need.",
+      "body": "What is happening now may show you the difference between an old wound and a current need. When Chiron opposes the South Node, a present vulnerability can stand directly across from the strategy you developed to protect yourself before. You may want to disappear, prove yourself, help everyone else, or avoid asking because that response once made sense. The old protection does not have to be mocked or discarded. It just needs to stop answering questions the present has not asked.",
+      "reviewStatus": "needs_review",
+      "runtimeEligible": false
+    }
+  ]
+}
