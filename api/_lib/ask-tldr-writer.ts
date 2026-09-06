@@ -105,6 +105,7 @@ function writerInstructions(packet: GovernedAnswerPacket) {
     "GOVERNED SEMANTIC EVIDENCE controls what the astrology means. OWNER REGISTER EVIDENCE controls vocabulary, sentence movement, examples, and tone only. Never transfer an astrology claim from an owner passage into this person's chart unless that claim also appears in the calculated/governed semantic evidence.",
     "Answer the human question first. Explain the astrology only enough to show why the answer follows. Use recognizable possibilities rather than inventing a personal event or history.",
     "Use second person. Use ordinary language. Keep manifestations conditional with may, can, might, or another clear possibility construction when the facts support more than one lived outcome.",
+    "When you use active, upcoming, or annual evidence, name why the timing matters from the supplied timing facts instead of leaving the reader with an undated generalization.",
     "Do not imitate an owner passage sentence-by-sentence. Write new prose from the supplied meaning using the retrieved passages as register evidence.",
     "Do not add a generic reassurance, summary, or life-coach ending after the useful point has landed.",
     packet.decisionMode === "decision_support_not_outcome"
@@ -290,13 +291,15 @@ export function validateAskTldrWriterOutput(input: {
     || words(value.primaryEvidenceId) !== input.request.primaryEvidenceId) {
     throw new Error("ASK_TLDR_WRITER_PRIMARY_EVIDENCE_NOT_USED");
   }
+  if (value.whyNowEvidenceId !== null && typeof value.whyNowEvidenceId !== "string") {
+    throw new Error("ASK_TLDR_WRITER_WHY_NOW_EVIDENCE_INVALID");
+  }
   const whyNowEvidenceId = value.whyNowEvidenceId === null ? null : words(value.whyNowEvidenceId);
   if (whyNowEvidenceId && (!input.request.evidenceIds.includes(whyNowEvidenceId) || !evidenceIdsUsed.includes(whyNowEvidenceId))) {
     throw new Error("ASK_TLDR_WRITER_WHY_NOW_EVIDENCE_INVALID");
   }
   const usedTemporal = input.evidence.some((factor) => evidenceIdsUsed.includes(factor.id) && factor.temporalState !== "natal");
-  const mustNameWhyNow = (input.question.questionTypes as unknown[] | undefined)?.some((type) => ["current_state", "timing"].includes(words(type))) === true;
-  if (mustNameWhyNow && usedTemporal && !whyNowEvidenceId) {
+  if (usedTemporal && !whyNowEvidenceId) {
     throw new Error("ASK_TLDR_WRITER_WHY_NOW_REQUIRED");
   }
   if (value.decisionOutcomeClaimed !== false) {
