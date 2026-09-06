@@ -26,6 +26,32 @@ const vite = await createServer({
 });
 
 try {
+  const ephemeris = await vite.ssrLoadModule("/src/services/ephemeris.ts");
+  const engineFacts = await ephemeris.getSkyPlacementTransitFacts({
+    planet: "sun",
+    sign: "scorpio",
+    referenceDate: new Date("2026-11-01T12:00:00.000Z"),
+    timeZone: "America/New_York"
+  });
+  const chronologicalEngineEvents = [...engineFacts.rankedEventsDuringTransit]
+    .sort((first, second) => first.occursAt.localeCompare(second.occursAt));
+  assert.deepEqual(
+    chronologicalEngineEvents.map((event) => `${event.planet} ${event.aspect} ${event.otherPlanet}`),
+    [
+      "Sun conjunction Venus",
+      "Sun square Pluto",
+      "Sun conjunction Mercury",
+      "Sun square Jupiter",
+      "Sun square Mars"
+    ],
+    "The calculation engine itself must expose all five Sun in Scorpio residency aspects, including conjunctions."
+  );
+  assert.deepEqual(
+    chronologicalEngineEvents.map((event) => event.dateKey),
+    ["2026-10-24", "2026-10-26", "2026-11-04", "2026-11-18", "2026-11-19"],
+    "Engine-owned Sun in Scorpio exact-aspect dates drifted."
+  );
+
   const residency = await vite.ssrLoadModule("/src/services/skyPlacementResidencyAspects.ts");
   const result = await residency.skyPlacementResidencyAspectSections({
     planet: "sun",
@@ -102,6 +128,15 @@ try {
     "Long-form residency aspect enrichment must remain explicitly Sun-only in the pilot."
   );
 
+  const ephemerisSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/services/ephemeris.ts"), "utf8");
+  assert.match(ephemerisSource, /function findSkyPlacementResidencyAspects/u);
+  assert.match(ephemerisSource, /planet === "Sun"[\s\S]*?findSkyPlacementResidencyAspects/u);
+  assert.match(
+    ephemerisSource,
+    /function findSkyAspects\([\s\S]*?previousDistance === 0 \|\| previousDistance \* currentDistance < 0/u,
+    "The existing Calendar scanner must remain byte-behaviorally separate from the residency-specific conjunction fix."
+  );
+
   const detailSource = fs.readFileSync(path.join(repoRoot, "apps/web/src/features/sky/SkyDetailArticle.tsx"), "utf8");
   assert.match(detailSource, /skyPlacementResidencyAspectSections/u);
   assert.doesNotMatch(
@@ -116,7 +151,7 @@ try {
   );
   assert.match(detailSource, /section\.dateLine/u, "Residency aspect cards must surface the engine-owned exact date.");
 
-  console.log("Sky Placement residency aspects pilot: PASS (Sun in Scorpio 5/5 exact approved aspects; Gifts/Lessons UI preserved; compact selector preserved; base copy drift 0). ");
+  console.log("Sky Placement residency aspects pilot: PASS (engine 5/5; exact approved copy 5/5; Gifts/Lessons UI preserved; compact selector preserved; base copy drift 0). ");
 } finally {
   await vite.close();
 }
