@@ -124,14 +124,13 @@ function reportReadyTitle(friendName: string) {
 }
 
 function notifyFriendReadingReady(request: GenerateUserContentRequest, result: LiveGeneratedContent | null) {
-  if (request.subjectType !== "friend_transit_reading" || !result?.id) return result;
+  if (request.subjectType !== "friend_transit_reading" || !result?.id) return;
   dispatchReportReady({
     sourceKind: "generated_interpretation",
     sourceId: result.id,
     title: reportReadyTitle(friendNameFromRequest(request)),
     route: `/reports/generated/${result.id}`
   });
-  return result;
 }
 
 export async function loadUserGeneratedInterpretation({
@@ -223,13 +222,19 @@ export async function generateUserContent(request: GenerateUserContentRequest) {
   const saved = payload?.saved?.[0];
 
   if (saved) {
-    const result = request.subjectType === "friend_transit_reading" && saved.status === "DRAFT"
-      ? fromRow(saved)
-      : saved.status === "LIVE"
-        ? fromRow(saved)
-        : null;
-    return notifyFriendReadingReady(request, result);
+    if (request.subjectType === "friend_transit_reading" && saved.status === "DRAFT") {
+      notifyFriendReadingReady(request, fromRow(saved));
+      return fromRow(saved);
+    }
+    if (saved.status === "LIVE") {
+      const result = fromRow(saved);
+      notifyFriendReadingReady(request, result);
+      return result;
+    }
+    return null;
   }
 
-  return notifyFriendReadingReady(request, payload?.generated ?? null);
+  const generated = payload?.generated ?? null;
+  notifyFriendReadingReady(request, generated);
+  return generated;
 }
