@@ -1,7 +1,7 @@
 # Sky Calendar South Node pole-specific authoring — V1
 
 Date: 2026-09-06
-Status: **needs owner review / no serving changes**
+Status: **exact owner approved / no serving changes yet**
 
 ## Owner product decision
 
@@ -58,20 +58,29 @@ Mechanism sources:
 - `packages/astro-knowledge/data/primitives/aspects.json`
 - `packages/astro-knowledge/review/TLDR-Aspect-PairSources-Chiron-Lilith-Nodes-REVIEW.md`
 
-## Review wall
+## Owner approval
 
-All 60 V1 passages are `needs_review` and `runtimeEligible:false`.
+On 2026-09-06 the owner reviewed representative passages from the complete 60-record set and replied:
 
-This branch does **not**:
+> these are great, approved
+
+That statement grants **exact wording approval** to all 60 `summary` and `body` fields in the candidate set bound to commit `2005e620da8a98f8cbc2e1aa711f4cc127f5ddac` and the twelve record-file blob SHAs recorded in `owner-batch-authorization.json`.
+
+The original record packets retain their `needs_review` fields as the immutable pre-approval snapshot. The separate authorization record is the approval evidence and binds the approved wording without rewriting the source packets after the decision.
+
+Approval does **not** by itself make these records runtime eligible. Serving remains a separate implementation change.
+
+## Current boundary
+
+This approval branch still does **not**:
 
 - change the approved North Node corpus;
-- create any `*-south-node.json` runtime transit records;
+- create live `*-south-node.json` runtime transit records;
 - change Calendar event calculation or timestamps;
 - change reader routing;
-- mark any South Node passage approved;
 - publish any South Node copy.
 
-Owner review is required before a serving PR. After approval, the release implementation should keep a single astronomical node-axis event while making both pole-specific interpretations addressable by the content/UI layer.
+The next serving implementation must keep a single astronomical node-axis event while making both pole-specific interpretations addressable by the content/UI layer.
 
 ## What the eventual serving model should preserve
 
