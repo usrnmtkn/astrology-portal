@@ -1,3 +1,5 @@
+import { createHash } from "node:crypto";
+import fs from "node:fs";
 import { createRequire } from "node:module";
 import type { AskTldrRankedEvidence } from "./ask-tldr-model.ts";
 import type { AskTldrCalculatedEvidenceCandidate } from "./ask-tldr-evidence-adapter.ts";
@@ -28,6 +30,7 @@ const knowledgeResolver = require("../../packages/astro-knowledge/scripts/knowle
 type FactRecord = Record<string, unknown>;
 type TargetUsage = "primary" | "mechanism-reference";
 type EvidenceSurface = "you-natal" | "you-transit";
+type GovernedMeaningSourceKind = "knowledge_index" | "owner_approved_cms_snapshot";
 
 type RankedCalculatedEvidence = AskTldrRankedEvidence & Pick<
   AskTldrCalculatedEvidenceCandidate,
@@ -43,6 +46,7 @@ type MeaningTarget = {
 export type AskTldrGovernedFactor = RankedCalculatedEvidence & {
   governedMeaning: {
     status: "full" | "partial" | "missing";
+    sourceKind: GovernedMeaningSourceKind | null;
     evidenceSurface: EvidenceSurface;
     canonicalIds: string[];
     targetUsages: TargetUsage[];
@@ -51,12 +55,29 @@ export type AskTldrGovernedFactor = RankedCalculatedEvidence & {
     packet: Record<string, unknown> | null;
     promptEvidence: string | null;
     indexSha256: string | null;
+    governanceSourceSha256: string | null;
     packetSha256: string | null;
   };
 };
 
 const APPROVED_MEANING_AUTHORITIES = new Set(["owner-approved-prose", "factual-evidence"]);
 const FILTER_ID = "ask-tldr-approved-meaning-v1";
+const CMS_TRANSIT_CANDIDATES_URL = new URL(
+  "../../packages/astro-knowledge/review/transit-aspect-you-refresh-candidates-2026-09-04.json",
+  import.meta.url
+);
+const CMS_TRANSIT_AUTHORIZATION_URL = new URL(
+  "../../packages/astro-knowledge/review/transit-aspect-you-refresh-376-owner-live-2026-09-04.json",
+  import.meta.url
+);
+const CONJUNCTION_SOFT_PLANETS = new Set(["venus", "sun", "mercury", "jupiter"]);
+
+let cmsTransitSnapshotCache: null | {
+  candidateFileSha256: string;
+  authorizationFileSha256: string;
+  recordsByKey: Map<string, FactRecord>;
+  approvalsByKey: Map<string, FactRecord>;
+} = null;
 
 function words(value: unknown) {
   return typeof value === "string" ? value.trim() : "";
@@ -68,6 +89,37 @@ function numberValue(value: unknown) {
 
 function unique<T>(values: T[]) {
   return [...new Set(values)];
+}
+
+function sha256(value: string) {
+  return createHash("sha256").update(value).digest("hex");
+}
+
+function sha256Json(value: unknown) {
+  return sha256(JSON.stringify(value));
+}
+
+function parseJsonFile(url: URL) {
+  const raw = fs.readFileSync(url, "utf8");
+  return { raw, value: JSON.parse(raw) as FactRecord, sha256: sha256(raw) };
+}
+
+function recordArray(value: unknown) {
+  return Array.isArray(value)
+    ? value.filter((entry): entry is FactRecord => Boolean(entry) && typeof entry === "object" && !Array.isArray(entry))
+    : [];
+}
+
+function contentSlug(value: unknown) {
+  return words(value).toLowerCase().replace(/[_\s]+/gu, "-").replace(/[^a-z0-9-]+/gu, "").replace(/-+/gu, "-");
+}
+
+function transitAspectFamily(planet: string, aspect: string) {
+  const normalizedPlanet = contentSlug(planet);
+  const normalizedAspect = contentSlug(aspect);
+  if (["trine", "sextile"].includes(normalizedAspect)) return "soft";
+  if (normalizedAspect === "conjunction" && CONJUNCTION_SOFT_PLANETS.has(normalizedPlanet)) return "soft";
+  return "hard";
 }
 
 function approvedMeaningRecord(record: Record<string, unknown>) {
@@ -131,6 +183,138 @@ function natalPlacementFields(facts: FactRecord, candidate: RankedCalculatedEvid
     sign: words(facts.sign),
     house: numberValue(facts.house) ?? candidate.houses?.[0] ?? null
   };
+}
+
+function loadCmsTransitSnapshot() {
+  if (cmsTransitSnapshotCache) return cmsTransitSnapshotCache;
+  const candidates = parseJsonFile(CMS_TRANSIT_CANDIDATES_URL);
+  const authorization = parseJsonFile(CMS_TRANSIT_AUTHORIZATION_URL);
+  if (authorization.value.decision !== "approve"
+    || authorization.value.surface !== "personal-transits-you"
+    || authorization.value.approvedField !== "body_you"
+    || !recordArray(authorization.value.members).length
+    || !Array.isArray(authorization.value.capabilities)
+    || !authorization.value.capabilities.includes("serving")) {
+    throw new Error("ASK_TLDR_CMS_TRANSIT_AUTHORIZATION_INVALID");
+  }
+  if (words(authorization.value.sourceRecordSha256) !== candidates.sha256) {
+    throw new Error("ASK_TLDR_CMS_TRANSIT_SOURCE_HASH_MISMATCH");
+  }
+  const recordsByKey = new Map(recordArray(candidates.value.records).map((entry) => [words(entry.contentKey), entry]));
+  const approvalsByKey = new Map(recordArray(authorization.value.members).map((entry) => [words(entry.contentKey), entry]));
+  if (recordsByKey.size < 1 || approvalsByKey.size < 1) {
+    throw new Error("ASK_TLDR_CMS_TRANSIT_SOURCE_EMPTY");
+  }
+  cmsTransitSnapshotCache = {
+    candidateFileSha256: candidates.sha256,
+    authorizationFileSha256: authorization.sha256,
+    recordsByKey,
+    approvalsByKey
+  };
+  return cmsTransitSnapshotCache;
+}
+
+function cmsTransitContentKeys(candidate: RankedCalculatedEvidence) {
+  if (!["transit_to_natal", "return"].includes(candidate.kind)) return [];
+  const { transitPlanet, natalPoint, aspect } = transitFields(candidate.facts);
+  if (!transitPlanet || !natalPoint || !aspect) return [];
+  const planet = contentSlug(transitPlanet);
+  const point = contentSlug(natalPoint);
+  const aspectSlug = contentSlug(aspect);
+  const family = transitAspectFamily(planet, aspectSlug);
+  return unique([
+    `authored/transit-aspect/${planet}/${point}/${aspectSlug}`,
+    `authored/transit-aspect/${planet}/${point}/${family}`
+  ]);
+}
+
+function cmsTransitGovernedMeaning(
+  candidate: RankedCalculatedEvidence,
+  surface: EvidenceSurface,
+  unresolvedKnowledgeIds: string[]
+): AskTldrGovernedFactor["governedMeaning"] | null {
+  if (surface !== "you-transit") return null;
+  const snapshot = loadCmsTransitSnapshot();
+  for (const contentKey of cmsTransitContentKeys(candidate)) {
+    const source = snapshot.recordsByKey.get(contentKey);
+    const approval = snapshot.approvalsByKey.get(contentKey);
+    if (!source || !approval) continue;
+    const text = words(source.proposedBodyYou);
+    const textSha256 = words(source.proposedBodyYouSha256);
+    const approvedPayloadSha256 = words(approval.payloadSha256);
+    if (!text || !textSha256 || textSha256 !== approvedPayloadSha256 || sha256(text) !== textSha256) {
+      throw new Error(`ASK_TLDR_CMS_TRANSIT_PAYLOAD_HASH_MISMATCH: ${contentKey}`);
+    }
+    const sourceAuthorityText = words(source.sourceBodyThey);
+    const sourceAuthoritySha256 = words(source.sourceBodyTheySha256);
+    const approvedAuthoritySha256 = words(approval.semanticAuthoritySha256);
+    if (approvedAuthoritySha256 && (
+      !sourceAuthorityText
+      || sourceAuthoritySha256 !== approvedAuthoritySha256
+      || sha256(sourceAuthorityText) !== sourceAuthoritySha256
+    )) {
+      throw new Error(`ASK_TLDR_CMS_TRANSIT_SEMANTIC_AUTHORITY_HASH_MISMATCH: ${contentKey}`);
+    }
+    const evidence = [{
+      authorityClass: "owner-approved-prose",
+      surfacePermission: ["you-transit"],
+      store: "owner-approved-cms-transit-snapshot",
+      path: "packages/astro-knowledge/review/transit-aspect-you-refresh-candidates-2026-09-04.json",
+      field: "proposedBodyYou",
+      rowKey: contentKey,
+      sourceSha256: snapshot.candidateFileSha256,
+      text,
+      usage: "primary",
+      temporality: "temporary-window",
+      framingAllowed: true,
+      evidenceSha256: sha256Json({
+        contentKey,
+        textSha256,
+        semanticAuthoritySha256: approvedAuthoritySha256 || null,
+        authorizationSha256: snapshot.authorizationFileSha256
+      })
+    }];
+    const packetWithoutHash = {
+      schemaVersion: 1,
+      packetKind: "ask-tldr-owner-approved-cms-transit",
+      contentKey,
+      surface: "you-transit",
+      register: "article",
+      evidence,
+      authorization: {
+        path: "packages/astro-knowledge/review/transit-aspect-you-refresh-376-owner-live-2026-09-04.json",
+        sha256: snapshot.authorizationFileSha256,
+        payloadSha256: approvedPayloadSha256,
+        semanticAuthoritySha256: approvedAuthoritySha256 || null
+      }
+    };
+    const packetSha256 = sha256Json(packetWithoutHash);
+    const packet = { ...packetWithoutHash, packetSha256 };
+    const promptEvidence = [
+      `CANONICAL OBJECT: cms:${contentKey}`,
+      "TEMPORALITY: temporary-window",
+      "SURFACE: you-transit",
+      "",
+      "ASTROLOGICAL TRUTH (owner-approved current Personal Transit meaning; not a prose template)",
+      `--- [owner-approved-prose; source=${contentKey}]`,
+      text
+    ].join("\n");
+    return {
+      status: "full",
+      sourceKind: "owner_approved_cms_snapshot",
+      evidenceSurface: surface,
+      canonicalIds: [`cms:${contentKey}`],
+      targetUsages: ["primary"],
+      mappingBases: ["owner-approved-cms-transit-aspect"],
+      unresolvedKnowledgeIds,
+      packet,
+      promptEvidence,
+      indexSha256: null,
+      governanceSourceSha256: snapshot.authorizationFileSha256,
+      packetSha256
+    };
+  }
+  return null;
 }
 
 function derivedMeaningTargets(candidate: RankedCalculatedEvidence, surface: EvidenceSurface): MeaningTarget[] {
@@ -315,11 +499,18 @@ export function resolveAskTldrGovernedFactor(candidate: RankedCalculatedEvidence
     surface
   );
   const status = meaningStatus(candidate, targets);
+
+  if (status !== "full") {
+    const cmsMeaning = cmsTransitGovernedMeaning(candidate, surface, explicit.unresolvedKnowledgeIds);
+    if (cmsMeaning) return { ...candidate, governedMeaning: cmsMeaning };
+  }
+
   if (!targets.length) {
     return {
       ...candidate,
       governedMeaning: {
         status,
+        sourceKind: null,
         evidenceSurface: surface,
         canonicalIds: [],
         targetUsages: [],
@@ -328,6 +519,7 @@ export function resolveAskTldrGovernedFactor(candidate: RankedCalculatedEvidence
         packet: null,
         promptEvidence: null,
         indexSha256: null,
+        governanceSourceSha256: null,
         packetSha256: null
       }
     };
@@ -353,6 +545,7 @@ export function resolveAskTldrGovernedFactor(candidate: RankedCalculatedEvidence
     ...candidate,
     governedMeaning: {
       status,
+      sourceKind: "knowledge_index",
       evidenceSurface: surface,
       canonicalIds: targets.map((target) => target.canonicalId),
       targetUsages: targets.map((target) => target.targetUsage),
@@ -361,6 +554,7 @@ export function resolveAskTldrGovernedFactor(candidate: RankedCalculatedEvidence
       packet,
       promptEvidence,
       indexSha256: words(packet.indexSha256) || null,
+      governanceSourceSha256: words(packet.indexSha256) || null,
       packetSha256: words(packet.packetSha256) || null
     }
   };
