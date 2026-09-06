@@ -35,10 +35,18 @@ const READER_COPY_FIELDS = Object.freeze([
 ]);
 
 const EXPLICIT_TAROT_REFERENCE = /\b(?:tarot|major\s+arcana|minor\s+arcana)\b/iu;
-const TAROT_CARD_NAME = "(?:the\\s+)?(?:chariot|emperor|empress|hierophant|high\\s+priestess|hermit|magician|fool|lovers|devil|hanged\\s+man|wheel\\s+of\\s+fortune|temperance|judg(?:e)?ment)";
+const DISTINCTIVE_MAJOR_ARCANA_CARD_NAME = "(?:the\\s+)?(?:chariot|emperor|empress|hierophant|high\\s+priestess|hermit|magician|fool|lovers|devil|hanged\\s+man|wheel\\s+of\\s+fortune|temperance|judg(?:e)?ment)";
+const AMBIGUOUS_MAJOR_ARCANA_CARD_NAME = "(?:Strength|Justice|Death|The\\s+Tower|The\\s+Star|The\\s+Moon|The\\s+Sun|The\\s+World)";
+const ANY_MAJOR_ARCANA_CARD_NAME = "(?:the\\s+)?(?:fool|magician|high\\s+priestess|empress|emperor|hierophant|lovers|chariot|strength|hermit|wheel\\s+of\\s+fortune|justice|hanged\\s+man|death|temperance|devil|tower|star|moon|sun|judg(?:e)?ment|world)";
+const MINOR_ARCANA_CARD_NAME = "(?:ace|two|three|four|five|six|seven|eight|nine|ten|page|knight|queen|king)\\s+of\\s+(?:wands|cups|swords|pentacles|coins)";
+const ANY_TAROT_CARD_NAME = `(?:${ANY_MAJOR_ARCANA_CARD_NAME}|${MINOR_ARCANA_CARD_NAME})`;
 const TAROT_CARD_CONTEXT = new RegExp(
-  `(?:\\b${TAROT_CARD_NAME}\\b[^.!?\\n]{0,80}\\b(?:card|arcana|tarot)\\b|\\b(?:card|arcana|tarot)\\b[^.!?\\n]{0,80}\\b${TAROT_CARD_NAME}\\b|\\b(?:corresponds?\\s+to|represented\\s+by|associated\\s+with)\\b[^.!?\\n]{0,80}\\b${TAROT_CARD_NAME}\\b)`,
+  `(?:\\b${ANY_TAROT_CARD_NAME}\\b[^.!?\\n]{0,80}\\b(?:cards?|arcana|tarot)\\b|\\b(?:cards?|arcana|tarot)\\b[^.!?\\n]{0,80}\\b${ANY_TAROT_CARD_NAME}\\b|\\b(?:corresponds?\\s+to|represented\\s+by|associated\\s+with|symboli[sz]ed\\s+by)\\b[^.!?\\n]{0,80}\\b(?:${DISTINCTIVE_MAJOR_ARCANA_CARD_NAME}|${MINOR_ARCANA_CARD_NAME})\\b)`,
   "iu"
+);
+const TITLED_AMBIGUOUS_TAROT_CORRESPONDENCE = new RegExp(
+  `\\b(?:corresponds?\\s+to|represented\\s+by|symboli[sz]ed\\s+by)\\b[^.!?\\n]{0,80}\\b${AMBIGUOUS_MAJOR_ARCANA_CARD_NAME}\\b`,
+  "u"
 );
 
 function readerCopyStrings(row) {
@@ -68,7 +76,9 @@ export function readerContentType(row) {
 
 export function hasTarotReferenceInReaderCopy(row) {
   return readerCopyStrings(row).some((value) => (
-    EXPLICIT_TAROT_REFERENCE.test(value) || TAROT_CARD_CONTEXT.test(value)
+    EXPLICIT_TAROT_REFERENCE.test(value)
+    || TAROT_CARD_CONTEXT.test(value)
+    || TITLED_AMBIGUOUS_TAROT_CORRESPONDENCE.test(value)
   ));
 }
 
