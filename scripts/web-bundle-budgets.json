@@ -13,13 +13,13 @@
   "relationshipFallbackChunkGzipBytes": 230000,
   "signupChunkGzipBytes": 4000,
   "totalCssGzipBytes": 115000,
-  "totalJavaScriptGzipBytes": 2880000,
+  "totalJavaScriptGzipBytes": 2900000,
   "_rationale": {
     "totalCssGzipBytes": "Raised narrowly from 113 kB to 115 kB for the production Content Studio editor redesign. The measured aggregate is 114.0 kB gzip; the added stylesheet is admin/editor-only. Reader startup CSS remains separately capped at 47 kB and still measures 46.9 kB, so reader startup weight is unchanged.",
     "readerBootGzipBytes": "Raised by 2 kB for the fail-soft eclipse review reporting and protected-content integrity boundary; deferred content must still remain outside the static boot graph.",
     "lunationBookFallbackChunkGzipBytes": "Raised by 5 kB for the 22 recovered, owner-approved full lunation book passages; the complete protected writing remains lazy-loaded and byte-exact.",
     "transitFallbackChunkGzipBytes": "Owner-authorized increase from 330 kB to 390 kB for the 351 exact, hash-bound Friends transit body_they passages. The transit corpus remains on-demand and outside the static App boot graph; all startup and route-local budgets remain unchanged.",
-    "totalJavaScriptGzipBytes": "Raised narrowly from 2.85 MB to 2.88 MB after completing the 131 exact owner-approved Sky Calendar major aspects, bringing the governed exact-aspect corpus to 379. The added prose remains in deferred/on-demand content; App boot, reader boot, App chunk, startup CSS, Friends workspace, transit chunk, and other route-local budgets remain unchanged.",
-    "authorization": "Owner authorized the 131 Calendar aspect serving release and instructed proceeding with the bundle-budget and Content Studio completion fixes on 2026-09-06."
+    "totalJavaScriptGzipBytes": "Raised narrowly from 2.88 MB to 2.90 MB for the 60 exact owner-approved South Node Calendar interpretations and their Content Studio-addressable runtime records. The astronomical event denominator remains 379, the additional pole-specific prose stays in deferred/on-demand content, and all startup, App, route-local, and content-family chunk budgets remain unchanged.",
+    "authorization": "Owner authorized the 60 South Node Calendar serving release, Content Studio editing, and production launch on 2026-09-06."
   }
 }
