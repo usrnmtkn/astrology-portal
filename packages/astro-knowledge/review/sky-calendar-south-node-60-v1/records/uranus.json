@@ -1,0 +1,51 @@
+{
+  "counterpartBody": "uranus",
+  "status": "needs_review",
+  "records": [
+    {
+      "contentKey": "sky.aspect.uranus.conjunction.south-node",
+      "aspect": "conjunction",
+      "mirroredNorthNodeAspect": "opposition",
+      "summary": "A sudden break can release something you have been repeating for much longer than you realized.",
+      "body": "A sudden break can release something you have been repeating for much longer than you realized. Uranus conjunct the South Node can disrupt an old routine, role, alliance, or way of staying predictable because it once kept life manageable. The change may arrive faster than your explanation for it. Something that felt permanent can suddenly look optional. Do not rush to rebuild the exact arrangement just because the empty space feels strange. The disruption may be showing you how much of the pattern was habit.",
+      "reviewStatus": "needs_review",
+      "runtimeEligible": false
+    },
+    {
+      "contentKey": "sky.aspect.uranus.sextile.south-node",
+      "aspect": "sextile",
+      "mirroredNorthNodeAspect": "trine",
+      "summary": "A small change can help you stop repeating an old pattern without blowing up everything around it.",
+      "body": "A small change can help you stop repeating an old pattern without blowing up everything around it. Uranus sextile the South Node can make a new tool, schedule, contact, route, or workaround available at exactly the point where the old method has become tedious. You may not need a dramatic exit. One practical change can loosen a habit that has been running automatically for years. Use the opening to make the familiar pattern less necessary.",
+      "reviewStatus": "needs_review",
+      "runtimeEligible": false
+    },
+    {
+      "contentKey": "sky.aspect.uranus.square.south-node",
+      "aspect": "square",
+      "mirroredNorthNodeAspect": "square",
+      "summary": "The urge to blow up the situation may be strongest where you have felt stuck in the same pattern before.",
+      "body": "The urge to blow up the situation may be strongest where you have felt stuck in the same pattern before. Uranus square the South Node can make an old routine, role, or expectation suddenly intolerable. You may want to quit, cut contact, cancel the plan, or change everything at once simply because you cannot stand repeating it again. The need for change may be valid. Separate the part that needs freedom from the part that is reacting to the history. A different future does not require the messiest possible exit.",
+      "reviewStatus": "needs_review",
+      "runtimeEligible": false
+    },
+    {
+      "contentKey": "sky.aspect.uranus.trine.south-node",
+      "aspect": "trine",
+      "mirroredNorthNodeAspect": "sextile",
+      "summary": "It may be surprisingly easy to stop doing something you once thought was permanent.",
+      "body": "It may be surprisingly easy to stop doing something you once thought was permanent. Uranus trine the South Node can loosen an old routine, attachment, identity, or expectation without requiring a dramatic confrontation. A new option may make the old pattern irrelevant almost overnight. Let the ease help. You do not need to manufacture a crisis to justify leaving something that has simply run its course.",
+      "reviewStatus": "needs_review",
+      "runtimeEligible": false
+    },
+    {
+      "contentKey": "sky.aspect.uranus.opposition.south-node",
+      "aspect": "opposition",
+      "mirroredNorthNodeAspect": "conjunction",
+      "summary": "The new option can make the old pattern look much less inevitable.",
+      "body": "The new option can make the old pattern look much less inevitable. When Uranus opposes the South Node, a disruption, unexpected person, different route, or sudden possibility can stand directly across from the way you have always handled something. The contrast may be uncomfortable because the familiar arrangement once gave you predictability. You do not have to destroy the past to choose differently. Let the new information change what you consider possible.",
+      "reviewStatus": "needs_review",
+      "runtimeEligible": false
+    }
+  ]
+}
