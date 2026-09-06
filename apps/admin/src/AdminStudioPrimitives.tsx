@@ -103,7 +103,7 @@ export function AdminPageHeader({
       </div>
       <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap", justifyContent: "flex-end" }}>
         <a
-          className="admin-create-button"
+          className="admin-create-button admin-attention-button"
           href="/admin/content/coverage?view=attention"
           style={coverageActionStyle}
           title="Open the short queue of content work that can affect required reader coverage"
