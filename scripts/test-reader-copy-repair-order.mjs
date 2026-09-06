@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import crypto from "node:crypto";
 import fs from "node:fs";
 
 import {
@@ -18,10 +19,12 @@ import {
 } from "../apps/web/src/content/fallbackArchitectureV3/resolver/renderTransitSynastry.mjs";
 
 const readJson = (path) => JSON.parse(fs.readFileSync(new URL(path, import.meta.url), "utf8"));
+const sha256 = (value) => crypto.createHash("sha256").update(value, "utf8").digest("hex");
 const transit = readJson("../apps/web/src/content/fallbackArchitectureV3/source-rows/transit-synastry-rows-v1.json");
 const fallback = readJson("../apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json");
 const queue = readJson("../packages/astro-knowledge/review/reader-copy-repair-queue-2026-08-21.json");
 const manifest = readJson("../apps/web/src/content/fallbackArchitectureV3/bundled-manifest-v3.json");
+const lunationBoundaryOverrides = readJson("../apps/web/src/content/fallbackArchitectureV3/source-rows/lunation-astrology-boundary-overrides-v1.json");
 const app = fs.readFileSync(new URL("../apps/web/src/App.tsx", import.meta.url), "utf8");
 const browserFallback = fs.readFileSync(new URL("../apps/web/src/content/fallbackArchitectureV3/resolver/renderFallback.browser.ts", import.meta.url), "utf8");
 
@@ -54,6 +57,85 @@ assert.equal(
 
 const sunVirgo = fallback.hookRows.find((row) => row.contentKey === "fallback-hook/sky-sign-copy/sun/virgo");
 assert.equal(sunVirgo, undefined, "The duplicate pending Sun-in-Virgo row must be removed after source repair.");
+
+const astrologyTarotProbe = {
+  contentKey: "probe/astrology/tarot",
+  review_status: "approved",
+  reader_content_type: "astrology",
+  body: "The fourth house corresponds to The Chariot in the Major Arcana."
+};
+assert.equal(isGovernedReaderEligible(astrologyTarotProbe), false);
+assert.equal(readerEligibilityReason(astrologyTarotProbe), "tarot-reference-in-astrology-copy");
+
+const tarotSurfaceProbe = {
+  ...astrologyTarotProbe,
+  contentKey: "probe/tarot/chariot",
+  reader_content_type: "tarot"
+};
+assert.equal(isGovernedReaderEligible(tarotSurfaceProbe), true, "An explicitly designated Tarot surface must remain possible.");
+assert.equal(readerEligibilityReason(tarotSurfaceProbe), null);
+
+const mixedProbe = {
+  ...astrologyTarotProbe,
+  contentKey: "probe/mixed/chariot",
+  reader_content_type: "mixed"
+};
+assert.equal(isGovernedReaderEligible(mixedProbe), false);
+assert.equal(readerEligibilityReason(mixedProbe), "mixed-astrology-tarot-owner-approval-required");
+
+const ownerApprovedMixedProbe = {
+  ...mixedProbe,
+  content_boundary: { mixedOwnerApproved: true },
+  approval: {
+    approvalLevel: "exact_owner_approved",
+    recordPath: "owner/mixed-boundary-probe",
+    payloadSha256: "a".repeat(64),
+    approvedAt: "2026-09-06"
+  }
+};
+assert.equal(isGovernedReaderEligible(ownerApprovedMixedProbe), true);
+
+const legacyUnclassifiedProbe = {
+  contentKey: "legacy/unclassified/lunation",
+  review_status: "approved",
+  body: "The fifth house corresponds to Strength in the Major Arcana."
+};
+assert.equal(
+  isGovernedReaderEligible(legacyUnclassifiedProbe),
+  true,
+  "Legacy unclassified rows remain migration-safe until their family is repaired instead of blanking the whole surface."
+);
+
+const virgoGeminiKey = "authored/book-ritual-and-the-moon/lunation-horoscope/new-moon/virgo/rising-gemini/house-4";
+const knownLegacyViolationProbe = {
+  contentKey: virgoGeminiKey,
+  review_status: "approved",
+  body: "The 4th house corresponds to The Chariot in the Major Arcana."
+};
+assert.equal(isGovernedReaderEligible(knownLegacyViolationProbe), false);
+assert.equal(readerEligibilityReason(knownLegacyViolationProbe), "tarot-reference-in-astrology-copy");
+
+assert.equal(lunationBoundaryOverrides.schema, "lunation-astrology-boundary-overrides/v1");
+assert.equal(lunationBoundaryOverrides.count, 1);
+const virgoGeminiOverride = lunationBoundaryOverrides.authoredCards[0];
+assert.equal(virgoGeminiOverride.contentKey, virgoGeminiKey);
+assert.equal(virgoGeminiOverride.reader_content_type, "astrology");
+assert.equal(isGovernedReaderEligible(virgoGeminiOverride), true);
+assert.equal(sha256(virgoGeminiOverride.body), virgoGeminiOverride.protected_content.body_sha256);
+assert.equal(virgoGeminiOverride.body.length, virgoGeminiOverride.protected_content.char_count);
+assert.match(
+  virgoGeminiOverride.body,
+  /All relationships require give and take, and this New Moon can make it easier to see where the balance at home has become uneven\./u
+);
+assert.doesNotMatch(virgoGeminiOverride.body, /\b(?:tarot|major\s+arcana|minor\s+arcana|chariot)\b/iu);
+
+const ordinaryAstrologyProbe = {
+  contentKey: "probe/astrology/ordinary-card-word",
+  review_status: "approved",
+  reader_content_type: "astrology",
+  body: "A card in the mail could change the plan while the Moon moves through Virgo."
+};
+assert.equal(isGovernedReaderEligible(ordinaryAstrologyProbe), true, "The word card alone must not trigger the Tarot boundary.");
 
 const exactNatal = renderNatalAspect({
   planetA: "sun",
@@ -130,4 +212,4 @@ assert.match(app, /legacy-reviewed-transit-continuity-v1/u);
 assert.doesNotMatch(app, /void friendPronouns/u);
 assert.doesNotMatch(app, /void romanticAllowed/u);
 
-console.log("reader copy repair order: ok (provenance, registers, source gaps, and page-layer labels)");
+console.log("reader copy repair order: ok (provenance, registers, source gaps, tarot boundary, and page-layer labels)");
