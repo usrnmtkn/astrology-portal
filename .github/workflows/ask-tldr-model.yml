@@ -30,6 +30,9 @@ jobs:
       - name: Validate Ask TLDR taxonomy
         run: npx tsx scripts/test-ask-tldr-question-taxonomy.mjs
 
+      - name: Validate Ask TLDR free-text classifier
+        run: npx tsx scripts/test-ask-tldr-classifier.mjs
+
       - name: Validate Ask TLDR answer model
         run: npx tsx scripts/test-ask-tldr-answer-model.mjs
 
