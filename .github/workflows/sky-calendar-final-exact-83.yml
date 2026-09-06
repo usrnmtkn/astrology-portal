@@ -7,7 +7,7 @@ on:
       - "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/**"
       - "scripts/release-calendar-exact-approved-20260906-final-83.mjs"
       - "scripts/test-calendar-exact-approved-20260906-final-83.mjs"
-      - "scripts/test-calendar-exact-sky-aspect-routing.mjs"
+      - "scripts/test-calendar-major-exact-routing-complete.mjs"
       - ".github/workflows/sky-calendar-final-exact-83.yml"
 
 permissions:
@@ -41,10 +41,10 @@ jobs:
         run: node scripts/test-bounded-owner-batch-approval-governance.mjs
       - name: Verify final 83 exact-owner-approved release
         run: node scripts/test-calendar-exact-approved-20260906-final-83.mjs
-      - name: Verify complete exact Sky aspect routing
+      - name: Verify complete 379-row major exact Sky aspect routing
         env:
           SKY_CALENDAR_OWNER_PAYLOADS_PATH: packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-06-final-83/current-owner-payloads.json
-        run: node scripts/test-calendar-exact-sky-aspect-routing.mjs
+        run: node scripts/test-calendar-major-exact-routing-complete.mjs
       - name: Verify generated fallback manifest
         run: node scripts/generate-fallback-package-manifest.mjs --check
       - name: Verify generated knowledge index
