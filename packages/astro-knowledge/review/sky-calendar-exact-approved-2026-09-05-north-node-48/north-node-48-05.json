@@ -1,0 +1,71 @@
+{
+  "schemaVersion": 2,
+  "family": "north-node-48-05",
+  "rowCount": 8,
+  "rows": [
+    {
+      "contentKey": "sky.aspect.saturn.conjunction.north-node",
+      "summary": "A decision you have been postponing becomes much harder to avoid once it arrives with a formal deadline or a new responsibility.",
+      "body": "A decision you have been postponing becomes much harder to avoid once it arrives with a formal deadline or a new responsibility. When Saturn conjuncts the North Node, future direction and practical limitation meet in the same decision, turning a theoretical plan into a concrete requirement for paperwork, commitment, or structure. The pressure to sign the contract or accept the role is not proof that you have to say yes. It simply gives you measurable terms. Read them carefully, and only accept the arrangement if you are prepared to carry the actual weight of the work.",
+      "bodySha256": "f4275d2760128aed7158260d3df823adcd39933252e96e9238ed6620639379cf",
+      "sourceApprovalBatch": "sky-north-node-launch-batch-2-exact-owner-approved-refined-2026-09-05",
+      "sourceApprovalLevel": "exact_owner_approved"
+    },
+    {
+      "contentKey": "sky.aspect.saturn.opposition.north-node",
+      "summary": "A deep sense of responsibility can make leaving an arrangement feel wrong long after it has stopped being useful.",
+      "body": "A deep sense of responsibility can make leaving an arrangement feel wrong long after it has stopped being useful. When Saturn opposes the North Node, institutional loyalty and past promises can make it difficult to walk away from a role you know how to perform perfectly, even when another direction needs more of your time. You may still need to finish what you started or protect the people relying on you. Separate that obligation from the assumption that keeping your word requires staying exactly where you are.",
+      "bodySha256": "95c0e2c749ac13f2c9b33a4b872b99f060ce92b333e30d6dc15ddf9aa5cbc1e1",
+      "sourceApprovalBatch": "sky-north-node-launch-batch-2-exact-owner-approved-refined-2026-09-05",
+      "sourceApprovalLevel": "exact_owner_approved"
+    },
+    {
+      "contentKey": "sky.aspect.saturn.sextile.north-node",
+      "summary": "A strict rule or a firm deadline may provide the exact structure an unfamiliar plan needs to survive.",
+      "body": "A strict rule or a firm deadline may provide the exact structure an unfamiliar plan needs to survive. When Saturn sextiles the North Node, formal boundaries can give a new ambition enough structure to become workable. You do not need to view every limitation as a roadblock designed to stop you. Accept the commitment, schedule, or budget that gives your next move enough protection to hold up in ordinary life.",
+      "bodySha256": "c2bf831cfcfef559954992438dde4bc7e1e37c107b29cb28f30962ef973fc311",
+      "sourceApprovalBatch": "sky-north-node-launch-batch-2-exact-owner-approved-refined-2026-09-05",
+      "sourceApprovalLevel": "exact_owner_approved"
+    },
+    {
+      "contentKey": "sky.aspect.saturn.square.north-node",
+      "summary": "The responsibility keeping your current life intact may be the exact obligation making it impossible to change your direction.",
+      "body": "The responsibility keeping your current life intact may be the exact obligation making it impossible to change your direction. When Saturn squares the North Node, structural duty can take up enough time, money, or authority that a necessary career move or personal shift keeps getting deferred. Simply carrying a heavier load will not fix a setup that is fundamentally stuck. Put the actual costs on paper, and decide what must be delegated, finished, or renegotiated before duty becomes the only reason nothing else moves.",
+      "bodySha256": "632840cc3a0866200dc7ffc6ed516f8b36f5df0d34c411f9adbd6003c7dba492",
+      "sourceApprovalBatch": "sky-north-node-launch-batch-2-exact-owner-approved-refined-2026-09-05",
+      "sourceApprovalLevel": "exact_owner_approved"
+    },
+    {
+      "contentKey": "sky.aspect.sun.conjunction.north-node",
+      "summary": "You may find yourself being taken seriously for something you have only just started claiming.",
+      "body": "You may find yourself being taken seriously for something you have only just started claiming. When the Sun conjuncts the North Node, visibility lands on the newer role, project, or identity you are trying to grow into, so putting your name on the work, accepting the title, publishing the idea, or introducing yourself differently can carry more weight than the size of the move suggests. The older version of you may still be easier for other people to recognize, but that does not make it more relevant. Use the attention to reinforce what you want to be known for now.",
+      "bodySha256": "5a977317e8c16626fdeab716ed453688cb7357b083f531dc731ad94db07bd957",
+      "sourceApprovalBatch": "sky-north-node-launch-batch-1-owner-review-v2-2026-09-05",
+      "sourceApprovalLevel": "exact_owner_approved"
+    },
+    {
+      "contentKey": "sky.aspect.sun.opposition.north-node",
+      "summary": "A comeback offer can be genuinely flattering and still point toward a version of yourself you already know how to be.",
+      "body": "A comeback offer can be genuinely flattering and still point toward a version of yourself you already know how to be. When the Sun opposes the North Node, recognition can collect around an old title, audience, role, or area of expertise because other people already know what you can do there. There may be money, access, or useful leverage in saying yes. The question is what that success pays for. Use the old strength if it gives you more freedom to build something newer; be cautious if the reward only keeps you too busy to leave the old role.",
+      "bodySha256": "d1205710af88844b1d81175d1d7ed4f8f6bb9092b2291b20743ab3e69048f50b",
+      "sourceApprovalBatch": "sky-north-node-launch-batch-1-owner-review-v2-2026-09-05",
+      "sourceApprovalLevel": "exact_owner_approved"
+    },
+    {
+      "contentKey": "sky.aspect.sun.sextile.north-node",
+      "summary": "Past work may open a door you could not have opened from scratch.",
+      "body": "Past work may open a door you could not have opened from scratch. When the Sun sextiles the North Node, recognition you already earned can support something newer through a recommendation, introduction, invitation, or first chance to lead in unfamiliar territory. The useful part is not being rewarded for staying the same; it is that old credibility can give you a chance to try something different. Accept the opportunity if it gives you experience, access, or proof you can carry into the role you want to grow into.",
+      "bodySha256": "0f1369d286faea6ced0e5e145ff27b41ac2d2f848e91ca5be5143fc34504731b",
+      "sourceApprovalBatch": "sky-north-node-launch-batch-1-owner-review-v2-2026-09-05",
+      "sourceApprovalLevel": "exact_owner_approved"
+    },
+    {
+      "contentKey": "sky.aspect.sun.square.north-node",
+      "summary": "Being good at something can make it much harder to admit that you no longer want your future built around it.",
+      "body": "Being good at something can make it much harder to admit that you no longer want your future built around it. When the Sun squares the North Node, praise, promotion, or another chance to lead can reward the exact role you have been trying to outgrow. That is what makes the tension difficult: the old identity is not failing; it may be succeeding well enough to make changing course more expensive. Decide what you still want from the recognition, then stop letting other people's approval choose the role you keep repeating.",
+      "bodySha256": "4329915f227323a652db73f46d9865b3eb61ce78f190b5f805a7d7e5fa90385f",
+      "sourceApprovalBatch": "sky-north-node-launch-batch-1-owner-review-v2-2026-09-05",
+      "sourceApprovalLevel": "exact_owner_approved"
+    }
+  ]
+}
