@@ -1,0 +1,66 @@
+/* Content Studio access and authentication feedback.
+   Keep access errors semantically distinct from success states and make the
+   owner-sign-in path explicit on preview deployments. */
+
+.admin-dashboard .admin-access-owner-signin {
+  align-items: center;
+  background: var(--admin-ui-primary);
+  border: var(--border-width-thin) solid var(--admin-ui-primary);
+  border-radius: var(--admin-radius-md);
+  color: var(--admin-dark-text);
+  display: inline-flex;
+  font-weight: var(--weight-semibold);
+  gap: var(--admin-space-md);
+  justify-content: center;
+  min-height: var(--admin-control-height-md);
+  padding: var(--admin-space-sm) var(--admin-space-lg);
+  text-decoration: none;
+  width: 100%;
+}
+
+.admin-dashboard .admin-access-owner-signin:hover {
+  background: var(--admin-ui-primary-hover);
+  border-color: var(--admin-ui-primary-hover);
+}
+
+.admin-dashboard .admin-access-owner-signin:focus-visible {
+  outline: var(--border-width-medium) solid var(--admin-ui-primary);
+  outline-offset: var(--admin-space-xs);
+}
+
+.admin-dashboard .admin-access-gate-note,
+.admin-dashboard .admin-access-secret-note {
+  color: var(--admin-ui-muted);
+  font-size: var(--admin-ui-type-caption);
+  line-height: var(--leading-description);
+  margin: 0;
+}
+
+.admin-dashboard .admin-access-secret-note code {
+  color: var(--admin-text-secondary);
+  font-size: inherit;
+}
+
+.admin-dashboard .admin-access-divider {
+  align-items: center;
+  color: var(--admin-ui-muted);
+  display: flex;
+  font-family: var(--font-label);
+  font-size: var(--admin-ui-type-caption);
+  gap: var(--admin-space-lg);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+}
+
+.admin-dashboard .admin-access-divider::before,
+.admin-dashboard .admin-access-divider::after {
+  background: var(--admin-ui-border);
+  content: "";
+  flex: 1 1 auto;
+  height: var(--border-width-thin);
+}
+
+/* Error toast colour lives in admin.css (.admin-save-toast.is-error); do not redefine it here. */
+.admin-dashboard .admin-save-toast.is-error button {
+  color: var(--admin-ui-error-copy);
+}

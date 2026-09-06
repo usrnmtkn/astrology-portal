@@ -97,6 +97,9 @@ const directWindowOpenFiles = [];
 const contextlessLiteralReaderLinks = [];
 const ungovernedViewInAppFiles = [];
 const literalHrefPattern = /href\s*=\s*["'`]([^"'`]+)["'`]/gu;
+// Authentication routes are not reader landing pages: the access gate sends
+// the owner to sign in, and the reader app's session then unlocks the Studio.
+const authenticationHrefs = new Set(["/?auth=login"]);
 
 for (const filePath of adminSourceFiles) {
   const source = fs.readFileSync(filePath, "utf8");
@@ -114,6 +117,7 @@ for (const filePath of adminSourceFiles) {
 
   for (const match of source.matchAll(literalHrefPattern)) {
     const href = match[1];
+    if (authenticationHrefs.has(href)) continue;
     if (isReaderAppHref(href) && !isContextualReaderHref(href)) {
       contextlessLiteralReaderLinks.push(`${relative}: ${href}`);
     }
