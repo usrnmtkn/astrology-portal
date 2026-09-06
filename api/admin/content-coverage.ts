@@ -169,6 +169,8 @@ function buildCoverage() {
       incomplete: coverage.filter((row) => row.state === "incomplete").length,
       unresolvedQueue: Number(unresolved.count ?? 0),
   unresolvedIssues: Number(unresolved.issueCount ?? unresolved.count ?? 0),
+  unresolvedOptionalQueue: Number(unresolved.optionalCount ?? 0),
+  unresolvedOptionalIssues: Number(unresolved.optionalIssueCount ?? 0),
   unresolvedShadowed: Number(unresolved.shadowedCount ?? 0),
   unresolvedRetired: Number(unresolved.retiredCount ?? 0)
     },
@@ -179,6 +181,7 @@ function buildCoverage() {
         : null,
       unresolvedReasonCounts: unresolved.reasonCounts ?? {},
   unresolvedWorkload: unresolved.workload ?? {},
+  unresolvedOptionalWorkload: unresolved.optionalWorkload ?? {},
   unresolvedShadowedReasonCounts: unresolved.shadowedReasonCounts ?? {},
   unresolvedRetiredReasonCounts: unresolved.retiredReasonCounts ?? {}
     }
