@@ -1,21 +1,15 @@
 {
   "schema": "tldrastro-content-unresolved-queue/v1",
   "generatedFrom": "apps/web/src/content/fallbackArchitectureV3/source-rows",
-  "count": 103,
-  "issueCount": 92,
-  "actionableContentKeys": [
-    "authored/book-ritual-and-the-moon/lunation-horoscope/eclipse-lunar/pisces/rising-aquarius/house-2",
-    "authored/book-ritual-and-the-moon/lunation-horoscope/eclipse-lunar/pisces/rising-aries/house-12",
-    "authored/book-ritual-and-the-moon/lunation-horoscope/eclipse-lunar/pisces/rising-cancer/house-9",
-    "authored/book-ritual-and-the-moon/lunation-horoscope/eclipse-lunar/pisces/rising-capricorn/house-3",
-    "authored/book-ritual-and-the-moon/lunation-horoscope/eclipse-lunar/pisces/rising-gemini/house-10",
-    "authored/book-ritual-and-the-moon/lunation-horoscope/eclipse-lunar/pisces/rising-leo/house-8",
-    "authored/book-ritual-and-the-moon/lunation-horoscope/eclipse-lunar/pisces/rising-libra/house-6",
-    "authored/book-ritual-and-the-moon/lunation-horoscope/eclipse-lunar/pisces/rising-pisces/house-1",
-    "authored/book-ritual-and-the-moon/lunation-horoscope/eclipse-lunar/pisces/rising-sagittarius/house-4",
-    "authored/book-ritual-and-the-moon/lunation-horoscope/eclipse-lunar/pisces/rising-scorpio/house-5",
-    "authored/book-ritual-and-the-moon/lunation-horoscope/eclipse-lunar/pisces/rising-taurus/house-11",
-    "authored/book-ritual-and-the-moon/lunation-horoscope/eclipse-lunar/pisces/rising-virgo/house-7",
+  "count": 0,
+  "issueCount": 0,
+  "actionableContentKeys": [],
+  "workload": {},
+  "reasonCounts": {},
+  "items": [],
+  "optionalCount": 80,
+  "optionalIssueCount": 69,
+  "optionalContentKeys": [
     "authored/sky-lunation-macro/new-moon/aquarius",
     "daily-glance-variant/conjunction/venus/headline/headline-affection-shows-up-in-small-practical-ways",
     "daily-glance-variant/opposition/mercury/headline/headline-youre-reading-too-much-into-a-short-message",
@@ -71,17 +65,6 @@
     "fallback-hook/lunation-ruler-house/7",
     "fallback-hook/lunation-ruler-house/8",
     "fallback-hook/lunation-ruler-house/9",
-    "fallback-hook/lunation-uranus-layer/10",
-    "fallback-hook/lunation-uranus-layer/11",
-    "fallback-hook/lunation-uranus-layer/12",
-    "fallback-hook/lunation-uranus-layer/2",
-    "fallback-hook/lunation-uranus-layer/3",
-    "fallback-hook/lunation-uranus-layer/4",
-    "fallback-hook/lunation-uranus-layer/5",
-    "fallback-hook/lunation-uranus-layer/6",
-    "fallback-hook/lunation-uranus-layer/7",
-    "fallback-hook/lunation-uranus-layer/8",
-    "fallback-hook/lunation-uranus-layer/9",
     "fallback-template/natal.planet-in-sign/chiron",
     "fallback-template/natal.planet-in-sign/jupiter",
     "fallback-template/natal.planet-in-sign/lilith",
@@ -97,16 +80,20 @@
     "fallback-template/natal.planet-in-sign/uranus",
     "fallback-template/natal.planet-in-sign/venus"
   ],
-  "workload": {
-    "full-copy-review": {
-      "records": 13,
-      "decisions": 13
+  "optionalWorkload": {
+    "optional-lunation-macro": {
+      "records": 1,
+      "decisions": 1
     },
-    "shared-fallback-authoring": {
-      "records": 44,
-      "decisions": 33
+    "optional-lunation-opening": {
+      "records": 11,
+      "decisions": 11
     },
-    "template-review": {
+    "optional-lunation-ruler": {
+      "records": 22,
+      "decisions": 11
+    },
+    "optional-template": {
       "records": 14,
       "decisions": 14
     },
@@ -115,142 +102,10 @@
       "decisions": 32
     }
   },
-  "reasonCounts": {
-    "review-status": 103
+  "optionalReasonCounts": {
+    "review-status": 80
   },
-  "items": [
-    {
-      "id": "unresolved-701f69b38087a6a6",
-      "contentKey": "authored/book-ritual-and-the-moon/lunation-horoscope/eclipse-lunar/pisces/rising-aquarius/house-2",
-      "contentRole": "full_copy",
-      "reviewStatus": "needs_review",
-      "reason": "review-status",
-      "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/lunation-eclipse-variants-v1.json",
-      "objectPath": "/authoredCards/1",
-      "sourceSha256": "5dc7ebb7107d4b42cb23a63af607eaf976cdd50df0f3cff67b770c61580a5de3",
-      "workClass": "full-copy-review"
-    },
-    {
-      "id": "unresolved-c9bf38031344c178",
-      "contentKey": "authored/book-ritual-and-the-moon/lunation-horoscope/eclipse-lunar/pisces/rising-aries/house-12",
-      "contentRole": "full_copy",
-      "reviewStatus": "needs_review",
-      "reason": "review-status",
-      "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/lunation-eclipse-variants-v1.json",
-      "objectPath": "/authoredCards/11",
-      "sourceSha256": "d098eed93dede0943e656c9c456146c68ba8a557b41f62cd9cdfb83faef5f01e",
-      "workClass": "full-copy-review"
-    },
-    {
-      "id": "unresolved-dd05f69b2f209367",
-      "contentKey": "authored/book-ritual-and-the-moon/lunation-horoscope/eclipse-lunar/pisces/rising-cancer/house-9",
-      "contentRole": "full_copy",
-      "reviewStatus": "needs_review",
-      "reason": "review-status",
-      "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/lunation-eclipse-variants-v1.json",
-      "objectPath": "/authoredCards/8",
-      "sourceSha256": "5bf08200332827de68cbb389faf56bc5e44f64f240f104a91c3afcdf4d09b450",
-      "workClass": "full-copy-review"
-    },
-    {
-      "id": "unresolved-38a9ccde381878fc",
-      "contentKey": "authored/book-ritual-and-the-moon/lunation-horoscope/eclipse-lunar/pisces/rising-capricorn/house-3",
-      "contentRole": "full_copy",
-      "reviewStatus": "needs_review",
-      "reason": "review-status",
-      "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/lunation-eclipse-variants-v1.json",
-      "objectPath": "/authoredCards/2",
-      "sourceSha256": "179fb5ab3338c3860461fa02e2b9db21324bc04cff2bc68380f34db17261736e",
-      "workClass": "full-copy-review"
-    },
-    {
-      "id": "unresolved-4928e83b9276f12d",
-      "contentKey": "authored/book-ritual-and-the-moon/lunation-horoscope/eclipse-lunar/pisces/rising-gemini/house-10",
-      "contentRole": "full_copy",
-      "reviewStatus": "needs_review",
-      "reason": "review-status",
-      "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/lunation-eclipse-variants-v1.json",
-      "objectPath": "/authoredCards/9",
-      "sourceSha256": "e1f9ad12d59ac9b9f3d7f0f219344e8d028e9909548d1ef29aaffdd9dd6ae250",
-      "workClass": "full-copy-review"
-    },
-    {
-      "id": "unresolved-6ee524e8f19227b5",
-      "contentKey": "authored/book-ritual-and-the-moon/lunation-horoscope/eclipse-lunar/pisces/rising-leo/house-8",
-      "contentRole": "full_copy",
-      "reviewStatus": "needs_review",
-      "reason": "review-status",
-      "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/lunation-eclipse-variants-v1.json",
-      "objectPath": "/authoredCards/7",
-      "sourceSha256": "befa8ceff3e49e140c99d2c255da3117f0dc24cbe94b41f15a0fa177fae336aa",
-      "workClass": "full-copy-review"
-    },
-    {
-      "id": "unresolved-23eb7e0508f0a898",
-      "contentKey": "authored/book-ritual-and-the-moon/lunation-horoscope/eclipse-lunar/pisces/rising-libra/house-6",
-      "contentRole": "full_copy",
-      "reviewStatus": "needs_review",
-      "reason": "review-status",
-      "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/lunation-eclipse-variants-v1.json",
-      "objectPath": "/authoredCards/5",
-      "sourceSha256": "bbb098b8a8846226d0f066bd1099b50ebbd829b4cd5bdb6a524ebe5199100865",
-      "workClass": "full-copy-review"
-    },
-    {
-      "id": "unresolved-356cc63607eb51f0",
-      "contentKey": "authored/book-ritual-and-the-moon/lunation-horoscope/eclipse-lunar/pisces/rising-pisces/house-1",
-      "contentRole": "full_copy",
-      "reviewStatus": "needs_review",
-      "reason": "review-status",
-      "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/lunation-eclipse-variants-v1.json",
-      "objectPath": "/authoredCards/0",
-      "sourceSha256": "b444449667ed05f61e2356d9df0a37415337d08a0599c3ca669a0a3be6b0ea32",
-      "workClass": "full-copy-review"
-    },
-    {
-      "id": "unresolved-767027add4dd9a24",
-      "contentKey": "authored/book-ritual-and-the-moon/lunation-horoscope/eclipse-lunar/pisces/rising-sagittarius/house-4",
-      "contentRole": "full_copy",
-      "reviewStatus": "needs_review",
-      "reason": "review-status",
-      "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/lunation-eclipse-variants-v1.json",
-      "objectPath": "/authoredCards/3",
-      "sourceSha256": "7e92867224fbaa0046df829abe20d26e4918dde85d303c43e9737798788ce1be",
-      "workClass": "full-copy-review"
-    },
-    {
-      "id": "unresolved-54c2d84e36d669d8",
-      "contentKey": "authored/book-ritual-and-the-moon/lunation-horoscope/eclipse-lunar/pisces/rising-scorpio/house-5",
-      "contentRole": "full_copy",
-      "reviewStatus": "needs_review",
-      "reason": "review-status",
-      "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/lunation-eclipse-variants-v1.json",
-      "objectPath": "/authoredCards/4",
-      "sourceSha256": "b0526df2ea8df8b183792320d6ef98fc805681f39f8cce21daeccb7539da20cc",
-      "workClass": "full-copy-review"
-    },
-    {
-      "id": "unresolved-5b25a8d0ff9dccfa",
-      "contentKey": "authored/book-ritual-and-the-moon/lunation-horoscope/eclipse-lunar/pisces/rising-taurus/house-11",
-      "contentRole": "full_copy",
-      "reviewStatus": "needs_review",
-      "reason": "review-status",
-      "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/lunation-eclipse-variants-v1.json",
-      "objectPath": "/authoredCards/10",
-      "sourceSha256": "3b0e9dea925f29cac0dcaffc925e842a48c7106e42a90ba82f6e0c801a22dfd2",
-      "workClass": "full-copy-review"
-    },
-    {
-      "id": "unresolved-e42058e684b0d05a",
-      "contentKey": "authored/book-ritual-and-the-moon/lunation-horoscope/eclipse-lunar/pisces/rising-virgo/house-7",
-      "contentRole": "full_copy",
-      "reviewStatus": "needs_review",
-      "reason": "review-status",
-      "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/lunation-eclipse-variants-v1.json",
-      "objectPath": "/authoredCards/6",
-      "sourceSha256": "79a35bfbe3f2d1029d0994a97a31d8998d721902a544b1b48151f457a084f8a0",
-      "workClass": "full-copy-review"
-    },
+  "optionalItems": [
     {
       "id": "unresolved-fb2777fc4d416d4a",
       "contentKey": "authored/sky-lunation-macro/new-moon/aquarius",
@@ -260,7 +115,7 @@
       "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/transit-synastry-rows-v1.json",
       "objectPath": "/authoredCards/2727",
       "sourceSha256": "df5f71d7409b344d5efa4e42d63a65de7e6d7c49c6960b148490be10d865021e",
-      "workClass": "full-copy-review"
+      "workClass": "optional-lunation-macro"
     },
     {
       "id": "unresolved-d970a49dce08a85f",
@@ -623,7 +478,7 @@
       "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
       "objectPath": "/hookRows/3319",
       "sourceSha256": "f99a3f4e635a68ea23052b37e060bb9ad43230832508db865011197abdd73ec2",
-      "workClass": "shared-fallback-authoring"
+      "workClass": "optional-lunation-opening"
     },
     {
       "id": "unresolved-e34611a749277038",
@@ -634,7 +489,7 @@
       "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
       "objectPath": "/hookRows/3320",
       "sourceSha256": "ec29fe6518e86391c51df4054974c5fbcdd071f5bd1056d5ec1152044c51101b",
-      "workClass": "shared-fallback-authoring"
+      "workClass": "optional-lunation-opening"
     },
     {
       "id": "unresolved-d4cdcdc4b5dcd579",
@@ -645,7 +500,7 @@
       "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
       "objectPath": "/hookRows/3321",
       "sourceSha256": "79df63d8796d6eaa8530eb730eb4920b88c0c56a01478c91b0540ea4d2068c57",
-      "workClass": "shared-fallback-authoring"
+      "workClass": "optional-lunation-opening"
     },
     {
       "id": "unresolved-13fea7e055f3c655",
@@ -656,7 +511,7 @@
       "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
       "objectPath": "/hookRows/3322",
       "sourceSha256": "9d0df747039d0f0812b42092952282f8e617aa618e4c625191665f81e6e3349f",
-      "workClass": "shared-fallback-authoring"
+      "workClass": "optional-lunation-opening"
     },
     {
       "id": "unresolved-9ec46e2d29c24d9d",
@@ -667,7 +522,7 @@
       "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
       "objectPath": "/hookRows/3323",
       "sourceSha256": "b8d94e94894420a052cc09c6832a4236a786b36996b5f45004309162809a2741",
-      "workClass": "shared-fallback-authoring"
+      "workClass": "optional-lunation-opening"
     },
     {
       "id": "unresolved-35142921d5a8b915",
@@ -678,7 +533,7 @@
       "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
       "objectPath": "/hookRows/3324",
       "sourceSha256": "1c06fc70e00ace5a4c913b1940f31d85f9438a7533dd005582a709060f241d9a",
-      "workClass": "shared-fallback-authoring"
+      "workClass": "optional-lunation-opening"
     },
     {
       "id": "unresolved-22e6a293551e53e4",
@@ -689,7 +544,7 @@
       "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
       "objectPath": "/hookRows/3325",
       "sourceSha256": "6da1255a98fa3369787a51bfd31e0fc38f82fc0cc52404eca28ed7de66e444fd",
-      "workClass": "shared-fallback-authoring"
+      "workClass": "optional-lunation-opening"
     },
     {
       "id": "unresolved-8f32a323daaad539",
@@ -700,7 +555,7 @@
       "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
       "objectPath": "/hookRows/3326",
       "sourceSha256": "6145ba241f95bef0c192417d32cd1f05801386fe8c8f1afebd2fdbf4894d06ce",
-      "workClass": "shared-fallback-authoring"
+      "workClass": "optional-lunation-opening"
     },
     {
       "id": "unresolved-61869688890cd9c6",
@@ -711,7 +566,7 @@
       "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
       "objectPath": "/hookRows/3327",
       "sourceSha256": "ba85e132c571999051a9bc220f48e8fd61e455e208ffe5657d7dffbd1c931895",
-      "workClass": "shared-fallback-authoring"
+      "workClass": "optional-lunation-opening"
     },
     {
       "id": "unresolved-e3ba653d20b7a410",
@@ -722,7 +577,7 @@
       "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
       "objectPath": "/hookRows/3328",
       "sourceSha256": "ba394521b2693457daf14cd7f6cc9437c796bcae18a1311bfb565b7336e4851e",
-      "workClass": "shared-fallback-authoring"
+      "workClass": "optional-lunation-opening"
     },
     {
       "id": "unresolved-d0e8f5c8639ac903",
@@ -733,7 +588,7 @@
       "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
       "objectPath": "/hookRows/3329",
       "sourceSha256": "1127bddbd31d4c98f3a043c54da4a8cd0b028d3ec296039ebf493055c54d1f4c",
-      "workClass": "shared-fallback-authoring"
+      "workClass": "optional-lunation-opening"
     },
     {
       "id": "unresolved-88891358be2942fb",
@@ -744,7 +599,7 @@
       "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
       "objectPath": "/hookRows/3331",
       "sourceSha256": "633ca705f19684e0046d97e9e821ddf27ba728000c73cc83de9cadf57cdb3935",
-      "workClass": "shared-fallback-authoring"
+      "workClass": "optional-lunation-ruler"
     },
     {
       "id": "unresolved-8d0498b116f81953",
@@ -755,7 +610,7 @@
       "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/lunation-blend-units-v1.json",
       "objectPath": "/hookRows/1",
       "sourceSha256": "5a841dbbcd225211b7e8e9124fdcf893472b13e6cd20f5a3b2d0f2e922fb51c3",
-      "workClass": "shared-fallback-authoring"
+      "workClass": "optional-lunation-ruler"
     },
     {
       "id": "unresolved-7df99aa0aab61ebd",
@@ -766,7 +621,7 @@
       "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
       "objectPath": "/hookRows/3332",
       "sourceSha256": "8a20e56fff8876dd2779e3689a7826be82a30f678bdced73a1dd3d06296e4a63",
-      "workClass": "shared-fallback-authoring"
+      "workClass": "optional-lunation-ruler"
     },
     {
       "id": "unresolved-b710e8589d76e0c7",
@@ -777,7 +632,7 @@
       "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/lunation-blend-units-v1.json",
       "objectPath": "/hookRows/10",
       "sourceSha256": "d237be08a4dfc4c0f7e1492e9e48885e68d6d85a7fd8ad22da877720360e819b",
-      "workClass": "shared-fallback-authoring"
+      "workClass": "optional-lunation-ruler"
     },
     {
       "id": "unresolved-3fc19d13cc51b8f5",
@@ -788,7 +643,7 @@
       "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
       "objectPath": "/hookRows/3334",
       "sourceSha256": "81db86b59e03bf81c1d843c5f5993c529f8e678148c3252c7d5cf9a9c25d8dbd",
-      "workClass": "shared-fallback-authoring"
+      "workClass": "optional-lunation-ruler"
     },
     {
       "id": "unresolved-2a4c762ffc4a7d1e",
@@ -799,7 +654,7 @@
       "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/lunation-blend-units-v1.json",
       "objectPath": "/hookRows/12",
       "sourceSha256": "7bc4e80622fe500e5db51d9e18f3fc6ed4124c2c22b104b30dfb6f5ab573b59f",
-      "workClass": "shared-fallback-authoring"
+      "workClass": "optional-lunation-ruler"
     },
     {
       "id": "unresolved-4e9e104e8b1a9925",
@@ -810,7 +665,7 @@
       "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
       "objectPath": "/hookRows/3335",
       "sourceSha256": "911ee20239e9fa571519d9c6ff334abb19e0d40e83141c6f0e916af998623c44",
-      "workClass": "shared-fallback-authoring"
+      "workClass": "optional-lunation-ruler"
     },
     {
       "id": "unresolved-964ab6785e5d8a74",
@@ -821,7 +676,7 @@
       "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/lunation-blend-units-v1.json",
       "objectPath": "/hookRows/2",
       "sourceSha256": "e96ccc80cb31fbb0ce2b959c2df0af6b3cb669c8db864d0696a3dbc0efafc6dc",
-      "workClass": "shared-fallback-authoring"
+      "workClass": "optional-lunation-ruler"
     },
     {
       "id": "unresolved-c73b4139c9453ec5",
@@ -832,7 +687,7 @@
       "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
       "objectPath": "/hookRows/3336",
       "sourceSha256": "370b95e497928934e301fb11b3671064703ca1de8348b21c461372c230067ac0",
-      "workClass": "shared-fallback-authoring"
+      "workClass": "optional-lunation-ruler"
     },
     {
       "id": "unresolved-d00f37764aabc4d6",
@@ -843,7 +698,7 @@
       "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/lunation-blend-units-v1.json",
       "objectPath": "/hookRows/3",
       "sourceSha256": "8a013e7eea19c14759d209cac1999c1067a4aa152e9b732b2fd5495915c24a84",
-      "workClass": "shared-fallback-authoring"
+      "workClass": "optional-lunation-ruler"
     },
     {
       "id": "unresolved-94409fce62cca4b5",
@@ -854,7 +709,7 @@
       "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
       "objectPath": "/hookRows/3337",
       "sourceSha256": "289b8dc74feec7671393d7b3ed74ff99217d9c5ffbf6a799f2231c5d3a8a0072",
-      "workClass": "shared-fallback-authoring"
+      "workClass": "optional-lunation-ruler"
     },
     {
       "id": "unresolved-1b94e6bd8ce2a7e7",
@@ -865,7 +720,7 @@
       "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/lunation-blend-units-v1.json",
       "objectPath": "/hookRows/4",
       "sourceSha256": "eedb863094a97d784c7e5e28cfe261bc90a2e243472ab3501527ab6015641e03",
-      "workClass": "shared-fallback-authoring"
+      "workClass": "optional-lunation-ruler"
     },
     {
       "id": "unresolved-79fe88e42525a936",
@@ -876,7 +731,7 @@
       "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
       "objectPath": "/hookRows/3338",
       "sourceSha256": "5b6df2cbcb401575fa6623c23b524db22bc3bd5900cb22f73cf44c7a9f93dc45",
-      "workClass": "shared-fallback-authoring"
+      "workClass": "optional-lunation-ruler"
     },
     {
       "id": "unresolved-eb18d218443863f3",
@@ -887,7 +742,7 @@
       "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/lunation-blend-units-v1.json",
       "objectPath": "/hookRows/5",
       "sourceSha256": "40907e8145110aa8fca64064ca9ad2a339a884fde470dfb4fb4dd877e698d30a",
-      "workClass": "shared-fallback-authoring"
+      "workClass": "optional-lunation-ruler"
     },
     {
       "id": "unresolved-49e39de2e5941ac3",
@@ -898,7 +753,7 @@
       "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
       "objectPath": "/hookRows/3339",
       "sourceSha256": "5df86a7363facead22e5e20c5963c632a82e9c8c8766c1f96ec04eb8f7267fa2",
-      "workClass": "shared-fallback-authoring"
+      "workClass": "optional-lunation-ruler"
     },
     {
       "id": "unresolved-a39ff786eec39900",
@@ -909,7 +764,7 @@
       "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/lunation-blend-units-v1.json",
       "objectPath": "/hookRows/6",
       "sourceSha256": "5ad1fa9d2d42928b4fa211afa021f6f2c03eeb5868cd3f1a35a9b6cacf2195c2",
-      "workClass": "shared-fallback-authoring"
+      "workClass": "optional-lunation-ruler"
     },
     {
       "id": "unresolved-34bbd3201e4e3ffe",
@@ -920,7 +775,7 @@
       "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
       "objectPath": "/hookRows/3340",
       "sourceSha256": "9d5f6fcea2fd0a74f595f86c78b47dceed8c6eb913467a00269d514c560b39b6",
-      "workClass": "shared-fallback-authoring"
+      "workClass": "optional-lunation-ruler"
     },
     {
       "id": "unresolved-39eef6805a12f3c6",
@@ -931,7 +786,7 @@
       "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/lunation-blend-units-v1.json",
       "objectPath": "/hookRows/7",
       "sourceSha256": "f296aa3890d3581ffca021003055c096a733c799e3d5c27d1d322c60a593be9d",
-      "workClass": "shared-fallback-authoring"
+      "workClass": "optional-lunation-ruler"
     },
     {
       "id": "unresolved-46f4866be225f2c8",
@@ -942,7 +797,7 @@
       "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
       "objectPath": "/hookRows/3341",
       "sourceSha256": "b93f649bce00c8a5452d29adb443a4f348c5152c739e1f320793f0f831a7521e",
-      "workClass": "shared-fallback-authoring"
+      "workClass": "optional-lunation-ruler"
     },
     {
       "id": "unresolved-03fb9d8bf645dd10",
@@ -953,7 +808,7 @@
       "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/lunation-blend-units-v1.json",
       "objectPath": "/hookRows/8",
       "sourceSha256": "0f158a1f77153d0dcc4c86aa500e220b8577ea85c2b3b2357ecfe930feaef455",
-      "workClass": "shared-fallback-authoring"
+      "workClass": "optional-lunation-ruler"
     },
     {
       "id": "unresolved-ee5c0452bf3a4036",
@@ -964,7 +819,7 @@
       "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
       "objectPath": "/hookRows/3342",
       "sourceSha256": "85b63087b9c5d07e6d6d9d7f839bd883951039f9af929ae9608958773658b03b",
-      "workClass": "shared-fallback-authoring"
+      "workClass": "optional-lunation-ruler"
     },
     {
       "id": "unresolved-daf3b3e0c5e1e61e",
@@ -975,128 +830,7 @@
       "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/lunation-blend-units-v1.json",
       "objectPath": "/hookRows/9",
       "sourceSha256": "4d87858a127649f9ca344fa0affff40dfdf96b252c8e03f63db26b3f25282dcc",
-      "workClass": "shared-fallback-authoring"
-    },
-    {
-      "id": "unresolved-d98239755505ada2",
-      "contentKey": "fallback-hook/lunation-uranus-layer/10",
-      "contentRole": "fallback_hook",
-      "reviewStatus": "needs_review",
-      "reason": "review-status",
-      "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
-      "objectPath": "/hookRows/3369",
-      "sourceSha256": "eddd6aa4732832734b1517edd8003cde5f9baefd076cdffcfbacf668397f7ef5",
-      "workClass": "shared-fallback-authoring"
-    },
-    {
-      "id": "unresolved-f3f8da9d0061678c",
-      "contentKey": "fallback-hook/lunation-uranus-layer/11",
-      "contentRole": "fallback_hook",
-      "reviewStatus": "needs_review",
-      "reason": "review-status",
-      "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
-      "objectPath": "/hookRows/3370",
-      "sourceSha256": "18a96d2b4ab7ad6ff5607e72c831f0597a98ae98a7244c2d1cce7e8297537282",
-      "workClass": "shared-fallback-authoring"
-    },
-    {
-      "id": "unresolved-b3aafbe7f4d19df0",
-      "contentKey": "fallback-hook/lunation-uranus-layer/12",
-      "contentRole": "fallback_hook",
-      "reviewStatus": "needs_review",
-      "reason": "review-status",
-      "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
-      "objectPath": "/hookRows/3371",
-      "sourceSha256": "6d69cb98e16bf7dea6ab5e7bb5598ecbc85d36c2deb66f68991467b682f4bbb2",
-      "workClass": "shared-fallback-authoring"
-    },
-    {
-      "id": "unresolved-9a2efb0663f79b29",
-      "contentKey": "fallback-hook/lunation-uranus-layer/2",
-      "contentRole": "fallback_hook",
-      "reviewStatus": "needs_review",
-      "reason": "review-status",
-      "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
-      "objectPath": "/hookRows/3372",
-      "sourceSha256": "a72472f21f123dd1478ed183cc880bb9b133f571e7ab50519d765763164ce064",
-      "workClass": "shared-fallback-authoring"
-    },
-    {
-      "id": "unresolved-030e5e2f825147bc",
-      "contentKey": "fallback-hook/lunation-uranus-layer/3",
-      "contentRole": "fallback_hook",
-      "reviewStatus": "needs_review",
-      "reason": "review-status",
-      "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
-      "objectPath": "/hookRows/3373",
-      "sourceSha256": "66ca66c0b6fde67c203f76841270e4514564d08c78e5ce9498b72460051047ec",
-      "workClass": "shared-fallback-authoring"
-    },
-    {
-      "id": "unresolved-d191166a681671c9",
-      "contentKey": "fallback-hook/lunation-uranus-layer/4",
-      "contentRole": "fallback_hook",
-      "reviewStatus": "needs_review",
-      "reason": "review-status",
-      "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
-      "objectPath": "/hookRows/3374",
-      "sourceSha256": "bcca8e1b85040e5d7408fadae7d47e8de4c47feff8acbac9bc8b98712982acf5",
-      "workClass": "shared-fallback-authoring"
-    },
-    {
-      "id": "unresolved-68dcb59b63facc42",
-      "contentKey": "fallback-hook/lunation-uranus-layer/5",
-      "contentRole": "fallback_hook",
-      "reviewStatus": "needs_review",
-      "reason": "review-status",
-      "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
-      "objectPath": "/hookRows/3375",
-      "sourceSha256": "44cffe66d58872bbdf95a730c6bbc6d2909a4c8870b0db4236b9e0a95fba81e9",
-      "workClass": "shared-fallback-authoring"
-    },
-    {
-      "id": "unresolved-e4f0e5f06f0cf216",
-      "contentKey": "fallback-hook/lunation-uranus-layer/6",
-      "contentRole": "fallback_hook",
-      "reviewStatus": "needs_review",
-      "reason": "review-status",
-      "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
-      "objectPath": "/hookRows/3376",
-      "sourceSha256": "4e45ef6cd95e54c9cc4fcbc756ce6cb16b24f30f0c4bc9cb678d64345fe4a3aa",
-      "workClass": "shared-fallback-authoring"
-    },
-    {
-      "id": "unresolved-a6a26880c5459c9d",
-      "contentKey": "fallback-hook/lunation-uranus-layer/7",
-      "contentRole": "fallback_hook",
-      "reviewStatus": "needs_review",
-      "reason": "review-status",
-      "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
-      "objectPath": "/hookRows/3377",
-      "sourceSha256": "3f79fa85692b29ec8f7b4bc3445b4411e66b751476eb485651eb9210ff191357",
-      "workClass": "shared-fallback-authoring"
-    },
-    {
-      "id": "unresolved-51ea5fdcc520c487",
-      "contentKey": "fallback-hook/lunation-uranus-layer/8",
-      "contentRole": "fallback_hook",
-      "reviewStatus": "needs_review",
-      "reason": "review-status",
-      "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
-      "objectPath": "/hookRows/3378",
-      "sourceSha256": "96fad948cb4cc7f5accc367784db736a71164365f159d5c296cff6d430ee2208",
-      "workClass": "shared-fallback-authoring"
-    },
-    {
-      "id": "unresolved-19490d2473672ae7",
-      "contentKey": "fallback-hook/lunation-uranus-layer/9",
-      "contentRole": "fallback_hook",
-      "reviewStatus": "needs_review",
-      "reason": "review-status",
-      "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
-      "objectPath": "/hookRows/3379",
-      "sourceSha256": "ab8e9e00be01c70010a240ea78bd7fb95f1f1af63db3a283eb7de17d51141b0e",
-      "workClass": "shared-fallback-authoring"
+      "workClass": "optional-lunation-ruler"
     },
     {
       "id": "unresolved-16a2bf84d8460d32",
@@ -1107,7 +841,7 @@
       "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/placement-interim-fixes-v1.json",
       "objectPath": "/templates/10",
       "sourceSha256": "d75c9bb13c445bfa56e9e7516d8802b3123a9daee82caa85924e9380f871b9a3",
-      "workClass": "template-review"
+      "workClass": "optional-template"
     },
     {
       "id": "unresolved-7490b250af8519e5",
@@ -1118,7 +852,7 @@
       "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/placement-interim-fixes-v1.json",
       "objectPath": "/templates/5",
       "sourceSha256": "38617dad28c9721a5616849d9d201bbefe228f1eb813bd09fa6553cbc7105e9d",
-      "workClass": "template-review"
+      "workClass": "optional-template"
     },
     {
       "id": "unresolved-1b0302e99ab64990",
@@ -1129,7 +863,7 @@
       "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/placement-interim-fixes-v1.json",
       "objectPath": "/templates/11",
       "sourceSha256": "5c82df6c986df1ff004f2b24a86e22aaac0d7ca1d27b7bafd6bc169eeec41749",
-      "workClass": "template-review"
+      "workClass": "optional-template"
     },
     {
       "id": "unresolved-b9c67be6f569c872",
@@ -1140,7 +874,7 @@
       "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/placement-interim-fixes-v1.json",
       "objectPath": "/templates/4",
       "sourceSha256": "b553a463dd888788658405b23266fbeca6f7252af48cc2b7cf3fd85205c54dc6",
-      "workClass": "template-review"
+      "workClass": "optional-template"
     },
     {
       "id": "unresolved-362263169ed488e5",
@@ -1151,7 +885,7 @@
       "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/placement-interim-fixes-v1.json",
       "objectPath": "/templates/2",
       "sourceSha256": "741f67d43bf74ef1aa593bc06ad99f4d143c3eb1d51f8e1f2b48248162be60c3",
-      "workClass": "template-review"
+      "workClass": "optional-template"
     },
     {
       "id": "unresolved-13045dcb1c5bd1ed",
@@ -1162,7 +896,7 @@
       "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/placement-interim-fixes-v1.json",
       "objectPath": "/templates/1",
       "sourceSha256": "3ac3f0d6df663e8c415e6e793b9f6a81a666b9ba27b4902dff5fccb82be9dc1f",
-      "workClass": "template-review"
+      "workClass": "optional-template"
     },
     {
       "id": "unresolved-fefaabf7b60f0642",
@@ -1173,7 +907,7 @@
       "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/placement-interim-fixes-v1.json",
       "objectPath": "/templates/8",
       "sourceSha256": "740c60db863b477b942689e4718a2a45a9aa5be21f4482ce9edcfd7eadf1032c",
-      "workClass": "template-review"
+      "workClass": "optional-template"
     },
     {
       "id": "unresolved-419230f14e87b9c9",
@@ -1184,7 +918,7 @@
       "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/placement-interim-fixes-v1.json",
       "objectPath": "/templates/12",
       "sourceSha256": "d18275bbaccf1fe5cabe24e7f8d966bf6df7bb56efc566696872cdc05ecefe13",
-      "workClass": "template-review"
+      "workClass": "optional-template"
     },
     {
       "id": "unresolved-4df141d25e99d087",
@@ -1195,7 +929,7 @@
       "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/placement-interim-fixes-v1.json",
       "objectPath": "/templates/9",
       "sourceSha256": "8ff73c1fbd34faeb2e6022da23cebb4638f4da23fabf44d80157289379b1078a",
-      "workClass": "template-review"
+      "workClass": "optional-template"
     },
     {
       "id": "unresolved-84fe80367876fd13",
@@ -1206,7 +940,7 @@
       "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/placement-interim-fixes-v1.json",
       "objectPath": "/templates/6",
       "sourceSha256": "bab4c532515cd82e18570169ede4461bc8ac6fa80e9530b16a45d7fcb996f017",
-      "workClass": "template-review"
+      "workClass": "optional-template"
     },
     {
       "id": "unresolved-734f3058046c8dbc",
@@ -1217,7 +951,7 @@
       "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/placement-interim-fixes-v1.json",
       "objectPath": "/templates/13",
       "sourceSha256": "ab605016ce21212d941e5e271fe0438a1377bb69596a238daa298321d7a2dfa6",
-      "workClass": "template-review"
+      "workClass": "optional-template"
     },
     {
       "id": "unresolved-7ac2b7c99efbb1c9",
@@ -1228,7 +962,7 @@
       "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/placement-interim-fixes-v1.json",
       "objectPath": "/templates/0",
       "sourceSha256": "1bca58b0eaaede877c01bcb979076e660fc6d09e50a1fa09fbcf72f05b5dd445",
-      "workClass": "template-review"
+      "workClass": "optional-template"
     },
     {
       "id": "unresolved-5027355d32b71f89",
@@ -1239,7 +973,7 @@
       "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/placement-interim-fixes-v1.json",
       "objectPath": "/templates/7",
       "sourceSha256": "20df9e8ca9ca34e01f8173b6ec071e1285b238fec7b77e07e6830acddd6c6e63",
-      "workClass": "template-review"
+      "workClass": "optional-template"
     },
     {
       "id": "unresolved-1ce0a3a7a3467bbc",
@@ -1250,7 +984,7 @@
       "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/placement-interim-fixes-v1.json",
       "objectPath": "/templates/3",
       "sourceSha256": "2505898a66a678df58b54d0215d6a3ef2f8c105345f8dd3497c39a1de7bba988",
-      "workClass": "template-review"
+      "workClass": "optional-template"
     }
   ],
   "shadowedCount": 47,
@@ -2206,12 +1940,206 @@
       ]
     }
   ],
-  "retiredCount": 62,
+  "retiredCount": 85,
   "retiredReasonCounts": {
+    "governed-reader-layer-retirement": 11,
     "owner-retired-family": 56,
-    "superseded-by-owner-approved-v14": 6
+    "superseded-by-owner-approved-v14": 6,
+    "superseded-by-protected-evergreen-eclipse-assembly": 12
   },
   "retiredItems": [
+    {
+      "id": "unresolved-701f69b38087a6a6",
+      "contentKey": "authored/book-ritual-and-the-moon/lunation-horoscope/eclipse-lunar/pisces/rising-aquarius/house-2",
+      "contentRole": "full_copy",
+      "reviewStatus": "needs_review",
+      "reason": "review-status",
+      "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/lunation-eclipse-variants-v1.json",
+      "objectPath": "/authoredCards/1",
+      "sourceSha256": "5dc7ebb7107d4b42cb23a63af607eaf976cdd50df0f3cff67b770c61580a5de3",
+      "retirement": {
+        "id": "superseded-lunar-eclipse-dedicated-book-cells",
+        "reason": "superseded-by-protected-evergreen-eclipse-assembly",
+        "evidence": "packages/astro-knowledge/review/lunation-card-assembly-v1/spec.md#33-solar-and-lunar-eclipses-owner-language-candidate; apps/web/src/content/fallbackArchitectureV3/resolver/renderTransitSynastry.mjs#renderLunationHoroscope",
+        "replacement": "Owner-approved Full Moon book cell plus separately protected eclipse sections; exact eclipse preview cells are intentionally not selected by the runtime."
+      }
+    },
+    {
+      "id": "unresolved-c9bf38031344c178",
+      "contentKey": "authored/book-ritual-and-the-moon/lunation-horoscope/eclipse-lunar/pisces/rising-aries/house-12",
+      "contentRole": "full_copy",
+      "reviewStatus": "needs_review",
+      "reason": "review-status",
+      "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/lunation-eclipse-variants-v1.json",
+      "objectPath": "/authoredCards/11",
+      "sourceSha256": "d098eed93dede0943e656c9c456146c68ba8a557b41f62cd9cdfb83faef5f01e",
+      "retirement": {
+        "id": "superseded-lunar-eclipse-dedicated-book-cells",
+        "reason": "superseded-by-protected-evergreen-eclipse-assembly",
+        "evidence": "packages/astro-knowledge/review/lunation-card-assembly-v1/spec.md#33-solar-and-lunar-eclipses-owner-language-candidate; apps/web/src/content/fallbackArchitectureV3/resolver/renderTransitSynastry.mjs#renderLunationHoroscope",
+        "replacement": "Owner-approved Full Moon book cell plus separately protected eclipse sections; exact eclipse preview cells are intentionally not selected by the runtime."
+      }
+    },
+    {
+      "id": "unresolved-dd05f69b2f209367",
+      "contentKey": "authored/book-ritual-and-the-moon/lunation-horoscope/eclipse-lunar/pisces/rising-cancer/house-9",
+      "contentRole": "full_copy",
+      "reviewStatus": "needs_review",
+      "reason": "review-status",
+      "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/lunation-eclipse-variants-v1.json",
+      "objectPath": "/authoredCards/8",
+      "sourceSha256": "5bf08200332827de68cbb389faf56bc5e44f64f240f104a91c3afcdf4d09b450",
+      "retirement": {
+        "id": "superseded-lunar-eclipse-dedicated-book-cells",
+        "reason": "superseded-by-protected-evergreen-eclipse-assembly",
+        "evidence": "packages/astro-knowledge/review/lunation-card-assembly-v1/spec.md#33-solar-and-lunar-eclipses-owner-language-candidate; apps/web/src/content/fallbackArchitectureV3/resolver/renderTransitSynastry.mjs#renderLunationHoroscope",
+        "replacement": "Owner-approved Full Moon book cell plus separately protected eclipse sections; exact eclipse preview cells are intentionally not selected by the runtime."
+      }
+    },
+    {
+      "id": "unresolved-38a9ccde381878fc",
+      "contentKey": "authored/book-ritual-and-the-moon/lunation-horoscope/eclipse-lunar/pisces/rising-capricorn/house-3",
+      "contentRole": "full_copy",
+      "reviewStatus": "needs_review",
+      "reason": "review-status",
+      "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/lunation-eclipse-variants-v1.json",
+      "objectPath": "/authoredCards/2",
+      "sourceSha256": "179fb5ab3338c3860461fa02e2b9db21324bc04cff2bc68380f34db17261736e",
+      "retirement": {
+        "id": "superseded-lunar-eclipse-dedicated-book-cells",
+        "reason": "superseded-by-protected-evergreen-eclipse-assembly",
+        "evidence": "packages/astro-knowledge/review/lunation-card-assembly-v1/spec.md#33-solar-and-lunar-eclipses-owner-language-candidate; apps/web/src/content/fallbackArchitectureV3/resolver/renderTransitSynastry.mjs#renderLunationHoroscope",
+        "replacement": "Owner-approved Full Moon book cell plus separately protected eclipse sections; exact eclipse preview cells are intentionally not selected by the runtime."
+      }
+    },
+    {
+      "id": "unresolved-4928e83b9276f12d",
+      "contentKey": "authored/book-ritual-and-the-moon/lunation-horoscope/eclipse-lunar/pisces/rising-gemini/house-10",
+      "contentRole": "full_copy",
+      "reviewStatus": "needs_review",
+      "reason": "review-status",
+      "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/lunation-eclipse-variants-v1.json",
+      "objectPath": "/authoredCards/9",
+      "sourceSha256": "e1f9ad12d59ac9b9f3d7f0f219344e8d028e9909548d1ef29aaffdd9dd6ae250",
+      "retirement": {
+        "id": "superseded-lunar-eclipse-dedicated-book-cells",
+        "reason": "superseded-by-protected-evergreen-eclipse-assembly",
+        "evidence": "packages/astro-knowledge/review/lunation-card-assembly-v1/spec.md#33-solar-and-lunar-eclipses-owner-language-candidate; apps/web/src/content/fallbackArchitectureV3/resolver/renderTransitSynastry.mjs#renderLunationHoroscope",
+        "replacement": "Owner-approved Full Moon book cell plus separately protected eclipse sections; exact eclipse preview cells are intentionally not selected by the runtime."
+      }
+    },
+    {
+      "id": "unresolved-6ee524e8f19227b5",
+      "contentKey": "authored/book-ritual-and-the-moon/lunation-horoscope/eclipse-lunar/pisces/rising-leo/house-8",
+      "contentRole": "full_copy",
+      "reviewStatus": "needs_review",
+      "reason": "review-status",
+      "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/lunation-eclipse-variants-v1.json",
+      "objectPath": "/authoredCards/7",
+      "sourceSha256": "befa8ceff3e49e140c99d2c255da3117f0dc24cbe94b41f15a0fa177fae336aa",
+      "retirement": {
+        "id": "superseded-lunar-eclipse-dedicated-book-cells",
+        "reason": "superseded-by-protected-evergreen-eclipse-assembly",
+        "evidence": "packages/astro-knowledge/review/lunation-card-assembly-v1/spec.md#33-solar-and-lunar-eclipses-owner-language-candidate; apps/web/src/content/fallbackArchitectureV3/resolver/renderTransitSynastry.mjs#renderLunationHoroscope",
+        "replacement": "Owner-approved Full Moon book cell plus separately protected eclipse sections; exact eclipse preview cells are intentionally not selected by the runtime."
+      }
+    },
+    {
+      "id": "unresolved-23eb7e0508f0a898",
+      "contentKey": "authored/book-ritual-and-the-moon/lunation-horoscope/eclipse-lunar/pisces/rising-libra/house-6",
+      "contentRole": "full_copy",
+      "reviewStatus": "needs_review",
+      "reason": "review-status",
+      "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/lunation-eclipse-variants-v1.json",
+      "objectPath": "/authoredCards/5",
+      "sourceSha256": "bbb098b8a8846226d0f066bd1099b50ebbd829b4cd5bdb6a524ebe5199100865",
+      "retirement": {
+        "id": "superseded-lunar-eclipse-dedicated-book-cells",
+        "reason": "superseded-by-protected-evergreen-eclipse-assembly",
+        "evidence": "packages/astro-knowledge/review/lunation-card-assembly-v1/spec.md#33-solar-and-lunar-eclipses-owner-language-candidate; apps/web/src/content/fallbackArchitectureV3/resolver/renderTransitSynastry.mjs#renderLunationHoroscope",
+        "replacement": "Owner-approved Full Moon book cell plus separately protected eclipse sections; exact eclipse preview cells are intentionally not selected by the runtime."
+      }
+    },
+    {
+      "id": "unresolved-356cc63607eb51f0",
+      "contentKey": "authored/book-ritual-and-the-moon/lunation-horoscope/eclipse-lunar/pisces/rising-pisces/house-1",
+      "contentRole": "full_copy",
+      "reviewStatus": "needs_review",
+      "reason": "review-status",
+      "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/lunation-eclipse-variants-v1.json",
+      "objectPath": "/authoredCards/0",
+      "sourceSha256": "b444449667ed05f61e2356d9df0a37415337d08a0599c3ca669a0a3be6b0ea32",
+      "retirement": {
+        "id": "superseded-lunar-eclipse-dedicated-book-cells",
+        "reason": "superseded-by-protected-evergreen-eclipse-assembly",
+        "evidence": "packages/astro-knowledge/review/lunation-card-assembly-v1/spec.md#33-solar-and-lunar-eclipses-owner-language-candidate; apps/web/src/content/fallbackArchitectureV3/resolver/renderTransitSynastry.mjs#renderLunationHoroscope",
+        "replacement": "Owner-approved Full Moon book cell plus separately protected eclipse sections; exact eclipse preview cells are intentionally not selected by the runtime."
+      }
+    },
+    {
+      "id": "unresolved-767027add4dd9a24",
+      "contentKey": "authored/book-ritual-and-the-moon/lunation-horoscope/eclipse-lunar/pisces/rising-sagittarius/house-4",
+      "contentRole": "full_copy",
+      "reviewStatus": "needs_review",
+      "reason": "review-status",
+      "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/lunation-eclipse-variants-v1.json",
+      "objectPath": "/authoredCards/3",
+      "sourceSha256": "7e92867224fbaa0046df829abe20d26e4918dde85d303c43e9737798788ce1be",
+      "retirement": {
+        "id": "superseded-lunar-eclipse-dedicated-book-cells",
+        "reason": "superseded-by-protected-evergreen-eclipse-assembly",
+        "evidence": "packages/astro-knowledge/review/lunation-card-assembly-v1/spec.md#33-solar-and-lunar-eclipses-owner-language-candidate; apps/web/src/content/fallbackArchitectureV3/resolver/renderTransitSynastry.mjs#renderLunationHoroscope",
+        "replacement": "Owner-approved Full Moon book cell plus separately protected eclipse sections; exact eclipse preview cells are intentionally not selected by the runtime."
+      }
+    },
+    {
+      "id": "unresolved-54c2d84e36d669d8",
+      "contentKey": "authored/book-ritual-and-the-moon/lunation-horoscope/eclipse-lunar/pisces/rising-scorpio/house-5",
+      "contentRole": "full_copy",
+      "reviewStatus": "needs_review",
+      "reason": "review-status",
+      "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/lunation-eclipse-variants-v1.json",
+      "objectPath": "/authoredCards/4",
+      "sourceSha256": "b0526df2ea8df8b183792320d6ef98fc805681f39f8cce21daeccb7539da20cc",
+      "retirement": {
+        "id": "superseded-lunar-eclipse-dedicated-book-cells",
+        "reason": "superseded-by-protected-evergreen-eclipse-assembly",
+        "evidence": "packages/astro-knowledge/review/lunation-card-assembly-v1/spec.md#33-solar-and-lunar-eclipses-owner-language-candidate; apps/web/src/content/fallbackArchitectureV3/resolver/renderTransitSynastry.mjs#renderLunationHoroscope",
+        "replacement": "Owner-approved Full Moon book cell plus separately protected eclipse sections; exact eclipse preview cells are intentionally not selected by the runtime."
+      }
+    },
+    {
+      "id": "unresolved-5b25a8d0ff9dccfa",
+      "contentKey": "authored/book-ritual-and-the-moon/lunation-horoscope/eclipse-lunar/pisces/rising-taurus/house-11",
+      "contentRole": "full_copy",
+      "reviewStatus": "needs_review",
+      "reason": "review-status",
+      "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/lunation-eclipse-variants-v1.json",
+      "objectPath": "/authoredCards/10",
+      "sourceSha256": "3b0e9dea925f29cac0dcaffc925e842a48c7106e42a90ba82f6e0c801a22dfd2",
+      "retirement": {
+        "id": "superseded-lunar-eclipse-dedicated-book-cells",
+        "reason": "superseded-by-protected-evergreen-eclipse-assembly",
+        "evidence": "packages/astro-knowledge/review/lunation-card-assembly-v1/spec.md#33-solar-and-lunar-eclipses-owner-language-candidate; apps/web/src/content/fallbackArchitectureV3/resolver/renderTransitSynastry.mjs#renderLunationHoroscope",
+        "replacement": "Owner-approved Full Moon book cell plus separately protected eclipse sections; exact eclipse preview cells are intentionally not selected by the runtime."
+      }
+    },
+    {
+      "id": "unresolved-e42058e684b0d05a",
+      "contentKey": "authored/book-ritual-and-the-moon/lunation-horoscope/eclipse-lunar/pisces/rising-virgo/house-7",
+      "contentRole": "full_copy",
+      "reviewStatus": "needs_review",
+      "reason": "review-status",
+      "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/lunation-eclipse-variants-v1.json",
+      "objectPath": "/authoredCards/6",
+      "sourceSha256": "79a35bfbe3f2d1029d0994a97a31d8998d721902a544b1b48151f457a084f8a0",
+      "retirement": {
+        "id": "superseded-lunar-eclipse-dedicated-book-cells",
+        "reason": "superseded-by-protected-evergreen-eclipse-assembly",
+        "evidence": "packages/astro-knowledge/review/lunation-card-assembly-v1/spec.md#33-solar-and-lunar-eclipses-owner-language-candidate; apps/web/src/content/fallbackArchitectureV3/resolver/renderTransitSynastry.mjs#renderLunationHoroscope",
+        "replacement": "Owner-approved Full Moon book cell plus separately protected eclipse sections; exact eclipse preview cells are intentionally not selected by the runtime."
+      }
+    },
     {
       "id": "unresolved-1ba2fddc45d009eb",
       "contentKey": "fallback-hook/empty-house-ruler-v3/a",
@@ -2306,6 +2234,182 @@
         "reason": "superseded-by-owner-approved-v14",
         "evidence": "packages/astro-knowledge/review/empty-house-v14/import-manifest.json",
         "replacement": "fallback-template/natal.empty-house-v14 and its owner-approved V14 source keys"
+      }
+    },
+    {
+      "id": "unresolved-d98239755505ada2",
+      "contentKey": "fallback-hook/lunation-uranus-layer/10",
+      "contentRole": "fallback_hook",
+      "reviewStatus": "needs_review",
+      "reason": "review-status",
+      "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+      "objectPath": "/hookRows/3369",
+      "sourceSha256": "eddd6aa4732832734b1517edd8003cde5f9baefd076cdffcfbacf668397f7ef5",
+      "retirement": {
+        "id": "retired-lunation-uranus-reader-layer",
+        "reason": "governed-reader-layer-retirement",
+        "evidence": "docs/decisions/2026-08-23-remove-uranus-lunation-reader-layer.md",
+        "replacement": "No Uranus-only secondary lunation paragraph; current lunation assembly uses the common governed composition path."
+      }
+    },
+    {
+      "id": "unresolved-f3f8da9d0061678c",
+      "contentKey": "fallback-hook/lunation-uranus-layer/11",
+      "contentRole": "fallback_hook",
+      "reviewStatus": "needs_review",
+      "reason": "review-status",
+      "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+      "objectPath": "/hookRows/3370",
+      "sourceSha256": "18a96d2b4ab7ad6ff5607e72c831f0597a98ae98a7244c2d1cce7e8297537282",
+      "retirement": {
+        "id": "retired-lunation-uranus-reader-layer",
+        "reason": "governed-reader-layer-retirement",
+        "evidence": "docs/decisions/2026-08-23-remove-uranus-lunation-reader-layer.md",
+        "replacement": "No Uranus-only secondary lunation paragraph; current lunation assembly uses the common governed composition path."
+      }
+    },
+    {
+      "id": "unresolved-b3aafbe7f4d19df0",
+      "contentKey": "fallback-hook/lunation-uranus-layer/12",
+      "contentRole": "fallback_hook",
+      "reviewStatus": "needs_review",
+      "reason": "review-status",
+      "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+      "objectPath": "/hookRows/3371",
+      "sourceSha256": "6d69cb98e16bf7dea6ab5e7bb5598ecbc85d36c2deb66f68991467b682f4bbb2",
+      "retirement": {
+        "id": "retired-lunation-uranus-reader-layer",
+        "reason": "governed-reader-layer-retirement",
+        "evidence": "docs/decisions/2026-08-23-remove-uranus-lunation-reader-layer.md",
+        "replacement": "No Uranus-only secondary lunation paragraph; current lunation assembly uses the common governed composition path."
+      }
+    },
+    {
+      "id": "unresolved-9a2efb0663f79b29",
+      "contentKey": "fallback-hook/lunation-uranus-layer/2",
+      "contentRole": "fallback_hook",
+      "reviewStatus": "needs_review",
+      "reason": "review-status",
+      "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+      "objectPath": "/hookRows/3372",
+      "sourceSha256": "a72472f21f123dd1478ed183cc880bb9b133f571e7ab50519d765763164ce064",
+      "retirement": {
+        "id": "retired-lunation-uranus-reader-layer",
+        "reason": "governed-reader-layer-retirement",
+        "evidence": "docs/decisions/2026-08-23-remove-uranus-lunation-reader-layer.md",
+        "replacement": "No Uranus-only secondary lunation paragraph; current lunation assembly uses the common governed composition path."
+      }
+    },
+    {
+      "id": "unresolved-030e5e2f825147bc",
+      "contentKey": "fallback-hook/lunation-uranus-layer/3",
+      "contentRole": "fallback_hook",
+      "reviewStatus": "needs_review",
+      "reason": "review-status",
+      "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+      "objectPath": "/hookRows/3373",
+      "sourceSha256": "66ca66c0b6fde67c203f76841270e4514564d08c78e5ce9498b72460051047ec",
+      "retirement": {
+        "id": "retired-lunation-uranus-reader-layer",
+        "reason": "governed-reader-layer-retirement",
+        "evidence": "docs/decisions/2026-08-23-remove-uranus-lunation-reader-layer.md",
+        "replacement": "No Uranus-only secondary lunation paragraph; current lunation assembly uses the common governed composition path."
+      }
+    },
+    {
+      "id": "unresolved-d191166a681671c9",
+      "contentKey": "fallback-hook/lunation-uranus-layer/4",
+      "contentRole": "fallback_hook",
+      "reviewStatus": "needs_review",
+      "reason": "review-status",
+      "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+      "objectPath": "/hookRows/3374",
+      "sourceSha256": "bcca8e1b85040e5d7408fadae7d47e8de4c47feff8acbac9bc8b98712982acf5",
+      "retirement": {
+        "id": "retired-lunation-uranus-reader-layer",
+        "reason": "governed-reader-layer-retirement",
+        "evidence": "docs/decisions/2026-08-23-remove-uranus-lunation-reader-layer.md",
+        "replacement": "No Uranus-only secondary lunation paragraph; current lunation assembly uses the common governed composition path."
+      }
+    },
+    {
+      "id": "unresolved-68dcb59b63facc42",
+      "contentKey": "fallback-hook/lunation-uranus-layer/5",
+      "contentRole": "fallback_hook",
+      "reviewStatus": "needs_review",
+      "reason": "review-status",
+      "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+      "objectPath": "/hookRows/3375",
+      "sourceSha256": "44cffe66d58872bbdf95a730c6bbc6d2909a4c8870b0db4236b9e0a95fba81e9",
+      "retirement": {
+        "id": "retired-lunation-uranus-reader-layer",
+        "reason": "governed-reader-layer-retirement",
+        "evidence": "docs/decisions/2026-08-23-remove-uranus-lunation-reader-layer.md",
+        "replacement": "No Uranus-only secondary lunation paragraph; current lunation assembly uses the common governed composition path."
+      }
+    },
+    {
+      "id": "unresolved-e4f0e5f06f0cf216",
+      "contentKey": "fallback-hook/lunation-uranus-layer/6",
+      "contentRole": "fallback_hook",
+      "reviewStatus": "needs_review",
+      "reason": "review-status",
+      "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+      "objectPath": "/hookRows/3376",
+      "sourceSha256": "4e45ef6cd95e54c9cc4fcbc756ce6cb16b24f30f0c4bc9cb678d64345fe4a3aa",
+      "retirement": {
+        "id": "retired-lunation-uranus-reader-layer",
+        "reason": "governed-reader-layer-retirement",
+        "evidence": "docs/decisions/2026-08-23-remove-uranus-lunation-reader-layer.md",
+        "replacement": "No Uranus-only secondary lunation paragraph; current lunation assembly uses the common governed composition path."
+      }
+    },
+    {
+      "id": "unresolved-a6a26880c5459c9d",
+      "contentKey": "fallback-hook/lunation-uranus-layer/7",
+      "contentRole": "fallback_hook",
+      "reviewStatus": "needs_review",
+      "reason": "review-status",
+      "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+      "objectPath": "/hookRows/3377",
+      "sourceSha256": "3f79fa85692b29ec8f7b4bc3445b4411e66b751476eb485651eb9210ff191357",
+      "retirement": {
+        "id": "retired-lunation-uranus-reader-layer",
+        "reason": "governed-reader-layer-retirement",
+        "evidence": "docs/decisions/2026-08-23-remove-uranus-lunation-reader-layer.md",
+        "replacement": "No Uranus-only secondary lunation paragraph; current lunation assembly uses the common governed composition path."
+      }
+    },
+    {
+      "id": "unresolved-51ea5fdcc520c487",
+      "contentKey": "fallback-hook/lunation-uranus-layer/8",
+      "contentRole": "fallback_hook",
+      "reviewStatus": "needs_review",
+      "reason": "review-status",
+      "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+      "objectPath": "/hookRows/3378",
+      "sourceSha256": "96fad948cb4cc7f5accc367784db736a71164365f159d5c296cff6d430ee2208",
+      "retirement": {
+        "id": "retired-lunation-uranus-reader-layer",
+        "reason": "governed-reader-layer-retirement",
+        "evidence": "docs/decisions/2026-08-23-remove-uranus-lunation-reader-layer.md",
+        "replacement": "No Uranus-only secondary lunation paragraph; current lunation assembly uses the common governed composition path."
+      }
+    },
+    {
+      "id": "unresolved-19490d2473672ae7",
+      "contentKey": "fallback-hook/lunation-uranus-layer/9",
+      "contentRole": "fallback_hook",
+      "reviewStatus": "needs_review",
+      "reason": "review-status",
+      "sourcePath": "apps/web/src/content/fallbackArchitectureV3/source-rows/fallback-source-rows-v3.json",
+      "objectPath": "/hookRows/3379",
+      "sourceSha256": "ab8e9e00be01c70010a240ea78bd7fb95f1f1af63db3a283eb7de17d51141b0e",
+      "retirement": {
+        "id": "retired-lunation-uranus-reader-layer",
+        "reason": "governed-reader-layer-retirement",
+        "evidence": "docs/decisions/2026-08-23-remove-uranus-lunation-reader-layer.md",
+        "replacement": "No Uranus-only secondary lunation paragraph; current lunation assembly uses the common governed composition path."
       }
     },
     {
@@ -3206,10 +3310,11 @@
     }
   ],
   "semantics": {
-    "count": "Actionable unresolved source records.",
-    "issueCount": "Unique actionable content keys, which is the closer measure of owner/editorial decisions remaining.",
-    "items": "Actionable unresolved records with no governed retirement and no reader-eligible peer using the same contentKey.",
-    "shadowedItems": "Pending source records retained as audit evidence but excluded from owner/editorial backlog because an exact-key reader-eligible peer already exists.",
+    "count": "Required unresolved source records.",
+    "issueCount": "Unique required content keys that still need an editorial decision before required reader coverage can be complete.",
+    "items": "Required unresolved records with no governed retirement, no reader-eligible peer using the same contentKey, and no resolver-supported optional classification.",
+    "optionalItems": "Non-serving enrichment candidates retained for future editorial work but excluded from the required backlog because current reader coverage resolves without them.",
+    "shadowedItems": "Pending source records retained as audit evidence but excluded from required owner/editorial work because an exact-key reader-eligible peer already exists.",
     "retiredItems": "Pending source records retained as audit evidence but excluded from owner/editorial backlog because a governed retirement or supersession decision already exists."
   }
 }
