@@ -65,6 +65,8 @@ assert.equal(taxonomy.routingPolicy.evergreenAndFreeTextShareIntentLayer, true);
 assert.equal(taxonomy.routingPolicy.pillarIsUserFacingAndDoesNotEqualHouse, true);
 assert.equal(taxonomy.routingPolicy.astrologyRetrievedAfterIntentClassification, true);
 assert.equal(taxonomy.routingPolicy.llmMustNotCalculateAstrology, true);
+assert.equal(taxonomy.routingPolicy.evergreenQuestionTextIsIntentNotEvidence, true);
+assert.equal(taxonomy.routingPolicy.answerMustNotTreatQuestionPremiseAsProvenFact, true);
 
 const money = pillars.find((pillar) => pillar.id === "money");
 assert.ok(money?.answerBoundary?.includes("Do not recommend or guarantee"), "Money must retain the financial-decision boundary.");
