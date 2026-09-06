@@ -2,6 +2,7 @@ import { AlertTriangle, ArrowLeft, CheckCircle2, RefreshCw } from "lucide-react"
 import { useEffect, useState } from "react";
 import { adminCredentialHeaders, adminSecretStorageKey, normalizeAdminSecret } from "./adminSecret";
 import { AdminAccessGate } from "./AdminStudioPrimitives";
+import NeedsAttentionDashboard from "./NeedsAttentionDashboard";
 import { loadOwnerSessionAccessToken, watchOwnerSessionAccessToken } from "./ownerSession";
 import "./admin.css";
 import "./admin-components.css";
@@ -42,20 +43,20 @@ type CoveragePayload = {
     complete: number;
     incomplete: number;
     unresolvedQueue: number;
-  unresolvedIssues: number;
-  unresolvedOptionalQueue: number;
-  unresolvedOptionalIssues: number;
-  unresolvedShadowed: number;
-  unresolvedRetired: number;
+    unresolvedIssues: number;
+    unresolvedOptionalQueue: number;
+    unresolvedOptionalIssues: number;
+    unresolvedShadowed: number;
+    unresolvedRetired: number;
   };
   coverage: CoverageRow[];
   notes: {
     friendsIntentionalGap: string | null;
     unresolvedReasonCounts: Record<string, number>;
-  unresolvedWorkload: Record<string, { records: number; decisions: number }>;
-  unresolvedOptionalWorkload: Record<string, { records: number; decisions: number }>;
-  unresolvedShadowedReasonCounts: Record<string, number>;
-  unresolvedRetiredReasonCounts: Record<string, number>;
+    unresolvedWorkload: Record<string, { records: number; decisions: number }>;
+    unresolvedOptionalWorkload: Record<string, { records: number; decisions: number }>;
+    unresolvedShadowedReasonCounts: Record<string, number>;
+    unresolvedRetiredReasonCounts: Record<string, number>;
   };
 };
 
@@ -71,7 +72,7 @@ const authorityLineStyle = {
   overflowWrap: "anywhere"
 } as const;
 
-export default function ContentCoverageDashboard() {
+function CoverageDashboard() {
   const [payload, setPayload] = useState<CoveragePayload | null>(null);
   const [credential, setCredential] = useState("");
   const [emergencySecret, setEmergencySecret] = useState(() => normalizeAdminSecret(window.localStorage.getItem(adminSecretStorageKey) ?? ""));
@@ -140,15 +141,18 @@ export default function ContentCoverageDashboard() {
               One view of what is complete, what is missing, and the authority chain from owner source to reader destination.
             </p>
           </div>
-          <button
-            type="button"
-            className="admin-create-button"
-            onClick={() => credential && void loadCoverage(credential)}
-            disabled={!credential || loading}
-          >
-            <RefreshCw size={16} aria-hidden="true" />
-            {loading ? "Refreshing…" : "Refresh"}
-          </button>
+          <div className="admin-toolbar-actions">
+            <a className="admin-create-button" href="/admin/content/coverage?view=attention">Needs attention</a>
+            <button
+              type="button"
+              className="admin-create-button"
+              onClick={() => credential && void loadCoverage(credential)}
+              disabled={!credential || loading}
+            >
+              <RefreshCw size={16} aria-hidden="true" />
+              {loading ? "Refreshing…" : "Refresh"}
+            </button>
+          </div>
         </header>
 
         {!payload && (
@@ -176,51 +180,51 @@ export default function ContentCoverageDashboard() {
               </div>
               <div style={cardStyle}>
                 <p className="admin-eyebrow">Required decisions</p>
-      <strong style={{ fontSize: 28 }}>{payload.summary.unresolvedIssues}</strong>
-    </div>
-    <div style={cardStyle}>
-      <p className="admin-eyebrow">Optional enrichment</p>
-      <strong style={{ fontSize: 28 }}>{payload.summary.unresolvedOptionalIssues}</strong>
-    </div>
-    <div style={cardStyle}>
-      <p className="admin-eyebrow">Required source records</p>
-      <strong style={{ fontSize: 28 }}>{payload.summary.unresolvedQueue}</strong>
-    </div>
-    <div style={cardStyle}>
-      <p className="admin-eyebrow">Resolved source history</p>
-      <strong style={{ fontSize: 28 }}>{payload.summary.unresolvedShadowed + payload.summary.unresolvedRetired}</strong>
+                <strong style={{ fontSize: 28 }}>{payload.summary.unresolvedIssues}</strong>
+              </div>
+              <div style={cardStyle}>
+                <p className="admin-eyebrow">Optional enrichment</p>
+                <strong style={{ fontSize: 28 }}>{payload.summary.unresolvedOptionalIssues}</strong>
+              </div>
+              <div style={cardStyle}>
+                <p className="admin-eyebrow">Required source records</p>
+                <strong style={{ fontSize: 28 }}>{payload.summary.unresolvedQueue}</strong>
+              </div>
+              <div style={cardStyle}>
+                <p className="admin-eyebrow">Resolved source history</p>
+                <strong style={{ fontSize: 28 }}>{payload.summary.unresolvedShadowed + payload.summary.unresolvedRetired}</strong>
               </div>
             </section>
 
             {Object.keys(payload.notes.unresolvedWorkload).length > 0 && (
-    <section style={{ ...cardStyle, marginBottom: 20 }} aria-label="Editorial backlog classes">
-      <p className="admin-eyebrow">Required editorial work</p>
-      {Object.entries(payload.notes.unresolvedWorkload).map(([workClass, counts]) => (
-        <p key={workClass} style={{ margin: "6px 0 0" }}>
-          <strong>{workClass.replaceAll("-", " ")}:</strong> {counts.decisions} decisions · {counts.records} source records
-        </p>
-      ))}
-      <p style={{ margin: "8px 0 0", opacity: 0.72 }}>
-        Shadowed and governed retired source rows remain preserved as audit history and are not counted as required owner work.
-      </p>
-    </section>
-  )}
+              <section style={{ ...cardStyle, marginBottom: 20 }} aria-label="Editorial backlog classes">
+                <p className="admin-eyebrow">Required editorial work</p>
+                {Object.entries(payload.notes.unresolvedWorkload).map(([workClass, counts]) => (
+                  <p key={workClass} style={{ margin: "6px 0 0" }}>
+                    <strong>{workClass.replaceAll("-", " ")}:</strong> {counts.decisions} decisions · {counts.records} source records
+                  </p>
+                ))}
+                <p style={{ margin: "8px 0 0", opacity: 0.72 }}>
+                  Shadowed and governed retired source rows remain preserved as audit history and are not counted as required owner work.
+                </p>
+              </section>
+            )}
 
-  {Object.keys(payload.notes.unresolvedOptionalWorkload).length > 0 && (
-    <section style={{ ...cardStyle, marginBottom: 20 }} aria-label="Optional editorial enrichment">
-      <p className="admin-eyebrow">Optional enrichment</p>
-      {Object.entries(payload.notes.unresolvedOptionalWorkload).map(([workClass, counts]) => (
-        <p key={workClass} style={{ margin: "6px 0 0" }}>
-          <strong>{workClass.replaceAll("-", " ")}:</strong> {counts.decisions} decisions · {counts.records} source records
-        </p>
-      ))}
-      <p style={{ margin: "8px 0 0", opacity: 0.72 }}>
-        These candidates can improve rotation or depth later, but current reader coverage resolves without them.
-      </p>
-    </section>
-  )}
+            {Object.keys(payload.notes.unresolvedOptionalWorkload).length > 0 && (
+              <section style={{ ...cardStyle, marginBottom: 20 }} aria-label="Optional editorial enrichment">
+                <p className="admin-eyebrow">Optional enrichment</p>
+                {Object.entries(payload.notes.unresolvedOptionalWorkload).map(([workClass, counts]) => (
+                  <p key={workClass} style={{ margin: "6px 0 0" }}>
+                    <strong>{workClass.replaceAll("-", " ")}:</strong> {counts.decisions} decisions · {counts.records} source records
+                  </p>
+                ))}
+                <p style={{ margin: "8px 0 0", opacity: 0.72 }}>
+                  These candidates can improve rotation or depth later, but current reader coverage resolves without them.
+                </p>
+              </section>
+            )}
 
-  {payload.readerEligibility && (
+            {payload.readerEligibility && (
               <section style={{ ...cardStyle, marginBottom: 20 }} aria-label="Reader database eligibility">
                 <p className="admin-eyebrow">Database overlay rule</p>
                 <strong>Actually serving requires all three conditions</strong>
@@ -245,7 +249,7 @@ export default function ContentCoverageDashboard() {
 
             <section style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: 14 }} aria-label="Content corpus coverage">
               {payload.coverage.map((row) => (
-                <article key={row.id} style={cardStyle}>
+                <article id={row.id} key={row.id} style={cardStyle}>
                   <div style={{ display: "flex", justifyContent: "space-between", gap: 12, alignItems: "flex-start" }}>
                     <div>
                       <p className="admin-eyebrow">{row.state === "complete" ? "Complete" : "Needs work"}</p>
@@ -285,4 +289,9 @@ export default function ContentCoverageDashboard() {
       </section>
     </main>
   );
+}
+
+export default function ContentCoverageDashboard() {
+  const view = new URLSearchParams(window.location.search).get("view");
+  return view === "attention" ? <NeedsAttentionDashboard /> : <CoverageDashboard />;
 }

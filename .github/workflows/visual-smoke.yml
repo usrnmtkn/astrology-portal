@@ -58,7 +58,7 @@ jobs:
         run: npm run test:performance-contracts
 
       - name: Run admin user flows
-        run: npx playwright test -c playwright.config.ts tests/visual/content-dashboard-admin-user-flows.spec.ts tests/visual/content-studio-reader-destinations.spec.ts
+        run: npx playwright test -c playwright.config.ts tests/visual/content-dashboard-admin-user-flows.spec.ts tests/visual/content-studio-reader-destinations.spec.ts tests/visual/content-studio-needs-attention.spec.ts
 
       - name: Run client-facing user flows
         run: npx playwright test -c playwright.config.ts tests/visual/client-facing-user-flows.spec.ts
