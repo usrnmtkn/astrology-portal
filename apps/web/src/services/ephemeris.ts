@@ -3134,7 +3134,7 @@ function findSkyPlacementResidencyAspects(
     "Sun", "Mercury", "Venus", "Mars", "Jupiter", "Saturn",
     "Uranus", "Neptune", "Pluto", "Lilith"
   ].filter((candidate) => candidate !== planet);
-  const glyphByPlanet = new Map(planets.map(([name, glyph]) => [name, glyph]));
+  const glyphByPlanet = new Map<string, string>(planets.map(([name, glyph]) => [name, glyph]));
   const events: LunarCalendarEvent[] = [];
 
   for (const otherPlanet of otherPlanets) {
