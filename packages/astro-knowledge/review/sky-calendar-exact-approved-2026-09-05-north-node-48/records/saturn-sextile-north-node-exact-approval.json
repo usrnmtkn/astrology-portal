@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.saturn.sextile.north-node",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-05",
+  "ownerStatement": "yes please continue",
+  "decisionContext": "The owner had just been told the next step was to ship the 48 newly approved North Node passages into the governed Calendar exact-aspect corpus, then replied \"yes please continue\".",
+  "batchId": "sky-calendar-exact-approved-2026-09-05-north-node-48",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-05-north-node-48/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "c2bf831cfcfef559954992438dde4bc7e1e37c107b29cb28f30962ef973fc311",
+  "summary": "A strict rule or a firm deadline may provide the exact structure an unfamiliar plan needs to survive.",
+  "body": "A strict rule or a firm deadline may provide the exact structure an unfamiliar plan needs to survive. When Saturn sextiles the North Node, formal boundaries can give a new ambition enough structure to become workable. You do not need to view every limitation as a roadblock designed to stop you. Accept the commitment, schedule, or budget that gives your next move enough protection to hold up in ordinary life.",
+  "sourceApprovalBatch": "sky-north-node-launch-batch-2-exact-owner-approved-refined-2026-09-05"
+}

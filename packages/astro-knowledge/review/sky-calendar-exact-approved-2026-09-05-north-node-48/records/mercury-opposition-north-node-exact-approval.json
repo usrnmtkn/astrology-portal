@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.mercury.opposition.north-node",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-05",
+  "ownerStatement": "yes please continue",
+  "decisionContext": "The owner had just been told the next step was to ship the 48 newly approved North Node passages into the governed Calendar exact-aspect corpus, then replied \"yes please continue\".",
+  "batchId": "sky-calendar-exact-approved-2026-09-05-north-node-48",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-05-north-node-48/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "c67934aab7a08ae04e5c7d3f22b621beb6a5ef57a36ead122d71a325d96ad6c8",
+  "summary": "You can make an excellent case for staying with what you already know, especially when the unfamiliar option still has more questions than answers.",
+  "body": "You can make an excellent case for staying with what you already know, especially when the unfamiliar option still has more questions than answers. When Mercury opposes the North Node, old expertise, settled opinions, familiar contacts, or an explanation you have used for years can sound especially convincing because you already know how to defend it. That knowledge still matters, but expertise can turn into a closed argument when no new information is allowed to change the conclusion. Use what you know as evidence, not as a reason to stop asking what the unfamiliar option actually requires.",
+  "sourceApprovalBatch": "sky-north-node-launch-batch-1-owner-review-v2-2026-09-05"
+}

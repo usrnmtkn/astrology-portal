@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.pluto.conjunction.north-node",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-05",
+  "ownerStatement": "yes please continue",
+  "decisionContext": "The owner had just been told the next step was to ship the 48 newly approved North Node passages into the governed Calendar exact-aspect corpus, then replied \"yes please continue\".",
+  "batchId": "sky-calendar-exact-approved-2026-09-05-north-node-48",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-05-north-node-48/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "85a972b6f6b6f2d292cd257d2c4d625f557aabf1ea66845f9b2186b00f93cb14",
+  "summary": "A decision about your next direction may force you to confront whoever actually controls the access, funding, or authority.",
+  "body": "A decision about your next direction may force you to confront whoever actually controls the access, funding, or authority. When Pluto conjuncts the North Node, your plan can become inseparable from the power required to carry it out. A negotiation, difficult boundary, or exit from an unequal setup may matter far more right now than another round of deciding what you want. Wanting change and having leverage are two different problems. Find the leverage, then use it on the specific condition that is limiting your choices.",
+  "sourceApprovalBatch": "sky-north-node-launch-batch-2-exact-owner-approved-refined-2026-09-05"
+}

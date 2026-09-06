@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.sun.square.north-node",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-05",
+  "ownerStatement": "yes please continue",
+  "decisionContext": "The owner had just been told the next step was to ship the 48 newly approved North Node passages into the governed Calendar exact-aspect corpus, then replied \"yes please continue\".",
+  "batchId": "sky-calendar-exact-approved-2026-09-05-north-node-48",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-05-north-node-48/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "4329915f227323a652db73f46d9865b3eb61ce78f190b5f805a7d7e5fa90385f",
+  "summary": "Being good at something can make it much harder to admit that you no longer want your future built around it.",
+  "body": "Being good at something can make it much harder to admit that you no longer want your future built around it. When the Sun squares the North Node, praise, promotion, or another chance to lead can reward the exact role you have been trying to outgrow. That is what makes the tension difficult: the old identity is not failing; it may be succeeding well enough to make changing course more expensive. Decide what you still want from the recognition, then stop letting other people's approval choose the role you keep repeating.",
+  "sourceApprovalBatch": "sky-north-node-launch-batch-1-owner-review-v2-2026-09-05"
+}

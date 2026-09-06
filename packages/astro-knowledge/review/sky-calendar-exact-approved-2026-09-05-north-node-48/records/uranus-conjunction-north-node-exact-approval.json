@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.uranus.conjunction.north-node",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-05",
+  "ownerStatement": "yes please continue",
+  "decisionContext": "The owner had just been told the next step was to ship the 48 newly approved North Node passages into the governed Calendar exact-aspect corpus, then replied \"yes please continue\".",
+  "batchId": "sky-calendar-exact-approved-2026-09-05-north-node-48",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-05-north-node-48/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "8104483b15cbd99a71bd8237b9c2a9b60af019b0c09668b1e2f646b065af6069",
+  "summary": "An unexpected change can force a pivot you were hoping to make on your own timeline.",
+  "body": "An unexpected change can force a pivot you were hoping to make on your own timeline. When Uranus conjuncts the North Node, sudden disruption can alter what is available before you have had time to get comfortable with the new facts. The surprise may expose a change that was long overdue, but that does not make every impulsive reaction wise. Handle the immediate disruption first, then choose the option that gives you the most freedom after the adrenaline wears off.",
+  "sourceApprovalBatch": "sky-north-node-launch-batch-2-exact-owner-approved-refined-2026-09-05"
+}

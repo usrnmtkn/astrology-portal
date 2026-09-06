@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 2,
+  "contentKey": "sky.aspect.uranus.sextile.north-node",
+  "surface": "sky-calendar-exact-aspect",
+  "approvedField": "readerCopy.body",
+  "approvalLevel": "exact_owner_approved",
+  "authority": "owner",
+  "decision": "approve",
+  "approvedAt": "2026-09-05",
+  "ownerStatement": "yes please continue",
+  "decisionContext": "The owner had just been told the next step was to ship the 48 newly approved North Node passages into the governed Calendar exact-aspect corpus, then replied \"yes please continue\".",
+  "batchId": "sky-calendar-exact-approved-2026-09-05-north-node-48",
+  "evidenceRecordPath": "packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-05-north-node-48/owner-batch-authorization.json",
+  "capabilities": [
+    "batch_generation",
+    "serving"
+  ],
+  "bodySha256": "a9a994722fc56c4ded75401d9b7ded4d5b4d0b1b5d18d037857d02ceddd4955c",
+  "summary": "An unplanned workaround may give you access to a route the old system made unnecessarily difficult.",
+  "body": "An unplanned workaround may give you access to a route the old system made unnecessarily difficult. When Uranus sextiles the North Node, a new tool, unusual introduction, or sudden exception can remove one stubborn source of friction and make a different approach practical enough to try. You do not need to reinvent your entire life just because one better method appeared. Test the alternative where the old process was blocking you, and keep it if it genuinely gives you more choice.",
+  "sourceApprovalBatch": "sky-north-node-launch-batch-2-exact-owner-approved-refined-2026-09-05"
+}

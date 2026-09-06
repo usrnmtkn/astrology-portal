@@ -1,0 +1,18 @@
+{
+  "id": "saturn-conjunction-north-node",
+  "transiting": "saturn",
+  "aspect": "conjunction",
+  "other": "north-node",
+  "base": "A decision you have been postponing becomes much harder to avoid once it arrives with a formal deadline or a new responsibility.",
+  "business": "The two concerns arrive in the same decision; work with the point they now share.",
+  "shadow": "Because both concerns are active at once, acting on one can obscure what the other still needs.",
+  "arcApplying": "The two concerns become harder to separate as exactness approaches.",
+  "arcSeparating": "The fused emphasis begins to loosen after exactness.",
+  "voiceNeutral": true,
+  "status": "LIVE",
+  "readerCopy": {
+    "summary": "A decision you have been postponing becomes much harder to avoid once it arrives with a formal deadline or a new responsibility.",
+    "body": "A decision you have been postponing becomes much harder to avoid once it arrives with a formal deadline or a new responsibility. When Saturn conjuncts the North Node, future direction and practical limitation meet in the same decision, turning a theoretical plan into a concrete requirement for paperwork, commitment, or structure. The pressure to sign the contract or accept the role is not proof that you have to say yes. It simply gives you measurable terms. Read them carefully, and only accept the arrangement if you are prepared to carry the actual weight of the work.",
+    "approvedVia": "bounded owner-approved exact Calendar batch sky-calendar-exact-approved-2026-09-05-north-node-48; packages/astro-knowledge/review/sky-calendar-exact-approved-2026-09-05-north-node-48/owner-batch-authorization.json"
+  }
+}
